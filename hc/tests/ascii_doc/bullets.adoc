@@ -1,0 +1,27 @@
+= Iterated Dynamics
+:toc:
+:experimental:
+
+== Bullet Demonstration
+
+=== Bullets
+
+This is a paragraph before.
+
+* This is a single line bullet.
+* This is another bullet, across multiple source lines.  It goes on for
+  long enough that it will consume multiple output lines when formatted
+  as a printed document.
+* This is another single line bullet.
+
+This is a paragraph after.
+
+Now we have some indented bullets.
+
+  * This is the first indented bullet.
+  * This is the second indented bullet.  It goes on for long enough that
+    it will consume multiple output lines when formatted as a printed
+    document.
+  * This is another single line bullet.
+
+This is another paragraph after.

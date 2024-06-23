@@ -1,0 +1,33 @@
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~FormatExclude=8
+;
+;
+;
+~DocContents
+{3.   , 0, Bullet Demonstration, FF}
+{3.1  , 1, "Bullets"}
+;
+;
+~Topic=Bullets
+
+This is a paragraph before.
+
+o This is a single line bullet.\
+o This is another bullet, across multiple source
+  lines.  It goes on for long enough that it will consume
+  multiple output lines when formatted as a printed document.
+o This is another single line bullet.\
+
+This is a paragraph after.
+
+Now we have some indented bullets.
+
+  o This is the first indented bullet.\
+  o This is the second indented bullet.  It goes on for long
+    enough that it will consume multiple output lines when
+    formatted as a printed document.
+  o This is another single line bullet.\
+
+This is another paragraph after.

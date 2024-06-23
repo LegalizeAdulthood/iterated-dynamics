@@ -66,6 +66,7 @@ private:
     bool output(PD_COMMANDS cmd, PD_INFO *pd);
     void emit_char(char c);
     void emit_key_name();
+    void print_inside_key(char c);
     void print_char(char c, int n);
     void print_string(char const *s, int n);
 
@@ -79,6 +80,7 @@ private:
     std::string m_content;
     bool m_inside_key{};
     std::string m_key_name;
+    bool m_inside_bullet{};
 };
 
 bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
@@ -237,61 +239,81 @@ void AsciiDocProcessor::emit_key_name()
     }
 }
 
+void AsciiDocProcessor::print_inside_key(char c)
+{
+    if (c == '>')
+    {
+        if (m_key_name.empty())
+        {
+            m_key_name += c;
+        }
+        else
+        {
+            m_inside_key = false;
+            if (is_key_name(m_key_name))
+            {
+                m_key_name = "kbd:[" + m_key_name + ']';
+                emit_key_name();
+            }
+            else if (m_key_name.substr(0,4) == "http")
+            {
+                print_string(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+            }
+            else
+            {
+                emit_char('<');
+                emit_key_name();
+                emit_char('>');
+            }
+        }
+    }
+    else if (!std::isprint(c) || c == ' ')
+    {
+        m_inside_key = false;
+        emit_char('<');
+        emit_key_name();
+        emit_char(c);
+    }
+    else
+    {
+        m_key_name += c;
+    }
+}
+
 void AsciiDocProcessor::print_char(char c, int n)
 {
     while (n-- > 0)
     {
         if (m_inside_key)
         {
-            if (c == '>')
-            {
-                if (m_key_name.empty())
-                {
-                    m_key_name += c;
-                }
-                else
-                {
-                    m_inside_key = false;
-                    if (is_key_name(m_key_name))
-                    {
-                        m_key_name = "kbd:[" + m_key_name + ']';
-                        emit_key_name();
-                    }
-                    else if (m_key_name.substr(0,4) == "http")
-                    {
-                        print_string(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
-                    }
-                    else
-                    {
-                        emit_char('<');
-                        emit_key_name();
-                        emit_char('>');
-                    }
-                }
-            }
-            else if (!std::isprint(c) || c == ' ')
-            {
-                m_inside_key = false;
-                emit_char('<');
-                emit_key_name();
-                emit_char(c);
-            }
-            else
-            {
-                m_key_name += c;
-            }
+            print_inside_key(c);
+        }
+        else if (m_start_of_line && c == 'o')
+        {
+            m_inside_bullet = true;
         }
         else if (c == '<')
         {
+            m_inside_bullet = false;
             m_inside_key = true;
             m_key_name.clear();
         }
         else if (c == ' ')
         {
+            if (m_inside_bullet)
+            {
+                emit_char('*');
+            }
+            m_inside_bullet = false;
             ++m_spaces;
         }
         else if (c == '\n' || c == '\f')
         {
+            if (m_inside_bullet)
+            {
+                emit_char('o');
+            }
+            m_inside_bullet = false;
             ++m_newlines;
             m_start_of_line = true;
             m_spaces = 0;   // strip spaces before a new-line
@@ -302,6 +324,11 @@ void AsciiDocProcessor::print_char(char c, int n)
         }
         else 
         {
+            if (m_inside_bullet)
+            {
+                emit_char('o');
+            }
+            m_inside_bullet = false;
             emit_char(c);
         }
     }
