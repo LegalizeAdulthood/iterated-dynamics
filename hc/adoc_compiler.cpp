@@ -59,10 +59,11 @@ public:
     }
     ~AsciiDocProcessor() = default;
 
-    bool info(PD_COMMANDS cmd, PD_INFO *pd);
-    bool output(PD_COMMANDS cmd, PD_INFO *pd);
+    void process();
 
 private:
+    bool info(PD_COMMANDS cmd, PD_INFO *pd);
+    bool output(PD_COMMANDS cmd, PD_INFO *pd);
     void emit_char(char c);
     void emit_key_name();
     void print_char(char c, int n);
@@ -177,6 +178,15 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
     default:
         return false;
     }
+}
+
+void AsciiDocProcessor::process()
+{
+    auto info_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
+    { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
+    auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
+    { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
+    process_document(info_cb, output_cb, this);
 }
 
 static bool is_key_name(const std::string &name)
@@ -348,11 +358,7 @@ void AsciiDocCompiler::print_ascii_doc()
            ":experimental:\n";
 
     AsciiDocProcessor processor(str);
-    auto info_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
-    { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
-    auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
-    { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
-    process_document(info_cb, output_cb, &processor);
+    processor.process();
 }
 
 } // namespace hc
