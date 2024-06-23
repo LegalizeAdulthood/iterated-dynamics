@@ -432,10 +432,11 @@ directly.
 As soon as you select a video mode, Id begins drawing an image - the
 "full" Mandelbrot set if you haven't selected another fractal type.
 
-For a quick start, after starting Id try one of the following:\
-  Win32 GDI 800x600 small size image:       <F6>\
-  Win32 GDI 1024x768 medium size image:     <F7>\
-  Win32 GDI 1200x900 large size image:      <F8>
+For a quick start, after starting Id try one of the following:
+
+o Win32 GDI 800x600 small size image:       <F6>\
+o Win32 GDI 1024x768 medium size image:     <F7>\
+o Win32 GDI 1200x900 large size image:      <F8>\
 
 After the initial Mandelbrot image has been displayed, try zooming
 into it (see {Zoom Box Commands}) and color cycling (see
@@ -588,10 +589,11 @@ Commands marked with an '*' are also available at the credits screen.
 ;
 ~Topic=Plotting Commands
 Function keys & various combinations are used to select a video mode and
-redraw the screen.  For a quick start try one of the following:\
-  Win32 GDI 800x600 small size image:       <F6>\
-  Win32 GDI 1024x768 medium size image:     <F7>\
-  Win32 GDI 1200x900 large size image:      <F8>
+redraw the screen.  For a quick start try one of the following:
+
+o Win32 GDI 800x600 small size image:       <F6>\
+o Win32 GDI 1024x768 medium size image:     <F7>\
+o Win32 GDI 1200x900 large size image:      <F8>\
 
 <F1>\
 Display a help screen.  The function keys available in help mode are
@@ -935,7 +937,7 @@ to recreate it.
 
 After you press <B>, Id prompts for:
 
-  Parameter file:  The name of the file to store the parameters in.  You
+o Parameter file:  The name of the file to store the parameters in.  You
   should use some name like "myimages" instead of id.par, so that
   your images are kept separate from the ones released with new versions
   of Id.  You can use the parmfile= command in sstools.ini
@@ -943,18 +945,18 @@ After you press <B>, Id prompts for:
   (See {"Setting Defaults (sstools.ini File)"} and "parmfile=" in
   {"File Parameters"}.)
 
-  Name:  The name you want to assign to the entry, to be displayed when
+o Name:  The name you want to assign to the entry, to be displayed when
   the <@> or <2> command is used.
 
-  Main comment:  A comment to be shown beside the entry in the <@> command
+o Main comment:  A comment to be shown beside the entry in the <@> command
   display.
 
-  Second, Third, and Fourth comment:  Additional comments to store in the
+o Second, Third, and Fourth comment:  Additional comments to store in the
   file with the entry.  These comments go in the file only, and are not
   displayed by the <@> command.  You can set these comments from the
   command line - see {=@COMMENTS Comment= Command}.
 
-  Record colors?:  Whether color information should be included in the
+o Record colors?:  Whether color information should be included in the
   entry.  Usually the default value displayed by Id is what you want.
   Allowed values are:\
   "no" - Don't record colors.\
@@ -971,7 +973,7 @@ After you press <B>, Id prompts for:
   "only" - Record only the colors in the par file, without any other
      parameters.  This is useful for converting color maps to par entries.
 
-  # of colors:  This only matters if "Record colors?" is set to "yes".  It
+o # of colors:  This only matters if "Record colors?" is set to "yes".  It
   specifies the number of colors to record.  Recording less colors will
   take less space.  Usually the default value displayed by Id is what
   you want.  You might want to increase it in some cases, e.g. if you are
@@ -979,13 +981,13 @@ After you press <B>, Id prompts for:
   editor to set all 256 possible colors for use with color cycling, then
   you'll want to set the "# of colors" to 256.
 
-  See the {=@RECORDCOLORS Recordcolors} command, which controls when
+  See the {=@RECORDCOLORS recordcolors} command, which controls when
   mapfiles are used and when compressed colors are written to par files.
 
-  maxlinelength: This number controls the maximum width of a parameter
+o maxlinelength: This number controls the maximum width of a parameter
   entry in a par file.  The default is 72 characters.
 
-  At the bottom of the input screen are inputs for Id's "pieces"
+o At the bottom of the input screen are inputs for Id's "pieces"
   divide-and-conquer feature.  You can create multiple par entries that
   break an image up into pieces so that you can generate the image pieces
   one by one.  There are two reasons for doing this.  The first is in case
@@ -996,7 +998,7 @@ After you press <B>, Id prompts for:
      Y Multiples - How many divisions of final image in the y direction\
      Video mode  - Id video mode for each piece (e.g. "F3")\
 
-  The last item defaults to the current video mode.  If either X Multiples or
+o The last item defaults to the current video mode.  If either X Multiples or
   Y Multiples are greater than 1, then multiple numbered par entries for the
   pieces are added to the par file, and a makemig.bat file is created that
   builds all of the component pieces and then stitches them together into
@@ -1006,7 +1008,7 @@ After you press <B>, Id prompts for:
   X and Y directions of 65,535 (a limitation of "only" four billion pixels
   or so).
 
-  The final image generated by makemig is a "multi-image" GIF file called
+o The final image generated by makemig is a "multi-image" GIF file called
   fractmig.gif.  In case you have other software that can't handle
   multi-image GIF files, makemig includes a final (but commented out) call
   to simplgif, a companion program that reads a GIF file that may contain
@@ -1859,21 +1861,21 @@ centered at the cursor (the ends of the color range are noted by putting
 dashed lines around the corresponding palette values).  While in Freestyle
 mode:
 
- Moving the mouse changes the location of the range of colors that are
- affected.
+o Moving the mouse changes the location of the range of colors that are
+  affected.
 
- Control-Insert/Delete or the shifted-right-mouse-button changes the
- size of the affected palette range.
+o <Control+Insert>/<Ctrl+Delete> or the shifted-right-mouse-button changes
+  the size of the affected palette range.
 
- The normal color editing keys (R,G,B,1-6, etc) set the central color
- of the affected palette range.
+o The normal color editing keys (R,G,B,1-6, etc) set the central color
+  of the affected palette range.
 
- Pressing ENTER or double-clicking the left mouse button makes the
- palette changes permanent (if you don't perform this step, any
- palette changes disappear when you press the <F> key again to exit
- freestyle mode).
+o Pressing <Enter> or double-clicking the left mouse button makes the
+  palette changes permanent (if you don't perform this step, any
+  palette changes disappear when you press the <F> key again to exit
+  freestyle mode).
 
- For more details see {Freestyle mode tutorial}
+For more details see {Freestyle mode tutorial}
 ;
 ;
 ~Topic=Freestyle mode tutorial
