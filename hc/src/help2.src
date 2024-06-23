@@ -1696,13 +1696,13 @@ Id authors have provided this fractal as a built-in type.
 
 The formula is:
 
-MandelbrotMix4 \{\; Jim Muth\
-  a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),\
-    g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,\
-    k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel) :\
-  z=k*((a*(z^b))+(d*(z^f)))+c,\
-  |z| < l\
-\}
+  MandelbrotMix4 \{\; Jim Muth\
+    a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),\
+      g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,\
+      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel) :\
+    z=k*((a*(z^b))+(d*(z^f)))+c,\
+    |z| < l\
+  \}
 
 Note that Jim uses l=imag(p3)+100, which is to say, the sixth scalar
 parameter, as the bailout.  Our implementation follows Jim if the user
@@ -1715,12 +1715,12 @@ This is Jim Muth's fifth version of the DivideBrot formula.
 
 The formula is:
 
-DivideBrot5 \{ \; Jim Muth\
-   z = 0, c = pixel, a = real(p1) - 2,\
-   b = imag(p1) + 10^(-20) :\
-   z = sqr(z) / (z^(-a) + b) + c\
-   |z| < 16\
-\}
+  DivideBrot5 \{ \; Jim Muth\
+     z = 0, c = pixel, a = real(p1) - 2,\
+     b = imag(p1) + 10^(-20) :\
+     z = sqr(z) / (z^(-a) + b) + c\
+     |z| < 16\
+  \}
 ;
 ;
 ~Topic=Pickover Mandelbrot/Julia Types, Label=HT_PICKMJ
