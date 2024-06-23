@@ -1,7 +1,10 @@
 set(HC_TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_data)
 
-function(add_hc_test name)
+function(add_asciidoc_test name)
     cmake_parse_arguments(HC_TEST "" "" "PARAMETERS" ${ARGN})
+    list(APPEND HC_TEST_PARAMETERS /adoc /r ${name} /o ${name} ${name}.src)
+    configure_file(${name}.src ${HC_TEST_DIR}/${name}.src COPYONLY)
+    file(MAKE_DIRECTORY ${HC_TEST_DIR}/${name})
     add_test(NAME TestHelpCompiler.${name}
         COMMAND ${CMAKE_COMMAND}
             "-DHC=$<SHELL_PATH:$<TARGET_FILE:hc>>"
@@ -14,14 +17,6 @@ function(add_hc_test name)
     set_tests_properties(TestHelpCompiler.${name} PROPERTIES LABELS "hc;run-hc")
 endfunction()
 
-configure_file(toc.src ${HC_TEST_DIR}/toc.src COPYONLY)
-file(MAKE_DIRECTORY ${HC_TEST_DIR}/toc)
-add_hc_test(toc PARAMETERS /adoc /r toc /o toc toc.src)
-
-configure_file(sections.src ${HC_TEST_DIR}/sections.src COPYONLY)
-file(MAKE_DIRECTORY ${HC_TEST_DIR}/sections)
-add_hc_test(sections PARAMETERS /adoc /r sections /o sections sections.src)
-
-configure_file(keys.src ${HC_TEST_DIR}/keys.src COPYONLY)
-file(MAKE_DIRECTORY ${HC_TEST_DIR}/keys)
-add_hc_test(keys PARAMETERS /adoc /r keys /o keys keys.src)
+add_asciidoc_test(toc)
+add_asciidoc_test(sections)
+add_asciidoc_test(keys)
