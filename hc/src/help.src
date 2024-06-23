@@ -1982,84 +1982,84 @@ image.
 ;
 ~Topic=Parameter Explorer/Evolver, Label=HELP_EVOL
 
- Since Id is such a wonderfully complex program it has more than a few
- parameters to tweak and options to select.  To the inexperienced
- user the choice is bewildering.  Even for the experts the chaotic nature of
- the mathematical processes involved make it difficult to know what to
- change in order to achieve the desired effect.
+Since Id is such a wonderfully complex program it has more than a few
+parameters to tweak and options to select.  To the inexperienced
+user the choice is bewildering.  Even for the experts the chaotic nature of
+the mathematical processes involved make it difficult to know what to
+change in order to achieve the desired effect.
 
- In order to help with this situation the Id parameter evolver has been
- developed.  It varies those parameters for you and puts the results
- on screen as a grid of small images.  You can then choose the one which you
- like best and regenerate it full screen, or if you don't like any of the
- variations, you can try again to see if anything better turns up!
+In order to help with this situation the Id parameter evolver has been
+developed.  It varies those parameters for you and puts the results
+on screen as a grid of small images.  You can then choose the one which you
+like best and regenerate it full screen, or if you don't like any of the
+variations, you can try again to see if anything better turns up!
 
- Enough explanations for now, lets see how easy it is to use:
+Enough explanations for now, lets see how easy it is to use:
 
- With the default Mandlebrot set on the screen simply hold down the <Alt+1>
- key on the top row (DON'T use the numeric keypad to the
- right, it won't work).  You'll see a screen full of images generated starting
- from the middle and spiraling outwards.  The perfect Mandlebrot set will be
- in the middle and the others will be warped and distorted by having had the
- initial value of Z perturbed at random... but you don't need to know that
- (which is the whole point really!).
+With the default Mandlebrot set on the screen simply hold down the <Alt+1>
+key on the top row (DON'T use the numeric keypad to the
+right, it won't work).  You'll see a screen full of images generated starting
+from the middle and spiraling outwards.  The perfect Mandlebrot set will be
+in the middle and the others will be warped and distorted by having had the
+initial value of Z perturbed at random... but you don't need to know that
+(which is the whole point really!).
 
- <Alt+1> produces a low level of mutation of the fractal, only 'mild'
- parameters are changed, those which have a more subtle effect.  For much
- wilder variations try pressing <Alt+7> now.  This give the maximum available
- mutation with just about everything being twiddled and fiddled to rather
- dramatic effect as you should now be seeing.
+<Alt+1> produces a low level of mutation of the fractal, only 'mild'
+parameters are changed, those which have a more subtle effect.  For much
+wilder variations try pressing <Alt+7> now.  This give the maximum available
+mutation with just about everything being twiddled and fiddled to rather
+dramatic effect as you should now be seeing.
 
- To select an image for full screen display simply bring up a zoombox by
- pressing 'Page-up' once.  The center image will now have a white box around
- it.  Hold down the <Ctrl+Arrow> keys to move this box around
- until it's outlining an image you like.  Pressing <B> will now exit from
- evolver mode and redraw the selected image full size.  If, rather than
- exiting from evolver mode, you just press <Enter>, then a whole new set of
- images is generated, all based around the one you selected (which is now
- the middle image of the new set).
+To select an image for full screen display simply bring up a zoombox by
+pressing 'Page-up' once.  The center image will now have a white box around
+it.  Hold down the <Ctrl+Arrow> keys to move this box around
+until it's outlining an image you like.  Pressing <B> will now exit from
+evolver mode and redraw the selected image full size.  If, rather than
+exiting from evolver mode, you just press <Enter>, then a whole new set of
+images is generated, all based around the one you selected (which is now
+the middle image of the new set).
 
- From a basic point of view that's it!  Just press <Alt+1>-<Alt+7> to scramble
- things when you're out of inspiration, it works for any of the fractal
- types in Id including formulae... easy! (chaotic, but easy :-) )
+From a basic point of view that's it!  Just press <Alt+1>-<Alt+7> to scramble
+things when you're out of inspiration, it works for any of the fractal
+types in Id including formulae... easy! (chaotic, but easy :-) )
 
- As this is a Id feature, there is, of course, a lot more to it
- than the basics described above...
+As this is an Id feature, there is, of course, a lot more to it
+than the basics described above...
 
- For a start, there are some handy hotkeys to use, <F2> and <F3> are used to
- alter the amount of mutation or the amount by which the selected parameters
- can be varied. <F2> halves the amount of mutation, <F3> doubles it.  So if
- things on-screen are looking a bit samey just press <F3> a few times to
- crank up the mutation level.
+For a start, there are some handy hotkeys to use, <F2> and <F3> are used to
+alter the amount of mutation or the amount by which the selected parameters
+can be varied. <F2> halves the amount of mutation, <F3> doubles it.  So if
+things on-screen are looking a bit samey just press <F3> a few times to
+crank up the mutation level.
 
- Using <F2> to decrease mutation levels is a way of moving towards a goal
- image.  Say that a set of images contained one that looked a little like,
- maybe, a cats face and you wished to try and get something more cat like.
- To achieve this simply select the desired image and press <F2>.  The newly
- generated images should be more alike, though probably still quite widely
- varied.  With luck, one of the new images will be even more cat like.
- Select this one and press <F2> again.  Continue like this, selecting the
- center image again if there are no improvements in the current generation,
- until eventually all the images are alike and you've arrived at your goal
- (or at least you're probably as close as it's possible to get with that
- fractal type).
+Using <F2> to decrease mutation levels is a way of moving towards a goal
+image.  Say that a set of images contained one that looked a little like,
+maybe, a cats face and you wished to try and get something more cat like.
+To achieve this simply select the desired image and press <F2>.  The newly
+generated images should be more alike, though probably still quite widely
+varied.  With luck, one of the new images will be even more cat like.
+Select this one and press <F2> again.  Continue like this, selecting the
+center image again if there are no improvements in the current generation,
+until eventually all the images are alike and you've arrived at your goal
+(or at least you're probably as close as it's possible to get with that
+fractal type).
 
- As you look for more details in the images it is useful to reduce the number
- of images per generation, thus producing larger sub images.  Pressing <F4>
- will reduce the number of images per side on the grid by two and pressing
- <F5> increments the gridsize similarly.
+As you look for more details in the images it is useful to reduce the number
+of images per generation, thus producing larger sub images.  Pressing <F4>
+will reduce the number of images per side on the grid by two and pressing
+<F5> increments the gridsize similarly.
 
- <F6> will switch between normal random mutation and 'spread' random mutation.
- In 'spread' mode the amount of mutation allowed in an image is varied
- according to each images position in the grid.  Those images near the center
- are allowed a lesser degree of freedom of mutation than those around the
- outside.  This produces a sea of images, stable at the center with wilder
- variations around the edges.  This mode is best used with larger gridsizes
- and becomes completely silly at a gridsize of three!
+<F6> will switch between normal random mutation and 'spread' random mutation.
+In 'spread' mode the amount of mutation allowed in an image is varied
+according to each images position in the grid.  Those images near the center
+are allowed a lesser degree of freedom of mutation than those around the
+outside.  This produces a sea of images, stable at the center with wilder
+variations around the edges.  This mode is best used with larger gridsizes
+and becomes completely silly at a gridsize of three!
 
- <Ctrl+E> brings up the evolver control screen on which you have manual access
- to the evolution parameters varied by the hotkeys described above.\
- These are:
+<Ctrl+E> brings up the evolver control screen on which you have manual access
+to the evolution parameters varied by the hotkeys described above.\
+These are:
 
     Gridsize.            The number of sub images per side of the screen.  Use
                          odd numbers only.
@@ -2074,107 +2074,108 @@ image.
                          values of gridsize this can reclaim valuable screen
                          area for display use.
 
- Pressing <F6> brings up a screen from which you can control what parameters
- get varied and in what manner.  You'll notice that as well as the mutation
- modes 'random' and 'spread' there are other ways of stirring things around,
- read on......
+Pressing <F6> brings up a screen from which you can control what parameters
+get varied and in what manner.  You'll notice that as well as the mutation
+modes 'random' and 'spread' there are other ways of stirring things around,
+read on......
 
- As well as randomly mutating parameter values (referred to as 'evolver mode'
- or just 'evolving') a chosen set of parameters can be varied steadily across
- the screen thus allowing the user to explore what happens as a parameter is
- slowly changed ('explorer mode' or 'exploring').  For example, to get
- acquainted with parameter exploring and produce a map of the Julia sets, try
- this:\
- Start Id and set the type to Julia and the resolution higher than
- 320x200, once the default Julia set has been generated, press <Ctrl+E> to
- bring up the evolver/explorer control panel.
+As well as randomly mutating parameter values (referred to as 'evolver mode'
+or just 'evolving') a chosen set of parameters can be varied steadily across
+the screen thus allowing the user to explore what happens as a parameter is
+slowly changed ('explorer mode' or 'exploring').  For example, to get
+acquainted with parameter exploring and produce a map of the Julia sets, try
+this:
 
- Set evolve mode to yes and then press <F6> to bring up the screen that allows
- you to choose what gets varied.
+o Start Id and set the type to Julia and the resolution higher than
+  320x200, once the default Julia set has been generated, press <Ctrl+E> to
+  bring up the evolver/explorer control panel.
 
- Now set the first entry (param1) to 'x' and the second (param2) to 'y'.  This
- tells Id to vary param1 (the real part of c) across the screen and
- param2 (the imaginary part of c) down the screen.  Make sure all the other
- parameters are set to 'no' so that nothing else gets changed to confuse
- things.
+o Set evolve mode to yes and then press <F6> to bring up the screen that allows
+  you to choose what gets varied.
 
- Press <Return> to go back to the main evolver control screen and you'll see
- that a few more items have appeared.  These control just how much the
- parameters are varied across the screen and what their starting values
- should be, leave them as they are but increase gridsz to 15.  Also switch
- on the parameter zoom box option.
+o Now set the first entry (param1) to 'x' and the second (param2) to 'y'.  This
+  tells Id to vary param1 (the real part of c) across the screen and
+  param2 (the imaginary part of c) down the screen.  Make sure all the other
+  parameters are set to 'no' so that nothing else gets changed to confuse
+  things.
 
- When you exit this control screen with the <Return> key, you'll see a grid of
- Julia sets generated all mapped out onto the imaginary plane, squint and
- you'll be able to spot the underlying Mset!
+o Press <Return> to go back to the main evolver control screen and you'll see
+  that a few more items have appeared.  These control just how much the
+  parameters are varied across the screen and what their starting values
+  should be, leave them as they are but increase gridsz to 15.  Also switch
+  on the parameter zoom box option.
 
- When you press <PageUp> this time you'll notice that there are two boxes on
- screen with a larger box centered around the normal selection box.
- <Ctrl+PageUp> or <Ctrl+PageDown> varies the size of this box which
- represents the 'parameter' zoom box.  The parameter zoombox allows you to
- look at smaller areas of the parameter space in more detail.  To explain
- this further look at how the Julia sets change across the screen, around
- the area of 'seahorse valley' on the underlying Mset, the Julia sets
- undergo a sharp change in character.  This area of change can be examined
- in more detail using parameter zooming.  Make the outer zoombox a few grids
- across and select an image in the area of this change with the outer box
- straddling it.  Look at the images right in the corners of the parm zoombox,
- when you press <Enter> and a new generation of images is generated the same
- images will be in the corners of the screen with more sub images between
- them, allowing a finer look at how the change progresses.  In this way, you
- can observe the chaotic areas in parameter space with the unique pseudo four
- dimensional view offered by the explorer.
+o When you exit this control screen with the <Return> key, you'll see a grid of
+  Julia sets generated all mapped out onto the imaginary plane, squint and
+  you'll be able to spot the underlying Mset!
 
- In the example shown above, you were just exploring the variation in two
- 'real' parameters, i.e. they can take fractional values, and the idea of
- being able to create an image half way between two others is valid.  However,
- many of the parameters in Id are discrete, i.e. can be only one of a
- set of specific values.  Examples of discrete parameters are inside colouring
- method or decomposition values and the way in which these are explored is
- different in that parameter zooming has no meaning for discrete parameters.
+o When you press <PageUp> this time you'll notice that there are two boxes on
+  screen with a larger box centered around the normal selection box.
+  <Ctrl+PageUp> or <Ctrl+PageDown> varies the size of this box which
+  represents the 'parameter' zoom box.  The parameter zoombox allows you to
+  look at smaller areas of the parameter space in more detail.  To explain
+  this further look at how the Julia sets change across the screen, around
+  the area of 'seahorse valley' on the underlying Mset, the Julia sets
+  undergo a sharp change in character.  This area of change can be examined
+  in more detail using parameter zooming.  Make the outer zoombox a few grids
+  across and select an image in the area of this change with the outer box
+  straddling it.  Look at the images right in the corners of the parm zoombox,
+  when you press <Enter> and a new generation of images is generated the same
+  images will be in the corners of the screen with more sub images between
+  them, allowing a finer look at how the change progresses.  In this way, you
+  can observe the chaotic areas in parameter space with the unique pseudo four
+  dimensional view offered by the explorer.
 
- When a discrete parameter is set to vary with x or y it is simply cycled
- through all possible values and round again.  Words are getting clumsy so
- it's time for another example methinks!
+In the example shown above, you were just exploring the variation in two
+'real' parameters, i.e. they can take fractional values, and the idea of
+being able to create an image half way between two others is valid.  However,
+many of the parameters in Id are discrete, i.e. can be only one of a
+set of specific values.  Examples of discrete parameters are inside colouring
+method or decomposition values and the way in which these are explored is
+different in that parameter zooming has no meaning for discrete parameters.
 
- First press 'Insert' to restart Id and get everything back to its
- default values for a fresh start.  Set the fractal type to 'fn*fn' this type
- requires the user to choose two trig functions and this choice is made on
- the 'Z' screen.  There are around thirty different functions to choose from
- and checking out all the different combinations is a not inconsiderable task
- manually.  With the explorer, however, it's a piece of cake!
+When a discrete parameter is set to vary with x or y it is simply cycled
+through all possible values and round again.  Words are getting clumsy so
+it's time for another example methinks!
 
- Set the screen resolution to the highest you can view and press <Ctrl+E>
- to bring up the control panel and enable evolving mode.  Set the gridsize
- to 29 and leave the parameters at their defaults.  Now, press <F6> to enter
- 'variable tweak central' and set trig function 1 to 'x' and trig function 2
- to 'y', and all the others to 'no'.  Exit the two screens and you'll see
- generated all of the different combinations possible even if they are rather
- small examples!
+First press 'Insert' to restart Id and get everything back to its
+default values for a fresh start.  Set the fractal type to 'fn*fn' this type
+requires the user to choose two trig functions and this choice is made on
+the 'Z' screen.  There are around thirty different functions to choose from
+and checking out all the different combinations is a not inconsiderable task
+manually.  With the explorer, however, it's a piece of cake!
 
- To find out what particular combination of trig functions an image is using,
- just select the image using the zoombox and bring up the 'z' screen.  You
- don't have to press <Enter>, simply highlighting the appropriate image with
- the Ctrl+arrow keys will do.
+Set the screen resolution to the highest you can view and press <Ctrl+E>
+to bring up the control panel and enable evolving mode.  Set the gridsize
+to 29 and leave the parameters at their defaults.  Now, press <F6> to enter
+'variable tweak central' and set trig function 1 to 'x' and trig function 2
+to 'y', and all the others to 'no'.  Exit the two screens and you'll see
+generated all of the different combinations possible even if they are rather
+small examples!
 
- And that just about sums up the evolver!  Much more could be written but it's
- better experienced, try writing your formulae with more variable parameters
- and trig functions so that their behavior can be investigated.
+To find out what particular combination of trig functions an image is using,
+just select the image using the zoombox and bring up the 'z' screen.  You
+don't have to press <Enter>, simply highlighting the appropriate image with
+the Ctrl+arrow keys will do.
 
- Try using it with any fractal type, if in doubt just see what happens!
+And that just about sums up the evolver!  Much more could be written but it's
+better experienced, try writing your formulae with more variable parameters
+and trig functions so that their behavior can be investigated.
 
- It should be noted here that some of the fractal types such as the IFS do not
- terminate, they run on forever and as such aren't usable with the evolver as
- the first sub image would never finish to allow the next one to generate.
- These fractal types are detected and you won't be allowed to start the
- evolver with these.
+Try using it with any fractal type, if in doubt just see what happens!
 
- There now only remains to mention that you can save image sets and restore
- them later to carry on exploring from a different seed image:
- <S> saves and <R> restores as in normal Id operation and the screenfull
- is saved as a single GIF file.
+It should be noted here that some of the fractal types such as the IFS do not
+terminate, they run on forever and as such aren't usable with the evolver as
+the first sub image would never finish to allow the next one to generate.
+These fractal types are detected and you won't be allowed to start the
+evolver with these.
 
- Have fun!  See {Evolver Commands}.
+There now only remains to mention that you can save image sets and restore
+them later to carry on exploring from a different seed image:
+<S> saves and <R> restores as in normal Id operation and the screenfull
+is saved as a single GIF file.
+
+Have fun!  See {Evolver Commands}.
 ;
 ;
 ~Topic=Evolver Commands
