@@ -258,6 +258,11 @@ void AsciiDocProcessor::print_inside_key(char c)
             m_inside_key = false;
             if (is_key_name(m_key_name))
             {
+                if (m_key_name == R"(\)")
+                {
+                    // backslash inside kbd:[] must be escaped
+                    m_key_name += R"(\)";
+                }
                 m_key_name = "kbd:[" + m_key_name + ']';
                 emit_key_name();
             }

@@ -10,7 +10,7 @@ Urls pass through: https://github.com
 
 Try pressing kbd:[X], kbd:[Enter], kbd:[Esc], kbd:[Left], kbd:[Right], kbd:[Up], kbd:[Down], kbd:[F12],
 kbd:[Insert], kbd:[Delete], kbd:[Tab], kbd:[Space], kbd:[Shift+B], kbd:[Ctrl+E], kbd:[PageUp],
-kbd:[PageDown], kbd:[Shift], kbd:[Ctrl], kbd:[Alt], kbd:[Ctrl+Keypad+], kbd:[Ctrl+Keypad-], kbd:[\],
+kbd:[PageDown], kbd:[Shift], kbd:[Ctrl], kbd:[Alt], kbd:[Ctrl+Keypad+], kbd:[Ctrl+Keypad-], kbd:[\\],
 kbd:[<], kbd:[>], kbd:[Shift+Fn], kbd:[Home], kbd:[End] or kbd:[Alt+1].
 
 Sometimes you can type < or > to do something.  For degree <= -3, things
