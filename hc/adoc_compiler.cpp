@@ -397,8 +397,7 @@ void AsciiDocCompiler::print_ascii_doc()
            ":toc:\n"
            ":experimental:\n";
 
-    AsciiDocProcessor processor(str);
-    processor.process();
+    AsciiDocProcessor(str).process();
 }
 
 } // namespace hc
