@@ -323,7 +323,7 @@ any other label.  If an sstools.ini file looks like this:
   sound=off      ; (for home use only)\
   inside=0       ; using "traditional" black\
   [startrek]\
-  warp=9.5       ; Captain, I dinna think the engines can take it!\
+  warp=9.5       ; Captain, I dinna think the engines can take it!
 
 Id will use only the second and third lines of the file.
 (Why use a convention like that when Id is the only program you know
@@ -345,7 +345,7 @@ groups of parameters, looking something like this:
   slowdraw \{       ; another set of parameters\
      maxiter=2000\
      float=yes\
-  }\
+  }
 
 If you use the <@> or <2> command and select a parameter file containing the
 above example, Id will show two choices: quickdraw and slowdraw.  You
