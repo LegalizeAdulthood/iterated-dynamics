@@ -304,7 +304,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
             }
             else if (pd.line_num > 0)
             {
-                if (!do_print_n(static_cast<char const>('\n'), 2))
+                if (!do_print_n('\n', 2))
                 {
                     return false;
                 }
@@ -352,7 +352,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                 }
                 if (first_topic && pd.len != 0)
                 {
-                    if (!do_print_n(static_cast<char const>('\n'), 1))
+                    if (!do_print_n('\n', 1))
                     {
                         return false;
                     }
@@ -375,7 +375,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
             }
             else if (!first_topic)
             {
-                if (!do_print_n(static_cast<char const>('\n'), 1))
+                if (!do_print_n('\n', 1))
                 {
                     return false;
                 }
@@ -414,7 +414,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                     pd.len -= 3;
 
-                    if (!do_print_n(static_cast<char const>(' '), indent))
+                    if (!do_print_n(' ', indent))
                     {
                         return false;
                     }
@@ -441,7 +441,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                             {
                                 col = 0;
                                 ++pd.line_num;
-                                if (!do_print_n(static_cast<char const>('\n'), 1))
+                                if (!do_print_n('\n', 1))
                                 {
                                     return false;
                                 }
@@ -477,7 +477,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         {
                             col = 0;   /* fake a nl */
                             ++pd.line_num;
-                            if (!do_print_n(static_cast<char const>('\n'), 1))
+                            if (!do_print_n('\n', 1))
                             {
                                 return false;
                             }
@@ -515,7 +515,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         if (col+width > PAGE_WIDTH)
                         {
                             /* go to next line... */
-                            if (!do_print_n(static_cast<char const>('\n'), 1))
+                            if (!do_print_n('\n', 1))
                             {
                                 return false;
                             }
@@ -538,7 +538,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                                 width = 0;    /* skip spaces at start of a line */
                             }
 
-                            if (!do_print_n(static_cast<char const>(' '), margin))
+                            if (!do_print_n(' ', margin))
                             {
                                 return false;
                             }
@@ -549,7 +549,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         {
                             if (tok == token_types::TOK_SPACE)
                             {
-                                if (!do_print_n(static_cast<char const>(' '), width))
+                                if (!do_print_n(' ', width))
                                 {
                                     return false;
                                 }
@@ -586,7 +586,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                     {
                         if (col != 0)      /* if last wasn't a blank line... */
                         {
-                            if (!do_print_n(static_cast<char const>('\n'), 1))
+                            if (!do_print_n('\n', 1))
                             {
                                 return false;
                             }
@@ -605,7 +605,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                     }
                     else
                     {
-                        if (!do_print_n(static_cast<char const>('\n'), 1))
+                        if (!do_print_n('\n', 1))
                         {
                             return false;
                         }
@@ -634,7 +634,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                 case token_types::TOK_CENTER:
                     width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
-                    if (!do_print_n(static_cast<char const>(' '), width))
+                    if (!do_print_n(' ', width))
                     {
                         return false;
                     }
