@@ -10,9 +10,9 @@
 {3.1  , 1, "Drawing Method"}
 ~Topic=Drawing Method
 
-The "passes option" (<X> options screen or "passes=" parameter).
+Urls pass through: <https://github.com>
 
-Try pressing <Enter>, <Esc>, <Left>, <Right>, <Up>, <Down>, <F12>,
+Try pressing <X>, <Enter>, <Esc>, <Left>, <Right>, <Up>, <Down>, <F12>,
 <Insert>, <Delete>, <Tab>, <Space>, <Shift+B>, <Ctrl+E>,
 <PageUp>, <PageDown>,
 <Shift>, <Ctrl>, <Alt>,
@@ -23,3 +23,6 @@ Sometimes you can type < or > to do something.  For degree <= -3, things happen.
 <Ctrl+Arrow> keys.
 
   Indented text doesn't use kbd macro for keys <A>.
+
+o Except when the indented text is part of a very long winded and lengthy
+  list item that spans multiple lines like this <A>.

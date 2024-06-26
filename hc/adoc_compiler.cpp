@@ -80,8 +80,9 @@ private:
     std::string m_content;
     bool m_inside_key{};
     std::string m_key_name;
-    bool m_inside_bullet{};
+    bool m_bullet_started{};
     bool m_indented_line{};
+    bool m_inside_bullet{};
 };
 
 bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
@@ -211,7 +212,7 @@ static bool is_key_name(const std::string &name)
         || name == "Keypad+" || name == "Keypad-"                                    //
         || name == "PageDown" || name == "PageUp" || name == "Home" || name == "End" //
         || name == "Left" || name == "Right" || name == "Up" || name == "Down"       //
-        || name == "Fn" || "Arrow"                                                   //
+        || name == "Fn" || name == "Arrow"                                           //
         || is_function_key_name(name)                                                //
         || is_modified_key_name("Shift+", name)                                      //
         || is_modified_key_name("Ctrl+", name)                                       //
@@ -295,30 +296,31 @@ void AsciiDocProcessor::print_char(char c, int n)
         }
         else if (m_start_of_line && c == 'o')
         {
+            m_bullet_started = true;
             m_inside_bullet = true;
         }
-        else if (c == '<' && !m_indented_line)
+        else if (c == '<' && (!m_indented_line || m_inside_bullet))
         {
-            m_inside_bullet = false;
+            m_bullet_started = false;
             m_inside_key = true;
             m_key_name.clear();
         }
         else if (c == ' ')
         {
-            if (m_inside_bullet)
+            if (m_bullet_started)
             {
                 emit_char('*');
             }
-            m_inside_bullet = false;
+            m_bullet_started = false;
             ++m_spaces;
         }
         else if (c == '\n' || c == '\f')
         {
-            if (m_inside_bullet)
+            if (m_bullet_started)
             {
                 emit_char('o');
             }
-            m_inside_bullet = false;
+            m_bullet_started = false;
             ++m_newlines;
             m_start_of_line = true;
             m_indented_line = false;
@@ -330,11 +332,11 @@ void AsciiDocProcessor::print_char(char c, int n)
         }
         else 
         {
-            if (m_inside_bullet)
+            if (m_bullet_started)
             {
                 emit_char('o');
             }
-            m_inside_bullet = false;
+            m_bullet_started = false;
             emit_char(c);
         }
     }
