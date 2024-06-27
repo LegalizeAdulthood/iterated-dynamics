@@ -984,7 +984,6 @@ o # of colors:  This only matters if "Record colors?" is set to "yes".  It
   using a 256 color mode with maxiter 150, and have used the palette
   editor to set all 256 possible colors for use with color cycling, then
   you'll want to set the "# of colors" to 256.
-
   See the {=@RECORDCOLORS recordcolors} command, which controls when
   mapfiles are used and when compressed colors are written to par files.
 
@@ -1316,7 +1315,7 @@ screen (from main menu or by using <Delete>), then using the <Up> and <Down>
 arrow keys and/or <PageUp> and <PageDown> keys to highlight the desired mode,
 then pressing <Enter>.
 
-Up to 39 modes can be assigned to the keys F2-F10, SF1-SF10 <Shift+Fn>),
+Up to 39 modes can be assigned to the keys F2-F10, SF1-SF10 (<Shift+Fn>),
 CF1-CF10 (<Ctrl+Fn>), and AF1-AF10 (<Alt+Fn>).  The modes assigned to
 function keys can be invoked directly by pressing the assigned key, without
 going to the video mode selection screen.
@@ -1590,14 +1589,14 @@ Increase/decrease the cycling speed.
 
 <F2> through <F10>\
 Switches from simple rotation to color selection using randomly generated
-color bands of short (F2) to long (F10) duration.
+color bands of short (<F2>) to long (<F10>) duration.
 
 <1> through <9>\
 Causes the screen to be updated every 'n' color cycles (the default is 1).
 Handy for slower computers.
 
 <Enter>\
-Randomly selects a function key (F2 through F10) and then updates ALL the
+Randomly selects a function key (<F2> through <F10>) and then updates ALL the
 screen colors prior to displaying them for instant, random colors.  Hit
 this over and over again (we do).
 
@@ -1732,7 +1731,7 @@ Select previous or next color component in active register
 ~onlineFF
 <+>, <->\
 Increase or decrease the active color component value by 1.  Numeric keypad
-+ and - keys do the same.
+<+> and <-> keys do the same.
 
 <PageUp>, <PageDown>\
 Increase or decrease the active color component value by 5; Moving the
@@ -1747,15 +1746,15 @@ mode this results in the now-inactive register being set to remember the
 color under the cursor, and the now-active register changing from whatever
 it had previously remembered to now follow the color.
 
-<,> <.>\
+<,> (comma), <.> (period)\
 Rotate the palette one step.  By default colors 1 through 255 inclusive
 are rotated.  This range can be over-ridden with the "cyclerange"
 parameter, the <Y> options screen, or the <O> command described below.
 
-<<> <>>\
+<<>, <>>\
 Rotate the palette continuously (until next keystroke)
 
-<O>\
+<O> (oh, not zero)\
 Set the color cycling range to the range of colors currently defined by
 the color registers.
 
