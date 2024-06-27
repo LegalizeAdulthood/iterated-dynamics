@@ -130,7 +130,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
             }
             return false;
         }
-        pd->i = g_src.all_links[getint(pd->s)].doc_page;
+        pd->i = link.doc_page;
         return true;
     }
 
