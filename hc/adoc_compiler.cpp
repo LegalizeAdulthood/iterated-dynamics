@@ -258,10 +258,16 @@ void AsciiDocProcessor::print_inside_key(char c)
             m_inside_key = false;
             if (is_key_name(m_key_name))
             {
-                if (m_key_name == R"(\)")
+                if (m_key_name.back() == '\\' || m_key_name.back() == '+' || m_key_name.back() == '#')
                 {
-                    // backslash inside kbd:[] must be escaped
-                    m_key_name += R"(\)";
+                    // some trailing special characters inside kbd:[] must be followed by a space
+                    m_key_name += ' ';
+                }
+                else if (m_key_name.back() == ']')
+                {
+                    const char last = m_key_name.back();
+                    m_key_name.pop_back();
+                    m_key_name += R"(\])";
                 }
                 m_key_name = "kbd:[" + m_key_name + ']';
                 emit_key_name();
