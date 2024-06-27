@@ -400,7 +400,7 @@ void AsciiDocCompiler::print_ascii_doc()
         throw std::runtime_error("Couldn't open output file " + out_file.string());
     }
     str << "= Iterated Dynamics\n"
-           ":toc:\n"
+           ":toc: left\n"
            ":experimental:\n";
 
     AsciiDocProcessor(str).process();

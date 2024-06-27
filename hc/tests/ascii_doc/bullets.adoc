@@ -1,5 +1,5 @@
 = Iterated Dynamics
-:toc:
+:toc: left
 :experimental:
 
 == Bullet Demonstration
