@@ -430,7 +430,7 @@ doesn't start properly, please see {Common Problems}.
 
 Hitting <Enter> gets you from the initial screen to the main menu.  You can
 select options from the menu by moving the highlight with the arrow keys
-(<Left> <Right> <Up> <Down>) and pressing <Enter>, or you can enter commands
+(<Left>, <Right>, <Up>, <Down>) and pressing <Enter>, or you can enter commands
 directly.
 
 As soon as you select a video mode, Id begins drawing an image - the
@@ -785,7 +785,7 @@ size removes the zoom box from the display.  Moving the mouse away from you
 or toward you while holding the left button down performs the same
 functions as these keys.
 
-Using the "arrow" keys (<Left> <Right> <Up> <Down>) or moving
+Using the "arrow" keys (<Left>, <Right>, <Up>, <Down>) or moving
 the mouse without holding any buttons down, moves the zoom box.
 
 Holding <Ctrl> while pressing arrow keys moves the box 5 times
@@ -1605,14 +1605,14 @@ this over and over again (we do).
 Pause cycling with white overscan area.  Cycling restarts with any command
 key (including another spacebar).
 
-<Shift+F1>-<Shift+F10>\
+<Shift+F1> ... <Shift+F10>\
 Pause cycling and reset the palette to a preset two color "straight"
 assignment, such as a spread from black to white
 
-<Ctrl+F1>-<Ctrl+F10>\
+<Ctrl+F1> ... <Ctrl+F10>\
 Pause & set a 2-color cyclical assignment, e.g. red->yellow->red.
 
-<Alt+F1>-<Alt+F10>\
+<Alt+F1> ... <Alt+F10>\
 Pause & set a 3-color cyclical assignment, e.g. green->white->blue.
 
 <Shift+R>, <Shift+G>, <Shift+B>\
@@ -1716,29 +1716,29 @@ Hide the palette frame to see full image; the cross-hair remains visible
 and all functions remain enabled; hit <H> again to restore the palette
 display.
 
-<Left> <Right> <Up> <Down>\
+<Left>, <Right>, <Up>, <Down>\
 Move the cross-hair cursor around.  In 'auto' mode (the default) the color
 under the center of the cross-hair is automatically assigned to the active
 color register.  Control-arrow keys move the cross-hair faster.  A mouse
 can also be used to move around.
 
-<R> <G> <B>\
+<R>, <G>, <B>\
 Select the Red, Green, or Blue component of the active color register for
 subsequent commands
 
-<Insert> <Delete>\
+<Insert>, <Delete>\
 Select previous or next color component in active register
 
 ~onlineFF
-<+> <->\
+<+>, <->\
 Increase or decrease the active color component value by 1.  Numeric keypad
 + and - keys do the same.
 
-<PageUp> <PageDown>\
+<PageUp>, <PageDown>\
 Increase or decrease the active color component value by 5; Moving the
 mouse up/down with left button held is the same
 
-<0> <1> <2> <3> <4> <5> <6>\
+<0>, <1>, <2>, <3>, <4>, <5>, <6>\
 Set the active color component's value to 0 10 20 ... 60
 
 <Space>\
@@ -1845,9 +1845,9 @@ Make a negative color palette - will convert only current color if in 'x'
 mode or range between editors in 'y' mode or entire palette if in "normal"
 mode.
 
-<!> <@> <#>\
-Swap R/G, G/B, and R/B columns. <!>, <@>, and <#> are shifted 1, 2,
-and 3, which you may find easier to remember.
+<!>, <@>, <#>\
+Swap R/G, G/B, and R/B columns. <!>, <@>, and <#> are <Shift+1>, <Shift+2>,
+and <Shift+3>, which you may find easier to remember.
 
 <U>\
 Undoes the last palette editor command.  Will undo all the way to the
@@ -1868,7 +1868,7 @@ mode:
 o Moving the mouse changes the location of the range of colors that are
   affected.
 
-o <Control+Insert>/<Ctrl+Delete> or the shifted-right-mouse-button changes
+o <Ctrl+Insert>, <Ctrl+Delete> or the shifted-right-mouse-button changes
   the size of the affected palette range.
 
 o The normal color editing keys (R,G,B,1-6, etc) set the central color
@@ -2025,9 +2025,9 @@ exiting from evolver mode, you just press <Enter>, then a whole new set of
 images is generated, all based around the one you selected (which is now
 the middle image of the new set).
 
-From a basic point of view that's it!  Just press <Alt+1>-<Alt+7> to scramble
-things when you're out of inspiration, it works for any of the fractal
-types in Id including formulae... easy! (chaotic, but easy :-) )
+From a basic point of view that's it!  Just press <Alt+1> ... <Alt+7> to
+scramble things when you're out of inspiration, it works for any of the
+fractal types in Id including formulae... easy! (chaotic, but easy :-) )
 
 As this is an Id feature, there is, of course, a lot more to it
 than the basics described above...
