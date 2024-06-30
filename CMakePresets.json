@@ -93,6 +93,11 @@
       "inherits": [ "ci-build-preset", "default", "release-config" ]
     },
     {
+      "name": "ci-html-docs",
+      "displayName": "CI Configure HTML docs with Release settings for HTML",
+      "inherits": [ "ci-build-preset", "default", "release-config" ]
+    },
+    {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-build-preset", "compile-commands", "no-testing", "vcpkg" ]
@@ -127,6 +132,13 @@
       "displayName": "CI Build with Release settings",
       "configurePreset": "ci-release",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ci-html-docs",
+      "displayName": "CI Build HTML docs with Release settings",
+      "configurePreset": "ci-html-docs",
+      "configuration": "Release",
+      "targets": "ascii-doc"
     }
   ],
   "testPresets": [
@@ -306,6 +318,20 @@
         {
           "type": "package",
           "name": "ci-release"
+        }
+      ]
+    },
+    {
+      "name": "ci-html-docs",
+      "displayName": "CI Workflow for HTML docs with Release settings: configure, build",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-html-docs"
+        },
+        {
+          "type": "build",
+          "name": "ci-html-docs"
         }
       ]
     }
