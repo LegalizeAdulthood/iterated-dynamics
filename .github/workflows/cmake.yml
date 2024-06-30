@@ -25,9 +25,19 @@ jobs:
     - name: Run Workflow
       run: cmake --workflow --preset ci-html-docs
 
-    - name: Install AsciiDoctor
-      run: gem install asciidoctor
+    - name: Setup ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
 
+    - name: Setup AsciiDoctor
+      uses: reitzig/actions-asciidoctor@v2.0.2
+      with:
+        version: 2.0.18
+
+    - name: AsciiDoctor version
+      run: asciidoctor --version
+  
     - name: Run AsciiDoctor
       run: asciidoctor build-ci-html-docs/hc/src/index.adoc
 
