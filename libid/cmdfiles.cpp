@@ -65,14 +65,17 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <functional>
 #include <numeric>
+#include <optional>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <vector>
 
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
-static int get_max_curarg_len(char const *floatvalstr[], int totparm);
+static int get_max_curarg_len(char const *const floatvalstr[], int totparm);
 static cmdarg_flags cmdfile(std::FILE *handle, cmd_file mode);
 static int  next_command(
     char *cmdbuf,
@@ -88,77 +91,74 @@ static void initvars_restart();
 static void initvars_fractal();
 static void initvars_3d();
 static void reset_ifs_defn();
-static void parse_textcolors(char const *value);
-static cmdarg_flags parse_colors(char const *value);
 static int  get_bf(bf_t bf, char const *curarg);
 static bool isabigfloat(char const *str);
 
 // variables defined by the command line/files processor
-int     g_stop_pass{};           // stop at this guessing pass early
-int     g_distance_estimator_x_dots{};            // xdots to use for video independence
-int     g_distance_estimator_y_dots{};            // ydots to use for video independence
-int     g_bf_digits{};           // digits to use (force) for bf_math
-int     g_show_dot = -1;           // color to show crawling graphics cursor
-int     g_size_dot{};            // size of dot crawling cursor
-record_colors_mode g_record_colors = record_colors_mode::none;       // default PAR color-writing method
-char    g_auto_show_dot{};        // dark, medium, bright
-bool    g_start_show_orbit{};        // show orbits on at start of fractal
-std::string g_read_filename;           // name of fractal input file
-std::string g_temp_dir;            // name of temporary directory
-std::string g_working_dir;            // name of directory for misc files
-std::string g_organize_formulas_dir;          // name of directory for orgfrm files
-std::string g_gif_filename_mask;
-std::string g_save_filename{"fract001"}; // save files using this name
-bool    g_potential_flag{};        // continuous potential enabled?
-bool    g_potential_16bit{};               // store 16 bit continuous potential values
-bool    g_dither_flag{};    // true if want to dither GIFs
-bool    g_ask_video{};       // flag for video prompting
-bool    g_float_flag{};
-int     g_biomorph{};           // flag for biomorph
-int     g_user_biomorph_value{};
-int     g_show_file{};           // zero if file display pending
-bool    g_random_seed_flag{};
-int     g_random_seed{};              // Random number seeding flag and value
-int     g_decomp[2] = { 0 };      // Decomposition coloring
-long    g_distance_estimator{};
-int     g_distance_estimator_width_factor{};
-bool    g_overwrite_file{};// true if file overwrite allowed
-int     g_sound_flag{};          // sound control bitfield... see sound.c for useage
-int     g_base_hertz{};          // sound=x/y/x hertz value
-int     g_cycle_limit{};         // color-rotator upper limit
-int     g_fill_color{};          // fillcolor: -1=normal
-bool g_finite_attractor{};        // finite attractor logic
-display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
-bool    g_overlay_3d{};      // 3D overlay flag
-bool    g_check_cur_dir{};    // flag to check current dir for files
-batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
-int     g_init_save_time{};       // autosave minutes
-DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
-init_orbit_mode g_use_init_orbit = init_orbit_mode::normal;       // flag for initorbit
-int     g_init_mode{};        // initial video mode
-int     g_init_cycle_limit{};     // initial cycle limit
-bool    g_use_center_mag{};         // use center-mag corners
-long    g_bail_out{};            // user input bailout value
-double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
-int     g_color_cycle_range_lo{};
-int     g_color_cycle_range_hi{};          // cycling color range
-std::vector<int> g_iteration_ranges;        // iter->color ranges mapping
-int     g_iteration_ranges_len{};          // size of ranges array
-BYTE g_map_clut[256][3];          // map= (default colors)
-bool g_map_specified{};     // map= specified
-BYTE *mapdacbox = nullptr;      // map= (default colors)
-color_state g_color_state{color_state::DEFAULT}; // g_dac_box matches default (bios or map=)
-bool    g_colors_preloaded{}; // if g_dac_box preloaded for next mode select
-bool    g_read_color = true;  // flag for reading color from GIF
-double  g_math_tol[2] = {.05, .05}; // For math transition
-bool g_targa_out{};                 // 3D fullcolor flag
-bool g_truecolor{};                 // escape time truecolor flag
-true_color_mode g_true_mode = true_color_mode::default_color;               // truecolor coloring scheme
-std::string g_color_file;          // from last <l> <s> or colors=@filename
-bool g_new_bifurcation_functions_loaded{}; // if function loaded for new bifs
-float   g_screen_aspect = DEFAULT_ASPECT;   // aspect ratio of the screen
-float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  // how much drift is allowed and
-                                // still forced to screenaspect
+int g_stop_pass{};                                            // stop at this guessing pass early
+int g_distance_estimator_x_dots{};                            // xdots to use for video independence
+int g_distance_estimator_y_dots{};                            // ydots to use for video independence
+int g_bf_digits{};                                            // digits to use (force) for bf_math
+int g_show_dot{-1};                                           // color to show crawling graphics cursor
+int g_size_dot{};                                             // size of dot crawling cursor
+record_colors_mode g_record_colors{record_colors_mode::none}; // default PAR color-writing method
+char g_auto_show_dot{};                                       // dark, medium, bright
+bool g_start_show_orbit{};                                    // show orbits on at start of fractal
+std::string g_read_filename;                                  // name of fractal input file
+std::string g_temp_dir;                                       // name of temporary directory
+std::string g_working_dir;                                    // name of directory for misc files
+std::string g_organize_formulas_dir;                          // name of directory for orgfrm files
+std::string g_gif_filename_mask;                              //
+std::string g_save_filename{"fract001"};                      // save files using this name
+bool g_potential_flag{};                                      // continuous potential enabled?
+bool g_potential_16bit{};                                     // store 16 bit continuous potential values
+bool g_dither_flag{};                                         // true if want to dither GIFs
+bool g_ask_video{};                                           // flag for video prompting
+bool g_float_flag{};                                          //
+int g_biomorph{};                                             // flag for biomorph
+int g_user_biomorph_value{};                                  //
+int g_show_file{};                                            // zero if file display pending
+bool g_random_seed_flag{};                                    //
+int g_random_seed{};                                          // Random number seeding flag and value
+int g_decomp[2]{};                                            // Decomposition coloring
+long g_distance_estimator{};                                  //
+int g_distance_estimator_width_factor{};                      //
+bool g_overwrite_file{};                                      // true if file overwrite allowed
+int g_sound_flag{};                                    // sound control bitfield... see sound.c for useage
+int g_base_hertz{};                                    // sound=x/y/x hertz value
+int g_cycle_limit{};                                   // color-rotator upper limit
+int g_fill_color{};                                    // fillcolor: -1=normal
+bool g_finite_attractor{};                             // finite attractor logic
+display_3d_modes g_display_3d{display_3d_modes::NONE}; // 3D display flag: 0 = OFF
+bool g_overlay_3d{};                                   // 3D overlay flag
+bool g_check_cur_dir{};                                // flag to check current dir for files
+batch_modes g_init_batch{batch_modes::NONE};           // 1 if batch run (no kbd)
+int g_init_save_time{};                                // autosave minutes
+DComplex g_init_orbit{};                               // initial orbitvalue
+init_orbit_mode g_use_init_orbit{init_orbit_mode::normal};    // flag for initorbit
+int g_init_mode{};                                            // initial video mode
+int g_init_cycle_limit{};                                     // initial cycle limit
+bool g_use_center_mag{};                                      // use center-mag corners
+long g_bail_out{};                                            // user input bailout value
+double g_inversion[3]{};                                      // radius, xcenter, ycenter
+int g_color_cycle_range_lo{};                                 //
+int g_color_cycle_range_hi{};                                 // cycling color range
+std::vector<int> g_iteration_ranges;                          // iter->color ranges mapping
+int g_iteration_ranges_len{};                                 // size of ranges array
+BYTE g_map_clut[256][3];                                      // map= (default colors)
+bool g_map_specified{};                                       // map= specified
+BYTE *mapdacbox{};                                            // map= (default colors)
+color_state g_color_state{color_state::DEFAULT};              // g_dac_box matches default (bios or map=)
+bool g_colors_preloaded{};                                    // if g_dac_box preloaded for next mode select
+bool g_read_color{true};                                      // flag for reading color from GIF
+double g_math_tol[2]{.05, .05};                               // For math transition
+bool g_targa_out{};                                           // 3D fullcolor flag
+bool g_truecolor{};                                           // escape time truecolor flag
+true_color_mode g_true_mode{true_color_mode::default_color};  // truecolor coloring scheme
+std::string g_color_file;                                     // from last <l> <s> or colors=@filename
+bool g_new_bifurcation_functions_loaded{};                    // if function loaded for new bifs
+float g_screen_aspect{DEFAULT_ASPECT};                        // aspect ratio of the screen
+float g_aspect_drift{DEFAULT_ASPECT_DRIFT}; // how much drift is allowed and still forced to g_screen_aspect
 
 // true - reset viewwindows prior to a restore and
 // do not display warnings when video mode changes during restore
@@ -167,23 +167,22 @@ bool g_fast_restore{};
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 
-int     g_orbit_save_flags{};          // for IFS and LORENZ to output acrospin file
-std::string g_orbit_save_name{"orbits.raw"};
-int g_orbit_delay{};            // clock ticks delating orbit release
-int g_transparent_color_3d[2] = { 0 }; // transparency min/max values
-long    g_log_map_flag{};            // Logarithmic palette flag: 0 = no
+int g_orbit_save_flags{};                    // for IFS and LORENZ to output acrospin file
+std::string g_orbit_save_name{"orbits.raw"}; //
+int g_orbit_delay{};                         // clock ticks delating orbit release
+int g_transparent_color_3d[2]{};             // transparency min/max values
+long g_log_map_flag{};                       // Logarithmic palette flag: 0 = no
+int g_log_map_fly_calculate{};               // calculate logmap on-the-fly
+bool g_log_map_auto_calculate{};             // auto calculate logmap
+bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
+bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
+bool g_first_init{true};                     // first time into cmdfiles?
 
-int     g_log_map_fly_calculate{};       // calculate logmap on-the-fly
-bool    g_log_map_auto_calculate{};          // auto calculate logmap
-bool    g_bof_match_book_images = true;                  // Flag to make inside=bof options not duplicate bof images
-
-bool    g_escape_exit{};    // set to true to avoid the "are you sure?" screen
-bool g_first_init = true;                 // first time into cmdfiles?
-static int init_rseed{};
+static int init_rseed{};        //
 static bool s_init_corners{};   // corners set via corners= or center-mag=?
 static bool s_init_params{};    // params set via params=?
 static bool s_init_functions{}; // trig functions set via function=?
-fractalspecificstuff *g_cur_fractal_specific = nullptr;
+fractalspecificstuff *g_cur_fractal_specific{};
 
 std::string g_formula_filename;      // file to find (type=)formulas in
 std::string g_formula_name;          // Name of the Formula (if not null)
@@ -195,9 +194,9 @@ std::string g_ifs_filename;          // file to find (type=)IFS in
 std::string g_ifs_name;              // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;         //
 std::vector<float> g_ifs_definition; // ifs parameters
-bool g_ifs_type{};             // false=2d, true=3d
+bool g_ifs_type{};                   // false=2d, true=3d
 
-BYTE g_text_color[] =
+BYTE g_text_color[31] =
 {
     BLUE*16+L_WHITE,    // C_TITLE           title background
     BLUE*16+L_GREEN,    // C_TITLE_DEV       development vsn foreground
@@ -231,6 +230,8 @@ BYTE g_text_color[] =
     BLACK*16+L_WHITE,   // C_PRIMARY         primary authors
     BLACK*16+WHITE      // C_CONTRIB         contributing authors
 };
+
+static_assert(std::size(g_text_color) == 31);
 
 // cmdfiles(argc,argv) process the command-line arguments
 // it also processes the 'sstools.ini' file and any
@@ -406,7 +407,6 @@ cmdarg_flags load_commands(std::FILE *infile)
 
     return ret;
 }
-
 
 static void initvars_run()              // once per run init
 {
@@ -612,7 +612,6 @@ static void reset_ifs_defn()
     g_ifs_definition.clear();
 }
 
-
 // mode = AT_CMD_LINE           command line @filename
 //        SSTOOLS_INI           sstools.ini
 //        AT_AFTER_STARTUP      <@> command after startup
@@ -762,12 +761,6 @@ static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
-inline cmdarg_flags bad_arg(const char *curarg)
-{
-    argerror(curarg);
-    return cmdarg_flags::ERROR;
-}
-
 enum
 {
     NONNUMERIC = -32767
@@ -812,47 +805,38 @@ void set_print_document(const PrintDocFn &fn)
 
 } // namespace cmd_arg
 
-// cmdarg(string,mode) processes a single command-line/command-file argument
-//  return:
-//    -1 error, >= 0 ok
-//    if ok, return value:
-//      | 1 means fractal parm has been set
-//      | 2 means 3d parm has been set
-//      | 4 means 3d=yes specified
-//      | 8 means reset specified
-//
-cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
+struct Command
 {
-    int     valuelen{};               // length of value
-    int     numval{};                 // numeric value of arg
-    char    charval[16] = { 0 };        // first character of arg
-    int     yesnoval[16] = { 0 };       // 0 if 'n', 1 if 'y', -1 if not
-    double  ftemp{};
-    char    *argptr2 = nullptr;
-    int     totparms{};               // # of / delimited parms
-    int     intparms{};               // # of / delimited ints
-    int     floatparms{};             // # of / delimited floats
-    int     intval[64] = { 0 };         // pre-parsed integer parms
-    double  floatval[16] = { 0.0 };     // pre-parsed floating parms
-    char const *floatvalstr[16];        // pointers to float vals
-    char    tmpc{};
-    bool lastarg{};
-    double Xctr{};
-    double Yctr{};
-    double Xmagfactor{};
-    double Rotation{};
-    double Skew{};
-    LDBL Magnification{};
-    bf_t bXctr;
-    bf_t bYctr;
+    Command(char *curarg, cmd_file a_mode);
+    cmdarg_flags bad_arg() const;
 
+    char *arg;
+    cmd_file mode{};
+    char *value{};
+    std::string variable;
+    int valuelen{};                // length of value
+    int numval{};                  // numeric value of arg
+    char charval[16]{};            // first character of arg
+    int yesnoval[16]{};            // 0 if 'n', 1 if 'y', -1 if not
+    int totparms{};                // # of / delimited parms
+    int intparms{};                // # of / delimited ints
+    int floatparms{};              // # of / delimited floats
+    int intval[64]{};              // pre-parsed integer parms
+    double floatval[16]{};         // pre-parsed floating parms
+    char const *floatvalstr[16]{}; // pointers to float vals
+    cmdarg_flags status{cmdarg_flags::NONE};
+};
+
+Command::Command(char *curarg, cmd_file a_mode) :
+    arg(curarg),
+    mode(a_mode)
+{
     lowerize_parameter(curarg);
-
     int j;
-    char *value = std::strchr(&curarg[1], '=');
+    value = std::strchr(&curarg[1], '=');
     if (value != nullptr)
     {
-        j = (int)(value++ - curarg);
+        j = (int) (value++ - curarg);
     }
     else
     {
@@ -861,11 +845,12 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
     }
     if (j > 20)
     {
-        argerror(curarg);               // keyword too long
-        return cmdarg_flags::ERROR;
+        argerror(curarg); // keyword too long
+        status = cmdarg_flags::ERROR;
+        return;
     }
-    std::string const variable(curarg, j);
-    valuelen = (int) std::strlen(value);            // note value's length
+    variable = std::string(curarg, j);
+    valuelen = (int) std::strlen(value); // note value's length
     charval[0] = value[0];               // first letter of value
     yesnoval[0] = -1;                    // note yes|no value
     if (charval[0] == 'n')
@@ -882,16 +867,17 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
     intparms = 0;
     totparms = 0;
     numval = 0;
-    while (*argptr)                    // count and pre-parse parms
+    char *argptr2 = nullptr;
+    while (*argptr) // count and pre-parse parms
     {
         long ll;
-        lastarg = false;
+        bool last_arg{};
         argptr2 = std::strchr(argptr, '/');
-        if (argptr2 == nullptr)     // find next '/'
+        if (argptr2 == nullptr) // find next '/'
         {
             argptr2 = argptr + std::strlen(argptr);
             *argptr2 = '/';
-            lastarg = true;
+            last_arg = true;
         }
         if (totparms == 0)
         {
@@ -899,7 +885,7 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms < 16)
         {
-            charval[totparms] = *argptr;                      // first letter of value
+            charval[totparms] = *argptr; // first letter of value
             if (charval[totparms] == 'n')
             {
                 yesnoval[totparms] = 0;
@@ -910,7 +896,8 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         char next{};
-        if (std::sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
+        char tmpc{};
+        if (std::sscanf(argptr, "%c%c", &next, &tmpc) > 0 // NULL entry
             && (next == '/' || next == '=') && tmpc == '/')
         {
             j = 0;
@@ -930,8 +917,8 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
                 numval = j;
             }
         }
-        else if (std::sscanf(argptr, "%ld%c", &ll, &tmpc) > 0       // got an integer
-            && tmpc == '/')        // needs a long int, ll, here for lyapunov
+        else if (std::sscanf(argptr, "%ld%c", &ll, &tmpc) > 0 // got an integer
+            && tmpc == '/')                                   // needs a long int, ll, here for lyapunov
         {
             ++floatparms;
             ++intparms;
@@ -949,8 +936,8 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
                 numval = (int) ll;
             }
         }
-        else if (std::sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float
-            && tmpc == '/')
+        else if (double ftemp{}; std::sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0 // got a float
+                 && tmpc == '/')
         {
             ++floatparms;
             if (totparms < 16)
@@ -960,17 +947,16 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         // using arbitrary precision and above failed
-        else if (((int) std::strlen(argptr) > 513)  // very long command
-            || (totparms > 0 && floatval[totparms-1] == FLT_MAX && totparms < 6)
-            || isabigfloat(argptr))
+        else if (((int) std::strlen(argptr) > 513) // very long command
+            || (totparms > 0 && floatval[totparms - 1] == FLT_MAX && totparms < 6) || isabigfloat(argptr))
         {
             ++floatparms;
             floatval[totparms] = FLT_MAX;
             floatvalstr[totparms] = argptr;
         }
         ++totparms;
-        argptr = argptr2;                                 // on to the next
-        if (lastarg)
+        argptr = argptr2; // on to the next
+        if (last_arg)
         {
             *argptr = 0;
         }
@@ -979,2623 +965,582 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
             ++argptr;
         }
     }
+}
+cmdarg_flags Command::bad_arg() const
+{
+    argerror(arg);
+    return cmdarg_flags::ERROR;
+}
 
-    if (mode != cmd_file::AT_AFTER_STARTUP || g_debug_flag == debug_flags::allow_init_commands_anytime)
+struct CommandHandler
+{
+    std::string_view name;
+    std::function<cmdarg_flags(const Command &)> handler;
+};
+
+// For deprecated command parameters that are still parsed but ignored.
+static cmdarg_flags cmd_deprecated(const Command &)
+{
+    return cmdarg_flags::NONE;
+}
+
+// adapter parameter no longer used; check for bad argument anyway
+static cmdarg_flags cmd_adapter(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (std::strcmp(cmd.value, "egamono") != 0 && std::strcmp(cmd.value, "hgc") != 0 &&
+        std::strcmp(cmd.value, "ega") != 0 && std::strcmp(cmd.value, "cga") != 0 &&
+        std::strcmp(cmd.value, "mcga") != 0 && std::strcmp(cmd.value, "vga") != 0)
     {
-        // these commands are allowed only at startup
-        if (variable == "batch")     // batch=?
-        {
-            if (yesnoval[0] < 0)
-            {
-                return bad_arg(curarg);
-            }
-            g_init_batch = yesnoval[0] == 0 ? batch_modes::NONE : batch_modes::NORMAL;
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
-        if (variable == "maxhistory")       // maxhistory=?
-        {
-            if (numval == NONNUMERIC)
-            {
-                return bad_arg(curarg);
-            }
-            if (numval < 0)
-            {
-                return bad_arg(curarg);
-            }
-            g_max_image_history = numval;
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
 
-        // adapter= no longer used
-        if (variable == "adapter")    // adapter==?
-        {
-            // adapter parameter no longer used; check for bad argument anyway
-            if ((std::strcmp(value, "egamono") != 0) && (std::strcmp(value, "hgc") != 0)
-                && (std::strcmp(value, "ega") != 0) && (std::strcmp(value, "cga") != 0)
-                && (std::strcmp(value, "mcga") != 0) && (std::strcmp(value, "vga") != 0))
-            {
-                return bad_arg(curarg);
-            }
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+// 8514 API no longer used; silently gobble any argument
+static cmdarg_flags cmd_afi(const Command &)
+{
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
 
-        // 8514 API no longer used; silently gobble any argument
-        if (variable == "afi")
-        {
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+static cmdarg_flags cmd_batch(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_init_batch = cmd.yesnoval[0] == 0 ? batch_modes::NONE : batch_modes::NORMAL;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
 
-        if (variable == "textsafe")   // textsafe==?
-        {
-            // textsafe no longer used, do validity checking, but gobble argument
-            if (g_first_init)
-            {
-                if (!((charval[0] == 'n')   // no
-                    || (charval[0] == 'y')  // yes
-                    || (charval[0] == 'b')  // bios
-                    || (charval[0] == 's'))) // save
-                {
-                    return bad_arg(curarg);
-                }
-            }
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+// biospalette no longer used, do validity checks, but gobble argument
+static cmdarg_flags cmd_bios_palette(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
 
-        if (variable == "vesadetect")
-        {
-            // vesadetect no longer used, do validity checks, but gobble argument
-            if (yesnoval[0] < 0)
-            {
-                return bad_arg(curarg);
-            }
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+// exitnoask deprecated; validate arg and gobble
+static cmdarg_flags cmd_exit_no_ask(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_escape_exit = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
 
-        // biospalette no longer used, do validity checks, but gobble argument
-        if (variable == "biospalette")
-        {
-            if (yesnoval[0] < 0)
-            {
-                return bad_arg(curarg);
-            }
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+// fpu deprecated; validate arg and gobble
+static cmdarg_flags cmd_fpu(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (value == "387")
+    {
+        return cmdarg_flags::NONE;
+    }
+    return cmd.bad_arg();
+}
 
-        // fpu deprecated; validate arg and gobble
-        if (variable == "fpu")
-        {
-            if (std::strcmp(value, "387") == 0)
-            {
-                return cmdarg_flags::NONE;
-            }
-            return bad_arg(curarg);
-        }
+static cmdarg_flags cmd_make_doc(const Command &cmd)
+{
+    cmd_arg::s_print_document(*cmd.value ? cmd.value : "id.txt", makedoc_msg_func);
+    cmd_arg::s_goodbye();
+    return cmdarg_flags::GOODBYE;
+}
 
-        // exitnoask deprecated; validate arg and gobble
-        if (variable == "exitnoask")
-        {
-            if (yesnoval[0] < 0)
-            {
-                return bad_arg(curarg);
-            }
-            g_escape_exit = yesnoval[0] != 0;
-            return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-        }
+static cmdarg_flags cmd_make_par(const Command &cmd)
+{
+    if (cmd.totparms < 1 || cmd.totparms > 2)
+    {
+        return cmd.bad_arg();
+    }
+    char *slash = std::strchr(cmd.value, '/');
+    char *next = nullptr;
+    if (slash != nullptr)
+    {
+        *slash = 0;
+        next = slash + 1;
+    }
 
-        if (variable == "makedoc")
+    g_command_file = cmd.value;
+    if (std::strchr(g_command_file.c_str(), '.') == nullptr)
+    {
+        g_command_file += ".par";
+    }
+    if (g_read_filename == DOTSLASH)
+    {
+        g_read_filename = "";
+    }
+    if (next == nullptr)
+    {
+        if (!g_read_filename.empty())
         {
-            cmd_arg::s_print_document(*value ? value : "id.txt", makedoc_msg_func);
+            g_command_name = extract_filename(g_read_filename.c_str());
+        }
+        else if (!g_map_name.empty())
+        {
+            g_command_name = extract_filename(g_map_name.c_str());
+        }
+        else
+        {
+            return cmd.bad_arg();
+        }
+    }
+    else
+    {
+        g_command_name = next;
+        assert(g_command_name.length() <= ITEM_NAME_LEN);
+        if (g_command_name.length() > ITEM_NAME_LEN)
+        {
+            g_command_name.resize(ITEM_NAME_LEN);
+        }
+    }
+    g_make_parameter_file = true;
+    if (!g_read_filename.empty())
+    {
+        if (read_overlay() != 0)
+        {
             cmd_arg::s_goodbye();
             return cmdarg_flags::GOODBYE;
         }
-
-        if (variable == "makepar")
-        {
-            if (totparms < 1 || totparms > 2)
-            {
-                return bad_arg(curarg);
-            }
-            char *slash = std::strchr(value, '/');
-            char *next = nullptr;
-            if (slash != nullptr)
-            {
-                *slash = 0;
-                next = slash+1;
-            }
-
-            g_command_file = value;
-            if (std::strchr(g_command_file.c_str(), '.') == nullptr)
-            {
-                g_command_file += ".par";
-            }
-            if (g_read_filename == DOTSLASH)
-            {
-                g_read_filename = "";
-            }
-            if (next == nullptr)
-            {
-                if (!g_read_filename.empty())
-                {
-                    g_command_name = extract_filename(g_read_filename.c_str());
-                }
-                else if (!g_map_name.empty())
-                {
-                    g_command_name = extract_filename(g_map_name.c_str());
-                }
-                else
-                {
-                    return bad_arg(curarg);
-                }
-            }
-            else
-            {
-                g_command_name = next;
-                assert(g_command_name.length() <= ITEM_NAME_LEN);
-                if (g_command_name.length() > ITEM_NAME_LEN)
-                {
-                    g_command_name.resize(ITEM_NAME_LEN);
-                }
-            }
-            g_make_parameter_file = true;
-            if (!g_read_filename.empty())
-            {
-                if (read_overlay() != 0)
-                {
-                    cmd_arg::s_goodbye();
-                    return cmdarg_flags::GOODBYE;
-                }
-            }
-            else if (!g_map_name.empty())
-            {
-                g_make_parameter_file_map = true;
-            }
-            g_logical_screen_x_dots = g_file_x_dots;
-            g_logical_screen_y_dots = g_file_y_dots;
-            g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
-            g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
-            calcfracinit();
-            make_batch_file();
-            cmd_arg::s_goodbye();
-            return cmdarg_flags::GOODBYE;
-        }
-    } // end of commands allowed only at startup
-
-    if (variable == "reset")
+    }
+    else if (!g_map_name.empty())
     {
-        // PAR release unknown unless specified
-        if (numval < 0)
-        {
-            return bad_arg(curarg);
-        }
+        g_make_parameter_file_map = true;
+    }
+    g_logical_screen_x_dots = g_file_x_dots;
+    g_logical_screen_y_dots = g_file_y_dots;
+    g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
+    g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
+    calcfracinit();
+    make_batch_file();
+    cmd_arg::s_goodbye();
+    return cmdarg_flags::GOODBYE;
+}
 
-        initvars_fractal();
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::RESET;
+static cmdarg_flags cmd_max_history(const Command &cmd)
+{
+    if (cmd.numval == NONNUMERIC)
+    {
+        return cmd.bad_arg();
+    }
+    if (cmd.numval < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_max_image_history = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// textsafe no longer used, do validity checking, but gobble argument
+static cmdarg_flags cmd_text_safe(const Command &cmd)
+{
+    if (g_first_init)
+    {
+        if (!(cmd.charval[0] == 'n'        // no
+                || cmd.charval[0] == 'y'   // yes
+                || cmd.charval[0] == 'b'   // bios
+                || cmd.charval[0] == 's')) // save
+        {
+            return cmd.bad_arg();
+        }
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// vesadetect no longer used, do validity checks, but gobble argument
+static cmdarg_flags cmd_vesa_detect(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// these commands are allowed only at startup
+// Keep this sorted by parameter name for binary search to work correctly.
+static std::array<CommandHandler, 11> s_startup_commands{
+    CommandHandler{"adapter", cmd_adapter},          //
+    CommandHandler{"afi", cmd_afi},                  //
+    CommandHandler{"batch", cmd_batch},              //
+    CommandHandler{"biospalette", cmd_bios_palette}, //
+    CommandHandler{"exitnoask", cmd_exit_no_ask},    //
+    CommandHandler{"fpu", cmd_fpu},                  //
+    CommandHandler{"makedoc", cmd_make_doc},         //
+    CommandHandler{"makepar", cmd_make_par},         //
+    CommandHandler{"maxhistory", cmd_max_history},   //
+    CommandHandler{"textsafe", cmd_text_safe},       //
+    CommandHandler{"vesadetect", cmd_vesa_detect},   //
+};
+
+// 3d=?/?/..
+static cmdarg_flags cmd_3d(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    int yes_no = cmd.yesnoval[0];
+    if (value == "overlay")
+    {
+        yes_no = 1;
+        if (g_calc_status > calc_status_value::NO_FRACTAL) // if no image, treat same as 3D=yes
+        {
+            g_overlay_3d = true;
+        }
+    }
+    else if (yes_no < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_display_3d = yes_no != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
+    initvars_3d();
+    return g_display_3d != display_3d_modes::NONE ? cmdarg_flags::PARAM_3D | cmdarg_flags::YES_3D
+                                                  : cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_3d_mode(const Command &cmd)
+{
+    int julibrot_mode = -1;
+    for (int i = 0; i < 4; i++)
+    {
+        if (g_julibrot_3d_options[i] == std::string{cmd.value})
+        {
+            julibrot_mode = i;
+            break;
+        }
+    }
+    if (julibrot_mode < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_julibrot_3d_mode = static_cast<julibrot_3d_mode>(julibrot_mode);
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// ambient=?
+static cmdarg_flags cmd_ambient(const Command &cmd)
+{
+    if (cmd.numval < 0 || cmd.numval > 100)
+    {
+        return cmd.bad_arg();
+    }
+    g_ambient = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// askvideo=?
+static cmdarg_flags cmd_ask_video(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_ask_video = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+// aspectdrift=?
+static cmdarg_flags cmd_aspect_drift(const Command &cmd)
+{
+    if (cmd.floatparms != 1 || cmd.floatval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_aspect_drift = (float) cmd.floatval[0];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// attack=?
+static cmdarg_flags cmd_attack(const Command &cmd)
+{
+    g_fm_attack = cmd.numval & 0x0F;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_attenuate(const Command &cmd)
+{
+    if (cmd.charval[0] == 'n')
+    {
+        g_hi_attenuation = 0;
+    }
+    else if (cmd.charval[0] == 'l')
+    {
+        g_hi_attenuation = 1;
+    }
+    else if (cmd.charval[0] == 'm')
+    {
+        g_hi_attenuation = 2;
+    }
+    else if (cmd.charval[0] == 'h')
+    {
+        g_hi_attenuation = 3;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_auto_key(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (value == "record")
+    {
+        g_slides = slides_mode::RECORD;
+    }
+    else if (value == "play")
+    {
+        g_slides = slides_mode::PLAY;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_auto_key_name(const Command &cmd)
+{
+    if (merge_pathnames(g_auto_name, cmd.value, cmd.mode) < 0)
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+    }
+    return cmdarg_flags::NONE;
+}
+
+// background=?/?/?
+static cmdarg_flags cmd_background(const Command &cmd)
+{
+    if (cmd.totparms != 3 || cmd.intparms != 3)
+    {
+        return cmd.bad_arg();
+    }
+    for (int i = 0; i < 3; i++)
+    {
+        if (cmd.intval[i] & ~0xff)
+        {
+            return cmd.bad_arg();
+        }
+    }
+    g_background_color[0] = (BYTE) cmd.intval[0];
+    g_background_color[1] = (BYTE) cmd.intval[1];
+    g_background_color[2] = (BYTE) cmd.intval[2];
+    return cmdarg_flags::PARAM_3D;
+}
+
+// bailout=?
+static cmdarg_flags cmd_bail_out(const Command &cmd)
+{
+    if (cmd.floatval[0] < 1 || cmd.floatval[0] > 2100000000L)
+    {
+        return cmd.bad_arg();
+    }
+    g_bail_out = (long) cmd.floatval[0];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// bailoutest=?
+static cmdarg_flags cmd_bail_out_test(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (value == "mod")
+    {
+        g_bail_out_test = bailouts::Mod;
+    }
+    else if (value == "real")
+    {
+        g_bail_out_test = bailouts::Real;
+    }
+    else if (value == "imag")
+    {
+        g_bail_out_test = bailouts::Imag;
+    }
+    else if (value == "or")
+    {
+        g_bail_out_test = bailouts::Or;
+    }
+    else if (value == "and")
+    {
+        g_bail_out_test = bailouts::And;
+    }
+    else if (value == "manh")
+    {
+        g_bail_out_test = bailouts::Manh;
+    }
+    else if (value == "manr")
+    {
+        g_bail_out_test = bailouts::Manr;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+    set_bailout_formula(g_bail_out_test);
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_bf_digits(const Command &cmd)
+{
+    if (cmd.numval == NONNUMERIC || (cmd.numval < 0 || cmd.numval > 2000))
+    {
+        return cmd.bad_arg();
+    }
+    g_bf_digits = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// biomorph=?
+static cmdarg_flags cmd_biomorph(const Command &cmd)
+{
+    g_user_biomorph_value = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// brief=?
+static cmdarg_flags cmd_brief(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_brief = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// bright=?
+static cmdarg_flags cmd_bright(const Command &cmd)
+{
+    if (cmd.totparms != 2 || cmd.intparms != 2)
+    {
+        return cmd.bad_arg();
+    }
+    g_red_bright = cmd.intval[0];
+    g_blue_bright = cmd.intval[1];
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// center-mag=?/?/?[/?/?/?]
+static cmdarg_flags cmd_center_mag(const Command &cmd)
+{
+    if ((cmd.totparms != cmd.floatparms) || (cmd.totparms != 0 && cmd.totparms < 3) ||
+        (cmd.totparms >= 3 && cmd.floatval[2] == 0.0))
+    {
+        return cmd.bad_arg();
+    }
+    if (g_fractal_type == fractal_type::CELLULAR)
+    {
+        return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
     }
 
-    if (variable == "filename")      // filename=?
+    g_use_center_mag = true;
+    if (cmd.totparms == 0)
     {
-        if (charval[0] == '.' && value[1] != SLASHC)
-        {
-            if (valuelen > 4)
-            {
-                return bad_arg(curarg);
-            }
-            g_gif_filename_mask = std::string{"*"} + value;
-            return cmdarg_flags::NONE;
-        }
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (mode == cmd_file::AT_AFTER_STARTUP && g_display_3d == display_3d_modes::NONE) // can't do this in @ command
-        {
-            return bad_arg(curarg);
-        }
+        return cmdarg_flags::NONE; // turns center-mag mode on
+    }
+    s_init_corners = true;
+    // dec = get_max_curarg_len(floatvalstr, totparms);
+    LDBL Magnification;
+    std::sscanf(cmd.floatvalstr[2], "%Lf", &Magnification);
 
-        const int exist_dir = merge_pathnames(g_read_filename, value, mode);
-        if (exist_dir == 0)
-        {
-            g_show_file = 0;
-        }
-        else if (exist_dir < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        else
-        {
-            g_browse_name = extract_filename(g_read_filename.c_str());
-        }
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+    // I don't know if this is portable, but something needs to
+    // be used in case compiler's LDBL_MAX is not big enough
+    if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
+    {
+        return cmd.bad_arg(); // ie: Magnification is +-1.#INF
     }
 
-    if (variable == "video")         // video=?
+    const int dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
+
+    if ((dec <= DBL_DIG + 1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) ||
+        g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
     {
-        const int k = check_vidmode_keyname(value);
-        if (k == 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_init_mode = -1;
-        for (int i = 0; i < MAX_VIDEO_MODES; ++i)
-        {
-            if (g_video_table[i].keynum == k)
-            {
-                g_init_mode = i;
-                break;
-            }
-        }
-        if (g_init_mode == -1)
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "map")         // map=, set default colors
-    {
-        if (valuelen > FILE_MAX_PATH - 1)
-        {
-            return bad_arg(curarg);
-        }
-
-        const int exist_dir = merge_pathnames(g_map_name, value, mode);
-        if (exist_dir > 0)
-        {
-            return cmdarg_flags::NONE;    // got a directory
-        }
-        if (exist_dir < 0) // error
-        {
-            init_msg(variable.c_str(), value, mode);
-            return cmdarg_flags::NONE;
-        }
-        SetColorPaletteName(g_map_name.c_str());
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "colors")       // colors=, set current colors
-    {
-        if (parse_colors(value) == cmdarg_flags::ERROR)
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "recordcolors")       // recordcolors=
-    {
-        if (*value != 'y' && *value != 'c' && *value != 'a')
-        {
-            return bad_arg(curarg);
-        }
-        g_record_colors = static_cast<record_colors_mode>(*value);
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "maxlinelength")  // maxlinelength=
-    {
-        if (numval < MIN_MAX_LINE_LENGTH || numval > MAX_MAX_LINE_LENGTH)
-        {
-            return bad_arg(curarg);
-        }
-        g_max_line_length = numval;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "comment")       // comment=
-    {
-        parse_comments(value);
-        return cmdarg_flags::NONE;
-    }
-
-    // tplus no longer used, validate value and gobble argument
-    if (variable == "tplus")
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    // noninterlaced no longer used, validate value and gobble argument
-    if (variable == "noninterlaced")
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    // maxcolorres no longer used, validate value and gobble argument
-    if (variable == "maxcolorres") // Change default color resolution
-    {
-        if (numval == 1 || numval == 4 || numval == 8 || numval == 16 || numval == 24)
-        {
-            return cmdarg_flags::NONE;
-        }
-        return bad_arg(curarg);
-    }
-
-    // pixelzoom no longer used, validate value and gobble argument
-    if (variable == "pixelzoom")
-    {
-        if (numval >= 5)
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    // keep this for backward compatibility
-    if (variable == "warn")         // warn=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_overwrite_file = (yesnoval[0] ^ 1) != 0;
-        return cmdarg_flags::NONE;
-    }
-    if (variable == "overwrite")    // overwrite=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_overwrite_file = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "gif87a")       // gif87a=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "dither") // dither=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_dither_flag = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "savetime")      // savetime=?
-    {
-        g_init_save_time = numval;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "autokey")       // autokey=?
-    {
-        if (std::strcmp(value, "record") == 0)
-        {
-            g_slides = slides_mode::RECORD;
-        }
-        else if (std::strcmp(value, "play") == 0)
-        {
-            g_slides = slides_mode::PLAY;
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "autokeyname")   // autokeyname=?
-    {
-        if (merge_pathnames(g_auto_name, value, mode) < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "type")         // type=?
-    {
-        if (value[valuelen-1] == '*')
-        {
-            value[--valuelen] = 0;
-        }
-        // kludge because type ifs3d has an asterisk in front
-        if (std::strcmp(value, "ifs3d") == 0)
-        {
-            value[3] = 0;
-        }
-        int k;
-        for (k = 0; g_fractal_specific[k].name != nullptr; k++)
-        {
-            if (std::strcmp(value, g_fractal_specific[k].name) == 0)
-            {
-                break;
-            }
-        }
-        if (g_fractal_specific[k].name == nullptr)
-        {
-            return bad_arg(curarg);
-        }
-        const fractal_type old_fractal_type{g_fractal_type};
-        g_fractal_type = static_cast<fractal_type>(k);
-        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-        if (!s_init_corners)
-        {
-            g_x_min = g_cur_fractal_specific->xmin;
-            g_x_3rd = g_x_min;
-            g_x_max = g_cur_fractal_specific->xmax;
-            g_y_min = g_cur_fractal_specific->ymin;
-            g_y_3rd = g_y_min;
-            g_y_max = g_cur_fractal_specific->ymax;
-        }
-        if (!s_init_functions)
-        {
-            set_fractal_default_functions(old_fractal_type);
-        }
-        if (!s_init_params)
-        {
-            load_params(g_fractal_type);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "inside")       // inside=?
-    {
-        struct
-        {
-            char const *arg;
-            int inside;
-        }
-        const args[] =
-        {
-            { "zmag", ZMAG },
-            { "bof60", BOF60 },
-            { "bof61", BOF61 },
-            { "epsiloncross", EPSCROSS },
-            { "startrail", STARTRAIL },
-            { "period", PERIOD },
-            { "fmod", FMODI },
-            { "atan", ATANI },
-            { "maxiter", -1 }
-        };
-        for (auto &arg : args)
-        {
-            if (std::strcmp(value, arg.arg) == 0)
-            {
-                g_inside_color = arg.inside;
-                return cmdarg_flags::FRACTAL_PARAM;
-            }
-        }
-        if (numval == NONNUMERIC)
-        {
-            return bad_arg(curarg);
-        }
-        else
-        {
-            g_inside_color = numval;
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "proximity")       // proximity=?
-    {
-        g_close_proximity = floatval[0];
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "fillcolor")       // fillcolor
-    {
-        if (std::strcmp(value, "normal") == 0)
-        {
-            g_fill_color = -1;
-        }
-        else if (numval == NONNUMERIC)
-        {
-            return bad_arg(curarg);
-        }
-        else
-        {
-            g_fill_color = numval;
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "finattract")   // finattract=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_finite_attractor = yesnoval[0] != 0;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "nobof")   // nobof=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_bof_match_book_images = yesnoval[0] == 0;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "function")      // function=?,?
-    {
-        int k = 0;
-        while (*value && k < 4)
-        {
-            if (set_trig_array(k++, value))
-            {
-                return bad_arg(curarg);
-            }
-            value = std::strchr(value, '/');
-            if (value == nullptr)
-            {
-                break;
-            }
-            ++value;
-        }
-        g_new_bifurcation_functions_loaded = true; // for old bifs
-        s_init_functions = true;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "outside")      // outside=?
-    {
-        struct
-        {
-            char const *arg;
-            int outside;
-        }
-        args[] =
-        {
-            { "iter", ITER },
-            { "real", REAL },
-            { "imag", IMAG },
-            { "mult", MULT },
-            { "summ", SUM },
-            { "atan", ATAN },
-            { "fmod", FMOD },
-            { "tdis", TDIS }
-        };
-        for (auto &arg : args)
-        {
-            if (std::strcmp(value, arg.arg) == 0)
-            {
-                g_outside_color = arg.outside;
-                return cmdarg_flags::FRACTAL_PARAM;
-            }
-        }
-        if ((numval == NONNUMERIC) || (numval < TDIS || numval > 255))
-        {
-            return bad_arg(curarg);
-        }
-        g_outside_color = numval;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "bfdigits")      // bfdigits=?
-    {
-        if ((numval == NONNUMERIC) || (numval < 0 || numval > 2000))
-        {
-            return bad_arg(curarg);
-        }
-        g_bf_digits = numval;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "maxiter")       // maxiter=?
-    {
-        if (floatval[0] < 2)
-        {
-            return bad_arg(curarg);
-        }
-        g_max_iterations = (long) floatval[0];
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "iterincr")        // iterincr=?
-    {
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "passes")        // passes=?
-    {
-        if (std::strchr("123gbtsdo", charval[0]) == nullptr)
-        {
-            return bad_arg(curarg);
-        }
-        g_user_std_calc_mode = charval[0];
-        if (charval[0] == 'g')
-        {
-            g_stop_pass = ((int)value[1] - (int)'0');
-            if (g_stop_pass < 0 || g_stop_pass > 6)
-            {
-                g_stop_pass = 0;
-            }
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "ismand")        // ismand=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_is_mandelbrot = yesnoval[0] != 0;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "cyclelimit")   // cyclelimit=?
-    {
-        if (numval <= 1 || numval > 256)
-        {
-            return bad_arg(curarg);
-        }
-        g_init_cycle_limit = numval;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "makemig")
-    {
-        int xmult;
-        int ymult;
-        if (totparms < 2)
-        {
-            return bad_arg(curarg);
-        }
-        xmult = intval[0];
-        ymult = intval[1];
-        make_mig(xmult, ymult);
-        exit(0);
-    }
-
-    if (variable == "cyclerange")
-    {
-        if (totparms < 2)
-        {
-            intval[1] = 255;
-        }
-        if (totparms < 1)
-        {
-            intval[0] = 1;
-        }
-        if (totparms != intparms
-            || intval[0] < 0
-            || intval[1] > 255
-            || intval[0] > intval[1])
-        {
-            return bad_arg(curarg);
-        }
-        g_color_cycle_range_lo = intval[0];
-        g_color_cycle_range_hi = intval[1];
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "ranges")
-    {
-        int i;
-        int k;
-        int entries;
-        int prev;
-        int tmpranges[128];
-
-        if (totparms != intparms)
-        {
-            return bad_arg(curarg);
-        }
-        i = 0;
-        prev = i;
-        entries = prev;
-        g_log_map_flag = 0; // ranges overrides logmap
-        while (i < totparms)
-        {
-            k = intval[i++];
-            if (k < 0) // striping
-            {
-                k = -k;
-                if (k < 1 || k >= 16384 || i >= totparms)
-                {
-                    return bad_arg(curarg);
-                }
-                tmpranges[entries++] = -1; // {-1,width,limit} for striping
-                tmpranges[entries++] = k;
-                k = intval[i++];
-            }
-            if (k < prev)
-            {
-                return bad_arg(curarg);
-            }
-            prev = k;
-            tmpranges[entries++] = prev;
-        }
-        if (prev == 0)
-        {
-            return bad_arg(curarg);
-        }
-        bool resized{};
-        try
-        {
-            g_iteration_ranges.resize(entries);
-            resized = true;
-        }
-        catch (std::bad_alloc const &)
-        {
-        }
-        if (!resized)
-        {
-            stopmsg(stopmsg_flags::NO_STACK, "Insufficient memory for ranges=");
-            return cmdarg_flags::ERROR;
-        }
-        g_iteration_ranges_len = entries;
-        for (int i2 = 0; i2 < g_iteration_ranges_len; ++i2)
-        {
-            g_iteration_ranges[i2] = tmpranges[i2];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "savename")      // savename=?
-    {
-        if (valuelen > FILE_MAX_PATH - 1)
-        {
-            return bad_arg(curarg);
-        }
-        if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
-        {
-            if (merge_pathnames(g_save_filename, value, mode) < 0)
-            {
-                init_msg(variable.c_str(), value, mode);
-            }
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "tweaklzw")      // tweaklzw=?
-    {
-        // TODO: deprecated
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "minstack")      // minstack=?
-    {
-        if (totparms != 1)
-        {
-            return bad_arg(curarg);
-        }
-        g_soi_min_stack = intval[0];
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "mathtolerance")      // mathtolerance=?
-    {
-        if (charval[0] == '/')
-        {
-            ; // leave math_tol[0] at the default value
-        }
-        else if (totparms >= 1)
-        {
-            g_math_tol[0] = floatval[0];
-        }
-        if (totparms >= 2)
-        {
-            g_math_tol[1] = floatval[1];
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "tempdir")      // tempdir=?
-    {
-        if (valuelen > (FILE_MAX_DIR-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (!isadirectory(value))
-        {
-            return bad_arg(curarg);
-        }
-        g_temp_dir = value;
-        fix_dirname(g_temp_dir);
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "workdir")      // workdir=?
-    {
-        if (valuelen > (FILE_MAX_DIR-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (!isadirectory(value))
-        {
-            return bad_arg(curarg);
-        }
-        g_working_dir = value;
-        fix_dirname(g_working_dir);
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "exitmode")      // exitmode=? (deprecated)
-    {
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "textcolors")
-    {
-        parse_textcolors(value);
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "potential")     // potential=?
-    {
-        int k{};
-        while (k < 3 && *value)
-        {
-            if (k == 1)
-            {
-                g_potential_params[k] = std::atof(value);
-            }
-            else
-            {
-                g_potential_params[k] = std::atoi(value);
-            }
-            k++;
-            value = std::strchr(value, '/');
-            if (value == nullptr)
-            {
-                k = 99;
-            }
-            ++value;
-        }
-        g_potential_16bit = false;
-        if (k < 99)
-        {
-            if (std::strcmp(value, "16bit"))
-            {
-                return bad_arg(curarg);
-            }
-            g_potential_16bit = true;
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "params")        // params=?,?
-    {
-        if (totparms != floatparms || totparms > MAX_PARAMS)
-        {
-            return bad_arg(curarg);
-        }
-        s_init_params = true;
-        for (int k = 0; k < MAX_PARAMS; ++k)
-        {
-            g_params[k] = (k < totparms) ? floatval[k] : 0.0;
-        }
-        if (bf_math != bf_math_type::NONE)
-        {
-            for (int k = 0; k < MAX_PARAMS; k++)
-            {
-                floattobf(bfparms[k], g_params[k]);
-            }
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "miim")          // miim=?[/?[/?[/?]]]
-    {
-        if (totparms > 6)
-        {
-            return bad_arg(curarg);
-        }
-        if (charval[0] == 'b')
-        {
-            g_major_method = Major::breadth_first;
-        }
-        else if (charval[0] == 'd')
-        {
-            g_major_method = Major::depth_first;
-        }
-        else if (charval[0] == 'w')
-        {
-            g_major_method = Major::random_walk;
-        }
-#ifdef RANDOM_RUN
-        else if (charval[0] == 'r')
-        {
-            major_method = Major::random_run;
-        }
-#endif
-        else
-        {
-            return bad_arg(curarg);
-        }
-
-        if (charval[1] == 'l')
-        {
-            g_inverse_julia_minor_method = Minor::left_first;
-        }
-        else if (charval[1] == 'r')
-        {
-            g_inverse_julia_minor_method = Minor::right_first;
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-
-        // keep this next part in for backwards compatibility with old PARs ???
-
-        if (totparms > 2)
-        {
-            for (int k = 2; k < 6; ++k)
-            {
-                g_params[k-2] = (k < totparms) ? floatval[k] : 0.0;
-            }
-        }
-
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "initorbit")     // initorbit=?,?
-    {
-        if (std::strcmp(value, "pixel") == 0)
-        {
-            g_use_init_orbit = init_orbit_mode::pixel;
-        }
-        else
-        {
-            if (totparms != 2 || floatparms != 2)
-            {
-                return bad_arg(curarg);
-            }
-            g_init_orbit.x = floatval[0];
-            g_init_orbit.y = floatval[1];
-            g_use_init_orbit = init_orbit_mode::value;
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "orbitname")         // orbitname=?
-    {
-        if (check_orbit_name(value))
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "3dmode")         // 3dmode=?
-    {
-        int julibrot_mode = -1;
-        for (int i = 0; i < 4; i++)
-        {
-            if (g_julibrot_3d_options[i] == std::string{value})
-            {
-                julibrot_mode = i;
-                break;
-            }
-        }
-        if (julibrot_mode < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_julibrot_3d_mode = static_cast<julibrot_3d_mode>(julibrot_mode);
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "julibrot3d")       // julibrot3d=?,?,?,?
-    {
-        if (floatparms != totparms)
-        {
-            return bad_arg(curarg);
-        }
-        if (totparms > 0)
-        {
-            g_julibrot_z_dots = (int)floatval[0];
-        }
-        if (totparms > 1)
-        {
-            g_julibrot_origin_fp = (float)floatval[1];
-        }
-        if (totparms > 2)
-        {
-            g_julibrot_depth_fp = (float)floatval[2];
-        }
-        if (totparms > 3)
-        {
-            g_julibrot_height_fp = (float)floatval[3];
-        }
-        if (totparms > 4)
-        {
-            g_julibrot_width_fp = (float)floatval[4];
-        }
-        if (totparms > 5)
-        {
-            g_julibrot_dist_fp = (float)floatval[5];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "julibroteyes")       // julibroteyes=?,?,?,?
-    {
-        if (floatparms != totparms || totparms != 1)
-        {
-            return bad_arg(curarg);
-        }
-        g_eyes_fp = (float)floatval[0];
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "julibrotfromto")       // julibrotfromto=?,?,?,?
-    {
-        if (floatparms != totparms || totparms != 4)
-        {
-            return bad_arg(curarg);
-        }
-        g_julibrot_x_max = floatval[0];
-        g_julibrot_x_min = floatval[1];
-        g_julibrot_y_max = floatval[2];
-        g_julibrot_y_min = floatval[3];
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "corners")       // corners=?,?,?,?
-    {
-        int dec;
-        if (g_fractal_type == fractal_type::CELLULAR)
-        {
-            return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
-        }
-        if (floatparms != totparms
-            || (totparms != 0 && totparms != 4 && totparms != 6))
-        {
-            return bad_arg(curarg);
-        }
-        g_use_center_mag = false;
-        if (totparms == 0)
-        {
-            return cmdarg_flags::NONE; // turns corners mode on
-        }
-        s_init_corners = true;
-        // good first approx, but dec could be too big
-        dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-        if ((dec > DBL_DIG+1 || g_debug_flag == debug_flags::force_arbitrary_precision_math)
-            && g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
-        {
-            bf_math_type old_bf_math = bf_math;
-            if (bf_math == bf_math_type::NONE || dec > g_decimals)
-            {
-                init_bf_dec(dec);
-            }
-            if (old_bf_math == bf_math_type::NONE)
-            {
-                for (int k = 0; k < MAX_PARAMS; k++)
-                {
-                    floattobf(bfparms[k], g_params[k]);
-                }
-            }
-
-            // xx3rd = xxmin = floatval[0];
-            get_bf(g_bf_x_min, floatvalstr[0]);
-            get_bf(g_bf_x_3rd, floatvalstr[0]);
-
-            // xxmax = floatval[1];
-            get_bf(g_bf_x_max, floatvalstr[1]);
-
-            // yy3rd = yymin = floatval[2];
-            get_bf(g_bf_y_min, floatvalstr[2]);
-            get_bf(g_bf_y_3rd, floatvalstr[2]);
-
-            // yymax = floatval[3];
-            get_bf(g_bf_y_max, floatvalstr[3]);
-
-            if (totparms == 6)
-            {
-                // xx3rd = floatval[4];
-                get_bf(g_bf_x_3rd, floatvalstr[4]);
-
-                // yy3rd = floatval[5];
-                get_bf(g_bf_y_3rd, floatvalstr[5]);
-            }
-
-            // now that all the corners have been read in, get a more
-            // accurate value for dec and do it all again
-
-            dec = getprecbf_mag();
-            if (dec < 0)
-            {
-                return bad_arg(curarg);     // ie: Magnification is +-1.#INF
-            }
-
-            if (dec > g_decimals)  // get corners again if need more precision
-            {
-                init_bf_dec(dec);
-
-                // now get parameters and corners all over again at new
-                // decimal setting
-                for (int k = 0; k < MAX_PARAMS; k++)
-                {
-                    floattobf(bfparms[k], g_params[k]);
-                }
-
-                // xx3rd = xxmin = floatval[0];
-                get_bf(g_bf_x_min, floatvalstr[0]);
-                get_bf(g_bf_x_3rd, floatvalstr[0]);
-
-                // xxmax = floatval[1];
-                get_bf(g_bf_x_max, floatvalstr[1]);
-
-                // yy3rd = yymin = floatval[2];
-                get_bf(g_bf_y_min, floatvalstr[2]);
-                get_bf(g_bf_y_3rd, floatvalstr[2]);
-
-                // yymax = floatval[3];
-                get_bf(g_bf_y_max, floatvalstr[3]);
-
-                if (totparms == 6)
-                {
-                    // xx3rd = floatval[4];
-                    get_bf(g_bf_x_3rd, floatvalstr[4]);
-
-                    // yy3rd = floatval[5];
-                    get_bf(g_bf_y_3rd, floatvalstr[5]);
-                }
-            }
-        }
-        g_x_min = floatval[0];
-        g_x_3rd = floatval[0];
-        g_x_max = floatval[1];
-        g_y_min = floatval[2];
-        g_y_3rd = floatval[2];
-        g_y_max = floatval[3];
-
-        if (totparms == 6)
-        {
-            g_x_3rd =      floatval[4];
-            g_y_3rd =      floatval[5];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "orbitcorners")  // orbit corners=?,?,?,?
-    {
-        g_set_orbit_corners = false;
-        if (floatparms != totparms
-            || (totparms != 0 && totparms != 4 && totparms != 6))
-        {
-            return bad_arg(curarg);
-        }
-        g_orbit_corner_min_x = floatval[0];
-        g_orbit_corner_3_x = floatval[0];
-        g_orbit_corner_max_x = floatval[1];
-        g_orbit_corner_min_y = floatval[2];
-        g_orbit_corner_3_y = floatval[2];
-        g_orbit_corner_max_y = floatval[3];
-
-        if (totparms == 6)
-        {
-            g_orbit_corner_3_x =      floatval[4];
-            g_orbit_corner_3_y =      floatval[5];
-        }
-        g_set_orbit_corners = true;
-        g_keep_screen_coords = true;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "screencoords")     // screencoords=?
-    {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_keep_screen_coords = yesnoval[0] != 0;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "orbitdrawmode")     // orbitdrawmode=?
-    {
-        if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
-        {
-            return bad_arg(curarg);
-        }
-        g_draw_mode = charval[0];
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "viewwindows")
-    {
-        // viewwindows=?,?,?,?,?
-        if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
-        {
-            return bad_arg(curarg);
-        }
-        g_view_window = true;
-        g_view_reduction = 4.2F;  // reset default values
-        g_final_aspect_ratio = g_screen_aspect;
-        g_view_crop = true;
-        g_view_y_dots = 0;
-        g_view_x_dots = g_view_y_dots;
-
-        if ((totparms > 0) && (floatval[0] > 0.001))
-        {
-            g_view_reduction = (float)floatval[0];
-        }
-        if ((totparms > 1) && (floatval[1] > 0.001))
-        {
-            g_final_aspect_ratio = (float)floatval[1];
-        }
-        if ((totparms > 2) && (yesnoval[2] == 0))
-        {
-            g_view_crop = yesnoval[2] != 0;
-        }
-        if ((totparms > 3) && (intval[3] > 0))
-        {
-            g_view_x_dots = intval[3];
-        }
-        if ((totparms == 5) && (intval[4] > 0))
-        {
-            g_view_y_dots = intval[4];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "center-mag")
-    {
-        // center-mag=?,?,?[,?,?,?]
-        int dec;
-
-        if ((totparms != floatparms)
-            || (totparms != 0 && totparms < 3)
-            || (totparms >= 3 && floatval[2] == 0.0))
-        {
-            return bad_arg(curarg);
-        }
-        if (g_fractal_type == fractal_type::CELLULAR)
-        {
-            return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
-        }
-        g_use_center_mag = true;
-        if (totparms == 0)
-        {
-            return cmdarg_flags::NONE; // turns center-mag mode on
-        }
-        s_init_corners = true;
-        // dec = get_max_curarg_len(floatvalstr, totparms);
-        std::sscanf(floatvalstr[2], "%Lf", &Magnification);
-
-        // I don't know if this is portable, but something needs to
-        // be used in case compiler's LDBL_MAX is not big enough
-        if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
-        {
-            return bad_arg(curarg);     // ie: Magnification is +-1.#INF
-        }
-
-        dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
-
-        if ((dec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math)
-            || g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
-        {
-            // rough estimate that double is OK
-            Xctr = floatval[0];
-            Yctr = floatval[1];
-            Xmagfactor = 1;
-            Rotation = 0;
-            Skew = 0;
-            if (floatparms > 3)
-            {
-                Xmagfactor = floatval[3];
-            }
-            if (Xmagfactor == 0)
-            {
-                Xmagfactor = 1;
-            }
-            if (floatparms > 4)
-            {
-                Rotation = floatval[4];
-            }
-            if (floatparms > 5)
-            {
-                Skew = floatval[5];
-            }
-            // calculate bounds
-            cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-            return cmdarg_flags::FRACTAL_PARAM;
-        }
-
-
-        // use arbitrary precision
-        int saved;
-        s_init_corners = true;
-        bf_math_type old_bf_math = bf_math;
-        if (bf_math == bf_math_type::NONE || dec > g_decimals)
-        {
-            init_bf_dec(dec);
-        }
-        if (old_bf_math == bf_math_type::NONE)
-        {
-            for (int k = 0; k < MAX_PARAMS; k++)
-            {
-                floattobf(bfparms[k], g_params[k]);
-            }
-        }
-        g_use_center_mag = true;
-        saved = save_stack();
-        bXctr            = alloc_stack(bflength+2);
-        bYctr            = alloc_stack(bflength+2);
-        get_bf(bXctr, floatvalstr[0]);
-        get_bf(bYctr, floatvalstr[1]);
-        Xmagfactor = 1;
-        Rotation = 0;
-        Skew = 0;
-        if (floatparms > 3)
-        {
-            Xmagfactor = floatval[3];
+        // rough estimate that double is OK
+        double Xctr = cmd.floatval[0];
+        double Yctr = cmd.floatval[1];
+        double Xmagfactor = 1;
+        double Rotation = 0;
+        double Skew = 0;
+        if (cmd.floatparms > 3)
+        {
+            Xmagfactor = cmd.floatval[3];
         }
         if (Xmagfactor == 0)
         {
             Xmagfactor = 1;
         }
-        if (floatparms > 4)
+        if (cmd.floatparms > 4)
         {
-            Rotation = floatval[4];
+            Rotation = cmd.floatval[4];
         }
-        if (floatparms > 5)
+        if (cmd.floatparms > 5)
         {
-            Skew = floatval[5];
+            Skew = cmd.floatval[5];
         }
         // calculate bounds
-        cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
-        bfcornerstofloat();
-        restore_stack(saved);
-        return cmdarg_flags::FRACTAL_PARAM;
-
-    }
-
-    if (variable == "aspectdrift")
-    {
-        // aspectdrift=?
-        if (floatparms != 1 || floatval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_aspect_drift = (float)floatval[0];
+        cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         return cmdarg_flags::FRACTAL_PARAM;
     }
 
-    if (variable == "invert")
+    // use arbitrary precision
+    int saved;
+    s_init_corners = true;
+    bf_math_type old_bf_math = bf_math;
+    if (bf_math == bf_math_type::NONE || dec > g_decimals)
     {
-        // invert=?,?,?
-        if (totparms != floatparms || (totparms != 1 && totparms != 3))
-        {
-            return bad_arg(curarg);
-        }
-        g_inversion[0] = floatval[0];
-        g_invert = (g_inversion[0] != 0.0) ? totparms : 0;
-        if (totparms == 3)
-        {
-            g_inversion[1] = floatval[1];
-            g_inversion[2] = floatval[2];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "olddemmcolors")
-    {
-        // olddemmcolors=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_old_demm_colors = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "askvideo")
-    {
-        // askvideo=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_ask_video = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "ramvideo")          // ramvideo=?
-    {
-        return cmdarg_flags::NONE; // just ignore and return, for old time's sake
-    }
-
-    if (variable == "float")
-    {
-        // float=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_user_float_flag = yesnoval[0] != 0;
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "fastrestore")
-    {
-        // fastrestore=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_fast_restore = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "orgfrmdir")
-    {
-        // orgfrmdir=?
-        if (valuelen > (FILE_MAX_DIR-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (!isadirectory(value))
-        {
-            return bad_arg(curarg);
-        }
-        g_organize_formulas_search = true;
-        g_organize_formulas_dir = value;
-        fix_dirname(g_organize_formulas_dir);
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "biomorph")
-    {
-        // biomorph=?
-        g_user_biomorph_value = numval;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "orbitsave")
-    {
-        // orbitsave=?
-        if (charval[0] == 's')
-        {
-            g_orbit_save_flags |= osf_midi;
-        }
-        else if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_orbit_save_flags |= (yesnoval[0] ? osf_raw : 0);
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "orbitsavename")
-    {
-        // orbitsavename=?
-        g_orbit_save_name = value;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "bailout")
-    {
-        // bailout=?
-        if (floatval[0] < 1 || floatval[0] > 2100000000L)
-        {
-            return bad_arg(curarg);
-        }
-        g_bail_out = (long)floatval[0];
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "bailoutest")
-    {
-        // bailoutest=?
-        if (std::strcmp(value, "mod") == 0)
-        {
-            g_bail_out_test = bailouts::Mod;
-        }
-        else if (std::strcmp(value, "real") == 0)
-        {
-            g_bail_out_test = bailouts::Real;
-        }
-        else if (std::strcmp(value, "imag") == 0)
-        {
-            g_bail_out_test = bailouts::Imag;
-        }
-        else if (std::strcmp(value, "or") == 0)
-        {
-            g_bail_out_test = bailouts::Or;
-        }
-        else if (std::strcmp(value, "and") == 0)
-        {
-            g_bail_out_test = bailouts::And;
-        }
-        else if (std::strcmp(value, "manh") == 0)
-        {
-            g_bail_out_test = bailouts::Manh;
-        }
-        else if (std::strcmp(value, "manr") == 0)
-        {
-            g_bail_out_test = bailouts::Manr;
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-        set_bailout_formula(g_bail_out_test);
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "symmetry")
-    {
-        // symmetry=?
-        if (std::strcmp(value, "xaxis") == 0)
-        {
-            g_force_symmetry = symmetry_type::X_AXIS;
-        }
-        else if (std::strcmp(value, "yaxis") == 0)
-        {
-            g_force_symmetry = symmetry_type::Y_AXIS;
-        }
-        else if (std::strcmp(value, "xyaxis") == 0)
-        {
-            g_force_symmetry = symmetry_type::XY_AXIS;
-        }
-        else if (std::strcmp(value, "origin") == 0)
-        {
-            g_force_symmetry = symmetry_type::ORIGIN;
-        }
-        else if (std::strcmp(value, "pi") == 0)
-        {
-            g_force_symmetry = symmetry_type::PI_SYM;
-        }
-        else if (std::strcmp(value, "none") == 0)
-        {
-            g_force_symmetry = symmetry_type::NONE;
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    // deprecated print parameters
-    if ((variable == "printer")
-        || (variable == "printfile")
-        || (variable == "rleps")
-        || (variable == "colorps")
-        || (variable == "epsf")
-        || (variable == "title")
-        || (variable == "translate")
-        || (variable == "plotstyle")
-        || (variable == "halftone")
-        || (variable == "linefeed")
-        || (variable == "comport"))
-    {
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "sound")
-    {
-        // sound=?,?,?
-        if (totparms > 5)
-        {
-            return bad_arg(curarg);
-        }
-        g_sound_flag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
-        if (totparms == 1)
-        {
-            g_sound_flag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
-        }
-
-        // soundflag is used as a bitfield... bit 0,1,2 used for whether sound
-        // is modified by an orbits x,y,or z component. and also to turn it on
-        // or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
-        // Bit 3 is used for flagging the PC speaker sound,
-        // Bit 4 for OPL3 FM soundcard output,
-        // Bit 5 will be for midi output (not yet),
-        // Bit 6 for whether the tone is quantised to the nearest 'proper' note
-        //  (according to the western, even tempered system anyway)
-        if (charval[0] == 'n' || charval[0] == 'o')
-        {
-            g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
-        }
-        else if ((std::strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
-        {
-            g_sound_flag |= SOUNDFLAG_BEEP;
-        }
-        else if (charval[0] == 'x')
-        {
-            g_sound_flag |= SOUNDFLAG_X;
-        }
-        else if (charval[0] == 'y' && std::strncmp(value, "ye", 2) != 0)
-        {
-            g_sound_flag |= SOUNDFLAG_Y;
-        }
-        else if (charval[0] == 'z')
-        {
-            g_sound_flag |= SOUNDFLAG_Z;
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-        if (totparms > 1)
-        {
-            g_sound_flag &= SOUNDFLAG_ORBITMASK; // reset options
-            for (int i = 1; i < totparms; i++)
-            {
-                // this is for 2 or more options at the same time
-                if (charval[i] == 'f')
-                {
-                    // (try to)switch on opl3 fm synth
-                    if (driver_init_fm())
-                    {
-                        g_sound_flag |= SOUNDFLAG_OPL3_FM;
-                    }
-                    else
-                    {
-                        g_sound_flag &= ~SOUNDFLAG_OPL3_FM;
-                    }
-                }
-                else if (charval[i] == 'p')
-                {
-                    g_sound_flag |= SOUNDFLAG_SPEAKER;
-                }
-                else if (charval[i] == 'm')
-                {
-                    g_sound_flag |= SOUNDFLAG_MIDI;
-                }
-                else if (charval[i] == 'q')
-                {
-                    g_sound_flag |= SOUNDFLAG_QUANTIZED;
-                }
-                else
-                {
-                    return bad_arg(curarg);
-                }
-            } // end for
-        }    // end totparms > 1
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "hertz")
-    {
-        // Hertz=?
-        g_base_hertz = numval;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "volume")
-    {
-        // Volume =?
-        g_fm_volume = numval & 0x3F; // 63
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "attenuate")
-    {
-        if (charval[0] == 'n')
-        {
-            g_hi_attenuation = 0;
-        }
-        else if (charval[0] == 'l')
-        {
-            g_hi_attenuation = 1;
-        }
-        else if (charval[0] == 'm')
-        {
-            g_hi_attenuation = 2;
-        }
-        else if (charval[0] == 'h')
-        {
-            g_hi_attenuation = 3;
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "polyphony")
-    {
-        if (numval > 9)
-        {
-            return bad_arg(curarg);
-        }
-        g_polyphony = std::abs(numval-1);
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "wavetype")
-    {
-        // wavetype = ?
-        g_fm_wavetype = numval & 0x0F;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "attack")
-    {
-        // attack = ?
-        g_fm_attack = numval & 0x0F;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "decay")
-    {
-        // decay = ?
-        g_fm_decay = numval & 0x0F;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "sustain")
-    {
-        // sustain = ?
-        g_fm_sustain = numval & 0x0F;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "srelease")
-    {
-        // release = ?
-        g_fm_release = numval & 0x0F;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "scalemap")
-    {
-        // Scalemap=?,?,?,?,?,?,?,?,?,?,?
-        if (totparms != intparms)
-        {
-            return bad_arg(curarg);
-        }
-        for (int counter = 0; counter <= 11; counter++)
-        {
-            if ((totparms > counter) && (intval[counter] > 0)
-               && (intval[counter] < 13))
-            {
-                g_scale_map[counter] = intval[counter];
-            }
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "periodicity")
-    {
-        // periodicity=?
-        g_user_periodicity_value = 1;
-        if ((charval[0] == 'n') || (numval == 0))
-        {
-            g_user_periodicity_value = 0;
-        }
-        else if (charval[0] == 'y')
-        {
-            g_user_periodicity_value = 1;
-        }
-        else if (charval[0] == 's')       // 's' for 'show'
-        {
-            g_user_periodicity_value = -1;
-        }
-        else if (numval == NONNUMERIC)
-        {
-            return bad_arg(curarg);
-        }
-        else if (numval != 0)
-        {
-            g_user_periodicity_value = numval;
-            if (g_user_periodicity_value > 255)
-            {
-                g_user_periodicity_value = 255;
-            }
-            if (g_user_periodicity_value < -255)
-            {
-                g_user_periodicity_value = -255;
-            }
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "logmap")
-    {
-        // logmap=?
-        g_log_map_auto_calculate = false;          // turn this off if loading a PAR
-        if (charval[0] == 'y')
-        {
-            g_log_map_flag = 1;                           // palette is logarithmic
-        }
-        else if (charval[0] == 'n')
-        {
-            g_log_map_flag = 0;
-        }
-        else if (charval[0] == 'o')
-        {
-            g_log_map_flag = -1;                          // old log palette
-        }
-        else
-        {
-            g_log_map_flag = (long)floatval[0];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "logmode")
-    {
-        // logmode=?
-        g_log_map_fly_calculate = 0;                         // turn off if error
-        g_log_map_auto_calculate = false;
-        if (charval[0] == 'f')
-        {
-            g_log_map_fly_calculate = 1;                      // calculate on the fly
-        }
-        else if (charval[0] == 't')
-        {
-            g_log_map_fly_calculate = 2;                      // force use of LogTable
-        }
-        else if (charval[0] == 'a')
-        {
-            g_log_map_auto_calculate = true;        // force auto calc of logmap
-        }
-        else
-        {
-            return bad_arg(curarg);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "debugflag" || variable == "debug")
-    {
-        // internal use only
-        g_debug_flag = static_cast<debug_flags>(numval);
-        g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != debug_flags::none; // separate timer flag
-        g_debug_flag &= ~debug_flags::benchmark_timer;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "rseed")
-    {
-        g_random_seed = numval;
-        g_random_seed_flag = true;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "orbitdelay")
-    {
-        g_orbit_delay = numval;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "orbitinterval")
-    {
-        g_orbit_interval = numval;
-        if (g_orbit_interval < 1)
-        {
-            g_orbit_interval = 1;
-        }
-        if (g_orbit_interval > 255)
-        {
-            g_orbit_interval = 255;
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "showdot")
-    {
-        g_show_dot = 15;
-        if (totparms > 0)
-        {
-            g_auto_show_dot = (char)0;
-            if (std::isalpha(charval[0]))
-            {
-                if (std::strchr("abdm", (int)charval[0]) != nullptr)
-                {
-                    g_auto_show_dot = charval[0];
-                }
-                else
-                {
-                    return bad_arg(curarg);
-                }
-            }
-            else
-            {
-                g_show_dot = numval;
-                if (g_show_dot < 0)
-                {
-                    g_show_dot = -1;
-                }
-            }
-            if (totparms > 1 && intparms > 0)
-            {
-                g_size_dot = intval[1];
-            }
-            if (g_size_dot < 0)
-            {
-                g_size_dot = 0;
-            }
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "showorbit") // showorbit=yes|no
-    {
-        g_start_show_orbit = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "decomp")
-    {
-        if (totparms != intparms || totparms < 1)
-        {
-            return bad_arg(curarg);
-        }
-        g_decomp[0] = intval[0];
-        g_decomp[1] = 0;
-        if (totparms > 1) // backward compatibility
-        {
-            g_decomp[1] = intval[1];
-            g_bail_out = g_decomp[1];
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "distest")
-    {
-        if (totparms != intparms || totparms < 1)
-        {
-            return bad_arg(curarg);
-        }
-        g_user_distance_estimator_value = (long)floatval[0];
-        g_distance_estimator_width_factor = 71;
-        if (totparms > 1)
-        {
-            g_distance_estimator_width_factor = intval[1];
-        }
-        if (totparms > 3 && intval[2] > 0 && intval[3] > 0)
-        {
-            g_distance_estimator_x_dots = intval[2];
-            g_distance_estimator_y_dots = intval[3];
-        }
-        else
-        {
-            g_distance_estimator_y_dots = 0;
-            g_distance_estimator_x_dots = 0;
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "formulafile")
-    {
-        // formulafile=?
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (merge_pathnames(g_formula_filename, value, mode) < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "formulaname")
-    {
-        // formulaname=?
-        if (valuelen > ITEM_NAME_LEN)
-        {
-            return bad_arg(curarg);
-        }
-        g_formula_name = value;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "lfile")
-    {
-        // lfile=?
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (merge_pathnames(g_l_system_filename, value, mode) < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "lname")
-    {
-        if (valuelen > ITEM_NAME_LEN)
-        {
-            return bad_arg(curarg);
-        }
-        g_l_system_name = value;
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "ifsfile")
-    {
-        // ifsfile=??
-        int existdir;
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_arg(curarg);
-        }
-        existdir = merge_pathnames(g_ifs_filename, value, mode);
-        if (existdir == 0)
-        {
-            reset_ifs_defn();
-        }
-        else if (existdir < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-
-    if (variable == "ifs" || variable == "ifs3d")
-    {
-        // ifs3d for old time's sake
-        if (valuelen > ITEM_NAME_LEN)
-        {
-            return bad_arg(curarg);
-        }
-        g_ifs_name = value;
-        reset_ifs_defn();
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "parmfile")
-    {
-        // parmfile=?
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (merge_pathnames(g_command_file, value, mode) < 0)
-        {
-            init_msg(variable.c_str(), value, mode);
-        }
-        return cmdarg_flags::FRACTAL_PARAM;
-    }
-
-    if (variable == "stereo")
-    {
-        // stereo=?
-        if ((numval < 0) || (numval > 4))
-        {
-            return bad_arg(curarg);
-        }
-        g_glasses_type = numval;
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "rotation")
-    {
-        // rotation=?/?/?
-        if (totparms != 3 || intparms != 3)
-        {
-            return bad_arg(curarg);
-        }
-        XROT = intval[0];
-        YROT = intval[1];
-        ZROT = intval[2];
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "perspective")
-    {
-        // perspective=?
-        if (numval == NONNUMERIC)
-        {
-            return bad_arg(curarg);
-        }
-        ZVIEWER = numval;
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "xyshift")
-    {
-        // xyshift=?/?
-        if (totparms != 2 || intparms != 2)
-        {
-            return bad_arg(curarg);
-        }
-        XSHIFT = intval[0];
-        YSHIFT = intval[1];
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "interocular")
-    {
-        // interocular=?
-        g_eye_separation = numval;
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "converge")
-    {
-        // converg=?
-        g_converge_x_adjust = numval;
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "crop")
-    {
-        // crop=?
-        if (totparms != 4 || intparms != 4
-            || intval[0] < 0 || intval[0] > 100
-            || intval[1] < 0 || intval[1] > 100
-            || intval[2] < 0 || intval[2] > 100
-            || intval[3] < 0 || intval[3] > 100)
-        {
-            return bad_arg(curarg);
-        }
-        g_red_crop_left   = intval[0];
-        g_red_crop_right  = intval[1];
-        g_blue_crop_left  = intval[2];
-        g_blue_crop_right = intval[3];
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "bright")
-    {
-        // bright=?
-        if (totparms != 2 || intparms != 2)
-        {
-            return bad_arg(curarg);
-        }
-        g_red_bright  = intval[0];
-        g_blue_bright = intval[1];
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "xyadjust")
-    {
-        // trans=?
-        if (totparms != 2 || intparms != 2)
-        {
-            return bad_arg(curarg);
-        }
-        g_adjust_3d_x = intval[0];
-        g_adjust_3d_y = intval[1];
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "3d")
-    {
-        // 3d=?/?/..
-        if (std::strcmp(value, "overlay") == 0)
-        {
-            yesnoval[0] = 1;
-            if (g_calc_status > calc_status_value::NO_FRACTAL)   // if no image, treat same as 3D=yes
-            {
-                g_overlay_3d = true;
-            }
-        }
-        else if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_display_3d = yesnoval[0] != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
-        initvars_3d();
-        return g_display_3d != display_3d_modes::NONE ? (cmdarg_flags::PARAM_3D | cmdarg_flags::YES_3D) : cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "sphere")
-    {
-        // sphere=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        SPHERE = yesnoval[0];
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "scalexyz")
-    {
-        // scalexyz=?/?/?
-        if (totparms < 2 || intparms != totparms)
-        {
-            return bad_arg(curarg);
-        }
-        XSCALE = intval[0];
-        YSCALE = intval[1];
-        if (totparms > 2)
-        {
-            ROUGH = intval[2];
-        }
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    // "rough" is really scale z, but we add it here for convenience
-    if (variable == "roughness")
-    {
-        // roughness=?
-        ROUGH = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "waterline")
-    {
-        // waterline=?
-        if (numval < 0)
-        {
-            return bad_arg(curarg);
-        }
-        WATERLINE = numval;
-        return cmdarg_flags::PARAM_3D;
+        init_bf_dec(dec);
     }
-
-    if (variable == "filltype")
+    if (old_bf_math == bf_math_type::NONE)
     {
-        // filltype=?
-        if (numval < -1 || numval > 6)
+        for (int k = 0; k < MAX_PARAMS; k++)
         {
-            return bad_arg(curarg);
+            floattobf(bfparms[k], g_params[k]);
         }
-        FILLTYPE = numval;
-        return cmdarg_flags::PARAM_3D;
     }
-
-    if (variable == "lightsource")
+    g_use_center_mag = true;
+    saved = save_stack();
+    bf_t bXctr = alloc_stack(bflength + 2);
+    bf_t bYctr = alloc_stack(bflength + 2);
+    get_bf(bXctr, cmd.floatvalstr[0]);
+    get_bf(bYctr, cmd.floatvalstr[1]);
+    double Xmagfactor = 1;
+    double Rotation = 0;
+    double Skew = 0;
+    if (cmd.floatparms > 3)
     {
-        // lightsource=?/?/?
-        if (totparms != 3 || intparms != 3)
-        {
-            return bad_arg(curarg);
-        }
-        XLIGHT = intval[0];
-        YLIGHT = intval[1];
-        ZLIGHT = intval[2];
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "smoothing")
-    {
-        // smoothing=?
-        if (numval < 0)
-        {
-            return bad_arg(curarg);
-        }
-        LIGHTAVG = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "latitude")
-    {
-        // latitude=?/?
-        if (totparms != 2 || intparms != 2)
-        {
-            return bad_arg(curarg);
-        }
-        THETA1 = intval[0];
-        THETA2 = intval[1];
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "longitude")
-    {
-        // longitude=?/?
-        if (totparms != 2 || intparms != 2)
-        {
-            return bad_arg(curarg);
-        }
-        PHI1 = intval[0];
-        PHI2 = intval[1];
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "radius")
-    {
-        // radius=?
-        if (numval < 0)
-        {
-            return bad_arg(curarg);
-        }
-        RADIUS = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "transparent")
-    {
-        // transparent?
-        if (totparms != intparms || totparms < 1)
-        {
-            return bad_arg(curarg);
-        }
-        g_transparent_color_3d[0] = intval[0];
-        g_transparent_color_3d[1] = g_transparent_color_3d[0];
-        if (totparms > 1)
-        {
-            g_transparent_color_3d[1] = intval[1];
-        }
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "preview")
-    {
-        // preview?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_preview = yesnoval[0] != 0;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "showbox")
-    {
-        // showbox?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_show_box = yesnoval[0] != 0;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "coarse")
-    {
-        // coarse=?
-        if (numval < 3 || numval > 2000)
-        {
-            return bad_arg(curarg);
-        }
-        g_preview_factor = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "randomize")
-    {
-        // RANDOMIZE=?
-        if (numval < 0 || numval > 7)
-        {
-            return bad_arg(curarg);
-        }
-        g_randomize_3d = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "ambient")
-    {
-        // ambient=?
-        if (numval < 0 || numval > 100)
-        {
-            return bad_arg(curarg);
-        }
-        g_ambient = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "haze")
-    {
-        // haze=?
-        if (numval < 0 || numval > 100)
-        {
-            return bad_arg(curarg);
-        }
-        g_haze = numval;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "fullcolor")
-    {
-        // fullcolor=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_targa_out = yesnoval[0] != 0;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "truecolor")
-    {
-        // truecolor=?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_truecolor = yesnoval[0] != 0;
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "truemode")
-    {
-        // truemode=?
-        g_true_mode = true_color_mode::default_color;
-        if (charval[0] == 'd')
-        {
-            g_true_mode = true_color_mode::default_color;
-        }
-        if (charval[0] == 'i' || intval[0] == 1)
-        {
-            g_true_mode = true_color_mode::iterate;
-        }
-        return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "usegrayscale")
-    {
-        // usegrayscale?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_gray_flag = yesnoval[0] != 0;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    // TODO: deprecate monitorwidth parameter
-    if (variable == "monitorwidth" || variable == "stereowidth")
-    {
-        // monitorwidth/stereowidth=?
-        if (totparms != 1 || floatparms != 1)
-        {
-            return bad_arg(curarg);
-        }
-        g_auto_stereo_width  = floatval[0];
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "targa_overlay")
-    {
-        // Targa Overlay?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_targa_overlay = yesnoval[0] != 0;
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "background")
-    {
-        // background=?/?
-        if (totparms != 3 || intparms != 3)
-        {
-            return bad_arg(curarg);
-        }
-        for (int i = 0; i < 3; i++)
-        {
-            if (intval[i] & ~0xff)
-            {
-                return bad_arg(curarg);
-            }
-        }
-        g_background_color[0] = (BYTE)intval[0];
-        g_background_color[1] = (BYTE)intval[1];
-        g_background_color[2] = (BYTE)intval[2];
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "lightname")
-    {
-        // lightname=?
-        if (valuelen > (FILE_MAX_PATH-1))
-        {
-            return bad_arg(curarg);
-        }
-        if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
-        {
-            g_light_name = value;
-        }
-        return cmdarg_flags::NONE;
-    }
-
-    if (variable == "ray")
-    {
-        // RAY=?
-        if (numval < 0 || numval > 6)
-        {
-            return bad_arg(curarg);
-        }
-        g_raytrace_format = static_cast<raytrace_formats>(numval);
-        return cmdarg_flags::PARAM_3D;
-    }
-
-    if (variable == "brief")
-    {
-        // BRIEF?
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_brief = yesnoval[0] != 0;
-        return cmdarg_flags::PARAM_3D;
+        Xmagfactor = cmd.floatval[3];
     }
-
-    if (variable == "release")
+    if (Xmagfactor == 0)
     {
-        // release
-        return bad_arg(curarg);
+        Xmagfactor = 1;
     }
-
-    if (variable == "curdir")
+    if (cmd.floatparms > 4)
     {
-        // curdir=
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_check_cur_dir = yesnoval[0] != 0;
-        return cmdarg_flags::NONE;
+        Rotation = cmd.floatval[4];
     }
-
-    if (variable == "virtual")         // virtual=
+    if (cmd.floatparms > 5)
     {
-        if (yesnoval[0] < 0)
-        {
-            return bad_arg(curarg);
-        }
-        g_virtual_screens = yesnoval[0] != 0;
-        return cmdarg_flags::FRACTAL_PARAM;
+        Skew = cmd.floatval[5];
     }
-
-    return bad_arg(curarg);
+    // calculate bounds
+    cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+    bfcornerstofloat();
+    restore_stack(saved);
+    return cmdarg_flags::FRACTAL_PARAM;
 }
 
-static void parse_textcolors(char const *value)
+// coarse=?
+static cmdarg_flags cmd_coarse(const Command &cmd)
 {
-    if (std::strcmp(value, "mono") == 0)
+    if (cmd.numval < 3 || cmd.numval > 2000)
     {
-        for (auto & elem : g_text_color)
-        {
-            elem = BLACK*16 + WHITE;
-        }
-        g_text_color[28] = WHITE*16 + BLACK;
-        g_text_color[27] = WHITE*16 + BLACK;
-        g_text_color[20] = WHITE*16 + BLACK;
-        g_text_color[14] = WHITE*16 + BLACK;
-        g_text_color[13] = WHITE*16 + BLACK;
-        g_text_color[12] = WHITE*16 + BLACK;
-        g_text_color[6] = WHITE*16 + BLACK;
-        g_text_color[25] = BLACK*16 + L_WHITE;
-        g_text_color[24] = BLACK*16 + L_WHITE;
-        g_text_color[22] = BLACK*16 + L_WHITE;
-        g_text_color[17] = BLACK*16 + L_WHITE;
-        g_text_color[16] = BLACK*16 + L_WHITE;
-        g_text_color[11] = BLACK*16 + L_WHITE;
-        g_text_color[5] = BLACK*16 + L_WHITE;
-        g_text_color[2] = BLACK*16 + L_WHITE;
-        g_text_color[0] = BLACK*16 + L_WHITE;
+        return cmd.bad_arg();
     }
-    else
-    {
-        int k{};
-        while (k < sizeof(g_text_color))
-        {
-            if (*value == 0)
-            {
-                break;
-            }
-            if (*value != '/')
-            {
-                unsigned int hexval;
-                std::sscanf(value, "%x", &hexval);
-                unsigned int i = (hexval / 16) & 7;
-                unsigned int j = hexval & 15;
-                if (i == j || (i == 0 && j == 8))   // force contrast
-                {
-                    j = 15;
-                }
-                g_text_color[k] = (BYTE)(i * 16 + j);
-                value = std::strchr(value, '/');
-                if (value == nullptr)
-                {
-                    break;
-                }
-            }
-            ++value;
-            ++k;
-        }
-    }
+    g_preview_factor = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
 }
 
 static cmdarg_flags parse_colors(char const *value)
@@ -3725,16 +1670,2268 @@ badcolor:
     return cmdarg_flags::ERROR;
 }
 
+// colors=, set current colors
+static cmdarg_flags cmd_colors(const Command &cmd)
+{
+    if (parse_colors(cmd.value) == cmdarg_flags::ERROR)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_comment(const Command &cmd)
+{
+    parse_comments(cmd.value);
+    return cmdarg_flags::NONE;
+}
+
+// converge=?
+static cmdarg_flags cmd_converge(const Command &cmd)
+{
+    g_converge_x_adjust = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// corners=?/?/?/?
+static cmdarg_flags cmd_corners(const Command &cmd)
+{
+    if (g_fractal_type == fractal_type::CELLULAR)
+    {
+        return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
+    }
+
+    if (cmd.floatparms != cmd.totparms || (cmd.totparms != 0 && cmd.totparms != 4 && cmd.totparms != 6))
+    {
+        return cmd.bad_arg();
+    }
+    
+    g_use_center_mag = false;
+    if (cmd.totparms == 0)
+    {
+        return cmdarg_flags::NONE; // turns corners mode on
+    }
+
+    s_init_corners = true;
+    // good first approx, but dec could be too big
+    int dec = get_max_curarg_len(cmd.floatvalstr, cmd.totparms) + 1;
+    if ((dec > DBL_DIG + 1 || g_debug_flag == debug_flags::force_arbitrary_precision_math) &&
+        g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
+    {
+        bf_math_type old_bf_math = bf_math;
+        if (bf_math == bf_math_type::NONE || dec > g_decimals)
+        {
+            init_bf_dec(dec);
+        }
+        if (old_bf_math == bf_math_type::NONE)
+        {
+            for (int k = 0; k < MAX_PARAMS; k++)
+            {
+                floattobf(bfparms[k], g_params[k]);
+            }
+        }
+
+        // xx3rd = xxmin = floatval[0];
+        get_bf(g_bf_x_min, cmd.floatvalstr[0]);
+        get_bf(g_bf_x_3rd, cmd.floatvalstr[0]);
+
+        // xxmax = floatval[1];
+        get_bf(g_bf_x_max, cmd.floatvalstr[1]);
+
+        // yy3rd = yymin = floatval[2];
+        get_bf(g_bf_y_min, cmd.floatvalstr[2]);
+        get_bf(g_bf_y_3rd, cmd.floatvalstr[2]);
+
+        // yymax = floatval[3];
+        get_bf(g_bf_y_max, cmd.floatvalstr[3]);
+
+        if (cmd.totparms == 6)
+        {
+            // xx3rd = floatval[4];
+            get_bf(g_bf_x_3rd, cmd.floatvalstr[4]);
+
+            // yy3rd = floatval[5];
+            get_bf(g_bf_y_3rd, cmd.floatvalstr[5]);
+        }
+
+        // now that all the corners have been read in, get a more
+        // accurate value for dec and do it all again
+
+        dec = getprecbf_mag();
+        if (dec < 0)
+        {
+            return cmd.bad_arg(); // ie: Magnification is +-1.#INF
+        }
+
+        if (dec > g_decimals) // get corners again if need more precision
+        {
+            init_bf_dec(dec);
+
+            // now get parameters and corners all over again at new
+            // decimal setting
+            for (int k = 0; k < MAX_PARAMS; k++)
+            {
+                floattobf(bfparms[k], g_params[k]);
+            }
+
+            // xx3rd = xxmin = floatval[0];
+            get_bf(g_bf_x_min, cmd.floatvalstr[0]);
+            get_bf(g_bf_x_3rd, cmd.floatvalstr[0]);
+
+            // xxmax = floatval[1];
+            get_bf(g_bf_x_max, cmd.floatvalstr[1]);
+
+            // yy3rd = yymin = floatval[2];
+            get_bf(g_bf_y_min, cmd.floatvalstr[2]);
+            get_bf(g_bf_y_3rd, cmd.floatvalstr[2]);
+
+            // yymax = floatval[3];
+            get_bf(g_bf_y_max, cmd.floatvalstr[3]);
+
+            if (cmd.totparms == 6)
+            {
+                // xx3rd = floatval[4];
+                get_bf(g_bf_x_3rd, cmd.floatvalstr[4]);
+
+                // yy3rd = floatval[5];
+                get_bf(g_bf_y_3rd, cmd.floatvalstr[5]);
+            }
+        }
+    }
+    g_x_min = cmd.floatval[0];
+    g_x_3rd = cmd.floatval[0];
+    g_x_max = cmd.floatval[1];
+    g_y_min = cmd.floatval[2];
+    g_y_3rd = cmd.floatval[2];
+    g_y_max = cmd.floatval[3];
+
+    if (cmd.totparms == 6)
+    {
+        g_x_3rd = cmd.floatval[4];
+        g_y_3rd = cmd.floatval[5];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// crop=?/?/?/?
+static cmdarg_flags cmd_crop(const Command &cmd)
+{
+    if (cmd.totparms != 4 || cmd.intparms != 4 || cmd.intval[0] < 0 || cmd.intval[0] > 100 ||
+        cmd.intval[1] < 0 || cmd.intval[1] > 100 || cmd.intval[2] < 0 || cmd.intval[2] > 100 ||
+        cmd.intval[3] < 0 || cmd.intval[3] > 100)
+    {
+        return cmd.bad_arg();
+    }
+    g_red_crop_left = cmd.intval[0];
+    g_red_crop_right = cmd.intval[1];
+    g_blue_crop_left = cmd.intval[2];
+    g_blue_crop_right = cmd.intval[3];
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// curdir=?
+static cmdarg_flags cmd_cur_dir(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_check_cur_dir = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_cycle_limit(const Command &cmd)
+{
+    if (cmd.numval <= 1 || cmd.numval > 256)
+    {
+        return cmd.bad_arg();
+    }
+    g_init_cycle_limit = cmd.numval;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_cycle_range(const Command &cmd)
+{
+    int end{cmd.intval[1]};
+    if (cmd.totparms < 2)
+    {
+        end = 255;
+    }
+    int begin{cmd.intval[0]};
+    if (cmd.totparms < 1)
+    {
+        begin = 1;
+    }
+    if (cmd.totparms != cmd.intparms || begin < 0 || end > 255 || begin > end)
+    {
+        return cmd.bad_arg();
+    }
+    g_color_cycle_range_lo = begin;
+    g_color_cycle_range_hi = end;
+    return cmdarg_flags::NONE;
+}
+
+// debugflag=? or debug=?
+static cmdarg_flags cmd_debug_flag(const Command &cmd)
+{
+    // internal use only
+    g_debug_flag = static_cast<debug_flags>(cmd.numval);
+    g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != debug_flags::none; // separate timer flag
+    g_debug_flag &= ~debug_flags::benchmark_timer;
+    return cmdarg_flags::NONE;
+}
+
+// decay=?
+static cmdarg_flags cmd_decay(const Command &cmd)
+{
+    g_fm_decay = cmd.numval & 0x0F;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_decomp(const Command &cmd)
+{
+    if (cmd.totparms != cmd.intparms || cmd.totparms < 1)
+    {
+        return cmd.bad_arg();
+    }
+    g_decomp[0] = cmd.intval[0];
+    g_decomp[1] = 0;
+    if (cmd.totparms > 1) // backward compatibility
+    {
+        g_decomp[1] = cmd.intval[1];
+        g_bail_out = g_decomp[1];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_dist_est(const Command &cmd)
+{
+    if (cmd.totparms != cmd.intparms || cmd.totparms < 1)
+    {
+        return cmd.bad_arg();
+    }
+    g_user_distance_estimator_value = (long) cmd.floatval[0];
+    g_distance_estimator_width_factor = 71;
+    if (cmd.totparms > 1)
+    {
+        g_distance_estimator_width_factor = cmd.intval[1];
+    }
+    if (cmd.totparms > 3 && cmd.intval[2] > 0 && cmd.intval[3] > 0)
+    {
+        g_distance_estimator_x_dots = cmd.intval[2];
+        g_distance_estimator_y_dots = cmd.intval[3];
+    }
+    else
+    {
+        g_distance_estimator_y_dots = 0;
+        g_distance_estimator_x_dots = 0;
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_dither(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_dither_flag = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+// fastrestore=?
+static cmdarg_flags cmd_fast_restore(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_fast_restore = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_filename(const Command &cmd)
+{
+    if (cmd.charval[0] == '.' && cmd.value[1] != SLASHC)
+    {
+        if (cmd.valuelen > 4)
+        {
+            return cmd.bad_arg();
+        }
+        g_gif_filename_mask = std::string{"*"} + cmd.value;
+        return cmdarg_flags::NONE;
+    }
+    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (cmd.mode == cmd_file::AT_AFTER_STARTUP &&
+        g_display_3d == display_3d_modes::NONE) // can't do this in @ command
+    {
+        return cmd.bad_arg();
+    }
+
+    const int exist_dir = merge_pathnames(g_read_filename, cmd.value, cmd.mode);
+    if (exist_dir == 0)
+    {
+        g_show_file = 0;
+    }
+    else if (exist_dir < 0)
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+    }
+    else
+    {
+        g_browse_name = extract_filename(g_read_filename.c_str());
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// fillcolor=?
+static cmdarg_flags cmd_fill_color(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (value == "normal")
+    {
+        g_fill_color = -1;
+    }
+    else if (cmd.numval == NONNUMERIC)
+    {
+        return cmd.bad_arg();
+    }
+    else
+    {
+        g_fill_color = cmd.numval;
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// filltype=?
+static cmdarg_flags cmd_fill_type(const Command &cmd)
+{
+    if (cmd.numval < -1 || cmd.numval > 6)
+    {
+        return cmd.bad_arg();
+    }
+    FILLTYPE = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_fin_attract(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_finite_attractor = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// float=?
+static cmdarg_flags cmd_float(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_user_float_flag = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// formulafile=?
+static cmdarg_flags cmd_formula_file(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (merge_pathnames(g_formula_filename, cmd.value, cmd.mode) < 0)
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// formulaname=?
+static cmdarg_flags cmd_formula_name(const Command &cmd)
+{
+    if (cmd.valuelen > ITEM_NAME_LEN)
+    {
+        return cmd.bad_arg();
+    }
+    g_formula_name = cmd.value;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// fullcolor=?
+static cmdarg_flags cmd_full_color(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_targa_out = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_function(const Command &cmd)
+{
+    int k = 0;
+    const char *value = cmd.value;
+    while (*value && k < 4)
+    {
+        if (set_trig_array(k++, value))
+        {
+            return cmd.bad_arg();
+        }
+        value = std::strchr(value, '/');
+        if (value == nullptr)
+        {
+            break;
+        }
+        ++value;
+    }
+    g_new_bifurcation_functions_loaded = true; // for old bifs
+    s_init_functions = true;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// deprecated, validate argument and swallow value
+static cmdarg_flags cmd_gif87a(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+// haze=?
+static cmdarg_flags cmd_haze(const Command &cmd)
+{
+    if (cmd.numval < 0 || cmd.numval > 100)
+    {
+        return cmd.bad_arg();
+    }
+    g_haze = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// hertz=?
+static cmdarg_flags cmd_hertz(const Command &cmd)
+{
+    g_base_hertz = cmd.numval;
+    return cmdarg_flags::NONE;
+}
+
+// ifs=? or ifs3d=?
+static cmdarg_flags cmd_ifs(const Command &cmd)
+{
+    // ifs3d for old time's sake
+    if (cmd.valuelen > ITEM_NAME_LEN)
+    {
+        return cmd.bad_arg();
+    }
+    g_ifs_name = cmd.value;
+    reset_ifs_defn();
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// ifsfile=??
+static cmdarg_flags cmd_ifs_file(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (const int exist_dir = merge_pathnames(g_ifs_filename, cmd.value, cmd.mode); exist_dir == 0)
+    {
+        reset_ifs_defn();
+    }
+    else if (exist_dir < 0)
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// initorbit=?/?
+static cmdarg_flags cmd_init_orbit(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (value == "pixel")
+    {
+        g_use_init_orbit = init_orbit_mode::pixel;
+    }
+    else
+    {
+        if (cmd.totparms != 2 || cmd.floatparms != 2)
+        {
+            return cmd.bad_arg();
+        }
+        g_init_orbit.x = cmd.floatval[0];
+        g_init_orbit.y = cmd.floatval[1];
+        g_use_init_orbit = init_orbit_mode::value;
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_inside(const Command &cmd)
+{
+    struct Inside
+    {
+        const char *arg;
+        int inside;
+    };
+    const Inside inside_names[] = {
+        {"zmag", ZMAG},             //
+        {"bof60", BOF60},           //
+        {"bof61", BOF61},           //
+        {"epsiloncross", EPSCROSS}, //
+        {"startrail", STARTRAIL},   //
+        {"period", PERIOD},         //
+        {"fmod", FMODI},            //
+        {"atan", ATANI},            //
+        {"maxiter", -1}             //
+    };
+    for (const Inside &arg : inside_names)
+    {
+        if (std::strcmp(cmd.value, arg.arg) == 0)
+        {
+            g_inside_color = arg.inside;
+            return cmdarg_flags::FRACTAL_PARAM;
+        }
+    }
+    if (cmd.numval == NONNUMERIC)
+    {
+        return cmd.bad_arg();
+    }
+
+    g_inside_color = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// interocular=?
+static cmdarg_flags cmd_interocular(const Command &cmd)
+{
+    g_eye_separation = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// invert=?/?/?
+static cmdarg_flags cmd_invert(const Command &cmd)
+{
+    if (cmd.totparms != cmd.floatparms || (cmd.totparms != 1 && cmd.totparms != 3))
+    {
+        return cmd.bad_arg();
+    }
+    g_inversion[0] = cmd.floatval[0];
+    g_invert = (g_inversion[0] != 0.0) ? cmd.totparms : 0;
+    if (cmd.totparms == 3)
+    {
+        g_inversion[1] = cmd.floatval[1];
+        g_inversion[2] = cmd.floatval[2];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_is_mand(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_is_mandelbrot = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// julibrot3d=?/?/?/?
+static cmdarg_flags cmd_julibrot_3d(const Command &cmd)
+{
+    if (cmd.floatparms != cmd.totparms)
+    {
+        return cmd.bad_arg();
+    }
+    if (cmd.totparms > 0)
+    {
+        g_julibrot_z_dots = (int) cmd.floatval[0];
+    }
+    if (cmd.totparms > 1)
+    {
+        g_julibrot_origin_fp = (float) cmd.floatval[1];
+    }
+    if (cmd.totparms > 2)
+    {
+        g_julibrot_depth_fp = (float) cmd.floatval[2];
+    }
+    if (cmd.totparms > 3)
+    {
+        g_julibrot_height_fp = (float) cmd.floatval[3];
+    }
+    if (cmd.totparms > 4)
+    {
+        g_julibrot_width_fp = (float) cmd.floatval[4];
+    }
+    if (cmd.totparms > 5)
+    {
+        g_julibrot_dist_fp = (float) cmd.floatval[5];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// julibroteyes=?
+static cmdarg_flags cmd_julibrot_eyes(const Command &cmd)
+{
+    if (cmd.floatparms != cmd.totparms || cmd.totparms != 1)
+    {
+        return cmd.bad_arg();
+    }
+    g_eyes_fp = (float) cmd.floatval[0];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// julibrotfromto=?/?/?/?
+static cmdarg_flags cmd_julibrot_from_to(const Command &cmd)
+{
+    if (cmd.floatparms != cmd.totparms || cmd.totparms != 4)
+    {
+        return cmd.bad_arg();
+    }
+    g_julibrot_x_max = cmd.floatval[0];
+    g_julibrot_x_min = cmd.floatval[1];
+    g_julibrot_y_max = cmd.floatval[2];
+    g_julibrot_y_min = cmd.floatval[3];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// latitude=?/?
+static cmdarg_flags cmd_latitude(const Command &cmd)
+{
+    if (cmd.totparms != 2 || cmd.intparms != 2)
+    {
+        return cmd.bad_arg();
+    }
+    THETA1 = cmd.intval[0];
+    THETA2 = cmd.intval[1];
+    return cmdarg_flags::PARAM_3D;
+}
+
+// lfile=?
+static cmdarg_flags cmd_l_file(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (merge_pathnames(g_l_system_filename, cmd.value, cmd.mode) < 0)
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// lightname=?
+static cmdarg_flags cmd_light_name(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (g_first_init || cmd.mode == cmd_file::AT_AFTER_STARTUP)
+    {
+        g_light_name = cmd.value;
+    }
+    return cmdarg_flags::NONE;
+}
+
+// lightsource=?/?/?
+static cmdarg_flags cmd_light_source(const Command &cmd)
+{
+    if (cmd.totparms != 3 || cmd.intparms != 3)
+    {
+        return cmd.bad_arg();
+    }
+    XLIGHT = cmd.intval[0];
+    YLIGHT = cmd.intval[1];
+    ZLIGHT = cmd.intval[2];
+    return cmdarg_flags::PARAM_3D;
+}
+
+// lname=?
+static cmdarg_flags cmd_l_name(const Command &cmd)
+{
+    if (cmd.valuelen > ITEM_NAME_LEN)
+    {
+        return cmd.bad_arg();
+    }
+    g_l_system_name = cmd.value;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// logmap=?
+static cmdarg_flags cmd_log_map(const Command &cmd)
+{
+    g_log_map_auto_calculate = false; // turn this off if loading a PAR
+    if (cmd.charval[0] == 'y')
+    {
+        g_log_map_flag = 1; // palette is logarithmic
+    }
+    else if (cmd.charval[0] == 'n')
+    {
+        g_log_map_flag = 0;
+    }
+    else if (cmd.charval[0] == 'o')
+    {
+        g_log_map_flag = -1; // old log palette
+    }
+    else
+    {
+        g_log_map_flag = (long) cmd.floatval[0];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// logmode=?
+static cmdarg_flags cmd_log_mode(const Command &cmd)
+{
+    g_log_map_fly_calculate = 0; // turn off if error
+    g_log_map_auto_calculate = false;
+    if (cmd.charval[0] == 'f')
+    {
+        g_log_map_fly_calculate = 1; // calculate on the fly
+    }
+    else if (cmd.charval[0] == 't')
+    {
+        g_log_map_fly_calculate = 2; // force use of LogTable
+    }
+    else if (cmd.charval[0] == 'a')
+    {
+        g_log_map_auto_calculate = true; // force auto calc of logmap
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// longitude=?/?
+static cmdarg_flags cmd_longitude(const Command &cmd)
+{
+    if (cmd.totparms != 2 || cmd.intparms != 2)
+    {
+        return cmd.bad_arg();
+    }
+    PHI1 = cmd.intval[0];
+    PHI2 = cmd.intval[1];
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_make_mig(const Command &cmd)
+{
+    if (cmd.totparms < 2)
+    {
+        return cmd.bad_arg();
+    }
+    const int xmult = cmd.intval[0];
+    const int ymult = cmd.intval[1];
+    make_mig(xmult, ymult);
+    exit(0);
+}
+
+// map=, set default colors
+static cmdarg_flags cmd_map(const Command &cmd)
+{
+    if (cmd.valuelen > FILE_MAX_PATH - 1)
+    {
+        return cmd.bad_arg();
+    }
+
+    const int exist_dir = merge_pathnames(g_map_name, cmd.value, cmd.mode);
+    if (exist_dir > 0)
+    {
+        return cmdarg_flags::NONE; // got a directory
+    }
+    if (exist_dir < 0) // error
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        return cmdarg_flags::NONE;
+    }
+    SetColorPaletteName(g_map_name.c_str());
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_math_tolerance(const Command &cmd)
+{
+    if (cmd.charval[0] == '/')
+    {
+        // leave math_tol[0] at the default value
+    }
+    else if (cmd.totparms >= 1)
+    {
+        g_math_tol[0] = cmd.floatval[0];
+    }
+
+    if (cmd.totparms >= 2)
+    {
+        g_math_tol[1] = cmd.floatval[1];
+    }
+    return cmdarg_flags::NONE;
+}
+
+// maxcolorres deprecated, validate value and gobble argument
+// Change default color resolution
+static cmdarg_flags cmd_max_color_res(const Command &cmd)
+{
+    if (cmd.numval == 1 || cmd.numval == 4 || cmd.numval == 8 || cmd.numval == 16 || cmd.numval == 24)
+    {
+        return cmdarg_flags::NONE;
+    }
+    return cmd.bad_arg();
+}
+
+static cmdarg_flags cmd_max_iter(const Command &cmd)
+{
+    if (cmd.floatval[0] < 2)
+    {
+        return cmd.bad_arg();
+    }
+    g_max_iterations = (long) cmd.floatval[0];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_max_line_length(const Command &cmd)
+{
+    if (cmd.numval < MIN_MAX_LINE_LENGTH || cmd.numval > MAX_MAX_LINE_LENGTH)
+    {
+        return cmd.bad_arg();
+    }
+    g_max_line_length = cmd.numval;
+    return cmdarg_flags::NONE;
+}
+
+// miim=?[/?[/?[/?]]]
+static cmdarg_flags cmd_miim(const Command &cmd)
+{
+    if (cmd.totparms > 6)
+    {
+        return cmd.bad_arg();
+    }
+    if (cmd.charval[0] == 'b')
+    {
+        g_major_method = Major::breadth_first;
+    }
+    else if (cmd.charval[0] == 'd')
+    {
+        g_major_method = Major::depth_first;
+    }
+    else if (cmd.charval[0] == 'w')
+    {
+        g_major_method = Major::random_walk;
+    }
+#ifdef RANDOM_RUN
+    else if (cmd.charval[0] == 'r')
+    {
+        major_method = Major::random_run;
+    }
+#endif
+    else
+    {
+        return cmd.bad_arg();
+    }
+
+    if (cmd.charval[1] == 'l')
+    {
+        g_inverse_julia_minor_method = Minor::left_first;
+    }
+    else if (cmd.charval[1] == 'r')
+    {
+        g_inverse_julia_minor_method = Minor::right_first;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+
+    // keep this next part in for backwards compatibility with old PARs ???
+
+    if (cmd.totparms > 2)
+    {
+        for (int k = 2; k < 6; ++k)
+        {
+            g_params[k - 2] = (k < cmd.totparms) ? cmd.floatval[k] : 0.0;
+        }
+    }
+
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_min_stack(const Command &cmd)
+{
+    if (cmd.totparms != 1)
+    {
+        return cmd.bad_arg();
+    }
+    g_soi_min_stack = cmd.intval[0];
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_no_bof(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_bof_match_book_images = cmd.yesnoval[0] == 0;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// noninterlaced no longer used, validate value and gobble argument
+static cmdarg_flags cmd_non_interlaced(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+// olddemmcolors=?
+static cmdarg_flags cmd_old_demm_colors(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_old_demm_colors = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_orbit_delay(const Command &cmd)
+{
+    g_orbit_delay = cmd.numval;
+    return cmdarg_flags::NONE;
+}
+
+// orbit corners=?/?/?/?
+static cmdarg_flags cmd_orbit_corners(const Command &cmd)
+{
+    g_set_orbit_corners = false;
+    if (cmd.floatparms != cmd.totparms || (cmd.totparms != 0 && cmd.totparms != 4 && cmd.totparms != 6))
+    {
+        return cmd.bad_arg();
+    }
+    g_orbit_corner_min_x = cmd.floatval[0];
+    g_orbit_corner_3_x = cmd.floatval[0];
+    g_orbit_corner_max_x = cmd.floatval[1];
+    g_orbit_corner_min_y = cmd.floatval[2];
+    g_orbit_corner_3_y = cmd.floatval[2];
+    g_orbit_corner_max_y = cmd.floatval[3];
+
+    if (cmd.totparms == 6)
+    {
+        g_orbit_corner_3_x = cmd.floatval[4];
+        g_orbit_corner_3_y = cmd.floatval[5];
+    }
+    g_set_orbit_corners = true;
+    g_keep_screen_coords = true;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// orbitdrawmode=?
+// rectangle, line, or function (not yet tested or documented)
+static cmdarg_flags cmd_orbit_draw_mode(const Command &cmd)
+{
+    if (cmd.charval[0] != 'l' && cmd.charval[0] != 'r' && cmd.charval[0] != 'f')
+    {
+        return cmd.bad_arg();
+    }
+    g_draw_mode = cmd.charval[0];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_orbit_interval(const Command &cmd)
+{
+    g_orbit_interval = cmd.numval;
+    if (g_orbit_interval < 1)
+    {
+        g_orbit_interval = 1;
+    }
+    if (g_orbit_interval > 255)
+    {
+        g_orbit_interval = 255;
+    }
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_orbit_name(const Command &cmd)
+{
+    if (check_orbit_name(cmd.value))
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// orbitsave=?
+static cmdarg_flags cmd_orbit_save(const Command &cmd)
+{
+    if (cmd.charval[0] == 's')
+    {
+        g_orbit_save_flags |= osf_midi;
+    }
+    else if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_orbit_save_flags |= (cmd.yesnoval[0] ? osf_raw : 0);
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// orbitsavename=?
+static cmdarg_flags cmd_orbit_save_name(const Command &cmd)
+{
+    g_orbit_save_name = cmd.value;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// orgfrmdir=?
+static cmdarg_flags cmd_org_frm_dir(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_DIR - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (!isadirectory(cmd.value))
+    {
+        return cmd.bad_arg();
+    }
+    g_organize_formulas_search = true;
+    g_organize_formulas_dir = cmd.value;
+    fix_dirname(g_organize_formulas_dir);
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_outside(const Command &cmd)
+{
+    struct Outside
+    {
+        char const *arg;
+        int outside;
+    };
+    static const Outside args[] = {
+        {"iter", ITER}, //
+        {"real", REAL}, //
+        {"imag", IMAG}, //
+        {"mult", MULT}, //
+        {"summ", SUM},  //
+        {"atan", ATAN}, //
+        {"fmod", FMOD}, //
+        {"tdis", TDIS}  //
+    };
+    for (const Outside &arg : args)
+    {
+        if (std::strcmp(cmd.value, arg.arg) == 0)
+        {
+            g_outside_color = arg.outside;
+            return cmdarg_flags::FRACTAL_PARAM;
+        }
+    }
+    if (cmd.numval == NONNUMERIC || (cmd.numval < TDIS || cmd.numval > 255))
+    {
+        return cmd.bad_arg();
+    }
+    g_outside_color = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_overwrite(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_overwrite_file = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_params(const Command &cmd)
+{
+    if (cmd.totparms != cmd.floatparms || cmd.totparms > MAX_PARAMS)
+    {
+        return cmd.bad_arg();
+    }
+    s_init_params = true;
+    for (int k = 0; k < MAX_PARAMS; ++k)
+    {
+        g_params[k] = (k < cmd.totparms) ? cmd.floatval[k] : 0.0;
+    }
+    if (bf_math != bf_math_type::NONE)
+    {
+        for (int k = 0; k < MAX_PARAMS; k++)
+        {
+            floattobf(bfparms[k], g_params[k]);
+        }
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// parmfile=?
+static cmdarg_flags cmd_parm_file(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (merge_pathnames(g_command_file, cmd.value, cmd.mode) < 0)
+    {
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_passes(const Command &cmd)
+{
+    if (std::strchr("123gbtsdo", cmd.charval[0]) == nullptr)
+    {
+        return cmd.bad_arg();
+    }
+    g_user_std_calc_mode = cmd.charval[0];
+    if (cmd.charval[0] == 'g')
+    {
+        g_stop_pass = ((int) cmd.value[1] - (int) '0');
+        if (g_stop_pass < 0 || g_stop_pass > 6)
+        {
+            g_stop_pass = 0;
+        }
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// periodicity=?
+static cmdarg_flags cmd_periodicity(const Command &cmd)
+{
+    g_user_periodicity_value = 1;
+    if ((cmd.charval[0] == 'n') || (cmd.numval == 0))
+    {
+        g_user_periodicity_value = 0;
+    }
+    else if (cmd.charval[0] == 'y')
+    {
+        g_user_periodicity_value = 1;
+    }
+    else if (cmd.charval[0] == 's') // 's' for 'show'
+    {
+        g_user_periodicity_value = -1;
+    }
+    else if (cmd.numval == NONNUMERIC)
+    {
+        return cmd.bad_arg();
+    }
+    else if (cmd.numval != 0)
+    {
+        g_user_periodicity_value = cmd.numval;
+        if (g_user_periodicity_value > 255)
+        {
+            g_user_periodicity_value = 255;
+        }
+        if (g_user_periodicity_value < -255)
+        {
+            g_user_periodicity_value = -255;
+        }
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// perspective=?
+static cmdarg_flags cmd_perspective(const Command &cmd)
+{
+    if (cmd.numval == NONNUMERIC)
+    {
+        return cmd.bad_arg();
+    }
+    ZVIEWER = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// pixelzoom no longer used, validate value and gobble argument
+static cmdarg_flags cmd_pixel_zoom(const Command &cmd)
+{
+    if (cmd.numval >= 5)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_polyphony(const Command &cmd)
+{
+    if (cmd.numval > 9)
+    {
+        return cmd.bad_arg();
+    }
+    g_polyphony = std::abs(cmd.numval - 1);
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_potential(const Command &cmd)
+{
+    int k{};
+    const char *value= cmd.value;
+    while (k < 3 && *value)
+    {
+        if (k == 1)
+        {
+            g_potential_params[k] = std::atof(value);
+        }
+        else
+        {
+            g_potential_params[k] = std::atoi(value);
+        }
+        k++;
+        value = std::strchr(value, '/');
+        if (value == nullptr)
+        {
+            k = 99;
+        }
+        ++value;
+    }
+    g_potential_16bit = false;
+    if (k < 99)
+    {
+        if (std::strcmp(value, "16bit") != 0)
+        {
+            return cmd.bad_arg();
+        }
+        g_potential_16bit = true;
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// preview=?
+static cmdarg_flags cmd_preview(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_preview = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_proximity(const Command &cmd)
+{
+    g_close_proximity = cmd.floatval[0];
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// radius=?
+static cmdarg_flags cmd_radius(const Command &cmd)
+{
+    if (cmd.numval < 0)
+    {
+        return cmd.bad_arg();
+    }
+    RADIUS = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// randomize=?
+static cmdarg_flags cmd_randomize(const Command &cmd)
+{
+    if (cmd.numval < 0 || cmd.numval > 7)
+    {
+        return cmd.bad_arg();
+    }
+    g_randomize_3d = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// ranges=?/?/.../?
+static cmdarg_flags cmd_ranges(const Command &cmd)
+{
+    if (cmd.totparms != cmd.intparms)
+    {
+        return cmd.bad_arg();
+    }
+
+    int i = 0;
+    int prev = i;
+    int entries = prev;
+    g_log_map_flag = 0; // ranges overrides logmap
+    int tmpranges[128];
+    while (i < cmd.totparms)
+    {
+        int k = cmd.intval[i++];
+        if (k < 0) // striping
+        {
+            k = -k;
+            if (k < 1 || k >= 16384 || i >= cmd.totparms)
+            {
+                return cmd.bad_arg();
+            }
+            tmpranges[entries++] = -1; // {-1,width,limit} for striping
+            tmpranges[entries++] = k;
+            k = cmd.intval[i++];
+        }
+        if (k < prev)
+        {
+            return cmd.bad_arg();
+        }
+        prev = k;
+        tmpranges[entries++] = k;
+    }
+    if (prev == 0)
+    {
+        return cmd.bad_arg();
+    }
+    bool resized{};
+    try
+    {
+        g_iteration_ranges.resize(entries);
+        resized = true;
+    }
+    catch (std::bad_alloc const &)
+    {
+    }
+    if (!resized)
+    {
+        stopmsg(stopmsg_flags::NO_STACK, "Insufficient memory for ranges=");
+        return cmdarg_flags::ERROR;
+    }
+    g_iteration_ranges_len = entries;
+    for (int i2 = 0; i2 < g_iteration_ranges_len; ++i2)
+    {
+        g_iteration_ranges[i2] = tmpranges[i2];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// ray=?
+static cmdarg_flags cmd_ray(const Command &cmd)
+{
+    if (cmd.numval < 0 || cmd.numval > 6)
+    {
+        return cmd.bad_arg();
+    }
+    g_raytrace_format = static_cast<raytrace_formats>(cmd.numval);
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_record_colors(const Command &cmd)
+{
+    if (*cmd.value != 'y' && *cmd.value != 'c' && *cmd.value != 'a')
+    {
+        return cmd.bad_arg();
+    }
+    g_record_colors = static_cast<record_colors_mode>(*cmd.value);
+    return cmdarg_flags::NONE;
+}
+
+// release=?
+static cmdarg_flags cmd_release(const Command &cmd)
+{
+    return cmd.bad_arg();
+}
+
+static cmdarg_flags cmd_reset(const Command &cmd)
+{
+    // PAR release unknown unless specified
+    if (cmd.numval < 0)
+    {
+        return cmd.bad_arg();
+    }
+
+    initvars_fractal();
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::RESET;
+}
+
+// rotation=?/?/?
+static cmdarg_flags cmd_rotation(const Command &cmd)
+{
+    if (cmd.totparms != 3 || cmd.intparms != 3)
+    {
+        return cmd.bad_arg();
+    }
+    XROT = cmd.intval[0];
+    YROT = cmd.intval[1];
+    ZROT = cmd.intval[2];
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// roughness=?
+static cmdarg_flags cmd_roughness(const Command &cmd)
+{
+    // "rough" is really scale z, but we add it here for convenience
+    ROUGH = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// rseed=?
+static cmdarg_flags cmd_r_seed(const Command &cmd)
+{
+    g_random_seed = cmd.numval;
+    g_random_seed_flag = true;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+static cmdarg_flags cmd_save_name(const Command &cmd)
+{
+    if (cmd.valuelen > FILE_MAX_PATH - 1)
+    {
+        return cmd.bad_arg();
+    }
+    if (g_first_init || cmd.mode == cmd_file::AT_AFTER_STARTUP)
+    {
+        if (merge_pathnames(g_save_filename, cmd.value, cmd.mode) < 0)
+        {
+            init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        }
+    }
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_save_time(const Command &cmd)
+{
+    g_init_save_time = cmd.numval;
+    return cmdarg_flags::NONE;
+}
+
+// scalemap=?/?/?/?/?/?/?/?/?/?/?
+static cmdarg_flags cmd_scale_map(const Command &cmd)
+{
+    if (cmd.totparms != cmd.intparms)
+    {
+        return cmd.bad_arg();
+    }
+    for (int counter = 0; counter <= 11; counter++)
+    {
+        if ((cmd.totparms > counter) && (cmd.intval[counter] > 0) && (cmd.intval[counter] < 13))
+        {
+            g_scale_map[counter] = cmd.intval[counter];
+        }
+    }
+    return cmdarg_flags::NONE;
+}
+
+// scalexyz=?/?[/?]
+static cmdarg_flags cmd_scale_xyz(const Command &cmd)
+{
+    if (cmd.totparms < 2 || cmd.intparms != cmd.totparms)
+    {
+        return cmd.bad_arg();
+    }
+    XSCALE = cmd.intval[0];
+    YSCALE = cmd.intval[1];
+    if (cmd.totparms > 2)
+    {
+        ROUGH = cmd.intval[2];
+    }
+    return cmdarg_flags::PARAM_3D;
+}
+
+// screencoords=?
+static cmdarg_flags cmd_screen_coords(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_keep_screen_coords = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// showbox=?
+static cmdarg_flags cmd_show_box(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_show_box = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// showdot=?[/?]
+static cmdarg_flags cmd_show_dot(const Command &cmd)
+{
+    g_show_dot = 15;
+    if (cmd.totparms > 0)
+    {
+        g_auto_show_dot = (char) 0;
+        if (std::isalpha(cmd.charval[0]))
+        {
+            if (std::strchr("abdm", (int) cmd.charval[0]) != nullptr)
+            {
+                g_auto_show_dot = cmd.charval[0];
+            }
+            else
+            {
+                return cmd.bad_arg();
+            }
+        }
+        else
+        {
+            g_show_dot = cmd.numval;
+            if (g_show_dot < 0)
+            {
+                g_show_dot = -1;
+            }
+        }
+        if (cmd.totparms > 1 && cmd.intparms > 0)
+        {
+            g_size_dot = cmd.intval[1];
+        }
+        if (g_size_dot < 0)
+        {
+            g_size_dot = 0;
+        }
+    }
+    return cmdarg_flags::NONE;
+}
+
+// showorbit=yes|no
+static cmdarg_flags cmd_show_orbit(const Command &cmd)
+{
+    g_start_show_orbit = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::NONE;
+}
+
+// smoothing=?
+static cmdarg_flags cmd_smoothing(const Command &cmd)
+{
+    if (cmd.numval < 0)
+    {
+        return cmd.bad_arg();
+    }
+    LIGHTAVG = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// sound=?[/?/?/?/?]
+static cmdarg_flags cmd_sound(const Command &cmd)
+{
+    if (cmd.totparms > 5)
+    {
+        return cmd.bad_arg();
+    }
+    g_sound_flag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
+    if (cmd.totparms == 1)
+    {
+        g_sound_flag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
+    }
+
+    // g_sound_flag is used as a bitfield... bit 0,1,2 used for whether sound
+    // is modified by an orbits x,y,or z component. and also to turn it on
+    // or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
+    // Bit 3 is used for flagging the PC speaker sound,
+    // Bit 4 for OPL3 FM sound card output,
+    // Bit 5 will be for midi output (not yet),
+    // Bit 6 for whether the tone is quantised to the nearest 'proper' note
+    //  (according to the western, even tempered system anyway)
+    if (cmd.charval[0] == 'n' || cmd.charval[0] == 'o')
+    {
+        g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
+    }
+    else if ((std::strncmp(cmd.value, "ye", 2) == 0) || (cmd.charval[0] == 'b'))
+    {
+        g_sound_flag |= SOUNDFLAG_BEEP;
+    }
+    else if (cmd.charval[0] == 'x')
+    {
+        g_sound_flag |= SOUNDFLAG_X;
+    }
+    else if (cmd.charval[0] == 'y' && std::strncmp(cmd.value, "ye", 2) != 0)
+    {
+        g_sound_flag |= SOUNDFLAG_Y;
+    }
+    else if (cmd.charval[0] == 'z')
+    {
+        g_sound_flag |= SOUNDFLAG_Z;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+    if (cmd.totparms > 1)
+    {
+        g_sound_flag &= SOUNDFLAG_ORBITMASK; // reset options
+        for (int i = 1; i < cmd.totparms; i++)
+        {
+            // this is for 2 or more options at the same time
+            if (cmd.charval[i] == 'f')
+            {
+                // (try to)switch on opl3 fm synth
+                if (driver_init_fm())
+                {
+                    g_sound_flag |= SOUNDFLAG_OPL3_FM;
+                }
+                else
+                {
+                    g_sound_flag &= ~SOUNDFLAG_OPL3_FM;
+                }
+            }
+            else if (cmd.charval[i] == 'p')
+            {
+                g_sound_flag |= SOUNDFLAG_SPEAKER;
+            }
+            else if (cmd.charval[i] == 'm')
+            {
+                g_sound_flag |= SOUNDFLAG_MIDI;
+            }
+            else if (cmd.charval[i] == 'q')
+            {
+                g_sound_flag |= SOUNDFLAG_QUANTIZED;
+            }
+            else
+            {
+                return cmd.bad_arg();
+            }
+        } // end for
+    }     // end totparms > 1
+    return cmdarg_flags::NONE;
+}
+
+// sphere=?
+static cmdarg_flags cmd_sphere(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    SPHERE = cmd.yesnoval[0];
+    return cmdarg_flags::PARAM_3D;
+}
+
+// srelease=?
+static cmdarg_flags cmd_s_release(const Command &cmd)
+{
+    g_fm_release = cmd.numval & 0x0F;
+    return cmdarg_flags::NONE;
+}
+
+// stereo=?
+static cmdarg_flags cmd_stereo(const Command &cmd)
+{
+    if ((cmd.numval < 0) || (cmd.numval > 4))
+    {
+        return cmd.bad_arg();
+    }
+    g_glasses_type = cmd.numval;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// stereowidth=?, monitorwidth=?
+static cmdarg_flags cmd_stereo_width(const Command &cmd)
+{
+    if (cmd.totparms != 1 || cmd.floatparms != 1)
+    {
+        return cmd.bad_arg();
+    }
+    g_auto_stereo_width = cmd.floatval[0];
+    return cmdarg_flags::PARAM_3D;
+}
+
+// sustain=?
+static cmdarg_flags cmd_sustain(const Command &cmd)
+{
+    g_fm_sustain = cmd.numval & 0x0F;
+    return cmdarg_flags::NONE;
+}
+
+// symmetry=?
+static cmdarg_flags cmd_symmetry(const Command &cmd)
+{
+    const std::string_view value{cmd.value};
+    if (value == "xaxis")
+    {
+        g_force_symmetry = symmetry_type::X_AXIS;
+    }
+    else if (value == "yaxis")
+    {
+        g_force_symmetry = symmetry_type::Y_AXIS;
+    }
+    else if (value == "xyaxis")
+    {
+        g_force_symmetry = symmetry_type::XY_AXIS;
+    }
+    else if (value == "origin")
+    {
+        g_force_symmetry = symmetry_type::ORIGIN;
+    }
+    else if (value == "pi")
+    {
+        g_force_symmetry = symmetry_type::PI_SYM;
+    }
+    else if (value == "none")
+    {
+        g_force_symmetry = symmetry_type::NONE;
+    }
+    else
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// targaoverlay=?
+static cmdarg_flags cmd_targa_overlay(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_targa_overlay = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_temp_dir(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_DIR - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (!isadirectory(cmd.value))
+    {
+        return cmd.bad_arg();
+    }
+    g_temp_dir = cmd.value;
+    fix_dirname(g_temp_dir);
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_text_colors(const Command &cmd)
+{
+    char const *value = cmd.value;
+    if (std::string_view(value) == "mono")
+    {
+        for (BYTE &elem : g_text_color)
+        {
+            elem = BLACK * 16 + WHITE;
+        }
+        g_text_color[28] = WHITE * 16 + BLACK;
+        g_text_color[27] = WHITE * 16 + BLACK;
+        g_text_color[20] = WHITE * 16 + BLACK;
+        g_text_color[14] = WHITE * 16 + BLACK;
+        g_text_color[13] = WHITE * 16 + BLACK;
+        g_text_color[12] = WHITE * 16 + BLACK;
+        g_text_color[6] = WHITE * 16 + BLACK;
+        g_text_color[25] = BLACK * 16 + L_WHITE;
+        g_text_color[24] = BLACK * 16 + L_WHITE;
+        g_text_color[22] = BLACK * 16 + L_WHITE;
+        g_text_color[17] = BLACK * 16 + L_WHITE;
+        g_text_color[16] = BLACK * 16 + L_WHITE;
+        g_text_color[11] = BLACK * 16 + L_WHITE;
+        g_text_color[5] = BLACK * 16 + L_WHITE;
+        g_text_color[2] = BLACK * 16 + L_WHITE;
+        g_text_color[0] = BLACK * 16 + L_WHITE;
+    }
+    else
+    {
+        std::size_t k{};
+        while (k < std::size(g_text_color))
+        {
+            if (*value == 0)
+            {
+                break;
+            }
+            if (*value != '/')
+            {
+                unsigned int hexval;
+                std::sscanf(value, "%x", &hexval);
+                unsigned int i = (hexval / 16) & 7;
+                unsigned int j = hexval & 15;
+                if (i == j || (i == 0 && j == 8)) // force contrast
+                {
+                    j = 15;
+                }
+                g_text_color[k] = (BYTE) (i * 16 + j);
+                value = std::strchr(value, '/');
+                if (value == nullptr)
+                {
+                    break;
+                }
+            }
+            ++value;
+            ++k;
+        }
+    }
+
+    return cmdarg_flags::NONE;
+}
+
+// tplus no longer used, validate value and gobble argument
+static cmdarg_flags cmd_tplus(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::NONE;
+}
+
+// transparent=?
+static cmdarg_flags cmd_transparent(const Command &cmd)
+{
+    if (cmd.totparms != cmd.intparms || cmd.totparms < 1)
+    {
+        return cmd.bad_arg();
+    }
+    g_transparent_color_3d[0] = cmd.intval[0];
+    g_transparent_color_3d[1] = cmd.intval[0];
+    if (cmd.totparms > 1)
+    {
+        g_transparent_color_3d[1] = cmd.intval[1];
+    }
+    return cmdarg_flags::PARAM_3D;
+}
+
+// truecolor=?
+static cmdarg_flags cmd_true_color(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_truecolor = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// truemode=?
+static cmdarg_flags cmd_true_mode(const Command &cmd)
+{
+    g_true_mode = true_color_mode::default_color;
+    if (cmd.charval[0] == 'd')
+    {
+        g_true_mode = true_color_mode::default_color;
+    }
+    if (cmd.charval[0] == 'i' || cmd.intval[0] == 1)
+    {
+        g_true_mode = true_color_mode::iterate;
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_type(const Command &cmd)
+{
+    std::string value{cmd.value, static_cast<std::string::size_type>(cmd.valuelen)};
+    if (!value.empty() && value.back() == '*')
+    {
+        value.pop_back();
+    }
+
+    // kludge because type ifs3d has an asterisk in front
+    if (value == "ifs3d")
+    {
+        value = "ifs";
+    }
+    int k;
+    for (k = 0; g_fractal_specific[k].name != nullptr; k++)
+    {
+        if (value == g_fractal_specific[k].name)
+        {
+            break;
+        }
+    }
+    if (g_fractal_specific[k].name == nullptr)
+    {
+        return cmd.bad_arg();
+    }
+    const fractal_type previous{g_fractal_type};
+    g_fractal_type = static_cast<fractal_type>(k);
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+    if (!s_init_corners)
+    {
+        g_x_min = g_cur_fractal_specific->xmin;
+        g_x_3rd = g_x_min;
+        g_x_max = g_cur_fractal_specific->xmax;
+        g_y_min = g_cur_fractal_specific->ymin;
+        g_y_3rd = g_y_min;
+        g_y_max = g_cur_fractal_specific->ymax;
+    }
+    if (!s_init_functions)
+    {
+        set_fractal_default_functions(previous);
+    }
+    if (!s_init_params)
+    {
+        load_params(g_fractal_type);
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// usegrayscale=?
+static cmdarg_flags cmd_use_gray_scale(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_gray_flag = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::PARAM_3D;
+}
+
+static cmdarg_flags cmd_video(const Command &cmd)
+{
+    const int k = check_vidmode_keyname(cmd.value);
+    if (k == 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_init_mode = -1;
+    for (int i = 0; i < g_video_table_len; ++i)
+    {
+        if (g_video_table[i].keynum == k)
+        {
+            g_init_mode = i;
+            break;
+        }
+    }
+    if (g_init_mode == -1)
+    {
+        return cmd.bad_arg();
+    }
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// viewwindows=?/?/?/?/?
+static cmdarg_flags cmd_view_windows(const Command &cmd)
+{
+    if (cmd.totparms > 5 || cmd.floatparms - cmd.intparms > 2 || cmd.intparms > 4)
+    {
+        return cmd.bad_arg();
+    }
+
+    g_view_window = true;
+    g_view_reduction = 4.2F; // reset default values
+    g_final_aspect_ratio = g_screen_aspect;
+    g_view_crop = true;
+    g_view_x_dots = 0;
+    g_view_y_dots = 0;
+
+    if (cmd.totparms > 0 && cmd.floatval[0] > 0.001)
+    {
+        g_view_reduction = (float) cmd.floatval[0];
+    }
+    if (cmd.totparms > 1 && cmd.floatval[1] > 0.001)
+    {
+        g_final_aspect_ratio = (float) cmd.floatval[1];
+    }
+    if (cmd.totparms > 2 && cmd.yesnoval[2] == 0)
+    {
+        g_view_crop = cmd.yesnoval[2] != 0;
+    }
+    if (cmd.totparms > 3 && cmd.intval[3] > 0)
+    {
+        g_view_x_dots = cmd.intval[3];
+    }
+    if (cmd.totparms == 5 && cmd.intval[4] > 0)
+    {
+        g_view_y_dots = cmd.intval[4];
+    }
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// virtual=?
+static cmdarg_flags cmd_virtual(const Command &cmd)
+{
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_virtual_screens = cmd.yesnoval[0] != 0;
+    return cmdarg_flags::FRACTAL_PARAM;
+}
+
+// volume=?
+static cmdarg_flags cmd_volume(const Command &cmd)
+{
+    g_fm_volume = cmd.numval & 0x3F; // 63
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_warn(const Command &cmd)
+{
+    // keep this for backward compatibility
+    if (cmd.yesnoval[0] < 0)
+    {
+        return cmd.bad_arg();
+    }
+    g_overwrite_file = cmd.yesnoval[0] == 0;
+    return cmdarg_flags::NONE;
+}
+
+// waterline=?
+static cmdarg_flags cmd_water_line(const Command &cmd)
+{
+    if (cmd.numval < 0)
+    {
+        return cmd.bad_arg();
+    }
+    WATERLINE = cmd.numval;
+    return cmdarg_flags::PARAM_3D;
+}
+
+// wavetype=?
+static cmdarg_flags cmd_wave_type(const Command &cmd)
+{
+    g_fm_wavetype = cmd.numval & 0x0F;
+    return cmdarg_flags::NONE;
+}
+
+static cmdarg_flags cmd_work_dir(const Command &cmd)
+{
+    if (cmd.valuelen > (FILE_MAX_DIR - 1))
+    {
+        return cmd.bad_arg();
+    }
+    if (!isadirectory(cmd.value))
+    {
+        return cmd.bad_arg();
+    }
+    g_working_dir = cmd.value;
+    fix_dirname(g_working_dir);
+    return cmdarg_flags::NONE;
+}
+
+// xyadjust=?
+static cmdarg_flags cmd_xy_adjust(const Command &cmd)
+{
+    if (cmd.totparms != 2 || cmd.intparms != 2)
+    {
+        return cmd.bad_arg();
+    }
+    g_adjust_3d_x = cmd.intval[0];
+    g_adjust_3d_y = cmd.intval[1];
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// xyshift=?/?
+static cmdarg_flags cmd_xy_shift(const Command &cmd)
+{
+    if (cmd.totparms != 2 || cmd.intparms != 2)
+    {
+        return cmd.bad_arg();
+    }
+    XSHIFT = cmd.intval[0];
+    YSHIFT = cmd.intval[1];
+    return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
+}
+
+// Keep this sorted by parameter name for binary search to work correctly.
+static std::array<CommandHandler, 156> s_commands{
+    CommandHandler{"3d", cmd_3d},                           //
+    CommandHandler{"3dmode", cmd_3d_mode},                  //
+    CommandHandler{"ambient", cmd_ambient},                 //
+    CommandHandler{"askvideo", cmd_ask_video},              //
+    CommandHandler{"aspectdrift", cmd_aspect_drift},        //
+    CommandHandler{"attack", cmd_attack},                   //
+    CommandHandler{"attenuate", cmd_attenuate},             //
+    CommandHandler{"autokey", cmd_auto_key},                //
+    CommandHandler{"autokeyname", cmd_auto_key_name},       //
+    CommandHandler{"background", cmd_background},           //
+    CommandHandler{"bailout", cmd_bail_out},                //
+    CommandHandler{"bailoutest", cmd_bail_out_test},        //
+    CommandHandler{"bfdigits", cmd_bf_digits},              //
+    CommandHandler{"biomorph", cmd_biomorph},               //
+    CommandHandler{"brief", cmd_brief},                     //
+    CommandHandler{"bright", cmd_bright},                   //
+    CommandHandler{"center-mag", cmd_center_mag},           //
+    CommandHandler{"coarse", cmd_coarse},                   //
+    CommandHandler{"colorps", cmd_deprecated},              // deprecated print parameters
+    CommandHandler{"colors", cmd_colors},                   //
+    CommandHandler{"comment", cmd_comment},                 //
+    CommandHandler{"comport", cmd_deprecated},              // deprecated print parameters
+    CommandHandler{"converge", cmd_converge},               //
+    CommandHandler{"corners", cmd_corners},                 //
+    CommandHandler{"crop", cmd_crop},                       //
+    CommandHandler{"curdir", cmd_cur_dir},                  //
+    CommandHandler{"cyclelimit", cmd_cycle_limit},          //
+    CommandHandler{"cyclerange", cmd_cycle_range},          //
+    CommandHandler{"debug", cmd_debug_flag},                //
+    CommandHandler{"debugflag", cmd_debug_flag},            //
+    CommandHandler{"decay", cmd_decay},                     //
+    CommandHandler{"decomp", cmd_decomp},                   //
+    CommandHandler{"distest", cmd_dist_est},                //
+    CommandHandler{"dither", cmd_dither},                   //
+    CommandHandler{"epsf", cmd_deprecated},                 // deprecated print parameters
+    CommandHandler{"exitmode", cmd_deprecated},             //
+    CommandHandler{"fastrestore", cmd_fast_restore},        //
+    CommandHandler{"filename", cmd_filename},               //
+    CommandHandler{"fillcolor", cmd_fill_color},            //
+    CommandHandler{"filltype", cmd_fill_type},              //
+    CommandHandler{"finattract", cmd_fin_attract},          //
+    CommandHandler{"float", cmd_float},                     //
+    CommandHandler{"formulafile", cmd_formula_file},        //
+    CommandHandler{"formulaname", cmd_formula_name},        //
+    CommandHandler{"fullcolor", cmd_full_color},            //
+    CommandHandler{"function", cmd_function},               //
+    CommandHandler{"gif87a", cmd_gif87a},                   //
+    CommandHandler{"halftone", cmd_deprecated},             // deprecated print parameters
+    CommandHandler{"haze", cmd_haze},                       //
+    CommandHandler{"hertz", cmd_hertz},                     //
+    CommandHandler{"ifs", cmd_ifs},                         //
+    CommandHandler{"ifs3d", cmd_ifs},                       //
+    CommandHandler{"ifsfile", cmd_ifs_file},                //
+    CommandHandler{"initorbit", cmd_init_orbit},            //
+    CommandHandler{"inside", cmd_inside},                   //
+    CommandHandler{"interocular", cmd_interocular},         //
+    CommandHandler{"invert", cmd_invert},                   //
+    CommandHandler{"ismand", cmd_is_mand},                  //
+    CommandHandler{"iterincr", cmd_deprecated},             //
+    CommandHandler{"julibrot3d", cmd_julibrot_3d},          //
+    CommandHandler{"julibroteyes", cmd_julibrot_eyes},      //
+    CommandHandler{"julibrotfromto", cmd_julibrot_from_to}, //
+    CommandHandler{"latitude", cmd_latitude},               //
+    CommandHandler{"lfile", cmd_l_file},                    //
+    CommandHandler{"lightname", cmd_light_name},            //
+    CommandHandler{"lightsource", cmd_light_source},        //
+    CommandHandler{"linefeed", cmd_deprecated},             // deprecated print parameters
+    CommandHandler{"lname", cmd_l_name},                    //
+    CommandHandler{"logmap", cmd_log_map},                  //
+    CommandHandler{"logmode", cmd_log_mode},                //
+    CommandHandler{"longitude", cmd_longitude},             //
+    CommandHandler{"makemig", cmd_make_mig},                //
+    CommandHandler{"map", cmd_map},                         //
+    CommandHandler{"mathtolerance", cmd_math_tolerance},    //
+    CommandHandler{"maxcolorres", cmd_max_color_res},       //
+    CommandHandler{"maxiter", cmd_max_iter},                //
+    CommandHandler{"maxlinelength", cmd_max_line_length},   //
+    CommandHandler{"miim", cmd_miim},                       //
+    CommandHandler{"minstack", cmd_min_stack},              //
+    CommandHandler{"monitorwidth", cmd_stereo_width},       //
+    CommandHandler{"nobof", cmd_no_bof},                    //
+    CommandHandler{"noninterlaced", cmd_non_interlaced},    //
+    CommandHandler{"olddemmcolors", cmd_old_demm_colors},   //
+    CommandHandler{"orbitcorners", cmd_orbit_corners},      //
+    CommandHandler{"orbitdelay", cmd_orbit_delay},          //
+    CommandHandler{"orbitdrawmode", cmd_orbit_draw_mode},   //
+    CommandHandler{"orbitinterval", cmd_orbit_interval},    //
+    CommandHandler{"orbitname", cmd_orbit_name},            //
+    CommandHandler{"orbitsave", cmd_orbit_save},            //
+    CommandHandler{"orbitsavename", cmd_orbit_save_name},   //
+    CommandHandler{"orgfrmdir", cmd_org_frm_dir},           //
+    CommandHandler{"outside", cmd_outside},                 //
+    CommandHandler{"overwrite", cmd_overwrite},             //
+    CommandHandler{"params", cmd_params},                   //
+    CommandHandler{"parmfile", cmd_parm_file},              //
+    CommandHandler{"passes", cmd_passes},                   //
+    CommandHandler{"periodicity", cmd_periodicity},         //
+    CommandHandler{"perspective", cmd_perspective},         //
+    CommandHandler{"pixelzoom", cmd_pixel_zoom},            //
+    CommandHandler{"plotstyle", cmd_deprecated},            // deprecated print parameters
+    CommandHandler{"polyphony", cmd_polyphony},             //
+    CommandHandler{"potential", cmd_potential},             //
+    CommandHandler{"preview", cmd_preview},                 //
+    CommandHandler{"printer", cmd_deprecated},              // deprecated print parameters
+    CommandHandler{"printfile", cmd_deprecated},            // deprecated print parameters
+    CommandHandler{"proximity", cmd_proximity},             //
+    CommandHandler{"radius", cmd_radius},                   //
+    CommandHandler{"ramvideo", cmd_deprecated},             //
+    CommandHandler{"randomize", cmd_randomize},             //
+    CommandHandler{"ranges", cmd_ranges},                   //
+    CommandHandler{"ray", cmd_ray},                         //
+    CommandHandler{"recordcolors", cmd_record_colors},      //
+    CommandHandler{"release", cmd_release},                 //
+    CommandHandler{"reset", cmd_reset},                     //
+    CommandHandler{"rleps", cmd_deprecated},                // deprecated print parameters
+    CommandHandler{"rotation", cmd_rotation},               //
+    CommandHandler{"roughness", cmd_roughness},             //
+    CommandHandler{"rseed", cmd_r_seed},                    //
+    CommandHandler{"savename", cmd_save_name},              //
+    CommandHandler{"savetime", cmd_save_time},              //
+    CommandHandler{"scalemap", cmd_scale_map},              //
+    CommandHandler{"scalexyz", cmd_scale_xyz},              //
+    CommandHandler{"screencoords", cmd_screen_coords},      //
+    CommandHandler{"showbox", cmd_show_box},                //
+    CommandHandler{"showdot", cmd_show_dot},                //
+    CommandHandler{"showorbit", cmd_show_orbit},            //
+    CommandHandler{"smoothing", cmd_smoothing},             //
+    CommandHandler{"sound", cmd_sound},                     //
+    CommandHandler{"sphere", cmd_sphere},                   //
+    CommandHandler{"srelease", cmd_s_release},              //
+    CommandHandler{"stereo", cmd_stereo},                   //
+    CommandHandler{"stereowidth", cmd_stereo_width},        //
+    CommandHandler{"sustain", cmd_sustain},                 //
+    CommandHandler{"symmetry", cmd_symmetry},               //
+    CommandHandler{"targa_overlay", cmd_targa_overlay},     //
+    CommandHandler{"tempdir", cmd_temp_dir},                //
+    CommandHandler{"textcolors", cmd_text_colors},          //
+    CommandHandler{"title", cmd_deprecated},                // deprecated print parameters
+    CommandHandler{"tplus", cmd_tplus},                     //
+    CommandHandler{"translate", cmd_deprecated},            // deprecated print parameters
+    CommandHandler{"transparent", cmd_transparent},         //
+    CommandHandler{"truecolor", cmd_true_color},            //
+    CommandHandler{"truemode", cmd_true_mode},              //
+    CommandHandler{"tweaklzw", cmd_deprecated},             //
+    CommandHandler{"type", cmd_type},                       //
+    CommandHandler{"usegrayscale", cmd_use_gray_scale},     //
+    CommandHandler{"video", cmd_video},                     //
+    CommandHandler{"viewwindows", cmd_view_windows},        //
+    CommandHandler{"virtual", cmd_virtual},                 //
+    CommandHandler{"volume", cmd_volume},                   //
+    CommandHandler{"warn", cmd_warn},                       //
+    CommandHandler{"waterline", cmd_water_line},            //
+    CommandHandler{"wavetype", cmd_wave_type},              //
+    CommandHandler{"workdir", cmd_work_dir},                //
+    CommandHandler{"xyadjust", cmd_xy_adjust},              //
+    CommandHandler{"xyshift", cmd_xy_shift},                //
+};
+
+template <size_t N>
+std::optional<cmdarg_flags> handle_command(const std::array<CommandHandler, N> &handlers, Command &cmd)
+{
+    if (auto it = std::lower_bound(handlers.begin(), handlers.end(), cmd.variable,
+            [](const CommandHandler &handler, const std::string &name) { return handler.name < name; });
+        it != handlers.end() && it->name == cmd.variable)
+    {
+        return it->handler(cmd);
+    }
+    return {};
+}
+
+// cmdarg(string,mode) processes a single command-line/command-file argument
+//  return:
+//    -1 error, >= 0 ok
+//    if ok, return value:
+//      | 1 means fractal parm has been set
+//      | 2 means 3d parm has been set
+//      | 4 means 3d=yes specified
+//      | 8 means reset specified
+//
+cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
+{
+    Command cmd{curarg, mode};
+    if (cmd.status != cmdarg_flags::NONE)
+    {
+        return cmd.status;
+    }
+
+    if (mode != cmd_file::AT_AFTER_STARTUP || g_debug_flag == debug_flags::allow_init_commands_anytime)
+    {
+        if (const std::optional handled{handle_command(s_startup_commands, cmd)}; handled.has_value())
+        {
+            return handled.value();
+        }
+    }
+
+    if (const std::optional handled{handle_command(s_commands, cmd)}; handled.has_value())
+    {
+        return handled.value();
+    }
+
+    return cmd.bad_arg();
+}
+
 static void argerror(char const *badarg)      // oops. couldn't decode this
 {
-    std::string spillover;
-    if ((int) std::strlen(badarg) > 70)
+    std::string spillover{badarg};
+    if (spillover.length() > 70)
     {
-        spillover = std::string(&badarg[0], &badarg[70]);
-        badarg = spillover.c_str();
+        spillover = spillover.substr(0, 70);
     }
     std::string msg{"Oops. I couldn't understand the argument:\n  "};
-    msg += badarg;
+    msg += spillover;
 
     if (g_first_init)       // this is 1st call to cmdfiles
     {
@@ -3824,14 +4021,12 @@ static int get_curarg_len(char const *curarg)
 }
 
 // Get max length of current args
-static int get_max_curarg_len(char const *floatvalstr[], int totparms)
+static int get_max_curarg_len(const char *const floatvalstr[], int totparms)
 {
-    int tmp;
-    int max_str;
-    max_str = 0;
+    int max_str = 0;
     for (int i = 0; i < totparms; i++)
     {
-        tmp = get_curarg_len(floatvalstr[i]);
+        int tmp = get_curarg_len(floatvalstr[i]);
         if (tmp > max_str)
         {
             max_str = tmp;
