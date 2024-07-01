@@ -879,9 +879,9 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     char *argptr = value;
     floatparms = 0;
-    intparms = floatparms;
-    totparms = intparms;
-    numval = totparms;
+    intparms = 0;
+    totparms = 0;
+    numval = 0;
     while (*argptr)                    // count and pre-parse parms
     {
         long ll;
@@ -2148,10 +2148,10 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         g_x_min = floatval[0];
-        g_x_3rd = g_x_min;
+        g_x_3rd = floatval[0];
         g_x_max = floatval[1];
         g_y_min = floatval[2];
-        g_y_3rd = g_y_min;
+        g_y_3rd = floatval[2];
         g_y_max = floatval[3];
 
         if (totparms == 6)
@@ -2171,10 +2171,10 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
             return bad_arg(curarg);
         }
         g_orbit_corner_min_x = floatval[0];
-        g_orbit_corner_3_x = g_orbit_corner_min_x;
+        g_orbit_corner_3_x = floatval[0];
         g_orbit_corner_max_x = floatval[1];
         g_orbit_corner_min_y = floatval[2];
-        g_orbit_corner_3_y = g_orbit_corner_min_y;
+        g_orbit_corner_3_y = floatval[2];
         g_orbit_corner_max_y = floatval[3];
 
         if (totparms == 6)
@@ -3712,8 +3712,8 @@ static cmdarg_flags parse_colors(char const *value)
         {
             // zap unset entries
             g_dac_box[i][2] = 40;
-            g_dac_box[i][1] = g_dac_box[i][2];
-            g_dac_box[i][0] = g_dac_box[i][1];
+            g_dac_box[i][1] = 40;
+            g_dac_box[i][0] = 40;
             ++i;
         }
         g_color_state = color_state::UNKNOWN;
