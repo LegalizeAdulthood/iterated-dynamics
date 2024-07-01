@@ -836,7 +836,7 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
     double  floatval[16] = { 0.0 };     // pre-parsed floating parms
     char const *floatvalstr[16];        // pointers to float vals
     char    tmpc{};
-    int     lastarg{};
+    bool lastarg{};
     double Xctr{};
     double Yctr{};
     double Xmagfactor{};
@@ -885,13 +885,13 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
     while (*argptr)                    // count and pre-parse parms
     {
         long ll;
-        lastarg = 0;
+        lastarg = false;
         argptr2 = std::strchr(argptr, '/');
         if (argptr2 == nullptr)     // find next '/'
         {
             argptr2 = argptr + std::strlen(argptr);
             *argptr2 = '/';
-            lastarg = 1;
+            lastarg = true;
         }
         if (totparms == 0)
         {
