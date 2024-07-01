@@ -1744,7 +1744,7 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "savename")      // savename=?
     {
-        if (valuelen > (FILE_MAX_PATH-1))
+        if (valuelen > FILE_MAX_PATH - 1)
         {
             return bad_arg(curarg);
         }
