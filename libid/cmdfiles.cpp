@@ -277,7 +277,7 @@ static void process_simple_command(char *curarg)
         if (std::FILE *initfile = std::fopen(filename.c_str(), "rb"))
         {
             char signature[6];
-            if (std::fread(signature, 6, 1, initfile) != 6)
+            if (std::fread(signature, 1, 6, initfile) != 6)
             {
                 throw std::system_error(errno, std::system_category(), "process_simple_command failed fread");
             }
