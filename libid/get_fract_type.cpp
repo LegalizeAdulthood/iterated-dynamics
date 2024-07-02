@@ -193,13 +193,13 @@ static int sel_fractype_help(int curkey, int choice)
     return 0;
 }
 
-void set_fractal_default_functions(fractal_type oldfractype)
+void set_fractal_default_functions(fractal_type previous)
 {
     switch (g_fractal_type)
     {
     case fractal_type::BIFURCATION:
     case fractal_type::LBIFURCATION:
-        if (!(oldfractype == fractal_type::BIFURCATION || oldfractype == fractal_type::LBIFURCATION))
+        if (!(previous == fractal_type::BIFURCATION || previous == fractal_type::LBIFURCATION))
         {
             set_trig_array(0, "ident");
         }
@@ -207,7 +207,7 @@ void set_fractal_default_functions(fractal_type oldfractype)
 
     case fractal_type::BIFSTEWART:
     case fractal_type::LBIFSTEWART:
-        if (!(oldfractype == fractal_type::BIFSTEWART || oldfractype == fractal_type::LBIFSTEWART))
+        if (!(previous == fractal_type::BIFSTEWART || previous == fractal_type::LBIFSTEWART))
         {
             set_trig_array(0, "ident");
         }
@@ -215,7 +215,7 @@ void set_fractal_default_functions(fractal_type oldfractype)
 
     case fractal_type::BIFLAMBDA:
     case fractal_type::LBIFLAMBDA:
-        if (!(oldfractype == fractal_type::BIFLAMBDA || oldfractype == fractal_type::LBIFLAMBDA))
+        if (!(previous == fractal_type::BIFLAMBDA || previous == fractal_type::LBIFLAMBDA))
         {
             set_trig_array(0, "ident");
         }
@@ -223,7 +223,7 @@ void set_fractal_default_functions(fractal_type oldfractype)
 
     case fractal_type::BIFEQSINPI:
     case fractal_type::LBIFEQSINPI:
-        if (!(oldfractype == fractal_type::BIFEQSINPI || oldfractype == fractal_type::LBIFEQSINPI))
+        if (!(previous == fractal_type::BIFEQSINPI || previous == fractal_type::LBIFEQSINPI))
         {
             set_trig_array(0, "sin");
         }
@@ -231,7 +231,7 @@ void set_fractal_default_functions(fractal_type oldfractype)
 
     case fractal_type::BIFADSINPI:
     case fractal_type::LBIFADSINPI:
-        if (!(oldfractype == fractal_type::BIFADSINPI || oldfractype == fractal_type::LBIFADSINPI))
+        if (!(previous == fractal_type::BIFADSINPI || previous == fractal_type::LBIFADSINPI))
         {
             set_trig_array(0, "sin");
         }
@@ -243,8 +243,8 @@ void set_fractal_default_functions(fractal_type oldfractype)
     case fractal_type::LPOPCORN:
     case fractal_type::FPPOPCORNJUL:
     case fractal_type::LPOPCORNJUL:
-        if (!(oldfractype == fractal_type::FPPOPCORN || oldfractype == fractal_type::LPOPCORN ||
-                oldfractype == fractal_type::FPPOPCORNJUL || oldfractype == fractal_type::LPOPCORNJUL))
+        if (!(previous == fractal_type::FPPOPCORN || previous == fractal_type::LPOPCORN ||
+                previous == fractal_type::FPPOPCORNJUL || previous == fractal_type::LPOPCORNJUL))
         {
             set_function_parm_defaults();
         }
@@ -252,7 +252,7 @@ void set_fractal_default_functions(fractal_type oldfractype)
 
     // set LATOO function defaults
     case fractal_type::LATOO:
-        if (oldfractype != fractal_type::LATOO)
+        if (previous != fractal_type::LATOO)
         {
             set_function_parm_defaults();
         }
