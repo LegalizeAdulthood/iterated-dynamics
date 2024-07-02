@@ -15,12 +15,11 @@ void load_params(fractal_type fractype)
     {
         g_params[i] = g_fractal_specific[+fractype].paramvalue[i];
     }
-    int extra = find_extra_param(fractype);
-    if (extra > -1)
+    if (const int extra = find_extra_param(fractype); extra > -1)
     {
-        for (int i = 0; i < MAX_PARAMS-4; i++)
+        for (int i = 0; i < MAX_PARAMS - 4; i++)
         {
-            g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
+            g_params[i + 4] = g_more_fractal_params[extra].paramvalue[i];
         }
     }
 }
