@@ -106,11 +106,11 @@ void trigdetails(char *buf)
     *buf = 0; // null string if none
     if (numfn > 0)
     {
-        std::strcpy(buf, g_trig_fn[static_cast<int>(g_trig_index[0])].name);
+        std::strcpy(buf, g_trig_fn[+g_trig_index[0]].name);
         int i = 0;
         while (++i < numfn)
         {
-            std::snprintf(tmpbuf, std::size(tmpbuf), "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
+            std::snprintf(tmpbuf, std::size(tmpbuf), "/%s", g_trig_fn[+g_trig_index[i]].name);
             std::strcat(buf, tmpbuf);
         }
     }
@@ -149,24 +149,24 @@ void set_trig_pointers(int which)
     switch (which)
     {
     case 0:
-        ltrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].lfunct;
-        mtrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].mfunct;
-        dtrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].dfunct;
+        ltrig0 = g_trig_fn[+g_trig_index[0]].lfunct;
+        mtrig0 = g_trig_fn[+g_trig_index[0]].mfunct;
+        dtrig0 = g_trig_fn[+g_trig_index[0]].dfunct;
         break;
     case 1:
-        ltrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].lfunct;
-        mtrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].mfunct;
-        dtrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].dfunct;
+        ltrig1 = g_trig_fn[+g_trig_index[1]].lfunct;
+        mtrig1 = g_trig_fn[+g_trig_index[1]].mfunct;
+        dtrig1 = g_trig_fn[+g_trig_index[1]].dfunct;
         break;
     case 2:
-        ltrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].lfunct;
-        mtrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].mfunct;
-        dtrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].dfunct;
+        ltrig2 = g_trig_fn[+g_trig_index[2]].lfunct;
+        mtrig2 = g_trig_fn[+g_trig_index[2]].mfunct;
+        dtrig2 = g_trig_fn[+g_trig_index[2]].dfunct;
         break;
     case 3:
-        ltrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].lfunct;
-        mtrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].mfunct;
-        dtrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].dfunct;
+        ltrig3 = g_trig_fn[+g_trig_index[3]].lfunct;
+        mtrig3 = g_trig_fn[+g_trig_index[3]].mfunct;
+        dtrig3 = g_trig_fn[+g_trig_index[3]].dfunct;
         break;
     default: // do 'em all
         for (int i = 0; i < 4; i++)

@@ -38,6 +38,11 @@ enum class trig_fn
     ONE
 };
 
+inline int operator+(trig_fn value)
+{
+    return static_cast<int>(value);
+}
+
 struct trig_funct_lst
 {
     char const *name;

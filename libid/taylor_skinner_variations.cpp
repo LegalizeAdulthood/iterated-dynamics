@@ -253,7 +253,7 @@ bool FnPlusFnSym() // set symmetry matrix for fn+fn type
     {
         if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] < trig_fn::SQR)    // bounds of array
         {
-            g_symmetry = fnplusfn[static_cast<int>(g_trig_index[0])][static_cast<int>(g_trig_index[1])];
+            g_symmetry = fnplusfn[+g_trig_index[0]][+g_trig_index[1]];
         }
         if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
         {
@@ -283,7 +283,7 @@ bool FnXFnSetup()
     };
     if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] <= trig_fn::SQR)    // bounds of array
     {
-        g_symmetry = fnxfn[static_cast<int>(g_trig_index[0])][static_cast<int>(g_trig_index[1])];
+        g_symmetry = fnxfn[+g_trig_index[0]][+g_trig_index[1]];
         // defaults to X_AXIS symmetry
     }
     else
