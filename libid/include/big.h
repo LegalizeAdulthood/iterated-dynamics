@@ -43,7 +43,7 @@ extern int g_shift_factor;
 extern int g_bf_length;
 extern int g_r_bf_length;
 extern int bfpadding;
-extern int bfdecimals;
+extern int g_bf_decimals;
 extern bn_t bntmp1;    // g_r_length
 extern bn_t bntmp2;    // g_r_length
 extern bn_t bntmp3;    // g_r_length

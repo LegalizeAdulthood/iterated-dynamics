@@ -29,7 +29,7 @@ int g_shift_factor{};
 int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
-int bfdecimals{};
+int g_bf_decimals{};
 
 // used internally by bignum.c routines
 static char s_storage[4096];
@@ -152,7 +152,7 @@ void calc_lengths()
 
     g_bf_length = g_bn_length+g_bn_step; // one extra step for added precision
     g_r_bf_length = g_bf_length + g_padding;
-    bfdecimals = (int)((g_bf_length-2)*LOG10_256);
+    g_bf_decimals = (int)((g_bf_length-2)*LOG10_256);
 }
 
 /************************************************************************/
@@ -316,7 +316,7 @@ static void init_bf_2()
         ptr += g_r_bf_length+2;
     }
     bf10tmp    = bnroot+ptr;
-    ptr += bfdecimals+4;
+    ptr += g_bf_decimals+4;
 
     // ptr needs to be 16-bit aligned on some systems
     ptr = (ptr+1)&~1;
@@ -469,7 +469,7 @@ void free_bf_vars()
     g_decimals = 0;
     g_bf_length = 0;
     g_r_bf_length = 0;
-    bfdecimals = 0;
+    g_bf_decimals = 0;
 }
 
 /************************************************************************/
