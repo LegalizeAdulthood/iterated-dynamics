@@ -20,16 +20,16 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <string>
 
 // globals
-int bnstep = 0;
-int bnlength = 0;
-int intlength = 0;
-int rlength = 0;
-int padding = 0;
-int shiftfactor = 0;
-int g_decimals = 0;
-int bflength = 0;
-int rbflength = 0;
-int bfdecimals = 0;
+int bnstep{};
+int bnlength{};
+int intlength{};
+int rlength{};
+int padding{};
+int shiftfactor{};
+int g_decimals{};
+int bflength{};
+int rbflength{};
+int bfdecimals{};
 
 // used internally by bignum.c routines
 static char s_storage[4096];
@@ -159,10 +159,10 @@ void calc_lengths()
 // intended only to be called from init_bf_dec() or init_bf_length().
 // initialize bignumber global variables
 
-long g_bignum_max_stack_addr = 0;
-long startstack = 0;
-long maxstack = 0;
-int g_bf_save_len = 0;
+long g_bignum_max_stack_addr{};
+long startstack{};
+long maxstack{};
+int g_bf_save_len{};
 
 static void init_bf_2()
 {
