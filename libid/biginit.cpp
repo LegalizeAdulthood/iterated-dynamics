@@ -28,7 +28,7 @@ int g_padding{};
 int g_shift_factor{};
 int g_decimals{};
 int g_bf_length{};
-int rbflength{};
+int g_r_bf_length{};
 int bfdecimals{};
 
 // used internally by bignum.c routines
@@ -71,7 +71,7 @@ BNComplex bnsaved = { nullptr, nullptr };
 BNComplex bnnew = { nullptr, nullptr };   // g_r_length
 bn_t bn_pi = nullptr;                      // TAKES NO SPACE
 
-// // rbflength+2
+// // g_r_bf_length+2
 bf_t bftmp1 = nullptr;
 bf_t bftmp2 = nullptr;
 bf_t bftmp3 = nullptr;
@@ -92,7 +92,7 @@ bf_t bftmpsqry = nullptr;
 BFComplex bfparm = { nullptr, nullptr };
 BFComplex bfsaved = { nullptr, nullptr };
 
-// rbflength+2
+// g_r_bf_length+2
 BFComplex bfold = { nullptr, nullptr };
 BFComplex bfnew = { nullptr, nullptr };
 
@@ -151,7 +151,7 @@ void calc_lengths()
     g_shift_factor = g_padding - g_int_length;
 
     g_bf_length = g_bn_length+g_bn_step; // one extra step for added precision
-    rbflength = g_bf_length + g_padding;
+    g_r_bf_length = g_bf_length + g_padding;
     bfdecimals = (int)((g_bf_length-2)*LOG10_256);
 }
 
@@ -209,22 +209,22 @@ static void init_bf_2()
     ptr += g_r_length;
 
     bftmp1     = bnroot+ptr;
-    ptr += rbflength+2;
+    ptr += g_r_bf_length+2;
     bftmp2     = bnroot+ptr;
-    ptr += rbflength+2;
+    ptr += g_r_bf_length+2;
     bftmp3     = bnroot+ptr;
-    ptr += rbflength+2;
+    ptr += g_r_bf_length+2;
     bftmp4     = bnroot+ptr;
-    ptr += rbflength+2;
+    ptr += g_r_bf_length+2;
     bftmp5     = bnroot+ptr;
-    ptr += rbflength+2;
+    ptr += g_r_bf_length+2;
     bftmp6     = bnroot+ptr;
-    ptr += rbflength+2;
+    ptr += g_r_bf_length+2;
 
     bftmpcpy1  = bnroot+ptr;
-    ptr += (rbflength+2)*2;
+    ptr += (g_r_bf_length+2)*2;
     bftmpcpy2  = bnroot+ptr;
-    ptr += (rbflength+2)*2;
+    ptr += (g_r_bf_length+2)*2;
 
     bntmpcpy1  = bnroot+ptr;
     ptr += (g_r_length*2);
@@ -289,13 +289,13 @@ static void init_bf_2()
         bfydel2    = bnroot+ptr;
         ptr += g_bf_length+2;
         bfold.x    = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
         bfold.y    = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
         bfnew.x    = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
         bfnew.y    = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
         bfsaved.x  = bnroot+ptr;
         ptr += g_bf_length+2;
         bfsaved.y  = bnroot+ptr;
@@ -307,13 +307,13 @@ static void init_bf_2()
         bfparm.y   = bnroot+ptr;
         ptr += g_bf_length+2;
         bftmpsqrx  = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
         bftmpsqry  = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
         big_pi     = bnroot+ptr;
         ptr += g_bf_length+2;
         bftmp      = bnroot+ptr;
-        ptr += rbflength+2;
+        ptr += g_r_bf_length+2;
     }
     bf10tmp    = bnroot+ptr;
     ptr += bfdecimals+4;
@@ -468,7 +468,7 @@ void free_bf_vars()
     g_shift_factor = 0;
     g_decimals = 0;
     g_bf_length = 0;
-    rbflength = 0;
+    g_r_bf_length = 0;
     bfdecimals = 0;
 }
 

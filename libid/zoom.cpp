@@ -55,9 +55,9 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
     bf_t btmp1, btmp2 , btmp3;
     int saved;
     saved = save_stack();
-    btmp1 = alloc_stack(rbflength+2);
-    btmp2 = alloc_stack(rbflength+2);
-    btmp3 = alloc_stack(rbflength+2);
+    btmp1 = alloc_stack(g_r_bf_length+2);
+    btmp2 = alloc_stack(g_r_bf_length+2);
+    btmp3 = alloc_stack(g_r_bf_length+2);
 
     // use target as temporary variable
     floattobf(btmp3, p2);
@@ -140,11 +140,11 @@ void drawbox(bool drawit)
     if (g_bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
-        bffxwidth = alloc_stack(rbflength+2);
-        bffxskew  = alloc_stack(rbflength+2);
-        bffydepth = alloc_stack(rbflength+2);
-        bffyskew  = alloc_stack(rbflength+2);
-        bffxadj   = alloc_stack(rbflength+2);
+        bffxwidth = alloc_stack(g_r_bf_length+2);
+        bffxskew  = alloc_stack(g_r_bf_length+2);
+        bffydepth = alloc_stack(g_r_bf_length+2);
+        bffyskew  = alloc_stack(g_r_bf_length+2);
+        bffxadj   = alloc_stack(g_r_bf_length+2);
     }
     ftemp1 = PI*g_zoom_box_rotation/72; // convert to radians
     rotcos = std::cos(ftemp1);   // sin & cos of rotation
@@ -528,14 +528,14 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
     int saved;
     saved = save_stack();
 
-    btmp1  = alloc_stack(rbflength+2);
-    btmp2  = alloc_stack(rbflength+2);
-    btmp3  = alloc_stack(rbflength+2);
-    btmp4  = alloc_stack(rbflength+2);
-    btmp2a = alloc_stack(rbflength+2);
-    btmp4a = alloc_stack(rbflength+2);
-    btempx = alloc_stack(rbflength+2);
-    btempy = alloc_stack(rbflength+2);
+    btmp1  = alloc_stack(g_r_bf_length+2);
+    btmp2  = alloc_stack(g_r_bf_length+2);
+    btmp3  = alloc_stack(g_r_bf_length+2);
+    btmp4  = alloc_stack(g_r_bf_length+2);
+    btmp2a = alloc_stack(g_r_bf_length+2);
+    btmp4a = alloc_stack(g_r_bf_length+2);
+    btempx = alloc_stack(g_r_bf_length+2);
+    btempy = alloc_stack(g_r_bf_length+2);
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft thru (1,1) bottom right */
@@ -603,19 +603,19 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     bf_t tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2;
     int saved;
     saved = save_stack();
-    savbfxmin = alloc_stack(rbflength+2);
-    savbfymax = alloc_stack(rbflength+2);
-    bfftemp   = alloc_stack(rbflength+2);
-    tmp1      = alloc_stack(rbflength+2);
-    tmp2      = alloc_stack(rbflength+2);
-    tmp3      = alloc_stack(rbflength+2);
-    tmp4      = alloc_stack(rbflength+2);
-    tmp5      = alloc_stack(rbflength+2);
-    tmp6      = alloc_stack(rbflength+2);
-    bfplotmx1 = alloc_stack(rbflength+2);
-    bfplotmx2 = alloc_stack(rbflength+2);
-    bfplotmy1 = alloc_stack(rbflength+2);
-    bfplotmy2 = alloc_stack(rbflength+2);
+    savbfxmin = alloc_stack(g_r_bf_length+2);
+    savbfymax = alloc_stack(g_r_bf_length+2);
+    bfftemp   = alloc_stack(g_r_bf_length+2);
+    tmp1      = alloc_stack(g_r_bf_length+2);
+    tmp2      = alloc_stack(g_r_bf_length+2);
+    tmp3      = alloc_stack(g_r_bf_length+2);
+    tmp4      = alloc_stack(g_r_bf_length+2);
+    tmp5      = alloc_stack(g_r_bf_length+2);
+    tmp6      = alloc_stack(g_r_bf_length+2);
+    bfplotmx1 = alloc_stack(g_r_bf_length+2);
+    bfplotmx2 = alloc_stack(g_r_bf_length+2);
+    bfplotmy1 = alloc_stack(g_r_bf_length+2);
+    bfplotmy2 = alloc_stack(g_r_bf_length+2);
     // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
     sub_bf(tmp1, g_bf_y_min, g_bf_y_3rd);
     sub_bf(tmp2, g_bf_x_3rd, g_bf_x_min);

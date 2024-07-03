@@ -2847,7 +2847,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     if (g_bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
-        bft1    = alloc_stack(rbflength+2);
+        bft1    = alloc_stack(g_r_bf_length+2);
         xaxis_on_screen = (sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max));
         yaxis_on_screen = (sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max));
     }

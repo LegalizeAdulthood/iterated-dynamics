@@ -106,11 +106,11 @@ void showbfglobals(char const *s)
     std::snprintf(msg, std::size(msg),
         "%s\n"                                                                     //
         "g_bn_step=%d g_bn_length=%d g_int_length=%d g_r_length=%d g_padding=%d\n" //
-        "g_shift_factor=%d decimals=%d g_bf_length=%d rbflength=%d \n"                //
+        "g_shift_factor=%d decimals=%d g_bf_length=%d g_r_bf_length=%d \n"         //
         "bfdecimals=%d ",                                                          //
         s,                                                                         //
         g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,               //
-        g_shift_factor, g_decimals, g_bf_length, rbflength,                           //
+        g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                    //
         bfdecimals);
     if (stopmsg(msg))
     {
@@ -230,9 +230,9 @@ void showaspect(char const *s)
     char str[100];
     int saved;
     saved = save_stack();
-    bt1    = alloc_stack(rbflength+2);
-    bt2    = alloc_stack(rbflength+2);
-    aspect = alloc_stack(rbflength+2);
+    bt1    = alloc_stack(g_r_bf_length+2);
+    bt2    = alloc_stack(g_r_bf_length+2);
+    aspect = alloc_stack(g_r_bf_length+2);
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
@@ -853,7 +853,7 @@ int mandelbf_per_pixel()
     copy_bf(bfnew.x, bfold.x);
     copy_bf(bfnew.y, bfold.y);
 
-    // Square these to rbflength bytes of precision
+    // Square these to g_r_bf_length bytes of precision
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
 
@@ -909,7 +909,7 @@ juliabf_per_pixel()
     copy_bf(bfnew.x, bfold.x);
     copy_bf(bfnew.y, bfold.y);
 
-    // Square these to rbflength bytes of precision
+    // Square these to g_r_bf_length bytes of precision
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
 
@@ -1029,7 +1029,7 @@ BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     bf_t tmp1;
     int saved;
     saved = save_stack();
-    tmp1 = alloc_stack(rbflength+2);
+    tmp1 = alloc_stack(g_r_bf_length+2);
     mult_bf(t->x, x->x, y->x);
     mult_bf(t->y, x->y, y->y);
     sub_bf(t->x, t->x, t->y);
@@ -1046,8 +1046,8 @@ BFComplex *cplxdiv_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     bf_t tmp1, denom;
     int saved;
     saved = save_stack();
-    tmp1 = alloc_stack(rbflength + 2);
-    denom = alloc_stack(rbflength + 2);
+    tmp1 = alloc_stack(g_r_bf_length + 2);
+    denom = alloc_stack(g_r_bf_length + 2);
 
     square_bf(t->x, y->x);
     square_bf(t->y, y->y);
@@ -1082,11 +1082,11 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     bf_t cosy;
     int saved;
     saved = save_stack();
-    e2x  = alloc_stack(rbflength+2);
-    siny = alloc_stack(rbflength+2);
-    cosy = alloc_stack(rbflength+2);
-    tmp.x = alloc_stack(rbflength+2);
-    tmp.y = alloc_stack(rbflength+2);
+    e2x  = alloc_stack(g_r_bf_length+2);
+    siny = alloc_stack(g_r_bf_length+2);
+    cosy = alloc_stack(g_r_bf_length+2);
+    tmp.x = alloc_stack(g_r_bf_length+2);
+    tmp.y = alloc_stack(g_r_bf_length+2);
 
     // 0 raised to anything is 0
     if (is_bf_zero(xx->x) && is_bf_zero(xx->y))

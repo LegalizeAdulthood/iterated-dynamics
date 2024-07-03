@@ -1560,12 +1560,12 @@ int fgetwindow()
         g_calc_status = oldcalc_status;
     }
     saved = save_stack();
-    bt_a = alloc_stack(rbflength+2);
-    bt_b = alloc_stack(rbflength+2);
-    bt_c = alloc_stack(rbflength+2);
-    bt_d = alloc_stack(rbflength+2);
-    bt_e = alloc_stack(rbflength+2);
-    bt_f = alloc_stack(rbflength+2);
+    bt_a = alloc_stack(g_r_bf_length+2);
+    bt_b = alloc_stack(g_r_bf_length+2);
+    bt_c = alloc_stack(g_r_bf_length+2);
+    bt_d = alloc_stack(g_r_bf_length+2);
+    bt_e = alloc_stack(g_r_bf_length+2);
+    bt_f = alloc_stack(g_r_bf_length+2);
 
     int const num_dots = g_screen_x_dots + g_screen_y_dots;
     browse_windows.resize(MAX_WINDOWS_OPEN);
@@ -1981,7 +1981,7 @@ static bool is_visible_window(
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = g_shift_factor;
-    orig_rbflength     = rbflength;
+    orig_rbflength     = g_r_bf_length;
     /*
        if (oldbf_math && info->bf_math && (g_bn_length+4 < info->g_bf_length)) {
           g_bn_length = info->g_bf_length;
@@ -2002,7 +2002,7 @@ static bool is_visible_window(
     {
         const int di_bflength = info->g_bf_length + g_bn_step;
         const int two_di_len = di_bflength + 2;
-        const int two_rbf = rbflength + 2;
+        const int two_rbf = g_r_bf_length + 2;
 
         n_a     = alloc_stack(two_rbf);
         n_b     = alloc_stack(two_rbf);
@@ -2011,12 +2011,12 @@ static bool is_visible_window(
         n_e     = alloc_stack(two_rbf);
         n_f     = alloc_stack(two_rbf);
 
-        convert_bf(n_a, bt_a, rbflength, orig_rbflength);
-        convert_bf(n_b, bt_b, rbflength, orig_rbflength);
-        convert_bf(n_c, bt_c, rbflength, orig_rbflength);
-        convert_bf(n_d, bt_d, rbflength, orig_rbflength);
-        convert_bf(n_e, bt_e, rbflength, orig_rbflength);
-        convert_bf(n_f, bt_f, rbflength, orig_rbflength);
+        convert_bf(n_a, bt_a, g_r_bf_length, orig_rbflength);
+        convert_bf(n_b, bt_b, g_r_bf_length, orig_rbflength);
+        convert_bf(n_c, bt_c, g_r_bf_length, orig_rbflength);
+        convert_bf(n_d, bt_d, g_r_bf_length, orig_rbflength);
+        convert_bf(n_e, bt_e, g_r_bf_length, orig_rbflength);
+        convert_bf(n_f, bt_f, g_r_bf_length, orig_rbflength);
 
         bf_t bt_t1 = alloc_stack(two_di_len);
         bf_t bt_t2 = alloc_stack(two_di_len);
@@ -2146,7 +2146,7 @@ static bool is_visible_window(
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     g_shift_factor = orig_shiftfactor;
-    rbflength     = orig_rbflength;
+    g_r_bf_length = orig_rbflength;
 
     restore_stack(saved);
     if (cant_see)   // do it this way so bignum stack is released
@@ -2317,13 +2317,13 @@ static void bfsetup_convert_to_screen()
     int saved;
 
     saved = save_stack();
-    bt_inter1 = alloc_stack(rbflength+2);
-    bt_inter2 = alloc_stack(rbflength+2);
-    bt_det = alloc_stack(rbflength+2);
-    bt_xd  = alloc_stack(rbflength+2);
-    bt_yd  = alloc_stack(rbflength+2);
-    bt_tmp1 = alloc_stack(rbflength+2);
-    bt_tmp2 = alloc_stack(rbflength+2);
+    bt_inter1 = alloc_stack(g_r_bf_length+2);
+    bt_inter2 = alloc_stack(g_r_bf_length+2);
+    bt_det = alloc_stack(g_r_bf_length+2);
+    bt_xd  = alloc_stack(g_r_bf_length+2);
+    bt_yd  = alloc_stack(g_r_bf_length+2);
+    bt_tmp1 = alloc_stack(g_r_bf_length+2);
+    bt_tmp2 = alloc_stack(g_r_bf_length+2);
 
     // xx3rd-xxmin
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
@@ -2403,8 +2403,8 @@ static void bftransform(bf_t bt_x, bf_t bt_y, dblcoords *point)
     int saved;
 
     saved = save_stack();
-    bt_tmp1 = alloc_stack(rbflength+2);
-    bt_tmp2 = alloc_stack(rbflength+2);
+    bt_tmp1 = alloc_stack(g_r_bf_length+2);
+    bt_tmp2 = alloc_stack(g_r_bf_length+2);
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
     mult_bf(bt_tmp1, n_a, bt_x);

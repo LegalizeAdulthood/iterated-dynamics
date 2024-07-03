@@ -673,9 +673,9 @@ void adjust_cornerbf()
     bf_t btmp1;
     int saved;
     saved = save_stack();
-    bftemp  = alloc_stack(rbflength+2);
-    bftemp2 = alloc_stack(rbflength+2);
-    btmp1  =  alloc_stack(rbflength+2);
+    bftemp  = alloc_stack(g_r_bf_length+2);
+    bftemp2 = alloc_stack(g_r_bf_length+2);
+    btmp1  =  alloc_stack(g_r_bf_length+2);
 
     // While we're at it, let's adjust the Xmagfactor as well
     // use bftemp, bftemp2 as bfXctr, bfYctr
@@ -820,27 +820,27 @@ static void adjust_to_limitsbf(double expand)
     bf_t bexpand;
     int saved;
     saved = save_stack();
-    bcornerx[0] = alloc_stack(rbflength+2);
-    bcornerx[1] = alloc_stack(rbflength+2);
-    bcornerx[2] = alloc_stack(rbflength+2);
-    bcornerx[3] = alloc_stack(rbflength+2);
-    bcornery[0] = alloc_stack(rbflength+2);
-    bcornery[1] = alloc_stack(rbflength+2);
-    bcornery[2] = alloc_stack(rbflength+2);
-    bcornery[3] = alloc_stack(rbflength+2);
-    blowx       = alloc_stack(rbflength+2);
-    bhighx      = alloc_stack(rbflength+2);
-    blowy       = alloc_stack(rbflength+2);
-    bhighy      = alloc_stack(rbflength+2);
-    blimit      = alloc_stack(rbflength+2);
-    bftemp      = alloc_stack(rbflength+2);
-    bcenterx    = alloc_stack(rbflength+2);
-    bcentery    = alloc_stack(rbflength+2);
-    badjx       = alloc_stack(rbflength+2);
-    badjy       = alloc_stack(rbflength+2);
-    btmp1       = alloc_stack(rbflength+2);
-    btmp2       = alloc_stack(rbflength+2);
-    bexpand     = alloc_stack(rbflength+2);
+    bcornerx[0] = alloc_stack(g_r_bf_length+2);
+    bcornerx[1] = alloc_stack(g_r_bf_length+2);
+    bcornerx[2] = alloc_stack(g_r_bf_length+2);
+    bcornerx[3] = alloc_stack(g_r_bf_length+2);
+    bcornery[0] = alloc_stack(g_r_bf_length+2);
+    bcornery[1] = alloc_stack(g_r_bf_length+2);
+    bcornery[2] = alloc_stack(g_r_bf_length+2);
+    bcornery[3] = alloc_stack(g_r_bf_length+2);
+    blowx       = alloc_stack(g_r_bf_length+2);
+    bhighx      = alloc_stack(g_r_bf_length+2);
+    blowy       = alloc_stack(g_r_bf_length+2);
+    bhighy      = alloc_stack(g_r_bf_length+2);
+    blimit      = alloc_stack(g_r_bf_length+2);
+    bftemp      = alloc_stack(g_r_bf_length+2);
+    bcenterx    = alloc_stack(g_r_bf_length+2);
+    bcentery    = alloc_stack(g_r_bf_length+2);
+    badjx       = alloc_stack(g_r_bf_length+2);
+    badjy       = alloc_stack(g_r_bf_length+2);
+    btmp1       = alloc_stack(g_r_bf_length+2);
+    btmp2       = alloc_stack(g_r_bf_length+2);
+    bexpand     = alloc_stack(g_r_bf_length+2);
 
     limit = 32767.99;
 

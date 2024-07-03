@@ -184,8 +184,9 @@ bool tab_display_2(char *msg)
     write_row(++row, "Version %d patch %d", g_release, g_patch_level);
     write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, maxstack);
     write_row(++row, "   %ld used for bignum globals", startstack);
-    write_row(++row, "   %ld stack used == %ld variables of length %d",
-              g_bignum_max_stack_addr-startstack, (long)((g_bignum_max_stack_addr-startstack)/(rbflength+2)), rbflength+2);
+    write_row(++row, "   %ld stack used == %ld variables of length %d", //
+        g_bignum_max_stack_addr - startstack,                           //
+        (g_bignum_max_stack_addr - startstack) / (g_r_bf_length + 2), g_r_bf_length + 2);
     if (g_bf_math != bf_math_type::NONE)
     {
         write_row(++row, "g_int_length %-d g_bf_length %-d ", g_int_length, g_bf_length);
