@@ -460,8 +460,16 @@ void free_bf_vars()
 {
     g_bf_save_len = 0;
     bf_math = bf_math_type::NONE;
-    bnstep = bnlength = intlength = rlength = padding = shiftfactor = g_decimals = 0;
-    bflength = rbflength = bfdecimals = 0;
+    bnstep = 0;
+    bnlength = 0;
+    intlength = 0;
+    rlength = 0;
+    padding = 0;
+    shiftfactor = 0;
+    g_decimals = 0;
+    bflength = 0;
+    rbflength = 0;
+    bfdecimals = 0;
 }
 
 /************************************************************************/
