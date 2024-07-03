@@ -12,15 +12,15 @@
 ****************************************************************/
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
-// values that bf_math can hold,
-// 0 = bf_math is not being used
-// 1 = bf_math is being used
+// values that g_bf_math can hold,
+// 0 = g_bf_math is not being used
+// 1 = g_bf_math is being used
 enum class bf_math_type
 {
     // cppcheck-suppress variableHidingEnum
     NONE = 0,
-    BIGNUM = 1,         // bf_math is being used with bn_t numbers
-    BIGFLT = 2          // bf_math is being used with bf_t numbers
+    BIGNUM = 1,         // g_bf_math is being used with bn_t numbers
+    BIGFLT = 2          // g_bf_math is being used with bf_t numbers
 };
 
 using big_t = unsigned char *;
@@ -32,7 +32,7 @@ using BFComplex = id::Complex<bf_t>;
 using BNComplex = id::Complex<bn_t>;
 
 // globals
-extern bf_math_type bf_math;
+extern bf_math_type g_bf_math;
 extern int g_bn_step;
 extern int intlength;
 extern int bnlength;

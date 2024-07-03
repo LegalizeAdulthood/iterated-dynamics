@@ -179,15 +179,15 @@ static void init_bf_2()
     i = find_alternate_math(g_fractal_type, bf_math_type::BIGNUM);
     if (i > -1)
     {
-        bf_math = g_alternate_math[i].math;
+        g_bf_math = g_alternate_math[i].math;
     }
     else if ((i = find_alternate_math(g_fractal_type, bf_math_type::BIGFLT)) > -1)
     {
-        bf_math = g_alternate_math[i].math;
+        g_bf_math = g_alternate_math[i].math;
     }
     else
     {
-        bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and g_fractal_type not set
+        g_bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and g_fractal_type not set
     }
 
     g_float_flag = true;
@@ -231,7 +231,7 @@ static void init_bf_2()
     bntmpcpy2  = bnroot+ptr;
     ptr += (rlength*2);
 
-    if (bf_math == bf_math_type::BIGNUM)
+    if (g_bf_math == bf_math_type::BIGNUM)
     {
         bnxmin     = bnroot+ptr;
         ptr += bnlength;
@@ -278,7 +278,7 @@ static void init_bf_2()
         bntmp      = bnroot+ptr;
         ptr += rlength;
     }
-    if (bf_math == bf_math_type::BIGFLT)
+    if (g_bf_math == bf_math_type::BIGFLT)
     {
         bfxdel     = bnroot+ptr;
         ptr += bflength+2;
@@ -459,7 +459,7 @@ static int restore_bf_vars()
 void free_bf_vars()
 {
     g_bf_save_len = 0;
-    bf_math = bf_math_type::NONE;
+    g_bf_math = bf_math_type::NONE;
     g_bn_step = 0;
     bnlength = 0;
     intlength = 0;
@@ -478,9 +478,9 @@ void free_bf_vars()
 // Allocates a bn_t variable on stack
 bn_t alloc_stack(size_t size)
 {
-    if (bf_math == bf_math_type::NONE)
+    if (g_bf_math == bf_math_type::NONE)
     {
-        stopmsg("alloc_stack called with bf_math==0");
+        stopmsg("alloc_stack called with g_bf_math==0");
         return nullptr;
     }
     const long stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot

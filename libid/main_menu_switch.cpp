@@ -420,7 +420,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 || g_fractal_specific[+g_fractal_type].calctype == calcfroth)
             && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
                  g_fractal_specific[+g_fractal_type].tofloat != fractal_type::NOFRACTAL)
-            && (bf_math == bf_math_type::NONE) // for now no arbitrary precision support
+            && (g_bf_math == bf_math_type::NONE) // for now no arbitrary precision support
             && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
         {
             clear_zoombox();
@@ -428,7 +428,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case ID_KEY_SPACE:                  // spacebar, toggle mand/julia
-        if (bf_math != bf_math_type::NONE || g_evolving)
+        if (g_bf_math != bf_math_type::NONE || g_evolving)
         {
             break;
         }
@@ -461,7 +461,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 // switch to corresponding Julia set
                 int key;
-                g_has_inverse = (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE;
+                g_has_inverse = (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_bf_math == bf_math_type::NONE;
                 clear_zoombox();
                 Jiim(jiim_types::JIIM);
                 key = driver_get_key();    // flush keyboard buffer
@@ -607,7 +607,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             }
             return main_state::RESTORE_START;
         }
-        else if (g_max_image_history > 0 && bf_math == bf_math_type::NONE)
+        else if (g_max_image_history > 0 && g_bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
             {

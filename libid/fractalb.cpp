@@ -30,7 +30,7 @@ fractal routines.
 #include <cstring>
 #include <string>
 
-bf_math_type bf_math = bf_math_type::NONE;
+bf_math_type g_bf_math = bf_math_type::NONE;
 
 #ifndef NDEBUG
 //********************************************************************
@@ -292,7 +292,7 @@ void show_var_bf(char const *s, bf_t n)
 
 void bfcornerstofloat()
 {
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         g_x_min = (double)bftofloat(g_bf_x_min);
         g_y_min = (double)bftofloat(g_bf_y_min);
@@ -592,7 +592,7 @@ bool MandelbnSetup()
     bftobn(bnx3rd, g_bf_x_3rd);
     bftobn(bny3rd, g_bf_y_3rd);
 
-    bf_math = bf_math_type::BIGNUM;
+    g_bf_math = bf_math_type::BIGNUM;
 
     // bnxdel = (bnxmax - bnx3rd)/(xdots-1)
     sub_bn(bnxdel, bnxmax, bnx3rd);
@@ -685,7 +685,7 @@ bool MandelbfSetup()
     bftemp1 = alloc_stack(bflength+2);
     bftemp2 = alloc_stack(bflength+2);
 
-    bf_math = bf_math_type::BIGFLT;
+    g_bf_math = bf_math_type::BIGFLT;
 
     // bfxdel = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
     sub_bf(bfxdel, g_bf_x_max, g_bf_x_3rd);

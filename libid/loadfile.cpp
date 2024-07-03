@@ -768,13 +768,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_5_info.got_data)
     {
-        bf_math = bf_math_type::BIGNUM;
+        g_bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
         std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
     else
     {
-        bf_math = bf_math_type::NONE;
+        g_bf_math = bf_math_type::NONE;
     }
 
     if (blk_6_info.got_data)
@@ -1551,8 +1551,8 @@ int fgetwindow()
     int vid_too_big = 0;
     int saved;
 
-    oldbf_math = bf_math;
-    bf_math = bf_math_type::BIGFLT;
+    oldbf_math = g_bf_math;
+    g_bf_math = bf_math_type::BIGFLT;
     if (oldbf_math == bf_math_type::NONE)
     {
         calc_status_value oldcalc_status = g_calc_status; // kludge because next sets it = 0
@@ -1898,7 +1898,7 @@ rescan:  // entry for changed browse parms
     {
         free_bf_vars();
     }
-    bf_math = oldbf_math;
+    g_bf_math = oldbf_math;
     g_float_flag = g_user_float_flag;
 
     return c;
@@ -2310,7 +2310,7 @@ static void check_history(char const *oldname, char const *newname)
 
 static void bfsetup_convert_to_screen()
 {
-    // setup_convert_to_screen() in LORENZ.C, converted to bf_math
+    // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
     bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
     bf_t   bt_inter1, bt_inter2;

@@ -1679,7 +1679,7 @@ TEST_F(TestParameterCommand, paramsOneValue)
 {
     ValueSaver saved_params0{g_params[0], 1111.0};
     ValueSaver saved_params1{g_params[1], 2222.0};
-    ValueSaver saved_bf_math{bf_math, bf_math_type::NONE};
+    ValueSaver saved_bf_math{g_bf_math, bf_math_type::NONE};
 
     const cmdarg_flags result = exec_cmd_arg("params=1.0", cmd_file::AT_AFTER_STARTUP);
 
@@ -1693,7 +1693,7 @@ TEST_F(TestParameterCommand, paramsTwoValues)
     ValueSaver saved_params0{g_params[0], 1111.0};
     ValueSaver saved_params1{g_params[1], 2222.0};
     ValueSaver saved_params2{g_params[2], 3333.0};
-    ValueSaver saved_bf_math{bf_math, bf_math_type::NONE};
+    ValueSaver saved_bf_math{g_bf_math, bf_math_type::NONE};
 
     const cmdarg_flags result = exec_cmd_arg("params=1.0/2.0", cmd_file::AT_AFTER_STARTUP);
 

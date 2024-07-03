@@ -822,7 +822,7 @@ gfp_top:
     {
         std::sprintf(msg, "Parameters for fractal type %s", type_name);
     }
-    if (bf_math == bf_math_type::NONE)
+    if (g_bf_math == bf_math_type::NONE)
     {
         std::strcat(msg, "\n(Press F6 for corner parameters)");
         fkeymask = 1U << 6;     // F6 exits
@@ -850,7 +850,7 @@ gfp_top:
         {
             break;
         }
-        if (bf_math == bf_math_type::NONE)
+        if (g_bf_math == bf_math_type::NONE)
         {
             if (get_corners() > 0)
             {

@@ -595,7 +595,7 @@ bool encoder()
 
     }
     // Extended parameters block 005
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
         // note: this assumes variables allocated in order starting with
@@ -950,7 +950,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->bailoutest = (short) g_bail_out_test;
     save_info->iterations = g_max_iterations;
     save_info->bflength = (short) bnlength;
-    save_info->bf_math = (short) bf_math;
+    save_info->bf_math = (short) g_bf_math;
     save_info->old_demm_colors = (short) (g_old_demm_colors ? 1 : 0);
     save_info->logmap = g_log_map_flag;
     save_info->distest = g_distance_estimator;

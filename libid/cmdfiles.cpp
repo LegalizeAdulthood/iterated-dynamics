@@ -98,7 +98,7 @@ static bool isabigfloat(char const *str);
 int g_stop_pass{};                                            // stop at this guessing pass early
 int g_distance_estimator_x_dots{};                            // xdots to use for video independence
 int g_distance_estimator_y_dots{};                            // ydots to use for video independence
-int g_bf_digits{};                                            // digits to use (force) for bf_math
+int g_bf_digits{};                                            // digits to use (force) for g_bf_math
 int g_show_dot{-1};                                           // color to show crawling graphics cursor
 int g_size_dot{};                                             // size of dot crawling cursor
 record_colors_mode g_record_colors{record_colors_mode::none}; // default PAR color-writing method
@@ -521,7 +521,7 @@ static void initvars_fractal()
     g_y_min = -1.5;                                                 //
     g_y_3rd = g_y_min;                                              //
     g_y_max = 1.5;                                                  // initial corner values
-    bf_math = bf_math_type::NONE;                                   //
+    g_bf_math = bf_math_type::NONE;                                   //
     g_potential_16bit = false;                                      //
     g_potential_flag = false;                                       //
     g_log_map_flag = 0;                                             // no logarithmic palette
@@ -1488,8 +1488,8 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     // use arbitrary precision
     int saved;
     s_init_corners = true;
-    bf_math_type old_bf_math = bf_math;
-    if (bf_math == bf_math_type::NONE || dec > g_decimals)
+    bf_math_type old_bf_math = g_bf_math;
+    if (g_bf_math == bf_math_type::NONE || dec > g_decimals)
     {
         init_bf_dec(dec);
     }
@@ -1718,8 +1718,8 @@ static cmdarg_flags cmd_corners(const Command &cmd)
     if ((dec > DBL_DIG + 1 || g_debug_flag == debug_flags::force_arbitrary_precision_math) &&
         g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
     {
-        bf_math_type old_bf_math = bf_math;
-        if (bf_math == bf_math_type::NONE || dec > g_decimals)
+        bf_math_type old_bf_math = g_bf_math;
+        if (g_bf_math == bf_math_type::NONE || dec > g_decimals)
         {
             init_bf_dec(dec);
         }
@@ -2766,7 +2766,7 @@ static cmdarg_flags cmd_params(const Command &cmd)
     {
         g_params[k] = (k < cmd.totparms) ? cmd.floatval[k] : 0.0;
     }
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {

@@ -916,7 +916,7 @@ void soi_ldbl()
     g_soi_min_stack_available = 30000;
     g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         xxminl = bftofloat(g_bf_x_min);
         yyminl = bftofloat(g_bf_y_min);

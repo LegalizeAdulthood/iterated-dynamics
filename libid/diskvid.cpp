@@ -175,7 +175,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             --pixelshift;
         }
     }
-    timetodisplay = bf_math != bf_math_type::NONE ? 10 : 1000;  // time-to-g_driver-status counter
+    timetodisplay = g_bf_math != bf_math_type::NONE ? 10 : 1000;  // time-to-g_driver-status counter
 
     constexpr unsigned int cache_size = CACHEMAX;
     long longtmp = (long) cache_size << 10;
@@ -336,7 +336,7 @@ int readdisk(int col, int row)
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }
-        if (bf_math != bf_math_type::NONE)
+        if (g_bf_math != bf_math_type::NONE)
         {
             timetodisplay = 10;  // time-to-g_driver-status counter
         }

@@ -150,13 +150,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         fractal_type tofloat = g_cur_fractal_specific->tofloat;
         if (tofloat == fractal_type::NOFRACTAL)
         {
-            bf_math = bf_math_type::NONE;
+            g_bf_math = bf_math_type::NONE;
         }
         else if (bit_clear(g_fractal_specific[+tofloat].flags, fractal_flags::BF_MATH))
         {
-            bf_math = bf_math_type::NONE;
+            g_bf_math = bf_math_type::NONE;
         }
-        else if (bf_math != bf_math_type::NONE)
+        else if (g_bf_math != bf_math_type::NONE)
         {
             g_cur_fractal_specific = &g_fractal_specific[+tofloat];
             g_fractal_type = tofloat;
@@ -164,13 +164,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
 
     // switch back to double when zooming out if using arbitrary precision
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         int gotprec = getprecbf(CURRENTREZ);
         if ((gotprec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) || g_math_tol[1] >= 1.0)
         {
             bfcornerstofloat();
-            bf_math = bf_math_type::NONE;
+            g_bf_math = bf_math_type::NONE;
         }
         else
         {
@@ -220,7 +220,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         free_bf_vars();
     }
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         g_float_flag = true;
     }
@@ -420,7 +420,7 @@ init_restart:
     g_f_at_rad = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         adjust_to_limitsbf(1.0); // make sure all corners in valid range
     }
@@ -449,11 +449,11 @@ init_restart:
     }
 
     // skip this if plasma to avoid 3d problems
-    // skip if bf_math to avoid extraseg conflict with dx0 arrays
+    // skip if g_bf_math to avoid extraseg conflict with dx0 arrays
     // skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
     // is set.  These types don't auto switch between float and integer math
     if (g_fractal_type != fractal_type::PLASMA
-        && bf_math == bf_math_type::NONE
+        && g_bf_math == bf_math_type::NONE
         && g_fractal_type != fractal_type::IFS
         && g_fractal_type != fractal_type::IFS3D
         && g_fractal_type != fractal_type::LSYSTEM)
@@ -529,7 +529,7 @@ expand_retry:
                 dy0 = (double)(dy0 - (double)g_delta_y);
                 dx1 = (double)(dx1 + (double)g_delta_x2);
             }
-            if (bf_math == bf_math_type::NONE) // redundant test, leave for now
+            if (g_bf_math == bf_math_type::NONE) // redundant test, leave for now
             {
                 /* Following is the old logic for detecting failure of double
                    precision. It has two advantages: it is independent of the
@@ -630,7 +630,7 @@ expand_retry:
         g_plot_my1 = (double)((0.0-g_delta_y2) * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / ftemp);
         g_plot_my2 = (g_x_max-g_x_3rd) * g_logical_screen_y_size_dots / ftemp;
     }
-    if (bf_math == bf_math_type::NONE)
+    if (g_bf_math == bf_math_type::NONE)
     {
         free_bf_vars();
     }

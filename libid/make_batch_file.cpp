@@ -666,7 +666,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
     bf_t bfYctr = nullptr;
     int saved;
     saved = save_stack();
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         bfXctr = alloc_stack(bflength+2);
         bfYctr = alloc_stack(bflength+2);
@@ -772,7 +772,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
 
         if (g_use_center_mag)
         {
-            if (bf_math != bf_math_type::NONE)
+            if (g_bf_math != bf_math_type::NONE)
             {
                 int digits;
                 cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -781,7 +781,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
                 put_bf(0, bfXctr, digits);
                 put_bf(1, bfYctr, digits);
             }
-            else // !bf_math
+            else // !g_bf_math
             {
                 cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
                 put_parm(" %s=", "center-mag");
@@ -827,7 +827,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         else // not usemag
         {
             put_parm(" %s=", "corners");
-            if (bf_math != bf_math_type::NONE)
+            if (g_bf_math != bf_math_type::NONE)
             {
                 int digits;
                 digits = getprecbf(MAXREZ);

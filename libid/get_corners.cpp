@@ -147,7 +147,7 @@ gc_loop:
         {
             aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }
-        if (bf_math != bf_math_type::NONE)
+        if (g_bf_math != bf_math_type::NONE)
         {
             fractal_floattobf();
         }

@@ -169,7 +169,7 @@ AlternateMath g_alternate_math[] =
     {fractal_type::MANDELFP, bf_math_type::BIGFLT, JuliabfFractal, mandelbf_per_pixel, MandelbfSetup},
 #endif
     /*
-    NOTE: The default precision for bf_math=BIGNUM is not high enough
+    NOTE: The default precision for g_bf_math=BIGNUM is not high enough
           for JuliaZpowerbnFractal.  If you want to test BIGNUM (1) instead
           of the usual BIGFLT (2), then set bfdigits on the command to
           increase the precision.

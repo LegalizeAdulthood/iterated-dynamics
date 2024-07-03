@@ -186,7 +186,7 @@ bool tab_display_2(char *msg)
     write_row(++row, "   %ld used for bignum globals", startstack);
     write_row(++row, "   %ld stack used == %ld variables of length %d",
               g_bignum_max_stack_addr-startstack, (long)((g_bignum_max_stack_addr-startstack)/(rbflength+2)), rbflength+2);
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
     }
@@ -278,7 +278,7 @@ int tab_display()       // display the status of the current image
         g_calc_time += (std::clock() - g_timer_start) / (CLOCKS_PER_SEC/100);
     }
     driver_stack_screen();
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
         bfXctr = alloc_stack(bflength+2);
@@ -377,7 +377,7 @@ top:
         driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }
     ++s_row;
-    // if (bf_math == bf_math_type::NONE)
+    // if (g_bf_math == bf_math_type::NONE)
     ++s_row;
 
     int j = 0;
@@ -393,7 +393,7 @@ top:
         j = g_user_float_flag ? 1 : 2;
     }
 
-    if (bf_math == bf_math_type::NONE)
+    if (g_bf_math == bf_math_type::NONE)
     {
         if (j)
         {
@@ -524,14 +524,14 @@ top:
     }
 
     ++s_row;
-    if (bf_math == bf_math_type::NONE)
+    if (g_bf_math == bf_math_type::NONE)
     {
         ++s_row;
     }
     std::snprintf(
         msg, std::size(msg), "Driver: %s, %s", g_driver->get_name().c_str(), g_driver->get_description().c_str());
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
-    if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
+    if (g_video_entry.xdots && g_bf_math == bf_math_type::NONE)
     {
         std::sprintf(msg, "Video: %dx%dx%d %s",
                 g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
@@ -541,7 +541,7 @@ top:
     if (bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOZOOM))
     {
         adjust_corner(); // make bottom left exact if very near exact
-        if (bf_math != bf_math_type::NONE)
+        if (g_bf_math != bf_math_type::NONE)
         {
             int truncaterow;
             int dec = std::min(320, g_decimals);
@@ -713,7 +713,7 @@ top:
     }
     driver_unstack_screen();
     g_timer_start = std::clock(); // tab display was "time out"
-    if (bf_math != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         restore_stack(saved);
     }

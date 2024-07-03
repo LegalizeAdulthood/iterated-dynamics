@@ -47,9 +47,9 @@ void set_default_parms()
     }
     if (g_debug_flag != debug_flags::force_arbitrary_precision_math)
     {
-        bf_math = bf_math_type::NONE;
+        g_bf_math = bf_math_type::NONE;
     }
-    else if (bf_math != bf_math_type::NONE)
+    else if (g_bf_math != bf_math_type::NONE)
     {
         fractal_floattobf();
     }
