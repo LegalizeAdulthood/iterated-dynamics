@@ -50,8 +50,8 @@ extern bn_t g_bn_tmp3;    // g_r_length
 extern bn_t g_bn_tmp4;    // g_r_length
 extern bn_t g_bn_tmp5;    // g_r_length
 extern bn_t g_bn_tmp6;    // g_r_length
-extern bn_t bntmpcpy1; // g_bn_length
-extern bn_t bntmpcpy2; // g_bn_length
+extern bn_t g_bn_tmp_copy1; // g_bn_length
+extern bn_t g_bn_tmp_copy2; // g_bn_length
 extern bn_t bn_pi;
 extern bn_t bntmp;     // g_r_length
 extern bf_t bftmp1;    // g_r_bf_length+2

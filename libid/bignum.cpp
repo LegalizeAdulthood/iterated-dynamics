@@ -1462,7 +1462,7 @@ bn_t div_bn_int(bn_t r, bn_t n, U16 u)
 /**********************************************************************/
 char *bntostr(char *s, int dec, bn_t r)
 {
-    return unsafe_bntostr(s, dec, copy_bn(bntmpcpy2, r));
+    return unsafe_bntostr(s, dec, copy_bn(g_bn_tmp_copy2, r));
 }
 
 /**********************************************************************/
@@ -1480,23 +1480,23 @@ bn_t inv_bn(bn_t r, bn_t n)
 /**********************************************************************/
 bn_t div_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    copy_bn(bntmpcpy1, n1);
-    copy_bn(bntmpcpy2, n2);
-    return unsafe_div_bn(r, bntmpcpy1, bntmpcpy2);
+    copy_bn(g_bn_tmp_copy1, n1);
+    copy_bn(g_bn_tmp_copy2, n2);
+    return unsafe_div_bn(r, g_bn_tmp_copy1, g_bn_tmp_copy2);
 }
 
 /**********************************************************************/
 bn_t ln_bn(bn_t r, bn_t n)
 {
-    copy_bn(bntmpcpy1, n); // allows r and n to overlap memory
-    unsafe_ln_bn(r, bntmpcpy1);
+    copy_bn(g_bn_tmp_copy1, n); // allows r and n to overlap memory
+    unsafe_ln_bn(r, g_bn_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bn_t sincos_bn(bn_t s, bn_t c, bn_t n)
 {
-    return unsafe_sincos_bn(s, c, copy_bn(bntmpcpy1, n));
+    return unsafe_sincos_bn(s, c, copy_bn(g_bn_tmp_copy1, n));
 }
 
 /**********************************************************************/
@@ -1514,9 +1514,9 @@ bn_t atan_bn(bn_t r, bn_t n)
 /**********************************************************************/
 bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx)
 {
-    copy_bn(bntmpcpy1, ny);
-    copy_bn(bntmpcpy2, nx);
-    unsafe_atan2_bn(r, bntmpcpy1, bntmpcpy2);
+    copy_bn(g_bn_tmp_copy1, ny);
+    copy_bn(g_bn_tmp_copy2, nx);
+    unsafe_atan2_bn(r, g_bn_tmp_copy1, g_bn_tmp_copy2);
     return r;
 }
 

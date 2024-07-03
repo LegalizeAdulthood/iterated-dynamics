@@ -41,8 +41,8 @@ bn_t g_bn_tmp3 = nullptr;
 bn_t g_bn_tmp4 = nullptr;
 bn_t g_bn_tmp5 = nullptr;
 bn_t g_bn_tmp6 = nullptr;
-bn_t bntmpcpy1 = nullptr;
-bn_t bntmpcpy2 = nullptr;
+bn_t g_bn_tmp_copy1 = nullptr;
+bn_t g_bn_tmp_copy2 = nullptr;
 
 // used by other routines, g_bn_length
 bn_t bnxmin = nullptr;
@@ -226,9 +226,9 @@ static void init_bf_2()
     bftmpcpy2  = bnroot+ptr;
     ptr += (g_r_bf_length+2)*2;
 
-    bntmpcpy1  = bnroot+ptr;
+    g_bn_tmp_copy1  = bnroot+ptr;
     ptr += (g_r_length*2);
-    bntmpcpy2  = bnroot+ptr;
+    g_bn_tmp_copy2  = bnroot+ptr;
     ptr += (g_r_length*2);
 
     if (g_bf_math == bf_math_type::BIGNUM)
