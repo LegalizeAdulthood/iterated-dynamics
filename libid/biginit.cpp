@@ -69,7 +69,7 @@ BNComplex bnold = { nullptr, nullptr };
 BNComplex bnparm = { nullptr, nullptr };
 BNComplex bnsaved = { nullptr, nullptr };
 BNComplex bnnew = { nullptr, nullptr };   // g_r_length
-bn_t bn_pi = nullptr;                      // TAKES NO SPACE
+bn_t g_bn_pi = nullptr;                      // TAKES NO SPACE
 
 // // g_r_bf_length+2
 bf_t bftmp1 = nullptr;
@@ -685,7 +685,7 @@ void init_big_pi()
     pi_offset = sizeof pi_table - length;
     std::memcpy(big_pi, pi_table + pi_offset, length);
 
-    // notice that bf_pi and bn_pi can share the same memory space
+    // notice that bf_pi and g_bn_pi can share the same memory space
     bf_pi = big_pi;
-    bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
+    g_bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 }

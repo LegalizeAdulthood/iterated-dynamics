@@ -1042,7 +1042,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     }
     // n >= 0
 
-    double_bn(g_bn_tmp1, bn_pi); // 2*pi
+    double_bn(g_bn_tmp1, g_bn_pi); // 2*pi
     // this could be done with remainders, but it would probably be slower
     while (cmp_bn(n, g_bn_tmp1) >= 0)   // while n >= 2*pi
     {
@@ -1050,7 +1050,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     }
     // 0 <= n < 2*pi
 
-    copy_bn(g_bn_tmp1, bn_pi); // pi
+    copy_bn(g_bn_tmp1, g_bn_pi); // pi
     if (cmp_bn(n, g_bn_tmp1) >= 0) // if n >= pi
     {
         sub_a_bn(n, g_bn_tmp1);
@@ -1059,19 +1059,19 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     }
     // 0 <= n < pi
 
-    half_bn(g_bn_tmp1, bn_pi); // pi/2
+    half_bn(g_bn_tmp1, g_bn_pi); // pi/2
     if (cmp_bn(n, g_bn_tmp1) > 0) // if n > pi/2
     {
-        sub_bn(n, bn_pi, n);   // pi - n
+        sub_bn(n, g_bn_pi, n);   // pi - n
         signcos = !signcos;
     }
     // 0 <= n < pi/2
 
-    half_bn(g_bn_tmp1, bn_pi); // pi/2
+    half_bn(g_bn_tmp1, g_bn_pi); // pi/2
     half_a_bn(g_bn_tmp1);      // pi/4
     if (cmp_bn(n, g_bn_tmp1) > 0) // if n > pi/4
     {
-        half_bn(g_bn_tmp1, bn_pi); // pi/2
+        half_bn(g_bn_tmp1, g_bn_pi); // pi/2
         sub_bn(n, g_bn_tmp1, n);  // pi/2 - n
         switch_sincos = !switch_sincos;
     }
@@ -1223,7 +1223,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = g_shift_factor;
-    orig_bn_pi         = bn_pi;
+    orig_bn_pi         = g_bn_pi;
     orig_r             = r;
     orig_n             = n;
     orig_bntmp3        = g_bn_tmp3;
@@ -1238,7 +1238,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 
     // adjust pointers
     r = orig_r + orig_bnlength - g_bn_length;
-    bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
+    g_bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
     g_bn_tmp3 = orig_bntmp3 + orig_bnlength - g_bn_length;
 
     f = atanl(f); // approximate arctangent
@@ -1258,7 +1258,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         calc_lengths();
         r = orig_r + orig_bnlength - g_bn_length;
         n = orig_n + orig_bnlength - g_bn_length;
-        bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
+        g_bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
         g_bn_tmp3 = orig_bntmp3 + orig_bnlength - g_bn_length;
 
 #ifdef CALCULATING_BIG_PI
@@ -1310,13 +1310,13 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     g_shift_factor = orig_shiftfactor;
-    bn_pi         = orig_bn_pi;
+    g_bn_pi         = orig_bn_pi;
     r             = orig_r;
     g_bn_tmp3        = orig_bntmp3;
 
     if (large_arg)
     {
-        half_bn(g_bn_tmp3, bn_pi);  // pi/2
+        half_bn(g_bn_tmp3, g_bn_pi);  // pi/2
         sub_a_bn(g_bn_tmp3, r);     // pi/2 - atan(1/n)
         copy_bn(r, g_bn_tmp3);
     }
@@ -1343,7 +1343,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
     {
         if (signx < 0)
         {
-            copy_bn(r, bn_pi); // negative x axis, 180 deg
+            copy_bn(r, g_bn_pi); // negative x axis, 180 deg
         }
         else        // signx >= 0    positive x axis, 0
         {
@@ -1353,7 +1353,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
     }
     if (signx == 0)
     {
-        copy_bn(r, bn_pi); // y axis
+        copy_bn(r, g_bn_pi); // y axis
         half_a_bn(r);      // +90 deg
         if (signy < 0)
         {
@@ -1374,7 +1374,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
     unsafe_atan_bn(r, g_bn_tmp6);
     if (signx < 0)
     {
-        sub_bn(r, bn_pi, r);
+        sub_bn(r, g_bn_pi, r);
     }
     if (signy < 0)
     {
