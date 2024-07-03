@@ -188,7 +188,7 @@ bool tab_display_2(char *msg)
               g_bignum_max_stack_addr-startstack, (long)((g_bignum_max_stack_addr-startstack)/(rbflength+2)), rbflength+2);
     if (g_bf_math != bf_math_type::NONE)
     {
-        write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
+        write_row(++row, "g_int_length %-d bflength %-d ", g_int_length, bflength);
     }
     row++;
     show_str_var("tempdir",     g_temp_dir.c_str(),      &row, msg);

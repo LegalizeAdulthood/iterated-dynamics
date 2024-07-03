@@ -104,13 +104,13 @@ void showbfglobals(char const *s)
 {
     char msg[300];
     std::snprintf(msg, std::size(msg),
-        "%s\n"                                                          //
-        "g_bn_step=%d bnlength=%d intlength=%d rlength=%d padding=%d\n" //
-        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"        //
-        "bfdecimals=%d ",                                               //
-        s,                                                              //
-        g_bn_step, bnlength, intlength, rlength, padding,               //
-        shiftfactor, g_decimals, bflength, rbflength,                   //
+        "%s\n"                                                             //
+        "g_bn_step=%d bnlength=%d g_int_length=%d rlength=%d padding=%d\n" //
+        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"           //
+        "bfdecimals=%d ",                                                  //
+        s,                                                                 //
+        g_bn_step, bnlength, g_int_length, rlength, padding,               //
+        shiftfactor, g_decimals, bflength, rbflength,                      //
         bfdecimals);
     if (stopmsg(msg))
     {
@@ -314,8 +314,8 @@ void bfcornerstofloat()
 //    Bignumber Bailout Routines
 // --------------------------------------------------------------------
 
-// mandel_bntoint() can only be used for intlength of 1
-#define mandel_bntoint(n) (*(n + bnlength - 1)) // assumes intlength of 1
+// mandel_bntoint() can only be used for g_int_length of 1
+#define mandel_bntoint(n) (*(n + bnlength - 1)) // assumes g_int_length of 1
 
 // Note:
 // No need to set magnitude

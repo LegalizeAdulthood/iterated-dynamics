@@ -34,7 +34,7 @@ using BNComplex = id::Complex<bn_t>;
 // globals
 extern bf_math_type g_bf_math;
 extern int g_bn_step;
-extern int intlength;
+extern int g_int_length;
 extern int bnlength;
 extern int rlength;
 extern int padding;

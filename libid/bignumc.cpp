@@ -916,7 +916,7 @@ LDBL bntofloat(bn_t n)
         neg_a_bn(n);
     }
 
-    expon = intlength - 1;
+    expon = g_int_length - 1;
     getbyte = n + bnlength - 1;
     while (*getbyte == 0 && getbyte >= n)
     {
@@ -979,11 +979,11 @@ bf_t floattobf(bf_t r, LDBL f)
 
     bnl = bnlength;
     bnlength = bflength;
-    il = intlength;
-    intlength = 2;
+    il = g_int_length;
+    g_int_length = 2;
     floattobn(r, f);
     bnlength = bnl;
-    intlength = il;
+    g_int_length = il;
 
     big_set16(r + bflength, (S16)power); // exp
 
@@ -1013,11 +1013,11 @@ LDBL bftofloat(bf_t n)
 
     bnl = bnlength;
     bnlength = bflength;
-    il = intlength;
-    intlength = 2;
+    il = g_int_length;
+    g_int_length = 2;
     f = bntofloat(n);
     bnlength = bnl;
-    intlength = il;
+    g_int_length = il;
 
     power = (S16)big_access16(n + bflength);
     f = scale_256(f, power);

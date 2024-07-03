@@ -22,7 +22,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 // globals
 int g_bn_step{};
 int bnlength{};
-int intlength{};
+int g_int_length{};
 int rlength{};
 int padding{};
 int shiftfactor{};
@@ -147,8 +147,8 @@ void calc_lengths()
     rlength = bnlength + padding;
 
     // This shiftfactor assumes non-full multiplications will be performed.
-    // Change to bnlength-intlength for full multiplications.
-    shiftfactor = padding - intlength;
+    // Change to bnlength-g_int_length for full multiplications.
+    shiftfactor = padding - g_int_length;
 
     bflength = bnlength+g_bn_step; // one extra step for added precision
     rbflength = bflength + padding;
@@ -462,7 +462,7 @@ void free_bf_vars()
     g_bf_math = bf_math_type::NONE;
     g_bn_step = 0;
     bnlength = 0;
-    intlength = 0;
+    g_int_length = 0;
     rlength = 0;
     padding = 0;
     shiftfactor = 0;
@@ -536,13 +536,13 @@ void init_bf_dec(int dec)
     if (g_bail_out > 10)      // arbitrary value
     {
         // using 2 doesn't gain much and requires another test
-        intlength = 4;
+        g_int_length = 4;
     }
     else if (g_fractal_type == fractal_type::FPMANDELZPOWER //
         || g_fractal_type == fractal_type::FPJULIAZPOWER    //
         || g_fractal_type == fractal_type::DIVIDE_BROT5)
     {
-        intlength = 4; // 2 leaves artifacts in the center of the lakes
+        g_int_length = 4; // 2 leaves artifacts in the center of the lakes
     }
     // the bailout tests need greater dynamic range
     else if (g_bail_out_test == bailouts::Real //
@@ -550,14 +550,14 @@ void init_bf_dec(int dec)
         || g_bail_out_test == bailouts::And    //
         || g_bail_out_test == bailouts::Manr)
     {
-        intlength = 2;
+        g_int_length = 2;
     }
     else
     {
-        intlength = 1;
+        g_int_length = 1;
     }
     // conservative estimate
-    bnlength = intlength + (int)(g_decimals/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(g_decimals/LOG10_256) + 1; // round up
     init_bf_2();
 }
 
@@ -572,13 +572,13 @@ void init_bf_length(int bnl)
     if (g_bail_out > 10)      // arbitrary value
     {
         // using 2 doesn't gain much and requires another test
-        intlength = 4;
+        g_int_length = 4;
     }
     else if (g_fractal_type == fractal_type::FPMANDELZPOWER //
         || g_fractal_type == fractal_type::FPJULIAZPOWER    //
         || g_fractal_type == fractal_type::DIVIDE_BROT5)
     {
-        intlength = 4; // 2 leaves artifacts in the center of the lakes
+        g_int_length = 4; // 2 leaves artifacts in the center of the lakes
     }
     // the bailout tests need greater dynamic range
     else if (g_bail_out_test == bailouts::Real //
@@ -586,14 +586,14 @@ void init_bf_length(int bnl)
         || g_bail_out_test == bailouts::And    //
         || g_bail_out_test == bailouts::Manr)
     {
-        intlength = 2;
+        g_int_length = 2;
     }
     else
     {
-        intlength = 1;
+        g_int_length = 1;
     }
     // conservative estimate
-    g_decimals = (int)((bnlength-intlength)*LOG10_256);
+    g_decimals = (int)((bnlength-g_int_length)*LOG10_256);
     init_bf_2();
 }
 
@@ -677,7 +677,7 @@ void init_big_pi()
         0x09, 0xA4, 0x44, 0x73, 0x70, 0x03, 0x2E, 0x8A, 0x19, 0x13,
         0xD3, 0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
         /* . */  0x03, 0x00, 0x00, 0x00
-        //  <- up to intlength 4 ->
+        //  <- up to g_int_length 4 ->
         // or bf_t int length of 2 + 2 byte exp
     };
 
@@ -687,5 +687,5 @@ void init_big_pi()
 
     // notice that bf_pi and bn_pi can share the same memory space
     bf_pi = big_pi;
-    bn_pi = big_pi + (bflength-2) - (bnlength-intlength);
+    bn_pi = big_pi + (bflength-2) - (bnlength-g_int_length);
 }

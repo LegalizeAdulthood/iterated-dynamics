@@ -37,16 +37,16 @@ Each '_' below represents a block of memory used for arithmetic (1 block =
 LSB                                MSB
   _  _  _  _  _  _  _  _  _  _  _  _
 n <----------- bnlength ----------->
-                    intlength  ---> <---
+                 g_int_length  ---> <---
 
   bnlength  = the length in bytes of the bignumber
-  intlength = the number of bytes used to represent the integer part of
+  g_int_length = the number of bytes used to represent the integer part of
               the bignumber.  Possible values are 1, 2, or 4.  This
               determines the largest number that can be represented by
               the bignumber.
-                intlength = 1, max value = 127.99...
-                intlength = 2, max value = 32,767.99...
-                intlength = 4, max value = 2,147,483,647.99...
+                g_int_length = 1, max value = 127.99...
+                g_int_length = 2, max value = 32,767.99...
+                g_int_length = 4, max value = 2,147,483,647.99...
 
 
 FULL DOUBLE PRECISION MULTIPLICATION:
@@ -59,22 +59,22 @@ thereby eliminating the possiblity of overflowing the number.
 LSB                                                                    MSB
   _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _
 r <--------------------------- 2*bnlength ----------------------------->
-                                                     2*intlength  --->  <---
+                                                  2*g_int_length  --->  <---
 
 If this double wide bignumber, r, needs to be converted to a normal,
 single width bignumber, this is easily done with pointer arithmetic.  The
 converted value starts at r+shiftfactor (where shiftfactor =
-bnlength-intlength) and continues for bnlength bytes.  The lower order
+bnlength-g_int_length) and continues for bnlength bytes.  The lower order
 bytes and the upper integer part of the double wide number can then be
 ignored.
 
 LSB                                                                    MSB
   _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _
 r <--------------------------- 2*bnlength ----------------------------->
-                                                     2*intlength  --->  <---
+                                                  2*g_int_length  --->  <---
                                  LSB                                  MSB
                r+shiftfactor   <----------  bnlength  ------------>
-                                                       intlength  ---> <---
+                                                    g_int_length  ---> <---
 
 
 PARTIAL PRECISION MULTIPLICATION:
@@ -102,21 +102,21 @@ eliminating the possiblity of overflowing the number.
              LSB                                      MSB
                _  _  _  _  _  _  _  _  _  _  _  _  _  _
             r  <---- rlength = bnlength+padding ------>
-                                    2*intlength  --->  <---
+                                 2*g_int_length  --->  <---
 
 If r needs to be converted to a normal, single width bignumber, this is
 easily done with pointer arithmetic.  The converted value starts at
-r+shiftfactor (where shiftfactor = padding-intlength) and continues for
+r+shiftfactor (where shiftfactor = padding-g_int_length) and continues for
 bnlength bytes.  The lower order bytes and the upper integer part of the
 double wide number can then be ignored.
 
              LSB                                      MSB
                _  _  _  _  _  _  _  _  _  _  _  _  _  _
             r  <---- rlength = bnlength+padding ------>
-                                    2*intlength  --->  <---
+                                 2*g_int_length  --->  <---
                    LSB                                  MSB
       r+shiftfactor  <----------  bnlength  --------->
-                                       intlength ---> <---
+                                    g_int_length ---> <---
 */
 
 /************************************************************************/
@@ -198,10 +198,10 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
     int saveintlength;
 
     // save lengths so not dependent on external environment
-    saveintlength = intlength;
+    saveintlength = g_int_length;
     savebnlength  = bnlength;
 
-    intlength     = newintlength;
+    g_int_length     = newintlength;
     bnlength      = newbnlength;
     clear_bn(newnum);
 
@@ -220,7 +220,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
         std::memcpy(newnum, old+oldbnlength-oldintlength-newbnlength+newintlength,
                bnlength);
     }
-    intlength = saveintlength;
+    g_int_length = saveintlength;
     bnlength  = savebnlength;
     return 0;
 }
@@ -251,7 +251,7 @@ bn_t strtobn(bn_t r, char *s)
     long longval;
 
     clear_bn(r);
-    onesbyte = r + bnlength - intlength;
+    onesbyte = r + bnlength - g_int_length;
 
     if (s[0] == '+')    // for + sign
     {
@@ -275,7 +275,7 @@ bn_t strtobn(bn_t r, char *s)
         if (s[l] == '.')
         {
             longval = std::atol(s);
-            switch (intlength)
+            switch (g_int_length)
             {
                 // only 1, 2, or 4 are allowed
             case 1:
@@ -293,7 +293,7 @@ bn_t strtobn(bn_t r, char *s)
     else
     {
         longval = std::atol(s);
-        switch (intlength)
+        switch (g_int_length)
         {
             // only 1, 2, or 4 are allowed
         case 1:
@@ -324,7 +324,7 @@ int strlen_needed()
     int length = 3;
 
     // first space for integer part
-    switch (intlength)
+    switch (g_int_length)
     {
     case 1:
         length = 3;  // max 127
@@ -360,14 +360,14 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     {
         dec = g_decimals;
     }
-    onesbyte = r + bnlength - intlength;
+    onesbyte = r + bnlength - g_int_length;
 
     if (is_bn_neg(r))
     {
         neg_a_bn(r);
         *(s++) = '-';
     }
-    switch (intlength)
+    switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
     case 1:
@@ -406,8 +406,8 @@ bn_t inttobn(bn_t r, long longval)
     bn_t onesbyte;
 
     clear_bn(r);
-    onesbyte = r + bnlength - intlength;
-    switch (intlength)
+    onesbyte = r + bnlength - g_int_length;
+    switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
     case 1:
@@ -431,8 +431,8 @@ long bntoint(bn_t n)
     bn_t onesbyte;
     long longval = 0;
 
-    onesbyte = n + bnlength - intlength;
-    switch (intlength)
+    onesbyte = n + bnlength - g_int_length;
+    switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
     case 1:
@@ -457,7 +457,7 @@ bn_t floattobn(bn_t r, LDBL f)
     bool signflag = false;
 
     clear_bn(r);
-    onesbyte = r + bnlength - intlength;
+    onesbyte = r + bnlength - g_int_length;
 
     if (f < 0)
     {
@@ -465,7 +465,7 @@ bn_t floattobn(bn_t r, LDBL f)
         f = -f;
     }
 
-    switch (intlength)
+    switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
     case 1:
@@ -480,7 +480,7 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     f -= (long)f; // keep only the decimal part
-    for (int i = bnlength-intlength-1; i >= 0 && f != 0.0; i--)
+    for (int i = bnlength-g_int_length-1; i >= 0 && f != 0.0; i--)
     {
         f *= 256;
         r[i] = (BYTE)f;  // keep use the integer part
@@ -558,7 +558,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         return r;
     }
     f = 1/f; // approximate inverse
-    maxval = (1L << ((intlength << 3)-1)) - 1;
+    maxval = (1L << ((g_int_length << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -583,7 +583,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // orig_bntmp1        = bntmp1;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
@@ -667,7 +667,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         return r;
     }
     f = a/b; // approximate quotient
-    maxval = (1L << ((intlength << 3)-1)) - 1;
+    maxval = (1L << ((g_int_length << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -799,7 +799,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     orig_n             = n;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
@@ -919,7 +919,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
     f = bntofloat(n);
     f = logl(f); // approximate ln(x)
-    maxval = (1L << ((intlength << 3)-1)) - 1;
+    maxval = (1L << ((g_int_length << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -948,7 +948,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     inttobn(bntmp4, 1); // set before setting new values
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
@@ -1229,7 +1229,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     orig_bntmp3        = bntmp3;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;

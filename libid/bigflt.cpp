@@ -244,7 +244,7 @@ bn_t bftobn(bn_t n, bf_t f)
     BYTE hibyte;
 
     fexp = (S16)big_access16(f+bflength);
-    if (fexp >= intlength)
+    if (fexp >= g_int_length)
     {
         // if it's too big, use max value
         max_bn(n);
@@ -255,14 +255,14 @@ bn_t bftobn(bn_t n, bf_t f)
         return n;
     }
 
-    if (-fexp > bnlength - intlength) // too small, return zero
+    if (-fexp > bnlength - g_int_length) // too small, return zero
     {
         clear_bn(n);
         return n;
     }
 
     // already checked for over/underflow, this should be ok
-    movebytes = bnlength - intlength + fexp + 1;
+    movebytes = bnlength - g_int_length + fexp + 1;
     std::memcpy(n, f+bflength-movebytes-1, movebytes);
     hibyte = *(f+bflength-1);
     std::memset(n+movebytes, hibyte, bnlength-movebytes); // sign extends
@@ -278,7 +278,7 @@ bf_t bntobf(bf_t f, bn_t n)
     std::memcpy(f+bflength-bnlength-1, n, bnlength);
     std::memset(f, 0, bflength - bnlength - 1);
     *(f+bflength-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
-    big_set16(f+bflength, (S16)(intlength - 1)); // exp
+    big_set16(f+bflength, (S16)(g_int_length - 1)); // exp
     norm_bf(f);
     return f;
 }
@@ -403,7 +403,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     // orig_bftmp1        = bftmp1;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
@@ -561,7 +561,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     orig_n             = n;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
@@ -702,7 +702,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     orig_bftmp5        = bftmp5;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
@@ -1007,7 +1007,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     orig_bftmp3        = bftmp3;
 
     // calculate new starting values
-    bnlength = intlength + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
     if (bnlength > orig_bnlength)
     {
         bnlength = orig_bnlength;
