@@ -435,9 +435,9 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 }
 
 /************************************************************************/
-// r = n1 * n2 calculating only the top rlength bytes
-// Note: r will be of length rlength
-//       2*g_bn_length <= rlength < g_bn_length
+// r = n1 * n2 calculating only the top g_r_length bytes
+// Note: r will be of length g_r_length
+//       2*g_bn_length <= g_r_length < g_bn_length
 //       n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
@@ -472,15 +472,15 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
         }
     }
     n1p = n1;
-    n2 += (g_bn_length << 1) - rlength;  // shift n2 over to where it is needed
+    n2 += (g_bn_length << 1) - g_r_length;  // shift n2 over to where it is needed
 
-    g_bn_length = rlength;
-    clear_bn(r);        // zero out r, rlength width
+    g_bn_length = g_r_length;
+    clear_bn(r);        // zero out r, g_r_length width
     g_bn_length = bnl;
 
-    steps = (rlength-g_bn_length) >> 1;
+    steps = (g_r_length-g_bn_length) >> 1;
     skips = (g_bn_length >> 1) - steps;
-    carry_steps = doublesteps = (rlength >> 1)-2;
+    carry_steps = doublesteps = (g_r_length >> 1)-2;
     rp2 = rp1 = r;
     for (int i = g_bn_length >> 1; i > 0; i--)
     {
@@ -526,7 +526,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
     // if they were the same or same sign, the product must be positive
     if (!samevar && sign1 != sign2)
     {
-        g_bn_length = rlength;
+        g_bn_length = g_r_length;
         neg_a_bn(r);            // wider bignumber
         g_bn_length = bnl;
     }
@@ -647,8 +647,8 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 //          which is about 1/2 n*n as l gets large
 //  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)
 //
-// Note: r will be of length rlength
-//       2*g_bn_length >= rlength > g_bn_length
+// Note: r will be of length g_r_length
+//       2*g_bn_length >= g_r_length > g_bn_length
 // SIDE-EFFECTS: n is changed to its absolute value
 bn_t unsafe_square_bn(bn_t r, bn_t n)
 {
@@ -668,9 +668,9 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     int bnl;
 
     // This whole procedure would be a great deal simpler if we could assume that
-    // rlength < 2*g_bn_length (that is, not =).  Therefore, we will take the
+    // g_r_length < 2*g_bn_length (that is, not =).  Therefore, we will take the
     // easy way out and call full_square_bn() if it is.
-    if (rlength == (g_bn_length << 1))   // rlength == 2*g_bn_length
+    if (g_r_length == (g_bn_length << 1))   // g_r_length == 2*g_bn_length
     {
         return unsafe_full_square_bn(r, n);    // call full_square_bn() and quit
     }
@@ -681,14 +681,14 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     }
 
     bnl = g_bn_length;
-    g_bn_length = rlength;
-    clear_bn(r);        // zero out r, of width rlength
+    g_bn_length = g_r_length;
+    clear_bn(r);        // zero out r, of width g_r_length
     g_bn_length = bnl;
 
     // determine whether r is on an odd or even two-byte word in the number
-    rodd = (U16)(((g_bn_length << 1)-rlength) >> 1) & 0x0001;
+    rodd = (U16)(((g_bn_length << 1)-g_r_length) >> 1) & 0x0001;
     int i = (g_bn_length >> 1)-1;
-    steps = (rlength-g_bn_length) >> 1;
+    steps = (g_r_length-g_bn_length) >> 1;
     carry_steps = doublesteps = (g_bn_length >> 1)+steps-2;
     skips = (i - steps) >> 1;     // how long to skip over pointer shifts
     rp2 = rp1 = r;
@@ -746,7 +746,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
             carry_steps = doublesteps;
         }
         // All the middle terms have been multiplied.  Now double it.
-        g_bn_length = rlength;
+        g_bn_length = g_r_length;
         double_a_bn(r);
         g_bn_length = bnl;
     }
@@ -755,7 +755,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     // be careful, the next dozen or so lines are confusing!
     // determine whether r is on an odd or even word in the number
     // using i as a temporary variable here
-    i = (g_bn_length << 1)-rlength;
+    i = (g_bn_length << 1)-g_r_length;
     rp1 = r + ((U16)i & (U16)0x0002);
     i = (U16)((i >> 1)+1) & (U16)0xFFFE;
     n1p = n + i;

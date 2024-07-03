@@ -395,7 +395,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
     orig_r             = r;
@@ -448,7 +448,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
@@ -554,7 +554,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
     orig_r             = r;
@@ -608,7 +608,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     // cppcheck-suppress uselessAssignmentPtrArg
@@ -694,7 +694,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
     orig_r             = r;
@@ -756,7 +756,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
@@ -998,7 +998,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
     orig_bf_pi         = bf_pi;
@@ -1085,7 +1085,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
     bf_pi         = orig_bf_pi;
@@ -1849,9 +1849,9 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 }
 
 /************************************************************************/
-// r = n1 * n2 calculating only the top rlength bytes
-// Note: r will be of length rlength
-//       2*bflength <= rlength < bflength
+// r = n1 * n2 calculating only the top g_r_length bytes
+// Note: r will be of length g_r_length
+//       2*bflength <= g_r_length < bflength
 //       n1 and n2 can be the same pointer
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
@@ -1878,11 +1878,11 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 
     bnl = g_bn_length;
     g_bn_length = bflength;
-    rl = rlength;
-    rlength = rbflength;
+    rl = g_r_length;
+    g_r_length = rbflength;
     unsafe_mult_bn(r, n1, n2);
     g_bn_length = bnl;
-    rlength = rl;
+    g_r_length = rl;
 
     bfl = bflength;
     bflength = rbflength;
@@ -1945,8 +1945,8 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 //          which is about 1/2 n*n as l gets large
 //  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)
 /*                                                                      */
-// Note: r will be of length rlength
-//       2*bflength >= rlength > bflength
+// Note: r will be of length g_r_length
+//       2*bflength >= g_r_length > bflength
 // SIDE-EFFECTS: n is changed to its absolute value
 bf_t unsafe_square_bf(bf_t r, bf_t n)
 {
@@ -1967,11 +1967,11 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 
     bnl = g_bn_length;
     g_bn_length = bflength;
-    rl = rlength;
-    rlength = rbflength;
+    rl = g_r_length;
+    g_r_length = rbflength;
     unsafe_square_bn(r, n);
     g_bn_length = bnl;
-    rlength = rl;
+    g_r_length = rl;
 
     bfl = bflength;
     bflength = rbflength;

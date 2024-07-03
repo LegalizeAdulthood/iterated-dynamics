@@ -23,7 +23,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 int g_bn_step{};
 int g_bn_length{};
 int g_int_length{};
-int rlength{};
+int g_r_length{};
 int padding{};
 int shiftfactor{};
 int g_decimals{};
@@ -59,7 +59,7 @@ bn_t bnxdel2 = nullptr;
 bn_t bnydel2 = nullptr;
 bn_t bnclosenuff = nullptr;
 
-// rlength
+// g_r_length
 bn_t bntmpsqrx = nullptr;
 bn_t bntmpsqry = nullptr;
 bn_t bntmp = nullptr;
@@ -68,7 +68,7 @@ bn_t bntmp = nullptr;
 BNComplex bnold = { nullptr, nullptr };
 BNComplex bnparm = { nullptr, nullptr };
 BNComplex bnsaved = { nullptr, nullptr };
-BNComplex bnnew = { nullptr, nullptr };   // rlength
+BNComplex bnnew = { nullptr, nullptr };   // g_r_length
 bn_t bn_pi = nullptr;                      // TAKES NO SPACE
 
 // // rbflength+2
@@ -144,7 +144,7 @@ void calc_lengths()
     {
         padding = 2*g_bn_step;
     }
-    rlength = g_bn_length + padding;
+    g_r_length = g_bn_length + padding;
 
     // This shiftfactor assumes non-full multiplications will be performed.
     // Change to g_bn_length-g_int_length for full multiplications.
@@ -196,17 +196,17 @@ static void init_bf_2()
     // internal pointers
     ptr        = 0;
     bntmp1     = bnroot+ptr;
-    ptr += rlength;
+    ptr += g_r_length;
     bntmp2     = bnroot+ptr;
-    ptr += rlength;
+    ptr += g_r_length;
     bntmp3     = bnroot+ptr;
-    ptr += rlength;
+    ptr += g_r_length;
     bntmp4     = bnroot+ptr;
-    ptr += rlength;
+    ptr += g_r_length;
     bntmp5     = bnroot+ptr;
-    ptr += rlength;
+    ptr += g_r_length;
     bntmp6     = bnroot+ptr;
-    ptr += rlength;
+    ptr += g_r_length;
 
     bftmp1     = bnroot+ptr;
     ptr += rbflength+2;
@@ -227,9 +227,9 @@ static void init_bf_2()
     ptr += (rbflength+2)*2;
 
     bntmpcpy1  = bnroot+ptr;
-    ptr += (rlength*2);
+    ptr += (g_r_length*2);
     bntmpcpy2  = bnroot+ptr;
-    ptr += (rlength*2);
+    ptr += (g_r_length*2);
 
     if (g_bf_math == bf_math_type::BIGNUM)
     {
@@ -254,13 +254,13 @@ static void init_bf_2()
         bnydel2    = bnroot+ptr;
         ptr += g_bn_length;
         bnold.x    = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
         bnold.y    = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
         bnnew.x    = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
         bnnew.y    = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
         bnsaved.x  = bnroot+ptr;
         ptr += g_bn_length;
         bnsaved.y  = bnroot+ptr;
@@ -272,11 +272,11 @@ static void init_bf_2()
         bnparm.y   = bnroot+ptr;
         ptr += g_bn_length;
         bntmpsqrx  = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
         bntmpsqry  = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
         bntmp      = bnroot+ptr;
-        ptr += rlength;
+        ptr += g_r_length;
     }
     if (g_bf_math == bf_math_type::BIGFLT)
     {
@@ -463,7 +463,7 @@ void free_bf_vars()
     g_bn_step = 0;
     g_bn_length = 0;
     g_int_length = 0;
-    rlength = 0;
+    g_r_length = 0;
     padding = 0;
     shiftfactor = 0;
     g_decimals = 0;

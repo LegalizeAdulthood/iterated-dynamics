@@ -82,26 +82,26 @@ PARTIAL PRECISION MULTIPLICATION:
 
 In most cases, full double precision multiplication is not necessary.  The
 lower order bytes are usually thrown away anyway.  The non-"full"
-multiplication routines only calculate rlength bytes in the result.  The
-value of rlength must be in the range: 2*g_bn_length <= rlength < g_bn_length.
-The amount by which rlength exceeds g_bn_length accounts for the extra bytes
+multiplication routines only calculate g_r_length bytes in the result.  The
+value of g_r_length must be in the range: 2*g_bn_length <= g_r_length < g_bn_length.
+The amount by which g_r_length exceeds g_bn_length accounts for the extra bytes
 that must be multiplied so that the first g_bn_length bytes are correct.
 These extra bytes are refered to in the code as the "padding," that is:
-rlength=g_bn_length+padding.
+g_r_length=g_bn_length+padding.
 
-All three of the values, g_bn_length, rlength, and therefore padding, must be
+All three of the values, g_bn_length, g_r_length, and therefore padding, must be
 multiples of the size of memory blocks being used for arithmetic (2 on
 8086/286 and 4 on 386+).  Typically, the padding is 2*blocksize.  In the
 case where g_bn_length=blocksize, padding can only be blocksize to keep
-rlength from being too big.
+g_r_length from being too big.
 
 The product of two bignumbers, n1 and n2, will then be a result, r, which
-is of length rlength.  The integer part will be twice as wide, thereby
+is of length g_r_length.  The integer part will be twice as wide, thereby
 eliminating the possiblity of overflowing the number.
 
              LSB                                      MSB
                _  _  _  _  _  _  _  _  _  _  _  _  _  _
-            r  <--- rlength = g_bn_length+padding ---->
+            r  <-- g_r_length = g_bn_length+padding -->
                                  2*g_int_length  --->  <---
 
 If r needs to be converted to a normal, single width bignumber, this is
@@ -112,7 +112,7 @@ double wide number can then be ignored.
 
              LSB                                      MSB
                _  _  _  _  _  _  _  _  _  _  _  _  _  _
-            r  <--- rlength = g_bn_length+padding ---->
+            r  <-- g_r_length = g_bn_length+padding -->
                                  2*g_int_length  --->  <---
                    LSB                                  MSB
       r+shiftfactor  <--------  g_bn_length  -------->
@@ -576,7 +576,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // Save original values.
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_r             = r;
     orig_n             = n;
@@ -625,7 +625,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // restore original values
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     r             = orig_r;
 
@@ -793,7 +793,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // Save original values.
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_r             = r;
     orig_n             = n;
@@ -848,7 +848,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // restore original values
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     // cppcheck-suppress uselessAssignmentPtrArg
     r             = orig_r;
@@ -938,7 +938,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // Save original values.
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_r             = r;
     orig_n             = n;
@@ -1002,7 +1002,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // restore original values
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     r             = orig_r;
     bntmp5        = orig_bntmp5;
@@ -1221,7 +1221,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // Save original values.
     orig_bnlength      = g_bn_length;
     orig_padding       = padding;
-    orig_rlength       = rlength;
+    orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_bn_pi         = bn_pi;
     orig_r             = r;
@@ -1308,7 +1308,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // restore original values
     g_bn_length   = orig_bnlength;
     padding       = orig_padding;
-    rlength       = orig_rlength;
+    g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     bn_pi         = orig_bn_pi;
     r             = orig_r;

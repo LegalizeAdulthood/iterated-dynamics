@@ -104,13 +104,13 @@ void showbfglobals(char const *s)
 {
     char msg[300];
     std::snprintf(msg, std::size(msg),
-        "%s\n"                                                                //
-        "g_bn_step=%d g_bn_length=%d g_int_length=%d rlength=%d padding=%d\n" //
-        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"              //
-        "bfdecimals=%d ",                                                     //
-        s,                                                                    //
-        g_bn_step, g_bn_length, g_int_length, rlength, padding,               //
-        shiftfactor, g_decimals, bflength, rbflength,                         //
+        "%s\n"                                                                   //
+        "g_bn_step=%d g_bn_length=%d g_int_length=%d g_r_length=%d padding=%d\n" //
+        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"                 //
+        "bfdecimals=%d ",                                                        //
+        s,                                                                       //
+        g_bn_step, g_bn_length, g_int_length, g_r_length, padding,               //
+        shiftfactor, g_decimals, bflength, rbflength,                            //
         bfdecimals);
     if (stopmsg(msg))
     {
@@ -807,7 +807,7 @@ int mandelbn_per_pixel()
     copy_bn(bnnew.x, bnold.x);
     copy_bn(bnnew.y, bnold.y);
 
-    // Square these to rlength bytes of precision
+    // Square these to g_r_length bytes of precision
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
 
@@ -881,7 +881,7 @@ juliabn_per_pixel()
     copy_bn(bnnew.x, bnold.x);
     copy_bn(bnnew.y, bnold.y);
 
-    // Square these to rlength bytes of precision
+    // Square these to g_r_length bytes of precision
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
 
@@ -1128,7 +1128,7 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     bn_t tmp1;
     int saved;
     saved = save_stack();
-    tmp1 = alloc_stack(rlength);
+    tmp1 = alloc_stack(g_r_length);
     mult_bn(t->x, x->x, y->x);
     mult_bn(t->y, x->y, y->y);
     sub_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
@@ -1145,9 +1145,9 @@ BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     bn_t tmp1, tmp2, denom;
     int saved;
     saved = save_stack();
-    tmp1 = alloc_stack(rlength);
-    tmp2 = alloc_stack(rlength);
-    denom = alloc_stack(rlength);
+    tmp1 = alloc_stack(g_r_length);
+    tmp2 = alloc_stack(g_r_length);
+    denom = alloc_stack(g_r_length);
 
     square_bn(tmp1, y->x);
     square_bn(tmp2, y->y);
@@ -1188,11 +1188,11 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     bn_t cosy;
     int saved;
     saved = save_stack();
-    e2x = alloc_stack(rlength);
-    siny = alloc_stack(rlength);
-    cosy = alloc_stack(rlength);
-    tmp.x = alloc_stack(rlength);
-    tmp.y = alloc_stack(rlength);
+    e2x = alloc_stack(g_r_length);
+    siny = alloc_stack(g_r_length);
+    cosy = alloc_stack(g_r_length);
+    tmp.x = alloc_stack(g_r_length);
+    tmp.y = alloc_stack(g_r_length);
 
     // 0 raised to anything is 0
     if (is_bn_zero(xx->x) && is_bn_zero(xx->y))

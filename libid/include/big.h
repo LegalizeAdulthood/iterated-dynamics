@@ -36,7 +36,7 @@ extern bf_math_type g_bf_math;
 extern int g_bn_step;
 extern int g_int_length;
 extern int g_bn_length;
-extern int rlength;
+extern int g_r_length;
 extern int padding;
 extern int g_decimals;
 extern int shiftfactor;
@@ -44,19 +44,19 @@ extern int bflength;
 extern int rbflength;
 extern int bfpadding;
 extern int bfdecimals;
-extern bn_t bntmp1;    // rlength
-extern bn_t bntmp2;    // rlength
-extern bn_t bntmp3;    // rlength
-extern bn_t bntmp4;    // rlength
-extern bn_t bntmp5;    // rlength
-extern bn_t bntmp6;    // rlength
-extern bn_t bntest1;   // rlength
-extern bn_t bntest2;   // rlength
-extern bn_t bntest3;   // rlength
+extern bn_t bntmp1;    // g_r_length
+extern bn_t bntmp2;    // g_r_length
+extern bn_t bntmp3;    // g_r_length
+extern bn_t bntmp4;    // g_r_length
+extern bn_t bntmp5;    // g_r_length
+extern bn_t bntmp6;    // g_r_length
+extern bn_t bntest1;   // g_r_length
+extern bn_t bntest2;   // g_r_length
+extern bn_t bntest3;   // g_r_length
 extern bn_t bntmpcpy1; // g_bn_length
 extern bn_t bntmpcpy2; // g_bn_length
 extern bn_t bn_pi;
-extern bn_t bntmp;     // rlength
+extern bn_t bntmp;     // g_r_length
 extern bf_t bftmp1;    // rbflength+2
 extern bf_t bftmp2;    // rbflength+2
 extern bf_t bftmp3;    // rbflength+2
@@ -260,14 +260,14 @@ extern bn_t bnydel;
 extern bn_t bnxdel2;
 extern bn_t bnydel2;
 extern bn_t bnclosenuff;
-// rlength
+// g_r_length
 extern bn_t bntmpsqrx;
 extern bn_t bntmpsqry;
 // g_bn_length
 extern BNComplex bnold;
 extern BNComplex bnparm;
 extern BNComplex bnsaved;
-extern BNComplex bnnew;                                         // rlength
+extern BNComplex bnnew;                                         // g_r_length
 // rbflength+2
 extern bf_t bfxdel;
 extern bf_t bfydel;
