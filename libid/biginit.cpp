@@ -20,7 +20,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <string>
 
 // globals
-int bnstep{};
+int g_bn_step{};
 int bnlength{};
 int intlength{};
 int rlength{};
@@ -130,19 +130,19 @@ static int restore_bf_vars();
 // given bnlength, calc_lengths will calculate all the other lengths
 void calc_lengths()
 {
-    bnstep = 4;  // use 4 in all cases
+    g_bn_step = 4;  // use 4 in all cases
 
-    if (bnlength % bnstep != 0)
+    if (bnlength % g_bn_step != 0)
     {
-        bnlength = (bnlength / bnstep + 1) * bnstep;
+        bnlength = (bnlength / g_bn_step + 1) * g_bn_step;
     }
-    if (bnlength == bnstep)
+    if (bnlength == g_bn_step)
     {
         padding = bnlength;
     }
     else
     {
-        padding = 2*bnstep;
+        padding = 2*g_bn_step;
     }
     rlength = bnlength + padding;
 
@@ -150,7 +150,7 @@ void calc_lengths()
     // Change to bnlength-intlength for full multiplications.
     shiftfactor = padding - intlength;
 
-    bflength = bnlength+bnstep; // one extra step for added precision
+    bflength = bnlength+g_bn_step; // one extra step for added precision
     rbflength = bflength + padding;
     bfdecimals = (int)((bflength-2)*LOG10_256);
 }
@@ -460,7 +460,7 @@ void free_bf_vars()
 {
     g_bf_save_len = 0;
     bf_math = bf_math_type::NONE;
-    bnstep = 0;
+    g_bn_step = 0;
     bnlength = 0;
     intlength = 0;
     rlength = 0;

@@ -2000,7 +2000,7 @@ static bool is_visible_window(
 
     if (info->bf_math)
     {
-        const int di_bflength = info->bflength + bnstep;
+        const int di_bflength = info->bflength + g_bn_step;
         const int two_di_len = di_bflength + 2;
         const int two_rbf = rbflength + 2;
 

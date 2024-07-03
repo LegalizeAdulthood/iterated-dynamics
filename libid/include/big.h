@@ -33,7 +33,7 @@ using BNComplex = id::Complex<bn_t>;
 
 // globals
 extern bf_math_type bf_math;
-extern int bnstep;
+extern int g_bn_step;
 extern int intlength;
 extern int bnlength;
 extern int rlength;

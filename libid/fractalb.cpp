@@ -104,13 +104,13 @@ void showbfglobals(char const *s)
 {
     char msg[300];
     std::snprintf(msg, std::size(msg),
-        "%s\n"                                                       //
-        "bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n" //
-        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"     //
-        "bfdecimals=%d ",                                            //
-        s,                                                           //
-        bnstep, bnlength, intlength, rlength, padding,               //
-        shiftfactor, g_decimals, bflength, rbflength,                //
+        "%s\n"                                                          //
+        "g_bn_step=%d bnlength=%d intlength=%d rlength=%d padding=%d\n" //
+        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"        //
+        "bfdecimals=%d ",                                               //
+        s,                                                              //
+        g_bn_step, bnlength, intlength, rlength, padding,               //
+        shiftfactor, g_decimals, bflength, rbflength,                   //
         bfdecimals);
     if (stopmsg(msg))
     {
