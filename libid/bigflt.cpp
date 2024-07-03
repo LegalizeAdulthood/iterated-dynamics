@@ -396,7 +396,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = rbflength;
     orig_r             = r;
     orig_n             = n;
@@ -449,7 +449,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
     // bftmp1        = orig_bftmp1;
@@ -555,7 +555,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = rbflength;
     orig_r             = r;
     orig_n             = n;
@@ -609,7 +609,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     rbflength     = orig_rbflength;
     // cppcheck-suppress uselessAssignmentPtrArg
     r             = orig_r;
@@ -695,7 +695,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = rbflength;
     orig_r             = r;
     orig_n             = n;
@@ -757,7 +757,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     rbflength     = orig_rbflength;
     r             = orig_r;
     bftmp5        = orig_bftmp5;
@@ -999,7 +999,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = rbflength;
     orig_bf_pi         = bf_pi;
     orig_r             = r;
@@ -1086,7 +1086,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     rbflength     = orig_rbflength;
     bf_pi         = orig_bf_pi;
     r             = orig_r;

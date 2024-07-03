@@ -39,7 +39,7 @@ extern int g_bn_length;
 extern int g_r_length;
 extern int g_padding;
 extern int g_decimals;
-extern int shiftfactor;
+extern int g_shift_factor;
 extern int bflength;
 extern int rbflength;
 extern int bfpadding;

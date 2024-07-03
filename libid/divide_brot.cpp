@@ -83,12 +83,12 @@ int DivideBrot5bnFractal()
 
     /* sqr(z) */
     /* bnnumer.x = bntmpsqrx - bntmpsqry;   */
-    sub_bn(bnnumer.x, bntmpsqrx + shiftfactor, bntmpsqry + shiftfactor);
+    sub_bn(bnnumer.x, bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
 
     /* bnnumer.y = 2 * bnold.x * bnold.y; */
     mult_bn(tmp2, bnold.x, bnold.y);
-    double_a_bn(tmp2 + shiftfactor);
-    copy_bn(bnnumer.y, tmp2 + shiftfactor);
+    double_a_bn(tmp2 + g_shift_factor);
+    copy_bn(bnnumer.y, tmp2 + g_shift_factor);
 
     /* z^(a) */
     inttobn(bnc_exp.x, g_c_exponent);
@@ -96,9 +96,9 @@ int DivideBrot5bnFractal()
     ComplexPower_bn(&bntmpnew, &bnold, &bnc_exp);
     /* then add b */
     floattobn(tmp1, g_b_const);
-    add_bn(bntmpnew.x, tmp1, bntmpnew.x + shiftfactor);
-    /* need to shiftfactor bntmpnew.y */
-    copy_bn(tmp2, bntmpnew.y + shiftfactor);
+    add_bn(bntmpnew.x, tmp1, bntmpnew.x + g_shift_factor);
+    /* need to g_shift_factor bntmpnew.y */
+    copy_bn(tmp2, bntmpnew.y + g_shift_factor);
     copy_bn(bntmpnew.y, tmp2);
 
     /* sqr(z)/(z^(a)+b) */

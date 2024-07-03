@@ -25,7 +25,7 @@ int g_bn_length{};
 int g_int_length{};
 int g_r_length{};
 int g_padding{};
-int shiftfactor{};
+int g_shift_factor{};
 int g_decimals{};
 int bflength{};
 int rbflength{};
@@ -146,9 +146,9 @@ void calc_lengths()
     }
     g_r_length = g_bn_length + g_padding;
 
-    // This shiftfactor assumes non-full multiplications will be performed.
+    // This shift factor assumes non-full multiplications will be performed.
     // Change to g_bn_length-g_int_length for full multiplications.
-    shiftfactor = g_padding - g_int_length;
+    g_shift_factor = g_padding - g_int_length;
 
     bflength = g_bn_length+g_bn_step; // one extra step for added precision
     rbflength = bflength + g_padding;
@@ -465,7 +465,7 @@ void free_bf_vars()
     g_int_length = 0;
     g_r_length = 0;
     g_padding = 0;
-    shiftfactor = 0;
+    g_shift_factor = 0;
     g_decimals = 0;
     bflength = 0;
     rbflength = 0;

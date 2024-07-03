@@ -63,7 +63,7 @@ r <------------------------- 2*g_bn_length ---------------------------->
 
 If this double wide bignumber, r, needs to be converted to a normal,
 single width bignumber, this is easily done with pointer arithmetic.  The
-converted value starts at r+shiftfactor (where shiftfactor =
+converted value starts at r+g_shift_factor (where g_shift_factor =
 g_bn_length-g_int_length) and continues for g_bn_length bytes.  The lower order
 bytes and the upper integer part of the double wide number can then be
 ignored.
@@ -73,7 +73,7 @@ LSB                                                                    MSB
 r <------------------------- 2*g_bn_length ---------------------------->
                                                   2*g_int_length  --->  <---
                                  LSB                                  MSB
-               r+shiftfactor   <--------  g_bn_length  ----------->
+                r+g_shift_factor   <--------  g_bn_length  ----------->
                                                     g_int_length  ---> <---
 
 
@@ -106,7 +106,7 @@ eliminating the possiblity of overflowing the number.
 
 If r needs to be converted to a normal, single width bignumber, this is
 easily done with pointer arithmetic.  The converted value starts at
-r+shiftfactor (where shiftfactor = g_padding-g_int_length) and continues for
+r+g_shift_factor (where g_shift_factor = g_padding-g_int_length) and continues for
 g_bn_length bytes.  The lower order bytes and the upper integer part of the
 double wide number can then be ignored.
 
@@ -115,7 +115,7 @@ double wide number can then be ignored.
         r  <---- g_r_length = g_bn_length+g_padding ---->
                                    2*g_int_length  --->  <---
                    LSB                                MSB
-      r+shiftfactor  <--------  g_bn_length  --------->
+   r+g_shift_factor  <--------  g_bn_length  --------->
                                      g_int_length ---> <---
 */
 
@@ -577,7 +577,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_r             = r;
     orig_n             = n;
     // orig_bntmp1        = bntmp1;
@@ -612,21 +612,21 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
         unsafe_mult_bn(bntmp1, r, n); // bntmp1=rn
         inttobn(bntmp2, 1);  // bntmp2 = 1.0
-        if (g_bn_length == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0)    // if not different
+        if (g_bn_length == orig_bnlength && cmp_bn(bntmp2, bntmp1+g_shift_factor) == 0)    // if not different
         {
             break;  // they must be the same
         }
         inttobn(bntmp2, 2); // bntmp2 = 2.0
-        sub_bn(bntmp3, bntmp2, bntmp1+shiftfactor); // bntmp3=2-rn
+        sub_bn(bntmp3, bntmp2, bntmp1+g_shift_factor); // bntmp3=2-rn
         unsafe_mult_bn(bntmp1, r, bntmp3); // bntmp1=r(2-rn)
-        copy_bn(r, bntmp1+shiftfactor); // r = bntmp1
+        copy_bn(r, bntmp1+g_shift_factor); // r = bntmp1
     }
 
     // restore original values
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     r             = orig_r;
 
     if (signflag)
@@ -725,7 +725,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 
     unsafe_inv_bn(r, n2);
     unsafe_mult_bn(bntmp1, n1, r);
-    copy_bn(r, bntmp1+shiftfactor); // r = bntmp1
+    copy_bn(r, bntmp1+g_shift_factor); // r = bntmp1
 
     if (scale1 != scale2)
     {
@@ -794,7 +794,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_r             = r;
     orig_n             = n;
 
@@ -849,7 +849,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     // cppcheck-suppress uselessAssignmentPtrArg
     r             = orig_r;
 
@@ -876,7 +876,7 @@ bn_t exp_bn(bn_t r, bn_t n)
     {
         // copy n, if n is negative, mult_bn() alters n
         unsafe_mult_bn(bntmp3, bntmp2, copy_bn(bntmp1, n));
-        copy_bn(bntmp2, bntmp3+shiftfactor);
+        copy_bn(bntmp2, bntmp3+g_shift_factor);
         div_a_bn_int(bntmp2, fact);
         if (!is_bn_not_zero(bntmp2))
         {
@@ -939,7 +939,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_r             = r;
     orig_n             = n;
     orig_bntmp5        = bntmp5;
@@ -979,8 +979,8 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         bntmp4 = orig_bntmp4 + orig_bnlength - g_bn_length;
         exp_bn(bntmp6, r);     // exp(-r)
         unsafe_mult_bn(bntmp2, bntmp6, n);  // n*exp(-r)
-        sub_a_bn(bntmp2+shiftfactor, bntmp4);   // n*exp(-r) - 1
-        sub_a_bn(r, bntmp2+shiftfactor);        // -r - (n*exp(-r) - 1)
+        sub_a_bn(bntmp2+g_shift_factor, bntmp4);   // n*exp(-r) - 1
+        sub_a_bn(r, bntmp2+g_shift_factor);        // -r - (n*exp(-r) - 1)
 
         if (g_bn_length == orig_bnlength)
         {
@@ -1003,7 +1003,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     r             = orig_r;
     bntmp5        = orig_bntmp5;
     bntmp4        = orig_bntmp4;
@@ -1107,7 +1107,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     {
         // even terms for cosine
         unsafe_mult_bn(bntmp2, bntmp1, n);
-        copy_bn(bntmp1, bntmp2+shiftfactor);
+        copy_bn(bntmp1, bntmp2+g_shift_factor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
         {
@@ -1124,7 +1124,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 
         // odd terms for sine
         unsafe_mult_bn(bntmp2, bntmp1, n);
-        copy_bn(bntmp1, bntmp2+shiftfactor);
+        copy_bn(bntmp1, bntmp2+g_shift_factor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
         {
@@ -1150,10 +1150,10 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     for (int i = 0; i < halves; i++)
     {
         unsafe_mult_bn(bntmp2, s, c); // no need for safe mult
-        double_bn(s, bntmp2+shiftfactor); // sin(2x) = 2*sin(x)*cos(x)
+        double_bn(s, bntmp2+g_shift_factor); // sin(2x) = 2*sin(x)*cos(x)
         unsafe_square_bn(bntmp2, c);
-        double_a_bn(bntmp2+shiftfactor);
-        sub_bn(c, bntmp2+shiftfactor, bntmp1); // cos(2x) = 2*cos(x)*cos(x) - 1
+        double_a_bn(bntmp2+g_shift_factor);
+        sub_bn(c, bntmp2+g_shift_factor, bntmp1); // cos(2x) = 2*cos(x)*cos(x) - 1
     }
 
     if (switch_sincos)
@@ -1222,7 +1222,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_bn_pi         = bn_pi;
     orig_r             = r;
     orig_n             = n;
@@ -1268,9 +1268,9 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         copy_bn(bntmp3, r); // restore bntmp3 from sincos_bn()
         copy_bn(bntmp1, bntmp5);
         unsafe_mult_bn(bntmp2, n, bntmp1);     // n*cos(r)
-        sub_a_bn(bntmp4, bntmp2+shiftfactor); // sin(r) - n*cos(r)
+        sub_a_bn(bntmp4, bntmp2+g_shift_factor); // sin(r) - n*cos(r)
         unsafe_mult_bn(bntmp1, bntmp5, bntmp4); // cos(r) * (sin(r) - n*cos(r))
-        sub_a_bn(r, bntmp1+shiftfactor); // r - cos(r) * (sin(r) - n*cos(r))
+        sub_a_bn(r, bntmp1+g_shift_factor); // r - cos(r) * (sin(r) - n*cos(r))
 
 #ifdef CALCULATING_BIG_PI
         putchar('\n');
@@ -1309,7 +1309,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     bn_pi         = orig_bn_pi;
     r             = orig_r;
     bntmp3        = orig_bntmp3;

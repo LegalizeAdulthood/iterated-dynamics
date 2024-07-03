@@ -106,11 +106,11 @@ void showbfglobals(char const *s)
     std::snprintf(msg, std::size(msg),
         "%s\n"                                                                     //
         "g_bn_step=%d g_bn_length=%d g_int_length=%d g_r_length=%d g_padding=%d\n" //
-        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"                   //
+        "g_shift_factor=%d decimals=%d bflength=%d rbflength=%d \n"                //
         "bfdecimals=%d ",                                                          //
         s,                                                                         //
         g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,               //
-        shiftfactor, g_decimals, bflength, rbflength,                              //
+        g_shift_factor, g_decimals, bflength, rbflength,                           //
         bfdecimals);
     if (stopmsg(msg))
     {
@@ -327,7 +327,7 @@ int  bnMODbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    add_bn(bntmp, bntmpsqrx+shiftfactor, bntmpsqry+shiftfactor);
+    add_bn(bntmp, bntmpsqrx+g_shift_factor, bntmpsqry+g_shift_factor);
 
     longmagnitude = bntoint(bntmp);  // works with any fractal type
     if (longmagnitude >= (long)g_magnitude_limit)
@@ -345,7 +345,7 @@ int  bnREALbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
+    longtempsqrx = bntoint(bntmpsqrx+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
@@ -362,7 +362,7 @@ int  bnIMAGbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    longtempsqry = bntoint(bntmpsqry+shiftfactor);
+    longtempsqry = bntoint(bntmpsqry+g_shift_factor);
     if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -379,8 +379,8 @@ int  bnORbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
-    longtempsqry = bntoint(bntmpsqry+shiftfactor);
+    longtempsqrx = bntoint(bntmpsqrx+g_shift_factor);
+    longtempsqry = bntoint(bntmpsqry+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -397,8 +397,8 @@ int  bnANDbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
-    longtempsqry = bntoint(bntmpsqry+shiftfactor);
+    longtempsqrx = bntoint(bntmpsqrx+g_shift_factor);
+    longtempsqry = bntoint(bntmpsqry+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -419,7 +419,7 @@ int  bnMANHbailout()
     abs_bn(bnold.y, bnnew.y);
     add_bn(bntmp, bnold.x, bnold.y);
     square_bn(bnold.x, bntmp);
-    longtempmag = bntoint(bnold.x+shiftfactor);
+    longtempmag = bntoint(bnold.x+g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
@@ -438,7 +438,7 @@ int  bnMANRbailout()
     add_bn(bntmp, bnnew.x, bnnew.y); // don't need abs since we square it next
     // note: in next two lines, bnold is just used as a temporary variable
     square_bn(bnold.x, bntmp);
-    longtempmag = bntoint(bnold.x+shiftfactor);
+    longtempmag = bntoint(bnold.x+g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
@@ -920,19 +920,19 @@ int
 JuliabnFractal()
 {
     // Don't forget, with bn_t numbers, after multiplying or squaring
-    // you must shift over by shiftfactor to get the bn number.
+    // you must shift over by g_shift_factor to get the bn number.
 
     // bntmpsqrx and bntmpsqry were previously squared before getting to
     // this function, so they must be shifted.
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bn(bntmpsqrx+shiftfactor, bntmpsqry+shiftfactor);
-    add_bn(bnnew.x, bntmpsqrx+shiftfactor, bnparm.x);
+    sub_a_bn(bntmpsqrx+g_shift_factor, bntmpsqry+g_shift_factor);
+    add_bn(bnnew.x, bntmpsqrx+g_shift_factor, bnparm.x);
 
     // new.y = 2 * bnold.x * bnold.y + parm.y;
     mult_bn(bntmp, bnold.x, bnold.y); // ok to use unsafe here
-    double_a_bn(bntmp+shiftfactor);
-    add_bn(bnnew.y, bntmp+shiftfactor, bnparm.y);
+    double_a_bn(bntmp+g_shift_factor);
+    add_bn(bnnew.y, bntmp+g_shift_factor, bnparm.y);
 
     return g_bailout_bignum();
 }
@@ -964,8 +964,8 @@ JuliaZpowerbnFractal()
     floattobn(parm2.x, g_params[2]);
     floattobn(parm2.y, g_params[3]);
     ComplexPower_bn(&bnnew, &bnold, &parm2);
-    add_bn(bnnew.x, bnparm.x, bnnew.x+shiftfactor);
-    add_bn(bnnew.y, bnparm.y, bnnew.y+shiftfactor);
+    add_bn(bnnew.x, bnparm.x, bnnew.x+g_shift_factor);
+    add_bn(bnnew.y, bnparm.y, bnnew.y+g_shift_factor);
     restore_stack(saved);
     return g_bailout_bignum();
 }
@@ -1115,7 +1115,7 @@ BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
     }
     else
     {
-        add_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
+        add_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
         ln_bn(t->x, t->x);
         half_a_bn(t->x);
         atan2_bn(t->y, s->y, s->x);
@@ -1131,11 +1131,11 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     tmp1 = alloc_stack(g_r_length);
     mult_bn(t->x, x->x, y->x);
     mult_bn(t->y, x->y, y->y);
-    sub_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
+    sub_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
 
     mult_bn(tmp1, x->x, y->y);
     mult_bn(t->y, x->y, y->x);
-    add_bn(t->y, tmp1 + shiftfactor, t->y + shiftfactor);
+    add_bn(t->y, tmp1 + g_shift_factor, t->y + g_shift_factor);
     restore_stack(saved);
     return t;
 }
@@ -1151,7 +1151,7 @@ BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 
     square_bn(tmp1, y->x);
     square_bn(tmp2, y->y);
-    add_bn(denom, tmp1 + shiftfactor, tmp2 + shiftfactor);
+    add_bn(denom, tmp1 + g_shift_factor, tmp2 + g_shift_factor);
 
     if (is_bn_zero(x->x) && is_bn_zero(x->y))
     {
@@ -1166,12 +1166,12 @@ BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     {
         mult_bn(tmp1, x->x, y->x);
         mult_bn(t->x, x->y, y->y);
-        add_bn(tmp2, tmp1 + shiftfactor, t->x + shiftfactor);
+        add_bn(tmp2, tmp1 + g_shift_factor, t->x + g_shift_factor);
         div_bn(t->x, tmp2, denom);
 
         mult_bn(tmp1, x->y, y->x);
         mult_bn(t->y, x->x, y->y);
-        sub_bn(tmp2, tmp1 + shiftfactor, t->y + shiftfactor);
+        sub_bn(tmp2, tmp1 + g_shift_factor, t->y + g_shift_factor);
         div_bn(t->y, tmp2, denom);
     }
 
@@ -1179,7 +1179,7 @@ BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     return t;
 }
 
-// note: ComplexPower_bn() returns need to be +shiftfactor'ed
+// note: ComplexPower_bn() returns need to be +g_shift_factor'ed
 BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
     BNComplex tmp;

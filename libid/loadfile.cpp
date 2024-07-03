@@ -1980,7 +1980,7 @@ static bool is_visible_window(
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
-    orig_shiftfactor   = shiftfactor;
+    orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = rbflength;
     /*
        if (oldbf_math && info->bf_math && (g_bn_length+4 < info->bflength)) {
@@ -2145,7 +2145,7 @@ static bool is_visible_window(
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
-    shiftfactor   = orig_shiftfactor;
+    g_shift_factor = orig_shiftfactor;
     rbflength     = orig_rbflength;
 
     restore_stack(saved);
