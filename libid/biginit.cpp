@@ -35,12 +35,12 @@ int g_bf_decimals{};
 static char s_storage[4096];
 static bn_t bnroot = nullptr;
 static bn_t stack_ptr = nullptr; // memory allocator base after global variables
-bn_t bntmp1 = nullptr;
-bn_t bntmp2 = nullptr;
-bn_t bntmp3 = nullptr;
-bn_t bntmp4 = nullptr;
-bn_t bntmp5 = nullptr;
-bn_t bntmp6 = nullptr;
+bn_t g_bn_tmp1 = nullptr;
+bn_t g_bn_tmp2 = nullptr;
+bn_t g_bn_tmp3 = nullptr;
+bn_t g_bn_tmp4 = nullptr;
+bn_t g_bn_tmp5 = nullptr;
+bn_t g_bn_tmp6 = nullptr;
 bn_t bntmpcpy1 = nullptr;
 bn_t bntmpcpy2 = nullptr;
 
@@ -195,17 +195,17 @@ static void init_bf_2()
     // Now split up the memory among the pointers
     // internal pointers
     ptr        = 0;
-    bntmp1     = bnroot+ptr;
+    g_bn_tmp1     = bnroot+ptr;
     ptr += g_r_length;
-    bntmp2     = bnroot+ptr;
+    g_bn_tmp2     = bnroot+ptr;
     ptr += g_r_length;
-    bntmp3     = bnroot+ptr;
+    g_bn_tmp3     = bnroot+ptr;
     ptr += g_r_length;
-    bntmp4     = bnroot+ptr;
+    g_bn_tmp4     = bnroot+ptr;
     ptr += g_r_length;
-    bntmp5     = bnroot+ptr;
+    g_bn_tmp5     = bnroot+ptr;
     ptr += g_r_length;
-    bntmp6     = bnroot+ptr;
+    g_bn_tmp6     = bnroot+ptr;
     ptr += g_r_length;
 
     bftmp1     = bnroot+ptr;

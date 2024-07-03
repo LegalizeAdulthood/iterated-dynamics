@@ -44,12 +44,12 @@ extern int g_bf_length;
 extern int g_r_bf_length;
 extern int bfpadding;
 extern int g_bf_decimals;
-extern bn_t bntmp1;    // g_r_length
-extern bn_t bntmp2;    // g_r_length
-extern bn_t bntmp3;    // g_r_length
-extern bn_t bntmp4;    // g_r_length
-extern bn_t bntmp5;    // g_r_length
-extern bn_t bntmp6;    // g_r_length
+extern bn_t g_bn_tmp1;    // g_r_length
+extern bn_t g_bn_tmp2;    // g_r_length
+extern bn_t g_bn_tmp3;    // g_r_length
+extern bn_t g_bn_tmp4;    // g_r_length
+extern bn_t g_bn_tmp5;    // g_r_length
+extern bn_t g_bn_tmp6;    // g_r_length
 extern bn_t bntest1;   // g_r_length
 extern bn_t bntest2;   // g_r_length
 extern bn_t bntest3;   // g_r_length
