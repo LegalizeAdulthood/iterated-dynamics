@@ -1977,14 +1977,14 @@ static bool is_visible_window(
     saved = save_stack();
     // Save original values.
     orig_bflength      = bflength;
-    orig_bnlength      = bnlength;
+    orig_bnlength      = g_bn_length;
     orig_padding       = padding;
     orig_rlength       = rlength;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
     /*
-       if (oldbf_math && info->bf_math && (bnlength+4 < info->bflength)) {
-          bnlength = info->bflength;
+       if (oldbf_math && info->bf_math && (g_bn_length+4 < info->bflength)) {
+          g_bn_length = info->bflength;
           calc_lengths();
        }
     */
@@ -2142,7 +2142,7 @@ static bool is_visible_window(
 
     // restore original values
     bflength      = orig_bflength;
-    bnlength      = orig_bnlength;
+    g_bn_length   = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;

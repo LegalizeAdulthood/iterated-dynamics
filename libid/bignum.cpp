@@ -36,10 +36,10 @@ Each '_' below represents a block of memory used for arithmetic (1 block =
 
 LSB                                MSB
   _  _  _  _  _  _  _  _  _  _  _  _
-n <----------- bnlength ----------->
+n <---------- g_bn_length --------->
                  g_int_length  ---> <---
 
-  bnlength  = the length in bytes of the bignumber
+  g_bn_length  = the length in bytes of the bignumber
   g_int_length = the number of bytes used to represent the integer part of
               the bignumber.  Possible values are 1, 2, or 4.  This
               determines the largest number that can be represented by
@@ -58,22 +58,22 @@ thereby eliminating the possiblity of overflowing the number.
 
 LSB                                                                    MSB
   _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _
-r <--------------------------- 2*bnlength ----------------------------->
+r <------------------------- 2*g_bn_length ---------------------------->
                                                   2*g_int_length  --->  <---
 
 If this double wide bignumber, r, needs to be converted to a normal,
 single width bignumber, this is easily done with pointer arithmetic.  The
 converted value starts at r+shiftfactor (where shiftfactor =
-bnlength-g_int_length) and continues for bnlength bytes.  The lower order
+g_bn_length-g_int_length) and continues for g_bn_length bytes.  The lower order
 bytes and the upper integer part of the double wide number can then be
 ignored.
 
 LSB                                                                    MSB
   _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _
-r <--------------------------- 2*bnlength ----------------------------->
+r <------------------------- 2*g_bn_length ---------------------------->
                                                   2*g_int_length  --->  <---
                                  LSB                                  MSB
-               r+shiftfactor   <----------  bnlength  ------------>
+               r+shiftfactor   <--------  g_bn_length  ----------->
                                                     g_int_length  ---> <---
 
 
@@ -83,16 +83,16 @@ PARTIAL PRECISION MULTIPLICATION:
 In most cases, full double precision multiplication is not necessary.  The
 lower order bytes are usually thrown away anyway.  The non-"full"
 multiplication routines only calculate rlength bytes in the result.  The
-value of rlength must be in the range: 2*bnlength <= rlength < bnlength.
-The amount by which rlength exceeds bnlength accounts for the extra bytes
-that must be multiplied so that the first bnlength bytes are correct.
+value of rlength must be in the range: 2*g_bn_length <= rlength < g_bn_length.
+The amount by which rlength exceeds g_bn_length accounts for the extra bytes
+that must be multiplied so that the first g_bn_length bytes are correct.
 These extra bytes are refered to in the code as the "padding," that is:
-rlength=bnlength+padding.
+rlength=g_bn_length+padding.
 
-All three of the values, bnlength, rlength, and therefore padding, must be
+All three of the values, g_bn_length, rlength, and therefore padding, must be
 multiples of the size of memory blocks being used for arithmetic (2 on
 8086/286 and 4 on 386+).  Typically, the padding is 2*blocksize.  In the
-case where bnlength=blocksize, padding can only be blocksize to keep
+case where g_bn_length=blocksize, padding can only be blocksize to keep
 rlength from being too big.
 
 The product of two bignumbers, n1 and n2, will then be a result, r, which
@@ -101,21 +101,21 @@ eliminating the possiblity of overflowing the number.
 
              LSB                                      MSB
                _  _  _  _  _  _  _  _  _  _  _  _  _  _
-            r  <---- rlength = bnlength+padding ------>
+            r  <--- rlength = g_bn_length+padding ---->
                                  2*g_int_length  --->  <---
 
 If r needs to be converted to a normal, single width bignumber, this is
 easily done with pointer arithmetic.  The converted value starts at
 r+shiftfactor (where shiftfactor = padding-g_int_length) and continues for
-bnlength bytes.  The lower order bytes and the upper integer part of the
+g_bn_length bytes.  The lower order bytes and the upper integer part of the
 double wide number can then be ignored.
 
              LSB                                      MSB
                _  _  _  _  _  _  _  _  _  _  _  _  _  _
-            r  <---- rlength = bnlength+padding ------>
+            r  <--- rlength = g_bn_length+padding ---->
                                  2*g_int_length  --->  <---
                    LSB                                  MSB
-      r+shiftfactor  <----------  bnlength  --------->
+      r+shiftfactor  <--------  g_bn_length  -------->
                                     g_int_length ---> <---
 */
 
@@ -199,29 +199,29 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 
     // save lengths so not dependent on external environment
     saveintlength = g_int_length;
-    savebnlength  = bnlength;
+    savebnlength  = g_bn_length;
 
     g_int_length     = newintlength;
-    bnlength      = newbnlength;
+    g_bn_length      = newbnlength;
     clear_bn(newnum);
 
     if (newbnlength - newintlength > oldbnlength - oldintlength)
     {
 
         // This will keep the integer part from overflowing past the array.
-        bnlength = oldbnlength - oldintlength + std::min(oldintlength, newintlength);
+        g_bn_length = oldbnlength - oldintlength + std::min(oldintlength, newintlength);
 
         std::memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
-               old, bnlength);
+               old, g_bn_length);
     }
     else
     {
-        bnlength = newbnlength - newintlength + std::min(oldintlength, newintlength);
+        g_bn_length = newbnlength - newintlength + std::min(oldintlength, newintlength);
         std::memcpy(newnum, old+oldbnlength-oldintlength-newbnlength+newintlength,
-               bnlength);
+               g_bn_length);
     }
     g_int_length = saveintlength;
-    bnlength  = savebnlength;
+    g_bn_length  = savebnlength;
     return 0;
 }
 
@@ -230,7 +230,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 
 void bn_hexdump(bn_t r)
 {
-    for (int i = 0; i < bnlength; i++)
+    for (int i = 0; i < g_bn_length; i++)
     {
         std::printf("%02X ", r[i]);
     }
@@ -251,7 +251,7 @@ bn_t strtobn(bn_t r, char *s)
     long longval;
 
     clear_bn(r);
-    onesbyte = r + bnlength - g_int_length;
+    onesbyte = r + g_bn_length - g_int_length;
 
     if (s[0] == '+')    // for + sign
     {
@@ -360,7 +360,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     {
         dec = g_decimals;
     }
-    onesbyte = r + bnlength - g_int_length;
+    onesbyte = r + g_bn_length - g_int_length;
 
     if (is_bn_neg(r))
     {
@@ -406,7 +406,7 @@ bn_t inttobn(bn_t r, long longval)
     bn_t onesbyte;
 
     clear_bn(r);
-    onesbyte = r + bnlength - g_int_length;
+    onesbyte = r + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -431,7 +431,7 @@ long bntoint(bn_t n)
     bn_t onesbyte;
     long longval = 0;
 
-    onesbyte = n + bnlength - g_int_length;
+    onesbyte = n + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -457,7 +457,7 @@ bn_t floattobn(bn_t r, LDBL f)
     bool signflag = false;
 
     clear_bn(r);
-    onesbyte = r + bnlength - g_int_length;
+    onesbyte = r + g_bn_length - g_int_length;
 
     if (f < 0)
     {
@@ -480,7 +480,7 @@ bn_t floattobn(bn_t r, LDBL f)
     }
 
     f -= (long)f; // keep only the decimal part
-    for (int i = bnlength-g_int_length-1; i >= 0 && f != 0.0; i--)
+    for (int i = g_bn_length-g_int_length-1; i >= 0 && f != 0.0; i--)
     {
         f *= 256;
         r[i] = (BYTE)f;  // keep use the integer part
@@ -574,7 +574,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = bnlength;
+    orig_bnlength      = g_bn_length;
     orig_padding       = padding;
     orig_rlength       = rlength;
     orig_shiftfactor   = shiftfactor;
@@ -583,16 +583,16 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // orig_bntmp1        = bntmp1;
 
     // calculate new starting values
-    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (bnlength > orig_bnlength)
+    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    if (g_bn_length > orig_bnlength)
     {
-        bnlength = orig_bnlength;
+        g_bn_length = orig_bnlength;
     }
     calc_lengths();
 
     // adjust pointers
-    r = orig_r + orig_bnlength - bnlength;
-    // bntmp1 = orig_bntmp1 + orig_bnlength - bnlength;
+    r = orig_r + orig_bnlength - g_bn_length;
+    // bntmp1 = orig_bntmp1 + orig_bnlength - g_bn_length;
 
     floattobn(r, f); // start with approximate inverse
     clear_bn(bntmp2); // will be used as 1.0 and 2.0
@@ -600,19 +600,19 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
         // adjust lengths
-        bnlength <<= 1; // double precision
-        if (bnlength > orig_bnlength)
+        g_bn_length <<= 1; // double precision
+        if (g_bn_length > orig_bnlength)
         {
-            bnlength = orig_bnlength;
+            g_bn_length = orig_bnlength;
         }
         calc_lengths();
-        r = orig_r + orig_bnlength - bnlength;
-        n = orig_n + orig_bnlength - bnlength;
-        // bntmp1 = orig_bntmp1 + orig_bnlength - bnlength;
+        r = orig_r + orig_bnlength - g_bn_length;
+        n = orig_n + orig_bnlength - g_bn_length;
+        // bntmp1 = orig_bntmp1 + orig_bnlength - g_bn_length;
 
         unsafe_mult_bn(bntmp1, r, n); // bntmp1=rn
         inttobn(bntmp2, 1);  // bntmp2 = 1.0
-        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0)    // if not different
+        if (g_bn_length == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0)    // if not different
         {
             break;  // they must be the same
         }
@@ -623,7 +623,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     }
 
     // restore original values
-    bnlength      = orig_bnlength;
+    g_bn_length   = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
@@ -638,7 +638,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r = n1/n2
-//      r - result of length bnlength
+//      r - result of length g_bn_length
 // uses bntmp1 - bntmp3 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n1, n2 can end up as GARBAGE
@@ -695,22 +695,22 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 
     // scale n1 and n2 so: |n| >= 1/256
     // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
-    i = bnlength-1;
+    i = g_bn_length-1;
     while (i >= 0 && n1[i] == 0)
     {
         i--;
     }
-    scale1 = bnlength - i - 2;
+    scale1 = g_bn_length - i - 2;
     if (scale1 < 0)
     {
         scale1 = 0;
     }
-    i = bnlength-1;
+    i = g_bn_length-1;
     while (i >= 0 && n2[i] == 0)
     {
         i--;
     }
-    scale2 = bnlength - i - 2;
+    scale2 = g_bn_length - i - 2;
     if (scale2 < 0)
     {
         scale2 = 0;
@@ -718,9 +718,9 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 
     // shift n1, n2
     // important!, use std::memmove(), not std::memcpy()
-    std::memmove(n1+scale1, n1, bnlength-scale1); // shift bytes over
+    std::memmove(n1+scale1, n1, g_bn_length-scale1); // shift bytes over
     std::memset(n1, 0, scale1);  // zero out the rest
-    std::memmove(n2+scale2, n2, bnlength-scale2); // shift bytes over
+    std::memmove(n2+scale2, n2, g_bn_length-scale2); // shift bytes over
     std::memset(n2, 0, scale2);  // zero out the rest
 
     unsafe_inv_bn(r, n2);
@@ -733,13 +733,13 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         if (scale1 > scale2) // answer is too big, adjust it
         {
             int scale = scale1-scale2;
-            std::memmove(r, r+scale, bnlength-scale); // shift bytes over
-            std::memset(r+bnlength-scale, 0, scale);  // zero out the rest
+            std::memmove(r, r+scale, g_bn_length-scale); // shift bytes over
+            std::memset(r+g_bn_length-scale, 0, scale);  // zero out the rest
         }
         else if (scale1 < scale2) // answer is too small, adjust it
         {
             int scale = scale2-scale1;
-            std::memmove(r+scale, r, bnlength-scale); // shift bytes over
+            std::memmove(r+scale, r, g_bn_length-scale); // shift bytes over
             std::memset(r, 0, scale);                 // zero out the rest
         }
         // else scale1 == scale2
@@ -791,7 +791,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = bnlength;
+    orig_bnlength      = g_bn_length;
     orig_padding       = padding;
     orig_rlength       = rlength;
     orig_shiftfactor   = shiftfactor;
@@ -799,15 +799,15 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     orig_n             = n;
 
     // calculate new starting values
-    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (bnlength > orig_bnlength)
+    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    if (g_bn_length > orig_bnlength)
     {
-        bnlength = orig_bnlength;
+        g_bn_length = orig_bnlength;
     }
     calc_lengths();
 
     // adjust pointers
-    r = orig_r + orig_bnlength - bnlength;
+    r = orig_r + orig_bnlength - g_bn_length;
 
     floattobn(r, f); // start with approximate sqrt
     copy_bn(bntmp4, r);
@@ -815,21 +815,21 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
         // adjust lengths
-        bnlength <<= 1; // double precision
-        if (bnlength > orig_bnlength)
+        g_bn_length <<= 1; // double precision
+        if (g_bn_length > orig_bnlength)
         {
-            bnlength = orig_bnlength;
+            g_bn_length = orig_bnlength;
         }
         calc_lengths();
-        r = orig_r + orig_bnlength - bnlength;
-        n = orig_n + orig_bnlength - bnlength;
+        r = orig_r + orig_bnlength - g_bn_length;
+        n = orig_n + orig_bnlength - g_bn_length;
 
         copy_bn(bntmp6, r);
         copy_bn(bntmp5, n);
         unsafe_div_bn(bntmp4, bntmp5, bntmp6);
         add_a_bn(r, bntmp4);
         half_a_bn(r);
-        if (bnlength == orig_bnlength)
+        if (g_bn_length == orig_bnlength)
         {
             const int comp = std::abs(cmp_bn(r, bntmp4));
             if (comp < 8)  // if match or almost match
@@ -846,7 +846,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     }
 
     // restore original values
-    bnlength      = orig_bnlength;
+    g_bn_length   = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
@@ -936,7 +936,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = bnlength;
+    orig_bnlength      = g_bn_length;
     orig_padding       = padding;
     orig_rlength       = rlength;
     orig_shiftfactor   = shiftfactor;
@@ -948,17 +948,17 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     inttobn(bntmp4, 1); // set before setting new values
 
     // calculate new starting values
-    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (bnlength > orig_bnlength)
+    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    if (g_bn_length > orig_bnlength)
     {
-        bnlength = orig_bnlength;
+        g_bn_length = orig_bnlength;
     }
     calc_lengths();
 
     // adjust pointers
-    r = orig_r + orig_bnlength - bnlength;
-    bntmp5 = orig_bntmp5 + orig_bnlength - bnlength;
-    bntmp4 = orig_bntmp4 + orig_bnlength - bnlength;
+    r = orig_r + orig_bnlength - g_bn_length;
+    bntmp5 = orig_bntmp5 + orig_bnlength - g_bn_length;
+    bntmp4 = orig_bntmp4 + orig_bnlength - g_bn_length;
 
     floattobn(r, f); // start with approximate ln
     neg_a_bn(r); // -r
@@ -967,22 +967,22 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
         // adjust lengths
-        bnlength <<= 1; // double precision
-        if (bnlength > orig_bnlength)
+        g_bn_length <<= 1; // double precision
+        if (g_bn_length > orig_bnlength)
         {
-            bnlength = orig_bnlength;
+            g_bn_length = orig_bnlength;
         }
         calc_lengths();
-        r = orig_r + orig_bnlength - bnlength;
-        n = orig_n + orig_bnlength - bnlength;
-        bntmp5 = orig_bntmp5 + orig_bnlength - bnlength;
-        bntmp4 = orig_bntmp4 + orig_bnlength - bnlength;
+        r = orig_r + orig_bnlength - g_bn_length;
+        n = orig_n + orig_bnlength - g_bn_length;
+        bntmp5 = orig_bntmp5 + orig_bnlength - g_bn_length;
+        bntmp4 = orig_bntmp4 + orig_bnlength - g_bn_length;
         exp_bn(bntmp6, r);     // exp(-r)
         unsafe_mult_bn(bntmp2, bntmp6, n);  // n*exp(-r)
         sub_a_bn(bntmp2+shiftfactor, bntmp4);   // n*exp(-r) - 1
         sub_a_bn(r, bntmp2+shiftfactor);        // -r - (n*exp(-r) - 1)
 
-        if (bnlength == orig_bnlength)
+        if (g_bn_length == orig_bnlength)
         {
             const int comp = std::abs(cmp_bn(r, bntmp5));
             if (comp < 8)  // if match or almost match
@@ -1000,7 +1000,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     }
 
     // restore original values
-    bnlength      = orig_bnlength;
+    g_bn_length   = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
@@ -1090,7 +1090,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     // the range is cut in half, the number of iterations required is reduced
     // by "quite a bit."  It's just a matter of testing to see what gives the
     // optimal results.
-    // halves = bnlength / 10; */ /* this is experimental
+    // halves = g_bn_length / 10; */ /* this is experimental
     int halves = 1;
     for (int i = 0; i < halves; i++)
     {
@@ -1219,7 +1219,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = bnlength;
+    orig_bnlength      = g_bn_length;
     orig_padding       = padding;
     orig_rlength       = rlength;
     orig_shiftfactor   = shiftfactor;
@@ -1229,17 +1229,17 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     orig_bntmp3        = bntmp3;
 
     // calculate new starting values
-    bnlength = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (bnlength > orig_bnlength)
+    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    if (g_bn_length > orig_bnlength)
     {
-        bnlength = orig_bnlength;
+        g_bn_length = orig_bnlength;
     }
     calc_lengths();
 
     // adjust pointers
-    r = orig_r + orig_bnlength - bnlength;
-    bn_pi = orig_bn_pi + orig_bnlength - bnlength;
-    bntmp3 = orig_bntmp3 + orig_bnlength - bnlength;
+    r = orig_r + orig_bnlength - g_bn_length;
+    bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
+    bntmp3 = orig_bntmp3 + orig_bnlength - g_bn_length;
 
     f = atanl(f); // approximate arctangent
     // no need to check overflow
@@ -1250,19 +1250,19 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
         // adjust lengths
-        bnlength <<= 1; // double precision
-        if (bnlength > orig_bnlength)
+        g_bn_length <<= 1; // double precision
+        if (g_bn_length > orig_bnlength)
         {
-            bnlength = orig_bnlength;
+            g_bn_length = orig_bnlength;
         }
         calc_lengths();
-        r = orig_r + orig_bnlength - bnlength;
-        n = orig_n + orig_bnlength - bnlength;
-        bn_pi = orig_bn_pi + orig_bnlength - bnlength;
-        bntmp3 = orig_bntmp3 + orig_bnlength - bnlength;
+        r = orig_r + orig_bnlength - g_bn_length;
+        n = orig_n + orig_bnlength - g_bn_length;
+        bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
+        bntmp3 = orig_bntmp3 + orig_bnlength - g_bn_length;
 
 #ifdef CALCULATING_BIG_PI
-        std::printf("\natan() loop #%i, bnlength=%i\nsincos() loops\n", i, bnlength);
+        std::printf("\natan() loop #%i, g_bn_length=%i\nsincos() loops\n", i, g_bn_length);
 #endif
         unsafe_sincos_bn(bntmp4, bntmp5, bntmp3);   // sin(r), cos(r)
         copy_bn(bntmp3, r); // restore bntmp3 from sincos_bn()
@@ -1276,7 +1276,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         putchar('\n');
         bn_hexdump(r);
 #endif
-        if (bnlength == orig_bnlength)
+        if (g_bn_length == orig_bnlength)
         {
             const int comp = std::abs(cmp_bn(r, bntmp3));
             if (comp < 8)  // if match or almost match
@@ -1306,7 +1306,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     }
 
     // restore original values
-    bnlength      = orig_bnlength;
+    g_bn_length   = orig_bnlength;
     padding       = orig_padding;
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;

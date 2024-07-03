@@ -21,7 +21,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 
 // globals
 int g_bn_step{};
-int bnlength{};
+int g_bn_length{};
 int g_int_length{};
 int rlength{};
 int padding{};
@@ -44,7 +44,7 @@ bn_t bntmp6 = nullptr;
 bn_t bntmpcpy1 = nullptr;
 bn_t bntmpcpy2 = nullptr;
 
-// used by other routines, bnlength
+// used by other routines, g_bn_length
 bn_t bnxmin = nullptr;
 bn_t bnxmax = nullptr;
 bn_t bnymin = nullptr;
@@ -52,7 +52,7 @@ bn_t bnymax = nullptr;
 bn_t bnx3rd = nullptr;
 bn_t bny3rd = nullptr;
 
-// bnlength
+// g_bn_length
 bn_t bnxdel = nullptr;
 bn_t bnydel = nullptr;
 bn_t bnxdel2 = nullptr;
@@ -64,7 +64,7 @@ bn_t bntmpsqrx = nullptr;
 bn_t bntmpsqry = nullptr;
 bn_t bntmp = nullptr;
 
-// bnlength
+// g_bn_length
 BNComplex bnold = { nullptr, nullptr };
 BNComplex bnparm = { nullptr, nullptr };
 BNComplex bnsaved = { nullptr, nullptr };
@@ -127,30 +127,30 @@ static int save_bf_vars();
 static int restore_bf_vars();
 
 /*********************************************************************/
-// given bnlength, calc_lengths will calculate all the other lengths
+// given g_bn_length, calc_lengths will calculate all the other lengths
 void calc_lengths()
 {
     g_bn_step = 4;  // use 4 in all cases
 
-    if (bnlength % g_bn_step != 0)
+    if (g_bn_length % g_bn_step != 0)
     {
-        bnlength = (bnlength / g_bn_step + 1) * g_bn_step;
+        g_bn_length = (g_bn_length / g_bn_step + 1) * g_bn_step;
     }
-    if (bnlength == g_bn_step)
+    if (g_bn_length == g_bn_step)
     {
-        padding = bnlength;
+        padding = g_bn_length;
     }
     else
     {
         padding = 2*g_bn_step;
     }
-    rlength = bnlength + padding;
+    rlength = g_bn_length + padding;
 
     // This shiftfactor assumes non-full multiplications will be performed.
-    // Change to bnlength-g_int_length for full multiplications.
+    // Change to g_bn_length-g_int_length for full multiplications.
     shiftfactor = padding - g_int_length;
 
-    bflength = bnlength+g_bn_step; // one extra step for added precision
+    bflength = g_bn_length+g_bn_step; // one extra step for added precision
     rbflength = bflength + padding;
     bfdecimals = (int)((bflength-2)*LOG10_256);
 }
@@ -234,25 +234,25 @@ static void init_bf_2()
     if (g_bf_math == bf_math_type::BIGNUM)
     {
         bnxmin     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnxmax     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnymin     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnymax     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnx3rd     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bny3rd     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnxdel     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnydel     = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnxdel2    = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnydel2    = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnold.x    = bnroot+ptr;
         ptr += rlength;
         bnold.y    = bnroot+ptr;
@@ -262,15 +262,15 @@ static void init_bf_2()
         bnnew.y    = bnroot+ptr;
         ptr += rlength;
         bnsaved.x  = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnsaved.y  = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnclosenuff = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnparm.x   = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bnparm.y   = bnroot+ptr;
-        ptr += bnlength;
+        ptr += g_bn_length;
         bntmpsqrx  = bnroot+ptr;
         ptr += rlength;
         bntmpsqry  = bnroot+ptr;
@@ -461,7 +461,7 @@ void free_bf_vars()
     g_bf_save_len = 0;
     g_bf_math = bf_math_type::NONE;
     g_bn_step = 0;
-    bnlength = 0;
+    g_bn_length = 0;
     g_int_length = 0;
     rlength = 0;
     padding = 0;
@@ -557,7 +557,7 @@ void init_bf_dec(int dec)
         g_int_length = 1;
     }
     // conservative estimate
-    bnlength = g_int_length + (int)(g_decimals/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + (int)(g_decimals/LOG10_256) + 1; // round up
     init_bf_2();
 }
 
@@ -567,7 +567,7 @@ void init_bf_dec(int dec)
 //   intl = bytes for integer part (1, 2, or 4)
 void init_bf_length(int bnl)
 {
-    bnlength = bnl;
+    g_bn_length = bnl;
 
     if (g_bail_out > 10)      // arbitrary value
     {
@@ -593,7 +593,7 @@ void init_bf_length(int bnl)
         g_int_length = 1;
     }
     // conservative estimate
-    g_decimals = (int)((bnlength-g_int_length)*LOG10_256);
+    g_decimals = (int)((g_bn_length-g_int_length)*LOG10_256);
     init_bf_2();
 }
 
@@ -687,5 +687,5 @@ void init_big_pi()
 
     // notice that bf_pi and bn_pi can share the same memory space
     bf_pi = big_pi;
-    bn_pi = big_pi + (bflength-2) - (bnlength-g_int_length);
+    bn_pi = big_pi + (bflength-2) - (g_bn_length-g_int_length);
 }

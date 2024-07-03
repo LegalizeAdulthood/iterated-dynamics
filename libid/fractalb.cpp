@@ -104,13 +104,13 @@ void showbfglobals(char const *s)
 {
     char msg[300];
     std::snprintf(msg, std::size(msg),
-        "%s\n"                                                             //
-        "g_bn_step=%d bnlength=%d g_int_length=%d rlength=%d padding=%d\n" //
-        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"           //
-        "bfdecimals=%d ",                                                  //
-        s,                                                                 //
-        g_bn_step, bnlength, g_int_length, rlength, padding,               //
-        shiftfactor, g_decimals, bflength, rbflength,                      //
+        "%s\n"                                                                //
+        "g_bn_step=%d g_bn_length=%d g_int_length=%d rlength=%d padding=%d\n" //
+        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"              //
+        "bfdecimals=%d ",                                                     //
+        s,                                                                    //
+        g_bn_step, g_bn_length, g_int_length, rlength, padding,               //
+        shiftfactor, g_decimals, bflength, rbflength,                         //
         bfdecimals);
     if (stopmsg(msg))
     {
@@ -315,7 +315,7 @@ void bfcornerstofloat()
 // --------------------------------------------------------------------
 
 // mandel_bntoint() can only be used for g_int_length of 1
-#define mandel_bntoint(n) (*(n + bnlength - 1)) // assumes g_int_length of 1
+#define mandel_bntoint(n) (*(n + g_bn_length - 1)) // assumes g_int_length of 1
 
 // Note:
 // No need to set magnitude
@@ -582,8 +582,8 @@ bool MandelbnSetup()
     bn_t bntemp2;
     int saved;
     saved = save_stack();
-    bntemp1 = alloc_stack(bnlength);
-    bntemp2 = alloc_stack(bnlength);
+    bntemp1 = alloc_stack(g_bn_length);
+    bntemp2 = alloc_stack(g_bn_length);
 
     bftobn(bnxmin, g_bf_x_min);
     bftobn(bnxmax, g_bf_x_max);
@@ -958,8 +958,8 @@ JuliaZpowerbnFractal()
     int saved;
     saved = save_stack();
 
-    parm2.x = alloc_stack(bnlength);
-    parm2.y = alloc_stack(bnlength);
+    parm2.x = alloc_stack(g_bn_length);
+    parm2.y = alloc_stack(g_bn_length);
 
     floattobn(parm2.x, g_params[2]);
     floattobn(parm2.y, g_params[3]);

@@ -73,9 +73,9 @@ int DivideBrot5bnFractal()
     bntmpnew.y = alloc_stack(rlength);
     bnnumer.x = alloc_stack(rlength);
     bnnumer.y = alloc_stack(rlength);
-    bnc_exp.x = alloc_stack(bnlength);
-    bnc_exp.y = alloc_stack(bnlength);
-    tmp1 = alloc_stack(bnlength);
+    bnc_exp.x = alloc_stack(g_bn_length);
+    bnc_exp.y = alloc_stack(g_bn_length);
+    tmp1 = alloc_stack(g_bn_length);
     tmp2 = alloc_stack(rlength);
 
     /* bntmpsqrx and bntmpsqry were previously squared before getting to */

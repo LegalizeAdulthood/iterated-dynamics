@@ -35,7 +35,7 @@ using BNComplex = id::Complex<bn_t>;
 extern bf_math_type g_bf_math;
 extern int g_bn_step;
 extern int g_int_length;
-extern int bnlength;
+extern int g_bn_length;
 extern int rlength;
 extern int padding;
 extern int g_decimals;
@@ -53,8 +53,8 @@ extern bn_t bntmp6;    // rlength
 extern bn_t bntest1;   // rlength
 extern bn_t bntest2;   // rlength
 extern bn_t bntest3;   // rlength
-extern bn_t bntmpcpy1; // bnlength
-extern bn_t bntmpcpy2; // bnlength
+extern bn_t bntmpcpy1; // g_bn_length
+extern bn_t bntmpcpy2; // g_bn_length
 extern bn_t bn_pi;
 extern bn_t bntmp;     // rlength
 extern bf_t bftmp1;    // rbflength+2
@@ -248,7 +248,7 @@ bf_t div_a_bf_int(bf_t r, U16 u);
 #define MAXREZ        0
 
 // used by other routines
-// bnlength
+// g_bn_length
 extern bn_t bnxmin;
 extern bn_t bnxmax;
 extern bn_t bnymin;
@@ -263,7 +263,7 @@ extern bn_t bnclosenuff;
 // rlength
 extern bn_t bntmpsqrx;
 extern bn_t bntmpsqry;
-// bnlength
+// g_bn_length
 extern BNComplex bnold;
 extern BNComplex bnparm;
 extern BNComplex bnsaved;
