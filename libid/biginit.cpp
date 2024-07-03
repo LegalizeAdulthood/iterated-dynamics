@@ -24,7 +24,7 @@ int g_bn_step{};
 int g_bn_length{};
 int g_int_length{};
 int g_r_length{};
-int padding{};
+int g_padding{};
 int shiftfactor{};
 int g_decimals{};
 int bflength{};
@@ -138,20 +138,20 @@ void calc_lengths()
     }
     if (g_bn_length == g_bn_step)
     {
-        padding = g_bn_length;
+        g_padding = g_bn_length;
     }
     else
     {
-        padding = 2*g_bn_step;
+        g_padding = 2*g_bn_step;
     }
-    g_r_length = g_bn_length + padding;
+    g_r_length = g_bn_length + g_padding;
 
     // This shiftfactor assumes non-full multiplications will be performed.
     // Change to g_bn_length-g_int_length for full multiplications.
-    shiftfactor = padding - g_int_length;
+    shiftfactor = g_padding - g_int_length;
 
     bflength = g_bn_length+g_bn_step; // one extra step for added precision
-    rbflength = bflength + padding;
+    rbflength = bflength + g_padding;
     bfdecimals = (int)((bflength-2)*LOG10_256);
 }
 
@@ -464,7 +464,7 @@ void free_bf_vars()
     g_bn_length = 0;
     g_int_length = 0;
     g_r_length = 0;
-    padding = 0;
+    g_padding = 0;
     shiftfactor = 0;
     g_decimals = 0;
     bflength = 0;

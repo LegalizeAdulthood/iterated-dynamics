@@ -394,7 +394,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     // Save original values.
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
-    orig_padding       = padding;
+    orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
@@ -447,7 +447,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     // restore original values
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
-    padding       = orig_padding;
+    g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
@@ -553,7 +553,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     // Save original values.
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
-    orig_padding       = padding;
+    orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
@@ -607,7 +607,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     // restore original values
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
-    padding       = orig_padding;
+    g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
@@ -693,7 +693,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     // Save original values.
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
-    orig_padding       = padding;
+    orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
@@ -755,7 +755,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     // restore original values
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
-    padding       = orig_padding;
+    g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
@@ -997,7 +997,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     // Save original values.
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
-    orig_padding       = padding;
+    orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
@@ -1084,7 +1084,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     // restore original values
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
-    padding       = orig_padding;
+    g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
@@ -1889,7 +1889,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
     big_set16(r+bflength, (S16)(rexp+2)); // adjust after mult
     norm_sign_bf(r, positive);
     bflength = bfl;
-    std::memmove(r, r+padding, bflength+2); // shift back
+    std::memmove(r, r+g_padding, bflength+2); // shift back
 
     return r;
 }
@@ -1979,7 +1979,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 
     norm_sign_bf(r, true);
     bflength = bfl;
-    std::memmove(r, r+padding, bflength+2); // shift back
+    std::memmove(r, r+g_padding, bflength+2); // shift back
 
     return r;
 }

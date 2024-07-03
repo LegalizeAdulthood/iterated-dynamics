@@ -75,12 +75,12 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     char save2;
     int length;
     int decpt;
-    int padding;
+    int g_padding;
     int startrow;
     bool done = false;
     startrow = *row;
     length = (int) std::strlen(str);
-    padding = 3; // space between col1 and decimal.
+    g_padding = 3; // space between col1 and decimal.
     // find decimal point
     for (decpt = 0; decpt < length; decpt++)
     {
@@ -93,15 +93,15 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     {
         decpt = 0;
     }
-    if (decpt < padding)
+    if (decpt < g_padding)
     {
-        padding -= decpt;
+        g_padding -= decpt;
     }
     else
     {
-        padding = 0;
+        g_padding = 0;
     }
-    col1 += padding;
+    col1 += g_padding;
     decpt += col1+1; // column just past where decimal is
     while (length > 0)
     {

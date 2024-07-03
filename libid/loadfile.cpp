@@ -1978,7 +1978,7 @@ static bool is_visible_window(
     // Save original values.
     orig_bflength      = bflength;
     orig_bnlength      = g_bn_length;
-    orig_padding       = padding;
+    orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = shiftfactor;
     orig_rbflength     = rbflength;
@@ -2143,7 +2143,7 @@ static bool is_visible_window(
     // restore original values
     bflength      = orig_bflength;
     g_bn_length   = orig_bnlength;
-    padding       = orig_padding;
+    g_padding     = orig_padding;
     g_r_length    = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;

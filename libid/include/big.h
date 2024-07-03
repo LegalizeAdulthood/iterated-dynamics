@@ -37,7 +37,7 @@ extern int g_bn_step;
 extern int g_int_length;
 extern int g_bn_length;
 extern int g_r_length;
-extern int padding;
+extern int g_padding;
 extern int g_decimals;
 extern int shiftfactor;
 extern int bflength;
