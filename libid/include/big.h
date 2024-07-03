@@ -54,12 +54,12 @@ extern bn_t g_bn_tmp_copy1; // g_bn_length
 extern bn_t g_bn_tmp_copy2; // g_bn_length
 extern bn_t g_bn_pi;
 extern bn_t g_bn_tmp;     // g_r_length
-extern bf_t bftmp1;    // g_r_bf_length+2
-extern bf_t bftmp2;    // g_r_bf_length+2
-extern bf_t bftmp3;    // g_r_bf_length+2
-extern bf_t bftmp4;    // g_r_bf_length+2
-extern bf_t bftmp5;    // g_r_bf_length+2
-extern bf_t bftmp6;    // g_r_bf_length+2
+extern bf_t g_bf_tmp1;    // g_r_bf_length+2
+extern bf_t g_bf_tmp2;    // g_r_bf_length+2
+extern bf_t g_bf_tmp3;    // g_r_bf_length+2
+extern bf_t g_bf_tmp4;    // g_r_bf_length+2
+extern bf_t g_bf_tmp5;    // g_r_bf_length+2
+extern bf_t g_bf_tmp6;    // g_r_bf_length+2
 extern bf_t bftest1;   // g_r_bf_length+2
 extern bf_t bftest2;   // g_r_bf_length+2
 extern bf_t bftest3;   // g_r_bf_length+2

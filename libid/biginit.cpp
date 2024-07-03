@@ -72,12 +72,12 @@ BNComplex bnnew = { nullptr, nullptr };   // g_r_length
 bn_t g_bn_pi = nullptr;                      // TAKES NO SPACE
 
 // // g_r_bf_length+2
-bf_t bftmp1 = nullptr;
-bf_t bftmp2 = nullptr;
-bf_t bftmp3 = nullptr;
-bf_t bftmp4 = nullptr;
-bf_t bftmp5 = nullptr;
-bf_t bftmp6 = nullptr;
+bf_t g_bf_tmp1 = nullptr;
+bf_t g_bf_tmp2 = nullptr;
+bf_t g_bf_tmp3 = nullptr;
+bf_t g_bf_tmp4 = nullptr;
+bf_t g_bf_tmp5 = nullptr;
+bf_t g_bf_tmp6 = nullptr;
 bf_t bftmpcpy1 = nullptr;
 bf_t bftmpcpy2 = nullptr;
 bf_t bfxdel = nullptr;
@@ -208,17 +208,17 @@ static void init_bf_2()
     g_bn_tmp6     = bnroot+ptr;
     ptr += g_r_length;
 
-    bftmp1     = bnroot+ptr;
+    g_bf_tmp1     = bnroot+ptr;
     ptr += g_r_bf_length+2;
-    bftmp2     = bnroot+ptr;
+    g_bf_tmp2     = bnroot+ptr;
     ptr += g_r_bf_length+2;
-    bftmp3     = bnroot+ptr;
+    g_bf_tmp3     = bnroot+ptr;
     ptr += g_r_bf_length+2;
-    bftmp4     = bnroot+ptr;
+    g_bf_tmp4     = bnroot+ptr;
     ptr += g_r_bf_length+2;
-    bftmp5     = bnroot+ptr;
+    g_bf_tmp5     = bnroot+ptr;
     ptr += g_r_bf_length+2;
-    bftmp6     = bnroot+ptr;
+    g_bf_tmp6     = bnroot+ptr;
     ptr += g_r_bf_length+2;
 
     bftmpcpy1  = bnroot+ptr;
