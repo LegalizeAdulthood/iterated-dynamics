@@ -800,7 +800,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     // n >= 0
 
-    double_bf(g_bf_tmp1, bf_pi); // 2*pi
+    double_bf(g_bf_tmp1, g_bf_pi); // 2*pi
     // this could be done with remainders, but it would probably be slower
     while (cmp_bf(n, g_bf_tmp1) >= 0) // while n >= 2*pi
     {
@@ -810,7 +810,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     // 0 <= n < 2*pi
 
     bool signcos = false;
-    copy_bf(g_bf_tmp1, bf_pi); // pi
+    copy_bf(g_bf_tmp1, g_bf_pi); // pi
     if (cmp_bf(n, g_bf_tmp1) >= 0) // if n >= pi
     {
         unsafe_sub_a_bf(n, g_bf_tmp1);
@@ -819,22 +819,22 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     // 0 <= n < pi
 
-    half_bf(g_bf_tmp1, bf_pi); // pi/2
+    half_bf(g_bf_tmp1, g_bf_pi); // pi/2
     if (cmp_bf(n, g_bf_tmp1) > 0) // if n > pi/2
     {
-        copy_bf(g_bf_tmp2, bf_pi);
+        copy_bf(g_bf_tmp2, g_bf_pi);
         unsafe_sub_bf(n, g_bf_tmp2, n);
         signcos = !signcos;
     }
     // 0 <= n < pi/2
 
     bool switch_sincos = false;
-    half_bf(g_bf_tmp1, bf_pi); // pi/2
+    half_bf(g_bf_tmp1, g_bf_pi); // pi/2
     half_a_bf(g_bf_tmp1);      // pi/4
     if (cmp_bf(n, g_bf_tmp1) > 0) // if n > pi/4
     {
         copy_bf(g_bf_tmp2, n);
-        half_bf(g_bf_tmp1, bf_pi); // pi/2
+        half_bf(g_bf_tmp1, g_bf_pi); // pi/2
         unsafe_sub_bf(n, g_bf_tmp1, g_bf_tmp2);  // pi/2 - n
         switch_sincos = !switch_sincos;
     }
@@ -1001,7 +1001,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     orig_rlength       = g_r_length;
     orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = g_r_bf_length;
-    orig_bf_pi         = bf_pi;
+    orig_bf_pi         = g_bf_pi;
     orig_r             = r;
     orig_n             = n;
     orig_bftmp3        = g_bf_tmp3;
@@ -1016,7 +1016,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 
     // adjust pointers
     r = orig_r + orig_bflength - g_bf_length;
-    bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
+    g_bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
     g_bf_tmp3 = orig_bftmp3 + orig_bflength - g_bf_length;
 
     f = atanl(f); // approximate arctangent
@@ -1036,7 +1036,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         calc_lengths();
         r = orig_r + orig_bflength - g_bf_length;
         n = orig_n + orig_bflength - g_bf_length;
-        bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
+        g_bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
         g_bf_tmp3 = orig_bftmp3 + orig_bflength - g_bf_length;
 
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
@@ -1088,13 +1088,13 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     g_r_length    = orig_rlength;
     g_shift_factor = orig_shiftfactor;
     g_r_bf_length = orig_rbflength;
-    bf_pi         = orig_bf_pi;
+    g_bf_pi         = orig_bf_pi;
     r             = orig_r;
     g_bf_tmp3        = orig_bftmp3;
 
     if (large_arg)
     {
-        half_bf(g_bf_tmp3, bf_pi);  // pi/2
+        half_bf(g_bf_tmp3, g_bf_pi);  // pi/2
         sub_a_bf(g_bf_tmp3, r);     // pi/2 - atan(1/n)
         copy_bf(r, g_bf_tmp3);
     }
@@ -1121,7 +1121,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
     {
         if (signx < 0)
         {
-            copy_bf(r, bf_pi); // negative x axis, 180 deg
+            copy_bf(r, g_bf_pi); // negative x axis, 180 deg
         }
         else        // signx >= 0    positive x axis, 0
         {
@@ -1131,7 +1131,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
     }
     if (signx == 0)
     {
-        copy_bf(r, bf_pi); // y axis
+        copy_bf(r, g_bf_pi); // y axis
         half_a_bf(r);      // +90 deg
         if (signy < 0)
         {
@@ -1152,7 +1152,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
     unsafe_atan_bf(r, g_bf_tmp6);
     if (signx < 0)
     {
-        sub_bf(r, bf_pi, r);
+        sub_bf(r, g_bf_pi, r);
     }
     if (signy < 0)
     {
