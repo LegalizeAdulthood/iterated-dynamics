@@ -15,21 +15,14 @@ inline double deg_to_rad(double x)
 // convert center/mag to corners
 void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-    double x;
-    double y;
-    double h;
-    double w; // half height, width
-    double tanskew;
-    double sinrot;
-    double cosrot;
-
     if (Xmagfactor == 0.0)
     {
         Xmagfactor = 1.0;
     }
 
-    h = (double)(1/Magnification);
-    w = h / (DEFAULT_ASPECT * Xmagfactor);
+    // half height, width
+    const double h = (double) (1 / Magnification);
+    const double w = h / (DEFAULT_ASPECT * Xmagfactor);
 
     if (Rotation == 0.0 && Skew == 0.0)
     {
@@ -44,7 +37,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     }
 
     // in unrotated, untranslated coordinate system
-    tanskew = std::tan(deg_to_rad(Skew));
+    const double tanskew = std::tan(deg_to_rad(Skew));
     g_x_min = -w + h*tanskew;
     g_x_max =  w - h*tanskew;
     g_x_3rd = -w - h*tanskew;
@@ -54,12 +47,12 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 
     // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
-    sinrot = std::sin(Rotation);
-    cosrot = std::cos(Rotation);
+    const double sinrot = std::sin(Rotation);
+    const double cosrot = std::cos(Rotation);
 
     // top left
-    x = g_x_min * cosrot + g_y_max *  sinrot;
-    y = -g_x_min * sinrot + g_y_max *  cosrot;
+    double x = g_x_min * cosrot + g_y_max * sinrot;
+    double y = -g_x_min * sinrot + g_y_max * cosrot;
     g_x_min = x + Xctr;
     g_y_max = y + Yctr;
 
@@ -79,36 +72,19 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 // convert center/mag to corners using bf
 void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-    LDBL x;
-    LDBL y;
-    LDBL h;
-    LDBL w; // half height, width
-    LDBL xmin;
-    LDBL ymin;
-    LDBL xmax;
-    LDBL ymax;
-    LDBL x3rd;
-    LDBL y3rd;
-    double tanskew;
-    double sinrot;
-    double cosrot;
-    bf_t bfh;
-    bf_t bfw;
-    bf_t bftmp;
-    int saved;
-
-    saved = save_stack();
-    bfh = alloc_stack(bflength+2);
-    bfw = alloc_stack(bflength+2);
+    const int saved = save_stack();
+    bf_t bfh = alloc_stack(bflength + 2);
+    bf_t bfw = alloc_stack(bflength + 2);
 
     if (Xmagfactor == 0.0)
     {
         Xmagfactor = 1.0;
     }
 
-    h = 1/Magnification;
+    // half height, width
+    const LDBL h = 1 / Magnification;
     floattobf(bfh, h);
-    w = h / (DEFAULT_ASPECT * Xmagfactor);
+    const LDBL w = h / (DEFAULT_ASPECT * Xmagfactor);
     floattobf(bfw, w);
 
     if (Rotation == 0.0 && Skew == 0.0)
@@ -128,24 +104,24 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
         return;
     }
 
-    bftmp = alloc_stack(bflength+2);
+    bf_t bftmp = alloc_stack(bflength + 2);
     // in unrotated, untranslated coordinate system
-    tanskew = std::tan(deg_to_rad(Skew));
-    xmin = -w + h*tanskew;
-    xmax =  w - h*tanskew;
-    x3rd = -w - h*tanskew;
-    ymax = h;
-    ymin = -h;
-    y3rd = ymin;
+    const double tanskew = std::tan(deg_to_rad(Skew));
+    const LDBL xmin = -w + h * tanskew;
+    const LDBL xmax = w - h * tanskew;
+    const LDBL x3rd = -w - h * tanskew;
+    const LDBL ymax = h;
+    const LDBL ymin = -h;
+    const LDBL y3rd = ymin;
 
     // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
-    sinrot = std::sin(Rotation);
-    cosrot = std::cos(Rotation);
+    const double sinrot = std::sin(Rotation);
+    const double cosrot = std::cos(Rotation);
 
     // top left
-    x =  xmin * cosrot + ymax *  sinrot;
-    y = -xmin * sinrot + ymax *  cosrot;
+    LDBL x = xmin * cosrot + ymax * sinrot;
+    LDBL y = -xmin * sinrot + ymax * cosrot;
     // xxmin = x + Xctr;
     floattobf(bftmp, x);
     add_bf(g_bf_x_min, bftmp, Xctr);
