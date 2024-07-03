@@ -1502,8 +1502,8 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     }
     g_use_center_mag = true;
     saved = save_stack();
-    bf_t bXctr = alloc_stack(bflength + 2);
-    bf_t bYctr = alloc_stack(bflength + 2);
+    bf_t bXctr = alloc_stack(g_bf_length + 2);
+    bf_t bYctr = alloc_stack(g_bf_length + 2);
     get_bf(bXctr, cmd.floatvalstr[0]);
     get_bf(bYctr, cmd.floatvalstr[1]);
     double Xmagfactor = 1;

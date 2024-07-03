@@ -948,7 +948,7 @@ LDBL bntofloat(bn_t n)
 // r = 0
 bf_t clear_bf(bf_t r)
 {
-    std::memset(r, 0, bflength+2);  // set array to zero
+    std::memset(r, 0, g_bf_length+2);  // set array to zero
     return r;
 }
 
@@ -956,7 +956,7 @@ bf_t clear_bf(bf_t r)
 // r = n
 bf_t copy_bf(bf_t r, bf_t n)
 {
-    std::memcpy(r, n, bflength+2);
+    std::memcpy(r, n, g_bf_length+2);
     return r;
 }
 
@@ -978,14 +978,14 @@ bf_t floattobf(bf_t r, LDBL f)
     f = extract_256(f, &power);
 
     bnl = g_bn_length;
-    g_bn_length = bflength;
+    g_bn_length = g_bf_length;
     il = g_int_length;
     g_int_length = 2;
     floattobn(r, f);
     g_bn_length = bnl;
     g_int_length = il;
 
-    big_set16(r + bflength, (S16)power); // exp
+    big_set16(r + g_bf_length, (S16)power); // exp
 
     return r;
 }
@@ -1012,14 +1012,14 @@ LDBL bftofloat(bf_t n)
     LDBL f;
 
     bnl = g_bn_length;
-    g_bn_length = bflength;
+    g_bn_length = g_bf_length;
     il = g_int_length;
     g_int_length = 2;
     f = bntofloat(n);
     g_bn_length = bnl;
     g_int_length = il;
 
-    power = (S16)big_access16(n + bflength);
+    power = (S16)big_access16(n + g_bf_length);
     f = scale_256(f, power);
 
     return f;

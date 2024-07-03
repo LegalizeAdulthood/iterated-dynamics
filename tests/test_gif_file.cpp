@@ -318,7 +318,7 @@ std::ostream &operator<<(std::ostream &str, const FRACTAL_INFO &value)
                << R"(, "bailoutest": )" << value.bailoutest                  //
                << R"(, "iterations": )" << value.iterations                  //
                << R"(, "bf_math": )" << value.bf_math                        //
-               << R"(, "bflength": )" << value.bflength                      //
+               << R"(, "g_bf_length": )" << value.g_bf_length                      //
                << R"(, "yadjust": )" << value.yadjust                        //
                << R"(, "old_demm_colors": )" << value.old_demm_colors        //
                << R"(, "logmap": )" << value.logmap                          //
@@ -640,7 +640,7 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(0, info.bailoutest);
     EXPECT_EQ(150, info.iterations);
     EXPECT_EQ(0, info.bf_math);
-    EXPECT_EQ(0, info.bflength);
+    EXPECT_EQ(0, info.g_bf_length);
     EXPECT_EQ(0, info.yadjust);
     EXPECT_EQ(0, info.old_demm_colors);
     EXPECT_EQ(0, info.logmap);

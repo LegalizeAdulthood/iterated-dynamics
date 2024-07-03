@@ -188,7 +188,7 @@ bool tab_display_2(char *msg)
               g_bignum_max_stack_addr-startstack, (long)((g_bignum_max_stack_addr-startstack)/(rbflength+2)), rbflength+2);
     if (g_bf_math != bf_math_type::NONE)
     {
-        write_row(++row, "g_int_length %-d bflength %-d ", g_int_length, bflength);
+        write_row(++row, "g_int_length %-d g_bf_length %-d ", g_int_length, g_bf_length);
     }
     row++;
     show_str_var("tempdir",     g_temp_dir.c_str(),      &row, msg);
@@ -281,8 +281,8 @@ int tab_display()       // display the status of the current image
     if (g_bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
-        bfXctr = alloc_stack(bflength+2);
-        bfYctr = alloc_stack(bflength+2);
+        bfXctr = alloc_stack(g_bf_length+2);
+        bfYctr = alloc_stack(g_bf_length+2);
     }
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {

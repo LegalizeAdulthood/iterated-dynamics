@@ -668,8 +668,8 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
     saved = save_stack();
     if (g_bf_math != bf_math_type::NONE)
     {
-        bfXctr = alloc_stack(bflength+2);
-        bfYctr = alloc_stack(bflength+2);
+        bfXctr = alloc_stack(g_bf_length+2);
+        bfYctr = alloc_stack(g_bf_length+2);
     }
 
     s_wbdata.len = 0; // force first parm to start on new line

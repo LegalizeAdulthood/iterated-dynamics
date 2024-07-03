@@ -597,10 +597,10 @@ bool encoder()
     // Extended parameters block 005
     if (g_bf_math != bf_math_type::NONE)
     {
-        save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
+        save_info.tot_extend_len += extend_blk_len(22 * (g_bf_length + 2));
         // note: this assumes variables allocated in order starting with
         // g_bf_x_min in init_bf_2() in BIGNUM.C
-        if (!put_extend_blk(5, 22 * (bflength + 2), (char *) g_bf_x_min))
+        if (!put_extend_blk(5, 22 * (g_bf_length + 2), (char *) g_bf_x_min))
         {
             goto oops;
         }
@@ -949,7 +949,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->bailout = g_bail_out;
     save_info->bailoutest = (short) g_bail_out_test;
     save_info->iterations = g_max_iterations;
-    save_info->bflength = (short) g_bn_length;
+    save_info->g_bf_length = (short) g_bn_length;
     save_info->bf_math = (short) g_bf_math;
     save_info->old_demm_colors = (short) (g_old_demm_colors ? 1 : 0);
     save_info->logmap = g_log_map_flag;

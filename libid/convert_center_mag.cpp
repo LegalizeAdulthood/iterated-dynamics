@@ -132,8 +132,8 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
     if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
     {
         // no rotation or skewing, but stretching is allowed
-        bfWidth  = alloc_stack(bflength+2);
-        bf_t bfHeight = alloc_stack(bflength+2);
+        bfWidth  = alloc_stack(g_bf_length+2);
+        bf_t bfHeight = alloc_stack(g_bf_length+2);
         // Width  = g_x_max - g_x_min;
         sub_bf(bfWidth, g_bf_x_max, g_bf_x_min);
         LDBL Width = bftofloat(bfWidth);
@@ -153,8 +153,8 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
     }
     else
     {
-        bftmpx = alloc_stack(bflength+2);
-        bf_t bftmpy = alloc_stack(bflength+2);
+        bftmpx = alloc_stack(g_bf_length+2);
+        bf_t bftmpy = alloc_stack(g_bf_length+2);
 
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)

@@ -73,8 +73,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
     const int saved = save_stack();
-    bf_t bfh = alloc_stack(bflength + 2);
-    bf_t bfw = alloc_stack(bflength + 2);
+    bf_t bfh = alloc_stack(g_bf_length + 2);
+    bf_t bfw = alloc_stack(g_bf_length + 2);
 
     if (Xmagfactor == 0.0)
     {
@@ -104,7 +104,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
         return;
     }
 
-    bf_t bftmp = alloc_stack(bflength + 2);
+    bf_t bftmp = alloc_stack(g_bf_length + 2);
     // in unrotated, untranslated coordinate system
     const double tanskew = std::tan(deg_to_rad(Skew));
     const LDBL xmin = -w + h * tanskew;

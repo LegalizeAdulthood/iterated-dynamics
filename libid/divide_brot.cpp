@@ -122,9 +122,9 @@ int DivideBrot5bfFractal()
     bftmpnew.y = alloc_stack(rbflength + 2);
     bfnumer.x = alloc_stack(rbflength + 2);
     bfnumer.y = alloc_stack(rbflength + 2);
-    bfc_exp.x = alloc_stack(bflength + 2);
-    bfc_exp.y = alloc_stack(bflength + 2);
-    tmp1 = alloc_stack(bflength + 2);
+    bfc_exp.x = alloc_stack(g_bf_length + 2);
+    bfc_exp.y = alloc_stack(g_bf_length + 2);
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     /* sqr(z) */
     /* bfnumer.x = bftmpsqrx - bftmpsqry;   */

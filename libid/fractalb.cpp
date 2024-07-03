@@ -106,11 +106,11 @@ void showbfglobals(char const *s)
     std::snprintf(msg, std::size(msg),
         "%s\n"                                                                     //
         "g_bn_step=%d g_bn_length=%d g_int_length=%d g_r_length=%d g_padding=%d\n" //
-        "g_shift_factor=%d decimals=%d bflength=%d rbflength=%d \n"                //
+        "g_shift_factor=%d decimals=%d g_bf_length=%d rbflength=%d \n"                //
         "bfdecimals=%d ",                                                          //
         s,                                                                         //
         g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,               //
-        g_shift_factor, g_decimals, bflength, rbflength,                           //
+        g_shift_factor, g_decimals, g_bf_length, rbflength,                           //
         bfdecimals);
     if (stopmsg(msg))
     {
@@ -131,9 +131,9 @@ void showcornersbf(char const *s)
     bftostr(msg, dec, g_bf_x_min);
     std::snprintf(msg1, std::size(msg1),
         "bf_x_min=%s\n"                                //
-        "x_min= %.20f decimals %d bflength %d\n\n", //
+        "x_min= %.20f decimals %d g_bf_length %d\n\n", //
         msg,                                           //
-        g_x_min, g_decimals, bflength);
+        g_x_min, g_decimals, g_bf_length);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
@@ -682,8 +682,8 @@ bool MandelbfSetup()
     bf_t bftemp2;
     int saved;
     saved = save_stack();
-    bftemp1 = alloc_stack(bflength+2);
-    bftemp2 = alloc_stack(bflength+2);
+    bftemp1 = alloc_stack(g_bf_length+2);
+    bftemp2 = alloc_stack(g_bf_length+2);
 
     g_bf_math = bf_math_type::BIGFLT;
 
@@ -977,8 +977,8 @@ JuliaZpowerbfFractal()
     int saved;
     saved = save_stack();
 
-    parm2.x = alloc_stack(bflength+2);
-    parm2.y = alloc_stack(bflength+2);
+    parm2.x = alloc_stack(g_bf_length+2);
+    parm2.y = alloc_stack(g_bf_length+2);
 
     floattobf(parm2.x, g_params[2]);
     floattobf(parm2.y, g_params[3]);

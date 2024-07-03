@@ -27,7 +27,7 @@ int g_r_length{};
 int g_padding{};
 int g_shift_factor{};
 int g_decimals{};
-int bflength{};
+int g_bf_length{};
 int rbflength{};
 int bfdecimals{};
 
@@ -88,7 +88,7 @@ bf_t bfclosenuff = nullptr;
 bf_t bftmpsqrx = nullptr;
 bf_t bftmpsqry = nullptr;
 
-// bflength+2
+// g_bf_length+2
 BFComplex bfparm = { nullptr, nullptr };
 BFComplex bfsaved = { nullptr, nullptr };
 
@@ -97,12 +97,12 @@ BFComplex bfold = { nullptr, nullptr };
 BFComplex bfnew = { nullptr, nullptr };
 
 bf_t bf_pi = nullptr;      // TAKES NO SPACE
-bf_t big_pi = nullptr;     // bflength+2
+bf_t big_pi = nullptr;     // g_bf_length+2
 
 // for testing only
 
 // used by other routines
-// bflength+2
+// g_bf_length+2
 bf_t g_bf_x_min = nullptr;
 bf_t g_bf_x_max = nullptr;
 bf_t g_bf_y_min = nullptr;
@@ -115,7 +115,7 @@ bf_t g_bf_save_y_min = nullptr;
 bf_t g_bf_save_y_max = nullptr;
 bf_t g_bf_save_x_3rd = nullptr;
 bf_t g_bf_save_y_3rd = nullptr;
-bf_t bfparms[10];                                    // (bflength+2)*10
+bf_t bfparms[10];                                    // (g_bf_length+2)*10
 bf_t bftmp = nullptr;
 
 bf_t bf10tmp = nullptr;                                              // dec+4
@@ -150,9 +150,9 @@ void calc_lengths()
     // Change to g_bn_length-g_int_length for full multiplications.
     g_shift_factor = g_padding - g_int_length;
 
-    bflength = g_bn_length+g_bn_step; // one extra step for added precision
-    rbflength = bflength + g_padding;
-    bfdecimals = (int)((bflength-2)*LOG10_256);
+    g_bf_length = g_bn_length+g_bn_step; // one extra step for added precision
+    rbflength = g_bf_length + g_padding;
+    bfdecimals = (int)((g_bf_length-2)*LOG10_256);
 }
 
 /************************************************************************/
@@ -281,13 +281,13 @@ static void init_bf_2()
     if (g_bf_math == bf_math_type::BIGFLT)
     {
         bfxdel     = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfydel     = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfxdel2    = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfydel2    = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfold.x    = bnroot+ptr;
         ptr += rbflength+2;
         bfold.y    = bnroot+ptr;
@@ -297,21 +297,21 @@ static void init_bf_2()
         bfnew.y    = bnroot+ptr;
         ptr += rbflength+2;
         bfsaved.x  = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfsaved.y  = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfclosenuff = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfparm.x   = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bfparm.y   = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bftmpsqrx  = bnroot+ptr;
         ptr += rbflength+2;
         bftmpsqry  = bnroot+ptr;
         ptr += rbflength+2;
         big_pi     = bnroot+ptr;
-        ptr += bflength+2;
+        ptr += g_bf_length+2;
         bftmp      = bnroot+ptr;
         ptr += rbflength+2;
     }
@@ -325,12 +325,12 @@ static void init_bf_2()
     startstack = ptr;
 
     // max stack offset from bnroot
-    maxstack = (long)0x10000L-(bflength+2)*22;
+    maxstack = (long)0x10000L-(g_bf_length+2)*22;
 
     // sanity check
     // leave room for NUMVARS variables allocated from stack
     // also leave room for the safe area at top of segment
-    if (ptr + NUMVARS*(bflength+2) > maxstack)
+    if (ptr + NUMVARS*(g_bf_length+2) > maxstack)
     {
         stopmsg("Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
         goodbye();
@@ -341,32 +341,32 @@ static void init_bf_2()
     // generation - e.g. zoom box variables
     ptr  = maxstack;
     g_bf_x_min     = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_x_max     = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_y_min     = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_y_max     = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_x_3rd     = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_y_3rd     = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     for (auto &param : bfparms)
     {
         param = bnroot + ptr;
-        ptr += bflength + 2;
+        ptr += g_bf_length + 2;
     }
     g_bf_save_x_min    = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_save_x_max    = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_save_y_min    = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_save_y_max    = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_save_x_3rd    = bnroot+ptr;
-    ptr += bflength+2;
+    ptr += g_bf_length+2;
     g_bf_save_y_3rd    = bnroot+ptr;
     // end safe vars
 
@@ -378,7 +378,7 @@ static void init_bf_2()
     else   // first time through - nothing saved
     {
         // high variables
-        std::memset(bnroot+maxstack, 0, (bflength+2)*22);
+        std::memset(bnroot+maxstack, 0, (g_bf_length+2)*22);
         // low variables
         std::memset(bnroot, 0, (unsigned)startstack);
     }
@@ -395,8 +395,8 @@ static int save_bf_vars()
     int ret;
     if (bnroot != nullptr)
     {
-        unsigned int mem = (bflength+2)*22;  // 6 corners + 6 save corners + 10 params
-        g_bf_save_len = bflength;
+        unsigned int mem = (g_bf_length+2)*22;  // 6 corners + 6 save corners + 10 params
+        g_bf_save_len = g_bf_length;
         std::memcpy(bnroot, g_bf_x_min, mem);
         // scrub old high area
         std::memset(g_bf_x_min, 0, mem);
@@ -420,34 +420,34 @@ static int restore_bf_vars()
         return -1;
     }
     ptr  = bnroot;
-    convert_bf(g_bf_x_min, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_x_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_x_max, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_x_max, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_y_min, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_y_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_y_max, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_y_max, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_x_3rd, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_x_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_y_3rd, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
     for (auto &param : bfparms)
     {
-        convert_bf(param, ptr, bflength, g_bf_save_len);
+        convert_bf(param, ptr, g_bf_length, g_bf_save_len);
         ptr += g_bf_save_len + 2;
     }
-    convert_bf(g_bf_save_x_min, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_x_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_x_max, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_x_max, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_y_min, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_y_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_y_max, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_y_max, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_x_3rd, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_x_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(g_bf_save_y_3rd, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_y_3rd, ptr, g_bf_length, g_bf_save_len);
 
     // scrub save area
     std::memset(bnroot, 0, (g_bf_save_len+2)*22);
@@ -467,7 +467,7 @@ void free_bf_vars()
     g_padding = 0;
     g_shift_factor = 0;
     g_decimals = 0;
-    bflength = 0;
+    g_bf_length = 0;
     rbflength = 0;
     bfdecimals = 0;
 }
@@ -681,11 +681,11 @@ void init_big_pi()
         // or bf_t int length of 2 + 2 byte exp
     };
 
-    length = bflength+2; // 2 byte exp
+    length = g_bf_length+2; // 2 byte exp
     pi_offset = sizeof pi_table - length;
     std::memcpy(big_pi, pi_table + pi_offset, length);
 
     // notice that bf_pi and bn_pi can share the same memory space
     bf_pi = big_pi;
-    bn_pi = big_pi + (bflength-2) - (g_bn_length-g_int_length);
+    bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 }

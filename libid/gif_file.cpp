@@ -364,7 +364,7 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
     result.bailoutest = deser.extract_int16();
     result.iterations = deser.extract_int32();
     result.bf_math = deser.extract_int16();
-    result.bflength = deser.extract_int16();
+    result.g_bf_length = deser.extract_int16();
     result.yadjust = deser.extract_int16();
     result.old_demm_colors = deser.extract_int16();
     result.logmap = deser.extract_int32();
@@ -630,7 +630,7 @@ void put_fractal_info(GifFileType *gif, const FRACTAL_INFO &info)
     ser.insert_int16(info.bailoutest);
     ser.insert_int32(info.iterations);
     ser.insert_int16(info.bf_math);
-    ser.insert_int16(info.bflength);
+    ser.insert_int16(info.g_bf_length);
     ser.insert_int16(info.yadjust);
     ser.insert_int16(info.old_demm_colors);
     ser.insert_int32(info.logmap);

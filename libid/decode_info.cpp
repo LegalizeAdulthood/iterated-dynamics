@@ -182,7 +182,7 @@ void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
     get_int16(&info->bailoutest, &bufPtr, dir);
     get_int32(&info->iterations, &bufPtr, dir);
     get_int16(&info->bf_math, &bufPtr, dir);
-    get_int16(&info->bflength, &bufPtr, dir);
+    get_int16(&info->g_bf_length, &bufPtr, dir);
     get_int16(&info->yadjust, &bufPtr, dir);
     get_int16(&info->old_demm_colors, &bufPtr, dir);
     get_int32(&info->logmap, &bufPtr, dir);

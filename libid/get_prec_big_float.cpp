@@ -26,8 +26,8 @@ int getprecbf_mag()
     int dec;
 
     saved = save_stack();
-    bXctr            = alloc_stack(bflength+2);
-    bYctr            = alloc_stack(bflength+2);
+    bXctr            = alloc_stack(g_bf_length+2);
+    bYctr            = alloc_stack(g_bf_length+2);
     // this is just to find Magnification
     cvtcentermagbf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     restore_stack(saved);
@@ -60,13 +60,13 @@ int getprecbf(int rezflag)
     int saved;
     int rez;
     saved    = save_stack();
-    del1     = alloc_stack(bflength+2);
-    del2     = alloc_stack(bflength+2);
-    one      = alloc_stack(bflength+2);
-    bfxxdel   = alloc_stack(bflength+2);
-    bfxxdel2  = alloc_stack(bflength+2);
-    bfyydel   = alloc_stack(bflength+2);
-    bfyydel2  = alloc_stack(bflength+2);
+    del1     = alloc_stack(g_bf_length+2);
+    del2     = alloc_stack(g_bf_length+2);
+    one      = alloc_stack(g_bf_length+2);
+    bfxxdel   = alloc_stack(g_bf_length+2);
+    bfxxdel2  = alloc_stack(g_bf_length+2);
+    bfyydel   = alloc_stack(g_bf_length+2);
+    bfyydel2  = alloc_stack(g_bf_length+2);
     floattobf(one, 1.0);
     if (rezflag == MAXREZ)
     {

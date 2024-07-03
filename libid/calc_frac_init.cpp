@@ -1232,7 +1232,7 @@ static void smallest_add_bf(bf_t num)
     bf_t btmp1;
     int saved;
     saved = save_stack();
-    btmp1 = alloc_stack(bflength+2);
+    btmp1 = alloc_stack(g_bf_length+2);
     mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
     add_a_bf(num, btmp1);
     restore_stack(saved);

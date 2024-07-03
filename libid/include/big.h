@@ -40,7 +40,7 @@ extern int g_r_length;
 extern int g_padding;
 extern int g_decimals;
 extern int g_shift_factor;
-extern int bflength;
+extern int g_bf_length;
 extern int rbflength;
 extern int bfpadding;
 extern int bfdecimals;
@@ -283,7 +283,7 @@ extern BFComplex bfnew;
 
 // for testing only
 // used by other routines
-// bflength+2
+// g_bf_length+2
 extern bf_t g_bf_x_min;
 extern bf_t g_bf_x_max;
 extern bf_t g_bf_y_min;
@@ -296,4 +296,4 @@ extern bf_t g_bf_save_y_min;
 extern bf_t g_bf_save_y_max;
 extern bf_t g_bf_save_x_3rd;
 extern bf_t g_bf_save_y_3rd;
-extern bf_t bfparms[10];                                 // (bflength+2)*10
+extern bf_t bfparms[10];                                 // (g_bf_length+2)*10

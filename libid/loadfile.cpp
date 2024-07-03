@@ -283,7 +283,7 @@ bool operator==(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs)
         && lhs.bailoutest == rhs.bailoutest               //
         && lhs.iterations == rhs.iterations               //
         && lhs.bf_math == rhs.bf_math                     //
-        && lhs.bflength == rhs.bflength                   //
+        && lhs.g_bf_length == rhs.g_bf_length                   //
         && lhs.yadjust == rhs.yadjust                     //
         && lhs.old_demm_colors == rhs.old_demm_colors     //
         && lhs.logmap == rhs.logmap                       //
@@ -769,7 +769,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_5_info.got_data)
     {
         g_bf_math = bf_math_type::BIGNUM;
-        init_bf_length(read_info.bflength);
+        init_bf_length(read_info.g_bf_length);
         std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
     else
@@ -1976,19 +1976,19 @@ static bool is_visible_window(
 
     saved = save_stack();
     // Save original values.
-    orig_bflength      = bflength;
+    orig_bflength      = g_bf_length;
     orig_bnlength      = g_bn_length;
     orig_padding       = g_padding;
     orig_rlength       = g_r_length;
     orig_shiftfactor   = g_shift_factor;
     orig_rbflength     = rbflength;
     /*
-       if (oldbf_math && info->bf_math && (g_bn_length+4 < info->bflength)) {
-          g_bn_length = info->bflength;
+       if (oldbf_math && info->bf_math && (g_bn_length+4 < info->g_bf_length)) {
+          g_bn_length = info->g_bf_length;
           calc_lengths();
        }
     */
-    two_len = bflength + 2;
+    two_len = g_bf_length + 2;
     bt_x = alloc_stack(two_len);
     bt_y = alloc_stack(two_len);
     bt_xmin = alloc_stack(two_len);
@@ -2000,7 +2000,7 @@ static bool is_visible_window(
 
     if (info->bf_math)
     {
-        const int di_bflength = info->bflength + g_bn_step;
+        const int di_bflength = info->g_bf_length + g_bn_step;
         const int two_di_len = di_bflength + 2;
         const int two_rbf = rbflength + 2;
 
@@ -2141,7 +2141,7 @@ static bool is_visible_window(
     }
 
     // restore original values
-    bflength      = orig_bflength;
+    g_bf_length      = orig_bflength;
     g_bn_length   = orig_bnlength;
     g_padding     = orig_padding;
     g_r_length    = orig_rlength;
