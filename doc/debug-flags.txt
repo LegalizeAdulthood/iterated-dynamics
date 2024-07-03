@@ -1,4 +1,4 @@
-This list complete as of Iterated Dynamics version 1.0.
+This list is complete as of Iterated Dynamics version 1.0.
 None of these are necessarily supported in future.
 
 Add one to any debug value to trigger writing benchmark values to
@@ -11,7 +11,6 @@ Example:
 
 22      force float for 3D perspective
 50      compare <r>estored files
-72      don't use fast >= 287 fpu routines
 90      force "C" mandel & julia code (no calcmand or calmanfp)
 90      force generic code for fn+fn etc types
 90      force "C" parser code even if FPU >= 387
@@ -48,7 +47,6 @@ Example:
 6000    turns off optimization of using realzzpower types
         instead of complexzpower when imaginary part of
         parameter is zero
-8088    set cpu = 86, (case in general.asm is redundant?)
 10000   display cpu, fpu, and free memory at startup
 
 !=0     show "normal vector" errors instead of just fixing

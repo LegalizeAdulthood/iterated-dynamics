@@ -6,7 +6,6 @@ enum class debug_flags
     benchmark_timer                     = 1,
     force_float_perspective             = 22,
     force_disk_restore_not_save         = 50,
-    prevent_287_math                    = 72,
     force_standard_fractal              = 90,
     force_ld_check                      = 94,
     force_real_popcorn                  = 96,
@@ -37,7 +36,6 @@ enum class debug_flags
     force_scaled_sound_formula          = 4030,
     force_disk_min_cache                = 4200,
     force_complex_power                 = 6000,
-    prevent_386_math                    = 8088,
     display_memory_statistics           = 10000
 };
 
