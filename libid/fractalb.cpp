@@ -327,9 +327,9 @@ int  bnMODbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    add_bn(bntmp, bntmpsqrx+g_shift_factor, bntmpsqry+g_shift_factor);
+    add_bn(g_bn_tmp, bntmpsqrx+g_shift_factor, bntmpsqry+g_shift_factor);
 
-    longmagnitude = bntoint(bntmp);  // works with any fractal type
+    longmagnitude = bntoint(g_bn_tmp);  // works with any fractal type
     if (longmagnitude >= (long)g_magnitude_limit)
     {
         return 1;
@@ -417,8 +417,8 @@ int  bnMANHbailout()
     // note: in next five lines, bnold is just used as a temporary variable
     abs_bn(bnold.x, bnnew.x);
     abs_bn(bnold.y, bnnew.y);
-    add_bn(bntmp, bnold.x, bnold.y);
-    square_bn(bnold.x, bntmp);
+    add_bn(g_bn_tmp, bnold.x, bnold.y);
+    square_bn(bnold.x, g_bn_tmp);
     longtempmag = bntoint(bnold.x+g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
@@ -435,9 +435,9 @@ int  bnMANRbailout()
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
-    add_bn(bntmp, bnnew.x, bnnew.y); // don't need abs since we square it next
+    add_bn(g_bn_tmp, bnnew.x, bnnew.y); // don't need abs since we square it next
     // note: in next two lines, bnold is just used as a temporary variable
-    square_bn(bnold.x, bntmp);
+    square_bn(bnold.x, g_bn_tmp);
     longtempmag = bntoint(bnold.x+g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
@@ -772,9 +772,9 @@ int mandelbn_per_pixel()
 {
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
-    mult_bn_int(bntmp, bnxdel2, (U16)g_row);
+    mult_bn_int(g_bn_tmp, bnxdel2, (U16)g_row);
 
-    add_a_bn(bnparm.x, bntmp);
+    add_a_bn(bnparm.x, g_bn_tmp);
     add_a_bn(bnparm.x, bnxmin);
 
     // parm.y = g_y_max - row*dely - col*dely2;
@@ -865,9 +865,9 @@ juliabn_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
     mult_bn_int(bnold.x, bnxdel, (U16)g_col);
-    mult_bn_int(bntmp, bnxdel2, (U16)g_row);
+    mult_bn_int(g_bn_tmp, bnxdel2, (U16)g_row);
 
-    add_a_bn(bnold.x, bntmp);
+    add_a_bn(bnold.x, g_bn_tmp);
     add_a_bn(bnold.x, bnxmin);
 
     // old.y = g_y_max - row*dely - col*dely2;
@@ -930,9 +930,9 @@ JuliabnFractal()
     add_bn(bnnew.x, bntmpsqrx+g_shift_factor, bnparm.x);
 
     // new.y = 2 * bnold.x * bnold.y + parm.y;
-    mult_bn(bntmp, bnold.x, bnold.y); // ok to use unsafe here
-    double_a_bn(bntmp+g_shift_factor);
-    add_bn(bnnew.y, bntmp+g_shift_factor, bnparm.y);
+    mult_bn(g_bn_tmp, bnold.x, bnold.y); // ok to use unsafe here
+    double_a_bn(g_bn_tmp+g_shift_factor);
+    add_bn(bnnew.y, g_bn_tmp+g_shift_factor, bnparm.y);
 
     return g_bailout_bignum();
 }

@@ -18,9 +18,9 @@ int dividebrot5bn_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bn_int(bnparm.x, bnxdel, (U16) g_col);
-    mult_bn_int(bntmp, bnxdel2, (U16) g_row);
+    mult_bn_int(g_bn_tmp, bnxdel2, (U16) g_row);
 
-    add_a_bn(bnparm.x, bntmp);
+    add_a_bn(bnparm.x, g_bn_tmp);
     add_a_bn(bnparm.x, bnxmin);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
