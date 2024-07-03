@@ -60,9 +60,6 @@ extern bf_t g_bf_tmp3;    // g_r_bf_length+2
 extern bf_t g_bf_tmp4;    // g_r_bf_length+2
 extern bf_t g_bf_tmp5;    // g_r_bf_length+2
 extern bf_t g_bf_tmp6;    // g_r_bf_length+2
-extern bf_t bftest1;   // g_r_bf_length+2
-extern bf_t bftest2;   // g_r_bf_length+2
-extern bf_t bftest3;   // g_r_bf_length+2
 extern bf_t bftmpcpy1; // g_r_bf_length+2
 extern bf_t bftmpcpy2; // g_r_bf_length+2
 extern bf_t bf_pi;
