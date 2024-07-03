@@ -59,8 +59,8 @@ extern bf_t g_bf_tmp3;    // g_r_bf_length+2
 extern bf_t g_bf_tmp4;    // g_r_bf_length+2
 extern bf_t g_bf_tmp5;    // g_r_bf_length+2
 extern bf_t g_bf_tmp6;    // g_r_bf_length+2
-extern bf_t bftmpcpy1; // g_r_bf_length+2
-extern bf_t bftmpcpy2; // g_r_bf_length+2
+extern bf_t g_bf_tmp_copy1; // g_r_bf_length+2
+extern bf_t g_bf_tmp_copy2; // g_r_bf_length+2
 extern bf_t bf_pi;
 extern bf_t bftmp;     // g_r_bf_length
 extern bf10_t bf10tmp; // dec+4

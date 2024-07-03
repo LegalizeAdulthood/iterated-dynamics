@@ -78,8 +78,8 @@ bf_t g_bf_tmp3 = nullptr;
 bf_t g_bf_tmp4 = nullptr;
 bf_t g_bf_tmp5 = nullptr;
 bf_t g_bf_tmp6 = nullptr;
-bf_t bftmpcpy1 = nullptr;
-bf_t bftmpcpy2 = nullptr;
+bf_t g_bf_tmp_copy1 = nullptr;
+bf_t g_bf_tmp_copy2 = nullptr;
 bf_t bfxdel = nullptr;
 bf_t bfydel = nullptr;
 bf_t bfxdel2 = nullptr;
@@ -221,9 +221,9 @@ static void init_bf_2()
     g_bf_tmp6     = bnroot+ptr;
     ptr += g_r_bf_length+2;
 
-    bftmpcpy1  = bnroot+ptr;
+    g_bf_tmp_copy1  = bnroot+ptr;
     ptr += (g_r_bf_length+2)*2;
-    bftmpcpy2  = bnroot+ptr;
+    g_bf_tmp_copy2  = bnroot+ptr;
     ptr += (g_r_bf_length+2)*2;
 
     g_bn_tmp_copy1  = bnroot+ptr;

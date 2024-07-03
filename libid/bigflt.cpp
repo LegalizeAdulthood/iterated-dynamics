@@ -1170,34 +1170,34 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
 /**********************************************************************/
 bf_t add_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    copy_bf(bftmpcpy1, n1);
-    copy_bf(bftmpcpy2, n2);
-    unsafe_add_bf(r, bftmpcpy1, bftmpcpy2);
+    copy_bf(g_bf_tmp_copy1, n1);
+    copy_bf(g_bf_tmp_copy2, n2);
+    unsafe_add_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
 /**********************************************************************/
 bf_t add_a_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_add_a_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_add_a_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t sub_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    copy_bf(bftmpcpy1, n1);
-    copy_bf(bftmpcpy2, n2);
-    unsafe_sub_bf(r, bftmpcpy1, bftmpcpy2);
+    copy_bf(g_bf_tmp_copy1, n1);
+    copy_bf(g_bf_tmp_copy2, n2);
+    unsafe_sub_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
 /**********************************************************************/
 bf_t sub_a_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_sub_a_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_sub_a_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
@@ -1205,131 +1205,131 @@ bf_t sub_a_bf(bf_t r, bf_t n)
 // mult and div only change sign
 bf_t full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    copy_bf(bftmpcpy1, n1);
-    copy_bf(bftmpcpy2, n2);
-    unsafe_full_mult_bf(r, bftmpcpy1, bftmpcpy2);
+    copy_bf(g_bf_tmp_copy1, n1);
+    copy_bf(g_bf_tmp_copy2, n2);
+    unsafe_full_mult_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
 /**********************************************************************/
 bf_t mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    copy_bf(bftmpcpy1, n1);
-    copy_bf(bftmpcpy2, n2);
-    unsafe_mult_bf(r, bftmpcpy1, bftmpcpy2);
+    copy_bf(g_bf_tmp_copy1, n1);
+    copy_bf(g_bf_tmp_copy2, n2);
+    unsafe_mult_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
 /**********************************************************************/
 bf_t full_square_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_full_square_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_full_square_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t square_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_square_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_square_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t mult_bf_int(bf_t r, bf_t n, U16 u)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_mult_bf_int(r, bftmpcpy1, u);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_mult_bf_int(r, g_bf_tmp_copy1, u);
     return r;
 }
 
 /**********************************************************************/
 bf_t div_bf_int(bf_t r, bf_t n,  U16 u)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_div_bf_int(r, bftmpcpy1, u);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_div_bf_int(r, g_bf_tmp_copy1, u);
     return r;
 }
 
 /**********************************************************************/
 char *bftostr(char *s, int dec, bf_t r)
 {
-    copy_bf(bftmpcpy1, r);
-    unsafe_bftostr(s, dec, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, r);
+    unsafe_bftostr(s, dec, g_bf_tmp_copy1);
     return s;
 }
 
 /**********************************************************************/
 char *bftostr_e(char *s, int dec, bf_t r)
 {
-    copy_bf(bftmpcpy1, r);
-    unsafe_bftostr_e(s, dec, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, r);
+    unsafe_bftostr_e(s, dec, g_bf_tmp_copy1);
     return s;
 }
 
 /**********************************************************************/
 char *bftostr_f(char *s, int dec, bf_t r)
 {
-    copy_bf(bftmpcpy1, r);
-    unsafe_bftostr_f(s, dec, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, r);
+    unsafe_bftostr_f(s, dec, g_bf_tmp_copy1);
     return s;
 }
 
 /**********************************************************************/
 bf_t inv_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_inv_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_inv_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t div_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    copy_bf(bftmpcpy1, n1);
-    copy_bf(bftmpcpy2, n2);
-    unsafe_div_bf(r, bftmpcpy1, bftmpcpy2);
+    copy_bf(g_bf_tmp_copy1, n1);
+    copy_bf(g_bf_tmp_copy2, n2);
+    unsafe_div_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
 /**********************************************************************/
 bf_t sqrt_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_sqrt_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_sqrt_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t ln_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_ln_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_ln_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t sincos_bf(bf_t s, bf_t c, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    return unsafe_sincos_bf(s, c, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    return unsafe_sincos_bf(s, c, g_bf_tmp_copy1);
 }
 
 /**********************************************************************/
 bf_t atan_bf(bf_t r, bf_t n)
 {
-    copy_bf(bftmpcpy1, n);
-    unsafe_atan_bf(r, bftmpcpy1);
+    copy_bf(g_bf_tmp_copy1, n);
+    unsafe_atan_bf(r, g_bf_tmp_copy1);
     return r;
 }
 
 /**********************************************************************/
 bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx)
 {
-    copy_bf(bftmpcpy1, ny);
-    copy_bf(bftmpcpy2, nx);
-    unsafe_atan2_bf(r, bftmpcpy1, bftmpcpy2);
+    copy_bf(g_bf_tmp_copy1, ny);
+    copy_bf(g_bf_tmp_copy2, nx);
+    unsafe_atan2_bf(r, g_bf_tmp_copy1, g_bf_tmp_copy2);
     return r;
 }
 
