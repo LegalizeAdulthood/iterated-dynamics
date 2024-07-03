@@ -454,9 +454,9 @@ int  bfMODbailout()
 
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
-    add_bf(bftmp, bftmpsqrx, bftmpsqry);
+    add_bf(g_bf_tmp, bftmpsqrx, bftmpsqry);
 
-    longmagnitude = bftoint(bftmp);
+    longmagnitude = bftoint(g_bf_tmp);
     if (longmagnitude >= (long)g_magnitude_limit)
     {
         return 1;
@@ -544,8 +544,8 @@ int  bfMANHbailout()
     // note: in next five lines, bfold is just used as a temporary variable
     abs_bf(bfold.x, bfnew.x);
     abs_bf(bfold.y, bfnew.y);
-    add_bf(bftmp, bfold.x, bfold.y);
-    square_bf(bfold.x, bftmp);
+    add_bf(g_bf_tmp, bfold.x, bfold.y);
+    square_bf(bfold.x, g_bf_tmp);
     longtempmag = bftoint(bfold.x);
     if (longtempmag >= (long)g_magnitude_limit)
     {
@@ -562,9 +562,9 @@ int  bfMANRbailout()
 
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
-    add_bf(bftmp, bfnew.x, bfnew.y); // don't need abs since we square it next
+    add_bf(g_bf_tmp, bfnew.x, bfnew.y); // don't need abs since we square it next
     // note: in next two lines, bfold is just used as a temporary variable
-    square_bf(bfold.x, bftmp);
+    square_bf(bfold.x, g_bf_tmp);
     longtempmag = bftoint(bfold.x);
     if (longtempmag >= (long)g_magnitude_limit)
     {
@@ -818,9 +818,9 @@ int mandelbf_per_pixel()
 {
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
-    mult_bf_int(bftmp, bfxdel2, (U16)g_row);
+    mult_bf_int(g_bf_tmp, bfxdel2, (U16)g_row);
 
-    add_a_bf(bfparm.x, bftmp);
+    add_a_bf(bfparm.x, g_bf_tmp);
     add_a_bf(bfparm.x, g_bf_x_min);
 
     // parm.y = g_y_max - row*dely - col*dely2;
@@ -893,9 +893,9 @@ juliabf_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
     mult_bf_int(bfold.x, bfxdel, (U16)g_col);
-    mult_bf_int(bftmp, bfxdel2, (U16)g_row);
+    mult_bf_int(g_bf_tmp, bfxdel2, (U16)g_row);
 
-    add_a_bf(bfold.x, bftmp);
+    add_a_bf(bfold.x, g_bf_tmp);
     add_a_bf(bfold.x, g_bf_x_min);
 
     // old.y = g_y_max - row*dely - col*dely2;
@@ -945,9 +945,9 @@ JuliabfFractal()
     add_bf(bfnew.x, bftmpsqrx, bfparm.x);
 
     // new.y = 2 * bfold.x * bfold.y + parm.y;
-    mult_bf(bftmp, bfold.x, bfold.y); // ok to use unsafe here
-    double_a_bf(bftmp);
-    add_bf(bfnew.y, bftmp, bfparm.y);
+    mult_bf(g_bf_tmp, bfold.x, bfold.y); // ok to use unsafe here
+    double_a_bf(g_bf_tmp);
+    add_bf(bfnew.y, g_bf_tmp, bfparm.y);
     return g_bailout_bigfloat();
 }
 

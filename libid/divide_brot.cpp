@@ -42,9 +42,9 @@ int dividebrot5bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bf_int(bfparm.x, bfxdel, (U16) g_col);
-    mult_bf_int(bftmp, bfxdel2, (U16) g_row);
+    mult_bf_int(g_bf_tmp, bfxdel2, (U16) g_row);
 
-    add_a_bf(bfparm.x, bftmp);
+    add_a_bf(bfparm.x, g_bf_tmp);
     add_a_bf(bfparm.x, g_bf_x_min);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
