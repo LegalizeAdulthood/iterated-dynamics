@@ -266,7 +266,7 @@ extern bf_t g_delta_x_bf;
 extern bf_t g_delta_y_bf;
 extern bf_t g_delta2_x_bf;
 extern bf_t g_delta2_y_bf;
-extern bf_t bfclosenuff;
+extern bf_t g_close_enough_bf;
 extern bf_t bftmpsqrx;
 extern bf_t bftmpsqry;
 extern BFComplex bfparm;

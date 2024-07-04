@@ -84,7 +84,7 @@ bf_t g_delta_x_bf = nullptr;
 bf_t g_delta_y_bf = nullptr;
 bf_t g_delta2_x_bf = nullptr;
 bf_t g_delta2_y_bf = nullptr;
-bf_t bfclosenuff = nullptr;
+bf_t g_close_enough_bf = nullptr;
 bf_t bftmpsqrx = nullptr;
 bf_t bftmpsqry = nullptr;
 
@@ -300,7 +300,7 @@ static void init_bf_2()
         ptr += g_bf_length+2;
         bfsaved.y  = bnroot+ptr;
         ptr += g_bf_length+2;
-        bfclosenuff = bnroot+ptr;
+        g_close_enough_bf = bnroot+ptr;
         ptr += g_bf_length+2;
         bfparm.x   = bnroot+ptr;
         ptr += g_bf_length+2;

@@ -1897,9 +1897,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
-                    if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, bfsaved.x, bfnew.x)), bfclosenuff) < 0)
+                    if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, bfsaved.x, bfnew.x)), g_close_enough_bf) < 0)
                     {
-                        if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, bfsaved.y, bfnew.y)), bfclosenuff) < 0)
+                        if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, bfsaved.y, bfnew.y)), g_close_enough_bf) < 0)
                         {
                             caught_a_cycle = true;
                         }
