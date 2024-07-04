@@ -27,7 +27,7 @@ static int trail_col = 0;
 static BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
 
 // boundary trace method
-constexpr int bkcolor{0};
+constexpr int BK_COLOR{0};
 
 inline direction advance(direction dir, int increment)
 {
@@ -77,10 +77,10 @@ int boundary_trace()
     for (int cur_row = g_i_y_start; cur_row <= g_i_y_stop; cur_row++)
     {
         g_reset_periodicity = true; // reset for a new row
-        g_color = bkcolor;
+        g_color = BK_COLOR;
         for (int cur_col = g_i_x_start; cur_col <= g_i_x_stop; cur_col++)
         {
-            if (getcolor(cur_col, cur_row) != bkcolor)
+            if (getcolor(cur_col, cur_row) != BK_COLOR)
             {
                 continue;
             }
@@ -90,9 +90,9 @@ int boundary_trace()
             g_col = cur_col;
             if ((*g_calc_type)() == -1) // g_color, g_row, g_col are global
             {
-                if (g_show_dot != bkcolor)   // remove show dot pixel
+                if (g_show_dot != BK_COLOR)   // remove show dot pixel
                 {
-                    (*g_plot)(g_col, g_row, bkcolor);
+                    (*g_plot)(g_col, g_row, BK_COLOR);
                 }
                 if (g_i_y_stop != g_yy_stop)
                 {
@@ -129,11 +129,11 @@ int boundary_trace()
                 {
                     g_color = getcolor(g_col, g_row);
                     // g_color, g_row, g_col are global for (*g_calc_type)()
-                    if (g_color == bkcolor && (*g_calc_type)()== -1)
+                    if (g_color == BK_COLOR && (*g_calc_type)()== -1)
                     {
-                        if (g_show_dot != bkcolor)   // remove show dot pixel
+                        if (g_show_dot != BK_COLOR)   // remove show dot pixel
                         {
-                            (*g_plot)(g_col, g_row, bkcolor);
+                            (*g_plot)(g_col, g_row, BK_COLOR);
                         }
                         if (g_i_y_stop != g_yy_stop)
                         {
@@ -169,7 +169,7 @@ int boundary_trace()
             if (matches_found <= 3)
             {
                 // no hole
-                g_color = bkcolor;
+                g_color = BK_COLOR;
                 g_reset_periodicity = true;
                 continue;
             }
@@ -201,10 +201,10 @@ int boundary_trace()
                             {
                                 // do nothing
                             }
-                            if (g_color == bkcolor) // check last color
+                            if (g_color == BK_COLOR) // check last color
                             {
                                 int left = right;
-                                while (getcolor(--left,g_row) == bkcolor)
+                                while (getcolor(--left,g_row) == BK_COLOR)
                                 {
                                     // Should NOT be possible for left < g_i_x_start
                                     // do nothing
@@ -252,7 +252,7 @@ int boundary_trace()
                 }
             } while (trail_col != cur_col || trail_row != cur_row);
             g_reset_periodicity = true; // reset after a trace/fill
-            g_color = bkcolor;
+            g_color = BK_COLOR;
         }
     }
     return 0;
