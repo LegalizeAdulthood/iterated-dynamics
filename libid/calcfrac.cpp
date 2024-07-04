@@ -1433,8 +1433,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             if (g_bf_math == bf_math_type::BIGNUM)
             {
-                clear_bn(bnsaved.x);
-                clear_bn(bnsaved.y);
+                clear_bn(g_saved_z_bn.x);
+                clear_bn(g_saved_z_bn.y);
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
@@ -1517,7 +1517,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math == bf_math_type::BIGNUM)
         {
-            g_old_z = cmplxbntofloat(&bnold);
+            g_old_z = cmplxbntofloat(&g_old_z_bn);
         }
         else if (g_bf_math == bf_math_type::BIGFLT)
         {
@@ -1619,7 +1619,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (g_bf_math == bf_math_type::BIGNUM)
                 {
-                    g_new_z = cmplxbntofloat(&bnnew);
+                    g_new_z = cmplxbntofloat(&g_new_z_bn);
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
@@ -1636,7 +1636,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_bf_math == bf_math_type::BIGNUM)
             {
-                g_new_z = cmplxbntofloat(&bnnew);
+                g_new_z = cmplxbntofloat(&g_new_z_bn);
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
@@ -1752,7 +1752,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_bf_math == bf_math_type::BIGNUM)
             {
-                g_new_z = cmplxbntofloat(&bnnew);
+                g_new_z = cmplxbntofloat(&g_new_z_bn);
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
@@ -1855,8 +1855,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else if (g_bf_math == bf_math_type::BIGNUM)
                 {
-                    copy_bn(bnsaved.x, bnnew.x);
-                    copy_bn(bnsaved.y, bnnew.y);
+                    copy_bn(g_saved_z_bn.x, g_new_z_bn.x);
+                    copy_bn(g_saved_z_bn.y, g_new_z_bn.y);
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
@@ -1887,9 +1887,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else if (g_bf_math == bf_math_type::BIGNUM)
                 {
-                    if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, bnsaved.x, bnnew.x)), g_close_enough_bn) < 0)
+                    if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.x, g_new_z_bn.x)), g_close_enough_bn) < 0)
                     {
-                        if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, bnsaved.y, bnnew.y)), g_close_enough_bn) < 0)
+                        if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.y, g_new_z_bn.y)), g_close_enough_bn) < 0)
                         {
                             caught_a_cycle = true;
                         }
@@ -1953,8 +1953,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math == bf_math_type::BIGNUM)
         {
-            g_new_z.x = (double)bntofloat(bnnew.x);
-            g_new_z.y = (double)bntofloat(bnnew.y);
+            g_new_z.x = (double)bntofloat(g_new_z_bn.x);
+            g_new_z.y = (double)bntofloat(g_new_z_bn.y);
         }
         else if (g_bf_math == bf_math_type::BIGFLT)
         {
@@ -1985,8 +1985,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math ==  bf_math_type::BIGNUM)
         {
-            g_new_z.x = (double)bntofloat(bnnew.x);
-            g_new_z.y = (double)bntofloat(bnnew.y);
+            g_new_z.x = (double)bntofloat(g_new_z_bn.x);
+            g_new_z.y = (double)bntofloat(g_new_z_bn.y);
         }
         // Add 7 to overcome negative values on the MANDEL
         if (g_outside_color == REAL)                 // "real"

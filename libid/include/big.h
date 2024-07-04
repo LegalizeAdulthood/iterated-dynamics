@@ -257,10 +257,10 @@ extern bn_t g_close_enough_bn;
 extern bn_t g_tmp_sqr_x_bn;
 extern bn_t g_tmp_sqr_y_bn;
 // g_bn_length
-extern BNComplex bnold;
-extern BNComplex bnparm;
-extern BNComplex bnsaved;
-extern BNComplex bnnew; // g_r_length
+extern BNComplex g_old_z_bn;
+extern BNComplex g_param_z_bn;
+extern BNComplex g_saved_z_bn;
+extern BNComplex g_new_z_bn; // g_r_length
 // g_r_bf_length+2
 extern bf_t bfxdel;
 extern bf_t bfydel;

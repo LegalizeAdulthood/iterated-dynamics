@@ -17,23 +17,23 @@ LDBL g_b_const;
 int dividebrot5bn_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
-    mult_bn_int(bnparm.x, g_delta_x_bn, (U16) g_col);
+    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, (U16) g_col);
     mult_bn_int(g_bn_tmp, g_delta2_x_bn, (U16) g_row);
 
-    add_a_bn(bnparm.x, g_bn_tmp);
-    add_a_bn(bnparm.x, g_x_min_bn);
+    add_a_bn(g_param_z_bn.x, g_bn_tmp);
+    add_a_bn(g_param_z_bn.x, g_x_min_bn);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
-    /* note: in next four lines, bnold is just used as a temporary variable */
-    mult_bn_int(bnold.x, g_delta_y_bn, (U16) g_row);
-    mult_bn_int(bnold.y, g_delta2_y_bn, (U16) g_col);
-    add_a_bn(bnold.x, bnold.y);
-    sub_bn(bnparm.y, g_y_max_bn, bnold.x);
+    /* note: in next four lines, g_old_z_bn is just used as a temporary variable */
+    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, (U16) g_row);
+    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, (U16) g_col);
+    add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
+    sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
 
     clear_bn(g_tmp_sqr_x_bn);
     clear_bn(g_tmp_sqr_y_bn);
-    clear_bn(bnold.x);
-    clear_bn(bnold.y);
+    clear_bn(g_old_z_bn.x);
+    clear_bn(g_old_z_bn.y);
 
     return 0; /* 1st iteration has NOT been done */
 }
@@ -85,15 +85,15 @@ int DivideBrot5bnFractal()
     /* bnnumer.x = g_tmp_sqr_x_bn - g_tmp_sqr_y_bn;   */
     sub_bn(bnnumer.x, g_tmp_sqr_x_bn + g_shift_factor, g_tmp_sqr_y_bn + g_shift_factor);
 
-    /* bnnumer.y = 2 * bnold.x * bnold.y; */
-    mult_bn(tmp2, bnold.x, bnold.y);
+    /* bnnumer.y = 2 * g_old_z_bn.x * g_old_z_bn.y; */
+    mult_bn(tmp2, g_old_z_bn.x, g_old_z_bn.y);
     double_a_bn(tmp2 + g_shift_factor);
     copy_bn(bnnumer.y, tmp2 + g_shift_factor);
 
     /* z^(a) */
     inttobn(bnc_exp.x, g_c_exponent);
     clear_bn(bnc_exp.y);
-    ComplexPower_bn(&bntmpnew, &bnold, &bnc_exp);
+    ComplexPower_bn(&bntmpnew, &g_old_z_bn, &bnc_exp);
     /* then add b */
     floattobn(tmp1, g_b_const);
     add_bn(bntmpnew.x, tmp1, bntmpnew.x + g_shift_factor);
@@ -102,10 +102,10 @@ int DivideBrot5bnFractal()
     copy_bn(bntmpnew.y, tmp2);
 
     /* sqr(z)/(z^(a)+b) */
-    cplxdiv_bn(&bnnew, &bnnumer, &bntmpnew);
+    cplxdiv_bn(&g_new_z_bn, &bnnumer, &bntmpnew);
 
-    add_a_bn(bnnew.x, bnparm.x);
-    add_a_bn(bnnew.y, bnparm.y);
+    add_a_bn(g_new_z_bn.x, g_param_z_bn.x);
+    add_a_bn(g_new_z_bn.y, g_param_z_bn.y);
 
     restore_stack(saved);
     return g_bailout_bignum();
