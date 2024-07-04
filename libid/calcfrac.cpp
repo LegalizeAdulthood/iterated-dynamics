@@ -1212,7 +1212,7 @@ static void perform_worklist()
             tesseral();
             break;
         case 'b':
-            bound_trace_main();
+            boundary_trace();
             break;
         case 'g':
             solid_guess();

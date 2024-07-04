@@ -58,7 +58,7 @@ static void step_col_row()
     }
 }
 
-int bound_trace_main()
+int boundary_trace()
 {
     if (g_inside_color == COLOR_BLACK || g_outside_color == COLOR_BLACK)
     {
