@@ -610,28 +610,28 @@ bool MandelbnSetup()
     sub_bn(g_delta2_y_bn, g_y_3rd_bn, g_y_min_bn);
     div_a_bn_int(g_delta2_y_bn, (U16)(g_logical_screen_x_dots - 1));
 
-    abs_bn(bnclosenuff, g_delta_x_bn);
-    if (cmp_bn(abs_bn(bntemp1, g_delta2_x_bn), bnclosenuff) > 0)
+    abs_bn(g_close_enough_bn, g_delta_x_bn);
+    if (cmp_bn(abs_bn(bntemp1, g_delta2_x_bn), g_close_enough_bn) > 0)
     {
-        copy_bn(bnclosenuff, bntemp1);
+        copy_bn(g_close_enough_bn, bntemp1);
     }
     if (cmp_bn(abs_bn(bntemp1, g_delta_y_bn), abs_bn(bntemp2, g_delta2_y_bn)) > 0)
     {
-        if (cmp_bn(bntemp1, bnclosenuff) > 0)
+        if (cmp_bn(bntemp1, g_close_enough_bn) > 0)
         {
-            copy_bn(bnclosenuff, bntemp1);
+            copy_bn(g_close_enough_bn, bntemp1);
         }
     }
-    else if (cmp_bn(bntemp2, bnclosenuff) > 0)
+    else if (cmp_bn(bntemp2, g_close_enough_bn) > 0)
     {
-        copy_bn(bnclosenuff, bntemp2);
+        copy_bn(g_close_enough_bn, bntemp2);
     }
     {
         int t;
         t = std::abs(g_periodicity_check);
         while (t--)
         {
-            half_a_bn(bnclosenuff);
+            half_a_bn(g_close_enough_bn);
         }
     }
 

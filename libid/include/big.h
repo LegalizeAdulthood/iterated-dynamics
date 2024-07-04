@@ -252,7 +252,7 @@ extern bn_t g_delta_x_bn;
 extern bn_t g_delta_y_bn;
 extern bn_t g_delta2_x_bn;
 extern bn_t g_delta2_y_bn;
-extern bn_t bnclosenuff;
+extern bn_t g_close_enough_bn;
 // g_r_length
 extern bn_t bntmpsqrx;
 extern bn_t bntmpsqry;

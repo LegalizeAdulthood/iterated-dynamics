@@ -57,7 +57,7 @@ bn_t g_delta_x_bn = nullptr;
 bn_t g_delta_y_bn = nullptr;
 bn_t g_delta2_x_bn = nullptr;
 bn_t g_delta2_y_bn = nullptr;
-bn_t bnclosenuff = nullptr;
+bn_t g_close_enough_bn = nullptr;
 
 // g_r_length
 bn_t bntmpsqrx = nullptr;
@@ -265,7 +265,7 @@ static void init_bf_2()
         ptr += g_bn_length;
         bnsaved.y  = bnroot+ptr;
         ptr += g_bn_length;
-        bnclosenuff = bnroot+ptr;
+        g_close_enough_bn = bnroot+ptr;
         ptr += g_bn_length;
         bnparm.x   = bnroot+ptr;
         ptr += g_bn_length;
