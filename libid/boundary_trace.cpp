@@ -60,7 +60,6 @@ static void step_col_row()
 
 int bound_trace_main()
 {
-    int last_fillcolor_used = -1;
     if (g_inside_color == COLOR_BLACK || g_outside_color == COLOR_BLACK)
     {
         stopmsg("Boundary tracing cannot be used with inside=0 or outside=0");
@@ -72,6 +71,7 @@ int bound_trace_main()
         return -1;
     }
 
+    int last_fillcolor_used = -1;
     g_got_status = 2;
     int max_putline_length = 0; // reset max_putline_length
     for (int currow = g_i_y_start; currow <= g_i_y_stop; currow++)
