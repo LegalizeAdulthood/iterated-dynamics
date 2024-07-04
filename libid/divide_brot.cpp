@@ -18,7 +18,7 @@ int dividebrot5bn_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bn_int(bnparm.x, g_delta_x_bn, (U16) g_col);
-    mult_bn_int(g_bn_tmp, bnxdel2, (U16) g_row);
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn, (U16) g_row);
 
     add_a_bn(bnparm.x, g_bn_tmp);
     add_a_bn(bnparm.x, g_x_min_bn);
@@ -26,7 +26,7 @@ int dividebrot5bn_per_pixel()
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, bnold is just used as a temporary variable */
     mult_bn_int(bnold.x, g_delta_y_bn, (U16) g_row);
-    mult_bn_int(bnold.y, bnydel2, (U16) g_col);
+    mult_bn_int(bnold.y, g_delta2_y_bn, (U16) g_col);
     add_a_bn(bnold.x, bnold.y);
     sub_bn(bnparm.y, g_y_max_bn, bnold.x);
 

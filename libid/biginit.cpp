@@ -55,8 +55,8 @@ bn_t g_y_3rd_bn = nullptr;
 // g_bn_length
 bn_t g_delta_x_bn = nullptr;
 bn_t g_delta_y_bn = nullptr;
-bn_t bnxdel2 = nullptr;
-bn_t bnydel2 = nullptr;
+bn_t g_delta2_x_bn = nullptr;
+bn_t g_delta2_y_bn = nullptr;
 bn_t bnclosenuff = nullptr;
 
 // g_r_length
@@ -249,9 +249,9 @@ static void init_bf_2()
         ptr += g_bn_length;
         g_delta_y_bn     = bnroot+ptr;
         ptr += g_bn_length;
-        bnxdel2    = bnroot+ptr;
+        g_delta2_x_bn    = bnroot+ptr;
         ptr += g_bn_length;
-        bnydel2    = bnroot+ptr;
+        g_delta2_y_bn    = bnroot+ptr;
         ptr += g_bn_length;
         bnold.x    = bnroot+ptr;
         ptr += g_r_length;

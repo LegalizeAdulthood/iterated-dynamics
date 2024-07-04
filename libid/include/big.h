@@ -250,8 +250,8 @@ extern bn_t g_x_3rd_bn;
 extern bn_t g_y_3rd_bn;
 extern bn_t g_delta_x_bn;
 extern bn_t g_delta_y_bn;
-extern bn_t bnxdel2;
-extern bn_t bnydel2;
+extern bn_t g_delta2_x_bn;
+extern bn_t g_delta2_y_bn;
 extern bn_t bnclosenuff;
 // g_r_length
 extern bn_t bntmpsqrx;
