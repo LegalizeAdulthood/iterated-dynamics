@@ -34,7 +34,7 @@ int g_bf_decimals{};
 // used internally by bignum.c routines
 static char s_storage[4096];
 static bn_t s_bn_root = nullptr;
-static bn_t stack_ptr = nullptr; // memory allocator base after global variables
+static bn_t s_stack_ptr = nullptr; // memory allocator base after global variables
 bn_t g_bn_tmp1 = nullptr;
 bn_t g_bn_tmp2 = nullptr;
 bn_t g_bn_tmp3 = nullptr;
@@ -321,7 +321,7 @@ static void init_bf_2()
     // ptr needs to be 16-bit aligned on some systems
     ptr = (ptr+1)&~1;
 
-    stack_ptr  = s_bn_root + ptr;
+    s_stack_ptr  = s_bn_root + ptr;
     startstack = ptr;
 
     // max stack offset from s_bn_root
@@ -483,7 +483,7 @@ bn_t alloc_stack(size_t size)
         stopmsg("alloc_stack called with g_bf_math==0");
         return nullptr;
     }
-    const long stack_addr = (long)((stack_ptr-s_bn_root)+size); // part of s_bn_root
+    const long stack_addr = (long)((s_stack_ptr-s_bn_root)+size); // part of s_bn_root
 
     if (stack_addr > maxstack)
     {
@@ -495,15 +495,15 @@ bn_t alloc_stack(size_t size)
     {
         g_bignum_max_stack_addr = stack_addr;
     }
-    stack_ptr += size;   // increment stack pointer
-    return stack_ptr - size;
+    s_stack_ptr += size;   // increment stack pointer
+    return s_stack_ptr - size;
 }
 
 /************************************************************************/
 // Returns stack pointer offset so it can be saved.
 int save_stack()
 {
-    return (int)(stack_ptr - s_bn_root);
+    return (int)(s_stack_ptr - s_bn_root);
 }
 
 /************************************************************************/
@@ -511,7 +511,7 @@ int save_stack()
 //    allocated since save_stack()
 void restore_stack(int old_offset)
 {
-    stack_ptr  = s_bn_root+old_offset;
+    s_stack_ptr  = s_bn_root+old_offset;
 }
 
 /************************************************************************/
