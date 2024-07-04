@@ -687,13 +687,13 @@ bool MandelbfSetup()
 
     g_bf_math = bf_math_type::BIGFLT;
 
-    // bfxdel = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
-    sub_bf(bfxdel, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(bfxdel, (U16)(g_logical_screen_x_dots - 1));
+    // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
+    sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);
+    div_a_bf_int(g_delta_x_bf, (U16)(g_logical_screen_x_dots - 1));
 
-    // bfydel = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
-    sub_bf(bfydel, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(bfydel, (U16)(g_logical_screen_y_dots - 1));
+    // g_delta_y_bf = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
+    sub_bf(g_delta_y_bf, g_bf_y_max, g_bf_y_3rd);
+    div_a_bf_int(g_delta_y_bf, (U16)(g_logical_screen_y_dots - 1));
 
     // bfxdel2 = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
     sub_bf(bfxdel2, g_bf_x_3rd, g_bf_x_min);
@@ -703,12 +703,12 @@ bool MandelbfSetup()
     sub_bf(bfydel2, g_bf_y_3rd, g_bf_y_min);
     div_a_bf_int(bfydel2, (U16)(g_logical_screen_x_dots - 1));
 
-    abs_bf(bfclosenuff, bfxdel);
+    abs_bf(bfclosenuff, g_delta_x_bf);
     if (cmp_bf(abs_bf(bftemp1, bfxdel2), bfclosenuff) > 0)
     {
         copy_bf(bfclosenuff, bftemp1);
     }
-    if (cmp_bf(abs_bf(bftemp1, bfydel), abs_bf(bftemp2, bfydel2)) > 0)
+    if (cmp_bf(abs_bf(bftemp1, g_delta_y_bf), abs_bf(bftemp2, bfydel2)) > 0)
     {
         if (cmp_bf(bftemp1, bfclosenuff) > 0)
         {
@@ -817,7 +817,7 @@ int mandelbn_per_pixel()
 int mandelbf_per_pixel()
 {
     // parm.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
+    mult_bf_int(bfparm.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfparm.x, g_bf_tmp);
@@ -825,7 +825,7 @@ int mandelbf_per_pixel()
 
     // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bfold is just used as a temporary variable
-    mult_bf_int(bfold.x, bfydel, (U16)g_row);
+    mult_bf_int(bfold.x, g_delta_y_bf, (U16)g_row);
     mult_bf_int(bfold.y, bfydel2, (U16)g_col);
     add_a_bf(bfold.x, bfold.y);
     sub_bf(bfparm.y, g_bf_y_max, bfold.x);
@@ -892,7 +892,7 @@ int
 juliabf_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(bfold.x, bfxdel, (U16)g_col);
+    mult_bf_int(bfold.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfold.x, g_bf_tmp);
@@ -900,7 +900,7 @@ juliabf_per_pixel()
 
     // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bfnew is just used as a temporary variable
-    mult_bf_int(bfnew.x, bfydel, (U16)g_row);
+    mult_bf_int(bfnew.x, g_delta_y_bf, (U16)g_row);
     mult_bf_int(bfnew.y, bfydel2, (U16)g_col);
     add_a_bf(bfnew.x, bfnew.y);
     sub_bf(bfold.y, g_bf_y_max, bfnew.x);

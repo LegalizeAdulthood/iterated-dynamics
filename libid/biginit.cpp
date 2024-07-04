@@ -80,8 +80,8 @@ bf_t g_bf_tmp5 = nullptr;
 bf_t g_bf_tmp6 = nullptr;
 bf_t g_bf_tmp_copy1 = nullptr;
 bf_t g_bf_tmp_copy2 = nullptr;
-bf_t bfxdel = nullptr;
-bf_t bfydel = nullptr;
+bf_t g_delta_x_bf = nullptr;
+bf_t g_delta_y_bf = nullptr;
 bf_t bfxdel2 = nullptr;
 bf_t bfydel2 = nullptr;
 bf_t bfclosenuff = nullptr;
@@ -280,9 +280,9 @@ static void init_bf_2()
     }
     if (g_bf_math == bf_math_type::BIGFLT)
     {
-        bfxdel     = bnroot+ptr;
+        g_delta_x_bf     = bnroot+ptr;
         ptr += g_bf_length+2;
-        bfydel     = bnroot+ptr;
+        g_delta_y_bf     = bnroot+ptr;
         ptr += g_bf_length+2;
         bfxdel2    = bnroot+ptr;
         ptr += g_bf_length+2;
