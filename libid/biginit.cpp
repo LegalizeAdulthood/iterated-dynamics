@@ -160,7 +160,7 @@ void calc_lengths()
 
 long g_bignum_max_stack_addr{};
 long g_start_stack{};
-long maxstack{};
+long g_max_stack{};
 int g_bf_save_len{};
 
 static void init_bf_2()
@@ -324,12 +324,12 @@ static void init_bf_2()
     g_start_stack = ptr;
 
     // max stack offset from s_bn_root
-    maxstack = (long)0x10000L-(g_bf_length+2)*22;
+    g_max_stack = (long)0x10000L-(g_bf_length+2)*22;
 
     // sanity check
     // leave room for NUMVARS variables allocated from stack
     // also leave room for the safe area at top of segment
-    if (ptr + NUMVARS*(g_bf_length+2) > maxstack)
+    if (ptr + NUMVARS*(g_bf_length+2) > g_max_stack)
     {
         stopmsg("Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
         goodbye();
@@ -338,7 +338,7 @@ static void init_bf_2()
     // room for 6 corners + 6 save corners + 10 params at top of extraseg
     // this area is safe - use for variables that are used outside fractal
     // generation - e.g. zoom box variables
-    ptr  = maxstack;
+    ptr  = g_max_stack;
     g_bf_x_min     = s_bn_root+ptr;
     ptr += g_bf_length+2;
     g_bf_x_max     = s_bn_root+ptr;
@@ -377,7 +377,7 @@ static void init_bf_2()
     else   // first time through - nothing saved
     {
         // high variables
-        std::memset(s_bn_root+maxstack, 0, (g_bf_length+2)*22);
+        std::memset(s_bn_root+g_max_stack, 0, (g_bf_length+2)*22);
         // low variables
         std::memset(s_bn_root, 0, (unsigned)g_start_stack);
     }
@@ -484,7 +484,7 @@ bn_t alloc_stack(size_t size)
     }
     const long stack_addr = (long)((s_stack_ptr-s_bn_root)+size); // part of s_bn_root
 
-    if (stack_addr > maxstack)
+    if (stack_addr > g_max_stack)
     {
         stopmsg("Aborting, Out of Bignum Stack Space");
         goodbye();

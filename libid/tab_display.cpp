@@ -167,7 +167,7 @@ static void write_row(int row, char const *format, ...)
     driver_put_string(row, 2, C_GENERAL_HI, text);
 }
 
-extern long maxstack;
+extern long g_max_stack;
 extern long g_start_stack;
 
 bool tab_display_2(char *msg)
@@ -182,7 +182,7 @@ bool tab_display_2(char *msg)
     putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
     write_row(++row, "Version %d patch %d", g_release, g_patch_level);
-    write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, maxstack);
+    write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, g_max_stack);
     write_row(++row, "   %ld used for bignum globals", g_start_stack);
     write_row(++row, "   %ld stack used == %ld variables of length %d", //
         g_bignum_max_stack_addr - g_start_stack,                           //
