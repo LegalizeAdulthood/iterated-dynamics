@@ -78,16 +78,16 @@ int boundary_trace()
     {
         g_reset_periodicity = true; // reset for a new row
         g_color = bkcolor;
-        for (int curcol = g_i_x_start; curcol <= g_i_x_stop; curcol++)
+        for (int cur_col = g_i_x_start; cur_col <= g_i_x_stop; cur_col++)
         {
-            if (getcolor(curcol, cur_row) != bkcolor)
+            if (getcolor(cur_col, cur_row) != bkcolor)
             {
                 continue;
             }
 
             int trail_color = g_color;
             g_row = cur_row;
-            g_col = curcol;
+            g_col = cur_col;
             if ((*g_calc_type)() == -1) // g_color, g_row, g_col are global
             {
                 if (g_show_dot != bkcolor)   // remove show dot pixel
@@ -98,7 +98,7 @@ int boundary_trace()
                 {
                     g_i_y_stop = g_yy_stop - (cur_row - g_yy_start); // allow for sym
                 }
-                add_worklist(g_xx_start, g_xx_stop, curcol, cur_row, g_i_y_stop, cur_row, 0, g_work_symmetry);
+                add_worklist(g_xx_start, g_xx_stop, cur_col, cur_row, g_i_y_stop, cur_row, 0, g_work_symmetry);
                 return -1;
             }
             g_reset_periodicity = false; // normal periodicity checking
@@ -112,7 +112,7 @@ int boundary_trace()
 
             // sweep clockwise to trace outline
             trail_row = cur_row;
-            trail_col = curcol;
+            trail_col = cur_col;
             trail_color = g_color;
             const int fillcolor_used = g_fill_color > 0 ? g_fill_color : trail_color;
             direction coming_from = direction::West;
@@ -122,7 +122,7 @@ int boundary_trace()
             do
             {
                 step_col_row();
-                if (g_row >= cur_row         //
+                if (g_row >= cur_row        //
                     && g_col >= g_i_x_start //
                     && g_col <= g_i_x_stop  //
                     && g_row <= g_i_y_stop)
@@ -139,7 +139,7 @@ int boundary_trace()
                         {
                             g_i_y_stop = g_yy_stop - (cur_row - g_yy_start); // allow for sym
                         }
-                        add_worklist(g_xx_start, g_xx_stop, curcol, cur_row, g_i_y_stop, cur_row, 0, g_work_symmetry);
+                        add_worklist(g_xx_start, g_xx_stop, cur_col, cur_row, g_i_y_stop, cur_row, 0, g_work_symmetry);
                         return -1;
                     }
                     if (g_color == trail_color)
@@ -164,7 +164,7 @@ int boundary_trace()
                     going_to = advance(going_to, 1);
                     continue_loop = going_to != coming_from || matches_found > 0;
                 }
-            } while (continue_loop && (g_col != curcol || g_row != cur_row));
+            } while (continue_loop && (g_col != cur_col || g_row != cur_row));
 
             if (matches_found <= 3)
             {
@@ -177,7 +177,7 @@ int boundary_trace()
             // Fill in region by looping around again, filling lines to the left
             // whenever going_to is South or West
             trail_row = cur_row;
-            trail_col = curcol;
+            trail_col = cur_col;
             coming_from = direction::West;
             going_to = direction::East;
             do
@@ -186,7 +186,7 @@ int boundary_trace()
                 do
                 {
                     step_col_row();
-                    if (g_row >= cur_row                           //
+                    if (g_row >= cur_row                          //
                         && g_col >= g_i_x_start                   //
                         && g_col <= g_i_x_stop                    //
                         && g_row <= g_i_y_stop                    //
@@ -250,7 +250,7 @@ int boundary_trace()
                     going_to = advance(going_to, -1);
                     coming_from = advance(going_to, -1);
                 }
-            } while (trail_col != curcol || trail_row != cur_row);
+            } while (trail_col != cur_col || trail_row != cur_row);
             g_reset_periodicity = true; // reset after a trace/fill
             g_color = bkcolor;
         }
