@@ -594,13 +594,13 @@ bool MandelbnSetup()
 
     g_bf_math = bf_math_type::BIGNUM;
 
-    // bnxdel = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
-    sub_bn(bnxdel, g_x_max_bn, g_x_3rd_bn);
-    div_a_bn_int(bnxdel, (U16)(g_logical_screen_x_dots - 1));
+    // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
+    sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
+    div_a_bn_int(g_delta_x_bn, (U16)(g_logical_screen_x_dots - 1));
 
-    // bnydel = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
-    sub_bn(bnydel, g_y_max_bn, g_y_3rd_bn);
-    div_a_bn_int(bnydel, (U16)(g_logical_screen_y_dots - 1));
+    // g_delta_y_bn = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
+    sub_bn(g_delta_y_bn, g_y_max_bn, g_y_3rd_bn);
+    div_a_bn_int(g_delta_y_bn, (U16)(g_logical_screen_y_dots - 1));
 
     // bnxdel2 = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
     sub_bn(bnxdel2, g_x_3rd_bn, g_x_min_bn);
@@ -610,12 +610,12 @@ bool MandelbnSetup()
     sub_bn(bnydel2, g_y_3rd_bn, g_y_min_bn);
     div_a_bn_int(bnydel2, (U16)(g_logical_screen_x_dots - 1));
 
-    abs_bn(bnclosenuff, bnxdel);
+    abs_bn(bnclosenuff, g_delta_x_bn);
     if (cmp_bn(abs_bn(bntemp1, bnxdel2), bnclosenuff) > 0)
     {
         copy_bn(bnclosenuff, bntemp1);
     }
-    if (cmp_bn(abs_bn(bntemp1, bnydel), abs_bn(bntemp2, bnydel2)) > 0)
+    if (cmp_bn(abs_bn(bntemp1, g_delta_y_bn), abs_bn(bntemp2, bnydel2)) > 0)
     {
         if (cmp_bn(bntemp1, bnclosenuff) > 0)
         {
@@ -771,7 +771,7 @@ bool MandelbfSetup()
 int mandelbn_per_pixel()
 {
     // parm.x = g_x_min + col*delx + row*delx2
-    mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
+    mult_bn_int(bnparm.x, g_delta_x_bn, (U16)g_col);
     mult_bn_int(g_bn_tmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnparm.x, g_bn_tmp);
@@ -779,7 +779,7 @@ int mandelbn_per_pixel()
 
     // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bnold is just used as a temporary variable
-    mult_bn_int(bnold.x, bnydel, (U16)g_row);
+    mult_bn_int(bnold.x, g_delta_y_bn, (U16)g_row);
     mult_bn_int(bnold.y, bnydel2, (U16)g_col);
     add_a_bn(bnold.x, bnold.y);
     sub_bn(bnparm.y, g_y_max_bn, bnold.x);
@@ -864,7 +864,7 @@ int
 juliabn_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
-    mult_bn_int(bnold.x, bnxdel, (U16)g_col);
+    mult_bn_int(bnold.x, g_delta_x_bn, (U16)g_col);
     mult_bn_int(g_bn_tmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnold.x, g_bn_tmp);
@@ -872,7 +872,7 @@ juliabn_per_pixel()
 
     // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bnnew is just used as a temporary variable
-    mult_bn_int(bnnew.x, bnydel, (U16)g_row);
+    mult_bn_int(bnnew.x, g_delta_y_bn, (U16)g_row);
     mult_bn_int(bnnew.y, bnydel2, (U16)g_col);
     add_a_bn(bnnew.x, bnnew.y);
     sub_bn(bnold.y, g_y_max_bn, bnnew.x);
