@@ -45,12 +45,12 @@ bn_t g_bn_tmp_copy1 = nullptr;
 bn_t g_bn_tmp_copy2 = nullptr;
 
 // used by other routines, g_bn_length
-bn_t bnxmin = nullptr;
-bn_t bnxmax = nullptr;
-bn_t bnymin = nullptr;
-bn_t bnymax = nullptr;
-bn_t bnx3rd = nullptr;
-bn_t bny3rd = nullptr;
+bn_t g_x_min_bn = nullptr;
+bn_t g_x_max_bn = nullptr;
+bn_t g_y_min_bn = nullptr;
+bn_t g_y_max_bn = nullptr;
+bn_t g_x_3rd_bn = nullptr;
+bn_t g_y_3rd_bn = nullptr;
 
 // g_bn_length
 bn_t bnxdel = nullptr;
@@ -233,17 +233,17 @@ static void init_bf_2()
 
     if (g_bf_math == bf_math_type::BIGNUM)
     {
-        bnxmin     = bnroot+ptr;
+        g_x_min_bn     = bnroot+ptr;
         ptr += g_bn_length;
-        bnxmax     = bnroot+ptr;
+        g_x_max_bn     = bnroot+ptr;
         ptr += g_bn_length;
-        bnymin     = bnroot+ptr;
+        g_y_min_bn     = bnroot+ptr;
         ptr += g_bn_length;
-        bnymax     = bnroot+ptr;
+        g_y_max_bn     = bnroot+ptr;
         ptr += g_bn_length;
-        bnx3rd     = bnroot+ptr;
+        g_x_3rd_bn     = bnroot+ptr;
         ptr += g_bn_length;
-        bny3rd     = bnroot+ptr;
+        g_y_3rd_bn     = bnroot+ptr;
         ptr += g_bn_length;
         bnxdel     = bnroot+ptr;
         ptr += g_bn_length;

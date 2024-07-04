@@ -242,12 +242,12 @@ bf_t div_a_bf_int(bf_t r, U16 u);
 
 // used by other routines
 // g_bn_length
-extern bn_t bnxmin;
-extern bn_t bnxmax;
-extern bn_t bnymin;
-extern bn_t bnymax;
-extern bn_t bnx3rd;
-extern bn_t bny3rd;
+extern bn_t g_x_min_bn;
+extern bn_t g_x_max_bn;
+extern bn_t g_y_min_bn;
+extern bn_t g_y_max_bn;
+extern bn_t g_x_3rd_bn;
+extern bn_t g_y_3rd_bn;
 extern bn_t bnxdel;
 extern bn_t bnydel;
 extern bn_t bnxdel2;

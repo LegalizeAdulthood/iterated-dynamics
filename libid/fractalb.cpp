@@ -73,25 +73,25 @@ void showcorners(char const *s)
     char msg[100];
     char msg1[200];
     char msg3[400];
-    bntostr(msg, dec, bnxmin);
-    std::snprintf(msg1, std::size(msg1), "bnxmin=%s\nx_min= %.20f\n\n", msg, g_x_min);
+    bntostr(msg, dec, g_x_min_bn);
+    std::snprintf(msg1, std::size(msg1), "g_x_min_bn=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, bnxmax);
-    std::snprintf(msg1, std::size(msg1), "bnxmax=%s\nx_max= %.20f\n\n", msg, g_x_max);
+    bntostr(msg, dec, g_x_max_bn);
+    std::snprintf(msg1, std::size(msg1), "g_x_max_bn=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, bnymin);
-    std::snprintf(msg1, std::size(msg1), "bnymin=%s\ny_min= %.20f\n\n", msg, g_y_min);
+    bntostr(msg, dec, g_y_min_bn);
+    std::snprintf(msg1, std::size(msg1), "g_y_min_bn=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, bnymax);
-    std::snprintf(msg1, std::size(msg1), "bnymax=%s\ny_max= %.20f\n\n", msg, g_y_max);
+    bntostr(msg, dec, g_y_max_bn);
+    std::snprintf(msg1, std::size(msg1), "g_y_max_bn=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, bnx3rd);
-    std::snprintf(msg1, std::size(msg1), "bnx3rd=%s\nx_3rd= %.20f\n\n", msg, g_x_3rd);
+    bntostr(msg, dec, g_x_3rd_bn);
+    std::snprintf(msg1, std::size(msg1), "g_x_3rd_bn=%s\nx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, bny3rd);
-    std::snprintf(msg1, std::size(msg1), "bny3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
+    bntostr(msg, dec, g_y_3rd_bn);
+    std::snprintf(msg1, std::size(msg1), "g_y_3rd_bn=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(msg3))
     {
@@ -585,29 +585,29 @@ bool MandelbnSetup()
     bntemp1 = alloc_stack(g_bn_length);
     bntemp2 = alloc_stack(g_bn_length);
 
-    bftobn(bnxmin, g_bf_x_min);
-    bftobn(bnxmax, g_bf_x_max);
-    bftobn(bnymin, g_bf_y_min);
-    bftobn(bnymax, g_bf_y_max);
-    bftobn(bnx3rd, g_bf_x_3rd);
-    bftobn(bny3rd, g_bf_y_3rd);
+    bftobn(g_x_min_bn, g_bf_x_min);
+    bftobn(g_x_max_bn, g_bf_x_max);
+    bftobn(g_y_min_bn, g_bf_y_min);
+    bftobn(g_y_max_bn, g_bf_y_max);
+    bftobn(g_x_3rd_bn, g_bf_x_3rd);
+    bftobn(g_y_3rd_bn, g_bf_y_3rd);
 
     g_bf_math = bf_math_type::BIGNUM;
 
-    // bnxdel = (bnxmax - bnx3rd)/(xdots-1)
-    sub_bn(bnxdel, bnxmax, bnx3rd);
+    // bnxdel = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
+    sub_bn(bnxdel, g_x_max_bn, g_x_3rd_bn);
     div_a_bn_int(bnxdel, (U16)(g_logical_screen_x_dots - 1));
 
-    // bnydel = (bnymax - bny3rd)/(ydots-1)
-    sub_bn(bnydel, bnymax, bny3rd);
+    // bnydel = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
+    sub_bn(bnydel, g_y_max_bn, g_y_3rd_bn);
     div_a_bn_int(bnydel, (U16)(g_logical_screen_y_dots - 1));
 
-    // bnxdel2 = (bnx3rd - bnxmin)/(ydots-1)
-    sub_bn(bnxdel2, bnx3rd, bnxmin);
+    // bnxdel2 = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
+    sub_bn(bnxdel2, g_x_3rd_bn, g_x_min_bn);
     div_a_bn_int(bnxdel2, (U16)(g_logical_screen_y_dots - 1));
 
-    // bnydel2 = (bny3rd - bnymin)/(xdots-1)
-    sub_bn(bnydel2, bny3rd, bnymin);
+    // bnydel2 = (g_y_3rd_bn - g_y_min_bn)/(xdots-1)
+    sub_bn(bnydel2, g_y_3rd_bn, g_y_min_bn);
     div_a_bn_int(bnydel2, (U16)(g_logical_screen_x_dots - 1));
 
     abs_bn(bnclosenuff, bnxdel);
@@ -775,14 +775,14 @@ int mandelbn_per_pixel()
     mult_bn_int(g_bn_tmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnparm.x, g_bn_tmp);
-    add_a_bn(bnparm.x, bnxmin);
+    add_a_bn(bnparm.x, g_x_min_bn);
 
     // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bnold is just used as a temporary variable
     mult_bn_int(bnold.x, bnydel, (U16)g_row);
     mult_bn_int(bnold.y, bnydel2, (U16)g_col);
     add_a_bn(bnold.x, bnold.y);
-    sub_bn(bnparm.y, bnymax, bnold.x);
+    sub_bn(bnparm.y, g_y_max_bn, bnold.x);
 
     copy_bn(bnold.x, bnparm.x);
     copy_bn(bnold.y, bnparm.y);
@@ -868,14 +868,14 @@ juliabn_per_pixel()
     mult_bn_int(g_bn_tmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnold.x, g_bn_tmp);
-    add_a_bn(bnold.x, bnxmin);
+    add_a_bn(bnold.x, g_x_min_bn);
 
     // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bnnew is just used as a temporary variable
     mult_bn_int(bnnew.x, bnydel, (U16)g_row);
     mult_bn_int(bnnew.y, bnydel2, (U16)g_col);
     add_a_bn(bnnew.x, bnnew.y);
-    sub_bn(bnold.y, bnymax, bnnew.x);
+    sub_bn(bnold.y, g_y_max_bn, bnnew.x);
 
     // square has side effect - must copy first
     copy_bn(bnnew.x, bnold.x);
