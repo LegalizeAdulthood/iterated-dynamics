@@ -192,130 +192,79 @@ static void init_bf_2()
     g_float_flag = true;
 
     // Now split up the memory among the pointers
-    // internal pointers
+    const auto alloc_size = [&ptr](int size)
+    {
+        bn_t result = s_bn_root + ptr;
+        ptr += size;
+        return result;
+    };
     ptr        = 0;
-    g_bn_tmp1     = s_bn_root+ptr;
-    ptr += g_r_length;
-    g_bn_tmp2     = s_bn_root+ptr;
-    ptr += g_r_length;
-    g_bn_tmp3     = s_bn_root+ptr;
-    ptr += g_r_length;
-    g_bn_tmp4     = s_bn_root+ptr;
-    ptr += g_r_length;
-    g_bn_tmp5     = s_bn_root+ptr;
-    ptr += g_r_length;
-    g_bn_tmp6     = s_bn_root+ptr;
-    ptr += g_r_length;
+    g_bn_tmp1 = alloc_size(g_r_length);
+    g_bn_tmp2 = alloc_size(g_r_length);
+    g_bn_tmp3 = alloc_size(g_r_length);
+    g_bn_tmp4 = alloc_size(g_r_length);
+    g_bn_tmp5 = alloc_size(g_r_length);
+    g_bn_tmp6 = alloc_size(g_r_length);
 
-    g_bf_tmp1     = s_bn_root+ptr;
-    ptr += g_r_bf_length+2;
-    g_bf_tmp2     = s_bn_root+ptr;
-    ptr += g_r_bf_length+2;
-    g_bf_tmp3     = s_bn_root+ptr;
-    ptr += g_r_bf_length+2;
-    g_bf_tmp4     = s_bn_root+ptr;
-    ptr += g_r_bf_length+2;
-    g_bf_tmp5     = s_bn_root+ptr;
-    ptr += g_r_bf_length+2;
-    g_bf_tmp6     = s_bn_root+ptr;
-    ptr += g_r_bf_length+2;
+    g_bf_tmp1 = alloc_size(g_r_bf_length+2);
+    g_bf_tmp2 = alloc_size(g_r_bf_length+2);
+    g_bf_tmp3 = alloc_size(g_r_bf_length+2);
+    g_bf_tmp4 = alloc_size(g_r_bf_length+2);
+    g_bf_tmp5 = alloc_size(g_r_bf_length+2);
+    g_bf_tmp6 = alloc_size(g_r_bf_length+2);
 
-    g_bf_tmp_copy1  = s_bn_root+ptr;
-    ptr += (g_r_bf_length+2)*2;
-    g_bf_tmp_copy2  = s_bn_root+ptr;
-    ptr += (g_r_bf_length+2)*2;
+    g_bf_tmp_copy1 = alloc_size((g_r_bf_length+2)*2);
+    g_bf_tmp_copy2 = alloc_size((g_r_bf_length+2)*2);
 
-    g_bn_tmp_copy1  = s_bn_root+ptr;
-    ptr += (g_r_length*2);
-    g_bn_tmp_copy2  = s_bn_root+ptr;
-    ptr += (g_r_length*2);
+    g_bn_tmp_copy1 = alloc_size((g_r_length*2));
+    g_bn_tmp_copy2 = alloc_size((g_r_length*2));
 
     if (g_bf_math == bf_math_type::BIGNUM)
     {
-        g_x_min_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_x_max_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_y_min_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_y_max_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_x_3rd_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_y_3rd_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_delta_x_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_delta_y_bn     = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_delta2_x_bn    = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_delta2_y_bn    = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_old_z_bn.x    = s_bn_root+ptr;
-        ptr += g_r_length;
-        g_old_z_bn.y    = s_bn_root+ptr;
-        ptr += g_r_length;
-        g_new_z_bn.x    = s_bn_root+ptr;
-        ptr += g_r_length;
-        g_new_z_bn.y    = s_bn_root+ptr;
-        ptr += g_r_length;
-        g_saved_z_bn.x  = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_saved_z_bn.y  = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_close_enough_bn = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_param_z_bn.x   = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_param_z_bn.y   = s_bn_root+ptr;
-        ptr += g_bn_length;
-        g_tmp_sqr_x_bn  = s_bn_root+ptr;
-        ptr += g_r_length;
-        g_tmp_sqr_y_bn  = s_bn_root+ptr;
-        ptr += g_r_length;
-        g_bn_tmp      = s_bn_root+ptr;
-        ptr += g_r_length;
+        g_x_min_bn = alloc_size(g_bn_length);
+        g_x_max_bn = alloc_size(g_bn_length);
+        g_y_min_bn = alloc_size(g_bn_length);
+        g_y_max_bn = alloc_size(g_bn_length);
+        g_x_3rd_bn = alloc_size(g_bn_length);
+        g_y_3rd_bn = alloc_size(g_bn_length);
+        g_delta_x_bn = alloc_size(g_bn_length);
+        g_delta_y_bn = alloc_size(g_bn_length);
+        g_delta2_x_bn = alloc_size(g_bn_length);
+        g_delta2_y_bn = alloc_size(g_bn_length);
+        g_old_z_bn.x = alloc_size(g_r_length);
+        g_old_z_bn.y = alloc_size(g_r_length);
+        g_new_z_bn.x = alloc_size(g_r_length);
+        g_new_z_bn.y = alloc_size(g_r_length);
+        g_saved_z_bn.x = alloc_size(g_bn_length);
+        g_saved_z_bn.y = alloc_size(g_bn_length);
+        g_close_enough_bn = alloc_size(g_bn_length);
+        g_param_z_bn.x = alloc_size(g_bn_length);
+        g_param_z_bn.y = alloc_size(g_bn_length);
+        g_tmp_sqr_x_bn = alloc_size(g_r_length);
+        g_tmp_sqr_y_bn = alloc_size(g_r_length);
+        g_bn_tmp = alloc_size(g_r_length);
     }
-    if (g_bf_math == bf_math_type::BIGFLT)
+    else if (g_bf_math == bf_math_type::BIGFLT)
     {
-        g_delta_x_bf     = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_delta_y_bf     = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_delta2_x_bf    = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_delta2_y_bf    = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_old_z_bf.x    = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
-        g_old_z_bf.y    = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
-        g_new_z_bf.x    = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
-        g_new_z_bf.y    = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
-        g_saved_z_bf.x  = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_saved_z_bf.y  = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_close_enough_bf = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_parm_z_bf.x   = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_parm_z_bf.y   = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_tmp_sqr_x_bf  = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
-        g_tmp_sqr_y_bf  = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
-        g_big_pi     = s_bn_root+ptr;
-        ptr += g_bf_length+2;
-        g_bf_tmp      = s_bn_root+ptr;
-        ptr += g_r_bf_length+2;
+        g_delta_x_bf = alloc_size(g_bf_length+2);
+        g_delta_y_bf = alloc_size(g_bf_length+2);
+        g_delta2_x_bf = alloc_size(g_bf_length+2);
+        g_delta2_y_bf = alloc_size(g_bf_length+2);
+        g_old_z_bf.x = alloc_size(g_r_bf_length+2);
+        g_old_z_bf.y = alloc_size(g_r_bf_length+2);
+        g_new_z_bf.x = alloc_size(g_r_bf_length+2);
+        g_new_z_bf.y = alloc_size(g_r_bf_length+2);
+        g_saved_z_bf.x = alloc_size(g_bf_length+2);
+        g_saved_z_bf.y = alloc_size(g_bf_length+2);
+        g_close_enough_bf = alloc_size(g_bf_length+2);
+        g_parm_z_bf.x = alloc_size(g_bf_length+2);
+        g_parm_z_bf.y = alloc_size(g_bf_length+2);
+        g_tmp_sqr_x_bf = alloc_size(g_r_bf_length+2);
+        g_tmp_sqr_y_bf = alloc_size(g_r_bf_length+2);
+        g_big_pi = alloc_size(g_bf_length+2);
+        g_bf_tmp = alloc_size(g_r_bf_length+2);
     }
-    g_bf10_tmp    = s_bn_root+ptr;
-    ptr += g_bf_decimals+4;
+    g_bf10_tmp = alloc_size(g_bf_decimals+4);
 
     // ptr needs to be 16-bit aligned on some systems
     ptr = (ptr+1)&~1;
@@ -339,33 +288,22 @@ static void init_bf_2()
     // this area is safe - use for variables that are used outside fractal
     // generation - e.g. zoom box variables
     ptr  = g_max_stack;
-    g_bf_x_min     = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_x_max     = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_y_min     = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_y_max     = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_x_3rd     = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_y_3rd     = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    for (auto &param : g_bf_parms)
+    g_bf_x_min = alloc_size(g_bf_length+2);
+    g_bf_x_max = alloc_size(g_bf_length+2);
+    g_bf_y_min = alloc_size(g_bf_length+2);
+    g_bf_y_max = alloc_size(g_bf_length+2);
+    g_bf_x_3rd = alloc_size(g_bf_length+2);
+    g_bf_y_3rd = alloc_size(g_bf_length+2);
+    for (bf_t &param : g_bf_parms)
     {
         param = s_bn_root + ptr;
         ptr += g_bf_length + 2;
     }
-    g_bf_save_x_min    = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_save_x_max    = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_save_y_min    = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_save_y_max    = s_bn_root+ptr;
-    ptr += g_bf_length+2;
-    g_bf_save_x_3rd    = s_bn_root+ptr;
-    ptr += g_bf_length+2;
+    g_bf_save_x_min = alloc_size(g_bf_length+2);
+    g_bf_save_x_max = alloc_size(g_bf_length+2);
+    g_bf_save_y_min = alloc_size(g_bf_length+2);
+    g_bf_save_y_max = alloc_size(g_bf_length+2);
+    g_bf_save_x_3rd = alloc_size(g_bf_length+2);
     g_bf_save_y_3rd    = s_bn_root+ptr;
     // end safe vars
 
@@ -431,7 +369,7 @@ static int restore_bf_vars()
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    for (auto &param : g_bf_parms)
+    for (bf_t &param : g_bf_parms)
     {
         convert_bf(param, ptr, g_bf_length, g_bf_save_len);
         ptr += g_bf_save_len + 2;
