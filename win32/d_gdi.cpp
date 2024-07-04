@@ -99,8 +99,8 @@ static void show_hide_windows(HWND show, HWND hide)
 
 void GDIDriver::get_max_size(int *width, int *height, bool *center_x, bool *center_y) const
 {
-    *width = wintext.m_max_width;
-    *height = wintext.m_max_height;
+    *width = m_win_text.m_max_width;
+    *height = m_win_text.m_max_height;
     if (g_video_table[g_adapter].xdots > *width)
     {
         *width = g_video_table[g_adapter].xdots;
@@ -123,7 +123,7 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
     }
     else
     {
-        text_pos.x = (g_frame.m_width - wintext.m_max_width)/2;
+        text_pos.x = (g_frame.m_width - m_win_text.m_max_width)/2;
     }
 
     if (center_y)
@@ -132,13 +132,13 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
     }
     else
     {
-        text_pos.y = (g_frame.m_height - wintext.m_max_height)/2;
+        text_pos.y = (g_frame.m_height - m_win_text.m_max_height)/2;
     }
 
     bool status = SetWindowPos(plot.m_window, nullptr,
         plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
-    status = SetWindowPos(wintext.m_window, nullptr,
+    status = SetWindowPos(m_win_text.m_window, nullptr,
         text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
 }
@@ -237,7 +237,7 @@ void GDIDriver::schedule_alarm(int secs)
     secs = (secs ? 1 : DRAW_INTERVAL)*1000;
     if (text_not_graphics)
     {
-        wintext.schedule_alarm(secs);
+        m_win_text.schedule_alarm(secs);
     }
     else
     {
@@ -280,7 +280,7 @@ void GDIDriver::redraw()
     ODS("GDIDriver::redraw");
     if (text_not_graphics)
     {
-        wintext.paint_screen(0, 80, 0, 25);
+        m_win_text.paint_screen(0, 80, 0, 25);
     }
     else
     {
@@ -297,8 +297,8 @@ void GDIDriver::create_window()
 
     get_max_size(&width, &height, &center_x, &center_y);
     g_frame.create_window(width, height);
-    wintext.set_parent(g_frame.m_window);
-    wintext.text_on();
+    m_win_text.set_parent(g_frame.m_window);
+    m_win_text.text_on();
     plot.create_window(g_frame.m_window);
     center_windows(center_x, center_y);
 }
@@ -311,13 +311,13 @@ bool GDIDriver::is_text()
 void GDIDriver::set_for_text()
 {
     text_not_graphics = true;
-    show_hide_windows(wintext.m_window, plot.m_window);
+    show_hide_windows(m_win_text.m_window, plot.m_window);
 }
 
 void GDIDriver::set_for_graphics()
 {
     text_not_graphics = false;
-    show_hide_windows(plot.m_window, wintext.m_window);
+    show_hide_windows(plot.m_window, m_win_text.m_window);
     hide_text_cursor();
 }
 
@@ -325,7 +325,7 @@ void GDIDriver::set_clear()
 {
     if (text_not_graphics)
     {
-        wintext.clear();
+        m_win_text.clear();
     }
     else
     {
@@ -377,9 +377,9 @@ bool GDIDriver::validate_mode(VIDEOINFO *mode)
 
 void GDIDriver::pause()
 {
-    if (wintext.m_window)
+    if (m_win_text.m_window)
     {
-        ShowWindow(wintext.m_window, SW_HIDE);
+        ShowWindow(m_win_text.m_window, SW_HIDE);
     }
     if (plot.m_window)
     {
@@ -389,13 +389,13 @@ void GDIDriver::pause()
 
 void GDIDriver::resume()
 {
-    if (!wintext.m_window)
+    if (!m_win_text.m_window)
     {
         create_window();
     }
 
-    ShowWindow(wintext.m_window, SW_NORMAL);
-    wintext.resume();
+    ShowWindow(m_win_text.m_window, SW_NORMAL);
+    m_win_text.resume();
 }
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, char const *text)

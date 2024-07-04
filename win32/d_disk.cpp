@@ -165,7 +165,7 @@ bool DiskDriver::init(int *argc, char **argv)
  */
 bool DiskDriver::resize()
 {
-    g_frame.resize(wintext.m_max_width, wintext.m_max_height);
+    g_frame.resize(m_win_text.m_max_width, m_win_text.m_max_height);
     if ((g_video_table[g_adapter].xdots == width)
         && (g_video_table[g_adapter].ydots == height))
     {
@@ -256,7 +256,7 @@ int DiskDriver::write_palette()
 */
 void DiskDriver::schedule_alarm(int secs)
 {
-    wintext.schedule_alarm((secs ? 1 : DRAW_INTERVAL) * 1000);
+    m_win_text.schedule_alarm((secs ? 1 : DRAW_INTERVAL) * 1000);
 }
 
 /*
@@ -379,14 +379,14 @@ void DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 void DiskDriver::redraw()
 {
     ODS("DiskDriver::redraw");
-    wintext.paint_screen(0, 80, 0, 25);
+    m_win_text.paint_screen(0, 80, 0, 25);
 }
 
 void DiskDriver::create_window()
 {
-    g_frame.create_window(wintext.m_max_width, wintext.m_max_height);
-    wintext.set_parent(g_frame.m_window);
-    wintext.text_on();
+    g_frame.create_window(m_win_text.m_max_width, m_win_text.m_max_height);
+    m_win_text.set_parent(g_frame.m_window);
+    m_win_text.text_on();
 }
 
 extern void set_disk_dot();
@@ -415,7 +415,7 @@ void DiskDriver::set_video_mode(VIDEOINFO *mode)
 
 void DiskDriver::set_clear()
 {
-    wintext.clear();
+    m_win_text.clear();
 }
 
 void DiskDriver::display_string(int x, int y, int fg, int bg, char const *text)
@@ -449,24 +449,24 @@ bool DiskDriver::validate_mode(VIDEOINFO *mode)
 
 void DiskDriver::pause()
 {
-    if (wintext.m_window)
+    if (m_win_text.m_window)
     {
-        ShowWindow(wintext.m_window, SW_HIDE);
+        ShowWindow(m_win_text.m_window, SW_HIDE);
     }
 }
 
 void DiskDriver::resume()
 {
-    if (!wintext.m_window)
+    if (!m_win_text.m_window)
     {
         create_window();
     }
 
-    if (wintext.m_window)
+    if (m_win_text.m_window)
     {
-        ShowWindow(wintext.m_window, SW_NORMAL);
+        ShowWindow(m_win_text.m_window, SW_NORMAL);
     }
-    wintext.resume();
+    m_win_text.resume();
 }
 
 void DiskDriver::save_graphics()
