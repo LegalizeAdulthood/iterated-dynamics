@@ -115,7 +115,7 @@ bf_t g_bf_save_y_min = nullptr;
 bf_t g_bf_save_y_max = nullptr;
 bf_t g_bf_save_x_3rd = nullptr;
 bf_t g_bf_save_y_3rd = nullptr;
-bf_t bfparms[10];                                    // (g_bf_length+2)*10
+bf_t g_bf_parms[10];                                    // (g_bf_length+2)*10
 bf_t g_bf_tmp = nullptr;
 
 bf_t g_bf10_tmp = nullptr;                                              // dec+4
@@ -352,7 +352,7 @@ static void init_bf_2()
     ptr += g_bf_length+2;
     g_bf_y_3rd     = bnroot+ptr;
     ptr += g_bf_length+2;
-    for (auto &param : bfparms)
+    for (auto &param : g_bf_parms)
     {
         param = bnroot + ptr;
         ptr += g_bf_length + 2;
@@ -432,7 +432,7 @@ static int restore_bf_vars()
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    for (auto &param : bfparms)
+    for (auto &param : g_bf_parms)
     {
         convert_bf(param, ptr, g_bf_length, g_bf_save_len);
         ptr += g_bf_save_len + 2;

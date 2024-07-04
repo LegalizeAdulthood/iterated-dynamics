@@ -289,4 +289,4 @@ extern bf_t g_bf_save_y_min;
 extern bf_t g_bf_save_y_max;
 extern bf_t g_bf_save_x_3rd;
 extern bf_t g_bf_save_y_3rd;
-extern bf_t bfparms[10];                                 // (g_bf_length+2)*10
+extern bf_t g_bf_parms[10];                                 // (g_bf_length+2)*10

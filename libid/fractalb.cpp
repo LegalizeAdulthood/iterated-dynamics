@@ -305,7 +305,7 @@ void bfcornerstofloat()
     {
         if (typehasparm(g_fractal_type, i, nullptr))
         {
-            g_params[i] = (double)bftofloat(bfparms[i]);
+            g_params[i] = (double)bftofloat(g_bf_parms[i]);
         }
     }
 }
@@ -639,8 +639,8 @@ bool MandelbnSetup()
     switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
-        bftobn(g_param_z_bn.x, bfparms[0]);
-        bftobn(g_param_z_bn.y, bfparms[1]);
+        bftobn(g_param_z_bn.x, g_bf_parms[0]);
+        bftobn(g_param_z_bn.y, g_bf_parms[1]);
         break;
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
@@ -655,8 +655,8 @@ bool MandelbnSetup()
         break;
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
-        bftobn(g_param_z_bn.x, bfparms[0]);
-        bftobn(g_param_z_bn.y, bfparms[1]);
+        bftobn(g_param_z_bn.x, g_bf_parms[0]);
+        bftobn(g_param_z_bn.y, g_bf_parms[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = symmetry_type::NONE;
@@ -732,8 +732,8 @@ bool MandelbfSetup()
     switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
-        copy_bf(g_parm_z_bf.x, bfparms[0]);
-        copy_bf(g_parm_z_bf.y, bfparms[1]);
+        copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
+        copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
         break;
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
@@ -748,8 +748,8 @@ bool MandelbfSetup()
         break;
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
-        copy_bf(g_parm_z_bf.x, bfparms[0]);
-        copy_bf(g_parm_z_bf.y, bfparms[1]);
+        copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
+        copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = symmetry_type::NONE;

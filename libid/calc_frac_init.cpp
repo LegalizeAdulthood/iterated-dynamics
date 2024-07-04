@@ -111,7 +111,7 @@ void fractal_floattobf()
     {
         if (typehasparm(g_fractal_type, i, nullptr))
         {
-            floattobf(bfparms[i], g_params[i]);
+            floattobf(g_bf_parms[i], g_params[i]);
         }
     }
     g_calc_status = calc_status_value::PARAMS_CHANGED;

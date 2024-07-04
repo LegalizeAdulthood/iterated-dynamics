@@ -1497,7 +1497,7 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
-            floattobf(bfparms[k], g_params[k]);
+            floattobf(g_bf_parms[k], g_params[k]);
         }
     }
     g_use_center_mag = true;
@@ -1727,7 +1727,7 @@ static cmdarg_flags cmd_corners(const Command &cmd)
         {
             for (int k = 0; k < MAX_PARAMS; k++)
             {
-                floattobf(bfparms[k], g_params[k]);
+                floattobf(g_bf_parms[k], g_params[k]);
             }
         }
 
@@ -1771,7 +1771,7 @@ static cmdarg_flags cmd_corners(const Command &cmd)
             // decimal setting
             for (int k = 0; k < MAX_PARAMS; k++)
             {
-                floattobf(bfparms[k], g_params[k]);
+                floattobf(g_bf_parms[k], g_params[k]);
             }
 
             // xx3rd = xxmin = floatval[0];
@@ -2770,7 +2770,7 @@ static cmdarg_flags cmd_params(const Command &cmd)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
-            floattobf(bfparms[k], g_params[k]);
+            floattobf(g_bf_parms[k], g_params[k]);
         }
     }
     return cmdarg_flags::FRACTAL_PARAM;
