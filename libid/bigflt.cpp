@@ -181,15 +181,15 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
     }
 
     copy_bf(g_bf_tmp1, r);
-    unsafe_bftobf10(bf10tmp, dec, g_bf_tmp1);
-    power = (S16)big_access16(bf10tmp+dec+2); // where the exponent is stored
+    unsafe_bftobf10(g_bf10_tmp, dec, g_bf_tmp1);
+    power = (S16)big_access16(g_bf10_tmp+dec+2); // where the exponent is stored
     if (power > -4 && power < 6)   // tinker with this
     {
-        bf10tostr_f(s, dec, bf10tmp);
+        bf10tostr_f(s, dec, g_bf10_tmp);
     }
     else
     {
-        bf10tostr_e(s, dec, bf10tmp);
+        bf10tostr_e(s, dec, g_bf10_tmp);
     }
     return s;
 }
@@ -209,8 +209,8 @@ char *unsafe_bftostr_e(char *s, int dec, bf_t r)
     }
 
     copy_bf(g_bf_tmp1, r);
-    unsafe_bftobf10(bf10tmp, dec, g_bf_tmp1);
-    bf10tostr_e(s, dec, bf10tmp);
+    unsafe_bftobf10(g_bf10_tmp, dec, g_bf_tmp1);
+    bf10tostr_e(s, dec, g_bf10_tmp);
     return s;
 }
 
@@ -228,8 +228,8 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
     }
 
     copy_bf(g_bf_tmp1, r);
-    unsafe_bftobf10(bf10tmp, dec, g_bf_tmp1);
-    bf10tostr_f(s, dec, bf10tmp);
+    unsafe_bftobf10(g_bf10_tmp, dec, g_bf_tmp1);
+    bf10tostr_f(s, dec, g_bf10_tmp);
     return s;
 }
 

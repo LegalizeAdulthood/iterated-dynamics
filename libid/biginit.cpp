@@ -118,7 +118,7 @@ bf_t g_bf_save_y_3rd = nullptr;
 bf_t bfparms[10];                                    // (g_bf_length+2)*10
 bf_t g_bf_tmp = nullptr;
 
-bf_t bf10tmp = nullptr;                                              // dec+4
+bf_t g_bf10_tmp = nullptr;                                              // dec+4
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -315,7 +315,7 @@ static void init_bf_2()
         g_bf_tmp      = bnroot+ptr;
         ptr += g_r_bf_length+2;
     }
-    bf10tmp    = bnroot+ptr;
+    g_bf10_tmp    = bnroot+ptr;
     ptr += g_bf_decimals+4;
 
     // ptr needs to be 16-bit aligned on some systems
