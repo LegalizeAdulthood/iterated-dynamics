@@ -127,9 +127,9 @@ int bound_trace_main()
                     && g_col <= g_i_x_stop  //
                     && g_row <= g_i_y_stop)
                 {
-                    // the order of operations in this next line is critical
-                    if ((g_color = getcolor(g_col, g_row)) == bkcolor && (*g_calc_type)()== -1)
-                        // g_color, g_row, g_col are global for (*g_calc_type)()
+                    g_color = getcolor(g_col, g_row);
+                    // g_color, g_row, g_col are global for (*g_calc_type)()
+                    if (g_color == bkcolor && (*g_calc_type)()== -1)
                     {
                         if (g_show_dot != bkcolor)   // remove show dot pixel
                         {
