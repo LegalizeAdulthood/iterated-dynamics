@@ -33,92 +33,91 @@ int g_bf_decimals{};
 
 // used internally by bignum.c routines
 static char s_storage[4096];
-static bn_t s_bn_root = nullptr;
-static bn_t s_stack_ptr = nullptr; // memory allocator base after global variables
-bn_t g_bn_tmp1 = nullptr;
-bn_t g_bn_tmp2 = nullptr;
-bn_t g_bn_tmp3 = nullptr;
-bn_t g_bn_tmp4 = nullptr;
-bn_t g_bn_tmp5 = nullptr;
-bn_t g_bn_tmp6 = nullptr;
-bn_t g_bn_tmp_copy1 = nullptr;
-bn_t g_bn_tmp_copy2 = nullptr;
+static bn_t s_bn_root{};
+static bn_t s_stack_ptr{}; // memory allocator base after global variables
+bn_t g_bn_tmp1{};
+bn_t g_bn_tmp2{};
+bn_t g_bn_tmp3{};
+bn_t g_bn_tmp4{};
+bn_t g_bn_tmp5{};
+bn_t g_bn_tmp6{};
+bn_t g_bn_tmp_copy1{};
+bn_t g_bn_tmp_copy2{};
 
 // used by other routines, g_bn_length
-bn_t g_x_min_bn = nullptr;
-bn_t g_x_max_bn = nullptr;
-bn_t g_y_min_bn = nullptr;
-bn_t g_y_max_bn = nullptr;
-bn_t g_x_3rd_bn = nullptr;
-bn_t g_y_3rd_bn = nullptr;
+bn_t g_x_min_bn{};
+bn_t g_x_max_bn{};
+bn_t g_y_min_bn{};
+bn_t g_y_max_bn{};
+bn_t g_x_3rd_bn{};
+bn_t g_y_3rd_bn{};
 
 // g_bn_length
-bn_t g_delta_x_bn = nullptr;
-bn_t g_delta_y_bn = nullptr;
-bn_t g_delta2_x_bn = nullptr;
-bn_t g_delta2_y_bn = nullptr;
-bn_t g_close_enough_bn = nullptr;
+bn_t g_delta_x_bn{};
+bn_t g_delta_y_bn{};
+bn_t g_delta2_x_bn{};
+bn_t g_delta2_y_bn{};
+bn_t g_close_enough_bn{};
 
 // g_r_length
-bn_t g_tmp_sqr_x_bn = nullptr;
-bn_t g_tmp_sqr_y_bn = nullptr;
-bn_t g_bn_tmp = nullptr;
+bn_t g_tmp_sqr_x_bn{};
+bn_t g_tmp_sqr_y_bn{};
+bn_t g_bn_tmp{};
 
 // g_bn_length
-BNComplex g_old_z_bn = { nullptr, nullptr };
-BNComplex g_param_z_bn = { nullptr, nullptr };
-BNComplex g_saved_z_bn = { nullptr, nullptr };
-BNComplex g_new_z_bn = { nullptr, nullptr };   // g_r_length
-bn_t g_bn_pi = nullptr;                      // TAKES NO SPACE
+BNComplex g_old_z_bn{};
+BNComplex g_param_z_bn{};
+BNComplex g_saved_z_bn{};
+BNComplex g_new_z_bn{};   // g_r_length
+bn_t g_bn_pi{};                      // TAKES NO SPACE
 
 // // g_r_bf_length+2
-bf_t g_bf_tmp1 = nullptr;
-bf_t g_bf_tmp2 = nullptr;
-bf_t g_bf_tmp3 = nullptr;
-bf_t g_bf_tmp4 = nullptr;
-bf_t g_bf_tmp5 = nullptr;
-bf_t g_bf_tmp6 = nullptr;
-bf_t g_bf_tmp_copy1 = nullptr;
-bf_t g_bf_tmp_copy2 = nullptr;
-bf_t g_delta_x_bf = nullptr;
-bf_t g_delta_y_bf = nullptr;
-bf_t g_delta2_x_bf = nullptr;
-bf_t g_delta2_y_bf = nullptr;
-bf_t g_close_enough_bf = nullptr;
-bf_t g_tmp_sqr_x_bf = nullptr;
-bf_t g_tmp_sqr_y_bf = nullptr;
+bf_t g_bf_tmp1{};
+bf_t g_bf_tmp2{};
+bf_t g_bf_tmp3{};
+bf_t g_bf_tmp4{};
+bf_t g_bf_tmp5{};
+bf_t g_bf_tmp6{};
+bf_t g_bf_tmp_copy1{};
+bf_t g_bf_tmp_copy2{};
+bf_t g_delta_x_bf{};
+bf_t g_delta_y_bf{};
+bf_t g_delta2_x_bf{};
+bf_t g_delta2_y_bf{};
+bf_t g_close_enough_bf{};
+bf_t g_tmp_sqr_x_bf{};
+bf_t g_tmp_sqr_y_bf{};
 
 // g_bf_length+2
-BFComplex g_parm_z_bf = { nullptr, nullptr };
-BFComplex g_saved_z_bf = { nullptr, nullptr };
+BFComplex g_parm_z_bf{};
+BFComplex g_saved_z_bf{};
 
 // g_r_bf_length+2
-BFComplex g_old_z_bf = { nullptr, nullptr };
-BFComplex g_new_z_bf = { nullptr, nullptr };
+BFComplex g_old_z_bf{};
+BFComplex g_new_z_bf{};
 
-bf_t g_bf_pi = nullptr;      // TAKES NO SPACE
-bf_t g_big_pi = nullptr;     // g_bf_length+2
+bf_t g_bf_pi{};      // TAKES NO SPACE
+bf_t g_big_pi{};     // g_bf_length+2
 
 // for testing only
 
 // used by other routines
 // g_bf_length+2
-bf_t g_bf_x_min = nullptr;
-bf_t g_bf_x_max = nullptr;
-bf_t g_bf_y_min = nullptr;
-bf_t g_bf_y_max = nullptr;
-bf_t g_bf_x_3rd = nullptr;
-bf_t g_bf_y_3rd = nullptr;
-bf_t g_bf_save_x_min = nullptr;
-bf_t g_bf_save_x_max = nullptr;
-bf_t g_bf_save_y_min = nullptr;
-bf_t g_bf_save_y_max = nullptr;
-bf_t g_bf_save_x_3rd = nullptr;
-bf_t g_bf_save_y_3rd = nullptr;
-bf_t g_bf_parms[10];                                    // (g_bf_length+2)*10
-bf_t g_bf_tmp = nullptr;
-
-bf_t g_bf10_tmp = nullptr;                                              // dec+4
+bf_t g_bf_x_min{};
+bf_t g_bf_x_max{};
+bf_t g_bf_y_min{};
+bf_t g_bf_y_max{};
+bf_t g_bf_x_3rd{};
+bf_t g_bf_y_3rd{};
+bf_t g_bf_save_x_min{};
+bf_t g_bf_save_x_max{};
+bf_t g_bf_save_y_min{};
+bf_t g_bf_save_y_max{};
+bf_t g_bf_save_x_3rd{};
+bf_t g_bf_save_y_3rd{};
+bf_t g_bf_parms[10]{}; // (g_bf_length + 2)*10
+bf_t g_bf_tmp{};
+bf_t g_bf10_tmp{}; // g_bf_decimals + 4
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
