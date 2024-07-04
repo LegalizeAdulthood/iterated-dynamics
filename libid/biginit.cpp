@@ -159,7 +159,7 @@ void calc_lengths()
 // initialize bignumber global variables
 
 long g_bignum_max_stack_addr{};
-long startstack{};
+long g_start_stack{};
 long maxstack{};
 int g_bf_save_len{};
 
@@ -321,7 +321,7 @@ static void init_bf_2()
     ptr = (ptr+1)&~1;
 
     s_stack_ptr  = s_bn_root + ptr;
-    startstack = ptr;
+    g_start_stack = ptr;
 
     // max stack offset from s_bn_root
     maxstack = (long)0x10000L-(g_bf_length+2)*22;
@@ -372,14 +372,14 @@ static void init_bf_2()
     // good citizens initialize variables
     if (g_bf_save_len > 0)    // leave save area
     {
-        std::memset(s_bn_root+(g_bf_save_len+2)*22, 0, (unsigned)(startstack-(g_bf_save_len+2)*22));
+        std::memset(s_bn_root+(g_bf_save_len+2)*22, 0, (unsigned)(g_start_stack-(g_bf_save_len+2)*22));
     }
     else   // first time through - nothing saved
     {
         // high variables
         std::memset(s_bn_root+maxstack, 0, (g_bf_length+2)*22);
         // low variables
-        std::memset(s_bn_root, 0, (unsigned)startstack);
+        std::memset(s_bn_root, 0, (unsigned)g_start_stack);
     }
 
     restore_bf_vars();
