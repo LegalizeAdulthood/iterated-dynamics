@@ -104,12 +104,7 @@ bool Win32BaseDriver::init(int *argc, char **argv)
 
     ODS("Win32BaseDriver::init");
     g_frame.init(g_instance, title);
-    if (!wintext.initialize(g_instance, nullptr, "Text"))
-    {
-        return false;
-    }
-
-    return true;
+    return wintext.initialize(g_instance, nullptr, "Text");
 }
 
 /* key_pressed
