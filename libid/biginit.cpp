@@ -33,7 +33,7 @@ int g_bf_decimals{};
 
 // used internally by bignum.c routines
 static char s_storage[4096];
-static bn_t bnroot = nullptr;
+static bn_t s_bn_root = nullptr;
 static bn_t stack_ptr = nullptr; // memory allocator base after global variables
 bn_t g_bn_tmp1 = nullptr;
 bn_t g_bn_tmp2 = nullptr;
@@ -172,7 +172,7 @@ static void init_bf_2()
 
     calc_lengths();
 
-    bnroot = (bf_t) &s_storage[0];
+    s_bn_root = (bf_t) &s_storage[0];
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
@@ -195,136 +195,136 @@ static void init_bf_2()
     // Now split up the memory among the pointers
     // internal pointers
     ptr        = 0;
-    g_bn_tmp1     = bnroot+ptr;
+    g_bn_tmp1     = s_bn_root+ptr;
     ptr += g_r_length;
-    g_bn_tmp2     = bnroot+ptr;
+    g_bn_tmp2     = s_bn_root+ptr;
     ptr += g_r_length;
-    g_bn_tmp3     = bnroot+ptr;
+    g_bn_tmp3     = s_bn_root+ptr;
     ptr += g_r_length;
-    g_bn_tmp4     = bnroot+ptr;
+    g_bn_tmp4     = s_bn_root+ptr;
     ptr += g_r_length;
-    g_bn_tmp5     = bnroot+ptr;
+    g_bn_tmp5     = s_bn_root+ptr;
     ptr += g_r_length;
-    g_bn_tmp6     = bnroot+ptr;
+    g_bn_tmp6     = s_bn_root+ptr;
     ptr += g_r_length;
 
-    g_bf_tmp1     = bnroot+ptr;
+    g_bf_tmp1     = s_bn_root+ptr;
     ptr += g_r_bf_length+2;
-    g_bf_tmp2     = bnroot+ptr;
+    g_bf_tmp2     = s_bn_root+ptr;
     ptr += g_r_bf_length+2;
-    g_bf_tmp3     = bnroot+ptr;
+    g_bf_tmp3     = s_bn_root+ptr;
     ptr += g_r_bf_length+2;
-    g_bf_tmp4     = bnroot+ptr;
+    g_bf_tmp4     = s_bn_root+ptr;
     ptr += g_r_bf_length+2;
-    g_bf_tmp5     = bnroot+ptr;
+    g_bf_tmp5     = s_bn_root+ptr;
     ptr += g_r_bf_length+2;
-    g_bf_tmp6     = bnroot+ptr;
+    g_bf_tmp6     = s_bn_root+ptr;
     ptr += g_r_bf_length+2;
 
-    g_bf_tmp_copy1  = bnroot+ptr;
+    g_bf_tmp_copy1  = s_bn_root+ptr;
     ptr += (g_r_bf_length+2)*2;
-    g_bf_tmp_copy2  = bnroot+ptr;
+    g_bf_tmp_copy2  = s_bn_root+ptr;
     ptr += (g_r_bf_length+2)*2;
 
-    g_bn_tmp_copy1  = bnroot+ptr;
+    g_bn_tmp_copy1  = s_bn_root+ptr;
     ptr += (g_r_length*2);
-    g_bn_tmp_copy2  = bnroot+ptr;
+    g_bn_tmp_copy2  = s_bn_root+ptr;
     ptr += (g_r_length*2);
 
     if (g_bf_math == bf_math_type::BIGNUM)
     {
-        g_x_min_bn     = bnroot+ptr;
+        g_x_min_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_x_max_bn     = bnroot+ptr;
+        g_x_max_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_y_min_bn     = bnroot+ptr;
+        g_y_min_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_y_max_bn     = bnroot+ptr;
+        g_y_max_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_x_3rd_bn     = bnroot+ptr;
+        g_x_3rd_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_y_3rd_bn     = bnroot+ptr;
+        g_y_3rd_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_delta_x_bn     = bnroot+ptr;
+        g_delta_x_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_delta_y_bn     = bnroot+ptr;
+        g_delta_y_bn     = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_delta2_x_bn    = bnroot+ptr;
+        g_delta2_x_bn    = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_delta2_y_bn    = bnroot+ptr;
+        g_delta2_y_bn    = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_old_z_bn.x    = bnroot+ptr;
+        g_old_z_bn.x    = s_bn_root+ptr;
         ptr += g_r_length;
-        g_old_z_bn.y    = bnroot+ptr;
+        g_old_z_bn.y    = s_bn_root+ptr;
         ptr += g_r_length;
-        g_new_z_bn.x    = bnroot+ptr;
+        g_new_z_bn.x    = s_bn_root+ptr;
         ptr += g_r_length;
-        g_new_z_bn.y    = bnroot+ptr;
+        g_new_z_bn.y    = s_bn_root+ptr;
         ptr += g_r_length;
-        g_saved_z_bn.x  = bnroot+ptr;
+        g_saved_z_bn.x  = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_saved_z_bn.y  = bnroot+ptr;
+        g_saved_z_bn.y  = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_close_enough_bn = bnroot+ptr;
+        g_close_enough_bn = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_param_z_bn.x   = bnroot+ptr;
+        g_param_z_bn.x   = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_param_z_bn.y   = bnroot+ptr;
+        g_param_z_bn.y   = s_bn_root+ptr;
         ptr += g_bn_length;
-        g_tmp_sqr_x_bn  = bnroot+ptr;
+        g_tmp_sqr_x_bn  = s_bn_root+ptr;
         ptr += g_r_length;
-        g_tmp_sqr_y_bn  = bnroot+ptr;
+        g_tmp_sqr_y_bn  = s_bn_root+ptr;
         ptr += g_r_length;
-        g_bn_tmp      = bnroot+ptr;
+        g_bn_tmp      = s_bn_root+ptr;
         ptr += g_r_length;
     }
     if (g_bf_math == bf_math_type::BIGFLT)
     {
-        g_delta_x_bf     = bnroot+ptr;
+        g_delta_x_bf     = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_delta_y_bf     = bnroot+ptr;
+        g_delta_y_bf     = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_delta2_x_bf    = bnroot+ptr;
+        g_delta2_x_bf    = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_delta2_y_bf    = bnroot+ptr;
+        g_delta2_y_bf    = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_old_z_bf.x    = bnroot+ptr;
+        g_old_z_bf.x    = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
-        g_old_z_bf.y    = bnroot+ptr;
+        g_old_z_bf.y    = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
-        g_new_z_bf.x    = bnroot+ptr;
+        g_new_z_bf.x    = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
-        g_new_z_bf.y    = bnroot+ptr;
+        g_new_z_bf.y    = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
-        g_saved_z_bf.x  = bnroot+ptr;
+        g_saved_z_bf.x  = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_saved_z_bf.y  = bnroot+ptr;
+        g_saved_z_bf.y  = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_close_enough_bf = bnroot+ptr;
+        g_close_enough_bf = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_parm_z_bf.x   = bnroot+ptr;
+        g_parm_z_bf.x   = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_parm_z_bf.y   = bnroot+ptr;
+        g_parm_z_bf.y   = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_tmp_sqr_x_bf  = bnroot+ptr;
+        g_tmp_sqr_x_bf  = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
-        g_tmp_sqr_y_bf  = bnroot+ptr;
+        g_tmp_sqr_y_bf  = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
-        g_big_pi     = bnroot+ptr;
+        g_big_pi     = s_bn_root+ptr;
         ptr += g_bf_length+2;
-        g_bf_tmp      = bnroot+ptr;
+        g_bf_tmp      = s_bn_root+ptr;
         ptr += g_r_bf_length+2;
     }
-    g_bf10_tmp    = bnroot+ptr;
+    g_bf10_tmp    = s_bn_root+ptr;
     ptr += g_bf_decimals+4;
 
     // ptr needs to be 16-bit aligned on some systems
     ptr = (ptr+1)&~1;
 
-    stack_ptr  = bnroot + ptr;
+    stack_ptr  = s_bn_root + ptr;
     startstack = ptr;
 
-    // max stack offset from bnroot
+    // max stack offset from s_bn_root
     maxstack = (long)0x10000L-(g_bf_length+2)*22;
 
     // sanity check
@@ -340,47 +340,47 @@ static void init_bf_2()
     // this area is safe - use for variables that are used outside fractal
     // generation - e.g. zoom box variables
     ptr  = maxstack;
-    g_bf_x_min     = bnroot+ptr;
+    g_bf_x_min     = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_x_max     = bnroot+ptr;
+    g_bf_x_max     = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_y_min     = bnroot+ptr;
+    g_bf_y_min     = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_y_max     = bnroot+ptr;
+    g_bf_y_max     = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_x_3rd     = bnroot+ptr;
+    g_bf_x_3rd     = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_y_3rd     = bnroot+ptr;
+    g_bf_y_3rd     = s_bn_root+ptr;
     ptr += g_bf_length+2;
     for (auto &param : g_bf_parms)
     {
-        param = bnroot + ptr;
+        param = s_bn_root + ptr;
         ptr += g_bf_length + 2;
     }
-    g_bf_save_x_min    = bnroot+ptr;
+    g_bf_save_x_min    = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_save_x_max    = bnroot+ptr;
+    g_bf_save_x_max    = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_save_y_min    = bnroot+ptr;
+    g_bf_save_y_min    = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_save_y_max    = bnroot+ptr;
+    g_bf_save_y_max    = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_save_x_3rd    = bnroot+ptr;
+    g_bf_save_x_3rd    = s_bn_root+ptr;
     ptr += g_bf_length+2;
-    g_bf_save_y_3rd    = bnroot+ptr;
+    g_bf_save_y_3rd    = s_bn_root+ptr;
     // end safe vars
 
     // good citizens initialize variables
     if (g_bf_save_len > 0)    // leave save area
     {
-        std::memset(bnroot+(g_bf_save_len+2)*22, 0, (unsigned)(startstack-(g_bf_save_len+2)*22));
+        std::memset(s_bn_root+(g_bf_save_len+2)*22, 0, (unsigned)(startstack-(g_bf_save_len+2)*22));
     }
     else   // first time through - nothing saved
     {
         // high variables
-        std::memset(bnroot+maxstack, 0, (g_bf_length+2)*22);
+        std::memset(s_bn_root+maxstack, 0, (g_bf_length+2)*22);
         // low variables
-        std::memset(bnroot, 0, (unsigned)startstack);
+        std::memset(s_bn_root, 0, (unsigned)startstack);
     }
 
     restore_bf_vars();
@@ -388,16 +388,16 @@ static void init_bf_2()
 
 
 /**********************************************************/
-// save current corners and parameters to start of bnroot
+// save current corners and parameters to start of s_bn_root
 // to preserve values across calls to init_bf()
 static int save_bf_vars()
 {
     int ret;
-    if (bnroot != nullptr)
+    if (s_bn_root != nullptr)
     {
         unsigned int mem = (g_bf_length+2)*22;  // 6 corners + 6 save corners + 10 params
         g_bf_save_len = g_bf_length;
-        std::memcpy(bnroot, g_bf_x_min, mem);
+        std::memcpy(s_bn_root, g_bf_x_min, mem);
         // scrub old high area
         std::memset(g_bf_x_min, 0, mem);
         ret = 0;
@@ -419,7 +419,7 @@ static int restore_bf_vars()
     {
         return -1;
     }
-    ptr  = bnroot;
+    ptr  = s_bn_root;
     convert_bf(g_bf_x_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_x_max, ptr, g_bf_length, g_bf_save_len);
@@ -450,7 +450,7 @@ static int restore_bf_vars()
     convert_bf(g_bf_save_y_3rd, ptr, g_bf_length, g_bf_save_len);
 
     // scrub save area
-    std::memset(bnroot, 0, (g_bf_save_len+2)*22);
+    std::memset(s_bn_root, 0, (g_bf_save_len+2)*22);
     return 0;
 }
 
@@ -483,7 +483,7 @@ bn_t alloc_stack(size_t size)
         stopmsg("alloc_stack called with g_bf_math==0");
         return nullptr;
     }
-    const long stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot
+    const long stack_addr = (long)((stack_ptr-s_bn_root)+size); // part of s_bn_root
 
     if (stack_addr > maxstack)
     {
@@ -503,7 +503,7 @@ bn_t alloc_stack(size_t size)
 // Returns stack pointer offset so it can be saved.
 int save_stack()
 {
-    return (int)(stack_ptr - bnroot);
+    return (int)(stack_ptr - s_bn_root);
 }
 
 /************************************************************************/
@@ -511,7 +511,7 @@ int save_stack()
 //    allocated since save_stack()
 void restore_stack(int old_offset)
 {
-    stack_ptr  = bnroot+old_offset;
+    stack_ptr  = s_bn_root+old_offset;
 }
 
 /************************************************************************/
