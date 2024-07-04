@@ -114,7 +114,7 @@ int boundary_trace()
             trail_row = cur_row;
             trail_col = cur_col;
             trail_color = g_color;
-            const int fillcolor_used = g_fill_color > 0 ? g_fill_color : trail_color;
+            const int fill_color_used = g_fill_color > 0 ? g_fill_color : trail_color;
             direction coming_from = direction::West;
             going_to = direction::East;
             unsigned int matches_found = 0;
@@ -212,17 +212,17 @@ int boundary_trace()
                                 left++; // one pixel too far
                                 if (right == left)   // only one hole
                                 {
-                                    (*g_plot)(left,g_row,fillcolor_used);
+                                    (*g_plot)(left,g_row,fill_color_used);
                                 }
                                 else
                                 {
                                     // fill the line to the left
                                     const int length = right - left + 1;
-                                    if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
+                                    if (fill_color_used != last_fillcolor_used || length > max_putline_length)
                                     {
                                         // only reset dstack if necessary
-                                        std::memset(dstack, fillcolor_used, length);
-                                        last_fillcolor_used = fillcolor_used;
+                                        std::memset(dstack, fill_color_used, length);
+                                        last_fillcolor_used = fill_color_used;
                                         max_putline_length = length;
                                     }
                                     sym_fill_line(g_row, left, right, dstack);
