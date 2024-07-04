@@ -30,8 +30,8 @@ int dividebrot5bn_per_pixel()
     add_a_bn(bnold.x, bnold.y);
     sub_bn(bnparm.y, g_y_max_bn, bnold.x);
 
-    clear_bn(bntmpsqrx);
-    clear_bn(bntmpsqry);
+    clear_bn(g_tmp_sqr_x_bn);
+    clear_bn(g_tmp_sqr_y_bn);
     clear_bn(bnold.x);
     clear_bn(bnold.y);
 
@@ -78,12 +78,12 @@ int DivideBrot5bnFractal()
     tmp1 = alloc_stack(g_bn_length);
     tmp2 = alloc_stack(g_r_length);
 
-    /* bntmpsqrx and bntmpsqry were previously squared before getting to */
+    /* g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to */
     /* this function, so they must be shifted.                           */
 
     /* sqr(z) */
-    /* bnnumer.x = bntmpsqrx - bntmpsqry;   */
-    sub_bn(bnnumer.x, bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
+    /* bnnumer.x = g_tmp_sqr_x_bn - g_tmp_sqr_y_bn;   */
+    sub_bn(bnnumer.x, g_tmp_sqr_x_bn + g_shift_factor, g_tmp_sqr_y_bn + g_shift_factor);
 
     /* bnnumer.y = 2 * bnold.x * bnold.y; */
     mult_bn(tmp2, bnold.x, bnold.y);

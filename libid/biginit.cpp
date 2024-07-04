@@ -60,8 +60,8 @@ bn_t g_delta2_y_bn = nullptr;
 bn_t g_close_enough_bn = nullptr;
 
 // g_r_length
-bn_t bntmpsqrx = nullptr;
-bn_t bntmpsqry = nullptr;
+bn_t g_tmp_sqr_x_bn = nullptr;
+bn_t g_tmp_sqr_y_bn = nullptr;
 bn_t g_bn_tmp = nullptr;
 
 // g_bn_length
@@ -271,9 +271,9 @@ static void init_bf_2()
         ptr += g_bn_length;
         bnparm.y   = bnroot+ptr;
         ptr += g_bn_length;
-        bntmpsqrx  = bnroot+ptr;
+        g_tmp_sqr_x_bn  = bnroot+ptr;
         ptr += g_r_length;
-        bntmpsqry  = bnroot+ptr;
+        g_tmp_sqr_y_bn  = bnroot+ptr;
         ptr += g_r_length;
         g_bn_tmp      = bnroot+ptr;
         ptr += g_r_length;

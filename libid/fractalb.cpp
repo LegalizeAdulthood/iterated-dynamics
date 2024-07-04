@@ -325,9 +325,9 @@ int  bnMODbailout()
 {
     long longmagnitude;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
-    add_bn(g_bn_tmp, bntmpsqrx+g_shift_factor, bntmpsqry+g_shift_factor);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
+    add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
     longmagnitude = bntoint(g_bn_tmp);  // works with any fractal type
     if (longmagnitude >= (long)g_magnitude_limit)
@@ -343,9 +343,9 @@ int  bnREALbailout()
 {
     long longtempsqrx;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
-    longtempsqrx = bntoint(bntmpsqrx+g_shift_factor);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
+    longtempsqrx = bntoint(g_tmp_sqr_x_bn+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
@@ -360,9 +360,9 @@ int  bnIMAGbailout()
 {
     long longtempsqry;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
-    longtempsqry = bntoint(bntmpsqry+g_shift_factor);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
+    longtempsqry = bntoint(g_tmp_sqr_y_bn+g_shift_factor);
     if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -377,10 +377,10 @@ int  bnORbailout()
     long longtempsqrx;
     long longtempsqry;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
-    longtempsqrx = bntoint(bntmpsqrx+g_shift_factor);
-    longtempsqry = bntoint(bntmpsqry+g_shift_factor);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
+    longtempsqrx = bntoint(g_tmp_sqr_x_bn+g_shift_factor);
+    longtempsqry = bntoint(g_tmp_sqr_y_bn+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -395,10 +395,10 @@ int  bnANDbailout()
     long longtempsqrx;
     long longtempsqry;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
-    longtempsqrx = bntoint(bntmpsqrx+g_shift_factor);
-    longtempsqry = bntoint(bntmpsqry+g_shift_factor);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
+    longtempsqrx = bntoint(g_tmp_sqr_x_bn+g_shift_factor);
+    longtempsqry = bntoint(g_tmp_sqr_y_bn+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -412,8 +412,8 @@ int  bnMANHbailout()
 {
     long longtempmag;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
     // note: in next five lines, bnold is just used as a temporary variable
     abs_bn(bnold.x, bnnew.x);
     abs_bn(bnold.y, bnnew.y);
@@ -433,8 +433,8 @@ int  bnMANRbailout()
 {
     long longtempmag;
 
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
     add_bn(g_bn_tmp, bnnew.x, bnnew.y); // don't need abs since we square it next
     // note: in next two lines, bnold is just used as a temporary variable
     square_bn(bnold.x, g_bn_tmp);
@@ -808,8 +808,8 @@ int mandelbn_per_pixel()
     copy_bn(bnnew.y, bnold.y);
 
     // Square these to g_r_length bytes of precision
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -882,8 +882,8 @@ juliabn_per_pixel()
     copy_bn(bnnew.y, bnold.y);
 
     // Square these to g_r_length bytes of precision
-    square_bn(bntmpsqrx, bnnew.x);
-    square_bn(bntmpsqry, bnnew.y);
+    square_bn(g_tmp_sqr_x_bn, bnnew.x);
+    square_bn(g_tmp_sqr_y_bn, bnnew.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -922,12 +922,12 @@ JuliabnFractal()
     // Don't forget, with bn_t numbers, after multiplying or squaring
     // you must shift over by g_shift_factor to get the bn number.
 
-    // bntmpsqrx and bntmpsqry were previously squared before getting to
+    // g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to
     // this function, so they must be shifted.
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bn(bntmpsqrx+g_shift_factor, bntmpsqry+g_shift_factor);
-    add_bn(bnnew.x, bntmpsqrx+g_shift_factor, bnparm.x);
+    sub_a_bn(g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
+    add_bn(bnnew.x, g_tmp_sqr_x_bn+g_shift_factor, bnparm.x);
 
     // new.y = 2 * bnold.x * bnold.y + parm.y;
     mult_bn(g_bn_tmp, bnold.x, bnold.y); // ok to use unsafe here
