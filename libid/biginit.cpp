@@ -165,7 +165,6 @@ int g_bf_save_len{};
 
 static void init_bf_2()
 {
-    int i;
     long ptr;
     save_bf_vars(); // copy corners values for conversion
 
@@ -175,18 +174,21 @@ static void init_bf_2()
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-    i = find_alternate_math(g_fractal_type, bf_math_type::BIGNUM);
-    if (i > -1)
-    {
-        g_bf_math = g_alternate_math[i].math;
-    }
-    else if ((i = find_alternate_math(g_fractal_type, bf_math_type::BIGFLT)) > -1)
+    if (int i = find_alternate_math(g_fractal_type, bf_math_type::BIGNUM); i > -1)
     {
         g_bf_math = g_alternate_math[i].math;
     }
     else
     {
-        g_bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and g_fractal_type not set
+        i = find_alternate_math(g_fractal_type, bf_math_type::BIGFLT);
+        if (i > -1)
+        {
+            g_bf_math = g_alternate_math[i].math;
+        }
+        else
+        {
+            g_bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and g_fractal_type not set
+        }
     }
 
     g_float_flag = true;
