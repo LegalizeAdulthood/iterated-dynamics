@@ -42,7 +42,7 @@ int dividebrot5bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bf_int(bfparm.x, g_delta_x_bf, (U16) g_col);
-    mult_bf_int(g_bf_tmp, bfxdel2, (U16) g_row);
+    mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16) g_row);
 
     add_a_bf(bfparm.x, g_bf_tmp);
     add_a_bf(bfparm.x, g_bf_x_min);
@@ -50,7 +50,7 @@ int dividebrot5bf_per_pixel()
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, bfold is just used as a temporary variable */
     mult_bf_int(bfold.x, g_delta_y_bf, (U16) g_row);
-    mult_bf_int(bfold.y, bfydel2, (U16) g_col);
+    mult_bf_int(bfold.y, g_delta2_y_bf, (U16) g_col);
     add_a_bf(bfold.x, bfold.y);
     sub_bf(bfparm.y, g_bf_y_max, bfold.x);
 
