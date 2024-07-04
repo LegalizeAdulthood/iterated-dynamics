@@ -97,7 +97,7 @@ BFComplex bfold = { nullptr, nullptr };
 BFComplex bfnew = { nullptr, nullptr };
 
 bf_t g_bf_pi = nullptr;      // TAKES NO SPACE
-bf_t big_pi = nullptr;     // g_bf_length+2
+bf_t g_big_pi = nullptr;     // g_bf_length+2
 
 // for testing only
 
@@ -310,7 +310,7 @@ static void init_bf_2()
         ptr += g_r_bf_length+2;
         bftmpsqry  = bnroot+ptr;
         ptr += g_r_bf_length+2;
-        big_pi     = bnroot+ptr;
+        g_big_pi     = bnroot+ptr;
         ptr += g_bf_length+2;
         g_bf_tmp      = bnroot+ptr;
         ptr += g_r_bf_length+2;
@@ -683,9 +683,9 @@ void init_big_pi()
 
     length = g_bf_length+2; // 2 byte exp
     pi_offset = sizeof pi_table - length;
-    std::memcpy(big_pi, pi_table + pi_offset, length);
+    std::memcpy(g_big_pi, pi_table + pi_offset, length);
 
     // notice that g_bf_pi and g_bn_pi can share the same memory space
-    g_bf_pi = big_pi;
-    g_bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
+    g_bf_pi = g_big_pi;
+    g_bn_pi = g_big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 }

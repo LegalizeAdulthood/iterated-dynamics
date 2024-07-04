@@ -6,7 +6,7 @@
 // Number of bytes to use for integer part for fixed decimal math,
 // does not effect floating point math at all.
 #define BN_INT_LENGTH 4
-/* #define CALCULATING_BIG_PI */ /* define for generating big_pi[] table */
+/* #define CALCULATING_BIG_PI */ /* define for generating g_big_pi[] table */
 /****************************************************************
  The rest is handled by the compiler
 ****************************************************************/
@@ -64,7 +64,7 @@ extern bf_t g_bf_tmp_copy2; // g_r_bf_length+2
 extern bf_t g_bf_pi;
 extern bf_t g_bf_tmp;     // g_r_bf_length
 extern bf10_t g_bf10_tmp; // dec+4
-extern big_t big_pi;
+extern big_t g_big_pi;
 
 void calc_lengths();
 void init_big_dec(int dec);
