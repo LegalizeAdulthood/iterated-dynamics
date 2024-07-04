@@ -85,8 +85,8 @@ bf_t g_delta_y_bf = nullptr;
 bf_t g_delta2_x_bf = nullptr;
 bf_t g_delta2_y_bf = nullptr;
 bf_t g_close_enough_bf = nullptr;
-bf_t bftmpsqrx = nullptr;
-bf_t bftmpsqry = nullptr;
+bf_t g_tmp_sqr_x_bf = nullptr;
+bf_t g_tmp_sqr_y_bf = nullptr;
 
 // g_bf_length+2
 BFComplex bfparm = { nullptr, nullptr };
@@ -306,9 +306,9 @@ static void init_bf_2()
         ptr += g_bf_length+2;
         bfparm.y   = bnroot+ptr;
         ptr += g_bf_length+2;
-        bftmpsqrx  = bnroot+ptr;
+        g_tmp_sqr_x_bf  = bnroot+ptr;
         ptr += g_r_bf_length+2;
-        bftmpsqry  = bnroot+ptr;
+        g_tmp_sqr_y_bf  = bnroot+ptr;
         ptr += g_r_bf_length+2;
         g_big_pi     = bnroot+ptr;
         ptr += g_bf_length+2;

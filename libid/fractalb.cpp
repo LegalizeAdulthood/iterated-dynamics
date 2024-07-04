@@ -452,9 +452,9 @@ int  bfMODbailout()
 {
     long longmagnitude;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
-    add_bf(g_bf_tmp, bftmpsqrx, bftmpsqry);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    add_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
 
     longmagnitude = bftoint(g_bf_tmp);
     if (longmagnitude >= (long)g_magnitude_limit)
@@ -470,9 +470,9 @@ int  bfREALbailout()
 {
     long longtempsqrx;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
-    longtempsqrx = bftoint(bftmpsqrx);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    longtempsqrx = bftoint(g_tmp_sqr_x_bf);
     if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
@@ -487,9 +487,9 @@ int  bfIMAGbailout()
 {
     long longtempsqry;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
-    longtempsqry = bftoint(bftmpsqry);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    longtempsqry = bftoint(g_tmp_sqr_y_bf);
     if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -504,10 +504,10 @@ int  bfORbailout()
     long longtempsqrx;
     long longtempsqry;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
-    longtempsqrx = bftoint(bftmpsqrx);
-    longtempsqry = bftoint(bftmpsqry);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    longtempsqrx = bftoint(g_tmp_sqr_x_bf);
+    longtempsqry = bftoint(g_tmp_sqr_y_bf);
     if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -522,10 +522,10 @@ int  bfANDbailout()
     long longtempsqrx;
     long longtempsqry;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
-    longtempsqrx = bftoint(bftmpsqrx);
-    longtempsqry = bftoint(bftmpsqry);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    longtempsqrx = bftoint(g_tmp_sqr_x_bf);
+    longtempsqry = bftoint(g_tmp_sqr_y_bf);
     if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -539,8 +539,8 @@ int  bfMANHbailout()
 {
     long longtempmag;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
     // note: in next five lines, bfold is just used as a temporary variable
     abs_bf(bfold.x, bfnew.x);
     abs_bf(bfold.y, bfnew.y);
@@ -560,8 +560,8 @@ int  bfMANRbailout()
 {
     long longtempmag;
 
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
     add_bf(g_bf_tmp, bfnew.x, bfnew.y); // don't need abs since we square it next
     // note: in next two lines, bfold is just used as a temporary variable
     square_bf(bfold.x, g_bf_tmp);
@@ -854,8 +854,8 @@ int mandelbf_per_pixel()
     copy_bf(bfnew.y, bfold.y);
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -910,8 +910,8 @@ juliabf_per_pixel()
     copy_bf(bfnew.y, bfold.y);
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(bftmpsqrx, bfnew.x);
-    square_bf(bftmpsqry, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, bfnew.x);
+    square_bf(g_tmp_sqr_y_bf, bfnew.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -941,8 +941,8 @@ int
 JuliabfFractal()
 {
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bf(bftmpsqrx, bftmpsqry);
-    add_bf(bfnew.x, bftmpsqrx, bfparm.x);
+    sub_a_bf(g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
+    add_bf(bfnew.x, g_tmp_sqr_x_bf, bfparm.x);
 
     // new.y = 2 * bfold.x * bfold.y + parm.y;
     mult_bf(g_bf_tmp, bfold.x, bfold.y); // ok to use unsafe here

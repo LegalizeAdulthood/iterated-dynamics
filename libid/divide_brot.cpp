@@ -54,8 +54,8 @@ int dividebrot5bf_per_pixel()
     add_a_bf(bfold.x, bfold.y);
     sub_bf(bfparm.y, g_bf_y_max, bfold.x);
 
-    clear_bf(bftmpsqrx);
-    clear_bf(bftmpsqry);
+    clear_bf(g_tmp_sqr_x_bf);
+    clear_bf(g_tmp_sqr_y_bf);
     clear_bf(bfold.x);
     clear_bf(bfold.y);
 
@@ -127,8 +127,8 @@ int DivideBrot5bfFractal()
     tmp1 = alloc_stack(g_bf_length + 2);
 
     /* sqr(z) */
-    /* bfnumer.x = bftmpsqrx - bftmpsqry;   */
-    sub_bf(bfnumer.x, bftmpsqrx, bftmpsqry);
+    /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */
+    sub_bf(bfnumer.x, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
 
     /* bfnumer.y = 2 * bfold.x * bfold.y; */
     mult_bf(bfnumer.y, bfold.x, bfold.y);
