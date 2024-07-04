@@ -41,23 +41,23 @@ int dividebrot5bn_per_pixel()
 int dividebrot5bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
-    mult_bf_int(bfparm.x, g_delta_x_bf, (U16) g_col);
+    mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16) g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16) g_row);
 
-    add_a_bf(bfparm.x, g_bf_tmp);
-    add_a_bf(bfparm.x, g_bf_x_min);
+    add_a_bf(g_parm_z_bf.x, g_bf_tmp);
+    add_a_bf(g_parm_z_bf.x, g_bf_x_min);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
-    /* note: in next four lines, bfold is just used as a temporary variable */
-    mult_bf_int(bfold.x, g_delta_y_bf, (U16) g_row);
-    mult_bf_int(bfold.y, g_delta2_y_bf, (U16) g_col);
-    add_a_bf(bfold.x, bfold.y);
-    sub_bf(bfparm.y, g_bf_y_max, bfold.x);
+    /* note: in next four lines, g_old_z_bf is just used as a temporary variable */
+    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, (U16) g_row);
+    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, (U16) g_col);
+    add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
+    sub_bf(g_parm_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
     clear_bf(g_tmp_sqr_x_bf);
     clear_bf(g_tmp_sqr_y_bf);
-    clear_bf(bfold.x);
-    clear_bf(bfold.y);
+    clear_bf(g_old_z_bf.x);
+    clear_bf(g_old_z_bf.y);
 
     return 0; /* 1st iteration has NOT been done */
 }
@@ -130,23 +130,23 @@ int DivideBrot5bfFractal()
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */
     sub_bf(bfnumer.x, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
 
-    /* bfnumer.y = 2 * bfold.x * bfold.y; */
-    mult_bf(bfnumer.y, bfold.x, bfold.y);
+    /* bfnumer.y = 2 * g_old_z_bf.x * g_old_z_bf.y; */
+    mult_bf(bfnumer.y, g_old_z_bf.x, g_old_z_bf.y);
     double_a_bf(bfnumer.y);
 
     /* z^(a) */
     inttobf(bfc_exp.x, g_c_exponent);
     clear_bf(bfc_exp.y);
-    ComplexPower_bf(&bftmpnew, &bfold, &bfc_exp);
+    ComplexPower_bf(&bftmpnew, &g_old_z_bf, &bfc_exp);
     /* then add b */
     floattobf(tmp1, g_b_const);
     add_a_bf(bftmpnew.x, tmp1);
 
     /* sqr(z)/(z^(a)+b) */
-    cplxdiv_bf(&bfnew, &bfnumer, &bftmpnew);
+    cplxdiv_bf(&g_new_z_bf, &bfnumer, &bftmpnew);
 
-    add_a_bf(bfnew.x, bfparm.x);
-    add_a_bf(bfnew.y, bfparm.y);
+    add_a_bf(g_new_z_bf.x, g_parm_z_bf.x);
+    add_a_bf(g_new_z_bf.y, g_parm_z_bf.y);
 
     restore_stack(saved);
     return g_bailout_bigfloat();

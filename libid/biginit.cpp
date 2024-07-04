@@ -89,12 +89,12 @@ bf_t g_tmp_sqr_x_bf = nullptr;
 bf_t g_tmp_sqr_y_bf = nullptr;
 
 // g_bf_length+2
-BFComplex bfparm = { nullptr, nullptr };
-BFComplex bfsaved = { nullptr, nullptr };
+BFComplex g_parm_z_bf = { nullptr, nullptr };
+BFComplex g_saved_z_bf = { nullptr, nullptr };
 
 // g_r_bf_length+2
-BFComplex bfold = { nullptr, nullptr };
-BFComplex bfnew = { nullptr, nullptr };
+BFComplex g_old_z_bf = { nullptr, nullptr };
+BFComplex g_new_z_bf = { nullptr, nullptr };
 
 bf_t g_bf_pi = nullptr;      // TAKES NO SPACE
 bf_t g_big_pi = nullptr;     // g_bf_length+2
@@ -288,23 +288,23 @@ static void init_bf_2()
         ptr += g_bf_length+2;
         g_delta2_y_bf    = bnroot+ptr;
         ptr += g_bf_length+2;
-        bfold.x    = bnroot+ptr;
+        g_old_z_bf.x    = bnroot+ptr;
         ptr += g_r_bf_length+2;
-        bfold.y    = bnroot+ptr;
+        g_old_z_bf.y    = bnroot+ptr;
         ptr += g_r_bf_length+2;
-        bfnew.x    = bnroot+ptr;
+        g_new_z_bf.x    = bnroot+ptr;
         ptr += g_r_bf_length+2;
-        bfnew.y    = bnroot+ptr;
+        g_new_z_bf.y    = bnroot+ptr;
         ptr += g_r_bf_length+2;
-        bfsaved.x  = bnroot+ptr;
+        g_saved_z_bf.x  = bnroot+ptr;
         ptr += g_bf_length+2;
-        bfsaved.y  = bnroot+ptr;
+        g_saved_z_bf.y  = bnroot+ptr;
         ptr += g_bf_length+2;
         g_close_enough_bf = bnroot+ptr;
         ptr += g_bf_length+2;
-        bfparm.x   = bnroot+ptr;
+        g_parm_z_bf.x   = bnroot+ptr;
         ptr += g_bf_length+2;
-        bfparm.y   = bnroot+ptr;
+        g_parm_z_bf.y   = bnroot+ptr;
         ptr += g_bf_length+2;
         g_tmp_sqr_x_bf  = bnroot+ptr;
         ptr += g_r_bf_length+2;

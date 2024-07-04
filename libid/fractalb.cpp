@@ -452,8 +452,8 @@ int  bfMODbailout()
 {
     long longmagnitude;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     add_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
 
     longmagnitude = bftoint(g_bf_tmp);
@@ -461,8 +461,8 @@ int  bfMODbailout()
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -470,15 +470,15 @@ int  bfREALbailout()
 {
     long longtempsqrx;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     longtempsqrx = bftoint(g_tmp_sqr_x_bf);
     if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -487,15 +487,15 @@ int  bfIMAGbailout()
 {
     long longtempsqry;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     longtempsqry = bftoint(g_tmp_sqr_y_bf);
     if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -504,16 +504,16 @@ int  bfORbailout()
     long longtempsqrx;
     long longtempsqry;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     longtempsqrx = bftoint(g_tmp_sqr_x_bf);
     longtempsqry = bftoint(g_tmp_sqr_y_bf);
     if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -522,16 +522,16 @@ int  bfANDbailout()
     long longtempsqrx;
     long longtempsqry;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     longtempsqrx = bftoint(g_tmp_sqr_x_bf);
     longtempsqry = bftoint(g_tmp_sqr_y_bf);
     if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -539,20 +539,20 @@ int  bfMANHbailout()
 {
     long longtempmag;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
-    // note: in next five lines, bfold is just used as a temporary variable
-    abs_bf(bfold.x, bfnew.x);
-    abs_bf(bfold.y, bfnew.y);
-    add_bf(g_bf_tmp, bfold.x, bfold.y);
-    square_bf(bfold.x, g_bf_tmp);
-    longtempmag = bftoint(bfold.x);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
+    // note: in next five lines, g_old_z_bf is just used as a temporary variable
+    abs_bf(g_old_z_bf.x, g_new_z_bf.x);
+    abs_bf(g_old_z_bf.y, g_new_z_bf.y);
+    add_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y);
+    square_bf(g_old_z_bf.x, g_bf_tmp);
+    longtempmag = bftoint(g_old_z_bf.x);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -560,18 +560,18 @@ int  bfMANRbailout()
 {
     long longtempmag;
 
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
-    add_bf(g_bf_tmp, bfnew.x, bfnew.y); // don't need abs since we square it next
-    // note: in next two lines, bfold is just used as a temporary variable
-    square_bf(bfold.x, g_bf_tmp);
-    longtempmag = bftoint(bfold.x);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
+    add_bf(g_bf_tmp, g_new_z_bf.x, g_new_z_bf.y); // don't need abs since we square it next
+    // note: in next two lines, g_old_z_bf is just used as a temporary variable
+    square_bf(g_old_z_bf.x, g_bf_tmp);
+    longtempmag = bftoint(g_old_z_bf.x);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
     }
-    copy_bf(bfold.x, bfnew.x);
-    copy_bf(bfold.y, bfnew.y);
+    copy_bf(g_old_z_bf.x, g_new_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
 
@@ -732,8 +732,8 @@ bool MandelbfSetup()
     switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
-        copy_bf(bfparm.x, bfparms[0]);
-        copy_bf(bfparm.y, bfparms[1]);
+        copy_bf(g_parm_z_bf.x, bfparms[0]);
+        copy_bf(g_parm_z_bf.y, bfparms[1]);
         break;
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
@@ -748,8 +748,8 @@ bool MandelbfSetup()
         break;
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
-        copy_bf(bfparm.x, bfparms[0]);
-        copy_bf(bfparm.y, bfparms[1]);
+        copy_bf(g_parm_z_bf.x, bfparms[0]);
+        copy_bf(g_parm_z_bf.y, bfparms[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = symmetry_type::NONE;
@@ -817,45 +817,45 @@ int mandelbn_per_pixel()
 int mandelbf_per_pixel()
 {
     // parm.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(bfparm.x, g_delta_x_bf, (U16)g_col);
+    mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);
 
-    add_a_bf(bfparm.x, g_bf_tmp);
-    add_a_bf(bfparm.x, g_bf_x_min);
+    add_a_bf(g_parm_z_bf.x, g_bf_tmp);
+    add_a_bf(g_parm_z_bf.x, g_bf_x_min);
 
     // parm.y = g_y_max - row*dely - col*dely2;
-    // note: in next four lines, bfold is just used as a temporary variable
-    mult_bf_int(bfold.x, g_delta_y_bf, (U16)g_row);
-    mult_bf_int(bfold.y, g_delta2_y_bf, (U16)g_col);
-    add_a_bf(bfold.x, bfold.y);
-    sub_bf(bfparm.y, g_bf_y_max, bfold.x);
+    // note: in next four lines, g_old_z_bf is just used as a temporary variable
+    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, (U16)g_row);
+    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, (U16)g_col);
+    add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
+    sub_bf(g_parm_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
-    copy_bf(bfold.x, bfparm.x);
-    copy_bf(bfold.y, bfparm.y);
+    copy_bf(g_old_z_bf.x, g_parm_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_parm_z_bf.y);
 
     if ((g_inside_color == BOF60 || g_inside_color == BOF61) && g_bof_match_book_images)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobf(bfold.x, g_params[0]); // initial pertubation of parameters set
-        floattobf(bfold.y, g_params[1]);
+        floattobf(g_old_z_bf.x, g_params[0]); // initial pertubation of parameters set
+        floattobf(g_old_z_bf.y, g_params[1]);
         g_color_iter = -1;
     }
     else
     {
-        floattobf(bfnew.x, g_params[0]);
-        floattobf(bfnew.y, g_params[1]);
-        add_a_bf(bfold.x, bfnew.x);
-        add_a_bf(bfold.y, bfnew.y);
+        floattobf(g_new_z_bf.x, g_params[0]);
+        floattobf(g_new_z_bf.y, g_params[1]);
+        add_a_bf(g_old_z_bf.x, g_new_z_bf.x);
+        add_a_bf(g_old_z_bf.y, g_new_z_bf.y);
     }
 
     // square has side effect - must copy first
-    copy_bf(bfnew.x, bfold.x);
-    copy_bf(bfnew.y, bfold.y);
+    copy_bf(g_new_z_bf.x, g_old_z_bf.x);
+    copy_bf(g_new_z_bf.y, g_old_z_bf.y);
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -892,26 +892,26 @@ int
 juliabf_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(bfold.x, g_delta_x_bf, (U16)g_col);
+    mult_bf_int(g_old_z_bf.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);
 
-    add_a_bf(bfold.x, g_bf_tmp);
-    add_a_bf(bfold.x, g_bf_x_min);
+    add_a_bf(g_old_z_bf.x, g_bf_tmp);
+    add_a_bf(g_old_z_bf.x, g_bf_x_min);
 
     // old.y = g_y_max - row*dely - col*dely2;
-    // note: in next four lines, bfnew is just used as a temporary variable
-    mult_bf_int(bfnew.x, g_delta_y_bf, (U16)g_row);
-    mult_bf_int(bfnew.y, g_delta2_y_bf, (U16)g_col);
-    add_a_bf(bfnew.x, bfnew.y);
-    sub_bf(bfold.y, g_bf_y_max, bfnew.x);
+    // note: in next four lines, g_new_z_bf is just used as a temporary variable
+    mult_bf_int(g_new_z_bf.x, g_delta_y_bf, (U16)g_row);
+    mult_bf_int(g_new_z_bf.y, g_delta2_y_bf, (U16)g_col);
+    add_a_bf(g_new_z_bf.x, g_new_z_bf.y);
+    sub_bf(g_old_z_bf.y, g_bf_y_max, g_new_z_bf.x);
 
     // square has side effect - must copy first
-    copy_bf(bfnew.x, bfold.x);
-    copy_bf(bfnew.y, bfold.y);
+    copy_bf(g_new_z_bf.x, g_old_z_bf.x);
+    copy_bf(g_new_z_bf.y, g_old_z_bf.y);
 
     // Square these to g_r_bf_length bytes of precision
-    square_bf(g_tmp_sqr_x_bf, bfnew.x);
-    square_bf(g_tmp_sqr_y_bf, bfnew.y);
+    square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
+    square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
 
     return 1;                  // 1st iteration has been done
 }
@@ -942,12 +942,12 @@ JuliabfFractal()
 {
     // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bf(g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-    add_bf(bfnew.x, g_tmp_sqr_x_bf, bfparm.x);
+    add_bf(g_new_z_bf.x, g_tmp_sqr_x_bf, g_parm_z_bf.x);
 
-    // new.y = 2 * bfold.x * bfold.y + parm.y;
-    mult_bf(g_bf_tmp, bfold.x, bfold.y); // ok to use unsafe here
+    // new.y = 2 * g_old_z_bf.x * g_old_z_bf.y + parm.y;
+    mult_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y); // ok to use unsafe here
     double_a_bf(g_bf_tmp);
-    add_bf(bfnew.y, g_bf_tmp, bfparm.y);
+    add_bf(g_new_z_bf.y, g_bf_tmp, g_parm_z_bf.y);
     return g_bailout_bigfloat();
 }
 
@@ -982,9 +982,9 @@ JuliaZpowerbfFractal()
 
     floattobf(parm2.x, g_params[2]);
     floattobf(parm2.y, g_params[3]);
-    ComplexPower_bf(&bfnew, &bfold, &parm2);
-    add_bf(bfnew.x, bfparm.x, bfnew.x);
-    add_bf(bfnew.y, bfparm.y, bfnew.y);
+    ComplexPower_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
+    add_bf(g_new_z_bf.x, g_parm_z_bf.x, g_new_z_bf.x);
+    add_bf(g_new_z_bf.y, g_parm_z_bf.y, g_new_z_bf.y);
     restore_stack(saved);
     return g_bailout_bigfloat();
 }

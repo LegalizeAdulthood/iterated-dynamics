@@ -1438,8 +1438,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
-                clear_bf(bfsaved.x);
-                clear_bf(bfsaved.y);
+                clear_bf(g_saved_z_bf.x);
+                clear_bf(g_saved_z_bf.y);
             }
         }
         g_init.y = g_dy_pixel();
@@ -1521,7 +1521,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math == bf_math_type::BIGFLT)
         {
-            g_old_z = cmplxbftofloat(&bfold);
+            g_old_z = cmplxbftofloat(&g_old_z_bf);
         }
         lastz.x = g_old_z.x;
         lastz.y = g_old_z.y;
@@ -1623,7 +1623,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
-                    g_new_z = cmplxbftofloat(&bfnew);
+                    g_new_z = cmplxbftofloat(&g_new_z_bf);
                 }
                 plot_orbit(g_new_z.x, g_new_z.y, -1);
             }
@@ -1640,7 +1640,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
-                g_new_z = cmplxbftofloat(&bfnew);
+                g_new_z = cmplxbftofloat(&g_new_z_bf);
             }
             if (g_inside_color == STARTRAIL)
             {
@@ -1756,7 +1756,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
-                g_new_z = cmplxbftofloat(&bfnew);
+                g_new_z = cmplxbftofloat(&g_new_z_bf);
             }
             if (g_outside_color == TDIS)
             {
@@ -1860,8 +1860,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
-                    copy_bf(bfsaved.x, bfnew.x);
-                    copy_bf(bfsaved.y, bfnew.y);
+                    copy_bf(g_saved_z_bf.x, g_new_z_bf.x);
+                    copy_bf(g_saved_z_bf.y, g_new_z_bf.y);
                 }
                 else
                 {
@@ -1897,9 +1897,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
-                    if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, bfsaved.x, bfnew.x)), g_close_enough_bf) < 0)
+                    if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, g_saved_z_bf.x, g_new_z_bf.x)), g_close_enough_bf) < 0)
                     {
-                        if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, bfsaved.y, bfnew.y)), g_close_enough_bf) < 0)
+                        if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, g_saved_z_bf.y, g_new_z_bf.y)), g_close_enough_bf) < 0)
                         {
                             caught_a_cycle = true;
                         }
@@ -1958,8 +1958,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math == bf_math_type::BIGFLT)
         {
-            g_new_z.x = (double)bftofloat(bfnew.x);
-            g_new_z.y = (double)bftofloat(bfnew.y);
+            g_new_z.x = (double)bftofloat(g_new_z_bf.x);
+            g_new_z.y = (double)bftofloat(g_new_z_bf.y);
         }
         g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
         g_color_iter = potential(g_magnitude, g_color_iter);

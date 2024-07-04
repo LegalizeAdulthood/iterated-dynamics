@@ -269,10 +269,10 @@ extern bf_t g_delta2_y_bf;
 extern bf_t g_close_enough_bf;
 extern bf_t g_tmp_sqr_x_bf;
 extern bf_t g_tmp_sqr_y_bf;
-extern BFComplex bfparm;
-extern BFComplex bfsaved;
-extern BFComplex bfold;
-extern BFComplex bfnew;
+extern BFComplex g_parm_z_bf;
+extern BFComplex g_saved_z_bf;
+extern BFComplex g_old_z_bf;
+extern BFComplex g_new_z_bf;
 
 // for testing only
 // used by other routines
