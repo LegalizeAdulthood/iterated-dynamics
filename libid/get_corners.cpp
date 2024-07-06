@@ -3,8 +3,8 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "calcfrac.h"
 #include "calc_frac_init.h"
+#include "calcfrac.h"
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
@@ -16,6 +16,7 @@
 #include "id_keys.h"
 #include "lorenz.h"
 #include "sticky_orbits.h"
+#include "value_saver.h"
 #include "zoom.h"
 
 #include <cfloat>
@@ -117,10 +118,11 @@ gc_loop:
     // 1 item
     builder.comment("Press F4 to reset to type default values");
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_COORDS;
-    const int prompt_ret = builder.prompt("Image Coordinates", 128 | 16);
-    g_help_mode = old_help_mode;
+    int prompt_ret;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COORDS};
+        prompt_ret = builder.prompt("Image Coordinates", 128 | 16);
+    }
 
     if (prompt_ret < 0)
     {
