@@ -604,10 +604,11 @@ int get_fract3d_params() // prompt for 3D fractal parameters
         .int_number("Y shift with perspective (positive = up   )", YSHIFT)
         .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)", g_glasses_type);
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_3D_FRACT;
-    int i = builder.prompt("3D Parameters");
-    g_help_mode = old_help_mode;
+    int i;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_FRACT};
+        i = builder.prompt("3D Parameters");
+    }
 
     int ret{};
     if (i < 0)
