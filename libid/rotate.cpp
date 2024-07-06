@@ -622,17 +622,15 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
     }
 }
 
-
 void save_palette()
 {
     char palname[FILE_MAX_PATH];
     std::FILE *dacfile;
     int i;
     std::strcpy(palname, g_map_name.c_str());
-    help_labels const old_help_mode = g_help_mode;
     driver_stack_screen();
     char filename[256] = { 0 };
-    g_help_mode = help_labels::HELP_COLORMAP;
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COLORMAP};
     i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
@@ -666,7 +664,6 @@ void save_palette()
         }
         std::fclose(dacfile);
     }
-    g_help_mode = old_help_mode;
 }
 
 
