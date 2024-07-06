@@ -20,6 +20,7 @@
 #include "read_ticker.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "value_saver.h"
 #include "zoom.h"
 
 #include <algorithm>
@@ -3123,9 +3124,9 @@ static void PalTable_Process(PalTable *me)
 
 void EditPalette()
 {
-    int       old_look_at_mouse = g_look_at_mouse;
-    int       oldsxoffs      = g_logical_screen_x_offset;
-    int       oldsyoffs      = g_logical_screen_y_offset;
+    ValueSaver saved_look_at_mouse(g_look_at_mouse, 3);
+    ValueSaver saved_logical_screen_x_offset(g_logical_screen_x_offset, 0);
+    ValueSaver saved_logical_screen_y_offset(g_logical_screen_y_offset, 0);
 
     if (g_screen_x_dots < 133 || g_screen_y_dots < 174)
     {
@@ -3135,10 +3136,6 @@ void EditPalette()
     g_plot = g_put_color;
 
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-
-    g_look_at_mouse = 3;
-    g_logical_screen_y_offset = 0;
-    g_logical_screen_x_offset = g_logical_screen_y_offset;
 
     reserve_colors = true;
     inverse = false;
@@ -3151,8 +3148,5 @@ void EditPalette()
     PalTable_Process(&pt);
     PalTable_Destroy(&pt);
 
-    g_look_at_mouse = old_look_at_mouse;
-    g_logical_screen_x_offset = oldsxoffs;
-    g_logical_screen_y_offset = oldsyoffs;
     g_line_buff.clear();
 }
