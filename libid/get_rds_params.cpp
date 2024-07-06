@@ -9,6 +9,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "stereo.h"
+#include "value_saver.h"
 
 #include <cstring>
 #include <string>
@@ -88,10 +89,11 @@ int get_rds_params()
         {
             g_stereo_map_filename.clear();
         }
-        help_labels const old_help_mode = g_help_mode;
-        g_help_mode = help_labels::HELP_RDS;
-        int const choice = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
-        g_help_mode = old_help_mode;
+        int choice;
+        {
+            ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_RDS};
+            choice = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
+        }
         if (choice < 0)
         {
             ret = -1;
