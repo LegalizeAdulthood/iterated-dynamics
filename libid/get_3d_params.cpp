@@ -1,9 +1,6 @@
 #include "get_3d_params.h"
 
 #include "check_write_file.h"
-#include "port.h"
-#include "prototyp.h"
-
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -17,9 +14,11 @@
 #include "loadmap.h"
 #include "merge_path_names.h"
 #include "plot3d.h"
+#include "prototyp.h"
 #include "rotate.h"
 #include "stereo.h"
 #include "stop_msg.h"
+#include "value_saver.h"
 
 #include <cstring>
 #include <string>
@@ -98,11 +97,10 @@ restart_1:
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_3D_MODE;
-
-    k = fullscreen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
-    g_help_mode = old_help_mode;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_MODE};
+        k = fullscreen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
+    }
     if (k < 0)
     {
         return -1;
@@ -196,10 +194,12 @@ restart_1:
         {
             attributes[i] = 1;
         }
-        g_help_mode = help_labels::HELP_3D_FILL;
-        int i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
-            attributes, 0, 0, 0, FILLTYPE + 1, nullptr, nullptr, nullptr, nullptr);
-        g_help_mode = old_help_mode;
+        int i;
+        {
+            ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_FILL};
+            i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
+                attributes, 0, 0, 0, FILLTYPE + 1, nullptr, nullptr, nullptr, nullptr);
+        }
         if (i < 0)
         {
             goto restart_1;
@@ -314,9 +314,10 @@ restart_3:
 
 
     }
-    g_help_mode = help_labels::HELP_3D_PARAMETERS;
-    k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
-    g_help_mode = old_help_mode;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_PARAMETERS};
+        k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
+    }
     if (k < 0)
     {
         goto restart_1;
