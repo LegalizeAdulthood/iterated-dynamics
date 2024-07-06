@@ -841,8 +841,7 @@ int calcfract()
     {
         if (g_std_calc_mode == '3')  // convoluted 'g' + '2' hybrid
         {
-            int oldcalcmode;
-            oldcalcmode = g_std_calc_mode;
+            const int old_calc_mode = g_std_calc_mode;
             if (!g_resuming || g_three_pass)
             {
                 g_std_calc_mode = 'g';
@@ -877,7 +876,7 @@ int calcfract()
                 }
                 timer(timer_type::ENGINE, (int(*)())perform_worklist);
             }
-            g_std_calc_mode = (char)oldcalcmode;
+            g_std_calc_mode = (char)old_calc_mode;
         }
         else // main case, much nicer!
         {
