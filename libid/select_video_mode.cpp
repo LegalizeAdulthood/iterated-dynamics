@@ -11,6 +11,7 @@
 #include "id_data.h"
 #include "load_config.h"
 #include "stop_msg.h"
+#include "value_saver.h"
 #include "video_mode.h"
 
 #include <algorithm>
@@ -85,17 +86,15 @@ int select_video_mode(int curmode)
         i = 0;
     }
 
-    bool const old_tab_mode = g_tab_mode;
-    help_labels const old_help_mode = g_help_mode;
-    modes_changed = false;
-    g_tab_mode = false;
-    g_help_mode = help_labels::HELP_VIDEO_MODE;
-    i = fullscreen_choice(CHOICE_HELP, "Select Video Mode",
-        "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,
-        nullptr, attributes.data(), 1, 16, 74, i, format_vid_table, nullptr, nullptr,
-        check_modekey);
-    g_tab_mode = old_tab_mode;
-    g_help_mode = old_help_mode;
+    {
+        ValueSaver saved_tab_mode{g_tab_mode, false};
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_VIDEO_MODE};
+        modes_changed = false;
+        i = fullscreen_choice(CHOICE_HELP, "Select Video Mode",
+            "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,
+            nullptr, attributes.data(), 1, 16, 74, i, format_vid_table, nullptr, nullptr,
+            check_modekey);
+    }
     if (i == -1)
     {
         // update id.cfg for new key assignments
