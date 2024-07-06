@@ -9,12 +9,13 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "engine_timer.h"
+#include "help_title.h"
 #include "helpcom.h"
 #include "helpdefs.h"
-#include "help_title.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "put_string_center.h"
+#include "value_saver.h"
 
 #include <cstdlib>
 #include <ctime>
@@ -33,12 +34,10 @@ void intro()
     std::vector<int> authors;
     char credits[32768] = { 0 };
     char screen_text[32768];
-    int old_look_at_mouse;
 
     g_timer_start -= std::clock();       // "time out" during help
-    old_look_at_mouse = g_look_at_mouse;
-    help_labels const old_help_mode = g_help_mode;
-    g_look_at_mouse = 0;                    // de-activate full mouse checking
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, 0}; // de-activate full mouse checking
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_MENU};
 
     int i = 32767 + read_help_topic(help_labels::INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i] = '\0';
@@ -80,7 +79,6 @@ void intro()
     credits[authors.at(i+1)] = oldchar;
     delaymax = 10;
     driver_hide_text_cursor();
-    g_help_mode = help_labels::HELP_MENU;
     while (! driver_key_pressed())
     {
         if (slowdisplay)
@@ -115,7 +113,4 @@ void intro()
         credits[authors.at(i+1)] = oldchar;
         driver_hide_text_cursor(); // turn it off
     }
-
-    g_look_at_mouse = old_look_at_mouse;                // restore the mouse-checking
-    g_help_mode = old_help_mode;
 }
