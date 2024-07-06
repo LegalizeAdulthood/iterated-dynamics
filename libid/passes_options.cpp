@@ -12,6 +12,7 @@
 #include "id_keys.h"
 #include "lorenz.h"
 #include "sticky_orbits.h"
+#include "value_saver.h"
 
 /*
      passes_options invoked by <p> key
@@ -70,13 +71,13 @@ pass_option_restart:
                              :   /* function */    2;
     old_drawmode = g_draw_mode;
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_POPTS;
-    i = fullscreen_prompt("Passes Options\n"
-                          "(not all combinations make sense)\n"
-                          "(Press F2 for corner parameters)\n"
-                          "(Press F6 for calculation parameters)", k+1, choices, uvalues, 64 | 4, nullptr);
-    g_help_mode = old_help_mode;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_POPTS};
+        i = fullscreen_prompt("Passes Options\n"
+                              "(not all combinations make sense)\n"
+                              "(Press F2 for corner parameters)\n"
+                              "(Press F6 for calculation parameters)", k+1, choices, uvalues, 64 | 4, nullptr);
+    }
     if (i < 0)
     {
         return -1;
