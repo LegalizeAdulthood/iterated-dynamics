@@ -17,6 +17,7 @@
 #include "sqr.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
+#include "value_saver.h"
 #include "zoom.h"
 
 #include <algorithm>
@@ -667,7 +668,6 @@ void set_mutation_level(int strength)
 int get_evolve_Parms()
 {
     ChoiceBuilder<20> choices;
-    help_labels old_help_mode;
     int i, j, tmp;
     int old_evolving, old_image_grid_size;
     int old_variations = 0;
@@ -719,10 +719,10 @@ get_evol_restart:
         .comment("Press F3 to double mutation levels")
         .comment("Press F6 to control which parameters are varied");
 
-    old_help_mode = g_help_mode;     // this prevents HELP from activating
-    g_help_mode = help_labels::HELP_EVOL;
-    i = choices.prompt("Evolution Mode Options", 255);
-    g_help_mode = old_help_mode;     // re-enable HELP
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_EVOL};
+        i = choices.prompt("Evolution Mode Options", 255);
+    }
     if (i < 0)
     {
         // in case this point has been reached after calling sub menu with F6
