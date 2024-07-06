@@ -327,10 +327,10 @@ gsc_loop:
     }
     builder.comment("Press F4 to reset to type default values");
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_SCREEN_COORDS;
-    prompt_ret = builder.prompt("Screen Coordinates", 128 | 16);
-    g_help_mode = old_help_mode;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_SCREEN_COORDS};
+        prompt_ret = builder.prompt("Screen Coordinates", 128 | 16);
+    }
 
     if (prompt_ret < 0)
     {
