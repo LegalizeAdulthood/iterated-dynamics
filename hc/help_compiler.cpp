@@ -461,16 +461,12 @@ LABEL *find_next_label_by_topic(int t)
  */
 void HelpCompiler::set_hot_link_doc_page()
 {
-    LABEL *lbl;
-    int    t;
-
     for (LINK &l : g_src.all_links)
     {
         switch (l.type)
         {
         case link_types::LT_TOPIC:
-            t = find_topic_title(l.name.c_str());
-            if (t == -1)
+            if (int t = find_topic_title(l.name.c_str()); t == -1)
             {
                 g_current_src_filename = l.srcfile;
                 g_src_line = l.srcline; // pretend we are still in the source...
@@ -484,8 +480,7 @@ void HelpCompiler::set_hot_link_doc_page()
             break;
 
         case link_types::LT_LABEL:
-            lbl = g_src.find_label(l.name.c_str());
-            if (lbl == nullptr)
+            if (LABEL *lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
             {
                 g_current_src_filename = l.srcfile;
                 g_src_line = l.srcline; // pretend again
