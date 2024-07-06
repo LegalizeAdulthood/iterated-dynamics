@@ -795,8 +795,9 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     return action;
 }
 
-int help(int action)
+int help()
 {
+    int action{};
     HIST      curr = { -1 };
     int old_look_at_mouse;
     int       flags;

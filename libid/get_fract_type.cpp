@@ -187,7 +187,7 @@ static int sel_fractype_help(int curkey, int choice)
     {
         help_labels const old_help_mode = g_help_mode;
         g_help_mode = g_fractal_specific[(*(ft_choices+choice))->num].helptext;
-        help(0);
+        help();
         g_help_mode = old_help_mode;
     }
     return 0;

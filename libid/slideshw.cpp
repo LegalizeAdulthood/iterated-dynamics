@@ -506,7 +506,7 @@ int handle_special_keys(int ch)
     if (ID_KEY_F1 == ch && g_help_mode != help_labels::HELP_INDEX && !inside_help)
     {
         inside_help = true;
-        help(0);
+        help();
         inside_help = false;
         ch = 0;
     }

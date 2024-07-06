@@ -120,7 +120,7 @@ typedef bool (*PD_FUNC)(PD_COMMANDS cmd, PD_INFO *pd, void *info);
 token_types find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
 int find_line_width(token_modes mode, char const *curr, unsigned len);
 bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
-int help(int);
+int help();
 int read_help_topic(help_labels label, int , int , void *);
 bool makedoc_msg_func(int pnum, int num_pages);
 void print_document(char const *outfname, bool (*msg_func)(int, int));

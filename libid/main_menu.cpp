@@ -377,7 +377,7 @@ top:
             if (-10 == i)
             {
                 g_help_mode = help_labels::HELP_ZOOM;
-                help(0);
+                help();
                 i = 0;
             }
         }
