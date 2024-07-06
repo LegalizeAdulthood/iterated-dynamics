@@ -681,7 +681,7 @@ void write_header(char const *fname, std::FILE *file)
     std::fprintf(file, "};\n");
 }
 
-void HelpCompiler::write_hdr()
+void HelpCompiler::write_header()
 {
     const std::string &fname{g_src.hdr_filename};
 
@@ -1450,7 +1450,7 @@ void HelpCompiler::compile()
     }
     if (!g_errors)
     {
-        write_hdr();
+        write_header();
     }
     if (!g_errors)
     {
