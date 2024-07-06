@@ -10,6 +10,7 @@
 #include "id.h"
 #include "id_data.h"
 #include "loadfile.h"
+#include "value_saver.h"
 
 /*
     get_cmd_string() is called whenever the 'g' key is pressed.  Return codes are:
@@ -22,10 +23,8 @@ int get_cmd_string()
 {
     static char cmdbuf[61];
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_COMMANDS;
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COMMANDS};
     int i = field_prompt("Enter command string to use.", nullptr, cmdbuf, 60, nullptr);
-    g_help_mode = old_help_mode;
     if (i >= 0 && cmdbuf[0] != 0)
     {
         i = +cmdarg(cmdbuf, cmd_file::AT_AFTER_STARTUP);
