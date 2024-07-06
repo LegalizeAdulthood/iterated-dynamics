@@ -506,21 +506,17 @@ void HelpCompiler::set_hot_link_doc_page()
  */
 void HelpCompiler::set_content_doc_page()
 {
-    char buf[4];
-
     const int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
     TOPIC &t = g_src.topics[tnum];
-
     char *base = t.get_topic_text();
-
     for (const CONTENT &c : g_src.contents)
     {
         assert(c.doc_page >= 1);
-        std::sprintf(buf, "%d", c.doc_page);
-        const int len = (int) std::strlen(buf);
+        std::string doc_page{std::to_string(c.doc_page)};
+        const int len = (int) doc_page.size();
         assert(len <= 3);
-        std::memcpy(base + c.page_num_pos + (3 - len), buf, len);
+        std::memcpy(base + c.page_num_pos + (3 - len), doc_page.c_str(), len);
     }
 
     t.release_topic_text(true);
@@ -634,8 +630,6 @@ bool paginate_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 
 void HelpCompiler::paginate_document()
 {
-    PAGINATE_DOC_INFO info;
-
     if (g_src.contents.empty())
     {
         return;
@@ -643,6 +637,7 @@ void HelpCompiler::paginate_document()
 
     msg("Paginating document.");
 
+    PAGINATE_DOC_INFO info;
     info.topic_num = -1;
     info.content_num = info.topic_num;
     info.link_dest_warn = true;
