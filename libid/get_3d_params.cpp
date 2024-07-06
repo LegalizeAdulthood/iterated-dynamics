@@ -405,10 +405,10 @@ static bool get_light_params()
     }
     builder.comment("");
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_3D_LIGHT;
-    k = builder.prompt("Light Source Parameters");
-    g_help_mode = old_help_mode;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_LIGHT};
+        k = builder.prompt("Light Source Parameters");
+    }
     if (k < 0)
     {
         return true;
