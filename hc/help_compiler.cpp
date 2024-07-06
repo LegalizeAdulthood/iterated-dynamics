@@ -226,12 +226,9 @@ void HelpCompiler::make_hot_links()
     }
 }
 
-
 /*
  * online help pagination stuff
  */
-
-
 void HelpCompiler::paginate_online()    // paginate the text for on-line help
 {
     int size;
@@ -392,12 +389,9 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
     } // for
 }
 
-
 /*
  * paginate document stuff
  */
-
-
 struct DOC_INFO
 {
     int content_num;
@@ -411,7 +405,6 @@ struct PAGINATE_DOC_INFO : DOC_INFO
     CONTENT  *c;
     LABEL    *lbl;
 };
-
 
 LABEL *find_next_label_by_topic(int t)
 {
@@ -454,7 +447,6 @@ LABEL *find_next_label_by_topic(int t)
     }
     return (g->topic_off < p->topic_off) ? g : p;
 }
-
 
 /*
  * Find doc_page for all hot-links.
@@ -500,7 +492,6 @@ void HelpCompiler::set_hot_link_doc_page()
     }
 }
 
-
 /*
  * insert page #'s in the DocContents
  */
@@ -521,7 +512,6 @@ void HelpCompiler::set_content_doc_page()
 
     t.release_topic_text(true);
 }
-
 
 // this function also used by print_document()
 bool pd_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
@@ -581,7 +571,6 @@ bool pd_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
     }
 }
 
-
 bool paginate_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 {
     PAGINATE_DOC_INFO *info = static_cast<PAGINATE_DOC_INFO *>(context);
@@ -627,7 +616,6 @@ bool paginate_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
     }
 }
 
-
 void HelpCompiler::paginate_document()
 {
     if (g_src.contents.empty())
@@ -648,11 +636,9 @@ void HelpCompiler::paginate_document()
     set_content_doc_page();
 }
 
-
 /*
  * file write stuff.
  */
-
 
 // returns true if different
 bool compare_files(std::FILE *f1, std::FILE *f2)
@@ -672,7 +658,6 @@ bool compare_files(std::FILE *f1, std::FILE *f2)
 
     return !(std::feof(f1) && std::feof(f2));
 }
-
 
 void _write_hdr(char const *fname, std::FILE *file)
 {
@@ -726,7 +711,6 @@ void _write_hdr(char const *fname, std::FILE *file)
         "\n"
         "#endif\n");
 }
-
 
 void HelpCompiler::write_hdr()
 {
@@ -821,7 +805,6 @@ void HelpCompiler::calc_offsets()    // calc file offset to each topic
     }
 }
 
-
 /*
  * Replaces link indexes in the help text with topic_num, topic_off and
  * doc_page info.
@@ -845,7 +828,6 @@ void insert_real_link_info(char *curr, unsigned int len)
         curr += size;
     }
 }
-
 
 void _write_help(std::FILE *file)
 {
@@ -944,7 +926,6 @@ void _write_help(std::FILE *file)
     }
 }
 
-
 void HelpCompiler::write_help()
 {
     const char *fname{g_src.hlp_filename.c_str()};
@@ -961,12 +942,9 @@ void HelpCompiler::write_help()
     std::fclose(hlp);
 }
 
-
 /*
  * print document stuff.
  */
-
-
 struct PRINT_DOC_INFO : DOC_INFO
 {
     std::FILE *file;
@@ -1007,7 +985,6 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
         }
     }
 }
-
 
 void printers(PRINT_DOC_INFO *info, char const *s, int n)
 {
@@ -1091,7 +1068,6 @@ bool print_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
     }
 }
 
-
 void HelpCompiler::print_document()
 {
     char const *fname{m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str()};
@@ -1122,12 +1098,9 @@ void HelpCompiler::print_document()
     std::fclose(info.file);
 }
 
-
 /*
  * compiler status and memory usage report stuff.
  */
-
-
 void HelpCompiler::report_memory()
 {
     long bytes_in_strings = 0;
@@ -1202,7 +1175,6 @@ void HelpCompiler::report_memory()
     std::printf("%8ld Bytes in topic text.\n", text);
 }
 
-
 void HelpCompiler::report_stats()
 {
     int  pages = 0;
@@ -1222,12 +1194,9 @@ void HelpCompiler::report_stats()
     std::printf("%8d Document pages\n", g_num_doc_pages);
 }
 
-
 /*
  * add/delete help from .EXE functions.
  */
-
-
 void HelpCompiler::add_hlp_to_exe()
 {
     char const *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
@@ -1331,7 +1300,6 @@ void HelpCompiler::add_hlp_to_exe()
     close(exe);
     close(hlp);
 }
-
 
 void HelpCompiler::delete_hlp_from_exe()
 {
