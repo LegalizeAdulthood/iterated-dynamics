@@ -92,11 +92,38 @@ struct PAGE
 };
 
 // values for TOPIC.flags
-enum
+enum class topic_flags
 {
-    TF_IN_DOC = 1,          // set if topic is part of the printed document
-    TF_DATA = 2             // set if it is a "data" topic
+    NONE = 0,   // nothing special
+    IN_DOC = 1, // set if topic is part of the printed document
+    DATA = 2    // set if it is a "data" topic
 };
+
+inline int operator+(topic_flags val)
+{
+    return static_cast<int>(val);
+}
+
+inline topic_flags operator|(topic_flags lhs, topic_flags rhs)
+{
+    return static_cast<topic_flags>(+lhs | +rhs);    
+}
+
+inline topic_flags &operator|=(topic_flags &lhs, topic_flags rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+
+inline topic_flags operator&(topic_flags lhs, topic_flags rhs)
+{
+    return static_cast<topic_flags>(+lhs & +rhs);
+}
+
+inline bool bit_set(topic_flags flags, topic_flags bit)
+{
+    return (flags & bit) == bit;
+}
 
 struct TOPIC
 {
@@ -108,7 +135,7 @@ struct TOPIC
     void release_topic_text(bool save) const;
     void start(char const *text, int len);
 
-    unsigned  flags;          // see #defines for TF_???
+    topic_flags flags;        // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
     unsigned  title_len;      // length of title
     std::string title;        // title for this topic

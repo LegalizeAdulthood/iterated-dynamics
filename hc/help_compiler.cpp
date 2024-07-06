@@ -30,6 +30,7 @@
 #include <stdexcept>
 #include <string>
 #include <system_error>
+#include <utility>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -98,7 +99,7 @@ std::ostream &operator<<(std::ostream &str, const PAGE &page)
 
 std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
 {
-    str << "Flags: " << std::hex << topic.flags << std::dec << '\n'
+    str << "Flags: " << std::hex << +topic.flags << std::dec << '\n'
         << "Doc Page: " << topic.doc_page << '\n'
         << "Title Len: " << topic.title_len << '\n'
         << "Title: <" << topic.title << ">\n"
@@ -226,7 +227,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
     for (TOPIC &t : g_src.topics)
     {
-        if (t.flags & TF_DATA)
+        if (bit_set(t.flags, topic_flags::DATA))
         {
             continue;    // don't paginate data topics
         }
@@ -699,7 +700,7 @@ void HelpCompiler::write_header()
         write_header_file(fname.c_str(), hdr);
         std::fclose(hdr);
         notice("Id must be re-compiled.");
-        return ;
+        return;
     }
 
     msg("Comparing: %s", fname.c_str());
@@ -721,13 +722,13 @@ void HelpCompiler::write_header()
         throw std::runtime_error("Cannot open temporary file: \"" + std::string{TEMP_FNAME} + "\".");
     }
 
-    if (compare_files(temp, hdr))     // if they are different...
+    if (compare_files(temp, hdr)) // if they are different...
     {
         msg("Updating: %s", fname.c_str());
         std::fclose(temp);
         std::fclose(hdr);
-        std::remove(fname.c_str());               // delete the old hdr file
-        std::rename(TEMP_FNAME, fname.c_str());   // rename the temp to the hdr file
+        std::remove(fname.c_str());             // delete the old hdr file
+        std::rename(TEMP_FNAME, fname.c_str()); // rename the temp to the hdr file
         notice("Id must be re-compiled.");
     }
     else
@@ -735,7 +736,84 @@ void HelpCompiler::write_header()
         // if they are the same leave the original alone.
         std::fclose(temp);
         std::fclose(hdr);
-        std::remove(TEMP_FNAME);      // delete the temp
+        std::remove(TEMP_FNAME); // delete the temp
+    }
+}
+
+void HelpCompiler::write_link_source()
+{
+    std::vector<std::pair<int, LABEL>> topics;
+    for (const LABEL &label : g_src.labels)
+    {
+        if (label.topic_off == 0)
+        {
+            const TOPIC &topic{g_src.topics[label.topic_num]};
+            if (bit_set(topic.flags, topic_flags::IN_DOC))
+            {
+                topics.emplace_back(label.topic_num, label);
+            }
+        }
+    }
+
+    {
+        msg("Writing: help_links.h");
+        std::ofstream hdr{"help_links.h"};
+        hdr << "#pragma once\n"
+        "\n"
+        "#include <array>\n"
+        "#include <string_view>\n"
+        "\n"
+        "namespace hc\n"
+        "{\n"
+        "\n"
+        "struct HelpLink\n"
+        "{\n"
+        "    help_labels label;\n"
+        "    std::string_view link;\n"
+        "};\n"
+        "\n"
+        "extern std::array<HelpLink, " << topics.size() << "> g_help_links;\n"
+        "\n"
+        "} // namespace hc\n";
+    }
+
+    {
+        msg("Writing: help_links.cpp");
+        std::ofstream src{"help_links.cpp"};
+        src << "#include \"helpdefs.h\"\n"
+               "#include \"help_links.h\"\n"
+               "\n"
+               "namespace hc\n"
+               "{\n"
+               "\n"
+               "std::array<HelpLink, "
+            << topics.size() << "> g_help_links = {\n";
+        auto link_for_title = [](std::string text)
+        {
+            for (auto pos = text.find('/'); pos != std::string::npos; pos = text.find('/'))
+            {
+                text.erase(pos, 1);
+            }
+            std::transform(text.begin(), text.end(), text.begin(),
+                [](char c)
+                {
+                    unsigned char test = static_cast<unsigned char>(c);
+                    return std::isalnum(test) ? static_cast<char>(std::tolower(test)) : '_';
+                });
+            for (auto pos = text.find("__"); pos != std::string::npos; pos = text.find("__"))
+            {
+                text.erase(pos, 1);
+            }
+            return "index.html#_" + text;
+        };
+        for (std::pair<int, LABEL> &item : topics)
+        {
+            src << "    HelpLink{ help_labels::" << item.second.name << ", \""
+                      << link_for_title(g_src.topics[item.first].title) << "\" },\n";
+        }
+        src << "};\n"
+               "\n"
+               "} // namespace hc\n";
     }
 }
 
@@ -857,7 +935,7 @@ void _write_help(std::FILE *file)
     for (TOPIC &tp : g_src.topics)
     {
         // write the topics flags
-        putw(tp.flags, file);
+        putw(+tp.flags, file);
 
         // write offset, length and starting margin for each page
 
@@ -878,7 +956,7 @@ void _write_help(std::FILE *file)
 
         text = tp.get_topic_text();
 
-        if (!(tp.flags & TF_DATA))     // don't process data topics...
+        if (!bit_set(tp.flags, topic_flags::DATA))     // don't process data topics...
         {
             insert_real_link_info(text, tp.text_len);
         }
@@ -1454,6 +1532,10 @@ void HelpCompiler::compile()
     }
     if (!g_errors)
     {
+        write_link_source();
+    }
+    if (!g_errors)
+    {
         write_help();
     }
 
@@ -1534,7 +1616,7 @@ void HelpCompiler::paginate_html_document()
 
     for (TOPIC &t : g_src.topics)
     {
-        if (t.flags & TF_DATA)
+        if (bit_set(t.flags, topic_flags::DATA))
         {
             continue;    // don't paginate data topics
         }

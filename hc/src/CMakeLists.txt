@@ -9,6 +9,8 @@ source_group("Help Files" REGULAR_EXPRESSION .*\\.src)
 add_custom_command(
     OUTPUT
         ${CMAKE_CURRENT_BINARY_DIR}/helpdefs.h
+        ${CMAKE_CURRENT_BINARY_DIR}/help_links.h
+        ${CMAKE_CURRENT_BINARY_DIR}/help_links.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/id.hlp
         ${CMAKE_BINARY_DIR}/include/helpdefs.h
         ${home_dir}/id.hlp
@@ -24,6 +26,13 @@ add_custom_command(
         help4.src
         help5.src)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.hlp DESTINATION .)
+
+add_library(help-links 
+    ${CMAKE_CURRENT_BINARY_DIR}/help_links.h
+    ${CMAKE_CURRENT_BINARY_DIR}/help_links.cpp
+)
+target_include_directories(help-links PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(help-links PUBLIC help-defs)
 
 add_custom_target(ascii-doc
     DEPENDS hc
