@@ -231,20 +231,14 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             return main_state::CONTINUE;  // disk video and targa, nothing to save
         }
 
-        int oldsxoffs;
-        int oldsyoffs;
-        int oldxdots;
-        int oldydots;
-        int oldpx;
-        int oldpy;
         GENEBASE gene[NUM_GENES];
         copy_genes_from_bank(gene);
-        oldsxoffs = g_logical_screen_x_offset;
-        oldsyoffs = g_logical_screen_y_offset;
-        oldxdots = g_logical_screen_x_dots;
-        oldydots = g_logical_screen_y_dots;
-        oldpx = g_evolve_param_grid_x;
-        oldpy = g_evolve_param_grid_y;
+        const int oldsxoffs = g_logical_screen_x_offset;
+        const int oldsyoffs = g_logical_screen_y_offset;
+        const int oldxdots = g_logical_screen_x_dots;
+        const int oldydots = g_logical_screen_y_dots;
+        const int oldpx = g_evolve_param_grid_x;
+        const int oldpy = g_evolve_param_grid_y;
         g_logical_screen_y_offset = 0;
         g_logical_screen_x_offset = g_logical_screen_y_offset;
         g_logical_screen_x_dots = g_screen_x_dots;
