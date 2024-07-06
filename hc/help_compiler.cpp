@@ -1,9 +1,7 @@
-/*
- * Stand-alone help compiler.
- *
- * See help-compiler.txt for source file syntax.
- *
- */
+// Stand-alone help compiler.
+//
+// See help-compiler.txt for source file syntax.
+//
 #include "help_compiler.h"
 
 #include "adoc_compiler.h"
@@ -173,21 +171,15 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
     return str;
 }
 
-/*
- * stuff to resolve hot-link references.
- */
+// stuff to resolve hot-link references.
 
-/*
- * calculate topic_num/topic_off for each link.
- */
+// calculate topic_num/topic_off for each link.
 void HelpCompiler::make_hot_links()
 {
     msg("Making hot-links.");
 
-    /*
-     * Calculate topic_num for all entries in DocContents.  Also set
-     * "TF_IN_DOC" flag for all topics included in the document.
-     */
+    // Calculate topic_num for all entries in DocContents.  Also set
+    // "TF_IN_DOC" flag for all topics included in the document.
     for (CONTENT &c : g_src.contents)
     {
         for (int ctr = 0; ctr < c.num_topic; ctr++)
@@ -203,10 +195,8 @@ void HelpCompiler::make_hot_links()
         }
     }
 
-    /*
-     * Find topic_num and topic_off for all hot-links.  Also flag all hot-
-     * links which will (probably) appear in the document.
-     */
+    // Find topic_num and topic_off for all hot-links.  Also flag all hot-
+    // links which will (probably) appear in the document.
     for (LINK &l : g_src.all_links)
     {
         // name is the title of the topic
@@ -226,9 +216,7 @@ void HelpCompiler::make_hot_links()
     }
 }
 
-/*
- * online help pagination stuff
- */
+// online help pagination stuff
 void HelpCompiler::paginate_online()    // paginate the text for on-line help
 {
     int size;
@@ -389,9 +377,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
     } // for
 }
 
-/*
- * paginate document stuff
- */
+// paginate document stuff
 struct DOC_INFO
 {
     int content_num;
@@ -448,9 +434,7 @@ LABEL *find_next_label_by_topic(int t)
     return (g->topic_off < p->topic_off) ? g : p;
 }
 
-/*
- * Find doc_page for all hot-links.
- */
+// Find doc_page for all hot-links.
 void HelpCompiler::set_hot_link_doc_page()
 {
     for (LINK &l : g_src.all_links)
@@ -492,9 +476,7 @@ void HelpCompiler::set_hot_link_doc_page()
     }
 }
 
-/*
- * insert page #'s in the DocContents
- */
+// insert page #'s in the DocContents
 void HelpCompiler::set_content_doc_page()
 {
     const int tnum = find_topic_title(DOCCONTENTS_TITLE);
@@ -636,9 +618,7 @@ void HelpCompiler::paginate_document()
     set_content_doc_page();
 }
 
-/*
- * file write stuff.
- */
+// file write stuff.
 
 // returns true if different
 bool compare_files(std::FILE *f1, std::FILE *f2)
@@ -805,10 +785,8 @@ void HelpCompiler::calc_offsets()    // calc file offset to each topic
     }
 }
 
-/*
- * Replaces link indexes in the help text with topic_num, topic_off and
- * doc_page info.
- */
+// Replaces link indexes in the help text with topic_num, topic_off and
+// doc_page info.
 void insert_real_link_info(char *curr, unsigned int len)
 {
     while (len > 0)
@@ -942,9 +920,7 @@ void HelpCompiler::write_help()
     std::fclose(hlp);
 }
 
-/*
- * print document stuff.
- */
+// print document stuff.
 struct PRINT_DOC_INFO : DOC_INFO
 {
     std::FILE *file;
@@ -1098,9 +1074,7 @@ void HelpCompiler::print_document()
     std::fclose(info.file);
 }
 
-/*
- * compiler status and memory usage report stuff.
- */
+// compiler status and memory usage report stuff.
 void HelpCompiler::report_memory()
 {
     long bytes_in_strings = 0;
@@ -1194,9 +1168,7 @@ void HelpCompiler::report_stats()
     std::printf("%8d Document pages\n", g_num_doc_pages);
 }
 
-/*
- * add/delete help from .EXE functions.
- */
+// add/delete help from .EXE functions.
 void HelpCompiler::add_hlp_to_exe()
 {
     char const *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
