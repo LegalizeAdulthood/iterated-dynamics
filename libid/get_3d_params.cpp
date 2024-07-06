@@ -568,10 +568,8 @@ static bool get_funny_glasses_params()
         builder.string("Map file name", g_funny_glasses_map_name.c_str());
     }
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_3D_GLASSES;
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_GLASSES};
     int k = builder.prompt("Funny Glasses Parameters");
-    g_help_mode = old_help_mode;
     if (k < 0)
     {
         return true;
