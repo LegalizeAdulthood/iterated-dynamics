@@ -373,7 +373,6 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     char const *tmpptr;
     char bailoutmsg[50];
     int ret = 0;
-    help_labels old_help_mode;
     char parmprompt[MAX_PARAMS][55];
     static char const *trg[] =
     {
@@ -828,10 +827,8 @@ gfp_top:
     full_screen_reset_scrolling();
     while (true)
     {
-        old_help_mode = g_help_mode;
-        g_help_mode = g_cur_fractal_specific->helptext;
+        ValueSaver saved_help_mode{g_help_mode, g_cur_fractal_specific->helptext};
         int i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, s_tmp_stack);
-        g_help_mode = old_help_mode;
         if (i < 0)
         {
             if (g_julibrot)
