@@ -511,10 +511,9 @@ void HelpCompiler::set_hot_link_doc_page()
  */
 void HelpCompiler::set_content_doc_page()
 {
-    char     buf[4];
-    int      len;
+    char buf[4];
 
-    int tnum = find_topic_title(DOCCONTENTS_TITLE);
+    const int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
     TOPIC &t = g_src.topics[tnum];
 
@@ -524,7 +523,7 @@ void HelpCompiler::set_content_doc_page()
     {
         assert(c.doc_page >= 1);
         std::sprintf(buf, "%d", c.doc_page);
-        len = (int) std::strlen(buf);
+        const int len = (int) std::strlen(buf);
         assert(len <= 3);
         std::memcpy(base + c.page_num_pos + (3 - len), buf, len);
     }
