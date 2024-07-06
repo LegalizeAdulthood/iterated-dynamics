@@ -9,6 +9,10 @@ on:
 jobs:
   html-docs:
     runs-on: ubuntu-latest
+
+    env: 
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4.1.1
