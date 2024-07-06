@@ -114,7 +114,6 @@ get_sound_restart:
 
 static int get_scale_map()
 {
-    help_labels oldhelpmode;
     ChoiceBuilder<15> builder;
     int i;
 
