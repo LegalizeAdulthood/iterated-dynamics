@@ -639,7 +639,7 @@ bool compare_files(std::FILE *f1, std::FILE *f2)
     return !(std::feof(f1) && std::feof(f2));
 }
 
-void write_header(char const *fname, std::FILE *file)
+void write_header_file(char const *fname, std::FILE *file)
 {
     std::fprintf(file, "#pragma once\n"
         "\n"
@@ -696,7 +696,7 @@ void HelpCompiler::write_header()
             throw std::runtime_error("Cannot create \"" + fname + "\".");
         }
         msg("Writing: %s", fname.c_str());
-        write_header(fname.c_str(), hdr);
+        write_header_file(fname.c_str(), hdr);
         std::fclose(hdr);
         notice("Id must be re-compiled.");
         return ;
@@ -711,7 +711,7 @@ void HelpCompiler::write_header()
         throw std::runtime_error("Cannot create temporary file: \"" + std::string{TEMP_FNAME} + "\".");
     }
 
-    write_header(fname.c_str(), temp);
+    write_header_file(fname.c_str(), temp);
 
     std::fclose(temp);
     temp = std::fopen(TEMP_FNAME, "rt");
