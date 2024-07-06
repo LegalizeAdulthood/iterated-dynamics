@@ -24,6 +24,7 @@
 #include "spindac.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "value_saver.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -264,8 +265,7 @@ bool do_AutoStereo()
     std::time(&ltime);
     srand((unsigned int)ltime);
 
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_RDS_KEYS;
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_RDS_KEYS};
     driver_save_graphics();                      // save graphics image
     std::memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 
@@ -399,7 +399,6 @@ bool do_AutoStereo()
     }
 
 exit_stereo:
-    g_help_mode = old_help_mode;
     driver_restore_graphics();
     std::memcpy(g_dac_box, savedacbox, 256 * 3);
     spindac(0, 1);
