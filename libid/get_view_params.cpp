@@ -10,6 +10,7 @@
 #include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "value_saver.h"
 #include "video_mode.h"
 #include "zoom.h"
 
@@ -136,10 +137,10 @@ get_view_restart:
         uvalues[k].type = '*';
     }
 
-    help_labels const old_help_mode = g_help_mode;     // this prevents HELP from activating
-    g_help_mode = help_labels::HELP_VIEW;
-    i = fullscreen_prompt("View Window Options", k+1, choices, uvalues, 16, nullptr);
-    g_help_mode = old_help_mode;     // re-enable HELP
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_VIEW};
+        i = fullscreen_prompt("View Window Options", k+1, choices, uvalues, 16, nullptr);
+    }
     if (i < 0)
     {
         return -1;
