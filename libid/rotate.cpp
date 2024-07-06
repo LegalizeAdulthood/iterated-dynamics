@@ -69,7 +69,6 @@ void rotate(int direction)      // rotate-the-palette routine
     int togreen = 0;
     int changecolor;
     int changedirection;
-    help_labels old_help_mode;
     int rotate_max;
     int rotate_size;
 
@@ -87,8 +86,7 @@ void rotate(int direction)      // rotate-the-palette routine
         return;
     }
 
-    old_help_mode = g_help_mode;              // save the old help mode
-    g_help_mode = help_labels::HELP_CYCLING;              // new help mode
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_CYCLING};
 
     paused = false;                      // not paused
     fkey = 0;                            // no random coloring
@@ -540,8 +538,6 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         }
     }
-
-    g_help_mode = old_help_mode;              // return to previous help mode
 }
 
 static void pauserotate()               // pause-the-rotate routine
