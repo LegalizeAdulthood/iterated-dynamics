@@ -486,12 +486,10 @@ static bool check_mapfile()
     {
         if (askflag)
         {
-            help_labels const old_help_mode = g_help_mode;
-            g_help_mode = help_labels::NONE;
+            ValueSaver saved_help_mode{g_help_mode, help_labels::NONE};
             i = field_prompt("Enter name of .map file to use,\n"
                              "or '*' to use palette from the image to be loaded.",
-                             nullptr, buff, 60, nullptr);
-            g_help_mode = old_help_mode;
+                nullptr, buff, 60, nullptr);
             if (i < 0)
             {
                 return true;
