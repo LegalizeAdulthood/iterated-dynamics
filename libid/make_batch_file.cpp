@@ -40,6 +40,7 @@
 #include "stop_msg.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
+#include "value_saver.h"
 #include "version.h"
 #include "video_mode.h"
 
@@ -123,8 +124,7 @@ void make_batch_file()
     }
 
     driver_stack_screen();
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_PARMFILE;
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PARMFILE};
 
     maxcolor = g_colors;
     std::strcpy(colorspec, "y");
@@ -598,7 +598,6 @@ skip_UI:
         }
         break;
     }
-    g_help_mode = old_help_mode;
     driver_unstack_screen();
 }
 
