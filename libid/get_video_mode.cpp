@@ -28,6 +28,7 @@
 #include "make_batch_file.h"
 #include "stop_msg.h"
 #include "trim_filename.h"
+#include "value_saver.h"
 #include "version.h"
 #include "video_mode.h"
 
@@ -310,13 +311,14 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         instructions += "ESCAPE to back out.";
 
-        help_labels const oldhelpmode = g_help_mode;
-        g_help_mode = help_labels::HELP_LOADFILE;
-        const int i = fullscreen_choice(0, heading,
-            "key...name......................err...xdot..ydot.clr.comment..................",
-            instructions.c_str(), g_video_table_len, nullptr, &attributes[0], 1, 13, 78, 0,
-            format_item, nullptr, nullptr, check_modekey);
-        g_help_mode = oldhelpmode;
+        int i;
+        {
+            ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_LOADFILE};
+            i = fullscreen_choice(0, heading,
+                "key...name......................err...xdot..ydot.clr.comment..................",
+                instructions.c_str(), g_video_table_len, nullptr, &attributes[0], 1, 13, 78, 0,
+                format_item, nullptr, nullptr, check_modekey);
+        }
         if (i == -1)
         {
             return -1;
