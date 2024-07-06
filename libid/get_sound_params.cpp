@@ -10,6 +10,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "sound.h"
+#include "value_saver.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -27,10 +28,8 @@ int get_sound_params()
     const char *soundmodes[]{"off", "beep", "x", "y", "z"};
     int old_soundflag, old_orbit_delay;
     int i;
-    help_labels oldhelpmode;
     bool old_start_showorbit;
 
-    oldhelpmode = g_help_mode;
     old_soundflag = g_sound_flag;
     old_orbit_delay = g_orbit_delay;
     old_start_showorbit = g_start_show_orbit;
@@ -58,10 +57,10 @@ get_sound_restart:
         .comment("Press F6 for FM synth parameters, F7 for scale mappings")
         .comment("Press F4 to reset to default values");
 
-    oldhelpmode = g_help_mode;
-    g_help_mode = help_labels::HELP_SOUND;
-    i = builder.prompt("Sound Control Screen", 255);
-    g_help_mode = oldhelpmode;
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_SOUND};
+        i = builder.prompt("Sound Control Screen", 255);
+    }
     if (i < 0)
     {
         g_sound_flag = old_soundflag;
@@ -138,10 +137,10 @@ get_map_restart:
         .comment("Press F6 for FM synth parameters")
         .comment("Press F4 to reset to default values");
 
-    oldhelpmode = g_help_mode; /* this prevents HELP from activating */
-    g_help_mode = help_labels::HELP_MUSIC;
-    i = builder.prompt("Scale Mapping Screen", 255);
-    g_help_mode = oldhelpmode; /* re-enable HELP */
+    {
+        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_MUSIC};
+        i = builder.prompt("Scale Mapping Screen", 255);
+    }
     if (i < 0)
     {
         return -1;
