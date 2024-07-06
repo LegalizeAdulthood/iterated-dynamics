@@ -185,10 +185,8 @@ static int sel_fractype_help(int curkey, int choice)
 {
     if (curkey == ID_KEY_F2)
     {
-        help_labels const old_help_mode = g_help_mode;
-        g_help_mode = g_fractal_specific[(*(ft_choices+choice))->num].helptext;
+        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[(*(ft_choices + choice))->num].helptext};
         help();
-        g_help_mode = old_help_mode;
     }
     return 0;
 }
