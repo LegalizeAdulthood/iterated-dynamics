@@ -238,16 +238,14 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             ValueSaver saved_logical_screen_y_offset{g_logical_screen_y_offset, 0};
             ValueSaver saved_logical_screen_x_dots{g_logical_screen_x_dots, g_screen_x_dots};
             ValueSaver saved_logical_screen_y_dots{g_logical_screen_y_dots, g_screen_y_dots};
-            const int oldpx = g_evolve_param_grid_x;
-            const int oldpy = g_evolve_param_grid_y;
-            g_evolve_param_grid_x = g_evolve_image_grid_size / 2;
-            g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
-            restore_param_history();
-            fiddleparms(gene, 0);
-            drawparmbox(1);
-            savetodisk(g_save_filename);
-            g_evolve_param_grid_x = oldpx;
-            g_evolve_param_grid_y = oldpy;
+            {
+                ValueSaver saved_evolve_param_grid_x{g_evolve_param_grid_x, g_evolve_image_grid_size / 2};
+                ValueSaver saved_evolve_param_grid_y{g_evolve_param_grid_y, g_evolve_image_grid_size / 2};
+                restore_param_history();
+                fiddleparms(gene, 0);
+                drawparmbox(1);
+                savetodisk(g_save_filename);
+            }
             restore_param_history();
             fiddleparms(gene, unspiralmap());
         }
