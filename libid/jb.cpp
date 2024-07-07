@@ -118,7 +118,6 @@ const char *g_julibrot_3d_options[]{
 
 bool JulibrotSetup()
 {
-    int r = 0;
     char const *mapname;
 
     if (g_colors < 255)
@@ -236,7 +235,7 @@ bool JulibrotSetup()
             g_save_dac = 1;
         }
     }
-    return r >= 0;
+    return true;
 }
 
 
