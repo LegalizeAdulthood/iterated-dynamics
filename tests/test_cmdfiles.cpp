@@ -3302,28 +3302,28 @@ TEST_F(TestParameterCommand, sphereYes)
 
 TEST_F(TestParameterCommand, scaleXYZTwoValues)
 {
-    ValueSaver saved_XSCALE{XSCALE, -99};
-    ValueSaver saved_YSCALE{YSCALE, -99};
+    ValueSaver saved_x_scale{g_x_scale, -99};
+    ValueSaver saved_y_scale{g_y_scale, -99};
     VALUE_UNCHANGED(ROUGH, -99);
 
     const cmdarg_flags result = exec_cmd_arg("scalexyz=1/2", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, XSCALE);
-    EXPECT_EQ(2, YSCALE);
+    EXPECT_EQ(1, g_x_scale);
+    EXPECT_EQ(2, g_y_scale);
 }
 
 TEST_F(TestParameterCommand, scaleXYZThreeValues)
 {
-    ValueSaver saved_XSCALE{XSCALE, -99};
-    ValueSaver saved_YSCALE{YSCALE, -99};
+    ValueSaver saved_x_scale{g_x_scale, -99};
+    ValueSaver saved_y_scale{g_y_scale, -99};
     ValueSaver saved_ROUGH{ROUGH, -99};
 
     const cmdarg_flags result = exec_cmd_arg("scalexyz=1/2/3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, XSCALE);
-    EXPECT_EQ(2, YSCALE);
+    EXPECT_EQ(1, g_x_scale);
+    EXPECT_EQ(2, g_y_scale);
     EXPECT_EQ(3, ROUGH);
 }
 

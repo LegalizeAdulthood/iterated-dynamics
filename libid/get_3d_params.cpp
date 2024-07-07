@@ -251,10 +251,10 @@ restart_3:
         uvalues[++k].uval.ival   = g_z_rot    ;
         uvalues[k].type = 'i';
     }
-    uvalues[++k].uval.ival   = XSCALE    ;
+    uvalues[++k].uval.ival   = g_x_scale    ;
     uvalues[k].type = 'i';
 
-    uvalues[++k].uval.ival   = YSCALE    ;
+    uvalues[++k].uval.ival   = g_y_scale    ;
     uvalues[k].type = 'i';
 
     prompts3d[++k] = "Surface Roughness scaling factor in pct";
@@ -330,8 +330,8 @@ restart_3:
         g_y_rot    = uvalues[k++].uval.ival;
         g_z_rot    = uvalues[k++].uval.ival;
     }
-    XSCALE     = uvalues[k++].uval.ival;
-    YSCALE     = uvalues[k++].uval.ival;
+    g_x_scale     = uvalues[k++].uval.ival;
+    g_y_scale     = uvalues[k++].uval.ival;
     ROUGH      = uvalues[k++].uval.ival;
     WATERLINE  = uvalues[k++].uval.ival;
     if (g_raytrace_format == raytrace_formats::none)

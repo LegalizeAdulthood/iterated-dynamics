@@ -2522,8 +2522,8 @@ static int first_time(int linelen, VECTOR v)
 
 
     // get scale factors
-    sclx = XSCALE / 100.0;
-    scly = YSCALE / 100.0;
+    sclx = g_x_scale / 100.0;
+    scly = g_y_scale / 100.0;
     if (ROUGH)
     {
         sclz = -ROUGH / 100.0;

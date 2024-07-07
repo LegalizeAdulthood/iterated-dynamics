@@ -68,8 +68,8 @@ int &g_sphere{g_init_3d[0]}; // sphere? 1 = yes, 0 = no
 int &g_x_rot{g_init_3d[1]};     // rotate x-axis 60 degrees
 int &g_y_rot{g_init_3d[2]};     // rotate y-axis 90 degrees
 int &g_z_rot{g_init_3d[3]};     // rotate x-axis  0 degrees
-int &XSCALE{g_init_3d[4]};     // scale x-axis, 90 percent
-int &YSCALE{g_init_3d[5]};     // scale y-axis, 90 percent
+int &g_x_scale{g_init_3d[4]};     // scale x-axis, 90 percent
+int &g_y_scale{g_init_3d[5]};     // scale y-axis, 90 percent
 // sphere 3D
 int &PHI1{g_init_3d[1]};     // longitude start, 180
 int &PHI2{g_init_3d[2]};     // longitude end ,   0

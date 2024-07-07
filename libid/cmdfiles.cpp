@@ -3123,8 +3123,8 @@ static cmdarg_flags cmd_scale_xyz(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    XSCALE = cmd.intval[0];
-    YSCALE = cmd.intval[1];
+    g_x_scale = cmd.intval[0];
+    g_y_scale = cmd.intval[1];
     if (cmd.totparms > 2)
     {
         ROUGH = cmd.intval[2];
@@ -3983,8 +3983,8 @@ void set_3d_defaults()
         g_x_rot      = 60;
         g_y_rot      = 30;
         g_z_rot      = 0;
-        XSCALE    = 90;
-        YSCALE    = 90;
+        g_x_scale    = 90;
+        g_y_scale    = 90;
         FILLTYPE  = +fill_type::POINTS;
         XLIGHT    = 1;
         YLIGHT    = -1;

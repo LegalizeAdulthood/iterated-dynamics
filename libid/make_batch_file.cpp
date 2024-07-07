@@ -1203,7 +1203,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             put_parm(" %s=%d/%d", "longitude", PHI1, PHI2);
             put_parm(" %s=%d", "radius", RADIUS);
         }
-        put_parm(" %s=%d/%d", "scalexyz", XSCALE, YSCALE);
+        put_parm(" %s=%d/%d", "scalexyz", g_x_scale, g_y_scale);
         put_parm(" %s=%d", "roughness", ROUGH);
         put_parm(" %s=%d", "waterline", WATERLINE);
         if (FILLTYPE != +fill_type::POINTS)

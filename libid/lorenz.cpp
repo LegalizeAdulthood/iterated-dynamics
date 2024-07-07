@@ -2869,7 +2869,7 @@ static void setupmatrix(MATRIX doublemat)
     zrot((double)g_z_rot / 57.29577, doublemat);
 
     // apply scale
-    //   scale((double)XSCALE/100.0,(double)YSCALE/100.0,(double)ROUGH/100.0,doublemat);
+    //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
 }
 
 int orbit3dfloat()

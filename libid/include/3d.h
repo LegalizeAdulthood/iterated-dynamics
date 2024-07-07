@@ -42,12 +42,12 @@ constexpr int operator+(fill_type value)
 extern int g_init_3d[20];
 
 // regular 3D
-extern int &g_sphere; // sphere? 1 = yes, 0 = no
-extern int &g_x_rot;  // rotate x-axis 60 degrees
-extern int &g_y_rot;  // rotate y-axis 90 degrees
-extern int &g_z_rot;  // rotate x-axis  0 degrees
-extern int &XSCALE;   // scale x-axis, 90 percent
-extern int &YSCALE;   // scale y-axis, 90 percent
+extern int &g_sphere;  // sphere? 1 = yes, 0 = no
+extern int &g_x_rot;   // rotate x-axis 60 degrees
+extern int &g_y_rot;   // rotate y-axis 90 degrees
+extern int &g_z_rot;   // rotate x-axis  0 degrees
+extern int &g_x_scale; // scale x-axis, 90 percent
+extern int &g_y_scale; // scale y-axis, 90 percent
 // sphere 3D
 extern int &PHI1;   // longitude start, 180
 extern int &PHI2;   // longitude end ,   0
