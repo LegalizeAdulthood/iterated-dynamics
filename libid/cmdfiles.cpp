@@ -2310,8 +2310,8 @@ static cmdarg_flags cmd_latitude(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    THETA1 = cmd.intval[0];
-    THETA2 = cmd.intval[1];
+    g_sphere_theta_min = cmd.intval[0];
+    g_sphere_theta_max = cmd.intval[1];
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -2421,8 +2421,8 @@ static cmdarg_flags cmd_longitude(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    PHI1 = cmd.intval[0];
-    PHI2 = cmd.intval[1];
+    g_sphere_phi_min = cmd.intval[0];
+    g_sphere_phi_max = cmd.intval[1];
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -2934,7 +2934,7 @@ static cmdarg_flags cmd_radius(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    RADIUS = cmd.numval;
+    g_sphere_radius = cmd.numval;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3968,11 +3968,11 @@ void set_3d_defaults()
     g_background_color[2] = 200;
     if (g_sphere)
     {
-        PHI1      =  180;
-        PHI2      =  0;
-        THETA1    =  -90;
-        THETA2    =  90;
-        RADIUS    =  100;
+        g_sphere_phi_min      =  180;
+        g_sphere_phi_max      =  0;
+        g_sphere_theta_min    =  -90;
+        g_sphere_theta_max    =  90;
+        g_sphere_radius    =  100;
         FILLTYPE  = +fill_type::SURFACE_INTERPOLATED;
         XLIGHT    = 1;
         YLIGHT    = 1;

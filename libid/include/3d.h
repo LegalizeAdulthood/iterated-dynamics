@@ -49,11 +49,11 @@ extern int &g_z_rot;   // rotate x-axis  0 degrees
 extern int &g_x_scale; // scale x-axis, 90 percent
 extern int &g_y_scale; // scale y-axis, 90 percent
 // sphere 3D
-extern int &PHI1;   // longitude start, 180
-extern int &PHI2;   // longitude end ,   0
-extern int &THETA1; // latitude start,-90 degrees
-extern int &THETA2; // latitude stop,  90 degrees
-extern int &RADIUS; // should be user input
+extern int &g_sphere_phi_min;   // longitude start, 180
+extern int &g_sphere_phi_max;   // longitude end ,   0
+extern int &g_sphere_theta_min; // latitude start,-90 degrees
+extern int &g_sphere_theta_max; // latitude stop,  90 degrees
+extern int &g_sphere_radius;    // should be user input
 // common parameters
 extern int &ROUGH;     // scale z-axis, 30 percent
 extern int &WATERLINE; // water level

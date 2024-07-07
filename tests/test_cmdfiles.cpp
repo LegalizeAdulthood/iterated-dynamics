@@ -3383,36 +3383,36 @@ TEST_F(TestParameterCommand, smoothing)
 
 TEST_F(TestParameterCommand, latitude)
 {
-    ValueSaver saved_THETA1{THETA1, -99};
-    ValueSaver saved_THETA2{THETA2, -99};
+    ValueSaver saved_sphere_theta_min{g_sphere_theta_min, -99};
+    ValueSaver saved_sphere_theta_max{g_sphere_theta_max, -99};
 
     const cmdarg_flags result = exec_cmd_arg("latitude=1/3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, THETA1);
-    EXPECT_EQ(3, THETA2);
+    EXPECT_EQ(1, g_sphere_theta_min);
+    EXPECT_EQ(3, g_sphere_theta_max);
 }
 
 TEST_F(TestParameterCommand, longitude)
 {
-    ValueSaver saved_PHI1{PHI1, -99};
-    ValueSaver saved_PHI2{PHI2, -99};
+    ValueSaver saved_sphere_phi_min{g_sphere_phi_min, -99};
+    ValueSaver saved_sphere_phi_max{g_sphere_phi_max, -99};
 
     const cmdarg_flags result = exec_cmd_arg("longitude=1/3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, PHI1);
-    EXPECT_EQ(3, PHI2);
+    EXPECT_EQ(1, g_sphere_phi_min);
+    EXPECT_EQ(3, g_sphere_phi_max);
 }
 
 TEST_F(TestParameterCommand, radius)
 {
-    ValueSaver saved_RADIUS{RADIUS, -99};
+    ValueSaver saved_sphere_radius{g_sphere_radius, -99};
 
     const cmdarg_flags result = exec_cmd_arg("radius=1", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, RADIUS);
+    EXPECT_EQ(1, g_sphere_radius);
 }
 
 TEST_F(TestParameterCommand, transparentOneValue)

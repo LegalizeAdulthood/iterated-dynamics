@@ -71,11 +71,11 @@ int &g_z_rot{g_init_3d[3]};     // rotate x-axis  0 degrees
 int &g_x_scale{g_init_3d[4]};     // scale x-axis, 90 percent
 int &g_y_scale{g_init_3d[5]};     // scale y-axis, 90 percent
 // sphere 3D
-int &PHI1{g_init_3d[1]};     // longitude start, 180
-int &PHI2{g_init_3d[2]};     // longitude end ,   0
-int &THETA1{g_init_3d[3]};     // latitude start,-90 degrees
-int &THETA2{g_init_3d[4]};     // latitude stop,  90 degrees
-int &RADIUS{g_init_3d[5]};     // should be user input
+int &g_sphere_phi_min{g_init_3d[1]};   // longitude start, 180
+int &g_sphere_phi_max{g_init_3d[2]};   // longitude end ,   0
+int &g_sphere_theta_min{g_init_3d[3]}; // latitude start,-90 degrees
+int &g_sphere_theta_max{g_init_3d[4]}; // latitude stop,  90 degrees
+int &g_sphere_radius{g_init_3d[5]};    // should be user input
 // common parameters
 int &ROUGH{g_init_3d[6]};     // scale z-axis, 30 percent
 int &WATERLINE{g_init_3d[7]};     // water level

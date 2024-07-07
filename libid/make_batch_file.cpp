@@ -1199,9 +1199,9 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         if (g_sphere)
         {
             put_parm(" %s=y", "sphere");
-            put_parm(" %s=%d/%d", "latitude", THETA1, THETA2);
-            put_parm(" %s=%d/%d", "longitude", PHI1, PHI2);
-            put_parm(" %s=%d", "radius", RADIUS);
+            put_parm(" %s=%d/%d", "latitude", g_sphere_theta_min, g_sphere_theta_max);
+            put_parm(" %s=%d/%d", "longitude", g_sphere_phi_min, g_sphere_phi_max);
+            put_parm(" %s=%d", "radius", g_sphere_radius);
         }
         put_parm(" %s=%d/%d", "scalexyz", g_x_scale, g_y_scale);
         put_parm(" %s=%d", "roughness", ROUGH);

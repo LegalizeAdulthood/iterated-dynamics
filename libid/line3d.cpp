@@ -2656,12 +2656,12 @@ static int first_time(int linelen, VECTOR v)
          * latitude; bottom 90 degrees */
 
         // Map X to this LATITUDE range
-        theta1 = (float)(THETA1 * PI / 180.0);
-        theta2 = (float)(THETA2 * PI / 180.0);
+        theta1 = (float)(g_sphere_theta_min * PI / 180.0);
+        theta2 = (float)(g_sphere_theta_max * PI / 180.0);
 
         // Map Y to this LONGITUDE range
-        phi1 = (float)(PHI1 * PI / 180.0);
-        phi2 = (float)(PHI2 * PI / 180.0);
+        phi1 = (float)(g_sphere_phi_min * PI / 180.0);
+        phi2 = (float)(g_sphere_phi_max * PI / 180.0);
 
         theta = theta1;
 
@@ -2731,7 +2731,7 @@ static int first_time(int linelen, VECTOR v)
         // precalculate factor
         rXrscale = R * rscale;
 
-        scly = RADIUS/100.0;
+        scly = g_sphere_radius/100.0;
         sclx = scly;
         sclz = sclx;      // Need x,y,z for RAY
 
