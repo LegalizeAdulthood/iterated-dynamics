@@ -116,7 +116,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             i = get_cmd_string();
         }
         driver_unstack_screen();
-        if (g_evolving && g_truecolor)
+        if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
         {
             g_truecolor = false;          // truecolor doesn't play well with the evolver
         }
@@ -129,7 +129,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case 'b': // quick exit from evolve mode
-        g_evolving = 0;
+        g_evolving = evolution_mode_flags::NONE;
         g_view_window = false;
         save_param_history();
         *kbdmore = false;
@@ -333,7 +333,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         {
             GENEBASE gene[NUM_GENES];
             copy_genes_from_bank(gene);
-            if (g_evolving & FIELDMAP)
+            if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
             {
                 if (*kbdchar == ID_KEY_CTL_LEFT_ARROW)
                 {
@@ -367,7 +367,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 {
                     g_evolve_param_grid_y = 0;
                 }
-                int grout = !((g_evolving & NOGROUT)/NOGROUT);
+                const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
                 g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
                 g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_logical_screen_y_size_dots+1+grout);
 
@@ -444,10 +444,10 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 g_zoom_box_y = 0;
                 find_special_colors();
                 g_box_color = g_color_bright;
-                if (g_evolving & FIELDMAP)
+                if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
-                    int grout = !((g_evolving & NOGROUT) / NOGROUT);
+                    const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
                     g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
                     g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_logical_screen_y_size_dots+1+grout);
                     SetupParamBox();
@@ -468,7 +468,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             {
                 // end zoombox
                 g_zoom_box_width = 0;
-                if (g_evolving & FIELDMAP)
+                if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
                 {
                     drawparmbox(1); // clear boxes off screen
                     ReleaseParamBox();
@@ -590,7 +590,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case '0': // mutation level 0 == turn off evolving
-        g_evolving = 0;
+        g_evolving = evolution_mode_flags::NONE;
         g_view_window = false;
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;

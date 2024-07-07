@@ -256,7 +256,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i = get_cmd_string();
         }
         driver_unstack_screen();
-        if (g_evolving && g_truecolor)
+        if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
         {
             g_truecolor = false;          // truecolor doesn't play well with the evolver
         }
@@ -428,7 +428,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case ID_KEY_SPACE:                  // spacebar, toggle mand/julia
-        if (g_bf_math != bf_math_type::NONE || g_evolving)
+        if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
         {
             break;
         }
@@ -895,7 +895,7 @@ do_3d_transform:
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        g_evolving = FIELDMAP;
+        g_evolving = evolution_mode_flags::FIELDMAP;
         g_view_window = true;
         set_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1);
         save_param_history();

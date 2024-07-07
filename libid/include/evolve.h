@@ -65,14 +65,42 @@ inline bool operator!=(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs)
     return !(lhs == rhs);
 }
 
-// more bitmasks for evolution mode flag
-enum
+// bitmasks for evolution mode flag
+enum class evolution_mode_flags
 {
+    NONE = 0,      //
     FIELDMAP = 1,  // steady field varyiations across screen
     RANDWALK = 2,  // newparm = lastparm +- rand()
     RANDPARAM = 4, // newparm = constant +- rand()
-    NOGROUT = 8    // no gaps between images
+    NOGROUT = 8,   // no gaps between images
+    PARMBOX = 128, //
 };
+inline int operator+(evolution_mode_flags value)
+{
+    return static_cast<int>(value);
+}
+inline evolution_mode_flags operator|(evolution_mode_flags lhs, evolution_mode_flags rhs)
+{
+    return static_cast<evolution_mode_flags>(+lhs | +rhs);
+}
+inline evolution_mode_flags &operator|=(evolution_mode_flags &lhs, evolution_mode_flags rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+inline evolution_mode_flags operator^(evolution_mode_flags lhs, evolution_mode_flags rhs)
+{
+    return static_cast<evolution_mode_flags>(+lhs ^ +rhs);
+}
+inline evolution_mode_flags &operator^=(evolution_mode_flags &lhs, evolution_mode_flags rhs)
+{
+    lhs = lhs ^ rhs;
+    return lhs;
+}
+inline bool bit_set(evolution_mode_flags flags, evolution_mode_flags bit)
+{
+    return (+flags & +bit) == +bit;
+}
 
 extern char                  g_evolve_discrete_x_parameter_offset;
 extern char                  g_evolve_discrete_y_parameter_offset;
@@ -94,7 +122,7 @@ extern double                g_evolve_x_parameter_offset;
 extern double                g_evolve_x_parameter_range;
 extern double                g_evolve_y_parameter_offset;
 extern double                g_evolve_y_parameter_range;
-extern int                   g_evolving;
+extern evolution_mode_flags  g_evolving;
 extern GENEBASE              g_gene_bank[NUM_GENES];
 
 void copy_genes_to_bank(GENEBASE const gene[NUM_GENES]);

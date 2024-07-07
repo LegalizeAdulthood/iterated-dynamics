@@ -607,7 +607,7 @@ bool encoder()
     }
 
     // Extended parameters block 006
-    if (g_evolving & FIELDMAP)
+    if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
     {
         EVOLUTION_INFO esave_info;
         if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
@@ -625,7 +625,7 @@ bool encoder()
             esave_info.xdots           = (short)g_logical_screen_x_dots;
             esave_info.ydots           = (short)g_logical_screen_y_dots;
             esave_info.image_grid_size = (short) g_evolve_image_grid_size;
-            esave_info.evolving        = (short)g_evolving;
+            esave_info.evolving        = (short) +g_evolving;
             esave_info.this_generation_random_seed = (unsigned short) g_evolve_this_generation_random_seed;
             esave_info.max_random_mutation = g_evolve_max_random_mutation;
             esave_info.ecount          = (short)(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done

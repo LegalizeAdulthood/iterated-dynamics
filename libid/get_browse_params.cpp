@@ -97,7 +97,7 @@ get_brws_restart:
         i = -3;
     }
 
-    if (g_evolving)
+    if (g_evolving != evolution_mode_flags::NONE)
     {
         // can't browse
         g_auto_browse = false;
