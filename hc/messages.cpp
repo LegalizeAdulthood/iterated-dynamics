@@ -108,7 +108,7 @@ void msg_msg(char const *format, ...)
 
 void show_line(unsigned int line)
 {
-    std::printf("[%04d] ", line);
+    std::printf("[%04u] ", line);
 }
 
 } // namespace hc
