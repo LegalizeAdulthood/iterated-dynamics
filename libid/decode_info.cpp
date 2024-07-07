@@ -221,21 +221,21 @@ static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir)
 }
 
 /*
- * This routine gets an int out of the buffer.
+ * This routine gets an int16_t out of the buffer.
  * It updates the buffer pointer accordingly.
  */
 static void get_int16(std::int16_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
-        *dst = (*src)[0] + ((((char *)(*src))[1]) << 8);
+        *dst = static_cast<std::int16_t>((*src)[0] + (((char *) *src)[1] << 8));
     }
     else
     {
-        (*src)[0] = (*dst)&0xff;
-        (*src)[1] = ((*dst)&0xff00) >> 8;
+        (*src)[0] = *dst & 0xff;
+        (*src)[1] = (*dst & 0xff00) >> 8;
     }
-    (*src) += 2; // sizeof(int) in MS_DOS
+    *src += 2; // sizeof(std::uint16_t)
 }
 
 /*
