@@ -66,7 +66,10 @@ extern int &g_light_y;    // y light vector coordinate
 extern int &g_light_z;    // z light vector coordinate
 extern int &g_light_avg;  // number of points to average
 
-#define ILLUMINE (g_fill_type > +fill_type::SOLID_FILL) // illumination model
+inline bool illumine()
+{
+    return g_fill_type > +fill_type::SOLID_FILL; // illumination model
+}
 
 void identity(MATRIX);
 void mat_mul(MATRIX, MATRIX, MATRIX);

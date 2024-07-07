@@ -238,7 +238,7 @@ void plot3dsuperimpose256(int x, int y, int color)
             g_put_color(x, y, color|(tmp&240));
             if (g_targa_out)
             {
-                if (!ILLUMINE)
+                if (!illumine())
                 {
                     targa_color(x, y, color|(tmp&240));
                 }
@@ -258,7 +258,7 @@ void plot3dsuperimpose256(int x, int y, int color)
             g_put_color(x, y, color|(tmp&15));
             if (g_targa_out)
             {
-                if (!ILLUMINE)
+                if (!illumine())
                 {
                     targa_color(x, y, color|(tmp&15));
                 }
@@ -295,7 +295,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
             {
-                if (!ILLUMINE)
+                if (!illumine())
                 {
                     targa_color(x, y, color|tmp);
                 }
@@ -314,7 +314,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
             {
-                if (!ILLUMINE)
+                if (!illumine())
                 {
                     targa_color(x, y, color|tmp);
                 }
@@ -345,7 +345,7 @@ void plot3dalternate(int x, int y, int color)
             g_put_color(x, y, color >> 1);
             if (g_targa_out)
             {
-                if (!ILLUMINE)
+                if (!illumine())
                 {
                     targa_color(x, y, color >> 1);
                 }
@@ -363,7 +363,7 @@ void plot3dalternate(int x, int y, int color)
             g_put_color(x, y, (color >> 1)+(g_colors >> 1));
             if (g_targa_out)
             {
-                if (!ILLUMINE)
+                if (!illumine())
                 {
                     targa_color(x, y, (color >> 1)+(g_colors >> 1));
                 }

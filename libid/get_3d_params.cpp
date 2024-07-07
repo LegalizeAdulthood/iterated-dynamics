@@ -354,7 +354,7 @@ restart_3:
         g_randomize_3d = 0;
     }
 
-    if (g_targa_out || ILLUMINE || g_raytrace_format != raytrace_formats::none)
+    if (g_targa_out || illumine() || g_raytrace_format != raytrace_formats::none)
     {
         if (get_light_params())
         {
@@ -375,7 +375,7 @@ static bool get_light_params()
 
     k = -1;
 
-    if (ILLUMINE || g_raytrace_format != raytrace_formats::none)
+    if (illumine() || g_raytrace_format != raytrace_formats::none)
     {
         builder.int_number("X value light vector", g_light_x)
             .int_number("Y value light vector", g_light_y)
@@ -415,7 +415,7 @@ static bool get_light_params()
     }
 
     k = 0;
-    if (ILLUMINE)
+    if (illumine())
     {
         g_light_x   = builder.read_int_number();
         g_light_y   = builder.read_int_number();
