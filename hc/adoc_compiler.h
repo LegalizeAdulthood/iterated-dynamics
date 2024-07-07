@@ -8,7 +8,7 @@ namespace hc
 class AsciiDocCompiler : public HelpCompiler
 {
 public:
-    AsciiDocCompiler(const Options &options) : HelpCompiler(options)
+    explicit AsciiDocCompiler(const Options &options) : HelpCompiler(options)
     {
     }
     ~AsciiDocCompiler() override = default;

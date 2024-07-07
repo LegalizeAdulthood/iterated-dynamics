@@ -8,7 +8,7 @@ namespace hc
 class HelpCompiler : public Compiler
 {
 public:
-    HelpCompiler(const Options &options);
+    explicit HelpCompiler(const Options &options);
     ~HelpCompiler() override;
 
     int process() override;

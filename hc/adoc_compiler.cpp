@@ -53,7 +53,7 @@ int AsciiDocCompiler::process()
 class AsciiDocProcessor
 {
 public:
-    AsciiDocProcessor(std::ostream &str) :
+    explicit AsciiDocProcessor(std::ostream &str) :
         m_str(str)
     {
     }

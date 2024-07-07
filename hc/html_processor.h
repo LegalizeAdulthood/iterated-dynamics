@@ -13,7 +13,7 @@ extern std::string g_html_output_dir;
 class html_processor
 {
 public:
-    html_processor(std::string const &fname)
+    explicit html_processor(std::string const &fname)
         : m_fname(fname)
     {
     }
