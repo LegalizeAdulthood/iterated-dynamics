@@ -37,9 +37,6 @@ void goodbye()                  // we done.  Bail out
     if (!g_make_parameter_file)
     {
         driver_set_for_text();
-    }
-    if (!g_make_parameter_file)
-    {
         driver_move_cursor(6, 0);
     }
     stopslideshow();
