@@ -2811,7 +2811,7 @@ static cmdarg_flags cmd_passes(const Command &cmd)
 static cmdarg_flags cmd_periodicity(const Command &cmd)
 {
     g_user_periodicity_value = 1;
-    if ((cmd.charval[0] == 'n') || (cmd.numval == 0))
+    if (cmd.charval[0] == 'n' || cmd.numval == 0)
     {
         g_user_periodicity_value = 0;
     }
@@ -2827,7 +2827,7 @@ static cmdarg_flags cmd_periodicity(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    else if (cmd.numval != 0)
+    else
     {
         g_user_periodicity_value = cmd.numval;
         if (g_user_periodicity_value > 255)
