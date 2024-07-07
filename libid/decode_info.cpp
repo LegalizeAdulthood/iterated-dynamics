@@ -38,23 +38,10 @@ static void get_double(double *dst, unsigned char **src, int dir);
 void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
 {
     std::vector<unsigned char> info_buff;
-    unsigned char *buf;
-    unsigned char *bufPtr;
-
-    if (dir == 1)
-    {
-        info_buff.resize(sizeof(FRACTAL_INFO));
-        buf = &info_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)info, sizeof(FRACTAL_INFO));
-    }
-    else
-    {
-        info_buff.resize(sizeof(FRACTAL_INFO));
-        buf = &info_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)info, sizeof(FRACTAL_INFO));
-    }
+    info_buff.resize(sizeof(FRACTAL_INFO));
+    unsigned char *buf = &info_buff[0];
+    unsigned char *bufPtr = buf;
+    std::memcpy(buf, info, sizeof(FRACTAL_INFO));
 
     if (dir == 1)
     {
