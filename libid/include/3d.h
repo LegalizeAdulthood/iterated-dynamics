@@ -23,10 +23,26 @@ inline double dot_product(VECTOR v1, VECTOR v2)
     return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
 
-extern int                   g_init_3d[20];
+enum class fill_type
+{
+    SURFACE_GRID = -1,
+    POINTS = 0,
+    WIRE_FRAME = 1,
+    SURFACE_INTERPOLATED = 2,
+    SURFACE_CONSTANT = 3,
+    SOLID_FILL = 4,
+    LIGHT_SOURCE_BEFORE = 5,
+    LIGHT_SOURCE_AFTER = 6
+};
+constexpr int operator+(fill_type value)
+{
+    return static_cast<int>(value);
+}
+
+extern int g_init_3d[20];
 
 #define SPHERE    g_init_3d[0]     // sphere? 1 = yes, 0 = no
-#define ILLUMINE  (FILLTYPE>4)  // illumination model
+#define ILLUMINE (FILLTYPE > +fill_type::SOLID_FILL) // illumination model
 // regular 3D
 #define XROT      g_init_3d[1]     // rotate x-axis 60 degrees
 #define YROT      g_init_3d[2]     // rotate y-axis 90 degrees

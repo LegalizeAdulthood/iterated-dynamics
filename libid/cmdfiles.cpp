@@ -2008,7 +2008,7 @@ static cmdarg_flags cmd_fill_color(const Command &cmd)
 // filltype=?
 static cmdarg_flags cmd_fill_type(const Command &cmd)
 {
-    if (cmd.numval < -1 || cmd.numval > 6)
+    if (cmd.numval < +fill_type::SURFACE_GRID || cmd.numval > +fill_type::LIGHT_SOURCE_AFTER)
     {
         return cmd.bad_arg();
     }
@@ -3973,7 +3973,7 @@ void set_3d_defaults()
         THETA1    =  -90;
         THETA2    =  90;
         RADIUS    =  100;
-        FILLTYPE  = 2;
+        FILLTYPE  = +fill_type::SURFACE_INTERPOLATED;
         XLIGHT    = 1;
         YLIGHT    = 1;
         ZLIGHT    = 1;
@@ -3985,7 +3985,7 @@ void set_3d_defaults()
         ZROT      = 0;
         XSCALE    = 90;
         YSCALE    = 90;
-        FILLTYPE  = 0;
+        FILLTYPE  = +fill_type::POINTS;
         XLIGHT    = 1;
         YLIGHT    = -1;
         ZLIGHT    = 1;

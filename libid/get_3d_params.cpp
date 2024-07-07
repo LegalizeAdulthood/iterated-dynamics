@@ -542,7 +542,7 @@ static bool get_funny_glasses_params()
     }
     else if (g_glasses_type == 2)
     {
-        if (FILLTYPE == -1)
+        if (FILLTYPE == +fill_type::SURFACE_GRID)
         {
             g_funny_glasses_map_name = "grid.map";
         }

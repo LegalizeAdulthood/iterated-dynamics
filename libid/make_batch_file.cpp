@@ -1206,7 +1206,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         put_parm(" %s=%d/%d", "scalexyz", XSCALE, YSCALE);
         put_parm(" %s=%d", "roughness", ROUGH);
         put_parm(" %s=%d", "waterline", WATERLINE);
-        if (FILLTYPE)
+        if (FILLTYPE != +fill_type::POINTS)
         {
             put_parm(" %s=%d", "filltype", FILLTYPE);
         }
@@ -1231,7 +1231,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
                 put_parm(" %s=y", "brief");
             }
         }
-        if (FILLTYPE > 4)
+        if (FILLTYPE > +fill_type::SOLID_FILL)
         {
             put_parm(" %s=%d/%d/%d", "lightsource", XLIGHT, YLIGHT, ZLIGHT);
             if (LIGHTAVG)

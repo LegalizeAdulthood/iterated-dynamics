@@ -3354,7 +3354,7 @@ TEST_F(TestParameterCommand, fillType)
     const cmdarg_flags result = exec_cmd_arg("filltype=3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(3, FILLTYPE);
+    EXPECT_EQ(+fill_type::SURFACE_CONSTANT, FILLTYPE);
 }
 
 TEST_F(TestParameterCommand, lightSource)

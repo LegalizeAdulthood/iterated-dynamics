@@ -279,7 +279,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     // and code.
     //***********************************************************************
     lastdot = std::min(g_logical_screen_x_dots - 1, (int) linelen - 1);
-    if (FILLTYPE >= 5)
+    if (FILLTYPE >= +fill_type::LIGHT_SOURCE_BEFORE)
     {
         if (g_haze && g_targa_out)
         {
@@ -301,10 +301,10 @@ int line3d(BYTE * pixels, unsigned linelen)
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
     // Draw mod preview lines
-    if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < 0)
+    if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < +fill_type::POINTS)
         && (g_current_row != g_logical_screen_y_dots - 1)
         && (g_current_row % localpreviewfactor)
-        && !(g_raytrace_format == raytrace_formats::none && (FILLTYPE > 4) && (g_current_row == 1)))
+        && !(g_raytrace_format == raytrace_formats::none && (FILLTYPE > +fill_type::SOLID_FILL) && (g_current_row == 1)))
     {
         // Get init geometry in lightsource modes
         goto reallythebottom;     // skip over most of the line3d calcs
@@ -323,11 +323,11 @@ int line3d(BYTE * pixels, unsigned linelen)
     // PROCESS ROW LOOP BEGINS HERE
     while (col < (int) linelen)
     {
-        if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < 0)
+        if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < +fill_type::POINTS)
             && (col != lastdot)             // if this is not the last col
                                             // if not the 1st or mod factor col
             && (col % (int)(aspect * localpreviewfactor))
-            && !(g_raytrace_format == raytrace_formats::none && FILLTYPE > 4 && col == 1))
+            && !(g_raytrace_format == raytrace_formats::none && FILLTYPE > +fill_type::SOLID_FILL && col == 1))
         {
             goto loopbottom;
         }
@@ -336,7 +336,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         cur.color = Real_Color;
         f_cur.color = (float) cur.color;
 
-        if (g_raytrace_format != raytrace_formats::none|| g_preview || FILLTYPE < 0)
+        if (g_raytrace_format != raytrace_formats::none|| g_preview || FILLTYPE < +fill_type::POINTS)
         {
             next = (int)(col + aspect * localpreviewfactor);
             if (next == col)
@@ -369,7 +369,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             sintheta = sinthetaarray[col];
             costheta = costhetaarray[col];
 
-            if (sinphi < 0 && !(g_raytrace_format != raytrace_formats::none|| FILLTYPE < 0))
+            if (sinphi < 0 && !(g_raytrace_format != raytrace_formats::none|| FILLTYPE < +fill_type::POINTS))
             {
                 cur = bad;
                 f_cur = f_bad;
@@ -406,7 +406,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
                 lv[2] = (long)(-R - r * costheta * sinphi);      // z
-                if ((lv[2] > zcutoff) && !(FILLTYPE < 0))
+                if ((lv[2] > zcutoff) && !(FILLTYPE < +fill_type::POINTS))
                 {
                     cur = bad;
                     f_cur = f_bad;
@@ -415,7 +415,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[0] = (long)(xcenter + sintheta * sclx * r);   // x
                 lv[1] = (long)(ycenter + costheta * cosphi * scly * r);  // y
 
-                if ((FILLTYPE >= 5) || g_raytrace_format != raytrace_formats::none)
+                if ((FILLTYPE >= +fill_type::LIGHT_SOURCE_BEFORE) || g_raytrace_format != raytrace_formats::none)
                 {
                     // calculate illumination normal before persp
 
@@ -456,7 +456,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 cur.x = (int) f_cur.x;
                 f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + g_yy_adjust);
                 cur.y = (int) f_cur.y;
-                if (FILLTYPE >= 5 || g_raytrace_format != raytrace_formats::none)          // why do we do this for filltype>5?
+                if (FILLTYPE >= +fill_type::LIGHT_SOURCE_BEFORE || g_raytrace_format != raytrace_formats::none)          // why do we do this for filltype>5?
                 {
                     f_cur.color = (float)(-r * costheta * sinphi * sclz);
                 }
@@ -469,7 +469,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         {
             if (!g_user_float_flag && g_raytrace_format == raytrace_formats::none)
             {
-                if (FILLTYPE >= 5)         // flag to save vector before perspective
+                if (FILLTYPE >= +fill_type::LIGHT_SOURCE_BEFORE)         // flag to save vector before perspective
                 {
                     lv0[0] = 1;   // in longvmultpersp calculation
                 }
@@ -502,7 +502,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                 cur.x = (int)(((lv[0] + 32768L) >> 16) + g_xx_adjust);
                 cur.y = (int)(((lv[1] + 32768L) >> 16) + g_yy_adjust);
-                if (FILLTYPE >= 5 && !g_overflow)
+                if (FILLTYPE >= +fill_type::LIGHT_SOURCE_BEFORE && !g_overflow)
                 {
                     f_cur.x = (float) lv0[0];
                     f_cur.x /= 65536.0F;
@@ -523,7 +523,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                 mult_vec(v);     // matrix*vector routine
 
-                if (FILLTYPE > 4 || g_raytrace_format != raytrace_formats::none)
+                if (FILLTYPE > +fill_type::SOLID_FILL || g_raytrace_format != raytrace_formats::none)
                 {
                     f_cur.x = (float) v[0];
                     f_cur.y = (float) v[1];
@@ -666,7 +666,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
         switch (FILLTYPE)
         {
-        case -1:
+        case +fill_type::SURFACE_GRID:
             if (col
                 && old.x > bad_check
                 && old.x < (g_logical_screen_x_dots - bad_check))
@@ -684,11 +684,11 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
             break;
 
-        case 0:
+        case +fill_type::POINTS:
             (*g_plot)(cur.x, cur.y, cur.color);
             break;
 
-        case 1:                // connect-a-dot
+        case +fill_type::WIRE_FRAME:                // connect-a-dot
             if (old.x < g_logical_screen_x_dots && col
                 && old.x > bad_check
                 && old.y > bad_check)        // Don't draw from old to cur on col 0
@@ -697,8 +697,8 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
             break;
 
-        case 2:                // with interpolation
-        case 3:                // no interpolation
+        case +fill_type::SURFACE_INTERPOLATED: // with interpolation
+        case +fill_type::SURFACE_CONSTANT:     // no interpolation
             //***********************************************************
             // "triangle fill" - consider four points: current point,
             // previous point same row, point opposite current point in
@@ -731,7 +731,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
             break;
 
-        case 4:                // "solid fill"
+        case +fill_type::SOLID_FILL:
             if (SPHERE)
             {
                 if (persp)
@@ -786,8 +786,8 @@ int line3d(BYTE * pixels, unsigned linelen)
             driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
 
-        case 5:
-        case 6:
+        case +fill_type::LIGHT_SOURCE_BEFORE:
+        case +fill_type::LIGHT_SOURCE_AFTER:
             // light-source modulated fill
             if (g_current_row && col)  // skip first row and first column
             {
@@ -898,7 +898,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             break;
         }                      // End of CASE statement for fill type
 loopbottom:
-        if (g_raytrace_format != raytrace_formats::none || (FILLTYPE != 0 && FILLTYPE != 4))
+        if (g_raytrace_format != raytrace_formats::none || (FILLTYPE != +fill_type::POINTS && FILLTYPE != +fill_type::SOLID_FILL))
         {
             // for triangle and grid fill purposes
             oldlast = lastrow[col];
@@ -1118,7 +1118,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     }
 
     // transform the corners if necessary
-    if (FILLTYPE == 6)
+    if (FILLTYPE == +fill_type::LIGHT_SOURCE_AFTER)
     {
         for (int i = 0; i < 4; i++)
         {
@@ -1441,7 +1441,7 @@ static void interpcolor(int x, int y, int color)
             }
         }
 
-        if (FILLTYPE >= 5)
+        if (FILLTYPE >= +fill_type::LIGHT_SOURCE_BEFORE)
         {
             if (Real_V && g_targa_out)
             {
@@ -1476,7 +1476,7 @@ int targa_color(int x, int y, int color)
     unsigned long V;
     BYTE RGB[3];
 
-    if (FILLTYPE == 2 || g_glasses_type == 1 || g_glasses_type == 2 || g_truecolor)
+    if (FILLTYPE == +fill_type::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_truecolor)
     {
         Real_Color = (BYTE)color;       // So Targa gets interpolated color
     }
@@ -1501,7 +1501,7 @@ int targa_color(int x, int y, int color)
     R_H(RGB[0], RGB[1], RGB[2], &H, &S, &V);
 
     // Modify original S and V components
-    if (FILLTYPE > 4 && !(g_glasses_type == 1 || g_glasses_type == 2))
+    if (FILLTYPE > +fill_type::SOLID_FILL && !(g_glasses_type == 1 || g_glasses_type == 2))
     {
         // Adjust for Ambient
         V = (V * (65535L - (unsigned)(color * IAmbient))) / 65535L;
@@ -2765,7 +2765,7 @@ static int first_time(int linelen, VECTOR v)
     }
 
     // set fill plot function
-    if (FILLTYPE != 3)
+    if (FILLTYPE != +fill_type::SURFACE_CONSTANT)
     {
         fillplot = interpcolor;
     }
@@ -2790,13 +2790,13 @@ static int first_time(int linelen, VECTOR v)
 
     /* Needed because sclz = -ROUGH/100 and light_direction is transformed in
      * FILLTYPE 6 but not in 5. */
-    if (FILLTYPE == 5)
+    if (FILLTYPE == +fill_type::LIGHT_SOURCE_BEFORE)
     {
         light_direction[2] = -ZLIGHT;
         direct[2] = light_direction[2];
     }
 
-    if (FILLTYPE == 6)           // transform light direction
+    if (FILLTYPE == +fill_type::LIGHT_SOURCE_AFTER)           // transform light direction
     {
         /* Think of light direction  as a vector with tail at (0,0,0) and head
          * at (light_direction). We apply the transformation to BOTH head and
@@ -2822,7 +2822,7 @@ static int first_time(int linelen, VECTOR v)
         // move light vector to be more clear with grey scale maps
         origin[0] = (3 * g_logical_screen_x_dots) / 16;
         origin[1] = (3 * g_logical_screen_y_dots) / 4;
-        if (FILLTYPE == 6)
+        if (FILLTYPE == +fill_type::LIGHT_SOURCE_AFTER)
         {
             origin[1] = (11 * g_logical_screen_y_dots) / 16;
         }
@@ -2896,7 +2896,8 @@ static int line3dmem()
     minmax_x.clear();
 
     // these fill types call putatriangle which uses minmax_x
-    if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
+    if (FILLTYPE == +fill_type::SURFACE_INTERPOLATED || FILLTYPE == +fill_type::SURFACE_CONSTANT || FILLTYPE == +fill_type::LIGHT_SOURCE_BEFORE ||
+        FILLTYPE == +fill_type::LIGHT_SOURCE_AFTER)
     {
         minmax_x.resize(OLD_MAX_PIXELS);
     }
