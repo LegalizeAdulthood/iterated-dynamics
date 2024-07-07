@@ -9,7 +9,6 @@ on:
 jobs:
   html-docs:
     runs-on: ubuntu-latest
-
     env: 
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
@@ -57,9 +56,7 @@ jobs:
         preset: [ debug, release ]
         # macos-latest is disabled for now
         os: [ ubuntu-latest, windows-latest ]
-
     runs-on: ${{matrix.os}}
-
     env: 
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
@@ -106,12 +103,22 @@ jobs:
   cppcheck:
     name: cppcheck
     runs-on: ubuntu-latest
+    env: 
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4.1.1
         with:
           submodules: true
          
+      - name: Set Environment Variables
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
       - name: Configure Compilation Database
         run: cmake --preset cppcheck
   
