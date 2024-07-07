@@ -3055,9 +3055,9 @@ static cmdarg_flags cmd_rotation(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    XROT = cmd.intval[0];
-    YROT = cmd.intval[1];
-    ZROT = cmd.intval[2];
+    g_x_rot = cmd.intval[0];
+    g_y_rot = cmd.intval[1];
+    g_z_rot = cmd.intval[2];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -3980,9 +3980,9 @@ void set_3d_defaults()
     }
     else
     {
-        XROT      = 60;
-        YROT      = 30;
-        ZROT      = 0;
+        g_x_rot      = 60;
+        g_y_rot      = 30;
+        g_z_rot      = 0;
         XSCALE    = 90;
         YSCALE    = 90;
         FILLTYPE  = +fill_type::POINTS;

@@ -452,7 +452,7 @@ void plot_setup()
     case 4: // crosseyed mode
         if (g_screen_x_dots < 2*g_logical_screen_x_dots)
         {
-            if (XROT == 0 && YROT == 0)
+            if (g_x_rot == 0 && g_y_rot == 0)
             {
                 g_standard_plot = plot3dcrosseyedA; // use hidden surface kludge
             }
@@ -461,7 +461,7 @@ void plot_setup()
                 g_standard_plot = plot3dcrosseyedB;
             }
         }
-        else if (XROT == 0 && YROT == 0)
+        else if (g_x_rot == 0 && g_y_rot == 0)
         {
             g_standard_plot = plot3dcrosseyedC; // use hidden surface kludge
         }

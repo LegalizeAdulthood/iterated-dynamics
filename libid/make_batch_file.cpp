@@ -1272,7 +1272,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         //**** common (fractal & transform) 3d parameters in this section ****
         if (!g_sphere || g_display_3d < display_3d_modes::NONE)
         {
-            put_parm(" %s=%d/%d/%d", "rotation", XROT, YROT, ZROT);
+            put_parm(" %s=%d/%d/%d", "rotation", g_x_rot, g_y_rot, g_z_rot);
         }
         put_parm(" %s=%d", "perspective", ZVIEWER);
         put_parm(" %s=%d/%d", "xyshift", XSHIFT, YSHIFT);

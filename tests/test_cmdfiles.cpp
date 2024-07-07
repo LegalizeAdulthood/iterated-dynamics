@@ -3137,16 +3137,16 @@ TEST_F(TestParameterCommand, stereoValue)
 
 TEST_F(TestParameterCommand, rotation)
 {
-    ValueSaver saved_x_rot{XROT, -99};
-    ValueSaver saved_y_rot{YROT, -99};
-    ValueSaver saved_z_rot{ZROT, -99};
+    ValueSaver saved_x_rot{g_x_rot, -99};
+    ValueSaver saved_y_rot{g_y_rot, -99};
+    ValueSaver saved_z_rot{g_z_rot, -99};
 
     const cmdarg_flags result = exec_cmd_arg("rotation=30/60/90", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(30, XROT);
-    EXPECT_EQ(60, YROT);
-    EXPECT_EQ(90, ZROT);
+    EXPECT_EQ(30, g_x_rot);
+    EXPECT_EQ(60, g_y_rot);
+    EXPECT_EQ(90, g_z_rot);
 }
 
 TEST_F(TestParameterCommand, perspective)

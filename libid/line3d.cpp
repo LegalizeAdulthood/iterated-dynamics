@@ -2566,9 +2566,9 @@ static int first_time(int linelen, VECTOR v)
         scale(sclx, scly, sclz, lightm);
 
         // rotation values - converting from degrees to radians
-        xval = XROT / 57.29577;
-        yval = YROT / 57.29577;
-        zval = ZROT / 57.29577;
+        xval = g_x_rot / 57.29577;
+        yval = g_y_rot / 57.29577;
+        zval = g_z_rot / 57.29577;
 
         if (g_raytrace_format != raytrace_formats::none)
         {

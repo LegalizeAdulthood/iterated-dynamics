@@ -244,11 +244,11 @@ restart_3:
     k = -1;
     if (!(g_raytrace_format != raytrace_formats::none && !g_sphere))
     {
-        uvalues[++k].uval.ival   = XROT    ;
+        uvalues[++k].uval.ival   = g_x_rot    ;
         uvalues[k].type = 'i';
-        uvalues[++k].uval.ival   = YROT    ;
+        uvalues[++k].uval.ival   = g_y_rot    ;
         uvalues[k].type = 'i';
-        uvalues[++k].uval.ival   = ZROT    ;
+        uvalues[++k].uval.ival   = g_z_rot    ;
         uvalues[k].type = 'i';
     }
     uvalues[++k].uval.ival   = XSCALE    ;
@@ -326,9 +326,9 @@ restart_3:
     k = 0;
     if (!(g_raytrace_format != raytrace_formats::none && !g_sphere))
     {
-        XROT    = uvalues[k++].uval.ival;
-        YROT    = uvalues[k++].uval.ival;
-        ZROT    = uvalues[k++].uval.ival;
+        g_x_rot    = uvalues[k++].uval.ival;
+        g_y_rot    = uvalues[k++].uval.ival;
+        g_z_rot    = uvalues[k++].uval.ival;
     }
     XSCALE     = uvalues[k++].uval.ival;
     YSCALE     = uvalues[k++].uval.ival;
@@ -596,9 +596,9 @@ int get_fract3d_params() // prompt for 3D fractal parameters
 {
     driver_stack_screen();
     ChoiceBuilder<7> builder;
-    builder.int_number("X-axis rotation in degrees", XROT)
-        .int_number("Y-axis rotation in degrees", YROT)
-        .int_number("Z-axis rotation in degrees", ZROT)
+    builder.int_number("X-axis rotation in degrees", g_x_rot)
+        .int_number("Y-axis rotation in degrees", g_y_rot)
+        .int_number("Z-axis rotation in degrees", g_z_rot)
         .int_number("Perspective distance [1 - 999, 0 for no persp]", ZVIEWER)
         .int_number("X shift with perspective (positive = right)", XSHIFT)
         .int_number("Y shift with perspective (positive = up   )", YSHIFT)
@@ -617,9 +617,9 @@ int get_fract3d_params() // prompt for 3D fractal parameters
         goto get_f3d_exit;
     }
 
-    XROT    = builder.read_int_number();
-    YROT    = builder.read_int_number();
-    ZROT    = builder.read_int_number();
+    g_x_rot    = builder.read_int_number();
+    g_y_rot    = builder.read_int_number();
+    g_z_rot    = builder.read_int_number();
     ZVIEWER = builder.read_int_number();
     XSHIFT  = builder.read_int_number();
     YSHIFT  = builder.read_int_number();

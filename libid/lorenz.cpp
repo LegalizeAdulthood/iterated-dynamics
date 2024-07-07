@@ -2864,9 +2864,9 @@ static void setupmatrix(MATRIX doublemat)
     identity(doublemat);
 
     // apply rotations - uses the same rotation variables as line3d.c
-    xrot((double)XROT / 57.29577, doublemat);
-    yrot((double)YROT / 57.29577, doublemat);
-    zrot((double)ZROT / 57.29577, doublemat);
+    xrot((double)g_x_rot / 57.29577, doublemat);
+    yrot((double)g_y_rot / 57.29577, doublemat);
+    zrot((double)g_z_rot / 57.29577, doublemat);
 
     // apply scale
     //   scale((double)XSCALE/100.0,(double)YSCALE/100.0,(double)ROUGH/100.0,doublemat);
