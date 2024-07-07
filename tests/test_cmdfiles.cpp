@@ -3282,22 +3282,22 @@ TEST_F(TestParameterCommand, threeDOverlayNoFractal)
 
 TEST_F(TestParameterCommand, sphereNo)
 {
-    ValueSaver saved_SPHERE{SPHERE, -99};
+    ValueSaver saved_sphere{g_sphere, -99};
 
     const cmdarg_flags result = exec_cmd_arg("sphere=no", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(0, SPHERE);
+    EXPECT_EQ(0, g_sphere);
 }
 
 TEST_F(TestParameterCommand, sphereYes)
 {
-    ValueSaver saved_SPHERE{SPHERE, -99};
+    ValueSaver saved_sphere{g_sphere, -99};
 
     const cmdarg_flags result = exec_cmd_arg("sphere=yes", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, SPHERE);
+    EXPECT_EQ(1, g_sphere);
 }
 
 TEST_F(TestParameterCommand, scaleXYZTwoValues)

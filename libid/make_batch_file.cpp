@@ -1196,7 +1196,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         {
             put_filename("filename", g_read_filename.c_str());
         }
-        if (SPHERE)
+        if (g_sphere)
         {
             put_parm(" %s=y", "sphere");
             put_parm(" %s=%d/%d", "latitude", THETA1, THETA2);
@@ -1270,7 +1270,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
     {
         // universal 3d
         //**** common (fractal & transform) 3d parameters in this section ****
-        if (!SPHERE || g_display_3d < display_3d_modes::NONE)
+        if (!g_sphere || g_display_3d < display_3d_modes::NONE)
         {
             put_parm(" %s=%d/%d/%d", "rotation", XROT, YROT, ZROT);
         }

@@ -364,7 +364,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             f_cur.color += ((float) fraction[col]) / (float)(1 << 8);
         }
 
-        if (SPHERE)            // sphere case
+        if (g_sphere)            // sphere case
         {
             sintheta = sinthetaarray[col];
             costheta = costhetaarray[col];
@@ -732,7 +732,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             break;
 
         case +fill_type::SOLID_FILL:
-            if (SPHERE)
+            if (g_sphere)
             {
                 if (persp)
                 {
@@ -928,7 +928,7 @@ loopbottom:
 reallythebottom:
 
     // stuff that HAS to be done, even in preview mode, goes here
-    if (SPHERE)
+    if (g_sphere)
     {
         // incremental sin/cos phi calc
         if (g_current_row == 0)
@@ -2537,7 +2537,7 @@ static int first_time(int linelen, VECTOR v)
     // aspect ratio calculation - assume screen is 4 x 3
     aspect = (double) g_logical_screen_x_dots *.75 / (double) g_logical_screen_y_dots;
 
-    if (!SPHERE)         // skip this slow stuff in sphere case
+    if (!g_sphere)         // skip this slow stuff in sphere case
     {
         //*******************************************************************
         // What is done here is to create a single matrix, m, which has
@@ -2609,7 +2609,7 @@ static int first_time(int linelen, VECTOR v)
     lview[1] = g_logical_screen_y_dots >> 1;
 
     // z value of user's eye - should be more negative than extreme negative part of image
-    if (SPHERE)                    // sphere case
+    if (g_sphere)                    // sphere case
     {
         lview[2] = -(long)((double) g_logical_screen_y_dots * (double) ZVIEWER / 100.0);
     }
@@ -2625,7 +2625,7 @@ static int first_time(int linelen, VECTOR v)
     lview[1] = lview[1] << 16;
     lview[2] = lview[2] << 16;
 
-    if (!SPHERE)         // sphere skips this
+    if (!g_sphere)         // sphere skips this
     {
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */
@@ -2855,7 +2855,7 @@ static int first_time(int linelen, VECTOR v)
         draw_light_box(origin, direct, lightm);
         /* draw box around original field of view to help visualize effect of
          * rotations 1 means show box - xmin etc. do nothing here */
-        if (!SPHERE)
+        if (!g_sphere)
         {
             corners(g_m, true, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
         }
@@ -2883,7 +2883,7 @@ static int line3dmem()
        the purpose of filling in gaps with triangle procedure */
     lastrow.resize(g_logical_screen_x_dots);
 
-    if (SPHERE)
+    if (g_sphere)
     {
         sinthetaarray.resize(g_logical_screen_x_dots);
         costhetaarray.resize(g_logical_screen_x_dots);

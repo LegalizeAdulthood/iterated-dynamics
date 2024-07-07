@@ -64,7 +64,7 @@
 
 int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 
-int &SPHERE{g_init_3d[0]}; // sphere? 1 = yes, 0 = no
+int &g_sphere{g_init_3d[0]}; // sphere? 1 = yes, 0 = no
 int &XROT{g_init_3d[1]};     // rotate x-axis 60 degrees
 int &YROT{g_init_3d[2]};     // rotate y-axis 90 degrees
 int &ZROT{g_init_3d[3]};     // rotate x-axis  0 degrees

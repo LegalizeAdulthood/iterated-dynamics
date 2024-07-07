@@ -588,7 +588,7 @@ static void initvars_3d()
 {
     g_raytrace_format = raytrace_formats::none;
     g_brief   = false;
-    SPHERE = FALSE;
+    g_sphere = FALSE;
     g_preview = false;
     g_show_box = false;
     g_converge_x_adjust = 0;
@@ -3301,7 +3301,7 @@ static cmdarg_flags cmd_sphere(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    SPHERE = cmd.yesnoval[0];
+    g_sphere = cmd.yesnoval[0];
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3966,7 +3966,7 @@ void set_3d_defaults()
     g_background_color[0] = 51;
     g_background_color[1] = 153;
     g_background_color[2] = 200;
-    if (SPHERE)
+    if (g_sphere)
     {
         PHI1      =  180;
         PHI2      =  0;

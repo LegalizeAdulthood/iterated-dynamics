@@ -63,7 +63,7 @@ restart_1:
 
     prompts3d[++k] = "Spherical projection?";
     uvalues[k].type = 'y';
-    sphere = SPHERE;
+    sphere = g_sphere;
     uvalues[k].uval.ch.val = sphere;
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
@@ -139,14 +139,14 @@ restart_1:
         g_preview_factor = 2000;
     }
 
-    if (sphere && !SPHERE)
+    if (sphere && !g_sphere)
     {
-        SPHERE = TRUE;
+        g_sphere = TRUE;
         set_3d_defaults();
     }
-    else if (!sphere && SPHERE)
+    else if (!sphere && g_sphere)
     {
-        SPHERE = FALSE;
+        g_sphere = FALSE;
         set_3d_defaults();
     }
 
@@ -181,7 +181,7 @@ restart_1:
         choices[k++] = "surface fill (colors interpolated)";
         choices[k++] = "surface fill (colors not interpolated)";
         choices[k++] = "solid fill (bars up from \"ground\")";
-        if (SPHERE)
+        if (g_sphere)
         {
             choices[k++] = "light source";
         }
@@ -220,7 +220,7 @@ restart_1:
     }
 restart_3:
 
-    if (SPHERE)
+    if (g_sphere)
     {
         k = -1;
         prompts3d[++k] = "Longitude start (degrees)";
@@ -242,7 +242,7 @@ restart_3:
         prompts3d[++k] = "Y-axis scaling factor in pct";
     }
     k = -1;
-    if (!(g_raytrace_format != raytrace_formats::none && !SPHERE))
+    if (!(g_raytrace_format != raytrace_formats::none && !g_sphere))
     {
         uvalues[++k].uval.ival   = XROT    ;
         uvalues[k].type = 'i';
@@ -300,7 +300,7 @@ restart_3:
     uvalues[k].type = 'i';
     uvalues[k++].uval.ival = g_randomize_3d;
 
-    if (SPHERE)
+    if (g_sphere)
     {
         s = "Sphere 3D Parameters\n"
             "Sphere is on its side; North pole to right\n"
@@ -324,7 +324,7 @@ restart_3:
     }
 
     k = 0;
-    if (!(g_raytrace_format != raytrace_formats::none && !SPHERE))
+    if (!(g_raytrace_format != raytrace_formats::none && !g_sphere))
     {
         XROT    = uvalues[k++].uval.ival;
         YROT    = uvalues[k++].uval.ival;
