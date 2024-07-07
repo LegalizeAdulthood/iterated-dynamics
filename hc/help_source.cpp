@@ -467,7 +467,7 @@ int read_char()
             char buff[4];
             int  ctr;
 
-            for (ctr = 0; true; ctr++)
+            for (ctr = 0; ctr < 3; ctr++)
             {
                 if (ch < '0' || ch > '9' || ch == -1 || ctr >= 3)
                 {
@@ -480,14 +480,6 @@ int read_char()
             buff[ctr] = '\0';
             ch = std::atoi(buff);
         }
-
-#ifdef XFRACT
-        // Convert graphics arrows into keyboard chars
-        if (ch >= 24 && ch <= 27)
-        {
-            ch = "KJHL"[ch-24];
-        }
-#endif
         ch |= 0x100;
     }
 
