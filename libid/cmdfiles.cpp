@@ -75,7 +75,7 @@
 
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
-static int get_max_curarg_len(char const *const floatvalstr[], int totparm);
+static int get_max_curarg_len(char const *const floatvalstr[], int num_args);
 static cmdarg_flags cmdfile(std::FILE *handle, cmd_file mode);
 static int  next_command(
     char *cmdbuf,
@@ -4023,10 +4023,10 @@ static int get_curarg_len(char const *curarg)
 }
 
 // Get max length of current args
-static int get_max_curarg_len(const char *const floatvalstr[], int totparms)
+static int get_max_curarg_len(const char *const floatvalstr[], int num_args)
 {
     int max_str = 0;
-    for (int i = 0; i < totparms; i++)
+    for (int i = 0; i < num_args; i++)
     {
         int tmp = get_curarg_len(floatvalstr[i]);
         if (tmp > max_str)
