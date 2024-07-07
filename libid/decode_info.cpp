@@ -199,7 +199,7 @@ void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
     }
     if (dir == 0)
     {
-        std::memcpy((char *)info, (char *)buf, sizeof(FRACTAL_INFO));
+        std::memcpy(info, buf, sizeof(FRACTAL_INFO));
     }
 }
 
