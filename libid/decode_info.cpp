@@ -434,20 +434,10 @@ void decode_evolver_info_big_endian(EVOLUTION_INFO *info, int dir)
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    if (dir == 1)
-    {
-        evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
-        buf = &evolution_info_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)info, sizeof(EVOLUTION_INFO));
-    }
-    else
-    {
-        evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
-        buf = &evolution_info_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)info, sizeof(EVOLUTION_INFO));
-    }
+    evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
+    buf = &evolution_info_buff[0];
+    bufPtr = buf;
+    std::memcpy((char *)buf, (char *)info, sizeof(EVOLUTION_INFO));
 
     get_int16((short *) &info->evolving, &bufPtr, dir);
     get_int16(&info->image_grid_size, &bufPtr, dir);
@@ -493,20 +483,10 @@ void decode_orbits_info_big_endian(ORBITS_INFO *info, int dir)
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    if (dir == 1)
-    {
-        orbits_info_buff.resize(sizeof(ORBITS_INFO));
-        buf = &orbits_info_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)info, sizeof(ORBITS_INFO));
-    }
-    else
-    {
-        orbits_info_buff.resize(sizeof(ORBITS_INFO));
-        buf = &orbits_info_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)info, sizeof(ORBITS_INFO));
-    }
+    orbits_info_buff.resize(sizeof(ORBITS_INFO));
+    buf = &orbits_info_buff[0];
+    bufPtr = buf;
+    std::memcpy((char *)buf, (char *)info, sizeof(ORBITS_INFO));
 
     get_double(&info->oxmin, &bufPtr, dir);
     get_double(&info->oxmax, &bufPtr, dir);
