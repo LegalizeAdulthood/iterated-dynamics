@@ -41,31 +41,32 @@ constexpr int operator+(fill_type value)
 
 extern int g_init_3d[20];
 
-#define SPHERE    g_init_3d[0]     // sphere? 1 = yes, 0 = no
-#define ILLUMINE (FILLTYPE > +fill_type::SOLID_FILL) // illumination model
 // regular 3D
-#define XROT      g_init_3d[1]     // rotate x-axis 60 degrees
-#define YROT      g_init_3d[2]     // rotate y-axis 90 degrees
-#define ZROT      g_init_3d[3]     // rotate x-axis  0 degrees
-#define XSCALE    g_init_3d[4]     // scale x-axis, 90 percent
-#define YSCALE    g_init_3d[5]     // scale y-axis, 90 percent
+extern int &SPHERE; // sphere? 1 = yes, 0 = no
+extern int &XROT;   // rotate x-axis 60 degrees
+extern int &YROT;   // rotate y-axis 90 degrees
+extern int &ZROT;   // rotate x-axis  0 degrees
+extern int &XSCALE; // scale x-axis, 90 percent
+extern int &YSCALE; // scale y-axis, 90 percent
 // sphere 3D
-#define PHI1      g_init_3d[1]     // longitude start, 180
-#define PHI2      g_init_3d[2]     // longitude end ,   0
-#define THETA1    g_init_3d[3]     // latitude start,-90 degrees
-#define THETA2    g_init_3d[4]     // latitude stop,  90 degrees
-#define RADIUS    g_init_3d[5]     // should be user input
+extern int &PHI1;   // longitude start, 180
+extern int &PHI2;   // longitude end ,   0
+extern int &THETA1; // latitude start,-90 degrees
+extern int &THETA2; // latitude stop,  90 degrees
+extern int &RADIUS; // should be user input
 // common parameters
-#define ROUGH     g_init_3d[6]     // scale z-axis, 30 percent
-#define WATERLINE g_init_3d[7]     // water level
-#define FILLTYPE  g_init_3d[8]     // fill type
-#define ZVIEWER   g_init_3d[9]     // perspective view point
-#define XSHIFT    g_init_3d[10]    // x shift
-#define YSHIFT    g_init_3d[11]    // y shift
-#define XLIGHT    g_init_3d[12]    // x light vector coordinate
-#define YLIGHT    g_init_3d[13]    // y light vector coordinate
-#define ZLIGHT    g_init_3d[14]    // z light vector coordinate
-#define LIGHTAVG  g_init_3d[15]    // number of points to average
+extern int &ROUGH;     // scale z-axis, 30 percent
+extern int &WATERLINE; // water level
+extern int &FILLTYPE;  // fill type
+extern int &ZVIEWER;   // perspective view point
+extern int &XSHIFT;    // x shift
+extern int &YSHIFT;    // y shift
+extern int &XLIGHT;    // x light vector coordinate
+extern int &YLIGHT;    // y light vector coordinate
+extern int &ZLIGHT;    // z light vector coordinate
+extern int &LIGHTAVG;  // number of points to average
+
+#define ILLUMINE (FILLTYPE > +fill_type::SOLID_FILL) // illumination model
 
 void identity(MATRIX);
 void mat_mul(MATRIX, MATRIX, MATRIX);

@@ -64,6 +64,30 @@
 
 int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 
+int &SPHERE{g_init_3d[0]}; // sphere? 1 = yes, 0 = no
+int &XROT{g_init_3d[1]};     // rotate x-axis 60 degrees
+int &YROT{g_init_3d[2]};     // rotate y-axis 90 degrees
+int &ZROT{g_init_3d[3]};     // rotate x-axis  0 degrees
+int &XSCALE{g_init_3d[4]};     // scale x-axis, 90 percent
+int &YSCALE{g_init_3d[5]};     // scale y-axis, 90 percent
+// sphere 3D
+int &PHI1{g_init_3d[1]};     // longitude start, 180
+int &PHI2{g_init_3d[2]};     // longitude end ,   0
+int &THETA1{g_init_3d[3]};     // latitude start,-90 degrees
+int &THETA2{g_init_3d[4]};     // latitude stop,  90 degrees
+int &RADIUS{g_init_3d[5]};     // should be user input
+// common parameters
+int &ROUGH{g_init_3d[6]};     // scale z-axis, 30 percent
+int &WATERLINE{g_init_3d[7]};     // water level
+int &FILLTYPE{g_init_3d[8]};     // fill type
+int &ZVIEWER{g_init_3d[9]};     // perspective view point
+int &XSHIFT{g_init_3d[10]};    // x shift
+int &YSHIFT{g_init_3d[11]};    // y shift
+int &XLIGHT{g_init_3d[12]};    // x light vector coordinate
+int &YLIGHT{g_init_3d[13]};    // y light vector coordinate
+int &ZLIGHT{g_init_3d[14]};    // z light vector coordinate
+int &LIGHTAVG{g_init_3d[15]};    // number of points to average
+
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)
 {
