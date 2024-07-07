@@ -696,7 +696,7 @@ get_evol_restart:
     }
 
     choices.reset()
-        .yes_no("Evolution mode? (no for full screen)", g_evolving & FIELDMAP != 0)
+        .yes_no("Evolution mode? (no for full screen)", (g_evolving & FIELDMAP) != 0)
         .int_number("Image grid size (odd numbers only)", g_evolve_image_grid_size);
 
     if (explore_check())
