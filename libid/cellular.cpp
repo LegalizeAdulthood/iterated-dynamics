@@ -173,7 +173,7 @@ int cellular()
             abort_cellular(STRING1, 0);
             return -1;
         }
-        for (auto &elem : init_string)
+        for (U16 &elem : init_string)
         {
             elem = 0; // zero the array
         }
