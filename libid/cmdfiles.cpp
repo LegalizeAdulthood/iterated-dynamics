@@ -867,12 +867,11 @@ Command::Command(char *curarg, cmd_file a_mode) :
     intparms = 0;
     totparms = 0;
     numval = 0;
-    char *argptr2 = nullptr;
     while (*argptr) // count and pre-parse parms
     {
         long ll;
         bool last_arg{};
-        argptr2 = std::strchr(argptr, '/');
+        char *argptr2 = std::strchr(argptr, '/');
         if (argptr2 == nullptr) // find next '/'
         {
             argptr2 = argptr + std::strlen(argptr);
