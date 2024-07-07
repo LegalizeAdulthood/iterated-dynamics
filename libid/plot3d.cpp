@@ -476,9 +476,9 @@ void plot_setup()
         break;
     }
 
-    g_x_shift = (int)((XSHIFT * (double)g_logical_screen_x_dots)/100);
+    g_x_shift = (int)((g_shift_x * (double)g_logical_screen_x_dots)/100);
     g_x_shift1 = g_x_shift;
-    g_y_shift = (int)((YSHIFT * (double)g_logical_screen_y_dots)/100);
+    g_y_shift = (int)((g_shift_y * (double)g_logical_screen_y_dots)/100);
     g_y_shift1 = g_y_shift;
 
     if (g_glasses_type)

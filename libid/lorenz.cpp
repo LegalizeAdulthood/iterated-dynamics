@@ -2959,7 +2959,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
 
             /* z value of user's eye - should be more negative than extreme
                            negative part of image */
-            inf->iview[2] = (long)((inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0);
+            inf->iview[2] = (long)((inf->minvals[2]-inf->maxvals[2])*(double)g_viewer_z/100.0);
 
             // center image on origin
             double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
@@ -3004,9 +3004,9 @@ static bool long3dviewtransf(long3dvtinf *inf)
     }
 
     // apply perspective if requested
-    if (ZVIEWER)
+    if (g_viewer_z)
     {
-        if (g_debug_flag == debug_flags::force_float_perspective || ZVIEWER < 100) // use float for small persp
+        if (g_debug_flag == debug_flags::force_float_perspective || g_viewer_z < 100) // use float for small persp
         {
             // use float perspective calc
             VECTOR tmpv;
@@ -3135,7 +3135,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
             g_view[1] = 0;
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
+            g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)g_viewer_z/100.0;
 
             // center image on origin
             double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x
@@ -3163,7 +3163,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
     }
 
     // apply perspective if requested
-    if (ZVIEWER)
+    if (g_viewer_z)
     {
         perspective(inf->viewvect);
         if (s_real_time)

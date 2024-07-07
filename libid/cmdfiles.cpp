@@ -2012,7 +2012,7 @@ static cmdarg_flags cmd_fill_type(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    FILLTYPE = cmd.numval;
+    g_fill_type = cmd.numval;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -2350,9 +2350,9 @@ static cmdarg_flags cmd_light_source(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    XLIGHT = cmd.intval[0];
-    YLIGHT = cmd.intval[1];
-    ZLIGHT = cmd.intval[2];
+    g_light_x = cmd.intval[0];
+    g_light_y = cmd.intval[1];
+    g_light_z = cmd.intval[2];
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -2849,7 +2849,7 @@ static cmdarg_flags cmd_perspective(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    ZVIEWER = cmd.numval;
+    g_viewer_z = cmd.numval;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -3065,7 +3065,7 @@ static cmdarg_flags cmd_rotation(const Command &cmd)
 static cmdarg_flags cmd_roughness(const Command &cmd)
 {
     // "rough" is really scale z, but we add it here for convenience
-    ROUGH = cmd.numval;
+    g_rough = cmd.numval;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3127,7 +3127,7 @@ static cmdarg_flags cmd_scale_xyz(const Command &cmd)
     g_y_scale = cmd.intval[1];
     if (cmd.totparms > 2)
     {
-        ROUGH = cmd.intval[2];
+        g_rough = cmd.intval[2];
     }
     return cmdarg_flags::PARAM_3D;
 }
@@ -3206,7 +3206,7 @@ static cmdarg_flags cmd_smoothing(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    LIGHTAVG = cmd.numval;
+    g_light_avg = cmd.numval;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3670,7 +3670,7 @@ static cmdarg_flags cmd_water_line(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    WATERLINE = cmd.numval;
+    g_water_line = cmd.numval;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3715,8 +3715,8 @@ static cmdarg_flags cmd_xy_shift(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    XSHIFT = cmd.intval[0];
-    YSHIFT = cmd.intval[1];
+    g_shift_x = cmd.intval[0];
+    g_shift_y = cmd.intval[1];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -3952,14 +3952,14 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
 
 void set_3d_defaults()
 {
-    ROUGH     = 30;
-    WATERLINE = 0;
-    ZVIEWER   = 0;
-    XSHIFT    = 0;
-    YSHIFT    = 0;
+    g_rough     = 30;
+    g_water_line = 0;
+    g_viewer_z   = 0;
+    g_shift_x    = 0;
+    g_shift_y    = 0;
     g_adjust_3d_x    = 0;
     g_adjust_3d_y    = 0;
-    LIGHTAVG  = 0;
+    g_light_avg  = 0;
     g_ambient   = 20;
     g_randomize_3d = 0;
     g_haze      = 0;
@@ -3973,10 +3973,10 @@ void set_3d_defaults()
         g_sphere_theta_min    =  -90;
         g_sphere_theta_max    =  90;
         g_sphere_radius    =  100;
-        FILLTYPE  = +fill_type::SURFACE_INTERPOLATED;
-        XLIGHT    = 1;
-        YLIGHT    = 1;
-        ZLIGHT    = 1;
+        g_fill_type  = +fill_type::SURFACE_INTERPOLATED;
+        g_light_x    = 1;
+        g_light_y    = 1;
+        g_light_z    = 1;
     }
     else
     {
@@ -3985,10 +3985,10 @@ void set_3d_defaults()
         g_z_rot      = 0;
         g_x_scale    = 90;
         g_y_scale    = 90;
-        FILLTYPE  = +fill_type::POINTS;
-        XLIGHT    = 1;
-        YLIGHT    = -1;
-        ZLIGHT    = 1;
+        g_fill_type  = +fill_type::POINTS;
+        g_light_x    = 1;
+        g_light_y    = -1;
+        g_light_z    = 1;
     }
 }
 

@@ -55,18 +55,18 @@ extern int &g_sphere_theta_min; // latitude start,-90 degrees
 extern int &g_sphere_theta_max; // latitude stop,  90 degrees
 extern int &g_sphere_radius;    // should be user input
 // common parameters
-extern int &ROUGH;     // scale z-axis, 30 percent
-extern int &WATERLINE; // water level
-extern int &FILLTYPE;  // fill type
-extern int &ZVIEWER;   // perspective view point
-extern int &XSHIFT;    // x shift
-extern int &YSHIFT;    // y shift
-extern int &XLIGHT;    // x light vector coordinate
-extern int &YLIGHT;    // y light vector coordinate
-extern int &ZLIGHT;    // z light vector coordinate
-extern int &LIGHTAVG;  // number of points to average
+extern int &g_rough;      // scale z-axis, 30 percent
+extern int &g_water_line; // water level
+extern int &g_fill_type;  // fill type
+extern int &g_viewer_z;   // perspective view point
+extern int &g_shift_x;    // x shift
+extern int &g_shift_y;    // y shift
+extern int &g_light_x;    // x light vector coordinate
+extern int &g_light_y;    // y light vector coordinate
+extern int &g_light_z;    // z light vector coordinate
+extern int &g_light_avg;  // number of points to average
 
-#define ILLUMINE (FILLTYPE > +fill_type::SOLID_FILL) // illumination model
+#define ILLUMINE (g_fill_type > +fill_type::SOLID_FILL) // illumination model
 
 void identity(MATRIX);
 void mat_mul(MATRIX, MATRIX, MATRIX);

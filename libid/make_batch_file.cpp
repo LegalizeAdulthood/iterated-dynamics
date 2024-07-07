@@ -1204,11 +1204,11 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             put_parm(" %s=%d", "radius", g_sphere_radius);
         }
         put_parm(" %s=%d/%d", "scalexyz", g_x_scale, g_y_scale);
-        put_parm(" %s=%d", "roughness", ROUGH);
-        put_parm(" %s=%d", "waterline", WATERLINE);
-        if (FILLTYPE != +fill_type::POINTS)
+        put_parm(" %s=%d", "roughness", g_rough);
+        put_parm(" %s=%d", "waterline", g_water_line);
+        if (g_fill_type != +fill_type::POINTS)
         {
-            put_parm(" %s=%d", "filltype", FILLTYPE);
+            put_parm(" %s=%d", "filltype", g_fill_type);
         }
         if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
@@ -1231,12 +1231,12 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
                 put_parm(" %s=y", "brief");
             }
         }
-        if (FILLTYPE > +fill_type::SOLID_FILL)
+        if (g_fill_type > +fill_type::SOLID_FILL)
         {
-            put_parm(" %s=%d/%d/%d", "lightsource", XLIGHT, YLIGHT, ZLIGHT);
-            if (LIGHTAVG)
+            put_parm(" %s=%d/%d/%d", "lightsource", g_light_x, g_light_y, g_light_z);
+            if (g_light_avg)
             {
-                put_parm(" %s=%d", "smoothing", LIGHTAVG);
+                put_parm(" %s=%d", "smoothing", g_light_avg);
             }
         }
         if (g_randomize_3d)
@@ -1274,8 +1274,8 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         {
             put_parm(" %s=%d/%d/%d", "rotation", g_x_rot, g_y_rot, g_z_rot);
         }
-        put_parm(" %s=%d", "perspective", ZVIEWER);
-        put_parm(" %s=%d/%d", "xyshift", XSHIFT, YSHIFT);
+        put_parm(" %s=%d", "perspective", g_viewer_z);
+        put_parm(" %s=%d/%d", "xyshift", g_shift_x, g_shift_y);
         if (g_adjust_3d_x || g_adjust_3d_y)
         {
             put_parm(" %s=%d/%d", "xyadjust", g_adjust_3d_x, g_adjust_3d_y);

@@ -3151,24 +3151,24 @@ TEST_F(TestParameterCommand, rotation)
 
 TEST_F(TestParameterCommand, perspective)
 {
-    ValueSaver saved_z_viewer{ZVIEWER, -99};
+    ValueSaver saved_z_viewer{g_viewer_z, -99};
 
     const cmdarg_flags result = exec_cmd_arg("perspective=90", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(90, ZVIEWER);
+    EXPECT_EQ(90, g_viewer_z);
 }
 
 TEST_F(TestParameterCommand, xyShift)
 {
-    ValueSaver saved_x_shift{XSHIFT, -99};
-    ValueSaver saved_y_shift{YSHIFT, -99};
+    ValueSaver saved_x_shift{g_shift_x, -99};
+    ValueSaver saved_y_shift{g_shift_y, -99};
 
     const cmdarg_flags result = exec_cmd_arg("xyshift=30/90", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(30, XSHIFT);
-    EXPECT_EQ(90, YSHIFT);
+    EXPECT_EQ(30, g_shift_x);
+    EXPECT_EQ(90, g_shift_y);
 }
 
 TEST_F(TestParameterCommand, interocular)
@@ -3304,7 +3304,7 @@ TEST_F(TestParameterCommand, scaleXYZTwoValues)
 {
     ValueSaver saved_x_scale{g_x_scale, -99};
     ValueSaver saved_y_scale{g_y_scale, -99};
-    VALUE_UNCHANGED(ROUGH, -99);
+    VALUE_UNCHANGED(g_rough, -99);
 
     const cmdarg_flags result = exec_cmd_arg("scalexyz=1/2", cmd_file::AT_AFTER_STARTUP);
 
@@ -3317,68 +3317,68 @@ TEST_F(TestParameterCommand, scaleXYZThreeValues)
 {
     ValueSaver saved_x_scale{g_x_scale, -99};
     ValueSaver saved_y_scale{g_y_scale, -99};
-    ValueSaver saved_ROUGH{ROUGH, -99};
+    ValueSaver saved_rough{g_rough, -99};
 
     const cmdarg_flags result = exec_cmd_arg("scalexyz=1/2/3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
     EXPECT_EQ(1, g_x_scale);
     EXPECT_EQ(2, g_y_scale);
-    EXPECT_EQ(3, ROUGH);
+    EXPECT_EQ(3, g_rough);
 }
 
 TEST_F(TestParameterCommand, roughness)
 {
-    ValueSaver saved_ROUGH{ROUGH, -99};
+    ValueSaver saved_rough{g_rough, -99};
 
     const cmdarg_flags result = exec_cmd_arg("roughness=3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(3, ROUGH);
+    EXPECT_EQ(3, g_rough);
 }
 
 TEST_F(TestParameterCommand, waterline)
 {
-    ValueSaver saved_WATERLINE{WATERLINE, -99};
+    ValueSaver saved_water_line{g_water_line, -99};
 
     const cmdarg_flags result = exec_cmd_arg("waterline=3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(3, WATERLINE);
+    EXPECT_EQ(3, g_water_line);
 }
 
 TEST_F(TestParameterCommand, fillType)
 {
-    ValueSaver saved_FILLTYPE{FILLTYPE, -99};
+    ValueSaver saved_fill_type{g_fill_type, -99};
 
     const cmdarg_flags result = exec_cmd_arg("filltype=3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(+fill_type::SURFACE_CONSTANT, FILLTYPE);
+    EXPECT_EQ(+fill_type::SURFACE_CONSTANT, g_fill_type);
 }
 
 TEST_F(TestParameterCommand, lightSource)
 {
-    ValueSaver saved_XLIGHT{XLIGHT, -99};
-    ValueSaver saved_YLIGHT{YLIGHT, -99};
-    ValueSaver saved_ZLIGHT{ZLIGHT, -99};
+    ValueSaver saved_light_x{g_light_x, -99};
+    ValueSaver saved_light_y{g_light_y, -99};
+    ValueSaver saved_light_z{g_light_z, -99};
 
     const cmdarg_flags result = exec_cmd_arg("lightsource=1/2/3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(1, XLIGHT);
-    EXPECT_EQ(2, YLIGHT);
-    EXPECT_EQ(3, ZLIGHT);
+    EXPECT_EQ(1, g_light_x);
+    EXPECT_EQ(2, g_light_y);
+    EXPECT_EQ(3, g_light_z);
 }
 
 TEST_F(TestParameterCommand, smoothing)
 {
-    ValueSaver saved_LIGHTAVG{LIGHTAVG, -99};
+    ValueSaver saved_light_avg{g_light_avg, -99};
 
     const cmdarg_flags result = exec_cmd_arg("smoothing=3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(3, LIGHTAVG);
+    EXPECT_EQ(3, g_light_avg);
 }
 
 TEST_F(TestParameterCommand, latitude)
