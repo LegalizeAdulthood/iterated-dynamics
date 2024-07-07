@@ -2965,7 +2965,7 @@ static cmdarg_flags cmd_ranges(const Command &cmd)
         if (k < 0) // striping
         {
             k = -k;
-            if (k < 1 || k >= 16384 || i >= cmd.totparms)
+            if (k >= 16384 || i >= cmd.totparms)
             {
                 return cmd.bad_arg();
             }
