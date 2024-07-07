@@ -2876,7 +2876,7 @@ static cmdarg_flags cmd_polyphony(const Command &cmd)
 static cmdarg_flags cmd_potential(const Command &cmd)
 {
     int k{};
-    const char *value= cmd.value;
+    const char *value = cmd.value;
     while (k < 3 && *value)
     {
         if (k == 1)
@@ -2893,7 +2893,10 @@ static cmdarg_flags cmd_potential(const Command &cmd)
         {
             k = 99;
         }
-        ++value;
+        else
+        {
+            ++value;
+        }
     }
     g_potential_16bit = false;
     if (k < 99)
