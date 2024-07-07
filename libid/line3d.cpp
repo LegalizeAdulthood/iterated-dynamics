@@ -449,7 +449,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
             }
             // Not sure how this an 3rd if above relate
-            else if (!(persp && g_raytrace_format != raytrace_formats::none))
+            else
             {
                 // Why the xx- and yyadjust here and not above?
                 f_cur.x = (float) (xcenter + sintheta*sclx*r + g_xx_adjust);
