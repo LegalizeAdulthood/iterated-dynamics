@@ -1742,9 +1742,9 @@ void HelpCompiler::paginate_html_document()
     } // for
 }
 
-void HelpCompiler::print_html_document(std::string const &fname)
+void HelpCompiler::print_html_document(std::string const &output_filename)
 {
-    html_processor(fname).process();
+    html_processor(output_filename).process();
 }
 
 } // namespace hc
