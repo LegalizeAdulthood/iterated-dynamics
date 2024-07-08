@@ -32,9 +32,9 @@ struct lsysf_cmd
     char ch;
 };
 
-static std::vector<LDBL> sins_f;
-static std::vector<LDBL> coss_f;
-static LDBL const PI_DIV_180 = PI/180.0L;
+static std::vector<LDBL> s_sin_table_f;
+static std::vector<LDBL> s_cos_table_f;
+static constexpr LDBL PI_DIV_180{PI / 180.0L};
 
 static lsysf_cmd *findsize(lsysf_cmd *, lsys_turtlestatef *, lsysf_cmd **, int);
 
@@ -190,8 +190,8 @@ static void lsysf_dosizedm(lsys_turtlestatef *cmd)
 
 static void lsysf_dosizegf(lsys_turtlestatef *cmd)
 {
-    cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
-    cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
+    cmd->xpos += cmd->size * s_cos_table_f[(int)cmd->angle];
+    cmd->ypos += cmd->size * s_sin_table_f[(int)cmd->angle];
 
     if (cmd->xpos > cmd->xmax)
     {
@@ -245,16 +245,16 @@ static void lsysf_dodrawm(lsys_turtlestatef *cmd)
 
 static void lsysf_dodrawg(lsys_turtlestatef *cmd)
 {
-    cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
-    cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
+    cmd->xpos += cmd->size * s_cos_table_f[(int)cmd->angle];
+    cmd->ypos += cmd->size * s_sin_table_f[(int)cmd->angle];
 }
 
 static void lsysf_dodrawf(lsys_turtlestatef *cmd)
 {
     int lastx = (int) cmd->xpos;
     int lasty = (int) cmd->ypos;
-    cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
-    cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
+    cmd->xpos += cmd->size * s_cos_table_f[(int)cmd->angle];
+    cmd->ypos += cmd->size * s_sin_table_f[(int)cmd->angle];
     driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
 }
 
@@ -764,12 +764,12 @@ void lsysf_dosincos()
 
     locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     twopimax = TWOPI / g_max_angle;
-    sins_f.resize(g_max_angle);
-    coss_f.resize(g_max_angle);
+    s_sin_table_f.resize(g_max_angle);
+    s_cos_table_f.resize(g_max_angle);
     for (int i = 0; i < g_max_angle; i++)
     {
         twopimaxi = i * twopimax;
-        sins_f[i] = sinl(twopimaxi);
-        coss_f[i] = locaspect * cosl(twopimaxi);
+        s_sin_table_f[i] = sinl(twopimaxi);
+        s_cos_table_f[i] = locaspect * cosl(twopimaxi);
     }
 }
