@@ -26,11 +26,11 @@
 #define EVERY 15
 #define BASIN_COLOR 0
 
-int g_rhombus_stack[10];
-int g_rhombus_depth = 0;
-int g_max_rhombus_depth;
-int g_soi_min_stack_available;
-int g_soi_min_stack = 2200; // and this much stack to not crash when <tab> is pressed
+int g_rhombus_stack[10]{};
+int g_rhombus_depth{};
+int g_max_rhombus_depth{};
+int g_soi_min_stack_available{};
+int g_soi_min_stack{2200}; // and this much stack to not crash when <tab> is pressed
 
 namespace
 {
@@ -98,11 +98,11 @@ inline LDBL evaluate(
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-static long_double_complex zi[9];
+static long_double_complex zi[9]{};
 static soi_long_double_state state{};
-static LDBL twidth;
-static LDBL equal;
-static bool baxinxx = false;
+static LDBL twidth{};
+static LDBL equal{};
+static bool baxinxx{};
 
 static long iteration(
     LDBL cr, LDBL ci,
