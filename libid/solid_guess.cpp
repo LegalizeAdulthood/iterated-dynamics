@@ -18,20 +18,15 @@
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int, int, int, int);
 
-enum
-{
-    maxyblk = 7,  // maxxblk*maxyblk*2 <= 4096, the size of "prefix"
-    maxxblk = 202  // each maxnblk is oversize by 2 for a "border"
-};
-// maxxblk defn must match fracsubr.c
+// MAX_X_BLK defn must match fracsubr.c
 
-static bool s_guess_plot{};                            // paint 1st pass row at a time?
-static bool s_bottom_guess{};                          //
-static bool s_right_guess{};                           //
-static int s_max_block{};                              //
-static int s_half_block{};                             //
-static unsigned int s_t_prefix[2][maxyblk][maxxblk]{}; // common temp
-static BYTE s_stack[4096]{};                           // common temp, two put_line calls
+static bool s_guess_plot{};                                // paint 1st pass row at a time?
+static bool s_bottom_guess{};                              //
+static bool s_right_guess{};                               //
+static int s_max_block{};                                  //
+static int s_half_block{};                                 //
+static unsigned int s_t_prefix[2][MAX_Y_BLK][MAX_X_BLK]{}; // common temp
+static BYTE s_stack[4096]{};                               // common temp, two put_line calls
 
 // super solid guessing
 
@@ -89,7 +84,7 @@ int solid_guess()
         if (g_i_y_start <= g_yy_start) // first time for this window, init it
         {
             g_current_row = 0;
-            std::memset(&s_t_prefix[1][0][0], 0, maxxblk*maxyblk*2); // noskip flags off
+            std::memset(&s_t_prefix[1][0][0], 0, MAX_X_BLK*MAX_Y_BLK*2); // noskip flags off
             g_reset_periodicity = true;
             g_row = g_i_y_start;
             for (g_col = g_i_x_start; g_col <= g_i_x_stop; g_col += s_max_block)
@@ -105,7 +100,7 @@ int solid_guess()
         }
         else
         {
-            std::memset(&s_t_prefix[1][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
+            std::memset(&s_t_prefix[1][0][0], -1, MAX_X_BLK*MAX_Y_BLK*2); // noskip flags on
         }
         for (int y = g_i_y_start; y <= g_i_y_stop; y += blocksize)
         {
@@ -176,14 +171,14 @@ int solid_guess()
                 ++pfxp1;
                 u = *(pfxp1-1)|*pfxp1|*(pfxp1+1);
                 *(++pfxp0) = u|(u >> 1)|(u << 1)
-                             |((*(pfxp1-(maxxblk+1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1))) >> 15)
-                             |((*(pfxp1+(maxxblk-1))|*(pfxp1+maxxblk)|*(pfxp1+(maxxblk+1))) << 15);
+                             |((*(pfxp1-(MAX_X_BLK+1))|*(pfxp1-MAX_X_BLK)|*(pfxp1-(MAX_X_BLK-1))) >> 15)
+                             |((*(pfxp1+(MAX_X_BLK-1))|*(pfxp1+MAX_X_BLK)|*(pfxp1+(MAX_X_BLK+1))) << 15);
             }
         }
     }
     else   // first pass already done
     {
-        std::memset(&s_t_prefix[0][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
+        std::memset(&s_t_prefix[0][0][0], -1, MAX_X_BLK*MAX_Y_BLK*2); // noskip flags on
     }
     if (g_three_pass)
     {
