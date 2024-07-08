@@ -47,38 +47,46 @@ enum
     MAXRECT = 1024      // largest width of SaveRect/RestoreRect
 };
 
-static int show_numbers{};                       // toggle for display of coords
-static std::vector<char> screen_rect;            //
-static int windows{};                            // windows management system
-static int xc{}, yc{};                           // corners of the window
-static int xd{}, yd{};                           // dots in the window
-double g_julia_c_x{JULIA_C_NOT_SET};             //
-double g_julia_c_y{JULIA_C_NOT_SET};             //
-static int xbase{}, ybase{};                     // circle routines from Dr. Dobbs June 1990
-static unsigned int xAspect{}, yAspect{};        //
-static long ListFront{}, ListBack{}, ListSize{}; // head, tail, size of MIIM Queue
-static long lsize{}, lmax{};                     // how many in queue (now, ever)
-static int maxhits{1};                           //
-static bool OKtoMIIM{};                          //
-static int SecretExperimentalMode{};             //
-static float luckyx{}, luckyy{};                 //
+static int s_show_numbers{};             // toggle for display of coords
+static std::vector<char> s_screen_rect;  //
+static int s_windows{};                  // windows management system
+static int s_corner_x{};                 // corners of the window
+static int s_corner_y{};                 //
+static int s_win_width{};                // dots in the window
+static int s_win_height{};               //
+static int s_x_base{};                   // circle routines from Dr. Dobbs June 1990
+static int s_y_base{};                   //
+static unsigned int s_x_aspect{};        //
+static unsigned int s_y_aspect{};        //
+static long s_list_front{};              // head, tail, size of MIIM Queue
+static long s_list_back{};               //
+static long s_list_size{};               //
+static long s_l_size{};                  // how many in queue (now, ever)
+static long s_l_max{};                   //
+static int s_max_hits{1};                //
+static bool s_ok_to_miim{};              //
+static int s_secret_experimental_mode{}; //
+static float s_lucky_x{};                //
+static float s_lucky_y{};                //
 
-DComplex g_save_c{-3000.0, -3000.0};
+double g_julia_c_x{JULIA_C_NOT_SET}; //
+double g_julia_c_y{JULIA_C_NOT_SET}; //
+DComplex g_save_c{-3000.0, -3000.0}; //
 
 void SetAspect(double aspect)
 {
-    xAspect = 0;
-    yAspect = 0;
+    s_x_aspect = 0;
+    s_y_aspect = 0;
     aspect = std::fabs(aspect);
     if (aspect != 1.0)
     {
         if (aspect > 1.0)
         {
-            yAspect = (unsigned int)(65536.0 / aspect);
+            s_y_aspect = (unsigned int)(65536.0 / aspect);
         }
         else
         {
-            xAspect = (unsigned int)(65536.0 * aspect);
+            s_x_aspect = (unsigned int)(65536.0 * aspect);
         }
     }
 }
@@ -86,15 +94,15 @@ void SetAspect(double aspect)
 void c_putcolor(int x, int y, int color)
 {
     // avoid writing outside window
-    if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+    if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
     {
         return ;
     }
-    if (y >= g_screen_y_dots - show_numbers)   // avoid overwriting coords
+    if (y >= g_screen_y_dots - s_show_numbers)   // avoid overwriting coords
     {
         return;
     }
-    if (windows == 2)   // avoid overwriting fractal
+    if (s_windows == 2)   // avoid overwriting fractal
     {
         if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
         {
@@ -107,15 +115,15 @@ void c_putcolor(int x, int y, int color)
 int  c_getcolor(int x, int y)
 {
     // avoid reading outside window
-    if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+    if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
     {
         return 1000;
     }
-    if (y >= g_screen_y_dots - show_numbers)   // avoid overreading coords
+    if (y >= g_screen_y_dots - s_show_numbers)   // avoid overreading coords
     {
         return 1000;
     }
-    if (windows == 2)   // avoid overreading fractal
+    if (s_windows == 2)   // avoid overreading fractal
     {
         if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
         {
@@ -127,20 +135,20 @@ int  c_getcolor(int x, int y)
 
 void circleplot(int x, int y, int color)
 {
-    if (xAspect == 0)
+    if (s_x_aspect == 0)
     {
-        if (yAspect == 0)
+        if (s_y_aspect == 0)
         {
-            c_putcolor(x+xbase, y+ybase, color);
+            c_putcolor(x+s_x_base, y+s_y_base, color);
         }
         else
         {
-            c_putcolor(x+xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
+            c_putcolor(x+s_x_base, (short)(s_y_base + (((long) y * (long) s_y_aspect) >> 16)), color);
         }
     }
     else
     {
-        c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y+ybase, color);
+        c_putcolor((int)(s_x_base + (((long) x * (long) s_x_aspect) >> 16)), y+s_y_base, color);
     }
 }
 
@@ -216,20 +224,20 @@ static void fillrect(int x, int y, int width, int depth, int color)
 
 int QueueEmpty()            // True if NO points remain in queue
 {
-    return ListFront == ListBack;
+    return s_list_front == s_list_back;
 }
 
 int QueueFullAlmost()       // True if room for ONE more point in queue
 {
-    return ((ListFront + 2) % ListSize) == ListBack;
+    return ((s_list_front + 2) % s_list_size) == s_list_back;
 }
 
 void ClearQueue()
 {
-    lmax = 0;
-    lsize = lmax;
-    ListBack = lsize;
-    ListFront = ListBack;
+    s_l_max = 0;
+    s_l_size = s_l_max;
+    s_list_back = s_l_size;
+    s_list_front = s_list_back;
 }
 
 
@@ -243,56 +251,56 @@ bool Init_Queue(unsigned long request)
     if (driver_diskp())
     {
         stopmsg("Don't try this in disk video mode, kids...\n");
-        ListSize = 0;
+        s_list_size = 0;
         return false;
     }
 
-    for (ListSize = request; ListSize > 1024; ListSize /= 2)
+    for (s_list_size = request; s_list_size > 1024; s_list_size /= 2)
     {
-        switch (common_startdisk(ListSize * 8, 1, 256))
+        switch (common_startdisk(s_list_size * 8, 1, 256))
         {
         case 0:                        // success
-            ListBack = 0;
-            ListFront = ListBack;
-            lmax = 0;
-            lsize = lmax;
+            s_list_back = 0;
+            s_list_front = s_list_back;
+            s_l_max = 0;
+            s_l_size = s_l_max;
             return true;
         case -1:
             continue;                   // try smaller queue size
         case -2:
-            ListSize = 0;               // cancelled by user
+            s_list_size = 0;               // cancelled by user
             return false;
         }
     }
 
     // failed to get memory for MIIM Queue
-    ListSize = 0;
+    s_list_size = 0;
     return false;
 }
 
 void Free_Queue()
 {
     enddisk();
-    lmax = 0;
-    lsize = lmax;
-    ListSize = lsize;
-    ListBack = ListSize;
-    ListFront = ListBack;
+    s_l_max = 0;
+    s_l_size = s_l_max;
+    s_list_size = s_l_size;
+    s_list_back = s_list_size;
+    s_list_front = s_list_back;
 }
 
 int PushLong(long x, long y)
 {
-    if (((ListFront + 1) % ListSize) != ListBack)
+    if (((s_list_front + 1) % s_list_size) != s_list_back)
     {
-        if (ToMemDisk(8*ListFront, sizeof(x), &x)
-            && ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
+        if (ToMemDisk(8*s_list_front, sizeof(x), &x)
+            && ToMemDisk(8*s_list_front +sizeof(x), sizeof(y), &y))
         {
-            ListFront = (ListFront + 1) % ListSize;
-            if (++lsize > lmax)
+            s_list_front = (s_list_front + 1) % s_list_size;
+            if (++s_l_size > s_l_max)
             {
-                lmax   = lsize;
-                luckyx = (float)x;
-                luckyy = (float)y;
+                s_l_max   = s_l_size;
+                s_lucky_x = (float)x;
+                s_lucky_y = (float)y;
             }
             return 1;
         }
@@ -302,17 +310,17 @@ int PushLong(long x, long y)
 
 int PushFloat(float x, float y)
 {
-    if (((ListFront + 1) % ListSize) != ListBack)
+    if (((s_list_front + 1) % s_list_size) != s_list_back)
     {
-        if (ToMemDisk(8*ListFront, sizeof(x), &x)
-            && ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
+        if (ToMemDisk(8*s_list_front, sizeof(x), &x)
+            && ToMemDisk(8*s_list_front +sizeof(x), sizeof(y), &y))
         {
-            ListFront = (ListFront + 1) % ListSize;
-            if (++lsize > lmax)
+            s_list_front = (s_list_front + 1) % s_list_size;
+            if (++s_l_size > s_l_max)
             {
-                lmax   = lsize;
-                luckyx = x;
-                luckyy = y;
+                s_l_max   = s_l_size;
+                s_lucky_x = x;
+                s_lucky_y = y;
             }
             return 1;
         }
@@ -328,17 +336,17 @@ DComplex PopFloat()
 
     if (!QueueEmpty())
     {
-        ListFront--;
-        if (ListFront < 0)
+        s_list_front--;
+        if (s_list_front < 0)
         {
-            ListFront = ListSize - 1;
+            s_list_front = s_list_size - 1;
         }
-        if (FromMemDisk(8*ListFront, sizeof(popx), &popx)
-            && FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
+        if (FromMemDisk(8*s_list_front, sizeof(popx), &popx)
+            && FromMemDisk(8*s_list_front +sizeof(popx), sizeof(popy), &popy))
         {
             pop.x = popx;
             pop.y = popy;
-            --lsize;
+            --s_l_size;
         }
         return pop;
     }
@@ -353,15 +361,15 @@ LComplex PopLong()
 
     if (!QueueEmpty())
     {
-        ListFront--;
-        if (ListFront < 0)
+        s_list_front--;
+        if (s_list_front < 0)
         {
-            ListFront = ListSize - 1;
+            s_list_front = s_list_size - 1;
         }
-        if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x)
-            && FromMemDisk(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
+        if (FromMemDisk(8*s_list_front, sizeof(pop.x), &pop.x)
+            && FromMemDisk(8*s_list_front +sizeof(pop.x), sizeof(pop.y), &pop.y))
         {
-            --lsize;
+            --s_l_size;
         }
         return pop;
     }
@@ -386,15 +394,15 @@ DComplex DeQueueFloat()
     float outx;
     float outy;
 
-    if (ListBack != ListFront)
+    if (s_list_back != s_list_front)
     {
-        if (FromMemDisk(8*ListBack, sizeof(outx), &outx)
-            && FromMemDisk(8*ListBack +sizeof(outx), sizeof(outy), &outy))
+        if (FromMemDisk(8*s_list_back, sizeof(outx), &outx)
+            && FromMemDisk(8*s_list_back +sizeof(outx), sizeof(outy), &outy))
         {
-            ListBack = (ListBack + 1) % ListSize;
+            s_list_back = (s_list_back + 1) % s_list_size;
             out.x = outx;
             out.y = outy;
-            lsize--;
+            s_l_size--;
         }
         return out;
     }
@@ -409,13 +417,13 @@ LComplex DeQueueLong()
     out.x = 0;
     out.y = 0;
 
-    if (ListBack != ListFront)
+    if (s_list_back != s_list_front)
     {
-        if (FromMemDisk(8*ListBack, sizeof(out.x), &out.x)
-            && FromMemDisk(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
+        if (FromMemDisk(8*s_list_back, sizeof(out.x), &out.x)
+            && FromMemDisk(8*s_list_back +sizeof(out.x), sizeof(out.y), &out.y))
         {
-            ListBack = (ListBack + 1) % ListSize;
-            lsize--;
+            s_list_back = (s_list_back + 1) % s_list_size;
+            s_l_size--;
         }
         return out;
     }
@@ -437,13 +445,13 @@ static void SaveRect(int x, int y, int width, int depth)
         return;
     }
 
-    screen_rect.clear();
+    s_screen_rect.clear();
     std::vector<char> const background(width, char(g_color_dark));
-    screen_rect.resize(width*depth);
+    s_screen_rect.resize(width*depth);
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        getrow(x, y+yoff, width, &screen_rect[width*yoff]);
+        getrow(x, y+yoff, width, &s_screen_rect[width*yoff]);
         putrow(x, y+yoff, width, &background[0]);
     }
     Cursor_Show();
@@ -460,7 +468,7 @@ static void RestoreRect(int x, int y, int width, int depth)
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        putrow(x, y+yoff, width, &screen_rect[width*yoff]);
+        putrow(x, y+yoff, width, &s_screen_rect[width*yoff]);
     }
     Cursor_Show();
 }
@@ -518,7 +526,7 @@ void Jiim(jiim_types which)
     oldsxoffs = g_logical_screen_x_offset;
     oldsyoffs = g_logical_screen_y_offset;
     oldcalctype = g_calc_type;
-    show_numbers = 0;
+    s_show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
     aspect = ((double)g_logical_screen_x_dots*3)/((double)g_logical_screen_y_dots*4);  // assumes 4:3
@@ -537,13 +545,13 @@ void Jiim(jiim_types which)
      * MIIM code:
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
-    OKtoMIIM  = false;
+    s_ok_to_miim  = false;
     if (which == jiim_types::JIIM && g_debug_flag != debug_flags::prevent_miim)
     {
-        OKtoMIIM = Init_Queue(8*1024UL); // Queue Set-up Successful?
+        s_ok_to_miim = Init_Queue(8*1024UL); // Queue Set-up Successful?
     }
 
-    maxhits = 1;
+    s_max_hits = 1;
     if (which == jiim_types::ORBIT)
     {
         g_plot = c_putcolor;                // for line with clipping
@@ -578,53 +586,53 @@ void Jiim(jiim_types which)
     {
         /* this mode puts orbit/julia in an overlapping window 1/3 the size of
            the physical screen */
-        windows = 0; // full screen or large view window
-        xd = g_vesa_x_res / 3;
-        yd = g_vesa_y_res / 3;
-        xc = g_video_start_x + xd * 2;
-        yc = g_video_start_y + yd * 2;
-        xoff = g_video_start_x + xd * 5 / 2;
-        yoff = g_video_start_y + yd * 5 / 2;
+        s_windows = 0; // full screen or large view window
+        s_win_width = g_vesa_x_res / 3;
+        s_win_height = g_vesa_y_res / 3;
+        s_corner_x = g_video_start_x + s_win_width * 2;
+        s_corner_y = g_video_start_y + s_win_height * 2;
+        xoff = g_video_start_x + s_win_width * 5 / 2;
+        yoff = g_video_start_y + s_win_height * 5 / 2;
     }
     else if (g_logical_screen_x_dots > g_vesa_x_res/3 && g_logical_screen_y_dots > g_vesa_y_res/3)
     {
         // Julia/orbit and fractal don't overlap
-        windows = 1;
-        xd = g_vesa_x_res - g_logical_screen_x_dots;
-        yd = g_vesa_y_res - g_logical_screen_y_dots;
-        xc = g_video_start_x + g_logical_screen_x_dots;
-        yc = g_video_start_y + g_logical_screen_y_dots;
-        xoff = xc + xd/2;
-        yoff = yc + yd/2;
+        s_windows = 1;
+        s_win_width = g_vesa_x_res - g_logical_screen_x_dots;
+        s_win_height = g_vesa_y_res - g_logical_screen_y_dots;
+        s_corner_x = g_video_start_x + g_logical_screen_x_dots;
+        s_corner_y = g_video_start_y + g_logical_screen_y_dots;
+        xoff = s_corner_x + s_win_width/2;
+        yoff = s_corner_y + s_win_height/2;
 
     }
     else
     {
         // Julia/orbit takes whole screen
-        windows = 2;
-        xd = g_vesa_x_res;
-        yd = g_vesa_y_res;
-        xc = g_video_start_x;
-        yc = g_video_start_y;
-        xoff = g_video_start_x + xd/2;
-        yoff = g_video_start_y + yd/2;
+        s_windows = 2;
+        s_win_width = g_vesa_x_res;
+        s_win_height = g_vesa_y_res;
+        s_corner_x = g_video_start_x;
+        s_corner_y = g_video_start_y;
+        xoff = g_video_start_x + s_win_width/2;
+        yoff = g_video_start_y + s_win_height/2;
     }
 
-    xfactor = (int)(xd/5.33);
-    yfactor = (int)(-yd/4);
+    xfactor = (int)(s_win_width/5.33);
+    yfactor = (int)(-s_win_height/4);
 
-    if (windows == 0)
+    if (s_windows == 0)
     {
-        SaveRect(xc, yc, xd, yd);
+        SaveRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
     }
-    else if (windows == 2)    // leave the fractal
+    else if (s_windows == 2)    // leave the fractal
     {
-        fillrect(g_logical_screen_x_dots, yc, xd-g_logical_screen_x_dots, yd, g_color_dark);
-        fillrect(xc   , g_logical_screen_y_dots, g_logical_screen_x_dots, yd-g_logical_screen_y_dots, g_color_dark);
+        fillrect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
+        fillrect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
     }
     else    // blank whole window
     {
-        fillrect(xc, yc, xd, yd, g_color_dark);
+        fillrect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
     }
 
     setup_convert_to_screen(&cvt);
@@ -781,8 +789,8 @@ void Jiim(jiim_types which)
                     break;
                 case 'n':
                 case 'N':
-                    show_numbers = 8 - show_numbers;
-                    if (windows == 0 && show_numbers == 0)
+                    s_show_numbers = 8 - s_show_numbers;
+                    if (s_windows == 0 && s_show_numbers == 0)
                     {
                         Cursor_Hide();
                         cleartempmsg();
@@ -800,14 +808,14 @@ void Jiim(jiim_types which)
                     break;
                 case 'h':   // hide fractal toggle
                 case 'H':   // hide fractal toggle
-                    if (windows == 2)
+                    if (s_windows == 2)
                     {
-                        windows = 3;
+                        s_windows = 3;
                     }
-                    else if (windows == 3 && xd == g_vesa_x_res)
+                    else if (s_windows == 3 && s_win_width == g_vesa_x_res)
                     {
                         RestoreRect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
-                        windows = 2;
+                        s_windows = 2;
                     }
                     break;
 #ifdef XFRACT
@@ -826,7 +834,7 @@ void Jiim(jiim_types which)
                 case '9':
                     if (which == jiim_types::JIIM)
                     {
-                        SecretExperimentalMode = kbdchar - '0';
+                        s_secret_experimental_mode = kbdchar - '0';
                         break;
                     }
                 default:
@@ -893,11 +901,11 @@ void Jiim(jiim_types which)
                 }
             }
             actively_computing = true;
-            if (show_numbers) // write coordinates on screen
+            if (s_show_numbers) // write coordinates on screen
             {
                 char str[41];
                 std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
-                if (windows == 0)
+                if (s_windows == 0)
                 {
                     /* show temp msg will clear self if new msg is a
                        different length - pad to length 40*/
@@ -913,7 +921,7 @@ void Jiim(jiim_types which)
                 }
                 else
                 {
-                    driver_display_string(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str);
+                    driver_display_string(5, g_vesa_y_res-s_show_numbers, WHITE, BLACK, str);
                 }
             }
             iter = 1;
@@ -934,7 +942,7 @@ void Jiim(jiim_types which)
              * MIIM code:
              * compute fixed points and use them as starting points of JIIM
              */
-            if (which == jiim_types::JIIM && OKtoMIIM)
+            if (which == jiim_types::JIIM && s_ok_to_miim)
             {
                 DComplex f1;
                 DComplex f2;
@@ -947,7 +955,7 @@ void Jiim(jiim_types which)
                 f2.y = -Sqrt.y / 2;
 
                 ClearQueue();
-                maxhits = 1;
+                s_max_hits = 1;
                 EnQueueFloat((float)f1.x, (float)f1.y);
                 EnQueueFloat((float)f2.x, (float)f2.y);
             }
@@ -959,28 +967,28 @@ void Jiim(jiim_types which)
                 per_pixel();
             }
             // move window if bumped
-            if (windows == 0 && g_col > xc && g_col < xc+xd && g_row > yc && g_row < yc+yd)
+            if (s_windows == 0 && g_col > s_corner_x && g_col < s_corner_x+s_win_width && g_row > s_corner_y && g_row < s_corner_y+s_win_height)
             {
-                RestoreRect(xc, yc, xd, yd);
-                if (xc == g_video_start_x + xd*2)
+                RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
+                if (s_corner_x == g_video_start_x + s_win_width*2)
                 {
-                    xc = g_video_start_x + 2;
+                    s_corner_x = g_video_start_x + 2;
                 }
                 else
                 {
-                    xc = g_video_start_x + xd*2;
+                    s_corner_x = g_video_start_x + s_win_width*2;
                 }
-                xoff = xc + xd /  2;
-                SaveRect(xc, yc, xd, yd);
+                xoff = s_corner_x + s_win_width /  2;
+                SaveRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
             }
-            if (windows == 2)
+            if (s_windows == 2)
             {
-                fillrect(g_logical_screen_x_dots, yc, xd-g_logical_screen_x_dots, yd-show_numbers, g_color_dark);
-                fillrect(xc   , g_logical_screen_y_dots, g_logical_screen_x_dots, yd-g_logical_screen_y_dots-show_numbers, g_color_dark);
+                fillrect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height-s_show_numbers, g_color_dark);
+                fillrect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots-s_show_numbers, g_color_dark);
             }
             else
             {
-                fillrect(xc, yc, xd, yd, g_color_dark);
+                fillrect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
 
         } // end if (driver_key_pressed)
@@ -995,22 +1003,22 @@ void Jiim(jiim_types which)
              * MIIM code:
              * If we have MIIM queue allocated, then use MIIM method.
              */
-            if (OKtoMIIM)
+            if (s_ok_to_miim)
             {
                 if (QueueEmpty())
                 {
-                    if (maxhits < g_colors - 1
-                        && maxhits < 5
-                        && (luckyx != 0.0 || luckyy != 0.0))
+                    if (s_max_hits < g_colors - 1
+                        && s_max_hits < 5
+                        && (s_lucky_x != 0.0 || s_lucky_y != 0.0))
                     {
-                        lmax = 0;
-                        lsize = lmax;
-                        g_new_z.x = luckyx;
+                        s_l_max = 0;
+                        s_l_size = s_l_max;
+                        g_new_z.x = s_lucky_x;
                         g_old_z.x = g_new_z.x;
-                        g_new_z.y = luckyy;
+                        g_new_z.y = s_lucky_y;
                         g_old_z.y = g_new_z.y;
-                        luckyy = 0.0F;
-                        luckyx = luckyy;
+                        s_lucky_y = 0.0F;
+                        s_lucky_x = s_lucky_y;
                         for (int i = 0; i < 199; i++)
                         {
                             g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
@@ -1018,7 +1026,7 @@ void Jiim(jiim_types which)
                             EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
                             EnQueueFloat((float)-g_old_z.x, (float)-g_old_z.y);
                         }
-                        maxhits++;
+                        s_max_hits++;
                     }
                     else
                     {
@@ -1031,7 +1039,7 @@ void Jiim(jiim_types which)
                 x = (int)(g_old_z.x * xfactor * zoom + xoff);
                 y = (int)(g_old_z.y * yfactor * zoom + yoff);
                 color = c_getcolor(x, y);
-                if (color < maxhits)
+                if (color < s_max_hits)
                 {
                     c_putcolor(x, y, color + 1);
                     g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
@@ -1072,7 +1080,7 @@ void Jiim(jiim_types which)
                 g_new_z.y = std::sqrt(std::fabs((r - g_old_z.x)/2));
 
 
-                switch (SecretExperimentalMode)
+                switch (s_secret_experimental_mode)
                 {
                 case 0:                     // unmodified random walk
                 default:
@@ -1140,9 +1148,9 @@ void Jiim(jiim_types which)
                         }
                         else if (mode & 1)              // circles
                         {
-                            xbase = x;
-                            ybase = y;
-                            circle((int)(zoom*(xd >> 1)/iter), color);
+                            s_x_base = x;
+                            s_y_base = y;
+                            circle((int)(zoom*(s_win_width >> 1)/iter), color);
                         }
                         if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
                         {
@@ -1245,9 +1253,9 @@ void Jiim(jiim_types which)
             }
             else if (mode & 1)              // circles
             {
-                xbase = x;
-                ybase = y;
-                circle((int)(zoom*(xd >> 1)/iter), color);
+                s_x_base = x;
+                s_y_base = y;
+                circle((int)(zoom*(s_win_width >> 1)/iter), color);
             }
             if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
             {
@@ -1265,25 +1273,25 @@ finish:
     if (kbdchar != 's' && kbdchar != 'S')
     {
         Cursor_Hide();
-        if (windows == 0)
+        if (s_windows == 0)
         {
-            RestoreRect(xc, yc, xd, yd);
+            RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
         }
-        else if (windows >= 2)
+        else if (s_windows >= 2)
         {
-            if (windows == 2)
+            if (s_windows == 2)
             {
-                fillrect(g_logical_screen_x_dots, yc, xd-g_logical_screen_x_dots, yd, g_color_dark);
-                fillrect(xc   , g_logical_screen_y_dots, g_logical_screen_x_dots, yd-g_logical_screen_y_dots, g_color_dark);
+                fillrect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
+                fillrect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
             }
             else
             {
-                fillrect(xc, yc, xd, yd, g_color_dark);
+                fillrect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
-            if (windows == 3 && xd == g_vesa_x_res) // unhide
+            if (s_windows == 3 && s_win_width == g_vesa_x_res) // unhide
             {
                 RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-                windows = 2;
+                s_windows = 2;
             }
             Cursor_Hide();
             bool const savehasinverse = g_has_inverse;
@@ -1299,7 +1307,7 @@ finish:
     Cursor_EndMouseTracking();
 #endif
     g_line_buff.clear();
-    screen_rect.clear();
+    s_screen_rect.clear();
     g_look_at_mouse = old_look_at_mouse;
     g_using_jiim = false;
     g_calc_type = oldcalctype;
@@ -1325,7 +1333,7 @@ finish:
     {
         cleartempmsg();
     }
-    show_numbers = 0;
+    s_show_numbers = 0;
     driver_unget_key(kbdchar);
 
     if (g_cur_fractal_specific->calctype == calcfroth)
