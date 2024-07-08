@@ -23,8 +23,11 @@
 #include <cassert>
 #include <cmath>
 
-#define EVERY 15
-#define BASIN_COLOR 0
+enum
+{
+    EVERY = 15,
+    BASIN_COLOR = 0
+};
 
 int g_rhombus_stack[10]{};
 int g_rhombus_depth{};
@@ -356,10 +359,16 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 
 /* maximum side length beyond which we start regular scanning instead of
    subdividing */
-#define SCAN 16
+enum
+{
+    SCAN = 16
+};
 
 // pixel interleave used in scanning
-#define INTERLEAVE 4
+enum
+{
+    INTERLEAVE = 4
+};
 
 // compute the value of the interpolation polynomial at (x,y)
 #define GET_REAL(x, y) \
