@@ -17,13 +17,13 @@
 
 #include <cmath>
 
-static int inside_color{};
-static int periodicity_color{};
+static int s_inside_color{};
+static int s_periodicity_color{};
 
 void calcmandfpasmstart()
 {
-    inside_color = (g_inside_color < COLOR_BLACK) ? g_max_iterations : g_inside_color;
-    periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
+    s_inside_color = (g_inside_color < COLOR_BLACK) ? g_max_iterations : g_inside_color;
+    s_periodicity_color = (g_periodicity_check < 0) ? 7 : s_inside_color;
     g_old_color_iter = 0;
 }
 
@@ -148,7 +148,7 @@ long calcmandfpasm()
                     g_old_color_iter = g_max_iterations;
                     g_real_color_iter = g_max_iterations;
                     g_keyboard_check_interval = g_keyboard_check_interval -(g_max_iterations-cx);
-                    g_color_iter = periodicity_color;
+                    g_color_iter = s_periodicity_color;
                     goto pop_stack;
                 }
             }
@@ -166,7 +166,7 @@ long calcmandfpasm()
     g_old_color_iter = g_max_iterations;
     g_keyboard_check_interval -= g_max_iterations;
     g_real_color_iter = g_max_iterations;
-    g_color_iter = inside_color;
+    g_color_iter = s_inside_color;
 
 pop_stack:
     if (g_orbit_save_index)
