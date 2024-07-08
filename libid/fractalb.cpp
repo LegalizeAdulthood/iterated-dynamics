@@ -30,7 +30,7 @@ fractal routines.
 #include <cstring>
 #include <string>
 
-bf_math_type g_bf_math = bf_math_type::NONE;
+bf_math_type g_bf_math{};
 
 #ifndef NDEBUG
 //********************************************************************
