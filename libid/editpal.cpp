@@ -37,30 +37,36 @@
 
 enum
 {
-    FONT_DEPTH = 8, // font size
-    CSIZE_MIN = 8,  // csize cannot be smaller than this
-    CURSOR_SIZE = 5     // length of one side of the x-hair cursor
-};
-
+    FONT_DEPTH = 8,  // font size
+    CSIZE_MIN = 8,   // csize cannot be smaller than this
+    CURSOR_SIZE = 5, // length of one side of the x-hair cursor
+    BOX_INC = 1,
+    CSIZE_INC = 2,
 #ifndef XFRACT
-#define CURSOR_BLINK_RATE   3     // timer ticks between cursor blinks
+    CURSOR_BLINK_RATE = 3, // timer ticks between cursor blinks
 #else
-#define CURSOR_BLINK_RATE   300   // timer ticks between cursor blinks
+    CURSOR_BLINK_RATE = 300, // timer ticks between cursor blinks
 #endif
-
-enum
-{
     FAR_RESERVE = 8192L, // amount of mem we will leave avail.
+    TITLE_LEN = 17,
+    CEditor_WIDTH = 8 * 3 + 4,
+    CEditor_DEPTH = 8 + 4,
+    STATUS_LEN = 4,
+    CURS_INC = 1,
+    RGBEditor_WIDTH = 62,
+    RGBEditor_DEPTH = 1 + 1 + CEditor_DEPTH * 3 - 2 + 2,
+    RGBEditor_BWIDTH = RGBEditor_WIDTH - (2 + CEditor_WIDTH + 1 + 2),
+    RGBEditor_BDEPTH = RGBEditor_DEPTH - 4,
+    PalTable_PALX = 1,
+    PalTable_PALY = 2 + RGBEditor_DEPTH + 2,
+    UNDO_DATA = 1,
+    UNDO_DATA_SINGLE = 2,
+    UNDO_ROTATE = 3,
 };
 
 constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 
 static const char *undofile{"id.$$2"};  // file where undo list is stored
-
-enum
-{
-    TITLE_LEN = (17)
-};
 
 #ifdef XFRACT
 bool editpal_cursor{};
@@ -729,12 +735,6 @@ static void MoveBox__Erase(MoveBox *me)   // private
     putrow(me->x, me->y+depth-1, width, &me->b[0]);
 }
 
-enum
-{
-    BOX_INC = 1,
-    CSIZE_INC = 2
-};
-
 static void MoveBox__Move(MoveBox *me, int key)
 {
     bool done  = false;
@@ -964,12 +964,6 @@ static void CEditor_SetDone(CEditor *me, bool done);
 static void CEditor_SetHidden(CEditor *me, bool hidden);
 static int  CEditor_Edit(CEditor *me);
 
-enum
-{
-    CEditor_WIDTH = (8*3+4),
-    CEditor_DEPTH = (8+4)
-};
-
 static CEditor *CEditor_Construct(int x, int y, char letter,
                                   void (*other_key)(int, CEditor*, void *),
                                   void (*change)(CEditor*, void *), void *info)
@@ -1197,12 +1191,6 @@ static void     RGBEditor_Draw(RGBEditor *me);
 static int      RGBEditor_Edit(RGBEditor *me);
 static void     RGBEditor_SetRGB(RGBEditor *me, int pal, PALENTRY *rgb);
 static PALENTRY RGBEditor_GetRGB(RGBEditor *me);
-
-#define RGBEditor_WIDTH 62
-#define RGBEditor_DEPTH (1+1+CEditor_DEPTH*3-2+2)
-
-#define RGBEditor_BWIDTH ( RGBEditor_WIDTH - (2+CEditor_WIDTH+1 + 2) )
-#define RGBEditor_BDEPTH ( RGBEditor_DEPTH - 4 )
 
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEditor*, void*),
                                       void (*change)(RGBEditor*, void*), void *info)
@@ -1517,13 +1505,6 @@ static void      PalTable_Process(PalTable *me);
 static void      PalTable_SetHidden(PalTable *me, bool hidden);
 static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden);
 
-#define PalTable_PALX (1)
-#define PalTable_PALY (2+RGBEditor_DEPTH+2)
-
-#define UNDO_DATA        (1)
-#define UNDO_DATA_SINGLE (2)
-#define UNDO_ROTATE      (3)
-
 //  - Freestyle code -
 static void PalTable__CalcTopBottom(PalTable *me)
 {
@@ -1722,11 +1703,6 @@ static void PalTable__Redo(PalTable *me)
 }
 
 // - everything else -
-enum
-{
-    STATUS_LEN = (4)
-};
-
 static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 {
     int width = 1+(me->csize*16)+1+1;
@@ -2017,11 +1993,6 @@ static int PalTable__GetCursorColor(PalTable *me)
 
     return color;
 }
-
-enum
-{
-    CURS_INC = 1
-};
 
 static void PalTable__DoCurs(PalTable *me, int key)
 {
