@@ -25,13 +25,13 @@ enum
 };
 // maxxblk defn must match fracsubr.c
 
-static bool guessplot = false;          // paint 1st pass row at a time?
-static bool bottom_guess = false;
-static bool right_guess = false;
-static int maxblock = 0;
-static int halfblock = 0;
-static unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
-static BYTE s_stack[4096] = { 0 };              // common temp, two put_line calls
+static bool guessplot{}; // paint 1st pass row at a time?
+static bool bottom_guess{};
+static bool right_guess{};
+static int maxblock{};
+static int halfblock{};
+static unsigned int tprefix[2][maxyblk][maxxblk]{}; // common temp
+static BYTE s_stack[4096]{};                        // common temp, two put_line calls
 
 // super solid guessing
 
