@@ -40,11 +40,11 @@ int g_blue_crop_right{4};
 int g_red_bright{80};
 int g_blue_bright{100};
 
-static int red_local_left;
-static int red_local_right;
-static int blue_local_left;
-static int blue_local_right;
-static BYTE T_RED;
+static int red_local_left{};
+static int red_local_right{};
+static int blue_local_left{};
+static int blue_local_right{};
+static BYTE T_RED{};
 
 // Bresenham's algorithm for drawing line
 void draw_line(int X1, int Y1, int X2, int Y2, int color)
