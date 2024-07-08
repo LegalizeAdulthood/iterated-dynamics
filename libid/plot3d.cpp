@@ -40,11 +40,11 @@ int g_blue_crop_right{4};
 int g_red_bright{80};
 int g_blue_bright{100};
 
-static int red_local_left{};
-static int red_local_right{};
-static int blue_local_left{};
-static int blue_local_right{};
-static BYTE T_RED{};
+static int s_red_local_left{};
+static int s_red_local_right{};
+static int s_blue_local_left{};
+static int s_blue_local_right{};
+static BYTE s_t_red{};
 
 // Bresenham's algorithm for drawing line
 void draw_line(int X1, int Y1, int X2, int Y2, int color)
@@ -187,7 +187,7 @@ void plot3dsuperimpose16(int x, int y, int color)
         {
             color = PAL_MAGENTA;
         }
-        if (red_local_left < x && x < red_local_right)
+        if (s_red_local_left < x && x < s_red_local_right)
         {
             g_put_color(x, y, color);
             if (g_targa_out)
@@ -198,7 +198,7 @@ void plot3dsuperimpose16(int x, int y, int color)
     }
     else if (g_which_image == stereo_images::BLUE)   // BLUE
     {
-        if (blue_local_left < x && x < blue_local_right)
+        if (s_blue_local_left < x && x < s_blue_local_right)
         {
             color = PAL_BLUE;
             if (tmp > 0 && tmp != color)
@@ -232,7 +232,7 @@ void plot3dsuperimpose256(int x, int y, int color)
     // map to 16 colors
     if (g_which_image == stereo_images::RED) // RED
     {
-        if (red_local_left < x && x < red_local_right)
+        if (s_red_local_left < x && x < s_red_local_right)
         {
             // Overwrite prev Red don't mess w/blue
             g_put_color(x, y, color|(tmp&240));
@@ -251,7 +251,7 @@ void plot3dsuperimpose256(int x, int y, int color)
     }
     else if (g_which_image == stereo_images::BLUE)   // BLUE
     {
-        if (blue_local_left < x && x < blue_local_right)
+        if (s_blue_local_left < x && x < s_blue_local_right)
         {
             // Overwrite previous blue, don't mess with existing red
             color = color <<4;
@@ -264,8 +264,8 @@ void plot3dsuperimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_readdisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, T_RED, 0, t_c);
+                    targa_readdisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -290,7 +290,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
     // map to 16 colors
     if (g_which_image == stereo_images::RED) // RED
     {
-        if (red_local_left < x && x < red_local_right)
+        if (s_red_local_left < x && x < s_red_local_right)
         {
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
@@ -308,7 +308,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
     }
     else if (g_which_image == stereo_images::BLUE)   // BLUE
     {
-        if (blue_local_left < x && x < blue_local_right)
+        if (s_blue_local_left < x && x < s_blue_local_right)
         {
             color = color <<4;
             g_put_color(x, y, color|tmp);
@@ -320,8 +320,8 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_readdisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, T_RED, 0, t_c);
+                    targa_readdisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -340,7 +340,7 @@ void plot3dalternate(int x, int y, int color)
     color = g_colors - color;
     if ((g_which_image == stereo_images::RED) && !((x+y)&1)) // - lower half palette
     {
-        if (red_local_left < x && x < red_local_right)
+        if (s_red_local_left < x && x < s_red_local_right)
         {
             g_put_color(x, y, color >> 1);
             if (g_targa_out)
@@ -358,7 +358,7 @@ void plot3dalternate(int x, int y, int color)
     }
     else if ((g_which_image == stereo_images::BLUE) && ((x+y)&1))  // - upper half palette
     {
-        if (blue_local_left < x && x < blue_local_right)
+        if (s_blue_local_left < x && x < s_blue_local_right)
         {
             g_put_color(x, y, (color >> 1)+(g_colors >> 1));
             if (g_targa_out)
@@ -369,7 +369,7 @@ void plot3dalternate(int x, int y, int color)
                 }
                 else
                 {
-                    targa_writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, T_RED, 0, t_c);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -483,10 +483,10 @@ void plot_setup()
 
     if (g_glasses_type)
     {
-        red_local_left  = (int)((g_red_crop_left      * (double)g_logical_screen_x_dots)/100.0);
-        red_local_right = (int)(((100 - g_red_crop_right) * (double)g_logical_screen_x_dots)/100.0);
-        blue_local_left = (int)((g_blue_crop_left     * (double)g_logical_screen_x_dots)/100.0);
-        blue_local_right = (int)(((100 - g_blue_crop_right) * (double)g_logical_screen_x_dots)/100.0);
+        s_red_local_left  = (int)((g_red_crop_left      * (double)g_logical_screen_x_dots)/100.0);
+        s_red_local_right = (int)(((100 - g_red_crop_right) * (double)g_logical_screen_x_dots)/100.0);
+        s_blue_local_left = (int)((g_blue_crop_left     * (double)g_logical_screen_x_dots)/100.0);
+        s_blue_local_right = (int)(((100 - g_blue_crop_right) * (double)g_logical_screen_x_dots)/100.0);
         d_red_bright    = (double)g_red_bright/100.0;
         d_blue_bright   = (double)g_blue_bright/100.0;
 
