@@ -186,7 +186,7 @@ void save_history_info()
     current.decomp = g_decomp[0];
     current.biomorph = g_biomorph;
     current.force_symmetry = g_force_symmetry;
-    current.init_3d[0] = g_sphere;           // sphere? 1 = yes, 0 = no
+    current.init_3d[0] = g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
     current.init_3d[1] = g_x_rot;            // rotate x-axis 60 degrees
     current.init_3d[2] = g_y_rot;            // rotate y-axis 90 degrees
     current.init_3d[3] = g_z_rot;            // rotate x-axis  0 degrees
@@ -372,7 +372,7 @@ void restore_history_info(int i)
     g_user_biomorph_value = last.biomorph;
     g_biomorph = last.biomorph;
     g_force_symmetry = last.force_symmetry;
-    g_sphere = last.init_3d[0];           // sphere? 1 = yes, 0 = no
+    g_sphere = last.init_3d[0] != 0;      // sphere? 1 = yes, 0 = no
     g_x_rot = last.init_3d[1];            // rotate x-axis 60 degrees
     g_y_rot = last.init_3d[2];            // rotate y-axis 90 degrees
     g_z_rot = last.init_3d[3];            // rotate x-axis  0 degrees

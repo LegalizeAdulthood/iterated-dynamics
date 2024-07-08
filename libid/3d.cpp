@@ -63,7 +63,7 @@
 #include <cstring>
 
 // '3d=nn/nn/nn/...' values
-int g_sphere{};  // sphere? 1 = yes, 0 = no
+bool g_sphere{}; // sphere? 1 = yes, 0 = no
 int g_x_rot{};   // rotate x-axis 60 degrees
 int g_y_rot{};   // rotate y-axis 90 degrees
 int g_z_rot{};   // rotate x-axis  0 degrees

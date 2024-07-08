@@ -40,7 +40,7 @@ constexpr int operator+(fill_type value)
 }
 
 // regular 3D
-extern int g_sphere;  // sphere? 1 = yes, 0 = no
+extern bool g_sphere;  // sphere? true = yes, false = no
 extern int g_x_rot;   // rotate x-axis 60 degrees
 extern int g_y_rot;   // rotate y-axis 90 degrees
 extern int g_z_rot;   // rotate x-axis  0 degrees

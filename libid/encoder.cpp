@@ -868,7 +868,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->decomp[0] = (short) g_decomp[0];
     save_info->biomorph = (short) g_user_biomorph_value;
     save_info->symmetry = (short) g_force_symmetry;
-    save_info->init3d[0] = (std::int16_t) g_sphere;           // sphere? 1 = yes, 0 = no
+    save_info->init3d[0] = (std::int16_t) g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
     save_info->init3d[1] = (std::int16_t) g_x_rot;            // rotate x-axis 60 degrees
     save_info->init3d[2] = (std::int16_t) g_y_rot;            // rotate y-axis 90 degrees
     save_info->init3d[3] = (std::int16_t) g_z_rot;            // rotate x-axis  0 degrees

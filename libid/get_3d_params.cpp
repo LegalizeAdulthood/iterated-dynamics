@@ -63,7 +63,7 @@ restart_1:
 
     prompts3d[++k] = "Spherical projection?";
     uvalues[k].type = 'y';
-    sphere = g_sphere;
+    sphere = g_sphere ? 1 : 0;
     uvalues[k].uval.ch.val = sphere;
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
@@ -141,12 +141,12 @@ restart_1:
 
     if (sphere && !g_sphere)
     {
-        g_sphere = TRUE;
+        g_sphere = true;
         set_3d_defaults();
     }
     else if (!sphere && g_sphere)
     {
-        g_sphere = FALSE;
+        g_sphere = false;
         set_3d_defaults();
     }
 

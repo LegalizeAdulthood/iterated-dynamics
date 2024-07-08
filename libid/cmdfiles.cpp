@@ -588,7 +588,7 @@ static void initvars_3d()
 {
     g_raytrace_format = raytrace_formats::none;
     g_brief   = false;
-    g_sphere = FALSE;
+    g_sphere = false;
     g_preview = false;
     g_show_box = false;
     g_converge_x_adjust = 0;
@@ -3301,7 +3301,7 @@ static cmdarg_flags cmd_sphere(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_sphere = cmd.yesnoval[0];
+    g_sphere = cmd.yesnoval[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
