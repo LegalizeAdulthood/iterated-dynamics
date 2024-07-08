@@ -67,12 +67,12 @@ static void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 
 static std::vector<long> sins;
 static std::vector<long> coss;
-static long const PI_DIV_180_L = 11930465L;
+constexpr long PI_DIV_180_L{11930465L};
 static std::string axiom;
 static std::vector<std::string> rules;
 static std::vector<lsys_cmd *> rule_cmds;
 static std::vector<lsysf_cmd *> rulef_cmds;
-static bool loaded = false;
+static bool loaded{};
 
 char maxangle;
 
