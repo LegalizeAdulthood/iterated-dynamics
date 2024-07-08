@@ -37,8 +37,12 @@ void sleepms(long ms)
  * wait until wait_time microseconds from the
  * last call has elapsed.
  */
-#define MAX_INDEX 2
+enum
+{
+    MAX_INDEX = 2
+};
 static uclock_t s_next_time[MAX_INDEX];
+
 void wait_until(int index, unsigned long wait_time)
 {
     uclock_t now;
