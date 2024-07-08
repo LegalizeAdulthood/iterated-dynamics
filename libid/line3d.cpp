@@ -59,14 +59,11 @@ struct minmax
 };
 
 // routines in this module
-int line3d(BYTE *, unsigned);
-int targa_color(int, int, int);
 static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static int line3dmem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
-bool startdisk1(char const *File_Name2, std::FILE *Source, bool overlay);
 static void set_upr_lwr();
 static int end_object(bool triout);
 static int offscreen(point);
