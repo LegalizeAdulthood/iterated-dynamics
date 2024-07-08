@@ -66,14 +66,6 @@ enum
 
 constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 
-static const char *undofile{"id.$$2"};  // file where undo list is stored
-
-#ifdef XFRACT
-bool editpal_cursor{};
-#endif
-
-bool g_using_jiim{};
-
 // basic data types
 struct PALENTRY
 {
@@ -82,13 +74,146 @@ struct PALENTRY
     BYTE blue;
 };
 
+//
+// Class:     Cursor
+//
+// Purpose:   Draw the blinking cross-hair cursor.
+//
+// Note:      Only one Cursor exists (referenced through the_cursor).
+//            IMPORTANT: Call Cursor_Construct before you use any other
+//            Cursor_ function!
+//
+struct Cursor
+{
+    int x;
+    int y;
+    int     hidden;       // >0 if mouse hidden
+    long    last_blink;
+    bool blink;
+    char    t[CURSOR_SIZE];        // save line segments here
+    char    b[CURSOR_SIZE];
+    char    l[CURSOR_SIZE];
+    char    r[CURSOR_SIZE];
+};
+
+//
+// Class:     MoveBox
+//
+// Purpose:   Handles the rectangular move/resize box.
+//
+struct MoveBox
+{
+    int x;
+    int y;
+    int base_width;
+    int base_depth;
+    int      csize;
+    bool moved;
+    bool should_hide;
+    std::vector<char> t;
+    std::vector<char> b;
+    std::vector<char> l;
+    std::vector<char> r;
+};
+
+//
+// Class:     CEditor
+//
+// Purpose:   Edits a single color component (R, G or B)
+//
+// Note:      Calls the "other_key" function to process keys it doesn't use.
+//            The "change" function is called whenever the value is changed
+//            by the CEditor.
+//
+struct CEditor
+{
+    int x;
+    int y;
+    char      letter;
+    int       val;
+    bool done;
+    bool hidden;
+    void (*other_key)(int key, CEditor *ce, void *info);
+    void (*change)(CEditor *ce, void *info);
+    void     *info;
+};
+
+//
+// Class:     RGBEditor
+//
+// Purpose:   Edits a complete color using three CEditors for R, G and B
+//
+struct RGBEditor
+{
+    int x;
+    int y;
+    int       curr;            // 0=r, 1=g, 2=b
+    int       pal;             // palette number
+    bool done;
+    bool hidden;
+    CEditor  *color[3];        // color editors 0=r, 1=g, 2=b
+    void (*other_key)(int key, RGBEditor *e, void *info);
+    void (*change)(RGBEditor *e, void *info);
+    void     *info;
+};
+
+//
+// Class:     PalTable
+//
+// Purpose:   This is where it all comes together.  Creates the two RGBEditors
+//            and the palette. Moves the cursor, hides/restores the screen,
+//            handles (S)hading, (C)opying, e(X)clude mode, the "Y" exclusion
+//            mode, (Z)oom option, (H)ide palette, rotation, etc.
+//
+//
+
+//
+// Modes:
+//   Auto:          "A", " "
+//   Exclusion:     "X", "Y", " "
+//   Freestyle:     "F", " "
+//   S(t)ripe mode: "T", " "
+//
+//
+struct PalTable
+{
+    int x;
+    int y;
+    int           csize;
+    int           active;   // which RGBEditor is active (0,1)
+    int           curr[2];
+    RGBEditor    *rgb[2];
+    MoveBox      *movebox;
+    bool done;
+    int exclude;
+    bool auto_select;
+    PALENTRY      pal[256];
+    std::FILE         *undo_file;
+    bool curr_changed;
+    int           num_redo;
+    bool hidden;
+    int           stored_at;
+    std::vector<char> saved_pixels;
+    PALENTRY     save_pal[8][256];
+    PALENTRY      fs_color;
+    int           top, bottom; // top and bottom colours of freestyle band
+    int           bandwidth; //size of freestyle colour band
+    bool freestyle;
+};
+
+bool g_using_jiim{};
 std::vector<BYTE> g_line_buff;
+
+static const char *undofile{"id.$$2"};  // file where undo list is stored
+#ifdef XFRACT
+static bool editpal_cursor{};
+#endif
 static BYTE fg_color{};
 static BYTE bg_color{};
 static bool reserve_colors{};
 static bool inverse{};
 static float gamma_val{1.0f};
-
+static Cursor the_cursor{};
 
 // Interface to graphics stuff
 static void setpal(int pal, int r, int g, int b)
@@ -414,34 +539,10 @@ static void draw_diamond(int x, int y, int color)
     g_put_color(x+2, y+4,    color);
 }
 
-//
-// Class:     Cursor
-//
-// Purpose:   Draw the blinking cross-hair cursor.
-//
-// Note:      Only one Cursor exists (referenced through the_cursor).
-//            IMPORTANT: Call Cursor_Construct before you use any other
-//            Cursor_ function!
-//
-struct Cursor
-{
-    int x;
-    int y;
-    int     hidden;       // >0 if mouse hidden
-    long    last_blink;
-    bool blink;
-    char    t[CURSOR_SIZE];        // save line segments here
-    char    b[CURSOR_SIZE];
-    char    l[CURSOR_SIZE];
-    char    r[CURSOR_SIZE];
-};
-
 // private:
 static  void    Cursor__Draw();
 static  void    Cursor__Save();
 static  void    Cursor__Restore();
-
-static Cursor the_cursor{};
 
 void Cursor_Construct()
 {
@@ -604,26 +705,6 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
 
     return driver_key_pressed();
 }
-
-//
-// Class:     MoveBox
-//
-// Purpose:   Handles the rectangular move/resize box.
-//
-struct MoveBox
-{
-    int x;
-    int y;
-    int base_width;
-    int base_depth;
-    int      csize;
-    bool moved;
-    bool should_hide;
-    std::vector<char> t;
-    std::vector<char> b;
-    std::vector<char> l;
-    std::vector<char> r;
-};
 
 // private:
 static void     MoveBox__Draw(MoveBox *me);
@@ -929,28 +1010,6 @@ static bool MoveBox_Process(MoveBox *me)
     return key != ID_KEY_ESC;
 }
 
-//
-// Class:     CEditor
-//
-// Purpose:   Edits a single color component (R, G or B)
-//
-// Note:      Calls the "other_key" function to process keys it doesn't use.
-//            The "change" function is called whenever the value is changed
-//            by the CEditor.
-//
-struct CEditor
-{
-    int x;
-    int y;
-    char      letter;
-    int       val;
-    bool done;
-    bool hidden;
-    void (*other_key)(int key, CEditor *ce, void *info);
-    void (*change)(CEditor *ce, void *info);
-    void     *info;
-};
-
 // public:
 static CEditor *CEditor_Construct(int x, int y, char letter,
                                   void (*other_key)(int, CEditor*, void*),
@@ -1152,25 +1211,6 @@ static int CEditor_Edit(CEditor *me)
 
     return key;
 }
-
-//
-// Class:     RGBEditor
-//
-// Purpose:   Edits a complete color using three CEditors for R, G and B
-//
-struct RGBEditor
-{
-    int x;
-    int y;
-    int       curr;            // 0=r, 1=g, 2=b
-    int       pal;             // palette number
-    bool done;
-    bool hidden;
-    CEditor  *color[3];        // color editors 0=r, 1=g, 2=b
-    void (*other_key)(int key, RGBEditor *e, void *info);
-    void (*change)(RGBEditor *e, void *info);
-    void     *info;
-};
 
 // private:
 static void      RGBEditor__other_key(int key, CEditor *ceditor, void *info);
@@ -1430,52 +1470,6 @@ static PALENTRY RGBEditor_GetRGB(RGBEditor *me)
 
     return pal;
 }
-
-
-
-//
-// Class:     PalTable
-//
-// Purpose:   This is where it all comes together.  Creates the two RGBEditors
-//            and the palette. Moves the cursor, hides/restores the screen,
-//            handles (S)hading, (C)opying, e(X)clude mode, the "Y" exclusion
-//            mode, (Z)oom option, (H)ide palette, rotation, etc.
-//
-//
-
-//
-// Modes:
-//   Auto:          "A", " "
-//   Exclusion:     "X", "Y", " "
-//   Freestyle:     "F", " "
-//   S(t)ripe mode: "T", " "
-//
-//
-struct PalTable
-{
-    int x;
-    int y;
-    int           csize;
-    int           active;   // which RGBEditor is active (0,1)
-    int           curr[2];
-    RGBEditor    *rgb[2];
-    MoveBox      *movebox;
-    bool done;
-    int exclude;
-    bool auto_select;
-    PALENTRY      pal[256];
-    std::FILE         *undo_file;
-    bool curr_changed;
-    int           num_redo;
-    bool hidden;
-    int           stored_at;
-    std::vector<char> saved_pixels;
-    PALENTRY     save_pal[8][256];
-    PALENTRY      fs_color;
-    int           top, bottom; // top and bottom colours of freestyle band
-    int           bandwidth; //size of freestyle colour band
-    bool freestyle;
-};
 
 // private:
 static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
