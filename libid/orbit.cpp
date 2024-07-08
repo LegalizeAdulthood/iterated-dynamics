@@ -20,7 +20,7 @@ enum
     NUM_SAVE_ORBIT = 1500
 };
 
-static int save_orbit[NUM_SAVE_ORBIT] = { 0 };           // array to save orbit values
+static int save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
 
 /* Showing orbit requires converting real co-ords to screen co-ords.
    Define:
