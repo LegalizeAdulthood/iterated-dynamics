@@ -17,7 +17,8 @@
 
 #include <cmath>
 
-static int inside_color, periodicity_color;
+static int inside_color;
+static int periodicity_color;
 
 void calcmandfpasmstart()
 {
