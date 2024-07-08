@@ -177,13 +177,7 @@ bool g_log_map_auto_calculate{};             // auto calculate logmap
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
-
-static int init_rseed{};        //
-static bool s_init_corners{};   // corners set via corners= or center-mag=?
-static bool s_init_params{};    // params set via params=?
-static bool s_init_functions{}; // trig functions set via function=?
 fractalspecificstuff *g_cur_fractal_specific{};
-
 std::string g_formula_filename;      // file to find (type=)formulas in
 std::string g_formula_name;          // Name of the Formula (if not null)
 std::string g_l_system_filename;     // file to find (type=)L-System's in
@@ -195,7 +189,6 @@ std::string g_ifs_name;              // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;         //
 std::vector<float> g_ifs_definition; // ifs parameters
 bool g_ifs_type{};                   // false=2d, true=3d
-
 BYTE g_text_color[31] =
 {
     BLUE*16+L_WHITE,    // C_TITLE           title background
@@ -230,8 +223,13 @@ BYTE g_text_color[31] =
     BLACK*16+L_WHITE,   // C_PRIMARY         primary authors
     BLACK*16+WHITE      // C_CONTRIB         contributing authors
 };
-
 static_assert(std::size(g_text_color) == 31);
+
+
+static int init_rseed{};        //
+static bool s_init_corners{};   // corners set via corners= or center-mag=?
+static bool s_init_params{};    // params set via params=?
+static bool s_init_functions{}; // trig functions set via function=?
 
 // cmdfiles(argc,argv) process the command-line arguments
 // it also processes the 'sstools.ini' file and any
