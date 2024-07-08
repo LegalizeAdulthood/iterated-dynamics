@@ -55,7 +55,7 @@ extern int g_sphere_radius;    // should be user input
 // common parameters
 extern int g_rough;      // scale z-axis, 30 percent
 extern int g_water_line; // water level
-extern int g_fill_type;  // fill type
+extern fill_type g_fill_type;  // fill type
 extern int g_viewer_z;   // perspective view point
 extern int g_shift_x;    // x shift
 extern int g_shift_y;    // y shift
@@ -66,7 +66,7 @@ extern int g_light_avg;  // number of points to average
 
 inline bool illumine()
 {
-    return g_fill_type > +fill_type::SOLID_FILL; // illumination model
+    return g_fill_type > fill_type::SOLID_FILL; // illumination model
 }
 
 void identity(MATRIX);

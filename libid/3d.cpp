@@ -76,16 +76,16 @@ int g_sphere_theta_min{}; // latitude start,-90 degrees
 int g_sphere_theta_max{}; // latitude stop,  90 degrees
 int g_sphere_radius{};    // should be user input
 // common parameters
-int g_rough{};      // scale z-axis, 30 percent
-int g_water_line{}; // water level
-int g_fill_type{};  // fill type
-int g_viewer_z{};   // perspective view point
-int g_shift_x{};    // x shift
-int g_shift_y{};    // y shift
-int g_light_x{};    // x light vector coordinate
-int g_light_y{};    // y light vector coordinate
-int g_light_z{};    // z light vector coordinate
-int g_light_avg{};  // number of points to average
+int g_rough{};           // scale z-axis, 30 percent
+int g_water_line{};      // water level
+fill_type g_fill_type{}; // fill type
+int g_viewer_z{};        // perspective view point
+int g_shift_x{};         // x shift
+int g_shift_y{};         // y shift
+int g_light_x{};         // x light vector coordinate
+int g_light_y{};         // y light vector coordinate
+int g_light_z{};         // z light vector coordinate
+int g_light_avg{};       // number of points to average
 
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)

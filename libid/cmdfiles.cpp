@@ -2012,7 +2012,7 @@ static cmdarg_flags cmd_fill_type(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_fill_type = cmd.numval;
+    g_fill_type = static_cast<fill_type>(cmd.numval);
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3973,7 +3973,7 @@ void set_3d_defaults()
         g_sphere_theta_min    =  -90;
         g_sphere_theta_max    =  90;
         g_sphere_radius    =  100;
-        g_fill_type  = +fill_type::SURFACE_INTERPOLATED;
+        g_fill_type  = fill_type::SURFACE_INTERPOLATED;
         g_light_x    = 1;
         g_light_y    = 1;
         g_light_z    = 1;
@@ -3985,7 +3985,7 @@ void set_3d_defaults()
         g_z_rot      = 0;
         g_x_scale    = 90;
         g_y_scale    = 90;
-        g_fill_type  = +fill_type::POINTS;
+        g_fill_type  = fill_type::POINTS;
         g_light_x    = 1;
         g_light_y    = -1;
         g_light_z    = 1;

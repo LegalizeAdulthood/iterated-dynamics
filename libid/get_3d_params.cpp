@@ -198,13 +198,13 @@ restart_1:
         {
             ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_FILL};
             i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
-                attributes, 0, 0, 0, g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
+                attributes, 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
         }
         if (i < 0)
         {
             goto restart_1;
         }
-        g_fill_type = i-1;
+        g_fill_type = static_cast<fill_type>(i - 1);
 
         if (g_glasses_type)
         {
@@ -542,7 +542,7 @@ static bool get_funny_glasses_params()
     }
     else if (g_glasses_type == 2)
     {
-        if (g_fill_type == +fill_type::SURFACE_GRID)
+        if (g_fill_type == fill_type::SURFACE_GRID)
         {
             g_funny_glasses_map_name = "grid.map";
         }

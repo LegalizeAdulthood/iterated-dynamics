@@ -3349,12 +3349,12 @@ TEST_F(TestParameterCommand, waterline)
 
 TEST_F(TestParameterCommand, fillType)
 {
-    ValueSaver saved_fill_type{g_fill_type, -99};
+    ValueSaver saved_fill_type{g_fill_type, static_cast<fill_type>(-99)};
 
     const cmdarg_flags result = exec_cmd_arg("filltype=3", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, result);
-    EXPECT_EQ(+fill_type::SURFACE_CONSTANT, g_fill_type);
+    EXPECT_EQ(fill_type::SURFACE_CONSTANT, g_fill_type);
 }
 
 TEST_F(TestParameterCommand, lightSource)
