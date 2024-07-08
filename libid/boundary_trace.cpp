@@ -21,13 +21,13 @@ inline int operator+(direction value)
     return static_cast<int>(value);
 }
 
-static direction going_to;
-static int trail_row = 0;
-static int trail_col = 0;
-static BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
+static direction going_to{};
+static int trail_row{};
+static int trail_col{};
+static BYTE dstack[4096]{}; // common temp, two put_line calls
 
 // boundary trace method
-constexpr int BK_COLOR{0};
+constexpr int BK_COLOR{};
 
 inline direction advance(direction dir, int increment)
 {
