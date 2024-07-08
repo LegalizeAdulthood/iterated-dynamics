@@ -125,10 +125,10 @@ static bool long3dviewtransf(long3dvtinf *inf);
 static bool float3dviewtransf(float3dvtinf *inf);
 static std::FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
-static bool s_real_time{};
 
-long g_max_count;
+static bool s_real_time{};
 static int s_t{};
+
 static long s_l_dx{};
 static long s_l_dy{};
 static long s_l_dz{};
@@ -163,8 +163,6 @@ static double s_init_orbit_fp[3]{};
 // The following declarations used for Inverse Julia.
 static int      s_max_hits{};
 static int      s_run_length{};
-Major           g_major_method;
-Minor           g_inverse_julia_minor_method;
 static affine   s_cvt{};
 static l_affine s_l_cvt{};
 
@@ -182,6 +180,10 @@ static bool s_connect{true}; // flag to connect points with a line
 static bool s_euler{};       // use implicit euler approximation for dynamic system
 static int s_waste{100};     // waste this many points before plotting
 static int s_projection{2};  // projection plane - default is to plot x-y
+
+long g_max_count;
+Major g_major_method;
+Minor g_inverse_julia_minor_method;
 
 static void fallback_to_random_walk()
 {
