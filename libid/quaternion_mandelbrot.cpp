@@ -8,9 +8,6 @@
 #include "id_data.h"
 #include "pixel_grid.h"
 
-#define Q0 0
-#define Q1 0
-
 int quaternionjulfp_per_pixel()
 {
     g_old_z.x = g_dx_pixel();
