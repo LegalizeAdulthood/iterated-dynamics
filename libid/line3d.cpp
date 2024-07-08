@@ -63,7 +63,8 @@ static int first_time(int, VECTOR);
 static void hsv_to_rgb(
     BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long sat, unsigned long val);
 static int line3dmem();
-static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
+static int rgb_to_hsv(
+    BYTE red, BYTE green, BYTE blue, unsigned long *hue, unsigned long *sat, unsigned long *val);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 static void set_upr_lwr();
 static int end_object(bool triout);
@@ -1498,7 +1499,7 @@ int targa_color(int x, int y, int color)
     }
 
     // Now lets convert it to HSV
-    R_H(RGB[0], RGB[1], RGB[2], &H, &S, &V);
+    rgb_to_hsv(RGB[0], RGB[1], RGB[2], &H, &S, &V);
 
     // Modify original S and V components
     if (g_fill_type > fill_type::SOLID_FILL && !(g_glasses_type == 1 || g_glasses_type == 2))
@@ -1784,7 +1785,8 @@ bool targa_validate(char const *File_Name)
     return false;
 }
 
-static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsigned long *V)
+static int rgb_to_hsv(
+    BYTE red, BYTE green, BYTE blue, unsigned long *hue, unsigned long *sat, unsigned long *val)
 {
     unsigned long R1;
     unsigned long G1;
@@ -1792,90 +1794,90 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
     unsigned long DENOM;
     BYTE MIN;
 
-    *V = R;
-    MIN = G;
-    if (R < G)
+    *val = red;
+    MIN = green;
+    if (red < green)
     {
-        *V = G;
-        MIN = R;
-        if (G < B)
+        *val = green;
+        MIN = red;
+        if (green < blue)
         {
-            *V = B;
+            *val = blue;
         }
-        if (B < R)
+        if (blue < red)
         {
-            MIN = B;
+            MIN = blue;
         }
     }
     else
     {
-        if (B < G)
+        if (blue < green)
         {
-            MIN = B;
+            MIN = blue;
         }
-        if (R < B)
+        if (red < blue)
         {
-            *V = B;
+            *val = blue;
         }
     }
-    DENOM = *V - MIN;
-    if (*V != 0 && DENOM != 0)
+    DENOM = *val - MIN;
+    if (*val != 0 && DENOM != 0)
     {
-        *S = ((DENOM << 16) / *V) - 1;
+        *sat = ((DENOM << 16) / *val) - 1;
     }
     else
     {
-        *S = 0;      // Color is black! and Sat has no meaning
+        *sat = 0;      // Color is black! and Sat has no meaning
     }
-    if (*S == 0)    // R=G=B => shade of grey and Hue has no meaning
+    if (*sat == 0)    // R=G=B => shade of grey and Hue has no meaning
     {
-        *H = 0;
-        *V = *V << 8;
+        *hue = 0;
+        *val = *val << 8;
         return 1;               // v or s or both are 0
     }
-    if (*V == MIN)
+    if (*val == MIN)
     {
-        *H = 0;
-        *V = *V << 8;
+        *hue = 0;
+        *val = *val << 8;
         return 0;
     }
-    R1 = (((*V - R) * 60) << 6) / DENOM; // distance of color from red
-    G1 = (((*V - G) * 60) << 6) / DENOM; // distance of color from green
-    B1 = (((*V - B) * 60) << 6) / DENOM; // distance of color from blue
-    if (*V == R)
+    R1 = (((*val - red) * 60) << 6) / DENOM; // distance of color from red
+    G1 = (((*val - green) * 60) << 6) / DENOM; // distance of color from green
+    B1 = (((*val - blue) * 60) << 6) / DENOM; // distance of color from blue
+    if (*val == red)
     {
-        if (MIN == G)
+        if (MIN == green)
         {
-            *H = (300 << 6) + B1;
+            *hue = (300 << 6) + B1;
         }
         else
         {
-            *H = (60 << 6) - G1;
+            *hue = (60 << 6) - G1;
         }
     }
-    if (*V == G)
+    if (*val == green)
     {
-        if (MIN == B)
+        if (MIN == blue)
         {
-            *H = (60 << 6) + R1;
+            *hue = (60 << 6) + R1;
         }
         else
         {
-            *H = (180 << 6) - B1;
+            *hue = (180 << 6) - B1;
         }
     }
-    if (*V == B)
+    if (*val == blue)
     {
-        if (MIN == R)
+        if (MIN == red)
         {
-            *H = (180 << 6) + G1;
+            *hue = (180 << 6) + G1;
         }
         else
         {
-            *H = (300 << 6) - R1;
+            *hue = (300 << 6) - R1;
         }
     }
-    *V = *V << 8;
+    *val = *val << 8;
     return 0;
 }
 
