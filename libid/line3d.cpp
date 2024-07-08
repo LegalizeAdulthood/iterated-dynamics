@@ -85,7 +85,7 @@ static void vdraw_line(double *, double *, int color);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color);
-static void (*normalplot)(int x, int y, int color);
+static void (*s_normal_plot)(int x, int y, int color);
 static float deltaphi;          // increment of latitude, longitude
 static double rscale;           // surface roughness factor
 static long xcenter, ycenter;   // circle center
@@ -196,13 +196,13 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
     {
-        normalplot = T_clipcolor;
-        g_plot = normalplot;          // Use transparent plot function
+        s_normal_plot = T_clipcolor;
+        g_plot = s_normal_plot;          // Use transparent plot function
     }
     else                            // Use the usual plot function with clipping
     {
-        normalplot = clipcolor;
-        g_plot = normalplot;
+        s_normal_plot = clipcolor;
+        g_plot = s_normal_plot;
     }
 
     g_current_row = g_row_count;           // use separate variable to allow for pot16bit files
@@ -1259,14 +1259,14 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
         {
             driver_draw_line(p1.x, p1.y, p3.x, p3.y, color);
         }
-        g_plot = normalplot;
+        g_plot = s_normal_plot;
         return;
     }
     else if ((p3.y == p1.y && p3.x == p1.x) || (p3.y == p2.y && p3.x == p2.x))
     {
         g_plot = s_fill_plot;
         driver_draw_line(p1.x, p1.y, p2.x, p2.y, color);
-        g_plot = normalplot;
+        g_plot = s_normal_plot;
         return;
     }
 
@@ -1322,7 +1322,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
             (*s_fill_plot)(x, y, color);
         }
     }
-    g_plot = normalplot;
+    g_plot = s_normal_plot;
 }
 
 static int offscreen(point pt)
