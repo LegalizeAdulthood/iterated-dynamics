@@ -80,16 +80,17 @@ static void put_truecolor_disk(int, int, int);
 // added for testing autologmap()
 static long autologmap();
 
-static DComplex s_saved{};
-static double rqlim_save = 0.0;
-static int (*calctypetmp)() = nullptr;
-static unsigned long lm = 0;                   // magnitude limit (CALCMAND)
-int g_xx_begin = 0;                        // these are same as worklist,
-int g_yy_begin = 0;                        // declared as separate items
-static double dem_delta = 0.0;
-static double dem_width = 0.0;          // distance estimator variables
-static double dem_toobig = 0.0;
-static bool dem_mandel = false;
+static DComplex s_saved{};     //
+static double rqlim_save{};    //
+static int (*calctypetmp)(){}; //
+static unsigned long lm{};     // magnitude limit (CALCMAND)
+int g_xx_begin{};              // these are same as worklist,
+int g_yy_begin{};              // declared as separate items
+static double dem_delta{};     //
+static double dem_width{};     // distance estimator variables
+static double dem_toobig{};    //
+static bool dem_mandel{};      //
+
 #define DEM_BAILOUT 535.5
 // next has a skip bit for each maxblock unit;
 //   1st pass sets bit  [1]... off only if block's contents guessed;
@@ -98,105 +99,92 @@ static bool dem_mandel = false;
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
 // variables exported from this file
-long            g_l_at_rad;                     // finite attractor radius
-double          g_f_at_rad;                     // finite attractor radius
-LComplex g_l_init_orbit = { 0 };
-long g_l_magnitude = 0;
-long g_l_magnitude_limit = 0;
-long g_l_magnitude_limit2 = 0;
-long g_l_close_enough = 0;
-long g_l_init_x{};
-long g_l_init_y{};
-DComplex g_init = { 0.0 };
-DComplex g_tmp_z = { 0.0 };
-DComplex g_old_z = { 0.0 };
-DComplex g_new_z = { 0.0 };
-int g_color = 0;
-long g_color_iter = 0;
-long g_old_color_iter = 0;
-long g_real_color_iter = 0;
-int g_row = 0;
-int g_col = 0;
-int g_invert = 0;
-double g_f_radius = 0.0;
-double g_f_x_center = 0.0;
-double g_f_y_center = 0.0;                 // for inversion
-void (*g_put_color)(int, int, int) = putcolor_a;
-void (*g_plot)(int, int, int) = putcolor_a;
-
-double g_magnitude = 0.0;
-double g_magnitude_limit = 0.0;
-double g_magnitude_limit2 = 0.0;
-bool g_magnitude_calc = true;
-bool g_use_old_periodicity = false;
-bool g_use_old_distance_estimator = false;
-bool g_old_demm_colors = false;
-int (*g_calc_type)() = nullptr;
-bool g_quick_calc = false;
-double g_close_proximity = 0.01;
-
-double g_close_enough = 0.0;
-int g_pi_in_pixels = 0;                        // value of pi in pixels
-
-// ORBIT variables
-bool g_show_orbit = false;                // flag to turn on and off
-int g_orbit_save_index = 0;             // index into save_orbit array
-int g_orbit_color = 15;                 // XOR color
-
-int g_i_x_start = 0;
-int g_i_x_stop = 0;
-int g_i_y_start = 0;
-int g_i_y_stop = 0;                         // start, stop here
-symmetry_type g_symmetry = symmetry_type::NONE; // symmetry flag
-symmetry_type g_force_symmetry = symmetry_type::NONE;      // force symmetry
-bool g_reset_periodicity = false;         // true if escape time pixel rtn to reset
-int g_keyboard_check_interval = 0;
-int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
-
-int g_xx_start = 0;
-int g_xx_stop = 0;
-int g_yy_start = 0;
-int g_yy_stop = 0;
-int g_work_pass = 0;
-int g_work_symmetry = 0;                        // for the sake of calcmand
-
-// variables which must be visible for tab_display
-int g_got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
-                                        // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
-                                        // 6 for orbits
-int g_current_pass = 0;
-int g_total_passes = 0;
-int g_current_row = 0;
-int g_current_column = 0;
-
-// static vars for solid_guess & its subroutines
-bool g_three_pass = false;
-
-int g_attractors = 0;                     // number of finite attractors
-DComplex g_attractor[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
-LComplex g_l_attractor[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
-int g_attractor_period[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
-
-int     g_inside_color = 0;             // inside color: 1=blue
-int     g_outside_color = COLOR_BLACK;  // outside color
+long g_l_at_rad{};                              // finite attractor radius
+double g_f_at_rad{};                            // finite attractor radius
+LComplex g_l_init_orbit{};                      //
+long g_l_magnitude{};                           //
+long g_l_magnitude_limit{};                     //
+long g_l_magnitude_limit2{};                    //
+long g_l_close_enough{};                        //
+long g_l_init_x{};                              //
+long g_l_init_y{};                              //
+DComplex g_init{};                              //
+DComplex g_tmp_z{};                             //
+DComplex g_old_z{};                             //
+DComplex g_new_z{};                             //
+int g_color{};                                  //
+long g_color_iter{};                            //
+long g_old_color_iter{};                        //
+long g_real_color_iter{};                       //
+int g_row{};                                    //
+int g_col{};                                    //
+int g_invert{};                                 //
+double g_f_radius{};                            //
+double g_f_x_center{};                          //
+double g_f_y_center{};                          // for inversion
+void (*g_put_color)(int, int, int){putcolor_a}; //
+void (*g_plot)(int, int, int){putcolor_a};      //
+double g_magnitude{};                           //
+double g_magnitude_limit{};                     //
+double g_magnitude_limit2{};                    //
+bool g_magnitude_calc{true};                    //
+bool g_use_old_periodicity{};                   //
+bool g_use_old_distance_estimator{};            //
+bool g_old_demm_colors{};                       //
+int (*g_calc_type)(){};                         //
+bool g_quick_calc{};                            //
+double g_close_proximity{0.01};                 //
+double g_close_enough{};                        //
+int g_pi_in_pixels{};                           // value of pi in pixels
+                                                // ORBIT variables
+bool g_show_orbit{};                            // flag to turn on and off
+int g_orbit_save_index{};                       // index into save_orbit array
+int g_orbit_color{15};                          // XOR color
+int g_i_x_start{};                              //
+int g_i_x_stop{};                               //
+int g_i_y_start{};                              //
+int g_i_y_stop{};                               // start, stop here
+symmetry_type g_symmetry{};                     // symmetry flag
+symmetry_type g_force_symmetry{};               // force symmetry
+bool g_reset_periodicity{};                     // true if escape time pixel rtn to reset
+int g_keyboard_check_interval{};                //
+int g_max_keyboard_check_interval{};            // avoids checking keyboard too often
+int g_xx_start{};                               //
+int g_xx_stop{};                                //
+int g_yy_start{};                               //
+int g_yy_stop{};                                //
+int g_work_pass{};                              //
+int g_work_symmetry{};                          // for the sake of calcmand
+                                                // variables which must be visible for tab_display
+int g_got_status{-1};                           // -1 if not, 0 for 1or2pass, 1 for ssg,
+                                                // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
+                                                // 6 for orbits
+int g_current_pass{};                           //
+int g_total_passes{};                           //
+int g_current_row{};                            //
+int g_current_column{};                         //
+bool g_three_pass{};                            // for solid_guess & its subroutines
+int g_attractors{};                             // number of finite attractors
+DComplex g_attractor[MAX_NUM_ATTRACTORS]{};     // finite attractor vals (f.p)
+LComplex g_l_attractor[MAX_NUM_ATTRACTORS]{};   // finite attractor vals (int)
+int g_attractor_period[MAX_NUM_ATTRACTORS]{};   // period of the finite attractor
+int g_inside_color{};                           // inside color: 1=blue
+int g_outside_color{};                          // outside color
 
 // --------------------------------------------------------------------
 //              These variables are external for speed's sake only
 // --------------------------------------------------------------------
 
-int g_periodicity_check = 0;
-
-// For periodicity testing, only in standard_fractal()
-int g_periodicity_next_saved_incr = 0;
-long g_first_saved_and = 0;
+int g_periodicity_check{};           //
+int g_periodicity_next_saved_incr{}; // For periodicity testing, only in standard_fractal()
+long g_first_saved_and{};            //
+int g_atan_colors{180};              //
 
 static std::vector<BYTE> savedots;
-static BYTE *fillbuff = nullptr;
-static int savedotslen = 0;
-static int showdotcolor = 0;
-int g_atan_colors = 180;
-
-static int showdot_width = 0;
+static BYTE *fillbuff{};
+static int savedotslen{};
+static int showdotcolor{};
+static int showdot_width{};
 
 enum class show_dot_action
 {
@@ -213,7 +201,7 @@ enum class show_dot_direction
     UPPER_LEFT = 4
 };
 
-int g_and_color = 0;        // "and" value used for color selection
+int g_and_color {};        // "and" value used for color selection
 
 double fmodtest_bailout_or()
 {
