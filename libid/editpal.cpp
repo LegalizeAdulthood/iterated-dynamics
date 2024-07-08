@@ -101,19 +101,59 @@ struct Cursor
 //
 // Purpose:   Handles the rectangular move/resize box.
 //
-struct MoveBox
+class MoveBox
 {
-    int x;
-    int y;
-    int base_width;
-    int base_depth;
-    int      csize;
-    bool moved;
-    bool should_hide;
-    std::vector<char> t;
-    std::vector<char> b;
-    std::vector<char> l;
-    std::vector<char> r;
+public:
+    MoveBox() = default;
+    MoveBox(int x, int y, int csize, int base_width, int base_depth);
+
+    void move(int key);
+    bool process(); // returns false if ESCAPED
+    bool moved() const
+    {
+        return m_moved;
+    }
+    bool should_hide() const
+    {
+        return m_should_hide;
+    }
+    int x() const
+    {
+        return m_x;
+    }
+    int y() const
+    {
+        return m_y;
+    }
+    int csize() const
+    {
+        return m_csize;
+    }
+    void set_pos(int x_, int y_)
+    {
+        m_x = x_;
+        m_y = y_;
+    }
+    void set_csize(int csize_)
+    {
+        m_csize = csize_;
+    }
+
+private:
+    void draw();
+    void erase();
+
+    int m_x{};
+    int m_y{};
+    int m_base_width{};
+    int m_base_depth{};
+    int m_csize{};
+    bool m_moved{};
+    bool m_should_hide{};
+    std::vector<char> m_t;
+    std::vector<char> m_b;
+    std::vector<char> m_l;
+    std::vector<char> m_r;
 };
 
 //
@@ -546,11 +586,241 @@ static  void    Cursor__Restore();
 
 void Cursor_Construct()
 {
-    s_cursor.x          = g_screen_x_dots/2;
-    s_cursor.y          = g_screen_y_dots/2;
-    s_cursor.hidden     = 1;
-    s_cursor.blink      = false;
+    s_cursor.x = g_screen_x_dots / 2;
+    s_cursor.y = g_screen_y_dots / 2;
+    s_cursor.hidden = 1;
+    s_cursor.blink = false;
     s_cursor.last_blink = 0;
+}
+
+MoveBox::MoveBox(int x, int y, int csize, int base_width, int base_depth) :
+    m_x(x),
+    m_y(y),
+    m_base_width(base_width),
+    m_base_depth(base_depth),
+    m_csize(csize)
+{
+    m_t.resize(g_screen_x_dots);
+    m_b.resize(g_screen_x_dots);
+    m_l.resize(g_screen_y_dots);
+    m_r.resize(g_screen_y_dots);
+}
+
+void MoveBox::draw()
+{
+    int width = m_base_width + m_csize * 16 + 1;
+    int depth = m_base_depth + m_csize * 16 + 1;
+
+    getrow(m_x, m_y, width, &m_t[0]);
+    getrow(m_x, m_y + depth - 1, width, &m_b[0]);
+
+    vgetrow(m_x, m_y, depth, &m_l[0]);
+    vgetrow(m_x + width - 1, m_y, depth, &m_r[0]);
+
+    hdline(m_x, m_y, width);
+    hdline(m_x, m_y + depth - 1, width);
+
+    vdline(m_x, m_y, depth);
+    vdline(m_x + width - 1, m_y, depth);
+}
+
+void MoveBox::erase()
+{
+    int width = m_base_width + m_csize * 16 + 1;
+    int depth = m_base_depth + m_csize * 16 + 1;
+
+    vputrow(m_x, m_y, depth, &m_l[0]);
+    vputrow(m_x + width - 1, m_y, depth, &m_r[0]);
+
+    putrow(m_x, m_y, width, &m_t[0]);
+    putrow(m_x, m_y + depth - 1, width, &m_b[0]);
+}
+
+void MoveBox::move(int key)
+{
+    bool done = false;
+    bool first = true;
+    int xoff = 0;
+    int yoff = 0;
+
+    while (!done)
+    {
+        switch (key)
+        {
+        case ID_KEY_CTL_RIGHT_ARROW:
+            xoff += BOX_INC * 4;
+            break;
+        case ID_KEY_RIGHT_ARROW:
+            xoff += BOX_INC;
+            break;
+        case ID_KEY_CTL_LEFT_ARROW:
+            xoff -= BOX_INC * 4;
+            break;
+        case ID_KEY_LEFT_ARROW:
+            xoff -= BOX_INC;
+            break;
+        case ID_KEY_CTL_DOWN_ARROW:
+            yoff += BOX_INC * 4;
+            break;
+        case ID_KEY_DOWN_ARROW:
+            yoff += BOX_INC;
+            break;
+        case ID_KEY_CTL_UP_ARROW:
+            yoff -= BOX_INC * 4;
+            break;
+        case ID_KEY_UP_ARROW:
+            yoff -= BOX_INC;
+            break;
+
+        default:
+            done = true;
+        }
+
+        if (!done)
+        {
+            if (!first)
+            {
+                driver_get_key(); // delete key from buffer
+            }
+            else
+            {
+                first = false;
+            }
+            key = driver_key_pressed(); // peek at the next one...
+        }
+    }
+
+    xoff += m_x;
+    yoff += m_y; // (xoff,yoff) = new position
+
+    if (xoff < 0)
+    {
+        xoff = 0;
+    }
+    if (yoff < 0)
+    {
+        yoff = 0;
+    }
+
+    if (xoff + m_base_width + m_csize * 16 + 1 > g_screen_x_dots)
+    {
+        xoff = g_screen_x_dots - (m_base_width + m_csize * 16 + 1);
+    }
+
+    if (yoff + m_base_depth + m_csize * 16 + 1 > g_screen_y_dots)
+    {
+        yoff = g_screen_y_dots - (m_base_depth + m_csize * 16 + 1);
+    }
+
+    if (xoff != m_x || yoff != m_y)
+    {
+        erase();
+        m_y = yoff;
+        m_x = xoff;
+        draw();
+    }
+}
+
+bool MoveBox::process()
+{
+    int     key;
+    int orig_x = m_x;
+    int orig_y = m_y;
+    int orig_csize = m_csize;
+
+    draw();
+
+#ifdef XFRACT
+    Cursor_StartMouseTracking();
+#endif
+    while (true)
+    {
+        Cursor_WaitKey();
+        key = driver_get_key();
+
+        if (key == ID_KEY_ENTER || key == ID_KEY_ENTER_2 || key == ID_KEY_ESC || key == 'H' || key == 'h')
+        {
+            m_moved = m_x != orig_x || m_y != orig_y || m_csize != orig_csize;
+            break;
+        }
+
+        switch (key)
+        {
+        case ID_KEY_UP_ARROW:
+        case ID_KEY_DOWN_ARROW:
+        case ID_KEY_LEFT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_LEFT_ARROW:
+        case ID_KEY_CTL_RIGHT_ARROW:
+            move(key);
+            break;
+
+        case ID_KEY_PAGE_UP:   // shrink
+            if (m_csize > CSIZE_MIN)
+            {
+                int t = m_csize - CSIZE_INC;
+                int change;
+
+                if (t < CSIZE_MIN)
+                {
+                    t = CSIZE_MIN;
+                }
+
+                erase();
+
+                change = m_csize - t;
+                m_csize = t;
+                m_x += (change*16) / 2;
+                m_y += (change*16) / 2;
+                draw();
+            }
+            break;
+
+        case ID_KEY_PAGE_DOWN:   // grow
+        {
+            int max_width = std::min(g_screen_x_dots, MAX_WIDTH);
+
+            if (m_base_depth+(m_csize+CSIZE_INC)*16+1 < g_screen_y_dots
+                && m_base_width+(m_csize+CSIZE_INC)*16+1 < max_width)
+            {
+                erase();
+                m_x -= (CSIZE_INC*16) / 2;
+                m_y -= (CSIZE_INC*16) / 2;
+                m_csize += CSIZE_INC;
+                if (m_y+m_base_depth+m_csize*16+1 > g_screen_y_dots)
+                {
+                    m_y = g_screen_y_dots - (m_base_depth+m_csize*16+1);
+                }
+                if (m_x+m_base_width+m_csize*16+1 > max_width)
+                {
+                    m_x = max_width - (m_base_width+m_csize*16+1);
+                }
+                if (m_y < 0)
+                {
+                    m_y = 0;
+                }
+                if (m_x < 0)
+                {
+                    m_x = 0;
+                }
+                draw();
+            }
+        }
+        break;
+        }
+    }
+
+#ifdef XFRACT
+    Cursor_EndMouseTracking();
+#endif
+
+    erase();
+
+    m_should_hide = key == 'H' || key == 'h';
+
+    return key != ID_KEY_ESC;
 }
 
 static void Cursor__Draw()
@@ -704,310 +974,6 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
     }
 
     return driver_key_pressed();
-}
-
-// private:
-static void     MoveBox__Draw(MoveBox *me);
-static void     MoveBox__Erase(MoveBox *me);
-static void     MoveBox__Move(MoveBox *me, int key);
-
-// public:
-static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width,
-                                  int base_depth);
-static void     MoveBox_Destroy(MoveBox *me);
-static bool MoveBox_Process(MoveBox *me);     // returns false if ESCAPED
-static bool MoveBox_Moved(MoveBox *me);
-static bool MoveBox_ShouldHide(MoveBox *me);
-static int      MoveBox_X(MoveBox *me);
-static int      MoveBox_Y(MoveBox *me);
-static int      MoveBox_CSize(MoveBox *me);
-
-static void     MoveBox_SetPos(MoveBox *me, int x, int y);
-static void     MoveBox_SetCSize(MoveBox *me, int csize);
-
-static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int base_depth)
-{
-    MoveBox *me = new MoveBox;
-
-    me->x           = x;
-    me->y           = y;
-    me->csize       = csize;
-    me->base_width  = base_width;
-    me->base_depth  = base_depth;
-    me->moved       = false;
-    me->should_hide = false;
-    me->t.resize(g_screen_x_dots);
-    me->b.resize(g_screen_x_dots);
-    me->l.resize(g_screen_y_dots);
-    me->r.resize(g_screen_y_dots);
-
-    return me;
-}
-
-static void MoveBox_Destroy(MoveBox *me)
-{
-    delete me;
-}
-
-static bool MoveBox_Moved(MoveBox *me)
-{
-    return me->moved;
-}
-static bool MoveBox_ShouldHide(MoveBox *me)
-{
-    return me->should_hide;
-}
-
-static int MoveBox_X(MoveBox *me)
-{
-    return me->x;
-}
-
-static int MoveBox_Y(MoveBox *me)
-{
-    return me->y;
-}
-
-static int MoveBox_CSize(MoveBox *me)
-{
-    return me->csize;
-}
-
-static void MoveBox_SetPos(MoveBox *me, int x, int y)
-{
-    me->x = x;
-    me->y = y;
-}
-
-static void MoveBox_SetCSize(MoveBox *me, int csize)
-{
-    me->csize = csize;
-}
-
-static void MoveBox__Draw(MoveBox *me)  // private
-{
-    int width = me->base_width + me->csize * 16 + 1;
-    int depth = me->base_depth + me->csize * 16 + 1;
-    int x = me->x;
-    int y = me->y;
-
-    getrow(x, y,         width, &me->t[0]);
-    getrow(x, y+depth-1, width, &me->b[0]);
-
-    vgetrow(x,         y, depth, &me->l[0]);
-    vgetrow(x+width-1, y, depth, &me->r[0]);
-
-    hdline(x, y,         width);
-    hdline(x, y+depth-1, width);
-
-    vdline(x,         y, depth);
-    vdline(x+width-1, y, depth);
-}
-
-static void MoveBox__Erase(MoveBox *me)   // private
-{
-    int width = me->base_width + me->csize * 16 + 1;
-    int depth = me->base_depth + me->csize * 16 + 1;
-
-    vputrow(me->x,         me->y, depth, &me->l[0]);
-    vputrow(me->x+width-1, me->y, depth, &me->r[0]);
-
-    putrow(me->x, me->y,         width, &me->t[0]);
-    putrow(me->x, me->y+depth-1, width, &me->b[0]);
-}
-
-static void MoveBox__Move(MoveBox *me, int key)
-{
-    bool done  = false;
-    bool first = true;
-    int xoff = 0;
-    int yoff = 0;
-
-    while (!done)
-    {
-        switch (key)
-        {
-        case ID_KEY_CTL_RIGHT_ARROW:
-            xoff += BOX_INC*4;
-            break;
-        case ID_KEY_RIGHT_ARROW:
-            xoff += BOX_INC;
-            break;
-        case ID_KEY_CTL_LEFT_ARROW:
-            xoff -= BOX_INC*4;
-            break;
-        case ID_KEY_LEFT_ARROW:
-            xoff -= BOX_INC;
-            break;
-        case ID_KEY_CTL_DOWN_ARROW:
-            yoff += BOX_INC*4;
-            break;
-        case ID_KEY_DOWN_ARROW:
-            yoff += BOX_INC;
-            break;
-        case ID_KEY_CTL_UP_ARROW:
-            yoff -= BOX_INC*4;
-            break;
-        case ID_KEY_UP_ARROW:
-            yoff -= BOX_INC;
-            break;
-
-        default:
-            done = true;
-        }
-
-        if (!done)
-        {
-            if (!first)
-            {
-                driver_get_key();       // delete key from buffer
-            }
-            else
-            {
-                first = false;
-            }
-            key = driver_key_pressed();   // peek at the next one...
-        }
-    }
-
-    xoff += me->x;
-    yoff += me->y;   // (xoff,yoff) = new position
-
-    if (xoff < 0)
-    {
-        xoff = 0;
-    }
-    if (yoff < 0)
-    {
-        yoff = 0;
-    }
-
-    if (xoff+me->base_width+me->csize*16+1 > g_screen_x_dots)
-    {
-        xoff = g_screen_x_dots - (me->base_width+me->csize*16+1);
-    }
-
-    if (yoff+me->base_depth+me->csize*16+1 > g_screen_y_dots)
-    {
-        yoff = g_screen_y_dots - (me->base_depth+me->csize*16+1);
-    }
-
-    if (xoff != me->x || yoff != me->y)
-    {
-        MoveBox__Erase(me);
-        me->y = yoff;
-        me->x = xoff;
-        MoveBox__Draw(me);
-    }
-}
-
-static bool MoveBox_Process(MoveBox *me)
-{
-    int     key;
-    int orig_x = me->x;
-    int orig_y = me->y;
-    int orig_csize = me->csize;
-
-    MoveBox__Draw(me);
-
-#ifdef XFRACT
-    Cursor_StartMouseTracking();
-#endif
-    while (true)
-    {
-        Cursor_WaitKey();
-        key = driver_get_key();
-
-        if (key == ID_KEY_ENTER || key == ID_KEY_ENTER_2 || key == ID_KEY_ESC || key == 'H' || key == 'h')
-        {
-            if (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
-            {
-                me->moved = true;
-            }
-            else
-            {
-                me->moved = false;
-            }
-            break;
-        }
-
-        switch (key)
-        {
-        case ID_KEY_UP_ARROW:
-        case ID_KEY_DOWN_ARROW:
-        case ID_KEY_LEFT_ARROW:
-        case ID_KEY_RIGHT_ARROW:
-        case ID_KEY_CTL_UP_ARROW:
-        case ID_KEY_CTL_DOWN_ARROW:
-        case ID_KEY_CTL_LEFT_ARROW:
-        case ID_KEY_CTL_RIGHT_ARROW:
-            MoveBox__Move(me, key);
-            break;
-
-        case ID_KEY_PAGE_UP:   // shrink
-            if (me->csize > CSIZE_MIN)
-            {
-                int t = me->csize - CSIZE_INC;
-                int change;
-
-                if (t < CSIZE_MIN)
-                {
-                    t = CSIZE_MIN;
-                }
-
-                MoveBox__Erase(me);
-
-                change = me->csize - t;
-                me->csize = t;
-                me->x += (change*16) / 2;
-                me->y += (change*16) / 2;
-                MoveBox__Draw(me);
-            }
-            break;
-
-        case ID_KEY_PAGE_DOWN:   // grow
-        {
-            int max_width = std::min(g_screen_x_dots, MAX_WIDTH);
-
-            if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < g_screen_y_dots
-                && me->base_width+(me->csize+CSIZE_INC)*16+1 < max_width)
-            {
-                MoveBox__Erase(me);
-                me->x -= (CSIZE_INC*16) / 2;
-                me->y -= (CSIZE_INC*16) / 2;
-                me->csize += CSIZE_INC;
-                if (me->y+me->base_depth+me->csize*16+1 > g_screen_y_dots)
-                {
-                    me->y = g_screen_y_dots - (me->base_depth+me->csize*16+1);
-                }
-                if (me->x+me->base_width+me->csize*16+1 > max_width)
-                {
-                    me->x = max_width - (me->base_width+me->csize*16+1);
-                }
-                if (me->y < 0)
-                {
-                    me->y = 0;
-                }
-                if (me->x < 0)
-                {
-                    me->x = 0;
-                }
-                MoveBox__Draw(me);
-            }
-        }
-        break;
-        }
-    }
-
-#ifdef XFRACT
-    Cursor_EndMouseTracking();
-#endif
-
-    MoveBox__Erase(me);
-
-    me->should_hide = key == 'H' || key == 'h';
-
-    return key != ID_KEY_ESC;
 }
 
 // public:
@@ -2172,18 +2138,18 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         }
         Cursor_Hide();
         PalTable__RestoreRect(me);
-        MoveBox_SetPos(me->movebox, me->x, me->y);
-        MoveBox_SetCSize(me->movebox, me->csize);
-        if (MoveBox_Process(me->movebox))
+        me->movebox->set_pos(me->x, me->y);
+        me->movebox->set_csize(me->csize);
+        if (me->movebox->process())
         {
-            if (MoveBox_ShouldHide(me->movebox))
+            if (me->movebox->should_hide())
             {
                 PalTable_SetHidden(me, true);
             }
-            else if (MoveBox_Moved(me->movebox))
+            else if (me->movebox->moved())
             {
-                PalTable__SetPos(me, MoveBox_X(me->movebox), MoveBox_Y(me->movebox));
-                PalTable__SetCSize(me, MoveBox_CSize(me->movebox));
+                PalTable__SetPos(me, me->movebox->x(), me->movebox->y());
+                PalTable__SetCSize(me, me->movebox->csize());
                 PalTable__SaveRect(me);
             }
         }
@@ -2815,7 +2781,7 @@ static void PalTable_Construct(PalTable *me)
 
     me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
     me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
-    me->movebox = MoveBox_Construct(0, 0, 0, PalTable_PALX+1, PalTable_PALY+1);
+    me->movebox = new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1);
     me->active      = 0;
     me->curr[0]     = 1;
     me->curr[1]     = 1;
@@ -2902,7 +2868,7 @@ static void PalTable_Destroy(PalTable *me)
 
     RGBEditor_Destroy(me->rgb[0]);
     RGBEditor_Destroy(me->rgb[1]);
-    MoveBox_Destroy(me->movebox);
+    delete me->movebox;
 }
 
 static void PalTable_Process(PalTable *me)
@@ -2923,18 +2889,18 @@ static void PalTable_Process(PalTable *me)
 
     if (!me->hidden)
     {
-        MoveBox_SetPos(me->movebox, me->x, me->y);
-        MoveBox_SetCSize(me->movebox, me->csize);
-        if (!MoveBox_Process(me->movebox))
+        me->movebox->set_pos(me->x, me->y);
+        me->movebox->set_csize(me->csize);
+        if (!me->movebox->process())
         {
             setpalrange(0, g_colors, me->pal);
             return ;
         }
 
-        PalTable__SetPos(me, MoveBox_X(me->movebox), MoveBox_Y(me->movebox));
-        PalTable__SetCSize(me, MoveBox_CSize(me->movebox));
+        PalTable__SetPos(me, me->movebox->x(), me->movebox->y());
+        PalTable__SetCSize(me, me->movebox->csize());
 
-        if (MoveBox_ShouldHide(me->movebox))
+        if (me->movebox->should_hide())
         {
             PalTable_SetHidden(me, true);
             s_reserve_colors = false;
