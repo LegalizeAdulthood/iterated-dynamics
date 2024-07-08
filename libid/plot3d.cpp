@@ -25,20 +25,20 @@
 #define PAL_MAGENTA 3
 
 stereo_images g_which_image;
-int g_xx_adjust1;
-int g_yy_adjust1;
-int g_eye_separation = 0;
-int g_glasses_type = 0;
-int g_x_shift1;
-int g_y_shift1;
-int g_adjust_3d_x = 0;
-int g_adjust_3d_y = 0;
-int g_red_crop_left   = 4;
-int g_red_crop_right  = 0;
-int g_blue_crop_left  = 0;
-int g_blue_crop_right = 4;
-int g_red_bright      = 80;
-int g_blue_bright     = 100;
+int g_xx_adjust1{};
+int g_yy_adjust1{};
+int g_eye_separation{};
+int g_glasses_type{};
+int g_x_shift1{};
+int g_y_shift1{};
+int g_adjust_3d_x{};
+int g_adjust_3d_y{};
+int g_red_crop_left{4};
+int g_red_crop_right{};
+int g_blue_crop_left{};
+int g_blue_crop_right{4};
+int g_red_bright{80};
+int g_blue_bright{100};
 
 static int red_local_left;
 static int red_local_right;
