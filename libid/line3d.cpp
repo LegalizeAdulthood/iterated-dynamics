@@ -82,62 +82,62 @@ static void putminmax(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
 static void T_clipcolor(int, int, int);
 static void vdraw_line(double *, double *, int color);
+static void File_Error(char const *File_Name1, int ERROR);
 
 // static variables
-static void (*s_fill_plot)(int x, int y, int color){};     //
-static void (*s_normal_plot)(int x, int y, int color){};   //
-static float s_delta_phi{};                                // increment of latitude, longitude
-static double rscale{};                                    // surface roughness factor
-static long xcenter{}, ycenter{};                          // circle center
-static double sclx{}, scly{}, sclz{};                      // scale factors
-static double R{};                                         // radius values
-static double Rfactor{};                                   // for intermediate calculation
-static LMATRIX llm{};                                      // ""
-static LVECTOR lview{};                                    // for perspective views
-static double zcutoff{};                                   // perspective backside cutoff value
-static float twocosdeltaphi{};                             //
-static float cosphi{}, sinphi{};                           // precalculated sin/cos of longitude
-static float oldcosphi1{}, oldsinphi1{};                   //
-static float oldcosphi2{}, oldsinphi2{};                   //
-static std::vector<BYTE> fraction;                         // float version of pixels array
-static float min_xyz[3]{}, max_xyz[3]{};                   // For Raytrace output
-static int line_length1{};                                 //
-static int T_header_24 = 18;                               // Size of current Targa-24 header
-static std::FILE *File_Ptr1{};                             //
-static unsigned int IAmbient{};                            //
-static int rand_factor{};                                  //
-static int HAZE_MULT{};                                    //
-static void File_Error(char const *File_Name1, int ERROR); //
-static BYTE T24 = 24;                                      //
-static BYTE T32 = 32;                                      //
-static BYTE upr_lwr[4]{};                                  //
-static bool T_Safe{};                          // Original Targa Image successfully copied to targa_temp
-static VECTOR light_direction{};               //
-static BYTE Real_Color{};                      // Actual color of cur pixel
-static int RO{}, CO{}, CO_MAX{};               // For use in Acrospin support
-static int localpreviewfactor{};               //
-static int zcoord = 256;                       //
-static double aspect{};                        // aspect ratio
-static int evenoddrow{};                       //
-static std::vector<float> sinthetaarray;       // all sine thetas go here
-static std::vector<float> costhetaarray;       // all cosine thetas go here
-static double rXrscale{};                      // precalculation factor
-static bool persp{};                           // flag for indicating perspective transformations
-static point p1{}, p2{}, p3{};                 //
-static f_point f_bad{};                        // out of range value
-static point bad{};                            // out of range value
-static long num_tris{};                        // number of triangles output to ray trace file
-static std::vector<f_point> f_lastrow;         //
-static int Real_V{};                           // Actual value of V for fillytpe>4 monochrome images
-static int error{};                            //
-static std::string targa_temp("fractemp.tga"); //
-static int P = 250;                            // Perspective dist used when viewing light vector
-static int const bad_check = -3000;            // check values against this to determine if good
-static std::vector<point> lastrow;             // this array remembers the previous line
-static std::vector<minmax> minmax_x;           // array of min and max x values used in triangle fill
-static VECTOR cross{};                         //
-static VECTOR tmpcross{};                      //
-static point oldlast{};                        // old pixels
+static void (*s_fill_plot)(int x, int y, int color){};   //
+static void (*s_normal_plot)(int x, int y, int color){}; //
+static float s_delta_phi{};                              // increment of latitude, longitude
+static double s_r_scale{};                               // surface roughness factor
+static long s_x_center{}, s_y_center{};                  // circle center
+static double s_scale_x{}, s_scale_y{}, s_scale_z{};     // scale factors
+static double s_radius{};                                // radius values
+static double s_radius_factor{};                         // for intermediate calculation
+static LMATRIX s_llm{};                                  // ""
+static LVECTOR s_l_view{};                               // for perspective views
+static double s_z_cutoff{};                              // perspective backside cutoff value
+static float s_two_cos_delta_phi{};                      //
+static float s_cos_phi{}, s_sin_phi{};                   // precalculated sin/cos of longitude
+static float s_old_cos_phi1{}, s_old_sin_phi1{};         //
+static float s_old_cos_phi2{}, s_old_sin_phi2{};         //
+static std::vector<BYTE> s_fraction;                     // float version of pixels array
+static float s_min_xyz[3]{}, s_max_xyz[3]{};             // For Raytrace output
+static int s_line_length1{};                             //
+static int s_targa_header_24 = 18;                       // Size of current Targa-24 header
+static std::FILE *s_file_ptr1{};                         //
+static unsigned int s_i_ambient{};                       //
+static int s_rand_factor{};                              //
+static int s_haze_mult{};                                //
+static BYTE s_t24 = 24;                                  //
+static BYTE s_t32 = 32;                                  //
+static BYTE s_upr_lwr[4]{};                              //
+static bool s_t_safe{};                          // Original Targa Image successfully copied to targa_temp
+static VECTOR s_light_direction{};               //
+static BYTE s_real_color{};                      // Actual color of cur pixel
+static int s_ro{}, s_co{}, s_co_max{};           // For use in Acrospin support
+static int s_local_preview_factor{};             //
+static int s_z_coord = 256;                      //
+static double s_aspect{};                        // aspect ratio
+static int s_even_odd_row{};                     //
+static std::vector<float> s_sin_theta_array;     // all sine thetas go here
+static std::vector<float> s_cos_theta_array;     // all cosine thetas go here
+static double s_rXr_scale{};                     // precalculation factor
+static bool s_persp{};                           // flag for indicating perspective transformations
+static point s_p1{}, s_p2{}, s_p3{};             //
+static f_point s_f_bad{};                        // out of range value
+static point s_bad{};                            // out of range value
+static long s_num_tris{};                        // number of triangles output to ray trace file
+static std::vector<f_point> s_f_last_row;        //
+static int s_real_v{};                           // Actual value of V for fillytpe>4 monochrome images
+static int s_error{};                            //
+static std::string s_targa_temp("fractemp.tga"); //
+static int s_p = 250;                            // Perspective dist used when viewing light vector
+static int const s_bad_check = -3000;            // check values against this to determine if good
+static std::vector<point> s_last_row;            // this array remembers the previous line
+static std::vector<minmax> s_min_max_x;          // array of min and max x values used in triangle fill
+static VECTOR s_cross{};                         //
+static VECTOR s_tmp_cross{};                     //
+static point s_old_last{};                       // old pixels
 
 // global variables defined here
 void (*g_standard_plot)(int, int, int);
@@ -230,19 +230,19 @@ int line3d(BYTE * pixels, unsigned linelen)
         crossavg[0] = 0;
         crossavg[1] = 0;
         crossavg[2] = 0;
-        xcenter = g_logical_screen_x_dots / 2 + g_x_shift;
-        xcenter0 = (int) xcenter;
-        ycenter = g_logical_screen_y_dots / 2 - g_y_shift;
-        ycenter0 = (int) ycenter;
+        s_x_center = g_logical_screen_x_dots / 2 + g_x_shift;
+        xcenter0 = (int) s_x_center;
+        s_y_center = g_logical_screen_y_dots / 2 - g_y_shift;
+        ycenter0 = (int) s_y_center;
     }
     // make sure these pixel coordinates are out of range
-    old = bad;
-    f_old = f_bad;
+    old = s_bad;
+    f_old = s_f_bad;
 
     // copies pixels buffer to float type fraction buffer for fill purposes
     if (g_potential_16bit)
     {
-        if (set_pixel_buff(pixels, &fraction[0], linelen))
+        if (set_pixel_buff(pixels, &s_fraction[0], linelen))
         {
             return 0;
         }
@@ -265,7 +265,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     crossnotinit = true;
     col = 0;
 
-    CO = 0;
+    s_co = 0;
 
     //***********************************************************************
     // This section of code allows the operation of a preview mode when the
@@ -281,11 +281,11 @@ int line3d(BYTE * pixels, unsigned linelen)
     {
         if (g_haze && g_targa_out)
         {
-            HAZE_MULT = (int)(g_haze * (
+            s_haze_mult = (int)(g_haze * (
                                   (float)((long)(g_logical_screen_y_dots - 1 - g_current_row) *
                                           (long)(g_logical_screen_y_dots - 1 - g_current_row)) /
                                   (float)((long)(g_logical_screen_y_dots - 1) * (long)(g_logical_screen_y_dots - 1))));
-            HAZE_MULT = 100 - HAZE_MULT;
+            s_haze_mult = 100 - s_haze_mult;
         }
     }
 
@@ -294,14 +294,14 @@ int line3d(BYTE * pixels, unsigned linelen)
         g_preview_factor = std::min(g_logical_screen_y_dots - 1, lastdot);
     }
 
-    localpreviewfactor = g_logical_screen_y_dots / g_preview_factor;
+    s_local_preview_factor = g_logical_screen_y_dots / g_preview_factor;
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
     // Draw mod preview lines
     if ((g_raytrace_format != raytrace_formats::none || g_preview || g_fill_type < fill_type::POINTS) //
         && g_current_row != g_logical_screen_y_dots - 1                                               //
-        && g_current_row % localpreviewfactor                                                         //
+        && g_current_row % s_local_preview_factor                                                         //
         && !(g_raytrace_format == raytrace_formats::none                                              //
                && g_fill_type > fill_type::SOLID_FILL                                                 //
                && g_current_row == 1))
@@ -326,19 +326,19 @@ int line3d(BYTE * pixels, unsigned linelen)
         if ((g_raytrace_format != raytrace_formats::none || g_preview || g_fill_type < fill_type::POINTS)
             && (col != lastdot)             // if this is not the last col
                                             // if not the 1st or mod factor col
-            && (col % (int)(aspect * localpreviewfactor))
+            && (col % (int)(s_aspect * s_local_preview_factor))
             && !(g_raytrace_format == raytrace_formats::none && g_fill_type > fill_type::SOLID_FILL && col == 1))
         {
             goto loopbottom;
         }
 
-        Real_Color = pixels[col];
-        cur.color = Real_Color;
+        s_real_color = pixels[col];
+        cur.color = s_real_color;
         f_cur.color = (float) cur.color;
 
         if (g_raytrace_format != raytrace_formats::none|| g_preview || g_fill_type < fill_type::POINTS)
         {
-            next = (int)(col + aspect * localpreviewfactor);
+            next = (int)(col + s_aspect * s_local_preview_factor);
             if (next == col)
             {
                 next = col + 1;
@@ -355,24 +355,24 @@ int line3d(BYTE * pixels, unsigned linelen)
 
         if (cur.color > 0 && cur.color < g_water_line)
         {
-            Real_Color = (BYTE) g_water_line;
-            cur.color = Real_Color;
+            s_real_color = (BYTE) g_water_line;
+            cur.color = s_real_color;
             f_cur.color = (float) cur.color;  // "lake"
         }
         else if (g_potential_16bit)
         {
-            f_cur.color += ((float) fraction[col]) / (float)(1 << 8);
+            f_cur.color += ((float) s_fraction[col]) / (float)(1 << 8);
         }
 
         if (g_sphere)            // sphere case
         {
-            sintheta = sinthetaarray[col];
-            costheta = costhetaarray[col];
+            sintheta = s_sin_theta_array[col];
+            costheta = s_cos_theta_array[col];
 
-            if (sinphi < 0 && !(g_raytrace_format != raytrace_formats::none|| g_fill_type < fill_type::POINTS))
+            if (s_sin_phi < 0 && !(g_raytrace_format != raytrace_formats::none|| g_fill_type < fill_type::POINTS))
             {
-                cur = bad;
-                f_cur = f_bad;
+                cur = s_bad;
+                f_cur = s_f_bad;
                 goto loopbottom; // another goto !
             }
             //**********************************************************
@@ -387,49 +387,49 @@ int line3d(BYTE * pixels, unsigned linelen)
             // cur.y = ydots/2 + scly*r*costheta*cosphi - yup ;
             //**********************************************************
 
-            if (rscale < 0.0)
+            if (s_r_scale < 0.0)
             {
-                r = R + Rfactor * (double) f_cur.color * costheta;
+                r = s_radius + s_radius_factor * (double) f_cur.color * costheta;
             }
-            else if (rscale > 0.0)
+            else if (s_r_scale > 0.0)
             {
-                r = R - rXrscale + Rfactor * (double) f_cur.color * costheta;
+                r = s_radius - s_rXr_scale + s_radius_factor * (double) f_cur.color * costheta;
             }
             else
             {
-                r = R;
+                r = s_radius;
             }
             // Allow Ray trace to go through so display ok
-            if (persp || g_raytrace_format != raytrace_formats::none)
+            if (s_persp || g_raytrace_format != raytrace_formats::none)
             {
                 // how do lv[] and cur and f_cur all relate
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
-                lv[2] = (long)(-R - r * costheta * sinphi);      // z
-                if ((lv[2] > zcutoff) && !(g_fill_type < fill_type::POINTS))
+                lv[2] = (long)(-s_radius - r * costheta * s_sin_phi);      // z
+                if ((lv[2] > s_z_cutoff) && !(g_fill_type < fill_type::POINTS))
                 {
-                    cur = bad;
-                    f_cur = f_bad;
+                    cur = s_bad;
+                    f_cur = s_f_bad;
                     goto loopbottom;      // another goto !
                 }
-                lv[0] = (long)(xcenter + sintheta * sclx * r);   // x
-                lv[1] = (long)(ycenter + costheta * cosphi * scly * r);  // y
+                lv[0] = (long)(s_x_center + sintheta * s_scale_x * r);   // x
+                lv[1] = (long)(s_y_center + costheta * s_cos_phi * s_scale_y * r);  // y
 
                 if ((g_fill_type >= fill_type::LIGHT_SOURCE_BEFORE) || g_raytrace_format != raytrace_formats::none)
                 {
                     // calculate illumination normal before persp
 
                     r0 = r / 65536L;
-                    f_cur.x = (float)(xcenter0 + sintheta * sclx * r0);
-                    f_cur.y = (float)(ycenter0 + costheta * cosphi * scly * r0);
-                    f_cur.color = (float)(-r0 * costheta * sinphi);
+                    f_cur.x = (float)(xcenter0 + sintheta * s_scale_x * r0);
+                    f_cur.y = (float)(ycenter0 + costheta * s_cos_phi * s_scale_y * r0);
+                    f_cur.color = (float)(-r0 * costheta * s_sin_phi);
                 }
                 if (!(g_user_float_flag || g_raytrace_format != raytrace_formats::none))
                 {
-                    if (longpersp(lv, lview, 16) == -1)
+                    if (longpersp(lv, s_l_view, 16) == -1)
                     {
-                        cur = bad;
-                        f_cur = f_bad;
+                        cur = s_bad;
+                        f_cur = s_f_bad;
                         goto loopbottom;   // another goto !
                     }
                     cur.x = (int)(((lv[0] + 32768L) >> 16) + g_xx_adjust);
@@ -452,13 +452,13 @@ int line3d(BYTE * pixels, unsigned linelen)
             else
             {
                 // Why the xx- and yyadjust here and not above?
-                f_cur.x = (float) (xcenter + sintheta*sclx*r + g_xx_adjust);
+                f_cur.x = (float) (s_x_center + sintheta*s_scale_x*r + g_xx_adjust);
                 cur.x = (int) f_cur.x;
-                f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + g_yy_adjust);
+                f_cur.y = (float)(s_y_center + costheta*s_cos_phi*s_scale_y*r + g_yy_adjust);
                 cur.y = (int) f_cur.y;
                 if (g_fill_type >= fill_type::LIGHT_SOURCE_BEFORE || g_raytrace_format != raytrace_formats::none)          // why do we do this for filltype>5?
                 {
-                    f_cur.color = (float)(-r * costheta * sinphi * sclz);
+                    f_cur.color = (float)(-r * costheta * s_sin_phi * s_scale_z);
                 }
                 v[2] = 0;               // Why do we do this?
                 v[1] = v[2];
@@ -493,10 +493,10 @@ int line3d(BYTE * pixels, unsigned linelen)
                     lv[2] = lv[2] << 16;
                 }
 
-                if (longvmultpersp(lv, llm, lv0, lv, lview, 16) == -1)
+                if (longvmultpersp(lv, s_llm, lv0, lv, s_l_view, 16) == -1)
                 {
-                    cur = bad;
-                    f_cur = f_bad;
+                    cur = s_bad;
+                    f_cur = s_f_bad;
                     goto loopbottom;
                 }
 
@@ -537,7 +537,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     }
                 }
 
-                if (persp && g_raytrace_format == raytrace_formats::none)
+                if (s_persp && g_raytrace_format == raytrace_formats::none)
                 {
                     perspective(v);
                 }
@@ -557,7 +557,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             if (cur.color > g_water_line)
             {
                 RND = rand15() >> 8;     // 7-bit number
-                RND = RND * RND >> rand_factor;  // n-bit number
+                RND = RND * RND >> s_rand_factor;  // n-bit number
 
                 if (std::rand() & 1)
                 {
@@ -576,90 +576,90 @@ int line3d(BYTE * pixels, unsigned linelen)
                 {
                     cur.color = cur.color + RND;
                 }
-                Real_Color = (BYTE)cur.color;
+                s_real_color = (BYTE)cur.color;
             }
         }
 
         if (g_raytrace_format != raytrace_formats::none)
         {
             if (col && g_current_row
-                && old.x > bad_check
-                && old.x < (g_logical_screen_x_dots - bad_check)
-                && lastrow[col].x > bad_check
-                && lastrow[col].y > bad_check
-                && lastrow[col].x < (g_logical_screen_x_dots - bad_check)
-                && lastrow[col].y < (g_logical_screen_y_dots - bad_check))
+                && old.x > s_bad_check
+                && old.x < (g_logical_screen_x_dots - s_bad_check)
+                && s_last_row[col].x > s_bad_check
+                && s_last_row[col].y > s_bad_check
+                && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
+                && s_last_row[col].y < (g_logical_screen_y_dots - s_bad_check))
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
                 if (f_cur.color == f_water
-                    && f_lastrow[col].color == f_water
-                    && f_lastrow[next].color == f_water)
+                    && s_f_last_row[col].color == f_water
+                    && s_f_last_row[next].color == f_water)
                 {
                     goto loopbottom;
                 }
 
                 if (g_raytrace_format != raytrace_formats::acrospin)      // Output the vertex info
                 {
-                    out_triangle(f_cur, f_old, f_lastrow[col],
-                                 cur.color, old.color, lastrow[col].color);
+                    out_triangle(f_cur, f_old, s_f_last_row[col],
+                                 cur.color, old.color, s_last_row[col].color);
                 }
 
                 tout = true;
 
                 driver_draw_line(old.x, old.y, cur.x, cur.y, old.color);
-                driver_draw_line(old.x, old.y, lastrow[col].x,
-                                 lastrow[col].y, old.color);
-                driver_draw_line(lastrow[col].x, lastrow[col].y,
+                driver_draw_line(old.x, old.y, s_last_row[col].x,
+                                 s_last_row[col].y, old.color);
+                driver_draw_line(s_last_row[col].x, s_last_row[col].y,
                                  cur.x, cur.y, cur.color);
-                num_tris++;
+                s_num_tris++;
             }
 
             if (col < lastdot && g_current_row
-                && lastrow[col].x > bad_check
-                && lastrow[col].y > bad_check
-                && lastrow[col].x < (g_logical_screen_x_dots - bad_check)
-                && lastrow[col].y < (g_logical_screen_y_dots - bad_check)
-                && lastrow[next].x > bad_check
-                && lastrow[next].y > bad_check
-                && lastrow[next].x < (g_logical_screen_x_dots - bad_check)
-                && lastrow[next].y < (g_logical_screen_y_dots - bad_check))
+                && s_last_row[col].x > s_bad_check
+                && s_last_row[col].y > s_bad_check
+                && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
+                && s_last_row[col].y < (g_logical_screen_y_dots - s_bad_check)
+                && s_last_row[next].x > s_bad_check
+                && s_last_row[next].y > s_bad_check
+                && s_last_row[next].x < (g_logical_screen_x_dots - s_bad_check)
+                && s_last_row[next].y < (g_logical_screen_y_dots - s_bad_check))
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
                 if (f_cur.color == f_water
-                    && f_lastrow[col].color == f_water
-                    && f_lastrow[next].color == f_water)
+                    && s_f_last_row[col].color == f_water
+                    && s_f_last_row[next].color == f_water)
                 {
                     goto loopbottom;
                 }
 
                 if (g_raytrace_format != raytrace_formats::acrospin)      // Output the vertex info
                 {
-                    out_triangle(f_cur, f_lastrow[col], f_lastrow[next],
-                                 cur.color, lastrow[col].color, lastrow[next].color);
+                    out_triangle(f_cur, s_f_last_row[col], s_f_last_row[next],
+                                 cur.color, s_last_row[col].color, s_last_row[next].color);
                 }
 
                 tout = true;
 
-                driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x, cur.y,
+                driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x, cur.y,
                                  cur.color);
-                driver_draw_line(lastrow[next].x, lastrow[next].y, cur.x, cur.y,
+                driver_draw_line(s_last_row[next].x, s_last_row[next].y, cur.x, cur.y,
                                  cur.color);
-                driver_draw_line(lastrow[next].x, lastrow[next].y, lastrow[col].x,
-                                 lastrow[col].y, lastrow[col].color);
-                num_tris++;
+                driver_draw_line(s_last_row[next].x, s_last_row[next].y, s_last_row[col].x,
+                                 s_last_row[col].y, s_last_row[col].color);
+                s_num_tris++;
             }
 
             if (g_raytrace_format == raytrace_formats::acrospin)       // Output vertex info for Acrospin
             {
-                std::fprintf(File_Ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
-                        f_cur.x, f_cur.y, f_cur.color, RO, CO);
-                if (CO > CO_MAX)
+                std::fprintf(s_file_ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
+                        f_cur.x, f_cur.y, f_cur.color, s_ro, s_co);
+                if (s_co > s_co_max)
                 {
-                    CO_MAX = CO;
+                    s_co_max = s_co;
                 }
-                CO++;
+                s_co++;
             }
             goto loopbottom;
         }
@@ -668,18 +668,18 @@ int line3d(BYTE * pixels, unsigned linelen)
         {
         case fill_type::SURFACE_GRID:
             if (col
-                && old.x > bad_check
-                && old.x < (g_logical_screen_x_dots - bad_check))
+                && old.x > s_bad_check
+                && old.x < (g_logical_screen_x_dots - s_bad_check))
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
             if (g_current_row
-                && lastrow[col].x > bad_check
-                && lastrow[col].y > bad_check
-                && lastrow[col].x < (g_logical_screen_x_dots - bad_check)
-                && lastrow[col].y < (g_logical_screen_y_dots - bad_check))
+                && s_last_row[col].x > s_bad_check
+                && s_last_row[col].y > s_bad_check
+                && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
+                && s_last_row[col].y < (g_logical_screen_y_dots - s_bad_check))
             {
-                driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x,
+                driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x,
                                  cur.y, cur.color);
             }
             break;
@@ -690,8 +690,8 @@ int line3d(BYTE * pixels, unsigned linelen)
 
         case fill_type::WIRE_FRAME:                // connect-a-dot
             if (old.x < g_logical_screen_x_dots && col
-                && old.x > bad_check
-                && old.y > bad_check)        // Don't draw from old to cur on col 0
+                && old.x > s_bad_check
+                && old.y > s_bad_check)        // Don't draw from old to cur on col 0
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
@@ -714,35 +714,35 @@ int line3d(BYTE * pixels, unsigned linelen)
 
             if (g_current_row && !col)
             {
-                putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
             }
             if (g_current_row && col)  // skip first row and first column
             {
                 if (col == 1)
                 {
-                    putatriangle(lastrow[col], oldlast, old, old.color);
+                    putatriangle(s_last_row[col], s_old_last, old, old.color);
                 }
 
                 if (col < lastdot)
                 {
-                    putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                    putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
-                putatriangle(old, lastrow[col], cur, cur.color);
+                putatriangle(old, s_last_row[col], cur, cur.color);
             }
             break;
 
         case fill_type::SOLID_FILL:
             if (g_sphere)
             {
-                if (persp)
+                if (s_persp)
                 {
-                    old.x = (int)(xcenter >> 16);
-                    old.y = (int)(ycenter >> 16);
+                    old.x = (int)(s_x_center >> 16);
+                    old.y = (int)(s_y_center >> 16);
                 }
                 else
                 {
-                    old.x = (int) xcenter;
-                    old.y = (int) ycenter;
+                    old.x = (int) s_x_center;
+                    old.y = (int) s_y_center;
                 }
             }
             else
@@ -756,10 +756,10 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[1] = lv[1] << 16;
                 // Since 0, unnecessary lv[2] = lv[2] << 16;
 
-                if (longvmultpersp(lv, llm, lv0, lv, lview, 16))
+                if (longvmultpersp(lv, s_llm, lv0, lv, s_l_view, 16))
                 {
-                    cur = bad;
-                    f_cur = f_bad;
+                    cur = s_bad;
+                    f_cur = s_f_bad;
                     goto loopbottom;
                 }
 
@@ -791,8 +791,8 @@ int line3d(BYTE * pixels, unsigned linelen)
             // light-source modulated fill
             if (g_current_row && col)  // skip first row and first column
             {
-                if (f_cur.color < bad_check || f_old.color < bad_check ||
-                        f_lastrow[col].color < bad_check)
+                if (f_cur.color < s_bad_check || f_old.color < s_bad_check ||
+                        s_f_last_row[col].color < s_bad_check)
                 {
                     break;
                 }
@@ -801,20 +801,20 @@ int line3d(BYTE * pixels, unsigned linelen)
                 v1[1] = f_cur.y - f_old.y;
                 v1[2] = f_cur.color - f_old.color;
 
-                v2[0] = f_lastrow[col].x - f_cur.x;
-                v2[1] = f_lastrow[col].y - f_cur.y;
-                v2[2] = f_lastrow[col].color - f_cur.color;
+                v2[0] = s_f_last_row[col].x - f_cur.x;
+                v2[1] = s_f_last_row[col].y - f_cur.y;
+                v2[2] = s_f_last_row[col].color - f_cur.color;
 
-                cross_product(v1, v2, cross);
+                cross_product(v1, v2, s_cross);
 
                 // normalize cross - and check if non-zero
-                if (normalize_vector(cross))
+                if (normalize_vector(s_cross))
                 {
                     if (g_debug_flag != debug_flags::none)
                     {
                         stopmsg("debug, cur.color=bad");
                     }
-                    f_cur.color = (float) bad.color;
+                    f_cur.color = (float) s_bad.color;
                     cur.color = (int) f_cur.color;
                 }
                 else
@@ -825,21 +825,21 @@ int line3d(BYTE * pixels, unsigned linelen)
                         if (crossnotinit)
                         {
                             // initialize array of old normal vectors
-                            crossavg[0] = cross[0];
-                            crossavg[1] = cross[1];
-                            crossavg[2] = cross[2];
+                            crossavg[0] = s_cross[0];
+                            crossavg[1] = s_cross[1];
+                            crossavg[2] = s_cross[2];
                             crossnotinit = false;
                         }
-                        tmpcross[0] = (crossavg[0] * g_light_avg + cross[0]) /
+                        s_tmp_cross[0] = (crossavg[0] * g_light_avg + s_cross[0]) /
                                       (g_light_avg + 1);
-                        tmpcross[1] = (crossavg[1] * g_light_avg + cross[1]) /
+                        s_tmp_cross[1] = (crossavg[1] * g_light_avg + s_cross[1]) /
                                       (g_light_avg + 1);
-                        tmpcross[2] = (crossavg[2] * g_light_avg + cross[2]) /
+                        s_tmp_cross[2] = (crossavg[2] * g_light_avg + s_cross[2]) /
                                       (g_light_avg + 1);
-                        cross[0] = tmpcross[0];
-                        cross[1] = tmpcross[1];
-                        cross[2] = tmpcross[2];
-                        if (normalize_vector(cross))
+                        s_cross[0] = s_tmp_cross[0];
+                        s_cross[1] = s_tmp_cross[1];
+                        s_cross[2] = s_tmp_cross[2];
+                        if (normalize_vector(s_cross))
                         {
                             // this shouldn't happen
                             if (g_debug_flag != debug_flags::none)
@@ -850,15 +850,15 @@ int line3d(BYTE * pixels, unsigned linelen)
                             cur.color = (int) f_cur.color;
                         }
                     }
-                    crossavg[0] = tmpcross[0];
-                    crossavg[1] = tmpcross[1];
-                    crossavg[2] = tmpcross[2];
+                    crossavg[0] = s_tmp_cross[0];
+                    crossavg[1] = s_tmp_cross[1];
+                    crossavg[2] = s_tmp_cross[2];
 
                     // dot product of unit vectors is cos of angle between
                     // we will use this value to shade surface
 
                     cur.color = (int)(1 + (g_colors - 2) *
-                                      (1.0 - dot_product(cross, light_direction)));
+                                      (1.0 - dot_product(s_cross, s_light_direction)));
                 }
                 /* if colors out of range, set them to min or max color index
                  * but avoid background index. This makes colors "opaque" so
@@ -879,7 +879,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // fix ragged left margin in preview
                 if (col == 1 && g_current_row > 1)
                 {
-                    putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                    putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
 
                 if (col < 2 || g_current_row < 2)         // don't have valid colors yet
@@ -889,9 +889,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                 if (col < lastdot)
                 {
-                    putatriangle(lastrow[next], lastrow[col], cur, cur.color);
+                    putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
-                putatriangle(old, lastrow[col], cur, cur.color);
+                putatriangle(old, s_last_row[col], cur, cur.color);
 
                 g_plot = g_standard_plot;
             }
@@ -901,21 +901,21 @@ loopbottom:
         if (g_raytrace_format != raytrace_formats::none || (g_fill_type != fill_type::POINTS && g_fill_type != fill_type::SOLID_FILL))
         {
             // for triangle and grid fill purposes
-            oldlast = lastrow[col];
-            lastrow[col] = cur;
-            old = lastrow[col];
+            s_old_last = s_last_row[col];
+            s_last_row[col] = cur;
+            old = s_last_row[col];
 
             // for illumination model purposes
-            f_lastrow[col] = f_cur;
-            f_old = f_lastrow[col];
+            s_f_last_row[col] = f_cur;
+            f_old = s_f_last_row[col];
             if (g_current_row && g_raytrace_format != raytrace_formats::none && col >= lastdot)
                 // if we're at the end of a row, close the object
             {
                 end_object(tout);
                 tout = false;
-                if (ferror(File_Ptr1))
+                if (ferror(s_file_ptr1))
                 {
-                    std::fclose(File_Ptr1);
+                    std::fclose(s_file_ptr1);
                     std::remove(g_light_name.c_str());
                     File_Error(g_raytrace_filename.c_str(), 2);
                     return -1;
@@ -924,7 +924,7 @@ loopbottom:
         }
         col++;
     }                         // End of while statement for plotting line
-    RO++;
+    s_ro++;
 reallythebottom:
 
     // stuff that HAS to be done, even in preview mode, goes here
@@ -933,17 +933,17 @@ reallythebottom:
         // incremental sin/cos phi calc
         if (g_current_row == 0)
         {
-            sinphi = oldsinphi2;
-            cosphi = oldcosphi2;
+            s_sin_phi = s_old_sin_phi2;
+            s_cos_phi = s_old_cos_phi2;
         }
         else
         {
-            sinphi = twocosdeltaphi * oldsinphi2 - oldsinphi1;
-            cosphi = twocosdeltaphi * oldcosphi2 - oldcosphi1;
-            oldsinphi1 = oldsinphi2;
-            oldsinphi2 = sinphi;
-            oldcosphi1 = oldcosphi2;
-            oldcosphi2 = cosphi;
+            s_sin_phi = s_two_cos_delta_phi * s_old_sin_phi2 - s_old_sin_phi1;
+            s_cos_phi = s_two_cos_delta_phi * s_old_cos_phi2 - s_old_cos_phi1;
+            s_old_sin_phi1 = s_old_sin_phi2;
+            s_old_sin_phi2 = s_sin_phi;
+            s_old_cos_phi1 = s_old_cos_phi2;
+            s_old_cos_phi2 = s_cos_phi;
         }
     }
     return 0;                  // decoder needs to know all is well !!!
@@ -995,7 +995,7 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
     S[1][2][1] = S[1][3][1];
     S[0][3][1] = S[1][2][1];
     S[0][2][1] = S[0][3][1];
-    S[1][3][2] = zcoord - 1;
+    S[1][3][2] = s_z_coord - 1;
     S[1][2][2] = S[1][3][2];
     S[1][1][2] = S[1][2][2];
     S[1][0][2] = S[1][1][2];
@@ -1059,7 +1059,7 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
 
     if (show)
     {
-        if (persp)
+        if (s_persp)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -1129,7 +1129,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
     // always use perspective to aid viewing
     temp = g_view[2];              // save perspective distance for a later restore
-    g_view[2] = -P * 300.0 / 100.0;
+    g_view[2] = -s_p * 300.0 / 100.0;
 
     for (int i = 0; i < 4; i++)
     {
@@ -1141,8 +1141,8 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     // Adjust for aspect
     for (int i = 0; i < 4; i++)
     {
-        S[0][i][0] = S[0][i][0] * aspect;
-        S[1][i][0] = S[1][i][0] * aspect;
+        S[0][i][0] = S[0][i][0] * s_aspect;
+        S[1][i][0] = S[1][i][0] * s_aspect;
     }
 
     // draw box connecting transformed points. NOTE order and COLORS
@@ -1185,8 +1185,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 4; i++)
         {
-            if (std::fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check
-                && std::fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
+            if (std::fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * s_bad_check
+                && std::fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * s_bad_check)
             {
                 vdraw_line(V[i], V[(i + 1) % 4], color);
             }
@@ -1197,8 +1197,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 3; i += 2)
         {
-            if (std::fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check
-                && std::fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
+            if (std::fabs(V[i][0] - V[i + 1][0]) < -2 * s_bad_check
+                && std::fabs(V[i][1] - V[i + 1][1]) < -2 * s_bad_check)
             {
                 vdraw_line(V[i], V[i + 1], color);
             }
@@ -1212,13 +1212,13 @@ static void putminmax(int x, int y, int /*color*/)
 {
     if (y >= 0 && y < g_logical_screen_y_dots)
     {
-        if (x < minmax_x[y].minx)
+        if (x < s_min_max_x[y].minx)
         {
-            minmax_x[y].minx = x;
+            s_min_max_x[y].minx = x;
         }
-        if (x > minmax_x[y].maxx)
+        if (x > s_min_max_x[y].maxx)
         {
-            minmax_x[y].maxx = x;
+            s_min_max_x[y].maxx = x;
         }
     }
 }
@@ -1242,51 +1242,51 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
         return;
     }
 
-    p1 = pt1;                    // needed by interpcolor
-    p2 = pt2;
-    p3 = pt3;
+    s_p1 = pt1;                    // needed by interpcolor
+    s_p2 = pt2;
+    s_p3 = pt3;
 
     // fast way if single point or single line
-    if (p1.y == p2.y && p1.x == p2.x)
+    if (s_p1.y == s_p2.y && s_p1.x == s_p2.x)
     {
         g_plot = s_fill_plot;
-        if (p1.y == p3.y && p1.x == p3.x)
+        if (s_p1.y == s_p3.y && s_p1.x == s_p3.x)
         {
-            (*g_plot)(p1.x, p1.y, color);
+            (*g_plot)(s_p1.x, s_p1.y, color);
         }
         else
         {
-            driver_draw_line(p1.x, p1.y, p3.x, p3.y, color);
+            driver_draw_line(s_p1.x, s_p1.y, s_p3.x, s_p3.y, color);
         }
         g_plot = s_normal_plot;
         return;
     }
-    else if ((p3.y == p1.y && p3.x == p1.x) || (p3.y == p2.y && p3.x == p2.x))
+    else if ((s_p3.y == s_p1.y && s_p3.x == s_p1.x) || (s_p3.y == s_p2.y && s_p3.x == s_p2.x))
     {
         g_plot = s_fill_plot;
-        driver_draw_line(p1.x, p1.y, p2.x, p2.y, color);
+        driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, color);
         g_plot = s_normal_plot;
         return;
     }
 
     // find min max y
-    maxy = p1.y;
+    maxy = s_p1.y;
     miny = maxy;
-    if (p2.y < miny)
+    if (s_p2.y < miny)
     {
-        miny = p2.y;
+        miny = s_p2.y;
     }
     else
     {
-        maxy = p2.y;
+        maxy = s_p2.y;
     }
-    if (p3.y < miny)
+    if (s_p3.y < miny)
     {
-        miny = p3.y;
+        miny = s_p3.y;
     }
-    else if (p3.y > maxy)
+    else if (s_p3.y > maxy)
     {
-        maxy = p3.y;
+        maxy = s_p3.y;
     }
 
     // only worried about values on screen
@@ -1301,22 +1301,22 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
 
     for (int y = miny; y <= maxy; y++)
     {
-        minmax_x[y].minx = (int) INT_MAX;
-        minmax_x[y].maxx = (int) INT_MIN;
+        s_min_max_x[y].minx = (int) INT_MAX;
+        s_min_max_x[y].maxx = (int) INT_MIN;
     }
 
     // set plot to "fake" plot function
     g_plot = putminmax;
 
     // build table of extreme x's of triangle
-    driver_draw_line(p1.x, p1.y, p2.x, p2.y, 0);
-    driver_draw_line(p2.x, p2.y, p3.x, p3.y, 0);
-    driver_draw_line(p3.x, p3.y, p1.x, p1.y, 0);
+    driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, 0);
+    driver_draw_line(s_p2.x, s_p2.y, s_p3.x, s_p3.y, 0);
+    driver_draw_line(s_p3.x, s_p3.y, s_p1.x, s_p1.y, 0);
 
     for (int y = miny; y <= maxy; y++)
     {
-        xlim = minmax_x[y].maxx;
-        for (int x = minmax_x[y].minx; x <= xlim; x++)
+        xlim = s_min_max_x[y].maxx;
+        for (int x = s_min_max_x[y].minx; x <= xlim; x++)
         {
             (*s_fill_plot)(x, y, color);
         }
@@ -1339,7 +1339,7 @@ static int offscreen(point pt)
             }
         }
     }
-    if (std::abs(pt.x) > 0 - bad_check || std::abs(pt.y) > 0 - bad_check)
+    if (std::abs(pt.x) > 0 - s_bad_check || std::abs(pt.y) > 0 - s_bad_check)
     {
         return 99;              // point is bad
     }
@@ -1411,26 +1411,26 @@ static void interpcolor(int x, int y, int color)
      * it uses ONLY additions (almost) and it DOES go to zero as the points
      * get close. */
 
-    d1 = std::abs(p1.x - x) + std::abs(p1.y - y);
-    d2 = std::abs(p2.x - x) + std::abs(p2.y - y);
-    d3 = std::abs(p3.x - x) + std::abs(p3.y - y);
+    d1 = std::abs(s_p1.x - x) + std::abs(s_p1.y - y);
+    d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
+    d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
 
     D = (d1 + d2 + d3) << 1;
     if (D)
     {
         /* calculate a weighted average of colors long casts prevent integer
            overflow. This can evaluate to zero */
-        color = (int)(((long)(d2 + d3) * (long) p1.color +
-                       (long)(d1 + d3) * (long) p2.color +
-                       (long)(d1 + d2) * (long) p3.color) / D);
+        color = (int)(((long)(d2 + d3) * (long) s_p1.color +
+                       (long)(d1 + d3) * (long) s_p2.color +
+                       (long)(d1 + d2) * (long) s_p3.color) / D);
     }
 
     if (0 <= x && x < g_logical_screen_x_dots
         && 0 <= y && y < g_logical_screen_y_dots
         && 0 <= color && color < g_colors
         && (g_transparent_color_3d[1] == 0
-            || (int) Real_Color > g_transparent_color_3d[1]
-            || g_transparent_color_3d[0] > (int) Real_Color))
+            || (int) s_real_color > g_transparent_color_3d[1]
+            || g_transparent_color_3d[0] > (int) s_real_color))
     {
         if (g_targa_out)
         {
@@ -1443,13 +1443,13 @@ static void interpcolor(int x, int y, int color)
 
         if (g_fill_type >= fill_type::LIGHT_SOURCE_BEFORE)
         {
-            if (Real_V && g_targa_out)
+            if (s_real_v && g_targa_out)
             {
                 color = D;
             }
             else
             {
-                color = (1 + (unsigned) color * IAmbient) / 256;
+                color = (1 + (unsigned) color * s_i_ambient) / 256;
                 if (color == 0)
                 {
                     color = 1;
@@ -1478,16 +1478,16 @@ int targa_color(int x, int y, int color)
 
     if (g_fill_type == fill_type::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_truecolor)
     {
-        Real_Color = (BYTE)color;       // So Targa gets interpolated color
+        s_real_color = (BYTE)color;       // So Targa gets interpolated color
     }
 
     switch (g_true_mode)
     {
     case true_color_mode::default_color:
     default:
-        RGB[0] = (BYTE)(g_dac_box[Real_Color][0] << 2); // Move color space to
-        RGB[1] = (BYTE)(g_dac_box[Real_Color][1] << 2); // 256 color primaries
-        RGB[2] = (BYTE)(g_dac_box[Real_Color][2] << 2); // from 64 colors
+        RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); // Move color space to
+        RGB[1] = (BYTE)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
+        RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); // from 64 colors
         break;
 
     case true_color_mode::iterate:
@@ -1504,30 +1504,30 @@ int targa_color(int x, int y, int color)
     if (g_fill_type > fill_type::SOLID_FILL && !(g_glasses_type == 1 || g_glasses_type == 2))
     {
         // Adjust for Ambient
-        V = (V * (65535L - (unsigned)(color * IAmbient))) / 65535L;
+        V = (V * (65535L - (unsigned)(color * s_i_ambient))) / 65535L;
     }
 
     if (g_haze)
     {
         // Haze lowers sat of colors
-        S = (unsigned long)(S * HAZE_MULT) / 100;
+        S = (unsigned long)(S * s_haze_mult) / 100;
         if (V >= 32640)           // Haze reduces contrast
         {
             V = V - 32640;
-            V = (unsigned long)((V * HAZE_MULT) / 100);
+            V = (unsigned long)((V * s_haze_mult) / 100);
             V = V + 32640;
         }
         else
         {
             V = 32640 - V;
-            V = (unsigned long)((V * HAZE_MULT) / 100);
+            V = (unsigned long)((V * s_haze_mult) / 100);
             V = 32640 - V;
         }
     }
     // Now lets convert it back to RGB. Original Hue, modified Sat and Val
     hsv_to_rgb(&RGB[0], &RGB[1], &RGB[2], H, S, V);
 
-    if (Real_V)
+    if (s_real_v)
     {
         V = (35 * (int) RGB[0] + 45 * (int) RGB[1] + 20 * (int) RGB[2]) / 100;
     }
@@ -1541,7 +1541,7 @@ int targa_color(int x, int y, int color)
 
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 {
-    if ((evenoddrow++ & 1) == 0) // even rows are color value
+    if ((s_even_odd_row++ & 1) == 0) // even rows are color value
     {
         for (int i = 0; i < (int) linelen; i++)         // add the fractional part in odd row
         {
@@ -1573,7 +1573,7 @@ static void File_Error(char const *File_Name1, int ERROR)
 {
     char msgbuf[200];
 
-    error = ERROR;
+    s_error = ERROR;
     switch (ERROR)
     {
     case 1:                      // Can't Open
@@ -1624,7 +1624,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
     // Write the header
     if (overlay)                   // We are overlaying a file
     {
-        for (int i = 0; i < T_header_24; i++)   // Copy the header from the Source
+        for (int i = 0; i < s_targa_header_24; i++)   // Copy the header from the Source
         {
             std::fputc(fgetc(Source), fps);
         }
@@ -1639,7 +1639,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
             {
                 set_upr_lwr();
                 std::fputc(4, fps); // make room to write an extra number
-                T_header_24 = 18 + 4;
+                s_targa_header_24 = 18 + 4;
             }
             else if (i == 2)
             {
@@ -1651,12 +1651,12 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
             }
         }
         // Write image size
-        for (BYTE &elem : upr_lwr)
+        for (BYTE &elem : s_upr_lwr)
         {
             std::fputc(elem, fps);
         }
-        std::fputc(T24, fps);          // Targa 24 file
-        std::fputc(T32, fps);          // Image at upper left
+        std::fputc(s_t24, fps);          // Targa 24 file
+        std::fputc(s_t32, fps);          // Image at upper left
         inc = 3;
     }
 
@@ -1671,7 +1671,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
     // Finished with the header, now lets work on the display area
     for (int i = 0; i < g_logical_screen_y_dots; i++)  // "clear the screen" (write to the disk)
     {
-        for (int j = 0; j < line_length1; j = j + inc)
+        for (int j = 0; j < s_line_length1; j = j + inc)
         {
             if (overlay)
             {
@@ -1703,7 +1703,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
         }
     }
 
-    if (targa_startdisk(fps, T_header_24) != 0)
+    if (targa_startdisk(fps, s_targa_header_24) != 0)
     {
         enddisk();
         dir_remove(g_working_dir, File_Name2);
@@ -1722,7 +1722,7 @@ bool targa_validate(char const *File_Name)
         return true;              // Oops, file does not exist
     }
 
-    T_header_24 += fgetc(fp);    // Check ID field and adjust header size
+    s_targa_header_24 += fgetc(fp);    // Check ID field and adjust header size
 
     if (fgetc(fp))               // Make sure this is an unmapped file
     {
@@ -1748,7 +1748,7 @@ bool targa_validate(char const *File_Name)
         fgetc(fp);
     }
     // Check Image specs
-    for (auto &elem : upr_lwr)
+    for (auto &elem : s_upr_lwr)
     {
         if (fgetc(fp) != (int) elem)
         {
@@ -1757,15 +1757,15 @@ bool targa_validate(char const *File_Name)
         }
     }
 
-    if (fgetc(fp) != (int) T24)
+    if (fgetc(fp) != (int) s_t24)
     {
-        error = 4;                // Is it a targa 24 file?
+        s_error = 4;                // Is it a targa 24 file?
     }
-    if (fgetc(fp) != (int) T32)
+    if (fgetc(fp) != (int) s_t32)
     {
-        error = 4;                // Is the origin at the upper left?
+        s_error = 4;                // Is the origin at the upper left?
     }
-    if (error == 4)
+    if (s_error == 4)
     {
         File_Error(File_Name, 4);
         return true;
@@ -1773,14 +1773,14 @@ bool targa_validate(char const *File_Name)
     rewind(fp);
 
     // Now that we know its a good file, create a working copy
-    if (startdisk1(targa_temp, fp, true))
+    if (startdisk1(s_targa_temp, fp, true))
     {
         return true;
     }
 
     std::fclose(fp);                  // Close the source
 
-    T_Safe = true;              // Original file successfully copied to targa_temp
+    s_t_safe = true;              // Original file successfully copied to targa_temp
     return false;
 }
 
@@ -1964,74 +1964,74 @@ static int RAY_Header()
 {
     // Open the ray tracing output file
     check_writefile(g_raytrace_filename, ".ray");
-    File_Ptr1 = std::fopen(g_raytrace_filename.c_str(), "w");
-    if (File_Ptr1 == nullptr)
+    s_file_ptr1 = std::fopen(g_raytrace_filename.c_str(), "w");
+    if (s_file_ptr1 == nullptr)
     {
         return -1;              // Oops, somethings wrong!
     }
 
     if (g_raytrace_format == raytrace_formats::vivid)
     {
-        std::fprintf(File_Ptr1, "//");
+        std::fprintf(s_file_ptr1, "//");
     }
     if (g_raytrace_format == raytrace_formats::mtv)
     {
-        std::fprintf(File_Ptr1, "#");
+        std::fprintf(s_file_ptr1, "#");
     }
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
-        std::fprintf(File_Ptr1, "/*\n");
+        std::fprintf(s_file_ptr1, "/*\n");
     }
     if (g_raytrace_format == raytrace_formats::acrospin)
     {
-        std::fprintf(File_Ptr1, "--");
+        std::fprintf(s_file_ptr1, "--");
     }
     if (g_raytrace_format == raytrace_formats::dxf)
-        std::fprintf(File_Ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
+        std::fprintf(s_file_ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
  70\n     2\n  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n\
   0\nLAYER\n  2\nFRACTAL\n 70\n    64\n 62\n     1\n  6\nCONTINUOUS\n  0\n\
 ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        std::fprintf(File_Ptr1, "{ Created by " ID_PROGRAM_NAME " Ver. %#4.2f }\n\n", g_release / 100.);
+        std::fprintf(s_file_ptr1, "{ Created by " ID_PROGRAM_NAME " Ver. %#4.2f }\n\n", g_release / 100.);
     }
 
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
-        std::fprintf(File_Ptr1, "*/\n");
+        std::fprintf(s_file_ptr1, "*/\n");
     }
 
 
     // Set the default color
     if (g_raytrace_format == raytrace_formats::povray)
     {
-        std::fprintf(File_Ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
+        std::fprintf(s_file_ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
     }
     if (g_brief)
     {
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            std::fprintf(File_Ptr1, "surf={diff=0.8 0.4 0.1;}\n");
+            std::fprintf(s_file_ptr1, "surf={diff=0.8 0.4 0.1;}\n");
         }
         if (g_raytrace_format == raytrace_formats::mtv)
         {
-            std::fprintf(File_Ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
+            std::fprintf(s_file_ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
         }
         if (g_raytrace_format == raytrace_formats::rayshade)
         {
-            std::fprintf(File_Ptr1, "applysurf diffuse 0.8 0.4 0.1");
+            std::fprintf(s_file_ptr1, "applysurf diffuse 0.8 0.4 0.1");
         }
     }
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        std::fprintf(File_Ptr1, "\n");
+        std::fprintf(s_file_ptr1, "\n");
     }
 
     // open "grid" opject, a speedy way to do aggregates in rayshade
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
-        std::fprintf(File_Ptr1,
+        std::fprintf(s_file_ptr1,
                 "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
                 "/* make z grid = 1 always for landscapes. */\n\n"
                 "grid 33 25 1\n");
@@ -2039,7 +2039,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     if (g_raytrace_format == raytrace_formats::acrospin)
     {
-        std::fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
+        std::fprintf(s_file_ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
     }
 
     return 0;
@@ -2097,26 +2097,26 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     // Describe the triangle
     if (g_raytrace_format == raytrace_formats::povray)
     {
-        std::fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
+        std::fprintf(s_file_ptr1, " OBJECT\n  TRIANGLE ");
     }
     if (g_raytrace_format == raytrace_formats::vivid && !g_brief)
     {
-        std::fprintf(File_Ptr1, "surf={diff=");
+        std::fprintf(s_file_ptr1, "surf={diff=");
     }
     if (g_raytrace_format == raytrace_formats::mtv && !g_brief)
     {
-        std::fprintf(File_Ptr1, "f");
+        std::fprintf(s_file_ptr1, "f");
     }
     if (g_raytrace_format == raytrace_formats::rayshade && !g_brief)
     {
-        std::fprintf(File_Ptr1, "applysurf diffuse ");
+        std::fprintf(s_file_ptr1, "applysurf diffuse ");
     }
 
     if (!g_brief && g_raytrace_format != raytrace_formats::povray && g_raytrace_format != raytrace_formats::dxf)
     {
         for (int i = 0; i <= 2; i++)
         {
-            std::fprintf(File_Ptr1, "% #4.4f ", c[i]);
+            std::fprintf(s_file_ptr1, "% #4.4f ", c[i]);
         }
     }
 
@@ -2124,50 +2124,50 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     {
         if (!g_brief)
         {
-            std::fprintf(File_Ptr1, ";}\n");
+            std::fprintf(s_file_ptr1, ";}\n");
         }
-        std::fprintf(File_Ptr1, "polygon={points=3;");
+        std::fprintf(s_file_ptr1, "polygon={points=3;");
     }
     if (g_raytrace_format == raytrace_formats::mtv)
     {
         if (!g_brief)
         {
-            std::fprintf(File_Ptr1, "0.95 0.05 5 0 0\n");
+            std::fprintf(s_file_ptr1, "0.95 0.05 5 0 0\n");
         }
-        std::fprintf(File_Ptr1, "p 3");
+        std::fprintf(s_file_ptr1, "p 3");
     }
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
         if (!g_brief)
         {
-            std::fprintf(File_Ptr1, "\n");
+            std::fprintf(s_file_ptr1, "\n");
         }
-        std::fprintf(File_Ptr1, "triangle");
+        std::fprintf(s_file_ptr1, "triangle");
     }
 
     if (g_raytrace_format == raytrace_formats::dxf)
     {
-        std::fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
+        std::fprintf(s_file_ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
     }
 
     for (int i = 0; i <= 2; i++)     // Describe each  Vertex
     {
         if (g_raytrace_format != raytrace_formats::dxf)
         {
-            std::fprintf(File_Ptr1, "\n");
+            std::fprintf(s_file_ptr1, "\n");
         }
 
         if (g_raytrace_format == raytrace_formats::povray)
         {
-            std::fprintf(File_Ptr1, "      <");
+            std::fprintf(s_file_ptr1, "      <");
         }
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            std::fprintf(File_Ptr1, " vertex =  ");
+            std::fprintf(s_file_ptr1, " vertex =  ");
         }
         if (g_raytrace_format > raytrace_formats::raw && g_raytrace_format != raytrace_formats::dxf)
         {
-            std::fprintf(File_Ptr1, " ");
+            std::fprintf(s_file_ptr1, " ");
         }
 
         for (int j = 0; j <= 2; j++)
@@ -2175,59 +2175,59 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
             if (g_raytrace_format == raytrace_formats::dxf)
             {
                 // write 3dface entity to dxf file
-                std::fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
+                std::fprintf(s_file_ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
                 if (i == 2)           // 3dface needs 4 vertecies
                 {
-                    std::fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
+                    std::fprintf(s_file_ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
                             pt_t[i][j]);
                 }
             }
             else if (!(g_raytrace_format == raytrace_formats::mtv || g_raytrace_format == raytrace_formats::rayshade))
             {
-                std::fprintf(File_Ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
+                std::fprintf(s_file_ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
             }
             else
             {
-                std::fprintf(File_Ptr1, "% #4.4f ", pt_t[2 - i][j]);     // Left handed
+                std::fprintf(s_file_ptr1, "% #4.4f ", pt_t[2 - i][j]);     // Left handed
             }
         }
 
         if (g_raytrace_format == raytrace_formats::povray)
         {
-            std::fprintf(File_Ptr1, ">");
+            std::fprintf(s_file_ptr1, ">");
         }
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            std::fprintf(File_Ptr1, ";");
+            std::fprintf(s_file_ptr1, ";");
         }
     }
 
     if (g_raytrace_format == raytrace_formats::povray)
     {
-        std::fprintf(File_Ptr1, " END_TRIANGLE \n");
+        std::fprintf(s_file_ptr1, " END_TRIANGLE \n");
         if (!g_brief)
         {
-            std::fprintf(File_Ptr1,
+            std::fprintf(s_file_ptr1,
                     "  TEXTURE\n"
                     "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
                     "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
                     c[0], c[1], c[2]);
         }
-        std::fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
+        std::fprintf(s_file_ptr1, "  COLOR  F_Dflt  END_OBJECT");
         triangle_bounds(pt_t);    // update bounding info
     }
     if (g_raytrace_format == raytrace_formats::vivid)
     {
-        std::fprintf(File_Ptr1, "}");
+        std::fprintf(s_file_ptr1, "}");
     }
     if (g_raytrace_format == raytrace_formats::raw && !g_brief)
     {
-        std::fprintf(File_Ptr1, "\n");
+        std::fprintf(s_file_ptr1, "\n");
     }
 
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        std::fprintf(File_Ptr1, "\n");
+        std::fprintf(s_file_ptr1, "\n");
     }
 
     return 0;
@@ -2247,13 +2247,13 @@ static void triangle_bounds(float pt_t[3][3])
     {
         for (int j = 0; j <= 2; j++)
         {
-            if (pt_t[i][j] < min_xyz[j])
+            if (pt_t[i][j] < s_min_xyz[j])
             {
-                min_xyz[j] = pt_t[i][j];
+                s_min_xyz[j] = pt_t[i][j];
             }
-            if (pt_t[i][j] > max_xyz[j])
+            if (pt_t[i][j] > s_max_xyz[j])
             {
-                max_xyz[j] = pt_t[i][j];
+                s_max_xyz[j] = pt_t[i][j];
             }
         }
     }
@@ -2273,14 +2273,14 @@ static int start_object()
     }
 
     // Reset the min/max values, for bounding box
-    min_xyz[2] = 999999.0F;
-    min_xyz[1] = min_xyz[2];
-    min_xyz[0] = min_xyz[1];
-    max_xyz[2] = -999999.0F;
-    max_xyz[1] = max_xyz[2];
-    max_xyz[0] = max_xyz[1];
+    s_min_xyz[2] = 999999.0F;
+    s_min_xyz[1] = s_min_xyz[2];
+    s_min_xyz[0] = s_min_xyz[1];
+    s_max_xyz[2] = -999999.0F;
+    s_max_xyz[1] = s_max_xyz[2];
+    s_max_xyz[0] = s_max_xyz[1];
 
-    std::fprintf(File_Ptr1, "COMPOSITE\n");
+    std::fprintf(s_file_ptr1, "COMPOSITE\n");
     return 0;
 }
 
@@ -2306,36 +2306,36 @@ static int end_object(bool triout)
             // Make sure the bounding box is slightly larger than the object
             for (int i = 0; i <= 2; i++)
             {
-                if (min_xyz[i] == max_xyz[i])
+                if (s_min_xyz[i] == s_max_xyz[i])
                 {
-                    min_xyz[i] -= 0.01F;
-                    max_xyz[i] += 0.01F;
+                    s_min_xyz[i] -= 0.01F;
+                    s_max_xyz[i] += 0.01F;
                 }
                 else
                 {
-                    min_xyz[i] -= (max_xyz[i] - min_xyz[i]) * 0.01F;
-                    max_xyz[i] += (max_xyz[i] - min_xyz[i]) * 0.01F;
+                    s_min_xyz[i] -= (s_max_xyz[i] - s_min_xyz[i]) * 0.01F;
+                    s_max_xyz[i] += (s_max_xyz[i] - s_min_xyz[i]) * 0.01F;
                 }
             }
 
             // Add the bounding box info
-            std::fprintf(File_Ptr1, " BOUNDED_BY\n  INTERSECTION\n");
-            std::fprintf(File_Ptr1, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[0]);
-            std::fprintf(File_Ptr1, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[0]);
-            std::fprintf(File_Ptr1, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[1]);
-            std::fprintf(File_Ptr1, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[1]);
-            std::fprintf(File_Ptr1, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -min_xyz[2]);
-            std::fprintf(File_Ptr1, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  max_xyz[2]);
-            std::fprintf(File_Ptr1, "  END_INTERSECTION\n END_BOUND\n");
+            std::fprintf(s_file_ptr1, " BOUNDED_BY\n  INTERSECTION\n");
+            std::fprintf(s_file_ptr1, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -s_min_xyz[0]);
+            std::fprintf(s_file_ptr1, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  s_max_xyz[0]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -s_min_xyz[1]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  s_max_xyz[1]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -s_min_xyz[2]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  s_max_xyz[2]);
+            std::fprintf(s_file_ptr1, "  END_INTERSECTION\n END_BOUND\n");
         }
 
         // Complete the composite object statement
-        std::fprintf(File_Ptr1, "END_%s\n", "COMPOSITE");
+        std::fprintf(s_file_ptr1, "END_%s\n", "COMPOSITE");
     }
 
     if (g_raytrace_format != raytrace_formats::acrospin && g_raytrace_format != raytrace_formats::rayshade)
     {
-        std::fprintf(File_Ptr1, "\n");
+        std::fprintf(s_file_ptr1, "\n");
     }
 
     return 0;
@@ -2343,88 +2343,88 @@ static int end_object(bool triout)
 
 static void line3d_cleanup()
 {
-    if (g_raytrace_format != raytrace_formats::none && File_Ptr1)
+    if (g_raytrace_format != raytrace_formats::none && s_file_ptr1)
     {
         // Finish up the ray tracing files
         if (g_raytrace_format != raytrace_formats::rayshade && g_raytrace_format != raytrace_formats::dxf)
         {
-            std::fprintf(File_Ptr1, "\n");
+            std::fprintf(s_file_ptr1, "\n");
         }
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            std::fprintf(File_Ptr1, "\n\n//");
+            std::fprintf(s_file_ptr1, "\n\n//");
         }
         if (g_raytrace_format == raytrace_formats::mtv)
         {
-            std::fprintf(File_Ptr1, "\n\n#");
+            std::fprintf(s_file_ptr1, "\n\n#");
         }
 
         if (g_raytrace_format == raytrace_formats::rayshade)
         {
             // end grid aggregate
-            std::fprintf(File_Ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
+            std::fprintf(s_file_ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
                     "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
         }
         if (g_raytrace_format == raytrace_formats::acrospin)
         {
-            std::fprintf(File_Ptr1, "LineList From To\n");
-            for (int i = 0; i < RO; i++)
+            std::fprintf(s_file_ptr1, "LineList From To\n");
+            for (int i = 0; i < s_ro; i++)
             {
-                for (int j = 0; j <= CO_MAX; j++)
+                for (int j = 0; j <= s_co_max; j++)
                 {
-                    if (j < CO_MAX)
+                    if (j < s_co_max)
                     {
-                        std::fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
+                        std::fprintf(s_file_ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
                     }
-                    if (i < RO - 1)
+                    if (i < s_ro - 1)
                     {
-                        std::fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i + 1, j);
+                        std::fprintf(s_file_ptr1, "R%dC%d R%dC%d\n", i, j, i + 1, j);
                     }
-                    if (i && i < RO && j < CO_MAX)
+                    if (i && i < s_ro && j < s_co_max)
                     {
-                        std::fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
+                        std::fprintf(s_file_ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
                     }
                 }
             }
-            std::fprintf(File_Ptr1, "\n\n--");
+            std::fprintf(s_file_ptr1, "\n\n--");
         }
         if (g_raytrace_format != raytrace_formats::dxf)
         {
-            std::fprintf(File_Ptr1, "{ No. Of Triangles = %ld }*/\n\n", num_tris);
+            std::fprintf(s_file_ptr1, "{ No. Of Triangles = %ld }*/\n\n", s_num_tris);
         }
         if (g_raytrace_format == raytrace_formats::dxf)
         {
-            std::fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
+            std::fprintf(s_file_ptr1, "  0\nENDSEC\n  0\nEOF\n");
         }
-        std::fclose(File_Ptr1);
-        File_Ptr1 = nullptr;
+        std::fclose(s_file_ptr1);
+        s_file_ptr1 = nullptr;
     }
     if (g_targa_out)
     {
         // Finish up targa files
-        T_header_24 = 18;         // Reset Targa header size
+        s_targa_header_24 = 18;         // Reset Targa header size
         enddisk();
-        if (g_debug_flag == debug_flags::none && (!T_Safe || error) && g_targa_overlay)
+        if (g_debug_flag == debug_flags::none && (!s_t_safe || s_error) && g_targa_overlay)
         {
             dir_remove(g_working_dir, g_light_name);
-            std::rename(targa_temp.c_str(), g_light_name.c_str());
+            std::rename(s_targa_temp.c_str(), g_light_name.c_str());
         }
         if (g_debug_flag == debug_flags::none && g_targa_overlay)
         {
-            dir_remove(g_working_dir, targa_temp);
+            dir_remove(g_working_dir, s_targa_temp);
         }
     }
-    error = 0;
-    T_Safe = false;
+    s_error = 0;
+    s_t_safe = false;
 }
 
 static void set_upr_lwr()
 {
-    upr_lwr[0] = (BYTE)(g_logical_screen_x_dots & 0xff);
-    upr_lwr[1] = (BYTE)(g_logical_screen_x_dots >> 8);
-    upr_lwr[2] = (BYTE)(g_logical_screen_y_dots & 0xff);
-    upr_lwr[3] = (BYTE)(g_logical_screen_y_dots >> 8);
-    line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
+    s_upr_lwr[0] = (BYTE)(g_logical_screen_x_dots & 0xff);
+    s_upr_lwr[1] = (BYTE)(g_logical_screen_x_dots >> 8);
+    s_upr_lwr[2] = (BYTE)(g_logical_screen_y_dots & 0xff);
+    s_upr_lwr[3] = (BYTE)(g_logical_screen_y_dots >> 8);
+    s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 
 static int first_time(int linelen, VECTOR v)
@@ -2454,18 +2454,18 @@ static int first_time(int linelen, VECTOR v)
     float deltatheta; // increment of latitude
     g_out_line_cleanup = line3d_cleanup;
 
-    evenoddrow = 0;
-    g_calc_time = evenoddrow;
+    s_even_odd_row = 0;
+    g_calc_time = s_even_odd_row;
     // mark as in-progress, and enable <tab> timer display
     g_calc_status = calc_status_value::IN_PROGRESS;
 
-    IAmbient = (unsigned int)(255 * (float)(100 - g_ambient) / 100.0);
-    if (IAmbient < 1)
+    s_i_ambient = (unsigned int)(255 * (float)(100 - g_ambient) / 100.0);
+    if (s_i_ambient < 1)
     {
-        IAmbient = 1;
+        s_i_ambient = 1;
     }
 
-    num_tris = 0;
+    s_num_tris = 0;
 
     // Open file for RAY trace output and write header
     if (g_raytrace_format != raytrace_formats::none)
@@ -2477,16 +2477,16 @@ static int first_time(int linelen, VECTOR v)
         g_x_shift = 0;
     }
 
-    RO = 0;
-    CO = RO;
-    CO_MAX = CO;
+    s_ro = 0;
+    s_co = s_ro;
+    s_co_max = s_co;
 
     set_upr_lwr();
-    error = 0;
+    s_error = 0;
 
     if (g_which_image < stereo_images::BLUE)
     {
-        T_Safe = false; // Not safe yet to mess with the source image
+        s_t_safe = false; // Not safe yet to mess with the source image
     }
 
     if (g_targa_out
@@ -2511,9 +2511,9 @@ static int first_time(int linelen, VECTOR v)
         }
     }
 
-    rand_factor = 14 - g_randomize_3d;
+    s_rand_factor = 14 - g_randomize_3d;
 
-    zcoord = g_file_colors;
+    s_z_coord = g_file_colors;
 
     err = line3dmem();
     if (err != 0)
@@ -2523,20 +2523,20 @@ static int first_time(int linelen, VECTOR v)
 
 
     // get scale factors
-    sclx = g_x_scale / 100.0;
-    scly = g_y_scale / 100.0;
+    s_scale_x = g_x_scale / 100.0;
+    s_scale_y = g_y_scale / 100.0;
     if (g_rough)
     {
-        sclz = -g_rough / 100.0;
+        s_scale_z = -g_rough / 100.0;
     }
     else
     {
-        sclz = -0.0001;
-        rscale = sclz;  // if rough=0 make it very flat but plot something
+        s_scale_z = -0.0001;
+        s_r_scale = s_scale_z;  // if rough=0 make it very flat but plot something
     }
 
     // aspect ratio calculation - assume screen is 4 x 3
-    aspect = (double) g_logical_screen_x_dots *.75 / (double) g_logical_screen_y_dots;
+    s_aspect = (double) g_logical_screen_x_dots *.75 / (double) g_logical_screen_y_dots;
 
     if (!g_sphere)         // skip this slow stuff in sphere case
     {
@@ -2558,13 +2558,13 @@ static int first_time(int linelen, VECTOR v)
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
         trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
-              (double) zcoord / (-2.0), g_m);
+              (double) s_z_coord / (-2.0), g_m);
         trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
-              (double) zcoord / (-2.0), lightm);
+              (double) s_z_coord / (-2.0), lightm);
 
         // apply scale factors
-        scale(sclx, scly, sclz, g_m);
-        scale(sclx, scly, sclz, lightm);
+        scale(s_scale_x, s_scale_y, s_scale_z, g_m);
+        scale(s_scale_x, s_scale_y, s_scale_z, lightm);
 
         // rotation values - converting from degrees to radians
         xval = g_x_rot / 57.29577;
@@ -2595,10 +2595,10 @@ static int first_time(int linelen, VECTOR v)
     // perspective 3D vector - lview[2] == 0 means no perspective
 
     // set perspective flag
-    persp = false;
+    s_persp = false;
     if (g_viewer_z != 0)
     {
-        persp = true;
+        s_persp = true;
         if (g_viewer_z < 80)           // force float
         {
             g_user_float_flag = true;
@@ -2606,25 +2606,25 @@ static int first_time(int linelen, VECTOR v)
     }
 
     // set up view vector, and put viewer in center of screen
-    lview[0] = g_logical_screen_x_dots >> 1;
-    lview[1] = g_logical_screen_y_dots >> 1;
+    s_l_view[0] = g_logical_screen_x_dots >> 1;
+    s_l_view[1] = g_logical_screen_y_dots >> 1;
 
     // z value of user's eye - should be more negative than extreme negative part of image
     if (g_sphere)                    // sphere case
     {
-        lview[2] = -(long)((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+        s_l_view[2] = -(long)((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
     }
     else                             // non-sphere case
     {
-        lview[2] = (long)((zmin - zmax) * (double) g_viewer_z / 100.0);
+        s_l_view[2] = (long)((zmin - zmax) * (double) g_viewer_z / 100.0);
     }
 
-    g_view[0] = lview[0];
-    g_view[1] = lview[1];
-    g_view[2] = lview[2];
-    lview[0] = lview[0] << 16;
-    lview[1] = lview[1] << 16;
-    lview[2] = lview[2] << 16;
+    g_view[0] = s_l_view[0];
+    g_view[1] = s_l_view[1];
+    g_view[2] = s_l_view[2];
+    s_l_view[0] = s_l_view[0] << 16;
+    s_l_view[1] = s_l_view[1] << 16;
+    s_l_view[2] = s_l_view[2] << 16;
 
     if (!g_sphere)         // sphere skips this
     {
@@ -2645,7 +2645,7 @@ static int first_time(int linelen, VECTOR v)
         {
             for (int j = 0; j < 4; j++)
             {
-                llm[i][j] = (long)(g_m[i][j] * 65536.0);
+                s_llm[i][j] = (long)(g_m[i][j] * 65536.0);
             }
         }
 
@@ -2687,10 +2687,10 @@ static int first_time(int linelen, VECTOR v)
         deltatheta = (float)(theta2 - theta1) / (float) linelen;
 
         // initial sin,cos theta
-        sinthetaarray[0] = (float) std::sin((double) theta);
-        costhetaarray[0] = (float) std::cos((double) theta);
-        sinthetaarray[1] = (float) std::sin((double)(theta + deltatheta));
-        costhetaarray[1] = (float) std::cos((double)(theta + deltatheta));
+        s_sin_theta_array[0] = (float) std::sin((double) theta);
+        s_cos_theta_array[0] = (float) std::cos((double) theta);
+        s_sin_theta_array[1] = (float) std::sin((double)(theta + deltatheta));
+        s_cos_theta_array[1] = (float) std::cos((double)(theta + deltatheta));
 
         // sin,cos delta theta
         twocosdeltatheta = (float)(2.0 * std::cos((double) deltatheta));
@@ -2698,10 +2698,10 @@ static int first_time(int linelen, VECTOR v)
         // build table of other sin,cos with trig identity
         for (int i = 2; i < (int) linelen; i++)
         {
-            sinthetaarray[i] = sinthetaarray[i - 1] * twocosdeltatheta -
-                               sinthetaarray[i - 2];
-            costhetaarray[i] = costhetaarray[i - 1] * twocosdeltatheta -
-                               costhetaarray[i - 2];
+            s_sin_theta_array[i] = s_sin_theta_array[i - 1] * twocosdeltatheta -
+                               s_sin_theta_array[i - 2];
+            s_cos_theta_array[i] = s_cos_theta_array[i - 1] * twocosdeltatheta -
+                               s_cos_theta_array[i - 2];
         }
 
         // now phi - these calculated as we go - get started here
@@ -2709,59 +2709,59 @@ static int first_time(int linelen, VECTOR v)
 
         // initial sin,cos phi
 
-        oldsinphi1 = (float) std::sin((double) phi1);
-        sinphi = oldsinphi1;
-        oldcosphi1 = (float) std::cos((double) phi1);
-        cosphi = oldcosphi1;
-        oldsinphi2 = (float) std::sin((double)(phi1 + s_delta_phi));
-        oldcosphi2 = (float) std::cos((double)(phi1 + s_delta_phi));
+        s_old_sin_phi1 = (float) std::sin((double) phi1);
+        s_sin_phi = s_old_sin_phi1;
+        s_old_cos_phi1 = (float) std::cos((double) phi1);
+        s_cos_phi = s_old_cos_phi1;
+        s_old_sin_phi2 = (float) std::sin((double)(phi1 + s_delta_phi));
+        s_old_cos_phi2 = (float) std::cos((double)(phi1 + s_delta_phi));
 
         // sin,cos delta phi
-        twocosdeltaphi = (float)(2.0 * std::cos((double) s_delta_phi));
+        s_two_cos_delta_phi = (float)(2.0 * std::cos((double) s_delta_phi));
 
 
         // affects how rough planet terrain is
         if (g_rough)
         {
-            rscale = .3 * g_rough / 100.0;
+            s_r_scale = .3 * g_rough / 100.0;
         }
 
         // radius of planet
-        R = (double)(g_logical_screen_y_dots) / 2;
+        s_radius = (double)(g_logical_screen_y_dots) / 2;
 
         // precalculate factor
-        rXrscale = R * rscale;
+        s_rXr_scale = s_radius * s_r_scale;
 
-        scly = g_sphere_radius/100.0;
-        sclx = scly;
-        sclz = sclx;      // Need x,y,z for RAY
+        s_scale_y = g_sphere_radius/100.0;
+        s_scale_x = s_scale_y;
+        s_scale_z = s_scale_x;      // Need x,y,z for RAY
 
         // adjust x scale factor for aspect
-        sclx *= aspect;
+        s_scale_x *= s_aspect;
 
         // precalculation factor used in sphere calc
-        Rfactor = rscale * R / (double) zcoord;
+        s_radius_factor = s_r_scale * s_radius / (double) s_z_coord;
 
-        if (persp)                // precalculate fudge factor
+        if (s_persp)                // precalculate fudge factor
         {
             double radius;
             double zview;
             double angle;
 
-            xcenter = xcenter << 16;
-            ycenter = ycenter << 16;
+            s_x_center = s_x_center << 16;
+            s_y_center = s_y_center << 16;
 
-            Rfactor *= 65536.0;
-            R *= 65536.0;
+            s_radius_factor *= 65536.0;
+            s_radius *= 65536.0;
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
             zview = -(long)((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
             radius = (double)(g_logical_screen_y_dots) / 2;
             angle = std::atan(-radius / (zview + radius));
-            zcutoff = -radius - std::sin(angle) * radius;
-            zcutoff *= 1.1;        // for safety
-            zcutoff *= 65536L;
+            s_z_cutoff = -radius - std::sin(angle) * radius;
+            s_z_cutoff *= 1.1;        // for safety
+            s_z_cutoff *= 65536L;
         }
     }
 
@@ -2782,19 +2782,19 @@ static int first_time(int linelen, VECTOR v)
     }
 
     // Both Sphere and Normal 3D
-    light_direction[0] = g_light_x;
-    direct[0] = light_direction[0];
-    light_direction[1] = -g_light_y;
-    direct[1] = light_direction[1];
-    light_direction[2] = g_light_z;
-    direct[2] = light_direction[2];
+    s_light_direction[0] = g_light_x;
+    direct[0] = s_light_direction[0];
+    s_light_direction[1] = -g_light_y;
+    direct[1] = s_light_direction[1];
+    s_light_direction[2] = g_light_z;
+    direct[2] = s_light_direction[2];
 
     /* Needed because sclz = -ROUGH/100 and light_direction is transformed in
      * FILLTYPE 6 but not in 5. */
     if (g_fill_type == fill_type::LIGHT_SOURCE_BEFORE)
     {
-        light_direction[2] = -g_light_z;
-        direct[2] = light_direction[2];
+        s_light_direction[2] = -g_light_z;
+        direct[2] = s_light_direction[2];
     }
 
     if (g_fill_type == fill_type::LIGHT_SOURCE_AFTER)           // transform light direction
@@ -2807,14 +2807,14 @@ static int first_time(int linelen, VECTOR v)
         v[1] = 0.0;
         v[2] = 0.0;
         vmult(v, g_m, v);
-        vmult(light_direction, g_m, light_direction);
+        vmult(s_light_direction, g_m, s_light_direction);
 
         for (int i = 0; i < 3; i++)
         {
-            light_direction[i] -= v[i];
+            s_light_direction[i] -= v[i];
         }
     }
-    normalize_vector(light_direction);
+    normalize_vector(s_light_direction);
 
     if (g_preview && g_show_box)
     {
@@ -2831,9 +2831,9 @@ static int first_time(int linelen, VECTOR v)
         origin[2] = 0.0;
 
         v_length = std::min(g_logical_screen_x_dots, g_logical_screen_y_dots) / 2;
-        if (persp && g_viewer_z <= P)
+        if (s_persp && g_viewer_z <= s_p)
         {
-            v_length *= (long)(P + 600) / ((long)(g_viewer_z + 600) * 2);
+            v_length *= (long)(s_p + 600) / ((long)(g_viewer_z + 600) * 2);
         }
 
         /* Set direct[] to point from origin[] in direction of untransformed
@@ -2863,16 +2863,16 @@ static int first_time(int linelen, VECTOR v)
     }
 
     // bad has values caught by clipping
-    bad.x = g_bad_value;
-    f_bad.x = (float) bad.x;
-    bad.y = g_bad_value;
-    f_bad.y = (float) bad.y;
-    bad.color = g_bad_value;
-    f_bad.color = (float) bad.color;
+    s_bad.x = g_bad_value;
+    s_f_bad.x = (float) s_bad.x;
+    s_bad.y = g_bad_value;
+    s_f_bad.y = (float) s_bad.y;
+    s_bad.color = g_bad_value;
+    s_f_bad.color = (float) s_bad.color;
     for (int i = 0; i < (int) linelen; i++)
     {
-        lastrow[i] = bad;
-        f_lastrow[i] = f_bad;
+        s_last_row[i] = s_bad;
+        s_f_last_row[i] = s_f_bad;
     }
     g_got_status = 3;
     return 0;
@@ -2882,25 +2882,25 @@ static int line3dmem()
 {
     /* lastrow stores the previous row of the original GIF image for
        the purpose of filling in gaps with triangle procedure */
-    lastrow.resize(g_logical_screen_x_dots);
+    s_last_row.resize(g_logical_screen_x_dots);
 
     if (g_sphere)
     {
-        sinthetaarray.resize(g_logical_screen_x_dots);
-        costhetaarray.resize(g_logical_screen_x_dots);
+        s_sin_theta_array.resize(g_logical_screen_x_dots);
+        s_cos_theta_array.resize(g_logical_screen_x_dots);
     }
-    f_lastrow.resize(g_logical_screen_x_dots);
+    s_f_last_row.resize(g_logical_screen_x_dots);
     if (g_potential_16bit)
     {
-        fraction.resize(g_logical_screen_x_dots);
+        s_fraction.resize(g_logical_screen_x_dots);
     }
-    minmax_x.clear();
+    s_min_max_x.clear();
 
     // these fill types call putatriangle which uses minmax_x
     if (g_fill_type == fill_type::SURFACE_INTERPOLATED || g_fill_type == fill_type::SURFACE_CONSTANT ||
         g_fill_type == fill_type::LIGHT_SOURCE_BEFORE || g_fill_type == fill_type::LIGHT_SOURCE_AFTER)
     {
-        minmax_x.resize(OLD_MAX_PIXELS);
+        s_min_max_x.resize(OLD_MAX_PIXELS);
     }
 
     return 0;
