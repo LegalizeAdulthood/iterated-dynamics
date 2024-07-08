@@ -80,10 +80,10 @@ static void putminmax(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
 static void T_clipcolor(int, int, int);
 static void vdraw_line(double *, double *, int color);
-static void (* fillplot)(int, int, int);
-static void (* normalplot)(int, int, int);
 
 // static variables
+static void (*fillplot)(int x, int y, int color);
+static void (*normalplot)(int x, int y, int color);
 static float deltaphi;          // increment of latitude, longitude
 static double rscale;           // surface roughness factor
 static long xcenter, ycenter;   // circle center
