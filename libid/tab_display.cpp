@@ -513,7 +513,9 @@ top:
     if ((g_got_status == 5) && (g_calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-        get_calculation_time((long) (g_calc_time * ((g_diffusion_limit * 1.0) / g_diffusion_counter)));
+        const std::string time{get_calculation_time(
+            (long) (g_calc_time * (static_cast<double>(g_diffusion_limit) / g_diffusion_counter)))};
+        strncpy(msg, time.c_str(),std::size(msg));
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
