@@ -16,6 +16,10 @@
 
 struct MandelbrotMix
 {
+    bool setup();
+    int per_pixel();
+    int iterate();
+
     DComplex a;
     DComplex b;
     DComplex c;
@@ -29,43 +33,29 @@ struct MandelbrotMix
     DComplex z;
 };
 
-static MandelbrotMix s_mix{};
-
-#define A s_mix.a
-#define B s_mix.b
-#define C s_mix.c
-#define D s_mix.d
-#define F s_mix.f
-#define G s_mix.g
-#define H s_mix.h
-#define J s_mix.j
-#define K s_mix.k
-#define L s_mix.l
-#define Z s_mix.z
-
-bool MandelbrotMix4Setup()
+bool MandelbrotMix::setup()
 {
     int sign_array = 0;
-    A.x = g_params[0];
-    A.y = 0.0;    // a=real(p1),
-    B.x = g_params[1];
-    B.y = 0.0;    // b=imag(p1),
-    D.x = g_params[2];
-    D.y = 0.0;    // d=real(p2),
-    F.x = g_params[3];
-    F.y = 0.0;    // f=imag(p2),
-    K.x = g_params[4]+1.0;
-    K.y = 0.0;    // k=real(p3)+1,
-    L.x = g_params[5]+100.0;
-    L.y = 0.0;    // l=imag(p3)+100,
-    CMPLXrecip(F, G);                // g=1/f,
-    CMPLXrecip(D, H);                // h=1/d,
-    g_tmp_z = F - B;              // tmp = f-b
-    CMPLXrecip(g_tmp_z, J);              // j = 1/(f-b)
-    g_tmp_z = -A;
-    CMPLXmult(g_tmp_z, B, g_tmp_z);           // z=(-a*b*g*h)^j,
-    CMPLXmult(g_tmp_z, G, g_tmp_z);
-    CMPLXmult(g_tmp_z, H, g_tmp_z);
+    a.x = g_params[0];
+    a.y = 0.0; // a=real(p1),
+    b.x = g_params[1];
+    b.y = 0.0; // b=imag(p1),
+    d.x = g_params[2];
+    d.y = 0.0; // d=real(p2),
+    f.x = g_params[3];
+    f.y = 0.0; // f=imag(p2),
+    k.x = g_params[4] + 1.0;
+    k.y = 0.0; // k=real(p3)+1,
+    l.x = g_params[5] + 100.0;
+    l.y = 0.0;              // l=imag(p3)+100,
+    CMPLXrecip(f, g);       // g=1/f,
+    CMPLXrecip(d, h);       // h=1/d,
+    g_tmp_z = f - b;        // tmp = f-b
+    CMPLXrecip(g_tmp_z, j); // j = 1/(f-b)
+    g_tmp_z = -a;
+    CMPLXmult(g_tmp_z, b, g_tmp_z); // z=(-a*b*g*h)^j,
+    CMPLXmult(g_tmp_z, g, g_tmp_z);
+    CMPLXmult(g_tmp_z, h, g_tmp_z);
 
     /*
        This code kludge attempts to duplicate the behavior
@@ -79,19 +69,19 @@ bool MandelbrotMix4Setup()
        First create a number encoding the signs of a, b, g , h. Our
        kludge assumes that those signs determine the behavior.
      */
-    if (A.x < 0.0)
+    if (a.x < 0.0)
     {
         sign_array += 8;
     }
-    if (B.x < 0.0)
+    if (b.x < 0.0)
     {
         sign_array += 4;
     }
-    if (G.x < 0.0)
+    if (g.x < 0.0)
     {
         sign_array += 2;
     }
-    if (H.x < 0.0)
+    if (h.x < 0.0)
     {
         sign_array += 1;
     }
@@ -103,14 +93,14 @@ bool MandelbrotMix4Setup()
            Add to this list the magic numbers of any cases
            in which the fractal does not match the formula version
          */
-        case 15: // 1111
-        case 10: // 1010
-        case  6: // 0110
-        case  5: // 0101
-        case  3: // 0011
-        case  0: // 0000
+        case 15:                    // 1111
+        case 10:                    // 1010
+        case 6:                     // 0110
+        case 5:                     // 0101
+        case 3:                     // 0011
+        case 0:                     // 0000
             g_tmp_z.y = -g_tmp_z.y; // swap sign bit
-        default: // do nothing - remaining cases already OK
+        default:                    // do nothing - remaining cases already OK
             ;
         }
         // in case our kludge failed, let the user fix it
@@ -120,7 +110,7 @@ bool MandelbrotMix4Setup()
         }
     }
 
-    CMPLXpwr(g_tmp_z, J, g_tmp_z);   // note: z is old
+    CMPLXpwr(g_tmp_z, j, g_tmp_z); // note: z is old
     // in case our kludge failed, let the user fix it
     if (g_params[6] < 0.0)
     {
@@ -129,13 +119,13 @@ bool MandelbrotMix4Setup()
 
     if (g_bail_out == 0)
     {
-        g_magnitude_limit = L.x;
-        g_magnitude_limit2 = g_magnitude_limit*g_magnitude_limit;
+        g_magnitude_limit = l.x;
+        g_magnitude_limit2 = g_magnitude_limit * g_magnitude_limit;
     }
     return true;
 }
 
-int MandelbrotMix4fp_per_pixel()
+int MandelbrotMix::per_pixel()
 {
     if (g_invert != 0)
     {
@@ -147,28 +137,35 @@ int MandelbrotMix4fp_per_pixel()
         g_init.y = g_dy_pixel();
     }
     g_old_z = g_tmp_z;
-    CMPLXtrig0(g_init, C);        // c=fn1(pixel):
-    return 0; // 1st iteration has been NOT been done
+    CMPLXtrig0(g_init, c); // c=fn1(pixel):
+    return 0;              // 1st iteration has been NOT been done
 }
 
-int MandelbrotMix4fpFractal() // from formula by Jim Muth
+int MandelbrotMix::iterate()
 {
     // z=k*((a*(z^b))+(d*(z^f)))+c,
     DComplex z_b;
     DComplex z_f;
-    CMPLXpwr(g_old_z, B, z_b);     // (z^b)
-    CMPLXpwr(g_old_z, F, z_f);     // (z^f)
-    g_new_z.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
-    g_new_z.y = K.x*A.x*z_b.y + K.x*D.x*z_f.y + C.y;
+    CMPLXpwr(g_old_z, b, z_b); // (z^b)
+    CMPLXpwr(g_old_z, f, z_f); // (z^f)
+    g_new_z.x = k.x * a.x * z_b.x + k.x * d.x * z_f.x + c.x;
+    g_new_z.y = k.x * a.x * z_b.y + k.x * d.x * z_f.y + c.y;
     return g_bailout_float();
 }
-#undef A
-#undef B
-#undef C
-#undef D
-#undef F
-#undef G
-#undef H
-#undef J
-#undef K
-#undef L
+
+static MandelbrotMix s_mix{};
+
+bool MandelbrotMix4Setup()
+{
+    return s_mix.setup();
+}
+
+int MandelbrotMix4fp_per_pixel()
+{
+    return s_mix.per_pixel();
+}
+
+int MandelbrotMix4fpFractal() // from formula by Jim Muth
+{
+    return s_mix.iterate();
+}
