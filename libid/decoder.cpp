@@ -62,12 +62,12 @@ enum
     YUP = -1
 };
 
-static short curr_size{};         // The current code size
-static short navail_bytes{};      // # bytes left in block
-static short nbits_left{};        // # bits left in current byte
-static BYTE *byte_buff{};         // Current block, reuse shared mem
-static BYTE *pbytes{};            // Pointer to next byte in block
-static short code_mask[13] =
+static short s_curr_size{};       // The current code size
+static short s_num_avail_bytes{}; // # bytes left in block
+static short s_num_bits_left{};   // # bits left in current byte
+static BYTE *s_byte_buff{};       // Current block, reuse shared mem
+static BYTE *s_ptr_bytes{};       // Pointer to next byte in block
+static short s_code_mask[13] =
 {
     0,
     0x0001, 0x0003,
@@ -77,7 +77,7 @@ static short code_mask[13] =
     0x01FF, 0x03FF,
     0x07FF, 0x0FFF
 };
-static BYTE suffix[10000]{};
+static BYTE s_suffix[10000]{};
 
 // bad_code_count;
 //
@@ -86,8 +86,8 @@ static BYTE suffix[10000]{};
 // corrupt in some way...
 //
 
-static int bad_code_count{};
-static BYTE decoderline[MAX_PIXELS]{};
+static int s_bad_code_count{};
+static BYTE s_decoder_line[MAX_PIXELS]{};
 
 // The reason we have these separated like this instead of using
 // a structure like the original Wilhite code did, is because this
@@ -118,7 +118,7 @@ static BYTE decoderline[MAX_PIXELS]{};
 //
 
 // moved sizeofstring here for possible re-use elsewhere
-static short sizeofstring[MAX_CODES + 1]{};  // size of string list
+static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 
 short decoder(short linewidth)
 {
@@ -154,8 +154,8 @@ short decoder(short linewidth)
         return BAD_CODE_SIZE;
     }
 
-    curr_size = (short)(size + 1);
-    top_slot = (short)(1 << curr_size);
+    s_curr_size = (short)(size + 1);
+    top_slot = (short)(1 << s_curr_size);
     clear = (short)(1 << size);
     ending = (short)(clear + 1);
     newcodes = (short)(ending + 1);
@@ -163,13 +163,13 @@ short decoder(short linewidth)
     old_code = 0;
     yskip = old_code;
     xskip = yskip;
-    sizeofstring[slot] = xskip;
-    nbits_left = sizeofstring[slot];
-    navail_bytes = nbits_left;
+    s_sizeof_string[slot] = xskip;
+    s_num_bits_left = s_sizeof_string[slot];
+    s_num_avail_bytes = s_num_bits_left;
     out_value = 0;
     for (short i = 0; i < slot; i++)
     {
-        sizeofstring[i] = 0;
+        s_sizeof_string[i] = 0;
     }
 
     // Initialize in case they forgot to put in a clear code. (This shouldn't
@@ -178,7 +178,7 @@ short decoder(short linewidth)
     // Set up the stack pointer and decode buffer pointer
     BYTE decode_stack[4096] = { 0 };
     sp = decode_stack;
-    bufptr = decoderline;
+    bufptr = s_decoder_line;
     bufcnt = linewidth;
 
     // This is the main loop.  For each code we get we pass through the linked
@@ -199,10 +199,10 @@ short decoder(short linewidth)
         // If the code is a clear code, reinitialize all necessary items.
         if (c == clear)
         {
-            curr_size = (short)(size + 1);
+            s_curr_size = (short)(size + 1);
             slot = newcodes;
-            sizeofstring[slot] = 0;
-            top_slot = (short)(1 << curr_size);
+            s_sizeof_string[slot] = 0;
+            top_slot = (short)(1 << s_curr_size);
 
             // Continue reading codes until we get a non-clear code (Another
             // unlikely, but possible case...)
@@ -250,7 +250,7 @@ short decoder(short linewidth)
             {
                 if (code > slot)
                 {
-                    ++bad_code_count;
+                    ++s_bad_code_count;
                     c = slot;
                 }
                 code = old_code;
@@ -265,7 +265,7 @@ short decoder(short linewidth)
             fastloop = NOPE;
             while (code >= newcodes)
             {
-                int i = sizeofstring[code];
+                int i = s_sizeof_string[code];
                 j = i;
                 if (i > 0 && bufcnt - i > 0 && g_skip_x_dots == 0)
                 {
@@ -273,7 +273,7 @@ short decoder(short linewidth)
 
                     do
                     {
-                        *(bufptr + j) = suffix[code];
+                        *(bufptr + j) = s_suffix[code];
                         code = prefix[code];
                     }
                     while (--j > 0);
@@ -284,7 +284,7 @@ short decoder(short linewidth)
                     {
                         if (--yskip < 0)
                         {
-                            ret = (short)((*g_out_line)(decoderline, (int)(bufptr - decoderline)));
+                            ret = (short)((*g_out_line)(s_decoder_line, (int)(bufptr - s_decoder_line)));
                             if (ret < 0)
                             {
                                 return ret;
@@ -295,14 +295,14 @@ short decoder(short linewidth)
                         {
                             return -1;
                         }
-                        bufptr = decoderline;
+                        bufptr = s_decoder_line;
                         bufcnt = linewidth;
                         xskip = 0;
                     }
                 }
                 else
                 {
-                    *sp++ = suffix[code];
+                    *sp++ = s_suffix[code];
                     code = prefix[code];
                 }
             }
@@ -320,18 +320,18 @@ short decoder(short linewidth)
 
             if (slot < top_slot)
             {
-                sizeofstring[slot] = (short)(sizeofstring[old_code] + 1);
+                s_sizeof_string[slot] = (short)(s_sizeof_string[old_code] + 1);
                 out_value = (BYTE) code;
-                suffix[slot] = out_value;
+                s_suffix[slot] = out_value;
                 prefix[slot++] = old_code;
                 old_code = c;
             }
             if (slot >= top_slot)
             {
-                if (curr_size < 12)
+                if (s_curr_size < 12)
                 {
                     top_slot <<= 1;
-                    ++curr_size;
+                    ++s_curr_size;
                 }
             }
         }
@@ -347,7 +347,7 @@ short decoder(short linewidth)
             {
                 if (--yskip < 0)
                 {
-                    ret = (short)((*g_out_line)(decoderline, (int)(bufptr - decoderline)));
+                    ret = (short)((*g_out_line)(s_decoder_line, (int)(bufptr - s_decoder_line)));
                     if (ret < 0)
                     {
                         return ret;
@@ -358,7 +358,7 @@ short decoder(short linewidth)
                 {
                     return -1;
                 }
-                bufptr = decoderline;
+                bufptr = s_decoder_line;
                 bufcnt = linewidth;
                 xskip = 0;
             }
@@ -376,57 +376,57 @@ static short get_next_code()
     static BYTE b1;              // Current byte
     static unsigned short ret_code;
 
-    if (nbits_left == 0)
+    if (s_num_bits_left == 0)
     {
-        if (navail_bytes <= 0)
+        if (s_num_avail_bytes <= 0)
         {
 
             // Out of bytes in current block, so read next block
-            pbytes = byte_buff;
-            navail_bytes = (short) get_byte();
-            if (navail_bytes < 0)
+            s_ptr_bytes = s_byte_buff;
+            s_num_avail_bytes = (short) get_byte();
+            if (s_num_avail_bytes < 0)
             {
-                return navail_bytes;
+                return s_num_avail_bytes;
             }
-            else if (navail_bytes)
+            else if (s_num_avail_bytes)
             {
-                get_bytes(byte_buff, navail_bytes);
+                get_bytes(s_byte_buff, s_num_avail_bytes);
             }
         }
-        b1 = *pbytes++;
-        nbits_left = 8;
-        --navail_bytes;
+        b1 = *s_ptr_bytes++;
+        s_num_bits_left = 8;
+        --s_num_avail_bytes;
     }
 
-    ret_code = (short)(b1 >> (8 - nbits_left));
-    while (curr_size > nbits_left)
+    ret_code = (short)(b1 >> (8 - s_num_bits_left));
+    while (s_curr_size > s_num_bits_left)
     {
-        if (navail_bytes <= 0)
+        if (s_num_avail_bytes <= 0)
         {
 
             // Out of bytes in current block, so read next block
-            pbytes = byte_buff;
-            navail_bytes = (short) get_byte();
-            if (navail_bytes < 0)
+            s_ptr_bytes = s_byte_buff;
+            s_num_avail_bytes = (short) get_byte();
+            if (s_num_avail_bytes < 0)
             {
-                return navail_bytes;
+                return s_num_avail_bytes;
             }
-            else if (navail_bytes)
+            else if (s_num_avail_bytes)
             {
-                get_bytes(byte_buff, navail_bytes);
+                get_bytes(s_byte_buff, s_num_avail_bytes);
             }
         }
-        b1 = *pbytes++;
-        ret_code |= b1 << nbits_left;
-        nbits_left += 8;
-        --navail_bytes;
+        b1 = *s_ptr_bytes++;
+        ret_code |= b1 << s_num_bits_left;
+        s_num_bits_left += 8;
+        --s_num_avail_bytes;
     }
-    nbits_left -= curr_size;
-    return (short)(ret_code & code_mask[curr_size]);
+    s_num_bits_left -= s_curr_size;
+    return (short)(ret_code & s_code_mask[s_curr_size]);
 }
 
 // called in parent reoutine to set byte_buff
 void set_byte_buff(BYTE * ptr)
 {
-    byte_buff = ptr;
+    s_byte_buff = ptr;
 }
