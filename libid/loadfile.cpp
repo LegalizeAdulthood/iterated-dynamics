@@ -144,7 +144,7 @@ static bool fix_bof();
 static bool fix_period_bof();
 
 bool g_loaded_3d = false;
-static std::FILE *fp;
+static std::FILE *s_fp;
 int g_file_y_dots;
 int g_file_x_dots;
 int g_file_colors;
@@ -940,16 +940,16 @@ static int find_fractal_info(const std::string &gif_file, //
     blk_6_info->got_data = false;
     blk_7_info->got_data = false;
 
-    fp = std::fopen(gif_file.c_str(), "rb");
-    if (fp == nullptr)
+    s_fp = std::fopen(gif_file.c_str(), "rb");
+    if (s_fp == nullptr)
     {
         return -1;
     }
-    freader(gifstart, 13, 1, fp);
+    freader(gifstart, 13, 1, s_fp);
     if (std::strncmp((char *)gifstart, "GIF", 3) != 0)
     {
         // not GIF, maybe old .tga?
-        std::fclose(fp);
+        std::fclose(s_fp);
         return -1;
     }
 
@@ -980,7 +980,7 @@ static int find_fractal_info(const std::string &gif_file, //
             int k = 0;
             for (int j = 0; j < 3; j++)
             {
-                k = getc(fp);
+                k = getc(s_fp);
                 if (k < 0)
                 {
                     break;
@@ -1023,10 +1023,10 @@ static int find_fractal_info(const std::string &gif_file, //
 
     std::memset(info, 0, sizeof(FRACTAL_INFO));
     fractinf_len = sizeof(FRACTAL_INFO) + (sizeof(FRACTAL_INFO)+254)/255;
-    std::fseek(fp, (long)(-1-fractinf_len), SEEK_END);
+    std::fseek(s_fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FRACTAL_INFO structure for the platform */
-    freader(info, 1, sizeof(FRACTAL_INFO), fp);
+    freader(info, 1, sizeof(FRACTAL_INFO), s_fp);
     if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
         decode_fractal_info(info, 1);
@@ -1043,18 +1043,18 @@ static int find_fractal_info(const std::string &gif_file, //
         {
             // allow 512 garbage at eof
             offset += 100; // go back 100 bytes at a time
-            std::fseek(fp, (long)(0-offset), SEEK_END);
-            freader(tmpbuf, 1, 110, fp); // read 10 extra for string compare
+            std::fseek(s_fp, (long)(0-offset), SEEK_END);
+            freader(tmpbuf, 1, 110, s_fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
             {
                 if (!std::strcmp(INFO_ID, &tmpbuf[i]))
                 {
                     // found header?
                     std::strcpy(info->info_id, INFO_ID);
-                    std::fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
+                    std::fseek(s_fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FRACTAL_INFO structure for the platform */
-                    freader(info, 1, sizeof(FRACTAL_INFO), fp);
+                    freader(info, 1, sizeof(FRACTAL_INFO), s_fp);
                     decode_fractal_info(info, 1);
                     offset = 10000; // force exit from outer loop
                     break;
@@ -1073,12 +1073,12 @@ static int find_fractal_info(const std::string &gif_file, //
                  might be over 255 chars, and thus earlier load might be bad
                  find exact endpoint, so scan back to start of ext blks works
                */
-            fseek(fp, (long)(hdr_offset-15), SEEK_END);
+            fseek(s_fp, (long)(hdr_offset-15), SEEK_END);
             int scan_extend = 1;
             while (scan_extend)
             {
-                if (fgetc(fp) != '!' // if not what we expect just give up
-                    || std::fread(temp1, 1, 13, fp) != 13
+                if (fgetc(s_fp) != '!' // if not what we expect just give up
+                    || std::fread(temp1, 1, 13, s_fp) != 13
                     || std::strncmp(&temp1[2], "fractint", 8))
                 {
                     break;
@@ -1097,12 +1097,12 @@ static int find_fractal_info(const std::string &gif_file, //
                     decode_fractal_info(info, 1);
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
-                    fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
+                    fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
                     break;
                 case 2: // resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
-                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)g_block, data_len);
                     std::copy(&g_block[0], &g_block[data_len], &blk_2_info->resume_data[0]);
                     blk_2_info->length = data_len;
@@ -1111,7 +1111,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 case 3: // formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     // check data_len for backward compatibility
-                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&fload_info, data_len);
                     std::strcpy(blk_3_info->form_name, fload_info.form_name);
                     blk_3_info->length = data_len;
@@ -1143,7 +1143,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
                     blk_4_info->length = data_len/2;
                     blk_4_info->range_data.resize(blk_4_info->length);
-                    fseek(fp, (long) -block_len, SEEK_CUR);
+                    fseek(s_fp, (long) -block_len, SEEK_CUR);
                     {
                         std::vector<char> buffer(data_len, 0);
                         load_ext_blk(&buffer[0], data_len);
@@ -1158,13 +1158,13 @@ static int find_fractal_info(const std::string &gif_file, //
                 case 5: // extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_5_info->apm_data.resize(data_len);
-                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk(blk_5_info->apm_data.data(), data_len);
                     blk_5_info->got_data = true;
                     break;
                 case 6: // evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&eload_info, data_len);
                     decode_evolver_info(&eload_info, 1);
                     blk_6_info->length = data_len;
@@ -1194,7 +1194,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     break;
                 case 7: // orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    fseek(fp, (long)(0-block_len), SEEK_CUR);
+                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&oload_info, data_len);
                     decode_orbits_info(&oload_info, 1);
                     blk_7_info->length = data_len;
@@ -1214,7 +1214,7 @@ static int find_fractal_info(const std::string &gif_file, //
             }
         }
 
-        std::fclose(fp);
+        std::fclose(s_fp);
         g_file_aspect_ratio = g_screen_aspect; // if not >= v15, this is correct
         return 0;
     }
@@ -1242,24 +1242,24 @@ static int find_fractal_info(const std::string &gif_file, //
     info->version = 0; // this forces lots more init at calling end too
 
     // zero means we won
-    std::fclose(fp);
+    std::fclose(s_fp);
     return 0;
 }
 
 static void load_ext_blk(char *loadptr, int loadlen)
 {
     int len;
-    while ((len = fgetc(fp)) > 0)
+    while ((len = fgetc(s_fp)) > 0)
     {
         while (--len >= 0)
         {
             if (--loadlen >= 0)
             {
-                *(loadptr++) = (char)fgetc(fp);
+                *(loadptr++) = (char)fgetc(s_fp);
             }
             else
             {
-                fgetc(fp); // discard excess characters
+                fgetc(s_fp); // discard excess characters
             }
         }
     }
@@ -1270,9 +1270,9 @@ static void skip_ext_blk(int *block_len, int *data_len)
     int len;
     *data_len = 0;
     *block_len = 1;
-    while ((len = fgetc(fp)) > 0)
+    while ((len = fgetc(s_fp)) > 0)
     {
-        fseek(fp, (long)len, SEEK_CUR);
+        fseek(s_fp, (long)len, SEEK_CUR);
         *data_len += len;
         *block_len += len + 1;
     }
