@@ -62,16 +62,11 @@ enum
     YUP = -1
 };
 
-static short curr_size;         // The current code size
-
-// The following static variables are used
-// for seperating out codes
-//
-static short navail_bytes;      // # bytes left in block
-static short nbits_left;        // # bits left in current byte
-static BYTE *byte_buff;         // Current block, reuse shared mem
-static BYTE *pbytes;            // Pointer to next byte in block
-
+static short curr_size{};         // The current code size
+static short navail_bytes{};      // # bytes left in block
+static short nbits_left{};        // # bits left in current byte
+static BYTE *byte_buff{};         // Current block, reuse shared mem
+static BYTE *pbytes{};            // Pointer to next byte in block
 static short code_mask[13] =
 {
     0,
@@ -82,8 +77,7 @@ static short code_mask[13] =
     0x01FF, 0x03FF,
     0x07FF, 0x0FFF
 };
-
-static BYTE suffix[10000] = { 0 };
+static BYTE suffix[10000]{};
 
 // bad_code_count;
 //
@@ -92,8 +86,8 @@ static BYTE suffix[10000] = { 0 };
 // corrupt in some way...
 //
 
-static int bad_code_count = 0;
-static BYTE decoderline[MAX_PIXELS];
+static int bad_code_count{};
+static BYTE decoderline[MAX_PIXELS]{};
 
 // The reason we have these separated like this instead of using
 // a structure like the original Wilhite code did, is because this
@@ -124,7 +118,7 @@ static BYTE decoderline[MAX_PIXELS];
 //
 
 // moved sizeofstring here for possible re-use elsewhere
-static short sizeofstring[MAX_CODES + 1];  // size of string list
+static short sizeofstring[MAX_CODES + 1]{};  // size of string list
 
 short decoder(short linewidth)
 {
