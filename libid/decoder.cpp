@@ -40,7 +40,7 @@ static short get_next_code();
 // occurs in an odd place in the GIF file...  In any case, linelen will be
 // equal to the number of pixels passed...
 //
-int (*g_out_line)(BYTE *, int) = out_line;
+int (*g_out_line)(BYTE *, int){out_line};
 
 // Various error codes used by decoder
 // and my own routines...   It's okay
@@ -49,17 +49,18 @@ int (*g_out_line)(BYTE *, int) = out_line;
 // returned intact up the various subroutine
 // levels...
 //
-#define OUT_OF_MEMORY -10
-#define BAD_CODE_SIZE -20
-#define READ_ERROR -1
-#define WRITE_ERROR -2
-#define OPEN_ERROR -3
-#define CREATE_ERROR -4
-
-#define MAX_CODES   4095
-
-#define NOPE 0
-#define YUP -1
+enum
+{
+    OUT_OF_MEMORY = -10,
+    BAD_CODE_SIZE = -20,
+    READ_ERROR = -1,
+    WRITE_ERROR = -2,
+    OPEN_ERROR = -3,
+    CREATE_ERROR = -4,
+    MAX_CODES = 4095,
+    NOPE = 0,
+    YUP = -1
+};
 
 static short curr_size;         // The current code size
 
