@@ -52,7 +52,7 @@ static void verhulst();
 static void Bif_Period_Init();
 static bool Bif_Periodic(long time);
 
-static U16(*getpix)(int, int)  = (U16(*)(int, int))getcolor;
+static U16 (*getpix)(int, int){(U16(*)(int, int)) getcolor};
 
 using PLOT = void(*)(int, int, int);
 
@@ -117,12 +117,12 @@ int test()
 
 //**************** standalone engine for "plasma" *******************
 
-static int iparmx;      // iparmx = parm.x * 8
-static int shiftvalue;  // shift based on #colors
-static int recur1 = 1;
-static int pcolors;
-static int recur_level = 0;
-U16 max_plasma;
+static int iparmx{};     // iparmx = parm.x * 8
+static int shiftvalue{}; // shift based on #colors
+static int recur1{1};
+static int pcolors{};
+static int recur_level{};
+U16 max_plasma{};
 
 // returns a random 16 bit value that is never 0
 U16 rand16()
@@ -187,7 +187,7 @@ U16 getpot(int x, int y)
     return color;
 }
 
-static int plasma_check;                        // to limit kbd checking
+static int plasma_check{};                        // to limit kbd checking
 
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
@@ -1007,13 +1007,13 @@ int diffusion()
 #define SEED 0.66               // starting value for population
 
 static std::vector<int> verhulst_array;
-unsigned long filter_cycles;
-static bool half_time_check = false;
-static long   lPopulation, lRate;
-static double Population,  Rate;
-static bool mono = false;
-static int outside_x = 0;
-static long   LPI;
+unsigned long filter_cycles{};
+static bool half_time_check{};
+static long lPopulation{}, lRate{};
+static double Population{}, Rate{};
+static bool mono{};
+static int outside_x{};
+static long LPI{};
 
 inline bool population_exceeded()
 {
@@ -1222,10 +1222,10 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
     }
 }
-static  long    lBif_closenuf, lBif_savedpop;   // poss future use
-static  double   Bif_closenuf,  Bif_savedpop;
-static  int      Bif_savedinc;
-static  long     Bif_savedand;
+static long lBif_closenuf{}, lBif_savedpop{}; // poss future use
+static double Bif_closenuf{}, Bif_savedpop{};
+static int Bif_savedinc{};
+static long Bif_savedand{};
 
 static void Bif_Period_Init()
 {
@@ -1391,7 +1391,7 @@ int LongBifurcLambdaTrig()
     return g_overflow;
 }
 
-long beta;
+static long beta{};
 
 int BifurcMay()
 {
@@ -1474,8 +1474,8 @@ int popcorn()   // subset of std engine
 //**    1732: the infamous axis swap: (b,a)->(x,y),                     **
 //**            the order parameter becomes a long int                  **
 //************************************************************************
-int lyaLength, lyaSeedOK;
-int lyaRxy[34];
+static int lyaLength{}, lyaSeedOK{};
+static int lyaRxy[34]{};
 
 static int lyapunov_cycles(long filter_cycles, double a, double b);
 
@@ -1528,7 +1528,6 @@ int lyapunov()
     (*g_plot)(g_col, g_row, g_color);
     return g_color;
 }
-
 
 bool lya_setup()
 {
