@@ -86,7 +86,7 @@ static void vdraw_line(double *, double *, int color);
 // static variables
 static void (*s_fill_plot)(int x, int y, int color);
 static void (*s_normal_plot)(int x, int y, int color);
-static float deltaphi;          // increment of latitude, longitude
+static float s_delta_phi;          // increment of latitude, longitude
 static double rscale;           // surface roughness factor
 static long xcenter, ycenter;   // circle center
 static double sclx, scly, sclz; // scale factors
@@ -2706,7 +2706,7 @@ static int first_time(int linelen, VECTOR v)
         }
 
         // now phi - these calculated as we go - get started here
-        deltaphi = (float)(phi2 - phi1) / (float) g_height;
+        s_delta_phi = (float)(phi2 - phi1) / (float) g_height;
 
         // initial sin,cos phi
 
@@ -2714,11 +2714,11 @@ static int first_time(int linelen, VECTOR v)
         sinphi = oldsinphi1;
         oldcosphi1 = (float) std::cos((double) phi1);
         cosphi = oldcosphi1;
-        oldsinphi2 = (float) std::sin((double)(phi1 + deltaphi));
-        oldcosphi2 = (float) std::cos((double)(phi1 + deltaphi));
+        oldsinphi2 = (float) std::sin((double)(phi1 + s_delta_phi));
+        oldcosphi2 = (float) std::cos((double)(phi1 + s_delta_phi));
 
         // sin,cos delta phi
-        twocosdeltaphi = (float)(2.0 * std::cos((double) deltaphi));
+        twocosdeltaphi = (float)(2.0 * std::cos((double) s_delta_phi));
 
 
         // affects how rough planet terrain is
