@@ -46,8 +46,8 @@ enum
 //
 static std::vector<int> s_incx[DIRS];   // table for 4 directions
 static std::vector<int> s_incy[DIRS];
-static int s_last_xdots = 0;
-static int s_last_ydots = 0;
+static int s_last_xdots{};
+static int s_last_ydots{};
 
 void setwait(long *wait)
 {
