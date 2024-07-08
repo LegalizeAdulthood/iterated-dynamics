@@ -12,9 +12,9 @@
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-static DComplex  T_Cm1{};        // 3 * (floatparm - 1)
-static DComplex  T_Cm2{};        // 3 * (floatparm - 2)
-static DComplex  T_Cm1Cm2{};     // (floatparm - 1) * (floatparm - 2)
+static DComplex s_t_cm1{};     // 3 * (floatparm - 1)
+static DComplex s_t_cm2{};     // 3 * (floatparm - 2)
+static DComplex s_t_cm1_cm2{}; // (floatparm - 1) * (floatparm - 2)
 
 /*
 **  details of finite attractors (required for Magnet Fractals)
@@ -23,16 +23,16 @@ static DComplex  T_Cm1Cm2{};     // (floatparm - 1) * (floatparm - 2)
 
 void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 {
-    T_Cm1.x = g_float_param->x - 1.0;
-    T_Cm1.y = g_float_param->y;
-    T_Cm2.x = g_float_param->x - 2.0;
-    T_Cm2.y = g_float_param->y;
-    T_Cm1Cm2.x = (T_Cm1.x * T_Cm2.x) - (T_Cm1.y * T_Cm2.y);
-    T_Cm1Cm2.y = (T_Cm1.x * T_Cm2.y) + (T_Cm1.y * T_Cm2.x);
-    T_Cm1.x += T_Cm1.x + T_Cm1.x;
-    T_Cm1.y += T_Cm1.y + T_Cm1.y;
-    T_Cm2.x += T_Cm2.x + T_Cm2.x;
-    T_Cm2.y += T_Cm2.y + T_Cm2.y;
+    s_t_cm1.x = g_float_param->x - 1.0;
+    s_t_cm1.y = g_float_param->y;
+    s_t_cm2.x = g_float_param->x - 2.0;
+    s_t_cm2.y = g_float_param->y;
+    s_t_cm1_cm2.x = (s_t_cm1.x * s_t_cm2.x) - (s_t_cm1.y * s_t_cm2.y);
+    s_t_cm1_cm2.y = (s_t_cm1.x * s_t_cm2.y) + (s_t_cm1.y * s_t_cm2.x);
+    s_t_cm1.x += s_t_cm1.x + s_t_cm1.x;
+    s_t_cm1.y += s_t_cm1.y + s_t_cm1.y;
+    s_t_cm2.x += s_t_cm2.x + s_t_cm2.x;
+    s_t_cm2.y += s_t_cm2.y + s_t_cm2.y;
 }
 
 //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
@@ -76,20 +76,20 @@ int Magnet2Fractal()
     DComplex tmp;
     double div;
 
-    top.x = g_old_z.x * (g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + T_Cm1.x)
-            - g_old_z.y * T_Cm1.y + T_Cm1Cm2.x;
-    top.y = g_old_z.y * (g_temp_sqr_x+g_temp_sqr_x+g_temp_sqr_x-g_temp_sqr_y + T_Cm1.x)
-            + g_old_z.x * T_Cm1.y + T_Cm1Cm2.y;
+    top.x = g_old_z.x * (g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + s_t_cm1.x)
+            - g_old_z.y * s_t_cm1.y + s_t_cm1_cm2.x;
+    top.y = g_old_z.y * (g_temp_sqr_x+g_temp_sqr_x+g_temp_sqr_x-g_temp_sqr_y + s_t_cm1.x)
+            + g_old_z.x * s_t_cm1.y + s_t_cm1_cm2.y;
 
     bot.x = g_temp_sqr_x - g_temp_sqr_y;
     bot.x = bot.x + bot.x + bot.x
-            + g_old_z.x * T_Cm2.x - g_old_z.y * T_Cm2.y
-            + T_Cm1Cm2.x + 1.0;
+            + g_old_z.x * s_t_cm2.x - g_old_z.y * s_t_cm2.y
+            + s_t_cm1_cm2.x + 1.0;
     bot.y = g_old_z.x * g_old_z.y;
     bot.y += bot.y;
     bot.y = bot.y + bot.y + bot.y
-            + g_old_z.x * T_Cm2.y + g_old_z.y * T_Cm2.x
-            + T_Cm1Cm2.y;
+            + g_old_z.x * s_t_cm2.y + g_old_z.y * s_t_cm2.x
+            + s_t_cm1_cm2.y;
 
     div = bot.x*bot.x + bot.y*bot.y;                // tmp = top/bot
     if (div < FLT_MIN)
