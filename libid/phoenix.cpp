@@ -14,16 +14,16 @@
 #include "newton.h"
 #include "pixel_grid.h"
 
-static LComplex ltmp2{};
-static DComplex tmp2{};
+static LComplex s_ltmp2{};
+static DComplex s_tmp2{};
 
 int LongPhoenixFractal()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_l_temp.x = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
-    g_l_new_z.x = g_l_temp_sqr_x-g_l_temp_sqr_y+g_long_param->x+multiply(g_long_param->y, ltmp2.x, g_bit_shift);
-    g_l_new_z.y = (g_l_temp.x + g_l_temp.x) + multiply(g_long_param->y, ltmp2.y, g_bit_shift);
-    ltmp2 = g_l_old_z; // set ltmp2 to Y value
+    g_l_new_z.x = g_l_temp_sqr_x-g_l_temp_sqr_y+g_long_param->x+multiply(g_long_param->y, s_ltmp2.x, g_bit_shift);
+    g_l_new_z.y = (g_l_temp.x + g_l_temp.x) + multiply(g_long_param->y, s_ltmp2.y, g_bit_shift);
+    s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
     return g_bailout_long();
 }
 
@@ -31,9 +31,9 @@ int PhoenixFractal()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_float_param->y * tmp2.x);
-    g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + (g_float_param->y * tmp2.y);
-    tmp2 = g_old_z; // set tmp2 to Y value
+    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_float_param->y * s_tmp2.x);
+    g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + (g_float_param->y * s_tmp2.y);
+    s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
 
@@ -41,9 +41,9 @@ int LongPhoenixFractalcplx()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_l_temp.x = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
-    g_l_new_z.x = g_l_temp_sqr_x-g_l_temp_sqr_y+g_long_param->x+multiply(g_l_param2.x, ltmp2.x, g_bit_shift)-multiply(g_l_param2.y, ltmp2.y, g_bit_shift);
-    g_l_new_z.y = (g_l_temp.x + g_l_temp.x)+g_long_param->y+multiply(g_l_param2.x, ltmp2.y, g_bit_shift)+multiply(g_l_param2.y, ltmp2.x, g_bit_shift);
-    ltmp2 = g_l_old_z; // set ltmp2 to Y value
+    g_l_new_z.x = g_l_temp_sqr_x-g_l_temp_sqr_y+g_long_param->x+multiply(g_l_param2.x, s_ltmp2.x, g_bit_shift)-multiply(g_l_param2.y, s_ltmp2.y, g_bit_shift);
+    g_l_new_z.y = (g_l_temp.x + g_l_temp.x)+g_long_param->y+multiply(g_l_param2.x, s_ltmp2.y, g_bit_shift)+multiply(g_l_param2.y, s_ltmp2.x, g_bit_shift);
+    s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
     return g_bailout_long();
 }
 
@@ -51,9 +51,9 @@ int PhoenixFractalcplx()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_param_z2.x * tmp2.x) - (g_param_z2.y * tmp2.y);
-    g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + g_float_param->y + (g_param_z2.x * tmp2.y) + (g_param_z2.y * tmp2.x);
-    tmp2 = g_old_z; // set tmp2 to Y value
+    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_param_z2.x * s_tmp2.x) - (g_param_z2.y * s_tmp2.y);
+    g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + g_float_param->y + (g_param_z2.x * s_tmp2.y) + (g_param_z2.y * s_tmp2.x);
+    s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
 
@@ -71,9 +71,9 @@ int LongPhoenixPlusFractal()
     }
     loldplus.x += g_long_param->x;
     LCMPLXmult(g_l_temp, loldplus, lnewminus);
-    g_l_new_z.x = lnewminus.x + multiply(g_long_param->y, ltmp2.x, g_bit_shift);
-    g_l_new_z.y = lnewminus.y + multiply(g_long_param->y, ltmp2.y, g_bit_shift);
-    ltmp2 = g_l_old_z; // set ltmp2 to Y value
+    g_l_new_z.x = lnewminus.x + multiply(g_long_param->y, s_ltmp2.x, g_bit_shift);
+    g_l_new_z.y = lnewminus.y + multiply(g_long_param->y, s_ltmp2.y, g_bit_shift);
+    s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
     return g_bailout_long();
 }
 
@@ -91,9 +91,9 @@ int PhoenixPlusFractal()
     }
     oldplus.x += g_float_param->x;
     FPUcplxmul(&g_tmp_z, &oldplus, &newminus);
-    g_new_z.x = newminus.x + (g_float_param->y * tmp2.x);
-    g_new_z.y = newminus.y + (g_float_param->y * tmp2.y);
-    tmp2 = g_old_z; // set tmp2 to Y value
+    g_new_z.x = newminus.x + (g_float_param->y * s_tmp2.x);
+    g_new_z.y = newminus.y + (g_float_param->y * s_tmp2.y);
+    s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
 
@@ -111,9 +111,9 @@ int LongPhoenixMinusFractal()
     }
     loldsqr.x += g_long_param->x;
     LCMPLXmult(g_l_temp, loldsqr, lnewminus);
-    g_l_new_z.x = lnewminus.x + multiply(g_long_param->y, ltmp2.x, g_bit_shift);
-    g_l_new_z.y = lnewminus.y + multiply(g_long_param->y, ltmp2.y, g_bit_shift);
-    ltmp2 = g_l_old_z; // set ltmp2 to Y value
+    g_l_new_z.x = lnewminus.x + multiply(g_long_param->y, s_ltmp2.x, g_bit_shift);
+    g_l_new_z.y = lnewminus.y + multiply(g_long_param->y, s_ltmp2.y, g_bit_shift);
+    s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
     return g_bailout_long();
 }
 
@@ -131,9 +131,9 @@ int PhoenixMinusFractal()
     }
     oldsqr.x += g_float_param->x;
     FPUcplxmul(&g_tmp_z, &oldsqr, &newminus);
-    g_new_z.x = newminus.x + (g_float_param->y * tmp2.x);
-    g_new_z.y = newminus.y + (g_float_param->y * tmp2.y);
-    tmp2 = g_old_z; // set tmp2 to Y value
+    g_new_z.x = newminus.x + (g_float_param->y * s_tmp2.x);
+    g_new_z.y = newminus.y + (g_float_param->y * s_tmp2.y);
+    s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
 
@@ -152,10 +152,10 @@ int LongPhoenixCplxPlusFractal()
     loldplus.x += g_long_param->x;
     loldplus.y += g_long_param->y;
     LCMPLXmult(g_l_temp, loldplus, lnewminus);
-    LCMPLXmult(g_l_param2, ltmp2, g_l_temp);
+    LCMPLXmult(g_l_param2, s_ltmp2, g_l_temp);
     g_l_new_z.x = lnewminus.x + g_l_temp.x;
     g_l_new_z.y = lnewminus.y + g_l_temp.y;
-    ltmp2 = g_l_old_z; // set ltmp2 to Y value
+    s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
     return g_bailout_long();
 }
 
@@ -174,10 +174,10 @@ int PhoenixCplxPlusFractal()
     oldplus.x += g_float_param->x;
     oldplus.y += g_float_param->y;
     FPUcplxmul(&g_tmp_z, &oldplus, &newminus);
-    FPUcplxmul(&g_param_z2, &tmp2, &g_tmp_z);
+    FPUcplxmul(&g_param_z2, &s_tmp2, &g_tmp_z);
     g_new_z.x = newminus.x + g_tmp_z.x;
     g_new_z.y = newminus.y + g_tmp_z.y;
-    tmp2 = g_old_z; // set tmp2 to Y value
+    s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
 
@@ -196,10 +196,10 @@ int LongPhoenixCplxMinusFractal()
     loldsqr.x += g_long_param->x;
     loldsqr.y += g_long_param->y;
     LCMPLXmult(g_l_temp, loldsqr, lnewminus);
-    LCMPLXmult(g_l_param2, ltmp2, g_l_temp);
+    LCMPLXmult(g_l_param2, s_ltmp2, g_l_temp);
     g_l_new_z.x = lnewminus.x + g_l_temp.x;
     g_l_new_z.y = lnewminus.y + g_l_temp.y;
-    ltmp2 = g_l_old_z; // set ltmp2 to Y value
+    s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
     return g_bailout_long();
 }
 
@@ -218,10 +218,10 @@ int PhoenixCplxMinusFractal()
     oldsqr.x += g_float_param->x;
     oldsqr.y += g_float_param->y;
     FPUcplxmul(&g_tmp_z, &oldsqr, &newminus);
-    FPUcplxmul(&g_param_z2, &tmp2, &g_tmp_z);
+    FPUcplxmul(&g_param_z2, &s_tmp2, &g_tmp_z);
     g_new_z.x = newminus.x + g_tmp_z.x;
     g_new_z.y = newminus.y + g_tmp_z.y;
-    tmp2 = g_old_z; // set tmp2 to Y value
+    s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
 
@@ -250,8 +250,8 @@ int long_phoenix_per_pixel()
     }
     g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
     g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    ltmp2.x = 0; // use ltmp2 as the complex Y value
-    ltmp2.y = 0;
+    s_ltmp2.x = 0; // use ltmp2 as the complex Y value
+    s_ltmp2.y = 0;
     return 0;
 }
 
@@ -268,8 +268,8 @@ int phoenix_per_pixel()
     }
     g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     g_temp_sqr_y = sqr(g_old_z.y);
-    tmp2.x = 0; // use tmp2 as the complex Y value
-    tmp2.y = 0;
+    s_tmp2.x = 0; // use tmp2 as the complex Y value
+    s_tmp2.y = 0;
     return 0;
 }
 
@@ -308,8 +308,8 @@ int long_mandphoenix_per_pixel()
     g_l_old_z.y += g_l_param.y;
     g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
     g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    ltmp2.x = 0;
-    ltmp2.y = 0;
+    s_ltmp2.x = 0;
+    s_ltmp2.y = 0;
     return 1; // 1st iteration has been done
 }
 
@@ -338,8 +338,8 @@ int mandphoenix_per_pixel()
     g_old_z.y += g_param_z1.y;
     g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     g_temp_sqr_y = sqr(g_old_z.y);
-    tmp2.x = 0;
-    tmp2.y = 0;
+    s_tmp2.x = 0;
+    s_tmp2.y = 0;
     return 1; // 1st iteration has been done
 }
 
