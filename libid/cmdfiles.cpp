@@ -812,16 +812,16 @@ struct Command
     cmd_file mode{};
     char *value{};
     std::string variable;
-    int valuelen{};                // length of value
-    int numval{};                  // numeric value of arg
-    char charval[16]{};            // first character of arg
-    int yesnoval[16]{};            // 0 if 'n', 1 if 'y', -1 if not
-    int totparms{};                // # of / delimited parms
-    int intparms{};                // # of / delimited ints
-    int floatparms{};              // # of / delimited floats
-    int intval[64]{};              // pre-parsed integer parms
-    double floatval[16]{};         // pre-parsed floating parms
-    char const *floatvalstr[16]{}; // pointers to float vals
+    int value_len{};                  // length of value
+    int num_val{};                    // numeric value of arg
+    char char_val[16]{};              // first character of arg
+    int yes_no_val[16]{};             // 0 if 'n', 1 if 'y', -1 if not
+    int total_params{};               // # of / delimited parms
+    int num_int_params{};             // # of / delimited ints
+    int num_float_params{};           // # of / delimited floats
+    int int_vals[64]{};               // pre-parsed integer parms
+    double float_vals[16]{};          // pre-parsed floating parms
+    char const *float_val_strs[16]{}; // pointers to float vals
     cmdarg_flags status{cmdarg_flags::NONE};
 };
 
@@ -848,23 +848,23 @@ Command::Command(char *curarg, cmd_file a_mode) :
         return;
     }
     variable = std::string(curarg, j);
-    valuelen = (int) std::strlen(value); // note value's length
-    charval[0] = value[0];               // first letter of value
-    yesnoval[0] = -1;                    // note yes|no value
-    if (charval[0] == 'n')
+    value_len = (int) std::strlen(value); // note value's length
+    char_val[0] = value[0];               // first letter of value
+    yes_no_val[0] = -1;                    // note yes|no value
+    if (char_val[0] == 'n')
     {
-        yesnoval[0] = 0;
+        yes_no_val[0] = 0;
     }
-    if (charval[0] == 'y')
+    if (char_val[0] == 'y')
     {
-        yesnoval[0] = 1;
+        yes_no_val[0] = 1;
     }
 
     char *argptr = value;
-    floatparms = 0;
-    intparms = 0;
-    totparms = 0;
-    numval = 0;
+    num_float_params = 0;
+    num_int_params = 0;
+    total_params = 0;
+    num_val = 0;
     while (*argptr) // count and pre-parse parms
     {
         long ll;
@@ -876,20 +876,20 @@ Command::Command(char *curarg, cmd_file a_mode) :
             *argptr2 = '/';
             last_arg = true;
         }
-        if (totparms == 0)
+        if (total_params == 0)
         {
-            numval = NONNUMERIC;
+            num_val = NONNUMERIC;
         }
-        if (totparms < 16)
+        if (total_params < 16)
         {
-            charval[totparms] = *argptr; // first letter of value
-            if (charval[totparms] == 'n')
+            char_val[total_params] = *argptr; // first letter of value
+            if (char_val[total_params] == 'n')
             {
-                yesnoval[totparms] = 0;
+                yes_no_val[total_params] = 0;
             }
-            if (charval[totparms] == 'y')
+            if (char_val[total_params] == 'y')
             {
-                yesnoval[totparms] = 1;
+                yes_no_val[total_params] = 1;
             }
         }
         char next{};
@@ -898,60 +898,60 @@ Command::Command(char *curarg, cmd_file a_mode) :
             && (next == '/' || next == '=') && tmpc == '/')
         {
             j = 0;
-            ++floatparms;
-            ++intparms;
-            if (totparms < 16)
+            ++num_float_params;
+            ++num_int_params;
+            if (total_params < 16)
             {
-                floatval[totparms] = j;
-                floatvalstr[totparms] = "0";
+                float_vals[total_params] = j;
+                float_val_strs[total_params] = "0";
             }
-            if (totparms < 64)
+            if (total_params < 64)
             {
-                intval[totparms] = j;
+                int_vals[total_params] = j;
             }
-            if (totparms == 0)
+            if (total_params == 0)
             {
-                numval = j;
+                num_val = j;
             }
         }
         else if (std::sscanf(argptr, "%ld%c", &ll, &tmpc) > 0 // got an integer
             && tmpc == '/')                                   // needs a long int, ll, here for lyapunov
         {
-            ++floatparms;
-            ++intparms;
-            if (totparms < 16)
+            ++num_float_params;
+            ++num_int_params;
+            if (total_params < 16)
             {
-                floatval[totparms] = ll;
-                floatvalstr[totparms] = argptr;
+                float_vals[total_params] = ll;
+                float_val_strs[total_params] = argptr;
             }
-            if (totparms < 64)
+            if (total_params < 64)
             {
-                intval[totparms] = (int) ll;
+                int_vals[total_params] = (int) ll;
             }
-            if (totparms == 0)
+            if (total_params == 0)
             {
-                numval = (int) ll;
+                num_val = (int) ll;
             }
         }
         else if (double ftemp{}; std::sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0 // got a float
                  && tmpc == '/')
         {
-            ++floatparms;
-            if (totparms < 16)
+            ++num_float_params;
+            if (total_params < 16)
             {
-                floatval[totparms] = ftemp;
-                floatvalstr[totparms] = argptr;
+                float_vals[total_params] = ftemp;
+                float_val_strs[total_params] = argptr;
             }
         }
         // using arbitrary precision and above failed
         else if (((int) std::strlen(argptr) > 513) // very long command
-            || (totparms > 0 && floatval[totparms - 1] == FLT_MAX && totparms < 6) || isabigfloat(argptr))
+            || (total_params > 0 && float_vals[total_params - 1] == FLT_MAX && total_params < 6) || isabigfloat(argptr))
         {
-            ++floatparms;
-            floatval[totparms] = FLT_MAX;
-            floatvalstr[totparms] = argptr;
+            ++num_float_params;
+            float_vals[total_params] = FLT_MAX;
+            float_val_strs[total_params] = argptr;
         }
-        ++totparms;
+        ++total_params;
         argptr = argptr2; // on to the next
         if (last_arg)
         {
@@ -1002,18 +1002,18 @@ static cmdarg_flags cmd_afi(const Command &)
 
 static cmdarg_flags cmd_batch(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_init_batch = cmd.yesnoval[0] == 0 ? batch_modes::NONE : batch_modes::NORMAL;
+    g_init_batch = cmd.yes_no_val[0] == 0 ? batch_modes::NONE : batch_modes::NORMAL;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // biospalette no longer used, do validity checks, but gobble argument
 static cmdarg_flags cmd_bios_palette(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
@@ -1023,11 +1023,11 @@ static cmdarg_flags cmd_bios_palette(const Command &cmd)
 // exitnoask deprecated; validate arg and gobble
 static cmdarg_flags cmd_exit_no_ask(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_escape_exit = cmd.yesnoval[0] != 0;
+    g_escape_exit = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -1051,7 +1051,7 @@ static cmdarg_flags cmd_make_doc(const Command &cmd)
 
 static cmdarg_flags cmd_make_par(const Command &cmd)
 {
-    if (cmd.totparms < 1 || cmd.totparms > 2)
+    if (cmd.total_params < 1 || cmd.total_params > 2)
     {
         return cmd.bad_arg();
     }
@@ -1121,15 +1121,15 @@ static cmdarg_flags cmd_make_par(const Command &cmd)
 
 static cmdarg_flags cmd_max_history(const Command &cmd)
 {
-    if (cmd.numval == NONNUMERIC)
+    if (cmd.num_val == NONNUMERIC)
     {
         return cmd.bad_arg();
     }
-    if (cmd.numval < 0)
+    if (cmd.num_val < 0)
     {
         return cmd.bad_arg();
     }
-    g_max_image_history = cmd.numval;
+    g_max_image_history = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -1138,10 +1138,10 @@ static cmdarg_flags cmd_text_safe(const Command &cmd)
 {
     if (g_first_init)
     {
-        if (!(cmd.charval[0] == 'n'        // no
-                || cmd.charval[0] == 'y'   // yes
-                || cmd.charval[0] == 'b'   // bios
-                || cmd.charval[0] == 's')) // save
+        if (!(cmd.char_val[0] == 'n'        // no
+                || cmd.char_val[0] == 'y'   // yes
+                || cmd.char_val[0] == 'b'   // bios
+                || cmd.char_val[0] == 's')) // save
         {
             return cmd.bad_arg();
         }
@@ -1152,7 +1152,7 @@ static cmdarg_flags cmd_text_safe(const Command &cmd)
 // vesadetect no longer used, do validity checks, but gobble argument
 static cmdarg_flags cmd_vesa_detect(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
@@ -1179,7 +1179,7 @@ static std::array<CommandHandler, 11> s_startup_commands{
 static cmdarg_flags cmd_3d(const Command &cmd)
 {
     const std::string_view value{cmd.value};
-    int yes_no = cmd.yesnoval[0];
+    int yes_no = cmd.yes_no_val[0];
     if (value == "overlay")
     {
         yes_no = 1;
@@ -1220,58 +1220,58 @@ static cmdarg_flags cmd_3d_mode(const Command &cmd)
 // ambient=?
 static cmdarg_flags cmd_ambient(const Command &cmd)
 {
-    if (cmd.numval < 0 || cmd.numval > 100)
+    if (cmd.num_val < 0 || cmd.num_val > 100)
     {
         return cmd.bad_arg();
     }
-    g_ambient = cmd.numval;
+    g_ambient = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // askvideo=?
 static cmdarg_flags cmd_ask_video(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_ask_video = cmd.yesnoval[0] != 0;
+    g_ask_video = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 // aspectdrift=?
 static cmdarg_flags cmd_aspect_drift(const Command &cmd)
 {
-    if (cmd.floatparms != 1 || cmd.floatval[0] < 0)
+    if (cmd.num_float_params != 1 || cmd.float_vals[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_aspect_drift = (float) cmd.floatval[0];
+    g_aspect_drift = (float) cmd.float_vals[0];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // attack=?
 static cmdarg_flags cmd_attack(const Command &cmd)
 {
-    g_fm_attack = cmd.numval & 0x0F;
+    g_fm_attack = cmd.num_val & 0x0F;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_attenuate(const Command &cmd)
 {
-    if (cmd.charval[0] == 'n')
+    if (cmd.char_val[0] == 'n')
     {
         g_hi_attenuation = 0;
     }
-    else if (cmd.charval[0] == 'l')
+    else if (cmd.char_val[0] == 'l')
     {
         g_hi_attenuation = 1;
     }
-    else if (cmd.charval[0] == 'm')
+    else if (cmd.char_val[0] == 'm')
     {
         g_hi_attenuation = 2;
     }
-    else if (cmd.charval[0] == 'h')
+    else if (cmd.char_val[0] == 'h')
     {
         g_hi_attenuation = 3;
     }
@@ -1312,31 +1312,31 @@ static cmdarg_flags cmd_auto_key_name(const Command &cmd)
 // background=?/?/?
 static cmdarg_flags cmd_background(const Command &cmd)
 {
-    if (cmd.totparms != 3 || cmd.intparms != 3)
+    if (cmd.total_params != 3 || cmd.num_int_params != 3)
     {
         return cmd.bad_arg();
     }
     for (int i = 0; i < 3; i++)
     {
-        if (cmd.intval[i] & ~0xff)
+        if (cmd.int_vals[i] & ~0xff)
         {
             return cmd.bad_arg();
         }
     }
-    g_background_color[0] = (BYTE) cmd.intval[0];
-    g_background_color[1] = (BYTE) cmd.intval[1];
-    g_background_color[2] = (BYTE) cmd.intval[2];
+    g_background_color[0] = (BYTE) cmd.int_vals[0];
+    g_background_color[1] = (BYTE) cmd.int_vals[1];
+    g_background_color[2] = (BYTE) cmd.int_vals[2];
     return cmdarg_flags::PARAM_3D;
 }
 
 // bailout=?
 static cmdarg_flags cmd_bail_out(const Command &cmd)
 {
-    if (cmd.floatval[0] < 1 || cmd.floatval[0] > 2100000000L)
+    if (cmd.float_vals[0] < 1 || cmd.float_vals[0] > 2100000000L)
     {
         return cmd.bad_arg();
     }
-    g_bail_out = (long) cmd.floatval[0];
+    g_bail_out = (long) cmd.float_vals[0];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
@@ -1382,49 +1382,49 @@ static cmdarg_flags cmd_bail_out_test(const Command &cmd)
 
 static cmdarg_flags cmd_bf_digits(const Command &cmd)
 {
-    if (cmd.numval == NONNUMERIC || (cmd.numval < 0 || cmd.numval > 2000))
+    if (cmd.num_val == NONNUMERIC || (cmd.num_val < 0 || cmd.num_val > 2000))
     {
         return cmd.bad_arg();
     }
-    g_bf_digits = cmd.numval;
+    g_bf_digits = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // biomorph=?
 static cmdarg_flags cmd_biomorph(const Command &cmd)
 {
-    g_user_biomorph_value = cmd.numval;
+    g_user_biomorph_value = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // brief=?
 static cmdarg_flags cmd_brief(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_brief = cmd.yesnoval[0] != 0;
+    g_brief = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
 // bright=?
 static cmdarg_flags cmd_bright(const Command &cmd)
 {
-    if (cmd.totparms != 2 || cmd.intparms != 2)
+    if (cmd.total_params != 2 || cmd.num_int_params != 2)
     {
         return cmd.bad_arg();
     }
-    g_red_bright = cmd.intval[0];
-    g_blue_bright = cmd.intval[1];
+    g_red_bright = cmd.int_vals[0];
+    g_blue_bright = cmd.int_vals[1];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // center-mag=?/?/?[/?/?/?]
 static cmdarg_flags cmd_center_mag(const Command &cmd)
 {
-    if ((cmd.totparms != cmd.floatparms) || (cmd.totparms != 0 && cmd.totparms < 3) ||
-        (cmd.totparms >= 3 && cmd.floatval[2] == 0.0))
+    if ((cmd.total_params != cmd.num_float_params) || (cmd.total_params != 0 && cmd.total_params < 3) ||
+        (cmd.total_params >= 3 && cmd.float_vals[2] == 0.0))
     {
         return cmd.bad_arg();
     }
@@ -1434,14 +1434,14 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     }
 
     g_use_center_mag = true;
-    if (cmd.totparms == 0)
+    if (cmd.total_params == 0)
     {
         return cmdarg_flags::NONE; // turns center-mag mode on
     }
     s_init_corners = true;
     // dec = get_max_curarg_len(floatvalstr, totparms);
     LDBL Magnification;
-    std::sscanf(cmd.floatvalstr[2], "%Lf", &Magnification);
+    std::sscanf(cmd.float_val_strs[2], "%Lf", &Magnification);
 
     // I don't know if this is portable, but something needs to
     // be used in case compiler's LDBL_MAX is not big enough
@@ -1456,26 +1456,26 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
         g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
     {
         // rough estimate that double is OK
-        double Xctr = cmd.floatval[0];
-        double Yctr = cmd.floatval[1];
+        double Xctr = cmd.float_vals[0];
+        double Yctr = cmd.float_vals[1];
         double Xmagfactor = 1;
         double Rotation = 0;
         double Skew = 0;
-        if (cmd.floatparms > 3)
+        if (cmd.num_float_params > 3)
         {
-            Xmagfactor = cmd.floatval[3];
+            Xmagfactor = cmd.float_vals[3];
         }
         if (Xmagfactor == 0)
         {
             Xmagfactor = 1;
         }
-        if (cmd.floatparms > 4)
+        if (cmd.num_float_params > 4)
         {
-            Rotation = cmd.floatval[4];
+            Rotation = cmd.float_vals[4];
         }
-        if (cmd.floatparms > 5)
+        if (cmd.num_float_params > 5)
         {
-            Skew = cmd.floatval[5];
+            Skew = cmd.float_vals[5];
         }
         // calculate bounds
         cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -1501,26 +1501,26 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     saved = save_stack();
     bf_t bXctr = alloc_stack(g_bf_length + 2);
     bf_t bYctr = alloc_stack(g_bf_length + 2);
-    get_bf(bXctr, cmd.floatvalstr[0]);
-    get_bf(bYctr, cmd.floatvalstr[1]);
+    get_bf(bXctr, cmd.float_val_strs[0]);
+    get_bf(bYctr, cmd.float_val_strs[1]);
     double Xmagfactor = 1;
     double Rotation = 0;
     double Skew = 0;
-    if (cmd.floatparms > 3)
+    if (cmd.num_float_params > 3)
     {
-        Xmagfactor = cmd.floatval[3];
+        Xmagfactor = cmd.float_vals[3];
     }
     if (Xmagfactor == 0)
     {
         Xmagfactor = 1;
     }
-    if (cmd.floatparms > 4)
+    if (cmd.num_float_params > 4)
     {
-        Rotation = cmd.floatval[4];
+        Rotation = cmd.float_vals[4];
     }
-    if (cmd.floatparms > 5)
+    if (cmd.num_float_params > 5)
     {
-        Skew = cmd.floatval[5];
+        Skew = cmd.float_vals[5];
     }
     // calculate bounds
     cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -1532,11 +1532,11 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
 // coarse=?
 static cmdarg_flags cmd_coarse(const Command &cmd)
 {
-    if (cmd.numval < 3 || cmd.numval > 2000)
+    if (cmd.num_val < 3 || cmd.num_val > 2000)
     {
         return cmd.bad_arg();
     }
-    g_preview_factor = cmd.numval;
+    g_preview_factor = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -1686,7 +1686,7 @@ static cmdarg_flags cmd_comment(const Command &cmd)
 // converge=?
 static cmdarg_flags cmd_converge(const Command &cmd)
 {
-    g_converge_x_adjust = cmd.numval;
+    g_converge_x_adjust = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -1698,20 +1698,20 @@ static cmdarg_flags cmd_corners(const Command &cmd)
         return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
     }
 
-    if (cmd.floatparms != cmd.totparms || (cmd.totparms != 0 && cmd.totparms != 4 && cmd.totparms != 6))
+    if (cmd.num_float_params != cmd.total_params || (cmd.total_params != 0 && cmd.total_params != 4 && cmd.total_params != 6))
     {
         return cmd.bad_arg();
     }
     
     g_use_center_mag = false;
-    if (cmd.totparms == 0)
+    if (cmd.total_params == 0)
     {
         return cmdarg_flags::NONE; // turns corners mode on
     }
 
     s_init_corners = true;
     // good first approx, but dec could be too big
-    int dec = get_max_curarg_len(cmd.floatvalstr, cmd.totparms) + 1;
+    int dec = get_max_curarg_len(cmd.float_val_strs, cmd.total_params) + 1;
     if ((dec > DBL_DIG + 1 || g_debug_flag == debug_flags::force_arbitrary_precision_math) &&
         g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
     {
@@ -1729,26 +1729,26 @@ static cmdarg_flags cmd_corners(const Command &cmd)
         }
 
         // xx3rd = xxmin = floatval[0];
-        get_bf(g_bf_x_min, cmd.floatvalstr[0]);
-        get_bf(g_bf_x_3rd, cmd.floatvalstr[0]);
+        get_bf(g_bf_x_min, cmd.float_val_strs[0]);
+        get_bf(g_bf_x_3rd, cmd.float_val_strs[0]);
 
         // xxmax = floatval[1];
-        get_bf(g_bf_x_max, cmd.floatvalstr[1]);
+        get_bf(g_bf_x_max, cmd.float_val_strs[1]);
 
         // yy3rd = yymin = floatval[2];
-        get_bf(g_bf_y_min, cmd.floatvalstr[2]);
-        get_bf(g_bf_y_3rd, cmd.floatvalstr[2]);
+        get_bf(g_bf_y_min, cmd.float_val_strs[2]);
+        get_bf(g_bf_y_3rd, cmd.float_val_strs[2]);
 
         // yymax = floatval[3];
-        get_bf(g_bf_y_max, cmd.floatvalstr[3]);
+        get_bf(g_bf_y_max, cmd.float_val_strs[3]);
 
-        if (cmd.totparms == 6)
+        if (cmd.total_params == 6)
         {
             // xx3rd = floatval[4];
-            get_bf(g_bf_x_3rd, cmd.floatvalstr[4]);
+            get_bf(g_bf_x_3rd, cmd.float_val_strs[4]);
 
             // yy3rd = floatval[5];
-            get_bf(g_bf_y_3rd, cmd.floatvalstr[5]);
+            get_bf(g_bf_y_3rd, cmd.float_val_strs[5]);
         }
 
         // now that all the corners have been read in, get a more
@@ -1772,40 +1772,40 @@ static cmdarg_flags cmd_corners(const Command &cmd)
             }
 
             // xx3rd = xxmin = floatval[0];
-            get_bf(g_bf_x_min, cmd.floatvalstr[0]);
-            get_bf(g_bf_x_3rd, cmd.floatvalstr[0]);
+            get_bf(g_bf_x_min, cmd.float_val_strs[0]);
+            get_bf(g_bf_x_3rd, cmd.float_val_strs[0]);
 
             // xxmax = floatval[1];
-            get_bf(g_bf_x_max, cmd.floatvalstr[1]);
+            get_bf(g_bf_x_max, cmd.float_val_strs[1]);
 
             // yy3rd = yymin = floatval[2];
-            get_bf(g_bf_y_min, cmd.floatvalstr[2]);
-            get_bf(g_bf_y_3rd, cmd.floatvalstr[2]);
+            get_bf(g_bf_y_min, cmd.float_val_strs[2]);
+            get_bf(g_bf_y_3rd, cmd.float_val_strs[2]);
 
             // yymax = floatval[3];
-            get_bf(g_bf_y_max, cmd.floatvalstr[3]);
+            get_bf(g_bf_y_max, cmd.float_val_strs[3]);
 
-            if (cmd.totparms == 6)
+            if (cmd.total_params == 6)
             {
                 // xx3rd = floatval[4];
-                get_bf(g_bf_x_3rd, cmd.floatvalstr[4]);
+                get_bf(g_bf_x_3rd, cmd.float_val_strs[4]);
 
                 // yy3rd = floatval[5];
-                get_bf(g_bf_y_3rd, cmd.floatvalstr[5]);
+                get_bf(g_bf_y_3rd, cmd.float_val_strs[5]);
             }
         }
     }
-    g_x_min = cmd.floatval[0];
-    g_x_3rd = cmd.floatval[0];
-    g_x_max = cmd.floatval[1];
-    g_y_min = cmd.floatval[2];
-    g_y_3rd = cmd.floatval[2];
-    g_y_max = cmd.floatval[3];
+    g_x_min = cmd.float_vals[0];
+    g_x_3rd = cmd.float_vals[0];
+    g_x_max = cmd.float_vals[1];
+    g_y_min = cmd.float_vals[2];
+    g_y_3rd = cmd.float_vals[2];
+    g_y_max = cmd.float_vals[3];
 
-    if (cmd.totparms == 6)
+    if (cmd.total_params == 6)
     {
-        g_x_3rd = cmd.floatval[4];
-        g_y_3rd = cmd.floatval[5];
+        g_x_3rd = cmd.float_vals[4];
+        g_y_3rd = cmd.float_vals[5];
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }
@@ -1813,53 +1813,53 @@ static cmdarg_flags cmd_corners(const Command &cmd)
 // crop=?/?/?/?
 static cmdarg_flags cmd_crop(const Command &cmd)
 {
-    if (cmd.totparms != 4 || cmd.intparms != 4 || cmd.intval[0] < 0 || cmd.intval[0] > 100 ||
-        cmd.intval[1] < 0 || cmd.intval[1] > 100 || cmd.intval[2] < 0 || cmd.intval[2] > 100 ||
-        cmd.intval[3] < 0 || cmd.intval[3] > 100)
+    if (cmd.total_params != 4 || cmd.num_int_params != 4 || cmd.int_vals[0] < 0 || cmd.int_vals[0] > 100 ||
+        cmd.int_vals[1] < 0 || cmd.int_vals[1] > 100 || cmd.int_vals[2] < 0 || cmd.int_vals[2] > 100 ||
+        cmd.int_vals[3] < 0 || cmd.int_vals[3] > 100)
     {
         return cmd.bad_arg();
     }
-    g_red_crop_left = cmd.intval[0];
-    g_red_crop_right = cmd.intval[1];
-    g_blue_crop_left = cmd.intval[2];
-    g_blue_crop_right = cmd.intval[3];
+    g_red_crop_left = cmd.int_vals[0];
+    g_red_crop_right = cmd.int_vals[1];
+    g_blue_crop_left = cmd.int_vals[2];
+    g_blue_crop_right = cmd.int_vals[3];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // curdir=?
 static cmdarg_flags cmd_cur_dir(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_check_cur_dir = cmd.yesnoval[0] != 0;
+    g_check_cur_dir = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_cycle_limit(const Command &cmd)
 {
-    if (cmd.numval <= 1 || cmd.numval > 256)
+    if (cmd.num_val <= 1 || cmd.num_val > 256)
     {
         return cmd.bad_arg();
     }
-    g_init_cycle_limit = cmd.numval;
+    g_init_cycle_limit = cmd.num_val;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_cycle_range(const Command &cmd)
 {
-    int end{cmd.intval[1]};
-    if (cmd.totparms < 2)
+    int end{cmd.int_vals[1]};
+    if (cmd.total_params < 2)
     {
         end = 255;
     }
-    int begin{cmd.intval[0]};
-    if (cmd.totparms < 1)
+    int begin{cmd.int_vals[0]};
+    if (cmd.total_params < 1)
     {
         begin = 1;
     }
-    if (cmd.totparms != cmd.intparms || begin < 0 || end > 255 || begin > end)
+    if (cmd.total_params != cmd.num_int_params || begin < 0 || end > 255 || begin > end)
     {
         return cmd.bad_arg();
     }
@@ -1872,7 +1872,7 @@ static cmdarg_flags cmd_cycle_range(const Command &cmd)
 static cmdarg_flags cmd_debug_flag(const Command &cmd)
 {
     // internal use only
-    g_debug_flag = static_cast<debug_flags>(cmd.numval);
+    g_debug_flag = static_cast<debug_flags>(cmd.num_val);
     g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != debug_flags::none; // separate timer flag
     g_debug_flag &= ~debug_flags::benchmark_timer;
     return cmdarg_flags::NONE;
@@ -1881,21 +1881,21 @@ static cmdarg_flags cmd_debug_flag(const Command &cmd)
 // decay=?
 static cmdarg_flags cmd_decay(const Command &cmd)
 {
-    g_fm_decay = cmd.numval & 0x0F;
+    g_fm_decay = cmd.num_val & 0x0F;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_decomp(const Command &cmd)
 {
-    if (cmd.totparms != cmd.intparms || cmd.totparms < 1)
+    if (cmd.total_params != cmd.num_int_params || cmd.total_params < 1)
     {
         return cmd.bad_arg();
     }
-    g_decomp[0] = cmd.intval[0];
+    g_decomp[0] = cmd.int_vals[0];
     g_decomp[1] = 0;
-    if (cmd.totparms > 1) // backward compatibility
+    if (cmd.total_params > 1) // backward compatibility
     {
-        g_decomp[1] = cmd.intval[1];
+        g_decomp[1] = cmd.int_vals[1];
         g_bail_out = g_decomp[1];
     }
     return cmdarg_flags::FRACTAL_PARAM;
@@ -1903,20 +1903,20 @@ static cmdarg_flags cmd_decomp(const Command &cmd)
 
 static cmdarg_flags cmd_dist_est(const Command &cmd)
 {
-    if (cmd.totparms != cmd.intparms || cmd.totparms < 1)
+    if (cmd.total_params != cmd.num_int_params || cmd.total_params < 1)
     {
         return cmd.bad_arg();
     }
-    g_user_distance_estimator_value = (long) cmd.floatval[0];
+    g_user_distance_estimator_value = (long) cmd.float_vals[0];
     g_distance_estimator_width_factor = 71;
-    if (cmd.totparms > 1)
+    if (cmd.total_params > 1)
     {
-        g_distance_estimator_width_factor = cmd.intval[1];
+        g_distance_estimator_width_factor = cmd.int_vals[1];
     }
-    if (cmd.totparms > 3 && cmd.intval[2] > 0 && cmd.intval[3] > 0)
+    if (cmd.total_params > 3 && cmd.int_vals[2] > 0 && cmd.int_vals[3] > 0)
     {
-        g_distance_estimator_x_dots = cmd.intval[2];
-        g_distance_estimator_y_dots = cmd.intval[3];
+        g_distance_estimator_x_dots = cmd.int_vals[2];
+        g_distance_estimator_y_dots = cmd.int_vals[3];
     }
     else
     {
@@ -1928,37 +1928,37 @@ static cmdarg_flags cmd_dist_est(const Command &cmd)
 
 static cmdarg_flags cmd_dither(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_dither_flag = cmd.yesnoval[0] != 0;
+    g_dither_flag = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 // fastrestore=?
 static cmdarg_flags cmd_fast_restore(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_fast_restore = cmd.yesnoval[0] != 0;
+    g_fast_restore = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_filename(const Command &cmd)
 {
-    if (cmd.charval[0] == '.' && cmd.value[1] != SLASHC)
+    if (cmd.char_val[0] == '.' && cmd.value[1] != SLASHC)
     {
-        if (cmd.valuelen > 4)
+        if (cmd.value_len > 4)
         {
             return cmd.bad_arg();
         }
         g_gif_filename_mask = std::string{"*"} + cmd.value;
         return cmdarg_flags::NONE;
     }
-    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    if (cmd.value_len > (FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -1992,13 +1992,13 @@ static cmdarg_flags cmd_fill_color(const Command &cmd)
     {
         g_fill_color = -1;
     }
-    else if (cmd.numval == NONNUMERIC)
+    else if (cmd.num_val == NONNUMERIC)
     {
         return cmd.bad_arg();
     }
     else
     {
-        g_fill_color = cmd.numval;
+        g_fill_color = cmd.num_val;
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }
@@ -2006,39 +2006,39 @@ static cmdarg_flags cmd_fill_color(const Command &cmd)
 // filltype=?
 static cmdarg_flags cmd_fill_type(const Command &cmd)
 {
-    if (cmd.numval < +fill_type::SURFACE_GRID || cmd.numval > +fill_type::LIGHT_SOURCE_AFTER)
+    if (cmd.num_val < +fill_type::SURFACE_GRID || cmd.num_val > +fill_type::LIGHT_SOURCE_AFTER)
     {
         return cmd.bad_arg();
     }
-    g_fill_type = static_cast<fill_type>(cmd.numval);
+    g_fill_type = static_cast<fill_type>(cmd.num_val);
     return cmdarg_flags::PARAM_3D;
 }
 
 static cmdarg_flags cmd_fin_attract(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_finite_attractor = cmd.yesnoval[0] != 0;
+    g_finite_attractor = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // float=?
 static cmdarg_flags cmd_float(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_user_float_flag = cmd.yesnoval[0] != 0;
+    g_user_float_flag = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // formulafile=?
 static cmdarg_flags cmd_formula_file(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    if (cmd.value_len > (FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2052,7 +2052,7 @@ static cmdarg_flags cmd_formula_file(const Command &cmd)
 // formulaname=?
 static cmdarg_flags cmd_formula_name(const Command &cmd)
 {
-    if (cmd.valuelen > ITEM_NAME_LEN)
+    if (cmd.value_len > ITEM_NAME_LEN)
     {
         return cmd.bad_arg();
     }
@@ -2063,11 +2063,11 @@ static cmdarg_flags cmd_formula_name(const Command &cmd)
 // fullcolor=?
 static cmdarg_flags cmd_full_color(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_targa_out = cmd.yesnoval[0] != 0;
+    g_targa_out = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -2096,7 +2096,7 @@ static cmdarg_flags cmd_function(const Command &cmd)
 // deprecated, validate argument and swallow value
 static cmdarg_flags cmd_gif87a(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
@@ -2106,18 +2106,18 @@ static cmdarg_flags cmd_gif87a(const Command &cmd)
 // haze=?
 static cmdarg_flags cmd_haze(const Command &cmd)
 {
-    if (cmd.numval < 0 || cmd.numval > 100)
+    if (cmd.num_val < 0 || cmd.num_val > 100)
     {
         return cmd.bad_arg();
     }
-    g_haze = cmd.numval;
+    g_haze = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // hertz=?
 static cmdarg_flags cmd_hertz(const Command &cmd)
 {
-    g_base_hertz = cmd.numval;
+    g_base_hertz = cmd.num_val;
     return cmdarg_flags::NONE;
 }
 
@@ -2125,7 +2125,7 @@ static cmdarg_flags cmd_hertz(const Command &cmd)
 static cmdarg_flags cmd_ifs(const Command &cmd)
 {
     // ifs3d for old time's sake
-    if (cmd.valuelen > ITEM_NAME_LEN)
+    if (cmd.value_len > ITEM_NAME_LEN)
     {
         return cmd.bad_arg();
     }
@@ -2137,7 +2137,7 @@ static cmdarg_flags cmd_ifs(const Command &cmd)
 // ifsfile=??
 static cmdarg_flags cmd_ifs_file(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    if (cmd.value_len > (FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2162,12 +2162,12 @@ static cmdarg_flags cmd_init_orbit(const Command &cmd)
     }
     else
     {
-        if (cmd.totparms != 2 || cmd.floatparms != 2)
+        if (cmd.total_params != 2 || cmd.num_float_params != 2)
         {
             return cmd.bad_arg();
         }
-        g_init_orbit.x = cmd.floatval[0];
-        g_init_orbit.y = cmd.floatval[1];
+        g_init_orbit.x = cmd.float_vals[0];
+        g_init_orbit.y = cmd.float_vals[1];
         g_use_init_orbit = init_orbit_mode::value;
     }
     return cmdarg_flags::FRACTAL_PARAM;
@@ -2199,79 +2199,79 @@ static cmdarg_flags cmd_inside(const Command &cmd)
             return cmdarg_flags::FRACTAL_PARAM;
         }
     }
-    if (cmd.numval == NONNUMERIC)
+    if (cmd.num_val == NONNUMERIC)
     {
         return cmd.bad_arg();
     }
 
-    g_inside_color = cmd.numval;
+    g_inside_color = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // interocular=?
 static cmdarg_flags cmd_interocular(const Command &cmd)
 {
-    g_eye_separation = cmd.numval;
+    g_eye_separation = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // invert=?/?/?
 static cmdarg_flags cmd_invert(const Command &cmd)
 {
-    if (cmd.totparms != cmd.floatparms || (cmd.totparms != 1 && cmd.totparms != 3))
+    if (cmd.total_params != cmd.num_float_params || (cmd.total_params != 1 && cmd.total_params != 3))
     {
         return cmd.bad_arg();
     }
-    g_inversion[0] = cmd.floatval[0];
-    g_invert = (g_inversion[0] != 0.0) ? cmd.totparms : 0;
-    if (cmd.totparms == 3)
+    g_inversion[0] = cmd.float_vals[0];
+    g_invert = (g_inversion[0] != 0.0) ? cmd.total_params : 0;
+    if (cmd.total_params == 3)
     {
-        g_inversion[1] = cmd.floatval[1];
-        g_inversion[2] = cmd.floatval[2];
+        g_inversion[1] = cmd.float_vals[1];
+        g_inversion[2] = cmd.float_vals[2];
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 static cmdarg_flags cmd_is_mand(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_is_mandelbrot = cmd.yesnoval[0] != 0;
+    g_is_mandelbrot = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // julibrot3d=?/?/?/?
 static cmdarg_flags cmd_julibrot_3d(const Command &cmd)
 {
-    if (cmd.floatparms != cmd.totparms)
+    if (cmd.num_float_params != cmd.total_params)
     {
         return cmd.bad_arg();
     }
-    if (cmd.totparms > 0)
+    if (cmd.total_params > 0)
     {
-        g_julibrot_z_dots = (int) cmd.floatval[0];
+        g_julibrot_z_dots = (int) cmd.float_vals[0];
     }
-    if (cmd.totparms > 1)
+    if (cmd.total_params > 1)
     {
-        g_julibrot_origin_fp = (float) cmd.floatval[1];
+        g_julibrot_origin_fp = (float) cmd.float_vals[1];
     }
-    if (cmd.totparms > 2)
+    if (cmd.total_params > 2)
     {
-        g_julibrot_depth_fp = (float) cmd.floatval[2];
+        g_julibrot_depth_fp = (float) cmd.float_vals[2];
     }
-    if (cmd.totparms > 3)
+    if (cmd.total_params > 3)
     {
-        g_julibrot_height_fp = (float) cmd.floatval[3];
+        g_julibrot_height_fp = (float) cmd.float_vals[3];
     }
-    if (cmd.totparms > 4)
+    if (cmd.total_params > 4)
     {
-        g_julibrot_width_fp = (float) cmd.floatval[4];
+        g_julibrot_width_fp = (float) cmd.float_vals[4];
     }
-    if (cmd.totparms > 5)
+    if (cmd.total_params > 5)
     {
-        g_julibrot_dist_fp = (float) cmd.floatval[5];
+        g_julibrot_dist_fp = (float) cmd.float_vals[5];
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }
@@ -2279,44 +2279,44 @@ static cmdarg_flags cmd_julibrot_3d(const Command &cmd)
 // julibroteyes=?
 static cmdarg_flags cmd_julibrot_eyes(const Command &cmd)
 {
-    if (cmd.floatparms != cmd.totparms || cmd.totparms != 1)
+    if (cmd.num_float_params != cmd.total_params || cmd.total_params != 1)
     {
         return cmd.bad_arg();
     }
-    g_eyes_fp = (float) cmd.floatval[0];
+    g_eyes_fp = (float) cmd.float_vals[0];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // julibrotfromto=?/?/?/?
 static cmdarg_flags cmd_julibrot_from_to(const Command &cmd)
 {
-    if (cmd.floatparms != cmd.totparms || cmd.totparms != 4)
+    if (cmd.num_float_params != cmd.total_params || cmd.total_params != 4)
     {
         return cmd.bad_arg();
     }
-    g_julibrot_x_max = cmd.floatval[0];
-    g_julibrot_x_min = cmd.floatval[1];
-    g_julibrot_y_max = cmd.floatval[2];
-    g_julibrot_y_min = cmd.floatval[3];
+    g_julibrot_x_max = cmd.float_vals[0];
+    g_julibrot_x_min = cmd.float_vals[1];
+    g_julibrot_y_max = cmd.float_vals[2];
+    g_julibrot_y_min = cmd.float_vals[3];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // latitude=?/?
 static cmdarg_flags cmd_latitude(const Command &cmd)
 {
-    if (cmd.totparms != 2 || cmd.intparms != 2)
+    if (cmd.total_params != 2 || cmd.num_int_params != 2)
     {
         return cmd.bad_arg();
     }
-    g_sphere_theta_min = cmd.intval[0];
-    g_sphere_theta_max = cmd.intval[1];
+    g_sphere_theta_min = cmd.int_vals[0];
+    g_sphere_theta_max = cmd.int_vals[1];
     return cmdarg_flags::PARAM_3D;
 }
 
 // lfile=?
 static cmdarg_flags cmd_l_file(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    if (cmd.value_len > (FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2330,7 +2330,7 @@ static cmdarg_flags cmd_l_file(const Command &cmd)
 // lightname=?
 static cmdarg_flags cmd_light_name(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    if (cmd.value_len > (FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2344,20 +2344,20 @@ static cmdarg_flags cmd_light_name(const Command &cmd)
 // lightsource=?/?/?
 static cmdarg_flags cmd_light_source(const Command &cmd)
 {
-    if (cmd.totparms != 3 || cmd.intparms != 3)
+    if (cmd.total_params != 3 || cmd.num_int_params != 3)
     {
         return cmd.bad_arg();
     }
-    g_light_x = cmd.intval[0];
-    g_light_y = cmd.intval[1];
-    g_light_z = cmd.intval[2];
+    g_light_x = cmd.int_vals[0];
+    g_light_y = cmd.int_vals[1];
+    g_light_z = cmd.int_vals[2];
     return cmdarg_flags::PARAM_3D;
 }
 
 // lname=?
 static cmdarg_flags cmd_l_name(const Command &cmd)
 {
-    if (cmd.valuelen > ITEM_NAME_LEN)
+    if (cmd.value_len > ITEM_NAME_LEN)
     {
         return cmd.bad_arg();
     }
@@ -2369,21 +2369,21 @@ static cmdarg_flags cmd_l_name(const Command &cmd)
 static cmdarg_flags cmd_log_map(const Command &cmd)
 {
     g_log_map_auto_calculate = false; // turn this off if loading a PAR
-    if (cmd.charval[0] == 'y')
+    if (cmd.char_val[0] == 'y')
     {
         g_log_map_flag = 1; // palette is logarithmic
     }
-    else if (cmd.charval[0] == 'n')
+    else if (cmd.char_val[0] == 'n')
     {
         g_log_map_flag = 0;
     }
-    else if (cmd.charval[0] == 'o')
+    else if (cmd.char_val[0] == 'o')
     {
         g_log_map_flag = -1; // old log palette
     }
     else
     {
-        g_log_map_flag = (long) cmd.floatval[0];
+        g_log_map_flag = (long) cmd.float_vals[0];
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }
@@ -2393,15 +2393,15 @@ static cmdarg_flags cmd_log_mode(const Command &cmd)
 {
     g_log_map_fly_calculate = 0; // turn off if error
     g_log_map_auto_calculate = false;
-    if (cmd.charval[0] == 'f')
+    if (cmd.char_val[0] == 'f')
     {
         g_log_map_fly_calculate = 1; // calculate on the fly
     }
-    else if (cmd.charval[0] == 't')
+    else if (cmd.char_val[0] == 't')
     {
         g_log_map_fly_calculate = 2; // force use of LogTable
     }
-    else if (cmd.charval[0] == 'a')
+    else if (cmd.char_val[0] == 'a')
     {
         g_log_map_auto_calculate = true; // force auto calc of logmap
     }
@@ -2415,23 +2415,23 @@ static cmdarg_flags cmd_log_mode(const Command &cmd)
 // longitude=?/?
 static cmdarg_flags cmd_longitude(const Command &cmd)
 {
-    if (cmd.totparms != 2 || cmd.intparms != 2)
+    if (cmd.total_params != 2 || cmd.num_int_params != 2)
     {
         return cmd.bad_arg();
     }
-    g_sphere_phi_min = cmd.intval[0];
-    g_sphere_phi_max = cmd.intval[1];
+    g_sphere_phi_min = cmd.int_vals[0];
+    g_sphere_phi_max = cmd.int_vals[1];
     return cmdarg_flags::PARAM_3D;
 }
 
 static cmdarg_flags cmd_make_mig(const Command &cmd)
 {
-    if (cmd.totparms < 2)
+    if (cmd.total_params < 2)
     {
         return cmd.bad_arg();
     }
-    const int xmult = cmd.intval[0];
-    const int ymult = cmd.intval[1];
+    const int xmult = cmd.int_vals[0];
+    const int ymult = cmd.int_vals[1];
     make_mig(xmult, ymult);
     exit(0);
 }
@@ -2439,7 +2439,7 @@ static cmdarg_flags cmd_make_mig(const Command &cmd)
 // map=, set default colors
 static cmdarg_flags cmd_map(const Command &cmd)
 {
-    if (cmd.valuelen > FILE_MAX_PATH - 1)
+    if (cmd.value_len > FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2460,18 +2460,18 @@ static cmdarg_flags cmd_map(const Command &cmd)
 
 static cmdarg_flags cmd_math_tolerance(const Command &cmd)
 {
-    if (cmd.charval[0] == '/')
+    if (cmd.char_val[0] == '/')
     {
         // leave math_tol[0] at the default value
     }
-    else if (cmd.totparms >= 1)
+    else if (cmd.total_params >= 1)
     {
-        g_math_tol[0] = cmd.floatval[0];
+        g_math_tol[0] = cmd.float_vals[0];
     }
 
-    if (cmd.totparms >= 2)
+    if (cmd.total_params >= 2)
     {
-        g_math_tol[1] = cmd.floatval[1];
+        g_math_tol[1] = cmd.float_vals[1];
     }
     return cmdarg_flags::NONE;
 }
@@ -2480,7 +2480,7 @@ static cmdarg_flags cmd_math_tolerance(const Command &cmd)
 // Change default color resolution
 static cmdarg_flags cmd_max_color_res(const Command &cmd)
 {
-    if (cmd.numval == 1 || cmd.numval == 4 || cmd.numval == 8 || cmd.numval == 16 || cmd.numval == 24)
+    if (cmd.num_val == 1 || cmd.num_val == 4 || cmd.num_val == 8 || cmd.num_val == 16 || cmd.num_val == 24)
     {
         return cmdarg_flags::NONE;
     }
@@ -2489,40 +2489,40 @@ static cmdarg_flags cmd_max_color_res(const Command &cmd)
 
 static cmdarg_flags cmd_max_iter(const Command &cmd)
 {
-    if (cmd.floatval[0] < 2)
+    if (cmd.float_vals[0] < 2)
     {
         return cmd.bad_arg();
     }
-    g_max_iterations = (long) cmd.floatval[0];
+    g_max_iterations = (long) cmd.float_vals[0];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 static cmdarg_flags cmd_max_line_length(const Command &cmd)
 {
-    if (cmd.numval < MIN_MAX_LINE_LENGTH || cmd.numval > MAX_MAX_LINE_LENGTH)
+    if (cmd.num_val < MIN_MAX_LINE_LENGTH || cmd.num_val > MAX_MAX_LINE_LENGTH)
     {
         return cmd.bad_arg();
     }
-    g_max_line_length = cmd.numval;
+    g_max_line_length = cmd.num_val;
     return cmdarg_flags::NONE;
 }
 
 // miim=?[/?[/?[/?]]]
 static cmdarg_flags cmd_miim(const Command &cmd)
 {
-    if (cmd.totparms > 6)
+    if (cmd.total_params > 6)
     {
         return cmd.bad_arg();
     }
-    if (cmd.charval[0] == 'b')
+    if (cmd.char_val[0] == 'b')
     {
         g_major_method = Major::breadth_first;
     }
-    else if (cmd.charval[0] == 'd')
+    else if (cmd.char_val[0] == 'd')
     {
         g_major_method = Major::depth_first;
     }
-    else if (cmd.charval[0] == 'w')
+    else if (cmd.char_val[0] == 'w')
     {
         g_major_method = Major::random_walk;
     }
@@ -2537,11 +2537,11 @@ static cmdarg_flags cmd_miim(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    if (cmd.charval[1] == 'l')
+    if (cmd.char_val[1] == 'l')
     {
         g_inverse_julia_minor_method = Minor::left_first;
     }
-    else if (cmd.charval[1] == 'r')
+    else if (cmd.char_val[1] == 'r')
     {
         g_inverse_julia_minor_method = Minor::right_first;
     }
@@ -2552,11 +2552,11 @@ static cmdarg_flags cmd_miim(const Command &cmd)
 
     // keep this next part in for backwards compatibility with old PARs ???
 
-    if (cmd.totparms > 2)
+    if (cmd.total_params > 2)
     {
         for (int k = 2; k < 6; ++k)
         {
-            g_params[k - 2] = (k < cmd.totparms) ? cmd.floatval[k] : 0.0;
+            g_params[k - 2] = (k < cmd.total_params) ? cmd.float_vals[k] : 0.0;
         }
     }
 
@@ -2565,28 +2565,28 @@ static cmdarg_flags cmd_miim(const Command &cmd)
 
 static cmdarg_flags cmd_min_stack(const Command &cmd)
 {
-    if (cmd.totparms != 1)
+    if (cmd.total_params != 1)
     {
         return cmd.bad_arg();
     }
-    g_soi_min_stack = cmd.intval[0];
+    g_soi_min_stack = cmd.int_vals[0];
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_no_bof(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_bof_match_book_images = cmd.yesnoval[0] == 0;
+    g_bof_match_book_images = cmd.yes_no_val[0] == 0;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // noninterlaced no longer used, validate value and gobble argument
 static cmdarg_flags cmd_non_interlaced(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
@@ -2596,17 +2596,17 @@ static cmdarg_flags cmd_non_interlaced(const Command &cmd)
 // olddemmcolors=?
 static cmdarg_flags cmd_old_demm_colors(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_old_demm_colors = cmd.yesnoval[0] != 0;
+    g_old_demm_colors = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_orbit_delay(const Command &cmd)
 {
-    g_orbit_delay = cmd.numval;
+    g_orbit_delay = cmd.num_val;
     return cmdarg_flags::NONE;
 }
 
@@ -2614,21 +2614,21 @@ static cmdarg_flags cmd_orbit_delay(const Command &cmd)
 static cmdarg_flags cmd_orbit_corners(const Command &cmd)
 {
     g_set_orbit_corners = false;
-    if (cmd.floatparms != cmd.totparms || (cmd.totparms != 0 && cmd.totparms != 4 && cmd.totparms != 6))
+    if (cmd.num_float_params != cmd.total_params || (cmd.total_params != 0 && cmd.total_params != 4 && cmd.total_params != 6))
     {
         return cmd.bad_arg();
     }
-    g_orbit_corner_min_x = cmd.floatval[0];
-    g_orbit_corner_3_x = cmd.floatval[0];
-    g_orbit_corner_max_x = cmd.floatval[1];
-    g_orbit_corner_min_y = cmd.floatval[2];
-    g_orbit_corner_3_y = cmd.floatval[2];
-    g_orbit_corner_max_y = cmd.floatval[3];
+    g_orbit_corner_min_x = cmd.float_vals[0];
+    g_orbit_corner_3_x = cmd.float_vals[0];
+    g_orbit_corner_max_x = cmd.float_vals[1];
+    g_orbit_corner_min_y = cmd.float_vals[2];
+    g_orbit_corner_3_y = cmd.float_vals[2];
+    g_orbit_corner_max_y = cmd.float_vals[3];
 
-    if (cmd.totparms == 6)
+    if (cmd.total_params == 6)
     {
-        g_orbit_corner_3_x = cmd.floatval[4];
-        g_orbit_corner_3_y = cmd.floatval[5];
+        g_orbit_corner_3_x = cmd.float_vals[4];
+        g_orbit_corner_3_y = cmd.float_vals[5];
     }
     g_set_orbit_corners = true;
     g_keep_screen_coords = true;
@@ -2639,17 +2639,17 @@ static cmdarg_flags cmd_orbit_corners(const Command &cmd)
 // rectangle, line, or function (not yet tested or documented)
 static cmdarg_flags cmd_orbit_draw_mode(const Command &cmd)
 {
-    if (cmd.charval[0] != 'l' && cmd.charval[0] != 'r' && cmd.charval[0] != 'f')
+    if (cmd.char_val[0] != 'l' && cmd.char_val[0] != 'r' && cmd.char_val[0] != 'f')
     {
         return cmd.bad_arg();
     }
-    g_draw_mode = cmd.charval[0];
+    g_draw_mode = cmd.char_val[0];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 static cmdarg_flags cmd_orbit_interval(const Command &cmd)
 {
-    g_orbit_interval = cmd.numval;
+    g_orbit_interval = cmd.num_val;
     if (g_orbit_interval < 1)
     {
         g_orbit_interval = 1;
@@ -2673,15 +2673,15 @@ static cmdarg_flags cmd_orbit_name(const Command &cmd)
 // orbitsave=?
 static cmdarg_flags cmd_orbit_save(const Command &cmd)
 {
-    if (cmd.charval[0] == 's')
+    if (cmd.char_val[0] == 's')
     {
         g_orbit_save_flags |= osf_midi;
     }
-    else if (cmd.yesnoval[0] < 0)
+    else if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_orbit_save_flags |= (cmd.yesnoval[0] ? osf_raw : 0);
+    g_orbit_save_flags |= (cmd.yes_no_val[0] ? osf_raw : 0);
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
@@ -2695,7 +2695,7 @@ static cmdarg_flags cmd_orbit_save_name(const Command &cmd)
 // orgfrmdir=?
 static cmdarg_flags cmd_org_frm_dir(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_DIR - 1))
+    if (cmd.value_len > (FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -2734,34 +2734,34 @@ static cmdarg_flags cmd_outside(const Command &cmd)
             return cmdarg_flags::FRACTAL_PARAM;
         }
     }
-    if (cmd.numval == NONNUMERIC || (cmd.numval < TDIS || cmd.numval > 255))
+    if (cmd.num_val == NONNUMERIC || (cmd.num_val < TDIS || cmd.num_val > 255))
     {
         return cmd.bad_arg();
     }
-    g_outside_color = cmd.numval;
+    g_outside_color = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 static cmdarg_flags cmd_overwrite(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_overwrite_file = cmd.yesnoval[0] != 0;
+    g_overwrite_file = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_params(const Command &cmd)
 {
-    if (cmd.totparms != cmd.floatparms || cmd.totparms > MAX_PARAMS)
+    if (cmd.total_params != cmd.num_float_params || cmd.total_params > MAX_PARAMS)
     {
         return cmd.bad_arg();
     }
     s_init_params = true;
     for (int k = 0; k < MAX_PARAMS; ++k)
     {
-        g_params[k] = (k < cmd.totparms) ? cmd.floatval[k] : 0.0;
+        g_params[k] = (k < cmd.total_params) ? cmd.float_vals[k] : 0.0;
     }
     if (g_bf_math != bf_math_type::NONE)
     {
@@ -2776,7 +2776,7 @@ static cmdarg_flags cmd_params(const Command &cmd)
 // parmfile=?
 static cmdarg_flags cmd_parm_file(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_PATH - 1))
+    if (cmd.value_len > (FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2789,12 +2789,12 @@ static cmdarg_flags cmd_parm_file(const Command &cmd)
 
 static cmdarg_flags cmd_passes(const Command &cmd)
 {
-    if (std::strchr("123gbtsdo", cmd.charval[0]) == nullptr)
+    if (std::strchr("123gbtsdo", cmd.char_val[0]) == nullptr)
     {
         return cmd.bad_arg();
     }
-    g_user_std_calc_mode = cmd.charval[0];
-    if (cmd.charval[0] == 'g')
+    g_user_std_calc_mode = cmd.char_val[0];
+    if (cmd.char_val[0] == 'g')
     {
         g_stop_pass = ((int) cmd.value[1] - (int) '0');
         if (g_stop_pass < 0 || g_stop_pass > 6)
@@ -2809,25 +2809,25 @@ static cmdarg_flags cmd_passes(const Command &cmd)
 static cmdarg_flags cmd_periodicity(const Command &cmd)
 {
     g_user_periodicity_value = 1;
-    if (cmd.charval[0] == 'n' || cmd.numval == 0)
+    if (cmd.char_val[0] == 'n' || cmd.num_val == 0)
     {
         g_user_periodicity_value = 0;
     }
-    else if (cmd.charval[0] == 'y')
+    else if (cmd.char_val[0] == 'y')
     {
         g_user_periodicity_value = 1;
     }
-    else if (cmd.charval[0] == 's') // 's' for 'show'
+    else if (cmd.char_val[0] == 's') // 's' for 'show'
     {
         g_user_periodicity_value = -1;
     }
-    else if (cmd.numval == NONNUMERIC)
+    else if (cmd.num_val == NONNUMERIC)
     {
         return cmd.bad_arg();
     }
     else
     {
-        g_user_periodicity_value = cmd.numval;
+        g_user_periodicity_value = cmd.num_val;
         if (g_user_periodicity_value > 255)
         {
             g_user_periodicity_value = 255;
@@ -2843,18 +2843,18 @@ static cmdarg_flags cmd_periodicity(const Command &cmd)
 // perspective=?
 static cmdarg_flags cmd_perspective(const Command &cmd)
 {
-    if (cmd.numval == NONNUMERIC)
+    if (cmd.num_val == NONNUMERIC)
     {
         return cmd.bad_arg();
     }
-    g_viewer_z = cmd.numval;
+    g_viewer_z = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // pixelzoom no longer used, validate value and gobble argument
 static cmdarg_flags cmd_pixel_zoom(const Command &cmd)
 {
-    if (cmd.numval >= 5)
+    if (cmd.num_val >= 5)
     {
         return cmd.bad_arg();
     }
@@ -2863,11 +2863,11 @@ static cmdarg_flags cmd_pixel_zoom(const Command &cmd)
 
 static cmdarg_flags cmd_polyphony(const Command &cmd)
 {
-    if (cmd.numval > 9)
+    if (cmd.num_val > 9)
     {
         return cmd.bad_arg();
     }
-    g_polyphony = std::abs(cmd.numval - 1);
+    g_polyphony = std::abs(cmd.num_val - 1);
     return cmdarg_flags::NONE;
 }
 
@@ -2911,46 +2911,46 @@ static cmdarg_flags cmd_potential(const Command &cmd)
 // preview=?
 static cmdarg_flags cmd_preview(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_preview = cmd.yesnoval[0] != 0;
+    g_preview = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
 static cmdarg_flags cmd_proximity(const Command &cmd)
 {
-    g_close_proximity = cmd.floatval[0];
+    g_close_proximity = cmd.float_vals[0];
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // radius=?
 static cmdarg_flags cmd_radius(const Command &cmd)
 {
-    if (cmd.numval < 0)
+    if (cmd.num_val < 0)
     {
         return cmd.bad_arg();
     }
-    g_sphere_radius = cmd.numval;
+    g_sphere_radius = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // randomize=?
 static cmdarg_flags cmd_randomize(const Command &cmd)
 {
-    if (cmd.numval < 0 || cmd.numval > 7)
+    if (cmd.num_val < 0 || cmd.num_val > 7)
     {
         return cmd.bad_arg();
     }
-    g_randomize_3d = cmd.numval;
+    g_randomize_3d = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // ranges=?/?/.../?
 static cmdarg_flags cmd_ranges(const Command &cmd)
 {
-    if (cmd.totparms != cmd.intparms)
+    if (cmd.total_params != cmd.num_int_params)
     {
         return cmd.bad_arg();
     }
@@ -2960,19 +2960,19 @@ static cmdarg_flags cmd_ranges(const Command &cmd)
     int entries = prev;
     g_log_map_flag = 0; // ranges overrides logmap
     int tmpranges[128];
-    while (i < cmd.totparms)
+    while (i < cmd.total_params)
     {
-        int k = cmd.intval[i++];
+        int k = cmd.int_vals[i++];
         if (k < 0) // striping
         {
             k = -k;
-            if (k >= 16384 || i >= cmd.totparms)
+            if (k >= 16384 || i >= cmd.total_params)
             {
                 return cmd.bad_arg();
             }
             tmpranges[entries++] = -1; // {-1,width,limit} for striping
             tmpranges[entries++] = k;
-            k = cmd.intval[i++];
+            k = cmd.int_vals[i++];
         }
         if (k < prev)
         {
@@ -3010,11 +3010,11 @@ static cmdarg_flags cmd_ranges(const Command &cmd)
 // ray=?
 static cmdarg_flags cmd_ray(const Command &cmd)
 {
-    if (cmd.numval < 0 || cmd.numval > 6)
+    if (cmd.num_val < 0 || cmd.num_val > 6)
     {
         return cmd.bad_arg();
     }
-    g_raytrace_format = static_cast<raytrace_formats>(cmd.numval);
+    g_raytrace_format = static_cast<raytrace_formats>(cmd.num_val);
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3037,7 +3037,7 @@ static cmdarg_flags cmd_release(const Command &cmd)
 static cmdarg_flags cmd_reset(const Command &cmd)
 {
     // PAR release unknown unless specified
-    if (cmd.numval < 0)
+    if (cmd.num_val < 0)
     {
         return cmd.bad_arg();
     }
@@ -3049,13 +3049,13 @@ static cmdarg_flags cmd_reset(const Command &cmd)
 // rotation=?/?/?
 static cmdarg_flags cmd_rotation(const Command &cmd)
 {
-    if (cmd.totparms != 3 || cmd.intparms != 3)
+    if (cmd.total_params != 3 || cmd.num_int_params != 3)
     {
         return cmd.bad_arg();
     }
-    g_x_rot = cmd.intval[0];
-    g_y_rot = cmd.intval[1];
-    g_z_rot = cmd.intval[2];
+    g_x_rot = cmd.int_vals[0];
+    g_y_rot = cmd.int_vals[1];
+    g_z_rot = cmd.int_vals[2];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -3063,21 +3063,21 @@ static cmdarg_flags cmd_rotation(const Command &cmd)
 static cmdarg_flags cmd_roughness(const Command &cmd)
 {
     // "rough" is really scale z, but we add it here for convenience
-    g_rough = cmd.numval;
+    g_rough = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // rseed=?
 static cmdarg_flags cmd_r_seed(const Command &cmd)
 {
-    g_random_seed = cmd.numval;
+    g_random_seed = cmd.num_val;
     g_random_seed_flag = true;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 static cmdarg_flags cmd_save_name(const Command &cmd)
 {
-    if (cmd.valuelen > FILE_MAX_PATH - 1)
+    if (cmd.value_len > FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -3093,22 +3093,22 @@ static cmdarg_flags cmd_save_name(const Command &cmd)
 
 static cmdarg_flags cmd_save_time(const Command &cmd)
 {
-    g_init_save_time = cmd.numval;
+    g_init_save_time = cmd.num_val;
     return cmdarg_flags::NONE;
 }
 
 // scalemap=?/?/?/?/?/?/?/?/?/?/?
 static cmdarg_flags cmd_scale_map(const Command &cmd)
 {
-    if (cmd.totparms != cmd.intparms)
+    if (cmd.total_params != cmd.num_int_params)
     {
         return cmd.bad_arg();
     }
     for (int counter = 0; counter <= 11; counter++)
     {
-        if ((cmd.totparms > counter) && (cmd.intval[counter] > 0) && (cmd.intval[counter] < 13))
+        if ((cmd.total_params > counter) && (cmd.int_vals[counter] > 0) && (cmd.int_vals[counter] < 13))
         {
-            g_scale_map[counter] = cmd.intval[counter];
+            g_scale_map[counter] = cmd.int_vals[counter];
         }
     }
     return cmdarg_flags::NONE;
@@ -3117,15 +3117,15 @@ static cmdarg_flags cmd_scale_map(const Command &cmd)
 // scalexyz=?/?[/?]
 static cmdarg_flags cmd_scale_xyz(const Command &cmd)
 {
-    if (cmd.totparms < 2 || cmd.intparms != cmd.totparms)
+    if (cmd.total_params < 2 || cmd.num_int_params != cmd.total_params)
     {
         return cmd.bad_arg();
     }
-    g_x_scale = cmd.intval[0];
-    g_y_scale = cmd.intval[1];
-    if (cmd.totparms > 2)
+    g_x_scale = cmd.int_vals[0];
+    g_y_scale = cmd.int_vals[1];
+    if (cmd.total_params > 2)
     {
-        g_rough = cmd.intval[2];
+        g_rough = cmd.int_vals[2];
     }
     return cmdarg_flags::PARAM_3D;
 }
@@ -3133,22 +3133,22 @@ static cmdarg_flags cmd_scale_xyz(const Command &cmd)
 // screencoords=?
 static cmdarg_flags cmd_screen_coords(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_keep_screen_coords = cmd.yesnoval[0] != 0;
+    g_keep_screen_coords = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // showbox=?
 static cmdarg_flags cmd_show_box(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_show_box = cmd.yesnoval[0] != 0;
+    g_show_box = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3156,14 +3156,14 @@ static cmdarg_flags cmd_show_box(const Command &cmd)
 static cmdarg_flags cmd_show_dot(const Command &cmd)
 {
     g_show_dot = 15;
-    if (cmd.totparms > 0)
+    if (cmd.total_params > 0)
     {
         g_auto_show_dot = (char) 0;
-        if (std::isalpha(cmd.charval[0]))
+        if (std::isalpha(cmd.char_val[0]))
         {
-            if (std::strchr("abdm", (int) cmd.charval[0]) != nullptr)
+            if (std::strchr("abdm", (int) cmd.char_val[0]) != nullptr)
             {
-                g_auto_show_dot = cmd.charval[0];
+                g_auto_show_dot = cmd.char_val[0];
             }
             else
             {
@@ -3172,15 +3172,15 @@ static cmdarg_flags cmd_show_dot(const Command &cmd)
         }
         else
         {
-            g_show_dot = cmd.numval;
+            g_show_dot = cmd.num_val;
             if (g_show_dot < 0)
             {
                 g_show_dot = -1;
             }
         }
-        if (cmd.totparms > 1 && cmd.intparms > 0)
+        if (cmd.total_params > 1 && cmd.num_int_params > 0)
         {
-            g_size_dot = cmd.intval[1];
+            g_size_dot = cmd.int_vals[1];
         }
         if (g_size_dot < 0)
         {
@@ -3193,30 +3193,30 @@ static cmdarg_flags cmd_show_dot(const Command &cmd)
 // showorbit=yes|no
 static cmdarg_flags cmd_show_orbit(const Command &cmd)
 {
-    g_start_show_orbit = cmd.yesnoval[0] != 0;
+    g_start_show_orbit = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::NONE;
 }
 
 // smoothing=?
 static cmdarg_flags cmd_smoothing(const Command &cmd)
 {
-    if (cmd.numval < 0)
+    if (cmd.num_val < 0)
     {
         return cmd.bad_arg();
     }
-    g_light_avg = cmd.numval;
+    g_light_avg = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // sound=?[/?/?/?/?]
 static cmdarg_flags cmd_sound(const Command &cmd)
 {
-    if (cmd.totparms > 5)
+    if (cmd.total_params > 5)
     {
         return cmd.bad_arg();
     }
     g_sound_flag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
-    if (cmd.totparms == 1)
+    if (cmd.total_params == 1)
     {
         g_sound_flag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
     }
@@ -3229,23 +3229,23 @@ static cmdarg_flags cmd_sound(const Command &cmd)
     // Bit 5 will be for midi output (not yet),
     // Bit 6 for whether the tone is quantised to the nearest 'proper' note
     //  (according to the western, even tempered system anyway)
-    if (cmd.charval[0] == 'n' || cmd.charval[0] == 'o')
+    if (cmd.char_val[0] == 'n' || cmd.char_val[0] == 'o')
     {
         g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
     }
-    else if ((std::strncmp(cmd.value, "ye", 2) == 0) || (cmd.charval[0] == 'b'))
+    else if ((std::strncmp(cmd.value, "ye", 2) == 0) || (cmd.char_val[0] == 'b'))
     {
         g_sound_flag |= SOUNDFLAG_BEEP;
     }
-    else if (cmd.charval[0] == 'x')
+    else if (cmd.char_val[0] == 'x')
     {
         g_sound_flag |= SOUNDFLAG_X;
     }
-    else if (cmd.charval[0] == 'y' && std::strncmp(cmd.value, "ye", 2) != 0)
+    else if (cmd.char_val[0] == 'y' && std::strncmp(cmd.value, "ye", 2) != 0)
     {
         g_sound_flag |= SOUNDFLAG_Y;
     }
-    else if (cmd.charval[0] == 'z')
+    else if (cmd.char_val[0] == 'z')
     {
         g_sound_flag |= SOUNDFLAG_Z;
     }
@@ -3253,13 +3253,13 @@ static cmdarg_flags cmd_sound(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (cmd.totparms > 1)
+    if (cmd.total_params > 1)
     {
         g_sound_flag &= SOUNDFLAG_ORBITMASK; // reset options
-        for (int i = 1; i < cmd.totparms; i++)
+        for (int i = 1; i < cmd.total_params; i++)
         {
             // this is for 2 or more options at the same time
-            if (cmd.charval[i] == 'f')
+            if (cmd.char_val[i] == 'f')
             {
                 // (try to)switch on opl3 fm synth
                 if (driver_init_fm())
@@ -3271,15 +3271,15 @@ static cmdarg_flags cmd_sound(const Command &cmd)
                     g_sound_flag &= ~SOUNDFLAG_OPL3_FM;
                 }
             }
-            else if (cmd.charval[i] == 'p')
+            else if (cmd.char_val[i] == 'p')
             {
                 g_sound_flag |= SOUNDFLAG_SPEAKER;
             }
-            else if (cmd.charval[i] == 'm')
+            else if (cmd.char_val[i] == 'm')
             {
                 g_sound_flag |= SOUNDFLAG_MIDI;
             }
-            else if (cmd.charval[i] == 'q')
+            else if (cmd.char_val[i] == 'q')
             {
                 g_sound_flag |= SOUNDFLAG_QUANTIZED;
             }
@@ -3295,47 +3295,47 @@ static cmdarg_flags cmd_sound(const Command &cmd)
 // sphere=?
 static cmdarg_flags cmd_sphere(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_sphere = cmd.yesnoval[0] != 0;
+    g_sphere = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
 // srelease=?
 static cmdarg_flags cmd_s_release(const Command &cmd)
 {
-    g_fm_release = cmd.numval & 0x0F;
+    g_fm_release = cmd.num_val & 0x0F;
     return cmdarg_flags::NONE;
 }
 
 // stereo=?
 static cmdarg_flags cmd_stereo(const Command &cmd)
 {
-    if ((cmd.numval < 0) || (cmd.numval > 4))
+    if ((cmd.num_val < 0) || (cmd.num_val > 4))
     {
         return cmd.bad_arg();
     }
-    g_glasses_type = cmd.numval;
+    g_glasses_type = cmd.num_val;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // stereowidth=?, monitorwidth=?
 static cmdarg_flags cmd_stereo_width(const Command &cmd)
 {
-    if (cmd.totparms != 1 || cmd.floatparms != 1)
+    if (cmd.total_params != 1 || cmd.num_float_params != 1)
     {
         return cmd.bad_arg();
     }
-    g_auto_stereo_width = cmd.floatval[0];
+    g_auto_stereo_width = cmd.float_vals[0];
     return cmdarg_flags::PARAM_3D;
 }
 
 // sustain=?
 static cmdarg_flags cmd_sustain(const Command &cmd)
 {
-    g_fm_sustain = cmd.numval & 0x0F;
+    g_fm_sustain = cmd.num_val & 0x0F;
     return cmdarg_flags::NONE;
 }
 
@@ -3377,17 +3377,17 @@ static cmdarg_flags cmd_symmetry(const Command &cmd)
 // targaoverlay=?
 static cmdarg_flags cmd_targa_overlay(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_targa_overlay = cmd.yesnoval[0] != 0;
+    g_targa_overlay = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
 static cmdarg_flags cmd_temp_dir(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_DIR - 1))
+    if (cmd.value_len > (FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -3463,7 +3463,7 @@ static cmdarg_flags cmd_text_colors(const Command &cmd)
 // tplus no longer used, validate value and gobble argument
 static cmdarg_flags cmd_tplus(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
@@ -3473,15 +3473,15 @@ static cmdarg_flags cmd_tplus(const Command &cmd)
 // transparent=?
 static cmdarg_flags cmd_transparent(const Command &cmd)
 {
-    if (cmd.totparms != cmd.intparms || cmd.totparms < 1)
+    if (cmd.total_params != cmd.num_int_params || cmd.total_params < 1)
     {
         return cmd.bad_arg();
     }
-    g_transparent_color_3d[0] = cmd.intval[0];
-    g_transparent_color_3d[1] = cmd.intval[0];
-    if (cmd.totparms > 1)
+    g_transparent_color_3d[0] = cmd.int_vals[0];
+    g_transparent_color_3d[1] = cmd.int_vals[0];
+    if (cmd.total_params > 1)
     {
-        g_transparent_color_3d[1] = cmd.intval[1];
+        g_transparent_color_3d[1] = cmd.int_vals[1];
     }
     return cmdarg_flags::PARAM_3D;
 }
@@ -3489,11 +3489,11 @@ static cmdarg_flags cmd_transparent(const Command &cmd)
 // truecolor=?
 static cmdarg_flags cmd_true_color(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_truecolor = cmd.yesnoval[0] != 0;
+    g_truecolor = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
@@ -3501,11 +3501,11 @@ static cmdarg_flags cmd_true_color(const Command &cmd)
 static cmdarg_flags cmd_true_mode(const Command &cmd)
 {
     g_true_mode = true_color_mode::default_color;
-    if (cmd.charval[0] == 'd')
+    if (cmd.char_val[0] == 'd')
     {
         g_true_mode = true_color_mode::default_color;
     }
-    if (cmd.charval[0] == 'i' || cmd.intval[0] == 1)
+    if (cmd.char_val[0] == 'i' || cmd.int_vals[0] == 1)
     {
         g_true_mode = true_color_mode::iterate;
     }
@@ -3514,7 +3514,7 @@ static cmdarg_flags cmd_true_mode(const Command &cmd)
 
 static cmdarg_flags cmd_type(const Command &cmd)
 {
-    std::string value{cmd.value, static_cast<std::string::size_type>(cmd.valuelen)};
+    std::string value{cmd.value, static_cast<std::string::size_type>(cmd.value_len)};
     if (!value.empty() && value.back() == '*')
     {
         value.pop_back();
@@ -3563,11 +3563,11 @@ static cmdarg_flags cmd_type(const Command &cmd)
 // usegrayscale=?
 static cmdarg_flags cmd_use_gray_scale(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_gray_flag = cmd.yesnoval[0] != 0;
+    g_gray_flag = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3597,7 +3597,7 @@ static cmdarg_flags cmd_video(const Command &cmd)
 // viewwindows=?/?/?/?/?
 static cmdarg_flags cmd_view_windows(const Command &cmd)
 {
-    if (cmd.totparms > 5 || cmd.floatparms - cmd.intparms > 2 || cmd.intparms > 4)
+    if (cmd.total_params > 5 || cmd.num_float_params - cmd.num_int_params > 2 || cmd.num_int_params > 4)
     {
         return cmd.bad_arg();
     }
@@ -3609,25 +3609,25 @@ static cmdarg_flags cmd_view_windows(const Command &cmd)
     g_view_x_dots = 0;
     g_view_y_dots = 0;
 
-    if (cmd.totparms > 0 && cmd.floatval[0] > 0.001)
+    if (cmd.total_params > 0 && cmd.float_vals[0] > 0.001)
     {
-        g_view_reduction = (float) cmd.floatval[0];
+        g_view_reduction = (float) cmd.float_vals[0];
     }
-    if (cmd.totparms > 1 && cmd.floatval[1] > 0.001)
+    if (cmd.total_params > 1 && cmd.float_vals[1] > 0.001)
     {
-        g_final_aspect_ratio = (float) cmd.floatval[1];
+        g_final_aspect_ratio = (float) cmd.float_vals[1];
     }
-    if (cmd.totparms > 2 && cmd.yesnoval[2] == 0)
+    if (cmd.total_params > 2 && cmd.yes_no_val[2] == 0)
     {
-        g_view_crop = cmd.yesnoval[2] != 0;
+        g_view_crop = cmd.yes_no_val[2] != 0;
     }
-    if (cmd.totparms > 3 && cmd.intval[3] > 0)
+    if (cmd.total_params > 3 && cmd.int_vals[3] > 0)
     {
-        g_view_x_dots = cmd.intval[3];
+        g_view_x_dots = cmd.int_vals[3];
     }
-    if (cmd.totparms == 5 && cmd.intval[4] > 0)
+    if (cmd.total_params == 5 && cmd.int_vals[4] > 0)
     {
-        g_view_y_dots = cmd.intval[4];
+        g_view_y_dots = cmd.int_vals[4];
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }
@@ -3635,53 +3635,53 @@ static cmdarg_flags cmd_view_windows(const Command &cmd)
 // virtual=?
 static cmdarg_flags cmd_virtual(const Command &cmd)
 {
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_virtual_screens = cmd.yesnoval[0] != 0;
+    g_virtual_screens = cmd.yes_no_val[0] != 0;
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
 // volume=?
 static cmdarg_flags cmd_volume(const Command &cmd)
 {
-    g_fm_volume = cmd.numval & 0x3F; // 63
+    g_fm_volume = cmd.num_val & 0x3F; // 63
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_warn(const Command &cmd)
 {
     // keep this for backward compatibility
-    if (cmd.yesnoval[0] < 0)
+    if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_overwrite_file = cmd.yesnoval[0] == 0;
+    g_overwrite_file = cmd.yes_no_val[0] == 0;
     return cmdarg_flags::NONE;
 }
 
 // waterline=?
 static cmdarg_flags cmd_water_line(const Command &cmd)
 {
-    if (cmd.numval < 0)
+    if (cmd.num_val < 0)
     {
         return cmd.bad_arg();
     }
-    g_water_line = cmd.numval;
+    g_water_line = cmd.num_val;
     return cmdarg_flags::PARAM_3D;
 }
 
 // wavetype=?
 static cmdarg_flags cmd_wave_type(const Command &cmd)
 {
-    g_fm_wavetype = cmd.numval & 0x0F;
+    g_fm_wavetype = cmd.num_val & 0x0F;
     return cmdarg_flags::NONE;
 }
 
 static cmdarg_flags cmd_work_dir(const Command &cmd)
 {
-    if (cmd.valuelen > (FILE_MAX_DIR - 1))
+    if (cmd.value_len > (FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -3697,24 +3697,24 @@ static cmdarg_flags cmd_work_dir(const Command &cmd)
 // xyadjust=?
 static cmdarg_flags cmd_xy_adjust(const Command &cmd)
 {
-    if (cmd.totparms != 2 || cmd.intparms != 2)
+    if (cmd.total_params != 2 || cmd.num_int_params != 2)
     {
         return cmd.bad_arg();
     }
-    g_adjust_3d_x = cmd.intval[0];
-    g_adjust_3d_y = cmd.intval[1];
+    g_adjust_3d_x = cmd.int_vals[0];
+    g_adjust_3d_y = cmd.int_vals[1];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
 // xyshift=?/?
 static cmdarg_flags cmd_xy_shift(const Command &cmd)
 {
-    if (cmd.totparms != 2 || cmd.intparms != 2)
+    if (cmd.total_params != 2 || cmd.num_int_params != 2)
     {
         return cmd.bad_arg();
     }
-    g_shift_x = cmd.intval[0];
-    g_shift_y = cmd.intval[1];
+    g_shift_x = cmd.int_vals[0];
+    g_shift_y = cmd.int_vals[1];
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
 
