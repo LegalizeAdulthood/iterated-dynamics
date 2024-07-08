@@ -39,32 +39,30 @@ constexpr int operator+(fill_type value)
     return static_cast<int>(value);
 }
 
-extern int g_init_3d[20];
-
 // regular 3D
-extern int &g_sphere;  // sphere? 1 = yes, 0 = no
-extern int &g_x_rot;   // rotate x-axis 60 degrees
-extern int &g_y_rot;   // rotate y-axis 90 degrees
-extern int &g_z_rot;   // rotate x-axis  0 degrees
-extern int &g_x_scale; // scale x-axis, 90 percent
-extern int &g_y_scale; // scale y-axis, 90 percent
+extern int g_sphere;  // sphere? 1 = yes, 0 = no
+extern int g_x_rot;   // rotate x-axis 60 degrees
+extern int g_y_rot;   // rotate y-axis 90 degrees
+extern int g_z_rot;   // rotate x-axis  0 degrees
+extern int g_x_scale; // scale x-axis, 90 percent
+extern int g_y_scale; // scale y-axis, 90 percent
 // sphere 3D
-extern int &g_sphere_phi_min;   // longitude start, 180
-extern int &g_sphere_phi_max;   // longitude end ,   0
-extern int &g_sphere_theta_min; // latitude start,-90 degrees
-extern int &g_sphere_theta_max; // latitude stop,  90 degrees
-extern int &g_sphere_radius;    // should be user input
+extern int g_sphere_phi_min;   // longitude start, 180
+extern int g_sphere_phi_max;   // longitude end ,   0
+extern int g_sphere_theta_min; // latitude start,-90 degrees
+extern int g_sphere_theta_max; // latitude stop,  90 degrees
+extern int g_sphere_radius;    // should be user input
 // common parameters
-extern int &g_rough;      // scale z-axis, 30 percent
-extern int &g_water_line; // water level
-extern int &g_fill_type;  // fill type
-extern int &g_viewer_z;   // perspective view point
-extern int &g_shift_x;    // x shift
-extern int &g_shift_y;    // y shift
-extern int &g_light_x;    // x light vector coordinate
-extern int &g_light_y;    // y light vector coordinate
-extern int &g_light_z;    // z light vector coordinate
-extern int &g_light_avg;  // number of points to average
+extern int g_rough;      // scale z-axis, 30 percent
+extern int g_water_line; // water level
+extern int g_fill_type;  // fill type
+extern int g_viewer_z;   // perspective view point
+extern int g_shift_x;    // x shift
+extern int g_shift_y;    // y shift
+extern int g_light_x;    // x light vector coordinate
+extern int g_light_y;    // y light vector coordinate
+extern int g_light_z;    // z light vector coordinate
+extern int g_light_avg;  // number of points to average
 
 inline bool illumine()
 {

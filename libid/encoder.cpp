@@ -868,10 +868,27 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->decomp[0] = (short) g_decomp[0];
     save_info->biomorph = (short) g_user_biomorph_value;
     save_info->symmetry = (short) g_force_symmetry;
-    for (int i = 0; i < 16; i++)
-    {
-        save_info->init3d[i] = (short) g_init_3d[i];
-    }
+    save_info->init3d[0] = (std::int16_t) g_sphere;           // sphere? 1 = yes, 0 = no
+    save_info->init3d[1] = (std::int16_t) g_x_rot;            // rotate x-axis 60 degrees
+    save_info->init3d[2] = (std::int16_t) g_y_rot;            // rotate y-axis 90 degrees
+    save_info->init3d[3] = (std::int16_t) g_z_rot;            // rotate x-axis  0 degrees
+    save_info->init3d[4] = (std::int16_t) g_x_scale;          // scale x-axis, 90 percent
+    save_info->init3d[5] = (std::int16_t) g_y_scale;          // scale y-axis, 90 percent
+    save_info->init3d[1] = (std::int16_t) g_sphere_phi_min;   // longitude start, 180
+    save_info->init3d[2] = (std::int16_t) g_sphere_phi_max;   // longitude end ,   0
+    save_info->init3d[3] = (std::int16_t) g_sphere_theta_min; // latitude start,-90 degrees
+    save_info->init3d[4] = (std::int16_t) g_sphere_theta_max; // latitude stop,  90 degrees
+    save_info->init3d[5] = (std::int16_t) g_sphere_radius;    // should be user input
+    save_info->init3d[6] = (std::int16_t) g_rough;            // scale z-axis, 30 percent
+    save_info->init3d[7] = (std::int16_t) g_water_line;       // water level
+    save_info->init3d[8] = (std::int16_t) g_fill_type;        // fill type
+    save_info->init3d[9] = (std::int16_t) g_viewer_z;         // perspective view point
+    save_info->init3d[10] = (std::int16_t) g_shift_x;         // x shift
+    save_info->init3d[11] = (std::int16_t) g_shift_y;         // y shift
+    save_info->init3d[12] = (std::int16_t) g_light_x;         // x light vector coordinate
+    save_info->init3d[13] = (std::int16_t) g_light_y;         // y light vector coordinate
+    save_info->init3d[14] = (std::int16_t) g_light_z;         // z light vector coordinate
+    save_info->init3d[15] = (std::int16_t) g_light_avg;       // number of points to average
     save_info->previewfactor = (short) g_preview_factor;
     save_info->xtrans = (short) g_adjust_3d_x;
     save_info->ytrans = (short) g_adjust_3d_y;

@@ -62,31 +62,30 @@
 #include <cmath>
 #include <cstring>
 
-int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
-
-int &g_sphere{g_init_3d[0]};  // sphere? 1 = yes, 0 = no
-int &g_x_rot{g_init_3d[1]};   // rotate x-axis 60 degrees
-int &g_y_rot{g_init_3d[2]};   // rotate y-axis 90 degrees
-int &g_z_rot{g_init_3d[3]};   // rotate x-axis  0 degrees
-int &g_x_scale{g_init_3d[4]}; // scale x-axis, 90 percent
-int &g_y_scale{g_init_3d[5]}; // scale y-axis, 90 percent
+// '3d=nn/nn/nn/...' values
+int g_sphere{};  // sphere? 1 = yes, 0 = no
+int g_x_rot{};   // rotate x-axis 60 degrees
+int g_y_rot{};   // rotate y-axis 90 degrees
+int g_z_rot{};   // rotate x-axis  0 degrees
+int g_x_scale{}; // scale x-axis, 90 percent
+int g_y_scale{}; // scale y-axis, 90 percent
 // sphere 3D
-int &g_sphere_phi_min{g_init_3d[1]};   // longitude start, 180
-int &g_sphere_phi_max{g_init_3d[2]};   // longitude end ,   0
-int &g_sphere_theta_min{g_init_3d[3]}; // latitude start,-90 degrees
-int &g_sphere_theta_max{g_init_3d[4]}; // latitude stop,  90 degrees
-int &g_sphere_radius{g_init_3d[5]};    // should be user input
+int g_sphere_phi_min{};   // longitude start, 180
+int g_sphere_phi_max{};   // longitude end ,   0
+int g_sphere_theta_min{}; // latitude start,-90 degrees
+int g_sphere_theta_max{}; // latitude stop,  90 degrees
+int g_sphere_radius{};    // should be user input
 // common parameters
-int &g_rough{g_init_3d[6]};      // scale z-axis, 30 percent
-int &g_water_line{g_init_3d[7]}; // water level
-int &g_fill_type{g_init_3d[8]};  // fill type
-int &g_viewer_z{g_init_3d[9]};   // perspective view point
-int &g_shift_x{g_init_3d[10]};   // x shift
-int &g_shift_y{g_init_3d[11]};   // y shift
-int &g_light_x{g_init_3d[12]};   // x light vector coordinate
-int &g_light_y{g_init_3d[13]};   // y light vector coordinate
-int &g_light_z{g_init_3d[14]};   // z light vector coordinate
-int &g_light_avg{g_init_3d[15]}; // number of points to average
+int g_rough{};      // scale z-axis, 30 percent
+int g_water_line{}; // water level
+int g_fill_type{};  // fill type
+int g_viewer_z{};   // perspective view point
+int g_shift_x{};    // x shift
+int g_shift_y{};    // y shift
+int g_light_x{};    // x light vector coordinate
+int g_light_y{};    // y light vector coordinate
+int g_light_z{};    // z light vector coordinate
+int g_light_avg{};  // number of points to average
 
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)
