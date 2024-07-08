@@ -20,7 +20,7 @@ enum
     NUM_SAVE_ORBIT = 1500
 };
 
-static int save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
+static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
 
 /* Showing orbit requires converting real co-ords to screen co-ords.
    Define:
@@ -73,10 +73,10 @@ static void plotdorbit(double dx, double dy, int color)
     // save orbit value
     if (color == -1)
     {
-        save_orbit[g_orbit_save_index++] = i;
-        save_orbit[g_orbit_save_index++] = j;
+        s_save_orbit[g_orbit_save_index++] = i;
+        s_save_orbit[g_orbit_save_index++] = j;
         int const c = getcolor(i, j);
-        save_orbit[g_orbit_save_index++] = c;
+        s_save_orbit[g_orbit_save_index++] = c;
         g_put_color(i, j, c^g_orbit_color);
     }
     else
@@ -147,9 +147,9 @@ void scrub_orbit()
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     while (g_orbit_save_index >= 3)
     {
-        c = save_orbit[--g_orbit_save_index];
-        j = save_orbit[--g_orbit_save_index];
-        i = save_orbit[--g_orbit_save_index];
+        c = s_save_orbit[--g_orbit_save_index];
+        j = s_save_orbit[--g_orbit_save_index];
+        i = s_save_orbit[--g_orbit_save_index];
         g_put_color(i, j, c);
     }
     g_logical_screen_x_offset = save_sxoffs;
