@@ -12,7 +12,7 @@
 static int diffusion_engine();
 
 // lookup tables to avoid too much bit fiddling :
-static char dif_la[] =
+static char s_dif_la[] =
 {
     0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
     2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
@@ -26,7 +26,7 @@ static char dif_la[] =
     1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-static char dif_lb[] =
+static char s_dif_lb[] =
 {
     0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
     6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
@@ -47,7 +47,7 @@ static char dif_lb[] =
 //   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
-static BYTE s_stack[4096] {};              // common temp, two put_line calls
+static BYTE s_stack[4096]{}; // common temp, two put_line calls
 
 // vars for diffusion scan
 unsigned int g_diffusion_bits{};     // number of bits in the counter
@@ -107,18 +107,18 @@ inline void plot_block_lim(int x, int y, int s, int c)
 inline void count_to_int(unsigned long C, int &x, int &y, int dif_offset)
 {
     long unsigned tC = C;
-    x = dif_la[tC & 0xFF];
-    y = dif_lb[tC & 0xFF];
+    x = s_dif_la[tC & 0xFF];
+    y = s_dif_lb[tC & 0xFF];
     tC >>= 8;
     x <<= 4;
-    x += dif_la[tC & 0xFF];
+    x += s_dif_la[tC & 0xFF];
     y <<= 4;
-    y += dif_lb[tC & 0xFF];
+    y += s_dif_lb[tC & 0xFF];
     tC >>= 8;
     x <<= 4;
-    x += dif_la[tC & 0xFF];
+    x += s_dif_la[tC & 0xFF];
     y <<= 4;
-    y += dif_lb[tC & 0xFF];
+    y += s_dif_lb[tC & 0xFF];
     tC >>= 8;
     x >>= dif_offset;
     y >>= dif_offset;
