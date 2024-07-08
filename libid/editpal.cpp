@@ -165,17 +165,31 @@ private:
 //            The "change" function is called whenever the value is changed
 //            by the CEditor.
 //
-struct CEditor
+class CEditor
 {
-    int x;
-    int y;
-    char      letter;
-    int       val;
-    bool done;
-    bool hidden;
-    void (*other_key)(int key, CEditor *ce, void *info);
-    void (*change)(CEditor *ce, void *info);
-    void     *info;
+public:
+    CEditor() = default;
+    CEditor(int x, int y, char letter, void (*other_key)(int, CEditor *, void *),
+        void (*change)(CEditor *, void *), void *info);
+
+    void draw();
+    void set_pos(int x, int y);
+    void set_val(int val);
+    int get_val() const;
+    void set_done(bool done);
+    void set_hidden(bool hidden);
+    int edit();
+
+private:
+    int m_x{};
+    int m_y{};
+    char m_letter{};
+    int m_val{};
+    bool m_done{};
+    bool m_hidden{};
+    void (*m_other_key)(int key, CEditor *ce, void *info){};
+    void (*m_change)(CEditor *ce, void *info){};
+    void *m_info{};
 };
 
 //
@@ -636,6 +650,183 @@ void MoveBox::erase()
     putrow(m_x, m_y + depth - 1, width, &m_b[0]);
 }
 
+CEditor::CEditor(int x, int y, char letter, void (*other_key)(int, CEditor *, void *),
+    void (*change)(CEditor *, void *), void *info) :
+    m_x(x),
+    m_y(y),
+    m_letter(letter),
+    m_other_key(other_key),
+    m_change(change),
+    m_info(info)
+{
+}
+
+void CEditor::draw()
+{
+    if (m_hidden)
+    {
+        return;
+    }
+
+    Cursor_Hide();
+    displayf(m_x + 2, m_y + 2, s_fg_color, s_bg_color, "%c%02d", m_letter, m_val);
+    Cursor_Show();
+}
+
+void CEditor::set_pos(int x, int y)
+{
+    m_x = x;
+    m_y = y;
+}
+
+void CEditor::set_val(int val)
+{
+    m_val = val;
+}
+
+int CEditor::get_val() const
+{
+    return m_val;
+}
+
+void CEditor::set_done(bool done)
+{
+    m_done = done;
+}
+
+void CEditor::set_hidden(bool hidden)
+{
+    m_hidden = hidden;
+}
+
+int CEditor::edit()
+{
+    int key = 0;
+    int diff;
+
+    m_done = false;
+
+    if (!m_hidden)
+    {
+        Cursor_Hide();
+        rect(m_x, m_y, CEditor_WIDTH, CEditor_DEPTH, s_fg_color);
+        Cursor_Show();
+    }
+
+#ifdef XFRACT
+    Cursor_StartMouseTracking();
+#endif
+    while (!m_done)
+    {
+        Cursor_WaitKey();
+        key = driver_get_key();
+
+        switch (key)
+        {
+        case ID_KEY_PAGE_UP:
+            if (m_val < 63)
+            {
+                m_val += 5;
+                if (m_val > 63)
+                {
+                    m_val = 63;
+                }
+                draw();
+                m_change(this, m_info);
+            }
+            break;
+
+        case '+':
+        case ID_KEY_CTL_PLUS:
+            diff = 1;
+            while (driver_key_pressed() == key)
+            {
+                driver_get_key();
+                ++diff;
+            }
+            if (m_val < 63)
+            {
+                m_val += diff;
+                if (m_val > 63)
+                {
+                    m_val = 63;
+                }
+                draw();
+                m_change(this, m_info);
+            }
+            break;
+
+        case ID_KEY_PAGE_DOWN:
+            if (m_val > 0)
+            {
+                m_val -= 5;
+                if (m_val < 0)
+                {
+                    m_val = 0;
+                }
+                draw();
+                m_change(this, m_info);
+            }
+            break;
+
+        case '-':
+        case ID_KEY_CTL_MINUS:
+            diff = 1;
+            while (driver_key_pressed() == key)
+            {
+                driver_get_key();
+                ++diff;
+            }
+            if (m_val > 0)
+            {
+                m_val -= diff;
+                if (m_val < 0)
+                {
+                    m_val = 0;
+                }
+                draw();
+                m_change(this, m_info);
+            }
+            break;
+
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            m_val = (key - '0') * 10;
+            if (m_val > 63)
+            {
+                m_val = 63;
+            }
+            draw();
+            m_change(this, m_info);
+            break;
+
+        default:
+            m_other_key(key, this, m_info);
+            break;
+        } // switch
+    } // while
+#ifdef XFRACT
+    Cursor_EndMouseTracking();
+#endif
+
+    if (!m_hidden)
+    {
+        Cursor_Hide();
+        rect(m_x, m_y, CEditor_WIDTH, CEditor_DEPTH, s_bg_color);
+        Cursor_Show();
+    }
+
+    return key;
+}
+
 void MoveBox::move(int key)
 {
     bool done = false;
@@ -976,208 +1167,6 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
     return driver_key_pressed();
 }
 
-// public:
-static CEditor *CEditor_Construct(int x, int y, char letter,
-                                  void (*other_key)(int, CEditor*, void*),
-                                  void (*change)(CEditor*, void*), void *info);
-static void CEditor_Destroy(CEditor *me);
-static void CEditor_Draw(CEditor *me);
-static void CEditor_SetPos(CEditor *me, int x, int y);
-static void CEditor_SetVal(CEditor *me, int val);
-static int  CEditor_GetVal(CEditor *me);
-static void CEditor_SetDone(CEditor *me, bool done);
-static void CEditor_SetHidden(CEditor *me, bool hidden);
-static int  CEditor_Edit(CEditor *me);
-
-static CEditor *CEditor_Construct(int x, int y, char letter,
-                                  void (*other_key)(int, CEditor*, void *),
-                                  void (*change)(CEditor*, void *), void *info)
-{
-    CEditor *me = new CEditor;
-
-    me->x         = x;
-    me->y         = y;
-    me->letter    = letter;
-    me->val       = 0;
-    me->other_key = other_key;
-    me->hidden    = false;
-    me->change    = change;
-    me->info      = info;
-
-    return me;
-}
-
-static void CEditor_Destroy(CEditor *me)
-{
-    delete me;
-}
-
-static void CEditor_Draw(CEditor *me)
-{
-    if (me->hidden)
-    {
-        return;
-    }
-
-    Cursor_Hide();
-    displayf(me->x+2, me->y+2, s_fg_color, s_bg_color, "%c%02d", me->letter, me->val);
-    Cursor_Show();
-}
-
-static void CEditor_SetPos(CEditor *me, int x, int y)
-{
-    me->x = x;
-    me->y = y;
-}
-
-static void CEditor_SetVal(CEditor *me, int val)
-{
-    me->val = val;
-}
-
-static int CEditor_GetVal(CEditor *me)
-{
-    return me->val;
-}
-
-static void CEditor_SetDone(CEditor *me, bool done)
-{
-    me->done = done;
-}
-
-static void CEditor_SetHidden(CEditor *me, bool hidden)
-{
-    me->hidden = hidden;
-}
-
-static int CEditor_Edit(CEditor *me)
-{
-    int key = 0;
-    int diff;
-
-    me->done = false;
-
-    if (!me->hidden)
-    {
-        Cursor_Hide();
-        rect(me->x, me->y, CEditor_WIDTH, CEditor_DEPTH, s_fg_color);
-        Cursor_Show();
-    }
-
-#ifdef XFRACT
-    Cursor_StartMouseTracking();
-#endif
-    while (!me->done)
-    {
-        Cursor_WaitKey();
-        key = driver_get_key();
-
-        switch (key)
-        {
-        case ID_KEY_PAGE_UP:
-            if (me->val < 63)
-            {
-                me->val += 5;
-                if (me->val > 63)
-                {
-                    me->val = 63;
-                }
-                CEditor_Draw(me);
-                me->change(me, me->info);
-            }
-            break;
-
-        case '+':
-        case ID_KEY_CTL_PLUS:
-            diff = 1;
-            while (driver_key_pressed() == key)
-            {
-                driver_get_key();
-                ++diff;
-            }
-            if (me->val < 63)
-            {
-                me->val += diff;
-                if (me->val > 63)
-                {
-                    me->val = 63;
-                }
-                CEditor_Draw(me);
-                me->change(me, me->info);
-            }
-            break;
-
-        case ID_KEY_PAGE_DOWN:
-            if (me->val > 0)
-            {
-                me->val -= 5;
-                if (me->val < 0)
-                {
-                    me->val = 0;
-                }
-                CEditor_Draw(me);
-                me->change(me, me->info);
-            }
-            break;
-
-        case '-':
-        case ID_KEY_CTL_MINUS:
-            diff = 1;
-            while (driver_key_pressed() == key)
-            {
-                driver_get_key();
-                ++diff;
-            }
-            if (me->val > 0)
-            {
-                me->val -= diff;
-                if (me->val < 0)
-                {
-                    me->val = 0;
-                }
-                CEditor_Draw(me);
-                me->change(me, me->info);
-            }
-            break;
-
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            me->val = (key - '0') * 10;
-            if (me->val > 63)
-            {
-                me->val = 63;
-            }
-            CEditor_Draw(me);
-            me->change(me, me->info);
-            break;
-
-        default:
-            me->other_key(key, me, me->info);
-            break;
-        } // switch
-    } // while
-#ifdef XFRACT
-    Cursor_EndMouseTracking();
-#endif
-
-    if (!me->hidden)
-    {
-        Cursor_Hide();
-        rect(me->x, me->y, CEditor_WIDTH, CEditor_DEPTH, s_bg_color);
-        Cursor_Show();
-    }
-
-    return key;
-}
-
 // private:
 static void      RGBEditor__other_key(int key, CEditor *ceditor, void *info);
 static void      RGBEditor__change(CEditor *ceditor, void *info);
@@ -1206,8 +1195,7 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEd
 
     for (int ctr = 0; ctr < 3; ctr++)
     {
-        me->color[ctr] = CEditor_Construct(0, 0, letter[ctr], RGBEditor__other_key,
-                                           RGBEditor__change, me);
+        me->color[ctr] = new CEditor(0, 0, letter[ctr], RGBEditor__other_key, RGBEditor__change, me);
     }
 
     RGBEditor_SetPos(me, x, y);
@@ -1223,9 +1211,9 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEd
 
 static void RGBEditor_Destroy(RGBEditor *me)
 {
-    CEditor_Destroy(me->color[0]);
-    CEditor_Destroy(me->color[1]);
-    CEditor_Destroy(me->color[2]);
+    delete me->color[0];
+    delete me->color[1];
+    delete me->color[2];
     delete me;
 }
 
@@ -1237,9 +1225,9 @@ static void RGBEditor_SetDone(RGBEditor *me, bool done)
 static void RGBEditor_SetHidden(RGBEditor *me, bool hidden)
 {
     me->hidden = hidden;
-    CEditor_SetHidden(me->color[0], hidden);
-    CEditor_SetHidden(me->color[1], hidden);
-    CEditor_SetHidden(me->color[2], hidden);
+    me->color[0]->set_hidden(hidden);
+    me->color[1]->set_hidden(hidden);
+    me->color[2]->set_hidden(hidden);
 }
 
 static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // private
@@ -1253,7 +1241,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         if (me->curr != 0)
         {
             me->curr = 0;
-            CEditor_SetDone(ceditor, true);
+            ceditor->set_done(true);
         }
         break;
 
@@ -1262,7 +1250,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         if (me->curr != 1)
         {
             me->curr = 1;
-            CEditor_SetDone(ceditor, true);
+            ceditor->set_done(true);
         }
         break;
 
@@ -1271,7 +1259,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         if (me->curr != 2)
         {
             me->curr = 2;
-            CEditor_SetDone(ceditor, true);
+            ceditor->set_done(true);
         }
         break;
 
@@ -1281,7 +1269,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         {
             me->curr = 0;
         }
-        CEditor_SetDone(ceditor, true);
+        ceditor->set_done(true);
         break;
 
     case ID_KEY_INSERT:   // move to prev CEditor
@@ -1289,14 +1277,14 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         {
             me->curr = 2;
         }
-        CEditor_SetDone(ceditor, true);
+        ceditor->set_done(true);
         break;
 
     default:
         me->other_key(key, me, me->info);
         if (me->done)
         {
-            CEditor_SetDone(ceditor, true);
+            ceditor->set_done(true);
         }
         break;
     }
@@ -1308,8 +1296,7 @@ static void RGBEditor__change(CEditor * /*ceditor*/, void *info) // private
 
     if (me->pal < g_colors && !is_reserved(me->pal))
     {
-        setpal(me->pal, CEditor_GetVal(me->color[0]),
-               CEditor_GetVal(me->color[1]), CEditor_GetVal(me->color[2]));
+        setpal(me->pal, me->color[0]->get_val(), me->color[1]->get_val(), me->color[2]->get_val());
     }
 
     me->change(me, me->info);
@@ -1320,9 +1307,9 @@ static void RGBEditor_SetPos(RGBEditor *me, int x, int y)
     me->x = x;
     me->y = y;
 
-    CEditor_SetPos(me->color[0], x+2, y+2);
-    CEditor_SetPos(me->color[1], x+2, y+2+CEditor_DEPTH-1);
-    CEditor_SetPos(me->color[2], x+2, y+2+CEditor_DEPTH-1+CEditor_DEPTH-1);
+    me->color[0]->set_pos(x+2, y+2);
+    me->color[1]->set_pos(x+2, y+2+CEditor_DEPTH-1);
+    me->color[2]->set_pos(x+2, y+2+CEditor_DEPTH-1+CEditor_DEPTH-1);
 }
 
 static void RGBEditor_BlankSampleBox(RGBEditor *me)
@@ -1369,9 +1356,9 @@ static void RGBEditor_Update(RGBEditor *me)
         fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, me->pal);
     }
 
-    CEditor_Draw(me->color[0]);
-    CEditor_Draw(me->color[1]);
-    CEditor_Draw(me->color[2]);
+    me->color[0]->draw();
+    me->color[1]->draw();
+    me->color[2]->draw();
     Cursor_Show();
 }
 
@@ -1405,7 +1392,7 @@ static int RGBEditor_Edit(RGBEditor *me)
 
     while (!me->done)
     {
-        key = CEditor_Edit(me->color[me->curr]);
+        key = me->color[me->curr]->edit();
     }
 
     if (!me->hidden)
@@ -1421,18 +1408,18 @@ static int RGBEditor_Edit(RGBEditor *me)
 static void RGBEditor_SetRGB(RGBEditor *me, int pal, PALENTRY *rgb)
 {
     me->pal = pal;
-    CEditor_SetVal(me->color[0], rgb->red);
-    CEditor_SetVal(me->color[1], rgb->green);
-    CEditor_SetVal(me->color[2], rgb->blue);
+    me->color[0]->set_val(rgb->red);
+    me->color[1]->set_val(rgb->green);
+    me->color[2]->set_val(rgb->blue);
 }
 
 static PALENTRY RGBEditor_GetRGB(RGBEditor *me)
 {
     PALENTRY pal;
 
-    pal.red   = (BYTE)CEditor_GetVal(me->color[0]);
-    pal.green = (BYTE)CEditor_GetVal(me->color[1]);
-    pal.blue  = (BYTE)CEditor_GetVal(me->color[2]);
+    pal.red = (BYTE) me->color[0]->get_val();
+    pal.green = (BYTE) me->color[1]->get_val();
+    pal.blue = (BYTE) me->color[2]->get_val();
 
     return pal;
 }
