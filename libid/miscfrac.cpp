@@ -52,7 +52,39 @@ static void verhulst();
 static void Bif_Period_Init();
 static bool Bif_Periodic(long time);
 
-static U16 (*getpix)(int, int){(U16(*)(int, int)) getcolor};
+enum
+{
+    DEFAULTFILTER = 1000     /* "Beauty of Fractals" recommends using 5000
+                               (p.25), but that seems unnecessary. Can
+                               override this value with a nonzero param1 */
+};
+
+constexpr double SEED{0.66}; // starting value for population
+
+static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) getcolor(x, y); }};
+static U16 (*s_get_pix)(int x, int y){s_get_color};
+static int s_i_parm_x{};     // iparmx = parm.x * 8
+static int s_shift_value{}; // shift based on #colors
+static int s_recur1{1};
+static int s_p_colors{};
+static int s_recur_level{};
+static U16 s_max_plasma{};
+static int s_plasma_check{};                        // to limit kbd checking
+static std::vector<int> s_verhulst_array;
+static unsigned long s_filter_cycles{};
+static bool s_half_time_check{};
+static long s_population_l{}, s_rate_l{};
+static double s_population{}, s_rate{};
+static bool s_mono{};
+static int s_outside_x{};
+static long s_pi_l{};
+static long s_bif_close_enough_l{}, s_bif_saved_pop_l{}; // poss future use
+static double s_bif_close_enough{}, s_bif_saved_pop{};
+static int s_bif_saved_inc{};
+static long s_bif_saved_and{};
+static long s_beta{};
+static int s_lya_length{}, s_lya_seed_ok{};
+static int s_lya_rxy[34]{};
 
 using PLOT = void(*)(int, int, int);
 
@@ -117,13 +149,6 @@ int test()
 
 //**************** standalone engine for "plasma" *******************
 
-static int iparmx{};     // iparmx = parm.x * 8
-static int shiftvalue{}; // shift based on #colors
-static int recur1{1};
-static int pcolors{};
-static int recur_level{};
-U16 max_plasma{};
-
 // returns a random 16 bit value that is never 0
 U16 rand16()
 {
@@ -187,25 +212,23 @@ U16 getpot(int x, int y)
     return color;
 }
 
-static int plasma_check{};                        // to limit kbd checking
-
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
     S32 pseudorandom;
-    pseudorandom = ((S32)iparmx)*((rand15()-16383));
-    pseudorandom = pseudorandom * recur1;
-    pseudorandom = pseudorandom >> shiftvalue;
-    pseudorandom = (((S32)getpix(xa, ya)+(S32)getpix(xb, yb)+1) >> 1)+pseudorandom;
-    if (max_plasma == 0)
+    pseudorandom = ((S32)s_i_parm_x)*((rand15()-16383));
+    pseudorandom = pseudorandom * s_recur1;
+    pseudorandom = pseudorandom >> s_shift_value;
+    pseudorandom = (((S32)s_get_pix(xa, ya)+(S32)s_get_pix(xb, yb)+1) >> 1)+pseudorandom;
+    if (s_max_plasma == 0)
     {
-        if (pseudorandom >= pcolors)
+        if (pseudorandom >= s_p_colors)
         {
-            pseudorandom = pcolors-1;
+            pseudorandom = s_p_colors-1;
         }
     }
-    else if (pseudorandom >= (S32)max_plasma)
+    else if (pseudorandom >= (S32)s_max_plasma)
     {
-        pseudorandom = max_plasma;
+        pseudorandom = s_max_plasma;
     }
     if (pseudorandom < 1)
     {
@@ -214,7 +237,6 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
     g_plot(x, y, (U16)pseudorandom);
     return (U16)pseudorandom;
 }
-
 
 static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 {
@@ -237,7 +259,7 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
     static sub subx;
     static sub suby;
 
-    recur1 = (int)(320L >> recur);
+    s_recur1 = (int)(320L >> recur);
     suby.t = 2;
     suby.v[0] = y2;
     ny   = suby.v[0];
@@ -251,11 +273,11 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 
     while (suby.t >= 1)
     {
-        if ((++plasma_check & 0x0f) == 1)
+        if ((++s_plasma_check & 0x0f) == 1)
         {
             if (driver_key_pressed())
             {
-                plasma_check--;
+                s_plasma_check--;
                 return true;
             }
         }
@@ -303,28 +325,28 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
                 subx.r[subx.t-1]   = (BYTE)(std::max(subx.r[subx.t], subx.r[subx.t-2])+1);
             }
 
-            i = getpix(nx, y);
+            i = s_get_pix(nx, y);
             if (i == 0)
             {
                 i = adjust(nx, ny1, nx, y , nx, ny);
             }
             // cppcheck-suppress AssignmentIntegerToAddress
             v = i;
-            i = getpix(x, ny);
+            i = s_get_pix(x, ny);
             if (i == 0)
             {
                 i = adjust(nx1, ny, x , ny, nx, ny);
             }
             v += i;
-            if (getpix(x, y) == 0)
+            if (s_get_pix(x, y) == 0)
             {
-                i = getpix(x, ny1);
+                i = s_get_pix(x, ny1);
                 if (i == 0)
                 {
                     i = adjust(nx1, ny1, x , ny1, nx, ny1);
                 }
                 v += i;
-                i = getpix(nx1, y);
+                i = s_get_pix(nx1, y);
                 if (i == 0)
                 {
                     i = adjust(nx1, ny1, nx1, y , nx1, ny);
@@ -353,11 +375,11 @@ static void subDivide(int x1, int y1, int x2, int y2)
     int y;
     S32 v;
     S32 i;
-    if ((++plasma_check & 0x7f) == 1)
+    if ((++s_plasma_check & 0x7f) == 1)
     {
         if (driver_key_pressed())
         {
-            plasma_check--;
+            s_plasma_check--;
             return;
         }
     }
@@ -365,37 +387,37 @@ static void subDivide(int x1, int y1, int x2, int y2)
     {
         return;
     }
-    recur_level++;
-    recur1 = (int)(320L >> recur_level);
+    s_recur_level++;
+    s_recur1 = (int)(320L >> s_recur_level);
 
     x = (x1+x2) >> 1;
     y = (y1+y2) >> 1;
-    v = getpix(x, y1);
+    v = s_get_pix(x, y1);
     if (v == 0)
     {
         v = adjust(x1, y1, x , y1, x2, y1);
     }
     i = v;
-    v = getpix(x2, y);
+    v = s_get_pix(x2, y);
     if (v == 0)
     {
         v = adjust(x2, y1, x2, y , x2, y2);
     }
     i += v;
-    v = getpix(x, y2);
+    v = s_get_pix(x, y2);
     if (v == 0)
     {
         v = adjust(x1, y2, x , y2, x2, y2);
     }
     i += v;
-    v = getpix(x1, y);
+    v = s_get_pix(x1, y);
     if (v == 0)
     {
         v = adjust(x1, y1, x1, y , x1, y2);
     }
     i += v;
 
-    if (getpix(x, y) == 0)
+    if (s_get_pix(x, y) == 0)
     {
         g_plot(x, y, (U16)((i+2) >> 2));
     }
@@ -404,32 +426,31 @@ static void subDivide(int x1, int y1, int x2, int y2)
     subDivide(x , y1, x2, y);
     subDivide(x , y , x2, y2);
     subDivide(x1, y , x , y2);
-    recur_level--;
+    s_recur_level--;
 }
-
 
 int plasma()
 {
     U16 rnd[4];
     bool OldPotFlag = false;
     bool OldPot16bit = false;
-    plasma_check = 0;
+    s_plasma_check = 0;
 
     if (g_colors < 4)
     {
         stopmsg("Plasma Clouds can requires 4 or more color video");
         return -1;
     }
-    iparmx = (int)(g_params[0] * 8);
+    s_i_parm_x = (int)(g_params[0] * 8);
     if (g_param_z1.x <= 0.0)
     {
-        iparmx = 0;
+        s_i_parm_x = 0;
     }
     if (g_param_z1.x >= 100)
     {
-        iparmx = 800;
+        s_i_parm_x = 800;
     }
-    g_params[0] = (double)iparmx / 8.0;  // let user know what was used
+    g_params[0] = (double)s_i_parm_x / 8.0;  // let user know what was used
     if (g_params[1] < 0)
     {
         g_params[1] = 0;  // limit parameter values
@@ -463,13 +484,13 @@ int plasma()
     {
         g_random_seed = (int)g_params[2];
     }
-    max_plasma = (U16)g_params[3];  // max_plasma is used as a flag for potential
+    s_max_plasma = (U16)g_params[3];  // max_plasma is used as a flag for potential
 
-    if (max_plasma != 0)
+    if (s_max_plasma != 0)
     {
         if (pot_startdisk() >= 0)
         {
-            max_plasma = 0xFFFF;
+            s_max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)
             {
                 g_plot    = (PLOT)putpotborder;
@@ -478,13 +499,13 @@ int plasma()
             {
                 g_plot    = (PLOT)putpot;
             }
-            getpix =  getpot;
+            s_get_pix =  getpot;
             OldPotFlag = g_potential_flag;
             OldPot16bit = g_potential_16bit;
         }
         else
         {
-            max_plasma = 0;        // can't do potential (startdisk failed)
+            s_max_plasma = 0;        // can't do potential (startdisk failed)
             g_params[3]   = 0;
             if (g_outside_color >= COLOR_BLACK)
             {
@@ -494,7 +515,7 @@ int plasma()
             {
                 g_plot    = g_put_color;
             }
-            getpix  = (U16(*)(int, int))getcolor;
+            s_get_pix = s_get_color;
         }
     }
     else
@@ -507,7 +528,7 @@ int plasma()
         {
             g_plot    = g_put_color;
         }
-        getpix  = (U16(*)(int, int))getcolor;
+            s_get_pix = s_get_color;
     }
     srand(g_random_seed);
     if (!g_random_seed_flag)
@@ -522,37 +543,37 @@ int plasma()
 
     if (g_colors > 16)
     {
-        shiftvalue = 18;
+        s_shift_value = 18;
     }
     else
     {
         if (g_colors > 4)
         {
-            shiftvalue = 22;
+            s_shift_value = 22;
         }
         else
         {
             if (g_colors > 2)
             {
-                shiftvalue = 24;
+                s_shift_value = 24;
             }
             else
             {
-                shiftvalue = 25;
+                s_shift_value = 25;
             }
         }
     }
-    if (max_plasma != 0)
+    if (s_max_plasma != 0)
     {
-        shiftvalue = 10;
+        s_shift_value = 10;
     }
 
-    if (max_plasma == 0)
+    if (s_max_plasma == 0)
     {
-        pcolors = std::min(g_colors, 256);
+        s_p_colors = std::min(g_colors, 256);
         for (auto &elem : rnd)
         {
-            elem = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
+            elem = (U16)(1+(((rand15()/s_p_colors)*(s_p_colors-1)) >> (s_shift_value-11)));
         }
     }
     else
@@ -576,7 +597,7 @@ int plasma()
     g_plot(0, g_logical_screen_y_dots-1,  rnd[3]);
 
     int n;
-    recur_level = 0;
+    s_recur_level = 0;
     if (g_params[1] == 0)
     {
         subDivide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
@@ -585,7 +606,7 @@ int plasma()
     {
         int i = 1;
         int k = 1;
-        recur1 = 1;
+        s_recur1 = 1;
         while (new_subD(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1, i) == 0)
         {
             k = k * 2;
@@ -610,13 +631,13 @@ int plasma()
         n = 1;
     }
 done:
-    if (max_plasma != 0)
+    if (s_max_plasma != 0)
     {
         g_potential_flag = OldPotFlag;
         g_potential_16bit = OldPot16bit;
     }
     g_plot    = g_put_color;
-    getpix  = (U16(*)(int, int))getcolor;
+    s_get_pix = s_get_color;
     return n;
 }
 
@@ -871,7 +892,7 @@ int diffusion()
             y += random(3) - 1;
 
             // Check keyboard
-            if ((++plasma_check & 0x7f) == 1)
+            if ((++s_plasma_check & 0x7f) == 1)
             {
                 if (check_key())
                 {
@@ -887,7 +908,7 @@ int diffusion()
                                    sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
                     }
 
-                    plasma_check--;
+                    s_plasma_check--;
                     return 1;
                 }
             }
@@ -1000,25 +1021,10 @@ int diffusion()
 // to infinity).                Have fun !
 //*************************************************************
 
-#define DEFAULTFILTER 1000     /* "Beauty of Fractals" recommends using 5000
-                               (p.25), but that seems unnecessary. Can
-                               override this value with a nonzero param1 */
-
-#define SEED 0.66               // starting value for population
-
-static std::vector<int> verhulst_array;
-unsigned long filter_cycles{};
-static bool half_time_check{};
-static long lPopulation{}, lRate{};
-static double Population{}, Rate{};
-static bool mono{};
-static int outside_x{};
-static long LPI{};
-
 inline bool population_exceeded()
 {
     constexpr double limit{100000.0};
-    return std::fabs(Population) > limit;
+    return std::fabs(s_population) > limit;
 }
 
 inline int population_orbit()
@@ -1038,7 +1044,7 @@ int Bifurcation()
     bool resized = false;
     try
     {
-        verhulst_array.resize(g_i_y_stop + 1);
+        s_verhulst_array.resize(g_i_y_stop + 1);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -1050,37 +1056,37 @@ int Bifurcation()
         return -1;
     }
 
-    LPI = (long)(PI * g_fudge_factor);
+    s_pi_l = (long)(PI * g_fudge_factor);
 
     for (int y = 0; y <= g_i_y_stop; y++)   // should be iystop
     {
-        verhulst_array[y] = 0;
+        s_verhulst_array[y] = 0;
     }
 
-    mono = false;
+    s_mono = false;
     if (g_colors == 2)
     {
-        mono = true;
+        s_mono = true;
     }
-    if (mono)
+    if (s_mono)
     {
         if (g_inside_color != COLOR_BLACK)
         {
-            outside_x = 0;
+            s_outside_x = 0;
             g_inside_color = 1;
         }
         else
         {
-            outside_x = 1;
+            s_outside_x = 1;
         }
     }
 
-    filter_cycles = (g_param_z1.x <= 0) ? DEFAULTFILTER : (long)g_param_z1.x;
-    half_time_check = false;
-    if (g_periodicity_check && (unsigned long)g_max_iterations < filter_cycles)
+    s_filter_cycles = (g_param_z1.x <= 0) ? DEFAULTFILTER : (long)g_param_z1.x;
+    s_half_time_check = false;
+    if (g_periodicity_check && (unsigned long)g_max_iterations < s_filter_cycles)
     {
-        filter_cycles = (filter_cycles - g_max_iterations + 1) / 2;
-        half_time_check = true;
+        s_filter_cycles = (s_filter_cycles - g_max_iterations + 1) / 2;
+        s_half_time_check = true;
     }
 
     if (g_integer_fractal)
@@ -1096,7 +1102,7 @@ int Bifurcation()
     {
         if (driver_key_pressed())
         {
-            verhulst_array.clear();
+            s_verhulst_array.clear();
             alloc_resume(10, 1);
             put_resume(sizeof(x), &x, 0);
             return -1;
@@ -1104,36 +1110,36 @@ int Bifurcation()
 
         if (g_integer_fractal)
         {
-            lRate = g_l_x_min + x*g_l_delta_x;
+            s_rate_l = g_l_x_min + x*g_l_delta_x;
         }
         else
         {
-            Rate = (double)(g_x_min + x*g_delta_x);
+            s_rate = (double)(g_x_min + x*g_delta_x);
         }
         verhulst();        // calculate array once per column
 
         for (int y = g_i_y_stop; y >= 0; y--) // should be iystop & >=0
         {
             int color;
-            color = verhulst_array[y];
-            if (color && mono)
+            color = s_verhulst_array[y];
+            if (color && s_mono)
             {
                 color = g_inside_color;
             }
-            else if ((!color) && mono)
+            else if ((!color) && s_mono)
             {
-                color = outside_x;
+                color = s_outside_x;
             }
             else if (color>=g_colors)
             {
                 color = g_colors-1;
             }
-            verhulst_array[y] = 0;
+            s_verhulst_array[y] = 0;
             (*g_plot)(x, y, color); // was row-1, but that's not right?
         }
         x++;
     }
-    verhulst_array.clear();
+    s_verhulst_array.clear();
     return 0;
 }
 
@@ -1143,23 +1149,23 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     if (g_integer_fractal)
     {
-        lPopulation = (g_param_z1.y == 0) ? (long)(SEED*g_fudge_factor) : (long)(g_param_z1.y*g_fudge_factor);
+        s_population_l = (g_param_z1.y == 0) ? (long)(SEED*g_fudge_factor) : (long)(g_param_z1.y*g_fudge_factor);
     }
     else
     {
-        Population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
+        s_population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
     }
 
     g_overflow = false;
 
-    for (unsigned long counter = 0UL; counter < filter_cycles ; counter++)
+    for (unsigned long counter = 0UL; counter < s_filter_cycles ; counter++)
     {
         if (g_cur_fractal_specific->orbitcalc())
         {
             return;
         }
     }
-    if (half_time_check) // check for periodicity at half-time
+    if (s_half_time_check) // check for periodicity at half-time
     {
         Bif_Period_Init();
         unsigned long counter;
@@ -1176,7 +1182,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
         if (counter >= (unsigned long)g_max_iterations)   // if not periodic, go the distance
         {
-            for (counter = 0; counter < filter_cycles ; counter++)
+            for (counter = 0; counter < s_filter_cycles ; counter++)
             {
                 if (g_cur_fractal_specific->orbitcalc())
                 {
@@ -1200,46 +1206,42 @@ static void verhulst()          // P. F. Verhulst (1845)
         // assign population value to Y coordinate in pixels
         if (g_integer_fractal)
         {
-            pixel_row = g_i_y_stop - (int)((lPopulation - g_l_init.y) / g_l_delta_y); // iystop
+            pixel_row = g_i_y_stop - (int)((s_population_l - g_l_init.y) / g_l_delta_y); // iystop
         }
         else
         {
-            pixel_row = g_i_y_stop - (int)((Population - g_init.y) / g_delta_y);
+            pixel_row = g_i_y_stop - (int)((s_population - g_init.y) / g_delta_y);
         }
 
         // if it's visible on the screen, save it in the column array
         if (pixel_row <= (unsigned int)g_i_y_stop)
         {
-            verhulst_array[ pixel_row ] ++;
+            s_verhulst_array[ pixel_row ] ++;
         }
         if (g_periodicity_check && Bif_Periodic(counter))
         {
             if (pixel_row <= (unsigned int)g_i_y_stop)
             {
-                verhulst_array[ pixel_row ] --;
+                s_verhulst_array[ pixel_row ] --;
             }
             break;
         }
     }
 }
-static long lBif_closenuf{}, lBif_savedpop{}; // poss future use
-static double Bif_closenuf{}, Bif_savedpop{};
-static int Bif_savedinc{};
-static long Bif_savedand{};
 
 static void Bif_Period_Init()
 {
-    Bif_savedinc = 1;
-    Bif_savedand = 1;
+    s_bif_saved_inc = 1;
+    s_bif_saved_and = 1;
     if (g_integer_fractal)
     {
-        lBif_savedpop = -1;
-        lBif_closenuf = g_l_delta_y / 8;
+        s_bif_saved_pop_l = -1;
+        s_bif_close_enough_l = g_l_delta_y / 8;
     }
     else
     {
-        Bif_savedpop = -1.0;
-        Bif_closenuf = (double)g_delta_y / 8.0;
+        s_bif_saved_pop = -1.0;
+        s_bif_close_enough = (double)g_delta_y / 8.0;
     }
 }
 
@@ -1247,34 +1249,34 @@ static void Bif_Period_Init()
 // Returns : true if periodicity found, else false
 static bool Bif_Periodic(long time)
 {
-    if ((time & Bif_savedand) == 0)      // time to save a new value
+    if ((time & s_bif_saved_and) == 0)      // time to save a new value
     {
         if (g_integer_fractal)
         {
-            lBif_savedpop = lPopulation;
+            s_bif_saved_pop_l = s_population_l;
         }
         else
         {
-            Bif_savedpop =  Population;
+            s_bif_saved_pop =  s_population;
         }
-        if (--Bif_savedinc == 0)
+        if (--s_bif_saved_inc == 0)
         {
-            Bif_savedand = (Bif_savedand << 1) + 1;
-            Bif_savedinc = 4;
+            s_bif_saved_and = (s_bif_saved_and << 1) + 1;
+            s_bif_saved_inc = 4;
         }
     }
     else                         // check against an old save
     {
         if (g_integer_fractal)
         {
-            if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
+            if (labs(s_bif_saved_pop_l-s_population_l) <= s_bif_close_enough_l)
             {
                 return true;
             }
         }
         else
         {
-            if (std::fabs(Bif_savedpop-Population) <= Bif_closenuf)
+            if (std::fabs(s_bif_saved_pop-s_population) <= s_bif_close_enough)
             {
                 return true;
             }
@@ -1290,139 +1292,137 @@ static bool Bif_Periodic(long time)
 //********************************************************************
 int BifurcLambda() // Used by lyanupov
 {
-    Population = Rate * Population * (1 - Population);
+    s_population = s_rate * s_population * (1 - s_population);
     return population_orbit();
 }
 
 int BifurcVerhulstTrig()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
-    g_tmp_z.x = Population;
+    g_tmp_z.x = s_population;
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
-    Population += Rate * g_tmp_z.x * (1 - g_tmp_z.x);
+    s_population += s_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
 
 int LongBifurcVerhulstTrig()
 {
-    g_l_temp.x = lPopulation;
+    g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
-    lPopulation += multiply(lRate, g_l_temp.y, g_bit_shift);
+    s_population_l += multiply(s_rate_l, g_l_temp.y, g_bit_shift);
     return g_overflow;
 }
 
 int BifurcStewartTrig()
 {
     //  Population = (Rate * fn(Population) * fn(Population)) - 1.0
-    g_tmp_z.x = Population;
+    g_tmp_z.x = s_population;
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
-    Population = (Rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
+    s_population = (s_rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
     return population_orbit();
 }
 
 int LongBifurcStewartTrig()
 {
-    g_l_temp.x = lPopulation;
+    g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    lPopulation = multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
-    lPopulation = multiply(lPopulation, lRate,      g_bit_shift);
-    lPopulation -= g_fudge_factor;
+    s_population_l = multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
+    s_population_l = multiply(s_population_l, s_rate_l,      g_bit_shift);
+    s_population_l -= g_fudge_factor;
     return g_overflow;
 }
 
 int BifurcSetTrigPi()
 {
-    g_tmp_z.x = Population * PI;
+    g_tmp_z.x = s_population * PI;
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
-    Population = Rate * g_tmp_z.x;
+    s_population = s_rate * g_tmp_z.x;
     return population_orbit();
 }
 
 int LongBifurcSetTrigPi()
 {
-    g_l_temp.x = multiply(lPopulation, LPI, g_bit_shift);
+    g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    lPopulation = multiply(lRate, g_l_temp.x, g_bit_shift);
+    s_population_l = multiply(s_rate_l, g_l_temp.x, g_bit_shift);
     return g_overflow;
 }
 
 int BifurcAddTrigPi()
 {
-    g_tmp_z.x = Population * PI;
+    g_tmp_z.x = s_population * PI;
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
-    Population += Rate * g_tmp_z.x;
+    s_population += s_rate * g_tmp_z.x;
     return population_orbit();
 }
 
 int LongBifurcAddTrigPi()
 {
-    g_l_temp.x = multiply(lPopulation, LPI, g_bit_shift);
+    g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    lPopulation += multiply(lRate, g_l_temp.x, g_bit_shift);
+    s_population_l += multiply(s_rate_l, g_l_temp.x, g_bit_shift);
     return g_overflow;
 }
 
 int BifurcLambdaTrig()
 {
     //  Population = Rate * fn(Population) * (1 - fn(Population))
-    g_tmp_z.x = Population;
+    g_tmp_z.x = s_population;
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
-    Population = Rate * g_tmp_z.x * (1 - g_tmp_z.x);
+    s_population = s_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
 
 int LongBifurcLambdaTrig()
 {
-    g_l_temp.x = lPopulation;
+    g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
-    lPopulation = multiply(lRate, g_l_temp.y, g_bit_shift);
+    s_population_l = multiply(s_rate_l, g_l_temp.y, g_bit_shift);
     return g_overflow;
 }
-
-static long beta{};
 
 int BifurcMay()
 {
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
-    g_tmp_z.x = 1.0 + Population;
-    g_tmp_z.x = std::pow(g_tmp_z.x, -beta); // pow in math.h included with mpmath.h
-    Population = (Rate * Population) * g_tmp_z.x;
+    g_tmp_z.x = 1.0 + s_population;
+    g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with mpmath.h
+    s_population = (s_rate * s_population) * g_tmp_z.x;
     return population_orbit();
 }
 
 int LongBifurcMay()
 {
-    g_l_temp.x = lPopulation + g_fudge_factor;
+    g_l_temp.x = s_population_l + g_fudge_factor;
     g_l_temp.y = 0;
-    g_l_param2.x = beta * g_fudge_factor;
+    g_l_param2.x = s_beta * g_fudge_factor;
     LCMPLXpwr(g_l_temp, g_l_param2, g_l_temp);
-    lPopulation = multiply(lRate, lPopulation, g_bit_shift);
-    lPopulation = divide(lPopulation, g_l_temp.x, g_bit_shift);
+    s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
+    s_population_l = divide(s_population_l, g_l_temp.x, g_bit_shift);
     return g_overflow;
 }
 
 bool BifurcMaySetup()
 {
 
-    beta = (long)g_params[2];
-    if (beta < 2)
+    s_beta = (long)g_params[2];
+    if (s_beta < 2)
     {
-        beta = 2;
+        s_beta = 2;
     }
-    g_params[2] = (double)beta;
+    g_params[2] = (double)s_beta;
 
     timer(timer_type::ENGINE, g_cur_fractal_specific->calctype);
     return false;
@@ -1474,8 +1474,6 @@ int popcorn()   // subset of std engine
 //**    1732: the infamous axis swap: (b,a)->(x,y),                     **
 //**            the order parameter becomes a long int                  **
 //************************************************************************
-static int lyaLength{}, lyaSeedOK{};
-static int lyaRxy[34]{};
 
 static int lyapunov_cycles(long filter_cycles, double a, double b);
 
@@ -1491,18 +1489,18 @@ int lyapunov()
     g_overflow = false;
     if (g_params[1] == 1)
     {
-        Population = (1.0+std::rand())/(2.0+RAND_MAX);
+        s_population = (1.0+std::rand())/(2.0+RAND_MAX);
     }
     else if (g_params[1] == 0)
     {
-        if (population_exceeded() || Population == 0 || Population == 1)
+        if (population_exceeded() || s_population == 0 || s_population == 1)
         {
-            Population = (1.0+std::rand())/(2.0+RAND_MAX);
+            s_population = (1.0+std::rand())/(2.0+RAND_MAX);
         }
     }
     else
     {
-        Population = g_params[1];
+        s_population = g_params[1];
     }
     (*g_plot)(g_col, g_row, 1);
     if (g_invert != 0)
@@ -1516,7 +1514,7 @@ int lyapunov()
         a = g_dy_pixel();
         b = g_dx_pixel();
     }
-    g_color = lyapunov_cycles(filter_cycles, a, b);
+    g_color = lyapunov_cycles(s_filter_cycles, a, b);
     if (g_inside_color > COLOR_BLACK && g_color == 0)
     {
         g_color = g_inside_color;
@@ -1561,16 +1559,16 @@ bool lya_setup()
 
     long i;
 
-    filter_cycles = (long)g_params[2];
-    if (filter_cycles == 0)
+    s_filter_cycles = (long)g_params[2];
+    if (s_filter_cycles == 0)
     {
-        filter_cycles = g_max_iterations/2;
+        s_filter_cycles = g_max_iterations/2;
     }
-    lyaSeedOK = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != debug_flags::force_standard_fractal;
-    lyaLength = 1;
+    s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != debug_flags::force_standard_fractal;
+    s_lya_length = 1;
 
     i = (long)g_params[0];
-    lyaRxy[0] = 1;
+    s_lya_rxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)
     {
@@ -1581,9 +1579,9 @@ bool lya_setup()
     }
     for (; t >= 0; t--)
     {
-        lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
+        s_lya_rxy[s_lya_length++] = (i & (1<<t)) != 0;
     }
-    lyaRxy[lyaLength++] = 0;
+    s_lya_rxy[s_lya_length++] = 0;
     if (g_inside_color < COLOR_BLACK)
     {
         stopmsg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
@@ -1611,9 +1609,9 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
     long i;
     for (i = 0; i < filter_cycles; i++)
     {
-        for (int count = 0; count < lyaLength; count++)
+        for (int count = 0; count < s_lya_length; count++)
         {
-            Rate = lyaRxy[count] ? a : b;
+            s_rate = s_lya_rxy[count] ? a : b;
             if (g_cur_fractal_specific->orbitcalc())
             {
                 g_overflow = true;
@@ -1623,15 +1621,15 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
     }
     for (i = 0; i < g_max_iterations/2; i++)
     {
-        for (int count = 0; count < lyaLength; count++)
+        for (int count = 0; count < s_lya_length; count++)
         {
-            Rate = lyaRxy[count] ? a : b;
+            s_rate = s_lya_rxy[count] ? a : b;
             if (g_cur_fractal_specific->orbitcalc())
             {
                 g_overflow = true;
                 goto jumpout;
             }
-            temp = std::fabs(Rate-2.0*Rate*Population);
+            temp = std::fabs(s_rate-2.0*s_rate*s_population);
             total *= temp;
             if (total == 0)
             {
@@ -1661,11 +1659,11 @@ jumpout:
         double lyap;
         if (g_log_map_flag)
         {
-            lyap = -temp/((double) lyaLength*i);
+            lyap = -temp/((double) s_lya_length*i);
         }
         else
         {
-            lyap = 1 - std::exp(temp/((double) lyaLength*i));
+            lyap = 1 - std::exp(temp/((double) s_lya_length*i));
         }
         color = 1 + (int)(lyap * (g_colors-1));
     }
