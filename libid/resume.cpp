@@ -8,7 +8,7 @@
 #include <cstdarg>
 #include <vector>
 
-static int    resume_offset;            // offset in resume info gets
+static int    resume_offset{};            // offset in resume info gets
 
 std::vector<BYTE> g_resume_data; // resume info
 bool g_resuming{};               // true if resuming after interrupt
