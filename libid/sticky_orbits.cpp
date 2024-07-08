@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-char g_draw_mode = 'r';
+char g_draw_mode{'r'};
 
 int sticky_orbits()
 {
