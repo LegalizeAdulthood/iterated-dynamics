@@ -55,7 +55,7 @@ enum
 
 constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 
-static char undofile[] = "id.$$2";  // file where undo list is stored
+static const char *undofile{"id.$$2"};  // file where undo list is stored
 
 enum
 {
@@ -63,10 +63,10 @@ enum
 };
 
 #ifdef XFRACT
-bool editpal_cursor = false;
+bool editpal_cursor{};
 #endif
 
-bool g_using_jiim = false;
+bool g_using_jiim{};
 
 // basic data types
 struct PALENTRY
@@ -77,11 +77,11 @@ struct PALENTRY
 };
 
 std::vector<BYTE> g_line_buff;
-static BYTE fg_color;
-static BYTE bg_color;
-static bool reserve_colors = false;
-static bool inverse = false;
-static float    gamma_val = 1;
+static BYTE fg_color{};
+static BYTE bg_color{};
+static bool reserve_colors{};
+static bool inverse{};
+static float gamma_val{1.0f};
 
 
 // Interface to graphics stuff
@@ -435,7 +435,7 @@ static  void    Cursor__Draw();
 static  void    Cursor__Save();
 static  void    Cursor__Restore();
 
-static Cursor the_cursor;
+static Cursor the_cursor{};
 
 void Cursor_Construct()
 {
