@@ -18,14 +18,18 @@
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int, int, int, int);
 
+enum
+{
+    maxyblk = 7,  // maxxblk*maxyblk*2 <= 4096, the size of "prefix"
+    maxxblk = 202  // each maxnblk is oversize by 2 for a "border"
+};
+// maxxblk defn must match fracsubr.c
+
 static bool guessplot = false;          // paint 1st pass row at a time?
 static bool bottom_guess = false;
 static bool right_guess = false;
 static int maxblock = 0;
 static int halfblock = 0;
-#define maxyblk 7    // maxxblk*maxyblk*2 <= 4096, the size of "prefix"
-#define maxxblk 202  // each maxnblk is oversize by 2 for a "border"
-// maxxblk defn must match fracsubr.c
 static unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 static BYTE s_stack[4096] = { 0 };              // common temp, two put_line calls
 
