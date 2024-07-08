@@ -24,10 +24,13 @@
 #include <string>
 #include <vector>
 
-#define BOXROW   6
-#define BOXCOL   11
-#define BOXWIDTH 57
-#define BOXDEPTH 12
+enum
+{
+    BOXROW = 6,
+    BOXCOL = 11,
+    BOXWIDTH = 57,
+    BOXDEPTH = 12
+};
 
 bool g_disk_16_bit = false;                 // storing 16 bit values for continuous potential
 
@@ -37,12 +40,15 @@ bool g_disk_targa = false;
 bool g_disk_flag = false;
 bool g_good_mode = false;        // if non-zero, OK to read/write pixels
 
-#define BLOCKLEN 2048 // must be a power of 2, must match next
-#define BLOCKSHIFT 11 // must match above
-#define CACHEMIN 64   // minimum cache size in Kbytes
-#define CACHEMAX 4096 // maximum cache size in Kbytes
-#define FREEMEM 33    // try to leave this much memory unallocated
-#define HASHSIZE 2048 // power of 2, near CACHEMAX/(BLOCKLEN+8)
+enum
+{
+    BLOCKLEN = 2048, // must be a power of 2, must match next
+    BLOCKSHIFT = 11, // must match above
+    CACHEMIN = 64,   // minimum cache size in Kbytes
+    CACHEMAX = 4096, // maximum cache size in Kbytes
+    FREEMEM = 33,    // try to leave this much memory unallocated
+    HASHSIZE = 2048 // power of 2, near CACHEMAX/(BLOCKLEN+8)
+};
 
 struct cache                // structure of each cache entry
 {
@@ -585,6 +591,11 @@ static cache *find_cache(long offset)
     return nullptr;
 }
 
+enum
+{
+    WRITEGAP = 4 // 1 for no gaps
+};
+
 static void  write_cache_lru()
 {
     int i;
@@ -593,7 +604,6 @@ static void  write_cache_lru()
     BYTE tmpchar = 0;
     cache *ptr1;
     cache *ptr2;
-#define WRITEGAP 4 // 1 for no gaps
     // scan back to also write any preceding dirty blocks, skipping small gaps
     ptr1 = cache_lru;
     offset = ptr1->offset;
