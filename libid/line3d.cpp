@@ -60,7 +60,8 @@ struct minmax
 
 // routines in this module
 static int first_time(int, VECTOR);
-static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
+static void hsv_to_rgb(
+    BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long sat, unsigned long val);
 static int line3dmem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
@@ -1522,7 +1523,7 @@ int targa_color(int x, int y, int color)
         }
     }
     // Now lets convert it back to RGB. Original Hue, modified Sat and Val
-    H_R(&RGB[0], &RGB[1], &RGB[2], H, S, V);
+    hsv_to_rgb(&RGB[0], &RGB[1], &RGB[2], H, S, V);
 
     if (Real_V)
     {
@@ -1876,7 +1877,8 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
     return 0;
 }
 
-static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsigned long V)
+static void hsv_to_rgb(
+    BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long sat, unsigned long val)
 {
     unsigned long P1;
     unsigned long P2;
@@ -1884,51 +1886,50 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
     int RMD;
     int I;
 
-    if (H >= 23040)
+    if (hue >= 23040)
     {
-        H = H % 23040;            // Makes h circular
+        hue = hue % 23040;            // Makes h circular
     }
-    I = (int)(H / 3840);
-    RMD = (int)(H % 3840);       // RMD = fractional part of H
+    I = (int)(hue / 3840);
+    RMD = (int)(hue % 3840);       // RMD = fractional part of H
 
-    P1 = ((V * (65535L - S)) / 65280L) >> 8;
-    P2 = (((V * (65535L - (S * RMD) / 3840)) / 65280L) - 1) >> 8;
-    P3 = (((V * (65535L - (S * (3840 - RMD)) / 3840)) / 65280L)) >> 8;
-    V = V >> 8;
+    P1 = ((val * (65535L - sat)) / 65280L) >> 8;
+    P2 = (((val * (65535L - (sat * RMD) / 3840)) / 65280L) - 1) >> 8;
+    P3 = (((val * (65535L - (sat * (3840 - RMD)) / 3840)) / 65280L)) >> 8;
+    val = val >> 8;
     switch (I)
     {
     case 0:
-        *R = (BYTE) V;
-        *G = (BYTE) P3;
-        *B = (BYTE) P1;
+        *red = (BYTE) val;
+        *green = (BYTE) P3;
+        *blue = (BYTE) P1;
         break;
     case 1:
-        *R = (BYTE) P2;
-        *G = (BYTE) V;
-        *B = (BYTE) P1;
+        *red = (BYTE) P2;
+        *green = (BYTE) val;
+        *blue = (BYTE) P1;
         break;
     case 2:
-        *R = (BYTE) P1;
-        *G = (BYTE) V;
-        *B = (BYTE) P3;
+        *red = (BYTE) P1;
+        *green = (BYTE) val;
+        *blue = (BYTE) P3;
         break;
     case 3:
-        *R = (BYTE) P1;
-        *G = (BYTE) P2;
-        *B = (BYTE) V;
+        *red = (BYTE) P1;
+        *green = (BYTE) P2;
+        *blue = (BYTE) val;
         break;
     case 4:
-        *R = (BYTE) P3;
-        *G = (BYTE) P1;
-        *B = (BYTE) V;
+        *red = (BYTE) P3;
+        *green = (BYTE) P1;
+        *blue = (BYTE) val;
         break;
     case 5:
-        *R = (BYTE) V;
-        *G = (BYTE) P1;
-        *B = (BYTE) P2;
+        *red = (BYTE) val;
+        *green = (BYTE) P1;
+        *blue = (BYTE) P2;
         break;
     }
-    return 0;
 }
 
 
