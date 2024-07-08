@@ -140,29 +140,28 @@ static VECTOR s_tmp_cross{};                     //
 static point s_old_last{};                       // old pixels
 
 // global variables defined here
-void (*g_standard_plot)(int, int, int);
-MATRIX g_m; // transformation matrix
-int g_ambient;
-int g_randomize_3d;
-int g_haze;
+void (*g_standard_plot)(int, int, int){};
+MATRIX g_m{}; // transformation matrix
+int g_ambient{};
+int g_randomize_3d{};
+int g_haze{};
 std::string g_light_name{"fract001"};
-bool g_targa_overlay = false;
-BYTE g_background_color[3];
+bool g_targa_overlay{};
+BYTE g_background_color[3]{};
 std::string g_raytrace_filename{"fract001"};
-bool g_preview = false;
-bool g_show_box = false;
-int g_preview_factor = 20;
-int g_converge_x_adjust = 0;
-int g_converge_y_adjust = 0;
-int g_xx_adjust;
-int g_yy_adjust;
-int g_x_shift;
-int g_y_shift;
-extern int const g_bad_value = -10000;       // set bad values to this
-raytrace_formats g_raytrace_format = raytrace_formats::none;                    // Flag to generate Ray trace compatible files in 3d
-bool g_brief = false;             // 1 = short ray trace files
-
-VECTOR g_view;                // position of observer for perspective
+bool g_preview{};
+bool g_show_box{};
+int g_preview_factor{20};
+int g_converge_x_adjust{};
+int g_converge_y_adjust{};
+int g_xx_adjust{};
+int g_yy_adjust{};
+int g_x_shift{};
+int g_y_shift{};
+int const g_bad_value{-10000};         // set bad values to this
+raytrace_formats g_raytrace_format{};  // Flag to generate Ray trace compatible files in 3d
+bool g_brief{};                        // 1 = short ray trace files
+VECTOR g_view{};                       // position of observer for perspective
 
 int line3d(BYTE * pixels, unsigned linelen)
 {
