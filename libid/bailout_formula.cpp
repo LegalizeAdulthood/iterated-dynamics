@@ -4,11 +4,11 @@
 #include "fracsuba.h"
 #include "fractals.h"
 
-bailouts g_bail_out_test; // test used for determining bailout
-int (*g_bailout_float)();
-int (*g_bailout_long)();
-int (*g_bailout_bignum)();
-int (*g_bailout_bigfloat)();
+bailouts g_bail_out_test{}; // test used for determining bailout
+int (*g_bailout_float)(){};
+int (*g_bailout_long)(){};
+int (*g_bailout_bignum)(){};
+int (*g_bailout_bigfloat)(){};
 
 void set_bailout_formula(bailouts test)
 {
