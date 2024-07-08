@@ -16,7 +16,7 @@ static int tesschkrow(int, int, int);
 static int tesscol(int, int, int);
 static int tessrow(int, int, int);
 
-static bool guessplot{};     // paint 1st pass row at a time?
+static bool s_guess_plot{};  // paint 1st pass row at a time?
 static BYTE s_stack[4096]{}; // common temp, two put_line calls
 
 // tesseral method by CJLT begins here
@@ -31,7 +31,7 @@ int tesseral()
 {
     tess *tp;
 
-    guessplot = (g_plot != g_put_color && g_plot != symplot2);
+    s_guess_plot = (g_plot != g_put_color && g_plot != symplot2);
     tp = (tess *)&s_stack[0];
     tp->x1 = g_i_x_start;                              // set up initial box
     tp->x2 = g_i_x_stop;
@@ -198,7 +198,7 @@ int tesseral()
                 {
                     tp->top = g_fill_color %g_colors;
                 }
-                if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)
+                if (s_guess_plot || (j = tp->x2 - tp->x1 - 1) < 2)
                 {
                     // paint dots
                     for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
