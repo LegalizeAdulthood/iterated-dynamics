@@ -29,19 +29,7 @@ enum
     BOXROW = 6,
     BOXCOL = 11,
     BOXWIDTH = 57,
-    BOXDEPTH = 12
-};
-
-bool g_disk_16_bit = false;                 // storing 16 bit values for continuous potential
-
-static int timetodisplay;
-static std::FILE *fp = nullptr;
-bool g_disk_targa = false;
-bool g_disk_flag = false;
-bool g_good_mode = false;        // if non-zero, OK to read/write pixels
-
-enum
-{
+    BOXDEPTH = 12,
     BLOCKLEN = 2048, // must be a power of 2, must match next
     BLOCKSHIFT = 11, // must match above
     CACHEMIN = 64,   // minimum cache size in Kbytes
@@ -58,6 +46,14 @@ struct cache                // structure of each cache entry
     bool dirty;             // changed since read?
     bool lru;               // recently used?
 };
+
+bool g_disk_16_bit{}; // storing 16 bit values for continuous potential
+bool g_disk_targa {};
+bool g_disk_flag {};
+bool g_good_mode {};        // if non-zero, OK to read/write pixels
+
+static int timetodisplay;
+static std::FILE *fp = nullptr;
 static cache *cache_end = nullptr;
 static cache *cache_lru = nullptr;
 static cache *cur_cache = nullptr;
@@ -72,7 +68,6 @@ static int pixelshift;
 static int headerlength;
 static int rowsize = 0;   // doubles as a disk video not ok flag
 static int colsize;       // sydots, *2 when pot16bit
-
 static std::vector<BYTE> membuf;
 static U16 dv_handle = 0;
 static long memoffset = 0;
