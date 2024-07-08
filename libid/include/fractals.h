@@ -38,7 +38,7 @@ extern DComplex              g_power_z;
 extern double                g_quaternion_c;
 extern double                g_quaternion_ci;
 extern double                g_quaternion_cj;
-extern double                g_quaternino_ck;
+extern double                g_quaternion_ck;
 extern std::vector<DComplex> g_roots;
 extern double                g_sin_x;
 extern double                g_temp_sqr_x;

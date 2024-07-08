@@ -65,44 +65,43 @@ inline void conjugate(DComplex &pz)
     pz.y = - pz.y;
 }
 
-LComplex g_l_coefficient;
-LComplex g_l_old_z;
-LComplex g_l_new_z;
-LComplex g_l_param;
-LComplex g_l_init;
-LComplex g_l_temp;
-LComplex g_l_param2;
-long g_l_temp_sqr_x;
-long g_l_temp_sqr_y;
-int g_max_color;
-int g_degree;
-int g_basin;
-double g_newton_r_over_d;
-double g_degree_minus_1_over_degree;
-double g_threshold;
-static DComplex tmp2;
+LComplex g_l_coefficient{};
+LComplex g_l_old_z{};
+LComplex g_l_new_z{};
+LComplex g_l_param{};
+LComplex g_l_init{};
+LComplex g_l_temp{};
+LComplex g_l_param2{};
+long g_l_temp_sqr_x{};
+long g_l_temp_sqr_y{};
+int g_max_color{};
+int g_degree{};
+int g_basin{};
+double g_newton_r_over_d{};
+double g_degree_minus_1_over_degree{};
+double g_threshold{};
 std::vector<DComplex> g_roots;
 std::vector<MPC> g_mpc_roots;
-long g_fudge_half;
-DComplex g_power_z;
-int     g_bit_shift_less_1;                  // bit shift less 1
-int g_c_exponent;
-// These are local but I don't want to pass them as parameters
-DComplex g_param_z1;
-DComplex g_param_z2;
-DComplex *g_float_param;
-LComplex *g_long_param; // used here and in jb.c
+long g_fudge_half{};
+DComplex g_power_z{};
+int g_bit_shift_less_1{}; // bit shift less 1
+int g_c_exponent{};
+DComplex g_param_z1{};
+DComplex g_param_z2{};
+DComplex *g_float_param{};
+LComplex *g_long_param{};
+
 // --------------------------------------------------------------------
 //              These variables are external for speed's sake only
 // --------------------------------------------------------------------
-double g_sin_x;
-double g_cos_x;
-double g_temp_sqr_x;
-double g_temp_sqr_y;
-double g_quaternion_c;
-double g_quaternion_ci;
-double g_quaternion_cj;
-double g_quaternino_ck;
+double g_sin_x{};
+double g_cos_x{};
+double g_temp_sqr_x{};
+double g_temp_sqr_y{};
+double g_quaternion_c{};
+double g_quaternion_ci{};
+double g_quaternion_cj{};
+double g_quaternion_ck{};
 
 // --------------------------------------------------------------------
 //              Bailout Routines

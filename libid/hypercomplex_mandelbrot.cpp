@@ -23,7 +23,7 @@ int HyperComplexFPFractal()
     hnew.x += g_quaternion_c;
     hnew.y += g_quaternion_ci;
     hnew.z += g_quaternion_cj;
-    hnew.t += g_quaternino_ck;
+    hnew.t += g_quaternion_ck;
 
     g_new_z.x = hnew.x;
     g_old_z.x = g_new_z.x;
