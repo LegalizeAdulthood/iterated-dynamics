@@ -42,7 +42,10 @@
 #include <cstring>
 #include <vector>
 
-#define MAXRECT         1024      // largest width of SaveRect/RestoreRect
+enum
+{
+    MAXRECT = 1024      // largest width of SaveRect/RestoreRect
+};
 
 static int show_numbers = 0;              // toggle for display of coords
 static std::vector<char> screen_rect;
