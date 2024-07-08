@@ -65,18 +65,18 @@ static void lsysi_dodrawc(lsys_turtlestatei *cmd);
 static void lsysi_dodrawgt(lsys_turtlestatei *cmd);
 static void lsysi_dodrawlt(lsys_turtlestatei *cmd);
 
-static std::vector<long> sins;
-static std::vector<long> coss;
+static std::vector<long> s_sin_table;
+static std::vector<long> r_cos_table;
 constexpr long PI_DIV_180_L{11930465L};
-static std::string axiom;
-static std::vector<std::string> rules;
-static std::vector<lsys_cmd *> rule_cmds;
-static std::vector<lsysf_cmd *> rulef_cmds;
-static bool loaded{};
+static std::string s_axiom;
+static std::vector<std::string> s_rules;
+static std::vector<lsys_cmd *> s_rule_cmds;
+static std::vector<lsysf_cmd *> s_rulef_cmds;
+static bool s_loaded{};
 
-char maxangle;
+char g_max_angle{};
 
-bool ispow2(int n)
+inline bool ispow2(int n)
 {
     return n == (n & -n);
 }
@@ -156,7 +156,7 @@ static bool readLSystemFile(char const *str)
         }
     }
 
-    maxangle = 0;
+    g_max_angle = 0;
     int rulind = 0;
     char msgbuf[481] = { 0 }; // enough for 6 full lines
 
@@ -187,7 +187,7 @@ static bool readLSystemFile(char const *str)
             }
             else if (!std::strcmp(word, "angle"))
             {
-                maxangle = (char)std::atoi(std::strtok(nullptr, " \t\n"));
+                g_max_angle = (char)std::atoi(std::strtok(nullptr, " \t\n"));
                 check = true;
             }
             else if (!std::strcmp(word, "}"))
@@ -251,12 +251,12 @@ static bool readLSystemFile(char const *str)
         }
     }
     std::fclose(infile);
-    if (axiom.empty() && err < 6)
+    if (s_axiom.empty() && err < 6)
     {
         std::strcat(msgbuf, "Error:  no axiom\n");
         ++err;
     }
-    if ((maxangle < 3||maxangle > 50) && err < 6)
+    if ((g_max_angle < 3||g_max_angle > 50) && err < 6)
     {
         std::strcat(msgbuf, "Error:  illegal or missing angle\n");
         ++err;
@@ -275,7 +275,7 @@ int Lsystem()
     int order;
     bool stackoflow = false;
 
-    if (!loaded && LLoad())
+    if (!s_loaded && LLoad())
     {
         return -1;
     }
@@ -296,30 +296,30 @@ int Lsystem()
         lsys_turtlestatei ts;
 
         ts.stackoflow = false;
-        ts.maxangle = maxangle;
-        ts.dmaxangle = (char)(maxangle - 1);
+        ts.maxangle = g_max_angle;
+        ts.dmaxangle = (char)(g_max_angle - 1);
 
-        rule_cmds.push_back(LSysISizeTransform(axiom.c_str(), &ts));
-        for (auto const &rule : rules)
+        s_rule_cmds.push_back(LSysISizeTransform(s_axiom.c_str(), &ts));
+        for (auto const &rule : s_rules)
         {
-            rule_cmds.push_back(LSysISizeTransform(rule.c_str(), &ts));
+            s_rule_cmds.push_back(LSysISizeTransform(rule.c_str(), &ts));
         }
-        rule_cmds.push_back(nullptr);
+        s_rule_cmds.push_back(nullptr);
 
         lsysi_dosincos();
-        if (lsysi_findscale(rule_cmds[0], &ts, &rule_cmds[1], order))
+        if (lsysi_findscale(s_rule_cmds[0], &ts, &s_rule_cmds[1], order))
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
 
             free_lcmds();
-            rule_cmds.push_back(LSysIDrawTransform(axiom.c_str(), &ts));
-            for (auto const &rule : rules)
+            s_rule_cmds.push_back(LSysIDrawTransform(s_axiom.c_str(), &ts));
+            for (auto const &rule : s_rules)
             {
-                rule_cmds.push_back(LSysIDrawTransform(rule.c_str(), &ts));
+                s_rule_cmds.push_back(LSysIDrawTransform(rule.c_str(), &ts));
             }
-            rule_cmds.push_back(nullptr);
+            s_rule_cmds.push_back(nullptr);
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
@@ -327,7 +327,7 @@ int Lsystem()
             {
                 ts.curcolor = (char)(g_colors-1);
             }
-            drawLSysI(rule_cmds[0], &ts, &rule_cmds[1], order);
+            drawLSysI(s_rule_cmds[0], &ts, &s_rule_cmds[1], order);
         }
         stackoflow = ts.stackoflow;
     }
@@ -343,30 +343,30 @@ int Lsystem()
         g_overflow = false;
 
         ts.stackoflow = false;
-        ts.maxangle = maxangle;
-        ts.dmaxangle = (char)(maxangle - 1);
+        ts.maxangle = g_max_angle;
+        ts.dmaxangle = (char)(g_max_angle - 1);
 
-        rulef_cmds.push_back(LSysFSizeTransform(axiom.c_str(), &ts));
-        for (auto const &rule : rules)
+        s_rulef_cmds.push_back(LSysFSizeTransform(s_axiom.c_str(), &ts));
+        for (auto const &rule : s_rules)
         {
-            rulef_cmds.push_back(LSysFSizeTransform(rule.c_str(), &ts));
+            s_rulef_cmds.push_back(LSysFSizeTransform(rule.c_str(), &ts));
         }
-        rulef_cmds.push_back(nullptr);
+        s_rulef_cmds.push_back(nullptr);
 
         lsysf_dosincos();
-        if (lsysf_findscale(rulef_cmds[0], &ts, &rulef_cmds[1], order))
+        if (lsysf_findscale(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order))
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
 
             free_lcmds();
-            rulef_cmds.push_back(LSysFDrawTransform(axiom.c_str(), &ts));
-            for (auto const &rule : rules)
+            s_rulef_cmds.push_back(LSysFDrawTransform(s_axiom.c_str(), &ts));
+            for (auto const &rule : s_rules)
             {
-                rulef_cmds.push_back(LSysFDrawTransform(rule.c_str(), &ts));
+                s_rulef_cmds.push_back(LSysFDrawTransform(rule.c_str(), &ts));
             }
-            rulef_cmds.push_back(nullptr);
+            s_rulef_cmds.push_back(nullptr);
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
@@ -374,13 +374,13 @@ int Lsystem()
             {
                 ts.curcolor = (char)(g_colors-1);
             }
-            drawLSysF(rulef_cmds[0], &ts, &rulef_cmds[1], order);
+            drawLSysF(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order);
         }
         g_overflow = false;
     }
     free_rules_mem();
     free_lcmds();
-    loaded = false;
+    s_loaded = false;
     return 0;
 }
 
@@ -390,29 +390,29 @@ bool LLoad()
     {
         // error occurred
         free_rules_mem();
-        loaded = false;
+        s_loaded = false;
         return true;
     }
-    loaded = true;
+    s_loaded = true;
     return false;
 }
 
 static void free_rules_mem()
 {
-    for (auto &rule : rules)
+    for (auto &rule : s_rules)
     {
         rule.clear();
         rule.shrink_to_fit();
     }
-    rules.clear();
-    rules.shrink_to_fit();
+    s_rules.clear();
+    s_rules.shrink_to_fit();
 }
 
 static int rule_present(char symbol)
 {
-    for (std::size_t i = 1; i < rules.size(); ++i)
+    for (std::size_t i = 1; i < s_rules.size(); ++i)
     {
-        if (rules[i][0] == symbol)
+        if (s_rules[i][0] == symbol)
         {
             return static_cast<int>(i);
         }
@@ -424,7 +424,7 @@ static bool save_axiom(char const *text)
 {
     try
     {
-        axiom = text;
+        s_axiom = text;
         return false;
     }
     catch (std::bad_alloc const&)
@@ -438,8 +438,8 @@ static bool save_rule(char const *rule, int index)
     try
     {
         assert(index >= 0);
-        rules.resize(index + 1);
-        rules[index] = rule;
+        s_rules.resize(index + 1);
+        s_rules[index] = rule;
         return false;
     }
     catch (std::bad_alloc const&)
@@ -452,8 +452,8 @@ static bool append_rule(char const *rule, int index)
 {
     try
     {
-        assert(index > 0 && unsigned(index) < rules.size());
-        rules[index] += rule;
+        assert(index > 0 && unsigned(index) < s_rules.size());
+        s_rules[index] += rule;
         return false;
     }
     catch (std::bad_alloc const &)
@@ -464,22 +464,22 @@ static bool append_rule(char const *rule, int index)
 
 static void free_lcmds()
 {
-    for (auto cmd : rule_cmds)
+    for (auto cmd : s_rule_cmds)
     {
         if (cmd)
         {
             free(cmd);
         }
     }
-    rule_cmds.clear();
-    for (auto cmd : rulef_cmds)
+    s_rule_cmds.clear();
+    for (auto cmd : s_rulef_cmds)
     {
         if (cmd != nullptr)
         {
             free(cmd);
         }
     }
-    rulef_cmds.clear();
+    s_rulef_cmds.clear();
 }
 
 // integer specific routines
@@ -640,8 +640,8 @@ static void lsysi_dosizedm(lsys_turtlestatei *cmd)
 
 static void lsysi_dosizegf(lsys_turtlestatei *cmd)
 {
-    cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
+    cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
     if (cmd->xpos > cmd->xmax)
@@ -705,8 +705,8 @@ static void lsysi_dodrawm(lsys_turtlestatei *cmd)
 
 static void lsysi_dodrawg(lsys_turtlestatei *cmd)
 {
-    cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
+    cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
 }
@@ -715,8 +715,8 @@ static void lsysi_dodrawf(lsys_turtlestatei *cmd)
 {
     int lastx = (int)(cmd->xpos >> 19);
     int lasty = (int)(cmd->ypos >> 19);
-    cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
+    cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
     driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
@@ -1197,14 +1197,14 @@ static void lsysi_dosincos()
     double c;
 
     locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
-    twopimax = TWOPI / maxangle;
-    sins.resize(maxangle);
-    coss.resize(maxangle);
-    for (int i = 0; i < maxangle; i++)
+    twopimax = TWOPI / g_max_angle;
+    s_sin_table.resize(g_max_angle);
+    r_cos_table.resize(g_max_angle);
+    for (int i = 0; i < g_max_angle; i++)
     {
         twopimaxi = i * twopimax;
         FPUsincos(&twopimaxi, &s, &c);
-        sins[i] = (long)(s * FIXEDLT1);
-        coss[i] = (long)((locaspect * c) * FIXEDLT1);
+        s_sin_table[i] = (long)(s * FIXEDLT1);
+        r_cos_table[i] = (long)((locaspect * c) * FIXEDLT1);
     }
 }

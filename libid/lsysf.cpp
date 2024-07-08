@@ -763,10 +763,10 @@ void lsysf_dosincos()
     LDBL twopimaxi;
 
     locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
-    twopimax = TWOPI / maxangle;
-    sins_f.resize(maxangle);
-    coss_f.resize(maxangle);
-    for (int i = 0; i < maxangle; i++)
+    twopimax = TWOPI / g_max_angle;
+    sins_f.resize(g_max_angle);
+    coss_f.resize(g_max_angle);
+    for (int i = 0; i < g_max_angle; i++)
     {
         twopimaxi = i * twopimax;
         sins_f[i] = sinl(twopimaxi);
