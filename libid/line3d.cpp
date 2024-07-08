@@ -84,7 +84,7 @@ static void T_clipcolor(int, int, int);
 static void vdraw_line(double *, double *, int color);
 
 // static variables
-static void (*fillplot)(int x, int y, int color);
+static void (*s_fill_plot)(int x, int y, int color);
 static void (*normalplot)(int x, int y, int color);
 static float deltaphi;          // increment of latitude, longitude
 static double rscale;           // surface roughness factor
@@ -1250,7 +1250,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     // fast way if single point or single line
     if (p1.y == p2.y && p1.x == p2.x)
     {
-        g_plot = fillplot;
+        g_plot = s_fill_plot;
         if (p1.y == p3.y && p1.x == p3.x)
         {
             (*g_plot)(p1.x, p1.y, color);
@@ -1264,7 +1264,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     }
     else if ((p3.y == p1.y && p3.x == p1.x) || (p3.y == p2.y && p3.x == p2.x))
     {
-        g_plot = fillplot;
+        g_plot = s_fill_plot;
         driver_draw_line(p1.x, p1.y, p2.x, p2.y, color);
         g_plot = normalplot;
         return;
@@ -1319,7 +1319,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
         xlim = minmax_x[y].maxx;
         for (int x = minmax_x[y].minx; x <= xlim; x++)
         {
-            (*fillplot)(x, y, color);
+            (*s_fill_plot)(x, y, color);
         }
     }
     g_plot = normalplot;
@@ -2769,16 +2769,16 @@ static int first_time(int linelen, VECTOR v)
     // set fill plot function
     if (g_fill_type != fill_type::SURFACE_CONSTANT)
     {
-        fillplot = interpcolor;
+        s_fill_plot = interpcolor;
     }
     else
     {
-        fillplot = clipcolor;
+        s_fill_plot = clipcolor;
 
         if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
             // If transparent colors are set
-            fillplot = T_clipcolor;// Use the transparent plot function
+            s_fill_plot = T_clipcolor;// Use the transparent plot function
         }
     }
 
