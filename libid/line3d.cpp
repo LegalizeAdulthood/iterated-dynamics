@@ -2894,8 +2894,8 @@ static int line3dmem()
     minmax_x.clear();
 
     // these fill types call putatriangle which uses minmax_x
-    if (g_fill_type == +fill_type::SURFACE_INTERPOLATED || g_fill_type == +fill_type::SURFACE_CONSTANT || g_fill_type == +fill_type::LIGHT_SOURCE_BEFORE ||
-        g_fill_type == +fill_type::LIGHT_SOURCE_AFTER)
+    if (g_fill_type == +fill_type::SURFACE_INTERPOLATED || g_fill_type == +fill_type::SURFACE_CONSTANT ||
+        g_fill_type == +fill_type::LIGHT_SOURCE_BEFORE || g_fill_type == +fill_type::LIGHT_SOURCE_AFTER)
     {
         minmax_x.resize(OLD_MAX_PIXELS);
     }
