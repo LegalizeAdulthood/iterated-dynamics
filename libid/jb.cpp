@@ -95,20 +95,20 @@ static long eyes{};
 bool g_julibrot{}; // flag for julibrot
 
 // these need to be accessed elsewhere for saving data
-double g_julibrot_x_min = -.83;
-double g_julibrot_y_min = -.25;
-double g_julibrot_x_max = -.83;
-double g_julibrot_y_max =  .25;
+double g_julibrot_x_min{-.83};
+double g_julibrot_y_min{-.25};
+double g_julibrot_x_max{-.83};
+double g_julibrot_y_max{.25};
 //
-int g_julibrot_z_dots = 128;
-float g_julibrot_origin_fp  = 8.0F;
-float g_julibrot_height_fp  = 7.0F;
-float g_julibrot_width_fp   = 10.0F;
-float g_julibrot_dist_fp    = 24.0F;
-float g_eyes_fp    = 2.5F;
-float g_julibrot_depth_fp   = 8.0F;
+int g_julibrot_z_dots{128};
+float g_julibrot_origin_fp{8.0f};
+float g_julibrot_height_fp{7.0f};
+float g_julibrot_width_fp{10.0f};
+float g_julibrot_dist_fp{24.0f};
+float g_eyes_fp{2.5f};
+float g_julibrot_depth_fp{8.0f};
 julibrot_3d_mode g_julibrot_3d_mode{};
-fractal_type g_new_orbit_type = fractal_type::JULIA;
+fractal_type g_new_orbit_type{fractal_type::JULIA};
 const char *g_julibrot_3d_options[]{
     to_string(julibrot_3d_mode::MONOCULAR), //
     to_string(julibrot_3d_mode::LEFT_EYE),  //
