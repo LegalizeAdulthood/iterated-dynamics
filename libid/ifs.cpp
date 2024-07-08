@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <cstring>
 
-int g_num_affine_transforms;
+int g_num_affine_transforms{};
 
 enum
 {
