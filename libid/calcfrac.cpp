@@ -180,11 +180,11 @@ int g_periodicity_next_saved_incr{}; // For periodicity testing, only in standar
 long g_first_saved_and{};            //
 int g_atan_colors{180};              //
 
-static std::vector<BYTE> savedots;
-static BYTE *fillbuff{};
-static int savedotslen{};
-static int showdotcolor{};
-static int showdot_width{};
+static std::vector<BYTE> s_save_dots;
+static BYTE *s_fill_buff{};
+static int s_save_dots_len{};
+static int s_show_dot_color{};
+static int s_show_dot_width{};
 
 enum class show_dot_action
 {
@@ -380,12 +380,12 @@ void showdotsaverestore(
     int ct = 0;
     if (direction != show_dot_direction::JUST_A_POINT)
     {
-        if (savedots.empty())
+        if (s_save_dots.empty())
         {
             stopmsg("savedots empty");
             exit(0);
         }
-        if (fillbuff == nullptr)
+        if (s_fill_buff == nullptr)
         {
             stopmsg("fillbuff NULL");
             exit(0);
@@ -398,12 +398,12 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &savedots[0] + ct);
-                sym_fill_line(j, startx, stopx, fillbuff);
+                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &savedots[0] + ct);
+                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
             }
             ct += stopx-startx+1;
         }
@@ -413,12 +413,12 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &savedots[0] + ct);
-                sym_fill_line(j, startx, stopx, fillbuff);
+                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &savedots[0] + ct);
+                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
             }
             ct += stopx-startx+1;
         }
@@ -428,12 +428,12 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &savedots[0] + ct);
-                sym_fill_line(j, startx, stopx, fillbuff);
+                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &savedots[0] + ct);
+                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
             }
             ct += stopx-startx+1;
         }
@@ -443,12 +443,12 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &savedots[0] + ct);
-                sym_fill_line(j, startx, stopx, fillbuff);
+                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &savedots[0] + ct);
+                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
             }
             ct += stopx-startx+1;
         }
@@ -458,7 +458,7 @@ void showdotsaverestore(
     }
     if (action == show_dot_action::SAVE)
     {
-        (*g_plot)(g_col, g_row, showdotcolor);
+        (*g_plot)(g_col, g_row, s_show_dot_color);
     }
 }
 
@@ -475,7 +475,7 @@ int calctypeshowdot()
     startx = g_col;
     stopy = g_row;
     starty = g_row;
-    width = showdot_width+1;
+    width = s_show_dot_width+1;
     if (width > 0)
     {
         if (g_col+width <= g_i_x_stop && g_row+width <= g_i_y_stop)
@@ -1098,22 +1098,22 @@ static void perform_worklist()
             switch (g_auto_show_dot)
             {
             case 'd':
-                showdotcolor = g_color_dark % g_colors;
+                s_show_dot_color = g_color_dark % g_colors;
                 break;
             case 'm':
-                showdotcolor = g_color_medium % g_colors;
+                s_show_dot_color = g_color_medium % g_colors;
                 break;
             case 'b':
             case 'a':
-                showdotcolor = g_color_bright % g_colors;
+                s_show_dot_color = g_color_bright % g_colors;
                 break;
             default:
-                showdotcolor = g_show_dot % g_colors;
+                s_show_dot_color = g_show_dot % g_colors;
                 break;
             }
             if (g_size_dot <= 0)
             {
-                showdot_width = -1;
+                s_show_dot_width = -1;
             }
             else
             {
@@ -1124,32 +1124,32 @@ static void perform_worklist()
                 // overflow if dshowdot width gets near 256.
                 if (dshowdot_width > 150.0)
                 {
-                    showdot_width = 150;
+                    s_show_dot_width = 150;
                 }
                 else if (dshowdot_width > 0.0)
                 {
-                    showdot_width = (int)dshowdot_width;
+                    s_show_dot_width = (int)dshowdot_width;
                 }
                 else
                 {
-                    showdot_width = -1;
+                    s_show_dot_width = -1;
                 }
             }
-            while (showdot_width >= 0)
+            while (s_show_dot_width >= 0)
             {
                 // We're using near memory, so get the amount down
                 // to something reasonable. The polynomial used to
                 // calculate savedotslen is exactly right for the
                 // triangular-shaped shotdot cursor. The that cursor
                 // is changed, this formula must match.
-                while ((savedotslen = sqr(showdot_width) + 5*showdot_width + 4) > 1000)
+                while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 1000)
                 {
-                    showdot_width--;
+                    s_show_dot_width--;
                 }
                 bool resized = false;
                 try
                 {
-                    savedots.resize(savedotslen);
+                    s_save_dots.resize(s_save_dots_len);
                     resized = true;
                 }
                 catch (std::bad_alloc const&)
@@ -1158,18 +1158,18 @@ static void perform_worklist()
 
                 if (resized)
                 {
-                    savedotslen /= 2;
-                    fillbuff = &savedots[0] + savedotslen;
-                    std::memset(fillbuff, showdotcolor, savedotslen);
+                    s_save_dots_len /= 2;
+                    s_fill_buff = &s_save_dots[0] + s_save_dots_len;
+                    std::memset(s_fill_buff, s_show_dot_color, s_save_dots_len);
                     break;
                 }
                 // There's even less free memory than we thought, so reduce
                 // showdot_width still more
-                showdot_width--;
+                s_show_dot_width--;
             }
-            if (savedots.empty())
+            if (s_save_dots.empty())
             {
-                showdot_width = -1;
+                s_show_dot_width = -1;
             }
             calctypetmp = g_calc_type;
             g_calc_type    = calctypeshowdot;
@@ -1213,10 +1213,10 @@ static void perform_worklist()
         default:
             one_or_two_pass();
         }
-        if (!savedots.empty())
+        if (!s_save_dots.empty())
         {
-            savedots.clear();
-            fillbuff = nullptr;
+            s_save_dots.clear();
+            s_fill_buff = nullptr;
         }
         if (check_key())   // interrupted?
         {
