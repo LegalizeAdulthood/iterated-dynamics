@@ -56,7 +56,6 @@ enum
 constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 
 static char undofile[] = "id.$$2";  // file where undo list is stored
-#define TITLE   ID_PROGRAM_NAME
 
 enum
 {
@@ -1806,7 +1805,7 @@ static void PalTable__Draw(PalTable *me)
     {
         int center = (width - TITLE_LEN*8) / 2;
 
-        displayf(me->x+center, me->y+RGBEditor_DEPTH/2-12, fg_color, bg_color, TITLE);
+        displayf(me->x+center, me->y+RGBEditor_DEPTH/2-12, fg_color, bg_color, ID_PROGRAM_NAME);
     }
 
     RGBEditor_Draw(me->rgb[0]);
