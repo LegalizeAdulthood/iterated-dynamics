@@ -21,10 +21,10 @@ inline int operator+(direction value)
     return static_cast<int>(value);
 }
 
-static direction going_to{};
-static int trail_row{};
-static int trail_col{};
-static BYTE dstack[4096]{}; // common temp, two put_line calls
+static direction s_going_to{};
+static int s_trail_row{};
+static int s_trail_col{};
+static BYTE s_stack[4096]{}; // common temp, two put_line calls
 
 // boundary trace method
 constexpr int BK_COLOR{};
@@ -37,23 +37,23 @@ inline direction advance(direction dir, int increment)
 // take one step in the direction of going_to
 static void step_col_row()
 {
-    switch (going_to)
+    switch (s_going_to)
     {
     case direction::North:
-        g_col = trail_col;
-        g_row = trail_row - 1;
+        g_col = s_trail_col;
+        g_row = s_trail_row - 1;
         break;
     case direction::East:
-        g_col = trail_col + 1;
-        g_row = trail_row;
+        g_col = s_trail_col + 1;
+        g_row = s_trail_row;
         break;
     case direction::South:
-        g_col = trail_col;
-        g_row = trail_row + 1;
+        g_col = s_trail_col;
+        g_row = s_trail_row + 1;
         break;
     case direction::West:
-        g_col = trail_col - 1;
-        g_row = trail_row;
+        g_col = s_trail_col - 1;
+        g_row = s_trail_row;
         break;
     }
 }
@@ -111,12 +111,12 @@ int boundary_trace()
             }
 
             // sweep clockwise to trace outline
-            trail_row = cur_row;
-            trail_col = cur_col;
+            s_trail_row = cur_row;
+            s_trail_col = cur_col;
             trail_color = g_color;
             const int fill_color_used = g_fill_color > 0 ? g_fill_color : trail_color;
             direction coming_from = direction::West;
-            going_to = direction::East;
+            s_going_to = direction::East;
             unsigned int matches_found = 0;
             bool continue_loop = true;
             do
@@ -148,21 +148,21 @@ int boundary_trace()
                         {
                             matches_found++;
                         }
-                        trail_row = g_row;
-                        trail_col = g_col;
-                        going_to = advance(going_to, -1);
-                        coming_from = advance(going_to, -1);
+                        s_trail_row = g_row;
+                        s_trail_col = g_col;
+                        s_going_to = advance(s_going_to, -1);
+                        coming_from = advance(s_going_to, -1);
                     }
                     else
                     {
-                        going_to = advance(going_to, 1);
-                        continue_loop = going_to != coming_from || matches_found > 0;
+                        s_going_to = advance(s_going_to, 1);
+                        continue_loop = s_going_to != coming_from || matches_found > 0;
                     }
                 }
                 else
                 {
-                    going_to = advance(going_to, 1);
-                    continue_loop = going_to != coming_from || matches_found > 0;
+                    s_going_to = advance(s_going_to, 1);
+                    continue_loop = s_going_to != coming_from || matches_found > 0;
                 }
             } while (continue_loop && (g_col != cur_col || g_row != cur_row));
 
@@ -176,10 +176,10 @@ int boundary_trace()
 
             // Fill in region by looping around again, filling lines to the left
             // whenever going_to is South or West
-            trail_row = cur_row;
-            trail_col = cur_col;
+            s_trail_row = cur_row;
+            s_trail_col = cur_col;
             coming_from = direction::West;
-            going_to = direction::East;
+            s_going_to = direction::East;
             do
             {
                 bool match_found = false;
@@ -192,8 +192,8 @@ int boundary_trace()
                         && g_row <= g_i_y_stop                    //
                         && getcolor(g_col, g_row) == trail_color) // getcolor() must be last
                     {
-                        if (going_to == direction::South ||
-                            (going_to == direction::West && coming_from != direction::East))
+                        if (s_going_to == direction::South ||
+                            (s_going_to == direction::West && coming_from != direction::East))
                         {
                             // fill a row, but only once
                             int right = g_col;
@@ -221,36 +221,36 @@ int boundary_trace()
                                     if (fill_color_used != last_fillcolor_used || length > max_putline_length)
                                     {
                                         // only reset dstack if necessary
-                                        std::memset(dstack, fill_color_used, length);
+                                        std::memset(s_stack, fill_color_used, length);
                                         last_fillcolor_used = fill_color_used;
                                         max_putline_length = length;
                                     }
-                                    sym_fill_line(g_row, left, right, dstack);
+                                    sym_fill_line(g_row, left, right, s_stack);
                                 }
                             } // end of fill line
                         }
-                        trail_row = g_row;
-                        trail_col = g_col;
-                        going_to = advance(going_to, -1);
-                        coming_from = advance(going_to, -1);
+                        s_trail_row = g_row;
+                        s_trail_col = g_col;
+                        s_going_to = advance(s_going_to, -1);
+                        coming_from = advance(s_going_to, -1);
                         match_found = true;
                     }
                     else
                     {
-                        going_to = advance(going_to, 1);
+                        s_going_to = advance(s_going_to, 1);
                     }
-                } while (!match_found && going_to != coming_from);
+                } while (!match_found && s_going_to != coming_from);
 
                 if (!match_found)
                 {
                     // next one has to be a match
                     step_col_row();
-                    trail_row = g_row;
-                    trail_col = g_col;
-                    going_to = advance(going_to, -1);
-                    coming_from = advance(going_to, -1);
+                    s_trail_row = g_row;
+                    s_trail_col = g_col;
+                    s_going_to = advance(s_going_to, -1);
+                    coming_from = advance(s_going_to, -1);
                 }
-            } while (trail_col != cur_col || trail_row != cur_row);
+            } while (s_trail_col != cur_col || s_trail_row != cur_row);
             g_reset_periodicity = true; // reset after a trace/fill
             g_color = BK_COLOR;
         }

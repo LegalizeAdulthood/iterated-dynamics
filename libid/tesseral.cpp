@@ -17,7 +17,7 @@ static int tesscol(int, int, int);
 static int tessrow(int, int, int);
 
 static bool guessplot = false;          // paint 1st pass row at a time?
-static BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
+static BYTE s_stack[4096] = { 0 };              // common temp, two put_line calls
 
 // tesseral method by CJLT begins here
 
@@ -32,7 +32,7 @@ int tesseral()
     tess *tp;
 
     guessplot = (g_plot != g_put_color && g_plot != symplot2);
-    tp = (tess *)&dstack[0];
+    tp = (tess *)&s_stack[0];
     tp->x1 = g_i_x_start;                              // set up initial box
     tp->x2 = g_i_x_stop;
     tp->y1 = g_i_y_start;
@@ -118,7 +118,7 @@ int tesseral()
 
     g_got_status = 4; // for tab_display
 
-    while (tp >= (tess *)&dstack[0])
+    while (tp >= (tess *)&s_stack[0])
     {
         // do next box
         g_current_column = tp->x1; // for tab_display
@@ -220,16 +220,16 @@ int tesseral()
                 else
                 {
                     // use put_line for speed
-                    std::memset(&dstack[OLD_MAX_PIXELS], tp->top, j);
+                    std::memset(&s_stack[OLD_MAX_PIXELS], tp->top, j);
                     for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                     {
-                        put_line(g_row, tp->x1+1, tp->x2-1, &dstack[OLD_MAX_PIXELS]);
+                        put_line(g_row, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                         if (g_plot != g_put_color) // symmetry
                         {
                             j = g_yy_stop-(g_row-g_yy_start);
                             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
                             {
-                                put_line(j, tp->x1+1, tp->x2-1, &dstack[OLD_MAX_PIXELS]);
+                                put_line(j, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                             }
                         }
                         if (++i > 25)
@@ -330,7 +330,7 @@ tess_split:
     }
 
 tess_end:
-    if (tp >= (tess *)&dstack[0])
+    if (tp >= (tess *)&s_stack[0])
     {
         // didn't complete
         int i;

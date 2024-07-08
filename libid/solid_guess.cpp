@@ -27,7 +27,7 @@ static int halfblock = 0;
 #define maxxblk 202  // each maxnblk is oversize by 2 for a "border"
 // maxxblk defn must match fracsubr.c
 static unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
-static BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
+static BYTE s_stack[4096] = { 0 };              // common temp, two put_line calls
 
 // super solid guessing
 
@@ -561,12 +561,12 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         j = y+i;
         if (j <= g_i_y_stop)
         {
-            put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start]);
+            put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
         }
         j = y+i+halfblock;
         if (j <= g_i_y_stop)
         {
-            put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start+OLD_MAX_PIXELS]);
+            put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
         }
         if (driver_key_pressed())
         {
@@ -579,14 +579,14 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         {
             for (int i = (g_i_x_stop+g_xx_start+1)/2; --i >= g_xx_start;)
             {
-                color = dstack[i];
+                color = s_stack[i];
                 j = g_i_x_stop - (i - g_xx_start);
-                dstack[i] = dstack[j];
-                dstack[j] = (BYTE)color;
+                s_stack[i] = s_stack[j];
+                s_stack[j] = (BYTE)color;
                 j += OLD_MAX_PIXELS;
-                color = dstack[i + OLD_MAX_PIXELS];
-                dstack[i + OLD_MAX_PIXELS] = dstack[j];
-                dstack[j] = (BYTE)color;
+                color = s_stack[i + OLD_MAX_PIXELS];
+                s_stack[i + OLD_MAX_PIXELS] = s_stack[j];
+                s_stack[j] = (BYTE)color;
             }
         }
         for (int i = 0; i < halfblock; ++i)
@@ -594,12 +594,12 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             j = g_yy_stop-(y+i-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start]);
+                put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
             }
             j = g_yy_stop-(y+i+halfblock-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start+OLD_MAX_PIXELS]);
+                put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
             }
             if (driver_key_pressed())
             {
@@ -614,7 +614,7 @@ inline void fill_dstack(int x1, int x2, BYTE value)
 {
     const int begin = std::min(x1, x2);
     const int end = std::max(x1, x2);
-    std::fill(&dstack[begin], &dstack[end], value);
+    std::fill(&s_stack[begin], &s_stack[end], value);
 }
 
 static void plotblock(int buildrow, int x, int y, int color)
