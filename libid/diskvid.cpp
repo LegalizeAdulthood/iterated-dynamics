@@ -48,31 +48,31 @@ struct cache                // structure of each cache entry
 };
 
 bool g_disk_16_bit{}; // storing 16 bit values for continuous potential
-bool g_disk_targa {};
-bool g_disk_flag {};
-bool g_good_mode {};        // if non-zero, OK to read/write pixels
+bool g_disk_targa{};  //
+bool g_disk_flag{};   //
+bool g_good_mode{};   // if non-zero, OK to read/write pixels
 
-static int timetodisplay;
-static std::FILE *fp = nullptr;
-static cache *cache_end = nullptr;
-static cache *cache_lru = nullptr;
-static cache *cur_cache = nullptr;
-static cache *cache_start = nullptr;
-static long high_offset;           // highwater mark of writes
-static long seek_offset;           // what we'll get next if we don't seek
-static long cur_offset;            // offset of last block referenced
-static int cur_row;
-static long cur_row_base;
-static unsigned int hash_ptr[HASHSIZE] = { 0 };
-static int pixelshift;
-static int headerlength;
-static int rowsize = 0;   // doubles as a disk video not ok flag
-static int colsize;       // sydots, *2 when pot16bit
-static std::vector<BYTE> membuf;
-static U16 dv_handle = 0;
-static long memoffset = 0;
-static long oldmemoffset = 0;
-static BYTE *membufptr;
+static int timetodisplay{};               //
+static std::FILE *fp{};                   //
+static cache *cache_end{};                //
+static cache *cache_lru{};                //
+static cache *cur_cache{};                //
+static cache *cache_start{};              //
+static long high_offset{};                // highwater mark of writes
+static long seek_offset{};                // what we'll get next if we don't seek
+static long cur_offset{};                 // offset of last block referenced
+static int cur_row{};                     //
+static long cur_row_base{};               //
+static unsigned int hash_ptr[HASHSIZE]{}; //
+static int pixelshift{};                  //
+static int headerlength{};                //
+static int rowsize{};                     // doubles as a disk video not ok flag
+static int colsize{};                     // sydots, *2 when pot16bit
+static std::vector<BYTE> membuf;          //
+static U16 dv_handle{};                   //
+static long memoffset{};                  //
+static long oldmemoffset{};               //
+static BYTE *membufptr{};                 //
 
 static void findload_cache(long);
 static cache *find_cache(long);
