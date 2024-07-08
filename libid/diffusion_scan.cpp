@@ -47,12 +47,12 @@ static char dif_lb[] =
 //   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
-static BYTE s_stack[4096] = { 0 };              // common temp, two put_line calls
+static BYTE s_stack[4096] {};              // common temp, two put_line calls
 
-// static vars for diffusion scan
-unsigned int g_diffusion_bits = 0;        // number of bits in the counter
-unsigned long g_diffusion_counter = 0;  // the diffusion counter
-unsigned long g_diffusion_limit = 0;    // the diffusion counter
+// vars for diffusion scan
+unsigned int g_diffusion_bits{};     // number of bits in the counter
+unsigned long g_diffusion_counter{}; // the diffusion counter
+unsigned long g_diffusion_limit{};   // the diffusion counter
 
 int diffusion_scan()
 {
@@ -60,7 +60,7 @@ int diffusion_scan()
 
     log2 = (double) std::log(2.0);
 
-    g_got_status = 5;
+    g_got_status = status_values::DIFFUSION;
 
     // note: the max size of 2048x2048 gives us a 22 bit counter that will
     // fit any 32 bit architecture, the maxinum limit for this case would

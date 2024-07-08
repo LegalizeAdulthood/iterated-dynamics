@@ -116,7 +116,7 @@ int tesseral()
         }
     }
 
-    g_got_status = 4; // for tab_display
+    g_got_status = status_values::TESSERAL; // for tab_display
 
     while (tp >= (tess *)&s_stack[0])
     {

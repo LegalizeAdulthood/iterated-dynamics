@@ -155,21 +155,18 @@ int g_yy_start{};                               //
 int g_yy_stop{};                                //
 int g_work_pass{};                              //
 int g_work_symmetry{};                          // for the sake of calcmand
-                                                // variables which must be visible for tab_display
-int g_got_status{-1};                           // -1 if not, 0 for 1or2pass, 1 for ssg,
-                                                // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
-                                                // 6 for orbits
-int g_current_pass{};                           //
-int g_total_passes{};                           //
-int g_current_row{};                            //
-int g_current_column{};                         //
-bool g_three_pass{};                            // for solid_guess & its subroutines
-int g_attractors{};                             // number of finite attractors
-DComplex g_attractor[MAX_NUM_ATTRACTORS]{};     // finite attractor vals (f.p)
-LComplex g_l_attractor[MAX_NUM_ATTRACTORS]{};   // finite attractor vals (int)
-int g_attractor_period[MAX_NUM_ATTRACTORS]{};   // period of the finite attractor
-int g_inside_color{};                           // inside color: 1=blue
-int g_outside_color{};                          // outside color
+status_values g_got_status{status_values::NONE}; // variables which must be visible for tab_display
+int g_current_pass{};                            //
+int g_total_passes{};                            //
+int g_current_row{};                             //
+int g_current_column{};                          //
+bool g_three_pass{};                             // for solid_guess & its subroutines
+int g_attractors{};                              // number of finite attractors
+DComplex g_attractor[MAX_NUM_ATTRACTORS]{};      // finite attractor vals (f.p)
+LComplex g_l_attractor[MAX_NUM_ATTRACTORS]{};    // finite attractor vals (int)
+int g_attractor_period[MAX_NUM_ATTRACTORS]{};    // period of the finite attractor
+int g_inside_color{};                            // inside color: 1=blue
+int g_outside_color{};                           // outside color
 
 // --------------------------------------------------------------------
 //              These variables are external for speed's sake only

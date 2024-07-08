@@ -72,7 +72,7 @@ int boundary_trace()
     }
 
     int last_fillcolor_used = -1;
-    g_got_status = 2;
+    g_got_status = status_values::BOUNDARY_TRACE;
     int max_putline_length = 0; // reset max_putline_length
     for (int cur_row = g_i_y_start; cur_row <= g_i_y_stop; cur_row++)
     {

@@ -345,7 +345,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         driver_discard_screen();
         stacked = false;
     }
-    g_got_status = -1;                     // for tab_display
+    g_got_status = status_values::NONE;                     // for tab_display
 
     if (g_show_file)
     {

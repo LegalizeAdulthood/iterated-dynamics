@@ -2873,7 +2873,7 @@ static int first_time(int linelen, VECTOR v)
         s_last_row[i] = s_bad;
         s_f_last_row[i] = s_f_bad;
     }
-    g_got_status = 3;
+    g_got_status = status_values::THREE_D;
     return 0;
 } // end of once-per-image intializations
 

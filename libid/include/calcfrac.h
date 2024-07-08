@@ -54,6 +54,18 @@ enum
     ATANI = -104
 };
 
+enum class status_values
+{
+    NONE = -1,
+    ONE_OR_TWO_PASS = 0,
+    SOLID_GUESS = 1,
+    BOUNDARY_TRACE = 2,
+    THREE_D = 3,
+    TESSERAL = 4,
+    DIFFUSION = 5,
+    ORBITS =6,
+};
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  long                 g_l_at_rad;            // finite attractor radius
 extern  double               g_f_at_rad;            // finite attractor radius
@@ -74,7 +86,7 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
-extern int                   g_got_status;
+extern status_values         g_got_status;
 extern int                   g_i_x_start;
 extern int                   g_i_x_stop;
 extern int                   g_i_y_start;

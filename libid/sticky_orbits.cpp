@@ -13,7 +13,7 @@ char g_draw_mode = 'r';
 
 int sticky_orbits()
 {
-    g_got_status = 6; // for <tab> screen
+    g_got_status = status_values::ORBITS; // for <tab> screen
     g_total_passes = 1;
 
     if (plotorbits2dsetup() == -1)

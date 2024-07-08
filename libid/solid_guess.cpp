@@ -76,7 +76,7 @@ int solid_guess()
     g_i_y_start = g_yy_begin;
     g_i_y_start &= -1 - (maxblock-1);
 
-    g_got_status = 1;
+    g_got_status = status_values::SOLID_GUESS;
 
     if (g_work_pass == 0) // otherwise first pass already done
     {
