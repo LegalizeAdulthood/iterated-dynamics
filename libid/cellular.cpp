@@ -44,12 +44,12 @@ enum
 static void set_Cellular_palette();
 
 static std::vector<BYTE> cell_array[2];
-static S16 s_r;
-static S16 k_1;
-static S16 rule_digits;
-static bool lstscreenflag = false;
+static S16 s_r{};
+static S16 k_1{};
+static S16 rule_digits{};
+static bool lstscreenflag{};
 
-bool g_cellular_next_screen = false;             // for cellular next screen generation
+bool g_cellular_next_screen{};             // for cellular next screen generation
 
 void abort_cellular(int err, int t)
 {
