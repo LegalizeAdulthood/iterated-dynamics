@@ -12,8 +12,9 @@
 #include <cstdio>
 #include <ctime>
 
-bool    g_timer_flag = false;      // you didn't see this, either
-long g_timer_start, g_timer_interval;       // timer(...) start & total
+bool g_timer_flag{};     // you didn't see this, either
+long g_timer_start{};    // timer(...) start & total
+long g_timer_interval{}; //
 
 /* timer function:
      timer(timer_type::ENGINE,(*fractal)())              fractal engine
