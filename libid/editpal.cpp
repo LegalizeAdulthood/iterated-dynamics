@@ -35,11 +35,12 @@
 // misc. #defines
 //
 
-#define FONT_DEPTH          8     // font size
-
-#define CSIZE_MIN           8     // csize cannot be smaller than this
-
-#define CURSOR_SIZE         5     // length of one side of the x-hair cursor
+enum
+{
+    FONT_DEPTH = 8, // font size
+    CSIZE_MIN = 8,  // csize cannot be smaller than this
+    CURSOR_SIZE = 5     // length of one side of the x-hair cursor
+};
 
 #ifndef XFRACT
 #define CURSOR_BLINK_RATE   3     // timer ticks between cursor blinks
@@ -47,20 +48,24 @@
 #define CURSOR_BLINK_RATE   300   // timer ticks between cursor blinks
 #endif
 
-#define FAR_RESERVE     8192L     // amount of mem we will leave avail.
+enum
+{
+    FAR_RESERVE = 8192L, // amount of mem we will leave avail.
+};
 
-#define MAX_WIDTH        1024     // palette editor cannot be wider than this
+constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 
 static char undofile[] = "id.$$2";  // file where undo list is stored
 #define TITLE   ID_PROGRAM_NAME
 
-#define TITLE_LEN (17)
-
+enum
+{
+    TITLE_LEN = (17)
+};
 
 #ifdef XFRACT
 bool editpal_cursor = false;
 #endif
-
 
 bool g_using_jiim = false;
 
@@ -72,18 +77,15 @@ struct PALENTRY
     BYTE blue;
 };
 
-
 std::vector<BYTE> g_line_buff;
 static BYTE fg_color;
 static BYTE bg_color;
 static bool reserve_colors = false;
 static bool inverse = false;
-
 static float    gamma_val = 1;
 
 
 // Interface to graphics stuff
-
 static void setpal(int pal, int r, int g, int b)
 {
     g_dac_box[pal][0] = (BYTE)r;
@@ -92,19 +94,16 @@ static void setpal(int pal, int r, int g, int b)
     spindac(0, 1);
 }
 
-
 static void setpalrange(int first, int how_many, PALENTRY *pal)
 {
     std::memmove(g_dac_box+first, pal, how_many*3);
     spindac(0, 1);
 }
 
-
 static void getpalrange(int first, int how_many, PALENTRY *pal)
 {
     std::memmove(pal, g_dac_box+first, how_many*3);
 }
-
 
 static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
 {
@@ -135,7 +134,6 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
     }
 }
 
-
 static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
 {
     if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
@@ -161,7 +159,6 @@ static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
 
     put_line(row, start, stop, pixels);
 }
-
 
 static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 {
@@ -189,7 +186,6 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
     get_line(row, start, stop, pixels);
 }
 
-
 void clip_putcolor(int x, int y, int color)
 {
     if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
@@ -199,7 +195,6 @@ void clip_putcolor(int x, int y, int color)
 
     g_put_color(x, y, color);
 }
-
 
 int clip_getcolor(int x, int y)
 {
@@ -211,13 +206,11 @@ int clip_getcolor(int x, int y)
     return getcolor(x, y);
 }
 
-
 static void hline(int x, int y, int width, int color)
 {
     std::memset(&g_line_buff[0], color, width);
     clip_put_line(y, x, x+width-1, &g_line_buff[0]);
 }
-
 
 static void vline(int x, int y, int depth, int color)
 {
@@ -227,18 +220,15 @@ static void vline(int x, int y, int depth, int color)
     }
 }
 
-
 void getrow(int x, int y, int width, char *buff)
 {
     clip_get_line(y, x, x+width-1, (BYTE *)buff);
 }
 
-
 void putrow(int x, int y, int width, char const *buff)
 {
     clip_put_line(y, x, x+width-1, (BYTE *)buff);
 }
-
 
 static void vgetrow(int x, int y, int depth, char *buff)
 {
@@ -248,7 +238,6 @@ static void vgetrow(int x, int y, int depth, char *buff)
     }
 }
 
-
 static void vputrow(int x, int y, int depth, char const *buff)
 {
     while (depth-- > 0)
@@ -256,7 +245,6 @@ static void vputrow(int x, int y, int depth, char const *buff)
         clip_putcolor(x, y++, (BYTE)(*buff++));
     }
 }
-
 
 static void fillrect(int x, int y, int width, int depth, int color)
 {
@@ -266,7 +254,6 @@ static void fillrect(int x, int y, int width, int depth, int color)
     }
 }
 
-
 static void rect(int x, int y, int width, int depth, int color)
 {
     hline(x, y, width, color);
@@ -275,7 +262,6 @@ static void rect(int x, int y, int width, int depth, int color)
     vline(x, y, depth, color);
     vline(x+width-1, y, depth, color);
 }
-
 
 static void displayf(int x, int y, int fg, int bg, char const *format, ...)
 {
@@ -290,10 +276,7 @@ static void displayf(int x, int y, int fg, int bg, char const *format, ...)
     driver_display_string(x, y, fg, bg, buff);
 }
 
-
 // create smooth shades between two colors
-
-
 static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
     double rm = (double) ((int) p2->red - (int) p1->red) / num;
@@ -323,10 +306,7 @@ static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int 
     }
 }
 
-
-
 //  Swap RG GB & RB columns
-
 static void rotcolrg(PALENTRY pal[], int num)
 {
     for (int curr = 0; curr <= num; curr++)
@@ -336,7 +316,6 @@ static void rotcolrg(PALENTRY pal[], int num)
         pal[curr].green = (BYTE)dummy;
     }
 }
-
 
 static void rotcolgb(PALENTRY pal[], int num)
 {
@@ -358,10 +337,7 @@ static void rotcolbr(PALENTRY pal[], int num)
     }
 }
 
-
 // convert a range of colors to grey scale
-
-
 static void palrangetogrey(PALENTRY pal[], int first, int how_many)
 {
     for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
@@ -374,8 +350,6 @@ static void palrangetogrey(PALENTRY pal[], int first, int how_many)
 }
 
 // convert a range of colors to their inverse
-
-
 static void palrangetonegative(PALENTRY pal[], int first, int how_many)
 {
     for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
@@ -386,10 +360,7 @@ static void palrangetonegative(PALENTRY pal[], int first, int how_many)
     }
 }
 
-
 // draw and horizontal/vertical dotted lines
-
-
 static void hdline(int x, int y, int width)
 {
     BYTE *ptr = &g_line_buff[0];
@@ -401,7 +372,6 @@ static void hdline(int x, int y, int width)
     putrow(x, y, width, (char *) &g_line_buff[0]);
 }
 
-
 static void vdline(int x, int y, int depth)
 {
     for (int ctr = 0; ctr < depth; ctr++, y++)
@@ -409,7 +379,6 @@ static void vdline(int x, int y, int depth)
         clip_putcolor(x, y, (ctr&2) ? bg_color : fg_color);
     }
 }
-
 
 static void drect(int x, int y, int width, int depth)
 {
@@ -420,23 +389,16 @@ static void drect(int x, int y, int width, int depth)
     vdline(x+width-1, y, depth);
 }
 
-
 // misc. routines
-
-
 static bool is_reserved(int color)
 {
     return reserve_colors && (color == fg_color || color == bg_color);
 }
 
-
-
 static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
 {
     return (x >= bx) && (y >= by) && (x < bx+bw) && (y < by+bd);
 }
-
-
 
 static void draw_diamond(int x, int y, int color)
 {
@@ -447,8 +409,6 @@ static void draw_diamond(int x, int y, int color)
     g_put_color(x+2, y+4,    color);
 }
 
-
-
 //
 // Class:     Cursor
 //
@@ -458,7 +418,6 @@ static void draw_diamond(int x, int y, int color)
 //            IMPORTANT: Call Cursor_Construct before you use any other
 //            Cursor_ function!
 //
-
 struct Cursor
 {
     int x;
@@ -473,13 +432,11 @@ struct Cursor
 };
 
 // private:
-
 static  void    Cursor__Draw();
 static  void    Cursor__Save();
 static  void    Cursor__Restore();
 
 static Cursor the_cursor;
-
 
 void Cursor_Construct()
 {
@@ -489,7 +446,6 @@ void Cursor_Construct()
     the_cursor.blink      = false;
     the_cursor.last_blink = 0;
 }
-
 
 static void Cursor__Draw()
 {
@@ -505,7 +461,6 @@ static void Cursor__Draw()
     hline(the_cursor.x+2,             the_cursor.y, CURSOR_SIZE, color);
 }
 
-
 static void Cursor__Save()
 {
     vgetrow(the_cursor.x, the_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor.t);
@@ -515,7 +470,6 @@ static void Cursor__Save()
     getrow(the_cursor.x+2,             the_cursor.y,  CURSOR_SIZE, the_cursor.r);
 }
 
-
 static void Cursor__Restore()
 {
     vputrow(the_cursor.x, the_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor.t);
@@ -524,8 +478,6 @@ static void Cursor__Restore()
     putrow(the_cursor.x-CURSOR_SIZE-1, the_cursor.y,  CURSOR_SIZE, the_cursor.l);
     putrow(the_cursor.x+2,             the_cursor.y,  CURSOR_SIZE, the_cursor.r);
 }
-
-
 
 void Cursor_SetPos(int x, int y)
 {
@@ -578,7 +530,6 @@ void Cursor_Move(int xoff, int yoff)
     }
 }
 
-
 int Cursor_GetX()
 {
     return the_cursor.x;
@@ -589,7 +540,6 @@ int Cursor_GetY()
     return the_cursor.y;
 }
 
-
 void Cursor_Hide()
 {
     if (the_cursor.hidden++ == 0)
@@ -597,7 +547,6 @@ void Cursor_Hide()
         Cursor__Restore();
     }
 }
-
 
 void Cursor_Show()
 {
@@ -656,7 +605,6 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
 //
 // Purpose:   Handles the rectangular move/resize box.
 //
-
 struct MoveBox
 {
     int x;
@@ -673,13 +621,11 @@ struct MoveBox
 };
 
 // private:
-
 static void     MoveBox__Draw(MoveBox *me);
 static void     MoveBox__Erase(MoveBox *me);
 static void     MoveBox__Move(MoveBox *me, int key);
 
 // public:
-
 static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width,
                                   int base_depth);
 static void     MoveBox_Destroy(MoveBox *me);
@@ -692,8 +638,6 @@ static int      MoveBox_CSize(MoveBox *me);
 
 static void     MoveBox_SetPos(MoveBox *me, int x, int y);
 static void     MoveBox_SetCSize(MoveBox *me, int csize);
-
-
 
 static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int base_depth)
 {
@@ -714,18 +658,15 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
     return me;
 }
 
-
 static void MoveBox_Destroy(MoveBox *me)
 {
     delete me;
 }
 
-
 static bool MoveBox_Moved(MoveBox *me)
 {
     return me->moved;
 }
-
 static bool MoveBox_ShouldHide(MoveBox *me)
 {
     return me->should_hide;
@@ -746,19 +687,16 @@ static int MoveBox_CSize(MoveBox *me)
     return me->csize;
 }
 
-
 static void MoveBox_SetPos(MoveBox *me, int x, int y)
 {
     me->x = x;
     me->y = y;
 }
 
-
 static void MoveBox_SetCSize(MoveBox *me, int csize)
 {
     me->csize = csize;
 }
-
 
 static void MoveBox__Draw(MoveBox *me)  // private
 {
@@ -780,7 +718,6 @@ static void MoveBox__Draw(MoveBox *me)  // private
     vdline(x+width-1, y, depth);
 }
 
-
 static void MoveBox__Erase(MoveBox *me)   // private
 {
     int width = me->base_width + me->csize * 16 + 1;
@@ -793,9 +730,11 @@ static void MoveBox__Erase(MoveBox *me)   // private
     putrow(me->x, me->y+depth-1, width, &me->b[0]);
 }
 
-
-#define BOX_INC     1
-#define CSIZE_INC   2
+enum
+{
+    BOX_INC = 1,
+    CSIZE_INC = 2
+};
 
 static void MoveBox__Move(MoveBox *me, int key)
 {
@@ -881,7 +820,6 @@ static void MoveBox__Move(MoveBox *me, int key)
         MoveBox__Draw(me);
     }
 }
-
 
 static bool MoveBox_Process(MoveBox *me)
 {
@@ -992,8 +930,6 @@ static bool MoveBox_Process(MoveBox *me)
     return key != ID_KEY_ESC;
 }
 
-
-
 //
 // Class:     CEditor
 //
@@ -1003,7 +939,6 @@ static bool MoveBox_Process(MoveBox *me)
 //            The "change" function is called whenever the value is changed
 //            by the CEditor.
 //
-
 struct CEditor
 {
     int x;
@@ -1018,7 +953,6 @@ struct CEditor
 };
 
 // public:
-
 static CEditor *CEditor_Construct(int x, int y, char letter,
                                   void (*other_key)(int, CEditor*, void*),
                                   void (*change)(CEditor*, void*), void *info);
@@ -1031,10 +965,11 @@ static void CEditor_SetDone(CEditor *me, bool done);
 static void CEditor_SetHidden(CEditor *me, bool hidden);
 static int  CEditor_Edit(CEditor *me);
 
-#define CEditor_WIDTH (8*3+4)
-#define CEditor_DEPTH (8+4)
-
-
+enum
+{
+    CEditor_WIDTH = (8*3+4),
+    CEditor_DEPTH = (8+4)
+};
 
 static CEditor *CEditor_Construct(int x, int y, char letter,
                                   void (*other_key)(int, CEditor*, void *),
@@ -1059,7 +994,6 @@ static void CEditor_Destroy(CEditor *me)
     delete me;
 }
 
-
 static void CEditor_Draw(CEditor *me)
 {
     if (me->hidden)
@@ -1072,37 +1006,31 @@ static void CEditor_Draw(CEditor *me)
     Cursor_Show();
 }
 
-
 static void CEditor_SetPos(CEditor *me, int x, int y)
 {
     me->x = x;
     me->y = y;
 }
 
-
 static void CEditor_SetVal(CEditor *me, int val)
 {
     me->val = val;
 }
-
 
 static int CEditor_GetVal(CEditor *me)
 {
     return me->val;
 }
 
-
 static void CEditor_SetDone(CEditor *me, bool done)
 {
     me->done = done;
 }
 
-
 static void CEditor_SetHidden(CEditor *me, bool hidden)
 {
     me->hidden = hidden;
 }
-
 
 static int CEditor_Edit(CEditor *me)
 {
@@ -1232,14 +1160,11 @@ static int CEditor_Edit(CEditor *me)
     return key;
 }
 
-
-
 //
 // Class:     RGBEditor
 //
 // Purpose:   Edits a complete color using three CEditors for R, G and B
 //
-
 struct RGBEditor
 {
     int x;
@@ -1255,12 +1180,10 @@ struct RGBEditor
 };
 
 // private:
-
 static void      RGBEditor__other_key(int key, CEditor *ceditor, void *info);
 static void      RGBEditor__change(CEditor *ceditor, void *info);
 
 // public:
-
 static RGBEditor *RGBEditor_Construct(int x, int y,
                                       void (*other_key)(int, RGBEditor*, void*),
                                       void (*change)(RGBEditor*, void*), void *info);
@@ -1281,8 +1204,6 @@ static PALENTRY RGBEditor_GetRGB(RGBEditor *me);
 
 #define RGBEditor_BWIDTH ( RGBEditor_WIDTH - (2+CEditor_WIDTH+1 + 2) )
 #define RGBEditor_BDEPTH ( RGBEditor_DEPTH - 4 )
-
-
 
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEditor*, void*),
                                       void (*change)(RGBEditor*, void*), void *info)
@@ -1307,7 +1228,6 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEd
     return me;
 }
 
-
 static void RGBEditor_Destroy(RGBEditor *me)
 {
     CEditor_Destroy(me->color[0]);
@@ -1316,12 +1236,10 @@ static void RGBEditor_Destroy(RGBEditor *me)
     delete me;
 }
 
-
 static void RGBEditor_SetDone(RGBEditor *me, bool done)
 {
     me->done = done;
 }
-
 
 static void RGBEditor_SetHidden(RGBEditor *me, bool hidden)
 {
@@ -1330,7 +1248,6 @@ static void RGBEditor_SetHidden(RGBEditor *me, bool hidden)
     CEditor_SetHidden(me->color[1], hidden);
     CEditor_SetHidden(me->color[2], hidden);
 }
-
 
 static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // private
 {
@@ -1405,7 +1322,6 @@ static void RGBEditor__change(CEditor * /*ceditor*/, void *info) // private
     me->change(me, me->info);
 }
 
-
 static void RGBEditor_SetPos(RGBEditor *me, int x, int y)
 {
     me->x = x;
@@ -1415,7 +1331,6 @@ static void RGBEditor_SetPos(RGBEditor *me, int x, int y)
     CEditor_SetPos(me->color[1], x+2, y+2+CEditor_DEPTH-1);
     CEditor_SetPos(me->color[2], x+2, y+2+CEditor_DEPTH-1+CEditor_DEPTH-1);
 }
-
 
 static void RGBEditor_BlankSampleBox(RGBEditor *me)
 {
@@ -1428,7 +1343,6 @@ static void RGBEditor_BlankSampleBox(RGBEditor *me)
     fillrect(me->x+2+CEditor_WIDTH+1+1, me->y+2+1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
     Cursor_Show();
 }
-
 
 static void RGBEditor_Update(RGBEditor *me)
 {
@@ -1468,7 +1382,6 @@ static void RGBEditor_Update(RGBEditor *me)
     Cursor_Show();
 }
 
-
 static void RGBEditor_Draw(RGBEditor *me)
 {
     if (me->hidden)
@@ -1483,7 +1396,6 @@ static void RGBEditor_Draw(RGBEditor *me)
     RGBEditor_Update(me);
     Cursor_Show();
 }
-
 
 static int RGBEditor_Edit(RGBEditor *me)
 {
@@ -1513,7 +1425,6 @@ static int RGBEditor_Edit(RGBEditor *me)
     return key;
 }
 
-
 static void RGBEditor_SetRGB(RGBEditor *me, int pal, PALENTRY *rgb)
 {
     me->pal = pal;
@@ -1521,7 +1432,6 @@ static void RGBEditor_SetRGB(RGBEditor *me, int pal, PALENTRY *rgb)
     CEditor_SetVal(me->color[1], rgb->green);
     CEditor_SetVal(me->color[2], rgb->blue);
 }
-
 
 static PALENTRY RGBEditor_GetRGB(RGBEditor *me)
 {
@@ -1573,10 +1483,7 @@ struct PalTable
     bool hidden;
     int           stored_at;
     std::vector<char> saved_pixels;
-
     PALENTRY     save_pal[8][256];
-
-
     PALENTRY      fs_color;
     int           top, bottom; // top and bottom colours of freestyle band
     int           bandwidth; //size of freestyle colour band
@@ -1584,7 +1491,6 @@ struct PalTable
 };
 
 // private:
-
 static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
 static void    PalTable__HlPal(PalTable *me, int pnum, int color);
 static void    PalTable__Draw(PalTable *me);
@@ -1606,13 +1512,11 @@ static void    PalTable__Redo(PalTable *me);
 static void    PalTable__change(RGBEditor *rgb, void *info);
 
 // public:
-
 static void PalTable_Construct(PalTable *me);
 static void      PalTable_Destroy(PalTable *me);
 static void      PalTable_Process(PalTable *me);
 static void      PalTable_SetHidden(PalTable *me, bool hidden);
 static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden);
-
 
 #define PalTable_PALX (1)
 #define PalTable_PALY (2+RGBEditor_DEPTH+2)
@@ -1622,7 +1526,6 @@ static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden);
 #define UNDO_ROTATE      (3)
 
 //  - Freestyle code -
-
 static void PalTable__CalcTopBottom(PalTable *me)
 {
     if (me->curr[me->active] < me->bandwidth)
@@ -1670,10 +1573,7 @@ static void PalTable__PutBand(PalTable *me, PALENTRY *pal)
 
 }
 
-
 // - Undo.Redo code -
-
-
 static void PalTable__SaveUndoData(PalTable *me, int first, int last)
 {
     int num;
@@ -1704,7 +1604,6 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
     me->num_redo = 0;
 }
 
-
 static void PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last)
 {
     if (me->undo_file == nullptr)
@@ -1721,7 +1620,6 @@ static void PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last)
 
     me->num_redo = 0;
 }
-
 
 static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common code
 {
@@ -1786,7 +1684,6 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
     getw(me->undo_file);  // read size
 }
 
-
 static void PalTable__Undo(PalTable *me)
 {
     int  size;
@@ -1812,7 +1709,6 @@ static void PalTable__Undo(PalTable *me)
     ++me->num_redo;
 }
 
-
 static void PalTable__Redo(PalTable *me)
 {
     if (me->num_redo <= 0)
@@ -1826,11 +1722,11 @@ static void PalTable__Redo(PalTable *me)
     --me->num_redo;
 }
 
-
 // - everything else -
-
-
-#define STATUS_LEN (4)
+enum
+{
+    STATUS_LEN = (4)
+};
 
 static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 {
@@ -1864,7 +1760,6 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
     }
 }
 
-
 static void PalTable__HlPal(PalTable *me, int pnum, int color)
 {
     int x = me->x + PalTable_PALX + (pnum % 16) * me->csize;
@@ -1889,7 +1784,6 @@ static void PalTable__HlPal(PalTable *me, int pnum, int color)
 
     Cursor_Show();
 }
-
 
 static void PalTable__Draw(PalTable *me)
 {
@@ -1961,8 +1855,6 @@ static void PalTable__Draw(PalTable *me)
 
     Cursor_Show();
 }
-
-
 
 static void PalTable__SetCurr(PalTable *me, int which, int curr)
 {
@@ -2037,7 +1929,6 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
     me->curr_changed = false;
 }
 
-
 static void PalTable__SaveRect(PalTable *me)
 {
     int const width = PalTable_PALX + me->csize*16 + 1 + 1;
@@ -2052,7 +1943,6 @@ static void PalTable__SaveRect(PalTable *me)
     }
     Cursor_Show();
 }
-
 
 static void PalTable__RestoreRect(PalTable *me)
 {
@@ -2072,7 +1962,6 @@ static void PalTable__RestoreRect(PalTable *me)
     Cursor_Show();
 }
 
-
 static void PalTable__SetPos(PalTable *me, int x, int y)
 {
     int width = PalTable_PALX + me->csize*16 + 1 + 1;
@@ -2084,13 +1973,11 @@ static void PalTable__SetPos(PalTable *me, int x, int y)
     RGBEditor_SetPos(me->rgb[1], x+width-2-RGBEditor_WIDTH, y+2);
 }
 
-
 static void PalTable__SetCSize(PalTable *me, int csize)
 {
     me->csize = csize;
     PalTable__SetPos(me, me->x, me->y);
 }
-
 
 static int PalTable__GetCursorColor(PalTable *me)
 {
@@ -2132,9 +2019,10 @@ static int PalTable__GetCursorColor(PalTable *me)
     return color;
 }
 
-
-
-#define CURS_INC 1
+enum
+{
+    CURS_INC = 1
+};
 
 static void PalTable__DoCurs(PalTable *me, int key)
 {
@@ -2198,7 +2086,6 @@ static void PalTable__DoCurs(PalTable *me, int key)
     }
 }
 
-
 static void PalTable__change(RGBEditor *rgb, void *info)
 {
     PalTable *me = (PalTable *)info;
@@ -2233,7 +2120,6 @@ static void PalTable__change(RGBEditor *rgb, void *info)
     }
 
 }
-
 
 static void PalTable__UpdateDAC(PalTable *me)
 {
@@ -2287,7 +2173,6 @@ static void PalTable__UpdateDAC(PalTable *me)
     spindac(0, 1);
 }
 
-
 static void PalTable__Rotate(PalTable *me, int dir, int lo, int hi)
 {
 
@@ -2308,7 +2193,6 @@ static void PalTable__Rotate(PalTable *me, int dir, int lo, int hi)
 
     Cursor_Show();
 }
-
 
 static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 {
@@ -2961,8 +2845,6 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  // creates default Fkey p
     }
 }
 
-
-
 static void PalTable_Construct(PalTable *me)
 {
     int           csize;
@@ -3009,7 +2891,6 @@ static void PalTable_Construct(PalTable *me)
     PalTable__SetCSize(me, csize);
 }
 
-
 static void PalTable_SetHidden(PalTable *me, bool hidden)
 {
     me->hidden = hidden;
@@ -3017,8 +2898,6 @@ static void PalTable_SetHidden(PalTable *me, bool hidden)
     RGBEditor_SetHidden(me->rgb[1], hidden);
     PalTable__UpdateDAC(me);
 }
-
-
 
 static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
 {
@@ -3049,7 +2928,6 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
     }
 }
 
-
 static void PalTable_Destroy(PalTable *me)
 {
     if (me->undo_file != nullptr)
@@ -3062,7 +2940,6 @@ static void PalTable_Destroy(PalTable *me)
     RGBEditor_Destroy(me->rgb[1]);
     MoveBox_Destroy(me->movebox);
 }
-
 
 static void PalTable_Process(PalTable *me)
 {
