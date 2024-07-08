@@ -8,7 +8,7 @@
 #include <cstdarg>
 #include <vector>
 
-static int    resume_offset{};            // offset in resume info gets
+static int s_resume_offset{}; // offset in resume info gets
 
 std::vector<BYTE> g_resume_data; // resume info
 bool g_resuming{};               // true if resuming after interrupt
@@ -118,8 +118,8 @@ int get_resume(int len, ...)
     while (len)
     {
         BYTE *dest_ptr = va_arg(arg_marker, BYTE *);
-        std::copy(&g_resume_data[resume_offset], &g_resume_data[resume_offset + len], &dest_ptr[0]);
-        resume_offset += len;
+        std::copy(&g_resume_data[s_resume_offset], &g_resume_data[s_resume_offset + len], &dest_ptr[0]);
+        s_resume_offset += len;
         len = va_arg(arg_marker, int);
     }
     va_end(arg_marker);
@@ -133,7 +133,7 @@ int start_resume()
     {
         return -1;
     }
-    resume_offset = 0;
+    s_resume_offset = 0;
     get_resume(sizeof(version), &version, 0);
     return version;
 }
