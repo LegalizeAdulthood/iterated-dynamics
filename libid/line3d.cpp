@@ -84,61 +84,60 @@ static void T_clipcolor(int, int, int);
 static void vdraw_line(double *, double *, int color);
 
 // static variables
-static void (*s_fill_plot)(int x, int y, int color);
-static void (*s_normal_plot)(int x, int y, int color);
-static float s_delta_phi;          // increment of latitude, longitude
-static double rscale;           // surface roughness factor
-static long xcenter, ycenter;   // circle center
-static double sclx, scly, sclz; // scale factors
-static double R;                // radius values
-static double Rfactor;          // for intermediate calculation
-static LMATRIX llm;             // ""
-static LVECTOR lview;           // for perspective views
-static double zcutoff;          // perspective backside cutoff value
-static float twocosdeltaphi;
-static float cosphi, sinphi;    // precalculated sin/cos of longitude
-static float oldcosphi1, oldsinphi1;
-static float oldcosphi2, oldsinphi2;
-static std::vector<BYTE> fraction;  // float version of pixels array
-static float min_xyz[3], max_xyz[3];        // For Raytrace output
-static int line_length1;
-static int T_header_24 = 18;// Size of current Targa-24 header
-static std::FILE *File_Ptr1 = nullptr;
-static unsigned int IAmbient;
-static int rand_factor;
-static int HAZE_MULT;
-static void File_Error(char const *File_Name1, int ERROR);
-static BYTE T24 = 24;
-static BYTE T32 = 32;
-static BYTE upr_lwr[4];
-static bool T_Safe = false;     // Original Targa Image successfully copied to targa_temp
-static VECTOR light_direction;
-static BYTE Real_Color;  // Actual color of cur pixel
-static int RO, CO, CO_MAX;  // For use in Acrospin support
-static int localpreviewfactor;
-static int zcoord = 256;
-static double aspect;       // aspect ratio
-static int evenoddrow;
-static std::vector<float> sinthetaarray;    // all sine thetas go here
-static std::vector<float> costhetaarray;    // all cosine thetas go here
-static double rXrscale;     // precalculation factor
-static bool persp = false;      // flag for indicating perspective transformations
-static point p1, p2, p3;
-static f_point f_bad;// out of range value
-static point bad;    // out of range value
-static long num_tris; // number of triangles output to ray trace file
-static std::vector<f_point> f_lastrow;
-static int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
-static int error;
-static std::string targa_temp("fractemp.tga");
-static int P = 250; // Perspective dist used when viewing light vector
-static int const bad_check = -3000; // check values against this to determine if good
-static std::vector<point> lastrow; // this array remembers the previous line
-// array of min and max x values used in triangle fill
-static std::vector<minmax> minmax_x;
-static VECTOR cross;
-static VECTOR tmpcross;
-static point oldlast = { 0, 0, 0 }; // old pixels
+static void (*s_fill_plot)(int x, int y, int color){};     //
+static void (*s_normal_plot)(int x, int y, int color){};   //
+static float s_delta_phi{};                                // increment of latitude, longitude
+static double rscale{};                                    // surface roughness factor
+static long xcenter{}, ycenter{};                          // circle center
+static double sclx{}, scly{}, sclz{};                      // scale factors
+static double R{};                                         // radius values
+static double Rfactor{};                                   // for intermediate calculation
+static LMATRIX llm{};                                      // ""
+static LVECTOR lview{};                                    // for perspective views
+static double zcutoff{};                                   // perspective backside cutoff value
+static float twocosdeltaphi{};                             //
+static float cosphi{}, sinphi{};                           // precalculated sin/cos of longitude
+static float oldcosphi1{}, oldsinphi1{};                   //
+static float oldcosphi2{}, oldsinphi2{};                   //
+static std::vector<BYTE> fraction;                         // float version of pixels array
+static float min_xyz[3]{}, max_xyz[3]{};                   // For Raytrace output
+static int line_length1{};                                 //
+static int T_header_24 = 18;                               // Size of current Targa-24 header
+static std::FILE *File_Ptr1{};                             //
+static unsigned int IAmbient{};                            //
+static int rand_factor{};                                  //
+static int HAZE_MULT{};                                    //
+static void File_Error(char const *File_Name1, int ERROR); //
+static BYTE T24 = 24;                                      //
+static BYTE T32 = 32;                                      //
+static BYTE upr_lwr[4]{};                                  //
+static bool T_Safe{};                          // Original Targa Image successfully copied to targa_temp
+static VECTOR light_direction{};               //
+static BYTE Real_Color{};                      // Actual color of cur pixel
+static int RO{}, CO{}, CO_MAX{};               // For use in Acrospin support
+static int localpreviewfactor{};               //
+static int zcoord = 256;                       //
+static double aspect{};                        // aspect ratio
+static int evenoddrow{};                       //
+static std::vector<float> sinthetaarray;       // all sine thetas go here
+static std::vector<float> costhetaarray;       // all cosine thetas go here
+static double rXrscale{};                      // precalculation factor
+static bool persp{};                           // flag for indicating perspective transformations
+static point p1{}, p2{}, p3{};                 //
+static f_point f_bad{};                        // out of range value
+static point bad{};                            // out of range value
+static long num_tris{};                        // number of triangles output to ray trace file
+static std::vector<f_point> f_lastrow;         //
+static int Real_V{};                           // Actual value of V for fillytpe>4 monochrome images
+static int error{};                            //
+static std::string targa_temp("fractemp.tga"); //
+static int P = 250;                            // Perspective dist used when viewing light vector
+static int const bad_check = -3000;            // check values against this to determine if good
+static std::vector<point> lastrow;             // this array remembers the previous line
+static std::vector<minmax> minmax_x;           // array of min and max x values used in triangle fill
+static VECTOR cross{};                         //
+static VECTOR tmpcross{};                      //
+static point oldlast{};                        // old pixels
 
 // global variables defined here
 void (*g_standard_plot)(int, int, int);
