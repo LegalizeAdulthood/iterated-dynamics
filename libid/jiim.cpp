@@ -47,18 +47,23 @@ enum
     MAXRECT = 1024      // largest width of SaveRect/RestoreRect
 };
 
-static int show_numbers = 0;              // toggle for display of coords
-static std::vector<char> screen_rect;
-static int windows = 0;               // windows management system
+static int show_numbers{};                       // toggle for display of coords
+static std::vector<char> screen_rect;            //
+static int windows{};                            // windows management system
+static int xc{}, yc{};                           // corners of the window
+static int xd{}, yd{};                           // dots in the window
+double g_julia_c_x{JULIA_C_NOT_SET};             //
+double g_julia_c_y{JULIA_C_NOT_SET};             //
+static int xbase{}, ybase{};                     // circle routines from Dr. Dobbs June 1990
+static unsigned int xAspect{}, yAspect{};        //
+static long ListFront{}, ListBack{}, ListSize{}; // head, tail, size of MIIM Queue
+static long lsize{}, lmax{};                     // how many in queue (now, ever)
+static int maxhits{1};                           //
+static bool OKtoMIIM{};                          //
+static int SecretExperimentalMode{};             //
+static float luckyx{}, luckyy{};                 //
 
-static int xc, yc;                       // corners of the window
-static int xd, yd;                       // dots in the window
-double g_julia_c_x = JULIA_C_NOT_SET;
-double g_julia_c_y = JULIA_C_NOT_SET;
-
-// circle routines from Dr. Dobbs June 1990
-static int xbase, ybase;
-static unsigned int xAspect, yAspect;
+DComplex g_save_c{-3000.0, -3000.0};
 
 void SetAspect(double aspect)
 {
@@ -98,7 +103,6 @@ void c_putcolor(int x, int y, int color)
     }
     g_put_color(x, y, color);
 }
-
 
 int  c_getcolor(int x, int y)
 {
@@ -186,15 +190,6 @@ void circle(int radius, int color)
  * MIIM Julias will be grouped here (and shared by code in LORENZ.C)
  *
  */
-
-
-static long   ListFront, ListBack, ListSize;  // head, tail, size of MIIM Queue
-static long   lsize, lmax;                    // how many in queue (now, ever)
-static int    maxhits = 1;
-static bool   OKtoMIIM = false;
-static int    SecretExperimentalMode;
-static float  luckyx = 0, luckyy = 0;
-
 static void fillrect(int x, int y, int width, int depth, int color)
 {
     // fast version of fillrect
@@ -469,8 +464,6 @@ static void RestoreRect(int x, int y, int width, int depth)
     }
     Cursor_Show();
 }
-
-DComplex g_save_c = {-3000.0, -3000.0};
 
 void Jiim(jiim_types which)
 {
