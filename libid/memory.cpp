@@ -70,14 +70,6 @@ static int s_num_total_handles{};
 static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
 static mem handletable[MAXHANDLES];
 
-void InitMemory();
-void ExitCheck();
-U16 MemoryAlloc(U16 size, long count, int stored_at);
-void MemoryRelease(U16 handle);
-bool CopyFromMemoryToHandle(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
-
 // Memory handling support routines
 
 static bool CheckDiskSpace(long)
