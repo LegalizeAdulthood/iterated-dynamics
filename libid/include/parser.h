@@ -11,7 +11,6 @@ extern bool                  g_frm_uses_p5;
 extern double                g_fudge_limit;
 extern bool                  g_is_mandelbrot;
 extern int                   g_last_init_op;
-extern unsigned              g_last_op;
 extern int                   g_load_index;
 extern char                  g_max_function;
 extern unsigned              g_max_function_args;

@@ -322,7 +322,6 @@ int g_load_index{};
 bool g_is_mandelbrot{true};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
-unsigned int g_last_op{};
 int InitLodPtr{};
 int InitStoPtr{};
 int InitOpPtr{};
@@ -345,6 +344,7 @@ static int s_op_ptr{};
 static std::vector<FunctionPtr> s_fns;
 static std::vector<ConstArg> s_vars;
 #define LastSqr s_vars[4].a
+static unsigned int s_op_count{};
 
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
@@ -2963,7 +2963,7 @@ static bool parse_formula_text(char const *text)
     }
     push_pending_op(nullptr, 16);
     s_next_op = 0;
-    g_last_op = g_operation_index;
+    s_op_count = g_operation_index;
     while (s_next_op < g_operation_index)
     {
         if (s_op[s_next_op].f)
@@ -2973,7 +2973,7 @@ static bool parse_formula_text(char const *text)
         else
         {
             s_next_op++;
-            g_last_op--;
+            s_op_count--;
         }
     }
     return false;
@@ -3009,7 +3009,7 @@ int Formula()
     g_arg1 = &s_stack[0];
     g_arg2 = &s_stack[0];
     --g_arg2;
-    while (s_op_ptr < (int)g_last_op)
+    while (s_op_ptr < (int)s_op_count)
     {
         s_fns[s_op_ptr]();
         s_op_ptr++;
@@ -3144,7 +3144,7 @@ int form_per_pixel()
 
     if (g_last_init_op)
     {
-        g_last_init_op = g_last_op;
+        g_last_init_op = s_op_count;
     }
     while (s_op_ptr < g_last_init_op)
     {
@@ -3219,7 +3219,7 @@ static bool fill_jump_struct()
 
     std::vector<JUMP_PTRS_ST> jump_data;
 
-    for (s_op_ptr = 0; s_op_ptr < (int) g_last_op; s_op_ptr++)
+    for (s_op_ptr = 0; s_op_ptr < (int) s_op_count; s_op_ptr++)
     {
         if (find_new_func)
         {
