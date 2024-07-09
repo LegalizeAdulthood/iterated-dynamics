@@ -5,7 +5,10 @@
 
 #include <cstring>
 
-#define MAXFRACTALS 25
+enum
+{
+    MAXFRACTALS = 25
+};
 
 static int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
 {
