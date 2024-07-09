@@ -35,7 +35,10 @@ int g_evolve_param_grid_y;
 evolution_mode_flags g_evolving{evolution_mode_flags::NONE};
 int g_evolve_image_grid_size;
 
-#define EVOLVE_MAX_GRID_SIZE 51  // This is arbitrary, = 1024/20
+enum
+{
+    EVOLVE_MAX_GRID_SIZE = 51  // This is arbitrary, = 1024/20
+};
 static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
 // used to replay random sequences to obtain correct values when selecting a
