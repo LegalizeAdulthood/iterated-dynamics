@@ -320,7 +320,6 @@ int g_jump_index{};
 Arg *g_arg1{};
 Arg *g_arg2{};
 std::array<Arg, 20> g_stack{};
-std::vector<Arg *> Store;
 std::vector<Arg *> Load;
 int g_op_ptr{};
 std::vector<FunctionPtr> f;
@@ -345,6 +344,7 @@ bool g_uses_jump{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
+static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
 static unsigned long s_num_ops{};
 static unsigned long s_num_loads{};
@@ -1239,8 +1239,8 @@ static void lStkMod()
 
 static void StkSto()
 {
-    assert(Store[g_store_index] != nullptr);
-    *Store[g_store_index++] = *g_arg1;
+    assert(s_store[g_store_index] != nullptr);
+    *s_store[g_store_index++] = *g_arg1;
 }
 
 static void StkLod()
@@ -2901,7 +2901,7 @@ static bool parse_formula_text(char const *text)
             {
                 s_op[g_operation_index-1].f = StkSto;
                 s_op[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
-                Store[g_store_index++] = Load[--g_load_index];
+                s_store[g_store_index++] = Load[--g_load_index];
                 Equals++;
             }
             break;
@@ -4361,7 +4361,7 @@ static void parser_allocate()
     g_max_function_args = (unsigned)(g_max_function_ops/2.5);
 
     f.reserve(g_max_function_ops);
-    Store.resize(MAX_STORES);
+    s_store.resize(MAX_STORES);
     Load.resize(MAX_LOADS);
     v.resize(g_max_function_args);
 
@@ -4380,7 +4380,7 @@ static void parser_allocate()
 
 void free_workarea()
 {
-    Store.clear();
+    s_store.clear();
     Load.clear();
     v.clear();
     f.clear();
