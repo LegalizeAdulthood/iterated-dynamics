@@ -315,7 +315,6 @@ static void dStkJumpOnTrue();
 
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
-std::vector<JUMP_CONTROL_ST> g_jump_control;
 int g_jump_index{};
 Arg *g_arg1{};
 Arg *g_arg2{};
@@ -344,6 +343,7 @@ bool g_uses_jump{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
+static std::vector<JUMP_CONTROL_ST> s_jump_control;
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
 static unsigned long s_num_ops{};
@@ -530,7 +530,7 @@ inline void push_jump(jump_control_type type)
 {
     JUMP_CONTROL_ST value{};
     value.type = type;
-    g_jump_control.push_back(value);
+    s_jump_control.push_back(value);
     ++g_jump_index;
 }
 
@@ -2108,10 +2108,10 @@ static void EndInit()
 
 static void StkJump()
 {
-    g_op_ptr =  g_jump_control[g_jump_index].ptrs.JumpOpPtr;
-    g_load_index = g_jump_control[g_jump_index].ptrs.JumpLodPtr;
-    g_store_index = g_jump_control[g_jump_index].ptrs.JumpStoPtr;
-    g_jump_index = g_jump_control[g_jump_index].DestJumpIndex;
+    g_op_ptr =  s_jump_control[g_jump_index].ptrs.JumpOpPtr;
+    g_load_index = s_jump_control[g_jump_index].ptrs.JumpLodPtr;
+    g_store_index = s_jump_control[g_jump_index].ptrs.JumpStoPtr;
+    g_jump_index = s_jump_control[g_jump_index].DestJumpIndex;
 }
 
 static void dStkJumpOnFalse()
@@ -2486,7 +2486,7 @@ static bool parse_formula_text(char const *text)
     s_randomized = false;
     g_uses_jump = false;
     g_jump_index = 0;
-    g_jump_control.clear();
+    s_jump_control.clear();
 
     switch (s_math_type)
     {
@@ -3178,22 +3178,22 @@ static int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
     while (i > 0)
     {
         i--;
-        switch (g_jump_control[i].type)
+        switch (s_jump_control[i].type)
         {
         case jump_control_type::IF:    //if (); this concludes processing of this group
-            g_jump_control[i].ptrs = jump_data[ljp];
-            g_jump_control[i].DestJumpIndex = ljp + 1;
+            s_jump_control[i].ptrs = jump_data[ljp];
+            s_jump_control[i].DestJumpIndex = ljp + 1;
             return i;
         case jump_control_type::ELSE_IF:    //elseif* ( 2 jumps, the else and the if
             // first, the "if" part
-            g_jump_control[i].ptrs = jump_data[ljp];
-            g_jump_control[i].DestJumpIndex = ljp + 1;
+            s_jump_control[i].ptrs = jump_data[ljp];
+            s_jump_control[i].DestJumpIndex = ljp + 1;
 
             // then, the else part
             i--; //fall through to "else" is intentional
         case jump_control_type::ELSE:
-            g_jump_control[i].ptrs = jump_data[endif_index];
-            g_jump_control[i].DestJumpIndex = endif_index + 1;
+            s_jump_control[i].ptrs = jump_data[endif_index];
+            s_jump_control[i].DestJumpIndex = endif_index + 1;
             ljp = i;
             break;
         case jump_control_type::END_IF:    //endif
@@ -3223,9 +3223,9 @@ static bool fill_jump_struct()
     {
         if (find_new_func)
         {
-            if (i < static_cast<int>(g_jump_control.size()))
+            if (i < static_cast<int>(s_jump_control.size()))
             {
-                switch (g_jump_control[i].type)
+                switch (s_jump_control[i].type)
                 {
                 case jump_control_type::IF:
                     JumpFunc = StkJumpOnFalse;
@@ -3275,8 +3275,8 @@ static bool fill_jump_struct()
 
     // Following for safety only; all should always be false
     if (i != g_jump_index
-        || g_jump_control[i - 1].type != jump_control_type::END_IF
-        || g_jump_control[0].type != jump_control_type::IF)
+        || s_jump_control[i - 1].type != jump_control_type::END_IF
+        || s_jump_control[0].type != jump_control_type::IF)
     {
         return true;
     }
