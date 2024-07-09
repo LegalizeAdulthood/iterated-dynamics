@@ -82,7 +82,7 @@ struct ConstArg
     Arg a;
 };
 
-extern Arg *Arg1;
+extern Arg *g_arg1;
 extern Arg *Arg2;
 
 // --------------------------------------------------------------------
@@ -95,87 +95,87 @@ inline long LCMPLXmod(const LComplex &z)
 }
 inline void LCMPLXtrig0(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     ltrig0();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXtrig1(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     ltrig1();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXtrig2(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     ltrig2();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXtrig3(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     ltrig3();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void CMPLXtrig0(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dtrig0();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXtrig1(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dtrig1();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXtrig2(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dtrig2();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXtrig3(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = (arg);
+    g_arg1->d = (arg);
     dtrig3();
-    (out) = Arg1->d;
+    (out) = g_arg1->d;
 }
 inline void LCMPLXsin(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     lStkSin();
-    (out) = Arg1->l;
+    (out) = g_arg1->l;
 }
 inline void LCMPLXcos(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     lStkCos();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXsinh(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     lStkSinh();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXcosh(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     lStkCosh();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXlog(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     lStkLog();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXexp(const LComplex &arg, LComplex &out)
 {
-    Arg1->l = arg;
+    g_arg1->l = arg;
     lStkExp();
-    out = Arg1->l;
+    out = g_arg1->l;
 }
 inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
 {
@@ -190,19 +190,19 @@ inline void LCMPLXsqr_old(LComplex &out)
 inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     Arg2->l = arg1;
-    Arg1->l = arg2;
+    g_arg1->l = arg2;
     lStkPwr();
-    Arg1++;
+    g_arg1++;
     Arg2++;
     out = Arg2->l;
 }
 
 inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
-    Arg1->l = arg1;
+    g_arg1->l = arg1;
     Arg2->l = arg2;
     lStkMul();
-    Arg1++;
+    g_arg1++;
     Arg2++;
     out = Arg2->l;
 }
@@ -238,33 +238,33 @@ inline double CMPLXmod(const DComplex &z)
 }
 inline void CMPLXsin(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dStkSin();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXcos(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dStkCos();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXsinh(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dStkSinh();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXcosh(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dStkCosh();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXlog(const DComplex &arg, DComplex &out)
 {
-    Arg1->d = arg;
+    g_arg1->d = arg;
     dStkLog();
-    out = Arg1->d;
+    out = g_arg1->d;
 }
 inline void CMPLXexp(const DComplex &arg, DComplex &out)
 {
@@ -288,9 +288,9 @@ inline void CMPLXpwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     Arg2->d = arg1;
-    Arg1->d = arg2;
+    g_arg1->d = arg2;
     dStkMul();
-    Arg1++;
+    g_arg1++;
     Arg2++;
     out = Arg2->d;
 }
