@@ -77,13 +77,13 @@ static void setup_save_info(FRACTAL_INFO *save_info);
 //
 //
 
-static int numsaves = 0;        // For adjusting 'save-to-disk' filenames
-static std::FILE *g_outfile;
-static int last_colorbar;
-static bool save16bit;
-static int outcolor1s;
-static int outcolor2s;
-static int startbits;
+static int numsaves{}; // For adjusting 'save-to-disk' filenames
+static std::FILE *g_outfile{};
+static int last_colorbar{};
+static bool save16bit{};
+static int outcolor1s{};
+static int outcolor2s{};
+static int startbits{};
 
 static BYTE paletteBW[] =
 {
@@ -1021,16 +1021,16 @@ static void char_out(int c);
 static void flush_char();
 static void cl_block();
 
-static int n_bits;                        // number of bits/code
-static int maxbits = BITSF;                // user settable max # bits/code
-static int maxcode;                  // maximum code, given n_bits
-static int maxmaxcode = (int)1 << BITSF; // should NEVER generate this code
+static int n_bits{};                     // number of bits/code
+static int maxbits{BITSF};               // user settable max # bits/code
+static int maxcode{};                    // maximum code, given n_bits
+static int maxmaxcode{(int) 1 << BITSF}; // should NEVER generate this code
 # define MAXCODE(n_bits)        (((int) 1 << (n_bits)) - 1)
 
-BYTE g_block[4096] = { 0 };
+BYTE g_block[4096]{};
 
-static long htab[HSIZE];
-static unsigned short codetab[10240] = { 0 };
+static long htab[HSIZE]{};
+static unsigned short codetab[10240]{};
 
 // To save much memory, we overlay the table used by compress() with those
 // used by decompress().  The tab_prefix table is the same size and type
@@ -1043,11 +1043,11 @@ static unsigned short codetab[10240] = { 0 };
 #define tab_suffixof(i)   ((char_type *)(htab))[i]
 #define de_stack          ((char_type *)&tab_suffixof((int)1 << BITSF))
 
-static int free_ent;                  // first unused entry
+static int free_ent{};                  // first unused entry
 
 // block compression parameters -- after all codes are used up,
 // and compression rate changes, start over.
-static bool clear_flg = false;
+static bool clear_flg{};
 
 //
 // compress stdin to stdout
@@ -1065,16 +1065,16 @@ static bool clear_flg = false;
 // questions about this implementation to ames!jaw.
 //
 
-static int ClearCode;
-static int EOFCode;
-static int a_count; // Number of characters so far in this 'packet'
-static unsigned long cur_accum = 0;
-static int  cur_bits = 0;
+static int ClearCode{};
+static int EOFCode{};
+static int a_count{}; // Number of characters so far in this 'packet'
+static unsigned long cur_accum{};
+static int cur_bits{};
 
 //
 // Define the storage for the packet accumulator
 //
-static char accum[256];
+static char accum[256]{};
 
 static bool compress(int rowlimit)
 {
