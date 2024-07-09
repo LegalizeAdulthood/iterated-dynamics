@@ -317,7 +317,6 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 Arg *g_arg1{};
 Arg *g_arg2{};
-std::array<Arg, 20> g_stack{};
 std::vector<Arg *> Load;
 int g_op_ptr{};
 std::vector<FunctionPtr> f;
@@ -344,6 +343,8 @@ char g_max_function{};
 
 static std::vector<JUMP_CONTROL_ST> s_jump_control;
 static int s_jump_index{};
+static std::array<Arg, 20> s_stack{};
+
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
 static unsigned long s_num_ops{};
@@ -1252,9 +1253,9 @@ static void StkLod()
 
 static void StkClr()
 {
-    g_stack[0] = *g_arg1;
-    g_arg1 = &g_stack[0];
-    g_arg2 = &g_stack[0];
+    s_stack[0] = *g_arg1;
+    g_arg1 = &s_stack[0];
+    g_arg2 = &s_stack[0];
     g_arg2--;
 }
 
@@ -3006,8 +3007,8 @@ int Formula()
         }
     }
 
-    g_arg1 = &g_stack[0];
-    g_arg2 = &g_stack[0];
+    g_arg1 = &s_stack[0];
+    g_arg2 = &s_stack[0];
     --g_arg2;
     while (g_op_ptr < (int)g_last_op)
     {
@@ -3048,8 +3049,8 @@ int form_per_pixel()
     g_op_ptr = 0;
     g_store_index = 0;
     g_load_index = 0;
-    g_arg1 = &g_stack[0];
-    g_arg2 = &g_stack[0];
+    g_arg1 = &s_stack[0];
+    g_arg2 = &s_stack[0];
     g_arg2--;
 
 
