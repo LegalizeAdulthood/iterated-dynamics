@@ -50,7 +50,10 @@ static void slideshowerr(char const *msg);
 static int  get_scancode(char const *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
-#define MAX_MNEMONIC    20   // max size of any mnemonic string
+enum
+{
+    MAX_MNEMONIC = 20   // max size of any mnemonic string
+};
 
 struct key_mnemonic
 {
