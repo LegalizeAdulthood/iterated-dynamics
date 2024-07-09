@@ -35,9 +35,19 @@
 #include <cassert>
 #include <cmath>
 
-static MP Ans = { 0 };
+static MP Ans{};
+static double mlf;
+static unsigned long lf;
 
 bool g_mp_overflow{};
+MPC g_mpc_one =
+{
+    {0x3fff, 0x80000000l},
+    {0, 0l}
+};
+std::vector<BYTE> g_log_map_table;
+long g_log_map_table_max_size;
+bool g_log_map_calculate = false;
 
 MP *MPabs(MP x)
 {
@@ -93,12 +103,6 @@ MPC MPCsub(MPC x, MPC y)
     z.y = *MPsub(x.y, y.y);
     return z;
 }
-
-MPC g_mpc_one =
-{
-    {0x3fff, 0x80000000l},
-    {0, 0l}
-};
 
 MPC MPCpow(MPC x, int exp)
 {
@@ -428,22 +432,12 @@ DComplex ComplexSqrtFloat(double x, double y)
     return result;
 }
 
-
-#ifndef TESTING_MATH
-
-std::vector<BYTE> g_log_map_table;
-long g_log_map_table_max_size;
-bool g_log_map_calculate = false;
-static double mlf;
-static unsigned long lf;
-
 /* int LogFlag;
    LogFlag == 1  -- standard log palettes
    LogFlag == -1 -- 'old' log palettes
    LogFlag >  1  -- compress counts < LogFlag into color #1
    LogFlag < -1  -- use quadratic palettes based on square roots && compress
 */
-
 void SetupLogTable()
 {
     float l, f, c, m;
@@ -639,7 +633,6 @@ long ExpFloat14(long xx)
     Ans = ExpFudged(RegFloat2Fg(xx, 16), f);
     return RegFg2Float(Ans, (char)f);
 }
-#endif
 
 /*
 d2MP386     PROC     uses si di, x:QWORD
