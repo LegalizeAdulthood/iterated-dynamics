@@ -36,18 +36,14 @@
 #include <cmath>
 
 static MP Ans{};
-static double mlf;
-static unsigned long lf;
+static double mlf{};
+static unsigned long lf{};
 
 bool g_mp_overflow{};
-MPC g_mpc_one =
-{
-    {0x3fff, 0x80000000l},
-    {0, 0l}
-};
+MPC g_mpc_one{{0x3fff, 0X80000000L}, {0, 0L}};
 std::vector<BYTE> g_log_map_table;
-long g_log_map_table_max_size;
-bool g_log_map_calculate = false;
+long g_log_map_table_max_size{};
+bool g_log_map_calculate{};
 
 MP *MPabs(MP x)
 {
