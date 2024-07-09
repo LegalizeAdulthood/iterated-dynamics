@@ -32,15 +32,14 @@
 #include <vector>
 
 std::string g_stereo_map_filename;
-int g_auto_stereo_depth = 100;
-double g_auto_stereo_width = 10;
-bool g_gray_flag = false;          // flag to use gray value rather than color number
-char g_calibrate = 1;             // add calibration bars to image
-bool g_image_map = false;
+int g_auto_stereo_depth{100};
+double g_auto_stereo_width{10};
+bool g_gray_flag{};  // flag to use gray value rather than color number
+char g_calibrate{1}; // add calibration bars to image
+bool g_image_map{};
 
-/* this structure permits variables to be temporarily static and visible
-   to routines in this file without permanently hogging memory */
-
+// this structure permits variables to be temporarily static and visible
+// to routines in this file without permanently hogging memory
 struct static_vars
 {
     long avg;
@@ -63,7 +62,7 @@ struct static_vars
     int ycen;
     BYTE *savedac;
 };
-static static_vars *pv = nullptr;
+static static_vars *pv{};
 
 #define AVG         (pv->avg)
 #define AVGCT       (pv->avgct)
