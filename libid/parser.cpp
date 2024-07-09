@@ -322,7 +322,6 @@ int g_load_index{};
 bool g_is_mandelbrot{true};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
-
 int g_last_init_op{};
 double g_fudge_limit{};
 bool g_frm_uses_p1{};
@@ -330,7 +329,6 @@ bool g_frm_uses_p2{};
 bool g_frm_uses_p3{};
 bool g_frm_uses_p4{};
 bool g_frm_uses_p5{};
-bool g_uses_jump{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
@@ -346,7 +344,7 @@ static unsigned int s_op_count{};
 static int s_init_load_ptr{};
 static int s_init_store_ptr{};
 static int s_init_op_ptr{};
-
+static bool s_uses_jump{};
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
 static unsigned long s_num_ops{};
@@ -2485,7 +2483,7 @@ static bool parse_formula_text(char const *text)
     LDBL Magnification;
     s_set_random = false;
     s_randomized = false;
-    g_uses_jump = false;
+    s_uses_jump = false;
     s_jump_index = 0;
     s_jump_control.clear();
 
@@ -2915,7 +2913,7 @@ static bool parse_formula_text(char const *text)
             s_expecting_arg = false;
             if (const jump_control_type type = is_jump(&text[s_init_n], Len); type != jump_control_type::NONE)
             {
-                g_uses_jump = true;
+                s_uses_jump = true;
                 switch (type)
                 {
                 case jump_control_type::IF:
@@ -4290,7 +4288,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         {
             return true;   //  parse failed, don't change fn pointers
         }
-        if (g_uses_jump && fill_jump_struct())
+        if (s_uses_jump && fill_jump_struct())
         {
             stopmsg(ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
             return true;
@@ -4349,7 +4347,7 @@ void init_misc()
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
-    g_uses_jump = false;
+    s_uses_jump = false;
     g_frm_uses_ismand = false;
     g_frm_uses_p4 = false;
     g_frm_uses_p5 = false;
@@ -4528,7 +4526,7 @@ static bool frm_prescan(std::FILE * open_file)
     s_num_loads = 0UL;
     s_num_ops = 0UL;
     s_chars_in_formula = 0U;
-    g_uses_jump = false;
+    s_uses_jump = false;
     s_paren = 0;
 
     statement_pos = ftell(open_file);
@@ -4821,7 +4819,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             else
             {
-                g_uses_jump = true;
+                s_uses_jump = true;
                 switch (this_token.id)
                 {
                 case token_id::JUMP_IF:  // if
