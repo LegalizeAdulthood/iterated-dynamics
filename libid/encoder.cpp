@@ -77,29 +77,29 @@ static void setup_save_info(FRACTAL_INFO *save_info);
 //
 //
 
-static int numsaves{}; // For adjusting 'save-to-disk' filenames
+static int s_num_saves{}; // For adjusting 'save-to-disk' filenames
 static std::FILE *g_outfile{};
-static int last_colorbar{};
-static bool save16bit{};
-static int outcolor1s{};
-static int outcolor2s{};
-static int startbits{};
+static int s_last_color_bar{};
+static bool s_save_16bit{};
+static int s_out_color_1s{};
+static int s_out_color_2s{};
+static int s_start_bits{};
 
-static BYTE paletteBW[] =
+static BYTE s_palette_bw[] =
 {
     // B&W palette
     0, 0, 0, 63, 63, 63,
 };
 
 #ifndef XFRACT
-static BYTE paletteCGA[] =
+static BYTE s_palette_cga[] =
 {
     // 4-color (CGA) palette
     0, 0, 0, 21, 63, 63, 63, 21, 63, 63, 63, 63,
 };
 #endif
 
-static BYTE paletteEGA[] =
+static BYTE s_palette_ega[] =
 {
     // 16-color (EGA/CGA) pal
     0, 0, 0, 0, 0, 42, 0, 42, 0, 0, 42, 42,
@@ -117,10 +117,10 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
     int interrupted;
 
 restart:
-    save16bit = g_disk_16_bit;
+    s_save_16bit = g_disk_16_bit;
     open_file = filename;                  // decode and open the filename
     open_file_ext = DEFAULT_FRACTAL_TYPE; // determine the file extension
-    if (save16bit)
+    if (s_save_16bit)
     {
         open_file_ext = ".pot";
     }
@@ -240,9 +240,9 @@ restart:
     if (!driver_diskp())
     {
         // supress this on disk-video
-        int outcolor1 = outcolor1s;
-        int outcolor2 = outcolor2s;
-        for (int j = 0; j <= last_colorbar; j++)
+        int outcolor1 = s_out_color_1s;
+        int outcolor2 = s_out_color_2s;
+        for (int j = 0; j <= s_last_color_bar; j++)
         {
             if ((j & 4) == 0)
             {
@@ -328,10 +328,10 @@ bool encoder()
         bitsperpixel++;
     }
 
-    startbits = bitsperpixel + 1;// start coding with this many bits
+    s_start_bits = bitsperpixel + 1;// start coding with this many bits
     if (g_colors == 2)
     {
-        startbits++;    // B&W Klooge
+        s_start_bits++;    // B&W Klooge
     }
 #else
     if (g_colors == 2)
@@ -354,7 +354,7 @@ bool encoder()
 
     width = g_logical_screen_x_dots;
     rowlimit = g_logical_screen_y_dots;
-    if (save16bit)
+    if (s_save_16bit)
     {
         // pot16bit info is stored as: file:    double width rows, right side
         // of row is low 8 bits diskvid: ydots rows of colors followed by ydots
@@ -432,7 +432,7 @@ bool encoder()
             // uh oh - better fake it
             for (int j = 0; j < 256; j += 16)
             {
-                if (!shftwrite((BYTE *)paletteEGA, 16))
+                if (!shftwrite((BYTE *)s_palette_ega, 16))
                 {
                     goto oops;
                 }
@@ -442,7 +442,7 @@ bool encoder()
     if (g_colors == 2)
     {
         // write out the B&W palette
-        if (!shftwrite((BYTE *)paletteBW, g_colors))
+        if (!shftwrite((BYTE *)s_palette_bw, g_colors))
         {
             goto oops;
         }
@@ -451,7 +451,7 @@ bool encoder()
     if (g_colors == 4)
     {
         // write out the CGA palette
-        if (!shftwrite((BYTE *)paletteCGA, g_colors))
+        if (!shftwrite((BYTE *)s_palette_cga, g_colors))
         {
             goto oops;
         }
@@ -469,7 +469,7 @@ bool encoder()
         else
         {
             // no DAC - must be an EGA
-            if (!shftwrite((BYTE *)paletteEGA, g_colors))
+            if (!shftwrite((BYTE *)s_palette_ega, g_colors))
             {
                 goto oops;
             }
@@ -503,7 +503,7 @@ bool encoder()
         goto oops;
     }
 
-    bitsperpixel = (BYTE)(startbits - 1);
+    bitsperpixel = (BYTE)(s_start_bits - 1);
 
     if (write1(&bitsperpixel, 1, 1, g_outfile) != 1)
     {
@@ -1003,10 +1003,10 @@ static void char_out(int c);
 static void flush_char();
 static void cl_block();
 
-static int n_bits{};                     // number of bits/code
-static int maxbits{BITSF};               // user settable max # bits/code
-static int maxcode{};                    // maximum code, given n_bits
-static int maxmaxcode{(int) 1 << BITSF}; // should NEVER generate this code
+static int s_n_bits{};                     // number of bits/code
+static int s_max_bits{BITSF};               // user settable max # bits/code
+static int s_max_code{};                    // maximum code, given n_bits
+static int s_max_max_cde{(int) 1 << BITSF}; // should NEVER generate this code
 
 constexpr int max_code(int n_bits)
 {
@@ -1015,14 +1015,14 @@ constexpr int max_code(int n_bits)
 
 BYTE g_block[4096]{};
 
-static long htab[HSIZE]{};
-static unsigned short codetab[10240]{};
+static long s_h_tab[HSIZE]{};
+static unsigned short s_code_tab[10240]{};
 
-static int free_ent{};                  // first unused entry
+static int s_free_ent{};                  // first unused entry
 
 // block compression parameters -- after all codes are used up,
 // and compression rate changes, start over.
-static bool clear_flg{};
+static bool s_clear_flag{};
 
 //
 // compress stdin to stdout
@@ -1040,16 +1040,16 @@ static bool clear_flg{};
 // questions about this implementation to ames!jaw.
 //
 
-static int ClearCode{};
-static int EOFCode{};
-static int a_count{}; // Number of characters so far in this 'packet'
-static unsigned long cur_accum{};
-static int cur_bits{};
+static int s_clear_code{};
+static int s_eof_code{};
+static int s_a_count{}; // Number of characters so far in this 'packet'
+static unsigned long s_cur_accum{};
+static int s_cur_bits{};
 
 //
 // Define the storage for the packet accumulator
 //
-static char accum[256]{};
+static char s_accum[256]{};
 
 static bool compress(int rowlimit)
 {
@@ -1072,29 +1072,29 @@ static bool compress(int rowlimit)
         outcolor1 = 2;
         outcolor2 = 3;
     }
-    if (((++numsaves) & 1) == 0)
+    if (((++s_num_saves) & 1) == 0)
     {
         // reverse the colors on alt saves
         int i = outcolor1;
         outcolor1 = outcolor2;
         outcolor2 = i;
     }
-    outcolor1s = outcolor1;
-    outcolor2s = outcolor2;
+    s_out_color_1s = outcolor1;
+    s_out_color_2s = outcolor2;
 
     // Set up the necessary values
-    cur_accum = 0;
-    cur_bits = 0;
-    clear_flg = false;
+    s_cur_accum = 0;
+    s_cur_bits = 0;
+    s_clear_flag = false;
     ent = 0;
-    n_bits = startbits;
-    maxcode = max_code(n_bits);
+    s_n_bits = s_start_bits;
+    s_max_code = max_code(s_n_bits);
 
-    ClearCode = (1 << (startbits - 1));
-    EOFCode = ClearCode + 1;
-    free_ent = ClearCode + 2;
+    s_clear_code = (1 << (s_start_bits - 1));
+    s_eof_code = s_clear_code + 1;
+    s_free_ent = s_clear_code + 2;
 
-    a_count = 0;
+    s_a_count = 0;
     hshift = 0;
     for (long fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
     {
@@ -1102,10 +1102,10 @@ static bool compress(int rowlimit)
     }
     hshift = 8 - hshift;                // set hash code range bound
 
-    std::memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
+    std::memset(s_h_tab, 0xff, (unsigned)HSIZE*sizeof(long));
     hsize_reg = HSIZE;
 
-    output((int)ClearCode);
+    output((int)s_clear_code);
 
     for (int rownum = 0; rownum < g_logical_screen_y_dots; rownum++)
     {
@@ -1114,7 +1114,7 @@ static bool compress(int rowlimit)
         {
             for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++)
             {
-                if (save16bit == 0 || ydot < g_logical_screen_y_dots)
+                if (s_save_16bit == 0 || ydot < g_logical_screen_y_dots)
                 {
                     color = getcolor(xdot, ydot);
                 }
@@ -1128,15 +1128,15 @@ static bool compress(int rowlimit)
                     ent = color;
                     continue;
                 }
-                long fcode = (long)(((long) color << maxbits) + ent);
+                long fcode = (long)(((long) color << s_max_bits) + ent);
                 int i = (((int)color << hshift) ^ ent);    // xor hashing
 
-                if (htab[i] == fcode)
+                if (s_h_tab[i] == fcode)
                 {
-                    ent = codetab[i];
+                    ent = s_code_tab[i];
                     continue;
                 }
-                else if ((long)htab[i] < 0)        // empty slot
+                else if ((long)s_h_tab[i] < 0)        // empty slot
                 {
                     goto nomatch;
                 }
@@ -1151,23 +1151,23 @@ probe:
                     i += hsize_reg;
                 }
 
-                if (htab[i] == fcode)
+                if (s_h_tab[i] == fcode)
                 {
-                    ent = codetab[i];
+                    ent = s_code_tab[i];
                     continue;
                 }
-                if ((long)htab[i] > 0)
+                if ((long)s_h_tab[i] > 0)
                 {
                     goto probe;
                 }
 nomatch:
                 output((int) ent);
                 ent = color;
-                if (free_ent < maxmaxcode)
+                if (s_free_ent < s_max_max_cde)
                 {
                     // code -> hashtable
-                    codetab[i] = (unsigned short)free_ent++;
-                    htab[i] = fcode;
+                    s_code_tab[i] = (unsigned short)s_free_ent++;
+                    s_h_tab[i] = fcode;
                 }
                 else
                 {
@@ -1196,7 +1196,7 @@ nomatch:
                     g_put_color(g_logical_screen_x_dots - 1 - i, ydot,
                              getcolor(g_logical_screen_x_dots - 1 - i, ydot) ^ outcolor2);
                 }
-                last_colorbar = ydot;
+                s_last_color_bar = ydot;
             } // end if !driver_diskp()
             tempkey = driver_key_pressed();
             if (tempkey && (tempkey != 's'))  // keyboard hit - bail out
@@ -1214,7 +1214,7 @@ nomatch:
 
     // Put out the final code.
     output((int)ent);
-    output((int) EOFCode);
+    output((int) s_eof_code);
     return interrupted;
 }
 
@@ -1246,58 +1246,58 @@ static void output(int code)
         0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
     };
 
-    cur_accum &= masks[ cur_bits ];
+    s_cur_accum &= masks[ s_cur_bits ];
 
-    if (cur_bits > 0)
+    if (s_cur_bits > 0)
     {
-        cur_accum |= ((long)code << cur_bits);
+        s_cur_accum |= ((long)code << s_cur_bits);
     }
     else
     {
-        cur_accum = code;
+        s_cur_accum = code;
     }
 
-    cur_bits += n_bits;
+    s_cur_bits += s_n_bits;
 
-    while (cur_bits >= 8)
+    while (s_cur_bits >= 8)
     {
-        char_out((unsigned int)(cur_accum & 0xff));
-        cur_accum >>= 8;
-        cur_bits -= 8;
+        char_out((unsigned int)(s_cur_accum & 0xff));
+        s_cur_accum >>= 8;
+        s_cur_bits -= 8;
     }
 
     // If the next entry is going to be too big for the code size,
     // then increase it, if possible.
-    if (free_ent > maxcode || clear_flg)
+    if (s_free_ent > s_max_code || s_clear_flag)
     {
-        if (clear_flg)
+        if (s_clear_flag)
         {
-            n_bits = startbits;
-            maxcode = max_code(n_bits);
-            clear_flg = false;
+            s_n_bits = s_start_bits;
+            s_max_code = max_code(s_n_bits);
+            s_clear_flag = false;
         }
         else
         {
-            n_bits++;
-            if (n_bits == maxbits)
+            s_n_bits++;
+            if (s_n_bits == s_max_bits)
             {
-                maxcode = maxmaxcode;
+                s_max_code = s_max_max_cde;
             }
             else
             {
-                maxcode = max_code(n_bits);
+                s_max_code = max_code(s_n_bits);
             }
         }
     }
 
-    if (code == EOFCode)
+    if (code == s_eof_code)
     {
         // At EOF, write the rest of the buffer.
-        while (cur_bits > 0)
+        while (s_cur_bits > 0)
         {
-            char_out((unsigned int)(cur_accum & 0xff));
-            cur_accum >>= 8;
-            cur_bits -= 8;
+            char_out((unsigned int)(s_cur_accum & 0xff));
+            s_cur_accum >>= 8;
+            s_cur_bits -= 8;
         }
 
         flush_char();
@@ -1311,10 +1311,10 @@ static void output(int code)
 //
 static void cl_block()             // table clear for block compress
 {
-    std::memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
-    free_ent = ClearCode + 2;
-    clear_flg = true;
-    output((int)ClearCode);
+    std::memset(s_h_tab, 0xff, (unsigned)HSIZE*sizeof(long));
+    s_free_ent = s_clear_code + 2;
+    s_clear_flag = true;
+    output((int)s_clear_code);
 }
 
 //
@@ -1323,8 +1323,8 @@ static void cl_block()             // table clear for block compress
 //
 static void char_out(int c)
 {
-    accum[ a_count++ ] = (char)c;
-    if (a_count >= 254)
+    s_accum[ s_a_count++ ] = (char)c;
+    if (s_a_count >= 254)
     {
         flush_char();
     }
@@ -1335,10 +1335,10 @@ static void char_out(int c)
 //
 static void flush_char()
 {
-    if (a_count > 0)
+    if (s_a_count > 0)
     {
-        std::fputc(a_count, g_outfile);
-        std::fwrite(accum, 1, a_count, g_outfile);
-        a_count = 0;
+        std::fputc(s_a_count, g_outfile);
+        std::fwrite(s_accum, 1, s_a_count, g_outfile);
+        s_a_count = 0;
     }
 }
