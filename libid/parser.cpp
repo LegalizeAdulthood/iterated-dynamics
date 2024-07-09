@@ -317,7 +317,6 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 Arg *g_arg1{};
 Arg *g_arg2{};
-std::vector<ConstArg> v;
 int g_store_index{};
 int g_load_index{};
 bool g_is_mandelbrot{true};
@@ -344,6 +343,8 @@ static std::array<Arg, 20> s_stack{};
 static std::vector<Arg *> s_load;
 static int s_op_ptr{};
 static std::vector<FunctionPtr> s_fns;
+static std::vector<ConstArg> s_vars;
+#define LastSqr s_vars[4].a
 
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
@@ -620,8 +621,6 @@ inline bool check_denom(double denom)
     return false;
 }
 
-#define LastSqr v[4].a
-
 static char const *ParseErrs(int which)
 {
     static constexpr const char *const ErrStrings[] = {
@@ -709,8 +708,8 @@ static unsigned long NewRandNum()
 
 static void lRandom()
 {
-    v[7].a.l.x = NewRandNum() >> (32 - g_bit_shift);
-    v[7].a.l.y = NewRandNum() >> (32 - g_bit_shift);
+    s_vars[7].a.l.x = NewRandNum() >> (32 - g_bit_shift);
+    s_vars[7].a.l.y = NewRandNum() >> (32 - g_bit_shift);
 }
 
 static void dRandom()
@@ -722,8 +721,8 @@ static void dRandom()
            the same fractals when the srand() function is used. */
     x = NewRandNum() >> (32 - g_bit_shift);
     y = NewRandNum() >> (32 - g_bit_shift);
-    v[7].a.d.x = ((double)x / (1L << g_bit_shift));
-    v[7].a.d.y = ((double)y / (1L << g_bit_shift));
+    s_vars[7].a.d.x = ((double)x / (1L << g_bit_shift));
+    s_vars[7].a.d.y = ((double)y / (1L << g_bit_shift));
 
 }
 
@@ -736,8 +735,8 @@ static void mRandom()
        the same fractals when the srand() function is used. */
     x = NewRandNum() >> (32 - g_bit_shift);
     y = NewRandNum() >> (32 - g_bit_shift);
-    v[7].a.m.x = *fg2MP(x, g_bit_shift);
-    v[7].a.m.y = *fg2MP(y, g_bit_shift);
+    s_vars[7].a.m.x = *fg2MP(x, g_bit_shift);
+    s_vars[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
 
 static void SetRandFnct()
@@ -777,7 +776,7 @@ static void lStkSRand()
 {
     SetRandFnct();
     lRandom();
-    g_arg1->l = v[7].a.l;
+    g_arg1->l = s_vars[7].a.l;
 }
 
 static void mStkSRand()
@@ -786,7 +785,7 @@ static void mStkSRand()
     g_arg1->l.y = g_arg1->m.y.Mant ^ (long)g_arg1->m.y.Exp;
     SetRandFnct();
     mRandom();
-    g_arg1->m = v[7].a.m;
+    g_arg1->m = s_vars[7].a.m;
 }
 
 static void dStkSRand()
@@ -795,7 +794,7 @@ static void dStkSRand()
     g_arg1->l.y = (long)(g_arg1->d.y * (1L << g_bit_shift));
     SetRandFnct();
     dRandom();
-    g_arg1->d = v[7].a.d;
+    g_arg1->d = s_vars[7].a.d;
 }
 
 void dStkLodDup()
@@ -2241,9 +2240,9 @@ static ConstArg *is_const(char const *Str, int Len)
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_variable_index; n++)
     {
-        if (v[n].len == Len)
+        if (s_vars[n].len == Len)
         {
-            if (!strnicmp(v[n].s, Str, Len))
+            if (!strnicmp(s_vars[n].s, Str, Len))
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
@@ -2282,28 +2281,28 @@ static ConstArg *is_const(char const *Str, int Len)
                 }
                 if (!isconst_pair(Str))
                 {
-                    return &v[n];
+                    return &s_vars[n];
                 }
             }
         }
     }
-    v[g_variable_index].s = Str;
-    v[g_variable_index].len = Len;
-    v[g_variable_index].a.d.y = 0.0;
-    v[g_variable_index].a.d.x = v[g_variable_index].a.d.y;
+    s_vars[g_variable_index].s = Str;
+    s_vars[g_variable_index].len = Len;
+    s_vars[g_variable_index].a.d.y = 0.0;
+    s_vars[g_variable_index].a.d.x = s_vars[g_variable_index].a.d.y;
 
     // v[vsp].a should already be zeroed out
     switch (s_math_type)
     {
     case M_MATH:
-        v[g_variable_index].a.m.x.Exp = 0;
-        v[g_variable_index].a.m.x.Mant = 0;
-        v[g_variable_index].a.m.y.Exp = 0;
-        v[g_variable_index].a.m.y.Mant = 0;
+        s_vars[g_variable_index].a.m.x.Exp = 0;
+        s_vars[g_variable_index].a.m.x.Mant = 0;
+        s_vars[g_variable_index].a.m.y.Exp = 0;
+        s_vars[g_variable_index].a.m.y.Mant = 0;
         break;
     case L_MATH:
-        v[g_variable_index].a.l.y = 0;
-        v[g_variable_index].a.l.x = v[g_variable_index].a.l.y;
+        s_vars[g_variable_index].a.l.y = 0;
+        s_vars[g_variable_index].a.l.x = s_vars[g_variable_index].a.l.y;
         break;
     case D_MATH:
         break;
@@ -2321,7 +2320,7 @@ static ConstArg *is_const(char const *Str, int Len)
             g_operation_index--;
             Str = Str - 1;
             s_init_n--;
-            v[g_variable_index].len++;
+            s_vars[g_variable_index].len++;
         }
         unsigned n;
         for (n = 1; std::isdigit(Str[n]) || Str[n] == '.'; n++)
@@ -2338,7 +2337,7 @@ static ConstArg *is_const(char const *Str, int Len)
                 for (; std::isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
                 {
                 }
-                v[g_variable_index].len = j;
+                s_vars[g_variable_index].len = j;
             }
             else
             {
@@ -2353,19 +2352,19 @@ static ConstArg *is_const(char const *Str, int Len)
         switch (s_math_type)
         {
         case D_MATH:
-            v[g_variable_index].a.d = z;
+            s_vars[g_variable_index].a.d = z;
             break;
         case M_MATH:
-            v[g_variable_index].a.m = cmplx2MPC(z);
+            s_vars[g_variable_index].a.m = cmplx2MPC(z);
             break;
         case L_MATH:
-            v[g_variable_index].a.l.x = (long)(z.x * s_fudge);
-            v[g_variable_index].a.l.y = (long)(z.y * s_fudge);
+            s_vars[g_variable_index].a.l.x = (long)(z.x * s_fudge);
+            s_vars[g_variable_index].a.l.y = (long)(z.y * s_fudge);
             break;
         }
-        v[g_variable_index].s = Str;
+        s_vars[g_variable_index].s = Str;
     }
-    return &v[g_variable_index++];
+    return &s_vars[g_variable_index++];
 }
 
 /* return values
@@ -2660,98 +2659,98 @@ static bool parse_formula_text(char const *text)
     g_max_function = 0;
     for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(s_variables.size()); g_variable_index++)
     {
-        v[g_variable_index].s = s_variables[g_variable_index];
-        v[g_variable_index].len = (int) std::strlen(s_variables[g_variable_index]);
+        s_vars[g_variable_index].s = s_variables[g_variable_index];
+        s_vars[g_variable_index].len = (int) std::strlen(s_variables[g_variable_index]);
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     const_pi = std::atan(1.0) * 4;
     const_e  = std::exp(1.0);
-    v[7].a.d.y = 0.0;
-    v[7].a.d.x = v[7].a.d.y;
-    v[11].a.d.x = (double)g_logical_screen_x_dots;
-    v[11].a.d.y = (double)g_logical_screen_y_dots;
-    v[12].a.d.x = (double)g_max_iterations;
-    v[12].a.d.y = 0;
-    v[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
-    v[13].a.d.y = 0;
-    v[14].a.d.x = Xctr;
-    v[14].a.d.y = Yctr;
-    v[15].a.d.x = (double)Magnification;
-    v[15].a.d.y = Xmagfactor;
-    v[16].a.d.x = Rotation;
-    v[16].a.d.y = Skew;
+    s_vars[7].a.d.y = 0.0;
+    s_vars[7].a.d.x = s_vars[7].a.d.y;
+    s_vars[11].a.d.x = (double)g_logical_screen_x_dots;
+    s_vars[11].a.d.y = (double)g_logical_screen_y_dots;
+    s_vars[12].a.d.x = (double)g_max_iterations;
+    s_vars[12].a.d.y = 0;
+    s_vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
+    s_vars[13].a.d.y = 0;
+    s_vars[14].a.d.x = Xctr;
+    s_vars[14].a.d.y = Yctr;
+    s_vars[15].a.d.x = (double)Magnification;
+    s_vars[15].a.d.y = Xmagfactor;
+    s_vars[16].a.d.x = Rotation;
+    s_vars[16].a.d.y = Skew;
 
     switch (s_math_type)
     {
     case D_MATH:
-        v[1].a.d.x = g_params[0];
-        v[1].a.d.y = g_params[1];
-        v[2].a.d.x = g_params[2];
-        v[2].a.d.y = g_params[3];
-        v[5].a.d.x = const_pi;
-        v[5].a.d.y = 0.0;
-        v[6].a.d.x = const_e;
-        v[6].a.d.y = 0.0;
-        v[8].a.d.x = g_params[4];
-        v[8].a.d.y = g_params[5];
-        v[17].a.d.x = g_params[6];
-        v[17].a.d.y = g_params[7];
-        v[18].a.d.x = g_params[8];
-        v[18].a.d.y = g_params[9];
+        s_vars[1].a.d.x = g_params[0];
+        s_vars[1].a.d.y = g_params[1];
+        s_vars[2].a.d.x = g_params[2];
+        s_vars[2].a.d.y = g_params[3];
+        s_vars[5].a.d.x = const_pi;
+        s_vars[5].a.d.y = 0.0;
+        s_vars[6].a.d.x = const_e;
+        s_vars[6].a.d.y = 0.0;
+        s_vars[8].a.d.x = g_params[4];
+        s_vars[8].a.d.y = g_params[5];
+        s_vars[17].a.d.x = g_params[6];
+        s_vars[17].a.d.y = g_params[7];
+        s_vars[18].a.d.x = g_params[8];
+        s_vars[18].a.d.y = g_params[9];
         break;
     case M_MATH:
-        v[1].a.m.x = *d2MP(g_params[0]);
-        v[1].a.m.y = *d2MP(g_params[1]);
-        v[2].a.m.x = *d2MP(g_params[2]);
-        v[2].a.m.y = *d2MP(g_params[3]);
-        v[5].a.m.x = *d2MP(const_pi);
-        v[5].a.m.y = *d2MP(0.0);
-        v[6].a.m.x = *d2MP(const_e);
-        v[6].a.m.y = *d2MP(0.0);
-        v[8].a.m.x = *d2MP(g_params[4]);
-        v[8].a.m.y = *d2MP(g_params[5]);
-        v[11].a.m  = cmplx2MPC(v[11].a.d);
-        v[12].a.m  = cmplx2MPC(v[12].a.d);
-        v[13].a.m  = cmplx2MPC(v[13].a.d);
-        v[14].a.m  = cmplx2MPC(v[14].a.d);
-        v[15].a.m  = cmplx2MPC(v[15].a.d);
-        v[16].a.m  = cmplx2MPC(v[16].a.d);
-        v[17].a.m.x = *d2MP(g_params[6]);
-        v[17].a.m.y = *d2MP(g_params[7]);
-        v[18].a.m.x = *d2MP(g_params[8]);
-        v[18].a.m.y = *d2MP(g_params[9]);
+        s_vars[1].a.m.x = *d2MP(g_params[0]);
+        s_vars[1].a.m.y = *d2MP(g_params[1]);
+        s_vars[2].a.m.x = *d2MP(g_params[2]);
+        s_vars[2].a.m.y = *d2MP(g_params[3]);
+        s_vars[5].a.m.x = *d2MP(const_pi);
+        s_vars[5].a.m.y = *d2MP(0.0);
+        s_vars[6].a.m.x = *d2MP(const_e);
+        s_vars[6].a.m.y = *d2MP(0.0);
+        s_vars[8].a.m.x = *d2MP(g_params[4]);
+        s_vars[8].a.m.y = *d2MP(g_params[5]);
+        s_vars[11].a.m  = cmplx2MPC(s_vars[11].a.d);
+        s_vars[12].a.m  = cmplx2MPC(s_vars[12].a.d);
+        s_vars[13].a.m  = cmplx2MPC(s_vars[13].a.d);
+        s_vars[14].a.m  = cmplx2MPC(s_vars[14].a.d);
+        s_vars[15].a.m  = cmplx2MPC(s_vars[15].a.d);
+        s_vars[16].a.m  = cmplx2MPC(s_vars[16].a.d);
+        s_vars[17].a.m.x = *d2MP(g_params[6]);
+        s_vars[17].a.m.y = *d2MP(g_params[7]);
+        s_vars[18].a.m.x = *d2MP(g_params[8]);
+        s_vars[18].a.m.y = *d2MP(g_params[9]);
         break;
     case L_MATH:
-        v[1].a.l.x = (long)(g_params[0] * s_fudge);
-        v[1].a.l.y = (long)(g_params[1] * s_fudge);
-        v[2].a.l.x = (long)(g_params[2] * s_fudge);
-        v[2].a.l.y = (long)(g_params[3] * s_fudge);
-        v[5].a.l.x = (long)(const_pi * s_fudge);
-        v[5].a.l.y = 0L;
-        v[6].a.l.x = (long)(const_e * s_fudge);
-        v[6].a.l.y = 0L;
-        v[8].a.l.x = (long)(g_params[4] * s_fudge);
-        v[8].a.l.y = (long)(g_params[5] * s_fudge);
-        v[11].a.l.x = g_logical_screen_x_dots;
-        v[11].a.l.x <<= g_bit_shift;
-        v[11].a.l.y = g_logical_screen_y_dots;
-        v[11].a.l.y <<= g_bit_shift;
-        v[12].a.l.x = g_max_iterations;
-        v[12].a.l.x <<= g_bit_shift;
-        v[12].a.l.y = 0L;
-        v[13].a.l.x = g_is_mandelbrot ? 1 : 0;
-        v[13].a.l.x <<= g_bit_shift;
-        v[13].a.l.y = 0L;
-        v[14].a.l.x = (long)(v[14].a.d.x * s_fudge);
-        v[14].a.l.y = (long)(v[14].a.d.y * s_fudge);
-        v[15].a.l.x = (long)(v[15].a.d.x * s_fudge);
-        v[15].a.l.y = (long)(v[15].a.d.y * s_fudge);
-        v[16].a.l.x = (long)(v[16].a.d.x * s_fudge);
-        v[16].a.l.y = (long)(v[16].a.d.y * s_fudge);
-        v[17].a.l.x = (long)(g_params[6] * s_fudge);
-        v[17].a.l.y = (long)(g_params[7] * s_fudge);
-        v[18].a.l.x = (long)(g_params[8] * s_fudge);
-        v[18].a.l.y = (long)(g_params[9] * s_fudge);
+        s_vars[1].a.l.x = (long)(g_params[0] * s_fudge);
+        s_vars[1].a.l.y = (long)(g_params[1] * s_fudge);
+        s_vars[2].a.l.x = (long)(g_params[2] * s_fudge);
+        s_vars[2].a.l.y = (long)(g_params[3] * s_fudge);
+        s_vars[5].a.l.x = (long)(const_pi * s_fudge);
+        s_vars[5].a.l.y = 0L;
+        s_vars[6].a.l.x = (long)(const_e * s_fudge);
+        s_vars[6].a.l.y = 0L;
+        s_vars[8].a.l.x = (long)(g_params[4] * s_fudge);
+        s_vars[8].a.l.y = (long)(g_params[5] * s_fudge);
+        s_vars[11].a.l.x = g_logical_screen_x_dots;
+        s_vars[11].a.l.x <<= g_bit_shift;
+        s_vars[11].a.l.y = g_logical_screen_y_dots;
+        s_vars[11].a.l.y <<= g_bit_shift;
+        s_vars[12].a.l.x = g_max_iterations;
+        s_vars[12].a.l.x <<= g_bit_shift;
+        s_vars[12].a.l.y = 0L;
+        s_vars[13].a.l.x = g_is_mandelbrot ? 1 : 0;
+        s_vars[13].a.l.x <<= g_bit_shift;
+        s_vars[13].a.l.y = 0L;
+        s_vars[14].a.l.x = (long)(s_vars[14].a.d.x * s_fudge);
+        s_vars[14].a.l.y = (long)(s_vars[14].a.d.y * s_fudge);
+        s_vars[15].a.l.x = (long)(s_vars[15].a.d.x * s_fudge);
+        s_vars[15].a.l.y = (long)(s_vars[15].a.d.y * s_fudge);
+        s_vars[16].a.l.x = (long)(s_vars[16].a.d.x * s_fudge);
+        s_vars[16].a.l.y = (long)(s_vars[16].a.d.y * s_fudge);
+        s_vars[17].a.l.x = (long)(g_params[6] * s_fudge);
+        s_vars[17].a.l.y = (long)(g_params[7] * s_fudge);
+        s_vars[18].a.l.x = (long)(g_params[8] * s_fudge);
+        s_vars[18].a.l.y = (long)(g_params[9] * s_fudge);
         break;
     }
 
@@ -3019,15 +3018,15 @@ int Formula()
     switch (s_math_type)
     {
     case D_MATH:
-        g_new_z = v[3].a.d;
+        g_new_z = s_vars[3].a.d;
         g_old_z = g_new_z;
         return g_arg1->d.x == 0.0;
     case M_MATH:
-        g_new_z = MPC2cmplx(v[3].a.m);
+        g_new_z = MPC2cmplx(s_vars[3].a.m);
         g_old_z = g_new_z;
         return g_arg1->m.x.Exp == 0 && g_arg1->m.x.Mant == 0;
     case L_MATH:
-        g_l_new_z = v[3].a.l;
+        g_l_new_z = s_vars[3].a.l;
         g_l_old_z = g_l_new_z;
         if (g_overflow)
         {
@@ -3054,45 +3053,45 @@ int form_per_pixel()
     g_arg2--;
 
 
-    v[10].a.d.x = (double)g_col;
-    v[10].a.d.y = (double)g_row;
+    s_vars[10].a.d.x = (double)g_col;
+    s_vars[10].a.d.y = (double)g_row;
 
     switch (s_math_type)
     {
     case D_MATH:
         if ((g_row+g_col)&1)
         {
-            v[9].a.d.x = 1.0;
+            s_vars[9].a.d.x = 1.0;
         }
         else
         {
-            v[9].a.d.x = 0.0;
+            s_vars[9].a.d.x = 0.0;
         }
-        v[9].a.d.y = 0.0;
+        s_vars[9].a.d.y = 0.0;
         break;
     
     case M_MATH:
         if ((g_row+g_col)&1)
         {
-            v[9].a.m = g_mpc_one;
+            s_vars[9].a.m = g_mpc_one;
         }
         else
         {
-            v[9].a.m.x.Exp = 0;
-            v[9].a.m.x.Mant = 0;
-            v[9].a.m.y.Exp = 0;
-            v[9].a.m.y.Mant = 0;
+            s_vars[9].a.m.x.Exp = 0;
+            s_vars[9].a.m.x.Mant = 0;
+            s_vars[9].a.m.y.Exp = 0;
+            s_vars[9].a.m.y.Mant = 0;
         }
-        v[10].a.m = cmplx2MPC(v[10].a.d);
+        s_vars[10].a.m = cmplx2MPC(s_vars[10].a.d);
         break;
 
     case L_MATH:
-        v[9].a.l.x = (long)(((g_row+g_col)&1) * s_fudge);
-        v[9].a.l.y = 0L;
-        v[10].a.l.x = g_col;
-        v[10].a.l.x <<= g_bit_shift;
-        v[10].a.l.y = g_row;
-        v[10].a.l.y <<= g_bit_shift;
+        s_vars[9].a.l.x = (long)(((g_row+g_col)&1) * s_fudge);
+        s_vars[9].a.l.y = 0L;
+        s_vars[10].a.l.x = g_col;
+        s_vars[10].a.l.x <<= g_bit_shift;
+        s_vars[10].a.l.y = g_row;
+        s_vars[10].a.l.y <<= g_bit_shift;
         break;
     }
 
@@ -3103,12 +3102,12 @@ int form_per_pixel()
             switch (s_math_type)
             {
             case D_MATH:
-                v[0].a.d.x = g_old_z.x;
-                v[0].a.d.y = g_old_z.y;
+                s_vars[0].a.d.x = g_old_z.x;
+                s_vars[0].a.d.y = g_old_z.y;
                 break;
             case M_MATH:
-                v[0].a.m.x = *d2MP(g_old_z.x);
-                v[0].a.m.y = *d2MP(g_old_z.y);
+                s_vars[0].a.m.x = *d2MP(g_old_z.x);
+                s_vars[0].a.m.y = *d2MP(g_old_z.y);
                 break;
             case L_MATH:
                 // watch out for overflow
@@ -3118,8 +3117,8 @@ int form_per_pixel()
                     g_old_z.y = 8;
                 }
                 // convert to fudged longs
-                v[0].a.l.x = (long)(g_old_z.x*s_fudge);
-                v[0].a.l.y = (long)(g_old_z.y*s_fudge);
+                s_vars[0].a.l.x = (long)(g_old_z.x*s_fudge);
+                s_vars[0].a.l.y = (long)(g_old_z.y*s_fudge);
                 break;
             }
         }
@@ -3128,16 +3127,16 @@ int form_per_pixel()
             switch (s_math_type)
             {
             case D_MATH:
-                v[0].a.d.x = g_dx_pixel();
-                v[0].a.d.y = g_dy_pixel();
+                s_vars[0].a.d.x = g_dx_pixel();
+                s_vars[0].a.d.y = g_dy_pixel();
                 break;
             case M_MATH:
-                v[0].a.m.x = *d2MP(g_dx_pixel());
-                v[0].a.m.y = *d2MP(g_dy_pixel());
+                s_vars[0].a.m.x = *d2MP(g_dx_pixel());
+                s_vars[0].a.m.y = *d2MP(g_dy_pixel());
                 break;
             case L_MATH:
-                v[0].a.l.x = g_l_x_pixel();
-                v[0].a.l.y = g_l_y_pixel();
+                s_vars[0].a.l.x = g_l_x_pixel();
+                s_vars[0].a.l.y = g_l_y_pixel();
                 break;
             }
         }
@@ -3159,13 +3158,13 @@ int form_per_pixel()
     switch (s_math_type)
     {
     case D_MATH:
-        g_old_z = v[3].a.d;
+        g_old_z = s_vars[3].a.d;
         break;
     case M_MATH:
-        g_old_z = MPC2cmplx(v[3].a.m);
+        g_old_z = MPC2cmplx(s_vars[3].a.m);
         break;
     case L_MATH:
-        g_l_old_z = v[3].a.l;
+        g_l_old_z = s_vars[3].a.l;
         break;
     }
 
@@ -4335,9 +4334,9 @@ void init_misc()
 {
     static Arg argfirst;
     static Arg argsecond;
-    if (v.empty())
+    if (s_vars.empty())
     {
-        v.resize(5);
+        s_vars.resize(5);
     }
     g_arg1 = &argfirst;
     g_arg2 = &argsecond; // needed by all the ?Stk* functions
@@ -4364,7 +4363,7 @@ static void parser_allocate()
     s_fns.reserve(g_max_function_ops);
     s_store.resize(MAX_STORES);
     s_load.resize(MAX_LOADS);
-    v.resize(g_max_function_args);
+    s_vars.resize(g_max_function_args);
 
     if (!parse_formula_text(s_formula.c_str()))
     {
@@ -4383,7 +4382,7 @@ void free_workarea()
 {
     s_store.clear();
     s_load.clear();
-    v.clear();
+    s_vars.clear();
     s_fns.clear();
 }
 
