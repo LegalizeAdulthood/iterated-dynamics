@@ -150,16 +150,16 @@ static void backwardscompat(FRACTAL_INFO *info);
 static bool fix_bof();
 static bool fix_period_bof();
 
-bool g_loaded_3d = false;
-static std::FILE *s_fp;
-int g_file_y_dots;
-int g_file_x_dots;
-int g_file_colors;
-float g_file_aspect_ratio;
-short g_skip_x_dots;
-short g_skip_y_dots;      // for decoder, when reducing image
-bool g_bad_outside = false;
-bool g_ld_check = false;
+bool g_loaded_3d{};
+static std::FILE *s_fp{};
+int g_file_y_dots{};
+int g_file_x_dots{};
+int g_file_colors{};
+float g_file_aspect_ratio{};
+short g_skip_x_dots{};
+short g_skip_y_dots{};      // for decoder, when reducing image
+bool g_bad_outside{};
+bool g_ld_check{};
 
 inline bool within_eps(float lhs, float rhs)
 {
@@ -1535,20 +1535,20 @@ inline void restore_box(int num_dots, int which)
 }
 
 // here because must be visible inside several routines
-static affine *cvt;
-static bf_t bt_a;
-static bf_t bt_b;
-static bf_t bt_c;
-static bf_t bt_d;
-static bf_t bt_e;
-static bf_t bt_f;
-static bf_t n_a;
-static bf_t n_b;
-static bf_t n_c;
-static bf_t n_d;
-static bf_t n_e;
-static bf_t n_f;
-static bf_math_type oldbf_math;
+static affine *cvt{};
+static bf_t bt_a{};
+static bf_t bt_b{};
+static bf_t bt_c{};
+static bf_t bt_d{};
+static bf_t bt_e{};
+static bf_t bt_f{};
+static bf_t n_a{};
+static bf_t n_b{};
+static bf_t n_c{};
+static bf_t n_d{};
+static bf_t n_e{};
+static bf_t n_f{};
+static bf_math_type oldbf_math{};
 
 // fgetwindow reads all .GIF files and draws window outlines on the screen
 int fgetwindow()
