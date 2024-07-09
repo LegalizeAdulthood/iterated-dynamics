@@ -26,6 +26,37 @@
 #include <iterator>
 #include <vector>
 
+enum
+{
+    EVOLVE_MAX_GRID_SIZE = 51  // This is arbitrary, = 1024/20
+};
+
+// for saving evolution data of center image
+struct PARAMHIST
+{
+    double param0;
+    double param1;
+    double param2;
+    double param3;
+    double param4;
+    double param5;
+    double param6;
+    double param7;
+    double param8;
+    double param9;
+    int inside;
+    int outside;
+    int decomp0;
+    double invert0;
+    double invert1;
+    double invert2;
+    BYTE trigndx0;
+    BYTE trigndx1;
+    BYTE trigndx2;
+    BYTE trigndx3;
+    bailouts bailoutest;
+};
+
 GENEBASE g_gene_bank[NUM_GENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
@@ -34,12 +65,6 @@ int g_evolve_param_grid_x;
 int g_evolve_param_grid_y;
 evolution_mode_flags g_evolving{evolution_mode_flags::NONE};
 int g_evolve_image_grid_size;
-
-enum
-{
-    EVOLVE_MAX_GRID_SIZE = 51  // This is arbitrary, = 1024/20
-};
-static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
 // used to replay random sequences to obtain correct values when selecting a
 // seed image for next generation
@@ -73,6 +98,8 @@ char g_evolve_new_discrete_x_parameter_offset;
 char g_evolve_new_discrete_y_parameter_offset;
 
 int g_evolve_param_box_count;
+
+static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 static std::vector<int> param_box_x;
 static std::vector<int> param_box_y;
 static std::vector<int> param_box_values;
@@ -80,32 +107,7 @@ static int s_image_box_count;
 static std::vector<int> image_box_x;
 static std::vector<int> image_box_y;
 static std::vector<int> image_box_values;
-
-// for saving evolution data of center image
-struct PARAMHIST
-{
-    double param0;
-    double param1;
-    double param2;
-    double param3;
-    double param4;
-    double param5;
-    double param6;
-    double param7;
-    double param8;
-    double param9;
-    int inside;
-    int outside;
-    int decomp0;
-    double invert0;
-    double invert1;
-    double invert2;
-    BYTE trigndx0;
-    BYTE trigndx1;
-    BYTE trigndx2;
-    BYTE trigndx3;
-    bailouts bailoutest;
-};
+static PARAMHIST oldhistory = { 0 };
 
 void varydbl(GENEBASE gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
@@ -201,8 +203,6 @@ void initgene()
 
     copy_genes_to_bank(gene);
 }
-
-static PARAMHIST oldhistory = { 0 };
 
 void save_param_history()
 {
