@@ -197,18 +197,38 @@ private:
 //
 // Purpose:   Edits a complete color using three CEditors for R, G and B
 //
-struct RGBEditor
+class RGBEditor
 {
-    int x;
-    int y;
-    int       curr;            // 0=r, 1=g, 2=b
-    int       pal;             // palette number
-    bool done;
-    bool hidden;
-    CEditor  *color[3];        // color editors 0=r, 1=g, 2=b
-    void (*other_key)(int key, RGBEditor *e, void *info);
-    void (*change)(RGBEditor *e, void *info);
-    void     *info;
+public:
+    RGBEditor() = default;
+    RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *), void (*change)(RGBEditor *, void *),
+        void *info);
+    ~RGBEditor();
+
+    void set_done(bool done);
+    void set_pos(int x, int y);
+    void set_hidden(bool hidden);
+    void blank_sample_box();
+    void update();
+    void draw();
+    int edit();
+    void set_rgb(int pal, PALENTRY *rgb);
+    PALENTRY get_rgb() const;
+
+private:
+    int m_x{};
+    int m_y{};
+    int m_curr{}; // 0=r, 1=g, 2=b
+    int m_pal{};  // palette number
+    bool m_done{};
+    bool m_hidden{};
+    CEditor *m_color[3]{}; // color editors 0=r, 1=g, 2=b
+    void (*m_other_key)(int key, RGBEditor *e, void *info){};
+    void (*m_change)(RGBEditor *e, void *info){};
+    void *m_info{};
+
+    static void other_key_cb(int key, CEditor *ceditor, void *info);
+    static void change_cb(CEditor *, void *info);
 };
 
 //
@@ -812,7 +832,7 @@ int CEditor::edit()
             m_other_key(key, this, m_info);
             break;
         } // switch
-    } // while
+    }     // while
 #ifdef XFRACT
     Cursor_EndMouseTracking();
 #endif
@@ -1167,261 +1187,235 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
     return driver_key_pressed();
 }
 
-// private:
-static void      RGBEditor__other_key(int key, CEditor *ceditor, void *info);
-static void      RGBEditor__change(CEditor *ceditor, void *info);
-
-// public:
-static RGBEditor *RGBEditor_Construct(int x, int y,
-                                      void (*other_key)(int, RGBEditor*, void*),
-                                      void (*change)(RGBEditor*, void*), void *info);
-
-static void     RGBEditor_Destroy(RGBEditor *me);
-static void     RGBEditor_SetPos(RGBEditor *me, int x, int y);
-static void     RGBEditor_SetDone(RGBEditor *me, bool done);
-static void     RGBEditor_SetHidden(RGBEditor *me, bool hidden);
-static void     RGBEditor_BlankSampleBox(RGBEditor *me);
-static void     RGBEditor_Update(RGBEditor *me);
-static void     RGBEditor_Draw(RGBEditor *me);
-static int      RGBEditor_Edit(RGBEditor *me);
-static void     RGBEditor_SetRGB(RGBEditor *me, int pal, PALENTRY *rgb);
-static PALENTRY RGBEditor_GetRGB(RGBEditor *me);
-
-static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEditor*, void*),
-                                      void (*change)(RGBEditor*, void*), void *info)
+RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
+    void (*change)(RGBEditor *, void *), void *info) :
+    m_x(x),
+    m_y(y),
+    m_pal(1),
+    m_other_key(other_key),
+    m_change(change),
+    m_info(info)
 {
-    RGBEditor *me = new RGBEditor;
     static char letter[] = "RGB";
 
     for (int ctr = 0; ctr < 3; ctr++)
     {
-        me->color[ctr] = new CEditor(0, 0, letter[ctr], RGBEditor__other_key, RGBEditor__change, me);
-    }
-
-    RGBEditor_SetPos(me, x, y);
-    me->curr      = 0;
-    me->pal       = 1;
-    me->hidden    = false;
-    me->other_key = other_key;
-    me->change    = change;
-    me->info      = info;
-
-    return me;
-}
-
-static void RGBEditor_Destroy(RGBEditor *me)
-{
-    delete me->color[0];
-    delete me->color[1];
-    delete me->color[2];
-    delete me;
-}
-
-static void RGBEditor_SetDone(RGBEditor *me, bool done)
-{
-    me->done = done;
-}
-
-static void RGBEditor_SetHidden(RGBEditor *me, bool hidden)
-{
-    me->hidden = hidden;
-    me->color[0]->set_hidden(hidden);
-    me->color[1]->set_hidden(hidden);
-    me->color[2]->set_hidden(hidden);
-}
-
-static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // private
-{
-    RGBEditor *me = (RGBEditor *)info;
-
-    switch (key)
-    {
-    case 'R':
-    case 'r':
-        if (me->curr != 0)
-        {
-            me->curr = 0;
-            ceditor->set_done(true);
-        }
-        break;
-
-    case 'G':
-    case 'g':
-        if (me->curr != 1)
-        {
-            me->curr = 1;
-            ceditor->set_done(true);
-        }
-        break;
-
-    case 'B':
-    case 'b':
-        if (me->curr != 2)
-        {
-            me->curr = 2;
-            ceditor->set_done(true);
-        }
-        break;
-
-    case ID_KEY_DELETE:   // move to next CEditor
-    case ID_KEY_CTL_ENTER_2:    //double click rt mouse also!
-        if (++me->curr > 2)
-        {
-            me->curr = 0;
-        }
-        ceditor->set_done(true);
-        break;
-
-    case ID_KEY_INSERT:   // move to prev CEditor
-        if (--me->curr < 0)
-        {
-            me->curr = 2;
-        }
-        ceditor->set_done(true);
-        break;
-
-    default:
-        me->other_key(key, me, me->info);
-        if (me->done)
-        {
-            ceditor->set_done(true);
-        }
-        break;
+        m_color[ctr] = new CEditor(0, 0, letter[ctr], other_key_cb, change_cb, this);
     }
 }
 
-static void RGBEditor__change(CEditor * /*ceditor*/, void *info) // private
+RGBEditor::~RGBEditor()
 {
-    RGBEditor *me = (RGBEditor *)info;
-
-    if (me->pal < g_colors && !is_reserved(me->pal))
-    {
-        setpal(me->pal, me->color[0]->get_val(), me->color[1]->get_val(), me->color[2]->get_val());
-    }
-
-    me->change(me, me->info);
+    delete m_color[0];
+    delete m_color[1];
+    delete m_color[2];
 }
 
-static void RGBEditor_SetPos(RGBEditor *me, int x, int y)
+void RGBEditor::set_done(bool done)
 {
-    me->x = x;
-    me->y = y;
-
-    me->color[0]->set_pos(x+2, y+2);
-    me->color[1]->set_pos(x+2, y+2+CEditor_DEPTH-1);
-    me->color[2]->set_pos(x+2, y+2+CEditor_DEPTH-1+CEditor_DEPTH-1);
+    this->m_done = done;
 }
 
-static void RGBEditor_BlankSampleBox(RGBEditor *me)
+void RGBEditor::set_pos(int x, int y)
 {
-    if (me->hidden)
+    this->m_x = x;
+    this->m_y = y;
+    m_color[0]->set_pos(x + 2, y + 2);
+    m_color[1]->set_pos(x + 2, y + 2 + CEditor_DEPTH - 1);
+    m_color[2]->set_pos(x + 2, y + 2 + CEditor_DEPTH - 1 + CEditor_DEPTH - 1);
+}
+
+void RGBEditor::set_hidden(bool hidden)
+{
+    this->m_hidden = hidden;
+    m_color[0]->set_hidden(hidden);
+    m_color[1]->set_hidden(hidden);
+    m_color[2]->set_hidden(hidden);
+}
+
+void RGBEditor::blank_sample_box()
+{
+    if (m_hidden)
     {
-        return ;
+        return;
     }
 
     Cursor_Hide();
-    fillrect(me->x+2+CEditor_WIDTH+1+1, me->y+2+1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, s_bg_color);
+    fillrect(
+        m_x + 2 + CEditor_WIDTH + 1 + 1, m_y + 2 + 1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
     Cursor_Show();
 }
 
-static void RGBEditor_Update(RGBEditor *me)
+void RGBEditor::update()
 {
-    int x1 = me->x + 2 + CEditor_WIDTH + 1 + 1;
-    int y1 = me->y + 2 + 1;
-
-    if (me->hidden)
+    if (m_hidden)
     {
-        return ;
+        return;
     }
+
+    int x1 = m_x + 2 + CEditor_WIDTH + 1 + 1;
+    int y1 = m_y + 2 + 1;
 
     Cursor_Hide();
 
-    if (me->pal >= g_colors)
+    if (m_pal >= g_colors)
     {
-        fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, s_bg_color);
-        draw_diamond(x1+(RGBEditor_BWIDTH-5)/2, y1+(RGBEditor_BDEPTH-5)/2, s_fg_color);
+        fillrect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
+        draw_diamond(x1 + (RGBEditor_BWIDTH - 5) / 2, y1 + (RGBEditor_BDEPTH - 5) / 2, s_fg_color);
     }
 
-    else if (is_reserved(me->pal))
+    else if (is_reserved(m_pal))
     {
         int x2 = x1 + RGBEditor_BWIDTH - 3;
         int y2 = y1 + RGBEditor_BDEPTH - 3;
 
-        fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, s_bg_color);
+        fillrect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
         driver_draw_line(x1, y1, x2, y2, s_fg_color);
         driver_draw_line(x1, y2, x2, y1, s_fg_color);
     }
     else
     {
-        fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, me->pal);
+        fillrect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, m_pal);
     }
 
-    me->color[0]->draw();
-    me->color[1]->draw();
-    me->color[2]->draw();
+    m_color[0]->draw();
+    m_color[1]->draw();
+    m_color[2]->draw();
     Cursor_Show();
 }
 
-static void RGBEditor_Draw(RGBEditor *me)
+void RGBEditor::draw()
 {
-    if (me->hidden)
+    if (m_hidden)
     {
-        return ;
+        return;
     }
 
     Cursor_Hide();
-    drect(me->x, me->y, RGBEditor_WIDTH, RGBEditor_DEPTH);
-    fillrect(me->x+1, me->y+1, RGBEditor_WIDTH-2, RGBEditor_DEPTH-2, s_bg_color);
-    rect(me->x+1+CEditor_WIDTH+2, me->y+2, RGBEditor_BWIDTH, RGBEditor_BDEPTH, s_fg_color);
-    RGBEditor_Update(me);
+    drect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH);
+    fillrect(m_x + 1, m_y + 1, RGBEditor_WIDTH - 2, RGBEditor_DEPTH - 2, s_bg_color);
+    rect(m_x + 1 + CEditor_WIDTH + 2, m_y + 2, RGBEditor_BWIDTH, RGBEditor_BDEPTH, s_fg_color);
+    update();
     Cursor_Show();
 }
 
-static int RGBEditor_Edit(RGBEditor *me)
+int RGBEditor::edit()
 {
     int key = 0;
 
-    me->done = false;
+    m_done = false;
 
-    if (!me->hidden)
+    if (!m_hidden)
     {
         Cursor_Hide();
-        rect(me->x, me->y, RGBEditor_WIDTH, RGBEditor_DEPTH, s_fg_color);
+        rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH, s_fg_color);
         Cursor_Show();
     }
 
-    while (!me->done)
+    while (!m_done)
     {
-        key = me->color[me->curr]->edit();
+        key = m_color[m_curr]->edit();
     }
 
-    if (!me->hidden)
+    if (!m_hidden)
     {
         Cursor_Hide();
-        drect(me->x, me->y, RGBEditor_WIDTH, RGBEditor_DEPTH);
+        drect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH);
         Cursor_Show();
     }
 
     return key;
 }
 
-static void RGBEditor_SetRGB(RGBEditor *me, int pal, PALENTRY *rgb)
+void RGBEditor::set_rgb(int pal, PALENTRY *rgb)
 {
-    me->pal = pal;
-    me->color[0]->set_val(rgb->red);
-    me->color[1]->set_val(rgb->green);
-    me->color[2]->set_val(rgb->blue);
+    this->m_pal = pal;
+    m_color[0]->set_val(rgb->red);
+    m_color[1]->set_val(rgb->green);
+    m_color[2]->set_val(rgb->blue);
 }
 
-static PALENTRY RGBEditor_GetRGB(RGBEditor *me)
+PALENTRY RGBEditor::get_rgb() const
 {
     PALENTRY pal;
 
-    pal.red = (BYTE) me->color[0]->get_val();
-    pal.green = (BYTE) me->color[1]->get_val();
-    pal.blue = (BYTE) me->color[2]->get_val();
+    pal.red = (BYTE) m_color[0]->get_val();
+    pal.green = (BYTE) m_color[1]->get_val();
+    pal.blue = (BYTE) m_color[2]->get_val();
 
     return pal;
+}
+
+void RGBEditor::other_key_cb(int key, CEditor *ceditor, void *info) // private
+{
+    RGBEditor *me = static_cast<RGBEditor *>(info);
+
+    switch (key)
+    {
+    case 'R':
+    case 'r':
+        if (me->m_curr != 0)
+        {
+            me->m_curr = 0;
+            ceditor->set_done(true);
+        }
+        break;
+
+    case 'G':
+    case 'g':
+        if (me->m_curr != 1)
+        {
+            me->m_curr = 1;
+            ceditor->set_done(true);
+        }
+        break;
+
+    case 'B':
+    case 'b':
+        if (me->m_curr != 2)
+        {
+            me->m_curr = 2;
+            ceditor->set_done(true);
+        }
+        break;
+
+    case ID_KEY_DELETE:   // move to next CEditor
+    case ID_KEY_CTL_ENTER_2:    //double click rt mouse also!
+        if (++me->m_curr > 2)
+        {
+            me->m_curr = 0;
+        }
+        ceditor->set_done(true);
+        break;
+
+    case ID_KEY_INSERT:   // move to prev CEditor
+        if (--me->m_curr < 0)
+        {
+            me->m_curr = 2;
+        }
+        ceditor->set_done(true);
+        break;
+
+    default:
+        me->m_other_key(key, me, me->m_info);
+        if (me->m_done)
+        {
+            ceditor->set_done(true);
+        }
+        break;
+    }
+}
+
+void RGBEditor::change_cb(CEditor * /*ceditor*/, void *info) // private
+{
+    RGBEditor *me = (RGBEditor *)info;
+
+    if (me->m_pal < g_colors && !is_reserved(me->m_pal))
+    {
+        setpal(me->m_pal, me->m_color[0]->get_val(), me->m_color[1]->get_val(), me->m_color[2]->get_val());
+    }
+
+    me->m_change(me, me->m_info);
 }
 
 // private:
@@ -1587,10 +1581,10 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
 
         PalTable__UpdateDAC(me);
 
-        RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-        RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-        RGBEditor_Update(me->rgb[0]);
-        RGBEditor_Update(me->rgb[1]);
+        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+        me->rgb[0]->update();
+        me->rgb[1]->update();
         break;
     }
 
@@ -1731,8 +1725,8 @@ static void PalTable__Draw(PalTable *me)
         displayf(me->x+center, me->y+RGBEditor_DEPTH/2-12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
     }
 
-    RGBEditor_Draw(me->rgb[0]);
-    RGBEditor_Draw(me->rgb[1]);
+    me->rgb[0]->draw();
+    me->rgb[1]->draw();
 
     for (int pal = 0; pal < 256; pal++)
     {
@@ -1809,8 +1803,8 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
         PalTable__HlPal(me, me->bottom, -1);
         PalTable__HlPal(me, me->curr[me->active], s_fg_color);
 
-        RGBEditor_SetRGB(me->rgb[which], me->curr[which], &me->fs_color);
-        RGBEditor_Update(me->rgb[which]);
+        me->rgb[which]->set_rgb(me->curr[which], &me->fs_color);
+        me->rgb[which]->update();
 
         PalTable__UpdateDAC(me);
 
@@ -1827,18 +1821,18 @@ static void PalTable__SetCurr(PalTable *me, int which, int curr)
     }
     PalTable__HlPal(me, me->curr[me->active], s_fg_color);
 
-    RGBEditor_SetRGB(me->rgb[which], me->curr[which], &(me->pal[me->curr[which]]));
+    me->rgb[which]->set_rgb(me->curr[which], &(me->pal[me->curr[which]]));
 
     if (redraw)
     {
         int other = (which == 0) ? 1 : 0;
-        RGBEditor_SetRGB(me->rgb[other], me->curr[other], &(me->pal[me->curr[other]]));
-        RGBEditor_Update(me->rgb[0]);
-        RGBEditor_Update(me->rgb[1]);
+        me->rgb[other]->set_rgb(me->curr[other], &(me->pal[me->curr[other]]));
+        me->rgb[0]->update();
+        me->rgb[1]->update();
     }
     else
     {
-        RGBEditor_Update(me->rgb[which]);
+        me->rgb[which]->update();
     }
 
     if (me->exclude)
@@ -1891,8 +1885,8 @@ static void PalTable__SetPos(PalTable *me, int x, int y)
     me->x = x;
     me->y = y;
 
-    RGBEditor_SetPos(me->rgb[0], x+2, y+2);
-    RGBEditor_SetPos(me->rgb[1], x+width-2-RGBEditor_WIDTH, y+2);
+    me->rgb[0]->set_pos(x+2, y+2);
+    me->rgb[1]->set_pos(x+width-2-RGBEditor_WIDTH, y+2);
 }
 
 static void PalTable__SetCSize(PalTable *me, int csize)
@@ -2010,7 +2004,7 @@ static void PalTable__change(RGBEditor *rgb, void *info)
 
     if (me->freestyle)
     {
-        me->fs_color = RGBEditor_GetRGB(rgb);
+        me->fs_color = rgb->get_rgb();
         PalTable__UpdateDAC(me);
         return;
     }
@@ -2021,18 +2015,18 @@ static void PalTable__change(RGBEditor *rgb, void *info)
         me->curr_changed = true;
     }
 
-    me->pal[pnum] = RGBEditor_GetRGB(rgb);
+    me->pal[pnum] = rgb->get_rgb();
 
     if (me->curr[0] == me->curr[1])
     {
         int      other = me->active == 0 ? 1 : 0;
         PALENTRY color;
 
-        color = RGBEditor_GetRGB(me->rgb[me->active]);
-        RGBEditor_SetRGB(me->rgb[other], me->curr[other], &color);
+        color = me->rgb[me->active]->get_rgb();
+        me->rgb[other]->set_rgb(me->curr[other], &color);
 
         Cursor_Hide();
-        RGBEditor_Update(me->rgb[other]);
+        me->rgb[other]->update();
         Cursor_Show();
     }
 
@@ -2103,10 +2097,10 @@ static void PalTable__Rotate(PalTable *me, int dir, int lo, int hi)
 
     // update the editors.
 
-    RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-    RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-    RGBEditor_Update(me->rgb[0]);
-    RGBEditor_Update(me->rgb[1]);
+    me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+    me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+    me->rgb[0]->update();
+    me->rgb[1]->update();
 
     Cursor_Show();
 }
@@ -2143,7 +2137,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         PalTable__Draw(me);
         Cursor_Show();
 
-        RGBEditor_SetDone(me->rgb[me->active], true);
+        me->rgb[me->active]->set_done(true);
 
         if (me->auto_select)
         {
@@ -2191,7 +2185,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case ID_KEY_ESC:
         me->done = true;
-        RGBEditor_SetDone(rgb, true);
+        rgb->set_done(true);
         break;
 
     case ' ':     // select the other palette register
@@ -2210,7 +2204,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             PalTable__UpdateDAC(me);
         }
 
-        RGBEditor_SetDone(rgb, true);
+        rgb->set_done(true);
         break;
 
     case ID_KEY_ENTER:    // set register to color under cursor.  useful when not
@@ -2229,7 +2223,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             PalTable__UpdateDAC(me);
         }
 
-        RGBEditor_SetDone(rgb, true);
+        rgb->set_done(true);
         break;
 
     case 'D':    // copy (Duplicate?) color in inactive to color in active
@@ -2239,11 +2233,11 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         int b = (a == 0) ? 1 : 0;
         PALENTRY t;
 
-        t = RGBEditor_GetRGB(me->rgb[b]);
+        t = me->rgb[b]->get_rgb();
         Cursor_Hide();
 
-        RGBEditor_SetRGB(me->rgb[a], me->curr[a], &t);
-        RGBEditor_Update(me->rgb[a]);
+        me->rgb[a]->set_rgb(me->curr[a], &t);
+        me->rgb[a]->update();
         PalTable__change(me->rgb[a], me);
         PalTable__UpdateDAC(me);
 
@@ -2442,10 +2436,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         if (!me->hidden)
         {
-            RGBEditor_BlankSampleBox(me->rgb[0]);
-            RGBEditor_BlankSampleBox(me->rgb[1]);
-            RGBEditor_SetHidden(me->rgb[0], true);
-            RGBEditor_SetHidden(me->rgb[1], true);
+            me->rgb[0]->blank_sample_box();
+            me->rgb[1]->blank_sample_box();
+            me->rgb[0]->set_hidden(true);
+            me->rgb[1]->set_hidden(true);
         }
 
         do
@@ -2468,10 +2462,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         if (!me->hidden)
         {
-            RGBEditor_SetHidden(me->rgb[0], false);
-            RGBEditor_SetHidden(me->rgb[1], false);
-            RGBEditor_Update(me->rgb[0]);
-            RGBEditor_Update(me->rgb[1]);
+            me->rgb[0]->set_hidden(false);
+            me->rgb[1]->set_hidden(false);
+            me->rgb[0]->update();
+            me->rgb[1]->update();
         }
 
         if (diff != 0)
@@ -2509,7 +2503,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             Cursor_Show();
         }
 
-        RGBEditor_SetDone(me->rgb[me->active], true);
+        me->rgb[me->active]->set_done(true);
         break;
 
     case 'O':    // set rotate_lo and rotate_hi to editors
@@ -2545,7 +2539,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         PalTable__SetCurr(me, -1, 0);
         Cursor_Show();
-        RGBEditor_SetDone(me->rgb[me->active], true);
+        me->rgb[me->active]->set_done(true);
         break;
     }
 
@@ -2575,10 +2569,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         getpalrange(0, 256, me->pal);
 #endif
         PalTable__UpdateDAC(me);
-        RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-        RGBEditor_Update(me->rgb[0]);
-        RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-        RGBEditor_Update(me->rgb[1]);
+        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+        me->rgb[0]->update();
+        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+        me->rgb[1]->update();
         break;
     }
 
@@ -2613,8 +2607,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         PalTable__UpdateDAC(me);
         if (!oldhidden)
         {
-            RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-            RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
+            me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+            me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
             PalTable_Hide(me, rgb, false);
         }
         Cursor_Show();
@@ -2692,10 +2686,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         }
 
         PalTable__UpdateDAC(me);
-        RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-        RGBEditor_Update(me->rgb[0]);
-        RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-        RGBEditor_Update(me->rgb[1]);
+        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+        me->rgb[0]->update();
+        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+        me->rgb[1]->update();
         break;
     }
 
@@ -2733,10 +2727,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         }
 
         PalTable__UpdateDAC(me);
-        RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-        RGBEditor_Update(me->rgb[0]);
-        RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-        RGBEditor_Update(me->rgb[1]);
+        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+        me->rgb[0]->update();
+        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+        me->rgb[1]->update();
         break;
     }
 
@@ -2766,8 +2760,8 @@ static void PalTable_Construct(PalTable *me)
 {
     int           csize;
 
-    me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
-    me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key, PalTable__change, me);
+    me->rgb[0] = new RGBEditor(0, 0, PalTable__other_key, PalTable__change, me);
+    me->rgb[1] = new RGBEditor(0, 0, PalTable__other_key, PalTable__change, me);
     me->movebox = new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1);
     me->active      = 0;
     me->curr[0]     = 1;
@@ -2787,8 +2781,8 @@ static void PalTable_Construct(PalTable *me)
     me->curr_changed = false;
     me->num_redo     = 0;
 
-    RGBEditor_SetRGB(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
-    RGBEditor_SetRGB(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
+    me->rgb[0]->set_rgb(me->curr[0], &me->pal[me->curr[0]]);
+    me->rgb[1]->set_rgb(me->curr[1], &me->pal[me->curr[0]]);
 
     if (g_video_scroll)
     {
@@ -2811,8 +2805,8 @@ static void PalTable_Construct(PalTable *me)
 static void PalTable_SetHidden(PalTable *me, bool hidden)
 {
     me->hidden = hidden;
-    RGBEditor_SetHidden(me->rgb[0], hidden);
-    RGBEditor_SetHidden(me->rgb[1], hidden);
+    me->rgb[0]->set_hidden(hidden);
+    me->rgb[1]->set_hidden(hidden);
     PalTable__UpdateDAC(me);
 }
 
@@ -2841,7 +2835,7 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
         {
             PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
         }
-        RGBEditor_SetDone(rgb, true);
+        rgb->set_done(true);
     }
 }
 
@@ -2853,8 +2847,8 @@ static void PalTable_Destroy(PalTable *me)
         dir_remove(g_temp_dir.c_str(), s_undo_file);
     }
 
-    RGBEditor_Destroy(me->rgb[0]);
-    RGBEditor_Destroy(me->rgb[1]);
+    delete me->rgb[0];
+    delete me->rgb[1];
     delete me->movebox;
 }
 
@@ -2871,8 +2865,8 @@ static void PalTable_Process(PalTable *me)
 
     PalTable__UpdateDAC(me);
 
-    RGBEditor_SetRGB(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
-    RGBEditor_SetRGB(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
+    me->rgb[0]->set_rgb(me->curr[0], &me->pal[me->curr[0]]);
+    me->rgb[1]->set_rgb(me->curr[1], &me->pal[me->curr[0]]);
 
     if (!me->hidden)
     {
@@ -2908,7 +2902,7 @@ static void PalTable_Process(PalTable *me)
 
     while (!me->done)
     {
-        RGBEditor_Edit(me->rgb[me->active]);
+        me->rgb[me->active]->edit();
     }
 
     Cursor_Hide();
