@@ -70,31 +70,9 @@ enum
     MAX_ARGS = 100
 };
 
-unsigned int g_max_function_ops  = MAX_OPS;
-unsigned int g_max_function_args = MAX_ARGS;
-
-static MATH_TYPE s_math_type = D_MATH;
-static unsigned long s_num_ops{};
-static unsigned long s_num_loads{};
-static unsigned long s_num_stores{};
-static unsigned long s_num_jumps{};
-
-struct PEND_OP
-{
-    FunctionPtr f;
-    int p;
-};
-
 enum
 {
     MAX_JUMPS = 200  // size of JUMP_CONTROL array
-};
-
-struct JUMP_PTRS_ST
-{
-    int      JumpOpPtr;
-    int      JumpLodPtr;
-    int      JumpStoPtr;
 };
 
 enum class jump_control_type
@@ -105,83 +83,6 @@ enum class jump_control_type
     ELSE = 3,
     END_IF = 4
 };
-
-struct JUMP_CONTROL_ST
-{
-    jump_control_type type;
-    JUMP_PTRS_ST ptrs;
-    int DestJumpIndex;
-};
-
-std::vector<JUMP_CONTROL_ST> g_jump_control;
-int g_jump_index{};
-static int s_init_jump_index{};
-
-inline void push_jump(jump_control_type type)
-{
-    JUMP_CONTROL_ST value{};
-    value.type = type;
-    g_jump_control.push_back(value);
-    ++g_jump_index;
-}
-
-static bool frm_prescan(std::FILE * open_file);
-
-#define CASE_TERMINATOR case',':\
-                        case '\n':\
-                        case '(':\
-                        case ')':\
-                        case '!':\
-                        case '=':\
-                        case '<':\
-                        case '>':\
-                        case '|':\
-                        case '&':\
-                        case '}':\
-                        case ':':\
-                        case '+':\
-                        case '-':\
-                        case '*':\
-                        case '/':\
-                        case '^'
-
-#define CASE_ALPHA      case 'a':\
-                        case 'b':\
-                        case 'c':\
-                        case 'd':\
-                        case 'e':\
-                        case 'f':\
-                        case 'g':\
-                        case 'h':\
-                        case 'i':\
-                        case 'j':\
-                        case 'k':\
-                        case 'l':\
-                        case 'm':\
-                        case 'n':\
-                        case 'o':\
-                        case 'p':\
-                        case 'q':\
-                        case 'r':\
-                        case 's':\
-                        case 't':\
-                        case 'u':\
-                        case 'v':\
-                        case 'w':\
-                        case 'x':\
-                        case 'y':\
-                        case 'z'
-
-#define CASE_NUM        case '0':\
-                        case '1':\
-                        case '2':\
-                        case '3':\
-                        case '4':\
-                        case '5':\
-                        case '6':\
-                        case '7':\
-                        case '8':\
-                        case '9'
 
 // token_type definitions
 enum class token_type
@@ -300,91 +201,6 @@ inline int operator+(token_id value)
     return static_cast<int>(value);
 }
 
-struct token_st
-{
-    char str[80];
-    token_type type;
-    token_id id;
-    DComplex constant;
-};
-
-
-// MAX_STORES must be even to make Unix alignment work
-
-#define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
-#define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
-
-static std::vector<PEND_OP> s_op;
-
-static void parser_allocate();
-
-Arg *Arg1{};
-Arg *Arg2{};
-
-// Some of these variables should be renamed for safety
-std::array<Arg, 20> g_stack{};
-std::vector<Arg *> Store;
-std::vector<Arg *> Load;
-int g_op_ptr{};
-std::vector<FunctionPtr> f;
-std::vector<ConstArg> v;
-int g_store_index{};
-int g_load_index{};
-bool g_is_mandelbrot{true};
-unsigned int g_operation_index{};
-unsigned int g_variable_index{};
-unsigned int g_last_op{};
-static unsigned int s_n{};
-static unsigned int s_next_op{};
-static unsigned int s_init_n{};
-static int s_paren{};
-static bool s_expecting_arg{};
-int InitLodPtr{};
-int InitStoPtr{};
-int InitOpPtr{};
-int g_last_init_op{};
-static int s_delta16{};
-double g_fudge_limit{};
-static double s_fudge{};
-static int s_shift_back{};
-static bool s_set_random{};
-static bool s_randomized{};
-static unsigned long s_rand_num{};
-bool g_frm_uses_p1{};
-bool g_frm_uses_p2{};
-bool g_frm_uses_p3{};
-bool g_frm_uses_p4{};
-bool g_frm_uses_p5{};
-bool g_uses_jump{};
-bool g_frm_uses_ismand{};
-static unsigned int s_chars_in_formula{};
-
-inline bool check_denom(long denom)
-{
-    if (denom == 0 || g_overflow)
-    {
-        g_overflow = true;
-        return true;
-    }
-    if (denom == 0)
-    {
-        return true;
-    }
-    return false;
-}
-
-inline bool check_denom(double denom)
-{
-    if (std::fabs(denom) <= DBL_MIN)
-    {
-        g_overflow = true;
-        return true;
-    }
-    return false;
-}
-
-#define LastSqr v[4].a
-
 /* ParseErrs() defines; all calls to ParseErrs(), or any variable which will
    be used as the argument in a call to ParseErrs(), should use one of these
    defines.
@@ -429,6 +245,384 @@ enum
     PE_SECOND_COLON = 34,
     PE_INVALID_CALL_TO_PARSEERRS = 35
 };
+
+struct PEND_OP
+{
+    FunctionPtr f;
+    int p;
+};
+
+struct JUMP_PTRS_ST
+{
+    int      JumpOpPtr;
+    int      JumpLodPtr;
+    int      JumpStoPtr;
+};
+
+struct JUMP_CONTROL_ST
+{
+    jump_control_type type;
+    JUMP_PTRS_ST ptrs;
+    int DestJumpIndex;
+};
+
+struct token_st
+{
+    char str[80];
+    token_type type;
+    token_id id;
+    DComplex constant;
+};
+
+struct FNCT_LIST
+{
+    char const *s;
+    FunctionPtr *ptr;
+};
+
+struct SymmetryName
+{
+    char const *s;
+    symmetry_type n;
+};
+
+struct error_data_st
+{
+    long start_pos;
+    long error_pos;
+    int error_number;
+};
+
+// forward declarations
+static bool frm_prescan(std::FILE *open_file);
+static void parser_allocate();
+static void dStkSRand();
+static void dStkAdd();
+static void dStkSub();
+static void dStkReal();
+static void dStkImag();
+static void dStkNeg();
+static void dStkDiv();
+static void dStkMod();
+static void dStkLT();
+static void dStkGT();
+static void dStkLTE();
+static void dStkGTE();
+static void dStkEQ();
+static void dStkNE();
+static void dStkOR();
+static void dStkAND();
+static void EndInit();
+static void dStkJumpOnFalse();
+static void dStkJumpOnTrue();
+
+unsigned int g_max_function_ops{MAX_OPS};
+unsigned int g_max_function_args{MAX_ARGS};
+std::vector<JUMP_CONTROL_ST> g_jump_control;
+int g_jump_index{};
+Arg *Arg1{};
+Arg *Arg2{};
+std::array<Arg, 20> g_stack{};
+std::vector<Arg *> Store;
+std::vector<Arg *> Load;
+int g_op_ptr{};
+std::vector<FunctionPtr> f;
+std::vector<ConstArg> v;
+int g_store_index{};
+int g_load_index{};
+bool g_is_mandelbrot{true};
+unsigned int g_operation_index{};
+unsigned int g_variable_index{};
+unsigned int g_last_op{};
+int InitLodPtr{};
+int InitStoPtr{};
+int InitOpPtr{};
+int g_last_init_op{};
+double g_fudge_limit{};
+bool g_frm_uses_p1{};
+bool g_frm_uses_p2{};
+bool g_frm_uses_p3{};
+bool g_frm_uses_p4{};
+bool g_frm_uses_p5{};
+bool g_uses_jump{};
+bool g_frm_uses_ismand{};
+char g_max_function{};
+
+static MATH_TYPE s_math_type{D_MATH};
+static unsigned long s_num_ops{};
+static unsigned long s_num_loads{};
+static unsigned long s_num_stores{};
+static unsigned long s_num_jumps{};
+static int s_init_jump_index{};
+static std::vector<PEND_OP> s_op;
+static unsigned int s_n{};
+static unsigned int s_next_op{};
+static unsigned int s_init_n{};
+static int s_paren{};
+static bool s_expecting_arg{};
+static int s_delta16{};
+static double s_fudge{};
+static int s_shift_back{};
+static bool s_set_random{};
+static bool s_randomized{};
+static unsigned long s_rand_num{};
+static unsigned int s_chars_in_formula{};
+static constexpr std::array<char const *, 4> s_jump_list
+{
+    "if",
+    "elseif",
+    "else",
+    "endif"
+};
+static std::string s_formula;
+static std::array<error_data_st, 3> s_errors{};
+
+static FunctionPtr StkSRand{dStkSRand};
+static FunctionPtr StkAbs{dStkAbs};
+static FunctionPtr StkSqr{dStkSqr};
+static FunctionPtr StkAdd{dStkAdd};
+static FunctionPtr StkSub{dStkSub};
+static FunctionPtr StkConj{dStkConj};
+static FunctionPtr StkFloor{dStkFloor};
+static FunctionPtr StkCeil{dStkCeil};
+static FunctionPtr StkTrunc{dStkTrunc};
+static FunctionPtr StkRound{dStkRound};
+static FunctionPtr StkZero{dStkZero};
+static FunctionPtr StkOne{dStkOne};
+static FunctionPtr StkReal{dStkReal};
+static FunctionPtr StkImag{dStkImag};
+static FunctionPtr StkNeg{dStkNeg};
+static FunctionPtr StkMul{dStkMul};
+static FunctionPtr StkDiv{dStkDiv};
+static FunctionPtr StkMod{dStkMod};
+static FunctionPtr StkFlip{dStkFlip};
+static FunctionPtr StkSin{dStkSin};
+static FunctionPtr StkTan{dStkTan};
+static FunctionPtr StkTanh{dStkTanh};
+static FunctionPtr StkCoTan{dStkCoTan};
+static FunctionPtr StkCoTanh{dStkCoTanh};
+static FunctionPtr StkSinh{dStkSinh};
+static FunctionPtr StkCos{dStkCos};
+static FunctionPtr StkCosXX{dStkCosXX};
+static FunctionPtr StkCosh{dStkCosh};
+static FunctionPtr StkASin{dStkASin};
+static FunctionPtr StkASinh{dStkASinh};
+static FunctionPtr StkACos{dStkACos};
+static FunctionPtr StkACosh{dStkACosh};
+static FunctionPtr StkATan{dStkATan};
+static FunctionPtr StkATanh{dStkATanh};
+static FunctionPtr StkSqrt{dStkSqrt};
+static FunctionPtr StkCAbs{dStkCAbs};
+static FunctionPtr StkLT{dStkLT};
+static FunctionPtr StkGT{dStkGT};
+static FunctionPtr StkLTE{dStkLTE};
+static FunctionPtr StkGTE{dStkGTE};
+static FunctionPtr StkEQ{dStkEQ};
+static FunctionPtr StkNE{dStkNE};
+static FunctionPtr StkOR{dStkOR};
+static FunctionPtr StkAND{dStkAND};
+static FunctionPtr StkLog{dStkLog};
+static FunctionPtr StkExp{dStkExp};
+static FunctionPtr StkPwr{dStkPwr};
+static FunctionPtr PtrEndInit{EndInit};
+static FunctionPtr StkJumpOnFalse{dStkJumpOnFalse};
+static FunctionPtr StkJumpOnTrue{dStkJumpOnTrue};
+static FunctionPtr StkTrig0{dStkSin};
+static FunctionPtr StkTrig1{dStkSqr};
+static FunctionPtr StkTrig2{dStkSinh};
+static FunctionPtr StkTrig3{dStkCosh};
+static constexpr std::array<FNCT_LIST, 34> s_func_list
+{
+    FNCT_LIST{"sin",   &StkSin},
+    FNCT_LIST{"sinh",  &StkSinh},
+    FNCT_LIST{"cos",   &StkCos},
+    FNCT_LIST{"cosh",  &StkCosh},
+    FNCT_LIST{"sqr",   &StkSqr},
+    FNCT_LIST{"log",   &StkLog},
+    FNCT_LIST{"exp",   &StkExp},
+    FNCT_LIST{"abs",   &StkAbs},
+    FNCT_LIST{"conj",  &StkConj},
+    FNCT_LIST{"real",  &StkReal},
+    FNCT_LIST{"imag",  &StkImag},
+    FNCT_LIST{"fn1",   &StkTrig0},
+    FNCT_LIST{"fn2",   &StkTrig1},
+    FNCT_LIST{"fn3",   &StkTrig2},
+    FNCT_LIST{"fn4",   &StkTrig3},
+    FNCT_LIST{"flip",  &StkFlip},
+    FNCT_LIST{"tan",   &StkTan},
+    FNCT_LIST{"tanh",  &StkTanh},
+    FNCT_LIST{"cotan", &StkCoTan},
+    FNCT_LIST{"cotanh", &StkCoTanh},
+    FNCT_LIST{"cosxx", &StkCosXX},
+    FNCT_LIST{"srand", &StkSRand},
+    FNCT_LIST{"asin",  &StkASin},
+    FNCT_LIST{"asinh", &StkASinh},
+    FNCT_LIST{"acos",  &StkACos},
+    FNCT_LIST{"acosh", &StkACosh},
+    FNCT_LIST{"atan",  &StkATan},
+    FNCT_LIST{"atanh", &StkATanh},
+    FNCT_LIST{"sqrt",  &StkSqrt},
+    FNCT_LIST{"cabs",  &StkCAbs},
+    FNCT_LIST{"floor", &StkFloor},
+    FNCT_LIST{"ceil",  &StkCeil},
+    FNCT_LIST{"trunc", &StkTrunc},
+    FNCT_LIST{"round", &StkRound},
+};
+static std::array<char const *, 17> s_op_list
+{
+    ",",    //  0
+    "!=",   //  1
+    "=",    //  2
+    "==",   //  3
+    "<",    //  4
+    "<=",   //  5
+    ">",    //  6
+    ">=",   //  7
+    "|",    //  8
+    "||",   //  9
+    "&&",   // 10
+    ":",    // 11
+    "+",    // 12
+    "-",    // 13
+    "*",    // 14
+    "/",    // 15
+    "^"     // 16
+};
+static constexpr std::array<char const *, 19> s_variables
+{
+    "pixel",        // v[0]
+    "p1",           // v[1]
+    "p2",           // v[2]
+    "z",            // v[3]
+    "LastSqr",      // v[4]
+    "pi",           // v[5]
+    "e",            // v[6]
+    "rand",         // v[7]
+    "p3",           // v[8]
+    "whitesq",      // v[9]
+    "scrnpix",      // v[10]
+    "scrnmax",      // v[11]
+    "maxit",        // v[12]
+    "ismand",       // v[13]
+    "center",       // v[14]
+    "magxmag",      // v[15]
+    "rotskew",      // v[16]
+    "p4",           // v[17]
+    "p5"            // v[18]
+};
+static constexpr std::array<SymmetryName, 14> s_symmetry_names
+{
+    SymmetryName{ "NOSYM",         symmetry_type::NONE },
+    SymmetryName{ "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
+    SymmetryName{ "XAXIS",         symmetry_type::X_AXIS },
+    SymmetryName{ "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
+    SymmetryName{ "YAXIS",         symmetry_type::Y_AXIS },
+    SymmetryName{ "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
+    SymmetryName{ "XYAXIS",        symmetry_type::XY_AXIS },
+    SymmetryName{ "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
+    SymmetryName{ "ORIGIN",        symmetry_type::ORIGIN },
+    SymmetryName{ "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
+    SymmetryName{ "PI_SYM",        symmetry_type::PI_SYM },
+    SymmetryName{ "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
+    SymmetryName{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
+    SymmetryName{ "NOPLOT",        symmetry_type::NO_PLOT },
+};
+
+
+inline void push_jump(jump_control_type type)
+{
+    JUMP_CONTROL_ST value{};
+    value.type = type;
+    g_jump_control.push_back(value);
+    ++g_jump_index;
+}
+
+#define CASE_TERMINATOR case',':\
+                        case '\n':\
+                        case '(':\
+                        case ')':\
+                        case '!':\
+                        case '=':\
+                        case '<':\
+                        case '>':\
+                        case '|':\
+                        case '&':\
+                        case '}':\
+                        case ':':\
+                        case '+':\
+                        case '-':\
+                        case '*':\
+                        case '/':\
+                        case '^'
+
+#define CASE_ALPHA      case 'a':\
+                        case 'b':\
+                        case 'c':\
+                        case 'd':\
+                        case 'e':\
+                        case 'f':\
+                        case 'g':\
+                        case 'h':\
+                        case 'i':\
+                        case 'j':\
+                        case 'k':\
+                        case 'l':\
+                        case 'm':\
+                        case 'n':\
+                        case 'o':\
+                        case 'p':\
+                        case 'q':\
+                        case 'r':\
+                        case 's':\
+                        case 't':\
+                        case 'u':\
+                        case 'v':\
+                        case 'w':\
+                        case 'x':\
+                        case 'y':\
+                        case 'z'
+
+#define CASE_NUM        case '0':\
+                        case '1':\
+                        case '2':\
+                        case '3':\
+                        case '4':\
+                        case '5':\
+                        case '6':\
+                        case '7':\
+                        case '8':\
+                        case '9'
+
+// MAX_STORES must be even to make Unix alignment work
+
+#define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
+#define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
+
+inline bool check_denom(long denom)
+{
+    if (denom == 0 || g_overflow)
+    {
+        g_overflow = true;
+        return true;
+    }
+    if (denom == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+inline bool check_denom(double denom)
+{
+    if (std::fabs(denom) <= DBL_MIN)
+    {
+        g_overflow = true;
+        return true;
+    }
+    return false;
+}
+
+#define LastSqr v[4].a
 
 static char const *ParseErrs(int which)
 {
@@ -606,8 +800,6 @@ static void dStkSRand()
     Arg1->d = v[7].a.d;
 }
 
-static FunctionPtr StkSRand{dStkSRand};
-
 void dStkLodDup()
 {
     Arg1 += 2;
@@ -684,8 +876,6 @@ void lStkAbs()
     Arg1->l.y = labs(Arg1->l.y);
 }
 
-static FunctionPtr StkAbs{dStkAbs};
-
 void dStkSqr()
 {
     LastSqr.d.x = Arg1->d.x * Arg1->d.x;
@@ -718,8 +908,6 @@ void lStkSqr()
     LastSqr.l.y = 0L;
 }
 
-static FunctionPtr StkSqr{dStkSqr};
-
 static void dStkAdd()
 {
     Arg2->d.x += Arg1->d.x;
@@ -742,8 +930,6 @@ static void lStkAdd()
     Arg1--;
     Arg2--;
 }
-
-static FunctionPtr StkAdd{dStkAdd};
 
 static void dStkSub()
 {
@@ -768,8 +954,6 @@ static void lStkSub()
     Arg2--;
 }
 
-static FunctionPtr StkSub{dStkSub};
-
 void dStkConj()
 {
     Arg1->d.y = -Arg1->d.y;
@@ -784,8 +968,6 @@ void lStkConj()
 {
     Arg1->l.y = -Arg1->l.y;
 }
-
-static FunctionPtr StkConj{dStkConj};
 
 void dStkFloor()
 {
@@ -810,8 +992,6 @@ void lStkFloor()
     Arg1->l.y = (Arg1->l.y) << g_bit_shift;
 }
 
-static FunctionPtr StkFloor{dStkFloor};
-
 void dStkCeil()
 {
     Arg1->d.x = ceil(Arg1->d.x);
@@ -832,8 +1012,6 @@ void lStkCeil()
     Arg1->l.x = -((Arg1->l.x) << g_bit_shift);
     Arg1->l.y = -((Arg1->l.y) << g_bit_shift);
 }
-
-static FunctionPtr StkCeil{dStkCeil};
 
 void dStkTrunc()
 {
@@ -864,8 +1042,6 @@ void lStkTrunc()
     Arg1->l.y = signy*Arg1->l.y;
 }
 
-static FunctionPtr StkTrunc{dStkTrunc};
-
 void dStkRound()
 {
     Arg1->d.x = floor(Arg1->d.x+.5);
@@ -884,8 +1060,6 @@ void lStkRound()
     Arg1->l.y += (1L << g_bit_shift_less_1);
     lStkFloor();
 }
-
-static FunctionPtr StkRound{dStkRound};
 
 void dStkZero()
 {
@@ -907,8 +1081,6 @@ void lStkZero()
     Arg1->l.y = Arg1->l.x;
 }
 
-static FunctionPtr StkZero{dStkZero};
-
 void dStkOne()
 {
     Arg1->d.x = 1.0;
@@ -926,8 +1098,6 @@ void lStkOne()
     Arg1->l.y = 0L;
 }
 
-static FunctionPtr StkOne{dStkOne};
-
 static void dStkReal()
 {
     Arg1->d.y = 0.0;
@@ -943,8 +1113,6 @@ static void lStkReal()
 {
     Arg1->l.y = 0l;
 }
-
-static FunctionPtr StkReal{dStkReal};
 
 static void dStkImag()
 {
@@ -965,8 +1133,6 @@ static void lStkImag()
     Arg1->l.y = 0l;
 }
 
-static FunctionPtr StkImag{dStkImag};
-
 static void dStkNeg()
 {
     Arg1->d.x = -Arg1->d.x;
@@ -984,8 +1150,6 @@ static void lStkNeg()
     Arg1->l.x = -Arg1->l.x;
     Arg1->l.y = -Arg1->l.y;
 }
-
-static FunctionPtr StkNeg{dStkNeg};
 
 void dStkMul()
 {
@@ -1015,8 +1179,6 @@ void lStkMul()
     Arg1--;
     Arg2--;
 }
-
-static FunctionPtr StkMul{dStkMul};
 
 static void dStkDiv()
 {
@@ -1052,8 +1214,6 @@ static void lStkDiv()
     Arg2--;
 }
 
-static FunctionPtr StkDiv{dStkDiv};
-
 static void dStkMod()
 {
     Arg1->d.x = (Arg1->d.x * Arg1->d.x) + (Arg1->d.y * Arg1->d.y);
@@ -1079,8 +1239,6 @@ static void lStkMod()
     }
     Arg1->l.y = 0L;
 }
-
-static FunctionPtr StkMod{dStkMod};
 
 static void StkSto()
 {
@@ -1130,8 +1288,6 @@ void lStkFlip()
     Arg1->l.y = t;
 }
 
-static FunctionPtr StkFlip{dStkFlip};
-
 void dStkSin()
 {
     double sinx;
@@ -1165,8 +1321,6 @@ void lStkSin()
     Arg1->l.x = multiply(sinx, coshy, s_shift_back);
     Arg1->l.y = multiply(cosx, sinhy, s_shift_back);
 }
-
-static FunctionPtr StkSin{dStkSin};
 
 /* The following functions are supported by both the parser and for fn
    variable replacement.
@@ -1220,8 +1374,6 @@ void lStkTan()
     Arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
 
-static FunctionPtr StkTan{dStkTan};
-
 void dStkTanh()
 {
     double siny;
@@ -1270,8 +1422,6 @@ void lStkTanh()
     Arg1->l.x = divide(sinhx, denom, g_bit_shift);
     Arg1->l.y = divide(siny, denom, g_bit_shift);
 }
-
-static FunctionPtr StkTanh{dStkTanh};
 
 void dStkCoTan()
 {
@@ -1322,8 +1472,6 @@ void lStkCoTan()
     Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
 
-static FunctionPtr StkCoTan{dStkCoTan};
-
 void dStkCoTanh()
 {
     double siny;
@@ -1372,8 +1520,6 @@ void lStkCoTanh()
     Arg1->l.x = divide(sinhx, denom, g_bit_shift);
     Arg1->l.y = -divide(siny, denom, g_bit_shift);
 }
-
-static FunctionPtr StkCoTanh{dStkCoTanh};
 
 /* The following functions are not directly used by the parser - support
    for the parser was not provided because the existing parser language
@@ -1461,8 +1607,6 @@ void lStkSinh()
     Arg1->l.y = multiply(siny, coshx, s_shift_back);
 }
 
-static FunctionPtr StkSinh{dStkSinh};
-
 void dStkCos()
 {
     double sinx;
@@ -1498,8 +1642,6 @@ void lStkCos()
     Arg1->l.y = -multiply(sinx, sinhy, s_shift_back);
 }
 
-static FunctionPtr StkCos{dStkCos};
-
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
 void dStkCosXX()
@@ -1518,8 +1660,6 @@ void lStkCosXX()
     lStkCos();
     Arg1->l.y = -Arg1->l.y;
 }
-
-static FunctionPtr StkCosXX{dStkCosXX};
 
 void dStkCosh()
 {
@@ -1556,8 +1696,6 @@ void lStkCosh()
     Arg1->l.y = multiply(siny, sinhx, s_shift_back);
 }
 
-static FunctionPtr StkCosh{dStkCosh};
-
 void dStkASin()
 {
     Arcsinz(Arg1->d, &(Arg1->d));
@@ -1572,8 +1710,6 @@ void lStkASin()
 {
     lStkFunct(dStkASin);
 }
-
-static FunctionPtr StkASin{dStkASin};
 
 void dStkASinh()
 {
@@ -1590,8 +1726,6 @@ void lStkASinh()
     lStkFunct(dStkASinh);
 }
 
-static FunctionPtr StkASinh{dStkASinh};
-
 void dStkACos()
 {
     Arccosz(Arg1->d, &(Arg1->d));
@@ -1606,8 +1740,6 @@ void lStkACos()
 {
     lStkFunct(dStkACos);
 }
-
-static FunctionPtr StkACos{dStkACos};
 
 void dStkACosh()
 {
@@ -1624,8 +1756,6 @@ void lStkACosh()
     lStkFunct(dStkACosh);
 }
 
-static FunctionPtr StkACosh{dStkACosh};
-
 void dStkATan()
 {
     Arctanz(Arg1->d, &(Arg1->d));
@@ -1641,8 +1771,6 @@ void lStkATan()
     lStkFunct(dStkATan);
 }
 
-static FunctionPtr StkATan{dStkATan};
-
 void dStkATanh()
 {
     Arctanhz(Arg1->d, &(Arg1->d));
@@ -1657,8 +1785,6 @@ void lStkATanh()
 {
     lStkFunct(dStkATanh);
 }
-
-static FunctionPtr StkATanh{dStkATanh};
 
 void dStkSqrt()
 {
@@ -1676,8 +1802,6 @@ void lStkSqrt()
     Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
 
-static FunctionPtr StkSqrt{dStkSqrt};
-
 void dStkCAbs()
 {
     Arg1->d.x = std::sqrt(sqr(Arg1->d.x)+sqr(Arg1->d.y));
@@ -1693,8 +1817,6 @@ void lStkCAbs()
 {
     lStkFunct(dStkCAbs);
 }
-
-static FunctionPtr StkCAbs{dStkCAbs};
 
 static void dStkLT()
 {
@@ -1721,8 +1843,6 @@ static void lStkLT()
     Arg2--;
 }
 
-static FunctionPtr StkLT{dStkLT};
-
 static void dStkGT()
 {
     Arg2->d.x = (double)(Arg2->d.x > Arg1->d.x);
@@ -1747,8 +1867,6 @@ static void lStkGT()
     Arg1--;
     Arg2--;
 }
-
-static FunctionPtr StkGT{dStkGT};
 
 static void dStkLTE()
 {
@@ -1778,8 +1896,6 @@ static void lStkLTE()
     Arg2--;
 }
 
-static FunctionPtr StkLTE{dStkLTE};
-
 static void dStkGTE()
 {
     Arg2->d.x = (double)(Arg2->d.x >= Arg1->d.x);
@@ -1807,8 +1923,6 @@ static void lStkGTE()
     Arg1--;
     Arg2--;
 }
-
-static FunctionPtr StkGTE{dStkGTE};
 
 static void dStkEQ()
 {
@@ -1838,8 +1952,6 @@ static void lStkEQ()
     Arg2--;
 }
 
-static FunctionPtr StkEQ{dStkEQ};
-
 static void dStkNE()
 {
     Arg2->d.x = (double)(Arg2->d.x != Arg1->d.x);
@@ -1868,8 +1980,6 @@ static void lStkNE()
     Arg2--;
 }
 
-static FunctionPtr StkNE{dStkNE};
-
 static void dStkOR()
 {
     Arg2->d.x = (double)(Arg2->d.x || Arg1->d.x);
@@ -1894,8 +2004,6 @@ static void lStkOR()
     Arg1--;
     Arg2--;
 }
-
-static FunctionPtr StkOR{dStkOR};
 
 static void dStkAND()
 {
@@ -1922,8 +2030,6 @@ static void lStkAND()
     Arg2--;
 }
 
-static FunctionPtr StkAND{dStkAND};
-
 void dStkLog()
 {
     FPUcplxlog(&Arg1->d, &Arg1->d);
@@ -1939,8 +2045,6 @@ void lStkLog()
     lStkFunct(dStkLog);
 }
 
-static FunctionPtr StkLog{dStkLog};
-
 void dStkExp()
 {
     FPUcplxexp(&Arg1->d, &Arg1->d);
@@ -1955,8 +2059,6 @@ void lStkExp()
 {
     lStkFunct(dStkExp);
 }
-
-static FunctionPtr StkExp{dStkExp};
 
 void dStkPwr()
 {
@@ -2001,17 +2103,13 @@ void lStkPwr()
     Arg2--;
 }
 
-static FunctionPtr StkPwr{dStkPwr};
-
 static void EndInit()
 {
     g_last_init_op = g_op_ptr;
     s_init_jump_index = g_jump_index;
 }
 
-static FunctionPtr PtrEndInit{EndInit};
-
-void StkJump()
+static void StkJump()
 {
     g_op_ptr =  g_jump_control[g_jump_index].ptrs.JumpOpPtr;
     g_load_index = g_jump_control[g_jump_index].ptrs.JumpLodPtr;
@@ -2019,7 +2117,7 @@ void StkJump()
     g_jump_index = g_jump_control[g_jump_index].DestJumpIndex;
 }
 
-void dStkJumpOnFalse()
+static void dStkJumpOnFalse()
 {
     if (Arg1->d.x == 0)
     {
@@ -2031,7 +2129,7 @@ void dStkJumpOnFalse()
     }
 }
 
-void mStkJumpOnFalse()
+static void mStkJumpOnFalse()
 {
     if (Arg1->m.x.Mant == 0)
     {
@@ -2043,7 +2141,7 @@ void mStkJumpOnFalse()
     }
 }
 
-void lStkJumpOnFalse()
+static void lStkJumpOnFalse()
 {
     if (Arg1->l.x == 0)
     {
@@ -2055,9 +2153,7 @@ void lStkJumpOnFalse()
     }
 }
 
-static FunctionPtr StkJumpOnFalse{dStkJumpOnFalse};
-
-void dStkJumpOnTrue()
+static void dStkJumpOnTrue()
 {
     if (Arg1->d.x)
     {
@@ -2069,7 +2165,7 @@ void dStkJumpOnTrue()
     }
 }
 
-void mStkJumpOnTrue()
+static void mStkJumpOnTrue()
 {
     if (Arg1->m.x.Mant)
     {
@@ -2081,7 +2177,7 @@ void mStkJumpOnTrue()
     }
 }
 
-void lStkJumpOnTrue()
+static void lStkJumpOnTrue()
 {
     if (Arg1->l.x)
     {
@@ -2093,9 +2189,7 @@ void lStkJumpOnTrue()
     }
 }
 
-static FunctionPtr StkJumpOnTrue{dStkJumpOnTrue};
-
-void StkJumpLabel()
+static void StkJumpLabel()
 {
     g_jump_index++;
 }
@@ -2276,30 +2370,6 @@ static ConstArg *is_const(char const *Str, int Len)
     return &v[g_variable_index++];
 }
 
-namespace
-{
-
-struct FNCT_LIST
-{
-    char const *s;
-    FunctionPtr *ptr;
-};
-
-} // namespace
-
-static constexpr std::array<char const *, 4> s_jump_list
-{
-    "if",
-    "elseif",
-    "else",
-    "endif"
-};
-
-static FunctionPtr StkTrig0{dStkSin};
-static FunctionPtr StkTrig1{dStkSqr};
-static FunctionPtr StkTrig2{dStkSinh};
-static FunctionPtr StkTrig3{dStkCosh};
-
 /* return values
     0 - Not a jump
     1 - if
@@ -2318,67 +2388,6 @@ static jump_control_type is_jump(char const *Str, int Len)
     }
     return jump_control_type::NONE;
 }
-
-char g_max_function{};
-
-static constexpr std::array<FNCT_LIST, 34> s_func_list
-{
-    FNCT_LIST{"sin",   &StkSin},
-    FNCT_LIST{"sinh",  &StkSinh},
-    FNCT_LIST{"cos",   &StkCos},
-    FNCT_LIST{"cosh",  &StkCosh},
-    FNCT_LIST{"sqr",   &StkSqr},
-    FNCT_LIST{"log",   &StkLog},
-    FNCT_LIST{"exp",   &StkExp},
-    FNCT_LIST{"abs",   &StkAbs},
-    FNCT_LIST{"conj",  &StkConj},
-    FNCT_LIST{"real",  &StkReal},
-    FNCT_LIST{"imag",  &StkImag},
-    FNCT_LIST{"fn1",   &StkTrig0},
-    FNCT_LIST{"fn2",   &StkTrig1},
-    FNCT_LIST{"fn3",   &StkTrig2},
-    FNCT_LIST{"fn4",   &StkTrig3},
-    FNCT_LIST{"flip",  &StkFlip},
-    FNCT_LIST{"tan",   &StkTan},
-    FNCT_LIST{"tanh",  &StkTanh},
-    FNCT_LIST{"cotan", &StkCoTan},
-    FNCT_LIST{"cotanh", &StkCoTanh},
-    FNCT_LIST{"cosxx", &StkCosXX},
-    FNCT_LIST{"srand", &StkSRand},
-    FNCT_LIST{"asin",  &StkASin},
-    FNCT_LIST{"asinh", &StkASinh},
-    FNCT_LIST{"acos",  &StkACos},
-    FNCT_LIST{"acosh", &StkACosh},
-    FNCT_LIST{"atan",  &StkATan},
-    FNCT_LIST{"atanh", &StkATanh},
-    FNCT_LIST{"sqrt",  &StkSqrt},
-    FNCT_LIST{"cabs",  &StkCAbs},
-    FNCT_LIST{"floor", &StkFloor},
-    FNCT_LIST{"ceil",  &StkCeil},
-    FNCT_LIST{"trunc", &StkTrunc},
-    FNCT_LIST{"round", &StkRound},
-};
-
-static std::array<char const *, 17> s_op_list
-{
-    ",",    //  0
-    "!=",   //  1
-    "=",    //  2
-    "==",   //  3
-    "<",    //  4
-    "<=",   //  5
-    ">",    //  6
-    ">=",   //  7
-    "|",    //  8
-    "||",   //  9
-    "&&",   // 10
-    ":",    // 11
-    "+",    // 12
-    "-",    // 13
-    "*",    // 14
-    "/",    // 15
-    "^"     // 16
-};
 
 static void NotAFnct()
 {
@@ -2452,53 +2461,6 @@ static void RecSortPrec()
     f.push_back(s_op[ThisOp].f);
     ++g_op_ptr;
 }
-
-static constexpr std::array<char const *, 19> s_variables
-{
-    "pixel",        // v[0]
-    "p1",           // v[1]
-    "p2",           // v[2]
-    "z",            // v[3]
-    "LastSqr",      // v[4]
-    "pi",           // v[5]
-    "e",            // v[6]
-    "rand",         // v[7]
-    "p3",           // v[8]
-    "whitesq",      // v[9]
-    "scrnpix",      // v[10]
-    "scrnmax",      // v[11]
-    "maxit",        // v[12]
-    "ismand",       // v[13]
-    "center",       // v[14]
-    "magxmag",      // v[15]
-    "rotskew",      // v[16]
-    "p4",           // v[17]
-    "p5"            // v[18]
-};
-
-struct SymmetryName
-{
-    char const *s;
-    symmetry_type n;
-};
-
-static constexpr std::array<SymmetryName, 14> s_symmetry_names
-{
-    SymmetryName{ "NOSYM",         symmetry_type::NONE },
-    SymmetryName{ "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
-    SymmetryName{ "XAXIS",         symmetry_type::X_AXIS },
-    SymmetryName{ "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
-    SymmetryName{ "YAXIS",         symmetry_type::Y_AXIS },
-    SymmetryName{ "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
-    SymmetryName{ "XYAXIS",        symmetry_type::XY_AXIS },
-    SymmetryName{ "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
-    SymmetryName{ "ORIGIN",        symmetry_type::ORIGIN },
-    SymmetryName{ "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
-    SymmetryName{ "PI_SYM",        symmetry_type::PI_SYM },
-    SymmetryName{ "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
-    SymmetryName{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
-    SymmetryName{ "NOPLOT",        symmetry_type::NO_PLOT },
-};
 
 inline void push_pending_op(FunctionPtr f, int p)
 {
@@ -3329,8 +3291,6 @@ static bool fill_jump_struct()
     }
     return i < 0;
 }
-
-static std::string s_formula;
 
 static int frmgetchar(std::FILE * openfile)
 {
@@ -4428,15 +4388,6 @@ void free_workarea()
     v.clear();
     f.clear();
 }
-
-struct error_data_st
-{
-    long start_pos;
-    long error_pos;
-    int error_number;
-};
-
-static std::array<error_data_st, 3> s_errors{};
 
 static void frm_error(std::FILE * open_file, long begin_frm)
 {
