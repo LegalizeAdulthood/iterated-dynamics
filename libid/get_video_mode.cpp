@@ -40,18 +40,6 @@
 #include <sstream>
 #include <string>
 
-// routines in this module
-
-static void   format_item(int, char *);
-static int    check_modekey(int, int);
-static void   format_vid_inf(int i, char const *err, char *buf);
-static double vid_aspect(int tryxdots, int tryydots);
-
-struct vidinf
-{
-    int entnum;     // g_video_entry subscript
-    unsigned flags; // flags for sort's compare, defined below
-};
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */
 enum
@@ -67,6 +55,19 @@ enum
     VI_CBIG = 4,       // mode has excess colors
     VI_ASPECT = 1      // aspect ratio bad
 };
+
+struct vidinf
+{
+    int entnum;     // g_video_entry subscript
+    unsigned flags; // flags for sort's compare, defined below
+};
+
+static std::vector<vidinf> s_video_info;
+
+static void   format_item(int, char *);
+static int    check_modekey(int, int);
+static void   format_vid_inf(int i, char const *err, char *buf);
+static double vid_aspect(int tryxdots, int tryydots);
 
 static bool vidinf_less(const vidinf &lhs, const vidinf &rhs)
 {
@@ -113,8 +114,6 @@ static double vid_aspect(int tryxdots, int tryydots)
            * (double)g_video_entry.xdots / (double)g_video_entry.ydots
            * g_screen_aspect;
 }
-
-static std::vector<vidinf> s_video_info;
 
 static std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
