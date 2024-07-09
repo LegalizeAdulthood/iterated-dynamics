@@ -30,9 +30,9 @@ enum
     MAXHANDLES = 256      // arbitrary #, suitably big
 };
 
-int numTOTALhandles;
+static int s_num_total_handles{};
 
-static constexpr const char *const memstr[3]{"nowhere", "memory", "disk"};
+static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
 
 struct nowhere
 {
@@ -126,7 +126,7 @@ static void DisplayError(int stored_at, long howmuch)
     char buf[MSG_LEN*2];
     std::snprintf(buf, std::size(buf), "Allocating %ld Bytes of %s memory failed.\n"
             "Alternate disk space is also insufficient. Goodbye",
-            howmuch, memstr[stored_at]);
+            howmuch, s_memory_names[stored_at]);
     stopmsg(buf);
 }
 
@@ -243,7 +243,7 @@ void DisplayHandle(U16 handle)
 {
     char buf[MSG_LEN];
 
-    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
+    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, s_memory_names[handletable[handle].Nowhere.stored_at],
             handletable[handle].Nowhere.size);
     if (stopmsg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
@@ -253,7 +253,7 @@ void DisplayHandle(U16 handle)
 
 void InitMemory()
 {
-    numTOTALhandles = 0;
+    s_num_total_handles = 0;
     for (auto &elem : handletable)
     {
         elem.Nowhere.stored_at = NOWHERE;
@@ -263,7 +263,7 @@ void InitMemory()
 
 void ExitCheck()
 {
-    if (numTOTALhandles != 0)
+    if (s_num_total_handles != 0)
     {
         stopmsg("Error - not all memory released, I'll get it.");
         for (U16 i = 1; i < MAXHANDLES; i++)
@@ -272,7 +272,7 @@ void ExitCheck()
             {
                 char buf[MSG_LEN];
                 std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
-                        memstr[handletable[i].Nowhere.stored_at], i);
+                        s_memory_names[handletable[i].Nowhere.stored_at], i);
                 stopmsg(buf);
                 MemoryRelease(i);
             }
@@ -333,7 +333,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         handletable[handle].Linearmem.memory = (BYTE *)malloc(toallocate);
         handletable[handle].Linearmem.size = toallocate;
         handletable[handle].Linearmem.stored_at = MEMORY;
-        numTOTALhandles++;
+        s_num_total_handles++;
         success = true;
         break;
 
@@ -360,7 +360,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
             driver_buzzer(buzzer_codes::PROBLEM);
             break;
         }
-        numTOTALhandles++;
+        s_num_total_handles++;
         success = true;
         std::fclose(handletable[handle].Disk.file); // so clusters aren't lost if we crash while running
         handletable[handle].Disk.file = g_disk_targa ?
@@ -378,7 +378,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     {
         char buf[MSG_LEN * 2];
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
-            memstr[stored_at], toallocate, memstr[use_this_type], handle);
+            s_memory_names[stored_at], toallocate, s_memory_names[use_this_type], handle);
         stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
         DisplayMemory();
     }
@@ -405,7 +405,7 @@ void MemoryRelease(U16 handle)
         handletable[handle].Linearmem.memory = nullptr;
         handletable[handle].Linearmem.size = 0;
         handletable[handle].Linearmem.stored_at = NOWHERE;
-        numTOTALhandles--;
+        s_num_total_handles--;
         break;
 
     case DISK: // MemoryRelease
@@ -414,7 +414,7 @@ void MemoryRelease(U16 handle)
         handletable[handle].Disk.file = nullptr;
         handletable[handle].Disk.size = 0;
         handletable[handle].Disk.stored_at = NOWHERE;
-        numTOTALhandles--;
+        s_num_total_handles--;
         break;
     } // end of switch
 }
