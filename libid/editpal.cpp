@@ -226,9 +226,11 @@ private:
     void (*m_other_key)(int key, RGBEditor *e, void *info){};
     void (*m_change)(RGBEditor *e, void *info){};
     void *m_info{};
+    void change(CEditor *editor);
+    void other_key(int key, CEditor *ceditor);
 
     static void other_key_cb(int key, CEditor *ceditor, void *info);
-    static void change_cb(CEditor *, void *info);
+    static void change_cb(CEditor *ceditor, void *info);
 };
 
 //
@@ -249,8 +251,42 @@ private:
 //   S(t)ripe mode: "T", " "
 //
 //
-struct PalTable
+class PalTable
 {
+public:
+    PalTable();
+    ~PalTable();
+    void Process();
+    void SetHidden(bool hidden);
+
+private:
+    void DrawStatus(bool stripe_mode);
+    void HlPal(int pnum, int color);
+    void Draw();
+    void SetCurr(int which, int curr);
+    void SaveRect();
+    void RestoreRect();
+    void SetPos(int x, int y);
+    void SetCSize(int csize);
+    int GetCursorColor() const;
+    void DoCurs(int key);
+    void Rotate(int dir, int lo, int hi);
+    void UpdateDAC();
+    void SaveUndoData(int first, int last);
+    void SaveUndoRotate(int dir, int first, int last);
+    void UndoProcess(int delta);
+    void Undo();
+    void Redo();
+    void MkDefaultPalettes();
+    void Hide(RGBEditor *rgb, bool hidden);
+    void CalcTopBottom();
+    void PutBand(PALENTRY *pal);
+    void other_key(int key, RGBEditor *rgb);
+    void change(RGBEditor *rgb);
+    
+    static void other_key_cb(int key, RGBEditor *rgb, void *info);
+    static void change_cb(RGBEditor *rgb, void *info);
+
     int x;
     int y;
     int           csize;
@@ -273,6 +309,7 @@ struct PalTable
     int           top, bottom; // top and bottom colours of freestyle band
     int           bandwidth; //size of freestyle colour band
     bool freestyle;
+
 };
 
 bool g_using_jiim{};
@@ -1346,59 +1383,72 @@ PALENTRY RGBEditor::get_rgb() const
     return pal;
 }
 
-void RGBEditor::other_key_cb(int key, CEditor *ceditor, void *info) // private
+void RGBEditor::other_key_cb(int key, CEditor *ceditor, void *info)
 {
-    RGBEditor *me = static_cast<RGBEditor *>(info);
+    static_cast<RGBEditor *>(info)->other_key(key, ceditor);
+}
 
+void RGBEditor::change(CEditor *editor)
+{
+    if (m_pal < g_colors && !is_reserved(m_pal))
+    {
+        setpal(m_pal, m_color[0]->get_val(), m_color[1]->get_val(), m_color[2]->get_val());
+    }
+
+    m_change(this, m_info);
+}
+
+void RGBEditor::other_key(int key, CEditor *ceditor)
+{
     switch (key)
     {
     case 'R':
     case 'r':
-        if (me->m_curr != 0)
+        if (m_curr != 0)
         {
-            me->m_curr = 0;
+            m_curr = 0;
             ceditor->set_done(true);
         }
         break;
 
     case 'G':
     case 'g':
-        if (me->m_curr != 1)
+        if (m_curr != 1)
         {
-            me->m_curr = 1;
+            m_curr = 1;
             ceditor->set_done(true);
         }
         break;
 
     case 'B':
     case 'b':
-        if (me->m_curr != 2)
+        if (m_curr != 2)
         {
-            me->m_curr = 2;
+            m_curr = 2;
             ceditor->set_done(true);
         }
         break;
 
-    case ID_KEY_DELETE:   // move to next CEditor
-    case ID_KEY_CTL_ENTER_2:    //double click rt mouse also!
-        if (++me->m_curr > 2)
+    case ID_KEY_DELETE:      // move to next CEditor
+    case ID_KEY_CTL_ENTER_2: // double click rt mouse also!
+        if (++m_curr > 2)
         {
-            me->m_curr = 0;
+            m_curr = 0;
         }
         ceditor->set_done(true);
         break;
 
-    case ID_KEY_INSERT:   // move to prev CEditor
-        if (--me->m_curr < 0)
+    case ID_KEY_INSERT: // move to prev CEditor
+        if (--m_curr < 0)
         {
-            me->m_curr = 2;
+            m_curr = 2;
         }
         ceditor->set_done(true);
         break;
 
     default:
-        me->m_other_key(key, me, me->m_info);
-        if (me->m_done)
+        m_other_key(key, this, m_info);
+        if (m_done)
         {
             ceditor->set_done(true);
         }
@@ -1406,254 +1456,80 @@ void RGBEditor::other_key_cb(int key, CEditor *ceditor, void *info) // private
     }
 }
 
-void RGBEditor::change_cb(CEditor * /*ceditor*/, void *info) // private
+void RGBEditor::change_cb(CEditor *ceditor, void *info)
 {
-    RGBEditor *me = (RGBEditor *)info;
-
-    if (me->m_pal < g_colors && !is_reserved(me->m_pal))
-    {
-        setpal(me->m_pal, me->m_color[0]->get_val(), me->m_color[1]->get_val(), me->m_color[2]->get_val());
-    }
-
-    me->m_change(me, me->m_info);
+    static_cast<RGBEditor *>(info)->change(ceditor);
 }
 
-// private:
-static void    PalTable__DrawStatus(PalTable *me, bool stripe_mode);
-static void    PalTable__HlPal(PalTable *me, int pnum, int color);
-static void    PalTable__Draw(PalTable *me);
-static void PalTable__SetCurr(PalTable *me, int which, int curr);
-static void    PalTable__SaveRect(PalTable *me);
-static void    PalTable__RestoreRect(PalTable *me);
-static void    PalTable__SetPos(PalTable *me, int x, int y);
-static void    PalTable__SetCSize(PalTable *me, int csize);
-static int     PalTable__GetCursorColor(PalTable *me);
-static void    PalTable__DoCurs(PalTable *me, int key);
-static void    PalTable__Rotate(PalTable *me, int dir, int lo, int hi);
-static void    PalTable__UpdateDAC(PalTable *me);
-static void    PalTable__other_key(int key, RGBEditor *rgb, void *info);
-static void    PalTable__SaveUndoData(PalTable *me, int first, int last);
-static void    PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last);
-static void    PalTable__UndoProcess(PalTable *me, int delta);
-static void    PalTable__Undo(PalTable *me);
-static void    PalTable__Redo(PalTable *me);
-static void    PalTable__change(RGBEditor *rgb, void *info);
-
-// public:
-static void PalTable_Construct(PalTable *me);
-static void      PalTable_Destroy(PalTable *me);
-static void      PalTable_Process(PalTable *me);
-static void      PalTable_SetHidden(PalTable *me, bool hidden);
-static void      PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden);
-
-//  - Freestyle code -
-static void PalTable__CalcTopBottom(PalTable *me)
+void PalTable::Process()
 {
-    if (me->curr[me->active] < me->bandwidth)
+    getpalrange(0, g_colors, pal);
+
+    // Make sure all palette entries are 0-63
+
+    for (int ctr = 0; ctr < 768; ctr++)
     {
-        me->bottom = 0;
-    }
-    else
-    {
-        me->bottom = (me->curr[me->active]) - me->bandwidth;
-    }
-
-    if (me->curr[me->active] > (255-me->bandwidth))
-    {
-        me->top = 255;
-    }
-    else
-    {
-        me->top = (me->curr[me->active]) + me->bandwidth;
-    }
-}
-
-static void PalTable__PutBand(PalTable *me, PALENTRY *pal)
-{
-    int r;
-    int b;
-    int a;
-
-    // clip top and bottom values to stop them running off the end of the DAC
-
-    PalTable__CalcTopBottom(me);
-
-    // put bands either side of current colour
-
-    a = me->curr[me->active];
-    b = me->bottom;
-    r = me->top;
-
-    pal[a] = me->fs_color;
-
-    if (r != a && a != b)
-    {
-        mkpalrange(&pal[a], &pal[r], &pal[a], r-a, 1);
-        mkpalrange(&pal[b], &pal[a], &pal[b], a-b, 1);
+        ((char *)pal)[ctr] &= 63;
     }
 
-}
+    UpdateDAC();
 
-// - Undo.Redo code -
-static void PalTable__SaveUndoData(PalTable *me, int first, int last)
-{
-    int num;
+    rgb[0]->set_rgb(curr[0], &pal[curr[0]]);
+    rgb[1]->set_rgb(curr[1], &pal[curr[0]]);
 
-    if (me->undo_file == nullptr)
+    if (!hidden)
     {
-        return ;
-    }
-
-    num = (last - first) + 1;
-    std::fseek(me->undo_file, 0, SEEK_CUR);
-    if (num == 1)
-    {
-        putc(UNDO_DATA_SINGLE, me->undo_file);
-        putc(first, me->undo_file);
-        std::fwrite(me->pal+first, 3, 1, me->undo_file);
-        putw(1 + 1 + 3 + sizeof(int), me->undo_file);
-    }
-    else
-    {
-        putc(UNDO_DATA, me->undo_file);
-        putc(first, me->undo_file);
-        putc(last,  me->undo_file);
-        std::fwrite(me->pal+first, 3, num, me->undo_file);
-        putw(1 + 2 + (num*3) + sizeof(int), me->undo_file);
-    }
-
-    me->num_redo = 0;
-}
-
-static void PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last)
-{
-    if (me->undo_file == nullptr)
-    {
-        return ;
-    }
-
-    std::fseek(me->undo_file, 0, SEEK_CUR);
-    putc(UNDO_ROTATE, me->undo_file);
-    putc(first, me->undo_file);
-    putc(last,  me->undo_file);
-    putw(dir, me->undo_file);
-    putw(1 + 2 + sizeof(int), me->undo_file);
-
-    me->num_redo = 0;
-}
-
-static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common code
-{
-    // delta = -1 for undo, +1 for redo
-    int cmd = getc(me->undo_file);
-
-    switch (cmd)
-    {
-    case UNDO_DATA:
-    case UNDO_DATA_SINGLE:
-    {
-        int first;
-        int last;
-        int num;
-        PALENTRY temp[256];
-
-        if (cmd == UNDO_DATA)
+        movebox->set_pos(x, y);
+        movebox->set_csize(csize);
+        if (!movebox->process())
         {
-            first = (unsigned char)getc(me->undo_file);
-            last  = (unsigned char)getc(me->undo_file);
-        }
-        else  // UNDO_DATA_SINGLE
-        {
-            last = (unsigned char)getc(me->undo_file);
-            first = last;
+            setpalrange(0, g_colors, pal);
+            return ;
         }
 
-        num = (last - first) + 1;
-        if (std::fread(temp, 3, num, me->undo_file) != num)
+        SetPos(movebox->x(), movebox->y());
+        SetCSize(movebox->csize());
+
+        if (movebox->should_hide())
         {
-            throw std::system_error(errno, std::system_category(), "PalTable_UndoProcess  failed fread");
+            SetHidden(true);
+            s_reserve_colors = false;
         }
-
-        std::fseek(me->undo_file, -(num*3), SEEK_CUR);  // go to start of undo/redo data
-        std::fwrite(me->pal+first, 3, num, me->undo_file);  // write redo/undo data
-
-        std::memmove(me->pal+first, temp, num*3);
-
-        PalTable__UpdateDAC(me);
-
-        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
-        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
-        me->rgb[0]->update();
-        me->rgb[1]->update();
-        break;
+        else
+        {
+            s_reserve_colors = true;
+            SaveRect();
+            Draw();
+        }
     }
 
-    case UNDO_ROTATE:
+    SetCurr(active,          GetCursorColor());
+    SetCurr((active == 1)?0:1, GetCursorColor());
+    Cursor_Show();
+    MkDefaultPalettes();
+    done = false;
+
+    while (!done)
     {
-        int first = (unsigned char)getc(me->undo_file);
-        int last  = (unsigned char)getc(me->undo_file);
-        int dir   = getw(me->undo_file);
-        PalTable__Rotate(me, delta*dir, first, last);
-        break;
+        rgb[active]->edit();
     }
 
-    default:
-        break;
-    }
-
-    std::fseek(me->undo_file, 0, SEEK_CUR);  // to put us in read mode
-    getw(me->undo_file);  // read size
-}
-
-static void PalTable__Undo(PalTable *me)
-{
-    int  size;
-    long pos;
-
-    if (ftell(me->undo_file) <= 0)      // at beginning of file?
-    {
-        //   nothing to undo -- exit
-        return ;
-    }
-
-    std::fseek(me->undo_file, -(int)sizeof(int), SEEK_CUR);  // go back to get size
-
-    size = getw(me->undo_file);
-    std::fseek(me->undo_file, -size, SEEK_CUR);   // go to start of undo
-
-    pos = ftell(me->undo_file);
-
-    PalTable__UndoProcess(me, -1);
-
-    std::fseek(me->undo_file, pos, SEEK_SET);   // go to start of me block
-
-    ++me->num_redo;
-}
-
-static void PalTable__Redo(PalTable *me)
-{
-    if (me->num_redo <= 0)
-    {
-        return ;
-    }
-
-    std::fseek(me->undo_file, 0, SEEK_CUR);  // to make sure we are in "read" mode
-    PalTable__UndoProcess(me, 1);
-
-    --me->num_redo;
+    Cursor_Hide();
+    RestoreRect();
+    setpalrange(0, g_colors, pal);
 }
 
 // - everything else -
-static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
+void PalTable::DrawStatus(bool stripe_mode)
 {
-    int width = 1+(me->csize*16)+1+1;
+    int width = 1 + (csize * 16) + 1 + 1;
 
-    if (!me->hidden && (width - (RGBEditor_WIDTH*2+4) >= STATUS_LEN*8))
+    if (!hidden && (width - (RGBEditor_WIDTH * 2 + 4) >= STATUS_LEN * 8))
     {
-        int x = me->x + 2 + RGBEditor_WIDTH;
-        int y = me->y + PalTable_PALY - 10;
-        int color = PalTable__GetCursorColor(me);
-        if (color < 0 || color >= g_colors)   // hmm, the border returns -1
+        int x = this->x + 2 + RGBEditor_WIDTH;
+        int y = this->y + PalTable_PALY - 10;
+        int color = GetCursorColor();
+        if (color < 0 || color >= g_colors) // hmm, the border returns -1
         {
             color = 0;
         }
@@ -1661,11 +1537,11 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 
         {
             char buff[80];
-            std::snprintf(buff, std::size(buff), "%c%c%c%c",
-                    me->auto_select ? 'A' : ' ',
-                    (me->exclude == 1)  ? 'X' : (me->exclude == 2) ? 'Y' : ' ',
-                    me->freestyle ? 'F' : ' ',
-                    stripe_mode ? 'T' : ' ');
+            std::snprintf(buff, std::size(buff), "%c%c%c%c", auto_select ? 'A' : ' ',
+                (exclude == 1)       ? 'X'
+                    : (exclude == 2) ? 'Y'
+                                     : ' ',
+                freestyle ? 'F' : ' ', stripe_mode ? 'T' : ' ');
             driver_display_string(x, y, s_fg_color, s_bg_color, buff);
 
             y = y - 10;
@@ -1676,226 +1552,225 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
     }
 }
 
-static void PalTable__HlPal(PalTable *me, int pnum, int color)
+void PalTable::HlPal(int pnum, int color)
 {
-    int x = me->x + PalTable_PALX + (pnum % 16) * me->csize;
-    int y = me->y + PalTable_PALY + (pnum / 16) * me->csize;
-    int size = me->csize;
-
-    if (me->hidden)
+    if (hidden)
     {
-        return ;
+        return;
     }
+
+    int x = this->x + PalTable_PALX + (pnum % 16) * csize;
+    int y = this->y + PalTable_PALY + (pnum / 16) * csize;
 
     Cursor_Hide();
 
+    const int size = csize + 1;
     if (color < 0)
     {
-        drect(x, y, size+1, size+1);
+        drect(x, y, size, size);
     }
     else
     {
-        rect(x, y, size+1, size+1, color);
+        rect(x, y, size, size, color);
     }
 
     Cursor_Show();
 }
 
-static void PalTable__Draw(PalTable *me)
+void PalTable::Draw()
 {
-    if (me->hidden)
+    if (hidden)
     {
         return;
     }
 
     Cursor_Hide();
 
-    int width = 1+(me->csize*16)+1+1;
+    int width = 1 + (csize * 16) + 1 + 1;
 
-    rect(me->x, me->y, width, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1, s_fg_color);
+    rect(x, y, width, 2 + RGBEditor_DEPTH + 2 + (csize * 16) + 1 + 1, s_fg_color);
 
-    fillrect(me->x+1, me->y+1, width-2, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1-2, s_bg_color);
+    fillrect(x + 1, y + 1, width - 2, 2 + RGBEditor_DEPTH + 2 + (csize * 16) + 1 + 1 - 2, s_bg_color);
 
-    hline(me->x, me->y+PalTable_PALY-1, width, s_fg_color);
+    hline(x, y + PalTable_PALY - 1, width, s_fg_color);
 
-    if (width - (RGBEditor_WIDTH*2+4) >= TITLE_LEN*8)
+    if (width - (RGBEditor_WIDTH * 2 + 4) >= TITLE_LEN * 8)
     {
-        int center = (width - TITLE_LEN*8) / 2;
+        int center = (width - TITLE_LEN * 8) / 2;
 
-        displayf(me->x+center, me->y+RGBEditor_DEPTH/2-12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
+        displayf(x + center, y + RGBEditor_DEPTH / 2 - 12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
     }
 
-    me->rgb[0]->draw();
-    me->rgb[1]->draw();
+    rgb[0]->draw();
+    rgb[1]->draw();
 
     for (int pal = 0; pal < 256; pal++)
     {
-        int xoff = PalTable_PALX + (pal%16) * me->csize;
-        int yoff = PalTable_PALY + (pal/16) * me->csize;
+        int xoff = PalTable_PALX + (pal % 16) * csize;
+        int yoff = PalTable_PALY + (pal / 16) * csize;
 
         if (pal >= g_colors)
         {
-            fillrect(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, s_bg_color);
-            draw_diamond(me->x + xoff + me->csize/2 - 1, me->y + yoff + me->csize/2 - 1, s_fg_color);
+            fillrect(x + xoff + 1, y + yoff + 1, csize - 1, csize - 1, s_bg_color);
+            draw_diamond(x + xoff + csize / 2 - 1, y + yoff + csize / 2 - 1, s_fg_color);
         }
 
         else if (is_reserved(pal))
         {
-            int x1 = me->x + xoff + 1;
-            int y1 = me->y + yoff + 1;
-            int x2 = x1 + me->csize - 2;
-            int y2 = y1 + me->csize - 2;
-            fillrect(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, s_bg_color);
+            int x1 = x + xoff + 1;
+            int y1 = y + yoff + 1;
+            int x2 = x1 + csize - 2;
+            int y2 = y1 + csize - 2;
+            fillrect(x + xoff + 1, y + yoff + 1, csize - 1, csize - 1, s_bg_color);
             driver_draw_line(x1, y1, x2, y2, s_fg_color);
             driver_draw_line(x1, y2, x2, y1, s_fg_color);
         }
         else
         {
-            fillrect(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, pal);
+            fillrect(x + xoff + 1, y + yoff + 1, csize - 1, csize - 1, pal);
         }
-
     }
 
-    if (me->active == 0)
+    if (active == 0)
     {
-        PalTable__HlPal(me, me->curr[1], -1);
-        PalTable__HlPal(me, me->curr[0], s_fg_color);
+        HlPal(curr[1], -1);
+        HlPal(curr[0], s_fg_color);
     }
     else
     {
-        PalTable__HlPal(me, me->curr[0], -1);
-        PalTable__HlPal(me, me->curr[1], s_fg_color);
+        HlPal(curr[0], -1);
+        HlPal(curr[1], s_fg_color);
     }
 
-    PalTable__DrawStatus(me, false);
+    DrawStatus(false);
 
     Cursor_Show();
 }
 
-static void PalTable__SetCurr(PalTable *me, int which, int curr)
+void PalTable::SetCurr(int which, int curr)
 {
     bool redraw = which < 0;
 
     if (redraw)
     {
-        which = me->active;
-        curr = me->curr[which];
+        which = active;
+        curr = this->curr[which];
     }
-    else if (curr == me->curr[which] || curr < 0)
+    else if (curr == this->curr[which] || curr < 0)
     {
         return;
     }
 
     Cursor_Hide();
 
-    PalTable__HlPal(me, me->curr[0], s_bg_color);
-    PalTable__HlPal(me, me->curr[1], s_bg_color);
-    PalTable__HlPal(me, me->top,     s_bg_color);
-    PalTable__HlPal(me, me->bottom,  s_bg_color);
+    HlPal(this->curr[0], s_bg_color);
+    HlPal(this->curr[1], s_bg_color);
+    HlPal(top, s_bg_color);
+    HlPal(bottom, s_bg_color);
 
-    if (me->freestyle)
+    if (freestyle)
     {
-        me->curr[which] = curr;
+        this->curr[which] = curr;
 
-        PalTable__CalcTopBottom(me);
+        CalcTopBottom();
 
-        PalTable__HlPal(me, me->top,    -1);
-        PalTable__HlPal(me, me->bottom, -1);
-        PalTable__HlPal(me, me->curr[me->active], s_fg_color);
+        HlPal(top, -1);
+        HlPal(bottom, -1);
+        HlPal(this->curr[active], s_fg_color);
 
-        me->rgb[which]->set_rgb(me->curr[which], &me->fs_color);
-        me->rgb[which]->update();
+        rgb[which]->set_rgb(this->curr[which], &fs_color);
+        rgb[which]->update();
 
-        PalTable__UpdateDAC(me);
+        UpdateDAC();
 
         Cursor_Show();
 
         return;
     }
 
-    me->curr[which] = curr;
+    this->curr[which] = curr;
 
-    if (me->curr[0] != me->curr[1])
+    if (this->curr[0] != this->curr[1])
     {
-        PalTable__HlPal(me, me->curr[me->active == 0?1:0], -1);
+        HlPal(this->curr[active == 0 ? 1 : 0], -1);
     }
-    PalTable__HlPal(me, me->curr[me->active], s_fg_color);
+    HlPal(this->curr[active], s_fg_color);
 
-    me->rgb[which]->set_rgb(me->curr[which], &(me->pal[me->curr[which]]));
+    rgb[which]->set_rgb(this->curr[which], &(pal[this->curr[which]]));
 
     if (redraw)
     {
         int other = (which == 0) ? 1 : 0;
-        me->rgb[other]->set_rgb(me->curr[other], &(me->pal[me->curr[other]]));
-        me->rgb[0]->update();
-        me->rgb[1]->update();
+        rgb[other]->set_rgb(this->curr[other], &(pal[this->curr[other]]));
+        rgb[0]->update();
+        rgb[1]->update();
     }
     else
     {
-        me->rgb[which]->update();
+        rgb[which]->update();
     }
 
-    if (me->exclude)
+    if (exclude)
     {
-        PalTable__UpdateDAC(me);
+        UpdateDAC();
     }
 
     Cursor_Show();
 
-    me->curr_changed = false;
+    curr_changed = false;
 }
 
-static void PalTable__SaveRect(PalTable *me)
+void PalTable::SaveRect()
 {
-    int const width = PalTable_PALX + me->csize*16 + 1 + 1;
-    int const depth = PalTable_PALY + me->csize*16 + 1 + 1;
+    int const width = PalTable_PALX + csize * 16 + 1 + 1;
+    int const depth = PalTable_PALY + csize * 16 + 1 + 1;
 
-    me->saved_pixels.resize(width*depth);
+    saved_pixels.resize(width * depth);
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        getrow(me->x, me->y+yoff, width, &me->saved_pixels[yoff*width]);
-        hline(me->x, me->y+yoff, width, s_bg_color);
+        getrow(x, y + yoff, width, &saved_pixels[yoff * width]);
+        hline(x, y + yoff, width, s_bg_color);
     }
     Cursor_Show();
 }
 
-static void PalTable__RestoreRect(PalTable *me)
+void PalTable::RestoreRect()
 {
-    int width = PalTable_PALX + me->csize * 16 + 1 + 1;
-    int depth = PalTable_PALY + me->csize * 16 + 1 + 1;
-
-    if (me->hidden)
+    if (hidden)
     {
         return;
     }
 
+    int width = PalTable_PALX + csize * 16 + 1 + 1;
+    int depth = PalTable_PALY + csize * 16 + 1 + 1;
+
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        putrow(me->x, me->y+yoff, width, &me->saved_pixels[yoff*width]);
+        putrow(x, y + yoff, width, &saved_pixels[yoff * width]);
     }
     Cursor_Show();
 }
 
-static void PalTable__SetPos(PalTable *me, int x, int y)
+void PalTable::SetPos(int x, int y)
 {
-    int width = PalTable_PALX + me->csize*16 + 1 + 1;
+    int width = PalTable_PALX + csize * 16 + 1 + 1;
 
-    me->x = x;
-    me->y = y;
+    this->x = x;
+    this->y = y;
 
-    me->rgb[0]->set_pos(x+2, y+2);
-    me->rgb[1]->set_pos(x+width-2-RGBEditor_WIDTH, y+2);
+    rgb[0]->set_pos(x + 2, y + 2);
+    rgb[1]->set_pos(x + width - 2 - RGBEditor_WIDTH, y + 2);
 }
 
-static void PalTable__SetCSize(PalTable *me, int csize)
+void PalTable::SetCSize(int csize)
 {
-    me->csize = csize;
-    PalTable__SetPos(me, me->x, me->y);
+    this->csize = csize;
+    SetPos(x, y);
 }
 
-static int PalTable__GetCursorColor(PalTable *me)
+int PalTable::GetCursorColor() const
 {
     int x = Cursor_GetX();
     int y = Cursor_GetY();
@@ -1903,28 +1778,29 @@ static int PalTable__GetCursorColor(PalTable *me)
 
     if (is_reserved(color))
     {
-        if (is_in_box(x, y, me->x, me->y, 1+(me->csize*16)+1+1, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1))
+        if (is_in_box(x, y, this->x, this->y, 1 + (csize * 16) + 1 + 1,
+                2 + RGBEditor_DEPTH + 2 + (csize * 16) + 1 + 1))
         {
             // is the cursor over the editor?
-            x -= me->x + PalTable_PALX;
-            y -= me->y + PalTable_PALY;
-            int size = me->csize;
+            x -= this->x + PalTable_PALX;
+            y -= this->y + PalTable_PALY;
+            int size = csize;
 
-            if (x < 0 || y < 0 || x > size*16 || y > size*16)
+            if (x < 0 || y < 0 || x > size * 16 || y > size * 16)
             {
                 return -1;
             }
 
-            if (x == size*16)
+            if (x == size * 16)
             {
                 --x;
             }
-            if (y == size*16)
+            if (y == size * 16)
             {
                 --y;
             }
 
-            return (y/size)*16 + x/size;
+            return (y / size) * 16 + x / size;
         }
         else
         {
@@ -1935,9 +1811,9 @@ static int PalTable__GetCursorColor(PalTable *me)
     return color;
 }
 
-static void PalTable__DoCurs(PalTable *me, int key)
+void PalTable::DoCurs(int key)
 {
-    bool done  = false;
+    bool done = false;
     bool first = true;
     int xoff = 0;
     int yoff = 0;
@@ -1947,25 +1823,25 @@ static void PalTable__DoCurs(PalTable *me, int key)
         switch (key)
         {
         case ID_KEY_CTL_RIGHT_ARROW:
-            xoff += CURS_INC*4;
+            xoff += CURS_INC * 4;
             break;
         case ID_KEY_RIGHT_ARROW:
             xoff += CURS_INC;
             break;
         case ID_KEY_CTL_LEFT_ARROW:
-            xoff -= CURS_INC*4;
+            xoff -= CURS_INC * 4;
             break;
         case ID_KEY_LEFT_ARROW:
             xoff -= CURS_INC;
             break;
         case ID_KEY_CTL_DOWN_ARROW:
-            yoff += CURS_INC*4;
+            yoff += CURS_INC * 4;
             break;
         case ID_KEY_DOWN_ARROW:
             yoff += CURS_INC;
             break;
         case ID_KEY_CTL_UP_ARROW:
-            yoff -= CURS_INC*4;
+            yoff -= CURS_INC * 4;
             break;
         case ID_KEY_UP_ARROW:
             yoff -= CURS_INC;
@@ -1979,73 +1855,58 @@ static void PalTable__DoCurs(PalTable *me, int key)
         {
             if (!first)
             {
-                driver_get_key();       // delete key from buffer
+                driver_get_key(); // delete key from buffer
             }
             else
             {
                 first = false;
             }
-            key = driver_key_pressed();   // peek at the next one...
+            key = driver_key_pressed(); // peek at the next one...
         }
     }
 
     Cursor_Move(xoff, yoff);
 
-    if (me->auto_select)
+    if (auto_select)
     {
-        PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
+        SetCurr(active, GetCursorColor());
     }
 }
 
-static void PalTable__change(RGBEditor *rgb, void *info)
+void PalTable::Rotate(int dir, int lo, int hi)
 {
-    PalTable *me = (PalTable *)info;
-    int       pnum = me->curr[me->active];
+    rotatepal(pal, dir, lo, hi);
 
-    if (me->freestyle)
-    {
-        me->fs_color = rgb->get_rgb();
-        PalTable__UpdateDAC(me);
-        return;
-    }
+    Cursor_Hide();
 
-    if (!me->curr_changed)
-    {
-        PalTable__SaveUndoData(me, pnum, pnum);
-        me->curr_changed = true;
-    }
+    // update the DAC.
 
-    me->pal[pnum] = rgb->get_rgb();
+    UpdateDAC();
 
-    if (me->curr[0] == me->curr[1])
-    {
-        int      other = me->active == 0 ? 1 : 0;
-        PALENTRY color;
+    // update the editors.
 
-        color = me->rgb[me->active]->get_rgb();
-        me->rgb[other]->set_rgb(me->curr[other], &color);
+    rgb[0]->set_rgb(curr[0], &(pal[curr[0]]));
+    rgb[1]->set_rgb(curr[1], &(pal[curr[1]]));
+    rgb[0]->update();
+    rgb[1]->update();
 
-        Cursor_Hide();
-        me->rgb[other]->update();
-        Cursor_Show();
-    }
-
+    Cursor_Show();
 }
 
-static void PalTable__UpdateDAC(PalTable *me)
+void PalTable::UpdateDAC()
 {
-    if (me->exclude)
+    if (exclude)
     {
-        std::memset(g_dac_box, 0, 256*3);
-        if (me->exclude == 1)
+        std::memset(g_dac_box, 0, 256 * 3);
+        if (exclude == 1)
         {
-            int a = me->curr[me->active];
-            std::memmove(g_dac_box[a], &me->pal[a], 3);
+            int a = curr[active];
+            std::memmove(g_dac_box[a], &pal[a], 3);
         }
         else
         {
-            int a = me->curr[0];
-            int b = me->curr[1];
+            int a = curr[0];
+            int b = curr[1];
 
             if (a > b)
             {
@@ -2054,122 +1915,305 @@ static void PalTable__UpdateDAC(PalTable *me)
                 b = t;
             }
 
-            std::memmove(g_dac_box[a], &me->pal[a], 3*(1+(b-a)));
+            std::memmove(g_dac_box[a], &pal[a], 3 * (1 + (b - a)));
         }
     }
     else
     {
-        std::memmove(g_dac_box[0], me->pal, 3*g_colors);
+        std::memmove(g_dac_box[0], pal, 3 * g_colors);
 
-        if (me->freestyle)
+        if (freestyle)
         {
-            PalTable__PutBand(me, (PALENTRY *)g_dac_box);   // apply band to g_dac_box
+            PutBand((PALENTRY *) g_dac_box); // apply band to g_dac_box
         }
     }
 
-    if (!me->hidden)
+    if (!hidden)
     {
         if (s_inverse)
         {
-            std::memset(g_dac_box[s_fg_color], 0, 3);         // g_dac_box[fg] = (0,0,0)
-            std::memset(g_dac_box[s_bg_color], 48, 3);        // g_dac_box[bg] = (48,48,48)
+            std::memset(g_dac_box[s_fg_color], 0, 3);  // g_dac_box[fg] = (0,0,0)
+            std::memset(g_dac_box[s_bg_color], 48, 3); // g_dac_box[bg] = (48,48,48)
         }
         else
         {
-            std::memset(g_dac_box[s_bg_color], 0, 3);         // g_dac_box[bg] = (0,0,0)
-            std::memset(g_dac_box[s_fg_color], 48, 3);        // g_dac_box[fg] = (48,48,48)
+            std::memset(g_dac_box[s_bg_color], 0, 3);  // g_dac_box[bg] = (0,0,0)
+            std::memset(g_dac_box[s_fg_color], 48, 3); // g_dac_box[fg] = (48,48,48)
         }
     }
 
     spindac(0, 1);
 }
 
-static void PalTable__Rotate(PalTable *me, int dir, int lo, int hi)
+void PalTable::SaveUndoData(int first, int last)
 {
+    if (undo_file == nullptr)
+    {
+        return;
+    }
 
-    rotatepal(me->pal, dir, lo, hi);
+    int num;
 
-    Cursor_Hide();
+    num = (last - first) + 1;
+    std::fseek(undo_file, 0, SEEK_CUR);
+    if (num == 1)
+    {
+        putc(UNDO_DATA_SINGLE, undo_file);
+        putc(first, undo_file);
+        std::fwrite(pal + first, 3, 1, undo_file);
+        putw(1 + 1 + 3 + sizeof(int), undo_file);
+    }
+    else
+    {
+        putc(UNDO_DATA, undo_file);
+        putc(first, undo_file);
+        putc(last, undo_file);
+        std::fwrite(pal + first, 3, num, undo_file);
+        putw(1 + 2 + (num * 3) + sizeof(int), undo_file);
+    }
 
-    // update the DAC.
-
-    PalTable__UpdateDAC(me);
-
-    // update the editors.
-
-    me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
-    me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
-    me->rgb[0]->update();
-    me->rgb[1]->update();
-
-    Cursor_Show();
+    num_redo = 0;
 }
 
-static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
+void PalTable::SaveUndoRotate(int dir, int first, int last)
 {
-    PalTable *me = (PalTable *)info;
+    if (undo_file == nullptr)
+    {
+        return;
+    }
 
+    std::fseek(undo_file, 0, SEEK_CUR);
+    putc(UNDO_ROTATE, undo_file);
+    putc(first, undo_file);
+    putc(last, undo_file);
+    putw(dir, undo_file);
+    putw(1 + 2 + sizeof(int), undo_file);
+
+    num_redo = 0;
+}
+
+void PalTable::UndoProcess(int delta)
+{
+    // delta = -1 for undo, +1 for redo
+    int cmd = getc(undo_file);
+
+    switch (cmd)
+    {
+    case UNDO_DATA:
+    case UNDO_DATA_SINGLE:
+    {
+        int first;
+        int last;
+        int num;
+        PALENTRY temp[256];
+
+        if (cmd == UNDO_DATA)
+        {
+            first = (unsigned char) getc(undo_file);
+            last = (unsigned char) getc(undo_file);
+        }
+        else // UNDO_DATA_SINGLE
+        {
+            last = (unsigned char) getc(undo_file);
+            first = last;
+        }
+
+        num = (last - first) + 1;
+        if (std::fread(temp, 3, num, undo_file) != num)
+        {
+            throw std::system_error(errno, std::system_category(), "UndoProcess  failed fread");
+        }
+
+        std::fseek(undo_file, -(num * 3), SEEK_CUR); // go to start of undo/redo data
+        std::fwrite(pal + first, 3, num, undo_file); // write redo/undo data
+
+        std::memmove(pal + first, temp, num * 3);
+
+        UpdateDAC();
+
+        rgb[0]->set_rgb(curr[0], &(pal[curr[0]]));
+        rgb[1]->set_rgb(curr[1], &(pal[curr[1]]));
+        rgb[0]->update();
+        rgb[1]->update();
+        break;
+    }
+
+    case UNDO_ROTATE:
+    {
+        int first = (unsigned char) getc(undo_file);
+        int last = (unsigned char) getc(undo_file);
+        int dir = getw(undo_file);
+        Rotate(delta * dir, first, last);
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    std::fseek(undo_file, 0, SEEK_CUR); // to put us in read mode
+    getw(undo_file);                    // read size
+}
+
+void PalTable::Undo()
+{
+    int size;
+    long pos;
+
+    if (ftell(undo_file) <= 0) // at beginning of file?
+    {
+        //   nothing to undo -- exit
+        return;
+    }
+
+    std::fseek(undo_file, -(int) sizeof(int), SEEK_CUR); // go back to get size
+
+    size = getw(undo_file);
+    std::fseek(undo_file, -size, SEEK_CUR); // go to start of undo
+
+    pos = ftell(undo_file);
+
+    UndoProcess(-1);
+
+    std::fseek(undo_file, pos, SEEK_SET); // go to start of me block
+
+    ++num_redo;
+}
+
+void PalTable::Redo()
+{
+    if (num_redo <= 0)
+    {
+        return;
+    }
+
+    std::fseek(undo_file, 0, SEEK_CUR); // to make sure we are in "read" mode
+    UndoProcess(1);
+
+    --num_redo;
+}
+
+void PalTable::MkDefaultPalettes()
+{
+    for (int i = 0; i < 8; i++) // copy original palette to save areas
+    {
+        std::memcpy(save_pal[i], pal, 256 * sizeof(PALENTRY));
+    }
+}
+
+void PalTable::Hide(RGBEditor *rgb, bool hidden)
+{
+    if (hidden)
+    {
+        RestoreRect();
+        SetHidden(true);
+        s_reserve_colors = false;
+        if (auto_select)
+        {
+            SetCurr(active, GetCursorColor());
+        }
+    }
+    else
+    {
+        SetHidden(false);
+        s_reserve_colors = true;
+        if (stored_at == NOWHERE) // do we need to save screen?
+        {
+            SaveRect();
+        }
+        Draw();
+        if (auto_select)
+        {
+            SetCurr(active, GetCursorColor());
+        }
+        rgb->set_done(true);
+    }
+}
+
+void PalTable::CalcTopBottom()
+{
+    if (curr[active] < bandwidth)
+    {
+        bottom = 0;
+    }
+    else
+    {
+        bottom = (curr[active]) - bandwidth;
+    }
+
+    if (curr[active] > (255 - bandwidth))
+    {
+        top = 255;
+    }
+    else
+    {
+        top = (curr[active]) + bandwidth;
+    }
+}
+
+void PalTable::other_key(int key, RGBEditor *rgb)
+{
     switch (key)
     {
-    case '\\':    // move/resize
+    case '\\': // move/resize
     {
-        if (me->hidden)
+        if (hidden)
         {
-            break;           // cannot move a hidden pal
+            break; // cannot move a hidden pal
         }
         Cursor_Hide();
-        PalTable__RestoreRect(me);
-        me->movebox->set_pos(me->x, me->y);
-        me->movebox->set_csize(me->csize);
-        if (me->movebox->process())
+        RestoreRect();
+        movebox->set_pos(x, y);
+        movebox->set_csize(csize);
+        if (movebox->process())
         {
-            if (me->movebox->should_hide())
+            if (movebox->should_hide())
             {
-                PalTable_SetHidden(me, true);
+                SetHidden(true);
             }
-            else if (me->movebox->moved())
+            else if (movebox->moved())
             {
-                PalTable__SetPos(me, me->movebox->x(), me->movebox->y());
-                PalTable__SetCSize(me, me->movebox->csize());
-                PalTable__SaveRect(me);
+                SetPos(movebox->x(), movebox->y());
+                SetCSize(movebox->csize());
+                SaveRect();
             }
         }
-        PalTable__Draw(me);
+        Draw();
         Cursor_Show();
 
-        me->rgb[me->active]->set_done(true);
+        this->rgb[active]->set_done(true);
 
-        if (me->auto_select)
+        if (auto_select)
         {
-            PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
+            SetCurr(active, GetCursorColor());
         }
         break;
     }
 
-    case 'Y':    // exclude range
+    case 'Y': // exclude range
     case 'y':
-        if (me->exclude == 2)
+        if (exclude == 2)
         {
-            me->exclude = 0;
+            exclude = 0;
         }
         else
         {
-            me->exclude = 2;
+            exclude = 2;
         }
-        PalTable__UpdateDAC(me);
+        UpdateDAC();
         break;
 
     case 'X':
-    case 'x':     // exclude current entry
-        if (me->exclude == 1)
+    case 'x': // exclude current entry
+        if (exclude == 1)
         {
-            me->exclude = 0;
+            exclude = 0;
         }
         else
         {
-            me->exclude = 1;
+            exclude = 1;
         }
-        PalTable__UpdateDAC(me);
+        UpdateDAC();
         break;
 
     case ID_KEY_RIGHT_ARROW:
@@ -2180,75 +2224,75 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case ID_KEY_CTL_LEFT_ARROW:
     case ID_KEY_CTL_UP_ARROW:
     case ID_KEY_CTL_DOWN_ARROW:
-        PalTable__DoCurs(me, key);
+        DoCurs(key);
         break;
 
     case ID_KEY_ESC:
-        me->done = true;
+        done = true;
         rgb->set_done(true);
         break;
 
-    case ' ':     // select the other palette register
-        me->active = (me->active == 0) ? 1 : 0;
-        if (me->auto_select)
+    case ' ': // select the other palette register
+        active = (active == 0) ? 1 : 0;
+        if (auto_select)
         {
-            PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
+            SetCurr(active, GetCursorColor());
         }
         else
         {
-            PalTable__SetCurr(me, -1, 0);
+            SetCurr(-1, 0);
         }
 
-        if (me->exclude || me->freestyle)
+        if (exclude || freestyle)
         {
-            PalTable__UpdateDAC(me);
+            UpdateDAC();
         }
 
         rgb->set_done(true);
         break;
 
-    case ID_KEY_ENTER:    // set register to color under cursor.  useful when not
-    case ID_KEY_ENTER_2:  // in auto_select mode
+    case ID_KEY_ENTER:   // set register to color under cursor.  useful when not
+    case ID_KEY_ENTER_2: // in auto_select mode
 
-        if (me->freestyle)
+        if (freestyle)
         {
-            PalTable__SaveUndoData(me, me->bottom, me->top);
-            PalTable__PutBand(me, me->pal);
+            SaveUndoData(bottom, top);
+            PutBand(pal);
         }
 
-        PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
+        SetCurr(active, GetCursorColor());
 
-        if (me->exclude || me->freestyle)
+        if (exclude || freestyle)
         {
-            PalTable__UpdateDAC(me);
+            UpdateDAC();
         }
 
         rgb->set_done(true);
         break;
 
-    case 'D':    // copy (Duplicate?) color in inactive to color in active
+    case 'D': // copy (Duplicate?) color in inactive to color in active
     case 'd':
     {
-        int a = me->active;
+        int a = active;
         int b = (a == 0) ? 1 : 0;
         PALENTRY t;
 
-        t = me->rgb[b]->get_rgb();
+        t = this->rgb[b]->get_rgb();
         Cursor_Hide();
 
-        me->rgb[a]->set_rgb(me->curr[a], &t);
-        me->rgb[a]->update();
-        PalTable__change(me->rgb[a], me);
-        PalTable__UpdateDAC(me);
+        this->rgb[a]->set_rgb(curr[a], &t);
+        this->rgb[a]->update();
+        change_cb(this->rgb[a], this);
+        UpdateDAC();
 
         Cursor_Show();
         break;
     }
 
-    case '=':    // create a shade range between the two entries
+    case '=': // create a shade range between the two entries
     {
-        int a = me->curr[0];
-        int b = me->curr[1];
+        int a = curr[0];
+        int b = curr[1];
 
         if (a > b)
         {
@@ -2257,21 +2301,21 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             b = t;
         }
 
-        PalTable__SaveUndoData(me, a, b);
+        SaveUndoData(a, b);
 
         if (a != b)
         {
-            mkpalrange(&me->pal[a], &me->pal[b], &me->pal[a], b-a, 1);
-            PalTable__UpdateDAC(me);
+            mkpalrange(&pal[a], &pal[b], &pal[a], b - a, 1);
+            UpdateDAC();
         }
 
         break;
     }
 
-    case '!':    // swap r<->g
+    case '!': // swap r<->g
     {
-        int a = me->curr[0];
-        int b = me->curr[1];
+        int a = curr[0];
+        int b = curr[1];
 
         if (a > b)
         {
@@ -2280,24 +2324,23 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             b = t;
         }
 
-        PalTable__SaveUndoData(me, a, b);
+        SaveUndoData(a, b);
 
         if (a != b)
         {
-            rotcolrg(&me->pal[a], b-a);
-            PalTable__UpdateDAC(me);
+            rotcolrg(&pal[a], b - a);
+            UpdateDAC();
         }
-
 
         break;
     }
 
-    case '@':    // swap g<->b
-    case '"':    // UK keyboards
-    case 151:    // French keyboards
+    case '@': // swap g<->b
+    case '"': // UK keyboards
+    case 151: // French keyboards
     {
-        int a = me->curr[0];
-        int b = me->curr[1];
+        int a = curr[0];
+        int b = curr[1];
 
         if (a > b)
         {
@@ -2306,23 +2349,23 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             b = t;
         }
 
-        PalTable__SaveUndoData(me, a, b);
+        SaveUndoData(a, b);
 
         if (a != b)
         {
-            rotcolgb(&me->pal[a], b-a);
-            PalTable__UpdateDAC(me);
+            rotcolgb(&pal[a], b - a);
+            UpdateDAC();
         }
 
         break;
     }
 
-    case '#':    // swap r<->b
-    case 156:    // UK keyboards (pound sign)
-    case '$':    // For French keyboards
+    case '#': // swap r<->b
+    case 156: // UK keyboards (pound sign)
+    case '$': // For French keyboards
     {
-        int a = me->curr[0];
-        int b = me->curr[1];
+        int a = curr[0];
+        int b = curr[1];
 
         if (a > b)
         {
@@ -2331,30 +2374,29 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             b = t;
         }
 
-        PalTable__SaveUndoData(me, a, b);
+        SaveUndoData(a, b);
 
         if (a != b)
         {
-            rotcolbr(&me->pal[a], b-a);
-            PalTable__UpdateDAC(me);
+            rotcolbr(&pal[a], b - a);
+            UpdateDAC();
         }
 
         break;
     }
-
 
     case 'T':
-    case 't':   // s(T)ripe mode
+    case 't': // s(T)ripe mode
     {
         Cursor_Hide();
-        PalTable__DrawStatus(me, true);
+        DrawStatus(true);
         const int key2 = getakeynohelp();
         Cursor_Show();
 
         if (key2 >= '1' && key2 <= '9')
         {
-            int a = me->curr[0];
-            int b = me->curr[1];
+            int a = curr[0];
+            int b = curr[1];
 
             if (a > b)
             {
@@ -2363,24 +2405,24 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
                 b = t;
             }
 
-            PalTable__SaveUndoData(me, a, b);
+            SaveUndoData(a, b);
 
             if (a != b)
             {
-                mkpalrange(&me->pal[a], &me->pal[b], &me->pal[a], b-a, key2-'0');
-                PalTable__UpdateDAC(me);
+                mkpalrange(&pal[a], &pal[b], &pal[a], b - a, key2 - '0');
+                UpdateDAC();
             }
         }
 
         break;
     }
 
-    case 'M':   // set gamma
+    case 'M': // set gamma
     case 'm':
     {
         int i;
         char buf[20];
-        std::snprintf(buf, std::size(buf), "%.3f", 1./s_gamma_val);
+        std::snprintf(buf, std::size(buf), "%.3f", 1. / s_gamma_val);
         driver_stack_screen();
         i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();
@@ -2391,19 +2433,19 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             {
                 s_gamma_val = 0.0000000001F;
             }
-            s_gamma_val = (float)(1.0/s_gamma_val);
+            s_gamma_val = (float) (1.0 / s_gamma_val);
         }
     }
     break;
-    case 'A':   // toggle auto-select mode
+    case 'A': // toggle auto-select mode
     case 'a':
-        me->auto_select = !me->auto_select;
-        if (me->auto_select)
+        auto_select = !auto_select;
+        if (auto_select)
         {
-            PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
-            if (me->exclude)
+            SetCurr(active, GetCursorColor());
+            if (exclude)
             {
-                PalTable__UpdateDAC(me);
+                UpdateDAC();
             }
         }
         break;
@@ -2411,35 +2453,35 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'H':
     case 'h': // toggle hide/display of palette editor
         Cursor_Hide();
-        PalTable_Hide(me, rgb, !me->hidden);
+        Hide(rgb, !hidden);
         Cursor_Show();
         break;
 
-    case '.':   // rotate once
+    case '.': // rotate once
     case ',':
     {
         int dir = (key == '.') ? 1 : -1;
 
-        PalTable__SaveUndoRotate(me, dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
-        PalTable__Rotate(me, dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
+        SaveUndoRotate(dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
+        Rotate(dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
         break;
     }
 
-    case '>':   // continuous rotation (until a key is pressed)
+    case '>': // continuous rotation (until a key is pressed)
     case '<':
     {
-        int  dir;
+        int dir;
         long tick;
-        int  diff = 0;
+        int diff = 0;
 
         Cursor_Hide();
 
-        if (!me->hidden)
+        if (!hidden)
         {
-            me->rgb[0]->blank_sample_box();
-            me->rgb[1]->blank_sample_box();
-            me->rgb[0]->set_hidden(true);
-            me->rgb[1]->set_hidden(true);
+            this->rgb[0]->blank_sample_box();
+            this->rgb[1]->blank_sample_box();
+            this->rgb[0]->set_hidden(true);
+            this->rgb[1]->set_hidden(true);
         }
 
         do
@@ -2449,78 +2491,76 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             while (!driver_key_pressed())
             {
                 tick = readticker();
-                PalTable__Rotate(me, dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
+                Rotate(dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
                 diff += dir;
-                while (readticker() == tick)    // wait until a tick passes
+                while (readticker() == tick) // wait until a tick passes
                 {
                 }
             }
 
             key = driver_get_key();
-        }
-        while (key == '<' || key == '>');
+        } while (key == '<' || key == '>');
 
-        if (!me->hidden)
+        if (!hidden)
         {
-            me->rgb[0]->set_hidden(false);
-            me->rgb[1]->set_hidden(false);
-            me->rgb[0]->update();
-            me->rgb[1]->update();
+            this->rgb[0]->set_hidden(false);
+            this->rgb[1]->set_hidden(false);
+            this->rgb[0]->update();
+            this->rgb[1]->update();
         }
 
         if (diff != 0)
         {
-            PalTable__SaveUndoRotate(me, diff, g_color_cycle_range_lo, g_color_cycle_range_hi);
+            SaveUndoRotate(diff, g_color_cycle_range_lo, g_color_cycle_range_hi);
         }
 
         Cursor_Show();
         break;
     }
 
-    case 'I':     // invert the fg & bg colors
+    case 'I': // invert the fg & bg colors
     case 'i':
         s_inverse = !s_inverse;
-        PalTable__UpdateDAC(me);
+        UpdateDAC();
         break;
 
     case 'V':
-    case 'v':  // set the reserved colors to the editor colors
-        if (me->curr[0] >= g_colors || me->curr[1] >= g_colors ||
-                me->curr[0] == me->curr[1])
+    case 'v': // set the reserved colors to the editor colors
+        if (curr[0] >= g_colors || curr[1] >= g_colors || curr[0] == curr[1])
         {
             driver_buzzer(buzzer_codes::PROBLEM);
             break;
         }
 
-        s_fg_color = (BYTE)me->curr[0];
-        s_bg_color = (BYTE)me->curr[1];
+        s_fg_color = (BYTE) curr[0];
+        s_bg_color = (BYTE) curr[1];
 
-        if (!me->hidden)
+        if (!hidden)
         {
             Cursor_Hide();
-            PalTable__UpdateDAC(me);
-            PalTable__Draw(me);
+            UpdateDAC();
+            Draw();
             Cursor_Show();
         }
 
-        me->rgb[me->active]->set_done(true);
+        this->rgb[active]->set_done(true);
         break;
 
-    case 'O':    // set rotate_lo and rotate_hi to editors
+    case 'O': // set rotate_lo and rotate_hi to editors
     case 'o':
-        if (me->curr[0] > me->curr[1])
+        if (curr[0] > curr[1])
         {
-            g_color_cycle_range_lo = me->curr[1];
-            g_color_cycle_range_hi = me->curr[0];
+            g_color_cycle_range_lo = curr[1];
+            g_color_cycle_range_hi = curr[0];
         }
         else
         {
-            g_color_cycle_range_lo = me->curr[0];
-            g_color_cycle_range_hi = me->curr[1];
+            g_color_cycle_range_lo = curr[0];
+            g_color_cycle_range_hi = curr[1];
         }
         break;
 
-    case ID_KEY_F2:    // restore a palette
+    case ID_KEY_F2: // restore a palette
     case ID_KEY_F3:
     case ID_KEY_F4:
     case ID_KEY_F5:
@@ -2533,17 +2573,17 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         Cursor_Hide();
 
-        PalTable__SaveUndoData(me, 0, 255);
-        std::memcpy(me->pal, me->save_pal[which], 256*sizeof(PALENTRY));
-        PalTable__UpdateDAC(me);
+        SaveUndoData(0, 255);
+        std::memcpy(pal, save_pal[which], 256 * sizeof(PALENTRY));
+        UpdateDAC();
 
-        PalTable__SetCurr(me, -1, 0);
+        SetCurr(-1, 0);
         Cursor_Show();
-        me->rgb[me->active]->set_done(true);
+        this->rgb[active]->set_done(true);
         break;
     }
 
-    case ID_KEY_SF2:   // save a palette
+    case ID_KEY_SF2: // save a palette
     case ID_KEY_SF3:
     case ID_KEY_SF4:
     case ID_KEY_SF5:
@@ -2553,124 +2593,124 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case ID_KEY_SF9:
     {
         int which = key - ID_KEY_SF2;
-        std::memcpy(me->save_pal[which], me->pal, 256*sizeof(PALENTRY));
+        std::memcpy(save_pal[which], pal, 256 * sizeof(PALENTRY));
         break;
     }
 
-    case 'L':     // load a .map palette
+    case 'L': // load a .map palette
     case 'l':
     {
-        PalTable__SaveUndoData(me, 0, 255);
+        SaveUndoData(0, 255);
 
         load_palette();
 #ifndef XFRACT
-        getpalrange(0, g_colors, me->pal);
+        getpalrange(0, g_colors, pal);
 #else
-        getpalrange(0, 256, me->pal);
+        getpalrange(0, 256, pal);
 #endif
-        PalTable__UpdateDAC(me);
-        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
-        me->rgb[0]->update();
-        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
-        me->rgb[1]->update();
+        UpdateDAC();
+        this->rgb[0]->set_rgb(curr[0], &(pal[curr[0]]));
+        this->rgb[0]->update();
+        this->rgb[1]->set_rgb(curr[1], &(pal[curr[1]]));
+        this->rgb[1]->update();
         break;
     }
 
-    case 'S':     // save a .map palette
+    case 'S': // save a .map palette
     case 's':
     {
 #ifndef XFRACT
-        setpalrange(0, g_colors, me->pal);
+        setpalrange(0, g_colors, pal);
 #else
-        setpalrange(0, 256, me->pal);
+        setpalrange(0, 256, pal);
 #endif
         save_palette();
-        PalTable__UpdateDAC(me);
+        UpdateDAC();
         break;
     }
 
-    case 'C':     // color cycling sub-mode
+    case 'C': // color cycling sub-mode
     case 'c':
     {
-        bool oldhidden = me->hidden;
+        bool oldhidden = hidden;
 
-        PalTable__SaveUndoData(me, 0, 255);
+        SaveUndoData(0, 255);
 
         Cursor_Hide();
         if (!oldhidden)
         {
-            PalTable_Hide(me, rgb, true);
+            Hide(rgb, true);
         }
-        setpalrange(0, g_colors, me->pal);
+        setpalrange(0, g_colors, pal);
         rotate(0);
-        getpalrange(0, g_colors, me->pal);
-        PalTable__UpdateDAC(me);
+        getpalrange(0, g_colors, pal);
+        UpdateDAC();
         if (!oldhidden)
         {
-            me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
-            me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
-            PalTable_Hide(me, rgb, false);
+            this->rgb[0]->set_rgb(curr[0], &(pal[curr[0]]));
+            this->rgb[1]->set_rgb(curr[1], &(pal[curr[1]]));
+            Hide(rgb, false);
         }
         Cursor_Show();
         break;
     }
 
     case 'F':
-    case 'f':    // toggle freestyle palette edit mode
-        me->freestyle = !me->freestyle;
+    case 'f': // toggle freestyle palette edit mode
+        freestyle = !freestyle;
 
-        PalTable__SetCurr(me, -1, 0);
+        SetCurr(-1, 0);
 
-        if (!me->freestyle)       // if turning off...
+        if (!freestyle) // if turning off...
         {
-            PalTable__UpdateDAC(me);
+            UpdateDAC();
         }
 
         break;
 
-    case ID_KEY_CTL_DEL:  // rt plus down
-        if (me->bandwidth >0)
+    case ID_KEY_CTL_DEL: // rt plus down
+        if (bandwidth > 0)
         {
-            me->bandwidth--;
+            bandwidth--;
         }
         else
         {
-            me->bandwidth = 0;
+            bandwidth = 0;
         }
-        PalTable__SetCurr(me, -1, 0);
+        SetCurr(-1, 0);
         break;
 
     case ID_KEY_CTL_INSERT: // rt plus up
-        if (me->bandwidth <255)
+        if (bandwidth < 255)
         {
-            me->bandwidth ++;
+            bandwidth++;
         }
         else
         {
-            me->bandwidth = 255;
+            bandwidth = 255;
         }
-        PalTable__SetCurr(me, -1, 0);
+        SetCurr(-1, 0);
         break;
 
-    case 'W':   // convert to greyscale
+    case 'W': // convert to greyscale
     case 'w':
     {
-        switch (me->exclude)
+        switch (exclude)
         {
-        case 0:   // normal mode.  convert all colors to grey scale
-            PalTable__SaveUndoData(me, 0, 255);
-            palrangetogrey(me->pal, 0, 256);
+        case 0: // normal mode.  convert all colors to grey scale
+            SaveUndoData(0, 255);
+            palrangetogrey(pal, 0, 256);
             break;
 
-        case 1:   // 'x' mode. convert current color to grey scale.
-            PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
-            palrangetogrey(me->pal, me->curr[me->active], 1);
+        case 1: // 'x' mode. convert current color to grey scale.
+            SaveUndoData(curr[active], curr[active]);
+            palrangetogrey(pal, curr[active], 1);
             break;
 
-        case 2:  // 'y' mode.  convert range between editors to grey.
+        case 2: // 'y' mode.  convert range between editors to grey.
         {
-            int a = me->curr[0];
-            int b = me->curr[1];
+            int a = curr[0];
+            int b = curr[1];
 
             if (a > b)
             {
@@ -2679,39 +2719,39 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
                 b = t;
             }
 
-            PalTable__SaveUndoData(me, a, b);
-            palrangetogrey(me->pal, a, 1+(b-a));
+            SaveUndoData(a, b);
+            palrangetogrey(pal, a, 1 + (b - a));
             break;
         }
         }
 
-        PalTable__UpdateDAC(me);
-        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
-        me->rgb[0]->update();
-        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
-        me->rgb[1]->update();
+        UpdateDAC();
+        this->rgb[0]->set_rgb(curr[0], &(pal[curr[0]]));
+        this->rgb[0]->update();
+        this->rgb[1]->set_rgb(curr[1], &(pal[curr[1]]));
+        this->rgb[1]->update();
         break;
     }
 
-    case 'N':   // convert to negative color
+    case 'N': // convert to negative color
     case 'n':
     {
-        switch (me->exclude)
+        switch (exclude)
         {
-        case 0:      // normal mode.  convert all colors to grey scale
-            PalTable__SaveUndoData(me, 0, 255);
-            palrangetonegative(me->pal, 0, 256);
+        case 0: // normal mode.  convert all colors to grey scale
+            SaveUndoData(0, 255);
+            palrangetonegative(pal, 0, 256);
             break;
 
-        case 1:      // 'x' mode. convert current color to grey scale.
-            PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
-            palrangetonegative(me->pal, me->curr[me->active], 1);
+        case 1: // 'x' mode. convert current color to grey scale.
+            SaveUndoData(curr[active], curr[active]);
+            palrangetonegative(pal, curr[active], 1);
             break;
 
-        case 2:  // 'y' mode.  convert range between editors to grey.
+        case 2: // 'y' mode.  convert range between editors to grey.
         {
-            int a = me->curr[0];
-            int b = me->curr[1];
+            int a = curr[0];
+            int b = curr[1];
 
             if (a > b)
             {
@@ -2720,78 +2760,146 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
                 b = t;
             }
 
-            PalTable__SaveUndoData(me, a, b);
-            palrangetonegative(me->pal, a, 1+(b-a));
+            SaveUndoData(a, b);
+            palrangetonegative(pal, a, 1 + (b - a));
             break;
         }
         }
 
-        PalTable__UpdateDAC(me);
-        me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
-        me->rgb[0]->update();
-        me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
-        me->rgb[1]->update();
+        UpdateDAC();
+        this->rgb[0]->set_rgb(curr[0], &(pal[curr[0]]));
+        this->rgb[0]->update();
+        this->rgb[1]->set_rgb(curr[1], &(pal[curr[1]]));
+        this->rgb[1]->update();
         break;
     }
 
-    case 'U':     // Undo
+    case 'U': // Undo
     case 'u':
-        PalTable__Undo(me);
+        Undo();
         break;
 
-    case 'e':    // Redo
+    case 'e': // Redo
     case 'E':
-        PalTable__Redo(me);
+        Redo();
         break;
 
     } // switch
-    PalTable__DrawStatus(me, false);
+    DrawStatus(false);
 }
 
-static void PalTable__MkDefaultPalettes(PalTable *me)  // creates default Fkey palettes
+void PalTable::PutBand(PALENTRY *pal)
 {
-    for (int i = 0; i < 8; i++) // copy original palette to save areas
+    int r;
+    int b;
+    int a;
+
+    // clip top and bottom values to stop them running off the end of the DAC
+
+    CalcTopBottom();
+
+    // put bands either side of current colour
+
+    a = curr[active];
+    b = bottom;
+    r = top;
+
+    pal[a] = fs_color;
+
+    if (r != a && a != b)
     {
-        std::memcpy(me->save_pal[i], me->pal, 256*sizeof(PALENTRY));
+        mkpalrange(&pal[a], &pal[r], &pal[a], r-a, 1);
+        mkpalrange(&pal[b], &pal[a], &pal[b], a-b, 1);
     }
+
 }
 
-static void PalTable_Construct(PalTable *me)
+void PalTable::SetHidden(bool hidden)
 {
-    int           csize;
+    this->hidden = hidden;
+    rgb[0]->set_hidden(hidden);
+    rgb[1]->set_hidden(hidden);
+    UpdateDAC();
+}
 
-    me->rgb[0] = new RGBEditor(0, 0, PalTable__other_key, PalTable__change, me);
-    me->rgb[1] = new RGBEditor(0, 0, PalTable__other_key, PalTable__change, me);
-    me->movebox = new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1);
-    me->active      = 0;
-    me->curr[0]     = 1;
-    me->curr[1]     = 1;
-    me->auto_select = true;
-    me->exclude     = 0;
-    me->hidden      = false;
-    me->stored_at   = NOWHERE;
-    me->fs_color.red   = 42;
-    me->fs_color.green = 42;
-    me->fs_color.blue  = 42;
-    me->freestyle      = false;
-    me->bandwidth      = 15;
-    me->top            = 255;
-    me->bottom         = 0 ;
-    me->undo_file    = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
-    me->curr_changed = false;
-    me->num_redo     = 0;
+void PalTable::change(RGBEditor *rgb)
+{
+    int       pnum = curr[active];
 
-    me->rgb[0]->set_rgb(me->curr[0], &me->pal[me->curr[0]]);
-    me->rgb[1]->set_rgb(me->curr[1], &me->pal[me->curr[0]]);
+    if (freestyle)
+    {
+        fs_color = rgb->get_rgb();
+        UpdateDAC();
+        return;
+    }
+
+    if (!curr_changed)
+    {
+        SaveUndoData(pnum, pnum);
+        curr_changed = true;
+    }
+
+    pal[pnum] = rgb->get_rgb();
+
+    if (curr[0] == curr[1])
+    {
+        int      other = active == 0 ? 1 : 0;
+        PALENTRY color;
+
+        color = this->rgb[active]->get_rgb();
+        this->rgb[other]->set_rgb(curr[other], &color);
+
+        Cursor_Hide();
+        this->rgb[other]->update();
+        Cursor_Show();
+    }
+
+}
+
+void PalTable::change_cb(RGBEditor *rgb, void *info)
+{
+    static_cast<PalTable *>(info)->change(rgb);
+}
+
+void PalTable::other_key_cb(int key, RGBEditor *rgb, void *info)
+{
+    static_cast<PalTable *>(info)->other_key(key, rgb);
+}
+
+PalTable::PalTable()
+{
+    rgb[0] = new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this);
+    rgb[1] = new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this);
+    movebox = new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1);
+    active      = 0;
+    curr[0]     = 1;
+    curr[1]     = 1;
+    auto_select = true;
+    exclude     = 0;
+    hidden      = false;
+    stored_at   = NOWHERE;
+    fs_color.red   = 42;
+    fs_color.green = 42;
+    fs_color.blue  = 42;
+    freestyle      = false;
+    bandwidth      = 15;
+    top            = 255;
+    bottom         = 0 ;
+    undo_file    = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
+    curr_changed = false;
+    num_redo     = 0;
+
+    rgb[0]->set_rgb(curr[0], &pal[curr[0]]);
+    rgb[1]->set_rgb(curr[1], &pal[curr[0]]);
 
     if (g_video_scroll)
     {
-        PalTable__SetPos(me, g_video_start_x, g_video_start_y);
+        SetPos(g_video_start_x, g_video_start_y);
         csize = ((g_vesa_y_res-(PalTable_PALY+1+1)) / 2) / 16;
     }
     else
     {
-        PalTable__SetPos(me, 0, 0);
+        SetPos(0, 0);
         csize = ((g_screen_y_dots-(PalTable_PALY+1+1)) / 2) / 16;
     }
 
@@ -2799,115 +2907,20 @@ static void PalTable_Construct(PalTable *me)
     {
         csize = CSIZE_MIN;
     }
-    PalTable__SetCSize(me, csize);
+    SetCSize(csize);
 }
 
-static void PalTable_SetHidden(PalTable *me, bool hidden)
+PalTable::~PalTable()
 {
-    me->hidden = hidden;
-    me->rgb[0]->set_hidden(hidden);
-    me->rgb[1]->set_hidden(hidden);
-    PalTable__UpdateDAC(me);
-}
-
-static void PalTable_Hide(PalTable *me, RGBEditor *rgb, bool hidden)
-{
-    if (hidden)
+    if (undo_file != nullptr)
     {
-        PalTable__RestoreRect(me);
-        PalTable_SetHidden(me, true);
-        s_reserve_colors = false;
-        if (me->auto_select)
-        {
-            PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
-        }
-    }
-    else
-    {
-        PalTable_SetHidden(me, false);
-        s_reserve_colors = true;
-        if (me->stored_at == NOWHERE)    // do we need to save screen?
-        {
-            PalTable__SaveRect(me);
-        }
-        PalTable__Draw(me);
-        if (me->auto_select)
-        {
-            PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
-        }
-        rgb->set_done(true);
-    }
-}
-
-static void PalTable_Destroy(PalTable *me)
-{
-    if (me->undo_file != nullptr)
-    {
-        std::fclose(me->undo_file);
+        std::fclose(undo_file);
         dir_remove(g_temp_dir.c_str(), s_undo_file);
     }
 
-    delete me->rgb[0];
-    delete me->rgb[1];
-    delete me->movebox;
-}
-
-static void PalTable_Process(PalTable *me)
-{
-    getpalrange(0, g_colors, me->pal);
-
-    // Make sure all palette entries are 0-63
-
-    for (int ctr = 0; ctr < 768; ctr++)
-    {
-        ((char *)me->pal)[ctr] &= 63;
-    }
-
-    PalTable__UpdateDAC(me);
-
-    me->rgb[0]->set_rgb(me->curr[0], &me->pal[me->curr[0]]);
-    me->rgb[1]->set_rgb(me->curr[1], &me->pal[me->curr[0]]);
-
-    if (!me->hidden)
-    {
-        me->movebox->set_pos(me->x, me->y);
-        me->movebox->set_csize(me->csize);
-        if (!me->movebox->process())
-        {
-            setpalrange(0, g_colors, me->pal);
-            return ;
-        }
-
-        PalTable__SetPos(me, me->movebox->x(), me->movebox->y());
-        PalTable__SetCSize(me, me->movebox->csize());
-
-        if (me->movebox->should_hide())
-        {
-            PalTable_SetHidden(me, true);
-            s_reserve_colors = false;
-        }
-        else
-        {
-            s_reserve_colors = true;
-            PalTable__SaveRect(me);
-            PalTable__Draw(me);
-        }
-    }
-
-    PalTable__SetCurr(me, me->active,          PalTable__GetCursorColor(me));
-    PalTable__SetCurr(me, (me->active == 1)?0:1, PalTable__GetCursorColor(me));
-    Cursor_Show();
-    PalTable__MkDefaultPalettes(me);
-    me->done = false;
-
-    while (!me->done)
-    {
-        me->rgb[me->active]->edit();
-    }
-
-    Cursor_Hide();
-    PalTable__RestoreRect(me);
-    setpalrange(0, g_colors, me->pal);
+    delete rgb[0];
+    delete rgb[1];
+    delete movebox;
 }
 
 void EditPalette()
@@ -2932,9 +2945,7 @@ void EditPalette()
 
     Cursor_Construct();
     PalTable pt;
-    PalTable_Construct(&pt);
-    PalTable_Process(&pt);
-    PalTable_Destroy(&pt);
+    pt.Process();
 
     g_line_buff.clear();
 }
