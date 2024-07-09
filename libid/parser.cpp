@@ -322,7 +322,6 @@ int g_load_index{};
 bool g_is_mandelbrot{true};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
-int InitStoPtr{};
 int InitOpPtr{};
 int g_last_init_op{};
 double g_fudge_limit{};
@@ -344,7 +343,8 @@ static std::vector<FunctionPtr> s_fns;
 static std::vector<ConstArg> s_vars;
 #define LastSqr s_vars[4].a
 static unsigned int s_op_count{};
-static int s_init_lod_ptr{};
+static int s_init_load_ptr{};
+static int s_init_store_ptr{};
 
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
@@ -2986,8 +2986,8 @@ int Formula()
         return 1;
     }
 
-    g_load_index = s_init_lod_ptr;
-    g_store_index = InitStoPtr;
+    g_load_index = s_init_load_ptr;
+    g_store_index = s_init_store_ptr;
     s_op_ptr = InitOpPtr;
     s_jump_index = s_init_jump_index;
     // Set the random number
@@ -3151,8 +3151,8 @@ int form_per_pixel()
         s_fns[s_op_ptr]();
         s_op_ptr++;
     }
-    s_init_lod_ptr = g_load_index;
-    InitStoPtr = g_store_index;
+    s_init_load_ptr = g_load_index;
+    s_init_store_ptr = g_store_index;
     InitOpPtr = s_op_ptr;
     // Set old variable for orbits
     switch (s_math_type)
