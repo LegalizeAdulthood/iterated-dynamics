@@ -54,7 +54,12 @@
 #include <string>
 
 // ** Formula Declarations **
-enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
+enum MATH_TYPE
+{
+    D_MATH,
+    M_MATH,
+    L_MATH
+};
 
 using Function = void();
 using FunctionPtr = Function *;
