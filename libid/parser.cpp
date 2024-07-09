@@ -85,7 +85,10 @@ struct PEND_OP
     int p;
 };
 
-#define MAX_JUMPS 200  // size of JUMP_CONTROL array
+enum
+{
+    MAX_JUMPS = 200  // size of JUMP_CONTROL array
+};
 
 struct JUMP_PTRS_ST
 {
