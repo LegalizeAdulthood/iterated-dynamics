@@ -91,7 +91,7 @@ static static_vars *pv{};
    0 to 255.
 */
 
-typedef BYTE(*DACBOX)[256][3];
+using DACBOX = BYTE (*)[256][3];
 #define dac   (*((DACBOX)(pv->savedac)))
 
 static int getdepth(int xd, int yd)
