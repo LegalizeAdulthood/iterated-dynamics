@@ -1184,12 +1184,12 @@ void Cursor_Show()
 #ifdef XFRACT
 void Cursor_StartMouseTracking()
 {
-    s_editpal_cursor = true;
+    g_editpal_cursor = true;
 }
 
 void Cursor_EndMouseTracking()
 {
-    s_editpal_cursor = false;
+    g_editpal_cursor = false;
 }
 #endif
 
