@@ -1,4 +1,4 @@
-/* (C) 1990, Mark C. Peterson, CompuServe [70441,3353]
+/* (C) 1990, Mark C. Peterson
    All rights reserved.
 
    Code may be used in any program provided the author is credited
@@ -12,9 +12,6 @@
     however this is optional.
 
     Mark C. Peterson
-    405-C Queen St. Suite #181
-    Southington, CT 06489
-    (203) 276-9721
 */
 #include "port.h"
 #include "prototyp.h" // for stricmp
