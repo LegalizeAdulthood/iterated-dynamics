@@ -52,6 +52,8 @@ static int cmp_line(BYTE *pixels, int linelen);
 
 static long s_save_base{}; // base clock ticks
 static long s_save_ticks{};  // save after this many ticks
+static std::FILE *s_cmp_fp{};
+static int s_err_count{};
 
 bool g_from_text{}; // = true if we're in graphics mode
 int g_finish_row{}; // save when this row is finished
@@ -753,8 +755,6 @@ void move_zoombox(int keynum)
 }
 
 // displays differences between current image file and new image
-static std::FILE *cmp_fp{};
-static int errcount{};
 static int cmp_line(BYTE *pixels, int linelen)
 {
     int row;
@@ -762,8 +762,8 @@ static int cmp_line(BYTE *pixels, int linelen)
     row = g_row_count++;
     if (row == 0)
     {
-        errcount = 0;
-        cmp_fp = dir_fopen(g_working_dir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
+        s_err_count = 0;
+        s_cmp_fp = dir_fopen(g_working_dir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
     if (g_potential_16bit)
@@ -788,11 +788,11 @@ static int cmp_line(BYTE *pixels, int linelen)
             {
                 g_put_color(col, row, 1);
             }
-            ++errcount;
+            ++s_err_count;
             if (g_init_batch == batch_modes::NONE)
             {
-                std::fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
-                        errcount, col, row, oldcolor, pixels[col]);
+                std::fprintf(s_cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
+                        s_err_count, col, row, oldcolor, pixels[col]);
             }
         }
     }
@@ -808,10 +808,10 @@ static void cmp_line_cleanup()
         time(&ltime);
         timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
-        std::fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
-                timestring, g_read_filename.c_str(), errcount);
+        std::fprintf(s_cmp_fp, "%s compare to %s has %5d errs\n",
+                timestring, g_read_filename.c_str(), s_err_count);
     }
-    std::fclose(cmp_fp);
+    std::fclose(s_cmp_fp);
 }
 
 void clear_zoombox()
