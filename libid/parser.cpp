@@ -321,7 +321,7 @@ unsigned int g_max_function_args{MAX_ARGS};
 std::vector<JUMP_CONTROL_ST> g_jump_control;
 int g_jump_index{};
 Arg *g_arg1{};
-Arg *Arg2{};
+Arg *g_arg2{};
 std::array<Arg, 20> g_stack{};
 std::vector<Arg *> Store;
 std::vector<Arg *> Load;
@@ -803,16 +803,16 @@ static void dStkSRand()
 void dStkLodDup()
 {
     g_arg1 += 2;
-    Arg2 += 2;
+    g_arg2 += 2;
     *g_arg1 = *Load[g_load_index];
-    *Arg2 = *g_arg1;
+    *g_arg2 = *g_arg1;
     g_load_index += 2;
 }
 
 void dStkLodSqr()
 {
     g_arg1++;
-    Arg2++;
+    g_arg2++;
     g_arg1->d.y = Load[g_load_index]->d.x * Load[g_load_index]->d.y * 2.0;
     g_arg1->d.x = (Load[g_load_index]->d.x * Load[g_load_index]->d.x) - (Load[g_load_index]->d.y * Load[g_load_index]->d.y);
     g_load_index++;
@@ -821,7 +821,7 @@ void dStkLodSqr()
 void dStkLodSqr2()
 {
     g_arg1++;
-    Arg2++;
+    g_arg2++;
     LastSqr.d.x = Load[g_load_index]->d.x * Load[g_load_index]->d.x;
     LastSqr.d.y = Load[g_load_index]->d.y * Load[g_load_index]->d.y;
     g_arg1->d.y = Load[g_load_index]->d.x * Load[g_load_index]->d.y * 2.0;
@@ -834,7 +834,7 @@ void dStkLodSqr2()
 void dStkLodDbl()
 {
     g_arg1++;
-    Arg2++;
+    g_arg2++;
     g_arg1->d.x = Load[g_load_index]->d.x * 2.0;
     g_arg1->d.y = Load[g_load_index]->d.y * 2.0;
     g_load_index++;
@@ -910,48 +910,48 @@ void lStkSqr()
 
 static void dStkAdd()
 {
-    Arg2->d.x += g_arg1->d.x;
-    Arg2->d.y += g_arg1->d.y;
+    g_arg2->d.x += g_arg1->d.x;
+    g_arg2->d.y += g_arg1->d.y;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkAdd()
 {
-    Arg2->m = MPCadd(Arg2->m, g_arg1->m);
+    g_arg2->m = MPCadd(g_arg2->m, g_arg1->m);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkAdd()
 {
-    Arg2->l.x += g_arg1->l.x;
-    Arg2->l.y += g_arg1->l.y;
+    g_arg2->l.x += g_arg1->l.x;
+    g_arg2->l.y += g_arg1->l.y;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkSub()
 {
-    Arg2->d.x -= g_arg1->d.x;
-    Arg2->d.y -= g_arg1->d.y;
+    g_arg2->d.x -= g_arg1->d.x;
+    g_arg2->d.y -= g_arg1->d.y;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkSub()
 {
-    Arg2->m = MPCsub(Arg2->m, g_arg1->m);
+    g_arg2->m = MPCsub(g_arg2->m, g_arg1->m);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkSub()
 {
-    Arg2->l.x -= g_arg1->l.x;
-    Arg2->l.y -= g_arg1->l.y;
+    g_arg2->l.x -= g_arg1->l.x;
+    g_arg2->l.y -= g_arg1->l.y;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 void dStkConj()
@@ -1153,16 +1153,16 @@ static void lStkNeg()
 
 void dStkMul()
 {
-    FPUcplxmul(&Arg2->d, &g_arg1->d, &Arg2->d);
+    FPUcplxmul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkMul()
 {
-    Arg2->m = MPCmul(Arg2->m, g_arg1->m);
+    g_arg2->m = MPCmul(g_arg2->m, g_arg1->m);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 void lStkMul()
@@ -1170,28 +1170,28 @@ void lStkMul()
     long x;
     long y;
 
-    x = multiply(Arg2->l.x, g_arg1->l.x, g_bit_shift) -
-        multiply(Arg2->l.y, g_arg1->l.y, g_bit_shift);
-    y = multiply(Arg2->l.y, g_arg1->l.x, g_bit_shift) +
-        multiply(Arg2->l.x, g_arg1->l.y, g_bit_shift);
-    Arg2->l.x = x;
-    Arg2->l.y = y;
+    x = multiply(g_arg2->l.x, g_arg1->l.x, g_bit_shift) -
+        multiply(g_arg2->l.y, g_arg1->l.y, g_bit_shift);
+    y = multiply(g_arg2->l.y, g_arg1->l.x, g_bit_shift) +
+        multiply(g_arg2->l.x, g_arg1->l.y, g_bit_shift);
+    g_arg2->l.x = x;
+    g_arg2->l.y = y;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkDiv()
 {
-    FPUcplxdiv(&Arg2->d, &g_arg1->d, &Arg2->d);
+    FPUcplxdiv(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkDiv()
 {
-    Arg2->m = MPCdiv(Arg2->m, g_arg1->m);
+    g_arg2->m = MPCdiv(g_arg2->m, g_arg1->m);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkDiv()
@@ -1206,12 +1206,12 @@ static void lStkDiv()
           multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
     x = divide(g_arg1->l.x, mod, g_bit_shift);
     y = -divide(g_arg1->l.y, mod, g_bit_shift);
-    x2 = multiply(Arg2->l.x, x, g_bit_shift) - multiply(Arg2->l.y, y, g_bit_shift);
-    y2 = multiply(Arg2->l.y, x, g_bit_shift) + multiply(Arg2->l.x, y, g_bit_shift);
-    Arg2->l.x = x2;
-    Arg2->l.y = y2;
+    x2 = multiply(g_arg2->l.x, x, g_bit_shift) - multiply(g_arg2->l.y, y, g_bit_shift);
+    y2 = multiply(g_arg2->l.y, x, g_bit_shift) + multiply(g_arg2->l.x, y, g_bit_shift);
+    g_arg2->l.x = x2;
+    g_arg2->l.y = y2;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkMod()
@@ -1249,7 +1249,7 @@ static void StkSto()
 static void StkLod()
 {
     g_arg1++;
-    Arg2++;
+    g_arg2++;
     *g_arg1 = *Load[g_load_index++];
 }
 
@@ -1257,8 +1257,8 @@ static void StkClr()
 {
     g_stack[0] = *g_arg1;
     g_arg1 = &g_stack[0];
-    Arg2 = &g_stack[0];
-    Arg2--;
+    g_arg2 = &g_stack[0];
+    g_arg2--;
 }
 
 void dStkFlip()
@@ -1820,214 +1820,214 @@ void lStkCAbs()
 
 static void dStkLT()
 {
-    Arg2->d.x = (double)(Arg2->d.x < g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x < g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkLT()
 {
-    Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, g_arg1->m.x) == -1), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    g_arg2->m.x = *fg2MP((long)(MPcmp(g_arg2->m.x, g_arg1->m.x) == -1), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkLT()
 {
-    Arg2->l.x = (long)(Arg2->l.x < g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x < g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkGT()
 {
-    Arg2->d.x = (double)(Arg2->d.x > g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x > g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkGT()
 {
-    Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, g_arg1->m.x) == 1), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    g_arg2->m.x = *fg2MP((long)(MPcmp(g_arg2->m.x, g_arg1->m.x) == 1), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkGT()
 {
-    Arg2->l.x = (long)(Arg2->l.x > g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x > g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkLTE()
 {
-    Arg2->d.x = (double)(Arg2->d.x <= g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x <= g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkLTE()
 {
     int comp;
 
-    comp = MPcmp(Arg2->m.x, g_arg1->m.x);
-    Arg2->m.x = *fg2MP((long)(comp == -1 || comp == 0), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg2MP((long)(comp == -1 || comp == 0), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkLTE()
 {
-    Arg2->l.x = (long)(Arg2->l.x <= g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x <= g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkGTE()
 {
-    Arg2->d.x = (double)(Arg2->d.x >= g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x >= g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkGTE()
 {
     int comp;
 
-    comp = MPcmp(Arg2->m.x, g_arg1->m.x);
-    Arg2->m.x = *fg2MP((long)(comp == 1 || comp == 0), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg2MP((long)(comp == 1 || comp == 0), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkGTE()
 {
-    Arg2->l.x = (long)(Arg2->l.x >= g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x >= g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkEQ()
 {
-    Arg2->d.x = (double)(Arg2->d.x == g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x == g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkEQ()
 {
     int comp;
 
-    comp = MPcmp(Arg2->m.x, g_arg1->m.x);
-    Arg2->m.x = *fg2MP((long)(comp == 0), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg2MP((long)(comp == 0), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkEQ()
 {
-    Arg2->l.x = (long)(Arg2->l.x == g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x == g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkNE()
 {
-    Arg2->d.x = (double)(Arg2->d.x != g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x != g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkNE()
 {
     int comp;
 
-    comp = MPcmp(Arg2->m.x, g_arg1->m.x);
-    Arg2->m.x = *fg2MP((long)(comp != 0), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg2MP((long)(comp != 0), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkNE()
 {
-    Arg2->l.x = (long)(Arg2->l.x != g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x != g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkOR()
 {
-    Arg2->d.x = (double)(Arg2->d.x || g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x || g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkOR()
 {
-    Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || g_arg1->m.x.Mant), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    g_arg2->m.x = *fg2MP((long)(g_arg2->m.x.Mant || g_arg1->m.x.Mant), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkOR()
 {
-    Arg2->l.x = (long)(Arg2->l.x || g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x || g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void dStkAND()
 {
-    Arg2->d.x = (double)(Arg2->d.x && g_arg1->d.x);
-    Arg2->d.y = 0.0;
+    g_arg2->d.x = (double)(g_arg2->d.x && g_arg1->d.x);
+    g_arg2->d.y = 0.0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void mStkAND()
 {
-    Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && g_arg1->m.x.Mant), 0);
-    Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = 0;
+    g_arg2->m.x = *fg2MP((long)(g_arg2->m.x.Mant && g_arg1->m.x.Mant), 0);
+    g_arg2->m.y.Exp = 0;
+    g_arg2->m.y.Mant = 0;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void lStkAND()
 {
-    Arg2->l.x = (long)(Arg2->l.x && g_arg1->l.x) << g_bit_shift;
-    Arg2->l.y = 0l;
+    g_arg2->l.x = (long)(g_arg2->l.x && g_arg1->l.x) << g_bit_shift;
+    g_arg2->l.y = 0l;
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 void dStkLog()
@@ -2062,9 +2062,9 @@ void lStkExp()
 
 void dStkPwr()
 {
-    Arg2->d = ComplexPower(Arg2->d, g_arg1->d);
+    g_arg2->d = ComplexPower(g_arg2->d, g_arg1->d);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 void mStkPwr()
@@ -2072,12 +2072,12 @@ void mStkPwr()
     DComplex x;
     DComplex y;
 
-    x = MPC2cmplx(Arg2->m);
+    x = MPC2cmplx(g_arg2->m);
     y = MPC2cmplx(g_arg1->m);
     x = ComplexPower(x, y);
-    Arg2->m = cmplx2MPC(x);
+    g_arg2->m = cmplx2MPC(x);
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 void lStkPwr()
@@ -2085,22 +2085,22 @@ void lStkPwr()
     DComplex x;
     DComplex y;
 
-    x.x = (double)Arg2->l.x / s_fudge;
-    x.y = (double)Arg2->l.y / s_fudge;
+    x.x = (double)g_arg2->l.x / s_fudge;
+    x.y = (double)g_arg2->l.y / s_fudge;
     y.x = (double)g_arg1->l.x / s_fudge;
     y.y = (double)g_arg1->l.y / s_fudge;
     x = ComplexPower(x, y);
     if (std::fabs(x.x) < g_fudge_limit && std::fabs(x.y) < g_fudge_limit)
     {
-        Arg2->l.x = (long)(x.x * s_fudge);
-        Arg2->l.y = (long)(x.y * s_fudge);
+        g_arg2->l.x = (long)(x.x * s_fudge);
+        g_arg2->l.y = (long)(x.y * s_fudge);
     }
     else
     {
         g_overflow = true;
     }
     g_arg1--;
-    Arg2--;
+    g_arg2--;
 }
 
 static void EndInit()
@@ -3010,8 +3010,8 @@ int Formula()
     }
 
     g_arg1 = &g_stack[0];
-    Arg2 = &g_stack[0];
-    --Arg2;
+    g_arg2 = &g_stack[0];
+    --g_arg2;
     while (g_op_ptr < (int)g_last_op)
     {
         f[g_op_ptr]();
@@ -3052,8 +3052,8 @@ int form_per_pixel()
     g_store_index = 0;
     g_load_index = 0;
     g_arg1 = &g_stack[0];
-    Arg2 = &g_stack[0];
-    Arg2--;
+    g_arg2 = &g_stack[0];
+    g_arg2--;
 
 
     v[10].a.d.x = (double)g_col;
@@ -4342,7 +4342,7 @@ void init_misc()
         v.resize(5);
     }
     g_arg1 = &argfirst;
-    Arg2 = &argsecond; // needed by all the ?Stk* functions
+    g_arg2 = &argsecond; // needed by all the ?Stk* functions
     s_fudge = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / s_fudge;
     s_shift_back = 32 - g_bit_shift;

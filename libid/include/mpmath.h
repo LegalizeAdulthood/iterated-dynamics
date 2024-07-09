@@ -83,7 +83,7 @@ struct ConstArg
 };
 
 extern Arg *g_arg1;
-extern Arg *Arg2;
+extern Arg *g_arg2;
 
 // --------------------------------------------------------------------
 // The following functions allow the complex transcendental functions
@@ -189,22 +189,22 @@ inline void LCMPLXsqr_old(LComplex &out)
 }
 inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
-    Arg2->l = arg1;
+    g_arg2->l = arg1;
     g_arg1->l = arg2;
     lStkPwr();
     g_arg1++;
-    Arg2++;
-    out = Arg2->l;
+    g_arg2++;
+    out = g_arg2->l;
 }
 
 inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     g_arg1->l = arg1;
-    Arg2->l = arg2;
+    g_arg2->l = arg2;
     lStkMul();
     g_arg1++;
-    Arg2++;
-    out = Arg2->l;
+    g_arg2++;
+    out = g_arg2->l;
 }
 inline void LCMPLXadd(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
@@ -287,12 +287,12 @@ inline void CMPLXpwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 }
 inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
-    Arg2->d = arg1;
+    g_arg2->d = arg1;
     g_arg1->d = arg2;
     dStkMul();
     g_arg1++;
-    Arg2++;
-    out = Arg2->d;
+    g_arg2++;
+    out = g_arg2->d;
 }
 inline void CMPLXmult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
