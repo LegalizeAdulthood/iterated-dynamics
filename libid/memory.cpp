@@ -70,7 +70,6 @@ static int s_num_total_handles{};
 static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
 static mem handletable[MAXHANDLES];
 
-int MemoryType(U16 handle);
 void InitMemory();
 void ExitCheck();
 U16 MemoryAlloc(U16 size, long count, int stored_at);
