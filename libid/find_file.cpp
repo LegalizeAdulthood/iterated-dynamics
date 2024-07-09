@@ -2,11 +2,6 @@
 
 #include "path_match.h"
 
-DIR_SEARCH DTA;          // Allocate DTA and define structure
-
-namespace fs = std::filesystem;
-
-static MatchFn s_path_matcher;
 enum class dir_pos
 {
     NONE = 0,
@@ -14,6 +9,12 @@ enum class dir_pos
     DOT_DOT = 2,
     FILES = 3
 };
+
+DIR_SEARCH DTA;          // Allocate DTA and define structure
+
+namespace fs = std::filesystem;
+
+static MatchFn s_path_matcher;
 static dir_pos s_dir_pos{dir_pos::NONE};
 static fs::directory_iterator s_dir_it;
 
