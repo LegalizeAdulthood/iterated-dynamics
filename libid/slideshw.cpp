@@ -61,7 +61,7 @@ struct key_mnemonic
     char const *mnemonic;
 };
 
-static key_mnemonic scancodes[] =
+static key_mnemonic s_key_mnemonics[] =
 {
     { ID_KEY_ENTER,            "ENTER"     },
     { ID_KEY_INSERT,           "INSERT"    },
@@ -87,7 +87,7 @@ static key_mnemonic scancodes[] =
 
 static int get_scancode(char const *mn)
 {
-    for (key_mnemonic const &it : scancodes)
+    for (key_mnemonic const &it : s_key_mnemonics)
     {
         if (std::strcmp(mn, it.mnemonic) == 0)
         {
@@ -101,7 +101,7 @@ static int get_scancode(char const *mn)
 static void get_mnemonic(int code, char *mnemonic)
 {
     *mnemonic = 0;
-    for (key_mnemonic const &it : scancodes)
+    for (key_mnemonic const &it : s_key_mnemonics)
     {
         if (code == it.code)
         {
