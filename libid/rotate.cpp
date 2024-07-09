@@ -44,7 +44,6 @@ static BYTE s_brown[3]{31, 31, 0};
 
 std::string g_map_name;
 bool g_map_set{};
-char mapmask[13]{"*.map"};
 BYTE g_dac_box[256][3]{};
 BYTE g_old_dac_box[256][3]{};
 bool g_dac_learn{};
@@ -671,7 +670,7 @@ bool load_palette()
     ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COLORMAP};
     std::string filename{g_map_name};
     driver_stack_screen();
-    const bool i = getafilename("Select a MAP File", mapmask, filename);
+    const bool i = getafilename("Select a MAP File", "*.map", filename);
     driver_unstack_screen();
     if (!i)
     {
