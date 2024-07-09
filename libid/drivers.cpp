@@ -10,7 +10,10 @@ extern Driver *disk_driver;
 
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
-#define MAX_DRIVERS 10
+enum
+{
+    MAX_DRIVERS = 10
+};
 static int s_num_drivers{};
 static Driver *s_available[MAX_DRIVERS]{};
 
