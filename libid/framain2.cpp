@@ -51,15 +51,15 @@ static void cmp_line_cleanup();
 static int cmp_line(BYTE *pixels, int linelen);
 
 static long s_save_base{}; // base clock ticks
-static long s_save_ticks;  // save after this many ticks
+static long s_save_ticks{};  // save after this many ticks
 
 bool g_from_text{}; // = true if we're in graphics mode
-int g_finish_row = 0;    // save when this row is finished
-EVOLUTION_INFO g_evolve_info = { 0 };
-bool g_have_evolve_info = false;
-char g_old_std_calc_mode;
-void (*g_out_line_cleanup)();
-bool g_virtual_screens = false;
+int g_finish_row{}; // save when this row is finished
+EVOLUTION_INFO g_evolve_info{};
+bool g_have_evolve_info{};
+char g_old_std_calc_mode{};
+void (*g_out_line_cleanup)(){};
+bool g_virtual_screens{};
 
 main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const resumeflag)
 {
@@ -753,8 +753,8 @@ void move_zoombox(int keynum)
 }
 
 // displays differences between current image file and new image
-static std::FILE *cmp_fp;
-static int errcount;
+static std::FILE *cmp_fp{};
+static int errcount{};
 static int cmp_line(BYTE *pixels, int linelen)
 {
     int row;
