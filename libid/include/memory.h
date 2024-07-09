@@ -7,10 +7,8 @@ enum stored_at_values
     DISK
 };
 
-// memory -- C file prototypes
 // TODO: Get rid of this and use regular memory routines;
 // see about creating standard disk memory routines for disk video
-void DisplayHandle(U16 handle);
 int MemoryType(U16 handle);
 void InitMemory();
 void ExitCheck();

@@ -30,10 +30,6 @@ enum
     MAXHANDLES = 256      // arbitrary #, suitably big
 };
 
-static int s_num_total_handles{};
-
-static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
-
 struct nowhere
 {
     stored_at_values stored_at; // first 2 entries must be the same
@@ -61,8 +57,6 @@ union mem
     disk Disk;
 };
 
-mem handletable[MAXHANDLES];
-
 // Routines in this module
 static bool CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
@@ -70,10 +64,12 @@ static U16 next_handle();
 static int CheckBounds(long start, long length, U16 handle);
 static void WhichDiskError(int);
 static void DisplayError(int stored_at, long howmuch);
+static void DisplayHandle(U16 handle);
 
-// Routines in this module, visible to outside routines
+static int s_num_total_handles{};
+static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
+static mem handletable[MAXHANDLES];
 
-void DisplayHandle(U16 handle);
 int MemoryType(U16 handle);
 void InitMemory();
 void ExitCheck();
@@ -239,7 +235,7 @@ void DisplayMemory()
     stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
 }
 
-void DisplayHandle(U16 handle)
+static void DisplayHandle(U16 handle)
 {
     char buf[MSG_LEN];
 
