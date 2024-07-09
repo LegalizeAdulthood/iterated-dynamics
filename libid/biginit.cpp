@@ -30,11 +30,6 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-
-// used internally by bignum.c routines
-static char s_storage[4096];
-static bn_t s_bn_root{};
-static bn_t s_stack_ptr{}; // memory allocator base after global variables
 bn_t g_bn_tmp1{};
 bn_t g_bn_tmp2{};
 bn_t g_bn_tmp3{};
@@ -43,7 +38,6 @@ bn_t g_bn_tmp5{};
 bn_t g_bn_tmp6{};
 bn_t g_bn_tmp_copy1{};
 bn_t g_bn_tmp_copy2{};
-
 // used by other routines, g_bn_length
 bn_t g_x_min_bn{};
 bn_t g_x_max_bn{};
@@ -51,27 +45,23 @@ bn_t g_y_min_bn{};
 bn_t g_y_max_bn{};
 bn_t g_x_3rd_bn{};
 bn_t g_y_3rd_bn{};
-
 // g_bn_length
 bn_t g_delta_x_bn{};
 bn_t g_delta_y_bn{};
 bn_t g_delta2_x_bn{};
 bn_t g_delta2_y_bn{};
 bn_t g_close_enough_bn{};
-
 // g_r_length
 bn_t g_tmp_sqr_x_bn{};
 bn_t g_tmp_sqr_y_bn{};
 bn_t g_bn_tmp{};
-
 // g_bn_length
 BNComplex g_old_z_bn{};
 BNComplex g_param_z_bn{};
 BNComplex g_saved_z_bn{};
 BNComplex g_new_z_bn{};   // g_r_length
 bn_t g_bn_pi{};                      // TAKES NO SPACE
-
-// // g_r_bf_length+2
+// g_r_bf_length+2
 bf_t g_bf_tmp1{};
 bf_t g_bf_tmp2{};
 bf_t g_bf_tmp3{};
@@ -87,21 +77,14 @@ bf_t g_delta2_y_bf{};
 bf_t g_close_enough_bf{};
 bf_t g_tmp_sqr_x_bf{};
 bf_t g_tmp_sqr_y_bf{};
-
 // g_bf_length+2
 BFComplex g_parm_z_bf{};
 BFComplex g_saved_z_bf{};
-
 // g_r_bf_length+2
 BFComplex g_old_z_bf{};
 BFComplex g_new_z_bf{};
-
 bf_t g_bf_pi{};      // TAKES NO SPACE
 bf_t g_big_pi{};     // g_bf_length+2
-
-// for testing only
-
-// used by other routines
 // g_bf_length+2
 bf_t g_bf_x_min{};
 bf_t g_bf_x_max{};
@@ -118,6 +101,10 @@ bf_t g_bf_save_y_3rd{};
 bf_t g_bf_parms[10]{}; // (g_bf_length + 2)*10
 bf_t g_bf_tmp{};
 bf_t g_bf10_tmp{}; // g_bf_decimals + 4
+
+static char s_storage[4096];
+static bn_t s_bn_root{};
+static bn_t s_stack_ptr{}; // memory allocator base after global variables
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
