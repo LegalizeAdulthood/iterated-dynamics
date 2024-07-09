@@ -135,8 +135,21 @@ struct dblcoords
     double y;
 };
 
+struct window
+{
+    // for fgetwindow on screen browser
+    coords      itl;      // screen coordinates
+    coords      ibl;      //
+    coords      itr;      //
+    coords      ibr;      //
+    double      win_size; // box size for drawindow()
+    std::string name;     // for filename
+    int         boxcount; // bytes of saved screen info
+};
+
 } // namespace
 
+// prototypes
 static int  find_fractal_info(const std::string &gif_file, FRACTAL_INFO *info,
     ext_blk_2 *blk_2_info,
     ext_blk_3 *blk_3_info,
@@ -149,9 +162,38 @@ static void skip_ext_blk(int *, int *);
 static void backwardscompat(FRACTAL_INFO *info);
 static bool fix_bof();
 static bool fix_period_bof();
+static void drawindow(int colour, window const *info);
+static bool is_visible_window(window *list, FRACTAL_INFO const *info, ext_blk_5 const *blk_5_info);
+static void transform(dblcoords *);
+static bool paramsOK(FRACTAL_INFO const *info);
+static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info);
+static bool functionOK(FRACTAL_INFO const *info, int numfn);
+static void check_history(char const *oldname, char const *newname);
+static void bfsetup_convert_to_screen();
+static void bftransform(bf_t, bf_t, dblcoords *);
+
+static std::FILE *s_fp{};
+static std::vector<window> browse_windows;
+static std::vector<int> browse_box_x;
+static std::vector<int> browse_box_y;
+static std::vector<int> browse_box_values;
+// here because must be visible inside several routines
+static affine *cvt{};
+static bf_t bt_a{};
+static bf_t bt_b{};
+static bf_t bt_c{};
+static bf_t bt_d{};
+static bf_t bt_e{};
+static bf_t bt_f{};
+static bf_t n_a{};
+static bf_t n_b{};
+static bf_t n_c{};
+static bf_t n_d{};
+static bf_t n_e{};
+static bf_t n_f{};
+static bf_math_type oldbf_math{};
 
 bool g_loaded_3d{};
-static std::FILE *s_fp{};
 int g_file_y_dots{};
 int g_file_x_dots{};
 int g_file_colors{};
@@ -160,6 +202,7 @@ short g_skip_x_dots{};
 short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
 bool g_ld_check{};
+std::string g_browse_name; // name for browse file
 
 inline bool within_eps(float lhs, float rhs)
 {
@@ -920,7 +963,6 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
     }
 }
 
-
 static int find_fractal_info(const std::string &gif_file, //
     FRACTAL_INFO *info,                                   //
     ext_blk_2 *blk_2_info,                                //
@@ -1285,7 +1327,6 @@ static void skip_ext_blk(int *block_len, int *data_len)
     }
 }
 
-
 // switch obsolete fractal types to new generalizations
 static void backwardscompat(FRACTAL_INFO *info)
 {
@@ -1485,41 +1526,6 @@ static bool fix_period_bof()
 
 // browse code RB
 
-namespace
-{
-
-struct window
-{
-    // for fgetwindow on screen browser
-    coords      itl;      // screen coordinates
-    coords      ibl;      //
-    coords      itr;      //
-    coords      ibr;      //
-    double      win_size; // box size for drawindow()
-    std::string name;     // for filename
-    int         boxcount; // bytes of saved screen info
-};
-
-} // namespace
-
-// prototypes
-static void drawindow(int colour, window const *info);
-static bool is_visible_window(window *list, FRACTAL_INFO const *info, ext_blk_5 const *blk_5_info);
-static void transform(dblcoords *);
-static bool paramsOK(FRACTAL_INFO const *info);
-static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info);
-static bool functionOK(FRACTAL_INFO const *info, int numfn);
-static void check_history(char const *oldname, char const *newname);
-static void bfsetup_convert_to_screen();
-static void bftransform(bf_t, bf_t, dblcoords *);
-
-std::string g_browse_name; // name for browse file
-
-static std::vector<window> browse_windows;
-static std::vector<int> browse_box_x;
-static std::vector<int> browse_box_y;
-static std::vector<int> browse_box_values;
-
 inline void save_box(int num_dots, int which)
 {
     std::copy(&g_box_x[0], &g_box_x[num_dots], &browse_box_x[num_dots*which]);
@@ -1533,22 +1539,6 @@ inline void restore_box(int num_dots, int which)
     std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &g_box_y[0]);
     std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &g_box_values[0]);
 }
-
-// here because must be visible inside several routines
-static affine *cvt{};
-static bf_t bt_a{};
-static bf_t bt_b{};
-static bf_t bt_c{};
-static bf_t bt_d{};
-static bf_t bt_e{};
-static bf_t bt_f{};
-static bf_t n_a{};
-static bf_t n_b{};
-static bf_t n_c{};
-static bf_t n_d{};
-static bf_t n_e{};
-static bf_t n_f{};
-static bf_math_type oldbf_math{};
 
 // fgetwindow reads all .GIF files and draws window outlines on the screen
 int fgetwindow()
