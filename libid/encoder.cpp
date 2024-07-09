@@ -1004,7 +1004,11 @@ static int n_bits{};                     // number of bits/code
 static int maxbits{BITSF};               // user settable max # bits/code
 static int maxcode{};                    // maximum code, given n_bits
 static int maxmaxcode{(int) 1 << BITSF}; // should NEVER generate this code
-# define MAXCODE(n_bits)        (((int) 1 << (n_bits)) - 1)
+
+constexpr int max_code(int n_bits)
+{
+    return (1 << n_bits) - 1;
+}
 
 BYTE g_block[4096]{};
 
@@ -1081,7 +1085,7 @@ static bool compress(int rowlimit)
     clear_flg = false;
     ent = 0;
     n_bits = startbits;
-    maxcode = MAXCODE(n_bits);
+    maxcode = max_code(n_bits);
 
     ClearCode = (1 << (startbits - 1));
     EOFCode = ClearCode + 1;
@@ -1266,7 +1270,7 @@ static void output(int code)
         if (clear_flg)
         {
             n_bits = startbits;
-            maxcode = MAXCODE(n_bits);
+            maxcode = max_code(n_bits);
             clear_flg = false;
         }
         else
@@ -1278,7 +1282,7 @@ static void output(int code)
             }
             else
             {
-                maxcode = MAXCODE(n_bits);
+                maxcode = max_code(n_bits);
             }
         }
     }
