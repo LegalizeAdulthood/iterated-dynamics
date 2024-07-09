@@ -317,7 +317,6 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 Arg *g_arg1{};
 Arg *g_arg2{};
-std::vector<Arg *> Load;
 int g_op_ptr{};
 std::vector<FunctionPtr> f;
 std::vector<ConstArg> v;
@@ -344,6 +343,7 @@ char g_max_function{};
 static std::vector<JUMP_CONTROL_ST> s_jump_control;
 static int s_jump_index{};
 static std::array<Arg, 20> s_stack{};
+static std::vector<Arg *> s_load;
 
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
@@ -802,7 +802,7 @@ void dStkLodDup()
 {
     g_arg1 += 2;
     g_arg2 += 2;
-    *g_arg1 = *Load[g_load_index];
+    *g_arg1 = *s_load[g_load_index];
     *g_arg2 = *g_arg1;
     g_load_index += 2;
 }
@@ -811,8 +811,8 @@ void dStkLodSqr()
 {
     g_arg1++;
     g_arg2++;
-    g_arg1->d.y = Load[g_load_index]->d.x * Load[g_load_index]->d.y * 2.0;
-    g_arg1->d.x = (Load[g_load_index]->d.x * Load[g_load_index]->d.x) - (Load[g_load_index]->d.y * Load[g_load_index]->d.y);
+    g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
+    g_arg1->d.x = (s_load[g_load_index]->d.x * s_load[g_load_index]->d.x) - (s_load[g_load_index]->d.y * s_load[g_load_index]->d.y);
     g_load_index++;
 }
 
@@ -820,9 +820,9 @@ void dStkLodSqr2()
 {
     g_arg1++;
     g_arg2++;
-    LastSqr.d.x = Load[g_load_index]->d.x * Load[g_load_index]->d.x;
-    LastSqr.d.y = Load[g_load_index]->d.y * Load[g_load_index]->d.y;
-    g_arg1->d.y = Load[g_load_index]->d.x * Load[g_load_index]->d.y * 2.0;
+    LastSqr.d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x;
+    LastSqr.d.y = s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
+    g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
     g_arg1->d.x = LastSqr.d.x - LastSqr.d.y;
     LastSqr.d.x += LastSqr.d.y;
     LastSqr.d.y = 0;
@@ -833,8 +833,8 @@ void dStkLodDbl()
 {
     g_arg1++;
     g_arg2++;
-    g_arg1->d.x = Load[g_load_index]->d.x * 2.0;
-    g_arg1->d.y = Load[g_load_index]->d.y * 2.0;
+    g_arg1->d.x = s_load[g_load_index]->d.x * 2.0;
+    g_arg1->d.y = s_load[g_load_index]->d.y * 2.0;
     g_load_index++;
 }
 
@@ -1248,7 +1248,7 @@ static void StkLod()
 {
     g_arg1++;
     g_arg2++;
-    *g_arg1 = *Load[g_load_index++];
+    *g_arg1 = *s_load[g_load_index++];
 }
 
 static void StkClr()
@@ -2902,7 +2902,7 @@ static bool parse_formula_text(char const *text)
             {
                 s_op[g_operation_index-1].f = StkSto;
                 s_op[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
-                s_store[g_store_index++] = Load[--g_load_index];
+                s_store[g_store_index++] = s_load[--g_load_index];
                 Equals++;
             }
             break;
@@ -2954,7 +2954,7 @@ static bool parse_formula_text(char const *text)
                 else
                 {
                     c = is_const(&text[s_init_n], Len);
-                    Load[g_load_index++] = &(c->a);
+                    s_load[g_load_index++] = &(c->a);
                     push_pending_op(StkLod, 1 - (s_paren + Equals)*15);
                     s_n = s_init_n + c->len - 1;
                 }
@@ -4363,7 +4363,7 @@ static void parser_allocate()
 
     f.reserve(g_max_function_ops);
     s_store.resize(MAX_STORES);
-    Load.resize(MAX_LOADS);
+    s_load.resize(MAX_LOADS);
     v.resize(g_max_function_args);
 
     if (!parse_formula_text(s_formula.c_str()))
@@ -4382,7 +4382,7 @@ static void parser_allocate()
 void free_workarea()
 {
     s_store.clear();
-    Load.clear();
+    s_load.clear();
     v.clear();
     f.clear();
 }
