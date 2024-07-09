@@ -64,21 +64,19 @@ constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 constexpr int DECODERLINE_WIDTH{MAX_PIXELS};
 
 static void close_file();
-
-static std::FILE *fpin{}; // std::FILE pointer
-unsigned int g_height{};
-unsigned int g_num_colors{};
-
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
 static int out_line_too_wide(BYTE *, int);
-static int colcount; // keeps track of current column for wide images
 
+static std::FILE *fpin{}; // std::FILE pointer
+static int colcount; // keeps track of current column for wide images
 static unsigned int gifview_image_top{};    // (for migs)
 static unsigned int gifview_image_left{};   // (for migs)
 static unsigned int gifview_image_twidth{}; // (for migs)
-
 static std::vector<char> ditherbuf;
+
+unsigned int g_height{};
+unsigned int g_num_colors{};
 
 int get_byte()
 {
