@@ -293,32 +293,11 @@ restart:
     return 0;
 }
 
-enum e_save_format
-{
-    SAVEFORMAT_GIF = 0,
-    SAVEFORMAT_PNG,
-    SAVEFORMAT_JPEG
-};
-
-static int savetodisk(char *filename)
-{
-    e_save_format format = SAVEFORMAT_GIF;
-
-    switch (format)
-    {
-    case SAVEFORMAT_GIF:
-        return gif_savetodisk(filename);
-
-    default:
-        return -1;
-    }
-}
-
 int savetodisk(std::string &filename)
 {
     char buff[FILE_MAX_PATH];
     std::strncpy(buff, filename.c_str(), FILE_MAX_PATH);
-    int const result = savetodisk(buff);
+    int const result = gif_savetodisk(buff);
     filename = buff;
     return result;
 }
