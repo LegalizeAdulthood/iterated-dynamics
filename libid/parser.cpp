@@ -317,7 +317,6 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 Arg *g_arg1{};
 Arg *g_arg2{};
-std::vector<FunctionPtr> f;
 std::vector<ConstArg> v;
 int g_store_index{};
 int g_load_index{};
@@ -344,6 +343,7 @@ static int s_jump_index{};
 static std::array<Arg, 20> s_stack{};
 static std::vector<Arg *> s_load;
 static int s_op_ptr{};
+static std::vector<FunctionPtr> s_fns;
 
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
@@ -2451,12 +2451,12 @@ static void RecSortPrec()
     {
         RecSortPrec();
     }
-    if (s_op_ptr > static_cast<int>(f.size()))
+    if (s_op_ptr > static_cast<int>(s_fns.size()))
     {
         throw std::runtime_error(
-            "OpPtr (" + std::to_string(s_op_ptr) + ") exceeds size of f[] (" + std::to_string(f.size()) + ")");
+            "OpPtr (" + std::to_string(s_op_ptr) + ") exceeds size of f[] (" + std::to_string(s_fns.size()) + ")");
     }
-    f.push_back(s_op[ThisOp].f);
+    s_fns.push_back(s_op[ThisOp].f);
     ++s_op_ptr;
 }
 
@@ -3012,7 +3012,7 @@ int Formula()
     --g_arg2;
     while (s_op_ptr < (int)g_last_op)
     {
-        f[s_op_ptr]();
+        s_fns[s_op_ptr]();
         s_op_ptr++;
     }
 
@@ -3149,7 +3149,7 @@ int form_per_pixel()
     }
     while (s_op_ptr < g_last_init_op)
     {
-        f[s_op_ptr]();
+        s_fns[s_op_ptr]();
         s_op_ptr++;
     }
     InitLodPtr = g_load_index;
@@ -3254,15 +3254,15 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*(f[s_op_ptr]) == StkLod)
+        if (*(s_fns[s_op_ptr]) == StkLod)
         {
             loadcount++;
         }
-        else if (*(f[s_op_ptr]) == StkSto)
+        else if (*(s_fns[s_op_ptr]) == StkSto)
         {
             storecount++;
         }
-        else if (*(f[s_op_ptr]) == JumpFunc)
+        else if (*(s_fns[s_op_ptr]) == JumpFunc)
         {
             JUMP_PTRS_ST value{};
             value.JumpOpPtr = s_op_ptr;
@@ -4361,7 +4361,7 @@ static void parser_allocate()
     g_max_function_ops = 2300;
     g_max_function_args = (unsigned)(g_max_function_ops/2.5);
 
-    f.reserve(g_max_function_ops);
+    s_fns.reserve(g_max_function_ops);
     s_store.resize(MAX_STORES);
     s_load.resize(MAX_LOADS);
     v.resize(g_max_function_args);
@@ -4384,7 +4384,7 @@ void free_workarea()
     s_store.clear();
     s_load.clear();
     v.clear();
-    f.clear();
+    s_fns.clear();
 }
 
 static void frm_error(std::FILE * open_file, long begin_frm)
