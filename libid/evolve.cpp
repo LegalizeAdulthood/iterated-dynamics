@@ -99,15 +99,15 @@ char g_evolve_new_discrete_y_parameter_offset;
 
 int g_evolve_param_box_count;
 
-static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
-static std::vector<int> param_box_x;
-static std::vector<int> param_box_y;
-static std::vector<int> param_box_values;
+static int s_ecount_box[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
+static std::vector<int> s_param_box_x;
+static std::vector<int> s_param_box_y;
+static std::vector<int> s_param_box_values;
 static int s_image_box_count;
-static std::vector<int> image_box_x;
-static std::vector<int> image_box_y;
-static std::vector<int> image_box_values;
-static PARAMHIST oldhistory = { 0 };
+static std::vector<int> s_image_box_x;
+static std::vector<int> s_image_box_y;
+static std::vector<int> s_image_box_values;
+static PARAMHIST s_old_history{};
 
 void varydbl(GENEBASE gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
@@ -207,54 +207,54 @@ void initgene()
 void save_param_history()
 {
     // save the old parameter history
-    oldhistory.param0 = g_params[0];
-    oldhistory.param1 = g_params[1];
-    oldhistory.param2 = g_params[2];
-    oldhistory.param3 = g_params[3];
-    oldhistory.param4 = g_params[4];
-    oldhistory.param5 = g_params[5];
-    oldhistory.param6 = g_params[6];
-    oldhistory.param7 = g_params[7];
-    oldhistory.param8 = g_params[8];
-    oldhistory.param9 = g_params[9];
-    oldhistory.inside = g_inside_color;
-    oldhistory.outside = g_outside_color;
-    oldhistory.decomp0 = g_decomp[0];
-    oldhistory.invert0 = g_inversion[0];
-    oldhistory.invert1 = g_inversion[1];
-    oldhistory.invert2 = g_inversion[2];
-    oldhistory.trigndx0 = static_cast<BYTE>(g_trig_index[0]);
-    oldhistory.trigndx1 = static_cast<BYTE>(g_trig_index[1]);
-    oldhistory.trigndx2 = static_cast<BYTE>(g_trig_index[2]);
-    oldhistory.trigndx3 = static_cast<BYTE>(g_trig_index[3]);
-    oldhistory.bailoutest = g_bail_out_test;
+    s_old_history.param0 = g_params[0];
+    s_old_history.param1 = g_params[1];
+    s_old_history.param2 = g_params[2];
+    s_old_history.param3 = g_params[3];
+    s_old_history.param4 = g_params[4];
+    s_old_history.param5 = g_params[5];
+    s_old_history.param6 = g_params[6];
+    s_old_history.param7 = g_params[7];
+    s_old_history.param8 = g_params[8];
+    s_old_history.param9 = g_params[9];
+    s_old_history.inside = g_inside_color;
+    s_old_history.outside = g_outside_color;
+    s_old_history.decomp0 = g_decomp[0];
+    s_old_history.invert0 = g_inversion[0];
+    s_old_history.invert1 = g_inversion[1];
+    s_old_history.invert2 = g_inversion[2];
+    s_old_history.trigndx0 = static_cast<BYTE>(g_trig_index[0]);
+    s_old_history.trigndx1 = static_cast<BYTE>(g_trig_index[1]);
+    s_old_history.trigndx2 = static_cast<BYTE>(g_trig_index[2]);
+    s_old_history.trigndx3 = static_cast<BYTE>(g_trig_index[3]);
+    s_old_history.bailoutest = g_bail_out_test;
 }
 
 void restore_param_history()
 {
     // restore the old parameter history
-    g_params[0] = oldhistory.param0;
-    g_params[1] = oldhistory.param1;
-    g_params[2] = oldhistory.param2;
-    g_params[3] = oldhistory.param3;
-    g_params[4] = oldhistory.param4;
-    g_params[5] = oldhistory.param5;
-    g_params[6] = oldhistory.param6;
-    g_params[7] = oldhistory.param7;
-    g_params[8] = oldhistory.param8;
-    g_params[9] = oldhistory.param9;
-    g_inside_color = oldhistory.inside;
-    g_outside_color = oldhistory.outside;
-    g_decomp[0] = oldhistory.decomp0;
-    g_inversion[0] = oldhistory.invert0;
-    g_inversion[1] = oldhistory.invert1;
-    g_inversion[2] = oldhistory.invert2;
+    g_params[0] = s_old_history.param0;
+    g_params[1] = s_old_history.param1;
+    g_params[2] = s_old_history.param2;
+    g_params[3] = s_old_history.param3;
+    g_params[4] = s_old_history.param4;
+    g_params[5] = s_old_history.param5;
+    g_params[6] = s_old_history.param6;
+    g_params[7] = s_old_history.param7;
+    g_params[8] = s_old_history.param8;
+    g_params[9] = s_old_history.param9;
+    g_inside_color = s_old_history.inside;
+    g_outside_color = s_old_history.outside;
+    g_decomp[0] = s_old_history.decomp0;
+    g_inversion[0] = s_old_history.invert0;
+    g_inversion[1] = s_old_history.invert1;
+    g_inversion[2] = s_old_history.invert2;
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
-    g_trig_index[0] = static_cast<trig_fn>(oldhistory.trigndx0);
-    g_trig_index[1] = static_cast<trig_fn>(oldhistory.trigndx1);
-    g_trig_index[2] = static_cast<trig_fn>(oldhistory.trigndx2);
-    g_trig_index[3] = static_cast<trig_fn>(oldhistory.trigndx3);
-    g_bail_out_test = static_cast<bailouts>(oldhistory.bailoutest);
+    g_trig_index[0] = static_cast<trig_fn>(s_old_history.trigndx0);
+    g_trig_index[1] = static_cast<trig_fn>(s_old_history.trigndx1);
+    g_trig_index[2] = static_cast<trig_fn>(s_old_history.trigndx2);
+    g_trig_index[3] = static_cast<trig_fn>(s_old_history.trigndx3);
+    g_bail_out_test = static_cast<bailouts>(s_old_history.bailoutest);
 }
 
 // routine to vary doubles
@@ -871,23 +871,23 @@ void SetupParamBox()
     int const num_box_values = (g_logical_screen_x_dots + g_logical_screen_y_dots)*2;
     int const num_values = g_logical_screen_x_dots + g_logical_screen_y_dots + 2;
 
-    param_box_x.resize(num_box_values);
-    param_box_y.resize(num_box_values);
-    param_box_values.resize(num_values);
+    s_param_box_x.resize(num_box_values);
+    s_param_box_y.resize(num_box_values);
+    s_param_box_values.resize(num_values);
 
-    image_box_x.resize(num_box_values);
-    image_box_y.resize(num_box_values);
-    image_box_values.resize(num_values);
+    s_image_box_x.resize(num_box_values);
+    s_image_box_y.resize(num_box_values);
+    s_image_box_values.resize(num_values);
 }
 
 void ReleaseParamBox()
 {
-    param_box_x.clear();
-    param_box_y.clear();
-    param_box_values.clear();
-    image_box_x.clear();
-    image_box_y.clear();
-    image_box_values.clear();
+    s_param_box_x.clear();
+    s_param_box_y.clear();
+    s_param_box_values.clear();
+    s_image_box_x.clear();
+    s_image_box_y.clear();
+    s_image_box_values.clear();
 }
 
 void set_current_params()
@@ -976,18 +976,18 @@ void drawparmbox(int mode)
     if (g_box_count)
     {
         // stash normal zoombox pixels
-        std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &image_box_x[0]);
-        std::copy(&g_box_y[0], &g_box_y[g_box_count*2], &image_box_y[0]);
-        std::copy(&g_box_values[0], &g_box_values[g_box_count], &image_box_values[0]);
+        std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &s_image_box_x[0]);
+        std::copy(&g_box_y[0], &g_box_y[g_box_count*2], &s_image_box_y[0]);
+        std::copy(&g_box_values[0], &g_box_values[g_box_count], &s_image_box_values[0]);
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (g_evolve_param_box_count != 0)
     {
         // clear last parmbox
         g_box_count = g_evolve_param_box_count;
-        std::copy(&param_box_x[0], &param_box_x[g_box_count*2], &g_box_x[0]);
-        std::copy(&param_box_y[0], &param_box_y[g_box_count*2], &g_box_y[0]);
-        std::copy(&param_box_values[0], &param_box_values[g_box_count], &g_box_values[0]);
+        std::copy(&s_param_box_x[0], &s_param_box_x[g_box_count*2], &g_box_x[0]);
+        std::copy(&s_param_box_y[0], &s_param_box_y[g_box_count*2], &g_box_y[0]);
+        std::copy(&s_param_box_values[0], &s_param_box_values[g_box_count], &g_box_values[0]);
         clearbox();
     }
 
@@ -1018,18 +1018,18 @@ void drawparmbox(int mode)
     {
         dispbox();
         // stash pixel values for later
-        std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &param_box_x[0]);
-        std::copy(&g_box_y[0], &g_box_y[g_box_count*2], &param_box_y[0]);
-        std::copy(&g_box_values[0], &g_box_values[g_box_count], &param_box_values[0]);
+        std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &s_param_box_x[0]);
+        std::copy(&g_box_y[0], &g_box_y[g_box_count*2], &s_param_box_y[0]);
+        std::copy(&g_box_values[0], &g_box_values[g_box_count], &s_param_box_values[0]);
     }
     g_evolve_param_box_count = g_box_count;
     g_box_count = s_image_box_count;
     if (s_image_box_count)
     {
         // and move back old values so that everything can proceed as normal
-        std::copy(&image_box_x[0], &image_box_x[g_box_count*2], &g_box_x[0]);
-        std::copy(&image_box_y[0], &image_box_y[g_box_count*2], &g_box_y[0]);
-        std::copy(&image_box_values[0], &image_box_values[g_box_count], &g_box_values[0]);
+        std::copy(&s_image_box_x[0], &s_image_box_x[g_box_count*2], &g_box_x[0]);
+        std::copy(&s_image_box_y[0], &s_image_box_y[g_box_count*2], &g_box_y[0]);
+        std::copy(&s_image_box_values[0], &s_image_box_values[g_box_count], &g_box_values[0]);
         dispbox();
     }
 }
@@ -1117,16 +1117,16 @@ int unspiralmap()
     {
         // set up array and return
         int gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
-        ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
+        s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
         for (int i = 1; i < gridsqr; i++)
         {
             spiralmap(i);
-            ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y] = i;
+            s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = i;
         }
         old_image_grid_size = g_evolve_image_grid_size;
         g_evolve_param_grid_y = mid;
         g_evolve_param_grid_x = g_evolve_param_grid_y;
         return 0;
     }
-    return ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y];
+    return s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y];
 }
