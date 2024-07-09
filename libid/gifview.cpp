@@ -68,24 +68,24 @@ static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
 static int out_line_too_wide(BYTE *, int);
 
-static std::FILE *fpin{}; // std::FILE pointer
-static int colcount; // keeps track of current column for wide images
-static unsigned int gifview_image_top{};    // (for migs)
-static unsigned int gifview_image_left{};   // (for migs)
-static unsigned int gifview_image_twidth{}; // (for migs)
-static std::vector<char> ditherbuf;
+static std::FILE *s_fp_in{};
+static int s_col_count{};                    // keeps track of current column for wide images
+static unsigned int s_gifview_image_top{};   // (for migs)
+static unsigned int s_gifview_image_left{};  // (for migs)
+static unsigned int s_gifview_image_width{}; // (for migs)
+static std::vector<char> s_dither_buf;
 
 unsigned int g_height{};
 unsigned int g_num_colors{};
 
 int get_byte()
 {
-    return getc(fpin); // EOF is -1, as desired
+    return getc(s_fp_in); // EOF is -1, as desired
 }
 
 int get_bytes(BYTE *where, int how_many)
 {
-    return (int) std::fread((char *)where, 1, how_many, fpin); // EOF is -1, as desired
+    return (int) std::fread((char *)where, 1, how_many, s_fp_in); // EOF is -1, as desired
 }
 
 // Main entry decoder
@@ -108,7 +108,7 @@ int gifview()
 
     // initialize the col and row count for write-lines
     g_row_count = 0;
-    colcount = g_row_count;
+    s_col_count = g_row_count;
 
     // Open the file
     if (g_out_line == outline_stereo)
@@ -122,10 +122,10 @@ int gifview()
     if (has_ext(temp1) == nullptr)
     {
         std::strcat(temp1, DEFAULT_FRACTAL_TYPE);
-        fpin = std::fopen(temp1, "rb");
-        if (fpin != nullptr)
+        s_fp_in = std::fopen(temp1, "rb");
+        if (s_fp_in != nullptr)
         {
-            std::fclose(fpin);
+            std::fclose(s_fp_in);
         }
         else
         {
@@ -140,8 +140,8 @@ int gifview()
             std::strcat(temp1, ALTERNATE_FRACTAL_TYPE);
         }
     }
-    fpin = std::fopen(temp1, "rb");
-    if (fpin == nullptr)
+    s_fp_in = std::fopen(temp1, "rb");
+    if (s_fp_in == nullptr)
     {
         return -1;
     }
@@ -170,7 +170,7 @@ int gifview()
     width  = buffer[6] | (buffer[7] << 8);
     g_height = buffer[8] | (buffer[9] << 8);
     planes = (buffer[10] & 0x0F) + 1;
-    gifview_image_twidth = width;
+    s_gifview_image_width = width;
 
     if ((buffer[10] & 0x80) == 0)    // color map (better be!)
     {
@@ -272,20 +272,20 @@ int gifview()
             g_height = buffer[6] | (buffer[7] << 8);
 
             // adjustments for handling MIGs
-            gifview_image_top  = top;
+            s_gifview_image_top  = top;
             if (g_skip_x_dots > 0)
             {
-                gifview_image_top /= (g_skip_y_dots+1);
+                s_gifview_image_top /= (g_skip_y_dots+1);
             }
-            gifview_image_left = left;
+            s_gifview_image_left = left;
             if (g_skip_y_dots > 0)
             {
-                gifview_image_left /= (g_skip_x_dots+1);
+                s_gifview_image_left /= (g_skip_x_dots+1);
             }
             if (g_out_line == out_line)
             {
                 // what about continuous potential????
-                if (width != gifview_image_twidth || top != 0)
+                if (width != s_gifview_image_width || top != 0)
                 {
                     // we're using normal decoding and we have a MIG
                     g_out_line = out_line_migs;
@@ -379,8 +379,8 @@ int gifview()
 
 static void close_file()
 {
-    std::fclose(fpin);
-    fpin = nullptr;
+    std::fclose(s_fp_in);
+    s_fp_in = nullptr;
 }
 
 // routine for MIGS that generates partial output lines
@@ -391,8 +391,8 @@ static int out_line_migs(BYTE *pixels, int linelen)
     int startcol;
     int stopcol;
 
-    row = gifview_image_top + g_row_count;
-    startcol = gifview_image_left;
+    row = s_gifview_image_top + g_row_count;
+    startcol = s_gifview_image_left;
     stopcol = startcol+linelen-1;
     put_line(row, startcol, stopcol, pixels);
     g_row_count++;
@@ -405,8 +405,8 @@ static int out_line_dither(BYTE *pixels, int linelen)
     int nexterr;
     int brt;
     int err;
-    ditherbuf.resize(linelen + 1);
-    std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
+    s_dither_buf.resize(linelen + 1);
+    std::fill(s_dither_buf.begin(), s_dither_buf.end(), 0);
 
     nexterr = (std::rand()&0x1f)-16;
     for (int i = 0; i < linelen; i++)
@@ -424,9 +424,9 @@ static int out_line_dither(BYTE *pixels, int linelen)
             pixels[i] = 0;
             err = brt;
         }
-        nexterr = ditherbuf[i+1]+err/3;
-        ditherbuf[i] = (char)(err/3);
-        ditherbuf[i+1] = (char)(err/3);
+        nexterr = s_dither_buf[i+1]+err/3;
+        s_dither_buf[i] = (char)(err/3);
+        s_dither_buf[i+1] = (char)(err/3);
     }
     return out_line(pixels, linelen);
 }
@@ -439,23 +439,23 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
     int extra;
     while (linelen > 0)
     {
-        extra = colcount+linelen-twidth;
+        extra = s_col_count+linelen-twidth;
         if (extra > 0) // line wraps
         {
-            put_line(g_row_count, colcount, twidth-1, pixels);
-            pixels += twidth-colcount;
-            linelen -= twidth-colcount;
-            colcount = twidth;
+            put_line(g_row_count, s_col_count, twidth-1, pixels);
+            pixels += twidth-s_col_count;
+            linelen -= twidth-s_col_count;
+            s_col_count = twidth;
         }
         else
         {
-            put_line(g_row_count, colcount, colcount+linelen-1, pixels);
-            colcount += linelen;
+            put_line(g_row_count, s_col_count, s_col_count+linelen-1, pixels);
+            s_col_count += linelen;
             linelen = 0;
         }
-        if (colcount >= twidth)
+        if (s_col_count >= twidth)
         {
-            colcount = 0;
+            s_col_count = 0;
             g_row_count++;
         }
     }
@@ -488,29 +488,29 @@ int sound_line(BYTE *pixels, int linelen)
     int ret = 0;
     while (linelen > 0)
     {
-        extra = colcount+linelen-twidth;
+        extra = s_col_count+linelen-twidth;
         if (extra > 0) // line wraps
         {
-            if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
+            if (put_sound_line(g_row_count, s_col_count, twidth-1, pixels))
             {
                 break;
             }
-            pixels += twidth-colcount;
-            linelen -= twidth-colcount;
-            colcount = twidth;
+            pixels += twidth-s_col_count;
+            linelen -= twidth-s_col_count;
+            s_col_count = twidth;
         }
         else
         {
-            if (put_sound_line(g_row_count, colcount, colcount+linelen-1, pixels))
+            if (put_sound_line(g_row_count, s_col_count, s_col_count+linelen-1, pixels))
             {
                 break;
             }
-            colcount += linelen;
+            s_col_count += linelen;
             linelen = 0;
         }
-        if (colcount >= twidth)
+        if (s_col_count >= twidth)
         {
-            colcount = 0;
+            s_col_count = 0;
             g_row_count++;
         }
     }
