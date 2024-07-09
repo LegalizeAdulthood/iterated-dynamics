@@ -13,9 +13,6 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cstdlib>
 #include <cstring>
 
-#define LOG10_256 2.4082399653118
-#define LOG_256   5.5451774444795
-
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
 
