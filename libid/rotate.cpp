@@ -33,22 +33,22 @@ static void set_palette(BYTE start[3], BYTE finish[3]);
 static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
 
-static bool paused = false;             // rotate-is-paused flag
-static BYTE Red[3]    = {63, 0, 0};     // for shifted-Fkeys
-static BYTE Green[3]  = { 0, 63, 0};
-static BYTE Blue[3]   = { 0, 0, 63};
-static BYTE Black[3]  = { 0, 0, 0};
-static BYTE White[3]  = {63, 63, 63};
-static BYTE Yellow[3] = {63, 63, 0};
-static BYTE Brown[3]  = {31, 31, 0};
+static bool paused{};         // rotate-is-paused flag
+static BYTE Red[3]{63, 0, 0}; // for shifted-Fkeys
+static BYTE Green[3]{0, 63, 0};
+static BYTE Blue[3]{0, 0, 63};
+static BYTE Black[3]{0, 0, 0};
+static BYTE White[3]{63, 63, 63};
+static BYTE Yellow[3]{63, 63, 0};
+static BYTE Brown[3]{31, 31, 0};
 
 std::string g_map_name;
-bool g_map_set = false;
-char mapmask[13] = {"*.map"};
-BYTE g_dac_box[256][3];
-BYTE g_old_dac_box[256][3];
-bool g_dac_learn = false;
-bool g_got_real_dac = false;            // true if loaddac has a dacbox
+bool g_map_set{};
+char mapmask[13]{"*.map"};
+BYTE g_dac_box[256][3]{};
+BYTE g_old_dac_box[256][3]{};
+bool g_dac_learn{};
+bool g_got_real_dac{}; // true if loaddac has a dacbox
 
 void rotate(int direction)      // rotate-the-palette routine
 {
@@ -665,7 +665,6 @@ void save_palette()
         std::fclose(dacfile);
     }
 }
-
 
 bool load_palette()
 {
