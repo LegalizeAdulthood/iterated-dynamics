@@ -106,9 +106,6 @@ static char s_storage[4096];
 static bn_t s_bn_root{};
 static bn_t s_stack_ptr{}; // memory allocator base after global variables
 
-#define LOG10_256 2.4082399653118
-#define LOG_256   5.5451774444795
-
 static int save_bf_vars();
 static int restore_bf_vars();
 
