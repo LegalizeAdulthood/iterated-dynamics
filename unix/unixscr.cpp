@@ -1266,8 +1266,8 @@ handleesc()
     }
 }
 
-extern bool editpal_cursor;
-extern void Cursor_SetPos();
+extern bool g_editpal_cursor;
+extern void Cursor_SetPos(int x, int y);
 
 bool g_x_zoom_waiting = false;
 
@@ -1453,7 +1453,7 @@ xhandleevents()
         break;
         case MotionNotify:
         {
-            if (editpal_cursor && !g_inside_help)
+            if (g_editpal_cursor && !g_inside_help)
             {
                 while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
                                          &xevent))
@@ -1651,7 +1651,7 @@ xhandleevents()
         }  // End switch
     }  // End while
 
-    if (!xbufkey && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
+    if (!xbufkey && g_editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
             (dx != 0 || dy != 0))
     {
         if (ABS(dx) > ABS(dy))

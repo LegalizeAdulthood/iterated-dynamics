@@ -276,8 +276,8 @@ static const int mousefkey[4][4] /* [button][dir] */ = {
     {ID_KEY_CTL_END, ID_KEY_CTL_HOME, ID_KEY_CTL_PAGE_DOWN, ID_KEY_CTL_PAGE_UP}
 };
 
-extern bool editpal_cursor;
-extern void Cursor_SetPos();
+extern bool g_editpal_cursor;
+extern void Cursor_SetPos(int x, int y);
 
 #define SENS 1
 #define ABS(x) ((x) > 0 ? (x) : -(x))
@@ -1248,7 +1248,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
 
 void X11Driver::ev_motion_notify(XEvent *xevent)
 {
-    if (editpal_cursor && !g_inside_help)
+    if (g_editpal_cursor && !g_inside_help)
     {
         while (XCheckWindowEvent(m_dpy, m_window, PointerMotionMask, xevent))
             ;
@@ -1321,7 +1321,7 @@ void X11Driver::handle_events()
         }
     }
 
-    if (!m_key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
+    if (!m_key_buffer && g_editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
             (m_dx != 0 || m_dy != 0))
     {
         if (ABS(m_dx) > ABS(m_dy))

@@ -317,7 +317,7 @@ std::vector<BYTE> g_line_buff;
 
 static const char *s_undo_file{"id.$$2"};  // file where undo list is stored
 #ifdef XFRACT
-static bool s_editpal_cursor{};
+bool g_editpal_cursor{};
 #endif
 static BYTE s_fg_color{};
 static BYTE s_bg_color{};
