@@ -1011,17 +1011,6 @@ BYTE g_block[4096]{};
 static long htab[HSIZE]{};
 static unsigned short codetab[10240]{};
 
-// To save much memory, we overlay the table used by compress() with those
-// used by decompress().  The tab_prefix table is the same size and type
-// as the codetab.  The tab_suffix table needs 2**BITSF characters.  We
-// get this from the beginning of htab.  The output stack uses the rest
-// of htab, and contains characters.  There is plenty of room for any
-// possible stack (stack used to be 8000 characters).
-
-#define tab_prefixof(i)   codetab[i]
-#define tab_suffixof(i)   ((char_type *)(htab))[i]
-#define de_stack          ((char_type *)&tab_suffixof((int)1 << BITSF))
-
 static int free_ent{};                  // first unused entry
 
 // block compression parameters -- after all codes are used up,
