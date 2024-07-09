@@ -1621,7 +1621,7 @@ rescan:  // entry for changed browse parms
             driver_get_key();
             break;
         }
-        split_fname_ext(DTA.filename, fname, ext);
+        split_fname_ext(g_dta.filename, fname, ext);
         make_path(tmpmask, drive, dir, fname, ext);
         FRACTAL_INFO read_info;
         ext_blk_2 blk_2_info;
@@ -1634,11 +1634,11 @@ rescan:  // entry for changed browse parms
                 tmpmask, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
             && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)                                   //
             && (paramsOK(&read_info) || !g_browse_check_fractal_params)                                            //
-            && stricmp(g_browse_name.c_str(), DTA.filename.c_str()) != 0                                           //
+            && stricmp(g_browse_name.c_str(), g_dta.filename.c_str()) != 0                                           //
             && !blk_6_info.got_data                                                                                //
             && is_visible_window(&winlist, &read_info, &blk_5_info))                                               //
         {
-            winlist.name = DTA.filename;
+            winlist.name = g_dta.filename;
             drawindow(color_of_box, &winlist);
             winlist.boxcount = g_box_count;
             browse_windows[wincount] = winlist;

@@ -112,7 +112,7 @@ retry_dir:
         tmpmask[j] = 0; // strip trailing backslash
         if (std::strchr(tmpmask, '*') || std::strchr(tmpmask, '?')
             || fr_findfirst(tmpmask) != 0
-            || (DTA.attribute & SUBDIR) == 0)
+            || (g_dta.attribute & SUBDIR) == 0)
         {
             std::strcpy(dir, DOTSLASH);
             ++retried;
@@ -137,16 +137,16 @@ retry_dir:
     out = fr_findfirst(tmpmask);
     while (out == 0 && filecount < MAXNUMFILES)
     {
-        if ((DTA.attribute & SUBDIR) && DTA.filename != ".")
+        if ((g_dta.attribute & SUBDIR) && g_dta.filename != ".")
         {
-            if (DTA.filename != "..")
+            if (g_dta.filename != "..")
             {
-                DTA.filename += SLASH;
+                g_dta.filename += SLASH;
             }
-            std::strcpy(choices[++filecount]->full_name, DTA.filename.c_str());
+            std::strcpy(choices[++filecount]->full_name, g_dta.filename.c_str());
             choices[filecount]->subdir = true;
             dircount++;
-            if (DTA.filename == "..")
+            if (g_dta.filename == "..")
             {
                 notroot = true;
             }
@@ -168,19 +168,19 @@ retry_dir:
         out = fr_findfirst(tmpmask);
         while (out == 0 && filecount < MAXNUMFILES)
         {
-            if (!(DTA.attribute & SUBDIR))
+            if (!(g_dta.attribute & SUBDIR))
             {
                 if (rds)
                 {
-                    putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename.c_str());
+                    putstringcenter(2, 0, 80, C_GENERAL_INPUT, g_dta.filename.c_str());
 
-                    split_fname_ext(DTA.filename, fname, ext);
+                    split_fname_ext(g_dta.filename, fname, ext);
                     make_path(choices[++filecount]->full_name, drive, dir, fname, ext);
                     choices[filecount]->subdir = false;
                 }
                 else
                 {
-                    std::strcpy(choices[++filecount]->full_name, DTA.filename.c_str());
+                    std::strcpy(choices[++filecount]->full_name, g_dta.filename.c_str());
                     choices[filecount]->subdir = false;
                 }
             }
@@ -305,7 +305,7 @@ retry_dir:
     {
         if (speedstate == SEARCHPATH
             && std::strchr(speedstr, '*') == nullptr && std::strchr(speedstr, '?') == nullptr
-            && ((fr_findfirst(speedstr) == 0 && (DTA.attribute & SUBDIR))
+            && ((fr_findfirst(speedstr) == 0 && (g_dta.attribute & SUBDIR))
                 || std::strcmp(speedstr, SLASH) == 0)) // it is a directory
         {
             speedstate = TEMPLATE;

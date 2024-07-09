@@ -73,7 +73,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     {
         if (fr_findfirst(newfilename) == 0)
         {
-            if (DTA.attribute & SUBDIR) // exists and is dir
+            if (g_dta.attribute & SUBDIR) // exists and is dir
             {
                 fix_dirname(newfilename);  // add trailing slash
                 isadir = true;

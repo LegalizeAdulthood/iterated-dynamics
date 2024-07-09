@@ -172,13 +172,13 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
         while (out == 0)
         {
             char msg[200];
-            std::sprintf(msg, "Searching %13s for %s      ", DTA.filename.c_str(), itemname);
+            std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), itemname);
             showtempmsg(msg);
-            if (!(DTA.attribute & SUBDIR)
-                && DTA.filename != "."
-                && DTA.filename != "..")
+            if (!(g_dta.attribute & SUBDIR)
+                && g_dta.filename != "."
+                && g_dta.filename != "..")
             {
-                split_fname_ext(DTA.filename, fname, ext);
+                split_fname_ext(g_dta.filename, fname, ext);
                 make_path(fullpath, drive, dir, fname, ext);
                 infile = std::fopen(fullpath, "rb");
                 if (infile != nullptr)

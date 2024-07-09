@@ -19,7 +19,7 @@ struct DIR_SEARCH               // Allocate DTA and define structure
     std::string filename;       // Filename and extension
 };
 
-extern DIR_SEARCH DTA;
+extern DIR_SEARCH g_dta;
 
 int fr_findfirst(char const *path);
 int fr_findnext();
