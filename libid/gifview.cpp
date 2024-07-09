@@ -43,8 +43,12 @@
 #include <filesystem>
 #include <vector>
 
-#define MAXCOLORS       256
-#define ALTERNATE_FRACTAL_TYPE    ".fra"
+enum
+{
+    MAXCOLORS = 256
+};
+
+constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 
 /*
  * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
@@ -57,7 +61,7 @@
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-#define DECODERLINE_WIDTH MAX_PIXELS
+constexpr int DECODERLINE_WIDTH{MAX_PIXELS};
 
 static void close_file();
 
