@@ -76,11 +76,6 @@ static bool s_loaded{};
 
 char g_max_angle{};
 
-inline bool ispow2(int n)
-{
-    return n == (n & -n);
-}
-
 LDBL getnumber(char const **str)
 {
     bool root = false;
