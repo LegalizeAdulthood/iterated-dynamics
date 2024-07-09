@@ -63,6 +63,13 @@
 namespace
 {
 
+enum
+{
+    MAX_WINDOWS_OPEN = 450
+};
+
+constexpr double MINDIF{0.001};
+
 struct ext_blk_2
 {
     bool got_data;
@@ -1478,8 +1485,6 @@ static bool fix_period_bof()
 
 // browse code RB
 
-#define MAX_WINDOWS_OPEN 450
-
 namespace
 {
 
@@ -2202,7 +2207,6 @@ static bool paramsOK(FRACTAL_INFO const *info)
     double tmpparm5, tmpparm6;
     double tmpparm7, tmpparm8;
     double tmpparm9, tmpparm10;
-#define MINDIF 0.001
 
     if (info->version > 6)
     {
