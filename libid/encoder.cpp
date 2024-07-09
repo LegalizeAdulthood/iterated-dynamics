@@ -337,12 +337,12 @@ bool encoder()
     if (g_colors == 2)
     {
         bitsperpixel = 1;
-        startbits = 3;
+        s_start_bits = 3;
     }
     else
     {
         bitsperpixel = 8;
-        startbits = 9;
+        s_start_bits = 9;
     }
 #endif
 
