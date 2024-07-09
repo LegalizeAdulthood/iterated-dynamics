@@ -978,8 +978,11 @@ static void setup_save_info(FRACTAL_INFO *save_info)
 //
 //
 
-#define BITSF   12
-#define HSIZE  5003            // 80% occupancy
+enum
+{
+    BITSF = 12,
+    HSIZE = 5003            // 80% occupancy
+};
 
 // GIF Image compression - modified 'compress'
 //
