@@ -375,96 +375,96 @@ static constexpr std::array<char const *, 4> s_jump_list
 static std::string s_formula;
 static std::array<error_data_st, 3> s_errors{};
 
-static FunctionPtr StkSRand{dStkSRand};
-static FunctionPtr StkAbs{dStkAbs};
-static FunctionPtr StkSqr{dStkSqr};
-static FunctionPtr StkAdd{dStkAdd};
-static FunctionPtr StkSub{dStkSub};
-static FunctionPtr StkConj{dStkConj};
-static FunctionPtr StkFloor{dStkFloor};
-static FunctionPtr StkCeil{dStkCeil};
-static FunctionPtr StkTrunc{dStkTrunc};
-static FunctionPtr StkRound{dStkRound};
-static FunctionPtr StkZero{dStkZero};
-static FunctionPtr StkOne{dStkOne};
-static FunctionPtr StkReal{dStkReal};
-static FunctionPtr StkImag{dStkImag};
-static FunctionPtr StkNeg{dStkNeg};
-static FunctionPtr StkMul{dStkMul};
-static FunctionPtr StkDiv{dStkDiv};
-static FunctionPtr StkMod{dStkMod};
-static FunctionPtr StkFlip{dStkFlip};
-static FunctionPtr StkSin{dStkSin};
-static FunctionPtr StkTan{dStkTan};
-static FunctionPtr StkTanh{dStkTanh};
-static FunctionPtr StkCoTan{dStkCoTan};
-static FunctionPtr StkCoTanh{dStkCoTanh};
-static FunctionPtr StkSinh{dStkSinh};
-static FunctionPtr StkCos{dStkCos};
-static FunctionPtr StkCosXX{dStkCosXX};
-static FunctionPtr StkCosh{dStkCosh};
-static FunctionPtr StkASin{dStkASin};
-static FunctionPtr StkASinh{dStkASinh};
-static FunctionPtr StkACos{dStkACos};
-static FunctionPtr StkACosh{dStkACosh};
-static FunctionPtr StkATan{dStkATan};
-static FunctionPtr StkATanh{dStkATanh};
-static FunctionPtr StkSqrt{dStkSqrt};
-static FunctionPtr StkCAbs{dStkCAbs};
-static FunctionPtr StkLT{dStkLT};
-static FunctionPtr StkGT{dStkGT};
-static FunctionPtr StkLTE{dStkLTE};
-static FunctionPtr StkGTE{dStkGTE};
-static FunctionPtr StkEQ{dStkEQ};
-static FunctionPtr StkNE{dStkNE};
-static FunctionPtr StkOR{dStkOR};
-static FunctionPtr StkAND{dStkAND};
-static FunctionPtr StkLog{dStkLog};
-static FunctionPtr StkExp{dStkExp};
-static FunctionPtr StkPwr{dStkPwr};
-static FunctionPtr PtrEndInit{EndInit};
-static FunctionPtr StkJumpOnFalse{dStkJumpOnFalse};
-static FunctionPtr StkJumpOnTrue{dStkJumpOnTrue};
-static FunctionPtr StkTrig0{dStkSin};
-static FunctionPtr StkTrig1{dStkSqr};
-static FunctionPtr StkTrig2{dStkSinh};
-static FunctionPtr StkTrig3{dStkCosh};
+static FunctionPtr s_srand{dStkSRand};
+static FunctionPtr s_abs{dStkAbs};
+static FunctionPtr s_sqr{dStkSqr};
+static FunctionPtr s_add{dStkAdd};
+static FunctionPtr s_sub{dStkSub};
+static FunctionPtr s_conj{dStkConj};
+static FunctionPtr s_floor{dStkFloor};
+static FunctionPtr s_ceil{dStkCeil};
+static FunctionPtr s_trunc{dStkTrunc};
+static FunctionPtr s_round{dStkRound};
+static FunctionPtr s_zero{dStkZero};
+static FunctionPtr s_one{dStkOne};
+static FunctionPtr s_real{dStkReal};
+static FunctionPtr s_imag{dStkImag};
+static FunctionPtr s_neg{dStkNeg};
+static FunctionPtr s_mul{dStkMul};
+static FunctionPtr s_div{dStkDiv};
+static FunctionPtr s_mod{dStkMod};
+static FunctionPtr s_flip{dStkFlip};
+static FunctionPtr s_sin{dStkSin};
+static FunctionPtr s_tan{dStkTan};
+static FunctionPtr s_tanh{dStkTanh};
+static FunctionPtr s_cotan{dStkCoTan};
+static FunctionPtr s_cotanh{dStkCoTanh};
+static FunctionPtr s_sinh{dStkSinh};
+static FunctionPtr s_cos{dStkCos};
+static FunctionPtr s_cosxx{dStkCosXX};
+static FunctionPtr s_cosh{dStkCosh};
+static FunctionPtr s_asin{dStkASin};
+static FunctionPtr s_asinh{dStkASinh};
+static FunctionPtr s_acos{dStkACos};
+static FunctionPtr s_acosh{dStkACosh};
+static FunctionPtr s_atan{dStkATan};
+static FunctionPtr s_atanh{dStkATanh};
+static FunctionPtr s_sqrt{dStkSqrt};
+static FunctionPtr s_cabs{dStkCAbs};
+static FunctionPtr s_lt{dStkLT};
+static FunctionPtr s_gt{dStkGT};
+static FunctionPtr s_lte{dStkLTE};
+static FunctionPtr s_gte{dStkGTE};
+static FunctionPtr s_eq{dStkEQ};
+static FunctionPtr s_ne{dStkNE};
+static FunctionPtr s_or{dStkOR};
+static FunctionPtr s_and{dStkAND};
+static FunctionPtr s_log{dStkLog};
+static FunctionPtr s_exp{dStkExp};
+static FunctionPtr s_pwr{dStkPwr};
+static FunctionPtr s_end_init{EndInit};
+static FunctionPtr s_jump_on_false{dStkJumpOnFalse};
+static FunctionPtr s_jump_on_true{dStkJumpOnTrue};
+static FunctionPtr s_trig0{dStkSin};
+static FunctionPtr s_trig1{dStkSqr};
+static FunctionPtr s_trig2{dStkSinh};
+static FunctionPtr s_trig3{dStkCosh};
 static constexpr std::array<FNCT_LIST, 34> s_func_list
 {
-    FNCT_LIST{"sin",   &StkSin},
-    FNCT_LIST{"sinh",  &StkSinh},
-    FNCT_LIST{"cos",   &StkCos},
-    FNCT_LIST{"cosh",  &StkCosh},
-    FNCT_LIST{"sqr",   &StkSqr},
-    FNCT_LIST{"log",   &StkLog},
-    FNCT_LIST{"exp",   &StkExp},
-    FNCT_LIST{"abs",   &StkAbs},
-    FNCT_LIST{"conj",  &StkConj},
-    FNCT_LIST{"real",  &StkReal},
-    FNCT_LIST{"imag",  &StkImag},
-    FNCT_LIST{"fn1",   &StkTrig0},
-    FNCT_LIST{"fn2",   &StkTrig1},
-    FNCT_LIST{"fn3",   &StkTrig2},
-    FNCT_LIST{"fn4",   &StkTrig3},
-    FNCT_LIST{"flip",  &StkFlip},
-    FNCT_LIST{"tan",   &StkTan},
-    FNCT_LIST{"tanh",  &StkTanh},
-    FNCT_LIST{"cotan", &StkCoTan},
-    FNCT_LIST{"cotanh", &StkCoTanh},
-    FNCT_LIST{"cosxx", &StkCosXX},
-    FNCT_LIST{"srand", &StkSRand},
-    FNCT_LIST{"asin",  &StkASin},
-    FNCT_LIST{"asinh", &StkASinh},
-    FNCT_LIST{"acos",  &StkACos},
-    FNCT_LIST{"acosh", &StkACosh},
-    FNCT_LIST{"atan",  &StkATan},
-    FNCT_LIST{"atanh", &StkATanh},
-    FNCT_LIST{"sqrt",  &StkSqrt},
-    FNCT_LIST{"cabs",  &StkCAbs},
-    FNCT_LIST{"floor", &StkFloor},
-    FNCT_LIST{"ceil",  &StkCeil},
-    FNCT_LIST{"trunc", &StkTrunc},
-    FNCT_LIST{"round", &StkRound},
+    FNCT_LIST{"sin",   &s_sin},
+    FNCT_LIST{"sinh",  &s_sinh},
+    FNCT_LIST{"cos",   &s_cos},
+    FNCT_LIST{"cosh",  &s_cosh},
+    FNCT_LIST{"sqr",   &s_sqr},
+    FNCT_LIST{"log",   &s_log},
+    FNCT_LIST{"exp",   &s_exp},
+    FNCT_LIST{"abs",   &s_abs},
+    FNCT_LIST{"conj",  &s_conj},
+    FNCT_LIST{"real",  &s_real},
+    FNCT_LIST{"imag",  &s_imag},
+    FNCT_LIST{"fn1",   &s_trig0},
+    FNCT_LIST{"fn2",   &s_trig1},
+    FNCT_LIST{"fn3",   &s_trig2},
+    FNCT_LIST{"fn4",   &s_trig3},
+    FNCT_LIST{"flip",  &s_flip},
+    FNCT_LIST{"tan",   &s_tan},
+    FNCT_LIST{"tanh",  &s_tanh},
+    FNCT_LIST{"cotan", &s_cotan},
+    FNCT_LIST{"cotanh", &s_cotanh},
+    FNCT_LIST{"cosxx", &s_cosxx},
+    FNCT_LIST{"srand", &s_srand},
+    FNCT_LIST{"asin",  &s_asin},
+    FNCT_LIST{"asinh", &s_asinh},
+    FNCT_LIST{"acos",  &s_acos},
+    FNCT_LIST{"acosh", &s_acosh},
+    FNCT_LIST{"atan",  &s_atan},
+    FNCT_LIST{"atanh", &s_atanh},
+    FNCT_LIST{"sqrt",  &s_sqrt},
+    FNCT_LIST{"cabs",  &s_cabs},
+    FNCT_LIST{"floor", &s_floor},
+    FNCT_LIST{"ceil",  &s_ceil},
+    FNCT_LIST{"trunc", &s_trunc},
+    FNCT_LIST{"round", &s_round},
 };
 static std::array<char const *, 17> s_op_list
 {
@@ -525,7 +525,6 @@ static constexpr std::array<SymmetryName, 14> s_symmetry_names
     SymmetryName{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
     SymmetryName{ "NOPLOT",        symmetry_type::NO_PLOT },
 };
-
 
 inline void push_jump(jump_control_type type)
 {
@@ -2313,7 +2312,7 @@ static ConstArg *is_const(char const *Str, int Len)
     {
         assert(g_operation_index > 0);
         assert(g_operation_index == s_op.size());
-        if (s_op.back().f == StkNeg)
+        if (s_op.back().f == s_neg)
         {
             s_op.pop_back();
             g_operation_index--;
@@ -2490,169 +2489,169 @@ static bool parse_formula_text(char const *text)
     switch (s_math_type)
     {
     case D_MATH:
-        StkAdd = dStkAdd;
-        StkSub = dStkSub;
-        StkNeg = dStkNeg;
-        StkMul = dStkMul;
-        StkSin = dStkSin;
-        StkSinh = dStkSinh;
-        StkLT = dStkLT;
-        StkLTE = dStkLTE;
-        StkMod = dStkMod;
-        StkSqr = dStkSqr;
-        StkCos = dStkCos;
-        StkCosh = dStkCosh;
-        StkLog = dStkLog;
-        StkExp = dStkExp;
-        StkPwr = dStkPwr;
-        StkDiv = dStkDiv;
-        StkAbs = dStkAbs;
-        StkReal = dStkReal;
-        StkImag = dStkImag;
-        StkConj = dStkConj;
-        StkTrig0 = dtrig0;
-        StkTrig1 = dtrig1;
-        StkTrig2 = dtrig2;
-        StkTrig3 = dtrig3;
-        StkFlip = dStkFlip;
-        StkTan = dStkTan;
-        StkTanh = dStkTanh;
-        StkCoTan = dStkCoTan;
-        StkCoTanh = dStkCoTanh;
-        StkCosXX = dStkCosXX;
-        StkGT  = dStkGT;
-        StkGTE = dStkGTE;
-        StkEQ  = dStkEQ;
-        StkNE  = dStkNE;
-        StkAND = dStkAND;
-        StkOR  = dStkOR ;
-        StkSRand = dStkSRand;
-        StkASin = dStkASin;
-        StkASinh = dStkASinh;
-        StkACos = dStkACos;
-        StkACosh = dStkACosh;
-        StkATan = dStkATan;
-        StkATanh = dStkATanh;
-        StkCAbs = dStkCAbs;
-        StkSqrt = dStkSqrt;
-        StkZero = dStkZero;
-        StkFloor = dStkFloor;
-        StkCeil = dStkCeil;
-        StkTrunc = dStkTrunc;
-        StkRound = dStkRound;
-        StkJumpOnTrue  = dStkJumpOnTrue;
-        StkJumpOnFalse = dStkJumpOnFalse;
-        StkOne = dStkOne;
+        s_add = dStkAdd;
+        s_sub = dStkSub;
+        s_neg = dStkNeg;
+        s_mul = dStkMul;
+        s_sin = dStkSin;
+        s_sinh = dStkSinh;
+        s_lt = dStkLT;
+        s_lte = dStkLTE;
+        s_mod = dStkMod;
+        s_sqr = dStkSqr;
+        s_cos = dStkCos;
+        s_cosh = dStkCosh;
+        s_log = dStkLog;
+        s_exp = dStkExp;
+        s_pwr = dStkPwr;
+        s_div = dStkDiv;
+        s_abs = dStkAbs;
+        s_real = dStkReal;
+        s_imag = dStkImag;
+        s_conj = dStkConj;
+        s_trig0 = dtrig0;
+        s_trig1 = dtrig1;
+        s_trig2 = dtrig2;
+        s_trig3 = dtrig3;
+        s_flip = dStkFlip;
+        s_tan = dStkTan;
+        s_tanh = dStkTanh;
+        s_cotan = dStkCoTan;
+        s_cotanh = dStkCoTanh;
+        s_cosxx = dStkCosXX;
+        s_gt  = dStkGT;
+        s_gte = dStkGTE;
+        s_eq  = dStkEQ;
+        s_ne  = dStkNE;
+        s_and = dStkAND;
+        s_or  = dStkOR ;
+        s_srand = dStkSRand;
+        s_asin = dStkASin;
+        s_asinh = dStkASinh;
+        s_acos = dStkACos;
+        s_acosh = dStkACosh;
+        s_atan = dStkATan;
+        s_atanh = dStkATanh;
+        s_cabs = dStkCAbs;
+        s_sqrt = dStkSqrt;
+        s_zero = dStkZero;
+        s_floor = dStkFloor;
+        s_ceil = dStkCeil;
+        s_trunc = dStkTrunc;
+        s_round = dStkRound;
+        s_jump_on_true  = dStkJumpOnTrue;
+        s_jump_on_false = dStkJumpOnFalse;
+        s_one = dStkOne;
         break;
     case M_MATH:
-        StkAdd = mStkAdd;
-        StkSub = mStkSub;
-        StkNeg = mStkNeg;
-        StkMul = mStkMul;
-        StkSin = mStkSin;
-        StkSinh = mStkSinh;
-        StkLT = mStkLT;
-        StkLTE = mStkLTE;
-        StkMod = mStkMod;
-        StkSqr = mStkSqr;
-        StkCos = mStkCos;
-        StkCosh = mStkCosh;
-        StkLog = mStkLog;
-        StkExp = mStkExp;
-        StkPwr = mStkPwr;
-        StkDiv = mStkDiv;
-        StkAbs = mStkAbs;
-        StkReal = mStkReal;
-        StkImag = mStkImag;
-        StkConj = mStkConj;
-        StkTrig0 = mtrig0;
-        StkTrig1 = mtrig1;
-        StkTrig2 = mtrig2;
-        StkTrig3 = mtrig3;
-        StkFlip = mStkFlip;
-        StkTan  = mStkTan;
-        StkTanh  = mStkTanh;
-        StkCoTan  = mStkCoTan;
-        StkCoTanh  = mStkCoTanh;
-        StkCosXX = mStkCosXX;
-        StkGT  = mStkGT;
-        StkGTE = mStkGTE;
-        StkEQ  = mStkEQ;
-        StkNE  = mStkNE;
-        StkAND = mStkAND;
-        StkOR  = mStkOR ;
-        StkSRand = mStkSRand;
-        StkASin = mStkASin;
-        StkACos = mStkACos;
-        StkACosh = mStkACosh;
-        StkATan = mStkATan;
-        StkATanh = mStkATanh;
-        StkCAbs = mStkCAbs;
-        StkSqrt = mStkSqrt;
-        StkZero = mStkZero;
-        StkFloor = mStkFloor;
-        StkCeil = mStkCeil;
-        StkTrunc = mStkTrunc;
-        StkRound = mStkRound;
-        StkJumpOnTrue  = mStkJumpOnTrue;
-        StkJumpOnFalse = mStkJumpOnFalse;
-        StkOne = mStkOne;
+        s_add = mStkAdd;
+        s_sub = mStkSub;
+        s_neg = mStkNeg;
+        s_mul = mStkMul;
+        s_sin = mStkSin;
+        s_sinh = mStkSinh;
+        s_lt = mStkLT;
+        s_lte = mStkLTE;
+        s_mod = mStkMod;
+        s_sqr = mStkSqr;
+        s_cos = mStkCos;
+        s_cosh = mStkCosh;
+        s_log = mStkLog;
+        s_exp = mStkExp;
+        s_pwr = mStkPwr;
+        s_div = mStkDiv;
+        s_abs = mStkAbs;
+        s_real = mStkReal;
+        s_imag = mStkImag;
+        s_conj = mStkConj;
+        s_trig0 = mtrig0;
+        s_trig1 = mtrig1;
+        s_trig2 = mtrig2;
+        s_trig3 = mtrig3;
+        s_flip = mStkFlip;
+        s_tan  = mStkTan;
+        s_tanh  = mStkTanh;
+        s_cotan  = mStkCoTan;
+        s_cotanh  = mStkCoTanh;
+        s_cosxx = mStkCosXX;
+        s_gt  = mStkGT;
+        s_gte = mStkGTE;
+        s_eq  = mStkEQ;
+        s_ne  = mStkNE;
+        s_and = mStkAND;
+        s_or  = mStkOR ;
+        s_srand = mStkSRand;
+        s_asin = mStkASin;
+        s_acos = mStkACos;
+        s_acosh = mStkACosh;
+        s_atan = mStkATan;
+        s_atanh = mStkATanh;
+        s_cabs = mStkCAbs;
+        s_sqrt = mStkSqrt;
+        s_zero = mStkZero;
+        s_floor = mStkFloor;
+        s_ceil = mStkCeil;
+        s_trunc = mStkTrunc;
+        s_round = mStkRound;
+        s_jump_on_true  = mStkJumpOnTrue;
+        s_jump_on_false = mStkJumpOnFalse;
+        s_one = mStkOne;
         break;
     case L_MATH:
         s_delta16 = g_bit_shift - 16;
         s_shift_back = 32 - g_bit_shift;
-        StkAdd = lStkAdd;
-        StkSub = lStkSub;
-        StkNeg = lStkNeg;
-        StkMul = lStkMul;
-        StkSin = lStkSin;
-        StkSinh = lStkSinh;
-        StkLT = lStkLT;
-        StkLTE = lStkLTE;
-        StkMod = lStkMod;
-        StkSqr = lStkSqr;
-        StkCos = lStkCos;
-        StkCosh = lStkCosh;
-        StkLog = lStkLog;
-        StkExp = lStkExp;
-        StkPwr = lStkPwr;
-        StkDiv = lStkDiv;
-        StkAbs = lStkAbs;
-        StkReal = lStkReal;
-        StkImag = lStkImag;
-        StkConj = lStkConj;
-        StkTrig0 = ltrig0;
-        StkTrig1 = ltrig1;
-        StkTrig2 = ltrig2;
-        StkTrig3 = ltrig3;
-        StkFlip = lStkFlip;
-        StkTan  = lStkTan;
-        StkTanh  = lStkTanh;
-        StkCoTan  = lStkCoTan;
-        StkCoTanh  = lStkCoTanh;
-        StkCosXX = lStkCosXX;
-        StkGT  = lStkGT;
-        StkGTE = lStkGTE;
-        StkEQ  = lStkEQ;
-        StkNE  = lStkNE;
-        StkAND = lStkAND;
-        StkOR  = lStkOR ;
-        StkSRand = lStkSRand;
-        StkASin = lStkASin;
-        StkACos = lStkACos;
-        StkACosh = lStkACosh;
-        StkATan = lStkATan;
-        StkATanh = lStkATanh;
-        StkCAbs = lStkCAbs;
-        StkSqrt = lStkSqrt;
-        StkZero = lStkZero;
-        StkFloor = lStkFloor;
-        StkCeil = lStkCeil;
-        StkTrunc = lStkTrunc;
-        StkRound = lStkRound;
-        StkJumpOnTrue  = lStkJumpOnTrue;
-        StkJumpOnFalse = lStkJumpOnFalse;
-        StkOne = lStkOne;
+        s_add = lStkAdd;
+        s_sub = lStkSub;
+        s_neg = lStkNeg;
+        s_mul = lStkMul;
+        s_sin = lStkSin;
+        s_sinh = lStkSinh;
+        s_lt = lStkLT;
+        s_lte = lStkLTE;
+        s_mod = lStkMod;
+        s_sqr = lStkSqr;
+        s_cos = lStkCos;
+        s_cosh = lStkCosh;
+        s_log = lStkLog;
+        s_exp = lStkExp;
+        s_pwr = lStkPwr;
+        s_div = lStkDiv;
+        s_abs = lStkAbs;
+        s_real = lStkReal;
+        s_imag = lStkImag;
+        s_conj = lStkConj;
+        s_trig0 = ltrig0;
+        s_trig1 = ltrig1;
+        s_trig2 = ltrig2;
+        s_trig3 = ltrig3;
+        s_flip = lStkFlip;
+        s_tan  = lStkTan;
+        s_tanh  = lStkTanh;
+        s_cotan  = lStkCoTan;
+        s_cotanh  = lStkCoTanh;
+        s_cosxx = lStkCosXX;
+        s_gt  = lStkGT;
+        s_gte = lStkGTE;
+        s_eq  = lStkEQ;
+        s_ne  = lStkNE;
+        s_and = lStkAND;
+        s_or  = lStkOR ;
+        s_srand = lStkSRand;
+        s_asin = lStkASin;
+        s_acos = lStkACos;
+        s_acosh = lStkACosh;
+        s_atan = lStkATan;
+        s_atanh = lStkATanh;
+        s_cabs = lStkCAbs;
+        s_sqrt = lStkSqrt;
+        s_zero = lStkZero;
+        s_floor = lStkFloor;
+        s_ceil = lStkCeil;
+        s_trunc = lStkTrunc;
+        s_round = lStkRound;
+        s_jump_on_true  = lStkJumpOnTrue;
+        s_jump_on_false = lStkJumpOnFalse;
+        s_one = lStkOne;
         break;
     }
     g_max_function = 0;
@@ -2786,7 +2785,7 @@ static bool parse_formula_text(char const *text)
             {
                 s_expecting_arg = true;
                 s_n++;
-                push_pending_op(StkOR, 7 - (s_paren + Equals) * 15);
+                push_pending_op(s_or, 7 - (s_paren + Equals) * 15);
             }
             else if (ModFlag == s_paren-1)
             {
@@ -2797,7 +2796,7 @@ static bool parse_formula_text(char const *text)
             {
                 assert(mdstk < Mods.size());
                 Mods[mdstk++] = ModFlag;
-                push_pending_op(StkMod, 2 - (s_paren + Equals) * 15);
+                push_pending_op(s_mod, 2 - (s_paren + Equals) * 15);
                 ModFlag = s_paren++;
             }
             break;
@@ -2822,28 +2821,28 @@ static bool parse_formula_text(char const *text)
             break;
         case '+':
             s_expecting_arg = true;
-            push_pending_op(StkAdd, 4 - (s_paren + Equals)*15);
+            push_pending_op(s_add, 4 - (s_paren + Equals)*15);
             break;
         case '-':
             if (s_expecting_arg)
             {
-                push_pending_op(StkNeg, 2 - (s_paren + Equals)*15);
+                push_pending_op(s_neg, 2 - (s_paren + Equals)*15);
             }
             else
             {
-                push_pending_op(StkSub, 4 - (s_paren + Equals)*15);
+                push_pending_op(s_sub, 4 - (s_paren + Equals)*15);
                 s_expecting_arg = true;
             }
             break;
         case '&':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(StkAND, 7 - (s_paren + Equals)*15);
+            push_pending_op(s_and, 7 - (s_paren + Equals)*15);
             break;
         case '!':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(StkNE, 6 - (s_paren + Equals)*15);
+            push_pending_op(s_ne, 6 - (s_paren + Equals)*15);
             break;
         case '<':
             s_expecting_arg = true;
@@ -2852,11 +2851,11 @@ static bool parse_formula_text(char const *text)
                 if (text[s_n + 1] == '=')
                 {
                     s_n++;
-                    fn = StkLTE;
+                    fn = s_lte;
                 }
                 else
                 {
-                    fn = StkLT;
+                    fn = s_lt;
                 }
                 push_pending_op(fn, 6 - (s_paren + Equals) * 15);
             }
@@ -2868,33 +2867,33 @@ static bool parse_formula_text(char const *text)
                 if (text[s_n + 1] == '=')
                 {
                     s_n++;
-                    fn = StkGTE;
+                    fn = s_gte;
                 }
                 else
                 {
-                    fn = StkGT;
+                    fn = s_gt;
                 }
                 push_pending_op(fn, 6 - (s_paren + Equals) * 15);
             }
             break;
         case '*':
             s_expecting_arg = true;
-            push_pending_op(StkMul, 3 - (s_paren + Equals)*15);
+            push_pending_op(s_mul, 3 - (s_paren + Equals)*15);
             break;
         case '/':
             s_expecting_arg = true;
-            push_pending_op(StkDiv, 3 - (s_paren + Equals)*15);
+            push_pending_op(s_div, 3 - (s_paren + Equals)*15);
             break;
         case '^':
             s_expecting_arg = true;
-            push_pending_op(StkPwr, 2 - (s_paren + Equals)*15);
+            push_pending_op(s_pwr, 2 - (s_paren + Equals)*15);
             break;
         case '=':
             s_expecting_arg = true;
             if (text[s_n+1] == '=')
             {
                 s_n++;
-                push_pending_op(StkEQ, 6 - (s_paren + Equals)*15);
+                push_pending_op(s_eq, 6 - (s_paren + Equals)*15);
             }
             else
             {
@@ -2919,7 +2918,7 @@ static bool parse_formula_text(char const *text)
                 case jump_control_type::IF:
                     s_expecting_arg = true;
                     push_jump(jump_control_type::IF);
-                    push_pending_op(StkJumpOnFalse, 1);
+                    push_pending_op(s_jump_on_false, 1);
                     break;
                 case jump_control_type::ELSE_IF:
                     s_expecting_arg = true;
@@ -2928,7 +2927,7 @@ static bool parse_formula_text(char const *text)
                     push_pending_op(StkJump, 1);
                     push_pending_op(nullptr, 15);
                     push_pending_op(StkClr, -30000);
-                    push_pending_op(StkJumpOnFalse, 1);
+                    push_pending_op(s_jump_on_false, 1);
                     break;
                 case jump_control_type::ELSE:
                     push_jump(jump_control_type::ELSE);
@@ -3227,7 +3226,7 @@ static bool fill_jump_struct()
                 switch (s_jump_control[i].type)
                 {
                 case jump_control_type::IF:
-                    JumpFunc = StkJumpOnFalse;
+                    JumpFunc = s_jump_on_false;
                     break;
                 case jump_control_type::ELSE_IF:
                     checkforelse = !checkforelse;
@@ -3237,7 +3236,7 @@ static bool fill_jump_struct()
                     }
                     else
                     {
-                        JumpFunc = StkJumpOnFalse;
+                        JumpFunc = s_jump_on_false;
                     }
                     break;
                 case jump_control_type::ELSE:
