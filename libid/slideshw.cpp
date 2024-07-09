@@ -40,16 +40,6 @@
 #undef max
 #endif
 
-slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=record
-std::string g_auto_name{"auto.key"};    // record auto keystrokes here
-
-static void sleep_secs(int);
-static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
-static void message(int secs, char const *buf);
-static void slideshowerr(char const *msg);
-static int  get_scancode(char const *mn);
-static void get_mnemonic(int code, char *mnemonic);
-
 enum
 {
     MAX_MNEMONIC = 20   // max size of any mnemonic string
@@ -60,6 +50,17 @@ struct key_mnemonic
     int code;
     char const *mnemonic;
 };
+
+static void sleep_secs(int);
+static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
+static void message(int secs, char const *buf);
+static void slideshowerr(char const *msg);
+static int  get_scancode(char const *mn);
+static void get_mnemonic(int code, char *mnemonic);
+
+slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=record
+std::string g_auto_name{"auto.key"};    // record auto keystrokes here
+bool g_busy{};
 
 static key_mnemonic s_key_mnemonics[] =
 {
@@ -84,6 +85,14 @@ static key_mnemonic s_key_mnemonics[] =
     { ID_KEY_CTL_END,          "CTRL_END"  },
     { ID_KEY_CTL_HOME,         "CTRL_HOME" }
 };
+static std::FILE *s_slide_show_file{};
+static long s_start_tick{};
+static long s_ticks{};
+static int s_slow_count{};
+static bool s_quotes{};
+static bool s_calc_wait{};
+static int s_repeats{};
+static int s_last1{};
 
 static int get_scancode(char const *mn)
 {
@@ -110,16 +119,6 @@ static void get_mnemonic(int code, char *mnemonic)
         }
     }
 }
-
-bool g_busy{};
-static std::FILE *s_slide_show_file{};
-static long s_start_tick{};
-static long s_ticks{};
-static int s_slow_count{};
-static bool s_quotes{};
-static bool s_calc_wait{};
-static int s_repeats{};
-static int s_last1{};
 
 // places a temporary message on the screen in text mode
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt)
