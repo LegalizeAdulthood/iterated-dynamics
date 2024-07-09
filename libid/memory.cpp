@@ -26,8 +26,6 @@
 // For disk memory:
 #define DISKWRITELEN 2048L // max # bytes transferred to/from disk mem at once
 
-BYTE *charbuf = nullptr;
-
 #define MAXHANDLES 256   // arbitrary #, suitably big
 int numTOTALhandles;
 
