@@ -48,9 +48,8 @@ static  int check_f6_key(int curkey, int choice);
 static  int filename_speedstr(int row, int col, int vid,
                              char const *speedstring, int speed_match);
 
-static int speedstate{};
-static char const *masks[] = {"*.pot", "*.gif"};
-
+static int s_speed_state{};
+static char const *s_masks[]{"*.pot", "*.gif"};
 
 bool getafilename(char const *hdg, char const *file_template, std::string &flname)
 {
@@ -127,7 +126,7 @@ retry_dir:
     }
     else
     {
-        numtemplates = sizeof(masks)/sizeof(masks[0]);
+        numtemplates = sizeof(s_masks)/sizeof(s_masks[0]);
     }
     filecount = -1;
     dircount  = 0;
@@ -163,7 +162,7 @@ retry_dir:
     {
         if (numtemplates > 1)
         {
-            std::strcpy(&(tmpmask[masklen]), masks[j]);
+            std::strcpy(&(tmpmask[masklen]), s_masks[j]);
         }
         out = fr_findfirst(tmpmask);
         while (out == 0 && filecount < MAXNUMFILES)
@@ -214,7 +213,7 @@ retry_dir:
     if (numtemplates > 1)
     {
         std::strcat(tmpmask, " ");
-        std::strcat(tmpmask, masks[0]);
+        std::strcat(tmpmask, s_masks[0]);
     }
 
     std::string const heading{std::string{hdg} + "\n"
@@ -266,7 +265,7 @@ retry_dir:
         flname = old_flname;
         return true;
     }
-    if (speedstr[0] == 0 || speedstate == MATCHING)
+    if (speedstr[0] == 0 || s_speed_state == MATCHING)
     {
         if (choices[i]->subdir)
         {
@@ -303,15 +302,15 @@ retry_dir:
     }
     else
     {
-        if (speedstate == SEARCHPATH
+        if (s_speed_state == SEARCHPATH
             && std::strchr(speedstr, '*') == nullptr && std::strchr(speedstr, '?') == nullptr
             && ((fr_findfirst(speedstr) == 0 && (g_dta.attribute & SUBDIR))
                 || std::strcmp(speedstr, SLASH) == 0)) // it is a directory
         {
-            speedstate = TEMPLATE;
+            s_speed_state = TEMPLATE;
         }
 
-        if (speedstate == TEMPLATE)
+        if (s_speed_state == TEMPLATE)
         {
             /* extract from tempstr the pathname and template information,
                 being careful not to overwrite drive and directory if not
@@ -388,17 +387,17 @@ static int filename_speedstr(int row, int col, int vid,
         || std::strchr(speedstring, '*') || std::strchr(speedstring, '*')
         || std::strchr(speedstring, '?'))
     {
-        speedstate = TEMPLATE;  // template
+        s_speed_state = TEMPLATE;  // template
         prompt = "File Template";
     }
     else if (speed_match)
     {
-        speedstate = SEARCHPATH; // does not match list
+        s_speed_state = SEARCHPATH; // does not match list
         prompt = "Search Path for";
     }
     else
     {
-        speedstate = MATCHING;
+        s_speed_state = MATCHING;
         prompt = g_speed_prompt.c_str();
     }
     driver_put_string(row, col, vid, prompt);
