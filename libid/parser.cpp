@@ -315,7 +315,6 @@ static void dStkJumpOnTrue();
 
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
-int g_jump_index{};
 Arg *g_arg1{};
 Arg *g_arg2{};
 std::array<Arg, 20> g_stack{};
@@ -344,6 +343,7 @@ bool g_frm_uses_ismand{};
 char g_max_function{};
 
 static std::vector<JUMP_CONTROL_ST> s_jump_control;
+static int s_jump_index{};
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
 static unsigned long s_num_ops{};
@@ -531,7 +531,7 @@ inline void push_jump(jump_control_type type)
     JUMP_CONTROL_ST value{};
     value.type = type;
     s_jump_control.push_back(value);
-    ++g_jump_index;
+    ++s_jump_index;
 }
 
 #define CASE_TERMINATOR case',':\
@@ -2103,15 +2103,15 @@ void lStkPwr()
 static void EndInit()
 {
     g_last_init_op = g_op_ptr;
-    s_init_jump_index = g_jump_index;
+    s_init_jump_index = s_jump_index;
 }
 
 static void StkJump()
 {
-    g_op_ptr =  s_jump_control[g_jump_index].ptrs.JumpOpPtr;
-    g_load_index = s_jump_control[g_jump_index].ptrs.JumpLodPtr;
-    g_store_index = s_jump_control[g_jump_index].ptrs.JumpStoPtr;
-    g_jump_index = s_jump_control[g_jump_index].DestJumpIndex;
+    g_op_ptr =  s_jump_control[s_jump_index].ptrs.JumpOpPtr;
+    g_load_index = s_jump_control[s_jump_index].ptrs.JumpLodPtr;
+    g_store_index = s_jump_control[s_jump_index].ptrs.JumpStoPtr;
+    s_jump_index = s_jump_control[s_jump_index].DestJumpIndex;
 }
 
 static void dStkJumpOnFalse()
@@ -2122,7 +2122,7 @@ static void dStkJumpOnFalse()
     }
     else
     {
-        g_jump_index++;
+        s_jump_index++;
     }
 }
 
@@ -2134,7 +2134,7 @@ static void mStkJumpOnFalse()
     }
     else
     {
-        g_jump_index++;
+        s_jump_index++;
     }
 }
 
@@ -2146,7 +2146,7 @@ static void lStkJumpOnFalse()
     }
     else
     {
-        g_jump_index++;
+        s_jump_index++;
     }
 }
 
@@ -2158,7 +2158,7 @@ static void dStkJumpOnTrue()
     }
     else
     {
-        g_jump_index++;
+        s_jump_index++;
     }
 }
 
@@ -2170,7 +2170,7 @@ static void mStkJumpOnTrue()
     }
     else
     {
-        g_jump_index++;
+        s_jump_index++;
     }
 }
 
@@ -2182,13 +2182,13 @@ static void lStkJumpOnTrue()
     }
     else
     {
-        g_jump_index++;
+        s_jump_index++;
     }
 }
 
 static void StkJumpLabel()
 {
-    g_jump_index++;
+    s_jump_index++;
 }
 
 static unsigned int SkipWhiteSpace(char const *Str)
@@ -2485,7 +2485,7 @@ static bool parse_formula_text(char const *text)
     s_set_random = false;
     s_randomized = false;
     g_uses_jump = false;
-    g_jump_index = 0;
+    s_jump_index = 0;
     s_jump_control.clear();
 
     switch (s_math_type)
@@ -2989,7 +2989,7 @@ int Formula()
     g_load_index = InitLodPtr;
     g_store_index = InitStoPtr;
     g_op_ptr = InitOpPtr;
-    g_jump_index = s_init_jump_index;
+    s_jump_index = s_init_jump_index;
     // Set the random number
     if (s_set_random || s_randomized)
     {
@@ -3044,7 +3044,7 @@ int form_per_pixel()
         return 1;
     }
     g_overflow = false;
-    g_jump_index = 0;
+    s_jump_index = 0;
     g_op_ptr = 0;
     g_store_index = 0;
     g_load_index = 0;
@@ -3274,7 +3274,7 @@ static bool fill_jump_struct()
     }
 
     // Following for safety only; all should always be false
-    if (i != g_jump_index
+    if (i != s_jump_index
         || s_jump_control[i - 1].type != jump_control_type::END_IF
         || s_jump_control[0].type != jump_control_type::IF)
     {
