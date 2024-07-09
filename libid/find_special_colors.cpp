@@ -6,9 +6,9 @@
 #include "os.h"
 #include "rotate.h"
 
-int g_color_dark = 0;       // darkest color in palette
-int g_color_bright = 0;     // brightest color in palette
-int g_color_medium = 0;     // nearest to medbright grey in palette
+int g_color_dark{};   // darkest color in palette
+int g_color_bright{}; // brightest color in palette
+int g_color_medium{}; // nearest to medbright grey in palette
 
 //*************** Function find_special_colors ********************
 //
