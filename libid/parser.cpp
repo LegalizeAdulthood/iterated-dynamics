@@ -317,7 +317,6 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 Arg *g_arg1{};
 Arg *g_arg2{};
-int g_op_ptr{};
 std::vector<FunctionPtr> f;
 std::vector<ConstArg> v;
 int g_store_index{};
@@ -344,6 +343,7 @@ static std::vector<JUMP_CONTROL_ST> s_jump_control;
 static int s_jump_index{};
 static std::array<Arg, 20> s_stack{};
 static std::vector<Arg *> s_load;
+static int s_op_ptr{};
 
 static std::vector<Arg *> s_store;
 static MATH_TYPE s_math_type{D_MATH};
@@ -2103,13 +2103,13 @@ void lStkPwr()
 
 static void EndInit()
 {
-    g_last_init_op = g_op_ptr;
+    g_last_init_op = s_op_ptr;
     s_init_jump_index = s_jump_index;
 }
 
 static void StkJump()
 {
-    g_op_ptr =  s_jump_control[s_jump_index].ptrs.JumpOpPtr;
+    s_op_ptr =  s_jump_control[s_jump_index].ptrs.JumpOpPtr;
     g_load_index = s_jump_control[s_jump_index].ptrs.JumpLodPtr;
     g_store_index = s_jump_control[s_jump_index].ptrs.JumpStoPtr;
     s_jump_index = s_jump_control[s_jump_index].DestJumpIndex;
@@ -2451,13 +2451,13 @@ static void RecSortPrec()
     {
         RecSortPrec();
     }
-    if (g_op_ptr > static_cast<int>(f.size()))
+    if (s_op_ptr > static_cast<int>(f.size()))
     {
         throw std::runtime_error(
-            "OpPtr (" + std::to_string(g_op_ptr) + ") exceeds size of f[] (" + std::to_string(f.size()) + ")");
+            "OpPtr (" + std::to_string(s_op_ptr) + ") exceeds size of f[] (" + std::to_string(f.size()) + ")");
     }
     f.push_back(s_op[ThisOp].f);
-    ++g_op_ptr;
+    ++s_op_ptr;
 }
 
 inline void push_pending_op(FunctionPtr f, int p)
@@ -2759,7 +2759,7 @@ static bool parse_formula_text(char const *text)
     s_op.clear();
     g_store_index = 0;
     g_load_index = 0;
-    g_op_ptr = 0;
+    s_op_ptr = 0;
     s_paren = 0;
     g_last_init_op = 0;
     s_expecting_arg = true;
@@ -2989,7 +2989,7 @@ int Formula()
 
     g_load_index = InitLodPtr;
     g_store_index = InitStoPtr;
-    g_op_ptr = InitOpPtr;
+    s_op_ptr = InitOpPtr;
     s_jump_index = s_init_jump_index;
     // Set the random number
     if (s_set_random || s_randomized)
@@ -3010,10 +3010,10 @@ int Formula()
     g_arg1 = &s_stack[0];
     g_arg2 = &s_stack[0];
     --g_arg2;
-    while (g_op_ptr < (int)g_last_op)
+    while (s_op_ptr < (int)g_last_op)
     {
-        f[g_op_ptr]();
-        g_op_ptr++;
+        f[s_op_ptr]();
+        s_op_ptr++;
     }
 
     switch (s_math_type)
@@ -3046,7 +3046,7 @@ int form_per_pixel()
     }
     g_overflow = false;
     s_jump_index = 0;
-    g_op_ptr = 0;
+    s_op_ptr = 0;
     g_store_index = 0;
     g_load_index = 0;
     g_arg1 = &s_stack[0];
@@ -3147,14 +3147,14 @@ int form_per_pixel()
     {
         g_last_init_op = g_last_op;
     }
-    while (g_op_ptr < g_last_init_op)
+    while (s_op_ptr < g_last_init_op)
     {
-        f[g_op_ptr]();
-        g_op_ptr++;
+        f[s_op_ptr]();
+        s_op_ptr++;
     }
     InitLodPtr = g_load_index;
     InitStoPtr = g_store_index;
-    InitOpPtr = g_op_ptr;
+    InitOpPtr = s_op_ptr;
     // Set old variable for orbits
     switch (s_math_type)
     {
@@ -3220,7 +3220,7 @@ static bool fill_jump_struct()
 
     std::vector<JUMP_PTRS_ST> jump_data;
 
-    for (g_op_ptr = 0; g_op_ptr < (int) g_last_op; g_op_ptr++)
+    for (s_op_ptr = 0; s_op_ptr < (int) g_last_op; s_op_ptr++)
     {
         if (find_new_func)
         {
@@ -3254,18 +3254,18 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*(f[g_op_ptr]) == StkLod)
+        if (*(f[s_op_ptr]) == StkLod)
         {
             loadcount++;
         }
-        else if (*(f[g_op_ptr]) == StkSto)
+        else if (*(f[s_op_ptr]) == StkSto)
         {
             storecount++;
         }
-        else if (*(f[g_op_ptr]) == JumpFunc)
+        else if (*(f[s_op_ptr]) == JumpFunc)
         {
             JUMP_PTRS_ST value{};
-            value.JumpOpPtr = g_op_ptr;
+            value.JumpOpPtr = s_op_ptr;
             value.JumpLodPtr = loadcount;
             value.JumpStoPtr = storecount;
             jump_data.push_back(value);
