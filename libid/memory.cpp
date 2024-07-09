@@ -22,11 +22,14 @@
 
 // Memory allocation routines.
 
-#define FAR_RESERVE   8192L    // amount of far mem we will leave avail.
-// For disk memory:
-#define DISKWRITELEN 2048L // max # bytes transferred to/from disk mem at once
+enum
+{
+    FAR_RESERVE = 8192L,  // amount of far mem we will leave avail.
+                          // For disk memory:
+    DISKWRITELEN = 2048L, // max # bytes transferred to/from disk mem at once
+    MAXHANDLES = 256      // arbitrary #, suitably big
+};
 
-#define MAXHANDLES 256   // arbitrary #, suitably big
 int numTOTALhandles;
 
 static constexpr const char *const memstr[3]{"nowhere", "memory", "disk"};
