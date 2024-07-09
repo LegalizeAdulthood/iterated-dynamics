@@ -35,9 +35,9 @@
 #include <cassert>
 #include <cmath>
 
-static MP Ans{};
-static double mlf{};
-static unsigned long lf{};
+static MP s_ans{};
+static double s_mlf{};
+static unsigned long s_lf{};
 
 bool g_mp_overflow{};
 MPC g_mpc_one{{0x3fff, 0X80000000L}, {0, 0L}};
@@ -47,9 +47,9 @@ bool g_log_map_calculate{};
 
 MP *MPabs(MP x)
 {
-    Ans = x;
-    Ans.Exp &= 0x7fff;
-    return &Ans;
+    s_ans = x;
+    s_ans.Exp &= 0x7fff;
+    return &s_ans;
 }
 
 MPC MPCsqr(MPC x)
@@ -443,27 +443,27 @@ void SetupLogTable()
     if (g_log_map_flag > 0)
     {
         // new log function
-        lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-        if (lf >= (unsigned long)g_log_map_table_max_size)
+        s_lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
+        if (s_lf >= (unsigned long)g_log_map_table_max_size)
         {
-            lf = g_log_map_table_max_size - 1;
+            s_lf = g_log_map_table_max_size - 1;
         }
-        mlf = (g_colors - (lf?2:1)) / std::log(static_cast<double>(g_log_map_table_max_size - lf));
+        s_mlf = (g_colors - (s_lf?2:1)) / std::log(static_cast<double>(g_log_map_table_max_size - s_lf));
     }
     else if (g_log_map_flag == -1)
     {
         // old log function
-        mlf = (g_colors - 1) / std::log(static_cast<double>(g_log_map_table_max_size));
+        s_mlf = (g_colors - 1) / std::log(static_cast<double>(g_log_map_table_max_size));
     }
     else if (g_log_map_flag <= -2)
     {
         // sqrt function
-        lf = 0 - g_log_map_flag;
-        if (lf >= (unsigned long)g_log_map_table_max_size)
+        s_lf = 0 - g_log_map_flag;
+        if (s_lf >= (unsigned long)g_log_map_table_max_size)
         {
-            lf = g_log_map_table_max_size - 1;
+            s_lf = g_log_map_table_max_size - 1;
         }
-        mlf = (g_colors - 2) / std::sqrt(static_cast<double>(g_log_map_table_max_size - lf));
+        s_mlf = (g_colors - 2) / std::sqrt(static_cast<double>(g_log_map_table_max_size - s_lf));
     }
 
     if (g_log_map_calculate)
@@ -484,26 +484,26 @@ void SetupLogTable()
 
     if (g_log_map_flag > -2)
     {
-        lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-        if (lf >= (unsigned long)g_log_map_table_max_size)
+        s_lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
+        if (s_lf >= (unsigned long)g_log_map_table_max_size)
         {
-            lf = g_log_map_table_max_size - 1;
+            s_lf = g_log_map_table_max_size - 1;
         }
-        Fg2Float((long)(g_log_map_table_max_size-lf), 0, m);
+        Fg2Float((long)(g_log_map_table_max_size-s_lf), 0, m);
         fLog14(m, m);
-        Fg2Float((long)(g_colors-(lf?2:1)), 0, c);
+        Fg2Float((long)(g_colors-(s_lf?2:1)), 0, c);
         fDiv(m, c, m);
         unsigned long prev;
-        for (prev = 1; prev <= lf; prev++)
+        for (prev = 1; prev <= s_lf; prev++)
         {
             g_log_map_table[prev] = 1;
         }
-        for (unsigned n = (lf ? 2U : 1U); n < (unsigned int)g_colors; n++)
+        for (unsigned n = (s_lf ? 2U : 1U); n < (unsigned int)g_colors; n++)
         {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fExp14(f, l);
-            limit = (unsigned long)Float2Fg(l, 0) + lf;
+            limit = (unsigned long)Float2Fg(l, 0) + s_lf;
             if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
             {
                 limit = g_log_map_table_max_size;
@@ -516,17 +516,17 @@ void SetupLogTable()
     }
     else
     {
-        lf = 0 - g_log_map_flag;
-        if (lf >= (unsigned long)g_log_map_table_max_size)
+        s_lf = 0 - g_log_map_flag;
+        if (s_lf >= (unsigned long)g_log_map_table_max_size)
         {
-            lf = g_log_map_table_max_size - 1;
+            s_lf = g_log_map_table_max_size - 1;
         }
-        Fg2Float((long)(g_log_map_table_max_size-lf), 0, m);
+        Fg2Float((long)(g_log_map_table_max_size-s_lf), 0, m);
         fSqrt14(m, m);
         Fg2Float((long)(g_colors-2), 0, c);
         fDiv(m, c, m);
         unsigned long prev;
-        for (prev = 1; prev <= lf; prev++)
+        for (prev = 1; prev <= s_lf; prev++)
         {
             g_log_map_table[prev] = 1;
         }
@@ -535,7 +535,7 @@ void SetupLogTable()
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fMul16(f, f, l);
-            limit = (unsigned long)(Float2Fg(l, 0) + lf);
+            limit = (unsigned long)(Float2Fg(l, 0) + s_lf);
             if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
             {
                 limit = g_log_map_table_max_size;
@@ -575,17 +575,17 @@ long logtablecalc(long citer)
     if (g_log_map_flag > 0)
     {
         // new log function
-        if ((unsigned long)citer <= lf + 1)
+        if ((unsigned long)citer <= s_lf + 1)
         {
             ret = 1;
         }
-        else if ((citer - lf)/std::log(static_cast<double>(citer - lf)) <= mlf)
+        else if ((citer - s_lf)/std::log(static_cast<double>(citer - s_lf)) <= s_mlf)
         {
-            ret = (long)(citer - lf);
+            ret = (long)(citer - s_lf);
         }
         else
         {
-            ret = (long)(mlf * std::log(static_cast<double>(citer - lf))) + 1;
+            ret = (long)(s_mlf * std::log(static_cast<double>(citer - s_lf))) + 1;
         }
     }
     else if (g_log_map_flag == -1)
@@ -597,23 +597,23 @@ long logtablecalc(long citer)
         }
         else
         {
-            ret = (long)(mlf * std::log(static_cast<double>(citer))) + 1;
+            ret = (long)(s_mlf * std::log(static_cast<double>(citer))) + 1;
         }
     }
     else if (g_log_map_flag <= -2)
     {
         // sqrt function
-        if ((unsigned long)citer <= lf)
+        if ((unsigned long)citer <= s_lf)
         {
             ret = 1;
         }
-        else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf * mlf))
+        else if ((unsigned long)(citer - s_lf) <= (unsigned long)(s_mlf * s_mlf))
         {
-            ret = (long)(citer - lf + 1);
+            ret = (long)(citer - s_lf + 1);
         }
         else
         {
-            ret = (long)(mlf * std::sqrt(static_cast<double>(citer - lf))) + 1;
+            ret = (long)(s_mlf * std::sqrt(static_cast<double>(citer - s_lf))) + 1;
         }
     }
     return ret;
@@ -672,7 +672,7 @@ MP *d2MP(double x)
 {
     // TODO: implement
     assert(!"d2MP386 called.");
-    return &Ans;
+    return &s_ans;
 }
 
 /*
@@ -820,7 +820,7 @@ MP *MPadd(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPadd386 called.");
-    return &Ans;
+    return &s_ans;
 }
 
 /*
@@ -945,7 +945,7 @@ MP *MPdiv(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPdiv386 called.");
-    return &Ans;
+    return &s_ans;
 }
 
 /*
@@ -1009,7 +1009,7 @@ MP *MPmul(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPmul386 called.");
-    return &Ans;
+    return &s_ans;
 }
 
 /*
@@ -1050,5 +1050,5 @@ fg2MP386    ENDP
 MP *fg2MP(long x, int fg)
 {
     assert(!"fg2MP386 called");
-    return &Ans;
+    return &s_ans;
 }
