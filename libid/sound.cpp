@@ -12,15 +12,14 @@
 #include <cstdio>
 #include <ctime>
 
-int g_fm_attack = 0;
-int g_fm_decay = 0;
-int g_fm_release = 0;
-int g_fm_sustain = 0;
-int g_fm_volume = 0;
-int g_fm_wavetype = 0;
-int g_hi_attenuation = 0;
-int g_polyphony = 0;
-
+int g_fm_attack{};
+int g_fm_decay{};
+int g_fm_release{};
+int g_fm_sustain{};
+int g_fm_volume{};
+int g_fm_wavetype{};
+int g_hi_attenuation{};
+int g_polyphony{};
 // TODO: this doesn't appear to be used outside this file?
 bool g_tab_or_help{}; // kludge for sound and tab or help key press
 
