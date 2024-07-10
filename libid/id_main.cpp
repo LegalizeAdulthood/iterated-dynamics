@@ -54,7 +54,6 @@ int g_adapter{};                                              // Video Adapter c
 std::string g_fractal_search_dir1;                            //
 std::string g_fractal_search_dir2;                            //
 int g_dot_mode{};                                             // video access method
-int textsafe2{};                                              // textsafe override from g_video_table
 int g_screen_x_dots{}, g_screen_y_dots{};                     // # of dots on the physical screen
 int g_logical_screen_x_offset{}, g_logical_screen_y_offset{}; // physical top left of logical screen
 int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on the logical screen
