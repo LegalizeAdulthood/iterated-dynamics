@@ -110,8 +110,8 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
-static LPCSTR s_window_class = "IdText";
-static WinText *g_me = nullptr;
+static const char *const s_window_class{"IdText"};
+static WinText *g_me{};
 
 
 // EGA/VGA 16-color palette (which doesn't match Windows palette exactly)
@@ -138,7 +138,7 @@ COLORREF wintext_color[] =
 */
 // 16-color Windows Palette
 
-static COLORREF wintext_color[] =
+static COLORREF wintext_color[]
 {
     RGB(0, 0, 0),
     RGB(0, 0, 128),
