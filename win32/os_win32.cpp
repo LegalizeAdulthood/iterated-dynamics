@@ -48,7 +48,6 @@ static void (*linewrite)(int, int, int, BYTE const *){};
 static void (*lineread)(int, int, int, BYTE *){};
 
 // Global variables (yuck!)
-int dacnorm{};
 int g_row_count{};
 int g_vesa_detect{};
 int g_vesa_x_res{};
