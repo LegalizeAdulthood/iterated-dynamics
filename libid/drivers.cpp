@@ -5,7 +5,7 @@
 #include <cstring>
 
 extern Driver *x11_driver;
-extern Driver *gdi_driver;
+extern Driver *g_gdi_driver;
 extern Driver *g_disk_driver;
 
 // list of drivers that are supported by source code in Id.
@@ -52,7 +52,7 @@ int init_drivers(int *argc, char **argv)
 #endif
 
 #if HAVE_GDI_DRIVER
-    load_driver(gdi_driver, argc, argv);
+    load_driver(g_gdi_driver, argc, argv);
 #endif
 
     return s_num_drivers;     // number of drivers supported at runtime

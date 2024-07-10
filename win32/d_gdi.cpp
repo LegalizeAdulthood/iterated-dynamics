@@ -418,5 +418,5 @@ void GDIDriver::flush()
     plot.flush();
 }
 
-GDIDriver gdi_driver_info{};
-Driver *gdi_driver = &gdi_driver_info;
+static GDIDriver s_gdi_driver{};
+Driver *g_gdi_driver = &s_gdi_driver;
