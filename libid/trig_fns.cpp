@@ -59,18 +59,18 @@ trig_fn g_trig_index[] =
 {
     trig_fn::SIN, trig_fn::SQR, trig_fn::SINH, trig_fn::COSH
 };
-void (*ltrig0)() = lStkSin;
-void (*ltrig1)() = lStkSqr;
-void (*ltrig2)() = lStkSinh;
-void (*ltrig3)() = lStkCosh;
-void (*mtrig0)() = mStkSin;
-void (*mtrig1)() = mStkSqr;
-void (*mtrig2)() = mStkSinh;
-void (*mtrig3)() = mStkCosh;
-void (*dtrig0)() = dStkSin;
-void (*dtrig1)() = dStkSqr;
-void (*dtrig2)() = dStkSinh;
-void (*dtrig3)() = dStkCosh;
+void (*ltrig0)(){lStkSin};
+void (*ltrig1)(){lStkSqr};
+void (*ltrig2)(){lStkSinh};
+void (*ltrig3)(){lStkCosh};
+void (*mtrig0)(){mStkSin};
+void (*mtrig1)(){mStkSqr};
+void (*mtrig2)(){mStkSinh};
+void (*mtrig3)(){mStkCosh};
+void (*dtrig0)(){dStkSin};
+void (*dtrig1)(){dStkSqr};
+void (*dtrig2)(){dStkSinh};
+void (*dtrig3)(){dStkCosh};
 
 // return display form of active trig functions
 std::string showtrig()
@@ -141,6 +141,7 @@ int set_trig_array(int k, char const *name)
     }
     return 0;
 }
+
 void set_trig_pointers(int which)
 {
     // set trig variable functions to avoid array lookup time
