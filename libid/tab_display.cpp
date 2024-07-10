@@ -58,8 +58,6 @@
 #include <filesystem>
 #include <string>
 
-namespace fs = std::filesystem;
-
 static void area();
 
 // Wrapping version of putstring for long numbers
