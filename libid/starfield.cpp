@@ -24,7 +24,7 @@ const std::string_view g_altern_map_file{"altern.map"};
 static int s_distribution{30};
 static int s_slope{25};
 static long s_concentration{};
-static int s_offset = 0;
+static int s_offset{};
 static double s_starfield_values[4]{30.0, 100.0, 5.0, 0.0};
 
 //
