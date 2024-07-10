@@ -111,32 +111,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
 static const char *const s_window_class{"IdText"};
-static WinText *g_me{};
-
-
-// EGA/VGA 16-color palette (which doesn't match Windows palette exactly)
-/*
-COLORREF wintext_color[] =
-{
-    RGB(0, 0, 0),
-    RGB(0, 0, 168),
-    RGB(0, 168, 0),
-    RGB(0, 168, 168),
-    RGB(168, 0, 0),
-    RGB(168, 0, 168),
-    RGB(168, 84, 0),
-    RGB(168, 168, 168),
-    RGB(84, 84, 84),
-    RGB(84, 84, 255),
-    RGB(84, 255, 84),
-    RGB(84, 255, 255),
-    RGB(255, 84, 84),
-    RGB(255, 84, 255),
-    RGB(255, 255, 84),
-    RGB(255, 255, 255)
-};
-*/
-// 16-color Windows Palette
+static WinText *s_me{};
 
 static COLORREF wintext_color[]
 {
@@ -293,7 +268,7 @@ int WinText::text_on()
     /* make sure g_me points to me because CreateWindow
      * is going to call the window procedure.
      */
-    g_me = this;
+    s_me = this;
     m_window = CreateWindow(s_window_class,                   //
         m_title,                                              //
         nullptr == m_parent ? WS_OVERLAPPEDWINDOW : WS_CHILD, //
@@ -337,8 +312,8 @@ int WinText::text_off()
 static void wintext_OnClose(HWND window)
 {
     ODS("wintext_OnClose");
-    g_me->m_text_mode = 1;
-    g_me->m_alt_f4_hit = true;
+    s_me->m_text_mode = 1;
+    s_me->m_alt_f4_hit = true;
 }
 
 static void wintext_OnSetFocus(HWND window, HWND old_focus)
@@ -346,14 +321,14 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
     ODS("wintext_OnSetFocus");
     // get focus - display caret
     // create caret & display
-    if (TRUE == g_me->m_showing_cursor)
+    if (TRUE == s_me->m_showing_cursor)
     {
-        g_me->m_cursor_owned = true;
-        CreateCaret(g_me->m_window, g_me->m_bitmap[g_me->m_cursor_type], g_me->m_char_width, g_me->m_char_height);
-        SetCaretPos(g_me->m_cursor_x*g_me->m_char_width, g_me->m_cursor_y*g_me->m_char_height);
+        s_me->m_cursor_owned = true;
+        CreateCaret(s_me->m_window, s_me->m_bitmap[s_me->m_cursor_type], s_me->m_char_width, s_me->m_char_height);
+        SetCaretPos(s_me->m_cursor_x*s_me->m_char_width, s_me->m_cursor_y*s_me->m_char_height);
         //SetCaretBlinkTime(500);
         ODS3("======================== Show Caret %d #3 (%d,%d)", ++carrot_count, g_me->cursor_x*g_me->char_width, g_me->cursor_y*g_me->char_height);
-        ShowCaret(g_me->m_window);
+        ShowCaret(s_me->m_window);
     }
 }
 
@@ -361,9 +336,9 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
 {
     // kill focus - hide caret
     ODS("wintext_OnKillFocus");
-    if (TRUE == g_me->m_showing_cursor)
+    if (TRUE == s_me->m_showing_cursor)
     {
-        g_me->m_cursor_owned = false;
+        s_me->m_cursor_owned = false;
         ODS1("======================== Hide Caret %d", --carrot_count);
         HideCaret(window);
         DestroyCaret();
@@ -376,34 +351,34 @@ static void wintext_OnPaint(HWND window)
     HDC hDC = BeginPaint(window, &ps);
 
     // the routine below handles *all* window updates
-    int xmin = ps.rcPaint.left/g_me->m_char_width;
-    int xmax = (ps.rcPaint.right + g_me->m_char_width - 1)/g_me->m_char_width;
-    int ymin = ps.rcPaint.top/g_me->m_char_height;
-    int ymax = (ps.rcPaint.bottom + g_me->m_char_height - 1)/g_me->m_char_height;
+    int xmin = ps.rcPaint.left/s_me->m_char_width;
+    int xmax = (ps.rcPaint.right + s_me->m_char_width - 1)/s_me->m_char_width;
+    int ymin = ps.rcPaint.top/s_me->m_char_height;
+    int ymax = (ps.rcPaint.bottom + s_me->m_char_height - 1)/s_me->m_char_height;
 
     ODS("wintext_OnPaint");
 
-    g_me->paint_screen(xmin, xmax, ymin, ymax);
+    s_me->paint_screen(xmin, xmax, ymin, ymax);
     EndPaint(window, &ps);
 }
 
 static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
     ODS("wintext_OnSize");
-    if (cx > (WORD)g_me->m_max_width ||
-            cy > (WORD)g_me->m_max_height)
+    if (cx > (WORD)s_me->m_max_width ||
+            cy > (WORD)s_me->m_max_height)
     {
         SetWindowPos(window,
                      GetNextWindow(window, GW_HWNDPREV),
-                     0, 0, g_me->m_max_width, g_me->m_max_height, SWP_NOMOVE);
+                     0, 0, s_me->m_max_width, s_me->m_max_height, SWP_NOMOVE);
     }
 }
 
 static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 {
     ODS("wintext_OnGetMinMaxInfo");
-    lpMinMaxInfo->ptMaxSize.x = g_me->m_max_width;
-    lpMinMaxInfo->ptMaxSize.y = g_me->m_max_height;
+    lpMinMaxInfo->ptMaxSize.x = s_me->m_max_width;
+    lpMinMaxInfo->ptMaxSize.y = s_me->m_max_height;
 }
 
 /*
@@ -411,11 +386,11 @@ static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 */
 LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (g_me->m_window == nullptr)
+    if (s_me->m_window == nullptr)
     {
-        g_me->m_window = hWnd;
+        s_me->m_window = hWnd;
     }
-    else if (hWnd != g_me->m_window)  // ??? not the text-mode window!
+    else if (hWnd != s_me->m_window)  // ??? not the text-mode window!
     {
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -762,5 +737,5 @@ void WinText::put_char_attr(int row, int col, int char_attr)
 
 void WinText::resume()
 {
-    g_me = this;
+    s_me = this;
 }
