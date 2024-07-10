@@ -42,19 +42,19 @@
 
 HINSTANCE g_instance{};
 
-static void (*dotwrite)(int, int, int) = nullptr;
-static int (*dotread)(int, int) = nullptr;
-static void (*linewrite)(int, int, int, BYTE const *) = nullptr;
-static void (*lineread)(int, int, int, BYTE *) = nullptr;
+static void (*dotwrite)(int, int, int){};
+static int (*dotread)(int, int){};
+static void (*linewrite)(int, int, int, BYTE const *){};
+static void (*lineread)(int, int, int, BYTE *){};
 
 // Global variables (yuck!)
-int dacnorm = 0;
-int g_row_count = 0;
-int g_vesa_detect = 0;
-int g_vesa_x_res = 0;
-int g_vesa_y_res = 0;
-int g_video_start_x = 0;
-int g_video_start_y = 0;
+int dacnorm{};
+int g_row_count{};
+int g_vesa_detect{};
+int g_vesa_x_res{};
+int g_vesa_y_res{};
+int g_video_start_x{};
+int g_video_start_y{};
 char *s_tos{};
 
 /* Global functions
@@ -94,7 +94,7 @@ void restart_uclock()
 typedef unsigned long uclock_t;
 uclock_t usec_clock()
 {
-    uclock_t result = 0;
+    uclock_t result{};
     // TODO
     _ASSERTE(FALSE);
 
@@ -108,7 +108,7 @@ typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINID
 
 void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
-    MiniDumpWriteDumpProc *dumper = nullptr;
+    MiniDumpWriteDumpProc *dumper{};
     HMODULE debughlp = LoadLibrary("dbghelp.dll");
     char minidump[MAX_PATH] = "id-" ID_GIT_HASH ".dmp";
     MINIDUMP_EXCEPTION_INFORMATION mdei =
@@ -343,6 +343,6 @@ void init_failure(char const *message)
 // Return available stack space ... shouldn't be needed in Win32, should it?
 long stackavail()
 {
-    char junk = 0;
+    char junk{};
     return WIN32_STACK_SIZE - (long)(((char *) s_tos) - &junk);
 }
