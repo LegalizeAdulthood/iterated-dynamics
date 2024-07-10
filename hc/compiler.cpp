@@ -7,13 +7,8 @@ namespace hc
 
 std::shared_ptr<Compiler> create_compiler(const Options &options)
 {
-    switch (options.mode)
-    {
-    case modes::ASCII_DOC:
-        return std::make_shared<AsciiDocCompiler>(options);
-    default:
-        return std::make_shared<HelpCompiler>(options);
-    }
+    return options.mode == modes::ASCII_DOC ? std::make_shared<AsciiDocCompiler>(options)
+                                            : std::make_shared<HelpCompiler>(options);
 }
 
 } // namespace hc
