@@ -61,4 +61,7 @@ if(ASCII_DOCTOR)
         COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/index.adoc
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/index.adoc)
     set_target_properties(html-doc PROPERTIES FOLDER Docs)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/index.html DESTINATION .)
+elseif(EXISTS ${CMAKE_SOURCE_DIR}/index.html)
+    install(FILES ${CMAKE_SOURCE_DIR}/index.html DESTINATION .)
 endif()
