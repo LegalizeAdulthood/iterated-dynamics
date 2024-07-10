@@ -52,10 +52,6 @@ static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
 
-static char ifsmask[13]     = {"*.ifs"};
-static char formmask[13]    = {"*.frm"};
-static char lsysmask[13]    = {"*.l"};
-
 // ---------------------------------------------------------------------
 
 int get_fracttype()             // prompt for and select fractal type
@@ -276,7 +272,7 @@ sel_type_restart:
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
         ValueSaver saved_help_mode(g_help_mode, help_labels::HT_LSYS);
-        if (get_file_entry(gfe_type::L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
+        if (get_file_entry(gfe_type::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
         {
             return true;
         }
@@ -284,7 +280,7 @@ sel_type_restart:
     else if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         ValueSaver saved_help_mode(g_help_mode, help_labels::HT_FORMULA);
-        if (get_file_entry(gfe_type::FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
+        if (get_file_entry(gfe_type::FORMULA, "Formula", "*.frm", g_formula_filename, g_formula_name) < 0)
         {
             return true;
         }
@@ -292,7 +288,7 @@ sel_type_restart:
     else if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
     {
         ValueSaver saved_help_mode(g_help_mode, help_labels::HT_IFS);
-        if (get_file_entry(gfe_type::IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
+        if (get_file_entry(gfe_type::IFS, "IFS", "*.ifs", g_ifs_filename, g_ifs_name) < 0)
         {
             return true;
         }
