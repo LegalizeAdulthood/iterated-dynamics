@@ -48,6 +48,13 @@
 #include <string>
 #include <vector>
 
+struct FT_CHOICE
+{
+    char name[15];
+    int  num;
+};
+static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
+
 static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
@@ -85,13 +92,6 @@ int get_fracttype()             // prompt for and select fractal type
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     return done;
 }
-
-struct FT_CHOICE
-{
-    char name[15];
-    int  num;
-};
-static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
 static fractal_type select_fracttype(fractal_type t)
 {
