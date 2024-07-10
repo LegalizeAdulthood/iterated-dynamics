@@ -155,19 +155,19 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
             {
-                if (--historyptr < 0)
+                if (--g_history_ptr < 0)
                 {
-                    historyptr = g_max_image_history - 1;
+                    g_history_ptr = g_max_image_history - 1;
                 }
             }
             if (*kbdchar == ID_KEY_CTL_BACKSLASH || *kbdchar == 8)
             {
-                if (++historyptr >= g_max_image_history)
+                if (++g_history_ptr >= g_max_image_history)
                 {
-                    historyptr = 0;
+                    g_history_ptr = 0;
                 }
             }
-            restore_history_info(historyptr);
+            restore_history_info(g_history_ptr);
             g_zoom_off = true;
             g_init_mode = g_adapter;
             if (g_cur_fractal_specific->isinteger != 0
@@ -180,7 +180,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             {
                 g_user_float_flag = true;
             }
-            historyflag = true;         // avoid re-store parms due to rounding errs
+            g_history_flag = true;         // avoid re-store parms due to rounding errs
             return main_state::IMAGE_START;
         }
         break;

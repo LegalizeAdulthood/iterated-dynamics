@@ -136,11 +136,11 @@ struct HISTORY
 
 } // namespace
 
-int historyptr{-1};          // user pointer into history tbl
-int saveptr{};               // save ptr into history tbl
-bool historyflag{};          // are we backing off in history?
+int g_history_ptr{-1};       // user pointer into history tbl
+bool g_history_flag{};       // are we backing off in history?
 int g_max_image_history{10}; //
 
+static int s_save_ptr{}; // save ptr into history tbl
 static std::vector<HISTORY> s_history;
 
 void history_init()
@@ -154,7 +154,7 @@ void save_history_info()
     {
         return;
     }
-    HISTORY last = s_history[saveptr];
+    HISTORY last = s_history[s_save_ptr];
 
     HISTORY current{};
     current.image_fractal_type = g_fractal_type;
@@ -304,31 +304,31 @@ void save_history_info()
         current.file_item_name.clear();
         break;
     }
-    if (historyptr == -1)        // initialize the history file
+    if (g_history_ptr == -1)        // initialize the history file
     {
         for (int i = 0; i < g_max_image_history; i++)
         {
             s_history[i] = current;
         }
-        historyflag = false;
-        historyptr = 0;
-        saveptr = 0;   // initialize history ptr
+        g_history_flag = false;
+        g_history_ptr = 0;
+        s_save_ptr = 0;   // initialize history ptr
     }
-    else if (historyflag)
+    else if (g_history_flag)
     {
-        historyflag = false;            // coming from user history command, don't save
+        g_history_flag = false;            // coming from user history command, don't save
     }
     else if (std::memcmp(&current, &last, sizeof(HISTORY)))
     {
-        if (++saveptr >= g_max_image_history)    // back to beginning of circular buffer
+        if (++s_save_ptr >= g_max_image_history)    // back to beginning of circular buffer
         {
-            saveptr = 0;
+            s_save_ptr = 0;
         }
-        if (++historyptr >= g_max_image_history)    // move user pointer in parallel
+        if (++g_history_ptr >= g_max_image_history)    // move user pointer in parallel
         {
-            historyptr = 0;
+            g_history_ptr = 0;
         }
-        s_history[saveptr] = current;
+        s_history[s_save_ptr] = current;
     }
 }
 
