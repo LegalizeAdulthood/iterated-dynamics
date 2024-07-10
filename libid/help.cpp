@@ -1006,7 +1006,7 @@ static std::string find_file(char const *filename)
     return find_path(filename);
 }
 
-static int _read_help_topic(int topic, int off, int len, void *buf)
+static int read_help_topic(int topic, int off, int len, void *buf)
 {
     static int  curr_topic = -1;
     static long curr_base;
@@ -1062,10 +1062,8 @@ static int _read_help_topic(int topic, int off, int len, void *buf)
  */
 int read_help_topic(help_labels label_num, int off, int len, void *buf)
 {
-    int ret;
-    ret = _read_help_topic(label[static_cast<int>(label_num)].topic_num,
-                           label[static_cast<int>(label_num)].topic_off + off, len, buf);
-    return ret;
+    return read_help_topic(label[static_cast<int>(label_num)].topic_num,
+        label[static_cast<int>(label_num)].topic_off + off, len, buf);
 }
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
@@ -1175,7 +1173,7 @@ static bool print_doc_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
             return false;
         }
 
-        t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
+        t = read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
 
         assert(t <= 0);
 
