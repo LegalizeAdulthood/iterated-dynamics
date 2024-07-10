@@ -79,11 +79,6 @@ jobs:
       with:
         name: html-docs
 
-    - name: List directory
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      shell: bash
-      run: ls -lR
-
     - name: Run Workflow
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
