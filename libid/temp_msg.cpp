@@ -17,9 +17,9 @@
 #include <cstring>
 #include <vector>
 
-static std::vector<BYTE> temptextsave;
-static int textxdots;
-static int textydots;
+static std::vector<BYTE> s_text_save;
+static int s_text_x_dots{};
+static int s_text_y_dots{};
 
 /* texttempmsg(msg) displays a text message of up to 40 characters, waits
       for a key press, restores the prior display, and returns (without
@@ -40,7 +40,7 @@ int texttempmsg(char const *msgparm)
 
 void freetempmsg()
 {
-    temptextsave.clear();
+    s_text_save.clear();
 }
 
 bool showtempmsg(char const *msgparm)
@@ -66,13 +66,13 @@ bool showtempmsg(char const *msgparm)
 
     const int xrepeat = (g_screen_x_dots >= 640) ? 2 : 1;
     const int yrepeat = (g_screen_y_dots >= 300) ? 2 : 1;
-    textxdots = (int) std::strlen(msg) * xrepeat * 8;
-    textydots = yrepeat * 8;
+    s_text_x_dots = (int) std::strlen(msg) * xrepeat * 8;
+    s_text_y_dots = yrepeat * 8;
 
-    size = (long) textxdots * (long) textydots;
-    if (temptextsave.size() != size)
+    size = (long) s_text_x_dots * (long) s_text_y_dots;
+    if (s_text_save.size() != size)
     {
-        temptextsave.clear();
+        s_text_save.clear();
     }
     save_sxoffs = g_logical_screen_x_offset;
     save_syoffs = g_logical_screen_y_offset;
@@ -86,12 +86,12 @@ bool showtempmsg(char const *msgparm)
         g_logical_screen_y_offset = 0;
         g_logical_screen_x_offset = g_logical_screen_y_offset;
     }
-    if (temptextsave.empty()) // only save screen first time called
+    if (s_text_save.empty()) // only save screen first time called
     {
-        temptextsave.resize(textxdots*textydots);
-        for (int i = 0; i < textydots; ++i)
+        s_text_save.resize(s_text_x_dots*s_text_y_dots);
+        for (int i = 0; i < s_text_y_dots; ++i)
         {
-            get_line(i, 0, textxdots-1, &temptextsave[textxdots*i]);
+            get_line(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
         }
     }
 
@@ -109,7 +109,7 @@ void cleartempmsg()
     {
         dvid_status(0, "");
     }
-    else if (!temptextsave.empty())
+    else if (!s_text_save.empty())
     {
         int save_sxoffs = g_logical_screen_x_offset;
         int save_syoffs = g_logical_screen_y_offset;
@@ -123,13 +123,13 @@ void cleartempmsg()
             g_logical_screen_y_offset = 0;
             g_logical_screen_x_offset = g_logical_screen_y_offset;
         }
-        for (int i = 0; i < textydots; ++i)
+        for (int i = 0; i < s_text_y_dots; ++i)
         {
-            put_line(i, 0, textxdots-1, &temptextsave[textxdots*i]);
+            put_line(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
         }
         if (!g_using_jiim)                // jiim frees memory with freetempmsg()
         {
-            temptextsave.clear();
+            s_text_save.clear();
         }
         g_logical_screen_x_offset = save_sxoffs;
         g_logical_screen_y_offset = save_syoffs;
