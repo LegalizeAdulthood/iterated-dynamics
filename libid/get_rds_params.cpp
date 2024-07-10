@@ -14,7 +14,7 @@
 #include <cstring>
 #include <string>
 
-static char const *masks[] = {"*.pot", "*.gif"};
+static char const *s_masks[] = {"*.pot", "*.gif"};
 
 int get_rds_params()
 {
@@ -117,7 +117,7 @@ int get_rds_params()
             }
             if (g_image_map && !reuse)
             {
-                if (getafilename("Select an Imagemap File", masks[1], g_stereo_map_filename))
+                if (getafilename("Select an Imagemap File", s_masks[1], g_stereo_map_filename))
                 {
                     continue;
                 }
