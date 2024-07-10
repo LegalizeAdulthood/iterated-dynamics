@@ -24,10 +24,10 @@ bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 }
 
 
-static token_types find_token_length(char const *curr, unsigned len, int *size, int *width)
+static token_types find_token_length(char const *curr, unsigned len, int *ret_size, int *ret_width)
 {
-    int _size  = 0;
-    int _width = 0;
+    int size{};
+    int width{};
     token_types tok;
 
     if (len == 0)
@@ -40,25 +40,25 @@ static token_types find_token_length(char const *curr, unsigned len, int *size, 
         {
         case ' ':    /* it's a run of spaces */
             tok = token_types::TOK_SPACE;
-            while (*curr == ' ' && _size < (int)len)
+            while (*curr == ' ' && size < (int)len)
             {
                 ++curr;
-                ++_size;
-                ++_width;
+                ++size;
+                ++width;
             }
             break;
 
         case CMD_SPACE:
             tok = token_types::TOK_SPACE;
             ++curr;
-            ++_size;
-            _width = *curr;
-            ++_size;
+            ++size;
+            width = *curr;
+            ++size;
             break;
 
         case CMD_LINK:
             tok = token_types::TOK_LINK;
-            _size += 1+3*sizeof(int); /* skip CMD_LINK + topic_num + topic_off + page_num */
+            size += 1+3*sizeof(int); /* skip CMD_LINK + topic_num + topic_off + page_num */
             curr += 1+3*sizeof(int);
 
             while (*curr != CMD_LINK)
@@ -66,60 +66,60 @@ static token_types find_token_length(char const *curr, unsigned len, int *size, 
                 if (*curr == CMD_LITERAL)
                 {
                     ++curr;
-                    ++_size;
+                    ++size;
                 }
                 ++curr;
-                ++_size;
-                ++_width;
-                assert((unsigned) _size < len);
+                ++size;
+                ++width;
+                assert((unsigned) size < len);
             }
 
-            ++_size;   /* skip ending CMD_LINK */
+            ++size;   /* skip ending CMD_LINK */
             break;
 
         case CMD_PARA:
             tok = token_types::TOK_PARA;
-            _size += 3;     /* skip CMD_PARA + indent + margin */
+            size += 3;     /* skip CMD_PARA + indent + margin */
             break;
 
         case CMD_XONLINE:
             tok = token_types::TOK_XONLINE;
-            ++_size;
+            ++size;
             break;
 
         case CMD_XDOC:
             tok = token_types::TOK_XDOC;
-            ++_size;
+            ++size;
             break;
 
         case CMD_CENTER:
             tok = token_types::TOK_CENTER;
-            ++_size;
+            ++size;
             break;
 
         case '\n':
             tok = token_types::TOK_NL;
-            ++_size;
+            ++size;
             break;
 
         case CMD_FF:
             tok = token_types::TOK_FF;
-            ++_size;
+            ++size;
             break;
 
         default:   /* it must be a word */
             tok = token_types::TOK_WORD;
             while (true)
             {
-                if (_size >= (int)len)
+                if (size >= (int)len)
                 {
                     break;
                 }
                 if (*curr == CMD_LITERAL)
                 {
                     curr += 2;
-                    _size += 2;
-                    _width += 1;
+                    size += 2;
+                    width += 1;
                 }
                 else if (*curr == '\0')
                 {
@@ -132,8 +132,8 @@ static token_types find_token_length(char const *curr, unsigned len, int *size, 
                 else if (*curr == '-')
                 {
                     ++curr;
-                    ++_size;
-                    ++_width;
+                    ++size;
+                    ++width;
                     if (is_hyphen(curr-1))
                     {
                         break;
@@ -142,21 +142,21 @@ static token_types find_token_length(char const *curr, unsigned len, int *size, 
                 else
                 {
                     ++curr;
-                    ++_size;
-                    ++_width;
+                    ++size;
+                    ++width;
                 }
             }
             break;
         } /* switch */
     }
 
-    if (size  != nullptr)
+    if (ret_size  != nullptr)
     {
-        *size  = _size;
+        *ret_size  = size;
     }
-    if (width != nullptr)
+    if (ret_width != nullptr)
     {
-        *width = _width;
+        *ret_width = width;
     }
 
     return tok;
