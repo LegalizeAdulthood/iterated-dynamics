@@ -1,5 +1,7 @@
 # Copyright 2018 Richard Thomson
 
+find_program(ASCII_DOCTOR asciidoctor)
+
 set(ID_HELP_SOURCES help.src help2.src help3.src help4.src help5.src)
 
 add_custom_target(native-help
@@ -25,6 +27,7 @@ add_custom_command(
         help3.src
         help4.src
         help5.src)
+set_target_properties(native-help PROPERTIES FOLDER Docs)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.hlp DESTINATION .)
 
 add_library(help-links 
@@ -33,6 +36,7 @@ add_library(help-links
 )
 target_include_directories(help-links PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(help-links PUBLIC help-defs)
+set_target_properties(help-links PROPERTIES FOLDER Libraries)
 
 add_custom_target(ascii-doc
     DEPENDS hc
@@ -46,3 +50,15 @@ add_custom_command(
         help3.src
         help4.src
         help5.src)
+set_target_properties(ascii-doc PROPERTIES FOLDER Docs)
+
+if(ASCII_DOCTOR)
+    add_custom_target(html-doc
+        DEPENDS hc ascii-doc
+        SOURCES ${CMAKE_CURRENT_BINARY_DIR}/index.html ${CMAKE_CURRENT_BINARY_DIR}/index.adoc)
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/index.html
+        COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/index.adoc
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/index.adoc)
+    set_target_properties(html-doc PROPERTIES FOLDER Docs)
+endif()

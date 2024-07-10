@@ -50,8 +50,8 @@ source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
 source_group("Test Data/Config" REGULAR_EXPRESSION ".*\\.cfg$")
 target_include_directories(test-id PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_link_libraries(test-id PRIVATE GTest::gmock_main libid)
-gtest_discover_tests(test-id
-    PROPERTIES LABELS id)
+set_target_properties(test-id PROPERTIES FOLDER Tests)
+gtest_discover_tests(test-id PROPERTIES LABELS id)
 
 add_subdirectory(images)
 add_subdirectory(tools)
