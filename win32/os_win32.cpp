@@ -54,7 +54,7 @@ int g_vesa_x_res{};
 int g_vesa_y_res{};
 int g_video_start_x{};
 int g_video_start_y{};
-char *s_tos{};
+char *g_top_of_stack{};
 
 /* Global functions
  *
@@ -343,5 +343,5 @@ void init_failure(char const *message)
 long stackavail()
 {
     char junk{};
-    return WIN32_STACK_SIZE - (long)(((char *) s_tos) - &junk);
+    return WIN32_STACK_SIZE - (long)(((char *) g_top_of_stack) - &junk);
 }

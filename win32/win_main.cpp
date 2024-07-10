@@ -20,7 +20,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 
     __try
     {
-        s_tos = (char *) &result;
+        g_top_of_stack = (char *) &result;
         g_instance = instance;
         _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
         result = id_main(__argc, __argv);

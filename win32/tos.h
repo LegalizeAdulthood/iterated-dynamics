@@ -1,3 +1,3 @@
 #pragma once
 
-extern char *s_tos;
+extern char *g_top_of_stack;
