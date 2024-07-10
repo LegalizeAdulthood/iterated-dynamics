@@ -18,8 +18,8 @@
 static int get_music_parms();
 static int get_scale_map();
 
-static int scale_map[12];
-static int menu2{};
+static int s_scale_map[12]{};
+static int s_menu2{};
 
 int get_sound_params()
 {
@@ -43,7 +43,7 @@ int get_sound_params()
        bit 6 controls pitch quantise
        bit 7 free! */
 get_sound_restart:
-    menu2 = 0;
+    s_menu2 = 0;
     builder.reset()
         .list("Sound (off, beep, x, y, z)", 5, 4, soundmodes, g_sound_flag & SOUNDFLAG_ORBITMASK)
         .yes_no("Use PC internal speaker?", (g_sound_flag & SOUNDFLAG_SPEAKER) != 0)
@@ -117,21 +117,21 @@ static int get_scale_map()
     ChoiceBuilder<15> builder;
     int i;
 
-    ++menu2;
+    ++s_menu2;
 get_map_restart:
     builder.reset()
-        .int_number("Scale map C (1)", scale_map[0])
-        .int_number("Scale map C#(2)", scale_map[1])
-        .int_number("Scale map D (3)", scale_map[2])
-        .int_number("Scale map D#(4)", scale_map[3])
-        .int_number("Scale map E (5)", scale_map[4])
-        .int_number("Scale map F (6)", scale_map[5])
-        .int_number("Scale map F#(7)", scale_map[6])
-        .int_number("Scale map G (8)", scale_map[7])
-        .int_number("Scale map G#(9)", scale_map[8])
-        .int_number("Scale map A (10)", scale_map[9])
-        .int_number("Scale map A#(11)", scale_map[10])
-        .int_number("Scale map B (12)", scale_map[11])
+        .int_number("Scale map C (1)", s_scale_map[0])
+        .int_number("Scale map C#(2)", s_scale_map[1])
+        .int_number("Scale map D (3)", s_scale_map[2])
+        .int_number("Scale map D#(4)", s_scale_map[3])
+        .int_number("Scale map E (5)", s_scale_map[4])
+        .int_number("Scale map F (6)", s_scale_map[5])
+        .int_number("Scale map F#(7)", s_scale_map[6])
+        .int_number("Scale map G (8)", s_scale_map[7])
+        .int_number("Scale map G#(9)", s_scale_map[8])
+        .int_number("Scale map A (10)", s_scale_map[9])
+        .int_number("Scale map A#(11)", s_scale_map[10])
+        .int_number("Scale map B (12)", s_scale_map[11])
         .comment("")
         .comment("Press F6 for FM synth parameters")
         .comment("Press F4 to reset to default values");
@@ -147,24 +147,24 @@ get_map_restart:
 
     for (int j = 0; j <= 11; j++)
     {
-        scale_map[j] = std::min(12, std::abs(builder.read_int_number()));
+        s_scale_map[j] = std::min(12, std::abs(builder.read_int_number()));
     }
 
-    if (i == ID_KEY_F6 && menu2 == 1)
+    if (i == ID_KEY_F6 && s_menu2 == 1)
     {
         get_music_parms(); /* see below, for controling fmsynth */
         goto get_map_restart;
     }
-    if (i == ID_KEY_F6 && menu2 == 2)
+    if (i == ID_KEY_F6 && s_menu2 == 2)
     {
-        menu2--;
+        s_menu2--;
     }
 
     if (i == ID_KEY_F4)
     {
         for (int j = 0; j <= 11; j++)
         {
-            scale_map[j] = j + 1;
+            s_scale_map[j] = j + 1;
         }
         goto get_map_restart;
     }
@@ -179,7 +179,7 @@ static int get_music_parms()
     help_labels oldhelpmode;
     int i;
 
-    menu2++;
+    s_menu2++;
 get_music_restart:
     builder.reset()
         .int_number("polyphony 1..9", g_polyphony + 1)
@@ -216,14 +216,14 @@ get_music_restart:
         driver_init_fm();
     }
 
-    if (i == ID_KEY_F7 && menu2 == 1)
+    if (i == ID_KEY_F7 && s_menu2 == 1)
     {
         get_scale_map(); /* see above, for setting scale mapping */
         goto get_music_restart;
     }
-    if (i == ID_KEY_F7 && menu2 == 2)
+    if (i == ID_KEY_F7 && s_menu2 == 2)
     {
-        menu2--;
+        s_menu2--;
     }
 
     if (i == ID_KEY_F4)
