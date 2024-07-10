@@ -8,7 +8,7 @@
 
 VIDEOINFO g_video_table[MAX_VIDEO_MODES]{};
 
-int g_video_table_len;                 // number of entries in above
+int g_video_table_len{};                 // number of entries in above
 
 int check_vidmode_key(int option, int k)
 {
