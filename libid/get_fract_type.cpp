@@ -53,13 +53,35 @@ struct FT_CHOICE
     char name[15];
     int  num;
 };
-static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
-static  fractal_type select_fracttype(fractal_type t);
-static  int sel_fractype_help(int curkey, int choice);
+static FT_CHOICE **s_ft_choices{}; // for sel_fractype_help subrtn
+// Julia inverse iteration method (jiim)
+#ifdef RANDOM_RUN
+static const char *s_jiim_method_prompt{"Breadth first, Depth first, Random Walk, Random Run?"};
+static char const *s_jiim_method[]{
+    to_string(Major::breadth_first), //
+    to_string(Major::depth_first),   //
+    to_string(Major::random_walk),   //
+    to_string(Major::random_run)     //
+};
+#else
+static const char *s_jiim_method_prompt{"Breadth first, Depth first, Random Walk"};
+static const char *s_jiim_method[]{
+    to_string(Major::breadth_first), //
+    to_string(Major::depth_first),   //
+    to_string(Major::random_walk)    //
+};
+#endif
+static char const *s_jiim_left_right_names[]{
+    to_string(Minor::left_first), //
+    to_string(Minor::right_first) //
+};
+static char s_tmp_stack[4096]{};
+
+// forward declarations
+static fractal_type select_fracttype(fractal_type t);
+static int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
-
-// ---------------------------------------------------------------------
 
 int get_fracttype()             // prompt for and select fractal type
 {
@@ -110,7 +132,7 @@ static fractal_type select_fracttype(fractal_type t)
         choices[i] = &storage[i];
         attributes[i] = 1;
     }
-    ft_choices = &choices[0];
+    s_ft_choices = &choices[0];
 
     // setup context sensitive help
     ValueSaver save_help_mode(g_help_mode, help_labels::HELP_FRACTALS);
@@ -181,7 +203,7 @@ static int sel_fractype_help(int curkey, int choice)
 {
     if (curkey == ID_KEY_F2)
     {
-        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[(*(ft_choices + choice))->num].helptext};
+        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[(*(s_ft_choices + choice))->num].helptext};
         help();
     }
     return 0;
@@ -324,32 +346,6 @@ sel_type_restart:
     return ret;
 }
 
-// JIIM
-#ifdef RANDOM_RUN
-static const char *JIIMstr1{"Breadth first, Depth first, Random Walk, Random Run?"};
-static char const *s_jiim_method[]{
-    to_string(Major::breadth_first), //
-    to_string(Major::depth_first),   //
-    to_string(Major::random_walk),   //
-    to_string(Major::random_run)     //
-};
-#else
-static const char *JIIMstr1{"Breadth first, Depth first, Random Walk"};
-static const char *s_jiim_method[]{
-    to_string(Major::breadth_first), //
-    to_string(Major::depth_first),   //
-    to_string(Major::random_walk)    //
-};
-#endif
-
-static char s_tmp_stack[4096]{};
-
-static char const *jiim_left_right_list[]{
-    to_string(Minor::left_first), //
-    to_string(Minor::right_first) //
-};
-
-// ---------------------------------------------------------------------
 int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific parms
 {
     char const *v0 = "From cx (real part)";
@@ -775,7 +771,7 @@ gfp_top:
 
     if (curtype == fractal_type::INVERSEJULIA || curtype == fractal_type::INVERSEJULIAFP)
     {
-        choices[promptnum] = JIIMstr1;
+        choices[promptnum] = s_jiim_method_prompt;
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.list = s_jiim_method;
         paramvalues[promptnum].uval.ch.vlen = 7;
@@ -788,7 +784,7 @@ gfp_top:
 
         choices[promptnum] = "Left first or Right first?";
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.list = jiim_left_right_list;
+        paramvalues[promptnum].uval.ch.list = s_jiim_left_right_names;
         paramvalues[promptnum].uval.ch.vlen = 5;
         paramvalues[promptnum].uval.ch.llen = 2;
         paramvalues[promptnum++].uval.ch.val  = static_cast<int>(g_inverse_julia_minor_method);
