@@ -51,6 +51,7 @@ jobs:
         path: ${{github.workspace}}/build-ci-html-docs/hc/src/index.html
 
   build:
+    needs: html-docs
     strategy:
       matrix:
         preset: [ debug, release ]
