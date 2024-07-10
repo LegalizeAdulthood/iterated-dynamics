@@ -14,9 +14,9 @@
 #include <string>
 
 // The index into this array must correspond to enum trig_fn
-trig_funct_lst g_trig_fn[] =
-// changing the order of these alters meaning of *.fra file
+// changing the order of these alters meaning of GIF extensions
 // maximum 6 characters in function names or recheck all related code
+trig_funct_lst g_trig_fn[] =
 // clang-format off
 {
     {"sin",   dStkSin,   dStkSin,   dStkSin   },
@@ -53,9 +53,7 @@ trig_funct_lst g_trig_fn[] =
 };
 // clang-format on
 
-#define NUMTRIGFN  sizeof(g_trig_fn)/sizeof(trig_funct_lst)
-
-const int g_num_trig_functions = NUMTRIGFN;
+const int g_num_trig_functions{std::size(g_trig_fn)};
 
 trig_fn g_trig_index[] =
 {
