@@ -58,6 +58,18 @@
 
 namespace fs = std::filesystem;
 
+struct write_batch_data // buffer for parms to break lines nicely
+{
+    int len;
+    char buf[10000];
+};
+
+bool g_make_parameter_file = false;
+bool g_make_parameter_file_map = false;
+int g_max_line_length = 72;
+
+static std::FILE *parmfile;
+
 static void put_parm(char const *parm, ...);
 static void put_parm_line();
 static void put_float(int, double, int);
@@ -65,12 +77,6 @@ static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char const *keyword, char const *fname);
 static void strip_zeros(char *buf);
 static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj);
-
-bool g_make_parameter_file = false;
-bool g_make_parameter_file_map = false;
-int g_max_line_length = 72;
-
-static std::FILE *parmfile;
 
 inline char par_key(int x)
 {
@@ -601,11 +607,6 @@ skip_UI:
     driver_unstack_screen();
 }
 
-struct write_batch_data // buffer for parms to break lines nicely
-{
-    int len;
-    char buf[10000];
-};
 static write_batch_data s_wbdata;
 
 static int getprec(double a, double b, double c)
