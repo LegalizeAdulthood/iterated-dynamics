@@ -31,7 +31,7 @@
 #include <cmath>
 #include <vector>
 
-#define PIXELROUND 0.00001
+constexpr double PIXELROUND{0.00001};
 
 enum
 {
