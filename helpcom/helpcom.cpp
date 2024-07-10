@@ -163,23 +163,23 @@ static token_types find_token_length(char const *curr, unsigned len, int *ret_si
 }
 
 
-token_types find_token_length(token_modes mode, char const *curr, unsigned int len, int *size, int *width)
+token_types find_token_length(
+    token_modes mode, char const *curr, unsigned int len, int *ret_size, int *ret_width)
 {
     int t;
-    int _size;
+    token_types tok = find_token_length(curr, len, &t, ret_width);
 
-    token_types tok = find_token_length(curr, len, &t, width);
-
+    int size;
     if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
         || (tok == token_types::TOK_XDOC && mode == token_modes::DOC))
     {
-        _size = 0;
+        size = 0;
 
         while (true)
         {
             curr  += t;
             len   -= t;
-            _size += t;
+            size += t;
 
             tok = find_token_length(curr, len, &t, nullptr);
 
@@ -191,16 +191,16 @@ token_types find_token_length(token_modes mode, char const *curr, unsigned int l
             }
         }
 
-        _size += t;
+        size += t;
     }
     else
     {
-        _size = t;
+        size = t;
     }
 
-    if (size != nullptr)
+    if (ret_size != nullptr)
     {
-        *size = _size;
+        *ret_size = size;
     }
 
     return tok;
