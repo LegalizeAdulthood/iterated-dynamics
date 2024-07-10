@@ -31,16 +31,23 @@
 
 namespace fs = std::filesystem;
 
-#define MAX_HIST           16        // number of pages we'll remember
-#define ACTION_CALL         0        // values returned by help_topic()
-#define ACTION_PREV         1
-#define ACTION_PREV2        2        // special - go back two topics
-#define ACTION_INDEX        3
-#define ACTION_QUIT         4
-#define F_HIST              (1 << 0)   // flags for help_topic()
-#define F_INDEX             (1 << 1)
-#define MAX_PAGE_SIZE       (80*25)  // no page of text may be larger
-#define TEXT_START_ROW      2        // start print the help text here
+enum
+{
+    MAX_HIST = 16,             // number of pages we'll remember
+    ACTION_CALL = 0,           // values returned by help_topic()
+    ACTION_PREV = 1,           //
+    ACTION_PREV2 = 2,          // special - go back two topics
+    ACTION_INDEX = 3,          //
+    ACTION_QUIT = 4,           //
+    F_HIST = 1 << 0,           // flags for help_topic()
+    F_INDEX = 1 << 1,          //
+    MAX_PAGE_SIZE = 80 * 25,   // no page of text may be larger
+    TEXT_START_ROW = 2,        // start print the help text here
+    PRINT_BUFFER_SIZE = 32767, // max. size of help topic in doc.
+    MAX_NUM_TOPIC_SEC = 10,    // max. number of topics under any single section (CONTENT)
+};
+
+constexpr char const *TEMP_FILE_NAME{"HELP.$$$"}; // temp file while printing document
 
 struct LINK
 {
@@ -79,27 +86,50 @@ struct help_sig_info
     unsigned long base;     // only if added to id.exe
 };
 
+struct PRINT_DOC_INFO
+{
+    int       cnum;          // current CONTENT num
+    int       tnum;          // current topic num
+
+    long      content_pos;   // current CONTENT item offset in file
+    int       num_page;      // total number of pages in document
+
+    int       num_contents,  // total number of CONTENT entries
+              num_topic;     // number of topics in current CONTENT
+
+    int       topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
+
+    char buffer[PRINT_BUFFER_SIZE];        // text buffer
+
+    char      id[81];        // buffer to store id in
+    char      title[81];     // buffer to store title in
+
+    bool (*msg_func)(int pnum, int num_page);
+
+    std::FILE     *file;          // file to sent output to
+    int       margin;        // indent text by this much
+    bool      start_of_line; // are we at the beginning of a line?
+    int       spaces;        // number of spaces in a row
+};
+
+static std::FILE *help_file{};         // help file handle
+static long base_off{};                // offset to help info in help file
+static int max_links{};                // max # of links in any page
+static int max_pages{};                // max # of pages in any topic
+static int num_label{};                // number of labels
+static int num_topic{};                // number of topics
+static int curr_hist{};                // current pos in history
+                                       // these items setup in init_help...
+static std::vector<long> topic_offset; // 4*num_topic
+static std::vector<LABEL> label;       // 4*num_label
+static std::vector<HIST> hist;         // 6*MAX_HIST
+                                       // these items used only while help is active...
+static std::vector<char> g_buffer;     // MAX_PAGE_SIZE
+static std::vector<LINK> link_table;   // 10*max_links
+static std::vector<PAGE> page_table;   // 4*max_pages
+
+// forward declarations
 static bool print_doc_msg_func(int pnum, int num_pages);
-
-static std::FILE *help_file = nullptr;       // help file handle
-static long base_off;                   // offset to help info in help file
-static int max_links;                   // max # of links in any page
-static int max_pages;                   // max # of pages in any topic
-static int num_label;                   // number of labels
-static int num_topic;                   // number of topics
-static int curr_hist = 0;               // current pos in history
-
-// these items alloc'ed in init_help...
-
-static std::vector<long> topic_offset;  // 4*num_topic
-static std::vector<LABEL> label;        // 4*num_label
-static std::vector<HIST> hist;          // 6*MAX_HIST (96 bytes)
-
-// these items alloc'ed only while help is active...
-
-static std::vector<char> g_buffer;   // MAX_PAGE_SIZE (2048 bytes)
-static std::vector<LINK> link_table; // 10*max_links
-static std::vector<PAGE> page_table; // 4*max_pages
 
 static void help_seek(long pos)
 {
@@ -411,7 +441,6 @@ static void display_page(char const *title, char const *text, unsigned text_len,
  *                      |                     |
  *
  */
-
 static int overlap(int a, int a2, int b, int b2)
 {
     if (b < a)
@@ -586,7 +615,6 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
         throw std::system_error(errno, std::system_category(), "failed fread");
     }
 }
-
 
 static int help_topic(HIST *curr, HIST *next, int flags)
 {
@@ -968,7 +996,6 @@ static bool can_read_file(const std::string &path)
     return false;
 }
 
-
 static std::string find_file(char const *filename)
 {
     const std::string path{(fs::path(SRCDIR) / filename).string()};
@@ -1028,50 +1055,18 @@ static int _read_help_topic(int topic, int off, int len, void *buf)
     return curr_len - (off+len);
 }
 
-int read_help_topic(help_labels label_num, int off, int len, void *buf)
 /*
  * reads text from a help topic.  Returns number of bytes from (off+len)
  * to end of topic.  On "EOF" returns a negative number representing
  * number of bytes not read.
  */
+int read_help_topic(help_labels label_num, int off, int len, void *buf)
 {
     int ret;
     ret = _read_help_topic(label[static_cast<int>(label_num)].topic_num,
                            label[static_cast<int>(label_num)].topic_off + off, len, buf);
     return ret;
 }
-
-#define PRINT_BUFFER_SIZE  (32767)       // max. size of help topic in doc.
-#define TEMP_FILE_NAME     "HELP.$$$"    // temp file for storing extraseg
-//    while printing document
-#define MAX_NUM_TOPIC_SEC  (10)          // max. number of topics under any
-//    single section (CONTENT)
-
-struct PRINT_DOC_INFO
-{
-    int       cnum;          // current CONTENT num
-    int       tnum;          // current topic num
-
-    long      content_pos;   // current CONTENT item offset in file
-    int       num_page;      // total number of pages in document
-
-    int       num_contents,  // total number of CONTENT entries
-              num_topic;     // number of topics in current CONTENT
-
-    int       topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
-
-    char buffer[PRINT_BUFFER_SIZE];        // text buffer
-
-    char      id[81];        // buffer to store id in
-    char      title[81];     // buffer to store title in
-
-    bool (*msg_func)(int pnum, int num_page);
-
-    std::FILE     *file;          // file to sent output to
-    int       margin;        // indent text by this much
-    bool      start_of_line; // are we at the beginning of a line?
-    int       spaces;        // number of spaces in a row
-};
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
