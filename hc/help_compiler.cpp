@@ -883,7 +883,7 @@ void insert_real_link_info(char *curr, unsigned int len)
     }
 }
 
-void _write_help(std::FILE *file)
+void HelpCompiler::write_help(std::FILE *file)
 {
     char                 *text;
     help_sig_info  hs;
@@ -991,7 +991,7 @@ void HelpCompiler::write_help()
 
     msg("Writing: %s", fname);
 
-    _write_help(hlp);
+    write_help(hlp);
 
     std::fclose(hlp);
 }

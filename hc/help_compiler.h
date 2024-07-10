@@ -2,6 +2,8 @@
 
 #include "compiler.h"
 
+#include <cstdio>
+
 namespace hc
 {
 
@@ -32,6 +34,7 @@ private:
     void paginate_document();
     void write_header();
     void write_link_source();
+    void write_help(std::FILE *hlp);
     void write_help();
     void report_stats();
     void add_hlp_to_exe();
