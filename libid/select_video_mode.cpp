@@ -24,8 +24,8 @@
 
 namespace fs = std::filesystem;
 
-static std::vector<int> entnums;
-static bool modes_changed = false;
+static std::vector<int> s_entry_nums;
+static bool s_modes_changed{};
 
 static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
@@ -40,7 +40,7 @@ inline bool is_writable(const std::string &path)
 static void format_vid_table(int choice, char *buf)
 {
     char kname[5];
-    const int idx = entnums[choice];
+    const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[idx],
            sizeof(g_video_entry));
@@ -56,11 +56,11 @@ int select_video_mode(int curmode)
     int ret;
 
     attributes.resize(g_video_table_len);
-    entnums.resize(g_video_table_len);
+    s_entry_nums.resize(g_video_table_len);
     // init tables
     std::fill(attributes.begin(), attributes.end(), 1);
-    std::iota(entnums.begin(), entnums.end(), 0);
-    std::sort(entnums.begin(), entnums.end(), ent_less);
+    std::iota(s_entry_nums.begin(), s_entry_nums.end(), 0);
+    std::sort(s_entry_nums.begin(), s_entry_nums.end(), ent_less);
 
     // pick default mode
     if (curmode < 0)
@@ -74,9 +74,9 @@ int select_video_mode(int curmode)
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
-        if (g_video_entry.colors == g_video_table[entnums[i]].colors
+        if (g_video_entry.colors == g_video_table[s_entry_nums[i]].colors
             && (curmode < 0
-                || std::memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
+                || std::memcmp((char *) &g_video_entry, (char *) &g_video_table[s_entry_nums[i]], sizeof(g_video_entry)) == 0))
         {
             break;
         }
@@ -89,7 +89,7 @@ int select_video_mode(int curmode)
     {
         ValueSaver saved_tab_mode{g_tab_mode, false};
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_VIDEO_MODE};
-        modes_changed = false;
+        s_modes_changed = false;
         i = fullscreen_choice(CHOICE_HELP, "Select Video Mode",
             "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,
             nullptr, attributes.data(), 1, 16, 74, i, format_vid_table, nullptr, nullptr,
@@ -98,7 +98,7 @@ int select_video_mode(int curmode)
     if (i == -1)
     {
         // update id.cfg for new key assignments
-        if (modes_changed
+        if (s_modes_changed
             && g_bad_config == config_status::OK
             && stopmsg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER | stopmsg_flags::INFO_ONLY,
                 "Save new function key assignments or cancel changes?") == 0)
@@ -108,7 +108,7 @@ int select_video_mode(int curmode)
         return -1;
     }
     // picked by function key or ENTER key
-    i = (i < 0) ? (-1 - i) : entnums[i];
+    i = (i < 0) ? (-1 - i) : s_entry_nums[i];
     // the selected entry now in g_video_entry
     std::memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
 
@@ -133,7 +133,7 @@ int select_video_mode(int curmode)
     }
 
     // update id.cfg for new key assignments
-    if (modes_changed && g_bad_config == config_status::OK)
+    if (s_modes_changed && g_bad_config == config_status::OK)
     {
         update_id_cfg();
     }
@@ -148,7 +148,7 @@ static int check_modekey(int curkey, int choice)
     {
         return -1-i;
     }
-    i = entnums[choice];
+    i = s_entry_nums[choice];
     int ret = 0;
     if ((curkey == '-' || curkey == '+')
         && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
@@ -165,7 +165,7 @@ static int check_modekey(int curkey, int choice)
                 if (g_video_table[i].keynum >= 1084)
                 {
                     g_video_table[i].keynum = 0;
-                    modes_changed = true;
+                    s_modes_changed = true;
                 }
             }
             else
@@ -183,7 +183,7 @@ static int check_modekey(int curkey, int choice)
                         }
                     }
                     g_video_table[i].keynum = j;
-                    modes_changed = true;
+                    s_modes_changed = true;
                 }
             }
         }
