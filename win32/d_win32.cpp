@@ -37,9 +37,6 @@
 
 #include <read_ticker.h>
 
-
-#define DI(name_) Win32BaseDriver *name_ = (Win32BaseDriver *) drv
-
 static void flush_output()
 {
     static time_t start = 0;
@@ -266,8 +263,7 @@ void Win32BaseDriver::put_string(int row, int col, int attr, char const *msg)
 *
 *       Scroll the screen up (from toprow to botrow)
 */
-void
-Win32BaseDriver::scroll_up(int top, int bot)
+void Win32BaseDriver::scroll_up(int top, int bot)
 {
     m_win_text.scroll_up(top, bot);
 }
