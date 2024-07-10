@@ -4,8 +4,10 @@
 
 #include <stddef.h>
 
-extern int                   g_bf_save_len;
-extern long                  g_bignum_max_stack_addr;
+extern int g_bf_save_len;
+extern long g_bignum_max_stack_addr;
+extern long g_max_stack;
+extern long g_start_stack;
 
 void free_bf_vars();
 bn_t alloc_stack(size_t size);

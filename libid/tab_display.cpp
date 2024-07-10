@@ -165,9 +165,6 @@ static void write_row(int row, char const *format, ...)
     driver_put_string(row, 2, C_GENERAL_HI, text);
 }
 
-extern long g_max_stack;
-extern long g_start_stack;
-
 bool tab_display_2(char *msg)
 {
     int row;
