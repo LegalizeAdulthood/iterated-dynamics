@@ -54,14 +54,13 @@ extern int filelength(int);
 namespace hc
 {
 
-char const *const DEFAULT_SRC_FNAME = "help.src";
-char const *const DEFAULT_HLP_FNAME = "id.hlp";
-char const *const DEFAULT_EXE_FNAME = "id.exe";
-char const *const DEFAULT_DOC_FNAME = "id.txt";
-std::string const DEFAULT_HTML_FNAME = "index.rst";
-
-char const *const TEMP_FNAME = "hc.tmp";
-char const *const SWAP_FNAME = "hcswap.tmp";
+char const *const DEFAULT_SRC_FNAME{"help.src"};
+char const *const DEFAULT_HLP_FNAME{"id.hlp"};
+char const *const DEFAULT_EXE_FNAME{"id.exe"};
+char const *const DEFAULT_DOC_FNAME{"id.txt"};
+std::string const DEFAULT_HTML_FNAME{"index.rst"};
+char const *const TEMP_FNAME{"hc.tmp"};
+char const *const SWAP_FNAME{"hcswap.tmp"};
 
 struct help_sig_info
 {
@@ -70,8 +69,33 @@ struct help_sig_info
     unsigned long base;
 };
 
+// paginate document stuff
+struct DOC_INFO
+{
+    int content_num;
+    int topic_num;
+    bool link_dest_warn;
+};
+
+struct PAGINATE_DOC_INFO : DOC_INFO
+{
+    char const *start;
+    CONTENT  *c;
+    LABEL    *lbl;
+};
+
+// print document stuff.
+struct PRINT_DOC_INFO : DOC_INFO
+{
+    std::FILE *file;
+    int margin;
+    bool start_of_line;
+    int spaces;
+};
+
 int g_max_pages{};                   // max. pages in any topic
 int g_num_doc_pages{};               // total number of pages in document
+
 static std::string s_src_filename;   // command-line .SRC filename
 
 std::ostream &operator<<(std::ostream &str, const CONTENT &content)
@@ -377,21 +401,6 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
         t.release_topic_text(false);
     } // for
 }
-
-// paginate document stuff
-struct DOC_INFO
-{
-    int content_num;
-    int topic_num;
-    bool link_dest_warn;
-};
-
-struct PAGINATE_DOC_INFO : DOC_INFO
-{
-    char const *start;
-    CONTENT  *c;
-    LABEL    *lbl;
-};
 
 LABEL *find_next_label_by_topic(int t)
 {
@@ -986,15 +995,6 @@ void HelpCompiler::write_help()
 
     std::fclose(hlp);
 }
-
-// print document stuff.
-struct PRINT_DOC_INFO : DOC_INFO
-{
-    std::FILE *file;
-    int margin;
-    bool start_of_line;
-    int spaces;
-};
 
 void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
