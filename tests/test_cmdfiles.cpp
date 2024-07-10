@@ -39,6 +39,7 @@
 #include <cctype>
 #include <cstring>
 #include <string_view>
+#include <vector>
 
 using namespace testing;
 
@@ -75,12 +76,8 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    cmdarg_flags exec_cmd_arg(const char *curarg, cmd_file mode);
+    cmdarg_flags exec_cmd_arg(const std::string &curarg, cmd_file mode);
 
-    cmdarg_flags exec_cmd_arg(const std::string &curarg, cmd_file mode)
-    {
-        return exec_cmd_arg(curarg.c_str(), mode);
-    }
     void expect_stop_msg();
 
     StrictMock<MockFunction<cmd_arg::StopMsg>> m_stop_msg;
@@ -89,7 +86,7 @@ protected:
     cmd_arg::StopMsgFn m_prev_stop_msg;
     cmd_arg::GoodbyeFn m_prev_goodbye;
     cmd_arg::PrintDocFn m_prev_print_document;
-    char m_buffer[FILE_MAX_PATH * 2]{};
+    std::vector<char> m_buffer;
 };
 
 void TestParameterCommand::SetUp()
@@ -111,10 +108,11 @@ void TestParameterCommand::TearDown()
     Test::TearDown();
 }
 
-cmdarg_flags TestParameterCommand::exec_cmd_arg(const char *curarg, cmd_file mode)
+cmdarg_flags TestParameterCommand::exec_cmd_arg(const std::string &curarg, cmd_file mode)
 {
-    std::strcpy(m_buffer, curarg);
-    return cmdarg(m_buffer, mode);
+    m_buffer.resize(curarg.size() + 1);
+    std::strcpy(m_buffer.data(), curarg.c_str());
+    return cmdarg(m_buffer.data(), mode);
 }
 
 void TestParameterCommand::expect_stop_msg()
@@ -457,7 +455,7 @@ TEST_F(TestParameterCommand, filenameMask)
 }
 
 // TODO: why does this test cause a crash?
-TEST_F(TestParameterCommand, DISABLED_filenameTooLong)
+TEST_F(TestParameterCommand, filenameTooLong)
 {
     const std::string saved_gif_filename_mask{g_gif_filename_mask};
     const int saved_show_file{g_show_file};
