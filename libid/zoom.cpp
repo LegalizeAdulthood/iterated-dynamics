@@ -42,6 +42,7 @@ int g_box_x[NUM_BOX_POINTS]{};
 int g_box_y[NUM_BOX_POINTS]{};
 int g_box_values[NUM_BOX_POINTS]{};
 bool g_video_scroll{};
+int g_box_color{}; // Zoom-Box color
 
 static void zmo_calc(double, double, double *, double *, double);
 static void zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
@@ -67,9 +68,6 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
     add_a_bf(target, p1);
     restore_stack(saved);
 }
-
-// Zoom-Box color
-int g_box_color = 0;
 
 void dispbox()
 {
