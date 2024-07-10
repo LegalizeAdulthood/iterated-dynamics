@@ -19,7 +19,7 @@
 
 #include <cstdlib>
 
-std::string const g_altern_map_file{"altern.map"};
+const std::string_view g_altern_map_file{"altern.map"};
 
 static int s_distribution{30};
 static int s_slope{25};
@@ -97,7 +97,7 @@ int starfield()
     s_concentration  = (long)(((s_starfield_values[1]) / 100.0) * (1L << 16));
     s_slope = (int)(s_starfield_values[2]);
 
-    if (ValidateLuts(g_altern_map_file.c_str()))
+    if (ValidateLuts(g_altern_map_file.data()))
     {
         stopmsg("Unable to load ALTERN.MAP");
         g_busy = false;
