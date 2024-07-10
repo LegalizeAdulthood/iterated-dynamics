@@ -492,4 +492,4 @@ void DiskDriver::flush()
 
 static DiskDriver s_disk_driver{};
 
-Driver *disk_driver = &s_disk_driver;
+Driver *g_disk_driver = &s_disk_driver;

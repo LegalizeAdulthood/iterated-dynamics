@@ -6,7 +6,7 @@
 
 extern Driver *x11_driver;
 extern Driver *gdi_driver;
-extern Driver *disk_driver;
+extern Driver *g_disk_driver;
 
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
@@ -48,7 +48,7 @@ int init_drivers(int *argc, char **argv)
 #endif
 
 #if HAVE_WIN32_DISK_DRIVER
-    load_driver(disk_driver, argc, argv);
+    load_driver(g_disk_driver, argc, argv);
 #endif
 
 #if HAVE_GDI_DRIVER
