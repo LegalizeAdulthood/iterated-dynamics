@@ -341,7 +341,6 @@ static const char *s_jiim_method[]{
     to_string(Major::random_walk)    //
 };
 #endif
-static char JIIMstr2[] = "Left first or Right first?";
 
 static char s_tmp_stack[4096]{};
 
@@ -787,7 +786,7 @@ gfp_top:
 #endif
         paramvalues[promptnum++].uval.ch.val  = static_cast<int>(g_major_method);
 
-        choices[promptnum] = JIIMstr2;
+        choices[promptnum] = "Left first or Right first?";
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.list = jiim_left_right_list;
         paramvalues[promptnum].uval.ch.vlen = 5;
