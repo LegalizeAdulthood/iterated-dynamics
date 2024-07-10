@@ -140,8 +140,6 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     return done;
 }
 
-static char spressanykey[] = {"Press any key to continue, F6 for area, Ctrl+Tab for next page"};
-
 static void show_str_var(char const *name, char const *var, int *row, char *msg)
 {
     if (var == nullptr)
@@ -694,8 +692,8 @@ top:
     {
         ++s_row;
     }
-    //waitforkey:
-    putstringcenter(/*s_row*/24, 0, 80, C_GENERAL_LO, spressanykey);
+    putstringcenter(
+        24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
     driver_hide_text_cursor();
 #ifdef XFRACT
     while (driver_key_pressed())
