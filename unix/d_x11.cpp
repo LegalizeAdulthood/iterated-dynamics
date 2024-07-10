@@ -58,6 +58,7 @@
 #include "x11_frame.h"
 #include "x11_text.h"
 #include "x11_plot.h"
+#include "intro.h"
 
 #ifdef LINUX
 #define FNDELAY O_NDELAY
@@ -65,7 +66,6 @@
 
 // external variables (set in the id.cfg file, but findable here
 
-extern bool slowdisplay;
 extern  int g_dot_mode;        // video access method (= 19)
 extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
 extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset of drawing area
@@ -359,7 +359,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-slowdisplay") == 0)
     {
-        slowdisplay = true;
+        g_slow_display = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-sync") == 0)

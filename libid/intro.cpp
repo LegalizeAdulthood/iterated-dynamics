@@ -21,7 +21,7 @@
 #include <ctime>
 #include <vector>
 
-bool slowdisplay = false;
+bool g_slow_display{};
 
 void intro()
 {
@@ -81,7 +81,7 @@ void intro()
     driver_hide_text_cursor();
     while (! driver_key_pressed())
     {
-        if (slowdisplay)
+        if (g_slow_display)
         {
             delaymax *= 15;
         }
