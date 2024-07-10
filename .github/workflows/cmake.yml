@@ -62,11 +62,6 @@ jobs:
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
     steps:
-    - name: Get HTML documentation
-      uses: actions/download-artifact@v4
-      with:
-        name: html-docs
-
     - name: Checkout
       uses: actions/checkout@v4.1.1
       with:
@@ -78,6 +73,16 @@ jobs:
         script: |
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Get HTML documentation
+      uses: actions/download-artifact@v4
+      with:
+        name: html-docs
+
+    - name: List directory
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      shell: bash
+      run: ls -lR
 
     - name: Run Workflow
       run: cmake --workflow --preset ci-${{matrix.preset}}
