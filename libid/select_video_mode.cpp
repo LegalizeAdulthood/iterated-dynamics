@@ -24,6 +24,9 @@
 
 namespace fs = std::filesystem;
 
+static std::vector<int> entnums;
+static bool modes_changed = false;
+
 static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
@@ -33,9 +36,6 @@ inline bool is_writable(const std::string &path)
     const fs::perms read_write = fs::perms::owner_read | fs::perms::owner_write;
     return (fs::status(path).permissions() & read_write) == read_write;
 }
-
-static std::vector<int> entnums;
-static bool modes_changed = false;
 
 static void format_vid_table(int choice, char *buf)
 {
