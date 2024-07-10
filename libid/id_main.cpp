@@ -47,102 +47,89 @@
 #include <init_failure.h>
 #include <string>
 
-VIDEOINFO g_video_entry;
-help_labels g_help_mode;
-
-int g_look_at_mouse = 0;  // see notes at mouseread routine
-
-int     g_adapter;                      // Video Adapter chosen from list in ...h
-std::string g_fractal_search_dir1;
-std::string g_fractal_search_dir2;
-
-/*
-   the following variables are out here only so
-   that the calcfract() and assembler routines can get at them easily
-*/
-int g_dot_mode;                                                    // video access method
-int textsafe2;                                                     // textsafe override from g_video_table
-int g_screen_x_dots, g_screen_y_dots;                              // # of dots on the physical screen
-int g_logical_screen_x_offset, g_logical_screen_y_offset;          // physical top left of logical screen
-int g_logical_screen_x_dots, g_logical_screen_y_dots;              // # of dots on the logical screen
-double g_logical_screen_x_size_dots, g_logical_screen_y_size_dots; // xdots-1, ydots-1
-int g_colors = 256;                                                // maximum colors available
-long g_max_iterations;                                             // try this many iterations
-int g_box_count;                                                   // 0 if no zoom-box yet
-int g_zoom_box_rotation;                                           // zoombox rotation
-double g_zoom_box_x, g_zoom_box_y;                                 // topleft of zoombox
-double g_zoom_box_width, g_zoom_box_height;                        // zoombox size
-double g_zoom_box_skew;                                            // zoombox shape
-fractal_type g_fractal_type;                                       // if == 0, use Mandelbrot
-char g_std_calc_mode;                                              // '1', '2', 'g', 'b'
-long g_l_delta_x, g_l_delta_y;                                     // screen pixel increments
-long g_l_delta_x2, g_l_delta_y2;                                   // screen pixel increments
-LDBL g_delta_x, g_delta_y;                                         // screen pixel increments
-LDBL g_delta_x2, g_delta_y2;                                       // screen pixel increments
-long g_l_delta_min;                                                // for calcfrac/calcmand
-double g_delta_min;                                                // same as a double
-double g_params[MAX_PARAMS];                                       // parameters
-double g_potential_params[3];                                      // three potential parameters
-
-config_status     g_bad_config{};          // 'id.cfg' ok?
-bool g_has_inverse = false;
-int     g_integer_fractal;         // TRUE if fractal uses integer math
-
-// usr_xxx is what the user wants, vs what we may be forced to do
-char    g_user_std_calc_mode;
-int     g_user_periodicity_value;
-long    g_user_distance_estimator_value;
-bool    g_user_float_flag;
-
-bool    g_view_window = false;     // false for full screen, true for window
-float   g_view_reduction;          // window auto-sizing
-bool    g_view_crop = false;       // true to crop default coords
-float   g_final_aspect_ratio;       // for view shape and rotation
-int     g_view_x_dots, g_view_y_dots;    // explicit view sizing
-bool    g_keep_aspect_ratio = false;  // true to keep virtual aspect
-bool    g_z_scroll = false;        // screen/zoombox false fixed, true relaxed
-
-// variables defined by the command line/files processor
-bool    g_compare_gif = false;             // compare two gif files flag
-int     g_timed_save = 0;                    // when doing a timed save
-int     g_resave_flag = 0;                  // tells encoder not to incr filename
-bool    g_started_resaves = false;        // but incr on first resave
-int     g_save_system;                    // from and for save files
-bool    g_tab_mode = true;                 // tab display enabled
-
-// for historical reasons (before rotation):
-//    top    left  corner of screen is (xxmin,yymax)
-//    bottom left  corner of screen is (xx3rd,yy3rd)
-//    bottom right corner of screen is (xxmax,yymin)
-double  g_x_min, g_x_max, g_y_min, g_y_max, g_x_3rd, g_y_3rd; // selected screen corners
-long    g_l_x_min, g_l_x_max, g_l_y_min, g_l_y_max, g_l_x_3rd, g_l_y_3rd;  // integer equivs
-double  g_save_x_min, g_save_x_max, g_save_y_min, g_save_y_max, g_save_x_3rd, g_save_y_3rd; // displayed screen corners
-double  g_plot_mx1, g_plot_mx2, g_plot_my1, g_plot_my2;     // real->screen multipliers
-
-calc_status_value g_calc_status = calc_status_value::NO_FRACTAL;
-// -1 no fractal
-//  0 parms changed, recalc reqd
-//  1 actively calculating
-//  2 interrupted, resumable
-//  3 interrupted, not resumable
-//  4 completed
-long g_calc_time;
-
-bool g_zoom_off = false;                   // false when zoom is disabled
-int        g_save_dac;                     // save-the-Video DAC flag
-bool g_browsing = false;                  // browse mode flag
-std::string g_file_name_stack[16];        // array of file names used while browsing
-int g_filename_stack_index ;
-double g_smallest_window_display_size;
-int g_smallest_box_size_shown;
-bool g_browse_sub_images = true;
-bool g_auto_browse = false;
-bool g_confirm_file_deletes = false;
-bool g_browse_check_fractal_params = false;
-bool g_browse_check_fractal_type = false;
-std::string g_browse_mask;
-int g_scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
-
+VIDEOINFO g_video_entry{};                                    //
+help_labels g_help_mode{};                                    //
+int g_look_at_mouse{};                                        // see notes at mouseread routine
+int g_adapter{};                                              // Video Adapter chosen from list in ...h
+std::string g_fractal_search_dir1;                            //
+std::string g_fractal_search_dir2;                            //
+int g_dot_mode{};                                             // video access method
+int textsafe2{};                                              // textsafe override from g_video_table
+int g_screen_x_dots{}, g_screen_y_dots{};                     // # of dots on the physical screen
+int g_logical_screen_x_offset{}, g_logical_screen_y_offset{}; // physical top left of logical screen
+int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on the logical screen
+double g_logical_screen_x_size_dots{}, g_logical_screen_y_size_dots{}; // xdots-1, ydots-1
+int g_colors{256};                                                     // maximum colors available
+long g_max_iterations{};                                               // try this many iterations
+int g_box_count{};                                                     // 0 if no zoom-box yet
+int g_zoom_box_rotation{};                                             // zoombox rotation
+double g_zoom_box_x{}, g_zoom_box_y{};                                 // topleft of zoombox
+double g_zoom_box_width{}, g_zoom_box_height{};                        // zoombox size
+double g_zoom_box_skew{};                                              // zoombox shape
+fractal_type g_fractal_type{fractal_type::NOFRACTAL};                  // if == 0, use Mandelbrot
+char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
+long g_l_delta_x{}, g_l_delta_y{};                                     // screen pixel increments
+long g_l_delta_x2{}, g_l_delta_y2{};                                   // screen pixel increments
+LDBL g_delta_x{}, g_delta_y{};                                         // screen pixel increments
+LDBL g_delta_x2{}, g_delta_y2{};                                       // screen pixel increments
+long g_l_delta_min{};                                                  // for calcfrac/calcmand
+double g_delta_min{};                                                  // same as a double
+double g_params[MAX_PARAMS]{};                                         // parameters
+double g_potential_params[3]{};                                        // three potential parameters
+config_status g_bad_config{};                                          // 'id.cfg' ok?
+bool g_has_inverse{};                                                  //
+int g_integer_fractal{};                                               // TRUE if fractal uses integer math
+                         // user_xxx is what the user wants, vs what we may be forced to do
+char g_user_std_calc_mode{};            //
+int g_user_periodicity_value{};         //
+long g_user_distance_estimator_value{}; //
+bool g_user_float_flag{};               //
+bool g_view_window{};                   // false for full screen, true for window
+float g_view_reduction{};               // window auto-sizing
+bool g_view_crop{};                     // true to crop default coords
+float g_final_aspect_ratio{};           // for view shape and rotation
+int g_view_x_dots{}, g_view_y_dots{};   // explicit view sizing
+bool g_keep_aspect_ratio{};             // true to keep virtual aspect
+bool g_z_scroll{};                      // screen/zoombox false fixed, true relaxed
+                                        // variables defined by the command line/files processor
+bool g_compare_gif{};                   // compare two gif files flag
+int g_timed_save{};                     // when doing a timed save
+int g_resave_flag{};                    // tells encoder not to incr filename
+bool g_started_resaves{};               // but incr on first resave
+int g_save_system{};                    // from and for save files
+bool g_tab_mode{true};                  // tab display enabled
+                                        // for historical reasons (before rotation):
+                                        //    top    left  corner of screen is (xxmin,yymax)
+                                        //    bottom left  corner of screen is (xx3rd,yy3rd)
+                                        //    bottom right corner of screen is (xxmax,yymin)
+double g_x_min{}, g_x_max{};            //
+double g_y_min{}, g_y_max{};            //
+double g_x_3rd{}, g_y_3rd{};            // selected screen corners
+long g_l_x_min{}, g_l_x_max{};          //
+long g_l_y_min{}, g_l_y_max{};          //
+long g_l_x_3rd{}, g_l_y_3rd{};          // integer equivs
+double g_save_x_min{}, g_save_x_max{};  //
+double g_save_y_min{}, g_save_y_max{};  //
+double g_save_x_3rd{}, g_save_y_3rd{};  // displayed screen corners
+double g_plot_mx1{}, g_plot_mx2{};      //
+double g_plot_my1{}, g_plot_my2{};      // real->screen multipliers
+calc_status_value g_calc_status{calc_status_value::NO_FRACTAL}; //
+long g_calc_time{};                                             //
+bool g_zoom_off{};                                              // false when zoom is disabled
+int g_save_dac{};                                               // save-the-Video DAC flag
+bool g_browsing{};                                              // browse mode flag
+std::string g_file_name_stack[16]{};                            // array of file names used while browsing
+int g_filename_stack_index{};                                   //
+double g_smallest_window_display_size{};                        //
+int g_smallest_box_size_shown{};                                //
+bool g_browse_sub_images{true};                                 //
+bool g_auto_browse{};                                           //
+bool g_confirm_file_deletes{};                                  //
+bool g_browse_check_fractal_params{};                           //
+bool g_browse_check_fractal_type{};                             //
+std::string g_browse_mask;                                      //
+int g_scale_map[12]{
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
 // Do nothing if math error
 static void my_floating_point_err(int sig)
