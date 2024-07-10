@@ -64,11 +64,11 @@ struct write_batch_data // buffer for parms to break lines nicely
     char buf[10000];
 };
 
-bool g_make_parameter_file = false;
-bool g_make_parameter_file_map = false;
-int g_max_line_length = 72;
+bool g_make_parameter_file{};
+bool g_make_parameter_file_map{};
+int g_max_line_length{72};
 
-static std::FILE *parmfile;
+static std::FILE *parmfile{};
 
 static void put_parm(char const *parm, ...);
 static void put_parm_line();
