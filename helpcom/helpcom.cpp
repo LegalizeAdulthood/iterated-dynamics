@@ -24,7 +24,7 @@ bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 }
 
 
-static token_types _find_token_length(char const *curr, unsigned len, int *size, int *width)
+static token_types find_token_length(char const *curr, unsigned len, int *size, int *width)
 {
     int _size  = 0;
     int _width = 0;
@@ -168,7 +168,7 @@ token_types find_token_length(token_modes mode, char const *curr, unsigned int l
     int t;
     int _size;
 
-    token_types tok = _find_token_length(curr, len, &t, width);
+    token_types tok = find_token_length(curr, len, &t, width);
 
     if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
         || (tok == token_types::TOK_XDOC && mode == token_modes::DOC))
@@ -181,7 +181,7 @@ token_types find_token_length(token_modes mode, char const *curr, unsigned int l
             len   -= t;
             _size += t;
 
-            tok = _find_token_length(curr, len, &t, nullptr);
+            tok = find_token_length(curr, len, &t, nullptr);
 
             if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
                 || (tok == token_types::TOK_XDOC && mode == token_modes::DOC)
