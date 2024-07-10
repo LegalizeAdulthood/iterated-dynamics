@@ -18,6 +18,7 @@ add_library(os STATIC
     x11_text.cpp
     x11_plot.cpp
     general.cpp
+    special_dirs.cpp
     stack_avail.cpp
     unixscr.cpp
     video.cpp)

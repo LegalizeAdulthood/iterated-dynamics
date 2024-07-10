@@ -4,6 +4,7 @@ find_package(cpuid CONFIG REQUIRED)
 
 add_library(libid
     include/os.h
+    include/special_dirs.h
 
     3d.cpp include/3d.h
     line3d.cpp include/line3d.h
@@ -439,6 +440,7 @@ source_group("Header Files/plumbing" FILES
     include/put_color_a.h
     include/read_ticker.h
     include/set_null_video.h
+    include/special_dirs.h
     include/stack_avail.h
     include/value_saver.h
 )
