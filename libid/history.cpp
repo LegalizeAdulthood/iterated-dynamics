@@ -136,12 +136,12 @@ struct HISTORY
 
 } // namespace
 
-int historyptr{-1}; // user pointer into history tbl
-int saveptr{};      // save ptr into history tbl
-bool historyflag{}; // are we backing off in history?
+int historyptr{-1};          // user pointer into history tbl
+int saveptr{};               // save ptr into history tbl
+bool historyflag{};          // are we backing off in history?
+int g_max_image_history{10}; //
 
 static std::vector<HISTORY> s_history;
-int g_max_image_history{10};
 
 void history_init()
 {
