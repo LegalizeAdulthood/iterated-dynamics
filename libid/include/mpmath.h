@@ -96,49 +96,49 @@ inline long LCMPLXmod(const LComplex &z)
 inline void LCMPLXtrig0(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    ltrig0();
+    g_ltrig0();
     out = g_arg1->l;
 }
 inline void LCMPLXtrig1(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    ltrig1();
+    g_ltrig1();
     out = g_arg1->l;
 }
 inline void LCMPLXtrig2(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    ltrig2();
+    g_ltrig2();
     out = g_arg1->l;
 }
 inline void LCMPLXtrig3(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    ltrig3();
+    g_ltrig3();
     out = g_arg1->l;
 }
 inline void CMPLXtrig0(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dtrig0();
+    g_dtrig0();
     out = g_arg1->d;
 }
 inline void CMPLXtrig1(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dtrig1();
+    g_dtrig1();
     out = g_arg1->d;
 }
 inline void CMPLXtrig2(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dtrig2();
+    g_dtrig2();
     out = g_arg1->d;
 }
 inline void CMPLXtrig3(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = (arg);
-    dtrig3();
+    g_dtrig3();
     (out) = g_arg1->d;
 }
 inline void LCMPLXsin(const LComplex &arg, LComplex &out)
