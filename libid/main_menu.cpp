@@ -23,6 +23,12 @@
 #include <cstring>
 #include <helpcom.h>
 
+enum
+{
+    MENU_HDG = 3,
+    MENU_ITEM = 1
+};
+
 static bool s_full_menu{};
 
 static int menu_checkkey(int curkey, int /*choice*/)
@@ -87,9 +93,6 @@ static int menu_checkkey(int curkey, int /*choice*/)
     }
     return 0;
 }
-
-#define MENU_HDG 3
-#define MENU_ITEM 1
 
 int main_menu(bool full_menu)
 {
