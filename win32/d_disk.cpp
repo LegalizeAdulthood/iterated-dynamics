@@ -35,8 +35,11 @@ using t_dotreader = int(int, int);
 using t_linewriter = void(int y, int x, int lastx, BYTE *pixels);
 using t_linereader = void(int y, int x, int lastx, BYTE *pixels);
 
-#define DRAW_INTERVAL 6
-#define TIMER_ID 1
+enum
+{
+    DRAW_INTERVAL = 6,
+    TIMER_ID = 1
+};
 
 class DiskDriver : public Win32BaseDriver
 {
