@@ -22,7 +22,10 @@
 #include <stdexcept>
 #include <string>
 
-#define FRAME_TIMER_ID 2
+enum
+{
+    FRAME_TIMER_ID = 2
+};
 
 Frame g_frame{};
 
