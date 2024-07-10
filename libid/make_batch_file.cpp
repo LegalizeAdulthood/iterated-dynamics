@@ -68,7 +68,7 @@ bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
 int g_max_line_length{72};
 
-static std::FILE *parmfile{};
+static std::FILE *s_parm_file{};
 
 static void put_parm(char const *parm, ...);
 static void put_parm_line();
@@ -410,8 +410,8 @@ skip_UI:
             out_name.replace_filename("id.tmp");
             infile = std::fopen(g_command_file.c_str(), "rt");
         }
-        parmfile = std::fopen(out_name.string().c_str(), "wt");
-        if (parmfile == nullptr)
+        s_parm_file = std::fopen(out_name.string().c_str(), "wt");
+        if (s_parm_file == nullptr)
         {
             stopmsg("Can't create " + out_name.string());
             if (gotinfile)
@@ -437,7 +437,7 @@ skip_UI:
                     {
                         // cancel
                         std::fclose(infile);
-                        std::fclose(parmfile);
+                        std::fclose(s_parm_file);
                         remove(out_name);
                         goto prompt_user;
                     }
@@ -448,8 +448,8 @@ skip_UI:
                     }
                     break;
                 }
-                std::fputs(buf, parmfile);
-                std::fputc('\n', parmfile);
+                std::fputs(buf, s_parm_file);
+                std::fputc('\n', s_parm_file);
             }
         }
         //**** start here
@@ -497,7 +497,7 @@ skip_UI:
                         std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", par_key(i), par_key(j));
                         std::strcat(PCommandName, tmpbuff);
                     }
-                    std::fprintf(parmfile, "%-19s{", PCommandName);
+                    std::fprintf(s_parm_file, "%-19s{", PCommandName);
                     g_x_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
                     g_x_max = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
                     g_y_min = pyymax - pdely*((j+1)*pydots - 1) - pdely2*((i+1)*pxdots - 1);
@@ -517,7 +517,7 @@ skip_UI:
                 }
                 else
                 {
-                    std::fprintf(parmfile, "%-19s{", g_command_name.c_str());
+                    std::fprintf(s_parm_file, "%-19s{", g_command_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last
@@ -540,9 +540,9 @@ skip_UI:
                 }
                 if (!g_command_comment[0].empty())
                 {
-                    std::fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
+                    std::fprintf(s_parm_file, " ; %s", g_command_comment[0].c_str());
                 }
-                std::fputc('\n', parmfile);
+                std::fputc('\n', s_parm_file);
                 {
                     char tmpbuff[25];
                     std::memset(tmpbuff, ' ', 23);
@@ -552,21 +552,21 @@ skip_UI:
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            std::fprintf(parmfile, "%s%s\n", tmpbuff, g_command_comment[k].c_str());
+                            std::fprintf(s_parm_file, "%s%s\n", tmpbuff, g_command_comment[k].c_str());
                         }
                     }
                     if (g_patch_level != 0 && !colorsonly)
                     {
-                        std::fprintf(parmfile, "%s id Version %d Patchlevel %d\n", tmpbuff, g_release, g_patch_level);
+                        std::fprintf(s_parm_file, "%s id Version %d Patchlevel %d\n", tmpbuff, g_release, g_patch_level);
                     }
                 }
                 write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
                 if (xm > 1 || ym > 1)
                 {
-                    std::fprintf(parmfile, "  video=%s", vidmde);
-                    std::fprintf(parmfile, " savename=frmig_%c%c\n", par_key(i), par_key(j));
+                    std::fprintf(s_parm_file, "  video=%s", vidmde);
+                    std::fprintf(s_parm_file, " savename=frmig_%c%c\n", par_key(i), par_key(j));
                 }
-                std::fprintf(parmfile, "}\n\n");
+                std::fprintf(s_parm_file, "}\n\n");
             }
         }
         if (xm > 1 || ym > 1)
@@ -589,13 +589,13 @@ skip_UI:
             while (i == 0); // skip blanks
             while (i >= 0)
             {
-                std::fputs(buf, parmfile);
-                std::fputc('\n', parmfile);
+                std::fputs(buf, s_parm_file);
+                std::fputc('\n', s_parm_file);
                 i = file_gets(buf, 255, infile);
             }
             std::fclose(infile);
         }
-        std::fclose(parmfile);
+        std::fclose(s_parm_file);
         if (gotinfile)
         {
             // replace the original file with the new
@@ -1730,13 +1730,13 @@ static void put_parm_line()
     }
     c = s_wbdata.buf[len];
     s_wbdata.buf[len] = 0;
-    std::fputs("  ", parmfile);
-    std::fputs(s_wbdata.buf, parmfile);
+    std::fputs("  ", s_parm_file);
+    std::fputs(s_wbdata.buf, s_parm_file);
     if (c && c != ' ')
     {
-        std::fputc('\\', parmfile);
+        std::fputc('\\', s_parm_file);
     }
-    std::fputc('\n', parmfile);
+    std::fputc('\n', s_parm_file);
     s_wbdata.buf[len] = (char)c;
     if (c == ' ')
     {
