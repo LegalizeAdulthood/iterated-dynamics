@@ -1,5 +1,7 @@
 #include "special_dirs.h"
 
+#include "id.h"
+
 #include <unistd.h>
 
 #include <array>
