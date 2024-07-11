@@ -73,40 +73,20 @@ private:
 
 class TestParameterCommand : public Test
 {
+public:
+    ~TestParameterCommand() override = default;
+    
 protected:
-    void SetUp() override;
     void TearDown() override;
 
     void exec_cmd_arg(const std::string &curarg, cmd_file mode);
 
-    void expect_stop_msg();
-
-    StrictMock<MockFunction<cmd_arg::StopMsg>> m_stop_msg;
-    StrictMock<MockFunction<cmd_arg::Goodbye>> m_goodbye;
-    StrictMock<MockFunction<cmd_arg::PrintDoc>> m_print_document;
-    cmd_arg::StopMsgFn m_prev_stop_msg;
-    cmd_arg::GoodbyeFn m_prev_goodbye;
-    cmd_arg::PrintDocFn m_prev_print_document;
     std::vector<char> m_buffer;
     cmdarg_flags m_result{};
 };
 
-void TestParameterCommand::SetUp()
-{
-    Test::SetUp();
-    m_prev_stop_msg = cmd_arg::get_stop_msg();
-    m_prev_goodbye = cmd_arg::get_goodbye();
-    m_prev_print_document = cmd_arg::get_print_document();
-    cmd_arg::set_stop_msg(m_stop_msg.AsStdFunction());
-    cmd_arg::set_goodbye(m_goodbye.AsStdFunction());
-    cmd_arg::set_print_document(m_print_document.AsStdFunction());
-}
-
 void TestParameterCommand::TearDown()
 {
-    cmd_arg::set_print_document(m_prev_print_document);
-    cmd_arg::set_goodbye(m_prev_goodbye);
-    cmd_arg::set_stop_msg(m_prev_stop_msg);
     Test::TearDown();
 }
 
@@ -117,12 +97,39 @@ void TestParameterCommand::exec_cmd_arg(const std::string &curarg, cmd_file mode
     m_result = cmdarg(m_buffer.data(), mode);
 }
 
-void TestParameterCommand::expect_stop_msg()
+class TestParameterCommandError : public TestParameterCommand
+{
+public:
+    ~TestParameterCommandError() override = default;
+
+protected:
+    void SetUp() override;
+    void TearDown() override;
+    void expect_stop_msg();
+
+    cmd_arg::StopMsgFn m_prev_stop_msg;
+    StrictMock<MockFunction<cmd_arg::StopMsg>> m_stop_msg;
+};
+
+void TestParameterCommandError::expect_stop_msg()
 {
     EXPECT_CALL(m_stop_msg, Call(stopmsg_flags::NONE, _)).WillOnce(Return(false));
 }
 
-TEST_F(TestParameterCommand, parameterTooLong)
+void TestParameterCommandError::SetUp()
+{
+    TestParameterCommand::SetUp();
+    m_prev_stop_msg = cmd_arg::get_stop_msg();
+    cmd_arg::set_stop_msg(m_stop_msg.AsStdFunction());
+}
+
+void TestParameterCommandError::TearDown()
+{
+    cmd_arg::set_stop_msg(m_prev_stop_msg);
+    TestParameterCommand::TearDown();
+}
+
+TEST_F(TestParameterCommandError, parameterTooLong)
 {
     expect_stop_msg();
 
@@ -131,7 +138,7 @@ TEST_F(TestParameterCommand, parameterTooLong)
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
-TEST_F(TestParameterCommand, batchBadArg)
+TEST_F(TestParameterCommandError, batchBadArg)
 {
     expect_stop_msg();
 
@@ -160,7 +167,7 @@ TEST_F(TestParameterCommand, batchNo)
     EXPECT_EQ(batch_modes::NONE, g_init_batch);
 }
 
-TEST_F(TestParameterCommand, batchAfterStartup)
+TEST_F(TestParameterCommandError, batchAfterStartup)
 {
     ValueSaver saved_init_batch{g_init_batch, batch_modes::NONE};
     expect_stop_msg();
@@ -170,7 +177,7 @@ TEST_F(TestParameterCommand, batchAfterStartup)
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
-TEST_F(TestParameterCommand, maxHistoryNonNumeric)
+TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
     expect_stop_msg();
@@ -180,7 +187,7 @@ TEST_F(TestParameterCommand, maxHistoryNonNumeric)
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
-TEST_F(TestParameterCommand, maxHistoryNegative)
+TEST_F(TestParameterCommandError, maxHistoryNegative)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
     expect_stop_msg();
@@ -200,7 +207,7 @@ TEST_F(TestParameterCommand, maxHistory)
     EXPECT_EQ(10, g_max_image_history);
 }
 
-TEST_F(TestParameterCommand, maxHistoryAfterStartup)
+TEST_F(TestParameterCommandError, maxHistoryAfterStartup)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
     expect_stop_msg();
@@ -210,7 +217,37 @@ TEST_F(TestParameterCommand, maxHistoryAfterStartup)
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
-TEST_F(TestParameterCommand, makeDocDefaultFile)
+class TestParameterCommandMakeDoc : public TestParameterCommand
+{
+public:
+    ~TestParameterCommandMakeDoc() override = default;
+
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    StrictMock<MockFunction<cmd_arg::Goodbye>> m_goodbye;
+    StrictMock<MockFunction<cmd_arg::PrintDoc>> m_print_document;
+    cmd_arg::GoodbyeFn m_prev_goodbye;
+    cmd_arg::PrintDocFn m_prev_print_document;
+};
+
+void TestParameterCommandMakeDoc::SetUp()
+{
+    TestParameterCommand::SetUp();
+    m_prev_goodbye = cmd_arg::get_goodbye();
+    m_prev_print_document = cmd_arg::get_print_document();
+    cmd_arg::set_goodbye(m_goodbye.AsStdFunction());
+    cmd_arg::set_print_document(m_print_document.AsStdFunction());
+}
+void TestParameterCommandMakeDoc::TearDown()
+{
+    cmd_arg::set_print_document(m_prev_print_document);
+    cmd_arg::set_goodbye(m_prev_goodbye);
+    TestParameterCommand::TearDown();
+}
+
+TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
 {
     EXPECT_CALL(m_print_document, Call(StrEq("id.txt"), NotNull()));
     EXPECT_CALL(m_goodbye, Call());
@@ -220,7 +257,7 @@ TEST_F(TestParameterCommand, makeDocDefaultFile)
     EXPECT_EQ(cmdarg_flags::GOODBYE, m_result);
 }
 
-TEST_F(TestParameterCommand, makeDocCustomFile)
+TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
 {
     EXPECT_CALL(m_print_document, Call(StrEq("foo.txt"), NotNull()));
     EXPECT_CALL(m_goodbye, Call());
@@ -230,7 +267,7 @@ TEST_F(TestParameterCommand, makeDocCustomFile)
     EXPECT_EQ(cmdarg_flags::GOODBYE, m_result);
 }
 
-TEST_F(TestParameterCommand, makeParTooFewValues)
+TEST_F(TestParameterCommandError, makeParTooFewValues)
 {
     expect_stop_msg();
 
@@ -239,7 +276,7 @@ TEST_F(TestParameterCommand, makeParTooFewValues)
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
-TEST_F(TestParameterCommand, makeParTooManyValues)
+TEST_F(TestParameterCommandError, makeParTooManyValues)
 {
     expect_stop_msg();
 
@@ -250,7 +287,7 @@ TEST_F(TestParameterCommand, makeParTooManyValues)
 
 // TODO: test makepar with valid arguments
 
-TEST_F(TestParameterCommand, resetBadArg)
+TEST_F(TestParameterCommandError, resetBadArg)
 {
     ValueSaver saved_escape_exit{g_escape_exit, true};
     expect_stop_msg();
@@ -261,7 +298,7 @@ TEST_F(TestParameterCommand, resetBadArg)
     EXPECT_TRUE(g_escape_exit);
 }
 
-TEST_F(TestParameterCommand, filenameExtensionTooLong)
+TEST_F(TestParameterCommandError, filenameExtensionTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
     expect_stop_msg();
@@ -282,7 +319,7 @@ TEST_F(TestParameterCommand, filenameExtension)
     EXPECT_EQ("*.gif", g_gif_filename_mask);
 }
 
-TEST_F(TestParameterCommand, filenameValueTooLong)
+TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
     expect_stop_msg();
@@ -294,7 +331,7 @@ TEST_F(TestParameterCommand, filenameValueTooLong)
     EXPECT_EQ("*.pot", g_gif_filename_mask);
 }
 
-TEST_F(TestParameterCommand, mapTooLong)
+TEST_F(TestParameterCommandError, mapTooLong)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
     expect_stop_msg();
@@ -338,7 +375,7 @@ TEST_F(TestParameterCommand, adapterDeprecatedValues)
     }
 }
 
-TEST_F(TestParameterCommand, adapterBadValue)
+TEST_F(TestParameterCommandError, adapterBadValue)
 {
     expect_stop_msg();
 
@@ -367,7 +404,7 @@ TEST_F(TestParameterCommand, textSafeDeprecatedValues)
     }
 }
 
-TEST_F(TestParameterCommand, textSafeInvalidValue)
+TEST_F(TestParameterCommandError, textSafeInvalidValue)
 {
     ValueSaver saved_first_init{g_first_init, true};
     expect_stop_msg();
@@ -389,7 +426,7 @@ TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
     }
 }
 
-TEST_F(TestParameterCommand, vesaDetectInvalidValue)
+TEST_F(TestParameterCommandError, vesaDetectInvalidValue)
 {
     expect_stop_msg();
 
@@ -408,7 +445,7 @@ TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
     }
 }
 
-TEST_F(TestParameterCommand, biosPaletteDetectInvalidValue)
+TEST_F(TestParameterCommandError, biosPaletteDetectInvalidValue)
 {
     expect_stop_msg();
 
@@ -424,7 +461,7 @@ TEST_F(TestParameterCommand, fpuDetectDeprecatedValue)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, fpuDetectInvalidValue)
+TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
 {
     expect_stop_msg();
 
@@ -453,7 +490,7 @@ TEST_F(TestParameterCommand, exitNoAskYes)
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
 }
 
-TEST_F(TestParameterCommand, exitNoAskInvalidValue)
+TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
 {
     const bool saved_escape_exit{g_escape_exit};
     expect_stop_msg();
@@ -475,7 +512,7 @@ TEST_F(TestParameterCommand, filenameMask)
 }
 
 // TODO: why does this test cause a crash?
-TEST_F(TestParameterCommand, filenameTooLong)
+TEST_F(TestParameterCommandError, filenameTooLong)
 {
     const std::string saved_gif_filename_mask{g_gif_filename_mask};
     const int saved_show_file{g_show_file};
@@ -491,7 +528,7 @@ TEST_F(TestParameterCommand, filenameTooLong)
     EXPECT_EQ(saved_browse_name, g_browse_name);
 }
 
-TEST_F(TestParameterCommand, videoBadName)
+TEST_F(TestParameterCommandError, videoBadName)
 {
     expect_stop_msg();
 
@@ -500,7 +537,7 @@ TEST_F(TestParameterCommand, videoBadName)
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
-TEST_F(TestParameterCommand, videoNoModes)
+TEST_F(TestParameterCommandError, videoNoModes)
 {
     expect_stop_msg();
     ValueSaver saved_video_table_len{g_video_table_len, 0};
@@ -512,7 +549,7 @@ TEST_F(TestParameterCommand, videoNoModes)
     EXPECT_EQ(-1, g_init_mode);
 }
 
-TEST_F(TestParameterCommand, videoNoMatchingMode)
+TEST_F(TestParameterCommandError, videoNoMatchingMode)
 {
     expect_stop_msg();
     ValueSaver saved_video_table_len{g_video_table_len, 1};
@@ -588,7 +625,7 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
     EXPECT_EQ(40, g_dac_box[255][2]);
 }
 
-TEST_F(TestParameterCommand, recordColorsInvalidValue)
+TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_record_colors{g_record_colors, record_colors_mode::none};
@@ -629,7 +666,7 @@ TEST_F(TestParameterCommand, recordColorsYes)
     EXPECT_EQ(record_colors_mode::yes, g_record_colors);
 }
 
-TEST_F(TestParameterCommand, maxLineLengthTooSmall)
+TEST_F(TestParameterCommandError, maxLineLengthTooSmall)
 {
     expect_stop_msg();
     ValueSaver saved_max_line_length{g_max_line_length, 0};
@@ -641,7 +678,7 @@ TEST_F(TestParameterCommand, maxLineLengthTooSmall)
     EXPECT_EQ(0, g_max_line_length);
 }
 
-TEST_F(TestParameterCommand, maxLineLengthTooLarge)
+TEST_F(TestParameterCommandError, maxLineLengthTooLarge)
 {
     expect_stop_msg();
     ValueSaver saved_max_line_length{g_max_line_length, 0};
@@ -665,7 +702,7 @@ TEST_F(TestParameterCommand, maxLineLength)
     EXPECT_EQ(value, g_max_line_length);
 }
 
-TEST_F(TestParameterCommand, tplusInvalidValue)
+TEST_F(TestParameterCommandError, tplusInvalidValue)
 {
     expect_stop_msg();
 
@@ -681,7 +718,7 @@ TEST_F(TestParameterCommand, tplusYes)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, nonInterlacedInvalidValue)
+TEST_F(TestParameterCommandError, nonInterlacedInvalidValue)
 {
     expect_stop_msg();
 
@@ -697,7 +734,7 @@ TEST_F(TestParameterCommand, nonInterlacedYes)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, maxColorResInvalidValue)
+TEST_F(TestParameterCommandError, maxColorResInvalidValue)
 {
     expect_stop_msg();
 
@@ -718,7 +755,7 @@ TEST_F(TestParameterCommand, maxColorResValidValue)
     }
 }
 
-TEST_F(TestParameterCommand, pixelZoomInvalidValue)
+TEST_F(TestParameterCommandError, pixelZoomInvalidValue)
 {
     expect_stop_msg();
 
@@ -734,7 +771,7 @@ TEST_F(TestParameterCommand, pixelZoomValidValue)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, warnInvalidValue)
+TEST_F(TestParameterCommandError, warnInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_overwrite_file{g_overwrite_file, false};
@@ -765,7 +802,7 @@ TEST_F(TestParameterCommand, warnYes)
     EXPECT_FALSE(g_overwrite_file);
 }
 
-TEST_F(TestParameterCommand, overwriteInvalidValue)
+TEST_F(TestParameterCommandError, overwriteInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_overwrite_file{g_overwrite_file, true};
@@ -796,7 +833,7 @@ TEST_F(TestParameterCommand, overwriteYes)
     EXPECT_TRUE(g_overwrite_file);
 }
 
-TEST_F(TestParameterCommand, gif87aInvalidValue)
+TEST_F(TestParameterCommandError, gif87aInvalidValue)
 {
     expect_stop_msg();
 
@@ -819,7 +856,7 @@ TEST_F(TestParameterCommand, gif87aYes)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, ditherInvalidValue)
+TEST_F(TestParameterCommandError, ditherInvalidValue)
 {
     const bool saved_dither_flag{g_dither_flag};
     expect_stop_msg();
@@ -858,7 +895,7 @@ TEST_F(TestParameterCommand, saveTime)
     EXPECT_EQ(20, g_init_save_time);
 }
 
-TEST_F(TestParameterCommand, autoKeyInvalidValue)
+TEST_F(TestParameterCommandError, autoKeyInvalidValue)
 {
     ValueSaver saved_slides{g_slides, slides_mode::RECORD};
     expect_stop_msg();
@@ -951,7 +988,7 @@ TEST_F(TestParameterCommand, typeSierpinski)
     }
 }
 
-TEST_F(TestParameterCommand, insideInvalidValue)
+TEST_F(TestParameterCommandError, insideInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_inside_color{g_inside_color, -9999};
@@ -1002,7 +1039,7 @@ TEST_F(TestParameterCommand, fillColorNormal)
     EXPECT_EQ(-1, g_fill_color);
 }
 
-TEST_F(TestParameterCommand, fillColorInvalid)
+TEST_F(TestParameterCommandError, fillColorInvalid)
 {
     expect_stop_msg();
     ValueSaver saved_fill_color{g_fill_color, 999};
@@ -1023,7 +1060,7 @@ TEST_F(TestParameterCommand, fillColorNumber)
     EXPECT_EQ(100, g_fill_color);
 }
 
-TEST_F(TestParameterCommand, finAttractInvalidValue)
+TEST_F(TestParameterCommandError, finAttractInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_finite_attractor{g_finite_attractor, true};
@@ -1044,7 +1081,7 @@ TEST_F(TestParameterCommand, finAttractYes)
     EXPECT_TRUE(g_finite_attractor);
 }
 
-TEST_F(TestParameterCommand, noBoFInvalidValue)
+TEST_F(TestParameterCommandError, noBoFInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_bof_match_book_images{g_bof_match_book_images, true};
@@ -1145,7 +1182,7 @@ TEST_F(TestParameterCommand, outsideNumber)
     EXPECT_EQ(100, g_outside_color);
 }
 
-TEST_F(TestParameterCommand, outsideInvalidName)
+TEST_F(TestParameterCommandError, outsideInvalidName)
 {
     expect_stop_msg();
     ValueSaver saved_outside{g_outside_color, -9999};
@@ -1166,7 +1203,7 @@ TEST_F(TestParameterCommand, bfDigitsNumber)
     EXPECT_EQ(200, g_bf_digits);
 }
 
-TEST_F(TestParameterCommand, bfDigitsInvalidValue)
+TEST_F(TestParameterCommandError, bfDigitsInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_outside{g_bf_digits, 9999};
@@ -1177,7 +1214,7 @@ TEST_F(TestParameterCommand, bfDigitsInvalidValue)
     EXPECT_EQ(9999, g_bf_digits);
 }
 
-TEST_F(TestParameterCommand, bfDigitsTooSmall)
+TEST_F(TestParameterCommandError, bfDigitsTooSmall)
 {
     expect_stop_msg();
     ValueSaver saved_outside{g_bf_digits, 9999};
@@ -1188,7 +1225,7 @@ TEST_F(TestParameterCommand, bfDigitsTooSmall)
     EXPECT_EQ(9999, g_bf_digits);
 }
 
-TEST_F(TestParameterCommand, bfDigitsTooLarge)
+TEST_F(TestParameterCommandError, bfDigitsTooLarge)
 {
     expect_stop_msg();
     ValueSaver saved_outside{g_bf_digits, 9999};
@@ -1209,7 +1246,7 @@ TEST_F(TestParameterCommand, maxIterNumber)
     EXPECT_EQ(20, g_max_iterations);
 }
 
-TEST_F(TestParameterCommand, maxIterNumberTooSmall)
+TEST_F(TestParameterCommandError, maxIterNumberTooSmall)
 {
     expect_stop_msg();
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
@@ -1220,7 +1257,7 @@ TEST_F(TestParameterCommand, maxIterNumberTooSmall)
     EXPECT_EQ(9999, g_max_iterations);
 }
 
-TEST_F(TestParameterCommand, maxIterNotNumber)
+TEST_F(TestParameterCommandError, maxIterNotNumber)
 {
     expect_stop_msg();
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
@@ -1238,7 +1275,7 @@ TEST_F(TestParameterCommand, iterIncrIgnored)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, passesInvalidValue)
+TEST_F(TestParameterCommandError, passesInvalidValue)
 {
     expect_stop_msg();
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
@@ -1281,7 +1318,7 @@ TEST_F(TestParameterCommand, isMandYes)
     EXPECT_TRUE(g_is_mandelbrot);
 }
 
-TEST_F(TestParameterCommand, cycleLimitTooLow)
+TEST_F(TestParameterCommandError, cycleLimitTooLow)
 {
     expect_stop_msg();
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
@@ -1292,7 +1329,7 @@ TEST_F(TestParameterCommand, cycleLimitTooLow)
     EXPECT_EQ(9999, g_init_cycle_limit);
 }
 
-TEST_F(TestParameterCommand, cycleLimitTooHigh)
+TEST_F(TestParameterCommandError, cycleLimitTooHigh)
 {
     expect_stop_msg();
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
@@ -1349,7 +1386,7 @@ TEST_F(TestParameterCommand, cycleRangeTwoParams)
     EXPECT_EQ(20, g_color_cycle_range_hi);
 }
 
-TEST_F(TestParameterCommand, cycleRangeLoTooLow)
+TEST_F(TestParameterCommandError, cycleRangeLoTooLow)
 {
     expect_stop_msg();
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
@@ -1362,7 +1399,7 @@ TEST_F(TestParameterCommand, cycleRangeLoTooLow)
     EXPECT_EQ(9999, g_color_cycle_range_hi);
 }
 
-TEST_F(TestParameterCommand, cycleRangeHiTooHigh)
+TEST_F(TestParameterCommandError, cycleRangeHiTooHigh)
 {
     expect_stop_msg();
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
@@ -1375,7 +1412,7 @@ TEST_F(TestParameterCommand, cycleRangeHiTooHigh)
     EXPECT_EQ(9999, g_color_cycle_range_hi);
 }
 
-TEST_F(TestParameterCommand, rangesInvalidParamCount)
+TEST_F(TestParameterCommandError, rangesInvalidParamCount)
 {
     expect_stop_msg();
     ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
@@ -1447,7 +1484,7 @@ TEST_F(TestParameterCommand, tweakLZWDeprecated)
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
-TEST_F(TestParameterCommand, minStackTooFewValues)
+TEST_F(TestParameterCommandError, minStackTooFewValues)
 {
     expect_stop_msg();
     ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
@@ -1458,7 +1495,7 @@ TEST_F(TestParameterCommand, minStackTooFewValues)
     EXPECT_EQ(9999, g_soi_min_stack);
 }
 
-TEST_F(TestParameterCommand, minStackTooManyValues)
+TEST_F(TestParameterCommandError, minStackTooManyValues)
 {
     expect_stop_msg();
     ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
@@ -1759,7 +1796,7 @@ TEST_F(TestParameterCommand, initOrbitValue)
     EXPECT_EQ(20.0, g_init_orbit.y);
 }
 
-TEST_F(TestParameterCommand, initOrbitTooFewParameters)
+TEST_F(TestParameterCommandError, initOrbitTooFewParameters)
 {
     expect_stop_msg();
     ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
@@ -1773,7 +1810,7 @@ TEST_F(TestParameterCommand, initOrbitTooFewParameters)
     EXPECT_EQ(222.0, g_init_orbit.y);
 }
 
-TEST_F(TestParameterCommand, initOrbitTooFewFloatParameters)
+TEST_F(TestParameterCommandError, initOrbitTooFewFloatParameters)
 {
     expect_stop_msg();
     ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
@@ -1787,7 +1824,7 @@ TEST_F(TestParameterCommand, initOrbitTooFewFloatParameters)
     EXPECT_EQ(222.0, g_init_orbit.y);
 }
 
-TEST_F(TestParameterCommand, initOrbitTooManyParameters)
+TEST_F(TestParameterCommandError, initOrbitTooManyParameters)
 {
     expect_stop_msg();
     ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
@@ -2444,7 +2481,7 @@ TEST_F(TestParameterCommand, bailOutTestMod)
     EXPECT_EQ(bailouts::Mod, g_bail_out_test);
 }
 
-TEST_F(TestParameterCommand, bailOutTestBadValue)
+TEST_F(TestParameterCommandError, bailOutTestBadValue)
 {
     expect_stop_msg();
     ValueSaver saved_bail_out_test{g_bail_out_test, bailouts::Real};
@@ -2465,7 +2502,7 @@ TEST_F(TestParameterCommand, symmetryXAxis)
     EXPECT_EQ(symmetry_type::X_AXIS, g_force_symmetry);
 }
 
-TEST_F(TestParameterCommand, symmetryBadValue)
+TEST_F(TestParameterCommandError, symmetryBadValue)
 {
     expect_stop_msg();
     ValueSaver save_force_symmetry{g_force_symmetry, symmetry_type::XY_AXIS};
@@ -3673,7 +3710,7 @@ TEST_F(TestParameterCommand, briefNo)
     EXPECT_FALSE(g_brief);
 }
 
-TEST_F(TestParameterCommand, releaseNotAllowed)
+TEST_F(TestParameterCommandError, releaseNotAllowed)
 {
     expect_stop_msg();
 
