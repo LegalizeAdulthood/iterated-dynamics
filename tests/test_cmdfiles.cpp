@@ -77,18 +77,11 @@ public:
     ~TestParameterCommand() override = default;
     
 protected:
-    void TearDown() override;
-
     void exec_cmd_arg(const std::string &curarg, cmd_file mode);
 
     std::vector<char> m_buffer;
     cmdarg_flags m_result{};
 };
-
-void TestParameterCommand::TearDown()
-{
-    Test::TearDown();
-}
 
 void TestParameterCommand::exec_cmd_arg(const std::string &curarg, cmd_file mode)
 {
@@ -105,22 +98,17 @@ public:
 protected:
     void SetUp() override;
     void TearDown() override;
-    void expect_stop_msg();
 
     cmd_arg::StopMsgFn m_prev_stop_msg;
     StrictMock<MockFunction<cmd_arg::StopMsg>> m_stop_msg;
 };
-
-void TestParameterCommandError::expect_stop_msg()
-{
-    EXPECT_CALL(m_stop_msg, Call(stopmsg_flags::NONE, _)).WillOnce(Return(false));
-}
 
 void TestParameterCommandError::SetUp()
 {
     TestParameterCommand::SetUp();
     m_prev_stop_msg = cmd_arg::get_stop_msg();
     cmd_arg::set_stop_msg(m_stop_msg.AsStdFunction());
+    EXPECT_CALL(m_stop_msg, Call(stopmsg_flags::NONE, _)).WillOnce(Return(false));
 }
 
 void TestParameterCommandError::TearDown()
@@ -131,8 +119,6 @@ void TestParameterCommandError::TearDown()
 
 TEST_F(TestParameterCommandError, parameterTooLong)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("maximumoftwentycharactersinparametername", cmd_file::SSTOOLS_INI);
     
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -140,8 +126,6 @@ TEST_F(TestParameterCommandError, parameterTooLong)
 
 TEST_F(TestParameterCommandError, batchBadArg)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("batch=g", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -170,7 +154,6 @@ TEST_F(TestParameterCommand, batchNo)
 TEST_F(TestParameterCommandError, batchAfterStartup)
 {
     ValueSaver saved_init_batch{g_init_batch, batch_modes::NONE};
-    expect_stop_msg();
 
     exec_cmd_arg("batch=yes", cmd_file::AT_AFTER_STARTUP);
     
@@ -180,7 +163,6 @@ TEST_F(TestParameterCommandError, batchAfterStartup)
 TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
-    expect_stop_msg();
 
     exec_cmd_arg("maxhistory=yes", cmd_file::SSTOOLS_INI);
     
@@ -190,7 +172,6 @@ TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
 TEST_F(TestParameterCommandError, maxHistoryNegative)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
-    expect_stop_msg();
 
     exec_cmd_arg("maxhistory=-10", cmd_file::SSTOOLS_INI);
 
@@ -210,7 +191,6 @@ TEST_F(TestParameterCommand, maxHistory)
 TEST_F(TestParameterCommandError, maxHistoryAfterStartup)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
-    expect_stop_msg();
 
     exec_cmd_arg("maxhistory=10", cmd_file::AT_AFTER_STARTUP);
 
@@ -269,8 +249,6 @@ TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
 
 TEST_F(TestParameterCommandError, makeParTooFewValues)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("makepar", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -278,8 +256,6 @@ TEST_F(TestParameterCommandError, makeParTooFewValues)
 
 TEST_F(TestParameterCommandError, makeParTooManyValues)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("makepar=foo/bar/fmeh", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -290,7 +266,6 @@ TEST_F(TestParameterCommandError, makeParTooManyValues)
 TEST_F(TestParameterCommandError, resetBadArg)
 {
     ValueSaver saved_escape_exit{g_escape_exit, true};
-    expect_stop_msg();
 
     exec_cmd_arg("reset=foo", cmd_file::AT_AFTER_STARTUP);
 
@@ -301,7 +276,6 @@ TEST_F(TestParameterCommandError, resetBadArg)
 TEST_F(TestParameterCommandError, filenameExtensionTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
-    expect_stop_msg();
 
     exec_cmd_arg("filename=.foobar", cmd_file::AT_AFTER_STARTUP);
 
@@ -322,7 +296,6 @@ TEST_F(TestParameterCommand, filenameExtension)
 TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
-    expect_stop_msg();
     const std::string too_long{"filename=" + std::string(FILE_MAX_PATH, 'f') + ".gif"};
 
     exec_cmd_arg(too_long, cmd_file::AT_AFTER_STARTUP);
@@ -334,7 +307,6 @@ TEST_F(TestParameterCommandError, filenameValueTooLong)
 TEST_F(TestParameterCommandError, mapTooLong)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
-    expect_stop_msg();
     const std::string too_long{"map=" + std::string(FILE_MAX_PATH, 'f') + ".map"};
 
     exec_cmd_arg(too_long, cmd_file::SSTOOLS_INI);
@@ -377,8 +349,6 @@ TEST_F(TestParameterCommand, adapterDeprecatedValues)
 
 TEST_F(TestParameterCommandError, adapterBadValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("adapter=bad", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -407,7 +377,6 @@ TEST_F(TestParameterCommand, textSafeDeprecatedValues)
 TEST_F(TestParameterCommandError, textSafeInvalidValue)
 {
     ValueSaver saved_first_init{g_first_init, true};
-    expect_stop_msg();
 
     exec_cmd_arg("textsafe=!", cmd_file::SSTOOLS_INI);
 
@@ -428,8 +397,6 @@ TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
 
 TEST_F(TestParameterCommandError, vesaDetectInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("vesadetect=!", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -447,8 +414,6 @@ TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
 
 TEST_F(TestParameterCommandError, biosPaletteDetectInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("biospalette=!", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -463,8 +428,6 @@ TEST_F(TestParameterCommand, fpuDetectDeprecatedValue)
 
 TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("fpu=487", cmd_file::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -493,7 +456,6 @@ TEST_F(TestParameterCommand, exitNoAskYes)
 TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
 {
     const bool saved_escape_exit{g_escape_exit};
-    expect_stop_msg();
 
     exec_cmd_arg("exitnoask=!", cmd_file::SSTOOLS_INI);
 
@@ -518,7 +480,6 @@ TEST_F(TestParameterCommandError, filenameTooLong)
     const int saved_show_file{g_show_file};
     const std::string saved_browse_name{g_browse_name};
     const std::string too_long{"filename=" + std::string(1024, 'f')};
-    expect_stop_msg();
 
     exec_cmd_arg(too_long, cmd_file::AT_CMD_LINE);
 
@@ -530,8 +491,6 @@ TEST_F(TestParameterCommandError, filenameTooLong)
 
 TEST_F(TestParameterCommandError, videoBadName)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("video=fmeh", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -539,7 +498,6 @@ TEST_F(TestParameterCommandError, videoBadName)
 
 TEST_F(TestParameterCommandError, videoNoModes)
 {
-    expect_stop_msg();
     ValueSaver saved_video_table_len{g_video_table_len, 0};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
@@ -551,7 +509,6 @@ TEST_F(TestParameterCommandError, videoNoModes)
 
 TEST_F(TestParameterCommandError, videoNoMatchingMode)
 {
-    expect_stop_msg();
     ValueSaver saved_video_table_len{g_video_table_len, 1};
     VIDEOINFO test_mode{};
     test_mode.keynum = ID_KEY_F2;
@@ -627,7 +584,6 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_record_colors{g_record_colors, record_colors_mode::none};
 
     exec_cmd_arg("recordcolors=p", cmd_file::AT_CMD_LINE);
@@ -668,7 +624,6 @@ TEST_F(TestParameterCommand, recordColorsYes)
 
 TEST_F(TestParameterCommandError, maxLineLengthTooSmall)
 {
-    expect_stop_msg();
     ValueSaver saved_max_line_length{g_max_line_length, 0};
     const std::string arg{"maxlinelength=" + std::to_string(MIN_MAX_LINE_LENGTH - 1)};
 
@@ -680,7 +635,6 @@ TEST_F(TestParameterCommandError, maxLineLengthTooSmall)
 
 TEST_F(TestParameterCommandError, maxLineLengthTooLarge)
 {
-    expect_stop_msg();
     ValueSaver saved_max_line_length{g_max_line_length, 0};
     const std::string arg{"maxlinelength=" + std::to_string(MAX_MAX_LINE_LENGTH + 1)};
 
@@ -704,8 +658,6 @@ TEST_F(TestParameterCommand, maxLineLength)
 
 TEST_F(TestParameterCommandError, tplusInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("tplus=!", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -720,8 +672,6 @@ TEST_F(TestParameterCommand, tplusYes)
 
 TEST_F(TestParameterCommandError, nonInterlacedInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("noninterlaced=!", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -736,8 +686,6 @@ TEST_F(TestParameterCommand, nonInterlacedYes)
 
 TEST_F(TestParameterCommandError, maxColorResInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("maxcolorres=3", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -757,8 +705,6 @@ TEST_F(TestParameterCommand, maxColorResValidValue)
 
 TEST_F(TestParameterCommandError, pixelZoomInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("pixelzoom=5", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -773,7 +719,6 @@ TEST_F(TestParameterCommand, pixelZoomValidValue)
 
 TEST_F(TestParameterCommandError, warnInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_overwrite_file{g_overwrite_file, false};
 
     exec_cmd_arg("warn=!", cmd_file::AT_CMD_LINE);
@@ -804,7 +749,6 @@ TEST_F(TestParameterCommand, warnYes)
 
 TEST_F(TestParameterCommandError, overwriteInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_overwrite_file{g_overwrite_file, true};
 
     exec_cmd_arg("overwrite=!", cmd_file::AT_CMD_LINE);
@@ -835,8 +779,6 @@ TEST_F(TestParameterCommand, overwriteYes)
 
 TEST_F(TestParameterCommandError, gif87aInvalidValue)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("gif87a=!", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -859,7 +801,6 @@ TEST_F(TestParameterCommand, gif87aYes)
 TEST_F(TestParameterCommandError, ditherInvalidValue)
 {
     const bool saved_dither_flag{g_dither_flag};
-    expect_stop_msg();
 
     exec_cmd_arg("dither=!", cmd_file::AT_CMD_LINE);
 
@@ -898,7 +839,6 @@ TEST_F(TestParameterCommand, saveTime)
 TEST_F(TestParameterCommandError, autoKeyInvalidValue)
 {
     ValueSaver saved_slides{g_slides, slides_mode::RECORD};
-    expect_stop_msg();
 
     exec_cmd_arg("autokey=fmeh", cmd_file::AT_CMD_LINE);
 
@@ -990,7 +930,6 @@ TEST_F(TestParameterCommand, typeSierpinski)
 
 TEST_F(TestParameterCommandError, insideInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
     exec_cmd_arg("inside=foo", cmd_file::AT_CMD_LINE);
@@ -1041,7 +980,6 @@ TEST_F(TestParameterCommand, fillColorNormal)
 
 TEST_F(TestParameterCommandError, fillColorInvalid)
 {
-    expect_stop_msg();
     ValueSaver saved_fill_color{g_fill_color, 999};
 
     exec_cmd_arg("fillcolor=fmeh", cmd_file::AT_CMD_LINE);
@@ -1062,7 +1000,6 @@ TEST_F(TestParameterCommand, fillColorNumber)
 
 TEST_F(TestParameterCommandError, finAttractInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_finite_attractor{g_finite_attractor, true};
 
     exec_cmd_arg("finattract=!", cmd_file::AT_CMD_LINE);
@@ -1083,7 +1020,6 @@ TEST_F(TestParameterCommand, finAttractYes)
 
 TEST_F(TestParameterCommandError, noBoFInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_bof_match_book_images{g_bof_match_book_images, true};
 
     exec_cmd_arg("nobof=!", cmd_file::AT_CMD_LINE);
@@ -1184,7 +1120,6 @@ TEST_F(TestParameterCommand, outsideNumber)
 
 TEST_F(TestParameterCommandError, outsideInvalidName)
 {
-    expect_stop_msg();
     ValueSaver saved_outside{g_outside_color, -9999};
 
     exec_cmd_arg("outside=zmag", cmd_file::AT_CMD_LINE);
@@ -1205,7 +1140,6 @@ TEST_F(TestParameterCommand, bfDigitsNumber)
 
 TEST_F(TestParameterCommandError, bfDigitsInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_outside{g_bf_digits, 9999};
 
     exec_cmd_arg("bfdigits=fmeh", cmd_file::AT_CMD_LINE);
@@ -1216,7 +1150,6 @@ TEST_F(TestParameterCommandError, bfDigitsInvalidValue)
 
 TEST_F(TestParameterCommandError, bfDigitsTooSmall)
 {
-    expect_stop_msg();
     ValueSaver saved_outside{g_bf_digits, 9999};
 
     exec_cmd_arg("bfdigits=-1", cmd_file::AT_CMD_LINE);
@@ -1227,7 +1160,6 @@ TEST_F(TestParameterCommandError, bfDigitsTooSmall)
 
 TEST_F(TestParameterCommandError, bfDigitsTooLarge)
 {
-    expect_stop_msg();
     ValueSaver saved_outside{g_bf_digits, 9999};
 
     exec_cmd_arg("bfdigits=2001", cmd_file::AT_CMD_LINE);
@@ -1248,7 +1180,6 @@ TEST_F(TestParameterCommand, maxIterNumber)
 
 TEST_F(TestParameterCommandError, maxIterNumberTooSmall)
 {
-    expect_stop_msg();
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
 
     exec_cmd_arg("maxiter=1", cmd_file::AT_CMD_LINE);
@@ -1259,7 +1190,6 @@ TEST_F(TestParameterCommandError, maxIterNumberTooSmall)
 
 TEST_F(TestParameterCommandError, maxIterNotNumber)
 {
-    expect_stop_msg();
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
 
     exec_cmd_arg("maxiter=fmeh", cmd_file::AT_CMD_LINE);
@@ -1277,7 +1207,6 @@ TEST_F(TestParameterCommand, iterIncrIgnored)
 
 TEST_F(TestParameterCommandError, passesInvalidValue)
 {
-    expect_stop_msg();
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
 
     exec_cmd_arg("passes=!", cmd_file::AT_CMD_LINE);
@@ -1320,7 +1249,6 @@ TEST_F(TestParameterCommand, isMandYes)
 
 TEST_F(TestParameterCommandError, cycleLimitTooLow)
 {
-    expect_stop_msg();
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
 
     exec_cmd_arg("cyclelimit=1", cmd_file::AT_CMD_LINE);
@@ -1331,7 +1259,6 @@ TEST_F(TestParameterCommandError, cycleLimitTooLow)
 
 TEST_F(TestParameterCommandError, cycleLimitTooHigh)
 {
-    expect_stop_msg();
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
 
     exec_cmd_arg("cyclelimit=257", cmd_file::AT_CMD_LINE);
@@ -1388,7 +1315,6 @@ TEST_F(TestParameterCommand, cycleRangeTwoParams)
 
 TEST_F(TestParameterCommandError, cycleRangeLoTooLow)
 {
-    expect_stop_msg();
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
@@ -1401,7 +1327,6 @@ TEST_F(TestParameterCommandError, cycleRangeLoTooLow)
 
 TEST_F(TestParameterCommandError, cycleRangeHiTooHigh)
 {
-    expect_stop_msg();
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
@@ -1414,7 +1339,6 @@ TEST_F(TestParameterCommandError, cycleRangeHiTooHigh)
 
 TEST_F(TestParameterCommandError, rangesInvalidParamCount)
 {
-    expect_stop_msg();
     ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
 
     exec_cmd_arg("ranges=100/102/foo", cmd_file::AT_CMD_LINE);
@@ -1486,7 +1410,6 @@ TEST_F(TestParameterCommand, tweakLZWDeprecated)
 
 TEST_F(TestParameterCommandError, minStackTooFewValues)
 {
-    expect_stop_msg();
     ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
 
     exec_cmd_arg("minstack=", cmd_file::AT_AFTER_STARTUP);
@@ -1497,7 +1420,6 @@ TEST_F(TestParameterCommandError, minStackTooFewValues)
 
 TEST_F(TestParameterCommandError, minStackTooManyValues)
 {
-    expect_stop_msg();
     ValueSaver saved_soi_min_stack{g_soi_min_stack, 9999};
 
     exec_cmd_arg("minstack=10/20", cmd_file::AT_AFTER_STARTUP);
@@ -1798,7 +1720,6 @@ TEST_F(TestParameterCommand, initOrbitValue)
 
 TEST_F(TestParameterCommandError, initOrbitTooFewParameters)
 {
-    expect_stop_msg();
     ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
@@ -1812,7 +1733,6 @@ TEST_F(TestParameterCommandError, initOrbitTooFewParameters)
 
 TEST_F(TestParameterCommandError, initOrbitTooFewFloatParameters)
 {
-    expect_stop_msg();
     ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
@@ -1826,7 +1746,6 @@ TEST_F(TestParameterCommandError, initOrbitTooFewFloatParameters)
 
 TEST_F(TestParameterCommandError, initOrbitTooManyParameters)
 {
-    expect_stop_msg();
     ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
@@ -2483,7 +2402,6 @@ TEST_F(TestParameterCommand, bailOutTestMod)
 
 TEST_F(TestParameterCommandError, bailOutTestBadValue)
 {
-    expect_stop_msg();
     ValueSaver saved_bail_out_test{g_bail_out_test, bailouts::Real};
 
     exec_cmd_arg("bailoutest=foo", cmd_file::AT_AFTER_STARTUP);
@@ -2504,7 +2422,6 @@ TEST_F(TestParameterCommand, symmetryXAxis)
 
 TEST_F(TestParameterCommandError, symmetryBadValue)
 {
-    expect_stop_msg();
     ValueSaver save_force_symmetry{g_force_symmetry, symmetry_type::XY_AXIS};
 
     exec_cmd_arg("symmetry=fmeh", cmd_file::AT_AFTER_STARTUP);
@@ -3712,8 +3629,6 @@ TEST_F(TestParameterCommand, briefNo)
 
 TEST_F(TestParameterCommandError, releaseNotAllowed)
 {
-    expect_stop_msg();
-
     exec_cmd_arg("release=100", cmd_file::AT_AFTER_STARTUP);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
