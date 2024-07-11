@@ -4,8 +4,8 @@
 
 #include "bailout_formula.h"
 #include "biginit.h"
-#include "calcfrac.h"
 #include "calc_frac_init.h"
+#include "calcfrac.h"
 #include "check_orbit_name.h"
 #include "comments.h"
 #include "convert_corners.h"
@@ -35,9 +35,9 @@
 #include "is_directory.h"
 #include "jb.h"
 #include "line3d.h"
+#include "load_params.h"
 #include "loadfile.h"
 #include "loadmap.h"
-#include "load_params.h"
 #include "lorenz.h"
 #include "lowerize_parameter.h"
 #include "make_batch_file.h"
@@ -49,6 +49,7 @@
 #include "slideshw.h"
 #include "soi.h"
 #include "sound.h"
+#include "special_dirs.h"
 #include "stereo.h"
 #include "sticky_orbits.h"
 #include "stop_msg.h"
@@ -3075,6 +3076,12 @@ static cmdarg_flags cmd_r_seed(const Command &cmd)
     return cmdarg_flags::FRACTAL_PARAM;
 }
 
+static cmdarg_flags cmd_save_dir(const Command &cmd)
+{
+    g_save_dir = cmd.value;
+    return cmdarg_flags::NONE;
+}
+
 static cmdarg_flags cmd_save_name(const Command &cmd)
 {
     if (cmd.value_len > FILE_MAX_PATH - 1)
@@ -3719,7 +3726,7 @@ static cmdarg_flags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 156> s_commands{
+static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3838,6 +3845,7 @@ static std::array<CommandHandler, 156> s_commands{
     CommandHandler{"rotation", cmd_rotation},               //
     CommandHandler{"roughness", cmd_roughness},             //
     CommandHandler{"rseed", cmd_r_seed},                    //
+    CommandHandler{"savedir", cmd_save_dir},                //
     CommandHandler{"savename", cmd_save_name},              //
     CommandHandler{"savetime", cmd_save_time},              //
     CommandHandler{"scalemap", cmd_scale_map},              //

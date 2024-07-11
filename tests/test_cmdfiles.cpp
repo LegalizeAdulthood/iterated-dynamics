@@ -25,6 +25,7 @@
 #include <slideshw.h>
 #include <soi.h>
 #include <sound.h>
+#include <special_dirs.h>
 #include <stereo.h>
 #include <sticky_orbits.h>
 #include <stop_msg.h>
@@ -3680,4 +3681,14 @@ TEST_F(TestParameterCommand, virtualNo)
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, result);
     EXPECT_FALSE(g_virtual_screens);
+}
+
+TEST_F(TestParameterCommand, saveDir)
+{
+    ValueSaver saved_save_dir{g_save_dir, "foo"};
+
+    const cmdarg_flags result = exec_cmd_arg("savedir=" ID_TEST_DATA_DIR, cmd_file::AT_AFTER_STARTUP);
+
+    EXPECT_EQ(cmdarg_flags::NONE, result);
+    EXPECT_EQ(ID_TEST_DATA_DIR, g_save_dir);
 }

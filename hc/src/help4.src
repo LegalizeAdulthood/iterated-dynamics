@@ -1078,6 +1078,11 @@ default directories, or both.  For example, in the savename description below,
 plus filename.  You can specify default directories using these variables
 in your sstools.ini file.
 
+SAVEDIR=<path>\
+Sets the directory used when writing output files.  The "savename" parameter
+may use a relative path to the value of the "savedir" parameter if savedir
+is specified first.
+
 SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen.  The default
 filename is fract001.  The .gif extension is optional (Example:

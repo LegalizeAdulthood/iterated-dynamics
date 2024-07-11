@@ -7,7 +7,7 @@
 // don't convert these parameter values
 static constexpr const char *const s_unchanged_params[] = {"autokeyname", "colors", "comment", "filename",
     "formulafile", "ifsfile", "lfile", "lightname", "makedoc", "map", "orbitsavename", "parmfile",
-    "savename"};
+    "savename", "savedir"};
 
 void lowerize_parameter(char *curarg)
 {

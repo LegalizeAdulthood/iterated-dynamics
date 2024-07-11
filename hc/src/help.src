@@ -292,6 +292,10 @@ o The autokeyname parameter was enhanced to create a unique filename when
 o Disk video buffer sizes were dramatically increased.\
 o The formula parser has been enhanced to remove internal size limitations.
   The only limit on formula parsing is available memory.
+o The savedir parameter was added to specify the default directory used
+  for writing any files.  Since a Windows program is typically installed to
+  the Program Files directory, which is read-only, it cannot be assumed that
+  Id can write to the directory in which it is located.
 
 Additional changes in Version 1.0:
 

@@ -4,7 +4,6 @@ find_package(cpuid CONFIG REQUIRED)
 
 add_library(libid
     include/os.h
-    include/special_dirs.h
 
     3d.cpp include/3d.h
     line3d.cpp include/line3d.h
@@ -88,6 +87,7 @@ add_library(libid
     parser.cpp include/parser.h
     rotate.cpp include/rotate.h
     slideshw.cpp include/slideshw.h
+    special_dirs.cpp include/special_dirs.h
     stereo.cpp include/stereo.h
     text_screen.cpp include/text_screen.h
 
@@ -380,6 +380,7 @@ source_group("Header Files/IO" FILES
     include/rotate.h
     include/slideshw.h
     include/sound.h
+    include/special_dirs.h
     include/stereo.h
 )
 source_group("Source Files/IO" FILES
@@ -402,6 +403,7 @@ source_group("Source Files/IO" FILES
     rotate.cpp
     slideshw.cpp
     sound.cpp
+    special_dirs.cpp
     stereo.cpp
 )
 source_group("Header Files/math" FILES
