@@ -2602,11 +2602,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         save_undo_data(0, 255);
 
         load_palette();
-#ifndef XFRACT
         get_pal_range(0, g_colors, m_pal);
-#else
-        getpalrange(0, 256, pal);
-#endif
         update_dac();
         this->m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
         this->m_rgb[0]->update();
@@ -2618,11 +2614,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'S': // save a .map palette
     case 's':
     {
-#ifndef XFRACT
         set_pal_range(0, g_colors, m_pal);
-#else
-        setpalrange(0, 256, pal);
-#endif
         save_palette();
         update_dac();
         break;
