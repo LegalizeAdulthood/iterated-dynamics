@@ -1608,13 +1608,13 @@ static void File_Error(char const *File_Name1, int ERROR)
 //
 // *********************************************************************
 
-bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
+bool startdisk1(const std::string &filename, std::FILE *source, bool overlay)
 {
     // Open File for both reading and writing
-    std::FILE *fps = dir_fopen(g_working_dir.c_str(), File_Name2.c_str(), "w+b");
+    std::FILE *fps = dir_fopen(g_working_dir.c_str(), filename.c_str(), "w+b");
     if (fps == nullptr)
     {
-        File_Error(File_Name2.c_str(), 1);
+        File_Error(filename.c_str(), 1);
         return true;            // Oops, somethings wrong!
     }
 
@@ -1625,7 +1625,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
     {
         for (int i = 0; i < s_targa_header_24; i++)   // Copy the header from the Source
         {
-            std::fputc(fgetc(Source), fps);
+            std::fputc(fgetc(source), fps);
         }
     }
     else
@@ -1674,7 +1674,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
         {
             if (overlay)
             {
-                std::fputc(fgetc(Source), fps);
+                std::fputc(fgetc(source), fps);
             }
             else
             {
@@ -1690,10 +1690,10 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
             std::fclose(fps);
             if (overlay)
             {
-                std::fclose(Source);
+                std::fclose(source);
             }
-            dir_remove(g_working_dir, File_Name2);
-            File_Error(File_Name2.c_str(), 2);
+            dir_remove(g_working_dir, filename);
+            File_Error(filename.c_str(), 2);
             return true;
         }
         if (driver_key_pressed())
@@ -1705,7 +1705,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
     if (targa_startdisk(fps, s_targa_header_24) != 0)
     {
         enddisk();
-        dir_remove(g_working_dir, File_Name2);
+        dir_remove(g_working_dir, filename);
         return true;
     }
     return false;
