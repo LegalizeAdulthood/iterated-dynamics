@@ -198,7 +198,7 @@ void circle(int radius, int color)
  * MIIM Julias will be grouped here (and shared by code in LORENZ.C)
  *
  */
-static void fillrect(int x, int y, int width, int depth, int color)
+static void fill_rect(int x, int y, int width, int depth, int color)
 {
     // fast version of fillrect
     if (!g_has_inverse)
@@ -212,7 +212,7 @@ static void fillrect(int x, int y, int width, int depth, int color)
         {
             return;
         }
-        putrow(x, y++, width, &row[0]);
+        put_row(x, y++, width, &row[0]);
     }
 }
 
@@ -451,8 +451,8 @@ static void SaveRect(int x, int y, int width, int depth)
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        getrow(x, y+yoff, width, &s_screen_rect[width*yoff]);
-        putrow(x, y+yoff, width, &background[0]);
+        get_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
+        put_row(x, y+yoff, width, &background[0]);
     }
     Cursor_Show();
 }
@@ -468,7 +468,7 @@ static void RestoreRect(int x, int y, int width, int depth)
     Cursor_Hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
-        putrow(x, y+yoff, width, &s_screen_rect[width*yoff]);
+        put_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
     }
     Cursor_Show();
 }
@@ -627,12 +627,12 @@ void Jiim(jiim_types which)
     }
     else if (s_windows == 2)    // leave the fractal
     {
-        fillrect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
-        fillrect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
+        fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
+        fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
     }
     else    // blank whole window
     {
-        fillrect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
+        fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
     }
 
     setup_convert_to_screen(&cvt);
@@ -983,12 +983,12 @@ void Jiim(jiim_types which)
             }
             if (s_windows == 2)
             {
-                fillrect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height-s_show_numbers, g_color_dark);
-                fillrect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots-s_show_numbers, g_color_dark);
+                fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height-s_show_numbers, g_color_dark);
+                fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots-s_show_numbers, g_color_dark);
             }
             else
             {
-                fillrect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
+                fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
 
         } // end if (driver_key_pressed)
@@ -1281,12 +1281,12 @@ finish:
         {
             if (s_windows == 2)
             {
-                fillrect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
-                fillrect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
+                fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
+                fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
             }
             else
             {
-                fillrect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
+                fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
             if (s_windows == 3 && s_win_width == g_vesa_x_res) // unhide
             {
