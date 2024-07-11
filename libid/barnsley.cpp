@@ -7,8 +7,7 @@
 
 int Barnsley1Fractal()
 {
-    /* Barnsley's Mandelbrot type M1 from "Fractals
-    Everywhere" by Michael Barnsley, p. 322 */
+    // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
     // calculate intermediate products
     const long oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
@@ -31,9 +30,7 @@ int Barnsley1Fractal()
 
 int Barnsley1FPFractal()
 {
-    /* Barnsley's Mandelbrot type M1 from "Fractals
-    Everywhere" by Michael Barnsley, p. 322 */
-    // note that fast >= 287 equiv in fracsuba.asm must be kept in step
+    // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
     // calculate intermediate products
     const double foldxinitx = g_old_z.x * g_float_param->x;
@@ -56,9 +53,8 @@ int Barnsley1FPFractal()
 
 int Barnsley2Fractal()
 {
-    /* An unnamed Mandelbrot/Julia function from "Fractals
-    Everywhere" by Michael Barnsley, p. 331, example 4.2 */
-    // note that fast >= 287 equiv in fracsuba.asm must be kept in step
+    // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 331,
+    // example 4.2
 
     // calculate intermediate products
     const long oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
@@ -82,8 +78,8 @@ int Barnsley2Fractal()
 
 int Barnsley2FPFractal()
 {
-    /* An unnamed Mandelbrot/Julia function from "Fractals
-    Everywhere" by Michael Barnsley, p. 331, example 4.2 */
+    // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 331,
+    // example 4.2
 
     // calculate intermediate products
     const double foldxinitx = g_old_z.x * g_float_param->x;
@@ -107,8 +103,8 @@ int Barnsley2FPFractal()
 
 int Barnsley3Fractal()
 {
-    /* An unnamed Mandelbrot/Julia function from "Fractals
-    Everywhere" by Michael Barnsley, p. 292, example 4.1 */
+    // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 292,
+    // example 4.1
 
     // calculate intermediate products
     const long oldxinitx   = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
@@ -137,8 +133,8 @@ int Barnsley3Fractal()
 
 int Barnsley3FPFractal()
 {
-    /* An unnamed Mandelbrot/Julia function from "Fractals
-    Everywhere" by Michael Barnsley, p. 292, example 4.1 */
+    // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 292,
+    // example 4.1
 
     // calculate intermediate products
     const double foldxinitx  = g_old_z.x * g_old_z.x;
