@@ -5,15 +5,15 @@ enum
     CMAX = 4, // maximum column (4 x 4 matrix)
     RMAX = 4   // maximum row    (4 x 4 matrix)
 };
-typedef double MATRIX [RMAX] [CMAX];  // matrix of doubles
-typedef int   IMATRIX [RMAX] [CMAX];  // matrix of ints
-typedef long  LMATRIX [RMAX] [CMAX];  // matrix of longs
+using MATRIX = double[RMAX][CMAX];  // matrix of doubles
+using IMATRIX = int[RMAX][CMAX];  // matrix of ints
+using LMATRIX = long[RMAX][CMAX];  // matrix of longs
 /* A MATRIX is used to describe a transformation from one coordinate
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
-typedef double VECTOR [3];  // vector of doubles
-typedef int   IVECTOR [3];  // vector of ints
-typedef long  LVECTOR [3];  // vector of longs
+using VECTOR = double[3];  // vector of doubles
+using IVECTOR = int[3];  // vector of ints
+using LVECTOR = long[3];  // vector of longs
 /* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
 is not in the data structure */

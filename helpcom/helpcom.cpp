@@ -245,7 +245,7 @@ int find_line_width(token_modes mode, char const *curr, unsigned len)
 }
 
 
-bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
+bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 {
     PD_INFO pd{};
     pd.page_num = 1;

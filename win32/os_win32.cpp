@@ -90,7 +90,7 @@ void restart_uclock()
 **  number which a usec_clock() reading must be divided by to yield
 **  a number of seconds.
 */
-typedef unsigned long uclock_t;
+using uclock_t = unsigned long;
 uclock_t usec_clock()
 {
     uclock_t result{};
@@ -100,10 +100,9 @@ uclock_t usec_clock()
     return result;
 }
 
-typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
-                                   PMINIDUMP_EXCEPTION_INFORMATION exceptions,
-                                   PMINIDUMP_USER_STREAM_INFORMATION user,
-                                   PMINIDUMP_CALLBACK_INFORMATION callback);
+using MiniDumpWriteDumpProc = BOOL(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
+    PMINIDUMP_EXCEPTION_INFORMATION exceptions, PMINIDUMP_USER_STREAM_INFORMATION user,
+    PMINIDUMP_CALLBACK_INFORMATION callback);
 
 void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
