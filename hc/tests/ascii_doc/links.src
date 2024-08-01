@@ -1,0 +1,138 @@
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~FormatExclude=8
+;
+;
+;
+~DocContents
+{     , 0, "New Features in 1.0", FF}
+{     , 0, "Introduction", "Conditions on Use", FF}
+
+{1.1  , 1, "Getting Started"}
+
+{2.   , 0, "Fractal Types", FF}
+{2.1  , 1, "The Mandelbrot Set"}
+;
+; End of DoContents
+;
+;
+;
+~Topic=New Features in 1.0
+See {Getting Started}.
+
+Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Introduction
+Introduction.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Conditions on Use
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Getting Started
+See {Fractal Types}.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Fractal Types
+Fracal types.  See {Introduction}.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+
+o {The Mandelbrot Set}
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=The Mandelbrot Set, Label=HT_MANDEL
+(type=mandel)
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.

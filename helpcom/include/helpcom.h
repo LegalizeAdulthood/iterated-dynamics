@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstring>
+#include <string>
 
  /*
  * help file signature
@@ -96,6 +97,8 @@ struct PD_INFO
     // general parameters
     char const *s;
     int i;
+    // PD_GET_LINK_PAGE
+    std::string link_page;
 };
 
 /*
@@ -118,7 +121,7 @@ enum class PD_COMMANDS
     PD_GET_CONTENT,
     PD_GET_TOPIC,
     PD_RELEASE_TOPIC,
-    PD_GET_LINK_PAGE
+    PD_GET_LINK_PAGE,
 };
 
 using PD_FUNC = bool(PD_COMMANDS cmd, PD_INFO *pd, void *info);

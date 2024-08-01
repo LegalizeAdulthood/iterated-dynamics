@@ -1183,6 +1183,7 @@ static bool print_doc_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 
     case PD_COMMANDS::PD_GET_LINK_PAGE:
         pd->i = getint(pd->s+2*sizeof(int));
+        pd->link_page = "(p. " + std::to_string(pd->i) + ")";
         return pd->i != -1;
 
     case PD_COMMANDS::PD_RELEASE_TOPIC:

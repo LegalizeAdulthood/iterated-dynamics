@@ -550,6 +550,9 @@ bool pd_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
             return false;
         }
         pd->i = link.doc_page;
+        char buff[32];
+        snprintf(buff, sizeof(buff), "(p. %d)", pd->i);
+        pd->link_page = buff;
         return true;
     }
 

@@ -1,0 +1,107 @@
+= Iterated Dynamics
+:toc: left
+:experimental:
+
+== New Features in 1.0
+
+See <<_getting_started>>.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.
+
+== Introduction
+
+Introduction.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.
+
+=== Getting Started
+
+See <<_fractal_types>>.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.
+
+== Fractal Types
+
+Fracal types.  See <<_introduction>>.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.
+
+* <<_the_mandelbrot_set>>
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.
+
+=== The Mandelbrot Set
+
+(type=mandel)
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.

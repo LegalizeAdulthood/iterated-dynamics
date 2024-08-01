@@ -266,7 +266,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
     output(PD_COMMANDS::PD_HEADING, &pd, info);
 
     bool first_section = true;
-    char page_text[30]{};
+    std::string page_text;
     while (get_info(PD_COMMANDS::PD_GET_CONTENT, &pd, info))
     {
         if (!output(PD_COMMANDS::PD_START_SECTION, &pd, info))
@@ -448,23 +448,33 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                                 break;
                             }
 
-                            if (in_link == 1)
+                            if (!page_text.empty())
                             {
-                                tok = token_types::TOK_SPACE;
-                                width = 1;
-                                size = 0;
-                                ++in_link;
+                                if (in_link == 1)
+                                {
+                                    tok = token_types::TOK_SPACE;
+                                    width = 1;
+                                    size = 0;
+                                    ++in_link;
+                                }
+                                else if (in_link == 2)
+                                {
+                                    tok = token_types::TOK_WORD;
+                                    width = (int) page_text.length();
+                                    col += 8 - width;
+                                    size = 0;
+                                    pd.curr = page_text.c_str();
+                                    ++in_link;
+                                }
+                                else if (in_link == 3)
+                                {
+                                    pd.curr = holdcurr;
+                                    pd.len = holdlen;
+                                    in_link = 0;
+                                    continue;
+                                }
                             }
-                            else if (in_link == 2)
-                            {
-                                tok = token_types::TOK_WORD;
-                                width = (int) std::strlen(page_text);
-                                col += 8 - width;
-                                size = 0;
-                                pd.curr = page_text;
-                                ++in_link;
-                            }
-                            else if (in_link == 3)
+                            else
                             {
                                 pd.curr = holdcurr;
                                 pd.len = holdlen;
@@ -497,7 +507,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                             if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                             {
                                 in_link = 1;
-                                std::snprintf(page_text, std::size(page_text), "(p. %d)", pd.i);
+                                page_text = pd.link_page;
                             }
                             else
                             {
@@ -649,9 +659,8 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                     pd.s = pd.curr+1;
                     if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                     {
-                        width += 9;
-                        std::snprintf(page_text, std::size(page_text), " (p. %d)", pd.i);
-                        if (!do_print(page_text, (int) std::strlen(page_text)))
+                        width += static_cast<int>(pd.link_page.size());
+                        if (!do_print(page_text.c_str(), (int) page_text.size()))
                         {
                             return false;
                         }

@@ -3,6 +3,8 @@
 #include "help_source.h"
 #include "messages.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
@@ -62,6 +64,7 @@ public:
     void process();
 
 private:
+    void set_link(const std::string &text);
     bool info(PD_COMMANDS cmd, PD_INFO *pd);
     bool output(PD_COMMANDS cmd, PD_INFO *pd);
     void emit_char(char c);
@@ -69,6 +72,10 @@ private:
     void print_inside_key(char c);
     void print_char(char c, int n);
     void print_string(char const *s, int n);
+    void print_string(const std::string &text)
+    {
+        print_string(text.c_str(), static_cast<int>(text.size()));
+    }
 
     std::ostream &m_str;
     int m_content_num{};
@@ -83,6 +90,8 @@ private:
     bool m_bullet_started{};
     bool m_indented_line{};
     bool m_inside_bullet{};
+    std::string m_link_text;
+    std::string m_link_markup;
 };
 
 bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
@@ -130,7 +139,10 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
             }
             return false;
         }
+
+        set_link(link.name);
         pd->i = link.doc_page;
+        pd->link_page.clear();
         return true;
     }
 
@@ -191,6 +203,14 @@ void AsciiDocProcessor::process()
     auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
     process_document(info_cb, output_cb, this);
+}
+
+void AsciiDocProcessor::set_link(const std::string &text)
+{
+    m_link_text = text;
+    m_link_markup = boost::algorithm::to_lower_copy(m_link_text);
+    std::replace(m_link_markup.begin(), m_link_markup.end(), ' ', '_');
+    m_link_markup = "<<_" + m_link_markup + ">>";
 }
 
 static bool is_key_name(const std::string &name)
@@ -274,7 +294,7 @@ void AsciiDocProcessor::print_inside_key(char c)
             }
             else if (m_key_name.substr(0,4) == "http")
             {
-                print_string(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+                print_string(m_key_name);
             }
             else
             {
@@ -301,7 +321,18 @@ void AsciiDocProcessor::print_char(char c, int n)
 {
     while (n-- > 0)
     {
-        if (m_inside_key)
+        if (!m_link_text.empty())
+        {
+            if (c == m_link_text.front())
+            {
+                m_link_text.erase(0, 1);
+            }
+            if (m_link_text.empty())
+            {
+                print_string(m_link_markup);
+            }
+        }
+        else if (m_inside_key)
         {
             print_inside_key(c);
         }
