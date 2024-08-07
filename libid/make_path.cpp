@@ -30,7 +30,7 @@ std::string make_path(char const *drive, char const *dir, char const *fname, cha
     }
     if (not_empty(ext))
     {
-        result.replace_extension(ext);
+        result += ext;
     }
     return result.lexically_normal().make_preferred().string();
 }

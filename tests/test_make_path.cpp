@@ -98,6 +98,13 @@ TEST_F(TestMakePath, directoryWithTrailingSlash)
     ASSERT_EQ(fs::path{"tmp/"}.make_preferred().string(), result);
 }
 
+TEST_F(TestMakePath, filenameWithDot)
+{
+    result = make_path(nullptr, nullptr, "1997.04.30-Ship_of_Indecision", ".par");
+
+    ASSERT_EQ("1997.04.30-Ship_of_Indecision.par", result);
+}
+
 namespace
 {
 
