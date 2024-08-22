@@ -64,7 +64,7 @@ public:
     void process();
 
 private:
-    void set_link(const std::string &text);
+    void set_link_text(const LINK &link);
     bool info(PD_COMMANDS cmd, PD_INFO *pd);
     bool output(PD_COMMANDS cmd, PD_INFO *pd);
     void emit_char(char c);
@@ -133,14 +133,14 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
             if (m_link_dest_warn)
             {
                 g_current_src_filename = link.srcfile;
-                g_src_line    = link.srcline;
+                g_src_line = link.srcline;
                 warn(0, "Hot-link destination is not in the document.");
                 g_src_line = -1;
             }
             return false;
         }
 
-        set_link(link.name);
+        set_link_text(link);
         pd->i = link.doc_page;
         pd->link_page.clear();
         return true;
@@ -205,9 +205,38 @@ void AsciiDocProcessor::process()
     process_document(info_cb, output_cb, this);
 }
 
-void AsciiDocProcessor::set_link(const std::string &text)
+static std::string to_string(link_types type)
 {
-    m_link_text = text;
+    switch (type)
+    {
+    case link_types::LT_TOPIC:
+        return "LT_TOPIC";
+    case link_types::LT_LABEL:
+        return "LT_LABEL";
+    case link_types::LT_SPECIAL:
+        return "LT_SPECIAL";
+    }
+    return "? (" + std::to_string(static_cast<int>(type)) + ")";
+}
+
+void AsciiDocProcessor::set_link_text(const LINK &link)
+{
+    switch (link.type)
+    {
+    case link_types::LT_TOPIC:
+        m_link_text = link.name;
+        break;
+    case link_types::LT_LABEL:
+    {
+        const LABEL *label = g_src.find_label(link.name.c_str());
+        const TOPIC &topic = g_src.topics[label->topic_num];
+        m_link_text = topic.title;
+        break;
+    }
+    default:
+        throw std::runtime_error("Unknown link type " + to_string(link.type));
+    }
+
     m_link_markup = boost::algorithm::to_lower_copy(m_link_text);
     std::replace(m_link_markup.begin(), m_link_markup.end(), ' ', '_');
     m_link_markup = "<<_" + m_link_markup + ">>";
@@ -221,9 +250,7 @@ static bool is_key_name(const std::string &name)
             std::all_of(name.begin() + 1, name.end(), [](char c) { return std::isdigit(c) != 0; });
     };
     auto is_modified_key_name = [](const std::string &prefix, const std::string &name)
-    {
-        return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size()));
-    };
+    { return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size())); };
 
     return name.size() == 1                                                          //
         || name == "Enter" || name == "Esc" || name == "Delete" || name == "Insert"  //
@@ -292,7 +319,7 @@ void AsciiDocProcessor::print_inside_key(char c)
                 m_key_name = "kbd:[" + m_key_name + ']';
                 emit_key_name();
             }
-            else if (m_key_name.substr(0,4) == "http")
+            else if (m_key_name.substr(0, 4) == "http")
             {
                 print_string(m_key_name);
             }
@@ -321,11 +348,15 @@ void AsciiDocProcessor::print_char(char c, int n)
 {
     while (n-- > 0)
     {
-        if (!m_link_text.empty())
+        if (!m_link_text.empty() && c != '\n')
         {
             if (c == m_link_text.front())
             {
                 m_link_text.erase(0, 1);
+            }
+            else
+            {
+                throw std::runtime_error("Unexpected character '" + std::string{c} + "'");
             }
             if (m_link_text.empty())
             {
@@ -366,13 +397,13 @@ void AsciiDocProcessor::print_char(char c, int n)
             ++m_newlines;
             m_start_of_line = true;
             m_indented_line = false;
-            m_spaces = 0;   // strip spaces before a new-line
+            m_spaces = 0; // strip spaces before a new-line
             if (m_newlines <= 2)
             {
                 m_str << c;
             }
         }
-        else 
+        else
         {
             if (m_bullet_started)
             {
