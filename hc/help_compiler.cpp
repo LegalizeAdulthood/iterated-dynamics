@@ -802,7 +802,8 @@ void HelpCompiler::write_link_source()
             << topics.size() << "> g_help_links = {\n";
         auto link_for_title = [](std::string text)
         {
-            for (auto pos = text.find('/'); pos != std::string::npos; pos = text.find('/'))
+            for (auto pos = text.find_first_of("/\""); pos != std::string::npos;
+                 pos = text.find_first_of("/\""))
             {
                 text.erase(pos, 1);
             }
@@ -815,6 +816,10 @@ void HelpCompiler::write_link_source()
             for (auto pos = text.find("__"); pos != std::string::npos; pos = text.find("__"))
             {
                 text.erase(pos, 1);
+            }
+            if (auto pos = text.find_last_not_of('_') + 1; pos != text.length())
+            {
+                text.erase(pos);
             }
             return "index.html#_" + text;
         };
