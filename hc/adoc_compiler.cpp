@@ -454,7 +454,6 @@ void AsciiDocCompiler::print_ascii_doc()
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
 
-    const TOPIC &toc_topic = g_src.topics[toc.topic_num[0]];
     const std::filesystem::path out_file{std::filesystem::path{m_options.output_dir} / fname};
     std::ofstream str{out_file};
     if (!str)
