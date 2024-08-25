@@ -905,7 +905,7 @@ Select a fractal type:
 { The Mandelbrot Set }
 { Julia Sets }
 { Inverse Julias }
-{ Newton domains of attraction }
+{ Newton Domains of Attraction }
 { Newton }
 { Complex Newton }
 { Lambda Sets }
@@ -1193,7 +1193,7 @@ The <J> key toggles between the inverse Julia orbit and the
 corresponding Julia escape time fractal.
 ;
 ;
-~Topic=Newton domains of attraction, Label=HT_NEWTBAS
+~Topic=Newton Domains of Attraction, Label=HT_NEWTBAS
 (type=newtbasin)
 
 The Newton formula is an algorithm used to find the roots of polynomial
