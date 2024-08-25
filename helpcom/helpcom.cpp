@@ -504,6 +504,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         if (tok == token_types::TOK_LINK)
                         {
                             pd.s = pd.curr+1;
+                            pd.i = size;
                             if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                             {
                                 in_link = 1;
@@ -657,6 +658,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         return false;
                     }
                     pd.s = pd.curr+1;
+                    pd.i = size;
                     if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                     {
                         width += static_cast<int>(pd.link_page.size());
