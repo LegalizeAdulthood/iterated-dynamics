@@ -759,7 +759,6 @@ void process_doc_contents(char *(*format_toc)(char *buffer, CONTENT &c))
 
 void process_doc_contents(modes mode)
 {
-
     if (mode == modes::HTML)
     {
         process_doc_contents(
@@ -881,6 +880,20 @@ int parse_link()   // returns length of link or 0 on error
         {
             error(err_off, "Implicit hot-link has no title.");
             bad = true;
+        }
+        while (*ptr == ' ')
+        {
+            ++ptr;
+            --len;
+        }
+        while (len > 0 && ptr[len - 1] == ' ')
+        {
+            --len;
+        }
+        if (len > 2 && ptr[0] == '"' && ptr[len - 1] == '"')
+        {
+            ++ptr;
+            len -= 2;
         }
         l.name.assign(ptr, len);
     }
