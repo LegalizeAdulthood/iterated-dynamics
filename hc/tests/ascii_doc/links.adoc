@@ -1,10 +1,11 @@
 = Iterated Dynamics
 :toc: left
+:toclevels: 4
 :experimental:
 
 == New Features in 1.0
 
-See <<_getting_started>>.
+See <<_getting_started>>.  See <<_3d_commands>>.
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
@@ -31,6 +32,8 @@ text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
 of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.
+
+=== Conditions on Use
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
@@ -93,6 +96,20 @@ text.  Lots of text.
 === The Mandelbrot Set
 
 (type=mandel)
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.
+
+== "3D" Commands
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots

@@ -1,10 +1,13 @@
 = Iterated Dynamics
 :toc: left
+:toclevels: 4
 :experimental:
 
 == New Features in 1.0
 
 == Introduction
+
+=== Conditions on Use
 
 == Iterated Dynamics Commands
 
@@ -42,5 +45,9 @@
 
 == Mathematics of the Fractal Types
 
+=== Summary of Fractal Types
+
 == Stone Soup With Pixels: The Authors
+
+=== The Stone Soup Story
 

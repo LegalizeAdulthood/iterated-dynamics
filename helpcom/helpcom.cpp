@@ -858,7 +858,6 @@ bool DocumentProcessor::topic_token()
     case token_types::TOK_XONLINE: /* skip */
     case token_types::TOK_XDOC:    /* ignore */
         break;
-
     } /* switch */
 
     m_pd.curr += m_size;

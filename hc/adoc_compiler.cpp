@@ -4,6 +4,7 @@
 #include "messages.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include <algorithm>
 #include <cctype>
@@ -64,7 +65,7 @@ public:
     void process();
 
 private:
-    void set_link_text(const LINK &link);
+    void set_link_text(const LINK &link, const PD_INFO *pd);
     bool info(PD_COMMANDS cmd, PD_INFO *pd);
     bool output(PD_COMMANDS cmd, PD_INFO *pd);
     void emit_char(char c);
@@ -85,6 +86,7 @@ private:
     int m_newlines{};
     bool m_start_of_line{};
     std::string m_content;
+    std::string m_topic;
     bool m_inside_key{};
     std::string m_key_name;
     bool m_bullet_started{};
@@ -121,6 +123,14 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
             return false;
         }
         const TOPIC &topic{g_src.topics[content.topic_num[m_topic_num]]};
+        if (topic.title != content.name)
+        {
+            m_topic = std::string(content.indent + 3, '=') + ' ' + topic.title;
+        }
+        else
+        {
+            m_topic.clear();
+        }
         pd->curr = topic.get_topic_text();
         pd->len = topic.text_len;
         return true;
@@ -141,7 +151,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
             return false;
         }
 
-        set_link_text(link);
+        set_link_text(link, pd);
         pd->i = link.doc_page;
         pd->link_page.clear();
         return true;
@@ -164,19 +174,12 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
 {
     switch (cmd)
     {
-    case PD_COMMANDS::PD_HEADING:
-    case PD_COMMANDS::PD_FOOTING:
-        return true;
-
     case PD_COMMANDS::PD_PRINT:
         print_string(pd->s, pd->i);
         return true;
 
     case PD_COMMANDS::PD_PRINTN:
         print_char(*pd->s, pd->i);
-        return true;
-
-    case PD_COMMANDS::PD_PRINT_SEC:
         return true;
 
     case PD_COMMANDS::PD_START_SECTION:
@@ -186,11 +189,20 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
         return true;
 
     case PD_COMMANDS::PD_START_TOPIC:
+        if (!m_topic.empty())
+        {
+            print_char('\n', 1);
+            print_string(m_topic.data(), static_cast<int>(m_topic.length()));
+            print_char('\n', 2);
+        }
         return true;
 
+    case PD_COMMANDS::PD_HEADING:
+    case PD_COMMANDS::PD_FOOTING:
     case PD_COMMANDS::PD_SET_SECTION_PAGE:
     case PD_COMMANDS::PD_SET_TOPIC_PAGE:
     case PD_COMMANDS::PD_PERIODIC:
+    case PD_COMMANDS::PD_PRINT_SEC:
         return true;
 
     default:
@@ -200,9 +212,9 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
 
 void AsciiDocProcessor::process()
 {
-    auto info_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
+    const auto info_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
-    auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
+    const auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
     process_document(info_cb, output_cb, this);
 }
@@ -221,27 +233,54 @@ static std::string to_string(link_types type)
     return "? (" + std::to_string(static_cast<int>(type)) + ")";
 }
 
-void AsciiDocProcessor::set_link_text(const LINK &link)
+void AsciiDocProcessor::set_link_text(const LINK &link, const PD_INFO *pd)
 {
+    std::string anchor_name;
     switch (link.type)
     {
     case link_types::LT_TOPIC:
-        m_link_text = link.name;
+        anchor_name = link.name;
         break;
     case link_types::LT_LABEL:
     {
         const LABEL *label = g_src.find_label(link.name.c_str());
         const TOPIC &topic = g_src.topics[label->topic_num];
-        m_link_text = topic.title;
+        anchor_name = topic.title;
         break;
     }
     default:
         throw std::runtime_error("Unknown link type " + to_string(link.type));
     }
 
-    m_link_markup = boost::algorithm::to_lower_copy(m_link_text);
-    std::replace(m_link_markup.begin(), m_link_markup.end(), ' ', '_');
-    m_link_markup = "<<_" + m_link_markup + ">>";
+    const char *begin{pd->s + sizeof(int) * 3};
+    const size_t len{pd->i - sizeof(int) * 3 - 2};
+    m_link_text.assign(begin, len);
+    if (const auto first_non_space{m_link_text.find_first_not_of(' ')}; first_non_space != 0)
+    {
+        m_link_text.erase(0, first_non_space);
+    }
+    if (const auto last_non_space{m_link_text.find_last_not_of(' ')}; last_non_space != m_link_text.length() - 1)
+    {
+        m_link_text.erase(last_non_space + 1);
+    }
+    m_link_markup = boost::algorithm::to_lower_copy(anchor_name);
+    for (const char c : " .-")
+    {
+        std::replace(m_link_markup.begin(), m_link_markup.end(), c, '_');
+    }
+    constexpr const char *BAD_CHARS{R"bad_chars(=|/()<>@")bad_chars"};
+    for (auto pos = m_link_markup.find_first_of(BAD_CHARS); pos != std::string::npos;
+         pos = m_link_markup.find_first_of(BAD_CHARS, pos))
+    {
+        m_link_markup.erase(pos, 1);
+    }
+    boost::algorithm::replace_all(m_link_markup, "__", "_");
+    m_link_markup = "<<_" + m_link_markup;
+    if (m_link_text != anchor_name)
+    {
+        m_link_markup += "," + m_link_text;
+    }
+    m_link_markup += ">>";
 }
 
 static bool is_key_name(const std::string &name)
@@ -350,22 +389,7 @@ void AsciiDocProcessor::print_char(char c, int n)
 {
     while (n-- > 0)
     {
-        if (!m_link_text.empty() && c != '\n')
-        {
-            if (c == m_link_text.front())
-            {
-                m_link_text.erase(0, 1);
-            }
-            else
-            {
-                throw std::runtime_error("Unexpected character '" + std::string{c} + "'");
-            }
-            if (m_link_text.empty())
-            {
-                print_string(m_link_markup);
-            }
-        }
-        else if (m_inside_key)
+        if (m_inside_key)
         {
             print_inside_key(c);
         }
@@ -374,7 +398,7 @@ void AsciiDocProcessor::print_char(char c, int n)
             m_bullet_started = true;
             m_inside_bullet = true;
         }
-        else if (c == '<' && (!m_indented_line || m_inside_bullet))
+        else if (c == '<' && m_link_text.empty() && (!m_indented_line || m_inside_bullet))
         {
             m_bullet_started = false;
             m_inside_key = true;
@@ -385,17 +409,24 @@ void AsciiDocProcessor::print_char(char c, int n)
             if (m_bullet_started)
             {
                 emit_char('*');
+                m_bullet_started = false;
             }
-            m_bullet_started = false;
-            ++m_spaces;
+            if (!m_link_text.empty() && m_link_text.front() == ' ')
+            {
+                m_link_text.erase(0, 1);
+            }
+            else
+            {
+                ++m_spaces;
+            }
         }
         else if (c == '\n' || c == '\f')
         {
             if (m_bullet_started)
             {
                 emit_char('o');
+                m_bullet_started = false;
             }
-            m_bullet_started = false;
             ++m_newlines;
             m_start_of_line = true;
             m_indented_line = false;
@@ -404,15 +435,39 @@ void AsciiDocProcessor::print_char(char c, int n)
             {
                 m_str << c;
             }
+            while (!m_link_text.empty() && m_link_text.front() == ' ')
+            {
+                m_link_text.erase(0, 1);
+            }
         }
         else
         {
             if (m_bullet_started)
             {
                 emit_char('o');
+                m_bullet_started = false;
             }
-            m_bullet_started = false;
-            emit_char(c);
+
+            if (!m_link_text.empty())
+            {
+                if (c == m_link_text.front())
+                {
+                    m_link_text.erase(0, 1);
+                }
+                else
+                {
+                     throw std::runtime_error("Unexpected character '" + std::string{c} + "'");
+                }
+                if (m_link_text.empty())
+                {
+                    print_string(m_link_markup);
+                }
+                m_start_of_line = false;
+            }
+            else
+            {
+                emit_char(c);
+            }
         }
     }
 }
@@ -464,6 +519,7 @@ void AsciiDocCompiler::print_ascii_doc()
     }
     str << "= Iterated Dynamics\n"
            ":toc: left\n"
+           ":toclevels: 4\n"
            ":experimental:\n";
 
     AsciiDocProcessor(str).process();
