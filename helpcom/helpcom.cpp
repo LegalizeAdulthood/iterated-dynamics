@@ -652,15 +652,16 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                     break;
 
                 case token_types::TOK_LINK:
-                    skip_blanks = false;
-                    if (!do_print(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
-                    {
-                        return false;
-                    }
                     pd.s = pd.curr+1;
                     pd.i = size;
                     if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                     {
+                        skip_blanks = false;
+                        if (!do_print(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
+                        {
+                            return false;
+                        }
+
                         width += static_cast<int>(pd.link_page.size());
                         if (!do_print(page_text.c_str(), (int) page_text.size()))
                         {
