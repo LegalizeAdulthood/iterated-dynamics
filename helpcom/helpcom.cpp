@@ -244,15 +244,16 @@ int find_line_width(token_modes mode, char const *curr, unsigned len)
     return lwidth;
 }
 
-namespace {
+namespace
+{
 
 class DocumentProcessor
 {
 public:
-    DocumentProcessor(PD_FUNC *get_info_, PD_FUNC *output_, void *info_) :
-        get_info(get_info_),
-        output(output_),
-        info(info_)
+    DocumentProcessor(PD_FUNC *get_info, PD_FUNC *output, void *info) :
+        m_get_info(get_info),
+        m_output(output),
+        m_info(info)
     {
     }
 
@@ -271,85 +272,85 @@ private:
     bool topic_token();
     bool heading()
     {
-        return output(PD_COMMANDS::PD_HEADING, &pd, info);
+        return m_output(PD_COMMANDS::PD_HEADING, &m_pd, m_info);
     }
     bool get_content()
     {
-        return get_info(PD_COMMANDS::PD_GET_CONTENT, &pd, info);
+        return m_get_info(PD_COMMANDS::PD_GET_CONTENT, &m_pd, m_info);
     }
     bool start_section()
     {
-        return output(PD_COMMANDS::PD_START_SECTION, &pd, info);
+        return m_output(PD_COMMANDS::PD_START_SECTION, &m_pd, m_info);
     }
     bool footing()
     {
-        return output(PD_COMMANDS::PD_FOOTING, &pd, info);
+        return m_output(PD_COMMANDS::PD_FOOTING, &m_pd, m_info);
     }
     bool get_link_page()
     {
-        return get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info);
+        return m_get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &m_pd, m_info);
     }
     bool set_section_page()
     {
-        return output(PD_COMMANDS::PD_SET_SECTION_PAGE, &pd, info);
+        return m_output(PD_COMMANDS::PD_SET_SECTION_PAGE, &m_pd, m_info);
     }
     bool print_section()
     {
-        return output(PD_COMMANDS::PD_PRINT_SEC, &pd, info);
+        return m_output(PD_COMMANDS::PD_PRINT_SEC, &m_pd, m_info);
     }
     bool get_topic()
     {
-        return get_info(PD_COMMANDS::PD_GET_TOPIC, &pd, info);
+        return m_get_info(PD_COMMANDS::PD_GET_TOPIC, &m_pd, m_info);
     }
     bool start_topic()
     {
-        return output(PD_COMMANDS::PD_START_TOPIC, &pd, info);
+        return m_output(PD_COMMANDS::PD_START_TOPIC, &m_pd, m_info);
     }
     bool set_topic_page()
     {
-        return output(PD_COMMANDS::PD_SET_TOPIC_PAGE, &pd, info);
+        return m_output(PD_COMMANDS::PD_SET_TOPIC_PAGE, &m_pd, m_info);
     }
     bool periodic()
     {
-        return output(PD_COMMANDS::PD_PERIODIC, &pd, info);
+        return m_output(PD_COMMANDS::PD_PERIODIC, &m_pd, m_info);
     }
     bool release_topic()
     {
-        return get_info(PD_COMMANDS::PD_RELEASE_TOPIC, &pd, info);
+        return m_get_info(PD_COMMANDS::PD_RELEASE_TOPIC, &m_pd, m_info);
     }
     bool print(char const *str, int n)
     {
-        pd.s = str;
-        pd.i = n;
-        return output(PD_COMMANDS::PD_PRINT, &pd, info);
+        m_pd.s = str;
+        m_pd.i = n;
+        return m_output(PD_COMMANDS::PD_PRINT, &m_pd, m_info);
     }
     bool print_n(char ch, int n)
     {
-        pd.s = &ch;
-        pd.i = n;
-        return output(PD_COMMANDS::PD_PRINTN, &pd, info);
+        m_pd.s = &ch;
+        m_pd.i = n;
+        return m_output(PD_COMMANDS::PD_PRINTN, &m_pd, m_info);
     }
 
-    PD_FUNC *get_info;
-    PD_FUNC *output;
-    void *info;
-    PD_INFO pd{};
-    std::string page_text;
-    bool first_section{};
-    bool first_topic{};
-    bool skip_blanks{};
-    int col{};
-    int size{};
-    int width{};
+    PD_FUNC *m_get_info;
+    PD_FUNC *m_output;
+    void *m_info;
+    PD_INFO m_pd{};
+    std::string m_page_text;
+    bool m_first_section{};
+    bool m_first_topic{};
+    bool m_skip_blanks{};
+    int m_col{};
+    int m_size{};
+    int m_width{};
 };
 
 bool DocumentProcessor::process()
 {
-    pd.page_num = 1;
+    m_pd.page_num = 1;
 
     heading();
 
-    first_section = true;
+    m_first_section = true;
     while (get_content())
     {
         if (!content())
@@ -368,14 +369,14 @@ bool DocumentProcessor::content()
         return false;
     }
 
-    if (pd.new_page && pd.line_num != 0)
+    if (m_pd.new_page && m_pd.line_num != 0)
     {
         if (!footing())
         {
             return false;
         }
-        ++pd.page_num;
-        pd.line_num = 0;
+        ++m_pd.page_num;
+        m_pd.line_num = 0;
         if (!heading())
         {
             return false;
@@ -383,26 +384,26 @@ bool DocumentProcessor::content()
     }
     else
     {
-        if (pd.line_num + 2 > PAGE_DEPTH - CONTENT_BREAK)
+        if (m_pd.line_num + 2 > PAGE_DEPTH - CONTENT_BREAK)
         {
             if (!footing())
             {
                 return false;
             }
-            ++pd.page_num;
-            pd.line_num = 0;
+            ++m_pd.page_num;
+            m_pd.line_num = 0;
             if (!heading())
             {
                 return false;
             }
         }
-        else if (pd.line_num > 0)
+        else if (m_pd.line_num > 0)
         {
             if (!print_n('\n', 2))
             {
                 return false;
             }
-            pd.line_num += 2;
+            m_pd.line_num += 2;
         }
     }
 
@@ -411,16 +412,16 @@ bool DocumentProcessor::content()
         return false;
     }
 
-    if (!first_section)
+    if (!m_first_section)
     {
         if (!print_section())
         {
             return false;
         }
-        ++pd.line_num;
+        ++m_pd.line_num;
     }
 
-    first_topic = true;
+    m_first_topic = true;
     while (get_topic())
     {
         if (!topic())
@@ -429,7 +430,7 @@ bool DocumentProcessor::content()
         }
     }
 
-    first_section = false;
+    m_first_section = false;
     return true;
 }
 
@@ -440,50 +441,50 @@ bool DocumentProcessor::topic()
         return false;
     }
 
-    if (!first_section) /* do not skip blanks for DocContents */
+    if (!m_first_section) /* do not skip blanks for DocContents */
     {
-        while (pd.len > 0)
+        while (m_pd.len > 0)
         {
             int size = 0;
-            token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, nullptr);
+            token_types tok = find_token_length(token_modes::DOC, m_pd.curr, m_pd.len, &size, nullptr);
             if (tok != token_types::TOK_XDOC && tok != token_types::TOK_XONLINE &&
                 tok != token_types::TOK_NL && tok != token_types::TOK_DONE)
             {
                 break;
             }
-            pd.curr += size;
-            pd.len -= size;
+            m_pd.curr += size;
+            m_pd.len -= size;
         }
-        if (first_topic && pd.len != 0)
+        if (m_first_topic && m_pd.len != 0)
         {
             if (!print_n('\n', 1))
             {
                 return false;
             }
-            ++pd.line_num;
+            ++m_pd.line_num;
         }
     }
 
-    if (pd.line_num > PAGE_DEPTH - TOPIC_BREAK)
+    if (m_pd.line_num > PAGE_DEPTH - TOPIC_BREAK)
     {
         if (!footing())
         {
             return false;
         }
-        ++pd.page_num;
-        pd.line_num = 0;
+        ++m_pd.page_num;
+        m_pd.line_num = 0;
         if (!heading())
         {
             return false;
         }
     }
-    else if (!first_topic)
+    else if (!m_first_topic)
     {
         if (!print_n('\n', 1))
         {
             return false;
         }
-        ++pd.line_num;
+        ++m_pd.line_num;
     }
 
     if (!set_topic_page())
@@ -491,19 +492,19 @@ bool DocumentProcessor::topic()
         return false;
     }
 
-    skip_blanks = false;
-    col = 0;
+    m_skip_blanks = false;
+    m_col = 0;
     do
     {
         if (!topic_token())
         {
             return false;
         }
-    } while (pd.len > 0);
+    } while (m_pd.len > 0);
 
     release_topic();
 
-    first_topic = false;
+    m_first_topic = false;
     return true;
 }
 
@@ -513,19 +514,19 @@ bool DocumentProcessor::topic_paragraph()
     char const *holdcurr = nullptr;
     int in_link = 0;
 
-    ++pd.curr;
+    ++m_pd.curr;
 
-    int const indent = *pd.curr++;
-    int const margin = *pd.curr++;
+    int const indent = *m_pd.curr++;
+    int const margin = *m_pd.curr++;
 
-    pd.len -= 3;
+    m_pd.len -= 3;
 
     if (!print_n(' ', indent))
     {
         return false;
     }
 
-    col = indent;
+    m_col = indent;
 
     while (true)
     {
@@ -534,7 +535,7 @@ bool DocumentProcessor::topic_paragraph()
             return false;
         }
 
-        token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
+        token_types tok = find_token_length(token_modes::DOC, m_pd.curr, m_pd.len, &m_size, &m_width);
 
         if (tok == token_types::TOK_NL || tok == token_types::TOK_FF)
         {
@@ -545,8 +546,8 @@ bool DocumentProcessor::topic_paragraph()
         {
             if (in_link == 0)
             {
-                col = 0;
-                ++pd.line_num;
+                m_col = 0;
+                ++m_pd.line_num;
                 if (!print_n('\n', 1))
                 {
                     return false;
@@ -554,36 +555,36 @@ bool DocumentProcessor::topic_paragraph()
                 break;
             }
 
-            if (!page_text.empty())
+            if (!m_page_text.empty())
             {
                 if (in_link == 1)
                 {
                     tok = token_types::TOK_SPACE;
-                    width = 1;
-                    size = 0;
+                    m_width = 1;
+                    m_size = 0;
                     ++in_link;
                 }
                 else if (in_link == 2)
                 {
                     tok = token_types::TOK_WORD;
-                    width = (int) page_text.length();
-                    col += 8 - width;
-                    size = 0;
-                    pd.curr = page_text.c_str();
+                    m_width = (int) m_page_text.length();
+                    m_col += 8 - m_width;
+                    m_size = 0;
+                    m_pd.curr = m_page_text.c_str();
                     ++in_link;
                 }
                 else if (in_link == 3)
                 {
-                    pd.curr = holdcurr;
-                    pd.len = holdlen;
+                    m_pd.curr = holdcurr;
+                    m_pd.len = holdlen;
                     in_link = 0;
                     continue;
                 }
             }
             else
             {
-                pd.curr = holdcurr;
-                pd.len = holdlen;
+                m_pd.curr = holdcurr;
+                m_pd.len = holdlen;
                 in_link = 0;
                 continue;
             }
@@ -591,8 +592,8 @@ bool DocumentProcessor::topic_paragraph()
 
         if (tok == token_types::TOK_PARA)
         {
-            col = 0; /* fake a nl */
-            ++pd.line_num;
+            m_col = 0; /* fake a nl */
+            ++m_pd.line_num;
             if (!print_n('\n', 1))
             {
                 return false;
@@ -602,48 +603,48 @@ bool DocumentProcessor::topic_paragraph()
 
         if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
         {
-            pd.curr += size;
-            pd.len -= size;
+            m_pd.curr += m_size;
+            m_pd.len -= m_size;
             continue;
         }
 
         if (tok == token_types::TOK_LINK)
         {
-            pd.s = pd.curr + 1;
-            pd.i = size;
+            m_pd.s = m_pd.curr + 1;
+            m_pd.i = m_size;
             if (get_link_page())
             {
                 in_link = 1;
-                page_text = pd.link_page;
+                m_page_text = m_pd.link_page;
             }
             else
             {
                 in_link = 3;
             }
-            holdcurr = pd.curr + size;
-            holdlen = pd.len - size;
-            pd.len = size - 2 - 3 * sizeof(int);
-            pd.curr += 1 + 3 * sizeof(int);
+            holdcurr = m_pd.curr + m_size;
+            holdlen = m_pd.len - m_size;
+            m_pd.len = m_size - 2 - 3 * sizeof(int);
+            m_pd.curr += 1 + 3 * sizeof(int);
             continue;
         }
 
         // now tok is SPACE or WORD
 
-        if (col + width > PAGE_WIDTH)
+        if (m_col + m_width > PAGE_WIDTH)
         {
             /* go to next line... */
             if (!print_n('\n', 1))
             {
                 return false;
             }
-            if (++pd.line_num >= PAGE_DEPTH)
+            if (++m_pd.line_num >= PAGE_DEPTH)
             {
                 if (!footing())
                 {
                     return false;
                 }
-                ++pd.page_num;
-                pd.line_num = 0;
+                ++m_pd.page_num;
+                m_pd.line_num = 0;
                 if (!heading())
                 {
                     return false;
@@ -652,53 +653,53 @@ bool DocumentProcessor::topic_paragraph()
 
             if (tok == token_types::TOK_SPACE)
             {
-                width = 0; /* skip spaces at start of a line */
+                m_width = 0; /* skip spaces at start of a line */
             }
 
             if (!print_n(' ', margin))
             {
                 return false;
             }
-            col = margin;
+            m_col = margin;
         }
 
-        if (width > 0)
+        if (m_width > 0)
         {
             if (tok == token_types::TOK_SPACE)
             {
-                if (!print_n(' ', width))
+                if (!print_n(' ', m_width))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!print(pd.curr, (size == 0) ? width : size))
+                if (!print(m_pd.curr, (m_size == 0) ? m_width : m_size))
                 {
                     return false;
                 }
             }
         }
 
-        col += width;
-        pd.curr += size;
-        pd.len -= size;
+        m_col += m_width;
+        m_pd.curr += m_size;
+        m_pd.len -= m_size;
     }
 
-    skip_blanks = false;
-    size = 0;
-    width = size;
+    m_skip_blanks = false;
+    m_size = 0;
+    m_width = m_size;
 
     return true;
 }
 
 bool DocumentProcessor::topic_newline()
 {
-    ++pd.line_num;
+    ++m_pd.line_num;
 
-    if (pd.line_num >= PAGE_DEPTH || (col == 0 && pd.line_num >= PAGE_DEPTH - BLANK_BREAK))
+    if (m_pd.line_num >= PAGE_DEPTH || (m_col == 0 && m_pd.line_num >= PAGE_DEPTH - BLANK_BREAK))
     {
-        if (col != 0) /* if last wasn't a blank line... */
+        if (m_col != 0) /* if last wasn't a blank line... */
         {
             if (!print_n('\n', 1))
             {
@@ -709,9 +710,9 @@ bool DocumentProcessor::topic_newline()
         {
             return false;
         }
-        ++pd.page_num;
-        pd.line_num = 0;
-        skip_blanks = true;
+        ++m_pd.page_num;
+        m_pd.line_num = 0;
+        m_skip_blanks = true;
         if (!heading())
         {
             return false;
@@ -725,7 +726,7 @@ bool DocumentProcessor::topic_newline()
         }
     }
 
-    col = 0;
+    m_col = 0;
 
     return true;
 }
@@ -736,32 +737,32 @@ bool DocumentProcessor::topic_formfeed()
     {
         return false;
     }
-    col = 0;
-    pd.line_num = 0;
-    ++pd.page_num;
+    m_col = 0;
+    m_pd.line_num = 0;
+    ++m_pd.page_num;
     return heading();
 }
 
 bool DocumentProcessor::topic_center()
 {
-    width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
-    return print_n(' ', width);
+    m_width = (PAGE_WIDTH - find_line_width(token_modes::DOC, m_pd.curr, m_pd.len)) / 2;
+    return print_n(' ', m_width);
 }
 
 bool DocumentProcessor::topic_link()
 {
-    pd.s = pd.curr + 1;
-    pd.i = size;
+    m_pd.s = m_pd.curr + 1;
+    m_pd.i = m_size;
     if (get_link_page())
     {
-        skip_blanks = false;
-        if (!print(pd.curr + 1 + 3 * sizeof(int), size - 3 * sizeof(int) - 2))
+        m_skip_blanks = false;
+        if (!print(m_pd.curr + 1 + 3 * sizeof(int), m_size - 3 * sizeof(int) - 2))
         {
             return false;
         }
 
-        width += static_cast<int>(pd.link_page.size());
-        if (!print(page_text.c_str(), (int) page_text.size()))
+        m_width += static_cast<int>(m_pd.link_page.size());
+        if (!print(m_page_text.c_str(), (int) m_page_text.size()))
         {
             return false;
         }
@@ -772,14 +773,14 @@ bool DocumentProcessor::topic_link()
 
 bool DocumentProcessor::topic_word()
 {
-    skip_blanks = false;
-    return print(pd.curr, size);
+    m_skip_blanks = false;
+    return print(m_pd.curr, m_size);
 }
 
 bool DocumentProcessor::topic_space()
 {
-    skip_blanks = false;
-    return print_n(' ', width);
+    m_skip_blanks = false;
+    return print_n(' ', m_width);
 }
 
 bool DocumentProcessor::topic_token()
@@ -789,9 +790,9 @@ bool DocumentProcessor::topic_token()
         return false;
     }
 
-    size = 0;
-    width = 0;
-    token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
+    m_size = 0;
+    m_width = 0;
+    token_types tok = find_token_length(token_modes::DOC, m_pd.curr, m_pd.len, &m_size, &m_width);
     switch (tok)
     {
     case token_types::TOK_PARA:
@@ -802,7 +803,7 @@ bool DocumentProcessor::topic_token()
         break;
 
     case token_types::TOK_NL:
-        if (skip_blanks && col == 0)
+        if (m_skip_blanks && m_col == 0)
         {
             break;
         }
@@ -814,7 +815,7 @@ bool DocumentProcessor::topic_token()
         break;
 
     case token_types::TOK_FF:
-        if (skip_blanks)
+        if (m_skip_blanks)
         {
             break;
         }
@@ -860,10 +861,10 @@ bool DocumentProcessor::topic_token()
 
     } /* switch */
 
-    pd.curr += size;
-    pd.len -= size;
-    col += width;
-    
+    m_pd.curr += m_size;
+    m_pd.len -= m_size;
+    m_col += m_width;
+
     return true;
 }
 
