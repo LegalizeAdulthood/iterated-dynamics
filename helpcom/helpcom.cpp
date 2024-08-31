@@ -266,6 +266,7 @@ private:
     bool topic_formfeed();
     bool topic_center();
     bool topic_link();
+    bool topic_word();
     bool topic_token();
     bool heading()
     {
@@ -767,6 +768,12 @@ bool DocumentProcessor::topic_link()
     return true;
 }
 
+bool DocumentProcessor::topic_word()
+{
+    skip_blanks = false;
+    return print(pd.curr, size);
+}
+
 bool DocumentProcessor::topic_token()
 {
     if (!periodic())
@@ -825,8 +832,7 @@ bool DocumentProcessor::topic_token()
         break;
 
     case token_types::TOK_WORD:
-        skip_blanks = false;
-        if (!print(pd.curr, size))
+        if (!topic_word())
         {
             return false;
         }
