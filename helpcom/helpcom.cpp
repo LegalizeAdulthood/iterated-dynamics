@@ -244,45 +244,113 @@ int find_line_width(token_modes mode, char const *curr, unsigned len)
     return lwidth;
 }
 
+namespace {
 
-bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
+class DocumentProcessor
 {
-    PD_INFO pd{};
-    pd.page_num = 1;
+public:
+    DocumentProcessor(PD_FUNC *get_info_, PD_FUNC *output_, void *info_) :
+        get_info(get_info_),
+        output(output_),
+        info(info_)
+    {
+    }
 
-    auto const do_print = [=, &pd](char const *str, int n)
+    bool process();
+
+private:
+    bool heading()
+    {
+        return output(PD_COMMANDS::PD_HEADING, &pd, info);
+    }
+    bool get_content()
+    {
+        return get_info(PD_COMMANDS::PD_GET_CONTENT, &pd, info);
+    }
+    bool start_section()
+    {
+        return output(PD_COMMANDS::PD_START_SECTION, &pd, info);
+    }
+    bool footing()
+    {
+        return output(PD_COMMANDS::PD_FOOTING, &pd, info);
+    }
+    bool get_link_page()
+    {
+        return get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info);
+    }
+    bool set_section_page()
+    {
+        return output(PD_COMMANDS::PD_SET_SECTION_PAGE, &pd, info);
+    }
+    bool print_section()
+    {
+        return output(PD_COMMANDS::PD_PRINT_SEC, &pd, info);
+    }
+    bool get_topic()
+    {
+        return get_info(PD_COMMANDS::PD_GET_TOPIC, &pd, info);
+    }
+    bool start_topic()
+    {
+        return output(PD_COMMANDS::PD_START_TOPIC, &pd, info);
+    }
+    bool set_topic_page()
+    {
+        return output(PD_COMMANDS::PD_SET_TOPIC_PAGE, &pd, info);
+    }
+    bool periodic()
+    {
+        return output(PD_COMMANDS::PD_PERIODIC, &pd, info);
+    }
+    bool release_topic()
+    {
+        return get_info(PD_COMMANDS::PD_RELEASE_TOPIC, &pd, info);
+    }
+    bool print(char const *str, int n)
     {
         pd.s = str;
         pd.i = n;
         return output(PD_COMMANDS::PD_PRINT, &pd, info);
-    };
-    auto const do_print_n = [=, &pd](char ch, int n)
+    }
+    bool print_n(char ch, int n)
     {
         pd.s = &ch;
         pd.i = n;
         return output(PD_COMMANDS::PD_PRINTN, &pd, info);
-    };
+    }
 
-    output(PD_COMMANDS::PD_HEADING, &pd, info);
-
-    bool first_section = true;
+    PD_FUNC *get_info;
+    PD_FUNC *output;
+    void *info;
+    PD_INFO pd{};
     std::string page_text;
-    while (get_info(PD_COMMANDS::PD_GET_CONTENT, &pd, info))
+    bool first_section{};
+};
+
+bool DocumentProcessor::process()
+{
+    pd.page_num = 1;
+
+    heading();
+
+    first_section = true;
+    while (get_content())
     {
-        if (!output(PD_COMMANDS::PD_START_SECTION, &pd, info))
+        if (!start_section())
         {
             return false;
         }
 
         if (pd.new_page && pd.line_num != 0)
         {
-            if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
+            if (!footing())
             {
                 return false;
             }
             ++pd.page_num;
             pd.line_num = 0;
-            if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
+            if (!heading())
             {
                 return false;
             }
@@ -291,20 +359,20 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
         {
             if (pd.line_num + 2 > PAGE_DEPTH-CONTENT_BREAK)
             {
-                if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
+                if (!footing())
                 {
                     return false;
                 }
                 ++pd.page_num;
                 pd.line_num = 0;
-                if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
+                if (!heading())
                 {
                     return false;
                 }
             }
             else if (pd.line_num > 0)
             {
-                if (!do_print_n('\n', 2))
+                if (!print_n('\n', 2))
                 {
                     return false;
                 }
@@ -312,14 +380,14 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
             }
         }
 
-        if (!output(PD_COMMANDS::PD_SET_SECTION_PAGE, &pd, info))
+        if (!set_section_page())
         {
             return false;
         }
 
         if (!first_section)
         {
-            if (!output(PD_COMMANDS::PD_PRINT_SEC, &pd, info))
+            if (!print_section())
             {
                 return false;
             }
@@ -327,9 +395,9 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
         }
 
         bool first_topic = true;
-        while (get_info(PD_COMMANDS::PD_GET_TOPIC, &pd, info))
+        while (get_topic())
         {
-            if (!output(PD_COMMANDS::PD_START_TOPIC, &pd, info))
+            if (!start_topic())
             {
                 return false;
             }
@@ -352,7 +420,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                 }
                 if (first_topic && pd.len != 0)
                 {
-                    if (!do_print_n('\n', 1))
+                    if (!print_n('\n', 1))
                     {
                         return false;
                     }
@@ -362,27 +430,27 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
             if (pd.line_num > PAGE_DEPTH-TOPIC_BREAK)
             {
-                if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
+                if (!footing())
                 {
                     return false;
                 }
                 ++pd.page_num;
                 pd.line_num = 0;
-                if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
+                if (!heading())
                 {
                     return false;
                 }
             }
             else if (!first_topic)
             {
-                if (!do_print_n('\n', 1))
+                if (!print_n('\n', 1))
                 {
                     return false;
                 }
                 ++pd.line_num;
             }
 
-            if (!output(PD_COMMANDS::PD_SET_TOPIC_PAGE, &pd, info))
+            if (!set_topic_page())
             {
                 return false;
             }
@@ -391,7 +459,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
             int col = 0;
             do
             {
-                if (!output(PD_COMMANDS::PD_PERIODIC, &pd, info))
+                if (!periodic())
                 {
                     return false;
                 }
@@ -414,7 +482,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                     pd.len -= 3;
 
-                    if (!do_print_n(' ', indent))
+                    if (!print_n(' ', indent))
                     {
                         return false;
                     }
@@ -423,7 +491,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                     while (true)
                     {
-                        if (!output(PD_COMMANDS::PD_PERIODIC, &pd, info))
+                        if (!periodic())
                         {
                             return false;
                         }
@@ -441,7 +509,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                             {
                                 col = 0;
                                 ++pd.line_num;
-                                if (!do_print_n('\n', 1))
+                                if (!print_n('\n', 1))
                                 {
                                     return false;
                                 }
@@ -487,7 +555,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         {
                             col = 0;   /* fake a nl */
                             ++pd.line_num;
-                            if (!do_print_n('\n', 1))
+                            if (!print_n('\n', 1))
                             {
                                 return false;
                             }
@@ -505,7 +573,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         {
                             pd.s = pd.curr+1;
                             pd.i = size;
-                            if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
+                            if (get_link_page())
                             {
                                 in_link = 1;
                                 page_text = pd.link_page;
@@ -526,19 +594,19 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         if (col+width > PAGE_WIDTH)
                         {
                             /* go to next line... */
-                            if (!do_print_n('\n', 1))
+                            if (!print_n('\n', 1))
                             {
                                 return false;
                             }
                             if (++pd.line_num >= PAGE_DEPTH)
                             {
-                                if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
+                                if (!footing())
                                 {
                                     return false;
                                 }
                                 ++pd.page_num;
                                 pd.line_num = 0;
-                                if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
+                                if (!heading())
                                 {
                                     return false;
                                 }
@@ -549,7 +617,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                                 width = 0;    /* skip spaces at start of a line */
                             }
 
-                            if (!do_print_n(' ', margin))
+                            if (!print_n(' ', margin))
                             {
                                 return false;
                             }
@@ -560,14 +628,14 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                         {
                             if (tok == token_types::TOK_SPACE)
                             {
-                                if (!do_print_n(' ', width))
+                                if (!print_n(' ', width))
                                 {
                                     return false;
                                 }
                             }
                             else
                             {
-                                if (!do_print(pd.curr, (size == 0) ? width : size))
+                                if (!print(pd.curr, (size == 0) ? width : size))
                                 {
                                     return false;
                                 }
@@ -597,26 +665,26 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                     {
                         if (col != 0)      /* if last wasn't a blank line... */
                         {
-                            if (!do_print_n('\n', 1))
+                            if (!print_n('\n', 1))
                             {
                                 return false;
                             }
                         }
-                        if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
+                        if (!footing())
                         {
                             return false;
                         }
                         ++pd.page_num;
                         pd.line_num = 0;
                         skip_blanks = true;
-                        if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
+                        if (!heading())
                         {
                             return false;
                         }
                     }
                     else
                     {
-                        if (!do_print_n('\n', 1))
+                        if (!print_n('\n', 1))
                         {
                             return false;
                         }
@@ -630,14 +698,14 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                     {
                         break;
                     }
-                    if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
+                    if (!footing())
                     {
                         return false;
                     }
                     col = 0;
                     pd.line_num = 0;
                     ++pd.page_num;
-                    if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
+                    if (!heading())
                     {
                         return false;
                     }
@@ -645,7 +713,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                 case token_types::TOK_CENTER:
                     width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
-                    if (!do_print_n(' ', width))
+                    if (!print_n(' ', width))
                     {
                         return false;
                     }
@@ -654,16 +722,16 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
                 case token_types::TOK_LINK:
                     pd.s = pd.curr+1;
                     pd.i = size;
-                    if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
+                    if (get_link_page())
                     {
                         skip_blanks = false;
-                        if (!do_print(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
+                        if (!print(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
                         {
                             return false;
                         }
 
                         width += static_cast<int>(pd.link_page.size());
-                        if (!do_print(page_text.c_str(), (int) page_text.size()))
+                        if (!print(page_text.c_str(), (int) page_text.size()))
                         {
                             return false;
                         }
@@ -672,7 +740,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                 case token_types::TOK_WORD:
                     skip_blanks = false;
-                    if (!do_print(pd.curr, size))
+                    if (!print(pd.curr, size))
                     {
                         return false;
                     }
@@ -680,7 +748,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
 
                 case token_types::TOK_SPACE:
                     skip_blanks = false;
-                    if (!do_print_n(' ', width))
+                    if (!print_n(' ', width))
                     {
                         return false;
                     }
@@ -699,7 +767,7 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
             }
             while (pd.len > 0);
 
-            get_info(PD_COMMANDS::PD_RELEASE_TOPIC, &pd, info);
+            release_topic();
 
             first_topic = false;
         } /* while */
@@ -707,5 +775,12 @@ bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
         first_section = false;
     } /* while */
 
-    return output(PD_COMMANDS::PD_FOOTING, &pd, info);
+    return footing();
+}
+
+} // namespace
+
+bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
+{
+    return DocumentProcessor(get_info, output, info).process();
 }
