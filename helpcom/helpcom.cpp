@@ -264,6 +264,7 @@ private:
     bool topic_paragraph();
     bool topic_newline();
     bool topic_formfeed();
+    bool topic_center();
     bool topic_token();
     bool heading()
     {
@@ -738,6 +739,12 @@ bool DocumentProcessor::topic_formfeed()
     return heading();
 }
 
+bool DocumentProcessor::topic_center()
+{
+    width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
+    return print_n(' ', width);
+}
+
 bool DocumentProcessor::topic_token()
 {
     if (!periodic())
@@ -782,8 +789,7 @@ bool DocumentProcessor::topic_token()
         break;
 
     case token_types::TOK_CENTER:
-        width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
-        if (!print_n(' ', width))
+        if (!topic_center())
         {
             return false;
         }
