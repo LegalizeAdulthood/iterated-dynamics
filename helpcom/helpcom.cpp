@@ -261,6 +261,7 @@ public:
 private:
     bool content();
     bool topic();
+    bool topic_paragraph();
     bool topic_token();
     bool heading()
     {
@@ -332,6 +333,8 @@ private:
     bool first_topic{};
     bool skip_blanks{};
     int col{};
+    int size{};
+    int width{};
 };
 
 bool DocumentProcessor::process()
@@ -498,103 +501,45 @@ bool DocumentProcessor::topic()
     return true;
 }
 
-bool DocumentProcessor::topic_token()
+bool DocumentProcessor::topic_paragraph()
 {
-    if (!periodic())
+    unsigned int holdlen = 0;
+    char const *holdcurr = nullptr;
+    int in_link = 0;
+
+    ++pd.curr;
+
+    int const indent = *pd.curr++;
+    int const margin = *pd.curr++;
+
+    pd.len -= 3;
+
+    if (!print_n(' ', indent))
     {
         return false;
     }
 
-    int size = 0;
-    int width = 0;
-    token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
-    switch (tok)
+    col = indent;
+
+    while (true)
     {
-    case token_types::TOK_PARA:
-    {
-        unsigned int holdlen = 0;
-        char const *holdcurr = nullptr;
-        int in_link = 0;
-
-        ++pd.curr;
-
-        int const indent = *pd.curr++;
-        int const margin = *pd.curr++;
-
-        pd.len -= 3;
-
-        if (!print_n(' ', indent))
+        if (!periodic())
         {
             return false;
         }
 
-        col = indent;
+        token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
 
-        while (true)
+        if (tok == token_types::TOK_NL || tok == token_types::TOK_FF)
         {
-            if (!periodic())
+            break;
+        }
+
+        if (tok == token_types::TOK_DONE)
+        {
+            if (in_link == 0)
             {
-                return false;
-            }
-
-            tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
-
-            if (tok == token_types::TOK_NL || tok == token_types::TOK_FF)
-            {
-                break;
-            }
-
-            if (tok == token_types::TOK_DONE)
-            {
-                if (in_link == 0)
-                {
-                    col = 0;
-                    ++pd.line_num;
-                    if (!print_n('\n', 1))
-                    {
-                        return false;
-                    }
-                    break;
-                }
-
-                if (!page_text.empty())
-                {
-                    if (in_link == 1)
-                    {
-                        tok = token_types::TOK_SPACE;
-                        width = 1;
-                        size = 0;
-                        ++in_link;
-                    }
-                    else if (in_link == 2)
-                    {
-                        tok = token_types::TOK_WORD;
-                        width = (int) page_text.length();
-                        col += 8 - width;
-                        size = 0;
-                        pd.curr = page_text.c_str();
-                        ++in_link;
-                    }
-                    else if (in_link == 3)
-                    {
-                        pd.curr = holdcurr;
-                        pd.len = holdlen;
-                        in_link = 0;
-                        continue;
-                    }
-                }
-                else
-                {
-                    pd.curr = holdcurr;
-                    pd.len = holdlen;
-                    in_link = 0;
-                    continue;
-                }
-            }
-
-            if (tok == token_types::TOK_PARA)
-            {
-                col = 0; /* fake a nl */
+                col = 0;
                 ++pd.line_num;
                 if (!print_n('\n', 1))
                 {
@@ -603,96 +548,162 @@ bool DocumentProcessor::topic_token()
                 break;
             }
 
-            if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
+            if (!page_text.empty())
             {
-                pd.curr += size;
-                pd.len -= size;
+                if (in_link == 1)
+                {
+                    tok = token_types::TOK_SPACE;
+                    width = 1;
+                    size = 0;
+                    ++in_link;
+                }
+                else if (in_link == 2)
+                {
+                    tok = token_types::TOK_WORD;
+                    width = (int) page_text.length();
+                    col += 8 - width;
+                    size = 0;
+                    pd.curr = page_text.c_str();
+                    ++in_link;
+                }
+                else if (in_link == 3)
+                {
+                    pd.curr = holdcurr;
+                    pd.len = holdlen;
+                    in_link = 0;
+                    continue;
+                }
+            }
+            else
+            {
+                pd.curr = holdcurr;
+                pd.len = holdlen;
+                in_link = 0;
                 continue;
             }
-
-            if (tok == token_types::TOK_LINK)
-            {
-                pd.s = pd.curr + 1;
-                pd.i = size;
-                if (get_link_page())
-                {
-                    in_link = 1;
-                    page_text = pd.link_page;
-                }
-                else
-                {
-                    in_link = 3;
-                }
-                holdcurr = pd.curr + size;
-                holdlen = pd.len - size;
-                pd.len = size - 2 - 3 * sizeof(int);
-                pd.curr += 1 + 3 * sizeof(int);
-                continue;
-            }
-
-            // now tok is SPACE or WORD
-
-            if (col + width > PAGE_WIDTH)
-            {
-                /* go to next line... */
-                if (!print_n('\n', 1))
-                {
-                    return false;
-                }
-                if (++pd.line_num >= PAGE_DEPTH)
-                {
-                    if (!footing())
-                    {
-                        return false;
-                    }
-                    ++pd.page_num;
-                    pd.line_num = 0;
-                    if (!heading())
-                    {
-                        return false;
-                    }
-                }
-
-                if (tok == token_types::TOK_SPACE)
-                {
-                    width = 0; /* skip spaces at start of a line */
-                }
-
-                if (!print_n(' ', margin))
-                {
-                    return false;
-                }
-                col = margin;
-            }
-
-            if (width > 0)
-            {
-                if (tok == token_types::TOK_SPACE)
-                {
-                    if (!print_n(' ', width))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (!print(pd.curr, (size == 0) ? width : size))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            col += width;
-            pd.curr += size;
-            pd.len -= size;
         }
 
-        skip_blanks = false;
-        size = 0;
-        width = size;
-        break;
+        if (tok == token_types::TOK_PARA)
+        {
+            col = 0; /* fake a nl */
+            ++pd.line_num;
+            if (!print_n('\n', 1))
+            {
+                return false;
+            }
+            break;
+        }
+
+        if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
+        {
+            pd.curr += size;
+            pd.len -= size;
+            continue;
+        }
+
+        if (tok == token_types::TOK_LINK)
+        {
+            pd.s = pd.curr + 1;
+            pd.i = size;
+            if (get_link_page())
+            {
+                in_link = 1;
+                page_text = pd.link_page;
+            }
+            else
+            {
+                in_link = 3;
+            }
+            holdcurr = pd.curr + size;
+            holdlen = pd.len - size;
+            pd.len = size - 2 - 3 * sizeof(int);
+            pd.curr += 1 + 3 * sizeof(int);
+            continue;
+        }
+
+        // now tok is SPACE or WORD
+
+        if (col + width > PAGE_WIDTH)
+        {
+            /* go to next line... */
+            if (!print_n('\n', 1))
+            {
+                return false;
+            }
+            if (++pd.line_num >= PAGE_DEPTH)
+            {
+                if (!footing())
+                {
+                    return false;
+                }
+                ++pd.page_num;
+                pd.line_num = 0;
+                if (!heading())
+                {
+                    return false;
+                }
+            }
+
+            if (tok == token_types::TOK_SPACE)
+            {
+                width = 0; /* skip spaces at start of a line */
+            }
+
+            if (!print_n(' ', margin))
+            {
+                return false;
+            }
+            col = margin;
+        }
+
+        if (width > 0)
+        {
+            if (tok == token_types::TOK_SPACE)
+            {
+                if (!print_n(' ', width))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!print(pd.curr, (size == 0) ? width : size))
+                {
+                    return false;
+                }
+            }
+        }
+
+        col += width;
+        pd.curr += size;
+        pd.len -= size;
     }
+
+    skip_blanks = false;
+    size = 0;
+    width = size;
+
+    return true;
+}
+
+bool DocumentProcessor::topic_token()
+{
+    if (!periodic())
+    {
+        return false;
+    }
+
+    size = 0;
+    width = 0;
+    token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
+    switch (tok)
+    {
+    case token_types::TOK_PARA:
+        if (!topic_paragraph())
+        {
+            return false;
+        }
+        break;
 
     case token_types::TOK_NL:
         if (skip_blanks && col == 0)
