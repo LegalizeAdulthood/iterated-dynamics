@@ -263,6 +263,7 @@ private:
     bool topic();
     bool topic_paragraph();
     bool topic_newline();
+    bool topic_formfeed();
     bool topic_token();
     bool heading()
     {
@@ -725,6 +726,18 @@ bool DocumentProcessor::topic_newline()
     return true;
 }
 
+bool DocumentProcessor::topic_formfeed()
+{
+    if (!footing())
+    {
+        return false;
+    }
+    col = 0;
+    pd.line_num = 0;
+    ++pd.page_num;
+    return heading();
+}
+
 bool DocumentProcessor::topic_token()
 {
     if (!periodic())
@@ -761,14 +774,8 @@ bool DocumentProcessor::topic_token()
         {
             break;
         }
-        if (!footing())
-        {
-            return false;
-        }
-        col = 0;
-        pd.line_num = 0;
-        ++pd.page_num;
-        if (!heading())
+
+        if (!topic_formfeed())
         {
             return false;
         }
