@@ -262,6 +262,7 @@ private:
     bool content();
     bool topic();
     bool topic_paragraph();
+    bool topic_newline();
     bool topic_token();
     bool heading()
     {
@@ -686,6 +687,44 @@ bool DocumentProcessor::topic_paragraph()
     return true;
 }
 
+bool DocumentProcessor::topic_newline()
+{
+    ++pd.line_num;
+
+    if (pd.line_num >= PAGE_DEPTH || (col == 0 && pd.line_num >= PAGE_DEPTH - BLANK_BREAK))
+    {
+        if (col != 0) /* if last wasn't a blank line... */
+        {
+            if (!print_n('\n', 1))
+            {
+                return false;
+            }
+        }
+        if (!footing())
+        {
+            return false;
+        }
+        ++pd.page_num;
+        pd.line_num = 0;
+        skip_blanks = true;
+        if (!heading())
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if (!print_n('\n', 1))
+        {
+            return false;
+        }
+    }
+
+    col = 0;
+
+    return true;
+}
+
 bool DocumentProcessor::topic_token()
 {
     if (!periodic())
@@ -711,38 +750,10 @@ bool DocumentProcessor::topic_token()
             break;
         }
 
-        ++pd.line_num;
-
-        if (pd.line_num >= PAGE_DEPTH || (col == 0 && pd.line_num >= PAGE_DEPTH - BLANK_BREAK))
+        if (!topic_newline())
         {
-            if (col != 0) /* if last wasn't a blank line... */
-            {
-                if (!print_n('\n', 1))
-                {
-                    return false;
-                }
-            }
-            if (!footing())
-            {
-                return false;
-            }
-            ++pd.page_num;
-            pd.line_num = 0;
-            skip_blanks = true;
-            if (!heading())
-            {
-                return false;
-            }
+            return false;
         }
-        else
-        {
-            if (!print_n('\n', 1))
-            {
-                return false;
-            }
-        }
-
-        col = 0;
         break;
 
     case token_types::TOK_FF:
