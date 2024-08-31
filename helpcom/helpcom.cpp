@@ -267,6 +267,7 @@ private:
     bool topic_center();
     bool topic_link();
     bool topic_word();
+    bool topic_space();
     bool topic_token();
     bool heading()
     {
@@ -765,6 +766,7 @@ bool DocumentProcessor::topic_link()
             return false;
         }
     }
+
     return true;
 }
 
@@ -772,6 +774,12 @@ bool DocumentProcessor::topic_word()
 {
     skip_blanks = false;
     return print(pd.curr, size);
+}
+
+bool DocumentProcessor::topic_space()
+{
+    skip_blanks = false;
+    return print_n(' ', width);
 }
 
 bool DocumentProcessor::topic_token()
@@ -839,8 +847,7 @@ bool DocumentProcessor::topic_token()
         break;
 
     case token_types::TOK_SPACE:
-        skip_blanks = false;
-        if (!print_n(' ', width))
+        if (!topic_space())
         {
             return false;
         }
