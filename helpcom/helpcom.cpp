@@ -265,6 +265,7 @@ private:
     bool topic_newline();
     bool topic_formfeed();
     bool topic_center();
+    bool topic_link();
     bool topic_token();
     bool heading()
     {
@@ -745,6 +746,27 @@ bool DocumentProcessor::topic_center()
     return print_n(' ', width);
 }
 
+bool DocumentProcessor::topic_link()
+{
+    pd.s = pd.curr + 1;
+    pd.i = size;
+    if (get_link_page())
+    {
+        skip_blanks = false;
+        if (!print(pd.curr + 1 + 3 * sizeof(int), size - 3 * sizeof(int) - 2))
+        {
+            return false;
+        }
+
+        width += static_cast<int>(pd.link_page.size());
+        if (!print(page_text.c_str(), (int) page_text.size()))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool DocumentProcessor::topic_token()
 {
     if (!periodic())
@@ -796,21 +818,9 @@ bool DocumentProcessor::topic_token()
         break;
 
     case token_types::TOK_LINK:
-        pd.s = pd.curr + 1;
-        pd.i = size;
-        if (get_link_page())
+        if (!topic_link())
         {
-            skip_blanks = false;
-            if (!print(pd.curr + 1 + 3 * sizeof(int), size - 3 * sizeof(int) - 2))
-            {
-                return false;
-            }
-
-            width += static_cast<int>(pd.link_page.size());
-            if (!print(page_text.c_str(), (int) page_text.size()))
-            {
-                return false;
-            }
+            return false;
         }
         break;
 
