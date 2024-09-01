@@ -55,6 +55,7 @@ static char s_cmd[128]{};                    // holds the current command
 static int s_format_exclude{};               // disable formatting at this col, 0 to never disable formatting
 static bool s_xonline{};                     //
 static bool s_xdoc{};                        //
+static bool s_xadoc{};                       //
 static std::vector<Include> s_include_stack; //
 static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
 static int s_read_char_buff_pos{-1};
@@ -1908,6 +1909,39 @@ void read_src(std::string const &fname, modes mode)
                     else
                     {
                         error(eoff, "Invalid argument to Doc.");
+                    }
+                }
+                else if (strnicmp(s_cmd, "ADoc", 4) == 0)
+                {
+                    if (s_cmd[3] == '+')
+                    {
+                        check_command_length(eoff, 4);
+                        if (s_xadoc)
+                        {
+                            *g_src.curr++ = CMD_XADOC;
+                            s_xdoc = false;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"ADoc+\" already in effect.");
+                        }
+                    }
+                    else if (s_cmd[3] == '-')
+                    {
+                        check_command_length(eoff, 4);
+                        if (!s_xadoc)
+                        {
+                            *g_src.curr++ = CMD_XADOC;
+                            s_xdoc = true;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"ADoc-\" already in effect.");
+                        }
+                    }
+                    else
+                    {
+                        error(eoff, "Invalid argument to ADoc.");
                     }
                 }
                 else if (strnicmp(s_cmd, "Center", 6) == 0)

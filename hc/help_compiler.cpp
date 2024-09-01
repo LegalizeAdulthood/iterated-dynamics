@@ -625,7 +625,7 @@ void HelpCompiler::paginate_document()
     info.content_num = info.topic_num;
     info.link_dest_warn = true;
 
-    process_document(pd_get_info, paginate_doc_output, &info);
+    process_document(token_modes::DOC, pd_get_info, paginate_doc_output, &info);
 
     set_hot_link_doc_page();
     set_content_doc_page();
@@ -1144,7 +1144,7 @@ void HelpCompiler::print_document()
     info.start_of_line = true;
     info.spaces = 0;
 
-    process_document(pd_get_info, print_doc_output, &info);
+    process_document(token_modes::DOC, pd_get_info, print_doc_output, &info);
 
     std::fclose(info.file);
 }

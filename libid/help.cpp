@@ -1369,8 +1369,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int))
     info.start_of_line = true;
     info.spaces = 0;
 
-    success = process_document(print_doc_get_info,
-                               print_doc_output,   &info);
+    success = process_document(token_modes::DOC, print_doc_get_info, print_doc_output, &info);
     std::fclose(info.file);
 
 ErrorAbort:

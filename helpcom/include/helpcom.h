@@ -27,7 +27,8 @@ enum help_commands
     CMD_XDOC = 6,       // exclude from printed document on/off
     CMD_CENTER = 7,     // center this line
     CMD_SPACE = 8,      // next byte is count of spaces
-    MAX_CMD = 8
+    CMD_XADOC = 9,      // exclude from AsciiDoc document on/off
+    MAX_CMD = 9
 };
 
 enum
@@ -66,7 +67,8 @@ enum class token_types
     TOK_WORD = 6,       // a word
     TOK_XONLINE = 7,    // a CMD_XONLINE
     TOK_XDOC = 8,       // a CMD_XDOC
-    TOK_CENTER = 9      // a CMD_CENTER
+    TOK_CENTER = 9,     // a CMD_CENTER
+    TOK_XADOC = 10,     // a CMD_XADOC
 };
 
 /*
@@ -76,7 +78,8 @@ enum class token_modes
 {
     NONE = 0,
     ONLINE = 1,
-    DOC = 2
+    DOC = 2,
+    ADOC = 3,
 };
 
 /*
@@ -128,7 +131,7 @@ using PD_FUNC = bool(PD_COMMANDS cmd, PD_INFO *pd, void *info);
 token_types find_token_length(
     token_modes mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
 int find_line_width(token_modes mode, char const *curr, unsigned len);
-bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info);
+bool process_document(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info);
 int help();
 int read_help_topic(help_labels label, int , int , void *);
 bool makedoc_msg_func(int pnum, int num_pages);

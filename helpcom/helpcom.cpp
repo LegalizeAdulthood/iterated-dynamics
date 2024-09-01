@@ -92,6 +92,11 @@ static token_types find_token_length(char const *curr, unsigned len, int *ret_si
             ++size;
             break;
 
+        case CMD_XADOC:
+            tok = token_types::TOK_XADOC;
+            ++size;
+            break;
+
         case CMD_CENTER:
             tok = token_types::TOK_CENTER;
             ++size;
@@ -171,7 +176,8 @@ token_types find_token_length(
 
     int size;
     if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
-        || (tok == token_types::TOK_XDOC && mode == token_modes::DOC))
+        || (tok == token_types::TOK_XDOC && mode == token_modes::DOC)
+        || (tok == token_types::TOK_XADOC && mode == token_modes::ADOC))
     {
         size = 0;
 
@@ -183,9 +189,10 @@ token_types find_token_length(
 
             tok = find_token_length(curr, len, &t, nullptr);
 
-            if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
-                || (tok == token_types::TOK_XDOC && mode == token_modes::DOC)
-                || (tok == token_types::TOK_DONE))
+            if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE) ||
+                (tok == token_types::TOK_XDOC && mode == token_modes::DOC) ||
+                (tok == token_types::TOK_XADOC && mode == token_modes::ADOC) ||
+                tok == token_types::TOK_DONE)
             {
                 break;
             }
@@ -250,7 +257,8 @@ namespace
 class DocumentProcessor
 {
 public:
-    DocumentProcessor(PD_FUNC *get_info, PD_FUNC *output, void *info) :
+    DocumentProcessor(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info) :
+        m_token_mode(mode),
         m_get_info(get_info),
         m_output(output),
         m_info(info)
@@ -331,6 +339,7 @@ private:
         return m_output(PD_COMMANDS::PD_PRINTN, &m_pd, m_info);
     }
 
+    token_modes m_token_mode{};
     PD_FUNC *m_get_info;
     PD_FUNC *m_output;
     void *m_info;
@@ -447,7 +456,7 @@ bool DocumentProcessor::topic()
         while (m_pd.len > 0)
         {
             int size = 0;
-            token_types tok = find_token_length(token_modes::DOC, m_pd.curr, m_pd.len, &size, nullptr);
+            token_types tok = find_token_length(m_token_mode, m_pd.curr, m_pd.len, &size, nullptr);
             if (tok != token_types::TOK_XDOC && tok != token_types::TOK_XONLINE &&
                 tok != token_types::TOK_NL && tok != token_types::TOK_DONE)
             {
@@ -535,7 +544,7 @@ bool DocumentProcessor::topic_paragraph()
             return false;
         }
 
-        token_types tok = find_token_length(token_modes::DOC, m_pd.curr, m_pd.len, &m_size, &m_width);
+        token_types tok = find_token_length(m_token_mode, m_pd.curr, m_pd.len, &m_size, &m_width);
 
         if (tok == token_types::TOK_NL || tok == token_types::TOK_FF)
         {
@@ -745,7 +754,7 @@ bool DocumentProcessor::topic_formfeed()
 
 bool DocumentProcessor::topic_center()
 {
-    m_width = (PAGE_WIDTH - find_line_width(token_modes::DOC, m_pd.curr, m_pd.len)) / 2;
+    m_width = (PAGE_WIDTH - find_line_width(m_token_mode, m_pd.curr, m_pd.len)) / 2;
     return print_n(' ', m_width);
 }
 
@@ -792,7 +801,7 @@ bool DocumentProcessor::topic_token()
 
     m_size = 0;
     m_width = 0;
-    token_types tok = find_token_length(token_modes::DOC, m_pd.curr, m_pd.len, &m_size, &m_width);
+    token_types tok = find_token_length(m_token_mode, m_pd.curr, m_pd.len, &m_size, &m_width);
     switch (tok)
     {
     case token_types::TOK_PARA:
@@ -869,7 +878,7 @@ bool DocumentProcessor::topic_token()
 
 } // namespace
 
-bool process_document(PD_FUNC *get_info, PD_FUNC *output, void *info)
+bool process_document(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info)
 {
-    return DocumentProcessor(get_info, output, info).process();
+    return DocumentProcessor(mode, get_info, output, info).process();
 }

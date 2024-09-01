@@ -216,7 +216,7 @@ void AsciiDocProcessor::process()
     { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
     const auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
-    process_document(info_cb, output_cb, this);
+    process_document(token_modes::ADOC, info_cb, output_cb, this);
 }
 
 static std::string to_string(link_types type)
