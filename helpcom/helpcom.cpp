@@ -357,6 +357,7 @@ bool DocumentProcessor::process()
         {
             return false;
         }
+        m_first_section = false;
     }
 
     return footing();
@@ -428,9 +429,9 @@ bool DocumentProcessor::content()
         {
             return false;
         }
+        m_first_topic = false;
     }
 
-    m_first_section = false;
     return true;
 }
 
@@ -504,7 +505,6 @@ bool DocumentProcessor::topic()
 
     release_topic();
 
-    m_first_topic = false;
     return true;
 }
 
