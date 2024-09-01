@@ -1260,6 +1260,46 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
+static void toggle_mode(std::string tag, help_commands cmd, bool &flag, int eoff)
+{
+    if (strnicmp(s_cmd, tag.data(), tag.length()) != 0)
+    {
+        return;
+    }
+
+    if (s_cmd[tag.length()] == '+')
+    {
+        check_command_length(eoff, static_cast<int>(tag.length() + 1));
+
+        if (flag)
+        {
+            *g_src.curr++ = cmd;
+            flag = false;
+        }
+        else
+        {
+            warn(eoff, ("\"" + tag + "+\" already in effect.").c_str());
+        }
+    }
+    else if (s_cmd[tag.length()] == '-')
+    {
+        check_command_length(eoff, static_cast<int>(tag.length() + 1));
+        if (!flag)
+        {
+            *g_src.curr++ = cmd;
+            flag = true;
+        }
+        else
+        {
+            warn(eoff, ("\"" + tag + "-\" already in effect.").c_str());
+        }
+    }
+    else
+    {
+        error(eoff, ("Invalid argument to " + tag + ".").c_str());
+    }
+}
+
 void read_src(std::string const &fname, modes mode)
 {
     int    ch;
@@ -1846,103 +1886,15 @@ void read_src(std::string const &fname, modes mode)
                 }
                 else if (strnicmp(s_cmd, "Online", 6) == 0)
                 {
-                    if (s_cmd[6] == '+')
-                    {
-                        check_command_length(eoff, 7);
-
-                        if (s_xonline)
-                        {
-                            *g_src.curr++ = CMD_XONLINE;
-                            s_xonline = false;
-                        }
-                        else
-                        {
-                            warn(eoff, "\"Online+\" already in effect.");
-                        }
-                    }
-                    else if (s_cmd[6] == '-')
-                    {
-                        check_command_length(eoff, 7);
-                        if (!s_xonline)
-                        {
-                            *g_src.curr++ = CMD_XONLINE;
-                            s_xonline = true;
-                        }
-                        else
-                        {
-                            warn(eoff, "\"Online-\" already in effect.");
-                        }
-                    }
-                    else
-                    {
-                        error(eoff, "Invalid argument to Online.");
-                    }
+                    toggle_mode("Online", CMD_XONLINE, s_xonline, eoff);
                 }
                 else if (strnicmp(s_cmd, "Doc", 3) == 0)
                 {
-                    if (s_cmd[3] == '+')
-                    {
-                        check_command_length(eoff, 4);
-                        if (s_xdoc)
-                        {
-                            *g_src.curr++ = CMD_XDOC;
-                            s_xdoc = false;
-                        }
-                        else
-                        {
-                            warn(eoff, "\"Doc+\" already in effect.");
-                        }
-                    }
-                    else if (s_cmd[3] == '-')
-                    {
-                        check_command_length(eoff, 4);
-                        if (!s_xdoc)
-                        {
-                            *g_src.curr++ = CMD_XDOC;
-                            s_xdoc = true;
-                        }
-                        else
-                        {
-                            warn(eoff, "\"Doc-\" already in effect.");
-                        }
-                    }
-                    else
-                    {
-                        error(eoff, "Invalid argument to Doc.");
-                    }
+                    toggle_mode("Doc", CMD_XDOC, s_xdoc, eoff);
                 }
                 else if (strnicmp(s_cmd, "ADoc", 4) == 0)
                 {
-                    if (s_cmd[3] == '+')
-                    {
-                        check_command_length(eoff, 4);
-                        if (s_xadoc)
-                        {
-                            *g_src.curr++ = CMD_XADOC;
-                            s_xdoc = false;
-                        }
-                        else
-                        {
-                            warn(eoff, "\"ADoc+\" already in effect.");
-                        }
-                    }
-                    else if (s_cmd[3] == '-')
-                    {
-                        check_command_length(eoff, 4);
-                        if (!s_xadoc)
-                        {
-                            *g_src.curr++ = CMD_XADOC;
-                            s_xdoc = true;
-                        }
-                        else
-                        {
-                            warn(eoff, "\"ADoc-\" already in effect.");
-                        }
-                    }
-                    else
-                    {
-                        error(eoff, "Invalid argument to ADoc.");
-                    }
+                    toggle_mode("ADoc", CMD_XADOC, s_xadoc, eoff);
                 }
                 else if (strnicmp(s_cmd, "Center", 6) == 0)
                 {
