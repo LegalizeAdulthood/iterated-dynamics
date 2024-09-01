@@ -2582,6 +2582,35 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
           magxmag    Zoom box (Mag,      Xmagnitude) (see {=@CENTERMAG center-mag})
           rotskew    Zoom box (Rotation, Skew)       (see {=@CENTERMAG center-mag})
 
+~Doc-,Online-
+.Operator Precedence
+[cols="1,8"]
+|===
+^|Precedence|Operator or Function
+
+^|1
+|`sin()`, `cos()`, `sinh()`, `cosh()`, `cosxx()`, `tan()`, `cotan()`,
+`tanh()`, `cotanh()`, `sqr()`, `log()`, `exp()`, `abs()`, `conj()`,
+`real()`, `imag()`, `flip()`, `fn1()`, `fn2()`, `fn3()`, `fn4()`,
+`srand()`, `asin()`, `asinh()`, `acos()`, `acosh()`, `atan()`,
+`atanh()`, `sqrt()`, `cabs()`, `floor()`, `ceil()`, `trunc()`,
+`round()`
+^|2
+|`-` (negation), `^` (power)
+^|3
+|`*` (multiplication), `/` (division)
+^|4
+|`+` (addition), `-` (subtraction)
+^|5
+|`=` (assignment)
+^|6
+|`<` (less than), `\\<=` (less than or equal to),
+`>` (greater than), `>=` (greater than or equal to),
+`==` (equal to), `!=` (not equal to)
+^|7
+|`&&` (logical AND), `\\|\\|` (logical OR)
+|===
+~Doc+,Online+,ADoc-
           Precedence
           --------------------------------------------
           1          sin(), cos(), sinh(), cosh(), cosxx(), tan(), cotan(),
@@ -2595,15 +2624,17 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
           4          + (addition), - (subtraction)
           5          = (assignment)
 ~OnlineFF
-~Doc-,ADoc-
+~Doc-
           Precedence (Continued)
           --------------------------------------------
-~Doc+,ADoc+
-          6          < (less than), <= (less than or equal to)
-                     > (greater than), >= (greater than or equal to)
+~Doc+
+          6          < (less than), <= (less than or equal to),
+                     > (greater than), >= (greater than or equal to),
                      == (equal to), != (not equal to)
           7          && (logical AND), || (logical OR)
+~ADoc+
 ~Format+
+
 Precedence may be overridden by use of parenthesis.  Note the modulus squared
 operator |z| is also parenthetic and always sets the imaginary component to
 zero.  This means 'c * |z - 4|' first subtracts 4 from z, calculates the
