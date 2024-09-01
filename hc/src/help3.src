@@ -813,7 +813,7 @@ the spiked ends off of the protrusions.
 ;
 ~Topic=\"3D\" Images, Label=HELP_3D
 ; Empty in docs, just to have the hotlink defined at chapter level.
-~Format-,Doc-
+~Format-,Doc-,ADoc-
 
    { 3D Overview }
    { 3D Mode Selection }
@@ -827,7 +827,7 @@ the spiked ends off of the protrusions.
    { Making Terrains }
    { Making 3D Slides }
    { Interfacing with Ray Tracing Programs }
-~Format+,Doc+
+~Format+,Doc+,ADoc+
 ;
 ;
 ;
