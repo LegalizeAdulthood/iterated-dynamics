@@ -482,15 +482,15 @@ are indicated by $varname$.  Underscore characters are expanded to blanks.
 If you want to include the special characters '$', '_', or '\\' in a comment,
 precede the character with '\\'.  Supported variables are:
 
-Variable   Expands to   Example    Variable   Expands to    Example\
-===============================    ================================\
-$year$     time:year    2024       $date$     mo. day, yr   Mar 17, 2024\
-$month$    time:month   Mar        $calctime$ h:m:s         4:34:45.3\
-$day$      time:day     17         $version$  version       100\
-$hour$     time:hour    21         $patch$    patch number  0\
-$min$      time:minute  34         $xdots$    horiz res.    640\
-$sec$      time:sec     14         $ydots$    vertical res. 480\
-$time$     time:h:m:s   21:34:14   $vidkey$   video key     SF4\
+  Variable  Expands to   Example   Variable   Expands to    Example\
+  ==============================   ================================\
+  $year$    time:year    2024      $date$     mo. day, yr   Mar 17, 2024\
+  $month$   time:month   Mar       $calctime$ h:m:s         4:34:45.3\
+  $day$     time:day     17        $version$  version       100\
+  $hour$    time:hour    21        $patch$    patch number  0\
+  $min$     time:minute  34        $xdots$    horiz res.    640\
+  $sec$     time:sec     14        $ydots$    vertical res. 480\
+  $time$    time:h:m:s   21:34:14  $vidkey$   video key     SF4\
 
 The variable $cpu$ expands to information about your CPU, such as
 "Intel Core i7-6600U CPU @ 2.60GHz".
