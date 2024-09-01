@@ -104,30 +104,31 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
         {
             return false;
         }
-        const CONTENT &c{g_src.contents[m_content_num]};
+        const CONTENT &content{g_src.contents[m_content_num]};
         m_topic_num = -1;
-        pd->id = c.id.c_str();
-        m_content = std::string(c.indent + 2, '=') + ' ' + c.name;
+        pd->id = content.id.c_str();
+        m_content = std::string(content.indent + 2, '=') + ' ' + content.name;
         pd->title = m_content.c_str();
-        pd->new_page = (c.flags & CF_NEW_PAGE) != 0;
+        pd->new_page = (content.flags & CF_NEW_PAGE) != 0;
         return true;
     }
 
     case PD_COMMANDS::PD_GET_TOPIC:
     {
-        const CONTENT &c{g_src.contents[m_content_num]};
-        if (++m_topic_num >= c.num_topic)
+        const CONTENT &content{g_src.contents[m_content_num]};
+        if (++m_topic_num >= content.num_topic)
         {
             return false;
         }
-        pd->curr = g_src.topics[c.topic_num[m_topic_num]].get_topic_text();
-        pd->len = g_src.topics[c.topic_num[m_topic_num]].text_len;
+        const TOPIC &topic{g_src.topics[content.topic_num[m_topic_num]]};
+        pd->curr = topic.get_topic_text();
+        pd->len = topic.text_len;
         return true;
     }
 
     case PD_COMMANDS::PD_GET_LINK_PAGE:
     {
-        const LINK &link = g_src.all_links[getint(pd->s)];
+        const LINK &link{g_src.all_links[getint(pd->s)]};
         if (link.doc_page == -1)
         {
             if (m_link_dest_warn)
@@ -148,8 +149,9 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
 
     case PD_COMMANDS::PD_RELEASE_TOPIC:
     {
-        const CONTENT &c{g_src.contents[m_content_num]};
-        g_src.topics[c.topic_num[m_topic_num]].release_topic_text(false);
+        const CONTENT &content{g_src.contents[m_content_num]};
+        const TOPIC &topic{g_src.topics[content.topic_num[m_topic_num]]};
+        topic.release_topic_text(false);
         return true;
     }
 
