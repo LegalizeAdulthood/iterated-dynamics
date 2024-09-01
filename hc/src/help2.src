@@ -3178,15 +3178,15 @@ Any information after a ; (semi-colon) on a line is treated as a comment.
 Here is a sample L-system:
 
 ~Format-
-Dragon \{         ; Name of L-system, \{ indicates start
-  Angle 8        ; Specify the angle increment to 45 degrees
-  Axiom FX       ; Starting character string
-  F=             ; First rule:  Delete 'F'
-  y=+FX--FY+     ; Change 'y' into  "+fx--fy+"
-  x=-FX++FY-     ; Similar transformation on 'x'
-}                ; final } indicates end
+  Dragon \{         ; Name of L-system, \{ indicates start
+    Angle 8        ; Specify the angle increment to 45 degrees
+    Axiom FX       ; Starting character string
+    F=             ; First rule:  Delete 'F'
+    y=+FX--FY+     ; Change 'y' into  "+fx--fy+"
+    x=-FX++FY-     ; Similar transformation on 'x'
+  }                ; final } indicates end
 
-The standard drawing commands are:
+  The standard drawing commands are:
     F Draw forward
     G Move forward (without drawing)
     + Increase angle
@@ -3206,12 +3206,12 @@ angle pointer which is specified in degrees.
     \\nn Increase angle nn degrees
     /nn Decrease angle nn degrees
 
-Color control:
+  Color control:
     Cnn Select color nn
     <nn Increment color by nn
     >nn decrement color by nn
 
-Advanced commands:
+  Advanced commands:
     !     Reverse directions (Switch meanings of +, - and \, /)
     @nnn  Multiply line segment size by nnn
           nnn may be a plain number, or may be preceded by
