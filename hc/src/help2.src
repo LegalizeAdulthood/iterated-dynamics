@@ -2577,7 +2577,6 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
           ismand     1 (true) by default, changes to 0 when the Mandelbrot/
                      Julia SPACE toggle is pressed.  This allows writing
                      formulas with both "Mandelbrot" and "Julia" behavior.
-~LABEL=@PREDEFCENTERMAG
           center     Zoom box (Xcenter,  Ycenter)    (see {=@CENTERMAG center-mag})
           magxmag    Zoom box (Mag,      Xmagnitude) (see {=@CENTERMAG center-mag})
           rotskew    Zoom box (Rotation, Skew)       (see {=@CENTERMAG center-mag})
