@@ -556,7 +556,7 @@ default.  The default is to use integer math, but in this age of
 powerful CPUS we now recommend your making float=yes the default by
 adding this line to your sstools.ini file.  This sstools.ini file
 distributed with Iterated Dynamics has this setting.
-Also see {"Limitations of Integer Math (And How We Cope)"}.
+Also see {"Limitations of Integer Math (and How We Cope)"}.
 
 SYMMETRY=xxx\
 Forces symmetry to none, X axis, Y axis, XY axis, origin, or pi symmetry.

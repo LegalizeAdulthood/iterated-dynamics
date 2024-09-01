@@ -27,7 +27,7 @@ o When interacting with filenames and directories, Id may truncate
 
     A Little Code:
        { Periodicity Logic }
-       { Limitations of Integer Math (And How We Cope) }
+       { Limitations of Integer Math (and How We Cope) }
        { Arbitrary Precision and Deep Zooming }
        { The Id "Fractal Engine" Architecture }
 

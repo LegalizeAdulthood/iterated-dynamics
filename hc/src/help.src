@@ -182,7 +182,7 @@
 {8.1.2, 2, "Who Is This Guy\, Anyway?"}
 {8.2  , 1, A Little Code}
 {8.2.1, 2, "Periodicity Logic"}
-{8.2.2, 2, "Limitations of Integer Math (And How We Cope)"}
+{8.2.2, 2, "Limitations of Integer Math (and How We Cope)"}
 {8.2.3, 2, "Arbitrary Precision and Deep Zooming"}
 {8.2.4, 2, "The Id \"Fractal Engine\" Architecture"}
 
@@ -651,7 +651,7 @@ See {Fractal Types} for a list of supported types.
 
 <F>\
 Toggles the use of floating-point algorithms
-(see {"Limitations of Integer Math (And How We Cope)"}).
+(see {"Limitations of Integer Math (and How We Cope)"}).
 Whether floating point is in use is shown on the <Tab> status screen.
 The floating point option can also be turned on and off using the "X"
 options screen.
@@ -1042,7 +1042,7 @@ The <G> command lets you give a startup parameter interactively.
    Decomp Option - see {Decomposition}\
 
 You can toggle the use of floating-point algorithms on this screen (see
-{"Limitations of Integer Math (And How We Cope)"}).  Whether floating
+{"Limitations of Integer Math (and How We Cope)"}).  Whether floating
 point is in use is shown on the <Tab> status screen.
 ;
 ;
