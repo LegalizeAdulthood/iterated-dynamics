@@ -986,8 +986,19 @@ has certain areas of greater contribution and creativity.  Since there is
 not room in the credits screen for the contributions of the main authors,
 we list them here to further elaborate on their contributions.
 
-Main Author of Iterated Dynamics
+~Doc-,ADoc-
+     { Main Author of Iterated Dynamics }\
 
+     { Main Authors of Fractint, Id's Ancestor }
+~Doc+,ADoc+
+;
+;
+;
+~Topic=Main Author of Iterated Dynamics
+~Format-,Online-,ADoc-
+MAIN AUTHOR OF ITERATED DYNAMICS
+
+~Format+,Online+,ADoc+
 Richard Thomson is the main author of Id.  The Fractint code had
 languished for many years, struggling to leave its DOS nest.  This
 has resulted other fractal renderers passing it by as they adopted SIMD
@@ -1078,9 +1089,14 @@ systems, 3D graphics workstations, 3D paint software, digital video editing
 software, system management software, home automation software, 3D content
 creation software, solid-state storage management software and currently
 works on hardware accelerated ray tracing.
+;
+;
+;
+~Topic=Main Authors of Fractint\, Id's Ancestor
+~Format-,Online-,ADoc-
+MAIN AUTHORS OF FRACTINT, ID'S ANCESTOR
 
-Main Authors of Fractint, Id's Ancestor.
-
+~Format+,Online+,ADoc+
 Bert Tyler is the original author of Fractint.  He wrote the "blindingly
 fast" 386-specific 32 bit integer math code and the original video mode
 logic.  Bert made Stone Soup possible, and provides a sense of direction when
