@@ -1,11 +1,11 @@
 ~Topic=Summary of Fractal Types, Label=HELP_FRACTALS
 ~Format-
-~Doc-
+~Doc-,ADoc-
 For detailed descriptions, select a hot-link below, see {Fractal Types},
 or use <F2> from the fractal type selection screen.
 ~Doc+,Online-
 SUMMARY OF FRACTAL TYPES
-~Online+
+~Online+,ADoc+
 ~CompressSpaces-
 ;
 ; Note that get_fract_params() pulls formulas out of the following for <Z> screen,
@@ -20,7 +20,7 @@ SUMMARY OF FRACTAL TYPES
 ;
 {=HT_ANT ant}
 ~Label=HF_ANT
-    Generalized Ant Automaton as described in the July 1994 Scientific
+    Generalized Ant Automaton as described in the July, 1994 Scientific
     American.  Some ants wander around the screen.  A rule string (the first
     parameter) determines the ant's direction.  When the type 1 ant leaves a
     cell of color k, it turns right if the kth symbol in the first parameter
@@ -896,7 +896,7 @@ them.
 In the text that follows, due to the limitations of the ASCII character
 set, "a*b" means "a times b", and "a^b" means "a to the power b".
 
-~Doc-
+~Doc-,ADoc-
 Press <PageDown> for type selection list.
 ~FF
 Select a fractal type:
@@ -953,7 +953,7 @@ Select a fractal type:
 { Latoocarfian }
 { Hypercomplex }
 ~EndTable
-~Doc+
+~Doc+,ADoc+
 ;
 ;
 ~Topic=The Mandelbrot Set, Label=HT_MANDEL
@@ -1221,10 +1221,10 @@ fractal sense.  Zoom in and see for yourself.
 
 This fractal type is symmetric about the origin, with the number of
 "spokes" depending on the order you select.
-~Doc-
+~Doc-,ADoc-
 
 See also: {Newton}
-~Doc+
+~Doc+,ADoc+
 ;
 ;
 ~Topic=Newton, Label=HT_NEWT
@@ -2570,10 +2570,10 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
                      coordinates as a large checker board, whitesq is (1,0)
                      for the white squares and (0,0) for the black ones.
 ~OnlineFF
-~Doc-
+~Doc-,ADoc-
           Predefined Variables (Continued)
           --------------------------------------------
-~Doc+
+~Doc+,ADoc+
           ismand     1 (true) by default, changes to 0 when the Mandelbrot/
                      Julia SPACE toggle is pressed.  This allows writing
                      formulas with both "Mandelbrot" and "Julia" behavior.
@@ -2595,10 +2595,10 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
           4          + (addition), - (subtraction)
           5          = (assignment)
 ~OnlineFF
-~Doc-
+~Doc-,ADoc-
           Precedence (Continued)
           --------------------------------------------
-~Doc+
+~Doc+,ADoc+
           6          < (less than), <= (less than or equal to)
                      > (greater than), >= (greater than or equal to)
                      == (equal to), != (not equal to)

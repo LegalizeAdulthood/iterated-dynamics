@@ -1214,13 +1214,13 @@ the image and the effect changes the perspective you see.  The second set,
 perspective.  They are used just for positioning the final image on the
 screen.  Shifting of any type is not available if you have selected a ray
 tracing option.
-~Doc-
+~Doc-,ADoc-
 
 {3D Color Parameters} are also requested on the same input screen.
 
 If you are doing a {Spherical Projection}, special parameters for
 it are requested at the start of this screen.
-~Doc+
+~Doc+,ADoc+
 ;
 ;
 ;

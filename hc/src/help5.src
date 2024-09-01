@@ -18,8 +18,7 @@ o When interacting with filenames and directories, Id may truncate
 ~Topic=Fractals and the PC
 ;
 ; empty for document, present just so we can reference the subject
-
-~Format-,Doc-
+~Format-,Doc-,ADoc-
 
     A Little History:
        { Before Mandelbrot }
@@ -38,7 +37,7 @@ o When interacting with filenames and directories, Id may truncate
        { Finite Attractors }
        { Trig Identities }
        { Quaternion and Hypercomplex Algebra }
-~Format+,Doc+
+~Format+,Doc+,ADoc+
 ;
 ;
 ~Topic=Before Mandelbrot
@@ -385,10 +384,10 @@ See {Distribution of Iterated Dynamics}.
 ;
 ;
 ~Topic=Inside=bof60|bof61|zmag|fmod|period|atan
-~Format-,Online-
+~Format-,Online-,ADoc-
 
 INSIDE=bof60|bof61|zmag|fmod|period|atan
-~Format+,Online+
+~Format+,Online+,ADoc+
 
 Here is an attempted explanation of what the "inside=bof60" and
 "inside=bof61" options do.  This explanation is hereby dedicated to Adrian
@@ -448,10 +447,10 @@ feature should be used with periodicity=0.
 ;
 ;
 ~Topic=Inside=epscross|startrail
-~Format-,Online-
+~Format-,Online-,ADoc-
 
 INSIDE=epscross|startrail
-~Format+,Online+
+~Format+,Online+,ADoc+
 
 Kenneth Hooper has written a paper entitled "A Note On Some Internal
 Structures of the Mandelbrot Set" published in "Computers and Graphics", Vol
@@ -484,10 +483,10 @@ does "incorrect" mean in chaos theory anyway?!
 ;
 ;
 ~Topic=Finite Attractors
-~Format-,Online-
+~Format-,Online-,ADoc-
 
 FINITE ATTRACTORS
-~Format+,Online+
+~Format+,Online+,ADoc+
 
 Many of Id's fractals involve the iteration of functions of complex
 numbers until some bailout value is exceeded, then coloring the
@@ -613,11 +612,11 @@ color.
 ;
 ;
 ~Topic=Trig Identities
-~Online-
+~Online-,ADoc-
 
 TRIG IDENTITIES
 
-~Online+
+~Online+,ADoc+
 The following trig identities are invaluable for coding fractals that use
 complex-valued transcendental functions of a complex variable in terms of
 real-valued functions of a real variable, which are usually found in
@@ -880,10 +879,10 @@ The 'err' column in the video mode information indicates:
 ;
 ;
 ~Topic=Distribution of Iterated Dynamics
-~Format-,Online-
+~Format-,Online-,ADoc-
 
 DISTRIBUTION OF ID
-~Format+,Online+
+~Format+,Online+,ADoc+
 
 New versions of Iterated Dynamics are released through github,
 <https://github.com/LegalizeAdulthood/iterated-dynamics>,
@@ -895,10 +894,10 @@ The latest version of the code can always be found on the github repository.
 ;
 ;
 ~Topic=Contacting the Author
-~Format-,Online-
+~Format-,Online-,ADoc-
 
 CONTACTING THE AUTHOR
-~Format+,Online+
+~Format+,Online+,ADoc+
 Communication with the author for development of the next version of
 Iterated Dynamics takes place through the github repository,
 <https://github.com/LegalizeAdulthood/iterated-dynamics>.  From there you
@@ -910,9 +909,9 @@ it is best to use github.
 ;
 ;
 ~Topic=The Stone Soup Story
-~Format-,Online-
+~Format-,Online-,ADoc-
 THE STONE SOUP STORY
-~Format+,Online+
+~Format+,Online+,ADoc+
 
 Once upon a time, somewhere in Eastern Europe, there was a great famine.
 People jealously hoarded whatever food they could find, hiding it even
@@ -969,16 +968,16 @@ those wizards who first realized you could perform Mandelbrot calculations
 using integer math (it wasn't us - we just recognize good algorithms when
 we steal--uhh--see them).  Or those graphics experts who hang around the
 CompuServe PICS forum and keep adding video modes to the program.  Or...
-~Doc-
+~Doc-,ADoc-
 (continued in {A Word About the Authors})
-~Doc+
+~Doc+,ADoc+
 ;
 ;
 ~Topic=A Word About the Authors
-~Format-,Online-
+~Format-,Online-,ADoc-
 
 A WORD ABOUT THE AUTHORS
-~Format+,Online+
+~Format+,Online+,ADoc+
 
 Id's ancestor, Fractint 20.04, is the result of a synergy between the main
 authors, many contributors, and published sources.  All of the main

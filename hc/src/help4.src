@@ -522,9 +522,9 @@ Create Id documentation file (for printing or viewing with a text
 editor) and then exit.  Filename defaults to id.txt.
 There's also a function in Id's online help which can be used to
 produce the documentation file -
-~Doc-
+~Doc-,ADoc-
 see {Printing Id Documentation}.
-~Doc+,Online-
+~Doc+,ADoc+,Online-
 use "Printing Id Documentation" from the main help index.
 ~Online+
 
@@ -880,9 +880,9 @@ These modes force the writing of compressed color maps in the par file
 in all cases.  The only difference is that the comment option also writes
 the map filename in a comment so you can remember where the colors came
 from.
-~Doc-
+~Doc-,ADoc-
  See {Color Specification}.
-~Doc+
+~Doc+,ADoc+
 
 CYCLERANGE=nnn/nnn\
 Sets the range of color numbers to be animated during color cycling.  The

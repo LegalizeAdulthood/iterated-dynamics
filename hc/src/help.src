@@ -452,9 +452,9 @@ Help is available from the menu and at most other points in Id by
 pressing the <F1> key.
 
 At any time, you can hit
-~Doc-
+~Doc-,ADoc-
 one of the keys described in {Display Mode Commands}
-~Doc+,Online-
+~Doc+,ADoc+,Online-
 a command key
 ~Online+
 to select a function.  You do not need to wait for a calculation
@@ -468,9 +468,9 @@ described as <Shift+D>.
 
 Many commands and parameters can be passed to Id as command-line
 arguments or read from a configuration file;
-~Doc-
+~Doc-,ADoc-
 see {Startup Parameters\, Parameter Files} for details.
-~Doc+,Online-
+~Doc+,ADoc+,Online-
 see "Command Line Parameters, Parameter Files, Batch Mode" for details.
 ~Online+
 ;
@@ -500,7 +500,7 @@ see "Command Line Parameters, Parameter Files, Batch Mode" for details.
 ;
 ~Topic=Summary of Commands, Label=HELP_MAIN
 ; This topic is online only
-~Doc-
+~Doc-,ADoc-
 
 Hit any of these keys at the menu or while drawing or viewing a fractal.
 Commands marked with an '*' are also available at the credits screen.
@@ -587,7 +587,7 @@ Commands marked with an '*' are also available at the credits screen.
 {RDS Commands}
   Ctrl+S                Access RDS parameter screen
 
-~Doc+
+~Doc+,ADoc+
 ;
 ;
 ;
@@ -1545,10 +1545,10 @@ code base has been ported to the Macintosh line of computers.
 ;
 ~Topic=Color Cycling Commands, Label=@ColorCycling
 
-~Doc-
+~Doc-,ADoc-
 See {=HELP_CYCLING Color Cycling Command Summary} for a summary of commands.
 
-~Doc+
+~Doc+,ADoc+
 Color-cycling mode is entered with the <C>, <+>, or <-> keys from an image,
 or with the <C> key from Palette-Editing mode.
 
@@ -1664,10 +1664,10 @@ file (.map assumed).  See {Color Maps}.
 ;
 ~Topic=Palette Editing Commands
 
-~Doc-
+~Doc-,ADoc-
 See {=HELP_PALETTE_EDITOR Palette Editing Command Summary} for a summary of commands.
 
-~Doc+
+~Doc+,ADoc+
 Palette-editing mode provides a number of tools for modifying the colors
 in an image.  Many thanks to Ethan Nagel for creating the palette editor.
 
