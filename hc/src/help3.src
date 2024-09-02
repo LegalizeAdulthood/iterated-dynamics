@@ -885,6 +885,7 @@ wish to change the default for any of the following parameters,
 use the arrow keys to move through the menu.  When you're
 satisfied press <Enter>.
 
+~ADoc-
 Preview mode:\
    Preview mode provides a rapid look at your transformed image using by
    skipping a lot of rows and filling the image in.  Good for quickly
@@ -1020,7 +1021,153 @@ Output file name:\
    the file name will also be automatically incremented to avoid
    over-writing previous files.
 
-~Online-
+~ADoc+,Doc-,Online-
+~Format-
+Preview mode::
+Preview mode provides a rapid look at your transformed image using by
+skipping a lot of rows and filling the image in.  Good for quickly
+discovering the best parameters.
+
+Show box::
+If you have selected preview mode you have another option to worry
+about.  This is the option to show the image box in scaled and rotated
+coordinates x, y, and z.  The box only appears in rectangular
+transformations and shows how the final image will be oriented.  If you
+select light source in the next screen, it will also show you the
+light source vector so you can tell where the light is coming from in
+relation to your image.  Sorry no head or tail on the vector yet.
+
+Coarseness::
+This sets how many divisions the image will be divided into in the y
+direction, if you select preview mode, ray tracing output, or grid fill
+in the "Select 3D Fill Type" screen.
+
+Spherical projection::
+The next question asks if you want a sphere projection.  This will take
+your image and map it onto a plane if you answer "no" or a sphere if
+you answer "yes" as described above.  Try it and you'll see what we
+mean.  See {Spherical Projection}.
+
+Stereo::
+Stereo sound in Id?  Well, not yet.  Id now allows you to
+create 3D images for use with red/blue glasses like 3D comics you may
+have seen, or images like Captain EO.
++
+Option 0 is normal old 3D you can look at with just your eyes.
++
+Options 1 and 2 require the special red/blue-green glasses.  They are
+meant to be viewed right on the screen or on a color print off of the
+screen.  The image can be made to hover entirely or partially in front
+of the screen.  Great fun!  These two options give a gray scale image
+when viewed.
++
+Option 1 gives 64 shades of gray but with half the spatial resolution
+you have selected.  It works by writing the red and blue images on
+adjacent pixels, which is why it eats half your resolution.  In
+general, we recommend you use this only with higher resolution video
+modes.  Use this mode for continuous potential landscapes where you
+*need* all those shades.
++
+Option 2 gives you full spatial resolution but with only 16 shades
+of gray.  If the red and blue images overlap, the colors are mixed.
+Good for wire-frame images (we call them surface grids), lorenz3d and
+3D IFS.
++
+Option 3 is for creating stereo pair images for view later with more
+specialized equipment.  It allows full color images to be presented in
+glorious stereo.  The left image presented on the screen first.  You may
+photograph it or save it.  Then the second image is presented, you may
+do the same as the first image.  You can then take the two images and
+convert them to a stereo image pair as outlined by Bruce Goren (see
+below).
++
+Option 4 places left and right images on the screen simultaneously
+as a stereo pair.
+Also see {Stereo 3D Viewing}.
+
+Ray trace output::
+Id can create files of its 3D transformations which are compatible with
+many ray tracing programs.  Currently four are supported directly:
+DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "raw"
+output is supported which can be relatively easily transformed to be
+usable by many other products.
+One other option is supported: ACROSPIN.  This is not a ray tracer,
+but the same Id options apply.
++
+.Option Values
+[cols="1,8"]
+|===
+^|0
+|disables the creation of ray tracing output
+^|1
+|DKB format (obsolete-see below)
+^|2
+|VIVID format
+^|3
+|generic format (must be massaged externally)
+^|4
+|MTV format
+^|5
+|RAYSHADE format
+^|6
+|ACROSPIN format
+|===
++
+Users of POV-Ray can use the DKB output and convert to POV-Ray with the
+DKB2POV utility that comes with POV-Ray.  A better (faster) approach is to
+create a raw output file and convert to POV-Ray with RAW2POV.  A still
+better approach is to use POV-Ray's height field feature to directly
+read the fractal .gif or .pot file and do the 3D transformation inside
+POV-Ray.
++
+All ray tracing files consist of triangles which follow the surface
+created by Id during the 3D transform.  Triangles which lie below
+the "water line" are not created in order to avoid causing unnecessary
+work for the poor ray tracers which are already overworked.
+A simple plane can be substituted by the user at the
+waterline if needed.
++
+The size (and therefore the number) of triangles created is determined
+by the "coarse" parameter setting.  While generating the ray tracing
+file, you will view the image from above and watch it partitioned into
+triangles.
++
+The color of each triangle is the average of the color of its verticies
+in the original image, unless brief is selected.
++
+If brief is selected, a default color is assigned at the begining of the
+file and is used for all triangles.
++
+Also see {Interfacing with Ray Tracing Programs}.
+
+Brief output::
+This is a ray tracing sub-option.
+When it is set to yes, Id creates a considerably
+smaller and somewhat faster file.  In this mode, all triangles
+use the default color specified at the begining of the file.
+This color should be edited to supply the color of your choice.
+
+Targa output::
+If you want any of the 3D transforms you select to be saved as a
+Targa-24 file or overlayed onto one, select yes for this option.
+The overlay option in the final screen determines whether you will
+create a new file or overlay an existing one.
+
+Map file name::
+Imediately after selecting the previous options, you will be given the
+chance to select an alternate color map file.  The default is to
+use the current map.  If you want another map used, then enter your
+selection at this point.
+
+Output file name::
+This is a ray tracing sub-option, used to specify the name of the
+file to be written.  The default name is fract001.ray.  The name is
+incremented by one each time a file is written.
+If you have not set "overwrite=yes" then
+the file name will also be automatically incremented to avoid
+over-writing previous files.
+~Format+,Doc+
+
 When you are satisfied with your selections press enter to go
 to the next parameter screen.
 ~Online+
