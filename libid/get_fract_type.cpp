@@ -83,7 +83,8 @@ static fractal_type select_fracttype(fractal_type t);
 static int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
 
-int get_fracttype()             // prompt for and select fractal type
+// prompt for and select fractal type
+int get_fract_type()
 {
     fractal_type t;
     int done = -1;

@@ -281,7 +281,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_init_mode = -1;
                     g_calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
-                    get_fracttype();
+                    get_fract_type();
                     return main_state::IMAGE_START;
                 }
                 g_out_line = pot_line;

@@ -45,7 +45,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         g_julibrot = false;
         clear_zoombox();
         driver_stack_screen();
-        i = get_fracttype();
+        i = get_fract_type();
         if (i >= 0)
         {
             driver_discard_screen();

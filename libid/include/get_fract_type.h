@@ -2,6 +2,6 @@
 
 #include "fractype.h"
 
-int get_fracttype();
+int get_fract_type();
 int get_fract_params(bool prompt_for_type_params);
 void set_fractal_default_functions(fractal_type previous);

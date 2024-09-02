@@ -411,7 +411,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         {
             // set fractal type
             g_julibrot = false;
-            get_fracttype();
+            get_fract_type();
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'x')
