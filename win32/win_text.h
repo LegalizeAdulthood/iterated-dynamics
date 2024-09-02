@@ -7,6 +7,14 @@
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25
 
+#include <vector>
+
+struct Screen
+{
+    std::vector<BYTE> chars;
+    std::vector<BYTE> attrs;
+};
+
 struct WinText
 {
     bool initialize(HINSTANCE instance, HWND parent, LPCSTR title);
@@ -19,8 +27,8 @@ struct WinText
     void cursor(int xpos, int ypos, int cursor_type);
     void set_attr(int row, int col, int attr, int count);
     void clear();
-    BYTE *screen_get();
-    void screen_set(const BYTE *copy);
+    Screen screen_get();
+    void screen_set(const Screen &screen);
     void hide_cursor();
     void schedule_alarm(int secs);
     int get_char_attr(int row, int col);

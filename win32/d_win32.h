@@ -3,8 +3,6 @@
 #include "frame.h"
 #include "win_text.h"
 
-#define WIN32_MAXSCREENS 10
-
 class Win32BaseDriver : public Driver
 {
 public:
@@ -65,12 +63,11 @@ protected:
     * When we peeked ahead and saw a keypress, stash it here for later
     * feeding to our caller.
     */
-    mutable int key_buffer{};
+    mutable int m_key_buffer{};
 
-    int screen_count{-1};
-    BYTE *saved_screens[WIN32_MAXSCREENS]{};
-    int saved_cursor[WIN32_MAXSCREENS+1]{};
-    bool cursor_shown{};
-    int cursor_row{};
-    int cursor_col{};
+    std::vector<Screen> m_saved_screens;
+    std::vector<int> m_saved_cursor;
+    bool m_cursor_shown{};
+    int m_cursor_row{};
+    int m_cursor_col{};
 };
