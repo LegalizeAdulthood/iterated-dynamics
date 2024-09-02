@@ -15,17 +15,19 @@
 void helptitle()
 {
     char msg[MSG_LEN];
-    char buf[MSG_LEN];
     driver_set_clear(); // clear the screen
-    std::sprintf(msg, ID_PROGRAM_NAME " Version %d.%01d (" ID_GIT_HASH ")", g_release/100, (g_release%100)/10);
-    if (g_release%10)
+    std::snprintf(msg, sizeof(msg), ID_PROGRAM_NAME " Version %d.%01d (" ID_GIT_HASH ")", //
+        g_release / 100, (g_release % 100) / 10);
+    if (g_release % 10)
     {
-        std::sprintf(buf, "%01d", g_release%10);
+        char buf[MSG_LEN];
+        std::snprintf(buf, sizeof(buf), "%01d", g_release % 10);
         std::strcat(msg, buf);
     }
     if (g_patch_level)
     {
-        std::sprintf(buf, ".%d", g_patch_level);
+        char buf[MSG_LEN];
+        std::snprintf(buf, sizeof(buf), ".%d", g_patch_level);
         std::strcat(msg, buf);
     }
     putstringcenter(0, 0, 80, C_TITLE, msg);
