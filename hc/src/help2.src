@@ -2698,13 +2698,15 @@ sin, cos, sinh, cosh, exp, log, sqr, etc. for each required variable function.
 
 Most of the functions have their conventional meaning, here are a few notes on
 others that are not conventional.
+
 ~Format-
+~ADoc-
  abs()    - returns abs(x)+i*abs(y)
  |x+iy|   - returns x*x+y*y
  cabs()   - returns sqrt(x*x+y*y)
  conj()   - returns the complex conjugate of the argument.  That is, changes
             sign of the imaginary component of argument: (x,y) becomes (x,-y)
- cosxx()  - duplicates a bug in the version 16 cos() function
+ cosxx()  - duplicates a bug in the Fractint version 16 cos() function
  flip()   - Swap the real and imaginary components of the complex number.
             e.g. (4,5) would become (5,4)
  ident()  - identity function.  Leaves the value of the argument unchanged,
@@ -2716,6 +2718,42 @@ others that are not conventional.
  ceil()   - smallest integer not less than the argument
  trunc()  - truncate fraction part toward zero
  round()  - round to nearest integer or up. e.g. round(2.5,3.4) = (3,3)
+~ADoc+,Doc-,Online-
+.Function Meanings
+[cols="1,8"]
+|===
+^|`abs()`
+|returns `abs(x) + i*abs(y)`.
+^|`\\|x + iy\\|`
+|returns `x*x + y*y`.
+^|`cabs()`
+|returns `sqrt(x*x + y*y)`.
+^|`conj()`
+|returns the complex conjugate of the argument.  That is, changes
+sign of the imaginary component of argument: (x, y) becomes (x, -y).
+^|`cosxx()`
+|duplicates a bug in the Fractint version 16 `cos()` function.
+^|`flip()`
+|Swap the real and imaginary components of the complex number,
+e.g. (4, 5) would become (5, 4).
+^|`ident()`
+|identity function.  Leaves the value of the argument unchanged,
+acting like a "z" term in a formula.
+^|`zero()`
+|returns 0.
+^|`one()`
+|returns 1.
+^|`floor()`
+|largest integer not greater than the argument
+`floor(x + iy) = floor(x) + i*floor(y)`.
+^|`ceil()`
+|smallest integer not less than the argument.
+^|`trunc()`
+|truncate fraction part toward zero.
+^|`round()`
+|round to nearest integer or up, e.g. round(2.5, 3.4) = (3, 3).
+|===
+~Doc+,Online+
 ~Format+
 
 The formulas are performed using either integer or floating point
