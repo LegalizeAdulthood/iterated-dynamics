@@ -2548,6 +2548,7 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
 
 ~OnlineFF
 ~Format-
+~ADoc-
           Predefined Variables (x, y)
           --------------------------------------------
           z          used for periodicity checking
@@ -2570,10 +2571,10 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
                      coordinates as a large checker board, whitesq is (1,0)
                      for the white squares and (0,0) for the black ones.
 ~OnlineFF
-~Doc-,ADoc-
+~Doc-
           Predefined Variables (Continued)
           --------------------------------------------
-~Doc+,ADoc+
+~Doc+
           ismand     1 (true) by default, changes to 0 when the Mandelbrot/
                      Julia SPACE toggle is pressed.  This allows writing
                      formulas with both "Mandelbrot" and "Julia" behavior.
@@ -2581,7 +2582,56 @@ complex variable being nonzero).  Nesting of if..endif blocks is permitted.
           magxmag    Zoom box (Mag,      Xmagnitude) (see {=@CENTERMAG center-mag})
           rotskew    Zoom box (Rotation, Skew)       (see {=@CENTERMAG center-mag})
 
-~Doc-,Online-
+~Doc-,Online-,ADoc+
+.Predefined Variables (x, y)
+[cols="1,8"]
+|===
+^|`z`
+|used for periodicity checking
+^|`p1`
+|parameters 1 and 2
+^|`p2`
+|parameters 3 and 4
+^|`p3`
+|parameters 5 and 6
+^|`p4`
+|parameters 7 and 8
+^|`p5`
+|parameters 9 and 10
+^|`pixel`
+|complex coordinates
+^|`LastSqr`
+|Modulus from the last sqr() function
+^|`rand`
+|Complex random number
+^|`pi`
+|(3.14159..., 0.0)
+^|`e`
+|(2.71828..., 0.0)
+^|`maxit`
+|(maxit, 0) maximum iterations
+^|`scrnmax`
+|(xdots, ydots) max horizontal/vertical resolution.
+e.g. for SF7 scrnmax = (1024,768)
+^|`scrnpix`
+|(col, row) pixel screen coordinates. (col, row) ranges
+from (0,0) to (xdots-1, ydots-1)
+^|`whitesq`
+|((col+row) modulo 2, 0) i.e. thinking of the screen
+coordinates as a large checker board, whitesq is (1,0)
+for the white squares and (0,0) for the black ones.
+^|`ismand`
+|1 (true) by default, changes to 0 when the Mandelbrot/
+Julia SPACE toggle is pressed.  This allows writing
+formulas with both "Mandelbrot" and "Julia" behavior.
+^|`center`
+|Zoom box (Xcenter, Ycenter) (see {=@CENTERMAG center-mag})
+^|`magxmag`
+|Zoom box (Mag, Xmagnitude) (see {=@CENTERMAG center-mag})
+^|`rotskew`
+|Zoom box (Rotation, Skew) (see {=@CENTERMAG center-mag})
+|===
+
 .Operator Precedence
 [cols="1,8"]
 |===
