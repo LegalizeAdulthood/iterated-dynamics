@@ -667,7 +667,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
         if (draw_page)
         {
             help_seek(where+page_table[page].offset);
-            freader(&g_buffer[0], sizeof(char), page_table[page].len, help_file);
+            g_buffer.resize(page_table[page].len);
+            freader(g_buffer.data(), sizeof(char), page_table[page].len, help_file);
 
             num_link = 0;
             display_page(title, &g_buffer[0], page_table[page].len, page, num_pages,
