@@ -27,10 +27,6 @@ void intro()
 {
     // following overlayed data safe if "putstrings" are resident
     static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
-    int toprow;
-    int botrow;
-    int delaymax;
-    char      oldchar;
     std::vector<int> authors;
     char credits[32768] = { 0 };
     char screen_text[32768];
@@ -57,8 +53,8 @@ void intro()
 
     helptitle();
 #define END_MAIN_AUTHOR 6
-    toprow = END_MAIN_AUTHOR+1;
-    botrow = 21;
+    int toprow = END_MAIN_AUTHOR + 1;
+    int botrow = 21;
     putstringcenter(1, 0, 80, C_TITLE, PRESS_ENTER);
     driver_put_string(2, 0, C_CONTRIB, screen_text);
     driver_set_attr(2, 0, C_AUTHDIV1, 80);
@@ -73,11 +69,11 @@ void intro()
     srand((unsigned int)std::clock());
     j = std::rand()%(j-(botrow-toprow)); // first to use
     i = j+botrow-toprow; // last to use
-    oldchar = credits[authors.at(i+1)];
+    char oldchar = credits[authors.at(i + 1)];
     credits[authors.at(i+1)] = 0;
     driver_put_string(toprow, 0, C_CONTRIB, credits+authors.at(j));
     credits[authors.at(i+1)] = oldchar;
-    delaymax = 10;
+    int delaymax = 10;
     driver_hide_text_cursor();
     while (! driver_key_pressed())
     {
