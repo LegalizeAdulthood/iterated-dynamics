@@ -52,7 +52,7 @@ install(TARGETS id
 
 add_custom_target(doc-file ALL SOURCES "${CMAKE_CURRENT_BINARY_DIR}/id.txt")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
-    COMMAND id makedoc
+    COMMAND id savedir=. makedoc
     COMMENT "Building documentation text file"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS native-help
