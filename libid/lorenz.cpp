@@ -2396,7 +2396,7 @@ int funny_glasses_call(int (*calc)())
                 "then hit <s> to save, hit any other key to create second image.");
             for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
             {
-                savetodisk(g_save_filename);
+                save_image(g_save_filename);
             }
             // is there a better way to clear the screen in graphics mode?
             driver_set_video_mode(&g_video_entry);

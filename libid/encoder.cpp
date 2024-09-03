@@ -108,7 +108,7 @@ static BYTE s_palette_ega[] =
     63, 21, 21, 63, 21, 63, 63, 63, 21, 63, 63, 63,
 };
 
-int savetodisk(std::string &filename)      // save-to-disk routine
+int save_image(std::string &filename)      // save-to-disk routine
 {
     std::filesystem::path open_file;
     std::string open_file_ext;

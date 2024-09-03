@@ -383,7 +383,7 @@ bool do_AutoStereo()
             break;
         case 's':
         case 'S':
-            savetodisk(g_save_filename);
+            save_image(g_save_filename);
             break;
         default:
             if (kbdchar == ID_KEY_ESC)     // if ESC avoid returning to menu

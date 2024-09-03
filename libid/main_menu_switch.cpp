@@ -122,7 +122,7 @@ static bool look(bool *stacked)
     case 's':
         g_browsing = false;
         g_help_mode = old_help_mode;
-        savetodisk(g_save_filename);
+        save_image(g_save_filename);
         break;
 
     default:               // or no files found, leave the state of browsing alone
@@ -693,7 +693,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             return main_state::CONTINUE;  // disk video and targa, nothing to save
         }
-        savetodisk(g_save_filename);
+        save_image(g_save_filename);
         return main_state::CONTINUE;
     case '#':                    // 3D overlay
         clear_zoombox();

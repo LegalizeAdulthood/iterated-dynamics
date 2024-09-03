@@ -244,7 +244,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 restore_param_history();
                 fiddleparms(gene, 0);
                 drawparmbox(1);
-                savetodisk(g_save_filename);
+                save_image(g_save_filename);
             }
             restore_param_history();
             fiddleparms(gene, unspiralmap());
