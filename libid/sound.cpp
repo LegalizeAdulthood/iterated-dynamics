@@ -5,6 +5,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "save_file.h"
 #include "stop_msg.h"
 #include "update_save_name.h"
 #include "wait_until.h"
@@ -28,10 +29,10 @@ static std::FILE *s_snd_fp{};
 // open sound file
 bool snd_open()
 {
-    static char soundname[] = {"sound001.txt"};
+    std::string soundname{"sound001.txt"};
     if ((g_orbit_save_flags & osf_midi) != 0 && s_snd_fp == nullptr)
     {
-        s_snd_fp = std::fopen(soundname, "w");
+        s_snd_fp = open_save_file(soundname, "w");
         if (s_snd_fp == nullptr)
         {
             stopmsg("Can't open sound*.txt");

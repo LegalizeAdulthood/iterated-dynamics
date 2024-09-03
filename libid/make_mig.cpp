@@ -6,6 +6,7 @@
 #include "cmdfiles.h"
 #include "id.h"
 #include "rotate.h"
+#include "save_file.h"
 
 #include <array>
 #include <cstring>
@@ -68,7 +69,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 std::printf(" \n Generating multi-image GIF file %s using", gifout);
                 std::printf(" %u X and %u Y components\n\n", xmult, ymult);
                 // attempt to create the output file
-                out = std::fopen(gifout, "wb");
+                out = open_save_file(gifout, "wb");
                 if (out == nullptr)
                 {
                     std::printf("Cannot create output file %s!\n", gifout);

@@ -31,6 +31,7 @@
 #include "plot3d.h"
 #include "resume.h"
 #include "rotate.h"
+#include "save_file.h"
 #include "slideshw.h"
 #include "sticky_orbits.h"
 #include "stop_msg.h"
@@ -173,7 +174,7 @@ restart:
         g_resave_flag = 0;
     }
 
-    g_outfile = std::fopen(tmp_file.string().c_str(), "wb");
+    g_outfile = open_save_file(tmp_file.string(), "wb");
     if (g_outfile == nullptr)
     {
         stopmsg(std::string{"Can't create "} + tmp_file.string());

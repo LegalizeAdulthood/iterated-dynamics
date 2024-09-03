@@ -86,6 +86,7 @@ add_library(libid
     lowerize_parameter.cpp include/lowerize_parameter.h
     parser.cpp include/parser.h
     rotate.cpp include/rotate.h
+    save_file.cpp include/save_file.h
     slideshw.cpp include/slideshw.h
     special_dirs.cpp include/special_dirs.h
     stereo.cpp include/stereo.h
@@ -378,6 +379,7 @@ source_group("Header Files/IO" FILES
     include/lowerize_parameter.h
     include/parser.h
     include/rotate.h
+    include/save_file.h
     include/slideshw.h
     include/sound.h
     include/special_dirs.h
@@ -401,6 +403,7 @@ source_group("Source Files/IO" FILES
     lowerize_parameter.cpp
     parser.cpp
     rotate.cpp
+    save_file.cpp
     slideshw.cpp
     sound.cpp
     special_dirs.cpp

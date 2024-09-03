@@ -32,6 +32,7 @@
 #include "mpmath_c.h"
 #include "newton.h"
 #include "pixel_grid.h"
+#include "save_file.h"
 #include "sign.h"
 #include "stop_msg.h"
 #include "trig_fns.h"
@@ -3506,7 +3507,7 @@ static void is_complex_constant(std::FILE * openfile, token_st * tok)
     filepos = ftell(openfile);
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
-        debug_token = std::fopen("frmconst.txt", "at");
+        debug_token = open_save_file("frmconst.txt", "at");
     }
 
     while (!done)
@@ -3912,7 +3913,7 @@ int frm_get_param_stuff(char const *Name)
 
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
-        debug_token = std::fopen("frmtokens.txt", "at");
+        debug_token = open_save_file("frmtokens.txt", "at");
         if (debug_token != nullptr)
         {
             std::fprintf(debug_token, "%s\n", Name);
@@ -4162,7 +4163,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
     std::FILE *debug_fp = nullptr;
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
-        debug_fp = std::fopen("debugfrm.txt", "at");
+        debug_fp = open_save_file("debugfrm.txt", "at");
         if (debug_fp != nullptr)
         {
             std::fprintf(debug_fp, "%s\n", g_formula_name.c_str());

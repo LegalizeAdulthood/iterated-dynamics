@@ -20,6 +20,7 @@
 #endif
 #include "get_a_filename.h"
 #include "id_keys.h"
+#include "save_file.h"
 #include "spindac.h"
 #include "value_saver.h"
 
@@ -639,7 +640,7 @@ void save_palette()
             std::strcat(filename, ".map");
         }
         merge_pathnames(palname, filename, cmd_file::AT_AFTER_STARTUP);
-        dacfile = std::fopen(palname, "w");
+        dacfile = open_save_file(palname, "w");
         if (dacfile == nullptr)
         {
             driver_buzzer(buzzer_codes::PROBLEM);

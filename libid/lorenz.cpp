@@ -28,6 +28,7 @@
 #include "not_disk_msg.h"
 #include "plot3d.h"
 #include "resume.h"
+#include "save_file.h"
 #include "sign.h"
 #include "sound.h"
 #include "stop_msg.h"
@@ -3217,7 +3218,7 @@ static std::FILE *open_orbitsave()
 {
     check_writefile(g_orbit_save_name, ".raw");
     std::FILE *fp;
-    if ((g_orbit_save_flags & osf_raw) && (fp = std::fopen(g_orbit_save_name.c_str(), "w")) != nullptr)
+    if ((g_orbit_save_flags & osf_raw) && (fp = open_save_file(g_orbit_save_name, "w")) != nullptr)
     {
         std::fprintf(fp, "pointlist x y z color\n");
         return fp;

@@ -13,6 +13,7 @@
 #include "id_keys.h"
 #include "os.h"
 #include "put_string_center.h"
+#include "save_file.h"
 #include "stop_msg.h"
 #include "text_screen.h"
 #include "value_saver.h"
@@ -1359,7 +1360,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int))
         msg_func(0, info.num_page);   // initialize
     }
 
-    info.file = std::fopen(outfname, "wt");
+    info.file = open_save_file(outfname, "wt");
     if (info.file == nullptr)
     {
         msg = "Unable to create output file.\n";

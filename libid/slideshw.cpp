@@ -14,6 +14,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "save_file.h"
 #include "stop_msg.h"
 #include "tab_display.h"
 #include "temp_msg.h"
@@ -394,7 +395,7 @@ void recordshw(int key)
     if (s_slide_show_file == nullptr)
     {
         check_writefile(g_auto_name, ".key");
-        s_slide_show_file = std::fopen(g_auto_name.c_str(), "w");
+        s_slide_show_file = open_save_file(g_auto_name, "w");
         if (s_slide_show_file == nullptr)
         {
             return;

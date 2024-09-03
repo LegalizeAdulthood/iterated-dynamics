@@ -10,6 +10,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "load_config.h"
+#include "save_file.h"
 #include "stop_msg.h"
 #include "value_saver.h"
 #include "video_mode.h"
@@ -228,7 +229,7 @@ static void update_id_cfg()
         return;
     }
     const std::string outname{(fs::path{cfgname}.parent_path() / "id.tmp").string()};
-    outfile = std::fopen(outname.c_str(), "w");
+    outfile = open_save_file(outname, "w");
     if (outfile == nullptr)
     {
         std::snprintf(buf, std::size(buf), "Can't create %s", outname.c_str());

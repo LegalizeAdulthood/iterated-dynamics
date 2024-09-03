@@ -27,6 +27,7 @@
 #include "pixel_limits.h"
 #include "plot3d.h"
 #include "rotate.h"
+#include "save_file.h"
 #include "stereo.h"
 #include "stop_msg.h"
 #include "version.h"
@@ -1963,7 +1964,7 @@ static int RAY_Header()
 {
     // Open the ray tracing output file
     check_writefile(g_raytrace_filename, ".ray");
-    s_file_ptr1 = std::fopen(g_raytrace_filename.c_str(), "w");
+    s_file_ptr1 = open_save_file(g_raytrace_filename, "w");
     if (s_file_ptr1 == nullptr)
     {
         return -1;              // Oops, somethings wrong!

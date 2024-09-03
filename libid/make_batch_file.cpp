@@ -32,6 +32,7 @@
 #include "parser.h"
 #include "plot3d.h"
 #include "rotate.h"
+#include "save_file.h"
 #include "sign.h"
 #include "sound.h"
 #include "spindac.h"
@@ -410,7 +411,7 @@ skip_UI:
             out_name.replace_filename("id.tmp");
             infile = std::fopen(g_command_file.c_str(), "rt");
         }
-        s_parm_file = std::fopen(out_name.string().c_str(), "wt");
+        s_parm_file = open_save_file(out_name.string(), "wt");
         if (s_parm_file == nullptr)
         {
             stopmsg("Can't create " + out_name.string());
