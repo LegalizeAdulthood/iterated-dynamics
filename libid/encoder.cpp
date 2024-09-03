@@ -108,7 +108,7 @@ static BYTE s_palette_ega[] =
     63, 21, 21, 63, 21, 63, 63, 63, 21, 63, 63, 63,
 };
 
-static int gif_savetodisk(char *filename)      // save-to-disk routine
+int savetodisk(std::string &filename)      // save-to-disk routine
 {
     std::filesystem::path open_file;
     std::string open_file_ext;
@@ -291,15 +291,6 @@ restart:
         goodbye();
     }
     return 0;
-}
-
-int savetodisk(std::string &filename)
-{
-    char buff[FILE_MAX_PATH];
-    std::strncpy(buff, filename.c_str(), FILE_MAX_PATH);
-    int const result = gif_savetodisk(buff);
-    filename = buff;
-    return result;
 }
 
 bool encoder()
