@@ -4,4 +4,4 @@
 #define STRICT
 #include <Windows.h>
 
-void CreateMiniDump(EXCEPTION_POINTERS *ep);
+void create_minidump(EXCEPTION_POINTERS *ep);

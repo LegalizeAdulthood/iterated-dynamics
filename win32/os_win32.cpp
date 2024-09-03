@@ -104,7 +104,7 @@ using MiniDumpWriteDumpProc = BOOL(HANDLE process, DWORD pid, HANDLE file, MINID
     PMINIDUMP_EXCEPTION_INFORMATION exceptions, PMINIDUMP_USER_STREAM_INFORMATION user,
     PMINIDUMP_CALLBACK_INFORMATION callback);
 
-void CreateMiniDump(EXCEPTION_POINTERS *ep)
+void create_minidump(EXCEPTION_POINTERS *ep)
 {
     MiniDumpWriteDumpProc *dumper{};
     HMODULE debughlp = LoadLibrary("dbghelp.dll");
