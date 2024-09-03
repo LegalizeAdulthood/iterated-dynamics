@@ -9,7 +9,7 @@ else()
     set(COMMAND_ECHO "NONE")
 endif()
 
-list(APPEND PARAMETERS "savename=${TEST_SAVE_IMAGE}")
+list(APPEND PARAMETERS "savename=${TEST_SAVE_IMAGE}" "savedir=.")
 
 if(DEBUG)
     dump_var(ID)
