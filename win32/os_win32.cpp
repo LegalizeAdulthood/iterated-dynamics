@@ -19,8 +19,13 @@
 #include "put_color_a.h"
 #include "read_ticker.h"
 #include "rotate.h"
+#include "special_dirs.h"
 #include "stack_avail.h"
 #include "zoom.h"
+
+#include "create_minidump.h"
+#include "instance.h"
+#include "tos.h"
 
 #include <direct.h>
 #include <io.h>
@@ -35,10 +40,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
-
-#include "create_minidump.h"
-#include "instance.h"
-#include "tos.h"
+#include <filesystem>
 
 HINSTANCE g_instance{};
 
@@ -104,44 +106,55 @@ using MiniDumpWriteDumpProc = BOOL(HANDLE process, DWORD pid, HANDLE file, MINID
     PMINIDUMP_EXCEPTION_INFORMATION exceptions, PMINIDUMP_USER_STREAM_INFORMATION user,
     PMINIDUMP_CALLBACK_INFORMATION callback);
 
+namespace fs = std::filesystem;
+
 void create_minidump(EXCEPTION_POINTERS *ep)
 {
-    MiniDumpWriteDumpProc *dumper{};
-    HMODULE debughlp = LoadLibrary("dbghelp.dll");
-    char minidump[MAX_PATH] = "id-" ID_GIT_HASH ".dmp";
-    MINIDUMP_EXCEPTION_INFORMATION mdei =
-    {
-        GetCurrentThreadId(),
-        ep,
-        FALSE
-    };
-    HANDLE dump_file;
-    int i = 1;
-
+    HMODULE debughlp = LoadLibraryA("dbghelp.dll");
     if (debughlp == nullptr)
     {
-        MessageBox(nullptr, "An unexpected error occurred.  " ID_PROGRAM_NAME " will now exit.",
-                   "Id: Unexpected Error", MB_OK);
+        MessageBoxA(nullptr,
+            "An unexpected error occurred while loading dbghelp.dll.\n" ID_PROGRAM_NAME " will now exit.",
+            ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
         return;
     }
-    dumper = (MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump");
+    MiniDumpWriteDumpProc *dumper{(MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump")};
+    if (dumper == nullptr)
+    {
+        MessageBoxA(
+            nullptr, "Could not locate MiniDumpWriteDump", ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
+        ::FreeLibrary(debughlp);
+        return;
+    }
 
-    while (PathFileExists(minidump))
+    char minidump[MAX_PATH]{"id-" ID_GIT_HASH ".dmp"};
+    int i{1};
+    fs::path path{g_save_dir};
+    while (exists(path / minidump))
     {
         std::sprintf(minidump, "id-" ID_GIT_HASH "-%d.dmp", i++);
     }
-    dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
-                           0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
+    path /= minidump;
+    HANDLE dump_file{CreateFileA(path.string().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW,
+        FILE_ATTRIBUTE_NORMAL, nullptr)};
     _ASSERTE(dump_file != INVALID_HANDLE_VALUE);
+    if (dump_file == INVALID_HANDLE_VALUE)
+    {
+        MessageBoxA(nullptr, ("Could not open dump file " + path.string() + " for writing.").c_str(),
+            ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
+        ::FreeLibrary(debughlp);
+        return;
+    }
 
-    BOOL status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
-                       dump_file, MiniDumpNormal, &mdei, nullptr, nullptr);
+    MINIDUMP_EXCEPTION_INFORMATION mdei{GetCurrentThreadId(), ep, FALSE};
+    BOOL status{(*dumper)(
+        GetCurrentProcess(), GetCurrentProcessId(), dump_file, MiniDumpNormal, &mdei, nullptr, nullptr)};
     _ASSERTE(status);
     if (!status)
     {
         char msg[100];
         std::sprintf(msg, "MiniDumpWriteDump failed with %08lx", GetLastError());
-        MessageBox(nullptr, msg, "Ugh", MB_OK);
+        MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
     else
     {
@@ -154,10 +167,12 @@ void create_minidump(EXCEPTION_POINTERS *ep)
 
     if (g_init_batch != batch_modes::NORMAL)
     {
-        char msg[MAX_PATH*2];
-        std::sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
-                "Please include this file with your bug report.", minidump);
-        MessageBox(nullptr, msg, "Id: Unexpected Error", MB_OK);
+        char msg[MAX_PATH * 2];
+        std::sprintf(msg,
+            "Unexpected error, crash dump saved to %s.\n"
+            "Please include this file with your bug report.",
+            minidump);
+        MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
 }
 
@@ -177,7 +192,7 @@ ods(char const *file, unsigned int line, char const *format, ...)
     std::snprintf(full_msg, MAX_PATH, "%s(%u): %s\n", file, line, app_msg);
     va_end(args);
 
-    OutputDebugString(full_msg);
+    OutputDebugStringA(full_msg);
 }
 
 /*
@@ -333,7 +348,7 @@ int out_line(BYTE *pixels, int linelen)
 
 void init_failure(char const *message)
 {
-    MessageBox(nullptr, message, "Id: Fatal Error", MB_OK);
+    MessageBoxA(nullptr, message, "Id: Fatal Error", MB_OK);
 }
 
 #define WIN32_STACK_SIZE 1024*1024
