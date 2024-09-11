@@ -44,10 +44,10 @@
 
 HINSTANCE g_instance{};
 
-static void (*s_write_pixel)(int, int, int){};
-static int (*s_read_pixel)(int, int){};
-static void (*linewrite)(int, int, int, BYTE const *){};
-static void (*lineread)(int, int, int, BYTE *){};
+static void (*s_write_pixel)(int x, int y, int color){};
+static int (*s_read_pixel)(int x, int y){};
+static void (*s_write_span)(int y, int x, int lastx, BYTE const *pixels){};
+static void (*s_read_span)(int y, int x, int lastx, BYTE *pixels){};
 
 // Global variables (yuck!)
 int g_row_count{};
@@ -208,8 +208,8 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
         return;
-    _ASSERTE(lineread);
-    (*lineread)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    _ASSERTE(s_read_span);
+    (*s_read_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
 /*
@@ -227,15 +227,10 @@ void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
     {
         return;
     }
-    _ASSERTE(linewrite);
-    (*linewrite)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    _ASSERTE(s_write_span);
+    (*s_write_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
-/*
-; **************** internal Read/Write-a-line routines *********************
-;
-;       These routines are called by out_line(), put_line() and get_line().
-*/
 static void normaline(int y, int x, int lastx, BYTE const *pixels)
 {
     int width = lastx - x + 1;
@@ -270,8 +265,8 @@ void set_disk_dot()
 
 void set_normal_line()
 {
-    lineread = normalineread;
-    linewrite = normaline;
+    s_read_span = normalineread;
+    s_write_span = normaline;
 }
 
 static void null_write_pixel(int a, int b, int c)
@@ -339,8 +334,8 @@ int out_line(BYTE *pixels, int linelen)
     {
         return 0;
     }
-    _ASSERTE(linewrite);
-    (*linewrite)(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
+    _ASSERTE(s_write_span);
+    (*s_write_span)(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }
