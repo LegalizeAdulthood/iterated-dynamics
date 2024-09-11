@@ -236,7 +236,7 @@ void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 ;
 ;       These routines are called by out_line(), put_line() and get_line().
 */
-void normaline(int y, int x, int lastx, BYTE const *pixels)
+static void normaline(int y, int x, int lastx, BYTE const *pixels)
 {
     int width = lastx - x + 1;
     _ASSERTE(s_write_pixel);
@@ -246,7 +246,7 @@ void normaline(int y, int x, int lastx, BYTE const *pixels)
     }
 }
 
-void normalineread(int y, int x, int lastx, BYTE *pixels)
+static void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
     int width = lastx - x + 1;
     _ASSERTE(s_read_pixel);
