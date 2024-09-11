@@ -385,8 +385,7 @@ int FromMemDisk(long offset, int size, void *dest)
 }
 
 
-void targa_readdisk(unsigned int col, unsigned int row,
-                    BYTE *red, BYTE *green, BYTE *blue)
+void targa_readdisk(unsigned int col, unsigned int row, BYTE *red, BYTE *green, BYTE *blue)
 {
     col *= 3;
     *blue  = (BYTE)readdisk(col, row);
@@ -454,8 +453,7 @@ bool ToMemDisk(long offset, int size, void *src)
     return true;
 }
 
-void targa_writedisk(unsigned int col, unsigned int row,
-                     BYTE red, BYTE green, BYTE blue)
+void targa_writedisk(unsigned int col, unsigned int row, BYTE red, BYTE green, BYTE blue)
 {
     writedisk(col *= 3, row, blue);
     writedisk(++col, row, green);
