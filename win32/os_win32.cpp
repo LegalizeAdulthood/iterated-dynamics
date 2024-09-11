@@ -44,8 +44,8 @@
 
 HINSTANCE g_instance{};
 
-static void (*dotwrite)(int, int, int){};
-static int (*dotread)(int, int){};
+static void (*s_write_pixel)(int, int, int){};
+static int (*s_read_pixel)(int, int){};
 static void (*linewrite)(int, int, int, BYTE const *){};
 static void (*lineread)(int, int, int, BYTE *){};
 
@@ -239,33 +239,33 @@ void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 void normaline(int y, int x, int lastx, BYTE const *pixels)
 {
     int width = lastx - x + 1;
-    _ASSERTE(dotwrite);
+    _ASSERTE(s_write_pixel);
     for (int i = 0; i < width; i++)
     {
-        (*dotwrite)(x + i, y, pixels[i]);
+        (*s_write_pixel)(x + i, y, pixels[i]);
     }
 }
 
 void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
     int width = lastx - x + 1;
-    _ASSERTE(dotread);
+    _ASSERTE(s_read_pixel);
     for (int i = 0; i < width; i++)
     {
-        pixels[i] = (*dotread)(x + i, y);
+        pixels[i] = (*s_read_pixel)(x + i, y);
     }
 }
 
 void set_normal_dot()
 {
-    dotwrite = driver_write_pixel;
-    dotread = driver_read_pixel;
+    s_write_pixel = driver_write_pixel;
+    s_read_pixel = driver_read_pixel;
 }
 
 void set_disk_dot()
 {
-    dotwrite = disk_write_pixel;
-    dotread = disk_read_pixel;
+    s_write_pixel = disk_write_pixel;
+    s_read_pixel = disk_read_pixel;
 }
 
 void set_normal_line()
@@ -289,8 +289,8 @@ static int nullread(int a, int b)
 void setnullvideo()
 {
     _ASSERTE(0 && "setnullvideo called");
-    dotwrite = nullwrite;
-    dotread = nullread;
+    s_write_pixel = nullwrite;
+    s_read_pixel = nullread;
 }
 
 /*
@@ -307,8 +307,8 @@ int getcolor(int xdot, int ydot)
         // this can happen in boundary trace
         return 0;
     }
-    _ASSERTE(dotread);
-    return (*dotread)(x1, y1);
+    _ASSERTE(s_read_pixel);
+    return (*s_read_pixel)(x1, y1);
 }
 
 /*
@@ -322,8 +322,8 @@ void putcolor_a(int xdot, int ydot, int color)
     int y1 = ydot + g_logical_screen_y_offset;
     _ASSERTE(x1 >= 0 && x1 <= g_screen_x_dots);
     _ASSERTE(y1 >= 0 && y1 <= g_screen_y_dots);
-    _ASSERTE(dotwrite);
-    (*dotwrite)(x1, y1, color & g_and_color);
+    _ASSERTE(s_write_pixel);
+    (*s_write_pixel)(x1, y1, color & g_and_color);
 }
 
 /*
