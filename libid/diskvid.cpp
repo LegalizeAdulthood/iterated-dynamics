@@ -368,12 +368,12 @@ int readdisk(int col, int row)
     return s_cur_cache->pixel[col_subscr];
 }
 
-int FromMemDisk(long offset, int size, void *dest)
+bool FromMemDisk(long offset, int size, void *dest)
 {
     int col_subscr = (int)(offset & (BLOCKLEN - 1));
     if (col_subscr + size > BLOCKLEN)            // access violates  a
     {
-        return 0;                                 //   cache boundary
+        return false;                                 //   cache boundary
     }
     if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
@@ -381,7 +381,7 @@ int FromMemDisk(long offset, int size, void *dest)
     }
     std::memcpy(dest, (void *) &s_cur_cache->pixel[col_subscr], size);
     s_cur_cache->dirty = false;
-    return 1;
+    return true;
 }
 
 
