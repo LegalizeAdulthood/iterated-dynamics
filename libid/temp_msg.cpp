@@ -91,7 +91,7 @@ bool showtempmsg(char const *msgparm)
         s_text_save.resize(s_text_x_dots*s_text_y_dots);
         for (int i = 0; i < s_text_y_dots; ++i)
         {
-            get_line(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
+            read_span(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
         }
     }
 
@@ -125,7 +125,7 @@ void cleartempmsg()
         }
         for (int i = 0; i < s_text_y_dots; ++i)
         {
-            put_line(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
+            write_span(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
         }
         if (!g_using_jiim)                // jiim frees memory with freetempmsg()
         {

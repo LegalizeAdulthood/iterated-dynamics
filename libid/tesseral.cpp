@@ -223,13 +223,13 @@ int tesseral()
                     std::memset(&s_stack[OLD_MAX_PIXELS], tp->top, j);
                     for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                     {
-                        put_line(g_row, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
+                        write_span(g_row, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                         if (g_plot != g_put_color) // symmetry
                         {
                             j = g_yy_stop-(g_row-g_yy_start);
                             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
                             {
-                                put_line(j, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
+                                write_span(j, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                             }
                         }
                         if (++i > 25)

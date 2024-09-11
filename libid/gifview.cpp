@@ -394,7 +394,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
     row = s_gifview_image_top + g_row_count;
     startcol = s_gifview_image_left;
     stopcol = startcol+linelen-1;
-    put_line(row, startcol, stopcol, pixels);
+    write_span(row, startcol, stopcol, pixels);
     g_row_count++;
 
     return 0;
@@ -442,14 +442,14 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
         extra = s_col_count+linelen-twidth;
         if (extra > 0) // line wraps
         {
-            put_line(g_row_count, s_col_count, twidth-1, pixels);
+            write_span(g_row_count, s_col_count, twidth-1, pixels);
             pixels += twidth-s_col_count;
             linelen -= twidth-s_col_count;
             s_col_count = twidth;
         }
         else
         {
-            put_line(g_row_count, s_col_count, s_col_count+linelen-1, pixels);
+            write_span(g_row_count, s_col_count, s_col_count+linelen-1, pixels);
             s_col_count += linelen;
             linelen = 0;
         }

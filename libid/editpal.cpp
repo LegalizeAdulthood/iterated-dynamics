@@ -397,7 +397,7 @@ static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
         return ;
     }
 
-    put_line(row, start, stop, pixels);
+    write_span(row, start, stop, pixels);
 }
 
 static void clip_get_line(int row, int start, int stop, BYTE *pixels)
@@ -423,7 +423,7 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
         return ;
     }
 
-    get_line(row, start, stop, pixels);
+    read_span(row, start, stop, pixels);
 }
 
 void clip_put_color(int x, int y, int color)

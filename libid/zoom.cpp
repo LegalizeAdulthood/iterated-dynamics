@@ -806,9 +806,9 @@ static void move_row(int fromrow, int torow, int col)
         {
             startcol += col;
         }
-        get_line(fromrow, startcol, endcol, &temp[tocol]);
+        read_span(fromrow, startcol, endcol, &temp[tocol]);
     }
-    put_line(torow, 0, g_logical_screen_x_dots-1, &temp[0]);
+    write_span(torow, 0, g_logical_screen_x_dots-1, &temp[0]);
 }
 
 int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist & pan
@@ -949,7 +949,7 @@ static void restart_window(int wknum)
     std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
     while (yfrom <= yto)
     {
-        put_line(yfrom++, xfrom, xto, &temp[0]);
+        write_span(yfrom++, xfrom, xto, &temp[0]);
     }
     g_work_list[wknum].pass = 0;
     g_work_list[wknum].sym = g_work_list[wknum].pass;

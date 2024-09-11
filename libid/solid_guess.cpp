@@ -560,12 +560,12 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         j = y+i;
         if (j <= g_i_y_stop)
         {
-            put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
+            write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
         }
         j = y+i+s_half_block;
         if (j <= g_i_y_stop)
         {
-            put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
+            write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
         }
         if (driver_key_pressed())
         {
@@ -593,12 +593,12 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             j = g_yy_stop-(y+i-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
+                write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
             }
             j = g_yy_stop-(y+i+s_half_block-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                put_line(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
+                write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
             }
             if (driver_key_pressed())
             {

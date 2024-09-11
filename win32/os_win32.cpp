@@ -195,33 +195,29 @@ ods(char const *file, unsigned int line, char const *format, ...)
     OutputDebugStringA(full_msg);
 }
 
-/*
-; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'getcolor()', and gets a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void get_line(int row, int startcol, int stopcol, BYTE *pixels)
+// read_span(int row, int startcol, int stopcol, BYTE *pixels)
+//
+// This routine is a 'span' analog of 'getcolor()', and gets a horizontal
+// span of pixels from the screen and stores it in pixels[] at one byte per
+// pixel
+//
+void read_span(int row, int startcol, int stopcol, BYTE *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
+    {
         return;
+    }
     _ASSERTE(s_read_span);
     (*s_read_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
-/*
-; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'putcolor()', and puts a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
+// write_span(int row, int startcol, int stopcol, BYTE *pixels)
+//
+// This routine is a 'span' analog of 'putcolor()', and puts a horizontal
+// span of pixels to the screen from pixels[] at one byte per pixel
+// Called by the GIF decoder
+//
+void write_span(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
     {

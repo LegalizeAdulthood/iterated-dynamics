@@ -2,5 +2,5 @@
 
 #include "port.h"
 
-void put_line(int row, int startcol, int stopcol, BYTE const *pixels);
-void get_line(int row, int startcol, int stopcol, BYTE *pixels);
+void write_span(int row, int startcol, int stopcol, BYTE const *pixels);
+void read_span(int row, int startcol, int stopcol, BYTE *pixels);

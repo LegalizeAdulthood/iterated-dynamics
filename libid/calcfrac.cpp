@@ -276,7 +276,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 {
     int length;
     length = right-left+1;
-    put_line(row, left, right, str);
+    write_span(row, left, right, str);
     // here's where all the symmetry goes
     if (g_plot == g_put_color)
     {
@@ -287,13 +287,13 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
         int i = g_yy_stop-(row-g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots)
         {
-            put_line(i, left, right, str);
+            write_span(i, left, right, str);
             g_keyboard_check_interval -= length >> 3;
         }
     }
     else if (g_plot == symplot2Y) // Y-axis symmetry
     {
-        put_line(row, g_xx_stop-(right-g_xx_start), g_xx_stop-(left-g_xx_start), str);
+        write_span(row, g_xx_stop-(right-g_xx_start), g_xx_stop-(left-g_xx_start), str);
         g_keyboard_check_interval -= length >> 3;
     }
     else if (g_plot == symplot2J)  // Origin symmetry
@@ -303,7 +303,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
         int k = std::min(g_xx_stop-(left -g_xx_start), g_logical_screen_x_dots-1);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots && j <= k)
         {
-            put_line(i, j, k, str);
+            write_span(i, j, k, str);
         }
         g_keyboard_check_interval -= length >> 3;
     }
@@ -314,15 +314,15 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
         int k = std::min(g_xx_stop-(left -g_xx_start), g_logical_screen_x_dots-1);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots)
         {
-            put_line(i, left, right, str);
+            write_span(i, left, right, str);
             if (j <= k)
             {
-                put_line(i, j, k, str);
+                write_span(i, j, k, str);
             }
         }
         if (j <= k)
         {
-            put_line(row, j, k, str);
+            write_span(row, j, k, str);
         }
         g_keyboard_check_interval -= length >> 2;
     }
@@ -342,7 +342,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 static void sym_put_line(int row, int left, int right, BYTE *str)
 {
     int length = right-left+1;
-    put_line(row, left, right, str);
+    write_span(row, left, right, str);
     if (g_plot == g_put_color)
     {
         g_keyboard_check_interval -= length >> 4; // seems like a reasonable value
@@ -352,7 +352,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
         int i = g_yy_stop-(row-g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots)
         {
-            put_line(i, left, right, str);
+            write_span(i, left, right, str);
         }
         g_keyboard_check_interval -= length >> 3;
     }
@@ -395,7 +395,7 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
@@ -410,7 +410,7 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
@@ -425,7 +425,7 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
@@ -440,7 +440,7 @@ void showdotsaverestore(
         {
             if (action == show_dot_action::SAVE)
             {
-                get_line(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
