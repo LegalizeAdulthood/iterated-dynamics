@@ -368,7 +368,7 @@ int readdisk(int col, int row)
     return s_cur_cache->pixel[col_subscr];
 }
 
-bool FromMemDisk(long offset, int size, void *dest)
+bool from_mem_disk(long offset, int size, void *dest)
 {
     int col_subscr = (int)(offset & (BLOCKLEN - 1));
     if (col_subscr + size > BLOCKLEN)            // access violates  a
@@ -434,7 +434,7 @@ void writedisk(int col, int row, int color)
     }
 }
 
-bool ToMemDisk(long offset, int size, void *src)
+bool to_mem_disk(long offset, int size, void *src)
 {
     int col_subscr = (int)(offset & (BLOCKLEN - 1));
 

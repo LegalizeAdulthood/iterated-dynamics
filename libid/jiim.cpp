@@ -292,8 +292,8 @@ int PushLong(long x, long y)
 {
     if (((s_list_front + 1) % s_list_size) != s_list_back)
     {
-        if (ToMemDisk(8*s_list_front, sizeof(x), &x)
-            && ToMemDisk(8*s_list_front +sizeof(x), sizeof(y), &y))
+        if (to_mem_disk(8*s_list_front, sizeof(x), &x)
+            && to_mem_disk(8*s_list_front +sizeof(x), sizeof(y), &y))
         {
             s_list_front = (s_list_front + 1) % s_list_size;
             if (++s_l_size > s_l_max)
@@ -312,8 +312,8 @@ int PushFloat(float x, float y)
 {
     if (((s_list_front + 1) % s_list_size) != s_list_back)
     {
-        if (ToMemDisk(8*s_list_front, sizeof(x), &x)
-            && ToMemDisk(8*s_list_front +sizeof(x), sizeof(y), &y))
+        if (to_mem_disk(8*s_list_front, sizeof(x), &x)
+            && to_mem_disk(8*s_list_front +sizeof(x), sizeof(y), &y))
         {
             s_list_front = (s_list_front + 1) % s_list_size;
             if (++s_l_size > s_l_max)
@@ -341,8 +341,8 @@ DComplex PopFloat()
         {
             s_list_front = s_list_size - 1;
         }
-        if (FromMemDisk(8*s_list_front, sizeof(popx), &popx)
-            && FromMemDisk(8*s_list_front +sizeof(popx), sizeof(popy), &popy))
+        if (from_mem_disk(8*s_list_front, sizeof(popx), &popx)
+            && from_mem_disk(8*s_list_front +sizeof(popx), sizeof(popy), &popy))
         {
             pop.x = popx;
             pop.y = popy;
@@ -366,8 +366,8 @@ LComplex PopLong()
         {
             s_list_front = s_list_size - 1;
         }
-        if (FromMemDisk(8*s_list_front, sizeof(pop.x), &pop.x)
-            && FromMemDisk(8*s_list_front +sizeof(pop.x), sizeof(pop.y), &pop.y))
+        if (from_mem_disk(8*s_list_front, sizeof(pop.x), &pop.x)
+            && from_mem_disk(8*s_list_front +sizeof(pop.x), sizeof(pop.y), &pop.y))
         {
             --s_l_size;
         }
@@ -396,8 +396,8 @@ DComplex DeQueueFloat()
 
     if (s_list_back != s_list_front)
     {
-        if (FromMemDisk(8*s_list_back, sizeof(outx), &outx)
-            && FromMemDisk(8*s_list_back +sizeof(outx), sizeof(outy), &outy))
+        if (from_mem_disk(8*s_list_back, sizeof(outx), &outx)
+            && from_mem_disk(8*s_list_back +sizeof(outx), sizeof(outy), &outy))
         {
             s_list_back = (s_list_back + 1) % s_list_size;
             out.x = outx;
@@ -419,8 +419,8 @@ LComplex DeQueueLong()
 
     if (s_list_back != s_list_front)
     {
-        if (FromMemDisk(8*s_list_back, sizeof(out.x), &out.x)
-            && FromMemDisk(8*s_list_back +sizeof(out.x), sizeof(out.y), &out.y))
+        if (from_mem_disk(8*s_list_back, sizeof(out.x), &out.x)
+            && from_mem_disk(8*s_list_back +sizeof(out.x), sizeof(out.y), &out.y))
         {
             s_list_back = (s_list_back + 1) % s_list_size;
             s_l_size--;

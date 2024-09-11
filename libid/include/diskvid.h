@@ -24,5 +24,5 @@ inline void dvid_status(int line, const std::string &msg)
     dvid_status(line, msg.c_str());
 }
 int common_startdisk(long newrowsize, long newcolsize, int colors);
-bool FromMemDisk(long offset, int size, void *dest);
-bool ToMemDisk(long offset, int size, void *src);
+bool from_mem_disk(long offset, int size, void *dest);
+bool to_mem_disk(long offset, int size, void *src);
