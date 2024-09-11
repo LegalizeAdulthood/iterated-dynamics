@@ -25,6 +25,7 @@
 #include "frame.h"
 #include "instance.h"
 #include "ods.h"
+#include "os_win32.h"
 #include "plot.h"
 #include "win_text.h"
 
@@ -333,8 +334,6 @@ void GDIDriver::set_clear()
     }
 }
 
-extern void set_normal_dot();
-extern void set_normal_line();
 void GDIDriver::set_video_mode(VIDEOINFO *mode)
 {
     // initially, set the virtual line to be the scan line length
@@ -359,7 +358,7 @@ void GDIDriver::set_video_mode(VIDEOINFO *mode)
         enddisk();
     }
     set_normal_dot();
-    set_normal_line();
+    set_normal_span();
     set_for_graphics();
     set_clear();
 }

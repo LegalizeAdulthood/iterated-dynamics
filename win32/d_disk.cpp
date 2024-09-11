@@ -28,6 +28,7 @@
 #include "d_win32.h"
 #include "instance.h"
 #include "ods.h"
+#include "os_win32.h"
 
 // read/write-a-dot/line routines
 using t_dotwriter = void(int, int, int);
@@ -392,8 +393,6 @@ void DiskDriver::create_window()
     m_win_text.text_on();
 }
 
-extern void set_disk_dot();
-extern void set_normal_line();
 void DiskDriver::set_video_mode(VIDEOINFO *mode)
 {
     // initially, set the virtual line to be the scan line length
@@ -413,7 +412,7 @@ void DiskDriver::set_video_mode(VIDEOINFO *mode)
 
     resize();
     set_disk_dot();
-    set_normal_line();
+    set_normal_span();
 }
 
 void DiskDriver::set_clear()

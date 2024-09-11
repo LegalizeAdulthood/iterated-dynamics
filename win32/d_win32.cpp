@@ -33,6 +33,7 @@
 #include "frame.h"
 #include "instance.h"
 #include "ods.h"
+#include "os_win32.h"
 #include "plot.h"
 
 #include <read_ticker.h>
@@ -200,10 +201,6 @@ void Win32BaseDriver::hide_text_cursor()
     }
 }
 
-// set_video_mode
-extern void set_normal_dot();
-extern void set_normal_line();
-
 void Win32BaseDriver::set_video_mode(VIDEOINFO *mode)
 {
     // initially, set the virtual line to be the scan line length
@@ -227,7 +224,7 @@ void Win32BaseDriver::set_video_mode(VIDEOINFO *mode)
         enddisk();
     }
     set_normal_dot();
-    set_normal_line();
+    set_normal_span();
     set_for_graphics();
     set_clear();
 }

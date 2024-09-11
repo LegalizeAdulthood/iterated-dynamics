@@ -259,7 +259,7 @@ void set_disk_dot()
     s_read_pixel = disk_read_pixel;
 }
 
-void set_normal_line()
+void set_normal_span()
 {
     s_read_span = normal_read_span;
     s_write_span = normal_write_span;
