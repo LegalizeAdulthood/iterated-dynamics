@@ -264,8 +264,8 @@ void set_normal_dot()
 
 void set_disk_dot()
 {
-    dotwrite = writedisk;
-    dotread = readdisk;
+    dotwrite = disk_write_pixel;
+    dotread = disk_read_pixel;
 }
 
 void set_normal_line()

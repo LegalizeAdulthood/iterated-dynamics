@@ -546,7 +546,7 @@ int pot_line(BYTE *pixels, int linelen)
     }
     for (int col = 0; col < g_logical_screen_x_dots; ++col)
     {
-        writedisk(col+g_logical_screen_x_offset, row+g_logical_screen_y_offset, *(pixels+col));
+        disk_write_pixel(col+g_logical_screen_x_offset, row+g_logical_screen_y_offset, *(pixels+col));
     }
     g_row_count = saverowcount + 1;
     return 0;

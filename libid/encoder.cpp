@@ -1112,7 +1112,7 @@ static bool compress(int rowlimit)
                 }
                 else
                 {
-                    color = readdisk(xdot + g_logical_screen_x_offset, ydot + g_logical_screen_y_offset);
+                    color = disk_read_pixel(xdot + g_logical_screen_x_offset, ydot + g_logical_screen_y_offset);
                 }
                 if (in_count == 0)
                 {

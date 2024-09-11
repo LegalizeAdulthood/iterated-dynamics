@@ -324,7 +324,7 @@ void enddisk()
     g_disk_16_bit = false;
 }
 
-int readdisk(int col, int row)
+int disk_read_pixel(int col, int row)
 {
     int col_subscr;
     long offset;
@@ -388,12 +388,12 @@ bool from_mem_disk(long offset, int size, void *dest)
 void targa_readdisk(unsigned int col, unsigned int row, BYTE *red, BYTE *green, BYTE *blue)
 {
     col *= 3;
-    *blue  = (BYTE)readdisk(col, row);
-    *green = (BYTE)readdisk(++col, row);
-    *red   = (BYTE)readdisk(col+1, row);
+    *blue  = (BYTE)disk_read_pixel(col, row);
+    *green = (BYTE)disk_read_pixel(++col, row);
+    *red   = (BYTE)disk_read_pixel(col+1, row);
 }
 
-void writedisk(int col, int row, int color)
+void disk_write_pixel(int col, int row, int color)
 {
     int col_subscr;
     long offset;
@@ -455,9 +455,9 @@ bool to_mem_disk(long offset, int size, void *src)
 
 void targa_writedisk(unsigned int col, unsigned int row, BYTE red, BYTE green, BYTE blue)
 {
-    writedisk(col *= 3, row, blue);
-    writedisk(++col, row, green);
-    writedisk(col+1, row, red);
+    disk_write_pixel(col *= 3, row, blue);
+    disk_write_pixel(++col, row, green);
+    disk_write_pixel(col+1, row, red);
 }
 
 static void findload_cache(long offset) // used by read/write
