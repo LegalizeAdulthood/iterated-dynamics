@@ -197,7 +197,6 @@ add_library(libid
     include/drivers.h
     include/fractype.h
     include/get_color.h
-    include/get_line.h
     include/id.h
     include/id_data.h
     include/id_keys.h
@@ -211,6 +210,7 @@ add_library(libid
     include/read_ticker.h
     include/set_null_video.h
     include/sign.h
+    include/span.h
     include/stack_avail.h
     include/value_saver.h
 )
@@ -436,7 +436,6 @@ source_group("Header Files/plumbing" FILES
     include/drivers.h
     include/get_color.h
     include/get_disk_space.h
-    include/get_line.h
     include/init_failure.h
     include/memory.h
     include/os.h
@@ -445,6 +444,7 @@ source_group("Header Files/plumbing" FILES
     include/put_color_a.h
     include/read_ticker.h
     include/set_null_video.h
+    include/span.h
     include/special_dirs.h
     include/stack_avail.h
     include/value_saver.h

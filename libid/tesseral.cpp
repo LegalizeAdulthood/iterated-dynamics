@@ -4,9 +4,9 @@
 #include "check_key.h"
 #include "cmdfiles.h"
 #include "get_color.h"
-#include "get_line.h"
 #include "id_data.h"
 #include "pixel_limits.h"
+#include "span.h"
 #include "work_list.h"
 
 #include <cstring>
