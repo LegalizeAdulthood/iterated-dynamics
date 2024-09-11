@@ -231,7 +231,7 @@ void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
     (*s_write_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
-static void normaline(int y, int x, int lastx, BYTE const *pixels)
+static void normal_write_span(int y, int x, int lastx, BYTE const *pixels)
 {
     int width = lastx - x + 1;
     _ASSERTE(s_write_pixel);
@@ -241,7 +241,7 @@ static void normaline(int y, int x, int lastx, BYTE const *pixels)
     }
 }
 
-static void normalineread(int y, int x, int lastx, BYTE *pixels)
+static void normal_read_span(int y, int x, int lastx, BYTE *pixels)
 {
     int width = lastx - x + 1;
     _ASSERTE(s_read_pixel);
@@ -265,8 +265,8 @@ void set_disk_dot()
 
 void set_normal_line()
 {
-    s_read_span = normalineread;
-    s_write_span = normaline;
+    s_read_span = normal_read_span;
+    s_write_span = normal_write_span;
 }
 
 static void null_write_pixel(int a, int b, int c)
