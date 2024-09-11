@@ -1,3 +1,3 @@
 #pragma once
 
-void setnullvideo();
+void set_null_video();

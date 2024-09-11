@@ -274,23 +274,22 @@ void set_normal_line()
     linewrite = normaline;
 }
 
-static void nullwrite(int a, int b, int c)
+static void null_write_pixel(int a, int b, int c)
 {
     _ASSERTE(FALSE);
 }
 
-static int nullread(int a, int b)
+static int null_read_pixel(int a, int b)
 {
     _ASSERTE(FALSE);
     return 0;
 }
 
 // from video.asm
-void setnullvideo()
+void set_null_video()
 {
-    _ASSERTE(0 && "setnullvideo called");
-    s_write_pixel = nullwrite;
-    s_read_pixel = nullread;
+    s_write_pixel = null_write_pixel;
+    s_read_pixel = null_read_pixel;
 }
 
 /*
