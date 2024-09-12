@@ -79,25 +79,15 @@ int g_vesa_y_res;
 int chkd_vvs = 0;
 int video_vram = 0;
 
-void putstring(int row, int col, int attr, char const *msg);
-
 VIDEOINFO x11_video_table[] = {
-    { 999, 800, 600, 256, nullptr, "                         " },
+    {999, 800, 600, 256, nullptr, "                         "},
 };
 
-int
-nullread(int a, int b)
-{
-    return 0;
-}
-
-void
-setnullvideo()
+void set_null_video()
 {
 }
 
-void
-loaddac()
+void loaddac()
 {
     readvideopalette();
 }
@@ -107,8 +97,7 @@ loaddac()
 
 ;       Return the color on the screen at the (xdot,ydot) point
 */
-int
-getcolor(int xdot, int ydot)
+int getcolor(int xdot, int ydot)
 {
         return 0;
 }
@@ -118,88 +107,29 @@ getcolor(int xdot, int ydot)
 
 ;       write the color on the screen at the (xdot,ydot) point
 */
-void
-putcolor_a(int xdot, int ydot, int color)
+void putcolor_a(int xdot, int ydot, int color)
 {
 }
 
-unsigned char *fontTab = nullptr;
-
-/*
-; ************** Function findfont(n) ******************************
-
-;       findfont(0) returns pointer to 8x8 font table if it can
-;                   find it, nullptr otherwise;
-;                   nonzero parameter reserved for future use
-*/
-BYTE *
-findfont(int fontparm)
-{
-    if (fontTab == nullptr)
-    {
-        fontTab = xgetfont();
-    }
-    return (BYTE *) fontTab;
-}
-
-/*
-; Passing this routine 0 turns off shadow, nonzero turns it on.
-*/
-int
-ShadowVideo(int on)
-{
-    return 0;
-}
-
-int
-SetupShadowVideo()
-{
-    return 0;
-}
-
-/*
-; *************** Functions get_a_char, put_a_char ********************
-
-;       Get and put character and attribute at cursor
-;       Hi nybble=character, low nybble attribute. Text mode only
-*/
-char
-get_a_char()
-{
-    return 0;
-}
-
-void
-put_a_char(int ch)
-{
-}
-
-/*
-; ***Function get_line(int row,int startcol,int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'getcolor()', and gets a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void get_line(int row, int startcol, int stopcol, BYTE *pixels)
+// read_span(int row, int startcol, int stopcol, BYTE *pixels)
+//
+// This routine is a 'span' analog of 'getcolor()', and gets a horizontal
+// span of pixels from the screen and stores it in pixels[] at one byte per
+// pixel
+//
+void read_span(int row, int startcol, int stopcol, BYTE *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
         return;
 }
 
-/*
-; ***Function put_line(int row,int startcol,int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'putcolor()', and puts a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void
-put_line(int row, int startcol, int stopcol, BYTE const *pixels)
+// write_span(int row, int startcol, int stopcol, BYTE *pixels)
+//
+// This routine is a 'span' analog of 'putcolor()', and puts a horizontal
+// span of pixels to the screen from pixels[] at one byte per pixel
+// Called by the GIF decoder
+//
+void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
         return;
@@ -212,8 +142,7 @@ put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 ;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
 ;       Called by the GIF decoder
 */
-int
-out_line(BYTE *pixels, int linelen)
+int out_line(BYTE *pixels, int linelen)
 {
     if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
         return 0;
