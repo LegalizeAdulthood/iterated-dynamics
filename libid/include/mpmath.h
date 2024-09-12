@@ -206,10 +206,6 @@ inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out
     g_arg2++;
     out = g_arg2->l;
 }
-inline void LCMPLXsub(const LComplex &arg1, const LComplex &arg2, LComplex &out)
-{
-    out = arg1 - arg2;
-}
 inline void LCMPLXtimesreal(const LComplex &arg, long real, LComplex &out)
 {
     out.x = multiply(arg.x, real, g_bit_shift);
