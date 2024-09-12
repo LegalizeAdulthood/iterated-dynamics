@@ -697,15 +697,16 @@ static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
     }
 }
 
-static unsigned long NewRandNum()
+static unsigned long new_random_num()
 {
-    return s_rand_num = ((s_rand_num << 15) + rand15()) ^ s_rand_num;
+    s_rand_num = ((s_rand_num << 15) + rand15()) ^ s_rand_num;
+    return s_rand_num;
 }
 
 static void lRandom()
 {
-    s_vars[7].a.l.x = NewRandNum() >> (32 - g_bit_shift);
-    s_vars[7].a.l.y = NewRandNum() >> (32 - g_bit_shift);
+    s_vars[7].a.l.x = new_random_num() >> (32 - g_bit_shift);
+    s_vars[7].a.l.y = new_random_num() >> (32 - g_bit_shift);
 }
 
 static void dRandom()
@@ -715,8 +716,8 @@ static void dRandom()
 
     /* Use the same algorithm as for fixed math so that they will generate
            the same fractals when the srand() function is used. */
-    x = NewRandNum() >> (32 - g_bit_shift);
-    y = NewRandNum() >> (32 - g_bit_shift);
+    x = new_random_num() >> (32 - g_bit_shift);
+    y = new_random_num() >> (32 - g_bit_shift);
     s_vars[7].a.d.x = ((double)x / (1L << g_bit_shift));
     s_vars[7].a.d.y = ((double)y / (1L << g_bit_shift));
 
@@ -729,8 +730,8 @@ static void mRandom()
 
     /* Use the same algorithm as for fixed math so that they will generate
        the same fractals when the srand() function is used. */
-    x = NewRandNum() >> (32 - g_bit_shift);
-    y = NewRandNum() >> (32 - g_bit_shift);
+    x = new_random_num() >> (32 - g_bit_shift);
+    y = new_random_num() >> (32 - g_bit_shift);
     s_vars[7].a.m.x = *fg2MP(x, g_bit_shift);
     s_vars[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
@@ -747,9 +748,9 @@ static void set_random()
     s_set_random = true;
 
     // Clear out the seed
-    NewRandNum();
-    NewRandNum();
-    NewRandNum();
+    new_random_num();
+    new_random_num();
+    new_random_num();
 }
 
 static void RandomSeed()
@@ -760,9 +761,9 @@ static void RandomSeed()
     std::time(&ltime);
     srand((unsigned int)ltime);
 
-    NewRandNum();
-    NewRandNum();
-    NewRandNum();
+    new_random_num();
+    new_random_num();
+    new_random_num();
     s_randomized = true;
 }
 
