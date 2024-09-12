@@ -3617,7 +3617,7 @@ CASE_NUM :
     }
 }
 
-static bool frmgetalpha(std::FILE *openfile, Token *tok)
+static bool frm_get_alpha(std::FILE *openfile, Token *tok)
 {
     int c;
     int i = 1;
@@ -3763,7 +3763,7 @@ CASE_NUM:
 CASE_ALPHA:
     case '_':
         this_token->str[0] = (char) c;
-        return frmgetalpha(openfile, this_token);
+        return frm_get_alpha(openfile, this_token);
 CASE_TERMINATOR:
         this_token->type = token_type::OPERATOR; // this may be changed below
         this_token->str[0] = (char) c;
