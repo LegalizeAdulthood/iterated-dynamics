@@ -3392,7 +3392,7 @@ static void getvarinfo(Token *tok)
         of a complex constant. See is_complex_constant() below. */
 
 // returns 1 on success, 0 on NOT_A_TOKEN
-static bool frmgetconstant(std::FILE *openfile, Token *tok)
+static bool frm_get_constant(std::FILE *openfile, Token *tok)
 {
     int c;
     int i = 1;
@@ -3556,7 +3556,7 @@ CASE_NUM :
         {
             std::fprintf(debug_token,  "Calling frmgetconstant unless done is true; done is %s\n", done ? "true" : "false");
         }
-        if (!done && frmgetconstant(openfile, &temp_tok))
+        if (!done && frm_get_constant(openfile, &temp_tok))
         {
             c = frmgetchar(openfile);
             if (debug_token != nullptr)
@@ -3759,7 +3759,7 @@ static bool frm_get_token(std::FILE *openfile, Token *this_token)
 CASE_NUM:
     case '.':
         this_token->str[0] = (char) c;
-        return frmgetconstant(openfile, this_token);
+        return frm_get_constant(openfile, this_token);
 CASE_ALPHA:
     case '_':
         this_token->str[0] = (char) c;
