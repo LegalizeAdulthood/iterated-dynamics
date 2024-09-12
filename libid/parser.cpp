@@ -753,7 +753,7 @@ static void set_random()
     new_random_num();
 }
 
-static void RandomSeed()
+static void random_seed()
 {
     std::time_t ltime;
 
@@ -2249,7 +2249,7 @@ static ConstArg *is_const(char const *Str, int Len)
                 }
                 if (n == 7)          // The formula uses 'rand'.
                 {
-                    RandomSeed();
+                    random_seed();
                 }
                 if (n == 8)          // The formula uses 'p3'.
                 {
