@@ -203,15 +203,7 @@ inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)
     const long y = multiply(rhs.y, lhs.x, g_bit_shift) + multiply(rhs.x, lhs.y, g_bit_shift);
     return {x, y};
 }
-inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out)
-{
-    g_arg1->l = arg1;
-    g_arg2->l = arg2;
-    lStkMul();
-    g_arg1++;
-    g_arg2++;
-    out = g_arg2->l;
-}
+
 inline void LCMPLXtimesreal(const LComplex &arg, long real, LComplex &out)
 {
     out.x = multiply(arg.x, real, g_bit_shift);

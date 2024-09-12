@@ -1159,12 +1159,9 @@ static void mStkMul()
 
 void lStkMul()
 {
-    long x;
-    long y;
-
-    x = multiply(g_arg2->l.x, g_arg1->l.x, g_bit_shift) -
+    const long x = multiply(g_arg2->l.x, g_arg1->l.x, g_bit_shift) -
         multiply(g_arg2->l.y, g_arg1->l.y, g_bit_shift);
-    y = multiply(g_arg2->l.y, g_arg1->l.x, g_bit_shift) +
+    const long y = multiply(g_arg2->l.y, g_arg1->l.x, g_bit_shift) +
         multiply(g_arg2->l.x, g_arg1->l.y, g_bit_shift);
     g_arg2->l.x = x;
     g_arg2->l.y = y;

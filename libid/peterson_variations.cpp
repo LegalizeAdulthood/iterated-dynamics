@@ -141,7 +141,7 @@ int MarksMandelPwrfpFractal()
 int MarksMandelPwrFractal()
 {
     LCMPLXtrig0(g_l_old_z, g_l_new_z);
-    LCMPLXmult(g_l_temp, g_l_new_z, g_l_new_z);
+    g_l_new_z = g_l_temp * g_l_new_z;
     g_l_new_z.x += g_long_param->x;
     g_l_new_z.y += g_long_param->y;
     return g_bailout_long();

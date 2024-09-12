@@ -73,19 +73,6 @@ TEST_F(TestMathLComplex, multiplyOperator)
     EXPECT_EQ(expected.imag(), static_cast<float>(result.y >> g_bit_shift));
 }
 
-TEST_F(TestMathLComplex, multiplyFunction)
-{
-    const LComplex lhs{fixed_point(1), fixed_point(2)};
-    const LComplex rhs{fixed_point(3), fixed_point(4)};
-
-    LComplex result;
-    LCMPLXmult(lhs, rhs, result);
-
-    const std::complex<float> expected{std::complex<float>(1.0f, 2.0f) * std::complex<float>(3.0f, 4.0f)};
-    EXPECT_EQ(expected.real(), static_cast<float>(result.x >> g_bit_shift));
-    EXPECT_EQ(expected.imag(), static_cast<float>(result.y >> g_bit_shift));
-}
-
 TEST_F(TestMathLComplex, multiplyStackFunction)
 {
     const LComplex lhs{fixed_point(1), fixed_point(2)};
