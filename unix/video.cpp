@@ -129,7 +129,7 @@ void read_span(int row, int startcol, int stopcol, BYTE *pixels)
 // span of pixels to the screen from pixels[] at one byte per pixel
 // Called by the GIF decoder
 //
-void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
+void write_span(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
         return;
