@@ -969,7 +969,7 @@ void dStkFloor()
 
 void mStkFloor()
 {
-    mStkFunct(dStkFloor);   // call lStk via dStk
+    mStkFunct(dStkFloor);   // call mStk via dStk
 }
 
 void lStkFloor()
@@ -992,7 +992,7 @@ void dStkCeil()
 
 void mStkCeil()
 {
-    mStkFunct(dStkCeil);   // call lStk via dStk
+    mStkFunct(dStkCeil);   // call mStk via dStk
 }
 
 void lStkCeil()
@@ -1013,7 +1013,7 @@ void dStkTrunc()
 
 void mStkTrunc()
 {
-    mStkFunct(dStkTrunc);   // call lStk via dStk
+    mStkFunct(dStkTrunc);   // call mStk via dStk
 }
 
 void lStkTrunc()
@@ -1042,7 +1042,7 @@ void dStkRound()
 
 void mStkRound()
 {
-    mStkFunct(dStkRound);   // call lStk via dStk
+    mStkFunct(dStkRound);   // call mStk via dStk
 }
 
 void lStkRound()
@@ -1287,7 +1287,7 @@ void dStkSin()
 
 void mStkSin()
 {
-    mStkFunct(dStkSin);   // call lStk via dStk
+    mStkFunct(dStkSin);   // call mStk via dStk
 }
 
 void lStkSin()
@@ -1331,7 +1331,7 @@ void dStkTan()
 
 void mStkTan()
 {
-    mStkFunct(dStkTan);   // call lStk via dStk
+    mStkFunct(dStkTan);   // call mStk via dStk
 }
 
 void lStkTan()
@@ -1380,7 +1380,7 @@ void dStkTanh()
 
 void mStkTanh()
 {
-    mStkFunct(dStkTanh);   // call lStk via dStk
+    mStkFunct(dStkTanh);   // call mStk via dStk
 }
 
 void lStkTanh()
@@ -1429,7 +1429,7 @@ void dStkCoTan()
 
 void mStkCoTan()
 {
-    mStkFunct(dStkCoTan);   // call lStk via dStk
+    mStkFunct(dStkCoTan);   // call mStk via dStk
 }
 
 void lStkCoTan()
@@ -1478,7 +1478,7 @@ void dStkCoTanh()
 
 void mStkCoTanh()
 {
-    mStkFunct(dStkCoTanh);   // call lStk via dStk
+    mStkFunct(dStkCoTanh);   // call mStk via dStk
 }
 
 void lStkCoTanh()
@@ -1571,7 +1571,7 @@ void dStkSinh()
 
 void mStkSinh()
 {
-    mStkFunct(dStkSinh);   // call lStk via dStk
+    mStkFunct(dStkSinh);   // call mStk via dStk
 }
 
 void lStkSinh()
@@ -1606,7 +1606,7 @@ void dStkCos()
 
 void mStkCos()
 {
-    mStkFunct(dStkCos);   // call lStk via dStk
+    mStkFunct(dStkCos);   // call mStk via dStk
 }
 
 void lStkCos()
@@ -1636,7 +1636,7 @@ void dStkCosXX()
 
 void mStkCosXX()
 {
-    mStkFunct(dStkCosXX);   // call lStk via dStk
+    mStkFunct(dStkCosXX);   // call mStk via dStk
 }
 
 void lStkCosXX()
@@ -1660,7 +1660,7 @@ void dStkCosh()
 
 void mStkCosh()
 {
-    mStkFunct(dStkCosh);   // call lStk via dStk
+    mStkFunct(dStkCosh);   // call mStk via dStk
 }
 
 void lStkCosh()
@@ -2021,7 +2021,7 @@ void dStkLog()
 
 void mStkLog()
 {
-    mStkFunct(dStkLog);   // call lStk via dStk
+    mStkFunct(dStkLog);   // call mStk via dStk
 }
 
 void lStkLog()
@@ -2036,7 +2036,7 @@ void dStkExp()
 
 void mStkExp()
 {
-    mStkFunct(dStkExp);   // call lStk via dStk
+    mStkFunct(dStkExp);   // call mStk via dStk
 }
 
 void lStkExp()
