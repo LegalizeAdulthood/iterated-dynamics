@@ -244,7 +244,7 @@ inline int operator+(ParseError value)
     return static_cast<int>(value);
 }
 
-struct PEND_OP
+struct PendingOp
 {
     FunctionPtr f;
     int p;
@@ -353,7 +353,7 @@ static unsigned long s_num_loads{};
 static unsigned long s_num_stores{};
 static unsigned long s_num_jumps{};
 static int s_init_jump_index{};
-static std::vector<PEND_OP> s_op;
+static std::vector<PendingOp> s_op;
 static unsigned int s_n{};
 static unsigned int s_next_op{};
 static unsigned int s_init_n{};
@@ -2461,7 +2461,7 @@ static void RecSortPrec()
 
 inline void push_pending_op(FunctionPtr f, int p)
 {
-    s_op.push_back(PEND_OP{f, p});
+    s_op.push_back(PendingOp{f, p});
     ++g_operation_index;
     assert(g_operation_index == s_op.size());
 }
