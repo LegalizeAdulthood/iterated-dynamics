@@ -28,7 +28,7 @@ int FloatTrigPlusExponentFractal()
     const double tmpexp = std::exp(g_old_z.x);
     double siny;
     double cosy;
-    FPUsincos(&g_old_z.y, &siny, &cosy);
+    sin_cos(&g_old_z.y, &siny, &cosy);
     CMPLXtrig0(g_old_z, g_new_z);
 
     //new =   trig(old) + e**old + C
@@ -57,7 +57,7 @@ int LongTrigPlusExponentFractal()
     const long longtmp = Exp086(g_l_old_z.x);
     long lcosy;
     long lsiny;
-    SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
+    sin_cos(g_l_old_z.y, &lsiny,  &lcosy);
     LCMPLXtrig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x += multiply(longtmp,    lcosy,   g_bit_shift) + g_long_param->x;
     g_l_new_z.y += multiply(longtmp,    lsiny,   g_bit_shift) + g_long_param->y;

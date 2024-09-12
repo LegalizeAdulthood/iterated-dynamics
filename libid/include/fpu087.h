@@ -8,11 +8,11 @@ void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z); // z = x * y
 void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z); // z = x / y
 void FPUcplxlog(DComplex const *x, DComplex *z);                    // z = log(x)
 void FPUcplxexp(const DComplex *x, DComplex *z);                    // z = e^x
-void FPUsincos(double const *Angle, double *Sin, double *Cos);
-void FPUsinhcosh(double const *Angle, double *Sin, double *Cos);
+void sin_cos(double const *angle, double *sine, double *cosine);
+void sinh_cosh(double const *angle, double *sine, double *cosine);
 
-void SinCos086(long x, long *sinx, long *cosx);
-void SinhCosh086(long x, long *sinx, long *cosx);
+void sin_cos(long angle, long *sine, long *cosine);
+void sinh_cosh(long angle, long *sine, long *cosine);
 long r16Mul(long, long);
 long RegFloat2Fg(long, int);
 long Exp086(long);

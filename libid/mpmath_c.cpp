@@ -402,7 +402,7 @@ LComplex ComplexSqrtLong(long x, long y)
 #endif
     theta     = std::atan2((double) y/g_fudge_factor, (double) x/g_fudge_factor)/2;
     thetalong = (long)(theta * SinCosFudge);
-    SinCos086(thetalong, &result.y, &result.x);
+    sin_cos(thetalong, &result.y, &result.x);
     result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
     result.y  = multiply(result.y << (g_bit_shift - 16), maglong, g_bit_shift);
     return result;
@@ -421,7 +421,7 @@ DComplex ComplexSqrtFloat(double x, double y)
     {
         double mag = std::sqrt(std::sqrt(x*x + y*y));
         double theta = std::atan2(y, x) / 2;
-        FPUsincos(&theta, &result.y, &result.x);
+        sin_cos(&theta, &result.y, &result.x);
         result.x *= mag;
         result.y *= mag;
     }

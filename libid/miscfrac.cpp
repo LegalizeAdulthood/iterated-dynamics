@@ -813,7 +813,7 @@ int diffusion()
         {
         case 0: // Release new point on a circle inside the box
             angle = 2*(double)std::rand()/(RAND_MAX/PI);
-            FPUsincos(&angle, &sine, &cosine);
+            sin_cos(&angle, &sine, &cosine);
             x = (int)(cosine*(xmax-xmin) + g_logical_screen_x_dots);
             y = (int)(sine  *(ymax-ymin) + g_logical_screen_y_dots);
             x = x >> 1; // divide by 2
@@ -827,7 +827,7 @@ int diffusion()
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
             angle = 2*(double)std::rand()/(RAND_MAX/PI);
-            FPUsincos(&angle, &sine, &cosine);
+            sin_cos(&angle, &sine, &cosine);
             x = (int)(cosine*radius + g_logical_screen_x_dots);
             y = (int)(sine  *radius + g_logical_screen_y_dots);
             x = x >> 1;

@@ -1279,8 +1279,8 @@ void dStkSin()
     double sinhy;
     double coshy;
 
-    FPUsincos(&g_arg1->d.x, &sinx, &cosx);
-    FPUsinhcosh(&g_arg1->d.y, &sinhy, &coshy);
+    sin_cos(&g_arg1->d.x, &sinx, &cosx);
+    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
     g_arg1->d.x = sinx*coshy;
     g_arg1->d.y = cosx*sinhy;
 }
@@ -1300,8 +1300,8 @@ void lStkSin()
     long coshy;
     x = g_arg1->l.x >> s_delta16;
     y = g_arg1->l.y >> s_delta16;
-    SinCos086(x, &sinx, &cosx);
-    SinhCosh086(y, &sinhy, &coshy);
+    sin_cos(x, &sinx, &cosx);
+    sinh_cosh(y, &sinhy, &coshy);
     g_arg1->l.x = multiply(sinx, coshy, s_shift_back);
     g_arg1->l.y = multiply(cosx, sinhy, s_shift_back);
 }
@@ -1318,8 +1318,8 @@ void dStkTan()
     double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    FPUsincos(&g_arg1->d.x, &sinx, &cosx);
-    FPUsinhcosh(&g_arg1->d.y, &sinhy, &coshy);
+    sin_cos(&g_arg1->d.x, &sinx, &cosx);
+    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
     denom = cosx + coshy;
     if (check_denom(denom))
     {
@@ -1347,8 +1347,8 @@ void lStkTan()
     x = x << 1;
     y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    SinCos086(x, &sinx, &cosx);
-    SinhCosh086(y, &sinhy, &coshy);
+    sin_cos(x, &sinx, &cosx);
+    sinh_cosh(y, &sinhy, &coshy);
     denom = cosx + coshy;
     if (check_denom(denom))
     {
@@ -1367,8 +1367,8 @@ void dStkTanh()
     double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    FPUsincos(&g_arg1->d.y, &siny, &cosy);
-    FPUsinhcosh(&g_arg1->d.x, &sinhx, &coshx);
+    sin_cos(&g_arg1->d.y, &siny, &cosy);
+    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
     denom = coshx + cosy;
     if (check_denom(denom))
     {
@@ -1396,8 +1396,8 @@ void lStkTanh()
     x = x << 1;
     y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    SinCos086(y, &siny, &cosy);
-    SinhCosh086(x, &sinhx, &coshx);
+    sin_cos(y, &siny, &cosy);
+    sinh_cosh(x, &sinhx, &coshx);
     denom = coshx + cosy;
     if (check_denom(denom))
     {
@@ -1416,8 +1416,8 @@ void dStkCoTan()
     double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    FPUsincos(&g_arg1->d.x, &sinx, &cosx);
-    FPUsinhcosh(&g_arg1->d.y, &sinhy, &coshy);
+    sin_cos(&g_arg1->d.x, &sinx, &cosx);
+    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
     denom = coshy - cosx;
     if (check_denom(denom))
     {
@@ -1445,8 +1445,8 @@ void lStkCoTan()
     x = x << 1;
     y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    SinCos086(x, &sinx, &cosx);
-    SinhCosh086(y, &sinhy, &coshy);
+    sin_cos(x, &sinx, &cosx);
+    sinh_cosh(y, &sinhy, &coshy);
     denom = coshy - cosx;
     if (check_denom(denom))
     {
@@ -1465,8 +1465,8 @@ void dStkCoTanh()
     double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    FPUsincos(&g_arg1->d.y, &siny, &cosy);
-    FPUsinhcosh(&g_arg1->d.x, &sinhx, &coshx);
+    sin_cos(&g_arg1->d.y, &siny, &cosy);
+    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
     denom = coshx - cosy;
     if (check_denom(denom))
     {
@@ -1494,8 +1494,8 @@ void lStkCoTanh()
     x = x << 1;
     y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    SinCos086(y, &siny, &cosy);
-    SinhCosh086(x, &sinhx, &coshx);
+    sin_cos(y, &siny, &cosy);
+    sinh_cosh(x, &sinhx, &coshx);
     denom = coshx - cosy;
     if (check_denom(denom))
     {
@@ -1563,8 +1563,8 @@ void dStkSinh()
     double sinhx;
     double coshx;
 
-    FPUsincos(&g_arg1->d.y, &siny, &cosy);
-    FPUsinhcosh(&g_arg1->d.x, &sinhx, &coshx);
+    sin_cos(&g_arg1->d.y, &siny, &cosy);
+    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
     g_arg1->d.x = sinhx*cosy;
     g_arg1->d.y = coshx*siny;
 }
@@ -1585,8 +1585,8 @@ void lStkSinh()
 
     x = g_arg1->l.x >> s_delta16;
     y = g_arg1->l.y >> s_delta16;
-    SinCos086(y, &siny, &cosy);
-    SinhCosh086(x, &sinhx, &coshx);
+    sin_cos(y, &siny, &cosy);
+    sinh_cosh(x, &sinhx, &coshx);
     g_arg1->l.x = multiply(cosy, sinhx, s_shift_back);
     g_arg1->l.y = multiply(siny, coshx, s_shift_back);
 }
@@ -1598,8 +1598,8 @@ void dStkCos()
     double sinhy;
     double coshy;
 
-    FPUsincos(&g_arg1->d.x, &sinx, &cosx);
-    FPUsinhcosh(&g_arg1->d.y, &sinhy, &coshy);
+    sin_cos(&g_arg1->d.x, &sinx, &cosx);
+    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
     g_arg1->d.x = cosx*coshy;
     g_arg1->d.y = -sinx*sinhy;
 }
@@ -1620,8 +1620,8 @@ void lStkCos()
 
     x = g_arg1->l.x >> s_delta16;
     y = g_arg1->l.y >> s_delta16;
-    SinCos086(x, &sinx, &cosx);
-    SinhCosh086(y, &sinhy, &coshy);
+    sin_cos(x, &sinx, &cosx);
+    sinh_cosh(y, &sinhy, &coshy);
     g_arg1->l.x = multiply(cosx, coshy, s_shift_back);
     g_arg1->l.y = -multiply(sinx, sinhy, s_shift_back);
 }
@@ -1652,8 +1652,8 @@ void dStkCosh()
     double sinhx;
     double coshx;
 
-    FPUsincos(&g_arg1->d.y, &siny, &cosy);
-    FPUsinhcosh(&g_arg1->d.x, &sinhx, &coshx);
+    sin_cos(&g_arg1->d.y, &siny, &cosy);
+    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
     g_arg1->d.x = coshx*cosy;
     g_arg1->d.y = sinhx*siny;
 }
@@ -1674,8 +1674,8 @@ void lStkCosh()
 
     x = g_arg1->l.x >> s_delta16;
     y = g_arg1->l.y >> s_delta16;
-    SinCos086(y, &siny, &cosy);
-    SinhCosh086(x, &sinhx, &coshx);
+    sin_cos(y, &siny, &cosy);
+    sinh_cosh(x, &sinhx, &coshx);
     g_arg1->l.x = multiply(cosy, coshx, s_shift_back);
     g_arg1->l.y = multiply(siny, sinhx, s_shift_back);
 }

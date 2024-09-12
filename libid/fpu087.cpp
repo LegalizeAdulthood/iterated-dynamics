@@ -59,38 +59,38 @@ void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
     }
 }
 
-void FPUsincos(const double *Angle, double *Sin, double *Cos)
+void sin_cos(const double *angle, double *sine, double *cosine)
 {
-    if (std::isnan(*Angle) || std::isinf(*Angle))
+    if (std::isnan(*angle) || std::isinf(*angle))
     {
-        *Sin = 0.0;
-        *Cos = 1.0;
+        *sine = 0.0;
+        *cosine = 1.0;
     }
     else
     {
-        *Sin = std::sin(*Angle);
-        *Cos = std::cos(*Angle);
+        *sine = std::sin(*angle);
+        *cosine = std::cos(*angle);
     }
 }
 
-void FPUsinhcosh(const double *Angle, double *Sinh, double *Cosh)
+void sinh_cosh(const double *angle, double *sine, double *cosine)
 {
-    if (std::isnan(*Angle) || std::isinf(*Angle))
+    if (std::isnan(*angle) || std::isinf(*angle))
     {
-        *Sinh = 1.0;
-        *Cosh = 1.0;
+        *sine = 1.0;
+        *cosine = 1.0;
     }
     else
     {
-        *Sinh = std::sinh(*Angle);
-        *Cosh = std::cosh(*Angle);
-        if (std::isnan(*Sinh) || std::isinf(*Sinh))
+        *sine = std::sinh(*angle);
+        *cosine = std::cosh(*angle);
+        if (std::isnan(*sine) || std::isinf(*sine))
         {
-            *Sinh = 1.0;
+            *sine = 1.0;
         }
-        if (std::isnan(*Cosh) || std::isinf(*Cosh))
+        if (std::isnan(*cosine) || std::isinf(*cosine))
         {
-            *Cosh = 1.0;
+            *cosine = 1.0;
         }
     }
 }
@@ -139,18 +139,18 @@ void FPUcplxexp(const DComplex *x, DComplex *z)
 }
 
 // Integer Routines
-void SinCos086(long x, long *sinx, long *cosx)
+void sin_cos(long angle, long *sine, long *cosine)
 {
-    const double a = x / (double)(1 << 16);
-    *sinx = (long)(std::sin(a)*(double)(1 << 16));
-    *cosx = (long)(std::cos(a)*(double)(1 << 16));
+    const double a = angle / (double)(1 << 16);
+    *sine = (long)(std::sin(a)*(double)(1 << 16));
+    *cosine = (long)(std::cos(a)*(double)(1 << 16));
 }
 
-void SinhCosh086(long x, long *sinx, long *cosx)
+void sinh_cosh(long angle, long *sine, long *cosine)
 {
-    const double a = x / (double)(1 << 16);
-    *sinx = (long)(std::sinh(a)*(double)(1 << 16));
-    *cosx = (long)(std::cosh(a)*(double)(1 << 16));
+    const double a = angle / (double)(1 << 16);
+    *sine = (long)(std::sinh(a)*(double)(1 << 16));
+    *cosine = (long)(std::cosh(a)*(double)(1 << 16));
 }
 
 long Exp086(long x)

@@ -606,7 +606,7 @@ static void lsysi_dosizedm(lsys_turtlestatei *cmd)
     long fixedsin;
     long fixedcos;
 
-    FPUsincos(&angle, &s, &c);
+    sin_cos(&angle, &s, &c);
     fixedsin = (long)(s * FIXEDLT1);
     fixedcos = (long)(c * FIXEDLT1);
 
@@ -667,7 +667,7 @@ static void lsysi_dodrawd(lsys_turtlestatei *cmd)
     int lastx;
     int lasty;
 
-    FPUsincos(&angle, &s, &c);
+    sin_cos(&angle, &s, &c);
     fixedsin = (long)(s * FIXEDLT1);
     fixedcos = (long)(c * FIXEDLT1);
 
@@ -688,7 +688,7 @@ static void lsysi_dodrawm(lsys_turtlestatei *cmd)
     long fixedsin;
     long fixedcos;
 
-    FPUsincos(&angle, &s, &c);
+    sin_cos(&angle, &s, &c);
     fixedsin = (long)(s * FIXEDLT1);
     fixedcos = (long)(c * FIXEDLT1);
 
@@ -1198,7 +1198,7 @@ static void lsysi_dosincos()
     for (int i = 0; i < g_max_angle; i++)
     {
         twopimaxi = i * twopimax;
-        FPUsincos(&twopimaxi, &s, &c);
+        sin_cos(&twopimaxi, &s, &c);
         s_sin_table[i] = (long)(s * FIXEDLT1);
         r_cos_table[i] = (long)((locaspect * c) * FIXEDLT1);
     }

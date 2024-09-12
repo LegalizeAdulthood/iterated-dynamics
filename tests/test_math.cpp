@@ -89,7 +89,7 @@ TEST(TestMath, nanAngleSinCos)
 
     double result_sin{999.0};
     double result_cos{999.0};
-    FPUsincos(&angle, &result_sin, &result_cos);
+    sin_cos(&angle, &result_sin, &result_cos);
 
     EXPECT_EQ(0.0, result_sin);
     EXPECT_EQ(1.0, result_cos);
@@ -101,7 +101,7 @@ TEST(TestMath, infAngleSinCos)
 
     double result_sin{999.0};
     double result_cos{999.0};
-    FPUsincos(&angle, &result_sin, &result_cos);
+    sin_cos(&angle, &result_sin, &result_cos);
 
     EXPECT_EQ(0.0, result_sin);
     EXPECT_EQ(1.0, result_cos);
@@ -113,7 +113,7 @@ TEST(TestMath, nanAngleSinHCosH)
 
     double result_sin{999.0};
     double result_cos{999.0};
-    FPUsinhcosh(&angle, &result_sin, &result_cos);
+    sinh_cosh(&angle, &result_sin, &result_cos);
 
     EXPECT_EQ(1.0, result_sin);
     EXPECT_EQ(1.0, result_cos);
@@ -125,7 +125,7 @@ TEST(TestMath, infAngleSinHCosH)
 
     double result_sin{999.0};
     double result_cos{999.0};
-    FPUsinhcosh(&angle, &result_sin, &result_cos);
+    sinh_cosh(&angle, &result_sin, &result_cos);
 
     EXPECT_EQ(1.0, result_sin);
     EXPECT_EQ(1.0, result_cos);

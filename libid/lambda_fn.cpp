@@ -136,7 +136,7 @@ static int LongLambdaexponentFractal()
 
     long lsiny;
     long lcosy;
-    SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
+    sin_cos(g_l_old_z.y, &lsiny,  &lcosy);
 
     if (g_l_old_z.x >= g_l_magnitude_limit && lcosy >= 0L)
     {
@@ -168,7 +168,7 @@ static int LambdaexponentFractal()
     }
     double siny;
     double cosy;
-    FPUsincos(&g_old_z.y, &siny, &cosy);
+    sin_cos(&g_old_z.y, &siny, &cosy);
 
     if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
     {
