@@ -19,6 +19,16 @@
 #include "stack_avail.h"
 #include "zoom.h"
 
+#ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef STRICT
+#define STRICT
+#endif
+#include <crtdbg.h>
+#endif
+
 #include <cassert>
 #include <cstdarg>
 
@@ -155,7 +165,9 @@ void putcolor_a(int xdot, int ydot, int color)
 //
 int out_line(BYTE *pixels, int linelen)
 {
+#ifdef WIN32
     assert(_CrtCheckMemory());
+#endif
     if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
     {
         return 0;
