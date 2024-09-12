@@ -39,16 +39,16 @@ int TrigPlusSqrFractal() // generalization of Scott and Skinner types
     LCMPLXmult(g_l_param, g_l_temp, g_l_new_z); // lnew = lparm*trig(lold)
     LCMPLXsqr_old(g_l_temp);                    // ltmp = sqr(lold)
     LCMPLXmult(g_l_param2, g_l_temp, g_l_temp); // ltmp = lparm2*sqr(lold)
-    LCMPLXadd(g_l_new_z, g_l_temp, g_l_new_z);  // lnew = lparm*trig(lold)+lparm2*sqr(lold)
+    g_l_new_z = g_l_new_z + g_l_temp;           // lnew = lparm*trig(lold) + lparm2*sqr(lold)
     return g_bailout_long();
 }
 
 static int ScottTrigPlusSqrFractal()
 {
     //  { z=pixel: z=trig(z)+sqr(z), |z|<BAILOUT }
-    LCMPLXtrig0(g_l_old_z, g_l_new_z);         // lnew = trig(lold)
-    LCMPLXsqr_old(g_l_temp);                   // lold = sqr(lold)
-    LCMPLXadd(g_l_temp, g_l_new_z, g_l_new_z); // lnew = trig(lold)+sqr(lold)
+    LCMPLXtrig0(g_l_old_z, g_l_new_z); // lnew = trig(lold)
+    LCMPLXsqr_old(g_l_temp);           // lold = sqr(lold)
+    g_l_new_z = g_l_temp + g_l_new_z;  // lnew = trig(lold)+sqr(lold)
     return g_bailout_long();
 }
 
@@ -81,16 +81,16 @@ static bool TrigPlusSqrlongSetup()
 
 static int ScottTrigPlusTrigFractal()
 {
-    // z = trig0(z)+trig1(z)
+    // z = trig0(z) + trig1(z)
     LCMPLXtrig0(g_l_old_z, g_l_temp);
     LCMPLXtrig1(g_l_old_z, g_l_old_z);
-    LCMPLXadd(g_l_temp, g_l_old_z, g_l_new_z);
+    g_l_new_z = g_l_temp + g_l_old_z;
     return g_bailout_long();
 }
 
 static int SkinnerTrigSubTrigFractal()
 {
-    // z = trig(0, z)-trig1(z)
+    // z = trig(0, z) - trig1(z)
     LCMPLXtrig0(g_l_old_z, g_l_temp);
     LComplex ltmp2;
     LCMPLXtrig1(g_l_old_z, ltmp2);
@@ -220,7 +220,7 @@ int TrigPlusTrigFractal()
     LComplex ltmp2;
     LCMPLXtrig1(g_l_old_z, ltmp2);
     LCMPLXmult(g_l_param2, ltmp2, g_l_old_z);
-    LCMPLXadd(g_l_temp, g_l_old_z, g_l_new_z);
+    g_l_new_z = g_l_temp + g_l_old_z;
     return g_bailout_long();
 }
 
@@ -435,7 +435,7 @@ static int ScottZXTrigPlusZFractal()
     // z = (z*trig(z))+z
     LCMPLXtrig0(g_l_old_z, g_l_temp);           // ltmp  = trig(old)
     LCMPLXmult(g_l_old_z, g_l_temp, g_l_new_z); // lnew  = old*trig(old)
-    LCMPLXadd(g_l_new_z, g_l_old_z, g_l_new_z); // lnew  = trig(old) + old
+    g_l_new_z = g_l_new_z + g_l_old_z;          // lnew  = trig(old) + old
     return g_bailout_long();
 }
 
@@ -570,7 +570,7 @@ int ZXTrigPlusZFractal()
     LComplex ltmp2;                              //
     LCMPLXmult(g_l_old_z, g_l_temp, ltmp2);      // ltmp2 = p1*old*trig(old)
     LCMPLXmult(g_l_param2, g_l_old_z, g_l_temp); // ltmp  = p2*old
-    LCMPLXadd(ltmp2, g_l_temp, g_l_new_z);       // lnew  = p1*trig(old) + p2*old
+    g_l_new_z = ltmp2 + g_l_temp;                // lnew  = p1*trig(old) + p2*old
     return g_bailout_long();
 }
 

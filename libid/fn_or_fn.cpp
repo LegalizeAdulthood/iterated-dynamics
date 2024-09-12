@@ -118,12 +118,12 @@ int JuliaTrigOrTrigFractal()
     if (LCMPLXmod(g_l_old_z) < g_l_param2.x)
     {
         LCMPLXtrig0(g_l_old_z, g_l_temp);
-        LCMPLXadd(*g_long_param, g_l_temp, g_l_new_z);
+        g_l_new_z = *g_long_param + g_l_temp;
     }
     else
     {
         LCMPLXtrig1(g_l_old_z, g_l_temp);
-        LCMPLXadd(*g_long_param, g_l_temp, g_l_new_z);
+        g_l_new_z = *g_long_param + g_l_temp;
     }
     return g_bailout_long();
 }
