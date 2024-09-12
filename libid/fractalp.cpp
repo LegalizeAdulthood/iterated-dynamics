@@ -1106,7 +1106,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_FORMULA, help_labels::SPECIAL_FORMULA, fractal_flags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FFORMULA, symmetry_type::SETUP,
-        Formula, form_per_pixel, intFormulaSetup, standard_fractal,
+        formula, form_per_pixel, formula_setup_l, standard_fractal,
         0
     },
 
@@ -1117,7 +1117,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_FORMULA, help_labels::SPECIAL_FORMULA, fractal_flags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FORMULA, symmetry_type::SETUP,
-        Formula, form_per_pixel, fpFormulaSetup, standard_fractal,
+        formula, form_per_pixel, formula_setup_fp, standard_fractal,
         0
     },
 

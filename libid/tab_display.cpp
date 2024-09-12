@@ -223,8 +223,8 @@ bool tab_display_2(char *msg)
               g_driver->get_name().c_str(), g_driver->get_description().c_str());
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
-              g_cur_fractal_specific->orbitcalc ==  Formula ? "slow parser" :
-              g_cur_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
+              g_cur_fractal_specific->orbitcalc ==  formula ? "slow parser" :
+              g_cur_fractal_specific->orbitcalc ==  bad_formula ? "bad formula" :
               "", g_frm_uses_ismand ? 1 : 0);
     /*
         write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
