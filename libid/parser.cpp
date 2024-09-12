@@ -2187,7 +2187,7 @@ static void StkJumpLabel()
     s_jump_index++;
 }
 
-static unsigned int SkipWhiteSpace(char const *Str)
+static unsigned int skip_white_space(char const *Str)
 {
     unsigned n;
     bool Done = false;
@@ -2219,7 +2219,7 @@ static bool is_const_pair(char const *Str)
     }
     if (Str[n] == ',')
     {
-        j = n + SkipWhiteSpace(&Str[n+1]) + 1;
+        j = n + skip_white_space(&Str[n+1]) + 1;
         if (std::isdigit(Str[j])
             || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
             || Str[j] == '.')
@@ -2324,7 +2324,7 @@ static ConstArg *is_const(char const *Str, int Len)
         }
         if (Str[n] == ',')
         {
-            unsigned j = n + SkipWhiteSpace(&Str[n+1]) + 1;
+            unsigned j = n + skip_white_space(&Str[n+1]) + 1;
             if (std::isdigit(Str[j])
                 || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
                 || Str[j] == '.')
@@ -2415,7 +2415,7 @@ static int which_fn(char const *s, int len)
 
 static FunctionPtr is_func(char const *Str, int Len)
 {
-    unsigned n = SkipWhiteSpace(&Str[Len]);
+    unsigned n = skip_white_space(&Str[Len]);
     if (Str[Len+n] == '(')
     {
         for (n = 0; n < static_cast<unsigned>(s_func_list.size()); n++)
