@@ -2391,7 +2391,7 @@ static void FnctNotFound()
 }
 
 // determine if s names a function and if so which one
-static int whichfn(char const *s, int len)
+static int which_fn(char const *s, int len)
 {
     int out;
     if (len != 3)
@@ -2423,7 +2423,7 @@ static FunctionPtr is_func(char const *Str, int Len)
             if (!strnicmp(s_func_list[n].s, Str, Len))
             {
                 // count function variables
-                int functnum = whichfn(Str, Len);
+                int functnum = which_fn(Str, Len);
                 if (functnum != 0)
                 {
                     if (functnum > g_max_function)
