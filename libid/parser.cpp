@@ -2208,7 +2208,7 @@ static unsigned int SkipWhiteSpace(char const *Str)
 }
 
 // detect if constant is part of a (a,b) construct
-static bool isconst_pair(char const *Str)
+static bool is_const_pair(char const *Str)
 {
     int n;
     int j;
@@ -2275,7 +2275,7 @@ static ConstArg *is_const(char const *Str, int Len)
                         driver_unget_key('f');
                     }
                 }
-                if (!isconst_pair(Str))
+                if (!is_const_pair(Str))
                 {
                     return &s_vars[n];
                 }
@@ -3167,7 +3167,7 @@ int form_per_pixel()
     return g_overflow ? 0 : 1;
 }
 
-static int fill_if_group(int endif_index, JumpPtrs* jump_data)
+static int fill_if_group(int endif_index, JumpPtrs *jump_data)
 {
     int i   = endif_index;
     int ljp = endif_index; // ljp means "last jump processed"
