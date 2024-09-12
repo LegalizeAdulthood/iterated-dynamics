@@ -12,24 +12,26 @@
 #include "os.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "video.h"
 #include "video_mode.h"
-
-#define WIN32_LEAN_AND_MEAN
-#define STRICT
-#include <Windows.h>
-
-#include <array>
-#include <cassert>
 
 #include "d_win32.h"
 #include "frame.h"
 #include "instance.h"
 #include "ods.h"
-#include "os_win32.h"
 #include "plot.h"
 #include "win_text.h"
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef STRICT
+#define STRICT
+#endif
+#include <Windows.h>
+
 #include <array>
+#include <cassert>
 
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1

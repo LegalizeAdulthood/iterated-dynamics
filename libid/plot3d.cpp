@@ -11,13 +11,13 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "fractype.h"
-#include "get_color.h"
 #include "id_data.h"
 #include "line3d.h"
 #include "loadmap.h"
 #include "os.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "video.h"
 
 // Use these palette indices for red/blue - same on ega/vga
 #define PAL_BLUE    1

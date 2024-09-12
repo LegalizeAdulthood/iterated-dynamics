@@ -18,9 +18,14 @@
 #include "spindac.h"
 #include "stop_msg.h"
 #include "text_screen.h"
+#include "video.h"
 
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef STRICT
 #define STRICT
+#endif
 #include <Windows.h>
 
 #include <array>
@@ -28,13 +33,12 @@
 #include <cstdio>
 #include <ctime>
 
-#include "win_text.h"
 #include "d_win32.h"
 #include "frame.h"
 #include "instance.h"
 #include "ods.h"
-#include "os_win32.h"
 #include "plot.h"
+#include "win_text.h"
 
 #include <read_ticker.h>
 

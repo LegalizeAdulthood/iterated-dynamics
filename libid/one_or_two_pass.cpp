@@ -1,9 +1,9 @@
 #include "one_or_two_pass.h"
 
 #include "calcfrac.h"
-#include "get_color.h"
 #include "id_data.h"
 #include "resume.h"
+#include "video.h"
 #include "work_list.h"
 
 // routines in this module

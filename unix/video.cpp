@@ -83,69 +83,7 @@ VIDEOINFO x11_video_table[] = {
     {999, 800, 600, 256, nullptr, "                         "},
 };
 
-void set_null_video()
-{
-}
-
 void loaddac()
 {
     readvideopalette();
-}
-
-/*
-; **************** Function getcolor(xdot, ydot) *******************
-
-;       Return the color on the screen at the (xdot,ydot) point
-*/
-int getcolor(int xdot, int ydot)
-{
-        return 0;
-}
-
-/*
-; ************** Function putcolor_a(xdot, ydot, color) *******************
-
-;       write the color on the screen at the (xdot,ydot) point
-*/
-void putcolor_a(int xdot, int ydot, int color)
-{
-}
-
-// read_span(int row, int startcol, int stopcol, BYTE *pixels)
-//
-// This routine is a 'span' analog of 'getcolor()', and gets a horizontal
-// span of pixels from the screen and stores it in pixels[] at one byte per
-// pixel
-//
-void read_span(int row, int startcol, int stopcol, BYTE *pixels)
-{
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
-        return;
-}
-
-// write_span(int row, int startcol, int stopcol, BYTE *pixels)
-//
-// This routine is a 'span' analog of 'putcolor()', and puts a horizontal
-// span of pixels to the screen from pixels[] at one byte per pixel
-// Called by the GIF decoder
-//
-void write_span(int row, int startcol, int stopcol, BYTE const *pixels)
-{
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
-        return;
-}
-
-/*
-; ***************Function out_line(pixels,linelen) *********************
-
-;       This routine is a 'line' analog of 'putcolor()', and sends an
-;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
-;       Called by the GIF decoder
-*/
-int out_line(BYTE *pixels, int linelen)
-{
-    if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
-        return 0;
-    g_row_count++;
-    return 0;
 }

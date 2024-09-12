@@ -19,7 +19,6 @@ Miscellaneous fractal-specific code
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "get_color.h"
 #include "id.h"
 #include "id_data.h"
 #include "loadmap.h"
@@ -35,6 +34,7 @@ Miscellaneous fractal-specific code
 #include "stop_msg.h"
 #include "testpt.h"
 #include "trig_fns.h"
+#include "video.h"
 
 #include <algorithm>
 #include <cmath>

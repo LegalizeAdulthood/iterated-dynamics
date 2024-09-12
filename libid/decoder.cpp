@@ -21,9 +21,9 @@
 #include "drivers.h"
 #include "gifview.h"
 #include "loadfile.h"
-#include "out_line.h"
 #include "pixel_limits.h"
 #include "port.h"
+#include "video.h"
 
 static short get_next_code();
 

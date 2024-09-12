@@ -8,17 +8,20 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "get_color.h"
 #include "id_data.h"
 #include "os.h"
 #include "plot3d.h"
-#include "put_color_a.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "video.h"
 #include "video_mode.h"
 
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef STRICT
 #define STRICT
+#endif
 #include <Windows.h>
 
 #include <cassert>
@@ -26,15 +29,7 @@
 #include "win_text.h"
 #include "frame.h"
 #include "d_win32.h"
-#include "instance.h"
 #include "ods.h"
-#include "os_win32.h"
-
-// read/write-a-dot/line routines
-using t_dotwriter = void(int, int, int);
-using t_dotreader = int(int, int);
-using t_linewriter = void(int y, int x, int lastx, BYTE *pixels);
-using t_linereader = void(int y, int x, int lastx, BYTE *pixels);
 
 enum
 {

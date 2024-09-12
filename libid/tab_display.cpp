@@ -19,7 +19,6 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "get_calculation_time.h"
-#include "get_color.h"
 #include "get_key_no_help.h"
 #include "help_title.h"
 #include "id.h"
@@ -45,6 +44,7 @@
 #include "type_has_param.h"
 #include "update_save_name.h"
 #include "version.h"
+#include "video.h"
 #include "video_mode.h"
 
 #include <array>

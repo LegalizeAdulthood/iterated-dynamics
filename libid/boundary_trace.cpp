@@ -2,9 +2,9 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "get_color.h"
 #include "id_data.h"
 #include "stop_msg.h"
+#include "video.h"
 #include "work_list.h"
 
 #include <cstring>

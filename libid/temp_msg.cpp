@@ -10,7 +10,7 @@
 #include "find_special_colors.h"
 #include "id_data.h"
 #include "os.h"
-#include "span.h"
+#include "video.h"
 #include "zoom.h"
 
 #include <cstdio>

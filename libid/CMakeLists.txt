@@ -91,6 +91,7 @@ add_library(libid
     special_dirs.cpp include/special_dirs.h
     stereo.cpp include/stereo.h
     text_screen.cpp include/text_screen.h
+    video.cpp include/video.h
 
     bigflt.cpp
     biginit.cpp include/biginit.h
@@ -196,19 +197,15 @@ add_library(libid
     include/cmplx.h
     include/drivers.h
     include/fractype.h
-    include/get_color.h
     include/id.h
     include/id_data.h
     include/id_keys.h
     include/is_directory.h
     include/lsys.h
     include/mpmath.h
-    include/out_line.h
     include/pixel_limits.h
     include/prototyp.h
-    include/put_color_a.h
     include/read_ticker.h
-    include/set_null_video.h
     include/sign.h
     include/span.h
     include/stack_avail.h
@@ -384,6 +381,7 @@ source_group("Header Files/IO" FILES
     include/sound.h
     include/special_dirs.h
     include/stereo.h
+    include/video.h
 )
 source_group("Source Files/IO" FILES
     cmdfiles.cpp
@@ -408,6 +406,7 @@ source_group("Source Files/IO" FILES
     sound.cpp
     special_dirs.cpp
     stereo.cpp
+    video.cpp
 )
 source_group("Header Files/math" FILES
     include/big.h
@@ -434,16 +433,12 @@ source_group("Source Files/math" FILES
 source_group("Header Files/plumbing" FILES
     include/debug_flags.h
     include/drivers.h
-    include/get_color.h
     include/get_disk_space.h
     include/init_failure.h
     include/memory.h
     include/os.h
-    include/out_line.h
     include/prototyp.h
-    include/put_color_a.h
     include/read_ticker.h
-    include/set_null_video.h
     include/span.h
     include/special_dirs.h
     include/stack_avail.h

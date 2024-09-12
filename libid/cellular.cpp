@@ -10,10 +10,10 @@
 #include "id_data.h"
 #include "resume.h"
 #include "rotate.h"
-#include "span.h"
 #include "spindac.h"
 #include "stop_msg.h"
 #include "thinking.h"
+#include "video.h"
 
 #include <array>
 #include <cstdio>

@@ -16,7 +16,6 @@
 #include "extract_filename.h"
 #include "fractype.h"
 #include "framain2.h"
-#include "get_color.h"
 #include "goodbye.h"
 #include "id.h"
 #include "id_data.h"
@@ -39,6 +38,7 @@
 #include "trig_fns.h"
 #include "update_save_name.h"
 #include "version.h"
+#include "video.h"
 #include "video_mode.h"
 
 #include <algorithm>

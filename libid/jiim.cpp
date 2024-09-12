@@ -22,7 +22,6 @@
 #include "fractype.h"
 #include "frothy_basin.h"
 #include "get_a_number.h"
-#include "get_color.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
@@ -32,6 +31,7 @@
 #include "pixel_grid.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "video.h"
 #include "zoom.h"
 
 #include <algorithm>

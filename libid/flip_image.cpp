@@ -8,9 +8,9 @@
 #include "drivers.h"
 #include "fractalp.h"
 #include "framain2.h"
-#include "get_color.h"
 #include "id.h"
 #include "id_data.h"
+#include "video.h"
 
 /* This routine copies the current screen to by flipping x-axis, y-axis,
    or both. Refuses to work if calculation in progress or if fractal

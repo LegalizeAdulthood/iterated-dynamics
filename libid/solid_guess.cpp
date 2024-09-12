@@ -4,11 +4,10 @@
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
-#include "get_color.h"
 #include "id_data.h"
 #include "pixel_limits.h"
-#include "span.h"
 #include "ssg_block_size.h"
+#include "video.h"
 #include "work_list.h"
 
 #include <algorithm>

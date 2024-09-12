@@ -10,7 +10,6 @@
 #include "drivers.h"
 #include "field_prompt.h"
 #include "find_special_colors.h"
-#include "get_color.h"
 #include "get_key_no_help.h"
 #include "id_data.h"
 #include "id_keys.h"
@@ -18,9 +17,9 @@
 #include "os.h"
 #include "read_ticker.h"
 #include "rotate.h"
-#include "span.h"
 #include "spindac.h"
 #include "value_saver.h"
+#include "video.h"
 #include "zoom.h"
 
 #include <algorithm>

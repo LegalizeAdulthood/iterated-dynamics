@@ -15,16 +15,15 @@
 #include "fractalp.h"
 #include "framain2.h"
 #include "frothy_basin.h"
-#include "get_color.h"
 #include "id.h"
 #include "id_data.h"
 #include "miscfrac.h"
 #include "os.h"
 #include "resume.h"
-#include "span.h"
 #include "spindac.h"
 #include "ssg_block_size.h"
 #include "stop_msg.h"
+#include "video.h"
 #include "work_list.h"
 
 #include <cassert>

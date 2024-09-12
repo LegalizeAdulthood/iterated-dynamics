@@ -14,7 +14,6 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "find_special_colors.h"
-#include "get_color.h"
 #include "gifview.h"
 #include "helpdefs.h"
 #include "id_data.h"
@@ -25,6 +24,7 @@
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "value_saver.h"
+#include "video.h"
 
 #include <cstdlib>
 #include <cstring>

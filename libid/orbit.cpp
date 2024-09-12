@@ -8,9 +8,9 @@
 #include "debug_flags.h"
 #include "drivers.h"
 #include "fixed_pt.h"
-#include "get_color.h"
 #include "id_data.h"
 #include "sound.h"
+#include "video.h"
 #include "wait_until.h"
 
 static void   plotdorbit(double, double, int);

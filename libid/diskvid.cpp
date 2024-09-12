@@ -14,9 +14,9 @@
 #include "help_title.h"
 #include "id_data.h"
 #include "memory.h"
-#include "set_null_video.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "video.h"
 
 #include <array>
 #include <cassert>

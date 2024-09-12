@@ -8,7 +8,6 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fixed_pt.h"
-#include "get_color.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadmap.h"
@@ -16,6 +15,7 @@
 #include "spindac.h"
 #include "stop_msg.h"
 #include "value_saver.h"
+#include "video.h"
 
 #include <cstdlib>
 
