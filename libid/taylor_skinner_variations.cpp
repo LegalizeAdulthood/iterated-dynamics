@@ -35,7 +35,7 @@ static int TryFloatFractal(int (*fpFractal)())
 int TrigPlusSqrFractal() // generalization of Scott and Skinner types
 {
     // { z=pixel: z=(p1,p2)*trig(z)+(p3,p4)*sqr(z), |z|<BAILOUT }
-    LCMPLXtrig0(g_l_old_z, g_l_temp); // ltmp = trig(lold)
+    trig0(g_l_old_z, g_l_temp);       // ltmp = trig(lold)
     g_l_new_z = g_l_param * g_l_temp; // lnew = lparm*trig(lold)
     LCMPLXsqr_old(g_l_temp);          // ltmp = sqr(lold)
     g_l_temp = g_l_param2 * g_l_temp; // ltmp = lparm2*sqr(lold)
@@ -46,7 +46,7 @@ int TrigPlusSqrFractal() // generalization of Scott and Skinner types
 static int ScottTrigPlusSqrFractal()
 {
     //  { z=pixel: z=trig(z)+sqr(z), |z|<BAILOUT }
-    LCMPLXtrig0(g_l_old_z, g_l_new_z); // lnew = trig(lold)
+    trig0(g_l_old_z, g_l_new_z);       // lnew = trig(lold)
     LCMPLXsqr_old(g_l_temp);           // lold = sqr(lold)
     g_l_new_z = g_l_temp + g_l_new_z;  // lnew = trig(lold)+sqr(lold)
     return g_bailout_long();
@@ -55,7 +55,7 @@ static int ScottTrigPlusSqrFractal()
 static int SkinnerTrigSubSqrFractal()
 {
     // { z=pixel: z=sin(z)-sqr(z), |z|<BAILOUT }
-    LCMPLXtrig0(g_l_old_z, g_l_new_z); // lnew = trig(lold)
+    trig0(g_l_old_z, g_l_new_z);       // lnew = trig(lold)
     LCMPLXsqr_old(g_l_temp);           // lold = sqr(lold)
     g_l_new_z = g_l_new_z - g_l_temp;  // lnew = trig(lold) - sqr(lold)
     return g_bailout_long();
@@ -82,7 +82,7 @@ static bool TrigPlusSqrlongSetup()
 static int ScottTrigPlusTrigFractal()
 {
     // z = trig0(z) + trig1(z)
-    LCMPLXtrig0(g_l_old_z, g_l_temp);
+    trig0(g_l_old_z, g_l_temp);
     LCMPLXtrig1(g_l_old_z, g_l_old_z);
     g_l_new_z = g_l_temp + g_l_old_z;
     return g_bailout_long();
@@ -91,7 +91,7 @@ static int ScottTrigPlusTrigFractal()
 static int SkinnerTrigSubTrigFractal()
 {
     // z = trig(0, z) - trig1(z)
-    LCMPLXtrig0(g_l_old_z, g_l_temp);
+    trig0(g_l_old_z, g_l_temp);
     LComplex ltmp2;
     LCMPLXtrig1(g_l_old_z, ltmp2);
     g_l_new_z = g_l_temp - ltmp2;
@@ -215,7 +215,7 @@ bool TrigPlusTrigfpSetup()
 int TrigPlusTrigFractal()
 {
     // z = trig(0,z)*p1 + trig1(z)*p2
-    LCMPLXtrig0(g_l_old_z, g_l_temp);
+    trig0(g_l_old_z, g_l_temp);
     g_l_temp = g_l_param * g_l_temp;
     LComplex ltmp2;
     LCMPLXtrig1(g_l_old_z, ltmp2);
@@ -322,7 +322,7 @@ int TrigXTrigFractal()
 {
     LComplex ltmp3;
     // z = trig0(z)*trig1(z)
-    LCMPLXtrig0(g_l_old_z, g_l_temp);
+    trig0(g_l_old_z, g_l_temp);
     LCMPLXtrig1(g_l_old_z, ltmp3);
     g_l_new_z = g_l_temp * ltmp3;
     if (g_overflow)
@@ -360,7 +360,7 @@ int TrigZsqrdFractal() // this doesn't work very well
     }
     else
     {
-        LCMPLXtrig0(g_l_temp, g_l_new_z);
+        trig0(g_l_temp, g_l_new_z);
     }
     if (g_overflow)
     {
@@ -399,7 +399,7 @@ bool SqrTrigSetup()
 int SqrTrigFractal()
 {
     // { z=pixel: z=sqr(trig(z)), |z|<TEST}
-    LCMPLXtrig0(g_l_old_z, g_l_temp);
+    trig0(g_l_old_z, g_l_temp);
     LCMPLXsqr(g_l_temp, g_l_new_z);
     return g_bailout_long();
 }
@@ -415,7 +415,7 @@ int SqrTrigfpFractal()
 int Sqr1overTrigFractal()
 {
     // z = sqr(1/trig(z))
-    LCMPLXtrig0(g_l_old_z, g_l_old_z);
+    trig0(g_l_old_z, g_l_old_z);
     LCMPLXrecip(g_l_old_z, g_l_old_z);
     LCMPLXsqr(g_l_old_z, g_l_new_z);
     return g_bailout_long();
@@ -433,7 +433,7 @@ int Sqr1overTrigfpFractal()
 static int ScottZXTrigPlusZFractal()
 {
     // z = (z*trig(z))+z
-    LCMPLXtrig0(g_l_old_z, g_l_temp);  // ltmp  = trig(old)
+    trig0(g_l_old_z, g_l_temp);        // ltmp  = trig(old)
     g_l_new_z = g_l_old_z * g_l_temp;  // lnew  = old*trig(old)
     g_l_new_z = g_l_new_z + g_l_old_z; // lnew  = trig(old) + old
     return g_bailout_long();
@@ -442,7 +442,7 @@ static int ScottZXTrigPlusZFractal()
 static int SkinnerZXTrigSubZFractal()
 {
     // z = (z*trig(z))-z
-    LCMPLXtrig0(g_l_old_z, g_l_temp);  // ltmp  = trig(old)
+    trig0(g_l_old_z, g_l_temp);        // ltmp  = trig(old)
     g_l_new_z = g_l_old_z * g_l_temp;  // lnew  = old*trig(old)
     g_l_new_z = g_l_new_z - g_l_old_z; // lnew  = trig(old) - old
     return g_bailout_long();
@@ -565,7 +565,7 @@ int ZXTrigPlusZfpFractal()
 int ZXTrigPlusZFractal()
 {
     // z = (p1*z*trig(z))+p2*z
-    LCMPLXtrig0(g_l_old_z, g_l_temp);           // ltmp  = trig(old)
+    trig0(g_l_old_z, g_l_temp);                 // ltmp  = trig(old)
     g_l_temp = g_l_param * g_l_temp;            // ltmp  = p1*trig(old)
     const LComplex ltmp2{g_l_old_z * g_l_temp}; // ltmp2 = p1*old*trig(old)
     g_l_temp = g_l_param2 * g_l_old_z;          // ltmp  = p2*old
@@ -604,7 +604,7 @@ int Richard8fpFractal()
 int Richard8Fractal()
 {
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
-    LCMPLXtrig0(g_l_old_z, g_l_new_z);
+    trig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x += g_l_temp.x;
     g_l_new_z.y += g_l_temp.y;
     return g_bailout_long();

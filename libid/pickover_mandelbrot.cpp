@@ -58,7 +58,7 @@ int LongTrigPlusExponentFractal()
     long lcosy;
     long lsiny;
     sin_cos(g_l_old_z.y, &lsiny,  &lcosy);
-    LCMPLXtrig0(g_l_old_z, g_l_new_z);
+    trig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x += multiply(longtmp,    lcosy,   g_bit_shift) + g_long_param->x;
     g_l_new_z.y += multiply(longtmp,    lsiny,   g_bit_shift) + g_long_param->y;
     return g_bailout_long();
@@ -129,7 +129,7 @@ int TrigPlusZsquaredFractal()
     // From Scientific American, July 1989
     // A Biomorph
     // z(n+1) = trig(z(n))+z(n)**2+C
-    LCMPLXtrig0(g_l_old_z, g_l_new_z);
+    trig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x += g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
     g_l_new_z.y += multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
     return g_bailout_long();

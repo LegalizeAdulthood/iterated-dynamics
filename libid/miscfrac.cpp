@@ -1310,7 +1310,7 @@ int LongBifurcVerhulstTrig()
 {
     g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
-    LCMPLXtrig0(g_l_temp, g_l_temp);
+    trig0(g_l_temp, g_l_temp);
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
     s_population_l += multiply(s_rate_l, g_l_temp.y, g_bit_shift);
     return g_overflow;
@@ -1330,7 +1330,7 @@ int LongBifurcStewartTrig()
 {
     g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
-    LCMPLXtrig0(g_l_temp, g_l_temp);
+    trig0(g_l_temp, g_l_temp);
     s_population_l = multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
     s_population_l = multiply(s_population_l, s_rate_l,      g_bit_shift);
     s_population_l -= g_fudge_factor;
@@ -1350,7 +1350,7 @@ int LongBifurcSetTrigPi()
 {
     g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
     g_l_temp.y = 0;
-    LCMPLXtrig0(g_l_temp, g_l_temp);
+    trig0(g_l_temp, g_l_temp);
     s_population_l = multiply(s_rate_l, g_l_temp.x, g_bit_shift);
     return g_overflow;
 }
@@ -1368,7 +1368,7 @@ int LongBifurcAddTrigPi()
 {
     g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
     g_l_temp.y = 0;
-    LCMPLXtrig0(g_l_temp, g_l_temp);
+    trig0(g_l_temp, g_l_temp);
     s_population_l += multiply(s_rate_l, g_l_temp.x, g_bit_shift);
     return g_overflow;
 }
@@ -1387,7 +1387,7 @@ int LongBifurcLambdaTrig()
 {
     g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
-    LCMPLXtrig0(g_l_temp, g_l_temp);
+    trig0(g_l_temp, g_l_temp);
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
     s_population_l = multiply(s_rate_l, g_l_temp.y, g_bit_shift);
     return g_overflow;

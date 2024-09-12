@@ -93,7 +93,7 @@ inline long modulus(const LComplex &z)
 {
     return lsqr(z.x) + lsqr(z.y);
 }
-inline void LCMPLXtrig0(const LComplex &arg, LComplex &out)
+inline void trig0(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     g_ltrig0();

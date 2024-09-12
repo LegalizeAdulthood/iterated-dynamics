@@ -140,7 +140,7 @@ int MarksMandelPwrfpFractal()
 
 int MarksMandelPwrFractal()
 {
-    LCMPLXtrig0(g_l_old_z, g_l_new_z);
+    trig0(g_l_old_z, g_l_new_z);
     g_l_new_z = g_l_temp * g_l_new_z;
     g_l_new_z.x += g_long_param->x;
     g_l_new_z.y += g_long_param->y;
@@ -164,7 +164,7 @@ int TimsErrorfpFractal()
 
 int TimsErrorFractal()
 {
-    LCMPLXtrig0(g_l_old_z, g_l_new_z);
+    trig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x = multiply(g_l_new_z.x, g_l_temp.x, g_bit_shift)-multiply(g_l_new_z.y, g_l_temp.y, g_bit_shift);
     g_l_new_z.y = multiply(g_l_new_z.x, g_l_temp.y, g_bit_shift)-multiply(g_l_new_z.y, g_l_temp.x, g_bit_shift);
     g_l_new_z.x += g_long_param->x;

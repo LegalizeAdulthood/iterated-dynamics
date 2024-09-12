@@ -51,7 +51,7 @@ int LambdaTrigFractal()
     {
         return 1;
     }
-    LCMPLXtrig0(g_l_old_z, g_l_temp);     // ltmp = trig(lold)
+    trig0(g_l_old_z, g_l_temp);           // ltmp = trig(lold)
     g_l_new_z = *g_long_param * g_l_temp; // lnew = longparm*trig(lold)
     g_l_old_z = g_l_new_z;
     return 0;
@@ -77,7 +77,7 @@ static int LambdaTrigFractal1()
     {
         return 1;
     }
-    LCMPLXtrig0(g_l_old_z, g_l_temp);     // ltmp = trig(lold)
+    trig0(g_l_old_z, g_l_temp);           // ltmp = trig(lold)
     g_l_new_z = *g_long_param * g_l_temp; // lnew = longparm*trig(lold)
     g_l_old_z = g_l_new_z;
     return 0;
@@ -103,7 +103,7 @@ static int LambdaTrigFractal2()
     {
         return 1;
     }
-    LCMPLXtrig0(g_l_old_z, g_l_temp);     // ltmp = trig(lold)
+    trig0(g_l_old_z, g_l_temp);           // ltmp = trig(lold)
     g_l_new_z = *g_long_param * g_l_temp; // lnew = longparm*trig(lold)
     g_l_old_z = g_l_new_z;
     return 0;
