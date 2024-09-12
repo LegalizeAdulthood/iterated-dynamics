@@ -199,50 +199,50 @@ inline int operator+(token_id value)
     return static_cast<int>(value);
 }
 
-/* ParseErrs() defines; all calls to ParseErrs(), or any variable which will
-   be used as the argument in a call to ParseErrs(), should use one of these
-   defines.
-*/
-enum
+enum class ParseError
 {
-    PE_NO_ERRORS_FOUND = -1,
-    PE_SHOULD_BE_ARGUMENT = 0,
-    PE_SHOULD_BE_OPERATOR = 1,
-    PE_NEED_A_MATCHING_OPEN_PARENS = 2,
-    PE_NEED_MORE_CLOSE_PARENS = 3,
-    PE_UNDEFINED_OPERATOR = 4,
-    PE_UNDEFINED_FUNCTION = 5,
-    PE_TABLE_OVERFLOW = 6,
-    PE_NO_MATCH_RIGHT_PAREN = 7,
-    PE_NO_LEFT_BRACKET_FIRST_LINE = 8,
-    PE_UNEXPECTED_EOF = 9,
-    PE_INVALID_SYM_USING_NOSYM = 10,
-    PE_FORMULA_TOO_LARGE = 11,
-    PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA = 12,
-    PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED = 13,
-    PE_JUMP_NOT_FIRST = 14,
-    PE_NO_CHAR_AFTER_THIS_JUMP = 15,
-    PE_JUMP_NEEDS_BOOLEAN = 16,
-    PE_ENDIF_REQUIRED_AFTER_ELSE = 17,
-    PE_ENDIF_WITH_NO_IF = 18,
-    PE_MISPLACED_ELSE_OR_ELSEIF = 19,
-    PE_UNMATCHED_IF_IN_INIT_SECTION = 20,
-    PE_IF_WITH_NO_ENDIF = 21,
-    PE_ERROR_IN_PARSING_JUMP_STATEMENTS = 22,
-    PE_TOO_MANY_JUMPS = 23,
-    PE_FORMULA_NAME_TOO_LARGE = 24,
-    PE_ILLEGAL_ASSIGNMENT = 25,
-    PE_ILLEGAL_VAR_NAME = 26,
-    PE_INVALID_CONST = 27,
-    PE_ILLEGAL_CHAR = 28,
-    PE_NESTING_TO_DEEP = 29,
-    PE_UNMATCHED_MODULUS = 30,
-    PE_FUNC_USED_AS_VAR = 31,
-    PE_NO_NEG_AFTER_EXPONENT = 32,
-    PE_TOKEN_TOO_LONG = 33,
-    PE_SECOND_COLON = 34,
-    PE_INVALID_CALL_TO_PARSEERRS = 35
+    NONE = -1,
+    SHOULD_BE_ARGUMENT = 0,
+    SHOULD_BE_OPERATOR = 1,
+    NEED_A_MATCHING_OPEN_PARENS = 2,
+    NEED_MORE_CLOSE_PARENS = 3,
+    UNDEFINED_OPERATOR = 4,
+    UNDEFINED_FUNCTION = 5,
+    TABLE_OVERFLOW = 6,
+    NO_MATCH_RIGHT_PAREN = 7,
+    NO_LEFT_BRACKET_FIRST_LINE = 8,
+    UNEXPECTED_EOF = 9,
+    INVALID_SYM_USING_NOSYM = 10,
+    FORMULA_TOO_LARGE = 11,
+    INSUFFICIENT_MEM_FOR_TYPE_FORMULA = 12,
+    COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED = 13,
+    JUMP_NOT_FIRST = 14,
+    NO_CHAR_AFTER_THIS_JUMP = 15,
+    JUMP_NEEDS_BOOLEAN = 16,
+    ENDIF_REQUIRED_AFTER_ELSE = 17,
+    ENDIF_WITH_NO_IF = 18,
+    MISPLACED_ELSE_OR_ELSEIF = 19,
+    UNMATCHED_IF_IN_INIT_SECTION = 20,
+    IF_WITH_NO_ENDIF = 21,
+    ERROR_IN_PARSING_JUMP_STATEMENTS = 22,
+    TOO_MANY_JUMPS = 23,
+    FORMULA_NAME_TOO_LARGE = 24,
+    ILLEGAL_ASSIGNMENT = 25,
+    ILLEGAL_VAR_NAME = 26,
+    INVALID_CONST = 27,
+    ILLEGAL_CHAR = 28,
+    NESTING_TO_DEEP = 29,
+    UNMATCHED_MODULUS = 30,
+    FUNC_USED_AS_VAR = 31,
+    NO_NEG_AFTER_EXPONENT = 32,
+    TOKEN_TOO_LONG = 33,
+    SECOND_COLON = 34,
+    INVALID_CALL_TO_PARSE_ERRS = 35
 };
+inline int operator+(ParseError value)
+{
+    return static_cast<int>(value);
+}
 
 struct PEND_OP
 {
@@ -288,7 +288,7 @@ struct error_data_st
 {
     long start_pos;
     long error_pos;
-    int error_number;
+    ParseError error_number;
 };
 
 // forward declarations
@@ -620,9 +620,10 @@ inline bool check_denom(double denom)
     return false;
 }
 
-static char const *ParseErrs(int which)
+static char const *parse_error_text(ParseError which)
 {
-    static constexpr const char *const ErrStrings[]{
+    // the entries in this array need to correspond to the ParseError enum values
+    static constexpr const char *const messages[]{
         "Should be an Argument",
         "Should be an Operator",
         "')' needs a matching '('",
@@ -653,19 +654,19 @@ static char const *ParseErrs(int which)
         "Invalid constant expression",
         "This character not supported by parser",
         "Nesting of parentheses exceeds maximum depth",
-        R"msg(Unmatched modulus operator "|" in this expression)msg", //last one
+        R"msg(Unmatched modulus operator "|" in this expression)msg",
         "Can't use function name as variable",
         "Negative exponent must be enclosed in parens",
         "Variable or constant exceeds 32 character limit",
         R"msg(Only one ":" permitted in a formula)msg",
         "Invalid ParseErrs code",
     };
-    constexpr int lasterr = std::size(ErrStrings) - 1;
-    if (which > lasterr)
+    constexpr int lasterr = std::size(messages) - 1;
+    if (+which > lasterr)
     {
-        which = lasterr;
+        which = static_cast<ParseError>(lasterr);
     }
-    return ErrStrings[which];
+    return messages[+which];
 }
 
 /* use the following when only float functions are implemented to
@@ -3898,7 +3899,7 @@ int frm_get_param_stuff(char const *Name)
     }
     if (find_file_item(g_formula_filename, Name, &entry_file, gfe_type::FORMULA))
     {
-        stopmsg(ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+        stopmsg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
     while ((c = frmgetchar(entry_file)) != '{' && c != EOF)
@@ -3906,7 +3907,7 @@ int frm_get_param_stuff(char const *Name)
     }
     if (c != '{')
     {
-        stopmsg(ParseErrs(PE_UNEXPECTED_EOF));
+        stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
         std::fclose(entry_file);
         return 0;
     }
@@ -4011,11 +4012,11 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         switch (c)
         {
         case EOF:
-            stopmsg(ParseErrs(PE_UNEXPECTED_EOF));
+            stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
             return false;
         case '\r':
         case '\n':
-            stopmsg(ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+            stopmsg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
             return false;
         case ' ':
         case '\t':
@@ -4037,9 +4038,9 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     if (i > ITEM_NAME_LEN)
     {
         int j;
-        int k = (int) std::strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
+        int k = (int) std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
         char msgbuf[100];
-        std::strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
+        std::strcpy(msgbuf, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
         std::strcat(msgbuf, ":\n   ");
         std::fseek(open_file, filepos, SEEK_SET);
         for (j = 0; j < i && j < 25; j++)
@@ -4063,14 +4064,14 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stopmsg(ParseErrs(PE_UNEXPECTED_EOF));
+                stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
-                stopmsg(stopmsg_flags::FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
-                stopmsg(stopmsg_flags::FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN));
                 return false;
             case ' ':
             case '\t':
@@ -4098,7 +4099,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         }
         if (i == num_names && report_bad_sym)
         {
-            std::string msgbuf{ParseErrs(PE_INVALID_SYM_USING_NOSYM)};
+            std::string msgbuf{parse_error_text(ParseError::INVALID_SYM_USING_NOSYM)};
             msgbuf += ":\n   ";
             msgbuf += sym_buf;
             stopmsg(stopmsg_flags::FIXED_FONT, msgbuf);
@@ -4113,11 +4114,11 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stopmsg(stopmsg_flags::FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
+                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
-                stopmsg(stopmsg_flags::FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
                 done = true;
@@ -4274,7 +4275,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
 
     if (find_file_item(g_formula_filename, name.c_str(), &entry_file, gfe_type::FORMULA))
     {
-        stopmsg(ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+        stopmsg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
     }
 
@@ -4290,7 +4291,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         }
         if (s_uses_jump && fill_jump_struct())
         {
-            stopmsg(ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
+            stopmsg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
             return true;
         }
 
@@ -4399,7 +4400,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
 
     for (int j = 0; j < 3 && s_errors[j].start_pos; j++)
     {
-        bool const initialization_error = s_errors[j].error_number == PE_SECOND_COLON;
+        bool const initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
         std::fseek(open_file, begin_frm, SEEK_SET);
         line_number = 1;
         while (ftell(open_file) != s_errors[j].error_pos)
@@ -4417,7 +4418,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
                 return;
             }
         }
-        std::sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", s_errors[j].error_number, line_number, ParseErrs(s_errors[j].error_number));
+        std::sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number));
         int i = (int) std::strlen(msgbuf);
         std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
         token_count = 0;
@@ -4484,7 +4485,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         {
             std::strcat(msgbuf, " ");
         }
-        if (s_errors[j].error_number == PE_TOKEN_TOO_LONG)
+        if (s_errors[j].error_number == ParseError::TOKEN_TOO_LONG)
         {
             chars_in_error = 33;
         }
@@ -4535,7 +4536,7 @@ static bool frm_prescan(std::FILE * open_file)
     {
         error.start_pos    = 0L;
         error.error_pos    = 0L;
-        error.error_number = 0;
+        error.error_number = ParseError::NONE;
     }
 
     while (!done)
@@ -4550,7 +4551,7 @@ static bool frm_prescan(std::FILE * open_file)
             switch (this_token.id)
             {
             case token_id::END_OF_FILE:
-                stopmsg(ParseErrs(PE_UNEXPECTED_EOF));
+                stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
                 std::fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             case token_id::ILLEGAL_CHARACTER:
@@ -4558,7 +4559,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_ILLEGAL_CHAR;
+                    s_errors[errors_found++].error_number = ParseError::ILLEGAL_CHAR;
                 }
                 break;
             case token_id::ILLEGAL_VARIABLE_NAME:
@@ -4566,7 +4567,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_ILLEGAL_VAR_NAME;
+                    s_errors[errors_found++].error_number = ParseError::ILLEGAL_VAR_NAME;
                 }
                 break;
             case token_id::TOKEN_TOO_LONG:
@@ -4574,7 +4575,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_TOKEN_TOO_LONG;
+                    s_errors[errors_found++].error_number = ParseError::TOKEN_TOO_LONG;
                 }
                 break;
             case token_id::FUNC_USED_AS_VAR:
@@ -4582,7 +4583,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_FUNC_USED_AS_VAR;
+                    s_errors[errors_found++].error_number = ParseError::FUNC_USED_AS_VAR;
                 }
                 break;
             case token_id::JUMP_MISSING_BOOLEAN:
@@ -4590,7 +4591,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_JUMP_NEEDS_BOOLEAN;
+                    s_errors[errors_found++].error_number = ParseError::JUMP_NEEDS_BOOLEAN;
                 }
                 break;
             case token_id::JUMP_WITH_ILLEGAL_CHAR:
@@ -4598,7 +4599,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_NO_CHAR_AFTER_THIS_JUMP;
+                    s_errors[errors_found++].error_number = ParseError::NO_CHAR_AFTER_THIS_JUMP;
                 }
                 break;
             case token_id::UNDEFINED_FUNCTION:
@@ -4606,7 +4607,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_UNDEFINED_FUNCTION;
+                    s_errors[errors_found++].error_number = ParseError::UNDEFINED_FUNCTION;
                 }
                 break;
             case token_id::ILLEGAL_OPERATOR:
@@ -4614,7 +4615,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_UNDEFINED_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::UNDEFINED_OPERATOR;
                 }
                 break;
             case token_id::ILL_FORMED_CONSTANT:
@@ -4622,7 +4623,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_INVALID_CONST;
+                    s_errors[errors_found++].error_number = ParseError::INVALID_CONST;
                 }
                 break;
             default:
@@ -4643,7 +4644,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_NESTING_TO_DEEP;
+                        s_errors[errors_found++].error_number = ParseError::NESTING_TO_DEEP;
                     }
                 }
                 else if (!ExpectingArg)
@@ -4652,7 +4653,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                     }
                 }
                 waiting_for_mod = waiting_for_mod << 1;
@@ -4668,7 +4669,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_NEED_A_MATCHING_OPEN_PARENS;
+                        s_errors[errors_found++].error_number = ParseError::NEED_A_MATCHING_OPEN_PARENS;
                     }
                     s_paren = 0;
                 }
@@ -4678,7 +4679,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
+                        s_errors[errors_found++].error_number = ParseError::UNMATCHED_MODULUS;
                     }
                 }
                 else
@@ -4691,7 +4692,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 break;
@@ -4709,7 +4710,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             ExpectingArg = false;
@@ -4724,7 +4725,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             ExpectingArg = false;
@@ -4739,7 +4740,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             ExpectingArg = false;
@@ -4755,7 +4756,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             ExpectingArg = false;
@@ -4771,7 +4772,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             ExpectingArg = false;
@@ -4786,7 +4787,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             break;
@@ -4799,7 +4800,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                 }
             }
             NewStatement = false;
@@ -4814,7 +4815,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_JUMP_NOT_FIRST;
+                    s_errors[errors_found++].error_number = ParseError::JUMP_NOT_FIRST;
                 }
             }
             else
@@ -4835,7 +4836,7 @@ static bool frm_prescan(std::FILE * open_file)
                         {
                             s_errors[errors_found].start_pos      = statement_pos;
                             s_errors[errors_found].error_pos      = filepos;
-                            s_errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
+                            s_errors[errors_found++].error_number = ParseError::ENDIF_REQUIRED_AFTER_ELSE;
                         }
                     }
                     else if (!waiting_for_endif)
@@ -4844,7 +4845,7 @@ static bool frm_prescan(std::FILE * open_file)
                         {
                             s_errors[errors_found].start_pos      = statement_pos;
                             s_errors[errors_found].error_pos      = filepos;
-                            s_errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
+                            s_errors[errors_found++].error_number = ParseError::MISPLACED_ELSE_OR_ELSEIF;
                         }
                     }
                     break;
@@ -4855,7 +4856,7 @@ static bool frm_prescan(std::FILE * open_file)
                         {
                             s_errors[errors_found].start_pos      = statement_pos;
                             s_errors[errors_found].error_pos      = filepos;
-                            s_errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
+                            s_errors[errors_found++].error_number = ParseError::ENDIF_REQUIRED_AFTER_ELSE;
                         }
                     }
                     else if (!waiting_for_endif)
@@ -4864,7 +4865,7 @@ static bool frm_prescan(std::FILE * open_file)
                         {
                             s_errors[errors_found].start_pos      = statement_pos;
                             s_errors[errors_found].error_pos      = filepos;
-                            s_errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
+                            s_errors[errors_found++].error_number = ParseError::MISPLACED_ELSE_OR_ELSEIF;
                         }
                     }
                     else_has_been_used = else_has_been_used | 1;
@@ -4878,7 +4879,7 @@ static bool frm_prescan(std::FILE * open_file)
                         {
                             s_errors[errors_found].start_pos      = statement_pos;
                             s_errors[errors_found].error_pos      = filepos;
-                            s_errors[errors_found++].error_number = PE_ENDIF_WITH_NO_IF;
+                            s_errors[errors_found++].error_number = ParseError::ENDIF_WITH_NO_IF;
                         }
                         waiting_for_endif = 0;
                     }
@@ -4901,7 +4902,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
+                        s_errors[errors_found++].error_number = ParseError::NEED_MORE_CLOSE_PARENS;
                     }
                     s_paren = 0;
                 }
@@ -4911,7 +4912,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
+                        s_errors[errors_found++].error_number = ParseError::UNMATCHED_MODULUS;
                     }
                     waiting_for_mod = 0;
                 }
@@ -4932,7 +4933,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 if (this_token.id == token_id::OP_COLON && waiting_for_endif)
@@ -4941,7 +4942,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_UNMATCHED_IF_IN_INIT_SECTION;
+                        s_errors[errors_found++].error_number = ParseError::UNMATCHED_IF_IN_INIT_SECTION;
                     }
                     waiting_for_endif = 0;
                 }
@@ -4951,7 +4952,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SECOND_COLON;
+                        s_errors[errors_found++].error_number = ParseError::SECOND_COLON;
                     }
                 }
                 if (this_token.id == token_id::OP_COLON)
@@ -4971,7 +4972,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -4986,7 +4987,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
+                        s_errors[errors_found++].error_number = ParseError::ILLEGAL_ASSIGNMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -4999,7 +5000,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5012,7 +5013,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5025,7 +5026,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5038,7 +5039,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5051,7 +5052,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5068,7 +5069,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_OPERATOR;
                     }
                 }
                 else if ((waiting_for_mod & 1L) && ExpectingArg)
@@ -5077,7 +5078,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 waiting_for_mod = waiting_for_mod ^ 1L; //switch right bit
@@ -5090,7 +5091,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5103,7 +5104,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5116,7 +5117,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5133,7 +5134,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5146,7 +5147,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 ExpectingArg = true;
@@ -5159,7 +5160,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                        s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                     }
                 }
                 filepos = ftell(open_file);
@@ -5170,7 +5171,7 @@ static bool frm_prescan(std::FILE * open_file)
                     {
                         s_errors[errors_found].start_pos      = statement_pos;
                         s_errors[errors_found].error_pos      = filepos;
-                        s_errors[errors_found++].error_number = PE_NO_NEG_AFTER_EXPONENT;
+                        s_errors[errors_found++].error_number = ParseError::NO_NEG_AFTER_EXPONENT;
                     }
                 }
                 else
@@ -5191,7 +5192,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
+                    s_errors[errors_found++].error_number = ParseError::NEED_MORE_CLOSE_PARENS;
                 }
                 s_paren = 0;
             }
@@ -5201,7 +5202,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
+                    s_errors[errors_found++].error_number = ParseError::UNMATCHED_MODULUS;
                 }
                 waiting_for_mod = 0;
             }
@@ -5211,7 +5212,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_IF_WITH_NO_ENDIF;
+                    s_errors[errors_found++].error_number = ParseError::IF_WITH_NO_ENDIF;
                 }
                 waiting_for_endif = 0;
             }
@@ -5221,7 +5222,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+                    s_errors[errors_found++].error_number = ParseError::SHOULD_BE_ARGUMENT;
                 }
                 statement_pos = ftell(open_file);
             }
@@ -5232,7 +5233,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_errors[errors_found].start_pos      = statement_pos;
                     s_errors[errors_found].error_pos      = filepos;
-                    s_errors[errors_found++].error_number = PE_TOO_MANY_JUMPS;
+                    s_errors[errors_found++].error_number = ParseError::TOO_MANY_JUMPS;
                 }
             }
             done = true;
