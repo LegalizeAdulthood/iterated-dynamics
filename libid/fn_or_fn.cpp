@@ -64,7 +64,7 @@ int LambdaTrigOrTrigFractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
-    if ((LCMPLXmod(g_l_old_z)) < g_l_param2.x)
+    if ((modulus(g_l_old_z)) < g_l_param2.x)
     {
         LCMPLXtrig0(g_l_old_z, g_l_temp);
         g_l_new_z = *g_long_param * g_l_temp;
@@ -115,7 +115,7 @@ int JuliaTrigOrTrigFractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
-    if (LCMPLXmod(g_l_old_z) < g_l_param2.x)
+    if (modulus(g_l_old_z) < g_l_param2.x)
     {
         LCMPLXtrig0(g_l_old_z, g_l_temp);
         g_l_new_z = *g_long_param + g_l_temp;

@@ -89,7 +89,7 @@ extern Arg *g_arg2;
 // The following functions allow the complex transcendental functions
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
-inline long LCMPLXmod(const LComplex &z)
+inline long modulus(const LComplex &z)
 {
     return lsqr(z.x) + lsqr(z.y);
 }
