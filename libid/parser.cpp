@@ -3285,7 +3285,7 @@ static bool fill_jump_struct()
     return i < 0;
 }
 
-static int frmgetchar(std::FILE * openfile)
+static int frm_get_char(std::FILE *openfile)
 {
     int c;
     bool done = false;
@@ -3408,7 +3408,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
     }
     while (!done)
     {
-        c = frmgetchar(openfile);
+        c = frm_get_char(openfile);
         switch (c)
         {
         case EOF:
@@ -3440,7 +3440,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 getting_base = false;
                 got_decimal_already = false;
                 filepos = ftell(openfile);
-                c = frmgetchar(openfile);
+                c = frm_get_char(openfile);
                 if (c == '-' || c == '+')
                 {
                     tok->str[i++] = (char) c;
@@ -3509,7 +3509,7 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
 
     while (!done)
     {
-        c = frmgetchar(openfile);
+        c = frm_get_char(openfile);
         switch (c)
         {
 CASE_NUM :
@@ -3526,7 +3526,7 @@ CASE_NUM :
                 std::fprintf(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
-            c = frmgetchar(openfile);
+            c = frm_get_char(openfile);
             if (c == '.' || std::isdigit(c))
             {
                 if (debug_token != nullptr)
@@ -3558,7 +3558,7 @@ CASE_NUM :
         }
         if (!done && frm_get_constant(openfile, &temp_tok))
         {
-            c = frmgetchar(openfile);
+            c = frm_get_char(openfile);
             if (debug_token != nullptr)
             {
                 std::fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
@@ -3624,7 +3624,7 @@ static bool frm_get_alpha(std::FILE *openfile, Token *tok)
     bool var_name_too_long = false;
     long filepos;
     long last_filepos = ftell(openfile);
-    while ((c = frmgetchar(openfile)) != EOF)
+    while ((c = frm_get_char(openfile)) != EOF)
     {
         filepos = ftell(openfile);
         switch (c)
@@ -3721,7 +3721,7 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
     long last_filepos = ftell(openfile);
     int c;
 
-    for (c = frmgetchar(openfile); (c == '\n' || c == ',' || c == ':'); c = frmgetchar(openfile))
+    for (c = frm_get_char(openfile); (c == '\n' || c == ',' || c == ':'); c = frm_get_char(openfile))
     {
         if (c == ':')
         {
@@ -3753,7 +3753,7 @@ static bool frm_get_token(std::FILE *openfile, Token *this_token)
     int i = 1;
     long filepos;
 
-    int c = frmgetchar(openfile);
+    int c = frm_get_char(openfile);
     switch (c)
     {
 CASE_NUM:
@@ -3770,7 +3770,7 @@ CASE_TERMINATOR:
         filepos = ftell(openfile);
         if (c == '<' || c == '>' || c == '=')
         {
-            c = frmgetchar(openfile);
+            c = frm_get_char(openfile);
             if (c == '=')
             {
                 this_token->str[i++] = (char) c;
@@ -3782,7 +3782,7 @@ CASE_TERMINATOR:
         }
         else if (c == '!')
         {
-            c = frmgetchar(openfile);
+            c = frm_get_char(openfile);
             if (c == '=')
             {
                 this_token->str[i++] = (char) c;
@@ -3798,7 +3798,7 @@ CASE_TERMINATOR:
         }
         else if (c == '|')
         {
-            c = frmgetchar(openfile);
+            c = frm_get_char(openfile);
             if (c == '|')
             {
                 this_token->str[i++] = (char) c;
@@ -3810,7 +3810,7 @@ CASE_TERMINATOR:
         }
         else if (c == '&')
         {
-            c = frmgetchar(openfile);
+            c = frm_get_char(openfile);
             if (c == '&')
             {
                 this_token->str[i++] = (char) c;
@@ -3898,7 +3898,7 @@ int frm_get_param_stuff(char const *Name)
         stopmsg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
-    while ((c = frmgetchar(entry_file)) != '{' && c != EOF)
+    while ((c = frm_get_char(entry_file)) != '{' && c != EOF)
     {
     }
     if (c != '{')
