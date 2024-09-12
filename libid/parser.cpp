@@ -65,12 +65,8 @@ using FunctionPtr = Function *;
 enum
 {
     MAX_OPS = 250,
-    MAX_ARGS = 100
-};
-
-enum
-{
-    MAX_JUMPS = 200  // size of JUMP_CONTROL array
+    MAX_ARGS = 100,
+    MAX_JUMPS = 200 // size of JUMP_CONTROL array
 };
 
 enum class jump_control_type
