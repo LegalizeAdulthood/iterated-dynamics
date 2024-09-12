@@ -197,6 +197,12 @@ inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
     out = g_arg2->l;
 }
 
+inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)
+{
+    const long x = multiply(rhs.x, lhs.x, g_bit_shift) - multiply(rhs.y, lhs.y, g_bit_shift);
+    const long y = multiply(rhs.y, lhs.x, g_bit_shift) + multiply(rhs.x, lhs.y, g_bit_shift);
+    return {x, y};
+}
 inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     g_arg1->l = arg1;

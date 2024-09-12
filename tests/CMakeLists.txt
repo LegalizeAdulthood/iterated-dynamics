@@ -35,6 +35,7 @@ add_executable(test-id
     test_lowerize_parameter.cpp
     test_make_path.cpp
     test_math.cpp
+    test_math_lcmplx.cpp
     test_merge_path_names.cpp
     test_open_save_file.cpp
     test_path_match.cpp
