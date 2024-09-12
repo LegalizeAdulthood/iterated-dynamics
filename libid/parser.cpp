@@ -2382,11 +2382,11 @@ static jump_control_type is_jump(char const *Str, int Len)
     return jump_control_type::NONE;
 }
 
-static void NotAFnct()
+static void not_a_funct()
 {
 }
 
-static void FnctNotFound()
+static void funct_not_found()
 {
 }
 
@@ -2434,9 +2434,9 @@ static FunctionPtr is_func(char const *Str, int Len)
                 return *s_func_list[n].ptr;
             }
         }
-        return FnctNotFound;
+        return funct_not_found;
     }
-    return NotAFnct;
+    return not_a_funct;
 }
 
 static void sort_precedence()
@@ -2941,7 +2941,7 @@ static bool parse_formula_text(char const *text)
             }
             else
             {
-                if (const FunctionPtr fn = is_func(&text[s_init_n], Len); fn != NotAFnct)
+                if (const FunctionPtr fn = is_func(&text[s_init_n], Len); fn != not_a_funct)
                 {
                     push_pending_op(fn,  1 - (s_paren + Equals)*15);
                     s_expecting_arg = true;
