@@ -284,7 +284,7 @@ struct SymmetryName
     symmetry_type n;
 };
 
-struct error_data_st
+struct ErrorData
 {
     long start_pos;
     long error_pos;
@@ -374,7 +374,7 @@ static constexpr std::array<char const *, 4> s_jump_list
     "endif"
 };
 static std::string s_formula;
-static std::array<error_data_st, 3> s_errors{};
+static std::array<ErrorData, 3> s_errors{};
 
 static FunctionPtr s_srand{dStkSRand};
 static FunctionPtr s_abs{dStkAbs};
@@ -4532,7 +4532,7 @@ static bool frm_prescan(std::FILE * open_file)
 
     statement_pos = ftell(open_file);
     orig_pos = statement_pos;
-    for (error_data_st &error : s_errors)
+    for (ErrorData &error : s_errors)
     {
         error.start_pos    = 0L;
         error.error_pos    = 0L;
