@@ -207,7 +207,6 @@ add_library(libid
     include/prototyp.h
     include/read_ticker.h
     include/sign.h
-    include/span.h
     include/stack_avail.h
     include/value_saver.h
 )
@@ -439,7 +438,6 @@ source_group("Header Files/plumbing" FILES
     include/os.h
     include/prototyp.h
     include/read_ticker.h
-    include/span.h
     include/special_dirs.h
     include/stack_avail.h
     include/value_saver.h
