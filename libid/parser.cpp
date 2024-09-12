@@ -4135,7 +4135,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     letter of the name of the formula to be prepared. This function
     is called from run_formula() below.
 */
-static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
+static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
 {
     long filepos = ftell(file);
 
@@ -4275,7 +4275,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         return true;
     }
 
-    s_formula = PrepareFormula(entry_file, report_bad_sym);
+    s_formula = prepare_formula(entry_file, report_bad_sym);
     std::fclose(entry_file);
 
     if (!s_formula.empty())  //  No errors while making string
