@@ -60,8 +60,7 @@ int PhoenixFractalcplx()
 int LongPhoenixPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldplus;
-    loldplus = g_l_old_z;
+    LComplex loldplus{g_l_old_z};
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
     {
@@ -69,7 +68,7 @@ int LongPhoenixPlusFractal()
         g_l_temp = g_l_old_z * g_l_temp; // = old^(degree-1)
     }
     loldplus.x += g_long_param->x;
-    const LComplex lnewminus = g_l_temp * loldplus;
+    const LComplex lnewminus{g_l_temp * loldplus};
     g_l_new_z.x = lnewminus.x + multiply(g_long_param->y, s_ltmp2.x, g_bit_shift);
     g_l_new_z.y = lnewminus.y + multiply(g_long_param->y, s_ltmp2.y, g_bit_shift);
     s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
@@ -99,7 +98,7 @@ int PhoenixPlusFractal()
 int LongPhoenixMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldsqr = g_l_old_z * g_l_old_z;
+    LComplex loldsqr{g_l_old_z * g_l_old_z};
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
     {
@@ -107,7 +106,7 @@ int LongPhoenixMinusFractal()
         g_l_temp = g_l_old_z * g_l_temp; // = old^(degree-2)
     }
     loldsqr.x += g_long_param->x;
-    const LComplex lnewminus = g_l_temp * loldsqr;
+    const LComplex lnewminus{g_l_temp * loldsqr};
     g_l_new_z.x = lnewminus.x + multiply(g_long_param->y, s_ltmp2.x, g_bit_shift);
     g_l_new_z.y = lnewminus.y + multiply(g_long_param->y, s_ltmp2.y, g_bit_shift);
     s_ltmp2 = g_l_old_z; // set ltmp2 to Y value
@@ -137,7 +136,7 @@ int PhoenixMinusFractal()
 int LongPhoenixCplxPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldplus = g_l_old_z;
+    LComplex loldplus{g_l_old_z};
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
     {
@@ -146,7 +145,7 @@ int LongPhoenixCplxPlusFractal()
     }
     loldplus.x += g_long_param->x;
     loldplus.y += g_long_param->y;
-    const LComplex lnewminus = g_l_temp * loldplus;
+    const LComplex lnewminus{g_l_temp * loldplus};
     g_l_temp = g_l_param2 * s_ltmp2;
     g_l_new_z.x = lnewminus.x + g_l_temp.x;
     g_l_new_z.y = lnewminus.y + g_l_temp.y;
@@ -179,7 +178,7 @@ int PhoenixCplxPlusFractal()
 int LongPhoenixCplxMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldsqr = g_l_old_z * g_l_old_z;
+    LComplex loldsqr{g_l_old_z * g_l_old_z};
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
     {
@@ -188,7 +187,7 @@ int LongPhoenixCplxMinusFractal()
     }
     loldsqr.x += g_long_param->x;
     loldsqr.y += g_long_param->y;
-    const LComplex lnewminus = g_l_temp * loldsqr;
+    const LComplex lnewminus{g_l_temp * loldsqr};
     g_l_temp = g_l_param2 * s_ltmp2;
     g_l_new_z.x = lnewminus.x + g_l_temp.x;
     g_l_new_z.y = lnewminus.y + g_l_temp.y;
