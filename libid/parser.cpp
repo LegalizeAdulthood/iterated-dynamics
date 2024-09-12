@@ -622,7 +622,7 @@ inline bool check_denom(double denom)
 
 static char const *ParseErrs(int which)
 {
-    static constexpr const char *const ErrStrings[] = {
+    static constexpr const char *const ErrStrings[]{
         "Should be an Argument",
         "Should be an Operator",
         "')' needs a matching '('",
@@ -640,8 +640,8 @@ static char const *ParseErrs(int which)
         "No characters may precede jump instruction",
         "No characters may follow this jump instruction",
         "Jump instruction missing required (boolean argument)",
-        "Next jump after \"else\" must be \"endif\"",
-        R"("endif" has no matching "if")",
+        R"msg(Next jump after "else" must be "endif")msg",
+        R"msg("endif" has no matching "if")msg",
         R"msg(Misplaced "else" or "elseif()")msg",
         R"msg("if ()" in initialization has no matching "endif")msg",
         R"msg("if ()" has no matching "endif")msg",
@@ -653,11 +653,11 @@ static char const *ParseErrs(int which)
         "Invalid constant expression",
         "This character not supported by parser",
         "Nesting of parentheses exceeds maximum depth",
-        R"(Unmatched modulus operator "|" in this expression)", //last one
+        R"msg(Unmatched modulus operator "|" in this expression)msg", //last one
         "Can't use function name as variable",
         "Negative exponent must be enclosed in parens",
         "Variable or constant exceeds 32 character limit",
-        R"(Only one ":" permitted in a formula)",
+        R"msg(Only one ":" permitted in a formula)msg",
         "Invalid ParseErrs code",
     };
     constexpr int lasterr = std::size(ErrStrings) - 1;
