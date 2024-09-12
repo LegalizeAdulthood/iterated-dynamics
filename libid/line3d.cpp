@@ -31,6 +31,7 @@
 #include "stereo.h"
 #include "stop_msg.h"
 #include "version.h"
+#include "video.h"
 
 #include <algorithm>
 #include <array>

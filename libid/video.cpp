@@ -39,7 +39,6 @@ static void (*s_read_span)(int y, int x, int lastx, BYTE *pixels){};
 
 // Global variables (yuck!)
 int g_row_count{};
-int g_vesa_detect{};
 int g_vesa_x_res{};
 int g_vesa_y_res{};
 int g_video_start_x{};
