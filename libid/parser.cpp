@@ -257,7 +257,7 @@ struct JumpPtrs
     int JumpStoPtr;
 };
 
-struct JUMP_CONTROL_ST
+struct JumpControl
 {
     jump_control_type type;
     JumpPtrs ptrs;
@@ -333,7 +333,7 @@ bool g_frm_uses_p5{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
-static std::vector<JUMP_CONTROL_ST> s_jump_control;
+static std::vector<JumpControl> s_jump_control;
 static int s_jump_index{};
 static std::array<Arg, 20> s_stack{};
 static std::vector<Arg *> s_load;
@@ -529,7 +529,7 @@ static constexpr std::array<SymmetryName, 14> s_symmetry_names
 
 inline void push_jump(jump_control_type type)
 {
-    JUMP_CONTROL_ST value{};
+    JumpControl value{};
     value.type = type;
     s_jump_control.push_back(value);
     ++s_jump_index;
