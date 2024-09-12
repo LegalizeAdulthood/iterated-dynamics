@@ -112,5 +112,4 @@ using DHyperComplex = id::HyperComplex<double>;
 using LHyperComplex = id::HyperComplex<long>;
 
 using DComplex = id::Complex<double>;
-using LDComplex = id::Complex<LDBL>;
 using LComplex = id::Complex<long>;
