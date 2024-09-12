@@ -15,7 +15,7 @@
 
 namespace hc
 {
-std::string const DEFAULT_ADOC_FNAME = "index.adoc";
+std::string const DEFAULT_ADOC_FNAME = "id.adoc";
 
 int AsciiDocCompiler::process()
 {

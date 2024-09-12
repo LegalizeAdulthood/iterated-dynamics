@@ -42,13 +42,13 @@ jobs:
       run: asciidoctor --version
   
     - name: Run AsciiDoctor
-      run: asciidoctor build-ci-html-docs/hc/src/index.adoc
+      run: asciidoctor build-ci-html-docs/hc/src/id.adoc
 
     - name: Upload HTML artifact
       uses: actions/upload-artifact@v4
       with:
         name: html-docs
-        path: ${{github.workspace}}/build-ci-html-docs/hc/src/index.html
+        path: ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
 
   build:
     needs: html-docs

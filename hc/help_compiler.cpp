@@ -821,7 +821,7 @@ void HelpCompiler::write_link_source()
             {
                 text.erase(pos);
             }
-            return "index.html#_" + text;
+            return "id.html#_" + text;
         };
         for (std::pair<int, LABEL> &item : topics)
         {

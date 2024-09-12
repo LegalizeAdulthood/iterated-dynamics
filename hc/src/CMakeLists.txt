@@ -40,9 +40,9 @@ set_target_properties(help-links PROPERTIES FOLDER Libraries)
 
 add_custom_target(ascii-doc
     DEPENDS hc
-    SOURCES ${ID_HELP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/index.adoc)
+    SOURCES ${ID_HELP_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/index.adoc
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
     COMMAND hc /i ${CMAKE_CURRENT_SOURCE_DIR} /adoc help.src
     DEPENDS hc
         help.src
@@ -55,16 +55,16 @@ set_target_properties(ascii-doc PROPERTIES FOLDER Docs)
 if(ASCII_DOCTOR)
     add_custom_target(html-doc
         DEPENDS hc ascii-doc
-        SOURCES ${CMAKE_CURRENT_BINARY_DIR}/index.html ${CMAKE_CURRENT_BINARY_DIR}/index.adoc)
+        SOURCES ${CMAKE_CURRENT_BINARY_DIR}/id.html ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/index.html
-        COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/index.adoc
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/index.adoc)
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/id.html
+        COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     set_target_properties(html-doc PROPERTIES FOLDER Docs)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/index.html DESTINATION .)
-    set_property(INSTALL "index.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
-elseif(EXISTS ${CMAKE_SOURCE_DIR}/index.html)
-    message(STATUS "Installing prebuilt index.html")
-    install(FILES ${CMAKE_SOURCE_DIR}/index.html DESTINATION .)
-    set_property(INSTALL "index.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.html DESTINATION .)
+    set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
+elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)
+    message(STATUS "Installing prebuilt id.html")
+    install(FILES ${CMAKE_SOURCE_DIR}/id.html DESTINATION .)
+    set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 endif()
