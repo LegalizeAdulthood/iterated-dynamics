@@ -247,7 +247,7 @@ int LPopcornFractalFn()
 
     // ltmpx contains the generalized value of the old real "x" equation
     LCMPLXtimesreal(g_l_param2, g_l_old_z.y, g_l_temp); // tmp = (C * old.y)
-    LCMPLXtrig1(g_l_temp, ltmpx);                       // tmpx = trig1(tmp)
+    trig1(g_l_temp, ltmpx);                             // tmpx = trig1(tmp)
     fix_overflow(ltmpx);                                //
     ltmpx.x += g_l_old_z.y;                             // tmpx = old.y + trig1(tmp)
     trig0(ltmpx, g_l_temp);                             // tmp = trig0(tmpx)
