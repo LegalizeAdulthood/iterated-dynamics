@@ -3327,7 +3327,7 @@ static int frmgetchar(std::FILE * openfile)
 
 // This function also gets flow control info
 
-static void getfuncinfo(Token *tok)
+static void get_func_info(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(s_func_list.size()); i++)
     {
@@ -3665,7 +3665,7 @@ CASE_NUM:
             }
             tok->str[i] = (char) 0;
             std::fseek(openfile, last_filepos, SEEK_SET);
-            getfuncinfo(tok);
+            get_func_info(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
             {
                 if (tok->type == token_type::NOT_A_TOKEN)
