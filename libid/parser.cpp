@@ -735,17 +735,15 @@ static void mRandom()
     s_vars[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
 
-static void SetRandFnct()
+static void set_random()
 {
-    unsigned Seed;
-
     if (!s_set_random)
     {
         s_rand_num = g_arg1->l.x ^ g_arg1->l.y;
     }
 
-    Seed = (unsigned)s_rand_num ^ (unsigned)(s_rand_num >> 16);
-    srand(Seed);
+    const unsigned int seed = (unsigned) s_rand_num ^ (unsigned) (s_rand_num >> 16);
+    srand(seed);
     s_set_random = true;
 
     // Clear out the seed
@@ -770,7 +768,7 @@ static void RandomSeed()
 
 static void lStkSRand()
 {
-    SetRandFnct();
+    set_random();
     lRandom();
     g_arg1->l = s_vars[7].a.l;
 }
@@ -779,7 +777,7 @@ static void mStkSRand()
 {
     g_arg1->l.x = g_arg1->m.x.Mant ^ (long)g_arg1->m.x.Exp;
     g_arg1->l.y = g_arg1->m.y.Mant ^ (long)g_arg1->m.y.Exp;
-    SetRandFnct();
+    set_random();
     mRandom();
     g_arg1->m = s_vars[7].a.m;
 }
@@ -788,7 +786,7 @@ static void dStkSRand()
 {
     g_arg1->l.x = (long)(g_arg1->d.x * (1L << g_bit_shift));
     g_arg1->l.y = (long)(g_arg1->d.y * (1L << g_bit_shift));
-    SetRandFnct();
+    set_random();
     dRandom();
     g_arg1->d = s_vars[7].a.d;
 }
