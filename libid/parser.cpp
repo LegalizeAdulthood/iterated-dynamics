@@ -2439,12 +2439,12 @@ static FunctionPtr is_func(char const *Str, int Len)
     return NotAFnct;
 }
 
-static void RecSortPrec()
+static void sort_precedence()
 {
     int ThisOp = s_next_op++;
     while (s_op[ThisOp].p > s_op[s_next_op].p && s_next_op < g_operation_index)
     {
-        RecSortPrec();
+        sort_precedence();
     }
     if (s_op_ptr > static_cast<int>(s_fns.size()))
     {
@@ -2964,7 +2964,7 @@ static bool parse_formula_text(char const *text)
     {
         if (s_op[s_next_op].f)
         {
-            RecSortPrec();
+            sort_precedence();
         }
         else
         {
