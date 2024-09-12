@@ -105,7 +105,7 @@ inline void trig1(const LComplex &arg, LComplex &out)
     g_ltrig1();
     out = g_arg1->l;
 }
-inline void LCMPLXtrig2(const LComplex &arg, LComplex &out)
+inline void trig2(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     g_ltrig2();

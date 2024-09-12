@@ -259,7 +259,7 @@ int LPopcornFractalFn()
     LCMPLXtrig3(g_l_temp, ltmpy);                       // tmpy = trig3(tmp)
     fix_overflow(ltmpy);                                //
     ltmpy.x += g_l_old_z.x;                             // tmpy = old.x + trig1(tmp)
-    LCMPLXtrig2(ltmpy, g_l_temp);                       // tmp = trig2(tmpy)
+    trig2(ltmpy, g_l_temp);                             // tmp = trig2(tmpy)
     fix_overflow(g_l_temp);                             //
     ltmpy = g_l_temp * g_l_param;                       // tmpy = tmp * h
 
