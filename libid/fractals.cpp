@@ -452,7 +452,7 @@ int long_mandel_per_pixel()
         g_l_old_z = g_l_init;
     }
 
-    g_l_old_z.x += g_l_param.x;    // initial pertubation of parameters set
+    g_l_old_z.x += g_l_param.x;    // initial perturbation of parameters set
     g_l_old_z.y += g_l_param.y;
     return 1; // 1st iteration has been done
 }
