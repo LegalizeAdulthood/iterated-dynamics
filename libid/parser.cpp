@@ -3359,7 +3359,7 @@ static void getfuncinfo(Token *tok)
     tok->id   = token_id::UNDEFINED_FUNCTION;
 }
 
-static void getvarinfo(Token *tok)
+static void get_var_info(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(s_variables.size()); i++)
     {
@@ -3706,7 +3706,7 @@ CASE_NUM:
                 tok->id   = token_id::JUMP_WITH_ILLEGAL_CHAR;
                 return false;
             }
-            getvarinfo(tok);
+            get_var_info(tok);
             return true;
         }
     }
