@@ -272,7 +272,7 @@ struct Token
     DComplex constant;
 };
 
-struct FNCT_LIST
+struct FunctList
 {
     char const *s;
     FunctionPtr *ptr;
@@ -430,42 +430,42 @@ static FunctionPtr s_trig0{dStkSin};
 static FunctionPtr s_trig1{dStkSqr};
 static FunctionPtr s_trig2{dStkSinh};
 static FunctionPtr s_trig3{dStkCosh};
-static constexpr std::array<FNCT_LIST, 34> s_func_list
+static constexpr std::array<FunctList, 34> s_func_list
 {
-    FNCT_LIST{"sin",   &s_sin},
-    FNCT_LIST{"sinh",  &s_sinh},
-    FNCT_LIST{"cos",   &s_cos},
-    FNCT_LIST{"cosh",  &s_cosh},
-    FNCT_LIST{"sqr",   &s_sqr},
-    FNCT_LIST{"log",   &s_log},
-    FNCT_LIST{"exp",   &s_exp},
-    FNCT_LIST{"abs",   &s_abs},
-    FNCT_LIST{"conj",  &s_conj},
-    FNCT_LIST{"real",  &s_real},
-    FNCT_LIST{"imag",  &s_imag},
-    FNCT_LIST{"fn1",   &s_trig0},
-    FNCT_LIST{"fn2",   &s_trig1},
-    FNCT_LIST{"fn3",   &s_trig2},
-    FNCT_LIST{"fn4",   &s_trig3},
-    FNCT_LIST{"flip",  &s_flip},
-    FNCT_LIST{"tan",   &s_tan},
-    FNCT_LIST{"tanh",  &s_tanh},
-    FNCT_LIST{"cotan", &s_cotan},
-    FNCT_LIST{"cotanh", &s_cotanh},
-    FNCT_LIST{"cosxx", &s_cosxx},
-    FNCT_LIST{"srand", &s_srand},
-    FNCT_LIST{"asin",  &s_asin},
-    FNCT_LIST{"asinh", &s_asinh},
-    FNCT_LIST{"acos",  &s_acos},
-    FNCT_LIST{"acosh", &s_acosh},
-    FNCT_LIST{"atan",  &s_atan},
-    FNCT_LIST{"atanh", &s_atanh},
-    FNCT_LIST{"sqrt",  &s_sqrt},
-    FNCT_LIST{"cabs",  &s_cabs},
-    FNCT_LIST{"floor", &s_floor},
-    FNCT_LIST{"ceil",  &s_ceil},
-    FNCT_LIST{"trunc", &s_trunc},
-    FNCT_LIST{"round", &s_round},
+    FunctList{"sin",   &s_sin},
+    FunctList{"sinh",  &s_sinh},
+    FunctList{"cos",   &s_cos},
+    FunctList{"cosh",  &s_cosh},
+    FunctList{"sqr",   &s_sqr},
+    FunctList{"log",   &s_log},
+    FunctList{"exp",   &s_exp},
+    FunctList{"abs",   &s_abs},
+    FunctList{"conj",  &s_conj},
+    FunctList{"real",  &s_real},
+    FunctList{"imag",  &s_imag},
+    FunctList{"fn1",   &s_trig0},
+    FunctList{"fn2",   &s_trig1},
+    FunctList{"fn3",   &s_trig2},
+    FunctList{"fn4",   &s_trig3},
+    FunctList{"flip",  &s_flip},
+    FunctList{"tan",   &s_tan},
+    FunctList{"tanh",  &s_tanh},
+    FunctList{"cotan", &s_cotan},
+    FunctList{"cotanh", &s_cotanh},
+    FunctList{"cosxx", &s_cosxx},
+    FunctList{"srand", &s_srand},
+    FunctList{"asin",  &s_asin},
+    FunctList{"asinh", &s_asinh},
+    FunctList{"acos",  &s_acos},
+    FunctList{"acosh", &s_acosh},
+    FunctList{"atan",  &s_atan},
+    FunctList{"atanh", &s_atanh},
+    FunctList{"sqrt",  &s_sqrt},
+    FunctList{"cabs",  &s_cabs},
+    FunctList{"floor", &s_floor},
+    FunctList{"ceil",  &s_ceil},
+    FunctList{"trunc", &s_trunc},
+    FunctList{"round", &s_round},
 };
 static std::array<char const *, 17> s_op_list
 {
