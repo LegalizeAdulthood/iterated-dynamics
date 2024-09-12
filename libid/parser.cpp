@@ -3748,7 +3748,7 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
 /*frmgettoken fills token structure; returns 1 on success and 0 on
   NOT_A_TOKEN and END_OF_FORMULA
 */
-static bool frmgettoken(std::FILE *openfile, Token *this_token)
+static bool frm_get_token(std::FILE *openfile, Token *this_token)
 {
     int i = 1;
     long filepos;
@@ -3916,7 +3916,7 @@ int frm_get_param_stuff(char const *Name)
             std::fprintf(debug_token, "%s\n", Name);
         }
     }
-    while (frmgettoken(entry_file, &current_token))
+    while (frm_get_token(entry_file, &current_token))
     {
         if (debug_token != nullptr)
         {
@@ -4184,7 +4184,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     Token temp_tok;
     while (!Done)
     {
-        frmgettoken(file, &temp_tok);
+        frm_get_token(file, &temp_tok);
         if (temp_tok.type == token_type::NOT_A_TOKEN)
         {
             stopmsg(stopmsg_flags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
@@ -4215,7 +4215,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     Done = false;
     while (!Done)
     {
-        frmgettoken(file, &temp_tok);
+        frm_get_token(file, &temp_tok);
         switch (temp_tok.type)
         {
         case token_type::NOT_A_TOKEN:
@@ -4410,7 +4410,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             {
                 stopmsg("Unexpected EOF or end-of-formula in error function.\n");
                 std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
-                frmgettoken(open_file, &tok); //reset file to end of error token
+                frm_get_token(open_file, &tok); //reset file to end of error token
                 return;
             }
         }
@@ -4426,14 +4426,14 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             if (filepos == s_errors[j].error_pos)
             {
                 chars_to_error = statement_len;
-                frmgettoken(open_file, &tok);
+                frm_get_token(open_file, &tok);
                 chars_in_error = (int) std::strlen(tok.str);
                 statement_len += chars_in_error;
                 token_count++;
             }
             else
             {
-                frmgettoken(open_file, &tok);
+                frm_get_token(open_file, &tok);
                 statement_len += (int) std::strlen(tok.str);
                 token_count++;
             }
@@ -4453,7 +4453,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         {
             while (chars_to_error + chars_in_error > 74)
             {
-                frmgettoken(open_file, &tok);
+                frm_get_token(open_file, &tok);
                 chars_to_error -= (int) std::strlen(tok.str);
                 token_count--;
             }
@@ -4466,11 +4466,11 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         }
         while ((int) std::strlen(&msgbuf[i]) <=74 && token_count--)
         {
-            frmgettoken(open_file, &tok);
+            frm_get_token(open_file, &tok);
             std::strcat(msgbuf, tok.str);
         }
         std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
-        frmgettoken(open_file, &tok);
+        frm_get_token(open_file, &tok);
         if ((int) std::strlen(&msgbuf[i]) > 74)
         {
             msgbuf[i + 74] = (char) 0;
@@ -4547,7 +4547,7 @@ static bool frm_prescan(std::FILE * open_file)
     while (!done)
     {
         filepos = ftell(open_file);
-        frmgettoken(open_file, &this_token);
+        frm_get_token(open_file, &this_token);
         s_chars_in_formula += (int) std::strlen(this_token.str);
         switch (this_token.type)
         {
@@ -4934,7 +4934,7 @@ static bool frm_prescan(std::FILE * open_file)
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
                 filepos = ftell(open_file);
-                frmgettoken(open_file, &this_token);
+                frm_get_token(open_file, &this_token);
                 if (this_token.str[0] == '-')
                 {
                     record_error(ParseError::NO_NEG_AFTER_EXPONENT);
