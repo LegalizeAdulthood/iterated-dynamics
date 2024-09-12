@@ -264,7 +264,7 @@ struct JumpControl
     int DestJumpIndex;
 };
 
-struct token_st
+struct Token
 {
     char str[80];
     token_type type;
@@ -3331,7 +3331,7 @@ static int frmgetchar(std::FILE * openfile)
 
 // This function also gets flow control info
 
-static void getfuncinfo(token_st * tok)
+static void getfuncinfo(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(s_func_list.size()); i++)
     {
@@ -3363,7 +3363,7 @@ static void getfuncinfo(token_st * tok)
     tok->id   = token_id::UNDEFINED_FUNCTION;
 }
 
-static void getvarinfo(token_st * tok)
+static void getvarinfo(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(s_variables.size()); i++)
     {
@@ -3396,7 +3396,7 @@ static void getvarinfo(token_st * tok)
         of a complex constant. See is_complex_constant() below. */
 
 // returns 1 on success, 0 on NOT_A_TOKEN
-static bool frmgetconstant(std::FILE * openfile, token_st * tok)
+static bool frmgetconstant(std::FILE *openfile, Token *tok)
 {
     int c;
     int i = 1;
@@ -3493,10 +3493,10 @@ static bool frmgetconstant(std::FILE * openfile, token_st * tok)
     return true;
 }
 
-static void is_complex_constant(std::FILE * openfile, token_st * tok)
+static void is_complex_constant(std::FILE *openfile, Token *tok)
 {
     assert(tok->str[0] == '(');
-    token_st temp_tok;
+    Token temp_tok;
     long filepos;
     int c;
     int sign_value = 1;
@@ -3621,7 +3621,7 @@ CASE_NUM :
     }
 }
 
-static bool frmgetalpha(std::FILE * openfile, token_st * tok)
+static bool frmgetalpha(std::FILE *openfile, Token *tok)
 {
     int c;
     int i = 1;
@@ -3720,7 +3720,7 @@ CASE_NUM:
     return false;
 }
 
-static void frm_get_eos(std::FILE * openfile, token_st * this_token)
+static void frm_get_eos(std::FILE *openfile, Token *this_token)
 {
     long last_filepos = ftell(openfile);
     int c;
@@ -3752,7 +3752,7 @@ static void frm_get_eos(std::FILE * openfile, token_st * this_token)
 /*frmgettoken fills token structure; returns 1 on success and 0 on
   NOT_A_TOKEN and END_OF_FORMULA
 */
-static bool frmgettoken(std::FILE * openfile, token_st * this_token)
+static bool frmgettoken(std::FILE *openfile, Token *this_token)
 {
     int i = 1;
     long filepos;
@@ -3883,7 +3883,7 @@ int frm_get_param_stuff(char const *Name)
 {
     std::FILE *debug_token = nullptr;
     int c;
-    token_st current_token;
+    Token current_token;
     std::FILE * entry_file = nullptr;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
@@ -4185,7 +4185,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
     bool Done = false;
 
     //skip opening end-of-lines
-    token_st temp_tok;
+    Token temp_tok;
     while (!Done)
     {
         frmgettoken(file, &temp_tok);
@@ -4388,7 +4388,7 @@ void free_workarea()
 
 static void frm_error(std::FILE * open_file, long begin_frm)
 {
-    token_st tok;
+    Token tok;
     int chars_to_error = 0;
     int chars_in_error = 0;
     int token_count;
@@ -4511,7 +4511,7 @@ static bool frm_prescan(std::FILE * open_file)
     long statement_pos;
     long orig_pos;
     bool done = false;
-    token_st this_token;
+    Token this_token;
     int errors_found = 0;
     bool ExpectingArg = true;
     bool NewStatement = true;
