@@ -250,17 +250,17 @@ struct PendingOp
     int p;
 };
 
-struct JUMP_PTRS_ST
+struct JumpPtrs
 {
-    int      JumpOpPtr;
-    int      JumpLodPtr;
-    int      JumpStoPtr;
+    int JumpOpPtr;
+    int JumpLodPtr;
+    int JumpStoPtr;
 };
 
 struct JUMP_CONTROL_ST
 {
     jump_control_type type;
-    JUMP_PTRS_ST ptrs;
+    JumpPtrs ptrs;
     int DestJumpIndex;
 };
 
@@ -3171,7 +3171,7 @@ int form_per_pixel()
     return g_overflow ? 0 : 1;
 }
 
-static int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
+static int fill_if_group(int endif_index, JumpPtrs* jump_data)
 {
     int i   = endif_index;
     int ljp = endif_index; // ljp means "last jump processed"
@@ -3217,7 +3217,7 @@ static bool fill_jump_struct()
     FunctionPtr JumpFunc = nullptr;
     bool find_new_func = true;
 
-    std::vector<JUMP_PTRS_ST> jump_data;
+    std::vector<JumpPtrs> jump_data;
 
     for (s_op_ptr = 0; s_op_ptr < (int) s_op_count; s_op_ptr++)
     {
@@ -3263,7 +3263,7 @@ static bool fill_jump_struct()
         }
         else if (*(s_fns[s_op_ptr]) == JumpFunc)
         {
-            JUMP_PTRS_ST value{};
+            JumpPtrs value{};
             value.JumpOpPtr = s_op_ptr;
             value.JumpLodPtr = loadcount;
             value.JumpStoPtr = storecount;
