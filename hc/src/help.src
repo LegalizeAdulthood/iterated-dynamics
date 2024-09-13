@@ -17,7 +17,7 @@
    { Introduction }                         { Distribution of Iterated Dynamics }
    { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
-   { New Features in 1.0 }                  { A Word About the Authors }
+   { New Features in 1.1 }                  { A Word About the Authors }
 
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Unix }
@@ -38,7 +38,7 @@
 ;
 ;
 ~DocContents
-{     , 0, "New Features in 1.0", FF}
+{     , 0, "New Features in 1.1", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
 {1.   , 0, Iterated Dynamics Commands, FF}
@@ -257,7 +257,7 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ;
-~Topic=New Features in 1.0
+~Topic=New Features in 1.1
 Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
 its own history spanning many years.  Please consult the Fractint help
 for its history.  To avoid being confused with a new release of Fractint,
@@ -269,77 +269,12 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-New features in Version 1.0:
+New features in Version 1.1:
 
-o New formula file MandelbrotDerivatives.frm with Burning Ship,
-  Perpendicular Mandelbrot, Heart Mandelbrot, Mandelbar and other
-  Mandelbrot set formula variations.  The parameter file BurningShip.par
-  provides example parameters for these variations.  Contributed by
-  Paul de Leeuw.
-o New $cpu$ comment variable expands to a description of your CPU.\
-o Long filenames are now supported throughout.\
-o All filename parameters are now case sensitive.\
-o When browsing for files, e.g. <R>estoring *.GIF files, filenames are
-  compared case insensitive against wildcard search masks.
-o Added new fractal types {Mandelbrot Mix 4} and {DivideBrot5} by Jim Muth.
-  DivideBrot5 has arbitrary precision (AP) math support.  Note that image
-  skewing and inversion are not  supported by the AP math routines. See
-  {Arbitrary Precision and Deep Zooming} for other features not supported.
-o The orbitsavename parameter was added to specify the name of the raw
-  orbits file.  The orbits file, if it exists, is overwritten when
-  overwrite=yes.  Otherwise, the value of orbitsavename is incremented until
-  a filename is formed that does not exist.
-o The autokeyname parameter was enhanced to create a unique filename when
-  autokey=record unless overwrite=yes is specified.
-o Disk video buffer sizes were dramatically increased.\
-o The formula parser has been enhanced to remove internal size limitations.
-  The only limit on formula parsing is available memory.
-o The savedir parameter was added to specify the default directory used
-  for writing any files.  Since a Windows program is typically installed to
-  the Program Files directory, which is read-only, it cannot be assumed that
-  Id can write to the directory in which it is located.
-
-Additional changes in Version 1.0:
-
-o Most of the changes involve internal restructuring of the DOS Fractint
-  code to build a bridge to the future.
-o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
-  CMake build system and vcpkg for obtaining 3rd party library dependencies.
-o All assembly language code has been removed and, where practical, replaced
-  with C++ code that performs the same function.
-o A CGA text display is simulated for all prompt screens and help
-  screens.
-o A "video mode" determines the resolution of all saved images and is
-  provided by a driver.  Iterated Dynamics comes with two drivers: Disk and
-  GDI.  The GDI driver renders to the screen through the Windows GDI
-  interface.  The disk driver can be used to render images larger than your
-  physical screen, but still uses your screen's GUI for displaying status
-  with a CGA style window.
-o Id.cfg, which defines the default video modes, was updated to remove all
-  modes smaller than 800x600 and very large disk video modes were added.
-o DOS related information in video modes was dropped.\
-o All online help text has been reviewed and revised to drop DOS specific
-  discussions.  Where still appropriate the text has been updated to reflect
-  that Id is a program operating in a windowed environment.
-o The release parameter resets all values to their default but does not enable
-  any backwards compatible behavior in this release.  For backward
-  compatability with old behavior, use Fractint.
-o The monitorwidth parameter was renamed to stereowidth.  The old parameter
-  name is still accepted but will be deprecated in a future release.
-o Printing an image has been removed.  Use your operating system for that.
-  :)
-o The following parameter file commands are deprecated and support will be
-  removed in a future release.  In this release the arguments are parsed
-  and validated and the results ignored.\
-      adapter             halftone              ramvideo\
-      afi                 iterincr              rleps\
-      biospalette         linefeed              textsafe\
-      colorps             maxcolorres           title\
-      comport             noninterlaced         tplus\
-      epsf                pixelzoom             translate\
-      exitmode            plotstyle             tweaklzw\
-      fpu                 printer               vesadetect\
-      gif87a              printfile
+o When the monitor configuration changed since the last time Id was run
+  and the previous window position is no longer on-screen, the previous
+  window position is forgotten and the window is placed by the system.
+  (Fixes #136)
 
 Known limitations:
 
