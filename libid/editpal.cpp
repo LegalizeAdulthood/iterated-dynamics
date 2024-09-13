@@ -325,6 +325,9 @@ static bool s_inverse{};
 static float s_gamma_val{1.0f};
 static Cursor s_cursor{};
 
+static void clip_put_color(int x, int y, int color);
+static int clip_get_color(int x, int y);
+
 // Interface to graphics stuff
 static void set_pal(int pal, int r, int g, int b)
 {
@@ -426,7 +429,7 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
     read_span(row, start, stop, pixels);
 }
 
-void clip_put_color(int x, int y, int color)
+static void clip_put_color(int x, int y, int color)
 {
     if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
     {
@@ -436,7 +439,7 @@ void clip_put_color(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-int clip_get_color(int x, int y)
+static int clip_get_color(int x, int y)
 {
     if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
     {
