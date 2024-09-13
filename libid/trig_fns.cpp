@@ -26,7 +26,7 @@ trig_funct_lst g_trig_fn[] =
     {"exp",   dStkExp,   dStkExp,   dStkExp   },
     {"log",   dStkLog,   dStkLog,   dStkLog   },
     {"sqr",   dStkSqr,   dStkSqr,   dStkSqr   },
-    {"recip", dStkRecip, dStkRecip, dStkRecip }, // from recip on new in v16
+    {"recip", dStkRecip, dStkRecip, dStkRecip },
     {"ident", StkIdent,  StkIdent,  StkIdent  },
     {"cos",   dStkCos,   dStkCos,   dStkCos   },
     {"tan",   dStkTan,   dStkTan,   dStkTan   },
