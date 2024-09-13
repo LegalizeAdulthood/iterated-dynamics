@@ -6,7 +6,6 @@
 #include "id_keys.h"
 
 #include "win_defines.h"
-
 #include <tchar.h>
 #include <Windows.h>
 #include <windowsx.h>
@@ -32,6 +31,12 @@ Frame g_frame{};
 constexpr const TCHAR *const LEFT_POS{_T("Left")};
 constexpr const TCHAR *const TOP_POS{_T("Top")};
 constexpr const TCHAR *const WINDOW_POS_KEY{_T("SOFTWARE\\" ID_VENDOR_NAME "\\" ID_PROGRAM_NAME "\\Settings\\Window")};
+
+static void forget_frame_position(CRegKey &key)
+{
+    key.DeleteValue(LEFT_POS);
+    key.DeleteValue(TOP_POS);
+}
 
 static void save_frame_position(HWND window)
 {
@@ -70,6 +75,13 @@ static POINT get_saved_frame_position()
         pos.x = CW_USEDEFAULT;
         pos.y = CW_USEDEFAULT;
     }
+    HMONITOR monitor{MonitorFromPoint(pos, MONITOR_DEFAULTTONULL)};
+    if (monitor == nullptr)
+    {
+        forget_frame_position(key);
+        return {};
+    }
+
     return pos;
 }
 
