@@ -49,7 +49,7 @@
 
 VIDEOINFO g_video_entry{};                                    //
 help_labels g_help_mode{};                                    //
-int g_look_at_mouse{};                                        // see notes at mouseread routine
+int g_look_at_mouse{};                                        //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h
 std::string g_fractal_search_dir1;                            //
 std::string g_fractal_search_dir2;                            //
@@ -238,7 +238,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         std::memcpy(g_dac_box, g_old_dac_box, 256*3);   // restore in case colors= present
     }
 
-    g_look_at_mouse = 0;                     // ignore mouse
+    g_look_at_mouse = +MouseLook::IGNORE;
 
     while (g_show_file <= 0)              // image is to be loaded
     {
@@ -299,7 +299,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
     g_help_mode = help_labels::HELP_MENU;                 // now use this help mode
     g_tab_mode = true;
-    g_look_at_mouse = 0;                     // ignore mouse
+    g_look_at_mouse = +MouseLook::IGNORE;
 
     if (((g_overlay_3d && (g_init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed
     {

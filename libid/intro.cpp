@@ -32,7 +32,7 @@ void intro()
     char screen_text[32768];
 
     g_timer_start -= std::clock();       // "time out" during help
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, 0}; // de-activate full mouse checking
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
     ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_MENU};
 
     int i = 32767 + read_help_topic(help_labels::INTRO_AUTHORS, 0, 32767, screen_text);

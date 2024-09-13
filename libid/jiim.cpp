@@ -31,6 +31,7 @@
 #include "pixel_grid.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "value_saver.h"
 #include "video.h"
 #include "zoom.h"
 
@@ -479,7 +480,6 @@ void Jiim(jiim_types which)
     bool exact = false;
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...
-    int       old_look_at_mouse = g_look_at_mouse;
     double cr;
     double ci;
     double r;
@@ -532,7 +532,7 @@ void Jiim(jiim_types which)
     aspect = ((double)g_logical_screen_x_dots*3)/((double)g_logical_screen_y_dots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
-    g_look_at_mouse = 3;
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
 
     if (which == jiim_types::ORBIT)
     {
@@ -1308,7 +1308,6 @@ finish:
 #endif
     g_line_buff.clear();
     s_screen_rect.clear();
-    g_look_at_mouse = old_look_at_mouse;
     g_using_jiim = false;
     g_calc_type = oldcalctype;
     g_debug_flag = old_debugflag;

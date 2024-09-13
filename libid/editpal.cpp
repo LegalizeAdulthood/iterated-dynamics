@@ -2915,7 +2915,7 @@ PalTable::~PalTable()
 
 void EditPalette()
 {
-    ValueSaver saved_look_at_mouse(g_look_at_mouse, 3);
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
     ValueSaver saved_logical_screen_x_offset(g_logical_screen_x_offset, 0);
     ValueSaver saved_logical_screen_y_offset(g_logical_screen_y_offset, 0);
 

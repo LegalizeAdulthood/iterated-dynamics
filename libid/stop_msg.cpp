@@ -13,6 +13,7 @@
 #include "id_keys.h"
 #include "os.h"
 #include "text_screen.h"
+#include "value_saver.h"
 
 #include <cstdio>
 #include <cstring>
@@ -50,7 +51,6 @@ bool stopmsg(stopmsg_flags flags, const std::string &msg)
 {
     int toprow;
     int color;
-    int old_look_at_mouse;
     static bool batchmode = false;
     if (g_debug_flag != debug_flags::none || g_init_batch >= batch_modes::NORMAL)
     {
@@ -85,8 +85,7 @@ bool stopmsg(stopmsg_flags flags, const std::string &msg)
         batchmode = true; // fixes *second* stopmsg in batch mode bug
         return true;
     }
-    old_look_at_mouse = g_look_at_mouse;
-    g_look_at_mouse = -13;
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, -ID_KEY_ENTER};
     if (bit_set(flags, stopmsg_flags::NO_STACK))
     {
         blankrows(toprow = 12, 10, 7);
@@ -136,6 +135,5 @@ bool stopmsg(stopmsg_flags flags, const std::string &msg)
     {
         driver_unstack_screen();
     }
-    g_look_at_mouse = old_look_at_mouse;
     return ret;
 }

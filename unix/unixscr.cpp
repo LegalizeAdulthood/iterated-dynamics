@@ -1481,7 +1481,7 @@ xhandleevents()
 
 #define MSCALE 1
 
-                if (g_look_at_mouse == 3 && bnum != 0)
+                if (g_look_at_mouse == +MouseLook::POSITION && bnum != 0)
                 {
                     dx += (xevent.xmotion.x-lastx)/MSCALE;
                     dy += (xevent.xmotion.y-lasty)/MSCALE;
@@ -1501,7 +1501,7 @@ xhandleevents()
         {
             int done = 0;
             int banding = 0;
-            if (g_look_at_mouse == 3 || !g_zoom_off)
+            if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_off)
             {
                 lastx = xevent.xbutton.x;
                 lasty = xevent.xbutton.y;
@@ -1651,7 +1651,7 @@ xhandleevents()
         }  // End switch
     }  // End while
 
-    if (!xbufkey && g_editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
+    if (!xbufkey && g_editpal_cursor && !g_inside_help && g_look_at_mouse == +MouseLook::POSITION &&
             (dx != 0 || dy != 0))
     {
         if (ABS(dx) > ABS(dy))

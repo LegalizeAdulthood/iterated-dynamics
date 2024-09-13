@@ -556,7 +556,7 @@ resumeloop:                             // return here on failed overlays
             }
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
             {
-                g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -ID_KEY_PAGE_UP : 3;
+                g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     kbdchar = ID_KEY_ENTER;  // no visible reason to stop, continue

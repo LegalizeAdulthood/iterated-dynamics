@@ -7,6 +7,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "round_float_double.h"
+#include "value_saver.h"
 
 #include <cmath>
 #include <cstdio>
@@ -27,8 +28,7 @@ int input_field(
     int curkey;
     int i;
     int j;
-    int old_look_at_mouse = g_look_at_mouse;
-    g_look_at_mouse = 0;
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
     int ret = -1;
     std::strcpy(savefld, fld);
     int insert = 0;
@@ -205,6 +205,5 @@ int input_field(
         }
     }
 inpfld_end:
-    g_look_at_mouse = old_look_at_mouse;
     return ret;
 }

@@ -861,8 +861,7 @@ int help()
         return 0;
     }
 
-    old_look_at_mouse = g_look_at_mouse;
-    g_look_at_mouse = 0;
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
     g_timer_start -= std::clock();
     driver_stack_screen();
 
@@ -877,7 +876,7 @@ int help()
         next.topic_off = 0;
     }
 
-    help_labels const old_help_mode = g_help_mode;
+    const help_labels old_help_mode = g_help_mode;
 
     if (curr_hist <= 0)
     {
@@ -980,7 +979,6 @@ int help()
     while (action != ACTION_QUIT);
 
     driver_unstack_screen();
-    g_look_at_mouse = old_look_at_mouse;
     g_help_mode = old_help_mode;
     g_timer_start += std::clock();
 
