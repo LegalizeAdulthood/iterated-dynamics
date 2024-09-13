@@ -26,6 +26,9 @@
 #ifndef STRICT
 #define STRICT
 #endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <crtdbg.h>
 #endif
 

@@ -23,14 +23,9 @@
 #include "instance.h"
 #include "tos.h"
 
+#include "win_defines.h"
 #include <direct.h>
 #include <io.h>
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef STRICT
-#define STRICT
-#endif
 #include <Windows.h>
 #include <Shlwapi.h>
 #include <DbgHelp.h>

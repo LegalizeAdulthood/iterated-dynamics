@@ -1,11 +1,6 @@
 #include "special_dirs.h"
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef STRICT
-#define STRICT
-#endif
+#include "win_defines.h"
 #include <ShlObj.h>
 #include <Windows.h>
 

@@ -5,12 +5,8 @@
 #include "id.h"
 #include "id_keys.h"
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef STRICT
-#define STRICT
-#endif
+#include "win_defines.h"
+
 #include <tchar.h>
 #include <Windows.h>
 #include <windowsx.h>
