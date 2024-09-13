@@ -4128,9 +4128,9 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 */
 static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
 {
-    long filepos = ftell(file);
+    const long filepos{ftell(file)};
 
-    //Test for a repeat
+    // Test for a repeat
     if (!frm_check_name_and_sym(file, report_bad_sym))
     {
         std::fseek(file, filepos, SEEK_SET);
@@ -4148,7 +4148,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         return {};
     }
 
-    std::FILE *debug_fp = nullptr;
+    std::FILE *debug_fp{};
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
         debug_fp = open_save_file("debugfrm.txt", "at");
@@ -4167,13 +4167,13 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         }
     }
 
-    std::string FormulaStr;
+    std::string formula_text;
 
-    bool Done = false;
+    bool done{};
 
-    //skip opening end-of-lines
+    // skip opening end-of-lines
     Token temp_tok;
-    while (!Done)
+    while (!done)
     {
         frm_get_token(file, &temp_tok);
         if (temp_tok.type == token_type::NOT_A_TOKEN)
@@ -4198,19 +4198,19 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         }
         if (temp_tok.str[0] != ',')
         {
-            FormulaStr += temp_tok.str;
-            Done = true;
+            formula_text += temp_tok.str;
+            done = true;
         }
     }
 
-    Done = false;
-    while (!Done)
+    done = false;
+    while (!done)
     {
         frm_get_token(file, &temp_tok);
         switch (temp_tok.type)
         {
         case token_type::NOT_A_TOKEN:
-            stopmsg(stopmsg_flags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
+            stopmsg(stopmsg_flags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
             std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
@@ -4218,25 +4218,25 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
             }
             return {};
         case token_type::END_OF_FORMULA:
-            Done = true;
+            done = true;
             std::fseek(file, filepos, SEEK_SET);
             break;
         default:
-            FormulaStr += temp_tok.str;
+            formula_text += temp_tok.str;
             break;
         }
     }
 
-    if (debug_fp != nullptr && !FormulaStr.empty())
-    {
-        std::fprintf(debug_fp, "   %s\n", FormulaStr.c_str());
-    }
     if (debug_fp != nullptr)
     {
+        if (!formula_text.empty())
+        {
+            std::fprintf(debug_fp, "   %s\n", formula_text.c_str());
+        }
         std::fclose(debug_fp);
     }
 
-    return FormulaStr;
+    return formula_text;
 }
 
 int bad_formula()
