@@ -239,7 +239,7 @@ void rotate(int direction)      // rotate-the-palette routine
         case ID_KEY_F9:
         case ID_KEY_F10:
 #ifndef XFRACT
-            fkey = kbdchar-1058;
+            fkey = kbdchar - (ID_KEY_F1 - 1);
 #else
             switch (kbdchar)
             {

@@ -277,9 +277,6 @@ static const int mousefkey[4][4] /* [button][dir] */ = {
     {ID_KEY_CTL_END, ID_KEY_CTL_HOME, ID_KEY_CTL_PAGE_DOWN, ID_KEY_CTL_PAGE_UP}
 };
 
-extern bool g_editpal_cursor;
-extern void Cursor_SetPos(int x, int y);
-
 #define SENS 1
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))

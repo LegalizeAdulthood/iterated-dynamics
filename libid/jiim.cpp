@@ -677,9 +677,7 @@ void Jiim(jiim_types which)
     bool still = true;
     zoom = 1;
 
-#ifdef XFRACT
     Cursor_StartMouseTracking();
-#endif
 
     while (still)
     {
@@ -1304,9 +1302,7 @@ finish:
             g_has_inverse = savehasinverse;
         }
     }
-#ifdef XFRACT
     Cursor_EndMouseTracking();
-#endif
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;

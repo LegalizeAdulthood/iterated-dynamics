@@ -42,12 +42,8 @@ enum
     CURSOR_SIZE = 5, // length of one side of the x-hair cursor
     BOX_INC = 1,
     CSIZE_INC = 2,
-#ifndef XFRACT
-    CURSOR_BLINK_RATE = 3, // timer ticks between cursor blinks
-#else
     CURSOR_BLINK_RATE = 300, // timer ticks between cursor blinks
-#endif
-    FAR_RESERVE = 8192L, // amount of mem we will leave avail.
+    FAR_RESERVE = 8192L,     // amount of mem we will leave avail.
     TITLE_LEN = 17,
     CEditor_WIDTH = 8 * 3 + 4,
     CEditor_DEPTH = 8 + 4,
@@ -83,17 +79,34 @@ struct PALENTRY
 //            IMPORTANT: Call Cursor_Construct before you use any other
 //            Cursor_ function!
 //
-struct Cursor
+class Cursor
 {
-    int x;
-    int y;
-    int     hidden;       // >0 if mouse hidden
-    long    last_blink;
-    bool blink;
-    char    t[CURSOR_SIZE];        // save line segments here
-    char    b[CURSOR_SIZE];
-    char    l[CURSOR_SIZE];
-    char    r[CURSOR_SIZE];
+public:
+    Cursor();
+    void draw();
+    void save();
+    void restore();
+    void set_pos(int x, int y);
+    void move(int xoff, int yoff);
+    int get_x() const;
+    int get_y() const;
+    void check_blink();
+    int wait_key();
+    void hide();
+    void show();
+    void start_mouse_tracking();
+    void end_mouse_tracking();
+
+private:
+    int m_x;
+    int m_y;
+    int m_hidden; // >0 if mouse hidden
+    long m_last_blink;
+    bool m_blink;
+    char m_top[CURSOR_SIZE]; // save line segments here
+    char m_bottom[CURSOR_SIZE];
+    char m_left[CURSOR_SIZE];
+    char m_right[CURSOR_SIZE];
 };
 
 //
@@ -313,11 +326,9 @@ private:
 
 bool g_using_jiim{};
 std::vector<BYTE> g_line_buff;
+bool g_editpal_cursor{};
 
 static const char *s_undo_file{"id.$$2"};  // file where undo list is stored
-#ifdef XFRACT
-bool g_editpal_cursor{};
-#endif
 static BYTE s_fg_color{};
 static BYTE s_bg_color{};
 static bool s_reserve_colors{};
@@ -652,18 +663,22 @@ static void draw_diamond(int x, int y, int color)
     g_put_color(x+2, y+4,    color);
 }
 
-// private:
-static  void    Cursor__Draw();
-static  void    Cursor__Save();
-static  void    Cursor__Restore();
+Cursor::Cursor() :
+    m_x(g_screen_x_dots / 2),
+    m_y(g_screen_y_dots / 2),
+    m_hidden(1),
+    m_last_blink{},
+    m_blink{},
+    m_top{},
+    m_bottom{},
+    m_left{},
+    m_right{}
+{
+}
 
 void Cursor_Construct()
 {
-    s_cursor.x = g_screen_x_dots / 2;
-    s_cursor.y = g_screen_y_dots / 2;
-    s_cursor.hidden = 1;
-    s_cursor.blink = false;
-    s_cursor.last_blink = 0;
+    s_cursor = Cursor();
 }
 
 MoveBox::MoveBox(int x, int y, int csize, int base_width, int base_depth) :
@@ -727,9 +742,9 @@ void CEditor::draw()
         return;
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
     displayf(m_x + 2, m_y + 2, s_fg_color, s_bg_color, "%c%02d", m_letter, m_val);
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void CEditor::set_pos(int x, int y)
@@ -767,17 +782,15 @@ int CEditor::edit()
 
     if (!m_hidden)
     {
-        Cursor_Hide();
+        s_cursor.hide();
         rect(m_x, m_y, CEditor_WIDTH, CEditor_DEPTH, s_fg_color);
-        Cursor_Show();
+        s_cursor.show();
     }
 
-#ifdef XFRACT
-    Cursor_StartMouseTracking();
-#endif
+    s_cursor.start_mouse_tracking();
     while (!m_done)
     {
-        Cursor_WaitKey();
+        s_cursor.wait_key();
         key = driver_get_key();
 
         switch (key)
@@ -872,15 +885,13 @@ int CEditor::edit()
             break;
         } // switch
     }     // while
-#ifdef XFRACT
-    Cursor_EndMouseTracking();
-#endif
+    s_cursor.end_mouse_tracking();
 
     if (!m_hidden)
     {
-        Cursor_Hide();
+        s_cursor.hide();
         rect(m_x, m_y, CEditor_WIDTH, CEditor_DEPTH, s_bg_color);
-        Cursor_Show();
+        s_cursor.show();
     }
 
     return key;
@@ -980,12 +991,10 @@ bool MoveBox::process()
 
     draw();
 
-#ifdef XFRACT
-    Cursor_StartMouseTracking();
-#endif
+    s_cursor.start_mouse_tracking();
     while (true)
     {
-        Cursor_WaitKey();
+        s_cursor.wait_key();
         key = driver_get_key();
 
         if (key == ID_KEY_ENTER || key == ID_KEY_ENTER_2 || key == ID_KEY_ESC || key == 'H' || key == 'h')
@@ -1007,7 +1016,7 @@ bool MoveBox::process()
             move(key);
             break;
 
-        case ID_KEY_PAGE_UP:   // shrink
+        case ID_KEY_PAGE_UP: // shrink
             if (m_csize > CSIZE_MIN)
             {
                 int t = m_csize - CSIZE_INC;
@@ -1022,30 +1031,30 @@ bool MoveBox::process()
 
                 change = m_csize - t;
                 m_csize = t;
-                m_x += (change*16) / 2;
-                m_y += (change*16) / 2;
+                m_x += (change * 16) / 2;
+                m_y += (change * 16) / 2;
                 draw();
             }
             break;
 
-        case ID_KEY_PAGE_DOWN:   // grow
+        case ID_KEY_PAGE_DOWN: // grow
         {
             int max_width = std::min(g_screen_x_dots, MAX_WIDTH);
 
-            if (m_base_depth+(m_csize+CSIZE_INC)*16+1 < g_screen_y_dots
-                && m_base_width+(m_csize+CSIZE_INC)*16+1 < max_width)
+            if (m_base_depth + (m_csize + CSIZE_INC) * 16 + 1 < g_screen_y_dots &&
+                m_base_width + (m_csize + CSIZE_INC) * 16 + 1 < max_width)
             {
                 erase();
-                m_x -= (CSIZE_INC*16) / 2;
-                m_y -= (CSIZE_INC*16) / 2;
+                m_x -= (CSIZE_INC * 16) / 2;
+                m_y -= (CSIZE_INC * 16) / 2;
                 m_csize += CSIZE_INC;
-                if (m_y+m_base_depth+m_csize*16+1 > g_screen_y_dots)
+                if (m_y + m_base_depth + m_csize * 16 + 1 > g_screen_y_dots)
                 {
-                    m_y = g_screen_y_dots - (m_base_depth+m_csize*16+1);
+                    m_y = g_screen_y_dots - (m_base_depth + m_csize * 16 + 1);
                 }
-                if (m_x+m_base_width+m_csize*16+1 > max_width)
+                if (m_x + m_base_width + m_csize * 16 + 1 > max_width)
                 {
-                    m_x = max_width - (m_base_width+m_csize*16+1);
+                    m_x = max_width - (m_base_width + m_csize * 16 + 1);
                 }
                 if (m_y < 0)
                 {
@@ -1062,9 +1071,7 @@ bool MoveBox::process()
         }
     }
 
-#ifdef XFRACT
-    Cursor_EndMouseTracking();
-#endif
+    s_cursor.end_mouse_tracking();
 
     erase();
 
@@ -1073,157 +1080,199 @@ bool MoveBox::process()
     return key != ID_KEY_ESC;
 }
 
-static void Cursor__Draw()
+void Cursor::draw()
 {
     int color;
 
     find_special_colors();
-    color = s_cursor.blink ? g_color_medium : g_color_dark;
+    color = m_blink ? g_color_medium : g_color_dark;
 
-    ver_line(s_cursor.x, s_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, color);
-    ver_line(s_cursor.x, s_cursor.y+2,             CURSOR_SIZE, color);
+    ver_line(m_x, m_y-CURSOR_SIZE-1, CURSOR_SIZE, color);
+    ver_line(m_x, m_y+2,             CURSOR_SIZE, color);
 
-    hor_line(s_cursor.x-CURSOR_SIZE-1, s_cursor.y, CURSOR_SIZE, color);
-    hor_line(s_cursor.x+2,             s_cursor.y, CURSOR_SIZE, color);
+    hor_line(m_x-CURSOR_SIZE-1, m_y, CURSOR_SIZE, color);
+    hor_line(m_x+2,             m_y, CURSOR_SIZE, color);
 }
 
-static void Cursor__Save()
+void Cursor::save()
 {
-    ver_get_row(s_cursor.x, s_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, s_cursor.t);
-    ver_get_row(s_cursor.x, s_cursor.y+2,             CURSOR_SIZE, s_cursor.b);
+    ver_get_row(m_x, m_y-CURSOR_SIZE-1, CURSOR_SIZE, m_top);
+    ver_get_row(m_x, m_y+2,             CURSOR_SIZE, m_bottom);
 
-    get_row(s_cursor.x-CURSOR_SIZE-1, s_cursor.y,  CURSOR_SIZE, s_cursor.l);
-    get_row(s_cursor.x+2,             s_cursor.y,  CURSOR_SIZE, s_cursor.r);
+    get_row(m_x-CURSOR_SIZE-1, m_y,  CURSOR_SIZE, m_left);
+    get_row(m_x+2,             m_y,  CURSOR_SIZE, m_right);
 }
 
-static void Cursor__Restore()
+void Cursor::restore()
 {
-    ver_put_row(s_cursor.x, s_cursor.y-CURSOR_SIZE-1, CURSOR_SIZE, s_cursor.t);
-    ver_put_row(s_cursor.x, s_cursor.y+2,             CURSOR_SIZE, s_cursor.b);
+    ver_put_row(m_x, m_y-CURSOR_SIZE-1, CURSOR_SIZE, m_top);
+    ver_put_row(m_x, m_y+2,             CURSOR_SIZE, m_bottom);
 
-    put_row(s_cursor.x-CURSOR_SIZE-1, s_cursor.y,  CURSOR_SIZE, s_cursor.l);
-    put_row(s_cursor.x+2,             s_cursor.y,  CURSOR_SIZE, s_cursor.r);
+    put_row(m_x-CURSOR_SIZE-1, m_y,  CURSOR_SIZE, m_left);
+    put_row(m_x+2,             m_y,  CURSOR_SIZE, m_right);
+}
+
+void Cursor::set_pos(int x, int y)
+{
+    if (!m_hidden)
+    {
+        restore();
+    }
+
+    this->m_x = x;
+    this->m_y = y;
+
+    if (!m_hidden)
+    {
+        save();
+        draw();
+    }
 }
 
 void Cursor_SetPos(int x, int y)
 {
-    if (!s_cursor.hidden)
+    s_cursor.set_pos(x, y);
+}
+
+void Cursor::move(int xoff, int yoff)
+{
+    if (!m_hidden)
     {
-        Cursor__Restore();
+        restore();
     }
 
-    s_cursor.x = x;
-    s_cursor.y = y;
+    m_x += xoff;
+    m_y += yoff;
 
-    if (!s_cursor.hidden)
+    if (m_x < 0)
     {
-        Cursor__Save();
-        Cursor__Draw();
+        m_x = 0;
+    }
+    if (m_y < 0)
+    {
+        m_y = 0;
+    }
+    if (m_x >= g_screen_x_dots)
+    {
+        m_x = g_screen_x_dots-1;
+    }
+    if (m_y >= g_screen_y_dots)
+    {
+        m_y = g_screen_y_dots-1;
+    }
+
+    if (!m_hidden)
+    {
+        save();
+        draw();
     }
 }
 
-void Cursor_Move(int xoff, int yoff)
+int Cursor::get_x() const
 {
-    if (!s_cursor.hidden)
-    {
-        Cursor__Restore();
-    }
-
-    s_cursor.x += xoff;
-    s_cursor.y += yoff;
-
-    if (s_cursor.x < 0)
-    {
-        s_cursor.x = 0;
-    }
-    if (s_cursor.y < 0)
-    {
-        s_cursor.y = 0;
-    }
-    if (s_cursor.x >= g_screen_x_dots)
-    {
-        s_cursor.x = g_screen_x_dots-1;
-    }
-    if (s_cursor.y >= g_screen_y_dots)
-    {
-        s_cursor.y = g_screen_y_dots-1;
-    }
-
-    if (!s_cursor.hidden)
-    {
-        Cursor__Save();
-        Cursor__Draw();
-    }
+    return m_x;
 }
 
 int Cursor_GetX()
 {
-    return s_cursor.x;
+    return s_cursor.get_x();
+}
+
+int Cursor::get_y() const
+{
+    return m_y;
 }
 
 int Cursor_GetY()
 {
-    return s_cursor.y;
+    return s_cursor.get_y();
+}
+
+void Cursor::hide()
+{
+    if (m_hidden++ == 0)
+    {
+        restore();
+    }
 }
 
 void Cursor_Hide()
 {
-    if (s_cursor.hidden++ == 0)
+    s_cursor.hide();
+}
+
+void Cursor::show()
+{
+    if (--m_hidden == 0)
     {
-        Cursor__Restore();
+        save();
+        draw();
     }
 }
 
 void Cursor_Show()
 {
-    if (--s_cursor.hidden == 0)
-    {
-        Cursor__Save();
-        Cursor__Draw();
-    }
+    s_cursor.show();
 }
 
-#ifdef XFRACT
-void Cursor_StartMouseTracking()
+void Cursor::start_mouse_tracking()
 {
     g_editpal_cursor = true;
 }
 
-void Cursor_EndMouseTracking()
+void Cursor_StartMouseTracking()
+{
+    s_cursor.start_mouse_tracking();
+}
+
+void Cursor::end_mouse_tracking()
 {
     g_editpal_cursor = false;
 }
-#endif
+
+void Cursor_EndMouseTracking()
+{
+    s_cursor.end_mouse_tracking();
+}
 
 // See if the cursor should blink yet, and blink it if so
-void Cursor_CheckBlink()
+void Cursor::check_blink()
 {
-    long tick;
-    tick = readticker();
+    const long tick = readticker();
 
-    if ((tick - s_cursor.last_blink) > CURSOR_BLINK_RATE)
+    if (tick - m_last_blink > CURSOR_BLINK_RATE)
     {
-        s_cursor.blink = !s_cursor.blink;
-        s_cursor.last_blink = tick;
-        if (!s_cursor.hidden)
+        m_blink = !m_blink;
+        m_last_blink = tick;
+        if (!m_hidden)
         {
-            Cursor__Draw();
+            draw();
         }
     }
-    else if (tick < s_cursor.last_blink)
+    else if (tick < m_last_blink)
     {
-        s_cursor.last_blink = tick;
+        m_last_blink = tick;
     }
+}
+
+void Cursor_CheckBlink()
+{
+    s_cursor.check_blink();
+}
+
+int Cursor::wait_key()
+{
+    while (!driver_wait_key_pressed(1))
+    {
+        check_blink();
+    }
+
+    return driver_key_pressed();
 }
 
 int Cursor_WaitKey()   // blink cursor while waiting for a key
 {
-    while (!driver_wait_key_pressed(1))
-    {
-        Cursor_CheckBlink();
-    }
-
-    return driver_key_pressed();
+    return s_cursor.wait_key();
 }
 
 RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
@@ -1867,7 +1916,7 @@ void PalTable::do_curs(int key)
         }
     }
 
-    Cursor_Move(xoff, yoff);
+    s_cursor.move(xoff, yoff);
 
     if (m_auto_select)
     {

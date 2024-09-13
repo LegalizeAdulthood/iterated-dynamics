@@ -1267,9 +1267,6 @@ handleesc()
     }
 }
 
-extern bool g_editpal_cursor;
-extern void Cursor_SetPos(int x, int y);
-
 bool g_x_zoom_waiting = false;
 
 #define SENS 1
