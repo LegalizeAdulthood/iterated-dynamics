@@ -3388,7 +3388,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
     int c;
     int i = 1;
     bool getting_base = true;
-    long filepos = ftell(openfile);
+    long filepos = std::ftell(openfile);
     bool got_decimal_already = false;
     bool done = false;
     tok->constant.x = 0.0;          //initialize values to 0
@@ -3409,7 +3409,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             return false;
         CASE_NUM:
             tok->str[i++] = (char) c;
-            filepos = ftell(openfile);
+            filepos = std::ftell(openfile);
             break;
         case '.':
             if (got_decimal_already || !getting_base)
@@ -3422,7 +3422,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             }
             tok->str[i++] = (char) c;
             got_decimal_already = true;
-            filepos = ftell(openfile);
+            filepos = std::ftell(openfile);
             break;
         default :
             if (c == 'e' && getting_base && (std::isdigit(tok->str[i-1]) || (tok->str[i-1] == '.' && i > 1)))
@@ -3430,12 +3430,12 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 tok->str[i++] = (char) c;
                 getting_base = false;
                 got_decimal_already = false;
-                filepos = ftell(openfile);
+                filepos = std::ftell(openfile);
                 c = frm_get_char(openfile);
                 if (c == '-' || c == '+')
                 {
                     tok->str[i++] = (char) c;
-                    filepos = ftell(openfile);
+                    filepos = std::ftell(openfile);
                 }
                 else
                 {
@@ -3492,7 +3492,7 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
     std::FILE * debug_token = nullptr;
     tok->str[1] = (char) 0;  // so we can concatenate later
 
-    filepos = ftell(openfile);
+    filepos = std::ftell(openfile);
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
         debug_token = open_save_file("frmconst.txt", "at");
@@ -3614,10 +3614,10 @@ static bool frm_get_alpha(std::FILE *openfile, Token *tok)
     int i = 1;
     bool var_name_too_long = false;
     long filepos;
-    long last_filepos = ftell(openfile);
+    long last_filepos = std::ftell(openfile);
     while ((c = frm_get_char(openfile)) != EOF)
     {
-        filepos = ftell(openfile);
+        filepos = std::ftell(openfile);
         switch (c)
         {
 CASE_ALPHA:
@@ -3709,7 +3709,7 @@ CASE_NUM:
 
 static void frm_get_eos(std::FILE *openfile, Token *this_token)
 {
-    long last_filepos = ftell(openfile);
+    long last_filepos = std::ftell(openfile);
     int c;
 
     for (c = frm_get_char(openfile); (c == '\n' || c == ',' || c == ':'); c = frm_get_char(openfile))
@@ -3718,7 +3718,7 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
         {
             this_token->str[0] = ':';
         }
-        last_filepos = ftell(openfile);
+        last_filepos = std::ftell(openfile);
     }
     if (c == '}')
     {
@@ -3758,7 +3758,7 @@ CASE_ALPHA:
 CASE_TERMINATOR:
         this_token->type = token_type::OPERATOR; // this may be changed below
         this_token->str[0] = (char) c;
-        filepos = ftell(openfile);
+        filepos = std::ftell(openfile);
         if (c == '<' || c == '>' || c == '=')
         {
             c = frm_get_char(openfile);
@@ -3985,7 +3985,7 @@ int frm_get_param_stuff(char const *Name)
 */
 static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 {
-    long filepos = ftell(open_file);
+    long filepos = std::ftell(open_file);
     int c;
     int i;
     bool at_end_of_name = false;
@@ -4128,7 +4128,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 */
 static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
 {
-    const long filepos{ftell(file)};
+    const long filepos{std::ftell(file)};
 
     // Test for a repeat
     if (!frm_check_name_and_sym(file, report_bad_sym))
@@ -4389,7 +4389,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         bool const initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
         std::fseek(open_file, begin_frm, SEEK_SET);
         line_number = 1;
-        while (ftell(open_file) != s_errors[j].error_pos)
+        while (std::ftell(open_file) != s_errors[j].error_pos)
         {
             int i = fgetc(open_file);
             if (i == '\n')
@@ -4412,7 +4412,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         bool done = false;
         while (!done)
         {
-            filepos = ftell(open_file);
+            filepos = std::ftell(open_file);
             if (filepos == s_errors[j].error_pos)
             {
                 chars_to_error = statement_len;
@@ -4514,7 +4514,7 @@ static bool frm_prescan(std::FILE * open_file)
     s_uses_jump = false;
     s_paren = 0;
 
-    long statement_pos{ftell(open_file)};
+    long statement_pos{std::ftell(open_file)};
     long orig_pos{statement_pos};
     for (ErrorData &error : s_errors)
     {
@@ -4534,7 +4534,7 @@ static bool frm_prescan(std::FILE * open_file)
 
     while (!done)
     {
-        file_pos = ftell(open_file);
+        file_pos = std::ftell(open_file);
         frm_get_token(open_file, &this_token);
         s_chars_in_formula += (int) std::strlen(this_token.str);
         switch (this_token.type)
@@ -4795,7 +4795,7 @@ static bool frm_prescan(std::FILE * open_file)
                 new_statement = true;
                 expecting_arg = true;
                 assignment_ok = true;
-                statement_pos = ftell(open_file);
+                statement_pos = std::ftell(open_file);
                 break;
             case token_id::OP_NOT_EQUAL:     // !=
                 assignment_ok = false;
@@ -4921,7 +4921,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                file_pos = ftell(open_file);
+                file_pos = std::ftell(open_file);
                 frm_get_token(open_file, &this_token);
                 if (this_token.str[0] == '-')
                 {
@@ -4957,7 +4957,7 @@ static bool frm_prescan(std::FILE * open_file)
             if (expecting_arg && !new_statement)
             {
                 record_error(ParseError::SHOULD_BE_ARGUMENT);
-                statement_pos = ftell(open_file);
+                statement_pos = std::ftell(open_file);
             }
 
             if (s_num_jumps >= MAX_JUMPS)

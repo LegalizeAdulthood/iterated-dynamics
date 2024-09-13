@@ -2058,7 +2058,7 @@ void PalTable::undo()
     int size;
     long pos;
 
-    if (ftell(m_undo_file) <= 0) // at beginning of file?
+    if (std::ftell(m_undo_file) <= 0) // at beginning of file?
     {
         //   nothing to undo -- exit
         return;
@@ -2069,7 +2069,7 @@ void PalTable::undo()
     size = getw(m_undo_file);
     std::fseek(m_undo_file, -size, SEEK_CUR); // go to start of undo
 
-    pos = ftell(m_undo_file);
+    pos = std::ftell(m_undo_file);
 
     undo_process(-1);
 
