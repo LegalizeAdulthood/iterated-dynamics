@@ -4249,8 +4249,6 @@ int bad_formula()
 //  returns true if an error occurred
 bool run_formula(const std::string &name, bool report_bad_sym)
 {
-    std::FILE *entry_file = nullptr;
-
     //  first set the pointers so they point to a fn which always returns 1
     g_cur_fractal_specific->per_pixel = bad_formula;
     g_cur_fractal_specific->orbitcalc = bad_formula;
@@ -4260,6 +4258,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         return true;  //  and don't reset the pointers
     }
 
+    std::FILE *entry_file{};
     if (find_file_item(g_formula_filename, name.c_str(), &entry_file, gfe_type::FORMULA))
     {
         stopmsg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
