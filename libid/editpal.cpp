@@ -39,7 +39,6 @@ enum
 {
     FONT_DEPTH = 8,  // font size
     CSIZE_MIN = 8,   // csize cannot be smaller than this
-    CURSOR_SIZE = 5, // length of one side of the x-hair cursor
     BOX_INC = 1,
     CSIZE_INC = 2,
     CURSOR_BLINK_RATE = 300, // timer ticks between cursor blinks
@@ -68,45 +67,6 @@ struct PALENTRY
     BYTE red;
     BYTE green;
     BYTE blue;
-};
-
-//
-// Class:     Cursor
-//
-// Purpose:   Draw the blinking cross-hair cursor.
-//
-// Note:      Only one Cursor exists (referenced through the_cursor).
-//            IMPORTANT: Call Cursor_Construct before you use any other
-//            Cursor_ function!
-//
-class Cursor
-{
-public:
-    Cursor();
-    void draw();
-    void save();
-    void restore();
-    void set_pos(int x, int y);
-    void move(int xoff, int yoff);
-    int get_x() const;
-    int get_y() const;
-    void check_blink();
-    int wait_key();
-    void hide();
-    void show();
-    void start_mouse_tracking();
-    void end_mouse_tracking();
-
-private:
-    int m_x;
-    int m_y;
-    int m_hidden; // >0 if mouse hidden
-    long m_last_blink;
-    bool m_blink;
-    char m_top[CURSOR_SIZE]; // save line segments here
-    char m_bottom[CURSOR_SIZE];
-    char m_left[CURSOR_SIZE];
-    char m_right[CURSOR_SIZE];
 };
 
 //
@@ -676,11 +636,6 @@ Cursor::Cursor() :
 {
 }
 
-void Cursor_Construct()
-{
-    s_cursor = Cursor();
-}
-
 MoveBox::MoveBox(int x, int y, int csize, int base_width, int base_depth) :
     m_x(x),
     m_y(y),
@@ -1119,19 +1074,14 @@ void Cursor::set_pos(int x, int y)
         restore();
     }
 
-    this->m_x = x;
-    this->m_y = y;
+    m_x = x;
+    m_y = y;
 
     if (!m_hidden)
     {
         save();
         draw();
     }
-}
-
-void Cursor_SetPos(int x, int y)
-{
-    s_cursor.set_pos(x, y);
 }
 
 void Cursor::move(int xoff, int yoff)
@@ -1168,37 +1118,12 @@ void Cursor::move(int xoff, int yoff)
     }
 }
 
-int Cursor::get_x() const
-{
-    return m_x;
-}
-
-int Cursor_GetX()
-{
-    return s_cursor.get_x();
-}
-
-int Cursor::get_y() const
-{
-    return m_y;
-}
-
-int Cursor_GetY()
-{
-    return s_cursor.get_y();
-}
-
 void Cursor::hide()
 {
     if (m_hidden++ == 0)
     {
         restore();
     }
-}
-
-void Cursor_Hide()
-{
-    s_cursor.hide();
 }
 
 void Cursor::show()
@@ -1210,29 +1135,14 @@ void Cursor::show()
     }
 }
 
-void Cursor_Show()
-{
-    s_cursor.show();
-}
-
 void Cursor::start_mouse_tracking()
 {
     g_editpal_cursor = true;
 }
 
-void Cursor_StartMouseTracking()
-{
-    s_cursor.start_mouse_tracking();
-}
-
 void Cursor::end_mouse_tracking()
 {
     g_editpal_cursor = false;
-}
-
-void Cursor_EndMouseTracking()
-{
-    s_cursor.end_mouse_tracking();
 }
 
 // See if the cursor should blink yet, and blink it if so
@@ -1255,11 +1165,6 @@ void Cursor::check_blink()
     }
 }
 
-void Cursor_CheckBlink()
-{
-    s_cursor.check_blink();
-}
-
 int Cursor::wait_key()
 {
     while (!driver_wait_key_pressed(1))
@@ -1268,11 +1173,6 @@ int Cursor::wait_key()
     }
 
     return driver_key_pressed();
-}
-
-int Cursor_WaitKey()   // blink cursor while waiting for a key
-{
-    return s_cursor.wait_key();
 }
 
 RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
@@ -1328,10 +1228,10 @@ void RGBEditor::blank_sample_box()
         return;
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
     fill_rect(
         m_x + 2 + CEditor_WIDTH + 1 + 1, m_y + 2 + 1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void RGBEditor::update()
@@ -1344,7 +1244,7 @@ void RGBEditor::update()
     int x1 = m_x + 2 + CEditor_WIDTH + 1 + 1;
     int y1 = m_y + 2 + 1;
 
-    Cursor_Hide();
+    s_cursor.hide();
 
     if (m_pal >= g_colors)
     {
@@ -1369,7 +1269,7 @@ void RGBEditor::update()
     m_color[0]->draw();
     m_color[1]->draw();
     m_color[2]->draw();
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void RGBEditor::draw()
@@ -1379,12 +1279,12 @@ void RGBEditor::draw()
         return;
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
     dot_rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH);
     fill_rect(m_x + 1, m_y + 1, RGBEditor_WIDTH - 2, RGBEditor_DEPTH - 2, s_bg_color);
     rect(m_x + 1 + CEditor_WIDTH + 2, m_y + 2, RGBEditor_BWIDTH, RGBEditor_BDEPTH, s_fg_color);
     update();
-    Cursor_Show();
+    s_cursor.show();
 }
 
 int RGBEditor::edit()
@@ -1395,9 +1295,9 @@ int RGBEditor::edit()
 
     if (!m_hidden)
     {
-        Cursor_Hide();
+        s_cursor.hide();
         rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH, s_fg_color);
-        Cursor_Show();
+        s_cursor.show();
     }
 
     while (!m_done)
@@ -1407,9 +1307,9 @@ int RGBEditor::edit()
 
     if (!m_hidden)
     {
-        Cursor_Hide();
+        s_cursor.hide();
         dot_rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH);
-        Cursor_Show();
+        s_cursor.show();
     }
 
     return key;
@@ -1556,7 +1456,7 @@ void PalTable::process()
 
     set_curr(m_active,          get_cursor_color());
     set_curr((m_active == 1)?0:1, get_cursor_color());
-    Cursor_Show();
+    s_cursor.show();
     mk_default_palettes();
     m_done = false;
 
@@ -1565,7 +1465,7 @@ void PalTable::process()
         m_rgb[m_active]->edit();
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
     restore_rect();
     set_pal_range(0, g_colors, m_pal);
 }
@@ -1584,7 +1484,7 @@ void PalTable::draw_status(bool stripe_mode)
         {
             color = 0;
         }
-        Cursor_Hide();
+        s_cursor.hide();
 
         {
             char buff[80];
@@ -1599,7 +1499,7 @@ void PalTable::draw_status(bool stripe_mode)
             std::snprintf(buff, std::size(buff), "%-3d", color); // assumes 8-bit color, 0-255 values
             driver_display_string(x, y, s_fg_color, s_bg_color, buff);
         }
-        Cursor_Show();
+        s_cursor.show();
     }
 }
 
@@ -1613,7 +1513,7 @@ void PalTable::hl_pal(int pnum, int color)
     int x = this->m_x + PalTable_PALX + (pnum % 16) * m_csize;
     int y = this->m_y + PalTable_PALY + (pnum / 16) * m_csize;
 
-    Cursor_Hide();
+    s_cursor.hide();
 
     const int size = m_csize + 1;
     if (color < 0)
@@ -1625,7 +1525,7 @@ void PalTable::hl_pal(int pnum, int color)
         rect(x, y, size, size, color);
     }
 
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void PalTable::draw()
@@ -1635,7 +1535,7 @@ void PalTable::draw()
         return;
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
 
     int width = 1 + (m_csize * 16) + 1 + 1;
 
@@ -1695,7 +1595,7 @@ void PalTable::draw()
 
     draw_status(false);
 
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void PalTable::set_curr(int which, int curr)
@@ -1712,7 +1612,7 @@ void PalTable::set_curr(int which, int curr)
         return;
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
 
     hl_pal(this->m_curr[0], s_bg_color);
     hl_pal(this->m_curr[1], s_bg_color);
@@ -1734,7 +1634,7 @@ void PalTable::set_curr(int which, int curr)
 
         update_dac();
 
-        Cursor_Show();
+        s_cursor.show();
 
         return;
     }
@@ -1766,7 +1666,7 @@ void PalTable::set_curr(int which, int curr)
         update_dac();
     }
 
-    Cursor_Show();
+    s_cursor.show();
 
     m_curr_changed = false;
 }
@@ -1777,13 +1677,13 @@ void PalTable::save_rect()
     int const depth = PalTable_PALY + m_csize * 16 + 1 + 1;
 
     m_saved_pixel.resize(width * depth);
-    Cursor_Hide();
+    s_cursor.hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
         get_row(m_x, m_y + yoff, width, &m_saved_pixel[yoff * width]);
         hor_line(m_x, m_y + yoff, width, s_bg_color);
     }
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void PalTable::restore_rect()
@@ -1796,12 +1696,12 @@ void PalTable::restore_rect()
     int width = PalTable_PALX + m_csize * 16 + 1 + 1;
     int depth = PalTable_PALY + m_csize * 16 + 1 + 1;
 
-    Cursor_Hide();
+    s_cursor.hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
         put_row(m_x, m_y + yoff, width, &m_saved_pixel[yoff * width]);
     }
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void PalTable::set_pos(int x, int y)
@@ -1823,8 +1723,8 @@ void PalTable::set_csize(int csize)
 
 int PalTable::get_cursor_color() const
 {
-    int x = Cursor_GetX();
-    int y = Cursor_GetY();
+    int x = s_cursor.get_x();
+    int y = s_cursor.get_y();
     int color = getcolor(x, y);
 
     if (is_reserved(color))
@@ -1928,7 +1828,7 @@ void PalTable::rotate(int dir, int lo, int hi)
 {
     rotate_pal(m_pal, dir, lo, hi);
 
-    Cursor_Hide();
+    s_cursor.hide();
 
     // update the DAC.
 
@@ -1941,7 +1841,7 @@ void PalTable::rotate(int dir, int lo, int hi)
     m_rgb[0]->update();
     m_rgb[1]->update();
 
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void PalTable::update_dac()
@@ -2212,7 +2112,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         {
             break; // cannot move a hidden pal
         }
-        Cursor_Hide();
+        s_cursor.hide();
         restore_rect();
         m_move_box->set_pos(m_x, m_y);
         m_move_box->set_csize(m_csize);
@@ -2230,7 +2130,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             }
         }
         draw();
-        Cursor_Show();
+        s_cursor.show();
 
         this->m_rgb[m_active]->set_done(true);
 
@@ -2329,14 +2229,14 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         PALENTRY t;
 
         t = this->m_rgb[b]->get_rgb();
-        Cursor_Hide();
+        s_cursor.hide();
 
         this->m_rgb[a]->set_rgb(m_curr[a], &t);
         this->m_rgb[a]->update();
         change_cb(this->m_rgb[a], this);
         update_dac();
 
-        Cursor_Show();
+        s_cursor.show();
         break;
     }
 
@@ -2439,10 +2339,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'T':
     case 't': // s(T)ripe mode
     {
-        Cursor_Hide();
+        s_cursor.hide();
         draw_status(true);
         const int key2 = getakeynohelp();
-        Cursor_Show();
+        s_cursor.show();
 
         if (key2 >= '1' && key2 <= '9')
         {
@@ -2503,9 +2403,9 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
     case 'H':
     case 'h': // toggle hide/display of palette editor
-        Cursor_Hide();
+        s_cursor.hide();
         hide(rgb, !m_hidden);
-        Cursor_Show();
+        s_cursor.show();
         break;
 
     case '.': // rotate once
@@ -2525,7 +2425,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         long tick;
         int diff = 0;
 
-        Cursor_Hide();
+        s_cursor.hide();
 
         if (!m_hidden)
         {
@@ -2565,7 +2465,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             save_undo_rotate(diff, g_color_cycle_range_lo, g_color_cycle_range_hi);
         }
 
-        Cursor_Show();
+        s_cursor.show();
         break;
     }
 
@@ -2588,10 +2488,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         if (!m_hidden)
         {
-            Cursor_Hide();
+            s_cursor.hide();
             update_dac();
             draw();
-            Cursor_Show();
+            s_cursor.show();
         }
 
         this->m_rgb[m_active]->set_done(true);
@@ -2622,14 +2522,14 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     {
         int which = key - ID_KEY_F2;
 
-        Cursor_Hide();
+        s_cursor.hide();
 
         save_undo_data(0, 255);
         std::memcpy(m_pal, m_save_pal[which], 256 * sizeof(PALENTRY));
         update_dac();
 
         set_curr(-1, 0);
-        Cursor_Show();
+        s_cursor.show();
         this->m_rgb[m_active]->set_done(true);
         break;
     }
@@ -2679,7 +2579,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         save_undo_data(0, 255);
 
-        Cursor_Hide();
+        s_cursor.hide();
         if (!oldhidden)
         {
             hide(rgb, true);
@@ -2694,7 +2594,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             this->m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
             hide(rgb, false);
         }
-        Cursor_Show();
+        s_cursor.show();
         break;
     }
 
@@ -2892,9 +2792,9 @@ void PalTable::change(RGBEditor *rgb)
         color = this->m_rgb[m_active]->get_rgb();
         this->m_rgb[other]->set_rgb(m_curr[other], &color);
 
-        Cursor_Hide();
+        s_cursor.hide();
         this->m_rgb[other]->update();
-        Cursor_Show();
+        s_cursor.show();
     }
 
 }
@@ -2986,7 +2886,7 @@ void EditPalette()
     s_fg_color = (BYTE)(255%g_colors);
     s_bg_color = (BYTE)(s_fg_color-1);
 
-    Cursor_Construct();
+    s_cursor = Cursor();
     PalTable pt;
     pt.process();
 

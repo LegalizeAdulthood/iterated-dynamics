@@ -4,6 +4,51 @@
 
 #include <vector>
 
+//
+// Class:     Cursor
+//
+// Purpose:   Draw the blinking cross-hair cursor.
+//
+class Cursor
+{
+public:
+    Cursor();
+    void draw();
+    void save();
+    void restore();
+    void set_pos(int x, int y);
+    void move(int xoff, int yoff);
+    int get_x() const
+    {
+        return m_x;
+    }
+    int get_y() const
+    {
+        return m_y;
+    }
+    void check_blink();
+    int wait_key();
+    void hide();
+    void show();
+    void start_mouse_tracking();
+    void end_mouse_tracking();
+
+private:
+    enum
+    {
+        CURSOR_SIZE = 5, // length of one side of the x-hair cursor
+    };
+    int m_x;
+    int m_y;
+    int m_hidden; // >0 if mouse hidden
+    long m_last_blink;
+    bool m_blink;
+    char m_top[CURSOR_SIZE]; // save line segments here
+    char m_bottom[CURSOR_SIZE];
+    char m_left[CURSOR_SIZE];
+    char m_right[CURSOR_SIZE];
+};
+
 extern bool                  g_editpal_cursor;
 extern std::vector<BYTE>     g_line_buff;
 extern bool                  g_using_jiim;
@@ -11,14 +56,3 @@ extern bool                  g_using_jiim;
 void EditPalette();
 void put_row(int x, int y, int width, char const *buff);
 void get_row(int x, int y, int width, char *buff);
-
-void Cursor_StartMouseTracking();
-void Cursor_EndMouseTracking();
-int Cursor_WaitKey();
-void Cursor_CheckBlink();
-void Cursor_Construct();
-void Cursor_SetPos(int x, int y);
-int Cursor_GetX();
-int Cursor_GetY();
-void Cursor_Hide();
-void Cursor_Show();

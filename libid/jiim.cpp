@@ -70,6 +70,7 @@ static bool s_ok_to_miim{};              //
 static int s_secret_experimental_mode{}; //
 static float s_lucky_x{};                //
 static float s_lucky_y{};                //
+static Cursor s_cursor;                  //
 
 double g_julia_c_x{JULIA_C_NOT_SET}; //
 double g_julia_c_y{JULIA_C_NOT_SET}; //
@@ -450,13 +451,13 @@ static void SaveRect(int x, int y, int width, int depth)
     s_screen_rect.clear();
     std::vector<char> const background(width, char(g_color_dark));
     s_screen_rect.resize(width*depth);
-    Cursor_Hide();
+    s_cursor.hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
         get_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
         put_row(x, y+yoff, width, &background[0]);
     }
-    Cursor_Show();
+    s_cursor.show();
 }
 
 
@@ -467,12 +468,12 @@ static void RestoreRect(int x, int y, int width, int depth)
         return;
     }
 
-    Cursor_Hide();
+    s_cursor.hide();
     for (int yoff = 0; yoff < depth; yoff++)
     {
         put_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
     }
-    Cursor_Show();
+    s_cursor.show();
 }
 
 void Jiim(jiim_types which)
@@ -540,7 +541,7 @@ void Jiim(jiim_types which)
         per_image();
     }
 
-    Cursor_Construct();
+    s_cursor = Cursor();
 
     /*
      * MIIM code:
@@ -669,32 +670,32 @@ void Jiim(jiim_types which)
         fill_dx_array();
     }
 
-    Cursor_SetPos(g_col, g_row);
-    Cursor_Show();
+    s_cursor.set_pos(g_col, g_row);
+    s_cursor.show();
     color = g_color_bright;
 
     iter = 1;
     bool still = true;
     zoom = 1;
 
-    Cursor_StartMouseTracking();
+    s_cursor.start_mouse_tracking();
 
     while (still)
     {
         if (actively_computing)
         {
-            Cursor_CheckBlink();
+            s_cursor.check_blink();
         }
         else
         {
-            Cursor_WaitKey();
+            s_cursor.wait_key();
         }
         if (driver_key_pressed() || first_time) // prevent burning up UNIX CPU
         {
             first_time = false;
             while (driver_key_pressed())
             {
-                Cursor_WaitKey();
+                s_cursor.wait_key();
                 kbdchar = driver_get_key();
 
                 int dcol = 0;
@@ -791,9 +792,9 @@ void Jiim(jiim_types which)
                     s_show_numbers = 8 - s_show_numbers;
                     if (s_windows == 0 && s_show_numbers == 0)
                     {
-                        Cursor_Hide();
+                        s_cursor.hide();
                         cleartempmsg();
-                        Cursor_Show();
+                        s_cursor.show();
                     }
                     break;
                 case 'p':
@@ -854,8 +855,8 @@ void Jiim(jiim_types which)
                 {
                     // We want to use the position of the cursor
                     exact = false;
-                    g_col = Cursor_GetX();
-                    g_row = Cursor_GetY();
+                    g_col = s_cursor.get_x();
+                    g_row = s_cursor.get_y();
                 }
 #endif
 
@@ -881,7 +882,7 @@ void Jiim(jiim_types which)
                     exact = false;
                 }
 
-                Cursor_SetPos(g_col, g_row);
+                s_cursor.set_pos(g_col, g_row);
             }  // end while (driver_key_pressed)
 
             if (!exact)
@@ -913,10 +914,10 @@ void Jiim(jiim_types which)
                         std::strcat(str, " ");
                     }
                     str[40] = 0;
-                    Cursor_Hide();
+                    s_cursor.hide();
                     actively_computing = true;
                     showtempmsg(str);
-                    Cursor_Show();
+                    s_cursor.show();
                 }
                 else
                 {
@@ -1271,7 +1272,7 @@ finish:
 
     if (kbdchar != 's' && kbdchar != 'S')
     {
-        Cursor_Hide();
+        s_cursor.hide();
         if (s_windows == 0)
         {
             RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
@@ -1292,7 +1293,7 @@ finish:
                 RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
                 s_windows = 2;
             }
-            Cursor_Hide();
+            s_cursor.hide();
             bool const savehasinverse = g_has_inverse;
             g_has_inverse = true;
             SaveRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
@@ -1302,7 +1303,7 @@ finish:
             g_has_inverse = savehasinverse;
         }
     }
-    Cursor_EndMouseTracking();
+    s_cursor.end_mouse_tracking();
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;
