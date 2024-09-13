@@ -77,7 +77,6 @@ extern double                g_logical_screen_x_size_dots;
 extern int                   g_logical_screen_y_dots;
 extern int                   g_logical_screen_y_offset;
 extern double                g_logical_screen_y_size_dots;
-extern int                   g_look_at_mouse;
 extern long                  g_max_iterations;
 extern double                g_plot_mx1;
 extern double                g_plot_mx2;
@@ -127,16 +126,3 @@ extern double                g_zoom_box_width;
 extern double                g_zoom_box_x;
 extern double                g_zoom_box_y;
 extern bool                  g_zoom_off;
-
-// g_look_at_mouse is set to one of these positive values for handling mouse events,
-// or it is set to a negative key code for primary button click to generate a key.
-enum class MouseLook
-{
-    IGNORE = 0,      // ignoring the mouse
-    TEXT_SCROLL = 2, // for scrolling through text lists
-    POSITION = 3,    // for positioning things like the zoom box, palette editor, etc.
-};
-inline int operator+(MouseLook value)
-{
-    return static_cast<int>(value);
-}

@@ -6,6 +6,7 @@
 #include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "mouse.h"
 #include "round_float_double.h"
 #include "value_saver.h"
 

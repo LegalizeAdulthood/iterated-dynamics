@@ -3,8 +3,8 @@
 
 #include "framain2.h"
 
-#include "calcfrac.h"
 #include "calc_frac_init.h"
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "decoder.h"
@@ -27,6 +27,7 @@
 #include "lorenz.h"
 #include "main_menu.h"
 #include "main_menu_switch.h"
+#include "mouse.h"
 #include "os.h"
 #include "read_ticker.h"
 #include "rotate.h"

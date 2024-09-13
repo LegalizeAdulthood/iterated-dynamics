@@ -26,6 +26,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "os.h"
+#include "mouse.h"
 #include "read_ticker.h"
 #include "slideshw.h"
 #include "text_screen.h"

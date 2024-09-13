@@ -14,6 +14,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "memory.h"
+#include "mouse.h"
 #include "os.h"
 #include "read_ticker.h"
 #include "rotate.h"

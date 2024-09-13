@@ -168,6 +168,7 @@ add_library(libid
     make_mig.cpp include/make_mig.h
     make_path.cpp include/make_path.h
     merge_path_names.cpp include/merge_path_names.h
+    mouse.cpp include/mouse.h
     not_disk_msg.cpp include/not_disk_msg.h
     passes_options.cpp include/passes_options.h
     path_match.cpp include/path_match.h
@@ -508,6 +509,7 @@ source_group("Header Files/ui" FILES
     include/make_mig.h
     include/make_path.h
     include/merge_path_names.h
+    include/mouse.h
     include/not_disk_msg.h
     include/passes_options.h
     include/path_match.h
@@ -586,6 +588,7 @@ source_group("Source Files/ui" FILES
     make_mig.cpp
     make_path.cpp
     merge_path_names.cpp
+    mouse.cpp
     not_disk_msg.cpp
     passes_options.cpp
     path_match.cpp

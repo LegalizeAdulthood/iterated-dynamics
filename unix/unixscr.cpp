@@ -25,6 +25,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "os.h"
+#include "mouse.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "video_mode.h"

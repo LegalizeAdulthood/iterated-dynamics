@@ -29,11 +29,12 @@
 #include "id_keys.h"
 #include "intro.h"
 #include "jb.h"
-#include "loadfile.h"
 #include "load_config.h"
+#include "loadfile.h"
 #include "main_menu.h"
 #include "main_state.h"
 #include "memory.h"
+#include "mouse.h"
 #include "rotate.h"
 #include "select_video_mode.h"
 #include "stop_msg.h"
@@ -49,7 +50,6 @@
 
 VIDEOINFO g_video_entry{};                                    //
 help_labels g_help_mode{};                                    //
-int g_look_at_mouse{};                                        //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h
 std::string g_fractal_search_dir1;                            //
 std::string g_fractal_search_dir2;                            //

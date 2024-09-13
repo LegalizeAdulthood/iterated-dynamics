@@ -27,6 +27,7 @@
 #include "id_keys.h"
 #include "lorenz.h"
 #include "miscfrac.h"
+#include "mouse.h"
 #include "os.h"
 #include "pixel_grid.h"
 #include "stop_msg.h"
