@@ -4493,20 +4493,18 @@ static void frm_error(std::FILE * open_file, long begin_frm)
 */
 static bool frm_prescan(std::FILE * open_file)
 {
-    long filepos;
-    long statement_pos;
-    long orig_pos;
-    bool done = false;
-    Token this_token;
-    int errors_found = 0;
-    bool ExpectingArg = true;
-    bool NewStatement = true;
-    bool assignment_ok = true;
-    bool already_got_colon = false;
-    unsigned long else_has_been_used = 0;
-    unsigned long waiting_for_mod = 0;
-    int waiting_for_endif = 0;
-    int max_parens = sizeof(long) * 8;
+    long file_pos{};
+    bool done{};
+    Token this_token{};
+    int errors_found{};
+    bool expecting_arg{true};
+    bool new_statement{true};
+    bool assignment_ok{true};
+    bool already_got_colon{};
+    unsigned long else_has_been_used{};
+    unsigned long waiting_for_mod{};
+    int waiting_for_endif{};
+    constexpr int MAX_PARENS{sizeof(long) * 8};
 
     s_num_jumps = 0UL;
     s_num_stores = 0UL;
@@ -4516,8 +4514,8 @@ static bool frm_prescan(std::FILE * open_file)
     s_uses_jump = false;
     s_paren = 0;
 
-    statement_pos = ftell(open_file);
-    orig_pos = statement_pos;
+    long statement_pos{ftell(open_file)};
+    long orig_pos{statement_pos};
     for (ErrorData &error : s_errors)
     {
         error.start_pos    = 0L;
@@ -4529,14 +4527,14 @@ static bool frm_prescan(std::FILE * open_file)
         if (errors_found == 0 || s_errors[errors_found - 1].start_pos != statement_pos)
         {
             s_errors[errors_found].start_pos = statement_pos;
-            s_errors[errors_found].error_pos = filepos;
+            s_errors[errors_found].error_pos = file_pos;
             s_errors[errors_found++].error_number = err;
         }
     };
 
     while (!done)
     {
-        filepos = ftell(open_file);
+        file_pos = ftell(open_file);
         frm_get_token(open_file, &this_token);
         s_chars_in_formula += (int) std::strlen(this_token.str);
         switch (this_token.type)
@@ -4584,15 +4582,15 @@ static bool frm_prescan(std::FILE * open_file)
             break;
         case token_type::PARENS:
             assignment_ok = false;
-            NewStatement = false;
+            new_statement = false;
             switch (this_token.id)
             {
             case token_id::OPEN_PARENS:
-                if (++s_paren > max_parens)
+                if (++s_paren > MAX_PARENS)
                 {
                     record_error(ParseError::NESTING_TO_DEEP);
                 }
-                else if (!ExpectingArg)
+                else if (!expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_OPERATOR);
                 }
@@ -4616,7 +4614,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     waiting_for_mod = waiting_for_mod >> 1;
                 }
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
@@ -4628,60 +4626,60 @@ static bool frm_prescan(std::FILE * open_file)
         case token_type::PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
             s_num_ops++;
             s_num_loads++;
-            NewStatement = false;
-            if (!ExpectingArg)
+            new_statement = false;
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
-            ExpectingArg = false;
+            expecting_arg = false;
             break;
         case token_type::USER_NAMED_VARIABLE: // i.e. c, iter, etc.
             s_num_ops++;
             s_num_loads++;
-            NewStatement = false;
-            if (!ExpectingArg)
+            new_statement = false;
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
-            ExpectingArg = false;
+            expecting_arg = false;
             break;
         case token_type::PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
             s_num_ops++;
             s_num_loads++;
-            NewStatement = false;
-            if (!ExpectingArg)
+            new_statement = false;
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
-            ExpectingArg = false;
+            expecting_arg = false;
             break;
         case token_type::REAL_CONSTANT: // i.e. 4, (4,0), etc.
             assignment_ok = false;
             s_num_ops++;
             s_num_loads++;
-            NewStatement = false;
-            if (!ExpectingArg)
+            new_statement = false;
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
-            ExpectingArg = false;
+            expecting_arg = false;
             break;
         case token_type::COMPLEX_CONSTANT: // i.e. (1,2) etc.
             assignment_ok = false;
             s_num_ops++;
             s_num_loads++;
-            NewStatement = false;
-            if (!ExpectingArg)
+            new_statement = false;
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
-            ExpectingArg = false;
+            expecting_arg = false;
             break;
         case token_type::FUNCTION:
             assignment_ok = false;
-            NewStatement = false;
+            new_statement = false;
             s_num_ops++;
-            if (!ExpectingArg)
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
@@ -4689,17 +4687,17 @@ static bool frm_prescan(std::FILE * open_file)
         case token_type::PARAM_FUNCTION:
             assignment_ok = false;
             s_num_ops++;
-            if (!ExpectingArg)
+            if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
-            NewStatement = false;
+            new_statement = false;
             break;
         case token_type::FLOW_CONTROL:
             assignment_ok = false;
             s_num_ops++;
             s_num_jumps++;
-            if (!NewStatement)
+            if (!new_statement)
             {
                 record_error(ParseError::JUMP_NOT_FIRST);
             }
@@ -4766,7 +4764,7 @@ static bool frm_prescan(std::FILE * open_file)
                     record_error(ParseError::UNMATCHED_MODULUS);
                     waiting_for_mod = 0;
                 }
-                if (!ExpectingArg)
+                if (!expecting_arg)
                 {
                     if (this_token.id == token_id::OP_COLON)
                     {
@@ -4777,7 +4775,7 @@ static bool frm_prescan(std::FILE * open_file)
                         s_num_ops++;
                     }
                 }
-                else if (!NewStatement)
+                else if (!new_statement)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
@@ -4794,18 +4792,18 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     already_got_colon = true;
                 }
-                NewStatement = true;
-                ExpectingArg = true;
+                new_statement = true;
+                expecting_arg = true;
                 assignment_ok = true;
                 statement_pos = ftell(open_file);
                 break;
             case token_id::OP_NOT_EQUAL:     // !=
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_ASSIGN:     // =
                 s_num_ops--; //this just converts a load to a store
@@ -4815,47 +4813,47 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     record_error(ParseError::ILLEGAL_ASSIGNMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_EQUAL:     // ==
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_LT:     // <
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_LE:     // <=
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_GT:     // >
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_GE:     // >=
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_MODULUS:     // | (half of the modulus operator)
                 assignment_ok = false;
@@ -4863,11 +4861,11 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     s_num_ops--;
                 }
-                if (!(waiting_for_mod & 1L) && !ExpectingArg)
+                if (!(waiting_for_mod & 1L) && !expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_OPERATOR);
                 }
-                else if ((waiting_for_mod & 1L) && ExpectingArg)
+                else if ((waiting_for_mod & 1L) && expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
@@ -4875,55 +4873,55 @@ static bool frm_prescan(std::FILE * open_file)
                 break;
             case token_id::OP_OR:     // ||
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_AND:    // &&
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_PLUS:    // + case 11 (":") is up with case 0
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_MINUS:    // -
                 assignment_ok = false;
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_MULTIPLY:    // *
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_DIVIDE:    // /
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             case token_id::OP_POWER:    // ^
                 assignment_ok = false;
-                if (ExpectingArg)
+                if (expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                filepos = ftell(open_file);
+                file_pos = ftell(open_file);
                 frm_get_token(open_file, &this_token);
                 if (this_token.str[0] == '-')
                 {
@@ -4931,9 +4929,9 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 else
                 {
-                    std::fseek(open_file, filepos, SEEK_SET);
+                    std::fseek(open_file, file_pos, SEEK_SET);
                 }
-                ExpectingArg = true;
+                expecting_arg = true;
                 break;
             default:
                 break;
@@ -4956,7 +4954,7 @@ static bool frm_prescan(std::FILE * open_file)
                 record_error(ParseError::IF_WITH_NO_ENDIF);
                 waiting_for_endif = 0;
             }
-            if (ExpectingArg && !NewStatement)
+            if (expecting_arg && !new_statement)
             {
                 record_error(ParseError::SHOULD_BE_ARGUMENT);
                 statement_pos = ftell(open_file);
