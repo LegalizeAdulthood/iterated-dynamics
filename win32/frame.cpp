@@ -441,11 +441,10 @@ int Frame::get_key_press(bool wait_for_key)
 
 void Frame::adjust_size(int width, int height)
 {
-    g_frame.m_width = width;
-    g_frame.m_nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
-    g_frame.m_height = height;
-    g_frame.m_nc_height = height +
-                        GetSystemMetrics(SM_CYFRAME)*4 + GetSystemMetrics(SM_CYCAPTION) - 1;
+    m_width = width;
+    m_nc_width = width + GetSystemMetrics(SM_CXFRAME) * 2;
+    m_height = height;
+    m_nc_height = height + GetSystemMetrics(SM_CYFRAME) * 4 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
 void Frame::create_window(int width, int height)
@@ -467,7 +466,7 @@ void Frame::create_window(int width, int height)
 void Frame::resize(int width, int height)
 {
     adjust_size(width, height);
-    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_nc_width, g_frame.m_nc_height, SWP_NOZORDER | SWP_NOMOVE);
+    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_nc_width, m_nc_height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 }
 
