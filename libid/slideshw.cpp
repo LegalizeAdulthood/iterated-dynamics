@@ -303,7 +303,7 @@ start:
         else
         {
             char line[80];
-            rewind(s_slide_show_file);
+            std::rewind(s_slide_show_file);
             std::strcat(buffer, ":");
             int count;
             do

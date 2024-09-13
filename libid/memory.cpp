@@ -333,8 +333,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         {
             s_handles[handle].Disk.file = dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "w+b");
         }
-        rewind(s_handles[handle].Disk.file);
-        if (fseek(s_handles[handle].Disk.file, toallocate, SEEK_SET) != 0)
+        std::rewind(s_handles[handle].Disk.file);
+        if (std::fseek(s_handles[handle].Disk.file, toallocate, SEEK_SET) != 0)
         {
             s_handles[handle].Disk.file = nullptr;
         }
@@ -354,7 +354,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
             dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "r+b") :
             dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "r+b");
         // cppcheck-suppress useClosedFile
-        rewind(s_handles[handle].Disk.file);
+        std::rewind(s_handles[handle].Disk.file);
         s_handles[handle].Disk.size = toallocate;
         s_handles[handle].Disk.stored_at = DISK;
         use_this_type = DISK;
@@ -445,8 +445,8 @@ bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offse
         break;
 
     case DISK: // MoveToMemory
-        rewind(s_handles[handle].Disk.file);
-        fseek(s_handles[handle].Disk.file, start, SEEK_SET);
+        std::rewind(s_handles[handle].Disk.file);
+        std::fseek(s_handles[handle].Disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
             std::memcpy(diskbuf, buffer, (U16)DISKWRITELEN);
@@ -516,8 +516,8 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
         break;
 
     case DISK: // MoveFromMemory
-        rewind(s_handles[handle].Disk.file);
-        fseek(s_handles[handle].Disk.file, start, SEEK_SET);
+        std::rewind(s_handles[handle].Disk.file);
+        std::fseek(s_handles[handle].Disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
             numread = (U16)std::fread(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].Disk.file);
@@ -587,8 +587,8 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 
     case DISK: // SetMemory
         std::memset(diskbuf, value, (U16)DISKWRITELEN);
-        rewind(s_handles[handle].Disk.file);
-        fseek(s_handles[handle].Disk.file, start, SEEK_SET);
+        std::rewind(s_handles[handle].Disk.file);
+        std::fseek(s_handles[handle].Disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
             numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].Disk.file);

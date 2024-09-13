@@ -3439,7 +3439,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 }
                 else
                 {
-                    fseek(openfile, filepos, SEEK_SET);
+                    std::fseek(openfile, filepos, SEEK_SET);
                 }
             }
             else if (std::isalpha(c) || c == '_')
@@ -3460,7 +3460,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             }
             else
             {
-                fseek(openfile, filepos, SEEK_SET);
+                std::fseek(openfile, filepos, SEEK_SET);
                 tok->str[i++] = (char) 0;
                 done = true;
             }
@@ -3595,7 +3595,7 @@ CASE_NUM :
             done = true;
         }
     }
-    fseek(openfile, filepos, SEEK_SET);
+    std::fseek(openfile, filepos, SEEK_SET);
     tok->str[1] = (char) 0;
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
@@ -3651,7 +3651,7 @@ CASE_NUM:
                 tok->type = token_type::NOT_A_TOKEN;
                 tok->id   = token_id::TOKEN_TOO_LONG;
                 tok->str[i] = (char) 0;
-                fseek(openfile, last_filepos, SEEK_SET);
+                std::fseek(openfile, last_filepos, SEEK_SET);
                 return false;
             }
             tok->str[i] = (char) 0;
