@@ -1,5 +1,6 @@
 #pragma once
 
+extern bool                  g_cursor_mouse_tracking;
 extern int                   g_look_at_mouse;
 
 // g_look_at_mouse is set to one of these positive values for handling mouse events,

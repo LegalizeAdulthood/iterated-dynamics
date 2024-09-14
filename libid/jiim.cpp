@@ -678,7 +678,7 @@ void Jiim(jiim_types which)
     bool still = true;
     zoom = 1;
 
-    s_cursor.start_mouse_tracking();
+    g_cursor_mouse_tracking = true;
 
     while (still)
     {
@@ -1303,7 +1303,7 @@ finish:
             g_has_inverse = savehasinverse;
         }
     }
-    s_cursor.end_mouse_tracking();
+    g_cursor_mouse_tracking = false;
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;

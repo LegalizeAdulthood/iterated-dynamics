@@ -286,7 +286,6 @@ private:
 
 bool g_using_jiim{};
 std::vector<BYTE> g_line_buff;
-bool g_editpal_cursor{};
 
 static const char *s_undo_file{"id.$$2"};  // file where undo list is stored
 static BYTE s_fg_color{};
@@ -742,7 +741,7 @@ int CEditor::edit()
         s_cursor.show();
     }
 
-    s_cursor.start_mouse_tracking();
+    g_cursor_mouse_tracking = true;
     while (!m_done)
     {
         s_cursor.wait_key();
@@ -840,7 +839,7 @@ int CEditor::edit()
             break;
         } // switch
     }     // while
-    s_cursor.end_mouse_tracking();
+    g_cursor_mouse_tracking = false;
 
     if (!m_hidden)
     {
@@ -946,7 +945,7 @@ bool MoveBox::process()
 
     draw();
 
-    s_cursor.start_mouse_tracking();
+    g_cursor_mouse_tracking = true;
     while (true)
     {
         s_cursor.wait_key();
@@ -1026,7 +1025,7 @@ bool MoveBox::process()
         }
     }
 
-    s_cursor.end_mouse_tracking();
+    g_cursor_mouse_tracking = false;
 
     erase();
 
@@ -1133,16 +1132,6 @@ void Cursor::show()
         save();
         draw();
     }
-}
-
-void Cursor::start_mouse_tracking()
-{
-    g_editpal_cursor = true;
-}
-
-void Cursor::end_mouse_tracking()
-{
-    g_editpal_cursor = false;
 }
 
 // See if the cursor should blink yet, and blink it if so

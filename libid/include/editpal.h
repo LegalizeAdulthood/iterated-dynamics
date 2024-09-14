@@ -30,8 +30,6 @@ public:
     int wait_key();
     void hide();
     void show();
-    void start_mouse_tracking();
-    void end_mouse_tracking();
 
 private:
     enum
@@ -49,7 +47,6 @@ private:
     char m_right[CURSOR_SIZE];
 };
 
-extern bool                  g_editpal_cursor;
 extern std::vector<BYTE>     g_line_buff;
 extern bool                  g_using_jiim;
 
