@@ -1488,7 +1488,7 @@ xhandleevents()
                 }
                 else
                 {
-                    Cursor_SetPos(xevent.xmotion.x, xevent.xmotion.y);
+                    //Cursor_SetPos(xevent.xmotion.x, xevent.xmotion.y);
                     xbufkey = ID_KEY_ENTER;
                 }
 

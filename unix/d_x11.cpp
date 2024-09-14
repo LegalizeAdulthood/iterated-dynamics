@@ -1278,7 +1278,7 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
         }
         else
         {
-            Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
+            //Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
             m_key_buffer = ID_KEY_ENTER;
         }
     }
