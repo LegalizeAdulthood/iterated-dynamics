@@ -5,14 +5,14 @@
 #include <vector>
 
 //
-// Class:     Cursor
+// Class:     CrossHairCursor
 //
 // Purpose:   Draw the blinking cross-hair cursor.
 //
-class Cursor
+class CrossHairCursor
 {
 public:
-    Cursor();
+    CrossHairCursor();
     void draw();
     void save();
     void restore();

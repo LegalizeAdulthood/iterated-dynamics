@@ -293,7 +293,7 @@ static BYTE s_bg_color{};
 static bool s_reserve_colors{};
 static bool s_inverse{};
 static float s_gamma_val{1.0f};
-static Cursor s_cursor{};
+static CrossHairCursor s_cursor{};
 
 static void clip_put_color(int x, int y, int color);
 static int clip_get_color(int x, int y);
@@ -622,7 +622,7 @@ static void draw_diamond(int x, int y, int color)
     g_put_color(x+2, y+4,    color);
 }
 
-Cursor::Cursor() :
+CrossHairCursor::CrossHairCursor() :
     m_x(g_screen_x_dots / 2),
     m_y(g_screen_y_dots / 2),
     m_hidden(1),
@@ -1034,7 +1034,7 @@ bool MoveBox::process()
     return key != ID_KEY_ESC;
 }
 
-void Cursor::draw()
+void CrossHairCursor::draw()
 {
     int color;
 
@@ -1048,7 +1048,7 @@ void Cursor::draw()
     hor_line(m_x+2,             m_y, CURSOR_SIZE, color);
 }
 
-void Cursor::save()
+void CrossHairCursor::save()
 {
     ver_get_row(m_x, m_y-CURSOR_SIZE-1, CURSOR_SIZE, m_top);
     ver_get_row(m_x, m_y+2,             CURSOR_SIZE, m_bottom);
@@ -1057,7 +1057,7 @@ void Cursor::save()
     get_row(m_x+2,             m_y,  CURSOR_SIZE, m_right);
 }
 
-void Cursor::restore()
+void CrossHairCursor::restore()
 {
     ver_put_row(m_x, m_y-CURSOR_SIZE-1, CURSOR_SIZE, m_top);
     ver_put_row(m_x, m_y+2,             CURSOR_SIZE, m_bottom);
@@ -1066,7 +1066,7 @@ void Cursor::restore()
     put_row(m_x+2,             m_y,  CURSOR_SIZE, m_right);
 }
 
-void Cursor::set_pos(int x, int y)
+void CrossHairCursor::set_pos(int x, int y)
 {
     if (!m_hidden)
     {
@@ -1083,7 +1083,7 @@ void Cursor::set_pos(int x, int y)
     }
 }
 
-void Cursor::move(int xoff, int yoff)
+void CrossHairCursor::move(int xoff, int yoff)
 {
     if (!m_hidden)
     {
@@ -1117,7 +1117,7 @@ void Cursor::move(int xoff, int yoff)
     }
 }
 
-void Cursor::hide()
+void CrossHairCursor::hide()
 {
     if (m_hidden++ == 0)
     {
@@ -1125,7 +1125,7 @@ void Cursor::hide()
     }
 }
 
-void Cursor::show()
+void CrossHairCursor::show()
 {
     if (--m_hidden == 0)
     {
@@ -1135,7 +1135,7 @@ void Cursor::show()
 }
 
 // See if the cursor should blink yet, and blink it if so
-void Cursor::check_blink()
+void CrossHairCursor::check_blink()
 {
     const long tick = readticker();
 
@@ -1154,7 +1154,7 @@ void Cursor::check_blink()
     }
 }
 
-int Cursor::wait_key()
+int CrossHairCursor::wait_key()
 {
     while (!driver_wait_key_pressed(1))
     {
@@ -2875,7 +2875,7 @@ void EditPalette()
     s_fg_color = (BYTE)(255%g_colors);
     s_bg_color = (BYTE)(s_fg_color-1);
 
-    s_cursor = Cursor();
+    s_cursor = CrossHairCursor();
     PalTable pt;
     pt.process();
 

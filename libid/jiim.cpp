@@ -70,7 +70,7 @@ static bool s_ok_to_miim{};              //
 static int s_secret_experimental_mode{}; //
 static float s_lucky_x{};                //
 static float s_lucky_y{};                //
-static Cursor s_cursor;                  //
+static CrossHairCursor s_cursor;                  //
 
 double g_julia_c_x{JULIA_C_NOT_SET}; //
 double g_julia_c_y{JULIA_C_NOT_SET}; //
@@ -541,7 +541,7 @@ void Jiim(jiim_types which)
         per_image();
     }
 
-    s_cursor = Cursor();
+    s_cursor = CrossHairCursor();
 
     /*
      * MIIM code:
