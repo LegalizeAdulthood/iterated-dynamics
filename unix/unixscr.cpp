@@ -1451,7 +1451,7 @@ xhandleevents()
         break;
         case MotionNotify:
         {
-            if (g_editpal_cursor && !g_inside_help)
+            if (g_cursor_mouse_tracking && !g_inside_help)
             {
                 while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
                                          &xevent))
@@ -1649,7 +1649,7 @@ xhandleevents()
         }  // End switch
     }  // End while
 
-    if (!xbufkey && g_editpal_cursor && !g_inside_help && g_look_at_mouse == +MouseLook::POSITION &&
+    if (!xbufkey && g_cursor_mouse_tracking && !g_inside_help && g_look_at_mouse == +MouseLook::POSITION &&
             (dx != 0 || dy != 0))
     {
         if (ABS(dx) > ABS(dy))

@@ -1246,7 +1246,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
 
 void X11Driver::ev_motion_notify(XEvent *xevent)
 {
-    if (g_editpal_cursor && !g_inside_help)
+    if (g_cursor_mouse_tracking && !g_inside_help)
     {
         while (XCheckWindowEvent(m_dpy, m_window, PointerMotionMask, xevent))
             ;
@@ -1319,7 +1319,7 @@ void X11Driver::handle_events()
         }
     }
 
-    if (!m_key_buffer && g_editpal_cursor && !g_inside_help && g_look_at_mouse == +MouseLook::POSITION &&
+    if (!m_key_buffer && g_cursor_mouse_tracking && !g_inside_help && g_look_at_mouse == +MouseLook::POSITION &&
             (m_dx != 0 || m_dy != 0))
     {
         if (ABS(m_dx) > ABS(m_dy))
