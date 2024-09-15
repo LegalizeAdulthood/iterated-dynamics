@@ -30,6 +30,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
+#include <memory>
 #include <system_error>
 #include <vector>
 
@@ -113,10 +114,10 @@ public:
         m_csize = csize_;
     }
 
-private:
     void draw();
     void erase();
 
+private:
     int m_x{};
     int m_y{};
     int m_base_width{};
@@ -128,6 +129,32 @@ private:
     std::vector<char> m_b;
     std::vector<char> m_l;
     std::vector<char> m_r;
+};
+
+class MoveBoxNotification : public NullMouseNotification
+{
+public:
+    MoveBoxNotification(MoveBox &box) :
+        m_box(box)
+    {
+    }
+    ~MoveBoxNotification() override = default;
+    void move(int x, int y, int key_flags) override
+    {
+        m_box.erase();
+        m_box.set_pos(x, y);
+        m_box.draw();
+    }
+    void left_down(bool double_click, int x, int y, int key_flags) override
+    {
+        if (!double_click)
+        {
+            driver_unget_key(ID_KEY_ENTER);
+        }
+    }
+
+private:
+    MoveBox &m_box;
 };
 
 //
@@ -623,6 +650,25 @@ static void draw_diamond(int x, int y, int color)
     g_put_color(x+2, y+4,    color);
 }
 
+class CrossHairCursorNotification : public NullMouseNotification
+{
+public:
+    CrossHairCursorNotification(CrossHairCursor &cursor) :
+        m_cursor(cursor)
+    {
+    }
+    ~CrossHairCursorNotification() override = default;
+    void move(int x, int y, int key_flags) override;
+
+private:
+    CrossHairCursor &m_cursor;
+};
+
+void CrossHairCursorNotification::move(int x, int y, int key_flags)
+{
+    m_cursor.set_pos(x, y);
+}
+
 CrossHairCursor::CrossHairCursor() :
     m_x(g_screen_x_dots / 2),
     m_y(g_screen_y_dots / 2),
@@ -947,6 +993,7 @@ bool MoveBox::process()
     draw();
 
     g_cursor_mouse_tracking = true;
+    MouseSubscription sub{std::make_shared<MoveBoxNotification>(*this)};
     while (true)
     {
         s_cursor.wait_key();
@@ -1425,7 +1472,7 @@ void PalTable::process()
         if (!m_move_box->process())
         {
             set_pal_range(0, g_colors, m_pal);
-            return ;
+            return;
         }
 
         set_pos(m_move_box->x(), m_move_box->y());
@@ -1450,6 +1497,7 @@ void PalTable::process()
     mk_default_palettes();
     m_done = false;
 
+    MouseSubscription cursor_subscription{std::make_shared<CrossHairCursorNotification>(s_cursor)};
     while (!m_done)
     {
         m_rgb[m_active]->edit();
@@ -2808,7 +2856,12 @@ PalTable::PalTable() :
     m_undo_file = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
     m_rgb[0]->set_rgb(m_curr[0], &m_pal[m_curr[0]]);
     m_rgb[1]->set_rgb(m_curr[1], &m_pal[m_curr[0]]);
-    set_pos(0, 0);
+    {
+        int x;
+        int y;
+        driver_get_cursor_pos(x, y);
+        set_pos(x, y);
+    }
     set_csize(m_csize);
 }
 
@@ -2827,7 +2880,6 @@ PalTable::~PalTable()
 
 void EditPalette()
 {
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
     ValueSaver saved_logical_screen_x_offset(g_logical_screen_x_offset, 0);
     ValueSaver saved_logical_screen_y_offset(g_logical_screen_y_offset, 0);
 

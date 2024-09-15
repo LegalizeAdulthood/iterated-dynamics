@@ -273,6 +273,31 @@ static void plot_OnPaint(HWND window)
     s_plot->on_paint(window);
 }
 
+static void plot_OnLButtonDown(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+{
+    g_frame.on_left_button_down(window, double_click, x, y, key_flags);
+}
+
+static void plot_OnLButtonUp(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_left_button_up(window, x, y, key_flags);
+}
+
+static void plot_OnRButtonUp(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_right_button_up(window, x, y, key_flags);
+}
+
+static void plot_OnMButtonUp(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_middle_button_up(window, x, y, key_flags);
+}
+
+static void plot_OnMouseMove(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_mouse_move(window, x, y, key_flags);
+}
+
 static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
     _ASSERTE(s_plot != nullptr);
@@ -282,6 +307,26 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
         HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint);
         break;
 
+    case WM_LBUTTONDOWN:
+        HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_OnLButtonDown);
+        break;
+        
+    case WM_LBUTTONUP:
+        HANDLE_WM_LBUTTONUP(window, wp, lp, plot_OnLButtonUp);
+        break;
+
+    case WM_RBUTTONUP:
+        HANDLE_WM_RBUTTONUP(window, wp, lp, plot_OnRButtonUp);
+        break;
+        
+    case WM_MBUTTONUP:
+        HANDLE_WM_MBUTTONUP(window, wp, lp, plot_OnMButtonUp);
+        break;
+
+    case WM_MOUSEMOVE:
+        HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_OnMouseMove);
+        break;
+        
     default:
         return DefWindowProc(window, message, wp, lp);
     }

@@ -14,8 +14,13 @@
 #include "port.h"
 #include "id.h"
 
-#include "win_text.h"
+#include "frame.h"
 #include "ods.h"
+#include "win_text.h"
+
+#include "drivers.h"
+
+#include <string>
 
 #define TIMER_ID 1
 
@@ -411,33 +416,54 @@ static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
     s_me->on_get_min_max_info(hwnd,lpMinMaxInfo);
 }
 
-/*
-        Window-handling procedure
-*/
-LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+static void wintext_OnLButtonUp(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_left_button_up(window, x, y, key_flags);
+}
+
+static void wintext_OnRButtonUp(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_right_button_up(window, x, y, key_flags);
+}
+
+static void wintext_OnMButtonUp(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_middle_button_up(window, x, y, key_flags);
+}
+
+LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
     switch (message)
     {
     case WM_GETMINMAXINFO:
-        HANDLE_WM_GETMINMAXINFO(hWnd, wParam, lParam, wintext_OnGetMinMaxInfo);
+        HANDLE_WM_GETMINMAXINFO(window, wp, lp, wintext_OnGetMinMaxInfo);
         break;
     case WM_CLOSE:
-        HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);
+        HANDLE_WM_CLOSE(window, wp, lp, wintext_OnClose);
         break;
     case WM_SIZE:
-        HANDLE_WM_SIZE(hWnd, wParam, lParam, wintext_OnSize);
+        HANDLE_WM_SIZE(window, wp, lp, wintext_OnSize);
         break;
     case WM_SETFOCUS:
-        HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);
+        HANDLE_WM_SETFOCUS(window, wp, lp, wintext_OnSetFocus);
         break;
     case WM_KILLFOCUS:
-        HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus);
+        HANDLE_WM_KILLFOCUS(window, wp, lp, wintext_OnKillFocus);
         break;
     case WM_PAINT:
-        HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);
+        HANDLE_WM_PAINT(window, wp, lp, wintext_OnPaint);
+        break;
+    case WM_LBUTTONUP:
+        HANDLE_WM_LBUTTONUP(window, wp, lp, wintext_OnLButtonUp);
+        break;
+    case WM_RBUTTONUP:
+        HANDLE_WM_RBUTTONUP(window, wp, lp, wintext_OnRButtonUp);
+        break;
+    case WM_MBUTTONUP:
+        HANDLE_WM_MBUTTONUP(window, wp, lp, wintext_OnMButtonUp);
         break;
     default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
+        return DefWindowProc(window, message, wp, lp);
     }
     return 0;
 }

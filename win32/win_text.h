@@ -5,11 +5,13 @@
 #include "win_defines.h"
 #include <Windows.h>
 
-#define KEYBUFMAX 80
-#define WINTEXT_MAX_COL 80
-#define WINTEXT_MAX_ROW 25
-
 #include <vector>
+
+enum
+{
+    WINTEXT_MAX_COL = 80,
+    WINTEXT_MAX_ROW = 25
+};
 
 struct Screen
 {

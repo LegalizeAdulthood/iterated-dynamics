@@ -61,7 +61,7 @@ public:
     bool is_text() override;
     void set_for_text() override;
     void set_for_graphics() override;
-    bool diskp() override;
+    bool diskp() const override;
     bool validate_mode(VIDEOINFO *mode) override;
     void pause() override;
     void resume() override;
@@ -429,7 +429,7 @@ void DiskDriver::set_for_graphics()
     hide_text_cursor();
 }
 
-bool DiskDriver::diskp()
+bool DiskDriver::diskp() const
 {
     return true;
 }

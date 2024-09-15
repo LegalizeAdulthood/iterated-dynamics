@@ -2,13 +2,13 @@
 //
 #pragma once
 
+#include "mouse.h"
+
 #include "win_defines.h"
 #include <Windows.h>
 
 #include <array>
 #include <string>
-
-#define KEYBUFMAX 80
 
 class Frame
 {
@@ -42,15 +42,32 @@ public:
     void on_timer(HWND window, UINT id);
     void on_set_focus(HWND window, HWND old_focus);
     void on_kill_focus(HWND window, HWND old_focus);
+    void on_left_button_up(HWND window, int x, int y, UINT flags);
+    void on_right_button_up(HWND window, int x, int y, UINT key_flags);
+    void on_middle_button_up(HWND window, int x, int y, UINT key_flags);
+    void on_mouse_move(HWND window, int x, int y, UINT key_flags);
+    void on_left_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
+    void on_right_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
+    void on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
+    void get_cursor_pos(int &x, int &y) const
+    {
+        x = static_cast<int>(m_pos.x);
+        y = static_cast<int>(m_pos.y);
+    }
 
 private:
     enum
     {
-        FRAME_TIMER_ID = 2
+        FRAME_TIMER_ID = 2,
+        KEY_BUF_MAX = 80,
     };
 
     void adjust_size(int width, int height);
     void add_key_press(unsigned int key);
+    bool key_buffer_full() const
+    {
+        return m_key_press_count >= KEY_BUF_MAX;
+    }
 
     HINSTANCE m_instance{};
     HWND m_window{};
@@ -61,12 +78,17 @@ private:
     int m_nc_height{};
     bool m_has_focus{};
     bool m_timed_out{};
+    POINT m_last{-1,-1};
+    POINT m_delta{};
+    POINT m_pos{};
+    int m_look_at_mouse{+MouseLook::IGNORE_MOUSE};
+    long m_last_tick{-1};
 
     // the keypress buffer
     unsigned int m_key_press_count{};
     unsigned int m_key_press_head{};
     unsigned int m_key_press_tail{};
-    std::array<unsigned int, KEYBUFMAX> m_key_press_buffer{};
+    std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
 };
 
 extern Frame g_frame;

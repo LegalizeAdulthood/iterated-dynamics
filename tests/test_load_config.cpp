@@ -63,13 +63,14 @@ public:
     MOCK_METHOD(bool, sound_on, (int), (override));
     MOCK_METHOD(void, sound_off, (), (override));
     MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, diskp, (), (override));
+    MOCK_METHOD(bool, diskp, (), (const override));
     MOCK_METHOD(int, get_char_attr, (), (override));
     MOCK_METHOD(void, put_char_attr, (int), (override));
     MOCK_METHOD(void, delay, (int), (override));
     MOCK_METHOD(void, set_keyboard_timeout, (int), (override));
     MOCK_METHOD(void, flush, (), (override));
     MOCK_METHOD(void, debug_text, (const char *text), (override));
+    MOCK_METHOD(void, get_cursor_pos, (int &x, int &y), (const override));
 };
 
 TEST(TestDriver, loadClose)

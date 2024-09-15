@@ -58,62 +58,64 @@ class Driver
 public:
     virtual ~Driver() = default;
 
-    virtual const std::string &get_name() const = 0;                                 // name of driver
-    virtual const std::string &get_description() const = 0;                          // driver description
-    virtual bool init(int *argc, char **argv) = 0;                                   // init the driver
-    virtual bool validate_mode(VIDEOINFO *mode) = 0;                                 // validate a id.cfg mode
-    virtual void get_max_screen(int &xmax, int &ymax) = 0;                           // find max screen extents
-    virtual void terminate() = 0;                                                    // shutdown the driver
-    virtual void pause() = 0;                                                        // pause this driver
-    virtual void resume() = 0;                                                       // resume this driver
-    virtual void schedule_alarm(int secs) = 0;                                       // refresh alarm
-    virtual void create_window() = 0;                                                // creates a window
-    virtual bool resize() = 0;                                                       // handles window resize.
-    virtual void redraw() = 0;                                                       // redraws the screen
-    virtual int read_palette() = 0;                                                  // read palette into g_dac_box
-    virtual int write_palette() = 0;                                                 // write g_dac_box into palette
-    virtual int read_pixel(int x, int y) = 0;                                        // reads a single pixel
-    virtual void write_pixel(int x, int y, int color) = 0;                           // writes a single pixel
-    virtual void read_span(int y, int x, int lastx, BYTE *pixels) = 0;               // reads a span of pixel
-    virtual void write_span(int y, int x, int lastx, BYTE *pixels) = 0;              // writes a span of pixels
-    virtual void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) = 0;    //
-    virtual void put_truecolor(int x, int y, int r, int g, int b, int a) = 0;        //
-    virtual void set_line_mode(int mode) = 0;                                        // set copy/xor line
-    virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;           // draw line
-    virtual void display_string(int x, int y, int fg, int bg, char const *text) = 0; // draw string in graphics mode
-    virtual void save_graphics() = 0;                                                // save graphics
-    virtual void restore_graphics() = 0;                                             // restore graphics
-    virtual int get_key() = 0;                                                       // poll or block for a key
-    virtual int key_cursor(int row, int col) = 0;                                    //
-    virtual int key_pressed() = 0;                                                   //
-    virtual int wait_key_pressed(int timeout) = 0;                                   //
-    virtual void unget_key(int key) = 0;                                             //
-    virtual void shell() = 0;                                                        // invoke a command shell
-    virtual void set_video_mode(VIDEOINFO *mode) = 0;                                //
-    virtual void put_string(int row, int col, int attr, char const *msg) = 0;        //
-    virtual bool is_text() = 0;                                                      //
-    virtual void set_for_text() = 0;                                                 // set for text mode & save gfx
-    virtual void set_for_graphics() = 0;                                             // restores graphics and data
-    virtual void set_clear() = 0;                                                    // clears text screen
-    virtual void move_cursor(int row, int col) = 0;                                  // text screen functions
-    virtual void hide_text_cursor() = 0;                                             //
-    virtual void set_attr(int row, int col, int attr, int count) = 0;                //
-    virtual void scroll_up(int top, int bot) = 0;                                    //
-    virtual void stack_screen() = 0;                                                 //
-    virtual void unstack_screen() = 0;                                               //
-    virtual void discard_screen() = 0;                                               //
-    virtual int init_fm() = 0;                                                       // sound routines
-    virtual void buzzer(buzzer_codes kind) = 0;                                      //
-    virtual bool sound_on(int frequency) = 0;                                        //
-    virtual void sound_off() = 0;                                                    //
-    virtual void mute() = 0;                                                         //
-    virtual bool diskp() = 0;                                                        // is a disk driver?
-    virtual int get_char_attr() = 0;                                                 //
-    virtual void put_char_attr(int char_attr) = 0;                                   //
-    virtual void delay(int ms) = 0;                                                  //
-    virtual void set_keyboard_timeout(int ms) = 0;                                   //
-    virtual void flush() = 0;                                                        //
-    virtual void debug_text(const char *text) = 0;                                   // Emit debug text (no EOL assumed)
+    virtual const std::string &get_name() const = 0;                    // name of driver
+    virtual const std::string &get_description() const = 0;             // driver description
+    virtual bool init(int *argc, char **argv) = 0;                      // init the driver
+    virtual bool validate_mode(VIDEOINFO *mode) = 0;                    // validate a id.cfg mode
+    virtual void get_max_screen(int &xmax, int &ymax) = 0;              // find max screen extents
+    virtual void terminate() = 0;                                       // shutdown the driver
+    virtual void pause() = 0;                                           // pause this driver
+    virtual void resume() = 0;                                          // resume this driver
+    virtual void schedule_alarm(int secs) = 0;                          // refresh alarm
+    virtual void create_window() = 0;                                   // creates a window
+    virtual bool resize() = 0;                                          // handles window resize.
+    virtual void redraw() = 0;                                          // redraws the screen
+    virtual int read_palette() = 0;                                     // read palette into g_dac_box
+    virtual int write_palette() = 0;                                    // write g_dac_box into palette
+    virtual int read_pixel(int x, int y) = 0;                           // reads a single pixel
+    virtual void write_pixel(int x, int y, int color) = 0;              // writes a single pixel
+    virtual void read_span(int y, int x, int lastx, BYTE *pixels) = 0;  // reads a span of pixel
+    virtual void write_span(int y, int x, int lastx, BYTE *pixels) = 0; // writes a span of pixels
+    virtual void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) = 0; //
+    virtual void put_truecolor(int x, int y, int r, int g, int b, int a) = 0;     //
+    virtual void set_line_mode(int mode) = 0;                                     // set copy/xor line
+    virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;        // draw line
+    virtual void display_string(
+        int x, int y, int fg, int bg, char const *text) = 0;                  // draw string in graphics mode
+    virtual void save_graphics() = 0;                                         // save graphics
+    virtual void restore_graphics() = 0;                                      // restore graphics
+    virtual int get_key() = 0;                                                // poll or block for a key
+    virtual int key_cursor(int row, int col) = 0;                             //
+    virtual int key_pressed() = 0;                                            //
+    virtual int wait_key_pressed(int timeout) = 0;                            //
+    virtual void unget_key(int key) = 0;                                      //
+    virtual void shell() = 0;                                                 // invoke a command shell
+    virtual void set_video_mode(VIDEOINFO *mode) = 0;                         //
+    virtual void put_string(int row, int col, int attr, char const *msg) = 0; //
+    virtual bool is_text() = 0;                                               //
+    virtual void set_for_text() = 0;                                          // set for text mode & save gfx
+    virtual void set_for_graphics() = 0;                                      // restores graphics and data
+    virtual void set_clear() = 0;                                             // clears text screen
+    virtual void move_cursor(int row, int col) = 0;                           // text screen functions
+    virtual void hide_text_cursor() = 0;                                      //
+    virtual void set_attr(int row, int col, int attr, int count) = 0;         //
+    virtual void scroll_up(int top, int bot) = 0;                             //
+    virtual void stack_screen() = 0;                                          //
+    virtual void unstack_screen() = 0;                                        //
+    virtual void discard_screen() = 0;                                        //
+    virtual int init_fm() = 0;                                                // sound routines
+    virtual void buzzer(buzzer_codes kind) = 0;                               //
+    virtual bool sound_on(int frequency) = 0;                                 //
+    virtual void sound_off() = 0;                                             //
+    virtual void mute() = 0;                                                  //
+    virtual bool diskp() const = 0;                                           // is a disk driver?
+    virtual int get_char_attr() = 0;                                          //
+    virtual void put_char_attr(int char_attr) = 0;                            //
+    virtual void delay(int ms) = 0;                                           //
+    virtual void set_keyboard_timeout(int ms) = 0;                            //
+    virtual void flush() = 0;                                                 //
+    virtual void debug_text(const char *text) = 0;         // Emit debug text (no EOL assumed)
+    virtual void get_cursor_pos(int &x, int &y) const = 0; // get cursor position within frame
 };
 
 /* Define the drivers to be included in the compilation:
@@ -365,4 +367,8 @@ inline void driver_debug_line(const char *line)
 inline void driver_debug_line(const std::string &line)
 {
     driver_debug_line(line.c_str());
+}
+inline void driver_get_cursor_pos(int &x, int &y)
+{
+    g_driver->get_cursor_pos(x, y);
 }

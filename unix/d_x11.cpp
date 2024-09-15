@@ -170,13 +170,19 @@ public:
     bool sound_on(int frequency) override;
     void sound_off() override;
     void mute() override;
-    bool diskp() override;
+    bool diskp() const override;
     int get_char_attr() override;
     void put_char_attr(int char_attr) override;
     void delay(int ms) override;
     void set_keyboard_timeout(int ms) override;
     void flush() override;
     void debug_text(const char *text) override;
+    void get_cursor_pos(int &x, int &y) override
+    {
+        // TODO
+        x = 0;
+        y = 0;
+    }
 
     void setredrawscreen()
     {
@@ -2571,7 +2577,7 @@ void X11Driver::mute()
     // TODO
 }
 
-bool X11Driver::diskp()
+bool X11Driver::diskp() const
 {
     // TODO
     return false;

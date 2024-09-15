@@ -38,8 +38,8 @@
 #include "id_keys.h"
 #include "jb.h"
 #include "jiim.h"
-#include "loadfile.h"
 #include "load_params.h"
+#include "loadfile.h"
 #include "lorenz.h"
 #include "make_batch_file.h"
 #include "merge_path_names.h"
@@ -51,6 +51,7 @@
 #include "starfield.h"
 #include "stereo.h"
 #include "update_save_name.h"
+#include "value_saver.h"
 #include "video_mode.h"
 #include "zoom.h"
 
@@ -677,12 +678,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
-            help_labels const old_help_mode = g_help_mode;
+            ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PALETTE_EDITOR};
             std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-            g_help_mode = help_labels::HELP_PALETTE_EDITOR;
             EditPalette();
-            g_help_mode = old_help_mode;
-            if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+            if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
             {
                 g_color_state = color_state::UNKNOWN;
                 save_history_info();

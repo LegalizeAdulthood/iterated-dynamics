@@ -110,14 +110,16 @@ bool Win32BaseDriver::init(int *argc, char **argv)
  */
 int Win32BaseDriver::key_pressed()
 {
-    int ch = m_key_buffer;
-
-    if (ch)
+    if (m_key_buffer)
     {
-        return ch;
+        return m_key_buffer;
     }
     flush_output();
-    ch = handle_special_keys(g_frame.get_key_press(false));
+    const int ch = handle_special_keys(g_frame.get_key_press(false));
+    if (m_key_buffer)
+    {
+        return m_key_buffer;
+    }
     m_key_buffer = ch;
 
     return ch;
@@ -379,7 +381,7 @@ void Win32BaseDriver::mute()
     ODS("Win32BaseDriver::mute");
 }
 
-bool Win32BaseDriver::diskp()
+bool Win32BaseDriver::diskp() const
 {
     return false;
 }
@@ -467,4 +469,9 @@ void Win32BaseDriver::set_keyboard_timeout(int ms)
 void Win32BaseDriver::debug_text(const char *text)
 {
     OutputDebugStringA(text);
+}
+
+void Win32BaseDriver::get_cursor_pos(int &x, int &y) const
+{
+    g_frame.get_cursor_pos(x, y);
 }

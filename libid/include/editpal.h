@@ -15,6 +15,12 @@ class CrossHairCursor
 {
 public:
     CrossHairCursor();
+    CrossHairCursor(const CrossHairCursor &rhs) = delete;
+    CrossHairCursor(CrossHairCursor &&rhs) = delete;
+    ~CrossHairCursor() = default;
+    CrossHairCursor &operator=(const CrossHairCursor &rhs) = default;
+    CrossHairCursor &operator=(CrossHairCursor &&rhs) = default;
+    
     void draw();
     void save();
     void restore();
