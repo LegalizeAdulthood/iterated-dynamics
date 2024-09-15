@@ -1,3 +1,3 @@
 #pragma once
 
-void goodbye();
+[[noreturn]] void goodbye();

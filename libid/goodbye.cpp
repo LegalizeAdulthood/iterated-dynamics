@@ -22,7 +22,8 @@
 #include <crtdbg.h>
 #endif
 
-void goodbye()                  // we done.  Bail out
+// we done.  Bail out
+[[noreturn]] void goodbye()
 {
     end_resume();
     ReleaseParamBox();
