@@ -380,7 +380,7 @@ void Frame::terminate()
     save_frame_position(m_window);
 }
 
-void Frame::pump_messages(bool waitflag)
+void Frame::pump_messages(bool wait_flag)
 {
     MSG msg;
     bool quitting = false;
@@ -391,9 +391,9 @@ void Frame::pump_messages(bool waitflag)
         if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
         {
             // no messages waiting
-            if (!waitflag                     //
-                || m_key_press_count != 0     //
-                || (waitflag && m_timed_out)) //
+            if (!wait_flag                     //
+                || m_key_press_count != 0      //
+                || (wait_flag && m_timed_out)) //
             {
                 return;
             }
