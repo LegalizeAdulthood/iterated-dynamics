@@ -289,7 +289,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
     int result;
 
     m_instance = instance;
-    std::strcpy(m_title, title);
+    m_title = title;
 
     result = GetClassInfoA(m_instance, s_window_class, &wc);
     if (!result)
@@ -302,7 +302,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
         wc.hIcon = nullptr;
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
-        wc.lpszMenuName =  m_title;
+        wc.lpszMenuName = m_title.c_str();
         wc.lpszClassName = s_window_class;
 
         result = RegisterClassA(&wc);
@@ -351,7 +351,7 @@ void Plot::create_window(HWND parent)
         s_plot = this;
         m_parent = parent;
         m_window = CreateWindowA(s_window_class,     //
-            m_title,                                 //
+            m_title.c_str(),                         //
             parent ? WS_CHILD : WS_OVERLAPPEDWINDOW, //
             CW_USEDEFAULT,                           // default horizontal position
             CW_USEDEFAULT,                           // default vertical position

@@ -25,7 +25,7 @@ struct Plot
     void restore_graphics();
 
     HINSTANCE m_instance;
-    char m_title[120];
+    std::string m_title;
     HWND m_parent;
 
     HWND m_window;
