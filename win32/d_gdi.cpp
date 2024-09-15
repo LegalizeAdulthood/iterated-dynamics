@@ -97,8 +97,8 @@ static void show_hide_windows(HWND show, HWND hide)
 
 void GDIDriver::get_max_size(int *width, int *height, bool *center_x, bool *center_y) const
 {
-    *width = m_win_text.m_max_width;
-    *height = m_win_text.m_max_height;
+    *width = m_win_text.get_max_width();
+    *height = m_win_text.get_max_height();
     if (g_video_table[g_adapter].xdots > *width)
     {
         *width = g_video_table[g_adapter].xdots;
@@ -122,7 +122,7 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
     }
     else
     {
-        text_pos.x = (g_frame.get_width() - m_win_text.m_max_width)/2;
+        text_pos.x = (g_frame.get_width() - m_win_text.get_max_width())/2;
     }
 
     if (center_y)
@@ -131,13 +131,13 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
     }
     else
     {
-        text_pos.y = (g_frame.get_height() - m_win_text.m_max_height)/2;
+        text_pos.y = (g_frame.get_height() - m_win_text.get_max_height())/2;
     }
 
     bool status = SetWindowPos(plot.m_window, nullptr,
         plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
-    status = SetWindowPos(m_win_text.m_window, nullptr,
+    status = SetWindowPos(m_win_text.get_window(), nullptr,
         text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
 }
@@ -310,13 +310,13 @@ bool GDIDriver::is_text()
 void GDIDriver::set_for_text()
 {
     text_not_graphics = true;
-    show_hide_windows(m_win_text.m_window, plot.m_window);
+    show_hide_windows(m_win_text.get_window(), plot.m_window);
 }
 
 void GDIDriver::set_for_graphics()
 {
     text_not_graphics = false;
-    show_hide_windows(plot.m_window, m_win_text.m_window);
+    show_hide_windows(plot.m_window, m_win_text.get_window());
     hide_text_cursor();
 }
 
@@ -374,9 +374,9 @@ bool GDIDriver::validate_mode(VIDEOINFO *mode)
 
 void GDIDriver::pause()
 {
-    if (m_win_text.m_window)
+    if (m_win_text.get_window())
     {
-        ShowWindow(m_win_text.m_window, SW_HIDE);
+        ShowWindow(m_win_text.get_window(), SW_HIDE);
     }
     if (plot.m_window)
     {
@@ -386,12 +386,12 @@ void GDIDriver::pause()
 
 void GDIDriver::resume()
 {
-    if (!m_win_text.m_window)
+    if (!m_win_text.get_window())
     {
         create_window();
     }
 
-    ShowWindow(m_win_text.m_window, SW_NORMAL);
+    ShowWindow(m_win_text.get_window(), SW_NORMAL);
     m_win_text.resume();
 }
 

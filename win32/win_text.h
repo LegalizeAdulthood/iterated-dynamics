@@ -15,8 +15,9 @@ struct Screen
     std::vector<BYTE> attrs;
 };
 
-struct WinText
+class WinText
 {
+public:
     bool initialize(HINSTANCE instance, HWND parent, LPCSTR title);
     void destroy();
     int text_on();
@@ -38,7 +39,28 @@ struct WinText
     {
         m_parent = parent;
     }
+    int get_max_width() const
+    {
+        return m_max_width;
+    }
+    int get_max_height() const
+    {
+        return m_max_height;
+    }
+    HWND get_window() const
+    {
+        return m_window;
+    }
 
+    // message handlers
+    void on_close(HWND window);
+    void on_set_focus(HWND window, HWND old_focus);
+    void on_kill_focus(HWND window, HWND old_focus);
+    void on_paint(HWND window);
+    void on_size(HWND window, UINT state, int cx, int cy);
+    void on_get_min_max_info(HWND hwnd, LPMINMAXINFO lpMinMaxInfo);
+
+private:
     int m_text_mode{};
     bool m_alt_f4_hit{};
     int m_showing_cursor{};

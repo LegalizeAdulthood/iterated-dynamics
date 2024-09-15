@@ -159,7 +159,7 @@ bool DiskDriver::init(int *argc, char **argv)
  */
 bool DiskDriver::resize()
 {
-    g_frame.resize(m_win_text.m_max_width, m_win_text.m_max_height);
+    g_frame.resize(m_win_text.get_max_width(), m_win_text.get_max_height());
     if ((g_video_table[g_adapter].xdots == width)
         && (g_video_table[g_adapter].ydots == height))
     {
@@ -378,7 +378,7 @@ void DiskDriver::redraw()
 
 void DiskDriver::create_window()
 {
-    g_frame.create_window(m_win_text.m_max_width, m_win_text.m_max_height);
+    g_frame.create_window(m_win_text.get_max_width(), m_win_text.get_max_height());
     m_win_text.set_parent(g_frame.get_window());
     m_win_text.text_on();
 }
@@ -441,22 +441,22 @@ bool DiskDriver::validate_mode(VIDEOINFO *mode)
 
 void DiskDriver::pause()
 {
-    if (m_win_text.m_window)
+    if (m_win_text.get_window())
     {
-        ShowWindow(m_win_text.m_window, SW_HIDE);
+        ShowWindow(m_win_text.get_window(), SW_HIDE);
     }
 }
 
 void DiskDriver::resume()
 {
-    if (!m_win_text.m_window)
+    if (!m_win_text.get_window())
     {
         create_window();
     }
 
-    if (m_win_text.m_window)
+    if (m_win_text.get_window())
     {
-        ShowWindow(m_win_text.m_window, SW_NORMAL);
+        ShowWindow(m_win_text.get_window(), SW_NORMAL);
     }
     m_win_text.resume();
 }
