@@ -31,7 +31,7 @@ int input_field(
     int curkey;
     int i;
     int j;
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     int ret = -1;
     std::strcpy(savefld, fld);
     int insert = 0;

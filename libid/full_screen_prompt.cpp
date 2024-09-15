@@ -56,7 +56,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     s_prompt_fn_keys = fn_key_mask;
 
     /* If applicable, open file for scrolling extra_info. The function
@@ -942,7 +942,7 @@ static int input_field_list(
     char buf[81];
     int curkey;
     int ret;
-    ValueSaver save_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
+    ValueSaver save_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     for (initval = 0; initval < llen; ++initval)
     {
         if (std::strcmp(fld, list[initval]) == 0)

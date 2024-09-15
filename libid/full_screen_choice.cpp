@@ -188,7 +188,7 @@ int fullscreen_choice(
     )
 {
     const int scrunch = (options & CHOICE_CRUNCH) ? 1 : 0; // scrunch up a line
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     int ret = -1;
     // preset current to passed string
     int const speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
