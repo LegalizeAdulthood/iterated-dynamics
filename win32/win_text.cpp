@@ -161,7 +161,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     std::strcpy(m_title, title);
     m_parent = parent;
 
-    bool return_value = GetClassInfo(instance, s_window_class, &wc) != 0;
+    bool return_value = GetClassInfoA(instance, s_window_class, &wc) != 0;
     if (!return_value)
     {
         wc.style = 0;
@@ -175,7 +175,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
         wc.lpszMenuName =  m_title;
         wc.lpszClassName = s_window_class;
 
-        return_value = RegisterClass(&wc) != 0;
+        return_value = RegisterClassA(&wc) != 0;
     }
 
     // set up the font characteristics
@@ -183,7 +183,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     m_font = static_cast<HFONT>(GetStockObject(m_char_font));
     hDC = GetDC(parent);
     hOldFont = static_cast<HFONT>(SelectObject(hDC, m_font));
-    GetTextMetrics(hDC, &TextMetric);
+    GetTextMetricsA(hDC, &TextMetric);
     SelectObject(hDC, hOldFont);
     ReleaseDC(parent, hDC);
     m_char_width  = TextMetric.tmMaxCharWidth;
@@ -268,7 +268,7 @@ int WinText::text_on()
      * is going to call the window procedure.
      */
     s_me = this;
-    m_window = CreateWindow(s_window_class,                   //
+    m_window = CreateWindowA(s_window_class,                  //
         m_title,                                              //
         nullptr == m_parent ? WS_OVERLAPPEDWINDOW : WS_CHILD, //
         CW_USEDEFAULT,                                        //
@@ -599,7 +599,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
                 {
                     SetBkColor(hDC, wintext_color[oldbk]);
                     SetTextColor(hDC, wintext_color[oldfg]);
-                    TextOut(hDC,
+                    TextOutA(hDC,
                             istart*m_char_width,
                             jstart*m_char_height,
                             &m_chars[jstart][istart],
