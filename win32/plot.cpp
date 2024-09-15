@@ -5,6 +5,10 @@
 #include "plot3d.h"
 #include "rotate.h"
 
+#include "frame.h"
+#include "plot.h"
+#include "ods.h"
+
 #include "win_defines.h"
 #include <crtdbg.h>
 #include <Windows.h>
@@ -13,9 +17,6 @@
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
-
-#include "plot.h"
-#include "ods.h"
 
 #define PLOT_TIMER_ID 1
 
@@ -246,7 +247,7 @@ void Plot::init_pixels()
     }
 }
 
-static void plot_OnPaint(HWND window)
+void Plot::on_paint(HWND window)
 {
     PAINTSTRUCT ps;
     HDC dc = BeginPaint(window, &ps);
@@ -258,13 +259,16 @@ static void plot_OnPaint(HWND window)
     if (width > 0 && height > 0)
     {
         DWORD status;
-        status = StretchDIBits(dc,
-                               0, 0, s_plot->m_width, s_plot->m_height,
-                               0, 0, s_plot->m_width, s_plot->m_height,
-                               &s_plot->m_pixels[0], &s_plot->m_bmi, DIB_RGB_COLORS, SRCCOPY);
+        status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, &m_pixels[0], &m_bmi,
+            DIB_RGB_COLORS, SRCCOPY);
         _ASSERTE(status != GDI_ERROR);
     }
     EndPaint(window, &ps);
+}
+
+static void plot_OnPaint(HWND window)
+{
+    s_plot->on_paint(window);
 }
 
 static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)

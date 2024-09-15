@@ -23,32 +23,44 @@ struct Plot
     void display_string(int x, int y, int fg, int bg, char const *text);
     void save_graphics();
     void restore_graphics();
+    HWND get_window() const
+    {
+        return m_window;
+    }
+    int get_width() const
+    {
+        return m_width;
+    }
+    int get_height() const
+    {
+        return m_height;
+    }
 
-    HINSTANCE m_instance;
-    std::string m_title;
-    HWND m_parent;
-
-    HWND m_window;
-    HDC m_memory_dc;
-    HBITMAP m_rendering;
-    HBITMAP m_backup;
-    HFONT m_font;
-
-    bool m_dirty;
-    RECT m_dirty_region;
-    BITMAPINFO m_bmi;                     // contains first clut entry too
-    RGBQUAD m_bmi_colors[255];             // color look up table
-
-    std::vector<BYTE> m_pixels;
-    std::vector<BYTE> m_saved_pixels;
-    size_t m_pixels_len;
-    size_t m_row_len;
-    int m_width;
-    int m_height;
-    unsigned char m_clut[256][3];
+    // message handlers
+    void on_paint(HWND window);
 
 private:
     void set_dirty_region(int xmin, int ymin, int xmax, int ymax);
     void init_pixels();
     void create_backing_store();
+
+    HINSTANCE m_instance{};
+    std::string m_title;
+    HWND m_parent{};
+    HWND m_window{};
+    HDC m_memory_dc{};
+    HBITMAP m_rendering{};
+    HBITMAP m_backup{};
+    HFONT m_font{};
+    bool m_dirty{};
+    RECT m_dirty_region{};
+    BITMAPINFO m_bmi{};                     // contains first clut entry too
+    RGBQUAD m_bmi_colors[255]{};             // color look up table
+    std::vector<BYTE> m_pixels;
+    std::vector<BYTE> m_saved_pixels;
+    size_t m_pixels_len{};
+    size_t m_row_len{};
+    int m_width{};
+    int m_height{};
+    unsigned char m_clut[256][3]{};
 };
