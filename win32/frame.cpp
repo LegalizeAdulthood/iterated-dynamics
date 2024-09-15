@@ -380,7 +380,7 @@ void Frame::terminate()
     save_frame_position(m_window);
 }
 
-int Frame::pump_messages(bool waitflag)
+void Frame::pump_messages(bool waitflag)
 {
     MSG msg;
     bool quitting = false;
@@ -395,7 +395,7 @@ int Frame::pump_messages(bool waitflag)
                 || m_key_press_count != 0
                 || (waitflag && m_timed_out))
             {
-                return m_key_press_count > 0 ? 1 : 0;
+                return;
             }
         }
 
@@ -418,8 +418,6 @@ int Frame::pump_messages(bool waitflag)
     {
         goodbye();
     }
-
-    return m_key_press_count == 0 ? 0 : 1;
 }
 
 int Frame::get_key_press(bool wait_for_key)

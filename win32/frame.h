@@ -15,7 +15,7 @@ public:
     void terminate();
     void create_window(int width, int height);
     int get_key_press(bool wait_for_key);
-    int pump_messages(bool waitflag);
+    void pump_messages(bool waitflag);
     void resize(int width, int height);
     void set_keyboard_timeout(int ms);
 
