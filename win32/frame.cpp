@@ -391,26 +391,23 @@ void Frame::pump_messages(bool waitflag)
         if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
         {
             // no messages waiting
-            if (!waitflag
-                || m_key_press_count != 0
-                || (waitflag && m_timed_out))
+            if (!waitflag                     //
+                || m_key_press_count != 0     //
+                || (waitflag && m_timed_out)) //
             {
                 return;
             }
         }
 
+        if (int result = GetMessage(&msg, nullptr, 0, 0); result > 0)
         {
-            int result = GetMessage(&msg, nullptr, 0, 0);
-            if (result > 0)
-            {
-                // translate accelerator here?
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-            else if (0 == result)
-            {
-                quitting = true;
-            }
+            // translate accelerator here?
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        else if (0 == result)
+        {
+            quitting = true;
         }
     }
 
