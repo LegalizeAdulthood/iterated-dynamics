@@ -297,7 +297,7 @@ void Win32BaseDriver::stack_screen()
         driver_set_for_text();
     }
     m_saved_cursor.push_back(g_text_row * 80 + g_text_col);
-    m_saved_screens.push_back(m_win_text.screen_get());
+    m_saved_screens.push_back(m_win_text.get_screen());
     driver_set_clear();
 }
 
@@ -311,7 +311,7 @@ void Win32BaseDriver::unstack_screen()
     if (!m_saved_screens.empty())
     {
         // unstack
-        m_win_text.screen_set(m_saved_screens.back());
+        m_win_text.set_screen(m_saved_screens.back());
         m_saved_screens.pop_back();
         move_cursor(-1, -1);
     }

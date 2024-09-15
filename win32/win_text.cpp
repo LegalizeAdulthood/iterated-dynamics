@@ -700,7 +700,7 @@ void WinText::clear()
     InvalidateRect(m_window, nullptr, FALSE);
 }
 
-Screen WinText::screen_get()
+Screen WinText::get_screen() const
 {
     constexpr size_t count{WINTEXT_MAX_ROW * WINTEXT_MAX_COL};
     Screen result;
@@ -711,7 +711,7 @@ Screen WinText::screen_get()
     return result;
 }
 
-void WinText::screen_set(const Screen &screen)
+void WinText::set_screen(const Screen &screen)
 {
     constexpr size_t count{WINTEXT_MAX_ROW * WINTEXT_MAX_COL};
     std::memcpy(m_chars, screen.chars.data(), count);

@@ -28,8 +28,8 @@ public:
     void cursor(int xpos, int ypos, int cursor_type);
     void set_attr(int row, int col, int attr, int count);
     void clear();
-    Screen screen_get();
-    void screen_set(const Screen &screen);
+    Screen get_screen() const;
+    void set_screen(const Screen &screen);
     void hide_cursor();
     void schedule_alarm(int secs);
     int get_char_attr(int row, int col);
