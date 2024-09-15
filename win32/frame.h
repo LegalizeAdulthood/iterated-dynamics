@@ -18,8 +18,37 @@ public:
     void pump_messages(bool wait_flag);
     void resize(int width, int height);
     void set_keyboard_timeout(int ms);
+    HWND get_window() const
+    {
+        return m_window;
+    }
+    int get_width() const
+    {
+        return m_width;
+    }
+    int get_height() const
+    {
+        return m_height;
+    }
+
+    // event handlers
+    void on_close(HWND window);
+    void on_paint(HWND window);
+    void on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT flags);
+    void on_char(HWND window, TCHAR ch, int num_repeat);
+    void on_get_min_max_info(HWND hwnd, LPMINMAXINFO info);
+    void on_timer(HWND window, UINT id);
+    void on_set_focus(HWND window, HWND old_focus);
+    void on_kill_focus(HWND window, HWND old_focus);
+
+private:
+    enum
+    {
+        FRAME_TIMER_ID = 2
+    };
 
     void adjust_size(int width, int height);
+    void add_key_press(unsigned int key);
 
     HINSTANCE m_instance{};
     HWND m_window{};
@@ -28,7 +57,6 @@ public:
     int m_height{};
     int m_nc_width{};
     int m_nc_height{};
-    HWND m_child{};
     bool m_has_focus{};
     bool m_timed_out{};
 

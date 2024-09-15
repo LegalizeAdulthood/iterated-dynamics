@@ -379,7 +379,7 @@ void DiskDriver::redraw()
 void DiskDriver::create_window()
 {
     g_frame.create_window(m_win_text.m_max_width, m_win_text.m_max_height);
-    m_win_text.set_parent(g_frame.m_window);
+    m_win_text.set_parent(g_frame.get_window());
     m_win_text.text_on();
 }
 

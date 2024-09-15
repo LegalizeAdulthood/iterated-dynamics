@@ -21,11 +21,6 @@
 #include <stdexcept>
 #include <string>
 
-enum
-{
-    FRAME_TIMER_ID = 2
-};
-
 Frame g_frame{};
 
 constexpr const TCHAR *const LEFT_POS{_T("Left")};
@@ -85,44 +80,44 @@ static POINT get_saved_frame_position()
     return pos;
 }
 
-static void frame_OnClose(HWND window)
+void Frame::on_close(HWND window)
 {
+    if (window != m_window)
+    {
+        return;
+    }
+
     save_frame_position(window);
     PostQuitMessage(0);
 }
 
-static void frame_OnSetFocus(HWND window, HWND old_focus)
+void Frame::on_paint(HWND window)
 {
-    g_frame.m_has_focus = true;
-}
+    if (window != m_window)
+    {
+        return;
+    }
 
-static void frame_OnKillFocus(HWND window, HWND old_focus)
-{
-    g_frame.m_has_focus = false;
-}
-
-static void frame_OnPaint(HWND window)
-{
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(window, &ps);
     EndPaint(window, &ps);
 }
 
-static void frame_add_key_press(unsigned int key)
+void Frame::add_key_press(unsigned int key)
 {
-    if (g_frame.m_key_press_count >= KEYBUFMAX)
+    if (m_key_press_count >= KEYBUFMAX)
     {
-        _ASSERTE(g_frame.m_key_press_count < KEYBUFMAX);
+        _ASSERTE(m_key_press_count < KEYBUFMAX);
         // no room
         return;
     }
 
-    g_frame.m_key_press_buffer[g_frame.m_key_press_head] = key;
-    if (++g_frame.m_key_press_head >= KEYBUFMAX)
+    m_key_press_buffer[g_frame.m_key_press_head] = key;
+    if (++m_key_press_head >= KEYBUFMAX)
     {
-        g_frame.m_key_press_head = 0;
+        m_key_press_head = 0;
     }
-    g_frame.m_key_press_count++;
+    m_key_press_count++;
 }
 
 inline bool has_mod(int modifier)
@@ -155,9 +150,13 @@ inline void debug_key_strokes(const std::string &text)
 }
 #endif
 
-
-static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT flags)
 {
+    if (window != m_window)
+    {
+        return;
+    }
+
     // KEYUP, KEYDOWN, and CHAR msgs go to the 'key pressed' code
     // a key has been pressed - maybe ASCII, maybe not
     // if it's an ASCII key, 'WM_CHAR' will handle it
@@ -249,19 +248,19 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
         if (j >= '1' && j <= '7')
         {
             i = ID_KEY_ALT_1 + (j - '1');
-            frame_add_key_press(i);
+            add_key_press(i);
             debug_key_strokes("OnKeyDown key: " + std::to_string(i));
         }
         else if (std::tolower(j) == 'a')
         {
             i = ID_KEY_ALT_A;
-            frame_add_key_press(i);
+            add_key_press(i);
             debug_key_strokes("OnKeyDown key: " + std::to_string(i));
         }
         else if (std::tolower(j) == 's')
         {
             i = ID_KEY_ALT_S;
-            frame_add_key_press(i);
+            add_key_press(i);
             debug_key_strokes("OnKeyDown key: " + std::to_string(i));
         }
     }
@@ -269,44 +268,98 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
     // use this call only for non-ASCII keys
     if (!(vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) && (j == 0))
     {
-        frame_add_key_press(i);
+        add_key_press(i);
         debug_key_strokes("OnKeyDown key: " + std::to_string(i));
     }
     debug_key_strokes("OnKeyDown exit vk: " + std::to_string(vk) + ", vsc: " + std::to_string(i) + ", char: " + std::to_string(j));
 }
 
-static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
+void Frame::on_char(HWND window, TCHAR ch, int num_repeat)
 {
+    if (window != m_window)
+    {
+        return;
+    }
+    
     // KEYUP, KEYDOWN, and CHAR msgs go to the SG code
     // an ASCII key has been pressed
     unsigned int i, j, k;
-    i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
+    i = (unsigned int)((num_repeat & 0x00ff0000) >> 16);
     j = ch;
     k = (i << 8) + j;
     if (k == '\t' && has_mod(VK_SHIFT))
     {
         k = ID_KEY_SHF_TAB;
     }
-    frame_add_key_press(k);
+    add_key_press(k);
     debug_key_strokes("OnChar " + std::to_string(k));
 }
 
-static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
+void Frame::on_get_min_max_info(HWND hwnd, LPMINMAXINFO info)
 {
-    info->ptMaxSize.x = g_frame.m_nc_width;
-    info->ptMaxSize.y = g_frame.m_nc_height;
+    if (hwnd != m_window)
+    {
+        return;
+    }
+
+    info->ptMaxSize.x = m_nc_width;
+    info->ptMaxSize.y = m_nc_height;
     info->ptMaxTrackSize = info->ptMaxSize;
     info->ptMinTrackSize = info->ptMaxSize;
 }
 
-static void frame_OnTimer(HWND window, UINT id)
+void Frame::on_timer(HWND window, UINT id)
 {
-    _ASSERTE(g_frame.m_window == window);
+    if (window != m_window)
+    {
+        return;
+    }
+    
     _ASSERTE(FRAME_TIMER_ID == id);
-    g_frame.m_timed_out = true;
+    m_timed_out = true;
 }
 
-static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+static void frame_OnClose(HWND window)
+{
+    g_frame.on_close(window);
+}
+
+static void frame_OnSetFocus(HWND window, HWND old_focus)
+{
+    g_frame.on_set_focus(window, old_focus);
+}
+
+static void frame_OnKillFocus(HWND window, HWND old_focus)
+{
+    g_frame.on_kill_focus(window, old_focus);
+}
+
+static void frame_OnPaint(HWND window)
+{
+    g_frame.on_paint(window);
+}
+
+static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+{
+    g_frame.on_key_down(hwnd, vk, fDown, cRepeat, flags);
+}
+
+static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
+{
+    g_frame.on_char(hwnd, ch, cRepeat);
+}
+
+static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
+{
+    g_frame.on_get_min_max_info(hwnd, info);
+}
+
+static void frame_OnTimer(HWND window, UINT id)
+{
+    g_frame.on_timer(window, id);
+}
+
+static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
     switch (message)
     {
@@ -339,7 +392,6 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
         break;
     default:
         return DefWindowProc(window, message, wp, lp);
-        break;
     }
     return 0;
 }
@@ -356,7 +408,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
         m_title = title;
 
         wc.style = 0;
-        wc.lpfnWndProc = frame_proc;
+        wc.lpfnWndProc = frame_window_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = m_instance;
@@ -448,6 +500,24 @@ void Frame::adjust_size(int width, int height)
     m_nc_width = width + GetSystemMetrics(SM_CXFRAME) * 2;
     m_height = height;
     m_nc_height = height + GetSystemMetrics(SM_CYFRAME) * 4 + GetSystemMetrics(SM_CYCAPTION) - 1;
+}
+
+void Frame::on_set_focus(HWND window, HWND /*old_focus*/)
+{
+    if (window != m_window)
+    {
+        return;
+    }
+    m_has_focus = true;
+}
+
+void Frame::on_kill_focus(HWND window, HWND /*old_focus*/)
+{
+    if (window != m_window)
+    {
+        return;
+    }
+    g_frame.m_has_focus = false;
 }
 
 void Frame::create_window(int width, int height)

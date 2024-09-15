@@ -113,24 +113,25 @@ void GDIDriver::get_max_size(int *width, int *height, bool *center_x, bool *cent
 
 void GDIDriver::center_windows(bool center_x, bool center_y)
 {
-    POINT text_pos = { 0 }, plot_pos = { 0 };
+    POINT text_pos{};
+    POINT plot_pos{};
 
     if (center_x)
     {
-        plot_pos.x = (g_frame.m_width - plot.m_width)/2;
+        plot_pos.x = (g_frame.get_width() - plot.m_width)/2;
     }
     else
     {
-        text_pos.x = (g_frame.m_width - m_win_text.m_max_width)/2;
+        text_pos.x = (g_frame.get_width() - m_win_text.m_max_width)/2;
     }
 
     if (center_y)
     {
-        plot_pos.y = (g_frame.m_height - plot.m_height)/2;
+        plot_pos.y = (g_frame.get_height() - plot.m_height)/2;
     }
     else
     {
-        text_pos.y = (g_frame.m_height - m_win_text.m_max_height)/2;
+        text_pos.y = (g_frame.get_height() - m_win_text.m_max_height)/2;
     }
 
     bool status = SetWindowPos(plot.m_window, nullptr,
@@ -203,10 +204,10 @@ bool GDIDriver::resize()
     bool center_graphics_x = true, center_graphics_y = true;
 
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
-    if ((g_video_table[g_adapter].xdots == plot.m_width)
-        && (g_video_table[g_adapter].ydots == plot.m_height)
-        && (width == g_frame.m_width)
-        && (height == g_frame.m_height))
+    if (g_video_table[g_adapter].xdots == plot.m_width     //
+        && g_video_table[g_adapter].ydots == plot.m_height //
+        && width == g_frame.get_width()                    //
+        && height == g_frame.get_height())
     {
         return false;
     }
@@ -295,9 +296,9 @@ void GDIDriver::create_window()
 
     get_max_size(&width, &height, &center_x, &center_y);
     g_frame.create_window(width, height);
-    m_win_text.set_parent(g_frame.m_window);
+    m_win_text.set_parent(g_frame.get_window());
     m_win_text.text_on();
-    plot.create_window(g_frame.m_window);
+    plot.create_window(g_frame.get_window());
     center_windows(center_x, center_y);
 }
 
