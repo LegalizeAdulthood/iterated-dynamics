@@ -54,7 +54,11 @@ jobs:
     needs: html-docs
     strategy:
       matrix:
-        preset: [ debug, release ]
+        # The Windows debug build hangs when compiling the docs with id makedoc ...
+        # I can't reproduce this locally, but it's causing all CI jobs to fail.
+        # Temporary disable the debug jobs until this can be root caused.
+        # preset: [ debug, release ]
+        preset: [ release ]
         # macos-latest is disabled for now
         os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{matrix.os}}
