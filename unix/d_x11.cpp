@@ -53,6 +53,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -2283,7 +2284,7 @@ int X11Driver::key_cursor(int row, int col)
 
 void X11Driver::flush_output()
 {
-    static time_t start = 0;
+    static std::time_t start = 0;
     static long ticks_per_second = 0;
     static long last = 0;
     static long frames_per_second = 10;
@@ -2292,12 +2293,12 @@ void X11Driver::flush_output()
     {
         if (!start)
         {
-            time(&start);
+            std::time(&start);
             last = readticker();
         }
         else
         {
-            time_t now = time(nullptr);
+            std::time_t now = std::time(nullptr);
             long now_ticks = readticker();
             if (now > start)
             {
