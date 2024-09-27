@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* Unixscr.c
  * This file contains routines for the Unix port.
  * It uses the current window for text and creates an X window for graphics.

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include <cassert>
 
 #include "x11_frame.h"

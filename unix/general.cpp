@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* generalasm.c
  * This file contains routines to replace general.asm.
  *

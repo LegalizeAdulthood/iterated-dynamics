@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* Unix.c
  * This file contains compatibility routines.
  *
