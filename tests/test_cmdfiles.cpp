@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include <cmdfiles_test.h>
 
 #include "current_path_saver.h"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include <is_directory.h>
 
 #include "test_data.h"

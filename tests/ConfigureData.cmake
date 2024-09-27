@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 set(ID_TEST_HOME_DIR "${ID_TEST_DATA_DIR}/home")
 set(ID_TEST_MAP_SUBDIR "maps")

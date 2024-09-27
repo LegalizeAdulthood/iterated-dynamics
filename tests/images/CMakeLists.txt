@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 # Until the unix port is complete, we can't run end-to-end image tests there
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
