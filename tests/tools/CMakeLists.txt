@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 find_package(GIF REQUIRED)
 
 add_executable(image-compare image_compare.cpp)
