@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /**************************************
 **
 ** PORT.H : Miscellaneous definitions for portability.  Please add

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 #cmakedefine01 ID_BIG_ENDIAN
