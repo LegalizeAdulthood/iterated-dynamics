@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Wolf               { ; Jonathan Osuch
    reset type=phoenix corners=-1.557441/2.234555/-1.422003/1.421998
    params=-0.75078049362069/1.40200999374372/2 inside=0

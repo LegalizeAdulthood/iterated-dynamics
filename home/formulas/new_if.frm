@@ -1,4 +1,5 @@
-
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Gallet-8-01 { ; Sylvie Gallet, Mar 1997
    z = c = pixel , zc = 0 :
    if (zc < 0)

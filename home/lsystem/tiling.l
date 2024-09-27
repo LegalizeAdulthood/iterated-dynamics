@@ -1,4 +1,5 @@
-
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; These LSystems are designed to be run from Id.  No compilation is
 ; necessary, just copy this file to the Id directory and run Id.
 ; Select the lsystem fractal type and press F6 to select a file.

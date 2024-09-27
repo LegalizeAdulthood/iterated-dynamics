@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 PT1    {; Jaume Bartrolí
    ; Pythagorean Tree
    ; From "Chaos and Fractals" by Peitgen, Jürgens and Saupe

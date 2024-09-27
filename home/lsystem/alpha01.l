@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Anthony Hanmer 02-03/2000
 ;
 ; This is the first of a series of character fonts I have devised

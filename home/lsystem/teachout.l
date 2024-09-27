@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Date: Fri, 18 Apr 1997 11:19:47 -0500
 ; From: "William A McWorter Jr."
 ; Subject: Gary Teachout's lsystems

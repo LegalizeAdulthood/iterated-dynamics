@@ -1,3 +1,4 @@
+; SPDX-License-Identifier: GPL-3.0-only
 ;
 ; Spiral L-systems José Torres Torres 1998
 ;

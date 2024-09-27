@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Date: Wed, 19 Mar 1997 14:04:40 -0600
 ; From: "William A McWorter Jr."
 ;

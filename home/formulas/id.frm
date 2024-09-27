@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 comment {
  The formulas at the beginning of this file are from Mark Peterson, who
  built this fractal interpreter feature.  The rest are grouped by contributor.

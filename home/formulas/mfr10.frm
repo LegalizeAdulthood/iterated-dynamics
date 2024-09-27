@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Multifractal_10    { ;  Albrecht Niekamp  Jan2005
    ; p1 (spider)julia-seed
    ; real(p2) 5digits : (1)shape (2)outside (3)inside1 (4)inside2 (5)inside3

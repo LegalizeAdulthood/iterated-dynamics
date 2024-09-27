@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Another set, all based to varying degrees on the Cesaro and Double Cesaro 
 ; Curves.  (Here also lurk all the strings with which I have produced 15 
 ; L-system alphabets recently.)

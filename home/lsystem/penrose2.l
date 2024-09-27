@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 PenroseDouble { ; by Herb Savage
    ; This is Penrose3 and Penrose4 superimposed
    Angle 10

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Dekking's L-systems
 ; All translation errors due to William McWorter
 

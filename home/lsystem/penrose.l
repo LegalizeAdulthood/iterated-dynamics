@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 { Generation of Penrose aperiodic tilings
 
 Thanks to Herb Savage, who showed it was possible to generate those tilings

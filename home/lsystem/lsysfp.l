@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; The publication "Lindenmayer Systems, Fractals, and Plants",
 ; by Przemyslaw Prusinkiewicz & James Hanan, Lecture Notes in
 ; Biomathematics 79, Spinger-Verlag, 1989, gives a number of

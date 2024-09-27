@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Here are some more sets of L-Systems.
 ;
 ; Tony Hanmer

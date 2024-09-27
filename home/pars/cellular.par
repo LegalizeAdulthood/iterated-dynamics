@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 test_41            {
    reset type=cellular corners=-1.0/1.0/-1.0/1.0
    params=23.0/3311100320.0/41.0 inside=0 colors=000e00AXADCTwuI

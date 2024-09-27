@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Mandel_Demo        { ; PAR for initialization of Fractint demo
    reset type=mandel corners=-2.5/1.5/-1.5/1.5 params=0/0 inside=0
    sound=no maxiter=678

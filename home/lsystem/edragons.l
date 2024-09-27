@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Tony Hanmer
 
 README {  ; Anthony Hanmer 2000

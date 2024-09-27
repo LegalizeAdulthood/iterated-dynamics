@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; ... In the course of learning more about Hausdorff dimension from Morgan L. 
 ; Owens, I have also been instructed in simplifying my L-systems containing 
 ; the unnecessary "undefined x".

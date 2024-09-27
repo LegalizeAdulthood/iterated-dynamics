@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 a---mand { ; Eli Brandt, (c) 1992
    z = c = pixel:
    z = z^c + sin(c);

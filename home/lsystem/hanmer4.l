@@ -1,3 +1,4 @@
+; SPDX-License-Identifier: GPL-3.0-only
 ;
 ; Just a random set of L-systems from the last while of playing.  Save these 
 ; as hanmer4.l

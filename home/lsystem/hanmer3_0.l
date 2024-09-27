@@ -1,3 +1,4 @@
+; SPDX-License-Identifier: GPL-3.0-only
 ;
 ; It's amazing how living in a place where the electricity exists for about 6 
 ; hours a day, and where one doesn't have instant computer access, can be 

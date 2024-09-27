@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Koch1 { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 6

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ismand_demo_julia  { ; Image and par Copyright (c) Sylvie Gallet, 1999
    reset type=formula formulafile=example3.frm
    formulaname=ismand_demo ismand=n passes=d

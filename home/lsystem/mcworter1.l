@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Dragon0001 {
    Angle 4
    Axiom fx

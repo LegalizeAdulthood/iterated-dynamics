@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 adh6894 { ; Anthony Hanmer 2001, a.hanmer@gmail.com
    Angle 8 ; DC from 6829:
    Axiom x ; My only irregular-interior DC so far

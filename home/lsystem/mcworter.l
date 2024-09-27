@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Alien { ; William McWorter
    Angle 11
    Axiom x

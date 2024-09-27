@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; Mandelbrot Derivatives
 ;
 ; Putting abs() into various parts of the Mandelbrot formula 

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 bmc0884x {; Anthony Hanmer 27/1/2005, Designed with BRAZIL:
    ; One of my very best "BMC spirals", originating from play with
    ; Blancmange Curve variations

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 {--- SYLVIE GALLET -------------------------------------------------------}
 
 ismand_demo { ; by Sylvie Gallet

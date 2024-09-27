@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 mandphoenixclx1    { ; by Jonathan Osuch
    reset type=mandphoenixclx
    corners=-0.291827917/-0.281810939/0.125888824/0.133397639

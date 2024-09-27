@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Sand_Dollar        {
    reset type=icons corners=-1.424/1.424/-1.068/1.068
    params=-2.34/2/0.2/0.1/0.0/5 float=y inside=0

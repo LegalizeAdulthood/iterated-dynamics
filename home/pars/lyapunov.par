@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Blob1              { ; moderately slow
    reset type=lyapunov corners=2.719/3.178/3.26/3.604 params=65/0.05
    maxiter=25 colors=@gamma1.map

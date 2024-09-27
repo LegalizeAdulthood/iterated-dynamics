@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 IslandOfChaos(XAXIS_NOPARM) { ; Jonathan Osuch
    ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=sqr, fn2=sin, fn3=cosxx

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ;  From: "Anthony (Tony) Hanmer"
 ;  Subject: (fractint) L-system tinkerings
 ;  Date: Tue, 16 Nov 1999 11:09:42 +0400

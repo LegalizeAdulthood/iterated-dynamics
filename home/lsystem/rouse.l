@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; I have a couple of cool space-filling hexagonal fractals, plus another
 ; couple of fractals designed as L-systems that I'd like to see included in
 ; future Fractint.L files. No, it's not for money, just for glory <grin>.

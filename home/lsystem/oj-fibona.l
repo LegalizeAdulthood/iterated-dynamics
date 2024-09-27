@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; All the systems in this file is done
 ;  by Ole Jorgensen
 ;

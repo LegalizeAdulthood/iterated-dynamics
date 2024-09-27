@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 demonic_moose      { ; Jonathan Osuch
    reset type=tetrate passes=o
    center-mag=0.325467/4.44089e-16/0.5788618/1/-90/3.88578058618804789e-16

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 Achute             { ; (c) 1995 Bradley Beacham
                      ; No commercial use without permission
    reset type=lambda(fn||fn) function=sin/acos passes=t
