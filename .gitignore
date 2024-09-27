@@ -1,5 +1,6 @@
-home/id.hlp
-home/id.txt
+**/id.hlp
+**/id.txt
+**/helpdefs.h
 .idea
 .vs
 CMakeUserPresets.json
