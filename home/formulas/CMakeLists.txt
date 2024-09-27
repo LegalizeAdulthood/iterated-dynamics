@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 id_install_home(FILES
     example2.frm
     example3.frm

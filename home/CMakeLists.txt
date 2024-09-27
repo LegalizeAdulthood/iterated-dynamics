@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 set(ID_HOME_INSTALL_DIR .)
 
 function(id_install_home)

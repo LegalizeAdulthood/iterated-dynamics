@@ -1,3 +1,5 @@
+@rem SPDX-License-Identifier: GPL-3.0-only
+@rem
 @echo off
 setlocal
 rem TODO: Re-enable sound demo when audio library is selected.
