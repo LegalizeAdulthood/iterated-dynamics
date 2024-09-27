@@ -1,4 +1,7 @@
-# Copyright 2014 Richard Thomson
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright 2014-2024 Richard Thomson
+#
 cmake_minimum_required(VERSION 3.23)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
