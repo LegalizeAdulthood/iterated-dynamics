@@ -270,12 +270,18 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-New features in Version 1.1:
+New Features in Version 1.1:
+
+o None yet!\
+
+Bugs Fixed in Version 1.1:
 
 o When the monitor configuration changed since the last time Id was run
   and the previous window position is no longer on-screen, the previous
   window position is forgotten and the window is placed by the system.
   (Fixes #136)
+o On Windows, crash dump files are saved to the savedir location.
+  (Fixes #133)
 
 Known limitations:
 
