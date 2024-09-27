@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* d_win32.c
  *
  * Routines for a Win32 GDI driver for id.

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* d_win32_disk.c
  *
  * Routines for a Win32 disk video mode driver for id.

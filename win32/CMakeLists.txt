@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 # Copyright 2018 Richard Thomson
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
