@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "adoc_compiler.h"
 
 #include "help_source.h"

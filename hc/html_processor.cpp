@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "html_processor.h"
 
 #include "help_source.h"

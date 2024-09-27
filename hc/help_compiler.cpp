@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 // Stand-alone help compiler.
 //
 // See help-compiler.txt for source file syntax.
@@ -654,11 +656,14 @@ bool compare_files(std::FILE *f1, std::FILE *f2)
 
 void write_header_file(char const *fname, std::FILE *file)
 {
-    std::fprintf(file, "#pragma once\n"
+    std::fprintf(file, //
+        "// SPDX-License-Identifier: GPL-3.0-only\n"
+        "//\n"
+        "#pragma once\n"
         "\n"
         "// %s\n",
         fs::path{fname}.filename().string().c_str());
-    std::fprintf(file,
+    std::fprintf(file, //
         "//\n"
         "// Contains #defines for help.\n"
         "//\n"
@@ -666,7 +671,7 @@ void write_header_file(char const *fname, std::FILE *file)
         "//\n"
         "\n",
         fs::path{s_src_filename}.filename().string().c_str());
-    std::fprintf(file,
+    std::fprintf(file, //
         "// current help file version\n"
         "#define %-32s %3d\n"
         "\n"
@@ -770,35 +775,43 @@ void HelpCompiler::write_link_source()
     {
         msg("Writing: help_links.h");
         std::ofstream hdr{"help_links.h"};
-        hdr << "#pragma once\n"
-        "\n"
-        "#include <array>\n"
-        "#include <string_view>\n"
-        "\n"
-        "namespace hc\n"
-        "{\n"
-        "\n"
-        "struct HelpLink\n"
-        "{\n"
-        "    help_labels label;\n"
-        "    std::string_view link;\n"
-        "};\n"
-        "\n"
-        "extern std::array<HelpLink, " << topics.size() << "> g_help_links;\n"
-        "\n"
-        "} // namespace hc\n";
+        hdr << //
+            "// SPDX-License-Identifier: GPL-3.0-only\n"
+            "//\n"
+            "#pragma once\n"
+            "\n"
+            "#include <array>\n"
+            "#include <string_view>\n"
+            "\n"
+            "namespace hc\n"
+            "{\n"
+            "\n"
+            "struct HelpLink\n"
+            "{\n"
+            "    help_labels label;\n"
+            "    std::string_view link;\n"
+            "};\n"
+            "\n"
+            "extern std::array<HelpLink, "
+            << topics.size()
+            << "> g_help_links;\n"
+               "\n"
+               "} // namespace hc\n";
     }
 
     {
         msg("Writing: help_links.cpp");
         std::ofstream src{"help_links.cpp"};
-        src << "#include \"helpdefs.h\"\n"
-               "#include \"help_links.h\"\n"
-               "\n"
-               "namespace hc\n"
-               "{\n"
-               "\n"
-               "std::array<HelpLink, "
+        src << //
+            "// SPDX-License-Identifier: GPL-3.0-only\n"
+            "//\n"
+            "#include \"helpdefs.h\"\n"
+            "#include \"help_links.h\"\n"
+            "\n"
+            "namespace hc\n"
+            "{\n"
+            "\n"
+            "std::array<HelpLink, "
             << topics.size() << "> g_help_links = {\n";
         auto link_for_title = [](std::string text)
         {

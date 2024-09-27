@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 set(HC_TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_data)
 
 function(add_asciidoc_test name)

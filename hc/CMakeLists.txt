@@ -1,5 +1,7 @@
-# Copyright 2018 Richard Thomson
-
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright 2018-2024 Richard Thomson
+#
 find_package(Boost REQUIRED)
 
 add_library(libhc
