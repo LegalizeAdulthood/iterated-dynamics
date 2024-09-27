@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "select_video_mode.h"
 
 #include "port.h"

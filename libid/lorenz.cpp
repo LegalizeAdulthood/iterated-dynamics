@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
    This file contains two 3 dimensional orbit-type fractal
    generators - IFS and LORENZ3D, along with code to generate

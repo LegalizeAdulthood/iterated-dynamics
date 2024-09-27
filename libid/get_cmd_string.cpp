@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "get_cmd_string.h"
 
 #include "port.h"

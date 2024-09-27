@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
  *  Simultaneous Orbit Iteration Image Generation Method. Computes
  *      rectangular regions by tracking the orbits of only a few key points.

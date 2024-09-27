@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "fn_or_fn.h"
 
 #include "port.h"

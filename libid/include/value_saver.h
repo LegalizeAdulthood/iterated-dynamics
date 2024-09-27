@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 /// Saves the current value in the c'tor before assigning a new value.

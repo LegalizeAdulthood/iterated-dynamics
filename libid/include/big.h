@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #pragma once
 

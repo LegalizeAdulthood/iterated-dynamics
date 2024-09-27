@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "get_toggles2.h"
 
 #include "port.h"

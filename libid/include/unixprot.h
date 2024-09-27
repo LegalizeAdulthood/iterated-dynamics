@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 // This file contains prototypes for unix/linux specific functions.

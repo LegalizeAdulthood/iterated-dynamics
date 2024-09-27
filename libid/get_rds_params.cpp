@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "get_rds_params.h"
 
 #include "port.h"

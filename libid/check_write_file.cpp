@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "check_write_file.h"
 
 #include "cmdfiles.h"

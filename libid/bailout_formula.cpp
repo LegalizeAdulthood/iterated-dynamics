@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "bailout_formula.h"
 
 #include "debug_flags.h"

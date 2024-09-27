@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "comments.h"
 
 #include "get_calculation_time.h"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 //      Header file for L-system code.
 //
 #pragma once

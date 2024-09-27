@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "pixel_grid.h"
 
 #include "port.h"

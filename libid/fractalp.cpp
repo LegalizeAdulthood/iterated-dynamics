@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
         This module consists only of the fractalspecific structure
 */

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 void iplot_orbit(long ix, long iy, int color);

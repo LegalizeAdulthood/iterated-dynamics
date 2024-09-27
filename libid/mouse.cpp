@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "mouse.h"
 
 // g_look_at_mouse:

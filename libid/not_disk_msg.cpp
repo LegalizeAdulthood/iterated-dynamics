@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "not_disk_msg.h"
 
 #include "stop_msg.h"

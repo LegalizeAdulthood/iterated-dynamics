@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "text_screen.h"
 
 int g_text_row{};   // for putstring(-1,...)

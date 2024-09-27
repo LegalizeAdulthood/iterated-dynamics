@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
     subroutine of which sets up video (mode, screen size).
 

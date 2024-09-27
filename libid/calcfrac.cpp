@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 //
 // Contains the high level ("engine") code for calculating the
 // fractal images (well, SOMEBODY had to do it!).

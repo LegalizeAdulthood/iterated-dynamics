@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "ends_with_slash.h"
 
 #include "port.h"

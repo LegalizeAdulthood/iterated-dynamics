@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "one_or_two_pass.h"
 
 #include "calcfrac.h"

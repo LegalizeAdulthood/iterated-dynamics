@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* -----------------------------------------------------------------
 
 This file contains the "big number" high precision versions of the

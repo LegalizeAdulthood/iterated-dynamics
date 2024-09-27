@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "load_entry_text.h"
 
 static bool skip_starting_rows(std::FILE *entry_file, int start_row)

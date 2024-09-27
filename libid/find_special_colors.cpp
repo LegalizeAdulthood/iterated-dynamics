@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "find_special_colors.h"
 
 #include "port.h"

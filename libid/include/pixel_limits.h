@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 #define MAX_PIXELS   32767          // Maximum pixel count across/down the screen

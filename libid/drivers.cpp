@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "drivers.h"
 
 #include "video_mode.h"

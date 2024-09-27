@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 // Command-line / Command-File Parser Routines
 //
 #include "cmdfiles_test.h"

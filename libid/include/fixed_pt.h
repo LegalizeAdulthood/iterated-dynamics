@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 // Fixed-point math, e.g. 'long' arithmetic, related data and functions

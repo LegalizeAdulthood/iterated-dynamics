@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
 subroutines which belong primarily to calcfrac and
 fractals, i.e. which are non-fractal-specific fractal engine subroutines.

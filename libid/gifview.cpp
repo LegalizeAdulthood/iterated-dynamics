@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
  *
  * This GIF decoder is designed for use with this program.

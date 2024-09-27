@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* (C) 1990, Mark C. Peterson
    All rights reserved.
 

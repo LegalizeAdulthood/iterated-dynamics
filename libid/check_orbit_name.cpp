@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "check_orbit_name.h"
 
 #include "fractalp.h"

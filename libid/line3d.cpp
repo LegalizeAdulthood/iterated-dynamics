@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 //**********************************************************************
 // This file contains a 3D replacement for the out_line function called
 // by the decoder. The purpose is to apply various 3D transformations

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "work_list.h"
 
 int g_num_work_list{}; // resume work list for standard engine

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "calc_frac_init.h"
 
 #include "bailout_formula.h"

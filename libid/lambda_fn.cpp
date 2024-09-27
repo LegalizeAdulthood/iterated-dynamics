@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "lambda_fn.h"
 
 #include "port.h"

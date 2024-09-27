@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
 
 Write your fractal program here. initreal and initimag are the values in

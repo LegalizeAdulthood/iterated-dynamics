@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "mandelbrot_mix.h"
 
 #include "port.h"

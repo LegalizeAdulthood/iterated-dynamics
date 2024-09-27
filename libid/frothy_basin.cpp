@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 // frothy basin routines
 
 #include "frothy_basin.h"

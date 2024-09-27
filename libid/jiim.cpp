@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
  * Generates Inverse Julia in real time, lets move a cursor which determines
  * the J-set.

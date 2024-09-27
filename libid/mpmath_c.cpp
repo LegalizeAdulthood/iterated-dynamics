@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /* (C) 1989, Mark C. Peterson, CompuServe [70441,3353]
      All rights reserved.
 

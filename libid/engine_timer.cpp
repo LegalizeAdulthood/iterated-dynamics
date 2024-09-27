@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "engine_timer.h"
 
 #include "cmdfiles.h"

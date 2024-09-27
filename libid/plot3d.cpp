@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
     This file includes miscellaneous plot functions and logic
     for 3D, used by lorenz and line3d

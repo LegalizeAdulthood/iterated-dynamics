@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "volterra_lotka.h"
 
 #include "port.h"

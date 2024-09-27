@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 //*********************************************************************
 // These routines are called by driver_get_key to allow keystrokes that
 // control Iterated Dynamics to be read from a file.

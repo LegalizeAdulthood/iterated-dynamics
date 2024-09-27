@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #pragma once
 
 extern int                   g_text_cbase;      // g_text_col is relative to this

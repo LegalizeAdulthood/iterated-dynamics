@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 //
 // A word about the 3D library. Even though this library supports
 // three dimensions, the matrices are 4x4 for the following reason.

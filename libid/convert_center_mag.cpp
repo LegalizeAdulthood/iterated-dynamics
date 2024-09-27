@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "convert_center_mag.h"
 
 #include "biginit.h"

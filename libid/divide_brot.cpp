@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "divide_brot.h"
 
 #include "bailout_formula.h"

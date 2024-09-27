@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 find_package(Boost REQUIRED)
 find_package(GIF REQUIRED)
 find_package(cpuid CONFIG REQUIRED)

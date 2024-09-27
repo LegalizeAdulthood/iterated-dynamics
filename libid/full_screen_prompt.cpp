@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "full_screen_prompt.h"
 
 #include "port.h"

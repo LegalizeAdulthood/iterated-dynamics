@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 // An LZW decoder for GIF
 // Copyright (C) 1987, by Steven A. Bennett
 //

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "escher.h"
 
 #include "bailout_formula.h"

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "get_3d_params.h"
 
 #include "check_write_file.h"

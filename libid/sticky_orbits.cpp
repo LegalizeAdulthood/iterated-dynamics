@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "sticky_orbits.h"
 
 #include "calcfrac.h"

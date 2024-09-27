@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 /*
     A module to view 3D images.
     Written in Borland 'C++' by Paul de Leeuw.

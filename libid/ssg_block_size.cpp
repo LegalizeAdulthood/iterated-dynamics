@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "ssg_block_size.h"
 
 #include "id_data.h"
