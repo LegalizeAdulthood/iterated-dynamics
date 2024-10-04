@@ -462,11 +462,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 && g_params[1] == 0.0)
             {
                 // switch to corresponding Julia set
-                int key;
                 g_has_inverse = (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_bf_math == bf_math_type::NONE;
                 clear_zoombox();
                 Jiim(jiim_types::JIIM);
-                key = driver_get_key();    // flush keyboard buffer
+                const int key = driver_get_key();    // flush keyboard buffer
                 if (key != ID_KEY_SPACE)
                 {
                     driver_unget_key(key);
