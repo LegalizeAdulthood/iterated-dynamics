@@ -40,8 +40,14 @@ static void save_frame_position(HWND window)
     RECT rect{};
     GetWindowRect(window, &rect);
     CRegKey key;
-    key.Create(HKEY_CURRENT_USER, WINDOW_POS_KEY);
-    key.SetDWORDValue(LEFT_POS, rect.left);
+    if (key.Create(HKEY_CURRENT_USER, WINDOW_POS_KEY) != ERROR_SUCCESS)
+    {
+        return;
+    }
+    if (key.SetDWORDValue(LEFT_POS, rect.left) != ERROR_SUCCESS)
+    {
+        return;
+    }
     key.SetDWORDValue(TOP_POS, rect.top);
 }
 
@@ -65,18 +71,22 @@ static POINT get_saved_frame_position()
             return static_cast<int>(value);
         };
         pos.x = get_value(LEFT_POS);
-        pos.y = get_value(TOP_POS);
+        pos.y = pos.x != CW_USEDEFAULT ? get_value(TOP_POS) : CW_USEDEFAULT;
+
+        if (pos.x != CW_USEDEFAULT && pos.y != CW_USEDEFAULT)
+        {
+            const HMONITOR monitor{MonitorFromPoint(pos, MONITOR_DEFAULTTONULL)};
+            if (monitor == nullptr)
+            {
+                forget_frame_position(key);
+                return {CW_USEDEFAULT, CW_USEDEFAULT};
+            }
+        }
     }
     else
     {
         pos.x = CW_USEDEFAULT;
         pos.y = CW_USEDEFAULT;
-    }
-    HMONITOR monitor{MonitorFromPoint(pos, MONITOR_DEFAULTTONULL)};
-    if (monitor == nullptr)
-    {
-        forget_frame_position(key);
-        return {};
     }
 
     return pos;
