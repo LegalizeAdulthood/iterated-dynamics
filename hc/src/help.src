@@ -282,6 +282,7 @@ o When the monitor configuration changed since the last time Id was run
   (Fixes #136)
 o On Windows, crash dump files are saved to the savedir location.
   (Fixes #133)
+o Corrected an assert popup during a Debug build. (Fixes #147, #140)
 
 Known limitations:
 
@@ -293,6 +294,8 @@ o Sound output does nothing, although all controls can be set through
 o Some formulas don't render correctly.  These problems have been around
   forever as xfractint also renders them incorrectly.  This will be fixed
   in a subsequent release.
+o The code compiles on Linux, but the Linux port is incomplete and is
+  planned on being completed with the switch to wxWidgets in version 2.0.
 ;
 ;
 ;
