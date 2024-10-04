@@ -499,9 +499,6 @@ void Jiim(jiim_types which)
     long iter;
     int color;
     float zoom;
-    int oldsxoffs;
-    int oldsyoffs;
-    int (*oldcalctype)();
     int old_x;
     int old_y;
     double aspect;
@@ -510,26 +507,22 @@ void Jiim(jiim_types which)
     bool actively_computing = true;
     bool first_time = true;
 
-    debug_flags old_debugflag = g_debug_flag;
+    const ValueSaver saved_debug_flag{g_debug_flag};
     // must use standard fractal or be calcfroth
     if (g_fractal_specific[+g_fractal_type].calctype != standard_fractal
         && g_fractal_specific[+g_fractal_type].calctype != calcfroth)
     {
         return;
     }
-    help_labels const old_help_mode = g_help_mode;
-    if (which == jiim_types::JIIM)
+    const ValueSaver saved_help_mode{
+        g_help_mode, which == jiim_types::JIIM ? help_labels::HELP_JIIM : help_labels::HELP_ORBITS};
+    if (which == jiim_types::ORBIT)
     {
-        g_help_mode = help_labels::HELP_JIIM;
-    }
-    else
-    {
-        g_help_mode = help_labels::HELP_ORBITS;
         g_has_inverse = true;
     }
-    oldsxoffs = g_logical_screen_x_offset;
-    oldsyoffs = g_logical_screen_y_offset;
-    oldcalctype = g_calc_type;
+    const int oldsxoffs{g_logical_screen_x_offset};
+    const int oldsyoffs{g_logical_screen_y_offset};
+    const ValueSaver saved_calc_type{g_calc_type};
     s_show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
@@ -570,13 +563,11 @@ void Jiim(jiim_types which)
 
     if (g_logical_screen_x_offset != 0 || g_logical_screen_y_offset != 0) // we're in view windows
     {
-        bool const savehasinverse = g_has_inverse;
-        g_has_inverse = true;
+        ValueSaver saved_has_inverse(g_has_inverse, true);
         SaveRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
         g_logical_screen_x_offset = g_video_start_x;
         g_logical_screen_y_offset = g_video_start_y;
         RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-        g_has_inverse = savehasinverse;
     }
 
     if (g_logical_screen_x_dots == g_vesa_x_res
@@ -1306,9 +1297,6 @@ finish:
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;
-    g_calc_type = oldcalctype;
-    g_debug_flag = old_debugflag;
-    g_help_mode = old_help_mode;
     if (kbdchar == 's' || kbdchar == 'S')
     {
         g_view_window = false;
