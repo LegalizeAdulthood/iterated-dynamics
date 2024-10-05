@@ -261,28 +261,28 @@ private:
     static void other_key_cb(int key, RGBEditor *rgb, void *info);
     static void change_cb(RGBEditor *rgb, void *info);
 
-    int m_x;
-    int m_y;
-    int m_csize;
-    int m_active; // which RGBEditor is active (0,1)
-    int m_curr[2];
-    RGBEditor *m_rgb[2];
-    MoveBox *m_move_box;
-    bool m_done;
-    int m_exclude;
-    bool m_auto_select;
-    PALENTRY m_pal[256];
-    std::FILE *m_undo_file;
-    bool m_curr_changed;
-    int m_num_redo;
-    bool m_hidden;
-    int m_stored_at;
-    std::vector<char> m_saved_pixel;
-    PALENTRY m_save_pal[8][256];
-    PALENTRY m_fs_color;
-    int m_top, m_bottom; // top and bottom colours of freestyle band
-    int m_band_width;    // size of freestyle colour band
-    bool m_free_style;
+    int m_x{};                        // position
+    int m_y{};                        //
+    int m_csize{};                    // cell size
+    int m_active{};                   // which RGBEditor is active (0,1)
+    std::array<int, 2> m_curr;        //
+    std::array<RGBEditor *, 2> m_rgb; //
+    MoveBox *m_move_box{};            //
+    bool m_done{};                    //
+    int m_exclude{};                  //
+    bool m_auto_select{true};         //
+    PALENTRY m_pal[256]{};            //
+    std::FILE *m_undo_file{};         //
+    bool m_curr_changed{};            //
+    int m_num_redo{};                 //
+    bool m_hidden{};                  //
+    std::vector<char> m_saved_pixel;  //
+    PALENTRY m_save_pal[8][256]{};    //
+    PALENTRY m_fs_color{};            //
+    int m_top{};                      //
+    int m_bottom{};                   // top and bottom colours of freestyle band
+    int m_band_width{};               // size of freestyle colour band
+    bool m_free_style{};              //
 };
 
 bool g_using_jiim{};
@@ -2058,10 +2058,7 @@ void PalTable::hide(RGBEditor *rgb, bool hidden)
     {
         set_hidden(false);
         s_reserve_colors = true;
-        if (m_stored_at == NOWHERE) // do we need to save screen?
-        {
-            save_rect();
-        }
+        save_rect();
         draw();
         if (m_auto_select)
         {
@@ -2798,41 +2795,22 @@ void PalTable::other_key_cb(int key, RGBEditor *rgb, void *info)
     static_cast<PalTable *>(info)->other_key(key, rgb);
 }
 
-PalTable::PalTable()
+PalTable::PalTable() :
+    m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PalTable_PALY + 1 + 1)) / (2 * 16))),
+    m_curr({1, 1}),
+    m_rgb({new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this),
+        new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this)}),
+    m_move_box(new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1))
 {
-    m_rgb[0] = new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this);
-    m_rgb[1] = new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this);
-    m_move_box = new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1);
-    m_active      = 0;
-    m_curr[0]     = 1;
-    m_curr[1]     = 1;
-    m_auto_select = true;
-    m_exclude     = 0;
-    m_hidden      = false;
-    m_stored_at   = NOWHERE;
-    m_fs_color.red   = 42;
+    m_fs_color.red = 42;
     m_fs_color.green = 42;
-    m_fs_color.blue  = 42;
-    m_free_style      = false;
-    m_band_width      = 15;
-    m_top            = 255;
-    m_bottom         = 0 ;
-    m_undo_file    = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
-    m_curr_changed = false;
-    m_num_redo     = 0;
-
+    m_fs_color.blue = 42;
+    m_band_width = 15;
+    m_top = 255;
+    m_undo_file = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
     m_rgb[0]->set_rgb(m_curr[0], &m_pal[m_curr[0]]);
     m_rgb[1]->set_rgb(m_curr[1], &m_pal[m_curr[0]]);
-
-    {
-        set_pos(0, 0);
-        m_csize = ((g_screen_y_dots-(PalTable_PALY+1+1)) / 2) / 16;
-    }
-
-    if (m_csize < CSIZE_MIN)
-    {
-        m_csize = CSIZE_MIN;
-    }
+    set_pos(0, 0);
     set_csize(m_csize);
 }
 
