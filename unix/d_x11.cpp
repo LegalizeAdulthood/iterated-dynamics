@@ -177,7 +177,7 @@ public:
     void set_keyboard_timeout(int ms) override;
     void flush() override;
     void debug_text(const char *text) override;
-    void get_cursor_pos(int &x, int &y) override
+    void get_cursor_pos(int &x, int &y) const override
     {
         // TODO
         x = 0;
