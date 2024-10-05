@@ -1625,7 +1625,7 @@ When this mode is entered, an empty palette frame is displayed.  You can
 use the arrow keys to position the frame outline, and <PageUp> and
 <PageDown> to change its size.  (The upper and lower limits on the size
 depend on the current video mode.)  When the frame is positioned where you
-want it, hit Enter to display the current palette in the frame.
+want it, hit <Enter> to display the current palette in the frame.
 
 Note that the palette frame shows R(ed) G(reen) and B(lue) values for two
 color registers at the top.  The active color register has a solid frame,
