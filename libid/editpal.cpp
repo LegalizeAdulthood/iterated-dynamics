@@ -220,7 +220,10 @@ class RGBEditor : ColorEditorNotification
 public:
     RGBEditor() = default;
     RGBEditor(int x, int y, RGBEditorNotification *observer);
-    ~RGBEditor() override;
+    RGBEditor(const RGBEditor &rhs);
+    RGBEditor &operator=(const RGBEditor &rhs);
+    RGBEditor &operator=(RGBEditor &&rhs) noexcept;
+    ~RGBEditor() override = default;
 
     void set_done(bool done);
     void set_pos(int x, int y);
@@ -1224,15 +1227,40 @@ RGBEditor::RGBEditor(int x, int y, RGBEditorNotification *observer) :
     m_observer(observer)
 {
     static char letter[] = "RGB";
-
     for (int ctr = 0; ctr < 3; ctr++)
     {
         m_color[ctr] = ColorEditor(0, 0, letter[ctr], this);
     }
 }
 
-RGBEditor::~RGBEditor()
+RGBEditor::RGBEditor(const RGBEditor &rhs) :
+    RGBEditor(rhs.m_x, rhs.m_y, rhs.m_observer)
 {
+}
+
+RGBEditor &RGBEditor::operator=(const RGBEditor &rhs)
+{
+    if (&rhs == this)
+    {
+        return *this;
+    }
+    m_x = rhs.m_x;
+    m_y = rhs.m_y;
+    m_pal = rhs.m_pal;
+    m_observer = rhs.m_observer;
+
+    static char letter[] = "RGB";
+    for (int ctr = 0; ctr < 3; ctr++)
+    {
+        m_color[ctr] = ColorEditor(0, 0, letter[ctr], this);
+    }
+    return *this;
+}
+
+RGBEditor &RGBEditor::operator=(RGBEditor &&rhs) noexcept
+{
+    *this = rhs;
+    return *this;
 }
 
 void RGBEditor::set_done(bool done)
