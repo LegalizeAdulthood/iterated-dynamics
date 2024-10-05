@@ -304,7 +304,7 @@ private:
     int m_csize{};                    // cell size
     int m_active{};                   // which RGBEditor is active (0,1)
     std::array<int, 2> m_curr;        //
-    std::array<RGBEditor *, 2> m_rgb; //
+    std::array<RGBEditor, 2> m_rgb;   //
     MoveBox *m_move_box{};            //
     bool m_done{};                    //
     int m_exclude{};                  //
@@ -1479,8 +1479,8 @@ void PalTable::process()
 
     update_dac();
 
-    m_rgb[0]->set_rgb(m_curr[0], &m_pal[m_curr[0]]);
-    m_rgb[1]->set_rgb(m_curr[1], &m_pal[m_curr[0]]);
+    m_rgb[0].set_rgb(m_curr[0], &m_pal[m_curr[0]]);
+    m_rgb[1].set_rgb(m_curr[1], &m_pal[m_curr[0]]);
 
     if (!m_hidden)
     {
@@ -1517,7 +1517,7 @@ void PalTable::process()
     MouseSubscription cursor_subscription{std::make_shared<CrossHairCursorNotification>(s_cursor)};
     while (!m_done)
     {
-        m_rgb[m_active]->edit();
+        m_rgb[m_active].edit();
     }
 
     s_cursor.hide();
@@ -1607,8 +1607,8 @@ void PalTable::draw()
         displayf(m_x + center, m_y + RGBEditor_DEPTH / 2 - 12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
     }
 
-    m_rgb[0]->draw();
-    m_rgb[1]->draw();
+    m_rgb[0].draw();
+    m_rgb[1].draw();
 
     for (int pal = 0; pal < 256; pal++)
     {
@@ -1684,8 +1684,8 @@ void PalTable::set_curr(int which, int curr)
         hl_pal(m_bottom, -1);
         hl_pal(m_curr[m_active], s_fg_color);
 
-        m_rgb[which]->set_rgb(m_curr[which], &m_fs_color);
-        m_rgb[which]->update();
+        m_rgb[which].set_rgb(m_curr[which], &m_fs_color);
+        m_rgb[which].update();
 
         update_dac();
 
@@ -1702,18 +1702,18 @@ void PalTable::set_curr(int which, int curr)
     }
     hl_pal(m_curr[m_active], s_fg_color);
 
-    m_rgb[which]->set_rgb(m_curr[which], &(m_pal[m_curr[which]]));
+    m_rgb[which].set_rgb(m_curr[which], &(m_pal[m_curr[which]]));
 
     if (redraw)
     {
         int other = (which == 0) ? 1 : 0;
-        m_rgb[other]->set_rgb(m_curr[other], &(m_pal[m_curr[other]]));
-        m_rgb[0]->update();
-        m_rgb[1]->update();
+        m_rgb[other].set_rgb(m_curr[other], &(m_pal[m_curr[other]]));
+        m_rgb[0].update();
+        m_rgb[1].update();
     }
     else
     {
-        m_rgb[which]->update();
+        m_rgb[which].update();
     }
 
     if (m_exclude)
@@ -1766,8 +1766,8 @@ void PalTable::set_pos(int x, int y)
     m_x = x;
     m_y = y;
 
-    m_rgb[0]->set_pos(x + 2, y + 2);
-    m_rgb[1]->set_pos(x + width - 2 - RGBEditor_WIDTH, y + 2);
+    m_rgb[0].set_pos(x + 2, y + 2);
+    m_rgb[1].set_pos(x + width - 2 - RGBEditor_WIDTH, y + 2);
 }
 
 void PalTable::set_csize(int csize)
@@ -1891,10 +1891,10 @@ void PalTable::rotate(int dir, int lo, int hi)
 
     // update the editors.
 
-    m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
-    m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
-    m_rgb[0]->update();
-    m_rgb[1]->update();
+    m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
+    m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
+    m_rgb[0].update();
+    m_rgb[1].update();
 
     s_cursor.show();
 }
@@ -2037,10 +2037,10 @@ void PalTable::undo_process(int delta)
 
         update_dac();
 
-        m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
-        m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
-        m_rgb[0]->update();
-        m_rgb[1]->update();
+        m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
+        m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
+        m_rgb[0].update();
+        m_rgb[1].update();
         break;
     }
 
@@ -2184,7 +2184,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         draw();
         s_cursor.show();
 
-        m_rgb[m_active]->set_done(true);
+        m_rgb[m_active].set_done(true);
 
         if (m_auto_select)
         {
@@ -2280,12 +2280,12 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         int b = (a == 0) ? 1 : 0;
         PALENTRY t;
 
-        t = m_rgb[b]->get_rgb();
+        t = m_rgb[b].get_rgb();
         s_cursor.hide();
 
-        m_rgb[a]->set_rgb(m_curr[a], &t);
-        m_rgb[a]->update();
-        change(m_rgb[a]);
+        m_rgb[a].set_rgb(m_curr[a], &t);
+        m_rgb[a].update();
+        change(&m_rgb[a]);
         update_dac();
 
         s_cursor.show();
@@ -2481,10 +2481,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         if (!m_hidden)
         {
-            m_rgb[0]->blank_sample_box();
-            m_rgb[1]->blank_sample_box();
-            m_rgb[0]->set_hidden(true);
-            m_rgb[1]->set_hidden(true);
+            m_rgb[0].blank_sample_box();
+            m_rgb[1].blank_sample_box();
+            m_rgb[0].set_hidden(true);
+            m_rgb[1].set_hidden(true);
         }
 
         do
@@ -2506,10 +2506,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         if (!m_hidden)
         {
-            m_rgb[0]->set_hidden(false);
-            m_rgb[1]->set_hidden(false);
-            m_rgb[0]->update();
-            m_rgb[1]->update();
+            m_rgb[0].set_hidden(false);
+            m_rgb[1].set_hidden(false);
+            m_rgb[0].update();
+            m_rgb[1].update();
         }
 
         if (diff != 0)
@@ -2546,7 +2546,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             s_cursor.show();
         }
 
-        m_rgb[m_active]->set_done(true);
+        m_rgb[m_active].set_done(true);
         break;
 
     case 'O': // set rotate_lo and rotate_hi to editors
@@ -2582,7 +2582,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         set_curr(-1, 0);
         s_cursor.show();
-        m_rgb[m_active]->set_done(true);
+        m_rgb[m_active].set_done(true);
         break;
     }
 
@@ -2608,10 +2608,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         load_palette();
         get_pal_range(0, g_colors, m_pal);
         update_dac();
-        m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
-        m_rgb[0]->update();
-        m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
-        m_rgb[1]->update();
+        m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
+        m_rgb[0].update();
+        m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
+        m_rgb[1].update();
         break;
     }
 
@@ -2642,8 +2642,8 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         update_dac();
         if (!oldhidden)
         {
-            m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
-            m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
+            m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
+            m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
             hide(rgb, false);
         }
         s_cursor.show();
@@ -2721,10 +2721,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         }
 
         update_dac();
-        m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
-        m_rgb[0]->update();
-        m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
-        m_rgb[1]->update();
+        m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
+        m_rgb[0].update();
+        m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
+        m_rgb[1].update();
         break;
     }
 
@@ -2762,10 +2762,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         }
 
         update_dac();
-        m_rgb[0]->set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
-        m_rgb[0]->update();
-        m_rgb[1]->set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
-        m_rgb[1]->update();
+        m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
+        m_rgb[0].update();
+        m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
+        m_rgb[1].update();
         break;
     }
 
@@ -2810,8 +2810,8 @@ void PalTable::put_band(PALENTRY *pal)
 void PalTable::set_hidden(bool hidden)
 {
     m_hidden = hidden;
-    m_rgb[0]->set_hidden(hidden);
-    m_rgb[1]->set_hidden(hidden);
+    m_rgb[0].set_hidden(hidden);
+    m_rgb[1].set_hidden(hidden);
     update_dac();
 }
 
@@ -2839,11 +2839,11 @@ void PalTable::change(RGBEditor *rgb)
         int      other = m_active == 0 ? 1 : 0;
         PALENTRY color;
 
-        color = m_rgb[m_active]->get_rgb();
-        m_rgb[other]->set_rgb(m_curr[other], &color);
+        color = m_rgb[m_active].get_rgb();
+        m_rgb[other].set_rgb(m_curr[other], &color);
 
         s_cursor.hide();
-        m_rgb[other]->update();
+        m_rgb[other].update();
         s_cursor.show();
     }
 }
@@ -2851,7 +2851,7 @@ void PalTable::change(RGBEditor *rgb)
 PalTable::PalTable() :
     m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PalTable_PALY + 1 + 1)) / (2 * 16))),
     m_curr({1, 1}),
-    m_rgb({new RGBEditor(0, 0, this), new RGBEditor(0, 0, this)}),
+    m_rgb({RGBEditor(0, 0, this), RGBEditor(0, 0, this)}),
     m_move_box(new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1))
 {
     m_fs_color.red = 42;
@@ -2860,8 +2860,8 @@ PalTable::PalTable() :
     m_band_width = 15;
     m_top = 255;
     m_undo_file = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
-    m_rgb[0]->set_rgb(m_curr[0], &m_pal[m_curr[0]]);
-    m_rgb[1]->set_rgb(m_curr[1], &m_pal[m_curr[0]]);
+    m_rgb[0].set_rgb(m_curr[0], &m_pal[m_curr[0]]);
+    m_rgb[1].set_rgb(m_curr[1], &m_pal[m_curr[0]]);
     {
         int x;
         int y;
@@ -2878,9 +2878,6 @@ PalTable::~PalTable()
         std::fclose(m_undo_file);
         dir_remove(g_temp_dir.c_str(), s_undo_file);
     }
-
-    delete m_rgb[0];
-    delete m_rgb[1];
     delete m_move_box;
 }
 
