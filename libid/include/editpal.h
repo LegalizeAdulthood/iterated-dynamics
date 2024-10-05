@@ -38,6 +38,10 @@ public:
     int wait_key();
     void hide();
     void show();
+    bool hidden() const
+    {
+        return m_hidden > 0;
+    }
 
 private:
     enum

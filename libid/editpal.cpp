@@ -275,6 +275,29 @@ public:
     void set_hidden(bool hidden);
 
 private:
+    class CrossHairCursorNotification : public NullMouseNotification
+    {
+    public:
+        CrossHairCursorNotification(CrossHairCursor &cursor, PalTable *palTable) :
+            m_cursor(cursor),
+            m_palTable(palTable)
+        {
+        }
+        ~CrossHairCursorNotification() override = default;
+        void move(int x, int y, int key_flags) override
+        {
+            if (!m_cursor.hidden())
+            {
+                m_cursor.set_pos(x, y);
+                m_palTable->set_curr_from_cursor();
+            }
+        }
+
+    private:
+        CrossHairCursor &m_cursor;
+        PalTable *m_palTable;
+    };
+
     void draw_status(bool stripe_mode);
     void hl_pal(int pnum, int color);
     void draw();
@@ -284,6 +307,7 @@ private:
     void set_pos(int x, int y);
     void set_csize(int csize);
     int get_cursor_color() const;
+    void set_curr_from_cursor();
     void do_curs(int key);
     void rotate(int dir, int lo, int hi);
     void update_dac();
@@ -659,25 +683,6 @@ static void draw_diamond(int x, int y, int color)
     hor_line(x+0, y+2, 5, color);
     hor_line(x+1, y+3, 3, color);
     g_put_color(x+2, y+4,    color);
-}
-
-class CrossHairCursorNotification : public NullMouseNotification
-{
-public:
-    CrossHairCursorNotification(CrossHairCursor &cursor) :
-        m_cursor(cursor)
-    {
-    }
-    ~CrossHairCursorNotification() override = default;
-    void move(int x, int y, int key_flags) override;
-
-private:
-    CrossHairCursor &m_cursor;
-};
-
-void CrossHairCursorNotification::move(int x, int y, int key_flags)
-{
-    m_cursor.set_pos(x, y);
 }
 
 CrossHairCursor::CrossHairCursor() :
@@ -1514,7 +1519,7 @@ void PalTable::process()
     mk_default_palettes();
     m_done = false;
 
-    MouseSubscription cursor_subscription{std::make_shared<CrossHairCursorNotification>(s_cursor)};
+    MouseSubscription cursor_subscription{std::make_shared<CrossHairCursorNotification>(s_cursor, this)};
     while (!m_done)
     {
         m_rgb[m_active].edit();
@@ -1655,7 +1660,7 @@ void PalTable::draw()
 
 void PalTable::set_curr(int which, int curr)
 {
-    bool redraw = which < 0;
+    const bool redraw{which < 0};
 
     if (redraw)
     {
@@ -1784,8 +1789,8 @@ int PalTable::get_cursor_color() const
 
     if (is_reserved(color))
     {
-        if (is_in_box(x, y, m_x, m_y, 1 + (m_csize * 16) + 1 + 1,
-                2 + RGBEditor_DEPTH + 2 + (m_csize * 16) + 1 + 1))
+        if (is_in_box(
+                x, y, m_x, m_y, 1 + (m_csize * 16) + 1 + 1, 2 + RGBEditor_DEPTH + 2 + (m_csize * 16) + 1 + 1))
         {
             // is the cursor over the editor?
             x -= m_x + PalTable_PALX;
@@ -1817,6 +1822,13 @@ int PalTable::get_cursor_color() const
     return color;
 }
 
+void PalTable::set_curr_from_cursor()
+{
+    if (m_auto_select)
+    {
+        set_curr(m_active, get_cursor_color());
+    }
+}
 void PalTable::do_curs(int key)
 {
     bool done = false;
@@ -1873,10 +1885,7 @@ void PalTable::do_curs(int key)
 
     s_cursor.move(xoff, yoff);
 
-    if (m_auto_select)
-    {
-        set_curr(m_active, get_cursor_color());
-    }
+    set_curr_from_cursor();
 }
 
 void PalTable::rotate(int dir, int lo, int hi)
