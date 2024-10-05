@@ -158,7 +158,7 @@ private:
 };
 
 //
-// Class:     CEditor
+// Class:     ColorEditor
 //
 // Purpose:   Edits a single color component (R, G or B)
 //
@@ -166,12 +166,12 @@ private:
 //            The "change" function is called whenever the value is changed
 //            by the CEditor.
 //
-class CEditor
+class ColorEditor
 {
 public:
-    CEditor() = default;
-    CEditor(int x, int y, char letter, void (*other_key)(int, CEditor *, void *),
-        void (*change)(CEditor *, void *), void *info);
+    ColorEditor() = default;
+    ColorEditor(int x, int y, char letter, void (*other_key)(int, ColorEditor *, void *),
+        void (*change)(ColorEditor *, void *), void *info);
 
     void draw();
     void set_pos(int x, int y);
@@ -188,8 +188,8 @@ private:
     int m_val{};
     bool m_done{};
     bool m_hidden{};
-    void (*m_other_key)(int key, CEditor *ce, void *info){};
-    void (*m_change)(CEditor *ce, void *info){};
+    void (*m_other_key)(int key, ColorEditor *ce, void *info){};
+    void (*m_change)(ColorEditor *ce, void *info){};
     void *m_info{};
 };
 
@@ -223,15 +223,15 @@ private:
     int m_pal{};  // palette number
     bool m_done{};
     bool m_hidden{};
-    std::array<CEditor, 3> m_color; // color editors 0=r, 1=g, 2=b
+    std::array<ColorEditor, 3> m_color; // color editors 0=r, 1=g, 2=b
     void (*m_other_key)(int key, RGBEditor *e, void *info){};
     void (*m_change)(RGBEditor *e, void *info){};
     void *m_info{};
-    void change(CEditor *editor);
-    void other_key(int key, CEditor *ceditor);
+    void change(ColorEditor *editor);
+    void other_key(int key, ColorEditor *ceditor);
 
-    static void other_key_cb(int key, CEditor *ceditor, void *info);
-    static void change_cb(CEditor *ceditor, void *info);
+    static void other_key_cb(int key, ColorEditor *ceditor, void *info);
+    static void change_cb(ColorEditor *ceditor, void *info);
 };
 
 //
@@ -725,8 +725,8 @@ void MoveBox::erase()
     put_row(m_x, m_y + depth - 1, width, &m_b[0]);
 }
 
-CEditor::CEditor(int x, int y, char letter, void (*other_key)(int, CEditor *, void *),
-    void (*change)(CEditor *, void *), void *info) :
+ColorEditor::ColorEditor(int x, int y, char letter, void (*other_key)(int, ColorEditor *, void *),
+    void (*change)(ColorEditor *, void *), void *info) :
     m_x(x),
     m_y(y),
     m_letter(letter),
@@ -736,7 +736,7 @@ CEditor::CEditor(int x, int y, char letter, void (*other_key)(int, CEditor *, vo
 {
 }
 
-void CEditor::draw()
+void ColorEditor::draw()
 {
     if (m_hidden)
     {
@@ -748,33 +748,33 @@ void CEditor::draw()
     s_cursor.show();
 }
 
-void CEditor::set_pos(int x, int y)
+void ColorEditor::set_pos(int x, int y)
 {
     m_x = x;
     m_y = y;
 }
 
-void CEditor::set_val(int val)
+void ColorEditor::set_val(int val)
 {
     m_val = val;
 }
 
-int CEditor::get_val() const
+int ColorEditor::get_val() const
 {
     return m_val;
 }
 
-void CEditor::set_done(bool done)
+void ColorEditor::set_done(bool done)
 {
     m_done = done;
 }
 
-void CEditor::set_hidden(bool hidden)
+void ColorEditor::set_hidden(bool hidden)
 {
     m_hidden = hidden;
 }
 
-int CEditor::edit()
+int ColorEditor::edit()
 {
     int key = 0;
     int diff;
@@ -1225,7 +1225,7 @@ RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
 
     for (int ctr = 0; ctr < 3; ctr++)
     {
-        m_color[ctr] = CEditor(0, 0, letter[ctr], other_key_cb, change_cb, this);
+        m_color[ctr] = ColorEditor(0, 0, letter[ctr], other_key_cb, change_cb, this);
     }
 }
 
@@ -1368,12 +1368,12 @@ PALENTRY RGBEditor::get_rgb() const
     return pal;
 }
 
-void RGBEditor::other_key_cb(int key, CEditor *ceditor, void *info)
+void RGBEditor::other_key_cb(int key, ColorEditor *ceditor, void *info)
 {
     static_cast<RGBEditor *>(info)->other_key(key, ceditor);
 }
 
-void RGBEditor::change(CEditor *editor)
+void RGBEditor::change(ColorEditor *editor)
 {
     if (m_pal < g_colors && !is_reserved(m_pal))
     {
@@ -1383,7 +1383,7 @@ void RGBEditor::change(CEditor *editor)
     m_change(this, m_info);
 }
 
-void RGBEditor::other_key(int key, CEditor *ceditor)
+void RGBEditor::other_key(int key, ColorEditor *ceditor)
 {
     switch (key)
     {
@@ -1441,7 +1441,7 @@ void RGBEditor::other_key(int key, CEditor *ceditor)
     }
 }
 
-void RGBEditor::change_cb(CEditor *ceditor, void *info)
+void RGBEditor::change_cb(ColorEditor *ceditor, void *info)
 {
     static_cast<RGBEditor *>(info)->change(ceditor);
 }
