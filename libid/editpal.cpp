@@ -200,6 +200,16 @@ private:
     ColorEditorNotification *m_observer;
 };
 
+class RGBEditor;
+
+class RGBEditorNotification
+{
+public:
+    virtual ~RGBEditorNotification() = default;
+    virtual void other_key(int key, RGBEditor *editor) = 0;
+    virtual void change(RGBEditor *editor) = 0;
+};
+
 //
 // Class:     RGBEditor
 //
@@ -209,8 +219,7 @@ class RGBEditor : ColorEditorNotification
 {
 public:
     RGBEditor() = default;
-    RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *), void (*change)(RGBEditor *, void *),
-        void *info);
+    RGBEditor(int x, int y, RGBEditorNotification *observer);
     ~RGBEditor() override;
 
     void set_done(bool done);
@@ -231,9 +240,7 @@ private:
     bool m_done{};
     bool m_hidden{};
     std::array<ColorEditor, 3> m_color; // color editors 0=r, 1=g, 2=b
-    void (*m_other_key)(int key, RGBEditor *e, void *info){};
-    void (*m_change)(RGBEditor *e, void *info){};
-    void *m_info{};
+    RGBEditorNotification *m_observer;
     void change(ColorEditor *editor) override;
     void other_key(int key, ColorEditor *ceditor) override;
 };
@@ -256,11 +263,11 @@ private:
 //   S(t)ripe mode: "T", " "
 //
 //
-class PalTable
+class PalTable : RGBEditorNotification
 {
 public:
     PalTable();
-    ~PalTable();
+    ~PalTable() override;
     void process();
     void set_hidden(bool hidden);
 
@@ -286,12 +293,9 @@ private:
     void hide(RGBEditor *rgb, bool hidden);
     void calc_top_bottom();
     void put_band(PALENTRY *pal);
-    void other_key(int key, RGBEditor *rgb);
-    void change(RGBEditor *rgb);
+    void other_key(int key, RGBEditor *rgb) override;
+    void change(RGBEditor *rgb) override;
     
-    static void other_key_cb(int key, RGBEditor *rgb, void *info);
-    static void change_cb(RGBEditor *rgb, void *info);
-
     int m_x{};                        // position
     int m_y{};                        //
     int m_csize{};                    // cell size
@@ -1213,14 +1217,11 @@ int CrossHairCursor::wait_key()
     return driver_key_pressed();
 }
 
-RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
-    void (*change)(RGBEditor *, void *), void *info) :
+RGBEditor::RGBEditor(int x, int y, RGBEditorNotification *observer) :
     m_x(x),
     m_y(y),
     m_pal(1),
-    m_other_key(other_key),
-    m_change(change),
-    m_info(info)
+    m_observer(observer)
 {
     static char letter[] = "RGB";
 
@@ -1376,7 +1377,7 @@ void RGBEditor::change(ColorEditor *editor)
         set_pal(m_pal, m_color[0].get_val(), m_color[1].get_val(), m_color[2].get_val());
     }
 
-    m_change(this, m_info);
+    m_observer->change(this);
 }
 
 void RGBEditor::other_key(int key, ColorEditor *ceditor)
@@ -1428,7 +1429,7 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         break;
 
     default:
-        m_other_key(key, this, m_info);
+        m_observer->other_key(key, this);
         if (m_done)
         {
             ceditor->set_done(true);
@@ -2256,7 +2257,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         m_rgb[a]->set_rgb(m_curr[a], &t);
         m_rgb[a]->update();
-        change_cb(m_rgb[a], this);
+        change(m_rgb[a]);
         update_dac();
 
         s_cursor.show();
@@ -2819,21 +2820,10 @@ void PalTable::change(RGBEditor *rgb)
     }
 }
 
-void PalTable::change_cb(RGBEditor *rgb, void *info)
-{
-    static_cast<PalTable *>(info)->change(rgb);
-}
-
-void PalTable::other_key_cb(int key, RGBEditor *rgb, void *info)
-{
-    static_cast<PalTable *>(info)->other_key(key, rgb);
-}
-
 PalTable::PalTable() :
     m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PalTable_PALY + 1 + 1)) / (2 * 16))),
     m_curr({1, 1}),
-    m_rgb({new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this),
-        new RGBEditor(0, 0, &PalTable::other_key_cb, &PalTable::change_cb, this)}),
+    m_rgb({new RGBEditor(0, 0, this), new RGBEditor(0, 0, this)}),
     m_move_box(new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1))
 {
     m_fs_color.red = 42;
