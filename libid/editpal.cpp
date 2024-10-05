@@ -329,7 +329,7 @@ private:
     int m_active{};                   // which RGBEditor is active (0,1)
     std::array<int, 2> m_curr;        //
     std::array<RGBEditor, 2> m_rgb;   //
-    MoveBox *m_move_box{};            //
+    MoveBox m_move_box;               //
     bool m_done{};                    //
     int m_exclude{};                  //
     bool m_auto_select{true};         //
@@ -1489,18 +1489,18 @@ void PalTable::process()
 
     if (!m_hidden)
     {
-        m_move_box->set_pos(m_x, m_y);
-        m_move_box->set_csize(m_csize);
-        if (!m_move_box->process())
+        m_move_box.set_pos(m_x, m_y);
+        m_move_box.set_csize(m_csize);
+        if (!m_move_box.process())
         {
             set_pal_range(0, g_colors, m_pal);
             return;
         }
 
-        set_pos(m_move_box->x(), m_move_box->y());
-        set_csize(m_move_box->csize());
+        set_pos(m_move_box.x(), m_move_box.y());
+        set_csize(m_move_box.csize());
 
-        if (m_move_box->should_hide())
+        if (m_move_box.should_hide())
         {
             set_hidden(true);
             s_reserve_colors = false;
@@ -2175,18 +2175,18 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         }
         s_cursor.hide();
         restore_rect();
-        m_move_box->set_pos(m_x, m_y);
-        m_move_box->set_csize(m_csize);
-        if (m_move_box->process())
+        m_move_box.set_pos(m_x, m_y);
+        m_move_box.set_csize(m_csize);
+        if (m_move_box.process())
         {
-            if (m_move_box->should_hide())
+            if (m_move_box.should_hide())
             {
                 set_hidden(true);
             }
-            else if (m_move_box->moved())
+            else if (m_move_box.moved())
             {
-                set_pos(m_move_box->x(), m_move_box->y());
-                set_csize(m_move_box->csize());
+                set_pos(m_move_box.x(), m_move_box.y());
+                set_csize(m_move_box.csize());
                 save_rect();
             }
         }
@@ -2861,7 +2861,7 @@ PalTable::PalTable() :
     m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PalTable_PALY + 1 + 1)) / (2 * 16))),
     m_curr({1, 1}),
     m_rgb({RGBEditor(0, 0, this), RGBEditor(0, 0, this)}),
-    m_move_box(new MoveBox(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1))
+    m_move_box(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1)
 {
     m_fs_color.red = 42;
     m_fs_color.green = 42;
@@ -2887,7 +2887,6 @@ PalTable::~PalTable()
         std::fclose(m_undo_file);
         dir_remove(g_temp_dir.c_str(), s_undo_file);
     }
-    delete m_move_box;
 }
 
 void EditPalette()
