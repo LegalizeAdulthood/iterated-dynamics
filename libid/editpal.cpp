@@ -223,7 +223,7 @@ private:
     int m_pal{};  // palette number
     bool m_done{};
     bool m_hidden{};
-    CEditor *m_color[3]{}; // color editors 0=r, 1=g, 2=b
+    std::array<CEditor, 3> m_color; // color editors 0=r, 1=g, 2=b
     void (*m_other_key)(int key, RGBEditor *e, void *info){};
     void (*m_change)(RGBEditor *e, void *info){};
     void *m_info{};
@@ -1225,15 +1225,12 @@ RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
 
     for (int ctr = 0; ctr < 3; ctr++)
     {
-        m_color[ctr] = new CEditor(0, 0, letter[ctr], other_key_cb, change_cb, this);
+        m_color[ctr] = CEditor(0, 0, letter[ctr], other_key_cb, change_cb, this);
     }
 }
 
 RGBEditor::~RGBEditor()
 {
-    delete m_color[0];
-    delete m_color[1];
-    delete m_color[2];
 }
 
 void RGBEditor::set_done(bool done)
@@ -1245,17 +1242,17 @@ void RGBEditor::set_pos(int x, int y)
 {
     m_x = x;
     m_y = y;
-    m_color[0]->set_pos(x + 2, y + 2);
-    m_color[1]->set_pos(x + 2, y + 2 + CEditor_DEPTH - 1);
-    m_color[2]->set_pos(x + 2, y + 2 + CEditor_DEPTH - 1 + CEditor_DEPTH - 1);
+    m_color[0].set_pos(x + 2, y + 2);
+    m_color[1].set_pos(x + 2, y + 2 + CEditor_DEPTH - 1);
+    m_color[2].set_pos(x + 2, y + 2 + CEditor_DEPTH - 1 + CEditor_DEPTH - 1);
 }
 
 void RGBEditor::set_hidden(bool hidden)
 {
     m_hidden = hidden;
-    m_color[0]->set_hidden(hidden);
-    m_color[1]->set_hidden(hidden);
-    m_color[2]->set_hidden(hidden);
+    m_color[0].set_hidden(hidden);
+    m_color[1].set_hidden(hidden);
+    m_color[2].set_hidden(hidden);
 }
 
 void RGBEditor::blank_sample_box()
@@ -1303,9 +1300,9 @@ void RGBEditor::update()
         fill_rect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, m_pal);
     }
 
-    m_color[0]->draw();
-    m_color[1]->draw();
-    m_color[2]->draw();
+    m_color[0].draw();
+    m_color[1].draw();
+    m_color[2].draw();
     s_cursor.show();
 }
 
@@ -1339,7 +1336,7 @@ int RGBEditor::edit()
 
     while (!m_done)
     {
-        key = m_color[m_curr]->edit();
+        key = m_color[m_curr].edit();
     }
 
     if (!m_hidden)
@@ -1355,18 +1352,18 @@ int RGBEditor::edit()
 void RGBEditor::set_rgb(int pal, PALENTRY *rgb)
 {
     m_pal = pal;
-    m_color[0]->set_val(rgb->red);
-    m_color[1]->set_val(rgb->green);
-    m_color[2]->set_val(rgb->blue);
+    m_color[0].set_val(rgb->red);
+    m_color[1].set_val(rgb->green);
+    m_color[2].set_val(rgb->blue);
 }
 
 PALENTRY RGBEditor::get_rgb() const
 {
     PALENTRY pal;
 
-    pal.red = (BYTE) m_color[0]->get_val();
-    pal.green = (BYTE) m_color[1]->get_val();
-    pal.blue = (BYTE) m_color[2]->get_val();
+    pal.red = (BYTE) m_color[0].get_val();
+    pal.green = (BYTE) m_color[1].get_val();
+    pal.blue = (BYTE) m_color[2].get_val();
 
     return pal;
 }
@@ -1380,7 +1377,7 @@ void RGBEditor::change(CEditor *editor)
 {
     if (m_pal < g_colors && !is_reserved(m_pal))
     {
-        set_pal(m_pal, m_color[0]->get_val(), m_color[1]->get_val(), m_color[2]->get_val());
+        set_pal(m_pal, m_color[0].get_val(), m_color[1].get_val(), m_color[2].get_val());
     }
 
     m_change(this, m_info);
