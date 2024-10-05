@@ -157,6 +157,16 @@ private:
     MoveBox &m_box;
 };
 
+class ColorEditor;
+
+class ColorEditorNotification
+{
+public:
+    virtual ~ColorEditorNotification() = default;
+    virtual void other_key(int key, ColorEditor *editor) = 0;
+    virtual void change(ColorEditor *editor) = 0;
+};
+
 //
 // Class:     ColorEditor
 //
@@ -170,8 +180,7 @@ class ColorEditor
 {
 public:
     ColorEditor() = default;
-    ColorEditor(int x, int y, char letter, void (*other_key)(int, ColorEditor *, void *),
-        void (*change)(ColorEditor *, void *), void *info);
+    ColorEditor(int x, int y, char letter, ColorEditorNotification *observer);
 
     void draw();
     void set_pos(int x, int y);
@@ -188,9 +197,7 @@ private:
     int m_val{};
     bool m_done{};
     bool m_hidden{};
-    void (*m_other_key)(int key, ColorEditor *ce, void *info){};
-    void (*m_change)(ColorEditor *ce, void *info){};
-    void *m_info{};
+    ColorEditorNotification *m_observer;
 };
 
 //
@@ -198,13 +205,13 @@ private:
 //
 // Purpose:   Edits a complete color using three CEditors for R, G and B
 //
-class RGBEditor
+class RGBEditor : ColorEditorNotification
 {
 public:
     RGBEditor() = default;
     RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *), void (*change)(RGBEditor *, void *),
         void *info);
-    ~RGBEditor();
+    ~RGBEditor() override;
 
     void set_done(bool done);
     void set_pos(int x, int y);
@@ -227,11 +234,8 @@ private:
     void (*m_other_key)(int key, RGBEditor *e, void *info){};
     void (*m_change)(RGBEditor *e, void *info){};
     void *m_info{};
-    void change(ColorEditor *editor);
-    void other_key(int key, ColorEditor *ceditor);
-
-    static void other_key_cb(int key, ColorEditor *ceditor, void *info);
-    static void change_cb(ColorEditor *ceditor, void *info);
+    void change(ColorEditor *editor) override;
+    void other_key(int key, ColorEditor *ceditor) override;
 };
 
 //
@@ -725,14 +729,11 @@ void MoveBox::erase()
     put_row(m_x, m_y + depth - 1, width, &m_b[0]);
 }
 
-ColorEditor::ColorEditor(int x, int y, char letter, void (*other_key)(int, ColorEditor *, void *),
-    void (*change)(ColorEditor *, void *), void *info) :
+ColorEditor::ColorEditor(int x, int y, char letter, ColorEditorNotification *observer) :
     m_x(x),
     m_y(y),
     m_letter(letter),
-    m_other_key(other_key),
-    m_change(change),
-    m_info(info)
+    m_observer(observer)
 {
 }
 
@@ -805,7 +806,7 @@ int ColorEditor::edit()
                     m_val = 63;
                 }
                 draw();
-                m_change(this, m_info);
+                m_observer->change(this);
             }
             break;
 
@@ -825,7 +826,7 @@ int ColorEditor::edit()
                     m_val = 63;
                 }
                 draw();
-                m_change(this, m_info);
+                m_observer->change(this);
             }
             break;
 
@@ -838,7 +839,7 @@ int ColorEditor::edit()
                     m_val = 0;
                 }
                 draw();
-                m_change(this, m_info);
+                m_observer->change(this);
             }
             break;
 
@@ -858,7 +859,7 @@ int ColorEditor::edit()
                     m_val = 0;
                 }
                 draw();
-                m_change(this, m_info);
+                m_observer->change(this);
             }
             break;
 
@@ -878,11 +879,11 @@ int ColorEditor::edit()
                 m_val = 63;
             }
             draw();
-            m_change(this, m_info);
+            m_observer->change(this);
             break;
 
         default:
-            m_other_key(key, this, m_info);
+            m_observer->other_key(key, this);
             break;
         } // switch
     }     // while
@@ -1225,7 +1226,7 @@ RGBEditor::RGBEditor(int x, int y, void (*other_key)(int, RGBEditor *, void *),
 
     for (int ctr = 0; ctr < 3; ctr++)
     {
-        m_color[ctr] = ColorEditor(0, 0, letter[ctr], other_key_cb, change_cb, this);
+        m_color[ctr] = ColorEditor(0, 0, letter[ctr], this);
     }
 }
 
@@ -1368,11 +1369,6 @@ PALENTRY RGBEditor::get_rgb() const
     return pal;
 }
 
-void RGBEditor::other_key_cb(int key, ColorEditor *ceditor, void *info)
-{
-    static_cast<RGBEditor *>(info)->other_key(key, ceditor);
-}
-
 void RGBEditor::change(ColorEditor *editor)
 {
     if (m_pal < g_colors && !is_reserved(m_pal))
@@ -1439,11 +1435,6 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         }
         break;
     }
-}
-
-void RGBEditor::change_cb(ColorEditor *ceditor, void *info)
-{
-    static_cast<RGBEditor *>(info)->change(ceditor);
 }
 
 void PalTable::process()
