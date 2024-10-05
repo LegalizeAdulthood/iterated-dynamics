@@ -228,7 +228,6 @@ BYTE g_text_color[31] =
 };
 static_assert(std::size(g_text_color) == 31);
 
-
 static int init_rseed{};        //
 static bool s_init_corners{};   // corners set via corners= or center-mag=?
 static bool s_init_params{};    // params set via params=?

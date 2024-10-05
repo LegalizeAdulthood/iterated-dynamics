@@ -1746,7 +1746,6 @@ void HelpCompiler::paginate_html_document()
             default:    // SPACE, LINK, WORD
                 skip_blanks = false;
                 break;
-
             } // switch
 
             curr += size;

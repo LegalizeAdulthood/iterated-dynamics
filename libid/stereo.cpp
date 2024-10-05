@@ -240,7 +240,6 @@ int outline_stereo(BYTE *pixels, int linelen)
     return 0;
 }
 
-
 /**************************************************************************
         Convert current image into Auto Stereo Picture
 **************************************************************************/

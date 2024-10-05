@@ -722,7 +722,6 @@ static void dRandom()
     y = new_random_num() >> (32 - g_bit_shift);
     s_vars[7].a.d.x = ((double)x / (1L << g_bit_shift));
     s_vars[7].a.d.y = ((double)y / (1L << g_bit_shift));
-
 }
 
 static void mRandom()
@@ -3040,7 +3039,6 @@ int form_per_pixel()
     g_arg1 = &s_stack[0];
     g_arg2 = &s_stack[0];
     g_arg2--;
-
 
     s_vars[10].a.d.x = (double)g_col;
     s_vars[10].a.d.y = (double)g_row;

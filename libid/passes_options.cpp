@@ -103,13 +103,11 @@ pass_option_restart:
         j = 1;
     }
 
-
     g_orbit_delay = uvalues[++k].uval.ival;
     if (g_orbit_delay != old_orbit_delay)
     {
         j = 1;
     }
-
 
     g_orbit_interval = uvalues[++k].uval.ival;
     if (g_orbit_interval > 255)

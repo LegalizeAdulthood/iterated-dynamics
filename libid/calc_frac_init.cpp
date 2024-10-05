@@ -249,7 +249,6 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         else
         {
             g_user_std_calc_mode = '1';
-
         }
     }
 
@@ -597,7 +596,6 @@ expand_retry:
             g_y_min = (double)(g_y_max - (g_logical_screen_y_dots-1)*g_delta_y - (g_logical_screen_x_dots-1)*g_delta_y2);
             g_x_3rd = (double)(g_x_min + (g_logical_screen_y_dots-1)*g_delta_x2);
             g_y_3rd = (double)(g_y_max - (g_logical_screen_y_dots-1)*g_delta_y);
-
         } // end else
     } // end if not plasma
 
@@ -741,7 +739,6 @@ void adjust_cornerbf()
         copy_bf(g_bf_y_3rd, g_bf_y_max);
     }
 
-
     restore_stack(saved);
 }
 
@@ -799,7 +796,6 @@ void adjust_corner()
     {
         g_y_3rd = g_y_max;
     }
-
 }
 
 static void adjust_to_limitsbf(double expand)

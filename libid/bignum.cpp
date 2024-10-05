@@ -28,7 +28,6 @@ where the decimal is located are:  strtobn(), bntostr(), bntoint(), inttobn(),
 bntofloat(), floattobn(), inv_bn(), div_bn().  The number of bytes
 designated for the integer part may be 1, 2, or 4.
 
-
 BIGNUMBER FORMAT:
 The following is a discription of the bignumber format and associated
 variables.  The number is stored in reverse order (Least Significant Byte,
@@ -49,7 +48,6 @@ n <---------- g_bn_length --------->
                 g_int_length = 1, max value = 127.99...
                 g_int_length = 2, max value = 32,767.99...
                 g_int_length = 4, max value = 2,147,483,647.99...
-
 
 FULL DOUBLE PRECISION MULTIPLICATION:
 ( full_mult_bn(), full_square_bn() )
@@ -77,7 +75,6 @@ r <------------------------- 2*g_bn_length ---------------------------->
                                  LSB                                  MSB
                 r+g_shift_factor   <--------  g_bn_length  ----------->
                                                     g_int_length  ---> <---
-
 
 PARTIAL PRECISION MULTIPLICATION:
 ( mult_bn(), square_bn() )
@@ -745,7 +742,6 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
             std::memset(r, 0, scale);                 // zero out the rest
         }
         // else scale1 == scale2
-
     }
 
     if (sign)
@@ -1384,7 +1380,6 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
     }
     return r;
 }
-
 
 /**********************************************************************/
 // The rest of the functions are "safe" versions of the routines that

@@ -85,9 +85,7 @@ int cmp_bn(bn_t n1, bn_t n2)
             return g_bn_length; // high byte was different
         }
 
-
         return g_bn_length-1; // low byte was different
-
     }
     else if (Svalue1 < Svalue2)
     {
@@ -97,9 +95,7 @@ int cmp_bn(bn_t n1, bn_t n2)
             return -(g_bn_length); // high byte was different
         }
 
-
         return -(g_bn_length-1); // low byte was different
-
     }
 
     // unsigned comparison for the rest
@@ -125,9 +121,7 @@ int cmp_bn(bn_t n1, bn_t n2)
                 return -(i+2); // high byte was different
             }
 
-
             return -(i+1); // low byte was different
-
         }
     }
     return 0;
@@ -638,7 +632,6 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     }
     return r;
 }
-
 
 /************************************************************************/
 // r = n^2

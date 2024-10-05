@@ -327,7 +327,6 @@ tess_split:
                 }
             }
         }
-
     }
 
 tess_end:
@@ -356,7 +355,6 @@ tess_end:
         return -1;
     }
     return 0;
-
 } // tesseral
 
 static int tesschkcol(int x, int y1, int y2)

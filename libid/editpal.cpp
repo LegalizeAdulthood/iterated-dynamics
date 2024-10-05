@@ -2713,7 +2713,6 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'E':
         redo();
         break;
-
     } // switch
     draw_status(false);
 }
@@ -2741,7 +2740,6 @@ void PalTable::put_band(PALENTRY *pal)
         mk_pal_range(&pal[a], &pal[r], &pal[a], r-a, 1);
         mk_pal_range(&pal[b], &pal[a], &pal[b], a-b, 1);
     }
-
 }
 
 void PalTable::set_hidden(bool hidden)

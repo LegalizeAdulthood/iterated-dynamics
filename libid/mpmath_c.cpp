@@ -195,7 +195,6 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
 */
 
-
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
 void Arcsinz(DComplex z, DComplex *rz)
 {
@@ -214,7 +213,6 @@ void Arcsinz(DComplex z, DComplex *rz)
     rz->x = tempz1.y;
     rz->y = -tempz1.x;           // rz = (-i)*tempz1
 }   // end. Arcsinz
-
 
 // rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
 void Arccosz(DComplex z, DComplex *rz)

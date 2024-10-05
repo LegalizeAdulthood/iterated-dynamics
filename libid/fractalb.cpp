@@ -357,7 +357,6 @@ int  bnREALbailout()
     return 0;
 }
 
-
 int  bnIMAGbailout()
 {
     long longtempsqry;
@@ -483,7 +482,6 @@ int  bfREALbailout()
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
     return 0;
 }
-
 
 int  bfIMAGbailout()
 {

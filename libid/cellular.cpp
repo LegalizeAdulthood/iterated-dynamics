@@ -242,7 +242,6 @@ int cellular()
         }
     }
 
-
     start_row = 0;
     bool resized = false;
     try

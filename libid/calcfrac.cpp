@@ -209,9 +209,7 @@ double fmodtest_bailout_or()
         return tmpx;
     }
 
-
     return tmpy;
-
 }
 
 // FMODTEST routine.
@@ -841,8 +839,6 @@ int calcfract()
                     else
                     {
                         g_std_calc_mode = '1';
-
-
                     }
                     timer(timer_type::ENGINE, (int(*)())perform_worklist);
                     g_three_pass = false;
@@ -857,7 +853,6 @@ int calcfract()
                 else
                 {
                     g_std_calc_mode = '1';
-
                 }
                 timer(timer_type::ENGINE, (int(*)())perform_worklist);
             }
@@ -1904,7 +1899,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     cyclelen = g_color_iter-savedcoloriter;
                     g_color_iter = g_max_iterations - 1;
                 }
-
             }
         }
     }  // end while (g_color_iter++ < maxit)
@@ -1959,7 +1953,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         goto plot_inside;         // distest, decomp, biomorph don't apply
     }
 
-
     if (g_outside_color < ITER)
     {
         if (g_integer_fractal)
@@ -2001,7 +1994,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             g_color_iter = (long)(totaldist);
         }
-
 
         // eliminate negative colors & wrap arounds
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
@@ -2228,7 +2220,6 @@ plot_pixel:
     }
     return g_color;
 }
-
 
 #define cos45  sin45
 #define lcos45 lsin45

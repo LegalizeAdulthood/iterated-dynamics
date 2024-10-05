@@ -126,7 +126,6 @@ static void set_Froth_palette()
             else
             {
                 mapname = "froth316.map";
-
             }
         }
         if (ValidateLuts(mapname))
@@ -237,7 +236,6 @@ bool froth_setup()
 void froth_cleanup()
 {
 }
-
 
 // Froth Fractal type
 int calcfroth()   // per pixel 1/2/g, called with row & col set

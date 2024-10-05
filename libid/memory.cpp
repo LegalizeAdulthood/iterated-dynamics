@@ -166,7 +166,6 @@ static int check_for_mem(int stored_at, long howmuch)
     case NOWHERE: // check_for_mem
         use_this_type = NOWHERE;
         break;
-
     } // end of switch
 
     return use_this_type;

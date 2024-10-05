@@ -311,7 +311,6 @@ static void init_bf_2()
     restore_bf_vars();
 }
 
-
 /**********************************************************/
 // save current corners and parameters to start of s_bn_root
 // to preserve values across calls to init_bf()
@@ -521,7 +520,6 @@ void init_bf_length(int bnl)
     g_decimals = (int)((g_bn_length-g_int_length)*LOG10_256);
     init_bf_2();
 }
-
 
 void init_big_pi()
 {

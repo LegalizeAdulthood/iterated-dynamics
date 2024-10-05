@@ -299,7 +299,6 @@ prompt_user:
         if (has_ext(g_command_file.c_str()) == nullptr)
         {
             g_command_file += ".par";   // default extension .par
-
         }
         g_command_name = inpcommandname;
         for (int i = 0; i < 4; i++)
@@ -766,7 +765,6 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         {
             put_parm(" %s=%c", "passes", g_user_std_calc_mode);
         }
-
 
         if (g_stop_pass != 0)
         {
@@ -1493,7 +1491,6 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         {
             put_parm(" %s=%g/%g", "mathtolerance", g_math_tol[0], g_math_tol[1]);
         }
-
     }
 
     if (*colorinf != 'n')
@@ -1816,7 +1813,6 @@ static void put_bf(int slash, bf_t r, int prec)
     if (slash)
     {
         *(bptr++) = '/';
-
     }
     bftostr(bptr, prec, r);
     strip_zeros(bptr);

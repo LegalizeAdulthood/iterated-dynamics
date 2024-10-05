@@ -749,7 +749,6 @@ int X11Driver::end_video()
     return 0;             // set flag: video ended
 }
 
-
 int X11Driver::getachar()
 {
     if (0)
@@ -1825,7 +1824,6 @@ bool X11Driver::resize()
         return false;
     }
 }
-
 
 /*
  *----------------------------------------------------------------------

@@ -72,7 +72,6 @@ static void show_speedstring(
         while (i < 30)
         {
             buf[i++] = ' ';
-
         }
         buf[i] = 0;
         driver_put_string(speedrow, 16+j, C_CHOICE_SP_INSTR, " ");

@@ -199,7 +199,6 @@ int x11_text_window::text_off()
     return 0;
 }
 
-
 void x11_text_window::clear()
 {
     for (int y = 0; y < X11_TEXT_MAX_ROW; ++y)
@@ -302,7 +301,6 @@ void wintext_destroy(WinText *me)
     me->textmode = 0;
     me->AltF4hit = false;
 }
-
 
 /*
      Set up the text window and clear it

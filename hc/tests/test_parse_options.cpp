@@ -65,7 +65,6 @@ std::ostream &operator<<(std::ostream &str, hc::modes value)
 
 }
 
-
 class TestParseCompilerOptions : public Test
 {
 protected:

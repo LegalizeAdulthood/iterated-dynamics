@@ -302,7 +302,6 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
         return nullptr;
     }
 
-
     while (command->ch && command->ch != ']')
     {
         if (!(ts->counter++))
@@ -448,14 +447,12 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
         return nullptr;
     }
 
-
     if (stackavail() < 400)
     {
         // leave some margin for calling subroutines
         ts->stackoflow = true;
         return nullptr;
     }
-
 
     while (command->ch && command->ch != ']')
     {

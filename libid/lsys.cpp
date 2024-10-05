@@ -909,7 +909,6 @@ static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **
         return nullptr;
     }
 
-
     while (command->ch && command->ch != ']')
     {
         if (!(ts->counter++))

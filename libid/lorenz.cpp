@@ -676,7 +676,6 @@ rwalk:
         s_a =  g_params[1];
         s_b =  g_params[2];
         s_c =  g_params[3];
-
     }
 
     // precalculations for speed
@@ -838,7 +837,6 @@ int Minverse_julia_orbit()
         break;
     }
     return 1;
-
 }
 
 int Linverse_julia_orbit()

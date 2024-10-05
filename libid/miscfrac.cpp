@@ -920,7 +920,6 @@ int diffusion()
             {
                 g_put_color(x, y, random(g_colors-1)+1);
             }
-
         } // End of loop, now fix the point
 
         /* If we're doing colorshifting then use currentcolor, otherwise
@@ -989,8 +988,6 @@ int diffusion()
         }
     }
 }
-
-
 
 //*********** standalone engine for "bifurcation" types **************
 
@@ -1433,7 +1430,6 @@ bool BifurcMaySetup()
 // Here Endeth the Generalised Bifurcation Fractal Engine
 
 // END Phil Wilson's Code (modified slightly by Kev Allen et. al. !)
-
 
 //****************** standalone engine for "popcorn" *******************
 

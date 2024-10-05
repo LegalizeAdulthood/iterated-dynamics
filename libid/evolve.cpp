@@ -930,7 +930,6 @@ void fiddleparms(GENEBASE gene[], int ecount)
     {
         (*(gene[i].varyfunc))(gene, std::rand(), i);
     }
-
 }
 
 static void set_random(int ecount)

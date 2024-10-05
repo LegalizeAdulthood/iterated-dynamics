@@ -46,7 +46,6 @@ static int menu_checkkey(int curkey, int /*choice*/)
     if (testkey == '2')
     {
         testkey = '@';
-
     }
     if (std::strchr("#@2txyzgvir3dj", testkey)
         || testkey == ID_KEY_INSERT || testkey == ID_KEY_CTL_B

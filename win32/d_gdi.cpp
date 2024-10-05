@@ -220,7 +220,6 @@ bool GDIDriver::resize()
     return true;
 }
 
-
 // Reads the current video palette into g_dac_box.
 int GDIDriver::read_palette()
 {

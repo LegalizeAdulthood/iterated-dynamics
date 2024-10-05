@@ -98,8 +98,6 @@ static BYTE s_decoder_line[MAX_PIXELS]{};
 // C for speed or for space optimization, see Efficient C by Tom Plum,
 // published by Plum-Hall Associates...)
 //
-
-
 // short decoder(linewidth)
 //    short linewidth;              * Pixels per line of image *
 //

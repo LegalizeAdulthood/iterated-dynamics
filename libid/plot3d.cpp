@@ -216,7 +216,6 @@ void plot3dsuperimpose16(int x, int y, int color)
     }
 }
 
-
 void plot3dsuperimpose256(int x, int y, int color)
 {
     int tmp;

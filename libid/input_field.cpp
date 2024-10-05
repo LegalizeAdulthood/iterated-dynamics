@@ -45,7 +45,6 @@ int input_field(
         while (i < len)
         {
             buf[i++] = ' ';
-
         }
         buf[len] = 0;
         if (display)

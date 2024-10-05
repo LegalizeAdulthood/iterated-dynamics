@@ -246,7 +246,6 @@ void WinText::destroy()
     m_alt_f4_hit = false;
 }
 
-
 /*
      Set up the text window and clear it
 */

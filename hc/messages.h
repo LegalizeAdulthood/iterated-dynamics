@@ -46,5 +46,4 @@ void warn_msg(int diff, char const *format, ...);
 void notice_msg(char const *format, ...);
 void msg_msg(char const *format, ...);
 
-
 }

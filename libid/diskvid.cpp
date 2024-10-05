@@ -385,7 +385,6 @@ bool from_mem_disk(long offset, int size, void *dest)
     return true;
 }
 
-
 void targa_readdisk(unsigned int col, unsigned int row, BYTE *red, BYTE *green, BYTE *blue)
 {
     col *= 3;
@@ -727,7 +726,6 @@ static void mem_putc(BYTE c)     // memory get_char
     }
     *(s_mem_buf_ptr++) = c;
 }
-
 
 void dvid_status(int line, char const *msg)
 {

@@ -193,7 +193,6 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
     return s;
 }
 
-
 /********************************************************************/
 // the e version puts it in scientific notation, (like printf's %e)
 char *unsafe_bftostr_e(char *s, int dec, bf_t r)
@@ -846,7 +845,6 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
         inttobf(c, 1);  // cos(0) = 1
         return s;
     }
-
 
     // at this point, the double angle trig identities could be used as many
     // times as desired to reduce the range to pi/8, pi/16, etc...  Each time
@@ -1934,7 +1932,6 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
     return r;
 }
 
-
 /************************************************************************/
 // r = n^2
 //   because of the symmetry involved, n^2 is much faster than n*n
@@ -2224,8 +2221,6 @@ LDBL scale_10(LDBL f, int n)
     return scale_value(f, 10, n);
 }
 
-
-
 // big10flt.c - C routines for base 10 big floating point numbers
 
 /**********************************************************
@@ -2360,7 +2355,6 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
     return r;
 }
 
-
 /**********************************************************************/
 // mult_a_bf10_int()
 // r *= n
@@ -2453,7 +2447,6 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
     big_set16(power10, (U16)p); // save power of ten
     return r;
 }
-
 
 /*************************************************************************/
 // bf10tostr_e()
@@ -2548,7 +2541,6 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
     if (n[0] == 1)   // sign flag
     {
         *(s++) = '-';
-
     }
     if (p >= 0)
     {
@@ -2585,7 +2577,6 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
     if (*(s-1) == '.')   // put at least one 0 after the decimal
     {
         *(s++) = '0';
-
     }
     *s = '\0'; // terminating nul
     return s;

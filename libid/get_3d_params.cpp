@@ -313,8 +313,6 @@ restart_3:
         s = "Planar 3D Parameters\n"
             "Pre-rotation X axis is screen top; Y axis is left side\n"
             "Pre-rotation Z axis is coming at you out of the screen!";
-
-
     }
     {
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_PARAMETERS};
@@ -460,7 +458,6 @@ static bool get_light_params()
 }
 
 // ---------------------------------------------------------------------
-
 
 static bool check_mapfile()
 {

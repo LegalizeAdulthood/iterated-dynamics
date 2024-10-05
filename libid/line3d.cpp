@@ -195,7 +195,6 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     fudge = 1L << 16;
 
-
     if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
     {
         s_normal_plot = T_clipcolor;
@@ -1595,7 +1594,6 @@ static void File_Error(char const *File_Name1, int ERROR)
     stopmsg(msgbuf);
 }
 
-
 //**********************************************************************
 //
 //   This function opens a TARGA_24 file for reading and writing. If
@@ -1938,7 +1936,6 @@ static void hsv_to_rgb(
     }
 }
 
-
 //*************************************************************************
 //
 // general raytracing code info/notes:
@@ -2005,7 +2002,6 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
         std::fprintf(s_file_ptr1, "*/\n");
     }
 
-
     // Set the default color
     if (g_raytrace_format == raytrace_formats::povray)
     {
@@ -2047,7 +2043,6 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     return 0;
 }
-
 
 //******************************************************************
 //
@@ -2524,7 +2519,6 @@ static int first_time(int linelen, VECTOR v)
         return err;
     }
 
-
     // get scale factors
     s_scale_x = g_x_scale / 100.0;
     s_scale_y = g_y_scale / 100.0;
@@ -2651,7 +2645,6 @@ static int first_time(int linelen, VECTOR v)
                 s_llm[i][j] = (long)(g_m[i][j] * 65536.0);
             }
         }
-
     }
     else
         // sphere stuff goes here
@@ -2721,7 +2714,6 @@ static int first_time(int linelen, VECTOR v)
 
         // sin,cos delta phi
         s_two_cos_delta_phi = (float)(2.0 * std::cos((double) s_delta_phi));
-
 
         // affects how rough planet terrain is
         if (g_rough)

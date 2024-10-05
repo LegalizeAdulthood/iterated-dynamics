@@ -1781,7 +1781,6 @@ rescan:  // entry for changed browse parms
                     if (driver_get_key() != 'Y')
                     {
                         c = 'N';
-
                     }
                 }
                 if (c == 'Y')
@@ -1917,7 +1916,6 @@ rescan:  // entry for changed browse parms
 
     return c;
 }
-
 
 static void drawindow(int colour, window const *info)
 {

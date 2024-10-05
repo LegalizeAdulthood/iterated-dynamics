@@ -59,7 +59,6 @@ int get_rds_params()
         uvalues[k].uval.ch.val = g_image_map ? 1 : 0;
         uvalues[k++].type = 'y';
 
-
         if (!g_stereo_map_filename.empty() && g_image_map)
         {
             uvalues[k].uval.ch.val = reuse;
@@ -69,7 +68,6 @@ int get_rds_params()
             for (auto & elem : rds6)
             {
                 elem = ' ';
-
             }
             auto p = g_stereo_map_filename.find(SLASHC);
             if (p == std::string::npos ||

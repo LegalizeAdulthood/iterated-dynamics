@@ -564,7 +564,6 @@ bool encoder()
         {
             goto oops;
         }
-
     }
     // Extended parameters block 005
     if (g_bf_math != bf_math_type::NONE)
@@ -959,7 +958,6 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     {
         save_info->future[i] = 0;
     }
-
 }
 
 //
@@ -1227,7 +1225,6 @@ nomatch:
 // fit in it exactly).  Use the VAX insv instruction to insert each
 // code in turn.  When the buffer fills up empty it and start over.
 //
-
 
 static void output(int code)
 {

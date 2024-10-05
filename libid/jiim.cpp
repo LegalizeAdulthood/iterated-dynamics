@@ -195,7 +195,6 @@ void circle(int radius, int color)
     }
 }
 
-
 /*
  * MIIM section:
  *
@@ -244,7 +243,6 @@ void ClearQueue()
     s_list_back = s_l_size;
     s_list_front = s_list_back;
 }
-
 
 /*
  * Queue functions for MIIM julia:
@@ -438,7 +436,6 @@ LComplex DeQueueLong()
 }
 
 
-
 /*
  * End MIIM section;
  */
@@ -461,7 +458,6 @@ static void SaveRect(int x, int y, int width, int depth)
     }
     s_cursor.show();
 }
-
 
 static void RestoreRect(int x, int y, int width, int depth)
 {
@@ -596,7 +592,6 @@ void Jiim(jiim_types which)
         s_corner_y = g_video_start_y + g_logical_screen_y_dots;
         xoff = s_corner_x + s_win_width/2;
         yoff = s_corner_y + s_win_height/2;
-
     }
     else
     {
@@ -980,7 +975,6 @@ void Jiim(jiim_types which)
             {
                 fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
-
         } // end if (driver_key_pressed)
 
         if (which == jiim_types::JIIM)
@@ -1068,7 +1062,6 @@ void Jiim(jiim_types which)
                 }
 
                 g_new_z.y = std::sqrt(std::fabs((r - g_old_z.x)/2));
-
 
                 switch (s_secret_experimental_mode)
                 {

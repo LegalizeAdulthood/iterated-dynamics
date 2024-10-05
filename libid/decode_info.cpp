@@ -275,7 +275,6 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
 #define P44 17592186044416.
 #define P52 4503599627370496.
 
-
 /*
  * This routine gets a double out of the buffer, or puts a double into the
  * buffer;

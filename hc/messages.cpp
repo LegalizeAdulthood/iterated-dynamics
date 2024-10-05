@@ -26,7 +26,6 @@ void report_errors()
     std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
 
-
 void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
 {
     if (type != nullptr)

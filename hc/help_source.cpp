@@ -122,7 +122,6 @@ void CONTENT::content_topic(int ctr)
     }
 }
 
-
 void LINK::link_topic()
 {
     int const t = find_topic_title(name.c_str());
@@ -167,7 +166,6 @@ void LINK::link_label()
         g_src_line = -1;
     }
 }
-
 
 void TOPIC::alloc_topic_text(unsigned size)
 {
@@ -347,7 +345,6 @@ int HelpSource::add_content(const CONTENT &c)
     return static_cast<int>(contents.size() - 1);
 }
 
-
 /*
  * read_char() stuff
  */
@@ -438,7 +435,6 @@ int read_char_aux()
 
             ++s_src_col;
             return ch;
-
         } // switch
     }
 }
@@ -1669,7 +1665,6 @@ void read_src(std::string const &fname, modes mode)
                     continue;
                 }
 
-
                 // commands allowed only before all topics...
 
                 if (!in_topic)
@@ -1983,7 +1978,6 @@ void read_src(std::string const &fname, modes mode)
                     error(eoff, "Bad or unexpected command \"%s\".", s_cmd);
                 }
                 // else
-
             } // while (!done)
 
             continue;

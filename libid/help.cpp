@@ -1076,7 +1076,6 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
         if (c == ' ')
         {
             ++info->spaces;
-
         }
         else if (c == '\n' || c == '\f')
         {

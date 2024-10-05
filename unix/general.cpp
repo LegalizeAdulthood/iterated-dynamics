@@ -31,7 +31,6 @@
 
 // ********************** Mouse Support Variables **************************
 
-
 bool g_inside_help = false;
 
 /*

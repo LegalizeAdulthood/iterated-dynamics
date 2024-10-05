@@ -222,7 +222,6 @@ bool JulibrotSetup()
     return true;
 }
 
-
 int jb_per_pixel()
 {
     s_jb.jx = multiply(s_jb.per->x - s_jb.x_pixel, s_jb.init_z, 16);

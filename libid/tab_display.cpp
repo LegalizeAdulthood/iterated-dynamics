@@ -117,7 +117,6 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
             else
             {
                 str[col2-col1+1]   = '\\';
-
             }
             str[col2-col1+2] = 0;
             driver_put_string(*row, col1, color, str);

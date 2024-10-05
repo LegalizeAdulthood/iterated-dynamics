@@ -59,7 +59,6 @@ long readticker()
     return (long) GetTickCount();
 }
 
-
 // tenths of millisecond timewr routine
 // static struct timeval tv_start;
 
@@ -67,7 +66,6 @@ void restart_uclock()
 {
     // TODO
 }
-
 
 /*
 **  usec_clock()

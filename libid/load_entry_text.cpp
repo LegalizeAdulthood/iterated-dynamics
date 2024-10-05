@@ -146,7 +146,6 @@ void load_entry_text(
                     if (linelen == 76)
                     {
                         *buf++ = '\021';
-
                     }
                 }
                 else
