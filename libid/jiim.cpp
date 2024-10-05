@@ -565,11 +565,8 @@ void Jiim(jiim_types which)
      * end MIIM code.
      */
 
-    if (!g_video_scroll)
-    {
-        g_vesa_x_res = g_screen_x_dots;
-        g_vesa_y_res = g_screen_y_dots;
-    }
+    g_vesa_x_res = g_screen_x_dots;
+    g_vesa_y_res = g_screen_y_dots;
 
     if (g_logical_screen_x_offset != 0 || g_logical_screen_y_offset != 0) // we're in view windows
     {

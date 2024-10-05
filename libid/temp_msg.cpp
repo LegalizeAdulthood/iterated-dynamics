@@ -78,16 +78,8 @@ bool showtempmsg(char const *msgparm)
     }
     save_sxoffs = g_logical_screen_x_offset;
     save_syoffs = g_logical_screen_y_offset;
-    if (g_video_scroll)
-    {
-        g_logical_screen_x_offset = g_video_start_x;
-        g_logical_screen_y_offset = g_video_start_y;
-    }
-    else
-    {
-        g_logical_screen_y_offset = 0;
-        g_logical_screen_x_offset = g_logical_screen_y_offset;
-    }
+    g_logical_screen_y_offset = 0;
+    g_logical_screen_x_offset = g_logical_screen_y_offset;
     if (s_text_save.empty()) // only save screen first time called
     {
         s_text_save.resize(s_text_x_dots*s_text_y_dots);
@@ -115,16 +107,8 @@ void cleartempmsg()
     {
         int save_sxoffs = g_logical_screen_x_offset;
         int save_syoffs = g_logical_screen_y_offset;
-        if (g_video_scroll)
-        {
-            g_logical_screen_x_offset = g_video_start_x;
-            g_logical_screen_y_offset = g_video_start_y;
-        }
-        else
-        {
-            g_logical_screen_y_offset = 0;
-            g_logical_screen_x_offset = g_logical_screen_y_offset;
-        }
+        g_logical_screen_y_offset = 0;
+        g_logical_screen_x_offset = g_logical_screen_y_offset;
         for (int i = 0; i < s_text_y_dots; ++i)
         {
             write_span(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);

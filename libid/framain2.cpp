@@ -559,7 +559,7 @@ resumeloop:                             // return here on failed overlays
             }
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
             {
-                g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
+                g_look_at_mouse = g_zoom_box_width == 0 ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     kbdchar = ID_KEY_ENTER;  // no visible reason to stop, continue
@@ -749,10 +749,6 @@ void move_zoombox(int keynum)
     if (g_box_count)
     {
         moveboxf((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
-    }
-    else                                 // if no zoombox, scroll by arrows
-    {
-        scroll_relative(horizontal, vertical);
     }
 }
 

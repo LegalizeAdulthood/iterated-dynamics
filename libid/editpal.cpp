@@ -2825,12 +2825,6 @@ PalTable::PalTable()
     m_rgb[0]->set_rgb(m_curr[0], &m_pal[m_curr[0]]);
     m_rgb[1]->set_rgb(m_curr[1], &m_pal[m_curr[0]]);
 
-    if (g_video_scroll)
-    {
-        set_pos(g_video_start_x, g_video_start_y);
-        m_csize = ((g_vesa_y_res-(PalTable_PALY+1+1)) / 2) / 16;
-    }
-    else
     {
         set_pos(0, 0);
         m_csize = ((g_screen_y_dots-(PalTable_PALY+1+1)) / 2) / 16;
