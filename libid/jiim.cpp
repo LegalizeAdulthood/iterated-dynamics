@@ -667,7 +667,7 @@ void Jiim(jiim_types which)
 
     iter = 1;
     bool still = true;
-    zoom = 1;
+    zoom = 1.0f;
 
     g_cursor_mouse_tracking = true;
 
