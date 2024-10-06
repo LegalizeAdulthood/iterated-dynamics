@@ -682,6 +682,47 @@ static void increase_zoom_aspect()
     }
 }
 
+static void zoom_box_in()
+{
+    if (g_zoom_off)
+    {
+        if (g_zoom_box_width == 0)
+        {
+            // start zoombox
+            g_zoom_box_height = 1;
+            g_zoom_box_width = g_zoom_box_height;
+            g_zoom_box_rotation = 0;
+            g_zoom_box_skew = g_zoom_box_rotation;
+            g_zoom_box_x = 0;
+            g_zoom_box_y = 0;
+            find_special_colors();
+            g_box_color = g_color_bright;
+            g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
+            g_evolve_param_grid_x = g_evolve_param_grid_y;
+            move_box(0.0, 0.0); // force scrolling
+        }
+        else
+        {
+            resize_box(0 - key_count(ID_KEY_PAGE_UP));
+        }
+    }
+}
+
+static void zoom_box_out()
+{
+    if (g_box_count)
+    {
+        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
+        {
+            g_zoom_box_width = 0;
+        }
+        else
+        {
+            resize_box(key_count(ID_KEY_PAGE_DOWN));
+        }
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -926,41 +967,10 @@ do_3d_transform:
         break;
 
     case ID_KEY_PAGE_UP:                // page up
-        if (g_zoom_off)
-        {
-            if (g_zoom_box_width == 0)
-            {
-                // start zoombox
-                g_zoom_box_height = 1;
-                g_zoom_box_width = g_zoom_box_height;
-                g_zoom_box_rotation = 0;
-                g_zoom_box_skew = g_zoom_box_rotation;
-                g_zoom_box_x = 0;
-                g_zoom_box_y = 0;
-                find_special_colors();
-                g_box_color = g_color_bright;
-                g_evolve_param_grid_y = g_evolve_image_grid_size /2;
-                g_evolve_param_grid_x = g_evolve_param_grid_y;
-                move_box(0.0, 0.0); // force scrolling
-            }
-            else
-            {
-                resize_box(0 - key_count(ID_KEY_PAGE_UP));
-            }
-        }
+        zoom_box_in();
         break;
     case ID_KEY_PAGE_DOWN:              // page down
-        if (g_box_count)
-        {
-            if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
-            {
-                g_zoom_box_width = 0;
-            }
-            else
-            {
-                resize_box(key_count(ID_KEY_PAGE_DOWN));
-            }
-        }
+        zoom_box_out();
         break;
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
