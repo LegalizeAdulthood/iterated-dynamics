@@ -44,7 +44,7 @@ int g_box_values[NUM_BOX_POINTS]{};
 int g_box_color{}; // Zoom-Box color
 
 static int  check_pan();
-static void fix_worklist();
+static void fix_work_list();
 static void move_row(int fromrow, int torow, int col);
 
 // big number declarations
@@ -835,7 +835,7 @@ int init_pan_or_recalc(bool do_zoom_out)
             move_row(y+row, y, col);
         }
     }
-    fix_worklist(); // fixup any out of bounds worklist entries
+    fix_work_list(); // fixup any out of bounds worklist entries
     alloc_resume(sizeof(g_work_list)+20, 2); // post the new worklist
     put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     return 0;
@@ -859,7 +859,8 @@ static void restart_window(int index)
     g_work_list[index].xxbegin = g_work_list[index].xxstart;
 }
 
-static void fix_worklist() // fix out of bounds and symmetry related stuff
+// fix out of bounds and symmetry related stuff
+static void fix_work_list()
 {
     for (int i = 0; i < g_num_work_list; ++i)
     {
