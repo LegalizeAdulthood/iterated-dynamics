@@ -749,6 +749,16 @@ static void zoom_box_decrease_color()
     g_box_color -= key_count(ID_KEY_CTL_DEL);
 }
 
+static void start_evolution(bool &kbd_more, int kbd_char)
+{
+    g_evolving = evolution_mode_flags::FIELDMAP;
+    g_view_window = true;
+    set_mutation_level(kbd_char - ID_KEY_ALT_1 + 1);
+    save_param_history();
+    kbd_more = false;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -1018,12 +1028,7 @@ do_3d_transform:
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        g_evolving = evolution_mode_flags::FIELDMAP;
-        g_view_window = true;
-        set_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1);
-        save_param_history();
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        start_evolution(*kbdmore, *kbdchar);
         break;
 
     case ID_KEY_DELETE:         // select video mode from list
