@@ -642,6 +642,30 @@ static void request_zoom_out(bool &kbd_more)
     zoom_out();                // calc corners for zooming out
 }
 
+static void skew_zoom_left()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        const int i = key_count(ID_KEY_CTL_HOME);
+        if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
+        {
+            g_zoom_box_skew = -0.48;
+        }
+    }
+}
+
+static void skew_zoom_right()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        const int i = key_count(ID_KEY_CTL_END);
+        if ((g_zoom_box_skew += 0.02 * i) > 0.48)
+        {
+            g_zoom_box_skew = 0.48;
+        }
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -873,24 +897,10 @@ do_3d_transform:
         move_zoom_box(*kbdchar);
         break;
     case ID_KEY_CTL_HOME:               // Ctrl-home
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            i = key_count(ID_KEY_CTL_HOME);
-            if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
-            {
-                g_zoom_box_skew = -0.48;
-            }
-        }
+        skew_zoom_left();
         break;
     case ID_KEY_CTL_END:                // Ctrl-end
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            i = key_count(ID_KEY_CTL_END);
-            if ((g_zoom_box_skew += 0.02 * i) > 0.48)
-            {
-                g_zoom_box_skew = 0.48;
-            }
-        }
+        skew_zoom_right();
         break;
     case ID_KEY_CTL_PAGE_UP:            // Ctrl-pgup
         if (g_box_count)
