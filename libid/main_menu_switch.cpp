@@ -723,6 +723,22 @@ static void zoom_box_out()
     }
 }
 
+static void zoom_box_increase_rotation()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
+    }
+}
+
+static void zoom_box_decrease_rotation()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -973,16 +989,10 @@ do_3d_transform:
         zoom_box_out();
         break;
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
-        }
+        zoom_box_increase_rotation();
         break;
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
-        }
+        zoom_box_decrease_rotation();
         break;
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
         g_box_color += key_count(ID_KEY_CTL_INSERT);
