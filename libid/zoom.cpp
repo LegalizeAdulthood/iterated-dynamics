@@ -341,8 +341,7 @@ void add_box(coords point)
 
 void move_box(double dx, double dy)
 {
-    int align;
-    align = check_pan();
+    const int align = check_pan();
     if (dx != 0.0)
     {
         if ((g_zoom_box_x += dx) + g_zoom_box_width/2 < 0)    // center must stay onscreen
@@ -353,16 +352,18 @@ void move_box(double dx, double dy)
         {
             g_zoom_box_x = 1.0 - g_zoom_box_width/2;
         }
-        int col;
-        if (align != 0
-            && ((col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND))) & (align-1)) != 0)
+        if (align != 0)
         {
-            if (dx > 0)
+            if (int col = (int) (g_zoom_box_x * (g_logical_screen_x_size_dots + PIXELROUND));
+                (col & (align - 1)) != 0)
             {
-                col += align;
+                if (dx > 0)
+                {
+                    col += align;
+                }
+                col -= col & (align - 1); // adjust col to pass alignment
+                g_zoom_box_x = (double) col / g_logical_screen_x_size_dots;
             }
-            col -= col & (align-1); // adjust col to pass alignment
-            g_zoom_box_x = (double)col/g_logical_screen_x_size_dots;
         }
     }
     if (dy != 0.0)
@@ -375,16 +376,18 @@ void move_box(double dx, double dy)
         {
             g_zoom_box_y = 1.0 - g_zoom_box_height/2;
         }
-        int row;
-        if (align != 0
-            && ((row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND))) & (align-1)) != 0)
+        if (align != 0)
         {
-            if (dy > 0)
+            if (int row = (int) (g_zoom_box_y * (g_logical_screen_y_size_dots + PIXELROUND));
+                (row & (align - 1)) != 0)
             {
-                row += align;
+                if (dy > 0)
+                {
+                    row += align;
+                }
+                row -= row & (align - 1);
+                g_zoom_box_y = (double) row / g_logical_screen_y_size_dots;
             }
-            row -= row & (align-1);
-            g_zoom_box_y = (double)row/g_logical_screen_y_size_dots;
         }
     }
 }
