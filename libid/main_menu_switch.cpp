@@ -739,6 +739,16 @@ static void zoom_box_decrease_rotation()
     }
 }
 
+static void zoom_box_increase_color()
+{
+    g_box_color += key_count(ID_KEY_CTL_INSERT);
+}
+
+static void zoom_box_decrease_color()
+{
+    g_box_color -= key_count(ID_KEY_CTL_DEL);
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -995,10 +1005,10 @@ do_3d_transform:
         zoom_box_decrease_rotation();
         break;
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        g_box_color += key_count(ID_KEY_CTL_INSERT);
+        zoom_box_increase_color();
         break;
     case ID_KEY_CTL_DEL:                // Ctrl-del
-        g_box_color -= key_count(ID_KEY_CTL_DEL);
+        zoom_box_decrease_color();
         break;
 
     case ID_KEY_ALT_1: // alt + number keys set mutation level and start evolution engine
