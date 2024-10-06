@@ -1015,12 +1015,9 @@ void clear_zoom_box()
 // do all pending movement at once for smooth mouse diagonal moves
 void move_zoom_box(int key_num)
 {
-    int vertical;
-    int horizontal;
-    int getmore;
-    horizontal = 0;
-    vertical = horizontal;
-    getmore = 1;
+    int horizontal{};
+    int vertical{};
+    int getmore{1};
     while (getmore)
     {
         switch (key_num)
