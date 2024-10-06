@@ -759,6 +759,20 @@ static void start_evolution(bool &kbd_more, int kbd_char)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
+static void request_video_mode(int &kbd_char)
+{
+    driver_stack_screen();
+    kbd_char = select_video_mode(g_adapter);
+    if (check_vidmode_key(0, kbd_char) >= 0) // picked a new mode?
+    {
+        driver_discard_screen();
+    }
+    else
+    {
+        driver_unstack_screen();
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -1032,19 +1046,8 @@ do_3d_transform:
         break;
 
     case ID_KEY_DELETE:         // select video mode from list
-    {
-        driver_stack_screen();
-        *kbdchar = select_video_mode(g_adapter);
-        if (check_vidmode_key(0, *kbdchar) >= 0)    // picked a new mode?
-        {
-            driver_discard_screen();
-        }
-        else
-        {
-            driver_unstack_screen();
-        }
+        request_video_mode(*kbdchar);
         // fall through
-    }
     default:                     // other (maybe a valid Fn key)
         k = check_vidmode_key(0, *kbdchar);
         if (k >= 0)
