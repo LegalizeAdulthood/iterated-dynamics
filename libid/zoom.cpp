@@ -440,8 +440,6 @@ void change_box(int dw, int dd)
     change_box(dw / g_logical_screen_x_size_dots, dd / g_logical_screen_y_size_dots);
 }
 
-extern void show_three_bf();
-
 static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
                                  bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
                                  bf_t bfplotmy2, bf_t bfftemp)
@@ -477,9 +475,7 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
     // *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
     sub_bf(btmp1, g_bf_save_x_max, g_bf_save_x_3rd);
     mult_bf(btmp2, btempx, btmp1);
-    // show_three_bf("fact1",btempx,"fact2",btmp1,"prod ",btmp2,70);
     div_bf(btmp2a, btmp2, bfftemp);
-    // show_three_bf("num  ",btmp2,"denom",bfftemp,"quot ",btmp2a,70);
     sub_bf(btmp3, g_bf_save_x_3rd, g_bf_save_x_min);
     mult_bf(btmp4, btempy, btmp3);
     div_bf(btmp4a, btmp4, bfftemp);
