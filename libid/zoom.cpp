@@ -597,7 +597,9 @@ void zoom_out() // for ctl-enter, calc corners for zooming out
 
 void aspect_ratio_crop(float old_aspect, float new_aspect)
 {
-    double ftemp, xmargin, ymargin;
+    double ftemp;
+    double xmargin;
+    double ymargin;
     if (new_aspect > old_aspect)
     {
         // new ratio is taller, crop x
