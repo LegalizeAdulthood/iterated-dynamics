@@ -196,15 +196,15 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_Z:
         flip_image(*kbdchar);
         break;
-    case 'x':                    // invoke options screen
-    case 'y':
-    case 'p':                    // passes options
-    case 'z':                    // type specific parms
-    case 'g':
-    case 'v':
-    case ID_KEY_CTL_B:
-    case ID_KEY_CTL_E:
-    case ID_KEY_CTL_F:
+    case 'x':          // invoke options screen
+    case 'y':          //
+    case 'p':          // passes options
+    case 'z':          // type specific parms
+    case 'g':          // enter a command
+    case 'v':          // view window
+    case ID_KEY_CTL_B: // browsing
+    case ID_KEY_CTL_E: // evolving
+    case ID_KEY_CTL_F: // sound options
         old_maxit = g_max_iterations;
         clear_zoom_box();
         if (g_from_text)
