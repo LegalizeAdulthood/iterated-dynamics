@@ -1249,7 +1249,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     if (xlastcolor != -1)
         XSetForeground(m_dpy, m_gc, do_fake_lut(xlastcolor));
     XSetFunction(m_dpy, m_gc, xlastfcn);
-    drawbox(0);
+    draw_box(false);
 }
 
 void X11Driver::ev_motion_notify(XEvent *xevent)
@@ -2425,7 +2425,7 @@ void X11Driver::set_video_mode(VIDEOINFO *mode)
     {
         read_palette();
         g_and_color = g_colors-1;
-        g_box_count =0;
+        g_box_count = 0;
     }
 }
 

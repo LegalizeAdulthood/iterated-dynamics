@@ -1597,7 +1597,7 @@ xhandleevents()
             }
             XSetFunction(Xdp, Xgc, xlastfcn);
             g_x_zoom_waiting = true;
-            drawbox(0);
+            draw_box(false);
         }
         break;
         case ConfigureNotify:
