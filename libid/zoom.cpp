@@ -118,11 +118,6 @@ void clear_box()
 
 void draw_box(bool draw_it)
 {
-    coords tl, bl, tr, br; // dot addr of topleft, botleft, etc
-    double tmpx, tmpy, dx, dy, rotcos, rotsin, ftemp1, ftemp2;
-    double fxwidth, fxskew, fydepth, fyskew, fxadj;
-    bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
-    int saved = 0;
     if (g_zoom_box_width == 0)
     {
         // no box to draw
@@ -135,6 +130,13 @@ void draw_box(bool draw_it)
         reset_zoom_corners();
         return;
     }
+
+    int saved = 0;
+    bf_t bffxwidth;
+    bf_t bffxskew;
+    bf_t bffydepth;
+    bf_t bffyskew;
+    bf_t bffxadj;
     if (g_bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
@@ -144,16 +146,16 @@ void draw_box(bool draw_it)
         bffyskew  = alloc_stack(g_r_bf_length+2);
         bffxadj   = alloc_stack(g_r_bf_length+2);
     }
-    ftemp1 = PI*g_zoom_box_rotation/72; // convert to radians
-    rotcos = std::cos(ftemp1);   // sin & cos of rotation
-    rotsin = std::sin(ftemp1);
+    double ftemp1 = PI * g_zoom_box_rotation / 72; // convert to radians
+    const double rotcos = std::cos(ftemp1);   // sin & cos of rotation
+    const double rotsin = std::sin(ftemp1);
 
     // do some calcs just once here to reduce fp work a bit
-    fxwidth = g_save_x_max-g_save_x_3rd;
-    fxskew  = g_save_x_3rd-g_save_x_min;
-    fydepth = g_save_y_3rd-g_save_y_max;
-    fyskew  = g_save_y_min-g_save_y_3rd;
-    fxadj   = g_zoom_box_width*g_zoom_box_skew;
+    const double fxwidth = g_save_x_max - g_save_x_3rd;
+    const double fxskew = g_save_x_3rd - g_save_x_min;
+    const double fydepth = g_save_y_3rd - g_save_y_max;
+    const double fyskew = g_save_y_min - g_save_y_3rd;
+    const double fxadj = g_zoom_box_width * g_zoom_box_skew;
 
     if (g_bf_math != bf_math_type::NONE)
     {
@@ -166,17 +168,18 @@ void draw_box(bool draw_it)
     }
 
     // calc co-ords of topleft & botright corners of box
-    tmpx = g_zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
-    tmpy = g_zoom_box_height*g_final_aspect_ratio/2;
-    dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
-    dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
+    double tmpx = g_zoom_box_width / -2 + fxadj; // from zoombox center as origin, on xdots scale
+    double tmpy = g_zoom_box_height * g_final_aspect_ratio / 2;
+    double dx = (rotcos * tmpx - rotsin * tmpy) - tmpx; // delta x to rotate topleft
+    double dy = tmpy - (rotsin * tmpx + rotcos * tmpy); // delta y to rotate topleft
 
     // calc co-ords of topleft
     ftemp1 = g_zoom_box_x + dx + fxadj;
-    ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio;
+    double ftemp2 = g_zoom_box_y + dy / g_final_aspect_ratio;
 
-    tl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND)); // screen co-ords
-    tl.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
+    coords top_left;
+    top_left.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND)); // screen co-ords
+    top_left.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_min  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew; // real co-ords
     g_y_max  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
     if (g_bf_math != bf_math_type::NONE)
@@ -188,8 +191,9 @@ void draw_box(bool draw_it)
     // calc co-ords of bottom right
     ftemp1 = g_zoom_box_x + g_zoom_box_width - dx - fxadj;
     ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
-    br.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
-    br.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
+    coords bot_right;
+    bot_right.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
+    bot_right.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_max  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
     g_y_min  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
     if (g_bf_math != bf_math_type::NONE)
@@ -197,6 +201,7 @@ void draw_box(bool draw_it)
         calc_corner(g_bf_x_max, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
         calc_corner(g_bf_y_min, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
     }
+
     // do the same for botleft & topright
     tmpx = g_zoom_box_width/-2 - fxadj;
     tmpy = 0.0-tmpy;
@@ -204,8 +209,9 @@ void draw_box(bool draw_it)
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = g_zoom_box_x + dx - fxadj;
     ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
-    bl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
-    bl.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
+    coords bot_left;
+    bot_left.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
+    bot_left.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_3rd  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
     g_y_3rd  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
     if (g_bf_math != bf_math_type::NONE)
@@ -216,8 +222,9 @@ void draw_box(bool draw_it)
     }
     ftemp1 = g_zoom_box_x + g_zoom_box_width - dx + fxadj;
     ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
-    tr.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
-    tr.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
+    coords top_right;
+    top_right.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
+    top_right.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
 
     if (g_box_count != 0)
     {
@@ -229,25 +236,13 @@ void draw_box(bool draw_it)
     if (draw_it)
     {
         // caller wants box drawn as well as co-ords calc'd
-#ifndef XFRACT
         // build the list of zoom box pixels
-        add_box(tl);
-        add_box(tr);               // corner pixels
-        add_box(bl);
-        add_box(br);
-        draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y); // top & bottom lines
-        draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y); // left & right lines
-#else
-        g_box_x[0] = tl.x + g_logical_screen_x_offset;
-        g_box_y[0] = tl.y + g_logical_screen_y_offset;
-        g_box_x[1] = tr.x + g_logical_screen_x_offset;
-        g_box_y[1] = tr.y + g_logical_screen_y_offset;
-        g_box_x[2] = br.x + g_logical_screen_x_offset;
-        g_box_y[2] = br.y + g_logical_screen_y_offset;
-        g_box_x[3] = bl.x + g_logical_screen_x_offset;
-        g_box_y[3] = bl.y + g_logical_screen_y_offset;
-        g_box_count = 4;
-#endif
+        add_box(top_left);
+        add_box(top_right);               // corner pixels
+        add_box(bot_left);
+        add_box(bot_right);
+        draw_lines(top_left, top_right, bot_left.x-top_left.x, bot_left.y-top_left.y); // top & bottom lines
+        draw_lines(top_left, bot_left, top_right.x-top_left.x, top_right.y-top_left.y); // left & right lines
         display_box();
     }
 }
