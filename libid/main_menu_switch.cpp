@@ -607,6 +607,20 @@ static void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
     g_show_file = -1;
 }
 
+static bool look_for_files(bool &stacked)
+{
+    if ((g_zoom_box_width != 0) || driver_diskp())
+    {
+        g_browsing = false;
+        driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
+    }
+    else if (look(&stacked))
+    {
+        return true;
+    }
+    return false;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -806,12 +820,7 @@ do_3d_transform:
         return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
-        if ((g_zoom_box_width != 0) || driver_diskp())
-        {
-            g_browsing = false;
-            driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
-        }
-        else if (look(stacked))
+        if (look_for_files(*stacked))
         {
             return main_state::RESTORE_START;
         }
