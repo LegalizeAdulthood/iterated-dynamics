@@ -42,7 +42,6 @@ enum
 int g_box_x[NUM_BOX_POINTS]{};
 int g_box_y[NUM_BOX_POINTS]{};
 int g_box_values[NUM_BOX_POINTS]{};
-bool g_video_scroll{};
 int g_box_color{}; // Zoom-Box color
 
 static void zmo_calc(double, double, double *, double *, double);
