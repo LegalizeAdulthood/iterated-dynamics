@@ -773,6 +773,24 @@ static void request_video_mode(int &kbd_char)
     }
 }
 
+static bool requested_video_fn(bool &kbd_more, int kbd_char)
+{
+    const int k = check_vidmode_key(0, kbd_char);
+    if (k >= 0)
+    {
+        g_adapter = k;
+        if (g_video_table[g_adapter].colors != g_colors)
+        {
+            g_save_dac = 0;
+        }
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        kbd_more = false;
+        return true;
+    }
+
+    return false;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -1049,16 +1067,8 @@ do_3d_transform:
         request_video_mode(*kbdchar);
         // fall through
     default:                     // other (maybe a valid Fn key)
-        k = check_vidmode_key(0, *kbdchar);
-        if (k >= 0)
+        if (requested_video_fn(*kbdmore, *kbdchar))
         {
-            g_adapter = k;
-            if (g_video_table[g_adapter].colors != g_colors)
-            {
-                g_save_dac = 0;
-            }
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-            *kbdmore = false;
             return main_state::CONTINUE;
         }
         break;
