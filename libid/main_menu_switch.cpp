@@ -477,6 +477,69 @@ static void inverse_julia_toggle(bool &kbd_more)
     }
 }
 
+static main_state get_history(bool &stacked, int kbd_char)
+{
+    if (g_filename_stack_index >= 1)
+    {
+        // go back one file if somewhere to go (ie. browsing)
+        g_filename_stack_index--;
+        while (g_file_name_stack[g_filename_stack_index].empty() && g_filename_stack_index >= 0)
+        {
+            g_filename_stack_index--;
+        }
+        if (g_filename_stack_index < 0) // oops, must have deleted first one
+        {
+            return main_state::NOTHING;
+        }
+        g_browse_name = g_file_name_stack[g_filename_stack_index];
+        merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+        g_browsing = true;
+        g_browse_sub_images = true;
+        g_show_file = 0;
+        if (g_ask_video)
+        {
+            driver_stack_screen(); // save graphics image
+            stacked = true;
+        }
+        return main_state::RESTORE_START;
+    }
+
+    if (g_max_image_history > 0 && g_bf_math == bf_math_type::NONE)
+    {
+        if (kbd_char == '\\' || kbd_char == 'h')
+        {
+            if (--g_history_ptr < 0)
+            {
+                g_history_ptr = g_max_image_history - 1;
+            }
+        }
+        if (kbd_char == ID_KEY_CTL_BACKSLASH || kbd_char == ID_KEY_BACKSPACE)
+        {
+            if (++g_history_ptr >= g_max_image_history)
+            {
+                g_history_ptr = 0;
+            }
+        }
+        restore_history_info(g_history_ptr);
+        g_zoom_off = true;
+        g_init_mode = g_adapter;
+        if (g_cur_fractal_specific->isinteger != 0 &&
+            g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+        {
+            g_user_float_flag = false;
+        }
+        if (g_cur_fractal_specific->isinteger == 0 &&
+            g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+        {
+            g_user_float_flag = true;
+        }
+        g_history_flag = true; // avoid re-store parms due to rounding errs
+        return main_state::IMAGE_START;
+    }
+
+    return main_state::NOTHING;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -622,62 +685,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
-        if (g_filename_stack_index >= 1)
+        if (const main_state result = get_history(*stacked, *kbdchar); result != main_state::NOTHING)
         {
-            // go back one file if somewhere to go (ie. browsing)
-            g_filename_stack_index--;
-            while (g_file_name_stack[g_filename_stack_index].empty()
-                && g_filename_stack_index >= 0)
-            {
-                g_filename_stack_index--;
-            }
-            if (g_filename_stack_index < 0)   // oops, must have deleted first one
-            {
-                break;
-            }
-            g_browse_name = g_file_name_stack[g_filename_stack_index];
-            merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
-            g_browsing = true;
-            g_browse_sub_images = true;
-            g_show_file = 0;
-            if (g_ask_video)
-            {
-                driver_stack_screen();      // save graphics image
-                *stacked = true;
-            }
-            return main_state::RESTORE_START;
-        }
-        else if (g_max_image_history > 0 && g_bf_math == bf_math_type::NONE)
-        {
-            if (*kbdchar == '\\' || *kbdchar == 'h')
-            {
-                if (--g_history_ptr < 0)
-                {
-                    g_history_ptr = g_max_image_history - 1;
-                }
-            }
-            if (*kbdchar == ID_KEY_CTL_BACKSLASH || *kbdchar == ID_KEY_BACKSPACE)
-            {
-                if (++g_history_ptr >= g_max_image_history)
-                {
-                    g_history_ptr = 0;
-                }
-            }
-            restore_history_info(g_history_ptr);
-            g_zoom_off = true;
-            g_init_mode = g_adapter;
-            if (g_cur_fractal_specific->isinteger != 0
-                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
-            {
-                g_user_float_flag = false;
-            }
-            if (g_cur_fractal_specific->isinteger == 0
-                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
-            {
-                g_user_float_flag = true;
-            }
-            g_history_flag = true;         // avoid re-store parms due to rounding errs
-            return main_state::IMAGE_START;
+            return result;
         }
         break;
     case 'd':                    // shell to MS-DOS
