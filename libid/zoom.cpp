@@ -67,7 +67,7 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 
 void display_box()
 {
-    int boxc = (g_colors-1)&g_box_color;
+    const int boxc = (g_colors - 1) & g_box_color;
     int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
@@ -82,8 +82,11 @@ void display_box()
             g_box_values[i] = getcolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset);
         }
     }
+
     // There is an interaction between getcolor and putcolor, so separate them
-    if (!(g_is_true_color && g_true_mode != true_color_mode::default_color)) // don't need this for truecolor with truemode set
+    // don't need this for truecolor with truemode set
+    if (!(g_is_true_color && g_true_mode != true_color_mode::default_color))
+    {
         for (int i = 0; i < g_box_count; i++)
         {
             if (g_colors == 2)
@@ -95,6 +98,7 @@ void display_box()
                 g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, boxc);
             }
         }
+    }
 }
 
 void clear_box()
