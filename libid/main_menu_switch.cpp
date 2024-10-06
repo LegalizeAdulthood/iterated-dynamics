@@ -268,8 +268,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             && g_cur_fractal_specific->calctype == standard_fractal
             && !g_log_map_flag
             && !g_truecolor     // recalc not yet implemented with truecolor
-            && !(g_user_std_calc_mode == 't' && g_fill_color > -1) // tesseral with fill doesn't work
-            && !(g_user_std_calc_mode == 'o')
+            && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
+            && g_user_std_calc_mode != 'o'
             && i == 1 // nothing else changed
             && g_outside_color != ATAN)
         {
