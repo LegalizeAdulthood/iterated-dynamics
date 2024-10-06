@@ -162,8 +162,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         g_julibrot = false;
         clear_zoom_box();
         driver_stack_screen();
-        i = get_fract_type();
-        if (i >= 0)
+        if (const int type = get_fract_type(); type >= 0)
         {
             driver_discard_screen();
             g_save_dac = 0;
@@ -179,7 +178,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
             g_set_orbit_corners = false;
             save_param_history();
-            if (i == 0)
+            if (type == 0)
             {
                 g_init_mode = g_adapter;
                 *frommandel = false;
