@@ -259,12 +259,12 @@ void draw_lines(coords fr, coords to, int dx, int dy)
             fr = to;
             to = tmpp;
         }
-        int const xincr = (to.x-fr.x)*4/g_screen_x_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
-        int ctr = (to.x-fr.x-1)/xincr;
-        int const altdec = std::abs(to.y-fr.y)*xincr;
-        int const altinc = to.x-fr.x;
-        int altctr = altinc/2;
-        int const yincr = (to.y > fr.y)?1:-1;
+        const int xincr = (to.x-fr.x)*4/g_screen_x_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
+        int ctr = (to.x - fr.x - 1) / xincr;
+        const int altdec = std::abs(to.y - fr.y) * xincr;
+        const int altinc = to.x-fr.x;
+        int altctr = altinc / 2;
+        const int yincr = (to.y > fr.y)?1:-1;
         coords line1;
         line1.y = fr.y;
         line1.x = fr.x;
@@ -296,12 +296,12 @@ void draw_lines(coords fr, coords to, int dx, int dy)
             fr = to;
             to = tmpp;
         }
-        int const yincr = (to.y-fr.y)*4/g_screen_y_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
-        int ctr = (to.y-fr.y-1)/yincr;
-        int const altdec = std::abs(to.x-fr.x)*yincr;
-        int const altinc = to.y-fr.y;
-        int altctr = altinc/2;
-        int const xincr = (to.x > fr.x) ? 1 : -1;
+        const int yincr = (to.y-fr.y)*4/g_screen_y_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
+        int ctr = (to.y - fr.y - 1) / yincr;
+        const int altdec = std::abs(to.x - fr.x) * yincr;
+        const int altinc = to.y-fr.y;
+        int altctr = altinc / 2;
+        const int xincr = (to.x > fr.x) ? 1 : -1;
         coords line1;
         line1.x = fr.x;
         line1.y = fr.y;
