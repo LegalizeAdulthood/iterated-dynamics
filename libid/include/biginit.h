@@ -18,3 +18,23 @@ void restore_stack(int old_offset);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
 void init_big_pi();
+
+class BigStackSaver
+{
+public:
+    BigStackSaver() :
+        m_offset(save_stack())
+    {
+    }
+    BigStackSaver(const BigStackSaver &rhs) = delete;
+    BigStackSaver(BigStackSaver &&rhs) = delete;
+    ~BigStackSaver()
+    {
+        restore_stack(m_offset);
+    }
+    BigStackSaver &operator=(const BigStackSaver &rhs) = delete;
+    BigStackSaver &operator=(BigStackSaver &&rhs) = delete;
+
+private:
+    int m_offset;
+};
