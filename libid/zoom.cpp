@@ -440,23 +440,21 @@ void change_box(int dw, int dd)
     change_box(dw / g_logical_screen_x_size_dots, dd / g_logical_screen_y_size_dots);
 }
 
-static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
-                                 bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
-                                 bf_t bfplotmy2, bf_t bfftemp)
+static void zmo_calcbf(bf_t bfdx, bf_t bfdy, //
+    bf_t bfnewx, bf_t bfnewy,                //
+    bf_t bfplotmx1, bf_t bfplotmx2,          //
+    bf_t bfplotmy1, bf_t bfplotmy2,          //
+    bf_t bfftemp)
 {
-    bf_t btmp1, btmp2, btmp3, btmp4, btempx, btempy ;
-    bf_t btmp2a, btmp4a;
-    int saved;
-    saved = save_stack();
-
-    btmp1  = alloc_stack(g_r_bf_length+2);
-    btmp2  = alloc_stack(g_r_bf_length+2);
-    btmp3  = alloc_stack(g_r_bf_length+2);
-    btmp4  = alloc_stack(g_r_bf_length+2);
-    btmp2a = alloc_stack(g_r_bf_length+2);
-    btmp4a = alloc_stack(g_r_bf_length+2);
-    btempx = alloc_stack(g_r_bf_length+2);
-    btempy = alloc_stack(g_r_bf_length+2);
+    const int saved = save_stack();
+    bf_t btmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp2 = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp3 = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp4 = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp2a = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp4a = alloc_stack(g_r_bf_length + 2);
+    bf_t btempx = alloc_stack(g_r_bf_length + 2);
+    bf_t btempy = alloc_stack(g_r_bf_length + 2);
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft thru (1,1) bottom right */
@@ -558,16 +556,13 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
 
     sub_bf(tmp1, g_bf_save_x_min, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_max, savbfymax);
-    zmo_calcbf(tmp1, tmp2, g_bf_x_min, g_bf_y_max, bfplotmx1, bfplotmx2, bfplotmy1,
-               bfplotmy2, bfftemp);
+    zmo_calcbf(tmp1, tmp2, g_bf_x_min, g_bf_y_max, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_max, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_min, savbfymax);
-    zmo_calcbf(tmp1, tmp2, g_bf_x_max, g_bf_y_min, bfplotmx1, bfplotmx2, bfplotmy1,
-               bfplotmy2, bfftemp);
+    zmo_calcbf(tmp1, tmp2, g_bf_x_max, g_bf_y_min, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_3rd, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_3rd, savbfymax);
-    zmo_calcbf(tmp1, tmp2, g_bf_x_3rd, g_bf_y_3rd, bfplotmx1, bfplotmx2, bfplotmy1,
-               bfplotmy2, bfftemp);
+    zmo_calcbf(tmp1, tmp2, g_bf_x_3rd, g_bf_y_3rd, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
     restore_stack(saved);
 }
 
