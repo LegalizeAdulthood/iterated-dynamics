@@ -11,6 +11,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "find_special_colors.h"
 #include "fractalp.h"
 #include "framain2.h"
 #include "frothy_basin.h"
@@ -1083,3 +1084,132 @@ void reset_zoom_corners()
         copy_bf(g_bf_y_3rd, g_bf_save_y_3rd);
     }
 }
+
+void request_zoom_in(bool &kbd_more)
+{
+    if (g_zoom_box_width != 0.0)
+    {
+        // do a zoom
+        init_pan_or_recalc(false);
+        kbd_more = false;
+    }
+    if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+    {
+        kbd_more = false;
+    }
+}
+
+void request_zoom_out(bool &kbd_more)
+{
+    init_pan_or_recalc(true);
+    kbd_more = false;
+    zoom_out();                // calc corners for zooming out
+}
+
+void skew_zoom_left()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        const int i = key_count(ID_KEY_CTL_HOME);
+        if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
+        {
+            g_zoom_box_skew = -0.48;
+        }
+    }
+}
+
+void skew_zoom_right()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        const int i = key_count(ID_KEY_CTL_END);
+        if ((g_zoom_box_skew += 0.02 * i) > 0.48)
+        {
+            g_zoom_box_skew = 0.48;
+        }
+    }
+}
+
+void decrease_zoom_aspect()
+{
+    if (g_box_count)
+    {
+        change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
+    }
+}
+
+void increase_zoom_aspect()
+{
+    if (g_box_count)
+    {
+        change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
+    }
+}
+
+void zoom_box_in()
+{
+    if (g_zoom_off)
+    {
+        if (g_zoom_box_width == 0)
+        {
+            // start zoombox
+            g_zoom_box_height = 1;
+            g_zoom_box_width = g_zoom_box_height;
+            g_zoom_box_rotation = 0;
+            g_zoom_box_skew = g_zoom_box_rotation;
+            g_zoom_box_x = 0;
+            g_zoom_box_y = 0;
+            find_special_colors();
+            g_box_color = g_color_bright;
+            g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
+            g_evolve_param_grid_x = g_evolve_param_grid_y;
+            move_box(0.0, 0.0); // force scrolling
+        }
+        else
+        {
+            resize_box(0 - key_count(ID_KEY_PAGE_UP));
+        }
+    }
+}
+
+void zoom_box_out()
+{
+    if (g_box_count)
+    {
+        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
+        {
+            g_zoom_box_width = 0;
+        }
+        else
+        {
+            resize_box(key_count(ID_KEY_PAGE_DOWN));
+        }
+    }
+}
+
+void zoom_box_increase_rotation()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
+    }
+}
+
+void zoom_box_decrease_rotation()
+{
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    {
+        g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
+    }
+}
+
+void zoom_box_increase_color()
+{
+    g_box_color += key_count(ID_KEY_CTL_INSERT);
+}
+
+void zoom_box_decrease_color()
+{
+    g_box_color -= key_count(ID_KEY_CTL_DEL);
+}
+

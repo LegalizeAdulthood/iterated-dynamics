@@ -27,3 +27,16 @@ void display_box();
 void clear_zoom_box();
 void move_zoom_box(int key_num);
 void reset_zoom_corners();
+
+void request_zoom_in(bool &kbd_more);
+void request_zoom_out(bool &kbd_more);
+void skew_zoom_left();
+void skew_zoom_right();
+void decrease_zoom_aspect();
+void increase_zoom_aspect();
+void zoom_box_in();
+void zoom_box_out();
+void zoom_box_increase_rotation();
+void zoom_box_decrease_rotation();
+void zoom_box_increase_color();
+void zoom_box_decrease_color();
