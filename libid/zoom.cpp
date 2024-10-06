@@ -4,9 +4,6 @@
     routines for zoombox manipulation and for panning
 
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "zoom.h"
 
 #include "biginit.h"
@@ -19,6 +16,7 @@
 #include "frothy_basin.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "miscfrac.h"
 #include "os.h"
 #include "resume.h"
@@ -1027,4 +1025,86 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
         }
     }
     tidy_worklist(); // combine where possible, re-sort
+}
+
+void clear_zoombox()
+{
+    g_zoom_box_width = 0;
+    drawbox(false);
+    reset_zoom_corners();
+}
+
+// do all pending movement at once for smooth mouse diagonal moves
+void move_zoombox(int keynum)
+{
+    int vertical;
+    int horizontal;
+    int getmore;
+    horizontal = 0;
+    vertical = horizontal;
+    getmore = 1;
+    while (getmore)
+    {
+        switch (keynum)
+        {
+        case ID_KEY_LEFT_ARROW:               // cursor left
+            --horizontal;
+            break;
+        case ID_KEY_RIGHT_ARROW:              // cursor right
+            ++horizontal;
+            break;
+        case ID_KEY_UP_ARROW:                 // cursor up
+            --vertical;
+            break;
+        case ID_KEY_DOWN_ARROW:               // cursor down
+            ++vertical;
+            break;
+        case ID_KEY_CTL_LEFT_ARROW:             // Ctrl-cursor left
+            horizontal -= 8;
+            break;
+        case ID_KEY_CTL_RIGHT_ARROW:             // Ctrl-cursor right
+            horizontal += 8;
+            break;
+        case ID_KEY_CTL_UP_ARROW:               // Ctrl-cursor up
+            vertical -= 8;
+            break;
+        case ID_KEY_CTL_DOWN_ARROW:             // Ctrl-cursor down
+            vertical += 8;
+            break;                      // += 8 needed by VESA scrolling
+        default:
+            getmore = 0;
+        }
+        if (getmore)
+        {
+            if (getmore == 2)                // eat last key used
+            {
+                driver_get_key();
+            }
+            getmore = 2;
+            keynum = driver_key_pressed();         // next pending key
+        }
+    }
+    if (g_box_count)
+    {
+        moveboxf((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
+    }
+}
+
+void reset_zoom_corners()
+{
+    g_x_min = g_save_x_min;
+    g_x_max = g_save_x_max;
+    g_x_3rd = g_save_x_3rd;
+    g_y_max = g_save_y_max;
+    g_y_min = g_save_y_min;
+    g_y_3rd = g_save_y_3rd;
+    if (g_bf_math != bf_math_type::NONE)
+    {
+        copy_bf(g_bf_x_min, g_bf_save_x_min);
+        copy_bf(g_bf_x_max, g_bf_save_x_max);
+        copy_bf(g_bf_y_min, g_bf_save_y_min);
+        copy_bf(g_bf_y_max, g_bf_save_y_max);
+        copy_bf(g_bf_x_3rd, g_bf_save_x_3rd);
+        copy_bf(g_bf_y_3rd, g_bf_save_y_3rd);
+    }
 }

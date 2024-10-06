@@ -24,3 +24,6 @@ void drawlines(coords fr, coords to, int dx, int dy);
 void addbox(coords point);
 void clearbox();
 void dispbox();
+void clear_zoombox();
+void move_zoombox(int keynum);
+void reset_zoom_corners();
