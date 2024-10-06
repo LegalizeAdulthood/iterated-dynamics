@@ -666,6 +666,22 @@ static void skew_zoom_right()
     }
 }
 
+static void decrease_zoom_aspect()
+{
+    if (g_box_count)
+    {
+        change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
+    }
+}
+
+static void increase_zoom_aspect()
+{
+    if (g_box_count)
+    {
+        change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -903,16 +919,10 @@ do_3d_transform:
         skew_zoom_right();
         break;
     case ID_KEY_CTL_PAGE_UP:            // Ctrl-pgup
-        if (g_box_count)
-        {
-            change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
-        }
+        decrease_zoom_aspect();
         break;
     case ID_KEY_CTL_PAGE_DOWN:          // Ctrl-pgdn
-        if (g_box_count)
-        {
-            change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
-        }
+        increase_zoom_aspect();
         break;
 
     case ID_KEY_PAGE_UP:                // page up
