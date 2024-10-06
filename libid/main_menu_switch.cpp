@@ -621,6 +621,20 @@ static bool look_for_files(bool &stacked)
     return false;
 }
 
+static void request_zoom_in(bool &kbd_more)
+{
+    if (g_zoom_box_width != 0.0)
+    {
+        // do a zoom
+        init_pan_or_recalc(false);
+        kbd_more = false;
+    }
+    if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+    {
+        kbd_more = false;
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -830,16 +844,7 @@ do_3d_transform:
         break;
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        if (g_zoom_box_width != 0.0)
-        {
-            // do a zoom
-            init_pan_or_recalc(false);
-            *kbdmore = false;
-        }
-        if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
-        {
-            *kbdmore = false;
-        }
+        request_zoom_in(*kbdmore);
         break;
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
