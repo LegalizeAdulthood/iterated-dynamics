@@ -725,46 +725,51 @@ static void move_row(int fromrow, int torow, int col)
 // decide to recalc, or to chg worklist & pan
 int init_pan_or_recalc(bool do_zoom_out)
 {
-    int row;
-    int col;
-    int alignmask;
-    int listfull;
+    // no zoombox, leave g_calc_status as is
     if (g_zoom_box_width == 0.0)
     {
-        return 0; // no zoombox, leave g_calc_status as is
-    }
-    // got a zoombox
-    alignmask = check_pan()-1;
-    if (alignmask < 0 || g_evolving != evolution_mode_flags::NONE)
-    {
-        g_calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
         return 0;
     }
+    // got a zoombox
+    const int align_mask = check_pan() - 1;
+
+    // can't pan, trigger recalc
+    if (align_mask < 0 || g_evolving != evolution_mode_flags::NONE)
+    {
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        return 0;
+    }
+
+    // box is full screen, leave g_calc_status as is
     if (g_zoom_box_x == 0.0 && g_zoom_box_y == 0.0)
     {
         clear_box();
         return 0;
-    } // box is full screen, leave g_calc_status as is
-    col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND)); // calc dest col,row of topleft pixel
-    row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND));
+    }
+
+    int col = (int) (g_zoom_box_x *
+        (g_logical_screen_x_size_dots + PIXELROUND)); // calc dest col,row of topleft pixel
+    int row = (int) (g_zoom_box_y * (g_logical_screen_y_size_dots + PIXELROUND));
     if (do_zoom_out)
     {
         // invert row and col
-        row = 0-row;
-        col = 0-col;
+        row = -row;
+        col = -col;
     }
-    if ((row&alignmask) != 0 || (col&alignmask) != 0)
+    if ((row&align_mask) != 0 || (col&align_mask) != 0)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
         return 0;
     }
+
     // pan
     g_num_work_list = 0;
     if (g_calc_status == calc_status_value::RESUMABLE)
     {
         start_resume();
         get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-    } // don't do end_resume! we might still change our mind
+        // don't do end_resume! we might still change our mind
+    }
     // adjust existing worklist entries
     for (int i = 0; i < g_num_work_list; ++i)
     {
@@ -776,13 +781,13 @@ int init_pan_or_recalc(bool do_zoom_out)
         g_work_list[i].xxbegin -= col;
     }
     // add worklist entries for the new edges
-    listfull = 0;
+    int listfull = 0;
     int i = 0;
     int j = g_logical_screen_y_dots-1;
     if (row < 0)
     {
         listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, 0, 0-row-1, 0, 0, 0);
-        i = 0 - row;
+        i = -row;
     }
     if (row > 0)
     {
