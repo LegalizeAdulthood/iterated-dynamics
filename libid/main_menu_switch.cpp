@@ -374,6 +374,47 @@ static void prompt_options(bool &kbd_more, const int kbdchar)
     }
 }
 
+static bool begin_ant()
+{
+    clear_zoom_box();
+    double oldparm[MAX_PARAMS];
+    fractal_type oldtype = g_fractal_type;
+    for (int j = 0; j < MAX_PARAMS; ++j)
+    {
+        oldparm[j] = g_params[j];
+    }
+    if (g_fractal_type != fractal_type::ANT)
+    {
+        g_fractal_type = fractal_type::ANT;
+        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        load_params(g_fractal_type);
+    }
+    if (!g_from_text)
+    {
+        driver_stack_screen();
+    }
+    g_from_text = false;
+    int err = get_fract_params(true);
+    if (err >= 0)
+    {
+        driver_unstack_screen();
+        if (ant() >= 0)
+        {
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
+        }
+    }
+    else
+    {
+        driver_unstack_screen();
+    }
+    g_fractal_type = oldtype;
+    for (int j = 0; j < MAX_PARAMS; ++j)
+    {
+        g_params[j] = oldparm[j];
+    }
+    return err >= 0;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -472,48 +513,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case ID_KEY_CTL_A:                     // ^a Ant
-        clear_zoom_box();
+        if (begin_ant())
         {
-            int err;
-            double oldparm[MAX_PARAMS];
-            fractal_type oldtype = g_fractal_type;
-            for (int j = 0; j < MAX_PARAMS; ++j)
-            {
-                oldparm[j] = g_params[j];
-            }
-            if (g_fractal_type != fractal_type::ANT)
-            {
-                g_fractal_type = fractal_type::ANT;
-                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-                load_params(g_fractal_type);
-            }
-            if (!g_from_text)
-            {
-                driver_stack_screen();
-            }
-            g_from_text = false;
-            err = get_fract_params(true);
-            if (err >= 0)
-            {
-                driver_unstack_screen();
-                if (ant() >= 0)
-                {
-                    g_calc_status = calc_status_value::PARAMS_CHANGED;
-                }
-            }
-            else
-            {
-                driver_unstack_screen();
-            }
-            g_fractal_type = oldtype;
-            for (int j = 0; j < MAX_PARAMS; ++j)
-            {
-                g_params[j] = oldparm[j];
-            }
-            if (err >= 0)
-            {
-                return main_state::CONTINUE;
-            }
+            return main_state::CONTINUE;
         }
         break;
     case 'k':                    // ^s is irritating, give user a single key
