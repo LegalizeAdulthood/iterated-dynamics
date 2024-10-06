@@ -571,14 +571,13 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    double savxxmin, savyymax, ftemp;
-    ftemp = (g_y_min-g_y_3rd)*(g_x_3rd-g_x_min) - (g_x_max-g_x_3rd)*(g_y_3rd-g_y_max);
+    const double ftemp = (g_y_min - g_y_3rd) * (g_x_3rd - g_x_min) - (g_x_max - g_x_3rd) * (g_y_3rd - g_y_max);
     g_plot_mx1 = (g_x_3rd-g_x_min); // reuse the plotxxx vars is safe
     g_plot_mx2 = (g_y_3rd-g_y_max);
     g_plot_my1 = (g_y_min-g_y_3rd);
-    g_plot_my2 = (g_x_max-g_x_3rd);
-    savxxmin = g_x_min;
-    savyymax = g_y_max;
+    g_plot_my2 = (g_x_max - g_x_3rd);
+    const double savxxmin = g_x_min;
+    const double savyymax = g_y_max;
     zoom_out_calc(g_save_x_min-savxxmin, g_save_y_max-savyymax, &g_x_min, &g_y_max, ftemp);
     zoom_out_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &g_x_max, &g_y_min, ftemp);
     zoom_out_calc(g_save_x_3rd-savxxmin, g_save_y_3rd-savyymax, &g_x_3rd, &g_y_3rd, ftemp);
