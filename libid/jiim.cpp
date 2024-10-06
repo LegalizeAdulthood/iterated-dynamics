@@ -51,28 +51,36 @@ enum
     MAXRECT = 1024      // largest width of SaveRect/RestoreRect
 };
 
-static int s_show_numbers{};             // toggle for display of coords
-static std::vector<char> s_screen_rect;  //
-static int s_windows{};                  // windows management system
-static int s_corner_x{};                 // corners of the window
-static int s_corner_y{};                 //
-static int s_win_width{};                // dots in the window
-static int s_win_height{};               //
-static int s_x_base{};                   // circle routines from Dr. Dobbs June 1990
-static int s_y_base{};                   //
-static unsigned int s_x_aspect{};        //
-static unsigned int s_y_aspect{};        //
-static long s_list_front{};              // head, tail, size of MIIM Queue
-static long s_list_back{};               //
-static long s_list_size{};               //
-static long s_l_size{};                  // how many in queue (now, ever)
-static long s_l_max{};                   //
-static int s_max_hits{1};                //
-static bool s_ok_to_miim{};              //
-static int s_secret_experimental_mode{}; //
-static float s_lucky_x{};                //
-static float s_lucky_y{};                //
-static CrossHairCursor s_cursor;         //
+enum class JuliaWindowStyle
+{
+    LARGE = 0,       // full screen or large view window
+    NO_OVERLAP = 1,  // Julia/orbit and fractal don't overlap
+    FULL_SCREEN = 2, // Julia/orbit takes whole screen
+    HIDDEN = 3,
+};
+
+static int s_show_numbers{};              // toggle for display of coords
+static std::vector<char> s_screen_rect;   //
+static JuliaWindowStyle s_window_style{}; // windows management system
+static int s_corner_x{};                  // corners of the window
+static int s_corner_y{};                  //
+static int s_win_width{};                 // dots in the window
+static int s_win_height{};                //
+static int s_x_base{};                    // circle routines from Dr. Dobbs June 1990
+static int s_y_base{};                    //
+static unsigned int s_x_aspect{};         //
+static unsigned int s_y_aspect{};         //
+static long s_list_front{};               // head, tail, size of MIIM Queue
+static long s_list_back{};                //
+static long s_list_size{};                //
+static long s_l_size{};                   // how many in queue (now, ever)
+static long s_l_max{};                    //
+static int s_max_hits{1};                 //
+static bool s_ok_to_miim{};               //
+static int s_secret_experimental_mode{};  //
+static float s_lucky_x{};                 //
+static float s_lucky_y{};                 //
+static CrossHairCursor s_cursor;          //
 
 double g_julia_c_x{JULIA_C_NOT_SET}; //
 double g_julia_c_y{JULIA_C_NOT_SET}; //
@@ -107,7 +115,7 @@ void c_putcolor(int x, int y, int color)
     {
         return;
     }
-    if (s_windows == 2)   // avoid overwriting fractal
+    if (s_window_style == JuliaWindowStyle::FULL_SCREEN)   // avoid overwriting fractal
     {
         if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
         {
@@ -128,7 +136,7 @@ int  c_getcolor(int x, int y)
     {
         return 1000;
     }
-    if (s_windows == 2)   // avoid overreading fractal
+    if (s_window_style == JuliaWindowStyle::FULL_SCREEN)   // avoid overreading fractal
     {
         if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
         {
@@ -574,7 +582,7 @@ void Jiim(jiim_types which)
     {
         /* this mode puts orbit/julia in an overlapping window 1/3 the size of
            the physical screen */
-        s_windows = 0; // full screen or large view window
+        s_window_style = JuliaWindowStyle::LARGE;
         s_win_width = g_vesa_x_res / 3;
         s_win_height = g_vesa_y_res / 3;
         s_corner_x = g_video_start_x + s_win_width * 2;
@@ -584,8 +592,7 @@ void Jiim(jiim_types which)
     }
     else if (g_logical_screen_x_dots > g_vesa_x_res/3 && g_logical_screen_y_dots > g_vesa_y_res/3)
     {
-        // Julia/orbit and fractal don't overlap
-        s_windows = 1;
+        s_window_style = JuliaWindowStyle::NO_OVERLAP;
         s_win_width = g_vesa_x_res - g_logical_screen_x_dots;
         s_win_height = g_vesa_y_res - g_logical_screen_y_dots;
         s_corner_x = g_video_start_x + g_logical_screen_x_dots;
@@ -595,8 +602,7 @@ void Jiim(jiim_types which)
     }
     else
     {
-        // Julia/orbit takes whole screen
-        s_windows = 2;
+        s_window_style = JuliaWindowStyle::FULL_SCREEN;
         s_win_width = g_vesa_x_res;
         s_win_height = g_vesa_y_res;
         s_corner_x = g_video_start_x;
@@ -608,11 +614,11 @@ void Jiim(jiim_types which)
     xfactor = (int)(s_win_width/5.33);
     yfactor = (int)(-s_win_height/4);
 
-    if (s_windows == 0)
+    if (s_window_style == JuliaWindowStyle::LARGE)
     {
         SaveRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
     }
-    else if (s_windows == 2)    // leave the fractal
+    else if (s_window_style == JuliaWindowStyle::FULL_SCREEN)    // leave the fractal
     {
         fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
         fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
@@ -775,7 +781,7 @@ void Jiim(jiim_types which)
                 case 'n':
                 case 'N':
                     s_show_numbers = 8 - s_show_numbers;
-                    if (s_windows == 0 && s_show_numbers == 0)
+                    if (s_window_style == JuliaWindowStyle::LARGE && s_show_numbers == 0)
                     {
                         s_cursor.hide();
                         cleartempmsg();
@@ -793,14 +799,14 @@ void Jiim(jiim_types which)
                     break;
                 case 'h':   // hide fractal toggle
                 case 'H':   // hide fractal toggle
-                    if (s_windows == 2)
+                    if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
                     {
-                        s_windows = 3;
+                        s_window_style = JuliaWindowStyle::HIDDEN;
                     }
-                    else if (s_windows == 3 && s_win_width == g_vesa_x_res)
+                    else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
                     {
                         RestoreRect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
-                        s_windows = 2;
+                        s_window_style = JuliaWindowStyle::FULL_SCREEN;
                     }
                     break;
 #ifdef XFRACT
@@ -890,7 +896,7 @@ void Jiim(jiim_types which)
             {
                 char str[41];
                 std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
-                if (s_windows == 0)
+                if (s_window_style == JuliaWindowStyle::LARGE)
                 {
                     /* show temp msg will clear self if new msg is a
                        different length - pad to length 40*/
@@ -952,7 +958,8 @@ void Jiim(jiim_types which)
                 per_pixel();
             }
             // move window if bumped
-            if (s_windows == 0 && g_col > s_corner_x && g_col < s_corner_x+s_win_width && g_row > s_corner_y && g_row < s_corner_y+s_win_height)
+            if (s_window_style == JuliaWindowStyle::LARGE && g_col > s_corner_x &&
+                g_col < s_corner_x + s_win_width && g_row > s_corner_y && g_row < s_corner_y + s_win_height)
             {
                 RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
                 if (s_corner_x == g_video_start_x + s_win_width*2)
@@ -966,7 +973,7 @@ void Jiim(jiim_types which)
                 xoff = s_corner_x + s_win_width /  2;
                 SaveRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
             }
-            if (s_windows == 2)
+            if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
             {
                 fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height-s_show_numbers, g_color_dark);
                 fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots-s_show_numbers, g_color_dark);
@@ -1256,13 +1263,13 @@ finish:
     if (kbdchar != 's' && kbdchar != 'S')
     {
         s_cursor.hide();
-        if (s_windows == 0)
+        if (s_window_style == JuliaWindowStyle::LARGE)
         {
             RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
         }
-        else if (s_windows >= 2)
+        else if (s_window_style >= JuliaWindowStyle::FULL_SCREEN)
         {
-            if (s_windows == 2)
+            if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
             {
                 fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
                 fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
@@ -1271,10 +1278,10 @@ finish:
             {
                 fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
-            if (s_windows == 3 && s_win_width == g_vesa_x_res) // unhide
+            if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res) // unhide
             {
                 RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-                s_windows = 2;
+                s_window_style = JuliaWindowStyle::FULL_SCREEN;
             }
             s_cursor.hide();
             bool const savehasinverse = g_has_inverse;
