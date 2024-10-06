@@ -137,12 +137,12 @@ static bool look(bool *stacked)
 
 static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
 {
-    static double jxxmin;
-    static double jxxmax;
-    static double jyymin;
-    static double jyymax; // "Julia mode" entry point
-    static double jxx3rd;
-    static double jyy3rd;
+    static double s_j_x_min;
+    static double s_j_x_max;
+    static double s_j_y_min;
+    static double s_j_y_max; // "Julia mode" entry point
+    static double s_j_x_3rd;
+    static double s_j_y_3rd;
 
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
@@ -188,12 +188,12 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
             g_julia_c_y = JULIA_C_NOT_SET;
             g_julia_c_x = JULIA_C_NOT_SET;
         }
-        jxxmin = g_save_x_min;
-        jxxmax = g_save_x_max;
-        jyymax = g_save_y_max;
-        jyymin = g_save_y_min;
-        jxx3rd = g_save_x_3rd;
-        jyy3rd = g_save_y_3rd;
+        s_j_x_min = g_save_x_min;
+        s_j_x_max = g_save_x_max;
+        s_j_y_max = g_save_y_max;
+        s_j_y_min = g_save_y_min;
+        s_j_x_3rd = g_save_x_3rd;
+        s_j_y_3rd = g_save_y_3rd;
         from_mandel = true;
         g_x_min = g_cur_fractal_specific->xmin;
         g_x_max = g_cur_fractal_specific->xmax;
@@ -221,12 +221,12 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         if (from_mandel)
         {
-            g_x_min = jxxmin;
-            g_x_max = jxxmax;
-            g_y_min = jyymin;
-            g_y_max = jyymax;
-            g_x_3rd = jxx3rd;
-            g_y_3rd = jyy3rd;
+            g_x_min = s_j_x_min;
+            g_x_max = s_j_x_max;
+            g_y_min = s_j_y_min;
+            g_y_max = s_j_y_max;
+            g_x_3rd = s_j_x_3rd;
+            g_y_3rd = s_j_y_3rd;
         }
         else
         {
