@@ -492,11 +492,10 @@ static void zoom_out_calc(bf_t bfdx, bf_t bfdy, //
 
 static void zoom_out_calc(double dx, double dy, double *newx, double *newy, double ftemp)
 {
-    double tempx, tempy;
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft thru (1,1) bottom right */
-    tempx = dy * g_plot_mx1 - dx * g_plot_mx2;
-    tempy = dx * g_plot_my1 - dy * g_plot_my2;
+    const double tempx = dy * g_plot_mx1 - dx * g_plot_mx2;
+    const double tempy = dx * g_plot_my1 - dy * g_plot_my2;
 
     // calc new corner by extending from current screen corners
     *newx = g_save_x_min + tempx*(g_save_x_max-g_save_x_3rd)/ftemp + tempy*(g_save_x_3rd-g_save_x_min)/ftemp;
