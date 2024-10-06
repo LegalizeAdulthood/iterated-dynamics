@@ -635,6 +635,13 @@ static void request_zoom_in(bool &kbd_more)
     }
 }
 
+static void request_zoom_out(bool &kbd_more)
+{
+    init_pan_or_recalc(true);
+    kbd_more = false;
+    zoom_out();                // calc corners for zooming out
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -848,9 +855,7 @@ do_3d_transform:
         break;
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        init_pan_or_recalc(true);
-        *kbdmore = false;
-        zoom_out();                // calc corners for zooming out
+        request_zoom_out(*kbdmore);
         break;
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
