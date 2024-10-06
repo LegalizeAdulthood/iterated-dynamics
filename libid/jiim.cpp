@@ -1284,13 +1284,11 @@ finish:
                 s_window_style = JuliaWindowStyle::FULL_SCREEN;
             }
             s_cursor.hide();
-            bool const savehasinverse = g_has_inverse;
-            g_has_inverse = true;
+            ValueSaver saved_has_inverse{g_has_inverse, true};
             SaveRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
             g_logical_screen_x_offset = oldsxoffs;
             g_logical_screen_y_offset = oldsyoffs;
             RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-            g_has_inverse = savehasinverse;
         }
     }
     g_cursor_mouse_tracking = false;
