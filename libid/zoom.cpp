@@ -43,7 +43,6 @@ int g_box_values[NUM_BOX_POINTS]{};
 int g_box_color{}; // Zoom-Box color
 
 static void zmo_calc(double, double, double *, double *, double);
-static void zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
 static int  check_pan();
 static void fix_worklist();
 static void move_row(int fromrow, int torow, int col);
@@ -440,10 +439,10 @@ void change_box(int dw, int dd)
     change_box(dw / g_logical_screen_x_size_dots, dd / g_logical_screen_y_size_dots);
 }
 
-static void zmo_calcbf(bf_t bfdx, bf_t bfdy, //
-    bf_t bfnewx, bf_t bfnewy,                //
-    bf_t bfplotmx1, bf_t bfplotmx2,          //
-    bf_t bfplotmy1, bf_t bfplotmy2,          //
+static void zoom_out_calc(bf_t bfdx, bf_t bfdy, //
+    bf_t bfnewx, bf_t bfnewy,                   //
+    bf_t bfplotmx1, bf_t bfplotmx2,             //
+    bf_t bfplotmy1, bf_t bfplotmy2,             //
     bf_t bfftemp)
 {
     const int saved = save_stack();
@@ -556,13 +555,13 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
 
     sub_bf(tmp1, g_bf_save_x_min, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_max, savbfymax);
-    zmo_calcbf(tmp1, tmp2, g_bf_x_min, g_bf_y_max, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
+    zoom_out_calc(tmp1, tmp2, g_bf_x_min, g_bf_y_max, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_max, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_min, savbfymax);
-    zmo_calcbf(tmp1, tmp2, g_bf_x_max, g_bf_y_min, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
+    zoom_out_calc(tmp1, tmp2, g_bf_x_max, g_bf_y_min, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_3rd, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_3rd, savbfymax);
-    zmo_calcbf(tmp1, tmp2, g_bf_x_3rd, g_bf_y_3rd, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
+    zoom_out_calc(tmp1, tmp2, g_bf_x_3rd, g_bf_y_3rd, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2, bfftemp);
     restore_stack(saved);
 }
 
