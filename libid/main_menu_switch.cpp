@@ -135,16 +135,126 @@ static bool look(bool *stacked)
     return false;
 }
 
-main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
+static void toggle_mandelbrot_julia(bool *kbdmore, bool *frommandel)
 {
-    int i;
-    int k;
     static double jxxmin;
     static double jxxmax;
     static double jyymin;
     static double jyymax; // "Julia mode" entry point
     static double jxx3rd;
     static double jyy3rd;
+
+    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+    {
+        if (g_is_mandelbrot)
+        {
+            g_fractal_specific[+g_fractal_type].tojulia = g_fractal_type;
+            g_fractal_specific[+g_fractal_type].tomandel = fractal_type::NOFRACTAL;
+            g_is_mandelbrot = false;
+        }
+        else
+        {
+            g_fractal_specific[+g_fractal_type].tojulia = fractal_type::NOFRACTAL;
+            g_fractal_specific[+g_fractal_type].tomandel = g_fractal_type;
+            g_is_mandelbrot = true;
+        }
+    }
+    if (g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 &&
+        g_params[1] == 0.0)
+    {
+        // switch to corresponding Julia set
+        g_has_inverse =
+            (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) &&
+            g_bf_math == bf_math_type::NONE;
+        clear_zoom_box();
+        Jiim(jiim_types::JIIM);
+        const int key = driver_get_key(); // flush keyboard buffer
+        if (key != ID_KEY_SPACE)
+        {
+            driver_unget_key(key);
+            return;
+        }
+        g_fractal_type = g_cur_fractal_specific->tojulia;
+        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
+        {
+            g_params[0] = (g_x_max + g_x_min) / 2;
+            g_params[1] = (g_y_max + g_y_min) / 2;
+        }
+        else
+        {
+            g_params[0] = g_julia_c_x;
+            g_params[1] = g_julia_c_y;
+            g_julia_c_y = JULIA_C_NOT_SET;
+            g_julia_c_x = JULIA_C_NOT_SET;
+        }
+        jxxmin = g_save_x_min;
+        jxxmax = g_save_x_max;
+        jyymax = g_save_y_max;
+        jyymin = g_save_y_min;
+        jxx3rd = g_save_x_3rd;
+        jyy3rd = g_save_y_3rd;
+        *frommandel = true;
+        g_x_min = g_cur_fractal_specific->xmin;
+        g_x_max = g_cur_fractal_specific->xmax;
+        g_y_min = g_cur_fractal_specific->ymin;
+        g_y_max = g_cur_fractal_specific->ymax;
+        g_x_3rd = g_x_min;
+        g_y_3rd = g_y_min;
+        if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
+        {
+            g_x_min *= 3.0;
+            g_x_max *= 3.0;
+            g_y_min *= 3.0;
+            g_y_max *= 3.0;
+            g_x_3rd *= 3.0;
+            g_y_3rd *= 3.0;
+        }
+        g_zoom_off = true;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        *kbdmore = false;
+    }
+    else if (g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
+    {
+        // switch to corresponding Mandel set
+        g_fractal_type = g_cur_fractal_specific->tomandel;
+        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        if (*frommandel)
+        {
+            g_x_min = jxxmin;
+            g_x_max = jxxmax;
+            g_y_min = jyymin;
+            g_y_max = jyymax;
+            g_x_3rd = jxx3rd;
+            g_y_3rd = jyy3rd;
+        }
+        else
+        {
+            g_x_3rd = g_cur_fractal_specific->xmin;
+            g_x_min = g_x_3rd;
+            g_x_max = g_cur_fractal_specific->xmax;
+            g_y_3rd = g_cur_fractal_specific->ymin;
+            g_y_min = g_y_3rd;
+            g_y_max = g_cur_fractal_specific->ymax;
+        }
+        g_save_c.x = g_params[0];
+        g_save_c.y = g_params[1];
+        g_params[0] = 0;
+        g_params[1] = 0;
+        g_zoom_off = true;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        *kbdmore = false;
+    }
+    else
+    {
+        driver_buzzer(buzzer_codes::PROBLEM); // can't switch
+    }
+}
+
+main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
+{
+    int i;
+    int k;
     long old_maxit;
 
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
@@ -442,111 +552,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         else
         {
-            if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
-            {
-                if (g_is_mandelbrot)
-                {
-                    g_fractal_specific[+g_fractal_type].tojulia = g_fractal_type;
-                    g_fractal_specific[+g_fractal_type].tomandel = fractal_type::NOFRACTAL;
-                    g_is_mandelbrot = false;
-                }
-                else
-                {
-                    g_fractal_specific[+g_fractal_type].tojulia = fractal_type::NOFRACTAL;
-                    g_fractal_specific[+g_fractal_type].tomandel = g_fractal_type;
-                    g_is_mandelbrot = true;
-                }
-            }
-            if (g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
-                && g_params[0] == 0.0
-                && g_params[1] == 0.0)
-            {
-                // switch to corresponding Julia set
-                g_has_inverse = (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_bf_math == bf_math_type::NONE;
-                clear_zoom_box();
-                Jiim(jiim_types::JIIM);
-                const int key = driver_get_key();    // flush keyboard buffer
-                if (key != ID_KEY_SPACE)
-                {
-                    driver_unget_key(key);
-                    break;
-                }
-                g_fractal_type = g_cur_fractal_specific->tojulia;
-                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-                if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
-                {
-                    g_params[0] = (g_x_max + g_x_min) / 2;
-                    g_params[1] = (g_y_max + g_y_min) / 2;
-                }
-                else
-                {
-                    g_params[0] = g_julia_c_x;
-                    g_params[1] = g_julia_c_y;
-                    g_julia_c_y = JULIA_C_NOT_SET;
-                    g_julia_c_x = JULIA_C_NOT_SET;
-                }
-                jxxmin = g_save_x_min;
-                jxxmax = g_save_x_max;
-                jyymax = g_save_y_max;
-                jyymin = g_save_y_min;
-                jxx3rd = g_save_x_3rd;
-                jyy3rd = g_save_y_3rd;
-                *frommandel = true;
-                g_x_min = g_cur_fractal_specific->xmin;
-                g_x_max = g_cur_fractal_specific->xmax;
-                g_y_min = g_cur_fractal_specific->ymin;
-                g_y_max = g_cur_fractal_specific->ymax;
-                g_x_3rd = g_x_min;
-                g_y_3rd = g_y_min;
-                if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
-                {
-                    g_x_min *= 3.0;
-                    g_x_max *= 3.0;
-                    g_y_min *= 3.0;
-                    g_y_max *= 3.0;
-                    g_x_3rd *= 3.0;
-                    g_y_3rd *= 3.0;
-                }
-                g_zoom_off = true;
-                g_calc_status = calc_status_value::PARAMS_CHANGED;
-                *kbdmore = false;
-            }
-            else if (g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
-            {
-                // switch to corresponding Mandel set
-                g_fractal_type = g_cur_fractal_specific->tomandel;
-                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-                if (*frommandel)
-                {
-                    g_x_min = jxxmin;
-                    g_x_max = jxxmax;
-                    g_y_min = jyymin;
-                    g_y_max = jyymax;
-                    g_x_3rd = jxx3rd;
-                    g_y_3rd = jyy3rd;
-                }
-                else
-                {
-                    g_x_3rd = g_cur_fractal_specific->xmin;
-                    g_x_min = g_x_3rd;
-                    g_x_max = g_cur_fractal_specific->xmax;
-                    g_y_3rd = g_cur_fractal_specific->ymin;
-                    g_y_min = g_y_3rd;
-                    g_y_max = g_cur_fractal_specific->ymax;
-                }
-                g_save_c.x = g_params[0];
-                g_save_c.y = g_params[1];
-                g_params[0] = 0;
-                g_params[1] = 0;
-                g_zoom_off = true;
-                g_calc_status = calc_status_value::PARAMS_CHANGED;
-                *kbdmore = false;
-            }
-            else
-            {
-                driver_buzzer(buzzer_codes::PROBLEM);          // can't switch
-            }
-        }                         // end of else for if == cellular
+            toggle_mandelbrot_julia(kbdmore, frommandel);
+        }
         break;
     case 'j':                    // inverse julia toggle
         // if the inverse types proliferate, something more elegant will be needed
