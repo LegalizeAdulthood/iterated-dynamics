@@ -570,6 +570,43 @@ static bool color_editing(bool &kbd_more)
     return true;
 }
 
+static void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
+{
+    g_compare_gif = false;
+    from_mandel = false;
+    g_browsing = false;
+    if (kbd_char == 'r')
+    {
+        if (g_debug_flag == debug_flags::force_disk_restore_not_save)
+        {
+            g_compare_gif = true;
+            g_overlay_3d = true;
+            if (g_init_batch == batch_modes::SAVE)
+            {
+                driver_stack_screen();   // save graphics image
+                g_read_filename = g_save_filename;
+                g_show_file = 0;
+                return;
+            }
+        }
+        else
+        {
+            g_compare_gif = false;
+            g_overlay_3d = false;
+        }
+        g_display_3d = display_3d_modes::NONE;
+    }
+    driver_stack_screen();            // save graphics image
+    stacked = !g_overlay_3d;
+    if (g_resave_flag)
+    {
+        update_save_name(g_save_filename);      // do the pending increment
+        g_resave_flag = 0;
+        g_started_resaves = false;
+    }
+    g_show_file = -1;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -765,46 +802,7 @@ do_3d_transform:
             g_display_3d = display_3d_modes::YES;
         }
     case 'r':                    // restore-from
-        g_compare_gif = false;
-        *frommandel = false;
-        g_browsing = false;
-        if (*kbdchar == 'r')
-        {
-            if (g_debug_flag == debug_flags::force_disk_restore_not_save)
-            {
-                g_compare_gif = true;
-                g_overlay_3d = true;
-                if (g_init_batch == batch_modes::SAVE)
-                {
-                    driver_stack_screen();   // save graphics image
-                    g_read_filename = g_save_filename;
-                    g_show_file = 0;
-                    return main_state::RESTORE_START;
-                }
-            }
-            else
-            {
-                g_compare_gif = false;
-                g_overlay_3d = false;
-            }
-            g_display_3d = display_3d_modes::NONE;
-        }
-        driver_stack_screen();            // save graphics image
-        if (g_overlay_3d)
-        {
-            *stacked = false;
-        }
-        else
-        {
-            *stacked = true;
-        }
-        if (g_resave_flag)
-        {
-            update_save_name(g_save_filename);      // do the pending increment
-            g_resave_flag = 0;
-            g_started_resaves = false;
-        }
-        g_show_file = -1;
+        restore_from_image(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
