@@ -51,12 +51,10 @@ static void move_row(int fromrow, int torow, int col);
 // big number declarations
 void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
-    bf_t btmp1, btmp2 , btmp3;
-    int saved;
-    saved = save_stack();
-    btmp1 = alloc_stack(g_r_bf_length+2);
-    btmp2 = alloc_stack(g_r_bf_length+2);
-    btmp3 = alloc_stack(g_r_bf_length+2);
+    const int saved = save_stack();
+    const bf_t btmp1 = alloc_stack(g_r_bf_length + 2);
+    const bf_t btmp2 = alloc_stack(g_r_bf_length + 2);
+    const bf_t btmp3 = alloc_stack(g_r_bf_length + 2);
 
     // use target as temporary variable
     floattobf(btmp3, p2);
