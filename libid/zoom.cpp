@@ -26,6 +26,7 @@
 #include "video.h"
 #include "work_list.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <vector>
@@ -840,38 +841,22 @@ int init_pan_or_recalc(bool do_zoom_out)
     return 0;
 }
 
-static void restart_window(int wknum)
 // force a worklist entry to restart
+static void restart_window(int index)
 {
-    int yfrom = g_work_list[wknum].yystart;
-    if (yfrom < 0)
-    {
-        yfrom = 0;
-    }
-    int xfrom = g_work_list[wknum].xxstart;
-    if (xfrom < 0)
-    {
-        xfrom = 0;
-    }
-    int yto = g_work_list[wknum].yystop;
-    if (yto >= g_logical_screen_y_dots)
-    {
-        yto = g_logical_screen_y_dots - 1;
-    }
-    int xto = g_work_list[wknum].xxstop;
-    if (xto >= g_logical_screen_x_dots)
-    {
-        xto = g_logical_screen_x_dots - 1;
-    }
+    const int y_start = std::max(0, g_work_list[index].yystart);
+    const int x_start = std::max(0, g_work_list[index].xxstart);
+    const int y_stop = std::min(g_logical_screen_y_dots - 1, g_work_list[index].yystop);
+    const int x_stop = std::min(g_logical_screen_x_dots - 1, g_work_list[index].xxstop);
     std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
-    while (yfrom <= yto)
+    for (int y = y_start; y <= y_stop; ++y)
     {
-        write_span(yfrom++, xfrom, xto, &temp[0]);
+        write_span(y, x_start, x_stop, temp.data());
     }
-    g_work_list[wknum].pass = 0;
-    g_work_list[wknum].sym = g_work_list[wknum].pass;
-    g_work_list[wknum].yybegin = g_work_list[wknum].yystart;
-    g_work_list[wknum].xxbegin = g_work_list[wknum].xxstart;
+    g_work_list[index].pass = 0;
+    g_work_list[index].sym = g_work_list[index].pass;
+    g_work_list[index].yybegin = g_work_list[index].yystart;
+    g_work_list[index].xxbegin = g_work_list[index].xxstart;
 }
 
 static void fix_worklist() // fix out of bounds and symmetry related stuff
