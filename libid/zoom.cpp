@@ -417,7 +417,8 @@ static void change_box(double dwidth, double ddepth)
 
 void resize_box(int steps)
 {
-    double deltax, deltay;
+    double deltax;
+    double deltay;
     if (g_zoom_box_height*g_screen_aspect > g_zoom_box_width)
     {
         // box larger on y axis
