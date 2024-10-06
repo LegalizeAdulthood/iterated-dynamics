@@ -502,7 +502,7 @@ static void zoom_out_calc(double dx, double dy, double *newx, double *newy, doub
     *newy = g_save_y_max + tempy*(g_save_y_3rd-g_save_y_max)/ftemp + tempx*(g_save_y_min-g_save_y_3rd)/ftemp;
 }
 
-void zoomoutbf() // for ctl-enter, calc corners for zooming out
+static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 {
     /* (xxmin,yymax), etc, are already set to zoombox corners;
        (sxmin,symax), etc, are still the screen's corners;
@@ -563,7 +563,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     restore_stack(saved);
 }
 
-void zoomoutdbl() // for ctl-enter, calc corners for zooming out
+static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
 {
     /* (xxmin,yymax), etc, are already set to zoombox corners;
        (sxmin,symax), etc, are still the screen's corners;
@@ -591,11 +591,11 @@ void zoom_out() // for ctl-enter, calc corners for zooming out
 {
     if (g_bf_math != bf_math_type::NONE)
     {
-        zoomoutbf();
+        zoom_out_bf();
     }
     else
     {
-        zoomoutdbl();
+        zoom_out_dbl();
     }
 }
 
