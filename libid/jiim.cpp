@@ -239,9 +239,9 @@ int QueueFullAlmost()       // True if room for ONE more point in queue
 void ClearQueue()
 {
     s_l_max = 0;
-    s_l_size = s_l_max;
-    s_list_back = s_l_size;
-    s_list_front = s_list_back;
+    s_l_size = 0;
+    s_list_back = 0;
+    s_list_front = 0;
 }
 
 /*
@@ -264,9 +264,9 @@ bool Init_Queue(unsigned long request)
         {
         case 0:                        // success
             s_list_back = 0;
-            s_list_front = s_list_back;
+            s_list_front = 0;
             s_l_max = 0;
-            s_l_size = s_l_max;
+            s_l_size = 0;
             return true;
         case -1:
             continue;                   // try smaller queue size
@@ -285,10 +285,10 @@ void Free_Queue()
 {
     enddisk();
     s_l_max = 0;
-    s_l_size = s_l_max;
-    s_list_size = s_l_size;
-    s_list_back = s_list_size;
-    s_list_front = s_list_back;
+    s_l_size = 0;
+    s_list_size = 0;
+    s_list_back = 0;
+    s_list_front = 0;
 }
 
 int PushLong(long x, long y)
@@ -640,7 +640,7 @@ void Jiim(jiim_types which)
     }
 
     old_y = -1;
-    old_x = old_y;
+    old_x = -1;
 
     g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
     g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
@@ -789,7 +789,7 @@ void Jiim(jiim_types which)
                     g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
                     g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
                     drow = 0;
-                    dcol = drow;
+                    dcol = 0;
                     break;
                 case 'h':   // hide fractal toggle
                 case 'H':   // hide fractal toggle
@@ -911,18 +911,18 @@ void Jiim(jiim_types which)
             }
             iter = 1;
             g_l_old_z.y = 0;
-            g_l_old_z.x = g_l_old_z.y;
-            g_old_z.y = g_l_old_z.x;
-            g_old_z.x = g_old_z.y;
+            g_l_old_z.x = 0;
+            g_old_z.y = 0;
+            g_old_z.x = 0;
             g_init.x = cr;
-            g_save_c.x = g_init.x;
+            g_save_c.x = cr;
             g_init.y = ci;
-            g_save_c.y = g_init.y;
-            g_l_init.x = (long)(g_init.x*g_fudge_factor);
-            g_l_init.y = (long)(g_init.y*g_fudge_factor);
+            g_save_c.y = ci;
+            g_l_init.x = (long)(cr*g_fudge_factor);
+            g_l_init.y = (long)(ci*g_fudge_factor);
 
             old_y = -1;
-            old_x = old_y;
+            old_x = -1;
             /*
              * MIIM code:
              * compute fixed points and use them as starting points of JIIM
@@ -996,13 +996,13 @@ void Jiim(jiim_types which)
                         && (s_lucky_x != 0.0 || s_lucky_y != 0.0))
                     {
                         s_l_max = 0;
-                        s_l_size = s_l_max;
+                        s_l_size = 0;
                         g_new_z.x = s_lucky_x;
-                        g_old_z.x = g_new_z.x;
+                        g_old_z.x = s_lucky_x;
                         g_new_z.y = s_lucky_y;
-                        g_old_z.y = g_new_z.y;
-                        s_lucky_y = 0.0F;
-                        s_lucky_x = s_lucky_y;
+                        g_old_z.y = s_lucky_y;
+                        s_lucky_y = 0.0f;
+                        s_lucky_x = 0.0f;
                         for (int i = 0; i < 199; i++)
                         {
                             g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
@@ -1042,7 +1042,7 @@ void Jiim(jiim_types which)
                 if (r > 10.0)
                 {
                     g_old_z.y = 0.0;
-                    g_old_z.x = g_old_z.y; // avoids math error
+                    g_old_z.x = 0.0; // avoids math error
                     iter = 1;
                     r = 0;
                 }
@@ -1188,7 +1188,7 @@ void Jiim(jiim_types which)
                         if (++rancnt > 512)
                         {
                             rancnt = 0;
-                            randir = rancnt;
+                            randir = 0;
                         }
                         break;
                     }
@@ -1224,7 +1224,7 @@ void Jiim(jiim_types which)
             else
             {
                 y = -1;
-                x = y;
+                x = -1;
                 actively_computing = false;
             }
         }
