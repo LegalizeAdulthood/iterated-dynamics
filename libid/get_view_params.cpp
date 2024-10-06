@@ -231,7 +231,7 @@ get_view_restart:
 
     if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
     {
-        aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
+        aspect_ratio_crop(old_aspectratio, g_final_aspect_ratio);
     }
 
     return (g_view_window != old_viewwindow

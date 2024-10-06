@@ -26,7 +26,7 @@ void set_default_parms()
 
     if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
     {
-        aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
+        aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
     }
     for (int i = 0; i < 4; i++)
     {

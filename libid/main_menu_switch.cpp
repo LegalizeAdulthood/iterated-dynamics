@@ -160,7 +160,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     {
     case 't':                    // new fractal type
         g_julibrot = false;
-        clear_zoombox();
+        clear_zoom_box();
         driver_stack_screen();
         i = get_fract_type();
         if (i >= 0)
@@ -207,7 +207,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_E:
     case ID_KEY_CTL_F:
         old_maxit = g_max_iterations;
-        clear_zoombox();
+        clear_zoom_box();
         if (g_from_text)
         {
             g_from_text = false;
@@ -349,7 +349,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case ID_KEY_CTL_A:                     // ^a Ant
-        clear_zoombox();
+        clear_zoom_box();
         {
             int err;
             double oldparm[MAX_PARAMS];
@@ -395,7 +395,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         break;
     case 'k':                    // ^s is irritating, give user a single key
     case ID_KEY_CTL_S:                     // ^s RDS
-        clear_zoombox();
+        clear_zoom_box();
         if (get_rds_params() >= 0)
         {
             if (do_AutoStereo())
@@ -406,7 +406,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case 'a':                    // starfield parms
-        clear_zoombox();
+        clear_zoom_box();
         if (get_starfield_params() >= 0)
         {
             if (starfield() >= 0)
@@ -426,7 +426,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             && (g_bf_math == bf_math_type::NONE) // for now no arbitrary precision support
             && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
         {
-            clear_zoombox();
+            clear_zoom_box();
             Jiim(jiim_types::ORBIT);
         }
         break;
@@ -464,7 +464,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 // switch to corresponding Julia set
                 g_has_inverse = (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_bf_math == bf_math_type::NONE;
-                clear_zoombox();
+                clear_zoom_box();
                 Jiim(jiim_types::JIIM);
                 const int key = driver_get_key();    // flush keyboard buffer
                 if (key != ID_KEY_SPACE)
@@ -651,7 +651,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
-        clear_zoombox();
+        clear_zoom_box();
         std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
         if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
@@ -675,7 +675,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 return main_state::CONTINUE;
             }
         }
-        clear_zoombox();
+        clear_zoom_box();
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PALETTE_EDITOR};
@@ -696,7 +696,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         save_image(g_save_filename);
         return main_state::CONTINUE;
     case '#':                    // 3D overlay
-        clear_zoombox();
+        clear_zoom_box();
         g_overlay_3d = true;
     case '3':                    // restore-from (3d)
 do_3d_transform:
@@ -782,7 +782,7 @@ do_3d_transform:
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         init_pan_or_recalc(true);
         *kbdmore = false;
-        zoomout();                // calc corners for zooming out
+        zoom_out();                // calc corners for zooming out
         break;
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
@@ -791,13 +791,13 @@ do_3d_transform:
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
-        move_zoombox(*kbdchar);
+        move_zoom_box(*kbdchar);
         break;
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        move_zoombox(*kbdchar);
+        move_zoom_box(*kbdchar);
         break;
     case ID_KEY_CTL_HOME:               // Ctrl-home
         if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
@@ -822,13 +822,13 @@ do_3d_transform:
     case ID_KEY_CTL_PAGE_UP:            // Ctrl-pgup
         if (g_box_count)
         {
-            chgboxi(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
+            change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
         }
         break;
     case ID_KEY_CTL_PAGE_DOWN:          // Ctrl-pgdn
         if (g_box_count)
         {
-            chgboxi(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
+            change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
         }
         break;
 
@@ -848,11 +848,11 @@ do_3d_transform:
                 g_box_color = g_color_bright;
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;
                 g_evolve_param_grid_x = g_evolve_param_grid_y;
-                moveboxf(0.0, 0.0); // force scrolling
+                move_box(0.0, 0.0); // force scrolling
             }
             else
             {
-                resizebox(0 - key_count(ID_KEY_PAGE_UP));
+                resize_box(0 - key_count(ID_KEY_PAGE_UP));
             }
         }
         break;
@@ -865,7 +865,7 @@ do_3d_transform:
             }
             else
             {
-                resizebox(key_count(ID_KEY_PAGE_DOWN));
+                resize_box(key_count(ID_KEY_PAGE_DOWN));
             }
         }
         break;

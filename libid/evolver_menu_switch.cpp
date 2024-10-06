@@ -45,7 +45,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     {
     case 't':                    // new fractal type
         g_julibrot = false;
-        clear_zoombox();
+        clear_zoom_box();
         driver_stack_screen();
         i = get_fract_type();
         if (i >= 0)
@@ -84,7 +84,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'g':
     case ID_KEY_CTL_E:
     case ID_KEY_SPACE:
-        clear_zoombox();
+        clear_zoom_box();
         if (g_from_text)
         {
             g_from_text = false;
@@ -189,7 +189,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
-        clear_zoombox();
+        clear_zoom_box();
         std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
         if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
@@ -213,7 +213,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 return main_state::CONTINUE;
             }
         }
-        clear_zoombox();
+        clear_zoom_box();
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PALETTE_EDITOR};
@@ -314,7 +314,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         init_pan_or_recalc(true);
         *kbdmore = false;
-        zoomout();                // calc corners for zooming out
+        zoom_out();                // calc corners for zooming out
         break;
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
@@ -323,7 +323,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
-        move_zoombox(*kbdchar);
+        move_zoom_box(*kbdchar);
         break;
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
@@ -377,14 +377,14 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 fiddleparms(gene, unspiralmap()); // change all parameters
                 // to values appropriate to the image selected
                 set_evolve_ranges();
-                chgboxi(0, 0);
+                change_box(0, 0);
                 drawparmbox(0);
             }
             copy_genes_to_bank(gene);
         }
         else                         // if no zoombox, scroll by arrows
         {
-            move_zoombox(*kbdchar);
+            move_zoom_box(*kbdchar);
         }
         break;
     case ID_KEY_CTL_HOME:               // Ctrl-home
@@ -455,11 +455,11 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                     SetupParamBox();
                     drawparmbox(0);
                 }
-                moveboxf(0.0, 0.0); // force scrolling
+                move_box(0.0, 0.0); // force scrolling
             }
             else
             {
-                resizebox(0 - key_count(ID_KEY_PAGE_UP));
+                resize_box(0 - key_count(ID_KEY_PAGE_UP));
             }
         }
         break;
@@ -478,7 +478,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             }
             else
             {
-                resizebox(key_count(ID_KEY_PAGE_DOWN));
+                resize_box(key_count(ID_KEY_PAGE_DOWN));
             }
         }
         break;

@@ -980,7 +980,7 @@ void drawparmbox(int mode)
         std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &s_image_box_x[0]);
         std::copy(&g_box_y[0], &g_box_y[g_box_count*2], &s_image_box_y[0]);
         std::copy(&g_box_values[0], &g_box_values[g_box_count], &s_image_box_values[0]);
-        clearbox(); // to avoid probs when one box overlaps the other
+        clear_box(); // to avoid probs when one box overlaps the other
     }
     if (g_evolve_param_box_count != 0)
     {
@@ -989,7 +989,7 @@ void drawparmbox(int mode)
         std::copy(&s_param_box_x[0], &s_param_box_x[g_box_count*2], &g_box_x[0]);
         std::copy(&s_param_box_y[0], &s_param_box_y[g_box_count*2], &g_box_y[0]);
         std::copy(&s_param_box_values[0], &s_param_box_values[g_box_count], &g_box_values[0]);
-        clearbox();
+        clear_box();
     }
 
     if (mode == 1)
@@ -1009,15 +1009,15 @@ void drawparmbox(int mode)
     bl.y = ((g_evolve_param_grid_y +1+(int)g_evolve_param_zoom) * (int)(g_logical_screen_y_size_dots+1+grout))-g_logical_screen_y_offset;
     br.y = bl.y;
     g_box_count = 0;
-    addbox(br);
-    addbox(tr);
-    addbox(bl);
-    addbox(tl);
-    drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
-    drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
+    add_box(br);
+    add_box(tr);
+    add_box(bl);
+    add_box(tl);
+    draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y);
+    draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y);
     if (g_box_count)
     {
-        dispbox();
+        display_box();
         // stash pixel values for later
         std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &s_param_box_x[0]);
         std::copy(&g_box_y[0], &g_box_y[g_box_count*2], &s_param_box_y[0]);
@@ -1031,7 +1031,7 @@ void drawparmbox(int mode)
         std::copy(&s_image_box_x[0], &s_image_box_x[g_box_count*2], &g_box_x[0]);
         std::copy(&s_image_box_y[0], &s_image_box_y[g_box_count*2], &g_box_y[0]);
         std::copy(&s_image_box_values[0], &s_image_box_values[g_box_count], &g_box_values[0]);
-        dispbox();
+        display_box();
     }
 }
 

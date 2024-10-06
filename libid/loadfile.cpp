@@ -1886,7 +1886,7 @@ rescan:  // entry for changed browse parms
                 restore_box(num_dots, i);
                 if (g_box_count > 0)
                 {
-                    clearbox();
+                    clear_box();
                 }
             }
         }
@@ -1927,13 +1927,13 @@ static void drawindow(int colour, window const *info)
     {
         // big enough on screen to show up as a box so draw it
         // corner pixels
-        addbox(info->itl);
-        addbox(info->itr);
-        addbox(info->ibl);
-        addbox(info->ibr);
-        drawlines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines
-        drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
-        dispbox();
+        add_box(info->itl);
+        add_box(info->itr);
+        add_box(info->ibl);
+        add_box(info->ibr);
+        draw_lines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines
+        draw_lines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
+        display_box();
     }
     else
     {
@@ -1947,9 +1947,9 @@ static void drawindow(int colour, window const *info)
         itr.y = info->itl.y;
         ibl.y = info->itl.y - cross_size;
         ibl.x = info->itl.x;
-        drawlines(info->itl, itr, ibl.x-itr.x, 0); // top & bottom lines
-        drawlines(info->itl, ibl, 0, itr.y-ibl.y); // left & right lines
-        dispbox();
+        draw_lines(info->itl, itr, ibl.x-itr.x, 0); // top & bottom lines
+        draw_lines(info->itl, ibl, 0, itr.y-ibl.y); // left & right lines
+        display_box();
     }
 }
 

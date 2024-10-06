@@ -149,7 +149,7 @@ gc_loop:
         g_y_max = g_cur_fractal_specific->ymax;
         if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
-            aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
+            aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }
         if (g_bf_math != bf_math_type::NONE)
         {
@@ -370,7 +370,7 @@ gsc_loop:
         g_y_3rd = g_orbit_corner_3_y;
         if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
-            aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
+            aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }
 
         g_orbit_corner_min_x = g_x_min;

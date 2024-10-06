@@ -67,7 +67,7 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
     restore_stack(saved);
 }
 
-void dispbox()
+void display_box()
 {
     int boxc = (g_colors-1)&g_box_color;
     int rgb[3];
@@ -99,11 +99,11 @@ void dispbox()
         }
 }
 
-void clearbox()
+void clear_box()
 {
     if (g_is_true_color && g_true_mode != true_color_mode::default_color)
     {
-        dispbox();
+        display_box();
     }
     else
     {
@@ -114,7 +114,7 @@ void clearbox()
     }
 }
 
-void drawbox(bool drawit)
+void draw_box(bool draw_it)
 {
     coords tl, bl, tr, br; // dot addr of topleft, botleft, etc
     double tmpx, tmpy, dx, dy, rotcos, rotsin, ftemp1, ftemp2;
@@ -127,7 +127,7 @@ void drawbox(bool drawit)
         if (g_box_count != 0)
         {
             // remove the old box from display
-            clearbox();
+            clear_box();
             g_box_count = 0;
         }
         reset_zoom_corners();
@@ -220,21 +220,21 @@ void drawbox(bool drawit)
     if (g_box_count != 0)
     {
         // remove the old box from display
-        clearbox();
+        clear_box();
         g_box_count = 0;
     }
 
-    if (drawit)
+    if (draw_it)
     {
         // caller wants box drawn as well as co-ords calc'd
 #ifndef XFRACT
         // build the list of zoom box pixels
-        addbox(tl);
-        addbox(tr);               // corner pixels
-        addbox(bl);
-        addbox(br);
-        drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y); // top & bottom lines
-        drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y); // left & right lines
+        add_box(tl);
+        add_box(tr);               // corner pixels
+        add_box(bl);
+        add_box(br);
+        draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y); // top & bottom lines
+        draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y); // left & right lines
 #else
         g_box_x[0] = tl.x + g_logical_screen_x_offset;
         g_box_y[0] = tl.y + g_logical_screen_y_offset;
@@ -246,11 +246,11 @@ void drawbox(bool drawit)
         g_box_y[3] = bl.y + g_logical_screen_y_offset;
         g_box_count = 4;
 #endif
-        dispbox();
+        display_box();
     }
 }
 
-void drawlines(coords fr, coords to, int dx, int dy)
+void draw_lines(coords fr, coords to, int dx, int dy)
 {
     if (std::abs(to.x-fr.x) > std::abs(to.y-fr.y))
     {
@@ -285,8 +285,8 @@ void drawlines(coords fr, coords to, int dx, int dy)
                 line1.y += yincr;
                 line2.y += yincr;
             }
-            addbox(line1);
-            addbox(line2);
+            add_box(line1);
+            add_box(line2);
         }
     }
     else
@@ -322,13 +322,13 @@ void drawlines(coords fr, coords to, int dx, int dy)
                 line1.x += xincr;
                 line2.x += xincr;
             }
-            addbox(line1);
-            addbox(line2);
+            add_box(line1);
+            add_box(line2);
         }
     }
 }
 
-void addbox(coords point)
+void add_box(coords point)
 {
     assert(g_box_count < NUM_BOX_POINTS);
     point.x += g_logical_screen_x_offset;
@@ -342,7 +342,7 @@ void addbox(coords point)
     }
 }
 
-void moveboxf(double dx, double dy)
+void move_box(double dx, double dy)
 {
     int align;
     align = check_pan();
@@ -392,7 +392,7 @@ void moveboxf(double dx, double dy)
     }
 }
 
-static void chgboxf(double dwidth, double ddepth)
+static void change_box(double dwidth, double ddepth)
 {
     if (g_zoom_box_width+dwidth > 1)
     {
@@ -412,10 +412,10 @@ static void chgboxf(double dwidth, double ddepth)
         ddepth = 0.05-g_zoom_box_height;
     }
     g_zoom_box_height += ddepth;
-    moveboxf(dwidth/-2, ddepth/-2); // keep it centered & check limits
+    move_box(dwidth/-2, ddepth/-2); // keep it centered & check limits
 }
 
-void resizebox(int steps)
+void resize_box(int steps)
 {
     double deltax, deltay;
     if (g_zoom_box_height*g_screen_aspect > g_zoom_box_width)
@@ -430,13 +430,13 @@ void resizebox(int steps)
         deltax = steps * 0.036;
         deltay = g_zoom_box_height * deltax / g_zoom_box_width;
     }
-    chgboxf(deltax, deltay);
+    change_box(deltax, deltay);
 }
 
-void chgboxi(int dw, int dd)
+void change_box(int dw, int dd)
 {
     // change size by pixels
-    chgboxf((double)dw/g_logical_screen_x_size_dots, (double)dd/g_logical_screen_y_size_dots);
+    change_box(dw / g_logical_screen_x_size_dots, dd / g_logical_screen_y_size_dots);
 }
 
 extern void show_three_bf();
@@ -598,7 +598,7 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
     zmo_calc(g_save_x_3rd-savxxmin, g_save_y_3rd-savyymax, &g_x_3rd, &g_y_3rd, ftemp);
 }
 
-void zoomout() // for ctl-enter, calc corners for zooming out
+void zoom_out() // for ctl-enter, calc corners for zooming out
 {
     if (g_bf_math != bf_math_type::NONE)
     {
@@ -610,13 +610,13 @@ void zoomout() // for ctl-enter, calc corners for zooming out
     }
 }
 
-void aspectratio_crop(float oldaspect, float newaspect)
+void aspect_ratio_crop(float old_aspect, float new_aspect)
 {
     double ftemp, xmargin, ymargin;
-    if (newaspect > oldaspect)
+    if (new_aspect > old_aspect)
     {
         // new ratio is taller, crop x
-        ftemp = (1.0 - oldaspect / newaspect) / 2;
+        ftemp = (1.0 - old_aspect / new_aspect) / 2;
         xmargin = (g_x_max - g_x_3rd) * ftemp;
         ymargin = (g_y_min - g_y_3rd) * ftemp;
         g_x_3rd += xmargin;
@@ -625,7 +625,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
     else
     {
         // new ratio is wider, crop y
-        ftemp = (1.0 - newaspect / oldaspect) / 2;
+        ftemp = (1.0 - new_aspect / old_aspect) / 2;
         xmargin = (g_x_3rd - g_x_min) * ftemp;
         ymargin = (g_y_3rd - g_y_max) * ftemp;
         g_x_3rd -= xmargin;
@@ -736,7 +736,7 @@ static void move_row(int fromrow, int torow, int col)
 }
 
 // decide to recalc, or to chg worklist & pan
-int init_pan_or_recalc(bool do_zoomout)
+int init_pan_or_recalc(bool do_zoom_out)
 {
     int row;
     int col;
@@ -755,12 +755,12 @@ int init_pan_or_recalc(bool do_zoomout)
     }
     if (g_zoom_box_x == 0.0 && g_zoom_box_y == 0.0)
     {
-        clearbox();
+        clear_box();
         return 0;
     } // box is full screen, leave g_calc_status as is
     col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND)); // calc dest col,row of topleft pixel
     row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND));
-    if (do_zoomout)
+    if (do_zoom_out)
     {
         // invert row and col
         row = 0-row;
@@ -817,7 +817,7 @@ int init_pan_or_recalc(bool do_zoomout)
             "Cancel resumes old image, continue pans and calculates a new one."))
         {
             g_zoom_box_width = 0; // cancel the zoombox
-            drawbox(true);
+            draw_box(true);
         }
         else
         {
@@ -827,7 +827,7 @@ int init_pan_or_recalc(bool do_zoomout)
     }
     // now we're committed
     g_calc_status = calc_status_value::RESUMABLE;
-    clearbox();
+    clear_box();
     if (row > 0)   // move image up
     {
         for (int y = 0; y < g_logical_screen_y_dots; ++y)
@@ -1027,15 +1027,15 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
     tidy_worklist(); // combine where possible, re-sort
 }
 
-void clear_zoombox()
+void clear_zoom_box()
 {
     g_zoom_box_width = 0;
-    drawbox(false);
+    draw_box(false);
     reset_zoom_corners();
 }
 
 // do all pending movement at once for smooth mouse diagonal moves
-void move_zoombox(int keynum)
+void move_zoom_box(int key_num)
 {
     int vertical;
     int horizontal;
@@ -1045,7 +1045,7 @@ void move_zoombox(int keynum)
     getmore = 1;
     while (getmore)
     {
-        switch (keynum)
+        switch (key_num)
         {
         case ID_KEY_LEFT_ARROW:               // cursor left
             --horizontal;
@@ -1081,12 +1081,12 @@ void move_zoombox(int keynum)
                 driver_get_key();
             }
             getmore = 2;
-            keynum = driver_key_pressed();         // next pending key
+            key_num = driver_key_pressed();         // next pending key
         }
     }
     if (g_box_count)
     {
-        moveboxf((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
+        move_box((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
     }
 }
 

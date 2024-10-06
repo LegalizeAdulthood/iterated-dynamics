@@ -680,7 +680,7 @@ resumeloop:                             // return here on failed overlays
             }
             if (g_zoom_off && *kbdmore) // draw/clear a zoom box?
             {
-                drawbox(true);
+                draw_box(true);
             }
             if (driver_resize())
             {

@@ -34,7 +34,7 @@ void flip_image(int key)
     }
     if (g_bf_math != bf_math_type::NONE)
     {
-        clear_zoombox(); // clear, don't copy, the zoombox
+        clear_zoom_box(); // clear, don't copy, the zoombox
     }
     ixhalf = g_logical_screen_x_dots / 2;
     iyhalf = g_logical_screen_y_dots / 2;
