@@ -719,7 +719,7 @@ static void move_row(int fromrow, int torow, int col)
         }
         read_span(fromrow, startcol, endcol, &temp[tocol]);
     }
-    write_span(torow, 0, g_logical_screen_x_dots-1, &temp[0]);
+    write_span(torow, 0, g_logical_screen_x_dots-1, temp.data());
 }
 
 // decide to recalc, or to chg worklist & pan
