@@ -42,7 +42,6 @@ int g_box_y[NUM_BOX_POINTS]{};
 int g_box_values[NUM_BOX_POINTS]{};
 int g_box_color{}; // Zoom-Box color
 
-static void zmo_calc(double, double, double *, double *, double);
 static int  check_pan();
 static void fix_worklist();
 static void move_row(int fromrow, int torow, int col);
@@ -491,7 +490,7 @@ static void zoom_out_calc(bf_t bfdx, bf_t bfdy, //
     restore_stack(saved);
 }
 
-static void zmo_calc(double dx, double dy, double *newx, double *newy, double ftemp)
+static void zoom_out_calc(double dx, double dy, double *newx, double *newy, double ftemp)
 {
     double tempx, tempy;
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
@@ -584,9 +583,9 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
     g_plot_my2 = (g_x_max-g_x_3rd);
     savxxmin = g_x_min;
     savyymax = g_y_max;
-    zmo_calc(g_save_x_min-savxxmin, g_save_y_max-savyymax, &g_x_min, &g_y_max, ftemp);
-    zmo_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &g_x_max, &g_y_min, ftemp);
-    zmo_calc(g_save_x_3rd-savxxmin, g_save_y_3rd-savyymax, &g_x_3rd, &g_y_3rd, ftemp);
+    zoom_out_calc(g_save_x_min-savxxmin, g_save_y_max-savyymax, &g_x_min, &g_y_max, ftemp);
+    zoom_out_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &g_x_max, &g_y_min, ftemp);
+    zoom_out_calc(g_save_x_3rd-savxxmin, g_save_y_3rd-savyymax, &g_x_3rd, &g_y_3rd, ftemp);
 }
 
 void zoom_out() // for ctl-enter, calc corners for zooming out
