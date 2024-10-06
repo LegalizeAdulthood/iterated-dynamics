@@ -251,6 +251,42 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
     }
 }
 
+static bool new_fractal_type(bool &from_mandel)
+{
+    g_julibrot = false;
+    clear_zoom_box();
+    driver_stack_screen();
+    if (const int type = get_fract_type(); type >= 0)
+    {
+        driver_discard_screen();
+        g_save_dac = 0;
+        g_magnitude_calc = true;
+        g_use_old_periodicity = false;
+        g_bad_outside = false;
+        g_ld_check = false;
+        set_current_params();
+        g_evolve_new_discrete_y_parameter_offset = 0;
+        g_evolve_new_discrete_x_parameter_offset = 0;
+        g_evolve_discrete_y_parameter_offset = 0;
+        g_evolve_discrete_x_parameter_offset = 0;
+        g_evolve_max_random_mutation = 1;           // reset param evolution stuff
+        g_set_orbit_corners = false;
+        save_param_history();
+        if (type == 0)
+        {
+            g_init_mode = g_adapter;
+            from_mandel = false;
+        }
+        else if (g_init_mode < 0)   // it is supposed to be...
+        {
+            driver_set_for_text();     // reset to text mode
+        }
+        return true;
+    }
+    driver_unstack_screen();
+    return false;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -269,37 +305,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        g_julibrot = false;
-        clear_zoom_box();
-        driver_stack_screen();
-        if (const int type = get_fract_type(); type >= 0)
+        if (new_fractal_type(*frommandel))
         {
-            driver_discard_screen();
-            g_save_dac = 0;
-            g_magnitude_calc = true;
-            g_use_old_periodicity = false;
-            g_bad_outside = false;
-            g_ld_check = false;
-            set_current_params();
-            g_evolve_new_discrete_y_parameter_offset = 0;
-            g_evolve_new_discrete_x_parameter_offset = 0;
-            g_evolve_discrete_y_parameter_offset = 0;
-            g_evolve_discrete_x_parameter_offset = 0;
-            g_evolve_max_random_mutation = 1;           // reset param evolution stuff
-            g_set_orbit_corners = false;
-            save_param_history();
-            if (type == 0)
-            {
-                g_init_mode = g_adapter;
-                *frommandel = false;
-            }
-            else if (g_init_mode < 0)   // it is supposed to be...
-            {
-                driver_set_for_text();     // reset to text mode
-            }
             return main_state::IMAGE_START;
         }
-        driver_unstack_screen();
         break;
     case ID_KEY_CTL_X:                     // Ctl-X, Ctl-Y, CTL-Z do flipping
     case ID_KEY_CTL_Y:
