@@ -415,6 +415,19 @@ static bool begin_ant()
     return err >= 0;
 }
 
+static void toggle_float()
+{
+    if (!g_user_float_flag)
+    {
+        g_user_float_flag = true;
+    }
+    else if (g_std_calc_mode != 'o')     // don't go there
+    {
+        g_user_float_flag = false;
+    }
+    g_init_mode = g_adapter;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -495,15 +508,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case 'f':                    // floating pt toggle
-        if (!g_user_float_flag)
-        {
-            g_user_float_flag = true;
-        }
-        else if (g_std_calc_mode != 'o')     // don't go there
-        {
-            g_user_float_flag = false;
-        }
-        g_init_mode = g_adapter;
+        toggle_float();
         return main_state::IMAGE_START;
     case 'i':                    // 3d fractal parms
         if (get_fract3d_params() >= 0)    // get the parameters
