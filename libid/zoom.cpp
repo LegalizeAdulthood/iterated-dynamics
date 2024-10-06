@@ -513,23 +513,20 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    bf_t savbfxmin, savbfymax, bfftemp;
-    bf_t tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2;
-    int saved;
-    saved = save_stack();
-    savbfxmin = alloc_stack(g_r_bf_length+2);
-    savbfymax = alloc_stack(g_r_bf_length+2);
-    bfftemp   = alloc_stack(g_r_bf_length+2);
-    tmp1      = alloc_stack(g_r_bf_length+2);
-    tmp2      = alloc_stack(g_r_bf_length+2);
-    tmp3      = alloc_stack(g_r_bf_length+2);
-    tmp4      = alloc_stack(g_r_bf_length+2);
-    tmp5      = alloc_stack(g_r_bf_length+2);
-    tmp6      = alloc_stack(g_r_bf_length+2);
-    bfplotmx1 = alloc_stack(g_r_bf_length+2);
-    bfplotmx2 = alloc_stack(g_r_bf_length+2);
-    bfplotmy1 = alloc_stack(g_r_bf_length+2);
-    bfplotmy2 = alloc_stack(g_r_bf_length+2);
+    const int saved = save_stack();
+    const bf_t savbfxmin = alloc_stack(g_r_bf_length + 2);
+    const bf_t savbfymax = alloc_stack(g_r_bf_length + 2);
+    const bf_t bfftemp = alloc_stack(g_r_bf_length + 2);
+    const bf_t tmp1 = alloc_stack(g_r_bf_length + 2);
+    const bf_t tmp2 = alloc_stack(g_r_bf_length + 2);
+    const bf_t tmp3 = alloc_stack(g_r_bf_length + 2);
+    const bf_t tmp4 = alloc_stack(g_r_bf_length + 2);
+    const bf_t tmp5 = alloc_stack(g_r_bf_length + 2);
+    const bf_t tmp6 = alloc_stack(g_r_bf_length + 2);
+    const bf_t bfplotmx1 = alloc_stack(g_r_bf_length + 2);
+    const bf_t bfplotmx2 = alloc_stack(g_r_bf_length + 2);
+    const bf_t bfplotmy1 = alloc_stack(g_r_bf_length + 2);
+    const bf_t bfplotmy2 = alloc_stack(g_r_bf_length + 2);
     // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
     sub_bf(tmp1, g_bf_y_min, g_bf_y_3rd);
     sub_bf(tmp2, g_bf_x_3rd, g_bf_x_min);
