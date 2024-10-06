@@ -135,7 +135,7 @@ static bool look(bool *stacked)
     return false;
 }
 
-static void toggle_mandelbrot_julia(bool *kbdmore, bool *frommandel)
+static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
 {
     static double jxxmin;
     static double jxxmax;
@@ -194,7 +194,7 @@ static void toggle_mandelbrot_julia(bool *kbdmore, bool *frommandel)
         jyymin = g_save_y_min;
         jxx3rd = g_save_x_3rd;
         jyy3rd = g_save_y_3rd;
-        *frommandel = true;
+        from_mandel = true;
         g_x_min = g_cur_fractal_specific->xmin;
         g_x_max = g_cur_fractal_specific->xmax;
         g_y_min = g_cur_fractal_specific->ymin;
@@ -212,14 +212,14 @@ static void toggle_mandelbrot_julia(bool *kbdmore, bool *frommandel)
         }
         g_zoom_off = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        *kbdmore = false;
+        kbd_more = false;
     }
     else if (g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
     {
         // switch to corresponding Mandel set
         g_fractal_type = g_cur_fractal_specific->tomandel;
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-        if (*frommandel)
+        if (from_mandel)
         {
             g_x_min = jxxmin;
             g_x_max = jxxmax;
@@ -243,7 +243,7 @@ static void toggle_mandelbrot_julia(bool *kbdmore, bool *frommandel)
         g_params[1] = 0;
         g_zoom_off = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        *kbdmore = false;
+        kbd_more = false;
     }
     else
     {
@@ -552,7 +552,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         else
         {
-            toggle_mandelbrot_julia(kbdmore, frommandel);
+            toggle_mandelbrot_julia(*kbdmore, *frommandel);
         }
         break;
     case 'j':                    // inverse julia toggle
