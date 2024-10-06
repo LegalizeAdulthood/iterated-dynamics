@@ -443,6 +443,40 @@ static void show_orbit_window()
     }
 }
 
+static void inverse_julia_toggle(bool &kbd_more)
+{
+    // if the inverse types proliferate, something more elegant will be needed
+    if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP ||
+        g_fractal_type == fractal_type::INVERSEJULIA)
+    {
+        static fractal_type oldtype = fractal_type::NOFRACTAL;
+        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP)
+        {
+            oldtype = g_fractal_type;
+            g_fractal_type = fractal_type::INVERSEJULIA;
+        }
+        else if (g_fractal_type == fractal_type::INVERSEJULIA)
+        {
+            if (oldtype != fractal_type::NOFRACTAL)
+            {
+                g_fractal_type = oldtype;
+            }
+            else
+            {
+                g_fractal_type = fractal_type::JULIA;
+            }
+        }
+        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        g_zoom_off = true;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        kbd_more = false;
+    }
+    else
+    {
+        driver_buzzer(buzzer_codes::PROBLEM);
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -582,35 +616,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case 'j':                    // inverse julia toggle
-        // if the inverse types proliferate, something more elegant will be needed
-        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA)
-        {
-            static fractal_type oldtype = fractal_type::NOFRACTAL;
-            if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP)
-            {
-                oldtype = g_fractal_type;
-                g_fractal_type = fractal_type::INVERSEJULIA;
-            }
-            else if (g_fractal_type == fractal_type::INVERSEJULIA)
-            {
-                if (oldtype != fractal_type::NOFRACTAL)
-                {
-                    g_fractal_type = oldtype;
-                }
-                else
-                {
-                    g_fractal_type = fractal_type::JULIA;
-                }
-            }
-            g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-            g_zoom_off = true;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-            *kbdmore = false;
-        }
-        else
-        {
-            driver_buzzer(buzzer_codes::PROBLEM);
-        }
+        inverse_julia_toggle(*kbdmore);
         break;
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
