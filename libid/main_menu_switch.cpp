@@ -287,11 +287,97 @@ static bool new_fractal_type(bool &from_mandel)
     return false;
 }
 
+static void prompt_options(bool &kbd_more, const int kbdchar)
+{
+    const long old_maxit = g_max_iterations;
+    clear_zoom_box();
+    if (g_from_text)
+    {
+        g_from_text = false;
+    }
+    else
+    {
+        driver_stack_screen();
+    }
+    int i;
+    if (kbdchar == 'x')
+    {
+        i = get_toggles();
+    }
+    else if (kbdchar == 'y')
+    {
+        i = get_toggles2();
+    }
+    else if (kbdchar == 'p')
+    {
+        i = passes_options();
+    }
+    else if (kbdchar == 'z')
+    {
+        i = get_fract_params(true);
+    }
+    else if (kbdchar == 'v')
+    {
+        i = get_view_params(); // get the parameters
+    }
+    else if (kbdchar == ID_KEY_CTL_B)
+    {
+        i = get_browse_params();
+    }
+    else if (kbdchar == ID_KEY_CTL_E)
+    {
+        i = get_evolve_Parms();
+        if (i > 0)
+        {
+            g_start_show_orbit = false;
+            g_sound_flag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); // turn off only x,y,z
+            g_log_map_auto_calculate = false; // turn it off
+        }
+    }
+    else if (kbdchar == ID_KEY_CTL_F)
+    {
+        i = get_sound_params();
+    }
+    else
+    {
+        i = get_cmd_string();
+    }
+    driver_unstack_screen();
+    if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
+    {
+        g_truecolor = false;          // truecolor doesn't play well with the evolver
+    }
+    if (g_max_iterations > old_maxit
+        && g_inside_color >= COLOR_BLACK
+        && g_calc_status == calc_status_value::COMPLETED
+        && g_cur_fractal_specific->calctype == standard_fractal
+        && !g_log_map_flag
+        && !g_truecolor     // recalc not yet implemented with truecolor
+        && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
+        && g_user_std_calc_mode != 'o'
+        && i == 1 // nothing else changed
+        && g_outside_color != ATAN)
+    {
+        g_quick_calc = true;
+        g_old_std_calc_mode = g_user_std_calc_mode;
+        g_user_std_calc_mode = '1';
+        kbd_more = false;
+        g_calc_status = calc_status_value::RESUMABLE;
+    }
+    else if (i > 0)
+    {
+        // time to redraw?
+        g_quick_calc = false;
+        save_param_history();
+        kbd_more = false;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
     int k;
-    long old_maxit;
 
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
@@ -324,88 +410,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_B: // browsing
     case ID_KEY_CTL_E: // evolving
     case ID_KEY_CTL_F: // sound options
-        old_maxit = g_max_iterations;
-        clear_zoom_box();
-        if (g_from_text)
-        {
-            g_from_text = false;
-        }
-        else
-        {
-            driver_stack_screen();
-        }
-        if (*kbdchar == 'x')
-        {
-            i = get_toggles();
-        }
-        else if (*kbdchar == 'y')
-        {
-            i = get_toggles2();
-        }
-        else if (*kbdchar == 'p')
-        {
-            i = passes_options();
-        }
-        else if (*kbdchar == 'z')
-        {
-            i = get_fract_params(true);
-        }
-        else if (*kbdchar == 'v')
-        {
-            i = get_view_params(); // get the parameters
-        }
-        else if (*kbdchar == ID_KEY_CTL_B)
-        {
-            i = get_browse_params();
-        }
-        else if (*kbdchar == ID_KEY_CTL_E)
-        {
-            i = get_evolve_Parms();
-            if (i > 0)
-            {
-                g_start_show_orbit = false;
-                g_sound_flag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); // turn off only x,y,z
-                g_log_map_auto_calculate = false; // turn it off
-            }
-        }
-        else if (*kbdchar == ID_KEY_CTL_F)
-        {
-            i = get_sound_params();
-        }
-        else
-        {
-            i = get_cmd_string();
-        }
-        driver_unstack_screen();
-        if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
-        {
-            g_truecolor = false;          // truecolor doesn't play well with the evolver
-        }
-        if (g_max_iterations > old_maxit
-            && g_inside_color >= COLOR_BLACK
-            && g_calc_status == calc_status_value::COMPLETED
-            && g_cur_fractal_specific->calctype == standard_fractal
-            && !g_log_map_flag
-            && !g_truecolor     // recalc not yet implemented with truecolor
-            && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
-            && g_user_std_calc_mode != 'o'
-            && i == 1 // nothing else changed
-            && g_outside_color != ATAN)
-        {
-            g_quick_calc = true;
-            g_old_std_calc_mode = g_user_std_calc_mode;
-            g_user_std_calc_mode = '1';
-            *kbdmore = false;
-            g_calc_status = calc_status_value::RESUMABLE;
-        }
-        else if (i > 0)
-        {
-            // time to redraw?
-            g_quick_calc = false;
-            save_param_history();
-            *kbdmore = false;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-        }
+        prompt_options(*kbdmore, *kbdchar);
         break;
     case '@':                    // execute commands
     case '2':                    // execute commands
