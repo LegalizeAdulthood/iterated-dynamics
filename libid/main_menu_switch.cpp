@@ -428,6 +428,21 @@ static void toggle_float()
     g_init_mode = g_adapter;
 }
 
+static void show_orbit_window()
+{
+    // must use standard fractal and have a float variant
+    if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
+            || g_fractal_specific[+g_fractal_type].calctype == calcfroth)
+        && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
+             g_fractal_specific[+g_fractal_type].tofloat != fractal_type::NOFRACTAL)
+        && (g_bf_math == bf_math_type::NONE) // for now no arbitrary precision support
+        && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
+    {
+        clear_zoom_box();
+        Jiim(jiim_types::ORBIT);
+    }
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -548,17 +563,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         break;
     case ID_KEY_CTL_O:                     // ctrl-o
     case 'o':
-        // must use standard fractal and have a float variant
-        if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
-                || g_fractal_specific[+g_fractal_type].calctype == calcfroth)
-            && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
-                 g_fractal_specific[+g_fractal_type].tofloat != fractal_type::NOFRACTAL)
-            && (g_bf_math == bf_math_type::NONE) // for now no arbitrary precision support
-            && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
-        {
-            clear_zoom_box();
-            Jiim(jiim_types::ORBIT);
-        }
+        show_orbit_window();
         break;
     case ID_KEY_SPACE:                  // spacebar, toggle mand/julia
         if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
