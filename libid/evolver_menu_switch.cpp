@@ -129,33 +129,11 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         color_cycle(*kbdchar);
         return main_state::CONTINUE;
     case 'e':                    // switch to color editing
-        if (g_is_true_color && (g_init_batch == batch_modes::NONE))
+        if (color_editing(*kbdmore))
         {
-            // don't enter palette editor
-            if (!load_palette())
-            {
-                *kbdmore = false;
-                g_calc_status = calc_status_value::PARAMS_CHANGED;
-                break;
-            }
-            else
-            {
-                return main_state::CONTINUE;
-            }
+            return main_state::CONTINUE;
         }
-        clear_zoom_box();
-        if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
-        {
-            ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PALETTE_EDITOR};
-            std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-            EditPalette();
-            if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
-            {
-                g_color_state = color_state::UNKNOWN;
-                save_history_info();
-            }
-        }
-        return main_state::CONTINUE;
+        break;
     case 's':                    // save-to-disk
     {
         if (driver_diskp() && g_disk_targa)

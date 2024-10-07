@@ -9,3 +9,4 @@ bool request_fractal_type(bool &from_mandel);
 void toggle_float();
 main_state get_history(int kbd_char);
 void color_cycle(int kbd_char);
+bool color_editing(bool &kbd_more);

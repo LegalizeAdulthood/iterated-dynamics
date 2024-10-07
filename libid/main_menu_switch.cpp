@@ -555,7 +555,7 @@ void color_cycle(int kbd_char)
     }
 }
 
-static bool color_editing(bool &kbd_more)
+bool color_editing(bool &kbd_more)
 {
     if (g_is_true_color && (g_init_batch == batch_modes::NONE))
     {
