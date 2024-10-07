@@ -568,16 +568,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case ID_KEY_DELETE:         // select video mode from list
-        driver_stack_screen();
-        *kbdchar = select_video_mode(g_adapter);
-        if (check_vidmode_key(0, *kbdchar) >= 0)    // picked a new mode?
-        {
-            driver_discard_screen();
-        }
-        else
-        {
-            driver_unstack_screen();
-        }
+        request_video_mode(*kbdchar);
         // fall through
 
     default:             // other (maybe valid Fn key
