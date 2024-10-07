@@ -37,6 +37,34 @@
 
 #include <cstring>
 
+static void save_evolver_image()
+{
+    if (driver_diskp() && g_disk_targa)
+    {
+        return; // disk video and targa, nothing to save
+    }
+
+    GENEBASE gene[NUM_GENES];
+    copy_genes_from_bank(gene);
+    {
+        ValueSaver saved_logical_screen_x_offset{g_logical_screen_x_offset, 0};
+        ValueSaver saved_logical_screen_y_offset{g_logical_screen_y_offset, 0};
+        ValueSaver saved_logical_screen_x_dots{g_logical_screen_x_dots, g_screen_x_dots};
+        ValueSaver saved_logical_screen_y_dots{g_logical_screen_y_dots, g_screen_y_dots};
+        {
+            ValueSaver saved_evolve_param_grid_x{g_evolve_param_grid_x, g_evolve_image_grid_size / 2};
+            ValueSaver saved_evolve_param_grid_y{g_evolve_param_grid_y, g_evolve_image_grid_size / 2};
+            restore_param_history();
+            fiddleparms(gene, 0);
+            drawparmbox(1);
+            save_image(g_save_filename);
+        }
+        restore_param_history();
+        fiddleparms(gene, unspiralmap());
+    }
+    copy_genes_to_bank(gene);
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -135,33 +163,8 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case 's':                    // save-to-disk
-    {
-        if (driver_diskp() && g_disk_targa)
-        {
-            return main_state::CONTINUE;  // disk video and targa, nothing to save
-        }
-
-        GENEBASE gene[NUM_GENES];
-        copy_genes_from_bank(gene);
-        {
-            ValueSaver saved_logical_screen_x_offset{g_logical_screen_x_offset, 0};
-            ValueSaver saved_logical_screen_y_offset{g_logical_screen_y_offset, 0};
-            ValueSaver saved_logical_screen_x_dots{g_logical_screen_x_dots, g_screen_x_dots};
-            ValueSaver saved_logical_screen_y_dots{g_logical_screen_y_dots, g_screen_y_dots};
-            {
-                ValueSaver saved_evolve_param_grid_x{g_evolve_param_grid_x, g_evolve_image_grid_size / 2};
-                ValueSaver saved_evolve_param_grid_y{g_evolve_param_grid_y, g_evolve_image_grid_size / 2};
-                restore_param_history();
-                fiddleparms(gene, 0);
-                drawparmbox(1);
-                save_image(g_save_filename);
-            }
-            restore_param_history();
-            fiddleparms(gene, unspiralmap());
-        }
-        copy_genes_to_bank(gene);
+        save_evolver_image();
         return main_state::CONTINUE;
-    }
 
     case 'r':                    // restore-from
         g_compare_gif = false;
