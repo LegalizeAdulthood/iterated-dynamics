@@ -280,6 +280,19 @@ static void halve_mutation_params(bool &kbd_more)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
+static void double_mutation_params(bool &kbd_more)
+{
+    g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
+    const double centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
+    g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
+    g_evolve_new_x_parameter_offset = centerx - g_evolve_x_parameter_range / 2;
+    const double centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+    g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
+    g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
+    kbd_more = false;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -399,20 +412,8 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case ID_KEY_F3: //double mutation parameters and regenerate
-    {
-        double centerx;
-        double centery;
-        g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
-        centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
-        g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
-        g_evolve_new_x_parameter_offset = centerx - g_evolve_x_parameter_range / 2;
-        centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
-        g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
-        g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        double_mutation_params(*kbdmore);
         break;
-    }
 
     case ID_KEY_F4: //decrement  gridsize and regen
         if (g_evolve_image_grid_size > 3)
