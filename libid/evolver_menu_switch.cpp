@@ -118,37 +118,9 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
-        if (g_max_image_history > 0 && g_bf_math == bf_math_type::NONE)
+        if (const main_state result = get_history(*kbdchar); result != main_state::NOTHING)
         {
-            if (*kbdchar == '\\' || *kbdchar == 'h')
-            {
-                if (--g_history_ptr < 0)
-                {
-                    g_history_ptr = g_max_image_history - 1;
-                }
-            }
-            if (*kbdchar == ID_KEY_CTL_BACKSLASH || *kbdchar == 8)
-            {
-                if (++g_history_ptr >= g_max_image_history)
-                {
-                    g_history_ptr = 0;
-                }
-            }
-            restore_history_info(g_history_ptr);
-            g_zoom_off = true;
-            g_init_mode = g_adapter;
-            if (g_cur_fractal_specific->isinteger != 0
-                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
-            {
-                g_user_float_flag = false;
-            }
-            if (g_cur_fractal_specific->isinteger == 0
-                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
-            {
-                g_user_float_flag = true;
-            }
-            g_history_flag = true;         // avoid re-store parms due to rounding errs
-            return main_state::IMAGE_START;
+            return result;
         }
         break;
     case 'c':                    // switch to color cycling

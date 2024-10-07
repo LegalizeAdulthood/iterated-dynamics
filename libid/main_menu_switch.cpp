@@ -507,7 +507,7 @@ static main_state unstack_file(bool &stacked)
     return main_state::RESTORE_START;
 }
 
-static main_state get_history(int kbd_char)
+main_state get_history(int kbd_char)
 {
     if (g_max_image_history <= 0 || g_bf_math != bf_math_type::NONE)
     {
