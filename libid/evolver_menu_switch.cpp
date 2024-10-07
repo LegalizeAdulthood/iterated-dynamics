@@ -357,6 +357,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     {
     case 't':                    // new fractal type
         return request_fractal_type(*frommandel);
+
     case 'x':                    // invoke options screen
     case 'y':
     case 'p':                    // passes options
@@ -366,6 +367,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_SPACE:
         prompt_evolver_options(*kbdchar, *kbdmore);
         break;
+
     case 'b': // quick exit from evolve mode
         exit_evolver(*kbdmore);
         break;
@@ -373,6 +375,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'f':                    // floating pt toggle
         toggle_float();
         return main_state::IMAGE_START;
+        
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
@@ -382,17 +385,20 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             return result;
         }
         break;
+        
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
         color_cycle(*kbdchar);
         return main_state::CONTINUE;
+        
     case 'e':                    // switch to color editing
         if (color_editing(*kbdmore))
         {
             return main_state::CONTINUE;
         }
         break;
+        
     case 's':                    // save-to-disk
         save_evolver_image();
         return main_state::CONTINUE;
@@ -400,38 +406,47 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'r':                    // restore-from
         restore_from_image(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
+        
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
         request_zoom_in(*kbdmore);
         break;
+        
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         request_zoom_out(*kbdmore);
         break;
+        
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
         return main_state::RESTART;
+        
     case ID_KEY_LEFT_ARROW:             // cursor left
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
         move_zoom_box(*kbdchar);
         break;
+        
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
         move_evolver_selection(*kbdchar);
         break;
+        
     case ID_KEY_CTL_HOME:               // Ctrl-home
         skew_zoom_left();
         break;
+        
     case ID_KEY_CTL_END:                // Ctrl-end
         skew_zoom_right();
         break;
+        
     case ID_KEY_CTL_PAGE_UP:
         evolve_param_zoom_decrease();
         break;
+        
     case ID_KEY_CTL_PAGE_DOWN:
         evolve_param_zoom_increase();
         break;
@@ -439,18 +454,23 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_PAGE_UP:                // page up
         evolver_zoom_in();
         break;
+        
     case ID_KEY_PAGE_DOWN:              // page down
         evolver_zoom_out();
         break;
+        
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         zoom_box_increase_rotation();
         break;
+        
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
         zoom_box_decrease_rotation();
         break;
+        
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
         zoom_box_increase_color();
         break;
+        
     case ID_KEY_CTL_DEL:                // Ctrl-del
         zoom_box_decrease_color();
         break;
@@ -504,14 +524,16 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
 
     case ID_KEY_DELETE:         // select video mode from list
         request_video_mode(*kbdchar);
-        // fall through
+        // fallthrough
 
-    default:             // other (maybe valid Fn key
+    default: // NOLINT(clang-diagnostic-implicit-fallthrough)
+        // other (maybe valid Fn key
         if (requested_video_fn(*kbdmore, *kbdchar))
         {
             return main_state::CONTINUE;
         }
         break;
-    }                            // end of the big evolver switch
+    }
+
     return main_state::NOTHING;
 }

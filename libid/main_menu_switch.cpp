@@ -772,6 +772,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_Z:
         flip_image(*kbdchar);
         break;
+        
     case 'x':          // invoke options screen
     case 'y':          //
     case 'p':          // passes options
@@ -783,6 +784,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_F: // sound options
         prompt_options(*kbdmore, *kbdchar);
         break;
+        
     case '@':                    // execute commands
     case '2':                    // execute commands
         return execute_commands(*kbdchar, *frommandel, *kbdmore, *stacked);
@@ -790,6 +792,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 'f':                    // floating pt toggle
         toggle_float();
         return main_state::IMAGE_START;
+        
     case 'i':                    // 3d fractal parms
         if (get_fract3d_params() >= 0)    // get the parameters
         {
@@ -797,12 +800,14 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             *kbdmore = false;    // time to redraw
         }
         break;
+        
     case ID_KEY_CTL_A:                     // ^a Ant
         if (begin_ant())
         {
             return main_state::CONTINUE;
         }
         break;
+        
     case 'k':                    // ^s is irritating, give user a single key
     case ID_KEY_CTL_S:                     // ^s RDS
         return random_dot_stereogram();
@@ -814,6 +819,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 'o':
         show_orbit_window();
         break;
+        
     case ID_KEY_SPACE:                  // spacebar, toggle mand/julia
         if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
         {
@@ -830,9 +836,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             toggle_mandelbrot_julia(*kbdmore, *frommandel);
         }
         break;
+        
     case 'j':                    // inverse julia toggle
         inverse_julia_toggle(*kbdmore);
         break;
+        
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
@@ -846,6 +854,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             return result;
         }
         break;
+        
     case 'd':                    // shell to MS-DOS
         driver_stack_screen();
         driver_shell();
@@ -857,12 +866,14 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '-':                    // rotate palette
         color_cycle(*kbdchar);
         return main_state::CONTINUE;
+        
     case 'e':                    // switch to color editing
         if (color_editing(*kbdmore))
         {
             return main_state::CONTINUE;
         }
         break;
+        
     case 's':                    // save-to-disk
         if (driver_diskp() && g_disk_targa)
         {
@@ -870,17 +881,21 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         save_image(g_save_filename);
         return main_state::CONTINUE;
+        
     case '#':                    // 3D overlay
         clear_zoom_box();
         g_overlay_3d = true;
         restore_from_3d(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
+        
     case '3':                    // restore-from (3d)
         restore_from_3d(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
+        
     case 'r':                    // restore-from
         restore_from_image(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
+        
     case 'l':
     case 'L':                    // Look for other files within this view
         if (look_for_files(*stacked))
@@ -888,41 +903,48 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             return main_state::RESTORE_START;
         }
         break;
+        
     case 'b':                    // make batch file
         make_batch_file();
         break;
+        
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
         request_zoom_in(*kbdmore);
         break;
+        
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         request_zoom_out(*kbdmore);
         break;
+        
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
         return main_state::RESTART;
+        
     case ID_KEY_LEFT_ARROW:             // cursor left
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
-        move_zoom_box(*kbdchar);
-        break;
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
         move_zoom_box(*kbdchar);
         break;
+        
     case ID_KEY_CTL_HOME:               // Ctrl-home
         skew_zoom_left();
         break;
+        
     case ID_KEY_CTL_END:                // Ctrl-end
         skew_zoom_right();
         break;
+        
     case ID_KEY_CTL_PAGE_UP:            // Ctrl-pgup
         decrease_zoom_aspect();
         break;
+        
     case ID_KEY_CTL_PAGE_DOWN:          // Ctrl-pgdn
         increase_zoom_aspect();
         break;
@@ -930,18 +952,23 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_PAGE_UP:                // page up
         zoom_box_in();
         break;
+        
     case ID_KEY_PAGE_DOWN:              // page down
         zoom_box_out();
         break;
+        
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         zoom_box_increase_rotation();
         break;
+        
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
         zoom_box_decrease_rotation();
         break;
+        
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
         zoom_box_increase_color();
         break;
+        
     case ID_KEY_CTL_DEL:                // Ctrl-del
         zoom_box_decrease_color();
         break;
@@ -958,8 +985,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
 
     case ID_KEY_DELETE:         // select video mode from list
         request_video_mode(*kbdchar);
-        // fall through
-    default:                     // other (maybe a valid Fn key)
+        // fallthrough
+
+    default: // NOLINT(clang-diagnostic-implicit-fallthrough)
+        // other (maybe a valid Fn key)
         if (requested_video_fn(*kbdmore, *kbdchar))
         {
             return main_state::CONTINUE;
