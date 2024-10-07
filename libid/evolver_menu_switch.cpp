@@ -332,6 +332,14 @@ static void toggle_gene_variation(bool &kbd_more)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
+static void request_mutation_level(int mutation_level, bool &kbd_more)
+{
+    set_mutation_level(mutation_level);
+    restore_param_history();
+    kbd_more = false;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -473,10 +481,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        set_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1);
-        restore_param_history();
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        request_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1, *kbdmore);
         break;
 
     case '1':
@@ -486,10 +491,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case '5':
     case '6':
     case '7':
-        set_mutation_level(*kbdchar-(int)'0');
-        restore_param_history();
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        request_mutation_level(*kbdchar - '1' + 1, *kbdmore);
         break;
 
     case '0': // mutation level 0 == turn off evolving
