@@ -203,12 +203,69 @@ static void evolve_param_zoom_increase()
     if (g_evolve_param_box_count)
     {
         g_evolve_param_zoom += 1.0;
-        if (g_evolve_param_zoom > (double) g_evolve_image_grid_size /2.0)
+        if (g_evolve_param_zoom > (double) g_evolve_image_grid_size / 2.0)
         {
-            g_evolve_param_zoom = (double) g_evolve_image_grid_size /2.0;
+            g_evolve_param_zoom = (double) g_evolve_image_grid_size / 2.0;
         }
         drawparmbox(0);
         set_evolve_ranges();
+    }
+}
+
+static void evolver_zoom_in()
+{
+    if (g_zoom_off)
+    {
+        if (g_zoom_box_width == 0)
+        {
+            // start zoombox
+            g_zoom_box_height = 1;
+            g_zoom_box_width = 1;
+            g_zoom_box_rotation = 0;
+            g_zoom_box_skew = 0.0;
+            g_zoom_box_x = 0.0;
+            g_zoom_box_y = 0.0;
+            find_special_colors();
+            g_box_color = g_color_bright;
+            if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+            {
+                // set screen view params back (previously changed to allow full screen saves in viewwindow
+                // mode)
+                const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+                g_logical_screen_x_offset =
+                    g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
+                g_logical_screen_y_offset =
+                    g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
+                SetupParamBox();
+                drawparmbox(0);
+            }
+            move_box(0.0, 0.0); // force scrolling
+        }
+        else
+        {
+            resize_box(0 - key_count(ID_KEY_PAGE_UP));
+        }
+    }
+}
+
+static void evolver_zoom_out()
+{
+    if (g_box_count)
+    {
+        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
+        {
+            // end zoombox
+            g_zoom_box_width = 0;
+            if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+            {
+                drawparmbox(1); // clear boxes off screen
+                ReleaseParamBox();
+            }
+        }
+        else
+        {
+            resize_box(key_count(ID_KEY_PAGE_DOWN));
+        }
     }
 }
 
@@ -305,54 +362,10 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case ID_KEY_PAGE_UP:                // page up
-        if (g_zoom_off)
-        {
-            if (g_zoom_box_width == 0)
-            {
-                // start zoombox
-                g_zoom_box_height = 1;
-                g_zoom_box_width = g_zoom_box_height;
-                g_zoom_box_rotation = 0;
-                g_zoom_box_skew = g_zoom_box_rotation;
-                g_zoom_box_x = 0;
-                g_zoom_box_y = 0;
-                find_special_colors();
-                g_box_color = g_color_bright;
-                if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
-                {
-                    // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
-                    const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
-                    g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
-                    g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_logical_screen_y_size_dots+1+grout);
-                    SetupParamBox();
-                    drawparmbox(0);
-                }
-                move_box(0.0, 0.0); // force scrolling
-            }
-            else
-            {
-                resize_box(0 - key_count(ID_KEY_PAGE_UP));
-            }
-        }
+        evolver_zoom_in();
         break;
     case ID_KEY_PAGE_DOWN:              // page down
-        if (g_box_count)
-        {
-            if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
-            {
-                // end zoombox
-                g_zoom_box_width = 0;
-                if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
-                {
-                    drawparmbox(1); // clear boxes off screen
-                    ReleaseParamBox();
-                }
-            }
-            else
-            {
-                resize_box(key_count(ID_KEY_PAGE_DOWN));
-            }
-        }
+        evolver_zoom_out();
         break;
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         zoom_box_increase_rotation();
