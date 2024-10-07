@@ -293,6 +293,27 @@ static void double_mutation_params(bool &kbd_more)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
+static void decrease_grid_size(bool &kbd_more)
+{
+    if (g_evolve_image_grid_size > 3)
+    {
+        g_evolve_image_grid_size =
+            g_evolve_image_grid_size - 2; // evolve_image_grid_size must have odd value only
+        kbd_more = false;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+    }
+}
+
+static void increase_grid_size(bool &kbd_more)
+{
+    if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
+    {
+        g_evolve_image_grid_size = g_evolve_image_grid_size + 2;
+        kbd_more = false;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+    }
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -416,21 +437,11 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case ID_KEY_F4: //decrement  gridsize and regen
-        if (g_evolve_image_grid_size > 3)
-        {
-            g_evolve_image_grid_size = g_evolve_image_grid_size - 2;  // evolve_image_grid_size must have odd value only
-            *kbdmore = false;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-        }
+        decrease_grid_size(*kbdmore);
         break;
 
     case ID_KEY_F5: // increment gridsize and regen
-        if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
-        {
-            g_evolve_image_grid_size = g_evolve_image_grid_size + 2;
-            *kbdmore = false;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-        }
+        increase_grid_size(*kbdmore);
         break;
 
     case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
