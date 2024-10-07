@@ -356,11 +356,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        if (request_fractal_type(*frommandel))
-        {
-            return main_state::IMAGE_START;
-        }
-        break;
+        return request_fractal_type(*frommandel);
     case 'x':                    // invoke options screen
     case 'y':
     case 'p':                    // passes options

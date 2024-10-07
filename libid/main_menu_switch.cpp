@@ -251,7 +251,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
     }
 }
 
-bool request_fractal_type(bool &from_mandel)
+main_state request_fractal_type(bool &from_mandel)
 {
     g_julibrot = false;
     clear_zoom_box();
@@ -281,10 +281,10 @@ bool request_fractal_type(bool &from_mandel)
         {
             driver_set_for_text();     // reset to text mode
         }
-        return true;
+        return main_state::IMAGE_START;
     }
     driver_unstack_screen();
-    return false;
+    return main_state::NOTHING;
 }
 
 static void prompt_options(bool &kbd_more, const int kbdchar)
@@ -761,14 +761,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     {
         g_user_std_calc_mode = g_old_std_calc_mode;
     }
+    
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        if (request_fractal_type(*frommandel))
-        {
-            return main_state::IMAGE_START;
-        }
-        break;
+        return request_fractal_type(*frommandel);
+
     case ID_KEY_CTL_X:                     // Ctl-X, Ctl-Y, CTL-Z do flipping
     case ID_KEY_CTL_Y:
     case ID_KEY_CTL_Z:
@@ -967,6 +965,6 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             return main_state::CONTINUE;
         }
         break;
-    }                            // end of the big switch
+    }
     return main_state::NOTHING;
 }
