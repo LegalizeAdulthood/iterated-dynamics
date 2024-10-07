@@ -511,16 +511,8 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         // fall through
 
     default:             // other (maybe valid Fn key
-        k = check_vidmode_key(0, *kbdchar);
-        if (k >= 0)
+        if (requested_video_fn(*kbdmore, *kbdchar))
         {
-            g_adapter = k;
-            if (g_video_table[g_adapter].colors != g_colors)
-            {
-                g_save_dac = 0;
-            }
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-            *kbdmore = false;
             return main_state::CONTINUE;
         }
         break;

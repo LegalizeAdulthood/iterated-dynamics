@@ -646,7 +646,7 @@ static void start_evolution(bool &kbd_more, int kbd_char)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
-static bool requested_video_fn(bool &kbd_more, int kbd_char)
+bool requested_video_fn(bool &kbd_more, int kbd_char)
 {
     const int k = check_vidmode_key(0, kbd_char);
     if (k >= 0)
