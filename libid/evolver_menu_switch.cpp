@@ -299,22 +299,11 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         return main_state::RESTORE_START;
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        if (g_zoom_box_width != 0.0)
-        {
-            // do a zoom
-            init_pan_or_recalc(false);
-            *kbdmore = false;
-        }
-        if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
-        {
-            *kbdmore = false;
-        }
+        request_zoom_in(*kbdmore);
         break;
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        init_pan_or_recalc(true);
-        *kbdmore = false;
-        zoom_out();                // calc corners for zooming out
+        request_zoom_out(*kbdmore);
         break;
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
@@ -388,24 +377,10 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case ID_KEY_CTL_HOME:               // Ctrl-home
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            i = key_count(ID_KEY_CTL_HOME);
-            if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
-            {
-                g_zoom_box_skew = -0.48;
-            }
-        }
+        skew_zoom_left();
         break;
     case ID_KEY_CTL_END:                // Ctrl-end
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            i = key_count(ID_KEY_CTL_END);
-            if ((g_zoom_box_skew += 0.02 * i) > 0.48)
-            {
-                g_zoom_box_skew = 0.48;
-            }
-        }
+        skew_zoom_right();
         break;
     case ID_KEY_CTL_PAGE_UP:
         if (g_evolve_param_box_count)
@@ -483,22 +458,16 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
-        }
+        zoom_box_increase_rotation();
         break;
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
-        {
-            g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
-        }
+        zoom_box_decrease_rotation();
         break;
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        g_box_color += key_count(ID_KEY_CTL_INSERT);
+        zoom_box_increase_color();
         break;
     case ID_KEY_CTL_DEL:                // Ctrl-del
-        g_box_color -= key_count(ID_KEY_CTL_DEL);
+        zoom_box_decrease_color();
         break;
 
     /* grabbed a couple of video mode keys, user can change to these using
