@@ -585,7 +585,7 @@ bool color_editing(bool &kbd_more)
     return true;
 }
 
-static void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
+void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
 {
     g_compare_gif = false;
     from_mandel = false;
