@@ -280,3 +280,17 @@ static void update_id_cfg()
     fs::remove(cfgname);         // success assumed on these lines
     fs::rename(outname, cfgname); // since we checked earlier with access
 }
+
+void request_video_mode(int &kbd_char)
+{
+    driver_stack_screen();
+    kbd_char = select_video_mode(g_adapter);
+    if (check_vidmode_key(0, kbd_char) >= 0) // picked a new mode?
+    {
+        driver_discard_screen();
+    }
+    else
+    {
+        driver_unstack_screen();
+    }
+}

@@ -631,20 +631,6 @@ static void start_evolution(bool &kbd_more, int kbd_char)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
-static void request_video_mode(int &kbd_char)
-{
-    driver_stack_screen();
-    kbd_char = select_video_mode(g_adapter);
-    if (check_vidmode_key(0, kbd_char) >= 0) // picked a new mode?
-    {
-        driver_discard_screen();
-    }
-    else
-    {
-        driver_unstack_screen();
-    }
-}
-
 static bool requested_video_fn(bool &kbd_more, int kbd_char)
 {
     const int k = check_vidmode_key(0, kbd_char);
