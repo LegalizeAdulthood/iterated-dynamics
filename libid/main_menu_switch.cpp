@@ -677,11 +677,53 @@ static void restore_from_3d(bool &from_mandel, int key, bool &stacked)
     restore_from_image(from_mandel, key, stacked);
 }
 
+static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+{
+    driver_stack_screen();
+    int i = +get_commands();
+    if (g_init_mode != -1)
+    {
+        // video= was specified
+        g_adapter = g_init_mode;
+        g_init_mode = -1;
+        i |= +cmdarg_flags::FRACTAL_PARAM;
+        g_save_dac = 0;
+    }
+    else if (g_colors_preloaded)
+    {
+        // colors= was specified
+        spindac(0, 1);
+        g_colors_preloaded = false;
+    }
+    else if (i & +cmdarg_flags::RESET) // reset was specified
+    {
+        g_save_dac = 0;
+    }
+    if (i & +cmdarg_flags::YES_3D)
+    {
+        // 3d = was specified
+        key = '3';
+        driver_unstack_screen();
+        // pretend '3' was keyed
+        restore_from_3d(from_mandel, key, stacked);
+        return main_state::RESTORE_START;
+    }
+    if (i & +cmdarg_flags::FRACTAL_PARAM)
+    {
+        // fractal parameter changed
+        driver_discard_screen();
+        kbd_more = false;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+    }
+    else
+    {
+        driver_unstack_screen();
+    }
+    return main_state::NOTHING;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
-    int i;
-    int k;
-
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
         g_quick_calc = false;
@@ -717,45 +759,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         break;
     case '@':                    // execute commands
     case '2':                    // execute commands
-        driver_stack_screen();
-        i = +get_commands();
-        if (g_init_mode != -1)
-        {
-            // video= was specified
-            g_adapter = g_init_mode;
-            g_init_mode = -1;
-            i |= +cmdarg_flags::FRACTAL_PARAM;
-            g_save_dac = 0;
-        }
-        else if (g_colors_preloaded)
-        {
-            // colors= was specified
-            spindac(0, 1);
-            g_colors_preloaded = false;
-        }
-        else if (i & +cmdarg_flags::RESET)           // reset was specified
-        {
-            g_save_dac = 0;
-        }
-        if (i & +cmdarg_flags::YES_3D)
-        {
-            // 3d = was specified
-            *kbdchar = '3';
-            driver_unstack_screen();
-            goto do_3d_transform;  // pretend '3' was keyed
-        }
-        if (i & +cmdarg_flags::FRACTAL_PARAM)
-        {
-            // fractal parameter changed
-            driver_discard_screen();
-            *kbdmore = false;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-        }
-        else
-        {
-            driver_unstack_screen();
-        }
-        break;
+        return execute_commands(*kbdchar, *frommandel, *kbdmore, *stacked);
+        
     case 'f':                    // floating pt toggle
         toggle_float();
         return main_state::IMAGE_START;
@@ -861,7 +866,6 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         restore_from_3d(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
     case '3':                    // restore-from (3d)
-do_3d_transform:
         restore_from_3d(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
     case 'r':                    // restore-from
