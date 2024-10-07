@@ -736,6 +736,20 @@ static main_state random_dot_stereogram()
     return main_state::NOTHING;
 }
 
+static main_state request_starfield_params()
+{
+    clear_zoom_box();
+    if (get_starfield_params() >= 0)
+    {
+        if (starfield() >= 0)
+        {
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
+        }
+        return main_state::CONTINUE;
+    }
+    return main_state::NOTHING;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
@@ -796,16 +810,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         return random_dot_stereogram();
 
     case 'a':                    // starfield parms
-        clear_zoom_box();
-        if (get_starfield_params() >= 0)
-        {
-            if (starfield() >= 0)
-            {
-                g_calc_status = calc_status_value::PARAMS_CHANGED;
-            }
-            return main_state::CONTINUE;
-        }
-        break;
+        return request_starfield_params();
+        
     case ID_KEY_CTL_O:                     // ctrl-o
     case 'o':
         show_orbit_window();
