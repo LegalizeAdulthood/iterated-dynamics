@@ -722,6 +722,20 @@ static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, 
     return main_state::NOTHING;
 }
 
+static main_state random_dot_stereogram()
+{
+    clear_zoom_box();
+    if (get_rds_params() >= 0)
+    {
+        if (do_AutoStereo())
+        {
+            g_calc_status = calc_status_value::PARAMS_CHANGED;
+        }
+        return main_state::CONTINUE;
+    }
+    return main_state::NOTHING;
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
@@ -779,16 +793,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         break;
     case 'k':                    // ^s is irritating, give user a single key
     case ID_KEY_CTL_S:                     // ^s RDS
-        clear_zoom_box();
-        if (get_rds_params() >= 0)
-        {
-            if (do_AutoStereo())
-            {
-                g_calc_status = calc_status_value::PARAMS_CHANGED;
-            }
-            return main_state::CONTINUE;
-        }
-        break;
+        return random_dot_stereogram();
+
     case 'a':                    // starfield parms
         clear_zoom_box();
         if (get_starfield_params() >= 0)
