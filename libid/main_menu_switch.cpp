@@ -664,6 +664,19 @@ bool requested_video_fn(bool &kbd_more, int kbd_char)
     return false;
 }
 
+static void restore_from_3d(bool &from_mandel, int key, bool &stacked)
+{
+    if (g_overlay_3d)
+    {
+        g_display_3d = display_3d_modes::B_COMMAND; // for <b> command
+    }
+    else
+    {
+        g_display_3d = display_3d_modes::YES;
+    }
+    restore_from_image(from_mandel, key, stacked);
+}
+
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -845,16 +858,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '#':                    // 3D overlay
         clear_zoom_box();
         g_overlay_3d = true;
+        restore_from_3d(*frommandel, *kbdchar, *stacked);
+        return main_state::RESTORE_START;
     case '3':                    // restore-from (3d)
 do_3d_transform:
-        if (g_overlay_3d)
-        {
-            g_display_3d = display_3d_modes::B_COMMAND;         // for <b> command
-        }
-        else
-        {
-            g_display_3d = display_3d_modes::YES;
-        }
+        restore_from_3d(*frommandel, *kbdchar, *stacked);
+        return main_state::RESTORE_START;
     case 'r':                    // restore-from
         restore_from_image(*frommandel, *kbdchar, *stacked);
         return main_state::RESTORE_START;
