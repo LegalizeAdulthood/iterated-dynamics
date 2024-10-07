@@ -115,6 +115,15 @@ static void prompt_evolver_options(int key, bool &kbd_more)
     }
 }
 
+static void exit_evolver(bool &kbd_more)
+{
+    g_evolving = evolution_mode_flags::NONE;
+    g_view_window = false;
+    save_param_history();
+    kbd_more = false;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -138,11 +147,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         prompt_evolver_options(*kbdchar, *kbdmore);
         break;
     case 'b': // quick exit from evolve mode
-        g_evolving = evolution_mode_flags::NONE;
-        g_view_window = false;
-        save_param_history();
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        exit_evolver(*kbdmore);
         break;
 
     case 'f':                    // floating pt toggle
