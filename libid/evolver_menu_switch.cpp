@@ -24,6 +24,7 @@
 #include "jb.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "main_menu_switch.h"
 #include "passes_options.h"
 #include "pixel_limits.h"
 #include "rotate.h"
@@ -44,38 +45,10 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        g_julibrot = false;
-        clear_zoom_box();
-        driver_stack_screen();
-        i = get_fract_type();
-        if (i >= 0)
+        if (request_fractal_type(*frommandel))
         {
-            driver_discard_screen();
-            g_save_dac = 0;
-            g_magnitude_calc = true;
-            g_use_old_periodicity = false;
-            g_bad_outside = false;
-            g_ld_check = false;
-            set_current_params();
-            g_evolve_new_discrete_y_parameter_offset = 0;
-            g_evolve_new_discrete_x_parameter_offset = 0;
-            g_evolve_discrete_y_parameter_offset = 0;
-            g_evolve_discrete_x_parameter_offset = 0;
-            g_evolve_max_random_mutation = 1;           // reset param evolution stuff
-            g_set_orbit_corners = false;
-            save_param_history();
-            if (i == 0)
-            {
-                g_init_mode = g_adapter;
-                *frommandel = false;
-            }
-            else if (g_init_mode < 0)   // it is supposed to be...
-            {
-                driver_set_for_text();     // reset to text mode
-            }
             return main_state::IMAGE_START;
         }
-        driver_unstack_screen();
         break;
     case 'x':                    // invoke options screen
     case 'y':

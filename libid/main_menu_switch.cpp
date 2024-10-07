@@ -251,7 +251,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
     }
 }
 
-static bool new_fractal_type(bool &from_mandel)
+bool request_fractal_type(bool &from_mandel)
 {
     g_julibrot = false;
     clear_zoom_box();
@@ -666,7 +666,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        if (new_fractal_type(*frommandel))
+        if (request_fractal_type(*frommandel))
         {
             return main_state::IMAGE_START;
         }
