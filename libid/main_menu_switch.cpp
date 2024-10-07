@@ -543,6 +543,18 @@ main_state get_history(int kbd_char)
     return main_state::IMAGE_START;
 }
 
+void color_cycle(int kbd_char)
+{
+    clear_zoom_box();
+    std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
+    rotate((kbd_char == 'c') ? 0 : ((kbd_char == '+') ? 1 : -1));
+    if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+    {
+        g_color_state = color_state::UNKNOWN;
+        save_history_info();
+    }
+}
+
 static bool color_editing(bool &kbd_more)
 {
     if (g_is_true_color && (g_init_batch == batch_modes::NONE))
@@ -815,14 +827,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
-        clear_zoom_box();
-        std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-        rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-        if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
-        {
-            g_color_state = color_state::UNKNOWN;
-            save_history_info();
-        }
+        color_cycle(*kbdchar);
         return main_state::CONTINUE;
     case 'e':                    // switch to color editing
         if (color_editing(*kbdmore))

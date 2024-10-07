@@ -8,3 +8,4 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
 bool request_fractal_type(bool &from_mandel);
 void toggle_float();
 main_state get_history(int kbd_char);
+void color_cycle(int kbd_char);
