@@ -314,6 +314,24 @@ static void increase_grid_size(bool &kbd_more)
     }
 }
 
+static void toggle_gene_variation(bool &kbd_more)
+{
+    for (GENEBASE &gene : g_gene_bank)
+    {
+        if (gene.mutate == variations::RANDOM)
+        {
+            gene.mutate = variations::WEIGHTED_RANDOM;
+            continue;
+        }
+        if (gene.mutate == variations::WEIGHTED_RANDOM)
+        {
+            gene.mutate = variations::RANDOM;
+        }
+    }
+    kbd_more = false;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -445,20 +463,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-        for (auto &elem : g_gene_bank)
-        {
-            if (elem.mutate == variations::RANDOM)
-            {
-                elem.mutate = variations::WEIGHTED_RANDOM;
-                continue;
-            }
-            if (elem.mutate == variations::WEIGHTED_RANDOM)
-            {
-                elem.mutate = variations::RANDOM;
-            }
-        }
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        toggle_gene_variation(*kbdmore);
         break;
 
     case ID_KEY_ALT_1: // alt + number keys set mutation level
