@@ -112,15 +112,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case 'f':                    // floating pt toggle
-        if (!g_user_float_flag)
-        {
-            g_user_float_flag = true;
-        }
-        else if (g_std_calc_mode != 'o')     // don't go there
-        {
-            g_user_float_flag = false;
-        }
-        g_init_mode = g_adapter;
+        toggle_float();
         return main_state::IMAGE_START;
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:

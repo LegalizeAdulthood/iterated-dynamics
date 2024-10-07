@@ -415,7 +415,7 @@ static bool begin_ant()
     return err >= 0;
 }
 
-static void toggle_float()
+void toggle_float()
 {
     if (!g_user_float_flag)
     {
