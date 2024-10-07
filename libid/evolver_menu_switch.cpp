@@ -572,7 +572,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        set_mutation_level(*kbdchar-1119);
+        set_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1);
         restore_param_history();
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
