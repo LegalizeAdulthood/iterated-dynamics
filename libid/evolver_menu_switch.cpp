@@ -269,6 +269,17 @@ static void evolver_zoom_out()
     }
 }
 
+static void halve_mutation_params(bool &kbd_more)
+{
+    g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
+    g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
+    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
+    g_evolve_y_parameter_range = g_evolve_y_parameter_range / 2;
+    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+    kbd_more = false;
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -384,13 +395,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         delete and the menu if necessary */
 
     case ID_KEY_F2: // halve mutation params and regen
-        g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
-        g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
-        g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
-        g_evolve_y_parameter_range = g_evolve_y_parameter_range / 2;
-        g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
-        *kbdmore = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        halve_mutation_params(*kbdmore);
         break;
 
     case ID_KEY_F3: //double mutation parameters and regenerate
