@@ -35,6 +35,7 @@ add_executable(test-id
     test_is_directory.cpp
     test_load_config.cpp
     test_lowerize_parameter.cpp
+    test_main_menu_switch.cpp
     test_make_path.cpp
     test_math.cpp
     test_math_lcmplx.cpp
