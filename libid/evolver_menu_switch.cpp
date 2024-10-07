@@ -65,6 +65,56 @@ static void save_evolver_image()
     copy_genes_to_bank(gene);
 }
 
+static void prompt_evolver_options(int key, bool &kbd_more)
+{
+    clear_zoom_box();
+    if (g_from_text)
+    {
+        g_from_text = false;
+    }
+    else
+    {
+        driver_stack_screen();
+    }
+    int i;
+    if (key == 'x')
+    {
+        i = get_toggles();
+    }
+    else if (key == 'y')
+    {
+        i = get_toggles2();
+    }
+    else if (key == 'p')
+    {
+        i = passes_options();
+    }
+    else if (key == 'z')
+    {
+        i = get_fract_params(true);
+    }
+    else if (key == ID_KEY_CTL_E || key == ID_KEY_SPACE)
+    {
+        i = get_evolve_Parms();
+    }
+    else
+    {
+        i = get_cmd_string();
+    }
+    driver_unstack_screen();
+    if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
+    {
+        g_truecolor = false; // truecolor doesn't play well with the evolver
+    }
+    if (i > 0)
+    {
+        // time to redraw?
+        save_param_history();
+        kbd_more = false;
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+    }
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -85,51 +135,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'g':
     case ID_KEY_CTL_E:
     case ID_KEY_SPACE:
-        clear_zoom_box();
-        if (g_from_text)
-        {
-            g_from_text = false;
-        }
-        else
-        {
-            driver_stack_screen();
-        }
-        if (*kbdchar == 'x')
-        {
-            i = get_toggles();
-        }
-        else if (*kbdchar == 'y')
-        {
-            i = get_toggles2();
-        }
-        else if (*kbdchar == 'p')
-        {
-            i = passes_options();
-        }
-        else if (*kbdchar == 'z')
-        {
-            i = get_fract_params(true);
-        }
-        else if (*kbdchar == ID_KEY_CTL_E || *kbdchar == ID_KEY_SPACE)
-        {
-            i = get_evolve_Parms();
-        }
-        else
-        {
-            i = get_cmd_string();
-        }
-        driver_unstack_screen();
-        if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
-        {
-            g_truecolor = false;          // truecolor doesn't play well with the evolver
-        }
-        if (i > 0)
-        {
-            // time to redraw?
-            save_param_history();
-            *kbdmore = false;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-        }
+        prompt_evolver_options(*kbdchar, *kbdmore);
         break;
     case 'b': // quick exit from evolve mode
         g_evolving = evolution_mode_flags::NONE;
