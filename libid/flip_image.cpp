@@ -12,6 +12,7 @@
 #include "framain2.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "video.h"
 #include "zoom.h"
 
@@ -40,7 +41,7 @@ void flip_image(int key)
     iyhalf = g_logical_screen_y_dots / 2;
     switch (key)
     {
-    case 24:            // control-X - reverse X-axis
+    case ID_KEY_CTL_X:            // control-X - reverse X-axis
         for (int i = 0; i < ixhalf; i++)
         {
             if (driver_key_pressed())
@@ -72,7 +73,7 @@ void flip_image(int key)
             copy_bf(g_bf_save_y_3rd, g_bf_y_min);        // sy3rd = yymin;
         }
         break;
-    case 25:            // control-Y - reverse Y-aXis
+    case ID_KEY_CTL_Y:            // control-Y - reverse Y-aXis
         for (int j = 0; j < iyhalf; j++)
         {
             if (driver_key_pressed())
@@ -104,7 +105,7 @@ void flip_image(int key)
             copy_bf(g_bf_save_y_3rd, g_bf_y_max);        // sy3rd = yymax;
         }
         break;
-    case 26:            // control-Z - reverse X and Y aXis
+    case ID_KEY_CTL_Z:            // control-Z - reverse X and Y aXis
         for (int i = 0; i < ixhalf; i++)
         {
             if (driver_key_pressed())
