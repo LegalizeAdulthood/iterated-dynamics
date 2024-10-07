@@ -131,7 +131,7 @@ static void move_evolver_selection(int key)
         move_zoom_box(key);
         return;
     }
-    
+
     // if no zoombox, scroll by arrows
     // borrow ctrl cursor keys for moving selection box in evolver mode
     GENEBASE gene[NUM_GENES];
@@ -182,6 +182,34 @@ static void move_evolver_selection(int key)
         drawparmbox(0);
     }
     copy_genes_to_bank(gene);
+}
+
+static void evolve_param_zoom_decrease()
+{
+    if (g_evolve_param_box_count)
+    {
+        g_evolve_param_zoom -= 1.0;
+        if (g_evolve_param_zoom < 1.0)
+        {
+            g_evolve_param_zoom = 1.0;
+        }
+        drawparmbox(0);
+        set_evolve_ranges();
+    }
+}
+
+static void evolve_param_zoom_increase()
+{
+    if (g_evolve_param_box_count)
+    {
+        g_evolve_param_zoom += 1.0;
+        if (g_evolve_param_zoom > (double) g_evolve_image_grid_size /2.0)
+        {
+            g_evolve_param_zoom = (double) g_evolve_image_grid_size /2.0;
+        }
+        drawparmbox(0);
+        set_evolve_ranges();
+    }
 }
 
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
@@ -270,28 +298,10 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         skew_zoom_right();
         break;
     case ID_KEY_CTL_PAGE_UP:
-        if (g_evolve_param_box_count)
-        {
-            g_evolve_param_zoom -= 1.0;
-            if (g_evolve_param_zoom < 1.0)
-            {
-                g_evolve_param_zoom = 1.0;
-            }
-            drawparmbox(0);
-            set_evolve_ranges();
-        }
+        evolve_param_zoom_decrease();
         break;
     case ID_KEY_CTL_PAGE_DOWN:
-        if (g_evolve_param_box_count)
-        {
-            g_evolve_param_zoom += 1.0;
-            if (g_evolve_param_zoom > (double) g_evolve_image_grid_size /2.0)
-            {
-                g_evolve_param_zoom = (double) g_evolve_image_grid_size /2.0;
-            }
-            drawparmbox(0);
-            set_evolve_ranges();
-        }
+        evolve_param_zoom_increase();
         break;
 
     case ID_KEY_PAGE_UP:                // page up
