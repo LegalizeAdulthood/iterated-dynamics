@@ -124,6 +124,66 @@ static void exit_evolver(bool &kbd_more)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
+static void move_evolver_selection(int key)
+{
+    if (!g_box_count)
+    {
+        move_zoom_box(key);
+        return;
+    }
+    
+    // if no zoombox, scroll by arrows
+    // borrow ctrl cursor keys for moving selection box in evolver mode
+    GENEBASE gene[NUM_GENES];
+    copy_genes_from_bank(gene);
+    if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+    {
+        if (key == ID_KEY_CTL_LEFT_ARROW)
+        {
+            g_evolve_param_grid_x--;
+        }
+        if (key == ID_KEY_CTL_RIGHT_ARROW)
+        {
+            g_evolve_param_grid_x++;
+        }
+        if (key == ID_KEY_CTL_UP_ARROW)
+        {
+            g_evolve_param_grid_y--;
+        }
+        if (key == ID_KEY_CTL_DOWN_ARROW)
+        {
+            g_evolve_param_grid_y++;
+        }
+        if (g_evolve_param_grid_x < 0)
+        {
+            g_evolve_param_grid_x = g_evolve_image_grid_size - 1;
+        }
+        if (g_evolve_param_grid_x > (g_evolve_image_grid_size - 1))
+        {
+            g_evolve_param_grid_x = 0;
+        }
+        if (g_evolve_param_grid_y < 0)
+        {
+            g_evolve_param_grid_y = g_evolve_image_grid_size - 1;
+        }
+        if (g_evolve_param_grid_y > (g_evolve_image_grid_size - 1))
+        {
+            g_evolve_param_grid_y = 0;
+        }
+        const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+        g_logical_screen_x_offset = g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
+        g_logical_screen_y_offset = g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
+
+        restore_param_history();
+        fiddleparms(gene, unspiralmap()); // change all parameters
+        // to values appropriate to the image selected
+        set_evolve_ranges();
+        change_box(0, 0);
+        drawparmbox(0);
+    }
+    copy_genes_to_bank(gene);
+}
+
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
     int i;
@@ -201,63 +261,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        // borrow ctrl cursor keys for moving selection box
-        // in evolver mode
-        if (g_box_count)
-        {
-            GENEBASE gene[NUM_GENES];
-            copy_genes_from_bank(gene);
-            if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
-            {
-                if (*kbdchar == ID_KEY_CTL_LEFT_ARROW)
-                {
-                    g_evolve_param_grid_x--;
-                }
-                if (*kbdchar == ID_KEY_CTL_RIGHT_ARROW)
-                {
-                    g_evolve_param_grid_x++;
-                }
-                if (*kbdchar == ID_KEY_CTL_UP_ARROW)
-                {
-                    g_evolve_param_grid_y--;
-                }
-                if (*kbdchar == ID_KEY_CTL_DOWN_ARROW)
-                {
-                    g_evolve_param_grid_y++;
-                }
-                if (g_evolve_param_grid_x <0)
-                {
-                    g_evolve_param_grid_x = g_evolve_image_grid_size -1;
-                }
-                if (g_evolve_param_grid_x > (g_evolve_image_grid_size -1))
-                {
-                    g_evolve_param_grid_x = 0;
-                }
-                if (g_evolve_param_grid_y < 0)
-                {
-                    g_evolve_param_grid_y = g_evolve_image_grid_size -1;
-                }
-                if (g_evolve_param_grid_y > (g_evolve_image_grid_size -1))
-                {
-                    g_evolve_param_grid_y = 0;
-                }
-                const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
-                g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
-                g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_logical_screen_y_size_dots+1+grout);
-
-                restore_param_history();
-                fiddleparms(gene, unspiralmap()); // change all parameters
-                // to values appropriate to the image selected
-                set_evolve_ranges();
-                change_box(0, 0);
-                drawparmbox(0);
-            }
-            copy_genes_to_bank(gene);
-        }
-        else                         // if no zoombox, scroll by arrows
-        {
-            move_zoom_box(*kbdchar);
-        }
+        move_evolver_selection(*kbdchar);
         break;
     case ID_KEY_CTL_HOME:               // Ctrl-home
         skew_zoom_left();
