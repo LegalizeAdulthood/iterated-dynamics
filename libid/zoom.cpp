@@ -1085,7 +1085,7 @@ void reset_zoom_corners()
     }
 }
 
-void request_zoom_in(bool &kbd_more)
+main_state request_zoom_in(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_zoom_box_width != 0.0)
     {
@@ -1097,6 +1097,7 @@ void request_zoom_in(bool &kbd_more)
     {
         kbd_more = false;
     }
+    return main_state::NOTHING;
 }
 
 void request_zoom_out(bool &kbd_more)

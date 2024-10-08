@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #pragma once
+#include "main_state.h"
 
 struct coords
 {
@@ -28,7 +29,7 @@ void clear_zoom_box();
 void move_zoom_box(int key_num);
 void reset_zoom_corners();
 
-void request_zoom_in(bool &kbd_more);
+main_state request_zoom_in(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 void request_zoom_out(bool &kbd_more);
 void skew_zoom_left();
 void skew_zoom_right();

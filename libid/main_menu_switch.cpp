@@ -251,7 +251,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
     }
 }
 
-main_state request_fractal_type(bool &from_mandel)
+main_state request_fractal_type(int &, bool &from_mandel, bool &, bool &)
 {
     g_julibrot = false;
     clear_zoom_box();
@@ -287,7 +287,7 @@ main_state request_fractal_type(bool &from_mandel)
     return main_state::NOTHING;
 }
 
-static void prompt_options(bool &kbd_more, const int kbdchar)
+static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
 {
     const long old_maxit = g_max_iterations;
     clear_zoom_box();
@@ -300,31 +300,31 @@ static void prompt_options(bool &kbd_more, const int kbdchar)
         driver_stack_screen();
     }
     int i;
-    if (kbdchar == 'x')
+    if (key == 'x')
     {
         i = get_toggles();
     }
-    else if (kbdchar == 'y')
+    else if (key == 'y')
     {
         i = get_toggles2();
     }
-    else if (kbdchar == 'p')
+    else if (key == 'p')
     {
         i = passes_options();
     }
-    else if (kbdchar == 'z')
+    else if (key == 'z')
     {
         i = get_fract_params(true);
     }
-    else if (kbdchar == 'v')
+    else if (key == 'v')
     {
         i = get_view_params(); // get the parameters
     }
-    else if (kbdchar == ID_KEY_CTL_B)
+    else if (key == ID_KEY_CTL_B)
     {
         i = get_browse_params();
     }
-    else if (kbdchar == ID_KEY_CTL_E)
+    else if (key == ID_KEY_CTL_E)
     {
         i = get_evolve_Parms();
         if (i > 0)
@@ -334,7 +334,7 @@ static void prompt_options(bool &kbd_more, const int kbdchar)
             g_log_map_auto_calculate = false; // turn it off
         }
     }
-    else if (kbdchar == ID_KEY_CTL_F)
+    else if (key == ID_KEY_CTL_F)
     {
         i = get_sound_params();
     }
@@ -372,9 +372,10 @@ static void prompt_options(bool &kbd_more, const int kbdchar)
         kbd_more = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
+    return main_state::NOTHING;
 }
 
-static bool begin_ant()
+static main_state begin_ant(int &, bool &, bool &, bool &)
 {
     clear_zoom_box();
     double oldparm[MAX_PARAMS];
@@ -412,10 +413,10 @@ static bool begin_ant()
     {
         g_params[j] = oldparm[j];
     }
-    return err >= 0;
+    return err >= 0 ? main_state::CONTINUE : main_state::NOTHING;
 }
 
-void toggle_float()
+main_state toggle_float(int &, bool &, bool &, bool &)
 {
     if (!g_user_float_flag)
     {
@@ -426,9 +427,20 @@ void toggle_float()
         g_user_float_flag = false;
     }
     g_init_mode = g_adapter;
+    return main_state::IMAGE_START;
 }
 
-static void show_orbit_window()
+static main_state request_3d_fractal_params(int &, bool &, bool &kbd_more, bool &)
+{
+    if (get_fract3d_params() >= 0) // get the parameters
+    {
+        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        kbd_more = false; // time to redraw
+    }
+    return main_state::NOTHING;
+}
+
+static main_state show_orbit_window(int &, bool &, bool &, bool &)
 {
     // must use standard fractal and have a float variant
     if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
@@ -441,9 +453,31 @@ static void show_orbit_window()
         clear_zoom_box();
         Jiim(jiim_types::ORBIT);
     }
+    return main_state::NOTHING;
 }
 
-static void inverse_julia_toggle(bool &kbd_more)
+static main_state space_command(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+{
+    if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
+    {
+        return main_state::NOTHING;
+    }
+
+    if (g_fractal_type == fractal_type::CELLULAR)
+    {
+        g_cellular_next_screen = !g_cellular_next_screen;
+        g_calc_status = calc_status_value::RESUMABLE;
+        kbd_more = false;
+    }
+    else
+    {
+        toggle_mandelbrot_julia(kbd_more, from_mandel);
+    }
+    
+    return main_state::NOTHING;
+}
+
+static main_state inverse_julia_toggle(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     // if the inverse types proliferate, something more elegant will be needed
     if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP ||
@@ -475,6 +509,7 @@ static void inverse_julia_toggle(bool &kbd_more)
     {
         driver_buzzer(buzzer_codes::PROBLEM);
     }
+    return main_state::NOTHING;
 }
 
 static main_state unstack_file(bool &stacked)
@@ -543,19 +578,41 @@ main_state get_history(int kbd_char)
     return main_state::IMAGE_START;
 }
 
-void color_cycle(int kbd_char)
+static main_state main_history(int &key, bool &, bool &, bool &stacked)
+{
+    if (const main_state result = unstack_file(stacked); result != main_state::NOTHING)
+    {
+        return result;
+    }
+    if (const main_state result = get_history(key); result != main_state::NOTHING)
+    {
+        return result;
+    }
+    return main_state::NOTHING;
+}
+
+static main_state request_shell(int &, bool &, bool &, bool &)
+{
+    driver_stack_screen();
+    driver_shell();
+    driver_unstack_screen();
+    return main_state::NOTHING;
+}
+
+main_state color_cycle(int &key, bool &, bool &, bool &)
 {
     clear_zoom_box();
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-    rotate((kbd_char == 'c') ? 0 : ((kbd_char == '+') ? 1 : -1));
+    rotate((key == 'c') ? 0 : ((key == '+') ? 1 : -1));
     if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
     {
         g_color_state = color_state::UNKNOWN;
         save_history_info();
     }
+    return main_state::CONTINUE;
 }
 
-bool color_editing(bool &kbd_more)
+main_state color_editing(int &, bool &, bool &kbd_more, bool &)
 {
     if (g_is_true_color && (g_init_batch == batch_modes::NONE))
     {
@@ -564,10 +621,10 @@ bool color_editing(bool &kbd_more)
         {
             kbd_more = false;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
-            return false;
+            return main_state::NOTHING;
         }
 
-        return true;
+        return main_state::CONTINUE;
     }
 
     clear_zoom_box();
@@ -582,10 +639,20 @@ bool color_editing(bool &kbd_more)
             save_history_info();
         }
     }
-    return true;
+    return main_state::CONTINUE;
 }
 
-void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
+static main_state request_save_image(int &, bool &, bool &, bool &)
+{
+    if (driver_diskp() && g_disk_targa)
+    {
+        return main_state::CONTINUE; // disk video and targa, nothing to save
+    }
+    save_image(g_save_filename);
+    return main_state::CONTINUE;
+}
+
+main_state restore_from_image(int &kbd_char, bool &from_mandel, bool & /*kbd_more*/, bool &stacked)
 {
     g_compare_gif = false;
     from_mandel = false;
@@ -601,7 +668,7 @@ void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
                 driver_stack_screen();   // save graphics image
                 g_read_filename = g_save_filename;
                 g_show_file = 0;
-                return;
+                return main_state::RESTORE_START;
             }
         }
         else
@@ -620,9 +687,10 @@ void restore_from_image(bool &from_mandel, int kbd_char, bool &stacked)
         g_started_resaves = false;
     }
     g_show_file = -1;
+    return main_state::RESTORE_START;
 }
 
-static bool look_for_files(bool &stacked)
+static main_state look_for_files(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if ((g_zoom_box_width != 0) || driver_diskp())
     {
@@ -631,9 +699,16 @@ static bool look_for_files(bool &stacked)
     }
     else if (look(&stacked))
     {
-        return true;
+        return main_state::RESTORE_START;
     }
-    return false;
+    return main_state::NOTHING;
+}
+
+static main_state request_make_batch_file(
+    int & /*key*/, bool & /*from_mandel*/, bool & /*kbd_more*/, bool & /*stacked*/)
+{
+    make_batch_file();
+    return main_state::NOTHING;
 }
 
 static void start_evolution(bool &kbd_more, int kbd_char)
@@ -664,7 +739,7 @@ bool requested_video_fn(bool &kbd_more, int kbd_char)
     return false;
 }
 
-static void restore_from_3d(bool &from_mandel, int key, bool &stacked)
+static main_state restore_from_3d(int &key, bool &from_mandel, bool &kbdmore, bool &stacked)
 {
     if (g_overlay_3d)
     {
@@ -674,7 +749,14 @@ static void restore_from_3d(bool &from_mandel, int key, bool &stacked)
     {
         g_display_3d = display_3d_modes::YES;
     }
-    restore_from_image(from_mandel, key, stacked);
+    return restore_from_image(key, from_mandel, kbdmore, stacked);
+}
+
+static main_state request_3d_overlay(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+{
+    clear_zoom_box();
+    g_overlay_3d = true;
+    return restore_from_3d(key, from_mandel, kbd_more, stacked);
 }
 
 static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
@@ -705,8 +787,7 @@ static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, 
         key = '3';
         driver_unstack_screen();
         // pretend '3' was keyed
-        restore_from_3d(from_mandel, key, stacked);
-        return main_state::RESTORE_START;
+        return restore_from_3d(key, from_mandel, kbd_more, stacked);
     }
     if (i & +cmdarg_flags::FRACTAL_PARAM)
     {
@@ -722,7 +803,7 @@ static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, 
     return main_state::NOTHING;
 }
 
-static main_state random_dot_stereogram()
+static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
 {
     clear_zoom_box();
     if (get_rds_params() >= 0)
@@ -736,7 +817,7 @@ static main_state random_dot_stereogram()
     return main_state::NOTHING;
 }
 
-static main_state request_starfield_params()
+static main_state request_starfield_params(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     clear_zoom_box();
     if (get_starfield_params() >= 0)
@@ -749,6 +830,47 @@ static main_state request_starfield_params()
     }
     return main_state::NOTHING;
 }
+
+static MainMenuHandler s_handlers[]{
+    {ID_KEY_CTL_A, begin_ant},             //
+    {ID_KEY_CTL_B, prompt_options},        //
+    {ID_KEY_CTL_E, prompt_options},        //
+    {ID_KEY_CTL_F, prompt_options},        //
+    {ID_KEY_CTL_H, main_history},          //
+    {ID_KEY_ENTER, request_zoom_in},       //
+    {ID_KEY_CTL_O, show_orbit_window},     //
+    {ID_KEY_CTL_S, random_dot_stereogram}, //
+    {ID_KEY_CTL_X, flip_image},            //
+    {ID_KEY_CTL_Y, flip_image},            //
+    {ID_KEY_CTL_Z, flip_image},            //
+    {ID_KEY_CTL_BACKSLASH, main_history},  //
+    {ID_KEY_SPACE, space_command},         //
+    {'+', color_cycle},                    //
+    {'-', color_cycle},                    //
+    {'2', execute_commands},               //
+    {'@', execute_commands},               //
+    {'\\', main_history},                  //
+    {'a', request_starfield_params},       //
+    {'b', request_make_batch_file},        //
+    {'c', color_cycle},                    //
+    {'d', request_shell},                  //
+    {'e', color_editing},                  //
+    {'f', toggle_float},                   //
+    {'g', prompt_options},                 //
+    {'h', main_history},                   //
+    {'i', request_3d_fractal_params},      //
+    {'j', inverse_julia_toggle},           //
+    {'k', random_dot_stereogram},          //
+    {'o', show_orbit_window},              //
+    {'p', prompt_options},                 //
+    {'s', request_save_image},             //
+    {'t', request_fractal_type},           //
+    {'v', prompt_options},                 //
+    {'x', prompt_options},                 //
+    {'y', prompt_options},                 //
+    {'z', prompt_options},                 //
+    {ID_KEY_ENTER_2, request_zoom_in},     //
+};
 
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
@@ -765,13 +887,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        return request_fractal_type(*frommandel);
+        return request_fractal_type(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case ID_KEY_CTL_X:                     // Ctl-X, Ctl-Y, CTL-Z do flipping
     case ID_KEY_CTL_Y:
     case ID_KEY_CTL_Z:
-        flip_image(*kbdchar);
-        break;
+        return flip_image(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'x':          // invoke options screen
     case 'y':          //
@@ -782,136 +903,77 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_B: // browsing
     case ID_KEY_CTL_E: // evolving
     case ID_KEY_CTL_F: // sound options
-        prompt_options(*kbdmore, *kbdchar);
-        break;
+        return prompt_options(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case '@':                    // execute commands
     case '2':                    // execute commands
         return execute_commands(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'f':                    // floating pt toggle
-        toggle_float();
-        return main_state::IMAGE_START;
+        return toggle_float(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'i':                    // 3d fractal parms
-        if (get_fract3d_params() >= 0)    // get the parameters
-        {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
-            *kbdmore = false;    // time to redraw
-        }
-        break;
+        return request_3d_fractal_params(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_A:                     // ^a Ant
-        if (begin_ant())
-        {
-            return main_state::CONTINUE;
-        }
-        break;
+        return begin_ant(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'k':                    // ^s is irritating, give user a single key
     case ID_KEY_CTL_S:                     // ^s RDS
-        return random_dot_stereogram();
+        return random_dot_stereogram(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case 'a':                    // starfield parms
-        return request_starfield_params();
+        return request_starfield_params(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_O:                     // ctrl-o
     case 'o':
-        show_orbit_window();
-        break;
+        return show_orbit_window(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_SPACE:                  // spacebar, toggle mand/julia
-        if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
-        {
-            break;
-        }
-        if (g_fractal_type == fractal_type::CELLULAR)
-        {
-            g_cellular_next_screen = !g_cellular_next_screen;
-            g_calc_status = calc_status_value::RESUMABLE;
-            *kbdmore = false;
-        }
-        else
-        {
-            toggle_mandelbrot_julia(*kbdmore, *frommandel);
-        }
-        break;
+        return space_command(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'j':                    // inverse julia toggle
-        inverse_julia_toggle(*kbdmore);
-        break;
+        return inverse_julia_toggle(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
-        if (const main_state result = unstack_file(*stacked); result != main_state::NOTHING)
-        {
-            return result;
-        }
-        if (const main_state result = get_history(*kbdchar); result != main_state::NOTHING)
-        {
-            return result;
-        }
-        break;
+        return main_history(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'd':                    // shell to MS-DOS
-        driver_stack_screen();
-        driver_shell();
-        driver_unstack_screen();
-        break;
+        return request_shell(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
-        color_cycle(*kbdchar);
-        return main_state::CONTINUE;
+        return color_cycle(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'e':                    // switch to color editing
-        if (color_editing(*kbdmore))
-        {
-            return main_state::CONTINUE;
-        }
-        break;
+        return color_editing(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 's':                    // save-to-disk
-        if (driver_diskp() && g_disk_targa)
-        {
-            return main_state::CONTINUE;  // disk video and targa, nothing to save
-        }
-        save_image(g_save_filename);
-        return main_state::CONTINUE;
+        return request_save_image(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case '#':                    // 3D overlay
-        clear_zoom_box();
-        g_overlay_3d = true;
-        restore_from_3d(*frommandel, *kbdchar, *stacked);
-        return main_state::RESTORE_START;
+        return request_3d_overlay(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case '3':                    // restore-from (3d)
-        restore_from_3d(*frommandel, *kbdchar, *stacked);
-        return main_state::RESTORE_START;
+        return restore_from_3d(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'r':                    // restore-from
-        restore_from_image(*frommandel, *kbdchar, *stacked);
-        return main_state::RESTORE_START;
+        return restore_from_image(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'l':
     case 'L':                    // Look for other files within this view
-        if (look_for_files(*stacked))
-        {
-            return main_state::RESTORE_START;
-        }
-        break;
+        return look_for_files(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'b':                    // make batch file
-        make_batch_file();
-        break;
+        return request_make_batch_file(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        request_zoom_in(*kbdmore);
-        break;
+        return request_zoom_in(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter

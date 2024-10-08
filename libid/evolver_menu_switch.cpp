@@ -356,7 +356,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        return request_fractal_type(*frommandel);
+        return request_fractal_type(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case 'x':                    // invoke options screen
     case 'y':
@@ -373,8 +373,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
 
     case 'f':                    // floating pt toggle
-        toggle_float();
-        return main_state::IMAGE_START;
+        return toggle_float(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
@@ -389,28 +388,21 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
-        color_cycle(*kbdchar);
-        return main_state::CONTINUE;
+        return color_cycle(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 'e':                    // switch to color editing
-        if (color_editing(*kbdmore))
-        {
-            return main_state::CONTINUE;
-        }
-        break;
+        return color_editing(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case 's':                    // save-to-disk
         save_evolver_image();
         return main_state::CONTINUE;
 
     case 'r':                    // restore-from
-        restore_from_image(*frommandel, *kbdchar, *stacked);
-        return main_state::RESTORE_START;
+        return restore_from_image(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        request_zoom_in(*kbdmore);
-        break;
+        return request_zoom_in(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
