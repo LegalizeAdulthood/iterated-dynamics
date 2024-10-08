@@ -46,6 +46,7 @@ add_executable(id WIN32
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC libid)
+set_property(TARGET id PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id
     DESTINATION .
     RUNTIME_DEPENDENCIES
