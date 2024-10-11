@@ -13,7 +13,7 @@
       "cacheVariables": {
         "ID_PROJECT_NAME": {
           "type": "STRING",
-          "value": "Iterated Dynamics ${presetName}"
+          "value": "Iterated Dynamics ${sourceDirName} ${presetName}"
         }
       }
     },
@@ -21,7 +21,7 @@
       "name": "sibling-build-preset",
       "hidden": true,
       "description": "Use a sibling directory for the build based on the preset name",
-      "binaryDir": "${sourceDir}/../build-${presetName}"
+      "binaryDir": "${sourceDir}/../build-${sourceDirName}-${presetName}"
     },
     {
       "name": "ci-build-preset",
