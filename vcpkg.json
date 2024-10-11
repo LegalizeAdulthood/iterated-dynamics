@@ -12,6 +12,7 @@
     {
       "name": "libx11",
       "platform": "!windows"
-    }
+    },
+    "wxwidgets"
   ]
 }
