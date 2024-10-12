@@ -451,93 +451,121 @@ int  bnMANRbailout()
 
 int  bfMODbailout()
 {
-    long longmagnitude;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     add_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-
-    longmagnitude = bftoint(g_bf_tmp);
-    if (longmagnitude >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_bf_tmp, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
 int  bfREALbailout()
 {
-    long longtempsqrx;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    longtempsqrx = bftoint(g_tmp_sqr_x_bf);
-    if (longtempsqrx >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
+
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
+
 int  bfIMAGbailout()
 {
-    long longtempsqry;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    longtempsqry = bftoint(g_tmp_sqr_y_bf);
-    if (longtempsqry >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
+
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
 int  bfORbailout()
 {
-    long longtempsqrx;
-    long longtempsqry;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    longtempsqrx = bftoint(g_tmp_sqr_x_bf);
-    longtempsqry = bftoint(g_tmp_sqr_y_bf);
-    if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 || cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
+
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
 int  bfANDbailout()
 {
-    long longtempsqrx;
-    long longtempsqry;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    longtempsqrx = bftoint(g_tmp_sqr_x_bf);
-    longtempsqry = bftoint(g_tmp_sqr_y_bf);
-    if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 && cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
+
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
 int  bfMANHbailout()
 {
-    long longtempmag;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -546,32 +574,41 @@ int  bfMANHbailout()
     abs_bf(g_old_z_bf.y, g_new_z_bf.y);
     add_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y);
     square_bf(g_old_z_bf.x, g_bf_tmp);
-    longtempmag = bftoint(g_old_z_bf.x);
-    if (longtempmag >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
+
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
 int  bfMANRbailout()
 {
-    long longtempmag;
+    int saved;
+    bf_t tmp1;
+    saved = save_stack();
+    tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     add_bf(g_bf_tmp, g_new_z_bf.x, g_new_z_bf.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bf is just used as a temporary variable
     square_bf(g_old_z_bf.x, g_bf_tmp);
-    longtempmag = bftoint(g_old_z_bf.x);
-    if (longtempmag >= (long)g_magnitude_limit)
+    floattobf(tmp1, g_magnitude_limit);
+    if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
     {
+        restore_stack(saved);
         return 1;
     }
+
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
+    restore_stack(saved);
     return 0;
 }
 
