@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "goodbye.h"
+#include "ui/id_main.h"
+#include "ui/init_failure.h"
 
 #include <wx/wx.h>
 #include <wx/evtloop.h>
 
 #include <array>
 #include <cassert>
+
+void init_failure(const char *message)
+{
+    wxMessageBox(message, "Initialization Failure");
+}
 
 class IdApp : public wxApp
 {
@@ -61,6 +67,10 @@ bool IdApp::OnInit()
     frame->Show(true);
 
     // start a thread to call id_main here?
+    int argc{1};
+    char id[]{"id"};
+    char *argv[]{id};
+    id_main(argc, argv);
     
     return true;
 }
