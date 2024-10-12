@@ -1,42 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "id_main.h"
-
-#if 0
-#include "win_defines.h"
-#include <DbgHelp.h>
-#include <Shlwapi.h>
-#include <Windows.h>
-#include <crtdbg.h>
-
-#include <cctype>
-#include <cstdarg>
-
-#include "create_minidump.h"
-#include "instance.h"
-#include "tos.h"
-
-int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
-{
-    int result = 0;
-
-    __try
-    {
-        g_top_of_stack = (char *) &result;
-        g_instance = instance;
-        _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
-        result = id_main(__argc, __argv);
-    }
-    __except (create_minidump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
-    {
-        result = -1;
-    }
-
-    return result;
-}
-#endif
+#include "goodbye.h"
 
 #include <wx/wx.h>
+#include <wx/evtloop.h>
+
+#include <array>
+#include <cassert>
 
 class IdApp : public wxApp
 {
@@ -44,23 +14,43 @@ public:
     ~IdApp() override = default;
 
     bool OnInit() override;
+    void pump_messages(bool wait_flag);
 };
 
 class IdFrame : public wxFrame
 {
 public:
     IdFrame();
+    IdFrame(const IdFrame &rhs) = delete;
+    IdFrame(IdFrame &&rhs) = delete;
     ~IdFrame() override = default;
+    IdFrame &operator=(const IdFrame &rhs) = delete;
+    IdFrame &operator=(IdFrame &&rhs) = delete;
+
+    int get_key_press(bool wait_for_key);
 
 private:
-    void OnHello(wxCommandEvent &event);
-    void OnExit(wxCommandEvent &event);
-    void OnAbout(wxCommandEvent &event);
-};
+    enum
+    {
+        KEY_BUF_MAX = 80,
+    };
 
-enum
-{
-    ID_Hello = 1,
+    void on_exit(wxCommandEvent &event);
+    void on_about(wxCommandEvent &event);
+    void on_char(wxKeyEvent &event);
+    void add_key_press(unsigned int key);
+    bool key_buffer_full() const
+    {
+        return m_key_press_count >= KEY_BUF_MAX;
+    }
+
+    bool m_timed_out{};
+
+    // the keypress buffer
+    unsigned int m_key_press_count{};
+    unsigned int m_key_press_head{};
+    unsigned int m_key_press_tail{};
+    std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
 };
 
 wxIMPLEMENT_APP(IdApp);
@@ -69,15 +59,28 @@ bool IdApp::OnInit()
 {
     IdFrame *frame = new IdFrame();
     frame->Show(true);
+
+    // start a thread to call id_main here?
+    
     return true;
+}
+
+void IdApp::pump_messages(bool wait_flag)
+{
+    wxEventLoopBase *loop = GetMainLoop();
+    while (loop->Pending())
+    {
+        if (!loop->Dispatch())
+        {
+            return;
+        }
+    }
 }
 
 IdFrame::IdFrame() :
     wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics"))
 {
     wxMenu *file = new wxMenu;
-    file->Append(ID_Hello, "&Hello...\tCtrl+H", "Hep shown in status bar for this menu item");
-    file->AppendSeparator();
     file->Append(wxID_EXIT);
 
     wxMenu *help = new wxMenu;
@@ -90,25 +93,65 @@ IdFrame::IdFrame() :
     wxFrameBase::SetMenuBar(bar);
 
     wxFrameBase::CreateStatusBar();
-    wxFrameBase::SetStatusText("Welcome to Iterated Dynamics!");
 
-    Bind(wxEVT_MENU, &IdFrame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &IdFrame::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &IdFrame::OnExit, this, wxID_EXIT);
+    Bind(wxEVT_MENU, &IdFrame::on_about, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &IdFrame::on_exit, this, wxID_EXIT);
+    Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
 }
 
-void IdFrame::OnHello(wxCommandEvent &event)
+int IdFrame::get_key_press(bool wait_for_key)
 {
-    wxLogMessage("Hello from Iterated Dynamics!");
+    wxGetApp().pump_messages(wait_for_key);
+    if (wait_for_key && m_timed_out)
+    {
+        return 0;
+    }
+
+    if (m_key_press_count == 0)
+    {
+        _ASSERTE(!wait_for_key);
+        return 0;
+    }
+
+    const int i = m_key_press_buffer[m_key_press_tail];
+
+    if (++m_key_press_tail >= KEY_BUF_MAX)
+    {
+        m_key_press_tail = 0;
+    }
+    m_key_press_count--;
+
+    return i;
 }
 
-void IdFrame::OnExit(wxCommandEvent &event)
+void IdFrame::on_exit(wxCommandEvent &event)
 {
     Close(true);
 }
 
-void IdFrame::OnAbout(wxCommandEvent &event)
+void IdFrame::on_about(wxCommandEvent &event)
 {
-    wxMessageBox(
-        "Iterated Dynamics is a fractal renderer", "About Iterated Dynamics", wxOK | wxICON_INFORMATION);
+    wxMessageBox("Iterated Dynamics 2.0", "About Iterated Dynamics", wxOK | wxICON_INFORMATION);
+}
+
+void IdFrame::on_char(wxKeyEvent &event)
+{
+    int key = event.GetKeyCode();
+}
+
+void IdFrame::add_key_press(unsigned int key)
+{
+    if (key_buffer_full())
+    {
+        assert(m_key_press_count < KEY_BUF_MAX);
+        // no room
+        return;
+    }
+
+    m_key_press_buffer[m_key_press_head] = key;
+    if (++m_key_press_head >= KEY_BUF_MAX)
+    {
+        m_key_press_head = 0;
+    }
+    m_key_press_count++;
 }
