@@ -6,9 +6,7 @@
 
 #include <cstring>
 
-extern Driver *x11_driver;
-extern Driver *g_gdi_driver;
-extern Driver *g_disk_driver;
+extern Driver *g_wx_driver;
 
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
@@ -45,16 +43,11 @@ void load_driver(Driver *drv, int *argc, char **argv)
 //
 int init_drivers(int *argc, char **argv)
 {
-#if HAVE_X11_DRIVER
-    load_driver(x11_driver, argc, argv);
+#if HAVE_WX_DRIVER
+    load_driver(g_wx_driver, argc, argv);
 #endif
-
 #if HAVE_WIN32_DISK_DRIVER
     load_driver(g_disk_driver, argc, argv);
-#endif
-
-#if HAVE_GDI_DRIVER
-    load_driver(g_gdi_driver, argc, argv);
 #endif
 
     return s_num_drivers;     // number of drivers supported at runtime

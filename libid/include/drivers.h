@@ -124,16 +124,11 @@ public:
     HAVE_GDI_DRIVER         Win32 GDI driver
     HAVE_WIN32_DISK_DRIVER  Win32 disk driver
 */
-#if defined(XFRACT)
-#define HAVE_X11_DRIVER         1
-#define HAVE_GDI_DRIVER         0
-#define HAVE_WIN32_DISK_DRIVER  0
-#endif
-#if defined(_WIN32)
-#define HAVE_X11_DRIVER         0
-#define HAVE_GDI_DRIVER         1
-#define HAVE_WIN32_DISK_DRIVER  1
-#endif
+#define HAVE_WX_DRIVER 1
+#define HAVE_X11_DRIVER 0
+#define HAVE_GDI_DRIVER 0
+#define HAVE_WIN32_DISK_DRIVER 0
+
 void load_driver(Driver *drv, int *argc, char **argv);
 int init_drivers(int *argc, char **argv);
 void add_video_mode(Driver *drv, VideoInfo *mode);
