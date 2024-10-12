@@ -26,10 +26,11 @@ check_include_file("Windows.h"  HAVE_WINDOWS_H)
 check_include_file("X11/X11.h"  HAVE_X11_H)
 
 # Determine available driver types
-set(ID_HAVE_CURSES_DRIVER       OFF) # not yet implemented
-set(ID_HAVE_X11_DRIVER          ${HAVE_X11_H})
-set(ID_HAVE_GDI_DRIVER          ${HAVE_WINDOWS_H})
-set(ID_HAVE_WIN32_DISK_DRIVER   ${HAVE_WINDOWS_H})
+set(ID_HAVE_WX_DRIVER ON)
+set(ID_HAVE_CURSES_DRIVER OFF)
+set(ID_HAVE_X11_DRIVER OFF)
+set(ID_HAVE_GDI_DRIVER OFF)
+set(ID_HAVE_WIN32_DISK_DRIVER OFF)
 configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
 
 # Determine file descriptor I/O flavor
