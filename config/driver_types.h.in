@@ -7,11 +7,13 @@
 #pragma once
 
 // Define the drivers to be included in the compilation:
+//  ID_HAVE_WX_DRIVER          wxWidgets driver
 //  ID_HAVE_CURSES_DRIVER      Curses based disk driver (no current implementation)
 //  ID_HAVE_X11_DRIVER         X11 code path
 //  ID_HAVE_GDI_DRIVER         Win32 GDI driver
 //  ID_HAVE_WIN32_DISK_DRIVER  Win32 disk driver
 //
+#cmakedefine01 ID_HAVE_WX_DRIVER
 #cmakedefine01 ID_HAVE_CURSES_DRIVER
 #cmakedefine01 ID_HAVE_X11_DRIVER
 #cmakedefine01 ID_HAVE_GDI_DRIVER
@@ -27,4 +29,7 @@ extern Driver *g_gdi_driver;
 #endif
 #if ID_HAVE_WIN32_DISK_DRIVER
 extern Driver *g_disk_driver;
+#endif
+#if ID_HAVE_WX_DRIVER
+extern Driver *g_wx_driver;
 #endif
