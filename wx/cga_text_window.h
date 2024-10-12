@@ -1,5 +1,7 @@
 #pragma once
 
+#include <config/port.h>
+
 #include <vector>
 
 enum
@@ -10,8 +12,8 @@ enum
 
 struct Screen
 {
-    std::vector<BYTE> chars;
-    std::vector<BYTE> attrs;
+    std::vector<Byte> chars;
+    std::vector<Byte> attrs;
 };
 
 class CGATextWindow

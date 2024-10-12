@@ -55,6 +55,10 @@ int init_drivers(int *argc, char **argv)
     load_driver(g_gdi_driver, argc, argv);
 #endif
 
+#if ID_HAVE_WX_DRIVER
+    load_driver(g_wx_driver, argc, argv);
+#endif
+
     return s_num_drivers;     // number of drivers supported at runtime
 }
 

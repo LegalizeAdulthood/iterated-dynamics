@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "drivers.h"
+#include "misc/Driver.h"
 
 #include "cga_text_window.h"
 
@@ -34,7 +34,7 @@ public:
     void unget_key(int key) override;
     int get_key() override;
     void hide_text_cursor() override;
-    void set_video_mode(VIDEOINFO *mode) override;
+    void set_video_mode(VideoInfo *mode) override;
     void put_string(int row, int col, int attr, const char *msg) override;
     void scroll_up(int top, int bot) override;
     void move_cursor(int row, int col) override;
@@ -43,18 +43,18 @@ public:
     void unstack_screen() override;
     void discard_screen() override;
     int init_fm() override;
-    void buzzer(buzzer_codes kind) override;
+    void buzzer(Buzzer kind) override;
     void sound_off() override;
     bool sound_on(int frequency) override;
     void mute() override;
-    bool diskp() const override;
+    bool is_disk() const override;
     int key_cursor(int row, int col) override;
-    int wait_key_pressed(int timeout) override;
+    int wait_key_pressed(bool timeout) override;
     int get_char_attr() override;
     void put_char_attr(int char_attr) override;
     void delay(int ms) override;
-    void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) override;
-    void put_truecolor(int x, int y, int r, int g, int b, int a) override;
+    void get_true_color(int x, int y, int *r, int *g, int *b, int *a) override;
+    void put_true_color(int x, int y, int r, int g, int b, int a) override;
     void set_keyboard_timeout(int ms) override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;

@@ -7,11 +7,59 @@
 #include "d_wx.h"
 
 #include "frame.h"
-#include "read_ticker.h"
+#include "io/special_dirs.h"
+#include "misc/stack_avail.h"
+#include "ui/read_ticker.h"
+
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 #include <chrono>
 #include <ctime>
+#include <string>
 #include <thread>
+
+Driver *g_wx_driver{};
+
+long readticker()
+{
+    // TODO
+    return (long) 0;
+}
+
+long stackavail()
+{
+    // TODO
+    return 0L;
+}
+
+using uclock_t = unsigned long;
+uclock_t usec_clock()
+{
+    uclock_t result{};
+    // TODO
+    _ASSERTE(FALSE);
+
+    return result;
+}
+
+void restart_uclock()
+{
+    // TODO
+}
+
+std::string get_executable_dir()
+{
+    const wxFileName exe_file{wxStandardPaths::Get().GetExecutablePath()};
+    const wxString dir{exe_file.GetPath()};
+    return dir.ToStdString();
+}
+
+std::string get_documents_dir()
+{
+    const wxString dir{wxStandardPaths::Get().GetDocumentsDir()};
+    return dir.ToStdString();
+}
 
 static void flush_output()
 {
@@ -182,7 +230,7 @@ void WXDriver::hide_text_cursor()
     //}
 }
 
-void WXDriver::set_video_mode(VIDEOINFO *mode)
+void WXDriver::set_video_mode(VideoInfo *mode)
 {
     throw std::runtime_error("not implemented");
     // initially, set the virtual line to be the scan line length
@@ -331,7 +379,7 @@ int WXDriver::init_fm()
     return 0;
 }
 
-void WXDriver::buzzer(buzzer_codes kind)
+void WXDriver::buzzer(Buzzer kind)
 {
     throw std::runtime_error("not implemented");
     //UINT beep{MB_OK};
@@ -363,7 +411,7 @@ void WXDriver::mute()
 {
 }
 
-bool WXDriver::diskp() const
+bool WXDriver::is_disk() const
 {
     return false;
 }
@@ -399,7 +447,7 @@ int WXDriver::key_cursor(int row, int col)
     //return result;
 }
 
-int WXDriver::wait_key_pressed(int timeout)
+int WXDriver::wait_key_pressed(bool timeout)
 {
     int count = 10;
     while (!key_pressed())
@@ -436,12 +484,12 @@ void WXDriver::delay(int ms)
     //}
 }
 
-void WXDriver::get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
+void WXDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
 {
     throw std::runtime_error("not implemented");
 }
 
-void WXDriver::put_truecolor(int x, int y, int r, int g, int b, int a)
+void WXDriver::put_true_color(int x, int y, int r, int g, int b, int a)
 {
     throw std::runtime_error("not implemented");
 }
