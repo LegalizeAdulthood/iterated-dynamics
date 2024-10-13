@@ -11,9 +11,6 @@
 #include "special_dirs.h"
 #include "stack_avail.h"
 
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-
 #include <chrono>
 #include <ctime>
 #include <string>
@@ -46,19 +43,6 @@ uclock_t usec_clock()
 void restart_uclock()
 {
     // TODO
-}
-
-std::string get_executable_dir()
-{
-    const wxFileName exe_file{wxStandardPaths::Get().GetExecutablePath()};
-    const wxString dir{exe_file.GetPath()};
-    return dir.ToStdString();
-}
-
-std::string get_documents_dir()
-{
-    const wxString dir{wxStandardPaths::Get().GetDocumentsDir()};
-    return dir.ToStdString();
 }
 
 static void flush_output()

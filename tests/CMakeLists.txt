@@ -17,6 +17,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_check_write_file_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
+    stub.cpp
     current_path_saver.h
     test_config_data.h.in
     test_data.h.in
