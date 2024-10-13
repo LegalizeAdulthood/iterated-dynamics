@@ -70,3 +70,15 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)
     install(FILES ${CMAKE_SOURCE_DIR}/id.html DESTINATION .)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 endif()
+
+add_custom_target(doc-file ALL
+    SOURCES "${CMAKE_CURRENT_BINARY_DIR}/id.txt")
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
+    COMMAND hc /i "${CMAKE_CURRENT_SOURCE_DIR}" /p
+    COMMENT "Building documentation text file"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    DEPENDS native-help
+)
+set_target_properties(doc-file PROPERTIES FOLDER Docs)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/id.txt" DESTINATION .)
+set_property(INSTALL "id.txt" PROPERTY CPACK_START_MENU_SHORTCUTS "Documentation")
