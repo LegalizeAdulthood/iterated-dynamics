@@ -83,6 +83,8 @@ public:
     void set_clear() override;
     void flush() override;
     void check_memory() override;
+    bool get_filename(const char *hdg, const char *type_desc, const char *type_wildcard,
+        std::string &result_filename) override;
 
 protected:
     std::string m_name;

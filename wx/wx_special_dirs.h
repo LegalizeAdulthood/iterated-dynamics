@@ -12,9 +12,9 @@ class WxSpecialDirectories : public SpecialDirectories
 public:
     ~WxSpecialDirectories() override = default;
 
-    std::string documents_dir() const override;
+    std::filesystem::path documents_dir() const override;
 
-    std::string exeuctable_dir() const override;
+    std::filesystem::path exeuctable_dir() const override;
 };
 
 } // namespace id

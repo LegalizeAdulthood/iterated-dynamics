@@ -8,13 +8,13 @@
 namespace id
 {
 
-std::string WxSpecialDirectories::documents_dir() const
+std::filesystem::path WxSpecialDirectories::documents_dir() const
 {
     const wxString dir{wxStandardPaths::Get().GetDocumentsDir()};
     return dir.ToStdString();
 }
 
-std::string WxSpecialDirectories::exeuctable_dir() const
+std::filesystem::path WxSpecialDirectories::exeuctable_dir() const
 {
     const wxFileName exe_file{wxStandardPaths::Get().GetExecutablePath()};
     const wxString dir{exe_file.GetPath()};

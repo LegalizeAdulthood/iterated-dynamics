@@ -18,6 +18,7 @@
 #include <string>
 #include <thread>
 
+#if 0
 long readticker()
 {
     // TODO
@@ -44,6 +45,7 @@ void restart_uclock()
 {
     // TODO
 }
+#endif
 
 static void flush_output()
 {
@@ -57,12 +59,12 @@ static void flush_output()
         if (!start)
         {
             std::time(&start);
-            last = readticker();
+            last = read_ticker();
         }
         else
         {
             std::time_t now = std::time(nullptr);
-            long now_ticks = readticker();
+            long now_ticks = read_ticker();
             if (now > start)
             {
                 ticks_per_second = (now_ticks - last)/((long)(now - start));
@@ -71,7 +73,7 @@ static void flush_output()
     }
     else
     {
-        long now = readticker();
+        long now = read_ticker();
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             driver_flush();
@@ -96,12 +98,11 @@ void WXDriver::terminate()
 
 bool WXDriver::init(int *argc, char **argv)
 {
-    
-    throw std::runtime_error("not implemented");
     //LPCSTR title = ID_PROGRAM_NAME;
 
     //g_frame.init(g_instance, title);
     //return m_win_text.initialize(g_instance, nullptr, "Text");
+    return true;
 }
 
 /* key_pressed
@@ -605,6 +606,12 @@ void WXDriver::flush()
 
 void WXDriver::check_memory()
 {
+}
+
+bool WXDriver::get_filename(
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
+{
+    return false;
 }
 
 static WXDriver s_wx_driver{};

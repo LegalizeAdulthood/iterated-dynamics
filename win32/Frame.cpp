@@ -526,7 +526,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
         wc.lpszMenuName = m_title.c_str();
         wc.lpszClassName = window_class;
 
-        status = RegisterClass(&wc) != 0;
+        status = RegisterClassA(&wc) != 0;
     }
     _ASSERTE(status);
 
@@ -548,7 +548,7 @@ void Frame::pump_messages(bool wait_flag)
 
     while (!quitting)
     {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
+        if (PeekMessageA(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
         {
             // no messages waiting
             if (!wait_flag                     //
@@ -559,11 +559,11 @@ void Frame::pump_messages(bool wait_flag)
             }
         }
 
-        if (int result = GetMessage(&msg, nullptr, 0, 0); result > 0)
+        if (int result = GetMessageA(&msg, nullptr, 0, 0); result > 0)
         {
             // translate accelerator here?
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageA(&msg);
         }
         else if (0 == result)
         {

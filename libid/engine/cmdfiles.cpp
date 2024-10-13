@@ -437,7 +437,7 @@ static void init_libraries()
 {
     id::io::clear_read_library_path();
     id::io::clear_save_library();
-    const fs::path docs_dir{get_documents_dir() / ID_PROGRAM_NAME};
+    const fs::path docs_dir{g_special_dirs->documents_dir() / ID_PROGRAM_NAME};
     id::io::add_read_library(docs_dir);
     id::io::set_save_library(docs_dir);
 }

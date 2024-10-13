@@ -446,7 +446,7 @@ static void set_search_dirs()
     }
     else
     {
-        g_fractal_search_dir2 = get_executable_dir();
+        g_fractal_search_dir2 = g_special_dirs->exeuctable_dir();
     }
 }
 
