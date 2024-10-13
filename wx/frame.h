@@ -2,6 +2,40 @@
 
 #include <wx/frame.h>
 
-extern wxFrame *g_frame;
+#include <array>
 
-void wx_pump_messages(bool);
+class IdFrame : public wxFrame
+{
+public:
+    IdFrame();
+    IdFrame(const IdFrame &rhs) = delete;
+    IdFrame(IdFrame &&rhs) = delete;
+    ~IdFrame() override = default;
+    IdFrame &operator=(const IdFrame &rhs) = delete;
+    IdFrame &operator=(IdFrame &&rhs) = delete;
+
+    int get_key_press(bool wait_for_key);
+
+private:
+    enum
+    {
+        KEY_BUF_MAX = 80,
+    };
+
+    void on_exit(wxCommandEvent &event);
+    void on_about(wxCommandEvent &event);
+    void on_char(wxKeyEvent &event);
+    void add_key_press(unsigned int key);
+    bool key_buffer_full() const
+    {
+        return m_key_press_count >= KEY_BUF_MAX;
+    }
+
+    bool m_timed_out{};
+
+    // the keypress buffer
+    unsigned int m_key_press_count{};
+    unsigned int m_key_press_head{};
+    unsigned int m_key_press_tail{};
+    std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
+};

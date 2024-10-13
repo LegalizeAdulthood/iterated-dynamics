@@ -29,7 +29,14 @@ add_executable(id WIN32
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
     resource.h
-    win_main.cpp)
+    app.h
+    app.cpp
+    frame.h
+    frame.cpp
+    init_failure.cpp
+    wx_special_dirs.h
+    wx_special_dirs.cpp
+)
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC libid)

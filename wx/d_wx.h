@@ -12,9 +12,9 @@
 class WXDriver : public Driver
 {
 public:
-    WXDriver(const char *name, const char *description) :
-        m_name(name),
-        m_description(description)
+    WXDriver() :
+        m_name("wx"),
+        m_description("wxWidgets")
     {
     }
     ~WXDriver() override = default;
@@ -58,6 +58,31 @@ public:
     void set_keyboard_timeout(int ms) override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
+    bool validate_mode(VideoInfo *mode) override;
+    void get_max_screen(int &xmax, int &ymax) override;
+    void pause() override;
+    void resume() override;
+    void schedule_alarm(int secs) override;
+    void create_window() override;
+    bool resize() override;
+    void redraw() override;
+    int read_palette() override;
+    int write_palette() override;
+    int read_pixel(int x, int y) override;
+    void write_pixel(int x, int y, int color) override;
+    void read_span(int y, int x, int lastx, Byte *pixels) override;
+    void write_span(int y, int x, int lastx, Byte *pixels) override;
+    void set_line_mode(int mode) override;
+    void draw_line(int x1, int y1, int x2, int y2, int color) override;
+    void display_string(int x, int y, int fg, int bg, const char *text) override;
+    void save_graphics() override;
+    void restore_graphics() override;
+    bool is_text() override;
+    void set_for_text() override;
+    void set_for_graphics() override;
+    void set_clear() override;
+    void flush() override;
+    void check_memory() override;
 
 protected:
     std::string m_name;

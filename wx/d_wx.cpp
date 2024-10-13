@@ -6,6 +6,7 @@
  */
 #include "d_wx.h"
 
+#include "app.h"
 #include "frame.h"
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
@@ -16,8 +17,6 @@
 #include <ctime>
 #include <string>
 #include <thread>
-
-Driver *g_wx_driver{};
 
 long readticker()
 {
@@ -76,7 +75,7 @@ static void flush_output()
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             driver_flush();
-            wx_pump_messages(false);
+            wxGetApp().pump_messages(false);
             last = now;
         }
     }
@@ -97,6 +96,7 @@ void WXDriver::terminate()
 
 bool WXDriver::init(int *argc, char **argv)
 {
+    
     throw std::runtime_error("not implemented");
     //LPCSTR title = ID_PROGRAM_NAME;
 
@@ -498,5 +498,115 @@ void WXDriver::debug_text(const char *text)
 void WXDriver::get_cursor_pos(int &x, int &y) const
 {
     throw std::runtime_error("not implemented");
-    //g_frame.get_cursor_pos(x, y);
+    // g_frame.get_cursor_pos(x, y);
 }
+
+bool WXDriver::validate_mode(VideoInfo *mode)
+{
+    return false;
+}
+
+void WXDriver::get_max_screen(int &xmax, int &ymax)
+{
+}
+
+void WXDriver::pause()
+{
+}
+
+void WXDriver::resume()
+{
+}
+
+void WXDriver::schedule_alarm(int secs)
+{
+}
+
+void WXDriver::create_window()
+{
+}
+
+bool WXDriver::resize()
+{
+    return false;
+}
+
+void WXDriver::redraw()
+{
+}
+
+int WXDriver::read_palette()
+{
+    return 0;
+}
+
+int WXDriver::write_palette()
+{
+    return 0;
+}
+
+int WXDriver::read_pixel(int x, int y)
+{
+    return 0;
+}
+
+void WXDriver::write_pixel(int x, int y, int color)
+{
+}
+
+void WXDriver::read_span(int y, int x, int lastx, BYTE *pixels)
+{
+}
+
+void WXDriver::write_span(int y, int x, int lastx, BYTE *pixels)
+{
+}
+
+void WXDriver::set_line_mode(int mode)
+{
+}
+
+void WXDriver::draw_line(int x1, int y1, int x2, int y2, int color)
+{
+}
+
+void WXDriver::display_string(int x, int y, int fg, int bg, const char *text)
+{
+}
+
+void WXDriver::save_graphics()
+{
+}
+
+void WXDriver::restore_graphics()
+{
+}
+
+bool WXDriver::is_text()
+{
+    return true;
+}
+
+void WXDriver::set_for_text()
+{
+}
+
+void WXDriver::set_for_graphics()
+{
+}
+
+void WXDriver::set_clear()
+{
+}
+
+void WXDriver::flush()
+{
+}
+
+void WXDriver::check_memory()
+{
+}
+
+static WXDriver s_wx_driver{};
+
+Driver *g_wx_driver = &s_wx_driver;
