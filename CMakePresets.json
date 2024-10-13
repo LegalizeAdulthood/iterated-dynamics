@@ -159,6 +159,11 @@
       },
       "execution": {
         "jobs": 4
+      },
+      "filter": {
+        "exclude": {
+          "label": "image"
+        }
       }
     },
     {
