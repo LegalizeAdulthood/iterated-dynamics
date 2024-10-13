@@ -99,6 +99,7 @@ add_executable(test-id
     misc/test_driver.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
+    ui/stub.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_comments.cpp
     ui/test_file_item.cpp

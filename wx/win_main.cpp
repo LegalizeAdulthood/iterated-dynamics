@@ -1,13 +1,38 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "io/special_dirs.h"
 #include "ui/id_main.h"
 #include "ui/init_failure.h"
 
 #include <wx/wx.h>
 #include <wx/evtloop.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 #include <array>
 #include <cassert>
+
+namespace
+{
+
+class WxSpecialDirectories : public SpecialDirectories
+{
+public:
+    ~WxSpecialDirectories() override = default;
+    std::string documents_dir() const override
+    {
+        const wxString dir{wxStandardPaths::Get().GetDocumentsDir()};
+        return dir.ToStdString();
+    }
+    std::string exeuctable_dir() const override
+    {
+        const wxFileName exe_file{wxStandardPaths::Get().GetExecutablePath()};
+        const wxString dir{exe_file.GetPath()};
+        return dir.ToStdString();
+    }
+};
+
+} // namespace
 
 void init_failure(const char *message)
 {
@@ -63,6 +88,8 @@ wxIMPLEMENT_APP(IdApp);
 
 bool IdApp::OnInit()
 {
+    g_special_dirs = std::make_shared<WxSpecialDirectories>();
+    g_save_dir = g_special_dirs->documents_dir();
     IdFrame *frame = new IdFrame();
     frame->Show(true);
 
