@@ -2,4 +2,5 @@
 //
 #include "io/special_dirs.h"
 
-std::filesystem::path g_save_dir{get_documents_dir()};
+std::shared_ptr<SpecialDirectories> g_special_dirs;
+std::filesystem::path g_save_dir;

@@ -4,7 +4,14 @@
 
 #include <filesystem>
 
-extern std::filesystem::path g_save_dir;
+class SpecialDirectories
+{
+public:
+    virtual ~SpecialDirectories() = default;
 
-std::filesystem::path get_executable_dir();
-std::filesystem::path get_documents_dir();
+    virtual std::filesystem::path exeuctable_dir() const = 0;
+    virtual std::filesystem::path documents_dir() const = 0;
+};
+
+extern std::shared_ptr<SpecialDirectories> g_special_dirs;
+extern std::filesystem::path g_save_dir;
