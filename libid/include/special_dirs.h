@@ -2,9 +2,17 @@
 //
 #pragma once
 
+#include <memory>
 #include <string>
 
-extern std::string g_save_dir;
+class SpecialDirectories
+{
+public:
+    virtual ~SpecialDirectories() = default;
 
-std::string get_executable_dir();
-std::string get_documents_dir();
+    virtual std::string exeuctable_dir() const = 0;
+    virtual std::string documents_dir() const = 0;
+};
+
+extern std::shared_ptr<SpecialDirectories> g_special_dirs;
+extern std::string g_save_dir;

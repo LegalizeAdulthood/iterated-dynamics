@@ -15,11 +15,6 @@
 using namespace testing;
 namespace fs = std::filesystem;
 
-TEST(TestSaveDir, initialValue)
-{
-    EXPECT_EQ(get_documents_dir(), g_save_dir);
-}
-
 TEST(TestOpenSaveFile, filename)
 {
     constexpr std::string_view name{"tmp.txt"};
