@@ -126,8 +126,8 @@ public:
 */
 #define HAVE_WX_DRIVER 1
 #define HAVE_X11_DRIVER 0
-#define HAVE_GDI_DRIVER 0
-#define HAVE_WIN32_DISK_DRIVER 0
+#define HAVE_GDI_DRIVER 1
+#define HAVE_WIN32_DISK_DRIVER 1
 
 void load_driver(Driver *drv, int *argc, char **argv);
 int init_drivers(int *argc, char **argv);

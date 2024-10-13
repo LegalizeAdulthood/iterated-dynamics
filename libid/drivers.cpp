@@ -7,6 +7,8 @@
 #include <cstring>
 
 extern Driver *g_wx_driver;
+extern Driver *g_disk_driver;
+extern Driver *g_gdi_driver;
 
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
@@ -45,6 +47,9 @@ int init_drivers(int *argc, char **argv)
 {
 #if HAVE_WX_DRIVER
     load_driver(g_wx_driver, argc, argv);
+#endif
+#if HAVE_GDI_DRIVER
+    load_driver(g_gdi_driver, argc, argv);
 #endif
 #if HAVE_WIN32_DISK_DRIVER
     load_driver(g_disk_driver, argc, argv);

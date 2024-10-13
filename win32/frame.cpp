@@ -471,10 +471,10 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
 
 void Frame::init(HINSTANCE instance, LPCSTR title)
 {
-    LPCTSTR windowClass = _T("IdFrame");
-    WNDCLASS  wc;
+    const char *windowClass{"IdFrame"};
+    WNDCLASSA wc;
 
-    bool status = GetClassInfo(instance, windowClass, &wc) != 0;
+    bool status = GetClassInfoA(instance, windowClass, &wc) != 0;
     if (!status)
     {
         m_instance = instance;
@@ -491,7 +491,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
         wc.lpszMenuName = m_title.c_str();
         wc.lpszClassName = windowClass;
 
-        status = RegisterClass(&wc) != 0;
+        status = RegisterClassA(&wc) != 0;
     }
     _ASSERTE(status);
 
@@ -513,7 +513,7 @@ void Frame::pump_messages(bool wait_flag)
 
     while (!quitting)
     {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
+        if (PeekMessageA(&msg, nullptr, 0, 0, PM_NOREMOVE) == 0)
         {
             // no messages waiting
             if (!wait_flag                     //
@@ -524,11 +524,11 @@ void Frame::pump_messages(bool wait_flag)
             }
         }
 
-        if (int result = GetMessage(&msg, nullptr, 0, 0); result > 0)
+        if (int result = GetMessageA(&msg, nullptr, 0, 0); result > 0)
         {
             // translate accelerator here?
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageA(&msg);
         }
         else if (0 == result)
         {

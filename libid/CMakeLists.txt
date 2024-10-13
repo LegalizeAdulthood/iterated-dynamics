@@ -627,7 +627,7 @@ set_source_files_properties(decode_info.cpp
         COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
-target_link_libraries(libid PRIVATE helpcom os)
+target_link_libraries(libid PRIVATE helpcom os os-win32)
 target_link_libraries(libid PUBLIC help-defs config Boost::boost GIF::GIF cpuid::cpuid)
 set_target_properties(libid PROPERTIES FOLDER Libraries)
 add_dependencies(libid native-help)

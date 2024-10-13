@@ -15,6 +15,7 @@
 #include <string>
 #include <thread>
 
+#if 0
 long readticker()
 {
     // TODO
@@ -41,6 +42,7 @@ void restart_uclock()
 {
     // TODO
 }
+#endif
 
 static void flush_output()
 {
@@ -93,12 +95,11 @@ void WXDriver::terminate()
 
 bool WXDriver::init(int *argc, char **argv)
 {
-    
-    throw std::runtime_error("not implemented");
     //LPCSTR title = ID_PROGRAM_NAME;
 
     //g_frame.init(g_instance, title);
     //return m_win_text.initialize(g_instance, nullptr, "Text");
+    return true;
 }
 
 /* key_pressed

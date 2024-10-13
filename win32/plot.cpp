@@ -336,13 +336,12 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
 
 int Plot::init(HINSTANCE instance, LPCSTR title)
 {
-    WNDCLASS  wc;
-    int result;
+    WNDCLASSA wc;
 
     m_instance = instance;
     m_title = title;
 
-    result = GetClassInfoA(m_instance, s_window_class, &wc);
+    int result = GetClassInfoA(m_instance, s_window_class, &wc);
     if (!result)
     {
         wc.style = 0;
