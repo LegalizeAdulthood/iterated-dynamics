@@ -39,6 +39,7 @@
 #include "mouse.h"
 #include "rotate.h"
 #include "select_video_mode.h"
+#include "special_dirs.h"
 #include "stop_msg.h"
 #include "video_mode.h"
 
@@ -480,6 +481,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
 int id_main(int argc, char *argv[])
 {
+    g_save_dir = g_special_dirs->documents_dir();
     {
         const char *fract_dir = getenv("FRACTDIR");
         if (fract_dir == nullptr)
