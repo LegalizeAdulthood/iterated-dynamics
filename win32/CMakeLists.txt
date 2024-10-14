@@ -18,7 +18,7 @@ add_library(os-win32 STATIC
     WinText.h
     WinText.cpp
     create_minidump.h
-    instance.h
+    instance.h instance.cpp
     tos.h tos.cpp
     special_dirs.cpp
     win_defines.h

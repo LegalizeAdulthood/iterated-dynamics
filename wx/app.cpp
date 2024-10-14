@@ -6,9 +6,11 @@
 
 #include "frame.h"
 #include "wx_special_dirs.h"
+#include "../win32/instance.h"
 
 #include <wx/wx.h>
 #include <wx/evtloop.h>
+#include <wx/msw/private.h>
 
 #include <array>
 #include <cassert>
@@ -18,7 +20,8 @@ wxIMPLEMENT_APP(IdApp);
 bool IdApp::OnInit()
 {
     g_special_dirs = std::make_shared<id::WxSpecialDirectories>();
-    g_save_dir = g_special_dirs->documents_dir();
+
+    g_instance = wxGetInstance();
 
     // start a thread to call id_main here?
     id_main(argc, argv);
