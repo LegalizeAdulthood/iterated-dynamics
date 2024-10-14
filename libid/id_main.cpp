@@ -337,7 +337,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     if (g_show_file)
     {
-        if (g_calc_status > calc_status_value::PARAMS_CHANGED)                // goto imagestart implies re-calc
+        if (g_calc_status > calc_status_value::PARAMS_CHANGED)                // goto image_start implies re-calc
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
@@ -494,10 +494,6 @@ int id_main(int argc, char *argv[])
     g_fractal_search_dir2 = ".";
 #endif
 
-    bool resumeflag = false;
-    bool kbdmore = false;               // continuation variable
-    bool stacked = false;               // flag to indicate screen stacked
-
     // this traps non-math library floating point errors
     std::signal(SIGFPE, my_floating_point_err);
 
@@ -514,23 +510,27 @@ int id_main(int argc, char *argv[])
     load_config();
     init_help();
 
+    bool resume_flag{}; //
+    bool kbd_more{};    // continuation variable
+    bool stacked{};     // flag to indicate screen stacked
+
 restart:   // insert key re-starts here
     main_restart(argc, argv, stacked);
 
-restorestart:
-    if (main_restore_start(stacked, resumeflag))
+restore_start:
+    if (main_restore_start(stacked, resume_flag))
     {
-        goto resumeloop;                // ooh, this is ugly
+        goto resume_loop;                // ooh, this is ugly
     }
 
-imagestart:                             // calc/display a new image
-    switch (main_image_start(stacked, resumeflag))
+image_start:                             // calc/display a new image
+    switch (main_image_start(stacked, resume_flag))
     {
     case main_state::RESTORE_START:
-        goto restorestart;
+        goto restore_start;
 
     case main_state::IMAGE_START:
-        goto imagestart;
+        goto image_start;
 
     case main_state::RESTART:
         goto restart;
@@ -539,22 +539,22 @@ imagestart:                             // calc/display a new image
         break;
     }
 
-resumeloop:
+resume_loop:
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
     save_param_history();
     // this switch processes gotos that are now inside function
-    switch (big_while_loop(&kbdmore, &stacked, resumeflag))
+    switch (big_while_loop(&kbd_more, &stacked, resume_flag))
     {
     case main_state::RESTART:
         goto restart;
 
     case main_state::IMAGE_START:
-        goto imagestart;
+        goto image_start;
 
     case main_state::RESTORE_START:
-        goto restorestart;
+        goto restore_start;
 
     default:
         break;
