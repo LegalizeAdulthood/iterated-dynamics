@@ -19,4 +19,4 @@ main_state get_history(int kbd_char);
 main_state color_cycle(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state color_editing(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state restore_from_image(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked);
-bool requested_video_fn(bool &kbd_more, int kbd_char);
+main_state requested_video_fn(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked);

@@ -456,7 +456,7 @@ static main_state show_orbit_window(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state space_command(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state space_command(int &, bool &from_mandel, bool &kbd_more, bool &)
 {
     if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
     {
@@ -477,7 +477,7 @@ static main_state space_command(int &key, bool &from_mandel, bool &kbd_more, boo
     return main_state::NOTHING;
 }
 
-static main_state inverse_julia_toggle(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state inverse_julia_toggle(int &, bool &, bool &kbd_more, bool &)
 {
     // if the inverse types proliferate, something more elegant will be needed
     if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP ||
@@ -652,7 +652,7 @@ static main_state request_save_image(int &, bool &, bool &, bool &)
     return main_state::CONTINUE;
 }
 
-main_state restore_from_image(int &kbd_char, bool &from_mandel, bool & /*kbd_more*/, bool &stacked)
+main_state restore_from_image(int &kbd_char, bool &from_mandel, bool &, bool &stacked)
 {
     g_compare_gif = false;
     from_mandel = false;
@@ -690,7 +690,7 @@ main_state restore_from_image(int &kbd_char, bool &from_mandel, bool & /*kbd_mor
     return main_state::RESTORE_START;
 }
 
-static main_state look_for_files(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state look_for_files(int &, bool &, bool &, bool &stacked)
 {
     if ((g_zoom_box_width != 0) || driver_diskp())
     {
@@ -704,14 +704,13 @@ static main_state look_for_files(int &key, bool &from_mandel, bool &kbd_more, bo
     return main_state::NOTHING;
 }
 
-static main_state request_make_batch_file(
-    int & /*key*/, bool & /*from_mandel*/, bool & /*kbd_more*/, bool & /*stacked*/)
+static main_state request_make_batch_file(int &, bool &, bool &, bool &)
 {
     make_batch_file();
     return main_state::NOTHING;
 }
 
-static void start_evolution(bool &kbd_more, int kbd_char)
+static main_state start_evolution(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     g_evolving = evolution_mode_flags::FIELDMAP;
     g_view_window = true;
@@ -719,27 +718,28 @@ static void start_evolution(bool &kbd_more, int kbd_char)
     save_param_history();
     kbd_more = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
+    return main_state::NOTHING;
 }
 
-bool requested_video_fn(bool &kbd_more, int kbd_char)
+main_state requested_video_fn(int &kbd_char, bool &, bool &kbd_more, bool &)
 {
     const int k = check_vidmode_key(0, kbd_char);
-    if (k >= 0)
+    if (k < 0)
     {
-        g_adapter = k;
-        if (g_video_table[g_adapter].colors != g_colors)
-        {
-            g_save_dac = 0;
-        }
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
-        kbd_more = false;
-        return true;
+        return main_state::NOTHING;
     }
 
-    return false;
+    g_adapter = k;
+    if (g_video_table[g_adapter].colors != g_colors)
+    {
+        g_save_dac = 0;
+    }
+    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    kbd_more = false;
+    return main_state::CONTINUE;
 }
 
-static main_state restore_from_3d(int &key, bool &from_mandel, bool &kbdmore, bool &stacked)
+static main_state restore_from_3d(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_overlay_3d)
     {
@@ -749,7 +749,7 @@ static main_state restore_from_3d(int &key, bool &from_mandel, bool &kbdmore, bo
     {
         g_display_3d = display_3d_modes::YES;
     }
-    return restore_from_image(key, from_mandel, kbdmore, stacked);
+    return restore_from_image(key, from_mandel, kbd_more, stacked);
 }
 
 static main_state request_3d_overlay(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
@@ -817,7 +817,7 @@ static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state request_starfield_params(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state request_starfield_params(int &, bool &, bool &, bool &)
 {
     clear_zoom_box();
     if (get_starfield_params() >= 0)
@@ -829,6 +829,12 @@ static main_state request_starfield_params(int &key, bool &from_mandel, bool &kb
         return main_state::CONTINUE;
     }
     return main_state::NOTHING;
+}
+
+static main_state request_restart(int &, bool &, bool &, bool &)
+{
+    driver_set_for_text(); // force text mode
+    return main_state::RESTART;
 }
 
 static MainMenuHandler s_handlers[]{
@@ -977,12 +983,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        request_zoom_out(*kbdmore);
-        break;
+        return request_zoom_out(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_INSERT:         // insert
-        driver_set_for_text();           // force text mode
-        return main_state::RESTART;
+        return request_restart(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_LEFT_ARROW:             // cursor left
     case ID_KEY_RIGHT_ARROW:            // cursor right
@@ -992,48 +996,37 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        move_zoom_box(*kbdchar);
-        break;
+        return move_zoom_box(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_HOME:               // Ctrl-home
-        skew_zoom_left();
-        break;
+        return skew_zoom_left(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_END:                // Ctrl-end
-        skew_zoom_right();
-        break;
+        return skew_zoom_right(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_PAGE_UP:            // Ctrl-pgup
-        decrease_zoom_aspect();
-        break;
+        return decrease_zoom_aspect(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_PAGE_DOWN:          // Ctrl-pgdn
-        increase_zoom_aspect();
-        break;
+        return increase_zoom_aspect(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case ID_KEY_PAGE_UP:                // page up
-        zoom_box_in();
-        break;
+        return zoom_box_in(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_PAGE_DOWN:              // page down
-        zoom_box_out();
-        break;
+        return zoom_box_out(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        zoom_box_increase_rotation();
-        break;
+        return zoom_box_increase_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        zoom_box_decrease_rotation();
-        break;
+        return zoom_box_decrease_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        zoom_box_increase_color();
-        break;
+        return zoom_box_increase_color(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_DEL:                // Ctrl-del
-        zoom_box_decrease_color();
-        break;
+        return zoom_box_decrease_color(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case ID_KEY_ALT_1: // alt + number keys set mutation level and start evolution engine
     case ID_KEY_ALT_2:
@@ -1042,8 +1035,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        start_evolution(*kbdmore, *kbdchar);
-        break;
+        return start_evolution(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     case ID_KEY_DELETE:         // select video mode from list
         request_video_mode(*kbdchar);
@@ -1051,11 +1043,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
 
     default: // NOLINT(clang-diagnostic-implicit-fallthrough)
         // other (maybe a valid Fn key)
-        if (requested_video_fn(*kbdmore, *kbdchar))
-        {
-            return main_state::CONTINUE;
-        }
-        break;
+        return requested_video_fn(*kbdchar, *frommandel, *kbdmore, *stacked);
     }
     return main_state::NOTHING;
 }

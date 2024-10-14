@@ -124,12 +124,11 @@ static void exit_evolver(bool &kbd_more)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
-static void move_evolver_selection(int key)
+static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (!g_box_count)
     {
-        move_zoom_box(key);
-        return;
+        return move_zoom_box(key, from_mandel, kbd_more, stacked);
     }
 
     // if no zoombox, scroll by arrows
@@ -182,6 +181,7 @@ static void move_evolver_selection(int key)
         drawparmbox(0);
     }
     copy_genes_to_bank(gene);
+    return main_state::NOTHING;
 }
 
 static void evolve_param_zoom_decrease()
@@ -406,8 +406,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        request_zoom_out(*kbdmore);
-        break;
+        return request_zoom_out(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
@@ -417,23 +416,19 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
-        move_zoom_box(*kbdchar);
-        break;
+        return move_zoom_box(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        move_evolver_selection(*kbdchar);
-        break;
+        return move_evolver_selection(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_HOME:               // Ctrl-home
-        skew_zoom_left();
-        break;
+        return skew_zoom_left(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_END:                // Ctrl-end
-        skew_zoom_right();
-        break;
+        return skew_zoom_right(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_PAGE_UP:
         evolve_param_zoom_decrease();
@@ -452,20 +447,16 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
         
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        zoom_box_increase_rotation();
-        break;
+        return zoom_box_increase_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        zoom_box_decrease_rotation();
-        break;
+        return zoom_box_decrease_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        zoom_box_increase_color();
-        break;
+        return zoom_box_increase_color(*kbdchar, *frommandel, *kbdmore, *stacked);
         
     case ID_KEY_CTL_DEL:                // Ctrl-del
-        zoom_box_decrease_color();
-        break;
+        return zoom_box_decrease_color(*kbdchar, *frommandel, *kbdmore, *stacked);
 
     /* grabbed a couple of video mode keys, user can change to these using
         delete and the menu if necessary */
@@ -520,11 +511,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
 
     default: // NOLINT(clang-diagnostic-implicit-fallthrough)
         // other (maybe valid Fn key
-        if (requested_video_fn(*kbdmore, *kbdchar))
-        {
-            return main_state::CONTINUE;
-        }
-        break;
+        return requested_video_fn(*kbdchar, *frommandel, *kbdmore, *stacked);
     }
 
     return main_state::NOTHING;

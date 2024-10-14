@@ -1014,7 +1014,7 @@ void clear_zoom_box()
 }
 
 // do all pending movement at once for smooth mouse diagonal moves
-void move_zoom_box(int key_num)
+main_state move_zoom_box(int &key_num, bool &, bool &, bool &)
 {
     int horizontal{};
     int vertical{};
@@ -1064,6 +1064,7 @@ void move_zoom_box(int key_num)
     {
         move_box((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
     }
+    return main_state::NOTHING;
 }
 
 void reset_zoom_corners()
@@ -1085,7 +1086,7 @@ void reset_zoom_corners()
     }
 }
 
-main_state request_zoom_in(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state request_zoom_in(int &, bool &, bool &kbd_more, bool &)
 {
     if (g_zoom_box_width != 0.0)
     {
@@ -1093,21 +1094,22 @@ main_state request_zoom_in(int &key, bool &from_mandel, bool &kbd_more, bool &st
         init_pan_or_recalc(false);
         kbd_more = false;
     }
-    if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
+    if (g_calc_status != calc_status_value::COMPLETED) // don't restart if image complete
     {
         kbd_more = false;
     }
     return main_state::NOTHING;
 }
 
-void request_zoom_out(bool &kbd_more)
+main_state request_zoom_out(int &, bool &, bool &kbd_more, bool &)
 {
     init_pan_or_recalc(true);
     kbd_more = false;
-    zoom_out();                // calc corners for zooming out
+    zoom_out(); // calc corners for zooming out
+    return main_state::NOTHING;
 }
 
-void skew_zoom_left()
+main_state skew_zoom_left(int &, bool &, bool &, bool &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
@@ -1117,9 +1119,10 @@ void skew_zoom_left()
             g_zoom_box_skew = -0.48;
         }
     }
+    return main_state::NOTHING;
 }
 
-void skew_zoom_right()
+main_state skew_zoom_right(int &, bool &, bool &, bool &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
@@ -1129,25 +1132,28 @@ void skew_zoom_right()
             g_zoom_box_skew = 0.48;
         }
     }
+    return main_state::NOTHING;
 }
 
-void decrease_zoom_aspect()
+main_state decrease_zoom_aspect(int &, bool &, bool &, bool &)
 {
     if (g_box_count)
     {
         change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
     }
+    return main_state::NOTHING;
 }
 
-void increase_zoom_aspect()
+main_state increase_zoom_aspect(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_box_count)
     {
         change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
     }
+    return main_state::NOTHING;
 }
 
-void zoom_box_in()
+main_state zoom_box_in(int &, bool &, bool &, bool &)
 {
     if (g_zoom_off)
     {
@@ -1171,13 +1177,14 @@ void zoom_box_in()
             resize_box(0 - key_count(ID_KEY_PAGE_UP));
         }
     }
+    return main_state::NOTHING;
 }
 
-void zoom_box_out()
+main_state zoom_box_out(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_box_count)
     {
-        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
+        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999) // end zoombox
         {
             g_zoom_box_width = 0;
         }
@@ -1186,31 +1193,36 @@ void zoom_box_out()
             resize_box(key_count(ID_KEY_PAGE_DOWN));
         }
     }
+    return main_state::NOTHING;
 }
 
-void zoom_box_increase_rotation()
+main_state zoom_box_increase_rotation(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
         g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
     }
+    return main_state::NOTHING;
 }
 
-void zoom_box_decrease_rotation()
+main_state zoom_box_decrease_rotation(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
         g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
     }
+    return main_state::NOTHING;
 }
 
-void zoom_box_increase_color()
+main_state zoom_box_increase_color(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     g_box_color += key_count(ID_KEY_CTL_INSERT);
+    return main_state::NOTHING;
 }
 
-void zoom_box_decrease_color()
+main_state zoom_box_decrease_color(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     g_box_color -= key_count(ID_KEY_CTL_DEL);
+    return main_state::NOTHING;
 }
 
