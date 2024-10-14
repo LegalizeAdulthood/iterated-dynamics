@@ -12,7 +12,17 @@ struct MainMenuHandler
     std::function<main_state(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)> handler;
 };
 
-main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked);
+inline bool operator<(const MainMenuHandler &lhs, const MainMenuHandler &rhs)
+{
+    return lhs.key < rhs.key;
+}
+
+inline bool operator<(const MainMenuHandler &lhs, int key)
+{
+    return lhs.key < key;
+}
+
+main_state main_menu_switch(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state request_fractal_type(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state toggle_float(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state get_history(int kbd_char);

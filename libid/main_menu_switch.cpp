@@ -55,8 +55,10 @@
 #include "video_mode.h"
 #include "zoom.h"
 
+#include <algorithm>
 #include <cstring>
 #include <ctime>
+#include <iterator>
 #include <string>
 
 static bool look(bool *stacked)
@@ -838,47 +840,75 @@ static main_state request_restart(int &, bool &, bool &, bool &)
 }
 
 static MainMenuHandler s_handlers[]{
-    {ID_KEY_CTL_A, begin_ant},             //
-    {ID_KEY_CTL_B, prompt_options},        //
-    {ID_KEY_CTL_E, prompt_options},        //
-    {ID_KEY_CTL_F, prompt_options},        //
-    {ID_KEY_CTL_H, main_history},          //
-    {ID_KEY_ENTER, request_zoom_in},       //
-    {ID_KEY_CTL_O, show_orbit_window},     //
-    {ID_KEY_CTL_S, random_dot_stereogram}, //
-    {ID_KEY_CTL_X, flip_image},            //
-    {ID_KEY_CTL_Y, flip_image},            //
-    {ID_KEY_CTL_Z, flip_image},            //
-    {ID_KEY_CTL_BACKSLASH, main_history},  //
-    {ID_KEY_SPACE, space_command},         //
-    {'+', color_cycle},                    //
-    {'-', color_cycle},                    //
-    {'2', execute_commands},               //
-    {'@', execute_commands},               //
-    {'\\', main_history},                  //
-    {'a', request_starfield_params},       //
-    {'b', request_make_batch_file},        //
-    {'c', color_cycle},                    //
-    {'d', request_shell},                  //
-    {'e', color_editing},                  //
-    {'f', toggle_float},                   //
-    {'g', prompt_options},                 //
-    {'h', main_history},                   //
-    {'i', request_3d_fractal_params},      //
-    {'j', inverse_julia_toggle},           //
-    {'k', random_dot_stereogram},          //
-    {'o', show_orbit_window},              //
-    {'p', prompt_options},                 //
-    {'s', request_save_image},             //
-    {'t', request_fractal_type},           //
-    {'v', prompt_options},                 //
-    {'x', prompt_options},                 //
-    {'y', prompt_options},                 //
-    {'z', prompt_options},                 //
-    {ID_KEY_ENTER_2, request_zoom_in},     //
+    {ID_KEY_CTL_A, begin_ant},                      //
+    {ID_KEY_CTL_B, prompt_options},                 //
+    {ID_KEY_CTL_E, prompt_options},                 //
+    {ID_KEY_CTL_F, prompt_options},                 //
+    {ID_KEY_CTL_H, main_history},                   //
+    {ID_KEY_CTL_ENTER, request_zoom_out},           //
+    {ID_KEY_ENTER, request_zoom_in},                //
+    {ID_KEY_CTL_O, show_orbit_window},              //
+    {ID_KEY_CTL_S, random_dot_stereogram},          //
+    {ID_KEY_CTL_X, flip_image},                     //
+    {ID_KEY_CTL_Y, flip_image},                     //
+    {ID_KEY_CTL_Z, flip_image},                     //
+    {ID_KEY_CTL_BACKSLASH, main_history},           //
+    {ID_KEY_SPACE, space_command},                  //
+    {'+', color_cycle},                             //
+    {'-', color_cycle},                             //
+    {'2', execute_commands},                        //
+    {'@', execute_commands},                        //
+    {'\\', main_history},                           //
+    {'a', request_starfield_params},                //
+    {'b', request_make_batch_file},                 //
+    {'c', color_cycle},                             //
+    {'d', request_shell},                           //
+    {'e', color_editing},                           //
+    {'f', toggle_float},                            //
+    {'g', prompt_options},                          //
+    {'h', main_history},                            //
+    {'i', request_3d_fractal_params},               //
+    {'j', inverse_julia_toggle},                    //
+    {'k', random_dot_stereogram},                   //
+    {'o', show_orbit_window},                       //
+    {'p', prompt_options},                          //
+    {'s', request_save_image},                      //
+    {'t', request_fractal_type},                    //
+    {'v', prompt_options},                          //
+    {'x', prompt_options},                          //
+    {'y', prompt_options},                          //
+    {'z', prompt_options},                          //
+    {ID_KEY_CTL_ENTER_2, request_zoom_out},         //
+    {ID_KEY_ENTER_2, request_zoom_in},              //
+    {ID_KEY_UP_ARROW, move_zoom_box},               //
+    {ID_KEY_PAGE_UP, zoom_box_in},                  //
+    {ID_KEY_LEFT_ARROW, move_zoom_box},             //
+    {ID_KEY_RIGHT_ARROW, move_zoom_box},            //
+    {ID_KEY_DOWN_ARROW, move_zoom_box},             //
+    {ID_KEY_PAGE_DOWN, zoom_box_out},               //
+    {ID_KEY_INSERT, request_restart},               //
+    {ID_KEY_CTL_LEFT_ARROW, move_zoom_box},         //
+    {ID_KEY_CTL_RIGHT_ARROW, move_zoom_box},        //
+    {ID_KEY_CTL_END, skew_zoom_right},              //
+    {ID_KEY_CTL_PAGE_DOWN, increase_zoom_aspect},   //
+    {ID_KEY_CTL_HOME, skew_zoom_left},              //
+    {ID_KEY_ALT_1, start_evolution},                //
+    {ID_KEY_ALT_2, start_evolution},                //
+    {ID_KEY_ALT_3, start_evolution},                //
+    {ID_KEY_ALT_4, start_evolution},                //
+    {ID_KEY_ALT_5, start_evolution},                //
+    {ID_KEY_ALT_6, start_evolution},                //
+    {ID_KEY_ALT_7, start_evolution},                //
+    {ID_KEY_CTL_PAGE_UP, decrease_zoom_aspect},     //
+    {ID_KEY_CTL_UP_ARROW, move_zoom_box},           //
+    {ID_KEY_CTL_MINUS, zoom_box_increase_rotation}, //
+    {ID_KEY_CTL_PLUS, zoom_box_decrease_rotation},  //
+    {ID_KEY_CTL_DOWN_ARROW, move_zoom_box},         //
+    {ID_KEY_CTL_INSERT, zoom_box_increase_color},   //
+    {ID_KEY_CTL_DEL, zoom_box_decrease_color},      //
 };
 
-main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
+main_state main_menu_switch(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
@@ -889,161 +919,20 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     {
         g_user_std_calc_mode = g_old_std_calc_mode;
     }
-    
-    switch (*kbdchar)
+
+    assert(std::is_sorted(std::begin(s_handlers), std::end(s_handlers)));
+    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), key);
+        it != std::cend(s_handlers) && it->key == key)
     {
-    case 't':                    // new fractal type
-        return request_fractal_type(*kbdchar, *frommandel, *kbdmore, *stacked);
-
-    case ID_KEY_CTL_X:                     // Ctl-X, Ctl-Y, CTL-Z do flipping
-    case ID_KEY_CTL_Y:
-    case ID_KEY_CTL_Z:
-        return flip_image(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'x':          // invoke options screen
-    case 'y':          //
-    case 'p':          // passes options
-    case 'z':          // type specific parms
-    case 'g':          // enter a command
-    case 'v':          // view window
-    case ID_KEY_CTL_B: // browsing
-    case ID_KEY_CTL_E: // evolving
-    case ID_KEY_CTL_F: // sound options
-        return prompt_options(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case '@':                    // execute commands
-    case '2':                    // execute commands
-        return execute_commands(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'f':                    // floating pt toggle
-        return toggle_float(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'i':                    // 3d fractal parms
-        return request_3d_fractal_params(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_A:                     // ^a Ant
-        return begin_ant(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'k':                    // ^s is irritating, give user a single key
-    case ID_KEY_CTL_S:                     // ^s RDS
-        return random_dot_stereogram(*kbdchar, *frommandel, *kbdmore, *stacked);
-
-    case 'a':                    // starfield parms
-        return request_starfield_params(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_O:                     // ctrl-o
-    case 'o':
-        return show_orbit_window(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_SPACE:                  // spacebar, toggle mand/julia
-        return space_command(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'j':                    // inverse julia toggle
-        return inverse_julia_toggle(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case '\\':                   // return to prev image
-    case ID_KEY_CTL_BACKSLASH:
-    case 'h':
-    case ID_KEY_BACKSPACE:
-        return main_history(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'd':                    // shell to MS-DOS
-        return request_shell(*kbdchar, *frommandel, *kbdmore, *stacked);
-
-    case 'c':                    // switch to color cycling
-    case '+':                    // rotate palette
-    case '-':                    // rotate palette
-        return color_cycle(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'e':                    // switch to color editing
-        return color_editing(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 's':                    // save-to-disk
-        return request_save_image(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case '#':                    // 3D overlay
-        return request_3d_overlay(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case '3':                    // restore-from (3d)
-        return restore_from_3d(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'r':                    // restore-from
-        return restore_from_image(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'l':
-    case 'L':                    // Look for other files within this view
-        return look_for_files(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case 'b':                    // make batch file
-        return request_make_batch_file(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_ENTER:                  // Enter
-    case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        return request_zoom_in(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_ENTER:              // control-Enter
-    case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        return request_zoom_out(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_INSERT:         // insert
-        return request_restart(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_LEFT_ARROW:             // cursor left
-    case ID_KEY_RIGHT_ARROW:            // cursor right
-    case ID_KEY_UP_ARROW:               // cursor up
-    case ID_KEY_DOWN_ARROW:             // cursor down
-    case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
-    case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
-    case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
-    case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        return move_zoom_box(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_HOME:               // Ctrl-home
-        return skew_zoom_left(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_END:                // Ctrl-end
-        return skew_zoom_right(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_PAGE_UP:            // Ctrl-pgup
-        return decrease_zoom_aspect(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_PAGE_DOWN:          // Ctrl-pgdn
-        return increase_zoom_aspect(*kbdchar, *frommandel, *kbdmore, *stacked);
-
-    case ID_KEY_PAGE_UP:                // page up
-        return zoom_box_in(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_PAGE_DOWN:              // page down
-        return zoom_box_out(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        return zoom_box_increase_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        return zoom_box_decrease_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        return zoom_box_increase_color(*kbdchar, *frommandel, *kbdmore, *stacked);
-        
-    case ID_KEY_CTL_DEL:                // Ctrl-del
-        return zoom_box_decrease_color(*kbdchar, *frommandel, *kbdmore, *stacked);
-
-    case ID_KEY_ALT_1: // alt + number keys set mutation level and start evolution engine
-    case ID_KEY_ALT_2:
-    case ID_KEY_ALT_3:
-    case ID_KEY_ALT_4:
-    case ID_KEY_ALT_5:
-    case ID_KEY_ALT_6:
-    case ID_KEY_ALT_7:
-        return start_evolution(*kbdchar, *frommandel, *kbdmore, *stacked);
-
-    case ID_KEY_DELETE:         // select video mode from list
-        request_video_mode(*kbdchar);
-        // fallthrough
-
-    default: // NOLINT(clang-diagnostic-implicit-fallthrough)
-        // other (maybe a valid Fn key)
-        return requested_video_fn(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return it->handler(key, from_mandel, kbd_more, stacked);
     }
-    return main_state::NOTHING;
+
+    if (key == ID_KEY_DELETE)
+    {
+        // select video mode from list
+        request_video_mode(key);
+    }
+
+    // other (maybe a valid Fn key)
+    return requested_video_fn(key, from_mandel, kbd_more, stacked);
 }

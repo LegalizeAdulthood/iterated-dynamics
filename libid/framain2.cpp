@@ -651,7 +651,7 @@ resumeloop:                             // return here on failed overlays
             }
             else
             {
-                mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
+                mms_value = main_menu_switch(kbdchar, frommandel, *kbdmore, *stacked);
             }
             if (g_quick_calc
                 && (mms_value == main_state::IMAGE_START

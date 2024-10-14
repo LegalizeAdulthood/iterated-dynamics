@@ -21,7 +21,7 @@ protected:
     main_state execute(int key)
     {
         m_key = key;
-        return main_menu_switch(&m_key, &m_from_mandel, &m_more_keys, &m_stacked);
+        return main_menu_switch(m_key, m_from_mandel, m_more_keys, m_stacked);
     }
 
     int m_key{};
