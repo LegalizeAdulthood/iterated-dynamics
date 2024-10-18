@@ -179,6 +179,9 @@ AlternateMath g_alternate_math[] =
     {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, juliabf_per_pixel, MandelbfSetup  },
     {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
     {fractal_type::DIVIDE_BROT5, bf_math_type::BIGFLT, DivideBrot5bfFractal, dividebrot5bf_per_pixel, MandelbfSetup},
+    {fractal_type::BURNINGSHIP, bf_math_type::BIGFLT, BurningShipbfFractal, mandelbf_per_pixel, MandelbfSetup},
+    {fractal_type::MANDELBAR, bf_math_type::BIGFLT, MandelbarbfFractal, mandelbf_per_pixel, MandelbfSetup},
+    {fractal_type::CELTIC, bf_math_type::BIGFLT, CelticbfFractal, mandelbf_per_pixel, MandelbfSetup},
     {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr, nullptr, nullptr}
 };
 
@@ -273,7 +276,7 @@ fractalspecificstuff g_fractal_specific[] =
         t_mandel+1,
         {realz0, imagz0, "", ""},
         {0, 0, 0, 0},
-        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST,
+        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST|fractal_flags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::JULIA, fractal_type::NOFRACTAL, fractal_type::MANDELFP, symmetry_type::X_AXIS_NO_PARAM,
         JuliaFractal, mandel_per_pixel, MandelSetup, standard_fractal,
@@ -317,7 +320,7 @@ fractalspecificstuff g_fractal_specific[] =
         t_mandel,
         {realz0, imagz0, "", ""},
         {0, 0, 0, 0},
-        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
+        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST|fractal_flags::BF_MATH|fractal_flags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::JULIAFP, fractal_type::NOFRACTAL, fractal_type::MANDEL, symmetry_type::X_AXIS_NO_PARAM,
         JuliafpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
@@ -886,7 +889,7 @@ fractalspecificstuff g_fractal_specific[] =
         t_manzpower,
         {realz0, imagz0, exponent, imexponent},
         {0, 0, 2, 0},
-        help_labels::HT_PICKMJ, help_labels::HF_MANZPOWER, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
+        help_labels::HT_PICKMJ, help_labels::HF_MANZPOWER, fractal_flags::BAILTEST|fractal_flags::BF_MATH|fractal_flags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::FPJULIAZPOWER, fractal_type::NOFRACTAL, fractal_type::LMANDELZPOWER, symmetry_type::X_AXIS_NO_IMAG,
         floatZpowerFractal, othermandelfp_per_pixel, MandelfpSetup,
@@ -910,7 +913,7 @@ fractalspecificstuff g_fractal_specific[] =
         "manzzpwr",
         {realz0, imagz0, exponent, ""},
         {0, 0, 2, 0},
-        help_labels::HT_PICKMJ, help_labels::HF_MANZZPWR, fractal_flags::BAILTEST,
+        help_labels::HT_PICKMJ, help_labels::HF_MANZZPWR, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::FPJULZTOZPLUSZPWR, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_PARAM,
         floatZtozPluszpwrFractal, othermandelfp_per_pixel, MandelfpSetup,
@@ -2296,6 +2299,125 @@ fractalspecificstuff g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
         MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "burningship",
+        {realz0, imagz0, "degree", ""},
+        {0, 0, 2, 0},
+        help_labels::HT_BURNINGSHIP, help_labels::HF_BURNINGSHIP, fractal_flags::BAILTEST|fractal_flags::PERTURB|fractal_flags::BF_MATH,
+        -2.5F, 1.5F, -1.2F, 1.8F,
+        0, fractal_type::BURNINGSHIP, fractal_type::NOFRACTAL, fractal_type::BURNINGSHIP, symmetry_type::NONE,
+        burningshipfpOrbit, othermandelfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "mandelbar", {realz0, imagz0, "degree", ""},
+        {0, 0, 2, 0},
+        help_labels::HT_MANDELBAR, help_labels::HF_MANDELBAR, fractal_flags::BAILTEST | fractal_flags::PERTURB|fractal_flags::BF_MATH,
+        -3.0F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::MANDELBAR, fractal_type::NOFRACTAL, fractal_type::MANDELBAR, symmetry_type::NONE,
+        mandelbarfpOrbit, othermandelfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "celtic",
+        {realz0, imagz0, "degree", ""},
+        {0, 0, 2, 0}, help_labels::HT_CELTIC, help_labels::HF_CELTIC,
+        fractal_flags::BAILTEST | fractal_flags::PERTURB | fractal_flags::BF_MATH,
+        -3.0F, 2.0F, -2.0F, 2.0F, 0,
+        fractal_type::CELTIC, fractal_type::NOFRACTAL, fractal_type::CELTIC, symmetry_type::NONE,
+        celticfpOrbit, othermandelfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "talis",
+        {realz0, imagz0, "degree", "m"},
+        {0, 0, 2, 1}, help_labels::HT_TALIS, help_labels::HF_TALIS,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0, fractal_type::TALIS, fractal_type::NOFRACTAL,
+        fractal_type::TALIS, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        400
+    },
+    {
+        "newton_apple",
+        {realz0, imagz0, "degree", ""},
+        {0, 0, 4, 0}, help_labels::HT_NEWTONAPPLE, help_labels::HF_NEWTONAPPLE,
+        fractal_flags::BAILTEST,
+        -0.75F, 0.5F, -0.5F, 0.5F, 0,
+        fractal_type::NEWTONAPPLE, fractal_type::NOFRACTAL, fractal_type::NEWTONAPPLE, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "newton_polygon",
+        {realz0, imagz0, "degree", ""},
+        {0, 0, 6, 0}, help_labels::HT_NEWTONPOLYGON, help_labels::HF_NEWTONPOLYGON,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::NEWTONPOLYGON, fractal_type::NOFRACTAL, fractal_type::NEWTONPOLYGON, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "newton_cross",
+        {realz0, imagz0, "degree", ""},
+        {0, 0, 6, 0}, help_labels::HT_NEWTONCROSS, help_labels::HF_NEWTONCROSS,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::NEWTONCROSS, fractal_type::NOFRACTAL, fractal_type::NEWTONCROSS, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "nova",
+        {realz0, imagz0, "", ""},
+        {0, 0, 0, 0}, help_labels::HT_NEWTONNOVA, help_labels::HF_NEWTONNOVA,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::NEWTONNOVA, fractal_type::NOFRACTAL, fractal_type::NEWTONNOVA, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "newt_variation",
+        {realz0, imagz0, "", ""},
+        {0, 0, 0, 0}, help_labels::HT_NEWTONVARIATION, help_labels::HF_NEWTONVARIATION,
+        fractal_flags::BAILTEST,
+        -1.75F, 0.75F, -1.0F, 1.0F, 0,
+        fractal_type::NEWTONVARIATION, fractal_type::NOFRACTAL, fractal_type::NEWTONVARIATION, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "newton_flower",
+        {realz0, imagz0, "degree", ""},
+        {0, 0, 5, 0}, help_labels::HT_NEWTONFLOWER, help_labels::HF_NEWTONFLOWER,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::NEWTONFLOWER, fractal_type::NOFRACTAL, fractal_type::NEWTONFLOWER, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "quartet",
+        {realz0, imagz0, "degree", "version (1-6)"},
+        {0, 0, 4, 6}, help_labels::HT_QUARTET, help_labels::HF_QUARTET,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::QUARTET, fractal_type::NOFRACTAL, fractal_type::QUARTET, symmetry_type::NONE,
+        tierazonfpOrbit, tierazonfp_per_pixel, MandelfpSetup, standard_fractal,
+        STDBAILOUT
+    },
+    {
+        "artmatrixcubic",
+        {"subtype (0-3)", "special colour", "", ""},
+        {0, 2, 0, 0}, help_labels::HT_ARTMATRIXCUBIC, help_labels::HF_ARTMATRIXCUBIC,
+        fractal_flags::BAILTEST,
+        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        fractal_type::ARTMATRIXCUBIC, fractal_type::NOFRACTAL, fractal_type::ARTMATRIXCUBIC, symmetry_type::NONE,
+        ArtMatrixfpOrbit, ArtMatrixfp_per_pixel, MandelfpSetup, standard_fractal,
         STDBAILOUT
     },
 

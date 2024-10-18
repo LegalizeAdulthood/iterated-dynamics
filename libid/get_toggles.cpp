@@ -52,7 +52,7 @@ int get_toggles()
     int old_fillcolor;
     int old_stoppass;
     double old_closeprox;
-    char const *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
+    char const *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
     char const *soundmodes[5] = {"off", "beep", "x", "y", "z"};
     char const *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
                           "startrail", "period", "atan", "fmod"
@@ -63,7 +63,7 @@ int get_toggles()
 
     k = -1;
 
-    choices[++k] = "Passes (1,2,3, g[uess], b[ound], t[ess], d[iffu], o[rbit])";
+    choices[++k] = "Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])";
     uvalues[k].type = 'l';
     uvalues[k].uval.ch.vlen = 3;
     uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
@@ -83,7 +83,8 @@ int get_toggles()
         : (g_user_std_calc_mode == 's') ? 11
         : (g_user_std_calc_mode == 't') ? 12
         : (g_user_std_calc_mode == 'd') ? 13
-        :        /* "o"rbits */      14;
+        : (g_user_std_calc_mode == 'o') ? 14
+        :        /* "p"erturbation */     15;
     old_usr_stdcalcmode = g_user_std_calc_mode;
     old_stoppass = g_stop_pass;
     choices[++k] = "Floating Point Algorithm";

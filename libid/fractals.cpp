@@ -56,6 +56,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"
+#include "complex.h"
 #include "pixel_grid.h"
 
 #include <cfloat>
@@ -581,6 +582,7 @@ int mandelfp_per_pixel()
 {
     // floating point mandelbrot
     // mandelfp
+    // mandelbrot derivatives
 
     if (g_invert != 0)
     {
@@ -593,6 +595,12 @@ int mandelfp_per_pixel()
     }
     switch (g_fractal_type)
     {
+    case fractal_type::BURNINGSHIP: // a bunch of mandelbrot derivatives
+    case fractal_type::MANDELBAR:
+    case fractal_type::CELTIC:
+        g_old_z.x = 0.0;
+        g_old_z.y = 0.0;
+        break;
     case fractal_type::MAGNET2M:
         FloatPreCalcMagnet2();
     case fractal_type::MAGNET1M:
@@ -695,4 +703,219 @@ int otherjuliafp_per_pixel()
         g_old_z.y = g_dy_pixel();
     }
     return 0;
+}
+
+int burningshipfpOrbit()
+{
+    Complex z, q;
+    double real_imag;
+    int degree = (int) g_params[2];
+    q.x = g_init.x;
+    q.y = g_init.y;
+    if (degree == 2) // Burning Ship
+    {
+        g_temp_sqr_x = sqr(g_old_z.x);
+        g_temp_sqr_y = sqr(g_old_z.y);
+        real_imag = fabs(g_old_z.x * g_old_z.y);
+        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;
+        g_new_z.y = real_imag + real_imag - q.y;
+    }
+    else if (degree > 2) // Burning Ship to higher power
+    {
+        z.x = fabs(g_old_z.x);
+        z.y = -fabs(g_old_z.y);
+        z = z.CPolynomial(degree);
+        g_new_z.x = z.x + q.x;
+        g_new_z.y = z.y + q.y;
+    }
+    return g_bailout_float();
+}
+
+int mandelbarfpOrbit()
+{
+    Complex z, q;
+    double real_imag;
+    int degree = (int) g_params[2];
+    q.x = g_init.x;
+    q.y = g_init.y;
+    if (degree == 2) // Mandelbar
+    {
+        g_temp_sqr_x = sqr(g_old_z.x);
+        g_temp_sqr_y = sqr(g_old_z.y);
+        real_imag = g_old_z.x * g_old_z.y;
+        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;
+        g_new_z.y = -real_imag - real_imag + q.y;
+    }
+    else if (degree > 2) // Mandelbar to higher power
+    {
+        z.x = g_old_z.x;
+        z.y = g_old_z.y;
+        z = z.CPolynomial(degree);
+        g_new_z.x = z.x + q.x;
+        g_new_z.y = -z.y + q.y;
+    }
+    return g_bailout_float();
+}
+
+int celticfpOrbit()
+{
+    Complex z, q;
+    double real_imag;
+    int degree = (int) g_params[2];
+    q.x = g_init.x;
+    q.y = g_init.y;
+    if (degree == 2) // Celtic
+    {
+        g_temp_sqr_x = sqr(g_old_z.x);
+        g_temp_sqr_y = sqr(g_old_z.y);
+        real_imag = g_old_z.x * g_old_z.y;
+        g_new_z.y = -real_imag - real_imag - q.y;
+        g_new_z.x = -fabs(g_temp_sqr_x - g_temp_sqr_y) - q.x;
+    }
+    else if (degree > 2) // Celtic to higher power
+    {
+        z.x = g_old_z.x;
+        z.y = g_old_z.y;
+        z = z.CPolynomial(degree);
+        g_new_z.x = fabs(z.x) + q.x;
+        g_new_z.y = z.y + q.y;
+    }
+    return g_bailout_float();
+}
+
+/**************************************************************************
+        Initialise functions for each pixel
+**************************************************************************/
+
+static int g_subtype;
+static Complex g_a, g_a2, g_aa3, g_b, g_q, g_t2, g_t3, g_z, g_v;
+
+/**************************************************************************
+        Initialise functions for each pixel
+**************************************************************************/
+
+int InitArtMatrix(int subtype, Complex *z, Complex *q)
+{
+    // Art Matrix Cubic (taken from the original Fortran)
+    Complex temp;
+    //    period_level = FALSE;			            // no periodicity checking
+    if (subtype == 0) // CBIN
+    {
+        g_t3 = *q * 3;                  // T3 = 3*T
+        g_t2 = q->CSqr();               // T2 = T*T
+        g_a = (g_t2 + 1) / g_t3;        // A  = (T2 + 1)/T3
+                                        // B  = 2*A*A*A + (T2 - 2)/T3
+        temp = g_a.CCube() * 2;         // 2*A*A*A
+        g_b = (g_t2 - 2) / g_t3 + temp; // B  = 2*A*A*A + (T2 - 2)/T3
+    }
+    else if (subtype == 1 || subtype == 2) // CCIN or CFIN
+    {
+        g_a = *q;          // A = T
+                           // find B = T + 2*T*T*T
+        temp = q->CCube(); // B = T*T*T
+        if (subtype == 1)
+            g_b = temp + temp + *q; // B = B * 2 + T
+        else
+        {
+            g_b = (temp - *q) * 2; // B = B * 2 - 2 * T
+            g_a2 = g_a + g_a;
+        }
+    }
+    else if (subtype == 3) // CKIN
+    {
+        g_a = 0;
+        g_v = 0;
+        g_b = *q; // B = T
+    }
+    g_aa3 = g_a.CSqr() * 3; // AA3 = A*A*3
+                            //	        if (!juliaflag)
+    *z = -g_a;              // Z = -A
+    return 0;
+}
+
+/**************************************************************************
+        Run functions for each iteration
+**************************************************************************/
+
+int RunArtMatrix(int subtype, int special, Complex *z, Complex *q)
+{
+    Complex temp;
+
+    // Art Matrix Cubic (taken from the original Fortran)
+    if (subtype == 3) // CKIN
+    {
+        *z = z->CCube() + g_b; // Z = Z*Z*Z + B
+                               //       z->x += g_params[3];
+                               //       z->y += g_params[4];
+    }
+    else
+    {
+        temp = z->CCube() + g_b; // Z = Z*Z*Z + B
+        *z = temp - g_aa3 * *z;  // Z = Z*Z*Z - AA3*Z + B
+                                 //       z->x += g_params[3];
+                                 //       z->y += g_params[4];
+    }
+    if (z->CSumSqr() > 100.0)
+        return (TRUE);
+    else
+    {
+        if (subtype == 2)
+        {
+            if (q->CSumSqr() < 0.111111)
+            {
+                g_color_iter = special;
+                // 			    *SpecialFlag = TRUE;			// for decomp and
+                // biomorph
+                return (TRUE);
+            }
+            g_v = *z + g_a2;
+        }
+        else if (subtype == 3)
+            g_v = *z - g_v;
+        else
+            g_v = *z - g_a;
+        if (g_v.CSumSqr() <= 0.000001)
+        {
+            g_color_iter = special;
+            //	        *SpecialFlag = TRUE;			// for decomp and biomorph
+            return (TRUE);
+        }
+        return (FALSE);
+    }
+
+    return 0;
+}
+
+/**************************************************************************
+        Initialise functions for each pixel
+**************************************************************************/
+
+int ArtMatrixfp_per_pixel()
+{
+    g_z.x = g_old_z.x;
+    g_z.y = g_old_z.y;
+    g_q.x = g_dx_pixel();
+    g_q.y = g_dy_pixel();
+    g_subtype = (int) g_params[0];
+    if (g_subtype < 0 || g_subtype > 3)
+        g_subtype = 0;
+    //    g_bail_out_test = (bailouts) g_params[4];
+    InitArtMatrix(g_subtype, &g_z, &g_q);
+    return 0;
+}
+
+/**************************************************************************
+        Run functions for each orbit
+**************************************************************************/
+
+int ArtMatrixfpOrbit()
+{
+    int special = (int) g_params[1];
+    if (special < 0)
+        special = 0;
+    int ReturnMode;
+    ReturnMode = RunArtMatrix(g_subtype, special, &g_z, &g_q);
+    g_new_z.x = g_z.x;
+    g_new_z.y = g_z.y;
+    return ReturnMode;
 }

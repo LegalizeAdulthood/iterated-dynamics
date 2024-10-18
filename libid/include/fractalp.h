@@ -43,7 +43,8 @@ enum class fractal_flags
     MORE = 4096,     // more than 4 parms
     BAILTEST = 8192, // can use different bailout tests
     BF_MATH = 16384, // supports arbitrary precision
-    LD_MATH = 32768  // supports long double
+    LD_MATH = 32768, // supports long double
+    PERTURB = 65536  // supports perturbation
 };
 inline int operator+(fractal_flags value)
 {
