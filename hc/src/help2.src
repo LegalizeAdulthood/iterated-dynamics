@@ -33,6 +33,12 @@ SUMMARY OF FRACTAL TYPES
     or stop at the edge.  The 6th parameter is a random seed.  You can slow
     down the ants to see them better using the <P> screen Orbit Delay.
 
+{=HT_ARTMATRIXCUBIC artmatrixcubic}
+~Label=HF_ARTMATRIXCUBIC
+    Taken from the original Fortran code by Art Matrix 1997.
+    There are 4 varieties.
+  Two parameters: subtype and @special@ colour.
+
 {=HT_BARNS barnsleyj1}
 ~Label=HF_BARNSJ1
       z(0) = pixel;
@@ -119,6 +125,15 @@ SUMMARY OF FRACTAL TYPES
     Three parameters: Filter Cycles, Seed Population, and Beta.
 
 ~OnlineFF
+{=HT_BURNINGSHIP burningship}
+~Label=HF_BURNINGSHIP
+    Classic Mandelbrot Derivative fractal.
+      z(0) = c = pixel;
+      real(tmp) = sqr(real(z(n))) - sqr(imag(z(n)))
+      imag(tmp) = abs(real(z(n)) * imag(z(n))) * -2.0
+      z(n+1) = tmp + c.
+      Three parameters: perturbations of z(0) and degree.
+
 {=HT_CELLULAR cellular}
 ~Label=HF_CELLULAR
     One-dimensional cellular automata or line automata.  The type of CA
@@ -128,6 +143,15 @@ SUMMARY OF FRACTAL TYPES
     Four parameters: Initial String, Rule, Type, and Starting Row Number.
     For Type = 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27
         Rule =  4,  7, 10, 13, 16,  6, 11, 16,  8, 15, 10, 12, 14, 16 digits
+
+{=HT_CELTIC celtic}
+~Label=HF_CELTIC
+    Mandelbrot Derivative fractal.
+      z(0) = c = pixel;
+      real(tmp) = abs(sqr(real(z(n))) - sqr(imag(z(n))))
+      imag(tmp) = real(z(n)) * imag(z(n)) * 2.0
+      z(n+1) = tmp + c.
+      Three parameters: perturbations of z(0) and degree.
 
 {=HT_MARTIN chip}
 ~Label=HF_CHIP
@@ -523,6 +547,15 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n)^2 + c.
     Two parameters: real & imaginary perturbations of z(0).
 
+{=HT_MANDELBAR mandelbar}
+~Label=HF_MANDELBAR
+    Mandelbrot Derivative fractal. Also called Tricorn.
+      z(0) = c = pixel;
+      real(tmp) = sqr(real(z(n))) - sqr(imag(z(n)))
+      imag(tmp) = real(z(n)) * imag(z(n)) * -2.0
+      z(n+1) = tmp + c.
+      Three parameters: perturbations of z(0) and degree.
+
 {=HT_FNORFN mandel(fn||fn)}
 ~Label=HF_MANDELFNFN
       c = pixel;
@@ -702,6 +735,64 @@ SUMMARY OF FRACTAL TYPES
     One parameter: the polynomial degree p.
 
 ~OnlineFF
+{=HT_NEWTONAPPLE newton_apple}
+~Label=HF_NEWTONAPPLE
+    Based on the Newton formula for finding the roots of z^p - 1.
+    Standard colouring methods are used.
+      z(0) = pixel;
+      a = pixel * z^(n-1) * n - (z^(n-2) * (n - 1))) - z^(n-3) * (n - 2);
+      e = z^(n-3) * (n - 1) * (n - 2);
+      b = pixel * f1n * n * (n - 1) - e - f3n * (n - 2) * (n - 3);
+      z = z - a / b;
+    Parameters: real & imaginary perturbations of z(0), degree.
+
+{=HT_NEWTONCROSS newton_cross}
+~Label=HF_NEWTONCROSS
+    Based on the Newton formula for finding the roots of z^p - 1.
+    Standard colouring methods are used.
+      z(0) = pixel;
+      a = z^(n - 1) * (n - 1) + pixel * z^(n - 1) - 1.0;
+      b = z^(n - 3) * (N - 2) * (n - 1) + pixel * z^(n-2) * n * (n - 1);
+      z = z - a / b;
+    Parameters: real & imaginary perturbations of z(0), degree.
+
+{=HT_NEWTONFLOWER newton_flower}
+~Label=HF_NEWTONFLOWER
+    Based on the Newton formula for finding the roots of z^p - 1.
+    Standard colouring methods are used.
+      z(0) = pixel;
+      a = z^(n - 1) * pixel + z^n - z;
+      b = z^(n - 1) * n + pixel * (z^(n - 2) * (n - 1)) - 1.0;
+      z = z - a / b;
+    Parameters: real & imaginary perturbations of z(0), degree.
+
+{=HT_NEWTONPOLYGON newton_polygon}
+~Label=HF_NEWTONPOLYGON
+    Based on the Newton formula for finding the roots of z^p - 1.
+    Standard colouring methods are used.
+      z(0) = pixel;
+      a = z^(n - 1) * pixel + fn + *z + pixel;
+      b = z^(n - 1) * n + 1.0 + pixel * (z^(n - 2) * (n - 1));
+      z = z - a / b;
+    Parameters: real & imaginary perturbations of z(0), degree.
+
+{=HT_NEWTONVARIATION newt_variation}
+~Label=HF_NEWTONVARIATION
+    Based on the Newton formula for finding the roots of z^p - 1.
+    Standard colouring methods are used.
+      z(0) = pixel;
+      z = ((z*z*z-z-1)/(3*z*z-1)-z)*pixel;
+    Parameters: real & imaginary perturbations of z(0).
+
+{=HT_NEWTONNOVA nova}
+~Label=HF_NEWTONNOVA
+    Based on the Newton formula for finding the roots of z^p - 1.
+    Standard colouring methods are used.
+      z(0) = pixel;
+      z = z - ((z*z^2 - 1) / (z^2 * 3)) + pixel;
+    Parameters: real & imaginary perturbations of z(0).
+
+~OnlineFF
 {=HT_PHOENIX phoenix}
 ~Label=HF_PHOENIX
     z(0) = pixel, y(0) = 0;
@@ -780,6 +871,18 @@ SUMMARY OF FRACTAL TYPES
     Four parameters: c, ci, cj, ck
     c = (c1,ci,cj,ck)
 
+{=HT_QUARTET nova}
+~Label=HF_QUARTET
+    An iteresting suite of newton fractals.
+    z2=2; z=z*z*z*z+z2+c; z2=z1
+    z2=z; z=z*z*z*z+5*z2*c; z2=z1
+    t=0; z1=z; z=z*z*z-t*t*t+c; z=z1
+    t=0; z1=z; z=z*z*z*z-t*t*t*t+c; t=z1
+    z2=z; z=(z^4)+c; c=z2
+    z1=z; z=z*z*z*z-z2+c; z2 = z1
+    z1=z; z=z*z*z*z+z2/2+c;; z2=z1
+  Parameters: real & imaginary perturbations of z(0), degree and version.
+
 {=HT_QUAT quat}
 ~Label=HF_QUAT
     Quaternion Mandelbrot set.
@@ -823,6 +926,13 @@ SUMMARY OF FRACTAL TYPES
       z(0) = pixel;
       z(n+1) = fn(z(n))^2
     One parameter: the function fn.
+
+{=HT_TALIS talis}
+~Label=HF_TALIS
+    Based on the Newton formula for finding the roots of z^p - 1.
+      z(0) = pixel;
+      z = (z^(n - 1) * z) / (m + z^(n - 1)) + pixel;
+    Parameters: real & imaginary perturbations of z(0), degree and m.
 
 {=HT_TEST test}
 ~Label=HF_TEST
@@ -2339,6 +2449,99 @@ author of "A Hypercomplex Calculus with Applications to Relativity"
 (ISBN 0-9623837-0-8).
 
 See also {Quaternion} and { Quaternion and Hypercomplex Algebra }
+;
+;
+~Topic=BURNINGSHIP, Label=HT_BURNINGSHIP
+(type=burningship)
+
+~Topic=MANDELBAR, Label=HT_MANDELBAR
+(type=mandelbar)
+
+~Topic=CELTIC, Label=HT_CELTIC
+(type=celtic)
+
+These fractals are derivatives of the classic Mandelbrot fractal with a twist.
+Some parts use absolute values in the equations and give an amazing variety
+of new fractals.
+;
+;
+~Topic=NEWTONAPPLE, Label=HT_NEWTONAPPLE
+(type=newton_apple)
+
+~Topic=NEWTONCROSS, Label=HT_NEWTONCROSS
+(type=newton_cross)
+
+~Topic=NEWTONFLOWER, Label=HT_NEWTONFLOWER
+(type=newton_flower)
+
+~Topic=NEWTONPOLYGON, Label=HT_NEWTONPOLYGON
+(type=newton_polygon)
+
+~Topic=NEWTONVARIATION, Label=HT_NEWTONVARIATION
+(type=newt_variation)
+
+~Topic=NEWTONNOVA, Label=HT_NEWTONNOVA
+(type=nova)
+
+~Topic=QUARTET, Label=HT_QUARTET
+(type=quartet)
+
+~Topic=TALIS, Label=HT_TALIS
+(type=talis)
+
+The Newton method is a numerical method of solving for
+the roots of real or complex valued polynomial equations.
+An initial guess is made at a root and then the method is
+iterated, producing new values that (hopefully) converge
+to a root of the equation.
+
+The traditional Newton fractal is similar to a Julia set
+in that the pixel values are used as the initial values
+(or guesses).  A typical equation that is used to produce
+a traditional Newton fractal is:
+
+    Z^3 - 1 = 0
+
+On the other hand, what I call the Newton Mset method
+solves for the roots of an equation in which the pixel
+value appears in the equation.  For example, in this
+equation the pixel value is denoted as C:
+
+    Z^3 + C*Z^2 - Z + C = 0
+
+Because C has a different value for every pixel, the
+method actually solves a different equation for every
+pixel.  Now the question is what to use for the initial
+guess for each solution.  The answer is to use one of
+the "critical points."  These are the values of Z for
+which the second derivative vanishes and can be found
+by setting the second derivative of the equation to
+zero and solving for Z.  In the example equation
+above:
+
+    The function:          f(Z)   = Z^3 + C*Z^2 - Z + C
+    The first derivative:  f'(Z)  = 3*Z^2 + 2*C*Z - 1
+    The second derivative: f''(Z) = 6*Z + 2*C
+    Therefore,  setting 6*Z + 2*C = 0 we have Z = -C/3
+
+The variable Z is initialized to -C/3 prior to the
+iteration loop.  From there, everything proceeds as
+usual using the general Newton Method formula:
+
+    Z[n+1] = Z[n] - f(Z[n]) / f'(Z[n])
+
+A root is assumed to be found when Z[n] and Z[n+1] are
+very close together.
+
+In the Newton Mset fractals that I will be posting the
+colors of the pixels have nothing to do with which
+root a pixel converged to, unlike the more traditional
+coloring method.
+;
+;
+~Topic=ARTMATRIXCUBIC, Label=HT_ARTMATRIXCUBIC
+(type=artmatrixcubic)
+;
 ;
 ;
 ~Topic=Cellular Automata, Label=HT_CELLULAR
