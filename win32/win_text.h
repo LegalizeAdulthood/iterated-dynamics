@@ -65,6 +65,8 @@ public:
     void on_get_min_max_info(HWND hwnd, LPMINMAXINFO lpMinMaxInfo);
 
 private:
+    void invalidate(int left, int bot, int right, int top);
+
     int m_text_mode{};
     bool m_alt_f4_hit{};
     int m_showing_cursor{};
@@ -87,10 +89,6 @@ private:
     short m_cursor_pattern[3][40]{};
     char m_title[128]{};
     HWND m_window{};
-
-private:
-    void invalidate(int left, int bot, int right, int top);
-
     HWND m_parent{};
     HINSTANCE m_instance{};
 };
