@@ -2415,7 +2415,7 @@ fractalspecificstuff g_fractal_specific[] =
         {"subtype (0-3)", "special colour", "", ""},
         {0, 2, 0, 0}, help_labels::HT_ARTMATRIXCUBIC, help_labels::HF_ARTMATRIXCUBIC,
         fractal_flags::BAILTEST,
-        -2.5F, 2.5F, -2.0F, 2.0F, 0,
+        -4.0F, 4.0F, -3.2F, 3.2F, 0,
         fractal_type::ARTMATRIXCUBIC, fractal_type::NOFRACTAL, fractal_type::ARTMATRIXCUBIC, symmetry_type::NONE,
         ArtMatrixfpOrbit, ArtMatrixfp_per_pixel, MandelfpSetup, standard_fractal,
         STDBAILOUT

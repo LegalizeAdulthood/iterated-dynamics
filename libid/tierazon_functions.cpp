@@ -15,7 +15,7 @@
 
 #include "tierazon.h"
 
-bool juliaflag = false; // for the time being
+bool g_julia_flag = false; // for the time being
 
 static Complex g_z, g_z2, g_q;
 static int g_degree, g_subtype;
@@ -24,20 +24,20 @@ static int g_degree, g_subtype;
 	Initialise functions for each pixel
 **************************************************************************/
 
-int	InitTierazonFunctions(int subtype, Complex *z, Complex *q)
+int init_tierazon_functions(int subtype, Complex *z, Complex *q)
     {
     switch (g_fractal_type)
         {
         case fractal_type::TALIS:                   // Talis, z=((z*z)/(1+z))+c
         case fractal_type::NEWTONVARIATION:         // Newton variation, z=((z*z*z-z-1)/(3*z*z-1)-z)*c
-    	    if (!juliaflag)                         // let's worry about Julai sets later
+            if (!g_julia_flag)                      // let's worry about Julai sets later
 		        {
 		        z->x = q->x + g_params[0];
 		        z->y = q->y + g_params[1];
 		        }
 	        break;
         case fractal_type::NEWTONNOVA:              // Nova, init: z=1; iterate: z=z-((z*z*z-1)/(3*z*z))+c
-    	    if (!juliaflag)
+            if (!g_julia_flag)
 		        {
 		        //	Note that julia parameters are also used as starting values for Mandelbrot
 		        z->x = g_params[0] + 1.0;
@@ -140,14 +140,14 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
 */
         case fractal_type::NEWTONPOLYGON:           // Newton/Mandel, Newton Polygon
         case fractal_type::NEWTONFLOWER:            // Newton/Mandel, Newton Flower
-    	    if (!juliaflag)
+            if (!g_julia_flag)
 		        {
                 z->x = -q->x * (double) (g_degree - 2) / (double) g_degree + g_params[0];
                 z->y = -q->y * (double) (g_degree - 2) / (double) g_degree + g_params[1];
 		        }
 	        break;
         case fractal_type::NEWTONAPPLE:             // More Newton Msets, 4th order Newton's apple
-    	    if (!juliaflag)
+            if (!g_julia_flag)
                 *z = *q * ((double) g_degree);
 	        *z = z->CInvert();
 	        z->x = z->x + g_params[0];
@@ -155,7 +155,7 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
 	        break;
 
 	    case fractal_type::NEWTONCROSS:             // More Newton Msets, 5th order Newton Mset
-    	    if (!juliaflag)
+            if (!g_julia_flag)
 		        *z = *q * 2.0;
 	        *z = z->CInvert();
 	        z->x = g_params[0] - z->x;
@@ -168,7 +168,7 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
                 {
                 case 0:                             // Quartets, z2=2; z=z*z*z*z+z2+c; z2=z1
                 case 1:                             // Quartets, z2=z; z=z*z*z*z+5*z2*c; z2=z1
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                         *z = *q;
                     g_z2 = *z;
                     z->x += g_params[0];
@@ -177,7 +177,7 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
 
                 case 2:                             // Quartets, t=0; z1=z; z=z*z*z-t*t*t+c; z=z1
                     g_z2 = 0;
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                         *z = *q;
                     z->x += g_params[0];
                     z->y += g_params[1];
@@ -186,12 +186,12 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
                 case 3:                             // Quartets, t=0; z1=z; z=z*z*z*z-t*t*t*t+c; t=z1
                     g_z2.x = g_params[0]; // t = 0;
                     g_z2.y = g_params[1];
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                         *z = 0;
                     break;
 
                 case 4:                             // Quartets, z2=z; z=(z^4)+c; c=z2
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                     {
                         z->x = q->x + g_params[0];
                         z->y = q->y + g_params[1];
@@ -199,7 +199,7 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
                     break;
 
                 case 5:                             // Quartets, z1=z; z=z*z*z*z-z2+c; z2 = z1
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                         *z = *q;
                     g_z2 = *z;
                     z->x += g_params[0];
@@ -208,7 +208,7 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
 
                 case 6:                             // Quartets, z1=z; z=z*z*z*z+z2/2+c;; z2=z1
                     g_z2 = *q;
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                     {
                         z->x = g_params[0];
                         z->y = g_params[1];
@@ -217,7 +217,7 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
 
                 default:                            // Quartets, z1=z; z=z*z*z*z+z2/2+c;; z2=z1
                     g_z2 = *q;
-                    if (!juliaflag)
+                    if (!g_julia_flag)
                     {
                         z->x = g_params[0];
                         z->y = g_params[1];
@@ -233,8 +233,8 @@ WWW Fractal Galleries   http://sprott.physics.wisc.edu/carlson.htm
 	Run functions for each iteration
 **************************************************************************/
 
-int	RunTierazonFunctions(int subtype, Complex *z, Complex *q)
-{
+int run_tierazon_functions(int subtype, Complex *z, Complex *q)
+    {
     Complex a, b, c, zd, z1, zt;
     double d;
 
@@ -443,7 +443,7 @@ int tierazonfp_per_pixel()
     g_bail_out_test = (bailouts) g_params[4];
     if (g_degree < 2)
         g_degree = 2;
-    InitTierazonFunctions(g_subtype, &g_z, &g_q);
+    init_tierazon_functions(g_subtype, &g_z, &g_q);
     return 0;
     }
 
@@ -454,7 +454,7 @@ int tierazonfp_per_pixel()
 int tierazonfpOrbit()
     {
     int ReturnMode;
-    ReturnMode = RunTierazonFunctions(g_subtype, &g_z, &g_q);
+    ReturnMode = run_tierazon_functions(g_subtype, &g_z, &g_q);
     g_new_z.x = g_z.x;
     g_new_z.y = g_z.y;
     return ReturnMode;

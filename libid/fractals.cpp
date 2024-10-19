@@ -56,7 +56,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"
-#include "complex.h"
 #include "pixel_grid.h"
 
 #include <cfloat>
@@ -312,9 +311,38 @@ int lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 
 int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz)
 {
-    pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
-    pz->y = arg1.x*arg2.y+arg1.y*arg2.x;
+    pz->x = arg1.x * arg2.x - arg1.y * arg2.y;
+    pz->y = arg1.x * arg2.y + arg1.y * arg2.x;
     return 0;
+}
+
+int complex_sqr(DComplex arg, DComplex *pz)     // one less multiply than direct complex multilpy
+{
+    double t = arg.x * arg.y;
+    pz->x = arg.x * arg.x - arg.y * arg.y;
+    pz->y = t + t;
+    return 0;
+}
+
+/**************************************************************************
+        Cube c + jd = (a + jb) * (a + jb) * (a + jb)
+***************************************************************************/
+
+int complex_cube(DComplex arg, DComplex *pz)
+{
+    DComplex temp;
+    double sqr_real, sqr_imag;
+
+    sqr_real = arg.x * arg.x;
+    sqr_imag = arg.y * arg.y;
+    pz->x = arg.x * (sqr_real - (sqr_imag + sqr_imag + sqr_imag));
+    pz->y = arg.y * ((sqr_real + sqr_real + sqr_real) - sqr_imag);
+    return 0;
+}
+
+double sum_squared(DComplex a)
+{
+    return ((a.x * a.x) + (a.y * a.y));
 }
 
 int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
@@ -707,7 +735,7 @@ int otherjuliafp_per_pixel()
 
 int burningshipfpOrbit()
 {
-    Complex z, q;
+    DComplex z, q;
     double real_imag;
     int degree = (int) g_params[2];
     q.x = g_init.x;
@@ -724,7 +752,8 @@ int burningshipfpOrbit()
     {
         z.x = fabs(g_old_z.x);
         z.y = -fabs(g_old_z.y);
-        z = z.CPolynomial(degree);
+        cpower(&z, degree, &z);
+//        z = z.CPolynomial(degree);
         g_new_z.x = z.x + q.x;
         g_new_z.y = z.y + q.y;
     }
@@ -733,7 +762,7 @@ int burningshipfpOrbit()
 
 int mandelbarfpOrbit()
 {
-    Complex z, q;
+    DComplex z, q;
     double real_imag;
     int degree = (int) g_params[2];
     q.x = g_init.x;
@@ -750,7 +779,8 @@ int mandelbarfpOrbit()
     {
         z.x = g_old_z.x;
         z.y = g_old_z.y;
-        z = z.CPolynomial(degree);
+        cpower(&z, degree, &z);
+//        z = z.CPolynomial(degree);
         g_new_z.x = z.x + q.x;
         g_new_z.y = -z.y + q.y;
     }
@@ -759,7 +789,7 @@ int mandelbarfpOrbit()
 
 int celticfpOrbit()
 {
-    Complex z, q;
+    DComplex z, q;
     double real_imag;
     int degree = (int) g_params[2];
     q.x = g_init.x;
@@ -776,7 +806,8 @@ int celticfpOrbit()
     {
         z.x = g_old_z.x;
         z.y = g_old_z.y;
-        z = z.CPolynomial(degree);
+        cpower(&z, degree, &z);
+//        z = z.CPolynomial(degree);
         g_new_z.x = fabs(z.x) + q.x;
         g_new_z.y = z.y + q.y;
     }
@@ -788,48 +819,65 @@ int celticfpOrbit()
 **************************************************************************/
 
 static int g_subtype;
-static Complex g_a, g_a2, g_aa3, g_b, g_q, g_t2, g_t3, g_z, g_v;
+static DComplex g_a, g_a2, g_aa3, g_b, g_q, g_t2, g_t3, g_z, g_v;
 
 /**************************************************************************
         Initialise functions for each pixel
 **************************************************************************/
 
-int InitArtMatrix(int subtype, Complex *z, Complex *q)
+int init_art_matrix(int subtype, DComplex *z, DComplex *q)
 {
     // Art Matrix Cubic (taken from the original Fortran)
-    Complex temp;
-    //    period_level = FALSE;			            // no periodicity checking
+    DComplex temp, temp1, temp2;
     if (subtype == 0) // CBIN
     {
-        g_t3 = *q * 3;                  // T3 = 3*T
-        g_t2 = q->CSqr();               // T2 = T*T
-        g_a = (g_t2 + 1) / g_t3;        // A  = (T2 + 1)/T3
+        g_t3.x = q->x * 3;                  // T3 = 3*T
+        g_t3.y = q->y * 3;
+//        g_t3 = *q * 3;                  // T3 = 3*T
+        complex_sqr(*q, &g_t2);         // T2 = T*T
+//        g_t2 = q->CSqr();               // T2 = T*T
+        temp1.x = g_t2.x + 1;           // T2 + 1
+        temp1.y = g_t2.y;
+        complex_div(temp1, g_t3, &g_a); // A  = (T2 + 1)/T3
+//        g_a = (g_t2 + 1) / g_t3;        // A  = (T2 + 1)/T3
                                         // B  = 2*A*A*A + (T2 - 2)/T3
-        temp = g_a.CCube() * 2;         // 2*A*A*A
-        g_b = (g_t2 - 2) / g_t3 + temp; // B  = 2*A*A*A + (T2 - 2)/T3
+        complex_cube(g_a, &temp);       // A*A*A
+        temp.x *= 2;                    // 2*A*A*A
+        temp.y *= 2;
+        //        temp = g_a.CCube() * 2;         // 2*A*A*A
+        temp1.x = g_t2.x - 2;           // T2 - 2
+        temp1.y = g_t2.y;
+        complex_div(temp1, g_t3, &temp2);// (T2 - 2)/T3
+        g_b.x = temp2.x + temp.x;       // B  = 2*A*A*A + (T2 - 2)/T3
+        g_b.y = temp2.y + temp.y;
+//        g_b = (g_t2 - 2) / g_t3 + temp; // B  = 2*A*A*A + (T2 - 2)/T3
     }
     else if (subtype == 1 || subtype == 2) // CCIN or CFIN
     {
-        g_a = *q;          // A = T
-                           // find B = T + 2*T*T*T
-        temp = q->CCube(); // B = T*T*T
+        g_a = *q;                       // A = T
+                                        // find B = T + 2*T*T*T
+        complex_cube(*q, &temp);        // B = T*T*T
+//        temp = q->CCube();            // B = T*T*T
         if (subtype == 1)
-            g_b = temp + temp + *q; // B = B * 2 + T
+            g_b = temp + temp + *q;     // B = B * 2 + T
         else
         {
-            g_b = (temp - *q) * 2; // B = B * 2 - 2 * T
+            g_b = (temp - *q) * 2;      // B = B * 2 - 2 * T
             g_a2 = g_a + g_a;
         }
     }
-    else if (subtype == 3) // CKIN
+    else if (subtype == 3)              // CKIN
     {
-        g_a = 0;
-        g_v = 0;
-        g_b = *q; // B = T
+        g_a = {0.0, 0.0};
+        g_v = {0.0, 0.0};
+        g_b = *q;                       // B = T
     }
-    g_aa3 = g_a.CSqr() * 3; // AA3 = A*A*3
-                            //	        if (!juliaflag)
-    *z = -g_a;              // Z = -A
+    complex_sqr(g_a, &g_aa3);           // T2 = T*T
+    g_aa3.x *= 3;                       // AA3 = A*A*3
+    g_aa3.y *= 3;
+    //    g_aa3 = g_a.CSqr() * 3;             // AA3 = A*A*3
+                                        //	  if (!juliaflag)
+    *z = -g_a;                          // Z = -A
     return 0;
 }
 
@@ -837,36 +885,49 @@ int InitArtMatrix(int subtype, Complex *z, Complex *q)
         Run functions for each iteration
 **************************************************************************/
 
-int RunArtMatrix(int subtype, int special, Complex *z, Complex *q)
+
+int run_art_matrix(int subtype, int special, DComplex *z, DComplex *q)
 {
-    Complex temp;
+    DComplex temp, temp1;
 
     // Art Matrix Cubic (taken from the original Fortran)
     if (subtype == 3) // CKIN
     {
-        *z = z->CCube() + g_b; // Z = Z*Z*Z + B
+        complex_cube(*z, z);            // Z = Z*Z*Z
+        z->x += g_b.x;                  // Z = Z*Z*Z + B
+        z->y += g_b.y;
+        //        *z = z->CCube() + g_b; // Z = Z*Z*Z + B
                                //       z->x += g_params[3];
                                //       z->y += g_params[4];
     }
     else
     {
-        temp = z->CCube() + g_b; // Z = Z*Z*Z + B
-        *z = temp - g_aa3 * *z;  // Z = Z*Z*Z - AA3*Z + B
+        complex_cube(*z, &temp); // Z = Z*Z*Z
+        temp.x += g_b.x;
+        temp.y += g_b.y;
+        //        temp = z->CCube() + g_b;      // Z = Z*Z*Z + B
+        complex_mult(g_aa3, *z, &temp1);        // AA3*Z + B
+        z->x = temp.x - temp1.x;                // Z = Z*Z*Z - AA3*Z + B
+        z->y = temp.y - temp1.y;
+
+//        *z = temp - g_aa3 * *z;  // Z = Z*Z*Z - AA3*Z + B
                                  //       z->x += g_params[3];
                                  //       z->y += g_params[4];
     }
-    if (z->CSumSqr() > 100.0)
-        return (TRUE);
+    if (sum_squared(*z) > 100.0)
+        //    if (z->CSumSqr() > 100.0)
+        return (true);
     else
     {
         if (subtype == 2)
         {
-            if (q->CSumSqr() < 0.111111)
+            if (sum_squared(*q) < 0.111111)
+//            if (q->CSumSqr() < 0.111111)
             {
                 g_color_iter = special;
                 // 			    *SpecialFlag = TRUE;			// for decomp and
                 // biomorph
-                return (TRUE);
+                return (true);
             }
             g_v = *z + g_a2;
         }
@@ -874,13 +935,14 @@ int RunArtMatrix(int subtype, int special, Complex *z, Complex *q)
             g_v = *z - g_v;
         else
             g_v = *z - g_a;
-        if (g_v.CSumSqr() <= 0.000001)
+        if (sum_squared(g_v) <= 0.000001)
+//        if (g_v.CSumSqr() <= 0.000001)
         {
             g_color_iter = special;
             //	        *SpecialFlag = TRUE;			// for decomp and biomorph
-            return (TRUE);
+            return (true);
         }
-        return (FALSE);
+        return (false);
     }
 
     return 0;
@@ -900,7 +962,7 @@ int ArtMatrixfp_per_pixel()
     if (g_subtype < 0 || g_subtype > 3)
         g_subtype = 0;
     //    g_bail_out_test = (bailouts) g_params[4];
-    InitArtMatrix(g_subtype, &g_z, &g_q);
+    init_art_matrix(g_subtype, &g_z, &g_q);
     return 0;
 }
 
@@ -914,7 +976,7 @@ int ArtMatrixfpOrbit()
     if (special < 0)
         special = 0;
     int ReturnMode;
-    ReturnMode = RunArtMatrix(g_subtype, special, &g_z, &g_q);
+    ReturnMode = run_art_matrix(g_subtype, special, &g_z, &g_q);
     g_new_z.x = g_z.x;
     g_new_z.y = g_z.y;
     return ReturnMode;
