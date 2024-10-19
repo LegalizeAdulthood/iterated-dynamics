@@ -26,5 +26,5 @@ int plasma();
 int popcorn();
 int test();
 
-bool InitPerturbation(int);
-int DoPerturbation();
+bool init_perturbation(int);
+int perturbation();

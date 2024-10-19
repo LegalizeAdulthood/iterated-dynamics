@@ -676,7 +676,7 @@ bool MandelbnSetup()
 
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
     {
-        InitPerturbation(0);
+        init_perturbation(0);
         restore_stack(saved);
         g_std_calc_mode = 'g';      // better return calc mode back to guessing (default) or we get a nice little crash
         g_calc_status = calc_status_value::COMPLETED;   // don't want to redo fractal using guessing
@@ -801,31 +801,31 @@ bool MandelbfSetup()
             {
             case fractal_type::MANDELFP:
                 if (g_std_calc_mode == 'p')
-                    return InitPerturbation(0);
+                    return init_perturbation(0);
                 break;
             case fractal_type::BURNINGSHIP:
                 if (degree == 2)
-                    return InitPerturbation(2);
+                    return init_perturbation(2);
                 else if (degree > 2 && degree <= 5)
-                    return InitPerturbation(degree);
+                    return init_perturbation(degree);
                 else
-                    return InitPerturbation(2);
+                    return init_perturbation(2);
                 break;
             case fractal_type::MANDELBAR:
                 if (degree == 2)
-                    return InitPerturbation(10);
+                    return init_perturbation(10);
                 else if (degree > 2 && degree <= 10)
-                    return InitPerturbation(11);
+                    return init_perturbation(11);
                 else
-                    return InitPerturbation(10);
+                    return init_perturbation(10);
                 break;
             case fractal_type::CELTIC:
                 if (degree == 2)
-                    return InitPerturbation(6);
+                    return init_perturbation(6);
                 else if (degree > 2 && degree <= 5)
-                    return InitPerturbation(4 + degree);
+                    return init_perturbation(4 + degree);
                 else
-                    return InitPerturbation(6);
+                    return init_perturbation(6);
                 break;
             }
         }
@@ -851,7 +851,7 @@ bool MandelbfSetup()
         {
             int degree = (int) g_params[2]; // only allow integer values of real part
             if (degree > 2)
-                return InitPerturbation(1);
+                return init_perturbation(1);
         }
         else
         {

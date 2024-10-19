@@ -35,7 +35,7 @@ bool
 MandelSetup()           // Mandelbrot Routine
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
-        return InitPerturbation(0);
+        return init_perturbation(0);
     if (g_debug_flag != debug_flags::force_standard_fractal
         && (g_invert == 0)
         && g_decomp[0] == 0
@@ -130,7 +130,7 @@ MandelfpSetup()
            zmag, epsilon cross, and all the current outside options
         */
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
-            return InitPerturbation(0);
+            return init_perturbation(0);
         else if (g_debug_flag != debug_flags::force_standard_fractal
             && !g_distance_estimator
             && g_decomp[0] == 0
@@ -162,27 +162,27 @@ MandelfpSetup()
             {
             case fractal_type::BURNINGSHIP:
                 if (degree == 2)
-                    return InitPerturbation(2);
+                    return init_perturbation(2);
                 else if (degree > 2 && degree <= 5)
-                    return InitPerturbation(degree);
+                    return init_perturbation(degree);
                 else
-                    return InitPerturbation(2);
+                    return init_perturbation(2);
                 break;
             case fractal_type::MANDELBAR:
                 if (degree == 2)
-                    return InitPerturbation(10);
+                    return init_perturbation(10);
                 else if (degree > 2 && degree <= 10)
-                    return InitPerturbation(11);
+                    return init_perturbation(11);
                 else
-                    return InitPerturbation(10);
+                    return init_perturbation(10);
                 break;
             case fractal_type::CELTIC:
                 if (degree == 2)
-                    return InitPerturbation(6);
+                    return init_perturbation(6);
                 else if (degree > 2 && degree <= 5)
-                    return InitPerturbation(4 + degree);
+                    return init_perturbation(4 + degree);
                 else
-                    return InitPerturbation(6);
+                    return init_perturbation(6);
                 break;
             }
         }

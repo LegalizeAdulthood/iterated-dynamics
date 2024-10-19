@@ -24,36 +24,36 @@
 //////////////////////////////////////////////////////////////////////
 
 
-int CPertEngine::initialiseCalculateFrame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin,
+int CPertEngine::initialise_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin,
     bf_t yBigZoomPointin, double xZoomPointin, double yZoomPointin, double ZoomRadiusIn, bool IsPotentialIn,
     bf_math_type math_typeIn, double g_params[] /*, CTZfilter *TZfilter*/)
     {
     Complex q;
     int     i;
 
-    width = WidthIn;
-    height = HeightIn;
-    MaxIteration = threshold;
-    ZoomRadius = ZoomRadiusIn;
-    IsPotential = IsPotentialIn;
-    math_type = math_typeIn;
+    m_width = WidthIn;
+    m_height = HeightIn;
+    m_max_iteration = threshold;
+    m_zoom_radius = ZoomRadiusIn;
+    m_is_potential = IsPotentialIn;
+    m_math_type = math_typeIn;
     for (i = 0; i < MAX_PARAMS; i++)
-        param[i] = g_params[i];
+        m_param[i] = g_params[i];
 
     //    method = TZfilter->method;
 
-    if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+    if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
     {
-        saved = save_stack();
-        xBigZoomPt = alloc_stack(g_bf_length + 2);
-        yBigZoomPt = alloc_stack(g_bf_length + 2);
-        copy_bf(xBigZoomPt, xBigZoomPointin);
-        copy_bf(yBigZoomPt, yBigZoomPointin);
+        m_saved = save_stack();
+        m_x_zoom_pt_bf = alloc_stack(g_bf_length + 2);
+        m_y_zoom_pt_bf = alloc_stack(g_bf_length + 2);
+        copy_bf(m_x_zoom_pt_bf, xBigZoomPointin);
+        copy_bf(m_y_zoom_pt_bf, yBigZoomPointin);
     }
     else
     {
-        xZoomPt = xZoomPointin;
-        yZoomPt = yZoomPointin;
+        m_x_zoom_pt = xZoomPointin;
+        m_y_zoom_pt = yZoomPointin;
     }
 
     /*
@@ -70,129 +70,126 @@ int CPertEngine::initialiseCalculateFrame(int WidthIn, int HeightIn, int thresho
 // Full frame calculation
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::calculateOneFrame(double bailout, char *StatusBarInfo, int powerin, int InsideFilterIn, int OutsideFilterIn, int biomorphin, int subtypein, Complex rsrAin, bool rsrSignIn, int user_data(),
-        void (*plot)(int, int, int), int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
+int CPertEngine::calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn, int OutsideFilterIn, int biomorphin, int subtypein,
+    void (*plot)(int, int, int), int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
 
     {
     int i;
-    BFComplex BigC, BigReferenceCoordinate;
-    Complex C, ReferenceCoordinate;
+    BFComplex c_bf, reference_coordinate_bf;
+    Complex c, reference_coordinate;
 
-    referencePoints = 0;
-    GlitchPointCount = 0L;
-    RemainingPointCount = 0L;
-
-    rsrA = rsrAin;
-    rsrSign = rsrSignIn;
+    m_reference_points = 0;
+    m_glitch_point_count = 0L;
+    m_remaining_point_count = 0L;
 
     // get memory for all point arrays
-    pointsRemaining = new Point[width * height];
-    if (pointsRemaining == NULL)
+    m_points_remaining = new Point[m_width * m_height];
+    if (m_points_remaining == NULL)
 	    return -1;
-    glitchPoints = new Point[width * height];
-    if (glitchPoints == NULL)
+    m_glitch_points = new Point[m_width * m_height];
+    if (m_glitch_points == NULL)
         {
-	    if (pointsRemaining) { delete[] pointsRemaining; pointsRemaining = NULL; }
+	    if (m_points_remaining) { delete[] m_points_remaining; m_points_remaining = NULL; }
 	    return -1;
         }
 	// get memory for Perturbation Tolerance Check array
-	PerturbationToleranceCheck = new double[MaxIteration * 2];
-	if (PerturbationToleranceCheck == NULL)
+        m_perturbation_tolerance_check = new double[m_max_iteration * 2];
+        if (m_perturbation_tolerance_check == NULL)
 	    {
-	    if (pointsRemaining) { delete[] pointsRemaining; pointsRemaining = NULL; }
-	    if (glitchPoints) { delete[] glitchPoints; glitchPoints = NULL; }
+	    if (m_points_remaining) { delete[] m_points_remaining; m_points_remaining = NULL; }
+	    if (m_glitch_points) { delete[] m_glitch_points; m_glitch_points = NULL; }
 	    return -2;
 	    }
 	// get memory for Z array
-	XSubN = new Complex[MaxIteration + 1];
-	if (XSubN == NULL)
+	m_x_sub_n = new Complex[m_max_iteration + 1];
+	if (m_x_sub_n == NULL)
 	    {
-	    if (pointsRemaining) { delete[] pointsRemaining; pointsRemaining = NULL; }
-	    if (glitchPoints) { delete[] glitchPoints; glitchPoints = NULL; }
-	    if (PerturbationToleranceCheck) { delete[] PerturbationToleranceCheck; PerturbationToleranceCheck = NULL; }
+	    if (m_points_remaining) { delete[] m_points_remaining; m_points_remaining = NULL; }
+	    if (m_glitch_points) { delete[] m_glitch_points; m_glitch_points = NULL; }
+	    if (m_perturbation_tolerance_check) { delete[] m_perturbation_tolerance_check; m_perturbation_tolerance_check = NULL; }
 	    return -2;
 	    }
-    biomorph = biomorphin;
-    power = powerin;
-    if (power < 2)
-	    power = 2;
-    if (power > MAXPOWER)
-	    power = MAXPOWER;
-    InsideMethod = InsideFilterIn;
-    OutsideMethod = OutsideFilterIn;
-    subtype = subtypein;
+    m_biomorph = biomorphin;
+    m_power = powerin;
+    if (m_power < 2)
+	    m_power = 2;
+    if (m_power > MAXPOWER)
+	    m_power = MAXPOWER;
+    m_inside_method = InsideFilterIn;
+    m_outside_method = OutsideFilterIn;
+    m_subtype = subtypein;
 
     // calculate the pascal's triangle coefficients for powers > 3
-    LoadPascal(PascalArray, power);
+    load_pascal(m_pascal_array, m_power);
     //Fill the list of points with all points in the image.
-    for (long y = 0; y < height; y++) 
+    for (long y = 0; y < m_height; y++) 
 	    {
-	    for (long x = 0; x < width; x++) 
+	    for (long x = 0; x < m_width; x++) 
 	        {
-	        Point pt(x, height - 1 - y);
-	        *(pointsRemaining + y * width + x) = pt;
-	        RemainingPointCount++;
+	        Point pt(x, m_height - 1 - y);
+	        *(m_points_remaining + y * m_width + x) = pt;
+	        m_remaining_point_count++;
 	        }
 	    }
 
-    double magnifiedRadius = ZoomRadius;
-    int window_radius = (width < height) ? width : height;
-    int cplxsaved;
-    bf_t    bf_tmp;
+    double  magnified_radius = m_zoom_radius;
+    int     window_radius = (m_width < m_height) ? m_width : m_height;
+    int     cplxsaved;
+    bf_t    tmp_bf;
 
-    if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+    if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
     {
         cplxsaved = save_stack();
-        BigC.x = alloc_stack(g_r_bf_length + 2);
-        BigC.y = alloc_stack(g_r_bf_length + 2);
-        BigReferenceCoordinate.x = alloc_stack(g_r_bf_length + 2);
-        BigReferenceCoordinate.y = alloc_stack(g_r_bf_length + 2);
-        bf_tmp = alloc_stack(g_r_bf_length + 2);
+        c_bf.x = alloc_stack(g_r_bf_length + 2);
+        c_bf.y = alloc_stack(g_r_bf_length + 2);
+        reference_coordinate_bf.x = alloc_stack(g_r_bf_length + 2);
+        reference_coordinate_bf.y = alloc_stack(g_r_bf_length + 2);
+        tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 
-    while (RemainingPointCount > (width * height) * (percentGlitchTolerance / 100))
+    while (m_remaining_point_count > (m_width * m_height) * (m_percent_glitch_tolerance / 100))
 	    {
-	    referencePoints++;
+        m_reference_points++;
 
 	    //Determine the reference point to calculate
 	    //Check whether this is the first time running the loop. 
-	    if (referencePoints == 1) 
+	    if (m_reference_points == 1) 
 	        {
-            if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+            if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
                 {
-                copy_bf(BigC.x, xBigZoomPt);
-                copy_bf(BigC.y, yBigZoomPt);
-                copy_bf(BigReferenceCoordinate.x, BigC.x);
-                copy_bf(BigReferenceCoordinate.y, BigC.y);
+                copy_bf(c_bf.x, m_x_zoom_pt_bf);
+                copy_bf(c_bf.y, m_y_zoom_pt_bf);
+                copy_bf(reference_coordinate_bf.x, c_bf.x);
+                copy_bf(reference_coordinate_bf.y, c_bf.y);
                 }
             else
                 {
-                C.x = xZoomPt;
-                C.y = yZoomPt;
-                ReferenceCoordinate = C;
+                c.x = m_x_zoom_pt;
+                c.y = m_y_zoom_pt;
+                reference_coordinate = c;
                 }
  
-	        calculatedRealDelta = 0;
-	        calculatedImaginaryDelta = 0;
+	        m_calculated_real_delta = 0;
+	        m_calculated_imaginary_delta = 0;
 
             int result;
-            if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+            if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
                 {
-                result = BigReferenceZoomPoint(&BigReferenceCoordinate, MaxIteration, user_data, StatusBarInfo);
+                result = reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
                 }
             else
                 {
-                result = ReferenceZoomPoint(&ReferenceCoordinate, MaxIteration, user_data, StatusBarInfo);
+                result = reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
                 }
 	        if (result < 0)
 		        {
-		        CloseTheDamnPointers();
+		        close_the_damn_pointers();
 		        return -1;
 		        }
 	        }
 	    else 
 	        {
-	        if (calculateGlitches == false) 
+	        if (m_calculate_glitches == false) 
 		        break;
 
 	        int referencePointIndex = 0;
@@ -200,74 +197,74 @@ int CPertEngine::calculateOneFrame(double bailout, char *StatusBarInfo, int powe
 
 	        srand((unsigned)time(NULL));		// Seed the random-number generator with current time 
 	        Randomise = rand();
-	        referencePointIndex = (int)((double)Randomise / (RAND_MAX + 1) * RemainingPointCount);
-            Point   pt = *(pointsRemaining + referencePointIndex);
+	        referencePointIndex = (int)((double)Randomise / (RAND_MAX + 1) * m_remaining_point_count);
+            Point   pt = *(m_points_remaining + referencePointIndex);
 	        //Get the complex point at the chosen reference point
-	        double deltaReal = ((magnifiedRadius * (2 * pt.getX() - width)) / window_radius);
-	        double deltaImaginary = ((-magnifiedRadius * (2 * pt.getY() - height)) / window_radius);
+            double deltaReal = ((magnified_radius * (2 * pt.getX() - m_width)) / window_radius);
+            double deltaImaginary = ((-magnified_radius * (2 * pt.getY() - m_height)) / window_radius);
 
 	        // We need to store this offset because the formula we use to convert pixels into a complex point does so relative to the center of the image.
 	        // We need to offset that calculation when our reference point isn't in the center. The actual offsetting is done in calculate point.
 
-            calculatedRealDelta = deltaReal;
-            calculatedImaginaryDelta = deltaImaginary;
+            m_calculated_real_delta = deltaReal;
+            m_calculated_imaginary_delta = deltaImaginary;
 
-            if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+            if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
                 {
-                floattobf(bf_tmp, deltaReal);
-                add_bf(BigReferenceCoordinate.x, BigC.x, bf_tmp);
-                floattobf(bf_tmp, deltaImaginary);
-                add_bf(BigReferenceCoordinate.y, BigC.y, bf_tmp);
+                floattobf(tmp_bf, deltaReal);
+                add_bf(reference_coordinate_bf.x, c_bf.x, tmp_bf);
+                floattobf(tmp_bf, deltaImaginary);
+                add_bf(reference_coordinate_bf.y, c_bf.y, tmp_bf);
                 }
             else
                 {
-                ReferenceCoordinate.x = C.x + deltaReal;
-                ReferenceCoordinate.y = C.y + deltaImaginary;
+                reference_coordinate.x = c.x + deltaReal;
+                reference_coordinate.y = c.y + deltaImaginary;
                 }
 
             int result;
-            if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+            if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
                 {
-                result = BigReferenceZoomPoint(&BigReferenceCoordinate, MaxIteration, user_data, StatusBarInfo);
+                result = reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
                 }
             else
                 {
-                result = ReferenceZoomPoint(&ReferenceCoordinate, MaxIteration, user_data, StatusBarInfo);
+                result = reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
                 }
              if (result < 0)
                 {
-                CloseTheDamnPointers();
+                 close_the_damn_pointers();
                 return -1;
                 }
             }
 
 	    int lastChecked = -1;
-	    GlitchPointCount = 0;
-	    for (i = 0; i < RemainingPointCount; i++)
+	    m_glitch_point_count = 0;
+	    for (i = 0; i < m_remaining_point_count; i++)
 	        {
             if (i % 1000 == 0)
                 if (driver_key_pressed())
                     return -1;
-            Point   pt = *(pointsRemaining + i);
-            if (calculatePoint(pt.getX(), pt.getY(), magnifiedRadius, window_radius, bailout, glitchPoints, user_data, plot, potential/*, TZfilter, TrueCol*/) < 0)
+            Point   pt = *(m_points_remaining + i);
+            if (calculate_point(pt.getX(), pt.getY(), magnified_radius, window_radius, bailout, m_glitch_points, plot, potential/*, TZfilter, TrueCol*/) < 0)
 		        return -1;
 	        //Everything else in this loop is just for updating the progress counter. 
-	        double progress = (double)i / RemainingPointCount;
+	        double progress = (double) i / m_remaining_point_count;
 	        if (int(progress * 100) != lastChecked) 
 		        {
 		        lastChecked = int(progress * 100);
-		        sprintf(StatusBarInfo, "Pass: %d, (%d%%)", referencePoints, int(progress * 100));
+		        sprintf(status_bar_info, "Pass: %d, (%d%%)", m_reference_points, int(progress * 100));
 		        }
 	        }
 
 	    //These points are glitched, so we need to mark them for recalculation. We need to recalculate them using Pauldelbrot's glitch fixing method (see calculate point).
-	    memcpy(pointsRemaining, glitchPoints, sizeof(Point) * GlitchPointCount);
-	    RemainingPointCount = GlitchPointCount;
+	    memcpy(m_points_remaining, m_glitch_points, sizeof(Point) * m_glitch_point_count);
+	    m_remaining_point_count = m_glitch_point_count;
 	    }
 
-    if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+    if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
         restore_stack(cplxsaved);
-    CloseTheDamnPointers();
+    close_the_damn_pointers();
     return 0;
     }
 
@@ -275,61 +272,60 @@ int CPertEngine::calculateOneFrame(double bailout, char *StatusBarInfo, int powe
 // Cleanup
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::CloseTheDamnPointers(void)
+void CPertEngine::close_the_damn_pointers(void)
     {
-    if (math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
-        restore_stack(saved);
-    if (pointsRemaining) {delete[] pointsRemaining; pointsRemaining = NULL;}
-    if (glitchPoints) {delete[] glitchPoints; glitchPoints = NULL;}
-    if (XSubN) { delete[] XSubN; XSubN = NULL; }
-	if (PerturbationToleranceCheck) { delete[] PerturbationToleranceCheck; PerturbationToleranceCheck = NULL; }
+    if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+        restore_stack(m_saved);
+    if (m_points_remaining) {delete[] m_points_remaining; m_points_remaining = NULL;}
+    if (m_glitch_points) {delete[] m_glitch_points; m_glitch_points = NULL;}
+    if (m_x_sub_n) { delete[] m_x_sub_n; m_x_sub_n = NULL; }
+	if (m_perturbation_tolerance_check) { delete[] m_perturbation_tolerance_check; m_perturbation_tolerance_check = NULL; }
     }
 
 //////////////////////////////////////////////////////////////////////
 // Individual point calculation
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::calculatePoint(int x, int y, double magnifiedRadius, int window_radius, double bailout, Point *glitchPoints, int user_data(), void (*plot)(int, int, int),
+int CPertEngine::calculate_point(int x, int y, double magnified_radius, int window_radius, double bailout, Point *m_glitch_points, void (*plot)(int, int, int),
             int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
     {
 // Get the complex number at this pixel.
 // This calculates the number relative to the reference point, so we need to translate that to the center when the reference point isn't in the center.
-// That's why for the first reference, calculatedRealDelta and calculatedImaginaryDelta are 0: it's calculating relative to the center.
+// That's why for the first reference, m_calculated_real_delta and m_calculated_imaginary_delta are 0: it's calculating relative to the center.
 
-    double deltaReal = ((magnifiedRadius * (2 * x - width)) / window_radius) - calculatedRealDelta;
-    double deltaImaginary = ((-magnifiedRadius * (2 * y - height)) / window_radius) - calculatedImaginaryDelta;
+    double delta_real = ((magnified_radius * (2 * x - m_width)) / window_radius) - m_calculated_real_delta;
+    double  delta_imaginary = ((-magnified_radius * (2 * y - m_height)) / window_radius) - m_calculated_imaginary_delta;
     double	magnitude = 0.0;
-    Complex DeltaSub0 {deltaReal, deltaImaginary};
-    int iteration = skippedIterations;
-    Complex DeltaSubN;
-    DeltaSubN = DeltaSub0;
-    iteration = 0;
-    bool glitched = false;
+    Complex delta_sub_0{delta_real, delta_imaginary};
+    Complex delta_sub_n;
+    delta_sub_n = delta_sub_0;
+    int     iteration = 0;
+    bool    glitched = false;
 
-    double  BOFmagnitude;
+    double  BOF_magnitude;
     double  min_orbit;      // orbit value closest to origin
     long    min_index;      // iteration of min_orbit
-    if (InsideMethod == BOF60 || InsideMethod == BOF61)
+    if (m_inside_method == BOF60 || m_inside_method == BOF61)
         {
-        BOFmagnitude = 0.0;
+        BOF_magnitude = 0.0;
         min_orbit = 100000.0;
         }
 
     //Iteration loop
     do
 	    {
-        PertFunctions((XSubN + iteration), &DeltaSubN, &DeltaSub0);
+        pert_functions((m_x_sub_n + iteration), &delta_sub_n, &delta_sub_0);
 	    iteration++;
-        Complex CoordMag = *(XSubN + iteration) + DeltaSubN;
-        ZCoordinateMagnitudeSquared = sqr(CoordMag.x) + sqr(CoordMag.y);
+        Complex CoordMag = *(m_x_sub_n + iteration) + delta_sub_n;
+        m_z_coordinate_magnitude_squared = sqr(CoordMag.x) + sqr(CoordMag.y);
 
-        if (InsideMethod == BOF60 || InsideMethod == BOF61)
+        if (m_inside_method == BOF60 || m_inside_method == BOF61)
 	        {
-	        Complex z = *(XSubN + iteration) + DeltaSubN;
-	        BOFmagnitude = z.CSumSqr();
-	        if (BOFmagnitude < min_orbit)
+            Complex z = *(m_x_sub_n + iteration) + delta_sub_n;
+	        BOF_magnitude = z.CSumSqr();
+            if (BOF_magnitude < min_orbit)
 		        {
-		        min_orbit = BOFmagnitude;
+                min_orbit = BOF_magnitude;
 		        min_index = iteration + 1L;
 		        }
 	        }
@@ -346,43 +342,43 @@ int CPertEngine::calculatePoint(int x, int y, double magnifiedRadius, int window
     //	    TZfilter->DoTierazonFilter(z, (long *)&iteration);
     //	    }
 
-	    if (calculateGlitches == true && glitched == false && ZCoordinateMagnitudeSquared < PerturbationToleranceCheck[iteration])
+	    if (m_calculate_glitches == true && glitched == false && m_z_coordinate_magnitude_squared < m_perturbation_tolerance_check[iteration])
 	        {
 	        Point pt(x, y, iteration);
-	        glitchPoints[GlitchPointCount] = pt;
-	        GlitchPointCount++;
+	        m_glitch_points[m_glitch_point_count] = pt;
+	        m_glitch_point_count++;
 	        glitched = true;
 	        break;
 	        }
 
 	    //use bailout radius of 256 for smooth coloring.
-	    } while (ZCoordinateMagnitudeSquared < bailout && iteration < MaxIteration);
+	    } while (m_z_coordinate_magnitude_squared < bailout && iteration < m_max_iteration);
 
     if (glitched == false) 
         {
 	    int	index;
 	    double	rqlim2 = sqrt(bailout);
-	    Complex	w = XSubN[iteration] + DeltaSubN;
+	    Complex	w = m_x_sub_n[iteration] + delta_sub_n;
 
-	    if (biomorph >= 0)						// biomorph
+	    if (m_biomorph >= 0)						// biomorph
 	        {
-	        if (iteration == MaxIteration)
-	            index = MaxIteration;
+            if (iteration == m_max_iteration)
+	            index = m_max_iteration;
 	        else
 		        {
 		        if (fabs(w.x) < rqlim2 || fabs(w.y) < rqlim2)
-		            index = biomorph;
+		            index = m_biomorph;
 		        else
 		            index = iteration % 256;
 		        }
 	        }
 	    else
 	        {
-	        switch (OutsideMethod)
+	        switch (m_outside_method)
 		        {
 		        case 0:						// no filter
-		            if (iteration == MaxIteration)
-		                index = MaxIteration;
+		            if (iteration == m_max_iteration)
+		                index = m_max_iteration;
 		            else
 			            index = iteration % 256;
 		            break;
@@ -390,54 +386,54 @@ int CPertEngine::calculatePoint(int x, int y, double magnifiedRadius, int window
 //		            if (iteration == MaxIteration)
 //			            index = MaxIteration;
 //		            else
-//			            index = (int)((iteration - log2(log2(ZCoordinateMagnitudeSquared))) * 5) % 256; //Get the index of the color array that we are going to read from. 
+//			            index = (int)((iteration - log2(log2(m_z_coordinate_magnitude_squared))) * 5) % 256; //Get the index of the color array that we are going to read from. 
 //		            break;
 //		        case PERT2:						// something Shirom Makkad added
 //		            if (iteration == MaxIteration)
 //			            index = MaxIteration;
 //		            else
-//			            index = (int)(iteration - (log(0.5*(ZCoordinateMagnitudeSquared)) - log(0.5*log(256))) / log(2)) % 256;
+//			            index = (int)(iteration - (log(0.5*(m_z_coordinate_magnitude_squared)) - log(0.5*log(256))) / log(2)) % 256;
 //		            break;
 		        case ZMAG:
-		            if (iteration == MaxIteration)			// Zmag
-			            index = (int)((w.x * w.x + w.y + w.y) * (MaxIteration >> 1) + 1);
+		            if (iteration == m_max_iteration)			// Zmag
+			            index = (int)((w.x * w.x + w.y + w.y) * (m_max_iteration >> 1) + 1);
 		            else
 			            index = iteration % 256;
 		            break;
 		        case REAL:						// "real"
-		            if (iteration == MaxIteration)
-			            index = MaxIteration;
+		            if (iteration == m_max_iteration)
+			            index = m_max_iteration;
 		            else
 			            index = iteration + (long)w.x + 7;
 		            break;
 		        case IMAG:	    					// "imag"
-		            if (iteration == MaxIteration)
-			            index = MaxIteration;
+		            if (iteration == m_max_iteration)
+			            index = m_max_iteration;
 		            else
 			            index = iteration + (long)w.y + 7;
 		            break;
 		        case MULT:						// "mult"
-		            if (iteration == MaxIteration)
-			            index = MaxIteration;
+		            if (iteration == m_max_iteration)
+			            index = m_max_iteration;
 		            else if (w.y)
 			            index = (long)((double)iteration * (w.x / w.y));
                     else
                         index = iteration;
 		            break;
 		        case SUM:						// "sum"
-		            if (iteration == MaxIteration)
-			            index = MaxIteration;
+		            if (iteration == m_max_iteration)
+			            index = m_max_iteration;
 		            else
 			            index = iteration + (long)(w.x + w.y);
 		            break;
 		        case ATAN:						// "atan"
-		            if (iteration == MaxIteration)
-			            index = MaxIteration;
+		            if (iteration == m_max_iteration)
+			            index = m_max_iteration;
 		            else
 			            index = (long)fabs(atan2(w.y, w.x)*180.0 / PI);
 		            break;
 		        default:
-                    if (IsPotential)
+                    if (m_is_potential)
                         {
                         magnitude = sqr(w.x) + sqr(w.y);
                         index = potential(magnitude, iteration);
@@ -449,34 +445,34 @@ int CPertEngine::calculatePoint(int x, int y, double magnifiedRadius, int window
 //			            }
 		            else						// no filter
 			            {
-			            if (iteration == MaxIteration)
-			                index = MaxIteration;
+			            if (iteration == m_max_iteration)
+			                index = m_max_iteration;
 			            else
 			                index = iteration % 256;
 			            }
 		            break;
 		        }
-            if (InsideMethod >= 0) // no filter
+                        if (m_inside_method >= 0) // no filter
                 {
-		        if (iteration == MaxIteration)
-                    index = InsideMethod;
+                if (iteration == m_max_iteration)
+                    index = m_inside_method;
 		        else
 			        index = iteration % 256;
                 }
             else
                 {
-	            switch (InsideMethod)
+                switch (m_inside_method)
 		            {
 		            case ZMAG:
-		                if (iteration == MaxIteration)			// Zmag
-			                index = (int)((w.CSumSqr()) * (MaxIteration >> 1) + 1);
+		                if (iteration == m_max_iteration)			// Zmag
+			                index = (int)((w.CSumSqr()) * (m_max_iteration >> 1) + 1);
 		                break;
 		            case BOF60:
-		                if (iteration == MaxIteration)
+		                if (iteration == m_max_iteration)
 			                index = (int)(sqrt(min_orbit) * 75.0);
 		                break;
 		            case BOF61:
-		                if (iteration == MaxIteration)
+		                if (iteration == m_max_iteration)
 			                index = min_index;
 		                break;
 /*
@@ -494,7 +490,7 @@ int CPertEngine::calculatePoint(int x, int y, double magnifiedRadius, int window
 */
 		            }
 	            }
-	        plot(x, height - 1 - y, index);
+	        plot(x, m_height - 1 - y, index);
             }
 	    }
     return 0;
@@ -504,67 +500,67 @@ int CPertEngine::calculatePoint(int x, int y, double magnifiedRadius, int window
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::BigReferenceZoomPoint(BFComplex *centre, int maxIteration, int user_data(), char* StatusBarInfo)
+int CPertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, char* status_bar_info)
     {
     // Raising this number makes more calculations, but less variation between each calculation (less chance of mis-identifying a glitched point).
-    BFComplex   ZTimes2, Z;
-    bf_t   TempReal, TempImag, bftmp;
-    double      glitchTolerancy = 1e-6;
+    BFComplex   z_times_2_bf, z_bf;
+    bf_t   temp_real_bf, temp_imag_bf, tmp_bf;
+    double      glitch_tolerancy = 1e-6;
     int cplxsaved;
 
     cplxsaved = save_stack();
-    ZTimes2.x = alloc_stack(g_r_bf_length + 2);
-    ZTimes2.y = alloc_stack(g_r_bf_length + 2);
-    Z.x = alloc_stack(g_r_bf_length + 2);
-    Z.y = alloc_stack(g_r_bf_length + 2);
-    TempReal = alloc_stack(g_r_bf_length + 2);
-    TempImag = alloc_stack(g_r_bf_length + 2);
-    bftmp = alloc_stack(g_r_bf_length + 2);
+    z_times_2_bf.x = alloc_stack(g_r_bf_length + 2);
+    z_times_2_bf.y = alloc_stack(g_r_bf_length + 2);
+    z_bf.x = alloc_stack(g_r_bf_length + 2);
+    z_bf.y = alloc_stack(g_r_bf_length + 2);
+    temp_real_bf = alloc_stack(g_r_bf_length + 2);
+    temp_imag_bf = alloc_stack(g_r_bf_length + 2);
+    tmp_bf = alloc_stack(g_r_bf_length + 2);
 
-    copy_bf(Z.x, centre->x);
-    copy_bf(Z.y, centre->y);
-//    Z = *centre;
+    copy_bf(z_bf.x, centre->x);
+    copy_bf(z_bf.y, centre->y);
+    //    Z = *centre;
 
-    for (int i = 0; i <= maxIteration; i++)
+    for (int i = 0; i <= max_iteration; i++)
 	    {
         Complex c;
 	    // pre multiply by two
-        double_bf(ZTimes2.x, Z.x);
-        double_bf(ZTimes2.y, Z.y);
+        double_bf(z_times_2_bf.x, z_bf.x);
+        double_bf(z_times_2_bf.y, z_bf.y);
 
-        c.x = bftofloat(Z.x);
-        c.y = bftofloat(Z.y);
+        c.x = bftofloat(z_bf.x);
+        c.y = bftofloat(z_bf.y);
 
        // The reason we are storing the same value times two is that we can precalculate this value here
        // because multiplying this value by two is needed many times in the program.
 	    // Also, for some reason, we can't multiply complex numbers by anything greater than 1 using std::complex, so we have to multiply the individual terms each time.
 	    // This is expensive to do above, so we are just doing it here.
 
-	    XSubN[i] = c; 
+	    m_x_sub_n[i] = c; 
 	    // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
 	    // The reason we are storing this into an array is that we need to check the magnitude against this value to see if the value is glitched. 
 	    // We are leaving it squared because otherwise we'd need to do a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 	
 	    //Everything else in this loop is just for updating the progress counter. 
-	    int lastChecked = -1;
-	    double progress = (double)i / maxIteration;
-	    if (int(progress * 100) != lastChecked)
+	    int last_checked = -1;
+	    double progress = (double)i / max_iteration;
+        if (int(progress * 100) != last_checked)
 	        {
-	        lastChecked = int(progress * 100);
-	        sprintf(StatusBarInfo, "Pass: %d, Ref (%d%%)", referencePoints, int(progress * 100));
+	        last_checked = int(progress * 100);
+	        sprintf(status_bar_info, "Pass: %d, Ref (%d%%)", m_reference_points, int(progress * 100));
 	        }
 
-        floattobf(bftmp, glitchTolerancy);
-        mult_bf(TempReal, Z.x, bftmp);
-        mult_bf(TempImag, Z.y, bftmp);
+        floattobf(tmp_bf, glitch_tolerancy);
+        mult_bf(temp_real_bf, z_bf.x, tmp_bf);
+        mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
 	    Complex tolerancy;
-        tolerancy.x = bftofloat(TempReal);
-        tolerancy.y = bftofloat(TempImag);
+        tolerancy.x = bftofloat(temp_real_bf);
+        tolerancy.y = bftofloat(temp_imag_bf);
 
-        PerturbationToleranceCheck[i] = sqr(tolerancy.x) + sqr(tolerancy.y);
+        m_perturbation_tolerance_check[i] = sqr(tolerancy.x) + sqr(tolerancy.y);
 
 	    // Calculate the set
-        BigRefFunctions(centre, &Z, &ZTimes2);
+        ref_functions_bf(centre, &z_bf, &z_times_2_bf);
 	    }
     restore_stack(cplxsaved);
     return 0;
@@ -574,47 +570,45 @@ int CPertEngine::BigReferenceZoomPoint(BFComplex *centre, int maxIteration, int 
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::ReferenceZoomPoint(Complex *centre, int maxIteration, int user_data(), char* StatusBarInfo)
+int CPertEngine::reference_zoom_point(Complex *centre, int max_iteration, char* status_bar_info)
     {
     // Raising this number makes more calculations, but less variation between each calculation (less chance of mis-identifying a glitched point).
-    Complex   ZTimes2, Z;
-    double   TempReal, TempImag;
-    double      glitchTolerancy = 1e-6;
+    Complex z_times_2, z;
+    double  glitch_tolerancy = 1e-6;
 
-    Z = *centre;
+    z = *centre;
 
-    for (int i = 0; i <= maxIteration; i++)
+    for (int i = 0; i <= max_iteration; i++)
 	    {
         Complex c;
 	    // pre multiply by two
-	    ZTimes2 = Z + Z;
-	    c = Z;
+        z_times_2 = z + z;
+	    c = z;
 
-//	    Complex TwoC {ZTimes2.x.BigDoubleToDouble(), ZTimes2.y.BigDoubleToDouble()};
        // The reason we are storing the same value times two is that we can precalculate this value here
        // because multiplying this value by two is needed many times in the program.
 	    // Also, for some reason, we can't multiply complex numbers by anything greater than 1 using std::complex, so we have to multiply the individual terms each time.
 	    // This is expensive to do above, so we are just doing it here.
 
-	    XSubN[i] = c; 
+	    m_x_sub_n[i] = c; 
 	    // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
 	    // The reason we are storing this into an array is that we need to check the magnitude against this value to see if the value is glitched. 
 	    // We are leaving it squared because otherwise we'd need to do a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 	
 	    //Everything else in this loop is just for updating the progress counter. 
-	    int lastChecked = -1;
-	    double progress = (double)i / maxIteration;
-	    if (int(progress * 100) != lastChecked)
+	    int last_checked = -1;
+        double progress = (double) i / max_iteration;
+	    if (int(progress * 100) != last_checked)
 	        {
-	        lastChecked = int(progress * 100);
-	        sprintf(StatusBarInfo, "Pass: %d, Ref (%d%%)", referencePoints, int(progress * 100));
+	        last_checked = int(progress * 100);
+	        sprintf(status_bar_info, "Pass: %d, Ref (%d%%)", m_reference_points, int(progress * 100));
 	        }
 
-	    Complex tolerancy = Z * glitchTolerancy;
-        PerturbationToleranceCheck[i] = sqr(tolerancy.x) + sqr(tolerancy.y);
+	    Complex tolerancy = z * glitch_tolerancy;
+        m_perturbation_tolerance_check[i] = sqr(tolerancy.x) + sqr(tolerancy.y);
 
 	    // Calculate the set
-	    RefFunctions(centre, &Z, &ZTimes2);
+        ref_functions(centre, &z, &z_times_2);
 	    }
     return 0;
     }
