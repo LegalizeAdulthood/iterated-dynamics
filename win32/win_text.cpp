@@ -731,9 +731,7 @@ Screen WinText::get_screen() const
 {
     constexpr size_t count{WINTEXT_MAX_ROW * WINTEXT_MAX_COL};
     Screen result;
-    result.chars.resize(count);
     std::memcpy(result.chars.data(), m_chars, count);
-    result.attrs.resize(count);
     std::memcpy(result.attrs.data(), m_attrs, count);
     return result;
 }

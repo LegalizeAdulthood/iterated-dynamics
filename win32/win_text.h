@@ -5,9 +5,10 @@
 #include "win_defines.h"
 #include <Windows.h>
 
+#include <array>
 #include <vector>
 
-enum
+enum : size_t
 {
     WINTEXT_MAX_COL = 80,
     WINTEXT_MAX_ROW = 25
@@ -15,8 +16,8 @@ enum
 
 struct Screen
 {
-    std::vector<BYTE> chars;
-    std::vector<BYTE> attrs;
+    std::array<BYTE, WINTEXT_MAX_ROW * WINTEXT_MAX_COL> chars;
+    std::array<BYTE, WINTEXT_MAX_ROW * WINTEXT_MAX_COL> attrs;
 };
 
 class WinText
