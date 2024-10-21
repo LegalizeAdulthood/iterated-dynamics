@@ -33,6 +33,8 @@ add_executable(id WIN32
     app.cpp
     frame.h
     frame.cpp
+    text_screen.h
+    text_screen.cpp
     init_failure.cpp
     wx_special_dirs.h
     wx_special_dirs.cpp
