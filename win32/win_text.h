@@ -8,7 +8,7 @@
 #include <array>
 #include <vector>
 
-enum : size_t
+enum
 {
     WINTEXT_MAX_COL = 80,
     WINTEXT_MAX_ROW = 25
@@ -16,8 +16,18 @@ enum : size_t
 
 struct Screen
 {
-    std::array<BYTE, WINTEXT_MAX_ROW * WINTEXT_MAX_COL> chars;
-    std::array<BYTE, WINTEXT_MAX_ROW * WINTEXT_MAX_COL> attrs;
+    char &chars(int row, int col)
+    {
+        return m_chars[row * WINTEXT_MAX_COL + col];
+    }
+    BYTE &attrs(int row, int col)
+    {
+        return m_attrs[row * WINTEXT_MAX_COL + col];
+    }
+
+    static constexpr size_t size{static_cast<size_t>(WINTEXT_MAX_ROW * WINTEXT_MAX_COL)};
+    std::array<char, size> m_chars;
+    std::array<BYTE, size> m_attrs;
 };
 
 class WinText
@@ -71,8 +81,7 @@ private:
     int m_text_mode{};
     bool m_alt_f4_hit{};
     int m_showing_cursor{};
-    char m_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL]{}; // Local copy of the screen characters and attributes
-    unsigned char m_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL]{};
+    Screen m_screen{};
     bool m_buffer_init{}; // false if 'screen' is uninitialized
     HFONT m_font{};
     int m_char_font{};

@@ -20,6 +20,7 @@
 
 #include "drivers.h"
 
+#include <algorithm>
 #include <string>
 
 #define TIMER_ID 1
@@ -206,7 +207,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     // set up the font and caret information
     for (int i = 0; i < 3; i++)
     {
-        size_t count = std::size(m_cursor_pattern[0])*sizeof(m_cursor_pattern[0][0]);
+        const size_t count{std::size(m_cursor_pattern[0]) * sizeof(m_cursor_pattern[0][0])};
         std::memset(&m_cursor_pattern[i][0], 0, count);
     }
     for (int j = m_char_height-2; j < m_char_height; j++)
@@ -476,49 +477,44 @@ void WinText::put_string(int xpos, int ypos, int attrib, char const *string, int
 {
     ODS("WinText::put_string");
 
-    int j;
-    int k;
-    int maxrow;
-    int maxcol;
     char xc;
-    char xa;
 
-    xa = (attrib & 0x0ff);
-    maxrow = ypos;
-    j = maxrow;
-    maxcol = xpos-1;
-    k = maxcol;
+    char xa = (attrib & 0x0ff);
+    int maxrow = ypos;
+    int row = maxrow;
+    int maxcol = xpos - 1;
+    int col = maxcol;
 
     int i;
     for (i = 0; (xc = string[i]) != 0; i++)
     {
         if (xc == 13 || xc == 10)
         {
-            if (j < WINTEXT_MAX_ROW-1)
-                j++;
-            k = xpos-1;
+            if (row < WINTEXT_MAX_ROW-1)
+                row++;
+            col = xpos-1;
         }
         else
         {
-            if ((++k) >= WINTEXT_MAX_COL)
+            if ((++col) >= WINTEXT_MAX_COL)
             {
-                if (j < WINTEXT_MAX_ROW-1)
-                    j++;
-                k = xpos;
+                if (row < WINTEXT_MAX_ROW-1)
+                    row++;
+                col = xpos;
             }
-            if (maxrow < j)
-                maxrow = j;
-            if (maxcol < k)
-                maxcol = k;
-            m_chars[j][k] = xc;
-            m_attrs[j][k] = xa;
+            if (maxrow < row)
+                maxrow = row;
+            if (maxcol < col)
+                maxcol = col;
+            m_screen.chars(row, col) = xc;
+            m_screen.attrs(row, col) = xa;
         }
     }
     if (i > 0)
     {
         invalidate(xpos, ypos, maxcol, maxrow);
-        *end_row = j;
-        *end_col = k+1;
+        *end_row = row;
+        *end_col = col+1;
     }
 }
 
@@ -526,18 +522,18 @@ void WinText::scroll_up(int top, int bot)
 {
     for (int row = top; row < bot; row++)
     {
-        char *chars = &m_chars[row][0];
-        unsigned char *attrs = &m_attrs[row][0];
-        char *next_chars = &m_chars[row+1][0];
-        unsigned char *next_attrs = &m_attrs[row+1][0];
+        char *chars = &m_screen.chars(row, 0);
+        BYTE *attrs = &m_screen.attrs(row, 0);
+        char *next_chars = &m_screen.chars(row+1, 0);
+        BYTE *next_attrs = &m_screen.attrs(row+1, 0);
         for (int col = 0; col < WINTEXT_MAX_COL; col++)
         {
             *chars++ = *next_chars++;
             *attrs++ = *next_attrs++;
         }
     }
-    std::memset(&m_chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
-    std::memset(&m_attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+    std::memset(&m_screen.chars(bot, 0), 0, WINTEXT_MAX_COL);
+    std::memset(&m_screen.attrs(bot, 0), 0, WINTEXT_MAX_COL);
     invalidate(0, bot, WINTEXT_MAX_COL, top);
 }
 
@@ -570,12 +566,12 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
         oldfg = 0x0f;
         int k = (oldbk << 4) + oldfg;
         m_buffer_init = true;
-        for (int i = 0; i < m_char_xchars; i++)
+        for (int col = 0; col < m_char_xchars; col++)
         {
-            for (int j = 0; j < m_char_ychars; j++)
+            for (int row = 0; row < m_char_ychars; row++)
             {
-                m_chars[j][i] = ' ';
-                m_attrs[j][i] = k;
+                m_screen.chars(row, col) = ' ';
+                m_screen.attrs(row, col) = static_cast<BYTE>(k);
             }
         }
     }
@@ -616,7 +612,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
             int k = -1;
             if (i <= xmax)
             {
-                k = m_attrs[j][i];
+                k = m_screen.attrs(j, i);
             }
             foreground = (k & 15);
             background = (k >> 4);
@@ -629,7 +625,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
                     TextOutA(hDC,
                             istart*m_char_width,
                             jstart*m_char_height,
-                            &m_chars[jstart][istart],
+                            &m_screen.chars(jstart, istart),
                             length);
                 }
                 oldbk = background;
@@ -702,7 +698,7 @@ void WinText::set_attr(int row, int col, int attr, int count)
     ymin = ymax;
     for (int i = 0; i < count; i++)
     {
-        m_attrs[row][col+i] = (unsigned char)(attr & 0xFF);
+        m_screen.attrs(row, col+i) = static_cast<BYTE>(attr & 0xFF);
     }
     if (xmin + count >= WINTEXT_MAX_COL)
     {
@@ -719,28 +715,19 @@ void WinText::set_attr(int row, int col, int attr, int count)
 
 void WinText::clear()
 {
-    for (int y = 0; y < WINTEXT_MAX_ROW; y++)
-    {
-        std::memset(&m_chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
-        std::memset(&m_attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
-    }
+    std::fill(m_screen.m_chars.begin(), m_screen.m_chars.end(), ' ');
+    std::fill(m_screen.m_attrs.begin(), m_screen.m_attrs.end(), 0xf0);
     InvalidateRect(m_window, nullptr, FALSE);
 }
 
 Screen WinText::get_screen() const
 {
-    constexpr size_t count{WINTEXT_MAX_ROW * WINTEXT_MAX_COL};
-    Screen result;
-    std::memcpy(result.chars.data(), m_chars, count);
-    std::memcpy(result.attrs.data(), m_attrs, count);
-    return result;
+    return m_screen;
 }
 
 void WinText::set_screen(const Screen &screen)
 {
-    constexpr size_t count{WINTEXT_MAX_ROW * WINTEXT_MAX_COL};
-    std::memcpy(m_chars, screen.chars.data(), count);
-    std::memcpy(m_attrs, screen.attrs.data(), count);
+    m_screen = screen;
     InvalidateRect(m_window, nullptr, FALSE);
 }
 
@@ -771,13 +758,13 @@ void WinText::schedule_alarm(int secs)
 
 int WinText::get_char_attr(int row, int col)
 {
-    return ((m_chars[row][col] & 0xFF) << 8) | (m_attrs[row][col] & 0xFF);
+    return (m_screen.chars(row, col) & 0xFF) << 8 | (m_screen.attrs(row, col) & 0xFF);
 }
 
 void WinText::put_char_attr(int row, int col, int char_attr)
 {
-    m_chars[row][col] = (char_attr >> 8) & 0xFF;
-    m_attrs[row][col] = (char_attr & 0xFF);
+    m_screen.chars(row, col) = static_cast<char>((char_attr >> 8) & 0xFF);
+    m_screen.attrs(row, col) = static_cast<BYTE>(char_attr & 0xFF);
 }
 
 void WinText::resume()
