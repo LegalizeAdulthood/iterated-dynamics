@@ -15,6 +15,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "miscfrac.h"
 #include "get_julia_attractor.h"
 #include "id_data.h"
 #include "magnet.h"
@@ -33,6 +34,8 @@
 bool
 MandelSetup()           // Mandelbrot Routine
 {
+    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        return init_perturbation(0);
     if (g_debug_flag != debug_flags::force_standard_fractal
         && (g_invert == 0)
         && g_decomp[0] == 0
@@ -126,7 +129,9 @@ MandelfpSetup()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
-        if (g_debug_flag != debug_flags::force_standard_fractal
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+            return init_perturbation(0);
+        else if (g_debug_flag != debug_flags::force_standard_fractal
             && !g_distance_estimator
             && g_decomp[0] == 0
             && g_biomorph == -1
@@ -147,7 +152,67 @@ MandelfpSetup()
             g_calc_type = standard_fractal;
         }
         break;
+    case fractal_type::BURNINGSHIP:
+    case fractal_type::MANDELBAR:
+    case fractal_type::CELTIC:
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        {
+            int degree = (int) g_params[2];
+            switch (g_fractal_type)
+            {
+            case fractal_type::BURNINGSHIP:
+                if (degree == 2)
+                    return init_perturbation(2);
+                else if (degree > 2 && degree <= 5)
+                    return init_perturbation(degree);
+                else
+                    return init_perturbation(2);
+                break;
+            case fractal_type::MANDELBAR:
+                if (degree == 2)
+                    return init_perturbation(10);
+                else if (degree > 2 && degree <= 10)
+                    return init_perturbation(11);
+                else
+                    return init_perturbation(10);
+                break;
+            case fractal_type::CELTIC:
+                if (degree == 2)
+                    return init_perturbation(6);
+                else if (degree > 2 && degree <= 5)
+                    return init_perturbation(4 + degree);
+                else
+                    return init_perturbation(6);
+                break;
+            }
+        }
+        else 
+        {
+            g_symmetry = symmetry_type::NONE; // we can fix this up later
+            switch (g_fractal_type)
+            {
+            case fractal_type::BURNINGSHIP:
+                g_fractal_specific[+g_fractal_type].orbitcalc = burningshipfpOrbit;
+                break;
+            case fractal_type::MANDELBAR:
+                g_fractal_specific[+g_fractal_type].orbitcalc = mandelbarfpOrbit;
+                break;
+            case fractal_type::CELTIC:
+                g_fractal_specific[+g_fractal_type].orbitcalc = celticfpOrbit;
+                break;
+            }
+        }
+        break;
+
     case fractal_type::FPMANDELZPOWER:
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        {
+            int degree = (int) g_params[2];
+            if (degree == 2)
+                return init_perturbation(0);
+            else if (degree > 2)
+                return init_perturbation(1);
+        }
         if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents
         {
             g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;

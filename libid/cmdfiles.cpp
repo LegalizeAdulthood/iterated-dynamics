@@ -2791,7 +2791,7 @@ static cmdarg_flags cmd_parm_file(const Command &cmd)
 
 static cmdarg_flags cmd_passes(const Command &cmd)
 {
-    if (std::strchr("123gbtsdo", cmd.char_val[0]) == nullptr)
+    if (std::strchr("123gbtsdop", cmd.char_val[0]) == nullptr)
     {
         return cmd.bad_arg();
     }
