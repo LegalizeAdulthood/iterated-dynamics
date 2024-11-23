@@ -10,11 +10,6 @@ add_library(libid
     3d.cpp include/3d.h
     line3d.cpp include/line3d.h
     plot3d.cpp include/plot3d.h
-    pert_engine.cpp include/pert_engine.h
-    complex_fn.cpp include/complex_fn.h
-    pert_function.cpp
-    perturbation.cpp
-    include/point.h
     tierazon_functions.cpp include/tierazon.h
 
     boundary_trace.cpp include/boundary_trace.h
@@ -34,7 +29,11 @@ add_library(libid
     one_or_two_pass.cpp include/one_or_two_pass.h
     orbit.cpp include/orbit.h
     param_not_used.cpp include/param_not_used.h
+    pert_engine.cpp include/pert_engine.h
+    pert_function.cpp
+    perturbation.cpp
     pixel_grid.cpp include/pixel_grid.h
+    include/point.h
     resume.cpp include/resume.h
     soi.cpp include/soi.h
     soi1.cpp
@@ -105,6 +104,7 @@ add_library(libid
     biginit.cpp include/biginit.h
     bignum.cpp
     bignumc.cpp
+    complex_fn.cpp include/complex_fn.h
     fixed_pt.cpp include/fixed_pt.h
     fpu087.cpp include/fpu087.h
     hcmplx.cpp include/hcmplx.h
@@ -252,8 +252,10 @@ source_group("Header Files/engine" FILES
     include/one_or_two_pass.h
     include/orbit.h
     include/param_not_used.h
+    include/pert_engine.h
     include/pixel_grid.h
     include/pixel_limits.h
+    include/point.h
     include/resume.h
     include/soi.h
     include/solid_guess.h
@@ -284,6 +286,9 @@ source_group("Source Files/engine" FILES
     one_or_two_pass.cpp
     orbit.cpp
     param_not_used.cpp
+    pert_engine.cpp
+    pert_function.cpp
+    perturbation.cpp
     pixel_grid.cpp
     resume.cpp
     soi.cpp
@@ -420,6 +425,7 @@ source_group("Header Files/math" FILES
     include/big.h
     include/biginit.h
     include/cmplx.h
+    include/complex_fn.h
     include/fixed_pt.h
     include/fpu087.h
     include/hcmplx.h
@@ -433,6 +439,7 @@ source_group("Source Files/math" FILES
     biginit.cpp
     bignum.cpp
     bignumc.cpp
+    complex_fn.cpp
     fixed_pt.cpp
     fpu087.cpp
     hcmplx.cpp
