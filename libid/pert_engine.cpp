@@ -6,19 +6,12 @@
 //    Written in Microsoft Visual C++ by Paul de Leeuw.
 //////////////////////////////////////////////////////////////////////
 
-#include <windows.h>
-#include <time.h>
-#include <complex>
-#include "Big.h"
-//#include "Dib.h"
-#include "filter.h"
-#include "Big.h"
-#include "id.h"
-//#include "mpfr.h"
 #include "pert_engine.h"
-#include "Drivers.h"
+
+#include "biginit.h"
 #include "calcfrac.h"
 #include "complex_fn.h"
+#include "drivers.h"
 
 //////////////////////////////////////////////////////////////////////
 // Initialisation
