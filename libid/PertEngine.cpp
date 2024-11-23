@@ -15,10 +15,6 @@
 #include "drivers.h"
 #include "id_data.h"
 
-//////////////////////////////////////////////////////////////////////
-// Initialisation
-//////////////////////////////////////////////////////////////////////
-
 void PertEngine::initialize_frame(
     bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius)
 {
@@ -53,7 +49,7 @@ void PertEngine::initialize_frame(
 //////////////////////////////////////////////////////////////////////
 
 int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn, int OutsideFilterIn, int biomorphin, int subtypein,
-    void (*plot)(int, int, int), int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
+    void (*plot)(int, int, int), int potential(double, long))
 
     {
     int i;
@@ -228,7 +224,7 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
                 if (driver_key_pressed())
                     return -1;
             Point   pt = *(m_points_remaining + i);
-            if (calculate_point(pt.getX(), pt.getY(), magnified_radius, window_radius, bailout, m_glitch_points, plot, potential/*, TZfilter, TrueCol*/) < 0)
+            if (calculate_point(pt.getX(), pt.getY(), magnified_radius, window_radius, bailout, m_glitch_points, plot, potential) < 0)
 		        return -1;
 	        //Everything else in this loop is just for updating the progress counter. 
 	        double progress = (double) i / m_remaining_point_count;
@@ -269,7 +265,7 @@ void PertEngine::close_the_damn_pointers(void)
 //////////////////////////////////////////////////////////////////////
 
 int PertEngine::calculate_point(int x, int y, double magnified_radius, int window_radius, double bailout, Point *m_glitch_points, void (*plot)(int, int, int),
-            int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
+            int potential(double, long))
     {
 // Get the complex number at this pixel.
 // This calculates the number relative to the reference point, so we need to translate that to the center when the reference point isn't in the center.
@@ -458,19 +454,6 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
 		                if (iteration == m_max_iteration)
 			                index = min_index;
 		                break;
-/*
-		            case POTENTIAL:
-		                magnitude = sqr(w.x) + sqr(w.y);
-		                index = Pot.potential(magnitude, iteration, MaxIteration, TrueCol, 256, potparam);
-		                break;
-		            default:
-		                if (InsideMethod >= TIERAZONFILTERS)		// suite of Tierazon filters and colouring schemes
-			                {
-			                TZfilter->EndTierazonFilter(w, (long *)&iteration, TrueCol);
-			                index = iteration;
-			                }
-		                break;
-*/
 		            }
 	            }
 	        plot(x, m_height - 1 - y, index);

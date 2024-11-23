@@ -104,7 +104,7 @@ int perturbation(int subtype)
     int     degree;  // power
 
     degree = (int) g_params[2];
-    if (g_pert_engine.calculate_one_frame(g_magnitude_limit, g_pert_status, degree, g_inside_color, g_outside_color, g_biomorph, subtype, g_plot, potential/*, &TZfilter, &TrueCol*/) < 0)
+    if (g_pert_engine.calculate_one_frame(g_magnitude_limit, g_pert_status, degree, g_inside_color, g_outside_color, g_biomorph, subtype, g_plot, potential) < 0)
 	    return -1;
     return 0;
     }

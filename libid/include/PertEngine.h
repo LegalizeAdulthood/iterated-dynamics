@@ -18,12 +18,12 @@ public:
         bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius);
     int calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn,
         int OutsideFilterIn, int biomorph, int subtype, void (*plot)(int, int, int),
-        int potential(double, long) /*, CTZfilter *TZfilter, CTrueCol *TrueCol*/);
+        int potential(double, long));
 
 private:
     int calculate_point(int x, int y, double tempRadius, int window_radius, double bailout,
         Point *glitchPoints, void (*plot)(int, int, int),
-        int potential(double, long) /*, CTZfilter *TZfilter, CTrueCol *TrueCol*/);
+        int potential(double, long) );
     int reference_zoom_point_bf(BFComplex *BigCentre, int maxIteration, char *status_bar_info);
     int reference_zoom_point(std::complex<double> *centre, int maxIteration, char *status_bar_info);
     void load_pascal(long PascalArray[], int n);
