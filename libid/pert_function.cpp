@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-//////////////////////////////////////////////////////////////////////
-// PERT_FUNCTIONS.cpp a module with Perturbation functions and reference functions
-// Written in Microsoft Visual C++ by Paul de Leeuw.
-//////////////////////////////////////////////////////////////////////
 
 #include "PertEngine.h"
 #include "biginit.h"

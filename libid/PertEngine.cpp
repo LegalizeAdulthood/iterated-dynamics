@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-//////////////////////////////////////////////////////////////////////
-//    PERT_ENGINE.CPP a module to explore Perturbation
-//    Thanks to Claude Heiland-Allen https://fractalforums.org/programming/11/perturbation-code-for-cubic-and-higher-order-polynomials/2783
-//    Written in Microsoft Visual C++ by Paul de Leeuw.
-//////////////////////////////////////////////////////////////////////
+// Perturbation passes engine
+//
+// Thanks to Claude Heiland-Allen
+// <https://fractalforums.org/programming/11/perturbation-code-for-cubic-and-higher-order-polynomials/2783>
 
 #include "PertEngine.h"
 
@@ -311,13 +310,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
 	    // For more information, look at where the reference point is calculated.
 	    // I also only want to store this point once.
 
-    //	if (method >= TIERAZONFILTERS)
-    //	    {
-    //	    Complex z = XSubN[iteration] + DeltaSubN;
-    //	    TZfilter->DoTierazonFilter(z, (long *)&iteration);
-    //	    }
-
-	    if (m_calculate_glitches == true && glitched == false && m_z_coordinate_magnitude_squared < m_perturbation_tolerance_check[iteration])
+        if (m_calculate_glitches == true && glitched == false && m_z_coordinate_magnitude_squared < m_perturbation_tolerance_check[iteration])
 	        {
 	        Point pt(x, y, iteration);
 	        m_glitch_points[m_glitch_point_count] = pt;

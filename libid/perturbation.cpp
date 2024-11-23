@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-///////////////////////////////////////////////////////////
-//    PERTURBATION.CPP a module to explore Perturbation
-//    Thanks to Shirom Makkad fractaltodesktop@gmail.com
-//    Written in Microsoft Visual C++ by Paul de Leeuw.
-///////////////////////////////////////////////////////////
+// Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
 #include "PertEngine.h"
 #include "biginit.h"
@@ -12,35 +8,28 @@
 #include "fractalp.h"
 #include "id_data.h"
 
-//extern  int     driver_key_pressed();
-extern  void    (*g_plot)(int, int, int); // function pointer
-extern	int	    potential(double, long);
-extern  int     g_screen_x_dots, g_screen_y_dots; // # of dots on the physical screen
+extern void (*g_plot)(int, int, int); // function pointer
+extern int potential(double, long);
+extern int g_screen_x_dots, g_screen_y_dots; // # of dots on the physical screen
 extern calc_status_value g_calc_status;
+extern long g_max_iterations;
+extern double g_x_max, g_x_min, g_y_max, g_y_min;
+extern bool g_potential_flag;
+extern double g_magnitude_limit;    // bailout level
+int decimals = /*bflength * 4*/ 24; // we can sort this out later
+extern double g_params[];
+extern int g_outside_color; // outside filters
+extern int g_inside_color;  // inside  filters
+extern int g_biomorph;      // biomorph colour
 
-extern	long	g_max_iterations;
-extern  double  g_x_max, g_x_min, g_y_max, g_y_min;
-extern  bool    g_potential_flag;
-
-extern  double  g_magnitude_limit;          // bailout level
-int decimals = /*bflength * 4*/ 24;         // we can sort this out later
-extern	double	g_params[];
-extern	int	    g_outside_color;			// outside filters
-extern	int	    g_inside_color;			    // inside  filters
-extern	int	    g_biomorph;			        // biomorph colour
-//extern	RGBTRIPLE FilterRGB;			// for Tierazon filters
-//extern	double	dStrands;
-//extern	BOOL	UseCurrentPalette;		// do we use the ManpWIN palette? If false, generate internal filter palette
-
-/*
-static	CTZfilter	TZfilter;		// Tierazon filters
-*/
 PertEngine g_pert_engine;
-char		g_pert_status[200];
+char g_pert_status[200];
 
-int         perturbation(int);
-void        cvt_centermag_bf(bf_t *Xctr, bf_t *Yctr, double *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
-extern void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
+int perturbation(int);
+void cvt_centermag_bf(
+    bf_t *Xctr, bf_t *Yctr, double *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
+extern void cvtcentermag(
+    double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
 
 /**************************************************************************
 	Initialise Perturbation engine
