@@ -32,7 +32,7 @@ private:
         std::complex<double> *XRef, std::complex<double> *DeltaSubN, std::complex<double> *DeltaSub0);
     void ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2);
     void ref_functions(std::complex<double> *centre, std::complex<double> *Z, std::complex<double> *ZTimes2);
-    void close_the_damn_pointers(void);
+    void cleanup();
     void complex_polynomial_bf(BFComplex *out, BFComplex in, int degree);
     void complex_cube_bf(BFComplex *out, BFComplex in);
 

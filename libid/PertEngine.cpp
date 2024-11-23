@@ -161,7 +161,7 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
                 }
 	        if (result < 0)
 		        {
-		        close_the_damn_pointers();
+		        cleanup();
 		        return -1;
 		        }
 	        }
@@ -211,7 +211,7 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
                 }
              if (result < 0)
                 {
-                 close_the_damn_pointers();
+                 cleanup();
                 return -1;
                 }
             }
@@ -242,15 +242,11 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
 
     if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
         restore_stack(cplxsaved);
-    close_the_damn_pointers();
+    cleanup();
     return 0;
     }
 
-//////////////////////////////////////////////////////////////////////
-// Cleanup
-//////////////////////////////////////////////////////////////////////
-
-void PertEngine::close_the_damn_pointers(void)
+void PertEngine::cleanup(void)
     {
     if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
         restore_stack(m_saved);
