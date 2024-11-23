@@ -32,7 +32,7 @@ add_library(libid
     pert_function.cpp
     perturbation.cpp
     pixel_grid.cpp include/pixel_grid.h
-    include/point.h
+    include/Point.h
     resume.cpp include/resume.h
     soi.cpp include/soi.h
     soi1.cpp
@@ -254,7 +254,7 @@ source_group("Header Files/engine" FILES
     include/PertEngine.h
     include/pixel_grid.h
     include/pixel_limits.h
-    include/point.h
+    include/Point.h
     include/resume.h
     include/soi.h
     include/solid_guess.h
