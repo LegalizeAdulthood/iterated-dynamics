@@ -5,12 +5,11 @@
 // Written in Microsoft Visual C++ by Paul de Leeuw.
 //////////////////////////////////////////////////////////////////////
 
+#include "PertEngine.h"
 #include "biginit.h"
 #include "complex_fn.h"
 #include "fractalb.h"
-
-#include "pert_engine.h"
-#include <sqr.h>
+#include "sqr.h"
 
 //////////////////////////////////////////////////////////////////////
 // Individual function point calculations

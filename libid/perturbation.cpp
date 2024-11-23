@@ -6,11 +6,11 @@
 //    Written in Microsoft Visual C++ by Paul de Leeuw.
 ///////////////////////////////////////////////////////////
 
+#include "PertEngine.h"
 #include "biginit.h"
 #include "drivers.h"
 #include "fractalp.h"
 #include "id_data.h"
-#include "pert_engine.h"
 
 //extern  int     driver_key_pressed();
 extern  void    (*g_plot)(int, int, int); // function pointer

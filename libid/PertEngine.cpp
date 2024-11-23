@@ -6,7 +6,7 @@
 //    Written in Microsoft Visual C++ by Paul de Leeuw.
 //////////////////////////////////////////////////////////////////////
 
-#include "pert_engine.h"
+#include "PertEngine.h"
 
 #include "biginit.h"
 #include "calcfrac.h"

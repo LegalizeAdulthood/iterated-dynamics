@@ -28,7 +28,7 @@ add_library(libid
     one_or_two_pass.cpp include/one_or_two_pass.h
     orbit.cpp include/orbit.h
     param_not_used.cpp include/param_not_used.h
-    pert_engine.cpp include/pert_engine.h
+    PertEngine.cpp include/PertEngine.h
     pert_function.cpp
     perturbation.cpp
     pixel_grid.cpp include/pixel_grid.h
@@ -251,7 +251,7 @@ source_group("Header Files/engine" FILES
     include/one_or_two_pass.h
     include/orbit.h
     include/param_not_used.h
-    include/pert_engine.h
+    include/PertEngine.h
     include/pixel_grid.h
     include/pixel_limits.h
     include/point.h
@@ -285,7 +285,7 @@ source_group("Source Files/engine" FILES
     one_or_two_pass.cpp
     orbit.cpp
     param_not_used.cpp
-    pert_engine.cpp
+    PertEngine.cpp
     pert_function.cpp
     perturbation.cpp
     pixel_grid.cpp
