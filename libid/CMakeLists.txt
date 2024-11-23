@@ -10,7 +10,6 @@ add_library(libid
     3d.cpp include/3d.h
     line3d.cpp include/line3d.h
     plot3d.cpp include/plot3d.h
-    tierazon_functions.cpp include/tierazon.h
 
     boundary_trace.cpp include/boundary_trace.h
     calc_frac_init.cpp include/calc_frac_init.h
