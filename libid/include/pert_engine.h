@@ -14,9 +14,8 @@
 class CPertEngine
 {
 public:
-    int initialize_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin, bf_t yBigZoomPointin,
-        double xZoomPointin, double yZoomPointin, double m_zoom_radiusZoomRadiusIn, bool IsPotentialIn,
-        bf_math_type math_typeIn, double g_params[] /*, CTZfilter *TZfilter*/);
+    void initialize_frame(
+        bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius);
     int calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn,
         int OutsideFilterIn, int biomorph, int subtype, void (*plot)(int, int, int),
         int potential(double, long) /*, CTZfilter *TZfilter, CTrueCol *TrueCol*/);

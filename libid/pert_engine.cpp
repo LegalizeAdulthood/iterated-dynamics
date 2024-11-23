@@ -10,55 +10,43 @@
 
 #include "biginit.h"
 #include "calcfrac.h"
+#include "cmdfiles.h"
 #include "complex_fn.h"
 #include "drivers.h"
+#include "id_data.h"
 
 //////////////////////////////////////////////////////////////////////
 // Initialisation
 //////////////////////////////////////////////////////////////////////
 
-
-int CPertEngine::initialize_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin,
-    bf_t yBigZoomPointin, double xZoomPointin, double yZoomPointin, double ZoomRadiusIn, bool IsPotentialIn,
-    bf_math_type math_typeIn, double g_params[] /*, CTZfilter *TZfilter*/)
+void CPertEngine::initialize_frame(
+    bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius)
+{
+    m_width = g_screen_x_dots;
+    m_height = g_screen_y_dots;
+    m_max_iteration = g_max_iterations;
+    m_zoom_radius = zoom_radius;
+    m_is_potential = g_potential_flag;
+    m_math_type = g_bf_math;
+    for (int i = 0; i < MAX_PARAMS; i++)
     {
-    std::complex<double> q;
-    int     i;
-
-    m_width = WidthIn;
-    m_height = HeightIn;
-    m_max_iteration = threshold;
-    m_zoom_radius = ZoomRadiusIn;
-    m_is_potential = IsPotentialIn;
-    m_math_type = math_typeIn;
-    for (i = 0; i < MAX_PARAMS; i++)
         m_param[i] = g_params[i];
-
-    //    method = TZfilter->method;
+    }
 
     if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
     {
         m_saved = save_stack();
         m_x_zoom_pt_bf = alloc_stack(g_bf_length + 2);
         m_y_zoom_pt_bf = alloc_stack(g_bf_length + 2);
-        copy_bf(m_x_zoom_pt_bf, xBigZoomPointin);
-        copy_bf(m_y_zoom_pt_bf, yBigZoomPointin);
+        copy_bf(m_x_zoom_pt_bf, x_center_bf);
+        copy_bf(m_y_zoom_pt_bf, y_center_bf);
     }
     else
     {
-        m_x_zoom_pt = xZoomPointin;
-        m_y_zoom_pt = yZoomPointin;
+        m_x_zoom_pt = x_center;
+        m_y_zoom_pt = y_center;
     }
-
-    /*
-    if (method >= TIERAZONFILTERS)
-	    {
-	    q = { mpfr_get_d(xZoomPt, MPFR_RNDN), mpfr_get_d(yZoomPt, MPFR_RNDN) };
-	    TZfilter->LoadFilterQ(q);		// initialise the constants used by Tierazon fractals
-	    }
-*/
-    return 0;
-    }
+}
 
 //////////////////////////////////////////////////////////////////////
 // Full frame calculation

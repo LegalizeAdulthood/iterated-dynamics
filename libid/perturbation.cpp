@@ -87,8 +87,7 @@ bool	init_perturbation(int subtype)
     if (BigNumFlag)
 	    mandel_width = mpfr_get_d(BigWidth.x, MPFR_RNDN);
     */
-    g_pert_engine.initialize_frame(g_screen_x_dots, g_screen_y_dots, g_max_iterations, x_centre_bf,
-            y_centre_bf, x_centre, y_centre, mandel_width / 2, g_potential_flag, g_bf_math, g_params/*, &TZfilter*/);
+    g_pert_engine.initialize_frame(x_centre_bf, y_centre_bf, x_centre, y_centre, mandel_width / 2);
     perturbation(subtype);
     if (g_bf_math != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
         restore_stack(saved);
