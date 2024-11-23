@@ -18,7 +18,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-int CPertEngine::initialise_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin,
+int CPertEngine::initialize_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin,
     bf_t yBigZoomPointin, double xZoomPointin, double yZoomPointin, double ZoomRadiusIn, bool IsPotentialIn,
     bf_math_type math_typeIn, double g_params[] /*, CTZfilter *TZfilter*/)
     {

@@ -14,7 +14,7 @@
 class CPertEngine
 {
 public:
-    int initialise_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin, bf_t yBigZoomPointin,
+    int initialize_frame(int WidthIn, int HeightIn, int threshold, bf_t xBigZoomPointin, bf_t yBigZoomPointin,
         double xZoomPointin, double yZoomPointin, double m_zoom_radiusZoomRadiusIn, bool IsPotentialIn,
         bf_math_type math_typeIn, double g_params[] /*, CTZfilter *TZfilter*/);
     int calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn,
