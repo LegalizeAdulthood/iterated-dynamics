@@ -178,8 +178,8 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
 	        referencePointIndex = (int)((double)Randomise / (RAND_MAX + 1) * m_remaining_point_count);
             Point   pt = *(m_points_remaining + referencePointIndex);
 	        //Get the complex point at the chosen reference point
-            double deltaReal = ((magnified_radius * (2 * pt.getX() - m_width)) / window_radius);
-            double deltaImaginary = ((-magnified_radius * (2 * pt.getY() - m_height)) / window_radius);
+            double deltaReal = ((magnified_radius * (2 * pt.get_x() - m_width)) / window_radius);
+            double deltaImaginary = ((-magnified_radius * (2 * pt.get_y() - m_height)) / window_radius);
 
 	        // We need to store this offset because the formula we use to convert pixels into a complex point does so relative to the center of the image.
 	        // We need to offset that calculation when our reference point isn't in the center. The actual offsetting is done in calculate point.
@@ -224,7 +224,7 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
                 if (driver_key_pressed())
                     return -1;
             Point   pt = *(m_points_remaining + i);
-            if (calculate_point(pt.getX(), pt.getY(), magnified_radius, window_radius, bailout, m_glitch_points, plot, potential) < 0)
+            if (calculate_point(pt.get_x(), pt.get_y(), magnified_radius, window_radius, bailout, m_glitch_points, plot, potential) < 0)
 		        return -1;
 	        //Everything else in this loop is just for updating the progress counter. 
 	        double progress = (double) i / m_remaining_point_count;

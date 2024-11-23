@@ -4,15 +4,40 @@
 
 class Point
 {
-private:
-	int x, y;
-	int iteration = -1;
 public:
-	Point() {}
-	Point(int xIn, int Yin) : x(xIn), y(Yin) {}
-	Point(int xIn, int yIn, int iterationIn) : x(xIn), y(yIn), iteration(iterationIn) {}
+    Point() = default;
+    Point(int x, int y) :
+        m_x(x),
+        m_y(y)
+    {
+    }
+    Point(int x, int y, int iteration) :
+        m_x(x),
+        m_y(y),
+        m_iteration(iteration)
+    {
+    }
+    Point(const Point &rhs) = default;
+    Point(Point &&rhs) = default;
+    ~Point() = default;
+    Point &operator=(const Point &rhs) = default;
+    Point &operator=(Point &&rhs) = default;
 
-	int getX() { return x; };
-	int getY() { return y; };
-	int getIteration() { return iteration; };
+    int get_x() const
+    {
+        return m_x;
+    }
+    int get_y() const
+    {
+        return m_y;
+    }
+    int get_iteration() const
+    {
+        return m_iteration;
+    }
+
+private:
+    int m_x{};
+    int m_y{};
+    int m_iteration{-1};
 };
