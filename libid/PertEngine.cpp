@@ -19,7 +19,7 @@
 // Initialisation
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::initialize_frame(
+void PertEngine::initialize_frame(
     bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius)
 {
     m_width = g_screen_x_dots;
@@ -52,7 +52,7 @@ void CPertEngine::initialize_frame(
 // Full frame calculation
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn, int OutsideFilterIn, int biomorphin, int subtypein,
+int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn, int OutsideFilterIn, int biomorphin, int subtypein,
     void (*plot)(int, int, int), int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
 
     {
@@ -254,7 +254,7 @@ int CPertEngine::calculate_one_frame(double bailout, char *status_bar_info, int 
 // Cleanup
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::close_the_damn_pointers(void)
+void PertEngine::close_the_damn_pointers(void)
     {
     if (m_math_type != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
         restore_stack(m_saved);
@@ -268,7 +268,7 @@ void CPertEngine::close_the_damn_pointers(void)
 // Individual point calculation
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::calculate_point(int x, int y, double magnified_radius, int window_radius, double bailout, Point *m_glitch_points, void (*plot)(int, int, int),
+int PertEngine::calculate_point(int x, int y, double magnified_radius, int window_radius, double bailout, Point *m_glitch_points, void (*plot)(int, int, int),
             int potential(double, long)/*, CTZfilter *TZfilter, CTrueCol *TrueCol*/)
     {
 // Get the complex number at this pixel.
@@ -483,7 +483,7 @@ int CPertEngine::calculate_point(int x, int y, double magnified_radius, int wind
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, char* status_bar_info)
+int PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, char* status_bar_info)
     {
     // Raising this number makes more calculations, but less variation between each calculation (less chance of mis-identifying a glitched point).
     BFComplex   z_times_2_bf, z_bf;
@@ -553,7 +553,7 @@ int CPertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, c
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-int CPertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration, char* status_bar_info)
+int PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration, char* status_bar_info)
     {
     // Raising this number makes more calculations, but less variation between each calculation (less chance of mis-identifying a glitched point).
     std::complex<double> z_times_2, z;

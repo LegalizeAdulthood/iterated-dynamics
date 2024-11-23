@@ -11,7 +11,7 @@
 #define MAXPOWER 28
 #define MAXFILTER 9
 
-class CPertEngine
+class PertEngine
 {
 public:
     void initialize_frame(

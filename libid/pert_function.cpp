@@ -15,7 +15,7 @@
 // Individual function point calculations
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::pert_functions(std::complex<double> *x_ref, std::complex<double> *delta_sub_n, std::complex<double> *delta_sub_0)
+void PertEngine::pert_functions(std::complex<double> *x_ref, std::complex<double> *delta_sub_n, std::complex<double> *delta_sub_0)
 
     {
     double  dnr, dni;
@@ -189,7 +189,7 @@ void CPertEngine::pert_functions(std::complex<double> *x_ref, std::complex<doubl
 // Code is written in raw MPFR code to optimise speedy
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2)
+void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2)
     {
     bf_t	temp_real_bf, temp_imag_bf, sqr_real_bf, sqr_imag_bf, real_imag_bf;
     BFComplex temp_cmplx_cbf, temp_cmplx1_cbf;
@@ -313,7 +313,7 @@ void CPertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *Z
 // Code is written in raw MPFR code to optimise speedy
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::ref_functions(std::complex<double> *centre, std::complex<double> *Z, std::complex<double> *z_times_2)
+void PertEngine::ref_functions(std::complex<double> *centre, std::complex<double> *Z, std::complex<double> *z_times_2)
     {
     double	temp_real, temp_imag, sqr_real, sqr_imag, real_imag;
     std::complex<double> z;
@@ -399,7 +399,7 @@ void CPertEngine::ref_functions(std::complex<double> *centre, std::complex<doubl
 // Generate Pascal's Triangle coefficients
 //////////////////////////////////////////////////////////////////////
 
-void CPertEngine::load_pascal(long pascal_array[], int n)
+void PertEngine::load_pascal(long pascal_array[], int n)
 {
     long    j, c = 1L;
 
@@ -417,7 +417,7 @@ void CPertEngine::load_pascal(long pascal_array[], int n)
 // Laser Blaster's Code for removing absolutes from Mandelbrot derivatives
 //////////////////////////////////////////////////////////////////////
 
-double CPertEngine::diff_abs(const double c, const double d)
+double PertEngine::diff_abs(const double c, const double d)
     {
     double cd = c + d;
 
@@ -441,7 +441,7 @@ double CPertEngine::diff_abs(const double c, const double d)
 	Evaluate a Complex Polynomial
 **************************************************************************/
 
-void CPertEngine::complex_polynomial_bf(BFComplex *out, BFComplex in, int degree)
+void PertEngine::complex_polynomial_bf(BFComplex *out, BFComplex in, int degree)
 
     {
     bf_t	t, t1, t2, t3, t4;
@@ -501,7 +501,7 @@ void CPertEngine::complex_polynomial_bf(BFComplex *out, BFComplex in, int degree
 	Cube c + jd = (a + jb) * (a + jb) * (a + jb) 
 ***************************************************************************/
 
-void CPertEngine::complex_cube_bf(BFComplex *out, BFComplex in)
+void PertEngine::complex_cube_bf(BFComplex *out, BFComplex in)
 
     {
     bf_t	t, t1, t2, sqr_real, sqr_imag;

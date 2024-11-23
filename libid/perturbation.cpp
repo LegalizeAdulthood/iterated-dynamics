@@ -35,7 +35,7 @@ extern	int	    g_biomorph;			        // biomorph colour
 /*
 static	CTZfilter	TZfilter;		// Tierazon filters
 */
-CPertEngine g_pert_engine;
+PertEngine g_pert_engine;
 char		g_pert_status[200];
 
 int         perturbation(int);
