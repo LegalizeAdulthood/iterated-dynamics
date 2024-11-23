@@ -62,13 +62,13 @@ void PertEngine::pert_functions(
         *delta_sub_n += *delta_sub_0;
     }
     break;
-        
+
     case 2: // Burning Ship
         delta_sub_n->real(2.0 * a * r + a2 - 2.0 * b * i - b2);
         delta_sub_n->imag(diff_abs(r * i, r * b + i * a + a * b) * 2);
         *delta_sub_n += *delta_sub_0;
         break;
-        
+
     case 3: // Cubic Burning Ship
     {
         dnr = diff_abs(r, a);
@@ -82,7 +82,7 @@ void PertEngine::pert_functions(
         delta_sub_n->real(dnr);
     }
     break;
-        
+
     case 4: // 4th Power Burning Ship
         dnr = 4 * r2 * r * a + 6 * r2 * a2 + 4 * r * a2 * a + a2 * a2 + 4 * i2 * i * b + 6 * i2 * b2 +
             4 * i * b2 * b + b2 * b2 - 12 * r2 * i * b - 6 * r2 * b2 - 12 * r * a * i2 - 24 * r * a * i * b -
@@ -94,7 +94,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 5: // 5th Power Burning Ship
         dnr = diff_abs(r, a);
         dnr = (dnr) * (r * r * r * r - 10 * r * r * i * i + 5 * i * i * i * i) +
@@ -116,7 +116,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 6: // Celtic
         dnr = diff_abs(r2 - i2, (2 * r + a) * a - (2 * i + b) * b);
         dnr += a0;
@@ -125,7 +125,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 7: // Cubic Celtic
         c = r * (r2 - 3 * i2);
         d = a * (3 * r2 + a2) + 3 * r * (a2 - 2 * i * b - b2) - 3 * a * (i2 + 2 * i * b + b2);
@@ -136,7 +136,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 8: // 4th Celtic Buffalo
         c = r2 * r2 + i2 * i2 - 6 * r2 * i2;
         d = 4 * r2 * r * a + 6 * r2 * a2 + 4 * r * a2 * a + a2 * a2 + 4 * i2 * i * b + 6 * i2 * b2 +
@@ -151,7 +151,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 9: // 5th Celtic
         c = r2 * r2 * r - 10 * r2 * r * i2 + 5 * r * i2 * i2;
         d = 20 * r * b * i2 * i - 30 * r2 * a * i2 + 30 * r * b2 * i2 - 30 * r * a2 * i2 -
@@ -171,7 +171,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 10: // Mandelbar (Tricorn)
         dnr = 2 * r * a + a2 - b2 - 2 * b * i + a0;
         dni = b0 - (r * b + a * i + a * b) * 2;
@@ -179,7 +179,7 @@ void PertEngine::pert_functions(
         delta_sub_n->imag(dni);
         delta_sub_n->real(dnr);
         break;
-        
+
     case 11: // Mandelbar (power)
     {
         std::complex<double> zp(1.0, 0.0);
@@ -236,7 +236,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         mult_bf(real_imag_bf, ZTimes2->x, Z->y);
         add_bf(Z->y, real_imag_bf, centre->y);
         break;
-        
+
     case 1:
         if (m_power == 3)
         {
@@ -254,7 +254,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
             add_bf(Z->y, temp_cmplx_cbf.y, centre->y);
         }
         break;
-        
+
     case 2: // Burning Ship
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
@@ -274,7 +274,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         add_bf(Z->x, temp_cmplx1_cbf.x, centre->x);
         add_bf(Z->y, temp_cmplx1_cbf.y, centre->y);
         break;
-        
+
     case 6: // Celtic
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
@@ -284,28 +284,28 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         abs_bf(temp_imag_bf, temp_real_bf);
         add_bf(Z->x, temp_imag_bf, centre->x);
         break;
-        
+
     case 7: // Cubic Celtic
         complex_polynomial_bf(&temp_cmplx_cbf, *Z, 3);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
         add_bf(Z->x, temp_real_bf, centre->x);
         add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
         break;
-        
+
     case 8: // 4th Celtic Buffalo
         complex_polynomial_bf(&temp_cmplx_cbf, *Z, 4);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
         add_bf(Z->x, temp_real_bf, centre->x);
         add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
         break;
-        
+
     case 9: // 5th Celtic
         complex_polynomial_bf(&temp_cmplx_cbf, *Z, 5);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
         add_bf(Z->x, temp_real_bf, centre->x);
         add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
         break;
-        
+
     case 10: // Mandelbar (Tricorn)
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
@@ -314,7 +314,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         add_bf(Z->x, temp_real_bf, centre->x);
         sub_bf(Z->y, centre->y, real_imag_bf);
         break;
-        
+
     case 11: // Mandelbar (power)
         complex_polynomial_bf(&temp_cmplx_cbf, *Z, m_power);
         sub_bf(Z->y, centre->y, temp_cmplx_cbf.y);
@@ -354,7 +354,7 @@ void PertEngine::ref_functions(
         real_imag = z_times_2->real() * Z->imag();
         Z->imag(real_imag + centre->imag());
         break;
-        
+
     case 1:
         if (m_power == 3)
             *Z = complex_fn.complex_cube(*Z) +
@@ -367,7 +367,7 @@ void PertEngine::ref_functions(
             *Z = ComplexTemp + *centre;
         }
         break;
-        
+
     case 2: // Burning Ship
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
@@ -377,7 +377,7 @@ void PertEngine::ref_functions(
         real_imag = fabs(temp_imag);
         Z->imag(real_imag + centre->imag());
         break;
-        
+
     case 3: // Cubic Burning Ship
     case 4: // 4th Power Burning Ship
     case 5: // 5th Power Burning Ship
@@ -386,7 +386,7 @@ void PertEngine::ref_functions(
         z = complex_fn.complex_polynomial(z, m_power);
         *Z = z + *centre;
         break;
-        
+
     case 6: // Celtic
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
@@ -394,25 +394,25 @@ void PertEngine::ref_functions(
         Z->imag(real_imag + centre->imag());
         Z->real(fabs(sqr_real - sqr_imag) + centre->real());
         break;
-        
+
     case 7: // Cubic Celtic
         z = complex_fn.complex_polynomial(*Z, 3);
         Z->real(fabs(z.real()) + centre->real());
         Z->imag(z.imag() + centre->imag());
         break;
-        
+
     case 8: // 4th Celtic Buffalo
         z = complex_fn.complex_polynomial(*Z, 4);
         Z->real(fabs(z.real()) + centre->real());
         Z->imag(z.imag() + centre->imag());
         break;
-        
+
     case 9: // 5th Celtic
         z = complex_fn.complex_polynomial(*Z, 5);
         Z->real(fabs(z.real()) + centre->real());
         Z->imag(z.imag() + centre->imag());
         break;
-        
+
     case 10: // Mandelbar (Tricorn)
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
@@ -420,7 +420,7 @@ void PertEngine::ref_functions(
         Z->real(sqr_real - sqr_imag + centre->real());
         Z->imag(-real_imag + centre->imag());
         break;
-        
+
     case 11: // Mandelbar (power)
         z = complex_fn.complex_polynomial(*Z, m_power);
         Z->real(z.real() + centre->real());
