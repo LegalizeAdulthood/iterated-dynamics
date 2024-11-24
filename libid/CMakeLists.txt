@@ -29,7 +29,6 @@ add_library(libid
     orbit.cpp include/orbit.h
     param_not_used.cpp include/param_not_used.h
     PertEngine.cpp include/PertEngine.h
-    pert_function.cpp
     perturbation.cpp
     pixel_grid.cpp include/pixel_grid.h
     include/Point.h
@@ -286,7 +285,6 @@ source_group("Source Files/engine" FILES
     orbit.cpp
     param_not_used.cpp
     PertEngine.cpp
-    pert_function.cpp
     perturbation.cpp
     pixel_grid.cpp
     resume.cpp
