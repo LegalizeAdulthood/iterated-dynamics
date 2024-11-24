@@ -103,7 +103,7 @@ add_library(libid
     biginit.cpp include/biginit.h
     bignum.cpp
     bignumc.cpp
-    complex_fn.cpp include/complex_fn.h
+    include/complex_fn.h
     fixed_pt.cpp include/fixed_pt.h
     fpu087.cpp include/fpu087.h
     hcmplx.cpp include/hcmplx.h
@@ -438,7 +438,6 @@ source_group("Source Files/math" FILES
     biginit.cpp
     bignum.cpp
     bignumc.cpp
-    complex_fn.cpp
     fixed_pt.cpp
     fpu087.cpp
     hcmplx.cpp

@@ -325,7 +325,6 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
     delta_sub_n = delta_sub_0;
     int iteration = 0;
     bool glitched = false;
-    CComplexFn complex_fn;
 
     double BOF_magnitude;
     double min_orbit; // orbit value closest to origin

@@ -341,7 +341,6 @@ void PertEngine::ref_functions(
 {
     double temp_real, temp_imag, sqr_real, sqr_imag, real_imag;
     std::complex<double> z;
-    CComplexFn complex_fn;
 
     switch (m_subtype)
     {
@@ -383,7 +382,7 @@ void PertEngine::ref_functions(
     case 5: // 5th Power Burning Ship
         z.real(fabs(Z->real()));
         z.imag(fabs(Z->imag()));
-        z = complex_fn.complex_polynomial(z, m_power);
+        z = power(z, m_power);
         *Z = z + *centre;
         break;
 
@@ -396,19 +395,19 @@ void PertEngine::ref_functions(
         break;
 
     case 7: // Cubic Celtic
-        z = complex_fn.complex_polynomial(*Z, 3);
+        z = power(*Z, 3);
         Z->real(fabs(z.real()) + centre->real());
         Z->imag(z.imag() + centre->imag());
         break;
 
     case 8: // 4th Celtic Buffalo
-        z = complex_fn.complex_polynomial(*Z, 4);
+        z = power(*Z, 4);
         Z->real(fabs(z.real()) + centre->real());
         Z->imag(z.imag() + centre->imag());
         break;
 
     case 9: // 5th Celtic
-        z = complex_fn.complex_polynomial(*Z, 5);
+        z = power(*Z, 5);
         Z->real(fabs(z.real()) + centre->real());
         Z->imag(z.imag() + centre->imag());
         break;
@@ -422,7 +421,7 @@ void PertEngine::ref_functions(
         break;
 
     case 11: // Mandelbar (power)
-        z = complex_fn.complex_polynomial(*Z, m_power);
+        z = power(*Z, m_power);
         Z->real(z.real() + centre->real());
         Z->imag(-z.imag() + centre->imag());
         break;
