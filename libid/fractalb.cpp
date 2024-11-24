@@ -1,13 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-/* -----------------------------------------------------------------
-
-This file contains the "big number" high precision versions of the
-fractal routines.
-
---------------------------------------------------------------------   */
-#include "port.h"
-#include "prototyp.h"
+// This file contains the "big number" high precision versions of the
+// fractal routines.
 
 #include "fractalb.h"
 
@@ -20,14 +14,15 @@ fractal routines.
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
-#include "miscfrac.h"
+#include "frasetup.h"
 #include "goodbye.h"
-#include "helpdefs.h"
 #include "id.h"
 #include "id_data.h"
+#include "perturbation.h"
+#include "port.h"
+#include "prototyp.h"
 #include "stop_msg.h"
 #include "type_has_param.h"
-#include "frasetup.h"       // for MandelfpSetup() below - prevent crash when math type = NONE and still call bigflt.
 
 #include <array>
 #include <cstdio>

@@ -2,11 +2,12 @@
 //
 // Thanks to Shirom Makkad fractaltodesktop@gmail.com
 
+#include "perturbation.h"
+
 #include "PertEngine.h"
 #include "biginit.h"
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
-#include "fractalp.h"
 #include "id_data.h"
 
 static PertEngine s_pert_engine;
@@ -33,11 +34,10 @@ bool init_perturbation(int subtype)
     bf_t x_center_bf{};
     bf_t y_center_bf{};
     bf_t tmp_bf{};
-    int saved{};
+    BigStackSaver saved;
     LDBL magnification{};
     if (g_bf_math != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
     {
-        saved = save_stack();
         x_center_bf = alloc_stack(g_bf_length + 2);
         y_center_bf = alloc_stack(g_bf_length + 2);
         tmp_bf = alloc_stack(g_bf_length + 2);
@@ -65,10 +65,6 @@ bool init_perturbation(int subtype)
 
     s_pert_engine.initialize_frame(x_center_bf, y_center_bf, x_center, y_center, mandel_width / 2.0);
     perturbation(subtype);
-    if (g_bf_math != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
-    {
-        restore_stack(saved);
-    }
     g_calc_status = calc_status_value::COMPLETED;
     return false;
 }

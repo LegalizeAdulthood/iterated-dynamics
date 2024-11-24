@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "frasetup.h"
 
 #include "bailout_formula.h"
@@ -15,14 +12,15 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
-#include "miscfrac.h"
 #include "get_julia_attractor.h"
 #include "id_data.h"
 #include "magnet.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "perturbation.h"
 #include "pickover_mandelbrot.h"
 #include "popcorn.h"
+#include "prototyp.h"
 #include "trig_fns.h"
 
 #include <cmath>

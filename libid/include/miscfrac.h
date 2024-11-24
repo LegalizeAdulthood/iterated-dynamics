@@ -25,6 +25,3 @@ int lyapunov();
 int plasma();
 int popcorn();
 int test();
-
-bool init_perturbation(int);
-int perturbation();
