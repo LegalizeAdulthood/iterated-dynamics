@@ -35,7 +35,9 @@ bool
 MandelSetup()           // Mandelbrot Routine
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+    {
         return init_perturbation(0);
+    }
     if (g_debug_flag != debug_flags::force_standard_fractal
         && (g_invert == 0)
         && g_decomp[0] == 0
@@ -130,8 +132,10 @@ MandelfpSetup()
            zmag, epsilon cross, and all the current outside options
         */
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        {
             return init_perturbation(0);
-        else if (g_debug_flag != debug_flags::force_standard_fractal
+        }
+        if (g_debug_flag != debug_flags::force_standard_fractal
             && !g_distance_estimator
             && g_decomp[0] == 0
             && g_biomorph == -1
@@ -158,9 +162,13 @@ MandelfpSetup()
         {
             int degree = (int) g_params[2];
             if (degree == 2)
+            {
                 return init_perturbation(0);
-            else if (degree > 2)
+            }
+            if (degree > 2)
+            {
                 return init_perturbation(1);
+            }
         }
         if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents
         {
