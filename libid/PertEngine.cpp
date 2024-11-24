@@ -16,6 +16,7 @@
 #include "id_data.h"
 
 #include <algorithm>
+#include <cmath>
 #include <stdexcept>
 
 void PertEngine::initialize_frame(
@@ -153,7 +154,8 @@ int PertEngine::calculate_one_frame(int power, int subtype)
             Point pt{m_points_remaining[referencePointIndex]};
             // Get the complex point at the chosen reference point
             double deltaReal = ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius);
-            double deltaImaginary = ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius);
+            double deltaImaginary =
+                ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius);
 
             // We need to store this offset because the formula we use to convert pixels into a complex point
             // does so relative to the center of the image. We need to offset that calculation when our
@@ -237,40 +239,36 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     // when the reference point isn't in the center. That's why for the first reference,
     // m_calculated_real_delta and m_calculated_imaginary_delta are 0: it's calculating relative to the
     // center.
-    double delta_real =
+    const double delta_real =
         ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius) - m_delta_real;
-    double delta_imaginary =
+    const double delta_imaginary =
         ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius) - m_delta_imag;
     std::complex<double> delta_sub_0{delta_real, delta_imaginary};
-    std::complex<double> delta_sub_n;
-    delta_sub_n = delta_sub_0;
-    int iteration = 0;
-    bool glitched = false;
+    std::complex<double> delta_sub_n{delta_real, delta_imaginary};
+    int iteration{};
+    bool glitched{};
 
-    double BOF_magnitude;
-    double min_orbit; // orbit value closest to origin
-    long min_index;   // iteration of min_orbit
+    double min_orbit{}; // orbit value closest to origin
+    long min_index{};   // iteration of min_orbit
     if (g_inside_color == BOF60 || g_inside_color == BOF61)
     {
-        BOF_magnitude = 0.0;
         min_orbit = 100000.0;
     }
 
-    // Iteration loop
     do
     {
         pert_functions(m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
-        std::complex<double> CoordMag = m_xn[iteration] + delta_sub_n;
-        m_z_magnitude_squared = sqr(CoordMag.real()) + sqr(CoordMag.imag());
+        std::complex<double> coord_mag{m_xn[iteration] + delta_sub_n};
+        m_z_magnitude_squared = sqr(coord_mag.real()) + sqr(coord_mag.imag());
 
         if (g_inside_color == BOF60 || g_inside_color == BOF61)
         {
-            std::complex<double> z = m_xn[iteration] + delta_sub_n;
-            BOF_magnitude = mag_squared(z);
-            if (BOF_magnitude < min_orbit)
+            const std::complex<double> z{m_xn[iteration] + delta_sub_n};
+            const double bof_magnitude{mag_squared(z)};
+            if (bof_magnitude < min_orbit)
             {
-                min_orbit = BOF_magnitude;
+                min_orbit = bof_magnitude;
                 min_index = iteration + 1L;
             }
         }
@@ -280,24 +278,21 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         // for why it looks so weird, it's because I've squared both sides of his equation and moved the
         // |ZsubN| to the other side to be precalculated. For more information, look at where the reference
         // point is calculated. I also only want to store this point once.
-        if (m_calculate_glitches == true && glitched == false &&
+        if (m_calculate_glitches && !glitched &&
             m_z_magnitude_squared < m_perturbation_tolerance_check[iteration])
         {
-            Point pt(pt.get_x(), pt.get_y(), iteration);
-            m_glitch_points[m_glitch_point_count] = pt;
+            m_glitch_points[m_glitch_point_count] = Point(pt.get_x(), pt.get_y(), iteration);
             m_glitch_point_count++;
             glitched = true;
             break;
         }
-
-        // use bailout radius of 256 for smooth coloring.
     } while (m_z_magnitude_squared < g_magnitude_limit && iteration < g_max_iterations);
 
     if (!glitched)
     {
         int index;
-        double rqlim2 = sqrt(g_magnitude_limit);
-        std::complex<double> w = m_xn[iteration] + delta_sub_n;
+        const double rqlim2{std::sqrt(g_magnitude_limit)};
+        const std::complex<double> w{m_xn[iteration] + delta_sub_n};
 
         if (g_biomorph >= 0)
         {
@@ -442,7 +437,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 case BOF60:
                     if (iteration == g_max_iterations)
                     {
-                        index = (int) (sqrt(min_orbit) * 75.0);
+                        index = (int) (std::sqrt(min_orbit) * 75.0);
                     }
                     break;
                 case BOF61:
@@ -453,8 +448,8 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                     break;
                 }
             }
-            g_plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), index);
         }
+        g_plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), index);
     }
     return 0;
 }
