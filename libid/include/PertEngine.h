@@ -17,13 +17,13 @@ public:
     int calculate_one_frame(int subtype);
 
 private:
-    int calculate_point(const Point &pt, double tempRadius, int window_radius);
-    void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
-    void reference_zoom_point(const std::complex<double> &center, int maxIteration);
-    void pert_functions(
-        const std::complex<double> &x_ref, std::complex<double> &delta_n, std::complex<double> &delta0);
-    void ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);
-    void ref_functions(const std::complex<double> &center, std::complex<double> &z);
+    int calculate_point(int subtype, const Point &pt, double tempRadius, int window_radius);
+    void reference_zoom_point_bf(int subtype, const BFComplex &BigCentre, int maxIteration);
+    void reference_zoom_point(int subtype, const std::complex<double> &center, int maxIteration);
+    void pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
+        std::complex<double> &delta0);
+    void ref_functions_bf(int subtype, const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);
+    void ref_functions(int subtype, const std::complex<double> &center, std::complex<double> &z);
     void cleanup();
 
     std::string m_status;
@@ -34,7 +34,6 @@ private:
     double m_z_magnitude_squared{};
     std::vector<Point> m_points_remaining;
     std::vector<Point> m_glitch_points;
-    int m_subtype{};
     long m_glitch_point_count{};
     long m_remaining_point_count{};
     BFComplex m_center_bf{};

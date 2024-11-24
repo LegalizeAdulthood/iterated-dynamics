@@ -84,7 +84,6 @@ int PertEngine::calculate_one_frame(int subtype)
     m_glitch_points.resize(g_screen_x_dots * g_screen_y_dots);
     m_perturbation_tolerance_check.resize(g_max_iterations * 2);
     m_xn.resize(g_max_iterations + 1);
-    m_subtype = subtype;
 
     // calculate the pascal's triangle coefficients for powers > 3
     load_pascal(g_c_exponent);
@@ -139,11 +138,11 @@ int PertEngine::calculate_one_frame(int subtype)
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(reference_coordinate_bf, g_max_iterations);
+                reference_zoom_point_bf(subtype, reference_coordinate_bf, g_max_iterations);
             }
             else
             {
-                reference_zoom_point(reference_coordinate, g_max_iterations);
+                reference_zoom_point(subtype, reference_coordinate, g_max_iterations);
             }
         }
         else
@@ -189,11 +188,11 @@ int PertEngine::calculate_one_frame(int subtype)
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(reference_coordinate_bf, g_max_iterations);
+                reference_zoom_point_bf(subtype, reference_coordinate_bf, g_max_iterations);
             }
             else
             {
-                reference_zoom_point(reference_coordinate, g_max_iterations);
+                reference_zoom_point(subtype, reference_coordinate, g_max_iterations);
             }
         }
 
@@ -206,7 +205,7 @@ int PertEngine::calculate_one_frame(int subtype)
                 return -1;
             }
             Point pt{m_points_remaining[i]};
-            if (calculate_point(pt, magnified_radius, window_radius) < 0)
+            if (calculate_point(subtype, pt, magnified_radius, window_radius) < 0)
             {
                 return -1;
             }
@@ -242,7 +241,7 @@ void PertEngine::cleanup()
     m_xn.clear();
 }
 
-int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius)
+int PertEngine::calculate_point(int subtype, const Point &pt, double magnified_radius, int window_radius)
 {
     // Get the complex number at this pixel.
     // This calculates the number relative to the reference point, so we need to translate that to the center
@@ -267,7 +266,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
 
     do
     {
-        pert_functions(m_xn[iteration], delta_sub_n, delta_sub_0);
+        pert_functions(subtype, m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
         std::complex<double> coord_mag{m_xn[iteration] + delta_sub_n};
         m_z_magnitude_squared = sqr(coord_mag.real()) + sqr(coord_mag.imag());
@@ -465,7 +464,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
 }
 
 // Reference Zoom Point - BigFlt
-void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iteration)
+void PertEngine::reference_zoom_point_bf(int subtype, const BFComplex &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -531,7 +530,7 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
         // Calculate the set
-        ref_functions_bf(center, &z_bf, &z_times_2_bf);
+        ref_functions_bf(subtype, center, &z_bf, &z_times_2_bf);
     }
 }
 
@@ -539,7 +538,7 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-void PertEngine::reference_zoom_point(const std::complex<double> &center, int max_iteration)
+void PertEngine::reference_zoom_point(int subtype, const std::complex<double> &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -569,7 +568,7 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         std::complex<double> tolerancy = z * glitch_tolerancy;
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
-        ref_functions(center, z);
+        ref_functions(subtype, center, z);
     }
 }
 
@@ -587,8 +586,8 @@ inline double diff_abs(const double c, const double d)
 
 // Individual function point calculations
 //
-void PertEngine::pert_functions(
-    const std::complex<double> &x_ref, std::complex<double> &delta_n, std::complex<double> &delta0)
+void PertEngine::pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
+    std::complex<double> &delta0)
 {
     double dnr;
     double dni;
@@ -599,7 +598,7 @@ void PertEngine::pert_functions(
     const double a0 = delta0.real();
     const double b0 = delta0.imag();
 
-    switch (m_subtype)
+    switch (subtype)
     {
     case 0:               // Mandelbrot
         if (g_c_exponent == 3) // Cubic
@@ -636,7 +635,7 @@ void PertEngine::pert_functions(
     break;
 
     default:
-        throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
+        throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
     }
 }
 
@@ -718,7 +717,7 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
 
 // Reference Zoom Point Functions
 //
-void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
+void PertEngine::ref_functions_bf(int subtype, const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
 {
     BigStackSaver saved;
     BFComplex temp_cmplx_cbf;
@@ -729,7 +728,7 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
     temp_cmplx_cbf.x = alloc_stack(g_r_bf_length + 2);
     temp_cmplx_cbf.y = alloc_stack(g_r_bf_length + 2);
 
-    switch (m_subtype)
+    switch (subtype)
     {
     case 0: // optimise for Mandelbrot by taking out as many steps as possible
         //	    Z = Z.CSqr() + centre;
@@ -762,11 +761,11 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
         break;
 
     default:
-        throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
+        throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
     }
 }
 
-static void mandelbrot_ref_pt(const std::complex<double> &center, std::complex<double> &z)
+static void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
     const double real_sqr = sqr(z.real());
     const double imag_sqr = sqr(z.imag());
@@ -776,33 +775,36 @@ static void mandelbrot_ref_pt(const std::complex<double> &center, std::complex<d
     z.imag(imag);
 }
 
-// Reference Zoom Point Functions
-//
-void PertEngine::ref_functions(const std::complex<double> &center, std::complex<double> &z)
+static void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
-    switch (m_subtype)
+    if (g_c_exponent == 3)
+    {
+        z = cube(z) + center;
+    }
+    else
+    {
+        std::complex<double> tmp{z};
+        for (int k = 0; k < g_c_exponent - 1; k++)
+        {
+            tmp *= z;
+        }
+        z = tmp + center;
+    }
+}
+
+void PertEngine::ref_functions(int subtype, const std::complex<double> &center, std::complex<double> &z)
+{
+    switch (subtype)
     {
     case 0:
-        mandelbrot_ref_pt(center, z);
+        mandel_ref_pt(center, z);
         break;
 
     case 1:
-        if (g_c_exponent == 3)
-        {
-            z = cube(z) + center;
-        }
-        else
-        {
-            std::complex<double> ComplexTemp = z;
-            for (int k = 0; k < g_c_exponent - 1; k++)
-            {
-                ComplexTemp *= z;
-            }
-            z = ComplexTemp + center;
-        }
+        mandel_z_power_ref_pt(center, z);
         break;
 
     default:
-        throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
+        throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
     }
 }
