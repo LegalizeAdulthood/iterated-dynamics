@@ -264,8 +264,8 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
                 return -1;
             }
             Point pt = *(m_points_remaining + i);
-            if (calculate_point(pt.get_x(), pt.get_y(), magnified_radius, window_radius, bailout,
-                    m_glitch_points, plot, potential) < 0)
+            if (calculate_point(
+                    pt.get_x(), pt.get_y(), magnified_radius, window_radius, bailout, plot, potential) < 0)
             {
                 return -1;
             }
@@ -322,7 +322,7 @@ void PertEngine::cleanup()
 
 // Individual point calculation
 int PertEngine::calculate_point(int x, int y, double magnified_radius, int window_radius, double bailout,
-    Point *m_glitch_points, void (*plot)(int, int, int), int potential(double, long))
+    void (*plot)(int, int, int), int potential(double, long))
 {
     // Get the complex number at this pixel.
     // This calculates the number relative to the reference point, so we need to translate that to the center

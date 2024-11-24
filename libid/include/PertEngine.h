@@ -22,7 +22,7 @@ public:
 
 private:
     int calculate_point(int x, int y, double tempRadius, int window_radius, double bailout,
-        Point *glitchPoints, void (*plot)(int, int, int), int potential(double, long));
+        void (*plot)(int, int, int), int potential(double, long));
     void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
     void reference_zoom_point(const std::complex<double> &center, int maxIteration);
     void pert_functions(
