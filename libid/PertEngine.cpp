@@ -19,22 +19,21 @@
 #include <stdexcept>
 
 void PertEngine::initialize_frame(
-    bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius)
+    const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius)
 {
     m_zoom_radius = zoom_radius;
 
     if (g_bf_math != bf_math_type::NONE)
     {
         m_saved = save_stack();
-        m_zoom_pt_real_bf = alloc_stack(g_bf_length + 2);
-        m_zoom_pt_imag_bf = alloc_stack(g_bf_length + 2);
-        copy_bf(m_zoom_pt_real_bf, x_center_bf);
-        copy_bf(m_zoom_pt_imag_bf, y_center_bf);
+        m_center_bf.x = alloc_stack(g_bf_length + 2);
+        m_center_bf.y = alloc_stack(g_bf_length + 2);
+        copy_bf(m_center_bf.x, center_bf.x);
+        copy_bf(m_center_bf.y, center_bf.y);
     }
     else
     {
-        m_zoom_pt_real = x_center;
-        m_zoom_pt_imag = y_center;
+        m_center = center;
     }
 }
 
@@ -62,7 +61,7 @@ static void load_pascal(long pascal_array[], int n)
 int PertEngine::calculate_one_frame(int power, int subtype)
 {
     int i;
-    BFComplex c_bf;
+    BFComplex c_bf{};
     BFComplex reference_coordinate_bf;
     std::complex<double> c;
     std::complex<double> reference_coordinate;
@@ -115,16 +114,15 @@ int PertEngine::calculate_one_frame(int power, int subtype)
         {
             if (g_bf_math != bf_math_type::NONE)
             {
-                copy_bf(c_bf.x, m_zoom_pt_real_bf);
-                copy_bf(c_bf.y, m_zoom_pt_imag_bf);
+                copy_bf(c_bf.x, m_center_bf.x);
+                copy_bf(c_bf.y, m_center_bf.y);
                 copy_bf(reference_coordinate_bf.x, c_bf.x);
                 copy_bf(reference_coordinate_bf.y, c_bf.y);
             }
             else
             {
-                c.real(m_zoom_pt_real);
-                c.imag(m_zoom_pt_imag);
-                reference_coordinate = c;
+                c = m_center;
+                reference_coordinate = m_center;
             }
 
             m_delta_real = 0;

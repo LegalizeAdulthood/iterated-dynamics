@@ -7,6 +7,7 @@
 #include "PertEngine.h"
 #include "biginit.h"
 #include "cmdfiles.h"
+#include "cmplx.h"
 #include "convert_center_mag.h"
 #include "id_data.h"
 
@@ -25,32 +26,26 @@ static int perturbation(int subtype)
 // Initialize perturbation engine
 bool init_perturbation(int subtype)
 {
+    BigStackSaver saved;
     double mandel_width; // width of display
-    double x_center{};
-    double y_center{};
+    DComplex center{};
+    BFComplex center_bf{};
     double x_mag_factor{};
     double rotation{};
     double skew{};
-    bf_t x_center_bf{};
-    bf_t y_center_bf{};
-    bf_t tmp_bf{};
-    BigStackSaver saved;
     LDBL magnification{};
-    if (g_bf_math != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+    if (g_bf_math != bf_math_type::NONE)
     {
-        x_center_bf = alloc_stack(g_bf_length + 2);
-        y_center_bf = alloc_stack(g_bf_length + 2);
-        tmp_bf = alloc_stack(g_bf_length + 2);
-        cvtcentermagbf(x_center_bf, y_center_bf, &magnification, &x_mag_factor, &rotation, &skew);
-        neg_bf(y_center_bf, y_center_bf);
-        x_center = 0.0;
-        y_center = 0.0;
+        center_bf.x = alloc_stack(g_bf_length + 2);
+        center_bf.y = alloc_stack(g_bf_length + 2);
+        cvtcentermagbf(center_bf.x, center_bf.y, &magnification, &x_mag_factor, &rotation, &skew);
+        neg_bf(center_bf.y, center_bf.y);
     }
     else
     {
         LDBL magnification_ld;
-        cvtcentermag(&x_center, &y_center, &magnification_ld, &x_mag_factor, &rotation, &skew);
-        y_center = -y_center;
+        cvtcentermag(&center.x, &center.y, &magnification_ld, &x_mag_factor, &rotation, &skew);
+        center.y = -center.y;
     }
 
     if (g_bf_math == bf_math_type::NONE)
@@ -59,11 +54,12 @@ bool init_perturbation(int subtype)
     }
     else
     {
+        bf_t tmp_bf{alloc_stack(g_bf_length + 2)};
         sub_bf(tmp_bf, g_bf_y_max, g_bf_y_min);
         mandel_width = bftofloat(tmp_bf);
     }
 
-    s_pert_engine.initialize_frame(x_center_bf, y_center_bf, x_center, y_center, mandel_width / 2.0);
+    s_pert_engine.initialize_frame(center_bf, {center.x, center.y}, mandel_width / 2.0);
     perturbation(subtype);
     g_calc_status = calc_status_value::COMPLETED;
     return false;

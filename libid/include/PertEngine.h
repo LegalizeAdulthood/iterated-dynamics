@@ -13,8 +13,7 @@
 class PertEngine
 {
 public:
-    void initialize_frame(
-        bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius);
+    void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
     int calculate_one_frame(int power, int subtype);
 
 private:
@@ -48,10 +47,8 @@ private:
     int m_subtype{};
     long m_glitch_point_count{};
     long m_remaining_point_count{};
-    bf_t m_zoom_pt_real_bf{};
-    bf_t m_zoom_pt_imag_bf{};
-    double m_zoom_pt_real{};
-    double m_zoom_pt_imag{};
+    BFComplex m_center_bf{};
+    std::complex<double> m_center{};
     double m_zoom_radius{};
     bool m_calculate_glitches{true};
     double m_percent_glitch_tolerance{0.1}; // What percentage of the image is okay to be glitched.
