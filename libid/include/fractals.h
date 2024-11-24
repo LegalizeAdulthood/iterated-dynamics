@@ -4,6 +4,7 @@
 
 #include "cmplx.h"
 
+#include <complex>
 #include <vector>
 
 // some limits for Tierazon fractals
@@ -68,6 +69,7 @@ int long_mandel_per_pixel();
 int julia_per_pixel();
 int mandel_per_pixel();
 int mandelfp_per_pixel();
+void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z);
 int juliafp_per_pixel();
 int mandelbarfpOrbit();
 int burningshipfpOrbit();

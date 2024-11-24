@@ -15,6 +15,7 @@
 #include "fractalb.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "pickover_mandelbrot.h"
 
 #include <algorithm>
 #include <cmath>
@@ -762,33 +763,6 @@ void PertEngine::ref_functions_bf(int subtype, const BFComplex &center, BFComple
 
     default:
         throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
-    }
-}
-
-static void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
-{
-    const double real_sqr = sqr(z.real());
-    const double imag_sqr = sqr(z.imag());
-    const double real = real_sqr - imag_sqr + center.real();
-    const double imag = 2.0 * z.real() * z.imag() + center.imag();
-    z.real(real);
-    z.imag(imag);
-}
-
-static void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
-{
-    if (g_c_exponent == 3)
-    {
-        z = cube(z) + center;
-    }
-    else
-    {
-        std::complex<double> tmp{z};
-        for (int k = 0; k < g_c_exponent - 1; k++)
-        {
-            tmp *= z;
-        }
-        z = tmp + center;
     }
 }
 

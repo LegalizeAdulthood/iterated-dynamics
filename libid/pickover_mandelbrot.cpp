@@ -8,6 +8,7 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "complex_fn.h"
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractype.h"
@@ -84,6 +85,23 @@ int floatZpowerFractal()
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return g_bailout_float();
+}
+
+void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
+{
+    if (g_c_exponent == 3)
+    {
+        z = cube(z) + center;
+    }
+    else
+    {
+        std::complex<double> tmp{z};
+        for (int k = 0; k < g_c_exponent - 1; k++)
+        {
+            tmp *= z;
+        }
+        z = tmp + center;
+    }
 }
 
 int floatZtozPluszpwrFractal()

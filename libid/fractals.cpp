@@ -667,6 +667,16 @@ int mandelfp_per_pixel()
     return 1; // 1st iteration has been done
 }
 
+void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
+{
+    const double real_sqr = sqr(z.real());
+    const double imag_sqr = sqr(z.imag());
+    const double real = real_sqr - imag_sqr + center.real();
+    const double imag = 2.0 * z.real() * z.imag() + center.imag();
+    z.real(real);
+    z.imag(imag);
+}
+
 int juliafp_per_pixel()
 {
     // floating point julia
