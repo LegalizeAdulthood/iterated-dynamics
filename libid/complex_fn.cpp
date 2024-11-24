@@ -7,11 +7,6 @@
 // the following functions are put in a different class so that can also be used in both perturbation and
 // tierazon
 
-double CComplexFn::sum_squared(std::complex<double> z)
-{
-    return (sqr(z.real()) + sqr(z.imag()));
-}
-
 // Cube c + jd = (a + jb) * (a + jb) * (a + jb)
 std::complex<double> CComplexFn::complex_cube(std::complex<double> z)
 

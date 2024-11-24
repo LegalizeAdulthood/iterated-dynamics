@@ -347,7 +347,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
         if (m_inside_method == BOF60 || m_inside_method == BOF61)
         {
             std::complex<double> z = *(m_x_sub_n + iteration) + delta_sub_n;
-            BOF_magnitude = complex_fn.sum_squared(z);
+            BOF_magnitude = mag_squared(z);
             if (BOF_magnitude < min_orbit)
             {
                 min_orbit = BOF_magnitude;
@@ -481,7 +481,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
                 {
                 case ZMAG:
                     if (iteration == m_max_iteration) // Zmag
-                        index = (int) (complex_fn.sum_squared(w) * (m_max_iteration >> 1) + 1);
+                        index = (int) (mag_squared(w) * (m_max_iteration >> 1) + 1);
                     break;
                 case BOF60:
                     if (iteration == m_max_iteration)
