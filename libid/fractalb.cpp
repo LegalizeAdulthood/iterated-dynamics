@@ -790,58 +790,12 @@ bool MandelbfSetup()
     switch (g_fractal_type)
     {
     case fractal_type::MANDELFP:
-    case fractal_type::BURNINGSHIP:
-    case fractal_type::MANDELBAR:
-    case fractal_type::CELTIC:
-        
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         {
-            int degree = g_params[2];
-            switch (g_fractal_type)
-            {
-            case fractal_type::MANDELFP:
-                if (g_std_calc_mode == 'p')
-                    return init_perturbation(0);
-                break;
-            case fractal_type::BURNINGSHIP:
-                if (degree == 2)
-                    return init_perturbation(2);
-                else if (degree > 2 && degree <= 5)
-                    return init_perturbation(degree);
-                else
-                    return init_perturbation(2);
-                break;
-            case fractal_type::MANDELBAR:
-                if (degree == 2)
-                    return init_perturbation(10);
-                else if (degree > 2 && degree <= 10)
-                    return init_perturbation(11);
-                else
-                    return init_perturbation(10);
-                break;
-            case fractal_type::CELTIC:
-                if (degree == 2)
-                    return init_perturbation(6);
-                else if (degree > 2 && degree <= 5)
-                    return init_perturbation(4 + degree);
-                else
-                    return init_perturbation(6);
-                break;
-            }
-        }
-        else
-        {
-            switch (g_fractal_type)
-            {
-            case fractal_type::MANDELBAR:
-            case fractal_type::CELTIC:
-            case fractal_type::BURNINGSHIP:
-                g_calc_type = g_cur_fractal_specific->calctype;
-                g_symmetry = symmetry_type::NONE;
-                break;
-            }
+            return init_perturbation(0);
         }
         break;
+        
     case fractal_type::JULIAFP:
         copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
         copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
@@ -984,12 +938,6 @@ int mandelbf_per_pixel()
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
 
-    if (g_fractal_type == fractal_type::BURNINGSHIP || g_fractal_type == fractal_type::CELTIC || g_fractal_type == fractal_type::MANDELBAR)
-        // a bunch of mandelbrot derivatives
-    {
-        floattobf(g_old_z_bf.x, 0.0);
-        floattobf(g_old_z_bf.y, 0.0);
-    }
     return 1;                  // 1st iteration has been done
 }
 

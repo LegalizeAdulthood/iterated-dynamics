@@ -623,12 +623,6 @@ int mandelfp_per_pixel()
     }
     switch (g_fractal_type)
     {
-    case fractal_type::BURNINGSHIP: // a bunch of mandelbrot derivatives
-    case fractal_type::MANDELBAR:
-    case fractal_type::CELTIC:
-        g_old_z.x = 0.0;
-        g_old_z.y = 0.0;
-        break;
     case fractal_type::MAGNET2M:
         FloatPreCalcMagnet2();
     case fractal_type::MAGNET1M:

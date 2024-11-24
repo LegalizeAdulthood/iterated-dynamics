@@ -201,19 +201,7 @@ enum class fractal_type
     ESCHER                      = 170,
     LATOO                       = 171,
     DIVIDE_BROT5                = 172,
-    MANDELBROTMIX4              = 173,
-    BURNINGSHIP                 = 174,
-    MANDELBAR                   = 175,
-    CELTIC                      = 176,
-    TALIS                       = 177,
-    NEWTONAPPLE                 = 178,
-    NEWTONPOLYGON               = 179,
-    NEWTONCROSS                 = 180,
-    NEWTONNOVA                  = 181,
-    NEWTONVARIATION             = 182,
-    NEWTONFLOWER                = 183,
-    QUARTET                     = 184,
-    ARTMATRIXCUBIC              = 185,
+    MANDELBROTMIX4              = 173
 };
 
 inline int operator+(fractal_type rhs)

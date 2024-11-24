@@ -179,9 +179,6 @@ AlternateMath g_alternate_math[] =
     {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, juliabf_per_pixel, MandelbfSetup  },
     {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
     {fractal_type::DIVIDE_BROT5, bf_math_type::BIGFLT, DivideBrot5bfFractal, dividebrot5bf_per_pixel, MandelbfSetup},
-    {fractal_type::BURNINGSHIP, bf_math_type::BIGFLT, BurningShipbfFractal, mandelbf_per_pixel, MandelbfSetup},
-    {fractal_type::MANDELBAR, bf_math_type::BIGFLT, MandelbarbfFractal, mandelbf_per_pixel, MandelbfSetup},
-    {fractal_type::CELTIC, bf_math_type::BIGFLT, CelticbfFractal, mandelbf_per_pixel, MandelbfSetup},
     {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr, nullptr, nullptr}
 };
 
