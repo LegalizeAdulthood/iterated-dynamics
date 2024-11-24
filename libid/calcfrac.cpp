@@ -70,7 +70,6 @@
 
 // routines in this module
 static void perform_worklist();
-        int  potential(double, long); // no longer static as it is called by perturbation
 static void decomposition();
 static void setsymmetry(symmetry_type sym, bool uselist);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
@@ -2524,7 +2523,7 @@ static void decomposition()
 // controlling the level and slope of the continuous potential
 // surface. Returns color.
 //
-int potential(double mag, long iterations) // no longer static as it is called by perturbation
+int potential(double mag, long iterations)
 {
     float f_mag;
     float f_tmp;

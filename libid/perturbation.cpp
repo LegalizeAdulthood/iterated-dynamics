@@ -4,37 +4,20 @@
 
 #include "PertEngine.h"
 #include "biginit.h"
+#include "cmdfiles.h"
+#include "convert_center_mag.h"
 #include "drivers.h"
 #include "fractalp.h"
 #include "id_data.h"
 
-extern void (*g_plot)(int, int, int); // function pointer
-extern int potential(double, long);
-extern int g_screen_x_dots, g_screen_y_dots; // # of dots on the physical screen
-extern calc_status_value g_calc_status;
-extern long g_max_iterations;
-extern double g_x_max, g_x_min, g_y_max, g_y_min;
-extern bool g_potential_flag;
-extern double g_magnitude_limit;    // bailout level
-int decimals = /*bflength * 4*/ 24; // we can sort this out later
-extern double g_params[];
-extern int g_outside_color; // outside filters
-extern int g_inside_color;  // inside  filters
-extern int g_biomorph;      // biomorph colour
+static PertEngine g_pert_engine;
+static char g_pert_status[200];
 
-PertEngine g_pert_engine;
-char g_pert_status[200];
-
-int perturbation(int);
-void cvt_centermag_bf(
-    bf_t *Xctr, bf_t *Yctr, double *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
-extern void cvtcentermag(
-    double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
+static int perturbation(int subtype);
 
 /**************************************************************************
         Initialise Perturbation engine
 **************************************************************************/
-
 bool init_perturbation(int subtype)
 {
     double mandel_width; // width of display
@@ -43,7 +26,7 @@ bool init_perturbation(int subtype)
     bf_t x_centre_bf = NULL, y_centre_bf = NULL, tmp_bf = NULL;
     int saved;
 
-    double magnification;
+    LDBL magnification;
 
     if (g_bf_math != bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
     {
@@ -51,7 +34,7 @@ bool init_perturbation(int subtype)
         x_centre_bf = alloc_stack(g_bf_length + 2);
         y_centre_bf = alloc_stack(g_bf_length + 2);
         tmp_bf = alloc_stack(g_bf_length + 2);
-        cvt_centermag_bf(&x_centre_bf, &y_centre_bf, &magnification, &x_magfactor, &rotation, &skew);
+        cvtcentermagbf(x_centre_bf, y_centre_bf, &magnification, &x_magfactor, &rotation, &skew);
         neg_bf(y_centre_bf, y_centre_bf);
         x_centre = y_centre = 0.0; // get rid of silly runtime error messages
     }
@@ -88,7 +71,7 @@ bool init_perturbation(int subtype)
         The Perturbation engine
 **************************************************************************/
 
-int perturbation(int subtype)
+static int perturbation(int subtype)
 {
     int degree; // power
 
