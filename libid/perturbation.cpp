@@ -18,12 +18,7 @@ static int perturbation(int subtype)
 {
     // power
     int degree = (int) g_params[2];
-    if (s_pert_engine.calculate_one_frame(g_magnitude_limit, degree, g_inside_color, g_outside_color,
-            g_biomorph, subtype, g_plot, potential) < 0)
-    {
-        return -1;
-    }
-    return 0;
+    return s_pert_engine.calculate_one_frame(degree, subtype);
 }
 
 // Initialize perturbation engine

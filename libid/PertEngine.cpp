@@ -7,6 +7,8 @@
 
 #include "PertEngine.h"
 
+#include <algorithm>
+
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -18,29 +20,20 @@
 void PertEngine::initialize_frame(
     bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius)
 {
-    m_width = g_screen_x_dots;
-    m_height = g_screen_y_dots;
-    m_max_iteration = g_max_iterations;
     m_zoom_radius = zoom_radius;
-    m_is_potential = g_potential_flag;
-    m_math_type = g_bf_math;
-    for (int i = 0; i < MAX_PARAMS; i++)
-    {
-        m_param[i] = g_params[i];
-    }
 
-    if (m_math_type != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         m_saved = save_stack();
-        m_x_zoom_pt_bf = alloc_stack(g_bf_length + 2);
-        m_y_zoom_pt_bf = alloc_stack(g_bf_length + 2);
-        copy_bf(m_x_zoom_pt_bf, x_center_bf);
-        copy_bf(m_y_zoom_pt_bf, y_center_bf);
+        m_zoom_pt_real_bf = alloc_stack(g_bf_length + 2);
+        m_zoom_pt_imag_bf = alloc_stack(g_bf_length + 2);
+        copy_bf(m_zoom_pt_real_bf, x_center_bf);
+        copy_bf(m_zoom_pt_imag_bf, y_center_bf);
     }
     else
     {
-        m_x_zoom_pt = x_center;
-        m_y_zoom_pt = y_center;
+        m_zoom_pt_real = x_center;
+        m_zoom_pt_imag = y_center;
     }
 }
 
@@ -65,8 +58,7 @@ static void load_pascal(long pascal_array[], int n)
 }
 
 // Full frame calculation
-int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter, int outside_filter,
-    int biomorph, int subtype, void (*plot)(int, int, int), int potential(double, long))
+int PertEngine::calculate_one_frame(int power, int subtype)
 {
     int i;
     BFComplex c_bf;
@@ -79,12 +71,12 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
     m_remaining_point_count = 0L;
 
     // get memory for all point arrays
-    m_points_remaining = new Point[m_width * m_height];
+    m_points_remaining = new Point[g_screen_x_dots * g_screen_y_dots];
     if (m_points_remaining == NULL)
     {
         return -1;
     }
-    m_glitch_points = new Point[m_width * m_height];
+    m_glitch_points = new Point[g_screen_x_dots * g_screen_y_dots];
     if (m_glitch_points == NULL)
     {
         if (m_points_remaining)
@@ -95,7 +87,7 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
         return -1;
     }
     // get memory for Perturbation Tolerance Check array
-    m_perturbation_tolerance_check = new double[m_max_iteration * 2];
+    m_perturbation_tolerance_check = new double[g_max_iterations * 2];
     if (m_perturbation_tolerance_check == NULL)
     {
         if (m_points_remaining)
@@ -108,11 +100,11 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
             delete[] m_glitch_points;
             m_glitch_points = NULL;
         }
-        return -2;
+        return -1;
     }
     // get memory for Z array
-    m_x_sub_n = new std::complex<double>[m_max_iteration + 1];
-    if (m_x_sub_n == NULL)
+    m_xn = new std::complex<double>[g_max_iterations + 1];
+    if (m_xn == NULL)
     {
         if (m_points_remaining)
         {
@@ -129,41 +121,30 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
             delete[] m_perturbation_tolerance_check;
             m_perturbation_tolerance_check = NULL;
         }
-        return -2;
+        return -1;
     }
-    m_biomorph = biomorph;
-    m_power = power;
-    if (m_power < 2)
-    {
-        m_power = 2;
-    }
-    if (m_power > MAXPOWER)
-    {
-        m_power = MAXPOWER;
-    }
-    m_inside_method = inside_filter;
-    m_outside_method = outside_filter;
+    m_power = std::min(std::max(power, 2), static_cast<int>(MAX_POWER));
     m_subtype = subtype;
 
     // calculate the pascal's triangle coefficients for powers > 3
-    load_pascal(m_pascal_array, m_power);
+    load_pascal(m_pascal_triangle, m_power);
     // Fill the list of points with all points in the image.
-    for (long y = 0; y < m_height; y++)
+    for (long y = 0; y < g_screen_y_dots; y++)
     {
-        for (long x = 0; x < m_width; x++)
+        for (long x = 0; x < g_screen_x_dots; x++)
         {
-            Point pt(x, m_height - 1 - y);
-            *(m_points_remaining + y * m_width + x) = pt;
+            Point pt(x, g_screen_y_dots - 1 - y);
+            *(m_points_remaining + y * g_screen_x_dots + x) = pt;
             m_remaining_point_count++;
         }
     }
 
     double magnified_radius = m_zoom_radius;
-    int window_radius = (m_width < m_height) ? m_width : m_height;
+    int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
     int cplxsaved;
     bf_t tmp_bf;
 
-    if (m_math_type != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         cplxsaved = save_stack();
         c_bf.x = alloc_stack(g_r_bf_length + 2);
@@ -173,7 +154,7 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
         tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 
-    while (m_remaining_point_count > (m_width * m_height) * (m_percent_glitch_tolerance / 100))
+    while (m_remaining_point_count > (g_screen_x_dots * g_screen_y_dots) * (m_percent_glitch_tolerance / 100))
     {
         m_reference_points++;
 
@@ -181,30 +162,30 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
         // Check whether this is the first time running the loop.
         if (m_reference_points == 1)
         {
-            if (m_math_type != bf_math_type::NONE)
+            if (g_bf_math != bf_math_type::NONE)
             {
-                copy_bf(c_bf.x, m_x_zoom_pt_bf);
-                copy_bf(c_bf.y, m_y_zoom_pt_bf);
+                copy_bf(c_bf.x, m_zoom_pt_real_bf);
+                copy_bf(c_bf.y, m_zoom_pt_imag_bf);
                 copy_bf(reference_coordinate_bf.x, c_bf.x);
                 copy_bf(reference_coordinate_bf.y, c_bf.y);
             }
             else
             {
-                c.real(m_x_zoom_pt);
-                c.imag(m_y_zoom_pt);
+                c.real(m_zoom_pt_real);
+                c.imag(m_zoom_pt_imag);
                 reference_coordinate = c;
             }
 
-            m_calculated_real_delta = 0;
-            m_calculated_imaginary_delta = 0;
+            m_delta_real = 0;
+            m_delta_imag = 0;
 
-            if (m_math_type != bf_math_type::NONE)
+            if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(reference_coordinate_bf, m_max_iteration);
+                reference_zoom_point_bf(reference_coordinate_bf, g_max_iterations);
             }
             else
             {
-                reference_zoom_point(reference_coordinate, m_max_iteration);
+                reference_zoom_point(reference_coordinate, g_max_iterations);
             }
         }
         else
@@ -222,17 +203,17 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
             referencePointIndex = (int) ((double) Randomise / (RAND_MAX + 1) * m_remaining_point_count);
             Point pt = *(m_points_remaining + referencePointIndex);
             // Get the complex point at the chosen reference point
-            double deltaReal = ((magnified_radius * (2 * pt.get_x() - m_width)) / window_radius);
-            double deltaImaginary = ((-magnified_radius * (2 * pt.get_y() - m_height)) / window_radius);
+            double deltaReal = ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius);
+            double deltaImaginary = ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius);
 
             // We need to store this offset because the formula we use to convert pixels into a complex point
             // does so relative to the center of the image. We need to offset that calculation when our
             // reference point isn't in the center. The actual offsetting is done in calculate point.
 
-            m_calculated_real_delta = deltaReal;
-            m_calculated_imaginary_delta = deltaImaginary;
+            m_delta_real = deltaReal;
+            m_delta_imag = deltaImaginary;
 
-            if (m_math_type != bf_math_type::NONE)
+            if (g_bf_math != bf_math_type::NONE)
             {
                 floattobf(tmp_bf, deltaReal);
                 add_bf(reference_coordinate_bf.x, c_bf.x, tmp_bf);
@@ -245,13 +226,13 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
                 reference_coordinate.imag(c.imag() + deltaImaginary);
             }
 
-            if (m_math_type != bf_math_type::NONE)
+            if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(reference_coordinate_bf, m_max_iteration);
+                reference_zoom_point_bf(reference_coordinate_bf, g_max_iterations);
             }
             else
             {
-                reference_zoom_point(reference_coordinate, m_max_iteration);
+                reference_zoom_point(reference_coordinate, g_max_iterations);
             }
         }
 
@@ -264,8 +245,7 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
                 return -1;
             }
             Point pt = *(m_points_remaining + i);
-            if (calculate_point(
-                    pt.get_x(), pt.get_y(), magnified_radius, window_radius, bailout, plot, potential) < 0)
+            if (calculate_point(pt, magnified_radius, window_radius, g_magnitude_limit, g_plot, potential) < 0)
             {
                 return -1;
             }
@@ -274,7 +254,8 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
             if (int(progress * 100) != lastChecked)
             {
                 lastChecked = int(progress * 100);
-                m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" + std::to_string(int(progress * 100)) + "%)";
+                m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
+                    std::to_string(int(progress * 100)) + "%)";
             }
         }
 
@@ -284,7 +265,7 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
         m_remaining_point_count = m_glitch_point_count;
     }
 
-    if (m_math_type != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         restore_stack(cplxsaved);
     }
@@ -294,7 +275,7 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
 
 void PertEngine::cleanup()
 {
-    if (m_math_type != bf_math_type::NONE)
+    if (g_bf_math != bf_math_type::NONE)
     {
         restore_stack(m_saved);
     }
@@ -308,10 +289,10 @@ void PertEngine::cleanup()
         delete[] m_glitch_points;
         m_glitch_points = NULL;
     }
-    if (m_x_sub_n)
+    if (m_xn)
     {
-        delete[] m_x_sub_n;
-        m_x_sub_n = NULL;
+        delete[] m_xn;
+        m_xn = NULL;
     }
     if (m_perturbation_tolerance_check)
     {
@@ -321,7 +302,7 @@ void PertEngine::cleanup()
 }
 
 // Individual point calculation
-int PertEngine::calculate_point(int x, int y, double magnified_radius, int window_radius, double bailout,
+int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius, double bailout,
     void (*plot)(int, int, int), int potential(double, long))
 {
     // Get the complex number at this pixel.
@@ -329,10 +310,10 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
     // when the reference point isn't in the center. That's why for the first reference,
     // m_calculated_real_delta and m_calculated_imaginary_delta are 0: it's calculating relative to the
     // center.
-
-    double delta_real = ((magnified_radius * (2 * x - m_width)) / window_radius) - m_calculated_real_delta;
+    double delta_real =
+        ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius) - m_delta_real;
     double delta_imaginary =
-        ((-magnified_radius * (2 * y - m_height)) / window_radius) - m_calculated_imaginary_delta;
+        ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius) - m_delta_imag;
     double magnitude = 0.0;
     std::complex<double> delta_sub_0{delta_real, delta_imaginary};
     std::complex<double> delta_sub_n;
@@ -343,7 +324,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
     double BOF_magnitude;
     double min_orbit; // orbit value closest to origin
     long min_index;   // iteration of min_orbit
-    if (m_inside_method == BOF60 || m_inside_method == BOF61)
+    if (g_inside_color == BOF60 || g_inside_color == BOF61)
     {
         BOF_magnitude = 0.0;
         min_orbit = 100000.0;
@@ -352,14 +333,14 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
     // Iteration loop
     do
     {
-        pert_functions((m_x_sub_n + iteration), &delta_sub_n, &delta_sub_0);
+        pert_functions((m_xn + iteration), &delta_sub_n, &delta_sub_0);
         iteration++;
-        std::complex<double> CoordMag = *(m_x_sub_n + iteration) + delta_sub_n;
-        m_z_coordinate_magnitude_squared = sqr(CoordMag.real()) + sqr(CoordMag.imag());
+        std::complex<double> CoordMag = *(m_xn + iteration) + delta_sub_n;
+        m_z_magnitude_squared = sqr(CoordMag.real()) + sqr(CoordMag.imag());
 
-        if (m_inside_method == BOF60 || m_inside_method == BOF61)
+        if (g_inside_color == BOF60 || g_inside_color == BOF61)
         {
-            std::complex<double> z = *(m_x_sub_n + iteration) + delta_sub_n;
+            std::complex<double> z = *(m_xn + iteration) + delta_sub_n;
             BOF_magnitude = mag_squared(z);
             if (BOF_magnitude < min_orbit)
             {
@@ -374,9 +355,9 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
         // |ZsubN| to the other side to be precalculated. For more information, look at where the reference
         // point is calculated. I also only want to store this point once.
         if (m_calculate_glitches == true && glitched == false &&
-            m_z_coordinate_magnitude_squared < m_perturbation_tolerance_check[iteration])
+            m_z_magnitude_squared < m_perturbation_tolerance_check[iteration])
         {
-            Point pt(x, y, iteration);
+            Point pt(pt.get_x(), pt.get_y(), iteration);
             m_glitch_points[m_glitch_point_count] = pt;
             m_glitch_point_count++;
             glitched = true;
@@ -384,25 +365,25 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
         }
 
         // use bailout radius of 256 for smooth coloring.
-    } while (m_z_coordinate_magnitude_squared < bailout && iteration < m_max_iteration);
+    } while (m_z_magnitude_squared < bailout && iteration < g_max_iterations);
 
-    if (glitched == false)
+    if (!glitched)
     {
         int index;
         double rqlim2 = sqrt(bailout);
-        std::complex<double> w = m_x_sub_n[iteration] + delta_sub_n;
+        std::complex<double> w = m_xn[iteration] + delta_sub_n;
 
-        if (m_biomorph >= 0) // biomorph
+        if (g_biomorph >= 0)
         {
-            if (iteration == m_max_iteration)
+            if (iteration == g_max_iterations)
             {
-                index = m_max_iteration;
+                index = g_max_iterations;
             }
             else
             {
                 if (fabs(w.real()) < rqlim2 || fabs(w.imag()) < rqlim2)
                 {
-                    index = m_biomorph;
+                    index = g_biomorph;
                 }
                 else
                 {
@@ -412,12 +393,12 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
         }
         else
         {
-            switch (m_outside_method)
+            switch (g_outside_color)
             {
             case 0: // no filter
-                if (iteration == m_max_iteration)
+                if (iteration == g_max_iterations)
                 {
-                    index = m_max_iteration;
+                    index = g_max_iterations;
                 }
                 else
                 {
@@ -426,31 +407,31 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
                 break;
 
             case ZMAG:
-                if (iteration == m_max_iteration) // Zmag
+                if (iteration == g_max_iterations)
                 {
-                    index = (int) ((w.real() * w.real() + w.imag() + w.imag()) * (m_max_iteration >> 1) + 1);
+                    index = (int) ((w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
                 }
                 else
                 {
                     index = iteration % 256;
                 }
                 break;
-                
+
             case REAL:
-                if (iteration == m_max_iteration)
+                if (iteration == g_max_iterations)
                 {
-                    index = m_max_iteration;
+                    index = g_max_iterations;
                 }
                 else
                 {
                     index = iteration + (long) w.real() + 7;
                 }
                 break;
-                
+
             case IMAG:
-                if (iteration == m_max_iteration)
+                if (iteration == g_max_iterations)
                 {
-                    index = m_max_iteration;
+                    index = g_max_iterations;
                 }
                 else
                 {
@@ -459,9 +440,9 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
                 break;
 
             case MULT:
-                if (iteration == m_max_iteration)
+                if (iteration == g_max_iterations)
                 {
-                    index = m_max_iteration;
+                    index = g_max_iterations;
                 }
                 else if (w.imag())
                 {
@@ -472,36 +453,36 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
                     index = iteration;
                 }
                 break;
-                
+
             case SUM:
-                if (iteration == m_max_iteration)
-                    index = m_max_iteration;
+                if (iteration == g_max_iterations)
+                    index = g_max_iterations;
                 else
                     index = iteration + (long) (w.real() + w.imag());
                 break;
-                
+
             case ATAN:
-                if (iteration == m_max_iteration)
+                if (iteration == g_max_iterations)
                 {
-                    index = m_max_iteration;
+                    index = g_max_iterations;
                 }
                 else
                 {
                     index = (long) fabs(atan2(w.imag(), w.real()) * 180.0 / PI);
                 }
                 break;
-                
+
             default:
-                if (m_is_potential)
+                if (g_potential_flag)
                 {
                     magnitude = sqr(w.real()) + sqr(w.imag());
                     index = potential(magnitude, iteration);
                 }
                 else // no filter
                 {
-                    if (iteration == m_max_iteration)
+                    if (iteration == g_max_iterations)
                     {
-                        index = m_max_iteration;
+                        index = g_max_iterations;
                     }
                     else
                     {
@@ -510,12 +491,12 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
                 }
                 break;
             }
-            
-            if (m_inside_method >= 0) // no filter
+
+            if (g_inside_color >= 0) // no filter
             {
-                if (iteration == m_max_iteration)
+                if (iteration == g_max_iterations)
                 {
-                    index = m_inside_method;
+                    index = g_inside_color;
                 }
                 else
                 {
@@ -524,29 +505,29 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
             }
             else
             {
-                switch (m_inside_method)
+                switch (g_inside_color)
                 {
                 case ZMAG:
-                    if (iteration == m_max_iteration)
+                    if (iteration == g_max_iterations)
                     {
-                        index = (int) (mag_squared(w) * (m_max_iteration >> 1) + 1);
+                        index = (int) (mag_squared(w) * (g_max_iterations >> 1) + 1);
                     }
                     break;
                 case BOF60:
-                    if (iteration == m_max_iteration)
+                    if (iteration == g_max_iterations)
                     {
                         index = (int) (sqrt(min_orbit) * 75.0);
                     }
                     break;
                 case BOF61:
-                    if (iteration == m_max_iteration)
+                    if (iteration == g_max_iterations)
                     {
                         index = min_index;
                     }
                     break;
                 }
             }
-            plot(x, m_height - 1 - y, index);
+            plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), index);
         }
     }
     return 0;
@@ -594,7 +575,7 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
         // std::complex, so we have to multiply the individual terms each time. This is expensive to do above,
         // so we are just doing it here.
 
-        m_x_sub_n[i] = c;
+        m_xn[i] = c;
         // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
@@ -606,7 +587,8 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
         if (int(progress * 100) != last_checked)
         {
             last_checked = int(progress * 100);
-            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" + std::to_string(int(progress * 100)) + "%)";
+            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
+                std::to_string(int(progress * 100)) + "%)";
         }
 
         floattobf(tmp_bf, glitch_tolerancy);
@@ -650,7 +632,7 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         // std::complex, so we have to multiply the individual terms each time. This is expensive to do above,
         // so we are just doing it here.
 
-        m_x_sub_n[i] = c;
+        m_xn[i] = c;
         // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
@@ -662,7 +644,8 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         if (int(progress * 100) != last_checked)
         {
             last_checked = int(progress * 100);
-            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" + std::to_string(int(progress * 100)) + "%)";
+            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
+                std::to_string(int(progress * 100)) + "%)";
         }
 
         std::complex<double> tolerancy = z * glitch_tolerancy;
@@ -732,7 +715,7 @@ void PertEngine::pert_functions(
         std::complex<double> sum(0.0, 0.0);
         for (int j = 0; j < m_power; j++)
         {
-            sum += zp * (double) m_pascal_array[j];
+            sum += zp * (double) m_pascal_triangle[j];
             sum *= *delta_sub_n;
             zp *= *x_ref;
         }
@@ -864,7 +847,7 @@ void PertEngine::pert_functions(
         std::complex<double> sum(0.0, 0.0);
         for (int j = 0; j < m_power; j++)
         {
-            sum += zp * (double) m_pascal_array[j];
+            sum += zp * (double) m_pascal_triangle[j];
             sum *= *delta_sub_n;
             zp *= *x_ref;
         }
@@ -883,7 +866,6 @@ void PertEngine::pert_functions(
     }
 }
 
-
 // Cube c + jd = (a + jb) * (a + jb) * (a + jb)
 static void cube_bf(BFComplex &out, const BFComplex &in)
 {
@@ -897,12 +879,12 @@ static void cube_bf(BFComplex &out, const BFComplex &in)
     mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
     mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
     inttobf(t, 3);
-    mult_bf(t1, t, sqr_imag);  // sqr_real + sqr_real + sqr_real
-    sub_bf(t2, sqr_real, t1);  // sqr_real - (sqr_imag + sqr_imag + sqr_imag)
+    mult_bf(t1, t, sqr_imag); // sqr_real + sqr_real + sqr_real
+    sub_bf(t2, sqr_real, t1); // sqr_real - (sqr_imag + sqr_imag + sqr_imag)
     mult_bf(out.x, in.x, t2); // c = x * (sqr_real - (sqr_imag + sqr_imag + sqr_imag))
 
-    mult_bf(t1, t, sqr_real);  // sqr_imag + sqr_imag + sqr_imag
-    sub_bf(t2, t1, sqr_imag);  // (sqr_real + sqr_real + sqr_real) - sqr_imag
+    mult_bf(t1, t, sqr_real); // sqr_imag + sqr_imag + sqr_imag
+    sub_bf(t2, t1, sqr_imag); // (sqr_real + sqr_real + sqr_real) - sqr_imag
     mult_bf(out.y, in.y, t2); // d = y * ((sqr_real + sqr_real + sqr_real) - sqr_imag)
     restore_stack(saved);
 }
@@ -951,7 +933,7 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
         {
             mult_bf(t, t1, result.x);  // xt * result->x
             mult_bf(t3, t2, result.y); // yt * result->y
-            sub_bf(t4, t, t3);       // t2 = xt * result->x - yt * result->y
+            sub_bf(t4, t, t3);         // t2 = xt * result->x - yt * result->y
             mult_bf(t, t1, result.y);  // xt * result->y
             mult_bf(t3, t2, result.x); // yt * result->x
             add_bf(result.y, t, t3);   // result->y = result->y * xt + yt * result->x
