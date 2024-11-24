@@ -22,8 +22,7 @@ private:
         MAX_POWER = 28
     };
 
-    int calculate_point(const Point &pt, double tempRadius, int window_radius, double bailout,
-        void (*plot)(int, int, int), int potential(double, long));
+    int calculate_point(const Point &pt, double tempRadius, int window_radius);
     void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
     void reference_zoom_point(const std::complex<double> &center, int maxIteration);
     void pert_functions(

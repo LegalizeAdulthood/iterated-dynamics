@@ -194,7 +194,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
                 return -1;
             }
             Point pt{m_points_remaining[i]};
-            if (calculate_point(pt, magnified_radius, window_radius, g_magnitude_limit, g_plot, potential) < 0)
+            if (calculate_point(pt, magnified_radius, window_radius) < 0)
             {
                 return -1;
             }
@@ -230,9 +230,7 @@ void PertEngine::cleanup()
     m_xn.clear();
 }
 
-// Individual point calculation
-int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius, double bailout,
-    void (*plot)(int, int, int), int potential(double, long))
+int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius)
 {
     // Get the complex number at this pixel.
     // This calculates the number relative to the reference point, so we need to translate that to the center
@@ -293,12 +291,12 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         }
 
         // use bailout radius of 256 for smooth coloring.
-    } while (m_z_magnitude_squared < bailout && iteration < g_max_iterations);
+    } while (m_z_magnitude_squared < g_magnitude_limit && iteration < g_max_iterations);
 
     if (!glitched)
     {
         int index;
-        double rqlim2 = sqrt(bailout);
+        double rqlim2 = sqrt(g_magnitude_limit);
         std::complex<double> w = m_xn[iteration] + delta_sub_n;
 
         if (g_biomorph >= 0)
@@ -455,7 +453,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                     break;
                 }
             }
-            plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), index);
+            g_plot(pt.get_x(), g_screen_y_dots - 1 - pt.get_y(), index);
         }
     }
     return 0;
