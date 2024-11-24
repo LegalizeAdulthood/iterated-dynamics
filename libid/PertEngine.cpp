@@ -175,20 +175,13 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
             m_calculated_real_delta = 0;
             m_calculated_imaginary_delta = 0;
 
-            int result;
-            if (m_math_type !=
-                bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+            if (m_math_type != bf_math_type::NONE)
             {
-                result = reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
+                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
             }
             else
             {
-                result = reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
-            }
-            if (result < 0)
-            {
-                cleanup();
-                return -1;
+                reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
             }
         }
         else
@@ -228,20 +221,13 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
                 reference_coordinate.imag(c.imag() + deltaImaginary);
             }
 
-            int result;
-            if (m_math_type !=
-                bf_math_type::NONE) // we assume bignum is flagged and bf variables are initialised
+            if (m_math_type != bf_math_type::NONE)
             {
-                result = reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
+                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
             }
             else
             {
-                result = reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
-            }
-            if (result < 0)
-            {
-                cleanup();
-                return -1;
+                reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
             }
         }
 
@@ -502,7 +488,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-int PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, char *status_bar_info)
+void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, char *status_bar_info)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -568,14 +554,13 @@ int PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, ch
         ref_functions_bf(centre, &z_bf, &z_times_2_bf);
     }
     restore_stack(cplxsaved);
-    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-int PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration, char *status_bar_info)
+void PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration, char *status_bar_info)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -618,5 +603,4 @@ int PertEngine::reference_zoom_point(std::complex<double> *centre, int max_itera
         // Calculate the set
         ref_functions(centre, &z, &z_times_2);
     }
-    return 0;
 }
