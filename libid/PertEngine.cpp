@@ -74,15 +74,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
     m_points_remaining.resize(g_screen_x_dots * g_screen_y_dots);
     m_glitch_points.resize(g_screen_x_dots * g_screen_y_dots);
     m_perturbation_tolerance_check.resize(g_max_iterations * 2);
-    // get memory for Z array
-    m_xn = new std::complex<double>[g_max_iterations + 1];
-    if (m_xn == NULL)
-    {
-        m_points_remaining.clear();
-        m_glitch_points.clear();
-        m_perturbation_tolerance_check.clear();
-        return -1;
-    }
+    m_xn.resize(g_max_iterations + 1);
     m_power = std::min(std::max(power, 2), static_cast<int>(MAX_POWER));
     m_subtype = subtype;
 
@@ -242,11 +234,7 @@ void PertEngine::cleanup()
     m_points_remaining.clear();
     m_glitch_points.clear();
     m_perturbation_tolerance_check.clear();
-    if (m_xn)
-    {
-        delete[] m_xn;
-        m_xn = NULL;
-    }
+    m_xn.clear();
 }
 
 // Individual point calculation
@@ -282,12 +270,12 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     {
         pert_functions(m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
-        std::complex<double> CoordMag = *(m_xn + iteration) + delta_sub_n;
+        std::complex<double> CoordMag = m_xn[iteration] + delta_sub_n;
         m_z_magnitude_squared = sqr(CoordMag.real()) + sqr(CoordMag.imag());
 
         if (g_inside_color == BOF60 || g_inside_color == BOF61)
         {
-            std::complex<double> z = *(m_xn + iteration) + delta_sub_n;
+            std::complex<double> z = m_xn[iteration] + delta_sub_n;
             BOF_magnitude = mag_squared(z);
             if (BOF_magnitude < min_orbit)
             {

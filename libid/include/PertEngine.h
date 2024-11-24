@@ -36,7 +36,7 @@ private:
     void cleanup();
 
     std::string m_status;
-    std::complex<double> *m_xn{};
+    std::vector<std::complex<double>> m_xn;
     std::vector<double> m_perturbation_tolerance_check;
     double m_delta_real{};
     double m_delta_imag{};
