@@ -70,57 +70,16 @@ int PertEngine::calculate_one_frame(int power, int subtype)
     m_glitch_point_count = 0L;
     m_remaining_point_count = 0L;
 
-    // get memory for all point arrays
-    m_points_remaining = new Point[g_screen_x_dots * g_screen_y_dots];
-    if (m_points_remaining == NULL)
-    {
-        return -1;
-    }
-    m_glitch_points = new Point[g_screen_x_dots * g_screen_y_dots];
-    if (m_glitch_points == NULL)
-    {
-        if (m_points_remaining)
-        {
-            delete[] m_points_remaining;
-            m_points_remaining = NULL;
-        }
-        return -1;
-    }
-    // get memory for Perturbation Tolerance Check array
-    m_perturbation_tolerance_check = new double[g_max_iterations * 2];
-    if (m_perturbation_tolerance_check == NULL)
-    {
-        if (m_points_remaining)
-        {
-            delete[] m_points_remaining;
-            m_points_remaining = NULL;
-        }
-        if (m_glitch_points)
-        {
-            delete[] m_glitch_points;
-            m_glitch_points = NULL;
-        }
-        return -1;
-    }
+    m_points_remaining.resize(g_screen_x_dots * g_screen_y_dots);
+    m_glitch_points.resize(g_screen_x_dots * g_screen_y_dots);
+    m_perturbation_tolerance_check.resize(g_max_iterations * 2);
     // get memory for Z array
     m_xn = new std::complex<double>[g_max_iterations + 1];
     if (m_xn == NULL)
     {
-        if (m_points_remaining)
-        {
-            delete[] m_points_remaining;
-            m_points_remaining = NULL;
-        }
-        if (m_glitch_points)
-        {
-            delete[] m_glitch_points;
-            m_glitch_points = NULL;
-        }
-        if (m_perturbation_tolerance_check)
-        {
-            delete[] m_perturbation_tolerance_check;
-            m_perturbation_tolerance_check = NULL;
-        }
+        m_points_remaining.clear();
+        m_glitch_points.clear();
+        m_perturbation_tolerance_check.clear();
         return -1;
     }
     m_power = std::min(std::max(power, 2), static_cast<int>(MAX_POWER));
@@ -134,7 +93,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
         for (long x = 0; x < g_screen_x_dots; x++)
         {
             Point pt(x, g_screen_y_dots - 1 - y);
-            *(m_points_remaining + y * g_screen_x_dots + x) = pt;
+            m_points_remaining[y * g_screen_x_dots + x] = pt;
             m_remaining_point_count++;
         }
     }
@@ -201,7 +160,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
             srand((unsigned) time(NULL)); // Seed the random-number generator with current time
             Randomise = rand();
             referencePointIndex = (int) ((double) Randomise / (RAND_MAX + 1) * m_remaining_point_count);
-            Point pt = *(m_points_remaining + referencePointIndex);
+            Point pt{m_points_remaining[referencePointIndex]};
             // Get the complex point at the chosen reference point
             double deltaReal = ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius);
             double deltaImaginary = ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius);
@@ -244,7 +203,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
             {
                 return -1;
             }
-            Point pt = *(m_points_remaining + i);
+            Point pt{m_points_remaining[i]};
             if (calculate_point(pt, magnified_radius, window_radius, g_magnitude_limit, g_plot, potential) < 0)
             {
                 return -1;
@@ -261,7 +220,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
 
         // These points are glitched, so we need to mark them for recalculation. We need to recalculate them
         // using Pauldelbrot's glitch fixing method (see calculate point).
-        memcpy(m_points_remaining, m_glitch_points, sizeof(Point) * m_glitch_point_count);
+        memcpy(m_points_remaining.data(), m_glitch_points.data(), sizeof(Point) * m_glitch_point_count);
         m_remaining_point_count = m_glitch_point_count;
     }
 
@@ -279,25 +238,13 @@ void PertEngine::cleanup()
     {
         restore_stack(m_saved);
     }
-    if (m_points_remaining)
-    {
-        delete[] m_points_remaining;
-        m_points_remaining = NULL;
-    }
-    if (m_glitch_points)
-    {
-        delete[] m_glitch_points;
-        m_glitch_points = NULL;
-    }
+    m_points_remaining.clear();
+    m_glitch_points.clear();
+    m_perturbation_tolerance_check.clear();
     if (m_xn)
     {
         delete[] m_xn;
         m_xn = NULL;
-    }
-    if (m_perturbation_tolerance_check)
-    {
-        delete[] m_perturbation_tolerance_check;
-        m_perturbation_tolerance_check = NULL;
     }
 }
 

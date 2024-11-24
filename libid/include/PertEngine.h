@@ -8,6 +8,7 @@
 
 #include <complex>
 #include <string>
+#include <vector>
 
 class PertEngine
 {
@@ -36,13 +37,13 @@ private:
 
     std::string m_status;
     std::complex<double> *m_xn{};
-    double *m_perturbation_tolerance_check{};
+    std::vector<double> m_perturbation_tolerance_check;
     double m_delta_real{};
     double m_delta_imag{};
     double m_z_magnitude_squared{};
     long m_pascal_triangle[MAX_POWER]{};
-    Point *m_points_remaining{};
-    Point *m_glitch_points{};
+    std::vector<Point> m_points_remaining;
+    std::vector<Point> m_glitch_points;
     int m_power{};
     int m_subtype{};
     long m_glitch_point_count{};
