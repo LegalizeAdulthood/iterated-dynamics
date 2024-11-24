@@ -866,6 +866,61 @@ static void cube_bf(BFComplex &out, const BFComplex &in)
     restore_stack(saved);
 }
 
+// Evaluate a complex polynomial
+static void power_bf(BFComplex &result, const BFComplex &z, int degree)
+{
+    const int saved = save_stack();
+    bf_t t = alloc_stack(g_r_bf_length + 2);
+    bf_t t1 = alloc_stack(g_r_bf_length + 2);
+    bf_t t2 = alloc_stack(g_r_bf_length + 2);
+    bf_t t3 = alloc_stack(g_r_bf_length + 2);
+    bf_t t4 = alloc_stack(g_r_bf_length + 2);
+
+    if (degree < 0)
+    {
+        degree = 0;
+    }
+
+    copy_bf(t1, z.x); // BigTemp1 = xt
+    copy_bf(t2, z.y); // BigTemp2 = yt
+
+    if (degree & 1)
+    {
+        copy_bf(result.x, t1); // new.x = result real
+        copy_bf(result.y, t2); // new.y = result imag
+    }
+    else
+    {
+        inttobf(result.x, 1);
+        inttobf(result.y, 0);
+    }
+
+    degree >>= 1;
+    while (degree)
+    {
+        sub_bf(t, t1, t2);  // (xt - yt)
+        add_bf(t3, t1, t2); // (xt + yt)
+        mult_bf(t4, t, t3); // t2 = (xt + yt) * (xt - yt)
+        copy_bf(t, t2);
+        mult_bf(t3, t, t1); // yt = xt * yt
+        add_bf(t2, t3, t3); // yt = yt + yt
+        copy_bf(t1, t4);
+
+        if (degree & 1)
+        {
+            mult_bf(t, t1, result.x);  // xt * result->x
+            mult_bf(t3, t2, result.y); // yt * result->y
+            sub_bf(t4, t, t3);       // t2 = xt * result->x - yt * result->y
+            mult_bf(t, t1, result.y);  // xt * result->y
+            mult_bf(t3, t2, result.x); // yt * result->x
+            add_bf(result.y, t, t3);   // result->y = result->y * xt + yt * result->x
+            copy_bf(result.x, t4);     // result->x = t2
+        }
+        degree >>= 1;
+    }
+    restore_stack(saved);
+}
+
 // Reference Zoom Point Functions
 //
 void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2)
@@ -931,7 +986,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
     case 5: // 5th Power Burning Ship
         abs_bf(temp_cmplx_cbf.x, Z->x);
         abs_bf(temp_cmplx_cbf.y, Z->y);
-        complex_polynomial_bf(&temp_cmplx1_cbf, temp_cmplx_cbf, m_power);
+        power_bf(temp_cmplx1_cbf, temp_cmplx_cbf, m_power);
         add_bf(Z->x, temp_cmplx1_cbf.x, centre->x);
         add_bf(Z->y, temp_cmplx1_cbf.y, centre->y);
         break;
@@ -947,21 +1002,21 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         break;
 
     case 7: // Cubic Celtic
-        complex_polynomial_bf(&temp_cmplx_cbf, *Z, 3);
+        power_bf(temp_cmplx_cbf, *Z, 3);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
         add_bf(Z->x, temp_real_bf, centre->x);
         add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
         break;
 
     case 8: // 4th Celtic Buffalo
-        complex_polynomial_bf(&temp_cmplx_cbf, *Z, 4);
+        power_bf(temp_cmplx_cbf, *Z, 4);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
         add_bf(Z->x, temp_real_bf, centre->x);
         add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
         break;
 
     case 9: // 5th Celtic
-        complex_polynomial_bf(&temp_cmplx_cbf, *Z, 5);
+        power_bf(temp_cmplx_cbf, *Z, 5);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
         add_bf(Z->x, temp_real_bf, centre->x);
         add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
@@ -977,7 +1032,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         break;
 
     case 11: // Mandelbar (power)
-        complex_polynomial_bf(&temp_cmplx_cbf, *Z, m_power);
+        power_bf(temp_cmplx_cbf, *Z, m_power);
         sub_bf(Z->y, centre->y, temp_cmplx_cbf.y);
         add_bf(Z->x, temp_cmplx_cbf.x, centre->x);
         break;
@@ -1121,62 +1176,4 @@ double PertEngine::diff_abs(const double c, const double d)
         return cd >= 0.0 ? d : -d - 2.0 * c;
     }
     return cd > 0.0 ? d + 2.0 * c : -d;
-}
-
-// Evaluate a Complex Polynomial
-void PertEngine::complex_polynomial_bf(BFComplex *out, BFComplex in, int degree)
-{
-    bf_t t, t1, t2, t3, t4;
-    int cplxsaved;
-
-    cplxsaved = save_stack();
-    t = alloc_stack(g_r_bf_length + 2);
-    t1 = alloc_stack(g_r_bf_length + 2);
-    t2 = alloc_stack(g_r_bf_length + 2);
-    t3 = alloc_stack(g_r_bf_length + 2);
-    t4 = alloc_stack(g_r_bf_length + 2);
-
-    if (degree < 0)
-    {
-        degree = 0;
-    }
-
-    copy_bf(t1, in.x); // BigTemp1 = xt
-    copy_bf(t2, in.y); // BigTemp2 = yt
-
-    if (degree & 1)
-    {
-        copy_bf(out->x, t1); // new.x = result real
-        copy_bf(out->y, t2); // new.y = result imag
-    }
-    else
-    {
-        inttobf(out->x, 1);
-        inttobf(out->y, 0);
-    }
-
-    degree >>= 1;
-    while (degree)
-    {
-        sub_bf(t, t1, t2);  // (xt - yt)
-        add_bf(t3, t1, t2); // (xt + yt)
-        mult_bf(t4, t, t3); // t2 = (xt + yt) * (xt - yt)
-        copy_bf(t, t2);
-        mult_bf(t3, t, t1); // yt = xt * yt
-        add_bf(t2, t3, t3); // yt = yt + yt
-        copy_bf(t1, t4);
-
-        if (degree & 1)
-        {
-            mult_bf(t, t1, out->x);  // xt * result->x
-            mult_bf(t3, t2, out->y); // yt * result->y
-            sub_bf(t4, t, t3);       // t2 = xt * result->x - yt * result->y
-            mult_bf(t, t1, out->y);  // xt * result->y
-            mult_bf(t3, t2, out->x); // yt * result->x
-            add_bf(out->y, t, t3);   // result->y = result->y * xt + yt * result->x
-            copy_bf(out->x, t4);     // result->x = t2
-        }
-        degree >>= 1;
-    }
-    restore_stack(cplxsaved);
 }
