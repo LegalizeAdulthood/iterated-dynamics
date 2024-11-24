@@ -49,8 +49,10 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
     int biomorph, int subtype, void (*plot)(int, int, int), int potential(double, long))
 {
     int i;
-    BFComplex c_bf, reference_coordinate_bf;
-    std::complex<double> c, reference_coordinate;
+    BFComplex c_bf;
+    BFComplex reference_coordinate_bf;
+    std::complex<double> c;
+    std::complex<double> reference_coordinate;
 
     m_reference_points = 0;
     m_glitch_point_count = 0L;
@@ -531,8 +533,11 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
-    BFComplex z_times_2_bf, z_bf;
-    bf_t temp_real_bf, temp_imag_bf, tmp_bf;
+    BFComplex z_times_2_bf;
+    BFComplex z_bf;
+    bf_t temp_real_bf;
+    bf_t temp_imag_bf;
+    bf_t tmp_bf;
     double glitch_tolerancy = 1e-6;
     int cplxsaved;
 
@@ -603,17 +608,17 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
-    std::complex<double> z_times_2, z;
+    std::complex<double> z_times_2;
+    std::complex<double> z;
     double glitch_tolerancy = 1e-6;
 
     z = center;
 
     for (int i = 0; i <= max_iteration; i++)
     {
-        std::complex<double> c;
         // pre multiply by two
         z_times_2 = z + z;
-        c = z;
+        std::complex<double> c = z;
 
         // The reason we are storing the same value times two is that we can precalculate this value here
         // because multiplying this value by two is needed many times in the program.
@@ -925,17 +930,16 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
 //
 void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
 {
-    bf_t temp_real_bf, temp_imag_bf, sqr_real_bf, sqr_imag_bf, real_imag_bf;
-    BFComplex temp_cmplx_cbf, temp_cmplx1_cbf;
-    int cplxsaved;
+    BFComplex temp_cmplx_cbf;
+    BFComplex temp_cmplx1_cbf;
 
-    cplxsaved = save_stack();
+    const int cplxsaved = save_stack();
 
-    temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    temp_imag_bf = alloc_stack(g_r_bf_length + 2);
-    sqr_real_bf = alloc_stack(g_r_bf_length + 2);
-    sqr_imag_bf = alloc_stack(g_r_bf_length + 2);
-    real_imag_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t temp_real_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t temp_imag_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t sqr_real_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t sqr_imag_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t real_imag_bf = alloc_stack(g_r_bf_length + 2);
     temp_cmplx_cbf.x = alloc_stack(g_r_bf_length + 2);
     temp_cmplx_cbf.y = alloc_stack(g_r_bf_length + 2);
     temp_cmplx1_cbf.x = alloc_stack(g_r_bf_length + 2);
@@ -1154,7 +1158,8 @@ void PertEngine::ref_functions(
 // Generate Pascal's Triangle coefficients
 void PertEngine::load_pascal(long pascal_array[], int n)
 {
-    long j, c = 1L;
+    long j;
+    long c = 1L;
 
     for (j = 0; j <= n; j++)
     {
