@@ -48,9 +48,8 @@ void PertEngine::initialize_frame(
 // Full frame calculation
 //////////////////////////////////////////////////////////////////////
 
-int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn,
-    int OutsideFilterIn, int biomorphin, int subtypein, void (*plot)(int, int, int),
-    int potential(double, long))
+int PertEngine::calculate_one_frame(double bailout, int powerin, int InsideFilterIn, int OutsideFilterIn,
+    int biomorphin, int subtypein, void (*plot)(int, int, int), int potential(double, long))
 
 {
     int i;
@@ -178,11 +177,11 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
 
             if (m_math_type != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
+                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration);
             }
             else
             {
-                reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
+                reference_zoom_point(&reference_coordinate, m_max_iteration);
             }
         }
         else
@@ -224,11 +223,11 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
 
             if (m_math_type != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration, status_bar_info);
+                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration);
             }
             else
             {
-                reference_zoom_point(&reference_coordinate, m_max_iteration, status_bar_info);
+                reference_zoom_point(&reference_coordinate, m_max_iteration);
             }
         }
 
@@ -248,7 +247,7 @@ int PertEngine::calculate_one_frame(double bailout, char *status_bar_info, int p
             if (int(progress * 100) != lastChecked)
             {
                 lastChecked = int(progress * 100);
-                sprintf(status_bar_info, "Pass: %d, (%d%%)", m_reference_points, int(progress * 100));
+                m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" + std::to_string(int(progress * 100)) + "%)";
             }
         }
 
@@ -489,7 +488,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, char *status_bar_info)
+void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -539,7 +538,7 @@ void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, c
         if (int(progress * 100) != last_checked)
         {
             last_checked = int(progress * 100);
-            sprintf(status_bar_info, "Pass: %d, Ref (%d%%)", m_reference_points, int(progress * 100));
+            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" + std::to_string(int(progress * 100)) + "%)";
         }
 
         floattobf(tmp_bf, glitch_tolerancy);
@@ -561,7 +560,7 @@ void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration, c
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-void PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration, char *status_bar_info)
+void PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -595,7 +594,7 @@ void PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iter
         if (int(progress * 100) != last_checked)
         {
             last_checked = int(progress * 100);
-            sprintf(status_bar_info, "Pass: %d, Ref (%d%%)", m_reference_points, int(progress * 100));
+            m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" + std::to_string(int(progress * 100)) + "%)";
         }
 
         std::complex<double> tolerancy = z * glitch_tolerancy;

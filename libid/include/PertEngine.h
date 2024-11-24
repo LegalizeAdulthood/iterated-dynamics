@@ -7,6 +7,7 @@
 #include "id.h"
 
 #include <complex>
+#include <string>
 
 #define MAXPOWER 28
 #define MAXFILTER 9
@@ -16,15 +17,14 @@ class PertEngine
 public:
     void initialize_frame(
         bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius);
-    int calculate_one_frame(double bailout, char *status_bar_info, int powerin, int InsideFilterIn,
-        int OutsideFilterIn, int biomorph, int subtype, void (*plot)(int, int, int),
-        int potential(double, long));
+    int calculate_one_frame(double bailout, int powerin, int InsideFilterIn, int OutsideFilterIn,
+        int biomorph, int subtype, void (*plot)(int, int, int), int potential(double, long));
 
 private:
     int calculate_point(int x, int y, double tempRadius, int window_radius, double bailout,
         Point *glitchPoints, void (*plot)(int, int, int), int potential(double, long));
-    void reference_zoom_point_bf(BFComplex *BigCentre, int maxIteration, char *status_bar_info);
-    void reference_zoom_point(std::complex<double> *centre, int maxIteration, char *status_bar_info);
+    void reference_zoom_point_bf(BFComplex *BigCentre, int maxIteration);
+    void reference_zoom_point(std::complex<double> *centre, int maxIteration);
     void load_pascal(long PascalArray[], int n);
     double diff_abs(const double c, const double d);
     void pert_functions(
@@ -35,6 +35,7 @@ private:
     void complex_polynomial_bf(BFComplex *out, BFComplex in, int degree);
     void complex_cube_bf(BFComplex *out, BFComplex in);
 
+    std::string m_status;
     std::complex<double> *m_x_sub_n{};
     double *m_perturbation_tolerance_check{};
     double m_calculated_real_delta{};
