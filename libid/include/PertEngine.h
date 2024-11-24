@@ -25,8 +25,6 @@ private:
         Point *glitchPoints, void (*plot)(int, int, int), int potential(double, long));
     void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
     void reference_zoom_point(const std::complex<double> &center, int maxIteration);
-    void load_pascal(long PascalArray[], int n);
-    double diff_abs(const double c, const double d);
     void pert_functions(
         std::complex<double> *XRef, std::complex<double> *DeltaSubN, std::complex<double> *DeltaSub0);
     void ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);

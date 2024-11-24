@@ -44,6 +44,26 @@ void PertEngine::initialize_frame(
     }
 }
 
+// Generate Pascal's Triangle coefficients
+static void load_pascal(long pascal_array[], int n)
+{
+    long j;
+    long c = 1L;
+
+    for (j = 0; j <= n; j++)
+    {
+        if (j == 0)
+        {
+            c = 1;
+        }
+        else
+        {
+            c = c * (n - j + 1) / j;
+        }
+        pascal_array[j] = c;
+    }
+}
+
 // Full frame calculation
 int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter, int outside_filter,
     int biomorph, int subtype, void (*plot)(int, int, int), int potential(double, long))
@@ -653,6 +673,18 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
     }
 }
 
+// Laser Blaster's Code for removing absolutes from Mandelbrot derivatives
+inline double diff_abs(const double c, const double d)
+{
+    const double cd{c + d};
+
+    if (c >= 0.0)
+    {
+        return cd >= 0.0 ? d : -d - 2.0 * c;
+    }
+    return cd > 0.0 ? d + 2.0 * c : -d;
+}
+
 // Individual function point calculations
 //
 void PertEngine::pert_functions(
@@ -1157,36 +1189,4 @@ void PertEngine::ref_functions(
         Z->imag(-z.imag() + center.imag());
         break;
     }
-}
-
-// Generate Pascal's Triangle coefficients
-void PertEngine::load_pascal(long pascal_array[], int n)
-{
-    long j;
-    long c = 1L;
-
-    for (j = 0; j <= n; j++)
-    {
-        if (j == 0)
-        {
-            c = 1;
-        }
-        else
-        {
-            c = c * (n - j + 1) / j;
-        }
-        pascal_array[j] = c;
-    }
-}
-
-// Laser Blaster's Code for removing absolutes from Mandelbrot derivatives
-double PertEngine::diff_abs(const double c, const double d)
-{
-    const double cd{c + d};
-
-    if (c >= 0.0)
-    {
-        return cd >= 0.0 ? d : -d - 2.0 * c;
-    }
-    return cd > 0.0 ? d + 2.0 * c : -d;
 }
