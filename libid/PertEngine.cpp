@@ -842,6 +842,30 @@ void PertEngine::pert_functions(
     }
 }
 
+
+// Cube c + jd = (a + jb) * (a + jb) * (a + jb)
+static void cube_bf(BFComplex &out, const BFComplex &in)
+{
+    const int saved = save_stack();
+    bf_t t = alloc_stack(g_r_bf_length + 2);
+    bf_t t1 = alloc_stack(g_r_bf_length + 2);
+    bf_t t2 = alloc_stack(g_r_bf_length + 2);
+    bf_t sqr_real = alloc_stack(g_r_bf_length + 2);
+    bf_t sqr_imag = alloc_stack(g_r_bf_length + 2);
+
+    mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
+    mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
+    inttobf(t, 3);
+    mult_bf(t1, t, sqr_imag);  // sqr_real + sqr_real + sqr_real
+    sub_bf(t2, sqr_real, t1);  // sqr_real - (sqr_imag + sqr_imag + sqr_imag)
+    mult_bf(out.x, in.x, t2); // c = x * (sqr_real - (sqr_imag + sqr_imag + sqr_imag))
+
+    mult_bf(t1, t, sqr_real);  // sqr_imag + sqr_imag + sqr_imag
+    sub_bf(t2, t1, sqr_imag);  // (sqr_real + sqr_real + sqr_real) - sqr_imag
+    mult_bf(out.y, in.y, t2); // d = y * ((sqr_real + sqr_real + sqr_real) - sqr_imag)
+    restore_stack(saved);
+}
+
 // Reference Zoom Point Functions
 //
 void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2)
@@ -877,7 +901,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
     case 1:
         if (m_power == 3)
         {
-            complex_cube_bf(&temp_cmplx_cbf, *Z);
+            cube_bf(temp_cmplx_cbf, *Z);
             add_bf(Z->x, temp_cmplx_cbf.x, centre->x);
             add_bf(Z->y, temp_cmplx_cbf.y, centre->y);
         }
@@ -1154,32 +1178,5 @@ void PertEngine::complex_polynomial_bf(BFComplex *out, BFComplex in, int degree)
         }
         degree >>= 1;
     }
-    restore_stack(cplxsaved);
-}
-
-// Cube c + jd = (a + jb) * (a + jb) * (a + jb)
-void PertEngine::complex_cube_bf(BFComplex *out, BFComplex in)
-{
-    bf_t t, t1, t2, sqr_real, sqr_imag;
-
-    int cplxsaved;
-
-    cplxsaved = save_stack();
-    t = alloc_stack(g_r_bf_length + 2);
-    t1 = alloc_stack(g_r_bf_length + 2);
-    t2 = alloc_stack(g_r_bf_length + 2);
-    sqr_real = alloc_stack(g_r_bf_length + 2);
-    sqr_imag = alloc_stack(g_r_bf_length + 2);
-
-    mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
-    mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
-    inttobf(t, 3);
-    mult_bf(t1, t, sqr_imag);  // sqr_real + sqr_real + sqr_real
-    sub_bf(t2, sqr_real, t1);  // sqr_real - (sqr_imag + sqr_imag + sqr_imag)
-    mult_bf(out->x, in.x, t2); // c = x * (sqr_real - (sqr_imag + sqr_imag + sqr_imag))
-
-    mult_bf(t1, t, sqr_real);  // sqr_imag + sqr_imag + sqr_imag
-    sub_bf(t2, t1, sqr_imag);  // (sqr_real + sqr_real + sqr_real) - sqr_imag
-    mult_bf(out->y, in.y, t2); // d = y * ((sqr_real + sqr_real + sqr_real) - sqr_imag)
     restore_stack(cplxsaved);
 }

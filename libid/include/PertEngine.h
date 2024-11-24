@@ -33,7 +33,6 @@ private:
     void ref_functions(std::complex<double> *centre, std::complex<double> *Z, std::complex<double> *ZTimes2);
     void cleanup();
     void complex_polynomial_bf(BFComplex *out, BFComplex in, int degree);
-    void complex_cube_bf(BFComplex *out, BFComplex in);
 
     std::string m_status;
     std::complex<double> *m_x_sub_n{};
