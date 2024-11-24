@@ -20,6 +20,13 @@
 #include <cstdlib>
 #include <stdexcept>
 
+enum
+{
+    MAX_POWER = 28
+};
+
+static long s_pascal_triangle[MAX_POWER]{};
+
 void PertEngine::initialize_frame(
     const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius)
 {
@@ -40,7 +47,7 @@ void PertEngine::initialize_frame(
 }
 
 // Generate Pascal's Triangle coefficients
-static void load_pascal(long pascal_array[], int n)
+static void load_pascal(int n)
 {
     long j;
     long c = 1L;
@@ -55,7 +62,7 @@ static void load_pascal(long pascal_array[], int n)
         {
             c = c * (n - j + 1) / j;
         }
-        pascal_array[j] = c;
+        s_pascal_triangle[j] = c;
     }
 }
 
@@ -80,7 +87,7 @@ int PertEngine::calculate_one_frame(int power, int subtype)
     m_subtype = subtype;
 
     // calculate the pascal's triangle coefficients for powers > 3
-    load_pascal(m_pascal_triangle, m_power);
+    load_pascal(m_power);
     // Fill the list of points with all points in the image.
     for (long y = 0; y < g_screen_y_dots; y++)
     {
@@ -631,7 +638,7 @@ void PertEngine::pert_functions(
         std::complex<double> sum(0.0, 0.0);
         for (int j = 0; j < m_power; j++)
         {
-            sum += zp * (double) m_pascal_triangle[j];
+            sum += zp * (double) s_pascal_triangle[j];
             sum *= delta_n;
             zp *= x_ref;
         }

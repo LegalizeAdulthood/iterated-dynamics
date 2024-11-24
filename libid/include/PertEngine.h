@@ -17,11 +17,6 @@ public:
     int calculate_one_frame(int power, int subtype);
 
 private:
-    enum
-    {
-        MAX_POWER = 28
-    };
-
     int calculate_point(const Point &pt, double tempRadius, int window_radius);
     void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
     void reference_zoom_point(const std::complex<double> &center, int maxIteration);
@@ -38,7 +33,6 @@ private:
     double m_delta_real{};
     double m_delta_imag{};
     double m_z_magnitude_squared{};
-    long m_pascal_triangle[MAX_POWER]{};
     std::vector<Point> m_points_remaining;
     std::vector<Point> m_glitch_points;
     int m_power{};
