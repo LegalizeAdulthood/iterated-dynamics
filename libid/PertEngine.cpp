@@ -280,7 +280,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     // Iteration loop
     do
     {
-        pert_functions((m_xn + iteration), &delta_sub_n, &delta_sub_0);
+        pert_functions(m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
         std::complex<double> CoordMag = *(m_xn + iteration) + delta_sub_n;
         m_z_magnitude_squared = sqr(CoordMag.real()) + sqr(CoordMag.imag());
@@ -618,18 +618,18 @@ inline double diff_abs(const double c, const double d)
 // Individual function point calculations
 //
 void PertEngine::pert_functions(
-    std::complex<double> *x_ref, std::complex<double> *delta_sub_n, std::complex<double> *delta_sub_0)
+    const std::complex<double> &x_ref, std::complex<double> &delta_n, std::complex<double> &delta0)
 {
     double dnr;
     double dni;
-    const double r = x_ref->real();
-    const double i = x_ref->imag();
-    const double a = delta_sub_n->real();
-    const double b = delta_sub_n->imag();
+    const double r = x_ref.real();
+    const double i = x_ref.imag();
+    const double a = delta_n.real();
+    const double b = delta_n.imag();
     const double a2 = a * a;
     const double b2 = b * b;
-    const double a0 = delta_sub_0->real();
-    const double b0 = delta_sub_0->imag();
+    const double a0 = delta0.real();
+    const double b0 = delta0.imag();
     const double r2 = r * r;
     const double i2 = i * i;
     double c;
@@ -644,15 +644,15 @@ void PertEngine::pert_functions(
                 3 * i * 2 * a * b + a * a * a - 3 * a * b * b + a0;
             dni = 3 * r * r * b + 6 * r * i * a - 3 * i * i * b + 3 * r * 2 * a * b + 3 * i * a * a -
                 3 * i * b * b + 3 * a * a * b - b * b * b + b0;
-            delta_sub_n->imag(dni);
-            delta_sub_n->real(dnr);
+            delta_n.imag(dni);
+            delta_n.real(dnr);
         }
         else
         {
             dnr = (2 * r + a) * a - (2 * i + b) * b + a0;
             dni = 2 * ((r + a) * b + i * a) + b0;
-            delta_sub_n->imag(dni);
-            delta_sub_n->real(dnr);
+            delta_n.imag(dni);
+            delta_n.real(dnr);
         }
         break;
 
@@ -663,18 +663,18 @@ void PertEngine::pert_functions(
         for (int j = 0; j < m_power; j++)
         {
             sum += zp * (double) m_pascal_triangle[j];
-            sum *= *delta_sub_n;
-            zp *= *x_ref;
+            sum *= delta_n;
+            zp *= x_ref;
         }
-        *delta_sub_n = sum;
-        *delta_sub_n += *delta_sub_0;
+        delta_n = sum;
+        delta_n += delta0;
     }
     break;
 
     case 2: // Burning Ship
-        delta_sub_n->real(2.0 * a * r + a2 - 2.0 * b * i - b2);
-        delta_sub_n->imag(diff_abs(r * i, r * b + i * a + a * b) * 2);
-        *delta_sub_n += *delta_sub_0;
+        delta_n.real(2.0 * a * r + a2 - 2.0 * b * i - b2);
+        delta_n.imag(diff_abs(r * i, r * b + i * a + a * b) * 2);
+        delta_n += delta0;
         break;
 
     case 3: // Cubic Burning Ship
@@ -686,8 +686,8 @@ void PertEngine::pert_functions(
         ab = i + b;
         dni = (3 * r * r - i * i) * dni + (6 * r * a + 3 * a2 - 2 * i * b - b2) * fabs(ab) + b0;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
     }
     break;
 
@@ -699,8 +699,8 @@ void PertEngine::pert_functions(
         dni = 4 * (r2 - i2) * (dni) +
             4 * fabs(r * i + r * b + a * i + a * b) * (2 * a * r + a2 - 2 * b * i - b2) + b0;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 5: // 5th Power Burning Ship
@@ -721,8 +721,8 @@ void PertEngine::pert_functions(
                     b2 * b2) +
             b0;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 6: // Celtic
@@ -730,8 +730,8 @@ void PertEngine::pert_functions(
         dnr += a0;
         dni = 2 * r * b + 2 * a * (i + b) + b0;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 7: // Cubic Celtic
@@ -741,8 +741,8 @@ void PertEngine::pert_functions(
         dnr = dnr + a0;
         dni = 3 * i * (2 * r * a + a2 - b2) + 3 * b * (r2 + 2 * r * a + a2) - b * (b2 + 3 * i2) + b0;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 8: // 4th Celtic Buffalo
@@ -756,8 +756,8 @@ void PertEngine::pert_functions(
             12 * r2 * b * a + 12 * r * b * a2 - 4 * r * b2 * b + 4 * a2 * a * i - 4 * a * i2 * i -
             12 * a * i2 * b - 12 * a * i * b2 + 4 * a2 * a * b - 4 * a * b2 * b + b0;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 9: // 5th Celtic
@@ -776,16 +776,16 @@ void PertEngine::pert_functions(
             10 * i2 * i * b2 + 10 * i2 * b2 * b + 5 * i * b2 * b2 + 5 * b * r2 * r2 + 20 * b * r2 * r * a +
             30 * b * r2 * a2 + 20 * b * r * a2 * a + 5 * b * a2 * a2 - 10 * b2 * b * r2 -
             20 * b2 * b * r * a - 10 * b2 * b * a2 + b2 * b2 * b + b0;
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 10: // Mandelbar (Tricorn)
         dnr = 2 * r * a + a2 - b2 - 2 * b * i + a0;
         dni = b0 - (r * b + a * i + a * b) * 2;
 
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
 
     case 11: // Mandelbar (power)
@@ -795,20 +795,20 @@ void PertEngine::pert_functions(
         for (int j = 0; j < m_power; j++)
         {
             sum += zp * (double) m_pascal_triangle[j];
-            sum *= *delta_sub_n;
-            zp *= *x_ref;
+            sum *= delta_n;
+            zp *= x_ref;
         }
-        delta_sub_n->real(sum.real());
-        delta_sub_n->imag(-sum.imag());
-        *delta_sub_n += *delta_sub_0;
+        delta_n.real(sum.real());
+        delta_n.imag(-sum.imag());
+        delta_n += delta0;
     }
     break;
 
     default:
         dnr = (2 * r + a) * a - (2 * i + b) * b + a0;
         dni = 2 * ((r + a) * b + i * a) + b0;
-        delta_sub_n->imag(dni);
-        delta_sub_n->real(dnr);
+        delta_n.imag(dni);
+        delta_n.real(dnr);
         break;
     }
 }

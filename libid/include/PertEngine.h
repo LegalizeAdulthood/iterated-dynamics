@@ -29,7 +29,7 @@ private:
     void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
     void reference_zoom_point(const std::complex<double> &center, int maxIteration);
     void pert_functions(
-        std::complex<double> *XRef, std::complex<double> *DeltaSubN, std::complex<double> *DeltaSub0);
+        const std::complex<double> &x_ref, std::complex<double> &delta_n, std::complex<double> &delta0);
     void ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);
     void ref_functions(
         const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *ZTimes2);
