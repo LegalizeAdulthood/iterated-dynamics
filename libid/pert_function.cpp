@@ -357,7 +357,7 @@ void PertEngine::ref_functions(
 
     case 1:
         if (m_power == 3)
-            *Z = complex_fn.complex_cube(*Z) +
+            *Z = cube(*Z) +
                 *centre; // optimise for Cubic by taking out as many multiplies as possible
         else
         {
