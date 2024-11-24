@@ -46,6 +46,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "fractals.h"
 
 #include "bailout_formula.h"
+#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"
@@ -675,6 +676,27 @@ void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
     const double imag = 2.0 * z.real() * z.imag() + center.imag();
     z.real(real);
     z.imag(imag);
+}
+
+void mandel_ref_pt(const BFComplex &center, BFComplex &z)
+{
+    BigStackSaver saved;
+    bf_t temp_real = alloc_stack(g_r_bf_length + 2);
+    bf_t real_sqr = alloc_stack(g_r_bf_length + 2);
+    bf_t imag_sqr = alloc_stack(g_r_bf_length + 2);
+    bf_t real_imag = alloc_stack(g_r_bf_length + 2);
+    BFComplex z2;
+    z2.x = alloc_stack(g_r_bf_length + 2);
+    z2.y = alloc_stack(g_r_bf_length + 2);
+    double_bf(z2.x, z.x);
+    double_bf(z2.y, z.y);
+    
+    square_bf(real_sqr, z.x);
+    square_bf(imag_sqr, z.y);
+    sub_bf(temp_real, real_sqr, imag_sqr);
+    add_bf(z.x, temp_real, center.x);
+    mult_bf(real_imag, z2.x, z.y);
+    add_bf(z.y, real_imag, center.y);
 }
 
 int juliafp_per_pixel()

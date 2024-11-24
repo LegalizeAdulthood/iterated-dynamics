@@ -6,10 +6,12 @@
 #include "prototyp.h"
 
 #include "bailout_formula.h"
+#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "complex_fn.h"
 #include "fpu087.h"
+#include "fractalb.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "frasetup.h"
@@ -101,6 +103,31 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
             tmp *= z;
         }
         z = tmp + center;
+    }
+}
+
+void mandel_z_power_ref_pt(const BFComplex &center, BFComplex &z)
+{
+    BigStackSaver saved;
+    BFComplex tmp;
+    tmp.x = alloc_stack(g_r_bf_length + 2);
+    tmp.y = alloc_stack(g_r_bf_length + 2);
+    if (g_c_exponent == 3)
+    {
+        cube(tmp, z);
+        add_bf(z.x, tmp.x, center.x);
+        add_bf(z.y, tmp.y, center.y);
+    }
+    else
+    {
+        copy_bf(tmp.x, z.x);
+        copy_bf(tmp.y, z.y);
+        for (int k = 0; k < g_c_exponent - 1; k++)
+        {
+            cplxmul_bf(&tmp, &tmp, &z);
+        }
+        add_bf(z.x, tmp.x, center.x);
+        add_bf(z.y, tmp.y, center.y);
     }
 }
 

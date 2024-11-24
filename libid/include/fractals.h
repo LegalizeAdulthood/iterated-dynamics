@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include "big.h"
 #include "cmplx.h"
 
 #include <complex>
@@ -70,6 +71,7 @@ int julia_per_pixel();
 int mandel_per_pixel();
 int mandelfp_per_pixel();
 void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z);
+void mandel_ref_pt(const BFComplex &center, BFComplex &z);
 int juliafp_per_pixel();
 int mandelbarfpOrbit();
 int burningshipfpOrbit();
