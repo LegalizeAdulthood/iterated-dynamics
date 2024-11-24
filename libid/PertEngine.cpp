@@ -45,8 +45,8 @@ void PertEngine::initialize_frame(
 }
 
 // Full frame calculation
-int PertEngine::calculate_one_frame(double bailout, int powerin, int InsideFilterIn, int OutsideFilterIn,
-    int biomorphin, int subtypein, void (*plot)(int, int, int), int potential(double, long))
+int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter, int outside_filter,
+    int biomorph, int subtype, void (*plot)(int, int, int), int potential(double, long))
 {
     int i;
     BFComplex c_bf, reference_coordinate_bf;
@@ -109,8 +109,8 @@ int PertEngine::calculate_one_frame(double bailout, int powerin, int InsideFilte
         }
         return -2;
     }
-    m_biomorph = biomorphin;
-    m_power = powerin;
+    m_biomorph = biomorph;
+    m_power = power;
     if (m_power < 2)
     {
         m_power = 2;
@@ -119,9 +119,9 @@ int PertEngine::calculate_one_frame(double bailout, int powerin, int InsideFilte
     {
         m_power = MAXPOWER;
     }
-    m_inside_method = InsideFilterIn;
-    m_outside_method = OutsideFilterIn;
-    m_subtype = subtypein;
+    m_inside_method = inside_filter;
+    m_outside_method = outside_filter;
+    m_subtype = subtype;
 
     // calculate the pascal's triangle coefficients for powers > 3
     load_pascal(m_pascal_array, m_power);
@@ -1055,7 +1055,11 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
 void PertEngine::ref_functions(
     const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *z_times_2)
 {
-    double temp_real, temp_imag, sqr_real, sqr_imag, real_imag;
+    double temp_real;
+    double temp_imag;
+    double sqr_real;
+    double sqr_imag;
+    double real_imag;
     std::complex<double> z;
 
     switch (m_subtype)

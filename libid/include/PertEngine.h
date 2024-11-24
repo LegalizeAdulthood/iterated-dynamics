@@ -17,8 +17,8 @@ class PertEngine
 public:
     void initialize_frame(
         bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius);
-    int calculate_one_frame(double bailout, int powerin, int InsideFilterIn, int OutsideFilterIn,
-        int biomorph, int subtype, void (*plot)(int, int, int), int potential(double, long));
+    int calculate_one_frame(double bailout, int power, int inside_filter, int outside_filter, int biomorph,
+        int subtype, void (*plot)(int, int, int), int potential(double, long));
 
 private:
     int calculate_point(int x, int y, double tempRadius, int window_radius, double bailout,
