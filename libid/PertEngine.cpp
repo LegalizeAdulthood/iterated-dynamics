@@ -265,7 +265,9 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
     }
 
     if (m_math_type != bf_math_type::NONE)
+    {
         restore_stack(cplxsaved);
+    }
     cleanup();
     return 0;
 }
@@ -273,7 +275,9 @@ int PertEngine::calculate_one_frame(double bailout, int power, int inside_filter
 void PertEngine::cleanup()
 {
     if (m_math_type != bf_math_type::NONE)
+    {
         restore_stack(m_saved);
+    }
     if (m_points_remaining)
     {
         delete[] m_points_remaining;
