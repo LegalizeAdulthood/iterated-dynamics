@@ -22,7 +22,7 @@ private:
     void reference_zoom_point(int subtype, const std::complex<double> &center, int maxIteration);
     void pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
         std::complex<double> &delta0);
-    void ref_functions_bf(int subtype, const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);
+    void ref_functions_bf(int subtype, const BFComplex &center, BFComplex &z);
     void ref_functions(int subtype, const std::complex<double> &center, std::complex<double> &z);
     void cleanup();
 

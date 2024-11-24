@@ -469,41 +469,24 @@ void PertEngine::reference_zoom_point_bf(int subtype, const BFComplex &center, i
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
-    BFComplex z_times_2_bf;
-    BFComplex z_bf;
-    bf_t temp_real_bf;
-    bf_t temp_imag_bf;
-    bf_t tmp_bf;
-    double glitch_tolerancy = 1e-6;
+    const double glitch_tolerancy{1e-6};
     BigStackSaver saved;
 
-    z_times_2_bf.x = alloc_stack(g_r_bf_length + 2);
-    z_times_2_bf.y = alloc_stack(g_r_bf_length + 2);
+    BFComplex z_bf;
     z_bf.x = alloc_stack(g_r_bf_length + 2);
     z_bf.y = alloc_stack(g_r_bf_length + 2);
-    temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    temp_imag_bf = alloc_stack(g_r_bf_length + 2);
-    tmp_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t temp_real_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t temp_imag_bf = alloc_stack(g_r_bf_length + 2);
+    bf_t tmp_bf = alloc_stack(g_r_bf_length + 2);
 
     copy_bf(z_bf.x, center.x);
     copy_bf(z_bf.y, center.y);
-    //    Z = *centre;
 
     for (int i = 0; i <= max_iteration; i++)
     {
         std::complex<double> c;
-        // pre multiply by two
-        double_bf(z_times_2_bf.x, z_bf.x);
-        double_bf(z_times_2_bf.y, z_bf.y);
-
         c.real(bftofloat(z_bf.x));
         c.imag(bftofloat(z_bf.y));
-
-        // The reason we are storing the same value times two is that we can precalculate this value here
-        // because multiplying this value by two is needed many times in the program.
-        // Also, for some reason, we can't multiply complex numbers by anything greater than 1 using
-        // std::complex, so we have to multiply the individual terms each time. This is expensive to do above,
-        // so we are just doing it here.
 
         m_xn[i] = c;
         // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
@@ -524,14 +507,13 @@ void PertEngine::reference_zoom_point_bf(int subtype, const BFComplex &center, i
         floattobf(tmp_bf, glitch_tolerancy);
         mult_bf(temp_real_bf, z_bf.x, tmp_bf);
         mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
-        std::complex<double> tolerancy;
-        tolerancy.real(bftofloat(temp_real_bf));
-        tolerancy.imag(bftofloat(temp_imag_bf));
+        std::complex<double> tolerance;
+        tolerance.real(bftofloat(temp_real_bf));
+        tolerance.imag(bftofloat(temp_imag_bf));
 
-        m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
+        m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
 
-        // Calculate the set
-        ref_functions_bf(subtype, center, &z_bf, &z_times_2_bf);
+        ref_functions_bf(subtype, center, z_bf);
     }
 }
 
@@ -716,49 +698,62 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
     }
 }
 
-// Reference Zoom Point Functions
-//
-void PertEngine::ref_functions_bf(int subtype, const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
+static void mandel_ref_pt(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
-    BFComplex temp_cmplx_cbf;
-    bf_t temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    bf_t sqr_real_bf = alloc_stack(g_r_bf_length + 2);
-    bf_t sqr_imag_bf = alloc_stack(g_r_bf_length + 2);
-    bf_t real_imag_bf = alloc_stack(g_r_bf_length + 2);
-    temp_cmplx_cbf.x = alloc_stack(g_r_bf_length + 2);
-    temp_cmplx_cbf.y = alloc_stack(g_r_bf_length + 2);
+    bf_t temp_real = alloc_stack(g_r_bf_length + 2);
+    bf_t real_sqr = alloc_stack(g_r_bf_length + 2);
+    bf_t imag_sqr = alloc_stack(g_r_bf_length + 2);
+    bf_t real_imag = alloc_stack(g_r_bf_length + 2);
+    BFComplex z2;
+    z2.x = alloc_stack(g_r_bf_length + 2);
+    z2.y = alloc_stack(g_r_bf_length + 2);
+    double_bf(z2.x, z.x);
+    double_bf(z2.y, z.y);
+    
+    square_bf(real_sqr, z.x);
+    square_bf(imag_sqr, z.y);
+    sub_bf(temp_real, real_sqr, imag_sqr);
+    add_bf(z.x, temp_real, center.x);
+    mult_bf(real_imag, z2.x, z.y);
+    add_bf(z.y, real_imag, center.y);
+}
 
+static void mandel_z_power_ref_pt(const BFComplex &center, BFComplex &z)
+{
+    BigStackSaver saved;
+    BFComplex tmp;
+    tmp.x = alloc_stack(g_r_bf_length + 2);
+    tmp.y = alloc_stack(g_r_bf_length + 2);
+    if (g_c_exponent == 3)
+    {
+        cube_bf(tmp, z);
+        add_bf(z.x, tmp.x, center.x);
+        add_bf(z.y, tmp.y, center.y);
+    }
+    else
+    {
+        copy_bf(tmp.x, z.x);
+        copy_bf(tmp.y, z.y);
+        for (int k = 0; k < g_c_exponent - 1; k++)
+        {
+            cplxmul_bf(&tmp, &tmp, &z);
+        }
+        add_bf(z.x, tmp.x, center.x);
+        add_bf(z.y, tmp.y, center.y);
+    }
+}
+
+void PertEngine::ref_functions_bf(int subtype, const BFComplex &center, BFComplex &z)
+{
     switch (subtype)
     {
-    case 0: // optimise for Mandelbrot by taking out as many steps as possible
-        //	    Z = Z.CSqr() + centre;
-        square_bf(sqr_real_bf, Z->x);
-        square_bf(sqr_imag_bf, Z->y);
-        sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, center.x);
-        mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        add_bf(Z->y, real_imag_bf, center.y);
+    case 0:
+        mandel_ref_pt(center, z);
         break;
 
     case 1:
-        if (g_c_exponent == 3)
-        {
-            cube_bf(temp_cmplx_cbf, *Z);
-            add_bf(Z->x, temp_cmplx_cbf.x, center.x);
-            add_bf(Z->y, temp_cmplx_cbf.y, center.y);
-        }
-        else
-        {
-            copy_bf(temp_cmplx_cbf.x, Z->x);
-            copy_bf(temp_cmplx_cbf.y, Z->y);
-            for (int k = 0; k < g_c_exponent - 1; k++)
-            {
-                cplxmul_bf(&temp_cmplx_cbf, &temp_cmplx_cbf, Z);
-            }
-            add_bf(Z->x, temp_cmplx_cbf.x, center.x);
-            add_bf(Z->y, temp_cmplx_cbf.y, center.y);
-        }
+        mandel_z_power_ref_pt(center, z);
         break;
 
     default:
