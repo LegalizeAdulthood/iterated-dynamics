@@ -23,8 +23,7 @@ private:
     void pert_functions(
         const std::complex<double> &x_ref, std::complex<double> &delta_n, std::complex<double> &delta0);
     void ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);
-    void ref_functions(
-        const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *ZTimes2);
+    void ref_functions(const std::complex<double> &center, std::complex<double> &z);
     void cleanup();
 
     std::string m_status;

@@ -543,23 +543,12 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
-    std::complex<double> z_times_2;
-    std::complex<double> z;
     double glitch_tolerancy = 1e-6;
-
-    z = center;
+    std::complex<double> z = center;
 
     for (int i = 0; i <= max_iteration; i++)
     {
-        // pre multiply by two
-        z_times_2 = z + z;
         std::complex<double> c = z;
-
-        // The reason we are storing the same value times two is that we can precalculate this value here
-        // because multiplying this value by two is needed many times in the program.
-        // Also, for some reason, we can't multiply complex numbers by anything greater than 1 using
-        // std::complex, so we have to multiply the individual terms each time. This is expensive to do above,
-        // so we are just doing it here.
 
         m_xn[i] = c;
         // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
@@ -580,8 +569,7 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         std::complex<double> tolerancy = z * glitch_tolerancy;
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
-        // Calculate the set
-        ref_functions(center, &z, &z_times_2);
+        ref_functions(center, z);
     }
 }
 
@@ -778,41 +766,39 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
     }
 }
 
+static void mandelbrot_ref_pt(const std::complex<double> &center, std::complex<double> &z)
+{
+    const double real_sqr = sqr(z.real());
+    const double imag_sqr = sqr(z.imag());
+    const double real = real_sqr - imag_sqr + center.real();
+    const double imag = 2.0 * z.real() * z.imag() + center.imag();
+    z.real(real);
+    z.imag(imag);
+}
+
 // Reference Zoom Point Functions
 //
-void PertEngine::ref_functions(
-    const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *z_times_2)
+void PertEngine::ref_functions(const std::complex<double> &center, std::complex<double> &z)
 {
-    double temp_real;
-    double sqr_real;
-    double sqr_imag;
-    double real_imag;
-
     switch (m_subtype)
     {
-    case 0: // optimise for Mandelbrot by taking out as many steps as possible
-        //	    Z = Z.CSqr() + centre;
-        sqr_real = sqr(Z->real());
-        sqr_imag = sqr(Z->imag());
-        temp_real = sqr_real - sqr_imag;
-        Z->real(temp_real + center.real());
-        real_imag = z_times_2->real() * Z->imag();
-        Z->imag(real_imag + center.imag());
+    case 0:
+        mandelbrot_ref_pt(center, z);
         break;
 
     case 1:
         if (m_power == 3)
         {
-            *Z = cube(*Z) + center;
+            z = cube(z) + center;
         }
         else
         {
-            std::complex<double> ComplexTemp = *Z;
+            std::complex<double> ComplexTemp = z;
             for (int k = 0; k < m_power - 1; k++)
             {
-                ComplexTemp *= *Z;
+                ComplexTemp *= z;
             }
-            *Z = ComplexTemp + center;
+            z = ComplexTemp + center;
         }
         break;
 
