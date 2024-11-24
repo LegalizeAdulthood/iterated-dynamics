@@ -2,5 +2,4 @@
 //
 #pragma once
 
-bool init_perturbation(int subtype);
-int perturbation();
+bool perturbation(int subtype);

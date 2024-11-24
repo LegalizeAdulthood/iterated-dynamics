@@ -99,12 +99,12 @@ StandaloneSetup()
 
 bool mandel_perturbation_setup()
 {
-    return init_perturbation(0);
+    return perturbation(0);
 }
 
 bool mandel_z_power_perturbation_setup()
 {
-    return init_perturbation(1);
+    return perturbation(1);
 }
 
 bool

@@ -11,20 +11,11 @@
 #include "convert_center_mag.h"
 #include "id_data.h"
 
+#include <stdexcept>
+
 static PertEngine s_pert_engine;
 
-/**************************************************************************
-        The Perturbation engine
-**************************************************************************/
-static int perturbation(int subtype)
-{
-    // power
-    int degree = (int) g_params[2];
-    return s_pert_engine.calculate_one_frame(degree, subtype);
-}
-
-// Initialize perturbation engine
-bool init_perturbation(int subtype)
+bool perturbation(int subtype)
 {
     BigStackSaver saved;
     double mandel_width; // width of display
@@ -60,7 +51,11 @@ bool init_perturbation(int subtype)
     }
 
     s_pert_engine.initialize_frame(center_bf, {center.x, center.y}, mandel_width / 2.0);
-    perturbation(subtype);
+    const int degree = (int) g_params[2];
+    if (const int result = s_pert_engine.calculate_one_frame(degree, subtype); result < 0)
+    {
+        throw std::runtime_error("Failed to initialize perturbation engine (" + std::to_string(result) + ")");
+    }
     g_calc_status = calc_status_value::COMPLETED;
     return false;
 }
