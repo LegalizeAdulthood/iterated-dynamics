@@ -262,7 +262,6 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius) - m_delta_real;
     double delta_imaginary =
         ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius) - m_delta_imag;
-    double magnitude = 0.0;
     std::complex<double> delta_sub_0{delta_real, delta_imaginary};
     std::complex<double> delta_sub_n;
     delta_sub_n = delta_sub_0;
@@ -423,7 +422,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             default:
                 if (g_potential_flag)
                 {
-                    magnitude = sqr(w.real()) + sqr(w.imag());
+                    const double magnitude{sqr(w.real()) + sqr(w.imag())};
                     index = potential(magnitude, iteration);
                 }
                 else // no filter
