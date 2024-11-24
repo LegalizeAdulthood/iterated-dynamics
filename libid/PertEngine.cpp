@@ -13,6 +13,7 @@
 #include "complex_fn.h"
 #include "drivers.h"
 #include "fractalb.h"
+#include "fractals.h"
 #include "id_data.h"
 
 #include <algorithm>
@@ -67,7 +68,7 @@ static void load_pascal(int n)
 }
 
 // Full frame calculation
-int PertEngine::calculate_one_frame(int power, int subtype)
+int PertEngine::calculate_one_frame(int subtype)
 {
     int i;
     BFComplex c_bf{};
@@ -83,11 +84,10 @@ int PertEngine::calculate_one_frame(int power, int subtype)
     m_glitch_points.resize(g_screen_x_dots * g_screen_y_dots);
     m_perturbation_tolerance_check.resize(g_max_iterations * 2);
     m_xn.resize(g_max_iterations + 1);
-    m_power = std::min(std::max(power, 2), static_cast<int>(MAX_POWER));
     m_subtype = subtype;
 
     // calculate the pascal's triangle coefficients for powers > 3
-    load_pascal(m_power);
+    load_pascal(g_c_exponent);
     // Fill the list of points with all points in the image.
     for (long y = 0; y < g_screen_y_dots; y++)
     {
@@ -602,7 +602,7 @@ void PertEngine::pert_functions(
     switch (m_subtype)
     {
     case 0:               // Mandelbrot
-        if (m_power == 3) // Cubic
+        if (g_c_exponent == 3) // Cubic
         {
             dnr = 3 * r * r * a - 6 * r * i * b - 3 * i * i * a + 3 * r * a * a - 3 * r * b * b -
                 3 * i * 2 * a * b + a * a * a - 3 * a * b * b + a0;
@@ -624,7 +624,7 @@ void PertEngine::pert_functions(
     {
         std::complex<double> zp(1.0, 0.0);
         std::complex<double> sum(0.0, 0.0);
-        for (int j = 0; j < m_power; j++)
+        for (int j = 0; j < g_c_exponent; j++)
         {
             sum += zp * (double) s_pascal_triangle[j];
             sum *= delta_n;
@@ -742,7 +742,7 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
         break;
 
     case 1:
-        if (m_power == 3)
+        if (g_c_exponent == 3)
         {
             cube_bf(temp_cmplx_cbf, *Z);
             add_bf(Z->x, temp_cmplx_cbf.x, center.x);
@@ -752,7 +752,7 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
         {
             copy_bf(temp_cmplx_cbf.x, Z->x);
             copy_bf(temp_cmplx_cbf.y, Z->y);
-            for (int k = 0; k < m_power - 1; k++)
+            for (int k = 0; k < g_c_exponent - 1; k++)
             {
                 cplxmul_bf(&temp_cmplx_cbf, &temp_cmplx_cbf, Z);
             }
@@ -787,14 +787,14 @@ void PertEngine::ref_functions(const std::complex<double> &center, std::complex<
         break;
 
     case 1:
-        if (m_power == 3)
+        if (g_c_exponent == 3)
         {
             z = cube(z) + center;
         }
         else
         {
             std::complex<double> ComplexTemp = z;
-            for (int k = 0; k < m_power - 1; k++)
+            for (int k = 0; k < g_c_exponent - 1; k++)
             {
                 ComplexTemp *= z;
             }

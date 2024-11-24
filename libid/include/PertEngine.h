@@ -14,7 +14,7 @@ class PertEngine
 {
 public:
     void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
-    int calculate_one_frame(int power, int subtype);
+    int calculate_one_frame(int subtype);
 
 private:
     int calculate_point(const Point &pt, double tempRadius, int window_radius);
@@ -34,7 +34,6 @@ private:
     double m_z_magnitude_squared{};
     std::vector<Point> m_points_remaining;
     std::vector<Point> m_glitch_points;
-    int m_power{};
     int m_subtype{};
     long m_glitch_point_count{};
     long m_remaining_point_count{};

@@ -51,8 +51,7 @@ bool perturbation(int subtype)
     }
 
     s_pert_engine.initialize_frame(center_bf, {center.x, center.y}, mandel_width / 2.0);
-    const int degree = (int) g_params[2];
-    if (const int result = s_pert_engine.calculate_one_frame(degree, subtype); result < 0)
+    if (const int result = s_pert_engine.calculate_one_frame(subtype); result < 0)
     {
         throw std::runtime_error("Failed to initialize perturbation engine (" + std::to_string(result) + ")");
     }

@@ -104,6 +104,8 @@ bool mandel_perturbation_setup()
 
 bool mandel_z_power_perturbation_setup()
 {
+    constexpr int MAX_POWER{28};
+    g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
     return perturbation(1);
 }
 
@@ -132,6 +134,7 @@ MandelfpSetup()
             g_symmetry = symmetry_type::X_AXIS_NO_PARAM;
         }
         break;
+        
     case fractal_type::MANDELFP:
         /*
            floating point code could probably be altered to handle many of
@@ -168,12 +171,11 @@ MandelfpSetup()
     case fractal_type::FPMANDELZPOWER:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         {
-            int degree = (int) g_params[2];
-            if (degree == 2)
+            if (g_c_exponent == 2)
             {
                 return mandel_perturbation_setup();
             }
-            if (degree > 2)
+            if (g_c_exponent > 2)
             {
                 return mandel_z_power_perturbation_setup();
             }
