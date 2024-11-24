@@ -34,7 +34,7 @@ MandelSetup()           // Mandelbrot Routine
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
     {
-        return init_perturbation(0);
+        return mandel_perturbation_setup();
     }
     if (g_debug_flag != debug_flags::force_standard_fractal
         && (g_invert == 0)
@@ -97,6 +97,16 @@ StandaloneSetup()
     return false;               // effectively disable solid-guessing
 }
 
+bool mandel_perturbation_setup()
+{
+    return init_perturbation(0);
+}
+
+bool mandel_z_power_perturbation_setup()
+{
+    return init_perturbation(1);
+}
+
 bool
 MandelfpSetup()
 {
@@ -131,7 +141,7 @@ MandelfpSetup()
         */
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         {
-            return init_perturbation(0);
+            return mandel_perturbation_setup();
         }
         if (g_debug_flag != debug_flags::force_standard_fractal
             && !g_distance_estimator
@@ -161,11 +171,11 @@ MandelfpSetup()
             int degree = (int) g_params[2];
             if (degree == 2)
             {
-                return init_perturbation(0);
+                return mandel_perturbation_setup();
             }
             if (degree > 2)
             {
-                return init_perturbation(1);
+                return mandel_z_power_perturbation_setup();
             }
         }
         if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents

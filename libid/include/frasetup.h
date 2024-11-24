@@ -2,6 +2,8 @@
 //
 #pragma once
 
+bool mandel_perturbation_setup();
+bool mandel_z_power_perturbation_setup();
 bool MandelSetup();
 bool MandelfpSetup();
 bool JuliaSetup();

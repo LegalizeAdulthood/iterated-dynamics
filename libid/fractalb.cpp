@@ -18,7 +18,6 @@
 #include "goodbye.h"
 #include "id.h"
 #include "id_data.h"
-#include "perturbation.h"
 #include "port.h"
 #include "prototyp.h"
 #include "stop_msg.h"
@@ -611,11 +610,10 @@ int  bfMANRbailout()
 
 bool MandelbnSetup()
 {
+    BigStackSaver saved;
     // this should be set up dynamically based on corners
     bn_t bntemp1;
     bn_t bntemp2;
-    int saved;
-    saved = save_stack();
     bntemp1 = alloc_stack(g_bn_length);
     bntemp2 = alloc_stack(g_bn_length);
 
@@ -630,19 +628,19 @@ bool MandelbnSetup()
 
     // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
     sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
-    div_a_bn_int(g_delta_x_bn, (U16)(g_logical_screen_x_dots - 1));
+    div_a_bn_int(g_delta_x_bn, (U16) (g_logical_screen_x_dots - 1));
 
     // g_delta_y_bn = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
     sub_bn(g_delta_y_bn, g_y_max_bn, g_y_3rd_bn);
-    div_a_bn_int(g_delta_y_bn, (U16)(g_logical_screen_y_dots - 1));
+    div_a_bn_int(g_delta_y_bn, (U16) (g_logical_screen_y_dots - 1));
 
     // g_delta2_x_bn = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
     sub_bn(g_delta2_x_bn, g_x_3rd_bn, g_x_min_bn);
-    div_a_bn_int(g_delta2_x_bn, (U16)(g_logical_screen_y_dots - 1));
+    div_a_bn_int(g_delta2_x_bn, (U16) (g_logical_screen_y_dots - 1));
 
     // g_delta2_y_bn = (g_y_3rd_bn - g_y_min_bn)/(xdots-1)
     sub_bn(g_delta2_y_bn, g_y_3rd_bn, g_y_min_bn);
-    div_a_bn_int(g_delta2_y_bn, (U16)(g_logical_screen_x_dots - 1));
+    div_a_bn_int(g_delta2_y_bn, (U16) (g_logical_screen_x_dots - 1));
 
     abs_bn(g_close_enough_bn, g_delta_x_bn);
     if (cmp_bn(abs_bn(bntemp1, g_delta2_x_bn), g_close_enough_bn) > 0)
@@ -671,22 +669,24 @@ bool MandelbnSetup()
 
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
     {
-        init_perturbation(0);
-        restore_stack(saved);
-        g_std_calc_mode = 'g';      // better return calc mode back to guessing (default) or we get a nice little crash
-        g_calc_status = calc_status_value::COMPLETED;   // don't want to redo fractal using guessing
+        mandel_perturbation_setup();
+        // TODO: figure out crash if we don't do this
+        g_std_calc_mode ='g';
+        g_calc_status = calc_status_value::COMPLETED;
         return true;
     }
-    g_c_exponent = (int)g_params[2];
+    
+    g_c_exponent = (int) g_params[2];
     switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
         bftobn(g_param_z_bn.x, g_bf_parms[0]);
         bftobn(g_param_z_bn.y, g_bf_parms[1]);
         break;
+        
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
-        if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents
+        if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {
             g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
         }
@@ -695,25 +695,27 @@ bool MandelbnSetup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
+        
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
         bftobn(g_param_z_bn.x, g_bf_parms[0]);
         bftobn(g_param_z_bn.y, g_bf_parms[1]);
-        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
+        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
         {
             g_symmetry = symmetry_type::NONE;
         }
         break;
+        
     case fractal_type::DIVIDE_BROT5:
         init_big_pi();
         g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
         g_b_const = g_params[1] + 1.0e-20;
         break;
+
     default:
         break;
     }
 
-    restore_stack(saved);
     return true;
 }
 
@@ -722,15 +724,16 @@ bool MandelbfSetup()
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
     // the pointer to setup isn't.
-    if (g_bf_math == bf_math_type::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
+    if (g_bf_math == bf_math_type::NONE)
+    {
+        // kludge to prevent crash when math type = NONE and still call bigflt setup routine
         return MandelfpSetup();
+    }
+
     // this should be set up dynamically based on corners
-    bf_t bftemp1;
-    bf_t bftemp2;
-    int saved;
-    saved = save_stack();
-    bftemp1 = alloc_stack(g_bf_length+2);
-    bftemp2 = alloc_stack(g_bf_length+2);
+    BigStackSaver saved;
+    bf_t bftemp1{alloc_stack(g_bf_length + 2)};
+    bf_t bftemp2{alloc_stack(g_bf_length + 2)};
 
     g_bf_math = bf_math_type::BIGFLT;
 
@@ -767,27 +770,24 @@ bool MandelbfSetup()
         copy_bf(g_close_enough_bf, bftemp2);
     }
     {
-        int t;
-        t = std::abs(g_periodicity_check);
+        int t{std::abs(g_periodicity_check)};
         while (t--)
         {
             half_a_bf(g_close_enough_bf);
         }
     }
 
-        /*
-           floating point code could probably be altered to handle many of
-           the situations that otherwise are using standard_fractal().
-           calcmandfp() can currently handle invert, any rqlim, potflag
-           zmag, epsilon cross, and all the current outside options
-        */
+    // floating point code could probably be altered to handle many of
+    // the situations that otherwise are using standard_fractal().
+    // calcmandfp() can currently handle invert, any rqlim, potflag
+    // zmag, epsilon cross, and all the current outside options
     g_c_exponent = (int)g_params[2];
     switch (g_fractal_type)
     {
     case fractal_type::MANDELFP:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         {
-            return init_perturbation(0);
+            return mandel_perturbation_setup();
         }
         break;
         
@@ -795,26 +795,32 @@ bool MandelbfSetup()
         copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
         copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
         break;
+        
     case fractal_type::FPMANDELZPOWER:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         {
-            int degree = (int) g_params[2]; // only allow integer values of real part
-            if (degree > 2)
-                return init_perturbation(1);
+            // only allow integer values of real part
+            if (const int degree = (int) g_params[2]; degree > 2)
+            {
+                return mandel_z_power_perturbation_setup();
+            }
+            else if (degree == 2)
+            {
+                return mandel_perturbation_setup();
+            }
         }
-        else
+        
+        init_big_pi();
+        if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {
-            init_big_pi();
-            if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
-            {
-                g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
-            }
-            if (g_params[3] != 0)
-            {
-                g_symmetry = symmetry_type::NONE;
-            }
+            g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+        }
+        if (g_params[3] != 0)
+        {
+            g_symmetry = symmetry_type::NONE;
         }
         break;
+        
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
         copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
@@ -824,16 +830,17 @@ bool MandelbfSetup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
+        
     case fractal_type::DIVIDE_BROT5:
         init_big_pi();
         g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
         g_b_const = g_params[1] + 1.0e-20;
         break;
+        
     default:
         break;
     }
 
-    restore_stack(saved);
     return true;
 }
 
