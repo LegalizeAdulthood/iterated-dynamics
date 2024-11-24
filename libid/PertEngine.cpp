@@ -178,11 +178,11 @@ int PertEngine::calculate_one_frame(double bailout, int powerin, int InsideFilte
 
             if (m_math_type != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration);
+                reference_zoom_point_bf(reference_coordinate_bf, m_max_iteration);
             }
             else
             {
-                reference_zoom_point(&reference_coordinate, m_max_iteration);
+                reference_zoom_point(reference_coordinate, m_max_iteration);
             }
         }
         else
@@ -225,11 +225,11 @@ int PertEngine::calculate_one_frame(double bailout, int powerin, int InsideFilte
 
             if (m_math_type != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(&reference_coordinate_bf, m_max_iteration);
+                reference_zoom_point_bf(reference_coordinate_bf, m_max_iteration);
             }
             else
             {
-                reference_zoom_point(&reference_coordinate, m_max_iteration);
+                reference_zoom_point(reference_coordinate, m_max_iteration);
             }
         }
 
@@ -527,7 +527,7 @@ int PertEngine::calculate_point(int x, int y, double magnified_radius, int windo
 }
 
 // Reference Zoom Point - BigFlt
-void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration)
+void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -545,8 +545,8 @@ void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration)
     temp_imag_bf = alloc_stack(g_r_bf_length + 2);
     tmp_bf = alloc_stack(g_r_bf_length + 2);
 
-    copy_bf(z_bf.x, centre->x);
-    copy_bf(z_bf.y, centre->y);
+    copy_bf(z_bf.x, center.x);
+    copy_bf(z_bf.y, center.y);
     //    Z = *centre;
 
     for (int i = 0; i <= max_iteration; i++)
@@ -590,7 +590,7 @@ void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration)
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
         // Calculate the set
-        ref_functions_bf(centre, &z_bf, &z_times_2_bf);
+        ref_functions_bf(center, &z_bf, &z_times_2_bf);
     }
     restore_stack(cplxsaved);
 }
@@ -599,14 +599,14 @@ void PertEngine::reference_zoom_point_bf(BFComplex *centre, int max_iteration)
 // Reference Zoom Point - BigFlt
 //////////////////////////////////////////////////////////////////////
 
-void PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iteration)
+void PertEngine::reference_zoom_point(const std::complex<double> &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
     std::complex<double> z_times_2, z;
     double glitch_tolerancy = 1e-6;
 
-    z = *centre;
+    z = center;
 
     for (int i = 0; i <= max_iteration; i++)
     {
@@ -640,7 +640,7 @@ void PertEngine::reference_zoom_point(std::complex<double> *centre, int max_iter
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
         // Calculate the set
-        ref_functions(centre, &z, &z_times_2);
+        ref_functions(center, &z, &z_times_2);
     }
 }
 
@@ -923,7 +923,7 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
 
 // Reference Zoom Point Functions
 //
-void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2)
+void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
 {
     bf_t temp_real_bf, temp_imag_bf, sqr_real_bf, sqr_imag_bf, real_imag_bf;
     BFComplex temp_cmplx_cbf, temp_cmplx1_cbf;
@@ -948,17 +948,17 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
         sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, centre->x);
+        add_bf(Z->x, temp_real_bf, center.x);
         mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        add_bf(Z->y, real_imag_bf, centre->y);
+        add_bf(Z->y, real_imag_bf, center.y);
         break;
 
     case 1:
         if (m_power == 3)
         {
             cube_bf(temp_cmplx_cbf, *Z);
-            add_bf(Z->x, temp_cmplx_cbf.x, centre->x);
-            add_bf(Z->y, temp_cmplx_cbf.y, centre->y);
+            add_bf(Z->x, temp_cmplx_cbf.x, center.x);
+            add_bf(Z->y, temp_cmplx_cbf.y, center.y);
         }
         else
         {
@@ -966,8 +966,8 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
             copy_bf(temp_cmplx_cbf.y, Z->y);
             for (int k = 0; k < m_power - 1; k++)
                 cplxmul_bf(&temp_cmplx_cbf, &temp_cmplx_cbf, Z);
-            add_bf(Z->x, temp_cmplx_cbf.x, centre->x);
-            add_bf(Z->y, temp_cmplx_cbf.y, centre->y);
+            add_bf(Z->x, temp_cmplx_cbf.x, center.x);
+            add_bf(Z->y, temp_cmplx_cbf.y, center.y);
         }
         break;
 
@@ -975,10 +975,10 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
         sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, centre->x);
+        add_bf(Z->x, temp_real_bf, center.x);
         mult_bf(temp_imag_bf, ZTimes2->x, Z->y);
         abs_bf(real_imag_bf, temp_imag_bf);
-        add_bf(Z->y, real_imag_bf, centre->y);
+        add_bf(Z->y, real_imag_bf, center.y);
         break;
 
     case 3: // Cubic Burning Ship
@@ -987,39 +987,39 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         abs_bf(temp_cmplx_cbf.x, Z->x);
         abs_bf(temp_cmplx_cbf.y, Z->y);
         power_bf(temp_cmplx1_cbf, temp_cmplx_cbf, m_power);
-        add_bf(Z->x, temp_cmplx1_cbf.x, centre->x);
-        add_bf(Z->y, temp_cmplx1_cbf.y, centre->y);
+        add_bf(Z->x, temp_cmplx1_cbf.x, center.x);
+        add_bf(Z->y, temp_cmplx1_cbf.y, center.y);
         break;
 
     case 6: // Celtic
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
         mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        add_bf(Z->y, real_imag_bf, centre->y);
+        add_bf(Z->y, real_imag_bf, center.y);
         sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
         abs_bf(temp_imag_bf, temp_real_bf);
-        add_bf(Z->x, temp_imag_bf, centre->x);
+        add_bf(Z->x, temp_imag_bf, center.x);
         break;
 
     case 7: // Cubic Celtic
         power_bf(temp_cmplx_cbf, *Z, 3);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
-        add_bf(Z->x, temp_real_bf, centre->x);
-        add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
+        add_bf(Z->x, temp_real_bf, center.x);
+        add_bf(Z->y, center.y, temp_cmplx_cbf.y);
         break;
 
     case 8: // 4th Celtic Buffalo
         power_bf(temp_cmplx_cbf, *Z, 4);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
-        add_bf(Z->x, temp_real_bf, centre->x);
-        add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
+        add_bf(Z->x, temp_real_bf, center.x);
+        add_bf(Z->y, center.y, temp_cmplx_cbf.y);
         break;
 
     case 9: // 5th Celtic
         power_bf(temp_cmplx_cbf, *Z, 5);
         abs_bf(temp_real_bf, temp_cmplx_cbf.x);
-        add_bf(Z->x, temp_real_bf, centre->x);
-        add_bf(Z->y, centre->y, temp_cmplx_cbf.y);
+        add_bf(Z->x, temp_real_bf, center.x);
+        add_bf(Z->y, center.y, temp_cmplx_cbf.y);
         break;
 
     case 10: // Mandelbar (Tricorn)
@@ -1027,14 +1027,14 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         square_bf(sqr_imag_bf, Z->y);
         mult_bf(real_imag_bf, ZTimes2->x, Z->y);
         sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, centre->x);
-        sub_bf(Z->y, centre->y, real_imag_bf);
+        add_bf(Z->x, temp_real_bf, center.x);
+        sub_bf(Z->y, center.y, real_imag_bf);
         break;
 
     case 11: // Mandelbar (power)
         power_bf(temp_cmplx_cbf, *Z, m_power);
-        sub_bf(Z->y, centre->y, temp_cmplx_cbf.y);
-        add_bf(Z->x, temp_cmplx_cbf.x, centre->x);
+        sub_bf(Z->y, center.y, temp_cmplx_cbf.y);
+        add_bf(Z->x, temp_cmplx_cbf.x, center.x);
         break;
 
     default:
@@ -1042,9 +1042,9 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
         square_bf(sqr_real_bf, Z->x);
         square_bf(sqr_imag_bf, Z->y);
         sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, centre->x);
+        add_bf(Z->x, temp_real_bf, center.x);
         mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        add_bf(Z->y, real_imag_bf, centre->y);
+        add_bf(Z->y, real_imag_bf, center.y);
         break;
     }
     restore_stack(cplxsaved);
@@ -1053,7 +1053,7 @@ void PertEngine::ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZT
 // Reference Zoom Point Functions
 //
 void PertEngine::ref_functions(
-    std::complex<double> *centre, std::complex<double> *Z, std::complex<double> *z_times_2)
+    const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *z_times_2)
 {
     double temp_real, temp_imag, sqr_real, sqr_imag, real_imag;
     std::complex<double> z;
@@ -1065,15 +1065,15 @@ void PertEngine::ref_functions(
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
         temp_real = sqr_real - sqr_imag;
-        Z->real(temp_real + centre->real());
+        Z->real(temp_real + center.real());
         real_imag = z_times_2->real() * Z->imag();
-        Z->imag(real_imag + centre->imag());
+        Z->imag(real_imag + center.imag());
         break;
 
     case 1:
         if (m_power == 3)
         {
-            *Z = cube(*Z) + *centre;
+            *Z = cube(*Z) + center;
         }
         else
         {
@@ -1082,7 +1082,7 @@ void PertEngine::ref_functions(
             {
                 ComplexTemp *= *Z;
             }
-            *Z = ComplexTemp + *centre;
+            *Z = ComplexTemp + center;
         }
         break;
 
@@ -1090,10 +1090,10 @@ void PertEngine::ref_functions(
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
         temp_real = sqr_real - sqr_imag;
-        Z->real(temp_real + centre->real());
+        Z->real(temp_real + center.real());
         temp_imag = z_times_2->real() * Z->imag();
         real_imag = fabs(temp_imag);
-        Z->imag(real_imag + centre->imag());
+        Z->imag(real_imag + center.imag());
         break;
 
     case 3: // Cubic Burning Ship
@@ -1102,47 +1102,47 @@ void PertEngine::ref_functions(
         z.real(fabs(Z->real()));
         z.imag(fabs(Z->imag()));
         z = power(z, m_power);
-        *Z = z + *centre;
+        *Z = z + center;
         break;
 
     case 6: // Celtic
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
         real_imag = z_times_2->real() * Z->imag();
-        Z->imag(real_imag + centre->imag());
-        Z->real(fabs(sqr_real - sqr_imag) + centre->real());
+        Z->imag(real_imag + center.imag());
+        Z->real(fabs(sqr_real - sqr_imag) + center.real());
         break;
 
     case 7: // Cubic Celtic
         z = power(*Z, 3);
-        Z->real(fabs(z.real()) + centre->real());
-        Z->imag(z.imag() + centre->imag());
+        Z->real(fabs(z.real()) + center.real());
+        Z->imag(z.imag() + center.imag());
         break;
 
     case 8: // 4th Celtic Buffalo
         z = power(*Z, 4);
-        Z->real(fabs(z.real()) + centre->real());
-        Z->imag(z.imag() + centre->imag());
+        Z->real(fabs(z.real()) + center.real());
+        Z->imag(z.imag() + center.imag());
         break;
 
     case 9: // 5th Celtic
         z = power(*Z, 5);
-        Z->real(fabs(z.real()) + centre->real());
-        Z->imag(z.imag() + centre->imag());
+        Z->real(fabs(z.real()) + center.real());
+        Z->imag(z.imag() + center.imag());
         break;
 
     case 10: // Mandelbar (Tricorn)
         sqr_real = sqr(Z->real());
         sqr_imag = sqr(Z->imag());
         real_imag = Z->real() * z_times_2->imag();
-        Z->real(sqr_real - sqr_imag + centre->real());
-        Z->imag(-real_imag + centre->imag());
+        Z->real(sqr_real - sqr_imag + center.real());
+        Z->imag(-real_imag + center.imag());
         break;
 
     case 11: // Mandelbar (power)
         z = power(*Z, m_power);
-        Z->real(z.real() + centre->real());
-        Z->imag(-z.imag() + centre->imag());
+        Z->real(z.real() + center.real());
+        Z->imag(-z.imag() + center.imag());
         break;
     }
 }

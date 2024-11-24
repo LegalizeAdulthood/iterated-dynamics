@@ -23,14 +23,15 @@ public:
 private:
     int calculate_point(int x, int y, double tempRadius, int window_radius, double bailout,
         Point *glitchPoints, void (*plot)(int, int, int), int potential(double, long));
-    void reference_zoom_point_bf(BFComplex *BigCentre, int maxIteration);
-    void reference_zoom_point(std::complex<double> *centre, int maxIteration);
+    void reference_zoom_point_bf(const BFComplex &BigCentre, int maxIteration);
+    void reference_zoom_point(const std::complex<double> &center, int maxIteration);
     void load_pascal(long PascalArray[], int n);
     double diff_abs(const double c, const double d);
     void pert_functions(
         std::complex<double> *XRef, std::complex<double> *DeltaSubN, std::complex<double> *DeltaSub0);
-    void ref_functions_bf(BFComplex *centre, BFComplex *Z, BFComplex *ZTimes2);
-    void ref_functions(std::complex<double> *centre, std::complex<double> *Z, std::complex<double> *ZTimes2);
+    void ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2);
+    void ref_functions(
+        const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *ZTimes2);
     void cleanup();
 
     std::string m_status;
