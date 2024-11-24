@@ -19,8 +19,7 @@ public:
 private:
     enum
     {
-        MAX_POWER = 28,
-        MAX_FILTER = 9
+        MAX_POWER = 28
     };
 
     int calculate_point(const Point &pt, double tempRadius, int window_radius, double bailout,
