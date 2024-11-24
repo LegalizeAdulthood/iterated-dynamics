@@ -93,12 +93,11 @@ int PertEngine::calculate_one_frame(int power, int subtype)
 
     double magnified_radius = m_zoom_radius;
     int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
-    int cplxsaved;
+    BigStackSaver saved;
     bf_t tmp_bf;
 
     if (g_bf_math != bf_math_type::NONE)
     {
-        cplxsaved = save_stack();
         c_bf.x = alloc_stack(g_r_bf_length + 2);
         c_bf.y = alloc_stack(g_r_bf_length + 2);
         reference_coordinate_bf.x = alloc_stack(g_r_bf_length + 2);
@@ -217,10 +216,6 @@ int PertEngine::calculate_one_frame(int power, int subtype)
         m_remaining_point_count = m_glitch_point_count;
     }
 
-    if (g_bf_math != bf_math_type::NONE)
-    {
-        restore_stack(cplxsaved);
-    }
     cleanup();
     return 0;
 }
@@ -479,9 +474,8 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
     bf_t temp_imag_bf;
     bf_t tmp_bf;
     double glitch_tolerancy = 1e-6;
-    int cplxsaved;
+    BigStackSaver saved;
 
-    cplxsaved = save_stack();
     z_times_2_bf.x = alloc_stack(g_r_bf_length + 2);
     z_times_2_bf.y = alloc_stack(g_r_bf_length + 2);
     z_bf.x = alloc_stack(g_r_bf_length + 2);
@@ -538,7 +532,6 @@ void PertEngine::reference_zoom_point_bf(const BFComplex &center, int max_iterat
         // Calculate the set
         ref_functions_bf(center, &z_bf, &z_times_2_bf);
     }
-    restore_stack(cplxsaved);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -661,7 +654,7 @@ void PertEngine::pert_functions(
 // Cube c + jd = (a + jb) * (a + jb) * (a + jb)
 static void cube_bf(BFComplex &out, const BFComplex &in)
 {
-    const int saved = save_stack();
+    BigStackSaver saved;
     bf_t t = alloc_stack(g_r_bf_length + 2);
     bf_t t1 = alloc_stack(g_r_bf_length + 2);
     bf_t t2 = alloc_stack(g_r_bf_length + 2);
@@ -678,13 +671,12 @@ static void cube_bf(BFComplex &out, const BFComplex &in)
     mult_bf(t1, t, sqr_real); // sqr_imag + sqr_imag + sqr_imag
     sub_bf(t2, t1, sqr_imag); // (sqr_real + sqr_real + sqr_real) - sqr_imag
     mult_bf(out.y, in.y, t2); // d = y * ((sqr_real + sqr_real + sqr_real) - sqr_imag)
-    restore_stack(saved);
 }
 
 // Evaluate a complex polynomial
 static void power_bf(BFComplex &result, const BFComplex &z, int degree)
 {
-    const int saved = save_stack();
+    BigStackSaver saved;
     bf_t t = alloc_stack(g_r_bf_length + 2);
     bf_t t1 = alloc_stack(g_r_bf_length + 2);
     bf_t t2 = alloc_stack(g_r_bf_length + 2);
@@ -733,17 +725,14 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
         }
         degree >>= 1;
     }
-    restore_stack(saved);
 }
 
 // Reference Zoom Point Functions
 //
 void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
 {
+    BigStackSaver saved;
     BFComplex temp_cmplx_cbf;
-
-    const int cplxsaved = save_stack();
-
     bf_t temp_real_bf = alloc_stack(g_r_bf_length + 2);
     bf_t sqr_real_bf = alloc_stack(g_r_bf_length + 2);
     bf_t sqr_imag_bf = alloc_stack(g_r_bf_length + 2);
@@ -786,8 +775,6 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
     default:
         throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
     }
-
-    restore_stack(cplxsaved);
 }
 
 // Reference Zoom Point Functions
