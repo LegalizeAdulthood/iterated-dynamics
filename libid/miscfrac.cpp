@@ -532,7 +532,7 @@ int plasma()
         }
             s_get_pix = s_get_color;
     }
-    srand(g_random_seed);
+    std::srand(g_random_seed);
     if (!g_random_seed_flag)
     {
         ++g_random_seed;
@@ -728,7 +728,7 @@ int diffusion()
         border = 10;
     }
 
-    srand(g_random_seed);
+    std::srand(g_random_seed);
     if (!g_random_seed_flag)
     {
         ++g_random_seed;

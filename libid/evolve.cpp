@@ -938,7 +938,7 @@ static void set_random(int ecount)
     // Call this routine to set the random # to the proper value
     // if it may have changed, before fiddleparms() is called.
     // Now called by fiddleparms().
-    srand(g_evolve_this_generation_random_seed);
+    std::srand(g_evolve_this_generation_random_seed);
     for (int index = 0; index < ecount; index++)
     {
         for (int i = 0; i < NUM_GENES; i++)

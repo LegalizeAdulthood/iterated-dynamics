@@ -745,7 +745,7 @@ static void set_random()
     }
 
     const unsigned int seed = (unsigned) s_rand_num ^ (unsigned) (s_rand_num >> 16);
-    srand(seed);
+    std::srand(seed);
     s_set_random = true;
 
     // Clear out the seed
@@ -760,7 +760,7 @@ static void random_seed()
 
     // Use the current time to randomize the random number sequence.
     std::time(&ltime);
-    srand((unsigned int)ltime);
+    std::srand((unsigned int)ltime);
 
     new_random_num();
     new_random_num();

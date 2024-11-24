@@ -263,7 +263,7 @@ bool do_AutoStereo()
 
     // Use the current time to randomize the random number sequence.
     std::time(&ltime);
-    srand((unsigned int)ltime);
+    std::srand((unsigned int)ltime);
 
     ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_RDS_KEYS};
     driver_save_graphics();                      // save graphics image

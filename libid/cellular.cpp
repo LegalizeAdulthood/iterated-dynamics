@@ -200,7 +200,7 @@ int cellular()
         }
     }
 
-    srand(g_random_seed);
+    std::srand(g_random_seed);
     if (!g_random_seed_flag)
     {
         ++g_random_seed;

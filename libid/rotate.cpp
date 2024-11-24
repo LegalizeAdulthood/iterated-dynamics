@@ -98,7 +98,7 @@ void rotate(int direction)      // rotate-the-palette routine
     changecolor = -1;                    // no color (rgb) to change
     changedirection = 0;                 // no color direction to change
     incr = 999;                          // ready to randomize
-    srand((unsigned)std::time(nullptr));         // randomize things
+    std::srand((unsigned)std::time(nullptr));         // randomize things
 
     if (direction == 0)
     {

@@ -2452,7 +2452,7 @@ static int ifs3dfloat()
 
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
-    srand(1);
+    std::srand(1);
     color_method = (int)g_params[0];
     if (driver_diskp())                  // this would KILL a disk drive!
     {
@@ -2603,7 +2603,7 @@ static int ifs2d()
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&cvt);
 
-    srand(1);
+    std::srand(1);
     color_method = (int)g_params[0];
     bool resized = false;
     try
@@ -2721,7 +2721,7 @@ static int ifs3dlong()
     long tempr;
     long3dvtinf inf;
 
-    srand(1);
+    std::srand(1);
     color_method = (int)g_params[0];
     try
     {

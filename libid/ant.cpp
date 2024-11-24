@@ -537,7 +537,7 @@ int ant()
         g_random_seed = (int)g_params[5];
     }
 
-    srand(g_random_seed);
+    std::srand(g_random_seed);
     if (!g_random_seed_flag)
     {
         ++g_random_seed;
