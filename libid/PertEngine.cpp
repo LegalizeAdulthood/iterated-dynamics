@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <stdexcept>
 
 void PertEngine::initialize_frame(
@@ -146,11 +147,13 @@ int PertEngine::calculate_one_frame(int power, int subtype)
             }
 
             int referencePointIndex = 0;
-            int Randomise;
 
-            srand((unsigned) time(NULL)); // Seed the random-number generator with current time
-            Randomise = rand();
-            referencePointIndex = (int) ((double) Randomise / (RAND_MAX + 1) * m_remaining_point_count);
+            std::srand(g_random_seed);
+            if (!g_random_seed_flag)
+            {
+                ++g_random_seed;
+            }
+            referencePointIndex = (int) ((double) rand() / (RAND_MAX + 1) * m_remaining_point_count);
             Point pt{m_points_remaining[referencePointIndex]};
             // Get the complex point at the chosen reference point
             double deltaReal = ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius);
