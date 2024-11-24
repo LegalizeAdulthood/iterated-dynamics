@@ -7,8 +7,6 @@
 
 #include "PertEngine.h"
 
-#include <algorithm>
-
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -16,6 +14,9 @@
 #include "drivers.h"
 #include "fractalb.h"
 #include "id_data.h"
+
+#include <algorithm>
+#include <stdexcept>
 
 void PertEngine::initialize_frame(
     bf_t x_center_bf, bf_t y_center_bf, double x_center, double y_center, double zoom_radius)
@@ -626,14 +627,8 @@ void PertEngine::pert_functions(
     const double i = x_ref.imag();
     const double a = delta_n.real();
     const double b = delta_n.imag();
-    const double a2 = a * a;
-    const double b2 = b * b;
     const double a0 = delta0.real();
     const double b0 = delta0.imag();
-    const double r2 = r * r;
-    const double i2 = i * i;
-    double c;
-    double d;
 
     switch (m_subtype)
     {
@@ -671,145 +666,8 @@ void PertEngine::pert_functions(
     }
     break;
 
-    case 2: // Burning Ship
-        delta_n.real(2.0 * a * r + a2 - 2.0 * b * i - b2);
-        delta_n.imag(diff_abs(r * i, r * b + i * a + a * b) * 2);
-        delta_n += delta0;
-        break;
-
-    case 3: // Cubic Burning Ship
-    {
-        dnr = diff_abs(r, a);
-        double ab = r + a;
-        dnr = (r * r - 3 * i * i) * dnr + (2 * a * r + a2 - 6 * i * b - 3 * b2) * fabs(ab) + a0;
-        dni = diff_abs(i, b);
-        ab = i + b;
-        dni = (3 * r * r - i * i) * dni + (6 * r * a + 3 * a2 - 2 * i * b - b2) * fabs(ab) + b0;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-    }
-    break;
-
-    case 4: // 4th Power Burning Ship
-        dnr = 4 * r2 * r * a + 6 * r2 * a2 + 4 * r * a2 * a + a2 * a2 + 4 * i2 * i * b + 6 * i2 * b2 +
-            4 * i * b2 * b + b2 * b2 - 12 * r2 * i * b - 6 * r2 * b2 - 12 * r * a * i2 - 24 * r * a * i * b -
-            12 * r * a * b2 - 6 * a2 * i2 - 12 * a2 * i * b - 6 * a2 * b2 + a0;
-        dni = diff_abs(r * i, r * b + a * i + a * b);
-        dni = 4 * (r2 - i2) * (dni) +
-            4 * fabs(r * i + r * b + a * i + a * b) * (2 * a * r + a2 - 2 * b * i - b2) + b0;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 5: // 5th Power Burning Ship
-        dnr = diff_abs(r, a);
-        dnr = (dnr) * (r * r * r * r - 10 * r * r * i * i + 5 * i * i * i * i) +
-            fabs(r + a) *
-                (4 * r * r * r * a + 6 * r * r * a2 + 4 * r * a2 * a + a2 * a2 - 20 * r2 * i * b -
-                    10 * r2 * b2 - 20 * r * a * i2 - 40 * r * a * i * b - 20 * r * a * b2 - 10 * a2 * i2 -
-                    20 * a2 * i * b - 10 * a2 * b2 + 20 * i2 * i * b + 30 * i2 * b2 + 20 * i * b2 * b +
-                    5 * b2 * b2) +
-            a0;
-        dni = diff_abs(i, b);
-        dni = (dni) * (5 * r2 * r2 - 10 * r2 * i2 + i2 * i2) +
-            fabs(i + b) *
-                (20 * r2 * r * a + 30 * r2 * a2 + 20 * r * a2 * a + 5 * a2 * a2 - 20 * r2 * i * b -
-                    10 * r2 * b2 - 20 * r * a * i2 - 40 * r * a * i * b - 20 * r * a * b2 - 10 * a2 * i2 -
-                    20 * a2 * i * b - 10 * a2 * b2 + 4 * i2 * i * b + 6 * i2 * b2 + 4 * i * b2 * b +
-                    b2 * b2) +
-            b0;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 6: // Celtic
-        dnr = diff_abs(r2 - i2, (2 * r + a) * a - (2 * i + b) * b);
-        dnr += a0;
-        dni = 2 * r * b + 2 * a * (i + b) + b0;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 7: // Cubic Celtic
-        c = r * (r2 - 3 * i2);
-        d = a * (3 * r2 + a2) + 3 * r * (a2 - 2 * i * b - b2) - 3 * a * (i2 + 2 * i * b + b2);
-        dnr = diff_abs(c, d);
-        dnr = dnr + a0;
-        dni = 3 * i * (2 * r * a + a2 - b2) + 3 * b * (r2 + 2 * r * a + a2) - b * (b2 + 3 * i2) + b0;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 8: // 4th Celtic Buffalo
-        c = r2 * r2 + i2 * i2 - 6 * r2 * i2;
-        d = 4 * r2 * r * a + 6 * r2 * a2 + 4 * r * a2 * a + a2 * a2 + 4 * i2 * i * b + 6 * i2 * b2 +
-            4 * i * b2 * b + b2 * b2 - 12 * a * r * i2 - 6 * a2 * i2 - 12 * b * r2 * i - 24 * a * b * r * i -
-            12 * a2 * b * i - 6 * b2 * r2 - 12 * a * b2 * r - 6 * a2 * b2;
-        dnr = diff_abs(c, d);
-        dnr += a0;
-        dni = 12 * r2 * i * a + 12 * r * i * a2 - 12 * r * i2 * b - 12 * r * i * b2 + 4 * r2 * r * b +
-            12 * r2 * b * a + 12 * r * b * a2 - 4 * r * b2 * b + 4 * a2 * a * i - 4 * a * i2 * i -
-            12 * a * i2 * b - 12 * a * i * b2 + 4 * a2 * a * b - 4 * a * b2 * b + b0;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 9: // 5th Celtic
-        c = r2 * r2 * r - 10 * r2 * r * i2 + 5 * r * i2 * i2;
-        d = 20 * r * b * i2 * i - 30 * r2 * a * i2 + 30 * r * b2 * i2 - 30 * r * a2 * i2 -
-            20 * r2 * r * b * i - 60 * r2 * a * b * i + 20 * r * b2 * b * i - 60 * r * a2 * b * i +
-            5 * r2 * r2 * a - 10 * r2 * r * b2 + 10 * r2 * r * a2 - 30 * r2 * a * b2 + 10 * r2 * a2 * a +
-            5 * r * b2 * b2 - 30 * r * a2 * b2 + 5 * r * a2 * a2 + 5 * a * i2 * i2 + 20 * a * b * i2 * i +
-            30 * a * b2 * i2 - 10 * a2 * a * i2 + 20 * a * b2 * b * i - 20 * a2 * a * b * i +
-            5 * a * b2 * b2 - 10 * a2 * a * b2 + a2 * a2 * a;
-        dnr = diff_abs(c, d);
-        dnr += a0;
-        dni = 20 * i * r2 * r * a + 30 * i * r2 * a2 + 20 * i * r * a2 * a + 5 * i * a2 * a2 -
-            30 * i2 * r2 * b - 30 * i * r2 * b2 - 20 * i2 * i * r * a - 60 * i2 * r * a * b -
-            60 * i * r * a * b2 - 10 * i2 * i * a2 - 30 * i2 * a2 * b - 30 * i * a2 * b2 + 5 * i2 * i2 * b +
-            10 * i2 * i * b2 + 10 * i2 * b2 * b + 5 * i * b2 * b2 + 5 * b * r2 * r2 + 20 * b * r2 * r * a +
-            30 * b * r2 * a2 + 20 * b * r * a2 * a + 5 * b * a2 * a2 - 10 * b2 * b * r2 -
-            20 * b2 * b * r * a - 10 * b2 * b * a2 + b2 * b2 * b + b0;
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 10: // Mandelbar (Tricorn)
-        dnr = 2 * r * a + a2 - b2 - 2 * b * i + a0;
-        dni = b0 - (r * b + a * i + a * b) * 2;
-
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
-
-    case 11: // Mandelbar (power)
-    {
-        std::complex<double> zp(1.0, 0.0);
-        std::complex<double> sum(0.0, 0.0);
-        for (int j = 0; j < m_power; j++)
-        {
-            sum += zp * (double) m_pascal_triangle[j];
-            sum *= delta_n;
-            zp *= x_ref;
-        }
-        delta_n.real(sum.real());
-        delta_n.imag(-sum.imag());
-        delta_n += delta0;
-    }
-    break;
-
     default:
-        dnr = (2 * r + a) * a - (2 * i + b) * b + a0;
-        dni = 2 * ((r + a) * b + i * a) + b0;
-        delta_n.imag(dni);
-        delta_n.real(dnr);
-        break;
+        throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
     }
 }
 
@@ -896,19 +754,15 @@ static void power_bf(BFComplex &result, const BFComplex &z, int degree)
 void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFComplex *ZTimes2)
 {
     BFComplex temp_cmplx_cbf;
-    BFComplex temp_cmplx1_cbf;
 
     const int cplxsaved = save_stack();
 
     bf_t temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    bf_t temp_imag_bf = alloc_stack(g_r_bf_length + 2);
     bf_t sqr_real_bf = alloc_stack(g_r_bf_length + 2);
     bf_t sqr_imag_bf = alloc_stack(g_r_bf_length + 2);
     bf_t real_imag_bf = alloc_stack(g_r_bf_length + 2);
     temp_cmplx_cbf.x = alloc_stack(g_r_bf_length + 2);
     temp_cmplx_cbf.y = alloc_stack(g_r_bf_length + 2);
-    temp_cmplx1_cbf.x = alloc_stack(g_r_bf_length + 2);
-    temp_cmplx1_cbf.y = alloc_stack(g_r_bf_length + 2);
 
     switch (m_subtype)
     {
@@ -934,88 +788,18 @@ void PertEngine::ref_functions_bf(const BFComplex &center, BFComplex *Z, BFCompl
             copy_bf(temp_cmplx_cbf.x, Z->x);
             copy_bf(temp_cmplx_cbf.y, Z->y);
             for (int k = 0; k < m_power - 1; k++)
+            {
                 cplxmul_bf(&temp_cmplx_cbf, &temp_cmplx_cbf, Z);
+            }
             add_bf(Z->x, temp_cmplx_cbf.x, center.x);
             add_bf(Z->y, temp_cmplx_cbf.y, center.y);
         }
         break;
 
-    case 2: // Burning Ship
-        square_bf(sqr_real_bf, Z->x);
-        square_bf(sqr_imag_bf, Z->y);
-        sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, center.x);
-        mult_bf(temp_imag_bf, ZTimes2->x, Z->y);
-        abs_bf(real_imag_bf, temp_imag_bf);
-        add_bf(Z->y, real_imag_bf, center.y);
-        break;
-
-    case 3: // Cubic Burning Ship
-    case 4: // 4th Power Burning Ship
-    case 5: // 5th Power Burning Ship
-        abs_bf(temp_cmplx_cbf.x, Z->x);
-        abs_bf(temp_cmplx_cbf.y, Z->y);
-        power_bf(temp_cmplx1_cbf, temp_cmplx_cbf, m_power);
-        add_bf(Z->x, temp_cmplx1_cbf.x, center.x);
-        add_bf(Z->y, temp_cmplx1_cbf.y, center.y);
-        break;
-
-    case 6: // Celtic
-        square_bf(sqr_real_bf, Z->x);
-        square_bf(sqr_imag_bf, Z->y);
-        mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        add_bf(Z->y, real_imag_bf, center.y);
-        sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        abs_bf(temp_imag_bf, temp_real_bf);
-        add_bf(Z->x, temp_imag_bf, center.x);
-        break;
-
-    case 7: // Cubic Celtic
-        power_bf(temp_cmplx_cbf, *Z, 3);
-        abs_bf(temp_real_bf, temp_cmplx_cbf.x);
-        add_bf(Z->x, temp_real_bf, center.x);
-        add_bf(Z->y, center.y, temp_cmplx_cbf.y);
-        break;
-
-    case 8: // 4th Celtic Buffalo
-        power_bf(temp_cmplx_cbf, *Z, 4);
-        abs_bf(temp_real_bf, temp_cmplx_cbf.x);
-        add_bf(Z->x, temp_real_bf, center.x);
-        add_bf(Z->y, center.y, temp_cmplx_cbf.y);
-        break;
-
-    case 9: // 5th Celtic
-        power_bf(temp_cmplx_cbf, *Z, 5);
-        abs_bf(temp_real_bf, temp_cmplx_cbf.x);
-        add_bf(Z->x, temp_real_bf, center.x);
-        add_bf(Z->y, center.y, temp_cmplx_cbf.y);
-        break;
-
-    case 10: // Mandelbar (Tricorn)
-        square_bf(sqr_real_bf, Z->x);
-        square_bf(sqr_imag_bf, Z->y);
-        mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, center.x);
-        sub_bf(Z->y, center.y, real_imag_bf);
-        break;
-
-    case 11: // Mandelbar (power)
-        power_bf(temp_cmplx_cbf, *Z, m_power);
-        sub_bf(Z->y, center.y, temp_cmplx_cbf.y);
-        add_bf(Z->x, temp_cmplx_cbf.x, center.x);
-        break;
-
     default:
-        //	    Z = Z.CSqr() + centre;
-        square_bf(sqr_real_bf, Z->x);
-        square_bf(sqr_imag_bf, Z->y);
-        sub_bf(temp_real_bf, sqr_real_bf, sqr_imag_bf);
-        add_bf(Z->x, temp_real_bf, center.x);
-        mult_bf(real_imag_bf, ZTimes2->x, Z->y);
-        add_bf(Z->y, real_imag_bf, center.y);
-        break;
+        throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
     }
+
     restore_stack(cplxsaved);
 }
 
@@ -1025,11 +809,9 @@ void PertEngine::ref_functions(
     const std::complex<double> &center, std::complex<double> *Z, std::complex<double> *z_times_2)
 {
     double temp_real;
-    double temp_imag;
     double sqr_real;
     double sqr_imag;
     double real_imag;
-    std::complex<double> z;
 
     switch (m_subtype)
     {
@@ -1059,63 +841,7 @@ void PertEngine::ref_functions(
         }
         break;
 
-    case 2: // Burning Ship
-        sqr_real = sqr(Z->real());
-        sqr_imag = sqr(Z->imag());
-        temp_real = sqr_real - sqr_imag;
-        Z->real(temp_real + center.real());
-        temp_imag = z_times_2->real() * Z->imag();
-        real_imag = fabs(temp_imag);
-        Z->imag(real_imag + center.imag());
-        break;
-
-    case 3: // Cubic Burning Ship
-    case 4: // 4th Power Burning Ship
-    case 5: // 5th Power Burning Ship
-        z.real(fabs(Z->real()));
-        z.imag(fabs(Z->imag()));
-        z = power(z, m_power);
-        *Z = z + center;
-        break;
-
-    case 6: // Celtic
-        sqr_real = sqr(Z->real());
-        sqr_imag = sqr(Z->imag());
-        real_imag = z_times_2->real() * Z->imag();
-        Z->imag(real_imag + center.imag());
-        Z->real(fabs(sqr_real - sqr_imag) + center.real());
-        break;
-
-    case 7: // Cubic Celtic
-        z = power(*Z, 3);
-        Z->real(fabs(z.real()) + center.real());
-        Z->imag(z.imag() + center.imag());
-        break;
-
-    case 8: // 4th Celtic Buffalo
-        z = power(*Z, 4);
-        Z->real(fabs(z.real()) + center.real());
-        Z->imag(z.imag() + center.imag());
-        break;
-
-    case 9: // 5th Celtic
-        z = power(*Z, 5);
-        Z->real(fabs(z.real()) + center.real());
-        Z->imag(z.imag() + center.imag());
-        break;
-
-    case 10: // Mandelbar (Tricorn)
-        sqr_real = sqr(Z->real());
-        sqr_imag = sqr(Z->imag());
-        real_imag = Z->real() * z_times_2->imag();
-        Z->real(sqr_real - sqr_imag + center.real());
-        Z->imag(-real_imag + center.imag());
-        break;
-
-    case 11: // Mandelbar (power)
-        z = power(*Z, m_power);
-        Z->real(z.real() + center.real());
-        Z->imag(-z.imag() + center.imag());
-        break;
+    default:
+        throw std::runtime_error("Unexpected subtype " + std::to_string(m_subtype));
     }
 }
