@@ -46,7 +46,6 @@ void PertEngine::initialize_frame(
 // Full frame calculation
 int PertEngine::calculate_one_frame()
 {
-    int i;
     BFComplex c_bf{};
     BFComplex reference_coordinate_bf;
     std::complex<double> c;
@@ -136,28 +135,27 @@ int PertEngine::calculate_one_frame()
             const int index{(int) ((double) std::rand() / RAND_MAX * m_remaining_point_count)};
             Point pt{m_points_remaining[index]};
             // Get the complex point at the chosen reference point
-            double deltaReal = ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius);
-            double deltaImaginary =
-                ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius);
+            double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius;
+            double delta_imag = -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius;
 
             // We need to store this offset because the formula we use to convert pixels into a complex point
             // does so relative to the center of the image. We need to offset that calculation when our
             // reference point isn't in the center. The actual offsetting is done in calculate point.
 
-            m_delta_real = deltaReal;
-            m_delta_imag = deltaImaginary;
+            m_delta_real = delta_real;
+            m_delta_imag = delta_imag;
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                floattobf(tmp_bf, deltaReal);
+                floattobf(tmp_bf, delta_real);
                 add_bf(reference_coordinate_bf.x, c_bf.x, tmp_bf);
-                floattobf(tmp_bf, deltaImaginary);
+                floattobf(tmp_bf, delta_imag);
                 add_bf(reference_coordinate_bf.y, c_bf.y, tmp_bf);
             }
             else
             {
-                reference_coordinate.real(c.real() + deltaReal);
-                reference_coordinate.imag(c.imag() + deltaImaginary);
+                reference_coordinate.real(c.real() + delta_real);
+                reference_coordinate.imag(c.imag() + delta_imag);
             }
 
             if (g_bf_math != bf_math_type::NONE)
@@ -170,9 +168,9 @@ int PertEngine::calculate_one_frame()
             }
         }
 
-        int lastChecked = -1;
+        int last_checked{-1};
         m_glitch_point_count = 0;
-        for (i = 0; i < m_remaining_point_count; i++)
+        for (int i = 0; i < m_remaining_point_count; i++)
         {
             if (i % 1000 == 0 && driver_key_pressed())
             {
@@ -185,9 +183,9 @@ int PertEngine::calculate_one_frame()
             }
             // Everything else in this loop is just for updating the progress counter.
             double progress = (double) i / m_remaining_point_count;
-            if (int(progress * 100) != lastChecked)
+            if (int(progress * 100) != last_checked)
             {
-                lastChecked = int(progress * 100);
+                last_checked = int(progress * 100);
                 m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
                     std::to_string(int(progress * 100)) + "%)";
             }
