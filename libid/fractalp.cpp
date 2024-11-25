@@ -988,7 +988,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_POPCORN, help_labels::HF_POPCORN, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LPOPCORN, symmetry_type::NO_PLOT,
-        PopcornFractalFn, other_julia_fp_per_pixel, julia_fp_setup, popcorn,
+        popcorn_fractal_fn, other_julia_fp_per_pixel, julia_fp_setup, popcorn,
         STDBAILOUT
     },
 
@@ -999,7 +999,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_POPCORN, help_labels::HF_POPCORN, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FPPOPCORN, symmetry_type::NO_PLOT,
-        LPopcornFractalFn, long_julia_per_pixel, julia_long_setup, popcorn,
+        long_popcorn_fractal_fn, long_julia_per_pixel, julia_long_setup, popcorn,
         STDBAILOUT
     },
 
@@ -1487,7 +1487,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_POPCORN, help_labels::HF_POPCJUL, fractal_flags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LPOPCORNJUL, symmetry_type::NONE,
-        PopcornFractalFn, other_julia_fp_per_pixel, julia_fp_setup, standard_fractal,
+        popcorn_fractal_fn, other_julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STDBAILOUT
     },
 
@@ -1498,7 +1498,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_POPCORN, help_labels::HF_POPCJUL, fractal_flags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FPPOPCORNJUL, symmetry_type::NONE,
-        LPopcornFractalFn, long_julia_per_pixel, julia_long_setup, standard_fractal,
+        long_popcorn_fractal_fn, long_julia_per_pixel, julia_long_setup, standard_fractal,
         STDBAILOUT
     },
 

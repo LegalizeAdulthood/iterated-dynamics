@@ -15,7 +15,7 @@
 
 #include <cmath>
 
-int PopcornFractal_Old()
+int popcorn_fractal_old()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -49,7 +49,7 @@ int PopcornFractal_Old()
     return 0;
 }
 
-int PopcornFractal()
+int popcorn_fractal()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -102,7 +102,7 @@ static void ltrig_arg(long &val)
     }
 }
 
-int LPopcornFractal_Old()
+int long_popcorn_fractal_old()
 {
     g_l_temp = g_l_old_z;
     g_l_temp.x *= 3L;
@@ -145,7 +145,7 @@ int LPopcornFractal_Old()
     return 0;
 }
 
-int LPopcornFractal()
+int long_popcorn_fractal()
 {
     g_l_temp = g_l_old_z;
     g_l_temp.x *= 3L;
@@ -188,7 +188,7 @@ int LPopcornFractal()
 
 // Popcorn generalization
 
-int PopcornFractalFn()
+int popcorn_fractal_fn()
 {
     DComplex tmpx;
     DComplex tmpy;
@@ -240,7 +240,7 @@ inline void fix_overflow(LComplex &arg)
     }
 }
 
-int LPopcornFractalFn()
+int long_popcorn_fractal_fn()
 {
     LComplex ltmpx;
     LComplex ltmpy;

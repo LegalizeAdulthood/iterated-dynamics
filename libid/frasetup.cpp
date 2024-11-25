@@ -396,11 +396,11 @@ julia_fp_setup()
         }
         if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
         {
-            g_cur_fractal_specific->orbitcalc = PopcornFractal;
+            g_cur_fractal_specific->orbitcalc = popcorn_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc = PopcornFractalFn;
+            g_cur_fractal_specific->orbitcalc = popcorn_fractal_fn;
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
@@ -558,11 +558,11 @@ julia_long_setup()
         }
         if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
         {
-            g_cur_fractal_specific->orbitcalc = LPopcornFractal;
+            g_cur_fractal_specific->orbitcalc = long_popcorn_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc = LPopcornFractalFn;
+            g_cur_fractal_specific->orbitcalc = long_popcorn_fractal_fn;
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;

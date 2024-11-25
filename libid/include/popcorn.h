@@ -2,9 +2,9 @@
 //
 #pragma once
 
-int PopcornFractal();
-int LPopcornFractal();
-int PopcornFractal_Old();
-int LPopcornFractal_Old();
-int PopcornFractalFn();
-int LPopcornFractalFn();
+int popcorn_fractal();
+int long_popcorn_fractal();
+int popcorn_fractal_old();
+int long_popcorn_fractal_old();
+int popcorn_fractal_fn();
+int long_popcorn_fractal_fn();
