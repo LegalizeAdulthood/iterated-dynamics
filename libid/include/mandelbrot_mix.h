@@ -2,6 +2,6 @@
 //
 #pragma once
 
-int MandelbrotMix4fp_per_pixel();
-int MandelbrotMix4fpFractal();
-bool MandelbrotMix4Setup();
+int mandelbrot_mix4_fp_per_pixel();
+int mandelbrot_mix4_fp_fractal();
+bool mandelbrot_mix4_setup();

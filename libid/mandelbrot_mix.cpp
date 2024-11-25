@@ -157,17 +157,17 @@ int MandelbrotMix::iterate()
 
 static MandelbrotMix s_mix{};
 
-bool MandelbrotMix4Setup()
+bool mandelbrot_mix4_setup()
 {
     return s_mix.setup();
 }
 
-int MandelbrotMix4fp_per_pixel()
+int mandelbrot_mix4_fp_per_pixel()
 {
     return s_mix.per_pixel();
 }
 
-int MandelbrotMix4fpFractal() // from formula by Jim Muth
+int mandelbrot_mix4_fp_fractal() // from formula by Jim Muth
 {
     return s_mix.iterate();
 }

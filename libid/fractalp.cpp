@@ -2299,7 +2299,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MANDELBROTMIX4, help_labels::HF_MANDELBROTMIX4, fractal_flags::BAILTEST|fractal_flags::TRIG1|fractal_flags::MORE,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, standard_fractal,
+        mandelbrot_mix4_fp_fractal, mandelbrot_mix4_fp_per_pixel, mandelbrot_mix4_setup, standard_fractal,
         STDBAILOUT
     },
 
