@@ -11,7 +11,7 @@
 #include "fractals.h"
 #include "id_data.h"
 
-bool SierpinskiSetup()
+bool sierpinski_setup()
 {
     // sierpinski
     g_periodicity_check = 0;                // disable periodicity checks
@@ -21,7 +21,7 @@ bool SierpinskiSetup()
     return true;
 }
 
-bool SierpinskiFPSetup()
+bool sierpinski_fp_setup()
 {
     // sierpinski
     g_periodicity_check = 0;                // disable periodicity checks
@@ -30,7 +30,7 @@ bool SierpinskiFPSetup()
     return true;
 }
 
-int SierpinskiFractal()
+int sierpinski_fractal()
 {
     /* following code translated from basic - see "Fractals
     Everywhere" by Michael Barnsley, p. 251, Program 7.1.1 */
@@ -48,7 +48,7 @@ int SierpinskiFractal()
     return g_bailout_long();
 }
 
-int SierpinskiFPFractal()
+int sierpinski_fp_fractal()
 {
     /* following code translated from basic - see "Fractals
     Everywhere" by Michael Barnsley, p. 251, Program 7.1.1 */

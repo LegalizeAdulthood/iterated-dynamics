@@ -2,8 +2,8 @@
 //
 #pragma once
 
-bool SierpinskiSetup();
-bool SierpinskiFPSetup();
+bool sierpinski_setup();
+bool sierpinski_fp_setup();
 
-int SierpinskiFractal();
-int SierpinskiFPFractal();
+int sierpinski_fractal();
+int sierpinski_fp_fractal();

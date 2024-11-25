@@ -421,7 +421,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_SIER, help_labels::HF_SIER, fractal_flags::NONE,
         -4.0F/3.0F, 96.0F/45.0F, -0.9F, 1.7F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::SIERPINSKIFP, symmetry_type::NONE,
-        SierpinskiFractal, long_julia_per_pixel, SierpinskiSetup,
+        sierpinski_fractal, long_julia_per_pixel, sierpinski_setup,
         standard_fractal,
         127
     },
@@ -1133,7 +1133,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_SIER, help_labels::HF_SIER, fractal_flags::NONE,
         -4.0F/3.0F, 96.0F/45.0F, -0.9F, 1.7F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::SIERPINSKI, symmetry_type::NONE,
-        SierpinskiFPFractal, other_julia_fp_per_pixel, SierpinskiFPSetup,
+        sierpinski_fp_fractal, other_julia_fp_per_pixel, sierpinski_fp_setup,
         standard_fractal,
         127
     },
