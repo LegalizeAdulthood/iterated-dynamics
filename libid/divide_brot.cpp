@@ -16,7 +16,7 @@
 
 LDBL g_b_const{};
 
-int dividebrot5bn_per_pixel()
+int divide_brot5_bn_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bn_int(g_param_z_bn.x, g_delta_x_bn, (U16) g_col);
@@ -40,7 +40,7 @@ int dividebrot5bn_per_pixel()
     return 0; /* 1st iteration has NOT been done */
 }
 
-int dividebrot5bf_per_pixel()
+int divide_brot5_bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
     mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16) g_col);
@@ -64,7 +64,7 @@ int dividebrot5bf_per_pixel()
     return 0; /* 1st iteration has NOT been done */
 }
 
-int DivideBrot5bnFractal()
+int divide_brot5_bn_fractal()
 {
     BNComplex bntmpnew, bnnumer, bnc_exp;
     bn_t tmp1, tmp2;
@@ -113,7 +113,7 @@ int DivideBrot5bnFractal()
     return g_bailout_bignum();
 }
 
-int DivideBrot5bfFractal()
+int divide_brot5_bf_fractal()
 {
     BFComplex bftmpnew, bfnumer, bfc_exp;
     bf_t tmp1;
@@ -154,14 +154,14 @@ int DivideBrot5bfFractal()
     return g_bailout_bigfloat();
 }
 
-bool DivideBrot5Setup()
+bool divide_brot5_setup()
 {
     g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
     g_b_const = g_params[1] + 1.0e-20;
     return true;
 }
 
-int DivideBrot5fp_per_pixel()
+int divide_brot5_fp_per_pixel()
 {
     if (g_invert != 0)
     {
@@ -180,7 +180,7 @@ int DivideBrot5fp_per_pixel()
     return 0; /* 1st iteration has NOT been done */
 }
 
-int DivideBrot5fpFractal() /* from formula by Jim Muth */
+int divide_brot5_fp_fractal() /* from formula by Jim Muth */
 {
     /* z=sqr(z)/(z^(-a)+b)+c */
     /* we'll set a to -a in setup, so don't need it here */

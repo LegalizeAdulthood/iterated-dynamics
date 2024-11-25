@@ -6,10 +6,10 @@
 
 extern LDBL g_b_const;
 
-int dividebrot5bf_per_pixel();
-int dividebrot5bn_per_pixel();
-int DivideBrot5bnFractal();
-int DivideBrot5bfFractal();
-bool DivideBrot5Setup();
-int DivideBrot5fp_per_pixel();
-int DivideBrot5fpFractal();
+int divide_brot5_bf_per_pixel();
+int divide_brot5_bn_per_pixel();
+int divide_brot5_bn_fractal();
+int divide_brot5_bf_fractal();
+bool divide_brot5_setup();
+int divide_brot5_fp_per_pixel();
+int divide_brot5_fp_fractal();

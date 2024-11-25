@@ -178,7 +178,7 @@ AlternateMath g_alternate_math[] =
     */
     {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, julia_z_power_bf_fractal, julia_bf_per_pixel, mandel_bf_setup  },
     {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT, julia_z_power_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
-    {fractal_type::DIVIDE_BROT5, bf_math_type::BIGFLT, DivideBrot5bfFractal, dividebrot5bf_per_pixel, mandel_bf_setup},
+    {fractal_type::DIVIDE_BROT5, bf_math_type::BIGFLT, divide_brot5_bf_fractal, divide_brot5_bf_per_pixel, mandel_bf_setup},
     {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr, nullptr, nullptr}
 };
 
@@ -2288,7 +2288,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_DIVIDEBROT5, help_labels::HF_DIVIDEBROT5, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
         -2.5f, 1.5f, -1.5f, 1.5f,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        DivideBrot5fpFractal, DivideBrot5fp_per_pixel, DivideBrot5Setup, standard_fractal,
+        divide_brot5_fp_fractal, divide_brot5_fp_per_pixel, divide_brot5_setup, standard_fractal,
         16
     },
     {
