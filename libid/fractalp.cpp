@@ -740,7 +740,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_KAM, help_labels::HF_KAM, fractal_flags::NOGUESS|fractal_flags::NOTRACE,
         -1.0F, 1.0F, -.75F, .75F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::KAM, symmetry_type::NONE,
-        (VF)kamtorusfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)kam_torus_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -751,7 +751,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_KAM, help_labels::HF_KAM, fractal_flags::NOGUESS|fractal_flags::NOTRACE,
         -1.0F, 1.0F, -.75F, .75F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::KAMFP, symmetry_type::NONE,
-        (VF)kamtoruslongorbit, nullptr, orbit3dlongsetup, orbit2dlong,
+        (VF)kam_torus_long_orbit, nullptr, orbit3d_long_setup, orbit2d_long,
         NOBAILOUT
     },
 
@@ -762,7 +762,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_KAM, help_labels::HF_KAM, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D,
         -3.0F, 3.0F, -1.0F, 3.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::KAM3D, symmetry_type::NONE,
-        (VF)kamtorusfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)kam_torus_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -773,7 +773,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_KAM, help_labels::HF_KAM, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D,
         -3.0F, 3.0F, -1.0F, 3.5F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::KAM3DFP, symmetry_type::NONE,
-        (VF)kamtoruslongorbit, nullptr, orbit3dlongsetup, orbit3dlong,
+        (VF)kam_torus_long_orbit, nullptr, orbit3d_long_setup, orbit3d_long,
         NOBAILOUT
     },
 
@@ -1011,7 +1011,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LORENZ, help_labels::HF_LORENZ, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -15.0F, 15.0F, 0.0F, 30.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LLORENZ, symmetry_type::NONE,
-        (VF)lorenz3dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)lorenz3d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -1022,7 +1022,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LORENZ, help_labels::HF_LORENZ, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -15.0F, 15.0F, 0.0F, 30.0F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FPLORENZ, symmetry_type::NONE,
-        (VF)lorenz3dlongorbit, nullptr, orbit3dlongsetup, orbit2dlong,
+        (VF)lorenz3d_long_orbit, nullptr, orbit3d_long_setup, orbit2d_long,
         NOBAILOUT
     },
 
@@ -1033,7 +1033,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LORENZ, help_labels::HF_LORENZ, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FPLORENZ3D, symmetry_type::NONE,
-        (VF)lorenz3dlongorbit, nullptr, orbit3dlongsetup, orbit3dlong,
+        (VF)lorenz3d_long_orbit, nullptr, orbit3d_long_setup, orbit3d_long,
         NOBAILOUT
     },
 
@@ -1251,7 +1251,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LORENZ, help_labels::HF_LORENZ, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LLORENZ3D, symmetry_type::NONE,
-        (VF)lorenz3dfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -1262,7 +1262,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_ROSS, help_labels::HF_ROSS, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -20.0F, 40.0F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FPROSSLER, symmetry_type::NONE,
-        (VF)rosslerlongorbit, nullptr, orbit3dlongsetup, orbit3dlong,
+        (VF)rossler_long_orbit, nullptr, orbit3d_long_setup, orbit3d_long,
         NOBAILOUT
     },
 
@@ -1273,7 +1273,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_ROSS, help_labels::HF_ROSS, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -20.0F, 40.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LROSSLER, symmetry_type::NONE,
-        (VF)rosslerfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)rossler_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -1284,7 +1284,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_HENON, help_labels::HF_HENON, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -1.4F, 1.4F, -.5F, .5F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FPHENON, symmetry_type::NONE,
-        (VF)henonlongorbit, nullptr, orbit3dlongsetup, orbit2dlong,
+        (VF)henon_long_orbit, nullptr, orbit3d_long_setup, orbit2d_long,
         NOBAILOUT
     },
 
@@ -1295,7 +1295,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_HENON, help_labels::HF_HENON, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -1.4F, 1.4F, -.5F, .5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LHENON, symmetry_type::NONE,
-        (VF)henonfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)henon_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -1306,7 +1306,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PICK, help_labels::HF_PICKOVER, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D,
         -8.0F/3.0F, 8.0F/3.0F, -2.0F, 2.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)pickoverfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)pickover_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -1317,7 +1317,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_GINGER, help_labels::HF_GINGER, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -4.5F, 8.5F, -4.5F, 8.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)gingerbreadfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)ginger_bread_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -1659,7 +1659,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MARTIN, help_labels::HF_HOPALONG, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -2.0F, 3.0F, -1.625F, 2.625F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)hopalong2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)hopalong2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -1681,7 +1681,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MARTIN, help_labels::HF_MARTIN, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -32.0F, 32.0F, -24.0F, 24.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)martin2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)martin2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -1704,7 +1704,7 @@ fractalspecificstuff g_fractal_specific[] =
         fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)lorenz3d1floatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d1_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -1716,7 +1716,7 @@ fractalspecificstuff g_fractal_specific[] =
         fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)lorenz3d3floatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d3_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -1728,7 +1728,7 @@ fractalspecificstuff g_fractal_specific[] =
         fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NORESUME|fractal_flags::PARMS3D|fractal_flags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)lorenz3d4floatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)lorenz3d4_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -1879,7 +1879,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_DYNAM, help_labels::HF_DYNAM, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::TRIG1,
         -20.0F, 20.0F, -20.0F, 20.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)dynamfloat, nullptr, dynam2dfloatsetup, dynam2dfloat,
+        (VF)dynam_float, nullptr, dynam2d_float_setup, dynam2d_float,
         NOBAILOUT
     },
 
@@ -1959,7 +1959,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_INVERSE, help_labels::HF_INVERSE, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
         24, fractal_type::NOFRACTAL, fractal_type::MANDEL, fractal_type::INVERSEJULIAFP, symmetry_type::NONE,
-        Linverse_julia_orbit, nullptr, orbit3dlongsetup, inverse_julia_per_image,
+        l_inverse_julia_orbit, nullptr, orbit3d_long_setup, inverse_julia_per_image,
         NOBAILOUT
     },
 
@@ -1970,7 +1970,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_INVERSE, help_labels::HF_INVERSE, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::MANDEL, fractal_type::INVERSEJULIA, symmetry_type::NONE,
-        Minverse_julia_orbit, nullptr, orbit3dfloatsetup, inverse_julia_per_image,
+        m_inverse_julia_orbit, nullptr, orbit3d_float_setup, inverse_julia_per_image,
         NOBAILOUT
     },
 
@@ -1983,7 +1983,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MANDELCLOUD, help_labels::HF_MANDELCLOUD, fractal_flags::NOGUESS|fractal_flags::NOTRACE,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)mandelcloudfloat, nullptr, dynam2dfloatsetup, dynam2dfloat,
+        (VF)mandel_cloud_float, nullptr, dynam2d_float_setup, dynam2d_float,
         NOBAILOUT
     },
 
@@ -2133,7 +2133,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_ICON, help_labels::HF_ICON, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)iconfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)icon_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -2144,7 +2144,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_ICON, help_labels::HF_ICON, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::PARMS3D|fractal_flags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)iconfloatorbit, nullptr, orbit3dfloatsetup, orbit3dfloat,
+        (VF)icon_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NOBAILOUT
     },
 
@@ -2219,7 +2219,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MARTIN, help_labels::HF_CHIP, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -760.0F, 760.0F, -570.0F, 570.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)chip2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)chip2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -2230,7 +2230,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MARTIN, help_labels::HF_QUADRUPTWO, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -82.93367F, 112.2749F, -55.76383F, 90.64257F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)quadruptwo2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)quadrup_two2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -2241,7 +2241,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MARTIN, help_labels::HF_THREEPLY, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC,
         -8000.0F, 8000.0F, -6000.0F, 6000.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)threeply2dfloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)three_ply2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
 
@@ -2279,7 +2279,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LATOO, help_labels::HF_LATOO, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::TRIG4,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        (VF)latoofloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
+        (VF)latoo_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NOBAILOUT
     },
     {

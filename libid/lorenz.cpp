@@ -339,7 +339,7 @@ static long s_orbit_l{};
 static long s_sin_x_l{};
 static long s_cos_x_l{};
 
-bool orbit3dlongsetup()
+bool orbit3d_long_setup()
 {
     g_max_count = 0L;
     s_connect = true;
@@ -488,7 +488,7 @@ lrwalk:
 static double &cos_b{s_dx};
 static double &sin_sum_a_b_c{s_dy};
 
-bool orbit3dfloatsetup()
+bool orbit3d_float_setup()
 {
     g_max_count = 0L;
     s_connect = true;
@@ -690,7 +690,7 @@ rwalk:
 //   orbit functions - put in fractalspecific[fractype].orbitcalc
 //****************************************************************
 
-int Minverse_julia_orbit()
+int m_inverse_julia_orbit()
 {
     static int random_dir = 0;
     static int random_len = 0;
@@ -839,7 +839,7 @@ int Minverse_julia_orbit()
     return 1;
 }
 
-int Linverse_julia_orbit()
+int l_inverse_julia_orbit()
 {
     static int random_dir = 0;
     static int random_len = 0;
@@ -1004,7 +1004,7 @@ int Linverse_julia_orbit()
     return 1;
 }
 
-int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
+int lorenz3d_long_orbit(long *l_x, long *l_y, long *l_z)
 {
     s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
     s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
@@ -1018,7 +1018,7 @@ int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
     return 0;
 }
 
-int lorenz3d1floatorbit(double *x, double *y, double *z)
+int lorenz3d1_float_orbit(double *x, double *y, double *z)
 {
     double norm;
 
@@ -1039,7 +1039,7 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
     return 0;
 }
 
-int lorenz3dfloatorbit(double *x, double *y, double *z)
+int lorenz3d_float_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -1056,7 +1056,7 @@ int lorenz3dfloatorbit(double *x, double *y, double *z)
     return 0;
 }
 
-int lorenz3d3floatorbit(double *x, double *y, double *z)
+int lorenz3d3_float_orbit(double *x, double *y, double *z)
 {
     double norm;
 
@@ -1080,7 +1080,7 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
     return 0;
 }
 
-int lorenz3d4floatorbit(double *x, double *y, double *z)
+int lorenz3d4_float_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -1101,7 +1101,7 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
     return 0;
 }
 
-int henonfloatorbit(double *x, double *y, double * /*z*/)
+int henon_float_orbit(double *x, double *y, double * /*z*/)
 {
     double newx;
     double newy;
@@ -1112,7 +1112,7 @@ int henonfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
+int henon_long_orbit(long *l_x, long *l_y, long * /*l_z*/)
 {
     long newx;
     long newy;
@@ -1125,7 +1125,7 @@ int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
     return 0;
 }
 
-int rosslerfloatorbit(double *x, double *y, double *z)
+int rossler_float_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -1140,7 +1140,7 @@ int rosslerfloatorbit(double *x, double *y, double *z)
     return 0;
 }
 
-int pickoverfloatorbit(double *x, double *y, double *z)
+int pickover_float_orbit(double *x, double *y, double *z)
 {
     double newx;
     double newy;
@@ -1155,7 +1155,7 @@ int pickoverfloatorbit(double *x, double *y, double *z)
 }
 
 // page 149 "Science of Fractal Images"
-int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
+int ginger_bread_float_orbit(double *x, double *y, double * /*z*/)
 {
     double newx;
     newx = 1 - (*y) + std::fabs(*x);
@@ -1164,7 +1164,7 @@ int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
+int rossler_long_orbit(long *l_x, long *l_y, long *l_z)
 {
     s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
     s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
@@ -1185,7 +1185,7 @@ int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 // NTURNS = Outside Orbit
 // TURN2  = Points per orbit
 // a      = Angle
-int kamtorusfloatorbit(double *r, double *s, double *z)
+int kam_torus_float_orbit(double *r, double *s, double *z)
 {
     double srr;
     if (s_t++ >= s_l_d)
@@ -1206,7 +1206,7 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
     return 0;
 }
 
-int kamtoruslongorbit(long *r, long *s, long *z)
+int kam_torus_long_orbit(long *r, long *s, long *z)
 {
     long srr;
     if (s_t++ >= s_l_d)
@@ -1227,7 +1227,7 @@ int kamtoruslongorbit(long *r, long *s, long *z)
     return 0;
 }
 
-int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
+int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x)*std::sqrt(std::fabs(s_b*(*x)-s_c));
@@ -1236,7 +1236,7 @@ int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int chip2dfloatorbit(double *x, double *y, double * /*z*/)
+int chip2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x) * std::cos(sqr(std::log(std::fabs(s_b*(*x)-s_c))))
@@ -1246,7 +1246,7 @@ int chip2dfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
+int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x) * std::sin(std::log(std::fabs(s_b*(*x)-s_c)))
@@ -1256,7 +1256,7 @@ int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
+int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*cos_b+s_c-(*x)*sin_sum_a_b_c));
@@ -1265,7 +1265,7 @@ int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int martin2dfloatorbit(double *x, double *y, double * /*z*/)
+int martin2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - std::sin(*x);
@@ -1274,7 +1274,7 @@ int martin2dfloatorbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int mandelcloudfloat(double *x, double *y, double * /*z*/)
+int mandel_cloud_float(double *x, double *y, double * /*z*/)
 {
     double newx;
     double newy;
@@ -1293,7 +1293,7 @@ int mandelcloudfloat(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int dynamfloat(double *x, double *y, double * /*z*/)
+int dynam_float(double *x, double *y, double * /*z*/)
 {
     DComplex cp;
     DComplex tmp;
@@ -1324,7 +1324,7 @@ static const double &GAMMA{g_params[3]};
 static const double &OMEGA{g_params[4]};
 static const double &DEGREE{g_params[5]};
 
-int iconfloatorbit(double *x, double *y, double *z)
+int icon_float_orbit(double *x, double *y, double *z)
 {
     double oldx;
     double oldy;
@@ -1364,7 +1364,7 @@ static const double &PAR_B{g_params[1]};
 static const double &PAR_C{g_params[2]};
 static const double &PAR_D{g_params[3]};
 
-int latoofloatorbit(double *x, double *y, double * /*z*/)
+int latoo_float_orbit(double *x, double *y, double * /*z*/)
 {
     double xold = *x;
     double yold = *y;
@@ -1419,7 +1419,7 @@ int inverse_julia_per_image()
     return 0;
 }
 
-int orbit2dfloat()
+int orbit2d_float()
 {
     std::FILE *fp = open_orbitsave();
     affine cvt;
@@ -1581,7 +1581,7 @@ int orbit2dfloat()
     return ret;
 }
 
-int orbit2dlong()
+int orbit2d_long()
 {
     std::FILE *fp = open_orbitsave();
     l_affine cvt;
@@ -1992,7 +1992,7 @@ static int orbit3dfloatcalc()
     return ret;
 }
 
-bool dynam2dfloatsetup()
+bool dynam2d_float_setup()
 {
     s_connect = false;
     s_euler = false;
@@ -2035,7 +2035,7 @@ bool dynam2dfloatsetup()
  * of parameter1 pixels.  maxit differential equation steps are taken, with
  * a step size of parameter2.
  */
-int dynam2dfloat()
+int dynam2d_float()
 {
     std::FILE *fp = open_orbitsave();
 
@@ -2236,7 +2236,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
     return 0;
 }
 
-int plotorbits2dsetup()
+int plot_orbits2d_setup()
 {
     if (g_cur_fractal_specific->isinteger != 0)
     {
@@ -2287,7 +2287,7 @@ int plotorbits2dsetup()
     return 1;
 }
 
-int plotorbits2dfloat()
+int plot_orbits2d_float()
 {
     if (driver_key_pressed())
     {
@@ -2875,14 +2875,14 @@ static void setupmatrix(MATRIX doublemat)
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
 }
 
-int orbit3dfloat()
+int orbit3d_float()
 {
     g_display_3d = display_3d_modes::MINUS_ONE ;
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     return funny_glasses_call(orbit3dfloatcalc);
 }
 
-int orbit3dlong()
+int orbit3d_long()
 {
     g_display_3d = display_3d_modes::MINUS_ONE ;
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;

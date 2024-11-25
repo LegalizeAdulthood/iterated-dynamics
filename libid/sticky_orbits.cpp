@@ -18,7 +18,7 @@ int sticky_orbits()
     g_got_status = status_values::ORBITS; // for <tab> screen
     g_total_passes = 1;
 
-    if (plotorbits2dsetup() == -1)
+    if (plot_orbits2d_setup() == -1)
     {
         g_std_calc_mode = 'g';
         return -1;
@@ -37,7 +37,7 @@ int sticky_orbits()
             g_current_row = g_row;
             while (g_col <= g_i_x_stop)
             {
-                if (plotorbits2dfloat() == -1)
+                if (plot_orbits2d_float() == -1)
                 {
                     add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                     return -1; // interrupted
@@ -89,7 +89,7 @@ int sticky_orbits()
             {
                 while (g_col <= final)    // step through columns checking for new row
                 {
-                    if (plotorbits2dfloat() == -1)
+                    if (plot_orbits2d_float() == -1)
                     {
                         add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
@@ -110,7 +110,7 @@ int sticky_orbits()
             {
                 while (g_col <= final)    // step through columns checking for new row
                 {
-                    if (plotorbits2dfloat() == -1)
+                    if (plot_orbits2d_float() == -1)
                     {
                         add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
@@ -149,7 +149,7 @@ int sticky_orbits()
             {
                 while (g_row <= final)    // step through rows checking for new column
                 {
-                    if (plotorbits2dfloat() == -1)
+                    if (plot_orbits2d_float() == -1)
                     {
                         add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
@@ -170,7 +170,7 @@ int sticky_orbits()
             {
                 while (g_row <= final)    // step through rows checking for new column
                 {
-                    if (plotorbits2dfloat() == -1)
+                    if (plot_orbits2d_float() == -1)
                     {
                         add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
@@ -218,7 +218,7 @@ int sticky_orbits()
             theta = (double)angle * factor;
             g_col = (int)(xfactor + (Xctr + Xmagfactor * std::cos(theta)));
             g_row = (int)(yfactor + (Yctr + Xmagfactor * std::sin(theta)));
-            if (plotorbits2dfloat() == -1)
+            if (plot_orbits2d_float() == -1)
             {
                 add_worklist(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
                 return -1; // interrupted
