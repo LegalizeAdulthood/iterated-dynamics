@@ -8,10 +8,6 @@
 #include <complex>
 #include <vector>
 
-// some limits for Tierazon fractals
-#define MAXSIZE 1.0e+6
-#define MINSIZE 1.0e-6
-
 struct MP;
 struct MPC;
 
@@ -75,13 +71,6 @@ void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z);
 void mandel_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 int juliafp_per_pixel();
-int mandelbarfpOrbit();
-int burningshipfpOrbit();
-int celticfpOrbit();
-int tierazonfp_per_pixel();
-int tierazonfpOrbit();
-int ArtMatrixfp_per_pixel();
-int ArtMatrixfpOrbit();
 int othermandelfp_per_pixel();
 int otherjuliafp_per_pixel();
 int dynamfloat(double *, double *, double*);
