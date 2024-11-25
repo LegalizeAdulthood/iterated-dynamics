@@ -38,9 +38,8 @@ extern double                g_sin_x;
 extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;
 
-void cpower(DComplex *, int, DComplex *);
-int lcpower(LComplex *, int, LComplex *, int);
-int lcomplex_mult(LComplex, LComplex, LComplex *, int);
+void cpower(DComplex *base, int exp, DComplex *result);
+int lcpower(LComplex *base, int exp, LComplex *result, int bitshift);
 int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
 int complex_div(DComplex numerator, DComplex denominator, DComplex *pout);
 int MPCNewtonFractal();
@@ -62,8 +61,8 @@ void mandel_perturb(
 int juliafp_per_pixel();
 int othermandelfp_per_pixel();
 int otherjuliafp_per_pixel();
-int dynamfloat(double *, double *, double*);
-int mandelcloudfloat(double *, double *, double*);
+int dynamfloat(double *x, double *y, double *z);
+int mandelcloudfloat(double *x, double *y, double *z);
 int dynam2dfloat();
 int fpMODbailout();
 int fpREALbailout();
