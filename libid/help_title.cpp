@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <cstring>
 
-void helptitle()
+void help_title()
 {
     driver_set_clear();
     char msg[MSG_LEN];

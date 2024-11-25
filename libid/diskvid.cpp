@@ -137,7 +137,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     if (driver_diskp()) // otherwise, real screen also in use, don't hit it
     {
-        helptitle();
+        help_title();
         driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
         for (int i = 0; i < BOXDEPTH; ++i)
         {

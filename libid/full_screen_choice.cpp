@@ -368,8 +368,8 @@ int fullscreen_choice(
         topleftrow = 3 + titlelines + i;        // row of topleft choice
 
         // now set up the overall display
-        helptitle();                            // clear, display title line
-        driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      // init rest to background
+        help_title();                                   // clear, display title line
+        driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
         for (i = topleftrow - 1 - titlelines; i < topleftrow + box_depth + 1; ++i)
         {
             driver_set_attr(i, k, C_PROMPT_LO, j);          // draw empty box

@@ -403,7 +403,7 @@ static void display_page(char const *title, char const *text, unsigned text_len,
 {
     char temp[20];
 
-    helptitle();
+    help_title();
     helpinstr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     putstringcenter(1, 0, 80, C_HELP_HDG, title);
@@ -1297,7 +1297,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
 
     if (pnum == 0)   // initialization
     {
-        helptitle();
+        help_title();
         printinstr();
         driver_set_attr(2, 0, C_HELP_BODY, 80*22);
         putstringcenter(1, 0, 80, C_HELP_HDG, "Generating id.txt");
@@ -1377,7 +1377,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int))
 ErrorAbort:
     if (msg != nullptr)
     {
-        helptitle();
+        help_title();
         stopmsg(stopmsg_flags::NO_STACK, msg);
     }
 

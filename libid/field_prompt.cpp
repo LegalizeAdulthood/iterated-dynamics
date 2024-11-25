@@ -30,7 +30,7 @@ int field_prompt(
     int i;
     int j;
     char buf[81] = { 0 };
-    helptitle();                                    // clear screen, display title
+    help_title();                                   // clear screen, display title
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
     charptr = hdg;                                  // count title lines, find widest
     boxwidth = 0;

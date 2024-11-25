@@ -169,7 +169,7 @@ bool tab_display_2(char *msg)
     int row;
     int key = 0;
 
-    helptitle();
+    help_title();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
 
     row = 1;
@@ -293,7 +293,7 @@ int tab_display()       // display the status of the current image
 top:
     k = 0; /* initialize here so parameter line displays correctly on return
                 from control-tab */
-    helptitle();
+    help_title();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
     int s_row = 2;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");

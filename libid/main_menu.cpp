@@ -388,7 +388,7 @@ top:
     }
     if (i == ID_KEY_ESC)             // escape from menu exits
     {
-        helptitle();
+        help_title();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
         for (int j = 9; j <= 11; ++j)
         {

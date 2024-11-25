@@ -41,7 +41,7 @@ bool thinking(int options, char const *msg)
     {
         driver_stack_screen();
         s_think_state = 0;
-        helptitle();
+        help_title();
         char buf[81];
         std::strcpy(buf, "  ");
         std::strcat(buf, msg);

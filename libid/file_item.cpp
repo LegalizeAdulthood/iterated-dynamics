@@ -543,7 +543,7 @@ static int check_gfe_key(int curkey, int choice)
         std::strcat(infhdg, " file entry:\n\n");
         // ... instead, call help with buffer?  heading added
         driver_stack_screen();
-        helptitle();
+        help_title();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
         g_text_cbase = 0;
@@ -701,7 +701,7 @@ retry:
         attributes[i] = 1;
     }
 
-    helptitle(); // to display a clue when file big and next is slow
+    help_title(); // to display a clue when file big and next is slow
 
     numentries = scan_entries(s_gfe_file, &storage[0], nullptr);
     if (numentries == 0)

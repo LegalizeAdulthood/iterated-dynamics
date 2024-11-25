@@ -2,4 +2,4 @@
 //
 #pragma once
 
-void helptitle();
+void help_title();

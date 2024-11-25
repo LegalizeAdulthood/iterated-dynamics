@@ -54,7 +54,7 @@ void intro()
     }
     authors.push_back(i);
 
-    helptitle();
+    help_title();
 #define END_MAIN_AUTHOR 6
     int toprow = END_MAIN_AUTHOR + 1;
     int botrow = 21;
