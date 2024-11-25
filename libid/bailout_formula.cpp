@@ -2,8 +2,8 @@
 //
 #include "bailout_formula.h"
 
-#include "debug_flags.h"
 #include "fracsuba.h"
+#include "fractalb.h"
 #include "fractals.h"
 
 bailouts g_bail_out_test{}; // test used for determining bailout
