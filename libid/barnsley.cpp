@@ -7,7 +7,7 @@
 #include "fixed_pt.h"
 #include "fractals.h"
 
-int Barnsley1Fractal()
+int barnsley1_fractal()
 {
     // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
@@ -30,7 +30,7 @@ int Barnsley1Fractal()
     return g_bailout_long();
 }
 
-int Barnsley1FPFractal()
+int barnsley1_fp_fractal()
 {
     // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
@@ -53,7 +53,7 @@ int Barnsley1FPFractal()
     return g_bailout_float();
 }
 
-int Barnsley2Fractal()
+int barnsley2_fractal()
 {
     // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 331,
     // example 4.2
@@ -78,7 +78,7 @@ int Barnsley2Fractal()
     return g_bailout_long();
 }
 
-int Barnsley2FPFractal()
+int barnsley2_fp_fractal()
 {
     // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 331,
     // example 4.2
@@ -103,7 +103,7 @@ int Barnsley2FPFractal()
     return g_bailout_float();
 }
 
-int Barnsley3Fractal()
+int barnsley3_fractal()
 {
     // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 292,
     // example 4.1
@@ -133,7 +133,7 @@ int Barnsley3Fractal()
     return g_bailout_long();
 }
 
-int Barnsley3FPFractal()
+int barnsley3_fp_fractal()
 {
     // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 292,
     // example 4.1

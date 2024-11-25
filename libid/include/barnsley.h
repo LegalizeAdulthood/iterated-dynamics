@@ -2,9 +2,9 @@
 //
 #pragma once
 
-int Barnsley1Fractal();
-int Barnsley1FPFractal();
-int Barnsley2Fractal();
-int Barnsley2FPFractal();
-int Barnsley3Fractal();
-int Barnsley3FPFractal();
+int barnsley1_fractal();
+int barnsley1_fp_fractal();
+int barnsley2_fractal();
+int barnsley2_fp_fractal();
+int barnsley3_fractal();
+int barnsley3_fp_fractal();
