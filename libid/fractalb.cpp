@@ -898,7 +898,7 @@ int mandel_bf_per_pixel()
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
     // the pointer to setup isn't.
     if (g_bf_math == bf_math_type::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
-        return mandelfp_per_pixel();
+        return mandel_fp_per_pixel();
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);

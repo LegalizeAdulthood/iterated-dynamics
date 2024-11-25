@@ -467,7 +467,7 @@ int Std4dFractal()
         }
         else
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = longCmplxZpowerFractal;
+            g_fractal_specific[+g_new_orbit_type].orbitcalc = long_cmplx_z_power_fractal;
         }
     }
 
@@ -519,7 +519,7 @@ int Std4dfpFractal()
         }
         else
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = floatCmplxZpowerFractal;
+            g_fractal_specific[+g_new_orbit_type].orbitcalc = float_cmplx_z_power_fractal;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
     }

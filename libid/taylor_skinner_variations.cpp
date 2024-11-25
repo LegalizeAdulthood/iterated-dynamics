@@ -155,7 +155,7 @@ static int SkinnerTrigSubSqrfpFractal()
 
 static bool TrigPlusSqrfpSetup()
 {
-    g_cur_fractal_specific->per_pixel =  juliafp_per_pixel;
+    g_cur_fractal_specific->per_pixel =  julia_fp_per_pixel;
     g_cur_fractal_specific->orbitcalc =  TrigPlusSqrfpFractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
@@ -198,7 +198,7 @@ bool TrigPlusTrigfpSetup()
     {
         return TrigPlusSqrfpSetup();
     }
-    g_cur_fractal_specific->per_pixel =  otherjuliafp_per_pixel;
+    g_cur_fractal_specific->per_pixel =  other_julia_fp_per_pixel;
     g_cur_fractal_specific->orbitcalc =  TrigPlusTrigfpFractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
@@ -614,7 +614,7 @@ int Richard8Fractal()
 
 int otherrichard8fp_per_pixel()
 {
-    othermandelfp_per_pixel();
+    other_mandel_fp_per_pixel();
     CMPLXtrig1(*g_float_param, g_tmp_z);
     CMPLXmult(g_tmp_z, g_param_z2, g_tmp_z);
     return 1;

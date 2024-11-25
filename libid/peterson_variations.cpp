@@ -299,7 +299,7 @@ int marksmandelfp_per_pixel()
 
 int marks_mandelpwrfp_per_pixel()
 {
-    mandelfp_per_pixel();
+    mandel_fp_per_pixel();
     g_tmp_z = g_old_z;
     g_tmp_z.x -= 1;
     CMPLXpwr(g_old_z, g_tmp_z, g_tmp_z);

@@ -100,7 +100,7 @@ double g_quaternion_ck{};
 //              Bailout Routines
 // --------------------------------------------------------------------
 
-int  fpMODbailout()
+int  fp_mod_bailout()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
@@ -113,7 +113,7 @@ int  fpMODbailout()
     return 0;
 }
 
-int  fpREALbailout()
+int  fp_real_bailout()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
@@ -126,7 +126,7 @@ int  fpREALbailout()
     return 0;
 }
 
-int  fpIMAGbailout()
+int  fp_imag_bailout()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
@@ -139,7 +139,7 @@ int  fpIMAGbailout()
     return 0;
 }
 
-int  fpORbailout()
+int  fp_or_bailout()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
@@ -152,7 +152,7 @@ int  fpORbailout()
     return 0;
 }
 
-int  fpANDbailout()
+int  fp_and_bailout()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
@@ -165,7 +165,7 @@ int  fpANDbailout()
     return 0;
 }
 
-int  fpMANHbailout()
+int  fp_manh_bailout()
 {
     double manhmag;
     g_temp_sqr_x = sqr(g_new_z.x);
@@ -180,7 +180,7 @@ int  fpMANHbailout()
     return 0;
 }
 
-int  fpMANRbailout()
+int  fp_manr_bailout()
 {
     double manrmag;
     g_temp_sqr_x = sqr(g_new_z.x);
@@ -321,19 +321,15 @@ int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
     return 0;
 }
 
-int JuliaFractal()
+int julia_fractal()
 {
-    /* used for C prototype of fast integer math routines for classic
-       Mandelbrot and Julia */
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
     g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
     return g_bailout_long();
 }
 
-int JuliafpFractal()
+int julia_fp_fractal()
 {
-    // floating point version of classical Mandelbrot/Julia
-    // note that fast >= 287 equiv in fracsuba.asm must be kept in step
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
     return g_bailout_float();
@@ -342,7 +338,7 @@ int JuliafpFractal()
 long g_fudge_one;
 long g_fudge_two;
 
-int longCmplxZpowerFractal()
+int long_cmplx_z_power_fractal()
 {
     DComplex x;
     DComplex y;
@@ -366,7 +362,7 @@ int longCmplxZpowerFractal()
     return g_bailout_long();
 }
 
-int floatCmplxZpowerFractal()
+int float_cmplx_z_power_fractal()
 {
     g_new_z = ComplexPower(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;
@@ -566,7 +562,7 @@ int mandel_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int mandelfp_per_pixel()
+int mandel_fp_per_pixel()
 {
     // floating point mandelbrot
     // mandelfp
@@ -673,7 +669,7 @@ void mandel_perturb(
     delta_n.real(dnr);
 }
 
-int juliafp_per_pixel()
+int julia_fp_per_pixel()
 {
     // floating point julia
     // juliafp
@@ -692,7 +688,7 @@ int juliafp_per_pixel()
     return 0;
 }
 
-int othermandelfp_per_pixel()
+int other_mandel_fp_per_pixel()
 {
     if (g_invert != 0)
     {
@@ -719,7 +715,7 @@ int othermandelfp_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int otherjuliafp_per_pixel()
+int other_julia_fp_per_pixel()
 {
     if (g_invert != 0)
     {

@@ -553,7 +553,7 @@ static void initvars_fractal()
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
     g_bail_out_test = bailouts::Mod;                                //
-    g_bailout_float = fpMODbailout;                                 //
+    g_bailout_float = fp_mod_bailout;                                 //
     g_bailout_long = asmlMODbailout;                                //
     g_bailout_bignum = bnMODbailout;                                //
     g_bailout_bigfloat = bfMODbailout;                              //
