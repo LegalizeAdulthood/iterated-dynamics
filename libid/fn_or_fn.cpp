@@ -12,7 +12,7 @@
 #include "mpmath.h"
 #include "trig_fns.h"
 
-bool MandelTrigOrTrigSetup()
+bool mandel_trig_or_trig_setup()
 {
     // default symmetry is X_AXIS_NO_PARAM
     g_long_param = &g_l_init;
@@ -24,7 +24,7 @@ bool MandelTrigOrTrigSetup()
     return true;
 }
 
-bool ManlamTrigOrTrigSetup()
+bool man_lam_trig_or_trig_setup()
 {
     // psuedo
     // default symmetry is X_AXIS
@@ -41,7 +41,7 @@ bool ManlamTrigOrTrigSetup()
     return true;
 }
 
-bool LambdaTrigOrTrigSetup()
+bool lambda_trig_or_trig_setup()
 {
     // default symmetry is ORIGIN
     g_long_param = &g_l_param;
@@ -62,7 +62,7 @@ bool LambdaTrigOrTrigSetup()
    or alternate calculations.  The shift is made when the mod
    reaches a given value.  */
 
-int LambdaTrigOrTrigFractal()
+int lambda_trig_or_trig_fractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
@@ -79,7 +79,7 @@ int LambdaTrigOrTrigFractal()
     return g_bailout_long();
 }
 
-int LambdaTrigOrTrigfpFractal()
+int lambda_trig_or_trig_fp_fractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
@@ -96,7 +96,7 @@ int LambdaTrigOrTrigfpFractal()
     return g_bailout_float();
 }
 
-bool JuliaTrigOrTrigSetup()
+bool julia_trig_or_trig_setup()
 {
     // default symmetry is X_AXIS
     g_long_param = &g_l_param;
@@ -113,7 +113,7 @@ bool JuliaTrigOrTrigSetup()
     return true;
 }
 
-int JuliaTrigOrTrigFractal()
+int julia_trig_or_trig_fractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
@@ -130,7 +130,7 @@ int JuliaTrigOrTrigFractal()
     return g_bailout_long();
 }
 
-int JuliaTrigOrTrigfpFractal()
+int julia_trig_or_trig_fp_fractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */

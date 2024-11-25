@@ -2,13 +2,13 @@
 //
 #pragma once
 
-bool MandelTrigOrTrigSetup();
-bool ManlamTrigOrTrigSetup();
+bool mandel_trig_or_trig_setup();
+bool man_lam_trig_or_trig_setup();
 
-bool LambdaTrigOrTrigSetup();
-int LambdaTrigOrTrigFractal();
-int LambdaTrigOrTrigfpFractal();
+bool lambda_trig_or_trig_setup();
+int lambda_trig_or_trig_fractal();
+int lambda_trig_or_trig_fp_fractal();
 
-bool JuliaTrigOrTrigSetup();
-int JuliaTrigOrTrigFractal();
-int JuliaTrigOrTrigfpFractal();
+bool julia_trig_or_trig_setup();
+int julia_trig_or_trig_fractal();
+int julia_trig_or_trig_fp_fractal();
