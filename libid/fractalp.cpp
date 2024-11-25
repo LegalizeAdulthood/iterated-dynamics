@@ -558,7 +558,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MANDJUL4, help_labels::HF_MANDEL4, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::JULIA4, fractal_type::NOFRACTAL, fractal_type::MANDEL4FP, symmetry_type::X_AXIS_NO_PARAM,
-        Mandel4Fractal, mandel_per_pixel, mandel_long_setup, standard_fractal,
+        mandel4_fractal, mandel_per_pixel, mandel_long_setup, standard_fractal,
         STDBAILOUT
     },
 
@@ -569,7 +569,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MANDJUL4, help_labels::HF_JULIA4, fractal_flags::OKJB|fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::MANDEL4, fractal_type::JULIA4FP, symmetry_type::ORIGIN,
-        Mandel4Fractal, julia_per_pixel, julia_long_setup, standard_fractal,
+        mandel4_fractal, julia_per_pixel, julia_long_setup, standard_fractal,
         STDBAILOUT
     },
 
@@ -2086,7 +2086,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MANDJUL4, help_labels::HF_MANDEL4, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::JULIA4FP, fractal_type::NOFRACTAL, fractal_type::MANDEL4, symmetry_type::X_AXIS_NO_PARAM,
-        Mandel4fpFractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
+        mandel4_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         STDBAILOUT
     },
 
@@ -2097,7 +2097,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MANDJUL4, help_labels::HF_JULIA4, fractal_flags::OKJB|fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::MANDEL4FP, fractal_type::JULIA4, symmetry_type::ORIGIN,
-        Mandel4fpFractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
+        mandel4_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STDBAILOUT
     },
 

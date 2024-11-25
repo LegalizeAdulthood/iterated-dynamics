@@ -10,7 +10,7 @@
 #include "fixed_pt.h"
 #include "fractals.h"
 
-int Mandel4Fractal()
+int mandel4_fractal()
 {
     /*
        this routine calculates the Mandelbrot/Julia set based on the
@@ -31,7 +31,7 @@ int Mandel4Fractal()
     return g_bailout_long();
 }
 
-int Mandel4fpFractal()
+int mandel4_fp_fractal()
 {
     // first, compute (x + iy)**2
     g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y;

@@ -2,5 +2,5 @@
 //
 #pragma once
 
-int Mandel4Fractal();
-int Mandel4fpFractal();
+int mandel4_fractal();
+int mandel4_fp_fractal();
