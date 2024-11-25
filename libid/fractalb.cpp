@@ -42,7 +42,7 @@ void show_var_bn(char const *s, bn_t n)
     stopmsg(msg);
 }
 
-void showcornersdbl(char const *s)
+void show_corners_dbl(char const *s)
 {
     char msg[400];
     std::snprintf(msg, std::size(msg),
@@ -247,7 +247,7 @@ void showaspect(char const *s)
 }
 
 // compare a double and bignumber
-void comparevalues(char const *s, LDBL x, bn_t bnx)
+void compare_values(char const *s, LDBL x, bn_t bnx)
 {
     int dec = 40;
     char msg[100];
@@ -260,7 +260,7 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
     }
 }
 // compare a double and bignumber
-void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
+void compare_values_bf(char const *s, LDBL x, bf_t bfx)
 {
     int dec = 40;
     char msg[300];
@@ -288,7 +288,7 @@ void show_var_bf(char const *s, bf_t n)
 }
 #endif
 
-void bfcornerstofloat()
+void bf_corners_to_float()
 {
     if (g_bf_math != bf_math_type::NONE)
     {
@@ -608,7 +608,7 @@ int  bfMANRbailout()
     return 0;
 }
 
-bool MandelbnSetup()
+bool mandel_bn_setup()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
@@ -719,7 +719,7 @@ bool MandelbnSetup()
     return true;
 }
 
-bool MandelbfSetup()
+bool mandel_bf_setup()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
@@ -844,7 +844,7 @@ bool MandelbfSetup()
     return true;
 }
 
-int mandelbn_per_pixel()
+int mandel_bn_per_pixel()
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         return true;
@@ -892,7 +892,7 @@ int mandelbn_per_pixel()
     return 1;                  // 1st iteration has been done
 }
 
-int mandelbf_per_pixel()
+int mandel_bf_per_pixel()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
@@ -944,7 +944,7 @@ int mandelbf_per_pixel()
 }
 
 int
-juliabn_per_pixel()
+julia_bn_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
     mult_bn_int(g_old_z_bn.x, g_delta_x_bn, (U16)g_col);
@@ -972,7 +972,7 @@ juliabn_per_pixel()
 }
 
 int
-juliabf_per_pixel()
+julia_bf_per_pixel()
 {
     // old.x = g_x_min + col*delx + row*delx2
     mult_bf_int(g_old_z_bf.x, g_delta_x_bf, (U16)g_col);
@@ -1000,7 +1000,7 @@ juliabf_per_pixel()
 }
 
 int
-JuliabnFractal()
+julia_bn_fractal()
 {
     // Don't forget, with bn_t numbers, after multiplying or squaring
     // you must shift over by g_shift_factor to get the bn number.
@@ -1021,7 +1021,7 @@ JuliabnFractal()
 }
 
 int
-JuliabfFractal()
+julia_bf_fractal()
 {
     // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bf(g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
@@ -1035,7 +1035,7 @@ JuliabfFractal()
 }
 
 int
-JuliaZpowerbnFractal()
+julia_z_power_bn_fractal()
 {
     BNComplex parm2;
     int saved;
@@ -1046,7 +1046,7 @@ JuliaZpowerbnFractal()
 
     floattobn(parm2.x, g_params[2]);
     floattobn(parm2.y, g_params[3]);
-    ComplexPower_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
+    cmplx_pow_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
     add_bn(g_new_z_bn.x, g_param_z_bn.x, g_new_z_bn.x+g_shift_factor);
     add_bn(g_new_z_bn.y, g_param_z_bn.y, g_new_z_bn.y+g_shift_factor);
     restore_stack(saved);
@@ -1054,7 +1054,7 @@ JuliaZpowerbnFractal()
 }
 
 int
-JuliaZpowerbfFractal()
+julia_z_power_bf_fractal()
 {
     BFComplex parm2;
     int saved;
@@ -1065,14 +1065,14 @@ JuliaZpowerbfFractal()
 
     floattobf(parm2.x, g_params[2]);
     floattobf(parm2.y, g_params[3]);
-    ComplexPower_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
+    cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
     add_bf(g_new_z_bf.x, g_parm_z_bf.x, g_new_z_bf.x);
     add_bf(g_new_z_bf.y, g_parm_z_bf.y, g_new_z_bf.y);
     restore_stack(saved);
     return g_bailout_bigfloat();
 }
 
-DComplex cmplxbntofloat(BNComplex *s)
+DComplex cmplx_bn_to_float(BNComplex *s)
 {
     DComplex t;
     t.x = (double)bntofloat(s->x);
@@ -1080,7 +1080,7 @@ DComplex cmplxbntofloat(BNComplex *s)
     return t;
 }
 
-DComplex cmplxbftofloat(BFComplex *s)
+DComplex cmplx_bf_to_float(BFComplex *s)
 {
     DComplex t;
     t.x = (double)bftofloat(s->x);
@@ -1088,7 +1088,7 @@ DComplex cmplxbftofloat(BFComplex *s)
     return t;
 }
 
-BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
+BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
 {
     if (is_bf_zero(s->x) && is_bf_zero(s->y))
     {
@@ -1107,7 +1107,7 @@ BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
     return t;
 }
 
-BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
+BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     bf_t tmp1;
     int saved;
@@ -1124,7 +1124,7 @@ BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     return t;
 }
 
-BFComplex *cplxdiv_bf(BFComplex *t, BFComplex *x, BFComplex *y)
+BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     bf_t tmp1, denom;
     int saved;
@@ -1157,7 +1157,7 @@ BFComplex *cplxdiv_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     return t;
 }
 
-BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
+BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
     BFComplex tmp;
     bf_t e2x;
@@ -1179,8 +1179,8 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
         return t;
     }
 
-    cmplxlog_bf(t, xx);
-    cplxmul_bf(&tmp, t, yy);
+    cmplx_log_bf(t, xx);
+    cmplx_mul_bf(&tmp, t, yy);
     exp_bf(e2x, tmp.x);
     sincos_bf(siny, cosy, tmp.y);
     mult_bf(t->x, e2x, cosy);
@@ -1189,7 +1189,7 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     return t;
 }
 
-BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
+BNComplex *cmplx_log_bn(BNComplex *t, BNComplex *s)
 {
     if (is_bn_zero(s->x) && is_bn_zero(s->y))
     {
@@ -1206,7 +1206,7 @@ BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
     return t;
 }
 
-BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
+BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     bn_t tmp1;
     int saved;
@@ -1223,7 +1223,7 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     return t;
 }
 
-BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
+BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     bn_t tmp1, tmp2, denom;
     int saved;
@@ -1263,7 +1263,7 @@ BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 }
 
 // note: ComplexPower_bn() returns need to be +g_shift_factor'ed
-BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
+BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
     BNComplex tmp;
     bn_t e2x;
@@ -1286,8 +1286,8 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
         return t;
     }
 
-    cmplxlog_bn(t, xx);
-    cplxmul_bn(&tmp, t, yy);
+    cmplx_log_bn(t, xx);
+    cmplx_mul_bn(&tmp, t, yy);
     exp_bn(e2x, tmp.x);
     sincos_bn(siny, cosy, tmp.y);
     mult_bn(t->x, e2x, cosy);

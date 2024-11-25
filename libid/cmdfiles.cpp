@@ -1526,7 +1526,7 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     }
     // calculate bounds
     cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
-    bfcornerstofloat();
+    bf_corners_to_float();
     restore_stack(saved);
     return cmdarg_flags::FRACTAL_PARAM;
 }

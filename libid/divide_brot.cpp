@@ -95,7 +95,7 @@ int DivideBrot5bnFractal()
     /* z^(a) */
     inttobn(bnc_exp.x, g_c_exponent);
     clear_bn(bnc_exp.y);
-    ComplexPower_bn(&bntmpnew, &g_old_z_bn, &bnc_exp);
+    cmplx_pow_bn(&bntmpnew, &g_old_z_bn, &bnc_exp);
     /* then add b */
     floattobn(tmp1, g_b_const);
     add_bn(bntmpnew.x, tmp1, bntmpnew.x + g_shift_factor);
@@ -104,7 +104,7 @@ int DivideBrot5bnFractal()
     copy_bn(bntmpnew.y, tmp2);
 
     /* sqr(z)/(z^(a)+b) */
-    cplxdiv_bn(&g_new_z_bn, &bnnumer, &bntmpnew);
+    cmplx_div_bn(&g_new_z_bn, &bnnumer, &bntmpnew);
 
     add_a_bn(g_new_z_bn.x, g_param_z_bn.x);
     add_a_bn(g_new_z_bn.y, g_param_z_bn.y);
@@ -139,13 +139,13 @@ int DivideBrot5bfFractal()
     /* z^(a) */
     inttobf(bfc_exp.x, g_c_exponent);
     clear_bf(bfc_exp.y);
-    ComplexPower_bf(&bftmpnew, &g_old_z_bf, &bfc_exp);
+    cmplx_pow_bf(&bftmpnew, &g_old_z_bf, &bfc_exp);
     /* then add b */
     floattobf(tmp1, g_b_const);
     add_a_bf(bftmpnew.x, tmp1);
 
     /* sqr(z)/(z^(a)+b) */
-    cplxdiv_bf(&g_new_z_bf, &bfnumer, &bftmpnew);
+    cmplx_div_bf(&g_new_z_bf, &bfnumer, &bftmpnew);
 
     add_a_bf(g_new_z_bf.x, g_parm_z_bf.x);
     add_a_bf(g_new_z_bf.y, g_parm_z_bf.y);

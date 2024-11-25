@@ -1501,11 +1501,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math == bf_math_type::BIGNUM)
         {
-            g_old_z = cmplxbntofloat(&g_old_z_bn);
+            g_old_z = cmplx_bn_to_float(&g_old_z_bn);
         }
         else if (g_bf_math == bf_math_type::BIGFLT)
         {
-            g_old_z = cmplxbftofloat(&g_old_z_bf);
+            g_old_z = cmplx_bf_to_float(&g_old_z_bf);
         }
         lastz.x = g_old_z.x;
         lastz.y = g_old_z.y;
@@ -1603,11 +1603,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (g_bf_math == bf_math_type::BIGNUM)
                 {
-                    g_new_z = cmplxbntofloat(&g_new_z_bn);
+                    g_new_z = cmplx_bn_to_float(&g_new_z_bn);
                 }
                 else if (g_bf_math == bf_math_type::BIGFLT)
                 {
-                    g_new_z = cmplxbftofloat(&g_new_z_bf);
+                    g_new_z = cmplx_bf_to_float(&g_new_z_bf);
                 }
                 plot_orbit(g_new_z.x, g_new_z.y, -1);
             }
@@ -1620,11 +1620,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_bf_math == bf_math_type::BIGNUM)
             {
-                g_new_z = cmplxbntofloat(&g_new_z_bn);
+                g_new_z = cmplx_bn_to_float(&g_new_z_bn);
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
-                g_new_z = cmplxbftofloat(&g_new_z_bf);
+                g_new_z = cmplx_bf_to_float(&g_new_z_bf);
             }
             if (g_inside_color == STARTRAIL)
             {
@@ -1736,11 +1736,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_bf_math == bf_math_type::BIGNUM)
             {
-                g_new_z = cmplxbntofloat(&g_new_z_bn);
+                g_new_z = cmplx_bn_to_float(&g_new_z_bn);
             }
             else if (g_bf_math == bf_math_type::BIGFLT)
             {
-                g_new_z = cmplxbftofloat(&g_new_z_bf);
+                g_new_z = cmplx_bf_to_float(&g_new_z_bf);
             }
             if (g_outside_color == TDIS)
             {

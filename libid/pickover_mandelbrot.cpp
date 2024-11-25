@@ -150,7 +150,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
         copy_bf(tmp.y, z.y);
         for (int k = 0; k < g_c_exponent - 1; k++)
         {
-            cplxmul_bf(&tmp, &tmp, &z);
+            cmplx_mul_bf(&tmp, &tmp, &z);
         }
         add_bf(z.x, tmp.x, center.x);
         add_bf(z.y, tmp.y, center.y);

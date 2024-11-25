@@ -85,7 +85,7 @@ static int getprecdbl(int rezflag)
     if (del1 == 0)
     {
 #ifndef NDEBUG
-        showcornersdbl("getprecdbl");
+        show_corners_dbl("getprecdbl");
 #endif
         return -1;
     }
@@ -171,7 +171,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         int gotprec = getprecbf(CURRENTREZ);
         if ((gotprec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) || g_math_tol[1] >= 1.0)
         {
-            bfcornerstofloat();
+            bf_corners_to_float();
             g_bf_math = bf_math_type::NONE;
         }
         else

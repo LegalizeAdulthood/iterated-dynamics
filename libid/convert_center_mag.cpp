@@ -105,7 +105,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
             + sqr(ty3rd - g_y_3rd);               //
         if (error > .001)
         {
-            showcornersdbl("cvtcentermag problem");
+            show_corners_dbl("cvtcentermag problem");
         }
         g_x_min = txmin;
         g_x_max = txmax;
