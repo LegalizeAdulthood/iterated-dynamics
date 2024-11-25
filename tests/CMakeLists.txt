@@ -30,6 +30,7 @@ add_executable(test-id
     test_find_file.cpp
     test_find_file.txt.in
     test_find_path.cpp
+    test_fractalp.cpp
     test_get_ifs_token.cpp
     test_gif_file.cpp
     test_is_directory.cpp

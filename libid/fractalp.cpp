@@ -265,7 +265,8 @@ fractalspecificstuff g_fractal_specific[] =
        xmin, xmax, ymin, ymax,
        int, tojulia, tomandel, tofloat, symmetry,
        orbit fnct, per_pixel fnct, per_image fnct, calctype fcnt,
-       bailout
+       bailout,
+       perturbation ref pt, perturbation bf ref pt, perturbation point
     }
     */
 
@@ -278,7 +279,7 @@ fractalspecificstuff g_fractal_specific[] =
         1, fractal_type::JULIA, fractal_type::NOFRACTAL, fractal_type::MANDELFP, symmetry_type::X_AXIS_NO_PARAM,
         julia_fractal, mandel_per_pixel, mandel_setup, standard_fractal,
         STDBAILOUT,
-        mandel_ref_pt, mandel_ref_pt_bf
+        mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb
     },
 
     {
