@@ -547,7 +547,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_UNITY, help_labels::HF_UNITY, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::UNITYFP, symmetry_type::XY_AXIS,
-        UnityFractal, long_julia_per_pixel, UnitySetup, standard_fractal,
+        unity_fractal, long_julia_per_pixel, unity_setup, standard_fractal,
         NOBAILOUT
     },
 
@@ -1343,7 +1343,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_UNITY, help_labels::HF_UNITY, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::UNITY, symmetry_type::XY_AXIS,
-        UnityfpFractal, other_julia_fp_per_pixel, standard_setup, standard_fractal,
+        unity_fp_fractal, other_julia_fp_per_pixel, standard_setup, standard_fractal,
         NOBAILOUT
     },
 

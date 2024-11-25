@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-bool UnitySetup()
+bool unity_setup()
 {
     g_periodicity_check = 0;
     g_fudge_one = (1L << g_bit_shift);
@@ -21,7 +21,7 @@ bool UnitySetup()
     return true;
 }
 
-int UnityFractal()
+int unity_fractal()
 {
     const long xx_one = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
     if ((xx_one > g_fudge_two) || (labs(xx_one - g_fudge_one) < g_l_delta_min))
@@ -34,7 +34,7 @@ int UnityFractal()
     return 0;
 }
 
-int UnityfpFractal()
+int unity_fp_fractal()
 {
     const double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
     if ((XXOne > 2.0) || (std::fabs(XXOne - 1.0) < g_delta_min))
