@@ -17,12 +17,10 @@ public:
 
 private:
     int calculate_point(int subtype, const Point &pt, double tempRadius, int window_radius);
-    void reference_zoom_point(int subtype, const BFComplex &BigCentre, int maxIteration);
-    void reference_zoom_point(int subtype, const std::complex<double> &center, int maxIteration);
+    void reference_zoom_point(const BFComplex &BigCentre, int maxIteration);
+    void reference_zoom_point(const std::complex<double> &center, int maxIteration);
     void pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
         const std::complex<double> &delta0);
-    void ref_functions(int subtype, const BFComplex &center, BFComplex &z);
-    void ref_functions(int subtype, const std::complex<double> &center, std::complex<double> &z);
     void cleanup();
 
     std::string m_status;

@@ -12,6 +12,7 @@
 #include "cmdfiles.h"
 #include "complex_fn.h"
 #include "drivers.h"
+#include "fractalp.h"
 #include "fractals.h"
 #include "id.h"
 #include "id_data.h"
@@ -112,11 +113,11 @@ int PertEngine::calculate_one_frame(int subtype)
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point(subtype, reference_coordinate_bf, g_max_iterations);
+                reference_zoom_point(reference_coordinate_bf, g_max_iterations);
             }
             else
             {
-                reference_zoom_point(subtype, reference_coordinate, g_max_iterations);
+                reference_zoom_point(reference_coordinate, g_max_iterations);
             }
         }
         else
@@ -162,11 +163,11 @@ int PertEngine::calculate_one_frame(int subtype)
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point(subtype, reference_coordinate_bf, g_max_iterations);
+                reference_zoom_point(reference_coordinate_bf, g_max_iterations);
             }
             else
             {
-                reference_zoom_point(subtype, reference_coordinate, g_max_iterations);
+                reference_zoom_point(reference_coordinate, g_max_iterations);
             }
         }
 
@@ -437,11 +438,11 @@ int PertEngine::calculate_point(int subtype, const Point &pt, double magnified_r
     return 0;
 }
 
-void PertEngine::reference_zoom_point(int subtype, const BFComplex &center, int max_iteration)
+void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
-    const double glitch_tolerancy{1e-6};
+    const double glitch_tolerance{1e-6};
     BigStackSaver saved;
 
     BFComplex z_bf;
@@ -476,7 +477,7 @@ void PertEngine::reference_zoom_point(int subtype, const BFComplex &center, int 
                 std::to_string(int(progress * 100)) + "%)";
         }
 
-        floattobf(tmp_bf, glitch_tolerancy);
+        floattobf(tmp_bf, glitch_tolerance);
         mult_bf(temp_real_bf, z_bf.x, tmp_bf);
         mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
         std::complex<double> tolerance;
@@ -485,11 +486,16 @@ void PertEngine::reference_zoom_point(int subtype, const BFComplex &center, int 
 
         m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
 
-        ref_functions(subtype, center, z_bf);
+        if (g_cur_fractal_specific->ref_bf == nullptr)
+        {
+            throw std::runtime_error("No reference orbit function defined for fractal type (" +
+                std::string{g_cur_fractal_specific->name} + ")");
+        }
+        g_cur_fractal_specific->ref_bf(center, z_bf);
     }
 }
 
-void PertEngine::reference_zoom_point(int subtype, const std::complex<double> &center, int max_iteration)
+void PertEngine::reference_zoom_point(const std::complex<double> &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -519,7 +525,12 @@ void PertEngine::reference_zoom_point(int subtype, const std::complex<double> &c
         std::complex<double> tolerancy = z * glitch_tolerancy;
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
-        ref_functions(subtype, center, z);
+        if (g_cur_fractal_specific->ref == nullptr)
+        {
+            throw std::runtime_error("No reference orbit function defined for fractal type (" +
+                std::string{g_cur_fractal_specific->name} + ")");
+        }
+        g_cur_fractal_specific->ref(center, z);
     }
 }
 
@@ -534,40 +545,6 @@ void PertEngine::pert_functions(int subtype, const std::complex<double> &x_ref, 
 
     case 1:
         mandel_z_power_perturb(x_ref, delta_n, delta0);
-        break;
-
-    default:
-        throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
-    }
-}
-
-void PertEngine::ref_functions(int subtype, const BFComplex &center, BFComplex &z)
-{
-    switch (subtype)
-    {
-    case 0:
-        mandel_ref_pt(center, z);
-        break;
-
-    case 1:
-        mandel_z_power_ref_pt(center, z);
-        break;
-
-    default:
-        throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
-    }
-}
-
-void PertEngine::ref_functions(int subtype, const std::complex<double> &center, std::complex<double> &z)
-{
-    switch (subtype)
-    {
-    case 0:
-        mandel_ref_pt(center, z);
-        break;
-
-    case 1:
-        mandel_z_power_ref_pt(center, z);
         break;
 
     default:

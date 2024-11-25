@@ -8,6 +8,8 @@
 #include "helpdefs.h"
 #include "id.h"
 
+#include <complex>
+
 struct AlternateMath
 {
     fractal_type type;                  // index in fractalname of the fractal
@@ -75,6 +77,9 @@ inline bool bit_clear(fractal_flags value, fractal_flags bit)
     return (value & bit) == fractal_flags::NONE;
 }
 
+using PerturbationReference = void(const std::complex<double> &center, std::complex<double> &z);
+using PerturbationReferenceBF = void(const BFComplex &center, BFComplex &z);
+
 struct fractalspecificstuff
 {
     char const  *name;                  // name of the fractal
@@ -98,6 +103,8 @@ struct fractalspecificstuff
     bool (*per_image)();                // once-per-image setup
     int (*calctype)();                  // name of main fractal function
     int orbit_bailout;                  // usual bailout value for orbit calc
+    PerturbationReference *ref{};       // compute perturbation reference orbit
+    PerturbationReferenceBF *ref_bf{};  // compute BFComplex perturbation reference orbit
 };
 
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers

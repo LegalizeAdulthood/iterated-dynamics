@@ -13,7 +13,6 @@
 #include "fpu087.h"
 #include "fractalb.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "frasetup.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
@@ -133,7 +132,7 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
     }
 }
 
-void mandel_z_power_ref_pt(const BFComplex &center, BFComplex &z)
+void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
     BFComplex tmp;

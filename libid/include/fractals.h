@@ -71,7 +71,7 @@ int julia_per_pixel();
 int mandel_per_pixel();
 int mandelfp_per_pixel();
 void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z);
-void mandel_ref_pt(const BFComplex &center, BFComplex &z);
+void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z);
 void mandel_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 int juliafp_per_pixel();

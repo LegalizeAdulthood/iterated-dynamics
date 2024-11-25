@@ -678,7 +678,7 @@ void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
     z.imag(imag);
 }
 
-void mandel_ref_pt(const BFComplex &center, BFComplex &z)
+void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
     bf_t temp_real = alloc_stack(g_r_bf_length + 2);

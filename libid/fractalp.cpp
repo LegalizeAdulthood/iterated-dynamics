@@ -277,7 +277,8 @@ fractalspecificstuff g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::JULIA, fractal_type::NOFRACTAL, fractal_type::MANDELFP, symmetry_type::X_AXIS_NO_PARAM,
         JuliaFractal, mandel_per_pixel, MandelSetup, standard_fractal,
-        STDBAILOUT
+        STDBAILOUT,
+        mandel_ref_pt, mandel_ref_pt_bf
     },
 
     {
@@ -321,7 +322,8 @@ fractalspecificstuff g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::JULIAFP, fractal_type::NOFRACTAL, fractal_type::MANDEL, symmetry_type::X_AXIS_NO_PARAM,
         JuliafpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
-        STDBAILOUT
+        STDBAILOUT,
+        mandel_ref_pt, mandel_ref_pt_bf
     },
 
     {
@@ -891,7 +893,8 @@ fractalspecificstuff g_fractal_specific[] =
         0, fractal_type::FPJULIAZPOWER, fractal_type::NOFRACTAL, fractal_type::LMANDELZPOWER, symmetry_type::X_AXIS_NO_IMAG,
         floatZpowerFractal, othermandelfp_per_pixel, MandelfpSetup,
         standard_fractal,
-        STDBAILOUT
+        STDBAILOUT,
+        mandel_z_power_ref_pt, mandel_z_power_ref_pt_bf
     },
 
     {
