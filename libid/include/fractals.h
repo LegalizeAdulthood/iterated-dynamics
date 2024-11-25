@@ -6,17 +6,12 @@
 #include "cmplx.h"
 
 #include <complex>
-#include <vector>
-
-struct MP;
-struct MPC;
 
 extern int                   g_basin;
 extern int                   g_bit_shift_less_1;
 extern int                   g_c_exponent;
 extern double                g_cos_x;
 extern int                   g_degree;
-extern double                g_degree_minus_1_over_degree;
 extern DComplex *            g_float_param;
 extern long                  g_fudge_half;
 extern long                  g_fudge_one;
@@ -33,9 +28,6 @@ extern long                  g_l_temp_sqr_y;
 extern LComplex *            g_long_param;
 extern DComplex              g_marks_coefficient;
 extern int                   g_max_color;
-extern MP                    g_mp_one;
-extern std::vector<MPC>      g_mpc_roots;
-extern double                g_newton_r_over_d;
 extern DComplex              g_param_z1;
 extern DComplex              g_param_z2;
 extern DComplex              g_power_z;
@@ -43,7 +35,6 @@ extern double                g_quaternion_c;
 extern double                g_quaternion_ci;
 extern double                g_quaternion_cj;
 extern double                g_quaternion_ck;
-extern std::vector<DComplex> g_roots;
 extern double                g_sin_x;
 extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;

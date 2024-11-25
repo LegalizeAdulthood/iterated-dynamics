@@ -80,11 +80,7 @@ long g_l_temp_sqr_y{};
 int g_max_color{};
 int g_degree{};
 int g_basin{};
-double g_newton_r_over_d{};
-double g_degree_minus_1_over_degree{};
 double g_threshold{};
-std::vector<DComplex> g_roots;
-std::vector<MPC> g_mpc_roots;
 long g_fudge_half{};
 DComplex g_power_z{};
 int g_bit_shift_less_1{}; // bit shift less 1
@@ -330,8 +326,6 @@ int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
     pout->y = pout->y/mod;
     return 0;
 }
-
-MP g_mp_one;
 
 int JuliaFractal()
 {

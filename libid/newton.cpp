@@ -23,6 +23,11 @@
 #include <cmath>
 #include <cfloat>
 
+static double                s_degree_minus_1_over_degree{};
+static std::vector<MPC>      s_mpc_roots;
+static double                s_newton_r_over_d{};
+static std::vector<DComplex> s_roots;
+
 inline double distance(const DComplex &z1, const DComplex &z2)
 {
     return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
@@ -102,7 +107,7 @@ int NewtonFractal2()
             {
                 /* color in alternating shades with iteration according to
                    which root of 1 it converged to */
-                if (distance(g_roots[i], g_old_z) < g_threshold)
+                if (distance(s_roots[i], g_old_z) < g_threshold)
                 {
                     if (g_basin == 2)
                     {
@@ -126,8 +131,8 @@ int NewtonFractal2()
         }
         return 1;
     }
-    g_new_z.x = g_degree_minus_1_over_degree * g_new_z.x + g_newton_r_over_d;
-    g_new_z.y *= g_degree_minus_1_over_degree;
+    g_new_z.x = s_degree_minus_1_over_degree * g_new_z.x + s_newton_r_over_d;
+    g_new_z.y *= s_degree_minus_1_over_degree;
 
     // Watch for divide underflow
     double t2 = g_tmp_z.x * g_tmp_z.x + g_tmp_z.y * g_tmp_z.y;
@@ -280,20 +285,20 @@ bool NewtonSetup()
     }
 
     // precalculated values
-    g_newton_r_over_d       = 1.0 / (double)g_degree;
-    g_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
+    s_newton_r_over_d       = 1.0 / (double)g_degree;
+    s_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
     g_max_color     = 0;
     g_threshold    = .3*PI/g_degree; // less than half distance between roots
     if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
-        s_newton_mp_r_over_d = *d2MP(g_newton_r_over_d);
-        s_mp_degree_minus_1_over_degree = *d2MP(g_degree_minus_1_over_degree);
+        s_newton_mp_r_over_d = *d2MP(s_newton_r_over_d);
+        s_mp_degree_minus_1_over_degree = *d2MP(s_degree_minus_1_over_degree);
         s_mp_threshold = *d2MP(g_threshold);
         g_mp_one = *d2MP(1.0);
     }
 
     g_basin = 0;
-    g_roots.resize(16);
+    s_roots.resize(16);
     if (g_fractal_type == fractal_type::NEWTBASIN)
     {
         if (g_param_z1.y)
@@ -304,13 +309,13 @@ bool NewtonSetup()
         {
             g_basin = 1;
         }
-        g_roots.resize(g_degree);
+        s_roots.resize(g_degree);
 
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < g_degree; i++)
         {
-            g_roots[i].x = std::cos(i*PI*2.0/(double)g_degree);
-            g_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
+            s_roots[i].x = std::cos(i*PI*2.0/(double)g_degree);
+            s_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
         }
     }
     else if (g_fractal_type == fractal_type::MPNEWTBASIN)
@@ -324,13 +329,13 @@ bool NewtonSetup()
             g_basin = 1;
         }
 
-        g_mpc_roots.resize(g_degree);
+        s_mpc_roots.resize(g_degree);
 
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < g_degree; i++)
         {
-            g_mpc_roots[i].x = *d2MP(std::cos(i*PI*2.0/(double)g_degree));
-            g_mpc_roots[i].y = *d2MP(std::sin(i*PI*2.0/(double)g_degree));
+            s_mpc_roots[i].x = *d2MP(std::cos(i*PI*2.0/(double)g_degree));
+            s_mpc_roots[i].y = *d2MP(std::sin(i*PI*2.0/(double)g_degree));
         }
     }
 
@@ -365,7 +370,7 @@ int MPCNewtonFractal()
             long tmpcolor;
             tmpcolor = -1;
             for (int i = 0; i < g_degree; i++)
-                if (MPcmp(MPdistance(g_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
+                if (MPcmp(MPdistance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
                     {

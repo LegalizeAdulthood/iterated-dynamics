@@ -42,6 +42,7 @@ static double s_mlf{};
 static unsigned long s_lf{};
 
 bool g_mp_overflow{};
+MP g_mp_one{};
 MPC g_mpc_one{{0x3fff, 0X80000000L}, {0, 0L}};
 std::vector<BYTE> g_log_map_table;
 long g_log_map_table_max_size{};
