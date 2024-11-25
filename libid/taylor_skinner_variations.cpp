@@ -78,7 +78,7 @@ static bool TrigPlusSqrlongSetup()
             g_cur_fractal_specific->orbitcalc =  SkinnerTrigSubSqrFractal;
         }
     }
-    return JulialongSetup();
+    return julia_long_setup();
 }
 
 static int ScottTrigPlusTrigFractal()
@@ -120,7 +120,7 @@ bool TrigPlusTriglongSetup()
             g_cur_fractal_specific->orbitcalc =  SkinnerTrigSubTrigFractal;
         }
     }
-    return JulialongSetup();
+    return julia_long_setup();
 }
 
 static int TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
@@ -168,7 +168,7 @@ static bool TrigPlusSqrfpSetup()
             g_cur_fractal_specific->orbitcalc =  SkinnerTrigSubSqrfpFractal;
         }
     }
-    return JuliafpSetup();
+    return julia_fp_setup();
 }
 
 static int ScottTrigPlusTrigfpFractal()
@@ -211,7 +211,7 @@ bool TrigPlusTrigfpSetup()
             g_cur_fractal_specific->orbitcalc =  SkinnerTrigSubTrigfpFractal;
         }
     }
-    return JuliafpSetup();
+    return julia_fp_setup();
 }
 
 int TrigPlusTrigFractal()
@@ -312,11 +312,11 @@ bool FnXFnSetup()
     }
     if (g_cur_fractal_specific->isinteger)
     {
-        return JulialongSetup();
+        return julia_long_setup();
     }
     else
     {
-        return JuliafpSetup();
+        return julia_fp_setup();
     }
 }
 
@@ -390,11 +390,11 @@ bool SqrTrigSetup()
     }
     if (g_cur_fractal_specific->isinteger)
     {
-        return JulialongSetup();
+        return julia_long_setup();
     }
     else
     {
-        return JuliafpSetup();
+        return julia_fp_setup();
     }
 }
 
@@ -532,7 +532,7 @@ bool ZXTrigPlusZSetup()
                 g_cur_fractal_specific->orbitcalc =  SkinnerZXTrigSubZFractal;
             }
         }
-        return JulialongSetup();
+        return julia_long_setup();
     }
     else
     {
@@ -549,7 +549,7 @@ bool ZXTrigPlusZSetup()
             }
         }
     }
-    return JuliafpSetup();
+    return julia_fp_setup();
 }
 
 int ZXTrigPlusZfpFractal()

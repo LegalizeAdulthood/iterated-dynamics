@@ -249,11 +249,11 @@ bool LambdaTrigSetup()
     get_julia_attractor(0.0, 0.0);       // an attractor?
     if (isinteger)
     {
-        return JulialongSetup();
+        return julia_long_setup();
     }
     else
     {
-        return JuliafpSetup();
+        return julia_fp_setup();
     }
 }
 
@@ -313,10 +313,10 @@ bool MandelTrigSetup()
     }
     if (isinteger)
     {
-        return MandellongSetup();
+        return mandel_long_setup();
     }
     else
     {
-        return MandelfpSetup();
+        return mandel_fp_setup();
     }
 }

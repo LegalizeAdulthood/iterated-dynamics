@@ -31,7 +31,7 @@
 // --------------------------------------------------------------------
 
 bool
-MandelSetup()           // Mandelbrot Routine
+mandel_setup()           // Mandelbrot Routine
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
     {
@@ -63,7 +63,7 @@ MandelSetup()           // Mandelbrot Routine
 }
 
 bool
-JuliaSetup()            // Julia Routine
+julia_setup()            // Julia Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
         && (g_invert == 0)
@@ -92,7 +92,7 @@ JuliaSetup()            // Julia Routine
 }
 
 bool
-StandaloneSetup()
+standalone_setup()
 {
     timer(timer_type::ENGINE, g_cur_fractal_specific->calctype);
     return false;               // effectively disable solid-guessing
@@ -111,7 +111,7 @@ bool mandel_z_power_perturbation_setup()
 }
 
 bool
-MandelfpSetup()
+mandel_fp_setup()
 {
     g_bf_math = bf_math_type::NONE;
     g_c_exponent = (int)g_params[2];
@@ -266,7 +266,7 @@ MandelfpSetup()
 }
 
 bool
-JuliafpSetup()
+julia_fp_setup()
 {
     g_c_exponent = (int)g_params[2];
     g_float_param = &g_param_z1;
@@ -421,7 +421,7 @@ JuliafpSetup()
 }
 
 bool
-MandellongSetup()
+mandel_long_setup()
 {
     g_fudge_half = g_fudge_factor/2;
     g_c_exponent = (int)g_params[2];
@@ -492,7 +492,7 @@ MandellongSetup()
 }
 
 bool
-JulialongSetup()
+julia_long_setup()
 {
     g_c_exponent = (int)g_params[2];
     g_long_param = &g_l_param;
@@ -576,7 +576,7 @@ JulialongSetup()
 }
 
 bool
-StandardSetup()
+standard_setup()
 {
     if (g_fractal_type == fractal_type::UNITYFP)
     {

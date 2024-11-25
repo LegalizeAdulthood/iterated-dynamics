@@ -727,7 +727,7 @@ bool mandel_bf_setup()
     if (g_bf_math == bf_math_type::NONE)
     {
         // kludge to prevent crash when math type = NONE and still call bigflt setup routine
-        return MandelfpSetup();
+        return mandel_fp_setup();
     }
 
     // this should be set up dynamically based on corners

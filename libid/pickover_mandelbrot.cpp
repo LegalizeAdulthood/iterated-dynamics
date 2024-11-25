@@ -238,11 +238,11 @@ bool JuliafnPlusZsqrdSetup()
     }
     if (g_cur_fractal_specific->isinteger)
     {
-        return JulialongSetup();
+        return julia_long_setup();
     }
     else
     {
-        return JuliafpSetup();
+        return julia_fp_setup();
     }
 }
 
