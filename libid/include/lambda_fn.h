@@ -2,11 +2,11 @@
 //
 #pragma once
 
-int LambdaFractal();
-int LambdaFPFractal();
+int lambda_fractal();
+int lambda_fp_fractal();
 
-bool LambdaTrigSetup();
-int LambdaTrigFractal();
-int LambdaTrigfpFractal();
+bool lambda_trig_setup();
+int lambda_trig_fractal();
+int lambda_trig_fp_fractal();
 
-bool MandelTrigSetup();
+bool mandel_trig_setup();

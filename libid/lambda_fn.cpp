@@ -17,7 +17,7 @@
 
 #include <cmath>
 
-int LambdaFractal()
+int lambda_fractal()
 {
     // variation of classical Mandelbrot/Julia
 
@@ -33,7 +33,7 @@ int LambdaFractal()
     return g_bailout_long();
 }
 
-int LambdaFPFractal()
+int lambda_fp_fractal()
 {
     // variation of classical Mandelbrot/Julia
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -47,7 +47,7 @@ int LambdaFPFractal()
     return g_bailout_float();
 }
 
-int LambdaTrigFractal()
+int lambda_trig_fractal()
 {
     if (labs(g_l_old_z.x) >= g_l_magnitude_limit2 || labs(g_l_old_z.y) >= g_l_magnitude_limit2)
     {
@@ -59,7 +59,7 @@ int LambdaTrigFractal()
     return 0;
 }
 
-int LambdaTrigfpFractal()
+int lambda_trig_fp_fractal()
 {
     if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || std::fabs(g_old_z.y) >= g_magnitude_limit2)
     {
@@ -187,16 +187,16 @@ static int LambdaexponentFractal()
     return 0;
 }
 
-bool LambdaTrigSetup()
+bool lambda_trig_setup()
 {
     bool const isinteger = g_cur_fractal_specific->isinteger != 0;
     if (isinteger)
     {
-        g_cur_fractal_specific->orbitcalc =  LambdaTrigFractal;
+        g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal;
     }
     else
     {
-        g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal;
+        g_cur_fractal_specific->orbitcalc =  lambda_trig_fp_fractal;
     }
     switch (g_trig_index[0])
     {
@@ -257,16 +257,16 @@ bool LambdaTrigSetup()
     }
 }
 
-bool MandelTrigSetup()
+bool mandel_trig_setup()
 {
     bool const isinteger = g_cur_fractal_specific->isinteger != 0;
     if (isinteger)
     {
-        g_cur_fractal_specific->orbitcalc =  LambdaTrigFractal;
+        g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal;
     }
     else
     {
-        g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal;
+        g_cur_fractal_specific->orbitcalc =  lambda_trig_fp_fractal;
     }
     g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
