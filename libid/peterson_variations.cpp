@@ -23,7 +23,7 @@ DComplex g_marks_coefficient{};
 
 static LComplex s_l_coefficient{};
 
-bool MarksJuliaSetup()
+bool marks_julia_setup()
 {
     if (g_params[2] < 1)
     {
@@ -54,7 +54,7 @@ bool MarksJuliaSetup()
     return true;
 }
 
-bool MarksJuliafpSetup()
+bool marks_julia_fp_setup()
 {
     if (g_params[2] < 1)
     {
@@ -85,7 +85,7 @@ bool MarksJuliafpSetup()
     return true;
 }
 
-int MarksLambdaFractal()
+int marks_lambda_fractal()
 {
     // Mark Peterson's variation of "lambda" function
 
@@ -101,7 +101,7 @@ int MarksLambdaFractal()
     return g_bailout_long();
 }
 
-int MarksLambdafpFractal()
+int marks_lambda_fp_fractal()
 {
     // Mark Peterson's variation of "lambda" function
 
@@ -115,7 +115,7 @@ int MarksLambdafpFractal()
     return g_bailout_float();
 }
 
-int MarksCplxMand()
+int marks_cplx_mand()
 {
     g_tmp_z.x = g_temp_sqr_x - g_temp_sqr_y;
     g_tmp_z.y = 2*g_old_z.x*g_old_z.y;
@@ -133,7 +133,7 @@ int MarksCplxMand()
    }
 */
 
-int MarksMandelPwrfpFractal()
+int marks_mandel_pwr_fp_fractal()
 {
     CMPLXtrig0(g_old_z, g_new_z);
     CMPLXmult(g_tmp_z, g_new_z, g_new_z);
@@ -142,7 +142,7 @@ int MarksMandelPwrfpFractal()
     return g_bailout_float();
 }
 
-int MarksMandelPwrFractal()
+int marks_mandel_pwr_fractal()
 {
     trig0(g_l_old_z, g_l_new_z);
     g_l_new_z = g_l_temp * g_l_new_z;
@@ -156,7 +156,7 @@ int MarksMandelPwrFractal()
    I thought I would immortalize myself with this error!
                 Tim Wegner */
 
-int TimsErrorfpFractal()
+int tims_error_fp_fractal()
 {
     CMPLXtrig0(g_old_z, g_new_z);
     g_new_z.x = g_new_z.x * g_tmp_z.x - g_new_z.y * g_tmp_z.y;
@@ -166,7 +166,7 @@ int TimsErrorfpFractal()
     return g_bailout_float();
 }
 
-int TimsErrorFractal()
+int tims_error_fractal()
 {
     trig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x = multiply(g_l_new_z.x, g_l_temp.x, g_bit_shift)-multiply(g_l_new_z.y, g_l_temp.y, g_bit_shift);
@@ -306,7 +306,7 @@ int marks_mandelpwrfp_per_pixel()
     return 1;
 }
 
-int MarksCplxMandperp()
+int marks_cplx_mand_perp()
 {
     if (g_invert != 0)
     {
@@ -317,7 +317,7 @@ int MarksCplxMandperp()
         g_init.x = g_dx_pixel();
         g_init.y = g_dy_pixel();
     }
-    g_old_z.x = g_init.x + g_param_z1.x; // initial pertubation of parameters set
+    g_old_z.x = g_init.x + g_param_z1.x; // initial perturbation of parameters set
     g_old_z.y = g_init.y + g_param_z1.y;
     g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     g_temp_sqr_y = sqr(g_old_z.y);

@@ -2,23 +2,21 @@
 //
 #pragma once
 
-#include "port.h"
-
 #include "cmplx.h"
 
 extern DComplex              g_marks_coefficient;
 
-bool MarksJuliaSetup();
-bool MarksJuliafpSetup();
-int MarksLambdaFractal();
-int MarksLambdafpFractal();
-int MarksCplxMand();
-int MarksMandelPwrfpFractal();
-int MarksMandelPwrFractal();
-int TimsErrorfpFractal();
-int TimsErrorFractal();
+bool marks_julia_setup();
+bool marks_julia_fp_setup();
+int marks_lambda_fractal();
+int marks_lambda_fp_fractal();
+int marks_cplx_mand();
+int marks_mandel_pwr_fp_fractal();
+int marks_mandel_pwr_fractal();
+int tims_error_fp_fractal();
+int tims_error_fractal();
 int marks_mandelpwr_per_pixel();
 int marksmandel_per_pixel();
 int marksmandelfp_per_pixel();
 int marks_mandelpwrfp_per_pixel();
-int MarksCplxMandperp();
+int marks_cplx_mand_perp();
