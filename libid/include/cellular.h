@@ -4,5 +4,5 @@
 
 extern bool g_cellular_next_screen;
 
-bool CellularSetup();
+bool cellular_setup();
 int cellular();

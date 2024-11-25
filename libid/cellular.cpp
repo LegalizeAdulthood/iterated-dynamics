@@ -449,7 +449,7 @@ contloop:
     return 1;
 }
 
-bool CellularSetup()
+bool cellular_setup()
 {
     if (!g_resuming)
     {

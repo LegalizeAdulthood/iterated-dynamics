@@ -1913,7 +1913,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_CELLULAR, help_labels::HF_CELLULAR, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOZOOM,
         -1.0F, 1.0F, -1.0F, 1.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        nullptr, nullptr, CellularSetup, cellular,
+        nullptr, nullptr, cellular_setup, cellular,
         NOBAILOUT
     },
 
