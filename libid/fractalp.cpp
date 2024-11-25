@@ -1993,7 +1993,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_PHOENIX, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIX, fractal_type::PHOENIXFP, symmetry_type::X_AXIS,
-        LongPhoenixFractal, long_phoenix_per_pixel, PhoenixSetup,
+        long_phoenix_fractal, long_phoenix_per_pixel, phoenix_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -2005,7 +2005,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_PHOENIX, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIXFP, fractal_type::PHOENIX, symmetry_type::X_AXIS,
-        PhoenixFractal, phoenix_per_pixel, PhoenixSetup, standard_fractal,
+        phoenix_fractal, phoenix_per_pixel, phoenix_setup, standard_fractal,
         STDBAILOUT
     },
 
@@ -2016,7 +2016,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_MANDPHOENIX, fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::PHOENIX, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIXFP, symmetry_type::NONE,
-        LongPhoenixFractal, long_mandphoenix_per_pixel, MandPhoenixSetup,
+        long_phoenix_fractal, long_mand_phoenix_per_pixel, mand_phoenix_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -2028,7 +2028,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_MANDPHOENIX, fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::PHOENIXFP, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIX, symmetry_type::NONE,
-        PhoenixFractal, mandphoenix_per_pixel, MandPhoenixSetup,
+        phoenix_fractal, mand_phoenix_per_pixel, mand_phoenix_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -2154,7 +2154,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_PHOENIXCPLX, fractal_flags::MORE|fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIXCPLX, fractal_type::PHOENIXFPCPLX, symmetry_type::ORIGIN,
-        LongPhoenixFractalcplx, long_phoenix_per_pixel, PhoenixCplxSetup,
+        long_phoenix_fractal_cplx, long_phoenix_per_pixel, phoenix_cplx_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -2166,7 +2166,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_PHOENIXCPLX, fractal_flags::MORE|fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIXFPCPLX, fractal_type::PHOENIXCPLX, symmetry_type::ORIGIN,
-        PhoenixFractalcplx, phoenix_per_pixel, PhoenixCplxSetup,
+        phoenix_fractal_cplx, phoenix_per_pixel, phoenix_cplx_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -2178,8 +2178,8 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_MANDPHOENIXCPLX, fractal_flags::MORE|fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::PHOENIXCPLX, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIXFPCPLX, symmetry_type::X_AXIS,
-        LongPhoenixFractalcplx, long_mandphoenix_per_pixel,
-        MandPhoenixCplxSetup, standard_fractal,
+        long_phoenix_fractal_cplx, long_mand_phoenix_per_pixel,
+        mand_phoenix_cplx_setup, standard_fractal,
         STDBAILOUT
     },
 
@@ -2190,7 +2190,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_PHOENIX, help_labels::HF_MANDPHOENIXCPLX, fractal_flags::MORE|fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::PHOENIXFPCPLX, fractal_type::NOFRACTAL, fractal_type::MANDPHOENIXCPLX, symmetry_type::X_AXIS,
-        PhoenixFractalcplx, mandphoenix_per_pixel, MandPhoenixCplxSetup,
+        phoenix_fractal_cplx, mand_phoenix_per_pixel, mand_phoenix_cplx_setup,
         standard_fractal,
         STDBAILOUT
     },

@@ -19,7 +19,7 @@
 static LComplex s_ltmp2{};
 static DComplex s_tmp2{};
 
-int LongPhoenixFractal()
+int long_phoenix_fractal()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_l_temp.x = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
@@ -29,7 +29,7 @@ int LongPhoenixFractal()
     return g_bailout_long();
 }
 
-int PhoenixFractal()
+int phoenix_fractal()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
@@ -39,7 +39,7 @@ int PhoenixFractal()
     return g_bailout_float();
 }
 
-int LongPhoenixFractalcplx()
+int long_phoenix_fractal_cplx()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_l_temp.x = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
@@ -49,7 +49,7 @@ int LongPhoenixFractalcplx()
     return g_bailout_long();
 }
 
-int PhoenixFractalcplx()
+int phoenix_fractal_cplx()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
@@ -59,7 +59,7 @@ int PhoenixFractalcplx()
     return g_bailout_float();
 }
 
-int LongPhoenixPlusFractal()
+int long_phoenix_plus_fractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
     LComplex loldplus{g_l_old_z};
@@ -77,7 +77,7 @@ int LongPhoenixPlusFractal()
     return g_bailout_long();
 }
 
-int PhoenixPlusFractal()
+int phoenix_plus_fractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
     DComplex oldplus;
@@ -97,7 +97,7 @@ int PhoenixPlusFractal()
     return g_bailout_float();
 }
 
-int LongPhoenixMinusFractal()
+int long_phoenix_minus_fractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     LComplex loldsqr{g_l_old_z * g_l_old_z};
@@ -115,7 +115,7 @@ int LongPhoenixMinusFractal()
     return g_bailout_long();
 }
 
-int PhoenixMinusFractal()
+int phoenix_minus_fractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     DComplex oldsqr;
@@ -135,7 +135,7 @@ int PhoenixMinusFractal()
     return g_bailout_float();
 }
 
-int LongPhoenixCplxPlusFractal()
+int long_phoenix_cplx_plus_fractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
     LComplex loldplus{g_l_old_z};
@@ -155,7 +155,7 @@ int LongPhoenixCplxPlusFractal()
     return g_bailout_long();
 }
 
-int PhoenixCplxPlusFractal()
+int phoenix_cplx_plus_fractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
     DComplex oldplus;
@@ -177,7 +177,7 @@ int PhoenixCplxPlusFractal()
     return g_bailout_float();
 }
 
-int LongPhoenixCplxMinusFractal()
+int long_phoenix_cplx_minus_fractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     LComplex loldsqr{g_l_old_z * g_l_old_z};
@@ -197,7 +197,7 @@ int LongPhoenixCplxMinusFractal()
     return g_bailout_long();
 }
 
-int PhoenixCplxMinusFractal()
+int phoenix_cplx_minus_fractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     DComplex oldsqr;
@@ -267,7 +267,7 @@ int phoenix_per_pixel()
     return 0;
 }
 
-int long_mandphoenix_per_pixel()
+int long_mand_phoenix_per_pixel()
 {
     g_l_init.x = g_l_x_pixel();
     g_l_init.y = g_l_y_pixel();
@@ -307,7 +307,7 @@ int long_mandphoenix_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int mandphoenix_per_pixel()
+int mand_phoenix_per_pixel()
 {
     if (g_invert != 0)
     {
@@ -337,7 +337,7 @@ int mandphoenix_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-bool PhoenixSetup()
+bool phoenix_setup()
 {
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
@@ -351,11 +351,11 @@ bool PhoenixSetup()
     {
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal;
         }
     }
     if (g_degree >= 2)
@@ -363,11 +363,11 @@ bool PhoenixSetup()
         g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -375,18 +375,18 @@ bool PhoenixSetup()
         g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_minus_fractal;
         }
     }
 
     return true;
 }
 
-bool PhoenixCplxSetup()
+bool phoenix_cplx_setup()
 {
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
@@ -412,11 +412,11 @@ bool PhoenixCplxSetup()
         }
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixFractalcplx;
+            g_cur_fractal_specific->orbitcalc =  phoenix_fractal_cplx;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixFractalcplx;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal_cplx;
         }
     }
     if (g_degree >= 2)
@@ -432,11 +432,11 @@ bool PhoenixCplxSetup()
         }
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixCplxPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixCplxPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -452,18 +452,18 @@ bool PhoenixCplxSetup()
         }
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixCplxMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixCplxMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_minus_fractal;
         }
     }
 
     return true;
 }
 
-bool MandPhoenixSetup()
+bool mand_phoenix_setup()
 {
     g_long_param = &g_l_init;
     g_float_param = &g_init;
@@ -477,11 +477,11 @@ bool MandPhoenixSetup()
     {
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal;
         }
     }
     if (g_degree >= 2)
@@ -489,11 +489,11 @@ bool MandPhoenixSetup()
         g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -501,18 +501,18 @@ bool MandPhoenixSetup()
         g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_minus_fractal;
         }
     }
 
     return true;
 }
 
-bool MandPhoenixCplxSetup()
+bool mand_phoenix_cplx_setup()
 {
     g_long_param = &g_l_init;
     g_float_param = &g_init;
@@ -530,11 +530,11 @@ bool MandPhoenixCplxSetup()
     {
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixFractalcplx;
+            g_cur_fractal_specific->orbitcalc =  phoenix_fractal_cplx;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixFractalcplx;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal_cplx;
         }
     }
     if (g_degree >= 2)
@@ -542,11 +542,11 @@ bool MandPhoenixCplxSetup()
         g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixCplxPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixCplxPlusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -554,11 +554,11 @@ bool MandPhoenixCplxSetup()
         g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  PhoenixCplxMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  LongPhoenixCplxMinusFractal;
+            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_minus_fractal;
         }
     }
 
