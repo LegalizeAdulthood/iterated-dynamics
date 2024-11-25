@@ -2262,7 +2262,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_ESCHER, help_labels::HF_ESCHER, fractal_flags::NONE,
         -1.6F, 1.6F, -1.2F, 1.2F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::ORIGIN,
-        EscherfpFractal, julia_fp_per_pixel, standard_setup,
+        escher_fp_fractal, julia_fp_per_pixel, standard_setup,
         standard_fractal,
         STDBAILOUT
     },

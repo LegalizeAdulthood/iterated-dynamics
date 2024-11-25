@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int EscherfpFractal();
+int escher_fp_fractal();

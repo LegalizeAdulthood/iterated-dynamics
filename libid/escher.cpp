@@ -9,7 +9,7 @@
 #include "id_data.h"
 #include "sqr.h"
 
-int EscherfpFractal() // Science of Fractal Images pp. 185, 187
+int escher_fp_fractal() // Science of Fractal Images pp. 185, 187
 {
     DComplex oldtest;
     DComplex newtest;
