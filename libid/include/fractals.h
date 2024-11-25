@@ -16,7 +16,6 @@ extern DComplex *            g_float_param;
 extern long                  g_fudge_half;
 extern long                  g_fudge_one;
 extern long                  g_fudge_two;
-extern LComplex              g_l_coefficient;
 extern LComplex              g_l_init;
 extern LComplex              g_l_old_z;
 extern LComplex              g_l_new_z;
@@ -38,7 +37,6 @@ extern double                g_quaternion_ck;
 extern double                g_sin_x;
 extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;
-extern double                g_threshold;
 
 void cpower(DComplex *, int, DComplex *);
 int lcpower(LComplex *, int, LComplex *, int);

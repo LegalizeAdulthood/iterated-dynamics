@@ -27,6 +27,7 @@ static double                s_degree_minus_1_over_degree{};
 static std::vector<MPC>      s_mpc_roots;
 static double                s_newton_r_over_d{};
 static std::vector<DComplex> s_roots;
+static double                s_threshold{};
 
 inline double distance(const DComplex &z1, const DComplex &z2)
 {
@@ -94,7 +95,7 @@ int NewtonFractal2()
     cpower(&g_old_z, g_degree-1, &g_tmp_z);
     complex_mult(g_tmp_z, g_old_z, &g_new_z);
 
-    if (distance1(g_new_z) < g_threshold)
+    if (distance1(g_new_z) < s_threshold)
     {
         if (g_fractal_type == fractal_type::NEWTBASIN || g_fractal_type == fractal_type::MPNEWTBASIN)
         {
@@ -107,7 +108,7 @@ int NewtonFractal2()
             {
                 /* color in alternating shades with iteration according to
                    which root of 1 it converged to */
-                if (distance(s_roots[i], g_old_z) < g_threshold)
+                if (distance(s_roots[i], g_old_z) < s_threshold)
                 {
                     if (g_basin == 2)
                     {
@@ -151,7 +152,7 @@ int NewtonFractal2()
 
 bool ComplexNewtonSetup()
 {
-    g_threshold = .001;
+    s_threshold = .001;
     g_periodicity_check = 0;
     if (g_params[0] != 0.0
         || g_params[1] != 0.0
@@ -184,7 +185,7 @@ int ComplexNewton()
 
     g_tmp_z.x = g_new_z.x - s_croot.x;
     g_tmp_z.y = g_new_z.y - s_croot.y;
-    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
+    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
     {
         return 1;
     }
@@ -219,7 +220,7 @@ int ComplexBasin()
 
     g_tmp_z.x = g_new_z.x - s_croot.x;
     g_tmp_z.y = g_new_z.y - s_croot.y;
-    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
+    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
     {
         if (std::fabs(g_old_z.y) < .01)
         {
@@ -288,12 +289,12 @@ bool NewtonSetup()
     s_newton_r_over_d       = 1.0 / (double)g_degree;
     s_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
     g_max_color     = 0;
-    g_threshold    = .3*PI/g_degree; // less than half distance between roots
+    s_threshold    = .3*PI/g_degree; // less than half distance between roots
     if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         s_newton_mp_r_over_d = *d2MP(s_newton_r_over_d);
         s_mp_degree_minus_1_over_degree = *d2MP(s_degree_minus_1_over_degree);
-        s_mp_threshold = *d2MP(g_threshold);
+        s_mp_threshold = *d2MP(s_threshold);
         g_mp_one = *d2MP(1.0);
     }
 

@@ -21,6 +21,8 @@
 
 DComplex g_marks_coefficient{};
 
+static LComplex s_l_coefficient{};
+
 bool MarksJuliaSetup()
 {
     if (g_params[2] < 1)
@@ -32,21 +34,21 @@ bool MarksJuliaSetup()
     g_l_old_z = *g_long_param;
     if (g_c_exponent > 3)
     {
-        lcpower(&g_l_old_z, g_c_exponent-1, &g_l_coefficient, g_bit_shift);
+        lcpower(&g_l_old_z, g_c_exponent-1, &s_l_coefficient, g_bit_shift);
     }
     else if (g_c_exponent == 3)
     {
-        g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
+        s_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
+        s_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     }
     else if (g_c_exponent == 2)
     {
-        g_l_coefficient = g_l_old_z;
+        s_l_coefficient = g_l_old_z;
     }
     else if (g_c_exponent < 2)
     {
-        g_l_coefficient.x = 1L << g_bit_shift;
-        g_l_coefficient.y = 0L;
+        s_l_coefficient.x = 1L << g_bit_shift;
+        s_l_coefficient.y = 0L;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return true;
@@ -91,10 +93,10 @@ int MarksLambdaFractal()
     g_l_temp.x = g_l_temp_sqr_x - g_l_temp_sqr_y;
     g_l_temp.y = multiply(g_l_old_z.x , g_l_old_z.y , g_bit_shift_less_1);
 
-    g_l_new_z.x = multiply(g_l_coefficient.x, g_l_temp.x, g_bit_shift)
-             - multiply(g_l_coefficient.y, g_l_temp.y, g_bit_shift) + g_long_param->x;
-    g_l_new_z.y = multiply(g_l_coefficient.x, g_l_temp.y, g_bit_shift)
-             + multiply(g_l_coefficient.y, g_l_temp.x, g_bit_shift) + g_long_param->y;
+    g_l_new_z.x = multiply(s_l_coefficient.x, g_l_temp.x, g_bit_shift)
+             - multiply(s_l_coefficient.y, g_l_temp.y, g_bit_shift) + g_long_param->x;
+    g_l_new_z.y = multiply(s_l_coefficient.x, g_l_temp.y, g_bit_shift)
+             + multiply(s_l_coefficient.y, g_l_temp.x, g_bit_shift) + g_long_param->y;
 
     return g_bailout_long();
 }
@@ -221,22 +223,22 @@ int marksmandel_per_pixel()
 
     if (g_c_exponent > 3)
     {
-        lcpower(&g_l_old_z, g_c_exponent-1, &g_l_coefficient, g_bit_shift);
+        lcpower(&g_l_old_z, g_c_exponent-1, &s_l_coefficient, g_bit_shift);
     }
     else if (g_c_exponent == 3)
     {
-        g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift)
+        s_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift)
                          - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
+        s_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     }
     else if (g_c_exponent == 2)
     {
-        g_l_coefficient = g_l_old_z;
+        s_l_coefficient = g_l_old_z;
     }
     else if (g_c_exponent < 2)
     {
-        g_l_coefficient.x = 1L << g_bit_shift;
-        g_l_coefficient.y = 0L;
+        s_l_coefficient.x = 1L << g_bit_shift;
+        s_l_coefficient.y = 0L;
     }
 
     g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);

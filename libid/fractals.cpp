@@ -68,7 +68,6 @@ inline void conjugate(DComplex &pz)
     pz.y = - pz.y;
 }
 
-LComplex g_l_coefficient{};
 LComplex g_l_old_z{};
 LComplex g_l_new_z{};
 LComplex g_l_param{};
@@ -80,7 +79,6 @@ long g_l_temp_sqr_y{};
 int g_max_color{};
 int g_degree{};
 int g_basin{};
-double g_threshold{};
 long g_fudge_half{};
 DComplex g_power_z{};
 int g_bit_shift_less_1{}; // bit shift less 1
