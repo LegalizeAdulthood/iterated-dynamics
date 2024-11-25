@@ -20,3 +20,6 @@ void mandel_z_power_perturb(
 int floatZtozPluszpwrFractal();
 
 bool JuliafnPlusZsqrdSetup();
+
+int TrigPlusZsquaredFractal();
+int TrigPlusZsquaredfpFractal();

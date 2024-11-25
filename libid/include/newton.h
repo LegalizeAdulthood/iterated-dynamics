@@ -2,8 +2,6 @@
 //
 #pragma once
 
-#include "port.h"
-
 #include "cmplx.h"
 
 void invertz2(DComplex *z);
@@ -16,3 +14,5 @@ int ComplexBasin();
 
 bool NewtonSetup();
 int MPCjulia_per_pixel();
+
+int MPCNewtonFractal();

@@ -18,6 +18,7 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "perturbation.h"
+#include "peterson_variations.h"
 #include "pickover_mandelbrot.h"
 #include "popcorn.h"
 #include "prototyp.h"

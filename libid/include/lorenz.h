@@ -96,3 +96,6 @@ int latoofloatorbit(double *, double *, double *);
 bool setup_convert_to_screen(affine *);
 int plotorbits2dsetup();
 int plotorbits2dfloat();
+int dynamfloat(double *x, double *y, double *z);
+int mandelcloudfloat(double *x, double *y, double *z);
+int dynam2dfloat();
