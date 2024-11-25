@@ -12,8 +12,8 @@
 #include "cmdfiles.h"
 #include "complex_fn.h"
 #include "drivers.h"
-#include "fractalb.h"
 #include "fractals.h"
+#include "id.h"
 #include "id_data.h"
 #include "pickover_mandelbrot.h"
 
@@ -36,7 +36,7 @@ void PertEngine::initialize_frame(
 
     if (g_bf_math != bf_math_type::NONE)
     {
-        m_saved = save_stack();
+        m_saved_stack = save_stack();
         m_center_bf.x = alloc_stack(g_bf_length + 2);
         m_center_bf.y = alloc_stack(g_bf_length + 2);
         copy_bf(m_center_bf.x, center_bf.x);
@@ -139,7 +139,7 @@ int PertEngine::calculate_one_frame(int subtype)
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(subtype, reference_coordinate_bf, g_max_iterations);
+                reference_zoom_point(subtype, reference_coordinate_bf, g_max_iterations);
             }
             else
             {
@@ -189,7 +189,7 @@ int PertEngine::calculate_one_frame(int subtype)
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                reference_zoom_point_bf(subtype, reference_coordinate_bf, g_max_iterations);
+                reference_zoom_point(subtype, reference_coordinate_bf, g_max_iterations);
             }
             else
             {
@@ -234,7 +234,7 @@ void PertEngine::cleanup()
 {
     if (g_bf_math != bf_math_type::NONE)
     {
-        restore_stack(m_saved);
+        restore_stack(m_saved_stack);
     }
     m_points_remaining.clear();
     m_glitch_points.clear();
@@ -465,7 +465,7 @@ int PertEngine::calculate_point(int subtype, const Point &pt, double magnified_r
 }
 
 // Reference Zoom Point - BigFlt
-void PertEngine::reference_zoom_point_bf(int subtype, const BFComplex &center, int max_iteration)
+void PertEngine::reference_zoom_point(int subtype, const BFComplex &center, int max_iteration)
 {
     // Raising this number makes more calculations, but less variation between each calculation (less chance
     // of mis-identifying a glitched point).
@@ -513,7 +513,7 @@ void PertEngine::reference_zoom_point_bf(int subtype, const BFComplex &center, i
 
         m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
 
-        ref_functions_bf(subtype, center, z_bf);
+        ref_functions(subtype, center, z_bf);
     }
 }
 
@@ -608,7 +608,7 @@ void PertEngine::pert_functions(int subtype, const std::complex<double> &x_ref, 
     }
 }
 
-void PertEngine::ref_functions_bf(int subtype, const BFComplex &center, BFComplex &z)
+void PertEngine::ref_functions(int subtype, const BFComplex &center, BFComplex &z)
 {
     switch (subtype)
     {

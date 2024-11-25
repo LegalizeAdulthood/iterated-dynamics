@@ -4,7 +4,6 @@
 
 #include "Point.h"
 #include "big.h"
-#include "id.h"
 
 #include <complex>
 #include <string>
@@ -18,11 +17,11 @@ public:
 
 private:
     int calculate_point(int subtype, const Point &pt, double tempRadius, int window_radius);
-    void reference_zoom_point_bf(int subtype, const BFComplex &BigCentre, int maxIteration);
+    void reference_zoom_point(int subtype, const BFComplex &BigCentre, int maxIteration);
     void reference_zoom_point(int subtype, const std::complex<double> &center, int maxIteration);
     void pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
         std::complex<double> &delta0);
-    void ref_functions_bf(int subtype, const BFComplex &center, BFComplex &z);
+    void ref_functions(int subtype, const BFComplex &center, BFComplex &z);
     void ref_functions(int subtype, const std::complex<double> &center, std::complex<double> &z);
     void cleanup();
 
@@ -42,5 +41,5 @@ private:
     bool m_calculate_glitches{true};
     double m_percent_glitch_tolerance{0.1}; // What percentage of the image is okay to be glitched.
     int m_reference_points{};
-    int m_saved{}; // keep track of bigflt memory
+    int m_saved_stack{};
 };
