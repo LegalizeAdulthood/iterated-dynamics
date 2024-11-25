@@ -167,8 +167,8 @@ AlternateMath g_alternate_math[] =
     {fractal_type::JULIAFP, bf_math_type::BIGNUM, julia_bn_fractal, julia_bn_per_pixel,  mandel_bn_setup},
     {fractal_type::MANDELFP, bf_math_type::BIGNUM, julia_bn_fractal, mandel_bn_per_pixel, mandel_bn_setup},
 #else
-    {fractal_type::JULIAFP, bf_math_type::BIGFLT, JuliabfFractal, juliabf_per_pixel,  MandelbfSetup},
-    {fractal_type::MANDELFP, bf_math_type::BIGFLT, JuliabfFractal, mandelbf_per_pixel, MandelbfSetup},
+    {fractal_type::JULIAFP, bf_math_type::BIGFLT, julia_bf_fractal, julia_bf_per_pixel,  mandel_bf_setup},
+    {fractal_type::MANDELFP, bf_math_type::BIGFLT, julia_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
 #endif
     /*
     NOTE: The default precision for g_bf_math=BIGNUM is not high enough
