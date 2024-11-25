@@ -100,15 +100,15 @@ static int SkinnerTrigSubTrigFractal()
     return g_bailout_long();
 }
 
-bool TrigPlusTriglongSetup()
+bool trig_plus_trig_long_setup()
 {
-    FnPlusFnSym();
+    fn_plus_fn_sym();
     if (g_trig_index[1] == trig_fn::SQR)
     {
         return TrigPlusSqrlongSetup();
     }
     g_cur_fractal_specific->per_pixel =  long_julia_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  TrigPlusTrigFractal;
+    g_cur_fractal_specific->orbitcalc =  trig_plus_trig_fractal;
     if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
@@ -191,15 +191,15 @@ static int SkinnerTrigSubTrigfpFractal()
     return g_bailout_float();
 }
 
-bool TrigPlusTrigfpSetup()
+bool trig_plus_trig_fp_setup()
 {
-    FnPlusFnSym();
+    fn_plus_fn_sym();
     if (g_trig_index[1] == trig_fn::SQR)
     {
         return TrigPlusSqrfpSetup();
     }
     g_cur_fractal_specific->per_pixel =  other_julia_fp_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  TrigPlusTrigfpFractal;
+    g_cur_fractal_specific->orbitcalc =  trig_plus_trig_fp_fractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
@@ -214,7 +214,7 @@ bool TrigPlusTrigfpSetup()
     return julia_fp_setup();
 }
 
-int TrigPlusTrigFractal()
+int trig_plus_trig_fractal()
 {
     // z = trig(0,z)*p1 + trig1(z)*p2
     trig0(g_l_old_z, g_l_temp);
@@ -226,7 +226,7 @@ int TrigPlusTrigFractal()
     return g_bailout_long();
 }
 
-int TrigPlusTrigfpFractal()
+int trig_plus_trig_fp_fractal()
 {
     // z = trig0(z)*p1+trig1(z)*p2
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -237,7 +237,7 @@ int TrigPlusTrigfpFractal()
     return g_bailout_float();
 }
 
-bool FnPlusFnSym() // set symmetry matrix for fn+fn type
+bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
 {
     static symmetry_type fnplusfn[7][7] =
     {
@@ -269,7 +269,7 @@ bool FnPlusFnSym() // set symmetry matrix for fn+fn type
     return false;
 }
 
-bool FnXFnSetup()
+bool fn_x_fn_setup()
 {
     static symmetry_type fnxfn[7][7] =
     {
@@ -320,7 +320,7 @@ bool FnXFnSetup()
     }
 }
 
-int TrigXTrigFractal()
+int trig_x_trig_fractal()
 {
     LComplex ltmp3;
     // z = trig0(z)*trig1(z)
@@ -329,12 +329,12 @@ int TrigXTrigFractal()
     g_l_new_z = g_l_temp * ltmp3;
     if (g_overflow)
     {
-        TryFloatFractal(TrigXTrigfpFractal);
+        TryFloatFractal(trig_x_trig_fp_fractal);
     }
     return g_bailout_long();
 }
 
-int TrigXTrigfpFractal()
+int trig_x_trig_fp_fractal()
 {
     // z = trig0(z)*trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -343,7 +343,7 @@ int TrigXTrigfpFractal()
     return g_bailout_float();
 }
 
-int TrigZsqrdfpFractal()
+int trig_z_sqrd_fp_fractal()
 {
     // { z=pixel: z=trig(z*z), |z|<TEST }
     CMPLXsqr_old(g_tmp_z);
@@ -351,7 +351,7 @@ int TrigZsqrdfpFractal()
     return g_bailout_float();
 }
 
-int TrigZsqrdFractal() // this doesn't work very well
+int trig_z_sqrd_fractal() // this doesn't work very well
 {
     // { z=pixel: z=trig(z*z), |z|<TEST }
     long l16triglim_2 = 8L << 15;
@@ -366,12 +366,12 @@ int TrigZsqrdFractal() // this doesn't work very well
     }
     if (g_overflow)
     {
-        TryFloatFractal(TrigZsqrdfpFractal);
+        TryFloatFractal(trig_z_sqrd_fp_fractal);
     }
     return g_bailout_long();
 }
 
-bool SqrTrigSetup()
+bool sqr_trig_setup()
 {
     //   static char SqrTrigSym[] =
     // fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
@@ -398,7 +398,7 @@ bool SqrTrigSetup()
     }
 }
 
-int SqrTrigFractal()
+int sqr_trig_fractal()
 {
     // { z=pixel: z=sqr(trig(z)), |z|<TEST}
     trig0(g_l_old_z, g_l_temp);
@@ -406,7 +406,7 @@ int SqrTrigFractal()
     return g_bailout_long();
 }
 
-int SqrTrigfpFractal()
+int sqr_trig_fp_fractal()
 {
     // SZSB(XYAXIS) { z=pixel, TEST=(p1+3): z=sin(z)*sin(z), |z|<TEST}
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -414,7 +414,7 @@ int SqrTrigfpFractal()
     return g_bailout_float();
 }
 
-int Sqr1overTrigFractal()
+int sqr_1_over_trig_fractal()
 {
     // z = sqr(1/trig(z))
     trig0(g_l_old_z, g_l_old_z);
@@ -423,7 +423,7 @@ int Sqr1overTrigFractal()
     return g_bailout_long();
 }
 
-int Sqr1overTrigfpFractal()
+int sqr_1_over_trig_fp_fractal()
 {
     // z = sqr(1/trig(z))
     CMPLXtrig0(g_old_z, g_old_z);
@@ -468,7 +468,7 @@ static int SkinnerZXTrigSubZfpFractal()
     return g_bailout_float();
 }
 
-bool ZXTrigPlusZSetup()
+bool z_x_trig_plus_z_setup()
 {
     //   static char ZXTrigPlusZSym1[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
@@ -520,7 +520,7 @@ bool ZXTrigPlusZSetup()
     }
     if (g_cur_fractal_specific->isinteger)
     {
-        g_cur_fractal_specific->orbitcalc =  ZXTrigPlusZFractal;
+        g_cur_fractal_specific->orbitcalc =  z_x_trig_plus_z_fractal;
         if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
         {
             if (g_l_param2.x == g_fudge_factor)       // Scott variant
@@ -536,7 +536,7 @@ bool ZXTrigPlusZSetup()
     }
     else
     {
-        g_cur_fractal_specific->orbitcalc =  ZXTrigPlusZfpFractal;
+        g_cur_fractal_specific->orbitcalc =  z_x_trig_plus_z_fp_fractal;
         if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
         {
             if (g_param_z2.x == 1.0)       // Scott variant
@@ -552,7 +552,7 @@ bool ZXTrigPlusZSetup()
     return julia_fp_setup();
 }
 
-int ZXTrigPlusZfpFractal()
+int z_x_trig_plus_z_fp_fractal()
 {
     // z = (p1*z*trig(z))+p2*z
     CMPLXtrig0(g_old_z, g_tmp_z);            // tmp  = trig(old)
@@ -564,7 +564,7 @@ int ZXTrigPlusZfpFractal()
     return g_bailout_float();
 }
 
-int ZXTrigPlusZFractal()
+int z_x_trig_plus_z_fractal()
 {
     // z = (p1*z*trig(z))+p2*z
     trig0(g_l_old_z, g_l_temp);                 // ltmp  = trig(old)
@@ -575,7 +575,7 @@ int ZXTrigPlusZFractal()
     return g_bailout_long();
 }
 
-int ManOWarFractal()
+int man_o_war_fractal()
 {
     // From Art Matrix via Lee Skinner
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_l_temp.x + g_long_param->x;
@@ -584,7 +584,7 @@ int ManOWarFractal()
     return g_bailout_long();
 }
 
-int ManOWarfpFractal()
+int man_o_war_fp_fractal()
 {
     // From Art Matrix via Lee Skinner
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -594,7 +594,7 @@ int ManOWarfpFractal()
     return g_bailout_float();
 }
 
-int Richard8fpFractal()
+int richard_8_fp_fractal()
 {
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
     CMPLXtrig0(g_old_z, g_new_z);
@@ -603,7 +603,7 @@ int Richard8fpFractal()
     return g_bailout_float();
 }
 
-int Richard8Fractal()
+int richard_8_fractal()
 {
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
     trig0(g_l_old_z, g_l_new_z);
@@ -612,7 +612,7 @@ int Richard8Fractal()
     return g_bailout_long();
 }
 
-int otherrichard8fp_per_pixel()
+int other_richard_8_fp_per_pixel()
 {
     other_mandel_fp_per_pixel();
     CMPLXtrig1(*g_float_param, g_tmp_z);
@@ -620,7 +620,7 @@ int otherrichard8fp_per_pixel()
     return 1;
 }
 
-int long_richard8_per_pixel()
+int long_richard_8_per_pixel()
 {
     long_mandel_per_pixel();
     trig1(*g_long_param, g_l_temp);
@@ -628,7 +628,7 @@ int long_richard8_per_pixel()
     return 1;
 }
 
-int SpiderfpFractal()
+int spider_fp_fractal()
 {
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_tmp_z.x;
@@ -638,7 +638,7 @@ int SpiderfpFractal()
     return g_bailout_float();
 }
 
-int SpiderFractal()
+int spider_fractal()
 {
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_l_temp.x;
@@ -648,7 +648,7 @@ int SpiderFractal()
     return g_bailout_long();
 }
 
-int TetratefpFractal()
+int tetrate_fp_fractal()
 {
     // Tetrate(XAXIS) { c=z=pixel: z=c^z, |z|<=(P1+3) }
     g_new_z = ComplexPower(*g_float_param, g_old_z);

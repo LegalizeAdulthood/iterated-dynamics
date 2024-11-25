@@ -2,40 +2,40 @@
 //
 #pragma once
 
-bool FnPlusFnSym();
+bool fn_plus_fn_sym();
 
-int SqrTrigFractal();
-int SqrTrigfpFractal();
+int sqr_trig_fractal();
+int sqr_trig_fp_fractal();
 
-bool TrigPlusTriglongSetup();
-bool TrigPlusTrigfpSetup();
-int TrigPlusTrigFractal();
-int TrigPlusTrigfpFractal();
+bool trig_plus_trig_long_setup();
+bool trig_plus_trig_fp_setup();
+int trig_plus_trig_fractal();
+int trig_plus_trig_fp_fractal();
 
-bool FnXFnSetup();
-int TrigXTrigFractal();
-int TrigXTrigfpFractal();
+bool fn_x_fn_setup();
+int trig_x_trig_fractal();
+int trig_x_trig_fp_fractal();
 
-int TrigZsqrdFractal();
-int TrigZsqrdfpFractal();
+int trig_z_sqrd_fractal();
+int trig_z_sqrd_fp_fractal();
 
-bool SqrTrigSetup();
-int Sqr1overTrigFractal();
-int Sqr1overTrigfpFractal();
+bool sqr_trig_setup();
+int sqr_1_over_trig_fractal();
+int sqr_1_over_trig_fp_fractal();
 
-bool ZXTrigPlusZSetup();
-int ZXTrigPlusZFractal();
-int ZXTrigPlusZfpFractal();
+bool z_x_trig_plus_z_setup();
+int z_x_trig_plus_z_fractal();
+int z_x_trig_plus_z_fp_fractal();
 
-int ManOWarFractal();
-int ManOWarfpFractal();
+int man_o_war_fractal();
+int man_o_war_fp_fractal();
 
-int Richard8Fractal();
-int Richard8fpFractal();
-int long_richard8_per_pixel();
-int otherrichard8fp_per_pixel();
+int richard_8_fractal();
+int richard_8_fp_fractal();
+int long_richard_8_per_pixel();
+int other_richard_8_fp_per_pixel();
 
-int SpiderFractal();
-int SpiderfpFractal();
+int spider_fractal();
+int spider_fp_fractal();
 
-int TetratefpFractal();
+int tetrate_fp_fractal();
