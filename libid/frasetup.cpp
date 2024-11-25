@@ -99,14 +99,14 @@ StandaloneSetup()
 
 bool mandel_perturbation_setup()
 {
-    return perturbation(0);
+    return perturbation();
 }
 
 bool mandel_z_power_perturbation_setup()
 {
     constexpr int MAX_POWER{28};
     g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
-    return perturbation(1);
+    return perturbation();
 }
 
 bool

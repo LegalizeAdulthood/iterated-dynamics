@@ -323,7 +323,7 @@ fractalspecificstuff g_fractal_specific[] =
         0, fractal_type::JULIAFP, fractal_type::NOFRACTAL, fractal_type::MANDEL, symmetry_type::X_AXIS_NO_PARAM,
         JuliafpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
         STDBAILOUT,
-        mandel_ref_pt, mandel_ref_pt_bf
+        mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb
     },
 
     {
@@ -894,7 +894,7 @@ fractalspecificstuff g_fractal_specific[] =
         floatZpowerFractal, othermandelfp_per_pixel, MandelfpSetup,
         standard_fractal,
         STDBAILOUT,
-        mandel_z_power_ref_pt, mandel_z_power_ref_pt_bf
+        mandel_z_power_ref_pt, mandel_z_power_ref_pt_bf, mandel_z_power_perturb
     },
 
     {

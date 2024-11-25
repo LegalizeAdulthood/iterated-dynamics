@@ -43,7 +43,7 @@ void PertEngine::initialize_frame(
 }
 
 // Full frame calculation
-int PertEngine::calculate_one_frame(int subtype)
+int PertEngine::calculate_one_frame()
 {
     int i;
     BFComplex c_bf{};
@@ -180,7 +180,7 @@ int PertEngine::calculate_one_frame(int subtype)
                 return -1;
             }
             Point pt{m_points_remaining[i]};
-            if (calculate_point(subtype, pt, magnified_radius, window_radius) < 0)
+            if (calculate_point(pt, magnified_radius, window_radius) < 0)
             {
                 return -1;
             }
@@ -216,7 +216,7 @@ void PertEngine::cleanup()
     m_xn.clear();
 }
 
-int PertEngine::calculate_point(int subtype, const Point &pt, double magnified_radius, int window_radius)
+int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius)
 {
     // Get the complex number at this pixel.
     // This calculates the number relative to the reference point, so we need to translate that to the center
@@ -241,7 +241,12 @@ int PertEngine::calculate_point(int subtype, const Point &pt, double magnified_r
 
     do
     {
-        pert_functions(subtype, m_xn[iteration], delta_sub_n, delta_sub_0);
+        if (g_cur_fractal_specific->pert_pt == nullptr)
+        {
+            throw std::runtime_error("No perturbation point function defined for fractal type (" +
+                std::string{g_cur_fractal_specific->name} + ")");
+        }
+        g_cur_fractal_specific->pert_pt(m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
         std::complex<double> coord_mag{m_xn[iteration] + delta_sub_n};
         m_z_magnitude_squared = sqr(coord_mag.real()) + sqr(coord_mag.imag());
@@ -486,12 +491,12 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
 
         m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
 
-        if (g_cur_fractal_specific->ref_bf == nullptr)
+        if (g_cur_fractal_specific->pert_ref_bf == nullptr)
         {
             throw std::runtime_error("No reference orbit function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        g_cur_fractal_specific->ref_bf(center, z_bf);
+        g_cur_fractal_specific->pert_ref_bf(center, z_bf);
     }
 }
 
@@ -525,29 +530,11 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         std::complex<double> tolerancy = z * glitch_tolerancy;
         m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
 
-        if (g_cur_fractal_specific->ref == nullptr)
+        if (g_cur_fractal_specific->pert_ref == nullptr)
         {
             throw std::runtime_error("No reference orbit function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        g_cur_fractal_specific->ref(center, z);
-    }
-}
-
-void PertEngine::pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
-    const std::complex<double> &delta0)
-{
-    switch (subtype)
-    {
-    case 0:
-        mandel_perturb(x_ref, delta_n, delta0);
-        break;
-
-    case 1:
-        mandel_z_power_perturb(x_ref, delta_n, delta0);
-        break;
-
-    default:
-        throw std::runtime_error("Unexpected subtype " + std::to_string(subtype));
+        g_cur_fractal_specific->pert_ref(center, z);
     }
 }

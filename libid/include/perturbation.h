@@ -2,4 +2,4 @@
 //
 #pragma once
 
-bool perturbation(int subtype);
+bool perturbation();

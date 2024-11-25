@@ -13,14 +13,12 @@ class PertEngine
 {
 public:
     void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
-    int calculate_one_frame(int subtype);
+    int calculate_one_frame();
 
 private:
-    int calculate_point(int subtype, const Point &pt, double tempRadius, int window_radius);
-    void reference_zoom_point(const BFComplex &BigCentre, int maxIteration);
-    void reference_zoom_point(const std::complex<double> &center, int maxIteration);
-    void pert_functions(int subtype, const std::complex<double> &x_ref, std::complex<double> &delta_n,
-        const std::complex<double> &delta0);
+    int calculate_point(const Point &pt, double magnified_radius, int window_radius);
+    void reference_zoom_point(const BFComplex &center, int max_iteration);
+    void reference_zoom_point(const std::complex<double> &center, int max_iteration);
     void cleanup();
 
     std::string m_status;

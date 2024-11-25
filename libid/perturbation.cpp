@@ -15,7 +15,7 @@
 
 static PertEngine s_pert_engine;
 
-bool perturbation(int subtype)
+bool perturbation()
 {
     BigStackSaver saved;
     double mandel_width; // width of display
@@ -51,7 +51,7 @@ bool perturbation(int subtype)
     }
 
     s_pert_engine.initialize_frame(center_bf, {center.x, center.y}, mandel_width / 2.0);
-    if (const int result = s_pert_engine.calculate_one_frame(subtype); result < 0)
+    if (const int result = s_pert_engine.calculate_one_frame(); result < 0)
     {
         throw std::runtime_error("Failed to initialize perturbation engine (" + std::to_string(result) + ")");
     }
