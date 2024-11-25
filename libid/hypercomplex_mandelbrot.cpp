@@ -11,7 +11,7 @@
 #include "hcmplx.h"
 #include "sqr.h"
 
-int HyperComplexFPFractal()
+int hyper_complex_fp_fractal()
 {
     DHyperComplex hold;
     DHyperComplex hnew;
