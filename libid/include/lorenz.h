@@ -99,3 +99,4 @@ int plotorbits2dfloat();
 int dynamfloat(double *x, double *y, double *z);
 int mandelcloudfloat(double *x, double *y, double *z);
 int dynam2dfloat();
+bool dynam2dfloatsetup();

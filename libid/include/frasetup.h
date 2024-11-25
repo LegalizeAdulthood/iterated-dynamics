@@ -12,4 +12,3 @@ bool JuliafpSetup();
 bool MandellongSetup();
 bool JulialongSetup();
 bool StandardSetup();
-bool dynam2dfloatsetup();
