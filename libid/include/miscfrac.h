@@ -2,22 +2,22 @@
 //
 #pragma once
 
-int Bifurcation();
-int BifurcAddTrigPi();
-int BifurcLambda();
-int BifurcLambdaTrig();
-int BifurcMay();
-bool BifurcMaySetup();
-int BifurcSetTrigPi();
-int BifurcStewartTrig();
-int BifurcVerhulstTrig();
+int bifurcation();
+int bifurc_add_trig_pi();
+int bifurc_lambda();
+int bifurc_lambda_trig();
+int bifurc_may();
+bool bifurc_may_setup();
+int bifurc_set_trig_pi();
+int bifurc_stewart_trig();
+int bifurc_verhulst_trig();
 
-int LongBifurcAddTrigPi();
-int LongBifurcLambdaTrig();
-int LongBifurcMay();
-int LongBifurcSetTrigPi();
-int LongBifurcStewartTrig();
-int LongBifurcVerhulstTrig();
+int long_bifurc_add_trig_pi();
+int long_bifurc_lambda_trig();
+int long_bifurc_may();
+int long_bifurc_set_trig_pi();
+int long_bifurc_stewart_trig();
+int long_bifurc_verhulst_trig();
 
 int diffusion();
 bool lya_setup();

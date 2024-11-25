@@ -647,7 +647,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFURCATION, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         1.9F, 3.0F, 0.0F, 1.34F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LBIFURCATION, symmetry_type::NONE,
-        BifurcVerhulstTrig, nullptr, standalone_setup, Bifurcation,
+        bifurc_verhulst_trig, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1432,7 +1432,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFURCATION, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         1.9F, 3.0F, 0.0F, 1.34F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::BIFURCATION, symmetry_type::NONE,
-        LongBifurcVerhulstTrig, nullptr, standalone_setup, Bifurcation,
+        long_bifurc_verhulst_trig, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1443,7 +1443,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFLAMBDA, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         -2.0F, 4.0F, -1.0F, 2.0F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::BIFLAMBDA, symmetry_type::NONE,
-        LongBifurcLambdaTrig, nullptr, standalone_setup, Bifurcation,
+        long_bifurc_lambda_trig, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1454,7 +1454,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFLAMBDA, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         -2.0F, 4.0F, -1.0F, 2.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LBIFLAMBDA, symmetry_type::NONE,
-        BifurcLambdaTrig, nullptr, standalone_setup, Bifurcation,
+        bifurc_lambda_trig, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1465,7 +1465,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFPLUSSINPI, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         0.275F, 1.45F, 0.0F, 2.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LBIFADSINPI, symmetry_type::NONE,
-        BifurcAddTrigPi, nullptr, standalone_setup, Bifurcation,
+        bifurc_add_trig_pi, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1476,7 +1476,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFEQSINPI, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         -2.5F, 2.5F, -3.5F, 3.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LBIFEQSINPI, symmetry_type::NONE,
-        BifurcSetTrigPi, nullptr, standalone_setup, Bifurcation,
+        bifurc_set_trig_pi, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1614,7 +1614,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFEQSINPI, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         -2.5F, 2.5F, -3.5F, 3.5F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::BIFEQSINPI, symmetry_type::NONE,
-        LongBifurcSetTrigPi, nullptr, standalone_setup, Bifurcation,
+        long_bifurc_set_trig_pi, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1625,7 +1625,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFPLUSSINPI, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         0.275F, 1.45F, 0.0F, 2.0F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::BIFADSINPI, symmetry_type::NONE,
-        LongBifurcAddTrigPi, nullptr, standalone_setup, Bifurcation,
+        long_bifurc_add_trig_pi, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1636,7 +1636,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFSTEWART, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         0.7F, 2.0F, -1.1F, 1.1F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LBIFSTEWART, symmetry_type::NONE,
-        BifurcStewartTrig, nullptr, standalone_setup, Bifurcation,
+        bifurc_stewart_trig, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1647,7 +1647,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFSTEWART, fractal_flags::TRIG1|fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         0.7F, 2.0F, -1.1F, 1.1F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::BIFSTEWART, symmetry_type::NONE,
-        LongBifurcStewartTrig, nullptr, standalone_setup, Bifurcation,
+        long_bifurc_stewart_trig, nullptr, standalone_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1691,7 +1691,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LYAPUNOV, help_labels::HT_LYAPUNOV, fractal_flags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        BifurcLambda, nullptr, lya_setup, lyapunov,
+        bifurc_lambda, nullptr, lya_setup, lyapunov,
         NOBAILOUT
     },
 
@@ -1834,7 +1834,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFMAY, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         -3.5F, -0.9F, -0.5F, 3.2F,
         16, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::BIFMAY, symmetry_type::NONE,
-        LongBifurcMay, nullptr, BifurcMaySetup, Bifurcation,
+        long_bifurc_may, nullptr, bifurc_may_setup, bifurcation,
         NOBAILOUT
     },
 
@@ -1845,7 +1845,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_BIF, help_labels::HF_BIFMAY, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE,
         -3.5F, -0.9F, -0.5F, 3.2F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::LBIFMAY, symmetry_type::NONE,
-        BifurcMay, nullptr, BifurcMaySetup, Bifurcation,
+        bifurc_may, nullptr, bifurc_may_setup, bifurcation,
         NOBAILOUT
     },
 

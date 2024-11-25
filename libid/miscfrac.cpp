@@ -1031,7 +1031,7 @@ inline int population_orbit()
     return population_exceeded() ? 1 : 0;
 }
 
-int Bifurcation()
+int bifurcation()
 {
     int x = 0;
     if (g_resuming)
@@ -1289,13 +1289,13 @@ static bool Bif_Periodic(long time)
 // The following are Bifurcation "orbitcalc" routines...
 /*                                                                                                    */
 //********************************************************************
-int BifurcLambda() // Used by lyanupov
+int bifurc_lambda() // Used by lyanupov
 {
     s_population = s_rate * s_population * (1 - s_population);
     return population_orbit();
 }
 
-int BifurcVerhulstTrig()
+int bifurc_verhulst_trig()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
     g_tmp_z.x = s_population;
@@ -1305,7 +1305,7 @@ int BifurcVerhulstTrig()
     return population_orbit();
 }
 
-int LongBifurcVerhulstTrig()
+int long_bifurc_verhulst_trig()
 {
     g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
@@ -1315,7 +1315,7 @@ int LongBifurcVerhulstTrig()
     return g_overflow;
 }
 
-int BifurcStewartTrig()
+int bifurc_stewart_trig()
 {
     //  Population = (Rate * fn(Population) * fn(Population)) - 1.0
     g_tmp_z.x = s_population;
@@ -1325,7 +1325,7 @@ int BifurcStewartTrig()
     return population_orbit();
 }
 
-int LongBifurcStewartTrig()
+int long_bifurc_stewart_trig()
 {
     g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
@@ -1336,7 +1336,7 @@ int LongBifurcStewartTrig()
     return g_overflow;
 }
 
-int BifurcSetTrigPi()
+int bifurc_set_trig_pi()
 {
     g_tmp_z.x = s_population * PI;
     g_tmp_z.y = 0;
@@ -1345,7 +1345,7 @@ int BifurcSetTrigPi()
     return population_orbit();
 }
 
-int LongBifurcSetTrigPi()
+int long_bifurc_set_trig_pi()
 {
     g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
     g_l_temp.y = 0;
@@ -1354,7 +1354,7 @@ int LongBifurcSetTrigPi()
     return g_overflow;
 }
 
-int BifurcAddTrigPi()
+int bifurc_add_trig_pi()
 {
     g_tmp_z.x = s_population * PI;
     g_tmp_z.y = 0;
@@ -1363,7 +1363,7 @@ int BifurcAddTrigPi()
     return population_orbit();
 }
 
-int LongBifurcAddTrigPi()
+int long_bifurc_add_trig_pi()
 {
     g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
     g_l_temp.y = 0;
@@ -1372,7 +1372,7 @@ int LongBifurcAddTrigPi()
     return g_overflow;
 }
 
-int BifurcLambdaTrig()
+int bifurc_lambda_trig()
 {
     //  Population = Rate * fn(Population) * (1 - fn(Population))
     g_tmp_z.x = s_population;
@@ -1382,7 +1382,7 @@ int BifurcLambdaTrig()
     return population_orbit();
 }
 
-int LongBifurcLambdaTrig()
+int long_bifurc_lambda_trig()
 {
     g_l_temp.x = s_population_l;
     g_l_temp.y = 0;
@@ -1392,7 +1392,7 @@ int LongBifurcLambdaTrig()
     return g_overflow;
 }
 
-int BifurcMay()
+int bifurc_may()
 {
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
@@ -1402,7 +1402,7 @@ int BifurcMay()
     return population_orbit();
 }
 
-int LongBifurcMay()
+int long_bifurc_may()
 {
     g_l_temp.x = s_population_l + g_fudge_factor;
     g_l_temp.y = 0;
@@ -1413,7 +1413,7 @@ int LongBifurcMay()
     return g_overflow;
 }
 
-bool BifurcMaySetup()
+bool bifurc_may_setup()
 {
 
     s_beta = (long)g_params[2];
