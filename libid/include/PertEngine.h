@@ -26,7 +26,6 @@ private:
     std::vector<double> m_perturbation_tolerance_check;
     double m_delta_real{};
     double m_delta_imag{};
-    double m_z_magnitude_squared{};
     std::vector<Point> m_points_remaining;
     std::vector<Point> m_glitch_points;
     long m_glitch_point_count{};

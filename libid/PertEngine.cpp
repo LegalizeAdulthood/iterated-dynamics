@@ -234,7 +234,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
 
     double min_orbit{1e5}; // orbit value closest to origin
     long min_index{};      // iteration of min_orbit
-
+    double magnitude;
     do
     {
         if (g_cur_fractal_specific->pert_pt == nullptr)
@@ -244,13 +244,13 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         }
         g_cur_fractal_specific->pert_pt(m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
-        m_z_magnitude_squared = mag_squared(m_xn[iteration] + delta_sub_n);
+        magnitude = mag_squared(m_xn[iteration] + delta_sub_n);
 
         if (g_inside_color == BOF60 || g_inside_color == BOF61)
         {
-            if (m_z_magnitude_squared < min_orbit)
+            if (magnitude < min_orbit)
             {
-                min_orbit = m_z_magnitude_squared;
+                min_orbit = magnitude;
                 min_index = iteration + 1L;
             }
         }
@@ -261,14 +261,14 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         // |ZsubN| to the other side to be precalculated. For more information, look at where the reference
         // point is calculated. I also only want to store this point once.
         if (m_calculate_glitches && !glitched &&
-            m_z_magnitude_squared < m_perturbation_tolerance_check[iteration])
+            magnitude < m_perturbation_tolerance_check[iteration])
         {
             m_glitch_points[m_glitch_point_count] = Point(pt.get_x(), pt.get_y(), iteration);
             m_glitch_point_count++;
             glitched = true;
             break;
         }
-    } while (m_z_magnitude_squared < g_magnitude_limit && iteration < g_max_iterations);
+    } while (magnitude < g_magnitude_limit && iteration < g_max_iterations);
 
     if (!glitched)
     {
