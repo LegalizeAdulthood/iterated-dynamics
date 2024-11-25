@@ -555,8 +555,8 @@ static void initvars_fractal()
     g_bail_out_test = bailouts::Mod;                                //
     g_bailout_float = fp_mod_bailout;                                 //
     g_bailout_long = long_mod_bailout;                                //
-    g_bailout_bignum = bnMODbailout;                                //
-    g_bailout_bigfloat = bfMODbailout;                              //
+    g_bailout_bignum = bn_mod_bailout;                                //
+    g_bailout_bigfloat = bf_mod_bailout;                              //
     g_new_bifurcation_functions_loaded = false;                     // for old bifs
     g_julibrot_x_min = -.83;                                        //
     g_julibrot_y_min = -.25;                                        //

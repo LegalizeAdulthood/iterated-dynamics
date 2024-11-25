@@ -319,7 +319,7 @@ void bf_corners_to_float()
 // No need to set magnitude
 // as color schemes that need it calculate it later.
 
-int  bnMODbailout()
+int  bn_mod_bailout()
 {
     long longmagnitude;
 
@@ -337,7 +337,7 @@ int  bnMODbailout()
     return 0;
 }
 
-int  bnREALbailout()
+int  bn_real_bailout()
 {
     long longtempsqrx;
 
@@ -353,7 +353,7 @@ int  bnREALbailout()
     return 0;
 }
 
-int  bnIMAGbailout()
+int  bn_imag_bailout()
 {
     long longtempsqry;
 
@@ -369,7 +369,7 @@ int  bnIMAGbailout()
     return 0;
 }
 
-int  bnORbailout()
+int  bn_or_bailout()
 {
     long longtempsqrx;
     long longtempsqry;
@@ -387,7 +387,7 @@ int  bnORbailout()
     return 0;
 }
 
-int  bnANDbailout()
+int  bn_and_bailout()
 {
     long longtempsqrx;
     long longtempsqry;
@@ -405,7 +405,7 @@ int  bnANDbailout()
     return 0;
 }
 
-int  bnMANHbailout()
+int  bn_manh_bailout()
 {
     long longtempmag;
 
@@ -426,7 +426,7 @@ int  bnMANHbailout()
     return 0;
 }
 
-int  bnMANRbailout()
+int  bn_manr_bailout()
 {
     long longtempmag;
 
@@ -445,7 +445,7 @@ int  bnMANRbailout()
     return 0;
 }
 
-int  bfMODbailout()
+int  bf_mod_bailout()
 {
     int saved;
     bf_t tmp1;
@@ -467,7 +467,7 @@ int  bfMODbailout()
     return 0;
 }
 
-int  bfREALbailout()
+int  bf_real_bailout()
 {
     int saved;
     bf_t tmp1;
@@ -490,7 +490,7 @@ int  bfREALbailout()
 }
 
 
-int  bfIMAGbailout()
+int  bf_imag_bailout()
 {
     int saved;
     bf_t tmp1;
@@ -512,7 +512,7 @@ int  bfIMAGbailout()
     return 0;
 }
 
-int  bfORbailout()
+int  bf_or_bailout()
 {
     int saved;
     bf_t tmp1;
@@ -534,7 +534,7 @@ int  bfORbailout()
     return 0;
 }
 
-int  bfANDbailout()
+int  bf_and_bailout()
 {
     int saved;
     bf_t tmp1;
@@ -556,7 +556,7 @@ int  bfANDbailout()
     return 0;
 }
 
-int  bfMANHbailout()
+int  bf_manh_bailout()
 {
     int saved;
     bf_t tmp1;
@@ -583,7 +583,7 @@ int  bfMANHbailout()
     return 0;
 }
 
-int  bfMANRbailout()
+int  bf_manr_bailout()
 {
     int saved;
     bf_t tmp1;
