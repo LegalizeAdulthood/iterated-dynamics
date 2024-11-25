@@ -10,7 +10,7 @@
 #include "id_data.h"
 #include "pixel_grid.h"
 
-int quaternionjulfp_per_pixel()
+int quaternion_jul_fp_per_pixel()
 {
     g_old_z.x = g_dx_pixel();
     g_old_z.y = g_dy_pixel();
@@ -23,7 +23,7 @@ int quaternionjulfp_per_pixel()
     return 0;
 }
 
-int quaternionfp_per_pixel()
+int quaternion_fp_per_pixel()
 {
     g_old_z.x = 0;
     g_old_z.y = 0;
@@ -36,7 +36,7 @@ int quaternionfp_per_pixel()
     return 0;
 }
 
-int QuaternionFPFractal()
+int quaternion_fp_fractal()
 {
     double a0;
     double a1;

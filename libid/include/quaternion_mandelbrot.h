@@ -2,6 +2,6 @@
 //
 #pragma once
 
-int QuaternionFPFractal();
-int quaternionfp_per_pixel();
-int quaternionjulfp_per_pixel();
+int quaternion_fp_fractal();
+int quaternion_fp_per_pixel();
+int quaternion_jul_fp_per_pixel();
