@@ -25,7 +25,6 @@ extern LComplex              g_l_temp;
 extern long                  g_l_temp_sqr_x;
 extern long                  g_l_temp_sqr_y;
 extern LComplex *            g_long_param;
-extern DComplex              g_marks_coefficient;
 extern int                   g_max_color;
 extern DComplex              g_param_z1;
 extern DComplex              g_param_z2;

@@ -87,10 +87,6 @@ DComplex g_param_z1{};
 DComplex g_param_z2{};
 DComplex *g_float_param{};
 LComplex *g_long_param{};
-
-// --------------------------------------------------------------------
-//              These variables are external for speed's sake only
-// --------------------------------------------------------------------
 double g_sin_x{};
 double g_cos_x{};
 double g_temp_sqr_x{};
