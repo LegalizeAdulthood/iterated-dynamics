@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <stdexcept>
 
 void PertEngine::initialize_frame(
@@ -127,15 +128,13 @@ int PertEngine::calculate_one_frame()
                 break;
             }
 
-            int referencePointIndex = 0;
-
             std::srand(g_random_seed);
             if (!g_random_seed_flag)
             {
                 ++g_random_seed;
             }
-            referencePointIndex = (int) ((double) rand() / (RAND_MAX + 1) * m_remaining_point_count);
-            Point pt{m_points_remaining[referencePointIndex]};
+            const int index{(int) ((double) std::rand() / RAND_MAX * m_remaining_point_count)};
+            Point pt{m_points_remaining[index]};
             // Get the complex point at the chosen reference point
             double deltaReal = ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius);
             double deltaImaginary =
@@ -196,7 +195,7 @@ int PertEngine::calculate_one_frame()
 
         // These points are glitched, so we need to mark them for recalculation. We need to recalculate them
         // using Pauldelbrot's glitch fixing method (see calculate point).
-        memcpy(m_points_remaining.data(), m_glitch_points.data(), sizeof(Point) * m_glitch_point_count);
+        std::memcpy(m_points_remaining.data(), m_glitch_points.data(), sizeof(Point) * m_glitch_point_count);
         m_remaining_point_count = m_glitch_point_count;
     }
 
