@@ -232,12 +232,8 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     int iteration{};
     bool glitched{};
 
-    double min_orbit{}; // orbit value closest to origin
-    long min_index{};   // iteration of min_orbit
-    if (g_inside_color == BOF60 || g_inside_color == BOF61)
-    {
-        min_orbit = 100000.0;
-    }
+    double min_orbit{1e5}; // orbit value closest to origin
+    long min_index{};      // iteration of min_orbit
 
     do
     {
