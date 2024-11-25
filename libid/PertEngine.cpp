@@ -244,16 +244,13 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         }
         g_cur_fractal_specific->pert_pt(m_xn[iteration], delta_sub_n, delta_sub_0);
         iteration++;
-        std::complex<double> coord_mag{m_xn[iteration] + delta_sub_n};
-        m_z_magnitude_squared = sqr(coord_mag.real()) + sqr(coord_mag.imag());
+        m_z_magnitude_squared = mag_squared(m_xn[iteration] + delta_sub_n);
 
         if (g_inside_color == BOF60 || g_inside_color == BOF61)
         {
-            const std::complex<double> z{m_xn[iteration] + delta_sub_n};
-            const double bof_magnitude{mag_squared(z)};
-            if (bof_magnitude < min_orbit)
+            if (m_z_magnitude_squared < min_orbit)
             {
-                min_orbit = bof_magnitude;
+                min_orbit = m_z_magnitude_squared;
                 min_index = iteration + 1L;
             }
         }
@@ -381,7 +378,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             default:
                 if (g_potential_flag)
                 {
-                    const double magnitude{sqr(w.real()) + sqr(w.imag())};
+                    const double magnitude{mag_squared(w)};
                     index = potential(magnitude, iteration);
                 }
                 else // no filter
@@ -482,7 +479,7 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
         tolerance.real(bftofloat(temp_real_bf));
         tolerance.imag(bftofloat(temp_imag_bf));
 
-        m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
+        m_perturbation_tolerance_check[i] = mag_squared(tolerance);
 
         if (g_cur_fractal_specific->pert_ref_bf == nullptr)
         {
@@ -499,9 +496,8 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
 
     for (int i = 0; i <= max_iteration; i++)
     {
-        std::complex<double> c = z;
+        m_xn[i] = z;
 
-        m_xn[i] = c;
         // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
         // The reason we are storing this into an array is that we need to check the magnitude against this
         // value to see if the value is glitched. We are leaving it squared because otherwise we'd need to do
@@ -517,8 +513,7 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
                 std::to_string(int(progress * 100)) + "%)";
         }
 
-        std::complex<double> tolerance = z * GLITCH_TOLERANCE;
-        m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
+        m_perturbation_tolerance_check[i] = mag_squared(z * GLITCH_TOLERANCE);
 
         if (g_cur_fractal_specific->pert_ref == nullptr)
         {
