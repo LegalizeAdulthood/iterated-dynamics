@@ -1934,10 +1934,10 @@ fractalspecificstuff g_fractal_specific[] =
         t_julia_inverse+1,
         {realparm, imagparm, s_maxhits, "Random Run Interval"},
         {-0.11, 0.6557, 4, 1024},
-        help_labels::HT_INVERSE, help_labels::HF_INVERSE, NOGUESS|NOTRACE|INFCALC|NORESUME,
+        help_labels::HT_INVERSE, help_labels::HF_INVERSE, fractal_flags::NOGUESS | fractal_flags::NOTRACE | fractal_flags::INFCALC | fractal_flags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
         24, fractal_type::NOFRACTAL, fractal_type::MANDEL, fractal_type::INVERSEJULIAFP, symmetry_type::NONE,
-        Linverse_julia_orbit, nullptr, orbit3dlongsetup, inverse_julia_per_image,
+        l_inverse_julia_orbit, nullptr, orbit3d_long_setup, inverse_julia_per_image,
         NOBAILOUT
     },
 
@@ -1945,10 +1945,10 @@ fractalspecificstuff g_fractal_specific[] =
         t_julia_inverse,
         {realparm, imagparm, s_maxhits, "Random Run Interval"},
         {-0.11, 0.6557, 4, 1024},
-        help_labels::HT_INVERSE, help_labels::HF_INVERSE, NOGUESS|NOTRACE|INFCALC|NORESUME,
+        help_labels::HT_INVERSE, help_labels::HF_INVERSE, fractal_flags::NOGUESS | fractal_flags::NOTRACE | fractal_flags::INFCALC | fractal_flags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::MANDEL, fractal_type::INVERSEJULIA, symmetry_type::NONE,
-        Minverse_julia_orbit, nullptr, orbit3dfloatsetup, inverse_julia_per_image,
+        m_inverse_julia_orbit, nullptr, orbit3d_float_setup, inverse_julia_per_image,
         NOBAILOUT
     },
 #else
