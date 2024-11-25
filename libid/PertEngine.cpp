@@ -49,12 +49,12 @@ void PertEngine::initialize_frame(
 }
 
 // Generate Pascal's Triangle coefficients
-static void load_pascal(int n)
+static void pascal_triangle()
 {
     long j;
     long c = 1L;
 
-    for (j = 0; j <= n; j++)
+    for (j = 0; j <= g_c_exponent; j++)
     {
         if (j == 0)
         {
@@ -62,7 +62,7 @@ static void load_pascal(int n)
         }
         else
         {
-            c = c * (n - j + 1) / j;
+            c = c * (g_c_exponent - j + 1) / j;
         }
         s_pascal_triangle[j] = c;
     }
@@ -87,7 +87,7 @@ int PertEngine::calculate_one_frame(int subtype)
     m_xn.resize(g_max_iterations + 1);
 
     // calculate the pascal's triangle coefficients for powers > 3
-    load_pascal(g_c_exponent);
+    pascal_triangle();
     // Fill the list of points with all points in the image.
     for (long y = 0; y < g_screen_y_dots; y++)
     {
