@@ -23,7 +23,7 @@ static DComplex s_t_cm1_cm2{}; // (floatparm - 1) * (floatparm - 2)
 **  (can also be used in "coloring in" the lakes of Julia types)
 */
 
-void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
+void float_pre_calc_magnet2() // precalculation for Magnet2 (M & J) for speed
 {
     s_t_cm1.x = g_float_param->x - 1.0;
     s_t_cm1.y = g_float_param->y;
@@ -38,7 +38,7 @@ void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 }
 
 //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
-int Magnet1Fractal()
+int magnet1_fractal()
 {
     //  In "Beauty of Fractals", code by Kev Allen.
     DComplex top;
@@ -70,7 +70,7 @@ int Magnet1Fractal()
 
 // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
 //       (3Z**2 + 3(C-2)Z + (C-1)(C-2)+1) )**2
-int Magnet2Fractal()
+int magnet2_fractal()
 {
     //   In "Beauty of Fractals", code by Kev Allen.
     DComplex top;

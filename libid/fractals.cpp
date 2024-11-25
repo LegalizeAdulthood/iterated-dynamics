@@ -579,7 +579,7 @@ int mandel_fp_per_pixel()
     switch (g_fractal_type)
     {
     case fractal_type::MAGNET2M:
-        FloatPreCalcMagnet2();
+        float_pre_calc_magnet2();
     case fractal_type::MAGNET1M:
         g_old_z.y = 0.0;       // Critical Val Zero both, but neither
         g_old_z.x = g_old_z.y; // is of the form f(Z,C) = Z*g(Z)+C

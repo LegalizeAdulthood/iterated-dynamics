@@ -324,7 +324,7 @@ julia_fp_setup()
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
     case fractal_type::MAGNET2J:
-        FloatPreCalcMagnet2();
+        float_pre_calc_magnet2();
     case fractal_type::MAGNET1J:
         g_attractor[0].x = 1.0;      // 1.0 + 0.0i always attracts
         g_attractor[0].y = 0.0;      // - both MAGNET1 and MAGNET2

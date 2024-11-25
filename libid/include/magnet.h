@@ -2,6 +2,6 @@
 //
 #pragma once
 
-void FloatPreCalcMagnet2();
-int Magnet1Fractal();
-int Magnet2Fractal();
+void float_pre_calc_magnet2();
+int magnet1_fractal();
+int magnet2_fractal();

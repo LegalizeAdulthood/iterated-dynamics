@@ -1389,7 +1389,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MAGNET, help_labels::HF_MAGM1, fractal_flags::NONE,
         -4.0F, 4.0F, -3.0F, 3.0F,
         0, fractal_type::MAGNET1J, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_PARAM,
-        Magnet1Fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
+        magnet1_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         100
     },
 
@@ -1400,7 +1400,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MAGNET, help_labels::HF_MAGJ1, fractal_flags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
         0, fractal_type::NOFRACTAL, fractal_type::MAGNET1M, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_IMAG,
-        Magnet1Fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
+        magnet1_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         100
     },
 
@@ -1411,7 +1411,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MAGNET, help_labels::HF_MAGM2, fractal_flags::NONE,
         -1.5F, 3.7F, -1.95F, 1.95F,
         0, fractal_type::MAGNET2J, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_PARAM,
-        Magnet2Fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
+        magnet2_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         100
     },
 
@@ -1422,7 +1422,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_MAGNET, help_labels::HF_MAGJ2, fractal_flags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
         0, fractal_type::NOFRACTAL, fractal_type::MAGNET2M, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_IMAG,
-        Magnet2Fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
+        magnet2_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         100
     },
 
