@@ -2,8 +2,10 @@
 //
 #pragma once
 
+#include "big.h"
 #include "cmplx.h"
 
+#include <complex>
 #include <vector>
 
 struct MP;
@@ -64,6 +66,10 @@ int long_mandel_per_pixel();
 int julia_per_pixel();
 int mandel_per_pixel();
 int mandelfp_per_pixel();
+void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z);
+void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z);
+void mandel_perturb(
+    const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 int juliafp_per_pixel();
 int othermandelfp_per_pixel();
 int otherjuliafp_per_pixel();

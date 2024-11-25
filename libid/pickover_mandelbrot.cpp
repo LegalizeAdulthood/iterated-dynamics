@@ -6,17 +6,26 @@
 #include "prototyp.h"
 
 #include "bailout_formula.h"
+#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "complex_fn.h"
 #include "fpu087.h"
+#include "fractalb.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "frasetup.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "trig_fns.h"
 
 #include <cmath>
+
+enum
+{
+    MAX_POWER = 28
+};
+
+static long s_pascal_triangle[MAX_POWER]{};
 
 int FloatTrigPlusExponentFractal()
 {
@@ -84,6 +93,117 @@ int floatZpowerFractal()
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return g_bailout_float();
+}
+
+// Generate Pascal's Triangle coefficients
+void pascal_triangle()
+{
+    long j;
+    long c = 1L;
+
+    for (j = 0; j <= g_c_exponent; j++)
+    {
+        if (j == 0)
+        {
+            c = 1;
+        }
+        else
+        {
+            c = c * (g_c_exponent - j + 1) / j;
+        }
+        s_pascal_triangle[j] = c;
+    }
+}
+
+void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
+{
+    if (g_c_exponent == 3)
+    {
+        z = cube(z) + center;
+    }
+    else
+    {
+        std::complex<double> tmp{z};
+        for (int k = 0; k < g_c_exponent - 1; k++)
+        {
+            tmp *= z;
+        }
+        z = tmp + center;
+    }
+}
+
+void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
+{
+    BigStackSaver saved;
+    BFComplex tmp;
+    tmp.x = alloc_stack(g_r_bf_length + 2);
+    tmp.y = alloc_stack(g_r_bf_length + 2);
+    if (g_c_exponent == 3)
+    {
+        cube(tmp, z);
+        add_bf(z.x, tmp.x, center.x);
+        add_bf(z.y, tmp.y, center.y);
+    }
+    else
+    {
+        copy_bf(tmp.x, z.x);
+        copy_bf(tmp.y, z.y);
+        for (int k = 0; k < g_c_exponent - 1; k++)
+        {
+            cplxmul_bf(&tmp, &tmp, &z);
+        }
+        add_bf(z.x, tmp.x, center.x);
+        add_bf(z.y, tmp.y, center.y);
+    }
+}
+
+void mandel_z_power_perturb(
+    const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0)
+{
+    if (g_c_exponent == 3)
+    {
+        const double r{ref.real()};
+        const double i{ref.imag()};
+        const double a{delta_n.real()};
+        const double b{delta_n.imag()};
+        const double a0{delta0.real()};
+        const double b0{delta0.imag()};
+        const double dnr{       //
+            3 * r * r * a       //
+            - 6 * r * i * b     //
+            - 3 * i * i * a     //
+            + 3 * r * a * a     //
+            - 3 * r * b * b     //
+            - 3 * i * 2 * a * b //
+            + a * a * a         //
+            - 3 * a * b * b     //
+            + a0};
+        const double dni{       //
+            3 * r * r * b       //
+            + 6 * r * i * a     //
+            - 3 * i * i * b     //
+            + 3 * r * 2 * a * b //
+            + 3 * i * a * a     //
+            - 3 * i * b * b     //
+            + 3 * a * a * b     //
+            - b * b * b         //
+            + b0};
+        delta_n.imag(dni);
+        delta_n.real(dnr);
+    }
+    else
+    {
+        std::complex<double> zp(1.0, 0.0);
+        std::complex<double> sum(0.0, 0.0);
+        for (int j = 0; j < g_c_exponent; j++)
+        {
+            sum += zp * (double) s_pascal_triangle[j];
+            sum *= delta_n;
+            zp *= ref;
+        }
+        delta_n = sum;
+        delta_n += delta0;
+    }
 }
 
 int floatZtozPluszpwrFractal()

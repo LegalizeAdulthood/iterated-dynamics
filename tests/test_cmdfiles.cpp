@@ -1213,6 +1213,16 @@ TEST_F(TestParameterCommand, passesSolidGuess3)
     EXPECT_EQ(3, g_stop_pass);
 }
 
+TEST_F(TestParameterCommand, passesPerturbation)
+{
+    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
+
+    exec_cmd_arg("passes=p", cmd_file::AT_CMD_LINE);
+
+    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ('p', g_user_std_calc_mode);
+}
+
 TEST_F(TestParameterCommand, isMandYes)
 {
     ValueSaver saved_is_mandelbrot{g_is_mandelbrot, false};

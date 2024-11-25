@@ -28,7 +28,10 @@ add_library(libid
     one_or_two_pass.cpp include/one_or_two_pass.h
     orbit.cpp include/orbit.h
     param_not_used.cpp include/param_not_used.h
+    PertEngine.cpp include/PertEngine.h
+    perturbation.cpp include/perturbation.h
     pixel_grid.cpp include/pixel_grid.h
+    include/Point.h
     resume.cpp include/resume.h
     soi.cpp include/soi.h
     soi1.cpp
@@ -99,6 +102,7 @@ add_library(libid
     biginit.cpp include/biginit.h
     bignum.cpp
     bignumc.cpp
+    include/complex_fn.h
     fixed_pt.cpp include/fixed_pt.h
     fpu087.cpp include/fpu087.h
     hcmplx.cpp include/hcmplx.h
@@ -246,8 +250,11 @@ source_group("Header Files/engine" FILES
     include/one_or_two_pass.h
     include/orbit.h
     include/param_not_used.h
+    include/PertEngine.h
+    include/perturbation.h
     include/pixel_grid.h
     include/pixel_limits.h
+    include/Point.h
     include/resume.h
     include/soi.h
     include/solid_guess.h
@@ -278,6 +285,8 @@ source_group("Source Files/engine" FILES
     one_or_two_pass.cpp
     orbit.cpp
     param_not_used.cpp
+    PertEngine.cpp
+    perturbation.cpp
     pixel_grid.cpp
     resume.cpp
     soi.cpp
@@ -414,6 +423,7 @@ source_group("Header Files/math" FILES
     include/big.h
     include/biginit.h
     include/cmplx.h
+    include/complex_fn.h
     include/fixed_pt.h
     include/fpu087.h
     include/hcmplx.h

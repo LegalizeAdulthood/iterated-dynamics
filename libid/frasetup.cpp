@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "frasetup.h"
 
 #include "bailout_formula.h"
@@ -20,8 +17,10 @@
 #include "magnet.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "perturbation.h"
 #include "pickover_mandelbrot.h"
 #include "popcorn.h"
+#include "prototyp.h"
 #include "trig_fns.h"
 
 #include <cmath>
@@ -33,6 +32,10 @@
 bool
 MandelSetup()           // Mandelbrot Routine
 {
+    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+    {
+        return mandel_perturbation_setup();
+    }
     if (g_debug_flag != debug_flags::force_standard_fractal
         && (g_invert == 0)
         && g_decomp[0] == 0
@@ -94,6 +97,18 @@ StandaloneSetup()
     return false;               // effectively disable solid-guessing
 }
 
+bool mandel_perturbation_setup()
+{
+    return perturbation();
+}
+
+bool mandel_z_power_perturbation_setup()
+{
+    constexpr int MAX_POWER{28};
+    g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
+    return perturbation();
+}
+
 bool
 MandelfpSetup()
 {
@@ -119,6 +134,7 @@ MandelfpSetup()
             g_symmetry = symmetry_type::X_AXIS_NO_PARAM;
         }
         break;
+        
     case fractal_type::MANDELFP:
         /*
            floating point code could probably be altered to handle many of
@@ -126,6 +142,10 @@ MandelfpSetup()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        {
+            return mandel_perturbation_setup();
+        }
         if (g_debug_flag != debug_flags::force_standard_fractal
             && !g_distance_estimator
             && g_decomp[0] == 0
@@ -147,7 +167,19 @@ MandelfpSetup()
             g_calc_type = standard_fractal;
         }
         break;
+
     case fractal_type::FPMANDELZPOWER:
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        {
+            if (g_c_exponent == 2)
+            {
+                return mandel_perturbation_setup();
+            }
+            if (g_c_exponent > 2)
+            {
+                return mandel_z_power_perturbation_setup();
+            }
+        }
         if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents
         {
             g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;

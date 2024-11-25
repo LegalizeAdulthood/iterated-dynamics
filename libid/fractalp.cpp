@@ -273,11 +273,12 @@ fractalspecificstuff g_fractal_specific[] =
         t_mandel+1,
         {realz0, imagz0, "", ""},
         {0, 0, 0, 0},
-        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST,
+        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST | fractal_flags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::JULIA, fractal_type::NOFRACTAL, fractal_type::MANDELFP, symmetry_type::X_AXIS_NO_PARAM,
         JuliaFractal, mandel_per_pixel, MandelSetup, standard_fractal,
-        STDBAILOUT
+        STDBAILOUT,
+        mandel_ref_pt, mandel_ref_pt_bf
     },
 
     {
@@ -317,11 +318,12 @@ fractalspecificstuff g_fractal_specific[] =
         t_mandel,
         {realz0, imagz0, "", ""},
         {0, 0, 0, 0},
-        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
+        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST|fractal_flags::BF_MATH|fractal_flags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::JULIAFP, fractal_type::NOFRACTAL, fractal_type::MANDEL, symmetry_type::X_AXIS_NO_PARAM,
         JuliafpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
-        STDBAILOUT
+        STDBAILOUT,
+        mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb
     },
 
     {
@@ -886,12 +888,13 @@ fractalspecificstuff g_fractal_specific[] =
         t_manzpower,
         {realz0, imagz0, exponent, imexponent},
         {0, 0, 2, 0},
-        help_labels::HT_PICKMJ, help_labels::HF_MANZPOWER, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
+        help_labels::HT_PICKMJ, help_labels::HF_MANZPOWER, fractal_flags::BAILTEST|fractal_flags::BF_MATH|fractal_flags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::FPJULIAZPOWER, fractal_type::NOFRACTAL, fractal_type::LMANDELZPOWER, symmetry_type::X_AXIS_NO_IMAG,
         floatZpowerFractal, othermandelfp_per_pixel, MandelfpSetup,
         standard_fractal,
-        STDBAILOUT
+        STDBAILOUT,
+        mandel_z_power_ref_pt, mandel_z_power_ref_pt_bf, mandel_z_power_perturb
     },
 
     {
@@ -910,7 +913,7 @@ fractalspecificstuff g_fractal_specific[] =
         "manzzpwr",
         {realz0, imagz0, exponent, ""},
         {0, 0, 2, 0},
-        help_labels::HT_PICKMJ, help_labels::HF_MANZZPWR, fractal_flags::BAILTEST,
+        help_labels::HT_PICKMJ, help_labels::HF_MANZZPWR, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::FPJULZTOZPLUSZPWR, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::X_AXIS_NO_PARAM,
         floatZtozPluszpwrFractal, othermandelfp_per_pixel, MandelfpSetup,

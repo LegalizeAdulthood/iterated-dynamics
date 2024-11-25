@@ -149,6 +149,7 @@ int calcmand();
 int calcmandfp();
 int standard_fractal();
 int find_alternate_math(fractal_type type, bf_math_type math);
+int potential(double mag, long iterations);
 void symPIplot(int x, int y, int color);
 void symPIplot2J(int x, int y, int color);
 void symPIplot4J(int x, int y, int color);
