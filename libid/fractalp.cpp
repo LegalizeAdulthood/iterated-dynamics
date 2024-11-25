@@ -1669,7 +1669,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_CIRCLE, help_labels::HF_CIRCLE, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::XY_AXIS,
-        CirclefpFractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
+        circle_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         NOBAILOUT
     },
 
