@@ -21,6 +21,13 @@
 
 #include <cmath>
 
+enum
+{
+    MAX_POWER = 28
+};
+
+static long s_pascal_triangle[MAX_POWER]{};
+
 int FloatTrigPlusExponentFractal()
 {
     // another Scientific American biomorph type
@@ -89,6 +96,26 @@ int floatZpowerFractal()
     return g_bailout_float();
 }
 
+// Generate Pascal's Triangle coefficients
+void pascal_triangle()
+{
+    long j;
+    long c = 1L;
+
+    for (j = 0; j <= g_c_exponent; j++)
+    {
+        if (j == 0)
+        {
+            c = 1;
+        }
+        else
+        {
+            c = c * (g_c_exponent - j + 1) / j;
+        }
+        s_pascal_triangle[j] = c;
+    }
+}
+
 void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
     if (g_c_exponent == 3)
@@ -128,6 +155,55 @@ void mandel_z_power_ref_pt(const BFComplex &center, BFComplex &z)
         }
         add_bf(z.x, tmp.x, center.x);
         add_bf(z.y, tmp.y, center.y);
+    }
+}
+
+void mandel_z_power_perturb(
+    const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0)
+{
+    if (g_c_exponent == 3)
+    {
+        const double r{ref.real()};
+        const double i{ref.imag()};
+        const double a{delta_n.real()};
+        const double b{delta_n.imag()};
+        const double a0{delta0.real()};
+        const double b0{delta0.imag()};
+        const double dnr{       //
+            3 * r * r * a       //
+            - 6 * r * i * b     //
+            - 3 * i * i * a     //
+            + 3 * r * a * a     //
+            - 3 * r * b * b     //
+            - 3 * i * 2 * a * b //
+            + a * a * a         //
+            - 3 * a * b * b     //
+            + a0};
+        const double dni{       //
+            3 * r * r * b       //
+            + 6 * r * i * a     //
+            - 3 * i * i * b     //
+            + 3 * r * 2 * a * b //
+            + 3 * i * a * a     //
+            - 3 * i * b * b     //
+            + 3 * a * a * b     //
+            - b * b * b         //
+            + b0};
+        delta_n.imag(dni);
+        delta_n.real(dnr);
+    }
+    else
+    {
+        std::complex<double> zp(1.0, 0.0);
+        std::complex<double> sum(0.0, 0.0);
+        for (int j = 0; j < g_c_exponent; j++)
+        {
+            sum += zp * (double) s_pascal_triangle[j];
+            sum *= delta_n;
+            zp *= ref;
+        }
+        delta_n = sum;
+        delta_n += delta0;
     }
 }
 

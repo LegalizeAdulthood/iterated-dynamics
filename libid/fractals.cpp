@@ -699,6 +699,22 @@ void mandel_ref_pt(const BFComplex &center, BFComplex &z)
     add_bf(z.y, real_imag, center.y);
 }
 
+void mandel_perturb(
+    const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0)
+{
+    const double r{ref.real()};
+    const double i{ref.imag()};
+    const double a{delta_n.real()};
+    const double b{delta_n.imag()};
+    const double a0{delta0.real()};
+    const double b0{delta0.imag()};
+
+    const double dnr{(2 * r + a) * a - (2 * i + b) * b + a0};
+    const double dni{2 * ((r + a) * b + i * a) + b0};
+    delta_n.imag(dni);
+    delta_n.real(dnr);
+}
+
 int juliafp_per_pixel()
 {
     // floating point julia
