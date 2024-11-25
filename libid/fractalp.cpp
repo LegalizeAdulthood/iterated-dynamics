@@ -114,7 +114,7 @@ static const char *const s_randomseed{"+Random Seed Value (0 = Random, 1 = Reuse
 static const char *const color_method{"+Coloring method (0,1)"};
 
 // phoenix fractals
-static const char *const degreeZ{"Degree = 0 | >= 2 | <= -3"};
+static const char *const degree_z{"Degree = 0 | >= 2 | <= -3"};
 
 // julia inverse
 static const char *const s_maxhits{"Max Hits per Pixel"};
@@ -146,10 +146,10 @@ MOREPARAMS g_more_fractal_params[] =
     {fractal_type::ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
     {fractal_type::HYPERCMPLXJFP    , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
     {fractal_type::QUATJULFP        , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {fractal_type::PHOENIXCPLX      , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {fractal_type::PHOENIXFPCPLX    , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {fractal_type::MANDPHOENIXCPLX  , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {fractal_type::MANDPHOENIXFPCPLX, { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::PHOENIXCPLX      , { degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::PHOENIXFPCPLX    , { degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::MANDPHOENIXCPLX  , { degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {fractal_type::MANDPHOENIXFPCPLX, { degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
     {fractal_type::FORMULA  , { p3real, p3imag, p4real, p4imag, p5real, p5imag}, {0, 0, 0, 0, 0, 0}},
     {fractal_type::FFORMULA , { p3real, p3imag, p4real, p4imag, p5real, p5imag}, {0, 0, 0, 0, 0, 0}},
     {fractal_type::ANT              , { "+Wrap?", s_randomseed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
@@ -1989,7 +1989,7 @@ fractalspecificstuff g_fractal_specific[] =
 
     {
         t_phoenix+1,
-        {p1real, p2real, degreeZ, ""},
+        {p1real, p2real, degree_z, ""},
         {0.56667, -0.5, 0, 0},
         help_labels::HT_PHOENIX, help_labels::HF_PHOENIX, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2001,7 +2001,7 @@ fractalspecificstuff g_fractal_specific[] =
 
     {
         t_phoenix,
-        {p1real, p2real, degreeZ, ""},
+        {p1real, p2real, degree_z, ""},
         {0.56667, -0.5, 0, 0},
         help_labels::HT_PHOENIX, help_labels::HF_PHOENIX, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2012,7 +2012,7 @@ fractalspecificstuff g_fractal_specific[] =
 
     {
         t_mandphoenix+1,
-        {realz0, imagz0, degreeZ, ""},
+        {realz0, imagz0, degree_z, ""},
         {0.0, 0.0, 0, 0},
         help_labels::HT_PHOENIX, help_labels::HF_MANDPHOENIX, fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -2024,7 +2024,7 @@ fractalspecificstuff g_fractal_specific[] =
 
     {
         t_mandphoenix,
-        {realz0, imagz0, degreeZ, ""},
+        {realz0, imagz0, degree_z, ""},
         {0.0, 0.0, 0, 0},
         help_labels::HT_PHOENIX, help_labels::HF_MANDPHOENIX, fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
