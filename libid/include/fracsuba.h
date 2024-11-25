@@ -2,25 +2,10 @@
 //
 #pragma once
 
-// fracsuba -- assembler file prototypes
-int asmlMODbailout();
-int asmlREALbailout();
-int asmlIMAGbailout();
-int asmlORbailout();
-int asmlANDbailout();
-int asmlMANHbailout();
-int asmlMANRbailout();
-int asm386lMODbailout();
-int asm386lREALbailout();
-int asm386lIMAGbailout();
-int asm386lORbailout();
-int asm386lANDbailout();
-int asm386lMANHbailout();
-int asm386lMANRbailout();
-int asmfpMODbailout();
-int asmfpREALbailout();
-int asmfpIMAGbailout();
-int asmfpORbailout();
-int asmfpANDbailout();
-int asmfpMANHbailout();
-int asmfpMANRbailout();
+int long_mod_bailout();
+int long_real_bailout();
+int long_imag_bailout();
+int long_or_bailout();
+int long_and_bailout();
+int long_manh_bailout();
+int long_manr_bailout();

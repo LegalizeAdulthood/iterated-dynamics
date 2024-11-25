@@ -554,7 +554,7 @@ static void initvars_fractal()
     g_old_demm_colors = false;                                      //
     g_bail_out_test = bailouts::Mod;                                //
     g_bailout_float = fp_mod_bailout;                                 //
-    g_bailout_long = asmlMODbailout;                                //
+    g_bailout_long = long_mod_bailout;                                //
     g_bailout_bignum = bnMODbailout;                                //
     g_bailout_bigfloat = bfMODbailout;                              //
     g_new_bifurcation_functions_loaded = false;                     // for old bifs

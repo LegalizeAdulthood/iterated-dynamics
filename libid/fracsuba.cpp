@@ -12,7 +12,7 @@
 #include <cmath>
 #include <cstdlib>
 
-int asmlMODbailout()
+int long_mod_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -30,7 +30,7 @@ int asmlMODbailout()
     return 0;
 }
 
-int asmlREALbailout()
+int long_real_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -43,7 +43,7 @@ int asmlREALbailout()
     return 0;
 }
 
-int asmlIMAGbailout()
+int long_imag_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -56,7 +56,7 @@ int asmlIMAGbailout()
     return 0;
 }
 
-int asmlORbailout()
+int long_or_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -69,7 +69,7 @@ int asmlORbailout()
     return 0;
 }
 
-int asmlANDbailout()
+int long_and_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -82,7 +82,7 @@ int asmlANDbailout()
     return 0;
 }
 
-int asmlMANHbailout()
+int long_manh_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -95,7 +95,7 @@ int asmlMANHbailout()
     return 0;
 }
 
-int asmlMANRbailout()
+int long_manr_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
