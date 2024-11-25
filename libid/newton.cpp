@@ -55,7 +55,6 @@ static MP s_newton_mp_r_over_d{};
 static MP s_mp_degree_minus_1_over_degree{};
 static MP s_mp_threshold{};
 
-// this code translated to asm - lives in newton.asm
 // transform points with reciprocal function
 void invertz2(DComplex *z)
 {
@@ -85,7 +84,7 @@ inline double distance1(const DComplex &z)
     return sqr(z.x - 1.0) + sqr(z.y);
 }
 
-int NewtonFractal2()
+int newton_fractal2()
 {
     static char start = 1;
     if (start)
@@ -150,7 +149,7 @@ int NewtonFractal2()
     return 0;
 }
 
-bool ComplexNewtonSetup()
+bool complex_newton_setup()
 {
     s_threshold = .001;
     g_periodicity_check = 0;
@@ -169,7 +168,7 @@ bool ComplexNewtonSetup()
     return true;
 }
 
-int ComplexNewton()
+int complex_newton()
 {
     DComplex cd1;
 
@@ -204,7 +203,7 @@ int ComplexNewton()
     return 0;
 }
 
-int ComplexBasin()
+int complex_basin()
 {
     DComplex cd1;
 
@@ -264,7 +263,7 @@ int ComplexBasin()
 }
 
 // Newton/NewtBasin Routines
-bool NewtonSetup()
+bool newton_setup()
 {
     if (g_debug_flag != debug_flags::allow_mp_newton_type)
     {
@@ -354,7 +353,7 @@ bool NewtonSetup()
     return true;
 }
 
-int MPCNewtonFractal()
+int mpc_newton_fractal()
 {
     g_mp_overflow = false;
     MPC mpctmp = MPCpow(s_mpc_old, g_degree - 1);
@@ -406,7 +405,7 @@ int MPCNewtonFractal()
     return g_mp_overflow ? 1 : 0;
 }
 
-int MPCjulia_per_pixel()
+int mpc_julia_per_pixel()
 {
     // floating point julia
     // juliafp

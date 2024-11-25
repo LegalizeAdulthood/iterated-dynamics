@@ -6,13 +6,13 @@
 
 void invertz2(DComplex *z);
 
-int NewtonFractal2();
+int newton_fractal2();
 
-bool ComplexNewtonSetup();
-int ComplexNewton();
-int ComplexBasin();
+bool complex_newton_setup();
+int complex_newton();
+int complex_basin();
 
-bool NewtonSetup();
-int MPCjulia_per_pixel();
+bool newton_setup();
+int mpc_julia_per_pixel();
 
-int MPCNewtonFractal();
+int mpc_newton_fractal();

@@ -299,7 +299,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_NEWTBAS, help_labels::HF_NEWTBAS, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::MPNEWTBASIN, symmetry_type::NONE,
-        NewtonFractal2, other_julia_fp_per_pixel, NewtonSetup, standard_fractal,
+        newton_fractal2, other_julia_fp_per_pixel, newton_setup, standard_fractal,
         NOBAILOUT
     },
 
@@ -333,7 +333,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_NEWT, help_labels::HF_NEWT, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::MPNEWTON, symmetry_type::X_AXIS,
-        NewtonFractal2, other_julia_fp_per_pixel, NewtonSetup, standard_fractal,
+        newton_fractal2, other_julia_fp_per_pixel, newton_setup, standard_fractal,
         NOBAILOUT
     },
 
@@ -1043,7 +1043,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_NEWT, help_labels::HF_NEWT, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NEWTON, symmetry_type::X_AXIS,
-        MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
+        mpc_newton_fractal, mpc_julia_per_pixel, newton_setup, standard_fractal,
         NOBAILOUT
     },
 
@@ -1054,7 +1054,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_NEWTBAS, help_labels::HF_NEWTBAS, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NEWTBASIN, symmetry_type::NONE,
-        MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
+        mpc_newton_fractal, mpc_julia_per_pixel, newton_setup, standard_fractal,
         NOBAILOUT
     },
 
@@ -1065,7 +1065,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_NEWTCMPLX, help_labels::HF_COMPLEXNEWT, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        ComplexNewton, other_julia_fp_per_pixel, ComplexNewtonSetup,
+        complex_newton, other_julia_fp_per_pixel, complex_newton_setup,
         standard_fractal,
         NOBAILOUT
     },
@@ -1077,7 +1077,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_NEWTCMPLX, help_labels::HF_COMPLEXNEWT, fractal_flags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        ComplexBasin, other_julia_fp_per_pixel, ComplexNewtonSetup,
+        complex_basin, other_julia_fp_per_pixel, complex_newton_setup,
         standard_fractal,
         NOBAILOUT
     },
