@@ -4,8 +4,22 @@
 
 #include "big.h"
 
-DComplex cmplx_bn_to_float(BNComplex *s);
-DComplex cmplx_bf_to_float(BFComplex *s);
+inline DComplex cmplx_bn_to_float(const BNComplex &s)
+{
+    DComplex t;
+    t.x = (double)bntofloat(s.x);
+    t.y = (double)bntofloat(s.y);
+    return t;
+}
+
+inline DComplex cmplx_bf_to_float(const BFComplex &s)
+{
+    DComplex t;
+    t.x = (double)bftofloat(s.x);
+    t.y = (double)bftofloat(s.y);
+    return t;
+}
+
 void compare_values(char const *s, LDBL x, bn_t bnx);
 void compare_values_bf(char const *s, LDBL x, bf_t bfx);
 void show_var_bf(char const *s, bf_t n);

@@ -1072,22 +1072,6 @@ julia_z_power_bf_fractal()
     return g_bailout_bigfloat();
 }
 
-DComplex cmplx_bn_to_float(BNComplex *s)
-{
-    DComplex t;
-    t.x = (double)bntofloat(s->x);
-    t.y = (double)bntofloat(s->y);
-    return t;
-}
-
-DComplex cmplx_bf_to_float(BFComplex *s)
-{
-    DComplex t;
-    t.x = (double)bftofloat(s->x);
-    t.y = (double)bftofloat(s->y);
-    return t;
-}
-
 BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
 {
     if (is_bf_zero(s->x) && is_bf_zero(s->y))
