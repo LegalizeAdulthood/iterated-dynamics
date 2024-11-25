@@ -191,7 +191,7 @@ mandel_fp_setup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = floatZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = float_z_power_fractal;
         }
         else
         {
@@ -315,7 +315,7 @@ julia_fp_setup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = floatZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = float_z_power_fractal;
         }
         else
         {
@@ -448,7 +448,7 @@ mandel_long_setup()
     {
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = longZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = long_z_power_fractal;
         }
         else
         {
@@ -505,7 +505,7 @@ julia_long_setup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = longZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = long_z_power_fractal;
         }
         else
         {

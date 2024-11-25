@@ -27,7 +27,7 @@ enum
 
 static long s_pascal_triangle[MAX_POWER]{};
 
-int FloatTrigPlusExponentFractal()
+int float_trig_plus_exponent_fractal()
 {
     // another Scientific American biomorph type
     // z(n+1) = e**z(n) + trig(z(n)) + C
@@ -55,7 +55,7 @@ inline bool trig16_check(long val)
     return labs(val) > l16triglim;
 }
 
-int LongTrigPlusExponentFractal()
+int long_trig_plus_exponent_fractal()
 {
     // calculate exp(z)
 
@@ -75,7 +75,7 @@ int LongTrigPlusExponentFractal()
     return g_bailout_long();
 }
 
-int longZpowerFractal()
+int long_z_power_fractal()
 {
     if (lcpower(&g_l_old_z, g_c_exponent, &g_l_new_z, g_bit_shift))
     {
@@ -87,7 +87,7 @@ int longZpowerFractal()
     return g_bailout_long();
 }
 
-int floatZpowerFractal()
+int float_z_power_fractal()
 {
     cpower(&g_old_z, g_c_exponent, &g_new_z);
     g_new_z.x += g_float_param->x;
@@ -206,7 +206,7 @@ void mandel_z_power_perturb(
     }
 }
 
-int floatZtozPluszpwrFractal()
+int float_z_to_z_plus_z_pwr_fractal()
 {
     cpower(&g_old_z, (int)g_params[2], &g_new_z);
     g_old_z = ComplexPower(g_old_z, g_old_z);
@@ -215,7 +215,7 @@ int floatZtozPluszpwrFractal()
     return g_bailout_float();
 }
 
-bool JuliafnPlusZsqrdSetup()
+bool julia_fn_plus_z_sqrd_setup()
 {
     //   static char fnpluszsqrd[] =
     // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
@@ -246,7 +246,7 @@ bool JuliafnPlusZsqrdSetup()
     }
 }
 
-int TrigPlusZsquaredFractal()
+int trig_plus_z_squared_fractal()
 {
     // From Scientific American, July 1989
     // A Biomorph
@@ -257,7 +257,7 @@ int TrigPlusZsquaredFractal()
     return g_bailout_long();
 }
 
-int TrigPlusZsquaredfpFractal()
+int trig_plus_z_squared_fp_fractal()
 {
     // From Scientific American, July 1989
     // A Biomorph

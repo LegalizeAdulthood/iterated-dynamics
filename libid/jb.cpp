@@ -463,7 +463,7 @@ int std_4d_fractal()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = longZpowerFractal;
+            g_fractal_specific[+g_new_orbit_type].orbitcalc = long_z_power_fractal;
         }
         else
         {
@@ -515,7 +515,7 @@ int std_4d_fp_fractal()
     {
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = floatZpowerFractal;
+            g_fractal_specific[+g_new_orbit_type].orbitcalc = float_z_power_fractal;
         }
         else
         {
