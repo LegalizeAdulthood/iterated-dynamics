@@ -2251,7 +2251,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_VL, help_labels::HF_VL, fractal_flags::NONE,
         0.0F, 6.0F, 0.0F, 4.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        VLfpFractal, other_julia_fp_per_pixel, VLSetup, standard_fractal,
+        vl_fp_fractal, other_julia_fp_per_pixel, vl_setup, standard_fractal,
         256
     },
 

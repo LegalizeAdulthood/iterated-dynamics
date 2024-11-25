@@ -2,5 +2,5 @@
 //
 #pragma once
 
-int VLfpFractal();
-bool VLSetup();
+int vl_fp_fractal();
+bool vl_setup();

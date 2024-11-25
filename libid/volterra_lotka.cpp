@@ -11,7 +11,7 @@
 #include "id_data.h"
 
 // Beauty of Fractals pp. 125 - 127
-int VLfpFractal()
+int vl_fp_fractal()
 {
     double a;
     double b;
@@ -33,7 +33,7 @@ int VLfpFractal()
     return g_bailout_float();
 }
 
-bool VLSetup()
+bool vl_setup()
 {
     if (g_params[0] < 0.0)
     {
