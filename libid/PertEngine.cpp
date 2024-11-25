@@ -13,7 +13,6 @@
 #include "complex_fn.h"
 #include "drivers.h"
 #include "fractalp.h"
-#include "fractals.h"
 #include "id.h"
 #include "id_data.h"
 #include "pickover_mandelbrot.h"
@@ -23,6 +22,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
+
+// Raising this number makes more calculations, but less variation between each calculation (less chance
+// of mis-identifying a glitched point).
+constexpr double GLITCH_TOLERANCE{1e-6};
 
 void PertEngine::initialize_frame(
     const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius)
@@ -442,9 +445,6 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
 
 void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration)
 {
-    // Raising this number makes more calculations, but less variation between each calculation (less chance
-    // of mis-identifying a glitched point).
-    const double glitch_tolerance{1e-6};
     BigStackSaver saved;
 
     BFComplex z_bf;
@@ -479,7 +479,7 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
                 std::to_string(int(progress * 100)) + "%)";
         }
 
-        floattobf(tmp_bf, glitch_tolerance);
+        floattobf(tmp_bf, GLITCH_TOLERANCE);
         mult_bf(temp_real_bf, z_bf.x, tmp_bf);
         mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
         std::complex<double> tolerance;
@@ -499,9 +499,6 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
 
 void PertEngine::reference_zoom_point(const std::complex<double> &center, int max_iteration)
 {
-    // Raising this number makes more calculations, but less variation between each calculation (less chance
-    // of mis-identifying a glitched point).
-    double glitch_tolerancy = 1e-6;
     std::complex<double> z = center;
 
     for (int i = 0; i <= max_iteration; i++)
@@ -524,8 +521,8 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
                 std::to_string(int(progress * 100)) + "%)";
         }
 
-        std::complex<double> tolerancy = z * glitch_tolerancy;
-        m_perturbation_tolerance_check[i] = sqr(tolerancy.real()) + sqr(tolerancy.imag());
+        std::complex<double> tolerance = z * GLITCH_TOLERANCE;
+        m_perturbation_tolerance_check[i] = sqr(tolerance.real()) + sqr(tolerance.imag());
 
         if (g_cur_fractal_specific->pert_ref == nullptr)
         {
