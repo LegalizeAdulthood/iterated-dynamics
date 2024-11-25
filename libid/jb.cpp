@@ -100,7 +100,7 @@ const char *g_julibrot_3d_options[]{
     to_string(julibrot_3d_mode::RED_BLUE)   //
 };
 
-bool JulibrotSetup()
+bool julibrot_setup()
 {
     char const *mapname;
 
@@ -243,7 +243,7 @@ int jb_per_pixel()
     return 1;
 }
 
-int jbfp_per_pixel()
+int jb_fp_per_pixel()
 {
     s_jb_fp.jx = ((s_jb_fp.per->x - s_jb_fp.x_pixel) * s_jb_fp.init_z / g_julibrot_dist_fp - s_jb_fp.x_pixel) * s_jb_fp.x_per_inch;
     s_jb_fp.jx += s_jb_fp.x_offset;
@@ -260,7 +260,7 @@ static int zpixel;
 static int plotted;
 static long n;
 
-int zline(long x, long y)
+int z_line(long x, long y)
 {
     s_jb.x_pixel = x;
     s_jb.y_pixel = y;
@@ -346,7 +346,7 @@ int zline(long x, long y)
     return 0;
 }
 
-int zlinefp(double x, double y)
+int z_line_fp(double x, double y)
 {
     s_jb_fp.x_pixel = x;
     s_jb_fp.y_pixel = y;
@@ -372,7 +372,7 @@ int zlinefp(double x, double y)
         }
         break;
     }
-    jbfp_per_pixel();
+    jb_fp_per_pixel();
     for (zpixel = 0; zpixel < g_julibrot_z_dots; zpixel++)
     {
         // Special initialization for Mandelbrot types
@@ -451,7 +451,7 @@ int zlinefp(double x, double y)
     return 0;
 }
 
-int Std4dFractal()
+int std_4d_fractal()
 {
     long x;
     g_c_exponent = (int)g_params[2];
@@ -480,13 +480,13 @@ int Std4dFractal()
         {
             g_col = xdot;
             g_row = ydot;
-            if (zline(x, y) < 0)
+            if (z_line(x, y) < 0)
             {
                 return -1;
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = g_logical_screen_y_dots - g_row - 1;
-            if (zline(-x, -y) < 0)
+            if (z_line(-x, -y) < 0)
             {
                 return -1;
             }
@@ -506,7 +506,7 @@ int Std4dFractal()
     return 0;
 }
 
-int Std4dfpFractal()
+int std_4d_fp_fractal()
 {
     double x;
     g_c_exponent = (int)g_params[2];
@@ -533,13 +533,13 @@ int Std4dfpFractal()
         {
             g_col = xdot;
             g_row = ydot;
-            if (zlinefp(x, y) < 0)
+            if (z_line_fp(x, y) < 0)
             {
                 return -1;
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = g_logical_screen_y_dots - g_row - 1;
-            if (zlinefp(-x, -y) < 0)
+            if (z_line_fp(-x, -y) < 0)
             {
                 return -1;
             }

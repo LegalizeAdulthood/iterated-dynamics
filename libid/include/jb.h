@@ -44,11 +44,11 @@ extern int                   g_julibrot_z_dots;
 extern fractal_type          g_new_orbit_type;
 extern const char *          g_julibrot_3d_options[];
 
-bool JulibrotSetup();
-bool JulibrotfpSetup();
+bool julibrot_setup();
+bool julibrot_fp_setup();
 int jb_per_pixel();
-int jbfp_per_pixel();
-int zline(long, long);
-int zlinefp(double, double);
-int Std4dFractal();
-int Std4dfpFractal();
+int jb_fp_per_pixel();
+int z_line(long x, long y);
+int z_line_fp(double x, double y);
+int std_4d_fractal();
+int std_4d_fp_fractal();

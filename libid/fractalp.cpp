@@ -1239,7 +1239,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_JULIBROT, help_labels::NONE, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE|fractal_flags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::JULIBROTFP, symmetry_type::NONE,
-        julia_fractal, jb_per_pixel, JulibrotSetup, Std4dFractal,
+        julia_fractal, jb_per_pixel, julibrot_setup, std_4d_fractal,
         STDBAILOUT
     },
 
@@ -1924,7 +1924,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_JULIBROT, help_labels::NONE, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::NOROTATE|fractal_flags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::JULIBROT, symmetry_type::NONE,
-        julia_fp_fractal, jbfp_per_pixel, JulibrotSetup, Std4dfpFractal,
+        julia_fp_fractal, jb_fp_per_pixel, julibrot_setup, std_4d_fp_fractal,
         STDBAILOUT
     },
 
