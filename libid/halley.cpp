@@ -26,7 +26,7 @@ static MP s_halley_mp_a_plus_one_times_degree{};
 static MPC s_mpc_temp_param{};
 static MP s_mp_temp_param2_x{};
 
-bool HalleySetup()
+bool halley_setup()
 {
     // Halley
     g_periodicity_check = 0;
@@ -96,7 +96,7 @@ static bool MPCHalleybailout()
     return false;
 }
 
-int MPCHalleyFractal()
+int mpc_halley_fractal()
 {
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x,  relaxation coeff. = parm.y,  epsilon = parm2.x
@@ -149,7 +149,7 @@ int MPCHalleyFractal()
     return MPCHalleybailout() || g_mp_overflow ? 1 : 0;
 }
 
-int HalleyFractal()
+int halley_fractal()
 {
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x = degree, relaxation coeff. = parm.y, epsilon = parm2.x
@@ -188,7 +188,7 @@ int HalleyFractal()
     return Halleybailout();
 }
 
-int MPCHalley_per_pixel()
+int mpc_halley_per_pixel()
 {
     // MPC halley
     if (g_invert != 0)
@@ -207,7 +207,7 @@ int MPCHalley_per_pixel()
     return 0;
 }
 
-int Halley_per_pixel()
+int halley_per_pixel()
 {
     if (g_invert != 0)
     {

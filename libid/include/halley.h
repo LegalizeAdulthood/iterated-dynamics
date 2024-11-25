@@ -2,8 +2,8 @@
 //
 #pragma once
 
-bool HalleySetup();
-int HalleyFractal();
-int Halley_per_pixel();
-int MPCHalleyFractal();
-int MPCHalley_per_pixel();
+bool halley_setup();
+int halley_fractal();
+int halley_per_pixel();
+int mpc_halley_fractal();
+int mpc_halley_per_pixel();
