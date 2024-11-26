@@ -31,7 +31,7 @@
 namespace
 {
 
-struct lsys_cmd
+struct LSysCmd
 {
     void (*f)(LSysTurtleStateI *);
     long n;
@@ -47,11 +47,11 @@ static bool save_axiom(char const *axiom);
 static bool save_rule(char const *rule, int index);
 static bool append_rule(char const *rule, int index);
 static void free_lcmds();
-static lsys_cmd *findsize(lsys_cmd *, LSysTurtleStateI *, lsys_cmd **, int);
-static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth);
-static bool lsysi_findscale(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth);
-static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts);
-static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts);
+static LSysCmd *findsize(LSysCmd *, LSysTurtleStateI *, LSysCmd **, int);
+static LSysCmd *drawLSysI(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth);
+static bool lsysi_findscale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth);
+static LSysCmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts);
+static LSysCmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts);
 static void lsysi_dosincos();
 static void lsysi_doslash(LSysTurtleStateI *cmd);
 static void lsysi_dobslash(LSysTurtleStateI *cmd);
@@ -72,7 +72,7 @@ static std::vector<long> r_cos_table;
 constexpr long PI_DIV_180_L{11930465L};
 static std::string s_axiom;
 static std::vector<std::string> s_rules;
-static std::vector<lsys_cmd *> s_rule_cmds;
+static std::vector<LSysCmd *> s_rule_cmds;
 static std::vector<LSysFCmd *> s_rulef_cmds;
 static bool s_loaded{};
 
@@ -744,7 +744,7 @@ static void lsysi_dodrawlt(LSysTurtleStateI *cmd)
     }
 }
 
-static lsys_cmd *findsize(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth)
+static LSysCmd *findsize(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth)
 {
     if (g_overflow)       // integer math routines overflowed
     {
@@ -772,7 +772,7 @@ static lsys_cmd *findsize(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **ru
         bool tran = false;
         if (depth > 0)
         {
-            for (lsys_cmd **rulind = rules; *rulind; rulind++)
+            for (LSysCmd **rulind = rules; *rulind; rulind++)
             {
                 if ((*rulind)->ch == command->ch)
                 {
@@ -817,7 +817,7 @@ static lsys_cmd *findsize(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **ru
     return command;
 }
 
-static bool lsysi_findscale(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth)
+static bool lsysi_findscale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth)
 {
     float horiz;
     float vert;
@@ -827,7 +827,7 @@ static bool lsysi_findscale(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **
     double ymax;
     double locsize;
     double locaspect;
-    lsys_cmd *fsret;
+    LSysCmd *fsret;
 
     locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     ts->aspect = FIXEDPT(locaspect);
@@ -893,7 +893,7 @@ static bool lsysi_findscale(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **
     return true;
 }
 
-static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth)
+static LSysCmd *drawLSysI(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth)
 {
     bool tran;
 
@@ -922,7 +922,7 @@ static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **r
         tran = false;
         if (depth)
         {
-            for (lsys_cmd **rulind = rules; *rulind; rulind++)
+            for (LSysCmd **rulind = rules; *rulind; rulind++)
             {
                 if ((*rulind)->ch == command->ch)
                 {
@@ -969,7 +969,7 @@ static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **r
     return command;
 }
 
-static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
+static LSysCmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
 {
     int maxval = 10;
     int n = 0;
@@ -978,7 +978,7 @@ static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
     auto const minus = is_pow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
     auto const pipe = is_pow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
+    LSysCmd *ret = (LSysCmd *) malloc((long) maxval * sizeof(LSysCmd));
     if (ret == nullptr)
     {
         ts->stackoflow = true;
@@ -1037,14 +1037,14 @@ static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
         ret[n].n = num;
         if (++n == maxval)
         {
-            lsys_cmd *doub = (lsys_cmd *) malloc((long) maxval*2*sizeof(lsys_cmd));
+            LSysCmd *doub = (LSysCmd *) malloc((long) maxval*2*sizeof(LSysCmd));
             if (doub == nullptr)
             {
                 free(ret);
                 ts->stackoflow = true;
                 return nullptr;
             }
-            std::memcpy(doub, ret, maxval*sizeof(lsys_cmd));
+            std::memcpy(doub, ret, maxval*sizeof(LSysCmd));
             free(ret);
             ret = doub;
             maxval <<= 1;
@@ -1056,19 +1056,19 @@ static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
     ret[n].n = 0;
     n++;
 
-    lsys_cmd *doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
+    LSysCmd *doub = (LSysCmd *) malloc((long) n*sizeof(LSysCmd));
     if (doub == nullptr)
     {
         free(ret);
         ts->stackoflow = true;
         return nullptr;
     }
-    std::memcpy(doub, ret, n*sizeof(lsys_cmd));
+    std::memcpy(doub, ret, n*sizeof(LSysCmd));
     free(ret);
     return doub;
 }
 
-static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
+static LSysCmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
 {
     int maxval = 10;
     int n = 0;
@@ -1077,7 +1077,7 @@ static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
     auto const minus = is_pow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
     auto const pipe = is_pow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-    lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
+    LSysCmd *ret = (LSysCmd *) malloc((long) maxval * sizeof(LSysCmd));
     if (ret == nullptr)
     {
         ts->stackoflow = true;
@@ -1152,14 +1152,14 @@ static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
         ret[n].n = num;
         if (++n == maxval)
         {
-            lsys_cmd *doub = (lsys_cmd *) malloc((long) maxval*2*sizeof(lsys_cmd));
+            LSysCmd *doub = (LSysCmd *) malloc((long) maxval*2*sizeof(LSysCmd));
             if (doub == nullptr)
             {
                 free(ret);
                 ts->stackoflow = true;
                 return nullptr;
             }
-            std::memcpy(doub, ret, maxval*sizeof(lsys_cmd));
+            std::memcpy(doub, ret, maxval*sizeof(LSysCmd));
             free(ret);
             ret = doub;
             maxval <<= 1;
@@ -1171,14 +1171,14 @@ static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
     ret[n].n = 0;
     n++;
 
-    lsys_cmd *doub = (lsys_cmd *) malloc((long) n*sizeof(lsys_cmd));
+    LSysCmd *doub = (LSysCmd *) malloc((long) n*sizeof(LSysCmd));
     if (doub == nullptr)
     {
         free(ret);
         ts->stackoflow = true;
         return nullptr;
     }
-    std::memcpy(doub, ret, n*sizeof(lsys_cmd));
+    std::memcpy(doub, ret, n*sizeof(LSysCmd));
     free(ret);
     return doub;
 }
