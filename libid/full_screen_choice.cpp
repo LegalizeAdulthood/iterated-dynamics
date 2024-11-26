@@ -29,7 +29,7 @@ std::string const g_speed_prompt{"Speed key string"};
    char is a dot or last char is a slash */
 inline int isadirname(char const *name)
 {
-    return *name == '.' || endswithslash(name) ? 1 : 0;
+    return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
 
 static void footer_msg(int *i, int options, char const *speedstring)

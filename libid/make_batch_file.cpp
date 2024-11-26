@@ -1665,7 +1665,7 @@ docolors:
 static void put_filename(char const *keyword, char const *fname)
 {
     char const *p;
-    if (*fname && !endswithslash(fname))
+    if (*fname && !ends_with_slash(fname))
     {
         p = std::strrchr(fname, SLASHC);
         if (p != nullptr)
