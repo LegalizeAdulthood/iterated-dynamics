@@ -67,26 +67,26 @@ struct StereoData
 
 using DACBox = BYTE (*)[256][3];
 
-static StereoData *pv{};
+static StereoData *s_data{};
 
-#define AVG         (pv->avg)
-#define AVGCT       (pv->avgct)
-#define DEPTH       (pv->depth)
-#define BARHEIGHT   (pv->barheight)
-#define GROUND      (pv->ground)
-#define MAXCC       (pv->maxcc)
-#define MAXC        (pv->maxc)
-#define MINC        (pv->minc)
-#define REVERSE     (pv->reverse)
-#define SEP         (pv->sep)
-#define WIDTH       (pv->width)
-#define X1          (pv->x1)
-#define X2          (pv->x2)
-#define Y           (pv->y)
-#define Y1          (pv->y1)
-#define Y2          (pv->y2)
-#define XCEN        (pv->xcen)
-#define YCEN        (pv->ycen)
+#define AVG         (s_data->avg)
+#define AVGCT       (s_data->avgct)
+#define DEPTH       (s_data->depth)
+#define BARHEIGHT   (s_data->barheight)
+#define GROUND      (s_data->ground)
+#define MAXCC       (s_data->maxcc)
+#define MAXC        (s_data->maxc)
+#define MINC        (s_data->minc)
+#define REVERSE     (s_data->reverse)
+#define SEP         (s_data->sep)
+#define WIDTH       (s_data->width)
+#define X1          (s_data->x1)
+#define X2          (s_data->x2)
+#define Y           (s_data->y)
+#define Y1          (s_data->y1)
+#define Y2          (s_data->y2)
+#define XCEN        (s_data->xcen)
+#define YCEN        (s_data->ycen)
 
 /*
    The getdepth() function allows using the grayscale value of the color
@@ -96,7 +96,7 @@ static StereoData *pv{};
    0 to 255.
 */
 
-#define dac   (*((DACBox)(pv->savedac)))
+#define dac   (*((DACBox)(s_data->savedac)))
 
 static int getdepth(int xd, int yd)
 {
@@ -260,8 +260,8 @@ bool auto_stereo_convert()
     colour.resize(g_logical_screen_x_dots);
     bool done = false;
 
-    pv = &v;   // set static vars to stack structure
-    pv->savedac = savedacbox;
+    s_data = &v;   // set static vars to stack structure
+    s_data->savedac = savedacbox;
 
     // Use the current time to randomize the random number sequence.
     std::time(&ltime);
