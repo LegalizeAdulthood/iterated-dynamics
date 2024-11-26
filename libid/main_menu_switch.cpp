@@ -819,7 +819,7 @@ static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state request_starfield_params(int &, bool &, bool &, bool &)
+static main_state request_star_field_params(int &, bool &, bool &, bool &)
 {
     clear_zoom_box();
     if (get_star_field_params() >= 0)
@@ -860,7 +860,7 @@ static MainMenuHandler s_handlers[]{
     {'2', execute_commands},                        //
     {'@', execute_commands},                        //
     {'\\', main_history},                           //
-    {'a', request_starfield_params},                //
+    {'a', request_star_field_params},               //
     {'b', request_make_batch_file},                 //
     {'c', color_cycle},                             //
     {'d', request_shell},                           //
