@@ -679,7 +679,7 @@ void adjust_corner_bf()
 
     // While we're at it, let's adjust the Xmagfactor as well
     // use bftemp, bftemp2 as bfXctr, bfYctr
-    cvt_center_mag_bf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
+    cvt_center_mag_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
     ftemp = std::fabs(Xmagfactor);
     if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
     {
@@ -758,7 +758,7 @@ void adjust_corner()
     if (!g_integer_fractal)
     {
         // While we're at it, let's adjust the Xmagfactor as well
-        cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+        cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         ftemp = std::fabs(Xmagfactor);
         if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
         {

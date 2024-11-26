@@ -207,7 +207,7 @@ int sticky_orbits()
 
         angle = g_xx_begin;  // save angle in x parameter
 
-        cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+        cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         if (Rotation <= 0)
         {
             Rotation += 360;

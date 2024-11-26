@@ -31,7 +31,7 @@ int getprecbf_mag()
     bXctr            = alloc_stack(g_bf_length+2);
     bYctr            = alloc_stack(g_bf_length+2);
     // this is just to find Magnification
-    cvt_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+    cvt_center_mag_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
     restore_stack(saved);
 
     // I don't know if this is portable, but something needs to

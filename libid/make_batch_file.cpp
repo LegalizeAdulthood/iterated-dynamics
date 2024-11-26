@@ -776,7 +776,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             if (g_bf_math != bf_math_type::NONE)
             {
                 int digits;
-                cvt_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+                cvt_center_mag_bf(bfXctr, bfYctr, Magnification, Xmagfactor, Rotation, Skew);
                 digits = getprecbf(MAXREZ);
                 put_parm(" %s=", "center-mag");
                 put_bf(0, bfXctr, digits);
@@ -784,7 +784,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             }
             else // !g_bf_math
             {
-                cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+                cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
                 put_parm(" %s=", "center-mag");
                 //          convert 1000 fudged long to double, 1000/1<<24 = 6e-5
                 put_parm(g_delta_min > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
