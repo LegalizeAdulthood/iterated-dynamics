@@ -33,7 +33,7 @@
 namespace
 {
 
-struct HISTORY
+struct ImageHistory
 {
     fractal_type image_fractal_type;
     double x_min;
@@ -143,7 +143,7 @@ bool g_history_flag{};       // are we backing off in history?
 int g_max_image_history{10}; //
 
 static int s_save_ptr{}; // save ptr into history tbl
-static std::vector<HISTORY> s_history;
+static std::vector<ImageHistory> s_history;
 
 void history_init()
 {
@@ -156,9 +156,9 @@ void save_history_info()
     {
         return;
     }
-    HISTORY last = s_history[s_save_ptr];
+    ImageHistory last = s_history[s_save_ptr];
 
-    HISTORY current{};
+    ImageHistory current{};
     current.image_fractal_type = g_fractal_type;
     current.x_min = g_x_min;
     current.x_max = g_x_max;
@@ -320,7 +320,7 @@ void save_history_info()
     {
         g_history_flag = false;            // coming from user history command, don't save
     }
-    else if (std::memcmp(&current, &last, sizeof(HISTORY)))
+    else if (std::memcmp(&current, &last, sizeof(ImageHistory)))
     {
         if (++s_save_ptr >= g_max_image_history)    // back to beginning of circular buffer
         {
@@ -340,7 +340,7 @@ void restore_history_info(int i)
     {
         return;
     }
-    HISTORY last = s_history[i];
+    ImageHistory last = s_history[i];
     g_invert = 0;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     g_resuming = false;
