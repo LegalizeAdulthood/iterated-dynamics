@@ -12,10 +12,10 @@ struct TOPIC;
 
 extern std::string g_html_output_dir;
 
-class html_processor
+class HTMLProcessor
 {
 public:
-    explicit html_processor(std::string const &fname)
+    explicit HTMLProcessor(std::string const &fname)
         : m_fname(fname)
     {
     }

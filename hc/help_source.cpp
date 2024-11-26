@@ -2,7 +2,7 @@
 //
 #include "help_source.h"
 
-#include "html_processor.h"
+#include "HTMLProcessor.h"
 #include "messages.h"
 #include "modes.h"
 

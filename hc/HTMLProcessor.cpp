@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "html_processor.h"
+#include "HTMLProcessor.h"
 
 #include "help_source.h"
 #include "messages.h"
@@ -42,7 +42,7 @@ std::string rst_name(std::string const &content_name)
     return name;
 }
 
-void html_processor::process()
+void HTMLProcessor::process()
 {
     if (g_src.contents.empty())
     {
@@ -53,7 +53,7 @@ void html_processor::process()
     write_contents();
 }
 
-void html_processor::write_index_html()
+void HTMLProcessor::write_index_html()
 {
     msg(("Writing " + m_fname).c_str());
 
@@ -100,7 +100,7 @@ void html_processor::write_index_html()
     }
 }
 
-void html_processor::write_contents()
+void HTMLProcessor::write_contents()
 {
     for (const CONTENT &c : g_src.contents)
     {
@@ -108,7 +108,7 @@ void html_processor::write_contents()
     }
 }
 
-void html_processor::write_content(const CONTENT &c)
+void HTMLProcessor::write_content(const CONTENT &c)
 {
     for (int i = 0; i < c.num_topic; ++i)
     {
@@ -122,7 +122,7 @@ void html_processor::write_content(const CONTENT &c)
     }
 }
 
-void html_processor::write_topic(const TOPIC &t)
+void HTMLProcessor::write_topic(const TOPIC &t)
 {
     std::string const filename = rst_name(t.title) + ".rst";
     msg("Writing %s", filename.c_str());

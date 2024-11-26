@@ -8,7 +8,7 @@
 
 #include "adoc_compiler.h"
 #include "help_source.h"
-#include "html_processor.h"
+#include "HTMLProcessor.h"
 #include "messages.h"
 
 #include <port.h>
@@ -1764,7 +1764,7 @@ void HelpCompiler::paginate_html_document()
 
 void HelpCompiler::print_html_document(std::string const &output_filename)
 {
-    html_processor(output_filename).process();
+    HTMLProcessor(output_filename).process();
 }
 
 } // namespace hc
