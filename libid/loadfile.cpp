@@ -72,28 +72,28 @@ enum
 
 constexpr double MINDIF{0.001};
 
-struct ext_blk_2
+struct ExtBlock2
 {
     bool got_data;
     int length;
     std::vector<BYTE> resume_data;
 };
 
-struct ext_blk_4
+struct ExtBlock4
 {
     bool got_data;
     int length;
     std::vector<int> range_data;
 };
 
-struct ext_blk_5
+struct ExtBlock5
 {
     bool got_data;
     std::vector<char> apm_data;
 };
 
 // parameter evolution stuff
-struct ext_blk_6
+struct ExtBlock6
 {
     bool got_data;
     int length;
@@ -117,7 +117,7 @@ struct ext_blk_6
     short  mutate[NUM_GENES];
 };
 
-struct ext_blk_7
+struct ExtBlock7
 {
     bool got_data;
     int length;
@@ -131,13 +131,13 @@ struct ext_blk_7
     char drawmode;
 };
 
-struct dblcoords
+struct DblCoords
 {
     double x;
     double y;
 };
 
-struct window
+struct Window
 {
     // for fgetwindow on screen browser
     Coord      itl;      // screen coordinates
@@ -153,29 +153,29 @@ struct window
 
 // prototypes
 static int  find_fractal_info(const std::string &gif_file, FractalInfo *info,
-    ext_blk_2 *blk_2_info,
+    ExtBlock2 *blk_2_info,
     ExtBlock3 *blk_3_info,
-    ext_blk_4 *blk_4_info,
-    ext_blk_5 *blk_5_info,
-    ext_blk_6 *blk_6_info,
-    ext_blk_7 *blk_7_info);
+    ExtBlock4 *blk_4_info,
+    ExtBlock5 *blk_5_info,
+    ExtBlock6 *blk_6_info,
+    ExtBlock7 *blk_7_info);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
 static void backwardscompat(FractalInfo *info);
 static bool fix_bof();
 static bool fix_period_bof();
-static void drawindow(int colour, window const *info);
-static bool is_visible_window(window *list, FractalInfo const *info, ext_blk_5 const *blk_5_info);
-static void transform(dblcoords *);
+static void drawindow(int colour, Window const *info);
+static bool is_visible_window(Window *list, FractalInfo const *info, ExtBlock5 const *blk_5_info);
+static void transform(DblCoords *);
 static bool paramsOK(FractalInfo const *info);
 static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info);
 static bool functionOK(FractalInfo const *info, int numfn);
 static void check_history(char const *oldname, char const *newname);
 static void bfsetup_convert_to_screen();
-static void bftransform(bf_t, bf_t, dblcoords *);
+static void bftransform(bf_t, bf_t, DblCoords *);
 
 static std::FILE *s_fp{};
-static std::vector<window> browse_windows;
+static std::vector<Window> browse_windows;
 static std::vector<int> browse_box_x;
 static std::vector<int> browse_box_y;
 static std::vector<int> browse_box_values;
@@ -379,12 +379,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 {
     FractalInfo read_info;
     char msg[110];
-    ext_blk_2 blk_2_info;
+    ExtBlock2 blk_2_info;
     ExtBlock3 blk_3_info;
-    ext_blk_4 blk_4_info;
-    ext_blk_5 blk_5_info;
-    ext_blk_6 blk_6_info;
-    ext_blk_7 blk_7_info;
+    ExtBlock4 blk_4_info;
+    ExtBlock5 blk_5_info;
+    ExtBlock6 blk_6_info;
+    ExtBlock7 blk_7_info;
 
     g_show_file = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
@@ -967,12 +967,12 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 
 static int find_fractal_info(const std::string &gif_file, //
     FractalInfo *info,                                   //
-    ext_blk_2 *blk_2_info,                                //
+    ExtBlock2 *blk_2_info,                                //
     ExtBlock3 *blk_3_info,                                //
-    ext_blk_4 *blk_4_info,                                //
-    ext_blk_5 *blk_5_info,                                //
-    ext_blk_6 *blk_6_info,                                //
-    ext_blk_7 *blk_7_info)                                //
+    ExtBlock4 *blk_4_info,                                //
+    ExtBlock5 *blk_5_info,                                //
+    ExtBlock6 *blk_6_info,                                //
+    ExtBlock7 *blk_7_info)                                //
 {
     BYTE gifstart[18];
     char temp1[81];
@@ -1556,7 +1556,7 @@ int file_get_window()
     int wincount;
     int toggle;
     int color_of_box;
-    window winlist;
+    Window winlist;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -1626,12 +1626,12 @@ rescan:  // entry for changed browse parms
         split_fname_ext(g_dta.filename, fname, ext);
         make_path(tmpmask, drive, dir, fname, ext);
         FractalInfo read_info;
-        ext_blk_2 blk_2_info;
+        ExtBlock2 blk_2_info;
         ExtBlock3 blk_3_info;
-        ext_blk_4 blk_4_info;
-        ext_blk_5 blk_5_info;
-        ext_blk_6 blk_6_info;
-        ext_blk_7 blk_7_info;
+        ExtBlock4 blk_4_info;
+        ExtBlock5 blk_5_info;
+        ExtBlock6 blk_6_info;
+        ExtBlock7 blk_7_info;
         if (!find_fractal_info(
                 tmpmask, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
             && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)                                   //
@@ -1917,7 +1917,7 @@ rescan:  // entry for changed browse parms
     return c;
 }
 
-static void drawindow(int colour, window const *info)
+static void drawindow(int colour, Window const *info)
 {
     Coord ibl, itr;
 
@@ -1954,7 +1954,7 @@ static void drawindow(int colour, window const *info)
 }
 
 // maps points onto view screen
-static void transform(dblcoords *point)
+static void transform(DblCoords *point)
 {
     double tmp_pt_x;
     tmp_pt_x = cvt->a * point->x + cvt->b * point->y + cvt->e;
@@ -1963,11 +1963,11 @@ static void transform(dblcoords *point)
 }
 
 static bool is_visible_window(
-    window *list,
+    Window *list,
     FractalInfo const *info,
-    ext_blk_5 const *blk_5_info)
+    ExtBlock5 const *blk_5_info)
 {
-    dblcoords tl, tr, bl, br;
+    DblCoords tl, tr, bl, br;
     bf_t bt_x, bt_y;
     bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
     int saved;
@@ -2408,7 +2408,7 @@ static void bfsetup_convert_to_screen()
 }
 
 // maps points onto view screen
-static void bftransform(bf_t bt_x, bf_t bt_y, dblcoords *point)
+static void bftransform(bf_t bt_x, bf_t bt_y, DblCoords *point)
 {
     bf_t   bt_tmp1, bt_tmp2;
     int saved;
