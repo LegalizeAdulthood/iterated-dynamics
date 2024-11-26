@@ -91,7 +91,7 @@ int get_bytes(BYTE *where, int how_many)
 
 // Main entry decoder
 
-int gifview()
+int gif_view()
 {
     BYTE buffer[16];
     unsigned top;

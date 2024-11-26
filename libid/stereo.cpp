@@ -327,7 +327,7 @@ bool do_AutoStereo()
         g_out_line = outline_stereo;
         while ((Y) < g_logical_screen_y_dots)
         {
-            if (gifview())
+            if (gif_view())
             {
                 ret = true;
                 goto exit_stereo;

@@ -303,7 +303,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 std::snprintf(msg, std::size(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
                 stopmsg(stopmsg_flags::NO_BUZZER, msg);
             }
-            i = funny_glasses_call(gifview);
+            i = funny_glasses_call(gif_view);
             if (g_out_line_cleanup)              // cleanup routine defined?
             {
                 (*g_out_line_cleanup)();
