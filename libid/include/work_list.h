@@ -4,7 +4,7 @@
 
 #define MAX_CALC_WORK 12
 
-struct WORKLIST     // work list entry for std escape time engines
+struct WorkList     // work list entry for std escape time engines
 {
     int xxstart;    // screen window for this entry
     int xxstop;
@@ -17,7 +17,7 @@ struct WORKLIST     // work list entry for std escape time engines
 };
 
 extern int                   g_num_work_list;
-extern WORKLIST              g_work_list[MAX_CALC_WORK];
+extern WorkList              g_work_list[MAX_CALC_WORK];
 
 int add_worklist(int xfrom, int xto, int xbegin,
                  int yfrom, int yto, int ybegin,

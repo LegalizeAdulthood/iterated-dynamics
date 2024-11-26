@@ -865,7 +865,7 @@ static void fix_work_list()
 {
     for (int i = 0; i < g_num_work_list; ++i)
     {
-        WORKLIST *wk = &g_work_list[i];
+        WorkList *wk = &g_work_list[i];
         if (wk->yystart >= g_logical_screen_y_dots || wk->yystop < 0
             || wk->xxstart >= g_logical_screen_x_dots || wk->xxstop < 0)
         {

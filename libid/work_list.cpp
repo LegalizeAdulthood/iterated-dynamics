@@ -3,7 +3,7 @@
 #include "work_list.h"
 
 int g_num_work_list{}; // resume work list for standard engine
-WORKLIST g_work_list[MAX_CALC_WORK]{};
+WorkList g_work_list[MAX_CALC_WORK]{};
 
 static int    combine_worklist();
 
@@ -106,7 +106,7 @@ void tidy_worklist()
                             && g_work_list[j].xxstart <  g_work_list[i].xxstart))))
             {
                 // dumb sort, swap 2 entries to correct order
-                WORKLIST tempwork = g_work_list[i];
+                WorkList tempwork = g_work_list[i];
                 g_work_list[i] = g_work_list[j];
                 g_work_list[j] = tempwork;
             }
