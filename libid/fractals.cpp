@@ -210,7 +210,7 @@ void cpower(DComplex *base, int exp, DComplex *result)
     if (exp < 0)
     {
         cpower(base, -exp, result);
-        CMPLXrecip(*result, *result);
+        cmplx_recip(*result, *result);
         return;
     }
 
@@ -255,7 +255,7 @@ int lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
     if (exp < 0)
     {
         g_overflow = lcpower(base, -exp, result, bitshift) != 0;
-        LCMPLXrecip(*result, *result);
+        lcmplx_recip(*result, *result);
         return g_overflow ? 1 : 0;
     }
 

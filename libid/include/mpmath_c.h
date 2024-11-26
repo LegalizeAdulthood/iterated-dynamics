@@ -39,7 +39,7 @@ MPC cmplx2MPC(DComplex);
 DComplex ComplexPower(DComplex, DComplex);
 void SetupLogTable();
 long logtablecalc(long);
-long ExpFloat14(long);
+long exp_float14(long);
 void Arcsinz(DComplex z, DComplex *rz);
 void Arccosz(DComplex z, DComplex *rz);
 void Arcsinhz(DComplex z, DComplex *rz);

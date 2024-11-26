@@ -83,14 +83,14 @@ int lambda_trig_or_trig_fp_fractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
-    if (CMPLXmod(g_old_z) < g_param_z2.x)
+    if (cmplx_mod(g_old_z) < g_param_z2.x)
     {
-        CMPLXtrig0(g_old_z, g_old_z);
+        cmplx_trig0(g_old_z, g_old_z);
         fpu_cmplx_mul(g_float_param, &g_old_z, &g_new_z);
     }
     else
     {
-        CMPLXtrig1(g_old_z, g_old_z);
+        cmplx_trig1(g_old_z, g_old_z);
         fpu_cmplx_mul(g_float_param, &g_old_z, &g_new_z);
     }
     return g_bailout_float();
@@ -134,14 +134,14 @@ int julia_trig_or_trig_fp_fractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
-    if (CMPLXmod(g_old_z) < g_param_z2.x)
+    if (cmplx_mod(g_old_z) < g_param_z2.x)
     {
-        CMPLXtrig0(g_old_z, g_old_z);
+        cmplx_trig0(g_old_z, g_old_z);
         g_new_z = *g_float_param + g_old_z;
     }
     else
     {
-        CMPLXtrig1(g_old_z, g_old_z);
+        cmplx_trig1(g_old_z, g_old_z);
         g_new_z = *g_float_param + g_old_z;
     }
     return g_bailout_float();

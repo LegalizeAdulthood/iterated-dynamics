@@ -50,14 +50,14 @@ bool MandelbrotMix::setup()
     k.y = 0.0; // k=real(p3)+1,
     l.x = g_params[5] + 100.0;
     l.y = 0.0;              // l=imag(p3)+100,
-    CMPLXrecip(f, g);       // g=1/f,
-    CMPLXrecip(d, h);       // h=1/d,
+    cmplx_recip(f, g);       // g=1/f,
+    cmplx_recip(d, h);       // h=1/d,
     g_tmp_z = f - b;        // tmp = f-b
-    CMPLXrecip(g_tmp_z, j); // j = 1/(f-b)
+    cmplx_recip(g_tmp_z, j); // j = 1/(f-b)
     g_tmp_z = -a;
-    CMPLXmult(g_tmp_z, b, g_tmp_z); // z=(-a*b*g*h)^j,
-    CMPLXmult(g_tmp_z, g, g_tmp_z);
-    CMPLXmult(g_tmp_z, h, g_tmp_z);
+    cmplx_mult(g_tmp_z, b, g_tmp_z); // z=(-a*b*g*h)^j,
+    cmplx_mult(g_tmp_z, g, g_tmp_z);
+    cmplx_mult(g_tmp_z, h, g_tmp_z);
 
     /*
        This code kludge attempts to duplicate the behavior
@@ -112,7 +112,7 @@ bool MandelbrotMix::setup()
         }
     }
 
-    CMPLXpwr(g_tmp_z, j, g_tmp_z); // note: z is old
+    cmplx_pwr(g_tmp_z, j, g_tmp_z); // note: z is old
     // in case our kludge failed, let the user fix it
     if (g_params[6] < 0.0)
     {
@@ -139,7 +139,7 @@ int MandelbrotMix::per_pixel()
         g_init.y = g_dy_pixel();
     }
     g_old_z = g_tmp_z;
-    CMPLXtrig0(g_init, c); // c=fn1(pixel):
+    cmplx_trig0(g_init, c); // c=fn1(pixel):
     return 0;              // 1st iteration has been NOT been done
 }
 
@@ -148,8 +148,8 @@ int MandelbrotMix::iterate()
     // z=k*((a*(z^b))+(d*(z^f)))+c,
     DComplex z_b;
     DComplex z_f;
-    CMPLXpwr(g_old_z, b, z_b); // (z^b)
-    CMPLXpwr(g_old_z, f, z_f); // (z^f)
+    cmplx_pwr(g_old_z, b, z_b); // (z^b)
+    cmplx_pwr(g_old_z, f, z_f); // (z^f)
     g_new_z.x = k.x * a.x * z_b.x + k.x * d.x * z_f.x + c.x;
     g_new_z.y = k.x * a.x * z_b.y + k.x * d.x * z_f.y + c.y;
     return g_bailout_float();

@@ -135,8 +135,8 @@ int marks_cplx_mand()
 
 int marks_mandel_pwr_fp_fractal()
 {
-    CMPLXtrig0(g_old_z, g_new_z);
-    CMPLXmult(g_tmp_z, g_new_z, g_new_z);
+    cmplx_trig0(g_old_z, g_new_z);
+    cmplx_mult(g_tmp_z, g_new_z, g_new_z);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return g_bailout_float();
@@ -158,7 +158,7 @@ int marks_mandel_pwr_fractal()
 
 int tims_error_fp_fractal()
 {
-    CMPLXtrig0(g_old_z, g_new_z);
+    cmplx_trig0(g_old_z, g_new_z);
     g_new_z.x = g_new_z.x * g_tmp_z.x - g_new_z.y * g_tmp_z.y;
     g_new_z.y = g_new_z.x * g_tmp_z.y - g_new_z.y * g_tmp_z.x;
     g_new_z.x += g_float_param->x;
@@ -181,7 +181,7 @@ int marks_mandelpwr_per_pixel()
     mandel_per_pixel();
     g_l_temp = g_l_old_z;
     g_l_temp.x -= g_fudge_factor;
-    LCMPLXpwr(g_l_old_z, g_l_temp, g_l_temp);
+    lcmplx_pwr(g_l_old_z, g_l_temp, g_l_temp);
     return 1;
 }
 
@@ -302,7 +302,7 @@ int marks_mandelpwrfp_per_pixel()
     mandel_fp_per_pixel();
     g_tmp_z = g_old_z;
     g_tmp_z.x -= 1;
-    CMPLXpwr(g_old_z, g_tmp_z, g_tmp_z);
+    cmplx_pwr(g_old_z, g_tmp_z, g_tmp_z);
     return 1;
 }
 

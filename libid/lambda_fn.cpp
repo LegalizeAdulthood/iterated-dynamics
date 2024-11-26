@@ -65,8 +65,8 @@ int lambda_trig_fp_fractal()
     {
         return 1;
     }
-    CMPLXtrig0(g_old_z, g_tmp_z);              // tmp = trig(old)
-    CMPLXmult(*g_float_param, g_tmp_z, g_new_z);   // new = longparm*trig(old)
+    cmplx_trig0(g_old_z, g_tmp_z);              // tmp = trig(old)
+    cmplx_mult(*g_float_param, g_tmp_z, g_new_z);   // new = longparm*trig(old)
     g_old_z = g_new_z;
     return 0;
 }
@@ -92,8 +92,8 @@ static int LambdaTrigfpFractal1()
     {
         return 1;
     }
-    CMPLXtrig0(g_old_z, g_tmp_z);                // tmp = trig(old)
-    CMPLXmult(*g_float_param, g_tmp_z, g_new_z); // new = longparm*trig(old)
+    cmplx_trig0(g_old_z, g_tmp_z);                // tmp = trig(old)
+    cmplx_mult(*g_float_param, g_tmp_z, g_new_z); // new = longparm*trig(old)
     g_old_z = g_new_z;
     return 0;
 }
@@ -118,8 +118,8 @@ static int LambdaTrigfpFractal2()
     {
         return 1;
     }
-    CMPLXtrig0(g_old_z, g_tmp_z);              // tmp = trig(old)
-    CMPLXmult(*g_float_param, g_tmp_z, g_new_z);   // new = longparm*trig(old)
+    cmplx_trig0(g_old_z, g_tmp_z);              // tmp = trig(old)
+    cmplx_mult(*g_float_param, g_tmp_z, g_new_z);   // new = longparm*trig(old)
     g_old_z = g_new_z;
     return 0;
 }

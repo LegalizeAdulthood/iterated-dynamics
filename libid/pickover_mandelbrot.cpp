@@ -40,7 +40,7 @@ int float_trig_plus_exponent_fractal()
     double siny;
     double cosy;
     sin_cos(&g_old_z.y, &siny, &cosy);
-    CMPLXtrig0(g_old_z, g_new_z);
+    cmplx_trig0(g_old_z, g_new_z);
 
     //new =   trig(old) + e**old + C
     g_new_z.x += tmpexp*cosy + g_float_param->x;
@@ -263,7 +263,7 @@ int trig_plus_z_squared_fp_fractal()
     // A Biomorph
     // z(n+1) = trig(z(n))+z(n)**2+C
 
-    CMPLXtrig0(g_old_z, g_new_z);
+    cmplx_trig0(g_old_z, g_new_z);
     g_new_z.x += g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y += 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
     return g_bailout_float();

@@ -2544,8 +2544,8 @@ int potential(double mag, long iterations)
             if (l_pot < 120 && !g_float_flag) // empirically determined limit of fShift
             {
                 f_mag = (float)mag;
-                fLog14(f_mag, f_tmp); // this SHOULD be non-negative
-                fShift(f_tmp, (char)-l_pot, pot);
+                f_log14(f_mag, f_tmp); // this SHOULD be non-negative
+                f_shift(f_tmp, (char)-l_pot, pot);
             }
             else
             {
@@ -2574,7 +2574,7 @@ int potential(double mag, long iterations)
             }
             else
             {
-                fSqrt14(pot, f_tmp);
+                f_sqrt14(pot, f_tmp);
                 pot = f_tmp;
             }
             pot = (float)(g_potential_params[0] - pot*g_potential_params[1] - 1.0);

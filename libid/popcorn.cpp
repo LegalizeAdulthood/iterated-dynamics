@@ -195,18 +195,18 @@ int popcorn_fractal_fn()
 
     // tmpx contains the generalized value of the old real "x" equation
     g_tmp_z = g_param_z2*g_old_z.y;  // tmp = (C * old.y)
-    CMPLXtrig1(g_tmp_z, tmpx);             // tmpx = trig1(tmp)
+    cmplx_trig1(g_tmp_z, tmpx);             // tmpx = trig1(tmp)
     tmpx.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
-    CMPLXtrig0(tmpx, g_tmp_z);             // tmp = trig0(tmpx)
-    CMPLXmult(g_tmp_z, g_param_z1, tmpx);         // tmpx = tmp * h
+    cmplx_trig0(tmpx, g_tmp_z);             // tmp = trig0(tmpx)
+    cmplx_mult(g_tmp_z, g_param_z1, tmpx);         // tmpx = tmp * h
 
     // tmpy contains the generalized value of the old real "y" equation
     g_tmp_z = g_param_z2*g_old_z.x;  // tmp = (C * old.x)
-    CMPLXtrig3(g_tmp_z, tmpy);             // tmpy = trig3(tmp)
+    cmplx_trig3(g_tmp_z, tmpy);             // tmpy = trig3(tmp)
     tmpy.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
-    CMPLXtrig2(tmpy, g_tmp_z);             // tmp = trig2(tmpy)
+    cmplx_trig2(tmpy, g_tmp_z);             // tmp = trig2(tmpy)
 
-    CMPLXmult(g_tmp_z, g_param_z1, tmpy);         // tmpy = tmp * h
+    cmplx_mult(g_tmp_z, g_param_z1, tmpy);         // tmpy = tmp * h
 
     g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
     g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
@@ -248,7 +248,7 @@ int long_popcorn_fractal_fn()
     g_overflow = false;
 
     // ltmpx contains the generalized value of the old real "x" equation
-    LCMPLXtimesreal(g_l_param2, g_l_old_z.y, g_l_temp); // tmp = (C * old.y)
+    lcmplx_times_real(g_l_param2, g_l_old_z.y, g_l_temp); // tmp = (C * old.y)
     trig1(g_l_temp, ltmpx);                             // tmpx = trig1(tmp)
     fix_overflow(ltmpx);                                //
     ltmpx.x += g_l_old_z.y;                             // tmpx = old.y + trig1(tmp)
@@ -257,7 +257,7 @@ int long_popcorn_fractal_fn()
     ltmpx = g_l_temp * g_l_param;                       // tmpx = tmp * h
 
     // ltmpy contains the generalized value of the old real "y" equation
-    LCMPLXtimesreal(g_l_param2, g_l_old_z.x, g_l_temp); // tmp = (C * old.x)
+    lcmplx_times_real(g_l_param2, g_l_old_z.x, g_l_temp); // tmp = (C * old.x)
     trig3(g_l_temp, ltmpy);                             // tmpy = trig3(tmp)
     fix_overflow(ltmpy);                                //
     ltmpy.x += g_l_old_z.x;                             // tmpy = old.x + trig1(tmp)

@@ -57,7 +57,7 @@ TEST_F(TestMathLComplex, multiplyReal)
     const LComplex lhs{fixed_point(1), fixed_point(2)};
 
     LComplex result{};
-    LCMPLXtimesreal(lhs, fixed_point(3), result);
+    lcmplx_times_real(lhs, fixed_point(3), result);
 
     EXPECT_EQ(fixed_point(3), result.x);
     EXPECT_EQ(fixed_point(6), result.y);

@@ -34,41 +34,41 @@ extern bool                  g_mp_overflow;
 extern MP                    g_mp_one;
 extern MPC                   g_mpc_one;
 
-long ExpFloat14(long);
+long exp_float14(long);
 
-inline void fDiv(float x, float y, float &z)
+inline void f_div(float x, float y, float &z)
 {
     *(long*)&z = reg_div_float(*(long*)&x, *(long*)&y);
 }
-inline void fMul16(float x, float y, float &z)
+inline void f_mul16(float x, float y, float &z)
 {
     *(long*)&z = r16_mul(*(long*)&x, *(long*)&y);
 }
-inline void fShift(float x, int shift, float &z)
+inline void f_shift(float x, int shift, float &z)
 {
     *(long*)&z = reg_sft_float(*(long*)&x, shift);
 }
-inline void Fg2Float(int x, long f, float &z)
+inline void fg_to_float(int x, long f, float &z)
 {
     *(long*)&z = reg_fg_to_float(x, f);
 }
-inline long Float2Fg(float x, int f)
+inline long float_to_fg(float x, int f)
 {
     return reg_float_to_fg(*(long*)&x, f);
 }
-inline void fLog14(float x, float &z)
+inline void f_log14(float x, float &z)
 {
     *reinterpret_cast<long*>(&z) = reg_fg_to_float(log_float14(*reinterpret_cast<long*>(&x)), 16);
 }
-inline void fExp14(float x, float &z)
+inline void f_exp14(float x, float &z)
 {
-    *(long*)&z = ExpFloat14(*(long*)&x);
+    *(long*)&z = exp_float14(*(long*)&x);
 }
-inline void fSqrt14(float x, float &z)
+inline void f_sqrt14(float x, float &z)
 {
-    fLog14(x, z);
-    fShift(z, -1, z);
-    fExp14(z, z);
+    f_log14(x, z);
+    f_shift(z, -1, z);
+    f_exp14(z, z);
 }
 
 union Arg
@@ -120,77 +120,77 @@ inline void trig3(const LComplex &arg, LComplex &out)
     g_ltrig3();
     out = g_arg1->l;
 }
-inline void CMPLXtrig0(const DComplex &arg, DComplex &out)
+inline void cmplx_trig0(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     g_dtrig0();
     out = g_arg1->d;
 }
-inline void CMPLXtrig1(const DComplex &arg, DComplex &out)
+inline void cmplx_trig1(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     g_dtrig1();
     out = g_arg1->d;
 }
-inline void CMPLXtrig2(const DComplex &arg, DComplex &out)
+inline void cmplx_trig2(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     g_dtrig2();
     out = g_arg1->d;
 }
-inline void CMPLXtrig3(const DComplex &arg, DComplex &out)
+inline void cmplx_trig3(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = (arg);
     g_dtrig3();
     (out) = g_arg1->d;
 }
-inline void LCMPLXsin(const LComplex &arg, LComplex &out)
+inline void lcmplx_sin(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     lStkSin();
     (out) = g_arg1->l;
 }
-inline void LCMPLXcos(const LComplex &arg, LComplex &out)
+inline void lcmplx_cos(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     lStkCos();
     out = g_arg1->l;
 }
-inline void LCMPLXsinh(const LComplex &arg, LComplex &out)
+inline void lcmplx_sinh(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     lStkSinh();
     out = g_arg1->l;
 }
-inline void LCMPLXcosh(const LComplex &arg, LComplex &out)
+inline void lcmplx_cosh(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     lStkCosh();
     out = g_arg1->l;
 }
-inline void LCMPLXlog(const LComplex &arg, LComplex &out)
+inline void lcmplx_log(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     lStkLog();
     out = g_arg1->l;
 }
-inline void LCMPLXexp(const LComplex &arg, LComplex &out)
+inline void lcmplx_exp(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
     lStkExp();
     out = g_arg1->l;
 }
-inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
+inline void lcmplx_sqr(const LComplex &arg, LComplex &out)
 {
     out.x = lsqr(arg.x) - lsqr(arg.y);
     out.y = multiply(arg.x, arg.y, g_bit_shift_less_1);
 }
-inline void LCMPLXsqr_old(LComplex &out)
+inline void lcmplx_sqr_old(LComplex &out)
 {
     out.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     out.x = g_l_temp_sqr_x - g_l_temp_sqr_y;
 }
-inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
+inline void lcmplx_pwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     g_arg2->l = arg1;
     g_arg1->l = arg2;
@@ -207,12 +207,12 @@ inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)
     return {x, y};
 }
 
-inline void LCMPLXtimesreal(const LComplex &arg, long real, LComplex &out)
+inline void lcmplx_times_real(const LComplex &arg, long real, LComplex &out)
 {
     out.x = multiply(arg.x, real, g_bit_shift);
     out.y = multiply(arg.y, real, g_bit_shift);
 }
-inline void LCMPLXrecip(const LComplex &arg, LComplex &out)
+inline void lcmplx_recip(const LComplex &arg, LComplex &out)
 {
     const long denom = lsqr(arg.x) + lsqr(arg.y);
     if (denom == 0L)
@@ -225,60 +225,60 @@ inline void LCMPLXrecip(const LComplex &arg, LComplex &out)
         out.y = -divide(arg.y, denom, g_bit_shift);
     }
 }
-inline double CMPLXmod(const DComplex &z)
+inline double cmplx_mod(const DComplex &z)
 {
     return sqr(z.x) + sqr(z.y);
 }
-inline void CMPLXsin(const DComplex &arg, DComplex &out)
+inline void cmplx_sin(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     dStkSin();
     out = g_arg1->d;
 }
-inline void CMPLXcos(const DComplex &arg, DComplex &out)
+inline void cmplx_cos(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     dStkCos();
     out = g_arg1->d;
 }
-inline void CMPLXsinh(const DComplex &arg, DComplex &out)
+inline void cmplx_sinh(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     dStkSinh();
     out = g_arg1->d;
 }
-inline void CMPLXcosh(const DComplex &arg, DComplex &out)
+inline void cmplx_cosh(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     dStkCosh();
     out = g_arg1->d;
 }
-inline void CMPLXlog(const DComplex &arg, DComplex &out)
+inline void cmplx_log(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
     dStkLog();
     out = g_arg1->d;
 }
-inline void CMPLXexp(const DComplex &arg, DComplex &out)
+inline void cmplx_exp(const DComplex &arg, DComplex &out)
 {
     fpu_cmplx_exp(&(arg), &(out));
 }
-inline void CMPLXsqr(const DComplex &arg, DComplex &out)
+inline void cmplx_sqr(const DComplex &arg, DComplex &out)
 {
     out.x = sqr(arg.x) - sqr(arg.y);
     out.y = (arg.x + arg.x) * arg.y;
 }
-inline void CMPLXsqr_old(DComplex &out)
+inline void cmplx_sqr_old(DComplex &out)
 {
     out.y = (g_old_z.x+g_old_z.x) * g_old_z.y;
     out.x = g_temp_sqr_x - g_temp_sqr_y;
 }
-inline void CMPLXpwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
+inline void cmplx_pwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     extern DComplex ComplexPower(DComplex, DComplex);
     out = ComplexPower(arg1, arg2);
 }
-inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
+inline void cmplx_mult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     g_arg2->d = arg1;
     g_arg1->d = arg2;
@@ -287,14 +287,14 @@ inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out
     g_arg2++;
     out = g_arg2->d;
 }
-inline void CMPLXmult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
+inline void cmplx_mult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     DComplex tmp;
     tmp.x = arg1.x*arg2.x - arg1.y*arg2.y;
     tmp.y = arg1.x*arg2.y + arg1.y*arg2.x;
     out = tmp;
 }
-inline void CMPLXrecip(const DComplex &arg, DComplex &out)
+inline void cmplx_recip(const DComplex &arg, DComplex &out)
 {
     const double denom = sqr(arg.x) + sqr(arg.y);
     if (denom == 0.0)

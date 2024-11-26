@@ -95,8 +95,8 @@ void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out)
     b.y = h->y - h->z;
 
     // apply function to each part
-    CMPLXtrig0(a, resulta);
-    CMPLXtrig0(b, resultb);
+    cmplx_trig0(a, resulta);
+    cmplx_trig0(b, resultb);
 
     // convert back
     out->x = (resulta.x + resultb.x)/2;

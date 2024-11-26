@@ -1301,7 +1301,7 @@ int dynam_float(double *x, double *y, double * /*z*/)
     double newy;
     cp.x = s_b* *x;
     cp.y = 0;
-    CMPLXtrig0(cp, tmp);
+    cmplx_trig0(cp, tmp);
     newy = *y + s_dt*std::sin(*x + s_a*tmp.x);
     if (s_euler)
     {
@@ -1310,7 +1310,7 @@ int dynam_float(double *x, double *y, double * /*z*/)
 
     cp.x = s_b* *y;
     cp.y = 0;
-    CMPLXtrig0(cp, tmp);
+    cmplx_trig0(cp, tmp);
     newx = *x - s_dt*std::sin(*y + s_a*tmp.x);
     *x = newx;
     *y = newy;
@@ -1372,21 +1372,21 @@ int latoo_float_orbit(double *x, double *y, double * /*z*/)
     //    *x = sin(yold * PAR_B) + PAR_C * sin(xold * PAR_B);
     g_old_z.x = yold * PAR_B;
     g_old_z.y = 0;          // old = (y * B) + 0i (in the complex)
-    CMPLXtrig0(g_old_z, g_new_z);
+    cmplx_trig0(g_old_z, g_new_z);
     double tmp = g_new_z.x;
     g_old_z.x = xold * PAR_B;
     g_old_z.y = 0;          // old = (x * B) + 0i
-    CMPLXtrig1(g_old_z, g_new_z);
+    cmplx_trig1(g_old_z, g_new_z);
     *x  = PAR_C * g_new_z.x + tmp;
 
     //    *y = sin(xold * PAR_A) + PAR_D * sin(yold * PAR_A);
     g_old_z.x = xold * PAR_A;
     g_old_z.y = 0;          // old = (y * A) + 0i (in the complex)
-    CMPLXtrig2(g_old_z, g_new_z);
+    cmplx_trig2(g_old_z, g_new_z);
     tmp = g_new_z.x;
     g_old_z.x = yold * PAR_A;
     g_old_z.y = 0;          // old = (x * B) + 0i
-    CMPLXtrig3(g_old_z, g_new_z);
+    cmplx_trig3(g_old_z, g_new_z);
     *y  = PAR_D * g_new_z.x + tmp;
 
     return 0;

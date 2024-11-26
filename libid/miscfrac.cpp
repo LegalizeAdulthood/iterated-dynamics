@@ -1300,7 +1300,7 @@ int bifurc_verhulst_trig()
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
     g_tmp_z.x = s_population;
     g_tmp_z.y = 0;
-    CMPLXtrig0(g_tmp_z, g_tmp_z);
+    cmplx_trig0(g_tmp_z, g_tmp_z);
     s_population += s_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
@@ -1320,7 +1320,7 @@ int bifurc_stewart_trig()
     //  Population = (Rate * fn(Population) * fn(Population)) - 1.0
     g_tmp_z.x = s_population;
     g_tmp_z.y = 0;
-    CMPLXtrig0(g_tmp_z, g_tmp_z);
+    cmplx_trig0(g_tmp_z, g_tmp_z);
     s_population = (s_rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
     return population_orbit();
 }
@@ -1340,7 +1340,7 @@ int bifurc_set_trig_pi()
 {
     g_tmp_z.x = s_population * PI;
     g_tmp_z.y = 0;
-    CMPLXtrig0(g_tmp_z, g_tmp_z);
+    cmplx_trig0(g_tmp_z, g_tmp_z);
     s_population = s_rate * g_tmp_z.x;
     return population_orbit();
 }
@@ -1358,7 +1358,7 @@ int bifurc_add_trig_pi()
 {
     g_tmp_z.x = s_population * PI;
     g_tmp_z.y = 0;
-    CMPLXtrig0(g_tmp_z, g_tmp_z);
+    cmplx_trig0(g_tmp_z, g_tmp_z);
     s_population += s_rate * g_tmp_z.x;
     return population_orbit();
 }
@@ -1377,7 +1377,7 @@ int bifurc_lambda_trig()
     //  Population = Rate * fn(Population) * (1 - fn(Population))
     g_tmp_z.x = s_population;
     g_tmp_z.y = 0;
-    CMPLXtrig0(g_tmp_z, g_tmp_z);
+    cmplx_trig0(g_tmp_z, g_tmp_z);
     s_population = s_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
@@ -1407,7 +1407,7 @@ int long_bifurc_may()
     g_l_temp.x = s_population_l + g_fudge_factor;
     g_l_temp.y = 0;
     g_l_param2.x = s_beta * g_fudge_factor;
-    LCMPLXpwr(g_l_temp, g_l_param2, g_l_temp);
+    lcmplx_pwr(g_l_temp, g_l_param2, g_l_temp);
     s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
     s_population_l = divide(s_population_l, g_l_temp.x, g_bit_shift);
     return g_overflow;

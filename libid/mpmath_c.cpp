@@ -490,10 +490,10 @@ void SetupLogTable()
         {
             s_lf = g_log_map_table_max_size - 1;
         }
-        Fg2Float((long)(g_log_map_table_max_size-s_lf), 0, m);
-        fLog14(m, m);
-        Fg2Float((long)(g_colors-(s_lf?2:1)), 0, c);
-        fDiv(m, c, m);
+        fg_to_float((long)(g_log_map_table_max_size-s_lf), 0, m);
+        f_log14(m, m);
+        fg_to_float((long)(g_colors-(s_lf?2:1)), 0, c);
+        f_div(m, c, m);
         unsigned long prev;
         for (prev = 1; prev <= s_lf; prev++)
         {
@@ -501,10 +501,10 @@ void SetupLogTable()
         }
         for (unsigned n = (s_lf ? 2U : 1U); n < (unsigned int)g_colors; n++)
         {
-            Fg2Float((long)n, 0, f);
-            fMul16(f, m, f);
-            fExp14(f, l);
-            limit = (unsigned long)Float2Fg(l, 0) + s_lf;
+            fg_to_float((long)n, 0, f);
+            f_mul16(f, m, f);
+            f_exp14(f, l);
+            limit = (unsigned long)float_to_fg(l, 0) + s_lf;
             if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
             {
                 limit = g_log_map_table_max_size;
@@ -522,10 +522,10 @@ void SetupLogTable()
         {
             s_lf = g_log_map_table_max_size - 1;
         }
-        Fg2Float((long)(g_log_map_table_max_size-s_lf), 0, m);
-        fSqrt14(m, m);
-        Fg2Float((long)(g_colors-2), 0, c);
-        fDiv(m, c, m);
+        fg_to_float((long)(g_log_map_table_max_size-s_lf), 0, m);
+        f_sqrt14(m, m);
+        fg_to_float((long)(g_colors-2), 0, c);
+        f_div(m, c, m);
         unsigned long prev;
         for (prev = 1; prev <= s_lf; prev++)
         {
@@ -533,10 +533,10 @@ void SetupLogTable()
         }
         for (unsigned n = 2U; n < (unsigned int)g_colors; n++)
         {
-            Fg2Float((long)n, 0, f);
-            fMul16(f, m, f);
-            fMul16(f, f, l);
-            limit = (unsigned long)(Float2Fg(l, 0) + s_lf);
+            fg_to_float((long)n, 0, f);
+            f_mul16(f, m, f);
+            f_mul16(f, f, l);
+            limit = (unsigned long)(float_to_fg(l, 0) + s_lf);
             if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
             {
                 limit = g_log_map_table_max_size;
@@ -620,7 +620,7 @@ long logtablecalc(long citer)
     return ret;
 }
 
-long ExpFloat14(long xx)
+long exp_float14(long xx)
 {
     static float fLogTwo = 0.6931472F;
     int f;
