@@ -8,7 +8,7 @@
 
 #include "mpmath.h"
 
-void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
+void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x * arg2->x - arg1->y * arg2->y
              - arg1->z * arg2->z + arg1->t * arg2->t;
@@ -20,7 +20,7 @@ void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
              + arg1->y * arg2->z + arg1->x * arg2->t;
 }
 
-void HComplexSqr(DHyperComplex *arg, DHyperComplex *out)
+void hcmplx_sqr(DHyperComplex *arg, DHyperComplex *out)
 {
     out->x = arg->x * arg->x - arg->y * arg->y
              - arg->z * arg->z + arg->t * arg->t;
@@ -29,7 +29,7 @@ void HComplexSqr(DHyperComplex *arg, DHyperComplex *out)
     out->t = 2 * arg->t * arg->x + 2 * arg->z * arg->y;
 }
 
-int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
+int hcmplx_inv(DHyperComplex *arg, DHyperComplex *out)
 {
     double det;
     double mod;
@@ -52,7 +52,7 @@ int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
     return 0;
 }
 
-void HComplexAdd(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
+void hcmplx_add(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x + arg2->x;
     out->y = arg1->y + arg2->y;
@@ -60,7 +60,7 @@ void HComplexAdd(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
     out->t = arg1->t + arg2->t;
 }
 
-void HComplexSub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
+void hcmplx_sub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x - arg2->x;
     out->y = arg1->y - arg2->y;
@@ -68,7 +68,7 @@ void HComplexSub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
     out->t = arg1->t - arg2->t;
 }
 
-void HComplexMinus(DHyperComplex *arg1, DHyperComplex *out)
+void hcmplx_minus(DHyperComplex *arg1, DHyperComplex *out)
 {
     out->x = -arg1->x;
     out->y = -arg1->y;
