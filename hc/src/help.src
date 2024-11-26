@@ -185,7 +185,8 @@
 {8.2.1, 2, "Periodicity Logic"}
 {8.2.2, 2, "Limitations of Integer Math (and How We Cope)"}
 {8.2.3, 2, "Arbitrary Precision and Deep Zooming"}
-{8.2.4, 2, "The Id \"Fractal Engine\" Architecture"}
+{8.2.4, 2, "Perturbation Algorithm"}
+{8.2.5, 2, "The Id \"Fractal Engine\" Architecture"}
 
 {Appendix A, 0, Mathematics of the Fractal Types,
                    "Summary of Fractal Types",
@@ -272,10 +273,21 @@ Found a bug?  File an issue on our github project!\
 
 New Features in Version 1.1:
 
-o None yet!\
+o Perturbation drawing algorithm.  Paul de Leeuw contributed an
+  implementation of the perturbation drawing algorithm with support
+  for the Mandelbrot (type=mandel) and Mandelbrot power (type=manzpower)
+  fractal types.  See {Drawing Method} and {Perturbation Algorithm} for
+  details.  (PR #160)
+o The color palette editor can be positioned using the mouse and the
+  current pixel whose color is displayed in the editor can also be
+  selected with the mouse.  (Fixes #150)
 
 Bugs Fixed in Version 1.1:
 
+o The version number is now correctly displayed in the title of help
+  screens.  (Fixes #154)
+o When run from the Visual Studio debugger, the working directory of
+  the program is properly set to the home directory.  (Fixes #153)
 o When the monitor configuration changed since the last time Id was run
   and the previous window position is no longer on-screen, the previous
   window position is forgotten and the window is placed by the system.
@@ -286,7 +298,11 @@ o Corrected an assert popup during a Debug build. (Fixes #147, #140)
 
 Known limitations:
 
-o Navigation is exclusively through the keyboard.  Mouse support will be
+o This initial implementation of perturbation does not support
+  periodicity checking and only supports a limited number of inside and
+  outside coloring algorithms.  Suspend and resume is not supported with
+  perturbation.
+o Navigation is mostly through the keyboard.  Mouse support will be
   restored in a subsequent release.
 o Sound output does nothing, although all controls can be set through
   parameters or interactive screens.  Sound output will be restored once a

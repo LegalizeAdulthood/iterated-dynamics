@@ -85,6 +85,13 @@ visualization even in the slowest fractals.  With "fillcolor=0" (below)
 the squares are not painted and the points are spread over the image
 until all have being calculated (sort of a "fade in").
 
+Perturbation ("p") is a drawing type that is particularly fast when used
+with deep-zooms of the Mandelbrot set that require arbitrary precision
+arithmetic.  This initial implementation of perturbation does not support
+periodicity checking and only supports a limited number of inside and
+outside coloring algorithms.  Suspend and resume is not supported with
+perturbation.
+
 The "fillcolor=" option in the <X> screen or on the command line sets a
 fixed color to be used by the boundary tracing and tesseral calculations
 for filling in defined regions.  The effect of this is to show off the

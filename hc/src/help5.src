@@ -30,6 +30,7 @@ o When interacting with filenames and directories, Id may truncate
        { Periodicity Logic }
        { Limitations of Integer Math (and How We Cope) }
        { Arbitrary Precision and Deep Zooming }
+       { Perturbation Algorithm }
        { The Id "Fractal Engine" Architecture }
 
     A Little Math:
@@ -313,6 +314,21 @@ entered using the command-line interface or .par files.  Other known things
 that do not yet work with arbitrary precision are: biomorph, decomp, distance
 estimator, inversion, Julia-Mandel switch, history, orbit-in-window, and the
 browse feature.
+;
+;
+~Topic=Perturbation Algorithm
+
+The perturbation algorithm was originally implemented in a program called
+"SuperFractalThing" by K. I. Martin.  The core observation is that orbits
+for nearby points in the complex plane can be related to each other through
+a difference equation.  Therefore, if a single orbit is computed at high
+precision as a reference point, the values in the orbits of nearby points
+can be computed from the reference orbit using lower precision math.
+
+This is the essence of how perturbation methods speed up deep zooms of
+the Mandelbrot set.  Only a few reference points need to be calculated
+at full precision using slower operations and nearby points can be calculated
+using faster lesser precision operations.
 ;
 ;
 ~Topic=The Id "Fractal Engine" Architecture
@@ -1595,7 +1611,7 @@ o The following parameter file commands are deprecated and support will be
             Primary Author and Keeper of the Vision
  Richard Thomson      legalize AT xmission.com
               Supporting Cast and Peanut Gallery
- Paul de Leeuw        ManPWin author, Iterated Dynamics idea sounding board
+ Paul de Leeuw        Perturbation support, Id sounding board
             The Giants on Whose Shoulders We Stand
 ; room for 15 authors at a time here
 

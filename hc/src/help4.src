@@ -49,10 +49,11 @@
                            Inserts comments into par files.
 ~FF
 {Calculation Mode Parameters}
-  passes=1|2|3|g|b|d|t|g1..g6|s|o  Select single-pass, dual-pass, triple-pass
-                           solid-guessing, solid-guessing stop after pass n,
-                           boundary-tracing, diffusion, tesseral,
-                           synchronous orbits, or orbits drawing algorithms
+  passes=1|2|3|g|b|d|t|g1..g6|s|o|p  Select single-pass, dual-pass,
+                           triple-pass solid-guessing, solid-guessing stop
+                           after pass n, boundary-tracing, diffusion,
+                           tesseral, synchronous orbits, orbits, or
+                           perturbation drawing algorithms.
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
   float=yes                For most functions changes from integer math to fp
@@ -541,11 +542,11 @@ used up quickly.
 ;
 ;
 ~Topic=Calculation Mode Parameters
-PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o\
+PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o|p\
 Selects single-pass, dual-pass, triple-pass, solid-guessing mode,
 solid-guessing stop after pass n, boundary tracing, tesseral,
-synchronous orbits, or the orbits algorithm.  See {Drawing Method} and
-{Passes Parameters}.
+synchronous orbits, orbits, or the perturbation algorithm.
+See {Drawing Method} and {Passes Parameters}.
 
 FILLCOLOR=normal|<nnn>\
 Sets a color to be used for block fill by boundary tracing and tesseral
