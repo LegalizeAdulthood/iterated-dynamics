@@ -136,7 +136,7 @@ int find_line_width(token_modes mode, char const *curr, unsigned len);
 bool process_document(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info);
 int help();
 int read_help_topic(help_labels label, int , int , void *);
-bool makedoc_msg_func(int pnum, int num_pages);
+bool make_doc_msg_func(int pnum, int num_pages);
 void print_document(char const *outfname, bool (*msg_func)(int, int));
 int init_help();
 void end_help();

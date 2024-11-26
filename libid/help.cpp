@@ -145,7 +145,7 @@ static void help_seek(long pos)
     std::fseek(help_file, base_off + pos, SEEK_SET);
 }
 
-static void displaycc(int row, int col, int color, int ch)
+static void display_cc(int row, int col, int color, int ch)
 {
     char s[] = { (char) ch, 0 };
     driver_put_string(row, col, color, s);
@@ -160,7 +160,7 @@ static void display_text(int row, int col, int color, char const *text, unsigned
             ++text;
             --len;
         }
-        displaycc(row, col++, color, *text++);
+        display_cc(row, col++, color, *text++);
     }
 }
 
@@ -370,7 +370,7 @@ static void put_key(char const *name, char const *descrip)
     driver_put_string(-1, -1, C_HELP_INSTR, "  ");
 }
 
-static void helpinstr()
+static void help_instr()
 {
     for (int ctr = 0; ctr < 80; ctr++)
     {
@@ -389,7 +389,7 @@ static void helpinstr()
     PUT_KEY("Escape",           "Exit help");
 }
 
-static void printinstr()
+static void print_instr()
 {
     for (int ctr = 0; ctr < 80; ctr++)
     {
@@ -409,7 +409,7 @@ static void display_page(char const *title, char const *text, unsigned text_len,
     char temp[20];
 
     help_title();
-    helpinstr();
+    help_instr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     put_string_center(1, 0, 80, C_HELP_HDG, title);
     std::snprintf(temp, std::size(temp), "%2d of %d", page+1, num_pages);
@@ -477,7 +477,7 @@ static int dist1(int a, int b)
     return std::abs(t);
 }
 
-static int find_link_updown(Link *link, int num_link, int curr_link, int up)
+static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
 {
     int curr_c2, best_overlap = 0, temp_overlap;
     Link *curr, *best;
@@ -531,7 +531,7 @@ static int find_link_updown(Link *link, int num_link, int curr_link, int up)
     return (best == nullptr) ? -1 : (int)(best-link);
 }
 
-static int find_link_leftright(Link *link, int num_link, int curr_link, int left)
+static int find_link_left_right(Link *link, int num_link, int curr_link, int left)
 {
     int curr_c2, best_c2 = 0, temp_c2, best_dist = 0, temp_dist;
     Link *curr, *best;
@@ -770,7 +770,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_DOWN_ARROW:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 0)
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_up_down, 0)
                 && page < num_pages-1)
             {
                 ++page;
@@ -779,7 +779,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_UP_ARROW:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 1)
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_up_down, 1)
                 && page > 0)
             {
                 --page;
@@ -788,11 +788,11 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_LEFT_ARROW:
-            do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 1);
+            do_move_link(&link_table[0], num_link, &curr_link, find_link_left_right, 1);
             break;
 
         case ID_KEY_RIGHT_ARROW:
-            do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 0);
+            do_move_link(&link_table[0], num_link, &curr_link, find_link_left_right, 0);
             break;
 
         case ID_KEY_ESC:         // exit help
@@ -1074,7 +1074,7 @@ int read_help_topic(help_labels label_num, int off, int len, void *buf)
         label[static_cast<int>(label_num)].topic_off + off, len, buf);
 }
 
-static void printerc(PrintDocInfo *info, int c, int n)
+static void printer_ch(PrintDocInfo *info, int c, int n)
 {
     while (n-- > 0)
     {
@@ -1108,20 +1108,20 @@ static void printerc(PrintDocInfo *info, int c, int n)
     }
 }
 
-static void printers(PrintDocInfo *info, char const *s, int n)
+static void printer_str(PrintDocInfo *info, char const *s, int n)
 {
     if (n > 0)
     {
         while (n-- > 0)
         {
-            printerc(info, *s++, 1);
+            printer_ch(info, *s++, 1);
         }
     }
     else
     {
         while (*s != '\0')
         {
-            printerc(info, *s++, 1);
+            printer_ch(info, *s++, 1);
         }
     }
 }
@@ -1232,9 +1232,9 @@ static bool print_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
         std::snprintf(buff, std::size(buff), "Page %d", pd->page_num);
         std::memmove(line + (width - (int)std::strlen(buff)), buff, std::strlen(buff));
 
-        printerc(info, '\n', 1);
-        printers(info, line, width);
-        printerc(info, '\n', 2);
+        printer_ch(info, '\n', 1);
+        printer_str(info, line, width);
+        printer_ch(info, '\n', 2);
 
         info->margin = PAGE_INDENT;
 
@@ -1243,27 +1243,27 @@ static bool print_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 
     case PD_COMMANDS::PD_FOOTING:
         info->margin = 0;
-        printerc(info, '\f', 1);
+        printer_ch(info, '\f', 1);
         info->margin = PAGE_INDENT;
         return true;
 
     case PD_COMMANDS::PD_PRINT:
-        printers(info, pd->s, pd->i);
+        printer_str(info, pd->s, pd->i);
         return true;
 
     case PD_COMMANDS::PD_PRINTN:
-        printerc(info, *pd->s, pd->i);
+        printer_ch(info, *pd->s, pd->i);
         return true;
 
     case PD_COMMANDS::PD_PRINT_SEC:
         info->margin = TITLE_INDENT;
         if (pd->id[0] != '\0')
         {
-            printers(info, pd->id, 0);
-            printerc(info, ' ', 1);
+            printer_str(info, pd->id, 0);
+            printer_ch(info, ' ', 1);
         }
-        printers(info, pd->title, 0);
-        printerc(info, '\n', 1);
+        printer_str(info, pd->title, 0);
+        printer_ch(info, '\n', 1);
         info->margin = PAGE_INDENT;
         return true;
 
@@ -1303,7 +1303,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     if (pnum == 0)   // initialization
     {
         help_title();
-        printinstr();
+        print_instr();
         driver_set_attr(2, 0, C_HELP_BODY, 80*22);
         put_string_center(1, 0, 80, C_HELP_HDG, "Generating id.txt");
 
@@ -1327,7 +1327,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     return true;   // AOK -- continue
 }
 
-bool makedoc_msg_func(int pnum, int num_pages)
+bool make_doc_msg_func(int pnum, int num_pages)
 {
     char buffer[80] = "";
     bool result = false;

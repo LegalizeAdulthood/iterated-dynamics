@@ -1046,7 +1046,7 @@ static cmdarg_flags cmd_fpu(const Command &cmd)
 
 static cmdarg_flags cmd_make_doc(const Command &cmd)
 {
-    cmd_files_test::s_print_document(*cmd.value ? cmd.value : "id.txt", makedoc_msg_func);
+    cmd_files_test::s_print_document(*cmd.value ? cmd.value : "id.txt", make_doc_msg_func);
     cmd_files_test::s_goodbye();
     return cmdarg_flags::GOODBYE;
 }
