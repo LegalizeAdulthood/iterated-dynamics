@@ -48,8 +48,12 @@ static int s_blue_local_left{};
 static int s_blue_local_right{};
 static BYTE s_t_red{};
 
+static void plot3d_superimpose16(int x, int y, int color);
+static void plot3d_superimpose256(int x, int y, int color);
+static void plot_ifs3d_superimpose256(int x, int y, int color);
+
 // Bresenham's algorithm for drawing line
-void draw_line(int X1, int Y1, int X2, int Y2, int color)
+void draw_line(int x1, int y1, int x2, int y2, int color)
 
 {
     // uses Bresenham algorithm to draw a line
@@ -63,8 +67,8 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
     int inc2;  // G increment when row or column changes
     char pos_slope;
 
-    dX = X2 - X1;                   // find vector components
-    dY = Y2 - Y1;
+    dX = x2 - x1;                   // find vector components
+    dY = y2 - y1;
     pos_slope = (char)(dX > 0);                   // is slope positive?
     if (dY < 0)
     {
@@ -74,15 +78,15 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
     {
         if (dX > 0)         // determine start point and last column
         {
-            col = X1;
-            row = Y1;
-            final = X2;
+            col = x1;
+            row = y1;
+            final = x2;
         }
         else
         {
-            col = X2;
-            row = Y2;
-            final = X1;
+            col = x2;
+            row = y2;
+            final = x1;
         }
         inc1 = 2 * std::abs(dY);             // determine increments and initial G
         G = inc1 - std::abs(dX);
@@ -126,15 +130,15 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
     {
         if (dY > 0)             // determine start point and last row
         {
-            col = X1;
-            row = Y1;
-            final = Y2;
+            col = x1;
+            row = y1;
+            final = y2;
         }
         else
         {
-            col = X2;
-            row = Y2;
-            final = Y1;
+            col = x2;
+            row = y2;
+            final = y1;
         }
         inc1 = 2 * std::abs(dX);             // determine increments and initial G
         G = inc1 - std::abs(dY);
@@ -176,11 +180,9 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
     }
 }   // draw_line
 
-void plot3dsuperimpose16(int x, int y, int color)
+static void plot3d_superimpose16(int x, int y, int color)
 {
-    int tmp;
-
-    tmp = getcolor(x, y);
+    int tmp = getcolor(x, y);
 
     if (g_which_image == stereo_images::RED) // RED
     {
@@ -216,7 +218,7 @@ void plot3dsuperimpose16(int x, int y, int color)
     }
 }
 
-void plot3dsuperimpose256(int x, int y, int color)
+static void plot3d_superimpose256(int x, int y, int color)
 {
     int tmp;
     BYTE t_c;
@@ -273,7 +275,7 @@ void plot3dsuperimpose256(int x, int y, int color)
     }
 }
 
-void plotIFS3dsuperimpose256(int x, int y, int color)
+static void plot_ifs3d_superimpose256(int x, int y, int color)
 {
     int tmp;
     BYTE t_c;
@@ -329,7 +331,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
     }
 }
 
-void plot3dalternate(int x, int y, int color)
+static void plot3d_alternate(int x, int y, int color)
 {
     BYTE t_c;
 
@@ -377,7 +379,7 @@ void plot3dalternate(int x, int y, int color)
     }
 }
 
-void plot3dcrosseyedA(int x, int y, int color)
+static void plot3d_cross_eyed_a(int x, int y, int color)
 {
     x /= 2;
     y /= 2;
@@ -396,7 +398,7 @@ void plot3dcrosseyedA(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-void plot3dcrosseyedB(int x, int y, int color)
+static void plot3d_cross_eyed_b(int x, int y, int color)
 {
     x /= 2;
     y /= 2;
@@ -407,7 +409,7 @@ void plot3dcrosseyedB(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-void plot3dcrosseyedC(int x, int y, int color)
+static void plot3d_cross_eyed_c(int x, int y, int color)
 {
     if (g_row_count >= g_logical_screen_y_dots/2)
     {
@@ -429,7 +431,7 @@ void plot_setup()
     switch (g_glasses_type)
     {
     case 1:
-        g_standard_plot = plot3dalternate;
+        g_standard_plot = plot3d_alternate;
         break;
 
     case 2:
@@ -437,16 +439,16 @@ void plot_setup()
         {
             if (g_fractal_type != fractal_type::IFS3D)
             {
-                g_standard_plot = plot3dsuperimpose256;
+                g_standard_plot = plot3d_superimpose256;
             }
             else
             {
-                g_standard_plot = plotIFS3dsuperimpose256;
+                g_standard_plot = plot_ifs3d_superimpose256;
             }
         }
         else
         {
-            g_standard_plot = plot3dsuperimpose16;
+            g_standard_plot = plot3d_superimpose16;
         }
         break;
 
@@ -455,16 +457,16 @@ void plot_setup()
         {
             if (g_x_rot == 0 && g_y_rot == 0)
             {
-                g_standard_plot = plot3dcrosseyedA; // use hidden surface kludge
+                g_standard_plot = plot3d_cross_eyed_a; // use hidden surface kludge
             }
             else
             {
-                g_standard_plot = plot3dcrosseyedB;
+                g_standard_plot = plot3d_cross_eyed_b;
             }
         }
         else if (g_x_rot == 0 && g_y_rot == 0)
         {
-            g_standard_plot = plot3dcrosseyedC; // use hidden surface kludge
+            g_standard_plot = plot3d_cross_eyed_c; // use hidden surface kludge
         }
         else
         {
