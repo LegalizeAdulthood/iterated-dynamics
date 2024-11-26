@@ -129,10 +129,10 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
         const bf_t height_bf = alloc_stack(g_bf_length+2);
         // width  = g_x_max - g_x_min;
         sub_bf(width_bf, g_bf_x_max, g_bf_x_min);
-        const LDBL width = bftofloat(width_bf);
+        const LDBL width = bf_to_float(width_bf);
         // height = g_y_max - g_y_min;
         sub_bf(height_bf, g_bf_y_max, g_bf_y_min);
-        const LDBL height = bftofloat(height_bf);
+        const LDBL height = bf_to_float(height_bf);
         // *ctr_x = (g_x_min + g_x_max)/2;
         add_bf(ctr_x, g_bf_x_min, g_bf_x_max);
         half_a_bf(ctr_x);
@@ -155,19 +155,19 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
 
         // tmpx = g_x_max - g_x_min;
         sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_min);
-        LDBL tmpx1 = bftofloat(tmp_x_bf);
+        LDBL tmpx1 = bf_to_float(tmp_x_bf);
         // tmpy = g_y_max - g_y_min;
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_min);
-        LDBL tmpy1 = bftofloat(tmp_y_bf);
+        LDBL tmpy1 = bf_to_float(tmp_y_bf);
         const LDBL c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
         // tmpx = g_x_max - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_3rd);
-        tmpx1 = bftofloat(tmp_x_bf);
+        tmpx1 = bf_to_float(tmp_x_bf);
 
         // tmpy = g_y_min - g_y_3rd;
         sub_bf(tmp_y_bf, g_bf_y_min, g_bf_y_3rd);
-        tmpy1 = bftofloat(tmp_y_bf);
+        tmpy1 = bf_to_float(tmp_y_bf);
         const LDBL a2 = tmpx1 * tmpx1 + tmpy1 * tmpy1;
         const LDBL a = sqrtl(a2);
 
@@ -183,10 +183,10 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
 
         // tmpx = g_x_min - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_min, g_bf_x_3rd);
-        const LDBL tmpx2 = bftofloat(tmp_x_bf);
+        const LDBL tmpx2 = bf_to_float(tmp_x_bf);
         // tmpy = g_y_max - g_y_3rd;
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_3rd);
-        const LDBL tmpy2 = bftofloat(tmp_y_bf);
+        const LDBL tmpy2 = bf_to_float(tmp_y_bf);
         const LDBL b2 = tmpx2 * tmpx2 + tmpy2 * tmpy2;
         const LDBL b = sqrtl(b2);
 

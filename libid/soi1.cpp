@@ -771,10 +771,10 @@ void soi()
     g_max_rhombus_depth = 0;
     if (g_bf_math != bf_math_type::NONE)
     {
-        xxminl = (double)bftofloat(g_bf_x_min);
-        yyminl = (double)bftofloat(g_bf_y_min);
-        xxmaxl = (double)bftofloat(g_bf_x_max);
-        yymaxl = (double)bftofloat(g_bf_y_max);
+        xxminl = (double)bf_to_float(g_bf_x_min);
+        yyminl = (double)bf_to_float(g_bf_y_min);
+        xxmaxl = (double)bf_to_float(g_bf_x_max);
+        yymaxl = (double)bf_to_float(g_bf_y_max);
     }
     else
     {

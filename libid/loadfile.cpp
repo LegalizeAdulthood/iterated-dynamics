@@ -1597,12 +1597,12 @@ int file_get_window()
         s_cvt = &stack_cvt; // use stack
         setup_convert_to_screen(s_cvt);
         // put in bf variables
-        floattobf(s_bt_a, s_cvt->a);
-        floattobf(s_bt_b, s_cvt->b);
-        floattobf(s_bt_c, s_cvt->c);
-        floattobf(s_bt_d, s_cvt->d);
-        floattobf(s_bt_e, s_cvt->e);
-        floattobf(s_bt_f, s_cvt->f);
+        float_to_bf(s_bt_a, s_cvt->a);
+        float_to_bf(s_bt_b, s_cvt->b);
+        float_to_bf(s_bt_c, s_cvt->c);
+        float_to_bf(s_bt_d, s_cvt->d);
+        float_to_bf(s_bt_e, s_cvt->e);
+        float_to_bf(s_bt_f, s_cvt->f);
     }
     find_special_colors();
     color_of_box = g_color_medium;
@@ -2057,8 +2057,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            floattobf(bt_x, info->xmin);
-            floattobf(bt_y, info->ymax);
+            float_to_bf(bt_x, info->xmin);
+            float_to_bf(bt_y, info->ymax);
         }
         else
         {
@@ -2079,8 +2079,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
-            floattobf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
+            float_to_bf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
+            float_to_bf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
         }
         else
         {
@@ -2103,8 +2103,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            floattobf(bt_x, info->x3rd);
-            floattobf(bt_y, info->y3rd);
+            float_to_bf(bt_x, info->x3rd);
+            float_to_bf(bt_y, info->y3rd);
         }
         else
         {
@@ -2125,8 +2125,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            floattobf(bt_x, info->xmax);
-            floattobf(bt_y, info->ymin);
+            float_to_bf(bt_x, info->xmax);
+            float_to_bf(bt_y, info->ymin);
         }
         else
         {
@@ -2354,7 +2354,7 @@ static void bf_setup_convert_to_screen()
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
     // xd = x_size_d/det
-    floattobf(bt_tmp1, g_logical_screen_x_size_dots);
+    float_to_bf(bt_tmp1, g_logical_screen_x_size_dots);
     div_bf(bt_xd, bt_tmp1, bt_det);
 
     // a =  xd*(yymax-yy3rd)
@@ -2388,7 +2388,7 @@ static void bf_setup_convert_to_screen()
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
     // yd = y_size_d/det
-    floattobf(bt_tmp2, g_logical_screen_y_size_dots);
+    float_to_bf(bt_tmp2, g_logical_screen_y_size_dots);
     div_bf(bt_yd, bt_tmp2, bt_det);
 
     // c =  yd*(yymin-yy3rd)
@@ -2422,14 +2422,14 @@ static void bf_transform(bf_t bt_x, bf_t bt_y, DblCoords *point)
     mult_bf(bt_tmp2, s_n_b, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
     add_a_bf(bt_tmp1, s_n_e);
-    point->x = (double)bftofloat(bt_tmp1);
+    point->x = (double)bf_to_float(bt_tmp1);
 
     //  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
     mult_bf(bt_tmp1, s_n_c, bt_x);
     mult_bf(bt_tmp2, s_n_d, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
     add_a_bf(bt_tmp1, s_n_f);
-    point->y = (double)bftofloat(bt_tmp1);
+    point->y = (double)bf_to_float(bt_tmp1);
 
     restore_stack(saved);
 }

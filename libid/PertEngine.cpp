@@ -150,9 +150,9 @@ int PertEngine::calculate_one_frame()
 
             if (g_bf_math != bf_math_type::NONE)
             {
-                floattobf(tmp_bf, delta_real);
+                float_to_bf(tmp_bf, delta_real);
                 add_bf(reference_coordinate_bf.x, c_bf.x, tmp_bf);
-                floattobf(tmp_bf, delta_imag);
+                float_to_bf(tmp_bf, delta_imag);
                 add_bf(reference_coordinate_bf.y, c_bf.y, tmp_bf);
             }
             else
@@ -453,8 +453,8 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
     for (int i = 0; i <= max_iteration; i++)
     {
         std::complex<double> c;
-        c.real(bftofloat(z_bf.x));
-        c.imag(bftofloat(z_bf.y));
+        c.real(bf_to_float(z_bf.x));
+        c.imag(bf_to_float(z_bf.y));
 
         m_xn[i] = c;
         // Norm is the squared version of abs and 0.000001 is 10^-3 squared.
@@ -472,12 +472,12 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
                 std::to_string(int(progress * 100)) + "%)";
         }
 
-        floattobf(tmp_bf, GLITCH_TOLERANCE);
+        float_to_bf(tmp_bf, GLITCH_TOLERANCE);
         mult_bf(temp_real_bf, z_bf.x, tmp_bf);
         mult_bf(temp_imag_bf, z_bf.y, tmp_bf);
         std::complex<double> tolerance;
-        tolerance.real(bftofloat(temp_real_bf));
-        tolerance.imag(bftofloat(temp_imag_bf));
+        tolerance.real(bf_to_float(temp_real_bf));
+        tolerance.imag(bf_to_float(temp_imag_bf));
 
         m_perturbation_tolerance_check[i] = mag_squared(tolerance);
 

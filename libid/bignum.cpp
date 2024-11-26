@@ -550,7 +550,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         neg_a_bn(n);
     }
 
-    f = bntofloat(n);
+    f = bn_to_float(n);
     if (f == 0) // division by zero
     {
         max_bn(r);
@@ -653,13 +653,13 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     LDBL f;
 
     // first, check for valid data
-    a = bntofloat(n1);
+    a = bn_to_float(n1);
     if (a == 0) // division into zero
     {
         clear_bn(r); // return 0
         return r;
     }
-    b = bntofloat(n2);
+    b = bn_to_float(n2);
     if (b == 0) // division by zero
     {
         max_bn(r);
@@ -777,7 +777,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         return r;
     }
 
-    f = bntofloat(n);
+    f = bn_to_float(n);
     if (f == 0) // division by zero will occur
     {
         clear_bn(r); // sqrt(0) = 0
@@ -915,7 +915,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         return r;
     }
 
-    f = bntofloat(n);
+    f = bn_to_float(n);
     f = logl(f); // approximate ln(x)
     maxval = (1L << ((g_int_length << 3)-1)) - 1;
     if (f > maxval) // check for overflow
@@ -1203,13 +1203,13 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // good enough initial guess for Newton's Method.  If it is larger than
     // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
-    f = bntofloat(n);
+    f = bn_to_float(n);
     bool large_arg = f > 1.0;
     if (large_arg)
     {
         unsafe_inv_bn(g_bn_tmp3, n);
         copy_bn(n, g_bn_tmp3);
-        f = bntofloat(n);
+        f = bn_to_float(n);
     }
 
     clear_bn(g_bn_tmp3); // not really necessary, but makes things more consistent

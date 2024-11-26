@@ -141,7 +141,7 @@ int divide_brot5_bf_fractal()
     clear_bf(bfc_exp.y);
     cmplx_pow_bf(&bftmpnew, &g_old_z_bf, &bfc_exp);
     /* then add b */
-    floattobf(tmp1, g_b_const);
+    float_to_bf(tmp1, g_b_const);
     add_a_bf(bftmpnew.x, tmp1);
 
     /* sqr(z)/(z^(a)+b) */

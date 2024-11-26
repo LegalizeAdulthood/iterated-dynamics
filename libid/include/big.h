@@ -99,11 +99,11 @@ bn_t div_a_bn_int(bn_t r, U16 u);
 // used to be in bigflta.asm or bigfltc.c
 bf_t clear_bf(bf_t r);
 bf_t copy_bf(bf_t r, bf_t n);
-bf_t floattobf(bf_t r, LDBL f);
-LDBL bftofloat(bf_t n);
-LDBL bntofloat(bn_t n);
-LDBL extract_256(LDBL f, int *exp_ptr);
-LDBL scale_256(LDBL f, int n);
+bf_t float_to_bf(bf_t r, LDBL f);
+LDBL bf_to_float(bf_t n);
+LDBL bn_to_float(bn_t n);
+LDBL extract256(LDBL f, int *exp_ptr);
+LDBL scale256(LDBL f, int n);
 // functions defined in bignum.c
 #ifdef ACCESS_BY_BYTE
 // prototypes

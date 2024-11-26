@@ -69,7 +69,7 @@ int get_prec_bf(int rezflag)
     bfxxdel2  = alloc_stack(g_bf_length+2);
     bfyydel   = alloc_stack(g_bf_length+2);
     bfyydel2  = alloc_stack(g_bf_length+2);
-    floattobf(one, 1.0);
+    float_to_bf(one, 1.0);
     if (rezflag == MAXREZ)
     {
         rez = OLD_MAX_PIXELS -1;

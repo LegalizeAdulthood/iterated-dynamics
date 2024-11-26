@@ -7,16 +7,16 @@
 inline DComplex cmplx_bn_to_float(const BNComplex &s)
 {
     DComplex t;
-    t.x = (double)bntofloat(s.x);
-    t.y = (double)bntofloat(s.y);
+    t.x = (double)bn_to_float(s.x);
+    t.y = (double)bn_to_float(s.y);
     return t;
 }
 
 inline DComplex cmplx_bf_to_float(const BFComplex &s)
 {
     DComplex t;
-    t.x = (double)bftofloat(s.x);
-    t.y = (double)bftofloat(s.y);
+    t.x = (double)bf_to_float(s.x);
+    t.y = (double)bf_to_float(s.y);
     return t;
 }
 

@@ -102,18 +102,18 @@ static int getprecdbl(int rezflag)
 void fractal_float_to_bf()
 {
     init_bf_dec(getprecdbl(CURRENTREZ));
-    floattobf(g_bf_x_min, g_x_min);
-    floattobf(g_bf_x_max, g_x_max);
-    floattobf(g_bf_y_min, g_y_min);
-    floattobf(g_bf_y_max, g_y_max);
-    floattobf(g_bf_x_3rd, g_x_3rd);
-    floattobf(g_bf_y_3rd, g_y_3rd);
+    float_to_bf(g_bf_x_min, g_x_min);
+    float_to_bf(g_bf_x_max, g_x_max);
+    float_to_bf(g_bf_y_min, g_y_min);
+    float_to_bf(g_bf_y_max, g_y_max);
+    float_to_bf(g_bf_x_3rd, g_x_3rd);
+    float_to_bf(g_bf_y_3rd, g_y_3rd);
 
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i, nullptr))
         {
-            floattobf(g_bf_parms[i], g_params[i]);
+            float_to_bf(g_bf_parms[i], g_params[i]);
         }
     }
     g_calc_status = calc_status_value::PARAMS_CHANGED;
@@ -844,8 +844,8 @@ static void adjust_to_limitsbf(double expand)
 
     /*   if (bitshift >= 24) limit = 31.99;
        if (bitshift >= 29) limit = 3.99; */
-    floattobf(blimit, limit);
-    floattobf(bexpand, expand);
+    float_to_bf(blimit, limit);
+    float_to_bf(bexpand, expand);
 
     add_bf(bcenterx, g_bf_x_min, g_bf_x_max);
     half_a_bf(bcenterx);
@@ -975,10 +975,10 @@ static void adjust_to_limitsbf(double expand)
 
     // if image is too large, downsize it maintaining center
 
-    floattobf(btmp1, limit*2.0);
+    float_to_bf(btmp1, limit*2.0);
     copy_bf(btmp2, bftemp);
     div_bf(bftemp, btmp1, btmp2);
-    floattobf(btmp1, 1.0);
+    float_to_bf(btmp1, 1.0);
     if (cmp_bf(bftemp, btmp1) < 0)
     {
         for (int i = 0; i < 4; ++i)
@@ -1231,7 +1231,7 @@ static void smallest_add_bf(bf_t num)
     int saved;
     saved = save_stack();
     btmp1 = alloc_stack(g_bf_length+2);
-    mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
+    mult_bf(btmp1, float_to_bf(btmp1, 5.0e-16), num);
     add_a_bf(num, btmp1);
     restore_stack(saved);
 }

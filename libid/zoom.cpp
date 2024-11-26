@@ -57,9 +57,9 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
     const bf_t btmp3 = alloc_stack(g_r_bf_length + 2);
 
     // use target as temporary variable
-    floattobf(btmp3, p2);
+    float_to_bf(btmp3, p2);
     mult_bf(btmp1, btmp3, p3);
-    mult_bf(btmp2, floattobf(target, p4), p5);
+    mult_bf(btmp2, float_to_bf(target, p4), p5);
     add_bf(target, btmp1, btmp2);
     add_a_bf(target, p1);
     restore_stack(saved);
@@ -164,7 +164,7 @@ void draw_box(bool draw_it)
         sub_bf(bffxskew, g_bf_save_x_3rd, g_bf_save_x_min);
         sub_bf(bffydepth, g_bf_save_y_3rd, g_bf_save_y_max);
         sub_bf(bffyskew, g_bf_save_y_min, g_bf_save_y_3rd);
-        floattobf(bffxadj, fxadj);
+        float_to_bf(bffxadj, fxadj);
     }
 
     // calc co-ords of topleft & botright corners of box

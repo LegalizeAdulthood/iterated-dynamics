@@ -292,18 +292,18 @@ void bf_corners_to_float()
 {
     if (g_bf_math != bf_math_type::NONE)
     {
-        g_x_min = (double)bftofloat(g_bf_x_min);
-        g_y_min = (double)bftofloat(g_bf_y_min);
-        g_x_max = (double)bftofloat(g_bf_x_max);
-        g_y_max = (double)bftofloat(g_bf_y_max);
-        g_x_3rd = (double)bftofloat(g_bf_x_3rd);
-        g_y_3rd = (double)bftofloat(g_bf_y_3rd);
+        g_x_min = (double)bf_to_float(g_bf_x_min);
+        g_y_min = (double)bf_to_float(g_bf_y_min);
+        g_x_max = (double)bf_to_float(g_bf_x_max);
+        g_y_max = (double)bf_to_float(g_bf_y_max);
+        g_x_3rd = (double)bf_to_float(g_bf_x_3rd);
+        g_y_3rd = (double)bf_to_float(g_bf_y_3rd);
     }
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i, nullptr))
         {
-            g_params[i] = (double)bftofloat(g_bf_parms[i]);
+            g_params[i] = (double)bf_to_float(g_bf_parms[i]);
         }
     }
 }
@@ -455,7 +455,7 @@ int  bf_mod_bailout()
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
     add_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_bf_tmp, tmp1) > 0)
     {
         restore_stack(saved);
@@ -476,7 +476,7 @@ int  bf_real_bailout()
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0)
     {
         restore_stack(saved);
@@ -499,7 +499,7 @@ int  bf_imag_bailout()
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
         restore_stack(saved);
@@ -521,7 +521,7 @@ int  bf_or_bailout()
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 || cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
         restore_stack(saved);
@@ -543,7 +543,7 @@ int  bf_and_bailout()
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 && cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
         restore_stack(saved);
@@ -570,7 +570,7 @@ int  bf_manh_bailout()
     abs_bf(g_old_z_bf.y, g_new_z_bf.y);
     add_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y);
     square_bf(g_old_z_bf.x, g_bf_tmp);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
     {
         restore_stack(saved);
@@ -595,7 +595,7 @@ int  bf_manr_bailout()
     add_bf(g_bf_tmp, g_new_z_bf.x, g_new_z_bf.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bf is just used as a temporary variable
     square_bf(g_old_z_bf.x, g_bf_tmp);
-    floattobf(tmp1, g_magnitude_limit);
+    float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
     {
         restore_stack(saved);
@@ -920,14 +920,14 @@ int mandel_bf_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobf(g_old_z_bf.x, g_params[0]); // initial pertubation of parameters set
-        floattobf(g_old_z_bf.y, g_params[1]);
+        float_to_bf(g_old_z_bf.x, g_params[0]); // initial pertubation of parameters set
+        float_to_bf(g_old_z_bf.y, g_params[1]);
         g_color_iter = -1;
     }
     else
     {
-        floattobf(g_new_z_bf.x, g_params[0]);
-        floattobf(g_new_z_bf.y, g_params[1]);
+        float_to_bf(g_new_z_bf.x, g_params[0]);
+        float_to_bf(g_new_z_bf.y, g_params[1]);
         add_a_bf(g_old_z_bf.x, g_new_z_bf.x);
         add_a_bf(g_old_z_bf.y, g_new_z_bf.y);
     }
@@ -1063,8 +1063,8 @@ julia_z_power_bf_fractal()
     parm2.x = alloc_stack(g_bf_length+2);
     parm2.y = alloc_stack(g_bf_length+2);
 
-    floattobf(parm2.x, g_params[2]);
-    floattobf(parm2.y, g_params[3]);
+    float_to_bf(parm2.x, g_params[2]);
+    float_to_bf(parm2.y, g_params[3]);
     cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
     add_bf(g_new_z_bf.x, g_parm_z_bf.x, g_new_z_bf.x);
     add_bf(g_new_z_bf.y, g_parm_z_bf.y, g_new_z_bf.y);

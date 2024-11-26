@@ -85,9 +85,9 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
 
     // half height, width
     const LDBL h = 1 / mag;
-    floattobf(bfh, h);
+    float_to_bf(bfh, h);
     const LDBL w = h / (DEFAULT_ASPECT * x_mag_factor);
-    floattobf(bfw, w);
+    float_to_bf(bfw, w);
 
     if (rot == 0.0 && skew == 0.0)
     {
@@ -125,30 +125,30 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
     LDBL x = xmin * cosrot + ymax * sinrot;
     LDBL y = -xmin * sinrot + ymax * cosrot;
     // xxmin = x + Xctr;
-    floattobf(g_bf_tmp, x);
+    float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_min, g_bf_tmp, ctr_x);
     // yymax = y + Yctr;
-    floattobf(g_bf_tmp, y);
+    float_to_bf(g_bf_tmp, y);
     add_bf(g_bf_y_max, g_bf_tmp, ctr_y);
 
     // bottom right
     x =  xmax * cosrot + ymin *  sinrot;
     y = -xmax * sinrot + ymin *  cosrot;
     // xxmax = x + Xctr;
-    floattobf(g_bf_tmp, x);
+    float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_max, g_bf_tmp, ctr_x);
     // yymin = y + Yctr;
-    floattobf(g_bf_tmp, y);
+    float_to_bf(g_bf_tmp, y);
     add_bf(g_bf_y_min, g_bf_tmp, ctr_y);
 
     // bottom left
     x =  x3rd * cosrot + y3rd *  sinrot;
     y = -x3rd * sinrot + y3rd *  cosrot;
     // xx3rd = x + Xctr;
-    floattobf(g_bf_tmp, x);
+    float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_3rd, g_bf_tmp, ctr_x);
     // yy3rd = y + Yctr;
-    floattobf(g_bf_tmp, y);
+    float_to_bf(g_bf_tmp, y);
     add_bf(g_bf_y_3rd, g_bf_tmp, ctr_y);
 
     restore_stack(saved);

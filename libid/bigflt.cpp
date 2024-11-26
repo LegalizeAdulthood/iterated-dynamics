@@ -172,7 +172,7 @@ char *unsafe_bf_to_str(char *s, int dec, bf_t r)
     LDBL value;
     int power;
 
-    value = bftofloat(r);
+    value = bf_to_float(r);
     if (value == 0.0)
     {
         std::strcpy(s, "0.0");
@@ -199,7 +199,7 @@ char *unsafe_bf_to_str_e(char *s, int dec, bf_t r)
 {
     LDBL value;
 
-    value = bftofloat(r);
+    value = bf_to_float(r);
     if (value == 0.0)
     {
         std::strcpy(s, "0.0");
@@ -218,7 +218,7 @@ char *unsafe_bf_to_str_f(char *s, int dec, bf_t r)
 {
     LDBL value;
 
-    value = bftofloat(r);
+    value = bf_to_float(r);
     if (value == 0.0)
     {
         std::strcpy(s, "0.0");
@@ -379,7 +379,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     fexp = (S16)big_access16(n+g_bf_length);
     big_set16(n+g_bf_length, (S16)0); // put within LDBL range
 
-    f = bftofloat(n);
+    f = bf_to_float(n);
     if (f == 0) // division by zero
     {
         max_bf(r);
@@ -412,7 +412,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     r = orig_r + orig_bflength - g_bf_length;
     // g_bf_tmp1 = orig_bftmp1 + orig_bflength - g_bf_length;
 
-    floattobf(r, f); // start with approximate inverse
+    float_to_bf(r, f); // start with approximate inverse
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
@@ -482,7 +482,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
     aexp = (S16)big_access16(n1+g_bf_length);
     big_set16(n1+g_bf_length, (S16)0); // put within LDBL range
 
-    a = bftofloat(n1);
+    a = bf_to_float(n1);
     if (a == 0) // division into zero
     {
         clear_bf(r); // return 0
@@ -492,7 +492,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
     bexp = (S16)big_access16(n2+g_bf_length);
     big_set16(n2+g_bf_length, (S16)0); // put within LDBL range
 
-    b = bftofloat(n2);
+    b = bf_to_float(n2);
     if (b == 0) // division by zero
     {
         max_bf(r);
@@ -537,7 +537,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         return r;
     }
 
-    f = bftofloat(n);
+    f = bf_to_float(n);
     if (f == 0) // division by zero will occur
     {
         clear_bf(r); // sqrt(0) = 0
@@ -569,7 +569,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     // adjust pointers
     r = orig_r + orig_bflength - g_bf_length;
 
-    floattobf(r, f); // start with approximate sqrt
+    float_to_bf(r, f); // start with approximate sqrt
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
     {
@@ -681,7 +681,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
         return r;
     }
 
-    f = bftofloat(n);
+    f = bf_to_float(n);
     f = logl(f); // approximate ln(x)
     // no need to check overflow
     // appears to be ok, do ln
@@ -711,7 +711,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     r = orig_r + orig_bflength - g_bf_length;
     g_bf_tmp5 = orig_bftmp5 + orig_bflength - g_bf_length;
 
-    floattobf(r, f); // start with approximate ln
+    float_to_bf(r, f); // start with approximate ln
     neg_a_bf(r); // -r
     copy_bf(g_bf_tmp5, r); // -r
 
@@ -978,13 +978,13 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     // good enough initial guess for Newton's Method.  If it is larger than
     // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
-    f = bftofloat(n);
+    f = bf_to_float(n);
     bool large_arg = f > 1.0;
     if (large_arg)
     {
         unsafe_inv_bf(g_bf_tmp3, n);
         copy_bf(n, g_bf_tmp3);
-        f = bftofloat(n);
+        f = bf_to_float(n);
     }
 
     clear_bf(g_bf_tmp3); // not really necessary, but makes things more consistent
@@ -1019,7 +1019,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     f = atanl(f); // approximate arctangent
     // no need to check overflow
 
-    floattobf(r, f); // start with approximate atan
+    float_to_bf(r, f); // start with approximate atan
     copy_bf(g_bf_tmp3, r);
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed

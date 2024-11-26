@@ -1936,13 +1936,13 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math == bf_math_type::BIGNUM)
         {
-            g_new_z.x = (double)bntofloat(g_new_z_bn.x);
-            g_new_z.y = (double)bntofloat(g_new_z_bn.y);
+            g_new_z.x = (double)bn_to_float(g_new_z_bn.x);
+            g_new_z.y = (double)bn_to_float(g_new_z_bn.y);
         }
         else if (g_bf_math == bf_math_type::BIGFLT)
         {
-            g_new_z.x = (double)bftofloat(g_new_z_bf.x);
-            g_new_z.y = (double)bftofloat(g_new_z_bf.y);
+            g_new_z.x = (double)bf_to_float(g_new_z_bf.x);
+            g_new_z.y = (double)bf_to_float(g_new_z_bf.y);
         }
         g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
         g_color_iter = potential(g_magnitude, g_color_iter);
@@ -1967,8 +1967,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_bf_math ==  bf_math_type::BIGNUM)
         {
-            g_new_z.x = (double)bntofloat(g_new_z_bn.x);
-            g_new_z.y = (double)bntofloat(g_new_z_bn.y);
+            g_new_z.x = (double)bn_to_float(g_new_z_bn.x);
+            g_new_z.y = (double)bn_to_float(g_new_z_bn.y);
         }
         // Add 7 to overcome negative values on the MANDEL
         if (g_outside_color == REAL)                 // "real"
@@ -2843,7 +2843,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             sub_bf(bft1, g_bf_y_min, g_bf_y_max);
             div_bf(bft1, g_bf_y_max, bft1);
             neg_a_bf(bft1);
-            ftemp = (double)bftofloat(bft1);
+            ftemp = (double)bf_to_float(bft1);
         }
         else
         {
@@ -2865,7 +2865,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             div_bf(bft1, g_bf_x_min, bft1);
             neg_a_bf(bft1);
-            ftemp = (double)bftofloat(bft1);
+            ftemp = (double)bf_to_float(bft1);
         }
         else
         {
@@ -2994,7 +2994,7 @@ originsym:
     case symmetry_type::PI_SYM:                      // PI symmetry
         if (g_bf_math != bf_math_type::NONE)
         {
-            if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min))) < PI/4)
+            if ((double)bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min))) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -3033,7 +3033,7 @@ originsym:
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             abs_a_bf(bft1);
-            g_pi_in_pixels = (int)((PI/(double)bftofloat(bft1)*g_logical_screen_x_dots)); // PI in pixels
+            g_pi_in_pixels = (int)((PI/(double)bf_to_float(bft1)*g_logical_screen_x_dots)); // PI in pixels
         }
         else
         {
