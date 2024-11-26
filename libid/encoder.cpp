@@ -185,7 +185,7 @@ restart:
     if (driver_diskp())
     {
         // disk-video
-        dvid_status(1, "Saving " + extract_filename(open_file.string().c_str()));
+        dvid_status(1, "Saving " + extract_file_name(open_file.string().c_str()));
     }
 #ifdef XFRACT
     else
@@ -285,7 +285,7 @@ restart:
         driver_buzzer(buzzer_codes::COMPLETE);
         if (g_init_batch == batch_modes::NONE)
         {
-            texttempmsg((" File saved as " + extract_filename(open_file.string().c_str()) + ' ').c_str());
+            texttempmsg((" File saved as " + extract_file_name(open_file.string().c_str()) + ' ').c_str());
         }
     }
     if (g_init_save_time < 0)

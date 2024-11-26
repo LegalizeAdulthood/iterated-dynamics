@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <string>
 
-inline std::string extract_filename(char const *source)
+inline std::string extract_file_name(char const *source)
 {
     return std::filesystem::path(source).filename().string();
 }

@@ -289,7 +289,7 @@ static void process_simple_command(char *curarg)
                 && signature[4] >= '0' && signature[4] <= '9')
             {
                 g_read_filename = curarg;
-                g_browse_name = extract_filename(g_read_filename.c_str());
+                g_browse_name = extract_file_name(g_read_filename.c_str());
                 g_show_file = 0;
                 processed = true;
             }
@@ -1078,11 +1078,11 @@ static cmdarg_flags cmd_make_par(const Command &cmd)
     {
         if (!g_read_filename.empty())
         {
-            g_command_name = extract_filename(g_read_filename.c_str());
+            g_command_name = extract_file_name(g_read_filename.c_str());
         }
         else if (!g_map_name.empty())
         {
-            g_command_name = extract_filename(g_map_name.c_str());
+            g_command_name = extract_file_name(g_map_name.c_str());
         }
         else
         {
@@ -1981,7 +1981,7 @@ static cmdarg_flags cmd_filename(const Command &cmd)
     }
     else
     {
-        g_browse_name = extract_filename(g_read_filename.c_str());
+        g_browse_name = extract_file_name(g_read_filename.c_str());
     }
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }
