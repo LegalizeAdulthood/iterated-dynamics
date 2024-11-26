@@ -40,7 +40,7 @@ static double s_starfield_values[4]{30.0, 100.0, 5.0, 0.0};
 // 1 in distribution*(1-probability/range*concentration)+1 chance of getting a
 // Gaussian; otherwise you just get offset.
 //
-static int gausian_number(int probability, int range)
+static int gaussian_number(int probability, int range)
 {
     long p;
 
@@ -121,7 +121,7 @@ int star_field()
             {
                 c = g_colors-1;
             }
-            g_put_color(g_col, g_row, gausian_number(c, g_colors));
+            g_put_color(g_col, g_row, gaussian_number(c, g_colors));
         }
     }
     driver_buzzer(buzzer_codes::COMPLETE);
