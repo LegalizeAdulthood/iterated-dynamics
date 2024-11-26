@@ -40,6 +40,8 @@ bool g_gray_flag{};  // flag to use gray value rather than color number
 char g_calibrate{1}; // add calibration bars to image
 bool g_image_map{};
 
+// TODO: sort out the crazy usage of this structure
+
 // this structure permits variables to be temporarily static and visible
 // to routines in this file without permanently hogging memory
 struct StereoData
@@ -68,6 +70,8 @@ struct StereoData
 using DACBox = BYTE (*)[256][3];
 
 static StereoData *s_data{};
+
+// TODO: eliminate all these macros for structure access
 
 #define AVG         (s_data->avg)
 #define AVGCT       (s_data->avgct)
@@ -248,6 +252,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 
 bool auto_stereo_convert()
 {
+    // TODO: replace this stack variable with static data s_data
     StereoData v;
     BYTE savedacbox[256*3];
     bool ret = false;
