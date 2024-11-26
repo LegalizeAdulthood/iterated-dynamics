@@ -508,7 +508,7 @@ void HelpCompiler::set_content_doc_page()
 }
 
 // this function also used by print_document()
-bool pd_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
+bool pd_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 {
     DOC_INFO &info = *static_cast<DOC_INFO *>(context);
     const CONTENT *c;
@@ -568,7 +568,7 @@ bool pd_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
     }
 }
 
-bool paginate_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
+bool paginate_doc_output(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 {
     PAGINATE_DOC_INFO *info = static_cast<PAGINATE_DOC_INFO *>(context);
     switch (cmd)
@@ -1079,7 +1079,7 @@ static std::string version_header()
     return std::string(indent, ' ') + heading + std::string(field_width - indent - heading.size(), ' ');
 }
 
-bool print_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
+bool print_doc_output(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 {
     PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
     switch (cmd)

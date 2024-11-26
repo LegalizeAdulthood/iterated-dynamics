@@ -67,9 +67,9 @@ public:
     void process();
 
 private:
-    void set_link_text(const LINK &link, const PD_INFO *pd);
-    bool info(PD_COMMANDS cmd, PD_INFO *pd);
-    bool output(PD_COMMANDS cmd, PD_INFO *pd);
+    void set_link_text(const LINK &link, const ProcessDocumentInfo *pd);
+    bool info(PD_COMMANDS cmd, ProcessDocumentInfo *pd);
+    bool output(PD_COMMANDS cmd, ProcessDocumentInfo *pd);
     void emit_char(char c);
     void emit_key_name();
     void print_inside_key(char c);
@@ -98,7 +98,7 @@ private:
     std::string m_link_markup;
 };
 
-bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
+bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
@@ -172,7 +172,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
     }
 }
 
-bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
+bool AsciiDocProcessor::output(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
@@ -214,9 +214,9 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
 
 void AsciiDocProcessor::process()
 {
-    const auto info_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
+    const auto info_cb = [](PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
-    const auto output_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)
+    const auto output_cb = [](PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
     process_document(token_modes::ADOC, info_cb, output_cb, this);
 }
@@ -235,7 +235,7 @@ static std::string to_string(link_types type)
     return "? (" + std::to_string(static_cast<int>(type)) + ")";
 }
 
-void AsciiDocProcessor::set_link_text(const LINK &link, const PD_INFO *pd)
+void AsciiDocProcessor::set_link_text(const LINK &link, const ProcessDocumentInfo *pd)
 {
     std::string anchor_name;
     switch (link.type)

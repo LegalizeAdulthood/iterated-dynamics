@@ -1126,7 +1126,7 @@ static void printer_str(PrintDocInfo *info, char const *s, int n)
     }
 }
 
-static bool print_doc_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
+static bool print_doc_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     int t;
@@ -1201,7 +1201,7 @@ static bool print_doc_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
     }
 }
 
-static bool print_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
+static bool print_doc_output(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)

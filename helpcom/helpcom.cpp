@@ -342,7 +342,7 @@ private:
     PD_FUNC *m_get_info;
     PD_FUNC *m_output;
     void *m_info;
-    PD_INFO m_pd{};
+    ProcessDocumentInfo m_pd{};
     std::string m_page_text;
     bool m_first_section{};
     bool m_first_topic{};

@@ -85,9 +85,9 @@ enum class token_modes
 };
 
 /*
- * struct PD_INFO used by process_document()
+ * struct ProcessDocumentInfo used by process_document()
  */
-struct PD_INFO
+struct ProcessDocumentInfo
 {
     // used by process_document -- look but don't touch!
     int page_num;
@@ -129,7 +129,7 @@ enum class PD_COMMANDS
     PD_GET_LINK_PAGE,
 };
 
-using PD_FUNC = bool(PD_COMMANDS cmd, PD_INFO *pd, void *info);
+using PD_FUNC = bool(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *info);
 token_types find_token_length(
     token_modes mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
 int find_line_width(token_modes mode, char const *curr, unsigned len);
