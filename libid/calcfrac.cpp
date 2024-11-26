@@ -540,7 +540,7 @@ int calc_fract()
     if (g_truecolor)
     {
         check_write_file(g_light_name, ".tga");
-        if (!startdisk1(g_light_name, nullptr, false))
+        if (!start_disk1(g_light_name, nullptr, false))
         {
             // Have to force passes = 1
             g_std_calc_mode = '1';

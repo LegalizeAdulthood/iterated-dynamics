@@ -1610,7 +1610,7 @@ static void File_Error(char const *File_Name1, int ERROR)
 //
 // *********************************************************************
 
-bool startdisk1(const std::string &filename, std::FILE *source, bool overlay)
+bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
 {
     // Open File for both reading and writing
     std::FILE *fps = dir_fopen(g_working_dir.c_str(), filename.c_str(), "w+b");
@@ -1774,7 +1774,7 @@ bool targa_validate(char const *File_Name)
     std::rewind(fp);
 
     // Now that we know its a good file, create a working copy
-    if (startdisk1(s_targa_temp, fp, true))
+    if (start_disk1(s_targa_temp, fp, true))
     {
         return true;
     }
@@ -2502,7 +2502,7 @@ static int first_time(int linelen, VECTOR v)
         else
         {
             check_write_file(g_light_name, ".tga");
-            if (startdisk1(g_light_name, nullptr, false))     // Open new file
+            if (start_disk1(g_light_name, nullptr, false))     // Open new file
             {
                 return -1;
             }
