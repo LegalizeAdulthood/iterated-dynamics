@@ -174,7 +174,7 @@ static int check_modekey(int curkey, int choice)
             else
             {
                 // assign key?
-                int j = getakeynohelp();
+                int j = get_a_key_no_help();
                 if (j >= 1084 && j <= 1113)
                 {
                     for (int k = 0; k < g_video_table_len; ++k)

@@ -2402,7 +2402,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     {
         s_cursor.hide();
         draw_status(true);
-        const int key2 = getakeynohelp();
+        const int key2 = get_a_key_no_help();
         s_cursor.show();
 
         if (key2 >= '1' && key2 <= '9')

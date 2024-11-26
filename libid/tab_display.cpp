@@ -240,7 +240,7 @@ bool tab_display_2(char *msg)
     while ((key != ID_KEY_ESC) && (key != ID_KEY_BACKSPACE) && (key != ID_KEY_TAB))
     {
         driver_put_string(row, 2, C_GENERAL_HI, msg);
-        key = getakeynohelp();
+        key = get_a_key_no_help();
         std::sprintf(msg, "%d (0x%04x)      ", key, key);
     }
     return key != ID_KEY_ESC;
@@ -700,7 +700,7 @@ top:
         driver_get_key();
     }
 #endif
-    key = getakeynohelp();
+    key = get_a_key_no_help();
     if (key == ID_KEY_F6)
     {
         driver_stack_screen();

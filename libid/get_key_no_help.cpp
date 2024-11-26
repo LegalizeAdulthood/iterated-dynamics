@@ -12,7 +12,7 @@
 /*
  * This routine returns a key, ignoring F1
  */
-int getakeynohelp()
+int get_a_key_no_help()
 {
     int ch;
     do

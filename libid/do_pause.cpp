@@ -23,7 +23,7 @@ void do_pause(int action)
             }
             else if (needpause == 2)
             {
-                if (getakeynohelp() == ID_KEY_ESC)
+                if (get_a_key_no_help() == ID_KEY_ESC)
                 {
                     goodbye();
                 }

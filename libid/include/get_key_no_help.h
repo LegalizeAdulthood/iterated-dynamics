@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int getakeynohelp();
+int get_a_key_no_help();

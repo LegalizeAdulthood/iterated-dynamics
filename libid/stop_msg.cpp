@@ -125,7 +125,7 @@ bool stopmsg(stopmsg_flags flags, const std::string &msg)
     bool ret = false;
     if (g_debug_flag != debug_flags::show_formula_info_after_compile)
     {
-        if (getakeynohelp() == ID_KEY_ESC)
+        if (get_a_key_no_help() == ID_KEY_ESC)
         {
             ret = true;
         }
