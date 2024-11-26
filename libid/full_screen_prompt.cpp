@@ -674,7 +674,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 break;
             case 'f':
                 values[cur_choice].uval.dval = std::atof(buf);
-                roundfloatd(&values[cur_choice].uval.dval);
+                round_float_double(&values[cur_choice].uval.dval);
                 break;
             case 'i':
                 values[cur_choice].uval.ival = std::atoi(buf);

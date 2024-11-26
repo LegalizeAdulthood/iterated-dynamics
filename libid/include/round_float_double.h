@@ -2,4 +2,4 @@
 //
 #pragma once
 
-void roundfloatd(double *x);
+void round_float_double(double *x);

@@ -428,9 +428,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 0)
     {
         g_params[2]      = read_info.parm3;
-        roundfloatd(&g_params[2]);
+        round_float_double(&g_params[2]);
         g_params[3]      = read_info.parm4;
-        roundfloatd(&g_params[3]);
+        round_float_double(&g_params[3]);
         g_potential_params[0]   = read_info.potential[0];
         g_potential_params[1]   = read_info.potential[1];
         g_potential_params[2]   = read_info.potential[2];
@@ -2206,9 +2206,9 @@ static bool paramsOK(FractalInfo const *info)
     else
     {
         tmpparm3 = info->parm3;
-        roundfloatd(&tmpparm3);
+        round_float_double(&tmpparm3);
         tmpparm4 = info->parm4;
-        roundfloatd(&tmpparm4);
+        round_float_double(&tmpparm4);
     }
     if (info->version > 8)
     {

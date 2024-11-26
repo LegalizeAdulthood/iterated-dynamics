@@ -194,7 +194,7 @@ int input_field(
                 {
                     if ((options & INPUTFIELD_DOUBLE) == 0)
                     {
-                        roundfloatd(&tmpd);
+                        round_float_double(&tmpd);
                     }
                     std::sprintf(tmpfld, "%.15g", tmpd);
                     tmpfld[len-1] = 0; // safety, field should be long enough

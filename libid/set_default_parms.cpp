@@ -36,7 +36,7 @@ void set_default_parms()
             && g_fractal_type != fractal_type::FROTHFP
             && g_fractal_type != fractal_type::ANT)
         {
-            roundfloatd(&g_params[i]); // don't round cellular, frothybasin or ant
+            round_float_double(&g_params[i]); // don't round cellular, frothybasin or ant
         }
     }
     int extra = find_extra_param(g_fractal_type);
