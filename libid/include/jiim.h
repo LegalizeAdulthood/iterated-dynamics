@@ -18,8 +18,8 @@ constexpr double             JULIA_C_NOT_SET{100000.0};
 void jiim(jiim_types which);
 LComplex pop_long();
 DComplex pop_float();
-LComplex de_queue_long();
-DComplex de_queue_float();
+LComplex dequeue_long();
+DComplex dequeue_float();
 LComplex complex_sqrt_long(long, long);
 DComplex complex_sqrt_float(double, double);
 inline DComplex complex_sqrt_float(const DComplex &z)
@@ -34,5 +34,5 @@ int    queue_full();
 int    queue_full_almost();
 int    push_long(long, long);
 int    push_float(float, float);
-int    en_queue_long(long, long);
-int    en_queue_float(float, float);
+int    enqueue_long(long, long);
+int    enqueue_float(float, float);

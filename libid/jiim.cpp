@@ -86,7 +86,7 @@ double g_julia_c_x{JULIA_C_NOT_SET}; //
 double g_julia_c_y{JULIA_C_NOT_SET}; //
 DComplex g_save_c{-3000.0, -3000.0}; //
 
-void SetAspect(double aspect)
+static void set_aspect(double aspect)
 {
     s_x_aspect = 0;
     s_y_aspect = 0;
@@ -104,7 +104,7 @@ void SetAspect(double aspect)
     }
 }
 
-void c_putcolor(int x, int y, int color)
+static void c_put_color(int x, int y, int color)
 {
     // avoid writing outside window
     if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
@@ -125,7 +125,7 @@ void c_putcolor(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-int  c_getcolor(int x, int y)
+static int c_get_color(int x, int y)
 {
     // avoid reading outside window
     if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
@@ -146,38 +146,38 @@ int  c_getcolor(int x, int y)
     return get_color(x, y);
 }
 
-void circleplot(int x, int y, int color)
+static void circle_plot(int x, int y, int color)
 {
     if (s_x_aspect == 0)
     {
         if (s_y_aspect == 0)
         {
-            c_putcolor(x+s_x_base, y+s_y_base, color);
+            c_put_color(x+s_x_base, y+s_y_base, color);
         }
         else
         {
-            c_putcolor(x+s_x_base, (short)(s_y_base + (((long) y * (long) s_y_aspect) >> 16)), color);
+            c_put_color(x+s_x_base, (short)(s_y_base + (((long) y * (long) s_y_aspect) >> 16)), color);
         }
     }
     else
     {
-        c_putcolor((int)(s_x_base + (((long) x * (long) s_x_aspect) >> 16)), y+s_y_base, color);
+        c_put_color((int)(s_x_base + (((long) x * (long) s_x_aspect) >> 16)), y+s_y_base, color);
     }
 }
 
-void plot8(int x, int y, int color)
+static void plot8(int x, int y, int color)
 {
-    circleplot(x, y, color);
-    circleplot(-x, y, color);
-    circleplot(x, -y, color);
-    circleplot(-x, -y, color);
-    circleplot(y, x, color);
-    circleplot(-y, x, color);
-    circleplot(y, -x, color);
-    circleplot(-y, -x, color);
+    circle_plot(x, y, color);
+    circle_plot(-x, y, color);
+    circle_plot(x, -y, color);
+    circle_plot(-x, -y, color);
+    circle_plot(y, x, color);
+    circle_plot(-y, x, color);
+    circle_plot(y, -x, color);
+    circle_plot(-y, -x, color);
 }
 
-void circle(int radius, int color)
+static void circle(int radius, int color)
 {
     int x;
     int y;
@@ -389,17 +389,17 @@ LComplex pop_long()
     return pop;
 }
 
-int en_queue_float(float x, float y)
+int enqueue_float(float x, float y)
 {
     return push_float(x, y);
 }
 
-int en_queue_long(long x, long y)
+int enqueue_long(long x, long y)
 {
     return push_long(x, y);
 }
 
-DComplex de_queue_float()
+DComplex dequeue_float()
 {
     DComplex out;
     float outx;
@@ -422,7 +422,7 @@ DComplex de_queue_float()
     return out;
 }
 
-LComplex de_queue_long()
+LComplex dequeue_long()
 {
     LComplex out;
     out.x = 0;
@@ -448,7 +448,7 @@ LComplex de_queue_long()
  * End MIIM section;
  */
 
-static void SaveRect(int x, int y, int width, int depth)
+static void save_rect(int x, int y, int width, int depth)
 {
     if (!g_has_inverse)
     {
@@ -467,7 +467,7 @@ static void SaveRect(int x, int y, int width, int depth)
     s_cursor.show();
 }
 
-static void RestoreRect(int x, int y, int width, int depth)
+static void restore_rect(int x, int y, int width, int depth)
 {
     if (!g_has_inverse)
     {
@@ -532,7 +532,7 @@ void jiim(jiim_types which)
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
     aspect = ((double)g_logical_screen_x_dots*3)/((double)g_logical_screen_y_dots*4);  // assumes 4:3
     actively_computing = true;
-    SetAspect(aspect);
+    set_aspect(aspect);
     ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
 
     if (which == jiim_types::ORBIT)
@@ -555,7 +555,7 @@ void jiim(jiim_types which)
     s_max_hits = 1;
     if (which == jiim_types::ORBIT)
     {
-        g_plot = c_putcolor;                // for line with clipping
+        g_plot = c_put_color;                // for line with clipping
     }
 
     /*
@@ -568,10 +568,10 @@ void jiim(jiim_types which)
     if (g_logical_screen_x_offset != 0 || g_logical_screen_y_offset != 0) // we're in view windows
     {
         ValueSaver saved_has_inverse(g_has_inverse, true);
-        SaveRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+        save_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
         g_logical_screen_x_offset = g_video_start_x;
         g_logical_screen_y_offset = g_video_start_y;
-        RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+        restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
     }
 
     if (g_logical_screen_x_dots == g_vesa_x_res
@@ -616,7 +616,7 @@ void jiim(jiim_types which)
 
     if (s_window_style == JuliaWindowStyle::LARGE)
     {
-        SaveRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
+        save_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
     }
     else if (s_window_style == JuliaWindowStyle::FULL_SCREEN)    // leave the fractal
     {
@@ -805,7 +805,7 @@ void jiim(jiim_types which)
                     }
                     else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
                     {
-                        RestoreRect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
+                        restore_rect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
                         s_window_style = JuliaWindowStyle::FULL_SCREEN;
                     }
                     break;
@@ -947,8 +947,8 @@ void jiim(jiim_types which)
 
                 clear_queue();
                 s_max_hits = 1;
-                en_queue_float((float)f1.x, (float)f1.y);
-                en_queue_float((float)f2.x, (float)f2.y);
+                enqueue_float((float)f1.x, (float)f1.y);
+                enqueue_float((float)f2.x, (float)f2.y);
             }
             /*
              * End MIIM code.
@@ -961,7 +961,7 @@ void jiim(jiim_types which)
             if (s_window_style == JuliaWindowStyle::LARGE && g_col > s_corner_x &&
                 g_col < s_corner_x + s_win_width && g_row > s_corner_y && g_row < s_corner_y + s_win_height)
             {
-                RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
+                restore_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
                 if (s_corner_x == g_video_start_x + s_win_width*2)
                 {
                     s_corner_x = g_video_start_x + 2;
@@ -971,7 +971,7 @@ void jiim(jiim_types which)
                     s_corner_x = g_video_start_x + s_win_width*2;
                 }
                 xoff = s_corner_x + s_win_width /  2;
-                SaveRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
+                save_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
             }
             if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
             {
@@ -1014,8 +1014,8 @@ void jiim(jiim_types which)
                         {
                             g_old_z = complex_sqrt_float(g_old_z.x - cr, g_old_z.y - ci);
                             g_new_z = complex_sqrt_float(g_new_z.x - cr, g_new_z.y - ci);
-                            en_queue_float((float)g_new_z.x, (float)g_new_z.y);
-                            en_queue_float((float)-g_old_z.x, (float)-g_old_z.y);
+                            enqueue_float((float)g_new_z.x, (float)g_new_z.y);
+                            enqueue_float((float)-g_old_z.x, (float)-g_old_z.y);
                         }
                         s_max_hits++;
                     }
@@ -1025,17 +1025,17 @@ void jiim(jiim_types which)
                     }
                 }
 
-                g_old_z = de_queue_float();
+                g_old_z = dequeue_float();
 
                 x = (int)(g_old_z.x * xfactor * zoom + xoff);
                 y = (int)(g_old_z.y * yfactor * zoom + yoff);
-                color = c_getcolor(x, y);
+                color = c_get_color(x, y);
                 if (color < s_max_hits)
                 {
-                    c_putcolor(x, y, color + 1);
+                    c_put_color(x, y, color + 1);
                     g_new_z = complex_sqrt_float(g_old_z.x - cr, g_old_z.y - ci);
-                    en_queue_float((float)g_new_z.x, (float)g_new_z.y);
-                    en_queue_float((float)-g_new_z.x, (float)-g_new_z.y);
+                    enqueue_float((float)g_new_z.x, (float)g_new_z.y);
+                    enqueue_float((float)-g_new_z.x, (float)-g_new_z.y);
                 }
             }
             else
@@ -1103,7 +1103,7 @@ void jiim(jiim_types which)
                 case 4:                     // go negative if max color
                     x = (int)(g_new_z.x * xfactor * zoom + xoff);
                     y = (int)(g_new_z.y * yfactor * zoom + yoff);
-                    if (c_getcolor(x, y) == g_colors - 1)
+                    if (c_get_color(x, y) == g_colors - 1)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
@@ -1116,7 +1116,7 @@ void jiim(jiim_types which)
                     g_new_z.y = -g_new_z.y;
                     x = (int)(g_new_z.x * xfactor * zoom + xoff);
                     y = (int)(g_new_z.y * yfactor * zoom + yoff);
-                    if (c_getcolor(x, y) == g_colors - 1)
+                    if (c_get_color(x, y) == g_colors - 1)
                     {
                         x = (int)(g_new_z.x * xfactor * zoom + xoff);
                         y = (int)(g_new_z.y * yfactor * zoom + yoff);
@@ -1134,7 +1134,7 @@ void jiim(jiim_types which)
                     {
                         if (mode == 0)                          // pixels
                         {
-                            c_putcolor(x, y, color);
+                            c_put_color(x, y, color);
                         }
                         else if (mode & 1)              // circles
                         {
@@ -1239,7 +1239,7 @@ void jiim(jiim_types which)
         {
             if (mode == 0)                    // pixels
             {
-                c_putcolor(x, y, color);
+                c_put_color(x, y, color);
             }
             else if (mode & 1)              // circles
             {
@@ -1265,7 +1265,7 @@ finish:
         s_cursor.hide();
         if (s_window_style == JuliaWindowStyle::LARGE)
         {
-            RestoreRect(s_corner_x, s_corner_y, s_win_width, s_win_height);
+            restore_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
         }
         else if (s_window_style >= JuliaWindowStyle::FULL_SCREEN)
         {
@@ -1280,15 +1280,15 @@ finish:
             }
             if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res) // unhide
             {
-                RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+                restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
                 s_window_style = JuliaWindowStyle::FULL_SCREEN;
             }
             s_cursor.hide();
             ValueSaver saved_has_inverse{g_has_inverse, true};
-            SaveRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+            save_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
             g_logical_screen_x_offset = oldsxoffs;
             g_logical_screen_y_offset = oldsyoffs;
-            RestoreRect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+            restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
         }
     }
     g_cursor_mouse_tracking = false;
