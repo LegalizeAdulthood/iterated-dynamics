@@ -94,13 +94,13 @@ static void put_true_color_disk(int, int, int);
 static long auto_log_map();
 
 static DComplex s_saved{};            //
-static double rqlim_save{};           //
-static int (*calctypetmp)(){};        //
-static unsigned long lm{};            // magnitude limit (CALCMAND)
-static double dem_delta{};            //
-static double dem_width{};            // distance estimator variables
-static double dem_toobig{};           //
-static bool dem_mandel{};             //
+static double s_rq_lim_save{};        //
+static int (*s_calc_type_tmp)(){};    //
+static unsigned long s_lm{};          // magnitude limit (CALCMAND)
+static double s_dem_delta{};          //
+static double s_dem_width{};          // distance estimator variables
+static double s_dem_too_big{};        //
+static bool s_dem_mandel{};           //
 static std::vector<BYTE> s_save_dots; //
 static BYTE *s_fill_buff{};           //
 static int s_save_dots_len{};         //
@@ -501,7 +501,7 @@ static int calc_type_show_dot()
     {
         sleep_ms(g_orbit_delay);
     }
-    out = (*calctypetmp)();
+    out = (*s_calc_type_tmp)();
     show_dot_save_restore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);
     return out;
 }
@@ -679,7 +679,7 @@ int calc_fract()
             setup_log_table();
         }
     }
-    lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
+    s_lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
 
     g_atan_colors = g_colors;
 
@@ -734,7 +734,7 @@ int calc_fract()
     }
 
     g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
-    rqlim_save = g_magnitude_limit;
+    s_rq_lim_save = g_magnitude_limit;
     g_magnitude_limit2 = std::sqrt(g_magnitude_limit);
     if (g_integer_fractal)          // for integer routines (lambda)
     {
@@ -996,7 +996,7 @@ static void perform_work_list()
         delyy2 = (g_y_3rd - g_y_min) / d_x_size;
 
         g_use_old_distance_estimator = false;
-        g_magnitude_limit = rqlim_save; // just in case changed to DEM_BAILOUT earlier
+        g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
             if (g_magnitude_limit < DEM_BAILOUT)           // so go straight for dem bailout
@@ -1005,15 +1005,15 @@ static void perform_work_list()
             }
         }
         // must be mandel type, formula, or old PAR/GIF
-        dem_mandel = g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
+        s_dem_mandel = g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
             || g_use_old_distance_estimator
             || g_fractal_type == fractal_type::FORMULA
             || g_fractal_type == fractal_type::FFORMULA;
-        dem_delta = sqr(delxx) + sqr(delyy2);
+        s_dem_delta = sqr(delxx) + sqr(delyy2);
         ftemp = sqr(delyy) + sqr(delxx2);
-        if (ftemp > dem_delta)
+        if (ftemp > s_dem_delta)
         {
-            dem_delta = ftemp;
+            s_dem_delta = ftemp;
         }
         if (g_distance_estimator_width_factor == 0)
         {
@@ -1022,24 +1022,24 @@ static void perform_work_list()
         ftemp = g_distance_estimator_width_factor;
         if (g_distance_estimator_width_factor > 0)
         {
-            dem_delta *= sqr(ftemp)/10000; // multiply by thickness desired
+            s_dem_delta *= sqr(ftemp)/10000; // multiply by thickness desired
         }
         else
         {
-            dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
+            s_dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
         }
-        dem_width = (std::sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
+        s_dem_width = (std::sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
                      + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
         ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
         ftemp += 3; // bailout plus just a bit
         ftemp2 = std::log(ftemp);
         if (g_use_old_distance_estimator)
         {
-            dem_toobig = sqr(ftemp) * sqr(ftemp2) * 4 / dem_delta;
+            s_dem_too_big = sqr(ftemp) * sqr(ftemp2) * 4 / s_dem_delta;
         }
         else
         {
-            dem_toobig = std::fabs(ftemp) * std::fabs(ftemp2) * 2 / std::sqrt(dem_delta);
+            s_dem_too_big = std::fabs(ftemp) * std::fabs(ftemp2) * 2 / std::sqrt(s_dem_delta);
         }
     }
 
@@ -1151,7 +1151,7 @@ static void perform_work_list()
             {
                 s_show_dot_width = -1;
             }
-            calctypetmp = g_calc_type;
+            s_calc_type_tmp = g_calc_type;
             g_calc_type    = calc_type_show_dot;
         }
 
@@ -1420,7 +1420,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_use_old_distance_estimator)
             {
-                g_magnitude_limit = rqlim_save;
+                g_magnitude_limit = s_rq_lim_save;
                 if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
                 {
                     if (g_magnitude_limit < DEM_BAILOUT)     // so go straight for dem bailout
@@ -1530,7 +1530,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             double ftemp;
             // Distance estimator for points near Mandelbrot set
             // Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
-            if (dem_mandel)
+            if (s_dem_mandel)
             {
                 ftemp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y) + 1;
             }
@@ -1542,14 +1542,14 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             deriv.x = ftemp;
             if (g_use_old_distance_estimator)
             {
-                if (sqr(deriv.x)+sqr(deriv.y) > dem_toobig)
+                if (sqr(deriv.x)+sqr(deriv.y) > s_dem_too_big)
                 {
                     break;
                 }
             }
             else
             {
-                if (std::max(std::fabs(deriv.x), std::fabs(deriv.y)) > dem_toobig)
+                if (std::max(std::fabs(deriv.x), std::fabs(deriv.y)) > s_dem_too_big)
                 {
                     break;
                 }
@@ -2010,7 +2010,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             temp = std::log(dist);
             dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y));
         }
-        if (dist < dem_delta)     // point is on the edge
+        if (dist < s_dem_delta)     // point is on the edge
         {
             if (g_distance_estimator > 0)
             {
@@ -2028,15 +2028,15 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_old_demm_colors)   // this one is needed for old color scheme
             {
-                g_color_iter = (long)std::sqrt(sqrt(dist) / dem_width + 1);
+                g_color_iter = (long)std::sqrt(sqrt(dist) / s_dem_width + 1);
             }
             else if (g_use_old_distance_estimator)
             {
-                g_color_iter = (long)std::sqrt(dist / dem_width + 1);
+                g_color_iter = (long)std::sqrt(dist / s_dem_width + 1);
             }
             else
             {
-                g_color_iter = (long)(dist / dem_width + 1);
+                g_color_iter = (long)(dist / s_dem_width + 1);
             }
             g_color_iter &= LONG_MAX;  // oops - color can be negative
             goto plot_pixel;       // no further adjustments apply
