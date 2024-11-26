@@ -32,32 +32,37 @@ enum
     MAXHANDLES = 256      // arbitrary #, suitably big
 };
 
-struct nowhere
+namespace
+{
+
+struct Nowhere
 {
     stored_at_values stored_at; // first 2 entries must be the same
-    long size;                       // for each of these data structures
+    long size;                  // for each of these data structures
 };
 
-struct linearmem
+struct LinearMemory
 {
     stored_at_values stored_at;
     long size;
     BYTE *memory;
 };
 
-struct disk
+struct Disk
 {
     stored_at_values stored_at;
     long size;
     std::FILE *file;
 };
 
-union mem
+union Memory
 {
-    nowhere Nowhere;
-    linearmem Linearmem;
-    disk Disk;
+    Nowhere nowhere;
+    LinearMemory linear;
+    Disk disk;
 };
+
+} // namespace
 
 // Routines in this module
 static bool CheckDiskSpace(long howmuch);
@@ -70,7 +75,7 @@ static void DisplayHandle(U16 handle);
 
 static int s_num_total_handles{};
 static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
-static mem s_handles[MAXHANDLES];
+static Memory s_handles[MAXHANDLES];
 
 // Memory handling support routines
 
@@ -103,7 +108,7 @@ static void WhichDiskError(int I_O)
 
 int memory_type(U16 handle)
 {
-    return s_handles[handle].Nowhere.stored_at;
+    return s_handles[handle].nowhere.stored_at;
 }
 
 static void DisplayError(int stored_at, long howmuch)
@@ -175,7 +180,7 @@ static U16 next_handle()
 {
     U16 counter = 1; // don't use handle 0
 
-    while (s_handles[counter].Nowhere.stored_at != NOWHERE &&
+    while (s_handles[counter].nowhere.stored_at != NOWHERE &&
             counter < MAXHANDLES)
     {
         counter++;
@@ -185,7 +190,7 @@ static U16 next_handle()
 
 static int CheckBounds(long start, long length, U16 handle)
 {
-    if (s_handles[handle].Nowhere.size - start - length < 0)
+    if (s_handles[handle].nowhere.size - start - length < 0)
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
         DisplayHandle(handle);
@@ -197,7 +202,7 @@ static int CheckBounds(long start, long length, U16 handle)
         DisplayHandle(handle);
         return 1;
     }
-    if (s_handles[handle].Nowhere.stored_at == DISK
+    if (s_handles[handle].nowhere.stored_at == DISK
         && (stack_avail() <= DISKWRITELEN))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
@@ -231,8 +236,8 @@ static void DisplayHandle(U16 handle)
 {
     char buf[MSG_LEN];
 
-    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, s_memory_names[s_handles[handle].Nowhere.stored_at],
-            s_handles[handle].Nowhere.size);
+    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, s_memory_names[s_handles[handle].nowhere.stored_at],
+            s_handles[handle].nowhere.size);
     if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
         goodbye(); // bailout if ESC, it's messy, but should work
@@ -244,8 +249,8 @@ void init_memory()
     s_num_total_handles = 0;
     for (auto &elem : s_handles)
     {
-        elem.Nowhere.stored_at = NOWHERE;
-        elem.Nowhere.size = 0;
+        elem.nowhere.stored_at = NOWHERE;
+        elem.nowhere.size = 0;
     }
 }
 
@@ -256,11 +261,11 @@ void exit_check()
         stop_msg("Error - not all memory released, I'll get it.");
         for (U16 i = 1; i < MAXHANDLES; i++)
         {
-            if (s_handles[i].Nowhere.stored_at != NOWHERE)
+            if (s_handles[i].nowhere.stored_at != NOWHERE)
             {
                 char buf[MSG_LEN];
                 std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
-                        s_memory_names[s_handles[i].Nowhere.stored_at], i);
+                        s_memory_names[s_handles[i].nowhere.stored_at], i);
                 stop_msg(buf);
                 memory_release(i);
             }
@@ -318,9 +323,9 @@ U16 memory_alloc(U16 size, long count, int stored_at)
 
     case MEMORY: // MemoryAlloc
         // Availability of memory checked in check_for_mem()
-        s_handles[handle].Linearmem.memory = (BYTE *)malloc(toallocate);
-        s_handles[handle].Linearmem.size = toallocate;
-        s_handles[handle].Linearmem.stored_at = MEMORY;
+        s_handles[handle].linear.memory = (BYTE *)malloc(toallocate);
+        s_handles[handle].linear.size = toallocate;
+        s_handles[handle].linear.stored_at = MEMORY;
         s_num_total_handles++;
         success = true;
         break;
@@ -328,20 +333,20 @@ U16 memory_alloc(U16 size, long count, int stored_at)
     case DISK: // MemoryAlloc
         if (g_disk_targa)
         {
-            s_handles[handle].Disk.file = dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "a+b");
+            s_handles[handle].disk.file = dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "a+b");
         }
         else
         {
-            s_handles[handle].Disk.file = dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "w+b");
+            s_handles[handle].disk.file = dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "w+b");
         }
-        std::rewind(s_handles[handle].Disk.file);
-        if (std::fseek(s_handles[handle].Disk.file, toallocate, SEEK_SET) != 0)
+        std::rewind(s_handles[handle].disk.file);
+        if (std::fseek(s_handles[handle].disk.file, toallocate, SEEK_SET) != 0)
         {
-            s_handles[handle].Disk.file = nullptr;
+            s_handles[handle].disk.file = nullptr;
         }
-        if (s_handles[handle].Disk.file == nullptr)
+        if (s_handles[handle].disk.file == nullptr)
         {
-            s_handles[handle].Disk.stored_at = NOWHERE;
+            s_handles[handle].disk.stored_at = NOWHERE;
             use_this_type = NOWHERE;
             WhichDiskError(1);
             DisplayMemory();
@@ -350,14 +355,14 @@ U16 memory_alloc(U16 size, long count, int stored_at)
         }
         s_num_total_handles++;
         success = true;
-        std::fclose(s_handles[handle].Disk.file); // so clusters aren't lost if we crash while running
-        s_handles[handle].Disk.file = g_disk_targa ?
+        std::fclose(s_handles[handle].disk.file); // so clusters aren't lost if we crash while running
+        s_handles[handle].disk.file = g_disk_targa ?
             dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "r+b") :
             dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "r+b");
         // cppcheck-suppress useClosedFile
-        std::rewind(s_handles[handle].Disk.file);
-        s_handles[handle].Disk.size = toallocate;
-        s_handles[handle].Disk.stored_at = DISK;
+        std::rewind(s_handles[handle].disk.file);
+        s_handles[handle].disk.size = toallocate;
+        s_handles[handle].disk.stored_at = DISK;
         use_this_type = DISK;
         break;
     } // end of switch
@@ -383,25 +388,25 @@ U16 memory_alloc(U16 size, long count, int stored_at)
 
 void memory_release(U16 handle)
 {
-    switch (s_handles[handle].Nowhere.stored_at)
+    switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // MemoryRelease
         break;
 
     case MEMORY: // MemoryRelease
-        free(s_handles[handle].Linearmem.memory);
-        s_handles[handle].Linearmem.memory = nullptr;
-        s_handles[handle].Linearmem.size = 0;
-        s_handles[handle].Linearmem.stored_at = NOWHERE;
+        free(s_handles[handle].linear.memory);
+        s_handles[handle].linear.memory = nullptr;
+        s_handles[handle].linear.size = 0;
+        s_handles[handle].linear.stored_at = NOWHERE;
         s_num_total_handles--;
         break;
 
     case DISK: // MemoryRelease
-        std::fclose(s_handles[handle].Disk.file);
+        std::fclose(s_handles[handle].disk.file);
         dir_remove(g_temp_dir.c_str(), mem_file_name(handle));
-        s_handles[handle].Disk.file = nullptr;
-        s_handles[handle].Disk.size = 0;
-        s_handles[handle].Disk.stored_at = NOWHERE;
+        s_handles[handle].disk.file = nullptr;
+        s_handles[handle].disk.size = 0;
+        s_handles[handle].disk.stored_at = NOWHERE;
         s_num_total_handles--;
         break;
     } // end of switch
@@ -431,7 +436,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
     }
 
     bool success = false;
-    switch (s_handles[handle].Nowhere.stored_at)
+    switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // MoveToMemory
         DisplayHandle(handle);
@@ -439,19 +444,19 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
 
     case MEMORY: // MoveToMemory
 #if defined(_WIN32)
-        _ASSERTE(s_handles[handle].Linearmem.size >= size*count + start);
+        _ASSERTE(s_handles[handle].linear.size >= size*count + start);
 #endif
-        std::memcpy(s_handles[handle].Linearmem.memory + start, buffer, size*count);
+        std::memcpy(s_handles[handle].linear.memory + start, buffer, size*count);
         success = true; // No way to gauge success or failure
         break;
 
     case DISK: // MoveToMemory
-        std::rewind(s_handles[handle].Disk.file);
-        std::fseek(s_handles[handle].Disk.file, start, SEEK_SET);
+        std::rewind(s_handles[handle].disk.file);
+        std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
             std::memcpy(diskbuf, buffer, (U16)DISKWRITELEN);
-            numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].Disk.file);
+            numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
             if (numwritten != 1)
             {
                 WhichDiskError(3);
@@ -461,7 +466,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
             buffer += DISKWRITELEN;
         }
         std::memcpy(diskbuf, buffer, (U16)tomove);
-        numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].Disk.file);
+        numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numwritten != 1)
         {
             WhichDiskError(3);
@@ -500,7 +505,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     }
 
     bool success = false;
-    switch (s_handles[handle].Nowhere.stored_at)
+    switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // MoveFromMemory
         DisplayHandle(handle);
@@ -509,7 +514,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     case MEMORY: // MoveFromMemory
         for (int i = 0; i < size; i++)
         {
-            std::memcpy(buffer, s_handles[handle].Linearmem.memory+start, (U16)count);
+            std::memcpy(buffer, s_handles[handle].linear.memory+start, (U16)count);
             start += count;
             buffer += count;
         }
@@ -517,12 +522,12 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
         break;
 
     case DISK: // MoveFromMemory
-        std::rewind(s_handles[handle].Disk.file);
-        std::fseek(s_handles[handle].Disk.file, start, SEEK_SET);
+        std::rewind(s_handles[handle].disk.file);
+        std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
-            numread = (U16)std::fread(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].Disk.file);
-            if (numread != 1 && !std::feof(s_handles[handle].Disk.file))
+            numread = (U16)std::fread(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
+            if (numread != 1 && !std::feof(s_handles[handle].disk.file))
             {
                 WhichDiskError(4);
                 goto diskerror;
@@ -531,8 +536,8 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
             tomove -= DISKWRITELEN;
             buffer += DISKWRITELEN;
         }
-        numread = (U16)std::fread(diskbuf, (U16)tomove, 1, s_handles[handle].Disk.file);
-        if (numread != 1 && !std::feof(s_handles[handle].Disk.file))
+        numread = (U16)std::fread(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
+        if (numread != 1 && !std::feof(s_handles[handle].disk.file))
         {
             WhichDiskError(4);
             break;
@@ -571,7 +576,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     }
 
     bool success = false;
-    switch (s_handles[handle].Nowhere.stored_at)
+    switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // SetMemory
         DisplayHandle(handle);
@@ -580,7 +585,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     case MEMORY: // SetMemory
         for (int i = 0; i < size; i++)
         {
-            std::memset(s_handles[handle].Linearmem.memory+start, value, (U16)count);
+            std::memset(s_handles[handle].linear.memory+start, value, (U16)count);
             start += count;
         }
         success = true; // No way to gauge success or failure
@@ -588,11 +593,11 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
 
     case DISK: // SetMemory
         std::memset(diskbuf, value, (U16)DISKWRITELEN);
-        std::rewind(s_handles[handle].Disk.file);
-        std::fseek(s_handles[handle].Disk.file, start, SEEK_SET);
+        std::rewind(s_handles[handle].disk.file);
+        std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
-            numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].Disk.file);
+            numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
             if (numwritten != 1)
             {
                 WhichDiskError(2);
@@ -600,7 +605,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
             }
             tomove -= DISKWRITELEN;
         }
-        numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].Disk.file);
+        numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numwritten != 1)
         {
             WhichDiskError(2);
