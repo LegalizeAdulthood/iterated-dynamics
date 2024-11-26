@@ -27,7 +27,7 @@ std::string const g_speed_prompt{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
-inline int isadirname(char const *name)
+inline int is_a_dir_name(char const *name)
 {
     return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
@@ -43,7 +43,7 @@ static void footer_msg(int *i, int options, char const *speedstring)
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
-static void show_speedstring(
+static void show_speed_string(
     int speedrow,
     char const *speedstring,
     int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match))
@@ -84,7 +84,7 @@ static void show_speedstring(
     }
 }
 
-static void process_speedstring(char *speedstring, //
+static void process_speed_string(char *speedstring, //
     char const **choices,                          // array of choice strings
     int curkey,                                    //
     int *pcurrent,                                 //
@@ -511,7 +511,7 @@ int full_screen_choice(
 
         if (speed_string)                     // show speedstring if any
         {
-            show_speedstring(speedrow, speed_string, speed_prompt);
+            show_speed_string(speedrow, speed_string, speed_prompt);
         }
         else
         {
@@ -580,7 +580,7 @@ int full_screen_choice(
                     {
                         newcurrent = (newcurrent % box_width) - box_width;
                     }
-                    else if (!isadirname(choices[newcurrent]))
+                    else if (!is_a_dir_name(choices[newcurrent]))
                     {
                         if (current != newcurrent)
                         {
@@ -607,7 +607,7 @@ int full_screen_choice(
                         newcurrent = (num_choices - current) % box_width;
                         newcurrent =  num_choices + (newcurrent ? box_width - newcurrent: 0);
                     }
-                    else if (!isadirname(choices[newcurrent]))
+                    else if (!is_a_dir_name(choices[newcurrent]))
                     {
                         if (current != newcurrent)
                         {
@@ -634,7 +634,7 @@ int full_screen_choice(
                     {
                         newcurrent = -1;
                     }
-                    else if (!isadirname(choices[newcurrent]))
+                    else if (!is_a_dir_name(choices[newcurrent]))
                     {
                         if (current != newcurrent)
                         {
@@ -661,7 +661,7 @@ int full_screen_choice(
                     {
                         newcurrent = num_choices;
                     }
-                    else if (!isadirname(choices[newcurrent]))
+                    else if (!is_a_dir_name(choices[newcurrent]))
                     {
                         if (current != newcurrent)
                         {
@@ -701,7 +701,7 @@ int full_screen_choice(
             increment = rev_increment;
             for (int newcurrent = 0; newcurrent < num_choices; ++newcurrent)
             {
-                if (!isadirname(choices[newcurrent]))
+                if (!is_a_dir_name(choices[newcurrent]))
                 {
                     current = newcurrent - 1;
                     break;  // breaks the for loop
@@ -719,7 +719,7 @@ int full_screen_choice(
             increment = rev_increment;
             for (int newcurrent = num_choices - 1; newcurrent >= 0; --newcurrent)
             {
-                if (!isadirname(choices[newcurrent]))
+                if (!is_a_dir_name(choices[newcurrent]))
                 {
                     current = newcurrent + 1;
                     break;  // breaks the for loop
@@ -742,7 +742,7 @@ int full_screen_choice(
             ret = -1;
             if (speed_string)
             {
-                process_speedstring(speed_string, choices, curkey, &current,
+                process_speed_string(speed_string, choices, curkey, &current,
                                     num_choices, options & CHOICE_NOT_SORTED);
             }
             break;
