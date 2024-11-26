@@ -338,7 +338,7 @@ retry_dir:
                 // cppcheck-suppress uselessAssignmentPtrArg
                 file_template = user_file_template;
             }
-            else if (isadirectory(flname.c_str()))
+            else if (is_a_directory(flname.c_str()))
             {
                 fix_dir_name(flname);
             }

@@ -35,7 +35,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     // no dot or slash so assume a file
     bool isafile = std::strchr(newfilename, '.') == nullptr
         && std::strchr(newfilename, SLASHC) == nullptr;
-    bool isadir = isadirectory(newfilename);
+    bool isadir = is_a_directory(newfilename);
     if (isadir)
     {
         fix_dir_name(newfilename);

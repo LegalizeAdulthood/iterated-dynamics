@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-inline bool isadirectory(const char *s)
+inline bool is_a_directory(const char *s)
 {
     return std::filesystem::is_directory(s);
 }

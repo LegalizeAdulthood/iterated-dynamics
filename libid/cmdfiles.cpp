@@ -419,7 +419,7 @@ static void initvars_run()              // once per run init
     }
     if (p != nullptr)
     {
-        if (isadirectory(p))
+        if (is_a_directory(p))
         {
             g_temp_dir = p;
             fix_dir_name(g_temp_dir);
@@ -2701,7 +2701,7 @@ static cmdarg_flags cmd_org_frm_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (!isadirectory(cmd.value))
+    if (!is_a_directory(cmd.value))
     {
         return cmd.bad_arg();
     }
@@ -3399,7 +3399,7 @@ static cmdarg_flags cmd_temp_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (!isadirectory(cmd.value))
+    if (!is_a_directory(cmd.value))
     {
         return cmd.bad_arg();
     }
@@ -3693,7 +3693,7 @@ static cmdarg_flags cmd_work_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (!isadirectory(cmd.value))
+    if (!is_a_directory(cmd.value))
     {
         return cmd.bad_arg();
     }

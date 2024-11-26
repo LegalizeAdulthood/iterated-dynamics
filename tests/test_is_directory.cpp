@@ -12,12 +12,12 @@ namespace fs = std::filesystem;
 
 TEST(TestIsDirectory, affirmative)
 {
-    EXPECT_TRUE(isadirectory(ID_TEST_DATA_DIR));
-    EXPECT_TRUE(isadirectory(ID_TEST_DATA_SUBDIR));
+    EXPECT_TRUE(is_a_directory(ID_TEST_DATA_DIR));
+    EXPECT_TRUE(is_a_directory(ID_TEST_DATA_SUBDIR));
 }
 
 TEST(TestIsDirectory, negative)
 {
-    EXPECT_FALSE(isadirectory((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).string().c_str()));
-    EXPECT_FALSE(isadirectory((fs::path{ID_TEST_DATA_SUBDIR} / ID_TEST_IFS_FILE2).string().c_str()));
+    EXPECT_FALSE(is_a_directory((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).string().c_str()));
+    EXPECT_FALSE(is_a_directory((fs::path{ID_TEST_DATA_SUBDIR} / ID_TEST_IFS_FILE2).string().c_str()));
 }
