@@ -111,21 +111,17 @@ static std::vector<int> s_image_box_y;
 static std::vector<int> s_image_box_values;
 static ParamHistory s_old_history{};
 
-void varydbl(GeneBase gene[], int randval, int i);
-int varyint(int randvalue, int limit, int mode);
-int wrapped_positive_varyint(int randvalue, int limit, int mode);
-void varyinside(GeneBase gene[], int randval, int i);
-void varyoutside(GeneBase gene[], int randval, int i);
-void varypwr2(GeneBase gene[], int randval, int i);
-void varytrig(GeneBase gene[], int randval, int i);
-void varybotest(GeneBase gene[], int randval, int i);
-void varyinv(GeneBase gene[], int randval, int i);
+static void vary_dbl(GeneBase gene[], int randval, int i);
+static int vary_int(int randvalue, int limit, variations mode);
+static int wrapped_positive_vary_int(int randvalue, int limit, variations mode);
+static void vary_inside(GeneBase gene[], int randval, int i);
+static void vary_outside(GeneBase gene[], int randval, int i);
+static void vary_pwr2(GeneBase gene[], int randval, int i);
+static void vary_trig(GeneBase gene[], int randval, int i);
+static void vary_bo_test(GeneBase gene[], int randval, int i);
+static void vary_inv(GeneBase gene[], int randval, int i);
 static bool explore_check();
-void spiral_map(int);
 static void set_random(int);
-void set_mutation_level(int);
-void setup_param_box();
-void release_param_box();
 
 void copy_genes_from_bank(GeneBase gene[NUM_GENES])
 {
@@ -180,27 +176,27 @@ void init_gene()
     //                        Use only 15 letters below: 123456789012345
     GeneBase gene[NUM_GENES] =
     {
-        { &g_params[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
-        { &g_params[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
-        { &g_params[2], varydbl, variations::NONE,         "Param 2 real", 1 },
-        { &g_params[3], varydbl, variations::NONE,         "Param 2 imag", 1 },
-        { &g_params[4], varydbl, variations::NONE,         "Param 3 real", 1 },
-        { &g_params[5], varydbl, variations::NONE,         "Param 3 imag", 1 },
-        { &g_params[6], varydbl, variations::NONE,         "Param 4 real", 1 },
-        { &g_params[7], varydbl, variations::NONE,         "Param 4 imag", 1 },
-        { &g_params[8], varydbl, variations::NONE,         "Param 5 real", 1 },
-        { &g_params[9], varydbl, variations::NONE,         "Param 5 imag", 1 },
-        { &g_inside_color, varyinside, variations::NONE,        "inside color", 2 },
-        { &g_outside_color, varyoutside, variations::NONE,      "outside color", 3 },
-        { &g_decomp[0], varypwr2, variations::NONE,       "decomposition", 4 },
-        { &g_inversion[0], varyinv, variations::NONE,     "invert radius", 7 },
-        { &g_inversion[1], varyinv, variations::NONE,     "invert center x", 7 },
-        { &g_inversion[2], varyinv, variations::NONE,     "invert center y", 7 },
-        { &g_trig_index[0], varytrig, variations::NONE,      "trig function 1", 5 },
-        { &g_trig_index[1], varytrig, variations::NONE,      "trig fn 2", 5 },
-        { &g_trig_index[2], varytrig, variations::NONE,      "trig fn 3", 5 },
-        { &g_trig_index[3], varytrig, variations::NONE,      "trig fn 4", 5 },
-        { &g_bail_out_test, varybotest, variations::NONE,    "bailout test", 6 }
+        { &g_params[0], vary_dbl, variations::RANDOM,       "Param 1 real", 1 },
+        { &g_params[1], vary_dbl, variations::RANDOM,       "Param 1 imag", 1 },
+        { &g_params[2], vary_dbl, variations::NONE,         "Param 2 real", 1 },
+        { &g_params[3], vary_dbl, variations::NONE,         "Param 2 imag", 1 },
+        { &g_params[4], vary_dbl, variations::NONE,         "Param 3 real", 1 },
+        { &g_params[5], vary_dbl, variations::NONE,         "Param 3 imag", 1 },
+        { &g_params[6], vary_dbl, variations::NONE,         "Param 4 real", 1 },
+        { &g_params[7], vary_dbl, variations::NONE,         "Param 4 imag", 1 },
+        { &g_params[8], vary_dbl, variations::NONE,         "Param 5 real", 1 },
+        { &g_params[9], vary_dbl, variations::NONE,         "Param 5 imag", 1 },
+        { &g_inside_color, vary_inside, variations::NONE,        "inside color", 2 },
+        { &g_outside_color, vary_outside, variations::NONE,      "outside color", 3 },
+        { &g_decomp[0], vary_pwr2, variations::NONE,       "decomposition", 4 },
+        { &g_inversion[0], vary_inv, variations::NONE,     "invert radius", 7 },
+        { &g_inversion[1], vary_inv, variations::NONE,     "invert center x", 7 },
+        { &g_inversion[2], vary_inv, variations::NONE,     "invert center y", 7 },
+        { &g_trig_index[0], vary_trig, variations::NONE,      "trig function 1", 5 },
+        { &g_trig_index[1], vary_trig, variations::NONE,      "trig fn 2", 5 },
+        { &g_trig_index[2], vary_trig, variations::NONE,      "trig fn 3", 5 },
+        { &g_trig_index[3], vary_trig, variations::NONE,      "trig fn 4", 5 },
+        { &g_bail_out_test, vary_bo_test, variations::NONE,    "bailout test", 6 }
     };
 
     copy_genes_to_bank(gene);
@@ -260,7 +256,7 @@ void restore_param_history()
 }
 
 // routine to vary doubles
-void varydbl(GeneBase gene[], int randval, int i)
+void vary_dbl(GeneBase gene[], int randval, int i)
 {
     int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (gene[i].mutate)
@@ -293,7 +289,7 @@ void varydbl(GeneBase gene[], int randval, int i)
     }
 }
 
-int varyint(int randvalue, int limit, variations mode)
+static int vary_int(int randvalue, int limit, variations mode)
 {
     int ret = 0;
     int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
@@ -329,10 +325,10 @@ int varyint(int randvalue, int limit, variations mode)
     return ret;
 }
 
-int wrapped_positive_varyint(int randvalue, int limit, variations mode)
+int wrapped_positive_vary_int(int randvalue, int limit, variations mode)
 {
     int i;
-    i = varyint(randvalue, limit, mode);
+    i = vary_int(randvalue, limit, mode);
     if (i < 0)
     {
         return limit + i;
@@ -343,25 +339,25 @@ int wrapped_positive_varyint(int randvalue, int limit, variations mode)
     }
 }
 
-void varyinside(GeneBase gene[], int randval, int i)
+void vary_inside(GeneBase gene[], int randval, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
     }
 }
 
-void varyoutside(GeneBase gene[], int randval, int i)
+void vary_outside(GeneBase gene[], int randval, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)];
     }
 }
 
-void varybotest(GeneBase gene[], int randval, int i)
+void vary_bo_test(GeneBase gene[], int randval, int i)
 {
     int choices[7] =
     {
@@ -375,36 +371,36 @@ void varybotest(GeneBase gene[], int randval, int i)
     };
     if (gene[i].mutate != variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
         set_bailout_formula(g_bail_out_test);
     }
 }
 
-void varypwr2(GeneBase gene[], int randval, int i)
+void vary_pwr2(GeneBase gene[], int randval, int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
     }
 }
 
-void varytrig(GeneBase gene[], int randval, int i)
+void vary_trig(GeneBase gene[], int randval, int i)
 {
     if (gene[i].mutate != variations::NONE)
     {
         *static_cast<trig_fn *>(gene[i].addr) =
-            static_cast<trig_fn>(wrapped_positive_varyint(randval, g_num_trig_functions, gene[i].mutate));
+            static_cast<trig_fn>(wrapped_positive_vary_int(randval, g_num_trig_functions, gene[i].mutate));
     }
     set_trig_pointers(5); //set all trig ptrs up
 }
 
-void varyinv(GeneBase gene[], int randval, int i)
+void vary_inv(GeneBase gene[], int randval, int i)
 {
     if (gene[i].mutate != variations::NONE)
     {
-        varydbl(gene, randval, i);
+        vary_dbl(gene, randval, i);
     }
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 }
@@ -417,7 +413,7 @@ void varyinv(GeneBase gene[], int randval, int i)
 //     0  minor variable changed.  No need to re-generate the image.
 //     1  major parms changed.  Re-generate the images.
 //
-int get_the_rest()
+static int get_the_rest()
 {
     ChoiceBuilder<20> choices;
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
