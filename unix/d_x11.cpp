@@ -269,7 +269,7 @@ private:
     int m_last_y{};             //
     int m_dx{};                 //
     int m_dy{};                 //
-    x11_frame_window m_frame;   //
+    X11FrameWindow m_frame;   //
     X11TextWindow m_text;     //
     X11PlotWindow m_plot;     //
 };

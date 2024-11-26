@@ -4,7 +4,7 @@
 
 #include "x11_frame.h"
 
-void x11_frame_window::initialize(Display *dpy,
+void X11FrameWindow::initialize(Display *dpy,
     int screen_num,
     char const *geometry)
 {
@@ -41,7 +41,7 @@ void x11_frame_window::initialize(Display *dpy,
     XChangeWindowAttributes(dpy, window_, CWBackPixel, &attrs);
 }
 
-void x11_frame_window::window(unsigned width, unsigned height)
+void X11FrameWindow::window(unsigned width, unsigned height)
 {
     width_ = width;
     height_ = height;
@@ -54,7 +54,7 @@ void x11_frame_window::window(unsigned width, unsigned height)
     }
 }
 
-int x11_frame_window::get_key_press(int wait_for_key)
+int X11FrameWindow::get_key_press(int wait_for_key)
 {
     pump_messages(wait_for_key != 0);
     if (wait_for_key && timed_out_)
@@ -78,7 +78,7 @@ int x11_frame_window::get_key_press(int wait_for_key)
     return i;
 }
 
-int x11_frame_window::pump_messages(bool wait_flag)
+int X11FrameWindow::pump_messages(bool wait_flag)
 {
     return 0;
 }

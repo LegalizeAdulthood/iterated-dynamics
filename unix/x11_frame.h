@@ -10,10 +10,10 @@ enum
 };
 
 // cppcheck-suppress noConstructor
-class x11_frame_window
+class X11FrameWindow
 {
 public:
-    x11_frame_window()
+    X11FrameWindow()
         : dpy_{},
         timed_out_{},
         keypress_count_{},
