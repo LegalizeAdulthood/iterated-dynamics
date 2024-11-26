@@ -6,5 +6,5 @@
 
 extern const std::string_view g_altern_map_file;
 
-int get_starfield_params();
-int starfield();
+int get_star_field_params();
+int star_field();

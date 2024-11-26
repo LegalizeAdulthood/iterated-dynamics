@@ -822,9 +822,9 @@ static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
 static main_state request_starfield_params(int &, bool &, bool &, bool &)
 {
     clear_zoom_box();
-    if (get_starfield_params() >= 0)
+    if (get_star_field_params() >= 0)
     {
-        if (starfield() >= 0)
+        if (star_field() >= 0)
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }

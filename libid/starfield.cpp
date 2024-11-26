@@ -66,7 +66,7 @@ static int gausian_number(int probability, int range)
     return s_offset;
 }
 
-int starfield()
+int star_field()
 {   
     int c;
     g_busy = true;
@@ -129,7 +129,7 @@ int starfield()
     return 0;
 }
 
-int get_starfield_params()
+int get_star_field_params()
 {
     if (g_colors < 255)
     {
