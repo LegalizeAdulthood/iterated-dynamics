@@ -55,9 +55,9 @@ struct KeyMnemonic
 };
 
 static void sleep_secs(int);
-static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
+static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt);
 static void message(int secs, char const *buf);
-static void slideshowerr(char const *msg);
+static void slide_show_err(char const *msg);
 static int  get_scancode(char const *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
@@ -124,7 +124,7 @@ static void get_mnemonic(int code, char *mnemonic)
 }
 
 // places a temporary message on the screen in text mode
-static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt)
+static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt)
 {
     int savescrn[80];
 
@@ -148,7 +148,7 @@ static void message(int secs, char const *buf)
 {
     if (driver_is_text())
     {
-        showtempmsg_txt(0, 0, 7, secs, buf);
+        show_temp_msg_txt(0, 0, 7, secs, buf);
     }
     else if (!show_temp_msg(buf))
     {
@@ -241,7 +241,7 @@ start:
             || s_repeats >= 256
             || std::feof(s_slide_show_file))
         {
-            slideshowerr("error in * argument");
+            slide_show_err("error in * argument");
             s_repeats = 0;
             s_last1 = s_repeats;
         }
@@ -278,7 +278,7 @@ start:
         int secs;
         if (std::fscanf(s_slide_show_file, "%d", &secs) != 1)
         {
-            slideshowerr("MESSAGE needs argument");
+            slide_show_err("MESSAGE needs argument");
         }
         else
         {
@@ -299,7 +299,7 @@ start:
     {
         if (std::fscanf(s_slide_show_file, "%s", buffer) != 1)
         {
-            slideshowerr("GOTO needs target");
+            slide_show_err("GOTO needs target");
             out = 0;
         }
         else
@@ -315,7 +315,7 @@ start:
             while (count == 1 && std::strcmp(line, buffer) != 0);
             if (std::feof(s_slide_show_file))
             {
-                slideshowerr("GOTO target not found");
+                slide_show_err("GOTO target not found");
                 return 0;
             }
             goto start;
@@ -338,7 +338,7 @@ start:
         }
         else
         {
-            slideshowerr("WAIT needs argument");
+            slide_show_err("WAIT needs argument");
         }
         out = 0;
         s_slow_count = 0;
@@ -357,7 +357,7 @@ start:
     {
         std::ostringstream msg;
         msg << "Can't understand " << buffer;
-        slideshowerr(msg.str().c_str());
+        slide_show_err(msg.str().c_str());
         out = 0;
     }
     s_last1 = out;
@@ -467,7 +467,7 @@ static void sleep_secs(int secs)
     g_slides = slides_mode::PLAY;
 }
 
-static void slideshowerr(char const *msg)
+static void slide_show_err(char const *msg)
 {
     char msgbuf[300] = { "Slideshow error:\n" };
     stop_slide_show();
