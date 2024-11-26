@@ -4,4 +4,4 @@
 
 #include "cmplx.h"
 
-void HComplexTrig0(DHyperComplex *, DHyperComplex *);
+void hcmplx_trig0(DHyperComplex *, DHyperComplex *);

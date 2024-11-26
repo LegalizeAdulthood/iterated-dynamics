@@ -77,7 +77,7 @@ void HComplexMinus(DHyperComplex *arg1, DHyperComplex *out)
 }
 
 // extends the unary function f to *h1
-void HComplexTrig0(DHyperComplex *h, DHyperComplex *out)
+void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out)
 {
     /* This is the whole beauty of Hypercomplex numbers - *ANY* unary
        complex valued function of a complex variable can easily

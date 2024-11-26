@@ -20,7 +20,7 @@ int hyper_complex_fp_fractal()
     hold.z = g_float_param->x;
     hold.t = g_float_param->y;
 
-    HComplexTrig0(&hold, &hnew);
+    hcmplx_trig0(&hold, &hnew);
 
     hnew.x += g_quaternion_c;
     hnew.y += g_quaternion_ci;
