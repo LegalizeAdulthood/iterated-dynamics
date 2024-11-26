@@ -788,21 +788,21 @@ int init_pan_or_recalc(bool do_zoom_out)
     int j = g_logical_screen_y_dots-1;
     if (row < 0)
     {
-        listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, 0, 0-row-1, 0, 0, 0);
+        listfull |= add_work_list(0, g_logical_screen_x_dots-1, 0, 0, 0-row-1, 0, 0, 0);
         i = -row;
     }
     if (row > 0)
     {
-        listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, g_logical_screen_y_dots-row, g_logical_screen_y_dots-1, g_logical_screen_y_dots-row, 0, 0);
+        listfull |= add_work_list(0, g_logical_screen_x_dots-1, 0, g_logical_screen_y_dots-row, g_logical_screen_y_dots-1, g_logical_screen_y_dots-row, 0, 0);
         j = g_logical_screen_y_dots - row - 1;
     }
     if (col < 0)
     {
-        listfull |= add_worklist(0, 0-col-1, 0, i, j, i, 0, 0);
+        listfull |= add_work_list(0, 0-col-1, 0, i, j, i, 0, 0);
     }
     if (col > 0)
     {
-        listfull |= add_worklist(g_logical_screen_x_dots-col, g_logical_screen_x_dots-1, g_logical_screen_x_dots-col, i, j, i, 0, 0);
+        listfull |= add_work_list(g_logical_screen_x_dots-col, g_logical_screen_x_dots-1, g_logical_screen_x_dots-col, i, j, i, 0, 0);
     }
     if (listfull != 0)
     {
@@ -1003,7 +1003,7 @@ static void fix_work_list()
             wk->xxbegin = wk->xxstop;
         }
     }
-    tidy_worklist(); // combine where possible, re-sort
+    tidy_work_list(); // combine where possible, re-sort
 }
 
 void clear_zoom_box()

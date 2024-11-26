@@ -39,7 +39,7 @@ int sticky_orbits()
             {
                 if (plot_orbits2d_float() == -1)
                 {
-                    add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
+                    add_work_list(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                     return -1; // interrupted
                 }
                 ++g_col;
@@ -91,7 +91,7 @@ int sticky_orbits()
                 {
                     if (plot_orbits2d_float() == -1)
                     {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
+                        add_work_list(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_col++;
@@ -112,7 +112,7 @@ int sticky_orbits()
                 {
                     if (plot_orbits2d_float() == -1)
                     {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
+                        add_work_list(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_col++;
@@ -151,7 +151,7 @@ int sticky_orbits()
                 {
                     if (plot_orbits2d_float() == -1)
                     {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
+                        add_work_list(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_row++;
@@ -172,7 +172,7 @@ int sticky_orbits()
                 {
                     if (plot_orbits2d_float() == -1)
                     {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
+                        add_work_list(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_row++;
@@ -220,7 +220,7 @@ int sticky_orbits()
             g_row = (int)(yfactor + (Yctr + Xmagfactor * std::sin(theta)));
             if (plot_orbits2d_float() == -1)
             {
-                add_worklist(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
+                add_work_list(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
                 return -1; // interrupted
             }
             angle++;

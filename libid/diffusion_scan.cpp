@@ -74,7 +74,7 @@ int diffusion_scan()
 
     if (diffusion_engine() == -1)
     {
-        add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
+        add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
                      (int)(g_diffusion_counter >> 16),            // high,
                      (int)(g_diffusion_counter & 0xffff),         // low order words
                      g_work_symmetry);

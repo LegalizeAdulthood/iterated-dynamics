@@ -7,7 +7,7 @@ WorkList g_work_list[MAX_CALC_WORK]{};
 
 static int    combine_worklist();
 
-int add_worklist(int xfrom, int xto, int xbegin,
+int add_work_list(int xfrom, int xto, int xbegin,
                  int yfrom, int yto, int ybegin,
                  int pass, int sym)
 {
@@ -24,7 +24,7 @@ int add_worklist(int xfrom, int xto, int xbegin,
     g_work_list[g_num_work_list].pass    = pass;
     g_work_list[g_num_work_list].sym     = sym;
     ++g_num_work_list;
-    tidy_worklist();
+    tidy_work_list();
     return 0;
 }
 
@@ -81,7 +81,7 @@ static int combine_worklist() // look for 2 entries which can freely merge
 }
 
 // combine mergeable entries, resort
-void tidy_worklist()
+void tidy_work_list()
 {
     {
         int i;

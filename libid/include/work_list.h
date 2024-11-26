@@ -19,7 +19,7 @@ struct WorkList     // work list entry for std escape time engines
 extern int                   g_num_work_list;
 extern WorkList              g_work_list[MAX_CALC_WORK];
 
-int add_worklist(int xfrom, int xto, int xbegin,
+int add_work_list(int xfrom, int xto, int xbegin,
                  int yfrom, int yto, int ybegin,
                  int pass, int sym);
-void tidy_worklist();
+void tidy_work_list();

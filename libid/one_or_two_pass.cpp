@@ -24,12 +24,12 @@ int one_or_two_pass()
     {
         if (standard_calc(1) == -1)
         {
-            add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
+            add_work_list(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
             return -1;
         }
         if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
         {
-            add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_symmetry);
+            add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_symmetry);
             return 0;
         }
         g_work_pass = 1;
@@ -44,7 +44,7 @@ int one_or_two_pass()
         {
             i -= g_row - g_i_y_start;
         }
-        add_worklist(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, g_work_pass, g_work_symmetry);
+        add_work_list(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, g_work_pass, g_work_symmetry);
         return -1;
     }
 
