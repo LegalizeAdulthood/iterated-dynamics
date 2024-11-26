@@ -274,9 +274,9 @@ extern init_orbit_mode       g_use_init_orbit;
 extern int                   g_user_biomorph_value;
 extern std::string           g_working_dir;
 
-int cmdfiles(int argc, char const *const *argv);
+int cmd_files(int argc, char const *const *argv);
 cmdarg_flags load_commands(std::FILE *);
 void set_3d_defaults();
 int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode);
-cmdarg_flags cmdarg(char *curarg, cmd_file mode);
-int getpower10(LDBL x);
+cmdarg_flags cmd_arg(char *curarg, cmd_file mode);
+int get_power10(LDBL x);

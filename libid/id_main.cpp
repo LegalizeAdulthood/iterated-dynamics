@@ -197,7 +197,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     driver_set_for_text();                          // switch to text mode
     g_save_dac = 0;                                 // don't save the VGA DAC
 
-    cmdfiles(argc, argv);         // process the command-line
+    cmd_files(argc, argv);         // process the command-line
     dopause(0);                  // pause for error msg if not batch
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 

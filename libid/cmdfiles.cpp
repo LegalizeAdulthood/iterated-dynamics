@@ -241,7 +241,7 @@ static bool s_init_functions{}; // trig functions set via function=?
 // getpower10(x) returns the magnitude of x.  This rounds
 // a little so 9.95 rounds to 10, but we're using a binary base anyway,
 // so there's nothing magic about changing to the next power of 10.
-int getpower10(LDBL x)
+int get_power10(LDBL x)
 {
     char string[11]; // space for "+x.xe-xxxx"
     int p;
@@ -298,7 +298,7 @@ static void process_simple_command(char *curarg)
     }
     if (!processed)
     {
-        cmdarg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
+        cmd_arg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
     }
 }
 
@@ -328,7 +328,7 @@ static void process_file(char *curarg)
     cmdfile(initfile, cmd_file::AT_CMD_LINE);
 }
 
-int cmdfiles(int argc, char const *const *argv)
+int cmd_files(int argc, char const *const *argv)
 {
     if (g_first_init)
     {
@@ -640,7 +640,7 @@ static cmdarg_flags cmdfile(std::FILE *handle, cmd_file mode)
         {
             break;
         }
-        const cmdarg_flags i = cmdarg(cmdbuf, mode);
+        const cmdarg_flags i = cmd_arg(cmdbuf, mode);
         if (i == cmdarg_flags::ERROR)
         {
             break;
@@ -1452,7 +1452,7 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
         return cmd.bad_arg(); // ie: Magnification is +-1.#INF
     }
 
-    const int dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
+    const int dec = get_power10(Magnification) + 4; // 4 digits of padding sounds good
 
     if ((dec <= DBL_DIG + 1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) ||
         g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
@@ -3908,7 +3908,7 @@ std::optional<cmdarg_flags> handle_command(const std::array<CommandHandler, N> &
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
+cmdarg_flags cmd_arg(char *curarg, cmd_file mode) // process a single argument
 {
     Command cmd{curarg, mode};
     if (cmd.status != cmdarg_flags::NONE)

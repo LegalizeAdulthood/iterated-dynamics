@@ -63,7 +63,7 @@ void TestParameterCommand::exec_cmd_arg(const std::string &curarg, cmd_file mode
 {
     m_buffer.resize(curarg.size() + 1);
     std::strcpy(m_buffer.data(), curarg.c_str());
-    m_result = cmdarg(m_buffer.data(), mode);
+    m_result = cmd_arg(m_buffer.data(), mode);
 }
 
 class TestParameterCommandError : public TestParameterCommand

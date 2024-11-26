@@ -41,7 +41,7 @@ int getprecbf_mag()
         return -1;
     }
 
-    dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
+    dec = get_power10(Magnification) + 4; // 4 digits of padding sounds good
     return dec;
 }
 
