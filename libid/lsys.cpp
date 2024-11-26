@@ -33,7 +33,7 @@ namespace
 
 struct lsys_cmd
 {
-    void (*f)(lsys_turtlestatei *);
+    void (*f)(LSysTurtleStateI *);
     long n;
     char ch;
 };
@@ -47,25 +47,25 @@ static bool save_axiom(char const *axiom);
 static bool save_rule(char const *rule, int index);
 static bool append_rule(char const *rule, int index);
 static void free_lcmds();
-static lsys_cmd *findsize(lsys_cmd *, lsys_turtlestatei *, lsys_cmd **, int);
-static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
-static bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth);
-static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts);
-static lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts);
+static lsys_cmd *findsize(lsys_cmd *, LSysTurtleStateI *, lsys_cmd **, int);
+static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth);
+static bool lsysi_findscale(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth);
+static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts);
+static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts);
 static void lsysi_dosincos();
-static void lsysi_doslash(lsys_turtlestatei *cmd);
-static void lsysi_dobslash(lsys_turtlestatei *cmd);
-static void lsysi_doat(lsys_turtlestatei *cmd);
-static void lsysi_dopipe(lsys_turtlestatei *cmd);
-static void lsysi_dosizedm(lsys_turtlestatei *cmd);
-static void lsysi_dosizegf(lsys_turtlestatei *cmd);
-static void lsysi_dodrawd(lsys_turtlestatei *cmd);
-static void lsysi_dodrawm(lsys_turtlestatei *cmd);
-static void lsysi_dodrawg(lsys_turtlestatei *cmd);
-static void lsysi_dodrawf(lsys_turtlestatei *cmd);
-static void lsysi_dodrawc(lsys_turtlestatei *cmd);
-static void lsysi_dodrawgt(lsys_turtlestatei *cmd);
-static void lsysi_dodrawlt(lsys_turtlestatei *cmd);
+static void lsysi_doslash(LSysTurtleStateI *cmd);
+static void lsysi_dobslash(LSysTurtleStateI *cmd);
+static void lsysi_doat(LSysTurtleStateI *cmd);
+static void lsysi_dopipe(LSysTurtleStateI *cmd);
+static void lsysi_dosizedm(LSysTurtleStateI *cmd);
+static void lsysi_dosizegf(LSysTurtleStateI *cmd);
+static void lsysi_dodrawd(LSysTurtleStateI *cmd);
+static void lsysi_dodrawm(LSysTurtleStateI *cmd);
+static void lsysi_dodrawg(LSysTurtleStateI *cmd);
+static void lsysi_dodrawf(LSysTurtleStateI *cmd);
+static void lsysi_dodrawc(LSysTurtleStateI *cmd);
+static void lsysi_dodrawgt(LSysTurtleStateI *cmd);
+static void lsysi_dodrawlt(LSysTurtleStateI *cmd);
 
 static std::vector<long> s_sin_table;
 static std::vector<long> r_cos_table;
@@ -73,7 +73,7 @@ constexpr long PI_DIV_180_L{11930465L};
 static std::string s_axiom;
 static std::vector<std::string> s_rules;
 static std::vector<lsys_cmd *> s_rule_cmds;
-static std::vector<lsysf_cmd *> s_rulef_cmds;
+static std::vector<LSysFCmd *> s_rulef_cmds;
 static bool s_loaded{};
 
 char g_max_angle{};
@@ -290,7 +290,7 @@ int Lsystem()
     }
     else
     {
-        lsys_turtlestatei ts;
+        LSysTurtleStateI ts;
 
         ts.stackoflow = false;
         ts.maxangle = g_max_angle;
@@ -335,7 +335,7 @@ int Lsystem()
     }
     else if (g_overflow)
     {
-        lsys_turtlestatef ts;
+        LSysTurtleStateF ts;
 
         g_overflow = false;
 
@@ -481,7 +481,7 @@ static void free_lcmds()
 
 // integer specific routines
 
-static void lsysi_doplus(lsys_turtlestatei *cmd)
+static void lsysi_doplus(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -504,7 +504,7 @@ static void lsysi_doplus(lsys_turtlestatei *cmd)
 }
 
 // This is the same as lsys_doplus, except maxangle is a power of 2.
-void lsysi_doplus_pow2(lsys_turtlestatei *cmd)
+void lsysi_doplus_pow2(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -518,7 +518,7 @@ void lsysi_doplus_pow2(lsys_turtlestatei *cmd)
     }
 }
 
-void lsysi_dominus(lsys_turtlestatei *cmd)
+void lsysi_dominus(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -540,7 +540,7 @@ void lsysi_dominus(lsys_turtlestatei *cmd)
     }
 }
 
-void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
+void lsysi_dominus_pow2(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -554,7 +554,7 @@ void lsysi_dominus_pow2(lsys_turtlestatei *cmd)
     }
 }
 
-static void lsysi_doslash(lsys_turtlestatei *cmd)
+static void lsysi_doslash(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -566,7 +566,7 @@ static void lsysi_doslash(lsys_turtlestatei *cmd)
     }
 }
 
-static void lsysi_dobslash(lsys_turtlestatei *cmd)
+static void lsysi_dobslash(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -578,29 +578,29 @@ static void lsysi_dobslash(lsys_turtlestatei *cmd)
     }
 }
 
-static void lsysi_doat(lsys_turtlestatei *cmd)
+static void lsysi_doat(LSysTurtleStateI *cmd)
 {
     cmd->size = multiply(cmd->size, cmd->num, 19);
 }
 
-static void lsysi_dopipe(lsys_turtlestatei *cmd)
+static void lsysi_dopipe(LSysTurtleStateI *cmd)
 {
     cmd->angle = (char)(cmd->angle + (char)(cmd->maxangle / 2));
     cmd->angle %= cmd->maxangle;
 }
 
-static void lsysi_dopipe_pow2(lsys_turtlestatei *cmd)
+static void lsysi_dopipe_pow2(LSysTurtleStateI *cmd)
 {
     cmd->angle += cmd->maxangle >> 1;
     cmd->angle &= cmd->dmaxangle;
 }
 
-static void lsysi_dobang(lsys_turtlestatei *cmd)
+static void lsysi_dobang(LSysTurtleStateI *cmd)
 {
     cmd->reverse = ! cmd->reverse;
 }
 
-static void lsysi_dosizedm(lsys_turtlestatei *cmd)
+static void lsysi_dosizedm(LSysTurtleStateI *cmd)
 {
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
     double s;
@@ -635,7 +635,7 @@ static void lsysi_dosizedm(lsys_turtlestatei *cmd)
     }
 }
 
-static void lsysi_dosizegf(lsys_turtlestatei *cmd)
+static void lsysi_dosizegf(LSysTurtleStateI *cmd)
 {
     cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
     cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
@@ -659,7 +659,7 @@ static void lsysi_dosizegf(lsys_turtlestatei *cmd)
     }
 }
 
-static void lsysi_dodrawd(lsys_turtlestatei *cmd)
+static void lsysi_dodrawd(LSysTurtleStateI *cmd)
 {
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
     double s;
@@ -682,7 +682,7 @@ static void lsysi_dodrawd(lsys_turtlestatei *cmd)
     driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
-static void lsysi_dodrawm(lsys_turtlestatei *cmd)
+static void lsysi_dodrawm(LSysTurtleStateI *cmd)
 {
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
     double s;
@@ -700,7 +700,7 @@ static void lsysi_dodrawm(lsys_turtlestatei *cmd)
     cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
 
-static void lsysi_dodrawg(lsys_turtlestatei *cmd)
+static void lsysi_dodrawg(LSysTurtleStateI *cmd)
 {
     cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
     cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
@@ -708,7 +708,7 @@ static void lsysi_dodrawg(lsys_turtlestatei *cmd)
     // ypos+=size*sins[angle];
 }
 
-static void lsysi_dodrawf(lsys_turtlestatei *cmd)
+static void lsysi_dodrawf(LSysTurtleStateI *cmd)
 {
     int lastx = (int)(cmd->xpos >> 19);
     int lasty = (int)(cmd->ypos >> 19);
@@ -719,12 +719,12 @@ static void lsysi_dodrawf(lsys_turtlestatei *cmd)
     driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
-static void lsysi_dodrawc(lsys_turtlestatei *cmd)
+static void lsysi_dodrawc(LSysTurtleStateI *cmd)
 {
     cmd->curcolor = (char)(((int) cmd->num) % g_colors);
 }
 
-static void lsysi_dodrawgt(lsys_turtlestatei *cmd)
+static void lsysi_dodrawgt(LSysTurtleStateI *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
     cmd->curcolor %= g_colors;
@@ -734,7 +734,7 @@ static void lsysi_dodrawgt(lsys_turtlestatei *cmd)
     }
 }
 
-static void lsysi_dodrawlt(lsys_turtlestatei *cmd)
+static void lsysi_dodrawlt(LSysTurtleStateI *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
     cmd->curcolor %= g_colors;
@@ -744,7 +744,7 @@ static void lsysi_dodrawlt(lsys_turtlestatei *cmd)
     }
 }
 
-static lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
+static lsys_cmd *findsize(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth)
 {
     if (g_overflow)       // integer math routines overflowed
     {
@@ -817,7 +817,7 @@ static lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **r
     return command;
 }
 
-static bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
+static bool lsysi_findscale(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth)
 {
     float horiz;
     float vert;
@@ -893,7 +893,7 @@ static bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd *
     return true;
 }
 
-static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
+static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **rules, int depth)
 {
     bool tran;
 
@@ -969,7 +969,7 @@ static lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **
     return command;
 }
 
-static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
+static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
 {
     int maxval = 10;
     int n = 0;
@@ -986,7 +986,7 @@ static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     }
     while (*s)
     {
-        void (*f)(lsys_turtlestatei *) = nullptr;
+        void (*f)(LSysTurtleStateI *) = nullptr;
         long num = 0;
         ret[n].ch = *s;
         switch (*s)
@@ -1068,7 +1068,7 @@ static lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
     return doub;
 }
 
-static lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
+static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
 {
     int maxval = 10;
     int n = 0;
@@ -1085,7 +1085,7 @@ static lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
     }
     while (*s)
     {
-        void (*f)(lsys_turtlestatei *) = nullptr;
+        void (*f)(LSysTurtleStateI *) = nullptr;
         long num = 0;
         ret[n].ch = *s;
         switch (*s)

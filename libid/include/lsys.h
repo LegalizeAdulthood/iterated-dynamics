@@ -23,7 +23,7 @@
 #define MAXRULES 27 // this limits rules to 25
 #define MAX_LSYS_LINE_LEN 255 // this limits line length to 255
 
-struct lsys_turtlestatei
+struct LSysTurtleStateI
 {
     char counter, angle, reverse;
     bool stackoflow;
@@ -37,7 +37,7 @@ struct lsys_turtlestatei
     long num;
 };
 
-struct lsys_turtlestatef
+struct LSysTurtleStateF
 {
     char counter, angle, reverse;
     bool stackoflow;
@@ -57,9 +57,9 @@ struct lsys_turtlestatef
 
 extern char g_max_angle;
 
-struct lsysf_cmd;
-lsysf_cmd *drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth);
-bool lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth);
-lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts);
-lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts);
+struct LSysFCmd;
+LSysFCmd *drawLSysF(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
+bool lsysf_findscale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
+LSysFCmd *LSysFSizeTransform(char const *s, LSysTurtleStateF *ts);
+LSysFCmd *LSysFDrawTransform(char const *s, LSysTurtleStateF *ts);
 void lsysf_dosincos();
