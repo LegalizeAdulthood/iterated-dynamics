@@ -149,7 +149,7 @@ long g_start_stack{};
 long g_max_stack{};
 int g_bf_save_len{};
 
-static void init_bf_2()
+static void init_bf2()
 {
     long ptr;
     save_bf_vars(); // copy corners values for conversion
@@ -482,7 +482,7 @@ void init_bf_dec(int dec)
     }
     // conservative estimate
     g_bn_length = g_int_length + (int)(g_decimals/LOG10_256) + 1; // round up
-    init_bf_2();
+    init_bf2();
 }
 
 /************************************************************************/
@@ -518,7 +518,7 @@ void init_bf_length(int bnl)
     }
     // conservative estimate
     g_decimals = (int)((g_bn_length-g_int_length)*LOG10_256);
-    init_bf_2();
+    init_bf2();
 }
 
 void init_big_pi()
