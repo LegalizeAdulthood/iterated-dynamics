@@ -343,25 +343,25 @@ int Lsystem()
         ts.maxangle = g_max_angle;
         ts.dmaxangle = (char)(g_max_angle - 1);
 
-        s_rulef_cmds.push_back(LSysFSizeTransform(s_axiom.c_str(), &ts));
+        s_rulef_cmds.push_back(lsysf_size_transform(s_axiom.c_str(), &ts));
         for (auto const &rule : s_rules)
         {
-            s_rulef_cmds.push_back(LSysFSizeTransform(rule.c_str(), &ts));
+            s_rulef_cmds.push_back(lsysf_size_transform(rule.c_str(), &ts));
         }
         s_rulef_cmds.push_back(nullptr);
 
-        lsysf_dosincos();
-        if (lsysf_findscale(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order))
+        lsysf_do_sin_cos();
+        if (lsysf_find_scale(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order))
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
             ts.realangle = ts.angle;
 
             free_lcmds();
-            s_rulef_cmds.push_back(LSysFDrawTransform(s_axiom.c_str(), &ts));
+            s_rulef_cmds.push_back(lsysf_draw_transform(s_axiom.c_str(), &ts));
             for (auto const &rule : s_rules)
             {
-                s_rulef_cmds.push_back(LSysFDrawTransform(rule.c_str(), &ts));
+                s_rulef_cmds.push_back(lsysf_draw_transform(rule.c_str(), &ts));
             }
             s_rulef_cmds.push_back(nullptr);
 
@@ -371,7 +371,7 @@ int Lsystem()
             {
                 ts.curcolor = (char)(g_colors-1);
             }
-            drawLSysF(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order);
+            draw_lsysf(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order);
         }
         g_overflow = false;
     }

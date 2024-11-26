@@ -372,7 +372,7 @@ findsize(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
 }
 
 bool
-lsysf_findscale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
+lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
 {
     ts->aspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     ts->ymin = 0;
@@ -438,7 +438,7 @@ lsysf_findscale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int d
 }
 
 LSysFCmd *
-drawLSysF(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
+draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
 {
     bool tran;
 
@@ -472,7 +472,7 @@ drawLSysF(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
                 if ((*rulind)->ch == command->ch)
                 {
                     tran = true;
-                    if (drawLSysF((*rulind)+1, ts, rules, depth-1) == nullptr)
+                    if (draw_lsysf((*rulind)+1, ts, rules, depth-1) == nullptr)
                     {
                         return nullptr;
                     }
@@ -505,7 +505,7 @@ drawLSysF(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
                 LDBL const savex = ts->xpos;
                 LDBL const savey = ts->ypos;
                 char const savecolor = ts->curcolor;
-                command = drawLSysF(command+1, ts, rules, depth);
+                command = draw_lsysf(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
                     return nullptr;
@@ -524,7 +524,7 @@ drawLSysF(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
     return command;
 }
 
-LSysFCmd *LSysFSizeTransform(char const *s, LSysTurtleStateF *ts)
+LSysFCmd *lsysf_size_transform(char const *s, LSysTurtleStateF *ts)
 {
     int max = 10;
     int n = 0;
@@ -631,7 +631,7 @@ LSysFCmd *LSysFSizeTransform(char const *s, LSysTurtleStateF *ts)
     return doub;
 }
 
-LSysFCmd *LSysFDrawTransform(char const *s, LSysTurtleStateF *ts)
+LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
 {
     int max = 10;
     int n = 0;
@@ -754,7 +754,7 @@ LSysFCmd *LSysFDrawTransform(char const *s, LSysTurtleStateF *ts)
     return doub;
 }
 
-void lsysf_dosincos()
+void lsysf_do_sin_cos()
 {
     LDBL locaspect;
     LDBL TWOPI = 2.0 * PI;

@@ -58,8 +58,8 @@ struct LSysTurtleStateF
 extern char g_max_angle;
 
 struct LSysFCmd;
-LSysFCmd *drawLSysF(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
-bool lsysf_findscale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
-LSysFCmd *LSysFSizeTransform(char const *s, LSysTurtleStateF *ts);
-LSysFCmd *LSysFDrawTransform(char const *s, LSysTurtleStateF *ts);
-void lsysf_dosincos();
+LSysFCmd *draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
+bool lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
+LSysFCmd *lsysf_size_transform(char const *s, LSysTurtleStateF *ts);
+LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts);
+void lsysf_do_sin_cos();
