@@ -88,35 +88,41 @@ struct LAffine
     long f;
 };
 
-struct ViewTransform3DLong // data used by 3d view transform subroutine
+// data used by 3d view transform subroutine
+struct ViewTransform3DLong
 {
-    long orbit[3];       // iterated function orbit value
-    long iview[3];       // perspective viewer's coordinates
-    long viewvect[3];    // orbit transformed for viewing
-    long viewvect1[3];   // orbit transformed for viewing
-    long maxvals[3];
-    long minvals[3];
-    MATRIX doublemat;    // transformation matrix
-    MATRIX doublemat1;   // transformation matrix
-    long longmat[4][4];  // long version of matrix
-    long longmat1[4][4]; // long version of matrix
-    int row, col;         // results
-    int row1, col1;
-    LAffine cvt;
+    long orbit[3];        // iterated function orbit value
+    long iview[3];        // perspective viewer's coordinates
+    long view_vect[3];    // orbit transformed for viewing
+    long view_vect1[3];   // orbit transformed for viewing
+    long max_vals[3];     //
+    long min_vals[3];     //
+    MATRIX double_mat;    // transformation matrix
+    MATRIX double_mat1;   // transformation matrix
+    long long_mat[4][4];  // long version of matrix
+    long long_mat1[4][4]; // long version of matrix
+    int row;              //
+    int col;              // results
+    int row1;             //
+    int col1;             //
+    LAffine cvt;          //
 };
 
-struct ViewTransform3DFloat // data used by 3d view transform subroutine
+// data used by 3d view transform subroutine
+struct ViewTransform3DFloat
 {
-    double orbit[3];                // interated function orbit value
-    double viewvect[3];        // orbit transformed for viewing
-    double viewvect1[3];        // orbit transformed for viewing
-    double maxvals[3];
-    double minvals[3];
-    MATRIX doublemat;    // transformation matrix
-    MATRIX doublemat1;   // transformation matrix
-    int row, col;         // results
-    int row1, col1;
-    Affine cvt;
+    double orbit[3];      // iterated function orbit value
+    double view_vect[3];  // orbit transformed for viewing
+    double view_vect1[3]; // orbit transformed for viewing
+    double max_vals[3];   //
+    double min_vals[3];   //
+    MATRIX double_mat;    // transformation matrix
+    MATRIX double_mat1;   // transformation matrix
+    int row;              //
+    int col;              // results
+    int row1;             //
+    int col1;             //
+    Affine cvt;           //
 };
 
 } // namespace
@@ -1821,7 +1827,7 @@ static int orbit3dlongcalc()
                 if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
                     double yy;
-                    yy = inf.viewvect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
+                    yy = inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
                     yy = yy/g_fudge_factor;
                     write_sound((int)(yy*100+g_base_hertz));
                 }
@@ -1945,7 +1951,7 @@ static int orbit3dfloatcalc()
                 }
                 if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
-                    write_sound((int)(inf.viewvect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+g_base_hertz));
+                    write_sound((int)(inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+g_base_hertz));
                 }
                 if (oldcol != -1 && s_connect)
                 {
@@ -2913,33 +2919,33 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
     {
         for (int i = 0; i < 3; i++)
         {
-            inf->minvals[i] =  1L << 30;
-            inf->maxvals[i] = -inf->minvals[i];
+            inf->min_vals[i] =  1L << 30;
+            inf->max_vals[i] = -inf->min_vals[i];
         }
-        setupmatrix(inf->doublemat);
+        setupmatrix(inf->double_mat);
         if (s_real_time)
         {
-            setupmatrix(inf->doublemat1);
+            setupmatrix(inf->double_mat1);
         }
         // copy xform matrix to long for for fixed point math
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
-                inf->longmat[i][j] = (long)(inf->doublemat[i][j] * g_fudge_factor);
+                inf->long_mat[i][j] = (long)(inf->double_mat[i][j] * g_fudge_factor);
                 if (s_real_time)
                 {
-                    inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * g_fudge_factor);
+                    inf->long_mat1[i][j] = (long)(inf->double_mat1[i][j] * g_fudge_factor);
                 }
             }
         }
     }
 
     // 3D VIEWING TRANSFORM
-    long_vec_mat_mul(inf->orbit, inf->longmat, inf->viewvect, g_bit_shift);
+    long_vec_mat_mul(inf->orbit, inf->long_mat, inf->view_vect, g_bit_shift);
     if (s_real_time)
     {
-        long_vec_mat_mul(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
+        long_vec_mat_mul(inf->orbit, inf->long_mat1, inf->view_vect1, g_bit_shift);
     }
 
     if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
@@ -2947,14 +2953,14 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
         // find minz and maxz
         for (int i = 0; i < 3; i++)
         {
-            long const tmp = inf->viewvect[i];
-            if (tmp < inf->minvals[i])
+            long const tmp = inf->view_vect[i];
+            if (tmp < inf->min_vals[i])
             {
-                inf->minvals[i] = tmp;
+                inf->min_vals[i] = tmp;
             }
-            else if (tmp > inf->maxvals[i])
+            else if (tmp > inf->max_vals[i])
             {
-                inf->maxvals[i] = tmp;
+                inf->max_vals[i] = tmp;
             }
         }
 
@@ -2965,28 +2971,28 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
 
             /* z value of user's eye - should be more negative than extreme
                            negative part of image */
-            inf->iview[2] = (long)((inf->minvals[2]-inf->maxvals[2])*(double)g_viewer_z/100.0);
+            inf->iview[2] = (long)((inf->min_vals[2]-inf->max_vals[2])*(double)g_viewer_z/100.0);
 
             // center image on origin
-            double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
-            double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
+            double tmpx = (-inf->min_vals[0]-inf->max_vals[0])/(2.0*g_fudge_factor); // center x
+            double tmpy = (-inf->min_vals[1]-inf->max_vals[1])/(2.0*g_fudge_factor); // center y
 
             // apply perspective shift
             tmpx += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
             tmpy += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-            double tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
-            trans(tmpx, tmpy, tmpz, inf->doublemat);
+            double tmpz = -((double)inf->max_vals[2]) / g_fudge_factor;
+            trans(tmpx, tmpy, tmpz, inf->double_mat);
 
             if (s_real_time)
             {
                 // center image on origin
-                tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
-                tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
+                tmpx = (-inf->min_vals[0]-inf->max_vals[0])/(2.0*g_fudge_factor); // center x
+                tmpy = (-inf->min_vals[1]-inf->max_vals[1])/(2.0*g_fudge_factor); // center y
 
                 tmpx += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
                 tmpy += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-                tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
-                trans(tmpx, tmpy, tmpz, inf->doublemat1);
+                tmpz = -((double)inf->max_vals[2]) / g_fudge_factor;
+                trans(tmpx, tmpy, tmpz, inf->double_mat1);
             }
             for (int i = 0; i < 3; i++)
             {
@@ -2998,10 +3004,10 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    inf->longmat[i][j] = (long)(inf->doublemat[i][j] * g_fudge_factor);
+                    inf->long_mat[i][j] = (long)(inf->double_mat[i][j] * g_fudge_factor);
                     if (s_real_time)
                     {
-                        inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * g_fudge_factor);
+                        inf->long_mat1[i][j] = (long)(inf->double_mat1[i][j] * g_fudge_factor);
                     }
                 }
             }
@@ -3018,43 +3024,43 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
             VECTOR tmpv;
             for (int i = 0; i < 3; i++)
             {
-                tmpv[i] = (double)inf->viewvect[i] / g_fudge_factor;
+                tmpv[i] = (double)inf->view_vect[i] / g_fudge_factor;
             }
             perspective(tmpv);
             for (int i = 0; i < 3; i++)
             {
-                inf->viewvect[i] = (long)(tmpv[i]*g_fudge_factor);
+                inf->view_vect[i] = (long)(tmpv[i]*g_fudge_factor);
             }
             if (s_real_time)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    tmpv[i] = (double)inf->viewvect1[i] / g_fudge_factor;
+                    tmpv[i] = (double)inf->view_vect1[i] / g_fudge_factor;
                 }
                 perspective(tmpv);
                 for (int i = 0; i < 3; i++)
                 {
-                    inf->viewvect1[i] = (long)(tmpv[i]*g_fudge_factor);
+                    inf->view_vect1[i] = (long)(tmpv[i]*g_fudge_factor);
                 }
             }
         }
         else
         {
-            long_persp(inf->viewvect, inf->iview, g_bit_shift);
+            long_persp(inf->view_vect, inf->iview, g_bit_shift);
             if (s_real_time)
             {
-                long_persp(inf->viewvect1, inf->iview, g_bit_shift);
+                long_persp(inf->view_vect1, inf->iview, g_bit_shift);
             }
         }
     }
 
     // work out the screen positions
-    inf->row = (int)(((multiply(inf->cvt.c, inf->viewvect[0], g_bit_shift) +
-                       multiply(inf->cvt.d, inf->viewvect[1], g_bit_shift) + inf->cvt.f)
+    inf->row = (int)(((multiply(inf->cvt.c, inf->view_vect[0], g_bit_shift) +
+                       multiply(inf->cvt.d, inf->view_vect[1], g_bit_shift) + inf->cvt.f)
                       >> g_bit_shift)
                      + g_yy_adjust);
-    inf->col = (int)(((multiply(inf->cvt.a, inf->viewvect[0], g_bit_shift) +
-                       multiply(inf->cvt.b, inf->viewvect[1], g_bit_shift) + inf->cvt.e)
+    inf->col = (int)(((multiply(inf->cvt.a, inf->view_vect[0], g_bit_shift) +
+                       multiply(inf->cvt.b, inf->view_vect[1], g_bit_shift) + inf->cvt.e)
                       >> g_bit_shift)
                      + g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
@@ -3072,12 +3078,12 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
     }
     if (s_real_time)
     {
-        inf->row1 = (int)(((multiply(inf->cvt.c, inf->viewvect1[0], g_bit_shift) +
-                            multiply(inf->cvt.d, inf->viewvect1[1], g_bit_shift) +
+        inf->row1 = (int)(((multiply(inf->cvt.c, inf->view_vect1[0], g_bit_shift) +
+                            multiply(inf->cvt.d, inf->view_vect1[1], g_bit_shift) +
                             inf->cvt.f) >> g_bit_shift)
                           + g_yy_adjust1);
-        inf->col1 = (int)(((multiply(inf->cvt.a, inf->viewvect1[0], g_bit_shift) +
-                            multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
+        inf->col1 = (int)(((multiply(inf->cvt.a, inf->view_vect1[0], g_bit_shift) +
+                            multiply(inf->cvt.b, inf->view_vect1[1], g_bit_shift) +
                             inf->cvt.e) >> g_bit_shift)
                           + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
@@ -3103,21 +3109,21 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
     {
         for (int i = 0; i < 3; i++)
         {
-            inf->minvals[i] =  100000.0; // impossible value
-            inf->maxvals[i] = -100000.0;
+            inf->min_vals[i] =  100000.0; // impossible value
+            inf->max_vals[i] = -100000.0;
         }
-        setupmatrix(inf->doublemat);
+        setupmatrix(inf->double_mat);
         if (s_real_time)
         {
-            setupmatrix(inf->doublemat1);
+            setupmatrix(inf->double_mat1);
         }
     }
 
     // 3D VIEWING TRANSFORM
-    vec_mat_mul(inf->orbit, inf->doublemat, inf->viewvect);
+    vec_mat_mul(inf->orbit, inf->double_mat, inf->view_vect);
     if (s_real_time)
     {
-        vec_mat_mul(inf->orbit, inf->doublemat1, inf->viewvect1);
+        vec_mat_mul(inf->orbit, inf->double_mat1, inf->view_vect1);
     }
 
     if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
@@ -3125,14 +3131,14 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
         // find minz and maxz
         for (int i = 0; i < 3; i++)
         {
-            double const tmp = inf->viewvect[i];
-            if (tmp < inf->minvals[i])
+            double const tmp = inf->view_vect[i];
+            if (tmp < inf->min_vals[i])
             {
-                inf->minvals[i] = tmp;
+                inf->min_vals[i] = tmp;
             }
-            else if (tmp > inf->maxvals[i])
+            else if (tmp > inf->max_vals[i])
             {
-                inf->maxvals[i] = tmp;
+                inf->max_vals[i] = tmp;
             }
         }
         if (g_color_iter == s_waste) // time to work it out
@@ -3141,28 +3147,28 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
             g_view[1] = 0;
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)g_viewer_z/100.0;
+            g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)g_viewer_z/100.0;
 
             // center image on origin
-            double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x
-            double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
+            double tmpx = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
+            double tmpy = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
 
             // apply perspective shift
             tmpx += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
             tmpy += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-            double tmpz = -(inf->maxvals[2]);
-            trans(tmpx, tmpy, tmpz, inf->doublemat);
+            double tmpz = -(inf->max_vals[2]);
+            trans(tmpx, tmpy, tmpz, inf->double_mat);
 
             if (s_real_time)
             {
                 // center image on origin
-                tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x
-                tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
+                tmpx = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
+                tmpy = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
 
                 tmpx += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
                 tmpy += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-                tmpz = -(inf->maxvals[2]);
-                trans(tmpx, tmpy, tmpz, inf->doublemat1);
+                tmpz = -(inf->max_vals[2]);
+                trans(tmpx, tmpy, tmpz, inf->double_mat1);
             }
         }
         return false;
@@ -3171,15 +3177,15 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
     // apply perspective if requested
     if (g_viewer_z)
     {
-        perspective(inf->viewvect);
+        perspective(inf->view_vect);
         if (s_real_time)
         {
-            perspective(inf->viewvect1);
+            perspective(inf->view_vect1);
         }
     }
-    inf->row = (int)(inf->cvt.c*inf->viewvect[0] + inf->cvt.d*inf->viewvect[1]
+    inf->row = (int)(inf->cvt.c*inf->view_vect[0] + inf->cvt.d*inf->view_vect[1]
                      + inf->cvt.f + g_yy_adjust);
-    inf->col = (int)(inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
+    inf->col = (int)(inf->cvt.a*inf->view_vect[0] + inf->cvt.b*inf->view_vect[1]
                      + inf->cvt.e + g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
     {
@@ -3196,9 +3202,9 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
     }
     if (s_real_time)
     {
-        inf->row1 = (int)(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
+        inf->row1 = (int)(inf->cvt.c*inf->view_vect1[0] + inf->cvt.d*inf->view_vect1[1]
                           + inf->cvt.f + g_yy_adjust1);
-        inf->col1 = (int)(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
+        inf->col1 = (int)(inf->cvt.a*inf->view_vect1[0] + inf->cvt.b*inf->view_vect1[1]
                           + inf->cvt.e + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
