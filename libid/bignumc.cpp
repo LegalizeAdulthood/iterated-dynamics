@@ -992,7 +992,7 @@ bf_t floattobf1(bf_t r, LDBL f)
 {
     char msg[80];
     std::snprintf(msg, std::size(msg), "%-.22Le", f);
-    strtobf(r, msg);
+    str_to_bf(r, msg);
     return r;
 }
 

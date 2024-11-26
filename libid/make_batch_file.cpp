@@ -1814,7 +1814,7 @@ static void put_bf(int slash, bf_t r, int prec)
     {
         *(bptr++) = '/';
     }
-    bftostr(bptr, prec, r);
+    bf_to_str(bptr, prec, r);
     strip_zeros(bptr);
     put_parm(&buf[0]);
 }

@@ -558,13 +558,13 @@ top:
             truncaterow = g_row;
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(s_row, 8, C_GENERAL_MED, "x");
-            bftostr(msg, dec, bfXctr);
+            bf_to_str(msg, dec, bfXctr);
             if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5))
             {
                 truncate = true;
             }
             driver_put_string(++s_row, 8, C_GENERAL_MED, "y");
-            bftostr(msg, dec, bfYctr);
+            bf_to_str(msg, dec, bfYctr);
             if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
             {
                 driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");

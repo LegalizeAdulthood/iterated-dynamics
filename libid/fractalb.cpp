@@ -126,7 +126,7 @@ void showcornersbf(char const *s)
     {
         dec = 20;
     }
-    bftostr(msg, dec, g_bf_x_min);
+    bf_to_str(msg, dec, g_bf_x_min);
     std::snprintf(msg1, std::size(msg1),
         "bf_x_min=%s\n"                                //
         "x_min= %.20f decimals %d g_bf_length %d\n\n", //
@@ -135,19 +135,19 @@ void showcornersbf(char const *s)
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_x_max);
+    bf_to_str(msg, dec, g_bf_x_max);
     std::snprintf(msg1, std::size(msg1), "bf_x_max=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_y_min);
+    bf_to_str(msg, dec, g_bf_y_min);
     std::snprintf(msg1, std::size(msg1), "bf_y_min=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_y_max);
+    bf_to_str(msg, dec, g_bf_y_max);
     std::snprintf(msg1, std::size(msg1), "bf_y_max=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_x_3rd);
+    bf_to_str(msg, dec, g_bf_x_3rd);
     std::snprintf(msg1, std::size(msg1), "bf_x_3rd=%s\nxx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_y_3rd);
+    bf_to_str(msg, dec, g_bf_y_3rd);
     std::snprintf(msg1, std::size(msg1), "bf_y_3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stop_msg(msg3))
@@ -162,24 +162,24 @@ void showcornersbfs(char const *s)
     char msg[100];
     char msg1[200];
     char msg3[500];
-    bftostr(msg, dec, g_bf_save_x_min);
+    bf_to_str(msg, dec, g_bf_save_x_min);
     std::snprintf(msg1, std::size(msg1), "bf_save_x_min=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_save_x_max);
+    bf_to_str(msg, dec, g_bf_save_x_max);
     std::snprintf(msg1, std::size(msg1), "bf_save_x_max=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_save_y_min);
+    bf_to_str(msg, dec, g_bf_save_y_min);
     std::snprintf(msg1, std::size(msg1), "bf_save_y_min=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_save_y_max);
+    bf_to_str(msg, dec, g_bf_save_y_max);
     std::snprintf(msg1, std::size(msg1), "bf_save_y_max=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_save_x_3rd);
+    bf_to_str(msg, dec, g_bf_save_x_3rd);
     std::snprintf(msg1, std::size(msg1), "bf_save_x_3rd=%s\nx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, g_bf_save_y_3rd);
+    bf_to_str(msg, dec, g_bf_save_y_3rd);
     std::snprintf(msg1, std::size(msg1), "bf_save_y_3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stop_msg(msg3))
@@ -193,8 +193,8 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
     char msg1[200];
     char msg2[200];
     char msg3[500];
-    bftostr_e(msg1, digits, t1);
-    bftostr_e(msg2, digits, t2);
+    bf_to_str_e(msg1, digits, t1);
+    bf_to_str_e(msg2, digits, t2);
     std::snprintf(msg3, std::size(msg3), "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
     if (stop_msg(msg3))
     {
@@ -208,9 +208,9 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
     char msg2[200];
     char msg3[200];
     char msg4[700];
-    bftostr_e(msg1, digits, t1);
-    bftostr_e(msg2, digits, t2);
-    bftostr_e(msg3, digits, t3);
+    bf_to_str_e(msg1, digits, t1);
+    bf_to_str_e(msg2, digits, t2);
+    bf_to_str_e(msg3, digits, t3);
     std::snprintf(msg4, std::size(msg4), "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
     if (stop_msg(msg4))
     {
@@ -234,7 +234,7 @@ void showaspect(char const *s)
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
-    bftostr(str, 10, aspect);
+    bf_to_str(str, 10, aspect);
     std::snprintf(msg, std::size(msg), "aspect %s\nfloat %13.10f\nbf    %s\n\n",
             s,
             (g_y_max-g_y_min)/(g_x_max-g_x_min),
@@ -265,7 +265,7 @@ void compare_values_bf(char const *s, LDBL x, bf_t bfx)
     int dec = 40;
     char msg[300];
     char msg1[700];
-    bftostr_e(msg, dec, bfx);
+    bf_to_str_e(msg, dec, bfx);
     std::snprintf(msg1, std::size(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stop_msg(msg1))
     {
@@ -279,7 +279,7 @@ void show_var_bf(char const *s, bf_t n)
     char msg[200];
     std::strcpy(msg, s);
     std::strcat(msg, " ");
-    bftostr_e(msg+std::strlen(s), 40, n);
+    bf_to_str_e(msg+std::strlen(s), 40, n);
     msg[79] = 0;
     if (stop_msg(msg))
     {
@@ -617,12 +617,12 @@ bool mandel_bn_setup()
     bntemp1 = alloc_stack(g_bn_length);
     bntemp2 = alloc_stack(g_bn_length);
 
-    bftobn(g_x_min_bn, g_bf_x_min);
-    bftobn(g_x_max_bn, g_bf_x_max);
-    bftobn(g_y_min_bn, g_bf_y_min);
-    bftobn(g_y_max_bn, g_bf_y_max);
-    bftobn(g_x_3rd_bn, g_bf_x_3rd);
-    bftobn(g_y_3rd_bn, g_bf_y_3rd);
+    bf_to_bn(g_x_min_bn, g_bf_x_min);
+    bf_to_bn(g_x_max_bn, g_bf_x_max);
+    bf_to_bn(g_y_min_bn, g_bf_y_min);
+    bf_to_bn(g_y_max_bn, g_bf_y_max);
+    bf_to_bn(g_x_3rd_bn, g_bf_x_3rd);
+    bf_to_bn(g_y_3rd_bn, g_bf_y_3rd);
 
     g_bf_math = bf_math_type::BIGNUM;
 
@@ -680,8 +680,8 @@ bool mandel_bn_setup()
     switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
-        bftobn(g_param_z_bn.x, g_bf_parms[0]);
-        bftobn(g_param_z_bn.y, g_bf_parms[1]);
+        bf_to_bn(g_param_z_bn.x, g_bf_parms[0]);
+        bf_to_bn(g_param_z_bn.y, g_bf_parms[1]);
         break;
         
     case fractal_type::FPMANDELZPOWER:
@@ -698,8 +698,8 @@ bool mandel_bn_setup()
         
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
-        bftobn(g_param_z_bn.x, g_bf_parms[0]);
-        bftobn(g_param_z_bn.y, g_bf_parms[1]);
+        bf_to_bn(g_param_z_bn.x, g_bf_parms[0]);
+        bf_to_bn(g_param_z_bn.y, g_bf_parms[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
         {
             g_symmetry = symmetry_type::NONE;
@@ -1166,7 +1166,7 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     cmplx_log_bf(t, xx);
     cmplx_mul_bf(&tmp, t, yy);
     exp_bf(e2x, tmp.x);
-    sincos_bf(siny, cosy, tmp.y);
+    sin_cos_bf(siny, cosy, tmp.y);
     mult_bf(t->x, e2x, cosy);
     mult_bf(t->y, e2x, siny);
     restore_stack(saved);

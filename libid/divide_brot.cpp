@@ -137,7 +137,7 @@ int divide_brot5_bf_fractal()
     double_a_bf(bfnumer.y);
 
     /* z^(a) */
-    inttobf(bfc_exp.x, g_c_exponent);
+    int_to_bf(bfc_exp.x, g_c_exponent);
     clear_bf(bfc_exp.y);
     cmplx_pow_bf(&bftmpnew, &g_old_z_bf, &bfc_exp);
     /* then add b */

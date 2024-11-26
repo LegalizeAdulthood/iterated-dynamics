@@ -4007,11 +4007,11 @@ static int get_bf(bf_t bf, char const *curarg)
     if (s)
     {
         std::string buff(curarg, s);
-        strtobf(bf, buff.c_str());
+        str_to_bf(bf, buff.c_str());
     }
     else
     {
-        strtobf(bf, curarg);
+        str_to_bf(bf, curarg);
     }
     return 0;
 }

@@ -18,7 +18,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
 
-void bf_hexdump(bf_t r)
+void bf_hex_dump(bf_t r)
 {
     for (int i = 0; i < g_bf_length; i++)
     {
@@ -36,7 +36,7 @@ void bf_hexdump(bf_t r)
 //         It may use scientific notation.
 // USES: g_bf_tmp1
 
-bf_t strtobf(bf_t r, char const *s)
+bf_t str_to_bf(bf_t r, char const *s)
 {
     BYTE onesbyte;
     bool signflag = false;
@@ -78,7 +78,7 @@ bf_t strtobf(bf_t r, char const *s)
         while (*l >= '0' && *l <= '9') // while a digit
         {
             onesbyte = (BYTE)(*(l--) - '0');
-            inttobf(g_bf_tmp1, onesbyte);
+            int_to_bf(g_bf_tmp1, onesbyte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             div_a_bf_int(r, 10);
         }
@@ -89,7 +89,7 @@ bf_t strtobf(bf_t r, char const *s)
             while (keeplooping) // while a digit
             {
                 onesbyte = (BYTE)(*(l--) - '0');
-                inttobf(g_bf_tmp1, onesbyte);
+                int_to_bf(g_bf_tmp1, onesbyte);
                 unsafe_add_a_bf(r, g_bf_tmp1);
                 keeplooping = *l >= '0' && *l <= '9' && l >= s;
                 if (keeplooping)
@@ -106,7 +106,7 @@ bf_t strtobf(bf_t r, char const *s)
         while (keeplooping) // while a digit
         {
             onesbyte = (BYTE)(*(l--) - '0');
-            inttobf(g_bf_tmp1, onesbyte);
+            int_to_bf(g_bf_tmp1, onesbyte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             keeplooping = *l >= '0' && *l <= '9' && l >= s;
             if (keeplooping)
@@ -167,7 +167,7 @@ int strlen_needed_bf()
 // USES: g_bf_tmp1 - g_bf_tmp2
 /********************************************************************/
 
-char *unsafe_bftostr(char *s, int dec, bf_t r)
+char *unsafe_bf_to_str(char *s, int dec, bf_t r)
 {
     LDBL value;
     int power;
@@ -180,22 +180,22 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
     }
 
     copy_bf(g_bf_tmp1, r);
-    unsafe_bftobf10(g_bf10_tmp, dec, g_bf_tmp1);
+    unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
     power = (S16)big_access16(g_bf10_tmp+dec+2); // where the exponent is stored
     if (power > -4 && power < 6)   // tinker with this
     {
-        bf10tostr_f(s, dec, g_bf10_tmp);
+        bf10_to_str_f(s, dec, g_bf10_tmp);
     }
     else
     {
-        bf10tostr_e(s, dec, g_bf10_tmp);
+        bf10_to_str_e(s, dec, g_bf10_tmp);
     }
     return s;
 }
 
 /********************************************************************/
 // the e version puts it in scientific notation, (like printf's %e)
-char *unsafe_bftostr_e(char *s, int dec, bf_t r)
+char *unsafe_bf_to_str_e(char *s, int dec, bf_t r)
 {
     LDBL value;
 
@@ -207,14 +207,14 @@ char *unsafe_bftostr_e(char *s, int dec, bf_t r)
     }
 
     copy_bf(g_bf_tmp1, r);
-    unsafe_bftobf10(g_bf10_tmp, dec, g_bf_tmp1);
-    bf10tostr_e(s, dec, g_bf10_tmp);
+    unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
+    bf10_to_str_e(s, dec, g_bf10_tmp);
     return s;
 }
 
 /********************************************************************/
 // the f version puts it in decimal notation, (like printf's %f)
-char *unsafe_bftostr_f(char *s, int dec, bf_t r)
+char *unsafe_bf_to_str_f(char *s, int dec, bf_t r)
 {
     LDBL value;
 
@@ -226,8 +226,8 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
     }
 
     copy_bf(g_bf_tmp1, r);
-    unsafe_bftobf10(g_bf10_tmp, dec, g_bf_tmp1);
-    bf10tostr_f(s, dec, g_bf10_tmp);
+    unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
+    bf10_to_str_f(s, dec, g_bf10_tmp);
     return s;
 }
 
@@ -235,7 +235,7 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
 //  bn = floor(bf)
 //  Converts a bigfloat to a bignumber (integer)
 //  g_bf_length must be at least g_bn_length+2
-bn_t bftobn(bn_t n, bf_t f)
+bn_t bf_to_bn(bn_t n, bf_t f)
 {
     int fexp;
     int movebytes;
@@ -271,7 +271,7 @@ bn_t bftobn(bn_t n, bf_t f)
 //  bf = bn
 //  Converts a bignumber (integer) to a bigfloat
 //  g_bf_length must be at least g_bn_length+2
-bf_t bntobf(bf_t f, bn_t n)
+bf_t bn_to_bf(bf_t f, bn_t n)
 {
     std::memcpy(f+g_bf_length-g_bn_length-1, n, g_bn_length);
     std::memset(f, 0, g_bf_length - g_bn_length - 1);
@@ -284,7 +284,7 @@ bf_t bntobf(bf_t f, bn_t n)
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat
-bf_t inttobf(bf_t r, long longval)
+bf_t int_to_bf(bf_t r, long longval)
 {
     clear_bf(r);
     big_set32(r+g_bf_length-4, (S32)longval);
@@ -297,7 +297,7 @@ bf_t inttobf(bf_t r, long longval)
 //  l = floor(b), floor rounds down
 //  Converts a bigfloat to a long
 //  note: a bf value of 2.999... will be return a value of 2, not 3
-long bftoint(bf_t f)
+long bf_to_int(bf_t f)
 {
     int fexp;
     long longval;
@@ -428,7 +428,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
         // g_bf_tmp1 = orig_bftmp1 + orig_bflength - g_bf_length;
 
         unsafe_mult_bf(g_bf_tmp1, r, n); // g_bf_tmp1=rn
-        inttobf(g_bf_tmp2, 1); // will be used as 1.0
+        int_to_bf(g_bf_tmp2, 1); // will be used as 1.0
 
         // There seems to very little difficulty getting g_bf_tmp1 to be EXACTLY 1
         if (g_bf_length == orig_bflength && cmp_bf(g_bf_tmp1, g_bf_tmp2) == 0)
@@ -436,7 +436,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
             break;
         }
 
-        inttobf(g_bf_tmp2, 2); // will be used as 2.0
+        int_to_bf(g_bf_tmp2, 2); // will be used as 2.0
         unsafe_sub_a_bf(g_bf_tmp2, g_bf_tmp1); // g_bf_tmp2=2-rn
         unsafe_mult_bf(g_bf_tmp1, r, g_bf_tmp2); // g_bf_tmp1=r(2-rn)
         copy_bf(r, g_bf_tmp1); // r = g_bf_tmp1
@@ -629,12 +629,12 @@ bf_t exp_bf(bf_t r, bf_t n)
 
     if (is_bf_zero(n))
     {
-        inttobf(r, 1);
+        int_to_bf(r, 1);
         return r;
     }
 
     // use Taylor Series (very slow convergence)
-    inttobf(r, 1); // start with r=1.0
+    int_to_bf(r, 1); // start with r=1.0
     copy_bf(g_bf_tmp2, r);
     while (true)
     {
@@ -730,7 +730,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 
         exp_bf(g_bf_tmp6, r);     // exp(-r)
         unsafe_mult_bf(g_bf_tmp2, g_bf_tmp6, n);  // n*exp(-r)
-        inttobf(g_bf_tmp4, 1);
+        int_to_bf(g_bf_tmp4, 1);
         unsafe_sub_a_bf(g_bf_tmp2, g_bf_tmp4);   // n*exp(-r) - 1
         unsafe_sub_a_bf(r, g_bf_tmp2);        // -r - (n*exp(-r) - 1)
         if (g_bf_length == orig_bflength)
@@ -769,7 +769,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 // uses g_bf_tmp1 - g_bf_tmp2 - global temp bigfloats
 //  SIDE-EFFECTS:
 //      n ends up as |n| mod (pi/4)
-bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
+bf_t unsafe_sin_cos_bf(bf_t s, bf_t c, bf_t n)
 {
     U16 fact = 2;
     S16 *testexp;
@@ -786,7 +786,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     if (is_bf_zero(n))
     {
         clear_bf(s);    // sin(0) = 0
-        inttobf(c, 1);  // cos(0) = 1
+        int_to_bf(c, 1);  // cos(0) = 1
         return s;
     }
 
@@ -842,7 +842,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     if (is_bf_zero(n))
     {
         clear_bf(s);    // sin(0) = 0
-        inttobf(c, 1);  // cos(0) = 1
+        int_to_bf(c, 1);  // cos(0) = 1
         return s;
     }
 
@@ -861,7 +861,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 
     // use Taylor Series (very slow convergence)
     copy_bf(s, n); // start with s=n
-    inttobf(c, 1); // start with c=1
+    int_to_bf(c, 1); // start with c=1
     copy_bf(g_bf_tmp1, n); // the current x^n/n!
     bool sin_done = false;
     bool cos_done = false;
@@ -922,7 +922,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
         double_bf(s, g_bf_tmp2); // sin(2x) = 2*sin(x)*cos(x)
         unsafe_square_bf(g_bf_tmp2, c);
         double_a_bf(g_bf_tmp2);
-        inttobf(g_bf_tmp1, 1);
+        int_to_bf(g_bf_tmp1, 1);
         unsafe_sub_bf(c, g_bf_tmp2, g_bf_tmp1); // cos(2x) = 2*cos(x)*cos(x) - 1
     }
 
@@ -1039,7 +1039,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         std::printf("\natan() loop #%i, g_bf_length=%i\nsincos() loops\n", i, g_bf_length);
 #endif
-        unsafe_sincos_bf(g_bf_tmp4, g_bf_tmp5, g_bf_tmp3);   // sin(r), cos(r)
+        unsafe_sin_cos_bf(g_bf_tmp4, g_bf_tmp5, g_bf_tmp3);   // sin(r), cos(r)
         copy_bf(g_bf_tmp3, r); // restore g_bf_tmp3 from sincos_bf()
         copy_bf(g_bf_tmp1, g_bf_tmp5);
         unsafe_mult_bf(g_bf_tmp2, n, g_bf_tmp1);     // n*cos(r)
@@ -1250,26 +1250,26 @@ bf_t div_bf_int(bf_t r, bf_t n,  U16 u)
 }
 
 /**********************************************************************/
-char *bftostr(char *s, int dec, bf_t r)
+char *bf_to_str(char *s, int dec, bf_t r)
 {
     copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bftostr(s, dec, g_bf_tmp_copy1);
+    unsafe_bf_to_str(s, dec, g_bf_tmp_copy1);
     return s;
 }
 
 /**********************************************************************/
-char *bftostr_e(char *s, int dec, bf_t r)
+char *bf_to_str_e(char *s, int dec, bf_t r)
 {
     copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bftostr_e(s, dec, g_bf_tmp_copy1);
+    unsafe_bf_to_str_e(s, dec, g_bf_tmp_copy1);
     return s;
 }
 
 /**********************************************************************/
-char *bftostr_f(char *s, int dec, bf_t r)
+char *bf_to_str_f(char *s, int dec, bf_t r)
 {
     copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bftostr_f(s, dec, g_bf_tmp_copy1);
+    unsafe_bf_to_str_f(s, dec, g_bf_tmp_copy1);
     return s;
 }
 
@@ -1307,10 +1307,10 @@ bf_t ln_bf(bf_t r, bf_t n)
 }
 
 /**********************************************************************/
-bf_t sincos_bf(bf_t s, bf_t c, bf_t n)
+bf_t sin_cos_bf(bf_t s, bf_t c, bf_t n)
 {
     copy_bf(g_bf_tmp_copy1, n);
-    return unsafe_sincos_bf(s, c, g_bf_tmp_copy1);
+    return unsafe_sin_cos_bf(s, c, g_bf_tmp_copy1);
 }
 
 /**********************************************************************/
@@ -1475,7 +1475,7 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 // r = max positive value
 bf_t max_bf(bf_t r)
 {
-    inttobf(r, 1);
+    int_to_bf(r, 1);
     big_set16(r+g_bf_length, (S16)(LDBL_MAX_EXP/8));
     return r;
 }
@@ -2253,7 +2253,7 @@ n <><------------- dec --------------><> <->
 // dec - number of decimals, not including the one extra for rounding
 //  SIDE-EFFECTS: n is changed to |n|.  Make copy of n if necessary.
 
-bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
+bf10_t unsafe_bf_to_bf10(bf10_t r, int dec, bf_t n)
 {
     int power256;
     int p;
@@ -2453,7 +2453,7 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
 // Takes a bf10 number and converts it to an ascii string, sci. notation
 // dec - number of decimals, not including the one extra for rounding
 
-char *bf10tostr_e(char *s, int dec, bf10_t n)
+char *bf10_to_str_e(char *s, int dec, bf10_t n)
 {
     int p;
     bf10_t power10;
@@ -2509,7 +2509,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
 // bf10tostr_f()
 // Takes a bf10 number and converts it to an ascii string, decimal notation
 
-char *bf10tostr_f(char *s, int dec, bf10_t n)
+char *bf10_to_str_f(char *s, int dec, bf10_t n)
 {
     int p;
     bf10_t power10;

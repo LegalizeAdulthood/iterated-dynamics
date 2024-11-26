@@ -33,7 +33,7 @@ inline void cube(BFComplex &out, const BFComplex &in)
 
     mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
     mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
-    inttobf(t, 3);
+    int_to_bf(t, 3);
     mult_bf(t1, t, sqr_imag); // sqr_real + sqr_real + sqr_real
     sub_bf(t2, sqr_real, t1); // sqr_real - (sqr_imag + sqr_imag + sqr_imag)
     mult_bf(out.x, in.x, t2); // c = x * (sqr_real - (sqr_imag + sqr_imag + sqr_imag))
@@ -108,8 +108,8 @@ inline void power(BFComplex &result, const BFComplex &z, int degree)
     }
     else
     {
-        inttobf(result.x, 1);
-        inttobf(result.y, 0);
+        int_to_bf(result.x, 1);
+        int_to_bf(result.y, 0);
     }
 
     degree >>= 1;
