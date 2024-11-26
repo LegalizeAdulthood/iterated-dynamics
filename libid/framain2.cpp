@@ -455,7 +455,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     restore_param_history();
                     fiddleparms(gene, ecount);
                     calc_frac_init();
-                    if (calcfract() == -1)
+                    if (calc_fract() == -1)
                     {
                         goto done;
                     }
@@ -508,7 +508,7 @@ done:
             // end of evolution loop
             else
             {
-                i = calcfract();       // draw the fractal using "C"
+                i = calc_fract();       // draw the fractal using "C"
                 if (i == 0)
                 {
                     driver_buzzer(buzzer_codes::COMPLETE); // finished!!

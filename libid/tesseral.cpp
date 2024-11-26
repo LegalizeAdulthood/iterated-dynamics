@@ -32,7 +32,7 @@ int tesseral()
 {
     tess *tp;
 
-    s_guess_plot = (g_plot != g_put_color && g_plot != symplot2);
+    s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
     tp = (tess *)&s_stack[0];
     tp->x1 = g_i_x_start;                              // set up initial box
     tp->x2 = g_i_x_stop;

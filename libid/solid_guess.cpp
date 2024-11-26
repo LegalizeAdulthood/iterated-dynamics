@@ -47,11 +47,11 @@ int solid_guess()
     unsigned int *pfxp1;
     unsigned int u;
 
-    s_guess_plot = (g_plot != g_put_color && g_plot != symplot2 && g_plot != symplot2J);
+    s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2 && g_plot != sym_plot2j);
     // check if guessing at bottom & right edges is ok
-    s_bottom_guess = (g_plot == symplot2 || (g_plot == g_put_color && g_i_y_stop+1 == g_logical_screen_y_dots));
-    s_right_guess  = (g_plot == symplot2J
-        || ((g_plot == g_put_color || g_plot == symplot2) && g_i_x_stop+1 == g_logical_screen_x_dots));
+    s_bottom_guess = (g_plot == sym_plot2 || (g_plot == g_put_color && g_i_y_stop+1 == g_logical_screen_y_dots));
+    s_right_guess  = (g_plot == sym_plot2j
+        || ((g_plot == g_put_color || g_plot == sym_plot2) && g_i_x_stop+1 == g_logical_screen_x_dots));
 
     // there seems to be a bug in solid guessing at bottom and side
     if (g_debug_flag != debug_flags::force_solid_guess_error)
@@ -575,7 +575,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     }
     if (g_plot != g_put_color)  // symmetry, just vertical & origin the fast way
     {
-        if (g_plot == symplot2J)   // origin sym, reverse lines
+        if (g_plot == sym_plot2j)   // origin sym, reverse lines
         {
             for (int i = (g_i_x_stop+g_xx_start+1)/2; --i >= g_xx_start;)
             {

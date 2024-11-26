@@ -51,7 +51,7 @@ mandel_setup()           // Mandelbrot Routine
         && g_bail_out_test == bailouts::Mod
         && (g_orbit_save_flags & osf_midi) == 0)
     {
-        g_calc_type = calcmand; // the normal case - use CALCMAND
+        g_calc_type = calc_mand; // the normal case - use CALCMAND
     }
     else
     {
@@ -79,7 +79,7 @@ julia_setup()            // Julia Routine
         && g_bail_out_test == bailouts::Mod
         && (g_orbit_save_flags & osf_midi) == 0)
     {
-        g_calc_type = calcmand; // the normal case - use CALCMAND
+        g_calc_type = calc_mand; // the normal case - use CALCMAND
     }
     else
     {
@@ -159,7 +159,7 @@ mandel_fp_setup()
             && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
         {
-            g_calc_type = calcmandfp; // the normal case - use calcmandfp
+            g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
             calcmandfpasmstart();
         }
         else
@@ -298,7 +298,7 @@ julia_fp_setup()
             && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
         {
-            g_calc_type = calcmandfp; // the normal case - use calcmandfp
+            g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
             calcmandfpasmstart();
         }
         else

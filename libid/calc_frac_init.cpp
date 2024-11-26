@@ -271,8 +271,8 @@ init_restart:
     if (g_potential_params[0] != 0.0
         && g_colors >= 64
         && (g_cur_fractal_specific->calctype == standard_fractal
-            || g_cur_fractal_specific->calctype == calcmand
-            || g_cur_fractal_specific->calctype == calcmandfp))
+            || g_cur_fractal_specific->calctype == calc_mand
+            || g_cur_fractal_specific->calctype == calc_mand_fp))
     {
         g_potential_flag = true;
         g_user_distance_estimator_value = 0;

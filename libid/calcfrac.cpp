@@ -279,7 +279,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
     {
         g_keyboard_check_interval -= length >> 4; // seems like a reasonable value
     }
-    else if (g_plot == symplot2)   // X-axis symmetry
+    else if (g_plot == sym_plot2)   // X-axis symmetry
     {
         int i = g_yy_stop-(row-g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots)
@@ -288,12 +288,12 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
             g_keyboard_check_interval -= length >> 3;
         }
     }
-    else if (g_plot == symplot2Y) // Y-axis symmetry
+    else if (g_plot == sym_plot2y) // Y-axis symmetry
     {
         write_span(row, g_xx_stop-(right-g_xx_start), g_xx_stop-(left-g_xx_start), str);
         g_keyboard_check_interval -= length >> 3;
     }
-    else if (g_plot == symplot2J)  // Origin symmetry
+    else if (g_plot == sym_plot2j)  // Origin symmetry
     {
         int i = g_yy_stop-(row-g_yy_start);
         int j = std::min(g_xx_stop-(right-g_xx_start), g_logical_screen_x_dots-1);
@@ -304,7 +304,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
         }
         g_keyboard_check_interval -= length >> 3;
     }
-    else if (g_plot == symplot4) // X-axis and Y-axis symmetry
+    else if (g_plot == sym_plot4) // X-axis and Y-axis symmetry
     {
         int i = g_yy_stop-(row-g_yy_start);
         int j = std::min(g_xx_stop-(right-g_xx_start), g_logical_screen_x_dots-1);
@@ -344,7 +344,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
     {
         g_keyboard_check_interval -= length >> 4; // seems like a reasonable value
     }
-    else if (g_plot == symplot2)   // X-axis symmetry
+    else if (g_plot == sym_plot2)   // X-axis symmetry
     {
         int i = g_yy_stop-(row-g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots)
@@ -525,7 +525,7 @@ static void fix_inversion(double *x) // make double converted from string look o
 }
 
 // calcfract - the top level routine for generating an image
-int calcfract()
+int calc_fract()
 {
     g_attractors = 0;          // default to no known finite attractors
     g_display_3d = display_3d_modes::NONE;
@@ -777,8 +777,8 @@ int calcfract()
     }
 
     if (g_cur_fractal_specific->calctype != standard_fractal
-        && g_cur_fractal_specific->calctype != calcmand
-        && g_cur_fractal_specific->calctype != calcmandfp
+        && g_cur_fractal_specific->calctype != calc_mand
+        && g_cur_fractal_specific->calctype != calc_mand_fp
         && g_cur_fractal_specific->calctype != lyapunov
         && g_cur_fractal_specific->calctype != calcfroth)
     {
@@ -1239,7 +1239,7 @@ static void perform_worklist()
     }
 }
 
-int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
+int calc_mand()              // fast per pixel 1/2/b/g, called with row & col set
 {
     // setup values from array to avoid using es reg in calcmand.asm
     g_l_init_x = g_l_x_pixel();
@@ -1284,7 +1284,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 // sort of a floating point version of calcmand()
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
-int calcmandfp()
+int calc_mand_fp()
 {
     if (g_invert != 0)
     {
@@ -2743,7 +2743,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     }
     if (sym == symmetry_type::NO_PLOT && g_force_symmetry == symmetry_type::NOT_FORCED)
     {
-        g_plot = noplot;
+        g_plot = no_plot;
         return;
     }
     // NOTE: 16-bit potential disables symmetry
@@ -2905,11 +2905,11 @@ xsym:
         {
             if (g_basin)
             {
-                g_plot = symplot2basin;
+                g_plot = sym_plot2_basin;
             }
             else
             {
-                g_plot = symplot2;
+                g_plot = sym_plot2;
             }
         }
         break;
@@ -2921,7 +2921,7 @@ xsym:
     case symmetry_type::Y_AXIS:                       // Y-axis Symmetry
         if (!ysym_split(yaxis_col, yaxis_between))
         {
-            g_plot = symplot2Y;
+            g_plot = sym_plot2y;
         }
         break;
     case symmetry_type::XY_AXIS_NO_PARAM:                       // X-axis AND Y-axis Symmetry (no parms)
@@ -2937,11 +2937,11 @@ xsym:
         case 1: // just xaxis symmetry
             if (g_basin)
             {
-                g_plot = symplot2basin;
+                g_plot = sym_plot2_basin;
             }
             else
             {
-                g_plot = symplot2 ;
+                g_plot = sym_plot2 ;
             }
             break;
         case 2: // just yaxis symmetry
@@ -2952,17 +2952,17 @@ xsym:
             }
             else
             {
-                g_plot = symplot2Y;
+                g_plot = sym_plot2y;
             }
             break;
         case 3: // both axes
             if (g_basin)
             {
-                g_plot = symplot4basin;
+                g_plot = sym_plot4_basin;
             }
             else
             {
-                g_plot = symplot4 ;
+                g_plot = sym_plot4 ;
             }
         }
         break;
@@ -2976,7 +2976,7 @@ originsym:
         if (!xsym_split(xaxis_row, xaxis_between)
             && !ysym_split(yaxis_col, yaxis_between))
         {
-            g_plot = symplot2J;
+            g_plot = sym_plot2j;
             g_i_x_stop = g_xx_stop; // didn't want this changed
         }
         else
@@ -3010,18 +3010,18 @@ originsym:
         {
             goto originsym;
         }
-        g_plot = symPIplot ;
+        g_plot = sym_pi_plot ;
         g_symmetry = symmetry_type::NONE;
         if (!xsym_split(xaxis_row, xaxis_between)
             && !ysym_split(yaxis_col, yaxis_between))
         {
             if (g_param_z1.y == 0.0)
             {
-                g_plot = symPIplot4J; // both axes
+                g_plot = sym_pi_plot4j; // both axes
             }
             else
             {
-                g_plot = symPIplot2J; // origin
+                g_plot = sym_pi_plot2j; // origin
             }
         }
         else
@@ -3046,7 +3046,7 @@ originsym:
             g_i_x_stop = g_xx_stop;
         }
         i = (g_xx_start+g_xx_stop)/2;
-        if (g_plot == symPIplot4J && g_i_x_stop > i)
+        if (g_plot == sym_pi_plot4j && g_i_x_stop > i)
         {
             g_i_x_stop = i;
         }
@@ -3176,7 +3176,7 @@ ack: // bailout here if key is pressed
 }
 
 // Symmetry plot for period PI
-void symPIplot(int x, int y, int color)
+void sym_pi_plot(int x, int y, int color)
 {
     while (x <= g_xx_stop)
     {
@@ -3186,7 +3186,7 @@ void symPIplot(int x, int y, int color)
 }
 
 // Symmetry plot for period PI plus Origin Symmetry
-void symPIplot2J(int x, int y, int color)
+void sym_pi_plot2j(int x, int y, int color)
 {
     int i;
     int j;
@@ -3204,7 +3204,7 @@ void symPIplot2J(int x, int y, int color)
 }
 
 // Symmetry plot for period PI plus Both Axis Symmetry
-void symPIplot4J(int x, int y, int color)
+void sym_pi_plot4j(int x, int y, int color)
 {
     int i;
     int j;
@@ -3230,7 +3230,7 @@ void symPIplot4J(int x, int y, int color)
 }
 
 // Symmetry plot for X Axis Symmetry
-void symplot2(int x, int y, int color)
+void sym_plot2(int x, int y, int color)
 {
     int i;
     g_put_color(x, y, color) ;
@@ -3242,7 +3242,7 @@ void symplot2(int x, int y, int color)
 }
 
 // Symmetry plot for Y Axis Symmetry
-void symplot2Y(int x, int y, int color)
+void sym_plot2y(int x, int y, int color)
 {
     int i;
     g_put_color(x, y, color) ;
@@ -3254,7 +3254,7 @@ void symplot2Y(int x, int y, int color)
 }
 
 // Symmetry plot for Origin Symmetry
-void symplot2J(int x, int y, int color)
+void sym_plot2j(int x, int y, int color)
 {
     int i;
     int j;
@@ -3268,7 +3268,7 @@ void symplot2J(int x, int y, int color)
 }
 
 // Symmetry plot for Both Axis Symmetry
-void symplot4(int x, int y, int color)
+void sym_plot4(int x, int y, int color)
 {
     int i;
     int j;
@@ -3290,7 +3290,7 @@ void symplot4(int x, int y, int color)
 }
 
 // Symmetry plot for X Axis Symmetry - Striped Newtbasin version
-void symplot2basin(int x, int y, int color)
+void sym_plot2_basin(int x, int y, int color)
 {
     int i;
     int stripe;
@@ -3314,7 +3314,7 @@ void symplot2basin(int x, int y, int color)
 }
 
 // Symmetry plot for Both Axis Symmetry  - Newtbasin version
-void symplot4basin(int x, int y, int color)
+void sym_plot4_basin(int x, int y, int color)
 {
     int i;
     int j;
@@ -3322,7 +3322,7 @@ void symplot4basin(int x, int y, int color)
     int stripe;
     if (color == 0) // assumed to be "inside" color
     {
-        symplot4(x, y, color);
+        sym_plot4(x, y, color);
         return;
     }
     if (g_basin == 2 && color > 8)
@@ -3366,6 +3366,6 @@ static void put_truecolor_disk(int x, int y, int color)
 }
 
 // Do nothing plot!!!
-void noplot(int, int, int)
+void no_plot(int, int, int)
 {
 }

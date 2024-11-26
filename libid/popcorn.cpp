@@ -30,7 +30,7 @@ int popcorn_fractal_old()
     sin_cos(&g_tmp_z.y, &siny, &cosy);
     g_new_z.x = g_old_z.x - g_param_z1.x*siny;
     g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
-    if (g_plot == noplot)
+    if (g_plot == no_plot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+g_row%g_colors);
         g_old_z = g_new_z;
@@ -64,7 +64,7 @@ int popcorn_fractal()
     sin_cos(&g_tmp_z.y, &siny, &cosy);
     g_new_z.x = g_old_z.x - g_param_z1.x*siny;
     g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
-    if (g_plot == noplot)
+    if (g_plot == no_plot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+g_row%g_colors);
         g_old_z = g_new_z;
@@ -123,7 +123,7 @@ int long_popcorn_fractal_old()
     sin_cos(g_l_temp.y, &lsiny, &lcosy);
     g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, lsiny, g_bit_shift);
     g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, lsinx, g_bit_shift);
-    if (g_plot == noplot)
+    if (g_plot == no_plot)
     {
         iplot_orbit(g_l_new_z.x, g_l_new_z.y, 1+g_row%g_colors);
         g_l_old_z = g_l_new_z;
@@ -166,7 +166,7 @@ int long_popcorn_fractal()
     sin_cos(g_l_temp.y, &lsiny, &lcosy);
     g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, lsiny, g_bit_shift);
     g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, lsinx, g_bit_shift);
-    if (g_plot == noplot)
+    if (g_plot == no_plot)
     {
         iplot_orbit(g_l_new_z.x, g_l_new_z.y, 1+g_row%g_colors);
         g_l_old_z = g_l_new_z;
@@ -211,7 +211,7 @@ int popcorn_fractal_fn()
     g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
     g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
 
-    if (g_plot == noplot)
+    if (g_plot == no_plot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+g_row%g_colors);
         g_old_z = g_new_z;
@@ -268,7 +268,7 @@ int long_popcorn_fractal_fn()
     g_l_new_z.x = g_l_old_z.x - ltmpx.x - ltmpy.y;
     g_l_new_z.y = g_l_old_z.y - ltmpy.x - ltmpx.y;
 
-    if (g_plot == noplot)
+    if (g_plot == no_plot)
     {
         iplot_orbit(g_l_new_z.x, g_l_new_z.y, 1+g_row%g_colors);
         g_l_old_z = g_l_new_z;
