@@ -498,7 +498,7 @@ int id_main(int argc, char *argv[])
     std::signal(SIGFPE, my_floating_point_err);
 
     initasmvars();                       // initialize ASM stuff
-    InitMemory();
+    init_memory();
 
     // let drivers add their video modes
     if (! init_drivers(&argc, argv))

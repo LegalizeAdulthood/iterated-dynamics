@@ -36,7 +36,7 @@
     free_grid_pointers();
     free_ant_storage();
     end_disk();
-    ExitCheck();
+    exit_check();
     if (!g_make_parameter_file)
     {
         driver_set_for_text();

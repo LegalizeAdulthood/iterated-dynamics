@@ -101,7 +101,7 @@ static void WhichDiskError(int I_O)
     }
 }
 
-int MemoryType(U16 handle)
+int memory_type(U16 handle)
 {
     return s_handles[handle].Nowhere.stored_at;
 }
@@ -239,7 +239,7 @@ static void DisplayHandle(U16 handle)
     }
 }
 
-void InitMemory()
+void init_memory()
 {
     s_num_total_handles = 0;
     for (auto &elem : s_handles)
@@ -249,7 +249,7 @@ void InitMemory()
     }
 }
 
-void ExitCheck()
+void exit_check()
 {
     if (s_num_total_handles != 0)
     {
@@ -262,7 +262,7 @@ void ExitCheck()
                 std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
                         s_memory_names[s_handles[i].Nowhere.stored_at], i);
                 stopmsg(buf);
-                MemoryRelease(i);
+                memory_release(i);
             }
         }
     }
@@ -276,7 +276,7 @@ static std::string mem_file_name(U16 handle)
 // * * * *
 // Memory handling routines
 
-U16 MemoryAlloc(U16 size, long count, int stored_at)
+U16 memory_alloc(U16 size, long count, int stored_at)
 {
     // Returns handle number if successful, 0 or nullptr if failure
 
@@ -381,7 +381,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     }
 }
 
-void MemoryRelease(U16 handle)
+void memory_release(U16 handle)
 {
     switch (s_handles[handle].Nowhere.stored_at)
     {
@@ -413,7 +413,7 @@ void MemoryRelease(U16 handle)
 // to start moving the contents of buffer to
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
+bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
 {
     BYTE diskbuf[DISKWRITELEN];
     long start; // offset to first location to move to
@@ -482,7 +482,7 @@ diskerror:
 // offset is the number of units from the beginning of buffer to start moving
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
     BYTE diskbuf[DISKWRITELEN];
     long start; // first location to move
@@ -549,7 +549,7 @@ diskerror:
     return success;
 }
 
-bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
+bool set_memory(int value, U16 size, long count, long offset, U16 handle)
 {
     // value is the value to set memory to
     // offset is the number of units from the start of allocated memory

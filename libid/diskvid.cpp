@@ -239,11 +239,11 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             s_mem_buf[i] = (BYTE)fgetc(s_fp);
         }
         std::fclose(s_fp);
-        s_dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, DISK);
+        s_dv_handle = memory_alloc((U16)BLOCKLEN, memorysize, DISK);
     }
     else
     {
-        s_dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, MEMORY);
+        s_dv_handle = memory_alloc((U16)BLOCKLEN, memorysize, MEMORY);
     }
     if (s_dv_handle == 0)
     {
@@ -256,7 +256,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     if (driver_diskp())
     {
         driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
-                          (MemoryType(s_dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
+                          (memory_type(s_dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
     }
 
     s_mem_buf_ptr = &s_mem_buf[0];
@@ -264,13 +264,13 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     if (g_disk_targa)
     {
         // Put header information in the file
-        CopyFromMemoryToHandle(&s_mem_buf[0], (U16)s_header_length, 1L, 0, s_dv_handle);
+        copy_from_memory_to_handle(&s_mem_buf[0], (U16)s_header_length, 1L, 0, s_dv_handle);
     }
     else
     {
         for (long offset = 0; offset < memorysize; offset++)
         {
-            SetMemory(0, (U16)BLOCKLEN, 1L, offset, s_dv_handle);
+            set_memory(0, (U16)BLOCKLEN, 1L, offset, s_dv_handle);
             if (driver_key_pressed())           // user interrupt
             {
                 // esc to cancel, else continue
@@ -311,7 +311,7 @@ void end_disk()
 
     if (s_dv_handle != 0)
     {
-        MemoryRelease(s_dv_handle);
+        memory_release(s_dv_handle);
         s_dv_handle = 0;
     }
     if (s_cache_start != nullptr)
@@ -694,8 +694,8 @@ static void mem_seek(long offset)        // mem seek
     s_mem_offset = offset >> BLOCKSHIFT;
     if (s_mem_offset != s_old_mem_offset)
     {
-        CopyFromMemoryToHandle(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_old_mem_offset, s_dv_handle);
-        CopyFromHandleToMemory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
+        copy_from_memory_to_handle(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_old_mem_offset, s_dv_handle);
+        copy_from_handle_to_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
     }
     s_old_mem_offset = s_mem_offset;
     s_mem_buf_ptr = &s_mem_buf[0] + (offset & (BLOCKLEN - 1));
@@ -705,9 +705,9 @@ static BYTE  mem_getc()                     // memory get_char
 {
     if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCKLEN)
     {
-        CopyFromMemoryToHandle(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
+        copy_from_memory_to_handle(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
         s_mem_offset++;
-        CopyFromHandleToMemory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
+        copy_from_handle_to_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
         s_mem_buf_ptr = &s_mem_buf[0];
         s_old_mem_offset = s_mem_offset;
     }
@@ -718,9 +718,9 @@ static void mem_putc(BYTE c)     // memory get_char
 {
     if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCKLEN)
     {
-        CopyFromMemoryToHandle(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
+        copy_from_memory_to_handle(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
         s_mem_offset++;
-        CopyFromHandleToMemory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
+        copy_from_handle_to_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset, s_dv_handle);
         s_mem_buf_ptr = &s_mem_buf[0];
         s_old_mem_offset = s_mem_offset;
     }
