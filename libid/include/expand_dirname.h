@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int expand_dirname(char *dirname, char *drive);
+int expand_dir_name(char *dirname, char *drive);

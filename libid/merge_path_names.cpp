@@ -45,7 +45,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
     {
         char temp_drive[FILE_MAX_PATH];
-        expand_dirname(newfilename, temp_drive);
+        expand_dir_name(newfilename, temp_drive);
         std::strcat(temp_drive, newfilename);
         std::strcpy(newfilename, temp_drive);
         isadir = true;
@@ -60,7 +60,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
         {
             test_dir = true;    // only one '.' assume it's a directory
         }
-        expand_dirname(newfilename, temp_drive);
+        expand_dir_name(newfilename, temp_drive);
         std::strcat(temp_drive, newfilename);
         std::strcpy(newfilename, temp_drive);
         if (!test_dir)

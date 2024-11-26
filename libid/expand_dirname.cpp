@@ -10,7 +10,7 @@
 namespace fs = std::filesystem;
 
 // converts relative path to absolute path
-int expand_dirname(char *dirname, char *drive)
+int expand_dir_name(char *dirname, char *drive)
 {
     fs::path path{dirname};
     if (path.has_relative_path())

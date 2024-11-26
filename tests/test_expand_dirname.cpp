@@ -48,7 +48,7 @@ TEST_F(TestExpandDirName, resolvesRelativeDir)
     std::strcpy(m_dir_name, ID_TEST_DATA_SUBDIR_NAME);
     std::strcpy(m_drive, m_test_data_dir.root_name().string().c_str());
 
-    expand_dirname(m_dir_name, m_drive);
+    expand_dir_name(m_dir_name, m_drive);
 
     EXPECT_EQ(m_dir_name, m_test_data_subdir.string().substr(std::strlen(m_drive)) + m_sep);
 }
@@ -58,7 +58,7 @@ TEST_F(TestExpandDirName, setsDriveToCurrentDrive)
     current_path_saver saver(ID_TEST_DATA_DIR);
     std::strcpy(m_dir_name, ID_TEST_DATA_SUBDIR_NAME);
 
-    expand_dirname(m_dir_name, m_drive);
+    expand_dir_name(m_dir_name, m_drive);
 
     EXPECT_EQ(m_drive, m_test_data_subdir.root_name().string());
 }
@@ -67,7 +67,7 @@ TEST_F(TestExpandDirName, absolutePathUnchanged)
 {
     std::strcpy(m_dir_name, m_test_data_dir.string().c_str());
 
-    expand_dirname(m_dir_name, m_drive);
+    expand_dir_name(m_dir_name, m_drive);
 
     EXPECT_EQ(m_test_data_dir.root_name().string(), m_drive);
     EXPECT_EQ(m_test_data_dir.string().substr(std::strlen(m_drive)) + m_sep, m_dir_name);

@@ -104,7 +104,7 @@ retry_dir:
     {
         std::strcpy(dir, ".");
     }
-    expand_dirname(dir, drive);
+    expand_dir_name(dir, drive);
     make_drive_dir(tmpmask, drive, dir);
     fix_dirname(tmpmask);
     if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOTSLASH))
