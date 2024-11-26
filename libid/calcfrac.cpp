@@ -1376,9 +1376,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     // Jonathan - how about this idea ? skips first saved value which never works
 #ifdef MINSAVEDAND
-    if (oldcoloriter < MINSAVEDAND)
+    if (g_old_color_iter < MINSAVEDAND)
     {
-        oldcoloriter = MINSAVEDAND;
+        g_old_color_iter = MINSAVEDAND;
     }
 #else
     if (g_old_color_iter < g_first_saved_and)   // I like it!
