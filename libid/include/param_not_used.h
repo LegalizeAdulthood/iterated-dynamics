@@ -2,4 +2,4 @@
 //
 #pragma once
 
-bool paramnotused(int);
+bool param_not_used(int parm);

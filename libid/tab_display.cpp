@@ -283,7 +283,7 @@ int tab_display()       // display the status of the current image
     {
         for (int i = 0; i < MAX_PARAMS; i += 2)
         {
-            if (!paramnotused(i))
+            if (!param_not_used(i))
             {
                 hasformparam++;
             }

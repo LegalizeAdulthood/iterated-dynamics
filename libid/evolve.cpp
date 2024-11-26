@@ -568,7 +568,7 @@ int get_variations()
         {
             if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
             {
-                if (paramnotused(i))
+                if (param_not_used(i))
                 {
                     continue;
                 }
@@ -589,7 +589,7 @@ choose_vars_restart:
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
-            if (paramnotused(num))
+            if (param_not_used(num))
             {
                 continue;
             }
@@ -640,7 +640,7 @@ choose_vars_restart:
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
-            if (paramnotused(num))
+            if (param_not_used(num))
             {
                 continue;
             }

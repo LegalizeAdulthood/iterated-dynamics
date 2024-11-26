@@ -13,7 +13,7 @@
  *  formula.  If the parameter is used, or not a formula fractal,
  *  a 0 is returned.  Note: this routine only works for formula types.
  */
-bool paramnotused(int parm)
+bool param_not_used(int parm)
 {
     bool ret = false;
 

@@ -605,7 +605,7 @@ gfp_top:
             {
                 if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
                 {
-                    if (paramnotused(i))
+                    if (param_not_used(i))
                     {
                         continue;
                     }
@@ -852,7 +852,7 @@ gfp_top:
     {
         if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
         {
-            if (paramnotused(i))
+            if (param_not_used(i))
             {
                 continue;
             }

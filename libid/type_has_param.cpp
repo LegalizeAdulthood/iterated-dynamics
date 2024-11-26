@@ -43,7 +43,7 @@ bool typehasparm(fractal_type type, int parm, char *buf)
 
     if (type == fractal_type::FORMULA || type == fractal_type::FFORMULA)
     {
-        if (paramnotused(parm))
+        if (param_not_used(parm))
         {
             ret = nullptr;
         }
