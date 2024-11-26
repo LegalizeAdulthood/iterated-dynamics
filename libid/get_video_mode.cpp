@@ -69,7 +69,7 @@ struct VideoModeChoice
 
 } // namespace
 
-static std::vector<VideoModeChoice> s_video_info;
+static std::vector<VideoModeChoice> s_video_choices;
 
 static void   format_item(int, char *);
 static int    check_modekey(int, int);
@@ -206,7 +206,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     }
 
     // setup table entry for each vid mode, flagged for how well it matches
-    s_video_info.resize(g_video_table_len);
+    s_video_choices.resize(g_video_table_len);
     for (int i = 0; i < g_video_table_len; ++i)
     {
         g_video_entry = g_video_table[i];
@@ -256,9 +256,9 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 tmpflags |= VI_ASPECT;
             }
         }
-        s_video_info[i].entry_num = i;
+        s_video_choices[i].entry_num = i;
         // cppcheck-suppress unreadVariable
-        s_video_info[i].flags  = tmpflags;
+        s_video_choices[i].flags  = tmpflags;
     }
 
     if (g_fast_restore  && !g_ask_video)
@@ -270,7 +270,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == batch_modes::NONE))) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
-        std::sort(s_video_info.begin(), s_video_info.end(), vidinf_less);
+        std::sort(s_video_choices.begin(), s_video_choices.end(), vidinf_less);
 
         std::vector<int> attributes(g_video_table_len, 1);
 
@@ -336,7 +336,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         else
         {
-            g_init_mode = s_video_info[i].entry_num;
+            g_init_mode = s_video_choices[i].entry_num;
         }
     }
 
@@ -526,7 +526,7 @@ static void format_item(int choice, char *buf)
     char errbuf[10];
     unsigned tmpflags;
     errbuf[0] = 0;
-    tmpflags = s_video_info[choice].flags;
+    tmpflags = s_video_choices[choice].flags;
     if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
     {
         std::strcat(errbuf, "*");
@@ -555,7 +555,7 @@ static void format_item(int choice, char *buf)
     {
         std::strcat(errbuf, "c");
     }
-    format_vid_inf(s_video_info[choice].entry_num, errbuf, buf);
+    format_vid_inf(s_video_choices[choice].entry_num, errbuf, buf);
 }
 
 static int check_modekey(int curkey, int /*choice*/)
