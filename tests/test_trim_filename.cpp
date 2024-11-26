@@ -33,7 +33,7 @@ TEST(TestTrimFilename, dropsIntermediateDirectoriesUnix)
 {
     const std::string filename{R"(/home/users/l/legalize/iterated-dynamics/build-default/install/pars/foo.par)"};
     
-    const std::string result = trim_filename(filename, 40);
+    const std::string result = trim_file_name(filename, 40);
 
                //12345678901234567890123456789012345678901234
     EXPECT_GE(40U, result.size());
