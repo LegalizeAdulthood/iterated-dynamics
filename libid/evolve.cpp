@@ -34,7 +34,7 @@ enum
 };
 
 // for saving evolution data of center image
-struct PARAMHIST
+struct ParamHistory
 {
     double param0;
     double param1;
@@ -109,7 +109,7 @@ static int s_image_box_count;
 static std::vector<int> s_image_box_x;
 static std::vector<int> s_image_box_y;
 static std::vector<int> s_image_box_values;
-static PARAMHIST s_old_history{};
+static ParamHistory s_old_history{};
 
 void varydbl(GeneBase gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
