@@ -17,7 +17,7 @@ public:
     MOCK_METHOD(const std::string &, get_name, (), (const, override));
     MOCK_METHOD(const std::string &, get_description, (), (const, override));
     MOCK_METHOD(bool, init, (int *, char **), (override));
-    MOCK_METHOD(bool, validate_mode, (VIDEOINFO *), (override));
+    MOCK_METHOD(bool, validate_mode, (VideoInfo *), (override));
     MOCK_METHOD(void, get_max_screen, (int &, int &), (override));
     MOCK_METHOD(void, terminate, (), (override));
     MOCK_METHOD(void, pause, (), (override));
@@ -45,7 +45,7 @@ public:
     MOCK_METHOD(int, wait_key_pressed, (int), (override));
     MOCK_METHOD(void, unget_key, (int), (override));
     MOCK_METHOD(void, shell, (), (override));
-    MOCK_METHOD(void, set_video_mode, (VIDEOINFO *), (override));
+    MOCK_METHOD(void, set_video_mode, (VideoInfo *), (override));
     MOCK_METHOD(void, put_string, (int, int, int, char const *), (override));
     MOCK_METHOD(bool, is_text, (), (override));
     MOCK_METHOD(void, set_for_text, (), (override));
@@ -107,14 +107,14 @@ TEST(TestLoadConfig, gdiDisk)
     load_config(ID_TEST_CONFIG_FILE);
 
     ASSERT_EQ(2, g_video_table_len);
-    const VIDEOINFO &gdi_mode{g_video_table[0]};
+    const VideoInfo &gdi_mode{g_video_table[0]};
     EXPECT_STREQ(ID_TEST_GDI_COMMENT, gdi_mode.comment);
     EXPECT_EQ(ID_TEST_GDI_FN_KEY, gdi_mode.keynum);
     EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.xdots);
     EXPECT_EQ(ID_TEST_GDI_HEIGHT, gdi_mode.ydots);
     EXPECT_EQ(ID_TEST_GDI_COLORS, gdi_mode.colors);
     EXPECT_EQ(&gdi, gdi_mode.driver);
-    const VIDEOINFO &disk_mode{g_video_table[1]};
+    const VideoInfo &disk_mode{g_video_table[1]};
     EXPECT_STREQ(ID_TEST_DISK_COMMENT, disk_mode.comment);
     EXPECT_EQ(ID_TEST_DISK_FN_KEY, disk_mode.keynum);
     EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.xdots);

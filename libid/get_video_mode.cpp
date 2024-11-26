@@ -168,10 +168,10 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     g_init_mode = -1;
 
     // try to find exact match for vid mode: first look for non-disk video
-    const VIDEOINFO *begin = g_video_table;
-    const VIDEOINFO *end = g_video_table + g_video_table_len;
+    const VideoInfo *begin = g_video_table;
+    const VideoInfo *end = g_video_table + g_video_table_len;
     auto it = std::find_if(begin, end,
-        [=](const VIDEOINFO &mode)
+        [=](const VideoInfo &mode)
         {
             return info->xdots == mode.xdots    //
                 && info->ydots == mode.ydots    //
@@ -182,7 +182,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     if (it == end)
     {
         it = std::find_if(begin, end,
-            [=](const VIDEOINFO &mode)
+            [=](const VideoInfo &mode)
             {
                 return info->xdots == mode.xdots //
                     && info->ydots == mode.ydots //

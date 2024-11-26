@@ -2,7 +2,7 @@
 //
 #pragma once
 
-struct VIDEOINFO;
+struct VideoInfo;
 
 #if defined(XFRACT)
 extern bool                  g_fake_lut;

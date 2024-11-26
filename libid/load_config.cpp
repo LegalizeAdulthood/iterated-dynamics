@@ -37,7 +37,7 @@ void load_config()
 void load_config(const std::string &cfg_path)
 {
     std::FILE   *cfgfile;
-    VIDEOINFO    vident;
+    VideoInfo    vident;
     int          linenum;
     long xdots;
     long ydots;
@@ -130,7 +130,7 @@ void load_config(const std::string &cfg_path)
                 bool synonym_found = false;
                 for (int m = 0; m < g_video_table_len; m++)
                 {
-                    VIDEOINFO *mode = &g_video_table[m];
+                    VideoInfo *mode = &g_video_table[m];
                     if ((mode->driver == vident.driver) && (mode->colors == vident.colors)
                         && (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots))
                     {

@@ -204,7 +204,7 @@ void Win32BaseDriver::hide_text_cursor()
     }
 }
 
-void Win32BaseDriver::set_video_mode(VIDEOINFO *mode)
+void Win32BaseDriver::set_video_mode(VideoInfo *mode)
 {
     // initially, set the virtual line to be the scan line length
     g_is_true_color = false;            // assume not truecolor

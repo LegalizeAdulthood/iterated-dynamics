@@ -30,7 +30,7 @@ public:
     void unget_key(int key) override;
     int get_key() override;
     void hide_text_cursor() override;
-    void set_video_mode(VIDEOINFO *mode) override;
+    void set_video_mode(VideoInfo *mode) override;
     void put_string(int row, int col, int attr, const char *msg) override;
     void scroll_up(int top, int bot) override;
     void move_cursor(int row, int col) override;

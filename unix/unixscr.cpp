@@ -82,7 +82,7 @@ extern bool g_inside_help;
 extern float g_final_aspect_ratio;
 extern  float   g_screen_aspect;
 
-extern VIDEOINFO x11_video_table[];
+extern VideoInfo x11_video_table[];
 
 // the video-palette array (named after the VGA adapter's video-DAC)
 

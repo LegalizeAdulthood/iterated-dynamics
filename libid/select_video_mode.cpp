@@ -220,7 +220,7 @@ static void update_id_cfg()
     int linenum;
     int nextlinenum;
     int nextmode;
-    VIDEOINFO vident{};
+    VideoInfo vident{};
 
     const std::string cfgname = find_path("id.cfg");
 

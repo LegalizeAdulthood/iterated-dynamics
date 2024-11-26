@@ -7,7 +7,7 @@
 #include <cassert>
 #include <string>
 
-struct VIDEOINFO;
+struct VideoInfo;
 
 enum class buzzer_codes
 {
@@ -61,7 +61,7 @@ public:
     virtual const std::string &get_name() const = 0;                    // name of driver
     virtual const std::string &get_description() const = 0;             // driver description
     virtual bool init(int *argc, char **argv) = 0;                      // init the driver
-    virtual bool validate_mode(VIDEOINFO *mode) = 0;                    // validate a id.cfg mode
+    virtual bool validate_mode(VideoInfo *mode) = 0;                    // validate a id.cfg mode
     virtual void get_max_screen(int &xmax, int &ymax) = 0;              // find max screen extents
     virtual void terminate() = 0;                                       // shutdown the driver
     virtual void pause() = 0;                                           // pause this driver
@@ -90,7 +90,7 @@ public:
     virtual int wait_key_pressed(int timeout) = 0;                            //
     virtual void unget_key(int key) = 0;                                      //
     virtual void shell() = 0;                                                 // invoke a command shell
-    virtual void set_video_mode(VIDEOINFO *mode) = 0;                         //
+    virtual void set_video_mode(VideoInfo *mode) = 0;                         //
     virtual void put_string(int row, int col, int attr, char const *msg) = 0; //
     virtual bool is_text() = 0;                                               //
     virtual void set_for_text() = 0;                                          // set for text mode & save gfx
@@ -136,15 +136,15 @@ public:
 #endif
 void load_driver(Driver *drv, int *argc, char **argv);
 int init_drivers(int *argc, char **argv);
-void add_video_mode(Driver *drv, VIDEOINFO *mode);
+void add_video_mode(Driver *drv, VideoInfo *mode);
 void close_drivers();
 Driver *driver_find_by_name(char const *name);
 
 extern Driver *g_driver;            // current driver in use
 
-void driver_set_video_mode(VIDEOINFO *mode);
+void driver_set_video_mode(VideoInfo *mode);
 
-inline bool driver_validate_mode(VIDEOINFO *mode)
+inline bool driver_validate_mode(VideoInfo *mode)
 {
     return g_driver->validate_mode(mode);
 }

@@ -64,7 +64,7 @@ int init_drivers(int *argc, char **argv)
 //
 // a driver uses this to inform the system of an available video mode
 //
-void add_video_mode(Driver *drv, VIDEOINFO *mode)
+void add_video_mode(Driver *drv, VideoInfo *mode)
 {
 #if defined(_WIN32)
     _ASSERTE(g_video_table_len < MAX_VIDEO_MODES);
@@ -102,7 +102,7 @@ Driver *driver_find_by_name(char const *name)
     return nullptr;
 }
 
-void driver_set_video_mode(VIDEOINFO *mode)
+void driver_set_video_mode(VideoInfo *mode)
 {
     if (g_driver != mode->driver)
     {

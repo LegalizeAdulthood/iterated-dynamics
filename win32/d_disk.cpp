@@ -55,14 +55,14 @@ public:
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
     void create_window() override;
-    void set_video_mode(VIDEOINFO *mode) override;
+    void set_video_mode(VideoInfo *mode) override;
     void set_clear() override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
     bool is_text() override;
     void set_for_text() override;
     void set_for_graphics() override;
     bool diskp() const override;
-    bool validate_mode(VIDEOINFO *mode) override;
+    bool validate_mode(VideoInfo *mode) override;
     void pause() override;
     void resume() override;
     void save_graphics() override;
@@ -78,7 +78,7 @@ private:
 
 #define DRIVER_MODE(width_, height_ ) \
     { 0, width_, height_, 256, nullptr, "                        " }
-static VIDEOINFO modes[] =
+static VideoInfo modes[] =
 {
     DRIVER_MODE( 800,  600),
     DRIVER_MODE(1024,  768),
@@ -146,7 +146,7 @@ bool DiskDriver::init(int *argc, char **argv)
     initdacbox();
 
     // add default list of video modes
-    for (VIDEOINFO &mode : modes)
+    for (VideoInfo &mode : modes)
     {
         add_video_mode(this, &mode);
     }
@@ -384,7 +384,7 @@ void DiskDriver::create_window()
     m_win_text.text_on();
 }
 
-void DiskDriver::set_video_mode(VIDEOINFO *mode)
+void DiskDriver::set_video_mode(VideoInfo *mode)
 {
     // initially, set the virtual line to be the scan line length
     g_is_true_color = false;            // assume not truecolor
@@ -434,7 +434,7 @@ bool DiskDriver::diskp() const
     return true;
 }
 
-bool DiskDriver::validate_mode(VIDEOINFO *mode)
+bool DiskDriver::validate_mode(VideoInfo *mode)
 {
     /* allow modes of any size with 256 colors */
     return mode->colors == 256;

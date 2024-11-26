@@ -50,7 +50,7 @@
 #include <init_failure.h>
 #include <string>
 
-VIDEOINFO g_video_entry{};                                    //
+VideoInfo g_video_entry{};                                    //
 help_labels g_help_mode{};                                    //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h
 std::string g_fractal_search_dir1;                            //

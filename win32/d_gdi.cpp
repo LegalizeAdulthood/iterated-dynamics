@@ -60,8 +60,8 @@ public:
     void set_for_text() override;
     void set_for_graphics() override;
     void set_clear() override;
-    void set_video_mode(VIDEOINFO *mode) override;
-    bool validate_mode(VIDEOINFO *mode) override;
+    void set_video_mode(VideoInfo *mode) override;
+    bool validate_mode(VideoInfo *mode) override;
     void pause() override;
     void resume() override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
@@ -79,7 +79,7 @@ private:
 
 #define DRIVER_MODE(width_, height_) \
     { 0, width_, height_, 256, nullptr, "                        " }
-static VIDEOINFO modes[] =
+static VideoInfo modes[] =
 {
     DRIVER_MODE( 800,  600),
     DRIVER_MODE(1024,  768),
@@ -333,7 +333,7 @@ void GDIDriver::set_clear()
     }
 }
 
-void GDIDriver::set_video_mode(VIDEOINFO *mode)
+void GDIDriver::set_video_mode(VideoInfo *mode)
 {
     // initially, set the virtual line to be the scan line length
     g_is_true_color = false;            // assume not truecolor
@@ -362,7 +362,7 @@ void GDIDriver::set_video_mode(VIDEOINFO *mode)
     set_clear();
 }
 
-bool GDIDriver::validate_mode(VIDEOINFO *mode)
+bool GDIDriver::validate_mode(VideoInfo *mode)
 {
     int width, height;
     get_max_screen(width, height);

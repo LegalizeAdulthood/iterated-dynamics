@@ -25,7 +25,7 @@
 
 bool g_fake_lut{};
 
-VIDEOINFO x11_video_table[] = {
+VideoInfo x11_video_table[] = {
     {999, 800, 600, 256, nullptr, "                         "},
 };
 

@@ -8,7 +8,7 @@
 
 #include <cstdio>
 
-VIDEOINFO g_video_table[MAX_VIDEO_MODES]{};
+VideoInfo g_video_table[MAX_VIDEO_MODES]{};
 
 int g_video_table_len{};                 // number of entries in above
 

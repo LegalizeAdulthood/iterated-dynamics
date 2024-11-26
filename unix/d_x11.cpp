@@ -80,7 +80,7 @@ extern bool g_got_real_dac;
 extern bool g_inside_help;
 extern float g_final_aspect_ratio;
 extern  float   g_screen_aspect;
-extern VIDEOINFO x11_video_table[];
+extern VideoInfo x11_video_table[];
 
 // the video-palette array (named after the VGA adapter's video-DAC)
 
@@ -124,7 +124,7 @@ public:
         return m_description;
     }
     bool init(int *argc, char **argv) override;
-    bool validate_mode(VIDEOINFO *mode) override;
+    bool validate_mode(VideoInfo *mode) override;
     void get_max_screen(int &width, int &height) override;
     void terminate() override;
     void pause() override;
@@ -152,7 +152,7 @@ public:
     int wait_key_pressed(int timeout) override;
     void unget_key(int key) override;
     void shell() override;
-    void set_video_mode(VIDEOINFO *mode) override;
+    void set_video_mode(VideoInfo *mode) override;
     void put_string(int row, int col, int attr, char const *msg) override;
     bool is_text() override;
     void set_for_text() override;
@@ -297,7 +297,7 @@ static const int mousefkey[4][4] /* [button][dir] */ = {
 
 #define DRIVER_MODE(width_, height_) \
     { 0, width_, height_, 256, nullptr, "                         " }
-static const VIDEOINFO modes[] =
+static const VideoInfo modes[] =
 {
     // 4:3 aspect ratio
     DRIVER_MODE(800, 600),
@@ -1552,7 +1552,7 @@ bool X11Driver::init(int *argc, char **argv)
     return true;
 }
 
-bool X11Driver::validate_mode(VIDEOINFO *mode)
+bool X11Driver::validate_mode(VideoInfo *mode)
 {
     return false;
 }
@@ -2401,7 +2401,7 @@ void X11Driver::shell()
     putchar('\n');
 }
 
-void X11Driver::set_video_mode(VIDEOINFO *mode)
+void X11Driver::set_video_mode(VideoInfo *mode)
 {
     if (g_disk_flag)
         enddisk();

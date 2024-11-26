@@ -6,7 +6,7 @@
 
 #include <string>
 
-struct VIDEOINFO;
+struct VideoInfo;
 
 // -1 no fractal
 //  0 parms changed, recalc reqd
@@ -108,7 +108,7 @@ extern long                  g_user_distance_estimator_value;
 extern bool                  g_user_float_flag;
 extern int                   g_user_periodicity_value;
 extern char                  g_user_std_calc_mode;
-extern VIDEOINFO             g_video_entry;
+extern VideoInfo             g_video_entry;
 extern bool                  g_view_crop;
 extern float                 g_view_reduction;
 extern bool                  g_view_window;
