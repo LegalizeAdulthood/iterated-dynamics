@@ -35,18 +35,18 @@ enum
     FUDGEFACTOR2 = 24 // (or maybe this)
 };
 
-static long   fudgetolong(double d);
-static double fudgetodouble(long l);
+static long   fudge_to_long(double d);
+static double fudge_to_double(long l);
 static void   adjust_to_limits(double expand);
 static void   smallest_add(double *num);
 static int    ratio_bad(double actual, double desired);
-static void   adjust_to_limitsbf(double expand);
+static void   adjust_to_limits_bf(double expand);
 static void   smallest_add_bf(bf_t num);
 
 /* This function calculates the precision needed to distinguish adjacent
    pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
-static int getprecdbl(int rezflag)
+static int get_prec_dbl(int rezflag)
 {
     LDBL del1;
     LDBL del2;
@@ -101,7 +101,7 @@ static int getprecdbl(int rezflag)
 
 void fractal_float_to_bf()
 {
-    init_bf_dec(getprecdbl(CURRENTREZ));
+    init_bf_dec(get_prec_dbl(CURRENTREZ));
     float_to_bf(g_bf_x_min, g_x_min);
     float_to_bf(g_bf_x_max, g_x_max);
     float_to_bf(g_bf_y_min, g_y_min);
@@ -423,7 +423,7 @@ init_restart:
     // now setup arrays of real coordinates corresponding to each pixel
     if (g_bf_math != bf_math_type::NONE)
     {
-        adjust_to_limitsbf(1.0); // make sure all corners in valid range
+        adjust_to_limits_bf(1.0); // make sure all corners in valid range
     }
     else
     {
@@ -437,16 +437,16 @@ init_restart:
 
     if (g_fractal_type != fractal_type::CELLULAR && g_fractal_type != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
-        g_l_x_min  = fudgetolong(g_x_min);
-        g_l_x_max  = fudgetolong(g_x_max);
-        g_l_x_3rd  = fudgetolong(g_x_3rd);
-        g_l_y_min  = fudgetolong(g_y_min);
-        g_l_y_max  = fudgetolong(g_y_max);
-        g_l_y_3rd  = fudgetolong(g_y_3rd);
-        g_l_delta_x  = fudgetolong((double)g_delta_x);
-        g_l_delta_y  = fudgetolong((double)g_delta_y);
-        g_l_delta_x2 = fudgetolong((double)g_delta_x2);
-        g_l_delta_y2 = fudgetolong((double)g_delta_y2);
+        g_l_x_min  = fudge_to_long(g_x_min);
+        g_l_x_max  = fudge_to_long(g_x_max);
+        g_l_x_3rd  = fudge_to_long(g_x_3rd);
+        g_l_y_min  = fudge_to_long(g_y_min);
+        g_l_y_max  = fudge_to_long(g_y_max);
+        g_l_y_3rd  = fudge_to_long(g_y_3rd);
+        g_l_delta_x  = fudge_to_long((double)g_delta_x);
+        g_l_delta_y  = fudge_to_long((double)g_delta_y);
+        g_l_delta_x2 = fudge_to_long((double)g_delta_x2);
+        g_l_delta_y2 = fudge_to_long((double)g_delta_y2);
     }
 
     // skip this if plasma to avoid 3d problems
@@ -498,12 +498,12 @@ expand_retry:
             g_l_y_min = g_l_y0[g_logical_screen_y_dots-1] + g_l_y1[g_logical_screen_x_dots-1];
             g_l_x_3rd = g_l_x_min + g_l_x1[g_logical_screen_y_dots-1];
             g_l_y_3rd = g_l_y0[g_logical_screen_y_dots-1];
-            g_x_min = fudgetodouble(g_l_x_min);
-            g_x_max = fudgetodouble(g_l_x_max);
-            g_x_3rd = fudgetodouble(g_l_x_3rd);
-            g_y_min = fudgetodouble(g_l_y_min);
-            g_y_max = fudgetodouble(g_l_y_max);
-            g_y_3rd = fudgetodouble(g_l_y_3rd);
+            g_x_min = fudge_to_double(g_l_x_min);
+            g_x_max = fudge_to_double(g_l_x_max);
+            g_x_3rd = fudge_to_double(g_l_x_3rd);
+            g_y_min = fudge_to_double(g_l_y_min);
+            g_y_max = fudge_to_double(g_l_y_max);
+            g_y_3rd = fudge_to_double(g_l_y_3rd);
         } // end if (integerfractal && !invert && use_grid)
         else
         {
@@ -617,7 +617,7 @@ expand_retry:
     {
         g_delta_min = std::fabs((double)g_delta_y2);
     }
-    g_l_delta_min = fudgetolong(g_delta_min);
+    g_l_delta_min = fudge_to_long(g_delta_min);
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
@@ -636,7 +636,7 @@ expand_retry:
     }
 }
 
-static long fudgetolong(double d)
+static long fudge_to_long(double d)
 {
     if ((d *= g_fudge_factor) > 0)
     {
@@ -649,7 +649,7 @@ static long fudgetolong(double d)
     return (long)d;
 }
 
-static double fudgetodouble(long l)
+static double fudge_to_double(long l)
 {
     char buf[30];
     double d;
@@ -798,7 +798,7 @@ void adjust_corner()
     }
 }
 
-static void adjust_to_limitsbf(double expand)
+static void adjust_to_limits_bf(double expand)
 {
     LDBL limit;
     bf_t bcornerx[4];
