@@ -1244,7 +1244,7 @@ int calc_mand()              // fast per pixel 1/2/b/g, called with row & col se
     // setup values from array to avoid using es reg in calcmand.asm
     g_l_init_x = g_l_x_pixel();
     g_l_init_y = g_l_y_pixel();
-    if (calcmandasm() >= 0)
+    if (calc_mand_asm() >= 0)
     {
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
             && (g_real_color_iter < g_max_iterations

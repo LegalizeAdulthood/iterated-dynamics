@@ -4,7 +4,7 @@
 
 #include "stop_msg.h"
 
-long calcmandasm()
+long calc_mand_asm()
 {
     static bool been_here = false;
     if (!been_here)

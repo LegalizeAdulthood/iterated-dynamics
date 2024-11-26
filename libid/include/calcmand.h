@@ -2,4 +2,4 @@
 //
 #pragma once
 
-long calcmandasm();
+long calc_mand_asm();
