@@ -81,8 +81,8 @@ static char const *s_jiim_left_right_names[]{
 static char s_tmp_stack[4096]{};
 
 // forward declarations
-static fractal_type select_fracttype(fractal_type t);
-static int sel_fractype_help(int curkey, int choice);
+static fractal_type select_fract_type(fractal_type t);
+static int sel_fract_type_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
 
 // prompt for and select fractal type
@@ -93,7 +93,7 @@ int get_fract_type()
     fractal_type oldfractype = g_fractal_type;
     while (true)
     {
-        t = select_fracttype(g_fractal_type);
+        t = select_fract_type(g_fractal_type);
         if (t == fractal_type::NOFRACTAL)
         {
             break;
@@ -118,7 +118,7 @@ int get_fract_type()
     return done;
 }
 
-static fractal_type select_fracttype(fractal_type t)
+static fractal_type select_fract_type(fractal_type t)
 {
     int numtypes;
 #define MAXFTYPES 200
@@ -179,7 +179,7 @@ static fractal_type select_fracttype(fractal_type t)
     const int done = full_screen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
         "Press F2 for a description of the highlighted type", numtypes, (char const **) choices,
-        attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fractype_help);
+        attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fract_type_help);
     fractal_type result = fractal_type::NOFRACTAL;
     if (done >= 0)
     {
@@ -202,7 +202,7 @@ static fractal_type select_fracttype(fractal_type t)
     return result;
 }
 
-static int sel_fractype_help(int curkey, int choice)
+static int sel_fract_type_help(int curkey, int choice)
 {
     if (curkey == ID_KEY_F2)
     {
@@ -516,7 +516,7 @@ gfp_top:
     promptnum = 0;
     if (g_julibrot)
     {
-        fractal_type i = select_fracttype(g_new_orbit_type);
+        fractal_type i = select_fract_type(g_new_orbit_type);
         if (i == fractal_type::NOFRACTAL)
         {
             if (ret == 0)
