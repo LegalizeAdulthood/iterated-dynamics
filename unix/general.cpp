@@ -60,9 +60,9 @@ nosnd()
 {}
 
 /*
-; long readticker() returns current bios ticker value
+; long read_ticker() returns current bios ticker value
 */
-long readticker()
+long read_ticker()
 {
     return std::clock();
 }

@@ -2300,12 +2300,12 @@ void X11Driver::flush_output()
         if (!start)
         {
             std::time(&start);
-            last = readticker();
+            last = read_ticker();
         }
         else
         {
             std::time_t now = std::time(nullptr);
-            long now_ticks = readticker();
+            long now_ticks = read_ticker();
             if (now > start)
             {
                 ticks_per_second = (now_ticks - last)/((long)(now - start));
@@ -2314,7 +2314,7 @@ void X11Driver::flush_output()
     }
     else
     {
-        long now = readticker();
+        long now = read_ticker();
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             flush();
@@ -2404,7 +2404,7 @@ void X11Driver::shell()
 void X11Driver::set_video_mode(VideoInfo *mode)
 {
     if (g_disk_flag)
-        enddisk();
+        end_disk();
     end_video();
     g_good_mode = true;
     switch (g_dot_mode)

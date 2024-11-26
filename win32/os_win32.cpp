@@ -52,7 +52,7 @@ char *g_top_of_stack{};
  */
 
 /*
-; long readticker() returns current bios ticker value
+; long read_ticker() returns current bios ticker value
 */
 long read_ticker()
 {
