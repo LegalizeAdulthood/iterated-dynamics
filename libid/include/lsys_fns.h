@@ -4,11 +4,11 @@
 
 #include "port.h"
 
-inline bool ispow2(int n)
+inline bool is_pow2(int n)
 {
     return n == (n & -n);
 }
 
-LDBL  getnumber(char const **str);
-int Lsystem();
-bool LLoad();
+LDBL  get_number(char const **str);
+int lsystem();
+bool lsystem_load();

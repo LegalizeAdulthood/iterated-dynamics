@@ -1510,7 +1510,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_LSYS, help_labels::SPECIAL_L_SYSTEM, fractal_flags::NOZOOM|fractal_flags::NORESUME|fractal_flags::NOGUESS|fractal_flags::NOTRACE,
         -1.0F, 1.0F, -1.0F, 1.0F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
-        nullptr, nullptr, standalone_setup, Lsystem,
+        nullptr, nullptr, standalone_setup, lsystem,
         NOBAILOUT
     },
 

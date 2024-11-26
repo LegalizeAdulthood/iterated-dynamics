@@ -78,7 +78,7 @@ static bool s_loaded{};
 
 char g_max_angle{};
 
-LDBL getnumber(char const **str)
+LDBL get_number(char const **str)
 {
     bool root = false;
     bool inverse = false;
@@ -267,12 +267,12 @@ static bool readLSystemFile(char const *str)
     return false;
 }
 
-int Lsystem()
+int lsystem()
 {
     int order;
     bool stackoflow = false;
 
-    if (!s_loaded && LLoad())
+    if (!s_loaded && lsystem_load())
     {
         return -1;
     }
@@ -381,7 +381,7 @@ int Lsystem()
     return 0;
 }
 
-bool LLoad()
+bool lsystem_load()
 {
     if (readLSystemFile(g_l_system_name.c_str()))
     {
@@ -974,9 +974,9 @@ static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
     int maxval = 10;
     int n = 0;
 
-    auto const plus = ispow2(ts->maxangle) ? lsysi_doplus_pow2 : lsysi_doplus;
-    auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
-    auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+    auto const plus = is_pow2(ts->maxangle) ? lsysi_doplus_pow2 : lsysi_doplus;
+    auto const minus = is_pow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
+    auto const pipe = is_pow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
     lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
@@ -999,15 +999,15 @@ static lsys_cmd *LSysISizeTransform(char const *s, LSysTurtleStateI *ts)
             break;
         case '/':
             f = lsysi_doslash;
-            num = (long)(getnumber(&s) * PI_DIV_180_L);
+            num = (long)(get_number(&s) * PI_DIV_180_L);
             break;
         case '\\':
             f = lsysi_dobslash;
-            num = (long)(getnumber(&s) * PI_DIV_180_L);
+            num = (long)(get_number(&s) * PI_DIV_180_L);
             break;
         case '@':
             f = lsysi_doat;
-            num = FIXEDPT(getnumber(&s));
+            num = FIXEDPT(get_number(&s));
             break;
         case '|':
             f = pipe;
@@ -1073,9 +1073,9 @@ static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
     int maxval = 10;
     int n = 0;
 
-    auto const plus = ispow2(ts->maxangle) ? lsysi_doplus_pow2 : lsysi_doplus;
-    auto const minus = ispow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
-    auto const pipe = ispow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+    auto const plus = is_pow2(ts->maxangle) ? lsysi_doplus_pow2 : lsysi_doplus;
+    auto const minus = is_pow2(ts->maxangle) ? lsysi_dominus_pow2 : lsysi_dominus;
+    auto const pipe = is_pow2(ts->maxangle) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
     lsys_cmd *ret = (lsys_cmd *) malloc((long) maxval * sizeof(lsys_cmd));
     if (ret == nullptr)
@@ -1098,15 +1098,15 @@ static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
             break;
         case '/':
             f = lsysi_doslash;
-            num = (long)(getnumber(&s) * PI_DIV_180_L);
+            num = (long)(get_number(&s) * PI_DIV_180_L);
             break;
         case '\\':
             f = lsysi_dobslash;
-            num = (long)(getnumber(&s) * PI_DIV_180_L);
+            num = (long)(get_number(&s) * PI_DIV_180_L);
             break;
         case '@':
             f = lsysi_doat;
-            num = FIXEDPT(getnumber(&s));
+            num = FIXEDPT(get_number(&s));
             break;
         case '|':
             f = pipe;
@@ -1128,15 +1128,15 @@ static lsys_cmd *LSysIDrawTransform(char const *s, LSysTurtleStateI *ts)
             break;
         case 'c':
             f = lsysi_dodrawc;
-            num = (long) getnumber(&s);
+            num = (long) get_number(&s);
             break;
         case '<':
             f = lsysi_dodrawlt;
-            num = (long) getnumber(&s);
+            num = (long) get_number(&s);
             break;
         case '>':
             f = lsysi_dodrawgt;
-            num = (long) getnumber(&s);
+            num = (long) get_number(&s);
             break;
         case '[':
             num = 1;

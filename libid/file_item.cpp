@@ -804,7 +804,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
             }
             break;
         case gfe_type::L_SYSTEM:
-            if (LLoad() == 0)
+            if (lsystem_load() == 0)
             {
                 return 0;
             }

@@ -529,9 +529,9 @@ LSysFCmd *lsysf_size_transform(char const *s, LSysTurtleStateF *ts)
     int max = 10;
     int n = 0;
 
-    auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
-    auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
-    auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
+    auto const plus = is_pow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
+    auto const minus = is_pow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
+    auto const pipe = is_pow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
     LSysFCmd *ret = (LSysFCmd *) malloc((long) max * sizeof(LSysFCmd));
     if (ret == nullptr)
@@ -556,17 +556,17 @@ LSysFCmd *lsysf_size_transform(char const *s, LSysTurtleStateF *ts)
         case '/':
             f = lsysf_doslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
+            ret[n].parm.nf = get_number(&s) * PI_DIV_180;
             break;
         case '\\':
             f = lsysf_dobslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
+            ret[n].parm.nf = get_number(&s) * PI_DIV_180;
             break;
         case '@':
             f = lsysf_doat;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s);
+            ret[n].parm.nf = get_number(&s);
             break;
         case '|':
             f = pipe;
@@ -636,9 +636,9 @@ LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
     int max = 10;
     int n = 0;
 
-    auto const plus = ispow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
-    auto const minus = ispow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
-    auto const pipe = ispow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
+    auto const plus = is_pow2(ts->maxangle) ? lsysf_doplus_pow2 : lsysf_doplus;
+    auto const minus = is_pow2(ts->maxangle) ? lsysf_dominus_pow2 : lsysf_dominus;
+    auto const pipe = is_pow2(ts->maxangle) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
     LSysFCmd *ret = (LSysFCmd *) malloc((long) max * sizeof(LSysFCmd));
     if (ret == nullptr)
@@ -663,17 +663,17 @@ LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
         case '/':
             f = lsysf_doslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
+            ret[n].parm.nf = get_number(&s) * PI_DIV_180;
             break;
         case '\\':
             f = lsysf_dobslash;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s) * PI_DIV_180;
+            ret[n].parm.nf = get_number(&s) * PI_DIV_180;
             break;
         case '@':
             f = lsysf_doat;
             ptype = 10;
-            ret[n].parm.nf = getnumber(&s);
+            ret[n].parm.nf = get_number(&s);
             break;
         case '|':
             f = pipe;
@@ -695,15 +695,15 @@ LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
             break;
         case 'c':
             f = lsysf_dodrawc;
-            num = getnumber(&s);
+            num = get_number(&s);
             break;
         case '<':
             f = lsysf_dodrawlt;
-            num = getnumber(&s);
+            num = get_number(&s);
             break;
         case '>':
             f = lsysf_dodrawgt;
-            num = getnumber(&s);
+            num = get_number(&s);
             break;
         case '[':
             num = 1;
