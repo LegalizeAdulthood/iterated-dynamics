@@ -74,7 +74,10 @@ enum
     BAD_PIXEL = 10000L
 };
 
-struct l_affine
+namespace
+{
+
+struct LAffine
 {
     // weird order so a,b,e and c,d,f are vectors
     long a;
@@ -85,7 +88,7 @@ struct l_affine
     long f;
 };
 
-struct long3dvtinf // data used by 3d view transform subroutine
+struct ViewTransform3DLong // data used by 3d view transform subroutine
 {
     long orbit[3];       // iterated function orbit value
     long iview[3];       // perspective viewer's coordinates
@@ -99,10 +102,10 @@ struct long3dvtinf // data used by 3d view transform subroutine
     long longmat1[4][4]; // long version of matrix
     int row, col;         // results
     int row1, col1;
-    l_affine cvt;
+    LAffine cvt;
 };
 
-struct float3dvtinf // data used by 3d view transform subroutine
+struct ViewTransform3DFloat // data used by 3d view transform subroutine
 {
     double orbit[3];                // interated function orbit value
     double viewvect[3];        // orbit transformed for viewing
@@ -116,16 +119,16 @@ struct float3dvtinf // data used by 3d view transform subroutine
     Affine cvt;
 };
 
-// Routines in this module
+} // namespace
 
 static int  ifs2d();
 static int  ifs3d();
 static int  ifs3dlong();
 static int  ifs3dfloat();
-static bool l_setup_convert_to_screen(l_affine *);
+static bool l_setup_convert_to_screen(LAffine *);
 static void setupmatrix(MATRIX);
-static bool long3dviewtransf(long3dvtinf *inf);
-static bool float3dviewtransf(float3dvtinf *inf);
+static bool long3dviewtransf(ViewTransform3DLong *inf);
+static bool float3dviewtransf(ViewTransform3DFloat *inf);
 static std::FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
 
@@ -167,7 +170,7 @@ static double s_init_orbit_fp[3]{};
 static int      s_max_hits{};
 static int      s_run_length{};
 static Affine   s_cvt{};
-static l_affine s_l_cvt{};
+static LAffine s_l_cvt{};
 
 static double s_Cx{};
 static double s_Cy{};
@@ -311,7 +314,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     return false;
 }
 
-static bool l_setup_convert_to_screen(l_affine *l_cvt)
+static bool l_setup_convert_to_screen(LAffine *l_cvt)
 {
     Affine cvt;
 
@@ -1584,7 +1587,7 @@ int orbit2d_float()
 int orbit2d_long()
 {
     std::FILE *fp = open_orbitsave();
-    l_affine cvt;
+    LAffine cvt;
     l_setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
     // set up projection scheme
@@ -1754,7 +1757,7 @@ static int orbit3dlongcalc()
         color = 1;
     }
 
-    long3dvtinf inf;
+    ViewTransform3DLong inf;
     l_setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
     inf.orbit[0] = s_init_orbit_long[0];
     inf.orbit[1] = s_init_orbit_long[1];
@@ -1878,7 +1881,7 @@ static int orbit3dfloatcalc()
         color = 1;
     }
 
-    float3dvtinf inf;
+    ViewTransform3DFloat inf;
     setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
     inf.orbit[0] = s_init_orbit_fp[0];
     inf.orbit[1] = s_init_orbit_fp[1];
@@ -2448,7 +2451,7 @@ static int ifs3dfloat()
     int k;
     int ret;
 
-    float3dvtinf inf;
+    ViewTransform3DFloat inf;
 
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
@@ -2599,7 +2602,7 @@ static int ifs2d()
     long r;
     long sum;
     long tempr;
-    l_affine cvt;
+    LAffine cvt;
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&cvt);
 
@@ -2719,7 +2722,7 @@ static int ifs3dlong()
     long r;
     long sum;
     long tempr;
-    long3dvtinf inf;
+    ViewTransform3DLong inf;
 
     std::srand(1);
     color_method = (int)g_params[0];
@@ -2904,7 +2907,7 @@ static int ifs3d()
     }
 }
 
-static bool long3dviewtransf(long3dvtinf *inf)
+static bool long3dviewtransf(ViewTransform3DLong *inf)
 {
     if (g_color_iter == 1)  // initialize on first call
     {
@@ -3094,7 +3097,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
     return true;
 }
 
-static bool float3dviewtransf(float3dvtinf *inf)
+static bool float3dviewtransf(ViewTransform3DFloat *inf)
 {
     if (g_color_iter == 1)  // initialize on first call
     {
