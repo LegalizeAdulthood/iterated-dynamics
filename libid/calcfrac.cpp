@@ -68,36 +68,53 @@
 #include <cstring>
 #include <vector>
 
-// routines in this module
+constexpr double DEM_BAILOUT{535.5};
+
+enum class show_dot_action
+{
+    SAVE = 1,
+    RESTORE = 2
+};
+
+enum class show_dot_direction
+{
+    JUST_A_POINT = 0,
+    LOWER_RIGHT = 1,
+    UPPER_RIGHT = 2,
+    LOWER_LEFT = 3,
+    UPPER_LEFT = 4
+};
+
 static void perform_work_list();
 static void decomposition();
 static void set_symmetry(symmetry_type sym, bool uselist);
 static bool x_sym_split(int xaxis_row, bool xaxis_between);
 static bool y_sym_split(int yaxis_col, bool yaxis_between);
 static void put_true_color_disk(int, int, int);
-
-// added for testing autologmap()
 static long auto_log_map();
 
-static DComplex s_saved{};     //
-static double rqlim_save{};    //
-static int (*calctypetmp)(){}; //
-static unsigned long lm{};     // magnitude limit (CALCMAND)
-int g_xx_begin{};              // these are same as worklist,
-int g_yy_begin{};              // declared as separate items
-static double dem_delta{};     //
-static double dem_width{};     // distance estimator variables
-static double dem_toobig{};    //
-static bool dem_mandel{};      //
+static DComplex s_saved{};            //
+static double rqlim_save{};           //
+static int (*calctypetmp)(){};        //
+static unsigned long lm{};            // magnitude limit (CALCMAND)
+static double dem_delta{};            //
+static double dem_width{};            // distance estimator variables
+static double dem_toobig{};           //
+static bool dem_mandel{};             //
+static std::vector<BYTE> s_save_dots; //
+static BYTE *s_fill_buff{};           //
+static int s_save_dots_len{};         //
+static int s_show_dot_color{};        //
+static int s_show_dot_width{};        //
 
-#define DEM_BAILOUT 535.5
 // next has a skip bit for each maxblock unit;
 //   1st pass sets bit  [1]... off only if block's contents guessed;
 //   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
-// variables exported from this file
+int g_xx_begin{};                               // these are same as work list,
+int g_yy_begin{};                               // declared as separate items
 long g_l_at_rad{};                              // finite attractor radius
 double g_f_at_rad{};                            // finite attractor radius
 LComplex g_l_init_orbit{};                      //
@@ -166,38 +183,11 @@ LComplex g_l_attractor[MAX_NUM_ATTRACTORS]{};    // finite attractor vals (int)
 int g_attractor_period[MAX_NUM_ATTRACTORS]{};    // period of the finite attractor
 int g_inside_color{};                            // inside color: 1=blue
 int g_outside_color{};                           // outside color
-
-// --------------------------------------------------------------------
-//              These variables are external for speed's sake only
-// --------------------------------------------------------------------
-
-int g_periodicity_check{};           //
-int g_periodicity_next_saved_incr{}; // For periodicity testing, only in standard_fractal()
-long g_first_saved_and{};            //
-int g_atan_colors{180};              //
-
-static std::vector<BYTE> s_save_dots;
-static BYTE *s_fill_buff{};
-static int s_save_dots_len{};
-static int s_show_dot_color{};
-static int s_show_dot_width{};
-
-enum class show_dot_action
-{
-    SAVE = 1,
-    RESTORE = 2
-};
-
-enum class show_dot_direction
-{
-    JUST_A_POINT = 0,
-    LOWER_RIGHT = 1,
-    UPPER_RIGHT = 2,
-    LOWER_LEFT = 3,
-    UPPER_LEFT = 4
-};
-
-int g_and_color {};        // "and" value used for color selection
+int g_periodicity_check{};                       //
+int g_periodicity_next_saved_incr{};             // For periodicity testing, only in standard_fractal()
+long g_first_saved_and{};                        //
+int g_atan_colors{180};                          //
+int g_and_color{};                               // "and" value used for color selection
 
 static double fmod_test_bailout_or()
 {
@@ -211,7 +201,6 @@ static double fmod_test_bailout_or()
     return tmpy;
 }
 
-// FMODTEST routine.
 // Makes the test condition for the FMOD coloring type
 //   that of the current bailout method. 'or' and 'and'
 //   methods are not used - in these cases a normal
