@@ -69,15 +69,15 @@
 #include <vector>
 
 // routines in this module
-static void perform_worklist();
+static void perform_work_list();
 static void decomposition();
-static void setsymmetry(symmetry_type sym, bool uselist);
-static bool xsym_split(int xaxis_row, bool xaxis_between);
-static bool ysym_split(int yaxis_col, bool yaxis_between);
-static void put_truecolor_disk(int, int, int);
+static void set_symmetry(symmetry_type sym, bool uselist);
+static bool x_sym_split(int xaxis_row, bool xaxis_between);
+static bool y_sym_split(int yaxis_col, bool yaxis_between);
+static void put_true_color_disk(int, int, int);
 
 // added for testing autologmap()
-static long autologmap();
+static long auto_log_map();
 
 static DComplex s_saved{};     //
 static double rqlim_save{};    //
@@ -199,7 +199,7 @@ enum class show_dot_direction
 
 int g_and_color {};        // "and" value used for color selection
 
-double fmodtest_bailout_or()
+static double fmod_test_bailout_or()
 {
     double const tmpx = sqr(g_new_z.x);
     double const tmpy = sqr(g_new_z.y);
@@ -217,7 +217,7 @@ double fmodtest_bailout_or()
 //   methods are not used - in these cases a normal
 //   modulus test is used
 //
-double fmodtest()
+static double fmod_test()
 {
     double result;
 
@@ -243,7 +243,7 @@ double fmodtest()
         break;
 
     case bailouts::Or:
-        result = fmodtest_bailout_or();
+        result = fmod_test_bailout_or();
         break;
 
     case bailouts::Manh:
@@ -363,7 +363,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
     }
 }
 
-void showdotsaverestore(
+static void show_dot_save_restore(
     int startx,
     int stopx,
     int starty,
@@ -456,7 +456,7 @@ void showdotsaverestore(
     }
 }
 
-int calctypeshowdot()
+static int calc_type_show_dot()
 {
     int out;
     int startx;
@@ -507,13 +507,13 @@ int calctypeshowdot()
             stopy  = g_row-1;
         }
     }
-    showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::SAVE);
+    show_dot_save_restore(startx, stopx, starty, stopy, direction, show_dot_action::SAVE);
     if (g_orbit_delay > 0)
     {
         sleep_ms(g_orbit_delay);
     }
     out = (*calctypetmp)();
-    showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);
+    show_dot_save_restore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);
     return out;
 }
 
@@ -545,7 +545,7 @@ int calc_fract()
             // Have to force passes = 1
             g_std_calc_mode = '1';
             g_user_std_calc_mode = g_std_calc_mode;
-            g_put_color = put_truecolor_disk;
+            g_put_color = put_true_color_disk;
         }
         else
         {
@@ -804,7 +804,7 @@ int calc_fract()
             // next two lines in case periodicity changed
             g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
-            setsymmetry(g_symmetry, false);
+            set_symmetry(g_symmetry, false);
             timer(timer_type::ENGINE, g_calc_type); // non-standard fractal engine
         }
         if (check_key())
@@ -828,7 +828,7 @@ int calc_fract()
             {
                 g_std_calc_mode = 'g';
                 g_three_pass = true;
-                timer(timer_type::ENGINE, (int(*)())perform_worklist);
+                timer(timer_type::ENGINE, (int(*)())perform_work_list);
                 if (g_calc_status == calc_status_value::COMPLETED)
                 {
                     if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low rez
@@ -839,7 +839,7 @@ int calc_fract()
                     {
                         g_std_calc_mode = '1';
                     }
-                    timer(timer_type::ENGINE, (int(*)())perform_worklist);
+                    timer(timer_type::ENGINE, (int(*)())perform_work_list);
                     g_three_pass = false;
                 }
             }
@@ -853,14 +853,14 @@ int calc_fract()
                 {
                     g_std_calc_mode = '1';
                 }
-                timer(timer_type::ENGINE, (int(*)())perform_worklist);
+                timer(timer_type::ENGINE, (int(*)())perform_work_list);
             }
             g_std_calc_mode = (char)old_calc_mode;
         }
         else // main case, much nicer!
         {
             g_three_pass = false;
-            timer(timer_type::ENGINE, (int(*)())perform_worklist);
+            timer(timer_type::ENGINE, (int(*)())perform_work_list);
         }
     }
     g_calc_time += g_timer_interval;
@@ -907,7 +907,7 @@ int find_alternate_math(fractal_type type, bf_math_type math)
 }
 
 // general escape-time engine routines
-static void perform_worklist()
+static void perform_work_list()
 {
     int (*sv_orbitcalc)() = nullptr;  // function that calculates one orbit
     int (*sv_per_pixel)() = nullptr;  // once-per-pixel init
@@ -1163,7 +1163,7 @@ static void perform_worklist()
                 s_show_dot_width = -1;
             }
             calctypetmp = g_calc_type;
-            g_calc_type    = calctypeshowdot;
+            g_calc_type    = calc_type_show_dot;
         }
 
         // some common initialization for escape-time pixel level routines
@@ -1171,12 +1171,12 @@ static void perform_worklist()
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
-        setsymmetry(g_symmetry, true);
+        set_symmetry(g_symmetry, true);
 
         if (!g_resuming && (labs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
         {
             // calculate round screen edges to work out best start for logmap
-            g_log_map_flag = (autologmap() * (g_log_map_flag / labs(g_log_map_flag)));
+            g_log_map_flag = (auto_log_map() * (g_log_map_flag / labs(g_log_map_flag)));
             setup_log_table();
         }
 
@@ -1703,7 +1703,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                     g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
                 }
-                mag = fmodtest();
+                mag = fmod_test();
                 if (mag < g_close_proximity)
                 {
                     memvalue = mag;
@@ -1761,7 +1761,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                     g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
                 }
-                mag = fmodtest();
+                mag = fmod_test();
                 if (mag < g_close_proximity)
                 {
                     memvalue = mag;
@@ -2618,7 +2618,7 @@ int potential(double mag, long iterations)
 }
 
 // symmetry plot setup
-static bool xsym_split(int xaxis_row, bool xaxis_between)
+static bool x_sym_split(int xaxis_row, bool xaxis_between)
 {
     if ((g_work_symmetry&0x11) == 0x10)   // already decided not sym
     {
@@ -2671,7 +2671,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
     return false; // tell set_symmetry its a go
 }
 
-static bool ysym_split(int yaxis_col, bool yaxis_between)
+static bool y_sym_split(int yaxis_col, bool yaxis_between)
 {
     if ((g_work_symmetry&0x22) == 0x20)   // already decided not sym
     {
@@ -2724,7 +2724,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
     return false; // tell set_symmetry its a go
 }
 
-static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmetrical plot functions
+static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symmetrical plot functions
 {
     int i;
     int xaxis_row;
@@ -2901,7 +2901,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         }
 xsym:
     case symmetry_type::X_AXIS:                       // X-axis Symmetry
-        if (!xsym_split(xaxis_row, xaxis_between))
+        if (!x_sym_split(xaxis_row, xaxis_between))
         {
             if (g_basin)
             {
@@ -2919,7 +2919,7 @@ xsym:
             break;
         }
     case symmetry_type::Y_AXIS:                       // Y-axis Symmetry
-        if (!ysym_split(yaxis_col, yaxis_between))
+        if (!y_sym_split(yaxis_col, yaxis_between))
         {
             g_plot = sym_plot2y;
         }
@@ -2930,8 +2930,8 @@ xsym:
             break;
         }
     case symmetry_type::XY_AXIS:                      // X-axis AND Y-axis Symmetry
-        xsym_split(xaxis_row, xaxis_between);
-        ysym_split(yaxis_col, yaxis_between);
+        x_sym_split(xaxis_row, xaxis_between);
+        y_sym_split(yaxis_col, yaxis_between);
         switch (g_work_symmetry & 3)
         {
         case 1: // just xaxis symmetry
@@ -2973,8 +2973,8 @@ xsym:
         }
     case symmetry_type::ORIGIN:                      // Origin Symmetry
 originsym:
-        if (!xsym_split(xaxis_row, xaxis_between)
-            && !ysym_split(yaxis_col, yaxis_between))
+        if (!x_sym_split(xaxis_row, xaxis_between)
+            && !y_sym_split(yaxis_col, yaxis_between))
         {
             g_plot = sym_plot2j;
             g_i_x_stop = g_xx_stop; // didn't want this changed
@@ -3012,8 +3012,8 @@ originsym:
         }
         g_plot = sym_pi_plot ;
         g_symmetry = symmetry_type::NONE;
-        if (!xsym_split(xaxis_row, xaxis_between)
-            && !ysym_split(yaxis_col, yaxis_between))
+        if (!x_sym_split(xaxis_row, xaxis_between)
+            && !y_sym_split(yaxis_col, yaxis_between))
         {
             if (g_param_z1.y == 0.0)
             {
@@ -3063,7 +3063,7 @@ originsym:
 // added for testing autologmap()
 // insert at end of CALCFRAC.C
 
-static long autologmap()
+static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
     long mincolour;
@@ -3359,7 +3359,7 @@ void sym_plot4_basin(int x, int y, int color)
     }
 }
 
-static void put_truecolor_disk(int x, int y, int color)
+static void put_true_color_disk(int x, int y, int color)
 {
     put_color_a(x, y, color);
     targa_color(x, y, color);
