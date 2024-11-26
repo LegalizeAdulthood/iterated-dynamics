@@ -274,7 +274,7 @@ julia_fp_setup()
     {
         g_power_z.x = g_params[2] - 1.0;
         g_power_z.y = g_params[3];
-        g_marks_coefficient = ComplexPower(*g_float_param, g_power_z);
+        g_marks_coefficient = complex_power(*g_float_param, g_power_z);
     }
     switch (g_fractal_type)
     {

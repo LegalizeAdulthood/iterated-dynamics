@@ -275,8 +275,8 @@ inline void cmplx_sqr_old(DComplex &out)
 }
 inline void cmplx_pwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
-    extern DComplex ComplexPower(DComplex, DComplex);
-    out = ComplexPower(arg1, arg2);
+    extern DComplex complex_power(DComplex, DComplex);
+    out = complex_power(arg1, arg2);
 }
 inline void cmplx_mult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {

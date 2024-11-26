@@ -672,9 +672,9 @@ static char const *parse_error_text(ParseError which)
 
 static void mStkFunct(FunctionPtr fct)   // call mStk via dStk
 {
-    g_arg1->d = MPC2cmplx(g_arg1->m);
+    g_arg1->d = mpc_to_cmplx(g_arg1->m);
     (*fct)();
-    g_arg1->m = cmplx2MPC(g_arg1->d);
+    g_arg1->m = cmplx_to_mpc(g_arg1->d);
 }
 
 static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
@@ -733,8 +733,8 @@ static void mRandom()
        the same fractals when the srand() function is used. */
     x = new_random_num() >> (32 - g_bit_shift);
     y = new_random_num() >> (32 - g_bit_shift);
-    s_vars[7].a.m.x = *fg2MP(x, g_bit_shift);
-    s_vars[7].a.m.y = *fg2MP(y, g_bit_shift);
+    s_vars[7].a.m.x = *fg_to_mp(x, g_bit_shift);
+    s_vars[7].a.m.y = *fg_to_mp(y, g_bit_shift);
 }
 
 static void set_random()
@@ -881,12 +881,12 @@ void dStkSqr()
 
 void mStkSqr()
 {
-    LastSqr.m.x = *MPmul(g_arg1->m.x, g_arg1->m.x);
-    LastSqr.m.y = *MPmul(g_arg1->m.y, g_arg1->m.y);
-    g_arg1->m.y = *MPmul(g_arg1->m.x, g_arg1->m.y);
+    LastSqr.m.x = *mp_mul(g_arg1->m.x, g_arg1->m.x);
+    LastSqr.m.y = *mp_mul(g_arg1->m.y, g_arg1->m.y);
+    g_arg1->m.y = *mp_mul(g_arg1->m.x, g_arg1->m.y);
     g_arg1->m.y.Exp++;
-    g_arg1->m.x = *MPsub(LastSqr.m.x, LastSqr.m.y);
-    LastSqr.m.x = *MPadd(LastSqr.m.x, LastSqr.m.y);
+    g_arg1->m.x = *mp_sub(LastSqr.m.x, LastSqr.m.y);
+    LastSqr.m.x = *mp_add(LastSqr.m.x, LastSqr.m.y);
     LastSqr.m.y.Exp = 0;
     LastSqr.m.y.Mant = 0;
 }
@@ -911,7 +911,7 @@ static void dStkAdd()
 
 static void mStkAdd()
 {
-    g_arg2->m = MPCadd(g_arg2->m, g_arg1->m);
+    g_arg2->m = mpc_add(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
@@ -934,7 +934,7 @@ static void dStkSub()
 
 static void mStkSub()
 {
-    g_arg2->m = MPCsub(g_arg2->m, g_arg1->m);
+    g_arg2->m = mpc_sub(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
@@ -1153,7 +1153,7 @@ void dStkMul()
 
 static void mStkMul()
 {
-    g_arg2->m = MPCmul(g_arg2->m, g_arg1->m);
+    g_arg2->m = mpc_mul(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
@@ -1174,7 +1174,7 @@ static void dStkDiv()
 
 static void mStkDiv()
 {
-    g_arg2->m = MPCdiv(g_arg2->m, g_arg1->m);
+    g_arg2->m = mpc_div(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
@@ -1207,7 +1207,7 @@ static void dStkMod()
 
 static void mStkMod()
 {
-    g_arg1->m.x = MPCmod(g_arg1->m);
+    g_arg1->m.x = mpc_mod(g_arg1->m);
     g_arg1->m.y.Exp = 0;
     g_arg1->m.y.Mant = 0;
 }
@@ -1528,14 +1528,14 @@ void dStkRecip()
 void mStkRecip()
 {
     MP mod;
-    mod = *MPadd(*MPmul(g_arg1->m.x, g_arg1->m.x), *MPmul(g_arg1->m.y, g_arg1->m.y));
+    mod = *mp_add(*mp_mul(g_arg1->m.x, g_arg1->m.x), *mp_mul(g_arg1->m.y, g_arg1->m.y));
     if (mod.Mant == 0L)
     {
         g_overflow = true;
         return;
     }
-    g_arg1->m.x = *MPdiv(g_arg1->m.x, mod);
-    g_arg1->m.y = *MPdiv(g_arg1->m.y, mod);
+    g_arg1->m.x = *mp_div(g_arg1->m.x, mod);
+    g_arg1->m.y = *mp_div(g_arg1->m.y, mod);
     g_arg1->m.y.Exp ^= 0x8000;
 }
 
@@ -1683,7 +1683,7 @@ void lStkCosh()
 
 void dStkASin()
 {
-    Arcsinz(g_arg1->d, &(g_arg1->d));
+    asin_z(g_arg1->d, &(g_arg1->d));
 }
 
 void mStkASin()
@@ -1698,7 +1698,7 @@ void lStkASin()
 
 void dStkASinh()
 {
-    Arcsinhz(g_arg1->d, &(g_arg1->d));
+    asinh_z(g_arg1->d, &(g_arg1->d));
 }
 
 void mStkASinh()
@@ -1713,7 +1713,7 @@ void lStkASinh()
 
 void dStkACos()
 {
-    Arccosz(g_arg1->d, &(g_arg1->d));
+    acos_z(g_arg1->d, &(g_arg1->d));
 }
 
 void mStkACos()
@@ -1728,7 +1728,7 @@ void lStkACos()
 
 void dStkACosh()
 {
-    Arccoshz(g_arg1->d, &(g_arg1->d));
+    acosh_z(g_arg1->d, &(g_arg1->d));
 }
 
 void mStkACosh()
@@ -1743,7 +1743,7 @@ void lStkACosh()
 
 void dStkATan()
 {
-    Arctanz(g_arg1->d, &(g_arg1->d));
+    atan_z(g_arg1->d, &(g_arg1->d));
 }
 
 void mStkATan()
@@ -1758,7 +1758,7 @@ void lStkATan()
 
 void dStkATanh()
 {
-    Arctanhz(g_arg1->d, &(g_arg1->d));
+    atanh_z(g_arg1->d, &(g_arg1->d));
 }
 
 void mStkATanh()
@@ -1813,7 +1813,7 @@ static void dStkLT()
 
 static void mStkLT()
 {
-    g_arg2->m.x = *fg2MP((long)(MPcmp(g_arg2->m.x, g_arg1->m.x) == -1), 0);
+    g_arg2->m.x = *fg_to_mp((long)(mp_cmp(g_arg2->m.x, g_arg1->m.x) == -1), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -1838,7 +1838,7 @@ static void dStkGT()
 
 static void mStkGT()
 {
-    g_arg2->m.x = *fg2MP((long)(MPcmp(g_arg2->m.x, g_arg1->m.x) == 1), 0);
+    g_arg2->m.x = *fg_to_mp((long)(mp_cmp(g_arg2->m.x, g_arg1->m.x) == 1), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -1865,8 +1865,8 @@ static void mStkLTE()
 {
     int comp;
 
-    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
-    g_arg2->m.x = *fg2MP((long)(comp == -1 || comp == 0), 0);
+    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg_to_mp((long)(comp == -1 || comp == 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -1893,8 +1893,8 @@ static void mStkGTE()
 {
     int comp;
 
-    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
-    g_arg2->m.x = *fg2MP((long)(comp == 1 || comp == 0), 0);
+    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg_to_mp((long)(comp == 1 || comp == 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -1921,8 +1921,8 @@ static void mStkEQ()
 {
     int comp;
 
-    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
-    g_arg2->m.x = *fg2MP((long)(comp == 0), 0);
+    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg_to_mp((long)(comp == 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -1949,8 +1949,8 @@ static void mStkNE()
 {
     int comp;
 
-    comp = MPcmp(g_arg2->m.x, g_arg1->m.x);
-    g_arg2->m.x = *fg2MP((long)(comp != 0), 0);
+    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    g_arg2->m.x = *fg_to_mp((long)(comp != 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -1975,7 +1975,7 @@ static void dStkOR()
 
 static void mStkOR()
 {
-    g_arg2->m.x = *fg2MP((long)(g_arg2->m.x.Mant || g_arg1->m.x.Mant), 0);
+    g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.Mant || g_arg1->m.x.Mant), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -2000,7 +2000,7 @@ static void dStkAND()
 
 static void mStkAND()
 {
-    g_arg2->m.x = *fg2MP((long)(g_arg2->m.x.Mant && g_arg1->m.x.Mant), 0);
+    g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.Mant && g_arg1->m.x.Mant), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
     g_arg1--;
@@ -2047,7 +2047,7 @@ void lStkExp()
 
 void dStkPwr()
 {
-    g_arg2->d = ComplexPower(g_arg2->d, g_arg1->d);
+    g_arg2->d = complex_power(g_arg2->d, g_arg1->d);
     g_arg1--;
     g_arg2--;
 }
@@ -2057,10 +2057,10 @@ void mStkPwr()
     DComplex x;
     DComplex y;
 
-    x = MPC2cmplx(g_arg2->m);
-    y = MPC2cmplx(g_arg1->m);
-    x = ComplexPower(x, y);
-    g_arg2->m = cmplx2MPC(x);
+    x = mpc_to_cmplx(g_arg2->m);
+    y = mpc_to_cmplx(g_arg1->m);
+    x = complex_power(x, y);
+    g_arg2->m = cmplx_to_mpc(x);
     g_arg1--;
     g_arg2--;
 }
@@ -2074,7 +2074,7 @@ void lStkPwr()
     x.y = (double)g_arg2->l.y / s_fudge;
     y.x = (double)g_arg1->l.x / s_fudge;
     y.y = (double)g_arg1->l.y / s_fudge;
-    x = ComplexPower(x, y);
+    x = complex_power(x, y);
     if (std::fabs(x.x) < g_fudge_limit && std::fabs(x.y) < g_fudge_limit)
     {
         g_arg2->l.x = (long)(x.x * s_fudge);
@@ -2343,7 +2343,7 @@ static ConstArg *is_const(char const *Str, int Len)
             s_vars[g_variable_index].a.d = z;
             break;
         case math_type::MPC:
-            s_vars[g_variable_index].a.m = cmplx2MPC(z);
+            s_vars[g_variable_index].a.m = cmplx_to_mpc(z);
             break;
         case math_type::LONG:
             s_vars[g_variable_index].a.l.x = (long)(z.x * s_fudge);
@@ -2687,26 +2687,26 @@ static bool parse_formula_text(char const *text)
         s_vars[18].a.d.y = g_params[9];
         break;
     case math_type::MPC:
-        s_vars[1].a.m.x = *d2MP(g_params[0]);
-        s_vars[1].a.m.y = *d2MP(g_params[1]);
-        s_vars[2].a.m.x = *d2MP(g_params[2]);
-        s_vars[2].a.m.y = *d2MP(g_params[3]);
-        s_vars[5].a.m.x = *d2MP(const_pi);
-        s_vars[5].a.m.y = *d2MP(0.0);
-        s_vars[6].a.m.x = *d2MP(const_e);
-        s_vars[6].a.m.y = *d2MP(0.0);
-        s_vars[8].a.m.x = *d2MP(g_params[4]);
-        s_vars[8].a.m.y = *d2MP(g_params[5]);
-        s_vars[11].a.m  = cmplx2MPC(s_vars[11].a.d);
-        s_vars[12].a.m  = cmplx2MPC(s_vars[12].a.d);
-        s_vars[13].a.m  = cmplx2MPC(s_vars[13].a.d);
-        s_vars[14].a.m  = cmplx2MPC(s_vars[14].a.d);
-        s_vars[15].a.m  = cmplx2MPC(s_vars[15].a.d);
-        s_vars[16].a.m  = cmplx2MPC(s_vars[16].a.d);
-        s_vars[17].a.m.x = *d2MP(g_params[6]);
-        s_vars[17].a.m.y = *d2MP(g_params[7]);
-        s_vars[18].a.m.x = *d2MP(g_params[8]);
-        s_vars[18].a.m.y = *d2MP(g_params[9]);
+        s_vars[1].a.m.x = *d_to_mp(g_params[0]);
+        s_vars[1].a.m.y = *d_to_mp(g_params[1]);
+        s_vars[2].a.m.x = *d_to_mp(g_params[2]);
+        s_vars[2].a.m.y = *d_to_mp(g_params[3]);
+        s_vars[5].a.m.x = *d_to_mp(const_pi);
+        s_vars[5].a.m.y = *d_to_mp(0.0);
+        s_vars[6].a.m.x = *d_to_mp(const_e);
+        s_vars[6].a.m.y = *d_to_mp(0.0);
+        s_vars[8].a.m.x = *d_to_mp(g_params[4]);
+        s_vars[8].a.m.y = *d_to_mp(g_params[5]);
+        s_vars[11].a.m  = cmplx_to_mpc(s_vars[11].a.d);
+        s_vars[12].a.m  = cmplx_to_mpc(s_vars[12].a.d);
+        s_vars[13].a.m  = cmplx_to_mpc(s_vars[13].a.d);
+        s_vars[14].a.m  = cmplx_to_mpc(s_vars[14].a.d);
+        s_vars[15].a.m  = cmplx_to_mpc(s_vars[15].a.d);
+        s_vars[16].a.m  = cmplx_to_mpc(s_vars[16].a.d);
+        s_vars[17].a.m.x = *d_to_mp(g_params[6]);
+        s_vars[17].a.m.y = *d_to_mp(g_params[7]);
+        s_vars[18].a.m.x = *d_to_mp(g_params[8]);
+        s_vars[18].a.m.y = *d_to_mp(g_params[9]);
         break;
     case math_type::LONG:
         s_vars[1].a.l.x = (long)(g_params[0] * s_fudge);
@@ -3010,7 +3010,7 @@ int formula()
         g_old_z = g_new_z;
         return g_arg1->d.x == 0.0;
     case math_type::MPC:
-        g_new_z = MPC2cmplx(s_vars[3].a.m);
+        g_new_z = mpc_to_cmplx(s_vars[3].a.m);
         g_old_z = g_new_z;
         return g_arg1->m.x.Exp == 0 && g_arg1->m.x.Mant == 0;
     case math_type::LONG:
@@ -3069,7 +3069,7 @@ int form_per_pixel()
             s_vars[9].a.m.y.Exp = 0;
             s_vars[9].a.m.y.Mant = 0;
         }
-        s_vars[10].a.m = cmplx2MPC(s_vars[10].a.d);
+        s_vars[10].a.m = cmplx_to_mpc(s_vars[10].a.d);
         break;
 
     case math_type::LONG:
@@ -3093,8 +3093,8 @@ int form_per_pixel()
                 s_vars[0].a.d.y = g_old_z.y;
                 break;
             case math_type::MPC:
-                s_vars[0].a.m.x = *d2MP(g_old_z.x);
-                s_vars[0].a.m.y = *d2MP(g_old_z.y);
+                s_vars[0].a.m.x = *d_to_mp(g_old_z.x);
+                s_vars[0].a.m.y = *d_to_mp(g_old_z.y);
                 break;
             case math_type::LONG:
                 // watch out for overflow
@@ -3118,8 +3118,8 @@ int form_per_pixel()
                 s_vars[0].a.d.y = g_dy_pixel();
                 break;
             case math_type::MPC:
-                s_vars[0].a.m.x = *d2MP(g_dx_pixel());
-                s_vars[0].a.m.y = *d2MP(g_dy_pixel());
+                s_vars[0].a.m.x = *d_to_mp(g_dx_pixel());
+                s_vars[0].a.m.y = *d_to_mp(g_dy_pixel());
                 break;
             case math_type::LONG:
                 s_vars[0].a.l.x = g_l_x_pixel();
@@ -3148,7 +3148,7 @@ int form_per_pixel()
         g_old_z = s_vars[3].a.d;
         break;
     case math_type::MPC:
-        g_old_z = MPC2cmplx(s_vars[3].a.m);
+        g_old_z = mpc_to_cmplx(s_vars[3].a.m);
         break;
     case math_type::LONG:
         g_l_old_z = s_vars[3].a.l;

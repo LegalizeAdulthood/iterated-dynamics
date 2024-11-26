@@ -48,62 +48,62 @@ std::vector<BYTE> g_log_map_table;
 long g_log_map_table_max_size{};
 bool g_log_map_calculate{};
 
-MP *MPabs(MP x)
+MP *mp_abs(MP x)
 {
     s_ans = x;
     s_ans.Exp &= 0x7fff;
     return &s_ans;
 }
 
-MPC MPCsqr(MPC x)
+MPC mpc_sqr(MPC x)
 {
     MPC z;
 
-    z.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
-    z.y = *MPmul(x.x, x.y);
+    z.x = *mp_sub(*mp_mul(x.x, x.x), *mp_mul(x.y, x.y));
+    z.y = *mp_mul(x.x, x.y);
     z.y.Exp++;
     return z;
 }
 
-MPC MPCmul(MPC x, MPC y)
+MPC mpc_mul(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *MPsub(*MPmul(x.x, y.x), *MPmul(x.y, y.y));
-    z.y = *MPadd(*MPmul(x.x, y.y), *MPmul(x.y, y.x));
+    z.x = *mp_sub(*mp_mul(x.x, y.x), *mp_mul(x.y, y.y));
+    z.y = *mp_add(*mp_mul(x.x, y.y), *mp_mul(x.y, y.x));
     return z;
 }
 
-MPC MPCdiv(MPC x, MPC y)
+MPC mpc_div(MPC x, MPC y)
 {
     MP mod;
 
-    mod = MPCmod(y);
+    mod = mpc_mod(y);
     y.y.Exp ^= 0x8000;
-    y.x = *MPdiv(y.x, mod);
-    y.y = *MPdiv(y.y, mod);
-    return MPCmul(x, y);
+    y.x = *mp_div(y.x, mod);
+    y.y = *mp_div(y.y, mod);
+    return mpc_mul(x, y);
 }
 
-MPC MPCadd(MPC x, MPC y)
+MPC mpc_add(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *MPadd(x.x, y.x);
-    z.y = *MPadd(x.y, y.y);
+    z.x = *mp_add(x.x, y.x);
+    z.y = *mp_add(x.y, y.y);
     return z;
 }
 
-MPC MPCsub(MPC x, MPC y)
+MPC mpc_sub(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *MPsub(x.x, y.x);
-    z.y = *MPsub(x.y, y.y);
+    z.x = *mp_sub(x.x, y.x);
+    z.y = *mp_sub(x.y, y.y);
     return z;
 }
 
-MPC MPCpow(MPC x, int exp)
+MPC mpc_pow(MPC x, int exp)
 {
     MPC z;
     MPC zz;
@@ -119,14 +119,14 @@ MPC MPCpow(MPC x, int exp)
     exp >>= 1;
     while (exp)
     {
-        zz.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
-        zz.y = *MPmul(x.x, x.y);
+        zz.x = *mp_sub(*mp_mul(x.x, x.x), *mp_mul(x.y, x.y));
+        zz.y = *mp_mul(x.x, x.y);
         zz.y.Exp++;
         x = zz;
         if (exp & 1)
         {
-            zz.x = *MPsub(*MPmul(z.x, x.x), *MPmul(z.y, x.y));
-            zz.y = *MPadd(*MPmul(z.x, x.y), *MPmul(z.y, x.x));
+            zz.x = *mp_sub(*mp_mul(z.x, x.x), *mp_mul(z.y, x.y));
+            zz.y = *mp_add(*mp_mul(z.x, x.y), *mp_mul(z.y, x.x));
             z = zz;
         }
         exp >>= 1;
@@ -134,15 +134,15 @@ MPC MPCpow(MPC x, int exp)
     return z;
 }
 
-int MPCcmp(MPC x, MPC y)
+int mpc_cmp(MPC x, MPC y)
 {
     MPC z;
 
-    if (MPcmp(x.x, y.x) || MPcmp(x.y, y.y))
+    if (mp_cmp(x.x, y.x) || mp_cmp(x.y, y.y))
     {
-        z.x = MPCmod(x);
-        z.y = MPCmod(y);
-        return MPcmp(z.x, z.y);
+        z.x = mpc_mod(x);
+        z.y = mpc_mod(y);
+        return mp_cmp(z.x, z.y);
     }
     else
     {
@@ -150,25 +150,25 @@ int MPCcmp(MPC x, MPC y)
     }
 }
 
-DComplex MPC2cmplx(MPC x)
+DComplex mpc_to_cmplx(MPC x)
 {
     DComplex z;
 
-    z.x = *MP2d(x.x);
-    z.y = *MP2d(x.y);
+    z.x = *mp_to_d(x.x);
+    z.y = *mp_to_d(x.y);
     return z;
 }
 
-MPC cmplx2MPC(DComplex z)
+MPC cmplx_to_mpc(DComplex z)
 {
     MPC x;
 
-    x.x = *d2MP(z.x);
-    x.y = *d2MP(z.y);
+    x.x = *d_to_mp(z.x);
+    x.y = *d_to_mp(z.y);
     return x;
 }
 
-DComplex ComplexPower(DComplex xx, DComplex yy)
+DComplex complex_power(DComplex xx, DComplex yy)
 {
     DComplex z;
     DComplex cLog;
@@ -197,7 +197,7 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 */
 
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
-void Arcsinz(DComplex z, DComplex *rz)
+void asin_z(DComplex z, DComplex *rz)
 {
     DComplex tempz1, tempz2;
 
@@ -216,7 +216,7 @@ void Arcsinz(DComplex z, DComplex *rz)
 }   // end. Arcsinz
 
 // rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
-void Arccosz(DComplex z, DComplex *rz)
+void acos_z(DComplex z, DComplex *rz)
 {
     DComplex temp;
 
@@ -232,7 +232,7 @@ void Arccosz(DComplex z, DComplex *rz)
     rz->y = -temp.x;              // rz = (-i)*tempz1
 }   // end. Arccosz
 
-void Arcsinhz(DComplex z, DComplex *rz)
+void asinh_z(DComplex z, DComplex *rz)
 {
     DComplex temp;
 
@@ -245,7 +245,7 @@ void Arcsinhz(DComplex z, DComplex *rz)
 }  // end. Arcsinhz
 
 // rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
-void Arccoshz(DComplex z, DComplex *rz)
+void acosh_z(DComplex z, DComplex *rz)
 {
     DComplex tempz;
     fpu_cmplx_mul(&z, &z, &tempz);
@@ -257,7 +257,7 @@ void Arccoshz(DComplex z, DComplex *rz)
 }   // end. Arccoshz
 
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
-void Arctanhz(DComplex z, DComplex *rz)
+void atanh_z(DComplex z, DComplex *rz)
 {
     DComplex temp0, temp1, temp2;
 
@@ -291,7 +291,7 @@ void Arctanhz(DComplex z, DComplex *rz)
 }   // end. Arctanhz
 
 // rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)}
-void Arctanz(DComplex z, DComplex *rz)
+void atan_z(DComplex z, DComplex *rz)
 {
     DComplex temp0, temp1, temp2, temp3;
     if (z.x == 0.0 && z.y == 0.0)
@@ -308,7 +308,7 @@ void Arctanz(DComplex z, DComplex *rz)
     {
         temp0.x = z.y;
         temp0.y = 0.0;
-        Arctanhz(temp0, &temp0);
+        atanh_z(temp0, &temp0);
         rz->x = -temp0.y;
         rz->y = temp0.x;              // i*temp0
     }
@@ -435,7 +435,7 @@ DComplex complex_sqrt_float(double x, double y)
    LogFlag >  1  -- compress counts < LogFlag into color #1
    LogFlag < -1  -- use quadratic palettes based on square roots && compress
 */
-void SetupLogTable()
+void setup_log_table()
 {
     float l, f, c, m;
     unsigned long limit;
@@ -477,7 +477,7 @@ void SetupLogTable()
         g_log_map_calculate = true;   // turn it on
         for (unsigned long prev = 0U; prev <= (unsigned long)g_log_map_table_max_size; prev++)
         {
-            g_log_map_table[prev] = (BYTE)logtablecalc((long)prev);
+            g_log_map_table[prev] = (BYTE)log_table_calc((long)prev);
         }
         g_log_map_calculate = false;   // turn it off, again
         return;
@@ -560,7 +560,7 @@ void SetupLogTable()
     }
 }
 
-long logtablecalc(long citer)
+long log_table_calc(long citer)
 {
     long ret = 0;
 
@@ -669,7 +669,7 @@ StoreAns:
    ret
 d2MP386     ENDP
 */
-MP *d2MP(double x)
+MP *d_to_mp(double x)
 {
     // TODO: implement
     assert(!"d2MP386 called.");
@@ -716,7 +716,7 @@ StoreAns:
    ret
 MP2d386     ENDP
 */
-double *MP2d(MP x)
+double *mp_to_d(MP x)
 {
     // TODO: implement
     static double ans = 0.0;
@@ -817,7 +817,7 @@ StoreAns:
    ret
 MPadd386    ENDP
 */
-MP *MPadd(MP x, MP y)
+MP *mp_add(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPadd386 called.");
@@ -880,7 +880,7 @@ ExitCmp:
    ret
 MPcmp386    ENDP
 */
-int MPcmp(MP x, MP y)
+int mp_cmp(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPcmp386 called.");
@@ -942,7 +942,7 @@ StoreMant:
    ret
 MPdiv386    ENDP
 */
-MP *MPdiv(MP x, MP y)
+MP *mp_div(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPdiv386 called.");
@@ -1006,7 +1006,7 @@ StoreMant:
    ret
 MPmul386    ENDP
 */
-MP *MPmul(MP x, MP y)
+MP *mp_mul(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPmul386 called.");
@@ -1048,7 +1048,7 @@ StoreAns:
    ret
 fg2MP386    ENDP
 */
-MP *fg2MP(long x, int fg)
+MP *fg_to_mp(long x, int fg)
 {
     assert(!"fg2MP386 called");
     return &s_ans;

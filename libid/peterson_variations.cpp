@@ -321,6 +321,6 @@ int marks_cplx_mand_perp()
     g_old_z.y = g_init.y + g_param_z1.y;
     g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     g_temp_sqr_y = sqr(g_old_z.y);
-    g_marks_coefficient = ComplexPower(g_init, g_power_z);
+    g_marks_coefficient = complex_power(g_init, g_power_z);
     return 1;
 }

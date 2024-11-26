@@ -55,12 +55,12 @@ bool halley_setup()
 
     if (g_fractal_type == fractal_type::MPHALLEY)
     {
-        s_halley_mp_a_plus_one = *d2MP((double)s_halley_a_plus_one);
-        s_halley_mp_a_plus_one_times_degree = *d2MP((double)s_halley_a_plus_one_times_degree);
-        s_mpc_temp_param.x = *d2MP(g_param_z1.y);
-        s_mpc_temp_param.y = *d2MP(g_param_z2.y);
-        s_mp_temp_param2_x = *d2MP(g_param_z2.x);
-        g_mp_one        = *d2MP(1.0);
+        s_halley_mp_a_plus_one = *d_to_mp((double)s_halley_a_plus_one);
+        s_halley_mp_a_plus_one_times_degree = *d_to_mp((double)s_halley_a_plus_one_times_degree);
+        s_mpc_temp_param.x = *d_to_mp(g_param_z1.y);
+        s_mpc_temp_param.y = *d_to_mp(g_param_z2.y);
+        s_mp_temp_param2_x = *d_to_mp(g_param_z2.x);
+        g_mp_one        = *d_to_mp(1.0);
     }
 
     if (g_degree % 2)
@@ -87,8 +87,8 @@ static int  Halleybailout()
 static bool MPCHalleybailout()
 {
     static MP mptmpbailout;
-    mptmpbailout = *MPabs(*MPsub(MPCmod(s_mpc_new), MPCmod(s_mpc_old)));
-    if (MPcmp(mptmpbailout, s_mp_temp_param2_x) < 0)
+    mptmpbailout = *mp_abs(*mp_sub(mpc_mod(s_mpc_new), mpc_mod(s_mpc_old)));
+    if (mp_cmp(mptmpbailout, s_mp_temp_param2_x) < 0)
     {
         return true;
     }
@@ -111,41 +111,41 @@ int mpc_halley_fractal()
     mpcXtoAlessOne.y = s_mpc_old.y;
     for (int ihal = 2; ihal < g_degree; ihal++)
     {
-        mpctmp2.x = *MPsub(*MPmul(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul(mpcXtoAlessOne.y, s_mpc_old.y));
-        mpctmp2.y = *MPadd(*MPmul(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul(mpcXtoAlessOne.y, s_mpc_old.x));
+        mpctmp2.x = *mp_sub(*mp_mul(mpcXtoAlessOne.x, s_mpc_old.x), *mp_mul(mpcXtoAlessOne.y, s_mpc_old.y));
+        mpctmp2.y = *mp_add(*mp_mul(mpcXtoAlessOne.x, s_mpc_old.y), *mp_mul(mpcXtoAlessOne.y, s_mpc_old.x));
         mpcXtoAlessOne.x = mpctmp2.x;
         mpcXtoAlessOne.y = mpctmp2.y;
     }
-    mpcXtoA.x = *MPsub(*MPmul(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul(mpcXtoAlessOne.y, s_mpc_old.y));
-    mpcXtoA.y = *MPadd(*MPmul(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul(mpcXtoAlessOne.y, s_mpc_old.x));
-    mpcXtoAplusOne.x = *MPsub(*MPmul(mpcXtoA.x, s_mpc_old.x), *MPmul(mpcXtoA.y, s_mpc_old.y));
-    mpcXtoAplusOne.y = *MPadd(*MPmul(mpcXtoA.x, s_mpc_old.y), *MPmul(mpcXtoA.y, s_mpc_old.x));
+    mpcXtoA.x = *mp_sub(*mp_mul(mpcXtoAlessOne.x, s_mpc_old.x), *mp_mul(mpcXtoAlessOne.y, s_mpc_old.y));
+    mpcXtoA.y = *mp_add(*mp_mul(mpcXtoAlessOne.x, s_mpc_old.y), *mp_mul(mpcXtoAlessOne.y, s_mpc_old.x));
+    mpcXtoAplusOne.x = *mp_sub(*mp_mul(mpcXtoA.x, s_mpc_old.x), *mp_mul(mpcXtoA.y, s_mpc_old.y));
+    mpcXtoAplusOne.y = *mp_add(*mp_mul(mpcXtoA.x, s_mpc_old.y), *mp_mul(mpcXtoA.y, s_mpc_old.x));
 
-    mpcFX.x = *MPsub(mpcXtoAplusOne.x, s_mpc_old.x);
-    mpcFX.y = *MPsub(mpcXtoAplusOne.y, s_mpc_old.y); // FX = X^(a+1) - X  = F
+    mpcFX.x = *mp_sub(mpcXtoAplusOne.x, s_mpc_old.x);
+    mpcFX.y = *mp_sub(mpcXtoAplusOne.y, s_mpc_old.y); // FX = X^(a+1) - X  = F
 
-    mpcF2prime.x = *MPmul(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.x); // mpAp1deg in setup
-    mpcF2prime.y = *MPmul(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.y);        // F"
+    mpcF2prime.x = *mp_mul(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.x); // mpAp1deg in setup
+    mpcF2prime.y = *mp_mul(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.y);        // F"
 
-    mpcF1prime.x = *MPsub(*MPmul(s_halley_mp_a_plus_one, mpcXtoA.x), g_mp_one);
-    mpcF1prime.y = *MPmul(s_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
+    mpcF1prime.x = *mp_sub(*mp_mul(s_halley_mp_a_plus_one, mpcXtoA.x), g_mp_one);
+    mpcF1prime.y = *mp_mul(s_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
 
-    mpctmp2.x = *MPsub(*MPmul(mpcF2prime.x, mpcFX.x), *MPmul(mpcF2prime.y, mpcFX.y));
-    mpctmp2.y = *MPadd(*MPmul(mpcF2prime.x, mpcFX.y), *MPmul(mpcF2prime.y, mpcFX.x));
+    mpctmp2.x = *mp_sub(*mp_mul(mpcF2prime.x, mpcFX.x), *mp_mul(mpcF2prime.y, mpcFX.y));
+    mpctmp2.y = *mp_add(*mp_mul(mpcF2prime.x, mpcFX.y), *mp_mul(mpcF2prime.y, mpcFX.x));
     //  F * F"
 
-    mpcHaldenom.x = *MPadd(mpcF1prime.x, mpcF1prime.x);
-    mpcHaldenom.y = *MPadd(mpcF1prime.y, mpcF1prime.y);      //  2 * F'
+    mpcHaldenom.x = *mp_add(mpcF1prime.x, mpcF1prime.x);
+    mpcHaldenom.y = *mp_add(mpcF1prime.y, mpcF1prime.y);      //  2 * F'
 
-    mpcHalnumer1 = MPCdiv(mpctmp2, mpcHaldenom);        //  F"F/2F'
-    mpctmp2.x = *MPsub(mpcF1prime.x, mpcHalnumer1.x);
-    mpctmp2.y = *MPsub(mpcF1prime.y, mpcHalnumer1.y); //  F' - F"F/2F'
-    mpcHalnumer2 = MPCdiv(mpcFX, mpctmp2);
+    mpcHalnumer1 = mpc_div(mpctmp2, mpcHaldenom);        //  F"F/2F'
+    mpctmp2.x = *mp_sub(mpcF1prime.x, mpcHalnumer1.x);
+    mpctmp2.y = *mp_sub(mpcF1prime.y, mpcHalnumer1.y); //  F' - F"F/2F'
+    mpcHalnumer2 = mpc_div(mpcFX, mpctmp2);
 
-    mpctmp2   =  MPCmul(s_mpc_temp_param, mpcHalnumer2);  // mpctmpparm is
+    mpctmp2   =  mpc_mul(s_mpc_temp_param, mpcHalnumer2);  // mpctmpparm is
     // relaxation coef.
-    s_mpc_new = MPCsub(s_mpc_old, mpctmp2);
-    g_new_z    = MPC2cmplx(s_mpc_new);
+    s_mpc_new = mpc_sub(s_mpc_old, mpctmp2);
+    g_new_z    = mpc_to_cmplx(s_mpc_new);
     return MPCHalleybailout() || g_mp_overflow ? 1 : 0;
 }
 
@@ -201,8 +201,8 @@ int mpc_halley_per_pixel()
         g_init.y = g_dy_pixel();
     }
 
-    s_mpc_old.x = *d2MP(g_init.x);
-    s_mpc_old.y = *d2MP(g_init.y);
+    s_mpc_old.x = *d_to_mp(g_init.x);
+    s_mpc_old.y = *d_to_mp(g_init.y);
 
     return 0;
 }

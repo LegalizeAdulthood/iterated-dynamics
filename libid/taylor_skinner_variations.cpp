@@ -651,6 +651,6 @@ int spider_fractal()
 int tetrate_fp_fractal()
 {
     // Tetrate(XAXIS) { c=z=pixel: z=c^z, |z|<=(P1+3) }
-    g_new_z = ComplexPower(*g_float_param, g_old_z);
+    g_new_z = complex_power(*g_float_param, g_old_z);
     return g_bailout_float();
 }

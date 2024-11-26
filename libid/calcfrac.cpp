@@ -605,7 +605,7 @@ int calc_fract()
         && ((g_max_iterations > 32767) || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
-        SetupLogTable();
+        setup_log_table();
     }
     else if (g_log_map_flag && (g_log_map_fly_calculate == 2))
     {
@@ -640,7 +640,7 @@ int calc_fract()
                 stopmsg("Insufficient memory for logTable, using on-the-fly routine");
                 g_log_map_fly_calculate = 1;
                 g_log_map_calculate = true; // calculate on the fly
-                SetupLogTable();
+                setup_log_table();
             }
         }
         else if (g_iteration_ranges_len)
@@ -687,7 +687,7 @@ int calc_fract()
         }
         else
         {
-            SetupLogTable();
+            setup_log_table();
         }
     }
     lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
@@ -1177,7 +1177,7 @@ static void perform_worklist()
         {
             // calculate round screen edges to work out best start for logmap
             g_log_map_flag = (autologmap() * (g_log_map_flag / labs(g_log_map_flag)));
-            SetupLogTable();
+            setup_log_table();
         }
 
         // call the appropriate escape-time engine
@@ -1250,7 +1250,7 @@ int calc_mand()              // fast per pixel 1/2/b/g, called with row & col se
             && (g_real_color_iter < g_max_iterations
                 || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
-            g_color_iter = logtablecalc(g_color_iter);
+            g_color_iter = log_table_calc(g_color_iter);
         }
         g_color = std::abs((int)g_color_iter);
         if (g_color_iter >= g_colors)
@@ -1305,7 +1305,7 @@ int calc_mand_fp()
             && (g_real_color_iter < g_max_iterations
                 || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
-            g_color_iter = logtablecalc(g_color_iter);
+            g_color_iter = log_table_calc(g_color_iter);
         }
         g_color = std::abs((int)g_color_iter);
         if (g_color_iter >= g_colors)
@@ -1948,7 +1948,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         g_color_iter = potential(g_magnitude, g_color_iter);
         if (!g_log_map_table.empty() || g_log_map_calculate)
         {
-            g_color_iter = logtablecalc(g_color_iter);
+            g_color_iter = log_table_calc(g_color_iter);
         }
         goto plot_pixel;          // skip any other adjustments
     }
@@ -2085,7 +2085,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     else if (!g_log_map_table.empty() || g_log_map_calculate)
     {
-        g_color_iter = logtablecalc(g_color_iter);
+        g_color_iter = log_table_calc(g_color_iter);
     }
     goto plot_pixel;
 
@@ -2186,7 +2186,7 @@ plot_inside: // we're "inside"
         }
         if (!g_log_map_table.empty() || g_log_map_calculate)
         {
-            g_color_iter = logtablecalc(g_color_iter);
+            g_color_iter = log_table_calc(g_color_iter);
         }
     }
 

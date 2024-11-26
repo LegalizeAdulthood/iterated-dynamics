@@ -347,7 +347,7 @@ int long_cmplx_z_power_fractal()
     x.y = (double)g_l_old_z.y / g_fudge_factor;
     y.x = (double)g_l_param2.x / g_fudge_factor;
     y.y = (double)g_l_param2.y / g_fudge_factor;
-    x = ComplexPower(x, y);
+    x = complex_power(x, y);
     if (std::fabs(x.x) < g_fudge_limit && std::fabs(x.y) < g_fudge_limit)
     {
         g_l_new_z.x = (long)(x.x * g_fudge_factor);
@@ -364,7 +364,7 @@ int long_cmplx_z_power_fractal()
 
 int float_cmplx_z_power_fractal()
 {
-    g_new_z = ComplexPower(g_old_z, g_param_z2);
+    g_new_z = complex_power(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return g_bailout_float();
