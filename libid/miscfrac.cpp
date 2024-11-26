@@ -251,15 +251,15 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
     S32 i;
     S32 v;
 
-    struct sub
+    struct Sub
     {
         BYTE t; // top of stack
         int v[16]; // subdivided value
         BYTE r[16];  // recursion level
     };
 
-    static sub subx;
-    static sub suby;
+    static Sub subx;
+    static Sub suby;
 
     s_recur1 = (int)(320L >> recur);
     suby.t = 2;
