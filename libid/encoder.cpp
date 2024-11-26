@@ -51,7 +51,7 @@
 #include <string>
 
 static bool compress(int rowlimit);
-static int shftwrite(BYTE const *color, int numcolors);
+static int shift_write(BYTE const *color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
@@ -404,7 +404,7 @@ bool encoder()
         if (g_got_real_dac)
         {
             // got a DAC - must be a VGA
-            if (!shftwrite((BYTE *) g_dac_box, g_colors))
+            if (!shift_write((BYTE *) g_dac_box, g_colors))
             {
                 goto oops;
             }
@@ -425,7 +425,7 @@ bool encoder()
             // uh oh - better fake it
             for (int j = 0; j < 256; j += 16)
             {
-                if (!shftwrite((BYTE *)s_palette_ega, 16))
+                if (!shift_write((BYTE *)s_palette_ega, 16))
                 {
                     goto oops;
                 }
@@ -435,7 +435,7 @@ bool encoder()
     if (g_colors == 2)
     {
         // write out the B&W palette
-        if (!shftwrite((BYTE *)s_palette_bw, g_colors))
+        if (!shift_write((BYTE *)s_palette_bw, g_colors))
         {
             goto oops;
         }
@@ -444,7 +444,7 @@ bool encoder()
     if (g_colors == 4)
     {
         // write out the CGA palette
-        if (!shftwrite((BYTE *)s_palette_cga, g_colors))
+        if (!shift_write((BYTE *)s_palette_cga, g_colors))
         {
             goto oops;
         }
@@ -454,7 +454,7 @@ bool encoder()
         // Either EGA or VGA
         if (g_got_real_dac)
         {
-            if (!shftwrite((BYTE *) g_dac_box, g_colors))
+            if (!shift_write((BYTE *) g_dac_box, g_colors))
             {
                 goto oops;
             }
@@ -462,7 +462,7 @@ bool encoder()
         else
         {
             // no DAC - must be an EGA
-            if (!shftwrite((BYTE *)s_palette_ega, g_colors))
+            if (!shift_write((BYTE *)s_palette_ega, g_colors))
             {
                 goto oops;
             }
@@ -689,7 +689,7 @@ oops:
 
 // TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
 // shift IBM colors to GIF
-static int shftwrite(BYTE const *color, int numcolors)
+static int shift_write(BYTE const *color, int numcolors)
 {
     for (int i = 0; i < numcolors; i++)
     {
