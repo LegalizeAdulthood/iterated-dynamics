@@ -175,25 +175,25 @@ static void bf_setup_convert_to_screen();
 static void bf_transform(bf_t, bf_t, DblCoords *);
 
 static std::FILE *s_fp{};
-static std::vector<Window> browse_windows;
-static std::vector<int> browse_box_x;
-static std::vector<int> browse_box_y;
-static std::vector<int> browse_box_values;
+static std::vector<Window> s_browse_windows;
+static std::vector<int> s_browse_box_x;
+static std::vector<int> s_browse_box_y;
+static std::vector<int> s_browse_box_values;
 // here because must be visible inside several routines
-static Affine *cvt{};
-static bf_t bt_a{};
-static bf_t bt_b{};
-static bf_t bt_c{};
-static bf_t bt_d{};
-static bf_t bt_e{};
-static bf_t bt_f{};
-static bf_t n_a{};
-static bf_t n_b{};
-static bf_t n_c{};
-static bf_t n_d{};
-static bf_t n_e{};
-static bf_t n_f{};
-static bf_math_type oldbf_math{};
+static Affine *s_cvt{};
+static bf_t s_bt_a{};
+static bf_t s_bt_b{};
+static bf_t s_bt_c{};
+static bf_t s_bt_d{};
+static bf_t s_bt_e{};
+static bf_t s_bt_f{};
+static bf_t s_n_a{};
+static bf_t s_n_b{};
+static bf_t s_n_c{};
+static bf_t s_n_d{};
+static bf_t s_n_e{};
+static bf_t s_n_f{};
+static bf_math_type s_old_bf_math{};
 
 bool g_loaded_3d{};
 int g_file_y_dots{};
@@ -1530,16 +1530,16 @@ static bool fix_period_bof()
 
 inline void save_box(int num_dots, int which)
 {
-    std::copy(&g_box_x[0], &g_box_x[num_dots], &browse_box_x[num_dots*which]);
-    std::copy(&g_box_y[0], &g_box_y[num_dots], &browse_box_y[num_dots*which]);
-    std::copy(&g_box_values[0], &g_box_values[num_dots], &browse_box_values[num_dots*which]);
+    std::copy(&g_box_x[0], &g_box_x[num_dots], &s_browse_box_x[num_dots*which]);
+    std::copy(&g_box_y[0], &g_box_y[num_dots], &s_browse_box_y[num_dots*which]);
+    std::copy(&g_box_values[0], &g_box_values[num_dots], &s_browse_box_values[num_dots*which]);
 }
 
 inline void restore_box(int num_dots, int which)
 {
-    std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &g_box_x[0]);
-    std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &g_box_y[0]);
-    std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &g_box_values[0]);
+    std::copy(&s_browse_box_x[num_dots*which], &s_browse_box_x[num_dots*(which + 1)], &g_box_x[0]);
+    std::copy(&s_browse_box_y[num_dots*which], &s_browse_box_y[num_dots*(which + 1)], &g_box_y[0]);
+    std::copy(&s_browse_box_values[num_dots*which], &s_browse_box_values[num_dots*(which + 1)], &g_box_values[0]);
 }
 
 // fgetwindow reads all .GIF files and draws window outlines on the screen
@@ -1565,44 +1565,44 @@ int file_get_window()
     int vid_too_big = 0;
     int saved;
 
-    oldbf_math = g_bf_math;
+    s_old_bf_math = g_bf_math;
     g_bf_math = bf_math_type::BIGFLT;
-    if (oldbf_math == bf_math_type::NONE)
+    if (s_old_bf_math == bf_math_type::NONE)
     {
         calc_status_value oldcalc_status = g_calc_status; // kludge because next sets it = 0
         fractal_float_to_bf();
         g_calc_status = oldcalc_status;
     }
     saved = save_stack();
-    bt_a = alloc_stack(g_r_bf_length+2);
-    bt_b = alloc_stack(g_r_bf_length+2);
-    bt_c = alloc_stack(g_r_bf_length+2);
-    bt_d = alloc_stack(g_r_bf_length+2);
-    bt_e = alloc_stack(g_r_bf_length+2);
-    bt_f = alloc_stack(g_r_bf_length+2);
+    s_bt_a = alloc_stack(g_r_bf_length+2);
+    s_bt_b = alloc_stack(g_r_bf_length+2);
+    s_bt_c = alloc_stack(g_r_bf_length+2);
+    s_bt_d = alloc_stack(g_r_bf_length+2);
+    s_bt_e = alloc_stack(g_r_bf_length+2);
+    s_bt_f = alloc_stack(g_r_bf_length+2);
 
     int const num_dots = g_screen_x_dots + g_screen_y_dots;
-    browse_windows.resize(MAX_WINDOWS_OPEN);
-    browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
-    browse_box_y.resize(num_dots*MAX_WINDOWS_OPEN);
-    browse_box_values.resize(num_dots*MAX_WINDOWS_OPEN);
+    s_browse_windows.resize(MAX_WINDOWS_OPEN);
+    s_browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
+    s_browse_box_y.resize(num_dots*MAX_WINDOWS_OPEN);
+    s_browse_box_values.resize(num_dots*MAX_WINDOWS_OPEN);
 
     // set up complex-plane-to-screen transformation
-    if (oldbf_math != bf_math_type::NONE)
+    if (s_old_bf_math != bf_math_type::NONE)
     {
         bf_setup_convert_to_screen();
     }
     else
     {
-        cvt = &stack_cvt; // use stack
-        setup_convert_to_screen(cvt);
+        s_cvt = &stack_cvt; // use stack
+        setup_convert_to_screen(s_cvt);
         // put in bf variables
-        floattobf(bt_a, cvt->a);
-        floattobf(bt_b, cvt->b);
-        floattobf(bt_c, cvt->c);
-        floattobf(bt_d, cvt->d);
-        floattobf(bt_e, cvt->e);
-        floattobf(bt_f, cvt->f);
+        floattobf(s_bt_a, s_cvt->a);
+        floattobf(s_bt_b, s_cvt->b);
+        floattobf(s_bt_c, s_cvt->c);
+        floattobf(s_bt_d, s_cvt->d);
+        floattobf(s_bt_e, s_cvt->e);
+        floattobf(s_bt_f, s_cvt->f);
     }
     find_special_colors();
     color_of_box = g_color_medium;
@@ -1643,7 +1643,7 @@ rescan:  // entry for changed browse parms
             winlist.name = g_dta.filename;
             draw_window(color_of_box, &winlist);
             winlist.box_count = g_box_count;
-            browse_windows[wincount] = winlist;
+            s_browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
             wincount++;
         }
@@ -1665,7 +1665,7 @@ rescan:  // entry for changed browse parms
         driver_buzzer(buzzer_codes::COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
-        winlist = browse_windows[index];
+        winlist = s_browse_windows[index];
         restore_box(num_dots, index);
         show_temp_msg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
@@ -1728,7 +1728,7 @@ rescan:  // entry for changed browse parms
                         index = wincount -1 ;
                     }
                 }
-                winlist = browse_windows[index];
+                winlist = s_browse_windows[index];
                 restore_box(num_dots, index);
                 show_temp_msg(winlist.name);
                 break;
@@ -1736,9 +1736,9 @@ rescan:  // entry for changed browse parms
                 color_of_box += key_count(ID_KEY_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    draw_window(color_of_box, &browse_windows[i]);
+                    draw_window(color_of_box, &s_browse_windows[i]);
                 }
-                winlist = browse_windows[index];
+                winlist = s_browse_windows[index];
                 draw_window(color_of_box, &winlist);
                 break;
 
@@ -1746,9 +1746,9 @@ rescan:  // entry for changed browse parms
                 color_of_box -= key_count(ID_KEY_CTL_DEL);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    draw_window(color_of_box, &browse_windows[i]);
+                    draw_window(color_of_box, &s_browse_windows[i]);
                 }
-                winlist = browse_windows[index];
+                winlist = s_browse_windows[index];
                 draw_window(color_of_box, &winlist);
                 break;
             case ID_KEY_ENTER:
@@ -1847,7 +1847,7 @@ rescan:  // entry for changed browse parms
                             }
                         }
                     }
-                    browse_windows[index] = winlist;
+                    s_browse_windows[index] = winlist;
                     show_temp_msg(winlist.name);
                 }
                 break;
@@ -1881,7 +1881,7 @@ rescan:  // entry for changed browse parms
         {
             for (int i = wincount-1; i >= 0; i--)
             {
-                winlist = browse_windows[i];
+                winlist = s_browse_windows[i];
                 g_box_count = winlist.box_count;
                 restore_box(num_dots, i);
                 if (g_box_count > 0)
@@ -1902,16 +1902,16 @@ rescan:  // entry for changed browse parms
         g_browse_sub_images = false;
     }
 
-    browse_windows.clear();
-    browse_box_x.clear();
-    browse_box_y.clear();
-    browse_box_values.clear();
+    s_browse_windows.clear();
+    s_browse_box_x.clear();
+    s_browse_box_y.clear();
+    s_browse_box_values.clear();
     restore_stack(saved);
-    if (oldbf_math == bf_math_type::NONE)
+    if (s_old_bf_math == bf_math_type::NONE)
     {
         free_bf_vars();
     }
-    g_bf_math = oldbf_math;
+    g_bf_math = s_old_bf_math;
     g_float_flag = g_user_float_flag;
 
     return c;
@@ -1957,8 +1957,8 @@ static void draw_window(int colour, Window const *info)
 static void transform(DblCoords *point)
 {
     double tmp_pt_x;
-    tmp_pt_x = cvt->a * point->x + cvt->b * point->y + cvt->e;
-    point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
+    tmp_pt_x = s_cvt->a * point->x + s_cvt->b * point->y + s_cvt->e;
+    point->y = s_cvt->c * point->x + s_cvt->d * point->y + s_cvt->f;
     point->x = tmp_pt_x;
 }
 
@@ -2016,19 +2016,19 @@ static bool is_visible_window(
         const int two_di_len = di_bflength + 2;
         const int two_rbf = g_r_bf_length + 2;
 
-        n_a     = alloc_stack(two_rbf);
-        n_b     = alloc_stack(two_rbf);
-        n_c     = alloc_stack(two_rbf);
-        n_d     = alloc_stack(two_rbf);
-        n_e     = alloc_stack(two_rbf);
-        n_f     = alloc_stack(two_rbf);
+        s_n_a     = alloc_stack(two_rbf);
+        s_n_b     = alloc_stack(two_rbf);
+        s_n_c     = alloc_stack(two_rbf);
+        s_n_d     = alloc_stack(two_rbf);
+        s_n_e     = alloc_stack(two_rbf);
+        s_n_f     = alloc_stack(two_rbf);
 
-        convert_bf(n_a, bt_a, g_r_bf_length, orig_rbflength);
-        convert_bf(n_b, bt_b, g_r_bf_length, orig_rbflength);
-        convert_bf(n_c, bt_c, g_r_bf_length, orig_rbflength);
-        convert_bf(n_d, bt_d, g_r_bf_length, orig_rbflength);
-        convert_bf(n_e, bt_e, g_r_bf_length, orig_rbflength);
-        convert_bf(n_f, bt_f, g_r_bf_length, orig_rbflength);
+        convert_bf(s_n_a, s_bt_a, g_r_bf_length, orig_rbflength);
+        convert_bf(s_n_b, s_bt_b, g_r_bf_length, orig_rbflength);
+        convert_bf(s_n_c, s_bt_c, g_r_bf_length, orig_rbflength);
+        convert_bf(s_n_d, s_bt_d, g_r_bf_length, orig_rbflength);
+        convert_bf(s_n_e, s_bt_e, g_r_bf_length, orig_rbflength);
+        convert_bf(s_n_f, s_bt_f, g_r_bf_length, orig_rbflength);
 
         bf_t bt_t1 = alloc_stack(two_di_len);
         bf_t bt_t2 = alloc_stack(two_di_len);
@@ -2053,7 +2053,7 @@ static bool is_visible_window(
     }
 
     /* transform maps real plane co-ords onto the current screen view see above */
-    if (oldbf_math != bf_math_type::NONE || info->bf_math != 0)
+    if (s_old_bf_math != bf_math_type::NONE || info->bf_math != 0)
     {
         if (!info->bf_math)
         {
@@ -2075,7 +2075,7 @@ static bool is_visible_window(
     }
     list->itl.x = (int)(tl.x + 0.5);
     list->itl.y = (int)(tl.y + 0.5);
-    if (oldbf_math != bf_math_type::NONE || info->bf_math)
+    if (s_old_bf_math != bf_math_type::NONE || info->bf_math)
     {
         if (!info->bf_math)
         {
@@ -2099,7 +2099,7 @@ static bool is_visible_window(
     }
     list->itr.x = (int)(tr.x + 0.5);
     list->itr.y = (int)(tr.y + 0.5);
-    if (oldbf_math != bf_math_type::NONE || info->bf_math)
+    if (s_old_bf_math != bf_math_type::NONE || info->bf_math)
     {
         if (!info->bf_math)
         {
@@ -2121,7 +2121,7 @@ static bool is_visible_window(
     }
     list->ibl.x = (int)(bl.x + 0.5);
     list->ibl.y = (int)(bl.y + 0.5);
-    if (oldbf_math != bf_math_type::NONE || info->bf_math)
+    if (s_old_bf_math != bf_math_type::NONE || info->bf_math)
     {
         if (!info->bf_math)
         {
@@ -2359,16 +2359,16 @@ static void bf_setup_convert_to_screen()
 
     // a =  xd*(yymax-yy3rd)
     sub_bf(bt_inter1, g_bf_y_max, g_bf_y_3rd);
-    mult_bf(bt_a, bt_xd, bt_inter1);
+    mult_bf(s_bt_a, bt_xd, bt_inter1);
 
     // b =  xd*(xx3rd-xxmin)
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
-    mult_bf(bt_b, bt_xd, bt_inter1);
+    mult_bf(s_bt_b, bt_xd, bt_inter1);
 
     // e = -(a*xxmin + b*yymax)
-    mult_bf(bt_tmp1, bt_a, g_bf_x_min);
-    mult_bf(bt_tmp2, bt_b, g_bf_y_max);
-    neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
+    mult_bf(bt_tmp1, s_bt_a, g_bf_x_min);
+    mult_bf(bt_tmp2, s_bt_b, g_bf_y_max);
+    neg_a_bf(add_bf(s_bt_e, bt_tmp1, bt_tmp2));
 
     // xx3rd-xxmax
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_max);
@@ -2393,16 +2393,16 @@ static void bf_setup_convert_to_screen()
 
     // c =  yd*(yymin-yy3rd)
     sub_bf(bt_inter1, g_bf_y_min, g_bf_y_3rd);
-    mult_bf(bt_c, bt_yd, bt_inter1);
+    mult_bf(s_bt_c, bt_yd, bt_inter1);
 
     // d =  yd*(xx3rd-xxmax)
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_max);
-    mult_bf(bt_d, bt_yd, bt_inter1);
+    mult_bf(s_bt_d, bt_yd, bt_inter1);
 
     // f = -(c*xxmin + d*yymax)
-    mult_bf(bt_tmp1, bt_c, g_bf_x_min);
-    mult_bf(bt_tmp2, bt_d, g_bf_y_max);
-    neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
+    mult_bf(bt_tmp1, s_bt_c, g_bf_x_min);
+    mult_bf(bt_tmp2, s_bt_d, g_bf_y_max);
+    neg_a_bf(add_bf(s_bt_f, bt_tmp1, bt_tmp2));
 
     restore_stack(saved);
 }
@@ -2418,17 +2418,17 @@ static void bf_transform(bf_t bt_x, bf_t bt_y, DblCoords *point)
     bt_tmp2 = alloc_stack(g_r_bf_length+2);
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
-    mult_bf(bt_tmp1, n_a, bt_x);
-    mult_bf(bt_tmp2, n_b, bt_y);
+    mult_bf(bt_tmp1, s_n_a, bt_x);
+    mult_bf(bt_tmp2, s_n_b, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
-    add_a_bf(bt_tmp1, n_e);
+    add_a_bf(bt_tmp1, s_n_e);
     point->x = (double)bftofloat(bt_tmp1);
 
     //  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
-    mult_bf(bt_tmp1, n_c, bt_x);
-    mult_bf(bt_tmp2, n_d, bt_y);
+    mult_bf(bt_tmp1, s_n_c, bt_x);
+    mult_bf(bt_tmp2, s_n_d, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
-    add_a_bf(bt_tmp1, n_f);
+    add_a_bf(bt_tmp1, s_n_f);
     point->y = (double)bftofloat(bt_tmp1);
 
     restore_stack(saved);
