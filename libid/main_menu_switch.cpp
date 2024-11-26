@@ -725,7 +725,7 @@ static main_state start_evolution(int &kbd_char, bool &from_mandel, bool &kbd_mo
 
 main_state requested_video_fn(int &kbd_char, bool &, bool &kbd_more, bool &)
 {
-    const int k = check_vidmode_key(0, kbd_char);
+    const int k = check_vid_mode_key(0, kbd_char);
     if (k < 0)
     {
         return main_state::NOTHING;

@@ -586,7 +586,7 @@ resumeloop:                             // return here on failed overlays
                         kbdchar = main_menu(true);
                         if (kbdchar == '\\' || kbdchar == ID_KEY_CTL_BACKSLASH
                             || kbdchar == 'h' || kbdchar == ID_KEY_CTL_H
-                            || check_vidmode_key(0, kbdchar) >= 0)
+                            || check_vid_mode_key(0, kbdchar) >= 0)
                         {
                             driver_discard_screen();
                         }

@@ -349,7 +349,7 @@ start:
         out = 0;
         s_slow_count = 0;
     }
-    else if ((i = check_vidmode_keyname(buffer)) != 0)
+    else if ((i = check_vid_mode_key_name(buffer)) != 0)
     {
         out = i;
     }
@@ -435,10 +435,10 @@ void record_show(int key)
         {
             std::fprintf(s_slide_show_file, "%s", mn);
         }
-        else if (check_vidmode_key(0, key) >= 0)
+        else if (check_vid_mode_key(0, key) >= 0)
         {
             char buf[10];
-            vidmode_keyname(key, buf);
+            vid_mode_key_name(key, buf);
             std::fputs(buf, s_slide_show_file);
         }
         else   // not ASCII and not FN key

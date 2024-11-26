@@ -91,7 +91,7 @@ void load_config(const std::string &cfg_path)
                 tempstring[i] = 0;   // make field a separate string
             }
         }
-        keynum = check_vidmode_keyname(tempstring);
+        keynum = check_vid_mode_key_name(tempstring);
         assert(fields[0]);
         xdots = std::atol(fields[0]);
         assert(fields[1]);

@@ -3581,7 +3581,7 @@ static cmdarg_flags cmd_use_gray_scale(const Command &cmd)
 
 static cmdarg_flags cmd_video(const Command &cmd)
 {
-    const int k = check_vidmode_keyname(cmd.value);
+    const int k = check_vid_mode_key_name(cmd.value);
     if (k == 0)
     {
         return cmd.bad_arg();

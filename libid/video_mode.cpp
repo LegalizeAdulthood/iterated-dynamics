@@ -12,7 +12,7 @@ VideoInfo g_video_table[MAX_VIDEO_MODES]{};
 
 int g_video_table_len{};                 // number of entries in above
 
-int check_vidmode_key(int option, int k)
+int check_vid_mode_key(int option, int k)
 {
     // returns g_video_table entry number if the passed keystroke is a
     // function key currently assigned to a video mode, -1 otherwise
@@ -48,7 +48,7 @@ int check_vidmode_key(int option, int k)
     return -1;
 }
 
-int check_vidmode_keyname(char const *kname)
+int check_vid_mode_key_name(char const *kname)
 {
     // returns key number for the passed keyname, 0 if not a keyname
     int i;
@@ -101,7 +101,7 @@ int check_vidmode_keyname(char const *kname)
     return i;
 }
 
-void vidmode_keyname(int k, char *buf)
+void vid_mode_key_name(int k, char *buf)
 {
     // set buffer to name of passed key number
     *buf = 0;

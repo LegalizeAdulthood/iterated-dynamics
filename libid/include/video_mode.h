@@ -21,6 +21,6 @@ struct VideoInfo
 extern VideoInfo             g_video_table[];
 extern int                   g_video_table_len;
 
-int check_vidmode_key(int, int);
-int check_vidmode_keyname(char const *kname);
-void vidmode_keyname(int k, char *buf);
+int check_vid_mode_key(int, int);
+int check_vid_mode_key_name(char const *kname);
+void vid_mode_key_name(int k, char *buf);

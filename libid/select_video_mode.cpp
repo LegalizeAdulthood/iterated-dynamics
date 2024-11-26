@@ -47,7 +47,7 @@ static void format_vid_table(int choice, char *buf)
     assert(idx < g_video_table_len);
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[idx],
            sizeof(g_video_entry));
-    vidmode_keyname(g_video_entry.keynum, kname);
+    vid_mode_key_name(g_video_entry.keynum, kname);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
         kname, g_video_entry.driver->get_description().c_str(), g_video_entry.xdots, g_video_entry.ydots,
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
@@ -146,7 +146,7 @@ int select_video_mode(int curmode)
 
 static int check_modekey(int curkey, int choice)
 {
-    int i = check_vidmode_key(1, curkey);
+    int i = check_vid_mode_key(1, curkey);
     if (i >= 0)
     {
         return -1-i;
@@ -251,7 +251,7 @@ static void update_id_cfg()
         if (linenum == nextlinenum)
         {
             vident = g_video_table[nextmode];
-            vidmode_keyname(vident.keynum, kname);
+            vid_mode_key_name(vident.keynum, kname);
             std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
             std::fprintf(outfile, "%-4s,%4d,%5d,%s,%s,%s\n",
                     kname,
@@ -285,7 +285,7 @@ void request_video_mode(int &kbd_char)
 {
     driver_stack_screen();
     kbd_char = select_video_mode(g_adapter);
-    if (check_vidmode_key(0, kbd_char) >= 0) // picked a new mode?
+    if (check_vid_mode_key(0, kbd_char) >= 0) // picked a new mode?
     {
         driver_discard_screen();
     }

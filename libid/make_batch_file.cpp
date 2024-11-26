@@ -225,7 +225,7 @@ void make_batch_file()
         goto skip_UI;
     }
 
-    vidmode_keyname(g_video_entry.keynum, vidmde);
+    vid_mode_key_name(g_video_entry.keynum, vidmde);
     while (true)
     {
 prompt_user:
@@ -341,10 +341,10 @@ prompt_user:
             // get resolution from the video name (which must be valid)
             pydots = 0;
             pxdots = pydots;
-            i = check_vidmode_keyname(vidmde);
+            i = check_vid_mode_key_name(vidmde);
             if (i > 0)
             {
-                i = check_vidmode_key(0, i);
+                i = check_vid_mode_key(0, i);
                 if (i >= 0)
                 {
                     // get the resolution of this video mode

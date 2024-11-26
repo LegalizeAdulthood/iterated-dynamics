@@ -144,7 +144,7 @@ static char const *expand_var(char const *var, char *buf)
     else if (std::strcmp(var, "vidkey") == 0)   // 2 to 3 chars
     {
         char vidmde[5];
-        vidmode_keyname(g_video_entry.keynum, vidmde);
+        vid_mode_key_name(g_video_entry.keynum, vidmde);
         std::sprintf(buf, "%s", vidmde);
         out = buf;
     }

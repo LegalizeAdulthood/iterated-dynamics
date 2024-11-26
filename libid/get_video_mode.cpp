@@ -101,7 +101,7 @@ static void format_vid_inf(int i, char const *err, char *buf)
     char kname[5];
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
            sizeof(g_video_entry));
-    vidmode_keyname(g_video_entry.keynum, kname);
+    vid_mode_key_name(g_video_entry.keynum, kname);
     std::sprintf(buf, "%-5s %-16s %-4s %5d %5d %3d %-25s",  // 67 chars
             kname, g_video_entry.driver->get_description().c_str(), err,
             g_video_entry.xdots, g_video_entry.ydots,
@@ -555,6 +555,6 @@ static void format_item(int choice, char *buf)
 
 static int check_modekey(int curkey, int /*choice*/)
 {
-    int i = check_vidmode_key(0, curkey);
+    int i = check_vid_mode_key(0, curkey);
     return i >= 0 ? -100-i : 0;
 }

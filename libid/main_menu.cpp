@@ -88,7 +88,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
             return -testkey;
         }
     }
-    if (check_vidmode_key(0, testkey) >= 0)
+    if (check_vid_mode_key(0, testkey) >= 0)
     {
         return -testkey;
     }
