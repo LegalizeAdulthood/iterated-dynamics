@@ -147,37 +147,37 @@ inline void cmplx_trig3(const DComplex &arg, DComplex &out)
 inline void lcmplx_sin(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    lStkSin();
+    l_stk_sin();
     (out) = g_arg1->l;
 }
 inline void lcmplx_cos(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    lStkCos();
+    l_stk_cos();
     out = g_arg1->l;
 }
 inline void lcmplx_sinh(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    lStkSinh();
+    l_stk_sinh();
     out = g_arg1->l;
 }
 inline void lcmplx_cosh(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    lStkCosh();
+    l_stk_cosh();
     out = g_arg1->l;
 }
 inline void lcmplx_log(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    lStkLog();
+    l_stk_log();
     out = g_arg1->l;
 }
 inline void lcmplx_exp(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    lStkExp();
+    l_stk_exp();
     out = g_arg1->l;
 }
 inline void lcmplx_sqr(const LComplex &arg, LComplex &out)
@@ -194,7 +194,7 @@ inline void lcmplx_pwr(const LComplex &arg1, const LComplex &arg2, LComplex &out
 {
     g_arg2->l = arg1;
     g_arg1->l = arg2;
-    lStkPwr();
+    l_stk_pwr();
     g_arg1++;
     g_arg2++;
     out = g_arg2->l;
@@ -232,31 +232,31 @@ inline double cmplx_mod(const DComplex &z)
 inline void cmplx_sin(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dStkSin();
+    d_stk_sin();
     out = g_arg1->d;
 }
 inline void cmplx_cos(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dStkCos();
+    d_stk_cos();
     out = g_arg1->d;
 }
 inline void cmplx_sinh(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dStkSinh();
+    d_stk_sinh();
     out = g_arg1->d;
 }
 inline void cmplx_cosh(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dStkCosh();
+    d_stk_cosh();
     out = g_arg1->d;
 }
 inline void cmplx_log(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    dStkLog();
+    d_stk_log();
     out = g_arg1->d;
 }
 inline void cmplx_exp(const DComplex &arg, DComplex &out)
@@ -282,7 +282,7 @@ inline void cmplx_mult1(const DComplex &arg1, const DComplex &arg2, DComplex &ou
 {
     g_arg2->d = arg1;
     g_arg1->d = arg2;
-    dStkMul();
+    d_stk_mul();
     g_arg1++;
     g_arg2++;
     out = g_arg2->d;

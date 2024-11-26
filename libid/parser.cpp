@@ -375,41 +375,41 @@ static std::string s_formula;
 static std::array<ErrorData, 3> s_errors{};
 
 static FunctionPtr s_srand{dStkSRand};
-static FunctionPtr s_abs{dStkAbs};
-static FunctionPtr s_sqr{dStkSqr};
+static FunctionPtr s_abs{d_stk_abs};
+static FunctionPtr s_sqr{d_stk_sqr};
 static FunctionPtr s_add{dStkAdd};
 static FunctionPtr s_sub{dStkSub};
-static FunctionPtr s_conj{dStkConj};
-static FunctionPtr s_floor{dStkFloor};
-static FunctionPtr s_ceil{dStkCeil};
-static FunctionPtr s_trunc{dStkTrunc};
-static FunctionPtr s_round{dStkRound};
-static FunctionPtr s_zero{dStkZero};
-static FunctionPtr s_one{dStkOne};
+static FunctionPtr s_conj{d_stk_conj};
+static FunctionPtr s_floor{d_stk_floor};
+static FunctionPtr s_ceil{d_stk_ceil};
+static FunctionPtr s_trunc{d_stk_trunc};
+static FunctionPtr s_round{d_stk_round};
+static FunctionPtr s_zero{d_stk_zero};
+static FunctionPtr s_one{d_stk_one};
 static FunctionPtr s_real{dStkReal};
 static FunctionPtr s_imag{dStkImag};
 static FunctionPtr s_neg{dStkNeg};
-static FunctionPtr s_mul{dStkMul};
+static FunctionPtr s_mul{d_stk_mul};
 static FunctionPtr s_div{dStkDiv};
 static FunctionPtr s_mod{dStkMod};
-static FunctionPtr s_flip{dStkFlip};
-static FunctionPtr s_sin{dStkSin};
-static FunctionPtr s_tan{dStkTan};
-static FunctionPtr s_tanh{dStkTanh};
-static FunctionPtr s_cotan{dStkCoTan};
-static FunctionPtr s_cotanh{dStkCoTanh};
-static FunctionPtr s_sinh{dStkSinh};
-static FunctionPtr s_cos{dStkCos};
-static FunctionPtr s_cosxx{dStkCosXX};
-static FunctionPtr s_cosh{dStkCosh};
-static FunctionPtr s_asin{dStkASin};
-static FunctionPtr s_asinh{dStkASinh};
-static FunctionPtr s_acos{dStkACos};
-static FunctionPtr s_acosh{dStkACosh};
-static FunctionPtr s_atan{dStkATan};
-static FunctionPtr s_atanh{dStkATanh};
-static FunctionPtr s_sqrt{dStkSqrt};
-static FunctionPtr s_cabs{dStkCAbs};
+static FunctionPtr s_flip{d_stk_flip};
+static FunctionPtr s_sin{d_stk_sin};
+static FunctionPtr s_tan{d_stk_tan};
+static FunctionPtr s_tanh{d_stk_tanh};
+static FunctionPtr s_cotan{d_stk_cotan};
+static FunctionPtr s_cotanh{d_stk_cotanh};
+static FunctionPtr s_sinh{d_stk_sinh};
+static FunctionPtr s_cos{d_stk_cos};
+static FunctionPtr s_cosxx{d_stk_coxx};
+static FunctionPtr s_cosh{d_stk_cosh};
+static FunctionPtr s_asin{d_stk_asin};
+static FunctionPtr s_asinh{d_stk_asinh};
+static FunctionPtr s_acos{d_stk_acos};
+static FunctionPtr s_acosh{d_stk_acosh};
+static FunctionPtr s_atan{d_stk_atan};
+static FunctionPtr s_atanh{d_stk_atanh};
+static FunctionPtr s_sqrt{d_stk_sqrt};
+static FunctionPtr s_cabs{d_stk_cabs};
 static FunctionPtr s_lt{dStkLT};
 static FunctionPtr s_gt{dStkGT};
 static FunctionPtr s_lte{dStkLTE};
@@ -418,16 +418,16 @@ static FunctionPtr s_eq{dStkEQ};
 static FunctionPtr s_ne{dStkNE};
 static FunctionPtr s_or{dStkOR};
 static FunctionPtr s_and{dStkAND};
-static FunctionPtr s_log{dStkLog};
-static FunctionPtr s_exp{dStkExp};
-static FunctionPtr s_pwr{dStkPwr};
+static FunctionPtr s_log{d_stk_log};
+static FunctionPtr s_exp{d_stk_exp};
+static FunctionPtr s_pwr{d_stk_pwr};
 static FunctionPtr s_end_init{EndInit};
 static FunctionPtr s_jump_on_false{dStkJumpOnFalse};
 static FunctionPtr s_jump_on_true{dStkJumpOnTrue};
-static FunctionPtr s_trig0{dStkSin};
-static FunctionPtr s_trig1{dStkSqr};
-static FunctionPtr s_trig2{dStkSinh};
-static FunctionPtr s_trig3{dStkCosh};
+static FunctionPtr s_trig0{d_stk_sin};
+static FunctionPtr s_trig1{d_stk_sqr};
+static FunctionPtr s_trig2{d_stk_sinh};
+static FunctionPtr s_trig3{d_stk_cosh};
 static constexpr std::array<FunctList, 34> s_func_list
 {
     FunctList{"sin",   &s_sin},
@@ -845,13 +845,13 @@ void dStkSqr3()
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x;
 }
 
-void dStkAbs()
+void d_stk_abs()
 {
     g_arg1->d.x = std::fabs(g_arg1->d.x);
     g_arg1->d.y = std::fabs(g_arg1->d.y);
 }
 
-void mStkAbs()
+void m_stk_abs()
 {
     if (g_arg1->m.x.Exp < 0)
     {
@@ -863,13 +863,13 @@ void mStkAbs()
     }
 }
 
-void lStkAbs()
+void l_stk_abs()
 {
     g_arg1->l.x = labs(g_arg1->l.x);
     g_arg1->l.y = labs(g_arg1->l.y);
 }
 
-void dStkSqr()
+void d_stk_sqr()
 {
     LastSqr.d.x = g_arg1->d.x * g_arg1->d.x;
     LastSqr.d.y = g_arg1->d.y * g_arg1->d.y;
@@ -879,7 +879,7 @@ void dStkSqr()
     LastSqr.d.y = 0;
 }
 
-void mStkSqr()
+void m_stk_sqr()
 {
     LastSqr.m.x = *mp_mul(g_arg1->m.x, g_arg1->m.x);
     LastSqr.m.y = *mp_mul(g_arg1->m.y, g_arg1->m.y);
@@ -891,7 +891,7 @@ void mStkSqr()
     LastSqr.m.y.Mant = 0;
 }
 
-void lStkSqr()
+void l_stk_sqr()
 {
     LastSqr.l.x = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift);
     LastSqr.l.y = multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
@@ -947,33 +947,33 @@ static void lStkSub()
     g_arg2--;
 }
 
-void dStkConj()
+void d_stk_conj()
 {
     g_arg1->d.y = -g_arg1->d.y;
 }
 
-void mStkConj()
+void m_stk_conj()
 {
     g_arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkConj()
+void l_stk_conj()
 {
     g_arg1->l.y = -g_arg1->l.y;
 }
 
-void dStkFloor()
+void d_stk_floor()
 {
     g_arg1->d.x = floor(g_arg1->d.x);
     g_arg1->d.y = floor(g_arg1->d.y);
 }
 
-void mStkFloor()
+void m_stk_floor()
 {
-    mStkFunct(dStkFloor);   // call mStk via dStk
+    mStkFunct(d_stk_floor);   // call mStk via dStk
 }
 
-void lStkFloor()
+void l_stk_floor()
 {
     /*
      * Kill fractional part. This operation truncates negative numbers
@@ -985,18 +985,18 @@ void lStkFloor()
     g_arg1->l.y = (g_arg1->l.y) << g_bit_shift;
 }
 
-void dStkCeil()
+void d_stk_ceil()
 {
     g_arg1->d.x = ceil(g_arg1->d.x);
     g_arg1->d.y = ceil(g_arg1->d.y);
 }
 
-void mStkCeil()
+void m_stk_ceil()
 {
-    mStkFunct(dStkCeil);   // call mStk via dStk
+    mStkFunct(d_stk_ceil);   // call mStk via dStk
 }
 
-void lStkCeil()
+void l_stk_ceil()
 {
     /* the shift operation does the "floor" operation, so we
        negate everything before the operation */
@@ -1006,18 +1006,18 @@ void lStkCeil()
     g_arg1->l.y = -((g_arg1->l.y) << g_bit_shift);
 }
 
-void dStkTrunc()
+void d_stk_trunc()
 {
     g_arg1->d.x = (int)(g_arg1->d.x);
     g_arg1->d.y = (int)(g_arg1->d.y);
 }
 
-void mStkTrunc()
+void m_stk_trunc()
 {
-    mStkFunct(dStkTrunc);   // call mStk via dStk
+    mStkFunct(d_stk_trunc);   // call mStk via dStk
 }
 
-void lStkTrunc()
+void l_stk_trunc()
 {
     /* shifting and shifting back truncates positive numbers,
        so we make the numbers positive */
@@ -1035,32 +1035,32 @@ void lStkTrunc()
     g_arg1->l.y = signy*g_arg1->l.y;
 }
 
-void dStkRound()
+void d_stk_round()
 {
     g_arg1->d.x = floor(g_arg1->d.x+.5);
     g_arg1->d.y = floor(g_arg1->d.y+.5);
 }
 
-void mStkRound()
+void m_stk_round()
 {
-    mStkFunct(dStkRound);   // call mStk via dStk
+    mStkFunct(d_stk_round);   // call mStk via dStk
 }
 
-void lStkRound()
+void l_stk_round()
 {
     // Add .5 then truncate
     g_arg1->l.x += (1L << g_bit_shift_less_1);
     g_arg1->l.y += (1L << g_bit_shift_less_1);
-    lStkFloor();
+    l_stk_floor();
 }
 
-void dStkZero()
+void d_stk_zero()
 {
     g_arg1->d.x = 0.0;
     g_arg1->d.y = g_arg1->d.x;
 }
 
-void mStkZero()
+void m_stk_zero()
 {
     g_arg1->m.x.Exp = 0;
     g_arg1->m.x.Mant = 0;
@@ -1068,24 +1068,24 @@ void mStkZero()
     g_arg1->m.y.Mant = 0;
 }
 
-void lStkZero()
+void l_stk_zero()
 {
     g_arg1->l.x = 0;
     g_arg1->l.y = g_arg1->l.x;
 }
 
-void dStkOne()
+void d_stk_one()
 {
     g_arg1->d.x = 1.0;
     g_arg1->d.y = 0.0;
 }
 
-void mStkOne()
+void m_stk_one()
 {
     g_arg1->m = g_mpc_one;
 }
 
-void lStkOne()
+void l_stk_one()
 {
     g_arg1->l.x = (long) s_fudge;
     g_arg1->l.y = 0L;
@@ -1144,7 +1144,7 @@ static void lStkNeg()
     g_arg1->l.y = -g_arg1->l.y;
 }
 
-void dStkMul()
+void d_stk_mul()
 {
     fpu_cmplx_mul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
@@ -1158,7 +1158,7 @@ static void mStkMul()
     g_arg2--;
 }
 
-void lStkMul()
+void l_stk_mul()
 {
     g_arg2->l = g_arg2->l * g_arg1->l;
     g_arg1--;
@@ -1246,7 +1246,7 @@ static void StkClr()
     g_arg2--;
 }
 
-void dStkFlip()
+void d_stk_flip()
 {
     double t;
 
@@ -1255,7 +1255,7 @@ void dStkFlip()
     g_arg1->d.y = t;
 }
 
-void mStkFlip()
+void m_stk_flip()
 {
     MP t;
 
@@ -1264,7 +1264,7 @@ void mStkFlip()
     g_arg1->m.y = t;
 }
 
-void lStkFlip()
+void l_stk_flip()
 {
     long t;
 
@@ -1273,7 +1273,7 @@ void lStkFlip()
     g_arg1->l.y = t;
 }
 
-void dStkSin()
+void d_stk_sin()
 {
     double sinx;
     double cosx;
@@ -1286,12 +1286,12 @@ void dStkSin()
     g_arg1->d.y = cosx*sinhy;
 }
 
-void mStkSin()
+void m_stk_sin()
 {
-    mStkFunct(dStkSin);   // call mStk via dStk
+    mStkFunct(d_stk_sin);   // call mStk via dStk
 }
 
-void lStkSin()
+void l_stk_sin()
 {
     long x;
     long y;
@@ -1310,7 +1310,7 @@ void lStkSin()
 /* The following functions are supported by both the parser and for fn
    variable replacement.
 */
-void dStkTan()
+void d_stk_tan()
 {
     double sinx;
     double cosx;
@@ -1330,12 +1330,12 @@ void dStkTan()
     g_arg1->d.y = sinhy/denom;
 }
 
-void mStkTan()
+void m_stk_tan()
 {
-    mStkFunct(dStkTan);   // call mStk via dStk
+    mStkFunct(d_stk_tan);   // call mStk via dStk
 }
 
-void lStkTan()
+void l_stk_tan()
 {
     long x;
     long y;
@@ -1359,7 +1359,7 @@ void lStkTan()
     g_arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
 
-void dStkTanh()
+void d_stk_tanh()
 {
     double siny;
     double cosy;
@@ -1379,12 +1379,12 @@ void dStkTanh()
     g_arg1->d.y = siny/denom;
 }
 
-void mStkTanh()
+void m_stk_tanh()
 {
-    mStkFunct(dStkTanh);   // call mStk via dStk
+    mStkFunct(d_stk_tanh);   // call mStk via dStk
 }
 
-void lStkTanh()
+void l_stk_tanh()
 {
     long x;
     long y;
@@ -1408,7 +1408,7 @@ void lStkTanh()
     g_arg1->l.y = divide(siny, denom, g_bit_shift);
 }
 
-void dStkCoTan()
+void d_stk_cotan()
 {
     double sinx;
     double cosx;
@@ -1428,12 +1428,12 @@ void dStkCoTan()
     g_arg1->d.y = -sinhy/denom;
 }
 
-void mStkCoTan()
+void m_stk_cotan()
 {
-    mStkFunct(dStkCoTan);   // call mStk via dStk
+    mStkFunct(d_stk_cotan);   // call mStk via dStk
 }
 
-void lStkCoTan()
+void l_stk_cotan()
 {
     long x;
     long y;
@@ -1457,7 +1457,7 @@ void lStkCoTan()
     g_arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
 
-void dStkCoTanh()
+void d_stk_cotanh()
 {
     double siny;
     double cosy;
@@ -1477,12 +1477,12 @@ void dStkCoTanh()
     g_arg1->d.y = -siny/denom;
 }
 
-void mStkCoTanh()
+void m_stk_cotanh()
 {
-    mStkFunct(dStkCoTanh);   // call mStk via dStk
+    mStkFunct(d_stk_cotanh);   // call mStk via dStk
 }
 
-void lStkCoTanh()
+void l_stk_cotanh()
 {
     long x;
     long y;
@@ -1513,7 +1513,7 @@ void lStkCoTanh()
    the other parser functions.
 */
 
-void dStkRecip()
+void d_stk_recip()
 {
     double mod;
     mod =g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
@@ -1525,7 +1525,7 @@ void dStkRecip()
     g_arg1->d.y = -g_arg1->d.y/mod;
 }
 
-void mStkRecip()
+void m_stk_recip()
 {
     MP mod;
     mod = *mp_add(*mp_mul(g_arg1->m.x, g_arg1->m.x), *mp_mul(g_arg1->m.y, g_arg1->m.y));
@@ -1539,7 +1539,7 @@ void mStkRecip()
     g_arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkRecip()
+void l_stk_recip()
 {
     long mod;
     mod = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift)
@@ -1552,12 +1552,12 @@ void lStkRecip()
     g_arg1->l.y = -divide(g_arg1->l.y, mod, g_bit_shift);
 }
 
-void StkIdent()
+void stk_ident()
 {
     // do nothing - the function Z
 }
 
-void dStkSinh()
+void d_stk_sinh()
 {
     double siny;
     double cosy;
@@ -1570,12 +1570,12 @@ void dStkSinh()
     g_arg1->d.y = coshx*siny;
 }
 
-void mStkSinh()
+void m_stk_sinh()
 {
-    mStkFunct(dStkSinh);   // call mStk via dStk
+    mStkFunct(d_stk_sinh);   // call mStk via dStk
 }
 
-void lStkSinh()
+void l_stk_sinh()
 {
     long x;
     long y;
@@ -1592,7 +1592,7 @@ void lStkSinh()
     g_arg1->l.y = multiply(siny, coshx, s_shift_back);
 }
 
-void dStkCos()
+void d_stk_cos()
 {
     double sinx;
     double cosx;
@@ -1605,12 +1605,12 @@ void dStkCos()
     g_arg1->d.y = -sinx*sinhy;
 }
 
-void mStkCos()
+void m_stk_cos()
 {
-    mStkFunct(dStkCos);   // call mStk via dStk
+    mStkFunct(d_stk_cos);   // call mStk via dStk
 }
 
-void lStkCos()
+void l_stk_cos()
 {
     long x;
     long y;
@@ -1629,24 +1629,24 @@ void lStkCos()
 
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
-void dStkCosXX()
+void d_stk_coxx()
 {
-    dStkCos();
+    d_stk_cos();
     g_arg1->d.y = -g_arg1->d.y;
 }
 
-void mStkCosXX()
+void m_stk_cosxx()
 {
-    mStkFunct(dStkCosXX);   // call mStk via dStk
+    mStkFunct(d_stk_coxx);   // call mStk via dStk
 }
 
-void lStkCosXX()
+void l_stk_cosxx()
 {
-    lStkCos();
+    l_stk_cos();
     g_arg1->l.y = -g_arg1->l.y;
 }
 
-void dStkCosh()
+void d_stk_cosh()
 {
     double siny;
     double cosy;
@@ -1659,12 +1659,12 @@ void dStkCosh()
     g_arg1->d.y = sinhx*siny;
 }
 
-void mStkCosh()
+void m_stk_cosh()
 {
-    mStkFunct(dStkCosh);   // call mStk via dStk
+    mStkFunct(d_stk_cosh);   // call mStk via dStk
 }
 
-void lStkCosh()
+void l_stk_cosh()
 {
     long x;
     long y;
@@ -1681,126 +1681,126 @@ void lStkCosh()
     g_arg1->l.y = multiply(siny, sinhx, s_shift_back);
 }
 
-void dStkASin()
+void d_stk_asin()
 {
     asin_z(g_arg1->d, &(g_arg1->d));
 }
 
-void mStkASin()
+void m_stk_asin()
 {
-    mStkFunct(dStkASin);
+    mStkFunct(d_stk_asin);
 }
 
-void lStkASin()
+void l_stk_asin()
 {
-    lStkFunct(dStkASin);
+    lStkFunct(d_stk_asin);
 }
 
-void dStkASinh()
+void d_stk_asinh()
 {
     asinh_z(g_arg1->d, &(g_arg1->d));
 }
 
-void mStkASinh()
+void m_stk_asinh()
 {
-    mStkFunct(dStkASinh);
+    mStkFunct(d_stk_asinh);
 }
 
-void lStkASinh()
+void l_stk_asinh()
 {
-    lStkFunct(dStkASinh);
+    lStkFunct(d_stk_asinh);
 }
 
-void dStkACos()
+void d_stk_acos()
 {
     acos_z(g_arg1->d, &(g_arg1->d));
 }
 
-void mStkACos()
+void m_stk_acos()
 {
-    mStkFunct(dStkACos);
+    mStkFunct(d_stk_acos);
 }
 
-void lStkACos()
+void l_stk_acos()
 {
-    lStkFunct(dStkACos);
+    lStkFunct(d_stk_acos);
 }
 
-void dStkACosh()
+void d_stk_acosh()
 {
     acosh_z(g_arg1->d, &(g_arg1->d));
 }
 
-void mStkACosh()
+void m_stk_acosh()
 {
-    mStkFunct(dStkACosh);
+    mStkFunct(d_stk_acosh);
 }
 
-void lStkACosh()
+void l_stk_acosh()
 {
-    lStkFunct(dStkACosh);
+    lStkFunct(d_stk_acosh);
 }
 
-void dStkATan()
+void d_stk_atan()
 {
     atan_z(g_arg1->d, &(g_arg1->d));
 }
 
-void mStkATan()
+void m_stk_atan()
 {
-    mStkFunct(dStkATan);
+    mStkFunct(d_stk_atan);
 }
 
-void lStkATan()
+void l_stk_atan()
 {
-    lStkFunct(dStkATan);
+    lStkFunct(d_stk_atan);
 }
 
-void dStkATanh()
+void d_stk_atanh()
 {
     atanh_z(g_arg1->d, &(g_arg1->d));
 }
 
-void mStkATanh()
+void m_stk_atanh()
 {
-    mStkFunct(dStkATanh);
+    mStkFunct(d_stk_atanh);
 }
 
-void lStkATanh()
+void l_stk_atanh()
 {
-    lStkFunct(dStkATanh);
+    lStkFunct(d_stk_atanh);
 }
 
-void dStkSqrt()
+void d_stk_sqrt()
 {
     g_arg1->d = complex_sqrt_float(g_arg1->d.x, g_arg1->d.y);
 }
 
-void mStkSqrt()
+void m_stk_sqrt()
 {
-    mStkFunct(dStkSqrt);
+    mStkFunct(d_stk_sqrt);
 }
 
-void lStkSqrt()
+void l_stk_sqrt()
 {
     // lStkFunct(dStkSqrt);
     g_arg1->l = complex_sqrt_long(g_arg1->l.x, g_arg1->l.y);
 }
 
-void dStkCAbs()
+void d_stk_cabs()
 {
     g_arg1->d.x = std::sqrt(sqr(g_arg1->d.x)+sqr(g_arg1->d.y));
     g_arg1->d.y = 0.0;
 }
 
-void mStkCAbs()
+void m_stk_cabs()
 {
-    mStkFunct(dStkCAbs);
+    mStkFunct(d_stk_cabs);
 }
 
-void lStkCAbs()
+void l_stk_cabs()
 {
-    lStkFunct(dStkCAbs);
+    lStkFunct(d_stk_cabs);
 }
 
 static void dStkLT()
@@ -2015,44 +2015,44 @@ static void lStkAND()
     g_arg2--;
 }
 
-void dStkLog()
+void d_stk_log()
 {
     fpu_cmplx_log(&g_arg1->d, &g_arg1->d);
 }
 
-void mStkLog()
+void m_stk_log()
 {
-    mStkFunct(dStkLog);   // call mStk via dStk
+    mStkFunct(d_stk_log);   // call mStk via dStk
 }
 
-void lStkLog()
+void l_stk_log()
 {
-    lStkFunct(dStkLog);
+    lStkFunct(d_stk_log);
 }
 
-void dStkExp()
+void d_stk_exp()
 {
     fpu_cmplx_exp(&g_arg1->d, &g_arg1->d);
 }
 
-void mStkExp()
+void m_stk_exp()
 {
-    mStkFunct(dStkExp);   // call mStk via dStk
+    mStkFunct(d_stk_exp);   // call mStk via dStk
 }
 
-void lStkExp()
+void l_stk_exp()
 {
-    lStkFunct(dStkExp);
+    lStkFunct(d_stk_exp);
 }
 
-void dStkPwr()
+void d_stk_pwr()
 {
     g_arg2->d = complex_power(g_arg2->d, g_arg1->d);
     g_arg1--;
     g_arg2--;
 }
 
-void mStkPwr()
+void m_stk_pwr()
 {
     DComplex x;
     DComplex y;
@@ -2065,7 +2065,7 @@ void mStkPwr()
     g_arg2--;
 }
 
-void lStkPwr()
+void l_stk_pwr()
 {
     DComplex x;
     DComplex y;
@@ -2482,33 +2482,33 @@ static bool parse_formula_text(char const *text)
         s_add = dStkAdd;
         s_sub = dStkSub;
         s_neg = dStkNeg;
-        s_mul = dStkMul;
-        s_sin = dStkSin;
-        s_sinh = dStkSinh;
+        s_mul = d_stk_mul;
+        s_sin = d_stk_sin;
+        s_sinh = d_stk_sinh;
         s_lt = dStkLT;
         s_lte = dStkLTE;
         s_mod = dStkMod;
-        s_sqr = dStkSqr;
-        s_cos = dStkCos;
-        s_cosh = dStkCosh;
-        s_log = dStkLog;
-        s_exp = dStkExp;
-        s_pwr = dStkPwr;
+        s_sqr = d_stk_sqr;
+        s_cos = d_stk_cos;
+        s_cosh = d_stk_cosh;
+        s_log = d_stk_log;
+        s_exp = d_stk_exp;
+        s_pwr = d_stk_pwr;
         s_div = dStkDiv;
-        s_abs = dStkAbs;
+        s_abs = d_stk_abs;
         s_real = dStkReal;
         s_imag = dStkImag;
-        s_conj = dStkConj;
+        s_conj = d_stk_conj;
         s_trig0 = g_dtrig0;
         s_trig1 = g_dtrig1;
         s_trig2 = g_dtrig2;
         s_trig3 = g_dtrig3;
-        s_flip = dStkFlip;
-        s_tan = dStkTan;
-        s_tanh = dStkTanh;
-        s_cotan = dStkCoTan;
-        s_cotanh = dStkCoTanh;
-        s_cosxx = dStkCosXX;
+        s_flip = d_stk_flip;
+        s_tan = d_stk_tan;
+        s_tanh = d_stk_tanh;
+        s_cotan = d_stk_cotan;
+        s_cotanh = d_stk_cotanh;
+        s_cosxx = d_stk_coxx;
         s_gt  = dStkGT;
         s_gte = dStkGTE;
         s_eq  = dStkEQ;
@@ -2516,54 +2516,54 @@ static bool parse_formula_text(char const *text)
         s_and = dStkAND;
         s_or  = dStkOR ;
         s_srand = dStkSRand;
-        s_asin = dStkASin;
-        s_asinh = dStkASinh;
-        s_acos = dStkACos;
-        s_acosh = dStkACosh;
-        s_atan = dStkATan;
-        s_atanh = dStkATanh;
-        s_cabs = dStkCAbs;
-        s_sqrt = dStkSqrt;
-        s_zero = dStkZero;
-        s_floor = dStkFloor;
-        s_ceil = dStkCeil;
-        s_trunc = dStkTrunc;
-        s_round = dStkRound;
+        s_asin = d_stk_asin;
+        s_asinh = d_stk_asinh;
+        s_acos = d_stk_acos;
+        s_acosh = d_stk_acosh;
+        s_atan = d_stk_atan;
+        s_atanh = d_stk_atanh;
+        s_cabs = d_stk_cabs;
+        s_sqrt = d_stk_sqrt;
+        s_zero = d_stk_zero;
+        s_floor = d_stk_floor;
+        s_ceil = d_stk_ceil;
+        s_trunc = d_stk_trunc;
+        s_round = d_stk_round;
         s_jump_on_true  = dStkJumpOnTrue;
         s_jump_on_false = dStkJumpOnFalse;
-        s_one = dStkOne;
+        s_one = d_stk_one;
         break;
     case math_type::MPC:
         s_add = mStkAdd;
         s_sub = mStkSub;
         s_neg = mStkNeg;
         s_mul = mStkMul;
-        s_sin = mStkSin;
-        s_sinh = mStkSinh;
+        s_sin = m_stk_sin;
+        s_sinh = m_stk_sinh;
         s_lt = mStkLT;
         s_lte = mStkLTE;
         s_mod = mStkMod;
-        s_sqr = mStkSqr;
-        s_cos = mStkCos;
-        s_cosh = mStkCosh;
-        s_log = mStkLog;
-        s_exp = mStkExp;
-        s_pwr = mStkPwr;
+        s_sqr = m_stk_sqr;
+        s_cos = m_stk_cos;
+        s_cosh = m_stk_cosh;
+        s_log = m_stk_log;
+        s_exp = m_stk_exp;
+        s_pwr = m_stk_pwr;
         s_div = mStkDiv;
-        s_abs = mStkAbs;
+        s_abs = m_stk_abs;
         s_real = mStkReal;
         s_imag = mStkImag;
-        s_conj = mStkConj;
+        s_conj = m_stk_conj;
         s_trig0 = g_mtrig0;
         s_trig1 = g_mtrig1;
         s_trig2 = g_mtrig2;
         s_trig3 = g_mtrig3;
-        s_flip = mStkFlip;
-        s_tan  = mStkTan;
-        s_tanh  = mStkTanh;
-        s_cotan  = mStkCoTan;
-        s_cotanh  = mStkCoTanh;
-        s_cosxx = mStkCosXX;
+        s_flip = m_stk_flip;
+        s_tan  = m_stk_tan;
+        s_tanh  = m_stk_tanh;
+        s_cotan  = m_stk_cotan;
+        s_cotanh  = m_stk_cotanh;
+        s_cosxx = m_stk_cosxx;
         s_gt  = mStkGT;
         s_gte = mStkGTE;
         s_eq  = mStkEQ;
@@ -2571,21 +2571,21 @@ static bool parse_formula_text(char const *text)
         s_and = mStkAND;
         s_or  = mStkOR ;
         s_srand = mStkSRand;
-        s_asin = mStkASin;
-        s_acos = mStkACos;
-        s_acosh = mStkACosh;
-        s_atan = mStkATan;
-        s_atanh = mStkATanh;
-        s_cabs = mStkCAbs;
-        s_sqrt = mStkSqrt;
-        s_zero = mStkZero;
-        s_floor = mStkFloor;
-        s_ceil = mStkCeil;
-        s_trunc = mStkTrunc;
-        s_round = mStkRound;
+        s_asin = m_stk_asin;
+        s_acos = m_stk_acos;
+        s_acosh = m_stk_acosh;
+        s_atan = m_stk_atan;
+        s_atanh = m_stk_atanh;
+        s_cabs = m_stk_cabs;
+        s_sqrt = m_stk_sqrt;
+        s_zero = m_stk_zero;
+        s_floor = m_stk_floor;
+        s_ceil = m_stk_ceil;
+        s_trunc = m_stk_trunc;
+        s_round = m_stk_round;
         s_jump_on_true  = mStkJumpOnTrue;
         s_jump_on_false = mStkJumpOnFalse;
-        s_one = mStkOne;
+        s_one = m_stk_one;
         break;
     case math_type::LONG:
         s_delta16 = g_bit_shift - 16;
@@ -2593,33 +2593,33 @@ static bool parse_formula_text(char const *text)
         s_add = lStkAdd;
         s_sub = lStkSub;
         s_neg = lStkNeg;
-        s_mul = lStkMul;
-        s_sin = lStkSin;
-        s_sinh = lStkSinh;
+        s_mul = l_stk_mul;
+        s_sin = l_stk_sin;
+        s_sinh = l_stk_sinh;
         s_lt = lStkLT;
         s_lte = lStkLTE;
         s_mod = lStkMod;
-        s_sqr = lStkSqr;
-        s_cos = lStkCos;
-        s_cosh = lStkCosh;
-        s_log = lStkLog;
-        s_exp = lStkExp;
-        s_pwr = lStkPwr;
+        s_sqr = l_stk_sqr;
+        s_cos = l_stk_cos;
+        s_cosh = l_stk_cosh;
+        s_log = l_stk_log;
+        s_exp = l_stk_exp;
+        s_pwr = l_stk_pwr;
         s_div = lStkDiv;
-        s_abs = lStkAbs;
+        s_abs = l_stk_abs;
         s_real = lStkReal;
         s_imag = lStkImag;
-        s_conj = lStkConj;
+        s_conj = l_stk_conj;
         s_trig0 = g_ltrig0;
         s_trig1 = g_ltrig1;
         s_trig2 = g_ltrig2;
         s_trig3 = g_ltrig3;
-        s_flip = lStkFlip;
-        s_tan  = lStkTan;
-        s_tanh  = lStkTanh;
-        s_cotan  = lStkCoTan;
-        s_cotanh  = lStkCoTanh;
-        s_cosxx = lStkCosXX;
+        s_flip = l_stk_flip;
+        s_tan  = l_stk_tan;
+        s_tanh  = l_stk_tanh;
+        s_cotan  = l_stk_cotan;
+        s_cotanh  = l_stk_cotanh;
+        s_cosxx = l_stk_cosxx;
         s_gt  = lStkGT;
         s_gte = lStkGTE;
         s_eq  = lStkEQ;
@@ -2627,21 +2627,21 @@ static bool parse_formula_text(char const *text)
         s_and = lStkAND;
         s_or  = lStkOR ;
         s_srand = lStkSRand;
-        s_asin = lStkASin;
-        s_acos = lStkACos;
-        s_acosh = lStkACosh;
-        s_atan = lStkATan;
-        s_atanh = lStkATanh;
-        s_cabs = lStkCAbs;
-        s_sqrt = lStkSqrt;
-        s_zero = lStkZero;
-        s_floor = lStkFloor;
-        s_ceil = lStkCeil;
-        s_trunc = lStkTrunc;
-        s_round = lStkRound;
+        s_asin = l_stk_asin;
+        s_acos = l_stk_acos;
+        s_acosh = l_stk_acosh;
+        s_atan = l_stk_atan;
+        s_atanh = l_stk_atanh;
+        s_cabs = l_stk_cabs;
+        s_sqrt = l_stk_sqrt;
+        s_zero = l_stk_zero;
+        s_floor = l_stk_floor;
+        s_ceil = l_stk_ceil;
+        s_trunc = l_stk_trunc;
+        s_round = l_stk_round;
         s_jump_on_true  = lStkJumpOnTrue;
         s_jump_on_false = lStkJumpOnFalse;
-        s_one = lStkOne;
+        s_one = l_stk_one;
         break;
     }
     g_max_function = 0;
@@ -4342,7 +4342,7 @@ void init_misc()
 
 static void parser_allocate()
 {
-    free_workarea();
+    free_work_area();
     g_max_function_ops = 2300;
     g_max_function_args = (unsigned)(g_max_function_ops/2.5);
 
@@ -4364,7 +4364,7 @@ static void parser_allocate()
     g_frm_uses_p5 = false;
 }
 
-void free_workarea()
+void free_work_area()
 {
     s_store.clear();
     s_load.clear();

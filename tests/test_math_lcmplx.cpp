@@ -82,7 +82,7 @@ TEST_F(TestMathLComplex, multiplyStackFunction)
 
     g_arg1->l = lhs;
     g_arg2->l = rhs;
-    lStkMul();
+    l_stk_mul();
     g_arg2++;
     const LComplex result{g_arg2->l};
 

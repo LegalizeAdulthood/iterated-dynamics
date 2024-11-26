@@ -21,37 +21,37 @@
 trig_funct_lst g_trig_fn[] =
 // clang-format off
 {
-    {"sin",   dStkSin,   dStkSin,   dStkSin   },
-    {"cosxx", dStkCosXX, dStkCosXX, dStkCosXX },
-    {"sinh",  dStkSinh,  dStkSinh,  dStkSinh  },
-    {"cosh",  dStkCosh,  dStkCosh,  dStkCosh  },
-    {"exp",   dStkExp,   dStkExp,   dStkExp   },
-    {"log",   dStkLog,   dStkLog,   dStkLog   },
-    {"sqr",   dStkSqr,   dStkSqr,   dStkSqr   },
-    {"recip", dStkRecip, dStkRecip, dStkRecip },
-    {"ident", StkIdent,  StkIdent,  StkIdent  },
-    {"cos",   dStkCos,   dStkCos,   dStkCos   },
-    {"tan",   dStkTan,   dStkTan,   dStkTan   },
-    {"tanh",  dStkTanh,  dStkTanh,  dStkTanh  },
-    {"cotan", dStkCoTan, dStkCoTan, dStkCoTan },
-    {"cotanh", dStkCoTanh, dStkCoTanh, dStkCoTanh},
-    {"flip",  dStkFlip,  dStkFlip,  dStkFlip  },
-    {"conj",  dStkConj,  dStkConj,  dStkConj  },
-    {"zero",  dStkZero,  dStkZero,  dStkZero  },
-    {"asin",  dStkASin,  dStkASin,  dStkASin  },
-    {"asinh", dStkASinh, dStkASinh, dStkASinh },
-    {"acos",  dStkACos,  dStkACos,  dStkACos  },
-    {"acosh", dStkACosh, dStkACosh, dStkACosh },
-    {"atan",  dStkATan,  dStkATan,  dStkATan  },
-    {"atanh", dStkATanh, dStkATanh, dStkATanh },
-    {"cabs",  dStkCAbs,  dStkCAbs,  dStkCAbs  },
-    {"abs",   dStkAbs,   dStkAbs,   dStkAbs   },
-    {"sqrt",  dStkSqrt,  dStkSqrt,  dStkSqrt  },
-    {"floor", dStkFloor, dStkFloor, dStkFloor },
-    {"ceil",  dStkCeil,  dStkCeil,  dStkCeil  },
-    {"trunc", dStkTrunc, dStkTrunc, dStkTrunc },
-    {"round", dStkRound, dStkRound, dStkRound },
-    {"one",   dStkOne,   dStkOne,   dStkOne   },
+    {"sin",   d_stk_sin,   d_stk_sin,   d_stk_sin   },
+    {"cosxx", d_stk_coxx, d_stk_coxx, d_stk_coxx },
+    {"sinh",  d_stk_sinh,  d_stk_sinh,  d_stk_sinh  },
+    {"cosh",  d_stk_cosh,  d_stk_cosh,  d_stk_cosh  },
+    {"exp",   d_stk_exp,   d_stk_exp,   d_stk_exp   },
+    {"log",   d_stk_log,   d_stk_log,   d_stk_log   },
+    {"sqr",   d_stk_sqr,   d_stk_sqr,   d_stk_sqr   },
+    {"recip", d_stk_recip, d_stk_recip, d_stk_recip },
+    {"ident", stk_ident,  stk_ident,  stk_ident  },
+    {"cos",   d_stk_cos,   d_stk_cos,   d_stk_cos   },
+    {"tan",   d_stk_tan,   d_stk_tan,   d_stk_tan   },
+    {"tanh",  d_stk_tanh,  d_stk_tanh,  d_stk_tanh  },
+    {"cotan", d_stk_cotan, d_stk_cotan, d_stk_cotan },
+    {"cotanh", d_stk_cotanh, d_stk_cotanh, d_stk_cotanh},
+    {"flip",  d_stk_flip,  d_stk_flip,  d_stk_flip  },
+    {"conj",  d_stk_conj,  d_stk_conj,  d_stk_conj  },
+    {"zero",  d_stk_zero,  d_stk_zero,  d_stk_zero  },
+    {"asin",  d_stk_asin,  d_stk_asin,  d_stk_asin  },
+    {"asinh", d_stk_asinh, d_stk_asinh, d_stk_asinh },
+    {"acos",  d_stk_acos,  d_stk_acos,  d_stk_acos  },
+    {"acosh", d_stk_acosh, d_stk_acosh, d_stk_acosh },
+    {"atan",  d_stk_atan,  d_stk_atan,  d_stk_atan  },
+    {"atanh", d_stk_atanh, d_stk_atanh, d_stk_atanh },
+    {"cabs",  d_stk_cabs,  d_stk_cabs,  d_stk_cabs  },
+    {"abs",   d_stk_abs,   d_stk_abs,   d_stk_abs   },
+    {"sqrt",  d_stk_sqrt,  d_stk_sqrt,  d_stk_sqrt  },
+    {"floor", d_stk_floor, d_stk_floor, d_stk_floor },
+    {"ceil",  d_stk_ceil,  d_stk_ceil,  d_stk_ceil  },
+    {"trunc", d_stk_trunc, d_stk_trunc, d_stk_trunc },
+    {"round", d_stk_round, d_stk_round, d_stk_round },
+    {"one",   d_stk_one,   d_stk_one,   d_stk_one   },
 };
 // clang-format on
 
@@ -61,18 +61,18 @@ trig_fn g_trig_index[] =
 {
     trig_fn::SIN, trig_fn::SQR, trig_fn::SINH, trig_fn::COSH
 };
-void (*g_ltrig0)(){lStkSin};
-void (*g_ltrig1)(){lStkSqr};
-void (*g_ltrig2)(){lStkSinh};
-void (*g_ltrig3)(){lStkCosh};
-void (*g_mtrig0)(){mStkSin};
-void (*g_mtrig1)(){mStkSqr};
-void (*g_mtrig2)(){mStkSinh};
-void (*g_mtrig3)(){mStkCosh};
-void (*g_dtrig0)(){dStkSin};
-void (*g_dtrig1)(){dStkSqr};
-void (*g_dtrig2)(){dStkSinh};
-void (*g_dtrig3)(){dStkCosh};
+void (*g_ltrig0)(){l_stk_sin};
+void (*g_ltrig1)(){l_stk_sqr};
+void (*g_ltrig2)(){l_stk_sinh};
+void (*g_ltrig3)(){l_stk_cosh};
+void (*g_mtrig0)(){m_stk_sin};
+void (*g_mtrig1)(){m_stk_sqr};
+void (*g_mtrig2)(){m_stk_sinh};
+void (*g_mtrig3)(){m_stk_cosh};
+void (*g_dtrig0)(){d_stk_sin};
+void (*g_dtrig1)(){d_stk_sqr};
+void (*g_dtrig2)(){d_stk_sinh};
+void (*g_dtrig3)(){d_stk_cosh};
 
 // return display form of active trig functions
 std::string showtrig()

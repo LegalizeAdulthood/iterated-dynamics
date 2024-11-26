@@ -869,7 +869,7 @@ int calc_fract()
     {
         g_log_map_table.clear();
     }
-    free_workarea();
+    free_work_area();
 
     if (g_cur_fractal_specific->calctype == calc_froth)
     {
