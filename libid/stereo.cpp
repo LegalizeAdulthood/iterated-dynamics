@@ -98,7 +98,7 @@ static StereoData *s_data{};
 
 #define dac   (*((DACBox)(s_data->savedac)))
 
-static int getdepth(int xd, int yd)
+static int get_depth(int xd, int yd)
 {
     int pal;
     pal = get_color(xd, yd);
@@ -133,7 +133,7 @@ static bool get_min_max()
         }
         for (int xd = 0; xd < g_logical_screen_x_dots; xd++)
         {
-            int ldepth = getdepth(xd, yd);
+            int ldepth = get_depth(xd, yd);
             if (ldepth < MINC)
             {
                 MINC = ldepth;
@@ -190,11 +190,11 @@ int out_line_stereo(BYTE *pixels, int linelen)
     {
         if (REVERSE)
         {
-            SEP = GROUND - (int)(DEPTH * (getdepth(x, Y) - MINC) / MAXCC);
+            SEP = GROUND - (int)(DEPTH * (get_depth(x, Y) - MINC) / MAXCC);
         }
         else
         {
-            SEP = GROUND - (int)(DEPTH * (MAXCC - (getdepth(x, Y) - MINC)) / MAXCC);
+            SEP = GROUND - (int)(DEPTH * (MAXCC - (get_depth(x, Y) - MINC)) / MAXCC);
         }
         SEP = (int)((SEP * 10.0) / WIDTH);         // adjust for media WIDTH
 
