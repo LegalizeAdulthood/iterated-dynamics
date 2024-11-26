@@ -34,14 +34,14 @@ inline double distance(const DComplex &z1, const DComplex &z2)
     return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
 }
 
-inline MP pMPsqr(MP z)
+inline MP mp_sqr(MP z)
 {
     return *mp_mul(z, z);
 }
 
-inline MP MPdistance(const MPC &z1, const MPC &z2)
+inline MP mp_distance(const MPC &z1, const MPC &z2)
 {
-    return *mp_add(pMPsqr(*mp_sub(z1.x, z2.x)), pMPsqr(*mp_sub(z1.y, z2.y)));
+    return *mp_add(mp_sqr(*mp_sub(z1.x, z2.x)), mp_sqr(*mp_sub(z1.y, z2.y)));
 }
 
 static MPC s_mpc_old{};
@@ -370,7 +370,7 @@ int mpc_newton_fractal()
             long tmpcolor;
             tmpcolor = -1;
             for (int i = 0; i < g_degree; i++)
-                if (mp_cmp(MPdistance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
+                if (mp_cmp(mp_distance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
                     {
