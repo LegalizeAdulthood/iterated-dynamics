@@ -30,7 +30,7 @@ namespace fs = std::filesystem;
 static std::vector<int> s_entry_nums;
 static bool s_modes_changed{};
 
-static int check_modekey(int curkey, int choice);
+static int check_mode_key(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
 
@@ -96,7 +96,7 @@ int select_video_mode(int curmode)
         i = full_screen_choice(CHOICE_HELP, "Select Video Mode",
             "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,
             nullptr, attributes.data(), 1, 16, 74, i, format_vid_table, nullptr, nullptr,
-            check_modekey);
+            check_mode_key);
     }
     if (i == -1)
     {
@@ -144,7 +144,7 @@ int select_video_mode(int curmode)
     return ret;
 }
 
-static int check_modekey(int curkey, int choice)
+static int check_mode_key(int curkey, int choice)
 {
     int i = check_vid_mode_key(1, curkey);
     if (i >= 0)
