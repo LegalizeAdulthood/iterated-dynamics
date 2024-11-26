@@ -40,35 +40,35 @@ enum
 namespace
 {
 
-struct double_complex
+struct DoubleComplex
 {
     double re;
     double im;
 };
 
-struct soi_double_state
+struct SOIDoubleState
 {
     bool esc[9];
     bool tesc[4];
 
-    double_complex z;
-    double_complex step;
+    DoubleComplex z;
+    DoubleComplex step;
     double interstep;
     double helpre;
-    double_complex scan_z;
-    double_complex b1[3];
-    double_complex b2[3];
-    double_complex b3[3];
-    double_complex limit;
-    double_complex rq[9];
-    double_complex corner[2];
-    double_complex tz[4];
-    double_complex tq[4];
+    DoubleComplex scan_z;
+    DoubleComplex b1[3];
+    DoubleComplex b2[3];
+    DoubleComplex b3[3];
+    DoubleComplex limit;
+    DoubleComplex rq[9];
+    DoubleComplex corner[2];
+    DoubleComplex tz[4];
+    DoubleComplex tq[4];
 };
 
 } // namespace
 
-inline double_complex zsqr(double_complex z)
+inline DoubleComplex zsqr(DoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
 }
@@ -94,8 +94,8 @@ inline double evaluate(
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-static double_complex s_zi[9]{};
-static soi_double_state s_state{};
+static DoubleComplex s_zi[9]{};
+static SOIDoubleState s_state{};
 static double s_t_width{};
 static double s_equal{};
 
@@ -271,7 +271,7 @@ static int rhombus_aux(
     double midr = (cre1 + cre2)/2;
     double midi = (cim1 + cim2)/2;
 
-    double_complex s[9];
+    DoubleComplex s[9];
 
     bool status = false;
     avail = stack_avail();
