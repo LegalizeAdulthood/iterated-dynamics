@@ -2867,9 +2867,9 @@ static void setupmatrix(MATRIX doublemat)
     identity(doublemat);
 
     // apply rotations - uses the same rotation variables as line3d.c
-    xrot((double)g_x_rot / 57.29577, doublemat);
-    yrot((double)g_y_rot / 57.29577, doublemat);
-    zrot((double)g_z_rot / 57.29577, doublemat);
+    x_rot((double)g_x_rot / 57.29577, doublemat);
+    y_rot((double)g_y_rot / 57.29577, doublemat);
+    z_rot((double)g_z_rot / 57.29577, doublemat);
 
     // apply scale
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
@@ -2933,10 +2933,10 @@ static bool long3dviewtransf(long3dvtinf *inf)
     }
 
     // 3D VIEWING TRANSFORM
-    longvmult(inf->orbit, inf->longmat, inf->viewvect, g_bit_shift);
+    long_vec_mat_mul(inf->orbit, inf->longmat, inf->viewvect, g_bit_shift);
     if (s_real_time)
     {
-        longvmult(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
+        long_vec_mat_mul(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
     }
 
     if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
@@ -3037,10 +3037,10 @@ static bool long3dviewtransf(long3dvtinf *inf)
         }
         else
         {
-            longpersp(inf->viewvect, inf->iview, g_bit_shift);
+            long_persp(inf->viewvect, inf->iview, g_bit_shift);
             if (s_real_time)
             {
-                longpersp(inf->viewvect1, inf->iview, g_bit_shift);
+                long_persp(inf->viewvect1, inf->iview, g_bit_shift);
             }
         }
     }
@@ -3111,10 +3111,10 @@ static bool float3dviewtransf(float3dvtinf *inf)
     }
 
     // 3D VIEWING TRANSFORM
-    vmult(inf->orbit, inf->doublemat, inf->viewvect);
+    vec_mat_mul(inf->orbit, inf->doublemat, inf->viewvect);
     if (s_real_time)
     {
-        vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
+        vec_mat_mul(inf->orbit, inf->doublemat1, inf->viewvect1);
     }
 
     if (g_color_iter <= s_waste) // waste this many points to find minz and maxz

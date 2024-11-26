@@ -138,7 +138,7 @@ void scale(double sx, double sy, double sz, MATRIX m)
 }
 
 // rotate about X axis
-void xrot(double theta, MATRIX m)
+void x_rot(double theta, MATRIX m)
 {
     MATRIX rot;
     double sintheta;
@@ -154,7 +154,7 @@ void xrot(double theta, MATRIX m)
 }
 
 // rotate about Y axis
-void yrot(double theta, MATRIX m)
+void y_rot(double theta, MATRIX m)
 {
     MATRIX rot;
     double sintheta;
@@ -170,7 +170,7 @@ void yrot(double theta, MATRIX m)
 }
 
 // rotate about Z axis
-void zrot(double theta, MATRIX m)
+void z_rot(double theta, MATRIX m)
 {
     MATRIX rot;
     double sintheta;
@@ -234,7 +234,7 @@ bool normalize_vector(VECTOR v)
 
 // multiply source vector s by matrix m, result in target t
 // used to apply transformations to a vector
-int vmult(VECTOR s, MATRIX m, VECTOR t)
+int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t)
 {
     VECTOR tmp;
     for (int j = 0; j < CMAX-1; j++)
@@ -256,7 +256,7 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 // use with a function pointer in line3d.c
 // must coordinate calling conventions with
 // mult_vec in general.asm
-void mult_vec(VECTOR s)
+void vec_g_mat_mul(VECTOR s)
 {
     VECTOR tmp;
     for (int j = 0; j < CMAX-1; j++)
@@ -295,8 +295,7 @@ int perspective(VECTOR v)
 }
 
 // long version of vmult and perspective combined for speed
-int longvmultpersp(
-    LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bitshift)
+int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bit_shift)
 {
     // s: source vector
     // m: transformation matrix
@@ -318,7 +317,7 @@ int longvmultpersp(
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
         {
-            tmp[j] += multiply(s[i], m[i][j], bitshift);
+            tmp[j] += multiply(s[i], m[i][j], bit_shift);
         }
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];
@@ -340,22 +339,22 @@ int longvmultpersp(
         if (denom >= 0)           // bail out if point is "behind" us
         {
             t[0] = g_bad_value;
-            t[0] = t[0] << bitshift;
+            t[0] = t[0] << bit_shift;
             t[1] = t[0];
             t[2] = t[0];
             return -1;
         }
 
         // doing math in this order helps prevent overflow
-        tmpview[0] = divide(lview[0], denom, bitshift);
-        tmpview[1] = divide(lview[1], denom, bitshift);
-        tmpview[2] = divide(lview[2], denom, bitshift);
+        tmpview[0] = divide(lview[0], denom, bit_shift);
+        tmpview[1] = divide(lview[1], denom, bit_shift);
+        tmpview[2] = divide(lview[2], denom, bit_shift);
 
-        tmp[0] = multiply(tmp[0], tmpview[2], bitshift) -
-                 multiply(tmpview[0], tmp[2], bitshift);
+        tmp[0] = multiply(tmp[0], tmpview[2], bit_shift) -
+                 multiply(tmpview[0], tmp[2], bit_shift);
 
-        tmp[1] = multiply(tmp[1], tmpview[2], bitshift) -
-                 multiply(tmpview[1], tmp[2], bitshift);
+        tmp[1] = multiply(tmp[1], tmpview[2], bit_shift) -
+                 multiply(tmpview[1], tmp[2], bit_shift);
     }
 
     // set target = tmp. Necessary to use tmp in case source = target
@@ -368,7 +367,7 @@ int longvmultpersp(
 
 // Long version of perspective. Because of use of fixed point math, there
 // is danger of overflow and underflow
-int longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
+int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift)
 {
     LVECTOR tmpview;
     long denom;
@@ -377,27 +376,27 @@ int longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
     if (denom >= 0)              // bail out if point is "behind" us
     {
         lv[0] = g_bad_value;
-        lv[0] = lv[0] << bitshift;
+        lv[0] = lv[0] << bit_shift;
         lv[1] = lv[0];
         lv[2] = lv[0];
         return -1;
     }
 
     // doing math in this order helps prevent overflow
-    tmpview[0] = divide(lview[0], denom, bitshift);
-    tmpview[1] = divide(lview[1], denom, bitshift);
-    tmpview[2] = divide(lview[2], denom, bitshift);
+    tmpview[0] = divide(lview[0], denom, bit_shift);
+    tmpview[1] = divide(lview[1], denom, bit_shift);
+    tmpview[2] = divide(lview[2], denom, bit_shift);
 
-    lv[0] = multiply(lv[0], tmpview[2], bitshift) -
-            multiply(tmpview[0], lv[2], bitshift);
+    lv[0] = multiply(lv[0], tmpview[2], bit_shift) -
+            multiply(tmpview[0], lv[2], bit_shift);
 
-    lv[1] = multiply(lv[1], tmpview[2], bitshift) -
-            multiply(tmpview[1], lv[2], bitshift);
+    lv[1] = multiply(lv[1], tmpview[2], bit_shift) -
+            multiply(tmpview[1], lv[2], bit_shift);
 
     return g_overflow ? 1 : 0;
 }
 
-int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
+int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
 {
     LVECTOR tmp;
     int k;
@@ -409,7 +408,7 @@ int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
         tmp[j] = 0;
         for (int i = 0; i < RMAX-1; i++)
         {
-            tmp[j] += multiply(s[i], m[i][j], bitshift);
+            tmp[j] += multiply(s[i], m[i][j], bit_shift);
         }
         // vector is really four dimensional with last component always 1
         tmp[j] += m[3][j];

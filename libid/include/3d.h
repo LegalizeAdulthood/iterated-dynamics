@@ -71,18 +71,18 @@ inline bool illumine()
     return g_fill_type > fill_type::SOLID_FILL; // illumination model
 }
 
-void identity(MATRIX);
-void mat_mul(MATRIX, MATRIX, MATRIX);
-void scale(double, double, double, MATRIX);
-void xrot(double, MATRIX);
-void yrot(double, MATRIX);
-void zrot(double, MATRIX);
-void trans(double, double, double, MATRIX);
-int cross_product(VECTOR, VECTOR, VECTOR);
-bool normalize_vector(VECTOR);
-int vmult(VECTOR, MATRIX, VECTOR);
-void mult_vec(VECTOR);
-int perspective(VECTOR);
-int longvmultpersp(LVECTOR, LMATRIX, LVECTOR, LVECTOR, LVECTOR, int);
-int longpersp(LVECTOR, LVECTOR, int);
-int longvmult(LVECTOR, LMATRIX, LVECTOR, int);
+void identity(MATRIX m);
+void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3);
+void scale(double sx, double sy, double sz, MATRIX m);
+void x_rot(double theta, MATRIX m);
+void y_rot(double theta, MATRIX m);
+void z_rot(double theta, MATRIX m);
+void trans(double tx, double ty, double tz, MATRIX m);
+int cross_product(VECTOR v, VECTOR w, VECTOR cross);
+bool normalize_vector(VECTOR v);
+int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t);
+void vec_g_mat_mul(VECTOR s);
+int perspective(VECTOR v);
+int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bit_shift);
+int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift);
+int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift);

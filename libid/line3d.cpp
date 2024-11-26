@@ -428,7 +428,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
                 if (!(g_user_float_flag || g_raytrace_format != raytrace_formats::none))
                 {
-                    if (longpersp(lv, s_l_view, 16) == -1)
+                    if (long_persp(lv, s_l_view, 16) == -1)
                     {
                         cur = s_bad;
                         f_cur = s_f_bad;
@@ -495,7 +495,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     lv[2] = lv[2] << 16;
                 }
 
-                if (longvmultpersp(lv, s_llm, lv0, lv, s_l_view, 16) == -1)
+                if (long_vec_mat_mul_persp(lv, s_llm, lv0, lv, s_l_view, 16) == -1)
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
@@ -523,7 +523,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 v[1] = g_current_row;
                 v[2] = f_cur.color;      // Actually the z value
 
-                mult_vec(v);     // matrix*vector routine
+                vec_g_mat_mul(v);     // matrix*vector routine
 
                 if (g_fill_type > fill_type::SOLID_FILL || g_raytrace_format != raytrace_formats::none)
                 {
@@ -549,7 +549,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 v[0] = 0;
                 v[1] = 0;
                 v[2] = g_water_line;
-                mult_vec(v);
+                vec_g_mat_mul(v);
                 f_water = (float) v[2];
             }
         }
@@ -758,7 +758,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[1] = lv[1] << 16;
                 // Since 0, unnecessary lv[2] = lv[2] << 16;
 
-                if (longvmultpersp(lv, s_llm, lv0, lv, s_l_view, 16))
+                if (long_vec_mat_mul_persp(lv, s_llm, lv0, lv, s_l_view, 16))
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
@@ -1005,8 +1005,8 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
     for (int i = 0; i < 4; ++i)
     {
         // transform points
-        vmult(S[0][i], m, S[0][i]);
-        vmult(S[1][i], m, S[1][i]);
+        vec_mat_mul(S[0][i], m, S[0][i]);
+        vec_mat_mul(S[1][i], m, S[1][i]);
 
         // update minimums and maximums
         if (S[0][i][0] <= *pxmin)
@@ -1124,8 +1124,8 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     {
         for (int i = 0; i < 4; i++)
         {
-            vmult(S[0][i], light_m, S[0][i]);
-            vmult(S[1][i], light_m, S[1][i]);
+            vec_mat_mul(S[0][i], light_m, S[0][i]);
+            vec_mat_mul(S[1][i], light_m, S[1][i]);
         }
     }
 
@@ -2575,12 +2575,12 @@ static int first_time(int linelen, VECTOR v)
             xval = yval;
         }
 
-        xrot(xval, g_m);
-        xrot(xval, lightm);
-        yrot(yval, g_m);
-        yrot(yval, lightm);
-        zrot(zval, g_m);
-        zrot(zval, lightm);
+        x_rot(xval, g_m);
+        x_rot(xval, lightm);
+        y_rot(yval, g_m);
+        y_rot(yval, lightm);
+        z_rot(zval, g_m);
+        z_rot(zval, lightm);
 
         // Find values of translation that make all x,y,z negative
         // m current matrix
@@ -2801,8 +2801,8 @@ static int first_time(int linelen, VECTOR v)
         v[0] = 0.0;
         v[1] = 0.0;
         v[2] = 0.0;
-        vmult(v, g_m, v);
-        vmult(s_light_direction, g_m, s_light_direction);
+        vec_mat_mul(v, g_m, v);
+        vec_mat_mul(s_light_direction, g_m, s_light_direction);
 
         for (int i = 0; i < 3; i++)
         {
