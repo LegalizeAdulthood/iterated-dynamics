@@ -4,7 +4,7 @@
 
 #include <string>
 
-// stopmsg() flags
+// stop_msg() flags
 enum class stopmsg_flags
 {
     NONE        = 0,
@@ -28,10 +28,10 @@ inline bool bit_set(stopmsg_flags flags, stopmsg_flags bit)
     return (+flags & +bit) == +bit;
 }
 
-bool stopmsg(stopmsg_flags flags, const std::string &msg);
+bool stop_msg(stopmsg_flags flags, const std::string &msg);
 
 // the most common case
-inline bool stopmsg(const std::string &msg)
+inline bool stop_msg(const std::string &msg)
 {
-    return stopmsg(stopmsg_flags::NONE, msg);
+    return stop_msg(stopmsg_flags::NONE, msg);
 }

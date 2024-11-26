@@ -376,12 +376,12 @@ void showdotsaverestore(
     {
         if (s_save_dots.empty())
         {
-            stopmsg("savedots empty");
+            stop_msg("savedots empty");
             exit(0);
         }
         if (s_fill_buff == nullptr)
         {
-            stopmsg("fillbuff NULL");
+            stop_msg("fillbuff NULL");
             exit(0);
         }
     }
@@ -577,7 +577,7 @@ int calc_fract()
 
     if (g_log_map_flag && g_colors < 16)
     {
-        stopmsg("Need at least 16 colors to use logmap");
+        stop_msg("Need at least 16 colors to use logmap");
         g_log_map_flag = 0;
     }
 
@@ -633,11 +633,11 @@ int calc_fract()
         {
             if (g_iteration_ranges_len || g_log_map_fly_calculate == 2)
             {
-                stopmsg("Insufficient memory for logmap/ranges with this maxiter");
+                stop_msg("Insufficient memory for logmap/ranges with this maxiter");
             }
             else
             {
-                stopmsg("Insufficient memory for logTable, using on-the-fly routine");
+                stop_msg("Insufficient memory for logTable, using on-the-fly routine");
                 g_log_map_fly_calculate = 1;
                 g_log_map_calculate = true; // calculate on the fly
                 setup_log_table();

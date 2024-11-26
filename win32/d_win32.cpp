@@ -191,7 +191,7 @@ void  Win32BaseDriver::shell()
     }
     else
     {
-        stopmsg("Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
+        stop_msg("Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
     }
 }
 

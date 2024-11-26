@@ -355,14 +355,14 @@ prompt_user:
             if (pxdots == 0 && (xm > 1 || ym > 1))
             {
                 // no corresponding video mode!
-                stopmsg("Invalid video mode entry!");
+                stop_msg("Invalid video mode entry!");
                 goto prompt_user;
             }
 
             // bounds range on xm, ym
             if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
             {
-                stopmsg("X and Y components must be 1 to 36");
+                stop_msg("X and Y components must be 1 to 36");
                 goto prompt_user;
             }
 
@@ -373,7 +373,7 @@ prompt_user:
             ytotal *= pydots;
             if (xtotal > 65535L || ytotal > 65535L)
             {
-                stopmsg("Total resolution (X or Y) cannot exceed 65535");
+                stop_msg("Total resolution (X or Y) cannot exceed 65535");
                 goto prompt_user;
             }
         }
@@ -406,7 +406,7 @@ skip_UI:
             if (!is_writable(g_command_file))
             {
                 std::snprintf(buf, std::size(buf), "Can't write %s", g_command_file.c_str());
-                stopmsg(buf);
+                stop_msg(buf);
                 continue;
             }
             out_name.replace_filename("id.tmp");
@@ -415,7 +415,7 @@ skip_UI:
         s_parm_file = open_save_file(out_name.string(), "wt");
         if (s_parm_file == nullptr)
         {
-            stopmsg("Can't create " + out_name.string());
+            stop_msg("Can't create " + out_name.string());
             if (gotinfile)
             {
                 std::fclose(infile);
@@ -435,7 +435,7 @@ skip_UI:
                     std::snprintf(buf2, std::size(buf2), "File already has an entry named %s\n%s",
                     g_command_name.c_str(), g_make_parameter_file ?
                     "... Replacing ..." : "Continue to replace it, Cancel to back out");
-                    if (stopmsg(stopmsg_flags::CANCEL | stopmsg_flags::INFO_ONLY, buf2))
+                    if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::INFO_ONLY, buf2))
                     {
                         // cancel
                         std::fclose(infile);
@@ -1124,7 +1124,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         {
             if (g_force_symmetry == static_cast<symmetry_type>(1000) && ii == 1 && jj == 1)
             {
-                stopmsg("Regenerate before <b> to get correct symmetry");
+                stop_msg("Regenerate before <b> to get correct symmetry");
             }
             put_parm(" %s=", "symmetry");
             if (g_force_symmetry == symmetry_type::X_AXIS)

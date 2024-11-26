@@ -806,7 +806,7 @@ int init_pan_or_recalc(bool do_zoom_out)
     }
     if (listfull != 0)
     {
-        if (stopmsg(stopmsg_flags::CANCEL,
+        if (stop_msg(stopmsg_flags::CANCEL,
             "Tables full, can't pan current image.\n"
             "Cancel resumes old image, continue pans and calculates a new one."))
         {

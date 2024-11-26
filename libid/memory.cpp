@@ -94,7 +94,7 @@ static void WhichDiskError(int I_O)
     std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
-        if (stopmsg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
+        if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
         {
             goodbye(); // bailout if ESC
         }
@@ -116,7 +116,7 @@ static void DisplayError(int stored_at, long howmuch)
     std::snprintf(buf, std::size(buf), "Allocating %ld Bytes of %s memory failed.\n"
             "Alternate disk space is also insufficient. Goodbye",
             howmuch, s_memory_names[stored_at]);
-    stopmsg(buf);
+    stop_msg(buf);
 }
 
 static int check_for_mem(int stored_at, long howmuch)
@@ -187,32 +187,32 @@ static int CheckBounds(long start, long length, U16 handle)
 {
     if (s_handles[handle].Nowhere.size - start - length < 0)
     {
-        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
+        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
         DisplayHandle(handle);
         return 1;
     }
     if (length > (long)USHRT_MAX)
     {
-        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Tried to move > 65,535 bytes.");
+        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Tried to move > 65,535 bytes.");
         DisplayHandle(handle);
         return 1;
     }
     if (s_handles[handle].Nowhere.stored_at == DISK
         && (stack_avail() <= DISKWRITELEN))
     {
-        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
+        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
         DisplayHandle(handle);
         return 1;
     }
     if (length <= 0)
     {
-        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Zero or negative length.");
+        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Zero or negative length.");
         DisplayHandle(handle);
         return 1;
     }
     if (start < 0)
     {
-        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Negative offset.");
+        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Negative offset.");
         DisplayHandle(handle);
         return 1;
     }
@@ -224,7 +224,7 @@ void DisplayMemory()
     char buf[MSG_LEN];
 
     std::snprintf(buf, std::size(buf), "disk=%lu", get_disk_space());
-    stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
+    stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
 }
 
 static void DisplayHandle(U16 handle)
@@ -233,7 +233,7 @@ static void DisplayHandle(U16 handle)
 
     std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, s_memory_names[s_handles[handle].Nowhere.stored_at],
             s_handles[handle].Nowhere.size);
-    if (stopmsg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
+    if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
         goodbye(); // bailout if ESC, it's messy, but should work
     }
@@ -253,7 +253,7 @@ void exit_check()
 {
     if (s_num_total_handles != 0)
     {
-        stopmsg("Error - not all memory released, I'll get it.");
+        stop_msg("Error - not all memory released, I'll get it.");
         for (U16 i = 1; i < MAXHANDLES; i++)
         {
             if (s_handles[i].Nowhere.stored_at != NOWHERE)
@@ -261,7 +261,7 @@ void exit_check()
                 char buf[MSG_LEN];
                 std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
                         s_memory_names[s_handles[i].Nowhere.stored_at], i);
-                stopmsg(buf);
+                stop_msg(buf);
                 memory_release(i);
             }
         }
@@ -367,7 +367,7 @@ U16 memory_alloc(U16 size, long count, int stored_at)
         char buf[MSG_LEN * 2];
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
             s_memory_names[stored_at], toallocate, s_memory_names[use_this_type], handle);
-        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
+        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
         DisplayMemory();
     }
 

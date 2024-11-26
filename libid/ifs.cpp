@@ -91,7 +91,7 @@ int ifs_load()                   // read in IFS parameters
         g_ifs_definition.push_back(value);
         if (++i >= NUM_IFS_FUNCTIONS*row_size)
         {
-            stopmsg("IFS definition has too many lines");
+            stop_msg("IFS definition has too many lines");
             ret = -1;
             break;
         }
@@ -109,12 +109,12 @@ int ifs_load()                   // read in IFS parameters
 
     if ((i % row_size) != 0 || (bufptr && *bufptr != '}'))
     {
-        stopmsg("invalid IFS definition");
+        stop_msg("invalid IFS definition");
         ret = -1;
     }
     if (i == 0 && ret == 0)
     {
-        stopmsg("Empty IFS definition");
+        stop_msg("Empty IFS definition");
         ret = -1;
     }
     std::fclose(ifsfile);

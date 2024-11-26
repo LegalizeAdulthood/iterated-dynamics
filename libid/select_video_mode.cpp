@@ -103,7 +103,7 @@ int select_video_mode(int curmode)
         // update id.cfg for new key assignments
         if (s_modes_changed
             && g_bad_config == config_status::OK
-            && stopmsg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER | stopmsg_flags::INFO_ONLY,
+            && stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER | stopmsg_flags::INFO_ONLY,
                 "Save new function key assignments or cancel changes?") == 0)
         {
             update_id_cfg();
@@ -158,7 +158,7 @@ static int check_modekey(int curkey, int choice)
     {
         if (g_bad_config != config_status::OK)
         {
-            stopmsg("Missing or bad id.cfg file. Can't reassign keys.");
+            stop_msg("Missing or bad id.cfg file. Can't reassign keys.");
         }
         else
         {
@@ -227,7 +227,7 @@ static void update_id_cfg()
     if (!is_writable(cfgname))
     {
         std::snprintf(buf, std::size(buf), "Can't write %s", cfgname.c_str());
-        stopmsg(buf);
+        stop_msg(buf);
         return;
     }
     const std::string outname{(fs::path{cfgname}.parent_path() / "id.tmp").string()};
@@ -235,7 +235,7 @@ static void update_id_cfg()
     if (outfile == nullptr)
     {
         std::snprintf(buf, std::size(buf), "Can't create %s", outname.c_str());
-        stopmsg(buf);
+        stop_msg(buf);
         return;
     }
     cfgfile = std::fopen(cfgname.c_str(), "r");

@@ -261,7 +261,7 @@ bool init_queue(unsigned long request)
 {
     if (driver_diskp())
     {
-        stopmsg("Don't try this in disk video mode, kids...\n");
+        stop_msg("Don't try this in disk video mode, kids...\n");
         s_list_size = 0;
         return false;
     }

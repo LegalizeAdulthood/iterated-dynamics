@@ -120,7 +120,7 @@ restart_1:
     {
         if (g_raytrace_format == raytrace_formats::povray)
         {
-            stopmsg("DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
+            stop_msg("DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
                     "the online documentation.");
         }
     }

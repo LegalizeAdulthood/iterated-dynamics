@@ -64,12 +64,12 @@ int boundary_trace()
 {
     if (g_inside_color == COLOR_BLACK || g_outside_color == COLOR_BLACK)
     {
-        stopmsg("Boundary tracing cannot be used with inside=0 or outside=0");
+        stop_msg("Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;
     }
     if (g_colors < 16)
     {
-        stopmsg("Boundary tracing cannot be used with < 16 colors");
+        stop_msg("Boundary tracing cannot be used with < 16 colors");
         return -1;
     }
 

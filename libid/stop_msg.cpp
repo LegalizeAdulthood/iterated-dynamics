@@ -50,7 +50,7 @@ static void blankrows(int row, int count, int attr)
        &8 for parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-bool stopmsg(stopmsg_flags flags, const std::string &msg)
+bool stop_msg(stopmsg_flags flags, const std::string &msg)
 {
     int toprow;
     int color;

@@ -3886,7 +3886,7 @@ int frm_get_param_stuff(char const *Name)
     }
     if (find_file_item(g_formula_filename, Name, &entry_file, gfe_type::FORMULA))
     {
-        stopmsg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+        stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
     while ((c = frm_get_char(entry_file)) != '{' && c != EOF)
@@ -3894,7 +3894,7 @@ int frm_get_param_stuff(char const *Name)
     }
     if (c != '{')
     {
-        stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
+        stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
         std::fclose(entry_file);
         return 0;
     }
@@ -3999,11 +3999,11 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         switch (c)
         {
         case EOF:
-            stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
+            stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
             return false;
         case '\r':
         case '\n':
-            stopmsg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
+            stop_msg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
             return false;
         case ' ':
         case '\t':
@@ -4035,7 +4035,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             msgbuf[j+k+2] = (char) getc(open_file);
         }
         msgbuf[j+k+2] = (char) 0;
-        stopmsg(stopmsg_flags::FIXED_FONT, msgbuf);
+        stop_msg(stopmsg_flags::FIXED_FONT, msgbuf);
         return false;
     }
     // get symmetry
@@ -4051,14 +4051,14 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
+                stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
-                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
+                stop_msg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
-                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN));
+                stop_msg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN));
                 return false;
             case ' ':
             case '\t':
@@ -4089,7 +4089,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             std::string msgbuf{parse_error_text(ParseError::INVALID_SYM_USING_NOSYM)};
             msgbuf += ":\n   ";
             msgbuf += sym_buf;
-            stopmsg(stopmsg_flags::FIXED_FONT, msgbuf);
+            stop_msg(stopmsg_flags::FIXED_FONT, msgbuf);
         }
     }
     if (c != '{')
@@ -4101,11 +4101,11 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::UNEXPECTED_EOF));
+                stop_msg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
-                stopmsg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
+                stop_msg(stopmsg_flags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
                 done = true;
@@ -4178,7 +4178,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         frm_get_token(file, &temp_tok);
         if (temp_tok.type == token_type::NOT_A_TOKEN)
         {
-            stopmsg(stopmsg_flags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
+            stop_msg(stopmsg_flags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
@@ -4188,7 +4188,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         }
         if (temp_tok.type == token_type::END_OF_FORMULA)
         {
-            stopmsg(stopmsg_flags::FIXED_FONT, "Formula has no executable instructions\n");
+            stop_msg(stopmsg_flags::FIXED_FONT, "Formula has no executable instructions\n");
             std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
@@ -4210,7 +4210,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         switch (temp_tok.type)
         {
         case token_type::NOT_A_TOKEN:
-            stopmsg(stopmsg_flags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
+            stop_msg(stopmsg_flags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
             std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
@@ -4261,7 +4261,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
     std::FILE *entry_file{};
     if (find_file_item(g_formula_filename, name.c_str(), &entry_file, gfe_type::FORMULA))
     {
-        stopmsg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+        stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
     }
 
@@ -4277,7 +4277,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         }
         if (s_uses_jump && fill_jump_struct())
         {
-            stopmsg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
+            stop_msg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
             return true;
         }
 
@@ -4302,7 +4302,7 @@ bool formula_setup_l()
     static bool been_here = false;
     if (!been_here)
     {
-        stopmsg("This integer fractal type is unimplemented;\n"
+        stop_msg("This integer fractal type is unimplemented;\n"
                 "Use float=yes to get a real image.");
         been_here = true;
     }
@@ -4398,7 +4398,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             }
             else if (i == EOF || i == '}')
             {
-                stopmsg("Unexpected EOF or end-of-formula in error function.\n");
+                stop_msg("Unexpected EOF or end-of-formula in error function.\n");
                 std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
                 frm_get_token(open_file, &tok); //reset file to end of error token
                 return;
@@ -4481,7 +4481,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         }
         std::strcat(msgbuf, "\n");
     }
-    stopmsg(stopmsg_flags::FIXED_FONT, msgbuf);
+    stop_msg(stopmsg_flags::FIXED_FONT, msgbuf);
 }
 
 /*frm_prescan() takes an open file with the file pointer positioned at
@@ -4544,7 +4544,7 @@ static bool frm_prescan(std::FILE * open_file)
             switch (this_token.id)
             {
             case token_id::END_OF_FILE:
-                stopmsg(parse_error_text(ParseError::UNEXPECTED_EOF));
+                stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
                 std::fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             case token_id::ILLEGAL_CHARACTER:
@@ -4575,7 +4575,7 @@ static bool frm_prescan(std::FILE * open_file)
                 record_error(ParseError::INVALID_CONST);
                 break;
             default:
-                stopmsg("Unexpected arrival at default case in prescan()");
+                stop_msg("Unexpected arrival at default case in prescan()");
                 std::fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             }

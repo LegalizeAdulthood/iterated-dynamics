@@ -191,7 +191,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     s_mem_buf.resize(BLOCKLEN);
     if (s_cache_start == nullptr)
     {
-        stopmsg("*** insufficient free memory for cache buffers ***");
+        stop_msg("*** insufficient free memory for cache buffers ***");
         return -1;
     }
     if (driver_diskp())
@@ -247,7 +247,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
     if (s_dv_handle == 0)
     {
-        stopmsg("*** insufficient free memory/disk space ***");
+        stop_msg("*** insufficient free memory/disk space ***");
         g_good_mode = false;
         s_row_size = 0;
         return -1;
@@ -274,7 +274,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             if (driver_key_pressed())           // user interrupt
             {
                 // esc to cancel, else continue
-                if (stopmsg(stopmsg_flags::CANCEL, "Disk Video initialization interrupted:\n"))
+                if (stop_msg(stopmsg_flags::CANCEL, "Disk Video initialization interrupted:\n"))
                 {
                     end_disk();
                     g_good_mode = false;

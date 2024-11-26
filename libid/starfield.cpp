@@ -101,7 +101,7 @@ int star_field()
 
     if (validate_luts(g_altern_map_file.data()))
     {
-        stopmsg("Unable to load ALTERN.MAP");
+        stop_msg("Unable to load ALTERN.MAP");
         g_busy = false;
         return -1;
     }
@@ -133,7 +133,7 @@ int get_star_field_params()
 {
     if (g_colors < 255)
     {
-        stopmsg("starfield requires 256 color mode");
+        stop_msg("starfield requires 256 color mode");
         return -1;
     }
 

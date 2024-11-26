@@ -261,7 +261,7 @@ static bool readLSystemFile(char const *str)
     if (err)
     {
         msgbuf[std::strlen(msgbuf)-1] = 0; // strip trailing \n
-        stopmsg(msgbuf);
+        stop_msg(msgbuf);
         return true;
     }
     return false;
@@ -331,7 +331,7 @@ int lsystem()
 
     if (stackoflow)
     {
-        stopmsg("insufficient memory, try a lower order");
+        stop_msg("insufficient memory, try a lower order");
     }
     else if (g_overflow)
     {

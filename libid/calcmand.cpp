@@ -9,7 +9,7 @@ long calc_mand_asm()
     static bool been_here = false;
     if (!been_here)
     {
-        stopmsg("This integer fractal type is unimplemented;\n"
+        stop_msg("This integer fractal type is unimplemented;\n"
                 "Use float=yes to get a real image.");
         been_here = true;
     }

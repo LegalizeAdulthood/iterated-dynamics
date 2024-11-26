@@ -769,7 +769,7 @@ enum
 namespace cmd_files_test
 {
 
-static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stopmsg)};
+static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stop_msg)};
 static GoodbyeFn s_goodbye{goodbye};
 static PrintDocFn s_print_document{print_document};
 
@@ -2998,7 +2998,7 @@ static cmdarg_flags cmd_ranges(const Command &cmd)
     }
     if (!resized)
     {
-        stopmsg(stopmsg_flags::NO_STACK, "Insufficient memory for ranges=");
+        stop_msg(stopmsg_flags::NO_STACK, "Insufficient memory for ranges=");
         return cmdarg_flags::ERROR;
     }
     g_iteration_ranges_len = entries;
@@ -4102,7 +4102,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     }
     else if (badfilename)
     {
-        stopmsg(msg);
+        stop_msg(msg);
     }
     return 0;
 }

@@ -271,7 +271,7 @@ bool auto_stereo_convert()
 
     if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
     {
-        stopmsg("Stereo not allowed with resolution > 2048 pixels wide");
+        stop_msg("Stereo not allowed with resolution > 2048 pixels wide");
         driver_buzzer(buzzer_codes::INTERRUPT);
         ret = true;
         goto exit_stereo;

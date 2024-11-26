@@ -162,7 +162,7 @@ restart:
         }
         if ((status(open_file).permissions() & std::filesystem::perms::owner_write) == std::filesystem::perms::none)
         {
-            stopmsg(std::string{"Can't write "} + open_file.string());
+            stop_msg(std::string{"Can't write "} + open_file.string());
             return -1;
         }
         new_file = false;
@@ -178,7 +178,7 @@ restart:
     g_outfile = open_save_file(tmp_file.string(), "wb");
     if (g_outfile == nullptr)
     {
-        stopmsg(std::string{"Can't create "} + tmp_file.string());
+        stop_msg(std::string{"Can't create "} + tmp_file.string());
         return -1;
     }
 
@@ -225,7 +225,7 @@ restart:
             buf += "retain the original file,\ncontinue to replace original with new partial image.";
         }
         interrupted = 1;
-        if (stopmsg(stopmsg_flags::CANCEL, buf))
+        if (stop_msg(stopmsg_flags::CANCEL, buf))
         {
             interrupted = -1;
             std::filesystem::remove(tmp_file);
@@ -682,7 +682,7 @@ bool encoder()
 oops:
     {
         fflush(g_outfile);
-        stopmsg("Error Writing to disk (Disk full?)");
+        stop_msg("Error Writing to disk (Disk full?)");
         return true;
     }
 }

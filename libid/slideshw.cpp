@@ -472,7 +472,7 @@ static void slideshowerr(char const *msg)
     char msgbuf[300] = { "Slideshow error:\n" };
     stop_slide_show();
     std::strcat(msgbuf, msg);
-    stopmsg(msgbuf);
+    stop_msg(msgbuf);
 }
 
 // handle_special_keys

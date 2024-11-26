@@ -157,7 +157,7 @@ static char const *expand_var(char const *var, char *buf)
     {
         char buff[80];
         std::snprintf(buff, std::size(buff), "Unknown comment variable %s", var);
-        stopmsg(buff);
+        stop_msg(buff);
         out = "";
     }
     return out;

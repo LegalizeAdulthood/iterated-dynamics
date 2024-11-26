@@ -37,7 +37,7 @@ bool sound_open()
         s_snd_fp = open_save_file(soundname, "w");
         if (s_snd_fp == nullptr)
         {
-            stopmsg("Can't open sound*.txt");
+            stop_msg("Can't open sound*.txt");
         }
         else
         {
