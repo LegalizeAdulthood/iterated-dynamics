@@ -180,7 +180,7 @@ static std::vector<int> browse_box_x;
 static std::vector<int> browse_box_y;
 static std::vector<int> browse_box_values;
 // here because must be visible inside several routines
-static affine *cvt{};
+static Affine *cvt{};
 static bf_t bt_a{};
 static bf_t bt_b{};
 static bf_t bt_c{};
@@ -1545,7 +1545,7 @@ inline void restore_box(int num_dots, int which)
 // fgetwindow reads all .GIF files and draws window outlines on the screen
 int file_get_window()
 {
-    affine stack_cvt;
+    Affine stack_cvt;
     std::time_t thistime;
     std::time_t lastime;
     char mesg[40];

@@ -113,7 +113,7 @@ struct float3dvtinf // data used by 3d view transform subroutine
     MATRIX doublemat1;   // transformation matrix
     int row, col;         // results
     int row1, col1;
-    affine cvt;
+    Affine cvt;
 };
 
 // Routines in this module
@@ -166,7 +166,7 @@ static double s_init_orbit_fp[3]{};
 // The following declarations used for Inverse Julia.
 static int      s_max_hits{};
 static int      s_run_length{};
-static affine   s_cvt{};
+static Affine   s_cvt{};
 static l_affine s_l_cvt{};
 
 static double s_Cx{};
@@ -283,7 +283,7 @@ The same technique can be applied to the second set of equations:
         -  Sylvie
 */
 
-bool setup_convert_to_screen(affine *scrn_cnvt)
+bool setup_convert_to_screen(Affine *scrn_cnvt)
 {
     double det;
     double xd;
@@ -313,7 +313,7 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
 
 static bool l_setup_convert_to_screen(l_affine *l_cvt)
 {
-    affine cvt;
+    Affine cvt;
 
     // This function should return a something!
     if (setup_convert_to_screen(&cvt))
@@ -1422,7 +1422,7 @@ int inverse_julia_per_image()
 int orbit2d_float()
 {
     std::FILE *fp = open_orbitsave();
-    affine cvt;
+    Affine cvt;
     setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
     // set up projection scheme
@@ -2040,7 +2040,7 @@ int dynam2d_float()
     std::FILE *fp = open_orbitsave();
 
     // setup affine screen coord conversion
-    affine cvt;
+    Affine cvt;
     setup_convert_to_screen(&cvt);
 
     double x{};
@@ -2204,10 +2204,10 @@ double g_orbit_corner_max_x{};
 double g_orbit_corner_max_y{};
 double g_orbit_corner_3_x{};
 double g_orbit_corner_3_y{};
-static affine s_o_cvt{};
+static Affine s_o_cvt{};
 static int s_o_color{};
 
-int setup_orbits_to_screen(affine *scrn_cnvt)
+int setup_orbits_to_screen(Affine *scrn_cnvt)
 {
     double det = //
         (g_orbit_corner_3_x - g_orbit_corner_min_x) * (g_orbit_corner_min_y - g_orbit_corner_max_y) +

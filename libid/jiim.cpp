@@ -484,7 +484,7 @@ static void RestoreRect(int x, int y, int width, int depth)
 
 void jiim(jiim_types which)
 {
-    affine cvt;
+    Affine cvt;
     bool exact = false;
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...

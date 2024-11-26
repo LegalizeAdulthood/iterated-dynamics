@@ -2,7 +2,7 @@
 //
 #pragma once
 
-struct affine
+struct Affine
 {
     // weird order so a,b,e and c,d,f are vectors
     double a;
@@ -93,7 +93,7 @@ int orbit3d_float();
 int orbit3d_long();
 int icon_float_orbit(double *, double *, double *);
 int latoo_float_orbit(double *, double *, double *);
-bool setup_convert_to_screen(affine *);
+bool setup_convert_to_screen(Affine *);
 int plot_orbits2d_setup();
 int plot_orbits2d_float();
 int dynam_float(double *x, double *y, double *z);
