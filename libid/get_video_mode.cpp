@@ -63,7 +63,7 @@ namespace
 
 struct VideoModeChoice
 {
-    int entnum;     // g_video_entry subscript
+    int entry_num;  // g_video_entry subscript
     unsigned flags; // flags for sort's compare, defined below
 };
 
@@ -86,15 +86,15 @@ static bool vidinf_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
     {
         return false;
     }
-    if (g_video_table[lhs.entnum].keynum < g_video_table[rhs.entnum].keynum)
+    if (g_video_table[lhs.entry_num].keynum < g_video_table[rhs.entry_num].keynum)
     {
         return true;
     }
-    if (g_video_table[lhs.entnum].keynum > g_video_table[rhs.entnum].keynum)
+    if (g_video_table[lhs.entry_num].keynum > g_video_table[rhs.entry_num].keynum)
     {
         return false;
     }
-    if (lhs.entnum < rhs.entnum)
+    if (lhs.entry_num < rhs.entry_num)
     {
         return true;
     }
@@ -256,7 +256,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 tmpflags |= VI_ASPECT;
             }
         }
-        s_video_info[i].entnum = i;
+        s_video_info[i].entry_num = i;
         // cppcheck-suppress unreadVariable
         s_video_info[i].flags  = tmpflags;
     }
@@ -336,7 +336,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         else
         {
-            g_init_mode = s_video_info[i].entnum;
+            g_init_mode = s_video_info[i].entry_num;
         }
     }
 
@@ -555,7 +555,7 @@ static void format_item(int choice, char *buf)
     {
         std::strcat(errbuf, "c");
     }
-    format_vid_inf(s_video_info[choice].entnum, errbuf, buf);
+    format_vid_inf(s_video_info[choice].entry_num, errbuf, buf);
 }
 
 static int check_modekey(int curkey, int /*choice*/)
