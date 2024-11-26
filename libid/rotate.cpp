@@ -377,7 +377,7 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         case 'd':                      // load colors from "default.map"
         case 'D':
-            if (ValidateLuts("default"))
+            if (validate_luts("default"))
             {
                 break;
             }
@@ -386,7 +386,7 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         case 'a':                      // load colors from "altern.map"
         case 'A':
-            if (ValidateLuts("altern"))
+            if (validate_luts("altern"))
             {
                 break;
             }
@@ -677,7 +677,7 @@ bool load_palette()
     driver_unstack_screen();
     if (!i)
     {
-        if (!ValidateLuts(filename.c_str()))
+        if (!validate_luts(filename.c_str()))
         {
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
         }

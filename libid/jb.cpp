@@ -209,7 +209,7 @@ bool julibrot_setup()
     }
     if (g_save_dac != 1)
     {
-        if (ValidateLuts(mapname))
+        if (validate_luts(mapname))
         {
             return false;
         }

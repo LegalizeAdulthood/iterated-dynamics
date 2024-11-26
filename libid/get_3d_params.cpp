@@ -500,7 +500,7 @@ static bool check_mapfile()
             }
         }
         std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
-        bool valid = ValidateLuts(buff);
+        bool valid = validate_luts(buff);
         std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
         if (valid) // Oops, somethings wrong
         {

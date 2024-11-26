@@ -177,7 +177,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 else if ((driver_diskp() && g_colors == 256) || !g_colors)
                 {
                     // disk video, setvideomode via bios didn't get it right, so:
-                    ValidateLuts("default"); // read the default palette file
+                    validate_luts("default"); // read the default palette file
                 }
                 g_color_state = color_state::DEFAULT;
             }

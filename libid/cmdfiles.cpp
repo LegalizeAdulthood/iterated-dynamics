@@ -1550,7 +1550,7 @@ static cmdarg_flags parse_colors(char const *value)
         {
             init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
         }
-        if ((int)std::strlen(value) > FILE_MAX_PATH || ValidateLuts(g_map_name.c_str()))
+        if ((int)std::strlen(value) > FILE_MAX_PATH || validate_luts(g_map_name.c_str()))
         {
             goto badcolor;
         }
@@ -2456,7 +2456,7 @@ static cmdarg_flags cmd_map(const Command &cmd)
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
         return cmdarg_flags::NONE;
     }
-    SetColorPaletteName(g_map_name.c_str());
+    set_color_palette_name(g_map_name.c_str());
     return cmdarg_flags::NONE;
 }
 

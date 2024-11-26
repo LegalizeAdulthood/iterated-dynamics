@@ -99,7 +99,7 @@ int starfield()
     s_concentration  = (long)(((s_starfield_values[1]) / 100.0) * (1L << 16));
     s_slope = (int)(s_starfield_values[2]);
 
-    if (ValidateLuts(g_altern_map_file.data()))
+    if (validate_luts(g_altern_map_file.data()))
     {
         stopmsg("Unable to load ALTERN.MAP");
         g_busy = false;

@@ -2,6 +2,5 @@
 //
 #pragma once
 
-// loadmap -- C file prototypes
-bool ValidateLuts(char const *mapname);
-void SetColorPaletteName(char const *fn);
+bool validate_luts(char const *mapname);
+void set_color_palette_name(char const *fn);

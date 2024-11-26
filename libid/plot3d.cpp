@@ -525,7 +525,7 @@ void plot_setup()
 
     if (g_map_set)
     {
-        ValidateLuts(g_map_name.c_str()); // read the palette file
+        validate_luts(g_map_name.c_str()); // read the palette file
         if (g_glasses_type == 1 || g_glasses_type == 2)
         {
             if (g_glasses_type == 2 && g_colors < 256)

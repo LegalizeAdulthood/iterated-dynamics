@@ -128,7 +128,7 @@ static void set_Froth_palette()
                 mapname = "froth316.map";
             }
         }
-        if (ValidateLuts(mapname))
+        if (validate_luts(mapname))
         {
             return;
         }
