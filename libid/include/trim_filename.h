@@ -4,4 +4,4 @@
 
 #include <string>
 
-std::string trim_filename(const std::string &filename, int length);
+std::string trim_file_name(const std::string &file_name, int length);

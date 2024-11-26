@@ -723,7 +723,7 @@ retry:
 
     std::strcpy(buf, entryname.c_str()); // preset to last choice made
     std::string const heading{std::string{title} + " Selection\n"
-        + "File: " + trim_filename(filename, 68)};
+        + "File: " + trim_file_name(filename, 68)};
     formatitem = nullptr;
     boxdepth = 0;
     colwidth = boxdepth;

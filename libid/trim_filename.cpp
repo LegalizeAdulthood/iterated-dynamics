@@ -8,14 +8,14 @@
 
 namespace fs = std::filesystem;
 
-std::string trim_filename(const std::string &filename, int length)
+std::string trim_file_name(const std::string &file_name, int length)
 {
-    if (static_cast<int>(filename.length()) <= length)
+    if (static_cast<int>(file_name.length()) <= length)
     {
-        return filename;
+        return file_name;
     }
 
-    fs::path path{filename, fs::path::format::generic_format};
+    fs::path path{file_name, fs::path::format::generic_format};
     std::vector<fs::path> parts;
     while (path.has_parent_path() && path.parent_path() != path)
     {

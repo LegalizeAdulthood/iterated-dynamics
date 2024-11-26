@@ -219,7 +219,7 @@ retry_dir:
     }
 
     std::string const heading{std::string{hdg} + "\n"
-        + "Template: " + trim_filename(tmpmask, 66)};
+        + "Template: " + trim_file_name(tmpmask, 66)};
     std::strcpy(speedstr, filename);
     int i = 0;
     if (speedstr[0] == 0)
