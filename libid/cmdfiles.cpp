@@ -422,7 +422,7 @@ static void initvars_run()              // once per run init
         if (isadirectory(p))
         {
             g_temp_dir = p;
-            fix_dirname(g_temp_dir);
+            fix_dir_name(g_temp_dir);
         }
     }
     else
@@ -2707,7 +2707,7 @@ static cmdarg_flags cmd_org_frm_dir(const Command &cmd)
     }
     g_organize_formulas_search = true;
     g_organize_formulas_dir = cmd.value;
-    fix_dirname(g_organize_formulas_dir);
+    fix_dir_name(g_organize_formulas_dir);
     return cmdarg_flags::NONE;
 }
 
@@ -3404,7 +3404,7 @@ static cmdarg_flags cmd_temp_dir(const Command &cmd)
         return cmd.bad_arg();
     }
     g_temp_dir = cmd.value;
-    fix_dirname(g_temp_dir);
+    fix_dir_name(g_temp_dir);
     return cmdarg_flags::NONE;
 }
 
@@ -3698,7 +3698,7 @@ static cmdarg_flags cmd_work_dir(const Command &cmd)
         return cmd.bad_arg();
     }
     g_working_dir = cmd.value;
-    fix_dirname(g_working_dir);
+    fix_dir_name(g_working_dir);
     return cmdarg_flags::NONE;
 }
 

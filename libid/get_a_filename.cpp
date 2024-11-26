@@ -106,7 +106,7 @@ retry_dir:
     }
     expand_dir_name(dir, drive);
     make_drive_dir(tmpmask, drive, dir);
-    fix_dirname(tmpmask);
+    fix_dir_name(tmpmask);
     if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOTSLASH))
     {
         int j = (int) std::strlen(tmpmask) - 1;
@@ -256,7 +256,7 @@ retry_dir:
         {
             std::strcpy(dir, g_fractal_search_dir2.c_str());
         }
-        fix_dirname(dir);
+        fix_dir_name(dir);
         flname = make_drive_dir(drive, dir);
         lastdir = 1 - lastdir;
         goto restart;
@@ -295,7 +295,7 @@ retry_dir:
             {
                 std::strcat(dir, choices[i]->full_name);
             }
-            fix_dirname(dir);
+            fix_dir_name(dir);
             flname = make_drive_dir(drive, dir);
             goto restart;
         }
@@ -340,7 +340,7 @@ retry_dir:
             }
             else if (isadirectory(flname.c_str()))
             {
-                fix_dirname(flname);
+                fix_dir_name(flname);
             }
             goto restart;
         }

@@ -9,7 +9,7 @@
 #include <cstring>
 
 // fix up directory names
-void fix_dirname(char *dirname)
+void fix_dir_name(char *dirname)
 {
     int length = (int) std::strlen(dirname); // index of last character
 
@@ -24,10 +24,10 @@ void fix_dirname(char *dirname)
     std::strcat(dirname, SLASH);
 }
 
-void fix_dirname(std::string &dirname)
+void fix_dir_name(std::string &dirname)
 {
     char buff[FILE_MAX_PATH];
     std::strcpy(buff, dirname.c_str());
-    fix_dirname(buff);
+    fix_dir_name(buff);
     dirname = buff;
 }

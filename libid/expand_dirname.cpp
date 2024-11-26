@@ -19,7 +19,7 @@ int expand_dir_name(char *dirname, char *drive)
         std::strcpy(drive, path.root_name().string().c_str());
         std::strcpy(dirname, path.string().substr(std::strlen(drive)).c_str());
     }
-    fix_dirname(dirname);
+    fix_dir_name(dirname);
 
     return 0;
 }

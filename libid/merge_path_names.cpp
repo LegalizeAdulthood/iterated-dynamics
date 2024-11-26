@@ -38,7 +38,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     bool isadir = isadirectory(newfilename);
     if (isadir)
     {
-        fix_dirname(newfilename);
+        fix_dir_name(newfilename);
     }
 
     // if dot, slash, NUL, it's the current directory, set up full path
@@ -77,7 +77,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
         {
             if (g_dta.attribute & SUB_DIR) // exists and is dir
             {
-                fix_dirname(newfilename);  // add trailing slash
+                fix_dir_name(newfilename);  // add trailing slash
                 isadir = true;
                 isafile = false;
             }
