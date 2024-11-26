@@ -5,5 +5,5 @@
 #include "port.h"
 #include "big.h"
 
-void cvtcentermag(double *, double *, LDBL *, double *, double *, double *);
-void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
+void cvt_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew);
+void cvt_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew);

@@ -25,7 +25,7 @@ Rotation angles indicate how much the IMAGE has been rotated, not the
 zoom box.  Same goes for the Skew angles
 */
 
-void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
+void cvt_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
     double Height;
 
@@ -118,7 +118,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 }
 
 // convert corners to center/mag using bf
-void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
+void cvt_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
     // needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits
     LDBL Height;

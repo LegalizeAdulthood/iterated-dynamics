@@ -67,7 +67,7 @@ gc_loop:
     {
         cmag = 0;
     }
-    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+    cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     builder.reset();
     // 10 items
@@ -221,7 +221,7 @@ gc_loop:
         // toggle corners/center-mag mode
         if (!g_use_center_mag)
         {
-            cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+            cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             g_use_center_mag = true;
         }
         else
@@ -295,7 +295,7 @@ int get_screen_corners()
 
 gsc_loop:
     cmag = g_use_center_mag ? 1 : 0;
-    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+    cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     builder.reset();
     if (cmag)
@@ -440,7 +440,7 @@ gsc_loop:
         // toggle corners/center-mag mode
         if (!g_use_center_mag)
         {
-            cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+            cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             g_use_center_mag = true;
         }
         else

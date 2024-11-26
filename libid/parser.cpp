@@ -2650,7 +2650,7 @@ static bool parse_formula_text(char const *text)
         s_vars[g_variable_index].s = s_variables[g_variable_index];
         s_vars[g_variable_index].len = (int) std::strlen(s_variables[g_variable_index]);
     }
-    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+    cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     const_pi = std::atan(1.0) * 4;
     const_e  = std::exp(1.0);
     s_vars[7].a.d.y = 0.0;

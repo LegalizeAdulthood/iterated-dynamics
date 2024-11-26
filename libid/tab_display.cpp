@@ -547,7 +547,7 @@ top:
             int truncaterow;
             int dec = std::min(320, g_decimals);
             adjust_corner_bf(); // make bottom left exact if very near exact
-            cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+            cvt_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             // find alignment information
             msg[0] = 0;
             bool truncate = false;
@@ -598,7 +598,7 @@ top:
                 std::sprintf(msg, "%20.16f  %20.16f", g_x_3rd, g_y_3rd);
                 driver_put_string(-1, 17, C_GENERAL_HI, msg);
             }
-            cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+            cvt_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Ctr");
             std::sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);

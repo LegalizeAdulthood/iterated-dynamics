@@ -29,13 +29,13 @@ bool perturbation()
     {
         center_bf.x = alloc_stack(g_bf_length + 2);
         center_bf.y = alloc_stack(g_bf_length + 2);
-        cvtcentermagbf(center_bf.x, center_bf.y, &magnification, &x_mag_factor, &rotation, &skew);
+        cvt_center_mag_bf(center_bf.x, center_bf.y, &magnification, &x_mag_factor, &rotation, &skew);
         neg_bf(center_bf.y, center_bf.y);
     }
     else
     {
         LDBL magnification_ld;
-        cvtcentermag(&center.x, &center.y, &magnification_ld, &x_mag_factor, &rotation, &skew);
+        cvt_center_mag(&center.x, &center.y, &magnification_ld, &x_mag_factor, &rotation, &skew);
         center.y = -center.y;
     }
 
