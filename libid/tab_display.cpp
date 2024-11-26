@@ -617,12 +617,12 @@ top:
         }
     }
 
-    if (typehasparm(g_fractal_type, 0, msg) || hasformparam)
+    if (type_has_param(g_fractal_type, 0, msg) || hasformparam)
     {
         for (int i = 0; i < MAX_PARAMS; i++)
         {
             char p[50];
-            if (typehasparm(g_fractal_type, i, p))
+            if (type_has_param(g_fractal_type, i, p))
             {
                 int col;
                 if (k%4 == 0)

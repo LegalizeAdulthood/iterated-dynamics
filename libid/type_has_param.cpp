@@ -18,7 +18,7 @@
  *  Pass in nullptr for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-bool typehasparm(fractal_type type, int parm, char *buf)
+bool type_has_param(fractal_type type, int parm, char *buf)
 {
     char const *ret = nullptr;
     if (0 <= parm && parm < 4)

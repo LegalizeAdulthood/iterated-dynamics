@@ -601,7 +601,7 @@ gfp_top:
         for (int i = firstparm; i < lastparm; i++)
         {
             char tmpbuf[30];
-            if (!typehasparm(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
+            if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
             {
                 if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
                 {

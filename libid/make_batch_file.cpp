@@ -863,7 +863,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         int i;
         for (i = (MAX_PARAMS-1); i >= 0; --i)
         {
-            if (typehasparm((g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
+            if (type_has_param((g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
                             ?g_new_orbit_type:g_fractal_type, i, nullptr))
             {
                 break;
