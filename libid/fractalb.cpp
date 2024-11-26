@@ -65,7 +65,7 @@ void show_corners_dbl(char const *s)
 }
 
 // show floating point and bignumber corners
-void showcorners(char const *s)
+void show_corners_bn(char const *s)
 {
     int dec = 20;
     char msg[100];
@@ -98,7 +98,7 @@ void showcorners(char const *s)
 }
 
 // show globals
-void showbfglobals(char const *s)
+void show_globals_bf(char const *s)
 {
     char msg[300];
     std::snprintf(msg, std::size(msg),
@@ -116,7 +116,7 @@ void showbfglobals(char const *s)
     }
 }
 
-void showcornersbf(char const *s)
+void show_corners_bf(char const *s)
 {
     int dec = g_decimals;
     char msg[100];
@@ -156,7 +156,7 @@ void showcornersbf(char const *s)
     }
 }
 
-void showcornersbfs(char const *s)
+void show_corners_bf_save(char const *s)
 {
     int dec = 20;
     char msg[100];
@@ -219,7 +219,7 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
 }
 
 // for aspect ratio debugging
-void showaspect(char const *s)
+void show_aspect(char const *s)
 {
     bf_t bt1;
     bf_t bt2;
