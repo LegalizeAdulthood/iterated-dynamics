@@ -34,7 +34,7 @@ static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
 
-inline bool is_writable(const std::string &path)
+inline bool is_writeable(const std::string &path)
 {
     const fs::perms read_write = fs::perms::owner_read | fs::perms::owner_write;
     return (fs::status(path).permissions() & read_write) == read_write;
@@ -224,7 +224,7 @@ static void update_id_cfg()
 
     const std::string cfgname = find_path("id.cfg");
 
-    if (!is_writable(cfgname))
+    if (!is_writeable(cfgname))
     {
         std::snprintf(buf, std::size(buf), "Can't write %s", cfgname.c_str());
         stop_msg(buf);
