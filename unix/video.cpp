@@ -31,5 +31,5 @@ VideoInfo x11_video_table[] = {
 
 void load_dac()
 {
-    readvideopalette();
+    read_video_palette();
 }

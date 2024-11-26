@@ -289,7 +289,7 @@ select_visual()
 /*
  *----------------------------------------------------------------------
  *
- * initUnixWindow --
+ * init_unix_window --
  *
  *  Make the X window.
  *
@@ -303,7 +303,7 @@ select_visual()
  */
 
 void
-initUnixWindow()
+init_unix_window()
 {
     XSetWindowAttributes Xwatt;
     XGCValues Xgcvals;
@@ -457,7 +457,7 @@ initUnixWindow()
         }
     }
 
-    writevideopalette();
+    write_video_palette();
 
     x11_video_table[0].xdots = g_screen_x_dots;
     x11_video_table[0].ydots = g_screen_y_dots;
@@ -570,7 +570,7 @@ clearXwindow()
         XFillRectangle(Xdp, Xpixmap, Xgc, 0, 0, Xwinwidth, Xwinheight);
     }
     XFillRectangle(Xdp, Xw, Xgc, 0, 0, Xwinwidth, Xwinheight);
-    xsync();
+    x_sync();
     drawing_or_drawn = 0;
 }
 
@@ -647,7 +647,7 @@ initdacbox()
 /*
  *----------------------------------------------------------------------
  *
- * resizeWindow --
+ * resize_window --
  *
  *  Look after resizing the window if necessary.
  *
@@ -660,7 +660,7 @@ initdacbox()
  *----------------------------------------------------------------------
  */
 int
-resizeWindow()
+resize_window()
 {
     static int oldx = -1, oldy = -1;
     int junki;
@@ -778,7 +778,7 @@ xcmapstuff()
     {
         Xcmap = DefaultColormapOfScreen(Xsc);
         if (g_fake_lut)
-            writevideopalette();
+            write_video_palette();
     }
     else if (sharecolor)
     {
@@ -853,7 +853,7 @@ XColor cols[256];
 /*
  *----------------------------------------------------------------------
  *
- * readvideopalette --
+ * read_video_palette --
  *  Reads the current video palette into g_dac_box.
  *
  *
@@ -865,7 +865,7 @@ XColor cols[256];
  *
  *----------------------------------------------------------------------
  */
-int readvideopalette()
+int read_video_palette()
 {
     if (!g_got_real_dac && g_is_true_color && g_true_mode != true_color_mode::default_color)
         return -1;
@@ -881,7 +881,7 @@ int readvideopalette()
 /*
  *----------------------------------------------------------------------
  *
- * writevideopalette --
+ * write_video_palette --
  *  Writes g_dac_box into the video palette.
  *
  *
@@ -893,7 +893,7 @@ int readvideopalette()
  *
  *----------------------------------------------------------------------
  */
-int writevideopalette()
+int write_video_palette()
 {
     if (!g_got_real_dac)
     {
@@ -971,7 +971,7 @@ int writevideopalette()
 /*
  *----------------------------------------------------------------------
  *
- * xsync --
+ * x_sync --
  *
  *  Sync the x server
  *
@@ -984,7 +984,7 @@ int writevideopalette()
  *----------------------------------------------------------------------
  */
 void
-xsync()
+x_sync()
 {
     if (!unixDisk)
     {
@@ -1305,7 +1305,7 @@ xhandleevents()
 
     if (doredraw)
     {
-        redrawscreen();
+        redraw_screen();
     }
 
     while (XPending(Xdp) && !xbufkey)
@@ -1605,7 +1605,7 @@ xhandleevents()
                          ButtonPressMask|ButtonReleaseMask|PointerMotionMask);
             resize_flag = 1;
             drawn = drawing_or_drawn;
-            if (resizeWindow())
+            if (resize_window())
             {
                 if (drawn)
                 {
@@ -1820,7 +1820,7 @@ static unsigned char *fontPtr = nullptr;
 /*
  *----------------------------------------------------------------------
  *
- * xgetfont --
+ * x_get_font --
  *
  *  Get an 8x8 font.
  *
@@ -1833,7 +1833,7 @@ static unsigned char *fontPtr = nullptr;
  *----------------------------------------------------------------------
  */
 unsigned char *
-xgetfont()
+x_get_font()
 {
     XFontStruct *font_info;
     XImage *font_image;
@@ -1940,7 +1940,7 @@ setredrawscreen()
 /*
  *----------------------------------------------------------------------
  *
- * redrawscreen --
+ * redraw_screen --
  *
  *  Refresh the screen.
  *
@@ -1953,7 +1953,7 @@ setredrawscreen()
  *----------------------------------------------------------------------
  */
 void
-redrawscreen()
+redraw_screen()
 {
     if (alarmon)
     {

@@ -3,24 +3,24 @@
 #pragma once
 
 // reads the current colormap into dacbox.
-int readvideopalette();
+int read_video_palette();
 
 // writes the current colormap from dacbox.
-int writevideopalette();
+int write_video_palette();
 
 // initializes the graphics window, colormap, etc.
-void initUnixWindow();
+void init_unix_window();
 
 // Returns bitmap of an 8x8 font.
-unsigned char *xgetfont();
+unsigned char *x_get_font();
 
 // Forces all window events to be processed.
-void xsync();
+void x_sync();
 
 // Checks if the window has been resized, and handles the resize.
-int resizeWindow();
+int resize_window();
 
 /* Used with schedulealarm.  X11 has a delayed write mode,
  * where the screen is updated only every few seconds.
  */
-void redrawscreen();
+void redraw_screen();
