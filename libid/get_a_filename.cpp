@@ -95,7 +95,7 @@ restart:  // return here if template or directory changes
     {
         flname = DOTSLASH;
     }
-    splitpath(flname , drive, dir, fname, ext);
+    split_path(flname , drive, dir, fname, ext);
     make_fname_ext(filename, fname, ext);
     retried = 0;
 
@@ -208,7 +208,7 @@ retry_dir:
     }
     if (!notroot && dir[0] && dir[0] != SLASHC) // must be in root directory
     {
-        splitpath(tmpmask, drive, dir, fname, ext);
+        split_path(tmpmask, drive, dir, fname, ext);
         std::strcpy(dir, SLASH);
         make_path(tmpmask, drive, dir, fname, ext);
     }
@@ -321,7 +321,7 @@ retry_dir:
             char dir1[FILE_MAX_DIR];
             char fname1[FILE_MAX_FNAME];
             char ext1[FILE_MAX_EXT];
-            splitpath(speedstr, drive1, dir1, fname1, ext1);
+            split_path(speedstr, drive1, dir1, fname1, ext1);
             if (drive1[0])
             {
                 std::strcpy(drive, drive1);

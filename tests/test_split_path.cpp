@@ -34,7 +34,7 @@ TEST_F(TestSplitPath, absolutePath)
 {
     m_file_template = (fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred();
 
-    splitpath(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(m_file_template.root_name().string(), m_drive);
     EXPECT_EQ(m_file_template.parent_path().string().substr(m_file_template.root_name().string().length()) +
@@ -49,7 +49,7 @@ TEST_F(TestSplitPath, relativePath)
     current_path_saver saver{ID_TEST_DATA_DIR};
     m_file_template = ID_TEST_DATA_SUBDIR_NAME;
 
-    splitpath(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(m_file_template.root_name().string(), m_drive);
     EXPECT_EQ(std::string(), m_dir);
@@ -61,7 +61,7 @@ TEST_F(TestSplitPath, drive)
 {
     m_file_template = ID_TEST_DATA_DIR;
 
-    splitpath(m_file_template.root_name().string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.root_name().string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(m_file_template.root_name().string(), m_drive);
     EXPECT_EQ(std::string(), m_dir);
@@ -73,7 +73,7 @@ TEST_F(TestSplitPath, directory)
 {
     m_file_template = fs::path{ID_TEST_DATA_DIR}.make_preferred();
 
-    splitpath(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(m_file_template.root_name().string(), m_drive);
     EXPECT_EQ(m_file_template.parent_path().string().substr(m_file_template.root_name().string().length()) +
@@ -87,7 +87,7 @@ TEST_F(TestSplitPath, fileName)
 {
     m_file_template = fs::path{ID_TEST_IFS_FILE}.make_preferred();
 
-    splitpath(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(std::string(), m_drive);
     EXPECT_EQ(std::string(), m_dir);
@@ -99,7 +99,7 @@ TEST_F(TestSplitPath, fileNameNoExtension)
 {
     m_file_template = fs::path{ID_TEST_IFS_FILE}.replace_extension().make_preferred();
 
-    splitpath(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(std::string(), m_drive);
     EXPECT_EQ(std::string(), m_dir);
@@ -111,7 +111,7 @@ TEST_F(TestSplitPath, extensionNoFilename)
 {
     m_file_template = fs::path{ID_TEST_IFS_FILE}.replace_filename("").make_preferred();
 
-    splitpath(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
+    split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);
 
     EXPECT_EQ(std::string(), m_drive);
     EXPECT_EQ(std::string(), m_dir);

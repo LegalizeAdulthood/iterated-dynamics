@@ -92,13 +92,13 @@ int merge_path_names(char *oldfullpath, char const *new_filename, cmd_file mode)
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
-    splitpath(newfilename, drive, dir, fname, ext);
+    split_path(newfilename, drive, dir, fname, ext);
 
     char drive1[FILE_MAX_DRIVE];
     char dir1[FILE_MAX_DIR];
     char fname1[FILE_MAX_FNAME];
     char ext1[FILE_MAX_EXT];
-    splitpath(oldfullpath, drive1, dir1, fname1, ext1);
+    split_path(oldfullpath, drive1, dir1, fname1, ext1);
 
     bool const get_path = (mode == cmd_file::AT_CMD_LINE) || (mode == cmd_file::SSTOOLS_INI);
     if (get_path)

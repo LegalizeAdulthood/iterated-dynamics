@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-void splitpath(const std::string &file_template, char *drive, char *dir, char *fname, char *ext)
+void split_path(const std::string &file_template, char *drive, char *dir, char *fname, char *ext)
 {
     fs::path path{file_template};
     path.make_preferred();

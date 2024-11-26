@@ -4,14 +4,14 @@
 
 #include <string>
 
-void splitpath(const std::string &file_template, char *drive, char *dir, char *fname, char *ext);
+void split_path(const std::string &file_template, char *drive, char *dir, char *fname, char *ext);
 
 inline void split_fname_ext(const std::string &file_template, char *fname, char *ext)
 {
-    splitpath(file_template, nullptr, nullptr, fname, ext);
+    split_path(file_template, nullptr, nullptr, fname, ext);
 }
 
 inline void split_drive_dir(const std::string &file_template, char *drive, char *dir)
 {
-    splitpath(file_template, drive, dir, nullptr, nullptr);
+    split_path(file_template, drive, dir, nullptr, nullptr);
 }

@@ -61,7 +61,7 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     char fullpath[FILE_MAX_PATH];
     char defaultextension[5];
 
-    splitpath(filename, drive, dir, fname, ext);
+    split_path(filename, drive, dir, fname, ext);
     make_fname_ext(fullpath, fname, ext);
     if (stricmp(filename.c_str(), g_command_file.c_str()))
     {
