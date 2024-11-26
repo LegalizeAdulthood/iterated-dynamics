@@ -70,7 +70,7 @@ enum
     MAX_WINDOWS_OPEN = 450
 };
 
-constexpr double MINDIF{0.001};
+constexpr double MIN_DIF{0.001};
 
 struct ExtBlock2
 {
@@ -109,11 +109,11 @@ struct ExtBlock6
     short discrete_y_parameter_offset;
     short  px;
     short  py;
-    short  sxoffs;
-    short  syoffs;
-    short  xdots;
-    short  ydots;
-    short  ecount;
+    short  sx_offs;
+    short  sy_offs;
+    short  x_dots;
+    short  y_dots;
+    short  e_count;
     short  mutate[NUM_GENES];
 };
 
@@ -121,14 +121,14 @@ struct ExtBlock7
 {
     bool got_data;
     int length;
-    double oxmin;
-    double oxmax;
-    double oymin;
-    double oymax;
-    double ox3rd;
-    double oy3rd;
-    short keep_scrn_coords;
-    char drawmode;
+    double ox_min;
+    double ox_max;
+    double oy_min;
+    double oy_max;
+    double ox_3rd;
+    double oy_3rd;
+    short keep_screen_coords;
+    char draw_mode;
 };
 
 struct DblCoords
@@ -146,7 +146,7 @@ struct Window
     Coord      ibr;      //
     double      win_size; // box size for drawindow()
     std::string name;     // for filename
-    int         boxcount; // bytes of saved screen info
+    int         box_count; // bytes of saved screen info
 };
 
 } // namespace
@@ -854,9 +854,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             // Increasing NUM_GENES moves ecount in the data structure
             // We added 4 to NUM_GENES, so ecount is at NUM_GENES-4
-            blk_6_info.ecount = blk_6_info.mutate[NUM_GENES - 4];
+            blk_6_info.e_count = blk_6_info.mutate[NUM_GENES - 4];
         }
-        if (blk_6_info.ecount != blk_6_info.image_grid_size *blk_6_info.image_grid_size
+        if (blk_6_info.e_count != blk_6_info.image_grid_size *blk_6_info.image_grid_size
             && g_calc_status != calc_status_value::COMPLETED)
         {
             g_calc_status = calc_status_value::RESUMABLE;
@@ -868,15 +868,15 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_evolve_info.discrete_y_paramter_offset = blk_6_info.discrete_y_parameter_offset;
             g_evolve_info.px           = blk_6_info.px;
             g_evolve_info.py           = blk_6_info.py;
-            g_evolve_info.sxoffs       = blk_6_info.sxoffs;
-            g_evolve_info.syoffs       = blk_6_info.syoffs;
-            g_evolve_info.xdots        = blk_6_info.xdots;
-            g_evolve_info.ydots        = blk_6_info.ydots;
+            g_evolve_info.sxoffs       = blk_6_info.sx_offs;
+            g_evolve_info.syoffs       = blk_6_info.sy_offs;
+            g_evolve_info.xdots        = blk_6_info.x_dots;
+            g_evolve_info.ydots        = blk_6_info.y_dots;
             g_evolve_info.image_grid_size = blk_6_info.image_grid_size;
             g_evolve_info.evolving     = blk_6_info.evolving;
             g_evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
             g_evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
-            g_evolve_info.ecount       = blk_6_info.ecount;
+            g_evolve_info.ecount       = blk_6_info.e_count;
             g_have_evolve_info = true;
         }
         else
@@ -896,10 +896,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
         g_evolve_param_grid_x           = blk_6_info.px;
         g_evolve_param_grid_y           = blk_6_info.py;
-        g_logical_screen_x_offset       = blk_6_info.sxoffs;
-        g_logical_screen_y_offset       = blk_6_info.syoffs;
-        g_logical_screen_x_dots        = blk_6_info.xdots;
-        g_logical_screen_y_dots        = blk_6_info.ydots;
+        g_logical_screen_x_offset       = blk_6_info.sx_offs;
+        g_logical_screen_y_offset       = blk_6_info.sy_offs;
+        g_logical_screen_x_dots        = blk_6_info.x_dots;
+        g_logical_screen_y_dots        = blk_6_info.y_dots;
         g_evolve_image_grid_size = blk_6_info.image_grid_size;
         g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         g_evolve_max_random_mutation = blk_6_info.max_random_mutation;
@@ -939,14 +939,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_7_info.got_data)
     {
-        g_orbit_corner_min_x       = blk_7_info.oxmin;
-        g_orbit_corner_max_x       = blk_7_info.oxmax;
-        g_orbit_corner_min_y       = blk_7_info.oymin;
-        g_orbit_corner_max_y       = blk_7_info.oymax;
-        g_orbit_corner_3_x       = blk_7_info.ox3rd;
-        g_orbit_corner_3_y       = blk_7_info.oy3rd;
-        g_keep_screen_coords = blk_7_info.keep_scrn_coords != 0;
-        g_draw_mode    = blk_7_info.drawmode;
+        g_orbit_corner_min_x       = blk_7_info.ox_min;
+        g_orbit_corner_max_x       = blk_7_info.ox_max;
+        g_orbit_corner_min_y       = blk_7_info.oy_min;
+        g_orbit_corner_max_y       = blk_7_info.oy_max;
+        g_orbit_corner_3_x       = blk_7_info.ox_3rd;
+        g_orbit_corner_3_y       = blk_7_info.oy_3rd;
+        g_keep_screen_coords = blk_7_info.keep_screen_coords != 0;
+        g_draw_mode    = blk_7_info.draw_mode;
         if (g_keep_screen_coords)
         {
             g_set_orbit_corners = true;
@@ -1229,15 +1229,15 @@ static int find_fractal_info(const std::string &gif_file, //
                     blk_6_info->discrete_y_parameter_offset = (char)eload_info.discrete_y_paramter_offset;
                     blk_6_info->px              = eload_info.px;
                     blk_6_info->py              = eload_info.py;
-                    blk_6_info->sxoffs          = eload_info.sxoffs;
-                    blk_6_info->syoffs          = eload_info.syoffs;
-                    blk_6_info->xdots           = eload_info.xdots;
-                    blk_6_info->ydots           = eload_info.ydots;
+                    blk_6_info->sx_offs          = eload_info.sxoffs;
+                    blk_6_info->sy_offs          = eload_info.syoffs;
+                    blk_6_info->x_dots           = eload_info.xdots;
+                    blk_6_info->y_dots           = eload_info.ydots;
                     blk_6_info->image_grid_size = eload_info.image_grid_size;
                     blk_6_info->evolving        = eload_info.evolving;
                     blk_6_info->this_generation_random_seed = eload_info.this_generation_random_seed;
                     blk_6_info->max_random_mutation = eload_info.max_random_mutation;
-                    blk_6_info->ecount          = eload_info.ecount;
+                    blk_6_info->e_count          = eload_info.ecount;
                     for (int i = 0; i < NUM_GENES; i++)
                     {
                         blk_6_info->mutate[i]    = eload_info.mutate[i];
@@ -1250,14 +1250,14 @@ static int find_fractal_info(const std::string &gif_file, //
                     decode_orbits_info(&oload_info, 1);
                     blk_7_info->length = data_len;
                     blk_7_info->got_data = true;
-                    blk_7_info->oxmin           = oload_info.oxmin;
-                    blk_7_info->oxmax           = oload_info.oxmax;
-                    blk_7_info->oymin           = oload_info.oymin;
-                    blk_7_info->oymax           = oload_info.oymax;
-                    blk_7_info->ox3rd           = oload_info.ox3rd;
-                    blk_7_info->oy3rd           = oload_info.oy3rd;
-                    blk_7_info->keep_scrn_coords= oload_info.keep_scrn_coords;
-                    blk_7_info->drawmode        = oload_info.drawmode;
+                    blk_7_info->ox_min           = oload_info.oxmin;
+                    blk_7_info->ox_max           = oload_info.oxmax;
+                    blk_7_info->oy_min           = oload_info.oymin;
+                    blk_7_info->oy_max           = oload_info.oymax;
+                    blk_7_info->ox_3rd           = oload_info.ox3rd;
+                    blk_7_info->oy_3rd           = oload_info.oy3rd;
+                    blk_7_info->keep_screen_coords= oload_info.keep_scrn_coords;
+                    blk_7_info->draw_mode        = oload_info.drawmode;
                     break;
                 default:
                     skip_ext_blk(&block_len, &data_len);
@@ -1642,7 +1642,7 @@ rescan:  // entry for changed browse parms
         {
             winlist.name = g_dta.filename;
             draw_window(color_of_box, &winlist);
-            winlist.boxcount = g_box_count;
+            winlist.box_count = g_box_count;
             browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
             wincount++;
@@ -1882,7 +1882,7 @@ rescan:  // entry for changed browse parms
             for (int i = wincount-1; i >= 0; i--)
             {
                 winlist = browse_windows[i];
-                g_box_count = winlist.boxcount;
+                g_box_count = winlist.box_count;
                 restore_box(num_dots, i);
                 if (g_box_count > 0)
                 {
@@ -2228,17 +2228,17 @@ static bool params_ok(FractalInfo const *info)
         tmpparm9 = 0.0;
         tmpparm10 = 0.0;
     }
-    if (std::fabs(info->creal - g_params[0]) < MINDIF
-        && std::fabs(info->cimag - g_params[1]) < MINDIF
-        && std::fabs(tmpparm3 - g_params[2]) < MINDIF
-        && std::fabs(tmpparm4 - g_params[3]) < MINDIF
-        && std::fabs(tmpparm5 - g_params[4]) < MINDIF
-        && std::fabs(tmpparm6 - g_params[5]) < MINDIF
-        && std::fabs(tmpparm7 - g_params[6]) < MINDIF
-        && std::fabs(tmpparm8 - g_params[7]) < MINDIF
-        && std::fabs(tmpparm9 - g_params[8]) < MINDIF
-        && std::fabs(tmpparm10 - g_params[9]) < MINDIF
-        && info->invert[0] - g_inversion[0] < MINDIF)
+    if (std::fabs(info->creal - g_params[0]) < MIN_DIF
+        && std::fabs(info->cimag - g_params[1]) < MIN_DIF
+        && std::fabs(tmpparm3 - g_params[2]) < MIN_DIF
+        && std::fabs(tmpparm4 - g_params[3]) < MIN_DIF
+        && std::fabs(tmpparm5 - g_params[4]) < MIN_DIF
+        && std::fabs(tmpparm6 - g_params[5]) < MIN_DIF
+        && std::fabs(tmpparm7 - g_params[6]) < MIN_DIF
+        && std::fabs(tmpparm8 - g_params[7]) < MIN_DIF
+        && std::fabs(tmpparm9 - g_params[8]) < MIN_DIF
+        && std::fabs(tmpparm10 - g_params[9]) < MIN_DIF
+        && info->invert[0] - g_inversion[0] < MIN_DIF)
     {
         return true; // parameters are in range
     }
