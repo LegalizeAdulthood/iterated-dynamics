@@ -33,7 +33,7 @@ enum
 
 static bool s_full_menu{};
 
-static int menu_checkkey(int curkey, int /*choice*/)
+static int menu_check_key(int curkey, int /*choice*/)
 {
     int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
@@ -357,7 +357,7 @@ top:
     choices[nextright] = "Stereogram            <Ctrl+S>";
 
     i = driver_key_pressed() ? driver_get_key() : 0;
-    if (menu_checkkey(i, 0) == 0)
+    if (menu_check_key(i, 0) == 0)
     {
         g_help_mode = help_labels::HELP_MAIN;         // switch help modes
         nextleft += 2;
@@ -366,7 +366,7 @@ top:
             nextleft = nextright + 1;
         }
         i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, nextleft,
-            choices, attributes, 2, nextleft / 2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
+            choices, attributes, 2, nextleft / 2, 29, 0, nullptr, nullptr, nullptr, menu_check_key);
         if (i == -1)     // escape
         {
             i = ID_KEY_ESC;
