@@ -492,5 +492,5 @@ static void set_Cellular_palette()
     g_dac_box[5][1] = Brown[1];
     g_dac_box[5][2] = Brown[2];
 
-    spindac(0, 1);
+    spin_dac(0, 1);
 }

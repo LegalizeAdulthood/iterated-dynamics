@@ -167,7 +167,7 @@ void rotate(int direction)      // rotate-the-palette routine
                 {
                     step = oldstep;
                 }
-                spindac(direction, step);
+                spin_dac(direction, step);
             }
         }
         if (step >= rotate_size)
@@ -369,7 +369,7 @@ void rotate(int direction)      // rotate-the-palette routine
                 incr = 999;
             }
             fkey = 0;
-            spindac(direction, 1);
+            spin_dac(direction, 1);
             if (! s_paused)
             {
                 pauserotate();           // pause
@@ -559,7 +559,7 @@ static void pauserotate()               // pause-the-rotate routine
         g_dac_box[0][0] = 48;
         g_dac_box[0][1] = 48;
         g_dac_box[0][2] = 48;
-        spindac(0, 1);                     // show white border
+        spin_dac(0, 1);                     // show white border
         if (driver_diskp())
         {
             dvid_status(100, " Paused in \"color cycling\" mode ");
@@ -573,7 +573,7 @@ static void pauserotate()               // pause-the-rotate routine
         g_dac_box[0][0] = olddac0;
         g_dac_box[0][1] = olddac1;
         g_dac_box[0][2] = olddac2;
-        spindac(0, 1);                     // show black border
+        spin_dac(0, 1);                     // show black border
         g_dac_count = olddaccount;
         s_paused = true;
     }

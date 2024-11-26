@@ -494,7 +494,7 @@ void restore_history_info(int i)
             g_map_clut[j][2] = last.dac_box[j][2];
         }
     }
-    spindac(0, 1);
+    spin_dac(0, 1);
     if (g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
     {
         g_save_dac = 0;

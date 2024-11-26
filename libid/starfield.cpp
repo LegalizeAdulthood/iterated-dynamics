@@ -105,7 +105,7 @@ int starfield()
         g_busy = false;
         return -1;
     }
-    spindac(0, 1);                 // load it, but don't spin
+    spin_dac(0, 1);                 // load it, but don't spin
     for (g_row = 0; g_row < g_logical_screen_y_dots; g_row++)
     {
         for (g_col = 0; g_col < g_logical_screen_x_dots; g_col++)

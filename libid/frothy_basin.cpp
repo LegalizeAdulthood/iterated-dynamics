@@ -133,7 +133,7 @@ static void set_Froth_palette()
             return;
         }
         g_color_state = color_state::DEFAULT; // treat map as default
-        spindac(0, 1);
+        spin_dac(0, 1);
     }
 }
 

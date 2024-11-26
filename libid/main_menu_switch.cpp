@@ -776,7 +776,7 @@ static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, 
     else if (g_colors_preloaded)
     {
         // colors= was specified
-        spindac(0, 1);
+        spin_dac(0, 1);
         g_colors_preloaded = false;
     }
     else if (i & +cmdarg_flags::RESET) // reset was specified

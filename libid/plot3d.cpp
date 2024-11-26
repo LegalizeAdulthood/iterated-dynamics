@@ -550,6 +550,6 @@ void plot_setup()
                 elem[2] = (BYTE)(elem[2] * d_blue_bright);
             }
         }
-        spindac(0, 1); // load it, but don't spin
+        spin_dac(0, 1); // load it, but don't spin
     }
 }

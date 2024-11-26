@@ -401,6 +401,6 @@ bool do_AutoStereo()
 exit_stereo:
     driver_restore_graphics();
     std::memcpy(g_dac_box, savedacbox, 256 * 3);
-    spindac(0, 1);
+    spin_dac(0, 1);
     return ret;
 }

@@ -367,13 +367,13 @@ static void set_pal(int pal, int r, int g, int b)
     g_dac_box[pal][0] = (BYTE)r;
     g_dac_box[pal][1] = (BYTE)g;
     g_dac_box[pal][2] = (BYTE)b;
-    spindac(0, 1);
+    spin_dac(0, 1);
 }
 
 static void set_pal_range(int first, int how_many, PALENTRY *pal)
 {
     std::memmove(g_dac_box+first, pal, how_many*3);
-    spindac(0, 1);
+    spin_dac(0, 1);
 }
 
 static void get_pal_range(int first, int how_many, PALENTRY *pal)
@@ -1957,7 +1957,7 @@ void PalTable::update_dac()
         }
     }
 
-    spindac(0, 1);
+    spin_dac(0, 1);
 }
 
 void PalTable::save_undo_data(int first, int last)

@@ -213,7 +213,7 @@ bool julibrot_setup()
         {
             return false;
         }
-        spindac(0, 1);               // load it, but don't spin
+        spin_dac(0, 1);               // load it, but don't spin
         if (g_save_dac == 2)
         {
             g_save_dac = 1;

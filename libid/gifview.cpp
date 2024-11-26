@@ -208,11 +208,11 @@ int gif_view()
     if (g_display_3d != display_3d_modes::NONE && g_map_set && g_glasses_type != 1 && g_glasses_type != 2)
     {
         validate_luts(g_map_name.c_str());  // read the palette file
-        spindac(0, 1); // load it, but don't spin
+        spin_dac(0, 1); // load it, but don't spin
     }
     if (g_dac_box[0][0] != 255)
     {
-        spindac(0, 1);       // update the DAC
+        spin_dac(0, 1);       // update the DAC
     }
     if (driver_diskp())
     {

@@ -21,7 +21,7 @@ bool g_is_true_color{};
 ;       Rotate the MCGA/VGA DAC in the (plus or minus) "direction"
 ;       in "rstep" increments - or, if "direction" is 0, just replace it.
 */
-void spindac(int dir, int inc)
+void spin_dac(int dir, int inc)
 {
     if (g_colors < 16)
         return;
