@@ -250,16 +250,16 @@ struct PendingOp
 
 struct JumpPtrs
 {
-    int JumpOpPtr;
-    int JumpLodPtr;
-    int JumpStoPtr;
+    int jump_op_ptr;
+    int jump_lod_ptr;
+    int jump_sto_ptr;
 };
 
 struct JumpControl
 {
     jump_control_type type;
     JumpPtrs ptrs;
-    int DestJumpIndex;
+    int dest_jump_index;
 };
 
 struct Token
@@ -2097,10 +2097,10 @@ static void end_init()
 
 static void stk_jump()
 {
-    s_op_ptr =  s_jump_control[s_jump_index].ptrs.JumpOpPtr;
-    g_load_index = s_jump_control[s_jump_index].ptrs.JumpLodPtr;
-    g_store_index = s_jump_control[s_jump_index].ptrs.JumpStoPtr;
-    s_jump_index = s_jump_control[s_jump_index].DestJumpIndex;
+    s_op_ptr =  s_jump_control[s_jump_index].ptrs.jump_op_ptr;
+    g_load_index = s_jump_control[s_jump_index].ptrs.jump_lod_ptr;
+    g_store_index = s_jump_control[s_jump_index].ptrs.jump_sto_ptr;
+    s_jump_index = s_jump_control[s_jump_index].dest_jump_index;
 }
 
 static void d_stk_jump_on_false()
@@ -3170,18 +3170,18 @@ static int fill_if_group(int endif_index, JumpPtrs *jump_data)
         {
         case jump_control_type::IF:    //if (); this concludes processing of this group
             s_jump_control[i].ptrs = jump_data[ljp];
-            s_jump_control[i].DestJumpIndex = ljp + 1;
+            s_jump_control[i].dest_jump_index = ljp + 1;
             return i;
         case jump_control_type::ELSE_IF:    //elseif* ( 2 jumps, the else and the if
             // first, the "if" part
             s_jump_control[i].ptrs = jump_data[ljp];
-            s_jump_control[i].DestJumpIndex = ljp + 1;
+            s_jump_control[i].dest_jump_index = ljp + 1;
 
             // then, the else part
             i--; //fall through to "else" is intentional
         case jump_control_type::ELSE:
             s_jump_control[i].ptrs = jump_data[endif_index];
-            s_jump_control[i].DestJumpIndex = endif_index + 1;
+            s_jump_control[i].dest_jump_index = endif_index + 1;
             ljp = i;
             break;
         case jump_control_type::END_IF:    //endif
@@ -3252,9 +3252,9 @@ static bool fill_jump_struct()
         else if (*(s_fns[s_op_ptr]) == JumpFunc)
         {
             JumpPtrs value{};
-            value.JumpOpPtr = s_op_ptr;
-            value.JumpLodPtr = loadcount;
-            value.JumpStoPtr = storecount;
+            value.jump_op_ptr = s_op_ptr;
+            value.jump_lod_ptr = loadcount;
+            value.jump_sto_ptr = storecount;
             jump_data.push_back(value);
             i++;
             find_new_func = true;
