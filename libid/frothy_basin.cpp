@@ -96,7 +96,7 @@ inline double froth_top_x_mapping(double x)
 }
 
 // color maps which attempt to replicate the images of James Alexander.
-static void set_Froth_palette()
+static void set_froth_palette()
 {
     char const *mapname;
 
@@ -195,7 +195,7 @@ bool froth_setup()
     {
         g_magnitude_limit = 7.0;
     }
-    set_Froth_palette();
+    set_froth_palette();
     // make the best of the .map situation
     if (s_fsp.attractors != 6 && g_colors >= 16)
     {
