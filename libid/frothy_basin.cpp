@@ -39,7 +39,7 @@ constexpr double FROTH_SLOPE{SQRT3};                    //
 constexpr long FROTH_LSLOPE{froth_d_to_l(FROTH_SLOPE)}; //
 constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
-struct froth_double_struct
+struct FrothDouble
 {
     double a;
     double halfa;
@@ -57,7 +57,7 @@ struct froth_double_struct
     double right_x4;
 };
 
-struct froth_long_struct
+struct FrothLong
 {
     long a;
     long halfa;
@@ -75,7 +75,7 @@ struct froth_long_struct
     long right_x4;
 };
 
-struct froth_struct
+struct Froth
 {
     int repeat_mapping;
     int altcolor;
@@ -83,12 +83,12 @@ struct froth_struct
     int shades;
     union
     {
-        froth_double_struct f;
-        froth_long_struct l;
+        FrothDouble f;
+        FrothLong l;
     } fl;
 };
 
-static froth_struct s_fsp{};
+static Froth s_fsp{};
 
 inline double froth_top_x_mapping(double x)
 {
@@ -208,7 +208,7 @@ bool froth_setup()
 
     if (g_integer_fractal)
     {
-        froth_long_struct tmp_l;
+        FrothLong tmp_l;
 
         tmp_l.a        = froth_d_to_l(s_fsp.fl.f.a);
         tmp_l.halfa    = froth_d_to_l(s_fsp.fl.f.halfa);
