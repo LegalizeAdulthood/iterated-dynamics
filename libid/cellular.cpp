@@ -43,7 +43,7 @@ enum
     CELLULAR_DONE = 10
 };
 
-static void set_Cellular_palette();
+static void set_cellular_palette();
 
 static std::vector<BYTE> s_cell_array[2];
 static S16 s_s_r{};
@@ -137,7 +137,7 @@ int cellular()
     double n;
     char buf[512];
 
-    set_Cellular_palette();
+    set_cellular_palette();
 
     randparam = (S32)g_params[0];
     lnnmbr = (U32)g_params[3];
@@ -459,7 +459,7 @@ bool cellular_setup()
     return false;
 }
 
-static void set_Cellular_palette()
+static void set_cellular_palette()
 {
     static BYTE const Red[3]    = { 42, 0, 0 };
     static BYTE const Green[3]  = { 10, 35, 10 };
