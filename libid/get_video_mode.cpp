@@ -72,11 +72,11 @@ struct VideoModeChoice
 static std::vector<VideoModeChoice> s_video_choices;
 
 static void   format_item(int, char *);
-static int    check_modekey(int, int);
-static void   format_vid_inf(int i, char const *err, char *buf);
-static double vid_aspect(int tryxdots, int tryydots);
+static int    check_mode_key(int, int);
+static void   format_video_choice(int i, char const *err, char *buf);
+static double video_aspect(int tryxdots, int tryydots);
 
-static bool vidinf_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
+static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
 {
     if (lhs.flags < rhs.flags)
     {
@@ -101,7 +101,7 @@ static bool vidinf_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
     return false;
 }
 
-static void format_vid_inf(int i, char const *err, char *buf)
+static void format_video_choice(int i, char const *err, char *buf)
 {
     char kname[5];
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
@@ -114,7 +114,7 @@ static void format_vid_inf(int i, char const *err, char *buf)
     g_video_entry.xdots = 0; // so tab_display knows to display nothing
 }
 
-static double vid_aspect(int tryxdots, int tryydots)
+static double video_aspect(int tryxdots, int tryydots)
 {
     // calc resulting aspect ratio for specified dots in current mode
     return (double)tryydots / (double)tryxdots
@@ -249,7 +249,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (g_file_aspect_ratio != 0.0f && (tmpflags & VI_VSMALL) == 0)
         {
-            ftemp = vid_aspect(g_file_x_dots, g_file_y_dots);
+            ftemp = video_aspect(g_file_x_dots, g_file_y_dots);
             if (ftemp < g_file_aspect_ratio * 0.98
                 || ftemp > g_file_aspect_ratio * 1.02)
             {
@@ -270,7 +270,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == batch_modes::NONE))) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
-        std::sort(s_video_choices.begin(), s_video_choices.end(), vidinf_less);
+        std::sort(s_video_choices.begin(), s_video_choices.end(), video_choice_less);
 
         std::vector<int> attributes(g_video_table_len, 1);
 
@@ -297,7 +297,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             else
             {
                 char buff[80];
-                format_vid_inf(g_init_mode, "", buff);
+                format_video_choice(g_init_mode, "", buff);
                 std::strcat(heading, buff);
             }
         }
@@ -323,7 +323,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             i = full_screen_choice(0, heading,
                 "key...name......................err...xdot..ydot.clr.comment..................",
                 instructions.c_str(), g_video_table_len, nullptr, &attributes[0], 1, 13, 78, 0,
-                format_item, nullptr, nullptr, check_modekey);
+                format_item, nullptr, nullptr, check_mode_key);
         }
         if (i == -1)
         {
@@ -418,14 +418,14 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             tmpxdots = (g_file_x_dots + g_skip_x_dots - 1) / g_skip_x_dots;
             tmpydots = (g_file_y_dots + g_skip_y_dots - 1) / g_skip_y_dots;
             // reduce further if that improves aspect
-            ftemp = vid_aspect(tmpxdots, tmpydots);
+            ftemp = video_aspect(tmpxdots, tmpydots);
             if (ftemp > g_file_aspect_ratio)
             {
                 if (j)
                 {
                     break; // already reduced x, don't reduce y
                 }
-                double const ftemp2 = vid_aspect(tmpxdots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
+                double const ftemp2 = video_aspect(tmpxdots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
                 if (ftemp2 < g_file_aspect_ratio
                     && ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
                 {
@@ -440,7 +440,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 {
                     break; // already reduced y, don't reduce x
                 }
-                double const ftemp2 = vid_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmpydots);
+                double const ftemp2 = video_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmpydots);
                 if (ftemp2 > g_file_aspect_ratio
                     && g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
                 {
@@ -459,7 +459,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     g_final_aspect_ratio = g_file_aspect_ratio;
     if (g_final_aspect_ratio == 0) // assume display correct
     {
-        g_final_aspect_ratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
+        g_final_aspect_ratio = (float)video_aspect(g_file_x_dots, g_file_y_dots);
     }
     if (g_final_aspect_ratio >= g_screen_aspect-0.02
         && g_final_aspect_ratio <= g_screen_aspect+0.02)
@@ -555,10 +555,10 @@ static void format_item(int choice, char *buf)
     {
         std::strcat(errbuf, "c");
     }
-    format_vid_inf(s_video_choices[choice].entry_num, errbuf, buf);
+    format_video_choice(s_video_choices[choice].entry_num, errbuf, buf);
 }
 
-static int check_modekey(int curkey, int /*choice*/)
+static int check_mode_key(int curkey, int /*choice*/)
 {
     int i = check_vid_mode_key(0, curkey);
     return i >= 0 ? -100-i : 0;
