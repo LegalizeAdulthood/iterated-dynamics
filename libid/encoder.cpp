@@ -414,7 +414,7 @@ bool encoder()
         if (g_got_real_dac || g_fake_lut)
         {
             // got a DAC - must be a VGA
-            if (!shftwrite((BYTE *) g_dac_box, 256))
+            if (!shift_write((BYTE *) g_dac_box, 256))
             {
                 goto oops;
             }
