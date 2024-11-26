@@ -11,7 +11,7 @@ enum
     SUBDIR = 1
 };
 
-struct DIR_SEARCH               // Allocate DTA and define structure
+struct DirSearch
 {
     std::string path;           // path and filespec
     char attribute;             // File attributes wanted
@@ -21,7 +21,7 @@ struct DIR_SEARCH               // Allocate DTA and define structure
     std::string filename;       // Filename and extension
 };
 
-extern DIR_SEARCH g_dta;
+extern DirSearch g_dta;
 
 int fr_findfirst(char const *path);
 int fr_findnext();

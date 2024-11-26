@@ -12,7 +12,7 @@ enum class dir_pos
     FILES = 3
 };
 
-DIR_SEARCH g_dta;
+DirSearch g_dta;
 
 namespace fs = std::filesystem;
 
