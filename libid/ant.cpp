@@ -51,7 +51,7 @@ static std::vector<int> s_incy[DIRS];
 static int s_last_xdots{};
 static int s_last_ydots{};
 
-void setwait(long *wait)
+void set_wait(long *wait)
 {
     int kbdchar;
 
@@ -93,7 +93,7 @@ void setwait(long *wait)
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
-void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
+void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
     int ix;
     int iy;
@@ -196,7 +196,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             case ID_KEY_CTL_UP_ARROW:
             case ID_KEY_CTL_DOWN_ARROW:
             case ID_KEY_CTL_LEFT_ARROW:
-                setwait(&wait);
+                set_wait(&wait);
                 break;
             default:
                 done = true;
@@ -284,7 +284,7 @@ static unsigned rotate_left_one(unsigned value)
 }
 
 // this one ignore the color of the current cell is more like a white ant
-void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
+void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
     int ix;
     int iy;
@@ -371,7 +371,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             case ID_KEY_CTL_UP_ARROW:
             case ID_KEY_CTL_DOWN_ARROW:
             case ID_KEY_CTL_LEFT_ARROW:
-                setwait(&wait);
+                set_wait(&wait);
                 break;
             default:
                 done = true;
@@ -561,10 +561,10 @@ int ant()
     switch (type)
     {
     case 1:
-        TurkMite1(maxants, rule_len, rule.c_str(), maxpts, wait);
+        turk_mite1(maxants, rule_len, rule.c_str(), maxpts, wait);
         break;
     case 2:
-        TurkMite2(maxants, rule_len, rule.c_str(), maxpts, wait);
+        turk_mite2(maxants, rule_len, rule.c_str(), maxpts, wait);
         break;
     default:
         break;
