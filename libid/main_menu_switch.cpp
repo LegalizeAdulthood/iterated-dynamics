@@ -854,6 +854,7 @@ static MainMenuHandler s_handlers[]{
     {ID_KEY_CTL_Z, flip_image},                     //
     {ID_KEY_CTL_BACKSLASH, main_history},           //
     {ID_KEY_SPACE, space_command},                  //
+    {'#', request_3d_overlay},                      //
     {'+', color_cycle},                             //
     {'-', color_cycle},                             //
     {'2', execute_commands},                        //
