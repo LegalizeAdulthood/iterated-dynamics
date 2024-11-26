@@ -64,7 +64,7 @@ enum
 constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 
 // basic data types
-struct PALENTRY
+struct PalEntry
 {
     BYTE red;
     BYTE green;
@@ -232,8 +232,8 @@ public:
     void update();
     void draw();
     int edit();
-    void set_rgb(int pal, PALENTRY *rgb);
-    PALENTRY get_rgb() const;
+    void set_rgb(int pal, PalEntry *rgb);
+    PalEntry get_rgb() const;
 
 private:
     int m_x{};
@@ -319,7 +319,7 @@ private:
     void mk_default_palettes();
     void hide(RGBEditor *rgb, bool hidden);
     void calc_top_bottom();
-    void put_band(PALENTRY *pal);
+    void put_band(PalEntry *pal);
     void other_key(int key, RGBEditor *rgb) override;
     void change(RGBEditor *rgb) override;
     
@@ -333,14 +333,14 @@ private:
     bool m_done{};                    //
     int m_exclude{};                  //
     bool m_auto_select{true};         //
-    PALENTRY m_pal[256]{};            //
+    PalEntry m_pal[256]{};            //
     std::FILE *m_undo_file{};         //
     bool m_curr_changed{};            //
     int m_num_redo{};                 //
     bool m_hidden{};                  //
     std::vector<char> m_saved_pixel;  //
-    PALENTRY m_save_pal[8][256]{};    //
-    PALENTRY m_fs_color{};            //
+    PalEntry m_save_pal[8][256]{};    //
+    PalEntry m_fs_color{};            //
     int m_top{};                      //
     int m_bottom{};                   // top and bottom colours of freestyle band
     int m_band_width{};               // size of freestyle colour band
@@ -370,21 +370,21 @@ static void set_pal(int pal, int r, int g, int b)
     spin_dac(0, 1);
 }
 
-static void set_pal_range(int first, int how_many, PALENTRY *pal)
+static void set_pal_range(int first, int how_many, PalEntry *pal)
 {
     std::memmove(g_dac_box+first, pal, how_many*3);
     spin_dac(0, 1);
 }
 
-static void get_pal_range(int first, int how_many, PALENTRY *pal)
+static void get_pal_range(int first, int how_many, PalEntry *pal)
 {
     std::memmove(pal, g_dac_box+first, how_many*3);
 }
 
-static void rotate_pal(PALENTRY *pal, int dir, int lo, int hi)
+static void rotate_pal(PalEntry *pal, int dir, int lo, int hi)
 {
     // rotate in either direction
-    PALENTRY hold;
+    PalEntry hold;
     int      size;
 
     size  = 1 + (hi-lo);
@@ -553,7 +553,7 @@ static void displayf(int x, int y, int fg, int bg, char const *format, ...)
 }
 
 // create smooth shades between two colors
-static void mk_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
+static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, int skip)
 {
     double rm = (double) ((int) p2->red - (int) p1->red) / num;
     double gm = (double) ((int) p2->green - (int) p1->green) / num;
@@ -583,7 +583,7 @@ static void mk_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, in
 }
 
 //  Swap RG GB & RB columns
-static void rot_col_r_g(PALENTRY pal[], int num)
+static void rot_col_r_g(PalEntry pal[], int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
@@ -593,7 +593,7 @@ static void rot_col_r_g(PALENTRY pal[], int num)
     }
 }
 
-static void rot_col_g_b(PALENTRY pal[], int num)
+static void rot_col_g_b(PalEntry pal[], int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
@@ -603,7 +603,7 @@ static void rot_col_g_b(PALENTRY pal[], int num)
     }
 }
 
-static void rot_col_b_r(PALENTRY pal[], int num)
+static void rot_col_b_r(PalEntry pal[], int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
@@ -614,9 +614,9 @@ static void rot_col_b_r(PALENTRY pal[], int num)
 }
 
 // convert a range of colors to grey scale
-static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
+static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
 {
-    for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
+    for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
         BYTE val = (BYTE)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
         curr->blue = (BYTE)val;
@@ -626,9 +626,9 @@ static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 }
 
 // convert a range of colors to their inverse
-static void pal_range_to_negative(PALENTRY pal[], int first, int how_many)
+static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
 {
-    for (PALENTRY *curr = &pal[first]; how_many > 0; how_many--, curr++)
+    for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
         curr->red   = (BYTE)(63 - curr->red);
         curr->green = (BYTE)(63 - curr->green);
@@ -1384,7 +1384,7 @@ int RGBEditor::edit()
     return key;
 }
 
-void RGBEditor::set_rgb(int pal, PALENTRY *rgb)
+void RGBEditor::set_rgb(int pal, PalEntry *rgb)
 {
     m_pal = pal;
     m_color[0].set_val(rgb->red);
@@ -1392,9 +1392,9 @@ void RGBEditor::set_rgb(int pal, PALENTRY *rgb)
     m_color[2].set_val(rgb->blue);
 }
 
-PALENTRY RGBEditor::get_rgb() const
+PalEntry RGBEditor::get_rgb() const
 {
-    PALENTRY pal;
+    PalEntry pal;
 
     pal.red = (BYTE) m_color[0].get_val();
     pal.green = (BYTE) m_color[1].get_val();
@@ -1939,7 +1939,7 @@ void PalTable::update_dac()
 
         if (m_free_style)
         {
-            put_band((PALENTRY *) g_dac_box); // apply band to g_dac_box
+            put_band((PalEntry *) g_dac_box); // apply band to g_dac_box
         }
     }
 
@@ -2020,7 +2020,7 @@ void PalTable::undo_process(int delta)
         int first;
         int last;
         int num;
-        PALENTRY temp[256];
+        PalEntry temp[256];
 
         if (cmd == UNDO_DATA)
         {
@@ -2112,7 +2112,7 @@ void PalTable::mk_default_palettes()
 {
     for (int i = 0; i < 8; i++) // copy original palette to save areas
     {
-        std::memcpy(m_save_pal[i], m_pal, 256 * sizeof(PALENTRY));
+        std::memcpy(m_save_pal[i], m_pal, 256 * sizeof(PalEntry));
     }
 }
 
@@ -2287,7 +2287,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     {
         int a = m_active;
         int b = (a == 0) ? 1 : 0;
-        PALENTRY t;
+        PalEntry t;
 
         t = m_rgb[b].get_rgb();
         s_cursor.hide();
@@ -2586,7 +2586,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         s_cursor.hide();
 
         save_undo_data(0, 255);
-        std::memcpy(m_pal, m_save_pal[which], 256 * sizeof(PALENTRY));
+        std::memcpy(m_pal, m_save_pal[which], 256 * sizeof(PalEntry));
         update_dac();
 
         set_curr(-1, 0);
@@ -2605,7 +2605,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case ID_KEY_SF9:
     {
         int which = key - ID_KEY_SF2;
-        std::memcpy(m_save_pal[which], m_pal, 256 * sizeof(PALENTRY));
+        std::memcpy(m_save_pal[which], m_pal, 256 * sizeof(PalEntry));
         break;
     }
 
@@ -2791,7 +2791,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     draw_status(false);
 }
 
-void PalTable::put_band(PALENTRY *pal)
+void PalTable::put_band(PalEntry *pal)
 {
     int r;
     int b;
@@ -2846,7 +2846,7 @@ void PalTable::change(RGBEditor *rgb)
     if (m_curr[0] == m_curr[1])
     {
         int      other = m_active == 0 ? 1 : 0;
-        PALENTRY color;
+        PalEntry color;
 
         color = m_rgb[m_active].get_rgb();
         m_rgb[other].set_rgb(m_curr[other], &color);
