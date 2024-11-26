@@ -160,7 +160,7 @@ mandel_fp_setup()
             && (g_orbit_save_flags & osf_midi) == 0)
         {
             g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
-            calcmandfpasmstart();
+            calc_mand_fp_asm_start();
         }
         else
         {
@@ -299,7 +299,7 @@ julia_fp_setup()
             && (g_orbit_save_flags & osf_midi) == 0)
         {
             g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
-            calcmandfpasmstart();
+            calc_mand_fp_asm_start();
         }
         else
         {

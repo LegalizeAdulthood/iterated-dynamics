@@ -1295,7 +1295,7 @@ int calc_mand_fp()
         g_init.x = g_dx_pixel();
         g_init.y = g_dy_pixel();
     }
-    if (calcmandfpasm() >= 0)
+    if (calc_mand_fp_asm() >= 0)
     {
         if (g_potential_flag)
         {

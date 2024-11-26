@@ -2,5 +2,5 @@
 //
 #pragma once
 
-void calcmandfpasmstart();
-long calcmandfpasm();
+void calc_mand_fp_asm_start();
+long calc_mand_fp_asm();

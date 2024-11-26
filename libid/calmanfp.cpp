@@ -22,14 +22,14 @@
 static int s_inside_color{};
 static int s_periodicity_color{};
 
-void calcmandfpasmstart()
+void calc_mand_fp_asm_start()
 {
     s_inside_color = (g_inside_color < COLOR_BLACK) ? g_max_iterations : g_inside_color;
     s_periodicity_color = (g_periodicity_check < 0) ? 7 : s_inside_color;
     g_old_color_iter = 0;
 }
 
-long calcmandfpasm()
+long calc_mand_fp_asm()
 {
     long cx;
     long savedand;
