@@ -50,13 +50,13 @@
 #include <string>
 #include <vector>
 
-struct FT_CHOICE
+struct FractalTypeChoice
 {
     char name[15];
     int  num;
 };
 
-static FT_CHOICE **s_ft_choices{}; // for sel_fractype_help subrtn
+static FractalTypeChoice **s_ft_choices{}; // for sel_fractype_help subrtn
 // Julia inverse iteration method (jiim)
 #ifdef RANDOM_RUN
 static const char *s_jiim_method_prompt{"Breadth first, Depth first, Random Walk, Random Run?"};
@@ -123,8 +123,8 @@ static fractal_type select_fracttype(fractal_type t)
     int numtypes;
 #define MAXFTYPES 200
     char tname[40];
-    FT_CHOICE storage[MAXFTYPES] = { 0 };
-    FT_CHOICE *choices[MAXFTYPES];
+    FractalTypeChoice storage[MAXFTYPES] = { 0 };
+    FractalTypeChoice *choices[MAXFTYPES];
     int attributes[MAXFTYPES];
 
     // steal existing array for "choices"
@@ -165,7 +165,7 @@ static fractal_type select_fracttype(fractal_type t)
         }
         numtypes = j + 1;
     }
-    shell_sort(&choices, numtypes, sizeof(FT_CHOICE *)); // sort list
+    shell_sort(&choices, numtypes, sizeof(FractalTypeChoice *)); // sort list
     int j = 0;
     for (int i = 0; i < numtypes; ++i)   // find starting choice in sorted list
     {
