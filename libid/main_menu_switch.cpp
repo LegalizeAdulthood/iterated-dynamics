@@ -870,6 +870,7 @@ static MainMenuHandler s_handlers[]{
     {'i', request_3d_fractal_params},               //
     {'j', inverse_julia_toggle},                    //
     {'k', random_dot_stereogram},                   //
+    {'l', look_for_files},                          //
     {'o', show_orbit_window},                       //
     {'p', prompt_options},                          //
     {'s', request_save_image},                      //
