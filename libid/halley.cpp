@@ -74,7 +74,7 @@ bool halley_setup()
     return true;
 }
 
-static int  Halleybailout()
+static int halley_bailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
     {
@@ -84,7 +84,7 @@ static int  Halleybailout()
     return 0;
 }
 
-static bool MPCHalleybailout()
+static bool mpc_halley_bailout()
 {
     static MP mptmpbailout;
     mptmpbailout = *mp_abs(*mp_sub(mpc_mod(s_mpc_new), mpc_mod(s_mpc_old)));
@@ -146,7 +146,7 @@ int mpc_halley_fractal()
     // relaxation coef.
     s_mpc_new = mpc_sub(s_mpc_old, mpctmp2);
     g_new_z    = mpc_to_cmplx(s_mpc_new);
-    return MPCHalleybailout() || g_mp_overflow ? 1 : 0;
+    return mpc_halley_bailout() || g_mp_overflow ? 1 : 0;
 }
 
 int halley_fractal()
@@ -185,7 +185,7 @@ int halley_fractal()
     fpu_cmplx_mul(&relax, &Halnumer2, &Halnumer2);
     g_new_z.x = g_old_z.x - Halnumer2.x;
     g_new_z.y = g_old_z.y - Halnumer2.y;
-    return Halleybailout();
+    return halley_bailout();
 }
 
 int mpc_halley_per_pixel()
