@@ -33,7 +33,7 @@ static int prompt_checkkey(int curkey);
 static int prompt_checkkey_scroll(int curkey);
 static  int input_field_list(int attr, char *fld, int vlen, char const **list, int llen,
                              int row, int col, int (*checkkey)(int));
-static int prompt_valuestring(char *buf, fullscreenvalues const *val);
+static int prompt_valuestring(char *buf, FullScreenValues const *val);
 
 static int s_prompt_fn_keys{};
 
@@ -51,7 +51,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     char const *hdg,          // heading, lines separated by \n
     int num_prompts,          // there are this many prompts (max)
     char const **prompts,     // array of prompting pointers
-    fullscreenvalues *values, // array of values
+    FullScreenValues *values, // array of values
     int fn_key_mask,          // bit n on if Fn to cause return
     char *extra_info          // extra info box to display, \n separated
 )
@@ -811,7 +811,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     return full_screen_exit();
 }
 
-static int prompt_valuestring(char *buf, fullscreenvalues const *val)
+static int prompt_valuestring(char *buf, FullScreenValues const *val)
 {
     // format value into buf, return field width
     int i;

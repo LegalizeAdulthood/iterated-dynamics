@@ -37,7 +37,7 @@ int get_toggles()
     char const *choices[20];
     char prevsavename[FILE_MAX_DIR+1];
     char const *savenameptr;
-    fullscreenvalues uvalues[25];
+    FullScreenValues uvalues[25];
     int i;
     int j;
     int k;

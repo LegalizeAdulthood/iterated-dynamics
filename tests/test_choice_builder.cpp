@@ -23,7 +23,7 @@ namespace
 struct Prompter
 {
     MOCK_METHOD(int, prompt,
-        (char const *hdg, int numprompts, char const **prompts, fullscreenvalues *values, int fkeymask,
+        (char const *hdg, int numprompts, char const **prompts, FullScreenValues *values, int fkeymask,
             char *extrainfo),
         (const));
 };
@@ -34,7 +34,7 @@ MockPrompter *g_prompter{};
 
 struct Shim
 {
-    int operator()(char const *hdg, int numprompts, char const **prompts, fullscreenvalues *values, int fkeymask,
+    int operator()(char const *hdg, int numprompts, char const **prompts, FullScreenValues *values, int fkeymask,
         char *extrainfo) const
     {
         return g_prompter->prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
@@ -44,7 +44,7 @@ struct Shim
 template <typename T>
 using ListenerPredicate = std::function<bool(MatchResultListener *listener, const T&value)>;
 
-using FullScreenValuePredicate = ListenerPredicate<fullscreenvalues>;
+using FullScreenValuePredicate = ListenerPredicate<FullScreenValues>;
 
 template <typename T>
 ListenerPredicate<T> has_all(const ListenerPredicate<T> &pred)
@@ -80,7 +80,7 @@ MatchResultListener &operator<<(MatchResultListener &listener, const FullScreenV
 
 FullScreenValuePredicate has_type(int type)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         if (value.type != type)
         {
@@ -93,7 +93,7 @@ FullScreenValuePredicate has_type(int type)
     };
 }
 
-bool check_type(MatchResultListener *listener, const fullscreenvalues &value, int type)
+bool check_type(MatchResultListener *listener, const FullScreenValues &value, int type)
 {
     if (value.type != type)
     {
@@ -107,7 +107,7 @@ bool check_type(MatchResultListener *listener, const fullscreenvalues &value, in
 
 FullScreenValuePredicate has_yes_no(bool yes)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'y')};
         if (value.uval.ch.val != (yes ? 1 : 0))
@@ -125,7 +125,7 @@ FullScreenValuePredicate has_yes_no(bool yes)
 
 FullScreenValuePredicate has_int_number(int number)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'i')};
 
@@ -144,7 +144,7 @@ FullScreenValuePredicate has_int_number(int number)
 
 FullScreenValuePredicate has_long_number(long number)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'L')};
 
@@ -163,7 +163,7 @@ FullScreenValuePredicate has_long_number(long number)
 
 FullScreenValuePredicate has_float_number(float number)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'f')};
 
@@ -182,7 +182,7 @@ FullScreenValuePredicate has_float_number(float number)
 
 FullScreenValuePredicate has_double_number(double number)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'd')};
 
@@ -201,7 +201,7 @@ FullScreenValuePredicate has_double_number(double number)
 
 FullScreenValuePredicate has_int_double_number(double number)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'D')};
 
@@ -220,7 +220,7 @@ FullScreenValuePredicate has_int_double_number(double number)
 
 FullScreenValuePredicate has_list(int list_len, int list_value_len, const char *list[], int choice)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 'l')};
 
@@ -278,7 +278,7 @@ FullScreenValuePredicate has_list(int list_len, int list_value_len, const char *
 
 FullScreenValuePredicate has_string(const char *text)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 's')};
 
@@ -297,7 +297,7 @@ FullScreenValuePredicate has_string(const char *text)
 
 FullScreenValuePredicate has_string_buff(char *buff, int len)
 {
-    return [=](MatchResultListener *listener, const fullscreenvalues &value)
+    return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 0x100 + len)};
 
@@ -350,9 +350,9 @@ protected:
     }
 
     MockPrompter prompter;
-    std::function<void(fullscreenvalues *)> expect_yes_no(int index, bool expected)
+    std::function<void(FullScreenValues *)> expect_yes_no(int index, bool expected)
     {
-        return [=](fullscreenvalues *uvalues)
+        return [=](FullScreenValues *uvalues)
         {
             static const char *yesno[] = {"no", "yes"};
             uvalues[index].type = 'l';
@@ -368,9 +368,9 @@ protected:
 
 TEST(TestFullScreenValueMatchers, hasValue)
 {
-    fullscreenvalues values{};
-    auto always = [](MatchResultListener *, const fullscreenvalues &) { return true; };
-    auto never = [](MatchResultListener *, const fullscreenvalues &) { return false; };
+    FullScreenValues values{};
+    auto always = [](MatchResultListener *, const FullScreenValues &) { return true; };
+    auto never = [](MatchResultListener *, const FullScreenValues &) { return false; };
 
     EXPECT_THAT(&values, has_value(0, always));
     EXPECT_THAT(&values, Not(has_value(0, never)));
@@ -378,7 +378,7 @@ TEST(TestFullScreenValueMatchers, hasValue)
 
 TEST(TestFullScreenValueMatchers, hasType)
 {
-    fullscreenvalues value{};
+    FullScreenValues value{};
     value.type = 'f';
 
     EXPECT_THAT(&value, has_value(0, has_type('f')));
@@ -387,7 +387,7 @@ TEST(TestFullScreenValueMatchers, hasType)
 
 TEST(TestFullScreenValueMatchers, hasAllHead)
 {
-    fullscreenvalues value{};
+    FullScreenValues value{};
     value.type = 'f';
 
     EXPECT_THAT(&value, has_value(0, has_all(has_type('f'))));
@@ -624,7 +624,7 @@ TEST_F(TestChoiceBuilderPrompting, readIntChoice)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.ival = 12; }), Return(ID_KEY_ENTER)));
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { uvalues[0].uval.ival = 12; }), Return(ID_KEY_ENTER)));
     builder.int_number("Image grid size (odd numbers only)", 50);
     const int result = builder.prompt("Evolution Mode Options", 255);
 
@@ -638,7 +638,7 @@ TEST_F(TestChoiceBuilderPrompting, readLongChoice)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.Lval = 46L; }), Return(ID_KEY_ENTER)));
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { uvalues[0].uval.Lval = 46L; }), Return(ID_KEY_ENTER)));
     builder.long_number("Image grid size (odd numbers only)", 66L);
     const int result = builder.prompt("Evolution Mode Options", 255);
 
@@ -652,7 +652,7 @@ TEST_F(TestChoiceBuilderPrompting, readFloatChoice)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.dval = 46.5; }), Return(ID_KEY_ENTER)));
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { uvalues[0].uval.dval = 46.5; }), Return(ID_KEY_ENTER)));
     builder.float_number("Image grid size (odd numbers only)", 66.0f);
     const int result = builder.prompt("Evolution Mode Options", 255);
 
@@ -666,7 +666,7 @@ TEST_F(TestChoiceBuilderPrompting, readDoubleChoice)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.dval = 46.5; }), Return(ID_KEY_ENTER)));
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { uvalues[0].uval.dval = 46.5; }), Return(ID_KEY_ENTER)));
     builder.double_number("Image grid size (odd numbers only)", 66.0);
     const int result = builder.prompt("Evolution Mode Options", 255);
 
@@ -680,7 +680,7 @@ TEST_F(TestChoiceBuilderPrompting, readIntDoubleChoice)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.dval = 46; }), Return(ID_KEY_ENTER)));
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { uvalues[0].uval.dval = 46; }), Return(ID_KEY_ENTER)));
     builder.int_double_number("Image grid size (odd numbers only)", 66.0);
     const int result = builder.prompt("Evolution Mode Options", 255);
 
@@ -706,7 +706,7 @@ TEST_F(TestChoiceBuilderPrompting, readList)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, NotNull(), _, _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.ch.val = 0; }), Return(ID_KEY_ENTER)));
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { uvalues[0].uval.ch.val = 0; }), Return(ID_KEY_ENTER)));
     const char *list[]{"one", "two", "three"};
     const int list_len = 3;
     const int list_value_len = 5;
@@ -723,7 +723,7 @@ TEST_F(TestChoiceBuilderPrompting, readString)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, NotNull(), _, _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { std::strncpy(uvalues[0].uval.sval, "*.pot", 16); }),
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { std::strncpy(uvalues[0].uval.sval, "*.pot", 16); }),
             Return(ID_KEY_ENTER)));
     builder.string("Browse search filename mask ", "*.gif");
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -738,7 +738,7 @@ TEST_F(TestChoiceBuilderPrompting, readStringBuff)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, 1, NotNull(), _, _, _))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { std::strcpy(uvalues[0].uval.sbuf, "*.pot"); }),
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *uvalues) { std::strcpy(uvalues[0].uval.sbuf, "*.pot"); }),
             Return(ID_KEY_ENTER)));
     constexpr int len{80};
     char buff[len]{};

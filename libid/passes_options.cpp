@@ -25,7 +25,7 @@ int passes_options()
     char const *choices[20];
     char const *passcalcmodes[] = {"rect", "line"};
 
-    fullscreenvalues uvalues[25];
+    FullScreenValues uvalues[25];
     int i;
     int j;
     int k;

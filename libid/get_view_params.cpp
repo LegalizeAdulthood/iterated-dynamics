@@ -37,7 +37,7 @@
 int get_view_params()
 {
     char const *choices[16];
-    fullscreenvalues uvalues[25];
+    FullScreenValues uvalues[25];
     int i;
     int k;
     float old_viewreduction;

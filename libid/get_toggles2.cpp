@@ -25,7 +25,7 @@
 int get_toggles2()
 {
     char const *choices[18];
-    fullscreenvalues uvalues[23];
+    FullScreenValues uvalues[23];
     int old_rotate_lo;
     int old_rotate_hi;
     int old_distestwidth;

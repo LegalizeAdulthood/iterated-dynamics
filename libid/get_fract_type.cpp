@@ -358,7 +358,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     char const *juliorbitname = nullptr;
     int numparams;
     int numtrig;
-    fullscreenvalues paramvalues[30];
+    FullScreenValues paramvalues[30];
     char const *choices[30];
     long oldbailout = 0L;
     int promptnum;

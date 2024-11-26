@@ -11,7 +11,7 @@
 
 struct FullScreenPrompt
 {
-    int operator()(char const *hdg, int numprompts, char const **prompts, fullscreenvalues *values, int fkeymask,
+    int operator()(char const *hdg, int numprompts, char const **prompts, FullScreenValues *values, int fkeymask,
         char *extrainfo) const
     {
         return fullscreen_prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
@@ -111,7 +111,7 @@ public:
         m_current_build = 0;
         m_current_read = 0;
         choices = std::array<const char *, N>{};
-        uvalues = std::array<fullscreenvalues, N>{};
+        uvalues = std::array<FullScreenValues, N>{};
         m_prompted = false;
         m_result = 0;
         return *this;
@@ -191,7 +191,7 @@ public:
 
 private:
     std::array<const char *, N> choices{};
-    std::array<fullscreenvalues, N> uvalues{};
+    std::array<FullScreenValues, N> uvalues{};
 
     ChoiceBuilder &advance()
     {

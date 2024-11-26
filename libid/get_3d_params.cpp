@@ -40,7 +40,7 @@ int get_3d_params()     // prompt for 3D parameters
     int sphere;
     char const *s;
     char const *prompts3d[21];
-    fullscreenvalues uvalues[21];
+    FullScreenValues uvalues[21];
     int k;
 
 restart_1:

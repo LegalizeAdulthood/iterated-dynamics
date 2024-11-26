@@ -3,7 +3,7 @@
 #pragma once
 
 // structure passed to fullscreen_prompts
-struct fullscreenvalues
+struct FullScreenValues
 {
     int type;   // 'd' for double, 'f' for float, 's' for string,
     // 'D' for integer in double, '*' for comment
@@ -32,7 +32,7 @@ int fullscreen_prompt(
     char const *hdg,
     int num_prompts,
     char const **prompts,
-    fullscreenvalues *values,
+    FullScreenValues *values,
     int fn_key_mask,
     char *extra_info);
 
