@@ -11,5 +11,5 @@ extern bool                  g_gray_flag;
 extern bool                  g_image_map;
 extern std::string           g_stereo_map_filename;
 
-bool do_AutoStereo();
-int outline_stereo(BYTE *, int);
+bool auto_stereo_convert();
+int out_line_stereo(BYTE *pixels, int linelen);

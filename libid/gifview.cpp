@@ -112,7 +112,7 @@ int gif_view()
     s_col_count = g_row_count;
 
     // Open the file
-    if (g_out_line == outline_stereo)
+    if (g_out_line == out_line_stereo)
     {
         std::strcpy(temp1, g_stereo_map_filename.c_str());
     }
@@ -130,7 +130,7 @@ int gif_view()
         }
         else
         {
-            if (g_out_line == outline_stereo)
+            if (g_out_line == out_line_stereo)
             {
                 std::strcpy(temp1, g_stereo_map_filename.c_str());
             }

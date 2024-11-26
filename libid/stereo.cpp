@@ -169,7 +169,7 @@ static void toggle_bars(bool *bars, int barwidth, int const *colour)
     *bars = !*bars;
 }
 
-int outline_stereo(BYTE *pixels, int linelen)
+int out_line_stereo(BYTE *pixels, int linelen)
 {
     if ((Y) >= g_logical_screen_y_dots)
     {
@@ -244,7 +244,7 @@ int outline_stereo(BYTE *pixels, int linelen)
         Convert current image into Auto Stereo Picture
 **************************************************************************/
 
-bool do_AutoStereo()
+bool auto_stereo_convert()
 {
     static_vars v;
     BYTE savedacbox[256*3];
@@ -324,7 +324,7 @@ bool do_AutoStereo()
     Y = 0;
     if (g_image_map)
     {
-        g_out_line = outline_stereo;
+        g_out_line = out_line_stereo;
         while ((Y) < g_logical_screen_y_dots)
         {
             if (gif_view())
@@ -349,7 +349,7 @@ bool do_AutoStereo()
             {
                 buf[i] = (unsigned char)(std::rand()%g_colors);
             }
-            outline_stereo(&buf[0], g_logical_screen_x_dots);
+            out_line_stereo(&buf[0], g_logical_screen_x_dots);
         }
     }
 

@@ -810,7 +810,7 @@ static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
     clear_zoom_box();
     if (get_rds_params() >= 0)
     {
-        if (do_AutoStereo())
+        if (auto_stereo_convert())
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
