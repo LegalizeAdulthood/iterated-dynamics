@@ -64,7 +64,7 @@ std::string const DEFAULT_HTML_FNAME{"index.rst"};
 char const *const TEMP_FNAME{"hc.tmp"};
 char const *const SWAP_FNAME{"hcswap.tmp"};
 
-struct help_sig_info
+struct HelpSignature
 {
     unsigned long sig;
     int           version;
@@ -72,14 +72,14 @@ struct help_sig_info
 };
 
 // paginate document stuff
-struct DOC_INFO
+struct DocInfo
 {
     int content_num;
     int topic_num;
     bool link_dest_warn;
 };
 
-struct PAGINATE_DOC_INFO : DOC_INFO
+struct PaginateDocIno : DocInfo
 {
     char const *start;
     Content  *c;
@@ -87,7 +87,7 @@ struct PAGINATE_DOC_INFO : DOC_INFO
 };
 
 // print document stuff.
-struct PRINT_DOC_INFO : DOC_INFO
+struct PrintDocInfo : DocInfo
 {
     std::FILE *file;
     int margin;
@@ -510,7 +510,7 @@ void HelpCompiler::set_content_doc_page()
 // this function also used by print_document()
 bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
-    DOC_INFO &info = *static_cast<DOC_INFO *>(context);
+    DocInfo &info = *static_cast<DocInfo *>(context);
     const Content *c;
 
     switch (cmd)
@@ -570,7 +570,7 @@ bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 
 bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
-    PAGINATE_DOC_INFO *info = static_cast<PAGINATE_DOC_INFO *>(context);
+    PaginateDocIno *info = static_cast<PaginateDocIno *>(context);
     switch (cmd)
     {
     case PrintDocCommand::PD_FOOTING:
@@ -622,7 +622,7 @@ void HelpCompiler::paginate_document()
 
     msg("Paginating document.");
 
-    PAGINATE_DOC_INFO info;
+    PaginateDocIno info;
     info.topic_num = -1;
     info.content_num = info.topic_num;
     info.link_dest_warn = true;
@@ -907,7 +907,7 @@ void insert_real_link_info(char *curr, unsigned int len)
 void HelpCompiler::write_help(std::FILE *file)
 {
     char                 *text;
-    help_sig_info  hs;
+    HelpSignature  hs;
 
     // write the signature and version
 
@@ -1017,7 +1017,7 @@ void HelpCompiler::write_help()
     std::fclose(hlp);
 }
 
-void printerc(PRINT_DOC_INFO *info, int c, int n)
+void printerc(PrintDocInfo *info, int c, int n)
 {
     while (n-- > 0)
     {
@@ -1050,7 +1050,7 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
     }
 }
 
-void printers(PRINT_DOC_INFO *info, char const *s, int n)
+void printers(PrintDocInfo *info, char const *s, int n)
 {
     if (n > 0)
     {
@@ -1081,7 +1081,7 @@ static std::string version_header()
 
 bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
-    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
+    PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
     {
     case PrintDocCommand::PD_HEADING:
@@ -1143,7 +1143,7 @@ void HelpCompiler::print_document()
 
     msg("Printing to: %s", fname);
 
-    PRINT_DOC_INFO info;
+    PrintDocInfo info;
     info.topic_num = -1;
     info.content_num = info.topic_num;
     info.link_dest_warn = false;
@@ -1267,7 +1267,7 @@ void HelpCompiler::add_hlp_to_exe()
         hlp;
     long                 len;
     int                  size;
-    help_sig_info hs;
+    HelpSignature hs;
 
     exe = open(exe_fname, O_RDWR|O_BINARY);
     if (exe == -1)
@@ -1285,7 +1285,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     // first, check and see if any help is currently installed
 
-    lseek(exe, filelength(exe) - sizeof(help_sig_info), SEEK_SET);
+    lseek(exe, filelength(exe) - sizeof(HelpSignature), SEEK_SET);
 
     if (read(exe, (char *)&hs, 10) != 10)
     {
@@ -1368,7 +1368,7 @@ void HelpCompiler::delete_hlp_from_exe()
         throw std::runtime_error("Unexpected argument \"" + m_options.fname2 + "\"");
     }
     const char *exe_fname{m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str()};
-    help_sig_info hs;
+    HelpSignature hs;
 
     int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
