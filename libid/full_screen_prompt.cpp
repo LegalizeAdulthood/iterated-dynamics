@@ -29,11 +29,11 @@
 #include <cstdlib>
 #include <cstring>
 
-static int prompt_checkkey(int curkey);
-static int prompt_checkkey_scroll(int curkey);
+static int prompt_check_key(int curkey);
+static int prompt_check_key_scroll(int curkey);
 static  int input_field_list(int attr, char *fld, int vlen, char const **list, int llen,
                              int row, int col, int (*checkkey)(int));
-static int prompt_valuestring(char *buf, FullScreenValues const *val);
+static int prompt_value_string(char *buf, FullScreenValues const *val);
 
 static int s_prompt_fn_keys{};
 
@@ -285,7 +285,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 max_prompt_width = j;
             }
             char buf[81];
-            j = prompt_valuestring(buf, &values[i]);
+            j = prompt_value_string(buf, &values[i]);
             if (j > max_field_width)
             {
                 max_field_width = j;
@@ -436,7 +436,7 @@ int full_screen_prompt(        // full-screen prompting routine
     {
         driver_put_string(prompt_row+i, prompt_col, C_PROMPT_LO, prompts[i]);
         char buf[81];
-        prompt_valuestring(buf, &values[i]);
+        prompt_value_string(buf, &values[i]);
         driver_put_string(prompt_row+i, value_col, C_PROMPT_LO, buf);
     }
 
@@ -610,7 +610,7 @@ int full_screen_prompt(        // full-screen prompting routine
 
         const int cur_type = values[cur_choice].type;
         char buf[81];
-        const int cur_len = prompt_valuestring(buf, &values[cur_choice]);
+        const int cur_len = prompt_value_string(buf, &values[cur_choice]);
         if (!rewrite_extra_info)
         {
             put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
@@ -630,7 +630,7 @@ int full_screen_prompt(        // full-screen prompting routine
             i = input_field_list(
                     C_PROMPT_CHOOSE, buf, cur_len,
                     values[cur_choice].uval.ch.list, values[cur_choice].uval.ch.llen,
-                    prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                    prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
             int j;
             for (j = 0; j < values[cur_choice].uval.ch.llen; ++j)
             {
@@ -665,7 +665,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 j = INPUTFIELD_NUMERIC;
             }
             i = input_field(j, C_PROMPT_INPUT, buf, cur_len,
-                            prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                            prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
             switch (values[cur_choice].type)
             {
             case 'd':
@@ -811,7 +811,7 @@ int full_screen_prompt(        // full-screen prompting routine
     return full_screen_exit();
 }
 
-static int prompt_valuestring(char *buf, FullScreenValues const *val)
+static int prompt_value_string(char *buf, FullScreenValues const *val)
 {
     // format value into buf, return field width
     int i;
@@ -866,7 +866,7 @@ static int prompt_valuestring(char *buf, FullScreenValues const *val)
     return ret;
 }
 
-static int prompt_checkkey(int curkey)
+static int prompt_check_key(int curkey)
 {
     switch (curkey)
     {
@@ -892,7 +892,7 @@ static int prompt_checkkey(int curkey)
     return 0;
 }
 
-static int prompt_checkkey_scroll(int curkey)
+static int prompt_check_key_scroll(int curkey)
 {
     switch (curkey)
     {
