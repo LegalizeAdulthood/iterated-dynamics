@@ -22,7 +22,7 @@
 namespace
 {
 
-struct Palettetype
+struct PaletteType
 {
     BYTE red;
     BYTE green;
@@ -31,7 +31,7 @@ struct Palettetype
 
 } // namespace
 
-#define dac ((Palettetype *)g_dac_box)
+#define dac ((PaletteType *)g_dac_box)
 
 bool validate_luts(char const *fn)
 {
