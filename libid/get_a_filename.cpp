@@ -112,8 +112,8 @@ retry_dir:
         int j = (int) std::strlen(tmpmask) - 1;
         tmpmask[j] = 0; // strip trailing backslash
         if (std::strchr(tmpmask, '*') || std::strchr(tmpmask, '?')
-            || fr_findfirst(tmpmask) != 0
-            || (g_dta.attribute & SUBDIR) == 0)
+            || fr_find_first(tmpmask) != 0
+            || (g_dta.attribute & SUB_DIR) == 0)
         {
             std::strcpy(dir, DOTSLASH);
             ++retried;
@@ -135,10 +135,10 @@ retry_dir:
     notroot   = false;
     masklen = (int) std::strlen(tmpmask);
     std::strcat(tmpmask, "*.*");
-    out = fr_findfirst(tmpmask);
+    out = fr_find_first(tmpmask);
     while (out == 0 && filecount < MAXNUMFILES)
     {
-        if ((g_dta.attribute & SUBDIR) && g_dta.filename != ".")
+        if ((g_dta.attribute & SUB_DIR) && g_dta.filename != ".")
         {
             if (g_dta.filename != "..")
             {
@@ -152,7 +152,7 @@ retry_dir:
                 notroot = true;
             }
         }
-        out = fr_findnext();
+        out = fr_find_next();
     }
     tmpmask[masklen] = 0;
     if (file_template[0])
@@ -166,10 +166,10 @@ retry_dir:
         {
             std::strcpy(&(tmpmask[masklen]), s_masks[j]);
         }
-        out = fr_findfirst(tmpmask);
+        out = fr_find_first(tmpmask);
         while (out == 0 && filecount < MAXNUMFILES)
         {
-            if (!(g_dta.attribute & SUBDIR))
+            if (!(g_dta.attribute & SUB_DIR))
             {
                 if (rds)
                 {
@@ -185,7 +185,7 @@ retry_dir:
                     choices[filecount]->subdir = false;
                 }
             }
-            out = fr_findnext();
+            out = fr_find_next();
         }
     }
     while (++j < numtemplates);
@@ -306,7 +306,7 @@ retry_dir:
     {
         if (s_speed_state == SEARCHPATH
             && std::strchr(speedstr, '*') == nullptr && std::strchr(speedstr, '?') == nullptr
-            && ((fr_findfirst(speedstr) == 0 && (g_dta.attribute & SUBDIR))
+            && ((fr_find_first(speedstr) == 0 && (g_dta.attribute & SUB_DIR))
                 || std::strcmp(speedstr, SLASH) == 0)) // it is a directory
         {
             s_speed_state = TEMPLATE;

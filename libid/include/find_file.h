@@ -8,7 +8,7 @@
 
 enum
 {
-    SUBDIR = 1
+    SUB_DIR = 1
 };
 
 struct DirSearch
@@ -23,5 +23,5 @@ struct DirSearch
 
 extern DirSearch g_dta;
 
-int fr_findfirst(char const *path);
-int fr_findnext();
+int fr_find_first(char const *path);
+int fr_find_next();

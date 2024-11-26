@@ -28,7 +28,7 @@ static void fill_dta()
 {
     g_dta.path = s_dir_it->path().string();
     g_dta.filename = s_dir_it->path().filename().string();
-    g_dta.attribute = is_directory(*s_dir_it) ? SUBDIR : 0;
+    g_dta.attribute = is_directory(*s_dir_it) ? SUB_DIR : 0;
 }
 
 static bool next_match()
@@ -37,7 +37,7 @@ static bool next_match()
     {
         g_dta.path = (s_dir_it->path() / ".").string();
         g_dta.filename = ".";
-        g_dta.attribute = SUBDIR;
+        g_dta.attribute = SUB_DIR;
         s_dir_pos = dir_pos::DOT;
         return true;
     }
@@ -45,7 +45,7 @@ static bool next_match()
     {
         g_dta.path = (s_dir_it->path() / "..").string();
         g_dta.filename = "..";
-        g_dta.attribute = SUBDIR;
+        g_dta.attribute = SUB_DIR;
         s_dir_pos = dir_pos::DOT_DOT;
         return true;
     }
@@ -71,7 +71,7 @@ static bool next_match()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting path/filespec
+int fr_find_first(char const *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     const fs::path search{path};
     const fs::path search_dir{is_directory(search) ? search : (search.has_parent_path() ? search.parent_path() : ".")};
@@ -99,7 +99,7 @@ int fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting pa
  * Find the next file matching the wildcard search begun by fr_findfirst.
  * Fill in DTA.filename, DTA.path, and DTA.attribute
  */
-int fr_findnext()
+int fr_find_next()
 {
     if (s_dir_pos == dir_pos::FILES)
     {

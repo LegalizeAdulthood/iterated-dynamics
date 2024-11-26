@@ -1614,7 +1614,7 @@ rescan:  // entry for changed browse parms
     split_drive_dir(g_read_filename, drive, dir);
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmpmask, drive, dir, fname, ext);
-    done = (vid_too_big == 2) || fr_findfirst(tmpmask);
+    done = (vid_too_big == 2) || fr_find_first(tmpmask);
     // draw all visible windows
     while (!done)
     {
@@ -1647,7 +1647,7 @@ rescan:  // entry for changed browse parms
             save_box(num_dots, wincount);
             wincount++;
         }
-        done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
+        done = (fr_find_next() || wincount >= MAX_WINDOWS_OPEN);
     }
 
     if (wincount >= MAX_WINDOWS_OPEN)
