@@ -48,7 +48,7 @@ enum
     MAX_MNEMONIC = 20   // max size of any mnemonic string
 };
 
-struct key_mnemonic
+struct KeyMnemonic
 {
     int code;
     char const *mnemonic;
@@ -65,7 +65,7 @@ slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=rec
 std::string g_auto_name{"auto.key"};    // record auto keystrokes here
 bool g_busy{};
 
-static key_mnemonic s_key_mnemonics[] =
+static KeyMnemonic s_key_mnemonics[] =
 {
     { ID_KEY_ENTER,            "ENTER"     },
     { ID_KEY_INSERT,           "INSERT"    },
@@ -99,7 +99,7 @@ static int s_last1{};
 
 static int get_scancode(char const *mn)
 {
-    for (key_mnemonic const &it : s_key_mnemonics)
+    for (KeyMnemonic const &it : s_key_mnemonics)
     {
         if (std::strcmp(mn, it.mnemonic) == 0)
         {
@@ -113,7 +113,7 @@ static int get_scancode(char const *mn)
 static void get_mnemonic(int code, char *mnemonic)
 {
     *mnemonic = 0;
-    for (key_mnemonic const &it : s_key_mnemonics)
+    for (KeyMnemonic const &it : s_key_mnemonics)
     {
         if (code == it.code)
         {
