@@ -46,9 +46,8 @@ struct CHOICE
     bool subdir;
 };
 
-static  int check_f6_key(int curkey, int choice);
-static  int filename_speedstr(int row, int col, int vid,
-                             char const *speedstring, int speed_match);
+static int check_f6_key(int curkey, int choice);
+static int filename_speed_str(int row, int col, int vid, char const *speedstring, int speed_match);
 
 static int s_speed_state{};
 static char const *s_masks[]{"*.pot", "*.gif"};
@@ -239,7 +238,7 @@ retry_dir:
 
     i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
         heading.c_str(), nullptr, instr, filecount, (char const **) choices,
-        attributes, 0, 99, 0, i, nullptr, speedstr, filename_speedstr, check_f6_key);
+        attributes, 0, 99, 0, i, nullptr, speedstr, filename_speed_str, check_f6_key);
     if (i == -ID_KEY_F4)
     {
         dosort = !dosort;
@@ -381,8 +380,7 @@ static int check_f6_key(int curkey, int /*choice*/)
     return 0;
 }
 
-static int filename_speedstr(int row, int col, int vid,
-                             char const *speedstring, int speed_match)
+static int filename_speed_str(int row, int col, int vid, char const *speedstring, int speed_match)
 {
     char const *prompt;
     if (std::strchr(speedstring, ':')
