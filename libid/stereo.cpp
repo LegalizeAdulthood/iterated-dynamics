@@ -42,7 +42,7 @@ bool g_image_map{};
 
 // this structure permits variables to be temporarily static and visible
 // to routines in this file without permanently hogging memory
-struct static_vars
+struct StereoData
 {
     long avg;
     long avgct;
@@ -64,7 +64,10 @@ struct static_vars
     int ycen;
     BYTE *savedac;
 };
-static static_vars *pv{};
+
+using DACBox = BYTE (*)[256][3];
+
+static StereoData *pv{};
 
 #define AVG         (pv->avg)
 #define AVGCT       (pv->avgct)
@@ -93,8 +96,7 @@ static static_vars *pv{};
    0 to 255.
 */
 
-using DACBOX = BYTE (*)[256][3];
-#define dac   (*((DACBOX)(pv->savedac)))
+#define dac   (*((DACBox)(pv->savedac)))
 
 static int getdepth(int xd, int yd)
 {
@@ -246,7 +248,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 
 bool auto_stereo_convert()
 {
-    static_vars v;
+    StereoData v;
     BYTE savedacbox[256*3];
     bool ret = false;
     bool bars;
