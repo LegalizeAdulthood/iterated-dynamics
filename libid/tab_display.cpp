@@ -173,7 +173,7 @@ bool tab_display_2(char *msg)
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
 
     row = 1;
-    putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
+    put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
     write_row(++row, "Version %d patch %d", g_release, g_patch_level);
     write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, g_max_stack);
@@ -233,7 +233,7 @@ bool tab_display_2(char *msg)
     */
     write_row(row++, "minstackavail %d llimit2 %ld use_grid %d",
               g_soi_min_stack_available, g_l_magnitude_limit2, g_use_grid ? 1 : 0);
-    putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
+    put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
     *msg = 0;
 
     // display keycodes while waiting for ESC, BACKSPACE or TAB
@@ -691,7 +691,7 @@ top:
     {
         ++s_row;
     }
-    putstringcenter(
+    put_string_center(
         24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
     driver_hide_text_cursor();
 #ifdef XFRACT

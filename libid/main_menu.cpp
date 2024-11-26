@@ -394,7 +394,7 @@ top:
         {
             driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
         }
-        putstringcenter(10, 18, 40, C_GENERAL_INPUT,
+        put_string_center(10, 18, 40, C_GENERAL_INPUT,
                         "Exit from " ID_PROGRAM_NAME " (y/n)? y"
                        );
         driver_hide_text_cursor();

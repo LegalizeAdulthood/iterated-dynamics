@@ -406,7 +406,7 @@ static void display_page(char const *title, char const *text, unsigned text_len,
     help_title();
     helpinstr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-    putstringcenter(1, 0, 80, C_HELP_HDG, title);
+    put_string_center(1, 0, 80, C_HELP_HDG, title);
     std::snprintf(temp, std::size(temp), "%2d of %d", page+1, num_pages);
     driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 
@@ -1282,7 +1282,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     if (pnum == -1)      // successful completion
     {
         driver_buzzer(buzzer_codes::COMPLETE);
-        putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
+        put_string_center(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
         driver_get_key();
         return false;
     }
@@ -1290,7 +1290,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     if (pnum == -2)     // aborted
     {
         driver_buzzer(buzzer_codes::INTERRUPT);
-        putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
+        put_string_center(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
         driver_get_key();
         return false;
     }
@@ -1300,7 +1300,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         help_title();
         printinstr();
         driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-        putstringcenter(1, 0, 80, C_HELP_HDG, "Generating id.txt");
+        put_string_center(1, 0, 80, C_HELP_HDG, "Generating id.txt");
 
         driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 

@@ -457,9 +457,9 @@ int full_screen_prompt(        // full-screen prompting routine
     };
     if (!any_input)
     {
-        putstringcenter(instr_row++, 0, 80, C_PROMPT_BKGRD,
+        put_string_center(instr_row++, 0, 80, C_PROMPT_BKGRD,
                         "No changeable parameters;");
-        putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
+        put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
                 (g_help_mode > help_labels::HELP_INDEX) ?
                 "Press ENTER to exit, ESC to back out, F1 for help"
                 : "Press ENTER to exit");
@@ -577,10 +577,10 @@ int full_screen_prompt(        // full-screen prompting routine
     // display footing
     if (num_prompts > 1)
     {
-        putstringcenter(instr_row++, 0, 80, C_PROMPT_BKGRD,
+        put_string_center(instr_row++, 0, 80, C_PROMPT_BKGRD,
                         "Use <Up> and <Down> to select values to change");
     }
-    putstringcenter(instr_row+1, 0, 80, C_PROMPT_BKGRD,
+    put_string_center(instr_row+1, 0, 80, C_PROMPT_BKGRD,
             (g_help_mode > help_labels::HELP_INDEX) ?
             "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
@@ -613,7 +613,7 @@ int full_screen_prompt(        // full-screen prompting routine
         const int cur_len = prompt_valuestring(buf, &values[cur_choice]);
         if (!rewrite_extra_info)
         {
-            putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
+            put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
                 (cur_type == 'l') ?
                 "Use <Left> or <Right> to change value of selected field"
                 : "Type in replacement value for selected field");

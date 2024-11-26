@@ -173,7 +173,7 @@ retry_dir:
             {
                 if (rds)
                 {
-                    putstringcenter(2, 0, 80, C_GENERAL_INPUT, g_dta.filename.c_str());
+                    put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename.c_str());
 
                     split_fname_ext(g_dta.filename, fname, ext);
                     make_path(choices[++filecount]->full_name, drive, dir, fname, ext);

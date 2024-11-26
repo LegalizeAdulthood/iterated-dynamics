@@ -32,5 +32,5 @@ void help_title()
         std::strcat(msg, buf);
     }
     strcat(msg, " (" ID_GIT_HASH ")");
-    putstringcenter(0, 0, 80, C_TITLE, msg);
+    put_string_center(0, 0, 80, C_TITLE, msg);
 }

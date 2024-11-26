@@ -84,15 +84,15 @@ int field_prompt(
             if (buf[j] == '\n')
             {
                 buf[j] = 0;
-                putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
+                put_string_center(i++, 0, 80, C_PROMPT_BKGRD, buf);
                 j = -1;
             }
         }
-        putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+        put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
     }
     else                                     // default instructions
     {
-        putstringcenter(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
+        put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
     }
     return input_field(0, C_PROMPT_INPUT, fld, len,
                        titlerow+titlelines+1, promptcol, checkkey);
