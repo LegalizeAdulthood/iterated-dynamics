@@ -490,7 +490,7 @@ int plasma()
 
     if (s_max_plasma != 0)
     {
-        if (pot_startdisk() >= 0)
+        if (pot_start_disk() >= 0)
         {
             s_max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)

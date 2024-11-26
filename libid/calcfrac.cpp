@@ -881,7 +881,7 @@ int calc_fract()
     }
     if (g_truecolor)
     {
-        enddisk();
+        end_disk();
     }
     return g_calc_status == calc_status_value::COMPLETED ? 0 : -1;
 }
@@ -935,7 +935,7 @@ static void perform_worklist()
         g_std_calc_mode = '1'; // force 1 pass
         if (!g_resuming)
         {
-            if (pot_startdisk() < 0)
+            if (pot_start_disk() < 0)
             {
                 g_potential_16bit = false;       // startdisk failed or cancelled
                 g_std_calc_mode = (char)tmpcalcmode;    // maybe we can carry on???

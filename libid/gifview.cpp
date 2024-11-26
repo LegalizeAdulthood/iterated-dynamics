@@ -529,7 +529,7 @@ int pot_line(BYTE *pixels, int linelen)
     int saverowcount;
     if (g_row_count == 0)
     {
-        if (pot_startdisk() < 0)
+        if (pot_start_disk() < 0)
         {
             return -1;
         }

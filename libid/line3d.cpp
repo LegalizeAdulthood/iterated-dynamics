@@ -1536,7 +1536,7 @@ int targa_color(int x, int y, int color)
 
     // Now write the color triple to its transformed location
     // on the disk.
-    targa_writedisk(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset, RGB[0], RGB[1], RGB[2]);
+    targa_write_disk(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset, RGB[0], RGB[1], RGB[2]);
 
     return (int)(255 - V);
 }
@@ -1704,9 +1704,9 @@ bool startdisk1(const std::string &filename, std::FILE *source, bool overlay)
         }
     }
 
-    if (targa_startdisk(fps, s_targa_header_24) != 0)
+    if (targa_start_disk(fps, s_targa_header_24) != 0)
     {
-        enddisk();
+        end_disk();
         dir_remove(g_working_dir, filename);
         return true;
     }
@@ -2401,7 +2401,7 @@ static void line3d_cleanup()
     {
         // Finish up targa files
         s_targa_header_24 = 18;         // Reset Targa header size
-        enddisk();
+        end_disk();
         if (g_debug_flag == debug_flags::none && (!s_t_safe || s_error) && g_targa_overlay)
         {
             dir_remove(g_working_dir, g_light_name);

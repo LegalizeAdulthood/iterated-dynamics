@@ -170,9 +170,9 @@ bool DiskDriver::resize()
 
     if (g_disk_flag)
     {
-        enddisk();
+        end_disk();
     }
-    startdisk();
+    start_disk();
 
     return true;
 }

@@ -157,7 +157,7 @@ int get_toggles2()
         {
             if (!driver_diskp())   // ditch the disk video
             {
-                enddisk();
+                end_disk();
             }
             else     // keep disk video, but ditch the fraction part at end
             {

@@ -82,19 +82,19 @@ static void mem_putc(BYTE);
 static BYTE  mem_getc();
 static void mem_seek(long);
 
-int startdisk()
+int start_disk()
 {
     s_header_length = 0;
     g_disk_targa = false;
-    return common_startdisk(g_screen_x_dots, g_screen_y_dots, g_colors);
+    return common_start_disk(g_screen_x_dots, g_screen_y_dots, g_colors);
 }
 
-int pot_startdisk()
+int pot_start_disk()
 {
     int i;
     if (driver_diskp())         // ditch the original disk file
     {
-        enddisk();
+        end_disk();
     }
     else
     {
@@ -102,7 +102,7 @@ int pot_startdisk()
     }
     s_header_length = 0;
     g_disk_targa = false;
-    i = common_startdisk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
+    i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
     cleartempmsg();
     if (i == 0)
     {
@@ -112,28 +112,28 @@ int pot_startdisk()
     return i;
 }
 
-int targa_startdisk(std::FILE *targafp, int overhead)
+int targa_start_disk(std::FILE *targafp, int overhead)
 {
     int i;
     if (driver_diskp()) // ditch the original file, make just the targa
     {
-        enddisk();      // close the 'screen'
+        end_disk();      // close the 'screen'
         set_null_video(); // set readdot and writedot routines to do nothing
     }
     s_header_length = overhead;
     s_fp = targafp;
     g_disk_targa = true;
-    i = common_startdisk(g_logical_screen_x_dots*3, g_logical_screen_y_dots, g_colors);
+    i = common_start_disk(g_logical_screen_x_dots*3, g_logical_screen_y_dots, g_colors);
     s_high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;
 }
 
-int common_startdisk(long newrowsize, long newcolsize, int colors)
+int common_start_disk(long newrowsize, long newcolsize, int colors)
 {
     if (g_disk_flag)
     {
-        enddisk();
+        end_disk();
     }
     if (driver_diskp()) // otherwise, real screen also in use, don't hit it
     {
@@ -276,7 +276,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
                 // esc to cancel, else continue
                 if (stopmsg(stopmsg_flags::CANCEL, "Disk Video initialization interrupted:\n"))
                 {
-                    enddisk();
+                    end_disk();
                     g_good_mode = false;
                     return -2;            // -1 == failed, -2 == cancel
                 }
@@ -291,7 +291,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     return 0;
 }
 
-void enddisk()
+void end_disk()
 {
     if (s_fp != nullptr)
     {
@@ -385,7 +385,7 @@ bool from_mem_disk(long offset, int size, void *dest)
     return true;
 }
 
-void targa_readdisk(unsigned int col, unsigned int row, BYTE *red, BYTE *green, BYTE *blue)
+void targa_read_disk(unsigned int col, unsigned int row, BYTE *red, BYTE *green, BYTE *blue)
 {
     col *= 3;
     *blue  = (BYTE)disk_read_pixel(col, row);
@@ -453,7 +453,7 @@ bool to_mem_disk(long offset, int size, void *src)
     return true;
 }
 
-void targa_writedisk(unsigned int col, unsigned int row, BYTE red, BYTE green, BYTE blue)
+void targa_write_disk(unsigned int col, unsigned int row, BYTE red, BYTE green, BYTE blue)
 {
     disk_write_pixel(col *= 3, row, blue);
     disk_write_pixel(++col, row, green);

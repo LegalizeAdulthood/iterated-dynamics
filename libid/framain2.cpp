@@ -274,7 +274,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             else if (g_potential_16bit)
             {
                 // .pot format input file
-                if (pot_startdisk() < 0)
+                if (pot_start_disk() < 0)
                 {
                     // pot file failed?
                     g_show_file = 1;

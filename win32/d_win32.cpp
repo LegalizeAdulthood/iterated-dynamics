@@ -224,7 +224,7 @@ void Win32BaseDriver::set_video_mode(VIDEOINFO *mode)
     resize();
     if (g_disk_flag)
     {
-        enddisk();
+        end_disk();
     }
     set_normal_dot();
     set_normal_span();

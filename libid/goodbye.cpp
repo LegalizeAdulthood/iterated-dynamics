@@ -35,7 +35,7 @@
     }
     free_grid_pointers();
     free_ant_storage();
-    enddisk();
+    end_disk();
     ExitCheck();
     if (!g_make_parameter_file)
     {

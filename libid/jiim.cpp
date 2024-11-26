@@ -268,7 +268,7 @@ bool Init_Queue(unsigned long request)
 
     for (s_list_size = request; s_list_size > 1024; s_list_size /= 2)
     {
-        switch (common_startdisk(s_list_size * 8, 1, 256))
+        switch (common_start_disk(s_list_size * 8, 1, 256))
         {
         case 0:                        // success
             s_list_back = 0;
@@ -291,7 +291,7 @@ bool Init_Queue(unsigned long request)
 
 void Free_Queue()
 {
-    enddisk();
+    end_disk();
     s_l_max = 0;
     s_l_size = 0;
     s_list_size = 0;
