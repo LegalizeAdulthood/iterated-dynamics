@@ -82,8 +82,8 @@ struct DOC_INFO
 struct PAGINATE_DOC_INFO : DOC_INFO
 {
     char const *start;
-    CONTENT  *c;
-    LABEL    *lbl;
+    Content  *c;
+    Label    *lbl;
 };
 
 // print document stuff.
@@ -100,7 +100,7 @@ int g_num_doc_pages{};               // total number of pages in document
 
 static std::string s_src_filename;   // command-line .SRC filename
 
-std::ostream &operator<<(std::ostream &str, const CONTENT &content)
+std::ostream &operator<<(std::ostream &str, const Content &content)
 {
     str << "Flags: " << std::hex << content.flags << std::dec << '\n'
         << "Id: <" << content.id << ">\n"
@@ -118,19 +118,19 @@ std::ostream &operator<<(std::ostream &str, const CONTENT &content)
         << "Source Line: " << content.srcline << '\n';
 }
 
-std::ostream &operator<<(std::ostream &str, const PAGE &page)
+std::ostream &operator<<(std::ostream &str, const Page &page)
 {
     return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin;
 }
 
-std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
+std::ostream &operator<<(std::ostream &str, const Topic &topic)
 {
     str << "Flags: " << std::hex << +topic.flags << std::dec << '\n'
         << "Doc Page: " << topic.doc_page << '\n'
         << "Title Len: " << topic.title_len << '\n'
         << "Title: <" << topic.title << ">\n"
         << "Num Page: " << topic.num_page << '\n';
-    for (const PAGE &page : topic.page)
+    for (const Page &page : topic.page)
     {
         str << "    " << page << '\n';
     }
@@ -207,7 +207,7 @@ void HelpCompiler::make_hot_links()
 
     // Calculate topic_num for all entries in DocContents.  Also set
     // "TF_IN_DOC" flag for all topics included in the document.
-    for (CONTENT &c : g_src.contents)
+    for (Content &c : g_src.contents)
     {
         for (int ctr = 0; ctr < c.num_topic; ctr++)
         {
@@ -224,7 +224,7 @@ void HelpCompiler::make_hot_links()
 
     // Find topic_num and topic_off for all hot-links.  Also flag all hot-
     // links which will (probably) appear in the document.
-    for (LINK &l : g_src.all_links)
+    for (Link &l : g_src.all_links)
     {
         // name is the title of the topic
         if (l.type == link_types::LT_TOPIC)
@@ -251,7 +251,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
     msg("Paginating online help.");
 
-    for (TOPIC &t : g_src.topics)
+    for (Topic &t : g_src.topics)
     {
         if (bit_set(t.flags, topic_flags::DATA))
         {
@@ -404,10 +404,10 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
     } // for
 }
 
-LABEL *find_next_label_by_topic(int t)
+Label *find_next_label_by_topic(int t)
 {
-    LABEL *g = nullptr;
-    for (LABEL &l : g_src.labels)
+    Label *g = nullptr;
+    for (Label &l : g_src.labels)
     {
         if (l.topic_num == t && l.doc_page == -1)
         {
@@ -420,8 +420,8 @@ LABEL *find_next_label_by_topic(int t)
         }
     }
 
-    LABEL *p = nullptr;
-    for (LABEL &pl : g_src.private_labels)
+    Label *p = nullptr;
+    for (Label &pl : g_src.private_labels)
     {
         if (pl.topic_num == t && pl.doc_page == -1)
         {
@@ -449,7 +449,7 @@ LABEL *find_next_label_by_topic(int t)
 // Find doc_page for all hot-links.
 void HelpCompiler::set_hot_link_doc_page()
 {
-    for (LINK &l : g_src.all_links)
+    for (Link &l : g_src.all_links)
     {
         switch (l.type)
         {
@@ -468,7 +468,7 @@ void HelpCompiler::set_hot_link_doc_page()
             break;
 
         case link_types::LT_LABEL:
-            if (LABEL *lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
+            if (Label *lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
             {
                 g_current_src_filename = l.srcfile;
                 g_src_line = l.srcline; // pretend again
@@ -493,9 +493,9 @@ void HelpCompiler::set_content_doc_page()
 {
     const int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
-    TOPIC &t = g_src.topics[tnum];
+    Topic &t = g_src.topics[tnum];
     char *base = t.get_topic_text();
-    for (const CONTENT &c : g_src.contents)
+    for (const Content &c : g_src.contents)
     {
         assert(c.doc_page >= 1);
         std::string doc_page{std::to_string(c.doc_page)};
@@ -511,7 +511,7 @@ void HelpCompiler::set_content_doc_page()
 bool pd_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 {
     DOC_INFO &info = *static_cast<DOC_INFO *>(context);
-    const CONTENT *c;
+    const Content *c;
 
     switch (cmd)
     {
@@ -539,7 +539,7 @@ bool pd_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
 
     case PD_COMMANDS::PD_GET_LINK_PAGE:
     {
-        const LINK &link = g_src.all_links[getint(pd->s)];
+        const Link &link = g_src.all_links[getint(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
@@ -759,12 +759,12 @@ void HelpCompiler::write_header()
 
 void HelpCompiler::write_link_source()
 {
-    std::vector<std::pair<int, LABEL>> topics;
-    for (const LABEL &label : g_src.labels)
+    std::vector<std::pair<int, Label>> topics;
+    for (const Label &label : g_src.labels)
     {
         if (label.topic_off == 0)
         {
-            const TOPIC &topic{g_src.topics[label.topic_num]};
+            const Topic &topic{g_src.topics[label.topic_num]};
             if (bit_set(topic.flags, topic_flags::IN_DOC))
             {
                 topics.emplace_back(label.topic_num, label);
@@ -836,7 +836,7 @@ void HelpCompiler::write_link_source()
             }
             return "id.html#_" + text;
         };
-        for (std::pair<int, LABEL> &item : topics)
+        for (std::pair<int, Label> &item : topics)
         {
             src << "    HelpLink{ help_labels::" << item.second.name << ", \""
                       << link_for_title(g_src.topics[item.first].title) << "\" },\n";
@@ -859,7 +859,7 @@ void HelpCompiler::calc_offsets()    // calc file offset to each topic
                                     g_src.topics.size() * sizeof(long) +    // offsets to each topic
                                     g_src.labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
-    offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset, [](long offset, const CONTENT &cp) {
+    offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset, [](long offset, const Content &cp) {
         return offset += sizeof(int) +  // flags
             1 +                         // id length
             (int) cp.id.length() +      // id text
@@ -869,7 +869,7 @@ void HelpCompiler::calc_offsets()    // calc file offset to each topic
             cp.num_topic*sizeof(int);   // topic numbers
     });
 
-    for (TOPIC &tp : g_src.topics)
+    for (Topic &tp : g_src.topics)
     {
         tp.offset = offset;
         offset += (long)sizeof(int) +       // topic flags
@@ -893,7 +893,7 @@ void insert_real_link_info(char *curr, unsigned int len)
 
         if (tok == token_types::TOK_LINK)
         {
-            const LINK &l = g_src.all_links[ getint(curr+1) ];
+            const Link &l = g_src.all_links[ getint(curr+1) ];
             setint(curr+1, l.topic_num);
             setint(curr+1+sizeof(int), l.topic_off);
             setint(curr+1+2*sizeof(int), l.doc_page);
@@ -932,20 +932,20 @@ void HelpCompiler::write_help(std::FILE *file)
     putw(g_num_doc_pages, file);
 
     // write the offsets to each topic
-    for (const TOPIC &t : g_src.topics)
+    for (const Topic &t : g_src.topics)
     {
         std::fwrite(&t.offset, sizeof(long), 1, file);
     }
 
     // write all public labels
-    for (const LABEL &l : g_src.labels)
+    for (const Label &l : g_src.labels)
     {
         putw(l.topic_num, file);
         putw(l.topic_off, file);
     }
 
     // write contents
-    for (const CONTENT &cp : g_src.contents)
+    for (const Content &cp : g_src.contents)
     {
         putw(cp.flags, file);
 
@@ -962,7 +962,7 @@ void HelpCompiler::write_help(std::FILE *file)
     }
 
     // write topics
-    for (TOPIC &tp : g_src.topics)
+    for (Topic &tp : g_src.topics)
     {
         // write the topics flags
         putw(+tp.flags, file);
@@ -970,7 +970,7 @@ void HelpCompiler::write_help(std::FILE *file)
         // write offset, length and starting margin for each page
 
         putw(tp.num_page, file);
-        for (const PAGE &p : tp.page)
+        for (const Page &p : tp.page)
         {
             putw(p.offset, file);
             putw(p.length, file);
@@ -1173,46 +1173,46 @@ void HelpCompiler::report_memory()
     long          // bytes in active data structure
         dead = 0; // bytes in unused data structure
 
-    for (const TOPIC &t : g_src.topics)
+    for (const Topic &t : g_src.topics)
     {
-        data   += sizeof(TOPIC);
+        data   += sizeof(Topic);
         bytes_in_strings += t.title_len;
         text   += t.text_len;
-        data   += t.num_page * sizeof(PAGE);
+        data   += t.num_page * sizeof(Page);
 
-        std::vector<PAGE> const &pages = t.page;
-        dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(PAGE));
+        std::vector<Page> const &pages = t.page;
+        dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(Page));
     }
 
-    for (const LINK &l : g_src.all_links)
+    for (const Link &l : g_src.all_links)
     {
-        data += sizeof(LINK);
+        data += sizeof(Link);
         bytes_in_strings += (long) l.name.length();
     }
 
-    dead += static_cast<long>((g_src.all_links.capacity() - g_src.all_links.size()) * sizeof(LINK));
+    dead += static_cast<long>((g_src.all_links.capacity() - g_src.all_links.size()) * sizeof(Link));
 
-    for (const LABEL &l : g_src.labels)
+    for (const Label &l : g_src.labels)
     {
-        data   += sizeof(LABEL);
+        data   += sizeof(Label);
         bytes_in_strings += (long) l.name.length() + 1;
     }
 
-    dead += static_cast<long>((g_src.labels.capacity() - g_src.labels.size()) * sizeof(LABEL));
+    dead += static_cast<long>((g_src.labels.capacity() - g_src.labels.size()) * sizeof(Label));
 
-    for (const LABEL &l : g_src.private_labels)
+    for (const Label &l : g_src.private_labels)
     {
-        data   += sizeof(LABEL);
+        data   += sizeof(Label);
         bytes_in_strings += (long) l.name.length() + 1;
     }
 
-    dead += static_cast<long>((g_src.private_labels.capacity() - g_src.private_labels.size()) * sizeof(LABEL));
+    dead += static_cast<long>((g_src.private_labels.capacity() - g_src.private_labels.size()) * sizeof(Label));
 
-    for (const CONTENT &c : g_src.contents)
+    for (const Content &c : g_src.contents)
     {
         int t = (MAX_CONTENT_TOPIC - c.num_topic) *
             (sizeof(g_src.contents[0].is_label[0]) + sizeof(g_src.contents[0].topic_name[0]) + sizeof(g_src.contents[0].topic_num[0]));
-        data += sizeof(CONTENT) - t;
+        data += sizeof(Content) - t;
         dead += t;
         bytes_in_strings += (long) c.id.length() + 1;
         bytes_in_strings += (long) c.name.length() + 1;
@@ -1222,7 +1222,7 @@ void HelpCompiler::report_memory()
         }
     }
 
-    dead += static_cast<long>((g_src.contents.capacity() - g_src.contents.size()) * sizeof(CONTENT));
+    dead += static_cast<long>((g_src.contents.capacity() - g_src.contents.size()) * sizeof(Content));
 
     std::printf("\n");
     std::printf("Memory Usage:\n");
@@ -1240,7 +1240,7 @@ void HelpCompiler::report_memory()
 void HelpCompiler::report_stats()
 {
     int  pages = 0;
-    for (const TOPIC &t : g_src.topics)
+    for (const Topic &t : g_src.topics)
     {
         pages += t.num_page;
     }
@@ -1635,7 +1635,7 @@ void HelpCompiler::paginate_html_document()
 
     msg("Paginating HTML.");
 
-    for (TOPIC &t : g_src.topics)
+    for (Topic &t : g_src.topics)
     {
         if (bit_set(t.flags, topic_flags::DATA))
         {

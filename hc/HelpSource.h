@@ -21,7 +21,7 @@ enum
     CF_NEW_PAGE = 1         // true if section starts on a new page
 };
 
-struct CONTENT
+struct Content
 {
     void label_topic(int ctr);
     void content_topic(int ctr);
@@ -40,7 +40,7 @@ struct CONTENT
     int srcline;
 };
 
-struct LABEL
+struct Label
 {
     std::string name;         // its name
     int      topic_num;       // topic number
@@ -48,7 +48,7 @@ struct LABEL
     int      doc_page;
 };
 
-inline bool operator<(const LABEL &a, const LABEL &b)
+inline bool operator<(const Label &a, const Label &b)
 {
     if (a.name == INDEX_LABEL)
     {
@@ -69,7 +69,7 @@ enum class link_types
     LT_SPECIAL
 };
 
-struct LINK
+struct Link
 {
     void link_topic();
     void link_label();
@@ -85,7 +85,7 @@ struct LINK
     int      srcline;       // .SRC file line # link appears in
 };
 
-struct PAGE
+struct Page
 {
     unsigned offset;    // offset from start of topic text
     unsigned length;    // length of page (in chars)
@@ -127,10 +127,10 @@ inline bool bit_set(topic_flags flags, topic_flags bit)
     return (flags & bit) == bit;
 }
 
-struct TOPIC
+struct Topic
 {
     void alloc_topic_text(unsigned size);
-    int add_page(const PAGE &p);
+    int add_page(const Page &p);
     void add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links);
     char *get_topic_text();
     const char *get_topic_text() const;
@@ -142,7 +142,7 @@ struct TOPIC
     unsigned  title_len;      // length of title
     std::string title;        // title for this topic
     int       num_page;       // number of pages
-    std::vector<PAGE> page;   // list of pages
+    std::vector<Page> page;   // list of pages
     unsigned  text_len;       // length of topic text
     long      text;           // topic text (all pages)
     long      offset;         // offset from start of file to topic
@@ -153,18 +153,18 @@ private:
 
 struct HelpSource
 {
-    int add_content(const CONTENT &c);
-    int add_link(LINK &l);
-    int add_topic(const TOPIC &t);
-    int add_label(const LABEL &l);
-    LABEL *find_label(char const *name);
+    int add_content(const Content &c);
+    int add_link(Link &l);
+    int add_topic(const Topic &t);
+    int add_label(const Label &l);
+    Label *find_label(char const *name);
     void sort_labels();
 
-    std::vector<CONTENT> contents;
-    std::vector<LINK> all_links;
-    std::vector<TOPIC> topics;
-    std::vector<LABEL> labels;
-    std::vector<LABEL> private_labels;
+    std::vector<Content> contents;
+    std::vector<Link> all_links;
+    std::vector<Topic> topics;
+    std::vector<Label> labels;
+    std::vector<Label> private_labels;
     std::FILE *swap_file{};
     long swap_pos{};
     std::vector<char> buffer;               // buffer to/from swap file

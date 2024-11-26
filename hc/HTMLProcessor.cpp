@@ -57,7 +57,7 @@ void HTMLProcessor::write_index_html()
 {
     msg(("Writing " + m_fname).c_str());
 
-    const CONTENT &toc = g_src.contents[0];
+    const Content &toc = g_src.contents[0];
     if (toc.num_topic != 1)
     {
         throw std::runtime_error("First content block contains multiple topics.");
@@ -67,7 +67,7 @@ void HTMLProcessor::write_index_html()
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
 
-    const TOPIC &toc_topic = g_src.topics[toc.topic_num[0]];
+    const Topic &toc_topic = g_src.topics[toc.topic_num[0]];
     std::ofstream str(g_html_output_dir + "/index.rst");
     str << ".. toctree::\n";
     char const *text = toc_topic.get_topic_text();
@@ -102,17 +102,17 @@ void HTMLProcessor::write_index_html()
 
 void HTMLProcessor::write_contents()
 {
-    for (const CONTENT &c : g_src.contents)
+    for (const Content &c : g_src.contents)
     {
         write_content(c);
     }
 }
 
-void HTMLProcessor::write_content(const CONTENT &c)
+void HTMLProcessor::write_content(const Content &c)
 {
     for (int i = 0; i < c.num_topic; ++i)
     {
-        const TOPIC &t = g_src.topics[c.topic_num[i]];
+        const Topic &t = g_src.topics[c.topic_num[i]];
         if (t.title == DOCCONTENTS_TITLE)
         {
             continue;
@@ -122,7 +122,7 @@ void HTMLProcessor::write_content(const CONTENT &c)
     }
 }
 
-void HTMLProcessor::write_topic(const TOPIC &t)
+void HTMLProcessor::write_topic(const Topic &t)
 {
     std::string const filename = rst_name(t.title) + ".rst";
     msg("Writing %s", filename.c_str());

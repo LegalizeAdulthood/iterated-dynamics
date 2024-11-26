@@ -63,9 +63,9 @@ static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
 static int s_read_char_buff_pos{-1};
 static int s_read_char_sp{};
 
-void CONTENT::label_topic(int ctr)
+void Content::label_topic(int ctr)
 {
-    if (LABEL *lbl = g_src.find_label(topic_name[ctr].c_str()))
+    if (Label *lbl = g_src.find_label(topic_name[ctr].c_str()))
     {
         if (bit_set(g_src.topics[lbl->topic_num].flags, topic_flags::DATA))
         {
@@ -97,7 +97,7 @@ void CONTENT::label_topic(int ctr)
     }
 }
 
-void CONTENT::content_topic(int ctr)
+void Content::content_topic(int ctr)
 {
     int const t = find_topic_title(topic_name[ctr].c_str());
     if (t == -1)
@@ -122,7 +122,7 @@ void CONTENT::content_topic(int ctr)
     }
 }
 
-void LINK::link_topic()
+void Link::link_topic()
 {
     int const t = find_topic_title(name.c_str());
     if (t == -1)
@@ -140,9 +140,9 @@ void LINK::link_topic()
     }
 }
 
-void LINK::link_label()
+void Link::link_label()
 {
-    if (LABEL *lbl = g_src.find_label(name.c_str()))
+    if (Label *lbl = g_src.find_label(name.c_str()))
     {
         if (bit_set(g_src.topics[lbl->topic_num].flags, topic_flags::DATA))
         {
@@ -167,7 +167,7 @@ void LINK::link_label()
     }
 }
 
-void TOPIC::alloc_topic_text(unsigned size)
+void Topic::alloc_topic_text(unsigned size)
 {
     text_len = size;
     text = g_src.swap_pos;
@@ -176,15 +176,15 @@ void TOPIC::alloc_topic_text(unsigned size)
     std::fwrite(g_src.buffer.data(), 1, text_len, g_src.swap_file);
 }
 
-int TOPIC::add_page(const PAGE &p)
+int Topic::add_page(const Page &p)
 {
     page.push_back(p);
     return num_page++;
 }
 
-void TOPIC::add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links)
+void Topic::add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links)
 {
-    PAGE p;
+    Page p;
     p.offset = (unsigned)(start - text);
     p.length = (unsigned)(curr - start);
     p.margin = margin;
@@ -196,19 +196,19 @@ void TOPIC::add_page_break(int margin, char const *text, char const *start, char
     }
 }
 
-char *TOPIC::get_topic_text()
+char *Topic::get_topic_text()
 {
     read_topic_text();
     return g_src.buffer.data();
 }
 
-const char *TOPIC::get_topic_text() const
+const char *Topic::get_topic_text() const
 {
     read_topic_text();
     return g_src.buffer.data();
 }
 
-void TOPIC::release_topic_text(bool save) const
+void Topic::release_topic_text(bool save) const
 {
     if (save)
     {
@@ -217,7 +217,7 @@ void TOPIC::release_topic_text(bool save) const
     }
 }
 
-void TOPIC::start(char const *text, int len)
+void Topic::start(char const *text, int len)
 {
     flags = topic_flags::NONE;
     title_len = len;
@@ -227,7 +227,7 @@ void TOPIC::start(char const *text, int len)
     g_src.curr = g_src.buffer.data();
 }
 
-void TOPIC::read_topic_text() const
+void Topic::read_topic_text() const
 {
     std::fseek(g_src.swap_file, text, SEEK_SET);
     if (std::fread(g_src.buffer.data(), 1, text_len, g_src.swap_file) != text_len)
@@ -256,11 +256,11 @@ inline void check_buffer(unsigned off)
     check_buffer(g_src.curr, off, g_src.buffer.data());
 }
 
-LABEL *HelpSource::find_label(char const *name)
+Label *HelpSource::find_label(char const *name)
 {
-    auto finder = [=](std::vector<LABEL> &collection) -> LABEL *
+    auto finder = [=](std::vector<Label> &collection) -> Label *
     {
-        for (LABEL &label : collection)
+        for (Label &label : collection)
         {
             if (name == label.name)
             {
@@ -315,19 +315,19 @@ int find_topic_title(char const *title)
 /*
  * memory-allocation functions.
  */
-int HelpSource::add_link(LINK &l)
+int HelpSource::add_link(Link &l)
 {
     all_links.push_back(l);
     return static_cast<int>(all_links.size() - 1);
 }
 
-int HelpSource::add_topic(const TOPIC &t)
+int HelpSource::add_topic(const Topic &t)
 {
     topics.push_back(t);
     return static_cast<int>(topics.size() - 1);
 }
 
-int HelpSource::add_label(const LABEL &l)
+int HelpSource::add_label(const Label &l)
 {
     if (l.name[0] == '@')    // if it's a private label...
     {
@@ -339,7 +339,7 @@ int HelpSource::add_label(const LABEL &l)
     return static_cast<int>(labels.size() - 1);
 }
 
-int HelpSource::add_content(const CONTENT &c)
+int HelpSource::add_content(const Content &c)
 {
     contents.push_back(c);
     return static_cast<int>(contents.size() - 1);
@@ -621,9 +621,9 @@ bool get_next_item()
     return last;
 }
 
-void process_doc_contents(char *(*format_toc)(char *buffer, CONTENT &c))
+void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 {
-    TOPIC t;
+    Topic t;
     t.flags     = topic_flags::NONE;
     t.title_len = (unsigned) std::strlen(DOCCONTENTS_TITLE)+1;
     t.title     = DOCCONTENTS_TITLE;
@@ -632,7 +632,7 @@ void process_doc_contents(char *(*format_toc)(char *buffer, CONTENT &c))
 
     g_src.curr = g_src.buffer.data();
 
-    CONTENT c{};
+    Content c{};
     c.flags = 0;
     c.id.clear();
     c.name.clear();
@@ -761,7 +761,7 @@ void process_doc_contents(modes mode)
     if (mode == modes::HTML)
     {
         process_doc_contents(
-            [](char *buffer, CONTENT &c)
+            [](char *buffer, Content &c)
             {
                 std::sprintf(buffer, "%s", rst_name(c.name).c_str());
                 c.page_num_pos = 0U;
@@ -771,7 +771,7 @@ void process_doc_contents(modes mode)
     else if (mode == modes::ASCII_DOC)
     {
         process_doc_contents(
-            [](char *buffer, CONTENT &c)
+            [](char *buffer, Content &c)
             {
                 c.page_num_pos = 0U;
                 return buffer;
@@ -780,7 +780,7 @@ void process_doc_contents(modes mode)
     else
     {
         process_doc_contents(
-            [](char *buffer, CONTENT &c)
+            [](char *buffer, Content &c)
             {
                 std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), c.indent * 2, "", c.name.c_str());
                 char *ptr = buffer + (int) std::strlen(buffer);
@@ -801,7 +801,7 @@ int parse_link()   // returns length of link or 0 on error
     int   len;
     int   err_off;
 
-    LINK l;
+    Link l;
     l.srcfile  = g_current_src_filename;
     l.srcline  = g_src_line;
     l.doc_page = -1;
@@ -1168,7 +1168,7 @@ void process_bininc()
     close(handle);
 }
 
-void end_topic(TOPIC &t)
+void end_topic(Topic &t)
 {
     t.alloc_topic_text((unsigned)(g_src.curr - g_src.buffer.data()));
     g_src.add_topic(t);
@@ -1201,7 +1201,7 @@ void add_blank_for_split()   // add space at g_src.curr for merging two lines
     }
 }
 
-void put_a_char(int ch, const TOPIC &t)
+void put_a_char(int ch, const Topic &t)
 {
     if (ch == '{' && !bit_set(t.flags, topic_flags::DATA)) // is it a hot-link?
     {
@@ -1302,8 +1302,8 @@ void read_src(std::string const &fname, modes mode)
 {
     int    ch;
     char  *ptr;
-    TOPIC  t;
-    LABEL  lbl;
+    Topic  t;
+    Label  lbl;
     char  *margin_pos = nullptr;
     bool in_topic = false;
     bool formatting = true;

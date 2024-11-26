@@ -67,7 +67,7 @@ public:
     void process();
 
 private:
-    void set_link_text(const LINK &link, const ProcessDocumentInfo *pd);
+    void set_link_text(const Link &link, const ProcessDocumentInfo *pd);
     bool info(PD_COMMANDS cmd, ProcessDocumentInfo *pd);
     bool output(PD_COMMANDS cmd, ProcessDocumentInfo *pd);
     void emit_char(char c);
@@ -108,7 +108,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
         {
             return false;
         }
-        const CONTENT &content{g_src.contents[m_content_num]};
+        const Content &content{g_src.contents[m_content_num]};
         m_topic_num = -1;
         pd->id = content.id.c_str();
         m_content = std::string(content.indent + 2, '=') + ' ' + content.name;
@@ -119,12 +119,12 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
 
     case PD_COMMANDS::PD_GET_TOPIC:
     {
-        const CONTENT &content{g_src.contents[m_content_num]};
+        const Content &content{g_src.contents[m_content_num]};
         if (++m_topic_num >= content.num_topic)
         {
             return false;
         }
-        const TOPIC &topic{g_src.topics[content.topic_num[m_topic_num]]};
+        const Topic &topic{g_src.topics[content.topic_num[m_topic_num]]};
         if (topic.title != content.name)
         {
             m_topic = std::string(content.indent + 3, '=') + ' ' + topic.title;
@@ -140,7 +140,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
 
     case PD_COMMANDS::PD_GET_LINK_PAGE:
     {
-        const LINK &link{g_src.all_links[getint(pd->s)]};
+        const Link &link{g_src.all_links[getint(pd->s)]};
         if (link.doc_page == -1)
         {
             if (m_link_dest_warn)
@@ -161,8 +161,8 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
 
     case PD_COMMANDS::PD_RELEASE_TOPIC:
     {
-        const CONTENT &content{g_src.contents[m_content_num]};
-        const TOPIC &topic{g_src.topics[content.topic_num[m_topic_num]]};
+        const Content &content{g_src.contents[m_content_num]};
+        const Topic &topic{g_src.topics[content.topic_num[m_topic_num]]};
         topic.release_topic_text(false);
         return true;
     }
@@ -235,7 +235,7 @@ static std::string to_string(link_types type)
     return "? (" + std::to_string(static_cast<int>(type)) + ")";
 }
 
-void AsciiDocProcessor::set_link_text(const LINK &link, const ProcessDocumentInfo *pd)
+void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInfo *pd)
 {
     std::string anchor_name;
     switch (link.type)
@@ -245,8 +245,8 @@ void AsciiDocProcessor::set_link_text(const LINK &link, const ProcessDocumentInf
         break;
     case link_types::LT_LABEL:
     {
-        const LABEL *label = g_src.find_label(link.name.c_str());
-        const TOPIC &topic = g_src.topics[label->topic_num];
+        const Label *label = g_src.find_label(link.name.c_str());
+        const Topic &topic = g_src.topics[label->topic_num];
         anchor_name = topic.title;
         break;
     }
@@ -503,7 +503,7 @@ void AsciiDocCompiler::print_ascii_doc()
 
     msg(("Writing " + fname).c_str());
 
-    const CONTENT &toc = g_src.contents[0];
+    const Content &toc = g_src.contents[0];
     if (toc.num_topic != 1)
     {
         throw std::runtime_error("First content block contains multiple topics.");

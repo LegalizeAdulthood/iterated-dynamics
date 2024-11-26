@@ -7,8 +7,8 @@
 namespace hc
 {
 
-struct CONTENT;
-struct TOPIC;
+struct Content;
+struct Topic;
 
 extern std::string g_html_output_dir;
 
@@ -25,8 +25,8 @@ public:
 private:
     void write_index_html();
     void write_contents();
-    void write_content(const CONTENT &c);
-    void write_topic(const TOPIC &t);
+    void write_content(const Content &c);
+    void write_topic(const Topic &t);
 
     std::string m_fname;
 };
