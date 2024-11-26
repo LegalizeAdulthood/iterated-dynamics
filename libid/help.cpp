@@ -1126,7 +1126,7 @@ static void printer_str(PrintDocInfo *info, char const *s, int n)
     }
 }
 
-static bool print_doc_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     int t;
@@ -1134,7 +1134,7 @@ static bool print_doc_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *c
 
     switch (cmd)
     {
-    case PD_COMMANDS::PD_GET_CONTENT:
+    case PrintDocCommand::PD_GET_CONTENT:
         if (++info->cnum >= info->num_contents)
         {
             return false;
@@ -1174,7 +1174,7 @@ static bool print_doc_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *c
         pd->title = info->title;
         return true;
 
-    case PD_COMMANDS::PD_GET_TOPIC:
+    case PrintDocCommand::PD_GET_TOPIC:
         if (++info->tnum >= info->num_topic)
         {
             return false;
@@ -1188,12 +1188,12 @@ static bool print_doc_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *c
         pd->len  = PRINT_BUFFER_SIZE + t;   // same as ...SIZE - abs(t)
         return true;
 
-    case PD_COMMANDS::PD_GET_LINK_PAGE:
+    case PrintDocCommand::PD_GET_LINK_PAGE:
         pd->i = getint(pd->s+2*sizeof(int));
         pd->link_page = "(p. " + std::to_string(pd->i) + ")";
         return pd->i != -1;
 
-    case PD_COMMANDS::PD_RELEASE_TOPIC:
+    case PrintDocCommand::PD_RELEASE_TOPIC:
         return true;
 
     default:
@@ -1201,12 +1201,12 @@ static bool print_doc_get_info(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *c
     }
 }
 
-static bool print_doc_output(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
     {
-    case PD_COMMANDS::PD_HEADING:
+    case PrintDocCommand::PD_HEADING:
     {
         char line[81];
         char buff[40];
@@ -1241,21 +1241,21 @@ static bool print_doc_output(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *con
         return keep_going;
     }
 
-    case PD_COMMANDS::PD_FOOTING:
+    case PrintDocCommand::PD_FOOTING:
         info->margin = 0;
         printer_ch(info, '\f', 1);
         info->margin = PAGE_INDENT;
         return true;
 
-    case PD_COMMANDS::PD_PRINT:
+    case PrintDocCommand::PD_PRINT:
         printer_str(info, pd->s, pd->i);
         return true;
 
-    case PD_COMMANDS::PD_PRINTN:
+    case PrintDocCommand::PD_PRINTN:
         printer_ch(info, *pd->s, pd->i);
         return true;
 
-    case PD_COMMANDS::PD_PRINT_SEC:
+    case PrintDocCommand::PD_PRINT_SEC:
         info->margin = TITLE_INDENT;
         if (pd->id[0] != '\0')
         {
@@ -1267,11 +1267,11 @@ static bool print_doc_output(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *con
         info->margin = PAGE_INDENT;
         return true;
 
-    case PD_COMMANDS::PD_START_SECTION:
-    case PD_COMMANDS::PD_START_TOPIC:
-    case PD_COMMANDS::PD_SET_SECTION_PAGE:
-    case PD_COMMANDS::PD_SET_TOPIC_PAGE:
-    case PD_COMMANDS::PD_PERIODIC:
+    case PrintDocCommand::PD_START_SECTION:
+    case PrintDocCommand::PD_START_TOPIC:
+    case PrintDocCommand::PD_SET_SECTION_PAGE:
+    case PrintDocCommand::PD_SET_TOPIC_PAGE:
+    case PrintDocCommand::PD_PERIODIC:
         return true;
 
     default:

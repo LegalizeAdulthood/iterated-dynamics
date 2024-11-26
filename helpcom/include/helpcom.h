@@ -109,7 +109,7 @@ struct ProcessDocumentInfo
 /*
  * Commands passed to (*get_info)() and (*output)() by process_document()
  */
-enum class PD_COMMANDS
+enum class PrintDocCommand
 {
     // commands sent to pd_output
     PD_HEADING,         // call at the top of each page
@@ -129,7 +129,7 @@ enum class PD_COMMANDS
     PD_GET_LINK_PAGE,
 };
 
-using PD_FUNC = bool(PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *info);
+using PD_FUNC = bool(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info);
 token_types find_token_length(
     token_modes mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
 int find_line_width(token_modes mode, char const *curr, unsigned len);

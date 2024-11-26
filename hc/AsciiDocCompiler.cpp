@@ -68,8 +68,8 @@ public:
 
 private:
     void set_link_text(const Link &link, const ProcessDocumentInfo *pd);
-    bool info(PD_COMMANDS cmd, ProcessDocumentInfo *pd);
-    bool output(PD_COMMANDS cmd, ProcessDocumentInfo *pd);
+    bool info(PrintDocCommand cmd, ProcessDocumentInfo *pd);
+    bool output(PrintDocCommand cmd, ProcessDocumentInfo *pd);
     void emit_char(char c);
     void emit_key_name();
     void print_inside_key(char c);
@@ -98,11 +98,11 @@ private:
     std::string m_link_markup;
 };
 
-bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
+bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
-    case PD_COMMANDS::PD_GET_CONTENT:
+    case PrintDocCommand::PD_GET_CONTENT:
     {
         if (++m_content_num >= static_cast<int>(g_src.contents.size()))
         {
@@ -117,7 +117,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
         return true;
     }
 
-    case PD_COMMANDS::PD_GET_TOPIC:
+    case PrintDocCommand::PD_GET_TOPIC:
     {
         const Content &content{g_src.contents[m_content_num]};
         if (++m_topic_num >= content.num_topic)
@@ -138,7 +138,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
         return true;
     }
 
-    case PD_COMMANDS::PD_GET_LINK_PAGE:
+    case PrintDocCommand::PD_GET_LINK_PAGE:
     {
         const Link &link{g_src.all_links[getint(pd->s)]};
         if (link.doc_page == -1)
@@ -159,7 +159,7 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
         return true;
     }
 
-    case PD_COMMANDS::PD_RELEASE_TOPIC:
+    case PrintDocCommand::PD_RELEASE_TOPIC:
     {
         const Content &content{g_src.contents[m_content_num]};
         const Topic &topic{g_src.topics[content.topic_num[m_topic_num]]};
@@ -172,25 +172,25 @@ bool AsciiDocProcessor::info(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
     }
 }
 
-bool AsciiDocProcessor::output(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
+bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
-    case PD_COMMANDS::PD_PRINT:
+    case PrintDocCommand::PD_PRINT:
         print_string(pd->s, pd->i);
         return true;
 
-    case PD_COMMANDS::PD_PRINTN:
+    case PrintDocCommand::PD_PRINTN:
         print_char(*pd->s, pd->i);
         return true;
 
-    case PD_COMMANDS::PD_START_SECTION:
+    case PrintDocCommand::PD_START_SECTION:
         print_char('\n', 1);
         print_string(pd->title, std::strlen(pd->title));
         print_char('\n', 2);
         return true;
 
-    case PD_COMMANDS::PD_START_TOPIC:
+    case PrintDocCommand::PD_START_TOPIC:
         if (!m_topic.empty())
         {
             print_char('\n', 1);
@@ -199,12 +199,12 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
         }
         return true;
 
-    case PD_COMMANDS::PD_HEADING:
-    case PD_COMMANDS::PD_FOOTING:
-    case PD_COMMANDS::PD_SET_SECTION_PAGE:
-    case PD_COMMANDS::PD_SET_TOPIC_PAGE:
-    case PD_COMMANDS::PD_PERIODIC:
-    case PD_COMMANDS::PD_PRINT_SEC:
+    case PrintDocCommand::PD_HEADING:
+    case PrintDocCommand::PD_FOOTING:
+    case PrintDocCommand::PD_SET_SECTION_PAGE:
+    case PrintDocCommand::PD_SET_TOPIC_PAGE:
+    case PrintDocCommand::PD_PERIODIC:
+    case PrintDocCommand::PD_PRINT_SEC:
         return true;
 
     default:
@@ -214,9 +214,9 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, ProcessDocumentInfo *pd)
 
 void AsciiDocProcessor::process()
 {
-    const auto info_cb = [](PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *info)
+    const auto info_cb = [](PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
-    const auto output_cb = [](PD_COMMANDS cmd, ProcessDocumentInfo *pd, void *info)
+    const auto output_cb = [](PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
     process_document(token_modes::ADOC, info_cb, output_cb, this);
 }

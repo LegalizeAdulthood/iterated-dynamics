@@ -279,63 +279,63 @@ private:
     bool topic_token();
     bool heading()
     {
-        return m_output(PD_COMMANDS::PD_HEADING, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_HEADING, &m_pd, m_info);
     }
     bool get_content()
     {
-        return m_get_info(PD_COMMANDS::PD_GET_CONTENT, &m_pd, m_info);
+        return m_get_info(PrintDocCommand::PD_GET_CONTENT, &m_pd, m_info);
     }
     bool start_section()
     {
-        return m_output(PD_COMMANDS::PD_START_SECTION, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_START_SECTION, &m_pd, m_info);
     }
     bool footing()
     {
-        return m_output(PD_COMMANDS::PD_FOOTING, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_FOOTING, &m_pd, m_info);
     }
     bool get_link_page()
     {
-        return m_get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &m_pd, m_info);
+        return m_get_info(PrintDocCommand::PD_GET_LINK_PAGE, &m_pd, m_info);
     }
     bool set_section_page()
     {
-        return m_output(PD_COMMANDS::PD_SET_SECTION_PAGE, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_SET_SECTION_PAGE, &m_pd, m_info);
     }
     bool print_section()
     {
-        return m_output(PD_COMMANDS::PD_PRINT_SEC, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_PRINT_SEC, &m_pd, m_info);
     }
     bool get_topic()
     {
-        return m_get_info(PD_COMMANDS::PD_GET_TOPIC, &m_pd, m_info);
+        return m_get_info(PrintDocCommand::PD_GET_TOPIC, &m_pd, m_info);
     }
     bool start_topic()
     {
-        return m_output(PD_COMMANDS::PD_START_TOPIC, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_START_TOPIC, &m_pd, m_info);
     }
     bool set_topic_page()
     {
-        return m_output(PD_COMMANDS::PD_SET_TOPIC_PAGE, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_SET_TOPIC_PAGE, &m_pd, m_info);
     }
     bool periodic()
     {
-        return m_output(PD_COMMANDS::PD_PERIODIC, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_PERIODIC, &m_pd, m_info);
     }
     bool release_topic()
     {
-        return m_get_info(PD_COMMANDS::PD_RELEASE_TOPIC, &m_pd, m_info);
+        return m_get_info(PrintDocCommand::PD_RELEASE_TOPIC, &m_pd, m_info);
     }
     bool print(char const *str, int n)
     {
         m_pd.s = str;
         m_pd.i = n;
-        return m_output(PD_COMMANDS::PD_PRINT, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_PRINT, &m_pd, m_info);
     }
     bool print_n(char ch, int n)
     {
         m_pd.s = &ch;
         m_pd.i = n;
-        return m_output(PD_COMMANDS::PD_PRINTN, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_PRINTN, &m_pd, m_info);
     }
 
     token_modes m_token_mode{};
