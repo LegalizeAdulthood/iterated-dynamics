@@ -129,14 +129,14 @@ struct ViewTransform3DFloat
 
 static int  ifs2d();
 static int  ifs3d();
-static int  ifs3dlong();
-static int  ifs3dfloat();
+static int  ifs3d_long();
+static int  ifs3d_float();
 static bool l_setup_convert_to_screen(LAffine *);
-static void setupmatrix(MATRIX);
-static bool long3dviewtransf(ViewTransform3DLong *inf);
-static bool float3dviewtransf(ViewTransform3DFloat *inf);
-static std::FILE *open_orbitsave();
-static void plothist(int x, int y, int color);
+static void setup_matrix(MATRIX);
+static bool long_view_transf3d(ViewTransform3DLong *inf);
+static bool float_view_transf3d(ViewTransform3DFloat *inf);
+static std::FILE *open_orbit_save();
+static void plot_hist(int x, int y, int color);
 
 static bool s_real_time{};
 static int s_t{};
@@ -1430,7 +1430,7 @@ int inverse_julia_per_image()
 
 int orbit2d_float()
 {
-    std::FILE *fp = open_orbitsave();
+    std::FILE *fp = open_orbit_save();
     Affine cvt;
     setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
@@ -1592,7 +1592,7 @@ int orbit2d_float()
 
 int orbit2d_long()
 {
-    std::FILE *fp = open_orbitsave();
+    std::FILE *fp = open_orbit_save();
     LAffine cvt;
     l_setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
@@ -1755,7 +1755,7 @@ int orbit2d_long()
     return ret;
 }
 
-static int orbit3dlongcalc()
+static int orbit3d_long_calc()
 {
     int color = 2;
     if (color >= g_colors)
@@ -1784,7 +1784,7 @@ static int orbit3dlongcalc()
     }
     g_color_iter = 0L;
 
-    std::FILE *fp = open_orbitsave();
+    std::FILE *fp = open_orbit_save();
     int ret = 0;
     unsigned long count = 0;
     int oldrow = -1;
@@ -1815,7 +1815,7 @@ static int orbit3dlongcalc()
         {
             std::fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge_factor, (double)inf.orbit[1]/g_fudge_factor, (double)inf.orbit[2]/g_fudge_factor);
         }
-        if (long3dviewtransf(&inf))
+        if (long_view_transf3d(&inf))
         {
             // plot if inside window
             if (inf.col >= 0)
@@ -1879,7 +1879,7 @@ static int orbit3dlongcalc()
     return ret;
 }
 
-static int orbit3dfloatcalc()
+static int orbit3d_float_calc()
 {
     int color = 2;
     if (color >= g_colors)
@@ -1908,7 +1908,7 @@ static int orbit3dfloatcalc()
     }
     g_color_iter = 0L;
 
-    std::FILE *fp = open_orbitsave();
+    std::FILE *fp = open_orbit_save();
     int ret = 0;
     unsigned long count = 0;
     int oldrow = -1;
@@ -1940,7 +1940,7 @@ static int orbit3dfloatcalc()
         {
             std::fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
         }
-        if (float3dviewtransf(&inf))
+        if (float_view_transf3d(&inf))
         {
             // plot if inside window
             if (inf.col >= 0)
@@ -2032,7 +2032,7 @@ bool dynam2d_float_setup()
     }
     if (g_outside_color == SUM)
     {
-        g_plot = plothist;
+        g_plot = plot_hist;
     }
     return true;
 }
@@ -2046,7 +2046,7 @@ bool dynam2d_float_setup()
  */
 int dynam2d_float()
 {
-    std::FILE *fp = open_orbitsave();
+    std::FILE *fp = open_orbit_save();
 
     // setup affine screen coord conversion
     Affine cvt;
@@ -2290,7 +2290,7 @@ int plot_orbits2d_setup()
 
     if (g_outside_color == SUM)
     {
-        g_plot = plothist;
+        g_plot = plot_hist;
     }
 
     return 1;
@@ -2443,7 +2443,7 @@ done:
 }
 
 // double version - mainly for testing
-static int ifs3dfloat()
+static int ifs3d_float()
 {
     int color_method;
     std::FILE *fp;
@@ -2472,7 +2472,7 @@ static int ifs3dfloat()
     inf.orbit[1] = 0;
     inf.orbit[2] = 0;
 
-    fp = open_orbitsave();
+    fp = open_orbit_save();
 
     ret = 0;
     if (g_max_iterations > 0x1fffffL)
@@ -2518,7 +2518,7 @@ static int ifs3dfloat()
         {
             std::fprintf(fp, "%g %g %g 15\n", newx, newy, newz);
         }
-        if (float3dviewtransf(&inf))
+        if (float_view_transf3d(&inf))
         {
             // plot if inside window
             if (inf.col >= 0)
@@ -2639,7 +2639,7 @@ static int ifs2d()
 
     tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
 
-    fp = open_orbitsave();
+    fp = open_orbit_save();
 
     x = 0;
     y = 0;
@@ -2714,7 +2714,7 @@ static int ifs2d()
     return ret;
 }
 
-static int ifs3dlong()
+static int ifs3d_long()
 {
     int color_method;
     std::FILE *fp;
@@ -2759,7 +2759,7 @@ static int ifs3dlong()
     inf.orbit[1] = 0;
     inf.orbit[2] = 0;
 
-    fp = open_orbitsave();
+    fp = open_orbit_save();
 
     ret = 0;
     if (g_max_iterations > 0x1fffffL)
@@ -2815,7 +2815,7 @@ static int ifs3dlong()
             std::fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, (double)newz/g_fudge_factor);
         }
 
-        if (long3dviewtransf(&inf))
+        if (long_view_transf3d(&inf))
         {
             if ((long)std::abs(inf.row) + (long)std::abs(inf.col) > BAD_PIXEL)   // sanity check
             {
@@ -2870,7 +2870,7 @@ static int ifs3dlong()
     return ret;
 }
 
-static void setupmatrix(MATRIX doublemat)
+static void setup_matrix(MATRIX doublemat)
 {
     // build transformation matrix
     identity(doublemat);
@@ -2888,14 +2888,14 @@ int orbit3d_float()
 {
     g_display_3d = display_3d_modes::MINUS_ONE ;
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
-    return funny_glasses_call(orbit3dfloatcalc);
+    return funny_glasses_call(orbit3d_float_calc);
 }
 
 int orbit3d_long()
 {
     g_display_3d = display_3d_modes::MINUS_ONE ;
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
-    return funny_glasses_call(orbit3dlongcalc);
+    return funny_glasses_call(orbit3d_long_calc);
 }
 
 static int ifs3d()
@@ -2905,15 +2905,15 @@ static int ifs3d()
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     if (g_float_flag)
     {
-        return funny_glasses_call(ifs3dfloat); // double version of ifs3d
+        return funny_glasses_call(ifs3d_float); // double version of ifs3d
     }
     else
     {
-        return funny_glasses_call(ifs3dlong); // long version of ifs3d
+        return funny_glasses_call(ifs3d_long); // long version of ifs3d
     }
 }
 
-static bool long3dviewtransf(ViewTransform3DLong *inf)
+static bool long_view_transf3d(ViewTransform3DLong *inf)
 {
     if (g_color_iter == 1)  // initialize on first call
     {
@@ -2922,10 +2922,10 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
             inf->min_vals[i] =  1L << 30;
             inf->max_vals[i] = -inf->min_vals[i];
         }
-        setupmatrix(inf->double_mat);
+        setup_matrix(inf->double_mat);
         if (s_real_time)
         {
-            setupmatrix(inf->double_mat1);
+            setup_matrix(inf->double_mat1);
         }
         // copy xform matrix to long for for fixed point math
         for (int i = 0; i < 4; i++)
@@ -3103,7 +3103,7 @@ static bool long3dviewtransf(ViewTransform3DLong *inf)
     return true;
 }
 
-static bool float3dviewtransf(ViewTransform3DFloat *inf)
+static bool float_view_transf3d(ViewTransform3DFloat *inf)
 {
     if (g_color_iter == 1)  // initialize on first call
     {
@@ -3112,10 +3112,10 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
             inf->min_vals[i] =  100000.0; // impossible value
             inf->max_vals[i] = -100000.0;
         }
-        setupmatrix(inf->double_mat);
+        setup_matrix(inf->double_mat);
         if (s_real_time)
         {
-            setupmatrix(inf->double_mat1);
+            setup_matrix(inf->double_mat1);
         }
     }
 
@@ -3223,7 +3223,7 @@ static bool float3dviewtransf(ViewTransform3DFloat *inf)
     return true;
 }
 
-static std::FILE *open_orbitsave()
+static std::FILE *open_orbit_save()
 {
     check_write_file(g_orbit_save_name, ".raw");
     std::FILE *fp;
@@ -3236,7 +3236,7 @@ static std::FILE *open_orbitsave()
 }
 
 // Plot a histogram by incrementing the pixel each time it it touched
-static void plothist(int x, int y, int color)
+static void plot_hist(int x, int y, int color)
 {
     color = get_color(x, y)+1;
     if (color >= g_colors)
