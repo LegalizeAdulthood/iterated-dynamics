@@ -19,7 +19,7 @@ struct AlternateMath
     bool (*per_image)();                // once-per-image setup
 };
 
-struct MOREPARAMS
+struct MoreParams
 {
     fractal_type type;                  // index in fractalname of the fractal
     char const *param[MAX_PARAMS-4];    // name of the parameters
@@ -112,7 +112,7 @@ struct FractalSpecific
 
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers
 extern FractalSpecific       g_fractal_specific[];
-extern MOREPARAMS            g_more_fractal_params[];
+extern MoreParams            g_more_fractal_params[];
 extern int                   g_num_fractal_types;
 
 inline bool per_image()

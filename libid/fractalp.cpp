@@ -140,7 +140,7 @@ enum
     NOBAILOUT = 0,
 };
 
-MOREPARAMS g_more_fractal_params[] =
+MoreParams g_more_fractal_params[] =
 {
     {fractal_type::ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
     {fractal_type::ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
