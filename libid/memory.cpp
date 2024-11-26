@@ -65,13 +65,13 @@ union Memory
 } // namespace
 
 // Routines in this module
-static bool CheckDiskSpace(long howmuch);
+static bool check_disk_space(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle();
-static int CheckBounds(long start, long length, U16 handle);
-static void WhichDiskError(int);
-static void DisplayError(int stored_at, long howmuch);
-static void DisplayHandle(U16 handle);
+static int check_bounds(long start, long length, U16 handle);
+static void which_disk_error(int);
+static void display_error(int stored_at, long howmuch);
+static void display_handle(U16 handle);
 
 static int s_num_total_handles{};
 static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
@@ -79,12 +79,12 @@ static Memory s_handles[MAXHANDLES];
 
 // Memory handling support routines
 
-static bool CheckDiskSpace(long)
+static bool check_disk_space(long)
 {
     return true;
 }
 
-static void WhichDiskError(int I_O)
+static void which_disk_error(int I_O)
 {
     // Set I_O == 1 after a file create, I_O == 2 after a file set value
     // Set I_O == 3 after a file write, I_O == 4 after a file read
@@ -111,7 +111,7 @@ int memory_type(U16 handle)
     return s_handles[handle].nowhere.stored_at;
 }
 
-static void DisplayError(int stored_at, long howmuch)
+static void display_error(int stored_at, long howmuch)
 {
     // This routine is used to display an error message when the requested
     // memory type cannot be allocated due to insufficient memory, AND there
@@ -161,7 +161,7 @@ static int check_for_mem(int stored_at, long howmuch)
 
     case DISK: // check_for_mem
     default: // just in case a nonsense number gets used
-        if (CheckDiskSpace(howmuch))
+        if (check_disk_space(howmuch))
         {
             use_this_type = DISK;
             break;
@@ -188,43 +188,43 @@ static U16 next_handle()
     return counter;
 }
 
-static int CheckBounds(long start, long length, U16 handle)
+static int check_bounds(long start, long length, U16 handle)
 {
     if (s_handles[handle].nowhere.size - start - length < 0)
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
-        DisplayHandle(handle);
+        display_handle(handle);
         return 1;
     }
     if (length > (long)USHRT_MAX)
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Tried to move > 65,535 bytes.");
-        DisplayHandle(handle);
+        display_handle(handle);
         return 1;
     }
     if (s_handles[handle].nowhere.stored_at == DISK
         && (stack_avail() <= DISKWRITELEN))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
-        DisplayHandle(handle);
+        display_handle(handle);
         return 1;
     }
     if (length <= 0)
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Zero or negative length.");
-        DisplayHandle(handle);
+        display_handle(handle);
         return 1;
     }
     if (start < 0)
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Negative offset.");
-        DisplayHandle(handle);
+        display_handle(handle);
         return 1;
     }
     return 0;
 }
 
-void DisplayMemory()
+void display_memory()
 {
     char buf[MSG_LEN];
 
@@ -232,7 +232,7 @@ void DisplayMemory()
     stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
 }
 
-static void DisplayHandle(U16 handle)
+static void display_handle(U16 handle)
 {
     char buf[MSG_LEN];
 
@@ -297,7 +297,7 @@ U16 memory_alloc(U16 size, long count, int stored_at)
     int use_this_type = check_for_mem(stored_at, toallocate);
     if (use_this_type == NOWHERE)
     {
-        DisplayError(stored_at, toallocate);
+        display_error(stored_at, toallocate);
         goodbye();
     }
 
@@ -307,7 +307,7 @@ U16 memory_alloc(U16 size, long count, int stored_at)
 
     if (handle >= MAXHANDLES || handle == 0)
     {
-        DisplayHandle(handle);
+        display_handle(handle);
         return 0U;
         // Oops, do something about this! ?????
     }
@@ -348,8 +348,8 @@ U16 memory_alloc(U16 size, long count, int stored_at)
         {
             s_handles[handle].disk.stored_at = NOWHERE;
             use_this_type = NOWHERE;
-            WhichDiskError(1);
-            DisplayMemory();
+            which_disk_error(1);
+            display_memory();
             driver_buzzer(buzzer_codes::PROBLEM);
             break;
         }
@@ -373,7 +373,7 @@ U16 memory_alloc(U16 size, long count, int stored_at)
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
             s_memory_names[stored_at], toallocate, s_memory_names[use_this_type], handle);
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
-        DisplayMemory();
+        display_memory();
     }
 
     if (success)
@@ -429,7 +429,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
     tomove = (long)count * size;
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
-        if (CheckBounds(start, tomove, handle))
+        if (check_bounds(start, tomove, handle))
         {
             return false; // out of bounds, don't do it
         }
@@ -439,7 +439,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
     switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // MoveToMemory
-        DisplayHandle(handle);
+        display_handle(handle);
         break;
 
     case MEMORY: // MoveToMemory
@@ -459,7 +459,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
             numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
             if (numwritten != 1)
             {
-                WhichDiskError(3);
+                which_disk_error(3);
                 goto diskerror;
             }
             tomove -= DISKWRITELEN;
@@ -469,7 +469,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
         numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numwritten != 1)
         {
-            WhichDiskError(3);
+            which_disk_error(3);
             break;
         }
         success = true;
@@ -478,7 +478,7 @@ diskerror:
     } // end of switch
     if (!success && g_debug_flag == debug_flags::display_memory_statistics)
     {
-        DisplayHandle(handle);
+        display_handle(handle);
     }
     return success;
 }
@@ -498,7 +498,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     tomove = (long)count * size;
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
-        if (CheckBounds(start, tomove, handle))
+        if (check_bounds(start, tomove, handle))
         {
             return false; // out of bounds, don't do it
         }
@@ -508,7 +508,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // MoveFromMemory
-        DisplayHandle(handle);
+        display_handle(handle);
         break;
 
     case MEMORY: // MoveFromMemory
@@ -529,7 +529,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
             numread = (U16)std::fread(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
             if (numread != 1 && !std::feof(s_handles[handle].disk.file))
             {
-                WhichDiskError(4);
+                which_disk_error(4);
                 goto diskerror;
             }
             std::memcpy(buffer, diskbuf, (U16)DISKWRITELEN);
@@ -539,7 +539,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
         numread = (U16)std::fread(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numread != 1 && !std::feof(s_handles[handle].disk.file))
         {
-            WhichDiskError(4);
+            which_disk_error(4);
             break;
         }
         std::memcpy(buffer, diskbuf, (U16)tomove);
@@ -549,7 +549,7 @@ diskerror:
     } // end of switch
     if (!success && g_debug_flag == debug_flags::display_memory_statistics)
     {
-        DisplayHandle(handle);
+        display_handle(handle);
     }
     return success;
 }
@@ -569,7 +569,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     tomove = (long)count * size;
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
-        if (CheckBounds(start, tomove, handle))
+        if (check_bounds(start, tomove, handle))
         {
             return false; // out of bounds, don't do it
         }
@@ -579,7 +579,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     switch (s_handles[handle].nowhere.stored_at)
     {
     case NOWHERE: // SetMemory
-        DisplayHandle(handle);
+        display_handle(handle);
         break;
 
     case MEMORY: // SetMemory
@@ -600,7 +600,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
             numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
             if (numwritten != 1)
             {
-                WhichDiskError(2);
+                which_disk_error(2);
                 goto diskerror;
             }
             tomove -= DISKWRITELEN;
@@ -608,7 +608,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
         numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numwritten != 1)
         {
-            WhichDiskError(2);
+            which_disk_error(2);
             break;
         }
         success = true;
@@ -617,7 +617,7 @@ diskerror:
     } // end of switch
     if (!success && g_debug_flag == debug_flags::display_memory_statistics)
     {
-        DisplayHandle(handle);
+        display_handle(handle);
     }
     return success;
 }
