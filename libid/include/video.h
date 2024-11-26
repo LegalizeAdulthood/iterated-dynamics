@@ -10,8 +10,8 @@ extern int                   g_vesa_y_res;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
 
-int getcolor(int x, int y);
-void putcolor_a(int xdot, int ydot, int color);
+int get_color(int x, int y);
+void put_color_a(int xdot, int ydot, int color);
 int out_line(BYTE *pixels, int linelen);
 void write_span(int row, int startcol, int stopcol, BYTE const *pixels);
 void read_span(int row, int startcol, int stopcol, BYTE *pixels);

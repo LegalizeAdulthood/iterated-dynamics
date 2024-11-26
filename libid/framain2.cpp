@@ -719,7 +719,7 @@ static int cmp_line(BYTE *pixels, int linelen)
     }
     for (int col = 0; col < linelen; col++)
     {
-        oldcolor = getcolor(col, row);
+        oldcolor = get_color(col, row);
         if (oldcolor == (int)pixels[col])
         {
             g_put_color(col, row, 0);

@@ -116,7 +116,7 @@ int star_field()
                 g_busy = false;
                 return 1;
             }
-            c = getcolor(g_col, g_row);
+            c = get_color(g_col, g_row);
             if (c == g_inside_color)
             {
                 c = g_colors-1;

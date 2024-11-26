@@ -121,8 +121,8 @@ int g_invert{};                                 //
 double g_f_radius{};                            //
 double g_f_x_center{};                          //
 double g_f_y_center{};                          // for inversion
-void (*g_put_color)(int, int, int){putcolor_a}; //
-void (*g_plot)(int, int, int){putcolor_a};      //
+void (*g_put_color)(int, int, int){put_color_a}; //
+void (*g_plot)(int, int, int){put_color_a};      //
 double g_magnitude{};                           //
 double g_magnitude_limit{};                     //
 double g_magnitude_limit2{};                    //
@@ -530,7 +530,7 @@ int calc_fract()
     g_attractors = 0;          // default to no known finite attractors
     g_display_3d = display_3d_modes::NONE;
     g_basin = 0;
-    g_put_color = putcolor_a;
+    g_put_color = put_color_a;
     if (g_is_true_color && g_true_mode != true_color_mode::default_color)
     {
         // Have to force passes = 1
@@ -3361,7 +3361,7 @@ void sym_plot4_basin(int x, int y, int color)
 
 static void put_truecolor_disk(int x, int y, int color)
 {
-    putcolor_a(x, y, color);
+    put_color_a(x, y, color);
     targa_color(x, y, color);
 }
 

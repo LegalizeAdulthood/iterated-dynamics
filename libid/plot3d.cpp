@@ -182,7 +182,7 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
 
 static void plot3d_superimpose16(int x, int y, int color)
 {
-    int tmp = getcolor(x, y);
+    int tmp = get_color(x, y);
 
     if (g_which_image == stereo_images::RED) // RED
     {
@@ -231,7 +231,7 @@ static void plot3d_superimpose256(int x, int y, int color)
         color = 1 + color / 18; //  Maps colors 1-255 to 15 even ranges
     }
 
-    tmp = getcolor(x, y);
+    tmp = get_color(x, y);
     // map to 16 colors
     if (g_which_image == stereo_images::RED) // RED
     {
@@ -289,7 +289,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
         color = 1 + color / 18; //  Looks weird but maps colors 1-255 to 15 relatively even ranges
     }
 
-    tmp = getcolor(x, y);
+    tmp = get_color(x, y);
     // map to 16 colors
     if (g_which_image == stereo_images::RED) // RED
     {
@@ -390,7 +390,7 @@ static void plot3d_cross_eyed_a(int x, int y, int color)
     if (g_row_count >= g_logical_screen_y_dots/2)
     {
         // hidden surface kludge
-        if (getcolor(x, y) != 0)
+        if (get_color(x, y) != 0)
         {
             return;
         }
@@ -414,7 +414,7 @@ static void plot3d_cross_eyed_c(int x, int y, int color)
     if (g_row_count >= g_logical_screen_y_dots/2)
     {
         // hidden surface kludge
-        if (getcolor(x, y) != 0)
+        if (get_color(x, y) != 0)
         {
             return;
         }

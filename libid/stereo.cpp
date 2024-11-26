@@ -99,7 +99,7 @@ using DACBOX = BYTE (*)[256][3];
 static int getdepth(int xd, int yd)
 {
     int pal;
-    pal = getcolor(xd, yd);
+    pal = get_color(xd, yd);
     if (g_gray_flag)
     {
         // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
@@ -361,8 +361,8 @@ bool auto_stereo_convert()
     {
         for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
         {
-            colour[ct++] = getcolor(i + (int)(AVG), j);
-            colour[ct++] = getcolor(i - (int)(AVG), j);
+            colour[ct++] = get_color(i + (int)(AVG), j);
+            colour[ct++] = get_color(i - (int)(AVG), j);
         }
     }
     bars = g_calibrate != 0;

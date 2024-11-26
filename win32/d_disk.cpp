@@ -271,7 +271,7 @@ void DiskDriver::schedule_alarm(int secs)
 */
 void DiskDriver::write_pixel(int x, int y, int color)
 {
-    putcolor_a(x, y, color);
+    put_color_a(x, y, color);
 }
 
 /*
@@ -291,7 +291,7 @@ void DiskDriver::write_pixel(int x, int y, int color)
 */
 int DiskDriver::read_pixel(int x, int y)
 {
-    return getcolor(x, y);
+    return get_color(x, y);
 }
 
 /*

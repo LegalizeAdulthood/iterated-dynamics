@@ -79,7 +79,7 @@ void display_box()
         }
         else
         {
-            g_box_values[i] = getcolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset);
+            g_box_values[i] = get_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset);
         }
     }
 

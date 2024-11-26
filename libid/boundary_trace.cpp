@@ -82,7 +82,7 @@ int boundary_trace()
         g_color = BK_COLOR;
         for (int cur_col = g_i_x_start; cur_col <= g_i_x_stop; cur_col++)
         {
-            if (getcolor(cur_col, cur_row) != BK_COLOR)
+            if (get_color(cur_col, cur_row) != BK_COLOR)
             {
                 continue;
             }
@@ -129,7 +129,7 @@ int boundary_trace()
                     && g_col <= g_i_x_stop  //
                     && g_row <= g_i_y_stop)
                 {
-                    g_color = getcolor(g_col, g_row);
+                    g_color = get_color(g_col, g_row);
                     // g_color, g_row, g_col are global for (*g_calc_type)()
                     if (g_color == BK_COLOR && (*g_calc_type)()== -1)
                     {
@@ -192,21 +192,21 @@ int boundary_trace()
                         && g_col >= g_i_x_start                   //
                         && g_col <= g_i_x_stop                    //
                         && g_row <= g_i_y_stop                    //
-                        && getcolor(g_col, g_row) == trail_color) // getcolor() must be last
+                        && get_color(g_col, g_row) == trail_color) // getcolor() must be last
                     {
                         if (s_going_to == direction::South ||
                             (s_going_to == direction::West && coming_from != direction::East))
                         {
                             // fill a row, but only once
                             int right = g_col;
-                            while (--right >= g_i_x_start && (g_color = getcolor(right,g_row)) == trail_color)
+                            while (--right >= g_i_x_start && (g_color = get_color(right,g_row)) == trail_color)
                             {
                                 // do nothing
                             }
                             if (g_color == BK_COLOR) // check last color
                             {
                                 int left = right;
-                                while (getcolor(--left,g_row) == BK_COLOR)
+                                while (get_color(--left,g_row) == BK_COLOR)
                                 {
                                     // Should NOT be possible for left < g_i_x_start
                                     // do nothing

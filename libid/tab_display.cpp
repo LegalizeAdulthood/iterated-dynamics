@@ -738,7 +738,7 @@ static void area()
     {
         for (int x = 0; x < g_logical_screen_x_dots; x++)
         {
-            if (getcolor(x, y) == g_inside_color)
+            if (get_color(x, y) == g_inside_color)
             {
                 cnt++;
             }

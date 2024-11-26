@@ -762,7 +762,7 @@ int m_inverse_julia_orbit()
      * For MIIM, if color >= mxhits, discard the point
      *           else put the point's children onto the queue
      */
-    color  = getcolor(newcol, newrow);
+    color  = get_color(newcol, newrow);
     switch (g_major_method)
     {
     case Major::breadth_first:
@@ -948,7 +948,7 @@ int l_inverse_julia_orbit()
      * For MIIM, if color >= mxhits, discard the point
      *           else put the point's children onto the queue
      */
-    color  = getcolor(newcol, newrow);
+    color  = get_color(newcol, newrow);
     switch (g_major_method)
     {
     case Major::breadth_first:
@@ -1545,7 +1545,7 @@ int orbit2d_float()
             else
             {
                 // should this be using plothist()?
-                color = getcolor(col, row)+1;
+                color = get_color(col, row)+1;
                 if (color < g_colors) // color sticks on last value
                 {
                     (*g_plot)(col, row, color);
@@ -2524,7 +2524,7 @@ static int ifs3dfloat()
                 }
                 else
                 {
-                    color = getcolor(inf.col, inf.row)+1;
+                    color = get_color(inf.col, inf.row)+1;
                 }
                 if (color < g_colors)     // color sticks on last value
                 {
@@ -2547,7 +2547,7 @@ static int ifs3dfloat()
                     }
                     else
                     {
-                        color = getcolor(inf.col1, inf.row1)+1;
+                        color = get_color(inf.col1, inf.row1)+1;
                     }
                     if (color < g_colors)     // color sticks on last value
                     {
@@ -2686,7 +2686,7 @@ static int ifs2d()
             }
             else
             {
-                color = getcolor(col, row)+1;
+                color = get_color(col, row)+1;
             }
             if (color < g_colors)     // color sticks on last value
             {
@@ -2825,7 +2825,7 @@ static int ifs3dlong()
                 }
                 else
                 {
-                    color = getcolor(inf.col, inf.row)+1;
+                    color = get_color(inf.col, inf.row)+1;
                 }
                 if (color < g_colors)     // color sticks on last value
                 {
@@ -2844,7 +2844,7 @@ static int ifs3dlong()
                     }
                     else
                     {
-                        color = getcolor(inf.col1, inf.row1)+1;
+                        color = get_color(inf.col1, inf.row1)+1;
                     }
                     if (color < g_colors)     // color sticks on last value
                     {
@@ -3229,7 +3229,7 @@ static std::FILE *open_orbitsave()
 // Plot a histogram by incrementing the pixel each time it it touched
 static void plothist(int x, int y, int color)
 {
-    color = getcolor(x, y)+1;
+    color = get_color(x, y)+1;
     if (color >= g_colors)
     {
         color = 1;

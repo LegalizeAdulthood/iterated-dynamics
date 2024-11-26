@@ -479,7 +479,7 @@ static int clip_get_color(int x, int y)
         return 0;
     }
 
-    return getcolor(x, y);
+    return get_color(x, y);
 }
 
 static void hor_line(int x, int y, int width, int color)
@@ -1785,7 +1785,7 @@ int PalTable::get_cursor_color() const
 {
     int x = s_cursor.get_x();
     int y = s_cursor.get_y();
-    int color = getcolor(x, y);
+    int color = get_color(x, y);
 
     if (is_reserved(color))
     {

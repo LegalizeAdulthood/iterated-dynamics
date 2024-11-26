@@ -360,10 +360,10 @@ tess_end:
 static int tesschkcol(int x, int y1, int y2)
 {
     int i;
-    i = getcolor(x, ++y1);
+    i = get_color(x, ++y1);
     while (--y2 > y1)
     {
-        if (getcolor(x, y2) != i)
+        if (get_color(x, y2) != i)
         {
             return -1;
         }
@@ -374,10 +374,10 @@ static int tesschkcol(int x, int y1, int y2)
 static int tesschkrow(int x1, int x2, int y)
 {
     int i;
-    i = getcolor(x1, y);
+    i = get_color(x1, y);
     while (x2 > x1)
     {
-        if (getcolor(x2, y) != i)
+        if (get_color(x2, y) != i)
         {
             return -1;
         }

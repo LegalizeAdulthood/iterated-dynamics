@@ -63,7 +63,7 @@ enum
 
 constexpr double SEED{0.66}; // starting value for population
 
-static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) getcolor(x, y); }};
+static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
 static U16 (*s_get_pix)(int x, int y){s_get_color};
 static int s_i_parm_x{};     // iparmx = parm.x * 8
 static int s_shift_value{}; // shift based on #colors
@@ -840,10 +840,10 @@ int diffusion()
         // Loop as long as the point (x,y) is surrounded by color 0
         // on all eight sides
 
-        while ((getcolor(x+1, y+1) == 0) && (getcolor(x+1, y) == 0)
-            && (getcolor(x+1, y-1) == 0) && (getcolor(x  , y+1) == 0)
-            && (getcolor(x  , y-1) == 0) && (getcolor(x-1, y+1) == 0)
-            && (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
+        while ((get_color(x+1, y+1) == 0) && (get_color(x+1, y) == 0)
+            && (get_color(x+1, y-1) == 0) && (get_color(x  , y+1) == 0)
+            && (get_color(x  , y-1) == 0) && (get_color(x-1, y+1) == 0)
+            && (get_color(x-1, y) == 0) && (get_color(x-1, y-1) == 0))
         {
             // Erase moving point
             if (g_show_orbit)

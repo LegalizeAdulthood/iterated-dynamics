@@ -143,7 +143,7 @@ int  c_getcolor(int x, int y)
             return 1000;
         }
     }
-    return getcolor(x, y);
+    return get_color(x, y);
 }
 
 void circleplot(int x, int y, int color)
@@ -895,7 +895,7 @@ void jiim(jiim_types which)
             if (s_show_numbers) // write coordinates on screen
             {
                 char str[41];
-                std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
+                std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", cr, ci, get_color(g_col, g_row));
                 if (s_window_style == JuliaWindowStyle::LARGE)
                 {
                     /* show temp msg will clear self if new msg is a

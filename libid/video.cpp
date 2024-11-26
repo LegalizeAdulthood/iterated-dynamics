@@ -138,7 +138,7 @@ void set_null_video()
 
 // Return the color on the screen at the (xdot, ydot) point
 //
-int getcolor(int xdot, int ydot)
+int get_color(int xdot, int ydot)
 {
     const int x1 = xdot + g_logical_screen_x_offset;
     const int y1 = ydot + g_logical_screen_y_offset;
@@ -153,7 +153,7 @@ int getcolor(int xdot, int ydot)
 
 // write the color on the screen at the (xdot, ydot) point
 //
-void putcolor_a(int xdot, int ydot, int color)
+void put_color_a(int xdot, int ydot, int color)
 {
     int x1 = xdot + g_logical_screen_x_offset;
     int y1 = ydot + g_logical_screen_y_offset;

@@ -67,7 +67,7 @@ static int standard_calc(int passnum)
             // on 2nd pass of two, skip even pts
             if (g_quick_calc && !g_resuming)
             {
-                g_color = getcolor(g_col, g_row);
+                g_color = get_color(g_col, g_row);
                 if (g_color != g_inside_color)
                 {
                     ++g_col;

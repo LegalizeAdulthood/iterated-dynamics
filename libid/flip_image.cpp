@@ -50,8 +50,8 @@ main_state flip_image(int &key, bool &, bool &, bool &)
             }
             for (int j = 0; j < g_logical_screen_y_dots; j++)
             {
-                tempdot = getcolor(i, j);
-                g_put_color(i, j, getcolor(g_logical_screen_x_dots-1-i, j));
+                tempdot = get_color(i, j);
+                g_put_color(i, j, get_color(g_logical_screen_x_dots-1-i, j));
                 g_put_color(g_logical_screen_x_dots-1-i, j, tempdot);
             }
         }
@@ -82,8 +82,8 @@ main_state flip_image(int &key, bool &, bool &, bool &)
             }
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                tempdot = getcolor(i, j);
-                g_put_color(i, j, getcolor(i, g_logical_screen_y_dots-1-j));
+                tempdot = get_color(i, j);
+                g_put_color(i, j, get_color(i, g_logical_screen_y_dots-1-j));
                 g_put_color(i, g_logical_screen_y_dots-1-j, tempdot);
             }
         }
@@ -114,8 +114,8 @@ main_state flip_image(int &key, bool &, bool &, bool &)
             }
             for (int j = 0; j < g_logical_screen_y_dots; j++)
             {
-                tempdot = getcolor(i, j);
-                g_put_color(i, j, getcolor(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j));
+                tempdot = get_color(i, j);
+                g_put_color(i, j, get_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j));
                 g_put_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j, tempdot);
             }
         }

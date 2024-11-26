@@ -260,9 +260,9 @@ restart:
             for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
             {
                 // clear vert status bars
-                g_put_color(i, j, getcolor(i, j) ^ outcolor1);
+                g_put_color(i, j, get_color(i, j) ^ outcolor1);
                 g_put_color(g_logical_screen_x_dots - 1 - i, j,
-                         getcolor(g_logical_screen_x_dots - 1 - i, j) ^ outcolor2);
+                         get_color(g_logical_screen_x_dots - 1 - i, j) ^ outcolor2);
             }
         }
     }
@@ -1107,7 +1107,7 @@ static bool compress(int rowlimit)
             {
                 if (s_save_16bit == 0 || ydot < g_logical_screen_y_dots)
                 {
-                    color = getcolor(xdot, ydot);
+                    color = get_color(xdot, ydot);
                 }
                 else
                 {
@@ -1183,9 +1183,9 @@ nomatch:
                 {
                     // display vert status bars
                     // (this is NOT GIF-related)
-                    g_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
+                    g_put_color(i, ydot, get_color(i, ydot) ^ outcolor1);
                     g_put_color(g_logical_screen_x_dots - 1 - i, ydot,
-                             getcolor(g_logical_screen_x_dots - 1 - i, ydot) ^ outcolor2);
+                             get_color(g_logical_screen_x_dots - 1 - i, ydot) ^ outcolor2);
                 }
                 s_last_color_bar = ydot;
             } // end if !driver_diskp()
