@@ -45,73 +45,73 @@ std::vector<double> g_grid_y1;
  */
 
 // Real component, grid lookup version - requires dx0/dx1 arrays
-static double dxpixel_grid()
+static double dx_pixel_grid()
 {
     return g_grid_x0[g_col]+g_grid_x1[g_row];
 }
 
 // Real component, calculation version - does not require arrays
-static double dxpixel_calc()
+static double dx_pixel_calc()
 {
     return (double)(g_x_min + g_col*g_delta_x + g_row*g_delta_x2);
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
-static double dypixel_grid()
+static double dy_pixel_grid()
 {
     return g_grid_y0[g_row]+g_grid_y1[g_col];
 }
 
 // Imaginary component, calculation version - does not require arrays
-static double dypixel_calc()
+static double dy_pixel_calc()
 {
     return (double)(g_y_max - g_row*g_delta_y - g_col*g_delta_y2);
 }
 
 // Real component, grid lookup version - requires lx0/lx1 arrays
-static long lxpixel_grid()
+static long lx_pixel_grid()
 {
     return g_l_x0[g_col]+g_l_x1[g_row];
 }
 
 // Real component, calculation version - does not require arrays
-static long lxpixel_calc()
+static long lx_pixel_calc()
 {
     return g_l_x_min + g_col*g_l_delta_x + g_row*g_l_delta_x2;
 }
 
 // Imaginary component, grid lookup version - requires ly0/ly1 arrays
-static long lypixel_grid()
+static long ly_pixel_grid()
 {
     return g_l_y0[g_row]+g_l_y1[g_col];
 }
 
 // Imaginary component, calculation version - does not require arrays
-static long lypixel_calc()
+static long ly_pixel_calc()
 {
     return g_l_y_max - g_row*g_l_delta_y - g_col*g_l_delta_y2;
 }
 
-double (*g_dx_pixel)() = dxpixel_calc;
-double (*g_dy_pixel)() = dypixel_calc;
-long (*g_l_x_pixel)() = lxpixel_calc;
-long (*g_l_y_pixel)() = lypixel_calc;
+double (*g_dx_pixel)() = dx_pixel_calc;
+double (*g_dy_pixel)() = dy_pixel_calc;
+long (*g_l_x_pixel)() = lx_pixel_calc;
+long (*g_l_y_pixel)() = ly_pixel_calc;
 
 void set_pixel_calc_functions()
 {
     if (g_use_grid)
     {
-        g_dx_pixel = dxpixel_grid;
-        g_dy_pixel = dypixel_grid;
-        g_l_x_pixel = lxpixel_grid;
-        g_l_y_pixel = lypixel_grid;
+        g_dx_pixel = dx_pixel_grid;
+        g_dy_pixel = dy_pixel_grid;
+        g_l_x_pixel = lx_pixel_grid;
+        g_l_y_pixel = ly_pixel_grid;
     }
     else
     {
-        g_dx_pixel = dxpixel_calc;
-        g_dy_pixel = dypixel_calc;
-        g_l_x_pixel = lxpixel_calc;
-        g_l_y_pixel = lypixel_calc;
+        g_dx_pixel = dx_pixel_calc;
+        g_dy_pixel = dy_pixel_calc;
+        g_l_x_pixel = lx_pixel_calc;
+        g_l_y_pixel = ly_pixel_calc;
     }
 }
 
