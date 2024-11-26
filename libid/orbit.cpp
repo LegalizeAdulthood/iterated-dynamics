@@ -15,7 +15,7 @@
 #include "video.h"
 #include "wait_until.h"
 
-static void   plotdorbit(double, double, int);
+static void plot_d_orbit(double, double, int);
 
 enum
 {
@@ -46,7 +46,7 @@ static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
                       / ((0-delyy2)*W*delxx2*D-Ys*Xs)
   */
 
-static void plotdorbit(double dx, double dy, int color)
+static void plot_d_orbit(double dx, double dy, int color)
 {
     int i;
     int j;
@@ -127,12 +127,12 @@ static void plotdorbit(double dx, double dy, int color)
 
 void iplot_orbit(long ix, long iy, int color)
 {
-    plotdorbit((double)ix/g_fudge_factor-g_x_min, (double)iy/g_fudge_factor-g_y_max, color);
+    plot_d_orbit((double)ix/g_fudge_factor-g_x_min, (double)iy/g_fudge_factor-g_y_max, color);
 }
 
 void plot_orbit(double real, double imag, int color)
 {
-    plotdorbit(real-g_x_min, imag-g_y_max, color);
+    plot_d_orbit(real-g_x_min, imag-g_y_max, color);
 }
 
 void scrub_orbit()
