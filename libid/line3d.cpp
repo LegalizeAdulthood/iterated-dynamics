@@ -653,7 +653,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             if (g_raytrace_format == raytrace_formats::acrospin)       // Output vertex info for Acrospin
             {
                 std::fprintf(s_file_ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
-                        f_cur.x, f_cur.y, f_cur.color, s_ro, s_co);
+                        f_cur.x, f_cur.y, static_cast<double>(f_cur.color), s_ro, s_co);
                 if (s_co > s_co_max)
                 {
                     s_co_max = s_co;
