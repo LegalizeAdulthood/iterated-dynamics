@@ -28,7 +28,7 @@
 [[noreturn]] void goodbye()
 {
     end_resume();
-    ReleaseParamBox();
+    release_param_box();
     if (!g_ifs_definition.empty())
     {
         g_ifs_definition.clear();

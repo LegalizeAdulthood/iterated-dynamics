@@ -328,7 +328,7 @@ static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
     }
     else if (key == ID_KEY_CTL_E)
     {
-        i = get_evolve_Parms();
+        i = get_evolve_params();
         if (i > 0)
         {
             g_start_show_orbit = false;

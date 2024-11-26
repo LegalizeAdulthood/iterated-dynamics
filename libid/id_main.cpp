@@ -187,7 +187,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_evolve_mutation_reduction_factor = 1.0;
     g_evolve_this_generation_random_seed = (unsigned int)std::clock();
     std::srand(g_evolve_this_generation_random_seed);
-    initgene(); /*initialise pointers to lots of variables for the evolution engine*/
+    init_gene(); /*initialise pointers to lots of variables for the evolution engine*/
     g_start_show_orbit = false;
     g_show_dot = -1; // turn off show_dot if entered with <g> command
     g_calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image

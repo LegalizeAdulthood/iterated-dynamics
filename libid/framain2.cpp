@@ -449,11 +449,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
                 while (ecount < gridsqr)
                 {
-                    spiralmap(ecount); // sets px & py
+                    spiral_map(ecount); // sets px & py
                     g_logical_screen_x_offset = tmpxdots * g_evolve_param_grid_x;
                     g_logical_screen_y_offset = tmpydots * g_evolve_param_grid_y;
                     restore_param_history();
-                    fiddleparms(gene, ecount);
+                    fiddle_params(gene, ecount);
                     calc_frac_init();
                     if (calc_fract() == -1)
                     {
@@ -500,9 +500,9 @@ done:
                 // set up for 1st selected image, this reuses px and py
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;
                 g_evolve_param_grid_x = g_evolve_param_grid_y;
-                unspiralmap();    // first time called, w/above line sets up array
+                unspiral_map();    // first time called, w/above line sets up array
                 restore_param_history();
-                fiddleparms(gene, 0);
+                fiddle_params(gene, 0);
                 copy_genes_to_bank(gene);
             }
             // end of evolution loop

@@ -121,11 +121,11 @@ void varytrig(GeneBase gene[], int randval, int i);
 void varybotest(GeneBase gene[], int randval, int i);
 void varyinv(GeneBase gene[], int randval, int i);
 static bool explore_check();
-void spiralmap(int);
+void spiral_map(int);
 static void set_random(int);
 void set_mutation_level(int);
-void SetupParamBox();
-void ReleaseParamBox();
+void setup_param_box();
+void release_param_box();
 
 void copy_genes_from_bank(GeneBase gene[NUM_GENES])
 {
@@ -175,7 +175,7 @@ void copy_genes_to_bank(GeneBase const gene[NUM_GENES])
 // control variables... revise as necessary when
 // new vars come along... don't forget to increment NUM_GENES
 // as well
-void initgene()
+void init_gene()
 {
     //                        Use only 15 letters below: 123456789012345
     GeneBase gene[NUM_GENES] =
@@ -669,7 +669,7 @@ void set_mutation_level(int strength)
     }
 }
 
-int get_evolve_Parms()
+int get_evolve_params()
 {
     ChoiceBuilder<20> choices;
     int i, j, tmp;
@@ -865,7 +865,7 @@ get_evol_restart:
     return i;
 }
 
-void SetupParamBox()
+void setup_param_box()
 {
     g_evolve_param_box_count = 0;
     g_evolve_param_zoom = ((double) g_evolve_image_grid_size -1.0)/2.0;
@@ -882,7 +882,7 @@ void SetupParamBox()
     s_image_box_values.resize(num_values);
 }
 
-void ReleaseParamBox()
+void release_param_box()
 {
     s_param_box_x.clear();
     s_param_box_y.clear();
@@ -902,7 +902,7 @@ void set_current_params()
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
 }
 
-void fiddleparms(GeneBase gene[], int ecount)
+void fiddle_params(GeneBase gene[], int ecount)
 {
     // call with px, py ... parameter set co-ords
     // set random seed then call rnd enough times to get to px, py
@@ -963,7 +963,7 @@ static bool explore_check()
     return false;
 }
 
-void drawparmbox(int mode)
+void draw_param_box(int mode)
 {
     // draws parameter zoom box in evolver mode
     // clears boxes off screen if mode = 1, otherwise, redraws boxes
@@ -1048,7 +1048,7 @@ void set_evolve_ranges()
     g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
 }
 
-void spiralmap(int count)
+void spiral_map(int count)
 {
     // maps out a clockwise spiral for a prettier and possibly
     // more intuitively useful order of drawing the sub images.
@@ -1105,7 +1105,7 @@ void spiralmap(int count)
     }
 }
 
-int unspiralmap()
+int unspiral_map()
 {
     // unmaps the clockwise spiral
     // All this malarky is to allow selecting different subimages
@@ -1121,7 +1121,7 @@ int unspiralmap()
         s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
         for (int i = 1; i < gridsqr; i++)
         {
-            spiralmap(i);
+            spiral_map(i);
             s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = i;
         }
         old_image_grid_size = g_evolve_image_grid_size;

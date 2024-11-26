@@ -55,12 +55,12 @@ static void save_evolver_image()
             ValueSaver saved_evolve_param_grid_x{g_evolve_param_grid_x, g_evolve_image_grid_size / 2};
             ValueSaver saved_evolve_param_grid_y{g_evolve_param_grid_y, g_evolve_image_grid_size / 2};
             restore_param_history();
-            fiddleparms(gene, 0);
-            drawparmbox(1);
+            fiddle_params(gene, 0);
+            draw_param_box(1);
             save_image(g_save_filename);
         }
         restore_param_history();
-        fiddleparms(gene, unspiralmap());
+        fiddle_params(gene, unspiral_map());
     }
     copy_genes_to_bank(gene);
 }
@@ -95,7 +95,7 @@ static void prompt_evolver_options(int key, bool &kbd_more)
     }
     else if (key == ID_KEY_CTL_E || key == ID_KEY_SPACE)
     {
-        i = get_evolve_Parms();
+        i = get_evolve_params();
     }
     else
     {
@@ -174,11 +174,11 @@ static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_
         g_logical_screen_y_offset = g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
 
         restore_param_history();
-        fiddleparms(gene, unspiralmap()); // change all parameters
+        fiddle_params(gene, unspiral_map()); // change all parameters
         // to values appropriate to the image selected
         set_evolve_ranges();
         change_box(0, 0);
-        drawparmbox(0);
+        draw_param_box(0);
     }
     copy_genes_to_bank(gene);
     return main_state::NOTHING;
@@ -193,7 +193,7 @@ static void evolve_param_zoom_decrease()
         {
             g_evolve_param_zoom = 1.0;
         }
-        drawparmbox(0);
+        draw_param_box(0);
         set_evolve_ranges();
     }
 }
@@ -207,7 +207,7 @@ static void evolve_param_zoom_increase()
         {
             g_evolve_param_zoom = (double) g_evolve_image_grid_size / 2.0;
         }
-        drawparmbox(0);
+        draw_param_box(0);
         set_evolve_ranges();
     }
 }
@@ -236,8 +236,8 @@ static void evolver_zoom_in()
                     g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
                 g_logical_screen_y_offset =
                     g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
-                SetupParamBox();
-                drawparmbox(0);
+                setup_param_box();
+                draw_param_box(0);
             }
             move_box(0.0, 0.0); // force scrolling
         }
@@ -258,8 +258,8 @@ static void evolver_zoom_out()
             g_zoom_box_width = 0;
             if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
             {
-                drawparmbox(1); // clear boxes off screen
-                ReleaseParamBox();
+                draw_param_box(1); // clear boxes off screen
+                release_param_box();
             }
         }
         else
