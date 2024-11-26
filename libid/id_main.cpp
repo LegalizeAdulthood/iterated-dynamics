@@ -144,7 +144,7 @@ static void my_floating_point_err(int sig)
 /*
 ; ****************** Function initasmvars() *****************************
 */
-static void initasmvars()
+static void init_asm_vars()
 {
     g_overflow = false;
 }
@@ -497,7 +497,7 @@ int id_main(int argc, char *argv[])
     // this traps non-math library floating point errors
     std::signal(SIGFPE, my_floating_point_err);
 
-    initasmvars();                       // initialize ASM stuff
+    init_asm_vars();                       // initialize ASM stuff
     init_memory();
 
     // let drivers add their video modes
