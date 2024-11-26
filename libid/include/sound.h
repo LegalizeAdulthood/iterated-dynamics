@@ -12,7 +12,7 @@ extern int                   g_hi_attenuation;
 extern int                   g_polyphony;
 extern bool                  g_tab_or_help;
 
-bool snd_open();
-void w_snd(int);
-void snd_time_write();
-void close_snd();
+bool sound_open();
+void write_sound(int);
+void sound_time_write();
+void close_sound();

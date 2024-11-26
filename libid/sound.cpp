@@ -29,7 +29,7 @@ bool g_tab_or_help{}; // kludge for sound and tab or help key press
 static std::FILE *s_snd_fp{};
 
 // open sound file
-bool snd_open()
+bool sound_open()
 {
     std::string soundname{"sound001.txt"};
     if ((g_orbit_save_flags & osf_midi) != 0 && s_snd_fp == nullptr)
@@ -49,12 +49,12 @@ bool snd_open()
 
 /* This routine plays a tone in the speaker and optionally writes a file
    if the orbitsave variable is turned on */
-void w_snd(int tone)
+void write_sound(int tone)
 {
     if ((g_orbit_save_flags & osf_midi) != 0)
     {
         // cppcheck-suppress leakNoVarFunctionCall
-        if (snd_open())
+        if (sound_open())
         {
             std::fprintf(s_snd_fp, "%-d\n", tone);
         }
@@ -77,16 +77,16 @@ void w_snd(int tone)
     }
 }
 
-void snd_time_write()
+void sound_time_write()
 {
     // cppcheck-suppress leakNoVarFunctionCall
-    if (snd_open())
+    if (sound_open())
     {
         std::fprintf(s_snd_fp, "time=%-ld\n", (long)std::clock()*1000/CLOCKS_PER_SEC);
     }
 }
 
-void close_snd()
+void close_sound()
 {
     if (s_snd_fp)
     {

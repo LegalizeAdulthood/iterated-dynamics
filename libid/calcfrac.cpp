@@ -877,7 +877,7 @@ int calc_fract()
     }
     if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)   // close sound write file
     {
-        close_snd();
+        close_sound();
     }
     if (g_truecolor)
     {
@@ -1522,7 +1522,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     if (g_show_orbit)
     {
-        snd_time_write();
+        sound_time_write();
     }
     while (++g_color_iter < g_max_iterations)
     {
