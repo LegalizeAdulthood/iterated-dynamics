@@ -15,8 +15,8 @@ extern std::string           g_auto_name;
 extern bool                  g_busy;
 extern slides_mode           g_slides;
 
-int slideshw();
-slides_mode startslideshow();
-void stopslideshow();
-void recordshw(int);
+int slide_show();
+slides_mode start_slide_show();
+void stop_slide_show();
+void record_show(int);
 int handle_special_keys(int ch);

@@ -158,7 +158,7 @@ static void message(int secs, char const *buf)
 }
 
 // this routine reads the file g_auto_name and returns keystrokes
-int slideshw()
+int slide_show()
 {
     int out;
     int i;
@@ -173,9 +173,9 @@ int slideshw()
     }
     if (s_slide_show_file == nullptr)     // open files first time through
     {
-        if (startslideshow() == slides_mode::OFF)
+        if (start_slide_show() == slides_mode::OFF)
         {
-            stopslideshow();
+            stop_slide_show();
             return 0;
         }
     }
@@ -224,7 +224,7 @@ start:
     switch (out)
     {
     case EOF:
-        stopslideshow();
+        stop_slide_show();
         return 0;
     case '\"':        // begin quoted string
         s_quotes = true;
@@ -364,7 +364,7 @@ start:
     return out;
 }
 
-slides_mode startslideshow()
+slides_mode start_slide_show()
 {
     s_slide_show_file = std::fopen(g_auto_name.c_str(), "r");
     if (s_slide_show_file == nullptr)
@@ -378,7 +378,7 @@ slides_mode startslideshow()
     return g_slides;
 }
 
-void stopslideshow()
+void stop_slide_show()
 {
     if (s_slide_show_file)
     {
@@ -388,7 +388,7 @@ void stopslideshow()
     g_slides = slides_mode::OFF;
 }
 
-void recordshw(int key)
+void record_show(int key)
 {
     char mn[MAX_MNEMONIC];
     float dt;
@@ -470,7 +470,7 @@ static void sleep_secs(int secs)
 static void slideshowerr(char const *msg)
 {
     char msgbuf[300] = { "Slideshow error:\n" };
-    stopslideshow();
+    stop_slide_show();
     std::strcat(msgbuf, msg);
     stopmsg(msgbuf);
 }
@@ -494,17 +494,17 @@ int handle_special_keys(int ch)
     {
         if (ch == ID_KEY_ESC)
         {
-            stopslideshow();
+            stop_slide_show();
             ch = 0;
         }
         else if (!ch)
         {
-            ch = slideshw();
+            ch = slide_show();
         }
     }
     else if ((g_slides == slides_mode::RECORD) && ch)
     {
-        recordshw(ch);
+        record_show(ch);
     }
 
     static bool inside_help = false;

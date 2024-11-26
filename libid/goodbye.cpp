@@ -42,7 +42,7 @@
         driver_set_for_text();
         driver_move_cursor(6, 0);
     }
-    stopslideshow();
+    stop_slide_show();
     end_help();
     int ret = 0;
     if (g_init_batch == batch_modes::BAILOUT_ERROR_NO_SAVE) // exit with error code for batch file
