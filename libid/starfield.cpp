@@ -27,7 +27,7 @@ static int s_distribution{30};
 static int s_slope{25};
 static long s_concentration{};
 static int s_offset{};
-static double s_starfield_values[4]{30.0, 100.0, 5.0, 0.0};
+static double s_star_field_values[4]{30.0, 100.0, 5.0, 0.0};
 
 //
 // Generate a gaussian distributed number.
@@ -70,34 +70,34 @@ int star_field()
 {   
     int c;
     g_busy = true;
-    if (s_starfield_values[0] <   1.0)
+    if (s_star_field_values[0] <   1.0)
     {
-        s_starfield_values[0] =   1.0;
+        s_star_field_values[0] =   1.0;
     }
-    if (s_starfield_values[0] > 100.0)
+    if (s_star_field_values[0] > 100.0)
     {
-        s_starfield_values[0] = 100.0;
+        s_star_field_values[0] = 100.0;
     }
-    if (s_starfield_values[1] <   1.0)
+    if (s_star_field_values[1] <   1.0)
     {
-        s_starfield_values[1] =   1.0;
+        s_star_field_values[1] =   1.0;
     }
-    if (s_starfield_values[1] > 100.0)
+    if (s_star_field_values[1] > 100.0)
     {
-        s_starfield_values[1] = 100.0;
+        s_star_field_values[1] = 100.0;
     }
-    if (s_starfield_values[2] <   1.0)
+    if (s_star_field_values[2] <   1.0)
     {
-        s_starfield_values[2] =   1.0;
+        s_star_field_values[2] =   1.0;
     }
-    if (s_starfield_values[2] > 100.0)
+    if (s_star_field_values[2] > 100.0)
     {
-        s_starfield_values[2] = 100.0;
+        s_star_field_values[2] = 100.0;
     }
 
-    s_distribution = (int)(s_starfield_values[0]);
-    s_concentration  = (long)(((s_starfield_values[1]) / 100.0) * (1L << 16));
-    s_slope = (int)(s_starfield_values[2]);
+    s_distribution = (int)(s_star_field_values[0]);
+    s_concentration  = (long)(((s_star_field_values[1]) / 100.0) * (1L << 16));
+    s_slope = (int)(s_star_field_values[2]);
 
     if (validate_luts(g_altern_map_file.data()))
     {
@@ -138,9 +138,9 @@ int get_star_field_params()
     }
 
     ChoiceBuilder<3> builder;
-    builder.float_number("Star Density in Pixels per Star", s_starfield_values[0])
-        .float_number("Percent Clumpiness", s_starfield_values[1])
-        .float_number("Ratio of Dim stars to Bright", s_starfield_values[2]);
+    builder.float_number("Star Density in Pixels per Star", s_star_field_values[0])
+        .float_number("Percent Clumpiness", s_star_field_values[1])
+        .float_number("Ratio of Dim stars to Bright", s_star_field_values[2]);
     driver_stack_screen();
     ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_STARFIELD};
     int const choice = builder.prompt("Starfield Parameters");
@@ -151,7 +151,7 @@ int get_star_field_params()
     }
     for (int i = 0; i < 3; i++)
     {
-        s_starfield_values[i] = builder.read_float_number();
+        s_star_field_values[i] = builder.read_float_number();
     }
 
     return 0;
