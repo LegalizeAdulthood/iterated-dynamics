@@ -61,11 +61,16 @@
 
 namespace fs = std::filesystem;
 
-struct write_batch_data // buffer for parms to break lines nicely
+namespace
+{
+
+struct WriteBatchData // buffer for parms to break lines nicely
 {
     int len;
     char buf[10000];
 };
+
+} // namespace
 
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
@@ -609,7 +614,7 @@ skip_UI:
     driver_unstack_screen();
 }
 
-static write_batch_data s_wbdata;
+static WriteBatchData s_wbdata;
 
 static int getprec(double a, double b, double c)
 {
