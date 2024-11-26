@@ -5,5 +5,5 @@
 #include "port.h"
 #include "big.h"
 
-void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew);
-void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew);
+void cvt_corners(double ctr_x, double ctr_y, LDBL mag, double x_mag_factor, double rot, double skew);
+void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, double rot, double skew);

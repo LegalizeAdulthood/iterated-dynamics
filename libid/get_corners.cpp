@@ -183,7 +183,7 @@ gc_loop:
             {
                 Xmagfactor = 1;
             }
-            cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         }
     }
     else
@@ -407,7 +407,7 @@ gsc_loop:
             {
                 Xmagfactor = 1;
             }
-            cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
             // set screen corners
             g_orbit_corner_min_x = g_x_min;
             g_orbit_corner_max_x = g_x_max;

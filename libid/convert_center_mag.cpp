@@ -93,7 +93,7 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDBL &mag, double &x_mag_facto
         const double tymin = g_y_min;
         const double tymax = g_y_max;
         const double ty3rd = g_y_3rd;
-        cvtcorners(ctr_x, ctr_y, mag, x_mag_factor, rot, skew);
+        cvt_corners(ctr_x, ctr_y, mag, x_mag_factor, rot, skew);
         const double error = sqr(txmin - g_x_min) //
             + sqr(txmax - g_x_max)                //
             + sqr(tx3rd - g_x_3rd)                //

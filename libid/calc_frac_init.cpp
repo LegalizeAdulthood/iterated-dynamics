@@ -684,7 +684,7 @@ void adjust_corner_bf()
     if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
     {
         Xmagfactor = sign(Xmagfactor);
-        cvtcornersbf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
+        cvt_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
     }
 
     // ftemp=fabs(xx3rd-xxmin);
@@ -763,7 +763,7 @@ void adjust_corner()
         if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
         {
             Xmagfactor = sign(Xmagfactor);
-            cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         }
     }
 

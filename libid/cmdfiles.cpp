@@ -1480,7 +1480,7 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
             Skew = cmd.float_vals[5];
         }
         // calculate bounds
-        cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+        cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         return cmdarg_flags::FRACTAL_PARAM;
     }
 
@@ -1525,7 +1525,7 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
         Skew = cmd.float_vals[5];
     }
     // calculate bounds
-    cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+    cvt_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
     bf_corners_to_float();
     restore_stack(saved);
     return cmdarg_flags::FRACTAL_PARAM;
