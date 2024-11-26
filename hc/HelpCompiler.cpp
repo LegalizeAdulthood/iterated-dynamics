@@ -1017,7 +1017,7 @@ void HelpCompiler::write_help()
     std::fclose(hlp);
 }
 
-void printerc(PrintDocInfo *info, int c, int n)
+static void printer_ch(PrintDocInfo *info, int c, int n)
 {
     while (n-- > 0)
     {
@@ -1050,20 +1050,20 @@ void printerc(PrintDocInfo *info, int c, int n)
     }
 }
 
-void printers(PrintDocInfo *info, char const *s, int n)
+static void printer_str(PrintDocInfo *info, char const *s, int n)
 {
     if (n > 0)
     {
         while (n-- > 0)
         {
-            printerc(info, *s++, 1);
+            printer_ch(info, *s++, 1);
         }
     }
     else
     {
         while (*s != '\0')
         {
-            printerc(info, *s++, 1);
+            printer_ch(info, *s++, 1);
         }
     }
 }
@@ -1079,7 +1079,7 @@ static std::string version_header()
     return std::string(indent, ' ') + heading + std::string(field_width - indent - heading.size(), ' ');
 }
 
-bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
@@ -1089,34 +1089,34 @@ bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *contex
         std::ostringstream buff;
         info->margin = 0;
         buff << "\n" << version_header() << "Page " << pd->page_num << "\n\n";
-        printers(info, buff.str().c_str(), 0);
+        printer_str(info, buff.str().c_str(), 0);
         info->margin = PAGE_INDENT;
         return true;
     }
 
     case PrintDocCommand::PD_FOOTING:
         info->margin = 0;
-        printerc(info, '\f', 1);
+        printer_ch(info, '\f', 1);
         info->margin = PAGE_INDENT;
         return true;
 
     case PrintDocCommand::PD_PRINT:
-        printers(info, pd->s, pd->i);
+        printer_str(info, pd->s, pd->i);
         return true;
 
     case PrintDocCommand::PD_PRINTN:
-        printerc(info, *pd->s, pd->i);
+        printer_ch(info, *pd->s, pd->i);
         return true;
 
     case PrintDocCommand::PD_PRINT_SEC:
         info->margin = TITLE_INDENT;
         if (pd->id[0] != '\0')
         {
-            printers(info, pd->id, 0);
-            printerc(info, ' ', 1);
+            printer_str(info, pd->id, 0);
+            printer_ch(info, ' ', 1);
         }
-        printers(info, pd->title, 0);
-        printerc(info, '\n', 1);
+        printer_str(info, pd->title, 0);
+        printer_ch(info, '\n', 1);
         info->margin = PAGE_INDENT;
         return true;
 
