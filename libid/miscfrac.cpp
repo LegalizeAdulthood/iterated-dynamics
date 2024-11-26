@@ -88,7 +88,7 @@ static long s_beta{};
 static int s_lya_length{}, s_lya_seed_ok{};
 static int s_lya_rxy[34]{};
 
-using PLOT = void(*)(int, int, int);
+using PlotFn = void(*)(int, int, int);
 
 //**************** standalone engine for "test" *******************
 
@@ -495,11 +495,11 @@ int plasma()
             s_max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)
             {
-                g_plot    = (PLOT)put_pot_border;
+                g_plot    = (PlotFn)put_pot_border;
             }
             else
             {
-                g_plot    = (PLOT)put_pot;
+                g_plot    = (PlotFn)put_pot;
             }
             s_get_pix =  get_pot;
             OldPotFlag = g_potential_flag;
