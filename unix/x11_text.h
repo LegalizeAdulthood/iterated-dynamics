@@ -13,11 +13,11 @@ enum
     X11_TEXT_MAX_ROW = 25
 };
 
-class x11_text_window
+class X11TextWindow
 {
 public:
-    x11_text_window();
-    ~x11_text_window();
+    X11TextWindow();
+    ~X11TextWindow();
 
     void initialize(Display *dpy, int screen_num, Window parent);
 

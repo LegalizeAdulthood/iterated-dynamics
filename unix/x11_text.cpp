@@ -7,7 +7,7 @@
 #include "port.h"
 #include "x11_text.h"
 
-x11_text_window::x11_text_window()
+X11TextWindow::X11TextWindow()
     : dpy_{},
     screen_num_{},
     font_{},
@@ -92,7 +92,7 @@ x11_text_window::x11_text_window()
 #endif
 }
 
-x11_text_window::~x11_text_window()
+X11TextWindow::~X11TextWindow()
 {
     if (font_)
     {
@@ -135,7 +135,7 @@ std::vector<XColor> text_colors =
 };
 }
 
-void x11_text_window::initialize(Display *dpy, int screen_num, Window parent)
+void X11TextWindow::initialize(Display *dpy, int screen_num, Window parent)
 {
     dpy_ = dpy;
     screen_num_ = screen_num;
@@ -157,7 +157,7 @@ void x11_text_window::initialize(Display *dpy, int screen_num, Window parent)
     }
 }
 
-int x11_text_window::text_on()
+int X11TextWindow::text_on()
 {
     if (text_mode_ != 1)
     {
@@ -191,7 +191,7 @@ int x11_text_window::text_on()
     return 0;
 }
 
-int x11_text_window::text_off()
+int X11TextWindow::text_off()
 {
     alt_f4_hit_ = false;
     XUnmapWindow(dpy_, window_);
@@ -199,7 +199,7 @@ int x11_text_window::text_off()
     return 0;
 }
 
-void x11_text_window::clear()
+void X11TextWindow::clear()
 {
     for (int y = 0; y < X11_TEXT_MAX_ROW; ++y)
     {
@@ -209,7 +209,7 @@ void x11_text_window::clear()
     // TODO: repaint
 }
 
-void x11_text_window::set_position(int x, int y)
+void X11TextWindow::set_position(int x, int y)
 {
     x_ = x;
     y_ = y;
@@ -796,7 +796,7 @@ void wintext_resume(WinText *me)
 }
 #endif
 
-void x11_text_window::put_string(int xpos, int ypos, int attrib, std::string const &text, int *end_row, int *end_col)
+void X11TextWindow::put_string(int xpos, int ypos, int attrib, std::string const &text, int *end_row, int *end_col)
 {
     unsigned char const xa = static_cast<unsigned char>(attrib & 0x0ff);
     int maxrow = ypos;
@@ -840,7 +840,7 @@ void x11_text_window::put_string(int xpos, int ypos, int attrib, std::string con
     }
 }
 
-void x11_text_window::repaint(int xmin, int xmax, int ymin, int ymax)
+void X11TextWindow::repaint(int xmin, int xmax, int ymin, int ymax)
 {
     unsigned char oldbk;
     unsigned char oldfg;

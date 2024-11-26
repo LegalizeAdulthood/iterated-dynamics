@@ -270,7 +270,7 @@ private:
     int m_dx{};                 //
     int m_dy{};                 //
     x11_frame_window m_frame;   //
-    x11_text_window m_text;     //
+    X11TextWindow m_text;     //
     x11_plot_window m_plot;     //
 };
 
