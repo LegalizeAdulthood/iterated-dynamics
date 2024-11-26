@@ -31,7 +31,7 @@
 #include <cstring>
 #include <ctime>
 
-static void pauserotate();
+static void pause_rotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);
 static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
@@ -103,7 +103,7 @@ void rotate(int direction)      // rotate-the-palette routine
     if (direction == 0)
     {
         // firing up in paused mode?
-        pauserotate();                    // then force a pause
+        pause_rotate();                    // then force a pause
         direction = 1;                    // and set a rotate direction
     }
 
@@ -124,7 +124,7 @@ void rotate(int direction)      // rotate-the-palette routine
         {
             if (!s_paused)
             {
-                pauserotate();
+                pause_rotate();
             }
         }
         else
@@ -348,7 +348,7 @@ void rotate(int direction)      // rotate-the-palette routine
         case ' ':                      // use the spacebar as a "pause" toggle
         case 'c':                      // for completeness' sake, the 'c' too
         case 'C':
-            pauserotate();              // pause
+            pause_rotate();              // pause
             break;
         case '>':                      // single-step
         case '.':
@@ -372,7 +372,7 @@ void rotate(int direction)      // rotate-the-palette routine
             spin_dac(direction, 1);
             if (! s_paused)
             {
-                pauserotate();           // pause
+                pause_rotate();           // pause
             }
             break;
         case 'd':                      // load colors from "default.map"
@@ -382,7 +382,7 @@ void rotate(int direction)      // rotate-the-palette routine
                 break;
             }
             fkey = 0;                   // disable random generation
-            pauserotate();              // update palette and pause
+            pause_rotate();              // update palette and pause
             break;
         case 'a':                      // load colors from "altern.map"
         case 'A':
@@ -391,7 +391,7 @@ void rotate(int direction)      // rotate-the-palette routine
                 break;
             }
             fkey = 0;                   // disable random generation
-            pauserotate();              // update palette and pause
+            pause_rotate();              // update palette and pause
             break;
         case 'l':                      // load colors from a specified map
 #ifndef XFRACT // L is used for ID_KEY_RIGHT_ARROW in Unix keyboard mapping
@@ -399,20 +399,20 @@ void rotate(int direction)      // rotate-the-palette routine
 #endif
             load_palette();
             fkey = 0;                   // disable random generation
-            pauserotate();              // update palette and pause
+            pause_rotate();              // update palette and pause
             break;
         case 's':                      // save the palette
         case 'S':
             save_palette();
             fkey = 0;                   // disable random generation
-            pauserotate();              // update palette and pause
+            pause_rotate();              // update palette and pause
             break;
         case ID_KEY_ESC:                      // escape
             more = false;                   // time to bail out
             break;
         case ID_KEY_HOME:                     // restore palette
             std::memcpy(g_dac_box, g_old_dac_box, 256*3);
-            pauserotate();              // pause
+            pause_rotate();              // pause
             break;
         default:                       // maybe a new palette
             fkey = 0;                   // disable random generation
@@ -536,13 +536,13 @@ void rotate(int direction)      // rotate-the-palette routine
             {
                 set_palette3(s_red, s_blue, s_white);
             }
-            pauserotate();  // update palette and pause
+            pause_rotate();  // update palette and pause
             break;
         }
     }
 }
 
-static void pauserotate()               // pause-the-rotate routine
+static void pause_rotate()               // pause-the-rotate routine
 {
     if (s_paused)                            // if already paused , just clear
     {
