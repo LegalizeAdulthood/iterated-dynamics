@@ -42,21 +42,18 @@
 #include <cstdlib>
 #include <vector>
 
-struct point
+template <typename T>
+struct PointColorT
 {
-    int x;
-    int y;
+    T x;
+    T y;
     int color;
 };
 
-struct f_point
-{
-    float x;
-    float y;
-    float color;
-};
+using PointColor = PointColorT<int>;
+using FPointColor = PointColorT<float>;
 
-struct minmax
+struct MinMax
 {
     int minx;
     int maxx;
@@ -72,8 +69,8 @@ static int rgb_to_hsv(
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 static void set_upr_lwr();
 static int end_object(bool triout);
-static int offscreen(point);
-static int out_triangle(f_point, f_point, f_point, int, int, int);
+static int offscreen(PointColor);
+static int out_triangle(FPointColor, FPointColor, FPointColor, int, int, int);
 static int RAY_Header();
 static int start_object();
 static void draw_light_box(double *, double *, MATRIX);
@@ -81,7 +78,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
 static void line3d_cleanup();
 static void clipcolor(int, int, int);
 static void interpcolor(int, int, int);
-static void putatriangle(point, point, point, int);
+static void putatriangle(PointColor, PointColor, PointColor, int);
 static void putminmax(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
 static void T_clipcolor(int, int, int);
@@ -127,21 +124,21 @@ static std::vector<float> s_sin_theta_array;     // all sine thetas go here
 static std::vector<float> s_cos_theta_array;     // all cosine thetas go here
 static double s_rXr_scale{};                     // precalculation factor
 static bool s_persp{};                           // flag for indicating perspective transformations
-static point s_p1{}, s_p2{}, s_p3{};             //
-static f_point s_f_bad{};                        // out of range value
-static point s_bad{};                            // out of range value
+static PointColor s_p1{}, s_p2{}, s_p3{};             //
+static FPointColor s_f_bad{};                        // out of range value
+static PointColor s_bad{};                            // out of range value
 static long s_num_tris{};                        // number of triangles output to ray trace file
-static std::vector<f_point> s_f_last_row;        //
+static std::vector<FPointColor> s_f_last_row;        //
 static int s_real_v{};                           // Actual value of V for fillytpe>4 monochrome images
 static int s_error{};                            //
 static std::string s_targa_temp("fractemp.tga"); //
 static int s_p = 250;                            // Perspective dist used when viewing light vector
 static int const s_bad_check = -3000;            // check values against this to determine if good
-static std::vector<point> s_last_row;            // this array remembers the previous line
-static std::vector<minmax> s_min_max_x;          // array of min and max x values used in triangle fill
+static std::vector<PointColor> s_last_row;            // this array remembers the previous line
+static std::vector<MinMax> s_min_max_x;          // array of min and max x values used in triangle fill
 static VECTOR s_cross{};                         //
 static VECTOR s_tmp_cross{};                     //
-static point s_old_last{};                       // old pixels
+static PointColor s_old_last{};                       // old pixels
 
 // global variables defined here
 void (*g_standard_plot)(int, int, int){};
@@ -179,10 +176,10 @@ int line3d(BYTE * pixels, unsigned linelen)
     float sintheta; // precalculated sin/cos of latitude
     int next;       // used by preview and grid
     int col;        // current column (original GIF)
-    point cur;      // current pixels
-    point old;      // old pixels
-    f_point f_cur = { 0.0 };
-    f_point f_old;
+    PointColor cur;      // current pixels
+    PointColor old;      // old pixels
+    FPointColor f_cur = { 0.0 };
+    FPointColor f_old;
     VECTOR v;                    // double vector
     VECTOR v1;
     VECTOR v2;
@@ -1232,7 +1229,7 @@ static void putminmax(int x, int y, int /*color*/)
 */
 #define MAXOFFSCREEN  2    // allow two of three points to be off screen
 
-static void putatriangle(point pt1, point pt2, point pt3, int color)
+static void putatriangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
 {
     int miny;
     int maxy;
@@ -1326,7 +1323,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     g_plot = s_normal_plot;
 }
 
-static int offscreen(point pt)
+static int offscreen(PointColor pt)
 {
     if (pt.x >= 0)
     {
@@ -2058,7 +2055,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 //
 //******************************************************************
 
-static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, int c3)
+static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c1, int c2, int c3)
 {
     float c[3];
     float pt_t[3][3];
