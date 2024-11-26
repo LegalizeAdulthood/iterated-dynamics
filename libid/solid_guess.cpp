@@ -16,8 +16,8 @@
 #include <cstring>
 
 // routines in this module
-static bool guessrow(bool firstpass, int y, int blocksize);
-static void plotblock(int, int, int, int);
+static bool guess_row(bool firstpass, int y, int blocksize);
+static void plot_block(int, int, int, int);
 
 // MAX_X_BLK defn must match fracsubr.c
 
@@ -123,7 +123,7 @@ int solid_guess()
                 }
             }
             g_reset_periodicity = false;
-            if (i == -1 || guessrow(true, y, blocksize)) // interrupted?
+            if (i == -1 || guess_row(true, y, blocksize)) // interrupted?
             {
                 if (y < g_yy_start)
                 {
@@ -206,7 +206,7 @@ int solid_guess()
         for (int y = g_i_y_start; y <= g_i_y_stop; y += blocksize)
         {
             g_current_row = y;
-            if (guessrow(false, y, blocksize))
+            if (guess_row(false, y, blocksize))
             {
                 if (y < g_yy_start)
                 {
@@ -237,7 +237,7 @@ inline int calc_a_dot(int x, int y)
     return (*g_calc_type)();
 }
 
-static bool guessrow(bool firstpass, int y, int blocksize)
+static bool guess_row(bool firstpass, int y, int blocksize)
 {
     int j;
     int color;
@@ -324,7 +324,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 
         if (firstpass)    // 1st pass, paint topleft corner
         {
-            plotblock(0, x, y, c22);
+            plot_block(0, x, y, c22);
         }
         // setup variables
         xplushalf = x + s_half_block;
@@ -453,23 +453,23 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                         (*g_plot)(xplushalf, yplushalf, c33);
                     }
                 }
-                plotblock(1, x, yplushalf, c23);
-                plotblock(0, xplushalf, y, c32);
-                plotblock(1, xplushalf, yplushalf, c33);
+                plot_block(1, x, yplushalf, c23);
+                plot_block(0, xplushalf, y, c32);
+                plot_block(1, xplushalf, yplushalf, c33);
             }
             else  // repaint changed blocks
             {
                 if (c23 != c22)
                 {
-                    plotblock(-1, x, yplushalf, c23);
+                    plot_block(-1, x, yplushalf, c23);
                 }
                 if (c32 != c22)
                 {
-                    plotblock(-1, xplushalf, y, c32);
+                    plot_block(-1, xplushalf, y, c32);
                 }
                 if (c33 != c22)
                 {
-                    plotblock(-1, xplushalf, yplushalf, c33);
+                    plot_block(-1, xplushalf, yplushalf, c33);
                 }
             }
         }
@@ -497,7 +497,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             }
             if (s_half_block > 1 && c21 != c22)
             {
-                plotblock(-1, x, ylesshalf, c21);
+                plot_block(-1, x, ylesshalf, c21);
             }
         }
         if (fix31)
@@ -509,7 +509,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             }
             if (s_half_block > 1 && c31 != c22)
             {
-                plotblock(-1, xplushalf, ylesshalf, c31);
+                plot_block(-1, xplushalf, ylesshalf, c31);
             }
         }
         if (c23 != c22)
@@ -523,7 +523,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 }
                 if (s_half_block > 1 && c12 != c22)
                 {
-                    plotblock(-1, x-s_half_block, y, c12);
+                    plot_block(-1, x-s_half_block, y, c12);
                 }
             }
             if (guessed13)
@@ -535,7 +535,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 }
                 if (s_half_block > 1 && c13 != c22)
                 {
-                    plotblock(-1, x-s_half_block, yplushalf, c13);
+                    plot_block(-1, x-s_half_block, yplushalf, c13);
                 }
             }
         }
@@ -617,7 +617,7 @@ inline void fill_dstack(int x1, int x2, BYTE value)
     std::fill(&s_stack[begin], &s_stack[end], value);
 }
 
-static void plotblock(int buildrow, int x, int y, int color)
+static void plot_block(int buildrow, int x, int y, int color)
 {
     int xlim;
     int ylim;
