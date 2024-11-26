@@ -5,21 +5,21 @@
 find_package(Boost REQUIRED)
 
 add_library(libhc
-    adoc_compiler.h
-    adoc_compiler.cpp
-    compiler.h
-    compiler.cpp
-    help_compiler.h
-    help_compiler.cpp
-    help_source.h
-    help_source.cpp
+    AsciiDocCompiler.h
+    AsciiDocCompiler.cpp
+    Compiler.h
+    Compiler.cpp
+    HelpCompiler.h
+    HelpCompiler.cpp
+    HelpSource.h
+    HelpSource.cpp
     HTMLProcessor.h
     HTMLProcessor.cpp
     messages.h
     messages.cpp
     modes.h
-    options.h
-    options.cpp
+    Options.h
+    Options.cpp
 )
 target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_include_directories(libhc PUBLIC .)

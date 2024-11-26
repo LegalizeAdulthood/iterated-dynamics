@@ -4,10 +4,10 @@
 //
 // See help-compiler.txt for source file syntax.
 //
-#include "help_compiler.h"
+#include "HelpCompiler.h"
 
-#include "adoc_compiler.h"
-#include "help_source.h"
+#include "AsciiDocCompiler.h"
+#include "HelpSource.h"
 #include "HTMLProcessor.h"
 #include "messages.h"
 

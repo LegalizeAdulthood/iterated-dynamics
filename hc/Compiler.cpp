@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "compiler.h"
-#include "adoc_compiler.h"
-#include "help_compiler.h"
+#include "Compiler.h"
+#include "AsciiDocCompiler.h"
+#include "HelpCompiler.h"
 
 namespace hc
 {

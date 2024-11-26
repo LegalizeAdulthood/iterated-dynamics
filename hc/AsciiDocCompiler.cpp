@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "adoc_compiler.h"
+#include "AsciiDocCompiler.h"
 
-#include "help_source.h"
+#include "HelpSource.h"
 #include "messages.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
