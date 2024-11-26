@@ -56,21 +56,20 @@ struct trig_funct_lst
 extern trig_funct_lst        g_trig_fn[];
 extern trig_fn               g_trig_index[];
 extern const int             g_num_trig_functions;
+extern void                (*g_l_trig0)();
+extern void                (*g_l_trig1)();
+extern void                (*g_l_trig2)();
+extern void                (*g_l_trig3)();
+extern void                (*g_d_trig0)();
+extern void                (*g_d_trig1)();
+extern void                (*g_d_trig2)();
+extern void                (*g_d_trig3)();
+extern void                (*g_m_trig0)();
+extern void                (*g_m_trig1)();
+extern void                (*g_m_trig2)();
+extern void                (*g_m_trig3)();
 
-extern void (*g_ltrig0)();
-extern void (*g_ltrig1)();
-extern void (*g_ltrig2)();
-extern void (*g_ltrig3)();
-extern void (*g_dtrig0)();
-extern void (*g_dtrig1)();
-extern void (*g_dtrig2)();
-extern void (*g_dtrig3)();
-extern void (*g_mtrig0)();
-extern void (*g_mtrig1)();
-extern void (*g_mtrig2)();
-extern void (*g_mtrig3)();
-
-std::string showtrig();
-void trigdetails(char *buf);
+std::string show_trig();
+void trig_details(char *buf);
 int set_trig_array(int k, char const *name);
 void set_trig_pointers(int);

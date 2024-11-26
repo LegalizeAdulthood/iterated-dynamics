@@ -61,24 +61,24 @@ trig_fn g_trig_index[] =
 {
     trig_fn::SIN, trig_fn::SQR, trig_fn::SINH, trig_fn::COSH
 };
-void (*g_ltrig0)(){l_stk_sin};
-void (*g_ltrig1)(){l_stk_sqr};
-void (*g_ltrig2)(){l_stk_sinh};
-void (*g_ltrig3)(){l_stk_cosh};
-void (*g_mtrig0)(){m_stk_sin};
-void (*g_mtrig1)(){m_stk_sqr};
-void (*g_mtrig2)(){m_stk_sinh};
-void (*g_mtrig3)(){m_stk_cosh};
-void (*g_dtrig0)(){d_stk_sin};
-void (*g_dtrig1)(){d_stk_sqr};
-void (*g_dtrig2)(){d_stk_sinh};
-void (*g_dtrig3)(){d_stk_cosh};
+void (*g_l_trig0)(){l_stk_sin};
+void (*g_l_trig1)(){l_stk_sqr};
+void (*g_l_trig2)(){l_stk_sinh};
+void (*g_l_trig3)(){l_stk_cosh};
+void (*g_m_trig0)(){m_stk_sin};
+void (*g_m_trig1)(){m_stk_sqr};
+void (*g_m_trig2)(){m_stk_sinh};
+void (*g_m_trig3)(){m_stk_cosh};
+void (*g_d_trig0)(){d_stk_sin};
+void (*g_d_trig1)(){d_stk_sqr};
+void (*g_d_trig2)(){d_stk_sinh};
+void (*g_d_trig3)(){d_stk_cosh};
 
 // return display form of active trig functions
-std::string showtrig()
+std::string show_trig()
 {
     char tmpbuf[30];
-    trigdetails(tmpbuf);
+    trig_details(tmpbuf);
     if (tmpbuf[0])
     {
         return std::string{" function="} + tmpbuf;
@@ -86,7 +86,7 @@ std::string showtrig()
     return {};
 }
 
-void trigdetails(char *buf)
+void trig_details(char *buf)
 {
     int numfn;
     char tmpbuf[20];
@@ -150,24 +150,24 @@ void set_trig_pointers(int which)
     switch (which)
     {
     case 0:
-        g_ltrig0 = g_trig_fn[+g_trig_index[0]].lfunct;
-        g_mtrig0 = g_trig_fn[+g_trig_index[0]].mfunct;
-        g_dtrig0 = g_trig_fn[+g_trig_index[0]].dfunct;
+        g_l_trig0 = g_trig_fn[+g_trig_index[0]].lfunct;
+        g_m_trig0 = g_trig_fn[+g_trig_index[0]].mfunct;
+        g_d_trig0 = g_trig_fn[+g_trig_index[0]].dfunct;
         break;
     case 1:
-        g_ltrig1 = g_trig_fn[+g_trig_index[1]].lfunct;
-        g_mtrig1 = g_trig_fn[+g_trig_index[1]].mfunct;
-        g_dtrig1 = g_trig_fn[+g_trig_index[1]].dfunct;
+        g_l_trig1 = g_trig_fn[+g_trig_index[1]].lfunct;
+        g_m_trig1 = g_trig_fn[+g_trig_index[1]].mfunct;
+        g_d_trig1 = g_trig_fn[+g_trig_index[1]].dfunct;
         break;
     case 2:
-        g_ltrig2 = g_trig_fn[+g_trig_index[2]].lfunct;
-        g_mtrig2 = g_trig_fn[+g_trig_index[2]].mfunct;
-        g_dtrig2 = g_trig_fn[+g_trig_index[2]].dfunct;
+        g_l_trig2 = g_trig_fn[+g_trig_index[2]].lfunct;
+        g_m_trig2 = g_trig_fn[+g_trig_index[2]].mfunct;
+        g_d_trig2 = g_trig_fn[+g_trig_index[2]].dfunct;
         break;
     case 3:
-        g_ltrig3 = g_trig_fn[+g_trig_index[3]].lfunct;
-        g_mtrig3 = g_trig_fn[+g_trig_index[3]].mfunct;
-        g_dtrig3 = g_trig_fn[+g_trig_index[3]].dfunct;
+        g_l_trig3 = g_trig_fn[+g_trig_index[3]].lfunct;
+        g_m_trig3 = g_trig_fn[+g_trig_index[3]].mfunct;
+        g_d_trig3 = g_trig_fn[+g_trig_index[3]].dfunct;
         break;
     default: // do 'em all
         for (int i = 0; i < 4; i++)

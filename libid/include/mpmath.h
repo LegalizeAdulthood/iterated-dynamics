@@ -99,49 +99,49 @@ inline long modulus(const LComplex &z)
 inline void trig0(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    g_ltrig0();
+    g_l_trig0();
     out = g_arg1->l;
 }
 inline void trig1(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    g_ltrig1();
+    g_l_trig1();
     out = g_arg1->l;
 }
 inline void trig2(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    g_ltrig2();
+    g_l_trig2();
     out = g_arg1->l;
 }
 inline void trig3(const LComplex &arg, LComplex &out)
 {
     g_arg1->l = arg;
-    g_ltrig3();
+    g_l_trig3();
     out = g_arg1->l;
 }
 inline void cmplx_trig0(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    g_dtrig0();
+    g_d_trig0();
     out = g_arg1->d;
 }
 inline void cmplx_trig1(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    g_dtrig1();
+    g_d_trig1();
     out = g_arg1->d;
 }
 inline void cmplx_trig2(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    g_dtrig2();
+    g_d_trig2();
     out = g_arg1->d;
 }
 inline void cmplx_trig3(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = (arg);
-    g_dtrig3();
+    g_d_trig3();
     (out) = g_arg1->d;
 }
 inline void lcmplx_sin(const LComplex &arg, LComplex &out)

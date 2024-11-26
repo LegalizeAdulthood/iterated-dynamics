@@ -755,7 +755,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             put_parm(" %s=%s/%s", "miim", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
 
-        strncpy(buf, showtrig().c_str(), std::size(buf));
+        strncpy(buf, show_trig().c_str(), std::size(buf));
         if (buf[0])
         {
             put_parm(buf);

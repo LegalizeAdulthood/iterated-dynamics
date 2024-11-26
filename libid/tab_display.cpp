@@ -315,7 +315,7 @@ top:
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
         }
-        trigdetails(msg);
+        trig_details(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
         if (g_fractal_type == fractal_type::LSYSTEM)
         {
