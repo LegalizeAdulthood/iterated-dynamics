@@ -140,10 +140,10 @@ struct dblcoords
 struct window
 {
     // for fgetwindow on screen browser
-    coords      itl;      // screen coordinates
-    coords      ibl;      //
-    coords      itr;      //
-    coords      ibr;      //
+    Coord      itl;      // screen coordinates
+    Coord      ibl;      //
+    Coord      itr;      //
+    Coord      ibr;      //
     double      win_size; // box size for drawindow()
     std::string name;     // for filename
     int         boxcount; // bytes of saved screen info
@@ -1919,7 +1919,7 @@ rescan:  // entry for changed browse parms
 
 static void drawindow(int colour, window const *info)
 {
-    coords ibl, itr;
+    Coord ibl, itr;
 
     g_box_color = colour;
     g_box_count = 0;

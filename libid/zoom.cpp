@@ -177,7 +177,7 @@ void draw_box(bool draw_it)
     ftemp1 = g_zoom_box_x + dx + fxadj;
     double ftemp2 = g_zoom_box_y + dy / g_final_aspect_ratio;
 
-    coords top_left;
+    Coord top_left;
     top_left.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND)); // screen co-ords
     top_left.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_min  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew; // real co-ords
@@ -191,7 +191,7 @@ void draw_box(bool draw_it)
     // calc co-ords of bottom right
     ftemp1 = g_zoom_box_x + g_zoom_box_width - dx - fxadj;
     ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
-    coords bot_right;
+    Coord bot_right;
     bot_right.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     bot_right.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_max  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -209,7 +209,7 @@ void draw_box(bool draw_it)
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = g_zoom_box_x + dx - fxadj;
     ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
-    coords bot_left;
+    Coord bot_left;
     bot_left.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     bot_left.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_3rd  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -222,7 +222,7 @@ void draw_box(bool draw_it)
     }
     ftemp1 = g_zoom_box_x + g_zoom_box_width - dx + fxadj;
     ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
-    coords top_right;
+    Coord top_right;
     top_right.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     top_right.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
 
@@ -247,7 +247,7 @@ void draw_box(bool draw_it)
     }
 }
 
-void draw_lines(coords fr, coords to, int dx, int dy)
+void draw_lines(Coord fr, Coord to, int dx, int dy)
 {
     if (std::abs(to.x-fr.x) > std::abs(to.y-fr.y))
     {
@@ -255,7 +255,7 @@ void draw_lines(coords fr, coords to, int dx, int dy)
         if (fr.x > to.x)
         {
             // swap so from.x is < to.x
-            coords const tmpp = fr;
+            Coord const tmpp = fr;
             fr = to;
             to = tmpp;
         }
@@ -265,10 +265,10 @@ void draw_lines(coords fr, coords to, int dx, int dy)
         const int altinc = to.x-fr.x;
         int altctr = altinc / 2;
         const int yincr = (to.y > fr.y)?1:-1;
-        coords line1;
+        Coord line1;
         line1.y = fr.y;
         line1.x = fr.x;
-        coords line2;
+        Coord line2;
         line2.x = line1.x + dx;
         line2.y = line1.y + dy;
         while (--ctr >= 0)
@@ -292,7 +292,7 @@ void draw_lines(coords fr, coords to, int dx, int dy)
         if (fr.y > to.y)
         {
             // swap so from.y is < to.y
-            coords const tmpp = fr;
+            Coord const tmpp = fr;
             fr = to;
             to = tmpp;
         }
@@ -302,10 +302,10 @@ void draw_lines(coords fr, coords to, int dx, int dy)
         const int altinc = to.y-fr.y;
         int altctr = altinc / 2;
         const int xincr = (to.x > fr.x) ? 1 : -1;
-        coords line1;
+        Coord line1;
         line1.x = fr.x;
         line1.y = fr.y;
-        coords line2;
+        Coord line2;
         line2.x = line1.x + dx;
         line2.y = line1.y + dy;
         while (--ctr >= 0)
@@ -325,7 +325,7 @@ void draw_lines(coords fr, coords to, int dx, int dy)
     }
 }
 
-void add_box(coords point)
+void add_box(Coord point)
 {
     assert(g_box_count < NUM_BOX_POINTS);
     point.x += g_logical_screen_x_offset;
