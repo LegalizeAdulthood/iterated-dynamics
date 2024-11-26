@@ -5,7 +5,7 @@
 int g_num_work_list{}; // resume work list for standard engine
 WorkList g_work_list[MAX_CALC_WORK]{};
 
-static int    combine_worklist();
+static int    combine_work_list();
 
 int add_work_list(int xfrom, int xto, int xbegin,
                  int yfrom, int yto, int ybegin,
@@ -28,7 +28,7 @@ int add_work_list(int xfrom, int xto, int xbegin,
     return 0;
 }
 
-static int combine_worklist() // look for 2 entries which can freely merge
+static int combine_work_list() // look for 2 entries which can freely merge
 {
     for (int i = 0; i < g_num_work_list; ++i)
     {
@@ -85,7 +85,7 @@ void tidy_work_list()
 {
     {
         int i;
-        while ((i = combine_worklist()) != 0)
+        while ((i = combine_work_list()) != 0)
         {
             // merged two, delete the gone one
             while (++i < g_num_work_list)
