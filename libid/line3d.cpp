@@ -1963,7 +1963,7 @@ static void hsv_to_rgb(
 static int RAY_Header()
 {
     // Open the ray tracing output file
-    check_writefile(g_raytrace_filename, ".ray");
+    check_write_file(g_raytrace_filename, ".ray");
     s_file_ptr1 = open_save_file(g_raytrace_filename, "w");
     if (s_file_ptr1 == nullptr)
     {
@@ -2501,7 +2501,7 @@ static int first_time(int linelen, VECTOR v)
         }
         else
         {
-            check_writefile(g_light_name, ".tga");
+            check_write_file(g_light_name, ".tga");
             if (startdisk1(g_light_name, nullptr, false))     // Open new file
             {
                 return -1;

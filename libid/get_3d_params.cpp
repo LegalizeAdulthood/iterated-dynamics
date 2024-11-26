@@ -86,7 +86,7 @@ restart_1:
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_brief ? 1 : 0;
 
-    check_writefile(g_raytrace_filename, ".ray");
+    check_write_file(g_raytrace_filename, ".ray");
     prompts3d[++k] = "    Output file name";
     uvalues[k].type = 's';
     std::strcpy(uvalues[k].uval.sval, g_raytrace_filename.c_str());
@@ -394,7 +394,7 @@ static bool get_light_params()
 
         if (!g_targa_overlay)
         {
-            check_writefile(g_light_name, ".tga");
+            check_write_file(g_light_name, ".tga");
         }
         builder.string("Targa File Name  (Assume .tga)", g_light_name.c_str())
             .comment("Back Ground Color (0 - 255)")

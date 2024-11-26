@@ -396,7 +396,7 @@ void recordshw(int key)
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
     {
-        check_writefile(g_auto_name, ".key");
+        check_write_file(g_auto_name, ".key");
         s_slide_show_file = open_save_file(g_auto_name, "w");
         if (s_slide_show_file == nullptr)
         {

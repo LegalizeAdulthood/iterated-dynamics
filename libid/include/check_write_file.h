@@ -4,4 +4,4 @@
 
 #include <string>
 
-void check_writefile(std::string &name, char const *ext);
+void check_write_file(std::string &name, char const *ext);

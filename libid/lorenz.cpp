@@ -3216,7 +3216,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
 
 static std::FILE *open_orbitsave()
 {
-    check_writefile(g_orbit_save_name, ".raw");
+    check_write_file(g_orbit_save_name, ".raw");
     std::FILE *fp;
     if ((g_orbit_save_flags & osf_raw) && (fp = open_save_file(g_orbit_save_name, "w")) != nullptr)
     {

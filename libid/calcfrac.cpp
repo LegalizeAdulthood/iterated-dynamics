@@ -539,7 +539,7 @@ int calc_fract()
     }
     if (g_truecolor)
     {
-        check_writefile(g_light_name, ".tga");
+        check_write_file(g_light_name, ".tga");
         if (!startdisk1(g_light_name, nullptr, false))
         {
             // Have to force passes = 1
