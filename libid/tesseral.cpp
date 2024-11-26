@@ -12,10 +12,10 @@
 
 #include <cstring>
 
-static int tesschkcol(int, int, int);
-static int tesschkrow(int, int, int);
-static int tesscol(int, int, int);
-static int tessrow(int, int, int);
+static int tess_check_col(int, int, int);
+static int tess_check_row(int, int, int);
+static int tess_col(int, int, int);
+static int tess_row(int, int, int);
 
 static bool s_guess_plot{};  // paint 1st pass row at a time?
 static BYTE s_stack[4096]{}; // common temp, two put_line calls
@@ -41,10 +41,10 @@ int tesseral()
 
     if (g_work_pass == 0) // not resuming
     {
-        tp->top = tessrow(g_i_x_start, g_i_x_stop, g_i_y_start);     // Do top row
-        tp->bot = tessrow(g_i_x_start, g_i_x_stop, g_i_y_stop);      // Do bottom row
-        tp->lft = tesscol(g_i_x_start, g_i_y_start+1, g_i_y_stop-1); // Do left column
-        tp->rgt = tesscol(g_i_x_stop, g_i_y_start+1, g_i_y_stop-1);  // Do right column
+        tp->top = tess_row(g_i_x_start, g_i_x_stop, g_i_y_start);     // Do top row
+        tp->bot = tess_row(g_i_x_start, g_i_x_stop, g_i_y_stop);      // Do bottom row
+        tp->lft = tess_col(g_i_x_start, g_i_y_start+1, g_i_y_stop-1); // Do left column
+        tp->rgt = tess_col(g_i_x_stop, g_i_y_start+1, g_i_y_stop-1);  // Do right column
         if (check_key())
         {
             // interrupt before we got properly rolling
@@ -132,7 +132,7 @@ int tesseral()
         // for any edge whose color is unknown, set it
         if (tp->top == -2)
         {
-            tp->top = tesschkrow(tp->x1, tp->x2, tp->y1);
+            tp->top = tess_check_row(tp->x1, tp->x2, tp->y1);
         }
         if (tp->top == -1)
         {
@@ -140,7 +140,7 @@ int tesseral()
         }
         if (tp->bot == -2)
         {
-            tp->bot = tesschkrow(tp->x1, tp->x2, tp->y2);
+            tp->bot = tess_check_row(tp->x1, tp->x2, tp->y2);
         }
         if (tp->bot != tp->top)
         {
@@ -148,7 +148,7 @@ int tesseral()
         }
         if (tp->lft == -2)
         {
-            tp->lft = tesschkcol(tp->x1, tp->y1, tp->y2);
+            tp->lft = tess_check_col(tp->x1, tp->y1, tp->y2);
         }
         if (tp->lft != tp->top)
         {
@@ -156,7 +156,7 @@ int tesseral()
         }
         if (tp->rgt == -2)
         {
-            tp->rgt = tesschkcol(tp->x2, tp->y1, tp->y2);
+            tp->rgt = tess_check_col(tp->x2, tp->y1, tp->y2);
         }
         if (tp->rgt != tp->top)
         {
@@ -170,7 +170,7 @@ int tesseral()
             {
                 // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;           // Find mid point
-                midcolor = tesscol(mid, tp->y1+1, tp->y2-1); // Do mid column
+                midcolor = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
                 if (midcolor != tp->top)
                 {
                     goto tess_split;
@@ -180,7 +180,7 @@ int tesseral()
             {
                 // divide across the middle
                 mid = (tp->y1 + tp->y2) >> 1;           // Find mid point
-                midcolor = tessrow(tp->x1+1, tp->x2-1, mid); // Do mid row
+                midcolor = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (midcolor != tp->top)
                 {
                     goto tess_split;
@@ -258,7 +258,7 @@ tess_split:
             {
                 // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
-                midcolor = tesscol(mid, tp->y1+1, tp->y2-1); // Do mid column
+                midcolor = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
                 if (midcolor == -3)
                 {
                     goto tess_end;
@@ -294,7 +294,7 @@ tess_split:
             {
                 // divide across the middle
                 mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
-                midcolor = tessrow(tp->x1+1, tp->x2-1, mid); // Do mid row
+                midcolor = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (midcolor == -3)
                 {
                     goto tess_end;
@@ -357,7 +357,7 @@ tess_end:
     return 0;
 } // tesseral
 
-static int tesschkcol(int x, int y1, int y2)
+static int tess_check_col(int x, int y1, int y2)
 {
     int i;
     i = get_color(x, ++y1);
@@ -371,7 +371,7 @@ static int tesschkcol(int x, int y1, int y2)
     return i;
 }
 
-static int tesschkrow(int x1, int x2, int y)
+static int tess_check_row(int x1, int x2, int y)
 {
     int i;
     i = get_color(x1, y);
@@ -386,7 +386,7 @@ static int tesschkrow(int x1, int x2, int y)
     return i;
 }
 
-static int tesscol(int x, int y1, int y2)
+static int tess_col(int x, int y1, int y2)
 {
     int colcolor;
     int i;
@@ -412,7 +412,7 @@ static int tesscol(int x, int y1, int y2)
     return colcolor;
 }
 
-static int tessrow(int x1, int x2, int y)
+static int tess_row(int x1, int x2, int y)
 {
     int rowcolor;
     int i;
