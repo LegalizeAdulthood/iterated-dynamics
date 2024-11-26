@@ -104,8 +104,8 @@ enum
     ID_KEY_CTL_TAB         = 1148,
 };
 
-// nonalpha tests if we have a control character
-inline bool nonalpha(int c)
+// tests if we have a control character
+inline bool non_alpha(int c)
 {
-    return c < 32 || c > 127;
+    return c < ID_KEY_SPACE || c > 127;
 }

@@ -993,7 +993,7 @@ static int input_field_list(
             curval = initval;
             break;
         default:
-            if (nonalpha(curkey))
+            if (non_alpha(curkey))
             {
                 if (checkkey && (ret = (*checkkey)(curkey)) != 0)
                 {

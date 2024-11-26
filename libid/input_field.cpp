@@ -123,7 +123,7 @@ int input_field(
             display = true;
             break;
         default:
-            if (nonalpha(curkey))
+            if (non_alpha(curkey))
             {
                 if (checkkey && (ret = (*checkkey)(curkey)) != 0)
                 {
