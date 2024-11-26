@@ -62,6 +62,6 @@ private:
 extern std::vector<BYTE>     g_line_buff;
 extern bool                  g_using_jiim;
 
-void EditPalette();
+void edit_palette();
 void put_row(int x, int y, int width, char const *buff);
 void get_row(int x, int y, int width, char *buff);

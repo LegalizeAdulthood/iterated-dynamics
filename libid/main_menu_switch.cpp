@@ -634,7 +634,7 @@ main_state color_editing(int &, bool &, bool &kbd_more, bool &)
     {
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PALETTE_EDITOR};
         std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-        EditPalette();
+        edit_palette();
         if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
         {
             g_color_state = color_state::UNKNOWN;

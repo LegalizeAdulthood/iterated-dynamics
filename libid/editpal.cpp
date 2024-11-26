@@ -2889,7 +2889,7 @@ PalTable::~PalTable()
     }
 }
 
-void EditPalette()
+void edit_palette()
 {
     ValueSaver saved_logical_screen_x_offset(g_logical_screen_x_offset, 0);
     ValueSaver saved_logical_screen_y_offset(g_logical_screen_y_offset, 0);
