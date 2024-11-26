@@ -47,12 +47,12 @@ Miscellaneous fractal-specific code
 
 // routines in this module
 
-static void set_Plasma_palette();
+static void set_plasma_palette();
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
-static void subDivide(int x1, int y1, int x2, int y2);
+static void sub_divide(int x1, int y1, int x2, int y2);
 static void verhulst();
-static void Bif_Period_Init();
-static bool Bif_Periodic(long time);
+static void bif_period_init();
+static bool bif_periodic(long time);
 
 enum
 {
@@ -165,7 +165,7 @@ U16 rand16()
     return value;
 }
 
-void putpot(int x, int y, U16 color)
+static void put_pot(int x, int y, U16 color)
 {
     if (color < 1)
     {
@@ -182,17 +182,17 @@ void putpot(int x, int y, U16 color)
 }
 
 // fixes border
-void putpotborder(int x, int y, U16 color)
+static void put_pot_border(int x, int y, U16 color)
 {
     if ((x == 0) || (y == 0) || (x == g_logical_screen_x_dots-1) || (y == g_logical_screen_y_dots-1))
     {
         color = (U16)g_outside_color;
     }
-    putpot(x, y, color);
+    put_pot(x, y, color);
 }
 
 // fixes border
-void putcolorborder(int x, int y, int color)
+static void put_color_border(int x, int y, int color)
 {
     if ((x == 0) || (y == 0) || (x == g_logical_screen_x_dots-1) || (y == g_logical_screen_y_dots-1))
     {
@@ -205,7 +205,7 @@ void putcolorborder(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-U16 getpot(int x, int y)
+static U16 get_pot(int x, int y)
 {
     U16 color;
 
@@ -240,7 +240,7 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
     return (U16)pseudorandom;
 }
 
-static bool new_subD(int x1, int y1, int x2, int y2, int recur)
+static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
 {
     int x;
     int y;
@@ -371,7 +371,7 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
     return false;
 }
 
-static void subDivide(int x1, int y1, int x2, int y2)
+static void sub_divide(int x1, int y1, int x2, int y2)
 {
     int x;
     int y;
@@ -424,10 +424,10 @@ static void subDivide(int x1, int y1, int x2, int y2)
         g_plot(x, y, (U16)((i+2) >> 2));
     }
 
-    subDivide(x1, y1, x , y);
-    subDivide(x , y1, x2, y);
-    subDivide(x , y , x2, y2);
-    subDivide(x1, y , x , y2);
+    sub_divide(x1, y1, x , y);
+    sub_divide(x , y1, x2, y);
+    sub_divide(x , y , x2, y2);
+    sub_divide(x1, y , x , y2);
     s_recur_level--;
 }
 
@@ -495,13 +495,13 @@ int plasma()
             s_max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)
             {
-                g_plot    = (PLOT)putpotborder;
+                g_plot    = (PLOT)put_pot_border;
             }
             else
             {
-                g_plot    = (PLOT)putpot;
+                g_plot    = (PLOT)put_pot;
             }
-            s_get_pix =  getpot;
+            s_get_pix =  get_pot;
             OldPotFlag = g_potential_flag;
             OldPot16bit = g_potential_16bit;
         }
@@ -511,7 +511,7 @@ int plasma()
             g_params[3]   = 0;
             if (g_outside_color >= COLOR_BLACK)
             {
-                g_plot    = putcolorborder;
+                g_plot    = put_color_border;
             }
             else
             {
@@ -524,7 +524,7 @@ int plasma()
     {
         if (g_outside_color >= COLOR_BLACK)
         {
-            g_plot    = putcolorborder;
+            g_plot    = put_color_border;
         }
         else
         {
@@ -540,7 +540,7 @@ int plasma()
 
     if (g_colors == 256)                     // set the (256-color) palette
     {
-        set_Plasma_palette();             // skip this if < 256 colors
+        set_plasma_palette();             // skip this if < 256 colors
     }
 
     if (g_colors > 16)
@@ -602,14 +602,14 @@ int plasma()
     s_recur_level = 0;
     if (g_params[1] == 0)
     {
-        subDivide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
+        sub_divide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
     }
     else
     {
         int i = 1;
         int k = 1;
         s_recur1 = 1;
-        while (new_subD(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1, i) == 0)
+        while (new_sub_d(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1, i) == 0)
         {
             k = k * 2;
             if (k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
@@ -643,7 +643,7 @@ done:
     return n;
 }
 
-static void set_Plasma_palette()
+static void set_plasma_palette()
 {
     static BYTE const Red[3]   = { 63, 0, 0 };
     static BYTE const Green[3] = { 0, 63, 0 };
@@ -1166,7 +1166,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
     if (s_half_time_check) // check for periodicity at half-time
     {
-        Bif_Period_Init();
+        bif_period_init();
         unsigned long counter;
         for (counter = 0; counter < (unsigned long)g_max_iterations ; counter++)
         {
@@ -1174,7 +1174,7 @@ static void verhulst()          // P. F. Verhulst (1845)
             {
                 return;
             }
-            if (g_periodicity_check && Bif_Periodic(counter))
+            if (g_periodicity_check && bif_periodic(counter))
             {
                 break;
             }
@@ -1193,7 +1193,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     if (g_periodicity_check)
     {
-        Bif_Period_Init();
+        bif_period_init();
     }
     for (unsigned long counter = 0UL; counter < (unsigned long)g_max_iterations ; counter++)
     {
@@ -1217,7 +1217,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         {
             s_verhulst_array[ pixel_row ] ++;
         }
-        if (g_periodicity_check && Bif_Periodic(counter))
+        if (g_periodicity_check && bif_periodic(counter))
         {
             if (pixel_row <= (unsigned int)g_i_y_stop)
             {
@@ -1228,7 +1228,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
 }
 
-static void Bif_Period_Init()
+static void bif_period_init()
 {
     s_bif_saved_inc = 1;
     s_bif_saved_and = 1;
@@ -1246,7 +1246,7 @@ static void Bif_Period_Init()
 
 // Bifurcation Population Periodicity Check
 // Returns : true if periodicity found, else false
-static bool Bif_Periodic(long time)
+static bool bif_periodic(long time)
 {
     if ((time & s_bif_saved_and) == 0)      // time to save a new value
     {
