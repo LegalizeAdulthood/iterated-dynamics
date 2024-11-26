@@ -1543,7 +1543,7 @@ inline void restore_box(int num_dots, int which)
 }
 
 // fgetwindow reads all .GIF files and draws window outlines on the screen
-int fgetwindow()
+int file_get_window()
 {
     affine stack_cvt;
     std::time_t thistime;

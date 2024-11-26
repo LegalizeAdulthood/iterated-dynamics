@@ -228,7 +228,7 @@ extern short                 g_skip_y_dots;
 int read_overlay();
 void set_if_old_bif();
 void set_function_parm_defaults();
-int fgetwindow();
+int file_get_window();
 void backwards_v18();
 void backwards_v19();
 void backwards_v20();

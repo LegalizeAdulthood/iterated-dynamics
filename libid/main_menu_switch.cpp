@@ -65,7 +65,7 @@ static bool look(bool *stacked)
 {
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_BROWSE;
-    switch (fgetwindow())
+    switch (file_get_window())
     {
     case ID_KEY_ENTER:
     case ID_KEY_ENTER_2:
