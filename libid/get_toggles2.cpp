@@ -105,7 +105,7 @@ int get_toggles2()
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_Y_OPTIONS;
     {
-        int i = fullscreen_prompt("Extended Options\n"
+        int i = full_screen_prompt("Extended Options\n"
                               "(not all combinations make sense)",
                               k+1, choices, uvalues, 0, nullptr);
         g_help_mode = old_help_mode;

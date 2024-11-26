@@ -47,7 +47,7 @@ void full_screen_reset_scrolling()
     s_scroll_column_status = 0;
 }
 
-int fullscreen_prompt(        // full-screen prompting routine
+int full_screen_prompt(        // full-screen prompting routine
     char const *hdg,          // heading, lines separated by \n
     int num_prompts,          // there are this many prompts (max)
     char const **prompts,     // array of prompting pointers

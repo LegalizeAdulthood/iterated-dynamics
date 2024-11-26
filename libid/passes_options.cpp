@@ -75,7 +75,7 @@ pass_option_restart:
 
     {
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_POPTS};
-        i = fullscreen_prompt("Passes Options\n"
+        i = full_screen_prompt("Passes Options\n"
                               "(not all combinations make sense)\n"
                               "(Press F2 for corner parameters)\n"
                               "(Press F6 for calculation parameters)", k+1, choices, uvalues, 64 | 4, nullptr);

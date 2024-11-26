@@ -141,7 +141,7 @@ get_view_restart:
 
     {
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_VIEW};
-        i = fullscreen_prompt("View Window Options", k+1, choices, uvalues, 16, nullptr);
+        i = full_screen_prompt("View Window Options", k+1, choices, uvalues, 16, nullptr);
     }
     if (i < 0)
     {

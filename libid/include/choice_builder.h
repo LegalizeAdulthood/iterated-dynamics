@@ -14,7 +14,7 @@ struct FullScreenPrompt
     int operator()(char const *hdg, int numprompts, char const **prompts, FullScreenValues *values, int fkeymask,
         char *extrainfo) const
     {
-        return fullscreen_prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
+        return full_screen_prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
     }
 };
 

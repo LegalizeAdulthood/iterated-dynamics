@@ -28,7 +28,7 @@ struct FullScreenValues
     } uval;
 };
 
-int fullscreen_prompt(
+int full_screen_prompt(
     char const *hdg,
     int num_prompts,
     char const **prompts,

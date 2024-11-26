@@ -284,7 +284,7 @@ prompt_user:
         paramvalues[promptnum].type = 0x100 + 4;
         paramvalues[promptnum++].uval.sbuf = vidmde;
 
-        if (fullscreen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, nullptr) < 0)
+        if (full_screen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, nullptr) < 0)
         {
             break;
         }

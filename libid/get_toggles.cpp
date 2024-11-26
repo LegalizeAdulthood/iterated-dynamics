@@ -246,7 +246,7 @@ int get_toggles()
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_X_OPTIONS;
-    i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k+1, choices, uvalues, 0, nullptr);
+    i = full_screen_prompt("Basic Options\n(not all combinations make sense)", k+1, choices, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (i < 0)
     {

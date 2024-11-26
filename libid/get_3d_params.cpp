@@ -101,7 +101,7 @@ restart_1:
 
     {
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_MODE};
-        k = fullscreen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
+        k = full_screen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
     }
     if (k < 0)
     {
@@ -316,7 +316,7 @@ restart_3:
     }
     {
         ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_PARAMETERS};
-        k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
+        k = full_screen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
     }
     if (k < 0)
     {

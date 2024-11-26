@@ -822,7 +822,7 @@ gfp_top:
     while (true)
     {
         ValueSaver saved_help_mode{g_help_mode, g_cur_fractal_specific->helptext};
-        int i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, s_tmp_stack);
+        int i = full_screen_prompt(msg, promptnum, choices, paramvalues, fkeymask, s_tmp_stack);
         if (i < 0)
         {
             if (g_julibrot)
