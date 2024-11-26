@@ -122,7 +122,7 @@ static long iteration(
     return start;
 }
 
-static void puthline(int x1, int y1, int x2, int color)
+static void put_hor_line(int x1, int y1, int x2, int color)
 {
     int x;
     for (x = x1; x <= x2; x++)
@@ -131,11 +131,11 @@ static void puthline(int x1, int y1, int x2, int color)
     }
 }
 
-static void putbox(int x1, int y1, int x2, int y2, int color)
+static void put_box(int x1, int y1, int x2, int y2, int color)
 {
     for (; y1 <= y2; y1++)
     {
-        puthline(x1, y1, x2, color);
+        put_hor_line(x1, y1, x2, color);
     }
 }
 
@@ -291,7 +291,7 @@ static int rhombus_aux(
     }
     if (iter > g_max_iterations)
     {
-        putbox(x1, y1, x2, y2, 0);
+        put_box(x1, y1, x2, y2, 0);
         return 0;
     }
 
@@ -359,7 +359,7 @@ scan:
 
                 if (savex < z)
                 {
-                    puthline(savex, y, z, (int)(savecolor&255));
+                    put_hor_line(savex, y, z, (int)(savecolor&255));
                 }
                 else
                 {
@@ -389,7 +389,7 @@ scan:
 
             if (savex < z)
             {
-                puthline(savex, y, z, (int)(savecolor&255));
+                put_hor_line(savex, y, z, (int)(savecolor&255));
             }
             else
             {
@@ -555,7 +555,7 @@ scan:
         of SOI, we seldom get there */
         if (iter > g_max_iterations)
         {
-            putbox(x1, y1, x2, y2, 0);
+            put_box(x1, y1, x2, y2, 0);
             return 0;
         }
 
