@@ -152,24 +152,24 @@ struct window
 } // namespace
 
 // prototypes
-static int  find_fractal_info(const std::string &gif_file, FRACTAL_INFO *info,
+static int  find_fractal_info(const std::string &gif_file, FractalInfo *info,
     ext_blk_2 *blk_2_info,
-    ext_blk_3 *blk_3_info,
+    ExtBlock3 *blk_3_info,
     ext_blk_4 *blk_4_info,
     ext_blk_5 *blk_5_info,
     ext_blk_6 *blk_6_info,
     ext_blk_7 *blk_7_info);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
-static void backwardscompat(FRACTAL_INFO *info);
+static void backwardscompat(FractalInfo *info);
 static bool fix_bof();
 static bool fix_period_bof();
 static void drawindow(int colour, window const *info);
-static bool is_visible_window(window *list, FRACTAL_INFO const *info, ext_blk_5 const *blk_5_info);
+static bool is_visible_window(window *list, FractalInfo const *info, ext_blk_5 const *blk_5_info);
 static void transform(dblcoords *);
-static bool paramsOK(FRACTAL_INFO const *info);
-static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info);
-static bool functionOK(FRACTAL_INFO const *info, int numfn);
+static bool paramsOK(FractalInfo const *info);
+static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info);
+static bool functionOK(FractalInfo const *info, int numfn);
 static void check_history(char const *oldname, char const *newname);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, dblcoords *);
@@ -236,7 +236,7 @@ bool equal(const double (&lhs)[N], const double (&rhs)[N])
         [](double lhs, double rhs) { return within_eps(lhs, rhs); });
 }
 
-bool operator==(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs)
+bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
 {
     return equal(lhs.info_id, rhs.info_id)                //
         && lhs.iterationsold == rhs.iterationsold         //
@@ -351,7 +351,7 @@ bool operator==(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs)
         && equal(lhs.math_tol, rhs.math_tol);             //
 }
 
-bool operator==(const formula_info &lhs, const formula_info &rhs)
+bool operator==(const FormulaInfo &lhs, const FormulaInfo &rhs)
 {
     return equal(lhs.form_name, rhs.form_name) //
         && lhs.uses_p1 == rhs.uses_p1          //
@@ -363,7 +363,7 @@ bool operator==(const formula_info &lhs, const formula_info &rhs)
         && lhs.uses_p5 == rhs.uses_p5;         //
 }
 
-bool operator==(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs)
+bool operator==(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
 {
     return lhs.oxmin == rhs.oxmin                       //
         && lhs.oxmax == rhs.oxmax                       //
@@ -377,10 +377,10 @@ bool operator==(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs)
 
 int read_overlay()      // read overlay/3D files, if reqr'd
 {
-    FRACTAL_INFO read_info;
+    FractalInfo read_info;
     char msg[110];
     ext_blk_2 blk_2_info;
-    ext_blk_3 blk_3_info;
+    ExtBlock3 blk_3_info;
     ext_blk_4 blk_4_info;
     ext_blk_5 blk_5_info;
     ext_blk_6 blk_6_info;
@@ -966,9 +966,9 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 }
 
 static int find_fractal_info(const std::string &gif_file, //
-    FRACTAL_INFO *info,                                   //
+    FractalInfo *info,                                   //
     ext_blk_2 *blk_2_info,                                //
-    ext_blk_3 *blk_3_info,                                //
+    ExtBlock3 *blk_3_info,                                //
     ext_blk_4 *blk_4_info,                                //
     ext_blk_5 *blk_5_info,                                //
     ext_blk_6 *blk_6_info,                                //
@@ -980,9 +980,9 @@ static int find_fractal_info(const std::string &gif_file, //
     int data_len;
     int fractinf_len;
     int hdr_offset;
-    formula_info fload_info;
+    FormulaInfo fload_info;
     EvolutionInfo eload_info;
-    ORBITS_INFO oload_info;
+    OrbitsInfo oload_info;
 
     blk_2_info->got_data = false;
     blk_3_info->got_data = false;
@@ -1055,11 +1055,11 @@ static int find_fractal_info(const std::string &gif_file, //
            x bytes   block info
             }
            1 byte    0, extension terminator
-       To scan extension blocks, we first look in file at length of FRACTAL_INFO
+       To scan extension blocks, we first look in file at length of FractalInfo
        (the main extension block) from end of file, looking for a literal known
        to be at start of our block info.  Then we scan forward a bit, in case
-       the file is from an earlier fractint vsn with shorter FRACTAL_INFO.
-       If FRACTAL_INFO is found and is from vsn>=14, it includes the total length
+       the file is from an earlier fractint vsn with shorter FractalInfo.
+       If FractalInfo is found and is from vsn>=14, it includes the total length
        of all extension blocks; we then scan them all first to last to load
        any optional ones which are present.
        Defined extension blocks:
@@ -1072,12 +1072,12 @@ static int find_fractal_info(const std::string &gif_file, //
          fractint007     orbits info
     */
 
-    std::memset(info, 0, sizeof(FRACTAL_INFO));
-    fractinf_len = sizeof(FRACTAL_INFO) + (sizeof(FRACTAL_INFO)+254)/255;
+    std::memset(info, 0, sizeof(FractalInfo));
+    fractinf_len = sizeof(FractalInfo) + (sizeof(FractalInfo)+254)/255;
     std::fseek(s_fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
-       of fields within the FRACTAL_INFO structure for the platform */
-    freader(info, 1, sizeof(FRACTAL_INFO), s_fp);
+       of fields within the FractalInfo structure for the platform */
+    freader(info, 1, sizeof(FractalInfo), s_fp);
     if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
         decode_fractal_info(info, 1);
@@ -1104,8 +1104,8 @@ static int find_fractal_info(const std::string &gif_file, //
                     std::strcpy(info->info_id, INFO_ID);
                     std::fseek(s_fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
-                        of fields within the FRACTAL_INFO structure for the platform */
-                    freader(info, 1, sizeof(FRACTAL_INFO), s_fp);
+                        of fields within the FractalInfo structure for the platform */
+                    freader(info, 1, sizeof(FractalInfo), s_fp);
                     decode_fractal_info(info, 1);
                     offset = 10000; // force exit from outer loop
                     break;
@@ -1144,7 +1144,7 @@ static int find_fractal_info(const std::string &gif_file, //
                         scan_extend = 0;
                         break;
                     }
-                    load_ext_blk((char *)info, sizeof(FRACTAL_INFO));
+                    load_ext_blk((char *)info, sizeof(FractalInfo));
                     decode_fractal_info(info, 1);
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
@@ -1330,7 +1330,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 }
 
 // switch obsolete fractal types to new generalizations
-static void backwardscompat(FRACTAL_INFO *info)
+static void backwardscompat(FractalInfo *info)
 {
     switch (g_fractal_type)
     {
@@ -1625,9 +1625,9 @@ rescan:  // entry for changed browse parms
         }
         split_fname_ext(g_dta.filename, fname, ext);
         make_path(tmpmask, drive, dir, fname, ext);
-        FRACTAL_INFO read_info;
+        FractalInfo read_info;
         ext_blk_2 blk_2_info;
-        ext_blk_3 blk_3_info;
+        ExtBlock3 blk_3_info;
         ext_blk_4 blk_4_info;
         ext_blk_5 blk_5_info;
         ext_blk_6 blk_6_info;
@@ -1964,7 +1964,7 @@ static void transform(dblcoords *point)
 
 static bool is_visible_window(
     window *list,
-    FRACTAL_INFO const *info,
+    FractalInfo const *info,
     ext_blk_5 const *blk_5_info)
 {
     dblcoords tl, tr, bl, br;
@@ -2191,7 +2191,7 @@ static bool is_visible_window(
     return cornercount >= 1;
 }
 
-static bool paramsOK(FRACTAL_INFO const *info)
+static bool paramsOK(FractalInfo const *info)
 {
     double tmpparm3, tmpparm4;
     double tmpparm5, tmpparm6;
@@ -2248,7 +2248,7 @@ static bool paramsOK(FRACTAL_INFO const *info)
     }
 }
 
-static bool functionOK(FRACTAL_INFO const *info, int numfn)
+static bool functionOK(FractalInfo const *info, int numfn)
 {
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++)
@@ -2261,7 +2261,7 @@ static bool functionOK(FRACTAL_INFO const *info, int numfn)
     return mzmatch <= 0; // they all match
 }
 
-static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
+static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info)
 {
     int numfn;
     if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA) &&

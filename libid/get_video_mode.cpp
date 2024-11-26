@@ -117,7 +117,7 @@ static double vid_aspect(int tryxdots, int tryydots)
            * g_screen_aspect;
 }
 
-static std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
+static std::string heading_detail(FractalInfo const *info, ExtBlock3 const *blk_3_info)
 {
     std::ostringstream result;
     if (info->info_id[0] == 'G')
@@ -159,7 +159,7 @@ static std::string save_release_detail()
     return std::string(buff);
 }
 
-int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
+int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 {
     bool gotrealmode;
     double ftemp;

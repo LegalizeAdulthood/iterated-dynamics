@@ -19,9 +19,9 @@ static_assert(sizeof(double) == 8, "sizeof(double) != 8");
 //
 // TODO: verify that size of binary EVOLUTION_INFO blob is 200; DOS code reported size of 208.
 //
-static_assert(sizeof(EvolutionInfo) == 200, "EVOLUTION_INFO size is incorrect");
-static_assert(sizeof(FRACTAL_INFO) == 504, "FRACTAL_INFO size is incorrect");
-static_assert(sizeof(ORBITS_INFO) == 200, "ORBITS_INFO size is incorrect");
+static_assert(sizeof(EvolutionInfo) == 200, "EvolutionInfo size is incorrect");
+static_assert(sizeof(FractalInfo) == 504, "FractalInfo size is incorrect");
+static_assert(sizeof(OrbitsInfo) == 200, "OrbitsInfo size is incorrect");
 
 /* --------------------------------------------------------------------
  * The following routines are used for encoding/decoding gif images.
@@ -37,13 +37,13 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir);
 static void get_float(float *dst, unsigned char **src, int dir);
 static void get_double(double *dst, unsigned char **src, int dir);
 
-void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
+void decode_fractal_info_big_endian(FractalInfo *info, int dir)
 {
     std::vector<unsigned char> info_buff;
-    info_buff.resize(sizeof(FRACTAL_INFO));
+    info_buff.resize(sizeof(FractalInfo));
     unsigned char *buf = &info_buff[0];
     unsigned char *bufPtr = buf;
-    std::memcpy(buf, info, sizeof(FRACTAL_INFO));
+    std::memcpy(buf, info, sizeof(FractalInfo));
 
     if (dir == 1)
     {
@@ -193,15 +193,15 @@ void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
     {
         get_int16(&info->future[i], &bufPtr, dir);
     }
-    if (bufPtr-buf != sizeof(FRACTAL_INFO))
+    if (bufPtr-buf != sizeof(FractalInfo))
     {
         std::printf("Warning: loadfile miscount on fractal_info structure.\n");
-        std::printf("Components add up to %d bytes, but sizeof(FRACTAL_INFO) = %d\n",
-               (int)(bufPtr-buf), (int) sizeof(FRACTAL_INFO));
+        std::printf("Components add up to %d bytes, but sizeof(FractalInfo) = %d\n",
+               (int)(bufPtr-buf), (int) sizeof(FractalInfo));
     }
     if (dir == 0)
     {
-        std::memcpy(info, buf, sizeof(FRACTAL_INFO));
+        std::memcpy(info, buf, sizeof(FractalInfo));
     }
 }
 
@@ -478,16 +478,16 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     }
 }
 
-void decode_orbits_info_big_endian(ORBITS_INFO *info, int dir)
+void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
 {
     std::vector<unsigned char> orbits_info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    orbits_info_buff.resize(sizeof(ORBITS_INFO));
+    orbits_info_buff.resize(sizeof(OrbitsInfo));
     buf = &orbits_info_buff[0];
     bufPtr = buf;
-    std::memcpy((char *)buf, (char *)info, sizeof(ORBITS_INFO));
+    std::memcpy((char *)buf, (char *)info, sizeof(OrbitsInfo));
 
     get_double(&info->oxmin, &bufPtr, dir);
     get_double(&info->oxmax, &bufPtr, dir);
@@ -503,14 +503,14 @@ void decode_orbits_info_big_endian(ORBITS_INFO *info, int dir)
     {
         get_int16(&info->future[i], &bufPtr, dir);
     }
-    if (bufPtr-buf != sizeof(ORBITS_INFO))
+    if (bufPtr-buf != sizeof(OrbitsInfo))
     {
         std::printf("Warning: loadfile miscount on orbits_info structure.\n");
-        std::printf("Components add up to %d bytes, but sizeof(ORBITS_INFO) = %d\n",
-               (int)(bufPtr-buf), (int) sizeof(ORBITS_INFO));
+        std::printf("Components add up to %d bytes, but sizeof(OrbitsInfo) = %d\n",
+               (int)(bufPtr-buf), (int) sizeof(OrbitsInfo));
     }
     if (dir == 0)
     {
-        std::memcpy((char *)info, (char *)buf, sizeof(ORBITS_INFO));
+        std::memcpy((char *)info, (char *)buf, sizeof(OrbitsInfo));
     }
 }

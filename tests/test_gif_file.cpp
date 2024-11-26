@@ -220,7 +220,7 @@ std::string trim(const char (&field)[N])
     return pos == std::string::npos ? (text[0] == 0 ? std::string{} : text) : text.substr(0, pos + 1);
 }
 
-std::ostream &operator<<(std::ostream &str, const FRACTAL_INFO &value)
+std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
 {
     return str << "{ "                                                       //
                << R"("info_id": ")" << trim(value.info_id) << '"'            //
@@ -337,7 +337,7 @@ std::ostream &operator<<(std::ostream &str, const FRACTAL_INFO &value)
                << " }";                                                      //
 }
 
-std::ostream &operator<<(std::ostream &str, const formula_info &value)
+std::ostream &operator<<(std::ostream &str, const FormulaInfo &value)
 {
     return str << R"({ "form_name": ")" << trim(value.form_name) << '"' //
                << R"(, "uses_p1": )" << value.uses_p1                 //
@@ -406,7 +406,7 @@ std::ostream &operator<<(std::ostream&str, const EvolutionInfo &value)
         << " }";                                                                       //
 }
 
-std::ostream &operator<<(std::ostream &str, const ORBITS_INFO &value)
+std::ostream &operator<<(std::ostream &str, const OrbitsInfo &value)
 {
     return str                                                                            //
         << R"({ "oxmin": )" << value.oxmin                                                //
@@ -460,8 +460,8 @@ private:
 
 TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
 {
-    const FRACTAL_INFO lhs{};
-    FRACTAL_INFO rhs{};
+    const FractalInfo lhs{};
+    FractalInfo rhs{};
     std::int16_t value{16};
     for (size_t i = 0; i < std::size(rhs.future); ++i)
     {
@@ -474,8 +474,8 @@ TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
 
 TEST(TestCompareFormulaInfo, futureFieldsAreIgnored)
 {
-    const formula_info lhs{};
-    formula_info rhs{};
+    const FormulaInfo lhs{};
+    FormulaInfo rhs{};
     std::int16_t value{16};
     for (size_t i = 0; i < std::size(rhs.future); ++i)
     {
@@ -518,7 +518,7 @@ TEST_F(TestGIFFractalInfoExtension, check)
 
 TEST_F(TestGIFFractalInfoExtension, decode)
 {
-    const FRACTAL_INFO info{get_fractal_info(m_gif)};
+    const FractalInfo info{get_fractal_info(m_gif)};
 
     EXPECT_EQ("Fractal", trim(info.info_id));
     EXPECT_EQ(150, info.iterationsold);
@@ -663,12 +663,12 @@ TEST_F(TestGIFFractalInfoExtension, decode)
 
 TEST_F(TestGIFFractalInfoExtension, encode)
 {
-    const FRACTAL_INFO info{get_fractal_info(m_gif)};
+    const FractalInfo info{get_fractal_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE1_FILE};
 
     put_fractal_info(out, info);
 
-    const FRACTAL_INFO info2{get_fractal_info(out)};
+    const FractalInfo info2{get_fractal_info(out)};
     EXPECT_EQ(info, info2);
 }
 
@@ -701,7 +701,7 @@ TEST_F(TestGIFItemNameInfoExtension, check)
 
 TEST_F(TestGIFItemNameInfoExtension, decode)
 {
-    const formula_info info{get_formula_info(m_gif)};
+    const FormulaInfo info{get_formula_info(m_gif)};
 
     EXPECT_EQ("Mandel3", trim(info.form_name));
     EXPECT_EQ(0, info.uses_p1);
@@ -715,12 +715,12 @@ TEST_F(TestGIFItemNameInfoExtension, decode)
 
 TEST_F(TestGIFItemNameInfoExtension, encode)
 {
-    const formula_info info{get_formula_info(m_gif)};
+    const FormulaInfo info{get_formula_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE3_FILE};
 
     put_formula_info(out, info);
 
-    const formula_info info2{get_formula_info(out)};
+    const FormulaInfo info2{get_formula_info(out)};
     EXPECT_EQ(info, info2);
 }
 
@@ -861,7 +861,7 @@ TEST_F(TestGIFOrbitInfoExtension, check)
 
 TEST_F(TestGIFOrbitInfoExtension, decode)
 {
-    const ORBITS_INFO info{get_orbits_info(m_gif)};
+    const OrbitsInfo info{get_orbits_info(m_gif)};
     EXPECT_NEAR(-1.0, info.oxmin, eps);
     EXPECT_NEAR(1.0, info.oxmax, eps);
     EXPECT_NEAR(-1.0, info.oymin, eps);
@@ -874,11 +874,11 @@ TEST_F(TestGIFOrbitInfoExtension, decode)
 
 TEST_F(TestGIFOrbitInfoExtension, encode)
 {
-    const ORBITS_INFO info1{get_orbits_info(m_gif)};
+    const OrbitsInfo info1{get_orbits_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE6_FILE};
 
     put_orbits_info(out, info1);
 
-    const ORBITS_INFO info2{get_orbits_info(out)};
+    const OrbitsInfo info2{get_orbits_info(out)};
     EXPECT_EQ(info1, info2) << info1 << " != " << info2;
 }

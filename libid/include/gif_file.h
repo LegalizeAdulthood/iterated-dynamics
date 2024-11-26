@@ -19,11 +19,11 @@ enum
     GIF_EXTENSION7_ORBIT_INFO_LENGTH = 200,
 };
 
-FRACTAL_INFO get_fractal_info(GifFileType *gif);
-void put_fractal_info(GifFileType *gif, const FRACTAL_INFO &info);
+FractalInfo get_fractal_info(GifFileType *gif);
+void put_fractal_info(GifFileType *gif, const FractalInfo &info);
 
-formula_info get_formula_info(GifFileType *gif);
-void put_formula_info(GifFileType *gif, const formula_info &info);
+FormulaInfo get_formula_info(GifFileType *gif);
+void put_formula_info(GifFileType *gif, const FormulaInfo &info);
 
 std::vector<int> get_ranges_info(GifFileType *gif);
 void put_ranges_info(GifFileType *gif, const std::vector<int> &info);
@@ -31,8 +31,8 @@ void put_ranges_info(GifFileType *gif, const std::vector<int> &info);
 EvolutionInfo get_evolution_info(GifFileType *gif);
 void put_evolution_info(GifFileType *gif, const EvolutionInfo &info);
 
-ORBITS_INFO get_orbits_info(GifFileType *gif);
-void put_orbits_info(GifFileType *gif, const ORBITS_INFO &info);
+OrbitsInfo get_orbits_info(GifFileType *gif);
+void put_orbits_info(GifFileType *gif, const OrbitsInfo &info);
 
 std::vector<char> get_extended_param_info(GifFileType *gif);
 void put_extended_param_info(GifFileType *gif, const std::vector<char> &params);

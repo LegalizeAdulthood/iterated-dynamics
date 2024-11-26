@@ -9,7 +9,7 @@
 
 /*
  * Note: because big endian machines store structures differently, we have
- * to do special processing of the FRACTAL_INFO structure in decode_info.cpp.
+ * to do special processing of the FractalInfo structure in decode_info.cpp.
  * Make sure changes to the structure here get reflected there.
  */
 #define FRACTAL_INFO_VERSION 17  // file version, independent of system
@@ -22,7 +22,7 @@
 #else
 #define ID_PACKED __attribute__((packed))
 #endif
-struct FRACTAL_INFO         // for saving data in GIF file
+struct FractalInfo         // for saving data in GIF file
 {
     char  info_id[8];       // Unique identifier for info block
     std::int16_t iterationsold;    // Pre version 18.24
@@ -147,7 +147,7 @@ struct FRACTAL_INFO         // for saving data in GIF file
     std::int16_t future[7];     // for stuff we haven't thought of yet
 } ID_PACKED;
 
-struct formula_info         // for saving formula data in GIF file
+struct FormulaInfo         // for saving formula data in GIF file
 {
     char  form_name[40];
     std::int16_t uses_p1;
@@ -160,7 +160,7 @@ struct formula_info         // for saving formula data in GIF file
     std::int16_t future[6];       // for stuff we haven't thought of, yet
 } ID_PACKED;
 
-struct ext_blk_3
+struct ExtBlock3
 {
     bool got_data;
     int32_t length;
@@ -176,10 +176,10 @@ struct ext_blk_3
 
 /*
  * Note: because big endian machines store structures differently, we have
- * to do special processing of the ORBITS_INFO structure in decode_info.cpp.
+ * to do special processing of the OrbitsInfo structure in decode_info.cpp.
  * Make sure changes to the structure here get reflected there.
  */
-struct ORBITS_INFO      // for saving orbits data in a GIF file
+struct OrbitsInfo      // for saving orbits data in a GIF file
 {
     double oxmin;
     double oxmax;
@@ -196,20 +196,20 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
 #pragma pack(pop)
 #endif
 
-bool operator==(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs);
-inline bool operator!=(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs)
+bool operator==(const FractalInfo &lhs, const FractalInfo &rhs);
+inline bool operator!=(const FractalInfo &lhs, const FractalInfo &rhs)
 {
     return !(lhs == rhs);
 }
 
-bool operator==(const formula_info &lhs, const formula_info &rhs);
-inline bool operator!=(const formula_info &lhs, const formula_info &rhs)
+bool operator==(const FormulaInfo &lhs, const FormulaInfo &rhs);
+inline bool operator!=(const FormulaInfo &lhs, const FormulaInfo &rhs)
 {
     return !(lhs == rhs);
 }
 
-bool operator==(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs);
-inline bool operator!=(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs)
+bool operator==(const OrbitsInfo &lhs, const OrbitsInfo &rhs);
+inline bool operator!=(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
 {
     return !(lhs == rhs);
 }

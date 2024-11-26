@@ -2,7 +2,7 @@
 //
 #pragma once
 
-struct ext_blk_3;
-struct FRACTAL_INFO;
+struct ExtBlock3;
+struct FractalInfo;
 
-int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info);
+int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info);

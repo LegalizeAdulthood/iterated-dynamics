@@ -55,7 +55,7 @@ static int shftwrite(BYTE const *color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
-static void setup_save_info(FRACTAL_INFO *save_info);
+static void setup_save_info(FractalInfo *save_info);
 
 //                        Save-To-Disk Routines (GIF)
 //
@@ -302,7 +302,7 @@ bool encoder()
     int rowlimit;
     BYTE bitsperpixel;
     BYTE x;
-    FRACTAL_INFO save_info;
+    FractalInfo save_info;
 
     if (g_init_batch != batch_modes::NONE)                 // flush any impending keystrokes
     {
@@ -644,7 +644,7 @@ bool encoder()
     // Extended parameters block 007
     if (g_std_calc_mode == 'o')
     {
-        ORBITS_INFO osave_info{};
+        OrbitsInfo osave_info{};
         osave_info.oxmin     = g_orbit_corner_min_x;
         osave_info.oxmax     = g_orbit_corner_max_x;
         osave_info.oymin     = g_orbit_corner_min_y;
@@ -665,9 +665,9 @@ bool encoder()
     }
 
     // main and last block, 001
-    save_info.tot_extend_len += extend_blk_len(sizeof(FRACTAL_INFO));
+    save_info.tot_extend_len += extend_blk_len(sizeof(FractalInfo));
     decode_fractal_info(&save_info, 0);
-    if (!put_extend_blk(1, sizeof(FRACTAL_INFO), (char *) &save_info))
+    if (!put_extend_blk(1, sizeof(FractalInfo), (char *) &save_info))
     {
         goto oops;
     }
@@ -746,7 +746,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
 
 static int store_item_name(char const *name)
 {
-    formula_info fsave_info{};
+    FormulaInfo fsave_info{};
     std::strcpy(fsave_info.form_name, name);
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
@@ -774,7 +774,7 @@ static int store_item_name(char const *name)
     return extend_blk_len(sizeof(fsave_info));
 }
 
-static void setup_save_info(FRACTAL_INFO *save_info)
+static void setup_save_info(FractalInfo *save_info)
 {
     if (g_fractal_type != fractal_type::FORMULA && g_fractal_type != fractal_type::FFORMULA)
     {

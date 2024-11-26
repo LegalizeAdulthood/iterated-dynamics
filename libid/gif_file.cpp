@@ -216,9 +216,9 @@ ExtensionDeserializer<Size>::ExtensionDeserializer(GifFileType *gif, const char 
     }
 }
 
-FRACTAL_INFO get_fractal_info(GifFileType *gif)
+FractalInfo get_fractal_info(GifFileType *gif)
 {
-    FRACTAL_INFO result{};
+    FractalInfo result{};
     ExtensionDeserializer<GIF_EXTENSION1_FRACTAL_INFO_LENGTH> deser(gif, "fractint001");
     deser.extract_chars(result.info_id);
     result.iterationsold = deser.extract_int16();
@@ -241,7 +241,7 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
     result.parm3 = deser.extract_float();
     result.parm4 = deser.extract_float();
     {
-        // TODO: when FRACTAL_INFO struct is no longer packed, we can avoid the intermediate copy
+        // TODO: when FractalInfo struct is no longer packed, we can avoid the intermediate copy
         // TODO: error: cannot bind packed field
         float potential[3];
         deser.extract_float(potential);
@@ -531,7 +531,7 @@ private:
     std::array<std::uint8_t, Size> m_bytes{};
 };
 
-void put_fractal_info(GifFileType *gif, const FRACTAL_INFO &info)
+void put_fractal_info(GifFileType *gif, const FractalInfo &info)
 {
     ExtensionSerializer<GIF_EXTENSION1_FRACTAL_INFO_LENGTH> ser;
     ser.insert_chars(info.info_id);
@@ -654,9 +654,9 @@ void put_fractal_info(GifFileType *gif, const FRACTAL_INFO &info)
     ser.add_extension(gif, "fractint001");
 }
 
-formula_info get_formula_info(GifFileType *gif)
+FormulaInfo get_formula_info(GifFileType *gif)
 {
-    formula_info result{};
+    FormulaInfo result{};
     ExtensionDeserializer<GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH> deser(gif, "fractint003");
     deser.extract_chars(result.form_name);
     result.uses_p1 = deser.extract_int16();
@@ -669,7 +669,7 @@ formula_info get_formula_info(GifFileType *gif)
     return result;
 }
 
-void put_formula_info(GifFileType *gif, const formula_info &info)
+void put_formula_info(GifFileType *gif, const FormulaInfo &info)
 {
     ExtensionSerializer<GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH> ser;
     ser.insert_chars(info.form_name);
@@ -823,9 +823,9 @@ void put_evolution_info(GifFileType *gif, const EvolutionInfo &info)
     ser.add_extension(gif, "fractint006");
 }
 
-ORBITS_INFO get_orbits_info(GifFileType *gif)
+OrbitsInfo get_orbits_info(GifFileType *gif)
 {
-    ORBITS_INFO result{};
+    OrbitsInfo result{};
     ExtensionDeserializer<GIF_EXTENSION7_ORBIT_INFO_LENGTH> deser(gif, "fractint007");
     result.oxmin = deser.extract_double();
     result.oxmax = deser.extract_double();
@@ -838,7 +838,7 @@ ORBITS_INFO get_orbits_info(GifFileType *gif)
     return result;
 }
 
-void put_orbits_info(GifFileType *gif, const ORBITS_INFO &info)
+void put_orbits_info(GifFileType *gif, const OrbitsInfo &info)
 {
     ExtensionSerializer<GIF_EXTENSION7_ORBIT_INFO_LENGTH> ser;
     ser.insert_double(info.oxmin);
