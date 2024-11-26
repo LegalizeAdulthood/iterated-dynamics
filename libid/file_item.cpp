@@ -810,7 +810,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
             }
             break;
         case gfe_type::IFS:
-            if (ifsload() == 0)
+            if (ifs_load() == 0)
             {
                 g_fractal_type = !g_ifs_type ? fractal_type::IFS : fractal_type::IFS3D;
                 g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];

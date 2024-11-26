@@ -55,7 +55,7 @@ char *get_next_ifs_token(char *buf, std::FILE *ifsfile)
     return get_ifs_token(buf, ifsfile);
 }
 
-int ifsload()                   // read in IFS parameters
+int ifs_load()                   // read in IFS parameters
 {
     // release prior params
     g_ifs_definition.clear();

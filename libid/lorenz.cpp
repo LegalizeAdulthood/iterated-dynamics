@@ -2570,7 +2570,7 @@ static int ifs3dfloat()
 
 int ifs()                       // front-end for ifs2d and ifs3d
 {
-    if (g_ifs_definition.empty() && ifsload() < 0)
+    if (g_ifs_definition.empty() && ifs_load() < 0)
     {
         return -1;
     }
