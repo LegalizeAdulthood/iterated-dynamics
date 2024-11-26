@@ -180,7 +180,7 @@ bool g_log_map_auto_calculate{};             // auto calculate logmap
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
-fractalspecificstuff *g_cur_fractal_specific{};
+FractalSpecific *g_cur_fractal_specific{};
 std::string g_formula_filename;      // file to find (type=)formulas in
 std::string g_formula_name;          // Name of the Formula (if not null)
 std::string g_l_system_filename;     // file to find (type=)L-System's in

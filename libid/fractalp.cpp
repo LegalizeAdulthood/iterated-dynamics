@@ -254,7 +254,7 @@ const char *const t_halley{"*halley"};
 using VF = int(*)();
 
 // This array is indexed by the enum fractal_type.
-fractalspecificstuff g_fractal_specific[] =
+FractalSpecific g_fractal_specific[] =
 {
     /*
     {
@@ -2316,4 +2316,4 @@ fractalspecificstuff g_fractal_specific[] =
 };
 
 int g_num_fractal_types = (sizeof(g_fractal_specific)/
-                         sizeof(fractalspecificstuff)) -1;
+                         sizeof(FractalSpecific)) -1;

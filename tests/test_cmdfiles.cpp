@@ -891,7 +891,7 @@ TEST_F(TestParameterCommand, typeSierpinski)
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(fractal_type::SIERPINSKI, g_fractal_type);
     EXPECT_EQ(g_cur_fractal_specific, &g_fractal_specific[+fractal_type::SIERPINSKI]);
-    const fractalspecificstuff &fractal{*g_cur_fractal_specific};
+    const FractalSpecific &fractal{*g_cur_fractal_specific};
     EXPECT_EQ(g_x_min, fractal.xmin);
     EXPECT_EQ(g_x_max, fractal.xmax);
     EXPECT_EQ(g_x_3rd, fractal.xmin);

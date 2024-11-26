@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-struct fractalspecificstuff;
+struct FractalSpecific;
 
 namespace id
 {
@@ -200,7 +200,7 @@ extern color_state           g_color_state;
 extern bool                  g_colors_preloaded;
 extern std::string           g_command_file;
 extern std::string           g_command_name;
-extern fractalspecificstuff *g_cur_fractal_specific;
+extern FractalSpecific *g_cur_fractal_specific;
 extern int                   g_cycle_limit;
 extern int                   g_decomp[];
 extern int                   g_bf_digits;

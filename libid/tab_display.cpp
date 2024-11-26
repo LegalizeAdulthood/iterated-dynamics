@@ -197,7 +197,7 @@ bool tab_display_2(char *msg)
     show_str_var("lightname",   g_light_name.c_str(),   &row, msg);
     show_str_var("map",         g_map_name.c_str(),     &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
-              g_num_fractal_types*(int)sizeof(fractalspecificstuff));
+              g_num_fractal_types*(int)sizeof(FractalSpecific));
     write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);
     ++row;
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)

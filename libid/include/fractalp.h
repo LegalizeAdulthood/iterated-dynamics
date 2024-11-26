@@ -82,7 +82,7 @@ using PerturbationReferenceBF = void(const BFComplex &center, BFComplex &z);
 using PerturbationPoint = void(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 
-struct fractalspecificstuff
+struct FractalSpecific
 {
     char const *name;                       // name of the fractal
                                             // (leading "*" suppresses name display)
@@ -111,7 +111,7 @@ struct fractalspecificstuff
 };
 
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers
-extern fractalspecificstuff  g_fractal_specific[];
+extern FractalSpecific       g_fractal_specific[];
 extern MOREPARAMS            g_more_fractal_params[];
 extern int                   g_num_fractal_types;
 

@@ -376,7 +376,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     std::FILE *entryfile;
     std::vector<char const *> trignameptr;
     char const *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-    fractalspecificstuff *jborbit = nullptr;
+    FractalSpecific *jborbit = nullptr;
     int firstparm = 0;
     int lastparm  = MAX_PARAMS;
     double oldparam[MAX_PARAMS];
@@ -509,7 +509,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
         }
         s_tmp_stack[j+1] = 0;
     }
-    fractalspecificstuff *savespecific = g_cur_fractal_specific;
+    FractalSpecific *savespecific = g_cur_fractal_specific;
     int orbit_bailout;
 
 gfp_top:
