@@ -976,7 +976,7 @@ bf_t floattobf(bf_t r, LDBL f)
     g_bn_length = g_bf_length;
     il = g_int_length;
     g_int_length = 2;
-    floattobn(r, f);
+    float_to_bn(r, f);
     g_bn_length = bnl;
     g_int_length = il;
 

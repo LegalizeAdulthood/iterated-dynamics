@@ -93,11 +93,11 @@ int divide_brot5_bn_fractal()
     copy_bn(bnnumer.y, tmp2 + g_shift_factor);
 
     /* z^(a) */
-    inttobn(bnc_exp.x, g_c_exponent);
+    int_to_bn(bnc_exp.x, g_c_exponent);
     clear_bn(bnc_exp.y);
     cmplx_pow_bn(&bntmpnew, &g_old_z_bn, &bnc_exp);
     /* then add b */
-    floattobn(tmp1, g_b_const);
+    float_to_bn(tmp1, g_b_const);
     add_bn(bntmpnew.x, tmp1, bntmpnew.x + g_shift_factor);
     /* need to g_shift_factor bntmpnew.y */
     copy_bn(tmp2, bntmpnew.y + g_shift_factor);

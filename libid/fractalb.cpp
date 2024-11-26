@@ -37,7 +37,7 @@ void show_var_bn(char const *s, bn_t n)
     char msg[200];
     std::strcpy(msg, s);
     std::strcat(msg, " ");
-    bntostr(msg + std::strlen(s), 40, n);
+    bn_to_str(msg + std::strlen(s), 40, n);
     msg[79] = 0;
     stop_msg(msg);
 }
@@ -71,24 +71,24 @@ void showcorners(char const *s)
     char msg[100];
     char msg1[200];
     char msg3[400];
-    bntostr(msg, dec, g_x_min_bn);
+    bn_to_str(msg, dec, g_x_min_bn);
     std::snprintf(msg1, std::size(msg1), "g_x_min_bn=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, g_x_max_bn);
+    bn_to_str(msg, dec, g_x_max_bn);
     std::snprintf(msg1, std::size(msg1), "g_x_max_bn=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, g_y_min_bn);
+    bn_to_str(msg, dec, g_y_min_bn);
     std::snprintf(msg1, std::size(msg1), "g_y_min_bn=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, g_y_max_bn);
+    bn_to_str(msg, dec, g_y_max_bn);
     std::snprintf(msg1, std::size(msg1), "g_y_max_bn=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, g_x_3rd_bn);
+    bn_to_str(msg, dec, g_x_3rd_bn);
     std::snprintf(msg1, std::size(msg1), "g_x_3rd_bn=%s\nx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bntostr(msg, dec, g_y_3rd_bn);
+    bn_to_str(msg, dec, g_y_3rd_bn);
     std::snprintf(msg1, std::size(msg1), "g_y_3rd_bn=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stop_msg(msg3))
@@ -252,7 +252,7 @@ void compare_values(char const *s, LDBL x, bn_t bnx)
     int dec = 40;
     char msg[100];
     char msg1[300];
-    bntostr(msg, dec, bnx);
+    bn_to_str(msg, dec, bnx);
     std::snprintf(msg1, std::size(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stop_msg(msg1))
     {
@@ -327,7 +327,7 @@ int  bn_mod_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
-    longmagnitude = bntoint(g_bn_tmp);  // works with any fractal type
+    longmagnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
     if (longmagnitude >= (long)g_magnitude_limit)
     {
         return 1;
@@ -343,7 +343,7 @@ int  bn_real_bailout()
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqrx = bntoint(g_tmp_sqr_x_bn+g_shift_factor);
+    longtempsqrx = bn_to_int(g_tmp_sqr_x_bn+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
@@ -359,7 +359,7 @@ int  bn_imag_bailout()
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqry = bntoint(g_tmp_sqr_y_bn+g_shift_factor);
+    longtempsqry = bn_to_int(g_tmp_sqr_y_bn+g_shift_factor);
     if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -376,8 +376,8 @@ int  bn_or_bailout()
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqrx = bntoint(g_tmp_sqr_x_bn+g_shift_factor);
-    longtempsqry = bntoint(g_tmp_sqr_y_bn+g_shift_factor);
+    longtempsqrx = bn_to_int(g_tmp_sqr_x_bn+g_shift_factor);
+    longtempsqry = bn_to_int(g_tmp_sqr_y_bn+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -394,8 +394,8 @@ int  bn_and_bailout()
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqrx = bntoint(g_tmp_sqr_x_bn+g_shift_factor);
-    longtempsqry = bntoint(g_tmp_sqr_y_bn+g_shift_factor);
+    longtempsqrx = bn_to_int(g_tmp_sqr_x_bn+g_shift_factor);
+    longtempsqry = bn_to_int(g_tmp_sqr_y_bn+g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -416,7 +416,7 @@ int  bn_manh_bailout()
     abs_bn(g_old_z_bn.y, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    longtempmag = bntoint(g_old_z_bn.x+g_shift_factor);
+    longtempmag = bn_to_int(g_old_z_bn.x+g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
@@ -435,7 +435,7 @@ int  bn_manr_bailout()
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    longtempmag = bntoint(g_old_z_bn.x+g_shift_factor);
+    longtempmag = bn_to_int(g_old_z_bn.x+g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
@@ -869,14 +869,14 @@ int mandel_bn_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        floattobn(g_old_z_bn.x, g_params[0]); // initial pertubation of parameters set
-        floattobn(g_old_z_bn.y, g_params[1]);
+        float_to_bn(g_old_z_bn.x, g_params[0]); // initial pertubation of parameters set
+        float_to_bn(g_old_z_bn.y, g_params[1]);
         g_color_iter = -1;
     }
     else
     {
-        floattobn(g_new_z_bn.x, g_params[0]);
-        floattobn(g_new_z_bn.y, g_params[1]);
+        float_to_bn(g_new_z_bn.x, g_params[0]);
+        float_to_bn(g_new_z_bn.y, g_params[1]);
         add_a_bn(g_old_z_bn.x, g_new_z_bn.x);
         add_a_bn(g_old_z_bn.y, g_new_z_bn.y);
     }
@@ -1044,8 +1044,8 @@ julia_z_power_bn_fractal()
     parm2.x = alloc_stack(g_bn_length);
     parm2.y = alloc_stack(g_bn_length);
 
-    floattobn(parm2.x, g_params[2]);
-    floattobn(parm2.y, g_params[3]);
+    float_to_bn(parm2.x, g_params[2]);
+    float_to_bn(parm2.y, g_params[3]);
     cmplx_pow_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
     add_bn(g_new_z_bn.x, g_param_z_bn.x, g_new_z_bn.x+g_shift_factor);
     add_bn(g_new_z_bn.y, g_param_z_bn.y, g_new_z_bn.y+g_shift_factor);
@@ -1273,7 +1273,7 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     cmplx_log_bn(t, xx);
     cmplx_mul_bn(&tmp, t, yy);
     exp_bn(e2x, tmp.x);
-    sincos_bn(siny, cosy, tmp.y);
+    sin_cos_bn(siny, cosy, tmp.y);
     mult_bn(t->x, e2x, cosy);
     mult_bn(t->y, e2x, siny);
     restore_stack(saved);

@@ -122,11 +122,11 @@ S16 big_setS16(S16 *addr, S16 val);
 #define big_set16(addr, val) (*(U16 *)(addr) = (U16)(val))
 #define big_setS16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
-void bn_hexdump(bn_t r);
-bn_t strtobn(bn_t r, char *s);
-char *unsafe_bntostr(char *s, int dec, bn_t r);
-bn_t inttobn(bn_t r, long longval);
-long bntoint(bn_t n);
+void bn_hex_dump(bn_t r);
+bn_t str_to_bn(bn_t r, char *s);
+char *unsafe_bn_to_str(char *s, int dec, bn_t r);
+bn_t int_to_bn(bn_t r, long longval);
+long bn_to_int(bn_t n);
 int  sign_bn(bn_t n);
 bn_t abs_bn(bn_t r, bn_t n);
 bn_t abs_a_bn(bn_t r);
@@ -135,7 +135,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2);
 bn_t sqrt_bn(bn_t r, bn_t n);
 bn_t exp_bn(bn_t r, bn_t n);
 bn_t unsafe_ln_bn(bn_t r, bn_t n);
-bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n);
+bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n);
 bn_t unsafe_atan_bn(bn_t r, bn_t n);
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
 int convert_bn(bn_t new_n, bn_t old, int newbnlength, int newintlength, int oldbnlength, int oldintlength);
@@ -145,16 +145,16 @@ bn_t mult_bn(bn_t r, bn_t n1, bn_t n2);
 bn_t full_square_bn(bn_t r, bn_t n);
 bn_t square_bn(bn_t r, bn_t n);
 bn_t div_bn_int(bn_t r, bn_t n, U16 u);
-char *bntostr(char *s, int dec, bn_t r);
+char *bn_to_str(char *s, int dec, bn_t r);
 bn_t inv_bn(bn_t r, bn_t n);
 bn_t div_bn(bn_t r, bn_t n1, bn_t n2);
 bn_t ln_bn(bn_t r, bn_t n);
-bn_t sincos_bn(bn_t s, bn_t c, bn_t n);
+bn_t sin_cos_bn(bn_t s, bn_t c, bn_t n);
 bn_t atan_bn(bn_t r, bn_t n);
 bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 // misc
 bool is_bn_zero(bn_t n);
-bn_t floattobn(bn_t r, LDBL f);
+bn_t float_to_bn(bn_t r, LDBL f);
 /************/
 // bigflt.c
 void bf_hex_dump(bf_t r);

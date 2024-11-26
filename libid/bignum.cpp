@@ -227,7 +227,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 /********************************************************************/
 // bn_hexdump() - for debugging, dumps to stdout
 
-void bn_hexdump(bn_t r)
+void bn_hex_dump(bn_t r)
 {
     for (int i = 0; i < g_bn_length; i++)
     {
@@ -243,7 +243,7 @@ void bn_hexdump(bn_t r)
 //   note: the string may not be empty or have extra space and may
 //   not use scientific notation (2.3e4).
 
-bn_t strtobn(bn_t r, char *s)
+bn_t str_to_bn(bn_t r, char *s)
 {
     bn_t onesbyte;
     bool signflag = false;
@@ -349,7 +349,7 @@ int strlen_needed()
 //   SIDE-EFFECT: the bignumber, r, is destroyed.
 //                Copy it first if necessary.
 
-char *unsafe_bntostr(char *s, int dec, bn_t r)
+char *unsafe_bn_to_str(char *s, int dec, bn_t r)
 {
     int l = 0;
     bn_t onesbyte;
@@ -400,7 +400,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bignumber
-bn_t inttobn(bn_t r, long longval)
+bn_t int_to_bn(bn_t r, long longval)
 {
     bn_t onesbyte;
 
@@ -425,7 +425,7 @@ bn_t inttobn(bn_t r, long longval)
 /*********************************************************************/
 //  l = floor(b), floor rounds down
 //  Converts the integer part a bignumber to a long
-long bntoint(bn_t n)
+long bn_to_int(bn_t n)
 {
     bn_t onesbyte;
     long longval = 0;
@@ -450,7 +450,7 @@ long bntoint(bn_t n)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bignumber
-bn_t floattobn(bn_t r, LDBL f)
+bn_t float_to_bn(bn_t r, LDBL f)
 {
     bn_t onesbyte;
     bool signflag = false;
@@ -593,7 +593,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     r = orig_r + orig_bnlength - g_bn_length;
     // g_bn_tmp1 = orig_bntmp1 + orig_bnlength - g_bn_length;
 
-    floattobn(r, f); // start with approximate inverse
+    float_to_bn(r, f); // start with approximate inverse
     clear_bn(g_bn_tmp2); // will be used as 1.0 and 2.0
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
@@ -610,12 +610,12 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         // g_bn_tmp1 = orig_bntmp1 + orig_bnlength - g_bn_length;
 
         unsafe_mult_bn(g_bn_tmp1, r, n); // g_bn_tmp1=rn
-        inttobn(g_bn_tmp2, 1);  // g_bn_tmp2 = 1.0
+        int_to_bn(g_bn_tmp2, 1);  // g_bn_tmp2 = 1.0
         if (g_bn_length == orig_bnlength && cmp_bn(g_bn_tmp2, g_bn_tmp1+g_shift_factor) == 0)    // if not different
         {
             break;  // they must be the same
         }
-        inttobn(g_bn_tmp2, 2); // g_bn_tmp2 = 2.0
+        int_to_bn(g_bn_tmp2, 2); // g_bn_tmp2 = 2.0
         sub_bn(g_bn_tmp3, g_bn_tmp2, g_bn_tmp1+g_shift_factor); // g_bn_tmp3=2-rn
         unsafe_mult_bn(g_bn_tmp1, r, g_bn_tmp3); // g_bn_tmp1=r(2-rn)
         copy_bn(r, g_bn_tmp1+g_shift_factor); // r = g_bn_tmp1
@@ -807,7 +807,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // adjust pointers
     r = orig_r + orig_bnlength - g_bn_length;
 
-    floattobn(r, f); // start with approximate sqrt
+    float_to_bn(r, f); // start with approximate sqrt
     copy_bn(g_bn_tmp4, r);
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
@@ -863,12 +863,12 @@ bn_t exp_bn(bn_t r, bn_t n)
 
     if (is_bn_zero(n))
     {
-        inttobn(r, 1);
+        int_to_bn(r, 1);
         return r;
     }
 
     // use Taylor Series (very slow convergence)
-    inttobn(r, 1); // start with r=1.0
+    int_to_bn(r, 1); // start with r=1.0
     copy_bn(g_bn_tmp2, r);
     while (true)
     {
@@ -943,7 +943,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     orig_bntmp5        = g_bn_tmp5;
     orig_bntmp4        = g_bn_tmp4;
 
-    inttobn(g_bn_tmp4, 1); // set before setting new values
+    int_to_bn(g_bn_tmp4, 1); // set before setting new values
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
@@ -958,7 +958,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     g_bn_tmp5 = orig_bntmp5 + orig_bnlength - g_bn_length;
     g_bn_tmp4 = orig_bntmp4 + orig_bnlength - g_bn_length;
 
-    floattobn(r, f); // start with approximate ln
+    float_to_bn(r, f); // start with approximate ln
     neg_a_bn(r); // -r
     copy_bn(g_bn_tmp5, r); // -r
 
@@ -1015,7 +1015,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 // uses g_bn_tmp1 - g_bn_tmp2 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n| mod (pi/4)
-bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
+bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n)
 {
     U16 fact = 2;
     bool k = false;
@@ -1026,7 +1026,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     if (is_bn_zero(n))
     {
         clear_bn(s);    // sin(0) = 0
-        inttobn(c, 1);  // cos(0) = 1
+        int_to_bn(c, 1);  // cos(0) = 1
         return s;
     }
 
@@ -1079,7 +1079,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     if (is_bn_zero(n))
     {
         clear_bn(s);    // sin(0) = 0
-        inttobn(c, 1);  // cos(0) = 1
+        int_to_bn(c, 1);  // cos(0) = 1
         return s;
     }
 
@@ -1098,7 +1098,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 
     // use Taylor Series (very slow convergence)
     copy_bn(s, n); // start with s=n
-    inttobn(c, 1); // start with c=1
+    int_to_bn(c, 1); // start with c=1
     copy_bn(g_bn_tmp1, n); // the current x^n/n!
 
     while (true)
@@ -1144,7 +1144,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 
 #ifndef CALCULATING_BIG_PI
     // now need to undo what was done by cutting angles in half
-    inttobn(g_bn_tmp1, 1);
+    int_to_bn(g_bn_tmp1, 1);
     for (int i = 0; i < halves; i++)
     {
         unsafe_mult_bn(g_bn_tmp2, s, c); // no need for safe mult
@@ -1242,7 +1242,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     f = atanl(f); // approximate arctangent
     // no need to check overflow
 
-    floattobn(r, f); // start with approximate atan
+    float_to_bn(r, f); // start with approximate atan
     copy_bn(g_bn_tmp3, r);
 
     for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
@@ -1262,7 +1262,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 #ifdef CALCULATING_BIG_PI
         std::printf("\natan() loop #%i, g_bn_length=%i\nsincos() loops\n", i, g_bn_length);
 #endif
-        unsafe_sincos_bn(g_bn_tmp4, g_bn_tmp5, g_bn_tmp3);   // sin(r), cos(r)
+        unsafe_sin_cos_bn(g_bn_tmp4, g_bn_tmp5, g_bn_tmp3);   // sin(r), cos(r)
         copy_bn(g_bn_tmp3, r); // restore g_bn_tmp3 from sincos_bn()
         copy_bn(g_bn_tmp1, g_bn_tmp5);
         unsafe_mult_bn(g_bn_tmp2, n, g_bn_tmp1);     // n*cos(r)
@@ -1457,9 +1457,9 @@ bn_t div_bn_int(bn_t r, bn_t n, U16 u)
 }
 
 /**********************************************************************/
-char *bntostr(char *s, int dec, bn_t r)
+char *bn_to_str(char *s, int dec, bn_t r)
 {
-    return unsafe_bntostr(s, dec, copy_bn(g_bn_tmp_copy2, r));
+    return unsafe_bn_to_str(s, dec, copy_bn(g_bn_tmp_copy2, r));
 }
 
 /**********************************************************************/
@@ -1491,9 +1491,9 @@ bn_t ln_bn(bn_t r, bn_t n)
 }
 
 /**********************************************************************/
-bn_t sincos_bn(bn_t s, bn_t c, bn_t n)
+bn_t sin_cos_bn(bn_t s, bn_t c, bn_t n)
 {
-    return unsafe_sincos_bn(s, c, copy_bn(g_bn_tmp_copy1, n));
+    return unsafe_sin_cos_bn(s, c, copy_bn(g_bn_tmp_copy1, n));
 }
 
 /**********************************************************************/
