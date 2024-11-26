@@ -703,7 +703,7 @@ int diffusion()
 
     if (driver_diskp())
     {
-        notdiskmsg();
+        not_disk_msg();
     }
 
     y = -1;

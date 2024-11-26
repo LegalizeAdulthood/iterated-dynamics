@@ -4,7 +4,7 @@
 
 #include "stop_msg.h"
 
-void notdiskmsg()
+void not_disk_msg()
 {
     stopmsg("This type may be slow using a real-disk based 'video' mode, but may not \n"
             "be too bad if you have enough expanded or extended memory. Press <Esc> to \n"

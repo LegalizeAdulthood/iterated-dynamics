@@ -1762,7 +1762,7 @@ static int orbit3dlongcalc()
 
     if (driver_diskp())                  // this would KILL a disk drive!
     {
-        notdiskmsg();
+        not_disk_msg();
     }
 
     if (g_max_iterations > 0x1fffffL || g_max_count)
@@ -1886,7 +1886,7 @@ static int orbit3dfloatcalc()
 
     if (driver_diskp())                  // this would KILL a disk drive!
     {
-        notdiskmsg();
+        not_disk_msg();
     }
 
     if (g_max_iterations > 0x1fffffL || g_max_count)
@@ -2456,7 +2456,7 @@ static int ifs3dfloat()
     color_method = (int)g_params[0];
     if (driver_diskp())                  // this would KILL a disk drive!
     {
-        notdiskmsg();
+        not_disk_msg();
     }
 
     inf.orbit[0] = 0;
@@ -2576,7 +2576,7 @@ int ifs()                       // front-end for ifs2d and ifs3d
     }
     if (driver_diskp())                  // this would KILL a disk drive!
     {
-        notdiskmsg();
+        not_disk_msg();
     }
     return !g_ifs_type ? ifs2d() : ifs3d();
 }
