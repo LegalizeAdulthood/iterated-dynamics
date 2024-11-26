@@ -161,18 +161,18 @@ static int  find_fractal_info(const std::string &gif_file, FractalInfo *info,
     ExtBlock7 *blk_7_info);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
-static void backwardscompat(FractalInfo *info);
+static void backwards_compat(FractalInfo *info);
 static bool fix_bof();
 static bool fix_period_bof();
-static void drawindow(int colour, Window const *info);
+static void draw_window(int colour, Window const *info);
 static bool is_visible_window(Window *list, FractalInfo const *info, ExtBlock5 const *blk_5_info);
 static void transform(DblCoords *);
-static bool paramsOK(FractalInfo const *info);
-static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info);
-static bool functionOK(FractalInfo const *info, int numfn);
+static bool params_ok(FractalInfo const *info);
+static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info);
+static bool function_ok(FractalInfo const *info, int numfn);
 static void check_history(char const *oldname, char const *newname);
-static void bfsetup_convert_to_screen();
-static void bftransform(bf_t, bf_t, DblCoords *);
+static void bf_setup_convert_to_screen();
+static void bf_transform(bf_t, bf_t, DblCoords *);
 
 static std::FILE *s_fp{};
 static std::vector<Window> browse_windows;
@@ -611,7 +611,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0?
     {
-        backwardscompat(&read_info); // translate obsolete types
+        backwards_compat(&read_info); // translate obsolete types
         if (g_log_map_flag)
         {
             g_log_map_flag = 2;
@@ -1330,7 +1330,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 }
 
 // switch obsolete fractal types to new generalizations
-static void backwardscompat(FractalInfo *info)
+static void backwards_compat(FractalInfo *info)
 {
     switch (g_fractal_type)
     {
@@ -1590,7 +1590,7 @@ int file_get_window()
     // set up complex-plane-to-screen transformation
     if (oldbf_math != bf_math_type::NONE)
     {
-        bfsetup_convert_to_screen();
+        bf_setup_convert_to_screen();
     }
     else
     {
@@ -1634,14 +1634,14 @@ rescan:  // entry for changed browse parms
         ExtBlock7 blk_7_info;
         if (!find_fractal_info(
                 tmpmask, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
-            && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)                                   //
-            && (paramsOK(&read_info) || !g_browse_check_fractal_params)                                            //
+            && (type_ok(&read_info, &blk_3_info) || !g_browse_check_fractal_type)                                   //
+            && (params_ok(&read_info) || !g_browse_check_fractal_params)                                            //
             && stricmp(g_browse_name.c_str(), g_dta.filename.c_str()) != 0                                           //
             && !blk_6_info.got_data                                                                                //
             && is_visible_window(&winlist, &read_info, &blk_5_info))                                               //
         {
             winlist.name = g_dta.filename;
-            drawindow(color_of_box, &winlist);
+            draw_window(color_of_box, &winlist);
             winlist.boxcount = g_box_count;
             browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
@@ -1686,11 +1686,11 @@ rescan:  // entry for changed browse parms
                 }
                 if (toggle)
                 {
-                    drawindow(g_color_bright, &winlist);   // flash current window
+                    draw_window(g_color_bright, &winlist);   // flash current window
                 }
                 else
                 {
-                    drawindow(g_color_dark, &winlist);
+                    draw_window(g_color_dark, &winlist);
                 }
 #ifdef XFRACT
                 blinks++;
@@ -1699,7 +1699,7 @@ rescan:  // entry for changed browse parms
 #ifdef XFRACT
             if ((blinks & 1) == 1)     // Need an odd # of blinks, so next one leaves box turned off
             {
-                drawindow(g_color_bright, &winlist);
+                draw_window(g_color_bright, &winlist);
             }
 #endif
 
@@ -1711,7 +1711,7 @@ rescan:  // entry for changed browse parms
             case ID_KEY_DOWN_ARROW:
             case ID_KEY_UP_ARROW:
                 clear_temp_msg();
-                drawindow(color_of_box, &winlist);// dim last window
+                draw_window(color_of_box, &winlist);// dim last window
                 if (c == ID_KEY_RIGHT_ARROW || c == ID_KEY_UP_ARROW)
                 {
                     index++;                     // shift attention to next window
@@ -1736,20 +1736,20 @@ rescan:  // entry for changed browse parms
                 color_of_box += key_count(ID_KEY_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    drawindow(color_of_box, &browse_windows[i]);
+                    draw_window(color_of_box, &browse_windows[i]);
                 }
                 winlist = browse_windows[index];
-                drawindow(color_of_box, &winlist);
+                draw_window(color_of_box, &winlist);
                 break;
 
             case ID_KEY_CTL_DEL:
                 color_of_box -= key_count(ID_KEY_CTL_DEL);
                 for (int i = 0; i < wincount ; i++)
                 {
-                    drawindow(color_of_box, &browse_windows[i]);
+                    draw_window(color_of_box, &browse_windows[i]);
                 }
                 winlist = browse_windows[index];
-                drawindow(color_of_box, &winlist);
+                draw_window(color_of_box, &winlist);
                 break;
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:   // this file please
@@ -1762,7 +1762,7 @@ rescan:  // entry for changed browse parms
             case 'L':
 #ifdef XFRACT
                 // Need all boxes turned on, turn last one back on.
-                drawindow(g_color_bright, &winlist);
+                draw_window(g_color_bright, &winlist);
 #endif
                 g_auto_browse = false;
                 done = 2;
@@ -1862,7 +1862,7 @@ rescan:  // entry for changed browse parms
 
             case 's': // save image with boxes
                 g_auto_browse = false;
-                drawindow(color_of_box, &winlist); // current window white
+                draw_window(color_of_box, &winlist); // current window white
                 done = 4;
                 break;
 
@@ -1917,7 +1917,7 @@ rescan:  // entry for changed browse parms
     return c;
 }
 
-static void drawindow(int colour, Window const *info)
+static void draw_window(int colour, Window const *info)
 {
     Coord ibl, itr;
 
@@ -2065,7 +2065,7 @@ static bool is_visible_window(
             copy_bf(bt_x, bt_xmin);
             copy_bf(bt_y, bt_ymax);
         }
-        bftransform(bt_x, bt_y, &tl);
+        bf_transform(bt_x, bt_y, &tl);
     }
     else
     {
@@ -2089,7 +2089,7 @@ static bool is_visible_window(
             sub_bf(bt_y, bt_ymin, bt_y3rd);
             add_a_bf(bt_y, bt_ymax);
         }
-        bftransform(bt_x, bt_y, &tr);
+        bf_transform(bt_x, bt_y, &tr);
     }
     else
     {
@@ -2111,7 +2111,7 @@ static bool is_visible_window(
             copy_bf(bt_x, bt_x3rd);
             copy_bf(bt_y, bt_y3rd);
         }
-        bftransform(bt_x, bt_y, &bl);
+        bf_transform(bt_x, bt_y, &bl);
     }
     else
     {
@@ -2133,7 +2133,7 @@ static bool is_visible_window(
             copy_bf(bt_x, bt_xmax);
             copy_bf(bt_y, bt_ymin);
         }
-        bftransform(bt_x, bt_y, &br);
+        bf_transform(bt_x, bt_y, &br);
     }
     else
     {
@@ -2191,7 +2191,7 @@ static bool is_visible_window(
     return cornercount >= 1;
 }
 
-static bool paramsOK(FractalInfo const *info)
+static bool params_ok(FractalInfo const *info)
 {
     double tmpparm3, tmpparm4;
     double tmpparm5, tmpparm6;
@@ -2248,7 +2248,7 @@ static bool paramsOK(FractalInfo const *info)
     }
 }
 
-static bool functionOK(FractalInfo const *info, int numfn)
+static bool function_ok(FractalInfo const *info, int numfn)
 {
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++)
@@ -2261,7 +2261,7 @@ static bool functionOK(FractalInfo const *info, int numfn)
     return mzmatch <= 0; // they all match
 }
 
-static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info)
+static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
 {
     int numfn;
     if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA) &&
@@ -2272,7 +2272,7 @@ static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info)
             numfn = g_max_function;
             if (numfn > 0)
             {
-                return functionOK(info, numfn);
+                return function_ok(info, numfn);
             }
             else
             {
@@ -2289,7 +2289,7 @@ static bool typeOK(FractalInfo const *info, ExtBlock3 const *blk_3_info)
         numfn = (+g_cur_fractal_specific->flags >> 6) & 7;
         if (numfn > 0)
         {
-            return functionOK(info, numfn);
+            return function_ok(info, numfn);
         }
         else
         {
@@ -2319,7 +2319,7 @@ static void check_history(char const *oldname, char const *newname)
     }
 }
 
-static void bfsetup_convert_to_screen()
+static void bf_setup_convert_to_screen()
 {
     // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
@@ -2408,7 +2408,7 @@ static void bfsetup_convert_to_screen()
 }
 
 // maps points onto view screen
-static void bftransform(bf_t bt_x, bf_t bt_y, DblCoords *point)
+static void bf_transform(bf_t bt_x, bf_t bt_y, DblCoords *point)
 {
     bf_t   bt_tmp1, bt_tmp2;
     int saved;
