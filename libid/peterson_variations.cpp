@@ -176,7 +176,7 @@ int tims_error_fractal()
     return g_bailout_long();
 }
 
-int marks_mandelpwr_per_pixel()
+int marks_mandel_pwr_per_pixel()
 {
     mandel_per_pixel();
     g_l_temp = g_l_old_z;
@@ -185,7 +185,7 @@ int marks_mandelpwr_per_pixel()
     return 1;
 }
 
-int marksmandel_per_pixel()
+int marks_mandel_per_pixel()
 {
     // marksmandel
     if (g_invert != 0)
@@ -246,7 +246,7 @@ int marksmandel_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int marksmandelfp_per_pixel()
+int marks_mandel_fp_per_pixel()
 {
     // marksmandel
 
@@ -297,7 +297,7 @@ int marksmandelfp_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int marks_mandelpwrfp_per_pixel()
+int marks_mandel_pwr_fp_per_pixel()
 {
     mandel_fp_per_pixel();
     g_tmp_z = g_old_z;

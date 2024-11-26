@@ -525,7 +525,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_MARKS, help_labels::HF_MARKSMAND, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         1, fractal_type::MARKSJULIA, fractal_type::NOFRACTAL, fractal_type::MARKSMANDELFP, symmetry_type::NONE,
-        marks_lambda_fractal, marksmandel_per_pixel, mandel_long_setup,
+        marks_lambda_fractal, marks_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -1567,7 +1567,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_MARKS, help_labels::HF_MARKSMANDPWR, fractal_flags::TRIG1|fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::MARKSMANDELPWR, symmetry_type::X_AXIS_NO_PARAM,
-        marks_mandel_pwr_fp_fractal, marks_mandelpwrfp_per_pixel, mandel_fp_setup,
+        marks_mandel_pwr_fp_fractal, marks_mandel_pwr_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -1579,7 +1579,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_MARKS, help_labels::HF_MARKSMANDPWR, fractal_flags::TRIG1|fractal_flags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::MARKSMANDELPWRFP, symmetry_type::X_AXIS_NO_PARAM,
-        marks_mandel_pwr_fractal, marks_mandelpwr_per_pixel, mandel_long_setup,
+        marks_mandel_pwr_fractal, marks_mandel_pwr_per_pixel, mandel_long_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -1591,7 +1591,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_MARKS, help_labels::HF_TIMSERR, fractal_flags::TRIG1|fractal_flags::BAILTEST,
         -2.9F, 4.3F, -2.7F, 2.7F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::TIMSERROR, symmetry_type::X_AXIS_NO_PARAM,
-        tims_error_fp_fractal, marks_mandelpwrfp_per_pixel, mandel_fp_setup,
+        tims_error_fp_fractal, marks_mandel_pwr_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -1603,7 +1603,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_MARKS, help_labels::HF_TIMSERR, fractal_flags::TRIG1|fractal_flags::BAILTEST,
         -2.9F, 4.3F, -2.7F, 2.7F,
         1, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::TIMSERRORFP, symmetry_type::X_AXIS_NO_PARAM,
-        tims_error_fractal, marks_mandelpwr_per_pixel, mandel_long_setup,
+        tims_error_fractal, marks_mandel_pwr_per_pixel, mandel_long_setup,
         standard_fractal,
         STDBAILOUT
     },
@@ -2109,7 +2109,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_MARKS, help_labels::HF_MARKSMAND, fractal_flags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::MARKSJULIAFP, fractal_type::NOFRACTAL, fractal_type::MARKSMANDEL, symmetry_type::NONE,
-        marks_lambda_fp_fractal, marksmandelfp_per_pixel, mandel_fp_setup,
+        marks_lambda_fp_fractal, marks_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STDBAILOUT
     },
