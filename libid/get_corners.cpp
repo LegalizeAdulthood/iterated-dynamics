@@ -31,7 +31,7 @@
    in the value, so will it twill test as "different" even though it
    is not
 */
-static int cmpdbl(double old, double new_val)
+static int cmp_dbl(double old, double new_val)
 {
     char buf[81];
 
@@ -166,12 +166,12 @@ gc_loop:
         const double new_x_mag_factor = builder.read_double_number();
         const double new_rotation = builder.read_double_number();
         const double new_skew = builder.read_double_number();
-        if (cmpdbl(Xctr, new_x_center)                           //
-            || cmpdbl(Yctr, new_y_center)                        //
-            || cmpdbl((double) Magnification, new_magnification) //
-            || cmpdbl(Xmagfactor, new_x_mag_factor)              //
-            || cmpdbl(Rotation, new_rotation)                    //
-            || cmpdbl(Skew, new_skew))
+        if (cmp_dbl(Xctr, new_x_center)                           //
+            || cmp_dbl(Yctr, new_y_center)                        //
+            || cmp_dbl((double) Magnification, new_magnification) //
+            || cmp_dbl(Xmagfactor, new_x_mag_factor)              //
+            || cmp_dbl(Rotation, new_rotation)                    //
+            || cmp_dbl(Skew, new_skew))
         {
             Xctr          = new_x_center;
             Yctr          = new_y_center;
@@ -231,8 +231,8 @@ gc_loop:
         goto gc_loop;
     }
 
-    if (!cmpdbl(oxxmin, g_x_min) && !cmpdbl(oxxmax, g_x_max) && !cmpdbl(oyymin, g_y_min) &&
-            !cmpdbl(oyymax, g_y_max) && !cmpdbl(oxx3rd, g_x_3rd) && !cmpdbl(oyy3rd, g_y_3rd))
+    if (!cmp_dbl(oxxmin, g_x_min) && !cmp_dbl(oxxmax, g_x_max) && !cmp_dbl(oyymin, g_y_min) &&
+            !cmp_dbl(oyymax, g_y_max) && !cmp_dbl(oxx3rd, g_x_3rd) && !cmp_dbl(oyy3rd, g_y_3rd))
     {
         // no change, restore values to avoid drift
         g_x_min = oxxmin;
@@ -390,12 +390,12 @@ gsc_loop:
         const double new_x_mag_factor = builder.read_double_number();
         const double new_rotation = builder.read_double_number();
         const double new_skew = builder.read_double_number();
-        if (cmpdbl(Xctr, new_x_center)                           //
-            || cmpdbl(Yctr, new_y_center)                        //
-            || cmpdbl((double) Magnification, new_magnification) //
-            || cmpdbl(Xmagfactor, new_x_mag_factor)              //
-            || cmpdbl(Rotation, new_rotation)                    //
-            || cmpdbl(Skew, new_skew))
+        if (cmp_dbl(Xctr, new_x_center)                           //
+            || cmp_dbl(Yctr, new_y_center)                        //
+            || cmp_dbl((double) Magnification, new_magnification) //
+            || cmp_dbl(Xmagfactor, new_x_mag_factor)              //
+            || cmp_dbl(Rotation, new_rotation)                    //
+            || cmp_dbl(Skew, new_skew))
         {
             Xctr          = new_x_center;
             Yctr          = new_y_center;
@@ -450,8 +450,8 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (!cmpdbl(oxxmin, g_orbit_corner_min_x) && !cmpdbl(oxxmax, g_orbit_corner_max_x) && !cmpdbl(oyymin, g_orbit_corner_min_y) &&
-            !cmpdbl(oyymax, g_orbit_corner_max_y) && !cmpdbl(oxx3rd, g_orbit_corner_3_x) && !cmpdbl(oyy3rd, g_orbit_corner_3_y))
+    if (!cmp_dbl(oxxmin, g_orbit_corner_min_x) && !cmp_dbl(oxxmax, g_orbit_corner_max_x) && !cmp_dbl(oyymin, g_orbit_corner_min_y) &&
+            !cmp_dbl(oyymax, g_orbit_corner_max_y) && !cmp_dbl(oxx3rd, g_orbit_corner_3_x) && !cmp_dbl(oyy3rd, g_orbit_corner_3_y))
     {
         // no change, restore values to avoid drift
         g_orbit_corner_min_x = oxxmin;
