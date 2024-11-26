@@ -673,7 +673,7 @@ bool load_palette()
     ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COLORMAP};
     std::string filename{g_map_name};
     driver_stack_screen();
-    const bool i = getafilename("Select a MAP File", "*.map", filename);
+    const bool i = get_a_file_name("Select a MAP File", "*.map", filename);
     driver_unstack_screen();
     if (!i)
     {

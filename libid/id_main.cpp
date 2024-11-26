@@ -263,7 +263,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
                 hdg = "Select File to Restore";
                 g_help_mode = help_labels::HELP_SAVEREST;
             }
-            if (g_show_file < 0 && getafilename(hdg, g_gif_filename_mask.c_str(), g_read_filename))
+            if (g_show_file < 0 && get_a_file_name(hdg, g_gif_filename_mask.c_str(), g_read_filename))
             {
                 g_show_file = 1;               // cancelled
                 g_init_mode = -1;

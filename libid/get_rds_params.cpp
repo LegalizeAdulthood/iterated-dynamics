@@ -117,7 +117,7 @@ int get_rds_params()
             }
             if (g_image_map && !reuse)
             {
-                if (getafilename("Select an Imagemap File", s_masks[1], g_stereo_map_filename))
+                if (get_a_file_name("Select an Imagemap File", s_masks[1], g_stereo_map_filename))
                 {
                     continue;
                 }

@@ -53,7 +53,7 @@ static  int filename_speedstr(int row, int col, int vid,
 static int s_speed_state{};
 static char const *s_masks[]{"*.pot", "*.gif"};
 
-bool getafilename(char const *hdg, char const *file_template, std::string &flname)
+bool get_a_file_name(char const *hdg, char const *file_template, std::string &flname)
 {
     char user_file_template[FILE_MAX_PATH] = { 0 };
     int rds;  // if getting an RDS image map

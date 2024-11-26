@@ -777,7 +777,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
                 stopmsg("Can't find " + filename);
             }
             std::sprintf(buf, "Select %s File", title);
-            if (getafilename(buf, fmask, filename))
+            if (get_a_file_name(buf, fmask, filename))
             {
                 return -1;
             }
