@@ -65,7 +65,7 @@ int long_trig_plus_exponent_fractal()
         return 1;
     }
 
-    const long longtmp = Exp086(g_l_old_z.x);
+    const long longtmp = exp_long(g_l_old_z.x);
     long lcosy;
     long lsiny;
     sin_cos(g_l_old_z.y, &lsiny,  &lcosy);

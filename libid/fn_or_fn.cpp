@@ -86,12 +86,12 @@ int lambda_trig_or_trig_fp_fractal()
     if (CMPLXmod(g_old_z) < g_param_z2.x)
     {
         CMPLXtrig0(g_old_z, g_old_z);
-        FPUcplxmul(g_float_param, &g_old_z, &g_new_z);
+        fpu_cmplx_mul(g_float_param, &g_old_z, &g_new_z);
     }
     else
     {
         CMPLXtrig1(g_old_z, g_old_z);
-        FPUcplxmul(g_float_param, &g_old_z, &g_new_z);
+        fpu_cmplx_mul(g_float_param, &g_old_z, &g_new_z);
     }
     return g_bailout_float();
 }

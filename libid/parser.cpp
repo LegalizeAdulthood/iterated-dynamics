@@ -1146,7 +1146,7 @@ static void lStkNeg()
 
 void dStkMul()
 {
-    FPUcplxmul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
+    fpu_cmplx_mul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
     g_arg2--;
 }
@@ -1167,7 +1167,7 @@ void lStkMul()
 
 static void dStkDiv()
 {
-    FPUcplxdiv(&g_arg2->d, &g_arg1->d, &g_arg2->d);
+    fpu_cmplx_div(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
     g_arg2--;
 }
@@ -2017,7 +2017,7 @@ static void lStkAND()
 
 void dStkLog()
 {
-    FPUcplxlog(&g_arg1->d, &g_arg1->d);
+    fpu_cmplx_log(&g_arg1->d, &g_arg1->d);
 }
 
 void mStkLog()
@@ -2032,7 +2032,7 @@ void lStkLog()
 
 void dStkExp()
 {
-    FPUcplxexp(&g_arg1->d, &g_arg1->d);
+    fpu_cmplx_exp(&g_arg1->d, &g_arg1->d);
 }
 
 void mStkExp()

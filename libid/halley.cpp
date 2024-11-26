@@ -160,10 +160,10 @@ int halley_fractal()
     XtoAlessOne = g_old_z;
     for (int ihal = 2; ihal < g_degree; ihal++)
     {
-        FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoAlessOne);
+        fpu_cmplx_mul(&g_old_z, &XtoAlessOne, &XtoAlessOne);
     }
-    FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoA);
-    FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
+    fpu_cmplx_mul(&g_old_z, &XtoAlessOne, &XtoA);
+    fpu_cmplx_mul(&g_old_z, &XtoA, &XtoAplusOne);
 
     FX = XtoAplusOne - g_old_z;        // FX = X^(a+1) - X  = F
     F2prime.x = s_halley_a_plus_one_times_degree * XtoAlessOne.x; // g_halley_a_plus_one_times_degree in setup
@@ -172,17 +172,17 @@ int halley_fractal()
     F1prime.x = s_halley_a_plus_one * XtoA.x - 1.0;
     F1prime.y = s_halley_a_plus_one * XtoA.y;                             //  F'
 
-    FPUcplxmul(&F2prime, &FX, &Halnumer1);                  //  F * F"
+    fpu_cmplx_mul(&F2prime, &FX, &Halnumer1);                  //  F * F"
     Haldenom.x = F1prime.x + F1prime.x;
     Haldenom.y = F1prime.y + F1prime.y;                     //  2 * F'
 
-    FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         //  F"F/2F'
+    fpu_cmplx_div(&Halnumer1, &Haldenom, &Halnumer1);         //  F"F/2F'
     Halnumer2 = F1prime - Halnumer1;          //  F' - F"F/2F'
-    FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
+    fpu_cmplx_div(&FX, &Halnumer2, &Halnumer2);
     // parm.y is relaxation coef.
     relax.x = g_param_z1.y;
     relax.y = g_params[3];
-    FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
+    fpu_cmplx_mul(&relax, &Halnumer2, &Halnumer2);
     g_new_z.x = g_old_z.x - Halnumer2.x;
     g_new_z.y = g_old_z.y - Halnumer2.y;
     return Halleybailout();

@@ -192,14 +192,14 @@ int divide_brot5_fp_fractal() /* from formula by Jim Muth */
     tmp_sqr.y = g_old_z.x * g_old_z.y * 2.0;
 
     /* z^(a) = e^(a * log(z))*/
-    FPUcplxlog(&g_old_z, &tmp1);
+    fpu_cmplx_log(&g_old_z, &tmp1);
     tmp1.x *= g_c_exponent;
     tmp1.y *= g_c_exponent;
-    FPUcplxexp(&tmp1, &tmp2);
+    fpu_cmplx_exp(&tmp1, &tmp2);
     /* then add b */
     tmp2.x += g_b_const;
     /* sqr(z)/(z^(a)+b) */
-    FPUcplxdiv(&tmp_sqr, &tmp2, &g_new_z);
+    fpu_cmplx_div(&tmp_sqr, &tmp2, &g_new_z);
     /* then add c = g_init = pixel */
     g_new_z.x += g_init.x;
     g_new_z.y += g_init.y;

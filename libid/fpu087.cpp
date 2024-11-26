@@ -10,7 +10,7 @@
 #include <cfloat>
 #include <cmath>
 
-void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
+void fpu_cmplx_mul(DComplex const *x, DComplex const *y, DComplex *z)
 {
     double tx;
     double ty;
@@ -33,7 +33,7 @@ void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
     z->y = std::isnan(ty) || std::isinf(ty) ? ID_INFINITY : ty;
 }
 
-void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
+void fpu_cmplx_div(DComplex const *x, DComplex const *y, DComplex *z)
 {
     const double mod = y->x * y->x + y->y * y->y;
     if (mod == 0.0 || std::abs(mod) <= DBL_MIN)
@@ -97,7 +97,7 @@ void sinh_cosh(const double *angle, double *sine, double *cosine)
     }
 }
 
-void FPUcplxlog(const DComplex *x, DComplex *z)
+void fpu_cmplx_log(const DComplex *x, DComplex *z)
 {
     if (x->x == 0.0 && x->y == 0.0)
     {
@@ -120,7 +120,7 @@ void FPUcplxlog(const DComplex *x, DComplex *z)
         : std::atan2(x->y, x->x);
 }
 
-void FPUcplxexp(const DComplex *x, DComplex *z)
+void fpu_cmplx_exp(const DComplex *x, DComplex *z)
 {
     const double y = x->y;
     double pow = std::exp(x->x);
@@ -155,7 +155,7 @@ void sinh_cosh(long angle, long *sine, long *cosine)
     *cosine = (long)(std::cosh(a)*(double)(1 << 16));
 }
 
-long Exp086(long x)
+long exp_long(long x)
 {
     return (long)(std::exp((double) x / (double)(1 << 16))*(double)(1 << 16));
 }
@@ -164,26 +164,26 @@ long Exp086(long x)
 #define float2em(f) (*(long *) &(f))
 
 // Input is a 16 bit offset number.  Output is shifted by Fudge.
-unsigned long ExpFudged(long x, int Fudge)
+unsigned long exp_fudged(long x, int Fudge)
 {
     return (long)(std::exp((double) x / (double)(1 << 16))*(double)(1 << Fudge));
 }
 
 // This multiplies two e/m numbers and returns an e/m number.
-long r16Mul(long x, long y)
+long r16_mul(long x, long y)
 {
     float f = em2float(x)*em2float(y);
     return float2em(f);
 }
 
 // This takes an exp/mant number and returns a shift-16 number
-long LogFloat14(unsigned long x)
+long log_float14(unsigned long x)
 {
     return (long) std::log((double) em2float(x))*(1 << 16);
 }
 
 // This divides two e/m numbers and returns an e/m number.
-long RegDivFloat(long x, long y)
+long reg_div_float(long x, long y)
 {
     float f = em2float(x)/em2float(y);
     return float2em(f);
@@ -194,7 +194,7 @@ long RegDivFloat(long x, long y)
 // Instead of using exp/mant format, we'll just use floats.
 // Note: If sizeof(float) != sizeof(long), we're hosed.
 //
-long RegFg2Float(long x, int FudgeFact)
+long reg_fg_to_float(long x, int FudgeFact)
 {
     float f = (float) x / (float)(1 << FudgeFact);
     return float2em(f);
@@ -202,12 +202,12 @@ long RegFg2Float(long x, int FudgeFact)
 
 // This converts em to shifted integer format.
 //
-long RegFloat2Fg(long x, int Fudge)
+long reg_float_to_fg(long x, int Fudge)
 {
     return (long)(em2float(x)*(float)(1 << Fudge));
 }
 
-long RegSftFloat(long x, int Shift)
+long reg_sft_float(long x, int Shift)
 {
     float f = em2float(x);
     if (Shift > 0)

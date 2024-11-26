@@ -144,7 +144,7 @@ static int LongLambdaexponentFractal()
     {
         return 1;
     }
-    long longtmp = Exp086(g_l_old_z.x);
+    long longtmp = exp_long(g_l_old_z.x);
 
     g_l_temp.x = multiply(longtmp,      lcosy,   g_bit_shift);
     g_l_temp.y = multiply(longtmp,      lsiny,   g_bit_shift);

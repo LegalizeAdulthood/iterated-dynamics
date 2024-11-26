@@ -24,7 +24,7 @@ TEST(TestMath, nanExponent)
     DComplex x{std::nan("1"), 0.0};
     DComplex z{};
 
-    FPUcplxexp(&x, &z); // z = e^x
+    fpu_cmplx_exp(&x, &z); // z = e^x
 
     EXPECT_EQ((DComplex{1.0, 0.0}), z);
 }
@@ -35,7 +35,7 @@ TEST(TestMath, nanRealMultiply)
     DComplex rhs{1.0, 0.0};
 
     DComplex result;
-    FPUcplxmul(&lhs, &rhs, &result);
+    fpu_cmplx_mul(&lhs, &rhs, &result);
 
     EXPECT_EQ((DComplex{ID_INFINITY, 0.0}), result);
 }
@@ -46,7 +46,7 @@ TEST(TestMath, infRealMultiply)
     DComplex rhs{1.0, 0.0};
 
     DComplex result;
-    FPUcplxmul(&lhs, &rhs, &result);
+    fpu_cmplx_mul(&lhs, &rhs, &result);
 
     EXPECT_EQ((DComplex{ID_INFINITY, 0.0}), result);
 }
@@ -57,7 +57,7 @@ TEST(TestMath, nanImagMultiply)
     DComplex rhs{1.0, 0.0};
 
     DComplex result;
-    FPUcplxmul(&lhs, &rhs, &result);
+    fpu_cmplx_mul(&lhs, &rhs, &result);
 
     EXPECT_EQ((DComplex{0.0, ID_INFINITY}), result);
 }
@@ -68,7 +68,7 @@ TEST(TestMath, infImagMultiply)
     DComplex rhs{1.0, 0.0};
 
     DComplex result;
-    FPUcplxmul(&lhs, &rhs, &result);
+    fpu_cmplx_mul(&lhs, &rhs, &result);
 
     EXPECT_EQ((DComplex{0.0, ID_INFINITY}), result);
 }
@@ -79,7 +79,7 @@ TEST(TestMath, zeroDivide)
     DComplex rhs{};
 
     DComplex result;
-    FPUcplxdiv(&lhs, &rhs, &result);
+    fpu_cmplx_div(&lhs, &rhs, &result);
 
     EXPECT_EQ((DComplex{ID_INFINITY, ID_INFINITY}), result);
     EXPECT_TRUE(g_overflow);
@@ -137,11 +137,11 @@ TEST(TestMath, multiplyAliasing)
 {
     const DComplex z{1.0, 2.0};
     DComplex result;
-    FPUcplxmul(&z, &z, &result);
+    fpu_cmplx_mul(&z, &z, &result);
     const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}*std::complex<double>{1.0, 2.0}};
 
     DComplex aliasResult{1.0, 2.0};
-    FPUcplxmul(&aliasResult, &aliasResult, &aliasResult);
+    fpu_cmplx_mul(&aliasResult, &aliasResult, &aliasResult);
 
     EXPECT_EQ(stdResult.real(), result.x);
     EXPECT_EQ(stdResult.imag(), result.y);
@@ -154,13 +154,13 @@ TEST(TestMath, divideAliasing)
     const DComplex num{1.0, 2.0};
     const DComplex denom{2.0, 4.0};
     DComplex result;
-    FPUcplxdiv(&num, &denom, &result);
+    fpu_cmplx_div(&num, &denom, &result);
     const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}/std::complex<double>{2.0, 4.0}};
 
     DComplex aliasResult1{1.0, 2.0};
-    FPUcplxdiv(&aliasResult1, &denom, &aliasResult1);
+    fpu_cmplx_div(&aliasResult1, &denom, &aliasResult1);
     DComplex aliasResult2{2.0, 4.0};
-    FPUcplxdiv(&num, &aliasResult2, &aliasResult2);
+    fpu_cmplx_div(&num, &aliasResult2, &aliasResult2);
 
     EXPECT_EQ(stdResult.real(), result.x);
     EXPECT_EQ(stdResult.imag(), result.y);

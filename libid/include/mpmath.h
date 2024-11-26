@@ -38,27 +38,27 @@ long ExpFloat14(long);
 
 inline void fDiv(float x, float y, float &z)
 {
-    *(long*)&z = RegDivFloat(*(long*)&x, *(long*)&y);
+    *(long*)&z = reg_div_float(*(long*)&x, *(long*)&y);
 }
 inline void fMul16(float x, float y, float &z)
 {
-    *(long*)&z = r16Mul(*(long*)&x, *(long*)&y);
+    *(long*)&z = r16_mul(*(long*)&x, *(long*)&y);
 }
 inline void fShift(float x, int shift, float &z)
 {
-    *(long*)&z = RegSftFloat(*(long*)&x, shift);
+    *(long*)&z = reg_sft_float(*(long*)&x, shift);
 }
 inline void Fg2Float(int x, long f, float &z)
 {
-    *(long*)&z = RegFg2Float(x, f);
+    *(long*)&z = reg_fg_to_float(x, f);
 }
 inline long Float2Fg(float x, int f)
 {
-    return RegFloat2Fg(*(long*)&x, f);
+    return reg_float_to_fg(*(long*)&x, f);
 }
 inline void fLog14(float x, float &z)
 {
-    *reinterpret_cast<long*>(&z) = RegFg2Float(LogFloat14(*reinterpret_cast<long*>(&x)), 16);
+    *reinterpret_cast<long*>(&z) = reg_fg_to_float(log_float14(*reinterpret_cast<long*>(&x)), 16);
 }
 inline void fExp14(float x, float &z)
 {
@@ -261,7 +261,7 @@ inline void CMPLXlog(const DComplex &arg, DComplex &out)
 }
 inline void CMPLXexp(const DComplex &arg, DComplex &out)
 {
-    FPUcplxexp(&(arg), &(out));
+    fpu_cmplx_exp(&(arg), &(out));
 }
 inline void CMPLXsqr(const DComplex &arg, DComplex &out)
 {
