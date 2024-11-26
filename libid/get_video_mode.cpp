@@ -58,20 +58,25 @@ enum
     VI_ASPECT = 1      // aspect ratio bad
 };
 
-struct vidinf
+namespace
+{
+
+struct VideoModeChoice
 {
     int entnum;     // g_video_entry subscript
     unsigned flags; // flags for sort's compare, defined below
 };
 
-static std::vector<vidinf> s_video_info;
+} // namespace
+
+static std::vector<VideoModeChoice> s_video_info;
 
 static void   format_item(int, char *);
 static int    check_modekey(int, int);
 static void   format_vid_inf(int i, char const *err, char *buf);
 static double vid_aspect(int tryxdots, int tryydots);
 
-static bool vidinf_less(const vidinf &lhs, const vidinf &rhs)
+static bool vidinf_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
 {
     if (lhs.flags < rhs.flags)
     {
