@@ -53,7 +53,10 @@ enum
 
 constexpr char const *TEMP_FILE_NAME{"HELP.$$$"}; // temp file while printing document
 
-struct LINK
+namespace
+{
+
+struct Link
 {
     BYTE r, c;
     int           width;
@@ -62,27 +65,27 @@ struct LINK
     unsigned      topic_off;
 };
 
-struct LABEL
+struct Label
 {
     int      topic_num;
     unsigned topic_off;
 };
 
-struct PAGE
+struct Page
 {
     unsigned      offset;
     unsigned      len;
     int           margin;
 };
 
-struct HIST
+struct History
 {
     int      topic_num;
     unsigned topic_off;
     int      link;
 };
 
-struct help_sig_info
+struct HelpSigInfo
 {
     unsigned long sig;
     int           version;
@@ -90,7 +93,7 @@ struct help_sig_info
     unsigned long base;     // only if added to id.exe
 };
 
-struct PRINT_DOC_INFO
+struct PrintDocInfo
 {
     int       cnum;          // current CONTENT num
     int       tnum;          // current topic num
@@ -116,6 +119,8 @@ struct PRINT_DOC_INFO
     int       spaces;        // number of spaces in a row
 };
 
+} // namespace
+
 static std::FILE *help_file{};         // help file handle
 static long base_off{};                // offset to help info in help file
 static int max_links{};                // max # of links in any page
@@ -125,12 +130,12 @@ static int num_topic{};                // number of topics
 static int curr_hist{};                // current pos in history
                                        // these items setup in init_help...
 static std::vector<long> topic_offset; // 4*num_topic
-static std::vector<LABEL> label;       // 4*num_label
-static std::vector<HIST> hist;         // 6*MAX_HIST
+static std::vector<Label> label;       // 4*num_label
+static std::vector<History> hist;         // 6*MAX_HIST
                                        // these items used only while help is active...
 static std::vector<char> g_buffer;     // MAX_PAGE_SIZE
-static std::vector<LINK> link_table;   // 10*max_links
-static std::vector<PAGE> page_table;   // 4*max_pages
+static std::vector<Link> link_table;   // 10*max_links
+static std::vector<Page> page_table;   // 4*max_pages
 
 // forward declarations
 static bool print_doc_msg_func(int pnum, int num_pages);
@@ -159,7 +164,7 @@ static void display_text(int row, int col, int color, char const *text, unsigned
     }
 }
 
-static void display_parse_text(char const *text, unsigned len, int start_margin, int *num_link, LINK *link)
+static void display_parse_text(char const *text, unsigned len, int start_margin, int *num_link, Link *link)
 {
     char const *curr;
     int row, col;
@@ -330,7 +335,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
     g_text_rbase = 0;
 }
 
-static void color_link(LINK *link, int color)
+static void color_link(Link *link, int color)
 {
     g_text_cbase = SCREEN_INDENT;
     g_text_rbase = TEXT_START_ROW;
@@ -399,7 +404,7 @@ static void printinstr()
 
 static void display_page(char const *title, char const *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
-                         int *num_link, LINK *link)
+                         int *num_link, Link *link)
 {
     char temp[20];
 
@@ -472,17 +477,17 @@ static int dist1(int a, int b)
     return std::abs(t);
 }
 
-static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
+static int find_link_updown(Link *link, int num_link, int curr_link, int up)
 {
     int curr_c2, best_overlap = 0, temp_overlap;
-    LINK *curr, *best;
+    Link *curr, *best;
     int temp_dist;
 
     curr    = &link[curr_link];
     best    = nullptr;
     curr_c2 = curr->c + curr->width - 1;
 
-    LINK *temp = link;
+    Link *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
     {
         if (ctr != curr_link
@@ -526,16 +531,16 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
     return (best == nullptr) ? -1 : (int)(best-link);
 }
 
-static int find_link_leftright(LINK *link, int num_link, int curr_link, int left)
+static int find_link_leftright(Link *link, int num_link, int curr_link, int left)
 {
     int curr_c2, best_c2 = 0, temp_c2, best_dist = 0, temp_dist;
-    LINK *curr, *best;
+    Link *curr, *best;
 
     curr    = &link[curr_link];
     best    = nullptr;
     curr_c2 = curr->c + curr->width - 1;
 
-    LINK *temp = link;
+    Link *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
     {
         temp_c2 = temp->c + temp->width - 1;
@@ -572,7 +577,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
     return (best == nullptr) ? -1 : (int)(best-link);
 }
 
-static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
+static int find_link_key(Link * /*link*/, int num_link, int curr_link, int key)
 {
     switch (key)
     {
@@ -586,7 +591,7 @@ static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
     }
 }
 
-static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, int, int, int), int val)
+static int do_move_link(Link *link, int num_link, int *curr, int (*f)(Link *, int, int, int), int val)
 {
     if (num_link > 1)
     {
@@ -620,7 +625,7 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
     }
 }
 
-static int help_topic(HIST *curr, HIST *next, int flags)
+static int help_topic(History *curr, History *next, int flags)
 {
     int       len;
     int       key;
@@ -831,10 +836,10 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 int help()
 {
     int action{};
-    HIST      curr = { -1 };
+    History      curr = { -1 };
     int old_look_at_mouse;
     int       flags;
-    HIST      next;
+    History      next;
 
     if (g_help_mode == help_labels::NONE)   // is help disabled?
     {
@@ -1069,7 +1074,7 @@ int read_help_topic(help_labels label_num, int off, int len, void *buf)
         label[static_cast<int>(label_num)].topic_off + off, len, buf);
 }
 
-static void printerc(PRINT_DOC_INFO *info, int c, int n)
+static void printerc(PrintDocInfo *info, int c, int n)
 {
     while (n-- > 0)
     {
@@ -1103,7 +1108,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
     }
 }
 
-static void printers(PRINT_DOC_INFO *info, char const *s, int n)
+static void printers(PrintDocInfo *info, char const *s, int n)
 {
     if (n > 0)
     {
@@ -1123,7 +1128,7 @@ static void printers(PRINT_DOC_INFO *info, char const *s, int n)
 
 static bool print_doc_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 {
-    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
+    PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     int t;
     BYTE ch;
 
@@ -1198,7 +1203,7 @@ static bool print_doc_get_info(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 
 static bool print_doc_output(PD_COMMANDS cmd, PD_INFO *pd, void *context)
 {
-    PRINT_DOC_INFO *info = static_cast<PRINT_DOC_INFO *>(context);
+    PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
     {
     case PD_COMMANDS::PD_HEADING:
@@ -1342,7 +1347,7 @@ bool makedoc_msg_func(int pnum, int num_pages)
 
 void print_document(char const *outfname, bool (*msg_func)(int, int))
 {
-    PRINT_DOC_INFO info;
+    PrintDocInfo info;
     bool success = false;
     char const *msg = nullptr;
 
@@ -1389,7 +1394,7 @@ ErrorAbort:
 
 int init_help()
 {
-    help_sig_info hs = { 0 };
+    HelpSigInfo hs = { 0 };
 
     help_file = nullptr;
 
@@ -1460,7 +1465,7 @@ int init_help()
 
     // read in the tables...
     freader(&topic_offset[0], sizeof(long), num_topic, help_file);
-    freader(&label[0], sizeof(LABEL), num_label, help_file);
+    freader(&label[0], sizeof(Label), num_label, help_file);
 
     // finished!
 
