@@ -54,7 +54,7 @@ char *g_top_of_stack{};
 /*
 ; long readticker() returns current bios ticker value
 */
-long readticker()
+long read_ticker()
 {
     return (long) GetTickCount();
 }

@@ -375,7 +375,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_init_save_time != 0 // autosave and resumable?
                 && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NORESUME))
             {
-                s_save_base = readticker(); // calc's start time
+                s_save_base = read_ticker(); // calc's start time
                 s_save_ticks = std::abs(g_init_save_time);
                 s_save_ticks *= 1092; // bios ticks/minute
                 if ((s_save_ticks & 65535L) == 0)

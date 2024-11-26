@@ -51,12 +51,12 @@ static void flush_output()
         if (!start)
         {
             std::time(&start);
-            last = readticker();
+            last = read_ticker();
         }
         else
         {
             std::time_t now = std::time(nullptr);
-            long now_ticks = readticker();
+            long now_ticks = read_ticker();
             if (now > start)
             {
                 ticks_per_second = (now_ticks - last)/((long)(now - start));
@@ -65,7 +65,7 @@ static void flush_output()
     }
     else
     {
-        long now = readticker();
+        long now = read_ticker();
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             driver_flush();

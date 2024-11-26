@@ -2,4 +2,4 @@
 //
 #pragma once
 
-long readticker();
+long read_ticker();

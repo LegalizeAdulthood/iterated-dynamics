@@ -1198,7 +1198,7 @@ void CrossHairCursor::show()
 // See if the cursor should blink yet, and blink it if so
 void CrossHairCursor::check_blink()
 {
-    const long tick = readticker();
+    const long tick = read_ticker();
 
     if (tick - m_last_blink > CURSOR_BLINK_RATE)
     {
@@ -2502,10 +2502,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
             while (!driver_key_pressed())
             {
-                tick = readticker();
+                tick = read_ticker();
                 rotate(dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
                 diff += dir;
-                while (readticker() == tick) // wait until a tick passes
+                while (read_ticker() == tick) // wait until a tick passes
                 {
                 }
             }
