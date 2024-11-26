@@ -22,7 +22,7 @@ static BYTE s_stack[4096]{}; // common temp, two put_line calls
 
 // tesseral method by CJLT begins here
 
-struct tess             // one of these per box to be done gets stacked
+struct Tess             // one of these per box to be done gets stacked
 {
     int x1, x2, y1, y2;      // left/right top/bottom x/y coords
     int top, bot, lft, rgt;  // edge colors, -1 mixed, -2 unknown
@@ -30,10 +30,10 @@ struct tess             // one of these per box to be done gets stacked
 
 int tesseral()
 {
-    tess *tp;
+    Tess *tp;
 
     s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
-    tp = (tess *)&s_stack[0];
+    tp = (Tess *)&s_stack[0];
     tp->x1 = g_i_x_start;                              // set up initial box
     tp->x2 = g_i_x_stop;
     tp->y1 = g_i_y_start;
@@ -60,7 +60,7 @@ int tesseral()
         int cury;
         int xsize;
         int ysize;
-        tess *tp2;
+        Tess *tp2;
         tp->rgt = -2;
         tp->lft = -2;
         tp->bot = -2;
@@ -119,7 +119,7 @@ int tesseral()
 
     g_got_status = status_values::TESSERAL; // for tab_display
 
-    while (tp >= (tess *)&s_stack[0])
+    while (tp >= (Tess *)&s_stack[0])
     {
         // do next box
         g_current_column = tp->x1; // for tab_display
@@ -253,7 +253,7 @@ tess_split:
             // box not surrounded by same color, sub-divide
             int mid;
             int midcolor;
-            tess *tp2;
+            Tess *tp2;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // divide down the middle
@@ -330,7 +330,7 @@ tess_split:
     }
 
 tess_end:
-    if (tp >= (tess *)&s_stack[0])
+    if (tp >= (Tess *)&s_stack[0])
     {
         // didn't complete
         int i;
