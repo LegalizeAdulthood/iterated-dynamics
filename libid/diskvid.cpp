@@ -75,11 +75,11 @@ static long s_mem_offset{};                 //
 static long s_old_mem_offset{};             //
 static BYTE *s_mem_buf_ptr{};               //
 
-static void findload_cache(long);
+static void find_load_cache(long);
 static cache *find_cache(long);
-static void  write_cache_lru();
+static void write_cache_lru();
 static void mem_putc(BYTE);
-static BYTE  mem_getc();
+static BYTE mem_getc();
 static void mem_seek(long);
 
 int start_disk()
@@ -364,7 +364,7 @@ int disk_read_pixel(int col, int row)
     col_subscr = (short) offset & (BLOCKLEN-1); // offset within cache entry
     if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
-        findload_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCKLEN));
     }
     return s_cur_cache->pixel[col_subscr];
 }
@@ -378,7 +378,7 @@ bool from_mem_disk(long offset, int size, void *dest)
     }
     if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
-        findload_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCKLEN));
     }
     std::memcpy(dest, (void *) &s_cur_cache->pixel[col_subscr], size);
     s_cur_cache->dirty = false;
@@ -425,7 +425,7 @@ void disk_write_pixel(int col, int row, int color)
     col_subscr = (short) offset & (BLOCKLEN-1);
     if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
-        findload_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCKLEN));
     }
     if (s_cur_cache->pixel[col_subscr] != (color & 0xff))
     {
@@ -445,7 +445,7 @@ bool to_mem_disk(long offset, int size, void *src)
 
     if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
     {
-        findload_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCKLEN));
     }
 
     std::memcpy((void *) &s_cur_cache->pixel[col_subscr], src, size);
@@ -460,7 +460,7 @@ void targa_write_disk(unsigned int col, unsigned int row, BYTE red, BYTE green, 
     disk_write_pixel(col+1, row, red);
 }
 
-static void findload_cache(long offset) // used by read/write
+static void find_load_cache(long offset) // used by read/write
 {
     unsigned int tbloffset;
     unsigned int *fwd_link;
