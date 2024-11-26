@@ -50,7 +50,7 @@ bool g_map_set{};
 BYTE g_dac_box[256][3]{};
 BYTE g_old_dac_box[256][3]{};
 bool g_dac_learn{};
-bool g_got_real_dac{}; // true if loaddac has a dacbox
+bool g_got_real_dac{}; // true if load_dac has a dacbox
 
 void rotate(int direction)      // rotate-the-palette routine
 {

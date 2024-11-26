@@ -29,7 +29,7 @@ VideoInfo x11_video_table[] = {
     {999, 800, 600, 256, nullptr, "                         "},
 };
 
-void loaddac()
+void load_dac()
 {
     readvideopalette();
 }

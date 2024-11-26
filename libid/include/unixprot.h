@@ -7,4 +7,4 @@
 int stricmp(char const *, char const *);
 int strnicmp(char const *, char const *, int);
 
-void loaddac();
+void load_dac();

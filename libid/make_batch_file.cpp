@@ -1522,7 +1522,7 @@ docolors:
 #ifdef XFRACT
             if (g_fake_lut && g_true_mode == true_color_mode::default_color)
             {
-                loaddac(); // stupid kludge
+                load_dac(); // stupid kludge
             }
 #endif
             while (true)
