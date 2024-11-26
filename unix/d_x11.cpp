@@ -271,7 +271,7 @@ private:
     int m_dy{};                 //
     x11_frame_window m_frame;   //
     X11TextWindow m_text;     //
-    x11_plot_window m_plot;     //
+    X11PlotWindow m_plot;     //
 };
 
 #ifdef FPUERR

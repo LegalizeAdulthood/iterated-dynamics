@@ -5,10 +5,10 @@
 #include <X11/Xlib.h>
 
 // cppcheck-suppress noConstructor
-class x11_plot_window
+class X11PlotWindow
 {
 public:
-    x11_plot_window()
+    X11PlotWindow()
             : dpy_{},
             x_{},
             y_{},

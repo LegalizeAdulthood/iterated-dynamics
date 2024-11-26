@@ -6,7 +6,7 @@
 
 #include <X11/Xlib.h>
 
-void x11_plot_window::initialize(Display *dpy, int screen_num, Window parent)
+void X11PlotWindow::initialize(Display *dpy, int screen_num, Window parent)
 {
     dpy_ = dpy;
     int x = 0;
@@ -24,13 +24,13 @@ void x11_plot_window::initialize(Display *dpy, int screen_num, Window parent)
     assert(window_ != 0);
 }
 
-void x11_plot_window::set_position(int x, int y)
+void X11PlotWindow::set_position(int x, int y)
 {
     assert(dpy_ != nullptr && window_ != 0);
     XMoveWindow(dpy_, window_, x, y);
 }
 
-void x11_plot_window::clear()
+void X11PlotWindow::clear()
 {
 
 }
