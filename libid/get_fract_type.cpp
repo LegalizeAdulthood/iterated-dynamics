@@ -176,7 +176,7 @@ static fractal_type select_fracttype(fractal_type t)
     }
 
     tname[0] = 0;
-    const int done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
+    const int done = full_screen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
         "Press F2 for a description of the highlighted type", numtypes, (char const **) choices,
         attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fractype_help);

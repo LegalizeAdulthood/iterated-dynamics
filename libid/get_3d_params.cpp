@@ -199,7 +199,7 @@ restart_1:
         int i;
         {
             ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_3D_FILL};
-            i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
+            i = full_screen_choice(CHOICE_HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
                 attributes, 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
         }
         if (i < 0)

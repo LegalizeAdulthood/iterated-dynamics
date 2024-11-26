@@ -315,7 +315,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         int i;
         {
             ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_LOADFILE};
-            i = fullscreen_choice(0, heading,
+            i = full_screen_choice(0, heading,
                 "key...name......................err...xdot..ydot.clr.comment..................",
                 instructions.c_str(), g_video_table_len, nullptr, &attributes[0], 1, 13, 78, 0,
                 format_item, nullptr, nullptr, check_modekey);

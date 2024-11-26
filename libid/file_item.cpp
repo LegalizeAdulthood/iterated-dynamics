@@ -736,7 +736,7 @@ retry:
         colwidth = 76;
     }
 
-    const int i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+    const int i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
         heading.c_str(), nullptr, instr, numentries, (char const **) choices, attributes, boxwidth,
         boxdepth, colwidth, 0, formatitem, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)

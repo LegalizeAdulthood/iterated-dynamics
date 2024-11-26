@@ -17,7 +17,7 @@ enum choice_flags
     CHOICE_NOT_SORTED   = 32
 };
 
-int fullscreen_choice(
+int full_screen_choice(
     int options,
     char const *hdg,
     char const *hdg2,

@@ -168,7 +168,7 @@ static void process_speedstring(char *speedstring, //
               k for checkkey routine return value k (if not 0 nor -1)
               speedstring[0] != 0 on return if string is present
 */
-int fullscreen_choice(
+int full_screen_choice(
     int options,
     char const *hdg,
     char const *hdg2,

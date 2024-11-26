@@ -237,7 +237,7 @@ retry_dir:
         }
     }
 
-    i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+    i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
         heading.c_str(), nullptr, instr, filecount, (char const **) choices,
         attributes, 0, 99, 0, i, nullptr, speedstr, filename_speedstr, check_f6_key);
     if (i == -ID_KEY_F4)

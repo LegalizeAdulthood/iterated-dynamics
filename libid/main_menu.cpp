@@ -365,7 +365,7 @@ top:
         {
             nextleft = nextright + 1;
         }
-        i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, nextleft,
+        i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, nextleft,
             choices, attributes, 2, nextleft / 2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
         if (i == -1)     // escape
         {
