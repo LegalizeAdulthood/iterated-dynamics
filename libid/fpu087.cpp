@@ -160,8 +160,15 @@ long exp_long(long x)
     return (long)(std::exp((double) x / (double)(1 << 16))*(double)(1 << 16));
 }
 
-#define em2float(l) (*(float *) &(l))
-#define float2em(f) (*(long *) &(f))
+inline float em_to_float(long l)
+{
+    return *(float *) &l;
+}
+
+inline long float_to_em(float f)
+{
+    return *(long *) &f;
+}
 
 // Input is a 16 bit offset number.  Output is shifted by Fudge.
 unsigned long exp_fudged(long x, int Fudge)
@@ -172,21 +179,21 @@ unsigned long exp_fudged(long x, int Fudge)
 // This multiplies two e/m numbers and returns an e/m number.
 long r16_mul(long x, long y)
 {
-    float f = em2float(x)*em2float(y);
-    return float2em(f);
+    float f = em_to_float(x)*em_to_float(y);
+    return float_to_em(f);
 }
 
 // This takes an exp/mant number and returns a shift-16 number
 long log_float14(unsigned long x)
 {
-    return (long) std::log((double) em2float(x))*(1 << 16);
+    return (long) std::log((double) em_to_float(x))*(1 << 16);
 }
 
 // This divides two e/m numbers and returns an e/m number.
 long reg_div_float(long x, long y)
 {
-    float f = em2float(x)/em2float(y);
-    return float2em(f);
+    float f = em_to_float(x)/em_to_float(y);
+    return float_to_em(f);
 }
 
 // This routine on the IBM converts shifted integer x, FudgeFact to
@@ -197,19 +204,19 @@ long reg_div_float(long x, long y)
 long reg_fg_to_float(long x, int FudgeFact)
 {
     float f = (float) x / (float)(1 << FudgeFact);
-    return float2em(f);
+    return float_to_em(f);
 }
 
 // This converts em to shifted integer format.
 //
 long reg_float_to_fg(long x, int Fudge)
 {
-    return (long)(em2float(x)*(float)(1 << Fudge));
+    return (long)(em_to_float(x)*(float)(1 << Fudge));
 }
 
 long reg_sft_float(long x, int Shift)
 {
-    float f = em2float(x);
+    float f = em_to_float(x);
     if (Shift > 0)
     {
         f *= (1 << Shift);
@@ -218,5 +225,5 @@ long reg_sft_float(long x, int Shift)
     {
         f /= (1 << Shift);
     }
-    return float2em(f);
+    return float_to_em(f);
 }
