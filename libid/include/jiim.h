@@ -15,24 +15,24 @@ extern double                g_julia_c_y;
 extern DComplex              g_save_c;
 constexpr double             JULIA_C_NOT_SET{100000.0};
 
-void Jiim(jiim_types which);
-LComplex PopLong();
-DComplex PopFloat();
-LComplex DeQueueLong();
-DComplex DeQueueFloat();
-LComplex ComplexSqrtLong(long, long);
-DComplex ComplexSqrtFloat(double, double);
-inline DComplex ComplexSqrtFloat(const DComplex &z)
+void jiim(jiim_types which);
+LComplex pop_long();
+DComplex pop_float();
+LComplex de_queue_long();
+DComplex de_queue_float();
+LComplex complex_sqrt_long(long, long);
+DComplex complex_sqrt_float(double, double);
+inline DComplex complex_sqrt_float(const DComplex &z)
 {
-    return ComplexSqrtFloat(z.x, z.y);
+    return complex_sqrt_float(z.x, z.y);
 }
-bool Init_Queue(unsigned long);
-void   Free_Queue();
-void   ClearQueue();
-int    QueueEmpty();
-int    QueueFull();
-int    QueueFullAlmost();
-int    PushLong(long, long);
-int    PushFloat(float, float);
-int    EnQueueLong(long, long);
-int    EnQueueFloat(float, float);
+bool init_queue(unsigned long);
+void   free_queue();
+void   clear_queue();
+int    queue_empty();
+int    queue_full();
+int    queue_full_almost();
+int    push_long(long, long);
+int    push_float(float, float);
+int    en_queue_long(long, long);
+int    en_queue_float(float, float);

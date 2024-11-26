@@ -234,17 +234,17 @@ static void fill_rect(int x, int y, int width, int depth, int color)
  * Defines a buffer that can be used as a FIFO queue or LIFO stack.
  */
 
-int QueueEmpty()            // True if NO points remain in queue
+int queue_empty()            // True if NO points remain in queue
 {
     return s_list_front == s_list_back;
 }
 
-int QueueFullAlmost()       // True if room for ONE more point in queue
+int queue_full_almost()       // True if room for ONE more point in queue
 {
     return ((s_list_front + 2) % s_list_size) == s_list_back;
 }
 
-void ClearQueue()
+void clear_queue()
 {
     s_l_max = 0;
     s_l_size = 0;
@@ -257,7 +257,7 @@ void ClearQueue()
  * move to JIIM.C when done
  */
 
-bool Init_Queue(unsigned long request)
+bool init_queue(unsigned long request)
 {
     if (driver_diskp())
     {
@@ -289,7 +289,7 @@ bool Init_Queue(unsigned long request)
     return false;
 }
 
-void Free_Queue()
+void free_queue()
 {
     end_disk();
     s_l_max = 0;
@@ -299,7 +299,7 @@ void Free_Queue()
     s_list_front = 0;
 }
 
-int PushLong(long x, long y)
+int push_long(long x, long y)
 {
     if (((s_list_front + 1) % s_list_size) != s_list_back)
     {
@@ -319,7 +319,7 @@ int PushLong(long x, long y)
     return 0;                    // fail
 }
 
-int PushFloat(float x, float y)
+int push_float(float x, float y)
 {
     if (((s_list_front + 1) % s_list_size) != s_list_back)
     {
@@ -339,13 +339,13 @@ int PushFloat(float x, float y)
     return 0;                    // fail
 }
 
-DComplex PopFloat()
+DComplex pop_float()
 {
     DComplex pop;
     float popx;
     float popy;
 
-    if (!QueueEmpty())
+    if (!queue_empty())
     {
         s_list_front--;
         if (s_list_front < 0)
@@ -366,11 +366,11 @@ DComplex PopFloat()
     return pop;
 }
 
-LComplex PopLong()
+LComplex pop_long()
 {
     LComplex pop;
 
-    if (!QueueEmpty())
+    if (!queue_empty())
     {
         s_list_front--;
         if (s_list_front < 0)
@@ -389,17 +389,17 @@ LComplex PopLong()
     return pop;
 }
 
-int EnQueueFloat(float x, float y)
+int en_queue_float(float x, float y)
 {
-    return PushFloat(x, y);
+    return push_float(x, y);
 }
 
-int EnQueueLong(long x, long y)
+int en_queue_long(long x, long y)
 {
-    return PushLong(x, y);
+    return push_long(x, y);
 }
 
-DComplex DeQueueFloat()
+DComplex de_queue_float()
 {
     DComplex out;
     float outx;
@@ -422,7 +422,7 @@ DComplex DeQueueFloat()
     return out;
 }
 
-LComplex DeQueueLong()
+LComplex de_queue_long()
 {
     LComplex out;
     out.x = 0;
@@ -482,7 +482,7 @@ static void RestoreRect(int x, int y, int width, int depth)
     s_cursor.show();
 }
 
-void Jiim(jiim_types which)
+void jiim(jiim_types which)
 {
     affine cvt;
     bool exact = false;
@@ -549,7 +549,7 @@ void Jiim(jiim_types which)
     s_ok_to_miim  = false;
     if (which == jiim_types::JIIM && g_debug_flag != debug_flags::prevent_miim)
     {
-        s_ok_to_miim = Init_Queue(8*1024UL); // Queue Set-up Successful?
+        s_ok_to_miim = init_queue(8*1024UL); // Queue Set-up Successful?
     }
 
     s_max_hits = 1;
@@ -939,16 +939,16 @@ void Jiim(jiim_types which)
                 DComplex f2;
                 DComplex Sqrt; // Fixed points of Julia
 
-                Sqrt = ComplexSqrtFloat(1 - 4 * cr, -4 * ci);
+                Sqrt = complex_sqrt_float(1 - 4 * cr, -4 * ci);
                 f1.x = (1 + Sqrt.x) / 2;
                 f2.x = (1 - Sqrt.x) / 2;
                 f1.y =  Sqrt.y / 2;
                 f2.y = -Sqrt.y / 2;
 
-                ClearQueue();
+                clear_queue();
                 s_max_hits = 1;
-                EnQueueFloat((float)f1.x, (float)f1.y);
-                EnQueueFloat((float)f2.x, (float)f2.y);
+                en_queue_float((float)f1.x, (float)f1.y);
+                en_queue_float((float)f2.x, (float)f2.y);
             }
             /*
              * End MIIM code.
@@ -996,7 +996,7 @@ void Jiim(jiim_types which)
              */
             if (s_ok_to_miim)
             {
-                if (QueueEmpty())
+                if (queue_empty())
                 {
                     if (s_max_hits < g_colors - 1
                         && s_max_hits < 5
@@ -1012,10 +1012,10 @@ void Jiim(jiim_types which)
                         s_lucky_x = 0.0f;
                         for (int i = 0; i < 199; i++)
                         {
-                            g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
-                            g_new_z = ComplexSqrtFloat(g_new_z.x - cr, g_new_z.y - ci);
-                            EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
-                            EnQueueFloat((float)-g_old_z.x, (float)-g_old_z.y);
+                            g_old_z = complex_sqrt_float(g_old_z.x - cr, g_old_z.y - ci);
+                            g_new_z = complex_sqrt_float(g_new_z.x - cr, g_new_z.y - ci);
+                            en_queue_float((float)g_new_z.x, (float)g_new_z.y);
+                            en_queue_float((float)-g_old_z.x, (float)-g_old_z.y);
                         }
                         s_max_hits++;
                     }
@@ -1025,7 +1025,7 @@ void Jiim(jiim_types which)
                     }
                 }
 
-                g_old_z = DeQueueFloat();
+                g_old_z = de_queue_float();
 
                 x = (int)(g_old_z.x * xfactor * zoom + xoff);
                 y = (int)(g_old_z.y * yfactor * zoom + yoff);
@@ -1033,9 +1033,9 @@ void Jiim(jiim_types which)
                 if (color < s_max_hits)
                 {
                     c_putcolor(x, y, color + 1);
-                    g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
-                    EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
-                    EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
+                    g_new_z = complex_sqrt_float(g_old_z.x - cr, g_old_z.y - ci);
+                    en_queue_float((float)g_new_z.x, (float)g_new_z.y);
+                    en_queue_float((float)-g_new_z.x, (float)-g_new_z.y);
                 }
             }
             else
@@ -1258,7 +1258,7 @@ void Jiim(jiim_types which)
         g_l_old_z = g_l_new_z;
     } // end while (still)
 finish:
-    Free_Queue();
+    free_queue();
 
     if (kbdchar != 's' && kbdchar != 'S')
     {

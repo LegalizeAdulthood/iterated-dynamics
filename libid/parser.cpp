@@ -1773,7 +1773,7 @@ void lStkATanh()
 
 void dStkSqrt()
 {
-    g_arg1->d = ComplexSqrtFloat(g_arg1->d.x, g_arg1->d.y);
+    g_arg1->d = complex_sqrt_float(g_arg1->d.x, g_arg1->d.y);
 }
 
 void mStkSqrt()
@@ -1784,7 +1784,7 @@ void mStkSqrt()
 void lStkSqrt()
 {
     // lStkFunct(dStkSqrt);
-    g_arg1->l = ComplexSqrtLong(g_arg1->l.x, g_arg1->l.y);
+    g_arg1->l = complex_sqrt_long(g_arg1->l.x, g_arg1->l.y);
 }
 
 void dStkCAbs()

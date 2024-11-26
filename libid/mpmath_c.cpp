@@ -204,7 +204,7 @@ void Arcsinz(DComplex z, DComplex *rz)
     fpu_cmplx_mul(&z, &z, &tempz1);
     tempz1.x = 1 - tempz1.x;
     tempz1.y = -tempz1.y;  // tempz1 = 1 - tempz1
-    tempz1 = ComplexSqrtFloat(tempz1);
+    tempz1 = complex_sqrt_float(tempz1);
 
     tempz2.x = -z.y;
     tempz2.y = z.x;                // tempz2 = i*z
@@ -222,7 +222,7 @@ void Arccosz(DComplex z, DComplex *rz)
 
     fpu_cmplx_mul(&z, &z, &temp);
     temp.x -= 1;                                 // temp = temp - 1
-    temp = ComplexSqrtFloat(temp);
+    temp = complex_sqrt_float(temp);
 
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
@@ -238,7 +238,7 @@ void Arcsinhz(DComplex z, DComplex *rz)
 
     fpu_cmplx_mul(&z, &z, &temp);
     temp.x += 1;                                 // temp = temp + 1
-    temp = ComplexSqrtFloat(temp);
+    temp = complex_sqrt_float(temp);
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
     fpu_cmplx_log(&temp, rz);
@@ -250,7 +250,7 @@ void Arccoshz(DComplex z, DComplex *rz)
     DComplex tempz;
     fpu_cmplx_mul(&z, &z, &tempz);
     tempz.x -= 1;                              // tempz = tempz - 1
-    tempz = ComplexSqrtFloat(tempz);
+    tempz = complex_sqrt_float(tempz);
     tempz.x = z.x + tempz.x;
     tempz.y = z.y + tempz.y;  // tempz = z + tempz
     fpu_cmplx_log(&tempz, rz);
@@ -388,7 +388,7 @@ long lsqrt(long f)
 }
 #endif
 
-LComplex ComplexSqrtLong(long x, long y)
+LComplex complex_sqrt_long(long x, long y)
 {
     double theta;
     long      maglong, thetalong;
@@ -409,7 +409,7 @@ LComplex ComplexSqrtLong(long x, long y)
     return result;
 }
 
-DComplex ComplexSqrtFloat(double x, double y)
+DComplex complex_sqrt_float(double x, double y)
 {
     DComplex  result;
 
