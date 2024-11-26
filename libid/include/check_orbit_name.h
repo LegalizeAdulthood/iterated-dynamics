@@ -2,4 +2,4 @@
 //
 #pragma once
 
-bool check_orbit_name(char const *orbitname);
+bool check_orbit_name(char const *orbit_name);

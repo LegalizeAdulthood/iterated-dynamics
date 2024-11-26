@@ -35,7 +35,7 @@ static int build_fractal_list(int fractals[], int *last_val, char const *nameptr
     return numfractals;
 }
 
-bool check_orbit_name(char const *orbitname)
+bool check_orbit_name(char const *orbit_name)
 {
     int numtypes;
     char const *nameptr[MAXFRACTALS];
@@ -46,7 +46,7 @@ bool check_orbit_name(char const *orbitname)
     bool bad = true;
     for (int i = 0; i < numtypes; i++)
     {
-        if (std::strcmp(orbitname, nameptr[i]) == 0)
+        if (std::strcmp(orbit_name, nameptr[i]) == 0)
         {
             g_new_orbit_type = static_cast<fractal_type>(fractals[i]);
             bad = false;
