@@ -63,27 +63,27 @@ struct MinMax
 static int first_time(int, VECTOR);
 static void hsv_to_rgb(
     BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long sat, unsigned long val);
-static int line3dmem();
+static int line3d_mem();
 static int rgb_to_hsv(
     BYTE red, BYTE green, BYTE blue, unsigned long *hue, unsigned long *sat, unsigned long *val);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
 static void set_upr_lwr();
 static int end_object(bool triout);
-static int offscreen(PointColor);
+static int off_screen(PointColor);
 static int out_triangle(FPointColor, FPointColor, FPointColor, int, int, int);
-static int RAY_Header();
+static int ray_header();
 static int start_object();
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect);
 static void line3d_cleanup();
-static void clipcolor(int, int, int);
-static void interpcolor(int, int, int);
-static void putatriangle(PointColor, PointColor, PointColor, int);
-static void putminmax(int, int, int);
+static void clip_color(int, int, int);
+static void interp_color(int, int, int);
+static void put_triangle(PointColor, PointColor, PointColor, int);
+static void put_min_max(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
-static void T_clipcolor(int, int, int);
-static void vdraw_line(double *, double *, int color);
-static void File_Error(char const *File_Name1, int ERROR);
+static void transparent_clip_color(int, int, int);
+static void vec_draw_line(double *, double *, int color);
+static void file_error(char const *File_Name1, int ERROR);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -194,12 +194,12 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
     {
-        s_normal_plot = T_clipcolor;
+        s_normal_plot = transparent_clip_color;
         g_plot = s_normal_plot;          // Use transparent plot function
     }
     else                            // Use the usual plot function with clipping
     {
-        s_normal_plot = clipcolor;
+        s_normal_plot = clip_color;
         g_plot = s_normal_plot;
     }
 
@@ -713,20 +713,20 @@ int line3d(BYTE * pixels, unsigned linelen)
 
             if (g_current_row && !col)
             {
-                putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
+                put_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
             }
             if (g_current_row && col)  // skip first row and first column
             {
                 if (col == 1)
                 {
-                    putatriangle(s_last_row[col], s_old_last, old, old.color);
+                    put_triangle(s_last_row[col], s_old_last, old, old.color);
                 }
 
                 if (col < lastdot)
                 {
-                    putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
+                    put_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
-                putatriangle(old, s_last_row[col], cur, cur.color);
+                put_triangle(old, s_last_row[col], cur, cur.color);
             }
             break;
 
@@ -878,7 +878,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // fix ragged left margin in preview
                 if (col == 1 && g_current_row > 1)
                 {
-                    putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
+                    put_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
 
                 if (col < 2 || g_current_row < 2)         // don't have valid colors yet
@@ -888,9 +888,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                 if (col < lastdot)
                 {
-                    putatriangle(s_last_row[next], s_last_row[col], cur, cur.color);
+                    put_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
-                putatriangle(old, s_last_row[col], cur, cur.color);
+                put_triangle(old, s_last_row[col], cur, cur.color);
 
                 g_plot = g_standard_plot;
             }
@@ -916,7 +916,7 @@ loopbottom:
                 {
                     std::fclose(s_file_ptr1);
                     std::remove(g_light_name.c_str());
-                    File_Error(g_raytrace_filename.c_str(), 2);
+                    file_error(g_raytrace_filename.c_str(), 2);
                     return -1;
                 }
             }
@@ -949,7 +949,7 @@ reallythebottom:
 }
 
 // vector version of line draw
-static void vdraw_line(double *v1, double *v2, int color)
+static void vec_draw_line(double *v1, double *v2, int color)
 {
     int x1;
     int y1;
@@ -1147,7 +1147,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     // draw box connecting transformed points. NOTE order and COLORS
     draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);
 
-    vdraw_line(S[0][0], S[1][2], 8);
+    vec_draw_line(S[0][0], S[1][2], 8);
 
     // sides
     draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 4, false);
@@ -1187,7 +1187,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
             if (std::fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * s_bad_check
                 && std::fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * s_bad_check)
             {
-                vdraw_line(V[i], V[(i + 1) % 4], color);
+                vec_draw_line(V[i], V[(i + 1) % 4], color);
             }
         }
     }
@@ -1199,7 +1199,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
             if (std::fabs(V[i][0] - V[i + 1][0]) < -2 * s_bad_check
                 && std::fabs(V[i][1] - V[i + 1][1]) < -2 * s_bad_check)
             {
-                vdraw_line(V[i], V[i + 1], color);
+                vec_draw_line(V[i], V[i + 1], color);
             }
         }
     }
@@ -1207,7 +1207,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
 
 // replacement for plot - builds a table of min and max x's instead of plot
 // called by draw_line as part of triangle fill routine
-static void putminmax(int x, int y, int /*color*/)
+static void put_min_max(int x, int y, int /*color*/)
 {
     if (y >= 0 && y < g_logical_screen_y_dots)
     {
@@ -1229,14 +1229,14 @@ static void putminmax(int x, int y, int /*color*/)
 */
 #define MAXOFFSCREEN  2    // allow two of three points to be off screen
 
-static void putatriangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
+static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
 {
     int miny;
     int maxy;
     int xlim;
 
     // Too many points off the screen?
-    if ((offscreen(pt1) + offscreen(pt2) + offscreen(pt3)) > MAXOFFSCREEN)
+    if ((off_screen(pt1) + off_screen(pt2) + off_screen(pt3)) > MAXOFFSCREEN)
     {
         return;
     }
@@ -1305,7 +1305,7 @@ static void putatriangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
     }
 
     // set plot to "fake" plot function
-    g_plot = putminmax;
+    g_plot = put_min_max;
 
     // build table of extreme x's of triangle
     driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, 0);
@@ -1323,7 +1323,7 @@ static void putatriangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
     g_plot = s_normal_plot;
 }
 
-static int offscreen(PointColor pt)
+static int off_screen(PointColor pt)
 {
     if (pt.x >= 0)
     {
@@ -1345,7 +1345,7 @@ static int offscreen(PointColor pt)
     return 1;                  // point is off the screen
 }
 
-static void clipcolor(int x, int y, int color)
+static void clip_color(int x, int y, int color)
 {
     if (0 <= x && x < g_logical_screen_x_dots
         && 0 <= y && y < g_logical_screen_y_dots
@@ -1370,7 +1370,7 @@ static void clipcolor(int x, int y, int color)
 // has been enabled.
 //*******************************************************************
 
-static void T_clipcolor(int x, int y, int color)
+static void transparent_clip_color(int x, int y, int color)
 {
     if (0 <= x && x < g_logical_screen_x_dots       // is the point on screen?
         && 0 <= y && y < g_logical_screen_y_dots    // Yes?
@@ -1399,7 +1399,7 @@ static void T_clipcolor(int x, int y, int color)
 //      Real_Color always contains the actual color
 //**********************************************************************
 
-static void interpcolor(int x, int y, int color)
+static void interp_color(int x, int y, int color)
 {
     int D;
     int d1;
@@ -1568,7 +1568,7 @@ static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 
 **************************************************************************/
 
-static void File_Error(char const *File_Name1, int ERROR)
+static void file_error(char const *File_Name1, int ERROR)
 {
     char msgbuf[200];
 
@@ -1613,7 +1613,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     std::FILE *fps = dir_fopen(g_working_dir.c_str(), filename.c_str(), "w+b");
     if (fps == nullptr)
     {
-        File_Error(filename.c_str(), 1);
+        file_error(filename.c_str(), 1);
         return true;            // Oops, somethings wrong!
     }
 
@@ -1692,7 +1692,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
                 std::fclose(source);
             }
             dir_remove(g_working_dir, filename);
-            File_Error(filename.c_str(), 2);
+            file_error(filename.c_str(), 2);
             return true;
         }
         if (driver_key_pressed())
@@ -1716,7 +1716,7 @@ bool targa_validate(char const *File_Name)
     std::FILE *fp = dir_fopen(g_working_dir.c_str(), File_Name, "rb");
     if (fp == nullptr)
     {
-        File_Error(File_Name, 1);
+        file_error(File_Name, 1);
         return true;              // Oops, file does not exist
     }
 
@@ -1724,13 +1724,13 @@ bool targa_validate(char const *File_Name)
 
     if (fgetc(fp))               // Make sure this is an unmapped file
     {
-        File_Error(File_Name, 4);
+        file_error(File_Name, 4);
         return true;
     }
 
     if (fgetc(fp) != 2)          // Make sure it is a type 2 file
     {
-        File_Error(File_Name, 4);
+        file_error(File_Name, 4);
         return true;
     }
 
@@ -1750,7 +1750,7 @@ bool targa_validate(char const *File_Name)
     {
         if (fgetc(fp) != (int) elem)
         {
-            File_Error(File_Name, 3);
+            file_error(File_Name, 3);
             return true;
         }
     }
@@ -1765,7 +1765,7 @@ bool targa_validate(char const *File_Name)
     }
     if (s_error == 4)
     {
-        File_Error(File_Name, 4);
+        file_error(File_Name, 4);
         return true;
     }
     std::rewind(fp);
@@ -1957,7 +1957,7 @@ static void hsv_to_rgb(
 //
 //******************************************************************
 
-static int RAY_Header()
+static int ray_header()
 {
     // Open the ray tracing output file
     check_write_file(g_raytrace_filename, ".ray");
@@ -2465,7 +2465,7 @@ static int first_time(int linelen, VECTOR v)
     // Open file for RAY trace output and write header
     if (g_raytrace_format != raytrace_formats::none)
     {
-        RAY_Header();
+        ray_header();
         g_yy_adjust = 0;
         g_xx_adjust = 0;  // Disable shifting in ray tracing
         g_y_shift = 0;
@@ -2510,7 +2510,7 @@ static int first_time(int linelen, VECTOR v)
 
     s_z_coord = g_file_colors;
 
-    err = line3dmem();
+    err = line3d_mem();
     if (err != 0)
     {
         return err;
@@ -2760,16 +2760,16 @@ static int first_time(int linelen, VECTOR v)
     // set fill plot function
     if (g_fill_type != fill_type::SURFACE_CONSTANT)
     {
-        s_fill_plot = interpcolor;
+        s_fill_plot = interp_color;
     }
     else
     {
-        s_fill_plot = clipcolor;
+        s_fill_plot = clip_color;
 
         if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
             // If transparent colors are set
-            s_fill_plot = T_clipcolor;// Use the transparent plot function
+            s_fill_plot = transparent_clip_color;// Use the transparent plot function
         }
     }
 
@@ -2870,7 +2870,7 @@ static int first_time(int linelen, VECTOR v)
     return 0;
 } // end of once-per-image intializations
 
-static int line3dmem()
+static int line3d_mem()
 {
     /* lastrow stores the previous row of the original GIF image for
        the purpose of filling in gaps with triangle procedure */
