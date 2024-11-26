@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <cfloat>
 
-int getprecbf_mag()
+int get_prec_bf_mag()
 {
     double Xmagfactor;
     double Rotation;
@@ -48,7 +48,7 @@ int getprecbf_mag()
 /* This function calculates the precision needed to distiguish adjacent
    pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
-int getprecbf(int rezflag)
+int get_prec_bf(int rezflag)
 {
     bf_t del1;
     bf_t del2;
@@ -119,6 +119,6 @@ int getprecbf(int rezflag)
     }
     digits = std::max(digits, 3);
     restore_stack(saved);
-    dec = getprecbf_mag();
+    dec = get_prec_bf_mag();
     return std::max(digits, dec);
 }

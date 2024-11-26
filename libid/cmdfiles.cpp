@@ -1756,7 +1756,7 @@ static cmdarg_flags cmd_corners(const Command &cmd)
         // now that all the corners have been read in, get a more
         // accurate value for dec and do it all again
 
-        dec = getprecbf_mag();
+        dec = get_prec_bf_mag();
         if (dec < 0)
         {
             return cmd.bad_arg(); // ie: Magnification is +-1.#INF

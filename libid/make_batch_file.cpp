@@ -777,7 +777,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             {
                 int digits;
                 cvt_center_mag_bf(bfXctr, bfYctr, Magnification, Xmagfactor, Rotation, Skew);
-                digits = getprecbf(MAXREZ);
+                digits = get_prec_bf(MAXREZ);
                 put_parm(" %s=", "center-mag");
                 put_bf(0, bfXctr, digits);
                 put_bf(1, bfYctr, digits);
@@ -831,7 +831,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             if (g_bf_math != bf_math_type::NONE)
             {
                 int digits;
-                digits = getprecbf(MAXREZ);
+                digits = get_prec_bf(MAXREZ);
                 put_bf(0, g_bf_x_min, digits);
                 put_bf(1, g_bf_x_max, digits);
                 put_bf(1, g_bf_y_min, digits);

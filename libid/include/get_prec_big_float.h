@@ -2,5 +2,5 @@
 //
 #pragma once
 
-int getprecbf(int rezflag);
-int getprecbf_mag();
+int get_prec_bf(int rezflag);
+int get_prec_bf_mag();
