@@ -766,7 +766,7 @@ enum
     NONNUMERIC = -32767
 };
 
-namespace cmd_arg
+namespace cmd_files_test
 {
 
 static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stopmsg)};
@@ -1046,8 +1046,8 @@ static cmdarg_flags cmd_fpu(const Command &cmd)
 
 static cmdarg_flags cmd_make_doc(const Command &cmd)
 {
-    cmd_arg::s_print_document(*cmd.value ? cmd.value : "id.txt", makedoc_msg_func);
-    cmd_arg::s_goodbye();
+    cmd_files_test::s_print_document(*cmd.value ? cmd.value : "id.txt", makedoc_msg_func);
+    cmd_files_test::s_goodbye();
     return cmdarg_flags::GOODBYE;
 }
 
@@ -1103,7 +1103,7 @@ static cmdarg_flags cmd_make_par(const Command &cmd)
     {
         if (read_overlay() != 0)
         {
-            cmd_arg::s_goodbye();
+            cmd_files_test::s_goodbye();
             return cmdarg_flags::GOODBYE;
         }
     }
@@ -1117,7 +1117,7 @@ static cmdarg_flags cmd_make_par(const Command &cmd)
     g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
     calc_frac_init();
     make_batch_file();
-    cmd_arg::s_goodbye();
+    cmd_files_test::s_goodbye();
     return cmdarg_flags::GOODBYE;
 }
 
@@ -3949,11 +3949,11 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)";
     }
-    cmd_arg::s_stop_msg(stopmsg_flags::NONE, msg);
+    cmd_files_test::s_stop_msg(stopmsg_flags::NONE, msg);
     if (g_init_batch != batch_modes::NONE)
     {
         g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
-        cmd_arg::s_goodbye();
+        cmd_files_test::s_goodbye();
     }
 }
 

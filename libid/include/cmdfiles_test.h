@@ -7,7 +7,7 @@
 
 #include <functional>
 
-namespace cmd_arg
+namespace cmd_files_test
 {
 
 // To facilitate testing

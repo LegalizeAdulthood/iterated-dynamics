@@ -75,21 +75,21 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    cmd_arg::StopMsgFn m_prev_stop_msg;
-    StrictMock<MockFunction<cmd_arg::StopMsg>> m_stop_msg;
+    cmd_files_test::StopMsgFn m_prev_stop_msg;
+    StrictMock<MockFunction<cmd_files_test::StopMsg>> m_stop_msg;
 };
 
 void TestParameterCommandError::SetUp()
 {
     TestParameterCommand::SetUp();
-    m_prev_stop_msg = cmd_arg::get_stop_msg();
-    cmd_arg::set_stop_msg(m_stop_msg.AsStdFunction());
+    m_prev_stop_msg = cmd_files_test::get_stop_msg();
+    cmd_files_test::set_stop_msg(m_stop_msg.AsStdFunction());
     EXPECT_CALL(m_stop_msg, Call(stopmsg_flags::NONE, _)).WillOnce(Return(false));
 }
 
 void TestParameterCommandError::TearDown()
 {
-    cmd_arg::set_stop_msg(m_prev_stop_msg);
+    cmd_files_test::set_stop_msg(m_prev_stop_msg);
     TestParameterCommand::TearDown();
 }
 
@@ -182,24 +182,24 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    StrictMock<MockFunction<cmd_arg::Goodbye>> m_goodbye;
-    StrictMock<MockFunction<cmd_arg::PrintDoc>> m_print_document;
-    cmd_arg::GoodbyeFn m_prev_goodbye;
-    cmd_arg::PrintDocFn m_prev_print_document;
+    StrictMock<MockFunction<cmd_files_test::Goodbye>> m_goodbye;
+    StrictMock<MockFunction<cmd_files_test::PrintDoc>> m_print_document;
+    cmd_files_test::GoodbyeFn m_prev_goodbye;
+    cmd_files_test::PrintDocFn m_prev_print_document;
 };
 
 void TestParameterCommandMakeDoc::SetUp()
 {
     TestParameterCommand::SetUp();
-    m_prev_goodbye = cmd_arg::get_goodbye();
-    m_prev_print_document = cmd_arg::get_print_document();
-    cmd_arg::set_goodbye(m_goodbye.AsStdFunction());
-    cmd_arg::set_print_document(m_print_document.AsStdFunction());
+    m_prev_goodbye = cmd_files_test::get_goodbye();
+    m_prev_print_document = cmd_files_test::get_print_document();
+    cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
+    cmd_files_test::set_print_document(m_print_document.AsStdFunction());
 }
 void TestParameterCommandMakeDoc::TearDown()
 {
-    cmd_arg::set_print_document(m_prev_print_document);
-    cmd_arg::set_goodbye(m_prev_goodbye);
+    cmd_files_test::set_print_document(m_prev_print_document);
+    cmd_files_test::set_goodbye(m_prev_goodbye);
     TestParameterCommand::TearDown();
 }
 
