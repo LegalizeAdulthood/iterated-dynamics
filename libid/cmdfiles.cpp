@@ -305,7 +305,7 @@ static void process_simple_command(char *curarg)
 static void process_file_setname(const char *curarg, char *sptr)
 {
     *sptr = 0;
-    if (merge_pathnames(g_command_file, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
+    if (merge_path_names(g_command_file, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
     {
         init_msg("", g_command_file.c_str(), cmd_file::AT_CMD_LINE);
     }
@@ -1304,7 +1304,7 @@ static cmdarg_flags cmd_auto_key(const Command &cmd)
 
 static cmdarg_flags cmd_auto_key_name(const Command &cmd)
 {
-    if (merge_pathnames(g_auto_name, cmd.value, cmd.mode) < 0)
+    if (merge_path_names(g_auto_name, cmd.value, cmd.mode) < 0)
     {
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
     }
@@ -1546,7 +1546,7 @@ static cmdarg_flags parse_colors(char const *value)
 {
     if (*value == '@')
     {
-        if (merge_pathnames(g_map_name, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+        if (merge_path_names(g_map_name, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
         {
             init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
         }
@@ -1560,7 +1560,7 @@ static cmdarg_flags parse_colors(char const *value)
         }
         else
         {
-            if (merge_pathnames(g_color_file, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+            if (merge_path_names(g_color_file, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
             {
                 init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
             }
@@ -1970,7 +1970,7 @@ static cmdarg_flags cmd_filename(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    const int exist_dir = merge_pathnames(g_read_filename, cmd.value, cmd.mode);
+    const int exist_dir = merge_path_names(g_read_filename, cmd.value, cmd.mode);
     if (exist_dir == 0)
     {
         g_show_file = 0;
@@ -2044,7 +2044,7 @@ static cmdarg_flags cmd_formula_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_pathnames(g_formula_filename, cmd.value, cmd.mode) < 0)
+    if (merge_path_names(g_formula_filename, cmd.value, cmd.mode) < 0)
     {
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
     }
@@ -2143,7 +2143,7 @@ static cmdarg_flags cmd_ifs_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (const int exist_dir = merge_pathnames(g_ifs_filename, cmd.value, cmd.mode); exist_dir == 0)
+    if (const int exist_dir = merge_path_names(g_ifs_filename, cmd.value, cmd.mode); exist_dir == 0)
     {
         reset_ifs_defn();
     }
@@ -2322,7 +2322,7 @@ static cmdarg_flags cmd_l_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_pathnames(g_l_system_filename, cmd.value, cmd.mode) < 0)
+    if (merge_path_names(g_l_system_filename, cmd.value, cmd.mode) < 0)
     {
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
     }
@@ -2446,7 +2446,7 @@ static cmdarg_flags cmd_map(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    const int exist_dir = merge_pathnames(g_map_name, cmd.value, cmd.mode);
+    const int exist_dir = merge_path_names(g_map_name, cmd.value, cmd.mode);
     if (exist_dir > 0)
     {
         return cmdarg_flags::NONE; // got a directory
@@ -2782,7 +2782,7 @@ static cmdarg_flags cmd_parm_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_pathnames(g_command_file, cmd.value, cmd.mode) < 0)
+    if (merge_path_names(g_command_file, cmd.value, cmd.mode) < 0)
     {
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
     }
@@ -3091,7 +3091,7 @@ static cmdarg_flags cmd_save_name(const Command &cmd)
     }
     if (g_first_init || cmd.mode == cmd_file::AT_AFTER_STARTUP)
     {
-        if (merge_pathnames(g_save_filename, cmd.value, cmd.mode) < 0)
+        if (merge_path_names(g_save_filename, cmd.value, cmd.mode) < 0)
         {
             init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
         }

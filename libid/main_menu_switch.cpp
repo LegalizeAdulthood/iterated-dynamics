@@ -84,7 +84,7 @@ static bool look(bool *stacked)
         }
         g_filename_stack_index++;
         g_file_name_stack[g_filename_stack_index] = g_browse_name;
-        merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+        merge_path_names(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
@@ -107,7 +107,7 @@ static bool look(bool *stacked)
                 break;
             }
             g_browse_name = g_file_name_stack[g_filename_stack_index];
-            merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+            merge_path_names(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
             g_show_file = 0;
             if (g_ask_video)
@@ -532,7 +532,7 @@ static main_state unstack_file(bool &stacked)
         return main_state::NOTHING;
     }
     g_browse_name = g_file_name_stack[g_filename_stack_index];
-    merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+    merge_path_names(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
     g_browsing = true;
     g_browse_sub_images = true;
     g_show_file = 0;

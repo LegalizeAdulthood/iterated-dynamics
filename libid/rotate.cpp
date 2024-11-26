@@ -641,7 +641,7 @@ void save_palette()
         {
             std::strcat(filename, ".map");
         }
-        merge_pathnames(palname, filename, cmd_file::AT_AFTER_STARTUP);
+        merge_path_names(palname, filename, cmd_file::AT_AFTER_STARTUP);
         dacfile = open_save_file(palname, "w");
         if (dacfile == nullptr)
         {
@@ -681,7 +681,7 @@ bool load_palette()
         {
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
         }
-        merge_pathnames(g_map_name, filename.c_str(), cmd_file::AT_CMD_LINE);
+        merge_path_names(g_map_name, filename.c_str(), cmd_file::AT_CMD_LINE);
     }
     return i;
 }

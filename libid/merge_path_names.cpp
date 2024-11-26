@@ -27,7 +27,7 @@ namespace fs = std::filesystem;
 // (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)
 // attempts to extract directory and test for existence
 // (modes AT_CMD_LINE and SSTOOLS_INI)
-int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
+int merge_path_names(char *oldfullpath, char const *new_filename, cmd_file mode)
 {
     char newfilename[FILE_MAX_PATH];
     std::strcpy(newfilename, fs::path(new_filename).make_preferred().string().c_str());
@@ -145,11 +145,11 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     return isadir_error ? -1 : (isadir ? 1 : 0);
 }
 
-int merge_pathnames(std::string &oldfullpath, char const *new_filename, cmd_file mode)
+int merge_path_names(std::string &oldfullpath, char const *new_filename, cmd_file mode)
 {
     char buff[FILE_MAX_PATH];
     std::strcpy(buff, oldfullpath.c_str());
-    int const result = merge_pathnames(buff, new_filename, mode);
+    int const result = merge_path_names(buff, new_filename, mode);
     oldfullpath = buff;
     return result;
 }

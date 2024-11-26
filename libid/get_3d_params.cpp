@@ -478,7 +478,7 @@ static bool check_mapfile()
     }
     else
     {
-        merge_pathnames(buff, g_funny_glasses_map_name.c_str(), cmd_file::AT_CMD_LINE);
+        merge_path_names(buff, g_funny_glasses_map_name.c_str(), cmd_file::AT_CMD_LINE);
     }
 
     while (true)
@@ -508,7 +508,7 @@ static bool check_mapfile()
             continue;
         }
         g_map_set = true;
-        merge_pathnames(g_map_name, buff, cmd_file::AT_CMD_LINE);
+        merge_path_names(g_map_name, buff, cmd_file::AT_CMD_LINE);
         break;
     }
     return false;
