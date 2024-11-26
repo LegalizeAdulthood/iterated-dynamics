@@ -1570,7 +1570,7 @@ int fgetwindow()
     if (oldbf_math == bf_math_type::NONE)
     {
         calc_status_value oldcalc_status = g_calc_status; // kludge because next sets it = 0
-        fractal_floattobf();
+        fractal_float_to_bf();
         g_calc_status = oldcalc_status;
     }
     saved = save_stack();

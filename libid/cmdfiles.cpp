@@ -1115,7 +1115,7 @@ static cmdarg_flags cmd_make_par(const Command &cmd)
     g_logical_screen_y_dots = g_file_y_dots;
     g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
     g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
-    calcfracinit();
+    calc_frac_init();
     make_batch_file();
     cmd_arg::s_goodbye();
     return cmdarg_flags::GOODBYE;

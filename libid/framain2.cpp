@@ -334,7 +334,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
         if (g_evolving == evolution_mode_flags::NONE)
         {
-            calcfracinit();
+            calc_frac_init();
         }
         driver_schedule_alarm(1);
 
@@ -454,7 +454,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_logical_screen_y_offset = tmpydots * g_evolve_param_grid_y;
                     restore_param_history();
                     fiddleparms(gene, ecount);
-                    calcfracinit();
+                    calc_frac_init();
                     if (calcfract() == -1)
                     {
                         goto done;

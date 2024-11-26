@@ -2,7 +2,7 @@
 //
 #pragma once
 
-void calcfracinit();
+void calc_frac_init();
 void adjust_corner();
-void adjust_cornerbf();
-void fractal_floattobf();
+void adjust_corner_bf();
+void fractal_float_to_bf();

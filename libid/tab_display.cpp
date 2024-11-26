@@ -546,7 +546,7 @@ top:
         {
             int truncaterow;
             int dec = std::min(320, g_decimals);
-            adjust_cornerbf(); // make bottom left exact if very near exact
+            adjust_corner_bf(); // make bottom left exact if very near exact
             cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             // find alignment information
             msg[0] = 0;

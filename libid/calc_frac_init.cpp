@@ -99,7 +99,7 @@ static int getprecdbl(int rezflag)
     return digits;
 }
 
-void fractal_floattobf()
+void fractal_float_to_bf()
 {
     init_bf_dec(getprecdbl(CURRENTREZ));
     floattobf(g_bf_x_min, g_x_min);
@@ -119,7 +119,7 @@ void fractal_floattobf()
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
-void calcfracinit() // initialize a *pile* of stuff for fractal calculation
+void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 {
     g_old_color_iter = 0L;
     g_color_iter = 0L;
@@ -184,7 +184,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         g_fractal_type = fractal_type::MANDELFP;
         g_cur_fractal_specific = &g_fractal_specific[+fractal_type::MANDELFP];
-        fractal_floattobf();
+        fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP)
@@ -192,7 +192,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         g_fractal_type = fractal_type::JULIAFP;
         g_cur_fractal_specific = &g_fractal_specific[+fractal_type::JULIAFP];
-        fractal_floattobf();
+        fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == fractal_type::LMANDELZPOWER || g_fractal_type == fractal_type::FPMANDELZPOWER)
@@ -200,7 +200,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         g_fractal_type = fractal_type::FPMANDELZPOWER;
         g_cur_fractal_specific = &g_fractal_specific[+fractal_type::FPMANDELZPOWER];
-        fractal_floattobf();
+        fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == fractal_type::LJULIAZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER)
@@ -208,14 +208,14 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     {
         g_fractal_type = fractal_type::FPJULIAZPOWER;
         g_cur_fractal_specific = &g_fractal_specific[+fractal_type::FPJULIAZPOWER];
-        fractal_floattobf();
+        fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if (g_fractal_type == fractal_type::DIVIDE_BROT5 //
         && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_cur_fractal_specific = &g_fractal_specific[+fractal_type::DIVIDE_BROT5];
-        fractal_floattobf();
+        fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else
@@ -580,7 +580,7 @@ expand_retry:
                     {
                         if (bit_set(g_cur_fractal_specific->flags, fractal_flags::BF_MATH))
                         {
-                            fractal_floattobf();
+                            fractal_float_to_bf();
                             goto init_restart;
                         }
                         goto expand_retry;
@@ -658,7 +658,7 @@ static double fudgetodouble(long l)
     return d;
 }
 
-void adjust_cornerbf()
+void adjust_corner_bf()
 {
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
@@ -1057,7 +1057,7 @@ static void adjust_to_limitsbf(double expand)
     // yy3rd = cornery[2] - adjy;
     sub_bf(g_bf_y_3rd, bcornery[2], badjy);
 
-    adjust_cornerbf(); // make 3rd corner exact if very near other co-ords
+    adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
     restore_stack(saved);
 }
 

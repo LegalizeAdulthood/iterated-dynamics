@@ -153,7 +153,7 @@ gc_loop:
         }
         if (g_bf_math != bf_math_type::NONE)
         {
-            fractal_floattobf();
+            fractal_float_to_bf();
         }
         goto gc_loop;
     }
