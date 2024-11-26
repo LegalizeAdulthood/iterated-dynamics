@@ -24,7 +24,7 @@
 #include <unistd.h>
 #endif
 
-static void blankrows(int row, int count, int attr)
+static void blank_rows(int row, int count, int attr)
 {
     char buf[81];
     std::memset(buf, ' ', 80);
@@ -91,7 +91,7 @@ bool stop_msg(stopmsg_flags flags, const std::string &msg)
     ValueSaver saved_look_at_mouse{g_look_at_mouse, -ID_KEY_ENTER};
     if (bit_set(flags, stopmsg_flags::NO_STACK))
     {
-        blankrows(toprow = 12, 10, 7);
+        blank_rows(toprow = 12, 10, 7);
     }
     else
     {
@@ -132,7 +132,7 @@ bool stop_msg(stopmsg_flags flags, const std::string &msg)
     }
     if (bit_set(flags, stopmsg_flags::NO_STACK))
     {
-        blankrows(toprow, 10, 7);
+        blank_rows(toprow, 10, 7);
     }
     else
     {
