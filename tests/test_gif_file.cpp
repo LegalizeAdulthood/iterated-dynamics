@@ -382,7 +382,7 @@ std::ostream &operator<<(std::ostream &str, const vec_printer<int> &value)
     return str << " ]";
 }
 
-std::ostream &operator<<(std::ostream&str, const EVOLUTION_INFO &value)
+std::ostream &operator<<(std::ostream&str, const EvolutionInfo &value)
 {
     return str                                                                         //
         << R"({ "evolving": )" << value.evolving                                       //
@@ -807,7 +807,7 @@ TEST_F(TestGIFEvolutionInfoExtension, check)
 
 TEST_F(TestGIFEvolutionInfoExtension, decode)
 {
-    const EVOLUTION_INFO info{get_evolution_info(m_gif)};
+    const EvolutionInfo info{get_evolution_info(m_gif)};
 
     EXPECT_EQ(1, info.evolving);
     EXPECT_EQ(9, info.image_grid_size);
@@ -835,12 +835,12 @@ TEST_F(TestGIFEvolutionInfoExtension, decode)
 
 TEST_F(TestGIFEvolutionInfoExtension, encode)
 {
-    const EVOLUTION_INFO info1{get_evolution_info(m_gif)};
+    const EvolutionInfo info1{get_evolution_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE6_FILE};
 
     put_evolution_info(out, info1);
 
-    const EVOLUTION_INFO info2{get_evolution_info(out)};
+    const EvolutionInfo info2{get_evolution_info(out)};
     EXPECT_EQ(info1, info2) << info1 << " != " << info2;
 }
 

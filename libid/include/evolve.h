@@ -17,10 +17,10 @@ enum class variations
 };
 
 // smallest part of a fractal 'gene'
-struct GENEBASE
+struct GeneBase
 {
     void *addr;             // address of variable to be referenced
-    void (*varyfunc)(GENEBASE *genes, int randval, int gene); // pointer to func used to vary it
+    void (*varyfunc)(GeneBase *genes, int randval, int gene); // pointer to func used to vary it
                             // takes random number and pointer to var
     variations mutate;      // flag to switch on variation of this variable
     char name[16];          // name of variable (for menu )
@@ -38,7 +38,7 @@ enum
  * in little-endian format.  If this structure changes, change the big-endian
  * marshalling routines in decode_info.h.
  */
-struct EVOLUTION_INFO      // for saving evolution data in a GIF file
+struct EvolutionInfo      // for saving evolution data in a GIF file
 {
     std::int16_t evolving;
     std::int16_t image_grid_size;
@@ -61,8 +61,8 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     std::int16_t future[66 - NUM_GENES];      // total of 200 bytes
 };
 
-bool operator==(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs);
-inline bool operator!=(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs)
+bool operator==(const EvolutionInfo &lhs, const EvolutionInfo &rhs);
+inline bool operator!=(const EvolutionInfo &lhs, const EvolutionInfo &rhs)
 {
     return !(lhs == rhs);
 }
@@ -125,17 +125,17 @@ extern double                g_evolve_x_parameter_range;
 extern double                g_evolve_y_parameter_offset;
 extern double                g_evolve_y_parameter_range;
 extern evolution_mode_flags  g_evolving;
-extern GENEBASE              g_gene_bank[NUM_GENES];
+extern GeneBase              g_gene_bank[NUM_GENES];
 
-void copy_genes_to_bank(GENEBASE const gene[NUM_GENES]);
-void copy_genes_from_bank(GENEBASE gene[NUM_GENES]);
+void copy_genes_to_bank(GeneBase const gene[NUM_GENES]);
+void copy_genes_from_bank(GeneBase gene[NUM_GENES]);
 void initgene();
 void save_param_history();
 void restore_param_history();
 int get_variations();
 int get_evolve_Parms();
 void set_current_params();
-void fiddleparms(GENEBASE gene[], int ecount);
+void fiddleparms(GeneBase gene[], int ecount);
 void set_evolve_ranges();
 void set_mutation_level(int);
 void drawparmbox(int);

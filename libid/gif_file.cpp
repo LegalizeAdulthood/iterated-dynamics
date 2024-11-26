@@ -769,9 +769,9 @@ void put_extended_param_info(GifFileType *gif, const std::vector<char> &params)
         reinterpret_cast<unsigned char *>(const_cast<char *>(params.data())), static_cast<int>(params.size()));
 }
 
-EVOLUTION_INFO get_evolution_info(GifFileType *gif)
+EvolutionInfo get_evolution_info(GifFileType *gif)
 {
-    EVOLUTION_INFO result{};
+    EvolutionInfo result{};
     ExtensionDeserializer<GIF_EXTENSION6_EVOLVER_INFO_LENGTH> deser(gif, "fractint006");
     result.evolving = deser.extract_int16();
     result.image_grid_size = deser.extract_int16();
@@ -794,7 +794,7 @@ EVOLUTION_INFO get_evolution_info(GifFileType *gif)
     return result;
 }
 
-void put_evolution_info(GifFileType *gif, const EVOLUTION_INFO &info)
+void put_evolution_info(GifFileType *gif, const EvolutionInfo &info)
 {
     ExtensionSerializer<GIF_EXTENSION6_EVOLVER_INFO_LENGTH> ser;
     ser.insert_int16(info.evolving);

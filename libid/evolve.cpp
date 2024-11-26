@@ -59,7 +59,7 @@ struct PARAMHIST
     bailouts bailoutest;
 };
 
-GENEBASE g_gene_bank[NUM_GENES];
+GeneBase g_gene_bank[NUM_GENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
@@ -111,15 +111,15 @@ static std::vector<int> s_image_box_y;
 static std::vector<int> s_image_box_values;
 static PARAMHIST s_old_history{};
 
-void varydbl(GENEBASE gene[], int randval, int i);
+void varydbl(GeneBase gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
 int wrapped_positive_varyint(int randvalue, int limit, int mode);
-void varyinside(GENEBASE gene[], int randval, int i);
-void varyoutside(GENEBASE gene[], int randval, int i);
-void varypwr2(GENEBASE gene[], int randval, int i);
-void varytrig(GENEBASE gene[], int randval, int i);
-void varybotest(GENEBASE gene[], int randval, int i);
-void varyinv(GENEBASE gene[], int randval, int i);
+void varyinside(GeneBase gene[], int randval, int i);
+void varyoutside(GeneBase gene[], int randval, int i);
+void varypwr2(GeneBase gene[], int randval, int i);
+void varytrig(GeneBase gene[], int randval, int i);
+void varybotest(GeneBase gene[], int randval, int i);
+void varyinv(GeneBase gene[], int randval, int i);
 static bool explore_check();
 void spiralmap(int);
 static void set_random(int);
@@ -127,7 +127,7 @@ void set_mutation_level(int);
 void SetupParamBox();
 void ReleaseParamBox();
 
-void copy_genes_from_bank(GENEBASE gene[NUM_GENES])
+void copy_genes_from_bank(GeneBase gene[NUM_GENES])
 {
     std::copy(&g_gene_bank[0], &g_gene_bank[NUM_GENES], &gene[0]);
 }
@@ -143,7 +143,7 @@ inline bool within_eps(double lhs, double rhs)
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
 
-bool operator==(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs)
+bool operator==(const EvolutionInfo &lhs, const EvolutionInfo &rhs)
 {
     return lhs.evolving == rhs.evolving                                       //
         && lhs.image_grid_size == rhs.image_grid_size                         //
@@ -165,7 +165,7 @@ bool operator==(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs)
         && lhs.ecount == rhs.ecount;                                          //
 }
 
-void copy_genes_to_bank(GENEBASE const gene[NUM_GENES])
+void copy_genes_to_bank(GeneBase const gene[NUM_GENES])
 {
     // cppcheck-suppress arrayIndexOutOfBounds
     std::copy(&gene[0], &gene[NUM_GENES], &g_gene_bank[0]);
@@ -178,7 +178,7 @@ void copy_genes_to_bank(GENEBASE const gene[NUM_GENES])
 void initgene()
 {
     //                        Use only 15 letters below: 123456789012345
-    GENEBASE gene[NUM_GENES] =
+    GeneBase gene[NUM_GENES] =
     {
         { &g_params[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
         { &g_params[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
@@ -260,7 +260,7 @@ void restore_param_history()
 }
 
 // routine to vary doubles
-void varydbl(GENEBASE gene[], int randval, int i)
+void varydbl(GeneBase gene[], int randval, int i)
 {
     int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (gene[i].mutate)
@@ -343,7 +343,7 @@ int wrapped_positive_varyint(int randvalue, int limit, variations mode)
     }
 }
 
-void varyinside(GENEBASE gene[], int randval, int i)
+void varyinside(GeneBase gene[], int randval, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != variations::NONE)
@@ -352,7 +352,7 @@ void varyinside(GENEBASE gene[], int randval, int i)
     }
 }
 
-void varyoutside(GENEBASE gene[], int randval, int i)
+void varyoutside(GeneBase gene[], int randval, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != variations::NONE)
@@ -361,7 +361,7 @@ void varyoutside(GENEBASE gene[], int randval, int i)
     }
 }
 
-void varybotest(GENEBASE gene[], int randval, int i)
+void varybotest(GeneBase gene[], int randval, int i)
 {
     int choices[7] =
     {
@@ -381,7 +381,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
     }
 }
 
-void varypwr2(GENEBASE gene[], int randval, int i)
+void varypwr2(GeneBase gene[], int randval, int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != variations::NONE)
@@ -390,7 +390,7 @@ void varypwr2(GENEBASE gene[], int randval, int i)
     }
 }
 
-void varytrig(GENEBASE gene[], int randval, int i)
+void varytrig(GeneBase gene[], int randval, int i)
 {
     if (gene[i].mutate != variations::NONE)
     {
@@ -400,7 +400,7 @@ void varytrig(GENEBASE gene[], int randval, int i)
     set_trig_pointers(5); //set all trig ptrs up
 }
 
-void varyinv(GENEBASE gene[], int randval, int i)
+void varyinv(GeneBase gene[], int randval, int i)
 {
     if (gene[i].mutate != variations::NONE)
     {
@@ -422,7 +422,7 @@ int get_the_rest()
     ChoiceBuilder<20> choices;
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     int i, numtrig;
-    GENEBASE gene[NUM_GENES];
+    GeneBase gene[NUM_GENES];
 
     copy_genes_from_bank(gene);
 
@@ -509,7 +509,7 @@ int get_variations()
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     int k, numparams;
     ChoiceBuilder<20> choices;
-    GENEBASE gene[NUM_GENES];
+    GeneBase gene[NUM_GENES];
     int firstparm = 0;
     int lastparm  = MAX_PARAMS;
     int chngd = -1;
@@ -902,7 +902,7 @@ void set_current_params()
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
 }
 
-void fiddleparms(GENEBASE gene[], int ecount)
+void fiddleparms(GeneBase gene[], int ecount)
 {
     // call with px, py ... parameter set co-ords
     // set random seed then call rnd enough times to get to px, py

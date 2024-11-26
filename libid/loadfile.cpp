@@ -848,7 +848,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_6_info.got_data)
     {
-        GENEBASE gene[NUM_GENES];
+        GeneBase gene[NUM_GENES];
         copy_genes_from_bank(gene);
         if (read_info.version < 15)
         {
@@ -981,7 +981,7 @@ static int find_fractal_info(const std::string &gif_file, //
     int fractinf_len;
     int hdr_offset;
     formula_info fload_info;
-    EVOLUTION_INFO eload_info;
+    EvolutionInfo eload_info;
     ORBITS_INFO oload_info;
 
     blk_2_info->got_data = false;

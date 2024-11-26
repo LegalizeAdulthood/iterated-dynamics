@@ -19,7 +19,7 @@ static_assert(sizeof(double) == 8, "sizeof(double) != 8");
 //
 // TODO: verify that size of binary EVOLUTION_INFO blob is 200; DOS code reported size of 208.
 //
-static_assert(sizeof(EVOLUTION_INFO) == 200, "EVOLUTION_INFO size is incorrect");
+static_assert(sizeof(EvolutionInfo) == 200, "EVOLUTION_INFO size is incorrect");
 static_assert(sizeof(FRACTAL_INFO) == 504, "FRACTAL_INFO size is incorrect");
 static_assert(sizeof(ORBITS_INFO) == 200, "ORBITS_INFO size is incorrect");
 
@@ -429,16 +429,16 @@ static void get_float(float *dst, unsigned char **src, int dir)
     *src += 4; // sizeof(float) in MSDOS
 }
 
-void decode_evolver_info_big_endian(EVOLUTION_INFO *info, int dir)
+void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
 {
     std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf;
     unsigned char *bufPtr;
 
-    evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
+    evolution_info_buff.resize(sizeof(EvolutionInfo));
     buf = &evolution_info_buff[0];
     bufPtr = buf;
-    std::memcpy((char *)buf, (char *)info, sizeof(EVOLUTION_INFO));
+    std::memcpy((char *)buf, (char *)info, sizeof(EvolutionInfo));
 
     get_int16((short *) &info->evolving, &bufPtr, dir);
     get_int16(&info->image_grid_size, &bufPtr, dir);
@@ -466,15 +466,15 @@ void decode_evolver_info_big_endian(EVOLUTION_INFO *info, int dir)
     {
         get_int16(&info->future[i], &bufPtr, dir);
     }
-    if (bufPtr-buf != sizeof(EVOLUTION_INFO))
+    if (bufPtr-buf != sizeof(EvolutionInfo))
     {
         std::printf("Warning: loadfile miscount on evolution_info structure.\n");
         std::printf("Components add up to %d bytes, but sizeof(EVOLUTION_INFO) = %d\n",
-               (int)(bufPtr-buf), (int) sizeof(EVOLUTION_INFO));
+               (int)(bufPtr-buf), (int) sizeof(EvolutionInfo));
     }
     if (dir == 0)
     {
-        std::memcpy((char *)info, (char *)buf, sizeof(EVOLUTION_INFO));
+        std::memcpy((char *)info, (char *)buf, sizeof(EvolutionInfo));
     }
 }
 

@@ -59,7 +59,7 @@ static int s_err_count{};
 
 bool g_from_text{}; // = true if we're in graphics mode
 int g_finish_row{}; // save when this row is finished
-EVOLUTION_INFO g_evolve_info{};
+EvolutionInfo g_evolve_info{};
 bool g_have_evolve_info{};
 char g_old_std_calc_mode{};
 void (*g_out_line_cleanup)(){};
@@ -396,7 +396,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 int tmpxdots;
                 int tmpydots;
                 int gridsqr;
-                GENEBASE gene[NUM_GENES];
+                GeneBase gene[NUM_GENES];
                 copy_genes_from_bank(gene);
                 if (g_have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
                 {

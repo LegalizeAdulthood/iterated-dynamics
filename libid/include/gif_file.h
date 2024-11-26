@@ -28,8 +28,8 @@ void put_formula_info(GifFileType *gif, const formula_info &info);
 std::vector<int> get_ranges_info(GifFileType *gif);
 void put_ranges_info(GifFileType *gif, const std::vector<int> &info);
 
-EVOLUTION_INFO get_evolution_info(GifFileType *gif);
-void put_evolution_info(GifFileType *gif, const EVOLUTION_INFO &info);
+EvolutionInfo get_evolution_info(GifFileType *gif);
+void put_evolution_info(GifFileType *gif, const EvolutionInfo &info);
 
 ORBITS_INFO get_orbits_info(GifFileType *gif);
 void put_orbits_info(GifFileType *gif, const ORBITS_INFO &info);

@@ -4,9 +4,9 @@
 
 #include "main_state.h"
 
-struct EVOLUTION_INFO;
+struct EvolutionInfo;
 
-extern EVOLUTION_INFO        g_evolve_info;
+extern EvolutionInfo         g_evolve_info;
 extern int                   g_finish_row;
 extern bool                  g_from_text;
 extern bool                  g_have_evolve_info;

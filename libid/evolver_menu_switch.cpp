@@ -44,7 +44,7 @@ static void save_evolver_image()
         return; // disk video and targa, nothing to save
     }
 
-    GENEBASE gene[NUM_GENES];
+    GeneBase gene[NUM_GENES];
     copy_genes_from_bank(gene);
     {
         ValueSaver saved_logical_screen_x_offset{g_logical_screen_x_offset, 0};
@@ -133,7 +133,7 @@ static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_
 
     // if no zoombox, scroll by arrows
     // borrow ctrl cursor keys for moving selection box in evolver mode
-    GENEBASE gene[NUM_GENES];
+    GeneBase gene[NUM_GENES];
     copy_genes_from_bank(gene);
     if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
     {
@@ -316,7 +316,7 @@ static void increase_grid_size(bool &kbd_more)
 
 static void toggle_gene_variation(bool &kbd_more)
 {
-    for (GENEBASE &gene : g_gene_bank)
+    for (GeneBase &gene : g_gene_bank)
     {
         if (gene.mutate == variations::RANDOM)
         {
