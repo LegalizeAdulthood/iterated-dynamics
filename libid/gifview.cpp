@@ -470,7 +470,7 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
         g_put_color(col, row, *pixels);
         if (g_orbit_delay > 0)
         {
-            sleepms(g_orbit_delay);
+            sleep_ms(g_orbit_delay);
         }
         write_sound((int)((int)(*pixels++)*3000/g_colors+g_base_hertz));
         if (driver_key_pressed())

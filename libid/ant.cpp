@@ -224,7 +224,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 
                     pixel = get_color(ix, iy);
                     g_put_color(ix, iy, 15);
-                    sleepms(wait);
+                    sleep_ms(wait);
                     g_put_color(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
@@ -399,7 +399,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 
                 if (wait > 0 && step == 0)
                 {
-                    sleepms(wait);
+                    sleep_ms(wait);
                 }
 
                 if (rule[pixel] & rule_mask)

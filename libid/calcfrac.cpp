@@ -510,7 +510,7 @@ int calctypeshowdot()
     showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::SAVE);
     if (g_orbit_delay > 0)
     {
-        sleepms(g_orbit_delay);
+        sleep_ms(g_orbit_delay);
     }
     out = (*calctypetmp)();
     showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);

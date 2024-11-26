@@ -21,7 +21,7 @@ using uclock_t = unsigned long;
 uclock_t usec_clock();
 void restart_uclock();
 
-void sleepms(long ms)
+void sleep_ms(long ms)
 {
     uclock_t       now = usec_clock();
     const uclock_t next_time = now + ms * 100;
