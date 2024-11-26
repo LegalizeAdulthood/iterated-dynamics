@@ -40,32 +40,32 @@ int g_soi_min_stack{2200}; // and this much stack to not crash when <tab> is pre
 namespace
 {
 
-struct long_double_complex
+struct LongDoubleComplex
 {
     LDBL re;
     LDBL im;
 };
 
-struct soi_long_double_state
+struct SOILongDoubleState
 {
-    long_double_complex z;
-    long_double_complex step;
+    LongDoubleComplex z;
+    LongDoubleComplex step;
     LDBL interstep;
     LDBL helpre;
-    long_double_complex scan_z;
-    long_double_complex b1[3];
-    long_double_complex b2[3];
-    long_double_complex b3[3];
-    long_double_complex limit;
-    long_double_complex rq[9];
-    long_double_complex corner[2];
-    long_double_complex tz[4];
-    long_double_complex tq[4];
+    LongDoubleComplex scan_z;
+    LongDoubleComplex b1[3];
+    LongDoubleComplex b2[3];
+    LongDoubleComplex b3[3];
+    LongDoubleComplex limit;
+    LongDoubleComplex rq[9];
+    LongDoubleComplex corner[2];
+    LongDoubleComplex tz[4];
+    LongDoubleComplex tq[4];
 };
 
 } // namespace
 
-inline long_double_complex zsqr(long_double_complex z)
+inline LongDoubleComplex zsqr(LongDoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
 }
@@ -103,8 +103,8 @@ inline LDBL evaluate(
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-static long_double_complex s_zi[9]{};
-static soi_long_double_state s_state{};
+static LongDoubleComplex s_zi[9]{};
+static SOILongDoubleState s_state{};
 static LDBL s_t_width{};
 static LDBL s_equal{};
 static bool s_ba_x_in_xx{};
@@ -489,7 +489,7 @@ static int rhombus_aux(
     LDBL midr = (cre1 + cre2)/2;
     LDBL midi = (cim1 + cim2)/2;
 
-    long_double_complex s[9];
+    LongDoubleComplex s[9];
 
     bool status = false;
     avail = stack_avail();
@@ -719,7 +719,7 @@ scan:
 
         // if one of the iterated values bails out, subdivide
         if (std::find_if(std::begin(s_state.rq), std::end(s_state.rq),
-            [](long_double_complex z) { return z.re + z.im > 16.0; }) != std::end(s_state.rq))
+            [](LongDoubleComplex z) { return z.re + z.im > 16.0; }) != std::end(s_state.rq))
         {
             break;
         }
