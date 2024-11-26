@@ -2,6 +2,6 @@
 //
 #pragma once
 
-int teststart();
-void testend();
-int testpt(double, double, double, double, long, int);
+int test_start();
+void test_end();
+int test_pt(double initreal, double initimag, double parm1, double parm2, long maxit, int inside);
