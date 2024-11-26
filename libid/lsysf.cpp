@@ -295,7 +295,7 @@ findsize(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
         return nullptr;
     }
 
-    if (stackavail() < 400)
+    if (stack_avail() < 400)
     {
         // leave some margin for calling subrtns
         ts->stackoflow = true;
@@ -447,7 +447,7 @@ draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
         return nullptr;
     }
 
-    if (stackavail() < 400)
+    if (stack_avail() < 400)
     {
         // leave some margin for calling subroutines
         ts->stackoflow = true;

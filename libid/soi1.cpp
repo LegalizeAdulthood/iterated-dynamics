@@ -274,7 +274,7 @@ static int rhombus_aux(
     double_complex s[9];
 
     bool status = false;
-    avail = stackavail();
+    avail = stack_avail();
     if (avail < g_soi_min_stack_available)
     {
         g_soi_min_stack_available = avail;

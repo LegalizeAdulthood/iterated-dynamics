@@ -751,7 +751,7 @@ static lsys_cmd *findsize(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **ru
         return nullptr;
     }
 
-    if (stackavail() < 400)
+    if (stack_avail() < 400)
     {
         // leave some margin for calling subrtns
         ts->stackoflow = true;
@@ -902,7 +902,7 @@ static lsys_cmd *drawLSysI(lsys_cmd *command, LSysTurtleStateI *ts, lsys_cmd **r
         return nullptr;
     }
 
-    if (stackavail() < 400)
+    if (stack_avail() < 400)
     {
         // leave some margin for calling subrtns
         ts->stackoflow = true;

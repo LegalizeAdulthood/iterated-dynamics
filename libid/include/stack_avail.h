@@ -2,4 +2,4 @@
 //
 #pragma once
 
-long stackavail();
+long stack_avail();
