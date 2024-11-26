@@ -446,7 +446,7 @@ static main_state show_orbit_window(int &, bool &, bool &, bool &)
 {
     // must use standard fractal and have a float variant
     if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
-            || g_fractal_specific[+g_fractal_type].calctype == calcfroth)
+            || g_fractal_specific[+g_fractal_type].calctype == calc_froth)
         && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
              g_fractal_specific[+g_fractal_type].tofloat != fractal_type::NOFRACTAL)
         && (g_bf_math == bf_math_type::NONE) // for now no arbitrary precision support

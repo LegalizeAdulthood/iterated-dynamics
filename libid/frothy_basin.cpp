@@ -238,7 +238,7 @@ void froth_cleanup()
 }
 
 // Froth Fractal type
-int calcfroth()   // per pixel 1/2/g, called with row & col set
+int calc_froth()   // per pixel 1/2/g, called with row & col set
 {
     int found_attractor = 0;
 

@@ -780,7 +780,7 @@ int calc_fract()
         && g_cur_fractal_specific->calctype != calc_mand
         && g_cur_fractal_specific->calctype != calc_mand_fp
         && g_cur_fractal_specific->calctype != lyapunov
-        && g_cur_fractal_specific->calctype != calcfroth)
+        && g_cur_fractal_specific->calctype != calc_froth)
     {
         g_calc_type = g_cur_fractal_specific->calctype; // per_image can override
         g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
@@ -871,7 +871,7 @@ int calc_fract()
     }
     free_workarea();
 
-    if (g_cur_fractal_specific->calctype == calcfroth)
+    if (g_cur_fractal_specific->calctype == calc_froth)
     {
         froth_cleanup();
     }

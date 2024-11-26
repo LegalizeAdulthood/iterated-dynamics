@@ -637,7 +637,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
         && g_cur_fractal_specific->calctype != calc_mand
         && g_cur_fractal_specific->calctype != calc_mand_fp
         && g_cur_fractal_specific->calctype != lyapunov
-        && g_cur_fractal_specific->calctype != calcfroth)
+        && g_cur_fractal_specific->calctype != calc_froth)
     {
         return 0; // not a worklist-driven type
     }

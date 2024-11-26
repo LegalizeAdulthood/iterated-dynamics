@@ -2065,7 +2065,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_FROTH, help_labels::HF_FROTH, fractal_flags::NOTRACE,
         -2.8F, 2.8F, -2.355F, 1.845F,
         28, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FROTHFP, symmetry_type::NONE,
-        froth_per_orbit, froth_per_pixel, froth_setup, calcfroth,
+        froth_per_orbit, froth_per_pixel, froth_setup, calc_froth,
         FROTHBAILOUT
     },
 
@@ -2076,7 +2076,7 @@ FractalSpecific g_fractal_specific[] =
         help_labels::HT_FROTH, help_labels::HF_FROTH, fractal_flags::NOTRACE,
         -2.8F, 2.8F, -2.355F, 1.845F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::FROTH, symmetry_type::NONE,
-        froth_per_orbit, froth_per_pixel, froth_setup, calcfroth,
+        froth_per_orbit, froth_per_pixel, froth_setup, calc_froth,
         FROTHBAILOUT
     },
 

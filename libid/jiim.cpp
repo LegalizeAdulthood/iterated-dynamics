@@ -514,7 +514,7 @@ void Jiim(jiim_types which)
     const ValueSaver saved_debug_flag{g_debug_flag};
     // must use standard fractal or be calcfroth
     if (g_fractal_specific[+g_fractal_type].calctype != standard_fractal
-        && g_fractal_specific[+g_fractal_type].calctype != calcfroth)
+        && g_fractal_specific[+g_fractal_type].calctype != calc_froth)
     {
         return;
     }
@@ -1318,7 +1318,7 @@ finish:
     s_show_numbers = 0;
     driver_unget_key(kbdchar);
 
-    if (g_cur_fractal_specific->calctype == calcfroth)
+    if (g_cur_fractal_specific->calctype == calc_froth)
     {
         froth_cleanup();
     }
