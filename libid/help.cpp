@@ -257,8 +257,8 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
                     {
                         link[*num_link].r         = (BYTE)row;
                         link[*num_link].c         = (BYTE)col;
-                        link[*num_link].topic_num = getint(curr+1);
-                        link[*num_link].topic_off = getint(curr+1+sizeof(int));
+                        link[*num_link].topic_num = get_int(curr+1);
+                        link[*num_link].topic_off = get_int(curr+1+sizeof(int));
                         link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
                         link[*num_link].width     = width;
                         ++(*num_link);
@@ -299,8 +299,8 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             {
                 link[*num_link].r         = (BYTE)row;
                 link[*num_link].c         = (BYTE)col;
-                link[*num_link].topic_num = getint(curr+1);
-                link[*num_link].topic_off = getint(curr+1+sizeof(int));
+                link[*num_link].topic_num = get_int(curr+1);
+                link[*num_link].topic_off = get_int(curr+1+sizeof(int));
                 link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
                 link[*num_link].width     = width;
                 ++(*num_link);
@@ -1189,7 +1189,7 @@ static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, voi
         return true;
 
     case PrintDocCommand::PD_GET_LINK_PAGE:
-        pd->i = getint(pd->s+2*sizeof(int));
+        pd->i = get_int(pd->s+2*sizeof(int));
         pd->link_page = "(p. " + std::to_string(pd->i) + ")";
         return pd->i != -1;
 

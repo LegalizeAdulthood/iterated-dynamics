@@ -146,7 +146,7 @@ bool is_hyphen(char const *ptr);
  * This routine is needed because this program uses unaligned 2 byte
  * pointers all over the place.
  */
-inline int getint(char const *ptr)
+inline int get_int(char const *ptr)
 {
     int s;
     std::memcpy(&s, ptr, sizeof(int));
@@ -154,7 +154,7 @@ inline int getint(char const *ptr)
 }
 
 /* Set an int to an unaligned pointer */
-inline void setint(char *ptr, int n)
+inline void set_int(char *ptr, int n)
 {
     std::memcpy(ptr, &n, sizeof(int));
 }

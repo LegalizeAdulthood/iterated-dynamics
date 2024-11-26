@@ -539,7 +539,7 @@ bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 
     case PrintDocCommand::PD_GET_LINK_PAGE:
     {
-        const Link &link = g_src.all_links[getint(pd->s)];
+        const Link &link = g_src.all_links[get_int(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
@@ -893,10 +893,10 @@ void insert_real_link_info(char *curr, unsigned int len)
 
         if (tok == token_types::TOK_LINK)
         {
-            const Link &l = g_src.all_links[ getint(curr+1) ];
-            setint(curr+1, l.topic_num);
-            setint(curr+1+sizeof(int), l.topic_off);
-            setint(curr+1+2*sizeof(int), l.doc_page);
+            const Link &l = g_src.all_links[ get_int(curr+1) ];
+            set_int(curr+1, l.topic_num);
+            set_int(curr+1+sizeof(int), l.topic_off);
+            set_int(curr+1+2*sizeof(int), l.doc_page);
         }
 
         len -= size;

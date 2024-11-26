@@ -140,7 +140,7 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
 
     case PrintDocCommand::PD_GET_LINK_PAGE:
     {
-        const Link &link{g_src.all_links[getint(pd->s)]};
+        const Link &link{g_src.all_links[get_int(pd->s)]};
         if (link.doc_page == -1)
         {
             if (m_link_dest_warn)

@@ -902,7 +902,7 @@ int parse_link()   // returns length of link or 0 on error
         check_buffer(1+3*sizeof(int)+len+1);
         int const lnum = g_src.add_link(l);
         *g_src.curr++ = CMD_LINK;
-        setint(g_src.curr, lnum);
+        set_int(g_src.curr, lnum);
         g_src.curr += 3*sizeof(int);
         std::memcpy(g_src.curr, ptr, len);
         g_src.curr += len;
@@ -1062,7 +1062,7 @@ int create_table()
 
             len = static_cast<int>(title[lnum].length());
             *g_src.curr++ = CMD_LINK;
-            setint(g_src.curr, first_link+lnum);
+            set_int(g_src.curr, first_link+lnum);
             g_src.curr += 3*sizeof(int);
             std::memcpy(g_src.curr, title[lnum].c_str(), len);
             g_src.curr += len;
