@@ -69,7 +69,7 @@ static void area();
 // color   -- attribute (same as for putstring)
 // maxrow -- max number of rows to write
 // returns false if success, true if hit maxrow before done
-static bool putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
+static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
     char save1;
     char save2;
@@ -164,7 +164,7 @@ static void write_row(int row, char const *format, ...)
     driver_put_string(row, 2, C_GENERAL_HI, text);
 }
 
-bool tab_display_2(char *msg)
+bool tab_display2(char *msg)
 {
     int row;
     int key = 0;
@@ -559,13 +559,13 @@ top:
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(s_row, 8, C_GENERAL_MED, "x");
             bf_to_str(msg, dec, bfXctr);
-            if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5))
+            if (put_string_wrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5))
             {
                 truncate = true;
             }
             driver_put_string(++s_row, 8, C_GENERAL_MED, "y");
             bf_to_str(msg, dec, bfYctr);
-            if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
+            if (put_string_wrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
             {
                 driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
@@ -710,7 +710,7 @@ top:
     }
     else if (key == ID_KEY_CTL_TAB || key == ID_KEY_SHF_TAB || key == ID_KEY_F7)
     {
-        if (tab_display_2(msg))
+        if (tab_display2(msg))
         {
             goto top;
         }
