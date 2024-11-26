@@ -26,7 +26,7 @@
 #include <string>
 
 static  bool get_light_params();
-static  bool check_mapfile();
+static  bool check_map_file();
 static  bool get_funny_glasses_params();
 
 static std::string g_funny_glasses_map_name;
@@ -215,7 +215,7 @@ restart_1:
                 goto restart_1;
             }
         }
-        if (check_mapfile())
+        if (check_map_file())
         {
             goto restart_1;
         }
@@ -459,7 +459,7 @@ static bool get_light_params()
 
 // ---------------------------------------------------------------------
 
-static bool check_mapfile()
+static bool check_map_file()
 {
     bool askflag = false;
     int i;
@@ -629,7 +629,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
     }
     if (g_glasses_type)
     {
-        if (get_funny_glasses_params() || check_mapfile())
+        if (get_funny_glasses_params() || check_map_file())
         {
             ret = -1;
         }
