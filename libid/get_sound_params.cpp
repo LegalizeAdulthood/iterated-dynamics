@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-static int get_music_parms();
+static int get_music_params();
 static int get_scale_map();
 
 static int s_scale_map[12]{};
@@ -89,7 +89,7 @@ get_sound_restart:
 
     if (i == ID_KEY_F6)
     {
-        get_music_parms(); /* see below, for controling fmsynth */
+        get_music_params(); /* see below, for controling fmsynth */
         goto get_sound_restart;
     }
 
@@ -154,7 +154,7 @@ get_map_restart:
 
     if (i == ID_KEY_F6 && s_menu2 == 1)
     {
-        get_music_parms(); /* see below, for controling fmsynth */
+        get_music_params(); /* see below, for controling fmsynth */
         goto get_map_restart;
     }
     if (i == ID_KEY_F6 && s_menu2 == 2)
@@ -174,7 +174,7 @@ get_map_restart:
     return 0;
 }
 
-static int get_music_parms()
+static int get_music_params()
 {
     ChoiceBuilder<11> builder;
     const char *attenmodes[] = {"none", "low", "mid", "high"};
