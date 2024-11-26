@@ -292,25 +292,25 @@ struct ErrorData
 // forward declarations
 static bool frm_prescan(std::FILE *open_file);
 static void parser_allocate();
-static void dStkSRand();
-static void dStkAdd();
-static void dStkSub();
-static void dStkReal();
-static void dStkImag();
-static void dStkNeg();
-static void dStkDiv();
-static void dStkMod();
-static void dStkLT();
-static void dStkGT();
-static void dStkLTE();
-static void dStkGTE();
-static void dStkEQ();
-static void dStkNE();
-static void dStkOR();
-static void dStkAND();
-static void EndInit();
-static void dStkJumpOnFalse();
-static void dStkJumpOnTrue();
+static void d_stk_srand();
+static void d_stk_add();
+static void d_stk_sub();
+static void d_stk_real();
+static void d_stk_imag();
+static void d_stk_neg();
+static void d_stk_div();
+static void d_stk_mod();
+static void d_stk_lt();
+static void d_stk_gt();
+static void d_stk_lte();
+static void d_stk_gte();
+static void d_stk_eq();
+static void d_stk_ne();
+static void d_stk_or();
+static void d_stk_and();
+static void end_init();
+static void d_stk_jump_on_false();
+static void d_stk_jump_on_true();
 
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
@@ -374,11 +374,11 @@ static constexpr std::array<char const *, 4> s_jump_list
 static std::string s_formula;
 static std::array<ErrorData, 3> s_errors{};
 
-static FunctionPtr s_srand{dStkSRand};
+static FunctionPtr s_srand{d_stk_srand};
 static FunctionPtr s_abs{d_stk_abs};
 static FunctionPtr s_sqr{d_stk_sqr};
-static FunctionPtr s_add{dStkAdd};
-static FunctionPtr s_sub{dStkSub};
+static FunctionPtr s_add{d_stk_add};
+static FunctionPtr s_sub{d_stk_sub};
 static FunctionPtr s_conj{d_stk_conj};
 static FunctionPtr s_floor{d_stk_floor};
 static FunctionPtr s_ceil{d_stk_ceil};
@@ -386,12 +386,12 @@ static FunctionPtr s_trunc{d_stk_trunc};
 static FunctionPtr s_round{d_stk_round};
 static FunctionPtr s_zero{d_stk_zero};
 static FunctionPtr s_one{d_stk_one};
-static FunctionPtr s_real{dStkReal};
-static FunctionPtr s_imag{dStkImag};
-static FunctionPtr s_neg{dStkNeg};
+static FunctionPtr s_real{d_stk_real};
+static FunctionPtr s_imag{d_stk_imag};
+static FunctionPtr s_neg{d_stk_neg};
 static FunctionPtr s_mul{d_stk_mul};
-static FunctionPtr s_div{dStkDiv};
-static FunctionPtr s_mod{dStkMod};
+static FunctionPtr s_div{d_stk_div};
+static FunctionPtr s_mod{d_stk_mod};
 static FunctionPtr s_flip{d_stk_flip};
 static FunctionPtr s_sin{d_stk_sin};
 static FunctionPtr s_tan{d_stk_tan};
@@ -410,20 +410,20 @@ static FunctionPtr s_atan{d_stk_atan};
 static FunctionPtr s_atanh{d_stk_atanh};
 static FunctionPtr s_sqrt{d_stk_sqrt};
 static FunctionPtr s_cabs{d_stk_cabs};
-static FunctionPtr s_lt{dStkLT};
-static FunctionPtr s_gt{dStkGT};
-static FunctionPtr s_lte{dStkLTE};
-static FunctionPtr s_gte{dStkGTE};
-static FunctionPtr s_eq{dStkEQ};
-static FunctionPtr s_ne{dStkNE};
-static FunctionPtr s_or{dStkOR};
-static FunctionPtr s_and{dStkAND};
+static FunctionPtr s_lt{d_stk_lt};
+static FunctionPtr s_gt{d_stk_gt};
+static FunctionPtr s_lte{d_stk_lte};
+static FunctionPtr s_gte{d_stk_gte};
+static FunctionPtr s_eq{d_stk_eq};
+static FunctionPtr s_ne{d_stk_ne};
+static FunctionPtr s_or{d_stk_or};
+static FunctionPtr s_and{d_stk_and};
 static FunctionPtr s_log{d_stk_log};
 static FunctionPtr s_exp{d_stk_exp};
 static FunctionPtr s_pwr{d_stk_pwr};
-static FunctionPtr s_end_init{EndInit};
-static FunctionPtr s_jump_on_false{dStkJumpOnFalse};
-static FunctionPtr s_jump_on_true{dStkJumpOnTrue};
+static FunctionPtr s_end_init{end_init};
+static FunctionPtr s_jump_on_false{d_stk_jump_on_false};
+static FunctionPtr s_jump_on_true{d_stk_jump_on_true};
 static FunctionPtr s_trig0{d_stk_sin};
 static FunctionPtr s_trig1{d_stk_sqr};
 static FunctionPtr s_trig2{d_stk_sinh};
@@ -670,14 +670,16 @@ static char const *parse_error_text(ParseError which)
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
-static void mStkFunct(FunctionPtr fct)   // call mStk via dStk
+// call m_stk via d_stk
+static void m_stk_funct(FunctionPtr fct)
 {
     g_arg1->d = mpc_to_cmplx(g_arg1->m);
     (*fct)();
     g_arg1->m = cmplx_to_mpc(g_arg1->d);
 }
 
-static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
+// call l_stk via d_stk
+static void l_stk_funct(FunctionPtr fct)
 {
     double y;
     /*
@@ -705,13 +707,13 @@ static unsigned long new_random_num()
     return s_rand_num;
 }
 
-static void lRandom()
+static void l_random()
 {
     s_vars[7].a.l.x = new_random_num() >> (32 - g_bit_shift);
     s_vars[7].a.l.y = new_random_num() >> (32 - g_bit_shift);
 }
 
-static void dRandom()
+static void d_random()
 {
     long x;
     long y;
@@ -724,7 +726,7 @@ static void dRandom()
     s_vars[7].a.d.y = ((double)y / (1L << g_bit_shift));
 }
 
-static void mRandom()
+static void m_random()
 {
     long x;
     long y;
@@ -768,32 +770,32 @@ static void random_seed()
     s_randomized = true;
 }
 
-static void lStkSRand()
+static void l_stk_srand()
 {
     set_random();
-    lRandom();
+    l_random();
     g_arg1->l = s_vars[7].a.l;
 }
 
-static void mStkSRand()
+static void m_stk_srand()
 {
     g_arg1->l.x = g_arg1->m.x.Mant ^ (long)g_arg1->m.x.Exp;
     g_arg1->l.y = g_arg1->m.y.Mant ^ (long)g_arg1->m.y.Exp;
     set_random();
-    mRandom();
+    m_random();
     g_arg1->m = s_vars[7].a.m;
 }
 
-static void dStkSRand()
+static void d_stk_srand()
 {
     g_arg1->l.x = (long)(g_arg1->d.x * (1L << g_bit_shift));
     g_arg1->l.y = (long)(g_arg1->d.y * (1L << g_bit_shift));
     set_random();
-    dRandom();
+    d_random();
     g_arg1->d = s_vars[7].a.d;
 }
 
-void dStkLodDup()
+void d_stk_lod_dup()
 {
     g_arg1 += 2;
     g_arg2 += 2;
@@ -802,7 +804,7 @@ void dStkLodDup()
     g_load_index += 2;
 }
 
-void dStkLodSqr()
+void d_stk_lod_sqr()
 {
     g_arg1++;
     g_arg2++;
@@ -811,7 +813,7 @@ void dStkLodSqr()
     g_load_index++;
 }
 
-void dStkLodSqr2()
+void d_stk_lod_sqr2()
 {
     g_arg1++;
     g_arg2++;
@@ -824,7 +826,7 @@ void dStkLodSqr2()
     g_load_index++;
 }
 
-void dStkLodDbl()
+void d_stk_lod_dbl()
 {
     g_arg1++;
     g_arg2++;
@@ -833,14 +835,14 @@ void dStkLodDbl()
     g_load_index++;
 }
 
-void dStkSqr0()
+void d_stk_sqr0()
 {
     LastSqr.d.y = g_arg1->d.y * g_arg1->d.y; // use LastSqr as temp storage
     g_arg1->d.y = g_arg1->d.x * g_arg1->d.y * 2.0;
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x - LastSqr.d.y;
 }
 
-void dStkSqr3()
+void d_stk_sqr3()
 {
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x;
 }
@@ -901,7 +903,7 @@ void l_stk_sqr()
     LastSqr.l.y = 0L;
 }
 
-static void dStkAdd()
+static void d_stk_add()
 {
     g_arg2->d.x += g_arg1->d.x;
     g_arg2->d.y += g_arg1->d.y;
@@ -909,14 +911,14 @@ static void dStkAdd()
     g_arg2--;
 }
 
-static void mStkAdd()
+static void m_stk_add()
 {
     g_arg2->m = mpc_add(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
 
-static void lStkAdd()
+static void l_stk_add()
 {
     g_arg2->l.x += g_arg1->l.x;
     g_arg2->l.y += g_arg1->l.y;
@@ -924,7 +926,7 @@ static void lStkAdd()
     g_arg2--;
 }
 
-static void dStkSub()
+static void d_stk_sub()
 {
     g_arg2->d.x -= g_arg1->d.x;
     g_arg2->d.y -= g_arg1->d.y;
@@ -932,14 +934,14 @@ static void dStkSub()
     g_arg2--;
 }
 
-static void mStkSub()
+static void m_stk_sub()
 {
     g_arg2->m = mpc_sub(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
 
-static void lStkSub()
+static void l_stk_sub()
 {
     g_arg2->l.x -= g_arg1->l.x;
     g_arg2->l.y -= g_arg1->l.y;
@@ -970,7 +972,7 @@ void d_stk_floor()
 
 void m_stk_floor()
 {
-    mStkFunct(d_stk_floor);   // call mStk via dStk
+    m_stk_funct(d_stk_floor);
 }
 
 void l_stk_floor()
@@ -993,7 +995,7 @@ void d_stk_ceil()
 
 void m_stk_ceil()
 {
-    mStkFunct(d_stk_ceil);   // call mStk via dStk
+    m_stk_funct(d_stk_ceil);
 }
 
 void l_stk_ceil()
@@ -1014,7 +1016,7 @@ void d_stk_trunc()
 
 void m_stk_trunc()
 {
-    mStkFunct(d_stk_trunc);   // call mStk via dStk
+    m_stk_funct(d_stk_trunc);
 }
 
 void l_stk_trunc()
@@ -1043,7 +1045,7 @@ void d_stk_round()
 
 void m_stk_round()
 {
-    mStkFunct(d_stk_round);   // call mStk via dStk
+    m_stk_funct(d_stk_round);
 }
 
 void l_stk_round()
@@ -1091,54 +1093,54 @@ void l_stk_one()
     g_arg1->l.y = 0L;
 }
 
-static void dStkReal()
+static void d_stk_real()
 {
     g_arg1->d.y = 0.0;
 }
 
-static void mStkReal()
+static void m_stk_real()
 {
     g_arg1->m.y.Exp = 0;
     g_arg1->m.y.Mant = 0;
 }
 
-static void lStkReal()
+static void l_stk_real()
 {
     g_arg1->l.y = 0l;
 }
 
-static void dStkImag()
+static void d_stk_imag()
 {
     g_arg1->d.x = g_arg1->d.y;
     g_arg1->d.y = 0.0;
 }
 
-static void mStkImag()
+static void m_stk_imag()
 {
     g_arg1->m.x = g_arg1->m.y;
     g_arg1->m.y.Exp = 0;
     g_arg1->m.y.Mant = 0;
 }
 
-static void lStkImag()
+static void l_stk_imag()
 {
     g_arg1->l.x = g_arg1->l.y;
     g_arg1->l.y = 0l;
 }
 
-static void dStkNeg()
+static void d_stk_neg()
 {
     g_arg1->d.x = -g_arg1->d.x;
     g_arg1->d.y = -g_arg1->d.y;
 }
 
-static void mStkNeg()
+static void m_stk_neg()
 {
     g_arg1->m.x.Exp ^= 0x8000;
     g_arg1->m.y.Exp ^= 0x8000;
 }
 
-static void lStkNeg()
+static void l_stk_neg()
 {
     g_arg1->l.x = -g_arg1->l.x;
     g_arg1->l.y = -g_arg1->l.y;
@@ -1151,7 +1153,7 @@ void d_stk_mul()
     g_arg2--;
 }
 
-static void mStkMul()
+static void m_stk_mul()
 {
     g_arg2->m = mpc_mul(g_arg2->m, g_arg1->m);
     g_arg1--;
@@ -1165,21 +1167,21 @@ void l_stk_mul()
     g_arg2--;
 }
 
-static void dStkDiv()
+static void d_stk_div()
 {
     fpu_cmplx_div(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
     g_arg2--;
 }
 
-static void mStkDiv()
+static void m_stk_div()
 {
     g_arg2->m = mpc_div(g_arg2->m, g_arg1->m);
     g_arg1--;
     g_arg2--;
 }
 
-static void lStkDiv()
+static void l_stk_div()
 {
     long x;
     long y;
@@ -1199,20 +1201,20 @@ static void lStkDiv()
     g_arg2--;
 }
 
-static void dStkMod()
+static void d_stk_mod()
 {
     g_arg1->d.x = (g_arg1->d.x * g_arg1->d.x) + (g_arg1->d.y * g_arg1->d.y);
     g_arg1->d.y = 0.0;
 }
 
-static void mStkMod()
+static void m_stk_mod()
 {
     g_arg1->m.x = mpc_mod(g_arg1->m);
     g_arg1->m.y.Exp = 0;
     g_arg1->m.y.Mant = 0;
 }
 
-static void lStkMod()
+static void l_stk_mod()
 {
     //   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
     //   multiply(Arg2->l.y, Arg1->l.y, bitshift);
@@ -1225,20 +1227,20 @@ static void lStkMod()
     g_arg1->l.y = 0L;
 }
 
-static void StkSto()
+static void stk_sto()
 {
     assert(s_store[g_store_index] != nullptr);
     *s_store[g_store_index++] = *g_arg1;
 }
 
-static void StkLod()
+static void stk_lod()
 {
     g_arg1++;
     g_arg2++;
     *g_arg1 = *s_load[g_load_index++];
 }
 
-static void StkClr()
+static void stk_clr()
 {
     s_stack[0] = *g_arg1;
     g_arg1 = &s_stack[0];
@@ -1288,7 +1290,7 @@ void d_stk_sin()
 
 void m_stk_sin()
 {
-    mStkFunct(d_stk_sin);   // call mStk via dStk
+    m_stk_funct(d_stk_sin);
 }
 
 void l_stk_sin()
@@ -1332,7 +1334,7 @@ void d_stk_tan()
 
 void m_stk_tan()
 {
-    mStkFunct(d_stk_tan);   // call mStk via dStk
+    m_stk_funct(d_stk_tan);
 }
 
 void l_stk_tan()
@@ -1381,7 +1383,7 @@ void d_stk_tanh()
 
 void m_stk_tanh()
 {
-    mStkFunct(d_stk_tanh);   // call mStk via dStk
+    m_stk_funct(d_stk_tanh);
 }
 
 void l_stk_tanh()
@@ -1430,7 +1432,7 @@ void d_stk_cotan()
 
 void m_stk_cotan()
 {
-    mStkFunct(d_stk_cotan);   // call mStk via dStk
+    m_stk_funct(d_stk_cotan);
 }
 
 void l_stk_cotan()
@@ -1479,7 +1481,7 @@ void d_stk_cotanh()
 
 void m_stk_cotanh()
 {
-    mStkFunct(d_stk_cotanh);   // call mStk via dStk
+    m_stk_funct(d_stk_cotanh);
 }
 
 void l_stk_cotanh()
@@ -1572,7 +1574,7 @@ void d_stk_sinh()
 
 void m_stk_sinh()
 {
-    mStkFunct(d_stk_sinh);   // call mStk via dStk
+    m_stk_funct(d_stk_sinh);
 }
 
 void l_stk_sinh()
@@ -1607,7 +1609,7 @@ void d_stk_cos()
 
 void m_stk_cos()
 {
-    mStkFunct(d_stk_cos);   // call mStk via dStk
+    m_stk_funct(d_stk_cos);
 }
 
 void l_stk_cos()
@@ -1637,7 +1639,7 @@ void d_stk_coxx()
 
 void m_stk_cosxx()
 {
-    mStkFunct(d_stk_coxx);   // call mStk via dStk
+    m_stk_funct(d_stk_coxx);
 }
 
 void l_stk_cosxx()
@@ -1661,7 +1663,7 @@ void d_stk_cosh()
 
 void m_stk_cosh()
 {
-    mStkFunct(d_stk_cosh);   // call mStk via dStk
+    m_stk_funct(d_stk_cosh);
 }
 
 void l_stk_cosh()
@@ -1688,12 +1690,12 @@ void d_stk_asin()
 
 void m_stk_asin()
 {
-    mStkFunct(d_stk_asin);
+    m_stk_funct(d_stk_asin);
 }
 
 void l_stk_asin()
 {
-    lStkFunct(d_stk_asin);
+    l_stk_funct(d_stk_asin);
 }
 
 void d_stk_asinh()
@@ -1703,12 +1705,12 @@ void d_stk_asinh()
 
 void m_stk_asinh()
 {
-    mStkFunct(d_stk_asinh);
+    m_stk_funct(d_stk_asinh);
 }
 
 void l_stk_asinh()
 {
-    lStkFunct(d_stk_asinh);
+    l_stk_funct(d_stk_asinh);
 }
 
 void d_stk_acos()
@@ -1718,12 +1720,12 @@ void d_stk_acos()
 
 void m_stk_acos()
 {
-    mStkFunct(d_stk_acos);
+    m_stk_funct(d_stk_acos);
 }
 
 void l_stk_acos()
 {
-    lStkFunct(d_stk_acos);
+    l_stk_funct(d_stk_acos);
 }
 
 void d_stk_acosh()
@@ -1733,12 +1735,12 @@ void d_stk_acosh()
 
 void m_stk_acosh()
 {
-    mStkFunct(d_stk_acosh);
+    m_stk_funct(d_stk_acosh);
 }
 
 void l_stk_acosh()
 {
-    lStkFunct(d_stk_acosh);
+    l_stk_funct(d_stk_acosh);
 }
 
 void d_stk_atan()
@@ -1748,12 +1750,12 @@ void d_stk_atan()
 
 void m_stk_atan()
 {
-    mStkFunct(d_stk_atan);
+    m_stk_funct(d_stk_atan);
 }
 
 void l_stk_atan()
 {
-    lStkFunct(d_stk_atan);
+    l_stk_funct(d_stk_atan);
 }
 
 void d_stk_atanh()
@@ -1763,12 +1765,12 @@ void d_stk_atanh()
 
 void m_stk_atanh()
 {
-    mStkFunct(d_stk_atanh);
+    m_stk_funct(d_stk_atanh);
 }
 
 void l_stk_atanh()
 {
-    lStkFunct(d_stk_atanh);
+    l_stk_funct(d_stk_atanh);
 }
 
 void d_stk_sqrt()
@@ -1778,12 +1780,11 @@ void d_stk_sqrt()
 
 void m_stk_sqrt()
 {
-    mStkFunct(d_stk_sqrt);
+    m_stk_funct(d_stk_sqrt);
 }
 
 void l_stk_sqrt()
 {
-    // lStkFunct(dStkSqrt);
     g_arg1->l = complex_sqrt_long(g_arg1->l.x, g_arg1->l.y);
 }
 
@@ -1795,15 +1796,15 @@ void d_stk_cabs()
 
 void m_stk_cabs()
 {
-    mStkFunct(d_stk_cabs);
+    m_stk_funct(d_stk_cabs);
 }
 
 void l_stk_cabs()
 {
-    lStkFunct(d_stk_cabs);
+    l_stk_funct(d_stk_cabs);
 }
 
-static void dStkLT()
+static void d_stk_lt()
 {
     g_arg2->d.x = (double)(g_arg2->d.x < g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1811,7 +1812,7 @@ static void dStkLT()
     g_arg2--;
 }
 
-static void mStkLT()
+static void m_stk_lt()
 {
     g_arg2->m.x = *fg_to_mp((long)(mp_cmp(g_arg2->m.x, g_arg1->m.x) == -1), 0);
     g_arg2->m.y.Exp = 0;
@@ -1820,7 +1821,7 @@ static void mStkLT()
     g_arg2--;
 }
 
-static void lStkLT()
+static void l_stk_lt()
 {
     g_arg2->l.x = (long)(g_arg2->l.x < g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1828,7 +1829,7 @@ static void lStkLT()
     g_arg2--;
 }
 
-static void dStkGT()
+static void d_stk_gt()
 {
     g_arg2->d.x = (double)(g_arg2->d.x > g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1836,7 +1837,7 @@ static void dStkGT()
     g_arg2--;
 }
 
-static void mStkGT()
+static void m_stk_gt()
 {
     g_arg2->m.x = *fg_to_mp((long)(mp_cmp(g_arg2->m.x, g_arg1->m.x) == 1), 0);
     g_arg2->m.y.Exp = 0;
@@ -1845,7 +1846,7 @@ static void mStkGT()
     g_arg2--;
 }
 
-static void lStkGT()
+static void l_stk_gt()
 {
     g_arg2->l.x = (long)(g_arg2->l.x > g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1853,7 +1854,7 @@ static void lStkGT()
     g_arg2--;
 }
 
-static void dStkLTE()
+static void d_stk_lte()
 {
     g_arg2->d.x = (double)(g_arg2->d.x <= g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1861,7 +1862,7 @@ static void dStkLTE()
     g_arg2--;
 }
 
-static void mStkLTE()
+static void m_stk_lte()
 {
     int comp;
 
@@ -1873,7 +1874,7 @@ static void mStkLTE()
     g_arg2--;
 }
 
-static void lStkLTE()
+static void l_stk_lte()
 {
     g_arg2->l.x = (long)(g_arg2->l.x <= g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1881,7 +1882,7 @@ static void lStkLTE()
     g_arg2--;
 }
 
-static void dStkGTE()
+static void d_stk_gte()
 {
     g_arg2->d.x = (double)(g_arg2->d.x >= g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1889,7 +1890,7 @@ static void dStkGTE()
     g_arg2--;
 }
 
-static void mStkGTE()
+static void m_stk_gte()
 {
     int comp;
 
@@ -1901,7 +1902,7 @@ static void mStkGTE()
     g_arg2--;
 }
 
-static void lStkGTE()
+static void l_stk_gte()
 {
     g_arg2->l.x = (long)(g_arg2->l.x >= g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1909,7 +1910,7 @@ static void lStkGTE()
     g_arg2--;
 }
 
-static void dStkEQ()
+static void d_stk_eq()
 {
     g_arg2->d.x = (double)(g_arg2->d.x == g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1917,7 +1918,7 @@ static void dStkEQ()
     g_arg2--;
 }
 
-static void mStkEQ()
+static void m_stk_eq()
 {
     int comp;
 
@@ -1929,7 +1930,7 @@ static void mStkEQ()
     g_arg2--;
 }
 
-static void lStkEQ()
+static void l_stk_eq()
 {
     g_arg2->l.x = (long)(g_arg2->l.x == g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1937,7 +1938,7 @@ static void lStkEQ()
     g_arg2--;
 }
 
-static void dStkNE()
+static void d_stk_ne()
 {
     g_arg2->d.x = (double)(g_arg2->d.x != g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1945,7 +1946,7 @@ static void dStkNE()
     g_arg2--;
 }
 
-static void mStkNE()
+static void m_stk_ne()
 {
     int comp;
 
@@ -1957,7 +1958,7 @@ static void mStkNE()
     g_arg2--;
 }
 
-static void lStkNE()
+static void l_stk_ne()
 {
     g_arg2->l.x = (long)(g_arg2->l.x != g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1965,7 +1966,7 @@ static void lStkNE()
     g_arg2--;
 }
 
-static void dStkOR()
+static void d_stk_or()
 {
     g_arg2->d.x = (double)(g_arg2->d.x || g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1973,7 +1974,7 @@ static void dStkOR()
     g_arg2--;
 }
 
-static void mStkOR()
+static void m_stk_or()
 {
     g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.Mant || g_arg1->m.x.Mant), 0);
     g_arg2->m.y.Exp = 0;
@@ -1982,7 +1983,7 @@ static void mStkOR()
     g_arg2--;
 }
 
-static void lStkOR()
+static void l_stk_or()
 {
     g_arg2->l.x = (long)(g_arg2->l.x || g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -1990,7 +1991,7 @@ static void lStkOR()
     g_arg2--;
 }
 
-static void dStkAND()
+static void d_stk_and()
 {
     g_arg2->d.x = (double)(g_arg2->d.x && g_arg1->d.x);
     g_arg2->d.y = 0.0;
@@ -1998,7 +1999,7 @@ static void dStkAND()
     g_arg2--;
 }
 
-static void mStkAND()
+static void m_stk_and()
 {
     g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.Mant && g_arg1->m.x.Mant), 0);
     g_arg2->m.y.Exp = 0;
@@ -2007,7 +2008,7 @@ static void mStkAND()
     g_arg2--;
 }
 
-static void lStkAND()
+static void l_stk_and()
 {
     g_arg2->l.x = (long)(g_arg2->l.x && g_arg1->l.x) << g_bit_shift;
     g_arg2->l.y = 0l;
@@ -2022,12 +2023,12 @@ void d_stk_log()
 
 void m_stk_log()
 {
-    mStkFunct(d_stk_log);   // call mStk via dStk
+    m_stk_funct(d_stk_log);
 }
 
 void l_stk_log()
 {
-    lStkFunct(d_stk_log);
+    l_stk_funct(d_stk_log);
 }
 
 void d_stk_exp()
@@ -2037,12 +2038,12 @@ void d_stk_exp()
 
 void m_stk_exp()
 {
-    mStkFunct(d_stk_exp);   // call mStk via dStk
+    m_stk_funct(d_stk_exp);
 }
 
 void l_stk_exp()
 {
-    lStkFunct(d_stk_exp);
+    l_stk_funct(d_stk_exp);
 }
 
 void d_stk_pwr()
@@ -2088,13 +2089,13 @@ void l_stk_pwr()
     g_arg2--;
 }
 
-static void EndInit()
+static void end_init()
 {
     g_last_init_op = s_op_ptr;
     s_init_jump_index = s_jump_index;
 }
 
-static void StkJump()
+static void stk_jump()
 {
     s_op_ptr =  s_jump_control[s_jump_index].ptrs.JumpOpPtr;
     g_load_index = s_jump_control[s_jump_index].ptrs.JumpLodPtr;
@@ -2102,11 +2103,11 @@ static void StkJump()
     s_jump_index = s_jump_control[s_jump_index].DestJumpIndex;
 }
 
-static void dStkJumpOnFalse()
+static void d_stk_jump_on_false()
 {
     if (g_arg1->d.x == 0)
     {
-        StkJump();
+        stk_jump();
     }
     else
     {
@@ -2114,11 +2115,11 @@ static void dStkJumpOnFalse()
     }
 }
 
-static void mStkJumpOnFalse()
+static void m_stk_jump_on_false()
 {
     if (g_arg1->m.x.Mant == 0)
     {
-        StkJump();
+        stk_jump();
     }
     else
     {
@@ -2126,11 +2127,11 @@ static void mStkJumpOnFalse()
     }
 }
 
-static void lStkJumpOnFalse()
+static void l_stk_jump_on_false()
 {
     if (g_arg1->l.x == 0)
     {
-        StkJump();
+        stk_jump();
     }
     else
     {
@@ -2138,11 +2139,11 @@ static void lStkJumpOnFalse()
     }
 }
 
-static void dStkJumpOnTrue()
+static void d_stk_jump_on_true()
 {
     if (g_arg1->d.x)
     {
-        StkJump();
+        stk_jump();
     }
     else
     {
@@ -2150,11 +2151,11 @@ static void dStkJumpOnTrue()
     }
 }
 
-static void mStkJumpOnTrue()
+static void m_stk_jump_on_true()
 {
     if (g_arg1->m.x.Mant)
     {
-        StkJump();
+        stk_jump();
     }
     else
     {
@@ -2162,11 +2163,11 @@ static void mStkJumpOnTrue()
     }
 }
 
-static void lStkJumpOnTrue()
+static void l_stk_jump_on_true()
 {
     if (g_arg1->l.x)
     {
-        StkJump();
+        stk_jump();
     }
     else
     {
@@ -2174,7 +2175,7 @@ static void lStkJumpOnTrue()
     }
 }
 
-static void StkJumpLabel()
+static void stk_jump_label()
 {
     s_jump_index++;
 }
@@ -2479,25 +2480,25 @@ static bool parse_formula_text(char const *text)
     switch (s_math_type)
     {
     case math_type::DOUBLE:
-        s_add = dStkAdd;
-        s_sub = dStkSub;
-        s_neg = dStkNeg;
+        s_add = d_stk_add;
+        s_sub = d_stk_sub;
+        s_neg = d_stk_neg;
         s_mul = d_stk_mul;
         s_sin = d_stk_sin;
         s_sinh = d_stk_sinh;
-        s_lt = dStkLT;
-        s_lte = dStkLTE;
-        s_mod = dStkMod;
+        s_lt = d_stk_lt;
+        s_lte = d_stk_lte;
+        s_mod = d_stk_mod;
         s_sqr = d_stk_sqr;
         s_cos = d_stk_cos;
         s_cosh = d_stk_cosh;
         s_log = d_stk_log;
         s_exp = d_stk_exp;
         s_pwr = d_stk_pwr;
-        s_div = dStkDiv;
+        s_div = d_stk_div;
         s_abs = d_stk_abs;
-        s_real = dStkReal;
-        s_imag = dStkImag;
+        s_real = d_stk_real;
+        s_imag = d_stk_imag;
         s_conj = d_stk_conj;
         s_trig0 = g_d_trig0;
         s_trig1 = g_d_trig1;
@@ -2509,13 +2510,13 @@ static bool parse_formula_text(char const *text)
         s_cotan = d_stk_cotan;
         s_cotanh = d_stk_cotanh;
         s_cosxx = d_stk_coxx;
-        s_gt  = dStkGT;
-        s_gte = dStkGTE;
-        s_eq  = dStkEQ;
-        s_ne  = dStkNE;
-        s_and = dStkAND;
-        s_or  = dStkOR ;
-        s_srand = dStkSRand;
+        s_gt  = d_stk_gt;
+        s_gte = d_stk_gte;
+        s_eq  = d_stk_eq;
+        s_ne  = d_stk_ne;
+        s_and = d_stk_and;
+        s_or  = d_stk_or ;
+        s_srand = d_stk_srand;
         s_asin = d_stk_asin;
         s_asinh = d_stk_asinh;
         s_acos = d_stk_acos;
@@ -2529,30 +2530,30 @@ static bool parse_formula_text(char const *text)
         s_ceil = d_stk_ceil;
         s_trunc = d_stk_trunc;
         s_round = d_stk_round;
-        s_jump_on_true  = dStkJumpOnTrue;
-        s_jump_on_false = dStkJumpOnFalse;
+        s_jump_on_true  = d_stk_jump_on_true;
+        s_jump_on_false = d_stk_jump_on_false;
         s_one = d_stk_one;
         break;
     case math_type::MPC:
-        s_add = mStkAdd;
-        s_sub = mStkSub;
-        s_neg = mStkNeg;
-        s_mul = mStkMul;
+        s_add = m_stk_add;
+        s_sub = m_stk_sub;
+        s_neg = m_stk_neg;
+        s_mul = m_stk_mul;
         s_sin = m_stk_sin;
         s_sinh = m_stk_sinh;
-        s_lt = mStkLT;
-        s_lte = mStkLTE;
-        s_mod = mStkMod;
+        s_lt = m_stk_lt;
+        s_lte = m_stk_lte;
+        s_mod = m_stk_mod;
         s_sqr = m_stk_sqr;
         s_cos = m_stk_cos;
         s_cosh = m_stk_cosh;
         s_log = m_stk_log;
         s_exp = m_stk_exp;
         s_pwr = m_stk_pwr;
-        s_div = mStkDiv;
+        s_div = m_stk_div;
         s_abs = m_stk_abs;
-        s_real = mStkReal;
-        s_imag = mStkImag;
+        s_real = m_stk_real;
+        s_imag = m_stk_imag;
         s_conj = m_stk_conj;
         s_trig0 = g_m_trig0;
         s_trig1 = g_m_trig1;
@@ -2564,13 +2565,13 @@ static bool parse_formula_text(char const *text)
         s_cotan  = m_stk_cotan;
         s_cotanh  = m_stk_cotanh;
         s_cosxx = m_stk_cosxx;
-        s_gt  = mStkGT;
-        s_gte = mStkGTE;
-        s_eq  = mStkEQ;
-        s_ne  = mStkNE;
-        s_and = mStkAND;
-        s_or  = mStkOR ;
-        s_srand = mStkSRand;
+        s_gt  = m_stk_gt;
+        s_gte = m_stk_gte;
+        s_eq  = m_stk_eq;
+        s_ne  = m_stk_ne;
+        s_and = m_stk_and;
+        s_or  = m_stk_or ;
+        s_srand = m_stk_srand;
         s_asin = m_stk_asin;
         s_acos = m_stk_acos;
         s_acosh = m_stk_acosh;
@@ -2583,32 +2584,32 @@ static bool parse_formula_text(char const *text)
         s_ceil = m_stk_ceil;
         s_trunc = m_stk_trunc;
         s_round = m_stk_round;
-        s_jump_on_true  = mStkJumpOnTrue;
-        s_jump_on_false = mStkJumpOnFalse;
+        s_jump_on_true  = m_stk_jump_on_true;
+        s_jump_on_false = m_stk_jump_on_false;
         s_one = m_stk_one;
         break;
     case math_type::LONG:
         s_delta16 = g_bit_shift - 16;
         s_shift_back = 32 - g_bit_shift;
-        s_add = lStkAdd;
-        s_sub = lStkSub;
-        s_neg = lStkNeg;
+        s_add = l_stk_add;
+        s_sub = l_stk_sub;
+        s_neg = l_stk_neg;
         s_mul = l_stk_mul;
         s_sin = l_stk_sin;
         s_sinh = l_stk_sinh;
-        s_lt = lStkLT;
-        s_lte = lStkLTE;
-        s_mod = lStkMod;
+        s_lt = l_stk_lt;
+        s_lte = l_stk_lte;
+        s_mod = l_stk_mod;
         s_sqr = l_stk_sqr;
         s_cos = l_stk_cos;
         s_cosh = l_stk_cosh;
         s_log = l_stk_log;
         s_exp = l_stk_exp;
         s_pwr = l_stk_pwr;
-        s_div = lStkDiv;
+        s_div = l_stk_div;
         s_abs = l_stk_abs;
-        s_real = lStkReal;
-        s_imag = lStkImag;
+        s_real = l_stk_real;
+        s_imag = l_stk_imag;
         s_conj = l_stk_conj;
         s_trig0 = g_l_trig0;
         s_trig1 = g_l_trig1;
@@ -2620,13 +2621,13 @@ static bool parse_formula_text(char const *text)
         s_cotan  = l_stk_cotan;
         s_cotanh  = l_stk_cotanh;
         s_cosxx = l_stk_cosxx;
-        s_gt  = lStkGT;
-        s_gte = lStkGTE;
-        s_eq  = lStkEQ;
-        s_ne  = lStkNE;
-        s_and = lStkAND;
-        s_or  = lStkOR ;
-        s_srand = lStkSRand;
+        s_gt  = l_stk_gt;
+        s_gte = l_stk_gte;
+        s_eq  = l_stk_eq;
+        s_ne  = l_stk_ne;
+        s_and = l_stk_and;
+        s_or  = l_stk_or ;
+        s_srand = l_stk_srand;
         s_asin = l_stk_asin;
         s_acos = l_stk_acos;
         s_acosh = l_stk_acosh;
@@ -2639,8 +2640,8 @@ static bool parse_formula_text(char const *text)
         s_ceil = l_stk_ceil;
         s_trunc = l_stk_trunc;
         s_round = l_stk_round;
-        s_jump_on_true  = lStkJumpOnTrue;
-        s_jump_on_false = lStkJumpOnFalse;
+        s_jump_on_true  = l_stk_jump_on_true;
+        s_jump_on_false = l_stk_jump_on_false;
         s_one = l_stk_one;
         break;
     }
@@ -2796,7 +2797,7 @@ static bool parse_formula_text(char const *text)
             {
                 s_expecting_arg = true;
                 push_pending_op(nullptr, 15);
-                push_pending_op(StkClr, -30000);
+                push_pending_op(stk_clr, -30000);
                 s_paren = 0;
                 Equals = s_paren;
             }
@@ -2804,7 +2805,7 @@ static bool parse_formula_text(char const *text)
         case ':':
             s_expecting_arg = true;
             push_pending_op(nullptr, 15);
-            push_pending_op(EndInit, -30000);
+            push_pending_op(end_init, -30000);
             s_paren = 0;
             Equals = s_paren;
             g_last_init_op = 10000;
@@ -2887,7 +2888,7 @@ static bool parse_formula_text(char const *text)
             }
             else
             {
-                s_op[g_operation_index-1].f = StkSto;
+                s_op[g_operation_index-1].f = stk_sto;
                 s_op[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
                 s_store[g_store_index++] = s_load[--g_load_index];
                 Equals++;
@@ -2914,18 +2915,18 @@ static bool parse_formula_text(char const *text)
                     s_expecting_arg = true;
                     push_jump(jump_control_type::ELSE_IF);
                     push_jump(jump_control_type::ELSE_IF);
-                    push_pending_op(StkJump, 1);
+                    push_pending_op(stk_jump, 1);
                     push_pending_op(nullptr, 15);
-                    push_pending_op(StkClr, -30000);
+                    push_pending_op(stk_clr, -30000);
                     push_pending_op(s_jump_on_false, 1);
                     break;
                 case jump_control_type::ELSE:
                     push_jump(jump_control_type::ELSE);
-                    push_pending_op(StkJump, 1);
+                    push_pending_op(stk_jump, 1);
                     break;
                 case jump_control_type::END_IF:
                     push_jump(jump_control_type::END_IF);
-                    push_pending_op(StkJumpLabel, 1);
+                    push_pending_op(stk_jump_label, 1);
                     break;
                 default:
                     break;
@@ -2942,7 +2943,7 @@ static bool parse_formula_text(char const *text)
                 {
                     c = is_const(&text[s_init_n], Len);
                     s_load[g_load_index++] = &(c->a);
-                    push_pending_op(StkLod, 1 - (s_paren + Equals)*15);
+                    push_pending_op(stk_lod, 1 - (s_paren + Equals)*15);
                     s_n = s_init_n + c->len - 1;
                 }
             }
@@ -2984,13 +2985,13 @@ int formula()
         switch (s_math_type)
         {
         case math_type::DOUBLE:
-            dRandom();
+            d_random();
             break;
         case math_type::LONG:
-            lRandom();
+            l_random();
             break;
         case math_type::MPC:
-            mRandom();
+            m_random();
         }
     }
 
@@ -3221,7 +3222,7 @@ static bool fill_jump_struct()
                     checkforelse = !checkforelse;
                     if (checkforelse)
                     {
-                        JumpFunc = StkJump;
+                        JumpFunc = stk_jump;
                     }
                     else
                     {
@@ -3229,10 +3230,10 @@ static bool fill_jump_struct()
                     }
                     break;
                 case jump_control_type::ELSE:
-                    JumpFunc = StkJump;
+                    JumpFunc = stk_jump;
                     break;
                 case jump_control_type::END_IF:
-                    JumpFunc = StkJumpLabel;
+                    JumpFunc = stk_jump_label;
                     break;
                 default:
                     break;
@@ -3240,11 +3241,11 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*(s_fns[s_op_ptr]) == StkLod)
+        if (*(s_fns[s_op_ptr]) == stk_lod)
         {
             loadcount++;
         }
-        else if (*(s_fns[s_op_ptr]) == StkSto)
+        else if (*(s_fns[s_op_ptr]) == stk_sto)
         {
             storecount++;
         }
@@ -4325,7 +4326,7 @@ void init_misc()
         s_vars.resize(5);
     }
     g_arg1 = &argfirst;
-    g_arg2 = &argsecond; // needed by all the ?Stk* functions
+    g_arg2 = &argsecond; // needed by all the ?stk* functions
     s_fudge = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / s_fudge;
     s_shift_back = 32 - g_bit_shift;
