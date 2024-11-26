@@ -784,7 +784,7 @@ void jiim(jiim_types which)
                     if (s_window_style == JuliaWindowStyle::LARGE && s_show_numbers == 0)
                     {
                         s_cursor.hide();
-                        cleartempmsg();
+                        clear_temp_msg();
                         s_cursor.show();
                     }
                     break;
@@ -907,7 +907,7 @@ void jiim(jiim_types which)
                     str[40] = 0;
                     s_cursor.hide();
                     actively_computing = true;
-                    showtempmsg(str);
+                    show_temp_msg(str);
                     s_cursor.show();
                 }
                 else
@@ -1309,11 +1309,11 @@ finish:
         g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
         g_logical_screen_x_offset = 0;
         g_logical_screen_y_offset = 0;
-        freetempmsg();
+        free_temp_msg();
     }
     else
     {
-        cleartempmsg();
+        clear_temp_msg();
     }
     s_show_numbers = 0;
     driver_unget_key(kbdchar);

@@ -273,7 +273,7 @@ restart:
 
     if (interrupted)
     {
-        texttempmsg(" *interrupted* save ");
+        text_temp_msg(" *interrupted* save ");
         if (g_init_batch >= batch_modes::NORMAL)
         {
             g_init_batch = batch_modes::BAILOUT_ERROR_NO_SAVE;         // if batch mode, set error level
@@ -285,7 +285,7 @@ restart:
         driver_buzzer(buzzer_codes::COMPLETE);
         if (g_init_batch == batch_modes::NONE)
         {
-            texttempmsg((" File saved as " + extract_file_name(open_file.string().c_str()) + ' ').c_str());
+            text_temp_msg((" File saved as " + extract_file_name(open_file.string().c_str()) + ' ').c_str());
         }
     }
     if (g_init_save_time < 0)

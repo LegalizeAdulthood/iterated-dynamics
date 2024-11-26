@@ -98,12 +98,12 @@ int pot_start_disk()
     }
     else
     {
-        showtempmsg("clearing 16bit pot work area");
+        show_temp_msg("clearing 16bit pot work area");
     }
     s_header_length = 0;
     g_disk_targa = false;
     i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
-    cleartempmsg();
+    clear_temp_msg();
     if (i == 0)
     {
         g_disk_16_bit = true;

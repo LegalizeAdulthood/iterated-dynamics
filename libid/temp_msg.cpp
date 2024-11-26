@@ -28,24 +28,24 @@ static int s_text_y_dots{};
       eating the key).
       It works in almost any video mode - does nothing in some very odd cases
       (HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
-int texttempmsg(char const *msgparm)
+int text_temp_msg(char const *msgparm)
 {
-    if (showtempmsg(msgparm))
+    if (show_temp_msg(msgparm))
     {
         return -1;
     }
 
     driver_wait_key_pressed(0); // wait for a keystroke but don't eat it
-    cleartempmsg();
+    clear_temp_msg();
     return 0;
 }
 
-void freetempmsg()
+void free_temp_msg()
 {
     s_text_save.clear();
 }
 
-bool showtempmsg(char const *msgparm)
+bool show_temp_msg(char const *msgparm)
 {
     static size_t size = 0;
     char msg[41];
@@ -97,7 +97,7 @@ bool showtempmsg(char const *msgparm)
     return false;
 }
 
-void cleartempmsg()
+void clear_temp_msg()
 {
     if (driver_diskp()) // disk video, easy
     {

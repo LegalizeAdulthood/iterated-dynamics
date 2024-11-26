@@ -1653,11 +1653,11 @@ rescan:  // entry for changed browse parms
     if (wincount >= MAX_WINDOWS_OPEN)
     {
         // hard code message at MAX_WINDOWS_OPEN = 450
-        texttempmsg("Sorry...no more space, 450 displayed.");
+        text_temp_msg("Sorry...no more space, 450 displayed.");
     }
     if (vid_too_big == 2)
     {
-        texttempmsg("Xdots + Ydots > 4096.");
+        text_temp_msg("Xdots + Ydots > 4096.");
     }
     c = 0;
     if (wincount)
@@ -1667,7 +1667,7 @@ rescan:  // entry for changed browse parms
         done = 0;
         winlist = browse_windows[index];
         restore_box(num_dots, index);
-        showtempmsg(winlist.name);
+        show_temp_msg(winlist.name);
         while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
                                  done = 3 for rescan
@@ -1710,7 +1710,7 @@ rescan:  // entry for changed browse parms
             case ID_KEY_LEFT_ARROW:
             case ID_KEY_DOWN_ARROW:
             case ID_KEY_UP_ARROW:
-                cleartempmsg();
+                clear_temp_msg();
                 drawindow(color_of_box, &winlist);// dim last window
                 if (c == ID_KEY_RIGHT_ARROW || c == ID_KEY_UP_ARROW)
                 {
@@ -1730,7 +1730,7 @@ rescan:  // entry for changed browse parms
                 }
                 winlist = browse_windows[index];
                 restore_box(num_dots, index);
-                showtempmsg(winlist.name);
+                show_temp_msg(winlist.name);
                 break;
             case ID_KEY_CTL_INSERT:
                 color_of_box += key_count(ID_KEY_CTL_INSERT);
@@ -1769,15 +1769,15 @@ rescan:  // entry for changed browse parms
                 break;
 
             case 'D': // delete file
-                cleartempmsg();
+                clear_temp_msg();
                 std::snprintf(mesg, std::size(mesg), "Delete %s? (Y/N)", winlist.name.c_str());
-                showtempmsg(mesg);
+                show_temp_msg(mesg);
                 driver_wait_key_pressed(0);
-                cleartempmsg();
+                clear_temp_msg();
                 c = driver_get_key();
                 if (c == 'Y' && g_confirm_file_deletes)
                 {
-                    texttempmsg("ARE YOU SURE???? (Y/N)");
+                    text_temp_msg("ARE YOU SURE???? (Y/N)");
                     if (driver_get_key() != 'Y')
                     {
                         c = 'N';
@@ -1801,19 +1801,19 @@ rescan:  // entry for changed browse parms
                     }
                     else if (errno == EACCES)
                     {
-                        texttempmsg("Sorry...it's a read only file, can't del");
-                        showtempmsg(winlist.name);
+                        text_temp_msg("Sorry...it's a read only file, can't del");
+                        show_temp_msg(winlist.name);
                         break;
                     }
                 }
                 {
-                    texttempmsg("file not deleted (phew!)");
+                    text_temp_msg("file not deleted (phew!)");
                 }
-                showtempmsg(winlist.name);
+                show_temp_msg(winlist.name);
                 break;
 
             case 'R':
-                cleartempmsg();
+                clear_temp_msg();
                 driver_stack_screen();
                 newname[0] = 0;
                 std::strcpy(mesg, "Enter the new filename for ");
@@ -1835,7 +1835,7 @@ rescan:  // entry for changed browse parms
                         {
                             if (errno == EACCES)
                             {
-                                texttempmsg("Sorry....can't rename");
+                                text_temp_msg("Sorry....can't rename");
                             }
                             else
                             {
@@ -1848,16 +1848,16 @@ rescan:  // entry for changed browse parms
                         }
                     }
                     browse_windows[index] = winlist;
-                    showtempmsg(winlist.name);
+                    show_temp_msg(winlist.name);
                 }
                 break;
 
             case ID_KEY_CTL_B:
-                cleartempmsg();
+                clear_temp_msg();
                 driver_stack_screen();
                 done = std::abs(get_browse_params());
                 driver_unstack_screen();
-                showtempmsg(winlist.name);
+                show_temp_msg(winlist.name);
                 break;
 
             case 's': // save image with boxes
@@ -1876,7 +1876,7 @@ rescan:  // entry for changed browse parms
         } //while
 
         // now clean up memory (and the screen if necessary)
-        cleartempmsg();
+        clear_temp_msg();
         if (done >= 1 && done < 4)
         {
             for (int i = wincount-1; i >= 0; i--)
@@ -1898,7 +1898,7 @@ rescan:  // entry for changed browse parms
     else
     {
         driver_buzzer(buzzer_codes::INTERRUPT); //no suitable files in directory!
-        texttempmsg("Sorry.. I can't find anything");
+        text_temp_msg("Sorry.. I can't find anything");
         g_browse_sub_images = false;
     }
 

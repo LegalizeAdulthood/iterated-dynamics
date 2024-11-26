@@ -322,7 +322,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     {
                         driver_get_key();
                     }
-                    texttempmsg("*** load incomplete ***");
+                    text_temp_msg("*** load incomplete ***");
                 }
             }
         }

@@ -127,7 +127,7 @@ static bool get_min_max()
         }
         if (yd == 20)
         {
-            showtempmsg("Getting min and max");
+            show_temp_msg("Getting min and max");
         }
         for (int xd = 0; xd < g_logical_screen_x_dots; xd++)
         {
@@ -142,7 +142,7 @@ static bool get_min_max()
             }
         }
     }
-    cleartempmsg();
+    clear_temp_msg();
     return false;
 }
 

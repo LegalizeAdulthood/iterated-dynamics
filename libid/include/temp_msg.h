@@ -4,11 +4,11 @@
 
 #include <string>
 
-int texttempmsg(char const *);
-bool showtempmsg(char const *);
-inline bool showtempmsg(const std::string &msg)
+int text_temp_msg(char const *);
+bool show_temp_msg(char const *);
+inline bool show_temp_msg(const std::string &msg)
 {
-    return showtempmsg(msg.c_str());
+    return show_temp_msg(msg.c_str());
 }
-void cleartempmsg();
-void freetempmsg();
+void clear_temp_msg();
+void free_temp_msg();

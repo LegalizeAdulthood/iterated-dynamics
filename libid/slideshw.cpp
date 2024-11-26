@@ -150,10 +150,10 @@ static void message(int secs, char const *buf)
     {
         showtempmsg_txt(0, 0, 7, secs, buf);
     }
-    else if (!showtempmsg(buf))
+    else if (!show_temp_msg(buf))
     {
         sleep_secs(secs);
-        cleartempmsg();
+        clear_temp_msg();
     }
 }
 
