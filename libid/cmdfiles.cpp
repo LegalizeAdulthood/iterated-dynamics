@@ -4097,7 +4097,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         {
             driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
             driver_move_cursor(row+1, 0);
-            dopause(2);  // defer getakeynohelp until after parsing
+            do_pause(2);  // defer getakeynohelp until after parsing
         }
     }
     else if (badfilename)

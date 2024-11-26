@@ -9,7 +9,7 @@
 #include "id_keys.h"
 
 // defer pause until after parsing so we know if in batch mode
-void dopause(int action)
+void do_pause(int action)
 {
     static unsigned char needpause = 0;
     switch (action)

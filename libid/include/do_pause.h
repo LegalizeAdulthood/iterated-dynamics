@@ -2,4 +2,4 @@
 //
 #pragma once
 
-void dopause(int action);
+void do_pause(int action);

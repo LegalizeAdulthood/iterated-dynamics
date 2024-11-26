@@ -77,7 +77,7 @@ bool stopmsg(stopmsg_flags flags, const std::string &msg)
         exit(1);
 #else
         std::printf("%s\n", msg.c_str());
-        dopause(1); // pause deferred until after cmdfiles
+        do_pause(1); // pause deferred until after cmdfiles
         return false;
 #endif
     }
