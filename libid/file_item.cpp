@@ -448,7 +448,7 @@ bool search_for_entry(std::FILE *infile, char const *itemname)
     return scan_entries(infile, nullptr, itemname) == -1;
 }
 
-static void format_parmfile_line(int choice, char *buf)
+static void format_param_file_line(int choice, char *buf)
 {
     int c;
     int i;
@@ -730,7 +730,7 @@ retry:
     boxwidth = colwidth;
     if (type == gfe_type::PARM)
     {
-        formatitem = format_parmfile_line;
+        formatitem = format_param_file_line;
         boxwidth = 1;
         boxdepth = 16;
         colwidth = 76;
