@@ -475,21 +475,24 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     return main_state::CONTINUE;
 }
 
-int id_main(int argc, char *argv[])
+static void set_search_dirs()
 {
+    const char *fract_dir = getenv("FRACTDIR");
+    if (fract_dir == nullptr)
     {
-        const char *fract_dir = getenv("FRACTDIR");
-        if (fract_dir == nullptr)
-        {
-            fract_dir = ".";
-        }
-        g_fractal_search_dir1 = fract_dir;
+        fract_dir = ".";
     }
+    g_fractal_search_dir1 = fract_dir;
 #ifdef SRCDIR
     g_fractal_search_dir2 = SRCDIR;
 #else
     g_fractal_search_dir2 = ".";
 #endif
+}
+
+int id_main(int argc, char *argv[])
+{
+    set_search_dirs();
 
     // this traps non-math library floating point errors
     std::signal(SIGFPE, my_floating_point_err);
