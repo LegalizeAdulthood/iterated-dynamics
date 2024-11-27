@@ -65,13 +65,6 @@ std::string const DEFAULT_HTML_FNAME{"index.rst"};
 char const *const TEMP_FNAME{"hc.tmp"};
 char const *const SWAP_FNAME{"hcswap.tmp"};
 
-struct HelpSignature
-{
-    std::uint32_t sig;
-    std::int16_t version;
-    std::uint32_t base;
-};
-
 // paginate document stuff
 struct DocInfo
 {

@@ -85,14 +85,6 @@ struct History
     int      link;
 };
 
-struct HelpSigInfo
-{
-    unsigned long sig;
-    int           version;
-    // cppcheck-suppress unusedStructMember
-    unsigned long base;     // only if added to id.exe
-};
-
 struct PrintDocInfo
 {
     int       cnum;          // current CONTENT num
@@ -1394,7 +1386,7 @@ ErrorAbort:
 
 int init_help()
 {
-    HelpSigInfo hs = { 0 };
+    HelpSignature hs{};
 
     help_file = nullptr;
 
@@ -1404,7 +1396,7 @@ int init_help()
         help_file = std::fopen(path.c_str(), "rb");
         if (help_file != nullptr)
         {
-            freader(&hs, sizeof(long)+sizeof(int), 1, help_file);
+            freader(&hs, sizeof(HelpSignature), 1, help_file);
 
             if (hs.sig != HELP_SIG)
             {
@@ -1418,7 +1410,7 @@ int init_help()
             }
             else
             {
-                base_off = sizeof(long)+sizeof(int);
+                base_off = sizeof(HelpSignature);
             }
         }
     }

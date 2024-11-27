@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include <cstdint>
 #include <cstring>
 #include <string>
 
@@ -13,6 +14,13 @@
  * help file signature
  */
 #define HELP_SIG           (0xAFBC1823UL)
+
+struct HelpSignature
+{
+    std::uint32_t sig;
+    std::int16_t version;
+    std::uint32_t base;
+};
 
 enum class help_labels;
 
