@@ -173,7 +173,7 @@ static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_
     return main_state::NOTHING;
 }
 
-static void evolve_param_zoom_decrease()
+static main_state evolve_param_zoom_decrease()
 {
     if (g_evolve_param_box_count)
     {
@@ -185,6 +185,7 @@ static void evolve_param_zoom_decrease()
         draw_param_box(0);
         set_evolve_ranges();
     }
+    return main_state::NOTHING;
 }
 
 static void evolve_param_zoom_increase()
@@ -409,8 +410,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return skew_zoom_right(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_PAGE_UP:
-        evolve_param_zoom_decrease();
-        break;
+        return evolve_param_zoom_decrease();
         
     case ID_KEY_CTL_PAGE_DOWN:
         evolve_param_zoom_increase();
