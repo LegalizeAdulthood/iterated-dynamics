@@ -1704,7 +1704,7 @@ static cmdarg_flags cmd_corners(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    
+
     g_use_center_mag = false;
     if (cmd.total_params == 0)
     {

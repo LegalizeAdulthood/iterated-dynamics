@@ -108,7 +108,7 @@ inline int operator+(topic_flags val)
 
 inline topic_flags operator|(topic_flags lhs, topic_flags rhs)
 {
-    return static_cast<topic_flags>(+lhs | +rhs);    
+    return static_cast<topic_flags>(+lhs | +rhs);
 }
 
 inline topic_flags &operator|=(topic_flags &lhs, topic_flags rhs)

@@ -51,7 +51,7 @@ class TestParameterCommand : public Test
 {
 public:
     ~TestParameterCommand() override = default;
-    
+
 protected:
     void exec_cmd_arg(const std::string &curarg, cmd_file mode = cmd_file::AT_AFTER_STARTUP);
 
@@ -96,7 +96,7 @@ void TestParameterCommandError::TearDown()
 TEST_F(TestParameterCommandError, parameterTooLong)
 {
     exec_cmd_arg("maximumoftwentycharactersinparametername", cmd_file::SSTOOLS_INI);
-    
+
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
@@ -132,7 +132,7 @@ TEST_F(TestParameterCommandError, batchAfterStartup)
     ValueSaver saved_init_batch{g_init_batch, batch_modes::NONE};
 
     exec_cmd_arg("batch=yes");
-    
+
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
@@ -141,7 +141,7 @@ TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
     ValueSaver saved_max_image_history{g_max_image_history, 0};
 
     exec_cmd_arg("maxhistory=yes", cmd_file::SSTOOLS_INI);
-    
+
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 

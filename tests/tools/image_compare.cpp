@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
             std::cout << file2 << " does not exist.\n";
             return 1;
         }
-    
+
         GIFInputFile gif1{file1};
         gif1.slurp();
         GIFInputFile gif2{file2};

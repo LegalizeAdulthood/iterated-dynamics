@@ -3057,7 +3057,7 @@ int form_per_pixel()
         }
         s_vars[9].a.d.y = 0.0;
         break;
-    
+
     case math_type::MPC:
         if ((g_row+g_col)&1)
         {

@@ -675,7 +675,7 @@ bool mandel_bn_setup()
         g_calc_status = calc_status_value::COMPLETED;
         return true;
     }
-    
+
     g_c_exponent = (int) g_params[2];
     switch (g_fractal_type)
     {
@@ -683,7 +683,7 @@ bool mandel_bn_setup()
         bf_to_bn(g_param_z_bn.x, g_bf_parms[0]);
         bf_to_bn(g_param_z_bn.y, g_bf_parms[1]);
         break;
-        
+
     case fractal_type::FPMANDELZPOWER:
         init_big_pi();
         if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
@@ -695,7 +695,7 @@ bool mandel_bn_setup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
-        
+
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
         bf_to_bn(g_param_z_bn.x, g_bf_parms[0]);
@@ -705,7 +705,7 @@ bool mandel_bn_setup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
-        
+
     case fractal_type::DIVIDE_BROT5:
         init_big_pi();
         g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
@@ -790,12 +790,12 @@ bool mandel_bf_setup()
             return mandel_perturbation_setup();
         }
         break;
-        
+
     case fractal_type::JULIAFP:
         copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
         copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
         break;
-        
+
     case fractal_type::FPMANDELZPOWER:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
         {
@@ -809,7 +809,7 @@ bool mandel_bf_setup()
                 return mandel_perturbation_setup();
             }
         }
-        
+
         init_big_pi();
         if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {
@@ -820,7 +820,7 @@ bool mandel_bf_setup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
-        
+
     case fractal_type::FPJULIAZPOWER:
         init_big_pi();
         copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
@@ -830,13 +830,13 @@ bool mandel_bf_setup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
-        
+
     case fractal_type::DIVIDE_BROT5:
         init_big_pi();
         g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
         g_b_const = g_params[1] + 1.0e-20;
         break;
-        
+
     default:
         break;
     }

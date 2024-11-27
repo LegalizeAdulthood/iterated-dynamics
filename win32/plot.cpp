@@ -310,7 +310,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     case WM_LBUTTONDOWN:
         HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_OnLButtonDown);
         break;
-        
+
     case WM_LBUTTONUP:
         HANDLE_WM_LBUTTONUP(window, wp, lp, plot_OnLButtonUp);
         break;
@@ -318,7 +318,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     case WM_RBUTTONUP:
         HANDLE_WM_RBUTTONUP(window, wp, lp, plot_OnRButtonUp);
         break;
-        
+
     case WM_MBUTTONUP:
         HANDLE_WM_MBUTTONUP(window, wp, lp, plot_OnMButtonUp);
         break;
@@ -326,7 +326,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     case WM_MOUSEMOVE:
         HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_OnMouseMove);
         break;
-        
+
     default:
         return DefWindowProc(window, message, wp, lp);
     }

@@ -20,7 +20,7 @@ public:
     ~CrossHairCursor() = default;
     CrossHairCursor &operator=(const CrossHairCursor &rhs) = default;
     CrossHairCursor &operator=(CrossHairCursor &&rhs) = default;
-    
+
     void draw();
     void save();
     void restore();

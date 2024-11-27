@@ -67,7 +67,7 @@ static int gaussian_number(int probability, int range)
 }
 
 int star_field()
-{   
+{
     int c;
     g_busy = true;
     if (s_star_field_values[0] <   1.0)

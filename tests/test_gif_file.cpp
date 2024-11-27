@@ -367,7 +367,7 @@ std::ostream &operator<<(std::ostream &str, const vec_printer<int> &value)
     {
         return str << "[]";
     }
-    
+
     str << "[ ";
     bool first{true};
     for (int i : value.m_values)

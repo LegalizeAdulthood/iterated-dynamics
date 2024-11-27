@@ -294,7 +294,7 @@ void Frame::on_char(HWND window, TCHAR ch, int num_repeat)
     {
         return;
     }
-    
+
     // KEYUP, KEYDOWN, and CHAR msgs go to the SG code
     // an ASCII key has been pressed
     unsigned int i, j, k;
@@ -328,7 +328,7 @@ void Frame::on_timer(HWND window, UINT id)
     {
         return;
     }
-    
+
     _ASSERTE(FRAME_TIMER_ID == id);
     m_timed_out = true;
 }
@@ -1079,7 +1079,7 @@ mleftb:
     if (g_look_at_mouse > 0)
         goto mouser;
     ax = -g_look_at_mouse;
-    
+
 mouser:
     goto mouseret;
 
@@ -1265,7 +1265,7 @@ mmovek:
 
 mouseret:
     return;
-    
+
 */
 
 void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)

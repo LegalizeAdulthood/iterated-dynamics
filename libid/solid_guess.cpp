@@ -258,7 +258,7 @@ static bool guess_row(bool firstpass, int y, int blocksize)
     int c23;
     int c33;
     int c24;
-    int c44; 
+    int c44;
     int guessed23;
     int guessed32;
     int guessed33;

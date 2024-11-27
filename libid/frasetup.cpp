@@ -135,7 +135,7 @@ mandel_fp_setup()
             g_symmetry = symmetry_type::X_AXIS_NO_PARAM;
         }
         break;
-        
+
     case fractal_type::MANDELFP:
         /*
            floating point code could probably be altered to handle many of

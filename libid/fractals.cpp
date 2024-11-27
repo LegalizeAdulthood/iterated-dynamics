@@ -644,7 +644,7 @@ void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z)
     z2.y = alloc_stack(g_r_bf_length + 2);
     double_bf(z2.x, z.x);
     double_bf(z2.y, z.y);
-    
+
     square_bf(real_sqr, z.x);
     square_bf(imag_sqr, z.y);
     sub_bf(temp_real, real_sqr, imag_sqr);

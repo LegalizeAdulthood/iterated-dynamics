@@ -322,7 +322,7 @@ private:
     void put_band(PalEntry *pal);
     void other_key(int key, RGBEditor *rgb) override;
     void change(RGBEditor *rgb) override;
-    
+
     int m_x{};                        // position
     int m_y{};                        //
     int m_csize{};                    // cell size

@@ -365,7 +365,7 @@ FractalSpecific g_fractal_specific[] =
         nullptr, nullptr, standalone_setup, plasma,
         NO_BAIL_OUT
     },
- 
+
     {
         s_t_mandelfn,
         {s_realz0, s_imagz0, "", ""},

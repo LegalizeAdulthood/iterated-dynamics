@@ -369,77 +369,77 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
 
     case 'f':                    // floating pt toggle
         return toggle_float(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
         return get_history(kbd_char);
-        
+
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
         return color_cycle(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case 'e':                    // switch to color editing
         return color_editing(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case 's':                    // save-to-disk
         return save_evolver_image();
 
     case 'r':                    // restore-from
         return restore_from_image(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
         return request_zoom_in(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         return request_zoom_out(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_INSERT:
         return request_restart(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_LEFT_ARROW:             // cursor left
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
         return move_zoom_box(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
         return move_evolver_selection(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_HOME:               // Ctrl-home
         return skew_zoom_left(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_END:                // Ctrl-end
         return skew_zoom_right(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_PAGE_UP:
         return evolve_param_zoom_decrease();
-        
+
     case ID_KEY_CTL_PAGE_DOWN:
         return evolve_param_zoom_increase();
 
     case ID_KEY_PAGE_UP:                // page up
         return evolver_zoom_in();
-        
+
     case ID_KEY_PAGE_DOWN:              // page down
         return evolver_zoom_out();
-        
+
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         return zoom_box_increase_rotation(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
         return zoom_box_decrease_rotation(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
         return zoom_box_increase_color(kbd_char, from_mandel, kbd_more, stacked);
-        
+
     case ID_KEY_CTL_DEL:                // Ctrl-del
         return zoom_box_decrease_color(kbd_char, from_mandel, kbd_more, stacked);
 

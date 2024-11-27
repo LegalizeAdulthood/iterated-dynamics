@@ -54,7 +54,7 @@ MatchFn match_fn(const fs::path &pattern)
 {
     using namespace boost::algorithm;
     MatchFn always = [](const fs::path &) { return true; };
-    
+
     MatchFn match_stem;
     const std::string pat_stem{pattern.stem().string()};
     // match any filename

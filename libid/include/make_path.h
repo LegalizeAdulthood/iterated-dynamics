@@ -17,7 +17,7 @@ inline void make_path(char *template_str, char const *drive, char const *dir, ch
     }
 
     const std::string result{make_path(drive, dir, fname, ext)};
-    std::strcpy(template_str, result.c_str()); 
+    std::strcpy(template_str, result.c_str());
 }
 
 inline std::string make_fname_ext(char const *fname, char const *ext)

@@ -104,7 +104,7 @@ static bool look(bool *stacked)
             return true;
         }
         // otherwise fall through and turn off browsing
-        
+
     case ID_KEY_ESC:
     case 'l':              // turn it off
     case 'L':
@@ -413,7 +413,7 @@ static main_state space_command(int &, bool &from_mandel, bool &kbd_more, bool &
     {
         toggle_mandelbrot_julia(kbd_more, from_mandel);
     }
-    
+
     return main_state::NOTHING;
 }
 

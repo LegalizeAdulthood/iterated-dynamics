@@ -68,7 +68,7 @@ TEST(TestFindFile, findSubDir)
     {
         result = fr_find_next();
     }
-    
+
     EXPECT_EQ(0, result);
     EXPECT_EQ(subdir, g_dta.filename);
     EXPECT_EQ(SUB_DIR, g_dta.attribute);

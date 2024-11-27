@@ -47,7 +47,7 @@ enum
     SCREEN_WIDTH = 78,
     SCREEN_DEPTH = 22,
     SCREEN_INDENT = 1,
-    
+
     // printed document dimensions
     PAGE_WIDTH = 72,                               // width of printed text
     PAGE_INDENT = 2,                               // indent all text by this much
@@ -55,7 +55,7 @@ enum
     PAGE_RDEPTH = 59,                              // the total depth (inc. heading)
     PAGE_HEADING_DEPTH = 3,                        // depth of the heading
     PAGE_DEPTH = PAGE_RDEPTH - PAGE_HEADING_DEPTH, // depth of text
-    
+
     // Document page-break values.  Goto to next page if this close (or closer)
     // to end of page when starting a CONTENT, TOPIC, or at a BLANK line.
     CONTENT_BREAK = 7, // start of a "DocContent" entry
