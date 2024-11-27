@@ -643,10 +643,7 @@ resumeloop:                             // return here on failed overlays
                 }
             }
 
-            if ('A' <= kbdchar && kbdchar <= 'Z')
-            {
-                kbdchar = std::tolower(kbdchar);
-            }
+            kbdchar = std::tolower(kbdchar);
             if (g_evolving != evolution_mode_flags::NONE)
             {
                 mms_value = evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
