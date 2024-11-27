@@ -205,7 +205,7 @@ static main_state evolve_param_zoom_increase()
 
 static main_state evolver_zoom_in()
 {
-    if (g_zoom_off)
+    if (g_zoom_enabled)
     {
         if (g_zoom_box_width == 0)
         {

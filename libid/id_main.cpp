@@ -116,7 +116,7 @@ double g_plot_mx1{}, g_plot_mx2{};      //
 double g_plot_my1{}, g_plot_my2{};      // real->screen multipliers
 calc_status_value g_calc_status{calc_status_value::NO_FRACTAL}; //
 long g_calc_time{};                                             //
-bool g_zoom_off{};                                              // false when zoom is disabled
+bool g_zoom_enabled{};                                          // true when zoom is enabled
 int g_save_dac{};                                               // save-the-Video DAC flag
 bool g_browsing{};                                              // browse mode flag
 std::string g_file_name_stack[16]{};                            // array of file names used while browsing
@@ -468,7 +468,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    g_zoom_off = true;                     // zooming is enabled
+    g_zoom_enabled = true;                     // zooming is enabled
     g_help_mode = help_labels::HELP_MAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
 

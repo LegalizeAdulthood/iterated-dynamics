@@ -1155,7 +1155,7 @@ main_state increase_zoom_aspect(int &key, bool &from_mandel, bool &kbd_more, boo
 
 main_state zoom_box_in(int &, bool &, bool &, bool &)
 {
-    if (g_zoom_off)
+    if (g_zoom_enabled)
     {
         if (g_zoom_box_width == 0)
         {

@@ -127,4 +127,4 @@ extern double                g_zoom_box_skew;
 extern double                g_zoom_box_width;
 extern double                g_zoom_box_x;
 extern double                g_zoom_box_y;
-extern bool                  g_zoom_off;
+extern bool                  g_zoom_enabled;

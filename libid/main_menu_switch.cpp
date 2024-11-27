@@ -200,7 +200,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
             g_x_3rd *= 3.0;
             g_y_3rd *= 3.0;
         }
-        g_zoom_off = true;
+        g_zoom_enabled = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         kbd_more = false;
     }
@@ -231,7 +231,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
         g_save_c.y = g_params[1];
         g_params[0] = 0;
         g_params[1] = 0;
-        g_zoom_off = true;
+        g_zoom_enabled = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         kbd_more = false;
     }
@@ -441,7 +441,7 @@ static main_state inverse_julia_toggle(int &, bool &, bool &kbd_more, bool &)
             }
         }
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-        g_zoom_off = true;
+        g_zoom_enabled = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         kbd_more = false;
     }

@@ -327,10 +327,10 @@ main_state big_while_loop(bool &kbd_more, bool &stacked, const bool resume_flag)
             }
         }
 
-        g_zoom_off = true;                 // zooming is enabled
+        g_zoom_enabled = true;                 // zooming is enabled
         if (driver_diskp() || bit_set(g_cur_fractal_specific->flags, fractal_flags::NOZOOM))
         {
-            g_zoom_off = false;            // for these cases disable zooming
+            g_zoom_enabled = false;            // for these cases disable zooming
         }
         if (g_evolving == evolution_mode_flags::NONE)
         {
@@ -677,7 +677,7 @@ resumeloop:                             // return here on failed overlays
             default:
                 break;
             }
-            if (g_zoom_off && kbd_more) // draw/clear a zoom box?
+            if (g_zoom_enabled && kbd_more) // draw/clear a zoom box?
             {
                 draw_box(true);
             }
