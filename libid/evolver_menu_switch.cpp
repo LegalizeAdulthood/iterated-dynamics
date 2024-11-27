@@ -311,7 +311,7 @@ static main_state increase_grid_size(bool &kbd_more)
     return main_state::NOTHING;
 }
 
-static void toggle_gene_variation(bool &kbd_more)
+static main_state toggle_gene_variation(bool &kbd_more)
 {
     for (GeneBase &gene : g_gene_bank)
     {
@@ -327,6 +327,7 @@ static void toggle_gene_variation(bool &kbd_more)
     }
     kbd_more = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
+    return main_state::NOTHING;
 }
 
 static void request_mutation_level(int mutation_level, bool &kbd_more)
@@ -456,8 +457,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return increase_grid_size(kbd_more);
 
     case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-        toggle_gene_variation(kbd_more);
-        break;
+        return toggle_gene_variation(kbd_more);
 
     case ID_KEY_ALT_1: // alt + number keys set mutation level
     case ID_KEY_ALT_2:
