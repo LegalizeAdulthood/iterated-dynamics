@@ -1160,16 +1160,16 @@ main_state zoom_box_in(int &, bool &, bool &, bool &)
         if (g_zoom_box_width == 0)
         {
             // start zoombox
-            g_zoom_box_height = 1;
-            g_zoom_box_width = g_zoom_box_height;
-            g_zoom_box_rotation = 0;
-            g_zoom_box_skew = g_zoom_box_rotation;
-            g_zoom_box_x = 0;
-            g_zoom_box_y = 0;
+            g_zoom_box_height = 1.0;
+            g_zoom_box_width = 1.0;
+            g_zoom_box_rotation = 0.0;
+            g_zoom_box_skew = 0.0;
+            g_zoom_box_x = 0.0;
+            g_zoom_box_y = 0.0;
             find_special_colors();
             g_box_color = g_color_bright;
             g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
-            g_evolve_param_grid_x = g_evolve_param_grid_y;
+            g_evolve_param_grid_x = g_evolve_image_grid_size / 2;
             move_box(0.0, 0.0); // force scrolling
         }
         else
