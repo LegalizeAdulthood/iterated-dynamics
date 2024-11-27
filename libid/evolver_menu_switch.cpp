@@ -2,40 +2,25 @@
 //
 #include "evolver_menu_switch.h"
 
-#include "calcfrac.h"
 #include "cmdfiles.h"
-#include "debug_flags.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "editpal.h"
 #include "encoder.h"
 #include "evolve.h"
 #include "find_special_colors.h"
-#include "fractalp.h"
-#include "fractype.h"
 #include "framain2.h"
 #include "get_cmd_string.h"
 #include "get_fract_type.h"
 #include "get_toggles.h"
 #include "get_toggles2.h"
-#include "history.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "jb.h"
-#include "loadfile.h"
-#include "lorenz.h"
-#include "main_menu_switch.h"
+#include "menu_handler.h"
 #include "passes_options.h"
 #include "pixel_limits.h"
-#include "rotate.h"
 #include "select_video_mode.h"
-#include "spindac.h"
-#include "update_save_name.h"
 #include "value_saver.h"
-#include "video_mode.h"
 #include "zoom.h"
-
-#include <cstring>
 
 static void save_evolver_image()
 {
@@ -350,9 +335,6 @@ static void turn_off_evolving(bool &kbd_more)
 
 main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
-    int i;
-    int k;
-
     switch (kbd_char)
     {
     case 't':                    // new fractal type

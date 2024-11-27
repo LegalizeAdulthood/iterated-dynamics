@@ -173,6 +173,7 @@ add_library(libid
     make_batch_file.cpp include/make_batch_file.h
     make_mig.cpp include/make_mig.h
     make_path.cpp include/make_path.h
+    menu_handler.cpp include/menu_handler.h
     merge_path_names.cpp include/merge_path_names.h
     mouse.cpp include/mouse.h
     not_disk_msg.cpp include/not_disk_msg.h
@@ -520,6 +521,7 @@ source_group("Header Files/ui" FILES
     include/make_batch_file.h
     include/make_mig.h
     include/make_path.h
+    include/menu_handler.h
     include/merge_path_names.h
     include/mouse.h
     include/not_disk_msg.h
@@ -599,6 +601,7 @@ source_group("Source Files/ui" FILES
     make_batch_file.cpp
     make_mig.cpp
     make_path.cpp
+    menu_handler.cpp
     merge_path_names.cpp
     mouse.cpp
     not_disk_msg.cpp
