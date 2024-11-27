@@ -513,51 +513,45 @@ int id_main(int argc, char *argv[])
     bool resume_flag{}; //
     bool kbd_more{};    // continuation variable
     bool stacked{};     // flag to indicate screen stacked
-
-restart:   // insert key re-starts here
-    main_restart(argc, argv, stacked);
-
-restore_start:
-    if (main_restore_start(stacked, resume_flag))
+    main_state state{main_state::RESTART};
+    bool done{};
+    while (!done)
     {
-        goto resume_loop;                // ooh, this is ugly
-    }
-
-image_start:                             // calc/display a new image
-    switch (main_image_start(stacked, resume_flag))
-    {
-    case main_state::RESTORE_START:
-        goto restore_start;
-
-    case main_state::IMAGE_START:
-        goto image_start;
-
-    case main_state::RESTART:
-        goto restart;
-
-    default:
-        break;
-    }
-
-resume_loop:
 #if defined(_WIN32)
-    _ASSERTE(_CrtCheckMemory());
+        assert(_CrtCheckMemory());
 #endif
-    save_param_history();
-    // this switch processes gotos that are now inside function
-    switch (big_while_loop(kbd_more, stacked, resume_flag))
-    {
-    case main_state::RESTART:
-        goto restart;
+        switch (state)
+        {
+        case main_state::RESTART:
+            // insert key re-starts here
+            main_restart(argc, argv, stacked);
+            state = main_state::RESTORE_START;
+            break;
 
-    case main_state::IMAGE_START:
-        goto image_start;
+        case main_state::RESTORE_START:
+            state =
+                main_restore_start(stacked, resume_flag) ? main_state::RESUME_LOOP : main_state::IMAGE_START;
+            break;
 
-    case main_state::RESTORE_START:
-        goto restore_start;
+        case main_state::IMAGE_START:
+            state = main_image_start(stacked, resume_flag);
+            if (state != main_state::RESTORE_START && state != main_state::IMAGE_START &&
+                state != main_state::RESTART)
+            {
+                state = main_state::RESUME_LOOP;
+            }
+            break;
 
-    default:
-        break;
+        case main_state::RESUME_LOOP:
+            save_param_history();
+            state = big_while_loop(kbd_more, stacked, resume_flag);
+            break;
+
+        case main_state::CONTINUE:
+        case main_state::NOTHING:
+            done = true;
+            break;
+        }
     }
 
     return 0;

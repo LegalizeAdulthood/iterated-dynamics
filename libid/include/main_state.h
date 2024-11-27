@@ -8,5 +8,6 @@ enum class main_state
     RESTART,
     IMAGE_START,
     RESTORE_START,
-    CONTINUE
+    CONTINUE,
+    RESUME_LOOP
 };
