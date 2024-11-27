@@ -262,7 +262,7 @@ static main_state evolver_zoom_out()
     return main_state::NOTHING;
 }
 
-static void halve_mutation_params(bool &kbd_more)
+static main_state halve_mutation_params(bool &kbd_more)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
     g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
@@ -271,6 +271,7 @@ static void halve_mutation_params(bool &kbd_more)
     g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
     kbd_more = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
+    return main_state::NOTHING;
 }
 
 static void double_mutation_params(bool &kbd_more)
@@ -440,8 +441,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         delete and the menu if necessary */
 
     case ID_KEY_F2: // halve mutation params and regen
-        halve_mutation_params(kbd_more);
-        break;
+        return halve_mutation_params(kbd_more);
 
     case ID_KEY_F3: //double mutation parameters and regenerate
         double_mutation_params(kbd_more);
