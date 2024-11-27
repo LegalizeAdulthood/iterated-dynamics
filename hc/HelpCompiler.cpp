@@ -21,6 +21,7 @@
 #include <cerrno>
 #include <cstdarg>
 #include <cstdio>
+#include <cstdint>
 #include <cstring>
 #include <fcntl.h>
 #include <filesystem>
@@ -66,9 +67,9 @@ char const *const SWAP_FNAME{"hcswap.tmp"};
 
 struct HelpSignature
 {
-    unsigned long sig;
-    int           version;
-    unsigned long base;
+    std::uint32_t sig;
+    std::int16_t version;
+    std::uint32_t base;
 };
 
 // paginate document stuff
@@ -907,14 +908,13 @@ void insert_real_link_info(char *curr, unsigned int len)
 void HelpCompiler::write_help(std::FILE *file)
 {
     char                 *text;
-    HelpSignature  hs;
 
     // write the signature and version
-
-    hs.sig = HELP_SIG; // Edit line 17 of helpcom.h if this is a syntax error
+    HelpSignature hs{};
+    hs.sig = HELP_SIG;
     hs.version = g_src.version;
 
-    std::fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
+    std::fwrite(&hs, sizeof(HelpSignature), 1, file);
 
     // write max_pages & max_links
 
@@ -1267,7 +1267,7 @@ void HelpCompiler::add_hlp_to_exe()
         hlp;
     long                 len;
     int                  size;
-    HelpSignature hs;
+    HelpSignature hs{};
 
     exe = open(exe_fname, O_RDWR|O_BINARY);
     if (exe == -1)
@@ -1287,7 +1287,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     lseek(exe, filelength(exe) - sizeof(HelpSignature), SEEK_SET);
 
-    if (read(exe, (char *)&hs, 10) != 10)
+    if (read(exe, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
     {
         close(hlp);
         close(exe);
@@ -1296,17 +1296,16 @@ void HelpCompiler::add_hlp_to_exe()
 
     if (hs.sig == HELP_SIG)
     {
-        warn(0, "Overwriting previous help. (Version=%d)", hs.version);
+        warn(0, "Overwriting previous help. (Version=%d)", static_cast<int>(hs.version));
     }
     else
     {
-        hs.base = filelength(exe);
+        hs.base = static_cast<std::uint32_t>(filelength(exe));
     }
 
     // now, let's see if their help file is for real (and get the version)
 
-    auto const sig_len = sizeof(long) + sizeof(int);
-    if (read(hlp, (char *)&hs, sig_len) != sig_len)
+    if (read(hlp, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
     {
         close(hlp);
         close(exe);
@@ -1324,14 +1323,14 @@ void HelpCompiler::add_hlp_to_exe()
 
     lseek(exe, hs.base, SEEK_SET);
 
-    len = filelength(hlp) - sizeof(long) - sizeof(int); // adjust for the file signature & version
+    len = filelength(hlp) - sizeof(HelpSignature); // adjust for the file signature & version
 
     for (int count = 0; count < len;)
     {
         size = (int) std::min((long)BUFFER_SIZE, len-count);
         if (read(hlp, g_src.buffer.data(), size) != size)
         {
-            throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read3");
+            throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read");
         }
         if (write(exe, g_src.buffer.data(), size) != size)
         {
@@ -1342,7 +1341,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     // add on the signature, version and offset
 
-    if (write(exe, (char *)&hs, 10) != 10)
+    if (write(exe, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
     {
         close(hlp);
         close(exe);
@@ -1368,7 +1367,7 @@ void HelpCompiler::delete_hlp_from_exe()
         throw std::runtime_error("Unexpected argument \"" + m_options.fname2 + "\"");
     }
     const char *exe_fname{m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str()};
-    HelpSignature hs;
+    HelpSignature hs{};
 
     int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
@@ -1380,16 +1379,11 @@ void HelpCompiler::delete_hlp_from_exe()
 
     // see if any help is currently installed
 
-#ifndef XFRACT
-    lseek(exe, filelength(exe) - 10, SEEK_SET);
-    read(exe, (char *)&hs, 10);
-#else
-    lseek(exe, filelength(exe) - 12, SEEK_SET);
-    if (read(exe, (char *)&hs, 12) != 12)
+    lseek(exe, filelength(exe) - sizeof(HelpSignature), SEEK_SET);
+    if (read(exe, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
     {
-        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read4");
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read ");
     }
-#endif
 
     if (hs.sig == HELP_SIG)
     {
