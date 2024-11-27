@@ -339,12 +339,13 @@ static main_state request_mutation_level(int mutation_level, bool &kbd_more)
     return main_state::NOTHING;
 }
 
-static void turn_off_evolving(bool &kbd_more)
+static main_state turn_off_evolving(bool &kbd_more)
 {
     g_evolving = evolution_mode_flags::NONE;
     g_view_window = false;
     kbd_more = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
+    return main_state::NOTHING;
 }
 
 main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
@@ -479,8 +480,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return request_mutation_level(kbd_char - '1' + 1, kbd_more);
 
     case '0': // mutation level 0 == turn off evolving
-        turn_off_evolving(kbd_more);
-        break;
+        return turn_off_evolving(kbd_more);
 
     case ID_KEY_DELETE:         // select video mode from list
         request_video_mode(kbd_char);
