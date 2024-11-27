@@ -2316,5 +2316,4 @@ FractalSpecific g_fractal_specific[] =
     }
 };
 
-int g_num_fractal_types = (sizeof(g_fractal_specific)/
-                         sizeof(FractalSpecific)) -1;
+int g_num_fractal_types = (sizeof(g_fractal_specific) / sizeof(FractalSpecific)) - 1;
