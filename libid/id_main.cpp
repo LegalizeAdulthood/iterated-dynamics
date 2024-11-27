@@ -468,9 +468,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    g_zoom_enabled = true;                     // zooming is enabled
-    g_help_mode = help_labels::HELP_MAIN;                // now use this help mode
-    resumeflag = false;                 // allows taking goto inside big_while_loop()
+    g_zoom_enabled = true;
+    g_help_mode = help_labels::HELP_MAIN; // now use this help mode
+    resumeflag = false;                   // allows taking goto inside big_while_loop()
 
     return main_state::CONTINUE;
 }

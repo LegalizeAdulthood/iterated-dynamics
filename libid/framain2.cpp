@@ -327,11 +327,8 @@ main_state big_while_loop(bool &kbd_more, bool &stacked, const bool resume_flag)
             }
         }
 
-        g_zoom_enabled = true;                 // zooming is enabled
-        if (driver_diskp() || bit_set(g_cur_fractal_specific->flags, fractal_flags::NOZOOM))
-        {
-            g_zoom_enabled = false;            // for these cases disable zooming
-        }
+        // for these cases disable zooming
+        g_zoom_enabled = !driver_diskp() && !bit_set(g_cur_fractal_specific->flags, fractal_flags::NOZOOM);
         if (g_evolving == evolution_mode_flags::NONE)
         {
             calc_frac_init();
