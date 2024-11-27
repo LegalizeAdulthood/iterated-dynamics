@@ -545,7 +545,7 @@ resume_loop:
 #endif
     save_param_history();
     // this switch processes gotos that are now inside function
-    switch (big_while_loop(&kbd_more, &stacked, resume_flag))
+    switch (big_while_loop(kbd_more, stacked, resume_flag))
     {
     case main_state::RESTART:
         goto restart;
