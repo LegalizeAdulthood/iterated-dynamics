@@ -1501,7 +1501,7 @@ xhandleevents()
         {
             int done = 0;
             int banding = 0;
-            if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_off)
+            if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_enabled)
             {
                 lastx = xevent.xbutton.x;
                 lasty = xevent.xbutton.y;

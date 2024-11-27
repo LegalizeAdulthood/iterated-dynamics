@@ -1169,7 +1169,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     bool banding = false;
     int bandx0, bandy0, bandx1, bandy1;
 
-    if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_off)
+    if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_enabled)
     {
         m_last_x = xevent->xbutton.x;
         m_last_y = xevent->xbutton.y;
