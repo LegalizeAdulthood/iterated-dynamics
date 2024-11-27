@@ -101,13 +101,14 @@ static main_state prompt_evolver_options(int key, bool &kbd_more)
     return main_state::NOTHING;
 }
 
-static void exit_evolver(bool &kbd_more)
+static main_state exit_evolver(bool &kbd_more)
 {
     g_evolving = evolution_mode_flags::NONE;
     g_view_window = false;
     save_param_history();
     kbd_more = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
+    return main_state::NOTHING;
 }
 
 static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
@@ -351,8 +352,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return prompt_evolver_options(kbd_char, kbd_more);
 
     case 'b': // quick exit from evolve mode
-        exit_evolver(kbd_more);
-        break;
+        return exit_evolver(kbd_more);
 
     case 'f':                    // floating pt toggle
         return toggle_float(kbd_char, from_mandel, kbd_more, stacked);
