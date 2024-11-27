@@ -288,7 +288,7 @@ static main_state double_mutation_params(bool &kbd_more)
     return main_state::NOTHING;
 }
 
-static void decrease_grid_size(bool &kbd_more)
+static main_state decrease_grid_size(bool &kbd_more)
 {
     if (g_evolve_image_grid_size > 3)
     {
@@ -297,6 +297,7 @@ static void decrease_grid_size(bool &kbd_more)
         kbd_more = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
+    return main_state::NOTHING;
 }
 
 static void increase_grid_size(bool &kbd_more)
@@ -448,8 +449,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return double_mutation_params(kbd_more);
 
     case ID_KEY_F4: //decrement  gridsize and regen
-        decrease_grid_size(kbd_more);
-        break;
+        return decrease_grid_size(kbd_more);
 
     case ID_KEY_F5: // increment gridsize and regen
         increase_grid_size(kbd_more);
