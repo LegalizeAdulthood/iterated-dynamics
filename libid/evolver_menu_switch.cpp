@@ -348,15 +348,15 @@ static void turn_off_evolving(bool &kbd_more)
     g_calc_status = calc_status_value::PARAMS_CHANGED;
 }
 
-main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
+main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     int i;
     int k;
 
-    switch (*kbdchar)
+    switch (kbd_char)
     {
     case 't':                    // new fractal type
-        return request_fractal_type(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return request_fractal_type(kbd_char, from_mandel, kbd_more, stacked);
 
     case 'x':                    // invoke options screen
     case 'y':
@@ -365,21 +365,21 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'g':
     case ID_KEY_CTL_E:
     case ID_KEY_SPACE:
-        prompt_evolver_options(*kbdchar, *kbdmore);
+        prompt_evolver_options(kbd_char, kbd_more);
         break;
 
     case 'b': // quick exit from evolve mode
-        exit_evolver(*kbdmore);
+        exit_evolver(kbd_more);
         break;
 
     case 'f':                    // floating pt toggle
-        return toggle_float(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return toggle_float(kbd_char, from_mandel, kbd_more, stacked);
         
     case '\\':                   // return to prev image
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
-        if (const main_state result = get_history(*kbdchar); result != main_state::NOTHING)
+        if (const main_state result = get_history(kbd_char); result != main_state::NOTHING)
         {
             return result;
         }
@@ -388,25 +388,25 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
     case '-':                    // rotate palette
-        return color_cycle(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return color_cycle(kbd_char, from_mandel, kbd_more, stacked);
         
     case 'e':                    // switch to color editing
-        return color_editing(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return color_editing(kbd_char, from_mandel, kbd_more, stacked);
         
     case 's':                    // save-to-disk
         save_evolver_image();
         return main_state::CONTINUE;
 
     case 'r':                    // restore-from
-        return restore_from_image(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return restore_from_image(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        return request_zoom_in(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return request_zoom_in(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_ENTER:              // control-Enter
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        return request_zoom_out(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return request_zoom_out(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
@@ -416,19 +416,19 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_RIGHT_ARROW:            // cursor right
     case ID_KEY_UP_ARROW:               // cursor up
     case ID_KEY_DOWN_ARROW:             // cursor down
-        return move_zoom_box(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return move_zoom_box(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
     case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
     case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
     case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        return move_evolver_selection(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return move_evolver_selection(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_HOME:               // Ctrl-home
-        return skew_zoom_left(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return skew_zoom_left(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_END:                // Ctrl-end
-        return skew_zoom_right(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return skew_zoom_right(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_PAGE_UP:
         evolve_param_zoom_decrease();
@@ -447,38 +447,38 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
         
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        return zoom_box_increase_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return zoom_box_increase_rotation(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        return zoom_box_decrease_rotation(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return zoom_box_decrease_rotation(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        return zoom_box_increase_color(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return zoom_box_increase_color(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_CTL_DEL:                // Ctrl-del
-        return zoom_box_decrease_color(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return zoom_box_decrease_color(kbd_char, from_mandel, kbd_more, stacked);
 
     /* grabbed a couple of video mode keys, user can change to these using
         delete and the menu if necessary */
 
     case ID_KEY_F2: // halve mutation params and regen
-        halve_mutation_params(*kbdmore);
+        halve_mutation_params(kbd_more);
         break;
 
     case ID_KEY_F3: //double mutation parameters and regenerate
-        double_mutation_params(*kbdmore);
+        double_mutation_params(kbd_more);
         break;
 
     case ID_KEY_F4: //decrement  gridsize and regen
-        decrease_grid_size(*kbdmore);
+        decrease_grid_size(kbd_more);
         break;
 
     case ID_KEY_F5: // increment gridsize and regen
-        increase_grid_size(*kbdmore);
+        increase_grid_size(kbd_more);
         break;
 
     case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-        toggle_gene_variation(*kbdmore);
+        toggle_gene_variation(kbd_more);
         break;
 
     case ID_KEY_ALT_1: // alt + number keys set mutation level
@@ -488,7 +488,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        request_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1, *kbdmore);
+        request_mutation_level(kbd_char - ID_KEY_ALT_1 + 1, kbd_more);
         break;
 
     case '1':
@@ -498,20 +498,20 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case '5':
     case '6':
     case '7':
-        request_mutation_level(*kbdchar - '1' + 1, *kbdmore);
+        request_mutation_level(kbd_char - '1' + 1, kbd_more);
         break;
 
     case '0': // mutation level 0 == turn off evolving
-        turn_off_evolving(*kbdmore);
+        turn_off_evolving(kbd_more);
         break;
 
     case ID_KEY_DELETE:         // select video mode from list
-        request_video_mode(*kbdchar);
+        request_video_mode(kbd_char);
         // fallthrough
 
     default: // NOLINT(clang-diagnostic-implicit-fallthrough)
         // other (maybe valid Fn key
-        return requested_video_fn(*kbdchar, *frommandel, *kbdmore, *stacked);
+        return requested_video_fn(kbd_char, from_mandel, kbd_more, stacked);
     }
 
     return main_state::NOTHING;
