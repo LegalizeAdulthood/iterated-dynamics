@@ -203,7 +203,7 @@ static main_state evolve_param_zoom_increase()
     return main_state::NOTHING;
 }
 
-static void evolver_zoom_in()
+static main_state evolver_zoom_in()
 {
     if (g_zoom_off)
     {
@@ -237,6 +237,7 @@ static void evolver_zoom_in()
             resize_box(0 - key_count(ID_KEY_PAGE_UP));
         }
     }
+    return main_state::NOTHING;
 }
 
 static void evolver_zoom_out()
@@ -417,8 +418,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return evolve_param_zoom_increase();
 
     case ID_KEY_PAGE_UP:                // page up
-        evolver_zoom_in();
-        break;
+        return evolver_zoom_in();
         
     case ID_KEY_PAGE_DOWN:              // page down
         evolver_zoom_out();
