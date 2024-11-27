@@ -207,3 +207,9 @@ main_state requested_video_fn(int &kbd_char, bool &, bool &kbd_more, bool &)
     kbd_more = false;
     return main_state::CONTINUE;
 }
+
+main_state request_restart(int &, bool &, bool &, bool &)
+{
+    driver_set_for_text(); // force text mode
+    return main_state::RESTART;
+}

@@ -636,12 +636,6 @@ static main_state request_star_field_params(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state request_restart(int &, bool &, bool &, bool &)
-{
-    driver_set_for_text(); // force text mode
-    return main_state::RESTART;
-}
-
 static MenuHandler s_handlers[]{
     {ID_KEY_CTL_A, begin_ant},                      //
     {ID_KEY_CTL_B, prompt_options},                 //

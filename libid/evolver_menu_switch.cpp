@@ -387,9 +387,8 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         return request_zoom_out(kbd_char, from_mandel, kbd_more, stacked);
         
-    case ID_KEY_INSERT:         // insert
-        driver_set_for_text();           // force text mode
-        return main_state::RESTART;
+    case ID_KEY_INSERT:
+        return request_restart(kbd_char, from_mandel, kbd_more, stacked);
         
     case ID_KEY_LEFT_ARROW:             // cursor left
     case ID_KEY_RIGHT_ARROW:            // cursor right
