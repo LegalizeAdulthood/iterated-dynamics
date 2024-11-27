@@ -393,7 +393,7 @@ static void frame_on_secondary_button_down(HWND window, BOOL double_click, int x
     g_frame.on_secondary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_on_m_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
@@ -418,11 +418,6 @@ static void frame_on_mouse_move(HWND window, int x, int y, UINT key_flags)
     g_frame.on_mouse_move(window,x, y, key_flags);
 }
 
-static void frame_on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
-{
-    g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
-}
-
 static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
     switch (message)
@@ -430,54 +425,79 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
     case WM_CLOSE:
         HANDLE_WM_CLOSE(window, wp, lp, frame_on_close);
         break;
+
     case WM_GETMINMAXINFO:
         HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_on_get_min_max_info);
         break;
+
     case WM_SETFOCUS:
         HANDLE_WM_SETFOCUS(window, wp, lp, frame_on_set_focus);
         break;
+
     case WM_KILLFOCUS:
         HANDLE_WM_KILLFOCUS(window, wp, lp, frame_on_kill_focus);
         break;
+
     case WM_PAINT:
         HANDLE_WM_PAINT(window, wp, lp, frame_on_paint);
         break;
+
     case WM_KEYDOWN:
         HANDLE_WM_KEYDOWN(window, wp, lp, frame_on_key_down);
         break;
+
     case WM_SYSKEYDOWN:
         HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_on_key_down);
         break;
+
     case WM_CHAR:
         HANDLE_WM_CHAR(window, wp, lp, frame_on_char);
         break;
+
     case WM_TIMER:
         HANDLE_WM_TIMER(window, wp, lp, frame_on_timer);
         break;
+
     case WM_LBUTTONUP:
         HANDLE_WM_LBUTTONUP(window, wp, lp, frame_on_primary_button_up);
         break;
+
     case WM_RBUTTONUP:
         HANDLE_WM_RBUTTONUP(window, wp, lp, frame_on_secondary_button_up);
         break;
+
     case WM_MBUTTONUP:
         HANDLE_WM_MBUTTONUP(window, wp, lp, frame_on_middle_button_up);
         break;
+
     case WM_MOUSEMOVE:
         HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_on_mouse_move);
         break;
+
     case WM_LBUTTONDOWN:
-    case WM_LBUTTONDBLCLK:
         HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_on_primary_button_down);
         break;
+
+    case WM_LBUTTONDBLCLK:
+        HANDLE_WM_LBUTTONDBLCLK(window, wp, lp, frame_on_primary_button_down);
+        break;
+
     case WM_RBUTTONDOWN:
-    case WM_RBUTTONDBLCLK:
         HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_on_secondary_button_down);
         break;
+
+    case WM_RBUTTONDBLCLK:
+        HANDLE_WM_RBUTTONDBLCLK(window, wp, lp, frame_on_secondary_button_down);
+        break;
+
     case WM_MBUTTONDOWN:
-    case WM_MBUTTONDBLCLK:
         HANDLE_WM_MBUTTONDOWN(window, wp, lp, frame_on_middle_button_down);
         break;
+
+    case WM_MBUTTONDBLCLK:
+        HANDLE_WM_MBUTTONDBLCLK(window, wp, lp, frame_on_middle_button_down);
+        break;
+
     default:
         return DefWindowProc(window, message, wp, lp);
     }
@@ -495,7 +515,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
         m_instance = instance;
         m_title = title;
 
-        wc.style = 0;
+        wc.style = CS_DBLCLKS;
         wc.lpfnWndProc = frame_window_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
@@ -639,31 +659,6 @@ static int get_mouse_look_key()
     const int key{+g_look_at_mouse};
     assert(key < 0);
     return -key;
-}
-
-void Frame::on_primary_button_up(HWND window, int x, int y, UINT key_flags)
-{
-    if (+g_look_at_mouse < 0)
-    {
-        add_key_press(get_mouse_look_key());
-    }
-    else
-    {
-        driver_debug_line("left up: " + std::to_string(x) + "," + std::to_string(y) +
-            ", flags: " + key_flags_string(key_flags));
-    }
-}
-
-void Frame::on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
-{
-    driver_debug_line(
-        "right up: " + std::to_string(x) + "," + std::to_string(y) + ", flags: " + key_flags_string(key_flags));
-}
-
-void Frame::on_middle_button_up(HWND window, int x, int y, UINT key_flags)
-{
-    driver_debug_line("middle up: " + std::to_string(x) + "," + std::to_string(y) +
-        ", flags: " + key_flags_string(key_flags));
 }
 
 /*
@@ -1354,6 +1349,7 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
 
 void Frame::on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
+    SetCapture(m_window);
     mouse_notify_primary_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "left down: (double)" : "left down: ") + std::to_string(x) + "," +
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
@@ -1361,15 +1357,49 @@ void Frame::on_primary_button_down(HWND window, BOOL double_click, int x, int y,
 
 void Frame::on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
-    mouse_notify_secondary_down(x, y, static_cast<int>(key_flags));
+    SetCapture(m_window);
+    mouse_notify_secondary_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "right down: (double)" : "right down: ") + std::to_string(x) + "," +
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }
 
 void Frame::on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
+    SetCapture(m_window);
+    mouse_notify_middle_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "middle down: (double)" : "middle down: ") + std::to_string(x) + "," +
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
+}
+
+void Frame::on_primary_button_up(HWND window, int x, int y, UINT key_flags)
+{
+    ReleaseCapture();
+    mouse_notify_primary_up(x, y, static_cast<int>(key_flags));
+    if (+g_look_at_mouse < 0)
+    {
+        add_key_press(get_mouse_look_key());
+    }
+    else
+    {
+        driver_debug_line("left up: " + std::to_string(x) + "," + std::to_string(y) +
+            ", flags: " + key_flags_string(key_flags));
+    }
+}
+
+void Frame::on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
+{
+    ReleaseCapture();
+    mouse_notify_secondary_up(x, y, key_flags);
+    driver_debug_line("right up: " + std::to_string(x) + "," + std::to_string(y) +
+        ", flags: " + key_flags_string(key_flags));
+}
+
+void Frame::on_middle_button_up(HWND window, int x, int y, UINT key_flags)
+{
+    ReleaseCapture();
+    mouse_notify_middle_up(x, y, static_cast<int>(key_flags));
+    driver_debug_line("middle up: " + std::to_string(x) + "," + std::to_string(y) +
+        ", flags: " + key_flags_string(key_flags));
 }
 
 void Frame::create_window(int width, int height)
@@ -1378,8 +1408,8 @@ void Frame::create_window(int width, int height)
     {
         adjust_size(width, height);
         const POINT location{get_saved_frame_position()};
-        m_window = CreateWindow("IdFrame", m_title.c_str(), WS_OVERLAPPEDWINDOW, location.x, location.y, m_nc_width,
-            m_nc_height, nullptr, nullptr, m_instance, nullptr);
+        m_window = CreateWindowA("IdFrame", m_title.c_str(), WS_OVERLAPPEDWINDOW, location.x,
+            location.y, m_nc_width, m_nc_height, nullptr, nullptr, m_instance, nullptr);
         ShowWindow(m_window, SW_SHOWNORMAL);
     }
     else

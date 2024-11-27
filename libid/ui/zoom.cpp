@@ -23,6 +23,7 @@
 #include "ui/find_special_colors.h"
 #include "ui/framain2.h"
 #include "ui/id_keys.h"
+#include "ui/mouse.h"
 #include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
@@ -49,6 +50,7 @@ double g_zoom_box_x{}, g_zoom_box_y{};                          // topleft of zo
 double g_zoom_box_width{}, g_zoom_box_height{};                 // zoombox size
 double g_zoom_box_skew{};                                       // zoombox shape
 bool g_zoom_enabled{};                                          // true when zoom is enabled
+bool g_zoom_box_active{};                                       // true when zoom box is active
 
 static int  check_pan();
 static void fix_work_list();
@@ -124,7 +126,7 @@ void clear_box()
 
 void draw_box(bool draw_it)
 {
-    if (g_zoom_box_width == 0)
+    if (g_zoom_box_width == 0.0)
     {
         // no box to draw
         if (g_box_count != 0)
@@ -998,7 +1000,7 @@ static void fix_work_list()
 
 void clear_zoom_box()
 {
-    g_zoom_box_width = 0;
+    g_zoom_box_width = 0.0;
     draw_box(false);
     reset_zoom_corners();
 }
@@ -1147,7 +1149,7 @@ MainState zoom_box_in(MainContext &/*context*/)
 {
     if (g_zoom_enabled)
     {
-        if (g_zoom_box_width == 0)
+        if (g_zoom_box_width == 0.0)
         {
             // start zoombox
             g_zoom_box_height = 1.0;
@@ -1174,9 +1176,10 @@ MainState zoom_box_out(MainContext &/*context*/)
 {
     if (g_box_count)
     {
-        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999) // end zoombox
+        // end zoombox
+        if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
         {
-            g_zoom_box_width = 0;
+            g_zoom_box_width = 0.0;
         }
         else
         {

@@ -32,7 +32,11 @@ public:
     virtual ~MouseNotification() = default;
 
     virtual void primary_down(bool double_click, int x, int y, int key_flags) = 0;
-    virtual void secondary_down(int x, int y, int key_flags) = 0;
+    virtual void secondary_down(bool double_click, int x, int y, int key_flags) = 0;
+    virtual void middle_down(bool double_click, int i, int y, int key_flags) = 0;
+    virtual void primary_up(int x, int y, int key_flags) = 0;
+    virtual void secondary_up(int x, int y, int key_flags) = 0;
+    virtual void middle_up(int x, int y, int key_flags) = 0;
     virtual void move(int x, int y, int key_flags) = 0;
 };
 
@@ -40,27 +44,52 @@ class NullMouseNotification : public MouseNotification
 {
 public:
     ~NullMouseNotification() override = default;
+
     void primary_down(bool double_click, int x, int y, int key_flags) override
     {
     }
-    void secondary_down(int x, int y, int key_flags) override
+
+    void secondary_down(bool double_click, int x, int y, int key_flags) override
     {
     }
+
+    void middle_down(bool double_click, int x, int y, int key_flags) override
+    {
+    }
+
+    void primary_up(int x, int y, int key_flags) override
+    {
+    }
+
+    void secondary_up(int x, int y, int key_flags) override
+    {
+    }
+
+    void middle_up(int x, int y, int key_flags) override
+    {
+    }
+
     void move(int x, int y, int key_flags) override
     {
     }
 };
 
-int mouse_subscribe(std::shared_ptr<MouseNotification> subscriber);
+using MouseNotificationPtr = std::shared_ptr<MouseNotification>;
+
+int mouse_subscribe(MouseNotificationPtr subscriber);
 void mouse_unsubscribe(int id);
 void mouse_notify_primary_down(bool double_click, int x, int y, int key_flags);
-void mouse_notify_secondary_down(int x, int y, int key_flags);
+void mouse_notify_secondary_down(bool double_click, int x, int y, int key_flags);
+void mouse_notify_middle_down(bool double_click, int x, int y, int key_flags);
+void mouse_notify_primary_up(int x, int y, int key_flags);
+void mouse_notify_secondary_up(int x, int y, int key_flags);
+void mouse_notify_middle_up(int x, int y, int key_flags);
 void mouse_notify_move(int x, int y, int key_flags);
 
 class MouseSubscription
 {
 public:
-    explicit MouseSubscription(std::shared_ptr<MouseNotification> subscriber) :
+    explicit MouseSubscription(MouseNotificationPtr subscriber) :
         m_id(mouse_subscribe(std::move(subscriber)))
     {
     }

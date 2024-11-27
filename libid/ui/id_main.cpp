@@ -323,11 +323,6 @@ static MainState main_image_start(bool &stacked, bool &resume_flag)
         g_calc_status = std::min(g_calc_status, CalcStatus::PARAMS_CHANGED);
     }
 
-    if (g_init_batch == BatchMode::NONE)
-    {
-        g_look_at_mouse = mouse_look_key(ID_KEY_PAGE_UP);
-    }
-
     g_cycle_limit = g_init_cycle_limit;         // default cycle limit
     g_adapter = g_init_mode;                  // set the video adapter up
     g_init_mode = -1;                       // (once)

@@ -279,9 +279,19 @@ static void plot_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
     g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
+static void plot_on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+{
+    g_frame.on_secondary_button_down(window, double_click, x, y, key_flags);
+}
+
 static void plot_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_secondary_button_up(window, x, y, key_flags);
+}
+
+static void plot_on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+{
+    g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
 
 static void plot_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
@@ -307,12 +317,32 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
         HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_on_primary_button_down);
         break;
 
+    case WM_LBUTTONDBLCLK:
+        HANDLE_WM_LBUTTONDBLCLK(window, wp, lp, plot_on_primary_button_down);
+        break;
+
     case WM_LBUTTONUP:
         HANDLE_WM_LBUTTONUP(window, wp, lp, plot_on_primary_button_up);
         break;
 
+    case WM_RBUTTONDOWN:
+        HANDLE_WM_RBUTTONDOWN(window, wp, lp, plot_on_secondary_button_down);
+        break;
+
+    case WM_RBUTTONDBLCLK:
+        HANDLE_WM_RBUTTONDBLCLK(window, wp, lp, plot_on_secondary_button_down);
+        break;
+
     case WM_RBUTTONUP:
         HANDLE_WM_RBUTTONUP(window, wp, lp, plot_on_secondary_button_up);
+        break;
+
+    case WM_MBUTTONDOWN:
+        HANDLE_WM_MBUTTONDOWN(window, wp, lp, plot_on_middle_button_down);
+        break;
+
+    case WM_MBUTTONDBLCLK:
+        HANDLE_WM_MBUTTONDBLCLK(window, wp, lp, plot_on_middle_button_down);
         break;
 
     case WM_MBUTTONUP:
@@ -340,7 +370,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
     int result = GetClassInfoA(m_instance, WINDOW_CLASS, &wc);
     if (!result)
     {
-        wc.style = 0;
+        wc.style = CS_DBLCLKS;
         wc.lpfnWndProc = plot_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;

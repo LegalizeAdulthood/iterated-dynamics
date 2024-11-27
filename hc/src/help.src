@@ -274,6 +274,7 @@ Found a bug?  File an issue on our github project!\
 
 New Features in Version 1.1:
 
+o Mouse support for the zoom box has been restored. (Fixes #14, #152)\
 o Ctrl <+> and <-> can now be used to rotate the zoom box, in addition
   to the numeric keypad <+> and <-> keys.  Some laptops don't have a
   numeric keypad.
@@ -360,8 +361,6 @@ o This initial implementation of perturbation does not support
   periodicity checking and only supports a limited number of inside and
   outside coloring algorithms.  Suspend and resume is not supported with
   perturbation.
-o Navigation is mostly through the keyboard.  Mouse support will be
-  restored in a subsequent release.
 o Sound output does nothing, although all controls can be set through
   parameters or interactive screens.  Sound output will be restored once a
   suitable audio library has been identified.

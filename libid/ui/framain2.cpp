@@ -65,10 +65,220 @@ static int iround(double value)
     return static_cast<int>(std::lround(value));
 }
 
+namespace
+{
+
+class ZoomMouseNotification : public NullMouseNotification
+{
+public:
+    ~ZoomMouseNotification() override = default;
+    void primary_down(bool double_click, int x, int y, int key_flags) override;
+    void secondary_down(bool double_click, int x, int y, int key_flags) override;
+    void middle_down(bool double_click, int x, int y, int key_flags) override;
+    void primary_up(int x, int y, int key_flags) override;
+    void secondary_up(int x, int y, int key_flags) override;
+    void middle_up(int x, int y, int key_flags) override;
+    void move(int x, int y, int key_flags) override;
+
+    // return false if no additional action needed;
+    // return true if main loop should be continued.
+    bool process_zoom(MainContext &context);
+
+private:
+    void button_down(int x, int y, bool &flag);
+    bool process_zoom_primary(MainContext &context);
+    bool process_zoom_secondary(MainContext &context);
+    bool process_zoom_middle(MainContext & context);
+
+    int m_x{-1};
+    int m_y{-1};
+    int m_down_x{};
+    int m_down_y{};
+    bool m_zoom_in_pending{};
+    bool m_zoom_out_pending{};
+    bool m_primary_down{};
+    bool m_secondary_down{};
+    bool m_middle_down{};
+    bool m_position_updated{};
+};
+
+void ZoomMouseNotification::primary_down(bool double_click, int x, int y, int key_flags)
+{
+    if (g_zoom_box_width != 0.0 && double_click)
+    {
+        m_zoom_in_pending = true;
+    }
+    button_down(x, y, m_primary_down);
+}
+
+void ZoomMouseNotification::secondary_down(bool double_click, int x, int y, int key_flags)
+{
+    if (g_zoom_box_width != 0.0 && double_click)
+    {
+        m_zoom_out_pending = true;
+    }
+    button_down(x, y, m_secondary_down);
+}
+
+void ZoomMouseNotification::middle_down(bool double_click, int x, int y, int key_flags)
+{
+    button_down(x, y, m_middle_down);
+}
+
+void ZoomMouseNotification::primary_up(int x, int y, int key_flags)
+{
+    m_primary_down = false;
+}
+
+void ZoomMouseNotification::secondary_up(int x, int y, int key_flags)
+{
+    m_secondary_down = false;
+}
+
+void ZoomMouseNotification::middle_up(int x, int y, int key_flags)
+{
+    m_middle_down = false;
+}
+
+void ZoomMouseNotification::move(int x, int y, int /*key_flags*/)
+{
+    if (m_x != x || m_y != y)
+    {
+        m_x = x;
+        m_y = y;
+        m_position_updated = true;
+    }
+    assert(!m_zoom_in_pending || g_zoom_box_width == 0.0);
+    assert(!m_zoom_out_pending || g_zoom_box_width == 0.0);
+}
+
+bool ZoomMouseNotification::process_zoom_primary(MainContext &context)
+{
+    if (g_zoom_box_width == 0.0)
+    {
+        zoom_box_in(context);
+        draw_box(true);
+        return true;
+    }
+    if (m_position_updated)
+    {
+        const int delta_y = m_y - m_down_y;
+        const int amt{static_cast<int>(g_logical_screen_y_size_dots * 0.02)};
+        const int steps{delta_y / amt};
+        if (steps != 0)
+        {
+            if (steps > 0 && g_zoom_box_width >= 0.95 && g_zoom_box_height >= 0.95)
+            {
+                g_zoom_box_width = 0.0;
+            }
+            else
+            {
+                m_down_y = m_y;
+                resize_box(steps);
+            }
+            draw_box(true);
+        }
+        return false;
+    }
+    return false;
+}
+
+bool ZoomMouseNotification::process_zoom_secondary(MainContext &/*context*/)
+{
+    if (g_zoom_box_width == 0.0)
+    {
+        return false;
+    }
+    if (m_position_updated)
+    {
+        const int delta_x = m_x - m_down_x;
+        const int amt{static_cast<int>(g_logical_screen_x_size_dots * 0.02)};
+        const int steps{delta_x / amt};
+        if (steps != 0)
+        {
+            m_down_x = m_x;
+            g_zoom_box_rotation += steps;
+            draw_box(true);
+        }
+        return false;
+    }
+
+    return false;
+}
+
+bool ZoomMouseNotification::process_zoom_middle(MainContext &/*context*/)
+{
+    if (g_zoom_box_width == 0.0)
+    {
+        return false;
+    }
+    if (m_position_updated)
+    {
+        const int delta_y = m_y - m_down_y;
+        m_down_y = m_y;
+        change_box(0, 2 * delta_y);
+        draw_box(true);
+        return false;
+    }
+
+    return false;
+}
+
+bool ZoomMouseNotification::process_zoom(MainContext &context)
+{
+    if (m_zoom_in_pending)
+    {
+        request_zoom_in(context);
+        m_zoom_in_pending = false;
+        return true;
+    }
+    if (m_zoom_out_pending)
+    {
+        request_zoom_out(context);
+        m_zoom_out_pending = false;
+        return true;
+    }
+    if (m_primary_down)
+    {
+        return process_zoom_primary(context);
+    }
+    if (m_secondary_down)
+    {
+        return process_zoom_secondary(context);
+    }
+    if (m_middle_down)
+    {
+        return process_zoom_middle(context);
+    }
+    if (m_position_updated)
+    {
+        if (g_box_count)
+        {
+            g_zoom_box_x = (double) m_x / g_logical_screen_x_size_dots - g_zoom_box_width / 2.0;
+            g_zoom_box_y = (double) m_y / g_logical_screen_y_size_dots - g_zoom_box_height / 2.0;
+            draw_box(true);
+        }
+        m_position_updated = false;
+        return false;
+    }
+    return false;
+}
+
+void ZoomMouseNotification::button_down(int x, int y, bool &flag)
+{
+    flag = true;
+    m_down_x = x;
+    m_down_y = y;
+}
+
+} // namespace
+
 MainState big_while_loop(MainContext &context)
 {
     int     i = 0;                           // temporary loop counters
     MainState mms_value;
+    auto mouse{std::make_shared<ZoomMouseNotification>()};
+    MouseSubscription subscription{mouse};
 
     driver_check_memory();
     context.from_mandel = false;            // if julia entered from mandel
@@ -246,10 +456,6 @@ MainState big_while_loop(MainContext &context)
         }
         // assume we save next time (except jb)
         g_save_dac = (g_save_dac == 0) ? 2 : 1;
-        if (g_init_batch == BatchMode::NONE)
-        {
-            g_look_at_mouse = mouse_look_key(ID_KEY_PAGE_UP); // mouse left button == pgup
-        }
 
         if (g_show_file == 0)
         {
@@ -539,8 +745,6 @@ resumeloop:                             // return here on failed overlays
             }
             else if (g_init_batch == BatchMode::NONE)      // not batch mode
             {
-                g_look_at_mouse =
-                    g_zoom_box_width == 0 ? mouse_look_key(ID_KEY_PAGE_UP) : MouseLook::POSITION;
                 if (g_calc_status == CalcStatus::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     context.key = ID_KEY_ENTER;  // no visible reason to stop, continue
@@ -553,8 +757,21 @@ resumeloop:                             // return here on failed overlays
                     }
                     else
                     {
-                        driver_wait_key_pressed(false);
-                        context.key = driver_get_key();
+                        bool changed{};
+                        while (!changed)
+                        {
+                            driver_wait_key_pressed(true);
+                            if (driver_key_pressed())
+                            {
+                                context.key = driver_get_key();
+                                break;
+                            }
+                            changed = mouse->process_zoom(context);
+                        }
+                        if (changed)
+                        {
+                            continue;
+                        }
                     }
                     if (context.key == ID_KEY_ESC || context.key == 'm' || context.key == 'M')
                     {

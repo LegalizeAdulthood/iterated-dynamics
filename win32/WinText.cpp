@@ -163,7 +163,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     bool return_value = GetClassInfoA(instance, WINDOW_CLASS, &wc) != 0;
     if (!return_value)
     {
-        wc.style = 0;
+        wc.style = CS_DBLCLKS;
         wc.lpfnWndProc = wintext_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
@@ -268,7 +268,7 @@ int WinText::text_on()
     s_me = this;
     m_window = CreateWindowA(WINDOW_CLASS,                  //
         m_title,                                              //
-        nullptr == m_parent ? WS_OVERLAPPEDWINDOW : WS_CHILD, //
+        m_parent == nullptr ? WS_OVERLAPPEDWINDOW : WS_CHILD, //
         CW_USEDEFAULT,                                        //
         CW_USEDEFAULT,                                        //
         m_max_width,                                          //
