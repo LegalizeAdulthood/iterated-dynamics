@@ -85,56 +85,51 @@ struct History
     int      link;
 };
 
+using PrintDocMessageFunc = bool(int pnum, int num_page);
+
 struct PrintDocInfo
 {
-    int       cnum;          // current CONTENT num
-    int       tnum;          // current topic num
-
-    long      content_pos;   // current CONTENT item offset in file
-    int       num_page;      // total number of pages in document
-
-    int       num_contents,  // total number of CONTENT entries
-              num_topic;     // number of topics in current CONTENT
-
-    int       topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
-
-    char buffer[PRINT_BUFFER_SIZE];        // text buffer
-
-    char      id[81];        // buffer to store id in
-    char      title[81];     // buffer to store title in
-
-    bool (*msg_func)(int pnum, int num_page);
-
-    std::FILE     *file;          // file to sent output to
-    int       margin;        // indent text by this much
-    bool      start_of_line; // are we at the beginning of a line?
-    int       spaces;        // number of spaces in a row
+    int cnum;                         // current CONTENT num
+    int tnum;                         // current topic num
+    long content_pos;                 // current CONTENT item offset in file
+    int num_page;                     // total number of pages in document
+    int num_contents,                 // total number of CONTENT entries
+        num_topic;                    // number of topics in current CONTENT
+    int topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
+    char buffer[PRINT_BUFFER_SIZE];   // text buffer
+    char id[81];                      // buffer to store id in
+    char title[81];                   // buffer to store title in
+    PrintDocMessageFunc *msg_func;    //
+    std::FILE *file;                  // file to sent output to
+    int margin;                       // indent text by this much
+    bool start_of_line;               // are we at the beginning of a line?
+    int spaces;                       // number of spaces in a row
 };
 
 } // namespace
 
-static std::FILE *help_file{};         // help file handle
-static long base_off{};                // offset to help info in help file
-static int max_links{};                // max # of links in any page
-static int max_pages{};                // max # of pages in any topic
-static int num_label{};                // number of labels
-static int num_topic{};                // number of topics
-static int curr_hist{};                // current pos in history
-                                       // these items setup in init_help...
-static std::vector<long> topic_offset; // 4*num_topic
-static std::vector<Label> label;       // 4*num_label
-static std::vector<History> hist;         // 6*MAX_HIST
-                                       // these items used only while help is active...
-static std::vector<char> g_buffer;     // MAX_PAGE_SIZE
-static std::vector<Link> link_table;   // 10*max_links
-static std::vector<Page> page_table;   // 4*max_pages
+static std::FILE *s_help_file{};         // help file handle
+static long s_base_off{};                // offset to help info in help file
+static int s_max_links{};                // max # of links in any page
+static int s_max_pages{};                // max # of pages in any topic
+static int s_num_label{};                // number of labels
+static int s_num_topic{};                // number of topics
+static int s_curr_hist{};                // current pos in history
+                                         // these items setup in init_help...
+static std::vector<long> s_topic_offset; // 4*num_topic
+static std::vector<Label> s_label;       // 4*num_label
+static std::vector<History> s_hist;      // 6*MAX_HIST
+                                         // these items used only while help is active...
+static std::vector<char> s_buffer;       // MAX_PAGE_SIZE
+static std::vector<Link> s_link_table;   // 10*max_links
+static std::vector<Page> s_page_table;   // 4*max_pages
 
 // forward declarations
 static bool print_doc_msg_func(int pnum, int num_pages);
 
 static void help_seek(long pos)
 {
-    std::fseek(help_file, base_off + pos, SEEK_SET);
+    std::fseek(s_help_file, s_base_off + pos, SEEK_SET);
 }
 
 static void display_cc(int row, int col, int color, int ch)
@@ -630,20 +625,20 @@ static int help_topic(History *curr, History *next, int flags)
     int       action;
     BYTE ch;
 
-    where     = topic_offset[curr->topic_num]+sizeof(int); // to skip flags
+    where     = s_topic_offset[curr->topic_num]+sizeof(int); // to skip flags
     curr_link = curr->link;
 
     help_seek(where);
 
-    freader(&num_pages, sizeof(int), 1, help_file);
-    assert(num_pages > 0 && num_pages <= max_pages);
+    freader(&num_pages, sizeof(int), 1, s_help_file);
+    assert(num_pages > 0 && num_pages <= s_max_pages);
 
-    freader(&page_table[0], 3*sizeof(int), num_pages, help_file);
+    freader(&s_page_table[0], 3*sizeof(int), num_pages, s_help_file);
 
-    freader(&ch, sizeof(char), 1, help_file);
+    freader(&ch, sizeof(char), 1, s_help_file);
     len = ch;
     assert(len < 81);
-    freader(title, sizeof(char), len, help_file);
+    freader(title, sizeof(char), len, s_help_file);
     title[len] = '\0';
 
     where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
@@ -651,8 +646,8 @@ static int help_topic(History *curr, History *next, int flags)
     int page;
     for (page = 0; page < num_pages; page++)
     {
-        if (curr->topic_off >= page_table[page].offset
-            && curr->topic_off <  page_table[page].offset+page_table[page].len)
+        if (curr->topic_off >= s_page_table[page].offset
+            && curr->topic_off <  s_page_table[page].offset+s_page_table[page].len)
         {
             break;
         }
@@ -667,13 +662,13 @@ static int help_topic(History *curr, History *next, int flags)
     {
         if (draw_page)
         {
-            help_seek(where+page_table[page].offset);
-            g_buffer.resize(page_table[page].len);
-            freader(g_buffer.data(), sizeof(char), page_table[page].len, help_file);
+            help_seek(where+s_page_table[page].offset);
+            s_buffer.resize(s_page_table[page].len);
+            freader(s_buffer.data(), sizeof(char), s_page_table[page].len, s_help_file);
 
             num_link = 0;
-            display_page(title, &g_buffer[0], page_table[page].len, page, num_pages,
-                         page_table[page].margin, &num_link, &link_table[0]);
+            display_page(title, &s_buffer[0], s_page_table[page].len, page, num_pages,
+                         s_page_table[page].margin, &num_link, &s_link_table[0]);
 
             if (draw_page == 2)
             {
@@ -690,7 +685,7 @@ static int help_topic(History *curr, History *next, int flags)
 
             if (num_link > 0)
             {
-                color_link(&link_table[curr_link], C_HELP_CURLINK);
+                color_link(&s_link_table[curr_link], C_HELP_CURLINK);
             }
 
             draw_page = 0;
@@ -727,7 +722,7 @@ static int help_topic(History *curr, History *next, int flags)
             }
             else
             {
-                do_move_link(&link_table[0], num_link, &curr_link, nullptr, 0);
+                do_move_link(&s_link_table[0], num_link, &curr_link, nullptr, 0);
             }
             break;
 
@@ -739,12 +734,12 @@ static int help_topic(History *curr, History *next, int flags)
             }
             else
             {
-                do_move_link(&link_table[0], num_link, &curr_link, nullptr, num_link-1);
+                do_move_link(&s_link_table[0], num_link, &curr_link, nullptr, num_link-1);
             }
             break;
 
         case ID_KEY_TAB:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key)
+            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_key, key)
                 && page < num_pages-1)
             {
                 ++page;
@@ -753,7 +748,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_SHF_TAB:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key)
+            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_key, key)
                 && page > 0)
             {
                 --page;
@@ -762,7 +757,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_DOWN_ARROW:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_up_down, 0)
+            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_up_down, 0)
                 && page < num_pages-1)
             {
                 ++page;
@@ -771,7 +766,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_UP_ARROW:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_up_down, 1)
+            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_up_down, 1)
                 && page > 0)
             {
                 --page;
@@ -780,11 +775,11 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_LEFT_ARROW:
-            do_move_link(&link_table[0], num_link, &curr_link, find_link_left_right, 1);
+            do_move_link(&s_link_table[0], num_link, &curr_link, find_link_left_right, 1);
             break;
 
         case ID_KEY_RIGHT_ARROW:
-            do_move_link(&link_table[0], num_link, &curr_link, find_link_left_right, 0);
+            do_move_link(&s_link_table[0], num_link, &curr_link, find_link_left_right, 0);
             break;
 
         case ID_KEY_ESC:         // exit help
@@ -810,8 +805,8 @@ static int help_topic(History *curr, History *next, int flags)
         case ID_KEY_ENTER_2:
             if (num_link > 0)
             {
-                next->topic_num = link_table[curr_link].topic_num;
-                next->topic_off = link_table[curr_link].topic_off;
+                next->topic_num = s_link_table[curr_link].topic_num;
+                next->topic_off = s_link_table[curr_link].topic_off;
                 action = ACTION_CALL;
             }
             break;
@@ -819,7 +814,7 @@ static int help_topic(History *curr, History *next, int flags)
     }
     while (action == -1);
 
-    curr->topic_off = page_table[page].offset;
+    curr->topic_off = s_page_table[page].offset;
     curr->link      = curr_link;
 
     return action;
@@ -838,7 +833,7 @@ int help()
         return 0;
     }
 
-    if (help_file == nullptr)
+    if (s_help_file == nullptr)
     {
         driver_buzzer(buzzer_codes::PROBLEM);
         return 0;
@@ -847,9 +842,9 @@ int help()
     bool resized = false;
     try
     {
-        g_buffer.resize(MAX_PAGE_SIZE);
-        link_table.resize(max_links);
-        page_table.resize(max_pages);
+        s_buffer.resize(MAX_PAGE_SIZE);
+        s_link_table.resize(s_max_links);
+        s_page_table.resize(s_max_pages);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -867,8 +862,8 @@ int help()
 
     if (g_help_mode >= help_labels::HELP_INDEX)
     {
-        next.topic_num = label[static_cast<int>(g_help_mode)].topic_num;
-        next.topic_off = label[static_cast<int>(g_help_mode)].topic_off;
+        next.topic_num = s_label[static_cast<int>(g_help_mode)].topic_num;
+        next.topic_off = s_label[static_cast<int>(g_help_mode)].topic_off;
     }
     else
     {
@@ -878,7 +873,7 @@ int help()
 
     const help_labels old_help_mode = g_help_mode;
 
-    if (curr_hist <= 0)
+    if (s_curr_hist <= 0)
     {
         action = ACTION_CALL;  // make sure it isn't ACTION_PREV!
     }
@@ -888,16 +883,16 @@ int help()
         switch (action)
         {
         case ACTION_PREV2:
-            if (curr_hist > 0)
+            if (s_curr_hist > 0)
             {
-                curr = hist[--curr_hist];
+                curr = s_hist[--s_curr_hist];
             }
             // fall-through
 
         case ACTION_PREV:
-            if (curr_hist > 0)
+            if (s_curr_hist > 0)
             {
-                curr = hist[--curr_hist];
+                curr = s_hist[--s_curr_hist];
             }
             break;
 
@@ -905,8 +900,8 @@ int help()
             break;
 
         case ACTION_INDEX:
-            next.topic_num = label[static_cast<int>(help_labels::HELP_INDEX)].topic_num;
-            next.topic_off = label[static_cast<int>(help_labels::HELP_INDEX)].topic_off;
+            next.topic_num = s_label[static_cast<int>(help_labels::HELP_INDEX)].topic_num;
+            next.topic_off = s_label[static_cast<int>(help_labels::HELP_INDEX)].topic_off;
             // fall-through
 
         case ACTION_CALL:
@@ -916,11 +911,11 @@ int help()
         } // switch
 
         flags = 0;
-        if (curr.topic_num == label[static_cast<int>(help_labels::HELP_INDEX)].topic_num)
+        if (curr.topic_num == s_label[static_cast<int>(help_labels::HELP_INDEX)].topic_num)
         {
             flags |= F_INDEX;
         }
-        if (curr_hist > 0)
+        if (s_curr_hist > 0)
         {
             flags |= F_HIST;
         }
@@ -964,16 +959,16 @@ int help()
 
         if (action != ACTION_PREV && action != ACTION_PREV2)
         {
-            if (curr_hist >= MAX_HIST)
+            if (s_curr_hist >= MAX_HIST)
             {
                 for (int ctr = 0; ctr < MAX_HIST-1; ctr++)
                 {
-                    hist[ctr] = hist[ctr+1];
+                    s_hist[ctr] = s_hist[ctr+1];
                 }
 
-                curr_hist = MAX_HIST-1;
+                s_curr_hist = MAX_HIST-1;
             }
-            hist[curr_hist++] = curr;
+            s_hist[s_curr_hist++] = curr;
         }
     }
     while (action != ACTION_QUIT);
@@ -1020,19 +1015,19 @@ static int read_help_topic(int topic, int off, int len, void *buf)
 
         curr_topic = topic;
 
-        curr_base = topic_offset[topic];
+        curr_base = s_topic_offset[topic];
 
         curr_base += sizeof(int);                 // skip flags
 
         help_seek(curr_base);
-        freader(&t, sizeof(int), 1, help_file); // read num_pages
+        freader(&t, sizeof(int), 1, s_help_file); // read num_pages
         curr_base += sizeof(int) + t*3*sizeof(int); // skip page info
 
         if (t > 0)
         {
             help_seek(curr_base);
         }
-        freader(&ch, sizeof(char), 1, help_file);   // read title_len
+        freader(&ch, sizeof(char), 1, s_help_file);   // read title_len
         t = ch;
         curr_base += 1 + t;                       // skip title
 
@@ -1040,7 +1035,7 @@ static int read_help_topic(int topic, int off, int len, void *buf)
         {
             help_seek(curr_base);
         }
-        freader(&curr_len, sizeof(int), 1, help_file); // read topic len
+        freader(&curr_len, sizeof(int), 1, s_help_file); // read topic len
         curr_base += sizeof(int);
     }
 
@@ -1049,7 +1044,7 @@ static int read_help_topic(int topic, int off, int len, void *buf)
     if (read_len > 0)
     {
         help_seek(curr_base + off);
-        freader(buf, sizeof(char), read_len, help_file);
+        freader(buf, sizeof(char), read_len, s_help_file);
     }
 
     return curr_len - (off+len);
@@ -1062,8 +1057,8 @@ static int read_help_topic(int topic, int off, int len, void *buf)
  */
 int read_help_topic(help_labels label_num, int off, int len, void *buf)
 {
-    return read_help_topic(label[static_cast<int>(label_num)].topic_num,
-        label[static_cast<int>(label_num)].topic_off + off, len, buf);
+    return read_help_topic(s_label[static_cast<int>(label_num)].topic_num,
+        s_label[static_cast<int>(label_num)].topic_off + off, len, buf);
 }
 
 static void printer_ch(PrintDocInfo *info, int c, int n)
@@ -1134,29 +1129,29 @@ static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, voi
 
         help_seek(info->content_pos);
 
-        freader(&t, sizeof(int), 1, help_file);      // read flags
+        freader(&t, sizeof(int), 1, s_help_file);      // read flags
         info->content_pos += sizeof(int);
         pd->new_page = (t & 1) != 0;
 
-        freader(&ch, sizeof(char), 1, help_file);       // read id len
+        freader(&ch, sizeof(char), 1, s_help_file);       // read id len
 
         t = ch;
         assert(t < 80);
-        freader(info->id, sizeof(char), t, help_file);  // read the id
+        freader(info->id, sizeof(char), t, s_help_file);  // read the id
         info->content_pos += 1 + t;
         info->id[t] = '\0';
 
-        freader(&ch, sizeof(char), 1, help_file);       // read title len
+        freader(&ch, sizeof(char), 1, s_help_file);       // read title len
         t = ch;
         assert(t < 80);
-        freader(info->title, sizeof(char), t, help_file); // read the title
+        freader(info->title, sizeof(char), t, s_help_file); // read the title
         info->content_pos += 1 + t;
         info->title[t] = '\0';
 
-        freader(&ch, sizeof(char), 1, help_file);       // read num_topic
+        freader(&ch, sizeof(char), 1, s_help_file);       // read num_topic
         t = ch;
         assert(t < MAX_NUM_TOPIC_SEC);
-        freader(info->topic_num, sizeof(int), t, help_file);  // read topic_num[]
+        freader(info->topic_num, sizeof(int), t, s_help_file);  // read topic_num[]
         info->num_topic = t;
         info->content_pos += 1 + t*sizeof(int);
 
@@ -1344,12 +1339,12 @@ void print_document(char const *outfname, bool (*msg_func)(int, int))
     char const *msg = nullptr;
 
     help_seek(16L);
-    freader(&info.num_contents, sizeof(int), 1, help_file);
-    freader(&info.num_page, sizeof(int), 1, help_file);
+    freader(&info.num_contents, sizeof(int), 1, s_help_file);
+    freader(&info.num_page, sizeof(int), 1, s_help_file);
 
     info.tnum = -1;
     info.cnum = info.tnum;
-    info.content_pos = 6*sizeof(int) + num_topic*sizeof(long) + num_label*2*sizeof(int);
+    info.content_pos = 6*sizeof(int) + s_num_topic*sizeof(long) + s_num_label*2*sizeof(int);
     info.msg_func = msg_func;
 
     if (msg_func != nullptr)
@@ -1388,58 +1383,58 @@ int init_help()
 {
     HelpSignature hs{};
 
-    help_file = nullptr;
+    s_help_file = nullptr;
 
     const std::string path{find_file("id.hlp")};
     if (!path.empty())
     {
-        help_file = std::fopen(path.c_str(), "rb");
-        if (help_file != nullptr)
+        s_help_file = std::fopen(path.c_str(), "rb");
+        if (s_help_file != nullptr)
         {
-            freader(&hs, sizeof(HelpSignature), 1, help_file);
+            freader(&hs, sizeof(HelpSignature), 1, s_help_file);
 
             if (hs.sig != HELP_SIG)
             {
-                std::fclose(help_file);
+                std::fclose(s_help_file);
                 stop_msg(stopmsg_flags::NO_STACK, "Invalid help signature in id.hlp!\n");
             }
             else if (hs.version != IDHELP_VERSION)
             {
-                std::fclose(help_file);
+                std::fclose(s_help_file);
                 stop_msg(stopmsg_flags::NO_STACK, "Wrong help version in id.hlp!\n");
             }
             else
             {
-                base_off = sizeof(HelpSignature);
+                s_base_off = sizeof(HelpSignature);
             }
         }
     }
 
-    if (help_file == nullptr)         // Can't find the help files anywhere!
+    if (s_help_file == nullptr)         // Can't find the help files anywhere!
     {
         stop_msg(stopmsg_flags::NO_STACK, "Couldn't find id.hlp; set environment variable FRACTDIR to proper directory.\n");
     }
 
     help_seek(0L);
 
-    freader(&max_pages, sizeof(int), 1, help_file);
-    freader(&max_links, sizeof(int), 1, help_file);
-    freader(&num_topic, sizeof(int), 1, help_file);
-    freader(&num_label, sizeof(int), 1, help_file);
+    freader(&s_max_pages, sizeof(int), 1, s_help_file);
+    freader(&s_max_links, sizeof(int), 1, s_help_file);
+    freader(&s_num_topic, sizeof(int), 1, s_help_file);
+    freader(&s_num_label, sizeof(int), 1, s_help_file);
     help_seek(6L*sizeof(int));  // skip num_contents and num_doc_pages
 
-    assert(max_pages > 0);
-    assert(max_links >= 0);
-    assert(num_topic > 0);
-    assert(num_label > 0);
+    assert(s_max_pages > 0);
+    assert(s_max_links >= 0);
+    assert(s_num_topic > 0);
+    assert(s_num_label > 0);
 
     // allocate all three arrays
     bool resized = false;
     try
     {
-        topic_offset.resize(num_topic);
-        label.resize(num_label);
-        hist.resize(MAX_HIST);
+        s_topic_offset.resize(s_num_topic);
+        s_label.resize(s_num_label);
+        s_hist.resize(MAX_HIST);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -1448,16 +1443,16 @@ int init_help()
 
     if (!resized)
     {
-        std::fclose(help_file);
-        help_file = nullptr;
+        std::fclose(s_help_file);
+        s_help_file = nullptr;
         stop_msg(stopmsg_flags::NO_STACK, "Not enough memory for help system!\n");
 
         return -2;
     }
 
     // read in the tables...
-    freader(&topic_offset[0], sizeof(long), num_topic, help_file);
-    freader(&label[0], sizeof(Label), num_label, help_file);
+    freader(&s_topic_offset[0], sizeof(long), s_num_topic, s_help_file);
+    freader(&s_label[0], sizeof(Label), s_num_label, s_help_file);
 
     // finished!
 
@@ -1466,9 +1461,9 @@ int init_help()
 
 void end_help()
 {
-    if (help_file != nullptr)
+    if (s_help_file != nullptr)
     {
-        std::fclose(help_file);
-        help_file = nullptr;
+        std::fclose(s_help_file);
+        s_help_file = nullptr;
     }
 }
