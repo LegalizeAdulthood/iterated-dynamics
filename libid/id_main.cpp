@@ -373,10 +373,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         {
             break;                                 // got a video mode now
         }
-        if ('A' <= kbdchar && kbdchar <= 'Z')
-        {
-            kbdchar = std::tolower(kbdchar);
-        }
+        kbdchar = std::tolower(kbdchar);
         if (kbdchar == 'd')
         {
             // shell to DOS
