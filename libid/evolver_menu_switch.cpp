@@ -240,7 +240,7 @@ static main_state evolver_zoom_in()
     return main_state::NOTHING;
 }
 
-static void evolver_zoom_out()
+static main_state evolver_zoom_out()
 {
     if (g_box_count)
     {
@@ -259,6 +259,7 @@ static void evolver_zoom_out()
             resize_box(key_count(ID_KEY_PAGE_DOWN));
         }
     }
+    return main_state::NOTHING;
 }
 
 static void halve_mutation_params(bool &kbd_more)
@@ -421,8 +422,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return evolver_zoom_in();
         
     case ID_KEY_PAGE_DOWN:              // page down
-        evolver_zoom_out();
-        break;
+        return evolver_zoom_out();
         
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         return zoom_box_increase_rotation(kbd_char, from_mandel, kbd_more, stacked);
