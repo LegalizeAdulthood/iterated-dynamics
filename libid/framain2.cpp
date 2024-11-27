@@ -606,6 +606,7 @@ resumeloop:                             // return here on failed overlays
             }
             else          // batch mode, fake next keystroke
             {
+                // clang-format off
                 // init_batch == FINISH_CALC_BEFORE_SAVE        flag to finish calc before save
                 // init_batch == NONE                           not in batch mode
                 // init_batch == NORMAL                         normal batch mode
@@ -613,6 +614,7 @@ resumeloop:                             // return here on failed overlays
                 // init_batch == BAILOUT_ERROR_NO_SAVE          bailout with errorlevel == 2, error occurred, no save
                 // init_batch == BAILOUT_INTERRUPTED_TRY_SAVE   bailout with errorlevel == 1, interrupted, try to save
                 // init_batch == BAILOUT_INTERRUPTED_SAVE       was BAILOUT_INTERRUPTED_TRY_SAVE, now do a save
+                // clang-format on
 
                 if (g_init_batch == batch_modes::FINISH_CALC_BEFORE_SAVE)
                 {
