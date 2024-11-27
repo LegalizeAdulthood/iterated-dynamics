@@ -22,11 +22,12 @@
 #include "value_saver.h"
 #include "zoom.h"
 
-static void save_evolver_image()
+static main_state save_evolver_image()
 {
     if (driver_diskp() && g_disk_targa)
     {
-        return; // disk video and targa, nothing to save
+        // disk video and targa, nothing to save
+        return main_state::NOTHING;
     }
 
     GeneBase gene[NUM_GENES];
@@ -48,6 +49,7 @@ static void save_evolver_image()
         fiddle_params(gene, unspiral_map());
     }
     copy_genes_to_bank(gene);
+    return main_state::CONTINUE;
 }
 
 static main_state prompt_evolver_options(int key, bool &kbd_more)
@@ -372,8 +374,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return color_editing(kbd_char, from_mandel, kbd_more, stacked);
         
     case 's':                    // save-to-disk
-        save_evolver_image();
-        return main_state::CONTINUE;
+        return save_evolver_image();
 
     case 'r':                    // restore-from
         return restore_from_image(kbd_char, from_mandel, kbd_more, stacked);
