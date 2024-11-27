@@ -361,11 +361,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
-        if (const main_state result = get_history(kbd_char); result != main_state::NOTHING)
-        {
-            return result;
-        }
-        break;
+        return get_history(kbd_char);
         
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
