@@ -23,6 +23,8 @@
 #include "video_mode.h"
 #include "zoom.h"
 
+#include <cstring>
+
 main_state request_fractal_type(int &, bool &from_mandel, bool &, bool &)
 {
     g_julibrot = false;
