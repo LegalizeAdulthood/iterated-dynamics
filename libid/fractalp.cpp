@@ -2316,8 +2316,8 @@ FractalSpecific g_fractal_specific[] =
         -2.5F, 1.5F, -1.2F, 1.8F,
         0, FractalType::BURNING_SHIP, FractalType::NOFRACTAL, FractalType::BURNING_SHIP, SymmetryType::NONE,
         burning_ship_fp_fractal, other_mandel_fp_per_pixel, mandel_setup, standard_fractal,
-        STD_BAIL_OUT
-    },
+        STD_BAIL_OUT,
+        burning_ship_ref_pt, burning_ship_ref_pt_bf, burning_ship_perturb},
 
     {
         nullptr,            // marks the END of the list

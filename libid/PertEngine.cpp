@@ -4,6 +4,9 @@
 //
 // Thanks to Claude Heiland-Allen
 // <https://fractalforums.org/programming/11/perturbation-code-for-cubic-and-higher-order-polynomials/2783>
+//
+// Much of perturbation code is based on the work of Shirom Makkad
+// https://github.com/ShiromMakkad/MandelbrotPerturbation
 
 #include "PertEngine.h"
 

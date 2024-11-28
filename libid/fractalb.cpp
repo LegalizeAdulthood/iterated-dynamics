@@ -785,6 +785,7 @@ bool mandel_bf_setup()
     switch (g_fractal_type)
     {
     case FractalType::MANDELFP:
+    case FractalType::BURNING_SHIP:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             return mandel_perturbation_setup();
