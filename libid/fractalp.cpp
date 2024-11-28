@@ -2306,9 +2306,9 @@ FractalSpecific g_fractal_specific[] =
     },
     {
         "burningship",
-        {s_p1_real, s_p1_imag, "degree", ""},
+        {s_p1_real, s_p1_imag, "degree (2-5)", ""},
         {0, 0, 2, 0},
-        help_labels::HT_MANDEL, help_labels::HF_MANDEL, fractal_flags::BAILTEST|fractal_flags::PERTURB|fractal_flags::BF_MATH,
+        help_labels::HT_BURNINGSHIP, help_labels::HF_BURNINGSHIP, fractal_flags::BAILTEST|fractal_flags::PERTURB|fractal_flags::BF_MATH,
         -2.5F, 1.5F, -1.2F, 1.8F,
         0, fractal_type::BURNINGSHIP, fractal_type::NOFRACTAL, fractal_type::BURNINGSHIP, symmetry_type::NONE,
         burning_ship_fp_fractal, other_mandel_fp_per_pixel, mandel_setup, standard_fractal,
