@@ -566,6 +566,7 @@ int mandel_fp_per_pixel()
 {
     // floating point mandelbrot
     // mandelfp
+    // burning ship
 
     if (g_invert != 0)
     {
@@ -578,6 +579,10 @@ int mandel_fp_per_pixel()
     }
     switch (g_fractal_type)
     {
+    case FractalType::BURNING_SHIP: // a bunch of mandelbrot derivatives
+        g_old_z.x = 0.0;
+        g_old_z.y = 0.0;
+        break;
     case FractalType::MAGNET2M:
         float_pre_calc_magnet2();
     case FractalType::MAGNET1M:
@@ -727,4 +732,30 @@ int other_julia_fp_per_pixel()
         g_old_z.y = g_dy_pixel();
     }
     return 0;
+}
+
+int burning_ship_fp_fractal()
+{
+    DComplex z, q;
+    double real_imag;
+    int degree = (int) g_params[2];
+    q.x = g_init.x;
+    q.y = g_init.y;
+    if (degree == 2) // Burning Ship
+    {
+        g_temp_sqr_x = sqr(g_old_z.x);
+        g_temp_sqr_y = sqr(g_old_z.y);
+        real_imag = fabs(g_old_z.x * g_old_z.y);
+        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;
+        g_new_z.y = real_imag + real_imag - q.y;
+    }
+    else if (degree > 2) // Burning Ship to higher power
+    {
+        z.x = fabs(g_old_z.x);
+        z.y = -fabs(g_old_z.y);
+        cpower(&z, degree, &z);
+        g_new_z.x = z.x + q.x;
+        g_new_z.y = z.y + q.y;
+    }
+    return g_bailout_float();
 }
