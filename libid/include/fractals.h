@@ -43,6 +43,7 @@ int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
 int complex_div(DComplex numerator, DComplex denominator, DComplex *pout);
 int julia_fractal();
 int julia_fp_fractal();
+int burning_ship_fp_fractal();
 int long_cmplx_z_power_fractal();
 int float_cmplx_z_power_fractal();
 int long_julia_per_pixel();
