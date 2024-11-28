@@ -119,6 +119,15 @@ SUMMARY OF FRACTAL TYPES
     Three parameters: Filter Cycles, Seed Population, and Beta.
 
 ~OnlineFF
+{=HT_BURNING_SHIP burning-ship}
+~Label=HF_BURNING_SHIP
+    Classic Mandelbrot Derivative fractal.
+      z(0) = c = pixel;
+      real(tmp) = sqr(real(z(n))) - sqr(imag(z(n)))
+      imag(tmp) = abs(real(z(n)) * imag(z(n))) * -2.0
+      z(n+1) = tmp + c.
+      Three parameters: perturbations of z(0) and degree.
+
 {=HT_CELLULAR cellular}
 ~Label=HF_CELLULAR
     One-dimensional cellular automata or line automata.  The type of CA
@@ -2339,6 +2348,14 @@ author of "A Hypercomplex Calculus with Applications to Relativity"
 (ISBN 0-9623837-0-8).
 
 See also {Quaternion} and {Quaternion and Hypercomplex Algebra}
+;
+;
+~Topic=Burning Ship, Label=HT_BURNING_SHIP
+(type=burning-ship)
+
+This fractal is a derivative of the classic Mandelbrot fractal with a twist.
+Some parts use absolute values in the equations and this gives an amazing
+angular quality to the fractal.
 ;
 ;
 ~Topic=Cellular Automata, Label=HT_CELLULAR

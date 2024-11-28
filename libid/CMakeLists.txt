@@ -46,6 +46,7 @@ add_library(libid
     ant.cpp include/ant.h
     barnsley.cpp include/barnsley.h
     bifurcation.cpp include/bifurcation.h
+    burning_ship.cpp include/burning_ship.h
     cellular.cpp include/cellular.h
     circle_pattern.cpp include/circle_pattern.h
     diffusion.cpp include/diffusion.h
@@ -308,6 +309,7 @@ source_group("Header Files/fractal specific" FILES
     include/ant.h
     include/barnsley.h
     include/bifurcation.h
+    include/burning_ship.h
     include/cellular.h
     include/circle_pattern.h
     include/diffusion.h
@@ -347,6 +349,7 @@ source_group("Source Files/fractal specific" FILES
     ant.cpp
     barnsley.cpp
     bifurcation.cpp
+    burning_ship.cpp
     cellular.cpp
     circle_pattern.cpp
     diffusion.cpp

@@ -11,6 +11,7 @@
 #include "ant.h"
 #include "barnsley.h"
 #include "bifurcation.h"
+#include "burning_ship.h"
 #include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"
@@ -2309,11 +2310,11 @@ FractalSpecific g_fractal_specific[] =
         STD_BAIL_OUT
     },
     {
-        "burningship",
-        {s_p1_real, s_p1_imag, "degree", ""},
+        "burning-ship",
+        {s_p1_real, s_p1_imag, "degree (2-5)", ""},
         {0, 0, 2, 0},
-        HelpLabels::HT_MANDEL, HelpLabels::HF_MANDEL, FractalFlags::BAILTEST|FractalFlags::PERTURB|FractalFlags::BF_MATH,
-        -2.5F, 1.5F, -1.2F, 1.8F,
+        HelpLabels::HT_BURNING_SHIP, HelpLabels::HF_BURNING_SHIP, FractalFlags::BAILTEST|FractalFlags::PERTURB|FractalFlags::BF_MATH,
+        -2.5f, 1.5f, -1.2f, 1.8f,
         0, FractalType::BURNING_SHIP, FractalType::NOFRACTAL, FractalType::BURNING_SHIP, SymmetryType::NONE,
         burning_ship_fp_fractal, other_mandel_fp_per_pixel, mandel_setup, standard_fractal,
         STD_BAIL_OUT,
