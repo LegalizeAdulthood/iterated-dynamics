@@ -566,6 +566,7 @@ int mandel_fp_per_pixel()
 {
     // floating point mandelbrot
     // mandelfp
+    // burning ship
 
     if (g_invert != 0)
     {
@@ -578,6 +579,10 @@ int mandel_fp_per_pixel()
     }
     switch (g_fractal_type)
     {
+    case fractal_type::BURNING_SHIP:
+        g_old_z.x = 0.0;
+        g_old_z.y = 0.0;
+        break;
     case fractal_type::MAGNET2M:
         float_pre_calc_magnet2();
     case fractal_type::MAGNET1M:
@@ -728,3 +733,4 @@ int other_julia_fp_per_pixel()
     }
     return 0;
 }
+
