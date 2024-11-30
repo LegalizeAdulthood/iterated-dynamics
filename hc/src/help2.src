@@ -119,8 +119,8 @@ SUMMARY OF FRACTAL TYPES
     Three parameters: Filter Cycles, Seed Population, and Beta.
 
 ~OnlineFF
-{=HT_BURNINGSHIP burningship}
-~Label=HF_BURNINGSHIP
+{=HT_BURNING_SHIP burning-ship}
+~Label=HF_BURNING_SHIP
     Classic Mandelbrot Derivative fractal.
       z(0) = c = pixel;
       real(tmp) = sqr(real(z(n))) - sqr(imag(z(n)))
@@ -2350,8 +2350,8 @@ author of "A Hypercomplex Calculus with Applications to Relativity"
 See also {Quaternion} and { Quaternion and Hypercomplex Algebra }
 ;
 ;
-~Topic=BURNINGSHIP, Label=HT_BURNINGSHIP
-(type=burningship)
+~Topic=Burning Ship, Label=HT_BURNING_SHIP
+(type=burning-ship)
 
 This fractal is a derivative of the classic Mandelbrot fractal with a twist.
 Some parts use absolute values in the equations and this gives an amazing
