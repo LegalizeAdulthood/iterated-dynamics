@@ -174,8 +174,8 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
     // KEYUP, KEYDOWN, and CHAR msgs go to the 'key pressed' code
     // a key has been pressed - maybe ASCII, maybe not
     // if it's an ASCII key, 'WM_CHAR' will handle it
-    unsigned int i = MapVirtualKey(vk, MAPVK_VK_TO_VSC);
-    unsigned int j = MapVirtualKey(vk, MAPVK_VK_TO_CHAR);
+    unsigned int i = MapVirtualKeyA(vk, MAPVK_VK_TO_VSC);
+    unsigned int j = MapVirtualKeyA(vk, MAPVK_VK_TO_CHAR);
     const bool alt = has_mod(VK_MENU);
     debug_key_strokes("OnKeyDown vk: " + std::to_string(vk) + ", vsc: " + std::to_string(i) + ", char: " + std::to_string(j));
 
@@ -184,15 +184,15 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
     {
         if (has_mod(VK_SHIFT))
         {
-            i = mod_key(VK_SHIFT, i, ID_KEY_SF1 + (vk - 0x70));
+            i = mod_key(VK_SHIFT, i, ID_KEY_SF1 + (vk - VK_F1));
         }
         else if (has_mod(VK_CONTROL))
         {
-            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_F1 + (vk - 0x70));
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_F1 + (vk - VK_F1));
         }
         else if (alt)
         {
-            i = mod_key(VK_MENU, i, ID_KEY_ALT_F1 + (vk - 0x70));
+            i = mod_key(VK_MENU, i, ID_KEY_ALT_F1 + (vk - VK_F1));
         }
         else
         {
