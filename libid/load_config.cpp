@@ -11,6 +11,7 @@
 #include "pixel_limits.h"
 #include "video_mode.h"
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdio>
@@ -122,31 +123,26 @@ void load_config(const std::string &cfg_path)
 
         // if valid, add to supported modes
         vident.driver = driver_find_by_name(fields[3]);
-        if (vident.driver != nullptr)
+        if (vident.driver != nullptr && vident.driver->validate_mode(&vident))
         {
-            if (vident.driver->validate_mode(&vident))
+            // look for a synonym mode and if found, overwrite its key
+            VideoInfo *begin{&g_video_table[0]};
+            VideoInfo *end{&g_video_table[g_video_table_len]};
+            auto it = std::find_if(begin, end,
+                [&](const VideoInfo &mode)
+                {
+                    return mode.driver == vident.driver //
+                        && mode.colors == vident.colors //
+                        && mode.xdots == vident.xdots   //
+                        && mode.ydots == vident.ydots;
+                });
+            if (it != end && it->keynum == 0)
             {
-                // look for a synonym mode and if found, overwite its key
-                bool synonym_found = false;
-                for (int m = 0; m < g_video_table_len; m++)
-                {
-                    VideoInfo *mode = &g_video_table[m];
-                    if ((mode->driver == vident.driver) && (mode->colors == vident.colors)
-                        && (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots))
-                    {
-                        if (0 == mode->keynum)
-                        {
-                            mode->keynum = vident.keynum;
-                        }
-                        synonym_found = true;
-                        break;
-                    }
-                }
-                // no synonym found, append it to current list of video modes
-                if (!synonym_found)
-                {
-                    add_video_mode(vident.driver, &vident);
-                }
+                it->keynum = vident.keynum;
+            }
+            else
+            {
+                add_video_mode(vident.driver, &vident);
             }
         }
     }
