@@ -5,6 +5,7 @@
 #include "port.h"
 
 #include "id.h"
+#include "id_keys.h"
 
 #include <cstdio>
 
@@ -48,25 +49,23 @@ int check_vid_mode_key(int option, int k)
     return -1;
 }
 
+// returns key number for the passed keyname, 0 if not a keyname
 int check_vid_mode_key_name(char const *kname)
 {
-    // returns key number for the passed keyname, 0 if not a keyname
-    int i;
-    int keyset;
-    keyset = 1058;
+    int keyset = ID_KEY_F1 - 1;
     if (*kname == 'S' || *kname == 's')
     {
-        keyset = 1083;
+        keyset = ID_KEY_SF1 - 1;
         ++kname;
     }
     else if (*kname == 'C' || *kname == 'c')
     {
-        keyset = 1093;
+        keyset = ID_KEY_CTL_F1 - 1;
         ++kname;
     }
     else if (*kname == 'A' || *kname == 'a')
     {
-        keyset = 1103;
+        keyset = ID_KEY_ALT_F1 - 1;
         ++kname;
     }
     if (*kname != 'F' && *kname != 'f')
@@ -77,7 +76,7 @@ int check_vid_mode_key_name(char const *kname)
     {
         return 0;
     }
-    i = *kname - '0';
+    int i = *kname - '0';
     if (*++kname != 0 && *kname != ' ')
     {
         if (*kname != '0' || i != 1)
@@ -107,24 +106,24 @@ void vid_mode_key_name(int k, char *buf)
     *buf = 0;
     if (k > 0)
     {
-        if (k > 1103)
+        if (k >= ID_KEY_ALT_F1)
         {
             *(buf++) = 'A';
-            k -= 1103;
+            k -= ID_KEY_ALT_F1 - 1;
         }
-        else if (k > 1093)
+        else if (k >= ID_KEY_CTL_F1)
         {
             *(buf++) = 'C';
-            k -= 1093;
+            k -= ID_KEY_CTL_F1 - 1;
         }
-        else if (k > 1083)
+        else if (k > ID_KEY_SF1 - 1)
         {
             *(buf++) = 'S';
-            k -= 1083;
+            k -= ID_KEY_SF1 - 1;
         }
         else
         {
-            k -= 1058;
+            k -= ID_KEY_F1 - 1;
         }
         std::sprintf(buf, "F%d", k);
     }
