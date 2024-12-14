@@ -1012,29 +1012,29 @@ point is in use is shown on the <Tab> status screen.
 ~Topic=<Y> Options Screen, Label=HELP_Y_OPTIONS
 ; This topic is online context-sensitive only.
 
-   Finite attractor - see{ Finite Attractors }\
+   Finite attractor - see {Finite Attractors}\
 
-   Potential parameters - see{ Continuous Potential }\
+   Potential parameters - see {Continuous Potential}\
 
-   Distance Estimator parameters - see{ Distance Estimator Method }\
+   Distance Estimator parameters - see {Distance Estimator Method}\
 
-   Inversion parameters - see{ Inversion }\
+   Inversion parameters - see {Inversion}\
 
-   Color cycling range - see{ Color Cycling Commands }\
+   Color cycling range - see {Color Cycling Commands}\
 ;
 ;
 ~Topic=<P> Options Screen, Label=HELP_POPTS
 ; This topic is online context-sensitive only.
 
-   Periodicity - see{ Passes Parameters }\
+   Periodicity - see {Passes Parameters}\
 
-   Orbit Delay - see{ Passes Parameters }\
+   Orbit Delay - see {Passes Parameters}\
 
-   Orbit Interval - see{ Passes Parameters }\
+   Orbit Interval - see {Passes Parameters}\
 
-   Maintain Screen Coordinates - see{ Passes Parameters }\
+   Maintain Screen Coordinates - see {Passes Parameters}\
 
-   Orbit Draw Mode - see{ Passes Parameters }\
+   Orbit Draw Mode - see {Passes Parameters}\
 ;
 ;
 ~Topic=Image Coordinates Screen, Label=HELP_COORDS

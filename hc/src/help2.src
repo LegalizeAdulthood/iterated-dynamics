@@ -2310,7 +2310,7 @@ For the Mandelbrot set, you can specify the position of the c-plane slice:
 These fractals are discussed in Chapter 10 of Pickover's "Computers,
 Pattern, Chaos, and Beauty".
 
-See also {HyperComplex} and { Quaternion and Hypercomplex Algebra }
+See also {HyperComplex} and {Quaternion and Hypercomplex Algebra}
 ;
 ;
 ~Topic=HyperComplex, Label=HT_HYPERC
@@ -2338,7 +2338,7 @@ Hypercomplex numbers were brought to our attention by Clyde Davenport,
 author of "A Hypercomplex Calculus with Applications to Relativity"
 (ISBN 0-9623837-0-8).
 
-See also {Quaternion} and { Quaternion and Hypercomplex Algebra }
+See also {Quaternion} and {Quaternion and Hypercomplex Algebra}
 ;
 ;
 ~Topic=Cellular Automata, Label=HT_CELLULAR
