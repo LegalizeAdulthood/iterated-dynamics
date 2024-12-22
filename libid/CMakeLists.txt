@@ -45,6 +45,7 @@ add_library(libid
 
     ant.cpp include/ant.h
     barnsley.cpp include/barnsley.h
+    burning_ship.cpp include/burning_ship.h
     cellular.cpp include/cellular.h
     circle_pattern.cpp include/circle_pattern.h
     divide_brot.cpp include/divide_brot.h

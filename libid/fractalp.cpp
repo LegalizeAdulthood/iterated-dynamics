@@ -10,6 +10,7 @@
 
 #include "ant.h"
 #include "barnsley.h"
+#include "burning_ship.h"
 #include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"
@@ -180,6 +181,7 @@ AlternateMath g_alternate_math[] =
     {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, julia_z_power_bf_fractal, julia_bf_per_pixel, mandel_bf_setup},
     {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT, julia_z_power_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
     {fractal_type::DIVIDE_BROT5, bf_math_type::BIGFLT, divide_brot5_bf_fractal, divide_brot5_bf_per_pixel, mandel_bf_setup},
+    {fractal_type::BURNING_SHIP, bf_math_type::BIGFLT, burning_ship_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
     {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr, nullptr, nullptr}
 };
 
@@ -2303,6 +2305,16 @@ FractalSpecific g_fractal_specific[] =
         mandelbrot_mix4_fp_fractal, mandelbrot_mix4_fp_per_pixel, mandelbrot_mix4_setup, standard_fractal,
         STD_BAIL_OUT
     },
+    {
+        "burning-ship",
+        {s_p1_real, s_p1_imag, "degree (2-5)", ""},
+        {0, 0, 2, 0},
+        help_labels::HT_BURNING_SHIP, help_labels::HF_BURNING_SHIP, fractal_flags::BAILTEST|fractal_flags::PERTURB|fractal_flags::BF_MATH,
+        -2.5F, 1.5F, -1.2F, 1.8F,
+        0, fractal_type::BURNING_SHIP, fractal_type::NOFRACTAL, fractal_type::BURNING_SHIP, symmetry_type::NONE,
+        burning_ship_fp_fractal, other_mandel_fp_per_pixel, mandel_setup, standard_fractal,
+        STD_BAIL_OUT,
+        burning_ship_ref_pt, burning_ship_ref_pt_bf, burning_ship_perturb},
 
     {
         nullptr,            // marks the END of the list
