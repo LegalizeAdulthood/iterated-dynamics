@@ -519,7 +519,7 @@ skip_UI:
                         g_x_3rd = g_x_min;
                         g_y_3rd = g_y_min;
                     }
-                    std::fprintf(fpbat, "id batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
+                    std::fprintf(fpbat, "start/wait id batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
                     std::fprintf(fpbat, "if errorlevel 2 goto oops\n");
                 }
                 else
@@ -579,7 +579,6 @@ skip_UI:
         if (xm > 1 || ym > 1)
         {
             std::fprintf(fpbat, "start/wait id makemig=%u/%u\n", xm, ym);
-            std::fprintf(fpbat, "rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
             std::fprintf(fpbat, ":oops\n");
             std::fclose(fpbat);
         }
