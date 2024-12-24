@@ -224,7 +224,7 @@ void make_batch_file()
     pxdots = g_logical_screen_x_dots;
     pydots = g_logical_screen_y_dots;
     ym = 1;
-    xm = ym;
+    xm = 1;
     if (g_make_parameter_file)
     {
         goto skip_UI;
@@ -345,7 +345,7 @@ prompt_user:
 
             // get resolution from the video name (which must be valid)
             pydots = 0;
-            pxdots = pydots;
+            pxdots = 0;
             i = check_vid_mode_key_name(vidmde);
             if (i > 0)
             {
