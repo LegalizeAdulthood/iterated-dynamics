@@ -142,11 +142,7 @@ void make_batch_file()
 
     maxcolor = g_colors;
     std::strcpy(colorspec, "y");
-#ifndef XFRACT
     if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
-#else
-    if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color) || g_fake_lut)
-#endif
     {
         --maxcolor;
         if (g_inside_color > COLOR_BLACK && g_inside_color > maxcolor)
@@ -253,11 +249,7 @@ prompt_user:
         choices[promptnum] = "Fourth comment";
         paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[3];
-#ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
-#else
-        if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color) || g_fake_lut)
-#endif
         {
             choices[promptnum] = "Record colors?";
             paramvalues[promptnum].type = 0x100 + 13;
@@ -310,11 +302,7 @@ prompt_user:
         {
             g_command_comment[i] = inpcomment[i];
         }
-#ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
-#else
-        if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color) || g_fake_lut)
-#endif
         {
             if (paramvalues[maxcolorindex].uval.ival > 0 &&
                     paramvalues[maxcolorindex].uval.ival <= 256)
