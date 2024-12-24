@@ -100,22 +100,22 @@ inline bool is_writeable(const std::string &path)
 void make_batch_file()
 {
     constexpr int MAXPROMPTS = 18;
-    bool colorsonly = false;
+    bool colorsonly{};
     // added for pieces feature
-    double pdelx = 0.0;
-    double pdely = 0.0;
-    double pdelx2 = 0.0;
-    double pdely2 = 0.0;
+    double pdelx{};
+    double pdely{};
+    double pdelx2{};
+    double pdely2{};
     unsigned int pxdots;
     unsigned int pydots;
     unsigned int xm;
     unsigned int ym;
-    double pxxmin = 0.0;
-    double pyymax = 0.0;
+    double pxxmin{};
+    double pyymax{};
     char vidmde[5];
     int promptnum;
     int piecespromts;
-    bool have3rd = false;
+    bool have3rd{};
     char inpcommandfile[80];
     char inpcommandname[ITEM_NAME_LEN + 1];
     char inpcomment[4][MAX_COMMENT_LEN];
@@ -124,12 +124,12 @@ void make_batch_file()
     fs::path out_name;
     char             buf[256];
     char             buf2[128];
-    std::FILE *infile = nullptr;
-    std::FILE *fpbat = nullptr;
+    std::FILE *infile{};
+    std::FILE *fpbat{};
     char colorspec[14];
     int maxcolor;
-    int maxcolorindex = 0;
-    char const *sptr = nullptr;
+    int maxcolorindex{};
+    char const *sptr{};
     char const *sptr2;
 
     if (g_make_parameter_file_map)   // makepar map case
@@ -403,7 +403,7 @@ skip_UI:
             }
         }
         out_name = g_command_file;
-        bool gotinfile = false;
+        bool gotinfile{};
         if (fs::exists(g_command_file))
         {
             // file exists
