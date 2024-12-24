@@ -315,7 +315,10 @@ static void process_file_set_name(const char *curarg, char *sptr)
     {
         arg_error(curarg);
     }
-    command_file(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
+    else
+    {
+        command_file(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
+    }
 }
 
 static void process_file(char *curarg)
