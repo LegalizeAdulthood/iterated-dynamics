@@ -116,7 +116,7 @@ void make_batch_file()
     char inpcommandfile[80];
     char inpcommandname[ITEM_NAME_LEN + 1];
     char inpcomment[4][MAX_COMMENT_LEN];
-    FullScreenValues paramvalues[18];
+    FullScreenValues paramvalues[MAXPROMPTS];
     char const      *choices[MAXPROMPTS];
     fs::path out_name;
     char             buf[256];
