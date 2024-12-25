@@ -263,20 +263,24 @@ void init_memory()
 
 void exit_check()
 {
-    if (s_num_total_handles != 0)
+    if (s_num_total_handles == 0)
     {
-        stop_msg("Error - not all memory released, I'll get it.");
-        for (U16 i = 1; i < MAXHANDLES; i++)
+        return;
+    }
+    
+    stop_msg("Error - not all memory released, I'll get it.");
+    for (U16 i = 1; i < MAXHANDLES; i++)
+    {
+        if (s_handles[i].nowhere.stored_at == NOWHERE)
         {
-            if (s_handles[i].nowhere.stored_at != NOWHERE)
-            {
-                char buf[MSG_LEN];
-                std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
-                        s_memory_names[s_handles[i].nowhere.stored_at], i);
-                stop_msg(buf);
-                memory_release(i);
-            }
+            continue;
         }
+
+        char buf[MSG_LEN];
+        std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
+            s_memory_names[s_handles[i].nowhere.stored_at], i);
+        stop_msg(buf);
+        memory_release(i);
     }
 }
 
