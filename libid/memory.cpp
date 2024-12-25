@@ -61,7 +61,7 @@ struct Memory
 
 // Routines in this module
 static bool check_disk_space(long howmuch);
-static MemoryLocation check_for_mem(MemoryLocation stored_at, long howmuch);
+static MemoryLocation check_for_mem(MemoryLocation where, long size);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
 static void which_disk_error(int);
@@ -120,7 +120,7 @@ static void display_error(MemoryLocation stored_at, long howmuch)
     stop_msg(buf);
 }
 
-static MemoryLocation check_for_mem(MemoryLocation stored_at, long howmuch)
+static MemoryLocation check_for_mem(MemoryLocation where, long size)
 {
     // This function returns an adjusted stored_at value.
     // This is where the memory requested can be allocated.
@@ -133,19 +133,19 @@ static MemoryLocation check_for_mem(MemoryLocation stored_at, long howmuch)
 
     if (g_debug_flag == debug_flags::force_memory_from_disk)
     {
-        stored_at = MemoryLocation::DISK;
+        where = MemoryLocation::DISK;
     }
     if (g_debug_flag == debug_flags::force_memory_from_memory)
     {
-        stored_at = MemoryLocation::MEMORY;
+        where = MemoryLocation::MEMORY;
     }
 
-    switch (stored_at)
+    switch (where)
     {
     case MemoryLocation::MEMORY: // check_for_mem
-        if (maxmem > howmuch)
+        if (maxmem > size)
         {
-            temp = (BYTE *)malloc(howmuch + FAR_RESERVE);
+            temp = (BYTE *)malloc(size + FAR_RESERVE);
             if (temp != nullptr)
             {
                 // minimum free space + requested amount
@@ -157,7 +157,7 @@ static MemoryLocation check_for_mem(MemoryLocation stored_at, long howmuch)
 
     case MemoryLocation::DISK: // check_for_mem
     default: // just in case a nonsense number gets used
-        if (check_disk_space(howmuch))
+        if (check_disk_space(size))
         {
             use_this_type = MemoryLocation::DISK;
             break;
