@@ -254,7 +254,7 @@ static void display_handle(U16 handle)
 void init_memory()
 {
     s_num_total_handles = 0;
-    for (auto &elem : s_handles)
+    for (Memory &elem : s_handles)
     {
         elem.nowhere.stored_at = NOWHERE;
         elem.nowhere.size = 0;
