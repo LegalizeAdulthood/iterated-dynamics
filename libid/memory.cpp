@@ -387,14 +387,7 @@ U16 memory_alloc(U16 size, long count, int stored_at)
         display_memory();
     }
 
-    if (success)
-    {
-        return handle;
-    }
-    else          // return 0 if failure
-    {
-        return 0U;
-    }
+    return success ? handle : 0U;
 }
 
 void memory_release(U16 handle)
