@@ -22,6 +22,13 @@
 #include <cstdio>
 #include <cstring>
 
+// for getpid
+#ifdef WIN32
+#include <process.h>
+#else
+#include <unistd.h>
+#endif
+
 // Memory allocation routines.
 
 enum
@@ -275,7 +282,7 @@ void exit_check()
 
 static std::string mem_file_name(U16 handle)
 {
-    return "id" + std::to_string(handle) + ".$$$";
+    return "id." + std::to_string(::getpid()) + '.' + std::to_string(handle) + ".tmp";
 }
 
 // * * * *
