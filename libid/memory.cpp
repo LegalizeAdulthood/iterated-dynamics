@@ -39,29 +39,20 @@ enum
 namespace
 {
 
-struct Nowhere
-{
-    MemoryLocation stored_at; // first 2 entries must be the same
-    long size;                  // for each of these data structures
-};
-
 struct LinearMemory
 {
-    MemoryLocation stored_at;
-    long size;
     BYTE *memory;
 };
 
 struct Disk
 {
-    MemoryLocation stored_at;
-    long size;
     std::FILE *file;
 };
 
-union Memory
+struct Memory
 {
-    Nowhere nowhere;
+    MemoryLocation stored_at;
+    long size;
     LinearMemory linear;
     Disk disk;
 };
@@ -112,7 +103,7 @@ static void which_disk_error(int I_O)
 
 MemoryLocation memory_type(U16 handle)
 {
-    return s_handles[handle].nowhere.stored_at;
+    return s_handles[handle].stored_at;
 }
 
 static void display_error(MemoryLocation stored_at, long howmuch)
@@ -185,7 +176,7 @@ static U16 next_handle()
 {
     U16 counter = 1; // don't use handle 0
 
-    while (s_handles[counter].nowhere.stored_at != MemoryLocation::NOWHERE &&
+    while (s_handles[counter].stored_at != MemoryLocation::NOWHERE &&
             counter < MAXHANDLES)
     {
         counter++;
@@ -195,7 +186,7 @@ static U16 next_handle()
 
 static int check_bounds(long start, long length, U16 handle)
 {
-    if (s_handles[handle].nowhere.size - start - length < 0)
+    if (s_handles[handle].size - start - length < 0)
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
         display_handle(handle);
@@ -207,7 +198,7 @@ static int check_bounds(long start, long length, U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (s_handles[handle].nowhere.stored_at == MemoryLocation::DISK
+    if (s_handles[handle].stored_at == MemoryLocation::DISK
         && (stack_avail() <= DISKWRITELEN))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
@@ -240,7 +231,7 @@ static void display_handle(U16 handle)
 {
     char buf[MSG_LEN];
     std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle,
-        memory_type(s_handles[handle].nowhere.stored_at), s_handles[handle].nowhere.size);
+        memory_type(s_handles[handle].stored_at), s_handles[handle].size);
     if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
         goodbye(); // bailout if ESC, it's messy, but should work
@@ -252,8 +243,8 @@ void init_memory()
     s_num_total_handles = 0;
     for (Memory &elem : s_handles)
     {
-        elem.nowhere.stored_at = MemoryLocation::NOWHERE;
-        elem.nowhere.size = 0;
+        elem.stored_at = MemoryLocation::NOWHERE;
+        elem.size = 0;
     }
 }
 
@@ -267,14 +258,14 @@ void exit_check()
     stop_msg("Error - not all memory released, I'll get it.");
     for (U16 i = 1; i < MAXHANDLES; i++)
     {
-        if (s_handles[i].nowhere.stored_at == MemoryLocation::NOWHERE)
+        if (s_handles[i].stored_at == MemoryLocation::NOWHERE)
         {
             continue;
         }
 
         char buf[MSG_LEN];
         std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
-            memory_type(s_handles[i].nowhere.stored_at), i);
+            memory_type(s_handles[i].stored_at), i);
         stop_msg(buf);
         memory_release(i);
     }
@@ -331,8 +322,8 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
     case MemoryLocation::MEMORY: // MemoryAlloc
         // Availability of memory checked in check_for_mem()
         s_handles[handle].linear.memory = (BYTE *)malloc(toallocate);
-        s_handles[handle].linear.size = toallocate;
-        s_handles[handle].linear.stored_at = MemoryLocation::MEMORY;
+        s_handles[handle].size = toallocate;
+        s_handles[handle].stored_at = MemoryLocation::MEMORY;
         s_num_total_handles++;
         success = true;
         break;
@@ -353,7 +344,7 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
         }
         if (s_handles[handle].disk.file == nullptr)
         {
-            s_handles[handle].disk.stored_at = MemoryLocation::NOWHERE;
+            s_handles[handle].stored_at = MemoryLocation::NOWHERE;
             use_this_type = MemoryLocation::NOWHERE;
             which_disk_error(1);
             display_memory();
@@ -368,8 +359,8 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
             dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "r+b");
         // cppcheck-suppress useClosedFile
         std::rewind(s_handles[handle].disk.file);
-        s_handles[handle].disk.size = toallocate;
-        s_handles[handle].disk.stored_at = MemoryLocation::DISK;
+        s_handles[handle].size = toallocate;
+        s_handles[handle].stored_at = MemoryLocation::DISK;
         use_this_type = MemoryLocation::DISK;
         break;
     } // end of switch
@@ -388,7 +379,7 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
 
 void memory_release(U16 handle)
 {
-    switch (s_handles[handle].nowhere.stored_at)
+    switch (s_handles[handle].stored_at)
     {
     case MemoryLocation::NOWHERE: // MemoryRelease
         break;
@@ -396,8 +387,8 @@ void memory_release(U16 handle)
     case MemoryLocation::MEMORY: // MemoryRelease
         free(s_handles[handle].linear.memory);
         s_handles[handle].linear.memory = nullptr;
-        s_handles[handle].linear.size = 0;
-        s_handles[handle].linear.stored_at = MemoryLocation::NOWHERE;
+        s_handles[handle].size = 0;
+        s_handles[handle].stored_at = MemoryLocation::NOWHERE;
         s_num_total_handles--;
         break;
 
@@ -405,8 +396,8 @@ void memory_release(U16 handle)
         std::fclose(s_handles[handle].disk.file);
         dir_remove(g_temp_dir.c_str(), mem_file_name(handle));
         s_handles[handle].disk.file = nullptr;
-        s_handles[handle].disk.size = 0;
-        s_handles[handle].disk.stored_at = MemoryLocation::NOWHERE;
+        s_handles[handle].size = 0;
+        s_handles[handle].stored_at = MemoryLocation::NOWHERE;
         s_num_total_handles--;
         break;
     } // end of switch
@@ -436,7 +427,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
     }
 
     bool success = false;
-    switch (s_handles[handle].nowhere.stored_at)
+    switch (s_handles[handle].stored_at)
     {
     case MemoryLocation::NOWHERE: // MoveToMemory
         display_handle(handle);
@@ -444,7 +435,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
 
     case MemoryLocation::MEMORY: // MoveToMemory
 #if defined(_WIN32)
-        _ASSERTE(s_handles[handle].linear.size >= size*count + start);
+        _ASSERTE(s_handles[handle].size >= size*count + start);
 #endif
         std::memcpy(s_handles[handle].linear.memory + start, buffer, size*count);
         success = true; // No way to gauge success or failure
@@ -505,7 +496,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     }
 
     bool success = false;
-    switch (s_handles[handle].nowhere.stored_at)
+    switch (s_handles[handle].stored_at)
     {
     case MemoryLocation::NOWHERE: // MoveFromMemory
         display_handle(handle);
@@ -576,7 +567,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     }
 
     bool success = false;
-    switch (s_handles[handle].nowhere.stored_at)
+    switch (s_handles[handle].stored_at)
     {
     case MemoryLocation::NOWHERE: // SetMemory
         display_handle(handle);
