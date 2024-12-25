@@ -30,7 +30,6 @@
 
 enum
 {
-    FAR_RESERVE = 8192L,  // amount of far mem we will leave avail.
                           // For disk memory:
     DISKWRITELEN = 2048L, // max # bytes transferred to/from disk mem at once
     MAXHANDLES = 256      // arbitrary #, suitably big
@@ -145,7 +144,7 @@ static MemoryLocation check_for_mem(MemoryLocation where, long size)
     case MemoryLocation::MEMORY: // check_for_mem
         if (maxmem > size)
         {
-            temp = (BYTE *)malloc(size + FAR_RESERVE);
+            temp = (BYTE *)malloc(size);
             if (temp != nullptr)
             {
                 // minimum free space + requested amount
