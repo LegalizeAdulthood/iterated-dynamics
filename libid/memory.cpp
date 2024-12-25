@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "memory.h"
 
 #include "cmdfiles.h"
