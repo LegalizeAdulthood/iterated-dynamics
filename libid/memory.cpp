@@ -18,6 +18,7 @@
 #include <climits>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 
 // for getpid
 #ifdef WIN32
@@ -58,7 +59,7 @@ struct Memory
 } // namespace
 
 // Routines in this module
-static bool check_disk_space(long howmuch);
+static bool check_disk_space(long size);
 static MemoryLocation check_for_mem(MemoryLocation where, long size);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
@@ -72,9 +73,10 @@ static Memory s_handles[MAX_HANDLES];
 
 // Memory handling support routines
 
-static bool check_disk_space(long)
+static bool check_disk_space(long size)
 {
-    return true;
+    std::filesystem::space_info space{std::filesystem::space(g_temp_dir)};
+    return space.free >= static_cast<std::uintmax_t>(size);
 }
 
 static const char *memory_type(MemoryLocation where)
