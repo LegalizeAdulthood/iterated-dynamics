@@ -239,11 +239,11 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             s_mem_buf[i] = (BYTE)fgetc(s_fp);
         }
         std::fclose(s_fp);
-        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, stored_at_values::DISK);
+        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, MemoryLocation::DISK);
     }
     else
     {
-        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, stored_at_values::MEMORY);
+        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, MemoryLocation::MEMORY);
     }
     if (s_dv_handle == 0)
     {
@@ -256,7 +256,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     if (driver_diskp())
     {
         driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
-                          (memory_type(s_dv_handle) == stored_at_values::DISK) ? "Using your Disk Drive" : "Using your memory");
+                          (memory_type(s_dv_handle) == MemoryLocation::DISK) ? "Using your Disk Drive" : "Using your memory");
     }
 
     s_mem_buf_ptr = &s_mem_buf[0];
