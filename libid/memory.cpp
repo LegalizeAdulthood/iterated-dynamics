@@ -88,19 +88,19 @@ static bool check_disk_space(long)
     return true;
 }
 
+static const char *memory_type(stored_at_values where)
+{
+    return s_memory_names[static_cast<int>(where)];
+}
+
 static void which_disk_error(int I_O)
 {
     // Set I_O == 1 after a file create, I_O == 2 after a file set value
     // Set I_O == 3 after a file write, I_O == 4 after a file read
     char buf[MSG_LEN];
-    char const *pats[4] =
-    {
-        "Create file error %d:  %s",
-        "Set file error %d:  %s",
-        "Write file error %d:  %s",
-        "Read file error %d:  %s"
-    };
-    std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
+    char const *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
+        "Read file error %d:  %s"};
+    std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O - 1) : 0], errno, strerror(errno));
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
@@ -122,9 +122,10 @@ static void display_error(stored_at_values stored_at, long howmuch)
     // is also insufficient disk space to use as memory.
 
     char buf[MSG_LEN*2];
-    std::snprintf(buf, std::size(buf), "Allocating %ld Bytes of %s memory failed.\n"
-            "Alternate disk space is also insufficient. Goodbye",
-            howmuch, s_memory_names[stored_at]);
+    std::snprintf(buf, std::size(buf),
+        "Allocating %ld Bytes of %s memory failed.\n"
+        "Alternate disk space is also insufficient. Goodbye",
+        howmuch, memory_type(stored_at));
     stop_msg(buf);
 }
 
@@ -141,16 +142,16 @@ static stored_at_values check_for_mem(stored_at_values stored_at, long howmuch)
 
     if (g_debug_flag == debug_flags::force_memory_from_disk)
     {
-        stored_at = DISK;
+        stored_at = stored_at_values::DISK;
     }
     if (g_debug_flag == debug_flags::force_memory_from_memory)
     {
-        stored_at = MEMORY;
+        stored_at = stored_at_values::MEMORY;
     }
 
     switch (stored_at)
     {
-    case MEMORY: // check_for_mem
+    case stored_at_values::MEMORY: // check_for_mem
         if (maxmem > howmuch)
         {
             temp = (BYTE *)malloc(howmuch + FAR_RESERVE);
@@ -158,22 +159,22 @@ static stored_at_values check_for_mem(stored_at_values stored_at, long howmuch)
             {
                 // minimum free space + requested amount
                 free(temp);
-                use_this_type = MEMORY;
+                use_this_type = stored_at_values::MEMORY;
                 break;
             }
         }
 
-    case DISK: // check_for_mem
+    case stored_at_values::DISK: // check_for_mem
     default: // just in case a nonsense number gets used
         if (check_disk_space(howmuch))
         {
-            use_this_type = DISK;
+            use_this_type = stored_at_values::DISK;
             break;
         }
         // failed, fall through, no memory available
 
-    case NOWHERE: // check_for_mem
-        use_this_type = NOWHERE;
+    case stored_at_values::NOWHERE: // check_for_mem
+        use_this_type = stored_at_values::NOWHERE;
         break;
     } // end of switch
 
@@ -184,7 +185,7 @@ static U16 next_handle()
 {
     U16 counter = 1; // don't use handle 0
 
-    while (s_handles[counter].nowhere.stored_at != NOWHERE &&
+    while (s_handles[counter].nowhere.stored_at != stored_at_values::NOWHERE &&
             counter < MAXHANDLES)
     {
         counter++;
@@ -206,7 +207,7 @@ static int check_bounds(long start, long length, U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (s_handles[handle].nowhere.stored_at == DISK
+    if (s_handles[handle].nowhere.stored_at == stored_at_values::DISK
         && (stack_avail() <= DISKWRITELEN))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
@@ -231,7 +232,6 @@ static int check_bounds(long start, long length, U16 handle)
 void display_memory()
 {
     char buf[MSG_LEN];
-
     std::snprintf(buf, std::size(buf), "disk=%lu", get_disk_space());
     stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
 }
@@ -239,9 +239,8 @@ void display_memory()
 static void display_handle(U16 handle)
 {
     char buf[MSG_LEN];
-
-    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, s_memory_names[s_handles[handle].nowhere.stored_at],
-            s_handles[handle].nowhere.size);
+    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle,
+        memory_type(s_handles[handle].nowhere.stored_at), s_handles[handle].nowhere.size);
     if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
         goodbye(); // bailout if ESC, it's messy, but should work
@@ -253,7 +252,7 @@ void init_memory()
     s_num_total_handles = 0;
     for (Memory &elem : s_handles)
     {
-        elem.nowhere.stored_at = NOWHERE;
+        elem.nowhere.stored_at = stored_at_values::NOWHERE;
         elem.nowhere.size = 0;
     }
 }
@@ -268,14 +267,14 @@ void exit_check()
     stop_msg("Error - not all memory released, I'll get it.");
     for (U16 i = 1; i < MAXHANDLES; i++)
     {
-        if (s_handles[i].nowhere.stored_at == NOWHERE)
+        if (s_handles[i].nowhere.stored_at == stored_at_values::NOWHERE)
         {
             continue;
         }
 
         char buf[MSG_LEN];
         std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
-            s_memory_names[s_handles[i].nowhere.stored_at], i);
+            memory_type(s_handles[i].nowhere.stored_at), i);
         stop_msg(buf);
         memory_release(i);
     }
@@ -303,7 +302,7 @@ U16 memory_alloc(U16 size, long count, stored_at_values stored_at)
        sufficient amount is available to grant request */
 
     stored_at_values use_this_type = check_for_mem(stored_at, toallocate);
-    if (use_this_type == NOWHERE)
+    if (use_this_type == stored_at_values::NOWHERE)
     {
         display_error(stored_at, toallocate);
         goodbye();
@@ -325,20 +324,20 @@ U16 memory_alloc(U16 size, long count, stored_at_values stored_at)
     switch (use_this_type)
     {
     default:
-    case NOWHERE: // MemoryAlloc
-        use_this_type = NOWHERE; // in case nonsense value is passed
+    case stored_at_values::NOWHERE: // MemoryAlloc
+        use_this_type = stored_at_values::NOWHERE; // in case nonsense value is passed
         break;
 
-    case MEMORY: // MemoryAlloc
+    case stored_at_values::MEMORY: // MemoryAlloc
         // Availability of memory checked in check_for_mem()
         s_handles[handle].linear.memory = (BYTE *)malloc(toallocate);
         s_handles[handle].linear.size = toallocate;
-        s_handles[handle].linear.stored_at = MEMORY;
+        s_handles[handle].linear.stored_at = stored_at_values::MEMORY;
         s_num_total_handles++;
         success = true;
         break;
 
-    case DISK: // MemoryAlloc
+    case stored_at_values::DISK: // MemoryAlloc
         if (g_disk_targa)
         {
             s_handles[handle].disk.file = dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "a+b");
@@ -354,8 +353,8 @@ U16 memory_alloc(U16 size, long count, stored_at_values stored_at)
         }
         if (s_handles[handle].disk.file == nullptr)
         {
-            s_handles[handle].disk.stored_at = NOWHERE;
-            use_this_type = NOWHERE;
+            s_handles[handle].disk.stored_at = stored_at_values::NOWHERE;
+            use_this_type = stored_at_values::NOWHERE;
             which_disk_error(1);
             display_memory();
             driver_buzzer(buzzer_codes::PROBLEM);
@@ -370,8 +369,8 @@ U16 memory_alloc(U16 size, long count, stored_at_values stored_at)
         // cppcheck-suppress useClosedFile
         std::rewind(s_handles[handle].disk.file);
         s_handles[handle].disk.size = toallocate;
-        s_handles[handle].disk.stored_at = DISK;
-        use_this_type = DISK;
+        s_handles[handle].disk.stored_at = stored_at_values::DISK;
+        use_this_type = stored_at_values::DISK;
         break;
     } // end of switch
 
@@ -379,7 +378,7 @@ U16 memory_alloc(U16 size, long count, stored_at_values stored_at)
     {
         char buf[MSG_LEN * 2];
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
-            s_memory_names[stored_at], toallocate, s_memory_names[use_this_type], handle);
+            memory_type(stored_at), toallocate, memory_type(use_this_type), handle);
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
         display_memory();
     }
@@ -391,23 +390,23 @@ void memory_release(U16 handle)
 {
     switch (s_handles[handle].nowhere.stored_at)
     {
-    case NOWHERE: // MemoryRelease
+    case stored_at_values::NOWHERE: // MemoryRelease
         break;
 
-    case MEMORY: // MemoryRelease
+    case stored_at_values::MEMORY: // MemoryRelease
         free(s_handles[handle].linear.memory);
         s_handles[handle].linear.memory = nullptr;
         s_handles[handle].linear.size = 0;
-        s_handles[handle].linear.stored_at = NOWHERE;
+        s_handles[handle].linear.stored_at = stored_at_values::NOWHERE;
         s_num_total_handles--;
         break;
 
-    case DISK: // MemoryRelease
+    case stored_at_values::DISK: // MemoryRelease
         std::fclose(s_handles[handle].disk.file);
         dir_remove(g_temp_dir.c_str(), mem_file_name(handle));
         s_handles[handle].disk.file = nullptr;
         s_handles[handle].disk.size = 0;
-        s_handles[handle].disk.stored_at = NOWHERE;
+        s_handles[handle].disk.stored_at = stored_at_values::NOWHERE;
         s_num_total_handles--;
         break;
     } // end of switch
@@ -439,11 +438,11 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
     bool success = false;
     switch (s_handles[handle].nowhere.stored_at)
     {
-    case NOWHERE: // MoveToMemory
+    case stored_at_values::NOWHERE: // MoveToMemory
         display_handle(handle);
         break;
 
-    case MEMORY: // MoveToMemory
+    case stored_at_values::MEMORY: // MoveToMemory
 #if defined(_WIN32)
         _ASSERTE(s_handles[handle].linear.size >= size*count + start);
 #endif
@@ -451,7 +450,7 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
         success = true; // No way to gauge success or failure
         break;
 
-    case DISK: // MoveToMemory
+    case stored_at_values::DISK: // MoveToMemory
         std::rewind(s_handles[handle].disk.file);
         std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
@@ -508,11 +507,11 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     bool success = false;
     switch (s_handles[handle].nowhere.stored_at)
     {
-    case NOWHERE: // MoveFromMemory
+    case stored_at_values::NOWHERE: // MoveFromMemory
         display_handle(handle);
         break;
 
-    case MEMORY: // MoveFromMemory
+    case stored_at_values::MEMORY: // MoveFromMemory
         for (int i = 0; i < size; i++)
         {
             std::memcpy(buffer, s_handles[handle].linear.memory+start, (U16)count);
@@ -522,7 +521,7 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
         success = true; // No way to gauge success or failure
         break;
 
-    case DISK: // MoveFromMemory
+    case stored_at_values::DISK: // MoveFromMemory
         std::rewind(s_handles[handle].disk.file);
         std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
@@ -579,11 +578,11 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     bool success = false;
     switch (s_handles[handle].nowhere.stored_at)
     {
-    case NOWHERE: // SetMemory
+    case stored_at_values::NOWHERE: // SetMemory
         display_handle(handle);
         break;
 
-    case MEMORY: // SetMemory
+    case stored_at_values::MEMORY: // SetMemory
         for (int i = 0; i < size; i++)
         {
             std::memset(s_handles[handle].linear.memory+start, value, (U16)count);
@@ -592,7 +591,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
         success = true; // No way to gauge success or failure
         break;
 
-    case DISK: // SetMemory
+    case stored_at_values::DISK: // SetMemory
         std::memset(diskbuf, value, (U16)DISKWRITELEN);
         std::rewind(s_handles[handle].disk.file);
         std::fseek(s_handles[handle].disk.file, start, SEEK_SET);

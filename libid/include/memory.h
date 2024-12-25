@@ -4,11 +4,11 @@
 
 #include "port.h"
 
-enum stored_at_values
+enum class stored_at_values
 {
-    NOWHERE,
-    MEMORY,
-    DISK
+    NOWHERE = 0,
+    MEMORY = 1,
+    DISK = 2
 };
 
 // TODO: Get rid of this and use regular memory routines;
