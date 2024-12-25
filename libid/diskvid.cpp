@@ -239,11 +239,11 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             s_mem_buf[i] = (BYTE)fgetc(s_fp);
         }
         std::fclose(s_fp);
-        s_dv_handle = memory_alloc((U16)BLOCKLEN, memorysize, DISK);
+        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, DISK);
     }
     else
     {
-        s_dv_handle = memory_alloc((U16)BLOCKLEN, memorysize, MEMORY);
+        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, MEMORY);
     }
     if (s_dv_handle == 0)
     {

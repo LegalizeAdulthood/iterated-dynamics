@@ -70,11 +70,11 @@ union Memory
 
 // Routines in this module
 static bool check_disk_space(long howmuch);
-static int check_for_mem(int stored_at, long howmuch);
+static stored_at_values check_for_mem(stored_at_values stored_at, long howmuch);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
 static void which_disk_error(int);
-static void display_error(int stored_at, long howmuch);
+static void display_error(stored_at_values stored_at, long howmuch);
 static void display_handle(U16 handle);
 
 static int s_num_total_handles{};
@@ -110,12 +110,12 @@ static void which_disk_error(int I_O)
     }
 }
 
-int memory_type(U16 handle)
+stored_at_values memory_type(U16 handle)
 {
     return s_handles[handle].nowhere.stored_at;
 }
 
-static void display_error(int stored_at, long howmuch)
+static void display_error(stored_at_values stored_at, long howmuch)
 {
     // This routine is used to display an error message when the requested
     // memory type cannot be allocated due to insufficient memory, AND there
@@ -128,14 +128,14 @@ static void display_error(int stored_at, long howmuch)
     stop_msg(buf);
 }
 
-static int check_for_mem(int stored_at, long howmuch)
+static stored_at_values check_for_mem(stored_at_values stored_at, long howmuch)
 {
     // This function returns an adjusted stored_at value.
     // This is where the memory requested can be allocated.
 
     long maxmem;
     BYTE *temp;
-    int use_this_type;
+    stored_at_values use_this_type;
 
     maxmem = (long)USHRT_MAX;
 
@@ -289,7 +289,7 @@ static std::string mem_file_name(U16 handle)
 // * * * *
 // Memory handling routines
 
-U16 memory_alloc(U16 size, long count, int stored_at)
+U16 memory_alloc(U16 size, long count, stored_at_values stored_at)
 {
     // Returns handle number if successful, 0 or nullptr if failure
 
@@ -302,7 +302,7 @@ U16 memory_alloc(U16 size, long count, int stored_at)
     /* check structure for requested memory type (add em up) to see if
        sufficient amount is available to grant request */
 
-    int use_this_type = check_for_mem(stored_at, toallocate);
+    stored_at_values use_this_type = check_for_mem(stored_at, toallocate);
     if (use_this_type == NOWHERE)
     {
         display_error(stored_at, toallocate);
