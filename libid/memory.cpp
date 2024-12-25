@@ -52,7 +52,7 @@ struct Disk
 struct Memory
 {
     MemoryLocation stored_at;
-    long size;
+    std::uint64_t size;
     LinearMemory linear;
     Disk disk;
 };
@@ -186,7 +186,7 @@ static U16 next_handle()
 
 static int check_bounds(long start, long length, U16 handle)
 {
-    if (s_handles[handle].size - start - length < 0)
+    if (s_handles[handle].size < static_cast<std::uint64_t>(start - length))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
         display_handle(handle);
@@ -198,8 +198,7 @@ static int check_bounds(long start, long length, U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (s_handles[handle].stored_at == MemoryLocation::DISK
-        && (stack_avail() <= DISKWRITELEN))
+    if (s_handles[handle].stored_at == MemoryLocation::DISK && (stack_avail() <= DISKWRITELEN))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
         display_handle(handle);
@@ -230,7 +229,7 @@ void display_memory()
 static void display_handle(U16 handle)
 {
     char buf[MSG_LEN];
-    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle,
+    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %llu", handle,
         memory_type(s_handles[handle].stored_at), s_handles[handle].size);
     if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
@@ -279,15 +278,10 @@ static std::string mem_file_name(U16 handle)
 // * * * *
 // Memory handling routines
 
+// Returns handle number if successful, 0 or nullptr if failure
 U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
 {
-    // Returns handle number if successful, 0 or nullptr if failure
-
-    long toallocate = count * size;
-    if (toallocate <= 0)      // we failed, can't allocate > 2,147,483,647
-    {
-        return 0U;          // or it wraps around to negative
-    }
+    std::uint64_t toallocate = count * size;
 
     /* check structure for requested memory type (add em up) to see if
        sufficient amount is available to grant request */
@@ -368,7 +362,7 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSG_LEN * 2];
-        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
+        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %llu bytes of %s, handle = %u.",
             memory_type(stored_at), toallocate, memory_type(use_this_type), handle);
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
         display_memory();
