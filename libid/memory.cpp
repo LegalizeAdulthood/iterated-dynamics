@@ -30,9 +30,8 @@
 
 enum
 {
-                          // For disk memory:
-    DISKWRITELEN = 2048L, // max # bytes transferred to/from disk mem at once
-    MAXHANDLES = 256      // arbitrary #, suitably big
+    DISK_WRITE_LEN = 2048L, // disk memory: max # bytes transferred to/from disk mem at once
+    MAX_HANDLES = 256       // disk memory: arbitrary #, suitably big
 };
 
 namespace
@@ -69,7 +68,7 @@ static void display_handle(U16 handle);
 
 static int s_num_total_handles{};
 static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
-static Memory s_handles[MAXHANDLES];
+static Memory s_handles[MAX_HANDLES];
 
 // Memory handling support routines
 
@@ -175,8 +174,7 @@ static U16 next_handle()
 {
     U16 counter = 1; // don't use handle 0
 
-    while (s_handles[counter].stored_at != MemoryLocation::NOWHERE &&
-            counter < MAXHANDLES)
+    while (s_handles[counter].stored_at != MemoryLocation::NOWHERE && counter < MAX_HANDLES)
     {
         counter++;
     }
@@ -197,7 +195,7 @@ static int check_bounds(long start, long length, U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (s_handles[handle].stored_at == MemoryLocation::DISK && (stack_avail() <= DISKWRITELEN))
+    if (s_handles[handle].stored_at == MemoryLocation::DISK && (stack_avail() <= DISK_WRITE_LEN))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
         display_handle(handle);
@@ -254,7 +252,7 @@ void exit_check()
     }
     
     stop_msg("Error - not all memory released, I'll get it.");
-    for (U16 i = 1; i < MAXHANDLES; i++)
+    for (U16 i = 1; i < MAX_HANDLES; i++)
     {
         if (s_handles[i].stored_at == MemoryLocation::NOWHERE)
         {
@@ -296,7 +294,7 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
 
     U16 handle = next_handle();
 
-    if (handle >= MAXHANDLES || handle == 0)
+    if (handle >= MAX_HANDLES || handle == 0)
     {
         display_handle(handle);
         return 0U;
@@ -404,7 +402,7 @@ void memory_release(U16 handle)
 // Returns true if successful, false if failure
 bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
 {
-    BYTE diskbuf[DISKWRITELEN];
+    BYTE diskbuf[DISK_WRITE_LEN];
     long start; // offset to first location to move to
     long tomove; // number of bytes to move
     U16 numwritten;
@@ -437,17 +435,17 @@ bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long o
     case MemoryLocation::DISK: // MoveToMemory
         std::rewind(s_handles[handle].disk.file);
         std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
-        while (tomove > DISKWRITELEN)
+        while (tomove > DISK_WRITE_LEN)
         {
-            std::memcpy(diskbuf, buffer, (U16)DISKWRITELEN);
-            numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
+            std::memcpy(diskbuf, buffer, (U16)DISK_WRITE_LEN);
+            numwritten = (U16)write1(diskbuf, (U16)DISK_WRITE_LEN, 1, s_handles[handle].disk.file);
             if (numwritten != 1)
             {
                 which_disk_error(3);
                 goto diskerror;
             }
-            tomove -= DISKWRITELEN;
-            buffer += DISKWRITELEN;
+            tomove -= DISK_WRITE_LEN;
+            buffer += DISK_WRITE_LEN;
         }
         std::memcpy(diskbuf, buffer, (U16)tomove);
         numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
@@ -473,7 +471,7 @@ diskerror:
 // Returns true if successful, false if failure
 bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
-    BYTE diskbuf[DISKWRITELEN];
+    BYTE diskbuf[DISK_WRITE_LEN];
     long start; // first location to move
     long tomove; // number of bytes to move
     U16 numread;
@@ -508,17 +506,17 @@ bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset,
     case MemoryLocation::DISK: // MoveFromMemory
         std::rewind(s_handles[handle].disk.file);
         std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
-        while (tomove > DISKWRITELEN)
+        while (tomove > DISK_WRITE_LEN)
         {
-            numread = (U16)std::fread(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
+            numread = (U16)std::fread(diskbuf, (U16)DISK_WRITE_LEN, 1, s_handles[handle].disk.file);
             if (numread != 1 && !std::feof(s_handles[handle].disk.file))
             {
                 which_disk_error(4);
                 goto diskerror;
             }
-            std::memcpy(buffer, diskbuf, (U16)DISKWRITELEN);
-            tomove -= DISKWRITELEN;
-            buffer += DISKWRITELEN;
+            std::memcpy(buffer, diskbuf, (U16)DISK_WRITE_LEN);
+            tomove -= DISK_WRITE_LEN;
+            buffer += DISK_WRITE_LEN;
         }
         numread = (U16)std::fread(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numread != 1 && !std::feof(s_handles[handle].disk.file))
@@ -544,7 +542,7 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
     // offset is the number of units from the start of allocated memory
     // size is the size of the unit, count is the number of units to set
     // Returns true if successful, false if failure
-    BYTE diskbuf[DISKWRITELEN];
+    BYTE diskbuf[DISK_WRITE_LEN];
     long start; // first location to set
     long tomove; // number of bytes to set
     U16 numwritten;
@@ -576,18 +574,18 @@ bool set_memory(int value, U16 size, long count, long offset, U16 handle)
         break;
 
     case MemoryLocation::DISK: // SetMemory
-        std::memset(diskbuf, value, (U16)DISKWRITELEN);
+        std::memset(diskbuf, value, (U16)DISK_WRITE_LEN);
         std::rewind(s_handles[handle].disk.file);
         std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
-        while (tomove > DISKWRITELEN)
+        while (tomove > DISK_WRITE_LEN)
         {
-            numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, s_handles[handle].disk.file);
+            numwritten = (U16)write1(diskbuf, (U16)DISK_WRITE_LEN, 1, s_handles[handle].disk.file);
             if (numwritten != 1)
             {
                 which_disk_error(2);
                 goto diskerror;
             }
-            tomove -= DISKWRITELEN;
+            tomove -= DISK_WRITE_LEN;
         }
         numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
         if (numwritten != 1)
