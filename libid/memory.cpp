@@ -14,8 +14,8 @@
 #include "stack_avail.h"
 #include "stop_msg.h"
 
-#include <array>
 #include <climits>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
@@ -59,7 +59,7 @@ struct Memory
 } // namespace
 
 // Routines in this module
-static bool check_disk_space(long size);
+static bool check_disk_space(std::uint64_t size);
 static MemoryLocation check_for_mem(MemoryLocation where, long size);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
@@ -73,10 +73,10 @@ static Memory s_handles[MAX_HANDLES];
 
 // Memory handling support routines
 
-static bool check_disk_space(long size)
+static bool check_disk_space(std::uint64_t size)
 {
     std::filesystem::space_info space{std::filesystem::space(g_temp_dir)};
-    return space.free >= static_cast<std::uintmax_t>(size);
+    return space.free >= size;
 }
 
 static const char *memory_type(MemoryLocation where)
@@ -101,9 +101,214 @@ static void which_disk_error(int I_O)
     }
 }
 
-MemoryLocation memory_type(U16 handle)
+// buffer is a pointer to local memory
+// Always start moving from the beginning of buffer
+// offset is the number of units from the start of the allocated "Memory"
+// to start moving the contents of buffer to
+// size is the size of the unit, count is the number of units to move
+// Returns true if successful, false if failure
+bool MemoryHandle::from_memory(BYTE const *buffer, U16 size, long count, long offset)
 {
-    return s_handles[handle].stored_at;
+    BYTE diskbuf[DISK_WRITE_LEN];
+    long start;  // offset to first location to move to
+    long tomove; // number of bytes to move
+    U16 numwritten;
+    start = (long) offset * size;
+    tomove = (long) count * size;
+    if (g_debug_flag == debug_flags::display_memory_statistics)
+    {
+        if (check_bounds(start, tomove, index))
+        {
+            return false; // out of bounds, don't do it
+        }
+    }
+    bool success = false;
+    switch (s_handles[index].stored_at)
+    {
+    case MemoryLocation::NOWHERE: // MoveToMemory
+        display_handle(index);
+        break;
+
+    case MemoryLocation::MEMORY: // MoveToMemory
+#if defined(_WIN32)
+        _ASSERTE(s_handles[index].size >= size * count + start);
+#endif
+        memcpy(s_handles[index].linear.memory + start, buffer, size * count);
+        success = true; // No way to gauge success or failure
+        break;
+
+    case MemoryLocation::DISK: // MoveToMemory
+        rewind(s_handles[index].disk.file);
+        fseek(s_handles[index].disk.file, start, SEEK_SET);
+        while (tomove > DISK_WRITE_LEN)
+        {
+            memcpy(diskbuf, buffer, (U16) DISK_WRITE_LEN);
+            numwritten = (U16) write1(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (numwritten != 1)
+            {
+                which_disk_error(3);
+                goto diskerror;
+            }
+            tomove -= DISK_WRITE_LEN;
+            buffer += DISK_WRITE_LEN;
+        }
+        memcpy(diskbuf, buffer, (U16) tomove);
+        numwritten = (U16) write1(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
+        if (numwritten != 1)
+        {
+            which_disk_error(3);
+            break;
+        }
+        success = true;
+diskerror:
+        break;
+    } // end of switch
+    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
+    {
+        display_handle(index);
+    }
+    return success;
+}
+
+// buffer points is the location to move the data to
+// offset is the number of units from the beginning of buffer to start moving
+// size is the size of the unit, count is the number of units to move
+// Returns true if successful, false if failure
+bool MemoryHandle::to_memory(BYTE *buffer, U16 size, long count, long offset)
+{
+    BYTE diskbuf[DISK_WRITE_LEN];
+    long start;  // first location to move
+    long tomove; // number of bytes to move
+    U16 numread;
+    start = (long) offset * size;
+    tomove = (long) count * size;
+    if (g_debug_flag == debug_flags::display_memory_statistics)
+    {
+        if (check_bounds(start, tomove, index))
+        {
+            return false; // out of bounds, don't do it
+        }
+    }
+    bool success = false;
+    switch (s_handles[index].stored_at)
+    {
+    case MemoryLocation::NOWHERE: // MoveFromMemory
+        display_handle(index);
+        break;
+
+    case MemoryLocation::MEMORY: // MoveFromMemory
+        for (int i = 0; i < size; i++)
+        {
+            memcpy(buffer, s_handles[index].linear.memory + start, (U16) count);
+            start += count;
+            buffer += count;
+        }
+        success = true; // No way to gauge success or failure
+        break;
+
+    case MemoryLocation::DISK: // MoveFromMemory
+        rewind(s_handles[index].disk.file);
+        fseek(s_handles[index].disk.file, start, SEEK_SET);
+        while (tomove > DISK_WRITE_LEN)
+        {
+            numread = (U16) fread(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (numread != 1 && !feof(s_handles[index].disk.file))
+            {
+                which_disk_error(4);
+                goto diskerror;
+            }
+            memcpy(buffer, diskbuf, (U16) DISK_WRITE_LEN);
+            tomove -= DISK_WRITE_LEN;
+            buffer += DISK_WRITE_LEN;
+        }
+        numread = (U16) fread(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
+        if (numread != 1 && !feof(s_handles[index].disk.file))
+        {
+            which_disk_error(4);
+            break;
+        }
+        memcpy(buffer, diskbuf, (U16) tomove);
+        success = true;
+diskerror:
+        break;
+    } // end of switch
+    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
+    {
+        display_handle(index);
+    }
+    return success;
+}
+
+
+// value is the value to set memory to
+// offset is the number of units from the start of allocated memory
+// size is the size of the unit, count is the number of units to set
+// Returns true if successful, false if failure
+bool MemoryHandle::set(int value, U16 size, long count, long offset)
+{
+    BYTE diskbuf[DISK_WRITE_LEN];
+    long start;  // first location to set
+    long tomove; // number of bytes to set
+    U16 numwritten;
+    start = (long) offset * size;
+    tomove = (long) count * size;
+    if (g_debug_flag == debug_flags::display_memory_statistics)
+    {
+        if (check_bounds(start, tomove, index))
+        {
+            return false; // out of bounds, don't do it
+        }
+    }
+    bool success = false;
+    switch (s_handles[index].stored_at)
+    {
+    case MemoryLocation::NOWHERE: // SetMemory
+        display_handle(index);
+        break;
+
+    case MemoryLocation::MEMORY: // SetMemory
+        for (int i = 0; i < size; i++)
+        {
+            memset(s_handles[index].linear.memory + start, value, (U16) count);
+            start += count;
+        }
+        success = true; // No way to gauge success or failure
+        break;
+
+    case MemoryLocation::DISK: // SetMemory
+        memset(diskbuf, value, (U16) DISK_WRITE_LEN);
+        rewind(s_handles[index].disk.file);
+        fseek(s_handles[index].disk.file, start, SEEK_SET);
+        while (tomove > DISK_WRITE_LEN)
+        {
+            numwritten = (U16) write1(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (numwritten != 1)
+            {
+                which_disk_error(2);
+                goto diskerror;
+            }
+            tomove -= DISK_WRITE_LEN;
+        }
+        numwritten = (U16) write1(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
+        if (numwritten != 1)
+        {
+            which_disk_error(2);
+            break;
+        }
+        success = true;
+diskerror:
+        break;
+    } // end of switch
+    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
+    {
+        display_handle(index);
+    }
+    return success;
+}
+
+MemoryLocation memory_type(MemoryHandle handle)
+{
+    return s_handles[handle.index].stored_at;
 }
 
 static void display_error(MemoryLocation stored_at, long howmuch)
@@ -265,7 +470,7 @@ void exit_check()
         std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
             memory_type(s_handles[i].stored_at), i);
         stop_msg(buf);
-        memory_release(i);
+        memory_release(MemoryHandle{i});
     }
 }
 
@@ -278,7 +483,7 @@ static std::string mem_file_name(U16 handle)
 // Memory handling routines
 
 // Returns handle number if successful, 0 or nullptr if failure
-U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
+MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
 {
     std::uint64_t toallocate = count * size;
 
@@ -299,7 +504,7 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
     if (handle >= MAX_HANDLES || handle == 0)
     {
         display_handle(handle);
-        return 0U;
+        return {};
         // Oops, do something about this! ?????
     }
 
@@ -367,241 +572,36 @@ U16 memory_alloc(U16 size, long count, MemoryLocation stored_at)
         display_memory();
     }
 
-    return success ? handle : 0U;
+    if (success)
+    {
+        return {handle};
+    }
+    return {};
 }
 
-void memory_release(U16 handle)
+void memory_release(MemoryHandle handle)
 {
-    switch (s_handles[handle].stored_at)
+    const U16 index{handle.index};
+    switch (s_handles[index].stored_at)
     {
     case MemoryLocation::NOWHERE: // MemoryRelease
         break;
 
     case MemoryLocation::MEMORY: // MemoryRelease
-        free(s_handles[handle].linear.memory);
-        s_handles[handle].linear.memory = nullptr;
-        s_handles[handle].size = 0;
-        s_handles[handle].stored_at = MemoryLocation::NOWHERE;
+        free(s_handles[index].linear.memory);
+        s_handles[index].linear.memory = nullptr;
+        s_handles[index].size = 0;
+        s_handles[index].stored_at = MemoryLocation::NOWHERE;
         s_num_total_handles--;
         break;
 
     case MemoryLocation::DISK: // MemoryRelease
-        std::fclose(s_handles[handle].disk.file);
-        dir_remove(g_temp_dir.c_str(), mem_file_name(handle));
-        s_handles[handle].disk.file = nullptr;
-        s_handles[handle].size = 0;
-        s_handles[handle].stored_at = MemoryLocation::NOWHERE;
+        std::fclose(s_handles[index].disk.file);
+        dir_remove(g_temp_dir.c_str(), mem_file_name(index));
+        s_handles[index].disk.file = nullptr;
+        s_handles[index].size = 0;
+        s_handles[index].stored_at = MemoryLocation::NOWHERE;
         s_num_total_handles--;
         break;
     } // end of switch
-}
-
-// buffer is a pointer to local memory
-// Always start moving from the beginning of buffer
-// offset is the number of units from the start of the allocated "Memory"
-// to start moving the contents of buffer to
-// size is the size of the unit, count is the number of units to move
-// Returns true if successful, false if failure
-bool copy_from_memory_to_handle(BYTE const *buffer, U16 size, long count, long offset, U16 handle)
-{
-    BYTE diskbuf[DISK_WRITE_LEN];
-    long start; // offset to first location to move to
-    long tomove; // number of bytes to move
-    U16 numwritten;
-
-    start = (long)offset * size;
-    tomove = (long)count * size;
-    if (g_debug_flag == debug_flags::display_memory_statistics)
-    {
-        if (check_bounds(start, tomove, handle))
-        {
-            return false; // out of bounds, don't do it
-        }
-    }
-
-    bool success = false;
-    switch (s_handles[handle].stored_at)
-    {
-    case MemoryLocation::NOWHERE: // MoveToMemory
-        display_handle(handle);
-        break;
-
-    case MemoryLocation::MEMORY: // MoveToMemory
-#if defined(_WIN32)
-        _ASSERTE(s_handles[handle].size >= size*count + start);
-#endif
-        std::memcpy(s_handles[handle].linear.memory + start, buffer, size*count);
-        success = true; // No way to gauge success or failure
-        break;
-
-    case MemoryLocation::DISK: // MoveToMemory
-        std::rewind(s_handles[handle].disk.file);
-        std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
-        while (tomove > DISK_WRITE_LEN)
-        {
-            std::memcpy(diskbuf, buffer, (U16)DISK_WRITE_LEN);
-            numwritten = (U16)write1(diskbuf, (U16)DISK_WRITE_LEN, 1, s_handles[handle].disk.file);
-            if (numwritten != 1)
-            {
-                which_disk_error(3);
-                goto diskerror;
-            }
-            tomove -= DISK_WRITE_LEN;
-            buffer += DISK_WRITE_LEN;
-        }
-        std::memcpy(diskbuf, buffer, (U16)tomove);
-        numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
-        if (numwritten != 1)
-        {
-            which_disk_error(3);
-            break;
-        }
-        success = true;
-diskerror:
-        break;
-    } // end of switch
-    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
-    {
-        display_handle(handle);
-    }
-    return success;
-}
-
-// buffer points is the location to move the data to
-// offset is the number of units from the beginning of buffer to start moving
-// size is the size of the unit, count is the number of units to move
-// Returns true if successful, false if failure
-bool copy_from_handle_to_memory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
-{
-    BYTE diskbuf[DISK_WRITE_LEN];
-    long start; // first location to move
-    long tomove; // number of bytes to move
-    U16 numread;
-
-    start = (long)offset * size;
-    tomove = (long)count * size;
-    if (g_debug_flag == debug_flags::display_memory_statistics)
-    {
-        if (check_bounds(start, tomove, handle))
-        {
-            return false; // out of bounds, don't do it
-        }
-    }
-
-    bool success = false;
-    switch (s_handles[handle].stored_at)
-    {
-    case MemoryLocation::NOWHERE: // MoveFromMemory
-        display_handle(handle);
-        break;
-
-    case MemoryLocation::MEMORY: // MoveFromMemory
-        for (int i = 0; i < size; i++)
-        {
-            std::memcpy(buffer, s_handles[handle].linear.memory+start, (U16)count);
-            start += count;
-            buffer += count;
-        }
-        success = true; // No way to gauge success or failure
-        break;
-
-    case MemoryLocation::DISK: // MoveFromMemory
-        std::rewind(s_handles[handle].disk.file);
-        std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
-        while (tomove > DISK_WRITE_LEN)
-        {
-            numread = (U16)std::fread(diskbuf, (U16)DISK_WRITE_LEN, 1, s_handles[handle].disk.file);
-            if (numread != 1 && !std::feof(s_handles[handle].disk.file))
-            {
-                which_disk_error(4);
-                goto diskerror;
-            }
-            std::memcpy(buffer, diskbuf, (U16)DISK_WRITE_LEN);
-            tomove -= DISK_WRITE_LEN;
-            buffer += DISK_WRITE_LEN;
-        }
-        numread = (U16)std::fread(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
-        if (numread != 1 && !std::feof(s_handles[handle].disk.file))
-        {
-            which_disk_error(4);
-            break;
-        }
-        std::memcpy(buffer, diskbuf, (U16)tomove);
-        success = true;
-diskerror:
-        break;
-    } // end of switch
-    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
-    {
-        display_handle(handle);
-    }
-    return success;
-}
-
-bool set_memory(int value, U16 size, long count, long offset, U16 handle)
-{
-    // value is the value to set memory to
-    // offset is the number of units from the start of allocated memory
-    // size is the size of the unit, count is the number of units to set
-    // Returns true if successful, false if failure
-    BYTE diskbuf[DISK_WRITE_LEN];
-    long start; // first location to set
-    long tomove; // number of bytes to set
-    U16 numwritten;
-
-    start = (long)offset * size;
-    tomove = (long)count * size;
-    if (g_debug_flag == debug_flags::display_memory_statistics)
-    {
-        if (check_bounds(start, tomove, handle))
-        {
-            return false; // out of bounds, don't do it
-        }
-    }
-
-    bool success = false;
-    switch (s_handles[handle].stored_at)
-    {
-    case MemoryLocation::NOWHERE: // SetMemory
-        display_handle(handle);
-        break;
-
-    case MemoryLocation::MEMORY: // SetMemory
-        for (int i = 0; i < size; i++)
-        {
-            std::memset(s_handles[handle].linear.memory+start, value, (U16)count);
-            start += count;
-        }
-        success = true; // No way to gauge success or failure
-        break;
-
-    case MemoryLocation::DISK: // SetMemory
-        std::memset(diskbuf, value, (U16)DISK_WRITE_LEN);
-        std::rewind(s_handles[handle].disk.file);
-        std::fseek(s_handles[handle].disk.file, start, SEEK_SET);
-        while (tomove > DISK_WRITE_LEN)
-        {
-            numwritten = (U16)write1(diskbuf, (U16)DISK_WRITE_LEN, 1, s_handles[handle].disk.file);
-            if (numwritten != 1)
-            {
-                which_disk_error(2);
-                goto diskerror;
-            }
-            tomove -= DISK_WRITE_LEN;
-        }
-        numwritten = (U16)write1(diskbuf, (U16)tomove, 1, s_handles[handle].disk.file);
-        if (numwritten != 1)
-        {
-            which_disk_error(2);
-            break;
-        }
-        success = true;
-diskerror:
-        break;
-    } // end of switch
-    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
-    {
-        display_handle(handle);
-    }
-    return success;
 }
