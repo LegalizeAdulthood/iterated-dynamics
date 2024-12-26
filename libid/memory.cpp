@@ -60,7 +60,7 @@ struct Memory
 
 // Routines in this module
 static bool check_disk_space(std::uint64_t size);
-static MemoryLocation check_for_mem(MemoryLocation where, long size);
+static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
 static void which_disk_error(int);
@@ -325,17 +325,10 @@ static void display_error(MemoryLocation stored_at, long howmuch)
     stop_msg(buf);
 }
 
-static MemoryLocation check_for_mem(MemoryLocation where, long size)
+// This function returns an adjusted stored_at value.
+// This is where the memory requested can be allocated.
+static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size)
 {
-    // This function returns an adjusted stored_at value.
-    // This is where the memory requested can be allocated.
-
-    long maxmem;
-    BYTE *temp;
-    MemoryLocation use_this_type;
-
-    maxmem = (long)USHRT_MAX;
-
     if (g_debug_flag == debug_flags::force_memory_from_disk)
     {
         where = MemoryLocation::DISK;
@@ -345,36 +338,32 @@ static MemoryLocation check_for_mem(MemoryLocation where, long size)
         where = MemoryLocation::MEMORY;
     }
 
+    MemoryLocation result{MemoryLocation::NOWHERE};
     switch (where)
     {
-    case MemoryLocation::MEMORY: // check_for_mem
-        if (maxmem > size)
+    case MemoryLocation::MEMORY:
+        if (void *temp = std::malloc(size); temp != nullptr)
         {
-            temp = (BYTE *)malloc(size);
-            if (temp != nullptr)
-            {
-                // minimum free space + requested amount
-                free(temp);
-                use_this_type = MemoryLocation::MEMORY;
-                break;
-            }
+            std::free(temp);
+            result = MemoryLocation::MEMORY;
+            break;
         }
+        // failed, fall through, not enough heap available
 
-    case MemoryLocation::DISK: // check_for_mem
-    default: // just in case a nonsense number gets used
+    case MemoryLocation::DISK: // NOLINT(clang-diagnostic-implicit-fallthrough)
         if (check_disk_space(size))
         {
-            use_this_type = MemoryLocation::DISK;
+            result = MemoryLocation::DISK;
             break;
         }
         // failed, fall through, no memory available
 
-    case MemoryLocation::NOWHERE: // check_for_mem
-        use_this_type = MemoryLocation::NOWHERE;
+    case MemoryLocation::NOWHERE:  // NOLINT(clang-diagnostic-implicit-fallthrough)
+        result = MemoryLocation::NOWHERE;
         break;
-    } // end of switch
+    }
 
-    return use_this_type;
+    return result;
 }
 
 static U16 next_handle()
