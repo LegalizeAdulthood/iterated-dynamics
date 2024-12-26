@@ -200,7 +200,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
 
     // preset cache to all invalid entries so we don't need free list logic
-    for (auto &elem : s_hash_ptr)
+    for (unsigned int &elem : s_hash_ptr)
     {
         elem = 0xffff; // 0xffff marks the end of a hash chain
     }
