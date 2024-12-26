@@ -21,6 +21,7 @@
 
 #include <array>
 #include <cassert>
+#include <chrono>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -729,6 +730,15 @@ static void mem_putc(BYTE c)     // memory get_char
 
 void dvid_status(int line, char const *msg)
 {
+    using namespace std::literals::chrono_literals;
+    static std::chrono::time_point<std::chrono::high_resolution_clock> last{};
+    std::chrono::time_point now{std::chrono::high_resolution_clock::now()};
+    if (now - last < 100ms)
+    {
+        return;
+    }
+    last = now;
+
     assert(msg != nullptr);
     const std::string buff = (msg + std::string(40, ' ')).substr(0, 40);
     int attrib = C_DVID_HI;
