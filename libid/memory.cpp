@@ -14,6 +14,7 @@
 #include "stack_avail.h"
 #include "stop_msg.h"
 
+#include <cinttypes>
 #include <climits>
 #include <cstdint>
 #include <cstdio>
@@ -422,7 +423,7 @@ void display_memory()
 static void display_handle(U16 handle)
 {
     char buf[MSG_LEN];
-    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %llu", handle,
+    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %" PRIu64, handle,
         memory_type(s_handles[handle].stored_at), s_handles[handle].size);
     if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
     {
@@ -555,7 +556,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSG_LEN * 2];
-        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %llu bytes of %s, handle = %u.",
+        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %" PRIu64 " bytes of %s, handle = %u.",
             memory_type(stored_at), toallocate, memory_type(use_this_type), handle);
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
         display_memory();
