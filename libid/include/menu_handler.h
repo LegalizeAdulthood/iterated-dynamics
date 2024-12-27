@@ -22,6 +22,15 @@ inline bool operator<(const MenuHandler &lhs, int key)
     return lhs.key < key;
 }
 
+inline bool operator==(const MenuHandler &lhs, const MenuHandler &rhs)
+{
+    return lhs.key == rhs.key;
+}
+inline bool operator!=(const MenuHandler &lhs, const MenuHandler &rhs)
+{
+    return !(lhs == rhs);
+}
+
 main_state request_fractal_type(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state toggle_float(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state get_history(int kbd_char);

@@ -22,6 +22,8 @@
 #include "value_saver.h"
 #include "zoom.h"
 
+#include <algorithm>
+#include <cassert>
 #include <stdexcept>
 
 static main_state save_evolver_image(int &, bool &, bool &, bool &)
@@ -369,146 +371,88 @@ static main_state evolver_get_history(int &kbd_char, bool &, bool &, bool &)
     return get_history(kbd_char);
 }
 
+// grabbed a couple of video mode keys, user can change to these using delete and the menu if necessary
+static const MenuHandler s_handlers[]{
+    {ID_KEY_CTL_E, prompt_evolver_options},             //
+    {ID_KEY_CTL_H, evolver_get_history},                // return to prev image
+    {ID_KEY_CTL_ENTER, request_zoom_out},               //
+    {ID_KEY_ENTER, request_zoom_in},                    //
+    {ID_KEY_CTL_BACKSLASH, evolver_get_history},        // return to prev image
+    {ID_KEY_SPACE, prompt_evolver_options},             //
+    {'+', color_cycle},                                 // rotate palette
+    {'-', color_cycle},                                 // rotate palette
+    {'0', turn_off_evolving},                           // mutation level 0 == turn off evolving
+    {'1', request_mutation_level},                      //
+    {'2', request_mutation_level},                      //
+    {'3', request_mutation_level},                      //
+    {'4', request_mutation_level},                      //
+    {'5', request_mutation_level},                      //
+    {'6', request_mutation_level},                      //
+    {'7', request_mutation_level},                      //
+    {'\\', evolver_get_history},                        // return to prev image
+    {'b', exit_evolver},                                // quick exit from evolve mode
+    {'c', color_cycle},                                 // switch to color cycling
+    {'e', color_editing},                               // switch to color editing
+    {'f', toggle_float},                                // floating pt toggle
+    {'g', prompt_evolver_options},                      //
+    {'h', evolver_get_history},                         // return to prev image
+    {'p', prompt_evolver_options},                      // passes options
+    {'r', restore_from_image},                          // restore-from
+    {'s', save_evolver_image},                          // save-to-disk
+    {'t', request_fractal_type},                        // new fractal type
+    {'x', prompt_evolver_options},                      // invoke options screen
+    {'y', prompt_evolver_options},                      // invoke options screen
+    {'z', prompt_evolver_options},                      // type specific params
+    {ID_KEY_CTL_ENTER_2, request_zoom_out},             //
+    {ID_KEY_ENTER_2, request_zoom_in},                  //
+    {ID_KEY_F2, halve_mutation_params},                 // halve mutation params and regen
+    {ID_KEY_F3, double_mutation_params},                // double mutation parameters and regenerate
+    {ID_KEY_F4, decrease_grid_size},                    // decrement grid size and regen
+    {ID_KEY_F5, increase_grid_size},                    // increment grid size and regen
+    {ID_KEY_F6, toggle_gene_variation},                 // toggle all variables selected for random variation
+    {ID_KEY_UP_ARROW, move_zoom_box},                   //
+    {ID_KEY_PAGE_UP, evolver_zoom_in},                  //
+    {ID_KEY_LEFT_ARROW, move_zoom_box},                 //
+    {ID_KEY_RIGHT_ARROW, move_zoom_box},                //
+    {ID_KEY_DOWN_ARROW, move_zoom_box},                 //
+    {ID_KEY_PAGE_DOWN, evolver_zoom_out},               //
+    {ID_KEY_INSERT, request_restart},                   //
+    {ID_KEY_CTL_LEFT_ARROW, move_evolver_selection},    //
+    {ID_KEY_CTL_RIGHT_ARROW, move_evolver_selection},   //
+    {ID_KEY_CTL_END, skew_zoom_right},                  //
+    {ID_KEY_CTL_PAGE_DOWN, evolve_param_zoom_increase}, //
+    {ID_KEY_CTL_HOME, skew_zoom_left},                  //
+    {ID_KEY_ALT_1, request_mutation_level},             //
+    {ID_KEY_ALT_2, request_mutation_level},             //
+    {ID_KEY_ALT_3, request_mutation_level},             //
+    {ID_KEY_ALT_4, request_mutation_level},             //
+    {ID_KEY_ALT_5, request_mutation_level},             //
+    {ID_KEY_ALT_6, request_mutation_level},             //
+    {ID_KEY_ALT_7, request_mutation_level},             //
+    {ID_KEY_CTL_PAGE_UP, evolve_param_zoom_decrease},   //
+    {ID_KEY_CTL_UP_ARROW, move_evolver_selection},      //
+    {ID_KEY_CTL_MINUS, zoom_box_increase_rotation},     //
+    {ID_KEY_CTL_PLUS, zoom_box_decrease_rotation},      //
+    {ID_KEY_CTL_DOWN_ARROW, move_evolver_selection},    //
+    {ID_KEY_CTL_INSERT, zoom_box_increase_color},       //
+    {ID_KEY_CTL_DEL, zoom_box_decrease_color},          //
+};
+
 main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
-    switch (kbd_char)
+    assert(std::is_sorted(std::begin(s_handlers), std::end(s_handlers)));
+    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), kbd_char);
+        it != std::cend(s_handlers) && it->key == kbd_char)
     {
-    case 't':                    // new fractal type
-        return request_fractal_type(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 'x':                    // invoke options screen
-    case 'y':
-    case 'p':                    // passes options
-    case 'z':                    // type specific parms
-    case 'g':
-    case ID_KEY_CTL_E:
-    case ID_KEY_SPACE:
-        return prompt_evolver_options(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 'b': // quick exit from evolve mode
-        return exit_evolver(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 'f':                    // floating pt toggle
-        return toggle_float(kbd_char, from_mandel, kbd_more, stacked);
-
-    case '\\':                   // return to prev image
-    case ID_KEY_CTL_BACKSLASH:
-    case 'h':
-    case ID_KEY_BACKSPACE:
-        return evolver_get_history(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 'c':                    // switch to color cycling
-    case '+':                    // rotate palette
-    case '-':                    // rotate palette
-        return color_cycle(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 'e':                    // switch to color editing
-        return color_editing(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 's':                    // save-to-disk
-        return save_evolver_image(kbd_char, from_mandel, kbd_more, stacked);
-
-    case 'r':                    // restore-from
-        return restore_from_image(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_ENTER:                  // Enter
-    case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
-        return request_zoom_in(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_ENTER:              // control-Enter
-    case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
-        return request_zoom_out(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_INSERT:
-        return request_restart(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_LEFT_ARROW:             // cursor left
-    case ID_KEY_RIGHT_ARROW:            // cursor right
-    case ID_KEY_UP_ARROW:               // cursor up
-    case ID_KEY_DOWN_ARROW:             // cursor down
-        return move_zoom_box(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
-    case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
-    case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
-    case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
-        return move_evolver_selection(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_HOME:               // Ctrl-home
-        return skew_zoom_left(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_END:                // Ctrl-end
-        return skew_zoom_right(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_PAGE_UP:
-        return evolve_param_zoom_decrease(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_PAGE_DOWN:
-        return evolve_param_zoom_increase(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_PAGE_UP:                // page up
-        return evolver_zoom_in(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_PAGE_DOWN:              // page down
-        return evolver_zoom_out(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        return zoom_box_increase_rotation(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        return zoom_box_decrease_rotation(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_INSERT:             // Ctrl-ins
-        return zoom_box_increase_color(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_CTL_DEL:                // Ctrl-del
-        return zoom_box_decrease_color(kbd_char, from_mandel, kbd_more, stacked);
-
-    /* grabbed a couple of video mode keys, user can change to these using
-        delete and the menu if necessary */
-
-    case ID_KEY_F2: // halve mutation params and regen
-        return halve_mutation_params(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_F3: //double mutation parameters and regenerate
-        return double_mutation_params(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_F4: //decrement  gridsize and regen
-        return decrease_grid_size(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_F5: // increment gridsize and regen
-        return increase_grid_size(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-        return toggle_gene_variation(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_ALT_1: // number keys (with or without Alt) set mutation level
-    case ID_KEY_ALT_2:
-    case ID_KEY_ALT_3:
-    case ID_KEY_ALT_4:
-    case ID_KEY_ALT_5:
-    case ID_KEY_ALT_6:
-    case ID_KEY_ALT_7:
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-        return request_mutation_level(kbd_char, from_mandel, kbd_more, stacked);
-
-    case '0': // mutation level 0 == turn off evolving
-        return turn_off_evolving(kbd_char, from_mandel, kbd_more, stacked);
-
-    case ID_KEY_DELETE:         // select video mode from list
-        request_video_mode(kbd_char);
-        // fallthrough
-
-    default: // NOLINT(clang-diagnostic-implicit-fallthrough)
-        // other (maybe valid Fn key
-        return requested_video_fn(kbd_char, from_mandel, kbd_more, stacked);
+        return it->handler(kbd_char, from_mandel, kbd_more, stacked);
     }
 
-    return main_state::NOTHING;
+    if (kbd_char == ID_KEY_DELETE)
+    {
+        // select video mode from list
+        request_video_mode(kbd_char);
+    }
+
+    // other (maybe a valid Fn key)
+    return requested_video_fn(kbd_char, from_mandel, kbd_more, stacked);
 }
