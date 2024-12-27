@@ -22,6 +22,8 @@
 #include "value_saver.h"
 #include "zoom.h"
 
+#include <stdexcept>
+
 static main_state save_evolver_image(int &, bool &, bool &, bool &)
 {
     if (driver_diskp() && g_disk_targa)
@@ -330,8 +332,22 @@ static main_state toggle_gene_variation(bool &kbd_more)
     return main_state::NOTHING;
 }
 
-static main_state request_mutation_level(int mutation_level, bool &kbd_more)
+static main_state request_mutation_level(int kbd_char, bool &kbd_more)
 {
+    int mutation_level;
+    if (kbd_char >= ID_KEY_ALT_1 && kbd_char <= ID_KEY_ALT_7)
+    {
+        mutation_level = kbd_char - ID_KEY_ALT_1 + 1;
+    }
+    else if (kbd_char >= '1' && kbd_char <= '7')
+    {
+        mutation_level = kbd_char - '1' + 1;
+    }
+    else
+    {
+        throw std::runtime_error(
+            "Bad mutation level character (" + std::to_string(kbd_char) + ") to request_mutation_level");
+    }
     set_mutation_level(mutation_level);
     restore_param_history();
     kbd_more = false;
@@ -473,7 +489,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        return request_mutation_level(kbd_char - ID_KEY_ALT_1 + 1, kbd_more);
+        return request_mutation_level(kbd_char, kbd_more);
 
     case '1':
     case '2':
@@ -482,7 +498,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case '5':
     case '6':
     case '7':
-        return request_mutation_level(kbd_char - '1' + 1, kbd_more);
+        return request_mutation_level(kbd_char, kbd_more);
 
     case '0': // mutation level 0 == turn off evolving
         return turn_off_evolving(kbd_more);
