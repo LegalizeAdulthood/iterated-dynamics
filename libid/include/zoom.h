@@ -35,7 +35,7 @@ main_state skew_zoom_left(int &key, bool &from_mandel, bool &kbd_more, bool &sta
 main_state skew_zoom_right(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state decrease_zoom_aspect(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state increase_zoom_aspect(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
-main_state zoom_box_in(int &key, bool &from_mande, bool &kbd_more, bool &stacked);
+main_state zoom_box_in(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state zoom_box_out(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state zoom_box_increase_rotation(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
 main_state zoom_box_decrease_rotation(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
