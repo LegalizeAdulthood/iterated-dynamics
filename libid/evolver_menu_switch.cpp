@@ -240,7 +240,7 @@ static main_state evolver_zoom_in(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state evolver_zoom_out()
+static main_state evolver_zoom_out(int &, bool &, bool &, bool &)
 {
     if (g_box_count)
     {
@@ -434,7 +434,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return evolver_zoom_in(kbd_char, from_mandel, kbd_more, stacked);
 
     case ID_KEY_PAGE_DOWN:              // page down
-        return evolver_zoom_out();
+        return evolver_zoom_out(kbd_char, from_mandel, kbd_more, stacked);
 
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         return zoom_box_increase_rotation(kbd_char, from_mandel, kbd_more, stacked);
