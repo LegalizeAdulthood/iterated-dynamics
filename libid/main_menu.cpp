@@ -273,6 +273,27 @@ int MainMenu::prompt()
 
 } // namespace
 
+static bool exit_prompt()
+{
+    help_title();
+    driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
+    for (int j = 9; j <= 11; ++j)
+    {
+        driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
+    }
+    put_string_center(10, 18, 40, C_GENERAL_INPUT, "Exit from " ID_PROGRAM_NAME " (y/n)? y");
+    driver_hide_text_cursor();
+    int i;
+    while ((i = driver_get_key()) != 'y' && i != 'Y' && i != ID_KEY_ENTER)
+    {
+        if (i == 'n' || i == 'N')
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 int main_menu(bool full_menu)
 {
     ValueSaver saved_tab_mode{g_tab_mode};
@@ -285,22 +306,11 @@ top:
     int i = menu.prompt();
     if (i == ID_KEY_ESC)             // escape from menu exits
     {
-        help_title();
-        driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
-        for (int j = 9; j <= 11; ++j)
+        if (exit_prompt())
         {
-            driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
+            goodbye();
         }
-        put_string_center(10, 18, 40, C_GENERAL_INPUT, "Exit from " ID_PROGRAM_NAME " (y/n)? y");
-        driver_hide_text_cursor();
-        while ((i = driver_get_key()) != 'y' && i != 'Y' && i != ID_KEY_ENTER)
-        {
-            if (i == 'n' || i == 'N')
-            {
-                goto top;
-            }
-        }
-        goodbye();
+        goto top;
     }
     if (i == ID_KEY_TAB)
     {
