@@ -655,6 +655,7 @@ static MenuHandler s_handlers[]{
     {'+', color_cycle},                             //
     {'-', color_cycle},                             //
     {'2', execute_commands},                        //
+    {'3', restore_from_3d},                         //
     {'@', execute_commands},                        //
     {'\\', main_history},                           //
     {'a', request_star_field_params},               //
