@@ -299,15 +299,15 @@ int main_menu(bool full_menu)
     ValueSaver saved_tab_mode{g_tab_mode};
 
     bool prompt{true};
-    int i{};
+    int key{};
     while (prompt)
     {
         s_full_menu = full_menu;
         g_tab_mode = false;
         MainMenu menu(full_menu);
 
-        i = menu.prompt();
-        if (i == ID_KEY_ESC)             // escape from menu exits
+        key = menu.prompt();
+        if (key == ID_KEY_ESC)             // escape from menu exits
         {
             if (exit_prompt())
             {
@@ -319,14 +319,14 @@ int main_menu(bool full_menu)
             prompt = false;
         }
     }
-    if (i == ID_KEY_TAB)
+    if (key == ID_KEY_TAB)
     {
         tab_display();
-        i = 0;
+        key = 0;
     }
-    if (i == ID_KEY_ENTER || i == ID_KEY_ENTER_2)
+    if (key == ID_KEY_ENTER || key == ID_KEY_ENTER_2)
     {
-        i = 0;                 // don't trigger new calc
+        key = 0;                 // don't trigger new calc
     }
-    return i;
+    return key;
 }
