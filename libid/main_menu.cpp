@@ -90,266 +90,266 @@ int main_menu(bool full_menu)
 {
     char const *choices[44]; // 2 columns * 22 rows
     int attributes[44];
-    int choicekey[44];
+    int choice_key[44];
     ValueSaver saved_tab_mode{g_tab_mode};
 
 top:
     s_full_menu = full_menu;
     g_tab_mode = false;
-    bool showjuliatoggle{};
+    bool show_julia_toggle{};
     for (int j = 0; j < 44; ++j)
     {
         attributes[j] = 256;
         choices[j] = "";
-        choicekey[j] = -1;
+        choice_key[j] = -1;
     }
-    int nextleft = -2;
-    int nextright = -1;
+    int next_left = -2;
+    int next_right = -1;
 
     if (full_menu)
     {
-        nextleft += 2;
-        choices[nextleft] = "      CURRENT IMAGE         ";
-        attributes[nextleft] = 256+MENU_HDG;
+        next_left += 2;
+        choices[next_left] = "      CURRENT IMAGE         ";
+        attributes[next_left] = 256+MENU_HDG;
 
-        nextleft += 2;
-        choicekey[nextleft] = 13; // enter
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = (g_calc_status == calc_status_value::RESUMABLE) ?
+        next_left += 2;
+        choice_key[next_left] = 13; // enter
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = (g_calc_status == calc_status_value::RESUMABLE) ?
                             "Continue calculation        " :
                             "Return to image             ";
 
-        nextleft += 2;
-        choicekey[nextleft] = 9; // tab
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Info about image      <Tab> ";
+        next_left += 2;
+        choice_key[next_left] = 9; // tab
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Info about image      <Tab> ";
 
-        nextleft += 2;
-        choicekey[nextleft] = 'o';
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Orbits window          <O>  ";
+        next_left += 2;
+        choice_key[next_left] = 'o';
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Orbits window          <O>  ";
         if (!(g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA))
         {
-            nextleft += 2;
+            next_left += 2;
         }
     }
 
-    nextleft += 2;
-    choices[nextleft] = "      NEW IMAGE             ";
-    attributes[nextleft] = 256+MENU_HDG;
+    next_left += 2;
+    choices[next_left] = "      NEW IMAGE             ";
+    attributes[next_left] = 256+MENU_HDG;
 
-    nextleft += 2;
-    choicekey[nextleft] = ID_KEY_DELETE;
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Select video mode...  <Del> ";
+    next_left += 2;
+    choice_key[next_left] = ID_KEY_DELETE;
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Select video mode...  <Del> ";
 
-    nextleft += 2;
-    choicekey[nextleft] = 't';
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Select fractal type    <T>  ";
+    next_left += 2;
+    choice_key[next_left] = 't';
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Select fractal type    <T>  ";
 
     if (full_menu)
     {
         if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
             || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
         {
-            nextleft += 2;
-            choicekey[nextleft] = ID_KEY_SPACE;
-            attributes[nextleft] = MENU_ITEM;
-            choices[nextleft] = "Toggle to/from Julia <Space>";
-            showjuliatoggle = true;
+            next_left += 2;
+            choice_key[next_left] = ID_KEY_SPACE;
+            attributes[next_left] = MENU_ITEM;
+            choices[next_left] = "Toggle to/from Julia <Space>";
+            show_julia_toggle = true;
         }
         if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP
             || g_fractal_type == fractal_type::INVERSEJULIA)
         {
-            nextleft += 2;
-            choicekey[nextleft] = 'j';
-            attributes[nextleft] = MENU_ITEM;
-            choices[nextleft] = "Toggle to/from inverse <J>  ";
-            showjuliatoggle = true;
+            next_left += 2;
+            choice_key[next_left] = 'j';
+            attributes[next_left] = MENU_ITEM;
+            choices[next_left] = "Toggle to/from inverse <J>  ";
+            show_julia_toggle = true;
         }
 
-        nextleft += 2;
-        choicekey[nextleft] = 'h';
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Return to prior image  <H>   ";
+        next_left += 2;
+        choice_key[next_left] = 'h';
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Return to prior image  <H>   ";
 
-        nextleft += 2;
-        choicekey[nextleft] = ID_KEY_BACKSPACE;
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Reverse thru history <Ctrl+H>";
+        next_left += 2;
+        choice_key[next_left] = ID_KEY_BACKSPACE;
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Reverse thru history <Ctrl+H>";
     }
     else
     {
-        nextleft += 2;
+        next_left += 2;
     }
 
-    nextleft += 2;
-    choices[nextleft] = "      OPTIONS                ";
-    attributes[nextleft] = 256+MENU_HDG;
+    next_left += 2;
+    choices[next_left] = "      OPTIONS                ";
+    attributes[next_left] = 256+MENU_HDG;
 
-    nextleft += 2;
-    choicekey[nextleft] = 'x';
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Basic options...       <X>  ";
+    next_left += 2;
+    choice_key[next_left] = 'x';
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Basic options...       <X>  ";
 
-    nextleft += 2;
-    choicekey[nextleft] = 'y';
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Extended options...    <Y>  ";
+    next_left += 2;
+    choice_key[next_left] = 'y';
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Extended options...    <Y>  ";
 
-    nextleft += 2;
-    choicekey[nextleft] = 'z';
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Type-specific parms... <Z>  ";
+    next_left += 2;
+    choice_key[next_left] = 'z';
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Type-specific parms... <Z>  ";
 
-    nextleft += 2;
-    choicekey[nextleft] = 'p';
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Passes options...      <P>  ";
+    next_left += 2;
+    choice_key[next_left] = 'p';
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Passes options...      <P>  ";
 
-    nextleft += 2;
-    choicekey[nextleft] = 'v';
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "View window options... <V>  ";
+    next_left += 2;
+    choice_key[next_left] = 'v';
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "View window options... <V>  ";
 
-    if (!showjuliatoggle)
+    if (!show_julia_toggle)
     {
-        nextleft += 2;
-        choicekey[nextleft] = 'i';
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Fractal 3D parms...    <I>  ";
+        next_left += 2;
+        choice_key[next_left] = 'i';
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Fractal 3D parms...    <I>  ";
     }
 
-    nextleft += 2;
-    choicekey[nextleft] = ID_KEY_CTL_B;
-    attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "Browse params...    <Ctrl+B>";
+    next_left += 2;
+    choice_key[next_left] = ID_KEY_CTL_B;
+    attributes[next_left] = MENU_ITEM;
+    choices[next_left] = "Browse params...    <Ctrl+B>";
 
     if (full_menu)
     {
-        nextleft += 2;
-        choicekey[nextleft] = ID_KEY_CTL_E;
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Evolver params...   <Ctrl+E>";
+        next_left += 2;
+        choice_key[next_left] = ID_KEY_CTL_E;
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Evolver params...   <Ctrl+E>";
 
-        nextleft += 2;
-        choicekey[nextleft] = ID_KEY_CTL_F;
-        attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "Sound params...     <Ctrl+F>";
+        next_left += 2;
+        choice_key[next_left] = ID_KEY_CTL_F;
+        attributes[next_left] = MENU_ITEM;
+        choices[next_left] = "Sound params...     <Ctrl+F>";
     }
 
-    nextright += 2;
-    attributes[nextright] = 256 + MENU_HDG;
-    choices[nextright] = "        FILE                  ";
+    next_right += 2;
+    attributes[next_right] = 256 + MENU_HDG;
+    choices[next_right] = "        FILE                  ";
 
-    nextright += 2;
-    choicekey[nextright] = '@';
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Run saved command set... <@>  ";
+    next_right += 2;
+    choice_key[next_right] = '@';
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Run saved command set... <@>  ";
 
     if (full_menu)
     {
-        nextright += 2;
-        choicekey[nextright] = 's';
-        attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "Save image to file       <S>  ";
+        next_right += 2;
+        choice_key[next_right] = 's';
+        attributes[next_right] = MENU_ITEM;
+        choices[next_right] = "Save image to file       <S>  ";
     }
 
-    nextright += 2;
-    choicekey[nextright] = 'r';
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Load image from file...  <R>  ";
+    next_right += 2;
+    choice_key[next_right] = 'r';
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Load image from file...  <R>  ";
 
-    nextright += 2;
-    choicekey[nextright] = '3';
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "3D transform from file...<3>  ";
+    next_right += 2;
+    choice_key[next_right] = '3';
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "3D transform from file...<3>  ";
 
     if (full_menu)
     {
-        nextright += 2;
-        choicekey[nextright] = '#';
-        attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "3D overlay from file.....<#>  ";
+        next_right += 2;
+        choice_key[next_right] = '#';
+        attributes[next_right] = MENU_ITEM;
+        choices[next_right] = "3D overlay from file.....<#>  ";
 
-        nextright += 2;
-        choicekey[nextright] = 'b';
-        attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "Save current parameters..<B>  ";
+        next_right += 2;
+        choice_key[next_right] = 'b';
+        attributes[next_right] = MENU_ITEM;
+        choices[next_right] = "Save current parameters..<B>  ";
     }
 
-    nextright += 2;
-    choicekey[nextright] = 'd';
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Command shell            <D>  ";
+    next_right += 2;
+    choice_key[next_right] = 'd';
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Command shell            <D>  ";
 
-    nextright += 2;
-    choicekey[nextright] = 'g';
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Give parameter string    <G>  ";
+    next_right += 2;
+    choice_key[next_right] = 'g';
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Give parameter string    <G>  ";
 
-    nextright += 2;
-    choicekey[nextright] = ID_KEY_ESC;
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Quit Id                  <Esc> ";
+    next_right += 2;
+    choice_key[next_right] = ID_KEY_ESC;
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Quit Id                  <Esc> ";
 
-    nextright += 2;
-    choicekey[nextright] = ID_KEY_INSERT;
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Restart Id               <Ins> ";
+    next_right += 2;
+    choice_key[next_right] = ID_KEY_INSERT;
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Restart Id               <Ins> ";
 
     if (full_menu && g_got_real_dac && g_colors >= 16)
     {
-        nextright += 2;
-        choices[nextright] = "       COLORS                 ";
-        attributes[nextright] = 256+MENU_HDG;
+        next_right += 2;
+        choices[next_right] = "       COLORS                 ";
+        attributes[next_right] = 256+MENU_HDG;
 
-        nextright += 2;
-        choicekey[nextright] = 'c';
-        attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "Color cycling mode       <C>  ";
+        next_right += 2;
+        choice_key[next_right] = 'c';
+        attributes[next_right] = MENU_ITEM;
+        choices[next_right] = "Color cycling mode       <C>  ";
 
-        nextright += 2;
-        choicekey[nextright] = '+';
-        attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "Rotate palette      <+>, <->  ";
+        next_right += 2;
+        choice_key[next_right] = '+';
+        attributes[next_right] = MENU_ITEM;
+        choices[next_right] = "Rotate palette      <+>, <->  ";
 
         if (g_colors > 16)
         {
-            nextright += 2;
-            choicekey[nextright] = 'e';
-            attributes[nextright] = MENU_ITEM;
-            choices[nextright] = "Palette editing mode     <E>  ";
+            next_right += 2;
+            choice_key[next_right] = 'e';
+            attributes[next_right] = MENU_ITEM;
+            choices[next_right] = "Palette editing mode     <E>  ";
 
-            nextright += 2;
-            choicekey[nextright] = 'a';
-            attributes[nextright] = MENU_ITEM;
-            choices[nextright] = "Make starfield           <A>  ";
+            next_right += 2;
+            choice_key[next_right] = 'a';
+            attributes[next_right] = MENU_ITEM;
+            choices[next_right] = "Make starfield           <A>  ";
         }
     }
 
-    nextright += 2;
-    choicekey[nextright] = ID_KEY_CTL_A;
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Ant automaton         <Ctrl+A>";
+    next_right += 2;
+    choice_key[next_right] = ID_KEY_CTL_A;
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Ant automaton         <Ctrl+A>";
 
-    nextright += 2;
-    choicekey[nextright] = ID_KEY_CTL_S;
-    attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "Stereogram            <Ctrl+S>";
+    next_right += 2;
+    choice_key[next_right] = ID_KEY_CTL_S;
+    attributes[next_right] = MENU_ITEM;
+    choices[next_right] = "Stereogram            <Ctrl+S>";
 
     int i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_check_key(i, 0) == 0)
     {
         g_help_mode = help_labels::HELP_MAIN;         // switch help modes
-        nextleft += 2;
-        if (nextleft < nextright)
+        next_left += 2;
+        if (next_left < next_right)
         {
-            nextleft = nextright + 1;
+            next_left = next_right + 1;
         }
-        i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, nextleft,
-            choices, attributes, 2, nextleft / 2, 29, 0, nullptr, nullptr, nullptr, menu_check_key);
+        i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, next_left,
+            choices, attributes, 2, next_left / 2, 29, 0, nullptr, nullptr, nullptr, menu_check_key);
         if (i == -1)     // escape
         {
             i = ID_KEY_ESC;
@@ -360,7 +360,7 @@ top:
         }
         else                      // user selected a choice
         {
-            i = choicekey[i];
+            i = choice_key[i];
             if (-10 == i)
             {
                 g_help_mode = help_labels::HELP_ZOOM;
