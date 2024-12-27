@@ -9,7 +9,7 @@
 struct MenuHandler
 {
     int key;
-    std::function<main_state(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)> handler;
+    std::function<main_state(MainContext &context)> handler;
 };
 
 inline bool operator<(const MenuHandler &lhs, const MenuHandler &rhs)
@@ -31,11 +31,11 @@ inline bool operator!=(const MenuHandler &lhs, const MenuHandler &rhs)
     return !(lhs == rhs);
 }
 
-main_state request_fractal_type(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
-main_state toggle_float(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
+main_state request_fractal_type(MainContext &context);
+main_state toggle_float(MainContext &context);
 main_state get_history(int kbd_char);
-main_state color_cycle(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
-main_state color_editing(int &key, bool &from_mandel, bool &kbd_more, bool &stacked);
-main_state restore_from_image(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked);
-main_state requested_video_fn(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked);
-main_state request_restart(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked);
+main_state color_cycle(MainContext &context);
+main_state color_editing(MainContext &context);
+main_state restore_from_image(MainContext &context);
+main_state requested_video_fn(MainContext &context);
+main_state request_restart(MainContext &context);

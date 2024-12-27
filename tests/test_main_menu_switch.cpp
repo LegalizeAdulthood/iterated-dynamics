@@ -20,14 +20,11 @@ class TestMainMenuSwitch : public Test
 protected:
     main_state execute(int key)
     {
-        m_key = key;
-        return main_menu_switch(m_key, m_from_mandel, m_more_keys, m_stacked);
+        m_context.key = key;
+        return main_menu_switch(m_context);
     }
 
-    int m_key{};
-    bool m_from_mandel{};
-    bool m_more_keys{};
-    bool m_stacked{};
+    MainContext m_context{};
 };
 
 } // namespace
@@ -40,10 +37,10 @@ TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
     const main_state result{execute('m')};
 
     EXPECT_EQ(main_state::NOTHING, result);
-    EXPECT_EQ('m', m_key);
-    EXPECT_FALSE(m_from_mandel);
-    EXPECT_FALSE(m_more_keys);
-    EXPECT_FALSE(m_stacked);
+    EXPECT_EQ('m', m_context.key);
+    EXPECT_FALSE(m_context.from_mandel);
+    EXPECT_FALSE(m_context.more_keys);
+    EXPECT_FALSE(m_context.stacked);
 }
 
 TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
@@ -56,10 +53,10 @@ TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
     const main_state result{execute('m')};
 
     EXPECT_EQ(main_state::NOTHING, result);
-    EXPECT_EQ('m', m_key);
-    EXPECT_FALSE(m_from_mandel);
-    EXPECT_FALSE(m_more_keys);
-    EXPECT_FALSE(m_stacked);
+    EXPECT_EQ('m', m_context.key);
+    EXPECT_FALSE(m_context.from_mandel);
+    EXPECT_FALSE(m_context.more_keys);
+    EXPECT_FALSE(m_context.stacked);
     EXPECT_FALSE(g_quick_calc);
     EXPECT_EQ('1', g_user_std_calc_mode);
 }
@@ -74,10 +71,10 @@ TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
     const main_state result{execute('m')};
 
     EXPECT_EQ(main_state::NOTHING, result);
-    EXPECT_EQ('m', m_key);
-    EXPECT_FALSE(m_from_mandel);
-    EXPECT_FALSE(m_more_keys);
-    EXPECT_FALSE(m_stacked);
+    EXPECT_EQ('m', m_context.key);
+    EXPECT_FALSE(m_context.from_mandel);
+    EXPECT_FALSE(m_context.more_keys);
+    EXPECT_FALSE(m_context.stacked);
     EXPECT_TRUE(g_quick_calc);
     EXPECT_EQ('1', g_user_std_calc_mode);
 }

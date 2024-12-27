@@ -65,18 +65,17 @@ char g_old_std_calc_mode{};
 void (*g_out_line_cleanup)(){};
 bool g_virtual_screens{};
 
-main_state big_while_loop(bool &kbd_more, bool &stacked, const bool resume_flag)
+main_state big_while_loop(MainContext &context)
 {
     double  ftemp;                       // fp temp
     int     i = 0;                           // temporary loop counters
-    int kbd_char;
     main_state mms_value;
 
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-    bool from_mandel = false;            // if julia entered from mandel
-    if (resume_flag)
+    context.from_mandel = false;            // if julia entered from mandel
+    if (context.resume)
     {
         goto resumeloop;
     }
@@ -532,8 +531,8 @@ resumeloop:                             // return here on failed overlays
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
 #endif
-        kbd_more = true;
-        while (kbd_more)
+        context.more_keys = true;
+        while (context.more_keys)
         {
             // loop through command keys
             if (g_timed_save != 0)
@@ -542,7 +541,7 @@ resumeloop:                             // return here on failed overlays
                 {
                     // woke up for timed save
                     driver_get_key();     // eat the dummy char
-                    kbd_char = 's'; // do the save
+                    context.key = 's'; // do the save
                     g_resave_flag = 1;
                     g_timed_save = 2;
                 }
@@ -551,7 +550,7 @@ resumeloop:                             // return here on failed overlays
                     // save done, resume
                     g_timed_save = 0;
                     g_resave_flag = 2;
-                    kbd_char = ID_KEY_ENTER;
+                    context.key = ID_KEY_ENTER;
                 }
             }
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
@@ -559,38 +558,38 @@ resumeloop:                             // return here on failed overlays
                 g_look_at_mouse = g_zoom_box_width == 0 ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
-                    kbd_char = ID_KEY_ENTER;  // no visible reason to stop, continue
+                    context.key = ID_KEY_ENTER;  // no visible reason to stop, continue
                 }
                 else      // wait for a real keystroke
                 {
                     if (g_auto_browse && g_browse_sub_images)
                     {
-                        kbd_char = 'l';
+                        context.key = 'l';
                     }
                     else
                     {
                         driver_wait_key_pressed(0);
-                        kbd_char = driver_get_key();
+                        context.key = driver_get_key();
                     }
-                    if (kbd_char == ID_KEY_ESC || kbd_char == 'm' || kbd_char == 'M')
+                    if (context.key == ID_KEY_ESC || context.key == 'm' || context.key == 'M')
                     {
-                        if (kbd_char == ID_KEY_ESC && g_escape_exit)
+                        if (context.key == ID_KEY_ESC && g_escape_exit)
                         {
                             // don't ask, just get out
                             goodbye();
                         }
                         driver_stack_screen();
-                        kbd_char = main_menu(true);
-                        if (kbd_char == '\\' || kbd_char == ID_KEY_CTL_BACKSLASH
-                            || kbd_char == 'h' || kbd_char == ID_KEY_CTL_H
-                            || check_vid_mode_key(0, kbd_char) >= 0)
+                        context.key = main_menu(true);
+                        if (context.key == '\\' || context.key == ID_KEY_CTL_BACKSLASH
+                            || context.key == 'h' || context.key == ID_KEY_CTL_H
+                            || check_vid_mode_key(0, context.key) >= 0)
                         {
                             driver_discard_screen();
                         }
-                        else if (kbd_char == 'x' || kbd_char == 'y'
-                            || kbd_char == 'z' || kbd_char == 'g'
-                            || kbd_char == 'v' || kbd_char == ID_KEY_CTL_B
-                            || kbd_char == ID_KEY_CTL_E || kbd_char == ID_KEY_CTL_F)
+                        else if (context.key == 'x' || context.key == 'y'
+                            || context.key == 'z' || context.key == 'g'
+                            || context.key == 'v' || context.key == ID_KEY_CTL_B
+                            || context.key == ID_KEY_CTL_E || context.key == ID_KEY_CTL_F)
                         {
                             g_from_text = true;
                         }
@@ -615,12 +614,12 @@ resumeloop:                             // return here on failed overlays
 
                 if (g_init_batch == batch_modes::FINISH_CALC_BEFORE_SAVE)
                 {
-                    kbd_char = ID_KEY_ENTER;
+                    context.key = ID_KEY_ENTER;
                     g_init_batch = batch_modes::NORMAL;
                 }
                 else if (g_init_batch == batch_modes::NORMAL || g_init_batch == batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
                 {
-                    kbd_char = (g_debug_flag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
+                    context.key = (g_debug_flag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
                     if (g_init_batch == batch_modes::NORMAL)
                     {
                         g_init_batch = batch_modes::SAVE;
@@ -640,14 +639,14 @@ resumeloop:                             // return here on failed overlays
                 }
             }
 
-            kbd_char = std::tolower(kbd_char);
+            context.key = std::tolower(context.key);
             if (g_evolving != evolution_mode_flags::NONE)
             {
-                mms_value = evolver_menu_switch(kbd_char, from_mandel, kbd_more, stacked);
+                mms_value = evolver_menu_switch(context);
             }
             else
             {
-                mms_value = main_menu_switch(kbd_char, from_mandel, kbd_more, stacked);
+                mms_value = main_menu_switch(context);
             }
             if (g_quick_calc
                 && (mms_value == main_state::IMAGE_START
@@ -674,7 +673,7 @@ resumeloop:                             // return here on failed overlays
             default:
                 break;
             }
-            if (g_zoom_enabled && kbd_more) // draw/clear a zoom box?
+            if (g_zoom_enabled && context.more_keys) // draw/clear a zoom box?
             {
                 draw_box(true);
             }

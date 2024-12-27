@@ -157,7 +157,7 @@ static void bad_id_cfg_msg()
     g_bad_config = config_status::BAD_WITH_MESSAGE;
 }
 
-static void main_restart(int const argc, char const *const argv[], bool &stacked)
+static void main_restart(int const argc, char const *const argv[], MainContext &context)
 {
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -226,27 +226,22 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     {
         set_if_old_bif();
     }
-    stacked = false;
+    context.stacked = false;
 }
 
-static bool main_restore_start(bool &stacked, bool &resumeflag)
+static bool main_restore_start(MainContext &context)
 {
-#if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
-#endif
-
     if (g_colors_preloaded)
     {
-        std::memcpy(g_dac_box, g_old_dac_box, 256*3);   // restore in case colors= present
+        memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
     }
-
     g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
-
-    while (g_show_file <= 0)              // image is to be loaded
+    while (g_show_file <= 0) // image is to be loaded
     {
         char const *hdg;
         g_tab_mode = false;
-        if (!g_browsing)      /*RB*/
+        if (!g_browsing) /*RB*/
         {
             if (g_overlay_3d)
             {
@@ -265,7 +260,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             }
             if (g_show_file < 0 && get_a_file_name(hdg, g_gif_filename_mask.c_str(), g_read_filename))
             {
-                g_show_file = 1;               // cancelled
+                g_show_file = 1; // cancelled
                 g_init_mode = -1;
                 break;
             }
@@ -279,15 +274,15 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         g_show_file = 0;
         g_help_mode = help_labels::NONE;
         g_tab_mode = true;
-        if (stacked)
+        if (context.stacked)
         {
             driver_discard_screen();
             driver_set_for_text();
-            stacked = false;
+            context.stacked = false;
         }
-        if (read_overlay() == 0)       // read hdr, get video mode
+        if (read_overlay() == 0) // read hdr, get video mode
         {
-            break;                      // got it, exit
+            break; // got it, exit
         }
         if (g_browsing) // break out of infinite loop, but lose your mind
         {
@@ -295,30 +290,27 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         }
         else
         {
-            g_show_file = -1;                 // retry
+            g_show_file = -1; // retry
         }
     }
-
-    g_help_mode = help_labels::HELP_MENU;                 // now use this help mode
+    g_help_mode = help_labels::HELP_MENU; // now use this help mode
     g_tab_mode = true;
     g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
-
-    if (((g_overlay_3d && (g_init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed
+    if (((g_overlay_3d && (g_init_batch == batch_modes::NONE)) || context.stacked) &&
+        g_init_mode < 0) // overlay command failed
     {
-        driver_unstack_screen();                  // restore the graphics screen
-        stacked = false;
-        g_overlay_3d = false;              // forget overlays
+        driver_unstack_screen(); // restore the graphics screen
+        context.stacked = false;
+        g_overlay_3d = false; // forget overlays
         g_display_3d = display_3d_modes::NONE;
         if (g_calc_status == calc_status_value::NON_RESUMABLE)
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
-        resumeflag = true;
+        context.resume = true;
         return true;
     }
-
-    g_save_dac = 0;                         // don't save the VGA DAC
-
+    g_save_dac = 0; // don't save the VGA DAC
     return false;
 }
 
@@ -475,6 +467,11 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     return main_state::CONTINUE;
 }
 
+static main_state main_image_start(MainContext &context)
+{
+    return main_image_start(context.stacked, context.resume);
+}
+
 static void set_search_dirs()
 {
     const char *fract_dir = getenv("FRACTDIR");
@@ -510,10 +507,8 @@ int id_main(int argc, char *argv[])
     load_config();
     init_help();
 
-    bool resume_flag{}; //
-    bool kbd_more{};    // continuation variable
-    bool stacked{};     // flag to indicate screen stacked
     main_state state{main_state::RESTART};
+    MainContext context;
     bool done{};
     while (!done)
     {
@@ -524,17 +519,16 @@ int id_main(int argc, char *argv[])
         {
         case main_state::RESTART:
             // insert key re-starts here
-            main_restart(argc, argv, stacked);
+            main_restart(argc, argv, context);
             state = main_state::RESTORE_START;
             break;
 
         case main_state::RESTORE_START:
-            state =
-                main_restore_start(stacked, resume_flag) ? main_state::RESUME_LOOP : main_state::IMAGE_START;
+            state = main_restore_start(context) ? main_state::RESUME_LOOP : main_state::IMAGE_START;
             break;
 
         case main_state::IMAGE_START:
-            state = main_image_start(stacked, resume_flag);
+            state = main_image_start(context);
             if (state != main_state::RESTORE_START && state != main_state::IMAGE_START &&
                 state != main_state::RESTART)
             {
@@ -544,7 +538,7 @@ int id_main(int argc, char *argv[])
 
         case main_state::RESUME_LOOP:
             save_param_history();
-            state = big_while_loop(kbd_more, stacked, resume_flag);
+            state = big_while_loop(context);
             break;
 
         case main_state::CONTINUE:

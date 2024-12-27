@@ -1014,14 +1014,14 @@ void clear_zoom_box()
 }
 
 // do all pending movement at once for smooth mouse diagonal moves
-main_state move_zoom_box(int &key_num, bool &, bool &, bool &)
+main_state move_zoom_box(MainContext &context)
 {
     int horizontal{};
     int vertical{};
     int getmore{1};
     while (getmore)
     {
-        switch (key_num)
+        switch (context.key)
         {
         case ID_KEY_LEFT_ARROW:               // cursor left
             --horizontal;
@@ -1057,7 +1057,7 @@ main_state move_zoom_box(int &key_num, bool &, bool &, bool &)
                 driver_get_key();
             }
             getmore = 2;
-            key_num = driver_key_pressed();         // next pending key
+            context.key = driver_key_pressed();         // next pending key
         }
     }
     if (g_box_count)
@@ -1086,30 +1086,30 @@ void reset_zoom_corners()
     }
 }
 
-main_state request_zoom_in(int &, bool &, bool &kbd_more, bool &)
+main_state request_zoom_in(MainContext &context)
 {
     if (g_zoom_box_width != 0.0)
     {
         // do a zoom
         init_pan_or_recalc(false);
-        kbd_more = false;
+        context.more_keys = false;
     }
     if (g_calc_status != calc_status_value::COMPLETED) // don't restart if image complete
     {
-        kbd_more = false;
+        context.more_keys = false;
     }
     return main_state::NOTHING;
 }
 
-main_state request_zoom_out(int &, bool &, bool &kbd_more, bool &)
+main_state request_zoom_out(MainContext &context)
 {
     init_pan_or_recalc(true);
-    kbd_more = false;
+    context.more_keys = false;
     zoom_out(); // calc corners for zooming out
     return main_state::NOTHING;
 }
 
-main_state skew_zoom_left(int &, bool &, bool &, bool &)
+main_state skew_zoom_left(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
@@ -1122,7 +1122,7 @@ main_state skew_zoom_left(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-main_state skew_zoom_right(int &, bool &, bool &, bool &)
+main_state skew_zoom_right(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
@@ -1135,7 +1135,7 @@ main_state skew_zoom_right(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-main_state decrease_zoom_aspect(int &, bool &, bool &, bool &)
+main_state decrease_zoom_aspect(MainContext &)
 {
     if (g_box_count)
     {
@@ -1144,7 +1144,7 @@ main_state decrease_zoom_aspect(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-main_state increase_zoom_aspect(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state increase_zoom_aspect(MainContext &)
 {
     if (g_box_count)
     {
@@ -1153,7 +1153,7 @@ main_state increase_zoom_aspect(int &key, bool &from_mandel, bool &kbd_more, boo
     return main_state::NOTHING;
 }
 
-main_state zoom_box_in(int &, bool &, bool &, bool &)
+main_state zoom_box_in(MainContext &)
 {
     if (g_zoom_enabled)
     {
@@ -1180,7 +1180,7 @@ main_state zoom_box_in(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-main_state zoom_box_out(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state zoom_box_out(MainContext &)
 {
     if (g_box_count)
     {
@@ -1196,7 +1196,7 @@ main_state zoom_box_out(int &key, bool &from_mandel, bool &kbd_more, bool &stack
     return main_state::NOTHING;
 }
 
-main_state zoom_box_increase_rotation(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state zoom_box_increase_rotation(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
@@ -1205,7 +1205,7 @@ main_state zoom_box_increase_rotation(int &key, bool &from_mandel, bool &kbd_mor
     return main_state::NOTHING;
 }
 
-main_state zoom_box_decrease_rotation(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state zoom_box_decrease_rotation(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
     {
@@ -1214,13 +1214,13 @@ main_state zoom_box_decrease_rotation(int &key, bool &from_mandel, bool &kbd_mor
     return main_state::NOTHING;
 }
 
-main_state zoom_box_increase_color(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state zoom_box_increase_color(MainContext &)
 {
     g_box_color += key_count(ID_KEY_CTL_INSERT);
     return main_state::NOTHING;
 }
 
-main_state zoom_box_decrease_color(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state zoom_box_decrease_color(MainContext &)
 {
     g_box_color -= key_count(ID_KEY_CTL_DEL);
     return main_state::NOTHING;

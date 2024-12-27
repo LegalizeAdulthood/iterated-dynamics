@@ -47,7 +47,7 @@
 #include <iterator>
 #include <string>
 
-static bool look(bool *stacked)
+static bool look(MainContext &context)
 {
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_BROWSE;
@@ -74,7 +74,7 @@ static bool look(bool *stacked)
         if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
-            *stacked = true;
+            context.stacked = true;
         }
         return true;       // hop off and do it!!
 
@@ -99,7 +99,7 @@ static bool look(bool *stacked)
             if (g_ask_video)
             {
                 driver_stack_screen();// save graphics image
-                *stacked = true;
+                context.stacked = true;
             }
             return true;
         }
@@ -125,7 +125,7 @@ static bool look(bool *stacked)
     return false;
 }
 
-static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
+static void toggle_mandelbrot_julia(MainContext &context)
 {
     static double s_j_x_min;
     static double s_j_x_max;
@@ -184,7 +184,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
         s_j_y_min = g_save_y_min;
         s_j_x_3rd = g_save_x_3rd;
         s_j_y_3rd = g_save_y_3rd;
-        from_mandel = true;
+        context.from_mandel = true;
         g_x_min = g_cur_fractal_specific->xmin;
         g_x_max = g_cur_fractal_specific->xmax;
         g_y_min = g_cur_fractal_specific->ymin;
@@ -202,14 +202,14 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
         }
         g_zoom_enabled = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        kbd_more = false;
+        context.more_keys = false;
     }
     else if (g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
     {
         // switch to corresponding Mandel set
         g_fractal_type = g_cur_fractal_specific->tomandel;
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-        if (from_mandel)
+        if (context.from_mandel)
         {
             g_x_min = s_j_x_min;
             g_x_max = s_j_x_max;
@@ -233,7 +233,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
         g_params[1] = 0;
         g_zoom_enabled = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        kbd_more = false;
+        context.more_keys = false;
     }
     else
     {
@@ -241,7 +241,7 @@ static void toggle_mandelbrot_julia(bool &kbd_more, bool &from_mandel)
     }
 }
 
-static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
+static main_state prompt_options(MainContext &context)
 {
     const long old_maxit = g_max_iterations;
     clear_zoom_box();
@@ -254,31 +254,31 @@ static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
         driver_stack_screen();
     }
     int i;
-    if (key == 'x')
+    if (context.key == 'x')
     {
         i = get_toggles();
     }
-    else if (key == 'y')
+    else if (context.key == 'y')
     {
         i = get_toggles2();
     }
-    else if (key == 'p')
+    else if (context.key == 'p')
     {
         i = passes_options();
     }
-    else if (key == 'z')
+    else if (context.key == 'z')
     {
         i = get_fract_params(true);
     }
-    else if (key == 'v')
+    else if (context.key == 'v')
     {
         i = get_view_params(); // get the parameters
     }
-    else if (key == ID_KEY_CTL_B)
+    else if (context.key == ID_KEY_CTL_B)
     {
         i = get_browse_params();
     }
-    else if (key == ID_KEY_CTL_E)
+    else if (context.key == ID_KEY_CTL_E)
     {
         i = get_evolve_params();
         if (i > 0)
@@ -288,7 +288,7 @@ static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
             g_log_map_auto_calculate = false; // turn it off
         }
     }
-    else if (key == ID_KEY_CTL_F)
+    else if (context.key == ID_KEY_CTL_F)
     {
         i = get_sound_params();
     }
@@ -315,7 +315,7 @@ static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
         g_quick_calc = true;
         g_old_std_calc_mode = g_user_std_calc_mode;
         g_user_std_calc_mode = '1';
-        kbd_more = false;
+        context.more_keys = false;
         g_calc_status = calc_status_value::RESUMABLE;
     }
     else if (i > 0)
@@ -323,13 +323,13 @@ static main_state prompt_options(int &key, bool &, bool &kbd_more, bool &)
         // time to redraw?
         g_quick_calc = false;
         save_param_history();
-        kbd_more = false;
+        context.more_keys = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
 
-static main_state begin_ant(int &, bool &, bool &, bool &)
+static main_state begin_ant(MainContext &)
 {
     clear_zoom_box();
     double oldparm[MAX_PARAMS];
@@ -370,17 +370,17 @@ static main_state begin_ant(int &, bool &, bool &, bool &)
     return err >= 0 ? main_state::CONTINUE : main_state::NOTHING;
 }
 
-static main_state request_3d_fractal_params(int &, bool &, bool &kbd_more, bool &)
+static main_state request_3d_fractal_params(MainContext &context)
 {
     if (get_fract3d_params() >= 0) // get the parameters
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        kbd_more = false; // time to redraw
+        context.more_keys = false; // time to redraw
     }
     return main_state::NOTHING;
 }
 
-static main_state show_orbit_window(int &, bool &, bool &, bool &)
+static main_state show_orbit_window(MainContext &)
 {
     // must use standard fractal and have a float variant
     if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
@@ -396,7 +396,7 @@ static main_state show_orbit_window(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state space_command(int &, bool &from_mandel, bool &kbd_more, bool &)
+static main_state space_command(MainContext &context)
 {
     if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
     {
@@ -407,17 +407,17 @@ static main_state space_command(int &, bool &from_mandel, bool &kbd_more, bool &
     {
         g_cellular_next_screen = !g_cellular_next_screen;
         g_calc_status = calc_status_value::RESUMABLE;
-        kbd_more = false;
+        context.more_keys = false;
     }
     else
     {
-        toggle_mandelbrot_julia(kbd_more, from_mandel);
+        toggle_mandelbrot_julia(context);
     }
 
     return main_state::NOTHING;
 }
 
-static main_state inverse_julia_toggle(int &, bool &, bool &kbd_more, bool &)
+static main_state inverse_julia_toggle(MainContext &context)
 {
     // if the inverse types proliferate, something more elegant will be needed
     if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP ||
@@ -443,7 +443,7 @@ static main_state inverse_julia_toggle(int &, bool &, bool &kbd_more, bool &)
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         g_zoom_enabled = true;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        kbd_more = false;
+        context.more_keys = false;
     }
     else
     {
@@ -482,20 +482,20 @@ static main_state unstack_file(bool &stacked)
     return main_state::RESTORE_START;
 }
 
-static main_state main_history(int &key, bool &, bool &, bool &stacked)
+static main_state main_history(MainContext &context)
 {
-    if (const main_state result = unstack_file(stacked); result != main_state::NOTHING)
+    if (const main_state result = unstack_file(context.stacked); result != main_state::NOTHING)
     {
         return result;
     }
-    if (const main_state result = get_history(key); result != main_state::NOTHING)
+    if (const main_state result = get_history(context.key); result != main_state::NOTHING)
     {
         return result;
     }
     return main_state::NOTHING;
 }
 
-static main_state request_shell(int &, bool &, bool &, bool &)
+static main_state request_shell(MainContext &)
 {
     driver_stack_screen();
     driver_shell();
@@ -503,7 +503,7 @@ static main_state request_shell(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state request_save_image(int &, bool &, bool &, bool &)
+static main_state request_save_image(MainContext &)
 {
     if (driver_diskp() && g_disk_targa)
     {
@@ -513,38 +513,38 @@ static main_state request_save_image(int &, bool &, bool &, bool &)
     return main_state::CONTINUE;
 }
 
-static main_state look_for_files(int &, bool &, bool &, bool &stacked)
+static main_state look_for_files(MainContext &context)
 {
     if ((g_zoom_box_width != 0) || driver_diskp())
     {
         g_browsing = false;
         driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
     }
-    else if (look(&stacked))
+    else if (look(context))
     {
         return main_state::RESTORE_START;
     }
     return main_state::NOTHING;
 }
 
-static main_state request_make_batch_file(int &, bool &, bool &, bool &)
+static main_state request_make_batch_file(MainContext &)
 {
     make_batch_file();
     return main_state::NOTHING;
 }
 
-static main_state start_evolution(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state start_evolution(MainContext &context)
 {
     g_evolving = evolution_mode_flags::FIELDMAP;
     g_view_window = true;
-    set_mutation_level(kbd_char - ID_KEY_ALT_1 + 1);
+    set_mutation_level(context.key - ID_KEY_ALT_1 + 1);
     save_param_history();
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state restore_from_3d(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state restore_from_3d(MainContext &context)
 {
     if (g_overlay_3d)
     {
@@ -554,17 +554,17 @@ static main_state restore_from_3d(int &key, bool &from_mandel, bool &kbd_more, b
     {
         g_display_3d = display_3d_modes::YES;
     }
-    return restore_from_image(key, from_mandel, kbd_more, stacked);
+    return restore_from_image(context);
 }
 
-static main_state request_3d_overlay(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state request_3d_overlay(MainContext &context)
 {
     clear_zoom_box();
     g_overlay_3d = true;
-    return restore_from_3d(key, from_mandel, kbd_more, stacked);
+    return restore_from_3d(context);
 }
 
-static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state execute_commands(MainContext &context)
 {
     driver_stack_screen();
     int i = +get_commands();
@@ -589,16 +589,16 @@ static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, 
     if (i & +cmdarg_flags::YES_3D)
     {
         // 3d = was specified
-        key = '3';
+        context.key = '3';
         driver_unstack_screen();
         // pretend '3' was keyed
-        return restore_from_3d(key, from_mandel, kbd_more, stacked);
+        return restore_from_3d(context);
     }
     if (i & +cmdarg_flags::FRACTAL_PARAM)
     {
         // fractal parameter changed
         driver_discard_screen();
-        kbd_more = false;
+        context.more_keys = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     else
@@ -608,7 +608,7 @@ static main_state execute_commands(int &key, bool &from_mandel, bool &kbd_more, 
     return main_state::NOTHING;
 }
 
-static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
+static main_state random_dot_stereogram(MainContext &)
 {
     clear_zoom_box();
     if (get_rds_params() >= 0)
@@ -622,7 +622,7 @@ static main_state random_dot_stereogram(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state request_star_field_params(int &, bool &, bool &, bool &)
+static main_state request_star_field_params(MainContext &)
 {
     clear_zoom_box();
     if (get_star_field_params() >= 0)
@@ -709,7 +709,7 @@ static MenuHandler s_handlers[]{
     {ID_KEY_CTL_DEL, zoom_box_decrease_color},      //
 };
 
-main_state main_menu_switch(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state main_menu_switch(MainContext &context)
 {
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
@@ -722,18 +722,18 @@ main_state main_menu_switch(int &key, bool &from_mandel, bool &kbd_more, bool &s
     }
 
     assert(std::is_sorted(std::begin(s_handlers), std::end(s_handlers)));
-    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), key);
-        it != std::cend(s_handlers) && it->key == key)
+    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), context.key);
+        it != std::cend(s_handlers) && it->key == context.key)
     {
-        return it->handler(key, from_mandel, kbd_more, stacked);
+        return it->handler(context);
     }
 
-    if (key == ID_KEY_DELETE)
+    if (context.key == ID_KEY_DELETE)
     {
         // select video mode from list
-        request_video_mode(key);
+        request_video_mode(context.key);
     }
 
     // other (maybe a valid Fn key)
-    return requested_video_fn(key, from_mandel, kbd_more, stacked);
+    return requested_video_fn(context);
 }

@@ -25,7 +25,7 @@
 
 #include <cstring>
 
-main_state request_fractal_type(int &, bool &from_mandel, bool &, bool &)
+main_state request_fractal_type(MainContext &context)
 {
     g_julibrot = false;
     clear_zoom_box();
@@ -49,7 +49,7 @@ main_state request_fractal_type(int &, bool &from_mandel, bool &, bool &)
         if (type == 0)
         {
             g_init_mode = g_adapter;
-            from_mandel = false;
+            context.from_mandel = false;
         }
         else if (g_init_mode < 0)   // it is supposed to be...
         {
@@ -61,7 +61,7 @@ main_state request_fractal_type(int &, bool &from_mandel, bool &, bool &)
     return main_state::NOTHING;
 }
 
-main_state toggle_float(int &, bool &, bool &, bool &)
+main_state toggle_float(MainContext &)
 {
     if (!g_user_float_flag)
     {
@@ -111,11 +111,18 @@ main_state get_history(int kbd_char)
     return main_state::IMAGE_START;
 }
 
-main_state color_cycle(int &key, bool &, bool &, bool &)
+main_state color_cycle(MainContext &context)
 {
     clear_zoom_box();
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-    rotate((key == 'c') ? 0 : ((key == '+') ? 1 : -1));
+    if (context.key == 'c')
+    {
+        rotate(0);
+    }
+    else
+    {
+        rotate(context.key == '+' ? 1 : -1);
+    }
     if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
     {
         g_color_state = color_state::UNKNOWN;
@@ -124,14 +131,14 @@ main_state color_cycle(int &key, bool &, bool &, bool &)
     return main_state::CONTINUE;
 }
 
-main_state color_editing(int &, bool &, bool &kbd_more, bool &)
+main_state color_editing(MainContext &context)
 {
     if (g_is_true_color && (g_init_batch == batch_modes::NONE))
     {
         // don't enter palette editor
         if (!load_palette())
         {
-            kbd_more = false;
+            context.more_keys = false;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             return main_state::NOTHING;
         }
@@ -154,12 +161,12 @@ main_state color_editing(int &, bool &, bool &kbd_more, bool &)
     return main_state::CONTINUE;
 }
 
-main_state restore_from_image(int &kbd_char, bool &from_mandel, bool &, bool &stacked)
+main_state restore_from_image(MainContext &context)
 {
     g_compare_gif = false;
-    from_mandel = false;
+    context.from_mandel = false;
     g_browsing = false;
-    if (kbd_char == 'r')
+    if (context.key == 'r')
     {
         if (g_debug_flag == debug_flags::force_disk_restore_not_save)
         {
@@ -181,7 +188,7 @@ main_state restore_from_image(int &kbd_char, bool &from_mandel, bool &, bool &st
         g_display_3d = display_3d_modes::NONE;
     }
     driver_stack_screen();            // save graphics image
-    stacked = !g_overlay_3d;
+    context.stacked = !g_overlay_3d;
     if (g_resave_flag)
     {
         update_save_name(g_save_filename);      // do the pending increment
@@ -192,9 +199,9 @@ main_state restore_from_image(int &kbd_char, bool &from_mandel, bool &, bool &st
     return main_state::RESTORE_START;
 }
 
-main_state requested_video_fn(int &kbd_char, bool &, bool &kbd_more, bool &)
+main_state requested_video_fn(MainContext &context)
 {
-    const int k = check_vid_mode_key(0, kbd_char);
+    const int k = check_vid_mode_key(0, context.key);
     if (k < 0)
     {
         return main_state::NOTHING;
@@ -206,11 +213,11 @@ main_state requested_video_fn(int &kbd_char, bool &, bool &kbd_more, bool &)
         g_save_dac = 0;
     }
     g_calc_status = calc_status_value::PARAMS_CHANGED;
-    kbd_more = false;
+    context.more_keys = false;
     return main_state::CONTINUE;
 }
 
-main_state request_restart(int &, bool &, bool &, bool &)
+main_state request_restart(MainContext &)
 {
     driver_set_for_text(); // force text mode
     return main_state::RESTART;

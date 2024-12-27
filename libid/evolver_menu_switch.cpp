@@ -26,7 +26,7 @@
 #include <cassert>
 #include <stdexcept>
 
-static main_state save_evolver_image(int &, bool &, bool &, bool &)
+static main_state save_evolver_image(MainContext &)
 {
     if (driver_diskp() && g_disk_targa)
     {
@@ -56,7 +56,7 @@ static main_state save_evolver_image(int &, bool &, bool &, bool &)
     return main_state::CONTINUE;
 }
 
-static main_state prompt_evolver_options(int &kbd_char, bool &, bool &kbd_more, bool &)
+static main_state prompt_evolver_options(MainContext &context)
 {
     clear_zoom_box();
     if (g_from_text)
@@ -68,23 +68,23 @@ static main_state prompt_evolver_options(int &kbd_char, bool &, bool &kbd_more, 
         driver_stack_screen();
     }
     int i;
-    if (kbd_char == 'x')
+    if (context.key == 'x')
     {
         i = get_toggles();
     }
-    else if (kbd_char == 'y')
+    else if (context.key == 'y')
     {
         i = get_toggles2();
     }
-    else if (kbd_char == 'p')
+    else if (context.key == 'p')
     {
         i = passes_options();
     }
-    else if (kbd_char == 'z')
+    else if (context.key == 'z')
     {
         i = get_fract_params(true);
     }
-    else if (kbd_char == ID_KEY_CTL_E || kbd_char == ID_KEY_SPACE)
+    else if (context.key == ID_KEY_CTL_E || context.key == ID_KEY_SPACE)
     {
         i = get_evolve_params();
     }
@@ -101,27 +101,27 @@ static main_state prompt_evolver_options(int &kbd_char, bool &, bool &kbd_more, 
     {
         // time to redraw?
         save_param_history();
-        kbd_more = false;
+        context.more_keys = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
 
-static main_state exit_evolver(int &, bool &, bool &kbd_more, bool &)
+static main_state exit_evolver(MainContext &context)
 {
     g_evolving = evolution_mode_flags::NONE;
     g_view_window = false;
     save_param_history();
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_more, bool &stacked)
+static main_state move_evolver_selection(MainContext &context)
 {
     if (!g_box_count)
     {
-        return move_zoom_box(key, from_mandel, kbd_more, stacked);
+        return move_zoom_box(context);
     }
 
     // if no zoombox, scroll by arrows
@@ -130,19 +130,19 @@ static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_
     copy_genes_from_bank(gene);
     if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
     {
-        if (key == ID_KEY_CTL_LEFT_ARROW)
+        if (context.key == ID_KEY_CTL_LEFT_ARROW)
         {
             g_evolve_param_grid_x--;
         }
-        if (key == ID_KEY_CTL_RIGHT_ARROW)
+        if (context.key == ID_KEY_CTL_RIGHT_ARROW)
         {
             g_evolve_param_grid_x++;
         }
-        if (key == ID_KEY_CTL_UP_ARROW)
+        if (context.key == ID_KEY_CTL_UP_ARROW)
         {
             g_evolve_param_grid_y--;
         }
-        if (key == ID_KEY_CTL_DOWN_ARROW)
+        if (context.key == ID_KEY_CTL_DOWN_ARROW)
         {
             g_evolve_param_grid_y++;
         }
@@ -177,7 +177,7 @@ static main_state move_evolver_selection(int &key, bool &from_mandel, bool &kbd_
     return main_state::NOTHING;
 }
 
-static main_state evolve_param_zoom_decrease(int &, bool &, bool &, bool &)
+static main_state evolve_param_zoom_decrease(MainContext &)
 {
     if (g_evolve_param_box_count)
     {
@@ -192,7 +192,7 @@ static main_state evolve_param_zoom_decrease(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state evolve_param_zoom_increase(int &, bool &, bool &, bool &)
+static main_state evolve_param_zoom_increase(MainContext &)
 {
     if (g_evolve_param_box_count)
     {
@@ -207,7 +207,7 @@ static main_state evolve_param_zoom_increase(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state evolver_zoom_in(int &, bool &, bool &, bool &)
+static main_state evolver_zoom_in(MainContext &)
 {
     if (g_zoom_enabled)
     {
@@ -244,7 +244,7 @@ static main_state evolver_zoom_in(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state evolver_zoom_out(int &, bool &, bool &, bool &)
+static main_state evolver_zoom_out(MainContext &)
 {
     if (g_box_count)
     {
@@ -266,19 +266,19 @@ static main_state evolver_zoom_out(int &, bool &, bool &, bool &)
     return main_state::NOTHING;
 }
 
-static main_state halve_mutation_params(int &, bool &, bool &kbd_more, bool &)
+static main_state halve_mutation_params(MainContext &context)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
     g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
     g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
     g_evolve_y_parameter_range = g_evolve_y_parameter_range / 2;
     g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state double_mutation_params(int &, bool &, bool &kbd_more, bool &)
+static main_state double_mutation_params(MainContext &context)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
     const double centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
@@ -287,35 +287,35 @@ static main_state double_mutation_params(int &, bool &, bool &kbd_more, bool &)
     const double centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
     g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
     g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state decrease_grid_size(int &, bool &, bool &kbd_more, bool &)
+static main_state decrease_grid_size(MainContext &context)
 {
     if (g_evolve_image_grid_size > 3)
     {
-        g_evolve_image_grid_size =
-            g_evolve_image_grid_size - 2; // evolve_image_grid_size must have odd value only
-        kbd_more = false;
+        // evolve_image_grid_size must have odd value only
+        g_evolve_image_grid_size -= 2;
+        context.more_keys = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
 
-static main_state increase_grid_size(int &, bool &, bool &kbd_more, bool &)
+static main_state increase_grid_size(MainContext &context)
 {
     if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
     {
-        g_evolve_image_grid_size = g_evolve_image_grid_size + 2;
-        kbd_more = false;
+        g_evolve_image_grid_size += 2;
+        context.more_keys = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
 
-static main_state toggle_gene_variation(int &, bool &, bool &kbd_more, bool &)
+static main_state toggle_gene_variation(MainContext &context)
 {
     for (GeneBase &gene : g_gene_bank)
     {
@@ -329,46 +329,46 @@ static main_state toggle_gene_variation(int &, bool &, bool &kbd_more, bool &)
             gene.mutate = variations::RANDOM;
         }
     }
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state request_mutation_level(int &kbd_char, bool &, bool &kbd_more, bool &)
+static main_state request_mutation_level(MainContext &context)
 {
     int mutation_level;
-    if (kbd_char >= ID_KEY_ALT_1 && kbd_char <= ID_KEY_ALT_7)
+    if (context.key >= ID_KEY_ALT_1 && context.key <= ID_KEY_ALT_7)
     {
-        mutation_level = kbd_char - ID_KEY_ALT_1 + 1;
+        mutation_level = context.key - ID_KEY_ALT_1 + 1;
     }
-    else if (kbd_char >= '1' && kbd_char <= '7')
+    else if (context.key >= '1' && context.key <= '7')
     {
-        mutation_level = kbd_char - '1' + 1;
+        mutation_level = context.key - '1' + 1;
     }
     else
     {
         throw std::runtime_error(
-            "Bad mutation level character (" + std::to_string(kbd_char) + ") to request_mutation_level");
+            "Bad mutation level character (" + std::to_string(context.key) + ") to request_mutation_level");
     }
     set_mutation_level(mutation_level);
     restore_param_history();
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state turn_off_evolving(int &, bool &, bool &kbd_more, bool &)
+static main_state turn_off_evolving(MainContext &context)
 {
     g_evolving = evolution_mode_flags::NONE;
     g_view_window = false;
-    kbd_more = false;
+    context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
-static main_state evolver_get_history(int &kbd_char, bool &, bool &, bool &)
+static main_state evolver_get_history(MainContext &context)
 {
-    return get_history(kbd_char);
+    return get_history(context.key);
 }
 
 // grabbed a couple of video mode keys, user can change to these using delete and the menu if necessary
@@ -438,21 +438,21 @@ static const MenuHandler s_handlers[]{
     {ID_KEY_CTL_DEL, zoom_box_decrease_color},          //
 };
 
-main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
+main_state evolver_menu_switch(MainContext &context)
 {
     assert(std::is_sorted(std::begin(s_handlers), std::end(s_handlers)));
-    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), kbd_char);
-        it != std::cend(s_handlers) && it->key == kbd_char)
+    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), context.key);
+        it != std::cend(s_handlers) && it->key == context.key)
     {
-        return it->handler(kbd_char, from_mandel, kbd_more, stacked);
+        return it->handler(context);
     }
 
-    if (kbd_char == ID_KEY_DELETE)
+    if (context.key == ID_KEY_DELETE)
     {
         // select video mode from list
-        request_video_mode(kbd_char);
+        request_video_mode(context.key);
     }
 
     // other (maybe a valid Fn key)
-    return requested_video_fn(kbd_char, from_mandel, kbd_more, stacked);
+    return requested_video_fn(context);
 }

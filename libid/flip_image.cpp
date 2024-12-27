@@ -20,7 +20,7 @@
    or both. Refuses to work if calculation in progress or if fractal
    non-resumable. Clears zoombox if any. Resets corners so resulting fractal
    is still valid. */
-main_state flip_image(int &key, bool &, bool &, bool &)
+main_state flip_image(MainContext &context)
 {
     int ixhalf;
     int iyhalf;
@@ -39,7 +39,7 @@ main_state flip_image(int &key, bool &, bool &, bool &)
     }
     ixhalf = g_logical_screen_x_dots / 2;
     iyhalf = g_logical_screen_y_dots / 2;
-    switch (key)
+    switch (context.key)
     {
     case ID_KEY_CTL_X:            // control-X - reverse X-axis
         for (int i = 0; i < ixhalf; i++)

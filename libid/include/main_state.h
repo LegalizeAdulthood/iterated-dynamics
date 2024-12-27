@@ -11,3 +11,12 @@ enum class main_state
     CONTINUE,
     RESUME_LOOP
 };
+
+struct MainContext
+{
+    int key{};          //
+    bool from_mandel{}; //
+    bool more_keys{};   // continuation variable
+    bool stacked{};     // flag to indicate screen stacked
+    bool resume{};      //
+};
