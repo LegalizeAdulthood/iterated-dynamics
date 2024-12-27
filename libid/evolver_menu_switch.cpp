@@ -482,15 +482,13 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
         return toggle_gene_variation(kbd_char, from_mandel, kbd_more, stacked);
 
-    case ID_KEY_ALT_1: // alt + number keys set mutation level
+    case ID_KEY_ALT_1: // number keys (with or without Alt) set mutation level
     case ID_KEY_ALT_2:
     case ID_KEY_ALT_3:
     case ID_KEY_ALT_4:
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        return request_mutation_level(kbd_char, from_mandel, kbd_more, stacked);
-
     case '1':
     case '2':
     case '3':
