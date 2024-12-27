@@ -348,6 +348,11 @@ static main_state turn_off_evolving(bool &kbd_more)
     return main_state::NOTHING;
 }
 
+static main_state evolver_get_history(int &kbd_char, bool &, bool &, bool &)
+{
+    return get_history(kbd_char);
+}
+
 main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more, bool &stacked)
 {
     switch (kbd_char)
@@ -374,7 +379,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case ID_KEY_CTL_BACKSLASH:
     case 'h':
     case ID_KEY_BACKSPACE:
-        return get_history(kbd_char);
+        return evolver_get_history(kbd_char, from_mandel, kbd_more, stacked);
 
     case 'c':                    // switch to color cycling
     case '+':                    // rotate palette
