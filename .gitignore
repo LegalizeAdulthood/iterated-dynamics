@@ -5,3 +5,4 @@
 .vs
 CMakeUserPresets.json
 build-ci-*
+home/*.gif
