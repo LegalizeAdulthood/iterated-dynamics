@@ -52,7 +52,7 @@ static main_state save_evolver_image()
     return main_state::CONTINUE;
 }
 
-static main_state prompt_evolver_options(int key, bool &kbd_more)
+static main_state prompt_evolver_options(int &kbd_char, bool &, bool &kbd_more, bool &)
 {
     clear_zoom_box();
     if (g_from_text)
@@ -64,23 +64,23 @@ static main_state prompt_evolver_options(int key, bool &kbd_more)
         driver_stack_screen();
     }
     int i;
-    if (key == 'x')
+    if (kbd_char == 'x')
     {
         i = get_toggles();
     }
-    else if (key == 'y')
+    else if (kbd_char == 'y')
     {
         i = get_toggles2();
     }
-    else if (key == 'p')
+    else if (kbd_char == 'p')
     {
         i = passes_options();
     }
-    else if (key == 'z')
+    else if (kbd_char == 'z')
     {
         i = get_fract_params(true);
     }
-    else if (key == ID_KEY_CTL_E || key == ID_KEY_SPACE)
+    else if (kbd_char == ID_KEY_CTL_E || kbd_char == ID_KEY_SPACE)
     {
         i = get_evolve_params();
     }
@@ -362,7 +362,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case 'g':
     case ID_KEY_CTL_E:
     case ID_KEY_SPACE:
-        return prompt_evolver_options(kbd_char, kbd_more);
+        return prompt_evolver_options(kbd_char, from_mandel, kbd_more, stacked);
 
     case 'b': // quick exit from evolve mode
         return exit_evolver(kbd_more);
