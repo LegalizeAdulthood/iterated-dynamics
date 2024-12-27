@@ -9,14 +9,15 @@
 #include "drivers.h"
 #include "fractalp.h"
 #include "full_screen_choice.h"
-#include "id.h"
-#include "id_data.h"
 #include "goodbye.h"
 #include "help_title.h"
+#include "id.h"
+#include "id_data.h"
 #include "id_keys.h"
 #include "put_string_center.h"
 #include "rotate.h"
 #include "tab_display.h"
+#include "value_saver.h"
 #include "video_mode.h"
 
 #include <cstring>
@@ -94,7 +95,7 @@ int main_menu(bool full_menu)
     int nextleft;
     int nextright;
     bool showjuliatoggle;
-    bool const old_tab_mode = g_tab_mode;
+    ValueSaver saved_tab_mode{g_tab_mode};
 
 top:
     s_full_menu = full_menu;
@@ -402,6 +403,5 @@ top:
     {
         i = 0;                 // don't trigger new calc
     }
-    g_tab_mode = old_tab_mode;
     return i;
 }
