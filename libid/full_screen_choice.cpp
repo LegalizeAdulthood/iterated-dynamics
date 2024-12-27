@@ -150,23 +150,23 @@ static void process_speed_string(char *speedstring, //
     hdg:            heading info, \n delimited
     hdg2:           column heading or nullptr
     instr:          instructions, \n delimited, or nullptr
-    numchoices:     How many choices in list
+    num_choices:    How many choices in list
     choices:        array of choice strings
     attributes:     &3: 0 normal color, 1,3 highlight
                     &256 marks a dummy entry
-    boxwidth:       box width, 0 for calc (in items)
-    boxdepth:       box depth, 0 for calc, 99 for max
-    colwidth:       data width of a column, 0 for calc
+    box_width:      box width, 0 for calc (in items)
+    box_depth:      box depth, 0 for calc, 99 for max
+    col_width:      data width of a column, 0 for calc
     current:        start with this item
-    formatitem:     routine to display an item or nullptr
-    speedstring:    returned speed key value, or nullptr
-    speedprompt:    routine to display prompt or nullptr
-    checkkey:       routine to check keystroke or nullptr
+    format_item:    routine to display an item or nullptr
+    speed_string:   returned speed key value, or nullptr
+    speed_prompt:   routine to display prompt or nullptr
+    check_key:      routine to check keystroke or nullptr
 
-    return is: n>=0 for choice n selected,
+    return is: n >= 0 for choice n selected,
               -1 for escape
-              k for checkkey routine return value k (if not 0 nor -1)
-              speedstring[0] != 0 on return if string is present
+              k for check_key routine return value k (if not 0 nor -1)
+              speed_string[0] != 0 on return if string is present
 */
 int full_screen_choice(
     int options,
@@ -182,8 +182,8 @@ int full_screen_choice(
     int current,
     void (*format_item)(int choice, char *buf),
     char *speed_string,
-    int (*speed_prompt)(int row, int col, int vid, char const *speedstring, int speed_match),
-    int (*check_key)(int curkey, int choice)
+    int (*speed_prompt)(int row, int col, int vid, char const *speed_string, int speed_match),
+    int (*check_key)(int key, int choice)
     )
 {
     const int scrunch = (options & CHOICE_CRUNCH) ? 1 : 0; // scrunch up a line
