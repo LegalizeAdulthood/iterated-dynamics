@@ -332,7 +332,7 @@ static main_state toggle_gene_variation(bool &kbd_more)
     return main_state::NOTHING;
 }
 
-static main_state request_mutation_level(int kbd_char, bool &kbd_more)
+static main_state request_mutation_level(int &kbd_char, bool &, bool &kbd_more, bool &)
 {
     int mutation_level;
     if (kbd_char >= ID_KEY_ALT_1 && kbd_char <= ID_KEY_ALT_7)
@@ -489,7 +489,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case ID_KEY_ALT_5:
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
-        return request_mutation_level(kbd_char, kbd_more);
+        return request_mutation_level(kbd_char, from_mandel, kbd_more, stacked);
 
     case '1':
     case '2':
@@ -498,7 +498,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
     case '5':
     case '6':
     case '7':
-        return request_mutation_level(kbd_char, kbd_more);
+        return request_mutation_level(kbd_char, from_mandel, kbd_more, stacked);
 
     case '0': // mutation level 0 == turn off evolving
         return turn_off_evolving(kbd_more);
