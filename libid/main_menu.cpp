@@ -11,9 +11,6 @@
 #include "full_screen_choice.h"
 #include "id.h"
 #include "id_data.h"
-#ifdef XFRACT
-#include "os.h"
-#endif
 #include "goodbye.h"
 #include "help_title.h"
 #include "id_keys.h"
@@ -36,13 +33,6 @@ static bool s_full_menu{};
 static int menu_check_key(int curkey, int /*choice*/)
 {
     int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
-#ifdef XFRACT
-    // We use F2 for shift-@, annoyingly enough
-    if (testkey == ID_KEY_F2)
-    {
-        return -testkey;
-    }
-#endif
     if (testkey == '2')
     {
         testkey = '@';
@@ -312,11 +302,7 @@ top:
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "Restart Id               <Ins> ";
 
-#ifdef XFRACT
-    if (full_menu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
-#else
     if (full_menu && g_got_real_dac && g_colors >= 16)
-#endif
     {
         nextright += 2;
         choices[nextright] = "       COLORS                 ";
