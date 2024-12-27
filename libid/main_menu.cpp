@@ -31,6 +31,21 @@ enum
 
 static bool s_full_menu{};
 
+static bool has_julia_toggle()
+{
+    return (g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && //
+               g_params[0] == 0.0 &&                                      //
+               g_params[1] == 0.0) ||
+        g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL;
+}
+
+static bool is_julia()
+{
+    return g_fractal_type == fractal_type::JULIA   //
+        || g_fractal_type == fractal_type::JULIAFP //
+        || g_fractal_type == fractal_type::INVERSEJULIA;
+}
+
 static int menu_check_key(int curkey, int /*choice*/)
 {
     int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
@@ -56,8 +71,7 @@ static int menu_check_key(int curkey, int /*choice*/)
         }
         if (testkey == ' ')
         {
-            if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
-                || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
+            if (has_julia_toggle())
             {
                 return -testkey;
             }
@@ -92,6 +106,34 @@ int main_menu(bool full_menu)
     int attributes[44];
     int choice_key[44];
     ValueSaver saved_tab_mode{g_tab_mode};
+    int next_left{};
+    int next_right{};
+    const auto add_left_heading{[&](const char *heading)
+        {
+            next_left += 2;
+            choices[next_left] = heading;
+            attributes[next_left] = 256 + MENU_HDG;
+        }};
+    const auto add_left_item{[&](const char *choice, int key)
+        {
+            next_left += 2;
+            choice_key[next_left] = key;
+            attributes[next_left] = MENU_ITEM;
+            choices[next_left] = choice;
+        }};
+    const auto add_right_heading{[&](const char *heading)
+        {
+            next_right += 2;
+            choices[next_right] = heading;
+            attributes[next_right] = 256 + MENU_HDG;
+        }};
+    const auto add_right_item{[&](const char *choice, int key)
+        {
+            next_right += 2;
+            choice_key[next_right] = key;
+            attributes[next_right] = MENU_ITEM;
+            choices[next_right] = choice;
+        }};
 
 top:
     s_full_menu = full_menu;
@@ -103,241 +145,87 @@ top:
         choices[j] = "";
         choice_key[j] = -1;
     }
-    int next_left = -2;
-    int next_right = -1;
+    next_left = -2;
+    next_right = -1;
 
     if (full_menu)
     {
-        next_left += 2;
-        choices[next_left] = "      CURRENT IMAGE         ";
-        attributes[next_left] = 256+MENU_HDG;
-
-        next_left += 2;
-        choice_key[next_left] = 13; // enter
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = (g_calc_status == calc_status_value::RESUMABLE) ?
-                            "Continue calculation        " :
-                            "Return to image             ";
-
-        next_left += 2;
-        choice_key[next_left] = 9; // tab
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Info about image      <Tab> ";
-
-        next_left += 2;
-        choice_key[next_left] = 'o';
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Orbits window          <O>  ";
-        if (!(g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA))
-        {
-            next_left += 2;
-        }
+        add_left_heading("      CURRENT IMAGE         ");
+        add_left_item((g_calc_status == calc_status_value::RESUMABLE) ? "Continue calculation        "
+                                                                      : "Return to image             ",
+            ID_KEY_ENTER);
+        add_left_item("Info about image      <Tab> ", ID_KEY_TAB);
+        add_left_item("Orbits window          <O>  ", 'o');
     }
-
-    next_left += 2;
-    choices[next_left] = "      NEW IMAGE             ";
-    attributes[next_left] = 256+MENU_HDG;
-
-    next_left += 2;
-    choice_key[next_left] = ID_KEY_DELETE;
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Select video mode...  <Del> ";
-
-    next_left += 2;
-    choice_key[next_left] = 't';
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Select fractal type    <T>  ";
-
+    add_left_heading("      NEW IMAGE             ");
+    add_left_item("Select video mode...  <Del> ", ID_KEY_DELETE);
+    add_left_item("Select fractal type    <T>  ", 't');
     if (full_menu)
     {
-        if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
-            || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
+        if (has_julia_toggle())
         {
-            next_left += 2;
-            choice_key[next_left] = ID_KEY_SPACE;
-            attributes[next_left] = MENU_ITEM;
-            choices[next_left] = "Toggle to/from Julia <Space>";
+            add_left_item("Toggle to/from Julia <Space>", ID_KEY_SPACE);
             show_julia_toggle = true;
         }
-        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP
-            || g_fractal_type == fractal_type::INVERSEJULIA)
+        if (is_julia())
         {
-            next_left += 2;
-            choice_key[next_left] = 'j';
-            attributes[next_left] = MENU_ITEM;
-            choices[next_left] = "Toggle to/from inverse <J>  ";
+            add_left_item("Toggle to/from inverse <J>  ", 'j');
             show_julia_toggle = true;
         }
-
-        next_left += 2;
-        choice_key[next_left] = 'h';
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Return to prior image  <H>   ";
-
-        next_left += 2;
-        choice_key[next_left] = ID_KEY_BACKSPACE;
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Reverse thru history <Ctrl+H>";
+        add_left_item("Return to prior image  <H>   ", 'h');
+        add_left_item("Reverse thru history <Ctrl+H>", ID_KEY_BACKSPACE);
     }
     else
     {
         next_left += 2;
     }
-
-    next_left += 2;
-    choices[next_left] = "      OPTIONS                ";
-    attributes[next_left] = 256+MENU_HDG;
-
-    next_left += 2;
-    choice_key[next_left] = 'x';
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Basic options...       <X>  ";
-
-    next_left += 2;
-    choice_key[next_left] = 'y';
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Extended options...    <Y>  ";
-
-    next_left += 2;
-    choice_key[next_left] = 'z';
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Type-specific parms... <Z>  ";
-
-    next_left += 2;
-    choice_key[next_left] = 'p';
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Passes options...      <P>  ";
-
-    next_left += 2;
-    choice_key[next_left] = 'v';
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "View window options... <V>  ";
-
+    add_left_heading("      OPTIONS                ");
+    add_left_item("Basic options...       <X>  ", 'x');
+    add_left_item("Extended options...    <Y>  ", 'y');
+    add_left_item("Type-specific params...<Z>  ", 'z');
+    add_left_item("Passes options...      <P>  ", 'p');
+    add_left_item("View window options... <V>  ", 'v');
     if (!show_julia_toggle)
     {
-        next_left += 2;
-        choice_key[next_left] = 'i';
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Fractal 3D parms...    <I>  ";
+        add_left_item("Fractal 3D params...   <I>  ", 'i');
     }
-
-    next_left += 2;
-    choice_key[next_left] = ID_KEY_CTL_B;
-    attributes[next_left] = MENU_ITEM;
-    choices[next_left] = "Browse params...    <Ctrl+B>";
-
+    add_left_item("Browse params...    <Ctrl+B>", ID_KEY_CTL_B);
     if (full_menu)
     {
-        next_left += 2;
-        choice_key[next_left] = ID_KEY_CTL_E;
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Evolver params...   <Ctrl+E>";
-
-        next_left += 2;
-        choice_key[next_left] = ID_KEY_CTL_F;
-        attributes[next_left] = MENU_ITEM;
-        choices[next_left] = "Sound params...     <Ctrl+F>";
+        add_left_item("Evolver params...   <Ctrl+E>", ID_KEY_CTL_E);
+        add_left_item("Sound params...     <Ctrl+F>", ID_KEY_CTL_F);
     }
 
-    next_right += 2;
-    attributes[next_right] = 256 + MENU_HDG;
-    choices[next_right] = "        FILE                  ";
-
-    next_right += 2;
-    choice_key[next_right] = '@';
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Run saved command set... <@>  ";
-
+    add_right_heading("        FILE                  ");
+    add_right_item("Run saved param set...   <@>  ", '@');
     if (full_menu)
     {
-        next_right += 2;
-        choice_key[next_right] = 's';
-        attributes[next_right] = MENU_ITEM;
-        choices[next_right] = "Save image to file       <S>  ";
+        add_right_item("Save image to file       <S>  ", 's');
     }
-
-    next_right += 2;
-    choice_key[next_right] = 'r';
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Load image from file...  <R>  ";
-
-    next_right += 2;
-    choice_key[next_right] = '3';
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "3D transform from file...<3>  ";
-
+    add_right_item("Load image from file...  <R>  ", 'r');
+    add_right_item("3D transform from file...<3>  ", '3');
     if (full_menu)
     {
-        next_right += 2;
-        choice_key[next_right] = '#';
-        attributes[next_right] = MENU_ITEM;
-        choices[next_right] = "3D overlay from file.....<#>  ";
-
-        next_right += 2;
-        choice_key[next_right] = 'b';
-        attributes[next_right] = MENU_ITEM;
-        choices[next_right] = "Save current parameters..<B>  ";
+        add_right_item("3D overlay from file...  <#>  ", '#');
+        add_right_item("Save current parameters..<B>  ", 'b');
     }
-
-    next_right += 2;
-    choice_key[next_right] = 'd';
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Command shell            <D>  ";
-
-    next_right += 2;
-    choice_key[next_right] = 'g';
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Give parameter string    <G>  ";
-
-    next_right += 2;
-    choice_key[next_right] = ID_KEY_ESC;
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Quit Id                  <Esc> ";
-
-    next_right += 2;
-    choice_key[next_right] = ID_KEY_INSERT;
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Restart Id               <Ins> ";
-
+    add_right_item("Command shell            <D>  ", 'd');
+    add_right_item("Give parameter string    <G>  ", 'g');
+    add_right_item("Quit Id                  <Esc> ", ID_KEY_ESC);
+    add_right_item("Restart Id               <Ins> ", ID_KEY_INSERT);
     if (full_menu && g_got_real_dac && g_colors >= 16)
     {
-        next_right += 2;
-        choices[next_right] = "       COLORS                 ";
-        attributes[next_right] = 256+MENU_HDG;
-
-        next_right += 2;
-        choice_key[next_right] = 'c';
-        attributes[next_right] = MENU_ITEM;
-        choices[next_right] = "Color cycling mode       <C>  ";
-
-        next_right += 2;
-        choice_key[next_right] = '+';
-        attributes[next_right] = MENU_ITEM;
-        choices[next_right] = "Rotate palette      <+>, <->  ";
-
+        add_right_heading("       COLORS                 ");
+        add_right_item("Color cycling mode       <C>  ",'c');
+        add_right_item("Rotate palette      <+>, <->  ", '+');
         if (g_colors > 16)
         {
-            next_right += 2;
-            choice_key[next_right] = 'e';
-            attributes[next_right] = MENU_ITEM;
-            choices[next_right] = "Palette editing mode     <E>  ";
-
-            next_right += 2;
-            choice_key[next_right] = 'a';
-            attributes[next_right] = MENU_ITEM;
-            choices[next_right] = "Make starfield           <A>  ";
+            add_right_item("Palette editing mode     <E>  ", 'e');
+            add_right_item("Make starfield           <A>  ", 'a');
         }
     }
-
-    next_right += 2;
-    choice_key[next_right] = ID_KEY_CTL_A;
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Ant automaton         <Ctrl+A>";
-
-    next_right += 2;
-    choice_key[next_right] = ID_KEY_CTL_S;
-    attributes[next_right] = MENU_ITEM;
-    choices[next_right] = "Stereogram            <Ctrl+S>";
+    add_right_item("Ant automaton         <Ctrl+A>", ID_KEY_CTL_A);
+    add_right_item("Stereogram            <Ctrl+S>", ID_KEY_CTL_S);
 
     int i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_check_key(i, 0) == 0)
