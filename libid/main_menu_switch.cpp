@@ -671,6 +671,7 @@ static MenuHandler s_handlers[]{
     {'l', look_for_files},                          //
     {'o', show_orbit_window},                       //
     {'p', prompt_options},                          //
+    {'r', restore_from_image},                      //
     {'s', request_save_image},                      //
     {'t', request_fractal_type},                    //
     {'v', prompt_options},                          //
