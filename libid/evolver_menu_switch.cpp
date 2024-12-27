@@ -22,7 +22,7 @@
 #include "value_saver.h"
 #include "zoom.h"
 
-static main_state save_evolver_image()
+static main_state save_evolver_image(int &, bool &, bool &, bool &)
 {
     if (driver_diskp() && g_disk_targa)
     {
@@ -390,7 +390,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return color_editing(kbd_char, from_mandel, kbd_more, stacked);
 
     case 's':                    // save-to-disk
-        return save_evolver_image();
+        return save_evolver_image(kbd_char, from_mandel, kbd_more, stacked);
 
     case 'r':                    // restore-from
         return restore_from_image(kbd_char, from_mandel, kbd_more, stacked);
