@@ -91,24 +91,20 @@ int main_menu(bool full_menu)
     char const *choices[44]; // 2 columns * 22 rows
     int attributes[44];
     int choicekey[44];
-    int i;
-    int nextleft;
-    int nextright;
-    bool showjuliatoggle;
     ValueSaver saved_tab_mode{g_tab_mode};
 
 top:
     s_full_menu = full_menu;
     g_tab_mode = false;
-    showjuliatoggle = false;
+    bool showjuliatoggle{};
     for (int j = 0; j < 44; ++j)
     {
         attributes[j] = 256;
         choices[j] = "";
         choicekey[j] = -1;
     }
-    nextleft = -2;
-    nextright = -1;
+    int nextleft = -2;
+    int nextright = -1;
 
     if (full_menu)
     {
@@ -343,7 +339,7 @@ top:
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "Stereogram            <Ctrl+S>";
 
-    i = driver_key_pressed() ? driver_get_key() : 0;
+    int i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_check_key(i, 0) == 0)
     {
         g_help_mode = help_labels::HELP_MAIN;         // switch help modes
