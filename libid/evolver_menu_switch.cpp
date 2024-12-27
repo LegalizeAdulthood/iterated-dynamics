@@ -300,7 +300,7 @@ static main_state decrease_grid_size(int &, bool &, bool &kbd_more, bool &)
     return main_state::NOTHING;
 }
 
-static main_state increase_grid_size(bool &kbd_more)
+static main_state increase_grid_size(int &, bool &, bool &kbd_more, bool &)
 {
     if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
     {
@@ -461,7 +461,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return decrease_grid_size(kbd_char, from_mandel, kbd_more, stacked);
 
     case ID_KEY_F5: // increment gridsize and regen
-        return increase_grid_size(kbd_more);
+        return increase_grid_size(kbd_char, from_mandel, kbd_more, stacked);
 
     case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
         return toggle_gene_variation(kbd_more);
