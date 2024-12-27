@@ -100,53 +100,61 @@ static int menu_check_key(int curkey, int /*choice*/)
     return 0;
 }
 
-int main_menu(bool full_menu)
+namespace
 {
-    char const *choices[44]; // 2 columns * 22 rows
-    int attributes[44];
-    int choice_key[44];
-    ValueSaver saved_tab_mode{g_tab_mode};
-    int next_left{};
-    int next_right{};
+
+struct MainMenu
+{
+    MainMenu(bool full_menu);
+
+    int prompt();
+
+private:
+    char const *m_choices[44]; // 2 columns * 22 rows
+    int m_attributes[44];
+    int m_choice_key[44];
+    int m_next_left{};
+    int m_next_right{};
+};
+
+MainMenu::MainMenu(bool full_menu)
+{
     const auto add_left_heading{[&](const char *heading)
         {
-            next_left += 2;
-            choices[next_left] = heading;
-            attributes[next_left] = 256 + MENU_HDG;
+            m_next_left += 2;
+            m_choices[m_next_left] = heading;
+            m_attributes[m_next_left] = 256 + MENU_HDG;
         }};
     const auto add_left_item{[&](const char *choice, int key)
         {
-            next_left += 2;
-            choice_key[next_left] = key;
-            attributes[next_left] = MENU_ITEM;
-            choices[next_left] = choice;
+            m_next_left += 2;
+            m_choice_key[m_next_left] = key;
+            m_attributes[m_next_left] = MENU_ITEM;
+            m_choices[m_next_left] = choice;
         }};
     const auto add_right_heading{[&](const char *heading)
         {
-            next_right += 2;
-            choices[next_right] = heading;
-            attributes[next_right] = 256 + MENU_HDG;
+            m_next_right += 2;
+            m_choices[m_next_right] = heading;
+            m_attributes[m_next_right] = 256 + MENU_HDG;
         }};
     const auto add_right_item{[&](const char *choice, int key)
         {
-            next_right += 2;
-            choice_key[next_right] = key;
-            attributes[next_right] = MENU_ITEM;
-            choices[next_right] = choice;
+            m_next_right += 2;
+            m_choice_key[m_next_right] = key;
+            m_attributes[m_next_right] = MENU_ITEM;
+            m_choices[m_next_right] = choice;
         }};
 
-top:
-    s_full_menu = full_menu;
-    g_tab_mode = false;
     bool show_julia_toggle{};
     for (int j = 0; j < 44; ++j)
     {
-        attributes[j] = 256;
-        choices[j] = "";
-        choice_key[j] = -1;
+        m_attributes[j] = 256;
+        m_choices[j] = "";
+        m_choice_key[j] = -1;
     }
-    next_left = -2;
-    next_right = -1;
+    m_next_left = -2;
+    m_next_right = -1;
 
     if (full_menu)
     {
@@ -177,7 +185,7 @@ top:
     }
     else
     {
-        next_left += 2;
+        m_next_left += 2;
     }
     add_left_heading("      OPTIONS                ");
     add_left_item("Basic options...       <X>  ", 'x');
@@ -226,18 +234,21 @@ top:
     }
     add_right_item("Ant automaton         <Ctrl+A>", ID_KEY_CTL_A);
     add_right_item("Stereogram            <Ctrl+S>", ID_KEY_CTL_S);
+}
 
+int MainMenu::prompt()
+{
     int i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_check_key(i, 0) == 0)
     {
         g_help_mode = help_labels::HELP_MAIN;         // switch help modes
-        next_left += 2;
-        if (next_left < next_right)
+        m_next_left += 2;
+        if (m_next_left < m_next_right)
         {
-            next_left = next_right + 1;
+            m_next_left = m_next_right + 1;
         }
-        i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, next_left,
-            choices, attributes, 2, next_left / 2, 29, 0, nullptr, nullptr, nullptr, menu_check_key);
+        i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, m_next_left,
+            m_choices, m_attributes, 2, m_next_left / 2, 29, 0, nullptr, nullptr, nullptr, menu_check_key);
         if (i == -1)     // escape
         {
             i = ID_KEY_ESC;
@@ -248,8 +259,8 @@ top:
         }
         else                      // user selected a choice
         {
-            i = choice_key[i];
-            if (-10 == i)
+            i = m_choice_key[i];
+            if (i == -ID_KEY_CTL_ENTER)
             {
                 g_help_mode = help_labels::HELP_ZOOM;
                 help();
@@ -257,6 +268,21 @@ top:
             }
         }
     }
+    return i;
+}
+
+} // namespace
+
+int main_menu(bool full_menu)
+{
+    ValueSaver saved_tab_mode{g_tab_mode};
+
+top:
+    s_full_menu = full_menu;
+    g_tab_mode = false;
+    MainMenu menu(full_menu);
+
+    int i = menu.prompt();
     if (i == ID_KEY_ESC)             // escape from menu exits
     {
         help_title();
@@ -265,9 +291,7 @@ top:
         {
             driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
         }
-        put_string_center(10, 18, 40, C_GENERAL_INPUT,
-                        "Exit from " ID_PROGRAM_NAME " (y/n)? y"
-                       );
+        put_string_center(10, 18, 40, C_GENERAL_INPUT, "Exit from " ID_PROGRAM_NAME " (y/n)? y");
         driver_hide_text_cursor();
         while ((i = driver_get_key()) != 'y' && i != 'Y' && i != ID_KEY_ENTER)
         {
