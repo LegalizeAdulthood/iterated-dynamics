@@ -298,19 +298,26 @@ int main_menu(bool full_menu)
 {
     ValueSaver saved_tab_mode{g_tab_mode};
 
-top:
-    s_full_menu = full_menu;
-    g_tab_mode = false;
-    MainMenu menu(full_menu);
-
-    int i = menu.prompt();
-    if (i == ID_KEY_ESC)             // escape from menu exits
+    bool prompt{true};
+    int i{};
+    while (prompt)
     {
-        if (exit_prompt())
+        s_full_menu = full_menu;
+        g_tab_mode = false;
+        MainMenu menu(full_menu);
+
+        i = menu.prompt();
+        if (i == ID_KEY_ESC)             // escape from menu exits
         {
-            goodbye();
+            if (exit_prompt())
+            {
+                goodbye();
+            }
         }
-        goto top;
+        else
+        {
+            prompt = false;
+        }
     }
     if (i == ID_KEY_TAB)
     {
