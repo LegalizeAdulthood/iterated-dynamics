@@ -274,7 +274,7 @@ static main_state halve_mutation_params(int &, bool &, bool &kbd_more, bool &)
     return main_state::NOTHING;
 }
 
-static main_state double_mutation_params(bool &kbd_more)
+static main_state double_mutation_params(int &, bool &, bool &kbd_more, bool &)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
     const double centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
@@ -455,7 +455,7 @@ main_state evolver_menu_switch(int &kbd_char, bool &from_mandel, bool &kbd_more,
         return halve_mutation_params(kbd_char, from_mandel, kbd_more, stacked);
 
     case ID_KEY_F3: //double mutation parameters and regenerate
-        return double_mutation_params(kbd_more);
+        return double_mutation_params(kbd_char, from_mandel, kbd_more, stacked);
 
     case ID_KEY_F4: //decrement  gridsize and regen
         return decrease_grid_size(kbd_more);
