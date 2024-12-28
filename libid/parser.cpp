@@ -54,7 +54,7 @@
 #include <string>
 
 // ** Formula Declarations **
-enum class math_type
+enum class MathType
 {
     DOUBLE,
     MPC,
@@ -345,7 +345,7 @@ static int s_init_store_ptr{};
 static int s_init_op_ptr{};
 static bool s_uses_jump{};
 static std::vector<Arg *> s_store;
-static math_type s_math_type{math_type::DOUBLE};
+static MathType s_math_type{MathType::DOUBLE};
 static unsigned long s_num_ops{};
 static unsigned long s_num_loads{};
 static unsigned long s_num_stores{};
@@ -2263,7 +2263,7 @@ static ConstArg *is_const(char const *Str, int Len)
                 }
                 if (n == 10 || n == 11 || n == 12)
                 {
-                    if (s_math_type == math_type::LONG)
+                    if (s_math_type == MathType::LONG)
                     {
                         driver_unget_key('f');
                     }
@@ -2283,17 +2283,17 @@ static ConstArg *is_const(char const *Str, int Len)
     // v[vsp].a should already be zeroed out
     switch (s_math_type)
     {
-    case math_type::MPC:
+    case MathType::MPC:
         s_vars[g_variable_index].a.m.x.Exp = 0;
         s_vars[g_variable_index].a.m.x.Mant = 0;
         s_vars[g_variable_index].a.m.y.Exp = 0;
         s_vars[g_variable_index].a.m.y.Mant = 0;
         break;
-    case math_type::LONG:
+    case MathType::LONG:
         s_vars[g_variable_index].a.l.y = 0;
         s_vars[g_variable_index].a.l.x = s_vars[g_variable_index].a.l.y;
         break;
-    case math_type::DOUBLE:
+    case MathType::DOUBLE:
         break;
     }
 
@@ -2340,13 +2340,13 @@ static ConstArg *is_const(char const *Str, int Len)
         z.x = std::atof(Str);
         switch (s_math_type)
         {
-        case math_type::DOUBLE:
+        case MathType::DOUBLE:
             s_vars[g_variable_index].a.d = z;
             break;
-        case math_type::MPC:
+        case MathType::MPC:
             s_vars[g_variable_index].a.m = cmplx_to_mpc(z);
             break;
-        case math_type::LONG:
+        case MathType::LONG:
             s_vars[g_variable_index].a.l.x = (long)(z.x * s_fudge);
             s_vars[g_variable_index].a.l.y = (long)(z.y * s_fudge);
             break;
@@ -2479,7 +2479,7 @@ static bool parse_formula_text(char const *text)
 
     switch (s_math_type)
     {
-    case math_type::DOUBLE:
+    case MathType::DOUBLE:
         s_add = d_stk_add;
         s_sub = d_stk_sub;
         s_neg = d_stk_neg;
@@ -2534,7 +2534,7 @@ static bool parse_formula_text(char const *text)
         s_jump_on_false = d_stk_jump_on_false;
         s_one = d_stk_one;
         break;
-    case math_type::MPC:
+    case MathType::MPC:
         s_add = m_stk_add;
         s_sub = m_stk_sub;
         s_neg = m_stk_neg;
@@ -2588,7 +2588,7 @@ static bool parse_formula_text(char const *text)
         s_jump_on_false = m_stk_jump_on_false;
         s_one = m_stk_one;
         break;
-    case math_type::LONG:
+    case MathType::LONG:
         s_delta16 = g_bit_shift - 16;
         s_shift_back = 32 - g_bit_shift;
         s_add = l_stk_add;
@@ -2671,7 +2671,7 @@ static bool parse_formula_text(char const *text)
 
     switch (s_math_type)
     {
-    case math_type::DOUBLE:
+    case MathType::DOUBLE:
         s_vars[1].a.d.x = g_params[0];
         s_vars[1].a.d.y = g_params[1];
         s_vars[2].a.d.x = g_params[2];
@@ -2687,7 +2687,7 @@ static bool parse_formula_text(char const *text)
         s_vars[18].a.d.x = g_params[8];
         s_vars[18].a.d.y = g_params[9];
         break;
-    case math_type::MPC:
+    case MathType::MPC:
         s_vars[1].a.m.x = *d_to_mp(g_params[0]);
         s_vars[1].a.m.y = *d_to_mp(g_params[1]);
         s_vars[2].a.m.x = *d_to_mp(g_params[2]);
@@ -2709,7 +2709,7 @@ static bool parse_formula_text(char const *text)
         s_vars[18].a.m.x = *d_to_mp(g_params[8]);
         s_vars[18].a.m.y = *d_to_mp(g_params[9]);
         break;
-    case math_type::LONG:
+    case MathType::LONG:
         s_vars[1].a.l.x = (long)(g_params[0] * s_fudge);
         s_vars[1].a.l.y = (long)(g_params[1] * s_fudge);
         s_vars[2].a.l.x = (long)(g_params[2] * s_fudge);
@@ -2984,13 +2984,13 @@ int formula()
     {
         switch (s_math_type)
         {
-        case math_type::DOUBLE:
+        case MathType::DOUBLE:
             d_random();
             break;
-        case math_type::LONG:
+        case MathType::LONG:
             l_random();
             break;
-        case math_type::MPC:
+        case MathType::MPC:
             m_random();
         }
     }
@@ -3006,15 +3006,15 @@ int formula()
 
     switch (s_math_type)
     {
-    case math_type::DOUBLE:
+    case MathType::DOUBLE:
         g_new_z = s_vars[3].a.d;
         g_old_z = g_new_z;
         return g_arg1->d.x == 0.0;
-    case math_type::MPC:
+    case MathType::MPC:
         g_new_z = mpc_to_cmplx(s_vars[3].a.m);
         g_old_z = g_new_z;
         return g_arg1->m.x.Exp == 0 && g_arg1->m.x.Mant == 0;
-    case math_type::LONG:
+    case MathType::LONG:
         g_l_new_z = s_vars[3].a.l;
         g_l_old_z = g_l_new_z;
         if (g_overflow)
@@ -3046,7 +3046,7 @@ int form_per_pixel()
 
     switch (s_math_type)
     {
-    case math_type::DOUBLE:
+    case MathType::DOUBLE:
         if ((g_row+g_col)&1)
         {
             s_vars[9].a.d.x = 1.0;
@@ -3058,7 +3058,7 @@ int form_per_pixel()
         s_vars[9].a.d.y = 0.0;
         break;
 
-    case math_type::MPC:
+    case MathType::MPC:
         if ((g_row+g_col)&1)
         {
             s_vars[9].a.m = g_mpc_one;
@@ -3073,7 +3073,7 @@ int form_per_pixel()
         s_vars[10].a.m = cmplx_to_mpc(s_vars[10].a.d);
         break;
 
-    case math_type::LONG:
+    case MathType::LONG:
         s_vars[9].a.l.x = (long)(((g_row+g_col)&1) * s_fudge);
         s_vars[9].a.l.y = 0L;
         s_vars[10].a.l.x = g_col;
@@ -3089,15 +3089,15 @@ int form_per_pixel()
             invertz2(&g_old_z);
             switch (s_math_type)
             {
-            case math_type::DOUBLE:
+            case MathType::DOUBLE:
                 s_vars[0].a.d.x = g_old_z.x;
                 s_vars[0].a.d.y = g_old_z.y;
                 break;
-            case math_type::MPC:
+            case MathType::MPC:
                 s_vars[0].a.m.x = *d_to_mp(g_old_z.x);
                 s_vars[0].a.m.y = *d_to_mp(g_old_z.y);
                 break;
-            case math_type::LONG:
+            case MathType::LONG:
                 // watch out for overflow
                 if (sqr(g_old_z.x)+sqr(g_old_z.y) >= 127)
                 {
@@ -3114,15 +3114,15 @@ int form_per_pixel()
         {
             switch (s_math_type)
             {
-            case math_type::DOUBLE:
+            case MathType::DOUBLE:
                 s_vars[0].a.d.x = g_dx_pixel();
                 s_vars[0].a.d.y = g_dy_pixel();
                 break;
-            case math_type::MPC:
+            case MathType::MPC:
                 s_vars[0].a.m.x = *d_to_mp(g_dx_pixel());
                 s_vars[0].a.m.y = *d_to_mp(g_dy_pixel());
                 break;
-            case math_type::LONG:
+            case MathType::LONG:
                 s_vars[0].a.l.x = g_l_x_pixel();
                 s_vars[0].a.l.y = g_l_y_pixel();
                 break;
@@ -3145,13 +3145,13 @@ int form_per_pixel()
     // Set old variable for orbits
     switch (s_math_type)
     {
-    case math_type::DOUBLE:
+    case MathType::DOUBLE:
         g_old_z = s_vars[3].a.d;
         break;
-    case math_type::MPC:
+    case MathType::MPC:
         g_old_z = mpc_to_cmplx(s_vars[3].a.m);
         break;
-    case math_type::LONG:
+    case MathType::LONG:
         g_l_old_z = s_vars[3].a.l;
         break;
     }
@@ -4292,7 +4292,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
 
 bool formula_setup_fp()
 {
-    s_math_type = math_type::DOUBLE;
+    s_math_type = MathType::DOUBLE;
     return !run_formula(g_formula_name, false); // run_formula() returns true for failure
 }
 
