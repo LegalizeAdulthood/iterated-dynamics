@@ -629,7 +629,7 @@ void aspect_ratio_crop(float old_aspect, float new_aspect)
 static int check_pan() // return 0 if can't, alignment requirement if can
 {
     if ((g_calc_status != calc_status_value::RESUMABLE && g_calc_status != calc_status_value::COMPLETED) ||
-        g_evolving != evolution_mode_flags::NONE)
+        g_evolving != EvolutionModeFlags::NONE)
     {
         return 0; // not resumable, not complete
     }
@@ -736,7 +736,7 @@ int init_pan_or_recalc(bool do_zoom_out)
     const int align_mask = check_pan() - 1;
 
     // can't pan, trigger recalc
-    if (align_mask < 0 || g_evolving != evolution_mode_flags::NONE)
+    if (align_mask < 0 || g_evolving != EvolutionModeFlags::NONE)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         return 0;

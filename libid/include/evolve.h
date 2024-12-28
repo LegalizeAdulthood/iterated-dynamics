@@ -68,7 +68,7 @@ inline bool operator!=(const EvolutionInfo &lhs, const EvolutionInfo &rhs)
 }
 
 // bitmasks for evolution mode flag
-enum class evolution_mode_flags
+enum class EvolutionModeFlags
 {
     NONE = 0,      //
     FIELDMAP = 1,  // steady field varyiations across screen
@@ -77,29 +77,29 @@ enum class evolution_mode_flags
     NOGROUT = 8,   // no gaps between images
     PARMBOX = 128, //
 };
-inline int operator+(evolution_mode_flags value)
+inline int operator+(EvolutionModeFlags value)
 {
     return static_cast<int>(value);
 }
-inline evolution_mode_flags operator|(evolution_mode_flags lhs, evolution_mode_flags rhs)
+inline EvolutionModeFlags operator|(EvolutionModeFlags lhs, EvolutionModeFlags rhs)
 {
-    return static_cast<evolution_mode_flags>(+lhs | +rhs);
+    return static_cast<EvolutionModeFlags>(+lhs | +rhs);
 }
-inline evolution_mode_flags &operator|=(evolution_mode_flags &lhs, evolution_mode_flags rhs)
+inline EvolutionModeFlags &operator|=(EvolutionModeFlags &lhs, EvolutionModeFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
-inline evolution_mode_flags operator^(evolution_mode_flags lhs, evolution_mode_flags rhs)
+inline EvolutionModeFlags operator^(EvolutionModeFlags lhs, EvolutionModeFlags rhs)
 {
-    return static_cast<evolution_mode_flags>(+lhs ^ +rhs);
+    return static_cast<EvolutionModeFlags>(+lhs ^ +rhs);
 }
-inline evolution_mode_flags &operator^=(evolution_mode_flags &lhs, evolution_mode_flags rhs)
+inline EvolutionModeFlags &operator^=(EvolutionModeFlags &lhs, EvolutionModeFlags rhs)
 {
     lhs = lhs ^ rhs;
     return lhs;
 }
-inline bool bit_set(evolution_mode_flags flags, evolution_mode_flags bit)
+inline bool bit_set(EvolutionModeFlags flags, EvolutionModeFlags bit)
 {
     return (+flags & +bit) == +bit;
 }
@@ -124,7 +124,7 @@ extern double                g_evolve_x_parameter_offset;
 extern double                g_evolve_x_parameter_range;
 extern double                g_evolve_y_parameter_offset;
 extern double                g_evolve_y_parameter_range;
-extern evolution_mode_flags  g_evolving;
+extern EvolutionModeFlags  g_evolving;
 extern GeneBase              g_gene_bank[NUM_GENES];
 
 void copy_genes_to_bank(GeneBase const gene[NUM_GENES]);

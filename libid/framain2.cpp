@@ -215,7 +215,7 @@ main_state big_while_loop(MainContext &context)
                 }
                 // changed test to 1, so a 2x2 window will work with the sound feature
                 else if ((g_logical_screen_x_dots <= 1 || g_logical_screen_y_dots <= 1) &&
-                    !bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+                    !bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
@@ -224,18 +224,18 @@ main_state big_while_loop(MainContext &context)
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP) &&
+                if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP) &&
                     bit_set(g_cur_fractal_specific->flags, fractal_flags::INFCALC))
                 {
                     stop_msg("Fractal doesn't terminate! switching off evolution.");
-                    g_evolving ^= evolution_mode_flags::FIELDMAP;
+                    g_evolving ^= EvolutionModeFlags::FIELDMAP;
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+                if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
                 {
-                    const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+                    const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
                     g_logical_screen_x_dots = (g_screen_x_dots / g_evolve_image_grid_size) - grout;
                     // trim to multiple of 4 for SSG
                     g_logical_screen_x_dots = g_logical_screen_x_dots - (g_logical_screen_x_dots % 4);
@@ -288,7 +288,7 @@ main_state big_while_loop(MainContext &context)
                 g_out_line = pot_line;
             }
             else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP &&
-                g_evolving == evolution_mode_flags::NONE) // regular gif/fra input file
+                g_evolving == EvolutionModeFlags::NONE) // regular gif/fra input file
             {
                 g_out_line = sound_line;      // sound decoding
             }
@@ -328,7 +328,7 @@ main_state big_while_loop(MainContext &context)
 
         // for these cases disable zooming
         g_zoom_enabled = !driver_diskp() && !bit_set(g_cur_fractal_specific->flags, fractal_flags::NOZOOM);
-        if (g_evolving == evolution_mode_flags::NONE)
+        if (g_evolving == EvolutionModeFlags::NONE)
         {
             calc_frac_init();
         }
@@ -384,7 +384,7 @@ main_state big_while_loop(MainContext &context)
             //rb
             g_filename_stack_index = -1;   // reset pointer
             g_browse_name.clear();
-            if (g_view_window && bit_set(g_evolving, evolution_mode_flags::FIELDMAP) &&
+            if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELDMAP) &&
                 g_calc_status != calc_status_value::COMPLETED)
             {
                 // generate a set of images with varied parameters on each one
@@ -415,8 +415,8 @@ main_state big_while_loop(MainContext &context)
                     g_evolve_image_grid_size = g_evolve_info.image_grid_size;
                     g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
-                    g_evolving = static_cast<evolution_mode_flags>(g_evolve_info.evolving);
-                    g_view_window = g_evolving != evolution_mode_flags::NONE;
+                    g_evolving = static_cast<EvolutionModeFlags>(g_evolve_info.evolving);
+                    g_view_window = g_evolving != EvolutionModeFlags::NONE;
                     ecount       = g_evolve_info.ecount;
                     g_have_evolve_info = false;
                 }
@@ -439,7 +439,7 @@ main_state big_while_loop(MainContext &context)
                 g_evolve_param_box_count = 0;
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
-                const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+                const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
                 tmpxdots = g_logical_screen_x_dots+grout;
                 tmpydots = g_logical_screen_y_dots+grout;
                 gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
@@ -640,7 +640,7 @@ resumeloop:                             // return here on failed overlays
             }
 
             context.key = std::tolower(context.key);
-            if (g_evolving != evolution_mode_flags::NONE)
+            if (g_evolving != EvolutionModeFlags::NONE)
             {
                 mms_value = evolver_menu_switch(context);
             }

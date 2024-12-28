@@ -578,7 +578,7 @@ bool encoder()
     }
 
     // Extended parameters block 006
-    if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+    if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
     {
         EvolutionInfo esave_info;
         if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)

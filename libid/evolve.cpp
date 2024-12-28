@@ -65,7 +65,7 @@ GeneBase g_gene_bank[NUM_GENES];
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
 int g_evolve_param_grid_x;
 int g_evolve_param_grid_y;
-evolution_mode_flags g_evolving{evolution_mode_flags::NONE};
+EvolutionModeFlags g_evolving{EvolutionModeFlags::NONE};
 int g_evolve_image_grid_size;
 
 // used to replay random sequences to obtain correct values when selecting a
@@ -674,7 +674,7 @@ int get_evolve_params()
     double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_max_random_mutation;
 
     // fill up the previous values arrays
-    evolution_mode_flags old_evolving = g_evolving;
+    EvolutionModeFlags old_evolving = g_evolving;
     old_image_grid_size = g_evolve_image_grid_size;
     old_x_parameter_range = g_evolve_x_parameter_range;
     old_y_parameter_range = g_evolve_y_parameter_range;
@@ -684,8 +684,8 @@ int get_evolve_params()
 
 get_evol_restart:
 
-    if (bit_set(g_evolving, evolution_mode_flags::RANDWALK) ||
-        bit_set(g_evolving, evolution_mode_flags::RANDPARAM))
+    if (bit_set(g_evolving, EvolutionModeFlags::RANDWALK) ||
+        bit_set(g_evolving, EvolutionModeFlags::RANDPARAM))
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
@@ -697,14 +697,14 @@ get_evol_restart:
     }
 
     choices.reset()
-        .yes_no("Evolution mode? (no for full screen)", bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+        .yes_no("Evolution mode? (no for full screen)", bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
         .int_number("Image grid size (odd numbers only)", g_evolve_image_grid_size);
 
     if (explore_check())
     {
         // test to see if any parms are set to linear
         // variation 'explore mode'
-        choices.yes_no("Show parameter zoom box?", bit_set(g_evolving, evolution_mode_flags::PARMBOX))
+        choices.yes_no("Show parameter zoom box?", bit_set(g_evolving, EvolutionModeFlags::PARMBOX))
             .float_number("x parameter range (across screen)", g_evolve_x_parameter_range)
             .float_number("x parameter offset (left hand edge)", g_evolve_x_parameter_offset)
             .float_number("y parameter range (up screen)", g_evolve_y_parameter_range)
@@ -713,7 +713,7 @@ get_evol_restart:
 
     choices.float_number("Max random mutation", g_evolve_max_random_mutation)
         .float_number("Mutation reduction factor (between generations)", g_evolve_mutation_reduction_factor)
-        .yes_no("Grouting? ", !bit_set(g_evolving, evolution_mode_flags::NOGROUT))
+        .yes_no("Grouting? ", !bit_set(g_evolving, EvolutionModeFlags::NOGROUT))
         .comment("")
         .comment("Press F4 to reset view parameters to defaults.")
         .comment("Press F2 to halve mutation levels")
@@ -774,10 +774,10 @@ get_evol_restart:
     j = i;
 
     // now check out the results
-    g_evolving = choices.read_yes_no() ? evolution_mode_flags::FIELDMAP : evolution_mode_flags::NONE;
-    g_view_window = g_evolving != evolution_mode_flags::NONE;
+    g_evolving = choices.read_yes_no() ? EvolutionModeFlags::FIELDMAP : EvolutionModeFlags::NONE;
+    g_view_window = g_evolving != EvolutionModeFlags::NONE;
 
-    if (g_evolving == evolution_mode_flags::NONE && i != ID_KEY_F6)    // don't need any of the other parameters
+    if (g_evolving == EvolutionModeFlags::NONE && i != ID_KEY_F6)    // don't need any of the other parameters
     {
         return 1;             // the following code can set evolving even if it's off
     }
@@ -801,7 +801,7 @@ get_evol_restart:
     g_evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
-        g_evolving |= choices.read_yes_no() ? evolution_mode_flags::PARMBOX : evolution_mode_flags::NONE;
+        g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::PARMBOX : EvolutionModeFlags::NONE;
         g_evolve_x_parameter_range = choices.read_float_number();
         g_evolve_x_parameter_offset = choices.read_float_number();
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset;
@@ -812,7 +812,7 @@ get_evol_restart:
 
     g_evolve_max_random_mutation = choices.read_float_number();
     g_evolve_mutation_reduction_factor = choices.read_float_number();
-    g_evolving |= choices.read_yes_no() ? evolution_mode_flags::NONE : evolution_mode_flags::NOGROUT;
+    g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::NONE : EvolutionModeFlags::NOGROUT;
     g_view_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-2;
     g_view_y_dots = (g_screen_y_dots / g_evolve_image_grid_size)-2;
     if (!g_view_window)
@@ -835,12 +835,12 @@ get_evol_restart:
         i = 1;
     }
 
-    if (g_evolving != evolution_mode_flags::NONE && old_evolving == evolution_mode_flags::NONE)
+    if (g_evolving != EvolutionModeFlags::NONE && old_evolving == EvolutionModeFlags::NONE)
     {
         save_param_history();
     }
 
-    if (g_evolving == evolution_mode_flags::NONE && g_evolving == old_evolving)
+    if (g_evolving == EvolutionModeFlags::NONE && g_evolving == old_evolving)
     {
         i = 0;
     }
@@ -852,7 +852,7 @@ get_evol_restart:
         if (old_variations > 0)
         {
             g_view_window = true;
-            g_evolving |= evolution_mode_flags::FIELDMAP;   // leave other settings alone
+            g_evolving |= EvolutionModeFlags::FIELDMAP;   // leave other settings alone
         }
         g_evolve_max_random_mutation = 1;
         g_evolve_mutation_reduction_factor = 1.0;
@@ -964,11 +964,11 @@ void draw_param_box(int mode)
     // draws parameter zoom box in evolver mode
     // clears boxes off screen if mode = 1, otherwise, redraws boxes
     Coord tl, tr, bl, br;
-    if (!bit_set(g_evolving, evolution_mode_flags::PARMBOX))
+    if (!bit_set(g_evolving, EvolutionModeFlags::PARMBOX))
     {
         return; // don't draw if not asked to!
     }
-    const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+    const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
     s_image_box_count = g_box_count;
     if (g_box_count)
     {

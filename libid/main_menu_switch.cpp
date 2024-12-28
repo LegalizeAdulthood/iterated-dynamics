@@ -297,7 +297,7 @@ static main_state prompt_options(MainContext &context)
         i = get_cmd_string();
     }
     driver_unstack_screen();
-    if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
+    if (g_evolving != EvolutionModeFlags::NONE && g_truecolor)
     {
         g_truecolor = false;          // truecolor doesn't play well with the evolver
     }
@@ -398,7 +398,7 @@ static main_state show_orbit_window(MainContext &)
 
 static main_state space_command(MainContext &context)
 {
-    if (g_bf_math != BFMathType::NONE || g_evolving != evolution_mode_flags::NONE)
+    if (g_bf_math != BFMathType::NONE || g_evolving != EvolutionModeFlags::NONE)
     {
         return main_state::NOTHING;
     }
@@ -535,7 +535,7 @@ static main_state request_make_batch_file(MainContext &)
 
 static main_state start_evolution(MainContext &context)
 {
-    g_evolving = evolution_mode_flags::FIELDMAP;
+    g_evolving = EvolutionModeFlags::FIELDMAP;
     g_view_window = true;
     set_mutation_level(context.key - ID_KEY_ALT_1 + 1);
     save_param_history();

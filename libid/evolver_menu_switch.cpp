@@ -93,7 +93,7 @@ static main_state prompt_evolver_options(MainContext &context)
         i = get_cmd_string();
     }
     driver_unstack_screen();
-    if (g_evolving != evolution_mode_flags::NONE && g_truecolor)
+    if (g_evolving != EvolutionModeFlags::NONE && g_truecolor)
     {
         g_truecolor = false; // truecolor doesn't play well with the evolver
     }
@@ -109,7 +109,7 @@ static main_state prompt_evolver_options(MainContext &context)
 
 static main_state exit_evolver(MainContext &context)
 {
-    g_evolving = evolution_mode_flags::NONE;
+    g_evolving = EvolutionModeFlags::NONE;
     g_view_window = false;
     save_param_history();
     context.more_keys = false;
@@ -128,7 +128,7 @@ static main_state move_evolver_selection(MainContext &context)
     // borrow ctrl cursor keys for moving selection box in evolver mode
     GeneBase gene[NUM_GENES];
     copy_genes_from_bank(gene);
-    if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+    if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
     {
         if (context.key == ID_KEY_CTL_LEFT_ARROW)
         {
@@ -162,7 +162,7 @@ static main_state move_evolver_selection(MainContext &context)
         {
             g_evolve_param_grid_y = 0;
         }
-        const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+        const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
         g_logical_screen_x_offset = g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
         g_logical_screen_y_offset = g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
 
@@ -222,11 +222,11 @@ static main_state evolver_zoom_in(MainContext &)
             g_zoom_box_y = 0.0;
             find_special_colors();
             g_box_color = g_color_bright;
-            if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+            if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
             {
                 // set screen view params back (previously changed to allow full screen saves in viewwindow
                 // mode)
-                const int grout = bit_set(g_evolving, evolution_mode_flags::NOGROUT) ? 0 : 1;
+                const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
                 g_logical_screen_x_offset =
                     g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
                 g_logical_screen_y_offset =
@@ -252,7 +252,7 @@ static main_state evolver_zoom_out(MainContext &)
         {
             // end zoombox
             g_zoom_box_width = 0;
-            if (bit_set(g_evolving, evolution_mode_flags::FIELDMAP))
+            if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
             {
                 draw_param_box(1); // clear boxes off screen
                 release_param_box();
@@ -359,7 +359,7 @@ static main_state request_mutation_level(MainContext &context)
 
 static main_state turn_off_evolving(MainContext &context)
 {
-    g_evolving = evolution_mode_flags::NONE;
+    g_evolving = EvolutionModeFlags::NONE;
     g_view_window = false;
     context.more_keys = false;
     g_calc_status = calc_status_value::PARAMS_CHANGED;

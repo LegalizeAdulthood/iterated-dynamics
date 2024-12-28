@@ -173,7 +173,7 @@ static void main_restart(int const argc, char const *const argv[], MainContext &
     g_browse_name = "            ";
     g_filename_stack_index = -1; // init loaded files stack
 
-    g_evolving = evolution_mode_flags::NONE;
+    g_evolving = EvolutionModeFlags::NONE;
     g_evolve_x_parameter_range = 4;
     g_evolve_new_x_parameter_offset = -2.0;
     g_evolve_x_parameter_offset = -2.0;
@@ -271,7 +271,7 @@ static bool main_restore_start(MainContext &context)
             g_file_name_stack[g_filename_stack_index] = g_browse_name;
         }
 
-        g_evolving = evolution_mode_flags::NONE;
+        g_evolving = EvolutionModeFlags::NONE;
         g_view_window = false;
         g_show_file = 0;
         g_help_mode = HelpLabels::NONE;
