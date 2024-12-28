@@ -77,7 +77,7 @@ void HTMLProcessor::write_index_html()
     {
         int size = 0;
         int width = 0;
-        TokenType const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        TokenType const tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {
@@ -146,7 +146,7 @@ void HTMLProcessor::write_topic(const Topic &t)
     {
         int size = 0;
         int width = 0;
-        TokenType const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        TokenType const tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {

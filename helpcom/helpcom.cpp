@@ -169,15 +169,15 @@ static TokenType find_token_length(char const *curr, unsigned len, int *ret_size
 }
 
 TokenType find_token_length(
-    token_modes mode, char const *curr, unsigned int len, int *ret_size, int *ret_width)
+    TokenMode mode, char const *curr, unsigned int len, int *ret_size, int *ret_width)
 {
     int t;
     TokenType tok = find_token_length(curr, len, &t, ret_width);
 
     int size;
-    if ((tok == TokenType::TOK_XONLINE && mode == token_modes::ONLINE)
-        || (tok == TokenType::TOK_XDOC && mode == token_modes::DOC)
-        || (tok == TokenType::TOK_XADOC && mode == token_modes::ADOC))
+    if ((tok == TokenType::TOK_XONLINE && mode == TokenMode::ONLINE)
+        || (tok == TokenType::TOK_XDOC && mode == TokenMode::DOC)
+        || (tok == TokenType::TOK_XADOC && mode == TokenMode::ADOC))
     {
         size = 0;
 
@@ -189,9 +189,9 @@ TokenType find_token_length(
 
             tok = find_token_length(curr, len, &t, nullptr);
 
-            if ((tok == TokenType::TOK_XONLINE && mode == token_modes::ONLINE) ||
-                (tok == TokenType::TOK_XDOC && mode == token_modes::DOC) ||
-                (tok == TokenType::TOK_XADOC && mode == token_modes::ADOC) ||
+            if ((tok == TokenType::TOK_XONLINE && mode == TokenMode::ONLINE) ||
+                (tok == TokenType::TOK_XDOC && mode == TokenMode::DOC) ||
+                (tok == TokenType::TOK_XADOC && mode == TokenMode::ADOC) ||
                 tok == TokenType::TOK_DONE)
             {
                 break;
@@ -213,7 +213,7 @@ TokenType find_token_length(
     return tok;
 }
 
-int find_line_width(token_modes mode, char const *curr, unsigned len)
+int find_line_width(TokenMode mode, char const *curr, unsigned len)
 {
     int size   = 0;
     int width  = 0;
@@ -256,7 +256,7 @@ namespace
 class DocumentProcessor
 {
 public:
-    DocumentProcessor(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info) :
+    DocumentProcessor(TokenMode mode, PD_FUNC *get_info, PD_FUNC *output, void *info) :
         m_token_mode(mode),
         m_get_info(get_info),
         m_output(output),
@@ -338,7 +338,7 @@ private:
         return m_output(PrintDocCommand::PD_PRINTN, &m_pd, m_info);
     }
 
-    token_modes m_token_mode{};
+    TokenMode m_token_mode{};
     PD_FUNC *m_get_info;
     PD_FUNC *m_output;
     void *m_info;
@@ -877,7 +877,7 @@ bool DocumentProcessor::topic_token()
 
 } // namespace
 
-bool process_document(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info)
+bool process_document(TokenMode mode, PD_FUNC *get_info, PD_FUNC *output, void *info)
 {
     return DocumentProcessor(mode, get_info, output, info).process();
 }

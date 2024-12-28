@@ -141,7 +141,7 @@ std::ostream &operator<<(std::ostream &str, const Topic &topic)
     {
         int size = 0;
         int width = 0;
-        TokenType const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        TokenType const tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {
@@ -265,7 +265,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
         while (len > 0)
         {
-            TokenType tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+            TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
             switch (tok)
             {
@@ -278,7 +278,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                 col = indent;
                 while (true)
                 {
-                    tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
                     if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
                     {
@@ -621,7 +621,7 @@ void HelpCompiler::paginate_document()
     info.content_num = info.topic_num;
     info.link_dest_warn = true;
 
-    process_document(token_modes::DOC, pd_get_info, paginate_doc_output, &info);
+    process_document(TokenMode::DOC, pd_get_info, paginate_doc_output, &info);
 
     set_hot_link_doc_page();
     set_content_doc_page();
@@ -883,7 +883,7 @@ void insert_real_link_info(char *curr, unsigned int len)
     while (len > 0)
     {
         int size = 0;
-        TokenType tok = find_token_length(token_modes::NONE, curr, len, &size, nullptr);
+        TokenType tok = find_token_length(TokenMode::NONE, curr, len, &size, nullptr);
 
         if (tok == TokenType::TOK_LINK)
         {
@@ -1150,7 +1150,7 @@ void HelpCompiler::print_document()
     info.start_of_line = true;
     info.spaces = 0;
 
-    process_document(token_modes::DOC, pd_get_info, print_doc_output, &info);
+    process_document(TokenMode::DOC, pd_get_info, print_doc_output, &info);
 
     std::fclose(info.file);
 }
@@ -1641,7 +1641,7 @@ void HelpCompiler::paginate_html_document()
 
         while (len > 0)
         {
-            TokenType tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+            TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
             switch (tok)
             {
@@ -1654,7 +1654,7 @@ void HelpCompiler::paginate_html_document()
                 col = indent;
                 while (true)
                 {
-                    tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
                     if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
                     {

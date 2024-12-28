@@ -84,7 +84,7 @@ enum class TokenType
 /*
  * modes for find_token_length() and find_line_width()
  */
-enum class token_modes
+enum class TokenMode
 {
     NONE = 0,
     ONLINE = 1,
@@ -139,9 +139,9 @@ enum class PrintDocCommand
 
 using PD_FUNC = bool(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info);
 TokenType find_token_length(
-    token_modes mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
-int find_line_width(token_modes mode, char const *curr, unsigned len);
-bool process_document(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info);
+    TokenMode mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
+int find_line_width(TokenMode mode, char const *curr, unsigned len);
+bool process_document(TokenMode mode, PD_FUNC *get_info, PD_FUNC *output, void *info);
 int help();
 int read_help_topic(HelpLabels label, int , int , void *);
 bool make_doc_msg_func(int pnum, int num_pages);

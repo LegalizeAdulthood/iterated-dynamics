@@ -202,7 +202,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
 
             while (true)
             {
-                tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+                tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
                 if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
                 {
@@ -267,7 +267,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         }
 
         case TokenType::TOK_CENTER:
-            col = find_line_width(token_modes::ONLINE, curr, len);
+            col = find_line_width(TokenMode::ONLINE, curr, len);
             col = (SCREEN_WIDTH - col)/2;
             if (col < 0)
             {
@@ -315,7 +315,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             break;
         }
 
-        tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
     } // while (true)
 
     g_text_cbase = 0;
@@ -1363,7 +1363,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int))
     info.start_of_line = true;
     info.spaces = 0;
 
-    success = process_document(token_modes::DOC, print_doc_get_info, print_doc_output, &info);
+    success = process_document(TokenMode::DOC, print_doc_get_info, print_doc_output, &info);
     std::fclose(info.file);
 
 ErrorAbort:
