@@ -2,7 +2,7 @@
 //
 #pragma once
 
-enum class stereo_images
+enum class StereoImage
 {
     NONE,
     RED,
@@ -19,7 +19,7 @@ extern int                   g_glasses_type;
 extern int                   g_red_bright;
 extern int                   g_red_crop_left;
 extern int                   g_red_crop_right;
-extern stereo_images         g_which_image;
+extern StereoImage           g_which_image;
 extern int                   g_x_shift1;
 extern int                   g_xx_adjust1;
 extern int                   g_y_shift1;

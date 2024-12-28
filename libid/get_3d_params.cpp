@@ -162,7 +162,7 @@ restart_1:
     }
     if (g_glasses_type)
     {
-        g_which_image = stereo_images::RED;
+        g_which_image = StereoImage::RED;
     }
 
     if (static_cast<int>(g_raytrace_format) < 0)

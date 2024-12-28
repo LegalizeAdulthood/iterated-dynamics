@@ -2479,14 +2479,14 @@ static int first_time(int linelen, VECTOR v)
     set_upr_lwr();
     s_error = 0;
 
-    if (g_which_image < stereo_images::BLUE)
+    if (g_which_image < StereoImage::BLUE)
     {
         s_t_safe = false; // Not safe yet to mess with the source image
     }
 
     if (g_targa_out
         && !((g_glasses_type == 1 || g_glasses_type == 2)
-            && g_which_image == stereo_images::BLUE))
+            && g_which_image == StereoImage::BLUE))
     {
         if (g_targa_overlay)
         {

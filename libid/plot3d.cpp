@@ -26,7 +26,7 @@
 #define PAL_RED 2
 #define PAL_MAGENTA 3
 
-stereo_images g_which_image;
+StereoImage g_which_image;
 int g_xx_adjust1{};
 int g_yy_adjust1{};
 int g_eye_separation{};
@@ -184,7 +184,7 @@ static void plot3d_superimpose16(int x, int y, int color)
 {
     int tmp = get_color(x, y);
 
-    if (g_which_image == stereo_images::RED) // RED
+    if (g_which_image == StereoImage::RED) // RED
     {
         color = PAL_RED;
         if (tmp > 0 && tmp != color)
@@ -200,7 +200,7 @@ static void plot3d_superimpose16(int x, int y, int color)
             }
         }
     }
-    else if (g_which_image == stereo_images::BLUE)   // BLUE
+    else if (g_which_image == StereoImage::BLUE)   // BLUE
     {
         if (s_blue_local_left < x && x < s_blue_local_right)
         {
@@ -233,7 +233,7 @@ static void plot3d_superimpose256(int x, int y, int color)
 
     tmp = get_color(x, y);
     // map to 16 colors
-    if (g_which_image == stereo_images::RED) // RED
+    if (g_which_image == StereoImage::RED) // RED
     {
         if (s_red_local_left < x && x < s_red_local_right)
         {
@@ -252,7 +252,7 @@ static void plot3d_superimpose256(int x, int y, int color)
             }
         }
     }
-    else if (g_which_image == stereo_images::BLUE)   // BLUE
+    else if (g_which_image == StereoImage::BLUE)   // BLUE
     {
         if (s_blue_local_left < x && x < s_blue_local_right)
         {
@@ -291,7 +291,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
 
     tmp = get_color(x, y);
     // map to 16 colors
-    if (g_which_image == stereo_images::RED) // RED
+    if (g_which_image == StereoImage::RED) // RED
     {
         if (s_red_local_left < x && x < s_red_local_right)
         {
@@ -309,7 +309,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
             }
         }
     }
-    else if (g_which_image == stereo_images::BLUE)   // BLUE
+    else if (g_which_image == StereoImage::BLUE)   // BLUE
     {
         if (s_blue_local_left < x && x < s_blue_local_right)
         {
@@ -341,7 +341,7 @@ static void plot3d_alternate(int x, int y, int color)
 
     // my mind is STILL fried - lower indices = darker colors is EASIER!
     color = g_colors - color;
-    if ((g_which_image == stereo_images::RED) && !((x+y)&1)) // - lower half palette
+    if ((g_which_image == StereoImage::RED) && !((x+y)&1)) // - lower half palette
     {
         if (s_red_local_left < x && x < s_red_local_right)
         {
@@ -359,7 +359,7 @@ static void plot3d_alternate(int x, int y, int color)
             }
         }
     }
-    else if ((g_which_image == stereo_images::BLUE) && ((x+y)&1))  // - upper half palette
+    else if ((g_which_image == StereoImage::BLUE) && ((x+y)&1))  // - upper half palette
     {
         if (s_blue_local_left < x && x < s_blue_local_right)
         {
@@ -383,7 +383,7 @@ static void plot3d_cross_eyed_a(int x, int y, int color)
 {
     x /= 2;
     y /= 2;
-    if (g_which_image == stereo_images::BLUE)
+    if (g_which_image == StereoImage::BLUE)
     {
         x += g_logical_screen_x_dots/2;
     }
@@ -402,7 +402,7 @@ static void plot3d_cross_eyed_b(int x, int y, int color)
 {
     x /= 2;
     y /= 2;
-    if (g_which_image == stereo_images::BLUE)
+    if (g_which_image == StereoImage::BLUE)
     {
         x += g_logical_screen_x_dots/2;
     }
@@ -495,7 +495,7 @@ void plot_setup()
 
         switch (g_which_image)
         {
-        case stereo_images::RED:
+        case StereoImage::RED:
             g_x_shift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             g_xx_adjust = (int)(((g_adjust_3d_x+g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             g_x_shift1 -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
@@ -506,7 +506,7 @@ void plot_setup()
             }
             break;
 
-        case stereo_images::BLUE:
+        case StereoImage::BLUE:
             g_x_shift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             g_xx_adjust = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)

@@ -1822,7 +1822,7 @@ static int orbit3d_long_calc()
             {
                 if (s_real_time)
                 {
-                    g_which_image = stereo_images::RED;
+                    g_which_image = StereoImage::RED;
                 }
                 if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
@@ -1848,7 +1848,7 @@ static int orbit3d_long_calc()
             oldrow = inf.row;
             if (s_real_time)
             {
-                g_which_image = stereo_images::BLUE;
+                g_which_image = StereoImage::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -1947,7 +1947,7 @@ static int orbit3d_float_calc()
             {
                 if (s_real_time)
                 {
-                    g_which_image = stereo_images::RED;
+                    g_which_image = StereoImage::RED;
                 }
                 if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
@@ -1970,7 +1970,7 @@ static int orbit3d_float_calc()
             oldrow = inf.row;
             if (s_real_time)
             {
-                g_which_image = stereo_images::BLUE;
+                g_which_image = StereoImage::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -2387,7 +2387,7 @@ int plot_orbits2d_float()
 // stuff so the code is not duplicated for ifs3d() and lorenz3d()
 int funny_glasses_call(int (*calc)())
 {
-    g_which_image = g_glasses_type ? stereo_images::RED : stereo_images::NONE;
+    g_which_image = g_glasses_type ? StereoImage::RED : StereoImage::NONE;
     plot_setup();
     g_plot = g_standard_plot;
     int status = calc();
@@ -2411,7 +2411,7 @@ int funny_glasses_call(int (*calc)())
             // is there a better way to clear the screen in graphics mode?
             driver_set_video_mode(&g_video_entry);
         }
-        g_which_image = stereo_images::BLUE;
+        g_which_image = StereoImage::BLUE;
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INFCALC))
         {
             g_cur_fractal_specific->per_image(); // reset for 2nd image
@@ -2525,7 +2525,7 @@ static int ifs3d_float()
             {
                 if (s_real_time)
                 {
-                    g_which_image = stereo_images::RED;
+                    g_which_image = StereoImage::RED;
                 }
                 if (color_method)
                 {
@@ -2546,7 +2546,7 @@ static int ifs3d_float()
             }
             if (s_real_time)
             {
-                g_which_image = stereo_images::BLUE;
+                g_which_image = StereoImage::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
@@ -2826,7 +2826,7 @@ static int ifs3d_long()
             {
                 if (s_real_time)
                 {
-                    g_which_image = stereo_images::RED;
+                    g_which_image = StereoImage::RED;
                 }
                 if (color_method)
                 {
@@ -2843,7 +2843,7 @@ static int ifs3d_long()
             }
             if (s_real_time)
             {
-                g_which_image = stereo_images::BLUE;
+                g_which_image = StereoImage::BLUE;
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
