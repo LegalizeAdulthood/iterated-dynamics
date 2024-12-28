@@ -102,7 +102,7 @@ inline int operator+(FormulaTokenType value)
 }
 
 // token IDs
-enum class token_id
+enum class TokenId
 {
     NONE = 0,                   // no relevant id for token
     END_OF_FILE = 1,            // begin error condition ids
@@ -192,7 +192,7 @@ enum class token_id
     JUMP_ELSE = 3,              //
     JUMP_END_IF = 4,             // end of jump list name ids
 };
-inline int operator+(token_id value)
+inline int operator+(TokenId value)
 {
     return static_cast<int>(value);
 }
@@ -266,7 +266,7 @@ struct Token
 {
     char str[80];
     FormulaTokenType type;
-    token_id id;
+    TokenId id;
     DComplex constant;
 };
 
@@ -3325,8 +3325,8 @@ static void get_func_info(Token *tok)
     {
         if (!std::strcmp(s_func_list[i].s, tok->str))
         {
-            tok->id = static_cast<token_id>(i);
-            if (tok->id >= token_id::FUNC_FN1 && tok->id <= token_id::FUNC_FN4)
+            tok->id = static_cast<TokenId>(i);
+            if (tok->id >= TokenId::FUNC_FN1 && tok->id <= TokenId::FUNC_FN4)
             {
                 tok->type = FormulaTokenType::PARAM_FUNCTION;
             }
@@ -3343,12 +3343,12 @@ static void get_func_info(Token *tok)
         if (std::strcmp(s_jump_list[i], tok->str) == 0)
         {
             tok->type = FormulaTokenType::FLOW_CONTROL;
-            tok->id   = static_cast<token_id>(i + 1);
+            tok->id   = static_cast<TokenId>(i + 1);
             return;
         }
     }
     tok->type = FormulaTokenType::NOT_A_TOKEN;
-    tok->id   = token_id::UNDEFINED_FUNCTION;
+    tok->id   = TokenId::UNDEFINED_FUNCTION;
 }
 
 static void get_var_info(Token *tok)
@@ -3357,15 +3357,15 @@ static void get_var_info(Token *tok)
     {
         if (!std::strcmp(s_variables[i], tok->str))
         {
-            tok->id = static_cast<token_id>(i);
+            tok->id = static_cast<TokenId>(i);
             switch (tok->id)
             {
-            case token_id::VAR_P1:
-            case token_id::VAR_P2:
-            case token_id::VAR_P3:
-            case token_id::VAR_IS_MANDEL:
-            case token_id::VAR_P4:
-            case token_id::VAR_P5:
+            case TokenId::VAR_P1:
+            case TokenId::VAR_P2:
+            case TokenId::VAR_P3:
+            case TokenId::VAR_IS_MANDEL:
+            case TokenId::VAR_P4:
+            case TokenId::VAR_P5:
                 tok->type = FormulaTokenType::PARAM_VARIABLE;
                 break;
             default:
@@ -3376,7 +3376,7 @@ static void get_var_info(Token *tok)
         }
     }
     tok->type = FormulaTokenType::USER_NAMED_VARIABLE;
-    tok->id   = token_id::NONE;
+    tok->id   = TokenId::NONE;
 }
 
 // fills in token structure where numeric constant is indicated
@@ -3406,7 +3406,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
         case EOF:
             tok->str[i] = (char) 0;
             tok->type = FormulaTokenType::NOT_A_TOKEN;
-            tok->id   = token_id::END_OF_FILE;
+            tok->id   = TokenId::END_OF_FILE;
             return false;
         CASE_NUM:
             tok->str[i++] = (char) c;
@@ -3418,7 +3418,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id = token_id::ILL_FORMED_CONSTANT;
+                tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
             tok->str[i++] = (char) c;
@@ -3448,7 +3448,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id = token_id::ILL_FORMED_CONSTANT;
+                tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
             else if (tok->str[i-1] == 'e' || (tok->str[i-1] == '.' && i == 1))
@@ -3456,7 +3456,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id = token_id::ILL_FORMED_CONSTANT;
+                tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
             else
@@ -3471,13 +3471,13 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
         {
             tok->str[33] = (char) 0;
             tok->type = FormulaTokenType::NOT_A_TOKEN;
-            tok->id = token_id::TOKEN_TOO_LONG;
+            tok->id = TokenId::TOKEN_TOO_LONG;
             return false;
         }
     }    // end of while loop. Now fill in the value
     tok->constant.x = std::atof(tok->str);
     tok->type = FormulaTokenType::REAL_CONSTANT;
-    tok->id   = token_id::NONE;
+    tok->id   = TokenId::NONE;
     return true;
 }
 
@@ -3577,7 +3577,7 @@ CASE_NUM :
                 std::strcat(tok->str, ")");
                 tok->constant.y = temp_tok.constant.x * sign_value;
                 tok->type = tok->constant.y ? FormulaTokenType::COMPLEX_CONSTANT : FormulaTokenType::REAL_CONSTANT;
-                tok->id   = token_id::NONE;
+                tok->id   = TokenId::NONE;
                 if (debug_token != nullptr)
                 {
                     std::fprintf(debug_token, "Exiting with type set to %d\n",
@@ -3601,7 +3601,7 @@ CASE_NUM :
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
     tok->type = FormulaTokenType::PARENS;
-    tok->id = token_id::OPEN_PARENS;
+    tok->id = TokenId::OPEN_PARENS;
     if (debug_token != nullptr)
     {
         std::fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
@@ -3642,7 +3642,7 @@ CASE_NUM:
             if (c == '.')       // illegal character in variable or func name
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = token_id::ILLEGAL_VARIABLE_NAME;
+                tok->id   = TokenId::ILLEGAL_VARIABLE_NAME;
                 tok->str[i++] = '.';
                 tok->str[i] = (char) 0;
                 return false;
@@ -3650,7 +3650,7 @@ CASE_NUM:
             else if (var_name_too_long)
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = token_id::TOKEN_TOO_LONG;
+                tok->id   = TokenId::TOKEN_TOO_LONG;
                 tok->str[i] = (char) 0;
                 std::fseek(openfile, last_filepos, SEEK_SET);
                 return false;
@@ -3665,10 +3665,10 @@ CASE_NUM:
                     return false;
                 }
                 if (tok->type == FormulaTokenType::FLOW_CONTROL &&
-                    (tok->id == token_id::ILLEGAL_VARIABLE_NAME || tok->id == token_id::TOKEN_TOO_LONG))
+                    (tok->id == TokenId::ILLEGAL_VARIABLE_NAME || tok->id == TokenId::TOKEN_TOO_LONG))
                 {
                     tok->type = FormulaTokenType::NOT_A_TOKEN;
-                    tok->id   = token_id::JUMP_WITH_ILLEGAL_CHAR;
+                    tok->id   = TokenId::JUMP_WITH_ILLEGAL_CHAR;
                     return false;
                 }
                 return true;
@@ -3677,25 +3677,25 @@ CASE_NUM:
             if (tok->type == FormulaTokenType::FUNCTION || tok->type == FormulaTokenType::PARAM_FUNCTION)
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = token_id::FUNC_USED_AS_VAR;
+                tok->id   = TokenId::FUNC_USED_AS_VAR;
                 return false;
             }
             if (tok->type == FormulaTokenType::FLOW_CONTROL &&
-                (tok->id == token_id::END_OF_FILE || tok->id == token_id::ILLEGAL_CHARACTER))
+                (tok->id == TokenId::END_OF_FILE || tok->id == TokenId::ILLEGAL_CHARACTER))
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = token_id::JUMP_MISSING_BOOLEAN;
+                tok->id   = TokenId::JUMP_MISSING_BOOLEAN;
                 return false;
             }
             if (tok->type == FormulaTokenType::FLOW_CONTROL &&
-                (tok->id == token_id::ILLEGAL_VARIABLE_NAME || tok->id == token_id::TOKEN_TOO_LONG))
+                (tok->id == TokenId::ILLEGAL_VARIABLE_NAME || tok->id == TokenId::TOKEN_TOO_LONG))
             {
                 if (c == ',' || c == '\n' || c == ':')
                 {
                     return true;
                 }
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = token_id::JUMP_WITH_ILLEGAL_CHAR;
+                tok->id   = TokenId::JUMP_WITH_ILLEGAL_CHAR;
                 return false;
             }
             get_var_info(tok);
@@ -3704,7 +3704,7 @@ CASE_NUM:
     }
     tok->str[0] = (char) 0;
     tok->type = FormulaTokenType::NOT_A_TOKEN;
-    tok->id   = token_id::END_OF_FILE;
+    tok->id   = TokenId::END_OF_FILE;
     return false;
 }
 
@@ -3725,7 +3725,7 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
     {
         this_token->str[0] = '}';
         this_token->type = FormulaTokenType::END_OF_FORMULA;
-        this_token->id   = token_id::NONE;
+        this_token->id   = TokenId::NONE;
     }
     else
     {
@@ -3784,7 +3784,7 @@ CASE_TERMINATOR:
                 std::fseek(openfile, filepos, SEEK_SET);
                 this_token->str[1] = (char) 0;
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
-                this_token->id = token_id::ILLEGAL_OPERATOR;
+                this_token->id = TokenId::ILLEGAL_OPERATOR;
                 return false;
             }
         }
@@ -3812,14 +3812,14 @@ CASE_TERMINATOR:
                 std::fseek(openfile, filepos, SEEK_SET);
                 this_token->str[1] = (char) 0;
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
-                this_token->id = token_id::ILLEGAL_OPERATOR;
+                this_token->id = TokenId::ILLEGAL_OPERATOR;
                 return false;
             }
         }
         else if (this_token->str[0] == '}')
         {
             this_token->type = FormulaTokenType::END_OF_FORMULA;
-            this_token->id   = token_id::NONE;
+            this_token->id   = TokenId::NONE;
         }
         else if (this_token->str[0] == '\n'
             || this_token->str[0] == ','
@@ -3830,7 +3830,7 @@ CASE_TERMINATOR:
         else if (this_token->str[0] == ')')
         {
             this_token->type = FormulaTokenType::PARENS;
-            this_token->id = token_id::CLOSE_PARENS;
+            this_token->id = TokenId::CLOSE_PARENS;
         }
         else if (this_token->str[0] == '(')
         {
@@ -3847,7 +3847,7 @@ CASE_TERMINATOR:
             {
                 if (std::strcmp(s_op_list[j], this_token->str) == 0)
                 {
-                    this_token->id = static_cast<token_id>(j);
+                    this_token->id = static_cast<TokenId>(j);
                     break;
                 }
             }
@@ -3856,13 +3856,13 @@ CASE_TERMINATOR:
     case EOF:
         this_token->str[0] = (char) 0;
         this_token->type = FormulaTokenType::NOT_A_TOKEN;
-        this_token->id = token_id::END_OF_FILE;
+        this_token->id = TokenId::END_OF_FILE;
         return false;
     default:
         this_token->str[0] = (char) c;
         this_token->str[1] = (char) 0;
         this_token->type = FormulaTokenType::NOT_A_TOKEN;
-        this_token->id = token_id::ILLEGAL_CHARACTER;
+        this_token->id = TokenId::ILLEGAL_CHARACTER;
         return false;
     }
 }
@@ -3925,27 +3925,27 @@ int frm_get_param_stuff(char const *Name)
         switch (current_token.type)
         {
         case FormulaTokenType::PARAM_VARIABLE:
-            if (current_token.id == token_id::VAR_P1)
+            if (current_token.id == TokenId::VAR_P1)
             {
                 g_frm_uses_p1 = true;
             }
-            else if (current_token.id == token_id::VAR_P2)
+            else if (current_token.id == TokenId::VAR_P2)
             {
                 g_frm_uses_p2 = true;
             }
-            else if (current_token.id == token_id::VAR_P3)
+            else if (current_token.id == TokenId::VAR_P3)
             {
                 g_frm_uses_p3 = true;
             }
-            else if (current_token.id == token_id::VAR_IS_MANDEL)
+            else if (current_token.id == TokenId::VAR_IS_MANDEL)
             {
                 g_frm_uses_ismand = true;
             }
-            else if (current_token.id == token_id::VAR_P4)
+            else if (current_token.id == TokenId::VAR_P4)
             {
                 g_frm_uses_p4 = true;
             }
-            else if (current_token.id == token_id::VAR_P5)
+            else if (current_token.id == TokenId::VAR_P5)
             {
                 g_frm_uses_p5 = true;
             }
@@ -4429,8 +4429,8 @@ static void frm_error(std::FILE * open_file, long begin_frm)
                 token_count++;
             }
             if (tok.type == FormulaTokenType::END_OF_FORMULA ||
-                (tok.type == FormulaTokenType::OPERATOR && (tok.id == token_id::OP_COMMA || tok.id == token_id::OP_COLON)) ||
-                (tok.type == FormulaTokenType::NOT_A_TOKEN && tok.id == token_id::END_OF_FILE))
+                (tok.type == FormulaTokenType::OPERATOR && (tok.id == TokenId::OP_COMMA || tok.id == TokenId::OP_COLON)) ||
+                (tok.type == FormulaTokenType::NOT_A_TOKEN && tok.id == TokenId::END_OF_FILE))
             {
                 done = true;
                 if (token_count > 1 && !initialization_error)
@@ -4544,35 +4544,35 @@ static bool frm_prescan(std::FILE * open_file)
             assignment_ok = false;
             switch (this_token.id)
             {
-            case token_id::END_OF_FILE:
+            case TokenId::END_OF_FILE:
                 stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
                 std::fseek(open_file, orig_pos, SEEK_SET);
                 return false;
-            case token_id::ILLEGAL_CHARACTER:
+            case TokenId::ILLEGAL_CHARACTER:
                 record_error(ParseError::ILLEGAL_CHAR);
                 break;
-            case token_id::ILLEGAL_VARIABLE_NAME:
+            case TokenId::ILLEGAL_VARIABLE_NAME:
                 record_error(ParseError::ILLEGAL_VAR_NAME);
                 break;
-            case token_id::TOKEN_TOO_LONG:
+            case TokenId::TOKEN_TOO_LONG:
                 record_error(ParseError::TOKEN_TOO_LONG);
                 break;
-            case token_id::FUNC_USED_AS_VAR:
+            case TokenId::FUNC_USED_AS_VAR:
                 record_error(ParseError::FUNC_USED_AS_VAR);
                 break;
-            case token_id::JUMP_MISSING_BOOLEAN:
+            case TokenId::JUMP_MISSING_BOOLEAN:
                 record_error(ParseError::JUMP_NEEDS_BOOLEAN);
                 break;
-            case token_id::JUMP_WITH_ILLEGAL_CHAR:
+            case TokenId::JUMP_WITH_ILLEGAL_CHAR:
                 record_error(ParseError::NO_CHAR_AFTER_THIS_JUMP);
                 break;
-            case token_id::UNDEFINED_FUNCTION:
+            case TokenId::UNDEFINED_FUNCTION:
                 record_error(ParseError::UNDEFINED_FUNCTION);
                 break;
-            case token_id::ILLEGAL_OPERATOR:
+            case TokenId::ILLEGAL_OPERATOR:
                 record_error(ParseError::UNDEFINED_OPERATOR);
                 break;
-            case token_id::ILL_FORMED_CONSTANT:
+            case TokenId::ILL_FORMED_CONSTANT:
                 record_error(ParseError::INVALID_CONST);
                 break;
             default:
@@ -4586,7 +4586,7 @@ static bool frm_prescan(std::FILE * open_file)
             new_statement = false;
             switch (this_token.id)
             {
-            case token_id::OPEN_PARENS:
+            case TokenId::OPEN_PARENS:
                 if (++s_paren > MAX_PARENS)
                 {
                     record_error(ParseError::NESTING_TO_DEEP);
@@ -4597,7 +4597,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 waiting_for_mod = waiting_for_mod << 1;
                 break;
-            case token_id::CLOSE_PARENS:
+            case TokenId::CLOSE_PARENS:
                 if (s_paren)
                 {
                     s_paren--;
@@ -4707,11 +4707,11 @@ static bool frm_prescan(std::FILE * open_file)
                 s_uses_jump = true;
                 switch (this_token.id)
                 {
-                case token_id::JUMP_IF:  // if
+                case TokenId::JUMP_IF:  // if
                     else_has_been_used = else_has_been_used << 1;
                     waiting_for_endif++;
                     break;
-                case token_id::JUMP_ELSE_IF: //ELSEIF
+                case TokenId::JUMP_ELSE_IF: //ELSEIF
                     s_num_ops += 3; //else + two clear statements
                     s_num_jumps++;  // this involves two jumps
                     if (else_has_been_used % 2)
@@ -4723,7 +4723,7 @@ static bool frm_prescan(std::FILE * open_file)
                         record_error(ParseError::MISPLACED_ELSE_OR_ELSEIF);
                     }
                     break;
-                case token_id::JUMP_ELSE: //ELSE
+                case TokenId::JUMP_ELSE: //ELSE
                     if (else_has_been_used % 2)
                     {
                         record_error(ParseError::ENDIF_REQUIRED_AFTER_ELSE);
@@ -4734,7 +4734,7 @@ static bool frm_prescan(std::FILE * open_file)
                     }
                     else_has_been_used = else_has_been_used | 1;
                     break;
-                case token_id::JUMP_END_IF: //ENDIF
+                case TokenId::JUMP_END_IF: //ENDIF
                     else_has_been_used = else_has_been_used >> 1;
                     waiting_for_endif--;
                     if (waiting_for_endif < 0)
@@ -4752,8 +4752,8 @@ static bool frm_prescan(std::FILE * open_file)
             s_num_ops++; //This will be corrected below in certain cases
             switch (this_token.id)
             {
-            case token_id::OP_COMMA:
-            case token_id::OP_COLON:    // end of statement and :
+            case TokenId::OP_COMMA:
+            case TokenId::OP_COLON:    // end of statement and :
                 s_num_ops++; // ParseStr inserts a dummy op
                 if (s_paren)
                 {
@@ -4767,7 +4767,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 if (!expecting_arg)
                 {
-                    if (this_token.id == token_id::OP_COLON)
+                    if (this_token.id == TokenId::OP_COLON)
                     {
                         s_num_ops += 2;
                     }
@@ -4780,16 +4780,16 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                if (this_token.id == token_id::OP_COLON && waiting_for_endif)
+                if (this_token.id == TokenId::OP_COLON && waiting_for_endif)
                 {
                     record_error(ParseError::UNMATCHED_IF_IN_INIT_SECTION);
                     waiting_for_endif = 0;
                 }
-                if (this_token.id == token_id::OP_COLON && already_got_colon)
+                if (this_token.id == TokenId::OP_COLON && already_got_colon)
                 {
                     record_error(ParseError::SECOND_COLON);
                 }
-                if (this_token.id == token_id::OP_COLON)
+                if (this_token.id == TokenId::OP_COLON)
                 {
                     already_got_colon = true;
                 }
@@ -4798,7 +4798,7 @@ static bool frm_prescan(std::FILE * open_file)
                 assignment_ok = true;
                 statement_pos = std::ftell(open_file);
                 break;
-            case token_id::OP_NOT_EQUAL:     // !=
+            case TokenId::OP_NOT_EQUAL:     // !=
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4806,7 +4806,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_ASSIGN:     // =
+            case TokenId::OP_ASSIGN:     // =
                 s_num_ops--; //this just converts a load to a store
                 s_num_loads--;
                 s_num_stores++;
@@ -4816,7 +4816,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_EQUAL:     // ==
+            case TokenId::OP_EQUAL:     // ==
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4824,7 +4824,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_LT:     // <
+            case TokenId::OP_LT:     // <
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4832,7 +4832,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_LE:     // <=
+            case TokenId::OP_LE:     // <=
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4840,7 +4840,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_GT:     // >
+            case TokenId::OP_GT:     // >
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4848,7 +4848,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_GE:     // >=
+            case TokenId::OP_GE:     // >=
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4856,7 +4856,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_MODULUS:     // | (half of the modulus operator)
+            case TokenId::OP_MODULUS:     // | (half of the modulus operator)
                 assignment_ok = false;
                 if (!(waiting_for_mod & 1L))
                 {
@@ -4872,7 +4872,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 waiting_for_mod = waiting_for_mod ^ 1L; //switch right bit
                 break;
-            case token_id::OP_OR:     // ||
+            case TokenId::OP_OR:     // ||
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4880,7 +4880,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_AND:    // &&
+            case TokenId::OP_AND:    // &&
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4888,7 +4888,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_PLUS:    // + case 11 (":") is up with case 0
+            case TokenId::OP_PLUS:    // + case 11 (":") is up with case 0
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4896,19 +4896,11 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_MINUS:    // -
+            case TokenId::OP_MINUS:    // -
                 assignment_ok = false;
                 expecting_arg = true;
                 break;
-            case token_id::OP_MULTIPLY:    // *
-                assignment_ok = false;
-                if (expecting_arg)
-                {
-                    record_error(ParseError::SHOULD_BE_ARGUMENT);
-                }
-                expecting_arg = true;
-                break;
-            case token_id::OP_DIVIDE:    // /
+            case TokenId::OP_MULTIPLY:    // *
                 assignment_ok = false;
                 if (expecting_arg)
                 {
@@ -4916,7 +4908,15 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 expecting_arg = true;
                 break;
-            case token_id::OP_POWER:    // ^
+            case TokenId::OP_DIVIDE:    // /
+                assignment_ok = false;
+                if (expecting_arg)
+                {
+                    record_error(ParseError::SHOULD_BE_ARGUMENT);
+                }
+                expecting_arg = true;
+                break;
+            case TokenId::OP_POWER:    // ^
                 assignment_ok = false;
                 if (expecting_arg)
                 {
