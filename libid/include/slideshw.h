@@ -4,7 +4,7 @@
 
 #include <string>
 
-enum class slides_mode
+enum class SlidesMode
 {
     OFF = 0,
     PLAY = 1,
@@ -13,10 +13,10 @@ enum class slides_mode
 
 extern std::string           g_auto_name;
 extern bool                  g_busy;
-extern slides_mode           g_slides;
+extern SlidesMode            g_slides;
 
 int slide_show();
-slides_mode start_slide_show();
+SlidesMode start_slide_show();
 void stop_slide_show();
 void record_show(int);
 int handle_special_keys(int ch);

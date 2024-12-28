@@ -814,32 +814,32 @@ TEST_F(TestParameterCommand, saveTime)
 
 TEST_F(TestParameterCommandError, autoKeyInvalidValue)
 {
-    ValueSaver saved_slides{g_slides, slides_mode::RECORD};
+    ValueSaver saved_slides{g_slides, SlidesMode::RECORD};
 
     exec_cmd_arg("autokey=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::ERROR, m_result);
-    EXPECT_EQ(slides_mode::RECORD, g_slides);
+    EXPECT_EQ(SlidesMode::RECORD, g_slides);
 }
 
 TEST_F(TestParameterCommand, autoKeyRecord)
 {
-    ValueSaver saved_slides{g_slides, slides_mode::OFF};
+    ValueSaver saved_slides{g_slides, SlidesMode::OFF};
 
     exec_cmd_arg("autokey=record", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(slides_mode::RECORD, g_slides);
+    EXPECT_EQ(SlidesMode::RECORD, g_slides);
 }
 
 TEST_F(TestParameterCommand, autoKeyPlay)
 {
-    ValueSaver saved_slides{g_slides, slides_mode::OFF};
+    ValueSaver saved_slides{g_slides, SlidesMode::OFF};
 
     exec_cmd_arg("autokey=play", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(slides_mode::PLAY, g_slides);
+    EXPECT_EQ(SlidesMode::PLAY, g_slides);
 }
 
 TEST_F(TestParameterCommand, autoKeyName)

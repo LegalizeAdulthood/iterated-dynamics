@@ -1292,11 +1292,11 @@ static CmdArgFlags cmd_auto_key(const Command &cmd)
     const std::string_view value{cmd.value};
     if (value == "record")
     {
-        g_slides = slides_mode::RECORD;
+        g_slides = SlidesMode::RECORD;
     }
     else if (value == "play")
     {
-        g_slides = slides_mode::PLAY;
+        g_slides = SlidesMode::PLAY;
     }
     else
     {

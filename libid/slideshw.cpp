@@ -61,7 +61,7 @@ static void slide_show_err(char const *msg);
 static int  get_scancode(char const *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
-slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=record
+SlidesMode g_slides{SlidesMode::OFF}; // PLAY autokey=play, RECORD autokey=record
 std::string g_auto_name{"auto.key"};    // record auto keystrokes here
 bool g_busy{};
 
@@ -173,7 +173,7 @@ int slide_show()
     }
     if (s_slide_show_file == nullptr)     // open files first time through
     {
-        if (start_slide_show() == slides_mode::OFF)
+        if (start_slide_show() == SlidesMode::OFF)
         {
             stop_slide_show();
             return 0;
@@ -364,12 +364,12 @@ start:
     return out;
 }
 
-slides_mode start_slide_show()
+SlidesMode start_slide_show()
 {
     s_slide_show_file = std::fopen(g_auto_name.c_str(), "r");
     if (s_slide_show_file == nullptr)
     {
-        g_slides = slides_mode::OFF;
+        g_slides = SlidesMode::OFF;
     }
     s_ticks = 0;
     s_quotes = false;
@@ -385,7 +385,7 @@ void stop_slide_show()
         std::fclose(s_slide_show_file);
     }
     s_slide_show_file = nullptr;
-    g_slides = slides_mode::OFF;
+    g_slides = SlidesMode::OFF;
 }
 
 void record_show(int key)
@@ -452,7 +452,7 @@ void record_show(int key)
 // suspend process # of seconds
 static void sleep_secs(int secs)
 {
-    g_slides = slides_mode::OFF;
+    g_slides = SlidesMode::OFF;
     const int iterations = secs * 100;
     for (int i = 0; i < iterations; ++i)
     {
@@ -464,7 +464,7 @@ static void sleep_secs(int secs)
         // sleep 10ms per iteration
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    g_slides = slides_mode::PLAY;
+    g_slides = SlidesMode::PLAY;
 }
 
 static void slide_show_err(char const *msg)
@@ -490,7 +490,7 @@ static void slide_show_err(char const *msg)
 //
 int handle_special_keys(int ch)
 {
-    if (g_slides == slides_mode::PLAY)
+    if (g_slides == SlidesMode::PLAY)
     {
         if (ch == ID_KEY_ESC)
         {
@@ -502,7 +502,7 @@ int handle_special_keys(int ch)
             ch = slide_show();
         }
     }
-    else if ((g_slides == slides_mode::RECORD) && ch)
+    else if ((g_slides == SlidesMode::RECORD) && ch)
     {
         record_show(ch);
     }
