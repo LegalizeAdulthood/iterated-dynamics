@@ -84,7 +84,7 @@ void TestParameterCommandError::SetUp()
     TestParameterCommand::SetUp();
     m_prev_stop_msg = cmd_files_test::get_stop_msg();
     cmd_files_test::set_stop_msg(m_stop_msg.AsStdFunction());
-    EXPECT_CALL(m_stop_msg, Call(stopmsg_flags::NONE, _)).WillOnce(Return(false));
+    EXPECT_CALL(m_stop_msg, Call(StopMsgFlags::NONE, _)).WillOnce(Return(false));
 }
 
 void TestParameterCommandError::TearDown()

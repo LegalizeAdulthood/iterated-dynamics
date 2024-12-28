@@ -103,7 +103,7 @@ int select_video_mode(int curmode)
         // update id.cfg for new key assignments
         if (s_modes_changed
             && g_bad_config == ConfigStatus::OK
-            && stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER | stopmsg_flags::INFO_ONLY,
+            && stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER | StopMsgFlags::INFO_ONLY,
                 "Save new function key assignments or cancel changes?") == 0)
         {
             update_id_cfg();

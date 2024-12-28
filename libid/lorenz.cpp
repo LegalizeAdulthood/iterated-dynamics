@@ -200,7 +200,7 @@ Minor g_inverse_julia_minor_method;
 static void fallback_to_random_walk()
 {
     stop_msg(
-        stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
+        StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
     g_major_method = Major::random_walk;
 }
 
@@ -2401,7 +2401,7 @@ int funny_glasses_call(int (*calc)())
         if (g_glasses_type == 3)
         {
             // photographer's mode
-            stop_msg(stopmsg_flags::INFO_ONLY,
+            stop_msg(StopMsgFlags::INFO_ONLY,
                 "First image (left eye) is ready.  Hit any key to see it,\n"
                 "then hit <s> to save, hit any other key to create second image.");
             for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
@@ -2426,7 +2426,7 @@ int funny_glasses_call(int (*calc)())
         }
         if (g_glasses_type == 3)   // photographer's mode
         {
-            stop_msg(stopmsg_flags::INFO_ONLY, "Second image (right eye) is ready");
+            stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
 done:

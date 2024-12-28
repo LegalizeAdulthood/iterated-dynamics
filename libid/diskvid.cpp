@@ -281,7 +281,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             if (driver_key_pressed())           // user interrupt
             {
                 // esc to cancel, else continue
-                if (stop_msg(stopmsg_flags::CANCEL, "Disk Video initialization interrupted:\n"))
+                if (stop_msg(StopMsgFlags::CANCEL, "Disk Video initialization interrupted:\n"))
                 {
                     end_disk();
                     g_good_mode = false;

@@ -755,5 +755,5 @@ static void area()
     std::sprintf(buf, "%s%ld inside pixels of %ld%s%f",
             msg, cnt, (long)g_logical_screen_x_dots*(long)g_logical_screen_y_dots, ".  Total area ",
             cnt/((float)g_logical_screen_x_dots*(float)g_logical_screen_y_dots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
-    stop_msg(stopmsg_flags::NO_BUZZER, buf);
+    stop_msg(StopMsgFlags::NO_BUZZER, buf);
 }

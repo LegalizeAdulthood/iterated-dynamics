@@ -300,7 +300,7 @@ MainState big_while_loop(MainContext &context)
             {
                 char msg[MSG_LEN];
                 std::snprintf(msg, std::size(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
-                stop_msg(stopmsg_flags::NO_BUZZER, msg);
+                stop_msg(StopMsgFlags::NO_BUZZER, msg);
             }
             i = funny_glasses_call(gif_view);
             if (g_out_line_cleanup)              // cleanup routine defined?

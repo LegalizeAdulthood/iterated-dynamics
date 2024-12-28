@@ -225,7 +225,7 @@ restart:
             buf += "retain the original file,\ncontinue to replace original with new partial image.";
         }
         interrupted = 1;
-        if (stop_msg(stopmsg_flags::CANCEL, buf))
+        if (stop_msg(StopMsgFlags::CANCEL, buf))
         {
             interrupted = -1;
             std::filesystem::remove(tmp_file);

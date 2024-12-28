@@ -425,7 +425,7 @@ skip_UI:
                     std::snprintf(buf2, std::size(buf2), "File already has an entry named %s\n%s",
                     g_command_name.c_str(), g_make_parameter_file ?
                     "... Replacing ..." : "Continue to replace it, Cancel to back out");
-                    if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::INFO_ONLY, buf2))
+                    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::INFO_ONLY, buf2))
                     {
                         // cancel
                         std::fclose(infile);

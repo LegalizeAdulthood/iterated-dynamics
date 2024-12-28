@@ -1370,7 +1370,7 @@ ErrorAbort:
     if (msg != nullptr)
     {
         help_title();
-        stop_msg(stopmsg_flags::NO_STACK, msg);
+        stop_msg(StopMsgFlags::NO_STACK, msg);
     }
 
     else if (msg_func != nullptr)
@@ -1396,12 +1396,12 @@ int init_help()
             if (hs.sig != HELP_SIG)
             {
                 std::fclose(s_help_file);
-                stop_msg(stopmsg_flags::NO_STACK, "Invalid help signature in id.hlp!\n");
+                stop_msg(StopMsgFlags::NO_STACK, "Invalid help signature in id.hlp!\n");
             }
             else if (hs.version != IDHELP_VERSION)
             {
                 std::fclose(s_help_file);
-                stop_msg(stopmsg_flags::NO_STACK, "Wrong help version in id.hlp!\n");
+                stop_msg(StopMsgFlags::NO_STACK, "Wrong help version in id.hlp!\n");
             }
             else
             {
@@ -1412,7 +1412,7 @@ int init_help()
 
     if (s_help_file == nullptr)         // Can't find the help files anywhere!
     {
-        stop_msg(stopmsg_flags::NO_STACK, "Couldn't find id.hlp; set environment variable FRACTDIR to proper directory.\n");
+        stop_msg(StopMsgFlags::NO_STACK, "Couldn't find id.hlp; set environment variable FRACTDIR to proper directory.\n");
     }
 
     help_seek(0L);
@@ -1445,7 +1445,7 @@ int init_help()
     {
         std::fclose(s_help_file);
         s_help_file = nullptr;
-        stop_msg(stopmsg_flags::NO_STACK, "Not enough memory for help system!\n");
+        stop_msg(StopMsgFlags::NO_STACK, "Not enough memory for help system!\n");
 
         return -2;
     }

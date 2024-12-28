@@ -95,7 +95,7 @@ static void which_disk_error(int I_O)
     std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O - 1) : 0], errno, strerror(errno));
     if (g_debug_flag == DebugFlags::display_memory_statistics)
     {
-        if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
+        if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER, buf))
         {
             goodbye(); // bailout if ESC
         }
@@ -382,31 +382,31 @@ static int check_bounds(long start, long length, U16 handle)
 {
     if (s_handles[handle].size < static_cast<std::uint64_t>(start - length))
     {
-        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Memory reference out of bounds.");
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Memory reference out of bounds.");
         display_handle(handle);
         return 1;
     }
     if (length > (long)USHRT_MAX)
     {
-        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Tried to move > 65,535 bytes.");
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Tried to move > 65,535 bytes.");
         display_handle(handle);
         return 1;
     }
     if (s_handles[handle].stored_at == MemoryLocation::DISK && (stack_avail() <= DISK_WRITE_LEN))
     {
-        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Stack space insufficient for disk memory.");
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Stack space insufficient for disk memory.");
         display_handle(handle);
         return 1;
     }
     if (length <= 0)
     {
-        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Zero or negative length.");
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Zero or negative length.");
         display_handle(handle);
         return 1;
     }
     if (start < 0)
     {
-        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Negative offset.");
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Negative offset.");
         display_handle(handle);
         return 1;
     }
@@ -417,7 +417,7 @@ void display_memory()
 {
     char buf[MSG_LEN];
     std::snprintf(buf, std::size(buf), "disk=%lu", get_disk_space());
-    stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
+    stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, buf);
 }
 
 static void display_handle(U16 handle)
@@ -425,7 +425,7 @@ static void display_handle(U16 handle)
     char buf[MSG_LEN];
     std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %" PRIu64, handle,
         memory_type(s_handles[handle].stored_at), s_handles[handle].size);
-    if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
+    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER, buf))
     {
         goodbye(); // bailout if ESC, it's messy, but should work
     }
@@ -558,7 +558,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
         char buf[MSG_LEN * 2];
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %" PRIu64 " bytes of %s, handle = %u.",
             memory_type(stored_at), toallocate, memory_type(use_this_type), handle);
-        stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, buf);
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, buf);
         display_memory();
     }
 

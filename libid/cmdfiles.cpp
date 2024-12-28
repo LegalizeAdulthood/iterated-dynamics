@@ -3001,7 +3001,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     }
     if (!resized)
     {
-        stop_msg(stopmsg_flags::NO_STACK, "Insufficient memory for ranges=");
+        stop_msg(StopMsgFlags::NO_STACK, "Insufficient memory for ranges=");
         return CmdArgFlags::ERROR;
     }
     g_iteration_ranges_len = entries;
@@ -3952,7 +3952,7 @@ static void arg_error(char const *badarg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)";
     }
-    cmd_files_test::s_stop_msg(stopmsg_flags::NONE, msg);
+    cmd_files_test::s_stop_msg(StopMsgFlags::NONE, msg);
     if (g_init_batch != BatchMode::NONE)
     {
         g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;
