@@ -247,7 +247,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
     for (Topic &t : g_src.topics)
     {
-        if (bit_set(t.flags, topic_flags::DATA))
+        if (bit_set(t.flags, TopicFlags::DATA))
         {
             continue;    // don't paginate data topics
         }
@@ -759,7 +759,7 @@ void HelpCompiler::write_link_source()
         if (label.topic_off == 0)
         {
             const Topic &topic{g_src.topics[label.topic_num]};
-            if (bit_set(topic.flags, topic_flags::IN_DOC))
+            if (bit_set(topic.flags, TopicFlags::IN_DOC))
             {
                 topics.emplace_back(label.topic_num, label);
             }
@@ -979,7 +979,7 @@ void HelpCompiler::write_help(std::FILE *file)
 
         text = tp.get_topic_text();
 
-        if (!bit_set(tp.flags, topic_flags::DATA))     // don't process data topics...
+        if (!bit_set(tp.flags, TopicFlags::DATA))     // don't process data topics...
         {
             insert_real_link_info(text, tp.text_len);
         }
@@ -1624,7 +1624,7 @@ void HelpCompiler::paginate_html_document()
 
     for (Topic &t : g_src.topics)
     {
-        if (bit_set(t.flags, topic_flags::DATA))
+        if (bit_set(t.flags, TopicFlags::DATA))
         {
             continue;    // don't paginate data topics
         }

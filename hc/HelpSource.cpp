@@ -67,7 +67,7 @@ void Content::label_topic(int ctr)
 {
     if (Label *lbl = g_src.find_label(topic_name[ctr].c_str()))
     {
-        if (bit_set(g_src.topics[lbl->topic_num].flags, topic_flags::DATA))
+        if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::DATA))
         {
             g_current_src_filename = srcfile;
             g_src_line = srcline;
@@ -77,14 +77,14 @@ void Content::label_topic(int ctr)
         else
         {
             topic_num[ctr] = lbl->topic_num;
-            if (bit_set(g_src.topics[lbl->topic_num].flags, topic_flags::IN_DOC))
+            if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::IN_DOC))
             {
                 warn(0, "Topic \"%s\" appears in document more than once.",
                     g_src.topics[lbl->topic_num].title.c_str());
             }
             else
             {
-                g_src.topics[lbl->topic_num].flags |= topic_flags::IN_DOC;
+                g_src.topics[lbl->topic_num].flags |= TopicFlags::IN_DOC;
             }
         }
     }
@@ -110,14 +110,14 @@ void Content::content_topic(int ctr)
     else
     {
         topic_num[ctr] = t;
-        if (bit_set(g_src.topics[t].flags, topic_flags::IN_DOC))
+        if (bit_set(g_src.topics[t].flags, TopicFlags::IN_DOC))
         {
             warn(0, "Topic \"%s\" appears in document more than once.",
                 g_src.topics[t].title.c_str());
         }
         else
         {
-            g_src.topics[t].flags |= topic_flags::IN_DOC;
+            g_src.topics[t].flags |= TopicFlags::IN_DOC;
         }
     }
 }
@@ -136,7 +136,7 @@ void Link::link_topic()
     {
         topic_num = t;
         topic_off = 0;
-        doc_page = bit_set(g_src.topics[t].flags, topic_flags::IN_DOC) ? 0 : -1;
+        doc_page = bit_set(g_src.topics[t].flags, TopicFlags::IN_DOC) ? 0 : -1;
     }
 }
 
@@ -144,7 +144,7 @@ void Link::link_label()
 {
     if (Label *lbl = g_src.find_label(name.c_str()))
     {
-        if (bit_set(g_src.topics[lbl->topic_num].flags, topic_flags::DATA))
+        if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::DATA))
         {
             g_current_src_filename = srcfile;
             g_src_line = srcline;
@@ -155,7 +155,7 @@ void Link::link_label()
         {
             topic_num = lbl->topic_num;
             topic_off = lbl->topic_off;
-            doc_page  = bit_set(g_src.topics[lbl->topic_num].flags, topic_flags::IN_DOC) ? 0 : -1;
+            doc_page  = bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::IN_DOC) ? 0 : -1;
         }
     }
     else
@@ -219,7 +219,7 @@ void Topic::release_topic_text(bool save) const
 
 void Topic::start(char const *text, int len)
 {
-    flags = topic_flags::NONE;
+    flags = TopicFlags::NONE;
     title_len = len;
     title.assign(text, len);
     doc_page = -1;
@@ -624,7 +624,7 @@ bool get_next_item()
 void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 {
     Topic t;
-    t.flags     = topic_flags::NONE;
+    t.flags     = TopicFlags::NONE;
     t.title_len = (unsigned) std::strlen(DOCCONTENTS_TITLE)+1;
     t.title     = DOCCONTENTS_TITLE;
     t.doc_page  = -1;
@@ -1203,7 +1203,7 @@ void add_blank_for_split()   // add space at g_src.curr for merging two lines
 
 void put_a_char(int ch, const Topic &t)
 {
-    if (ch == '{' && !bit_set(t.flags, topic_flags::DATA)) // is it a hot-link?
+    if (ch == '{' && !bit_set(t.flags, TopicFlags::DATA)) // is it a hot-link?
     {
         parse_link();
     }
@@ -1493,7 +1493,7 @@ void read_src(std::string const &fname, modes mode)
                     }
 
                     t.start("", 0);
-                    t.flags |= topic_flags::DATA;
+                    t.flags |= TopicFlags::DATA;
 
                     if ((int)std::strlen(data) > 32)
                     {
@@ -1775,7 +1775,7 @@ void read_src(std::string const &fname, modes mode)
                             warn(eoff, "Label name is long.");
                         }
 
-                        if (bit_set(t.flags, topic_flags::DATA) && s_cmd[6] == '@')
+                        if (bit_set(t.flags, TopicFlags::DATA) && s_cmd[6] == '@')
                         {
                             warn(eoff, "Data topic has a local label.");
                         }
@@ -1964,7 +1964,7 @@ void read_src(std::string const &fname, modes mode)
                 }
                 else if (strnicmp("BinInc ", s_cmd, 7) == 0)
                 {
-                    if (!bit_set(t.flags, topic_flags::DATA))
+                    if (!bit_set(t.flags, TopicFlags::DATA))
                     {
                         error(eoff, "BinInc allowed only in Data topics.");
                     }

@@ -93,36 +93,36 @@ struct Page
                         // should be indented by this much
 };
 
-// values for TOPIC.flags
-enum class topic_flags
+// values for Topic.flags
+enum class TopicFlags
 {
     NONE = 0,   // nothing special
     IN_DOC = 1, // set if topic is part of the printed document
     DATA = 2    // set if it is a "data" topic
 };
 
-inline int operator+(topic_flags val)
+inline int operator+(TopicFlags val)
 {
     return static_cast<int>(val);
 }
 
-inline topic_flags operator|(topic_flags lhs, topic_flags rhs)
+inline TopicFlags operator|(TopicFlags lhs, TopicFlags rhs)
 {
-    return static_cast<topic_flags>(+lhs | +rhs);
+    return static_cast<TopicFlags>(+lhs | +rhs);
 }
 
-inline topic_flags &operator|=(topic_flags &lhs, topic_flags rhs)
+inline TopicFlags &operator|=(TopicFlags &lhs, TopicFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
 
-inline topic_flags operator&(topic_flags lhs, topic_flags rhs)
+inline TopicFlags operator&(TopicFlags lhs, TopicFlags rhs)
 {
-    return static_cast<topic_flags>(+lhs & +rhs);
+    return static_cast<TopicFlags>(+lhs & +rhs);
 }
 
-inline bool bit_set(topic_flags flags, topic_flags bit)
+inline bool bit_set(TopicFlags flags, TopicFlags bit)
 {
     return (flags & bit) == bit;
 }
@@ -137,7 +137,7 @@ struct Topic
     void release_topic_text(bool save) const;
     void start(char const *text, int len);
 
-    topic_flags flags;        // see #defines for TF_???
+    TopicFlags flags;        // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
     unsigned  title_len;      // length of title
     std::string title;        // title for this topic
