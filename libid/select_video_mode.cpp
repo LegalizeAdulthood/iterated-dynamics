@@ -102,7 +102,7 @@ int select_video_mode(int curmode)
     {
         // update id.cfg for new key assignments
         if (s_modes_changed
-            && g_bad_config == config_status::OK
+            && g_bad_config == ConfigStatus::OK
             && stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER | stopmsg_flags::INFO_ONLY,
                 "Save new function key assignments or cancel changes?") == 0)
         {
@@ -136,7 +136,7 @@ int select_video_mode(int curmode)
     }
 
     // update id.cfg for new key assignments
-    if (s_modes_changed && g_bad_config == config_status::OK)
+    if (s_modes_changed && g_bad_config == ConfigStatus::OK)
     {
         update_id_cfg();
     }
@@ -156,7 +156,7 @@ static int check_mode_key(int curkey, int choice)
     if ((curkey == '-' || curkey == '+')
         && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
     {
-        if (g_bad_config != config_status::OK)
+        if (g_bad_config != ConfigStatus::OK)
         {
             stop_msg("Missing or bad id.cfg file. Can't reassign keys.");
         }

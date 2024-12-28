@@ -77,7 +77,7 @@ long g_l_delta_min{};                                                  // for ca
 double g_delta_min{};                                                  // same as a double
 double g_params[MAX_PARAMS]{};                                         // parameters
 double g_potential_params[3]{};                                        // three potential parameters
-config_status g_bad_config{};                                          // 'id.cfg' ok?
+ConfigStatus g_bad_config{};                                          // 'id.cfg' ok?
 bool g_has_inverse{};                                                  //
 int g_integer_fractal{};                                               // TRUE if fractal uses integer math
                          // user_xxx is what the user wants, vs what we may be forced to do
@@ -154,7 +154,7 @@ static void bad_id_cfg_msg()
     stop_msg("File id.cfg is missing or invalid.\n"
             "See Hardware Support and Video Modes in the full documentation for help.\n"
             "I will continue with only the built-in video modes available.");
-    g_bad_config = config_status::BAD_WITH_MESSAGE;
+    g_bad_config = ConfigStatus::BAD_WITH_MESSAGE;
 }
 
 static void main_restart(int const argc, char const *const argv[], MainContext &context)
@@ -203,7 +203,7 @@ static void main_restart(int const argc, char const *const argv[], MainContext &
 
     history_init();
 
-    if (g_bad_config == config_status::BAD_NO_MESSAGE)
+    if (g_bad_config == ConfigStatus::BAD_NO_MESSAGE)
     {
         bad_id_cfg_msg();
     }

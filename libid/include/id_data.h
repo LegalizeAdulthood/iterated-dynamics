@@ -24,7 +24,7 @@ enum class CalcStatus
     COMPLETED = 4
 };
 
-enum class config_status
+enum class ConfigStatus
 {
     OK = 0,
     BAD_WITH_MESSAGE = 1,
@@ -35,7 +35,7 @@ enum class HelpLabels;
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
-extern config_status         g_bad_config;
+extern ConfigStatus          g_bad_config;
 extern int                   g_box_count;
 extern std::string           g_browse_mask;
 extern bool                  g_browsing;

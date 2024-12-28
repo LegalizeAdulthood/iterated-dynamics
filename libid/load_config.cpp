@@ -51,7 +51,7 @@ void load_config(const std::string &cfg_path)
     if (cfg_path.empty()                                             // can't find the file
         || (cfgfile = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
     {
-        g_bad_config = config_status::BAD_NO_MESSAGE;
+        g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
         return;
     }
 
@@ -108,7 +108,7 @@ void load_config(const std::string &cfg_path)
                  colors != 256)
            )
         {
-            g_bad_config = config_status::BAD_NO_MESSAGE;
+            g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
             return;
         }
         g_cfg_line_nums[g_video_table_len] = linenum; // for update_id_cfg
