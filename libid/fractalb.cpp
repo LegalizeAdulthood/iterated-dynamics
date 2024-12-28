@@ -667,7 +667,7 @@ bool mandel_bn_setup()
         }
     }
 
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         mandel_perturbation_setup();
         // TODO: figure out crash if we don't do this
@@ -785,7 +785,7 @@ bool mandel_bf_setup()
     switch (g_fractal_type)
     {
     case FractalType::MANDELFP:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             return mandel_perturbation_setup();
         }
@@ -797,7 +797,7 @@ bool mandel_bf_setup()
         break;
 
     case FractalType::FPMANDELZPOWER:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             // only allow integer values of real part
             if (const int degree = (int) g_params[2]; degree > 2)
@@ -846,7 +846,7 @@ bool mandel_bf_setup()
 
 int mandel_bn_per_pixel()
 {
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, fractal_flags::PERTURB))
+    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         return true;
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bn_int(g_param_z_bn.x, g_delta_x_bn, (U16)g_col);

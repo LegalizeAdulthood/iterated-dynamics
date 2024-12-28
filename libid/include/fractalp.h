@@ -27,7 +27,7 @@ struct MoreParams
 };
 
 // bitmask values for fractalspecific flags
-enum class fractal_flags
+enum class FractalFlags
 {
     NONE = 0,        // no flags
     NOZOOM = 1,      // zoombox not allowed at all
@@ -48,33 +48,33 @@ enum class fractal_flags
     LD_MATH = 32768, // supports long double
     PERTURB = 65536  // supports perturbation
 };
-inline int operator+(fractal_flags value)
+inline int operator+(FractalFlags value)
 {
     return static_cast<int>(value);
 }
-inline fractal_flags operator|(fractal_flags lhs, fractal_flags rhs)
+inline FractalFlags operator|(FractalFlags lhs, FractalFlags rhs)
 {
-    return static_cast<fractal_flags>(+lhs | +rhs);
+    return static_cast<FractalFlags>(+lhs | +rhs);
 }
-inline fractal_flags operator&(fractal_flags lhs, fractal_flags rhs)
+inline FractalFlags operator&(FractalFlags lhs, FractalFlags rhs)
 {
-    return static_cast<fractal_flags>(+lhs & +rhs);
+    return static_cast<FractalFlags>(+lhs & +rhs);
 }
-inline fractal_flags operator^(fractal_flags lhs, fractal_flags rhs)
+inline FractalFlags operator^(FractalFlags lhs, FractalFlags rhs)
 {
-    return static_cast<fractal_flags>(+lhs ^ +rhs);
+    return static_cast<FractalFlags>(+lhs ^ +rhs);
 }
-inline fractal_flags operator~(fractal_flags lhs)
+inline FractalFlags operator~(FractalFlags lhs)
 {
-    return static_cast<fractal_flags>(~+lhs);
+    return static_cast<FractalFlags>(~+lhs);
 }
-inline bool bit_set(fractal_flags value, fractal_flags bit)
+inline bool bit_set(FractalFlags value, FractalFlags bit)
 {
     return (value & bit) == bit;
 }
-inline bool bit_clear(fractal_flags value, fractal_flags bit)
+inline bool bit_clear(FractalFlags value, FractalFlags bit)
 {
-    return (value & bit) == fractal_flags::NONE;
+    return (value & bit) == FractalFlags::NONE;
 }
 
 using PerturbationReference = void(const std::complex<double> &center, std::complex<double> &z);
@@ -90,7 +90,7 @@ struct FractalSpecific
     double paramvalue[4];                   // default parameter values
     HelpLabels helptext;                   // helpdefs.h HT_xxxx or NONE
     HelpLabels helpformula;                // helpdefs.h HF_xxxx or NONE
-    fractal_flags flags;                    // constraints, bits defined above
+    FractalFlags flags;                    // constraints, bits defined above
     float xmin;                             // default XMIN corner
     float xmax;                             // default XMAX corner
     float ymin;                             // default YMIN corner

@@ -147,14 +147,14 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 
     set_grid_pointers();
 
-    if (bit_clear(g_cur_fractal_specific->flags, fractal_flags::BF_MATH))
+    if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
         FractalType tofloat = g_cur_fractal_specific->tofloat;
         if (tofloat == FractalType::NOFRACTAL)
         {
             g_bf_math = BFMathType::NONE;
         }
-        else if (bit_clear(g_fractal_specific[+tofloat].flags, fractal_flags::BF_MATH))
+        else if (bit_clear(g_fractal_specific[+tofloat].flags, FractalFlags::BF_MATH))
         {
             g_bf_math = BFMathType::NONE;
         }
@@ -355,7 +355,7 @@ init_restart:
         }
     }
 
-    if (bit_set(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
+    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
     {
         // ensure min<max and unrotated rectangle
         if (g_x_min > g_x_max)
@@ -578,7 +578,7 @@ expand_retry:
                     if (ratio_bad(testx_try, testx_exact)
                         || ratio_bad(testy_try, testy_exact))
                     {
-                        if (bit_set(g_cur_fractal_specific->flags, fractal_flags::BF_MATH))
+                        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
                         {
                             fractal_float_to_bf();
                             goto init_restart;

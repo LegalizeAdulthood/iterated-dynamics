@@ -931,11 +931,11 @@ static void perform_work_list()
             }
         }
     }
-    if (g_std_calc_mode == 'b' && bit_set(g_cur_fractal_specific->flags, fractal_flags::NOTRACE))
+    if (g_std_calc_mode == 'b' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NOTRACE))
     {
         g_std_calc_mode = '1';
     }
-    if (g_std_calc_mode == 'g' && bit_set(g_cur_fractal_specific->flags, fractal_flags::NOGUESS))
+    if (g_std_calc_mode == 'g' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NOGUESS))
     {
         g_std_calc_mode = '1';
     }
@@ -1193,7 +1193,7 @@ static void perform_work_list()
             sticky_orbits();
             break;
         case 'p':
-            if (bit_set (g_cur_fractal_specific->flags, fractal_flags::PERTURB))    // we already finished perturbation, so let's get outa here
+            if (bit_set (g_cur_fractal_specific->flags, FractalFlags::PERTURB))    // we already finished perturbation, so let's get outa here
                 return;
             break;
         default:

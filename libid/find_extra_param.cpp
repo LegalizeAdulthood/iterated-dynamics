@@ -7,7 +7,7 @@
 int find_extra_param(FractalType type)
 {
     int ret = -1;
-    if (bit_set(g_fractal_specific[+type].flags, fractal_flags::MORE))
+    if (bit_set(g_fractal_specific[+type].flags, FractalFlags::MORE))
     {
         FractalType curtyp;
         int i = -1;

@@ -6,7 +6,7 @@ TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {
     for (int i =0; i < g_num_fractal_types; ++i)
     {
-        if (!bit_set(g_fractal_specific[i].flags, fractal_flags::PERTURB))
+        if (!bit_set(g_fractal_specific[i].flags, FractalFlags::PERTURB))
         {
             continue;
         }
