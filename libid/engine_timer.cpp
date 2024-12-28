@@ -23,7 +23,7 @@ long g_timer_interval{}; //
      timer(timer_type::DECODER,nullptr,int width)        decoder
      timer(timer_type::ENCODER)                          encoder
   */
-int timer(timer_type timertype, int(*subrtn)(), ...)
+int timer(TimerType timertype, int(*subrtn)(), ...)
 {
     std::va_list arg_marker;  // variable arg list
     char *timestring;
@@ -35,7 +35,7 @@ int timer(timer_type timertype, int(*subrtn)(), ...)
     va_start(arg_marker, subrtn);
 
     bool do_bench = g_timer_flag; // record time?
-    if (timertype == timer_type::ENCODER)     // encoder, record time only if debug flag set
+    if (timertype == TimerType::ENCODER)     // encoder, record time only if debug flag set
     {
         do_bench = (g_debug_flag == DebugFlags::benchmark_encoder);
     }
@@ -46,14 +46,14 @@ int timer(timer_type timertype, int(*subrtn)(), ...)
     g_timer_start = std::clock();
     switch (timertype)
     {
-    case timer_type::ENGINE:
+    case TimerType::ENGINE:
         out = subrtn();
         break;
-    case timer_type::DECODER:
+    case TimerType::DECODER:
         i = va_arg(arg_marker, int);
         out = (int)decoder((short)i); // not indirect, safer with overlays
         break;
-    case timer_type::ENCODER:
+    case TimerType::ENCODER:
         out = encoder();            // not indirect, safer with overlays
         break;
     }
@@ -67,10 +67,10 @@ int timer(timer_type timertype, int(*subrtn)(), ...)
         timestring[24] = 0; //clobber newline in time string
         switch (timertype)
         {
-        case timer_type::DECODER:
+        case TimerType::DECODER:
             std::fprintf(fp, "decode ");
             break;
-        case timer_type::ENCODER:
+        case TimerType::ENCODER:
             std::fprintf(fp, "encode ");
             break;
         default:

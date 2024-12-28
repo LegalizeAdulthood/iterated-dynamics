@@ -339,7 +339,7 @@ int gif_view()
             {
                 width = std::min(width, static_cast<unsigned>(DECODERLINE_WIDTH));
             }
-            status = timer(timer_type::DECODER, nullptr, width);
+            status = timer(TimerType::DECODER, nullptr, width);
             g_busy = false;      // for slideshow CALCWAIT
             if (g_calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
             {

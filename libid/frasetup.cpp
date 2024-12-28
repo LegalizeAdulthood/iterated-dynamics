@@ -94,7 +94,7 @@ julia_setup()            // Julia Routine
 bool
 standalone_setup()
 {
-    timer(timer_type::ENGINE, g_cur_fractal_specific->calctype);
+    timer(TimerType::ENGINE, g_cur_fractal_specific->calctype);
     return false;               // effectively disable solid-guessing
 }
 

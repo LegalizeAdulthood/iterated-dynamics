@@ -794,7 +794,7 @@ int calc_fract()
             g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             set_symmetry(g_symmetry, false);
-            timer(timer_type::ENGINE, g_calc_type); // non-standard fractal engine
+            timer(TimerType::ENGINE, g_calc_type); // non-standard fractal engine
         }
         if (check_key())
         {
@@ -817,7 +817,7 @@ int calc_fract()
             {
                 g_std_calc_mode = 'g';
                 g_three_pass = true;
-                timer(timer_type::ENGINE, (int(*)())perform_work_list);
+                timer(TimerType::ENGINE, (int(*)())perform_work_list);
                 if (g_calc_status == calc_status_value::COMPLETED)
                 {
                     if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low rez
@@ -828,7 +828,7 @@ int calc_fract()
                     {
                         g_std_calc_mode = '1';
                     }
-                    timer(timer_type::ENGINE, (int(*)())perform_work_list);
+                    timer(TimerType::ENGINE, (int(*)())perform_work_list);
                     g_three_pass = false;
                 }
             }
@@ -842,14 +842,14 @@ int calc_fract()
                 {
                     g_std_calc_mode = '1';
                 }
-                timer(timer_type::ENGINE, (int(*)())perform_work_list);
+                timer(TimerType::ENGINE, (int(*)())perform_work_list);
             }
             g_std_calc_mode = (char)old_calc_mode;
         }
         else // main case, much nicer!
         {
             g_three_pass = false;
-            timer(timer_type::ENGINE, (int(*)())perform_work_list);
+            timer(TimerType::ENGINE, (int(*)())perform_work_list);
         }
     }
     g_calc_time += g_timer_interval;
