@@ -71,7 +71,7 @@ enum
     MAX_JUMPS = 200 // size of JUMP_CONTROL array
 };
 
-enum class jump_control_type
+enum class JumpControlType
 {
     NONE = 0,
     IF = 1,
@@ -257,7 +257,7 @@ struct JumpPtrs
 
 struct JumpControl
 {
-    jump_control_type type;
+    JumpControlType type;
     JumpPtrs ptrs;
     int dest_jump_index;
 };
@@ -525,7 +525,7 @@ static constexpr std::array<SymmetryName, 14> s_symmetry_names
     SymmetryName{ "NOPLOT",        SymmetryType::NO_PLOT },
 };
 
-inline void push_jump(jump_control_type type)
+inline void push_jump(JumpControlType type)
 {
     JumpControl value{};
     value.type = type;
@@ -2363,16 +2363,16 @@ static ConstArg *is_const(char const *Str, int Len)
     3 - else
     4 - endif
 */
-static jump_control_type is_jump(char const *Str, int Len)
+static JumpControlType is_jump(char const *Str, int Len)
 {
     for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++)
     {
         if ((int) std::strlen(s_jump_list[i]) == Len && strnicmp(s_jump_list[i], Str, Len) == 0)
         {
-            return static_cast<jump_control_type>(i + 1);
+            return static_cast<JumpControlType>(i + 1);
         }
     }
-    return jump_control_type::NONE;
+    return JumpControlType::NONE;
 }
 
 static void not_a_funct()
@@ -2901,31 +2901,31 @@ static bool parse_formula_text(char const *text)
             }
             Len = (s_n+1)-s_init_n;
             s_expecting_arg = false;
-            if (const jump_control_type type = is_jump(&text[s_init_n], Len); type != jump_control_type::NONE)
+            if (const JumpControlType type = is_jump(&text[s_init_n], Len); type != JumpControlType::NONE)
             {
                 s_uses_jump = true;
                 switch (type)
                 {
-                case jump_control_type::IF:
+                case JumpControlType::IF:
                     s_expecting_arg = true;
-                    push_jump(jump_control_type::IF);
+                    push_jump(JumpControlType::IF);
                     push_pending_op(s_jump_on_false, 1);
                     break;
-                case jump_control_type::ELSE_IF:
+                case JumpControlType::ELSE_IF:
                     s_expecting_arg = true;
-                    push_jump(jump_control_type::ELSE_IF);
-                    push_jump(jump_control_type::ELSE_IF);
+                    push_jump(JumpControlType::ELSE_IF);
+                    push_jump(JumpControlType::ELSE_IF);
                     push_pending_op(stk_jump, 1);
                     push_pending_op(nullptr, 15);
                     push_pending_op(stk_clr, -30000);
                     push_pending_op(s_jump_on_false, 1);
                     break;
-                case jump_control_type::ELSE:
-                    push_jump(jump_control_type::ELSE);
+                case JumpControlType::ELSE:
+                    push_jump(JumpControlType::ELSE);
                     push_pending_op(stk_jump, 1);
                     break;
-                case jump_control_type::END_IF:
-                    push_jump(jump_control_type::END_IF);
+                case JumpControlType::END_IF:
+                    push_jump(JumpControlType::END_IF);
                     push_pending_op(stk_jump_label, 1);
                     break;
                 default:
@@ -3168,23 +3168,23 @@ static int fill_if_group(int endif_index, JumpPtrs *jump_data)
         i--;
         switch (s_jump_control[i].type)
         {
-        case jump_control_type::IF:    //if (); this concludes processing of this group
+        case JumpControlType::IF:    //if (); this concludes processing of this group
             s_jump_control[i].ptrs = jump_data[ljp];
             s_jump_control[i].dest_jump_index = ljp + 1;
             return i;
-        case jump_control_type::ELSE_IF:    //elseif* ( 2 jumps, the else and the if
+        case JumpControlType::ELSE_IF:    //elseif* ( 2 jumps, the else and the if
             // first, the "if" part
             s_jump_control[i].ptrs = jump_data[ljp];
             s_jump_control[i].dest_jump_index = ljp + 1;
 
             // then, the else part
             i--; //fall through to "else" is intentional
-        case jump_control_type::ELSE:
+        case JumpControlType::ELSE:
             s_jump_control[i].ptrs = jump_data[endif_index];
             s_jump_control[i].dest_jump_index = endif_index + 1;
             ljp = i;
             break;
-        case jump_control_type::END_IF:    //endif
+        case JumpControlType::END_IF:    //endif
             i = fill_if_group(i, jump_data);
             break;
         default:
@@ -3215,10 +3215,10 @@ static bool fill_jump_struct()
             {
                 switch (s_jump_control[i].type)
                 {
-                case jump_control_type::IF:
+                case JumpControlType::IF:
                     JumpFunc = s_jump_on_false;
                     break;
-                case jump_control_type::ELSE_IF:
+                case JumpControlType::ELSE_IF:
                     checkforelse = !checkforelse;
                     if (checkforelse)
                     {
@@ -3229,10 +3229,10 @@ static bool fill_jump_struct()
                         JumpFunc = s_jump_on_false;
                     }
                     break;
-                case jump_control_type::ELSE:
+                case JumpControlType::ELSE:
                     JumpFunc = stk_jump;
                     break;
-                case jump_control_type::END_IF:
+                case JumpControlType::END_IF:
                     JumpFunc = stk_jump_label;
                     break;
                 default:
@@ -3263,8 +3263,8 @@ static bool fill_jump_struct()
 
     // Following for safety only; all should always be false
     if (i != s_jump_index
-        || s_jump_control[i - 1].type != jump_control_type::END_IF
-        || s_jump_control[0].type != jump_control_type::IF)
+        || s_jump_control[i - 1].type != JumpControlType::END_IF
+        || s_jump_control[0].type != JumpControlType::IF)
     {
         return true;
     }
