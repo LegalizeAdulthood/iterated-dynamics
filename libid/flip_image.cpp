@@ -20,7 +20,7 @@
    or both. Refuses to work if calculation in progress or if fractal
    non-resumable. Clears zoombox if any. Resets corners so resulting fractal
    is still valid. */
-main_state flip_image(MainContext &context)
+MainState flip_image(MainContext &context)
 {
     int ixhalf;
     int iyhalf;
@@ -31,7 +31,7 @@ main_state flip_image(MainContext &context)
         || g_calc_status == CalcStatus::IN_PROGRESS              //
         || g_calc_status == CalcStatus::RESUMABLE)
     {
-        return main_state::NOTHING;
+        return MainState::NOTHING;
     }
     if (g_bf_math != BFMathType::NONE)
     {
@@ -140,5 +140,5 @@ main_state flip_image(MainContext &context)
     }
     reset_zoom_corners();
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }

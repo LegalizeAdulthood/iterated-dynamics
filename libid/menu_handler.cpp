@@ -25,7 +25,7 @@
 
 #include <cstring>
 
-main_state request_fractal_type(MainContext &context)
+MainState request_fractal_type(MainContext &context)
 {
     g_julibrot = false;
     clear_zoom_box();
@@ -55,13 +55,13 @@ main_state request_fractal_type(MainContext &context)
         {
             driver_set_for_text();     // reset to text mode
         }
-        return main_state::IMAGE_START;
+        return MainState::IMAGE_START;
     }
     driver_unstack_screen();
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state toggle_float(MainContext &)
+MainState toggle_float(MainContext &)
 {
     if (!g_user_float_flag)
     {
@@ -72,14 +72,14 @@ main_state toggle_float(MainContext &)
         g_user_float_flag = false;
     }
     g_init_mode = g_adapter;
-    return main_state::IMAGE_START;
+    return MainState::IMAGE_START;
 }
 
-main_state get_history(int kbd_char)
+MainState get_history(int kbd_char)
 {
     if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
     {
-        return main_state::NOTHING;
+        return MainState::NOTHING;
     }
 
     if (kbd_char == '\\' || kbd_char == 'h')
@@ -108,10 +108,10 @@ main_state get_history(int kbd_char)
         g_user_float_flag = true;
     }
     g_history_flag = true; // avoid re-store parms due to rounding errs
-    return main_state::IMAGE_START;
+    return MainState::IMAGE_START;
 }
 
-main_state color_cycle(MainContext &context)
+MainState color_cycle(MainContext &context)
 {
     clear_zoom_box();
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
@@ -128,10 +128,10 @@ main_state color_cycle(MainContext &context)
         g_color_state = ColorState::UNKNOWN;
         save_history_info();
     }
-    return main_state::CONTINUE;
+    return MainState::CONTINUE;
 }
 
-main_state color_editing(MainContext &context)
+MainState color_editing(MainContext &context)
 {
     if (g_is_true_color && (g_init_batch == BatchMode::NONE))
     {
@@ -140,10 +140,10 @@ main_state color_editing(MainContext &context)
         {
             context.more_keys = false;
             g_calc_status = CalcStatus::PARAMS_CHANGED;
-            return main_state::NOTHING;
+            return MainState::NOTHING;
         }
 
-        return main_state::CONTINUE;
+        return MainState::CONTINUE;
     }
 
     clear_zoom_box();
@@ -158,10 +158,10 @@ main_state color_editing(MainContext &context)
             save_history_info();
         }
     }
-    return main_state::CONTINUE;
+    return MainState::CONTINUE;
 }
 
-main_state restore_from_image(MainContext &context)
+MainState restore_from_image(MainContext &context)
 {
     g_compare_gif = false;
     context.from_mandel = false;
@@ -177,7 +177,7 @@ main_state restore_from_image(MainContext &context)
                 driver_stack_screen();   // save graphics image
                 g_read_filename = g_save_filename;
                 g_show_file = 0;
-                return main_state::RESTORE_START;
+                return MainState::RESTORE_START;
             }
         }
         else
@@ -196,15 +196,15 @@ main_state restore_from_image(MainContext &context)
         g_started_resaves = false;
     }
     g_show_file = -1;
-    return main_state::RESTORE_START;
+    return MainState::RESTORE_START;
 }
 
-main_state requested_video_fn(MainContext &context)
+MainState requested_video_fn(MainContext &context)
 {
     const int k = check_vid_mode_key(0, context.key);
     if (k < 0)
     {
-        return main_state::NOTHING;
+        return MainState::NOTHING;
     }
 
     g_adapter = k;
@@ -214,11 +214,11 @@ main_state requested_video_fn(MainContext &context)
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     context.more_keys = false;
-    return main_state::CONTINUE;
+    return MainState::CONTINUE;
 }
 
-main_state request_restart(MainContext &)
+MainState request_restart(MainContext &)
 {
     driver_set_for_text(); // force text mode
-    return main_state::RESTART;
+    return MainState::RESTART;
 }

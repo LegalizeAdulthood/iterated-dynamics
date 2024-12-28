@@ -2,7 +2,7 @@
 //
 #pragma once
 
-enum class main_state
+enum class MainState
 {
     NOTHING = 0,
     RESTART,

@@ -241,7 +241,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
     }
 }
 
-static main_state prompt_options(MainContext &context)
+static MainState prompt_options(MainContext &context)
 {
     const long old_maxit = g_max_iterations;
     clear_zoom_box();
@@ -326,10 +326,10 @@ static main_state prompt_options(MainContext &context)
         context.more_keys = false;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state begin_ant(MainContext &)
+static MainState begin_ant(MainContext &)
 {
     clear_zoom_box();
     double oldparm[MAX_PARAMS];
@@ -367,20 +367,20 @@ static main_state begin_ant(MainContext &)
     {
         g_params[j] = oldparm[j];
     }
-    return err >= 0 ? main_state::CONTINUE : main_state::NOTHING;
+    return err >= 0 ? MainState::CONTINUE : MainState::NOTHING;
 }
 
-static main_state request_3d_fractal_params(MainContext &context)
+static MainState request_3d_fractal_params(MainContext &context)
 {
     if (get_fract3d_params() >= 0) // get the parameters
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false; // time to redraw
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state show_orbit_window(MainContext &)
+static MainState show_orbit_window(MainContext &)
 {
     // must use standard fractal and have a float variant
     if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
@@ -393,14 +393,14 @@ static main_state show_orbit_window(MainContext &)
         clear_zoom_box();
         jiim(JIIMType::ORBIT);
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state space_command(MainContext &context)
+static MainState space_command(MainContext &context)
 {
     if (g_bf_math != BFMathType::NONE || g_evolving != EvolutionModeFlags::NONE)
     {
-        return main_state::NOTHING;
+        return MainState::NOTHING;
     }
 
     if (g_fractal_type == FractalType::CELLULAR)
@@ -414,10 +414,10 @@ static main_state space_command(MainContext &context)
         toggle_mandelbrot_julia(context);
     }
 
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state inverse_julia_toggle(MainContext &context)
+static MainState inverse_julia_toggle(MainContext &context)
 {
     // if the inverse types proliferate, something more elegant will be needed
     if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIAFP ||
@@ -449,14 +449,14 @@ static main_state inverse_julia_toggle(MainContext &context)
     {
         driver_buzzer(Buzzer::PROBLEM);
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state unstack_file(bool &stacked)
+static MainState unstack_file(bool &stacked)
 {
     if (g_filename_stack_index < 1)
     {
-        return main_state::NOTHING;
+        return MainState::NOTHING;
     }
 
     // go back one file if somewhere to go (ie. browsing)
@@ -467,7 +467,7 @@ static main_state unstack_file(bool &stacked)
     }
     if (g_filename_stack_index < 0) // oops, must have deleted first one
     {
-        return main_state::NOTHING;
+        return MainState::NOTHING;
     }
     g_browse_name = g_file_name_stack[g_filename_stack_index];
     merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
@@ -479,41 +479,41 @@ static main_state unstack_file(bool &stacked)
         driver_stack_screen(); // save graphics image
         stacked = true;
     }
-    return main_state::RESTORE_START;
+    return MainState::RESTORE_START;
 }
 
-static main_state main_history(MainContext &context)
+static MainState main_history(MainContext &context)
 {
-    if (const main_state result = unstack_file(context.stacked); result != main_state::NOTHING)
+    if (const MainState result = unstack_file(context.stacked); result != MainState::NOTHING)
     {
         return result;
     }
-    if (const main_state result = get_history(context.key); result != main_state::NOTHING)
+    if (const MainState result = get_history(context.key); result != MainState::NOTHING)
     {
         return result;
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state request_shell(MainContext &)
+static MainState request_shell(MainContext &)
 {
     driver_stack_screen();
     driver_shell();
     driver_unstack_screen();
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state request_save_image(MainContext &)
+static MainState request_save_image(MainContext &)
 {
     if (driver_diskp() && g_disk_targa)
     {
-        return main_state::CONTINUE; // disk video and targa, nothing to save
+        return MainState::CONTINUE; // disk video and targa, nothing to save
     }
     save_image(g_save_filename);
-    return main_state::CONTINUE;
+    return MainState::CONTINUE;
 }
 
-static main_state look_for_files(MainContext &context)
+static MainState look_for_files(MainContext &context)
 {
     if ((g_zoom_box_width != 0) || driver_diskp())
     {
@@ -522,18 +522,18 @@ static main_state look_for_files(MainContext &context)
     }
     else if (look(context))
     {
-        return main_state::RESTORE_START;
+        return MainState::RESTORE_START;
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state request_make_batch_file(MainContext &)
+static MainState request_make_batch_file(MainContext &)
 {
     make_batch_file();
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state start_evolution(MainContext &context)
+static MainState start_evolution(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::FIELDMAP;
     g_view_window = true;
@@ -541,10 +541,10 @@ static main_state start_evolution(MainContext &context)
     save_param_history();
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state restore_from_3d(MainContext &context)
+static MainState restore_from_3d(MainContext &context)
 {
     if (g_overlay_3d)
     {
@@ -557,14 +557,14 @@ static main_state restore_from_3d(MainContext &context)
     return restore_from_image(context);
 }
 
-static main_state request_3d_overlay(MainContext &context)
+static MainState request_3d_overlay(MainContext &context)
 {
     clear_zoom_box();
     g_overlay_3d = true;
     return restore_from_3d(context);
 }
 
-static main_state execute_commands(MainContext &context)
+static MainState execute_commands(MainContext &context)
 {
     driver_stack_screen();
     int i = +get_commands();
@@ -605,10 +605,10 @@ static main_state execute_commands(MainContext &context)
     {
         driver_unstack_screen();
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state random_dot_stereogram(MainContext &)
+static MainState random_dot_stereogram(MainContext &)
 {
     clear_zoom_box();
     if (get_rds_params() >= 0)
@@ -617,12 +617,12 @@ static main_state random_dot_stereogram(MainContext &)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
-        return main_state::CONTINUE;
+        return MainState::CONTINUE;
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-static main_state request_star_field_params(MainContext &)
+static MainState request_star_field_params(MainContext &)
 {
     clear_zoom_box();
     if (get_star_field_params() >= 0)
@@ -631,9 +631,9 @@ static main_state request_star_field_params(MainContext &)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
-        return main_state::CONTINUE;
+        return MainState::CONTINUE;
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
 static MenuHandler s_handlers[]{
@@ -709,7 +709,7 @@ static MenuHandler s_handlers[]{
     {ID_KEY_CTL_DEL, zoom_box_decrease_color},      //
 };
 
-main_state main_menu_switch(MainContext &context)
+MainState main_menu_switch(MainContext &context)
 {
     if (g_quick_calc && g_calc_status == CalcStatus::COMPLETED)
     {

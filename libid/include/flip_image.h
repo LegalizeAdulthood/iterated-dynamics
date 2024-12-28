@@ -4,4 +4,4 @@
 
 #include "main_state.h"
 
-main_state flip_image(MainContext &context);
+MainState flip_image(MainContext &context);

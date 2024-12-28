@@ -316,7 +316,7 @@ static bool main_restore_start(MainContext &context)
     return false;
 }
 
-static main_state main_image_start(bool &stacked, bool &resumeflag)
+static MainState main_image_start(bool &stacked, bool &resumeflag)
 {
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -356,7 +356,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         int kbdchar = main_menu(false);
         if (kbdchar == ID_KEY_INSERT)
         {
-            return main_state::RESTART;      // restart pgm on Insert Key
+            return MainState::RESTART;      // restart pgm on Insert Key
         }
         if (kbdchar == ID_KEY_DELETE)                      // select video mode list
         {
@@ -373,7 +373,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             // shell to DOS
             driver_set_clear();
             driver_shell();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
 
         if (kbdchar == '@' || kbdchar == '2')
@@ -381,7 +381,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             // execute commands
             if (!bit_set(get_commands(), CmdArgFlags::YES_3D))
             {
-                return main_state::IMAGE_START;
+                return MainState::IMAGE_START;
             }
             kbdchar = '3';                         // 3d=y so fall thru '3' code
         }
@@ -398,67 +398,67 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             }
             driver_set_for_text(); // switch to text mode
             g_show_file = -1;
-            return main_state::RESTORE_START;
+            return MainState::RESTORE_START;
         }
         if (kbdchar == 't')
         {
             // set fractal type
             g_julibrot = false;
             get_fract_type();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'x')
         {
             // generic toggle switch
             get_toggles();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'y')
         {
             // generic toggle switch
             get_toggles2();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'z')
         {
             // type specific parms
             get_fract_params(true);
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'v')
         {
             // view parameters
             get_view_params();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == ID_KEY_CTL_B)
         {
             /* ctrl B = browse parms*/
             get_browse_params();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == ID_KEY_CTL_F)
         {
             /* ctrl f = sound parms*/
             get_sound_params();
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'f')
         {
             // floating pt toggle
             g_user_float_flag = !g_user_float_flag;
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'i')
         {
             // set 3d fractal parms
             get_fract3d_params(); // get the parameters
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
         if (kbdchar == 'g')
         {
             get_cmd_string(); // get command string
-            return main_state::IMAGE_START;
+            return MainState::IMAGE_START;
         }
     }
 
@@ -466,10 +466,10 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     g_help_mode = HelpLabels::HELP_MAIN; // now use this help mode
     resumeflag = false;                   // allows taking goto inside big_while_loop()
 
-    return main_state::CONTINUE;
+    return MainState::CONTINUE;
 }
 
-static main_state main_image_start(MainContext &context)
+static MainState main_image_start(MainContext &context)
 {
     return main_image_start(context.stacked, context.resume);
 }
@@ -509,7 +509,7 @@ int id_main(int argc, char *argv[])
     load_config();
     init_help();
 
-    main_state state{main_state::RESTART};
+    MainState state{MainState::RESTART};
     MainContext context;
     bool done{};
     while (!done)
@@ -519,32 +519,32 @@ int id_main(int argc, char *argv[])
 #endif
         switch (state)
         {
-        case main_state::RESTART:
+        case MainState::RESTART:
             // insert key re-starts here
             main_restart(argc, argv, context);
-            state = main_state::RESTORE_START;
+            state = MainState::RESTORE_START;
             break;
 
-        case main_state::RESTORE_START:
-            state = main_restore_start(context) ? main_state::RESUME_LOOP : main_state::IMAGE_START;
+        case MainState::RESTORE_START:
+            state = main_restore_start(context) ? MainState::RESUME_LOOP : MainState::IMAGE_START;
             break;
 
-        case main_state::IMAGE_START:
+        case MainState::IMAGE_START:
             state = main_image_start(context);
-            if (state != main_state::RESTORE_START && state != main_state::IMAGE_START &&
-                state != main_state::RESTART)
+            if (state != MainState::RESTORE_START && state != MainState::IMAGE_START &&
+                state != MainState::RESTART)
             {
-                state = main_state::RESUME_LOOP;
+                state = MainState::RESUME_LOOP;
             }
             break;
 
-        case main_state::RESUME_LOOP:
+        case MainState::RESUME_LOOP:
             save_param_history();
             state = big_while_loop(context);
             break;
 
-        case main_state::CONTINUE:
-        case main_state::NOTHING:
+        case MainState::CONTINUE:
+        case MainState::NOTHING:
             done = true;
             break;
         }

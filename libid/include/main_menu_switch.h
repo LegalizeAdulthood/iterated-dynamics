@@ -4,4 +4,4 @@
 
 #include "main_state.h"
 
-main_state main_menu_switch(MainContext &context);
+MainState main_menu_switch(MainContext &context);

@@ -1014,7 +1014,7 @@ void clear_zoom_box()
 }
 
 // do all pending movement at once for smooth mouse diagonal moves
-main_state move_zoom_box(MainContext &context)
+MainState move_zoom_box(MainContext &context)
 {
     int horizontal{};
     int vertical{};
@@ -1064,7 +1064,7 @@ main_state move_zoom_box(MainContext &context)
     {
         move_box((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
 void reset_zoom_corners()
@@ -1086,7 +1086,7 @@ void reset_zoom_corners()
     }
 }
 
-main_state request_zoom_in(MainContext &context)
+MainState request_zoom_in(MainContext &context)
 {
     if (g_zoom_box_width != 0.0)
     {
@@ -1098,18 +1098,18 @@ main_state request_zoom_in(MainContext &context)
     {
         context.more_keys = false;
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state request_zoom_out(MainContext &context)
+MainState request_zoom_out(MainContext &context)
 {
     init_pan_or_recalc(true);
     context.more_keys = false;
     zoom_out(); // calc corners for zooming out
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state skew_zoom_left(MainContext &)
+MainState skew_zoom_left(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
     {
@@ -1119,10 +1119,10 @@ main_state skew_zoom_left(MainContext &)
             g_zoom_box_skew = -0.48;
         }
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state skew_zoom_right(MainContext &)
+MainState skew_zoom_right(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
     {
@@ -1132,28 +1132,28 @@ main_state skew_zoom_right(MainContext &)
             g_zoom_box_skew = 0.48;
         }
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state decrease_zoom_aspect(MainContext &)
+MainState decrease_zoom_aspect(MainContext &)
 {
     if (g_box_count)
     {
         change_box(0, -2 * key_count(ID_KEY_CTL_PAGE_UP));
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state increase_zoom_aspect(MainContext &)
+MainState increase_zoom_aspect(MainContext &)
 {
     if (g_box_count)
     {
         change_box(0, 2 * key_count(ID_KEY_CTL_PAGE_DOWN));
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state zoom_box_in(MainContext &)
+MainState zoom_box_in(MainContext &)
 {
     if (g_zoom_enabled)
     {
@@ -1177,10 +1177,10 @@ main_state zoom_box_in(MainContext &)
             resize_box(0 - key_count(ID_KEY_PAGE_UP));
         }
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state zoom_box_out(MainContext &)
+MainState zoom_box_out(MainContext &)
 {
     if (g_box_count)
     {
@@ -1193,36 +1193,36 @@ main_state zoom_box_out(MainContext &)
             resize_box(key_count(ID_KEY_PAGE_DOWN));
         }
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state zoom_box_increase_rotation(MainContext &)
+MainState zoom_box_increase_rotation(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
     {
         g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state zoom_box_decrease_rotation(MainContext &)
+MainState zoom_box_decrease_rotation(MainContext &)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
     {
         g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
     }
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state zoom_box_increase_color(MainContext &)
+MainState zoom_box_increase_color(MainContext &)
 {
     g_box_color += key_count(ID_KEY_CTL_INSERT);
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 
-main_state zoom_box_decrease_color(MainContext &)
+MainState zoom_box_decrease_color(MainContext &)
 {
     g_box_color -= key_count(ID_KEY_CTL_DEL);
-    return main_state::NOTHING;
+    return MainState::NOTHING;
 }
 

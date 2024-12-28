@@ -18,7 +18,7 @@ namespace
 class TestMainMenuSwitch : public Test
 {
 protected:
-    main_state execute(int key)
+    MainState execute(int key)
     {
         m_context.key = key;
         return main_menu_switch(m_context);
@@ -34,9 +34,9 @@ TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
     VALUE_UNCHANGED(g_quick_calc, false);
     VALUE_UNCHANGED(g_user_std_calc_mode, 'g');
 
-    const main_state result{execute('m')};
+    const MainState result{execute('m')};
 
-    EXPECT_EQ(main_state::NOTHING, result);
+    EXPECT_EQ(MainState::NOTHING, result);
     EXPECT_EQ('m', m_context.key);
     EXPECT_FALSE(m_context.from_mandel);
     EXPECT_FALSE(m_context.more_keys);
@@ -50,9 +50,9 @@ TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'g'};
     ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, '1'};
 
-    const main_state result{execute('m')};
+    const MainState result{execute('m')};
 
-    EXPECT_EQ(main_state::NOTHING, result);
+    EXPECT_EQ(MainState::NOTHING, result);
     EXPECT_EQ('m', m_context.key);
     EXPECT_FALSE(m_context.from_mandel);
     EXPECT_FALSE(m_context.more_keys);
@@ -68,9 +68,9 @@ TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'g'};
     ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, '1'};
 
-    const main_state result{execute('m')};
+    const MainState result{execute('m')};
 
-    EXPECT_EQ(main_state::NOTHING, result);
+    EXPECT_EQ(MainState::NOTHING, result);
     EXPECT_EQ('m', m_context.key);
     EXPECT_FALSE(m_context.from_mandel);
     EXPECT_FALSE(m_context.more_keys);

@@ -65,11 +65,11 @@ char g_old_std_calc_mode{};
 void (*g_out_line_cleanup)(){};
 bool g_virtual_screens{};
 
-main_state big_while_loop(MainContext &context)
+MainState big_while_loop(MainContext &context)
 {
     double  ftemp;                       // fp temp
     int     i = 0;                           // temporary loop counters
-    main_state mms_value;
+    MainState mms_value;
 
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -125,7 +125,7 @@ main_state big_while_loop(MainContext &context)
                     }
                     g_init_mode = -1;
                     driver_set_for_text(); // switch to text mode
-                    return main_state::RESTORE_START;
+                    return MainState::RESTORE_START;
                 }
 
                 if (g_virtual_screens && (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots))
@@ -283,7 +283,7 @@ main_state big_while_loop(MainContext &context)
                     g_calc_status = CalcStatus::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
                     get_fract_type();
-                    return main_state::IMAGE_START;
+                    return MainState::IMAGE_START;
                 }
                 g_out_line = pot_line;
             }
@@ -649,9 +649,9 @@ resumeloop:                             // return here on failed overlays
                 mms_value = main_menu_switch(context);
             }
             if (g_quick_calc
-                && (mms_value == main_state::IMAGE_START
-                    || mms_value == main_state::RESTORE_START
-                    || mms_value == main_state::RESTART))
+                && (mms_value == MainState::IMAGE_START
+                    || mms_value == MainState::RESTORE_START
+                    || mms_value == MainState::RESTART))
             {
                 g_quick_calc = false;
                 g_user_std_calc_mode = g_old_std_calc_mode;
@@ -662,13 +662,13 @@ resumeloop:                             // return here on failed overlays
             }
             switch (mms_value)
             {
-            case main_state::IMAGE_START:
-                return main_state::IMAGE_START;
-            case main_state::RESTORE_START:
-                return main_state::RESTORE_START;
-            case main_state::RESTART:
-                return main_state::RESTART;
-            case main_state::CONTINUE:
+            case MainState::IMAGE_START:
+                return MainState::IMAGE_START;
+            case MainState::RESTORE_START:
+                return MainState::RESTORE_START;
+            case MainState::RESTART:
+                return MainState::RESTART;
+            case MainState::CONTINUE:
                 continue;
             default:
                 break;
