@@ -423,12 +423,12 @@ top:
 
     ++s_row;
 
-    if (g_got_status >= status_values::ONE_OR_TWO_PASS &&
+    if (g_got_status >= StatusValues::ONE_OR_TWO_PASS &&
         (g_calc_status == calc_status_value::IN_PROGRESS || g_calc_status == calc_status_value::RESUMABLE))
     {
         switch (g_got_status)
         {
-        case status_values::ONE_OR_TWO_PASS:
+        case StatusValues::ONE_OR_TWO_PASS:
             std::sprintf(msg, "%d Pass Mode", g_total_passes);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
             if (g_user_std_calc_mode == '3')
@@ -436,34 +436,34 @@ top:
                 driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
             }
             break;
-        case status_values::SOLID_GUESS:
+        case StatusValues::SOLID_GUESS:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
             if (g_user_std_calc_mode == '3')
             {
                 driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
             }
             break;
-        case status_values::BOUNDARY_TRACE:
+        case StatusValues::BOUNDARY_TRACE:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
             break;
-        case status_values::THREE_D:
+        case StatusValues::THREE_D:
             std::sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
             break;
-        case status_values::TESSERAL:
+        case StatusValues::TESSERAL:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Tesseral");
             break;
-        case status_values::DIFFUSION:
+        case StatusValues::DIFFUSION:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Diffusion");
             break;
-        case status_values::ORBITS:
+        case StatusValues::ORBITS:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Orbits");
             break;
-        case status_values::NONE:
+        case StatusValues::NONE:
             break;
         }
         ++s_row;
-        if (g_got_status == status_values::DIFFUSION)
+        if (g_got_status == StatusValues::DIFFUSION)
         {
             std::sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
                     (100.0 * g_diffusion_counter)/g_diffusion_limit,
@@ -471,12 +471,12 @@ top:
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
             ++s_row;
         }
-        else if (g_got_status != status_values::THREE_D)
+        else if (g_got_status != StatusValues::THREE_D)
         {
             std::sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
                     g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-            if (g_got_status == status_values::BOUNDARY_TRACE || g_got_status == status_values::TESSERAL)
+            if (g_got_status == StatusValues::BOUNDARY_TRACE || g_got_status == StatusValues::TESSERAL)
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
                 std::sprintf(msg, "[%d, %d]", g_current_row, g_current_column);
@@ -507,7 +507,7 @@ top:
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
     strncpy(msg, get_calculation_time(g_calc_time).c_str(), std::size(msg));
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
-    if (g_got_status == status_values::DIFFUSION &&
+    if (g_got_status == StatusValues::DIFFUSION &&
         g_calc_status == calc_status_value::IN_PROGRESS) // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");

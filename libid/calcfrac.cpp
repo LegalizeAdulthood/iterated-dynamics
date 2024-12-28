@@ -171,7 +171,7 @@ int g_yy_start{};                               //
 int g_yy_stop{};                                //
 int g_work_pass{};                              //
 int g_work_symmetry{};                          // for the sake of calcmand
-status_values g_got_status{status_values::NONE}; // variables which must be visible for tab_display
+StatusValues g_got_status{StatusValues::NONE}; // variables which must be visible for tab_display
 int g_current_pass{};                            //
 int g_total_passes{};                            //
 int g_current_row{};                             //

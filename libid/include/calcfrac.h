@@ -56,7 +56,7 @@ enum
     ATANI = -104
 };
 
-enum class status_values
+enum class StatusValues
 {
     NONE = -1,
     ONE_OR_TWO_PASS = 0,
@@ -88,7 +88,7 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
-extern status_values         g_got_status;
+extern StatusValues         g_got_status;
 extern int                   g_i_x_start;
 extern int                   g_i_x_stop;
 extern int                   g_i_y_start;

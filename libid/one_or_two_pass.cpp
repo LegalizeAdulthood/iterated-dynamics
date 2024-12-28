@@ -53,7 +53,7 @@ int one_or_two_pass()
 
 static int standard_calc(int passnum)
 {
-    g_got_status = status_values::ONE_OR_TWO_PASS;
+    g_got_status = StatusValues::ONE_OR_TWO_PASS;
     g_current_pass = passnum;
     g_row = g_yy_begin;
     g_col = g_xx_begin;
