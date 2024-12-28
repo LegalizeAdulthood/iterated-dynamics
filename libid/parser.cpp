@@ -81,7 +81,7 @@ enum class JumpControlType
 };
 
 // token_type definitions
-enum class token_type
+enum class FormulaTokenType
 {
     NOT_A_TOKEN = 0,
     PARENS = 1,
@@ -96,7 +96,7 @@ enum class token_type
     OPERATOR = 10,
     END_OF_FORMULA = 11
 };
-inline int operator+(token_type value)
+inline int operator+(FormulaTokenType value)
 {
     return static_cast<int>(value);
 }
@@ -265,7 +265,7 @@ struct JumpControl
 struct Token
 {
     char str[80];
-    token_type type;
+    FormulaTokenType type;
     token_id id;
     DComplex constant;
 };
@@ -3328,11 +3328,11 @@ static void get_func_info(Token *tok)
             tok->id = static_cast<token_id>(i);
             if (tok->id >= token_id::FUNC_FN1 && tok->id <= token_id::FUNC_FN4)
             {
-                tok->type = token_type::PARAM_FUNCTION;
+                tok->type = FormulaTokenType::PARAM_FUNCTION;
             }
             else
             {
-                tok->type = token_type::FUNCTION;
+                tok->type = FormulaTokenType::FUNCTION;
             }
             return;
         }
@@ -3342,12 +3342,12 @@ static void get_func_info(Token *tok)
     {
         if (std::strcmp(s_jump_list[i], tok->str) == 0)
         {
-            tok->type = token_type::FLOW_CONTROL;
+            tok->type = FormulaTokenType::FLOW_CONTROL;
             tok->id   = static_cast<token_id>(i + 1);
             return;
         }
     }
-    tok->type = token_type::NOT_A_TOKEN;
+    tok->type = FormulaTokenType::NOT_A_TOKEN;
     tok->id   = token_id::UNDEFINED_FUNCTION;
 }
 
@@ -3366,16 +3366,16 @@ static void get_var_info(Token *tok)
             case token_id::VAR_IS_MANDEL:
             case token_id::VAR_P4:
             case token_id::VAR_P5:
-                tok->type = token_type::PARAM_VARIABLE;
+                tok->type = FormulaTokenType::PARAM_VARIABLE;
                 break;
             default:
-                tok->type = token_type::PREDEFINED_VARIABLE;
+                tok->type = FormulaTokenType::PREDEFINED_VARIABLE;
                 break;
             }
             return;
         }
     }
-    tok->type = token_type::USER_NAMED_VARIABLE;
+    tok->type = FormulaTokenType::USER_NAMED_VARIABLE;
     tok->id   = token_id::NONE;
 }
 
@@ -3405,7 +3405,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
         {
         case EOF:
             tok->str[i] = (char) 0;
-            tok->type = token_type::NOT_A_TOKEN;
+            tok->type = FormulaTokenType::NOT_A_TOKEN;
             tok->id   = token_id::END_OF_FILE;
             return false;
         CASE_NUM:
@@ -3417,7 +3417,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             {
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = token_id::ILL_FORMED_CONSTANT;
                 return false;
             }
@@ -3447,7 +3447,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             {
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = token_id::ILL_FORMED_CONSTANT;
                 return false;
             }
@@ -3455,7 +3455,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             {
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = token_id::ILL_FORMED_CONSTANT;
                 return false;
             }
@@ -3470,13 +3470,13 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
         if (i == 33 && tok->str[32])
         {
             tok->str[33] = (char) 0;
-            tok->type = token_type::NOT_A_TOKEN;
+            tok->type = FormulaTokenType::NOT_A_TOKEN;
             tok->id = token_id::TOKEN_TOO_LONG;
             return false;
         }
     }    // end of while loop. Now fill in the value
     tok->constant.x = std::atof(tok->str);
-    tok->type = token_type::REAL_CONSTANT;
+    tok->type = FormulaTokenType::REAL_CONSTANT;
     tok->id   = token_id::NONE;
     return true;
 }
@@ -3576,12 +3576,12 @@ CASE_NUM :
                 std::strcat(tok->str, temp_tok.str);
                 std::strcat(tok->str, ")");
                 tok->constant.y = temp_tok.constant.x * sign_value;
-                tok->type = tok->constant.y ? token_type::COMPLEX_CONSTANT : token_type::REAL_CONSTANT;
+                tok->type = tok->constant.y ? FormulaTokenType::COMPLEX_CONSTANT : FormulaTokenType::REAL_CONSTANT;
                 tok->id   = token_id::NONE;
                 if (debug_token != nullptr)
                 {
                     std::fprintf(debug_token, "Exiting with type set to %d\n",
-                        +(tok->constant.y ? token_type::COMPLEX_CONSTANT : token_type::REAL_CONSTANT));
+                        +(tok->constant.y ? FormulaTokenType::COMPLEX_CONSTANT : FormulaTokenType::REAL_CONSTANT));
                     std::fclose(debug_token);
                 }
                 return;
@@ -3600,7 +3600,7 @@ CASE_NUM :
     tok->str[1] = (char) 0;
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
-    tok->type = token_type::PARENS;
+    tok->type = FormulaTokenType::PARENS;
     tok->id = token_id::OPEN_PARENS;
     if (debug_token != nullptr)
     {
@@ -3641,7 +3641,7 @@ CASE_NUM:
         default:
             if (c == '.')       // illegal character in variable or func name
             {
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = token_id::ILLEGAL_VARIABLE_NAME;
                 tok->str[i++] = '.';
                 tok->str[i] = (char) 0;
@@ -3649,7 +3649,7 @@ CASE_NUM:
             }
             else if (var_name_too_long)
             {
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = token_id::TOKEN_TOO_LONG;
                 tok->str[i] = (char) 0;
                 std::fseek(openfile, last_filepos, SEEK_SET);
@@ -3660,41 +3660,41 @@ CASE_NUM:
             get_func_info(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
             {
-                if (tok->type == token_type::NOT_A_TOKEN)
+                if (tok->type == FormulaTokenType::NOT_A_TOKEN)
                 {
                     return false;
                 }
-                if (tok->type == token_type::FLOW_CONTROL &&
+                if (tok->type == FormulaTokenType::FLOW_CONTROL &&
                     (tok->id == token_id::ILLEGAL_VARIABLE_NAME || tok->id == token_id::TOKEN_TOO_LONG))
                 {
-                    tok->type = token_type::NOT_A_TOKEN;
+                    tok->type = FormulaTokenType::NOT_A_TOKEN;
                     tok->id   = token_id::JUMP_WITH_ILLEGAL_CHAR;
                     return false;
                 }
                 return true;
             }
             //can't use function names as variables
-            if (tok->type == token_type::FUNCTION || tok->type == token_type::PARAM_FUNCTION)
+            if (tok->type == FormulaTokenType::FUNCTION || tok->type == FormulaTokenType::PARAM_FUNCTION)
             {
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = token_id::FUNC_USED_AS_VAR;
                 return false;
             }
-            if (tok->type == token_type::FLOW_CONTROL &&
+            if (tok->type == FormulaTokenType::FLOW_CONTROL &&
                 (tok->id == token_id::END_OF_FILE || tok->id == token_id::ILLEGAL_CHARACTER))
             {
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = token_id::JUMP_MISSING_BOOLEAN;
                 return false;
             }
-            if (tok->type == token_type::FLOW_CONTROL &&
+            if (tok->type == FormulaTokenType::FLOW_CONTROL &&
                 (tok->id == token_id::ILLEGAL_VARIABLE_NAME || tok->id == token_id::TOKEN_TOO_LONG))
             {
                 if (c == ',' || c == '\n' || c == ':')
                 {
                     return true;
                 }
-                tok->type = token_type::NOT_A_TOKEN;
+                tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = token_id::JUMP_WITH_ILLEGAL_CHAR;
                 return false;
             }
@@ -3703,7 +3703,7 @@ CASE_NUM:
         }
     }
     tok->str[0] = (char) 0;
-    tok->type = token_type::NOT_A_TOKEN;
+    tok->type = FormulaTokenType::NOT_A_TOKEN;
     tok->id   = token_id::END_OF_FILE;
     return false;
 }
@@ -3724,7 +3724,7 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
     if (c == '}')
     {
         this_token->str[0] = '}';
-        this_token->type = token_type::END_OF_FORMULA;
+        this_token->type = FormulaTokenType::END_OF_FORMULA;
         this_token->id   = token_id::NONE;
     }
     else
@@ -3757,7 +3757,7 @@ CASE_ALPHA:
         this_token->str[0] = (char) c;
         return frm_get_alpha(openfile, this_token);
 CASE_TERMINATOR:
-        this_token->type = token_type::OPERATOR; // this may be changed below
+        this_token->type = FormulaTokenType::OPERATOR; // this may be changed below
         this_token->str[0] = (char) c;
         filepos = std::ftell(openfile);
         if (c == '<' || c == '>' || c == '=')
@@ -3783,7 +3783,7 @@ CASE_TERMINATOR:
             {
                 std::fseek(openfile, filepos, SEEK_SET);
                 this_token->str[1] = (char) 0;
-                this_token->type = token_type::NOT_A_TOKEN;
+                this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = token_id::ILLEGAL_OPERATOR;
                 return false;
             }
@@ -3811,14 +3811,14 @@ CASE_TERMINATOR:
             {
                 std::fseek(openfile, filepos, SEEK_SET);
                 this_token->str[1] = (char) 0;
-                this_token->type = token_type::NOT_A_TOKEN;
+                this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = token_id::ILLEGAL_OPERATOR;
                 return false;
             }
         }
         else if (this_token->str[0] == '}')
         {
-            this_token->type = token_type::END_OF_FORMULA;
+            this_token->type = FormulaTokenType::END_OF_FORMULA;
             this_token->id   = token_id::NONE;
         }
         else if (this_token->str[0] == '\n'
@@ -3829,7 +3829,7 @@ CASE_TERMINATOR:
         }
         else if (this_token->str[0] == ')')
         {
-            this_token->type = token_type::PARENS;
+            this_token->type = FormulaTokenType::PARENS;
             this_token->id = token_id::CLOSE_PARENS;
         }
         else if (this_token->str[0] == '(')
@@ -3841,7 +3841,7 @@ CASE_TERMINATOR:
             return true;
         }
         this_token->str[i] = (char) 0;
-        if (this_token->type == token_type::OPERATOR)
+        if (this_token->type == FormulaTokenType::OPERATOR)
         {
             for (int j = 0; j < static_cast<int>(s_op_list.size()); j++)
             {
@@ -3855,13 +3855,13 @@ CASE_TERMINATOR:
         return this_token->str[0] != '}';
     case EOF:
         this_token->str[0] = (char) 0;
-        this_token->type = token_type::NOT_A_TOKEN;
+        this_token->type = FormulaTokenType::NOT_A_TOKEN;
         this_token->id = token_id::END_OF_FILE;
         return false;
     default:
         this_token->str[0] = (char) c;
         this_token->str[1] = (char) 0;
-        this_token->type = token_type::NOT_A_TOKEN;
+        this_token->type = FormulaTokenType::NOT_A_TOKEN;
         this_token->id = token_id::ILLEGAL_CHARACTER;
         return false;
     }
@@ -3915,7 +3915,7 @@ int frm_get_param_stuff(char const *Name)
             std::fprintf(debug_token, "%s\n", current_token.str);
             std::fprintf(debug_token, "token_type is %d\n", +current_token.type);
             std::fprintf(debug_token, "token_id is %d\n", +current_token.id);
-            if (current_token.type == token_type::REAL_CONSTANT || current_token.type == token_type::COMPLEX_CONSTANT)
+            if (current_token.type == FormulaTokenType::REAL_CONSTANT || current_token.type == FormulaTokenType::COMPLEX_CONSTANT)
             {
                 std::fprintf(debug_token, "Real value is %f\n", current_token.constant.x);
                 std::fprintf(debug_token, "Imag value is %f\n", current_token.constant.y);
@@ -3924,7 +3924,7 @@ int frm_get_param_stuff(char const *Name)
         }
         switch (current_token.type)
         {
-        case token_type::PARAM_VARIABLE:
+        case FormulaTokenType::PARAM_VARIABLE:
             if (current_token.id == token_id::VAR_P1)
             {
                 g_frm_uses_p1 = true;
@@ -3950,7 +3950,7 @@ int frm_get_param_stuff(char const *Name)
                 g_frm_uses_p5 = true;
             }
             break;
-        case token_type::PARAM_FUNCTION:
+        case FormulaTokenType::PARAM_FUNCTION:
             if ((+current_token.id - 10) > g_max_function)
             {
                 g_max_function = (char)(+current_token.id - 10);
@@ -3965,7 +3965,7 @@ int frm_get_param_stuff(char const *Name)
     {
         std::fclose(debug_token);
     }
-    if (current_token.type != token_type::END_OF_FORMULA)
+    if (current_token.type != FormulaTokenType::END_OF_FORMULA)
     {
         g_frm_uses_p1 = false;
         g_frm_uses_p2 = false;
@@ -4177,7 +4177,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     while (!done)
     {
         frm_get_token(file, &temp_tok);
-        if (temp_tok.type == token_type::NOT_A_TOKEN)
+        if (temp_tok.type == FormulaTokenType::NOT_A_TOKEN)
         {
             stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             std::fseek(file, filepos, SEEK_SET);
@@ -4187,7 +4187,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
             }
             return {};
         }
-        if (temp_tok.type == token_type::END_OF_FORMULA)
+        if (temp_tok.type == FormulaTokenType::END_OF_FORMULA)
         {
             stop_msg(StopMsgFlags::FIXED_FONT, "Formula has no executable instructions\n");
             std::fseek(file, filepos, SEEK_SET);
@@ -4210,7 +4210,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         frm_get_token(file, &temp_tok);
         switch (temp_tok.type)
         {
-        case token_type::NOT_A_TOKEN:
+        case FormulaTokenType::NOT_A_TOKEN:
             stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
             std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
@@ -4218,7 +4218,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
                 std::fclose(debug_fp);
             }
             return {};
-        case token_type::END_OF_FORMULA:
+        case FormulaTokenType::END_OF_FORMULA:
             done = true;
             std::fseek(file, filepos, SEEK_SET);
             break;
@@ -4428,9 +4428,9 @@ static void frm_error(std::FILE * open_file, long begin_frm)
                 statement_len += (int) std::strlen(tok.str);
                 token_count++;
             }
-            if (tok.type == token_type::END_OF_FORMULA ||
-                (tok.type == token_type::OPERATOR && (tok.id == token_id::OP_COMMA || tok.id == token_id::OP_COLON)) ||
-                (tok.type == token_type::NOT_A_TOKEN && tok.id == token_id::END_OF_FILE))
+            if (tok.type == FormulaTokenType::END_OF_FORMULA ||
+                (tok.type == FormulaTokenType::OPERATOR && (tok.id == token_id::OP_COMMA || tok.id == token_id::OP_COLON)) ||
+                (tok.type == FormulaTokenType::NOT_A_TOKEN && tok.id == token_id::END_OF_FILE))
             {
                 done = true;
                 if (token_count > 1 && !initialization_error)
@@ -4540,7 +4540,7 @@ static bool frm_prescan(std::FILE * open_file)
         s_chars_in_formula += (int) std::strlen(this_token.str);
         switch (this_token.type)
         {
-        case token_type::NOT_A_TOKEN:
+        case FormulaTokenType::NOT_A_TOKEN:
             assignment_ok = false;
             switch (this_token.id)
             {
@@ -4581,7 +4581,7 @@ static bool frm_prescan(std::FILE * open_file)
                 return false;
             }
             break;
-        case token_type::PARENS:
+        case FormulaTokenType::PARENS:
             assignment_ok = false;
             new_statement = false;
             switch (this_token.id)
@@ -4624,7 +4624,7 @@ static bool frm_prescan(std::FILE * open_file)
                 break;
             }
             break;
-        case token_type::PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
+        case FormulaTokenType::PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
             s_num_ops++;
             s_num_loads++;
             new_statement = false;
@@ -4634,7 +4634,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             expecting_arg = false;
             break;
-        case token_type::USER_NAMED_VARIABLE: // i.e. c, iter, etc.
+        case FormulaTokenType::USER_NAMED_VARIABLE: // i.e. c, iter, etc.
             s_num_ops++;
             s_num_loads++;
             new_statement = false;
@@ -4644,7 +4644,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             expecting_arg = false;
             break;
-        case token_type::PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
+        case FormulaTokenType::PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
             s_num_ops++;
             s_num_loads++;
             new_statement = false;
@@ -4654,7 +4654,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             expecting_arg = false;
             break;
-        case token_type::REAL_CONSTANT: // i.e. 4, (4,0), etc.
+        case FormulaTokenType::REAL_CONSTANT: // i.e. 4, (4,0), etc.
             assignment_ok = false;
             s_num_ops++;
             s_num_loads++;
@@ -4665,7 +4665,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             expecting_arg = false;
             break;
-        case token_type::COMPLEX_CONSTANT: // i.e. (1,2) etc.
+        case FormulaTokenType::COMPLEX_CONSTANT: // i.e. (1,2) etc.
             assignment_ok = false;
             s_num_ops++;
             s_num_loads++;
@@ -4676,7 +4676,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             expecting_arg = false;
             break;
-        case token_type::FUNCTION:
+        case FormulaTokenType::FUNCTION:
             assignment_ok = false;
             new_statement = false;
             s_num_ops++;
@@ -4685,7 +4685,7 @@ static bool frm_prescan(std::FILE * open_file)
                 record_error(ParseError::SHOULD_BE_OPERATOR);
             }
             break;
-        case token_type::PARAM_FUNCTION:
+        case FormulaTokenType::PARAM_FUNCTION:
             assignment_ok = false;
             s_num_ops++;
             if (!expecting_arg)
@@ -4694,7 +4694,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             new_statement = false;
             break;
-        case token_type::FLOW_CONTROL:
+        case FormulaTokenType::FLOW_CONTROL:
             assignment_ok = false;
             s_num_ops++;
             s_num_jumps++;
@@ -4748,7 +4748,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
             }
             break;
-        case token_type::OPERATOR:
+        case FormulaTokenType::OPERATOR:
             s_num_ops++; //This will be corrected below in certain cases
             switch (this_token.id)
             {
@@ -4938,7 +4938,7 @@ static bool frm_prescan(std::FILE * open_file)
                 break;
             }
             break;
-        case token_type::END_OF_FORMULA:
+        case FormulaTokenType::END_OF_FORMULA:
             s_num_ops += 3; // Just need one, but a couple of extra just for the heck of it
             if (s_paren)
             {
