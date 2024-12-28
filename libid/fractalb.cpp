@@ -688,11 +688,11 @@ bool mandel_bn_setup()
         init_big_pi();
         if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {
-            g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+            g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
         if (g_params[3] != 0)
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         break;
 
@@ -702,7 +702,7 @@ bool mandel_bn_setup()
         bf_to_bn(g_param_z_bn.y, g_bf_parms[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         break;
 
@@ -813,11 +813,11 @@ bool mandel_bf_setup()
         init_big_pi();
         if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {
-            g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+            g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
         if (g_params[3] != 0)
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         break;
 
@@ -827,7 +827,7 @@ bool mandel_bf_setup()
         copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         break;
 

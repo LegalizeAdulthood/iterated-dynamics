@@ -279,7 +279,7 @@ struct FunctList
 struct SymmetryName
 {
     char const *s;
-    symmetry_type n;
+    SymmetryType n;
 };
 
 struct ErrorData
@@ -509,20 +509,20 @@ static constexpr std::array<char const *, 19> s_variables
 };
 static constexpr std::array<SymmetryName, 14> s_symmetry_names
 {
-    SymmetryName{ "NOSYM",         symmetry_type::NONE },
-    SymmetryName{ "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
-    SymmetryName{ "XAXIS",         symmetry_type::X_AXIS },
-    SymmetryName{ "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
-    SymmetryName{ "YAXIS",         symmetry_type::Y_AXIS },
-    SymmetryName{ "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
-    SymmetryName{ "XYAXIS",        symmetry_type::XY_AXIS },
-    SymmetryName{ "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
-    SymmetryName{ "ORIGIN",        symmetry_type::ORIGIN },
-    SymmetryName{ "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
-    SymmetryName{ "PI_SYM",        symmetry_type::PI_SYM },
-    SymmetryName{ "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
-    SymmetryName{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
-    SymmetryName{ "NOPLOT",        symmetry_type::NO_PLOT },
+    SymmetryName{ "NOSYM",         SymmetryType::NONE },
+    SymmetryName{ "XAXIS_NOPARM",  SymmetryType::X_AXIS_NO_PARAM },
+    SymmetryName{ "XAXIS",         SymmetryType::X_AXIS },
+    SymmetryName{ "YAXIS_NOPARM",  SymmetryType::Y_AXIS_NO_PARAM },
+    SymmetryName{ "YAXIS",         SymmetryType::Y_AXIS },
+    SymmetryName{ "XYAXIS_NOPARM", SymmetryType::XY_AXIS_NO_PARAM },
+    SymmetryName{ "XYAXIS",        SymmetryType::XY_AXIS },
+    SymmetryName{ "ORIGIN_NOPARM", SymmetryType::ORIGIN_NO_PARAM },
+    SymmetryName{ "ORIGIN",        SymmetryType::ORIGIN },
+    SymmetryName{ "PI_SYM_NOPARM", SymmetryType::PI_SYM_NO_PARAM },
+    SymmetryName{ "PI_SYM",        SymmetryType::PI_SYM },
+    SymmetryName{ "XAXIS_NOIMAG",  SymmetryType::X_AXIS_NO_IMAG },
+    SymmetryName{ "XAXIS_NOREAL",  SymmetryType::X_AXIS_NO_REAL },
+    SymmetryName{ "NOPLOT",        SymmetryType::NO_PLOT },
 };
 
 inline void push_jump(jump_control_type type)
@@ -4040,7 +4040,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         return false;
     }
     // get symmetry
-    g_symmetry = symmetry_type::NONE;
+    g_symmetry = SymmetryType::NONE;
     if (c == '(')
     {
         char sym_buf[20];
@@ -4156,7 +4156,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         if (debug_fp != nullptr)
         {
             std::fprintf(debug_fp, "%s\n", g_formula_name.c_str());
-            if (g_symmetry != symmetry_type::NONE)
+            if (g_symmetry != SymmetryType::NONE)
             {
                 auto it = std::find_if(std::begin(s_symmetry_names), std::end(s_symmetry_names),
                     [](const SymmetryName &item) { return item.n == g_symmetry; });

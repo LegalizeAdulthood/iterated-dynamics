@@ -87,7 +87,7 @@ enum class ShowDotDirection
 
 static void perform_work_list();
 static void decomposition();
-static void set_symmetry(symmetry_type sym, bool uselist);
+static void set_symmetry(SymmetryType sym, bool uselist);
 static bool x_sym_split(int xaxis_row, bool xaxis_between);
 static bool y_sym_split(int yaxis_col, bool yaxis_between);
 static void put_true_color_disk(int, int, int);
@@ -160,8 +160,8 @@ int g_i_x_start{};                              //
 int g_i_x_stop{};                               //
 int g_i_y_start{};                              //
 int g_i_y_stop{};                               // start, stop here
-symmetry_type g_symmetry{};                     // symmetry flag
-symmetry_type g_force_symmetry{};               // force symmetry
+SymmetryType g_symmetry{};                     // symmetry flag
+SymmetryType g_force_symmetry{};               // force symmetry
 bool g_reset_periodicity{};                     // true if escape time pixel rtn to reset
 int g_keyboard_check_interval{};                //
 int g_max_keyboard_check_interval{};            // avoids checking keyboard too often
@@ -2656,7 +2656,7 @@ static bool x_sym_split(int xaxis_row, bool xaxis_between)
         g_i_y_stop = xaxis_row;
         g_work_symmetry |= 1;
     }
-    g_symmetry = symmetry_type::NONE;
+    g_symmetry = SymmetryType::NONE;
     return false; // tell set_symmetry its a go
 }
 
@@ -2709,11 +2709,11 @@ static bool y_sym_split(int yaxis_col, bool yaxis_between)
         g_i_x_stop = yaxis_col;
         g_work_symmetry |= 2;
     }
-    g_symmetry = symmetry_type::NONE;
+    g_symmetry = SymmetryType::NONE;
     return false; // tell set_symmetry its a go
 }
 
-static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symmetrical plot functions
+static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmetrical plot functions
 {
     int i;
     int xaxis_row;
@@ -2725,12 +2725,12 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     double ftemp;
     bf_t bft1;
     int saved = 0;
-    g_symmetry = symmetry_type::X_AXIS;
+    g_symmetry = SymmetryType::X_AXIS;
     if (g_std_calc_mode == 's' || g_std_calc_mode == 'o')
     {
         return;
     }
-    if (sym == symmetry_type::NO_PLOT && g_force_symmetry == symmetry_type::NOT_FORCED)
+    if (sym == SymmetryType::NO_PLOT && g_force_symmetry == SymmetryType::NOT_FORCED)
     {
         g_plot = no_plot;
         return;
@@ -2751,18 +2751,18 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     {
         return;
     }
-    if (sym != symmetry_type::X_AXIS
-        && sym != symmetry_type::X_AXIS_NO_PARAM
+    if (sym != SymmetryType::X_AXIS
+        && sym != SymmetryType::X_AXIS_NO_PARAM
         && g_inversion[1] != 0.0
-        && g_force_symmetry == symmetry_type::NOT_FORCED)
+        && g_force_symmetry == SymmetryType::NOT_FORCED)
     {
         return;
     }
-    if (g_force_symmetry < symmetry_type::NOT_FORCED)
+    if (g_force_symmetry < SymmetryType::NOT_FORCED)
     {
         sym = g_force_symmetry;
     }
-    else if (g_force_symmetry == static_cast<symmetry_type>(1000))
+    else if (g_force_symmetry == static_cast<SymmetryType>(1000))
     {
         g_force_symmetry = sym;  // for backwards compatibility
     }
@@ -2871,25 +2871,25 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     }
     switch (sym)       // symmetry switch
     {
-    case symmetry_type::X_AXIS_NO_REAL:    // X-axis Symmetry (no real param)
+    case SymmetryType::X_AXIS_NO_REAL:    // X-axis Symmetry (no real param)
         if (!parmsnoreal)
         {
             break;
         }
         goto xsym;
-    case symmetry_type::X_AXIS_NO_IMAG:    // X-axis Symmetry (no imag param)
+    case SymmetryType::X_AXIS_NO_IMAG:    // X-axis Symmetry (no imag param)
         if (!parmsnoimag)
         {
             break;
         }
         goto xsym;
-    case symmetry_type::X_AXIS_NO_PARAM:                        // X-axis Symmetry  (no params)
+    case SymmetryType::X_AXIS_NO_PARAM:                        // X-axis Symmetry  (no params)
         if (!parmszero)
         {
             break;
         }
 xsym:
-    case symmetry_type::X_AXIS:                       // X-axis Symmetry
+    case SymmetryType::X_AXIS:                       // X-axis Symmetry
         if (!x_sym_split(xaxis_row, xaxis_between))
         {
             if (g_basin)
@@ -2902,23 +2902,23 @@ xsym:
             }
         }
         break;
-    case symmetry_type::Y_AXIS_NO_PARAM:                        // Y-axis Symmetry (No Parms)
+    case SymmetryType::Y_AXIS_NO_PARAM:                        // Y-axis Symmetry (No Parms)
         if (!parmszero)
         {
             break;
         }
-    case symmetry_type::Y_AXIS:                       // Y-axis Symmetry
+    case SymmetryType::Y_AXIS:                       // Y-axis Symmetry
         if (!y_sym_split(yaxis_col, yaxis_between))
         {
             g_plot = sym_plot2y;
         }
         break;
-    case symmetry_type::XY_AXIS_NO_PARAM:                       // X-axis AND Y-axis Symmetry (no parms)
+    case SymmetryType::XY_AXIS_NO_PARAM:                       // X-axis AND Y-axis Symmetry (no parms)
         if (!parmszero)
         {
             break;
         }
-    case symmetry_type::XY_AXIS:                      // X-axis AND Y-axis Symmetry
+    case SymmetryType::XY_AXIS:                      // X-axis AND Y-axis Symmetry
         x_sym_split(xaxis_row, xaxis_between);
         y_sym_split(yaxis_col, yaxis_between);
         switch (g_work_symmetry & 3)
@@ -2937,7 +2937,7 @@ xsym:
             if (g_basin) // got no routine for this case
             {
                 g_i_x_stop = g_xx_stop; // fix what split should not have done
-                g_symmetry = symmetry_type::X_AXIS;
+                g_symmetry = SymmetryType::X_AXIS;
             }
             else
             {
@@ -2955,12 +2955,12 @@ xsym:
             }
         }
         break;
-    case symmetry_type::ORIGIN_NO_PARAM:                       // Origin Symmetry (no parms)
+    case SymmetryType::ORIGIN_NO_PARAM:                       // Origin Symmetry (no parms)
         if (!parmszero)
         {
             break;
         }
-    case symmetry_type::ORIGIN:                      // Origin Symmetry
+    case SymmetryType::ORIGIN:                      // Origin Symmetry
 originsym:
         if (!x_sym_split(xaxis_row, xaxis_between)
             && !y_sym_split(yaxis_col, yaxis_between))
@@ -2971,16 +2971,16 @@ originsym:
         else
         {
             g_i_y_stop = g_yy_stop; // in case first split worked
-            g_symmetry = symmetry_type::X_AXIS;
+            g_symmetry = SymmetryType::X_AXIS;
             g_work_symmetry = 0x30; // let it recombine with others like it
         }
         break;
-    case symmetry_type::PI_SYM_NO_PARAM:
+    case SymmetryType::PI_SYM_NO_PARAM:
         if (!parmszero)
         {
             break;
         }
-    case symmetry_type::PI_SYM:                      // PI symmetry
+    case SymmetryType::PI_SYM:                      // PI symmetry
         if (g_bf_math != BFMathType::NONE)
         {
             if ((double)bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min))) < PI/4)
@@ -2995,12 +2995,12 @@ originsym:
                 break; // no point in pi symmetry if values too close
             }
         }
-        if ((g_invert != 0) && g_force_symmetry == symmetry_type::NOT_FORCED)
+        if ((g_invert != 0) && g_force_symmetry == SymmetryType::NOT_FORCED)
         {
             goto originsym;
         }
         g_plot = sym_pi_plot ;
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
         if (!x_sym_split(xaxis_row, xaxis_between)
             && !y_sym_split(yaxis_col, yaxis_between))
         {

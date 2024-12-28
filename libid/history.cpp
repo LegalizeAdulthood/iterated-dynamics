@@ -50,7 +50,7 @@ struct ImageHistory
     long log_map_flag;
     double inversion[3];
     int decomp;
-    symmetry_type force_symmetry;
+    SymmetryType force_symmetry;
     int init_3d[16];
     int preview_factor;
     int adjust_3d_x;

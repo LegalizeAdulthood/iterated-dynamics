@@ -517,7 +517,7 @@ static void init_vars_fractal()
     g_distance_estimator_x_dots = 0;                                //
     g_distance_estimator_y_dots = 0;                                //
     g_distance_estimator_width_factor = 71;                         //
-    g_force_symmetry = symmetry_type::NOT_FORCED;                   //
+    g_force_symmetry = SymmetryType::NOT_FORCED;                   //
     g_x_min = -2.5;                                                 //
     g_x_3rd = g_x_min;                                              //
     g_x_max = 1.5;                                                  // initial corner values
@@ -3356,27 +3356,27 @@ static cmdarg_flags cmd_symmetry(const Command &cmd)
     const std::string_view value{cmd.value};
     if (value == "xaxis")
     {
-        g_force_symmetry = symmetry_type::X_AXIS;
+        g_force_symmetry = SymmetryType::X_AXIS;
     }
     else if (value == "yaxis")
     {
-        g_force_symmetry = symmetry_type::Y_AXIS;
+        g_force_symmetry = SymmetryType::Y_AXIS;
     }
     else if (value == "xyaxis")
     {
-        g_force_symmetry = symmetry_type::XY_AXIS;
+        g_force_symmetry = SymmetryType::XY_AXIS;
     }
     else if (value == "origin")
     {
-        g_force_symmetry = symmetry_type::ORIGIN;
+        g_force_symmetry = SymmetryType::ORIGIN;
     }
     else if (value == "pi")
     {
-        g_force_symmetry = symmetry_type::PI_SYM;
+        g_force_symmetry = SymmetryType::PI_SYM;
     }
     else if (value == "none")
     {
-        g_force_symmetry = symmetry_type::NONE;
+        g_force_symmetry = SymmetryType::NONE;
     }
     else
     {

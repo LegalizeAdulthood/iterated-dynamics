@@ -19,7 +19,7 @@ bool mandel_trig_or_trig_setup()
     g_float_param = &g_init;
     if ((g_trig_index[0] == trig_fn::FLIP) || (g_trig_index[1] == trig_fn::FLIP))
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     return true;
 }
@@ -32,11 +32,11 @@ bool man_lam_trig_or_trig_setup()
     g_float_param = &g_init;
     if (g_trig_index[0] == trig_fn::SQR)
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     return true;
 }
@@ -48,11 +48,11 @@ bool lambda_trig_or_trig_setup()
     g_float_param = &g_param_z1;
     if ((g_trig_index[0] == trig_fn::EXP) || (g_trig_index[1] == trig_fn::EXP))
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
     {
-        g_symmetry = symmetry_type::X_AXIS;
+        g_symmetry = SymmetryType::X_AXIS;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return true;
@@ -103,11 +103,11 @@ bool julia_trig_or_trig_setup()
     g_float_param = &g_param_z1;
     if (g_param_z1.y != 0.0)
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return true;

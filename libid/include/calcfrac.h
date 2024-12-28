@@ -14,7 +14,7 @@ enum
     MAX_NUM_ATTRACTORS = 8
 };
 
-enum class symmetry_type
+enum class SymmetryType
 {
     NONE = 0,              //  0: no symmetry
     X_AXIS_NO_PARAM = -1,  // -1: x-axis symmetry (if no parameters)
@@ -125,8 +125,8 @@ extern long                  g_real_color_iter;
 extern bool                  g_reset_periodicity;
 extern int                   g_row;
 extern bool                  g_show_orbit;
-extern symmetry_type         g_force_symmetry;
-extern symmetry_type         g_symmetry;
+extern SymmetryType         g_force_symmetry;
+extern SymmetryType         g_symmetry;
 extern bool                  g_three_pass;
 extern int                   g_total_passes;
 extern DComplex              g_tmp_z;

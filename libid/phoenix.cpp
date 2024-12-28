@@ -400,15 +400,15 @@ bool phoenix_cplx_setup()
     {
         if (g_param_z2.x != 0 || g_param_z2.y != 0)
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         else
         {
-            g_symmetry = symmetry_type::ORIGIN;
+            g_symmetry = SymmetryType::ORIGIN;
         }
         if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
-            g_symmetry = symmetry_type::X_AXIS;
+            g_symmetry = SymmetryType::X_AXIS;
         }
         if (g_user_float_flag)
         {
@@ -424,11 +424,11 @@ bool phoenix_cplx_setup()
         g_degree = g_degree - 1;
         if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
-            g_symmetry = symmetry_type::X_AXIS;
+            g_symmetry = SymmetryType::X_AXIS;
         }
         else
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         if (g_user_float_flag)
         {
@@ -444,11 +444,11 @@ bool phoenix_cplx_setup()
         g_degree = std::abs(g_degree) - 2;
         if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
-            g_symmetry = symmetry_type::X_AXIS;
+            g_symmetry = SymmetryType::X_AXIS;
         }
         else
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         if (g_user_float_flag)
         {
@@ -524,7 +524,7 @@ bool mand_phoenix_cplx_setup()
     g_params[4] = (double)g_degree;
     if (g_param_z1.y != 0 || g_param_z2.y != 0)
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     if (g_degree == 0)
     {

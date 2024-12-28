@@ -2398,22 +2398,22 @@ TEST_F(TestParameterCommandError, bailOutTestBadValue)
 
 TEST_F(TestParameterCommand, symmetryXAxis)
 {
-    ValueSaver save_force_symmetry{g_force_symmetry, symmetry_type::XY_AXIS};
+    ValueSaver save_force_symmetry{g_force_symmetry, SymmetryType::XY_AXIS};
 
     exec_cmd_arg("symmetry=xaxis");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(symmetry_type::X_AXIS, g_force_symmetry);
+    EXPECT_EQ(SymmetryType::X_AXIS, g_force_symmetry);
 }
 
 TEST_F(TestParameterCommandError, symmetryBadValue)
 {
-    ValueSaver save_force_symmetry{g_force_symmetry, symmetry_type::XY_AXIS};
+    ValueSaver save_force_symmetry{g_force_symmetry, SymmetryType::XY_AXIS};
 
     exec_cmd_arg("symmetry=fmeh");
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
-    EXPECT_EQ(symmetry_type::XY_AXIS, g_force_symmetry);
+    EXPECT_EQ(SymmetryType::XY_AXIS, g_force_symmetry);
 }
 
 TEST_F(TestParameterCommand, soundYes)

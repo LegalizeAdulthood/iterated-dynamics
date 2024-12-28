@@ -65,11 +65,11 @@ bool halley_setup()
 
     if (g_degree % 2)
     {
-        g_symmetry = symmetry_type::X_AXIS;   // odd
+        g_symmetry = SymmetryType::X_AXIS;   // odd
     }
     else
     {
-        g_symmetry = symmetry_type::XY_AXIS; // even
+        g_symmetry = SymmetryType::XY_AXIS; // even
     }
     return true;
 }

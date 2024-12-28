@@ -229,7 +229,7 @@ bool julia_fn_plus_z_sqrd_setup()
     case trig_fn::COS:
     case trig_fn::TAN:
     case trig_fn::TANH:
-        g_symmetry = symmetry_type::ORIGIN;
+        g_symmetry = SymmetryType::ORIGIN;
         break;
         // default is for NONE symmetry
 

@@ -453,7 +453,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_decomp[0]     = read_info.decomp[0];
         g_decomp[1]     = read_info.decomp[1];
         g_user_biomorph_value  = read_info.biomorph;
-        g_force_symmetry = static_cast<symmetry_type>(read_info.symmetry);
+        g_force_symmetry = static_cast<SymmetryType>(read_info.symmetry);
     }
 
     if (read_info.version > 1)
@@ -649,9 +649,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             || g_outside_color == SUM
             || g_outside_color == ATAN)
         {
-            if (g_force_symmetry == symmetry_type::NOT_FORCED)
+            if (g_force_symmetry == SymmetryType::NOT_FORCED)
             {
-                g_force_symmetry = static_cast<symmetry_type>(1000);
+                g_force_symmetry = static_cast<SymmetryType>(1000);
             }
         }
     }

@@ -240,17 +240,17 @@ int trig_plus_trig_fp_fractal()
 
 bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
 {
-    static symmetry_type fnplusfn[7][7] =
+    static SymmetryType fnplusfn[7][7] =
     {
         // fn2 ->sin     cos    sinh    cosh   exp    log    sqr
         // fn1
-        /* sin */ {symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* cos */ {symmetry_type::X_AXIS,  symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* sinh*/ {symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* cosh*/ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* log */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
-        /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
+        /* sin */ {SymmetryType::PI_SYM,  SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::X_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS},
+        /* cos */ {SymmetryType::X_AXIS,  SymmetryType::PI_SYM,  SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS},
+        /* sinh*/ {SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::X_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS},
+        /* cosh*/ {SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS},
+        /* exp */ {SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::XY_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS},
+        /* log */ {SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS, SymmetryType::X_AXIS, SymmetryType::X_AXIS},
+        /* sqr */ {SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS, SymmetryType::X_AXIS, SymmetryType::XY_AXIS}
     };
     if (g_param_z1.y == 0.0 && g_param_z2.y == 0.0)
     {
@@ -260,29 +260,29 @@ bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
         }
         if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
     }                 // defaults to X_AXIS symmetry
     else
     {
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
     }
     return false;
 }
 
 bool fn_x_fn_setup()
 {
-    static symmetry_type fnxfn[7][7] =
+    static SymmetryType fnxfn[7][7] =
     {
         // fn2 ->sin     cos    sinh    cosh  exp    log    sqr
         // fn1
-        /* sin */ {symmetry_type::PI_SYM,  symmetry_type::Y_AXIS,  symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
-        /* cos */ {symmetry_type::Y_AXIS,  symmetry_type::PI_SYM,  symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
-        /* sinh*/ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
-        /* cosh*/ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
-        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::NONE,   symmetry_type::XY_AXIS},
-        /* log */ {symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::X_AXIS, symmetry_type::NONE},
-        /* sqr */ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::NONE,   symmetry_type::XY_AXIS},
+        /* sin */ {SymmetryType::PI_SYM,  SymmetryType::Y_AXIS,  SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::NONE,   SymmetryType::XY_AXIS},
+        /* cos */ {SymmetryType::Y_AXIS,  SymmetryType::PI_SYM,  SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::NONE,   SymmetryType::XY_AXIS},
+        /* sinh*/ {SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::NONE,   SymmetryType::XY_AXIS},
+        /* cosh*/ {SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::X_AXIS,  SymmetryType::NONE,   SymmetryType::XY_AXIS},
+        /* exp */ {SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::X_AXIS,  SymmetryType::NONE,   SymmetryType::XY_AXIS},
+        /* log */ {SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::X_AXIS, SymmetryType::NONE},
+        /* sqr */ {SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::NONE,   SymmetryType::XY_AXIS},
     };
     if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] <= trig_fn::SQR)    // bounds of array
     {
@@ -293,22 +293,22 @@ bool fn_x_fn_setup()
     {
         if (g_trig_index[0] == trig_fn::LOG || g_trig_index[1] == trig_fn::LOG)
         {
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
         }
         if (g_trig_index[0] == trig_fn::COS || g_trig_index[1] == trig_fn::COS)
         {
             if (g_trig_index[0] == trig_fn::SIN || g_trig_index[1] == trig_fn::SIN)
             {
-                g_symmetry = symmetry_type::PI_SYM;
+                g_symmetry = SymmetryType::PI_SYM;
             }
             if (g_trig_index[0] == trig_fn::COSXX || g_trig_index[1] == trig_fn::COSXX)
             {
-                g_symmetry = symmetry_type::PI_SYM;
+                g_symmetry = SymmetryType::PI_SYM;
             }
         }
         if (g_trig_index[0] == trig_fn::COS && g_trig_index[1] == trig_fn::COS)
         {
-            g_symmetry = symmetry_type::PI_SYM;
+            g_symmetry = SymmetryType::PI_SYM;
         }
     }
     if (g_cur_fractal_specific->isinteger)
@@ -382,7 +382,7 @@ bool sqr_trig_setup()
     case trig_fn::SIN:
     case trig_fn::COSXX: // cosxx
     case trig_fn::COS:   // 'real' cos
-        g_symmetry = symmetry_type::PI_SYM;
+        g_symmetry = SymmetryType::PI_SYM;
         break;
         // default is for X_AXIS symmetry
 
@@ -487,16 +487,16 @@ bool z_x_trig_plus_z_setup()
         case trig_fn::COSH:
         case trig_fn::SQR:
         case trig_fn::COS:
-            g_symmetry = symmetry_type::XY_AXIS;
+            g_symmetry = SymmetryType::XY_AXIS;
             break;
         case trig_fn::FLIP:
-            g_symmetry = symmetry_type::Y_AXIS;
+            g_symmetry = SymmetryType::Y_AXIS;
             break;
         case trig_fn::LOG:
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
             break;
         default:
-            g_symmetry = symmetry_type::X_AXIS;
+            g_symmetry = SymmetryType::X_AXIS;
             break;
         }
     }
@@ -509,13 +509,13 @@ bool z_x_trig_plus_z_setup()
         case trig_fn::COSH:
         case trig_fn::SQR:
         case trig_fn::COS:
-            g_symmetry = symmetry_type::ORIGIN;
+            g_symmetry = SymmetryType::ORIGIN;
             break;
         case trig_fn::FLIP:
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
             break;
         default:
-            g_symmetry = symmetry_type::NONE;
+            g_symmetry = SymmetryType::NONE;
             break;
         }
     }

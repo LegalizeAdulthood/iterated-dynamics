@@ -203,7 +203,7 @@ bool lambda_trig_setup()
     case trig_fn::SIN:
     case trig_fn::COSXX:
     case trig_fn::COS:
-        g_symmetry = symmetry_type::PI_SYM;
+        g_symmetry = SymmetryType::PI_SYM;
         if (isinteger)
         {
             g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal1;
@@ -215,7 +215,7 @@ bool lambda_trig_setup()
         break;
     case trig_fn::SINH:
     case trig_fn::COSH:
-        g_symmetry = symmetry_type::ORIGIN;
+        g_symmetry = SymmetryType::ORIGIN;
         if (isinteger)
         {
             g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal2;
@@ -226,7 +226,7 @@ bool lambda_trig_setup()
         }
         break;
     case trig_fn::SQR:
-        g_symmetry = symmetry_type::ORIGIN;
+        g_symmetry = SymmetryType::ORIGIN;
         break;
     case trig_fn::EXP:
         if (isinteger)
@@ -237,13 +237,13 @@ bool lambda_trig_setup()
         {
             g_cur_fractal_specific->orbitcalc =  lambda_exponent_fractal;
         }
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
         break;
     case trig_fn::LOG:
-        g_symmetry = symmetry_type::NONE;
+        g_symmetry = SymmetryType::NONE;
         break;
     default:   // default for additional functions
-        g_symmetry = symmetry_type::ORIGIN;
+        g_symmetry = SymmetryType::ORIGIN;
         break;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
@@ -268,7 +268,7 @@ bool mandel_trig_setup()
     {
         g_cur_fractal_specific->orbitcalc =  lambda_trig_fp_fractal;
     }
-    g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+    g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
     {
     case trig_fn::SIN:
@@ -294,7 +294,7 @@ bool mandel_trig_setup()
         }
         break;
     case trig_fn::EXP:
-        g_symmetry = symmetry_type::X_AXIS_NO_PARAM;
+        g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         if (isinteger)
         {
             g_cur_fractal_specific->orbitcalc =  long_lambda_exponent_fractal;
@@ -305,10 +305,10 @@ bool mandel_trig_setup()
         }
         break;
     case trig_fn::LOG:
-        g_symmetry = symmetry_type::X_AXIS_NO_PARAM;
+        g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         break;
     default:
-        g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
+        g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         break;
     }
     if (isinteger)

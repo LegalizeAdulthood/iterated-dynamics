@@ -342,11 +342,11 @@ bool newton_setup()
     g_params[0] = (double)g_degree;
     if (g_degree%4 == 0)
     {
-        g_symmetry = symmetry_type::XY_AXIS;
+        g_symmetry = SymmetryType::XY_AXIS;
     }
     else
     {
-        g_symmetry = symmetry_type::X_AXIS;
+        g_symmetry = SymmetryType::X_AXIS;
     }
 
     g_calc_type = standard_fractal;
