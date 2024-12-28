@@ -12,7 +12,7 @@
 
 struct AlternateMath
 {
-    fractal_type type;                  // index in fractalname of the fractal
+    FractalType type;                  // index in fractalname of the fractal
     BFMathType math;                  // kind of math used
     int (*orbitcalc)();                 // function that calculates one orbit
     int (*per_pixel)();                 // once-per-pixel init
@@ -21,7 +21,7 @@ struct AlternateMath
 
 struct MoreParams
 {
-    fractal_type type;                  // index in fractalname of the fractal
+    FractalType type;                  // index in fractalname of the fractal
     char const *param[MAX_PARAMS-4];    // name of the parameters
     double   paramvalue[MAX_PARAMS-4];  // default parameter values
 };
@@ -96,9 +96,9 @@ struct FractalSpecific
     float ymin;                             // default YMIN corner
     float ymax;                             // default YMAX corner
     int isinteger;                          // 1 if integer fractal, 0 otherwise
-    fractal_type tojulia;                   // mandel-to-julia switch
-    fractal_type tomandel;                  // julia-to-mandel switch
-    fractal_type tofloat;                   // integer-to-floating switch
+    FractalType tojulia;                   // mandel-to-julia switch
+    FractalType tomandel;                  // julia-to-mandel switch
+    FractalType tofloat;                   // integer-to-floating switch
     symmetry_type symmetry;                 // applicable symmetry logic
     int (*orbitcalc)();                     // function that calculates one orbit
     int (*per_pixel)();                     // once-per-pixel init

@@ -4,4 +4,4 @@
 
 #include "fractype.h"
 
-int find_extra_param(fractal_type type);
+int find_extra_param(FractalType type);

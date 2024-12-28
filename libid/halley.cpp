@@ -33,11 +33,11 @@ bool halley_setup()
 
     if (g_user_float_flag)
     {
-        g_fractal_type = fractal_type::HALLEY; // float on
+        g_fractal_type = FractalType::HALLEY; // float on
     }
     else
     {
-        g_fractal_type = fractal_type::MPHALLEY;
+        g_fractal_type = FractalType::MPHALLEY;
     }
 
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
@@ -53,7 +53,7 @@ bool halley_setup()
     s_halley_a_plus_one = g_degree + 1; // a+1
     s_halley_a_plus_one_times_degree = s_halley_a_plus_one * g_degree;
 
-    if (g_fractal_type == fractal_type::MPHALLEY)
+    if (g_fractal_type == FractalType::MPHALLEY)
     {
         s_halley_mp_a_plus_one = *d_to_mp((double)s_halley_a_plus_one);
         s_halley_mp_a_plus_one_times_degree = *d_to_mp((double)s_halley_a_plus_one_times_degree);

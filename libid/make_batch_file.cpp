@@ -686,7 +686,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         }
         put_param(" %s=%s", "type", sptr);
 
-        if (g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
+        if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROTFP)
         {
             put_param(" %s=%.15g/%.15g/%.15g/%.15g",
                      "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
@@ -705,7 +705,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             {
                 put_param(" %s=%g", "julibroteyes", g_eyes_fp);
             }
-            if (g_new_orbit_type != fractal_type::JULIA)
+            if (g_new_orbit_type != FractalType::JULIA)
             {
                 char const *name;
                 name = g_fractal_specific[+g_new_orbit_type].name;
@@ -720,7 +720,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
                 put_param(" %s=%s", "3dmode", to_string(g_julibrot_3d_mode));
             }
         }
-        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
         {
             put_file_name("formulafile", g_formula_filename.c_str());
             put_param(" %s=%s", "formulaname", g_formula_name.c_str());
@@ -729,17 +729,17 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
                 put_param(" %s=%c", "ismand", g_is_mandelbrot ? 'y' : 'n');
             }
         }
-        if (g_fractal_type == fractal_type::LSYSTEM)
+        if (g_fractal_type == FractalType::LSYSTEM)
         {
             put_file_name("lfile", g_l_system_filename.c_str());
             put_param(" %s=%s", "lname", g_l_system_name.c_str());
         }
-        if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
+        if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS3D)
         {
             put_file_name("ifsfile", g_ifs_filename.c_str());
             put_param(" %s=%s", "ifs", g_ifs_name.c_str());
         }
-        if (g_fractal_type == fractal_type::INVERSEJULIA || g_fractal_type == fractal_type::INVERSEJULIAFP)
+        if (g_fractal_type == FractalType::INVERSEJULIA || g_fractal_type == FractalType::INVERSEJULIAFP)
         {
             put_param(" %s=%s/%s", "miim", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
@@ -852,7 +852,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         int i;
         for (i = (MAX_PARAMS-1); i >= 0; --i)
         {
-            if (type_has_param((g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
+            if (type_has_param((g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROTFP)
                             ?g_new_orbit_type:g_fractal_type, i, nullptr))
             {
                 break;
@@ -861,7 +861,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 
         if (i >= 0)
         {
-            if (g_fractal_type == fractal_type::CELLULAR || g_fractal_type == fractal_type::ANT)
+            if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
             {
                 put_param(" %s=%.1f", "params", g_params[0]);
             }
@@ -878,7 +878,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             for (int j = 1; j <= i; ++j)
             {
-                if (g_fractal_type == fractal_type::CELLULAR || g_fractal_type == fractal_type::ANT)
+                if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
                 {
                     put_param("/%.1f", g_params[j]);
                 }

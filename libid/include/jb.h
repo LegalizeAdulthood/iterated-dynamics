@@ -2,7 +2,7 @@
 //
 #pragma once
 
-enum class fractal_type;
+enum class FractalType;
 
 enum class julibrot_3d_mode
 {
@@ -41,7 +41,7 @@ extern double                g_julibrot_x_min;
 extern double                g_julibrot_y_max;
 extern double                g_julibrot_y_min;
 extern int                   g_julibrot_z_dots;
-extern fractal_type          g_new_orbit_type;
+extern FractalType          g_new_orbit_type;
 extern const char *          g_julibrot_3d_options[];
 
 bool julibrot_setup();

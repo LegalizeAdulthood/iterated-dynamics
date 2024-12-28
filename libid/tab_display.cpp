@@ -200,7 +200,7 @@ bool tab_display2(char *msg)
               g_num_fractal_types*(int)sizeof(FractalSpecific));
     write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);
     ++row;
-    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
     {
         write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
                   g_operation_index, g_variable_index);
@@ -279,7 +279,7 @@ int tab_display()       // display the status of the current image
         bfXctr = alloc_stack(g_bf_length+2);
         bfYctr = alloc_stack(g_bf_length+2);
     }
-    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
     {
         for (int i = 0; i < MAX_PARAMS; i += 2)
         {
@@ -307,7 +307,7 @@ top:
                           g_cur_fractal_specific->name[0] == '*' ?
                           &g_cur_fractal_specific->name[1] : g_cur_fractal_specific->name);
         int i = 0;
-        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name);
@@ -317,7 +317,7 @@ top:
         }
         trig_details(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
-        if (g_fractal_type == fractal_type::LSYSTEM)
+        if (g_fractal_type == FractalType::LSYSTEM)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, g_l_system_name);
@@ -328,7 +328,7 @@ top:
             }
             driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_l_system_filename);
         }
-        if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
+        if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS3D)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, g_ifs_name);
@@ -667,7 +667,7 @@ top:
     std::sprintf(msg, "%f", g_magnitude_limit);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
-    if (g_fractal_type == fractal_type::PLASMA || g_fractal_type == fractal_type::ANT || g_fractal_type == fractal_type::CELLULAR)
+    if (g_fractal_type == FractalType::PLASMA || g_fractal_type == FractalType::ANT || g_fractal_type == FractalType::CELLULAR)
     {
         driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
         std::sprintf(msg, "%d", g_random_seed);

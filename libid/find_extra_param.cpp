@@ -4,14 +4,14 @@
 
 #include "fractalp.h"
 
-int find_extra_param(fractal_type type)
+int find_extra_param(FractalType type)
 {
     int ret = -1;
     if (bit_set(g_fractal_specific[+type].flags, fractal_flags::MORE))
     {
-        fractal_type curtyp;
+        FractalType curtyp;
         int i = -1;
-        while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != fractal_type::NOFRACTAL);
+        while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != FractalType::NOFRACTAL);
         if (curtyp == type)
         {
             ret = i;

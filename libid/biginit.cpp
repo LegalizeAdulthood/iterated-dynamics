@@ -462,9 +462,9 @@ void init_bf_dec(int dec)
         // using 2 doesn't gain much and requires another test
         g_int_length = 4;
     }
-    else if (g_fractal_type == fractal_type::FPMANDELZPOWER //
-        || g_fractal_type == fractal_type::FPJULIAZPOWER    //
-        || g_fractal_type == fractal_type::DIVIDE_BROT5)
+    else if (g_fractal_type == FractalType::FPMANDELZPOWER //
+        || g_fractal_type == FractalType::FPJULIAZPOWER    //
+        || g_fractal_type == FractalType::DIVIDE_BROT5)
     {
         g_int_length = 4; // 2 leaves artifacts in the center of the lakes
     }
@@ -498,9 +498,9 @@ void init_bf_length(int bnl)
         // using 2 doesn't gain much and requires another test
         g_int_length = 4;
     }
-    else if (g_fractal_type == fractal_type::FPMANDELZPOWER //
-        || g_fractal_type == fractal_type::FPJULIAZPOWER    //
-        || g_fractal_type == fractal_type::DIVIDE_BROT5)
+    else if (g_fractal_type == FractalType::FPMANDELZPOWER //
+        || g_fractal_type == FractalType::FPJULIAZPOWER    //
+        || g_fractal_type == FractalType::DIVIDE_BROT5)
     {
         g_int_length = 4; // 2 leaves artifacts in the center of the lakes
     }

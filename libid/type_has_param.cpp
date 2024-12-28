@@ -18,7 +18,7 @@
  *  Pass in nullptr for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-bool type_has_param(fractal_type type, int parm, char *buf)
+bool type_has_param(FractalType type, int parm, char *buf)
 {
     char const *ret = nullptr;
     if (0 <= parm && parm < 4)
@@ -41,7 +41,7 @@ bool type_has_param(fractal_type type, int parm, char *buf)
         }
     }
 
-    if (type == fractal_type::FORMULA || type == fractal_type::FFORMULA)
+    if (type == FractalType::FORMULA || type == FractalType::FFORMULA)
     {
         if (param_not_used(parm))
         {

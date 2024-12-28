@@ -99,11 +99,11 @@ main_state get_history(int kbd_char)
     restore_history_info(g_history_ptr);
     g_zoom_enabled = true;
     g_init_mode = g_adapter;
-    if (g_cur_fractal_specific->isinteger != 0 && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+    if (g_cur_fractal_specific->isinteger != 0 && g_cur_fractal_specific->tofloat != FractalType::NOFRACTAL)
     {
         g_user_float_flag = false;
     }
-    if (g_cur_fractal_specific->isinteger == 0 && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+    if (g_cur_fractal_specific->isinteger == 0 && g_cur_fractal_specific->tofloat != FractalType::NOFRACTAL)
     {
         g_user_float_flag = true;
     }

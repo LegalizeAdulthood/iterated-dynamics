@@ -10,7 +10,7 @@
 #include "id.h"
 #include "id_data.h"
 
-void load_params(fractal_type fractype)
+void load_params(FractalType fractype)
 {
     for (int i = 0; i < 4; ++i)
     {

@@ -3,7 +3,7 @@
 #pragma once
 
 // These MUST match the corresponding indices into the fractalspecific array
-enum class fractal_type
+enum class FractalType
 {
     NOFRACTAL                   = -1,
     MANDEL                      = 0,
@@ -204,33 +204,33 @@ enum class fractal_type
     MANDELBROTMIX4              = 173
 };
 
-inline int operator+(fractal_type rhs)
+inline int operator+(FractalType rhs)
 {
     return static_cast<int>(rhs);
 }
-inline bool operator==(fractal_type lhs, fractal_type rhs)
+inline bool operator==(FractalType lhs, FractalType rhs)
 {
     return +lhs == +rhs;
 }
-inline bool operator!=(fractal_type lhs, fractal_type rhs)
+inline bool operator!=(FractalType lhs, FractalType rhs)
 {
     return +lhs != +rhs;
 }
-inline bool operator<(fractal_type lhs, fractal_type rhs)
+inline bool operator<(FractalType lhs, FractalType rhs)
 {
     return +lhs < +rhs;
 }
-inline bool operator<=(fractal_type lhs, fractal_type rhs)
+inline bool operator<=(FractalType lhs, FractalType rhs)
 {
     return +lhs <= +rhs;
 }
-inline bool operator>(fractal_type lhs, fractal_type rhs)
+inline bool operator>(FractalType lhs, FractalType rhs)
 {
     return +lhs > +rhs;
 }
-inline bool operator>=(fractal_type lhs, fractal_type rhs)
+inline bool operator>=(FractalType lhs, FractalType rhs)
 {
     return +lhs >= +rhs;
 }
 
-extern fractal_type g_fractal_type;
+extern FractalType g_fractal_type;

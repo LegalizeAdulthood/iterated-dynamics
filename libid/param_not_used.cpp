@@ -18,7 +18,7 @@ bool param_not_used(int parm)
     bool ret = false;
 
     // sanity check
-    if (g_fractal_type != fractal_type::FORMULA && g_fractal_type != fractal_type::FFORMULA)
+    if (g_fractal_type != FractalType::FORMULA && g_fractal_type != FractalType::FFORMULA)
     {
         return false;
     }

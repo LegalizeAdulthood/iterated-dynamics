@@ -524,7 +524,7 @@ int mandel_per_pixel()
     }
     switch (g_fractal_type)
     {
-    case fractal_type::MANDELLAMBDA:              // Critical Value 0.5 + 0.0i
+    case FractalType::MANDELLAMBDA:              // Critical Value 0.5 + 0.0i
         g_l_old_z.x = g_fudge_half;
         g_l_old_z.y = 0;
         break;
@@ -578,13 +578,13 @@ int mandel_fp_per_pixel()
     }
     switch (g_fractal_type)
     {
-    case fractal_type::MAGNET2M:
+    case FractalType::MAGNET2M:
         float_pre_calc_magnet2();
-    case fractal_type::MAGNET1M:
+    case FractalType::MAGNET1M:
         g_old_z.y = 0.0;       // Critical Val Zero both, but neither
         g_old_z.x = g_old_z.y; // is of the form f(Z,C) = Z*g(Z)+C
         break;
-    case fractal_type::MANDELLAMBDAFP:            // Critical Value 0.5 + 0.0i
+    case FractalType::MANDELLAMBDAFP:            // Critical Value 0.5 + 0.0i
         g_old_z.x = 0.5;
         g_old_z.y = 0.0;
         break;

@@ -92,7 +92,7 @@ float g_julibrot_dist_fp{24.0f};
 float g_eyes_fp{2.5f};
 float g_julibrot_depth_fp{8.0f};
 julibrot_3d_mode g_julibrot_3d_mode{};
-fractal_type g_new_orbit_type{fractal_type::JULIA};
+FractalType g_new_orbit_type{FractalType::JULIA};
 const char *g_julibrot_3d_options[]{
     to_string(julibrot_3d_mode::MONOCULAR), //
     to_string(julibrot_3d_mode::LEFT_EYE),  //
@@ -376,7 +376,7 @@ int z_line_fp(double x, double y)
     for (zpixel = 0; zpixel < g_julibrot_z_dots; zpixel++)
     {
         // Special initialization for Mandelbrot types
-        if (g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP)
+        if (g_new_orbit_type == FractalType::QUATFP || g_new_orbit_type == FractalType::HYPERCMPLXFP)
         {
             g_old_z.x = 0.0;
             g_old_z.y = 0.0;
@@ -455,7 +455,7 @@ int std_4d_fractal()
 {
     long x;
     g_c_exponent = (int)g_params[2];
-    if (g_new_orbit_type == fractal_type::LJULIAZPOWER)
+    if (g_new_orbit_type == FractalType::LJULIAZPOWER)
     {
         if (g_c_exponent < 1)
         {
@@ -511,7 +511,7 @@ int std_4d_fp_fractal()
     double x;
     g_c_exponent = (int)g_params[2];
 
-    if (g_new_orbit_type == fractal_type::FPJULIAZPOWER)
+    if (g_new_orbit_type == FractalType::FPJULIAZPOWER)
     {
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {

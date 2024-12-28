@@ -520,7 +520,7 @@ done:
         g_box_count = 0;                     // no zoom box yet
         g_zoom_box_width = 0;
 
-        if (g_fractal_type == fractal_type::PLASMA)
+        if (g_fractal_type == FractalType::PLASMA)
         {
             g_cycle_limit = 256;              // plasma clouds need quick spins
             g_dac_count = 256;

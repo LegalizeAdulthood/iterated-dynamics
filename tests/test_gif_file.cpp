@@ -522,7 +522,7 @@ TEST_F(TestGIFFractalInfoExtension, decode)
 
     EXPECT_EQ("Fractal", trim(info.info_id));
     EXPECT_EQ(150, info.iterationsold);
-    EXPECT_EQ(+fractal_type::MANDEL, info.fractal_type);
+    EXPECT_EQ(+FractalType::MANDEL, info.fractal_type);
     EXPECT_NEAR(-2.5, info.xmin, eps);
     EXPECT_NEAR(1.5, info.xmax, eps);
     EXPECT_NEAR(-1.5, info.ymin, eps);

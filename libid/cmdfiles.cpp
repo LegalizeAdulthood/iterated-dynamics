@@ -499,7 +499,7 @@ static void init_vars_fractal()
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
     g_user_float_flag = true;                            // turn on the float flag
     g_finite_attractor = false;                          // disable finite attractor logic
-    g_fractal_type = fractal_type::MANDEL;               // initial type Set flag
+    g_fractal_type = FractalType::MANDEL;               // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];     //
     init_param_flags();                                  //
     g_bail_out = 0;                                      // no user-entered bailout
@@ -571,7 +571,7 @@ static void init_vars_fractal()
     g_julibrot_dist_fp = 24;                                        //
     g_eyes_fp = 2.5F;                                               //
     g_julibrot_depth_fp = 8;                                        //
-    g_new_orbit_type = fractal_type::JULIA;                         //
+    g_new_orbit_type = FractalType::JULIA;                         //
     g_julibrot_z_dots = 128;                                        //
     init_vars3d();                                                  //
     g_base_hertz = 440;                                             // basic hertz rate
@@ -1433,7 +1433,7 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (g_fractal_type == fractal_type::CELLULAR)
+    if (g_fractal_type == FractalType::CELLULAR)
     {
         return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
     }
@@ -1698,7 +1698,7 @@ static cmdarg_flags cmd_converge(const Command &cmd)
 // corners=?/?/?/?
 static cmdarg_flags cmd_corners(const Command &cmd)
 {
-    if (g_fractal_type == fractal_type::CELLULAR)
+    if (g_fractal_type == FractalType::CELLULAR)
     {
         return cmdarg_flags::FRACTAL_PARAM; // skip setting the corners
     }
@@ -3548,8 +3548,8 @@ static cmdarg_flags cmd_type(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    const fractal_type previous{g_fractal_type};
-    g_fractal_type = static_cast<fractal_type>(k);
+    const FractalType previous{g_fractal_type};
+    g_fractal_type = static_cast<FractalType>(k);
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     if (!s_init_corners)
     {

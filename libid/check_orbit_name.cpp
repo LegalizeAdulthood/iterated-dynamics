@@ -48,7 +48,7 @@ bool check_orbit_name(char const *orbit_name)
     {
         if (std::strcmp(orbit_name, nameptr[i]) == 0)
         {
-            g_new_orbit_type = static_cast<fractal_type>(fractals[i]);
+            g_new_orbit_type = static_cast<FractalType>(fractals[i]);
             bad = false;
             break;
         }

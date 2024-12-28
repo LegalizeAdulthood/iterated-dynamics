@@ -875,7 +875,7 @@ ParamSaver::~ParamSaver()
 
 TEST_F(TestParameterCommand, typeSierpinski)
 {
-    ValueSaver saved_fractal_type{g_fractal_type, fractal_type::LYAPUNOV};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::LYAPUNOV};
     ValueSaver saved_fractal_specific{g_cur_fractal_specific, nullptr};
     ValueSaver saved_x_min{g_x_min, 111.0};
     ValueSaver saved_x_max{g_x_max, 222.0};
@@ -889,8 +889,8 @@ TEST_F(TestParameterCommand, typeSierpinski)
     exec_cmd_arg("type=sierpinski", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(fractal_type::SIERPINSKI, g_fractal_type);
-    EXPECT_EQ(g_cur_fractal_specific, &g_fractal_specific[+fractal_type::SIERPINSKI]);
+    EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
+    EXPECT_EQ(g_cur_fractal_specific, &g_fractal_specific[+FractalType::SIERPINSKI]);
     const FractalSpecific &fractal{*g_cur_fractal_specific};
     EXPECT_EQ(g_x_min, fractal.xmin);
     EXPECT_EQ(g_x_max, fractal.xmax);
