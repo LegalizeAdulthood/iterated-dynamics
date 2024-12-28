@@ -4,7 +4,7 @@
 
 #include "path_match.h"
 
-enum class dir_pos
+enum class DirPos
 {
     NONE = 0,
     DOT = 1,
@@ -17,7 +17,7 @@ DirSearch g_dta;
 namespace fs = std::filesystem;
 
 static MatchFn s_path_matcher;
-static dir_pos s_dir_pos{dir_pos::NONE};
+static DirPos s_dir_pos{DirPos::NONE};
 static fs::directory_iterator s_dir_it;
 
 /* fill_dta
@@ -33,23 +33,23 @@ static void fill_dta()
 
 static bool next_match()
 {
-    if (s_dir_pos == dir_pos::NONE)
+    if (s_dir_pos == DirPos::NONE)
     {
         g_dta.path = (s_dir_it->path() / ".").string();
         g_dta.filename = ".";
         g_dta.attribute = SUB_DIR;
-        s_dir_pos = dir_pos::DOT;
+        s_dir_pos = DirPos::DOT;
         return true;
     }
-    if (s_dir_pos == dir_pos::DOT)
+    if (s_dir_pos == DirPos::DOT)
     {
         g_dta.path = (s_dir_it->path() / "..").string();
         g_dta.filename = "..";
         g_dta.attribute = SUB_DIR;
-        s_dir_pos = dir_pos::DOT_DOT;
+        s_dir_pos = DirPos::DOT_DOT;
         return true;
     }
-    s_dir_pos = dir_pos::FILES;
+    s_dir_pos = DirPos::FILES;
 
     while (s_dir_it != fs::directory_iterator() && !s_path_matcher(*s_dir_it))
     {
@@ -57,7 +57,7 @@ static bool next_match()
     }
     if (s_dir_it == fs::directory_iterator())
     {
-        s_dir_pos = dir_pos::NONE;
+        s_dir_pos = DirPos::NONE;
         return false;
     }
 
@@ -85,11 +85,11 @@ int fr_find_first(char const *path)       // Find 1st file (or subdir) meeting p
     s_path_matcher = match_fn(path);
     if (is_directory(search) || search.filename() == "*" || search.filename() == "*.*")
     {
-        s_dir_pos = dir_pos::NONE;
+        s_dir_pos = DirPos::NONE;
     }
     else
     {
-        s_dir_pos = dir_pos::FILES;
+        s_dir_pos = DirPos::FILES;
     }
     return next_match() ? 0 : 1;
 }
@@ -101,7 +101,7 @@ int fr_find_first(char const *path)       // Find 1st file (or subdir) meeting p
  */
 int fr_find_next()
 {
-    if (s_dir_pos == dir_pos::FILES)
+    if (s_dir_pos == DirPos::FILES)
     {
         ++s_dir_it;
     }
