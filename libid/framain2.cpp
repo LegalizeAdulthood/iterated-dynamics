@@ -309,14 +309,14 @@ main_state big_while_loop(MainContext &context)
             }
             if (i == 0)
             {
-                driver_buzzer(buzzer_codes::COMPLETE);
+                driver_buzzer(Buzzer::COMPLETE);
             }
             else
             {
                 g_calc_status = calc_status_value::NO_FRACTAL;
                 if (driver_key_pressed())
                 {
-                    driver_buzzer(buzzer_codes::INTERRUPT);
+                    driver_buzzer(Buzzer::INTERRUPT);
                     while (driver_key_pressed())
                     {
                         driver_get_key();
@@ -465,7 +465,7 @@ done:
                 if (ecount == gridsqr)
                 {
                     i = 0;
-                    driver_buzzer(buzzer_codes::COMPLETE); // finished!!
+                    driver_buzzer(Buzzer::COMPLETE); // finished!!
                 }
                 else
                 {
@@ -507,7 +507,7 @@ done:
                 i = calc_fract();       // draw the fractal using "C"
                 if (i == 0)
                 {
-                    driver_buzzer(buzzer_codes::COMPLETE); // finished!!
+                    driver_buzzer(Buzzer::COMPLETE); // finished!!
                 }
             }
 

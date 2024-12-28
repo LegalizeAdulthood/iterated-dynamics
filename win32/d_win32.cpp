@@ -347,18 +347,18 @@ int Win32BaseDriver::init_fm()
     return 0;
 }
 
-void Win32BaseDriver::buzzer(buzzer_codes kind)
+void Win32BaseDriver::buzzer(Buzzer kind)
 {
     UINT beep{MB_OK};
     switch (kind)
     {
-    case buzzer_codes::COMPLETE:
+    case Buzzer::COMPLETE:
     default:
         break;
-    case buzzer_codes::INTERRUPT:
+    case Buzzer::INTERRUPT:
         beep = MB_ICONWARNING;
         break;
-    case buzzer_codes::PROBLEM:
+    case Buzzer::PROBLEM:
         beep = MB_ICONERROR;
         break;
     }

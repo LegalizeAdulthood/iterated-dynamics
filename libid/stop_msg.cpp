@@ -115,8 +115,8 @@ bool stop_msg(stopmsg_flags flags, const std::string &msg)
     driver_hide_text_cursor();   // cursor off
     if (!bit_set(flags, stopmsg_flags::NO_BUZZER))
     {
-        driver_buzzer(bit_set(flags, stopmsg_flags::INFO_ONLY) ? buzzer_codes::COMPLETE
-                                                                       : buzzer_codes::PROBLEM);
+        driver_buzzer(bit_set(flags, stopmsg_flags::INFO_ONLY) ? Buzzer::COMPLETE
+                                                                       : Buzzer::PROBLEM);
     }
     while (driver_key_pressed())   // flush any keyahead
     {

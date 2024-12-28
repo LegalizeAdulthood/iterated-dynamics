@@ -9,7 +9,7 @@
 
 struct VideoInfo;
 
-enum class buzzer_codes
+enum class Buzzer
 {
     COMPLETE = 0,
     INTERRUPT = 1,
@@ -104,7 +104,7 @@ public:
     virtual void unstack_screen() = 0;                                        //
     virtual void discard_screen() = 0;                                        //
     virtual int init_fm() = 0;                                                // sound routines
-    virtual void buzzer(buzzer_codes kind) = 0;                               //
+    virtual void buzzer(Buzzer kind) = 0;                               //
     virtual bool sound_on(int frequency) = 0;                                 //
     virtual void sound_off() = 0;                                             //
     virtual void mute() = 0;                                                  //
@@ -306,7 +306,7 @@ inline int driver_init_fm()
 {
     return g_driver->init_fm();
 }
-inline void driver_buzzer(buzzer_codes kind)
+inline void driver_buzzer(Buzzer kind)
 {
     g_driver->buzzer(kind);
 }

@@ -59,7 +59,7 @@ public:
     MOCK_METHOD(void, unstack_screen, (), (override));
     MOCK_METHOD(void, discard_screen, (), (override));
     MOCK_METHOD(int, init_fm, (), (override));
-    MOCK_METHOD(void, buzzer, (buzzer_codes), (override));
+    MOCK_METHOD(void, buzzer, (Buzzer), (override));
     MOCK_METHOD(bool, sound_on, (int), (override));
     MOCK_METHOD(void, sound_off, (), (override));
     MOCK_METHOD(void, mute, (), (override));

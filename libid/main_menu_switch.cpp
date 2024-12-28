@@ -237,7 +237,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
     }
     else
     {
-        driver_buzzer(buzzer_codes::PROBLEM); // can't switch
+        driver_buzzer(Buzzer::PROBLEM); // can't switch
     }
 }
 
@@ -447,7 +447,7 @@ static main_state inverse_julia_toggle(MainContext &context)
     }
     else
     {
-        driver_buzzer(buzzer_codes::PROBLEM);
+        driver_buzzer(Buzzer::PROBLEM);
     }
     return main_state::NOTHING;
 }
@@ -518,7 +518,7 @@ static main_state look_for_files(MainContext &context)
     if ((g_zoom_box_width != 0) || driver_diskp())
     {
         g_browsing = false;
-        driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
+        driver_buzzer(Buzzer::PROBLEM);             // can't browse if zooming or disk video
     }
     else if (look(context))
     {

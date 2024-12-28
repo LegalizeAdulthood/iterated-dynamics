@@ -84,7 +84,7 @@ void rotate(int direction)      // rotate-the-palette routine
         || g_colors < 16)
     {
         // strange things happen in 2x modes
-        driver_buzzer(buzzer_codes::PROBLEM);
+        driver_buzzer(Buzzer::PROBLEM);
         return;
     }
 
@@ -645,7 +645,7 @@ void save_palette()
         dacfile = open_save_file(palname, "w");
         if (dacfile == nullptr)
         {
-            driver_buzzer(buzzer_codes::PROBLEM);
+            driver_buzzer(Buzzer::PROBLEM);
         }
         else
         {

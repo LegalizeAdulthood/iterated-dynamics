@@ -39,7 +39,7 @@ public:
     void unstack_screen() override;
     void discard_screen() override;
     int init_fm() override;
-    void buzzer(buzzer_codes kind) override;
+    void buzzer(Buzzer kind) override;
     void sound_off() override;
     bool sound_on(int frequency) override;
     void mute() override;

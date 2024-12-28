@@ -279,7 +279,7 @@ bool auto_stereo_convert()
     if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
     {
         stop_msg("Stereo not allowed with resolution > 2048 pixels wide");
-        driver_buzzer(buzzer_codes::INTERRUPT);
+        driver_buzzer(Buzzer::INTERRUPT);
         ret = true;
         goto exit_stereo;
     }
@@ -303,7 +303,7 @@ bool auto_stereo_convert()
     DEPTH = labs(DEPTH) + 1;
     if (get_min_max())
     {
-        driver_buzzer(buzzer_codes::INTERRUPT);
+        driver_buzzer(Buzzer::INTERRUPT);
         ret = true;
         goto exit_stereo;
     }
@@ -399,7 +399,7 @@ bool auto_stereo_convert()
                 kbdchar = 255;
             }
             driver_unget_key(kbdchar);
-            driver_buzzer(buzzer_codes::COMPLETE);
+            driver_buzzer(Buzzer::COMPLETE);
             done = true;
             break;
         }

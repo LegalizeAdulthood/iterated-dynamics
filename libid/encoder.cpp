@@ -282,7 +282,7 @@ restart:
     }
     if (g_timed_save == 0)
     {
-        driver_buzzer(buzzer_codes::COMPLETE);
+        driver_buzzer(Buzzer::COMPLETE);
         if (g_init_batch == BatchMode::NONE)
         {
             text_temp_msg((" File saved as " + extract_file_name(open_file.string().c_str()) + ' ').c_str());

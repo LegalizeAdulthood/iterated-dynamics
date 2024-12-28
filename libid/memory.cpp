@@ -536,7 +536,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
             use_this_type = MemoryLocation::NOWHERE;
             which_disk_error(1);
             display_memory();
-            driver_buzzer(buzzer_codes::PROBLEM);
+            driver_buzzer(Buzzer::PROBLEM);
             break;
         }
         s_num_total_handles++;

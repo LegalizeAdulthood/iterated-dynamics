@@ -1662,7 +1662,7 @@ rescan:  // entry for changed browse parms
     c = 0;
     if (wincount)
     {
-        driver_buzzer(buzzer_codes::COMPLETE); //let user know we've finished
+        driver_buzzer(Buzzer::COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
         winlist = s_browse_windows[index];
@@ -1897,7 +1897,7 @@ rescan:  // entry for changed browse parms
     }//if
     else
     {
-        driver_buzzer(buzzer_codes::INTERRUPT); //no suitable files in directory!
+        driver_buzzer(Buzzer::INTERRUPT); //no suitable files in directory!
         text_temp_msg("Sorry.. I can't find anything");
         g_browse_sub_images = false;
     }

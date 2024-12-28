@@ -112,7 +112,7 @@ int star_field()
         {
             if (driver_key_pressed())
             {
-                driver_buzzer(buzzer_codes::INTERRUPT);
+                driver_buzzer(Buzzer::INTERRUPT);
                 g_busy = false;
                 return 1;
             }
@@ -124,7 +124,7 @@ int star_field()
             g_put_color(g_col, g_row, gaussian_number(c, g_colors));
         }
     }
-    driver_buzzer(buzzer_codes::COMPLETE);
+    driver_buzzer(Buzzer::COMPLETE);
     g_busy = false;
     return 0;
 }

@@ -2540,7 +2540,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'v': // set the reserved colors to the editor colors
         if (m_curr[0] >= g_colors || m_curr[1] >= g_colors || m_curr[0] == m_curr[1])
         {
-            driver_buzzer(buzzer_codes::PROBLEM);
+            driver_buzzer(Buzzer::PROBLEM);
             break;
         }
 
