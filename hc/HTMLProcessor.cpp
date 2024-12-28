@@ -77,18 +77,18 @@ void HTMLProcessor::write_index_html()
     {
         int size = 0;
         int width = 0;
-        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        TokenType const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {
-        case token_types::TOK_SPACE:
+        case TokenType::TOK_SPACE:
             break;
 
-        case token_types::TOK_NL:
+        case TokenType::TOK_NL:
             str << '\n';
             break;
 
-        case token_types::TOK_WORD:
+        case TokenType::TOK_WORD:
             str << "   " << std::string(curr, width);
             break;
 
@@ -146,11 +146,11 @@ void HTMLProcessor::write_topic(const Topic &t)
     {
         int size = 0;
         int width = 0;
-        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        TokenType const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {
-        case token_types::TOK_SPACE:
+        case TokenType::TOK_SPACE:
             if (!nl(width))
             {
                 spaces = std::string(width, ' ');
@@ -162,13 +162,13 @@ void HTMLProcessor::write_topic(const Topic &t)
             }
             break;
 
-        case token_types::TOK_NL:
+        case TokenType::TOK_NL:
             str << '\n';
             spaces.clear();
             column = 0;
             break;
 
-        case token_types::TOK_WORD:
+        case TokenType::TOK_WORD:
             if (!nl(width) && !spaces.empty())
             {
                 str << spaces;
@@ -178,7 +178,7 @@ void HTMLProcessor::write_topic(const Topic &t)
             column += width;
             break;
 
-        case token_types::TOK_PARA:
+        case TokenType::TOK_PARA:
             if (column > 0)
             {
                 str << '\n';
@@ -187,7 +187,7 @@ void HTMLProcessor::write_topic(const Topic &t)
             spaces.clear();
             break;
 
-        case token_types::TOK_LINK:
+        case TokenType::TOK_LINK:
             {
                 char const *data = &curr[1];
                 int const link_num = get_int(data);
@@ -205,9 +205,9 @@ void HTMLProcessor::write_topic(const Topic &t)
             }
             break;
 
-        case token_types::TOK_FF:
-        case token_types::TOK_XONLINE:
-        case token_types::TOK_XDOC:
+        case TokenType::TOK_FF:
+        case TokenType::TOK_XONLINE:
+        case TokenType::TOK_XDOC:
             break;
 
         default:
