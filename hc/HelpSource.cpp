@@ -1258,7 +1258,7 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
-static void toggle_mode(std::string tag, help_commands cmd, bool &flag, int eoff)
+static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int eoff)
 {
     if (strnicmp(s_cmd, tag.data(), tag.length()) != 0)
     {

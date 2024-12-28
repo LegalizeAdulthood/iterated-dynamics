@@ -27,7 +27,7 @@ enum class HelpLabels;
 /*
  * commands embedded in the help text
  */
-enum help_commands
+enum HelpCommand
 {
     CMD_LITERAL = 1,    // next char taken literally
     CMD_PARA = 2,       // paragraph start code
