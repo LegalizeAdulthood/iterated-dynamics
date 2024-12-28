@@ -2378,22 +2378,22 @@ TEST_F(TestParameterCommand, bailOut)
 
 TEST_F(TestParameterCommand, bailOutTestMod)
 {
-    ValueSaver saved_bail_out_test{g_bail_out_test, bailouts::Real};
+    ValueSaver saved_bail_out_test{g_bail_out_test, Bailout::REAL};
 
     exec_cmd_arg("bailoutest=mod");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(bailouts::Mod, g_bail_out_test);
+    EXPECT_EQ(Bailout::MOD, g_bail_out_test);
 }
 
 TEST_F(TestParameterCommandError, bailOutTestBadValue)
 {
-    ValueSaver saved_bail_out_test{g_bail_out_test, bailouts::Real};
+    ValueSaver saved_bail_out_test{g_bail_out_test, Bailout::REAL};
 
     exec_cmd_arg("bailoutest=foo");
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
-    EXPECT_EQ(bailouts::Real, g_bail_out_test);
+    EXPECT_EQ(Bailout::REAL, g_bail_out_test);
 }
 
 TEST_F(TestParameterCommand, symmetryXAxis)

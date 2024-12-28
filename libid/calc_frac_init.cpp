@@ -409,7 +409,7 @@ init_restart:
             && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
             && g_debug_flag != debug_flags::force_smaller_bitshift // and not debugging
             && g_close_proximity <= 2.0             // and g_close_proximity not too large
-            && g_bail_out_test == bailouts::Mod)    // and bailout test = mod
+            && g_bail_out_test == Bailout::MOD)    // and bailout test = mod
         {
             g_bit_shift = FUDGEFACTOR;                     // use the larger bitshift
         }

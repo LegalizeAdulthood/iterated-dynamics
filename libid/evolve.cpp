@@ -56,7 +56,7 @@ struct ParamHistory
     BYTE trigndx1;
     BYTE trigndx2;
     BYTE trigndx3;
-    bailouts bailoutest;
+    Bailout bailoutest;
 };
 
 GeneBase g_gene_bank[NUM_GENES];
@@ -252,7 +252,7 @@ void restore_param_history()
     g_trig_index[1] = static_cast<trig_fn>(s_old_history.trigndx1);
     g_trig_index[2] = static_cast<trig_fn>(s_old_history.trigndx2);
     g_trig_index[3] = static_cast<trig_fn>(s_old_history.trigndx3);
-    g_bail_out_test = static_cast<bailouts>(s_old_history.bailoutest);
+    g_bail_out_test = static_cast<Bailout>(s_old_history.bailoutest);
 }
 
 // routine to vary doubles
@@ -361,13 +361,13 @@ void vary_bo_test(GeneBase gene[], int randval, int i)
 {
     int choices[7] =
     {
-        static_cast<int>(bailouts::Mod),
-        static_cast<int>(bailouts::Real),
-        static_cast<int>(bailouts::Imag),
-        static_cast<int>(bailouts::Or),
-        static_cast<int>(bailouts::And),
-        static_cast<int>(bailouts::Manh),
-        static_cast<int>(bailouts::Manr)
+        static_cast<int>(Bailout::MOD),
+        static_cast<int>(Bailout::REAL),
+        static_cast<int>(Bailout::IMAG),
+        static_cast<int>(Bailout::OR),
+        static_cast<int>(Bailout::AND),
+        static_cast<int>(Bailout::MANH),
+        static_cast<int>(Bailout::MANR)
     };
     if (gene[i].mutate != variations::NONE)
     {

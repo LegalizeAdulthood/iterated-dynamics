@@ -887,14 +887,14 @@ gfp_top:
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_bail_out_test))
         {
-            g_bail_out_test = static_cast<bailouts>(paramvalues[promptnum].uval.ch.val);
+            g_bail_out_test = static_cast<Bailout>(paramvalues[promptnum].uval.ch.val);
             ret = 1;
         }
         promptnum++;
     }
     else
     {
-        g_bail_out_test = bailouts::Mod;
+        g_bail_out_test = Bailout::MOD;
     }
     set_bailout_formula(g_bail_out_test);
 

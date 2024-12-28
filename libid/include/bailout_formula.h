@@ -2,21 +2,21 @@
 //
 #pragma once
 
-enum class bailouts
+enum class Bailout
 {
-    Mod,
-    Real,
-    Imag,
-    Or,
-    And,
-    Manh,
-    Manr
+    MOD,
+    REAL,
+    IMAG,
+    OR,
+    AND,
+    MANH,
+    MANR
 };
 
-extern bailouts   g_bail_out_test;
+extern Bailout    g_bail_out_test;
 extern int      (*g_bailout_float)();
 extern int      (*g_bailout_long)();
 extern int      (*g_bailout_bignum)();
 extern int      (*g_bailout_bigfloat)();
 
-void set_bailout_formula(bailouts test);
+void set_bailout_formula(Bailout test);

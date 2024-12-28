@@ -108,7 +108,7 @@ struct ImageHistory
     double dparm9;
     double dparm10;
     long bailout;
-    bailouts bail_out_test;
+    Bailout bail_out_test;
     long iterations;
     int converge_y_adjust;
     bool old_demm_colors;

@@ -920,30 +920,30 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             put_param(" %s=%ld", "bailout", g_bail_out);
         }
 
-        if (g_bail_out_test != bailouts::Mod)
+        if (g_bail_out_test != Bailout::MOD)
         {
             put_param(" %s=", "bailoutest");
-            if (g_bail_out_test == bailouts::Real)
+            if (g_bail_out_test == Bailout::REAL)
             {
                 put_param("real");
             }
-            else if (g_bail_out_test == bailouts::Imag)
+            else if (g_bail_out_test == Bailout::IMAG)
             {
                 put_param("imag");
             }
-            else if (g_bail_out_test == bailouts::Or)
+            else if (g_bail_out_test == Bailout::OR)
             {
                 put_param("or");
             }
-            else if (g_bail_out_test == bailouts::And)
+            else if (g_bail_out_test == Bailout::AND)
             {
                 put_param("and");
             }
-            else if (g_bail_out_test == bailouts::Manh)
+            else if (g_bail_out_test == Bailout::MANH)
             {
                 put_param("manh");
             }
-            else if (g_bail_out_test == bailouts::Manr)
+            else if (g_bail_out_test == Bailout::MANR)
             {
                 put_param("manr");
             }

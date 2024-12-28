@@ -48,7 +48,7 @@ mandel_setup()           // Mandelbrot Routine
         && g_outside_color >= ITER
         && g_use_init_orbit != init_orbit_mode::value
         && !g_using_jiim
-        && g_bail_out_test == bailouts::Mod
+        && g_bail_out_test == Bailout::MOD
         && (g_orbit_save_flags & osf_midi) == 0)
     {
         g_calc_type = calc_mand; // the normal case - use CALCMAND
@@ -76,7 +76,7 @@ julia_setup()            // Julia Routine
         && g_outside_color >= ITER
         && !g_finite_attractor
         && !g_using_jiim
-        && g_bail_out_test == bailouts::Mod
+        && g_bail_out_test == Bailout::MOD
         && (g_orbit_save_flags & osf_midi) == 0)
     {
         g_calc_type = calc_mand; // the normal case - use CALCMAND
@@ -156,7 +156,7 @@ mandel_fp_setup()
             && g_use_init_orbit != init_orbit_mode::value
             && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && !g_using_jiim
-            && g_bail_out_test == bailouts::Mod
+            && g_bail_out_test == Bailout::MOD
             && (g_orbit_save_flags & osf_midi) == 0)
         {
             g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
@@ -295,7 +295,7 @@ julia_fp_setup()
             && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && !g_finite_attractor
             && !g_using_jiim
-            && g_bail_out_test == bailouts::Mod
+            && g_bail_out_test == Bailout::MOD
             && (g_orbit_save_flags & osf_midi) == 0)
         {
             g_calc_type = calc_mand_fp; // the normal case - use calcmandfp

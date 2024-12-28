@@ -555,7 +555,7 @@ static void init_vars_fractal()
     g_display_3d = display_3d_modes::NONE;                          // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
-    g_bail_out_test = bailouts::Mod;                                //
+    g_bail_out_test = Bailout::MOD;                                //
     g_bailout_float = fp_mod_bailout;                                 //
     g_bailout_long = long_mod_bailout;                                //
     g_bailout_bignum = bn_mod_bailout;                                //
@@ -1351,31 +1351,31 @@ static cmdarg_flags cmd_bail_out_test(const Command &cmd)
     const std::string_view value{cmd.value};
     if (value == "mod")
     {
-        g_bail_out_test = bailouts::Mod;
+        g_bail_out_test = Bailout::MOD;
     }
     else if (value == "real")
     {
-        g_bail_out_test = bailouts::Real;
+        g_bail_out_test = Bailout::REAL;
     }
     else if (value == "imag")
     {
-        g_bail_out_test = bailouts::Imag;
+        g_bail_out_test = Bailout::IMAG;
     }
     else if (value == "or")
     {
-        g_bail_out_test = bailouts::Or;
+        g_bail_out_test = Bailout::OR;
     }
     else if (value == "and")
     {
-        g_bail_out_test = bailouts::And;
+        g_bail_out_test = Bailout::AND;
     }
     else if (value == "manh")
     {
-        g_bail_out_test = bailouts::Manh;
+        g_bail_out_test = Bailout::MANH;
     }
     else if (value == "manr")
     {
-        g_bail_out_test = bailouts::Manr;
+        g_bail_out_test = Bailout::MANR;
     }
     else
     {
