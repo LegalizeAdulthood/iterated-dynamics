@@ -566,7 +566,7 @@ bool encoder()
         }
     }
     // Extended parameters block 005
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         save_info.tot_extend_len += extend_blk_len(22 * (g_bf_length + 2));
         // note: this assumes variables allocated in order starting with

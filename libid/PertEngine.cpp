@@ -32,7 +32,7 @@ void PertEngine::initialize_frame(
 {
     m_zoom_radius = zoom_radius;
 
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         m_saved_stack = save_stack();
         m_center_bf.x = alloc_stack(g_bf_length + 2);
@@ -81,7 +81,7 @@ int PertEngine::calculate_one_frame()
     BigStackSaver saved;
     bf_t tmp_bf;
 
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         c_bf.x = alloc_stack(g_r_bf_length + 2);
         c_bf.y = alloc_stack(g_r_bf_length + 2);
@@ -98,7 +98,7 @@ int PertEngine::calculate_one_frame()
         // Check whether this is the first time running the loop.
         if (m_reference_points == 1)
         {
-            if (g_bf_math != bf_math_type::NONE)
+            if (g_bf_math != BFMathType::NONE)
             {
                 copy_bf(c_bf.x, m_center_bf.x);
                 copy_bf(c_bf.y, m_center_bf.y);
@@ -114,7 +114,7 @@ int PertEngine::calculate_one_frame()
             m_delta_real = 0;
             m_delta_imag = 0;
 
-            if (g_bf_math != bf_math_type::NONE)
+            if (g_bf_math != BFMathType::NONE)
             {
                 reference_zoom_point(reference_coordinate_bf, g_max_iterations);
             }
@@ -148,7 +148,7 @@ int PertEngine::calculate_one_frame()
             m_delta_real = delta_real;
             m_delta_imag = delta_imag;
 
-            if (g_bf_math != bf_math_type::NONE)
+            if (g_bf_math != BFMathType::NONE)
             {
                 float_to_bf(tmp_bf, delta_real);
                 add_bf(reference_coordinate_bf.x, c_bf.x, tmp_bf);
@@ -161,7 +161,7 @@ int PertEngine::calculate_one_frame()
                 reference_coordinate.imag(c.imag() + delta_imag);
             }
 
-            if (g_bf_math != bf_math_type::NONE)
+            if (g_bf_math != BFMathType::NONE)
             {
                 reference_zoom_point(reference_coordinate_bf, g_max_iterations);
             }
@@ -206,7 +206,7 @@ int PertEngine::calculate_one_frame()
 
 void PertEngine::cleanup()
 {
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         restore_stack(m_saved_stack);
     }

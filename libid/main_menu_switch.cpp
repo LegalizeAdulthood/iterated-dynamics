@@ -155,7 +155,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         // switch to corresponding Julia set
         g_has_inverse =
             (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) &&
-            g_bf_math == bf_math_type::NONE;
+            g_bf_math == BFMathType::NONE;
         clear_zoom_box();
         jiim(jiim_types::JIIM);
         const int key = driver_get_key(); // flush keyboard buffer
@@ -387,7 +387,7 @@ static main_state show_orbit_window(MainContext &)
             || g_fractal_specific[+g_fractal_type].calctype == calc_froth)
         && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
              g_fractal_specific[+g_fractal_type].tofloat != fractal_type::NOFRACTAL)
-        && (g_bf_math == bf_math_type::NONE) // for now no arbitrary precision support
+        && (g_bf_math == BFMathType::NONE) // for now no arbitrary precision support
         && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
     {
         clear_zoom_box();
@@ -398,7 +398,7 @@ static main_state show_orbit_window(MainContext &)
 
 static main_state space_command(MainContext &context)
 {
-    if (g_bf_math != bf_math_type::NONE || g_evolving != evolution_mode_flags::NONE)
+    if (g_bf_math != BFMathType::NONE || g_evolving != evolution_mode_flags::NONE)
     {
         return main_state::NOTHING;
     }

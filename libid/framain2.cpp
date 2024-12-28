@@ -341,7 +341,7 @@ main_state big_while_loop(MainContext &context)
         g_save_y_max = g_y_max;
         g_save_y_3rd = g_y_3rd;
 
-        if (g_bf_math != bf_math_type::NONE)
+        if (g_bf_math != BFMathType::NONE)
         {
             copy_bf(g_bf_save_x_min, g_bf_x_min);
             copy_bf(g_bf_save_x_max, g_bf_x_max);

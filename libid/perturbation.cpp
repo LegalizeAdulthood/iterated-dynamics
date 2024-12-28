@@ -25,7 +25,7 @@ bool perturbation()
     double rotation{};
     double skew{};
     LDBL magnification{};
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         center_bf.x = alloc_stack(g_bf_length + 2);
         center_bf.y = alloc_stack(g_bf_length + 2);
@@ -39,7 +39,7 @@ bool perturbation()
         center.y = -center.y;
     }
 
-    if (g_bf_math == bf_math_type::NONE)
+    if (g_bf_math == BFMathType::NONE)
     {
         mandel_width = g_y_max - g_y_min;
     }

@@ -28,7 +28,7 @@
 #include <cstring>
 #include <string>
 
-bf_math_type g_bf_math{};
+BFMathType g_bf_math{};
 
 #ifndef NDEBUG
 //********************************************************************
@@ -290,7 +290,7 @@ void show_var_bf(char const *s, bf_t n)
 
 void bf_corners_to_float()
 {
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         g_x_min = (double)bf_to_float(g_bf_x_min);
         g_y_min = (double)bf_to_float(g_bf_y_min);
@@ -624,7 +624,7 @@ bool mandel_bn_setup()
     bf_to_bn(g_x_3rd_bn, g_bf_x_3rd);
     bf_to_bn(g_y_3rd_bn, g_bf_y_3rd);
 
-    g_bf_math = bf_math_type::BIGNUM;
+    g_bf_math = BFMathType::BIGNUM;
 
     // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
     sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
@@ -724,7 +724,7 @@ bool mandel_bf_setup()
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
     // the pointer to setup isn't.
-    if (g_bf_math == bf_math_type::NONE)
+    if (g_bf_math == BFMathType::NONE)
     {
         // kludge to prevent crash when math type = NONE and still call bigflt setup routine
         return mandel_fp_setup();
@@ -735,7 +735,7 @@ bool mandel_bf_setup()
     bf_t bftemp1{alloc_stack(g_bf_length + 2)};
     bf_t bftemp2{alloc_stack(g_bf_length + 2)};
 
-    g_bf_math = bf_math_type::BIGFLT;
+    g_bf_math = BFMathType::BIGFLT;
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
     sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);
@@ -897,7 +897,7 @@ int mandel_bf_per_pixel()
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
     // the pointer to setup isn't.
-    if (g_bf_math == bf_math_type::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
+    if (g_bf_math == BFMathType::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
         return mandel_fp_per_pixel();
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16)g_col);

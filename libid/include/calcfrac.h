@@ -148,7 +148,7 @@ int calc_fract();
 int calc_mand();
 int calc_mand_fp();
 int standard_fractal();
-int find_alternate_math(fractal_type type, bf_math_type math);
+int find_alternate_math(fractal_type type, BFMathType math);
 int potential(double mag, long iterations);
 void sym_pi_plot(int x, int y, int color);
 void sym_pi_plot2j(int x, int y, int color);

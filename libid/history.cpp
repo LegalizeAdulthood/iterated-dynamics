@@ -152,7 +152,7 @@ void history_init()
 
 void save_history_info()
 {
-    if (g_max_image_history <= 0 || g_bf_math != bf_math_type::NONE)
+    if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
     {
         return;
     }
@@ -336,7 +336,7 @@ void save_history_info()
 
 void restore_history_info(int i)
 {
-    if (g_max_image_history <= 0 || g_bf_math != bf_math_type::NONE)
+    if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
     {
         return;
     }

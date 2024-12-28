@@ -524,7 +524,7 @@ static void init_vars_fractal()
     g_y_min = -1.5;                                                 //
     g_y_3rd = g_y_min;                                              //
     g_y_max = 1.5;                                                  // initial corner values
-    g_bf_math = bf_math_type::NONE;                                   //
+    g_bf_math = BFMathType::NONE;                                   //
     g_potential_16bit = false;                                      //
     g_potential_flag = false;                                       //
     g_log_map_flag = 0;                                             // no logarithmic palette
@@ -1490,12 +1490,12 @@ static cmdarg_flags cmd_center_mag(const Command &cmd)
     // use arbitrary precision
     int saved;
     s_init_corners = true;
-    bf_math_type old_bf_math = g_bf_math;
-    if (g_bf_math == bf_math_type::NONE || dec > g_decimals)
+    BFMathType old_bf_math = g_bf_math;
+    if (g_bf_math == BFMathType::NONE || dec > g_decimals)
     {
         init_bf_dec(dec);
     }
-    if (old_bf_math == bf_math_type::NONE)
+    if (old_bf_math == BFMathType::NONE)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
@@ -1720,12 +1720,12 @@ static cmdarg_flags cmd_corners(const Command &cmd)
     if ((dec > DBL_DIG + 1 || g_debug_flag == debug_flags::force_arbitrary_precision_math) &&
         g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
     {
-        bf_math_type old_bf_math = g_bf_math;
-        if (g_bf_math == bf_math_type::NONE || dec > g_decimals)
+        BFMathType old_bf_math = g_bf_math;
+        if (g_bf_math == BFMathType::NONE || dec > g_decimals)
         {
             init_bf_dec(dec);
         }
-        if (old_bf_math == bf_math_type::NONE)
+        if (old_bf_math == BFMathType::NONE)
         {
             for (int k = 0; k < MAX_PARAMS; k++)
             {
@@ -2768,7 +2768,7 @@ static cmdarg_flags cmd_params(const Command &cmd)
     {
         g_params[k] = (k < cmd.total_params) ? cmd.float_vals[k] : 0.0;
     }
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {

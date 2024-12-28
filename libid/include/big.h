@@ -17,7 +17,7 @@
 // values that g_bf_math can hold,
 // 0 = g_bf_math is not being used
 // 1 = g_bf_math is being used
-enum class bf_math_type
+enum class BFMathType
 {
     // cppcheck-suppress variableHidingEnum
     NONE = 0,
@@ -34,7 +34,7 @@ using BFComplex = id::Complex<bf_t>;
 using BNComplex = id::Complex<bn_t>;
 
 // globals
-extern bf_math_type g_bf_math;
+extern BFMathType g_bf_math;
 extern int g_bn_step;
 extern int g_int_length;
 extern int g_bn_length;

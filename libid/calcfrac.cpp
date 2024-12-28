@@ -876,9 +876,9 @@ int calc_fract()
 }
 
 // locate alternate math record
-int find_alternate_math(fractal_type type, bf_math_type math)
+int find_alternate_math(fractal_type type, BFMathType math)
 {
-    if (math == bf_math_type::NONE)
+    if (math == BFMathType::NONE)
     {
         return -1;
     }
@@ -888,7 +888,7 @@ int find_alternate_math(fractal_type type, bf_math_type math)
     {
     }
     int ret = -1;
-    if (curtype == type && g_alternate_math[i].math != bf_math_type::NONE)
+    if (curtype == type && g_alternate_math[i].math != BFMathType::NONE)
     {
         ret = i;
     }
@@ -914,7 +914,7 @@ static void perform_work_list()
     }
     else
     {
-        g_bf_math = bf_math_type::NONE;
+        g_bf_math = BFMathType::NONE;
     }
 
     if (g_potential_flag && g_potential_16bit)
@@ -1398,18 +1398,18 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             s_saved.x = 0;
             s_saved.y = 0;
         }
-        if (g_bf_math != bf_math_type::NONE)
+        if (g_bf_math != BFMathType::NONE)
         {
             if (g_decimals > 200)
             {
                 g_keyboard_check_interval = -1;
             }
-            if (g_bf_math == bf_math_type::BIGNUM)
+            if (g_bf_math == BFMathType::BIGNUM)
             {
                 clear_bn(g_saved_z_bn.x);
                 clear_bn(g_saved_z_bn.y);
             }
-            else if (g_bf_math == bf_math_type::BIGFLT)
+            else if (g_bf_math == BFMathType::BIGFLT)
             {
                 clear_bf(g_saved_z_bf.x);
                 clear_bf(g_saved_z_bf.y);
@@ -1488,11 +1488,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_old_z.x = ((double)g_l_old_z.x) / g_fudge_factor;
             g_old_z.y = ((double)g_l_old_z.y) / g_fudge_factor;
         }
-        else if (g_bf_math == bf_math_type::BIGNUM)
+        else if (g_bf_math == BFMathType::BIGNUM)
         {
             g_old_z = cmplx_bn_to_float(g_old_z_bn);
         }
-        else if (g_bf_math == bf_math_type::BIGFLT)
+        else if (g_bf_math == BFMathType::BIGFLT)
         {
             g_old_z = cmplx_bf_to_float(g_old_z_bf);
         }
@@ -1590,11 +1590,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (!g_integer_fractal)
             {
-                if (g_bf_math == bf_math_type::BIGNUM)
+                if (g_bf_math == BFMathType::BIGNUM)
                 {
                     g_new_z = cmplx_bn_to_float(g_new_z_bn);
                 }
-                else if (g_bf_math == bf_math_type::BIGFLT)
+                else if (g_bf_math == BFMathType::BIGFLT)
                 {
                     g_new_z = cmplx_bf_to_float(g_new_z_bf);
                 }
@@ -1607,11 +1607,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         if (g_inside_color < ITER)
         {
-            if (g_bf_math == bf_math_type::BIGNUM)
+            if (g_bf_math == BFMathType::BIGNUM)
             {
                 g_new_z = cmplx_bn_to_float(g_new_z_bn);
             }
-            else if (g_bf_math == bf_math_type::BIGFLT)
+            else if (g_bf_math == BFMathType::BIGFLT)
             {
                 g_new_z = cmplx_bf_to_float(g_new_z_bf);
             }
@@ -1723,11 +1723,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
         if (g_outside_color == TDIS || g_outside_color == FMOD)
         {
-            if (g_bf_math == bf_math_type::BIGNUM)
+            if (g_bf_math == BFMathType::BIGNUM)
             {
                 g_new_z = cmplx_bn_to_float(g_new_z_bn);
             }
-            else if (g_bf_math == bf_math_type::BIGFLT)
+            else if (g_bf_math == BFMathType::BIGFLT)
             {
                 g_new_z = cmplx_bf_to_float(g_new_z_bf);
             }
@@ -1826,12 +1826,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     lsaved = g_l_new_z;// integer fractals
                 }
-                else if (g_bf_math == bf_math_type::BIGNUM)
+                else if (g_bf_math == BFMathType::BIGNUM)
                 {
                     copy_bn(g_saved_z_bn.x, g_new_z_bn.x);
                     copy_bn(g_saved_z_bn.y, g_new_z_bn.y);
                 }
-                else if (g_bf_math == bf_math_type::BIGFLT)
+                else if (g_bf_math == BFMathType::BIGFLT)
                 {
                     copy_bf(g_saved_z_bf.x, g_new_z_bf.x);
                     copy_bf(g_saved_z_bf.y, g_new_z_bf.y);
@@ -1858,7 +1858,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         }
                     }
                 }
-                else if (g_bf_math == bf_math_type::BIGNUM)
+                else if (g_bf_math == BFMathType::BIGNUM)
                 {
                     if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.x, g_new_z_bn.x)), g_close_enough_bn) < 0)
                     {
@@ -1868,7 +1868,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         }
                     }
                 }
-                else if (g_bf_math == bf_math_type::BIGFLT)
+                else if (g_bf_math == BFMathType::BIGFLT)
                 {
                     if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, g_saved_z_bf.x, g_new_z_bf.x)), g_close_enough_bf) < 0)
                     {
@@ -1923,12 +1923,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
             g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
         }
-        else if (g_bf_math == bf_math_type::BIGNUM)
+        else if (g_bf_math == BFMathType::BIGNUM)
         {
             g_new_z.x = (double)bn_to_float(g_new_z_bn.x);
             g_new_z.y = (double)bn_to_float(g_new_z_bn.y);
         }
-        else if (g_bf_math == bf_math_type::BIGFLT)
+        else if (g_bf_math == BFMathType::BIGFLT)
         {
             g_new_z.x = (double)bf_to_float(g_new_z_bf.x);
             g_new_z.y = (double)bf_to_float(g_new_z_bf.y);
@@ -1954,7 +1954,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
             g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
         }
-        else if (g_bf_math ==  bf_math_type::BIGNUM)
+        else if (g_bf_math ==  BFMathType::BIGNUM)
         {
             g_new_z.x = (double)bn_to_float(g_new_z_bn.x);
             g_new_z.y = (double)bn_to_float(g_new_z_bn.y);
@@ -2738,7 +2738,7 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     // NOTE: 16-bit potential disables symmetry
     // also any decomp= option and any inversion not about the origin
     // also any rotation other than 180deg and any off-axis stretch
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         if (cmp_bf(g_bf_x_min, g_bf_x_3rd) || cmp_bf(g_bf_y_min, g_bf_y_3rd))
         {
@@ -2813,7 +2813,7 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     }
     yaxis_col = -1;
     xaxis_row = -1;
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
         bft1    = alloc_stack(g_r_bf_length+2);
@@ -2827,7 +2827,7 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     }
     if (xaxis_on_screen) // axis is on screen
     {
-        if (g_bf_math != bf_math_type::NONE)
+        if (g_bf_math != BFMathType::NONE)
         {
             sub_bf(bft1, g_bf_y_min, g_bf_y_max);
             div_bf(bft1, g_bf_y_max, bft1);
@@ -2849,7 +2849,7 @@ static void set_symmetry(symmetry_type sym, bool uselist) // set up proper symme
     }
     if (yaxis_on_screen) // axis is on screen
     {
-        if (g_bf_math != bf_math_type::NONE)
+        if (g_bf_math != BFMathType::NONE)
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             div_bf(bft1, g_bf_x_min, bft1);
@@ -2981,7 +2981,7 @@ originsym:
             break;
         }
     case symmetry_type::PI_SYM:                      // PI symmetry
-        if (g_bf_math != bf_math_type::NONE)
+        if (g_bf_math != BFMathType::NONE)
         {
             if ((double)bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min))) < PI/4)
             {
@@ -3018,7 +3018,7 @@ originsym:
             g_i_y_stop = g_yy_stop; // in case first split worked
             g_work_symmetry = 0x30;  // don't mark pisym as ysym, just do it unmarked
         }
-        if (g_bf_math != bf_math_type::NONE)
+        if (g_bf_math != BFMathType::NONE)
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             abs_a_bf(bft1);
@@ -3043,7 +3043,7 @@ originsym:
     default:                  // no symmetry
         break;
     }
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         restore_stack(saved);
     }

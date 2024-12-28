@@ -13,7 +13,7 @@
 struct AlternateMath
 {
     fractal_type type;                  // index in fractalname of the fractal
-    bf_math_type math;                  // kind of math used
+    BFMathType math;                  // kind of math used
     int (*orbitcalc)();                 // function that calculates one orbit
     int (*per_pixel)();                 // once-per-pixel init
     bool (*per_image)();                // once-per-image setup

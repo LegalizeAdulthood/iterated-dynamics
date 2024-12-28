@@ -113,7 +113,7 @@ bool mandel_z_power_perturbation_setup()
 bool
 mandel_fp_setup()
 {
-    g_bf_math = bf_math_type::NONE;
+    g_bf_math = BFMathType::NONE;
     g_c_exponent = (int)g_params[2];
     g_power_z.x = g_params[2] - 1.0;
     g_power_z.y = g_params[3];

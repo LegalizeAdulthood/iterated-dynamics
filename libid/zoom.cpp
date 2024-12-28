@@ -137,7 +137,7 @@ void draw_box(bool draw_it)
     bf_t bffydepth;
     bf_t bffyskew;
     bf_t bffxadj;
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
         bffxwidth = alloc_stack(g_r_bf_length+2);
@@ -157,7 +157,7 @@ void draw_box(bool draw_it)
     const double fyskew = g_save_y_min - g_save_y_3rd;
     const double fxadj = g_zoom_box_width * g_zoom_box_skew;
 
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         // do some calcs just once here to reduce fp work a bit
         sub_bf(bffxwidth, g_bf_save_x_max, g_bf_save_x_3rd);
@@ -182,7 +182,7 @@ void draw_box(bool draw_it)
     top_left.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_min  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew; // real co-ords
     g_y_max  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_min, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
         calc_corner(g_bf_y_max, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
@@ -196,7 +196,7 @@ void draw_box(bool draw_it)
     bot_right.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_max  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
     g_y_min  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_max, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
         calc_corner(g_bf_y_min, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
@@ -214,7 +214,7 @@ void draw_box(bool draw_it)
     bot_left.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_3rd  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
     g_y_3rd  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_3rd, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
         calc_corner(g_bf_y_3rd, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
@@ -587,7 +587,7 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
 
 void zoom_out() // for ctl-enter, calc corners for zooming out
 {
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         zoom_out_bf();
     }
@@ -1075,7 +1075,7 @@ void reset_zoom_corners()
     g_y_max = g_save_y_max;
     g_y_min = g_save_y_min;
     g_y_3rd = g_save_y_3rd;
-    if (g_bf_math != bf_math_type::NONE)
+    if (g_bf_math != BFMathType::NONE)
     {
         copy_bf(g_bf_x_min, g_bf_save_x_min);
         copy_bf(g_bf_x_max, g_bf_save_x_max);

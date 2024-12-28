@@ -193,7 +193,7 @@ static bf_t s_n_c{};
 static bf_t s_n_d{};
 static bf_t s_n_e{};
 static bf_t s_n_f{};
-static bf_math_type s_old_bf_math{};
+static BFMathType s_old_bf_math{};
 
 bool g_loaded_3d{};
 int g_file_y_dots{};
@@ -837,13 +837,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_5_info.got_data)
     {
-        g_bf_math = bf_math_type::BIGNUM;
+        g_bf_math = BFMathType::BIGNUM;
         init_bf_length(read_info.g_bf_length);
         std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
     else
     {
-        g_bf_math = bf_math_type::NONE;
+        g_bf_math = BFMathType::NONE;
     }
 
     if (blk_6_info.got_data)
@@ -1566,8 +1566,8 @@ int file_get_window()
     int saved;
 
     s_old_bf_math = g_bf_math;
-    g_bf_math = bf_math_type::BIGFLT;
-    if (s_old_bf_math == bf_math_type::NONE)
+    g_bf_math = BFMathType::BIGFLT;
+    if (s_old_bf_math == BFMathType::NONE)
     {
         calc_status_value oldcalc_status = g_calc_status; // kludge because next sets it = 0
         fractal_float_to_bf();
@@ -1588,7 +1588,7 @@ int file_get_window()
     s_browse_box_values.resize(num_dots*MAX_WINDOWS_OPEN);
 
     // set up complex-plane-to-screen transformation
-    if (s_old_bf_math != bf_math_type::NONE)
+    if (s_old_bf_math != BFMathType::NONE)
     {
         bf_setup_convert_to_screen();
     }
@@ -1907,7 +1907,7 @@ rescan:  // entry for changed browse parms
     s_browse_box_y.clear();
     s_browse_box_values.clear();
     restore_stack(saved);
-    if (s_old_bf_math == bf_math_type::NONE)
+    if (s_old_bf_math == BFMathType::NONE)
     {
         free_bf_vars();
     }
@@ -2053,7 +2053,7 @@ static bool is_visible_window(
     }
 
     /* transform maps real plane co-ords onto the current screen view see above */
-    if (s_old_bf_math != bf_math_type::NONE || info->bf_math != 0)
+    if (s_old_bf_math != BFMathType::NONE || info->bf_math != 0)
     {
         if (!info->bf_math)
         {
@@ -2075,7 +2075,7 @@ static bool is_visible_window(
     }
     list->itl.x = (int)(tl.x + 0.5);
     list->itl.y = (int)(tl.y + 0.5);
-    if (s_old_bf_math != bf_math_type::NONE || info->bf_math)
+    if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
         {
@@ -2099,7 +2099,7 @@ static bool is_visible_window(
     }
     list->itr.x = (int)(tr.x + 0.5);
     list->itr.y = (int)(tr.y + 0.5);
-    if (s_old_bf_math != bf_math_type::NONE || info->bf_math)
+    if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
         {
@@ -2121,7 +2121,7 @@ static bool is_visible_window(
     }
     list->ibl.x = (int)(bl.x + 0.5);
     list->ibl.y = (int)(bl.y + 0.5);
-    if (s_old_bf_math != bf_math_type::NONE || info->bf_math)
+    if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
         {

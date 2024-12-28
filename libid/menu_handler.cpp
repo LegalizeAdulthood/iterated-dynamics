@@ -77,7 +77,7 @@ main_state toggle_float(MainContext &)
 
 main_state get_history(int kbd_char)
 {
-    if (g_max_image_history <= 0 || g_bf_math != bf_math_type::NONE)
+    if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
     {
         return main_state::NOTHING;
     }
