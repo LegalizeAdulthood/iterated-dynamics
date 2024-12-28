@@ -1218,7 +1218,7 @@ static CmdArgFlags cmd_3d_mode(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_julibrot_3d_mode = static_cast<julibrot_3d_mode>(julibrot_mode);
+    g_julibrot_3d_mode = static_cast<Julibrot3DMode>(julibrot_mode);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

@@ -715,7 +715,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
                 }
                 put_param(" %s=%s", "orbitname", name);
             }
-            if (g_julibrot_3d_mode != julibrot_3d_mode::MONOCULAR)
+            if (g_julibrot_3d_mode != Julibrot3DMode::MONOCULAR)
             {
                 put_param(" %s=%s", "3dmode", to_string(g_julibrot_3d_mode));
             }

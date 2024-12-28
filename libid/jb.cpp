@@ -91,13 +91,13 @@ float g_julibrot_width_fp{10.0f};
 float g_julibrot_dist_fp{24.0f};
 float g_eyes_fp{2.5f};
 float g_julibrot_depth_fp{8.0f};
-julibrot_3d_mode g_julibrot_3d_mode{};
+Julibrot3DMode g_julibrot_3d_mode{};
 FractalType g_new_orbit_type{FractalType::JULIA};
 const char *g_julibrot_3d_options[]{
-    to_string(julibrot_3d_mode::MONOCULAR), //
-    to_string(julibrot_3d_mode::LEFT_EYE),  //
-    to_string(julibrot_3d_mode::RIGHT_EYE), //
-    to_string(julibrot_3d_mode::RED_BLUE)   //
+    to_string(Julibrot3DMode::MONOCULAR), //
+    to_string(Julibrot3DMode::LEFT_EYE),  //
+    to_string(Julibrot3DMode::RIGHT_EYE), //
+    to_string(Julibrot3DMode::RED_BLUE)   //
 };
 
 bool julibrot_setup()
@@ -120,7 +120,7 @@ bool julibrot_setup()
     s_jb_fp.inch_per_x_dot = g_julibrot_width_fp / g_logical_screen_x_dots;
     s_jb_fp.inch_per_y_dot = g_julibrot_height_fp / g_logical_screen_y_dots;
     s_jb_fp.init_z = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
-    if (g_julibrot_3d_mode == julibrot_3d_mode::MONOCULAR)
+    if (g_julibrot_3d_mode == Julibrot3DMode::MONOCULAR)
     {
         s_jb_fp.right_eye.x = 0.0;
     }
@@ -180,7 +180,7 @@ bool julibrot_setup()
         s_jb.inch_per_x_dot = (long)((g_julibrot_width_fp / g_logical_screen_x_dots) * s_fg16);
         s_jb.inch_per_y_dot = (long)((g_julibrot_height_fp / g_logical_screen_y_dots) * s_fg16);
         s_jb.init_z = origin - (s_depth / 2);
-        if (g_julibrot_3d_mode == julibrot_3d_mode::MONOCULAR)
+        if (g_julibrot_3d_mode == Julibrot3DMode::MONOCULAR)
         {
             s_jb.right_eye.x = 0L;
         }
@@ -198,7 +198,7 @@ bool julibrot_setup()
         s_b_base = (int)(128.0 * s_br_ratio_fp);
     }
 
-    if (g_julibrot_3d_mode == julibrot_3d_mode::RED_BLUE)
+    if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
     {
         g_save_dac = 0;
         mapname = g_glasses1_map.c_str();
@@ -268,14 +268,14 @@ int z_line(long x, long y)
     s_jb.my = s_my_min;
     switch (g_julibrot_3d_mode)
     {
-    case julibrot_3d_mode::MONOCULAR:
-    case julibrot_3d_mode::LEFT_EYE:
+    case Julibrot3DMode::MONOCULAR:
+    case Julibrot3DMode::LEFT_EYE:
         s_jb.per = &s_jb.left_eye;
         break;
-    case julibrot_3d_mode::RIGHT_EYE:
+    case Julibrot3DMode::RIGHT_EYE:
         s_jb.per = &s_jb.right_eye;
         break;
-    case julibrot_3d_mode::RED_BLUE:
+    case Julibrot3DMode::RED_BLUE:
         if ((g_row + g_col) & 1)
         {
             s_jb.per = &s_jb.left_eye;
@@ -308,7 +308,7 @@ int z_line(long x, long y)
         }
         if (n == g_max_iterations)
         {
-            if (g_julibrot_3d_mode == julibrot_3d_mode::RED_BLUE)
+            if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
             {
                 g_color = (int)(128l * zpixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
@@ -354,14 +354,14 @@ int z_line_fp(double x, double y)
     s_jb_fp.my = g_julibrot_y_min;
     switch (g_julibrot_3d_mode)
     {
-    case julibrot_3d_mode::MONOCULAR:
-    case julibrot_3d_mode::LEFT_EYE:
+    case Julibrot3DMode::MONOCULAR:
+    case Julibrot3DMode::LEFT_EYE:
         s_jb_fp.per = &s_jb_fp.left_eye;
         break;
-    case julibrot_3d_mode::RIGHT_EYE:
+    case Julibrot3DMode::RIGHT_EYE:
         s_jb_fp.per = &s_jb_fp.right_eye;
         break;
-    case julibrot_3d_mode::RED_BLUE:
+    case Julibrot3DMode::RED_BLUE:
         if ((g_row + g_col) & 1)
         {
             s_jb_fp.per = &s_jb_fp.left_eye;
@@ -414,7 +414,7 @@ int z_line_fp(double x, double y)
         }
         if (n == g_max_iterations)
         {
-            if (g_julibrot_3d_mode == julibrot_3d_mode::RED_BLUE)
+            if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
             {
                 g_color = (int)(128l * zpixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)

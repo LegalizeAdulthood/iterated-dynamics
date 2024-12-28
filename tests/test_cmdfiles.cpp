@@ -1745,12 +1745,12 @@ TEST_F(TestParameterCommandError, initOrbitTooManyParameters)
 
 TEST_F(TestParameterCommand, threeDModeMonocular)
 {
-    ValueSaver saved_julibrot_3d_mode{g_julibrot_3d_mode, julibrot_3d_mode::LEFT_EYE};
+    ValueSaver saved_julibrot_3d_mode{g_julibrot_3d_mode, Julibrot3DMode::LEFT_EYE};
 
     exec_cmd_arg("3dmode=monocular");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(julibrot_3d_mode::MONOCULAR, g_julibrot_3d_mode);
+    EXPECT_EQ(Julibrot3DMode::MONOCULAR, g_julibrot_3d_mode);
 }
 
 TEST_F(TestParameterCommand, julibrot3DZDots)

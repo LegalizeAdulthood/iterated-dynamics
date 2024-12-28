@@ -926,7 +926,7 @@ gfp_top:
         g_julibrot_x_min    = paramvalues[promptnum++].uval.dval;
         g_julibrot_y_min    = paramvalues[promptnum++].uval.dval;
         g_julibrot_z_dots      = paramvalues[promptnum++].uval.ival;
-        g_julibrot_3d_mode = static_cast<julibrot_3d_mode>(paramvalues[promptnum++].uval.ch.val);
+        g_julibrot_3d_mode = static_cast<Julibrot3DMode>(paramvalues[promptnum++].uval.ch.val);
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_depth_fp    = (float)paramvalues[promptnum++].uval.dval;

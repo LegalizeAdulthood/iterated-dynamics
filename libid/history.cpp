@@ -98,7 +98,7 @@ struct ImageHistory
     float julibrot_dist_fp;
     float eyes_fp;
     FractalType new_orbit_type;
-    julibrot_3d_mode julibrot_mode;
+    Julibrot3DMode julibrot_mode;
     Major major_method;
     Minor inverse_julia_minor_method;
     double dparm5;
