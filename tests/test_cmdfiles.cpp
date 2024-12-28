@@ -56,7 +56,7 @@ protected:
     void exec_cmd_arg(const std::string &curarg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
     std::vector<char> m_buffer;
-    cmdarg_flags m_result{};
+    CmdArgFlags m_result{};
 };
 
 void TestParameterCommand::exec_cmd_arg(const std::string &curarg, CmdFile mode)
@@ -97,14 +97,14 @@ TEST_F(TestParameterCommandError, parameterTooLong)
 {
     exec_cmd_arg("maximumoftwentycharactersinparametername", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, batchBadArg)
 {
     exec_cmd_arg("batch=g", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, batchYes)
@@ -113,7 +113,7 @@ TEST_F(TestParameterCommand, batchYes)
 
     exec_cmd_arg("batch=yes", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(batch_modes::NORMAL, g_init_batch);
 }
 
@@ -123,7 +123,7 @@ TEST_F(TestParameterCommand, batchNo)
 
     exec_cmd_arg("batch=no", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(batch_modes::NONE, g_init_batch);
 }
 
@@ -133,7 +133,7 @@ TEST_F(TestParameterCommandError, batchAfterStartup)
 
     exec_cmd_arg("batch=yes");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
@@ -142,7 +142,7 @@ TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
 
     exec_cmd_arg("maxhistory=yes", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, maxHistoryNegative)
@@ -151,7 +151,7 @@ TEST_F(TestParameterCommandError, maxHistoryNegative)
 
     exec_cmd_arg("maxhistory=-10", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, maxHistory)
@@ -160,7 +160,7 @@ TEST_F(TestParameterCommand, maxHistory)
 
     exec_cmd_arg("maxhistory=10", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(10, g_max_image_history);
 }
 
@@ -170,7 +170,7 @@ TEST_F(TestParameterCommandError, maxHistoryAfterStartup)
 
     exec_cmd_arg("maxhistory=10");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 class TestParameterCommandMakeDoc : public TestParameterCommand
@@ -210,7 +210,7 @@ TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
 
     exec_cmd_arg("makedoc", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
 }
 
 TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
@@ -220,21 +220,21 @@ TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
 
     exec_cmd_arg("makedoc=foo.txt", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::GOODBYE, m_result);
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
 }
 
 TEST_F(TestParameterCommandError, makeParTooFewValues)
 {
     exec_cmd_arg("makepar", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, makeParTooManyValues)
 {
     exec_cmd_arg("makepar=foo/bar/fmeh", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 // TODO: test makepar with valid arguments
@@ -245,7 +245,7 @@ TEST_F(TestParameterCommandError, resetBadArg)
 
     exec_cmd_arg("reset=foo");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_TRUE(g_escape_exit);
 }
 
@@ -255,7 +255,7 @@ TEST_F(TestParameterCommandError, filenameExtensionTooLong)
 
     exec_cmd_arg("filename=.foobar");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ("*.pot", g_gif_filename_mask);
 }
 
@@ -265,7 +265,7 @@ TEST_F(TestParameterCommand, filenameExtension)
 
     exec_cmd_arg("filename=.gif");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("*.gif", g_gif_filename_mask);
 }
 
@@ -276,7 +276,7 @@ TEST_F(TestParameterCommandError, filenameValueTooLong)
 
     exec_cmd_arg(too_long);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ("*.pot", g_gif_filename_mask);
 }
 
@@ -287,7 +287,7 @@ TEST_F(TestParameterCommandError, mapTooLong)
 
     exec_cmd_arg(too_long, CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ("foo.map", g_map_name);
 }
 
@@ -298,7 +298,7 @@ TEST_F(TestParameterCommand, mapSpecifiesSubdir)
 
     exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR, CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(ID_TEST_MAP_SUBDIR SLASH "foo.map", g_map_name);
 }
 
@@ -309,7 +309,7 @@ TEST_F(TestParameterCommand, mapSpecifiesExistingFile)
 
     exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, g_map_name);
 }
 
@@ -319,7 +319,7 @@ TEST_F(TestParameterCommand, adapterDeprecatedValues)
     {
         exec_cmd_arg("adapter=" + arg, CmdFile::SSTOOLS_INI);
 
-        EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     }
 }
 
@@ -327,14 +327,14 @@ TEST_F(TestParameterCommandError, adapterBadValue)
 {
     exec_cmd_arg("adapter=bad", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, afiValueIgnored)
 {
     exec_cmd_arg("afi=anything", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
 }
 
 TEST_F(TestParameterCommand, textSafeDeprecatedValues)
@@ -346,7 +346,7 @@ TEST_F(TestParameterCommand, textSafeDeprecatedValues)
     {
         exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
 
-        EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     }
 }
 
@@ -356,7 +356,7 @@ TEST_F(TestParameterCommandError, textSafeInvalidValue)
 
     exec_cmd_arg("textsafe=!", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
@@ -367,7 +367,7 @@ TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
     {
         exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
 
-        EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     }
 }
 
@@ -375,7 +375,7 @@ TEST_F(TestParameterCommandError, vesaDetectInvalidValue)
 {
     exec_cmd_arg("vesadetect=!", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
@@ -384,7 +384,7 @@ TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
     {
         exec_cmd_arg("biospalette=" + std::string{arg}, CmdFile::SSTOOLS_INI);
 
-        EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+        EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     }
 }
 
@@ -392,21 +392,21 @@ TEST_F(TestParameterCommandError, biosPaletteDetectInvalidValue)
 {
     exec_cmd_arg("biospalette=!", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, fpuDetectDeprecatedValue)
 {
     exec_cmd_arg("fpu=387", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
 {
     exec_cmd_arg("fpu=487", CmdFile::SSTOOLS_INI);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, exitNoAskNo)
@@ -416,7 +416,7 @@ TEST_F(TestParameterCommand, exitNoAskNo)
     exec_cmd_arg("exitnoask=n", CmdFile::SSTOOLS_INI);
 
     EXPECT_FALSE(g_escape_exit);
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
 }
 
 TEST_F(TestParameterCommand, exitNoAskYes)
@@ -426,7 +426,7 @@ TEST_F(TestParameterCommand, exitNoAskYes)
     exec_cmd_arg("exitnoask=y", CmdFile::SSTOOLS_INI);
 
     EXPECT_TRUE(g_escape_exit);
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
 }
 
 TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
@@ -436,7 +436,7 @@ TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
     exec_cmd_arg("exitnoask=!", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(saved_escape_exit, g_escape_exit);
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, filenameMask)
@@ -446,7 +446,7 @@ TEST_F(TestParameterCommand, filenameMask)
     exec_cmd_arg("filename=.pot", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ("*.pot", g_gif_filename_mask);
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 // TODO: why does this test cause a crash?
@@ -459,7 +459,7 @@ TEST_F(TestParameterCommandError, filenameTooLong)
 
     exec_cmd_arg(too_long, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(saved_gif_filename_mask, g_gif_filename_mask);
     EXPECT_EQ(saved_show_file, g_show_file);
     EXPECT_EQ(saved_browse_name, g_browse_name);
@@ -469,7 +469,7 @@ TEST_F(TestParameterCommandError, videoBadName)
 {
     exec_cmd_arg("video=fmeh", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, videoNoModes)
@@ -479,7 +479,7 @@ TEST_F(TestParameterCommandError, videoNoModes)
 
     exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(-1, g_init_mode);
 }
 
@@ -493,7 +493,7 @@ TEST_F(TestParameterCommandError, videoNoMatchingMode)
 
     exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(-1, g_init_mode);
 }
 
@@ -507,7 +507,7 @@ TEST_F(TestParameterCommand, videoMatchingMode)
 
     exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(0, g_init_mode);
 }
 
@@ -549,7 +549,7 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 
     exec_cmd_arg("colors", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(40, g_dac_box[0][0]);
     EXPECT_EQ(40, g_dac_box[0][1]);
     EXPECT_EQ(40, g_dac_box[0][2]);
@@ -564,7 +564,7 @@ TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 
     exec_cmd_arg("recordcolors=p", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(RecordColorsMode::NONE, g_record_colors);
 }
 
@@ -574,7 +574,7 @@ TEST_F(TestParameterCommand, recordColorsAutomatic)
 
     exec_cmd_arg("recordcolors=a", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(RecordColorsMode::AUTOMATIC, g_record_colors);
 }
 
@@ -584,7 +584,7 @@ TEST_F(TestParameterCommand, recordColorsComment)
 
     exec_cmd_arg("recordcolors=c", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(RecordColorsMode::COMMENT, g_record_colors);
 }
 
@@ -594,7 +594,7 @@ TEST_F(TestParameterCommand, recordColorsYes)
 
     exec_cmd_arg("recordcolors=y", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(RecordColorsMode::YES, g_record_colors);
 }
 
@@ -605,7 +605,7 @@ TEST_F(TestParameterCommandError, maxLineLengthTooSmall)
 
     exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(0, g_max_line_length);
 }
 
@@ -616,7 +616,7 @@ TEST_F(TestParameterCommandError, maxLineLengthTooLarge)
 
     exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(0, g_max_line_length);
 }
 
@@ -628,7 +628,7 @@ TEST_F(TestParameterCommand, maxLineLength)
 
     exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(value, g_max_line_length);
 }
 
@@ -636,35 +636,35 @@ TEST_F(TestParameterCommandError, tplusInvalidValue)
 {
     exec_cmd_arg("tplus=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, tplusYes)
 {
     exec_cmd_arg("tplus=y", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, nonInterlacedInvalidValue)
 {
     exec_cmd_arg("noninterlaced=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, nonInterlacedYes)
 {
     exec_cmd_arg("noninterlaced=y", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, maxColorResInvalidValue)
 {
     exec_cmd_arg("maxcolorres=3", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, maxColorResValidValue)
@@ -675,7 +675,7 @@ TEST_F(TestParameterCommand, maxColorResValidValue)
 
         exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
-        EXPECT_EQ(cmdarg_flags::NONE, m_result);
+        EXPECT_EQ(CmdArgFlags::NONE, m_result);
     }
 }
 
@@ -683,14 +683,14 @@ TEST_F(TestParameterCommandError, pixelZoomInvalidValue)
 {
     exec_cmd_arg("pixelzoom=5", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, pixelZoomValidValue)
 {
     exec_cmd_arg("pixelzoom=4", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, warnInvalidValue)
@@ -699,7 +699,7 @@ TEST_F(TestParameterCommandError, warnInvalidValue)
 
     exec_cmd_arg("warn=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_FALSE(g_overwrite_file);
 }
 
@@ -709,7 +709,7 @@ TEST_F(TestParameterCommand, warnNo)
 
     exec_cmd_arg("warn=n", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_overwrite_file);
 }
 
@@ -719,7 +719,7 @@ TEST_F(TestParameterCommand, warnYes)
 
     exec_cmd_arg("warn=yes", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_FALSE(g_overwrite_file);
 }
 
@@ -729,7 +729,7 @@ TEST_F(TestParameterCommandError, overwriteInvalidValue)
 
     exec_cmd_arg("overwrite=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_TRUE(g_overwrite_file);
 }
 
@@ -739,7 +739,7 @@ TEST_F(TestParameterCommand, overwriteNo)
 
     exec_cmd_arg("overwrite=n", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_FALSE(g_overwrite_file);
 }
 
@@ -749,7 +749,7 @@ TEST_F(TestParameterCommand, overwriteYes)
 
     exec_cmd_arg("overwrite=yes", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_overwrite_file);
 }
 
@@ -757,21 +757,21 @@ TEST_F(TestParameterCommandError, gif87aInvalidValue)
 {
     exec_cmd_arg("gif87a=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, gif87aNo)
 {
     exec_cmd_arg("gif87a=n", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommand, gif87aYes)
 {
     exec_cmd_arg("gif87a=yes", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, ditherInvalidValue)
@@ -780,7 +780,7 @@ TEST_F(TestParameterCommandError, ditherInvalidValue)
 
     exec_cmd_arg("dither=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(saved_dither_flag, g_dither_flag);
 }
 
@@ -790,7 +790,7 @@ TEST_F(TestParameterCommand, ditherNo)
 
     exec_cmd_arg("dither=n", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_FALSE(g_dither_flag);
 }
 
@@ -800,7 +800,7 @@ TEST_F(TestParameterCommand, ditherYes)
 
     exec_cmd_arg("dither=yes", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_dither_flag);
 }
 
@@ -808,7 +808,7 @@ TEST_F(TestParameterCommand, saveTime)
 {
     exec_cmd_arg("savetime=20", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(20, g_init_save_time);
 }
 
@@ -818,7 +818,7 @@ TEST_F(TestParameterCommandError, autoKeyInvalidValue)
 
     exec_cmd_arg("autokey=fmeh", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(slides_mode::RECORD, g_slides);
 }
 
@@ -828,7 +828,7 @@ TEST_F(TestParameterCommand, autoKeyRecord)
 
     exec_cmd_arg("autokey=record", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(slides_mode::RECORD, g_slides);
 }
 
@@ -838,7 +838,7 @@ TEST_F(TestParameterCommand, autoKeyPlay)
 
     exec_cmd_arg("autokey=play", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(slides_mode::PLAY, g_slides);
 }
 
@@ -848,7 +848,7 @@ TEST_F(TestParameterCommand, autoKeyName)
 
     exec_cmd_arg("autokeyname=baz.key", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("baz.key", g_auto_name);
 }
 
@@ -888,7 +888,7 @@ TEST_F(TestParameterCommand, typeSierpinski)
 
     exec_cmd_arg("type=sierpinski", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
     EXPECT_EQ(g_cur_fractal_specific, &g_fractal_specific[+FractalType::SIERPINSKI]);
     const FractalSpecific &fractal{*g_cur_fractal_specific};
@@ -910,7 +910,7 @@ TEST_F(TestParameterCommandError, insideInvalidValue)
 
     exec_cmd_arg("inside=foo", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(-9999, g_inside_color);
 }
 
@@ -920,7 +920,7 @@ TEST_F(TestParameterCommand, insideZMag)
 
     exec_cmd_arg("inside=zmag", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(ZMAG, g_inside_color);
 }
 
@@ -930,7 +930,7 @@ TEST_F(TestParameterCommand, insideNumber)
 
     exec_cmd_arg("inside=100", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_inside_color);
 }
 
@@ -940,7 +940,7 @@ TEST_F(TestParameterCommand, proximity)
 
     exec_cmd_arg("proximity=423", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(423.0, g_close_proximity);
 }
 
@@ -950,7 +950,7 @@ TEST_F(TestParameterCommand, fillColorNormal)
 
     exec_cmd_arg("fillcolor=normal", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(-1, g_fill_color);
 }
 
@@ -960,7 +960,7 @@ TEST_F(TestParameterCommandError, fillColorInvalid)
 
     exec_cmd_arg("fillcolor=fmeh", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(999, g_fill_color);
 }
 
@@ -970,7 +970,7 @@ TEST_F(TestParameterCommand, fillColorNumber)
 
     exec_cmd_arg("fillcolor=100", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_fill_color);
 }
 
@@ -980,7 +980,7 @@ TEST_F(TestParameterCommandError, finAttractInvalidValue)
 
     exec_cmd_arg("finattract=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_TRUE(g_finite_attractor);
 }
 
@@ -990,7 +990,7 @@ TEST_F(TestParameterCommand, finAttractYes)
 
     exec_cmd_arg("finattract=y", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_finite_attractor);
 }
 
@@ -1000,7 +1000,7 @@ TEST_F(TestParameterCommandError, noBoFInvalidValue)
 
     exec_cmd_arg("nobof=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_TRUE(g_bof_match_book_images);
 }
 
@@ -1010,7 +1010,7 @@ TEST_F(TestParameterCommand, noBoFYes)
 
     exec_cmd_arg("nobof=y", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_bof_match_book_images);
 }
 
@@ -1021,7 +1021,7 @@ TEST_F(TestParameterCommand, functionSin)
 
     exec_cmd_arg("function=sin", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
 }
@@ -1034,7 +1034,7 @@ TEST_F(TestParameterCommand, functionSinCos)
 
     exec_cmd_arg("function=sin/cos", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
     EXPECT_EQ(trig_fn::COS, g_trig_index[1]);
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
@@ -1049,7 +1049,7 @@ TEST_F(TestParameterCommand, functionSinCosTan)
 
     exec_cmd_arg("function=sin/cos/tan", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
     EXPECT_EQ(trig_fn::COS, g_trig_index[1]);
     EXPECT_EQ(trig_fn::TAN, g_trig_index[2]);
@@ -1066,7 +1066,7 @@ TEST_F(TestParameterCommand, functionSinCosTanCot)
 
     exec_cmd_arg("function=sin/cos/tan/cotan", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
     EXPECT_EQ(trig_fn::COS, g_trig_index[1]);
     EXPECT_EQ(trig_fn::TAN, g_trig_index[2]);
@@ -1080,7 +1080,7 @@ TEST_F(TestParameterCommand, outsideReal)
 
     exec_cmd_arg("outside=real", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(REAL, g_outside_color);
 }
 
@@ -1090,7 +1090,7 @@ TEST_F(TestParameterCommand, outsideNumber)
 
     exec_cmd_arg("outside=100", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_outside_color);
 }
 
@@ -1100,7 +1100,7 @@ TEST_F(TestParameterCommandError, outsideInvalidName)
 
     exec_cmd_arg("outside=zmag", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(-9999, g_outside_color);
 }
 
@@ -1110,7 +1110,7 @@ TEST_F(TestParameterCommand, bfDigitsNumber)
 
     exec_cmd_arg("bfdigits=200", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(200, g_bf_digits);
 }
 
@@ -1120,7 +1120,7 @@ TEST_F(TestParameterCommandError, bfDigitsInvalidValue)
 
     exec_cmd_arg("bfdigits=fmeh", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_bf_digits);
 }
 
@@ -1130,7 +1130,7 @@ TEST_F(TestParameterCommandError, bfDigitsTooSmall)
 
     exec_cmd_arg("bfdigits=-1", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_bf_digits);
 }
 
@@ -1140,7 +1140,7 @@ TEST_F(TestParameterCommandError, bfDigitsTooLarge)
 
     exec_cmd_arg("bfdigits=2001", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_bf_digits);
 }
 
@@ -1150,7 +1150,7 @@ TEST_F(TestParameterCommand, maxIterNumber)
 
     exec_cmd_arg("maxiter=20", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(20, g_max_iterations);
 }
 
@@ -1160,7 +1160,7 @@ TEST_F(TestParameterCommandError, maxIterNumberTooSmall)
 
     exec_cmd_arg("maxiter=1", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_max_iterations);
 }
 
@@ -1170,7 +1170,7 @@ TEST_F(TestParameterCommandError, maxIterNotNumber)
 
     exec_cmd_arg("maxiter=fmeh", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_max_iterations);
 }
 
@@ -1178,7 +1178,7 @@ TEST_F(TestParameterCommand, iterIncrIgnored)
 {
     exec_cmd_arg("iterincr=fmeh", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, passesInvalidValue)
@@ -1187,7 +1187,7 @@ TEST_F(TestParameterCommandError, passesInvalidValue)
 
     exec_cmd_arg("passes=!", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ('Z', g_user_std_calc_mode);
 }
 
@@ -1197,7 +1197,7 @@ TEST_F(TestParameterCommand, passesBoundaryTrace)
 
     exec_cmd_arg("passes=b", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('b', g_user_std_calc_mode);
 }
 
@@ -1208,7 +1208,7 @@ TEST_F(TestParameterCommand, passesSolidGuess3)
 
     exec_cmd_arg("passes=g3", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('g', g_user_std_calc_mode);
     EXPECT_EQ(3, g_stop_pass);
 }
@@ -1219,7 +1219,7 @@ TEST_F(TestParameterCommand, passesPerturbation)
 
     exec_cmd_arg("passes=p", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('p', g_user_std_calc_mode);
 }
 
@@ -1229,7 +1229,7 @@ TEST_F(TestParameterCommand, isMandYes)
 
     exec_cmd_arg("ismand=y", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_is_mandelbrot);
 }
 
@@ -1239,7 +1239,7 @@ TEST_F(TestParameterCommandError, cycleLimitTooLow)
 
     exec_cmd_arg("cyclelimit=1", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_init_cycle_limit);
 }
 
@@ -1249,7 +1249,7 @@ TEST_F(TestParameterCommandError, cycleLimitTooHigh)
 
     exec_cmd_arg("cyclelimit=257", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_init_cycle_limit);
 }
 
@@ -1259,7 +1259,7 @@ TEST_F(TestParameterCommand, cycleLimitNumber)
 
     exec_cmd_arg("cyclelimit=100", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(100, g_init_cycle_limit);
 }
 
@@ -1270,7 +1270,7 @@ TEST_F(TestParameterCommand, cycleRangeNoParams)
 
     exec_cmd_arg("cyclerange", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(1, g_color_cycle_range_lo);
     EXPECT_EQ(255, g_color_cycle_range_hi);
 }
@@ -1282,7 +1282,7 @@ TEST_F(TestParameterCommand, cycleRangeOneParam)
 
     exec_cmd_arg("cyclerange=10", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(10, g_color_cycle_range_lo);
     EXPECT_EQ(255, g_color_cycle_range_hi);
 }
@@ -1294,7 +1294,7 @@ TEST_F(TestParameterCommand, cycleRangeTwoParams)
 
     exec_cmd_arg("cyclerange=10/20", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(10, g_color_cycle_range_lo);
     EXPECT_EQ(20, g_color_cycle_range_hi);
 }
@@ -1306,7 +1306,7 @@ TEST_F(TestParameterCommandError, cycleRangeLoTooLow)
 
     exec_cmd_arg("cyclerange=-1/20", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_color_cycle_range_lo);
     EXPECT_EQ(9999, g_color_cycle_range_hi);
 }
@@ -1318,7 +1318,7 @@ TEST_F(TestParameterCommandError, cycleRangeHiTooHigh)
 
     exec_cmd_arg("cyclerange=10/256", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_color_cycle_range_lo);
     EXPECT_EQ(9999, g_color_cycle_range_hi);
 }
@@ -1329,7 +1329,7 @@ TEST_F(TestParameterCommandError, rangesInvalidParamCount)
 
     exec_cmd_arg("ranges=100/102/foo", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_log_map_flag);
 }
 
@@ -1339,7 +1339,7 @@ TEST_F(TestParameterCommand, rangesNoStriping)
 
     exec_cmd_arg("ranges=10/20/30", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(0, g_log_map_flag);
     EXPECT_EQ((std::vector{10, 20, 30}), g_iteration_ranges);
 }
@@ -1350,7 +1350,7 @@ TEST_F(TestParameterCommand, rangesOneStripe)
 
     exec_cmd_arg("ranges=10/-20/30", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(0, g_log_map_flag);
     EXPECT_EQ((std::vector{10, -1, 20, 30}), g_iteration_ranges);
 }
@@ -1361,7 +1361,7 @@ TEST_F(TestParameterCommand, saveNameOnFirstInit)
 
     exec_cmd_arg("savename=test.gif", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("test.gif", g_save_filename);
 }
 
@@ -1372,7 +1372,7 @@ TEST_F(TestParameterCommand, saveNameAfterStartup)
 
     exec_cmd_arg("savename=test.gif");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("test.gif", g_save_filename);
 }
 
@@ -1383,7 +1383,7 @@ TEST_F(TestParameterCommand, saveNameOtherwise)
 
     exec_cmd_arg("savename=test.gif", CmdFile::AT_CMD_LINE_SET_NAME);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("bar.gif", g_save_filename);
 }
 
@@ -1391,7 +1391,7 @@ TEST_F(TestParameterCommand, tweakLZWDeprecated)
 {
     exec_cmd_arg("tweaklzw=fmeh");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, minStackTooFewValues)
@@ -1400,7 +1400,7 @@ TEST_F(TestParameterCommandError, minStackTooFewValues)
 
     exec_cmd_arg("minstack=");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_soi_min_stack);
 }
 
@@ -1410,7 +1410,7 @@ TEST_F(TestParameterCommandError, minStackTooManyValues)
 
     exec_cmd_arg("minstack=10/20");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(9999, g_soi_min_stack);
 }
 
@@ -1420,7 +1420,7 @@ TEST_F(TestParameterCommand, minStackNumber)
 
     exec_cmd_arg("minstack=200");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(200, g_soi_min_stack);
 }
 
@@ -1431,7 +1431,7 @@ TEST_F(TestParameterCommand, mathToleranceOneValue)
 
     exec_cmd_arg("mathtolerance=20");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(20.0, g_math_tol[0]);
     EXPECT_EQ(8888.0, g_math_tol[1]);
 }
@@ -1443,7 +1443,7 @@ TEST_F(TestParameterCommand, mathToleranceTwoValues)
 
     exec_cmd_arg("mathtolerance=20/30");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(20.0, g_math_tol[0]);
     EXPECT_EQ(30, g_math_tol[1]);
 }
@@ -1455,7 +1455,7 @@ TEST_F(TestParameterCommand, mathToleranceSecondValueOnly)
 
     exec_cmd_arg("mathtolerance=/30");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(9999, g_math_tol[0]);
     EXPECT_EQ(30, g_math_tol[1]);
 }
@@ -1485,7 +1485,7 @@ TEST_F(TestParameterCommand, tempDirExisting)
 
     exec_cmd_arg("tempdir=" + new_dir.string());
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(new_dir.string(), adjust_dir(g_temp_dir));
 }
 
@@ -1499,7 +1499,7 @@ TEST_F(TestParameterCommand, workDirExisting)
 
     exec_cmd_arg("workdir=" + new_dir.string());
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(new_dir.string(), adjust_dir(g_working_dir));
 }
 
@@ -1507,7 +1507,7 @@ TEST_F(TestParameterCommand, exitModeDeprecated)
 {
     exec_cmd_arg("exitmode=fmeh");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 class TextColorSaver
@@ -1536,7 +1536,7 @@ TEST_F(TestParameterCommand, textColorsMono)
 
     exec_cmd_arg("textcolors=mono");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     for (int i : {1, 3, 4, 7, 8, 9, 10, 15, 18, 19, 21, 23, 26, 29, 30})
     {
         EXPECT_EQ(BLACK * 16 + WHITE, g_text_color[i]) << i;
@@ -1557,7 +1557,7 @@ TEST_F(TestParameterCommand, textColorsValues)
 
     exec_cmd_arg("textcolors=24/28");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(0x24, g_text_color[0]);
     EXPECT_EQ(0x28, g_text_color[1]);
 }
@@ -1569,7 +1569,7 @@ TEST_F(TestParameterCommand, textColorsSkippedValues)
 
     exec_cmd_arg("textcolors=/28");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(0x24, g_text_color[0]);
     EXPECT_EQ(0x28, g_text_color[1]);
 }
@@ -1583,7 +1583,7 @@ TEST_F(TestParameterCommand, potentialOneValue)
 
     exec_cmd_arg("potential=111");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(111.0, g_potential_params[0]);
     EXPECT_EQ(8888.0, g_potential_params[1]);
     EXPECT_EQ(7777.0, g_potential_params[2]);
@@ -1599,7 +1599,7 @@ TEST_F(TestParameterCommand, potentialTwoValues)
 
     exec_cmd_arg("potential=111/222");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(111.0, g_potential_params[0]);
     EXPECT_EQ(222.0, g_potential_params[1]);
     EXPECT_EQ(7777.0, g_potential_params[2]);
@@ -1615,7 +1615,7 @@ TEST_F(TestParameterCommand, potentialThreeValues)
 
     exec_cmd_arg("potential=111/222/333");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(111.0, g_potential_params[0]);
     EXPECT_EQ(222.0, g_potential_params[1]);
     EXPECT_EQ(333.0, g_potential_params[2]);
@@ -1631,7 +1631,7 @@ TEST_F(TestParameterCommand, potential16Bit)
 
     exec_cmd_arg("potential=111/222/333/16bit");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(111.0, g_potential_params[0]);
     EXPECT_EQ(222.0, g_potential_params[1]);
     EXPECT_EQ(333.0, g_potential_params[2]);
@@ -1646,7 +1646,7 @@ TEST_F(TestParameterCommand, paramsOneValue)
 
     exec_cmd_arg("params=1.0");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(1.0, g_params[0]);
     EXPECT_EQ(0.0, g_params[1]);
 }
@@ -1660,7 +1660,7 @@ TEST_F(TestParameterCommand, paramsTwoValues)
 
     exec_cmd_arg("params=1.0/2.0");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(1.0, g_params[0]);
     EXPECT_EQ(2.0, g_params[1]);
     EXPECT_EQ(0.0, g_params[2]);
@@ -1673,7 +1673,7 @@ TEST_F(TestParameterCommand, miimBreadthFirstLeftToRight)
 
     exec_cmd_arg("miim=b/l");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(Major::breadth_first, g_major_method);
     EXPECT_EQ(Minor::left_first, g_inverse_julia_minor_method);
 }
@@ -1685,7 +1685,7 @@ TEST_F(TestParameterCommand, initOrbitPixel)
 
     exec_cmd_arg("initorbit=pixel");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
@@ -1698,7 +1698,7 @@ TEST_F(TestParameterCommand, initOrbitValue)
 
     exec_cmd_arg("initorbit=10/20");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(InitOrbitMode::VALUE, g_use_init_orbit);
     EXPECT_EQ(10.0, g_init_orbit.x);
     EXPECT_EQ(20.0, g_init_orbit.y);
@@ -1711,7 +1711,7 @@ TEST_F(TestParameterCommandError, initOrbitTooFewParameters)
 
     exec_cmd_arg("initorbit=10");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
@@ -1724,7 +1724,7 @@ TEST_F(TestParameterCommandError, initOrbitTooFewFloatParameters)
 
     exec_cmd_arg("initorbit=10/fmeh");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
@@ -1737,7 +1737,7 @@ TEST_F(TestParameterCommandError, initOrbitTooManyParameters)
 
     exec_cmd_arg("initorbit=10/20/30");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
@@ -1749,7 +1749,7 @@ TEST_F(TestParameterCommand, threeDModeMonocular)
 
     exec_cmd_arg("3dmode=monocular");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(julibrot_3d_mode::MONOCULAR, g_julibrot_3d_mode);
 }
 
@@ -1760,7 +1760,7 @@ TEST_F(TestParameterCommand, julibrot3DZDots)
 
     exec_cmd_arg("julibrot3d=100");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
     EXPECT_EQ(111.0f, g_julibrot_origin_fp);
 }
@@ -1773,7 +1773,7 @@ TEST_F(TestParameterCommand, julibrot3DOrigin)
 
     exec_cmd_arg("julibrot3d=100/10");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
     EXPECT_EQ(10.0f, g_julibrot_origin_fp);
     EXPECT_EQ(222.0f, g_julibrot_depth_fp);
@@ -1788,7 +1788,7 @@ TEST_F(TestParameterCommand, julibrot3DDepth)
 
     exec_cmd_arg("julibrot3d=100/10/12");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
     EXPECT_EQ(10.0f, g_julibrot_origin_fp);
     EXPECT_EQ(12.0f, g_julibrot_depth_fp);
@@ -1805,7 +1805,7 @@ TEST_F(TestParameterCommand, julibrot3DHeight)
 
     exec_cmd_arg("julibrot3d=100/10/12/14");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
     EXPECT_EQ(10.0f, g_julibrot_origin_fp);
     EXPECT_EQ(12.0f, g_julibrot_depth_fp);
@@ -1824,7 +1824,7 @@ TEST_F(TestParameterCommand, julibrot3DWidth)
 
     exec_cmd_arg("julibrot3d=100/10/12/14/16");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
     EXPECT_EQ(10.0f, g_julibrot_origin_fp);
     EXPECT_EQ(12.0f, g_julibrot_depth_fp);
@@ -1844,7 +1844,7 @@ TEST_F(TestParameterCommand, julibrot3DDistance)
 
     exec_cmd_arg("julibrot3d=100/10/12/14/16/18");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
     EXPECT_EQ(10.0f, g_julibrot_origin_fp);
     EXPECT_EQ(12.0f, g_julibrot_depth_fp);
@@ -1859,7 +1859,7 @@ TEST_F(TestParameterCommand, julibrotEyes)
 
     exec_cmd_arg("julibroteyes=10");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(10.0f, g_eyes_fp);
 }
 
@@ -1872,7 +1872,7 @@ TEST_F(TestParameterCommand, julibrotFromToBadNumberOfValues)
 
     exec_cmd_arg("julibrotfromto=40/30/20/10");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(40.0, g_julibrot_x_max);
     EXPECT_EQ(30.0, g_julibrot_x_min);
     EXPECT_EQ(20.0, g_julibrot_y_max);
@@ -1885,7 +1885,7 @@ TEST_F(TestParameterCommand, cornersNoValues)
 
     exec_cmd_arg("corners=");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_FALSE(g_use_center_mag);
 }
 
@@ -1901,7 +1901,7 @@ TEST_F(TestParameterCommand, cornersFourValues)
 
     exec_cmd_arg("corners=1/2/3/4");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_use_center_mag);
     EXPECT_EQ(1.0, g_x_min);
     EXPECT_EQ(1.0, g_x_3rd);
@@ -1923,7 +1923,7 @@ TEST_F(TestParameterCommand, cornersSixValues)
 
     exec_cmd_arg("corners=1/2/3/4/5/6");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_use_center_mag);
     EXPECT_EQ(1.0, g_x_min);
     EXPECT_EQ(2.0, g_x_max);
@@ -1945,7 +1945,7 @@ TEST_F(TestParameterCommand, orbitCornersFourValues)
 
     exec_cmd_arg("orbitcorners=1/2/3/4");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_set_orbit_corners);
     EXPECT_TRUE(g_keep_screen_coords);
     EXPECT_EQ(1.0, g_orbit_corner_min_x);
@@ -1968,7 +1968,7 @@ TEST_F(TestParameterCommand, orbitCornersSixValues)
 
     exec_cmd_arg("orbitcorners=1/2/3/4/5/6");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_set_orbit_corners);
     EXPECT_TRUE(g_keep_screen_coords);
     EXPECT_EQ(1.0, g_orbit_corner_min_x);
@@ -1985,7 +1985,7 @@ TEST_F(TestParameterCommand, screenCoordsYes)
 
     exec_cmd_arg("screencoords=y");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_keep_screen_coords);
 }
 
@@ -1995,7 +1995,7 @@ TEST_F(TestParameterCommand, orbitDrawModeLine)
 
     exec_cmd_arg("orbitdrawmode=l");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('l', g_draw_mode);
 }
 
@@ -2005,7 +2005,7 @@ TEST_F(TestParameterCommand, orbitDrawModeRectangle)
 
     exec_cmd_arg("orbitdrawmode=r");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('r', g_draw_mode);
 }
 
@@ -2015,7 +2015,7 @@ TEST_F(TestParameterCommand, orbitDrawModeFunction)
 
     exec_cmd_arg("orbitdrawmode=f");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('f', g_draw_mode);
 }
 
@@ -2031,7 +2031,7 @@ TEST_F(TestParameterCommand, viewWindowsdDefaults)
 
     exec_cmd_arg("viewwindows");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_view_window);
     EXPECT_EQ(4.2f, g_view_reduction);
     EXPECT_EQ(0.75f, g_screen_aspect);
@@ -2053,7 +2053,7 @@ TEST_F(TestParameterCommand, viewWindowsOneValue)
 
     exec_cmd_arg("viewwindows=2");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(2.0f, g_view_reduction);
 }
 
@@ -2069,7 +2069,7 @@ TEST_F(TestParameterCommand, viewWindowsTwoValues)
 
     exec_cmd_arg("viewwindows=2/3");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(2.0f, g_view_reduction);
     EXPECT_EQ(3.0f, g_final_aspect_ratio);
 }
@@ -2086,7 +2086,7 @@ TEST_F(TestParameterCommand, viewWindowsThreeValues)
 
     exec_cmd_arg("viewwindows=2/3/n");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(2.0f, g_view_reduction);
     EXPECT_EQ(3.0f, g_final_aspect_ratio);
     EXPECT_FALSE(g_view_crop);
@@ -2104,7 +2104,7 @@ TEST_F(TestParameterCommand, viewWindowsFourValues)
 
     exec_cmd_arg("viewwindows=2/3/n/800");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(2.0f, g_view_reduction);
     EXPECT_EQ(3.0f, g_final_aspect_ratio);
     EXPECT_FALSE(g_view_crop);
@@ -2123,7 +2123,7 @@ TEST_F(TestParameterCommand, viewWindowsFiveValues)
 
     exec_cmd_arg("viewwindows=2/3/n/800/600");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(2.0f, g_view_reduction);
     EXPECT_EQ(3.0f, g_final_aspect_ratio);
     EXPECT_FALSE(g_view_crop);
@@ -2143,7 +2143,7 @@ TEST_F(TestParameterCommand, centerMagOn)
 
     exec_cmd_arg("center-mag");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_use_center_mag);
 }
 
@@ -2159,7 +2159,7 @@ TEST_F(TestParameterCommand, centerMagThreeValues)
 
     exec_cmd_arg("center-mag=2/4/3");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
     EXPECT_NEAR(1.555555, g_x_min, 1e-6);
     EXPECT_NEAR(2.444444, g_x_max, 1e-6);
@@ -2181,7 +2181,7 @@ TEST_F(TestParameterCommand, centerMagFourValues)
 
     exec_cmd_arg("center-mag=2/4/3/90");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
     EXPECT_NEAR(1.995061, g_x_min, 1e-6);
     EXPECT_NEAR(2.004938, g_x_max, 1e-6);
@@ -2203,7 +2203,7 @@ TEST_F(TestParameterCommand, centerMagFiveValues)
 
     exec_cmd_arg("center-mag=2/4/3/90/45");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
     EXPECT_NEAR(2.232210, g_x_min, 1e-6);
     EXPECT_NEAR(1.767789, g_x_max, 1e-6);
@@ -2219,7 +2219,7 @@ TEST_F(TestParameterCommand, aspectDrift)
 
     exec_cmd_arg("aspectdrift=12");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(12.0f, g_aspect_drift);
 }
 
@@ -2232,7 +2232,7 @@ TEST_F(TestParameterCommand, invertComputedRadius)
 
     exec_cmd_arg("invert=-1");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(-1.0, g_inversion[0]);
     EXPECT_EQ(1, g_invert);
 }
@@ -2246,7 +2246,7 @@ TEST_F(TestParameterCommand, invertDefaultCenter)
 
     exec_cmd_arg("invert=1");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(1.0, g_inversion[0]);
     EXPECT_EQ(1, g_invert);
 }
@@ -2260,7 +2260,7 @@ TEST_F(TestParameterCommand, invertRadiusCenter)
 
     exec_cmd_arg("invert=1/100/200");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(1.0, g_inversion[0]);
     EXPECT_EQ(100.0, g_inversion[1]);
     EXPECT_EQ(200.0, g_inversion[2]);
@@ -2273,7 +2273,7 @@ TEST_F(TestParameterCommand, oldDemmColorsYes)
 
     exec_cmd_arg("olddemmcolors=y");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_old_demm_colors);
 }
 
@@ -2283,7 +2283,7 @@ TEST_F(TestParameterCommand, askVideoYes)
 
     exec_cmd_arg("askvideo=y");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_ask_video);
 }
 
@@ -2291,7 +2291,7 @@ TEST_F(TestParameterCommand, ramVideoIgnored)
 {
     exec_cmd_arg("ramvideo=64");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommand, floatYes)
@@ -2300,7 +2300,7 @@ TEST_F(TestParameterCommand, floatYes)
 
     exec_cmd_arg("float=y");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_user_float_flag);
 }
 
@@ -2310,7 +2310,7 @@ TEST_F(TestParameterCommand, fastRestoreYes)
 
     exec_cmd_arg("fastrestore=y");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_fast_restore);
 }
 
@@ -2321,7 +2321,7 @@ TEST_F(TestParameterCommand, orgFrmDir)
 
     exec_cmd_arg("orgfrmdir=" ID_TEST_DATA_DIR);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_organize_formulas_search);
     EXPECT_EQ(ID_TEST_DATA_DIR, adjust_dir(g_organize_formulas_dir));
 }
@@ -2332,7 +2332,7 @@ TEST_F(TestParameterCommand, biomorph)
 
     exec_cmd_arg("biomorph=52");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(52, g_user_biomorph_value);
 }
 
@@ -2342,7 +2342,7 @@ TEST_F(TestParameterCommand, orbitSaveRaw)
 
     exec_cmd_arg("orbitsave=y");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(osf_raw, g_orbit_save_flags);
 }
 
@@ -2352,7 +2352,7 @@ TEST_F(TestParameterCommand, orbitSaveMidi)
 
     exec_cmd_arg("orbitsave=s");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(osf_midi | osf_raw, g_orbit_save_flags);
 }
 
@@ -2362,7 +2362,7 @@ TEST_F(TestParameterCommand, orbitSaveName)
 
     exec_cmd_arg("orbitsavename=smeagle.txt");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("smeagle.txt", g_orbit_save_name);
 }
 
@@ -2372,7 +2372,7 @@ TEST_F(TestParameterCommand, bailOut)
 
     exec_cmd_arg("bailout=50");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(50L, g_bail_out);
 }
 
@@ -2382,7 +2382,7 @@ TEST_F(TestParameterCommand, bailOutTestMod)
 
     exec_cmd_arg("bailoutest=mod");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(Bailout::MOD, g_bail_out_test);
 }
 
@@ -2392,7 +2392,7 @@ TEST_F(TestParameterCommandError, bailOutTestBadValue)
 
     exec_cmd_arg("bailoutest=foo");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(Bailout::REAL, g_bail_out_test);
 }
 
@@ -2402,7 +2402,7 @@ TEST_F(TestParameterCommand, symmetryXAxis)
 
     exec_cmd_arg("symmetry=xaxis");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(SymmetryType::X_AXIS, g_force_symmetry);
 }
 
@@ -2412,7 +2412,7 @@ TEST_F(TestParameterCommandError, symmetryBadValue)
 
     exec_cmd_arg("symmetry=fmeh");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
     EXPECT_EQ(SymmetryType::XY_AXIS, g_force_symmetry);
 }
 
@@ -2422,7 +2422,7 @@ TEST_F(TestParameterCommand, soundYes)
 
     exec_cmd_arg("sound=yes");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2432,7 +2432,7 @@ TEST_F(TestParameterCommand, soundNo)
 
     exec_cmd_arg("sound=no");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_OFF | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2442,7 +2442,7 @@ TEST_F(TestParameterCommand, soundBeep)
 
     exec_cmd_arg("sound=b");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2452,7 +2452,7 @@ TEST_F(TestParameterCommand, soundOrbitX)
 
     exec_cmd_arg("sound=x");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_X | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2462,7 +2462,7 @@ TEST_F(TestParameterCommand, soundOrbitY)
 
     exec_cmd_arg("sound=y");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Y | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2472,7 +2472,7 @@ TEST_F(TestParameterCommand, soundOrbitZ)
 
     exec_cmd_arg("sound=z");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2482,7 +2482,7 @@ TEST_F(TestParameterCommand, soundOrbitZMidi)
 
     exec_cmd_arg("sound=z/m");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_MIDI, g_sound_flag);
 }
 
@@ -2492,7 +2492,7 @@ TEST_F(TestParameterCommand, soundOrbitZSpeaker)
 
     exec_cmd_arg("sound=z/p");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, g_sound_flag);
 }
 
@@ -2502,7 +2502,7 @@ TEST_F(TestParameterCommand, soundOrbitZQuantized)
 
     exec_cmd_arg("sound=z/q");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_QUANTIZED, g_sound_flag);
 }
 
@@ -2512,7 +2512,7 @@ TEST_F(TestParameterCommand, hertzValue)
 
     exec_cmd_arg("hertz=100");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(100, g_base_hertz);
 }
 
@@ -2522,7 +2522,7 @@ TEST_F(TestParameterCommand, volumeValue)
 
     exec_cmd_arg("volume=63");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(63, g_fm_volume);
 }
 
@@ -2532,7 +2532,7 @@ TEST_F(TestParameterCommand, attenuateNo)
 
     exec_cmd_arg("attenuate=n");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(0, g_hi_attenuation);
 }
 
@@ -2542,7 +2542,7 @@ TEST_F(TestParameterCommand, attenuateLow)
 
     exec_cmd_arg("attenuate=l");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(1, g_hi_attenuation);
 }
 
@@ -2552,7 +2552,7 @@ TEST_F(TestParameterCommand, attenuateMiddle)
 
     exec_cmd_arg("attenuate=m");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(2, g_hi_attenuation);
 }
 
@@ -2562,7 +2562,7 @@ TEST_F(TestParameterCommand, attenuateHigh)
 
     exec_cmd_arg("attenuate=h");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(3, g_hi_attenuation);
 }
 
@@ -2572,7 +2572,7 @@ TEST_F(TestParameterCommand, polyphonyValue)
 
     exec_cmd_arg("polyphony=1");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(0, g_polyphony);
 }
 
@@ -2582,7 +2582,7 @@ TEST_F(TestParameterCommand, waveTypeValue)
 
     exec_cmd_arg("wavetype=4");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(4, g_fm_wavetype);
 }
 
@@ -2592,7 +2592,7 @@ TEST_F(TestParameterCommand, attackValue)
 
     exec_cmd_arg("attack=4");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(4, g_fm_attack);
 }
 
@@ -2602,7 +2602,7 @@ TEST_F(TestParameterCommand, decayValue)
 
     exec_cmd_arg("decay=4");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(4, g_fm_decay);
 }
 
@@ -2612,7 +2612,7 @@ TEST_F(TestParameterCommand, sustainValue)
 
     exec_cmd_arg("sustain=4");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(4, g_fm_sustain);
 }
 
@@ -2622,7 +2622,7 @@ TEST_F(TestParameterCommand, sReleaseValue)
 
     exec_cmd_arg("srelease=4");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(4, g_fm_release);
 }
 
@@ -2634,7 +2634,7 @@ TEST_F(TestParameterCommand, scaleMapValues)
 
     exec_cmd_arg("scalemap=4/5");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(4, g_scale_map[0]);
     EXPECT_EQ(5, g_scale_map[1]);
     EXPECT_EQ(-999, g_scale_map[2]);
@@ -2646,7 +2646,7 @@ TEST_F(TestParameterCommand, periodicityNo)
 
     exec_cmd_arg("periodicity=no");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(0, g_user_periodicity_value);
 }
 
@@ -2656,7 +2656,7 @@ TEST_F(TestParameterCommand, periodicityYes)
 
     exec_cmd_arg("periodicity=yes");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(1, g_user_periodicity_value);
 }
 
@@ -2666,7 +2666,7 @@ TEST_F(TestParameterCommand, periodicityShow)
 
     exec_cmd_arg("periodicity=show");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(-1, g_user_periodicity_value);
 }
 
@@ -2676,7 +2676,7 @@ TEST_F(TestParameterCommand, periodicityValue)
 
     exec_cmd_arg("periodicity=24");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(24, g_user_periodicity_value);
 }
 
@@ -2686,7 +2686,7 @@ TEST_F(TestParameterCommand, periodicityShowValue)
 
     exec_cmd_arg("periodicity=-24");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(-24, g_user_periodicity_value);
 }
 
@@ -2696,7 +2696,7 @@ TEST_F(TestParameterCommand, periodicityValueClampedHigh)
 
     exec_cmd_arg("periodicity=500");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(255, g_user_periodicity_value);
 }
 
@@ -2706,7 +2706,7 @@ TEST_F(TestParameterCommand, periodicityValueClampedLow)
 
     exec_cmd_arg("periodicity=-500");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(-255, g_user_periodicity_value);
 }
 
@@ -2716,7 +2716,7 @@ TEST_F(TestParameterCommand, logMapNo)
 
     exec_cmd_arg("logmap=no");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_log_map_auto_calculate);
     EXPECT_EQ(0L, g_log_map_flag);
 }
@@ -2727,7 +2727,7 @@ TEST_F(TestParameterCommand, logMapYes)
 
     exec_cmd_arg("logmap=yes");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_log_map_auto_calculate);
     EXPECT_EQ(1L, g_log_map_flag);
 }
@@ -2738,7 +2738,7 @@ TEST_F(TestParameterCommand, logMapOld)
 
     exec_cmd_arg("logmap=old");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_log_map_auto_calculate);
     EXPECT_EQ(-1L, g_log_map_flag);
 }
@@ -2749,7 +2749,7 @@ TEST_F(TestParameterCommand, logMapValue)
 
     exec_cmd_arg("logmap=15");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_log_map_auto_calculate);
     EXPECT_EQ(15L, g_log_map_flag);
 }
@@ -2761,7 +2761,7 @@ TEST_F(TestParameterCommand, logModeFly)
 
     exec_cmd_arg("logmode=f");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(1, g_log_map_fly_calculate);
     EXPECT_FALSE(g_log_map_auto_calculate);
 }
@@ -2773,7 +2773,7 @@ TEST_F(TestParameterCommand, logModeTable)
 
     exec_cmd_arg("logmode=t");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(2, g_log_map_fly_calculate);
     EXPECT_FALSE(g_log_map_auto_calculate);
 }
@@ -2785,7 +2785,7 @@ TEST_F(TestParameterCommand, logModeAuto)
 
     exec_cmd_arg("logmode=a");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(0, g_log_map_fly_calculate);
     EXPECT_TRUE(g_log_map_auto_calculate);
 }
@@ -2797,7 +2797,7 @@ TEST_F(TestParameterCommand, debugFlagValueViaDebug)
 
     exec_cmd_arg("debug=300");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(debug_flags::prevent_miim, g_debug_flag);
     EXPECT_FALSE(g_timer_flag);
 }
@@ -2809,7 +2809,7 @@ TEST_F(TestParameterCommand, debugFlagValue)
 
     exec_cmd_arg("debugflag=300");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(debug_flags::prevent_miim, g_debug_flag);
     EXPECT_FALSE(g_timer_flag);
 }
@@ -2821,7 +2821,7 @@ TEST_F(TestParameterCommand, debugFlagValueWithTimer)
 
     exec_cmd_arg("debugflag=301");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(debug_flags::prevent_miim, g_debug_flag);
     EXPECT_TRUE(g_timer_flag);
 }
@@ -2833,7 +2833,7 @@ TEST_F(TestParameterCommand, randomSeedValue)
 
     exec_cmd_arg("rseed=301");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(301, g_random_seed);
     EXPECT_TRUE(g_random_seed_flag);
 }
@@ -2844,7 +2844,7 @@ TEST_F(TestParameterCommand, orbitDelayValue)
 
     exec_cmd_arg("orbitdelay=301");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(301, g_orbit_delay);
 }
 
@@ -2854,7 +2854,7 @@ TEST_F(TestParameterCommand, orbitIntervalValue)
 
     exec_cmd_arg("orbitinterval=201");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(201, g_orbit_interval);
 }
 
@@ -2864,7 +2864,7 @@ TEST_F(TestParameterCommand, orbitIntervalValueTooSmall)
 
     exec_cmd_arg("orbitinterval=0");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(1, g_orbit_interval);
 }
 
@@ -2874,7 +2874,7 @@ TEST_F(TestParameterCommand, orbitIntervalValueTooBig)
 
     exec_cmd_arg("orbitinterval=256");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(255, g_orbit_interval);
 }
 
@@ -2886,7 +2886,7 @@ TEST_F(TestParameterCommand, showDotDefault)
 
     exec_cmd_arg("showdot");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(15, g_show_dot);
 }
 
@@ -2898,7 +2898,7 @@ TEST_F(TestParameterCommand, showDotAuto)
 
     exec_cmd_arg("showdot=a");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(15, g_show_dot);
     EXPECT_EQ('a', g_auto_show_dot);
     EXPECT_EQ(0, g_size_dot);
@@ -2912,7 +2912,7 @@ TEST_F(TestParameterCommand, showDotAutoSize)
 
     exec_cmd_arg("showdot=a/20");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(15, g_show_dot);
     EXPECT_EQ('a', g_auto_show_dot);
     EXPECT_EQ(20, g_size_dot);
@@ -2924,7 +2924,7 @@ TEST_F(TestParameterCommand, showOrbitYes)
 
     exec_cmd_arg("showorbit=y");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_start_show_orbit);
 }
 
@@ -2936,7 +2936,7 @@ TEST_F(TestParameterCommand, decompValue)
 
     exec_cmd_arg("decomp=16");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(16, g_decomp[0]);
     EXPECT_EQ(0, g_decomp[1]);
 }
@@ -2949,7 +2949,7 @@ TEST_F(TestParameterCommand, decompTwoValues)
 
     exec_cmd_arg("decomp=16/4");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(16, g_decomp[0]);
     EXPECT_EQ(4, g_decomp[1]);
     EXPECT_EQ(4, g_bail_out);
@@ -2964,7 +2964,7 @@ TEST_F(TestParameterCommand, distEstOneValue)
 
     exec_cmd_arg("distest=4");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(4L, g_user_distance_estimator_value);
     EXPECT_EQ(71, g_distance_estimator_width_factor);
     EXPECT_EQ(0, g_distance_estimator_x_dots);
@@ -2980,7 +2980,7 @@ TEST_F(TestParameterCommand, distEstTwoValues)
 
     exec_cmd_arg("distest=4/5");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(4L, g_user_distance_estimator_value);
     EXPECT_EQ(5, g_distance_estimator_width_factor);
     EXPECT_EQ(0, g_distance_estimator_x_dots);
@@ -2996,7 +2996,7 @@ TEST_F(TestParameterCommand, distEstFourValues)
 
     exec_cmd_arg("distest=4/5/6/7");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(4L, g_user_distance_estimator_value);
     EXPECT_EQ(5, g_distance_estimator_width_factor);
     EXPECT_EQ(6, g_distance_estimator_x_dots);
@@ -3009,7 +3009,7 @@ TEST_F(TestParameterCommand, formulaFileFilename)
 
     exec_cmd_arg("formulafile=foo.frm");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("foo.frm", g_formula_filename);
 }
 
@@ -3019,7 +3019,7 @@ TEST_F(TestParameterCommand, formulaName)
 
     exec_cmd_arg("formulaname=Monongahela");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("monongahela", g_formula_name);
 }
 
@@ -3029,7 +3029,7 @@ TEST_F(TestParameterCommand, lFileFilename)
 
     exec_cmd_arg("lfile=foo.l");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("foo.l", g_l_system_filename);
 }
 
@@ -3039,7 +3039,7 @@ TEST_F(TestParameterCommand, lName)
 
     exec_cmd_arg("lname=Monongahela");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("monongahela", g_l_system_name);
 }
 
@@ -3049,7 +3049,7 @@ TEST_F(TestParameterCommand, ifsFileFilename)
 
     exec_cmd_arg("ifsfile=foo.ifs");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("foo.ifs", g_ifs_filename);
 }
 
@@ -3059,7 +3059,7 @@ TEST_F(TestParameterCommand, ifsName)
 
     exec_cmd_arg("ifs=Monongahela");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("monongahela", g_ifs_name);
 }
 
@@ -3069,7 +3069,7 @@ TEST_F(TestParameterCommand, ifs3DName)
 
     exec_cmd_arg("ifs3d=Monongahela");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("monongahela", g_ifs_name);
 }
 
@@ -3079,7 +3079,7 @@ TEST_F(TestParameterCommand, parmFile)
 
     exec_cmd_arg("parmfile=foo.par");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ("foo.par", g_command_file);
 }
 
@@ -3089,7 +3089,7 @@ TEST_F(TestParameterCommand, stereoValue)
 
     exec_cmd_arg("stereo=3");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_glasses_type);
 }
 
@@ -3101,7 +3101,7 @@ TEST_F(TestParameterCommand, rotation)
 
     exec_cmd_arg("rotation=30/60/90");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(30, g_x_rot);
     EXPECT_EQ(60, g_y_rot);
     EXPECT_EQ(90, g_z_rot);
@@ -3113,7 +3113,7 @@ TEST_F(TestParameterCommand, perspective)
 
     exec_cmd_arg("perspective=90");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(90, g_viewer_z);
 }
 
@@ -3124,7 +3124,7 @@ TEST_F(TestParameterCommand, xyShift)
 
     exec_cmd_arg("xyshift=30/90");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(30, g_shift_x);
     EXPECT_EQ(90, g_shift_y);
 }
@@ -3135,7 +3135,7 @@ TEST_F(TestParameterCommand, interocular)
 
     exec_cmd_arg("interocular=90");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(90, g_eye_separation);
 }
 
@@ -3145,7 +3145,7 @@ TEST_F(TestParameterCommand, converge)
 
     exec_cmd_arg("converge=90");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(90, g_converge_x_adjust);
 }
 
@@ -3158,7 +3158,7 @@ TEST_F(TestParameterCommand, crop)
 
     exec_cmd_arg("crop=1/2/3/4");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_red_crop_left);
     EXPECT_EQ(2, g_red_crop_right);
     EXPECT_EQ(3, g_blue_crop_left);
@@ -3172,7 +3172,7 @@ TEST_F(TestParameterCommand, bright)
 
     exec_cmd_arg("bright=1/2");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_red_bright);
     EXPECT_EQ(2, g_blue_bright);
 }
@@ -3184,7 +3184,7 @@ TEST_F(TestParameterCommand, xyAdjust)
 
     exec_cmd_arg("xyadjust=1/2");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_adjust_3d_x);
     EXPECT_EQ(2, g_adjust_3d_y);
 }
@@ -3196,7 +3196,7 @@ TEST_F(TestParameterCommand, threeDNo)
 
     exec_cmd_arg("3d=no");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(display_3d_modes::NONE, g_display_3d);
 }
 
@@ -3207,7 +3207,7 @@ TEST_F(TestParameterCommand, threeDYes)
 
     exec_cmd_arg("3d=yes");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D | cmdarg_flags::YES_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
     EXPECT_FALSE(g_overlay_3d);
     EXPECT_EQ(display_3d_modes::YES, g_display_3d);
 }
@@ -3220,7 +3220,7 @@ TEST_F(TestParameterCommand, threeDOverlayWithFractal)
 
     exec_cmd_arg("3d=overlay");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D | cmdarg_flags::YES_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
     EXPECT_TRUE(g_overlay_3d);
     EXPECT_EQ(display_3d_modes::YES, g_display_3d);
 }
@@ -3233,7 +3233,7 @@ TEST_F(TestParameterCommand, threeDOverlayNoFractal)
 
     exec_cmd_arg("3d=overlay");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D | cmdarg_flags::YES_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
     EXPECT_FALSE(g_overlay_3d);
     EXPECT_EQ(display_3d_modes::YES, g_display_3d);
 }
@@ -3244,7 +3244,7 @@ TEST_F(TestParameterCommand, sphereNo)
 
     exec_cmd_arg("sphere=no");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_sphere);
 }
 
@@ -3254,7 +3254,7 @@ TEST_F(TestParameterCommand, sphereYes)
 
     exec_cmd_arg("sphere=yes");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_sphere);
 }
 
@@ -3266,7 +3266,7 @@ TEST_F(TestParameterCommand, scaleXYZTwoValues)
 
     exec_cmd_arg("scalexyz=1/2");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_x_scale);
     EXPECT_EQ(2, g_y_scale);
 }
@@ -3279,7 +3279,7 @@ TEST_F(TestParameterCommand, scaleXYZThreeValues)
 
     exec_cmd_arg("scalexyz=1/2/3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_x_scale);
     EXPECT_EQ(2, g_y_scale);
     EXPECT_EQ(3, g_rough);
@@ -3291,7 +3291,7 @@ TEST_F(TestParameterCommand, roughness)
 
     exec_cmd_arg("roughness=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_rough);
 }
 
@@ -3301,7 +3301,7 @@ TEST_F(TestParameterCommand, waterline)
 
     exec_cmd_arg("waterline=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_water_line);
 }
 
@@ -3311,7 +3311,7 @@ TEST_F(TestParameterCommand, fillType)
 
     exec_cmd_arg("filltype=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(FillType::SURFACE_CONSTANT, g_fill_type);
 }
 
@@ -3323,7 +3323,7 @@ TEST_F(TestParameterCommand, lightSource)
 
     exec_cmd_arg("lightsource=1/2/3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_light_x);
     EXPECT_EQ(2, g_light_y);
     EXPECT_EQ(3, g_light_z);
@@ -3335,7 +3335,7 @@ TEST_F(TestParameterCommand, smoothing)
 
     exec_cmd_arg("smoothing=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_light_avg);
 }
 
@@ -3346,7 +3346,7 @@ TEST_F(TestParameterCommand, latitude)
 
     exec_cmd_arg("latitude=1/3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_sphere_theta_min);
     EXPECT_EQ(3, g_sphere_theta_max);
 }
@@ -3358,7 +3358,7 @@ TEST_F(TestParameterCommand, longitude)
 
     exec_cmd_arg("longitude=1/3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_sphere_phi_min);
     EXPECT_EQ(3, g_sphere_phi_max);
 }
@@ -3369,7 +3369,7 @@ TEST_F(TestParameterCommand, radius)
 
     exec_cmd_arg("radius=1");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_sphere_radius);
 }
 
@@ -3380,7 +3380,7 @@ TEST_F(TestParameterCommand, transparentOneValue)
 
     exec_cmd_arg("transparent=1");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_transparent_color_3d[0]);
     EXPECT_EQ(1, g_transparent_color_3d[1]);
 }
@@ -3392,7 +3392,7 @@ TEST_F(TestParameterCommand, transparentTwoValues)
 
     exec_cmd_arg("transparent=1/2");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_transparent_color_3d[0]);
     EXPECT_EQ(2, g_transparent_color_3d[1]);
 }
@@ -3403,7 +3403,7 @@ TEST_F(TestParameterCommand, previewNo)
 
     exec_cmd_arg("preview=no");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_preview);
 }
 
@@ -3413,7 +3413,7 @@ TEST_F(TestParameterCommand, showBoxNo)
 
     exec_cmd_arg("showbox=no");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_show_box);
 }
 
@@ -3423,7 +3423,7 @@ TEST_F(TestParameterCommand, coarse)
 
     exec_cmd_arg("coarse=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_preview_factor);
 }
 
@@ -3433,7 +3433,7 @@ TEST_F(TestParameterCommand, randomize)
 
     exec_cmd_arg("randomize=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_randomize_3d);
 }
 
@@ -3443,7 +3443,7 @@ TEST_F(TestParameterCommand, ambient)
 
     exec_cmd_arg("ambient=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_ambient);
 }
 
@@ -3453,7 +3453,7 @@ TEST_F(TestParameterCommand, haze)
 
     exec_cmd_arg("haze=3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(3, g_haze);
 }
 
@@ -3463,7 +3463,7 @@ TEST_F(TestParameterCommand, fullColorNo)
 
     exec_cmd_arg("fullcolor=no");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_targa_out);
 }
 
@@ -3473,7 +3473,7 @@ TEST_F(TestParameterCommand, trueColorNo)
 
     exec_cmd_arg("truecolor=no");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_truecolor);
 }
 
@@ -3483,7 +3483,7 @@ TEST_F(TestParameterCommand, trueModeDefaultColor)
 
     exec_cmd_arg("truemode=d");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(TrueColorMode::DEFAULT_COLOR, g_true_mode);
 }
 
@@ -3493,7 +3493,7 @@ TEST_F(TestParameterCommand, trueModeIterate)
 
     exec_cmd_arg("truemode=i");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
 }
 
@@ -3503,7 +3503,7 @@ TEST_F(TestParameterCommand, trueModeValue)
 
     exec_cmd_arg("truemode=1");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
 }
 
@@ -3513,7 +3513,7 @@ TEST_F(TestParameterCommand, useGrayScaleNo)
 
     exec_cmd_arg("usegrayscale=n");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_gray_flag);
 }
 
@@ -3523,7 +3523,7 @@ TEST_F(TestParameterCommand, stereoWidth)
 
     exec_cmd_arg("stereowidth=4.5");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(4.5, g_auto_stereo_width);
 }
 
@@ -3533,7 +3533,7 @@ TEST_F(TestParameterCommand, monitorWidthAliasForStereoWidth)
 
     exec_cmd_arg("monitorwidth=4.5");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(4.5, g_auto_stereo_width);
 }
 
@@ -3543,7 +3543,7 @@ TEST_F(TestParameterCommand, targaOverlayNo)
 
     exec_cmd_arg("targa_overlay=n");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_targa_overlay);
 }
 
@@ -3555,7 +3555,7 @@ TEST_F(TestParameterCommand, background)
 
     exec_cmd_arg("background=1/2/3");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(1, g_background_color[0]);
     EXPECT_EQ(2, g_background_color[1]);
     EXPECT_EQ(3, g_background_color[2]);
@@ -3568,7 +3568,7 @@ TEST_F(TestParameterCommand, lightNameFirstInit)
 
     exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("foo", g_light_name);
 }
 
@@ -3579,7 +3579,7 @@ TEST_F(TestParameterCommand, lightNameAfterStartup)
 
     exec_cmd_arg("lightname=foo");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ("foo", g_light_name);
 }
 
@@ -3590,7 +3590,7 @@ TEST_F(TestParameterCommand, lightNameNotSet)
 
     exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommand, ray)
@@ -3599,7 +3599,7 @@ TEST_F(TestParameterCommand, ray)
 
     exec_cmd_arg("ray=3", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(raytrace_formats::raw, g_raytrace_format);
 }
 
@@ -3609,7 +3609,7 @@ TEST_F(TestParameterCommand, briefNo)
 
     exec_cmd_arg("brief=n");
 
-    EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_brief);
 }
 
@@ -3617,7 +3617,7 @@ TEST_F(TestParameterCommandError, releaseNotAllowed)
 {
     exec_cmd_arg("release=100");
 
-    EXPECT_EQ(cmdarg_flags::ERROR, m_result);
+    EXPECT_EQ(CmdArgFlags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, curDirNo)
@@ -3626,7 +3626,7 @@ TEST_F(TestParameterCommand, curDirNo)
 
     exec_cmd_arg("curdir=n");
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_FALSE(g_check_cur_dir);
 }
 
@@ -3636,7 +3636,7 @@ TEST_F(TestParameterCommand, virtualNo)
 
     exec_cmd_arg("virtual=n");
 
-    EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_virtual_screens);
 }
 
@@ -3646,6 +3646,6 @@ TEST_F(TestParameterCommand, saveDir)
 
     exec_cmd_arg("savedir=" ID_TEST_DATA_DIR);
 
-    EXPECT_EQ(cmdarg_flags::NONE, m_result);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(ID_TEST_DATA_DIR, g_save_dir);
 }

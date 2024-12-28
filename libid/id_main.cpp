@@ -379,7 +379,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         if (kbdchar == '@' || kbdchar == '2')
         {
             // execute commands
-            if (!bit_set(get_commands(), cmdarg_flags::YES_3D))
+            if (!bit_set(get_commands(), CmdArgFlags::YES_3D))
             {
                 return main_state::IMAGE_START;
             }

@@ -573,7 +573,7 @@ static main_state execute_commands(MainContext &context)
         // video= was specified
         g_adapter = g_init_mode;
         g_init_mode = -1;
-        i |= +cmdarg_flags::FRACTAL_PARAM;
+        i |= +CmdArgFlags::FRACTAL_PARAM;
         g_save_dac = 0;
     }
     else if (g_colors_preloaded)
@@ -582,11 +582,11 @@ static main_state execute_commands(MainContext &context)
         spin_dac(0, 1);
         g_colors_preloaded = false;
     }
-    else if (i & +cmdarg_flags::RESET) // reset was specified
+    else if (i & +CmdArgFlags::RESET) // reset was specified
     {
         g_save_dac = 0;
     }
-    if (i & +cmdarg_flags::YES_3D)
+    if (i & +CmdArgFlags::YES_3D)
     {
         // 3d = was specified
         context.key = '3';
@@ -594,7 +594,7 @@ static main_state execute_commands(MainContext &context)
         // pretend '3' was keyed
         return restore_from_3d(context);
     }
-    if (i & +cmdarg_flags::FRACTAL_PARAM)
+    if (i & +CmdArgFlags::FRACTAL_PARAM)
     {
         // fractal parameter changed
         driver_discard_screen();

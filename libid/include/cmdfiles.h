@@ -130,7 +130,7 @@ enum class CmdFile
     AT_CMD_LINE_SET_NAME = 3 // command line @filename/setname
 };
 
-enum class cmdarg_flags
+enum class CmdArgFlags
 {
     ERROR            = -1,
     NONE             = 0,
@@ -140,20 +140,20 @@ enum class cmdarg_flags
     RESET            = 8,
     GOODBYE          = 16,
 };
-inline int operator+(cmdarg_flags value)
+inline int operator+(CmdArgFlags value)
 {
     return static_cast<int>(value);
 }
-inline cmdarg_flags operator|(cmdarg_flags lhs, cmdarg_flags rhs)
+inline CmdArgFlags operator|(CmdArgFlags lhs, CmdArgFlags rhs)
 {
-    return static_cast<cmdarg_flags>(+lhs | +rhs);
+    return static_cast<CmdArgFlags>(+lhs | +rhs);
 }
-inline cmdarg_flags &operator|=(cmdarg_flags &lhs, cmdarg_flags rhs)
+inline CmdArgFlags &operator|=(CmdArgFlags &lhs, CmdArgFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
-inline bool bit_set(cmdarg_flags flags, cmdarg_flags bit)
+inline bool bit_set(CmdArgFlags flags, CmdArgFlags bit)
 {
     return (+flags & +bit) == +bit;
 }
@@ -275,8 +275,8 @@ extern int                   g_user_biomorph_value;
 extern std::string           g_working_dir;
 
 int cmd_files(int argc, char const *const *argv);
-cmdarg_flags load_commands(std::FILE *);
+CmdArgFlags load_commands(std::FILE *);
 void set_3d_defaults();
 int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode);
-cmdarg_flags cmd_arg(char *curarg, CmdFile mode);
+CmdArgFlags cmd_arg(char *curarg, CmdFile mode);
 int get_power10(LDBL x);
