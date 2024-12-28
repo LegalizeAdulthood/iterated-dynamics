@@ -55,6 +55,6 @@ bool perturbation()
     {
         throw std::runtime_error("Failed to initialize perturbation engine (" + std::to_string(result) + ")");
     }
-    g_calc_status = calc_status_value::COMPLETED;
+    g_calc_status = CalcStatus::COMPLETED;
     return false;
 }

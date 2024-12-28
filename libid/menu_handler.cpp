@@ -139,7 +139,7 @@ main_state color_editing(MainContext &context)
         if (!load_palette())
         {
             context.more_keys = false;
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
             return main_state::NOTHING;
         }
 
@@ -212,7 +212,7 @@ main_state requested_video_fn(MainContext &context)
     {
         g_save_dac = 0;
     }
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     context.more_keys = false;
     return main_state::CONTINUE;
 }

@@ -159,7 +159,7 @@ MainMenu::MainMenu(bool full_menu)
     if (full_menu)
     {
         add_left_heading("      CURRENT IMAGE         ");
-        add_left_item((g_calc_status == calc_status_value::RESUMABLE) ? "Continue calculation        "
+        add_left_item((g_calc_status == CalcStatus::RESUMABLE) ? "Continue calculation        "
                                                                       : "Return to image             ",
             ID_KEY_ENTER);
         add_left_item("Info about image      <Tab> ", ID_KEY_TAB);

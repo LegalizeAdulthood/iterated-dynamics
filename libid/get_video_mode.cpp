@@ -374,9 +374,9 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         && g_file_y_dots == g_video_entry.ydots)
     {
         // pull image into a view window
-        if (g_calc_status != calc_status_value::COMPLETED) // if not complete
+        if (g_calc_status != CalcStatus::COMPLETED) // if not complete
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
+            g_calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
         }
         if (g_view_x_dots)
         {
@@ -395,9 +395,9 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     if (g_video_entry.xdots < g_file_x_dots || g_video_entry.ydots < g_file_y_dots)
     {
         // set up to load only every nth pixel to make image fit
-        if (g_calc_status != calc_status_value::COMPLETED) // if not complete
+        if (g_calc_status != CalcStatus::COMPLETED) // if not complete
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
+            g_calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
         }
         g_skip_y_dots = 1;
         g_skip_x_dots = g_skip_y_dots;

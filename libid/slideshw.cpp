@@ -165,7 +165,7 @@ int slide_show()
     char buffer[81];
     if (s_calc_wait)
     {
-        if (g_calc_status == calc_status_value::IN_PROGRESS || g_busy)   // restart timer - process not done
+        if (g_calc_status == CalcStatus::IN_PROGRESS || g_busy)   // restart timer - process not done
         {
             return 0; // wait for calc to finish before reading more keystrokes
         }

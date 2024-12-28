@@ -264,11 +264,11 @@ int tab_display()       // display the status of the current image
     int k;
     int hasformparam = 0;
 
-    if (g_calc_status < calc_status_value::PARAMS_CHANGED)        // no active fractal image
+    if (g_calc_status < CalcStatus::PARAMS_CHANGED)        // no active fractal image
     {
         return 0;                // (no TAB on the credits screen)
     }
-    if (g_calc_status == calc_status_value::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
+    if (g_calc_status == CalcStatus::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
         g_calc_time += (std::clock() - g_timer_start) / (CLOCKS_PER_SEC/100);
     }
@@ -343,26 +343,26 @@ top:
 
     switch (g_calc_status)
     {
-    case calc_status_value::PARAMS_CHANGED:
+    case CalcStatus::PARAMS_CHANGED:
         msgptr = "Parms chgd since generated";
         break;
-    case calc_status_value::IN_PROGRESS:
+    case CalcStatus::IN_PROGRESS:
         msgptr = "Still being generated";
         break;
-    case calc_status_value::RESUMABLE:
+    case CalcStatus::RESUMABLE:
         msgptr = "Interrupted, resumable";
         break;
-    case calc_status_value::NON_RESUMABLE:
+    case CalcStatus::NON_RESUMABLE:
         msgptr = "Interrupted, non-resumable";
         break;
-    case calc_status_value::COMPLETED:
+    case CalcStatus::COMPLETED:
         msgptr = "Image completed";
         break;
     default:
         msgptr = "";
     }
     driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-    if (g_init_batch != BatchMode::NONE && g_calc_status != calc_status_value::PARAMS_CHANGED)
+    if (g_init_batch != BatchMode::NONE && g_calc_status != CalcStatus::PARAMS_CHANGED)
     {
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
     }
@@ -409,7 +409,7 @@ top:
     }
     s_row += 1;
 
-    if (g_calc_status == calc_status_value::IN_PROGRESS || g_calc_status == calc_status_value::RESUMABLE)
+    if (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE)
     {
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NORESUME))
         {
@@ -424,7 +424,7 @@ top:
     ++s_row;
 
     if (g_got_status >= StatusValues::ONE_OR_TWO_PASS &&
-        (g_calc_status == calc_status_value::IN_PROGRESS || g_calc_status == calc_status_value::RESUMABLE))
+        (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE))
     {
         switch (g_got_status)
         {
@@ -508,7 +508,7 @@ top:
     strncpy(msg, get_calculation_time(g_calc_time).c_str(), std::size(msg));
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     if (g_got_status == StatusValues::DIFFUSION &&
-        g_calc_status == calc_status_value::IN_PROGRESS) // estimate total time
+        g_calc_status == CalcStatus::IN_PROGRESS) // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
         const std::string time{get_calculation_time(

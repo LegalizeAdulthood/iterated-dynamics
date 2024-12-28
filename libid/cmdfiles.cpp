@@ -1188,7 +1188,7 @@ static CmdArgFlags cmd_3d(const Command &cmd)
     if (value == "overlay")
     {
         yes_no = 1;
-        if (g_calc_status > calc_status_value::NO_FRACTAL) // if no image, treat same as 3D=yes
+        if (g_calc_status > CalcStatus::NO_FRACTAL) // if no image, treat same as 3D=yes
         {
             g_overlay_3d = true;
         }

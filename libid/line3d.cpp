@@ -2452,7 +2452,7 @@ static int first_time(int linelen, VECTOR v)
     s_even_odd_row = 0;
     g_calc_time = s_even_odd_row;
     // mark as in-progress, and enable <tab> timer display
-    g_calc_status = calc_status_value::IN_PROGRESS;
+    g_calc_status = CalcStatus::IN_PROGRESS;
 
     s_i_ambient = (unsigned int)(255 * (float)(100 - g_ambient) / 100.0);
     if (s_i_ambient < 1)

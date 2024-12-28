@@ -519,10 +519,10 @@ bool encoder()
     // loadfile has notes about extension block structure
     if (interrupted)
     {
-        save_info.calc_status = static_cast<short>(calc_status_value::PARAMS_CHANGED); // partial save is not resumable
+        save_info.calc_status = static_cast<short>(CalcStatus::PARAMS_CHANGED); // partial save is not resumable
     }
     save_info.tot_extend_len = 0;
-    if (!g_resume_data.empty() && save_info.calc_status == static_cast<short>(calc_status_value::RESUMABLE))
+    if (!g_resume_data.empty() && save_info.calc_status == static_cast<short>(CalcStatus::RESUMABLE))
     {
         // resume info block, 002
         save_info.tot_extend_len += extend_blk_len(g_resume_len);
@@ -581,7 +581,7 @@ bool encoder()
     if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
     {
         EvolutionInfo esave_info;
-        if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
+        if (!g_have_evolve_info || g_calc_status == CalcStatus::COMPLETED)
         {
             esave_info.x_parameter_range = g_evolve_x_parameter_range;
             esave_info.y_parameter_range = g_evolve_y_parameter_range;

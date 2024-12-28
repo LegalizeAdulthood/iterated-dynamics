@@ -104,7 +104,7 @@ int alloc_resume(int alloclen, int version)
     g_resume_data.resize(sizeof(int)*alloclen);
     g_resume_len = 0;
     put_resume(sizeof(version), &version, 0);
-    g_calc_status = calc_status_value::RESUMABLE;
+    g_calc_status = CalcStatus::RESUMABLE;
     return 0;
 }
 

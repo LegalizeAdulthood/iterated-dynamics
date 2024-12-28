@@ -672,7 +672,7 @@ bool mandel_bn_setup()
         mandel_perturbation_setup();
         // TODO: figure out crash if we don't do this
         g_std_calc_mode ='g';
-        g_calc_status = calc_status_value::COMPLETED;
+        g_calc_status = CalcStatus::COMPLETED;
         return true;
     }
 

@@ -752,7 +752,7 @@ int calc_fract()
         g_l_init_orbit.x = (long)(g_init_orbit.x * g_fudge_factor);
         g_l_init_orbit.y = (long)(g_init_orbit.y * g_fudge_factor);
     }
-    g_resuming = (g_calc_status == calc_status_value::RESUMABLE);
+    g_resuming = (g_calc_status == CalcStatus::RESUMABLE);
     if (!g_resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
@@ -784,7 +784,7 @@ int calc_fract()
         g_i_y_stop = g_logical_screen_y_dots-1;
         g_xx_stop = g_logical_screen_x_dots-1;
         g_i_x_stop = g_logical_screen_x_dots-1;
-        g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
+        g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
         g_distance_estimator = 0; // only standard escape time engine supports distest
         // per_image routine is run here
         if (g_cur_fractal_specific->per_image())
@@ -798,14 +798,14 @@ int calc_fract()
         }
         if (check_key())
         {
-            if (g_calc_status == calc_status_value::IN_PROGRESS)   // calctype didn't set this itself,
+            if (g_calc_status == CalcStatus::IN_PROGRESS)   // calctype didn't set this itself,
             {
-                g_calc_status = calc_status_value::NON_RESUMABLE;   // so mark it interrupted, non-resumable
+                g_calc_status = CalcStatus::NON_RESUMABLE;   // so mark it interrupted, non-resumable
             }
         }
         else
         {
-            g_calc_status = calc_status_value::COMPLETED; // no key, so assume it completed
+            g_calc_status = CalcStatus::COMPLETED; // no key, so assume it completed
         }
     }
     else // standard escape-time engine
@@ -818,7 +818,7 @@ int calc_fract()
                 g_std_calc_mode = 'g';
                 g_three_pass = true;
                 timer(TimerType::ENGINE, (int(*)())perform_work_list);
-                if (g_calc_status == calc_status_value::COMPLETED)
+                if (g_calc_status == CalcStatus::COMPLETED)
                 {
                     if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low rez
                     {
@@ -872,7 +872,7 @@ int calc_fract()
     {
         end_disk();
     }
-    return g_calc_status == calc_status_value::COMPLETED ? 0 : -1;
+    return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
 }
 
 // locate alternate math record
@@ -1069,7 +1069,7 @@ static void perform_work_list()
             g_work_list[i] = g_work_list[i+1];
         }
 
-        g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
+        g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
 
         g_cur_fractal_specific->per_image();
         if (g_show_dot >= 0)
@@ -1182,7 +1182,7 @@ static void perform_work_list()
             boundary_trace();
             break;
         case 'g':
-            if (g_calc_status != calc_status_value::COMPLETED)      // horrible cludge preventing crash when
+            if (g_calc_status != CalcStatus::COMPLETED)      // horrible cludge preventing crash when
                                                                     // coming back from perturbation and math = bignum/bigflt in fractalb.cpp
                 solid_guess();
             break;
@@ -1218,7 +1218,7 @@ static void perform_work_list()
     }
     else
     {
-        g_calc_status = calc_status_value::COMPLETED; // completed
+        g_calc_status = CalcStatus::COMPLETED; // completed
     }
     if (sv_orbitcalc != nullptr)
     {

@@ -342,7 +342,7 @@ void restore_history_info(int i)
     }
     ImageHistory last = s_history[i];
     g_invert = 0;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
     g_fractal_type = last.image_fractal_type;
     g_x_min = last.x_min;

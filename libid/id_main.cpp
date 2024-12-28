@@ -114,7 +114,7 @@ double g_save_y_min{}, g_save_y_max{};  //
 double g_save_x_3rd{}, g_save_y_3rd{};  // displayed screen corners
 double g_plot_mx1{}, g_plot_mx2{};      //
 double g_plot_my1{}, g_plot_my2{};      // real->screen multipliers
-calc_status_value g_calc_status{calc_status_value::NO_FRACTAL}; //
+CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
 long g_calc_time{};                                             //
 bool g_zoom_enabled{};                                          // true when zoom is enabled
 int g_save_dac{};                                               // save-the-Video DAC flag
@@ -190,7 +190,7 @@ static void main_restart(int const argc, char const *const argv[], MainContext &
     init_gene(); /*initialise pointers to lots of variables for the evolution engine*/
     g_start_show_orbit = false;
     g_show_dot = -1; // turn off show_dot if entered with <g> command
-    g_calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
+    g_calc_status = CalcStatus::NO_FRACTAL;                    // no active fractal image
 
     driver_create_window();
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3); // save in case colors= present
@@ -305,9 +305,9 @@ static bool main_restore_start(MainContext &context)
         context.stacked = false;
         g_overlay_3d = false; // forget overlays
         g_display_3d = Display3DMode::NONE;
-        if (g_calc_status == calc_status_value::NON_RESUMABLE)
+        if (g_calc_status == CalcStatus::NON_RESUMABLE)
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
         context.resume = true;
         return true;
@@ -331,9 +331,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     if (g_show_file)
     {
-        if (g_calc_status > calc_status_value::PARAMS_CHANGED)                // goto image_start implies re-calc
+        if (g_calc_status > CalcStatus::PARAMS_CHANGED)                // goto image_start implies re-calc
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
     }
 

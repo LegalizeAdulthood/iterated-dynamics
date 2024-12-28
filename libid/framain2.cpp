@@ -86,7 +86,7 @@ main_state big_while_loop(MainContext &context)
         _ASSERTE(_CrtCheckMemory());
 #endif
 
-        if (g_calc_status != calc_status_value::RESUMABLE || g_show_file == 0)
+        if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == 0)
         {
             std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
@@ -280,7 +280,7 @@ main_state big_while_loop(MainContext &context)
                     g_potential_flag  = false;
                     g_potential_16bit = false;
                     g_init_mode = -1;
-                    g_calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
+                    g_calc_status = CalcStatus::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
                     get_fract_type();
                     return main_state::IMAGE_START;
@@ -313,7 +313,7 @@ main_state big_while_loop(MainContext &context)
             }
             else
             {
-                g_calc_status = calc_status_value::NO_FRACTAL;
+                g_calc_status = CalcStatus::NO_FRACTAL;
                 if (driver_key_pressed())
                 {
                     driver_buzzer(Buzzer::INTERRUPT);
@@ -356,7 +356,7 @@ main_state big_while_loop(MainContext &context)
         {
             // image has been loaded
             g_show_file = 1;
-            if (g_init_batch == BatchMode::NORMAL && g_calc_status == calc_status_value::RESUMABLE)
+            if (g_init_batch == BatchMode::NORMAL && g_calc_status == CalcStatus::RESUMABLE)
             {
                 g_init_batch = BatchMode::FINISH_CALC_BEFORE_SAVE;
             }
@@ -385,7 +385,7 @@ main_state big_while_loop(MainContext &context)
             g_filename_stack_index = -1;   // reset pointer
             g_browse_name.clear();
             if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELDMAP) &&
-                g_calc_status != calc_status_value::COMPLETED)
+                g_calc_status != CalcStatus::COMPLETED)
             {
                 // generate a set of images with varied parameters on each one
                 int ecount;
@@ -394,7 +394,7 @@ main_state big_while_loop(MainContext &context)
                 int gridsqr;
                 GeneBase gene[NUM_GENES];
                 copy_genes_from_bank(gene);
-                if (g_have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
+                if (g_have_evolve_info && (g_calc_status == CalcStatus::RESUMABLE))
                 {
                     g_evolve_x_parameter_range = g_evolve_info.x_parameter_range;
                     g_evolve_y_parameter_range = g_evolve_info.y_parameter_range;
@@ -556,7 +556,7 @@ resumeloop:                             // return here on failed overlays
             else if (g_init_batch == BatchMode::NONE)      // not batch mode
             {
                 g_look_at_mouse = g_zoom_box_width == 0 ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
-                if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
+                if (g_calc_status == CalcStatus::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     context.key = ID_KEY_ENTER;  // no visible reason to stop, continue
                 }
@@ -631,7 +631,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else
                 {
-                    if (g_calc_status != calc_status_value::COMPLETED)
+                    if (g_calc_status != CalcStatus::COMPLETED)
                     {
                         g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE; // bailout with error
                     }
@@ -656,7 +656,7 @@ resumeloop:                             // return here on failed overlays
                 g_quick_calc = false;
                 g_user_std_calc_mode = g_old_std_calc_mode;
             }
-            if (g_quick_calc && g_calc_status != calc_status_value::COMPLETED)
+            if (g_quick_calc && g_calc_status != CalcStatus::COMPLETED)
             {
                 g_user_std_calc_mode = '1';
             }
@@ -679,7 +679,7 @@ resumeloop:                             // return here on failed overlays
             }
             if (driver_resize())
             {
-                g_calc_status = calc_status_value::NO_FRACTAL;
+                g_calc_status = CalcStatus::NO_FRACTAL;
             }
         }
     }

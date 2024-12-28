@@ -504,7 +504,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_outside_color      = read_info.outside;
     }
 
-    g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
+    g_calc_status = CalcStatus::PARAMS_CHANGED;       // defaults if version < 4
     g_x_3rd = g_x_min;
     g_y_3rd = g_y_min;
     g_user_distance_estimator_value = 0;
@@ -513,7 +513,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_x_3rd       = read_info.x3rd;
         g_y_3rd       = read_info.y3rd;
-        g_calc_status = static_cast<calc_status_value>(read_info.calc_status);
+        g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
         g_user_std_calc_mode = read_info.stdcalcmode;
         g_three_pass = false;
         if (g_user_std_calc_mode == 127)
@@ -773,7 +773,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (g_display_3d != Display3DMode::NONE)
     {
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
         g_fractal_type = FractalType::PLASMA;
         g_cur_fractal_specific = &g_fractal_specific[+FractalType::PLASMA];
         g_params[0] = 0;
@@ -857,9 +857,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             blk_6_info.e_count = blk_6_info.mutate[NUM_GENES - 4];
         }
         if (blk_6_info.e_count != blk_6_info.image_grid_size *blk_6_info.image_grid_size
-            && g_calc_status != calc_status_value::COMPLETED)
+            && g_calc_status != CalcStatus::COMPLETED)
         {
-            g_calc_status = calc_status_value::RESUMABLE;
+            g_calc_status = CalcStatus::RESUMABLE;
             g_evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
             g_evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
             g_evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
@@ -882,7 +882,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         else
         {
             g_have_evolve_info = false;
-            g_calc_status = calc_status_value::COMPLETED;
+            g_calc_status = CalcStatus::COMPLETED;
         }
         g_evolve_x_parameter_range = blk_6_info.x_parameter_range;
         g_evolve_y_parameter_range = blk_6_info.y_parameter_range;
@@ -1569,7 +1569,7 @@ int file_get_window()
     g_bf_math = BFMathType::BIGFLT;
     if (s_old_bf_math == BFMathType::NONE)
     {
-        calc_status_value oldcalc_status = g_calc_status; // kludge because next sets it = 0
+        CalcStatus oldcalc_status = g_calc_status; // kludge because next sets it = 0
         fractal_float_to_bf();
         g_calc_status = oldcalc_status;
     }

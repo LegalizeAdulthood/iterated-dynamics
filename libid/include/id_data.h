@@ -14,7 +14,7 @@ struct VideoInfo;
 //  2 interrupted, resumable
 //  3 interrupted, not resumable
 //  4 completed
-enum class calc_status_value
+enum class CalcStatus
 {
     NO_FRACTAL = -1,
     PARAMS_CHANGED = 0,
@@ -43,7 +43,7 @@ extern bool                  g_browse_check_fractal_params;
 extern bool                  g_browse_check_fractal_type;
 extern bool                  g_browse_sub_images;
 extern long                  g_calc_time;
-extern calc_status_value     g_calc_status;
+extern CalcStatus            g_calc_status;
 extern int                   g_colors;
 extern bool                  g_compare_gif;
 extern bool                  g_confirm_file_deletes;
@@ -59,7 +59,7 @@ extern float                 g_final_aspect_ratio;
 extern std::string           g_fractal_search_dir1;
 extern std::string           g_fractal_search_dir2;
 extern bool                  g_has_inverse;
-extern HelpLabels           g_help_mode;
+extern HelpLabels            g_help_mode;
 extern int                   g_integer_fractal;
 extern bool                  g_keep_aspect_ratio;
 extern long                  g_l_delta_min;

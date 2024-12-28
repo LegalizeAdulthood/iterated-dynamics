@@ -102,7 +102,7 @@ static main_state prompt_evolver_options(MainContext &context)
         // time to redraw?
         save_param_history();
         context.more_keys = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
@@ -113,7 +113,7 @@ static main_state exit_evolver(MainContext &context)
     g_view_window = false;
     save_param_history();
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
@@ -274,7 +274,7 @@ static main_state halve_mutation_params(MainContext &context)
     g_evolve_y_parameter_range = g_evolve_y_parameter_range / 2;
     g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
@@ -288,7 +288,7 @@ static main_state double_mutation_params(MainContext &context)
     g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
     g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
@@ -299,7 +299,7 @@ static main_state decrease_grid_size(MainContext &context)
         // evolve_image_grid_size must have odd value only
         g_evolve_image_grid_size -= 2;
         context.more_keys = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
@@ -310,7 +310,7 @@ static main_state increase_grid_size(MainContext &context)
     {
         g_evolve_image_grid_size += 2;
         context.more_keys = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
@@ -330,7 +330,7 @@ static main_state toggle_gene_variation(MainContext &context)
         }
     }
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
@@ -353,7 +353,7 @@ static main_state request_mutation_level(MainContext &context)
     set_mutation_level(mutation_level);
     restore_param_history();
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
@@ -362,7 +362,7 @@ static main_state turn_off_evolving(MainContext &context)
     g_evolving = EvolutionModeFlags::NONE;
     g_view_window = false;
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 

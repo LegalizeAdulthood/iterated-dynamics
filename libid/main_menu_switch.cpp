@@ -201,7 +201,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
             g_y_3rd *= 3.0;
         }
         g_zoom_enabled = true;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
     }
     else if (g_cur_fractal_specific->tomandel != FractalType::NOFRACTAL)
@@ -232,7 +232,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_params[0] = 0;
         g_params[1] = 0;
         g_zoom_enabled = true;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
     }
     else
@@ -303,7 +303,7 @@ static main_state prompt_options(MainContext &context)
     }
     if (g_max_iterations > old_maxit
         && g_inside_color >= COLOR_BLACK
-        && g_calc_status == calc_status_value::COMPLETED
+        && g_calc_status == CalcStatus::COMPLETED
         && g_cur_fractal_specific->calctype == standard_fractal
         && !g_log_map_flag
         && !g_truecolor     // recalc not yet implemented with truecolor
@@ -316,7 +316,7 @@ static main_state prompt_options(MainContext &context)
         g_old_std_calc_mode = g_user_std_calc_mode;
         g_user_std_calc_mode = '1';
         context.more_keys = false;
-        g_calc_status = calc_status_value::RESUMABLE;
+        g_calc_status = CalcStatus::RESUMABLE;
     }
     else if (i > 0)
     {
@@ -324,7 +324,7 @@ static main_state prompt_options(MainContext &context)
         g_quick_calc = false;
         save_param_history();
         context.more_keys = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     return main_state::NOTHING;
 }
@@ -355,7 +355,7 @@ static main_state begin_ant(MainContext &)
         driver_unstack_screen();
         if (ant() >= 0)
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
     }
     else
@@ -374,7 +374,7 @@ static main_state request_3d_fractal_params(MainContext &context)
 {
     if (get_fract3d_params() >= 0) // get the parameters
     {
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false; // time to redraw
     }
     return main_state::NOTHING;
@@ -406,7 +406,7 @@ static main_state space_command(MainContext &context)
     if (g_fractal_type == FractalType::CELLULAR)
     {
         g_cellular_next_screen = !g_cellular_next_screen;
-        g_calc_status = calc_status_value::RESUMABLE;
+        g_calc_status = CalcStatus::RESUMABLE;
         context.more_keys = false;
     }
     else
@@ -442,7 +442,7 @@ static main_state inverse_julia_toggle(MainContext &context)
         }
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         g_zoom_enabled = true;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
     }
     else
@@ -540,7 +540,7 @@ static main_state start_evolution(MainContext &context)
     set_mutation_level(context.key - ID_KEY_ALT_1 + 1);
     save_param_history();
     context.more_keys = false;
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
     return main_state::NOTHING;
 }
 
@@ -599,7 +599,7 @@ static main_state execute_commands(MainContext &context)
         // fractal parameter changed
         driver_discard_screen();
         context.more_keys = false;
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     else
     {
@@ -615,7 +615,7 @@ static main_state random_dot_stereogram(MainContext &)
     {
         if (auto_stereo_convert())
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
         return main_state::CONTINUE;
     }
@@ -629,7 +629,7 @@ static main_state request_star_field_params(MainContext &)
     {
         if (star_field() >= 0)
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED;
+            g_calc_status = CalcStatus::PARAMS_CHANGED;
         }
         return main_state::CONTINUE;
     }
@@ -711,12 +711,12 @@ static MenuHandler s_handlers[]{
 
 main_state main_menu_switch(MainContext &context)
 {
-    if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
+    if (g_quick_calc && g_calc_status == CalcStatus::COMPLETED)
     {
         g_quick_calc = false;
         g_user_std_calc_mode = g_old_std_calc_mode;
     }
-    if (g_quick_calc && g_calc_status != calc_status_value::COMPLETED)
+    if (g_quick_calc && g_calc_status != CalcStatus::COMPLETED)
     {
         g_user_std_calc_mode = g_old_std_calc_mode;
     }

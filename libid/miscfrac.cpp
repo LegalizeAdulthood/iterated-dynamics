@@ -1461,7 +1461,7 @@ int popcorn()   // subset of std engine
             g_reset_periodicity = false;
         }
     }
-    g_calc_status = calc_status_value::COMPLETED;
+    g_calc_status = CalcStatus::COMPLETED;
     return 0;
 }
 

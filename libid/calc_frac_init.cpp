@@ -116,7 +116,7 @@ void fractal_float_to_bf()
             float_to_bf(g_bf_parms[i], g_params[i]);
         }
     }
-    g_calc_status = calc_status_value::PARAMS_CHANGED;
+    g_calc_status = CalcStatus::PARAMS_CHANGED;
 }
 
 void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
@@ -230,7 +230,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     {
         g_float_flag = g_user_float_flag;
     }
-    if (g_calc_status == calc_status_value::RESUMABLE)
+    if (g_calc_status == CalcStatus::RESUMABLE)
     {
         // on resume, ensure floatflag correct
         g_float_flag = g_cur_fractal_specific->isinteger == 0;
@@ -486,9 +486,9 @@ expand_retry:
                 {
                     adjust_to_limits(2.0);   // double the size
                 }
-                if (g_calc_status == calc_status_value::RESUMABLE)         // due to restore of an old file?
+                if (g_calc_status == CalcStatus::RESUMABLE)         // due to restore of an old file?
                 {
-                    g_calc_status = calc_status_value::PARAMS_CHANGED;         //   whatever, it isn't resumable
+                    g_calc_status = CalcStatus::PARAMS_CHANGED;         //   whatever, it isn't resumable
                 }
                 goto init_restart;
             } // end if ratio bad
@@ -1037,11 +1037,11 @@ static void adjust_to_limits_bf(double expand)
 
     /* if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
        g_calc_status = calc_status_value::PARAMS_CHANGED; */
-    if (g_calc_status == calc_status_value::RESUMABLE
+    if (g_calc_status == CalcStatus::RESUMABLE
         && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy))
         && (g_zoom_box_width == 1.0))
     {
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
 
     // xxmin = cornerx[0] - adjx;
@@ -1206,9 +1206,9 @@ static void adjust_to_limits(double expand)
             adjy = ftemp;
         }
     }
-    if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (g_zoom_box_width == 1.0))
+    if (g_calc_status == CalcStatus::RESUMABLE && (adjx != 0 || adjy != 0) && (g_zoom_box_width == 1.0))
     {
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     g_x_min = cornerx[0] - adjx;
     g_x_max = cornerx[1] - adjx;

@@ -46,7 +46,7 @@ TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
 TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
 {
     ValueSaver saved_quick_calc{g_quick_calc, true};
-    ValueSaver saved_calc_status{g_calc_status, calc_status_value::COMPLETED};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'g'};
     ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, '1'};
 
@@ -64,7 +64,7 @@ TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
 TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
 {
     ValueSaver saved_quick_calc{g_quick_calc, true};
-    ValueSaver saved_calc_status{g_calc_status, calc_status_value::IN_PROGRESS};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::IN_PROGRESS};
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'g'};
     ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, '1'};
 

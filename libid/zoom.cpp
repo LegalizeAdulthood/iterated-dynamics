@@ -628,7 +628,7 @@ void aspect_ratio_crop(float old_aspect, float new_aspect)
 
 static int check_pan() // return 0 if can't, alignment requirement if can
 {
-    if ((g_calc_status != calc_status_value::RESUMABLE && g_calc_status != calc_status_value::COMPLETED) ||
+    if ((g_calc_status != CalcStatus::RESUMABLE && g_calc_status != CalcStatus::COMPLETED) ||
         g_evolving != EvolutionModeFlags::NONE)
     {
         return 0; // not resumable, not complete
@@ -661,7 +661,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 
     // can pan if we get this far
 
-    if (g_calc_status == calc_status_value::COMPLETED)
+    if (g_calc_status == CalcStatus::COMPLETED)
     {
         return 1; // image completed, align on any pixel
     }
@@ -738,7 +738,7 @@ int init_pan_or_recalc(bool do_zoom_out)
     // can't pan, trigger recalc
     if (align_mask < 0 || g_evolving != EvolutionModeFlags::NONE)
     {
-        g_calc_status = calc_status_value::PARAMS_CHANGED;
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
         return 0;
     }
 
@@ -760,13 +760,13 @@ int init_pan_or_recalc(bool do_zoom_out)
     }
     if ((row&align_mask) != 0 || (col&align_mask) != 0)
     {
-        g_calc_status = calc_status_value::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
+        g_calc_status = CalcStatus::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
         return 0;
     }
 
     // pan
     g_num_work_list = 0;
-    if (g_calc_status == calc_status_value::RESUMABLE)
+    if (g_calc_status == CalcStatus::RESUMABLE)
     {
         start_resume();
         get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
@@ -815,12 +815,12 @@ int init_pan_or_recalc(bool do_zoom_out)
         }
         else
         {
-            g_calc_status = calc_status_value::PARAMS_CHANGED; // trigger recalc
+            g_calc_status = CalcStatus::PARAMS_CHANGED; // trigger recalc
         }
         return 0;
     }
     // now we're committed
-    g_calc_status = calc_status_value::RESUMABLE;
+    g_calc_status = CalcStatus::RESUMABLE;
     clear_box();
     if (row > 0)   // move image up
     {
@@ -1094,7 +1094,7 @@ main_state request_zoom_in(MainContext &context)
         init_pan_or_recalc(false);
         context.more_keys = false;
     }
-    if (g_calc_status != calc_status_value::COMPLETED) // don't restart if image complete
+    if (g_calc_status != CalcStatus::COMPLETED) // don't restart if image complete
     {
         context.more_keys = false;
     }

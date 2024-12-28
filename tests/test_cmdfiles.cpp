@@ -3216,7 +3216,7 @@ TEST_F(TestParameterCommand, threeDOverlayWithFractal)
 {
     ValueSaver saved_overlay_3d{g_overlay_3d, false};
     ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
-    ValueSaver saved_calc_status{g_calc_status, calc_status_value::PARAMS_CHANGED};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
 
     exec_cmd_arg("3d=overlay");
 
@@ -3229,7 +3229,7 @@ TEST_F(TestParameterCommand, threeDOverlayNoFractal)
 {
     ValueSaver saved_overlay_3d{g_overlay_3d, false};
     ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
-    ValueSaver saved_calc_status{g_calc_status, calc_status_value::NO_FRACTAL};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::NO_FRACTAL};
 
     exec_cmd_arg("3d=overlay");
 
