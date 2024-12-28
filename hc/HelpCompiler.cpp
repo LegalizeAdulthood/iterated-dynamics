@@ -221,17 +221,17 @@ void HelpCompiler::make_hot_links()
     for (Link &l : g_src.all_links)
     {
         // name is the title of the topic
-        if (l.type == link_types::LT_TOPIC)
+        if (l.type == LinkTypes::LT_TOPIC)
         {
             l.link_topic();
         }
         // name is the name of a label
-        else if (l.type == link_types::LT_LABEL)
+        else if (l.type == LinkTypes::LT_LABEL)
         {
             l.link_label();
         }
         // it's a "special" link; topic_off already has the value
-        else if (l.type == link_types::LT_SPECIAL)
+        else if (l.type == LinkTypes::LT_SPECIAL)
         {
         }
     }
@@ -447,7 +447,7 @@ void HelpCompiler::set_hot_link_doc_page()
     {
         switch (l.type)
         {
-        case link_types::LT_TOPIC:
+        case LinkTypes::LT_TOPIC:
             if (int t = find_topic_title(l.name.c_str()); t == -1)
             {
                 g_current_src_filename = l.srcfile;
@@ -461,7 +461,7 @@ void HelpCompiler::set_hot_link_doc_page()
             }
             break;
 
-        case link_types::LT_LABEL:
+        case LinkTypes::LT_LABEL:
             if (Label *lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
             {
                 g_current_src_filename = l.srcfile;
@@ -475,7 +475,7 @@ void HelpCompiler::set_hot_link_doc_page()
             }
             break;
 
-        case link_types::LT_SPECIAL:
+        case LinkTypes::LT_SPECIAL:
             // special topics don't appear in the document
             break;
         }

@@ -843,14 +843,14 @@ int parse_link()   // returns length of link or 0 on error
 
         if (s_cmd[1] == '-')
         {
-            l.type      = link_types::LT_SPECIAL;
+            l.type      = LinkTypes::LT_SPECIAL;
             l.topic_num = std::atoi(&s_cmd[1]);
             l.topic_off = 0;
             l.name.clear();
         }
         else
         {
-            l.type = link_types::LT_LABEL;
+            l.type = LinkTypes::LT_LABEL;
             if ((int)std::strlen(s_cmd) > 32)
             {
                 warn(err_off, "Label is long.");
@@ -873,7 +873,7 @@ int parse_link()   // returns length of link or 0 on error
     else
     {
         ptr = s_cmd;
-        l.type = link_types::LT_TOPIC;
+        l.type = LinkTypes::LT_TOPIC;
         len = (int)(end - ptr);
         if (len == 0)
         {

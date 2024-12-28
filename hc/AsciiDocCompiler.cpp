@@ -221,15 +221,15 @@ void AsciiDocProcessor::process()
     process_document(token_modes::ADOC, info_cb, output_cb, this);
 }
 
-static std::string to_string(link_types type)
+static std::string to_string(LinkTypes type)
 {
     switch (type)
     {
-    case link_types::LT_TOPIC:
+    case LinkTypes::LT_TOPIC:
         return "LT_TOPIC";
-    case link_types::LT_LABEL:
+    case LinkTypes::LT_LABEL:
         return "LT_LABEL";
-    case link_types::LT_SPECIAL:
+    case LinkTypes::LT_SPECIAL:
         return "LT_SPECIAL";
     }
     return "? (" + std::to_string(static_cast<int>(type)) + ")";
@@ -240,10 +240,10 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     std::string anchor_name;
     switch (link.type)
     {
-    case link_types::LT_TOPIC:
+    case LinkTypes::LT_TOPIC:
         anchor_name = link.name;
         break;
-    case link_types::LT_LABEL:
+    case LinkTypes::LT_LABEL:
     {
         const Label *label = g_src.find_label(link.name.c_str());
         const Topic &topic = g_src.topics[label->topic_num];

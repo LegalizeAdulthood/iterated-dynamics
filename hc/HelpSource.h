@@ -62,7 +62,7 @@ inline bool operator<(const Label &a, const Label &b)
     return a.name < b.name;
 }
 
-enum class link_types
+enum class LinkTypes
 {
     LT_TOPIC,
     LT_LABEL,
@@ -74,7 +74,7 @@ struct Link
     void link_topic();
     void link_label();
 
-    link_types type;        // 0 = name is topic title, 1 = name is label,
+    LinkTypes type;         // 0 = name is topic title, 1 = name is label,
                             //   2 = "special topic"; name is nullptr and
                             //   topic_num/topic_off is valid
     int      topic_num;     // topic number to link to
