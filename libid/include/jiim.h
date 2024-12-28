@@ -4,7 +4,7 @@
 
 #include "cmplx.h"
 
-enum class jiim_types
+enum class JIIMType
 {
     JIIM = 0,
     ORBIT
@@ -15,7 +15,7 @@ extern double                g_julia_c_y;
 extern DComplex              g_save_c;
 constexpr double             JULIA_C_NOT_SET{100000.0};
 
-void jiim(jiim_types which);
+void jiim(JIIMType which);
 LComplex pop_long();
 DComplex pop_float();
 LComplex dequeue_long();

@@ -482,7 +482,7 @@ static void restore_rect(int x, int y, int width, int depth)
     s_cursor.show();
 }
 
-void jiim(jiim_types which)
+void jiim(JIIMType which)
 {
     Affine cvt;
     bool exact = false;
@@ -519,8 +519,8 @@ void jiim(jiim_types which)
         return;
     }
     const ValueSaver saved_help_mode{
-        g_help_mode, which == jiim_types::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
-    if (which == jiim_types::ORBIT)
+        g_help_mode, which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
+    if (which == JIIMType::ORBIT)
     {
         g_has_inverse = true;
     }
@@ -535,7 +535,7 @@ void jiim(jiim_types which)
     set_aspect(aspect);
     ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
 
-    if (which == jiim_types::ORBIT)
+    if (which == JIIMType::ORBIT)
     {
         per_image();
     }
@@ -547,13 +547,13 @@ void jiim(jiim_types which)
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
     s_ok_to_miim  = false;
-    if (which == jiim_types::JIIM && g_debug_flag != DebugFlags::prevent_miim)
+    if (which == JIIMType::JIIM && g_debug_flag != DebugFlags::prevent_miim)
     {
         s_ok_to_miim = init_queue(8*1024UL); // Queue Set-up Successful?
     }
 
     s_max_hits = 1;
-    if (which == jiim_types::ORBIT)
+    if (which == JIIMType::ORBIT)
     {
         g_plot = c_put_color;                // for line with clipping
     }
@@ -823,7 +823,7 @@ void jiim(jiim_types which)
                 case '7':
                 case '8':
                 case '9':
-                    if (which == jiim_types::JIIM)
+                    if (which == JIIMType::JIIM)
                     {
                         s_secret_experimental_mode = kbdchar - '0';
                         break;
@@ -933,7 +933,7 @@ void jiim(jiim_types which)
              * MIIM code:
              * compute fixed points and use them as starting points of JIIM
              */
-            if (which == jiim_types::JIIM && s_ok_to_miim)
+            if (which == JIIMType::JIIM && s_ok_to_miim)
             {
                 DComplex f1;
                 DComplex f2;
@@ -953,7 +953,7 @@ void jiim(jiim_types which)
             /*
              * End MIIM code.
              */
-            if (which == jiim_types::ORBIT)
+            if (which == JIIMType::ORBIT)
             {
                 per_pixel();
             }
@@ -984,7 +984,7 @@ void jiim(jiim_types which)
             }
         } // end if (driver_key_pressed)
 
-        if (which == jiim_types::JIIM)
+        if (which == JIIMType::JIIM)
         {
             if (!g_has_inverse)
             {
@@ -1235,7 +1235,7 @@ void jiim(jiim_types which)
                 actively_computing = false;
             }
         }
-        if (which == jiim_types::ORBIT || iter > 10)
+        if (which == JIIMType::ORBIT || iter > 10)
         {
             if (mode == 0)                    // pixels
             {

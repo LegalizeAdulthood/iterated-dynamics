@@ -157,7 +157,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
             (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDELFP) &&
             g_bf_math == BFMathType::NONE;
         clear_zoom_box();
-        jiim(jiim_types::JIIM);
+        jiim(JIIMType::JIIM);
         const int key = driver_get_key(); // flush keyboard buffer
         if (key != ID_KEY_SPACE)
         {
@@ -391,7 +391,7 @@ static main_state show_orbit_window(MainContext &)
         && !(g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR))
     {
         clear_zoom_box();
-        jiim(jiim_types::ORBIT);
+        jiim(JIIMType::ORBIT);
     }
     return main_state::NOTHING;
 }
