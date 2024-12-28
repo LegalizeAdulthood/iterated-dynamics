@@ -2792,37 +2792,37 @@ TEST_F(TestParameterCommand, logModeAuto)
 
 TEST_F(TestParameterCommand, debugFlagValueViaDebug)
 {
-    ValueSaver saved_debug_flag{g_debug_flag, debug_flags::none};
+    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::none};
     ValueSaver saved_timer_flag{g_timer_flag, true};
 
     exec_cmd_arg("debug=300");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(debug_flags::prevent_miim, g_debug_flag);
+    EXPECT_EQ(DebugFlags::prevent_miim, g_debug_flag);
     EXPECT_FALSE(g_timer_flag);
 }
 
 TEST_F(TestParameterCommand, debugFlagValue)
 {
-    ValueSaver saved_debug_flag{g_debug_flag, debug_flags::none};
+    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::none};
     ValueSaver saved_timer_flag{g_timer_flag, true};
 
     exec_cmd_arg("debugflag=300");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(debug_flags::prevent_miim, g_debug_flag);
+    EXPECT_EQ(DebugFlags::prevent_miim, g_debug_flag);
     EXPECT_FALSE(g_timer_flag);
 }
 
 TEST_F(TestParameterCommand, debugFlagValueWithTimer)
 {
-    ValueSaver saved_debug_flag{g_debug_flag, debug_flags::none};
+    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::none};
     ValueSaver saved_timer_flag{g_timer_flag, false};
 
     exec_cmd_arg("debugflag=301");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(debug_flags::prevent_miim, g_debug_flag);
+    EXPECT_EQ(DebugFlags::prevent_miim, g_debug_flag);
     EXPECT_TRUE(g_timer_flag);
 }
 

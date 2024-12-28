@@ -1254,7 +1254,7 @@ int calc_mand()              // fast per pixel 1/2/b/g, called with row & col se
                 g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
             }
         }
-        if (g_debug_flag != debug_flags::force_boundary_trace_error)
+        if (g_debug_flag != DebugFlags::force_boundary_trace_error)
         {
             if (g_color <= 0 && g_std_calc_mode == 'b')
             {
@@ -1309,7 +1309,7 @@ int calc_mand_fp()
                 g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
             }
         }
-        if (g_debug_flag != debug_flags::force_boundary_trace_error)
+        if (g_debug_flag != DebugFlags::force_boundary_trace_error)
         {
             if (g_color == 0 && g_std_calc_mode == 'b')
             {
@@ -2194,7 +2194,7 @@ plot_pixel:
             g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
         }
     }
-    if (g_debug_flag != debug_flags::force_boundary_trace_error)
+    if (g_debug_flag != DebugFlags::force_boundary_trace_error)
     {
         if (g_color <= 0 && g_std_calc_mode == 'b')
         {

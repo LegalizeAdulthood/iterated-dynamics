@@ -375,7 +375,7 @@ int cmd_files(int argc, char const *const *argv)
 
     init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
-    if (g_debug_flag != debug_flags::allow_init_commands_anytime)
+    if (g_debug_flag != DebugFlags::allow_init_commands_anytime)
     {
         g_first_init = false;
     }
@@ -456,7 +456,7 @@ static void init_vars_restart() // <ins> key init
     g_z_scroll = true;                                 // relaxed screen scrolling
     g_orbit_delay = 0;                                 // full speed orbits
     g_orbit_interval = 1;                              // plot all orbits
-    g_debug_flag = debug_flags::none;                  // debugging flag(s) are off
+    g_debug_flag = DebugFlags::none;                  // debugging flag(s) are off
     g_timer_flag = false;                              // timer flags are off
     g_formula_filename = "id.frm";                     // default formula file
     g_formula_name.clear();                            //
@@ -1457,8 +1457,8 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
 
     const int dec = get_power10(Magnification) + 4; // 4 digits of padding sounds good
 
-    if ((dec <= DBL_DIG + 1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) ||
-        g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
+    if ((dec <= DBL_DIG + 1 && g_debug_flag != DebugFlags::force_arbitrary_precision_math) ||
+        g_debug_flag == DebugFlags::prevent_arbitrary_precision_math)
     {
         // rough estimate that double is OK
         double Xctr = cmd.float_vals[0];
@@ -1717,8 +1717,8 @@ static CmdArgFlags cmd_corners(const Command &cmd)
     s_init_corners = true;
     // good first approx, but dec could be too big
     int dec = get_max_cur_arg_len(cmd.float_val_strs, cmd.total_params) + 1;
-    if ((dec > DBL_DIG + 1 || g_debug_flag == debug_flags::force_arbitrary_precision_math) &&
-        g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
+    if ((dec > DBL_DIG + 1 || g_debug_flag == DebugFlags::force_arbitrary_precision_math) &&
+        g_debug_flag != DebugFlags::prevent_arbitrary_precision_math)
     {
         BFMathType old_bf_math = g_bf_math;
         if (g_bf_math == BFMathType::NONE || dec > g_decimals)
@@ -1877,9 +1877,9 @@ static CmdArgFlags cmd_cycle_range(const Command &cmd)
 static CmdArgFlags cmd_debug_flag(const Command &cmd)
 {
     // internal use only
-    g_debug_flag = static_cast<debug_flags>(cmd.num_val);
-    g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != debug_flags::none; // separate timer flag
-    g_debug_flag &= ~debug_flags::benchmark_timer;
+    g_debug_flag = static_cast<DebugFlags>(cmd.num_val);
+    g_timer_flag = (g_debug_flag & DebugFlags::benchmark_timer) != DebugFlags::none; // separate timer flag
+    g_debug_flag &= ~DebugFlags::benchmark_timer;
     return CmdArgFlags::NONE;
 }
 
@@ -3919,7 +3919,7 @@ CmdArgFlags cmd_arg(char *curarg, CmdFile mode) // process a single argument
         return cmd.status;
     }
 
-    if (mode != CmdFile::AT_AFTER_STARTUP || g_debug_flag == debug_flags::allow_init_commands_anytime)
+    if (mode != CmdFile::AT_AFTER_STARTUP || g_debug_flag == DebugFlags::allow_init_commands_anytime)
     {
         if (const std::optional handled{handle_command(s_startup_commands, cmd)}; handled.has_value())
         {

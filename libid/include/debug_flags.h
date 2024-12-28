@@ -2,7 +2,7 @@
 //
 #pragma once
 
-enum class debug_flags
+enum class DebugFlags
 {
     none                                = 0,
     benchmark_timer                     = 1,
@@ -41,25 +41,25 @@ enum class debug_flags
     display_memory_statistics           = 10000
 };
 
-inline int operator+(debug_flags val)
+inline int operator+(DebugFlags val)
 {
     return static_cast<int>(val);
 }
 
-inline debug_flags operator~(debug_flags val)
+inline DebugFlags operator~(DebugFlags val)
 {
-    return static_cast<debug_flags>(~+val);
+    return static_cast<DebugFlags>(~+val);
 }
 
-inline debug_flags operator&(debug_flags lhs, debug_flags rhs)
+inline DebugFlags operator&(DebugFlags lhs, DebugFlags rhs)
 {
-    return static_cast<debug_flags>(+lhs & +rhs);
+    return static_cast<DebugFlags>(+lhs & +rhs);
 }
 
-inline debug_flags &operator&=(debug_flags &lhs, debug_flags rhs)
+inline DebugFlags &operator&=(DebugFlags &lhs, DebugFlags rhs)
 {
     lhs = lhs & rhs;
     return lhs;
 }
 
-extern debug_flags           g_debug_flag;
+extern DebugFlags           g_debug_flag;

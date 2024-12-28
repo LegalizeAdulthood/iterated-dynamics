@@ -37,7 +37,7 @@ int timer(timer_type timertype, int(*subrtn)(), ...)
     bool do_bench = g_timer_flag; // record time?
     if (timertype == timer_type::ENCODER)     // encoder, record time only if debug flag set
     {
-        do_bench = (g_debug_flag == debug_flags::benchmark_encoder);
+        do_bench = (g_debug_flag == DebugFlags::benchmark_encoder);
     }
     if (do_bench)
     {

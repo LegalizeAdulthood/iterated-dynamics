@@ -296,7 +296,7 @@ main_state big_while_loop(MainContext &context)
             {
                 g_out_line = out_line;        // regular decoding
             }
-            if (g_debug_flag == debug_flags::show_float_flag)
+            if (g_debug_flag == DebugFlags::show_float_flag)
             {
                 char msg[MSG_LEN];
                 std::snprintf(msg, std::size(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
@@ -619,7 +619,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else if (g_init_batch == BatchMode::NORMAL || g_init_batch == BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
                 {
-                    context.key = (g_debug_flag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
+                    context.key = (g_debug_flag == DebugFlags::force_disk_restore_not_save) ? 'r' : 's';
                     if (g_init_batch == BatchMode::NORMAL)
                     {
                         g_init_batch = BatchMode::SAVE;

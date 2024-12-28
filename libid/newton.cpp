@@ -265,7 +265,7 @@ int complex_basin()
 // Newton/NewtBasin Routines
 bool newton_setup()
 {
-    if (g_debug_flag != debug_flags::allow_mp_newton_type)
+    if (g_debug_flag != DebugFlags::allow_mp_newton_type)
     {
         if (g_fractal_type == FractalType::MPNEWTON)
         {

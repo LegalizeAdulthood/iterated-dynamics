@@ -750,7 +750,7 @@ static int rhombus(
 
 void soi()
 {
-    if (g_debug_flag == debug_flags::use_soi_long_double)
+    if (g_debug_flag == DebugFlags::use_soi_long_double)
     {
         extern void soi_ldbl();
         soi_ldbl();

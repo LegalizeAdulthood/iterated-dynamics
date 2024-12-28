@@ -37,7 +37,7 @@ mandel_setup()           // Mandelbrot Routine
     {
         return mandel_perturbation_setup();
     }
-    if (g_debug_flag != debug_flags::force_standard_fractal
+    if (g_debug_flag != DebugFlags::force_standard_fractal
         && (g_invert == 0)
         && g_decomp[0] == 0
         && g_magnitude_limit == 4.0
@@ -65,7 +65,7 @@ mandel_setup()           // Mandelbrot Routine
 bool
 julia_setup()            // Julia Routine
 {
-    if (g_debug_flag != debug_flags::force_standard_fractal
+    if (g_debug_flag != DebugFlags::force_standard_fractal
         && (g_invert == 0)
         && g_decomp[0] == 0
         && g_magnitude_limit == 4.0
@@ -147,7 +147,7 @@ mandel_fp_setup()
         {
             return mandel_perturbation_setup();
         }
-        if (g_debug_flag != debug_flags::force_standard_fractal
+        if (g_debug_flag != DebugFlags::force_standard_fractal
             && !g_distance_estimator
             && g_decomp[0] == 0
             && g_biomorph == -1
@@ -189,7 +189,7 @@ mandel_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_fractal_type].orbitcalc = float_z_power_fractal;
         }
@@ -285,7 +285,7 @@ julia_fp_setup()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
-        if (g_debug_flag != debug_flags::force_standard_fractal
+        if (g_debug_flag != DebugFlags::force_standard_fractal
             && !g_distance_estimator
             && g_decomp[0] == 0
             && g_biomorph == -1
@@ -313,7 +313,7 @@ julia_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_fractal_type].orbitcalc = float_z_power_fractal;
         }
@@ -394,7 +394,7 @@ julia_fp_setup()
                 g_symmetry = SymmetryType::ORIGIN;
             }
         }
-        if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
+        if (default_functions && g_debug_flag == DebugFlags::force_real_popcorn)
         {
             g_cur_fractal_specific->orbitcalc = popcorn_fractal;
         }
@@ -446,7 +446,7 @@ mandel_long_setup()
     g_long_param = &g_l_init;
     if (g_fractal_type == FractalType::LMANDELZPOWER)
     {
-        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_fractal_type].orbitcalc = long_z_power_fractal;
         }
@@ -503,7 +503,7 @@ julia_long_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_fractal_type].orbitcalc = long_z_power_fractal;
         }
@@ -556,7 +556,7 @@ julia_long_setup()
                 g_symmetry = SymmetryType::ORIGIN;
             }
         }
-        if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
+        if (default_functions && g_debug_flag == DebugFlags::force_real_popcorn)
         {
             g_cur_fractal_specific->orbitcalc = long_popcorn_fractal;
         }

@@ -3494,7 +3494,7 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
     tok->str[1] = (char) 0;  // so we can concatenate later
 
     filepos = std::ftell(openfile);
-    if (g_debug_flag == debug_flags::write_formula_debug_information)
+    if (g_debug_flag == DebugFlags::write_formula_debug_information)
     {
         debug_token = open_save_file("frmconst.txt", "at");
     }
@@ -3900,7 +3900,7 @@ int frm_get_param_stuff(char const *Name)
         return 0;
     }
 
-    if (g_debug_flag == debug_flags::write_formula_debug_information)
+    if (g_debug_flag == DebugFlags::write_formula_debug_information)
     {
         debug_token = open_save_file("frmtokens.txt", "at");
         if (debug_token != nullptr)
@@ -4150,7 +4150,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     }
 
     std::FILE *debug_fp{};
-    if (g_debug_flag == debug_flags::write_formula_debug_information)
+    if (g_debug_flag == DebugFlags::write_formula_debug_information)
     {
         debug_fp = open_save_file("debugfrm.txt", "at");
         if (debug_fp != nullptr)

@@ -47,7 +47,7 @@ void set_default_parms()
             g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
     }
-    if (g_debug_flag != debug_flags::force_arbitrary_precision_math)
+    if (g_debug_flag != DebugFlags::force_arbitrary_precision_math)
     {
         g_bf_math = BFMathType::NONE;
     }

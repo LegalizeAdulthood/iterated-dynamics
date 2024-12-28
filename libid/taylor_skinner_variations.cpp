@@ -67,7 +67,7 @@ static bool trig_plus_sqr_long_setup()
 {
     g_cur_fractal_specific->per_pixel =  julia_per_pixel;
     g_cur_fractal_specific->orbitcalc =  trig_plus_sqr_fractal;
-    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != DebugFlags::force_standard_fractal)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
@@ -109,7 +109,7 @@ bool trig_plus_trig_long_setup()
     }
     g_cur_fractal_specific->per_pixel =  long_julia_per_pixel;
     g_cur_fractal_specific->orbitcalc =  trig_plus_trig_fractal;
-    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != DebugFlags::force_standard_fractal)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
@@ -158,7 +158,7 @@ static bool trig_plus_sqr_fp_setup()
 {
     g_cur_fractal_specific->per_pixel =  julia_fp_per_pixel;
     g_cur_fractal_specific->orbitcalc =  trig_plus_sqr_fp_fractal;
-    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::force_standard_fractal)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
         {
@@ -201,7 +201,7 @@ bool trig_plus_trig_fp_setup()
     }
     g_cur_fractal_specific->per_pixel =  other_julia_fp_per_pixel;
     g_cur_fractal_specific->orbitcalc =  trig_plus_trig_fp_fractal;
-    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::force_standard_fractal)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
         {
@@ -522,7 +522,7 @@ bool z_x_trig_plus_z_setup()
     if (g_cur_fractal_specific->isinteger)
     {
         g_cur_fractal_specific->orbitcalc =  z_x_trig_plus_z_fractal;
-        if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+        if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != DebugFlags::force_standard_fractal)
         {
             if (g_l_param2.x == g_fudge_factor)       // Scott variant
             {
@@ -538,7 +538,7 @@ bool z_x_trig_plus_z_setup()
     else
     {
         g_cur_fractal_specific->orbitcalc =  z_x_trig_plus_z_fp_fractal;
-        if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+        if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::force_standard_fractal)
         {
             if (g_param_z2.x == 1.0)       // Scott variant
             {

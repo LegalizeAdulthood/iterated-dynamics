@@ -93,7 +93,7 @@ static void which_disk_error(int I_O)
     char const *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
         "Read file error %d:  %s"};
     std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O - 1) : 0], errno, strerror(errno));
-    if (g_debug_flag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == DebugFlags::display_memory_statistics)
     {
         if (stop_msg(stopmsg_flags::CANCEL | stopmsg_flags::NO_BUZZER, buf))
         {
@@ -116,7 +116,7 @@ bool MemoryHandle::from_memory(BYTE const *buffer, U16 size, long count, long of
     U16 numwritten;
     start = (long) offset * size;
     tomove = (long) count * size;
-    if (g_debug_flag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == DebugFlags::display_memory_statistics)
     {
         if (check_bounds(start, tomove, index))
         {
@@ -164,7 +164,7 @@ bool MemoryHandle::from_memory(BYTE const *buffer, U16 size, long count, long of
 diskerror:
         break;
     } // end of switch
-    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
+    if (!success && g_debug_flag == DebugFlags::display_memory_statistics)
     {
         display_handle(index);
     }
@@ -183,7 +183,7 @@ bool MemoryHandle::to_memory(BYTE *buffer, U16 size, long count, long offset)
     U16 numread;
     start = (long) offset * size;
     tomove = (long) count * size;
-    if (g_debug_flag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == DebugFlags::display_memory_statistics)
     {
         if (check_bounds(start, tomove, index))
         {
@@ -233,7 +233,7 @@ bool MemoryHandle::to_memory(BYTE *buffer, U16 size, long count, long offset)
 diskerror:
         break;
     } // end of switch
-    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
+    if (!success && g_debug_flag == DebugFlags::display_memory_statistics)
     {
         display_handle(index);
     }
@@ -253,7 +253,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
     U16 numwritten;
     start = (long) offset * size;
     tomove = (long) count * size;
-    if (g_debug_flag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == DebugFlags::display_memory_statistics)
     {
         if (check_bounds(start, tomove, index))
         {
@@ -300,7 +300,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
 diskerror:
         break;
     } // end of switch
-    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
+    if (!success && g_debug_flag == DebugFlags::display_memory_statistics)
     {
         display_handle(index);
     }
@@ -330,11 +330,11 @@ static void display_error(MemoryLocation stored_at, long howmuch)
 // This is where the memory requested can be allocated.
 static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size)
 {
-    if (g_debug_flag == debug_flags::force_memory_from_disk)
+    if (g_debug_flag == DebugFlags::force_memory_from_disk)
     {
         where = MemoryLocation::DISK;
     }
-    if (g_debug_flag == debug_flags::force_memory_from_memory)
+    if (g_debug_flag == DebugFlags::force_memory_from_memory)
     {
         where = MemoryLocation::MEMORY;
     }
@@ -553,7 +553,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
         break;
     } // end of switch
 
-    if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
+    if (stored_at != use_this_type && g_debug_flag == DebugFlags::display_memory_statistics)
     {
         char buf[MSG_LEN * 2];
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %" PRIu64 " bytes of %s, handle = %u.",

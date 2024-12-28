@@ -1509,7 +1509,7 @@ void backwards_v20()
     // Fractype == FP type is not seen from PAR file ?????
     g_bad_outside = false;
     g_ld_check = (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
-        && (g_debug_flag == debug_flags::force_ld_check);
+        && (g_debug_flag == DebugFlags::force_ld_check);
     if (!g_new_bifurcation_functions_loaded)
     {
         set_function_parm_defaults();
