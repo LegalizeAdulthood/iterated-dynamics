@@ -297,7 +297,7 @@ sel_type_restart:
     if (g_fractal_type == FractalType::LSYSTEM)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_LSYS);
-        if (get_file_entry(gfe_type::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
+        if (get_file_entry(ItemType::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
         {
             return true;
         }
@@ -305,7 +305,7 @@ sel_type_restart:
     else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_FORMULA);
-        if (get_file_entry(gfe_type::FORMULA, "Formula", "*.frm", g_formula_filename, g_formula_name) < 0)
+        if (get_file_entry(ItemType::FORMULA, "Formula", "*.frm", g_formula_filename, g_formula_name) < 0)
         {
             return true;
         }
@@ -313,7 +313,7 @@ sel_type_restart:
     else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS3D)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_IFS);
-        if (get_file_entry(gfe_type::IFS, "IFS", "*.ifs", g_ifs_filename, g_ifs_name) < 0)
+        if (get_file_entry(ItemType::IFS, "IFS", "*.ifs", g_ifs_filename, g_ifs_name) < 0)
         {
             return true;
         }
@@ -424,11 +424,11 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             switch (label)
             {
             case HelpLabels::SPECIAL_IFS:
-                return gfe_type::IFS;
+                return ItemType::IFS;
             case HelpLabels::SPECIAL_L_SYSTEM:
-                return gfe_type::L_SYSTEM;
+                return ItemType::L_SYSTEM;
             case HelpLabels::SPECIAL_FORMULA:
-                return gfe_type::FORMULA;
+                return ItemType::FORMULA;
             default:
                 throw std::runtime_error(
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");

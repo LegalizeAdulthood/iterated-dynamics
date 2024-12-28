@@ -50,7 +50,7 @@ static std::FILE *s_gfe_file{};
 static FileEntry **s_gfe_choices{}; // for format_parmfile_line
 static char const *s_gfe_title{};
 
-bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
+bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, ItemType itemtype)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -102,25 +102,25 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     std::string par_search_name;
     switch (itemtype)
     {
-    case gfe_type::FORMULA:
+    case ItemType::FORMULA:
         par_search_name = "frm:";
         par_search_name += itemname;
         std::strcpy(defaultextension, ".frm");
         split_drive_dir(g_search_for.frm, drive, dir);
         break;
-    case gfe_type::L_SYSTEM:
+    case ItemType::L_SYSTEM:
         par_search_name = "lsys:";
         par_search_name += itemname;
         std::strcpy(defaultextension, ".l");
         split_drive_dir(g_search_for.lsys, drive, dir);
         break;
-    case gfe_type::IFS:
+    case ItemType::IFS:
         par_search_name = "ifs:";
         par_search_name += itemname;
         std::strcpy(defaultextension, ".ifs");
         split_drive_dir(g_search_for.ifs, drive, dir);
         break;
-    case gfe_type::PARM:
+    case ItemType::PARM:
     default:
         par_search_name = itemname;
         std::strcpy(defaultextension, ".par");
@@ -203,7 +203,7 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
         clear_temp_msg();
     }
 
-    if (!found && g_organize_formulas_search && itemtype == gfe_type::L_SYSTEM)
+    if (!found && g_organize_formulas_search && itemtype == ItemType::L_SYSTEM)
     {
         split_drive_dir(g_organize_formulas_dir, drive, dir);
         fname[0] = '_';
@@ -675,7 +675,7 @@ static int check_gfe_key(int curkey, int choice)
     return 0;
 }
 
-static long gfe_choose_entry(gfe_type type, char const *title, const std::string &filename, std::string &entryname)
+static long gfe_choose_entry(ItemType type, char const *title, const std::string &filename, std::string &entryname)
 {
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
@@ -728,7 +728,7 @@ retry:
     boxdepth = 0;
     colwidth = boxdepth;
     boxwidth = colwidth;
-    if (type == gfe_type::PARM)
+    if (type == ItemType::PARM)
     {
         formatitem = format_param_file_line;
         boxwidth = 1;
@@ -755,7 +755,7 @@ retry:
     return choices[i]->point;
 }
 
-long get_file_entry(gfe_type type, char const *title, char const *fmask,
+long get_file_entry(ItemType type, char const *title, char const *fmask,
     std::string &filename, std::string &entryname)
 {
     // Formula, LSystem, etc type structure, select from file
@@ -797,19 +797,19 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
         }
         switch (type)
         {
-        case gfe_type::FORMULA:
+        case ItemType::FORMULA:
             if (!run_formula(entryname, true))
             {
                 return 0;
             }
             break;
-        case gfe_type::L_SYSTEM:
+        case ItemType::L_SYSTEM:
             if (lsystem_load() == 0)
             {
                 return 0;
             }
             break;
-        case gfe_type::IFS:
+        case ItemType::IFS:
             if (ifs_load() == 0)
             {
                 g_fractal_type = !g_ifs_type ? FractalType::IFS : FractalType::IFS3D;
@@ -818,7 +818,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
                 return 0;
             }
             break;
-        case gfe_type::PARM:
+        case ItemType::PARM:
             return entry_pointer;
         }
     }

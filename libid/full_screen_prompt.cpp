@@ -70,19 +70,19 @@ int full_screen_prompt(        // full-screen prompting routine
     {
         if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
         {
-            find_file_item(g_formula_filename, g_formula_name.c_str(), &scroll_file, gfe_type::FORMULA);
+            find_file_item(g_formula_filename, g_formula_name.c_str(), &scroll_file, ItemType::FORMULA);
             in_scrolling_mode = true;
             scroll_file_start = std::ftell(scroll_file);
         }
         else if (g_fractal_type == FractalType::LSYSTEM)
         {
-            find_file_item(g_l_system_filename, g_l_system_name.c_str(), &scroll_file, gfe_type::L_SYSTEM);
+            find_file_item(g_l_system_filename, g_l_system_name.c_str(), &scroll_file, ItemType::L_SYSTEM);
             in_scrolling_mode = true;
             scroll_file_start = std::ftell(scroll_file);
         }
         else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS3D)
         {
-            find_file_item(g_ifs_filename, g_ifs_name.c_str(), &scroll_file, gfe_type::IFS);
+            find_file_item(g_ifs_filename, g_ifs_name.c_str(), &scroll_file, ItemType::IFS);
             in_scrolling_mode = true;
             scroll_file_start = std::ftell(scroll_file);
         }
