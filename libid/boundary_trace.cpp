@@ -11,19 +11,19 @@
 
 #include <cstring>
 
-enum class direction
+enum class Direction
 {
     North,
     East,
     South,
     West
 };
-inline int operator+(direction value)
+inline int operator+(Direction value)
 {
     return static_cast<int>(value);
 }
 
-static direction s_going_to{};
+static Direction s_going_to{};
 static int s_trail_row{};
 static int s_trail_col{};
 static BYTE s_stack[4096]{}; // common temp, two put_line calls
@@ -31,9 +31,9 @@ static BYTE s_stack[4096]{}; // common temp, two put_line calls
 // boundary trace method
 constexpr int BK_COLOR{};
 
-inline direction advance(direction dir, int increment)
+inline Direction advance(Direction dir, int increment)
 {
-    return static_cast<direction>((+dir + increment) & 0x03);
+    return static_cast<Direction>((+dir + increment) & 0x03);
 }
 
 // take one step in the direction of going_to
@@ -41,19 +41,19 @@ static void step_col_row()
 {
     switch (s_going_to)
     {
-    case direction::North:
+    case Direction::North:
         g_col = s_trail_col;
         g_row = s_trail_row - 1;
         break;
-    case direction::East:
+    case Direction::East:
         g_col = s_trail_col + 1;
         g_row = s_trail_row;
         break;
-    case direction::South:
+    case Direction::South:
         g_col = s_trail_col;
         g_row = s_trail_row + 1;
         break;
-    case direction::West:
+    case Direction::West:
         g_col = s_trail_col - 1;
         g_row = s_trail_row;
         break;
@@ -117,8 +117,8 @@ int boundary_trace()
             s_trail_col = cur_col;
             trail_color = g_color;
             const int fill_color_used = g_fill_color > 0 ? g_fill_color : trail_color;
-            direction coming_from = direction::West;
-            s_going_to = direction::East;
+            Direction coming_from = Direction::West;
+            s_going_to = Direction::East;
             unsigned int matches_found = 0;
             bool continue_loop = true;
             do
@@ -180,8 +180,8 @@ int boundary_trace()
             // whenever going_to is South or West
             s_trail_row = cur_row;
             s_trail_col = cur_col;
-            coming_from = direction::West;
-            s_going_to = direction::East;
+            coming_from = Direction::West;
+            s_going_to = Direction::East;
             do
             {
                 bool match_found = false;
@@ -194,8 +194,8 @@ int boundary_trace()
                         && g_row <= g_i_y_stop                    //
                         && get_color(g_col, g_row) == trail_color) // getcolor() must be last
                     {
-                        if (s_going_to == direction::South ||
-                            (s_going_to == direction::West && coming_from != direction::East))
+                        if (s_going_to == Direction::South ||
+                            (s_going_to == Direction::West && coming_from != Direction::East))
                         {
                             // fill a row, but only once
                             int right = g_col;
