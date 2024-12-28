@@ -100,7 +100,7 @@ static void set_froth_palette()
 {
     char const *mapname;
 
-    if (g_color_state != color_state::DEFAULT)   // 0 means g_dac_box matches default
+    if (g_color_state != ColorState::DEFAULT)   // 0 means g_dac_box matches default
     {
         return;
     }
@@ -132,7 +132,7 @@ static void set_froth_palette()
         {
             return;
         }
-        g_color_state = color_state::DEFAULT; // treat map as default
+        g_color_state = ColorState::DEFAULT; // treat map as default
         spin_dac(0, 1);
     }
 }

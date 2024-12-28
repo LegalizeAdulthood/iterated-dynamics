@@ -125,7 +125,7 @@ main_state color_cycle(MainContext &context)
     }
     if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
     {
-        g_color_state = color_state::UNKNOWN;
+        g_color_state = ColorState::UNKNOWN;
         save_history_info();
     }
     return main_state::CONTINUE;
@@ -154,7 +154,7 @@ main_state color_editing(MainContext &context)
         edit_palette();
         if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
         {
-            g_color_state = color_state::UNKNOWN;
+            g_color_state = ColorState::UNKNOWN;
             save_history_info();
         }
     }

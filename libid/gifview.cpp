@@ -202,7 +202,7 @@ int gif_view()
             }
         }
     }
-    g_color_state = color_state::UNKNOWN; // colors aren't default and not a known .map file
+    g_color_state = ColorState::UNKNOWN; // colors aren't default and not a known .map file
 
     // don't read if glasses
     if (g_display_3d != Display3DMode::NONE && g_map_set && g_glasses_type != 1 && g_glasses_type != 2)

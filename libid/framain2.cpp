@@ -178,7 +178,7 @@ main_state big_while_loop(MainContext &context)
                     // disk video, setvideomode via bios didn't get it right, so:
                     validate_luts("default"); // read the default palette file
                 }
-                g_color_state = color_state::DEFAULT;
+                g_color_state = ColorState::DEFAULT;
             }
             if (g_view_window)
             {

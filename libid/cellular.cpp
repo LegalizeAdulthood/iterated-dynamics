@@ -467,7 +467,7 @@ static void set_cellular_palette()
     static BYTE const Yellow[3] = { 60, 58, 18 };
     static BYTE const Brown[3]  = { 42, 21, 0 };
 
-    if (g_map_specified && g_color_state != color_state::DEFAULT)
+    if (g_map_specified && g_color_state != ColorState::DEFAULT)
     {
         return;       // map= specified
     }

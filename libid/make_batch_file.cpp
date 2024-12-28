@@ -167,7 +167,7 @@ void make_batch_file()
             maxcolor = 256;
         }
 
-        if (g_color_state == color_state::DEFAULT)
+        if (g_color_state == ColorState::DEFAULT)
         {
             // default colors
             if (g_map_specified)
@@ -176,7 +176,7 @@ void make_batch_file()
                 sptr = g_map_name.c_str();
             }
         }
-        else if (g_color_state == color_state::MAP_FILE)
+        else if (g_color_state == ColorState::MAP_FILE)
         {
             // colors match colorfile
             colorspec[0] = '@';

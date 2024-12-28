@@ -78,7 +78,7 @@ bool validate_luts(char const *fn)
         dac[index].red = 40;
         ++index;
     }
-    g_color_state = color_state::MAP_FILE;
+    g_color_state = ColorState::MAP_FILE;
     g_color_file = fn;
     return false;
 }

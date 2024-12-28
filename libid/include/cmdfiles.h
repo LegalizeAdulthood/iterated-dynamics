@@ -178,7 +178,7 @@ enum class Display3DMode
     B_COMMAND = 2
 };
 
-enum class color_state
+enum class ColorState
 {
     DEFAULT = 0,  // g_dac_box matches default (bios or map=)
     UNKNOWN = 1,  // g_dac_box matches no known defined map
@@ -196,15 +196,15 @@ extern bool                  g_check_cur_dir;
 extern int                   g_color_cycle_range_hi;
 extern int                   g_color_cycle_range_lo;
 extern std::string           g_color_file;
-extern color_state           g_color_state;
+extern ColorState            g_color_state;
 extern bool                  g_colors_preloaded;
 extern std::string           g_command_file;
 extern std::string           g_command_name;
-extern FractalSpecific *g_cur_fractal_specific;
+extern FractalSpecific      *g_cur_fractal_specific;
 extern int                   g_cycle_limit;
 extern int                   g_decomp[];
 extern int                   g_bf_digits;
-extern Display3DMode      g_display_3d;
+extern Display3DMode         g_display_3d;
 extern long                  g_distance_estimator;
 extern int                   g_distance_estimator_width_factor;
 extern int                   g_distance_estimator_x_dots;
@@ -223,7 +223,7 @@ extern std::vector<float>    g_ifs_definition;
 extern std::string           g_ifs_filename;
 extern std::string           g_ifs_name;
 extern bool                  g_ifs_type;
-extern BatchMode           g_init_batch;
+extern BatchMode             g_init_batch;
 extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;
 extern DComplex              g_init_orbit;
@@ -253,7 +253,7 @@ extern int                   g_random_seed;
 extern bool                  g_random_seed_flag;
 extern bool                  g_read_color;
 extern std::string           g_read_filename;
-extern RecordColorsMode    g_record_colors;
+extern RecordColorsMode      g_record_colors;
 extern std::string           g_save_filename;
 extern float                 g_screen_aspect;
 extern id::SearchPath        g_search_for;
@@ -267,10 +267,10 @@ extern bool                  g_targa_out;
 extern std::string           g_temp_dir;
 extern BYTE                  g_text_color[];
 extern int                   g_transparent_color_3d[];
-extern TrueColorMode       g_true_mode;
+extern TrueColorMode         g_true_mode;
 extern bool                  g_truecolor;
 extern bool                  g_use_center_mag;
-extern InitOrbitMode       g_use_init_orbit;
+extern InitOrbitMode         g_use_init_orbit;
 extern int                   g_user_biomorph_value;
 extern std::string           g_working_dir;
 
