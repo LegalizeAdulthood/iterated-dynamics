@@ -112,8 +112,8 @@ static std::vector<int> s_image_box_values;
 static ParamHistory s_old_history{};
 
 static void vary_dbl(GeneBase gene[], int randval, int i);
-static int vary_int(int randvalue, int limit, variations mode);
-static int wrapped_positive_vary_int(int randvalue, int limit, variations mode);
+static int vary_int(int randvalue, int limit, Variations mode);
+static int wrapped_positive_vary_int(int randvalue, int limit, Variations mode);
 static void vary_inside(GeneBase gene[], int randval, int i);
 static void vary_outside(GeneBase gene[], int randval, int i);
 static void vary_pwr2(GeneBase gene[], int randval, int i);
@@ -176,27 +176,27 @@ void init_gene()
     //                        Use only 15 letters below: 123456789012345
     GeneBase gene[NUM_GENES] =
     {
-        { &g_params[0], vary_dbl, variations::RANDOM,       "Param 1 real", 1 },
-        { &g_params[1], vary_dbl, variations::RANDOM,       "Param 1 imag", 1 },
-        { &g_params[2], vary_dbl, variations::NONE,         "Param 2 real", 1 },
-        { &g_params[3], vary_dbl, variations::NONE,         "Param 2 imag", 1 },
-        { &g_params[4], vary_dbl, variations::NONE,         "Param 3 real", 1 },
-        { &g_params[5], vary_dbl, variations::NONE,         "Param 3 imag", 1 },
-        { &g_params[6], vary_dbl, variations::NONE,         "Param 4 real", 1 },
-        { &g_params[7], vary_dbl, variations::NONE,         "Param 4 imag", 1 },
-        { &g_params[8], vary_dbl, variations::NONE,         "Param 5 real", 1 },
-        { &g_params[9], vary_dbl, variations::NONE,         "Param 5 imag", 1 },
-        { &g_inside_color, vary_inside, variations::NONE,        "inside color", 2 },
-        { &g_outside_color, vary_outside, variations::NONE,      "outside color", 3 },
-        { &g_decomp[0], vary_pwr2, variations::NONE,       "decomposition", 4 },
-        { &g_inversion[0], vary_inv, variations::NONE,     "invert radius", 7 },
-        { &g_inversion[1], vary_inv, variations::NONE,     "invert center x", 7 },
-        { &g_inversion[2], vary_inv, variations::NONE,     "invert center y", 7 },
-        { &g_trig_index[0], vary_trig, variations::NONE,      "trig function 1", 5 },
-        { &g_trig_index[1], vary_trig, variations::NONE,      "trig fn 2", 5 },
-        { &g_trig_index[2], vary_trig, variations::NONE,      "trig fn 3", 5 },
-        { &g_trig_index[3], vary_trig, variations::NONE,      "trig fn 4", 5 },
-        { &g_bail_out_test, vary_bo_test, variations::NONE,    "bailout test", 6 }
+        { &g_params[0], vary_dbl, Variations::RANDOM,       "Param 1 real", 1 },
+        { &g_params[1], vary_dbl, Variations::RANDOM,       "Param 1 imag", 1 },
+        { &g_params[2], vary_dbl, Variations::NONE,         "Param 2 real", 1 },
+        { &g_params[3], vary_dbl, Variations::NONE,         "Param 2 imag", 1 },
+        { &g_params[4], vary_dbl, Variations::NONE,         "Param 3 real", 1 },
+        { &g_params[5], vary_dbl, Variations::NONE,         "Param 3 imag", 1 },
+        { &g_params[6], vary_dbl, Variations::NONE,         "Param 4 real", 1 },
+        { &g_params[7], vary_dbl, Variations::NONE,         "Param 4 imag", 1 },
+        { &g_params[8], vary_dbl, Variations::NONE,         "Param 5 real", 1 },
+        { &g_params[9], vary_dbl, Variations::NONE,         "Param 5 imag", 1 },
+        { &g_inside_color, vary_inside, Variations::NONE,        "inside color", 2 },
+        { &g_outside_color, vary_outside, Variations::NONE,      "outside color", 3 },
+        { &g_decomp[0], vary_pwr2, Variations::NONE,       "decomposition", 4 },
+        { &g_inversion[0], vary_inv, Variations::NONE,     "invert radius", 7 },
+        { &g_inversion[1], vary_inv, Variations::NONE,     "invert center x", 7 },
+        { &g_inversion[2], vary_inv, Variations::NONE,     "invert center y", 7 },
+        { &g_trig_index[0], vary_trig, Variations::NONE,      "trig function 1", 5 },
+        { &g_trig_index[1], vary_trig, Variations::NONE,      "trig fn 2", 5 },
+        { &g_trig_index[2], vary_trig, Variations::NONE,      "trig fn 3", 5 },
+        { &g_trig_index[3], vary_trig, Variations::NONE,      "trig fn 4", 5 },
+        { &g_bail_out_test, vary_bo_test, Variations::NONE,    "bailout test", 6 }
     };
 
     copy_genes_to_bank(gene);
@@ -262,24 +262,24 @@ void vary_dbl(GeneBase gene[], int randval, int i)
     switch (gene[i].mutate)
     {
     default:
-    case variations::NONE:
+    case Variations::NONE:
         break;
-    case variations::X:
+    case Variations::X:
         *(double *)gene[i].addr = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
         break;
-    case variations::Y:
+    case Variations::Y:
         *(double *)gene[i].addr = lclpy * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
         break;
-    case variations::X_PLUS_Y:
+    case Variations::X_PLUS_Y:
         *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +(lclpy*g_evolve_dist_per_y)+ g_evolve_y_parameter_offset; //and x+y
         break;
-    case variations::X_MINUS_Y:
+    case Variations::X_MINUS_Y:
         *(double *)gene[i].addr = (g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset)-(lclpy*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
         break;
-    case variations::RANDOM:
+    case Variations::RANDOM:
         *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation;
         break;
-    case variations::WEIGHTED_RANDOM:
+    case Variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
@@ -289,31 +289,31 @@ void vary_dbl(GeneBase gene[], int randval, int i)
     }
 }
 
-static int vary_int(int randvalue, int limit, variations mode)
+static int vary_int(int randvalue, int limit, Variations mode)
 {
     int ret = 0;
     int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (mode)
     {
     default:
-    case variations::NONE:
+    case Variations::NONE:
         break;
-    case variations::X:
+    case Variations::X:
         ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)%limit;
         break;
-    case variations::Y:
+    case Variations::Y:
         ret = (g_evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
-    case variations::X_PLUS_Y:
+    case Variations::X_PLUS_Y:
         ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x+ g_evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
-    case variations::X_MINUS_Y:
+    case Variations::X_MINUS_Y:
         ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)-(g_evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
-    case variations::RANDOM:
+    case Variations::RANDOM:
         ret = randvalue % limit;
         break;
-    case variations::WEIGHTED_RANDOM:
+    case Variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
@@ -325,7 +325,7 @@ static int vary_int(int randvalue, int limit, variations mode)
     return ret;
 }
 
-int wrapped_positive_vary_int(int randvalue, int limit, variations mode)
+int wrapped_positive_vary_int(int randvalue, int limit, Variations mode)
 {
     int i;
     i = vary_int(randvalue, limit, mode);
@@ -342,7 +342,7 @@ int wrapped_positive_vary_int(int randvalue, int limit, variations mode)
 void vary_inside(GeneBase gene[], int randval, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
-    if (gene[i].mutate != variations::NONE)
+    if (gene[i].mutate != Variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
     }
@@ -351,7 +351,7 @@ void vary_inside(GeneBase gene[], int randval, int i)
 void vary_outside(GeneBase gene[], int randval, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
-    if (gene[i].mutate != variations::NONE)
+    if (gene[i].mutate != Variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)];
     }
@@ -369,7 +369,7 @@ void vary_bo_test(GeneBase gene[], int randval, int i)
         static_cast<int>(Bailout::MANH),
         static_cast<int>(Bailout::MANR)
     };
-    if (gene[i].mutate != variations::NONE)
+    if (gene[i].mutate != Variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
@@ -380,7 +380,7 @@ void vary_bo_test(GeneBase gene[], int randval, int i)
 void vary_pwr2(GeneBase gene[], int randval, int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
-    if (gene[i].mutate != variations::NONE)
+    if (gene[i].mutate != Variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
     }
@@ -388,7 +388,7 @@ void vary_pwr2(GeneBase gene[], int randval, int i)
 
 void vary_trig(GeneBase gene[], int randval, int i)
 {
-    if (gene[i].mutate != variations::NONE)
+    if (gene[i].mutate != Variations::NONE)
     {
         *static_cast<trig_fn *>(gene[i].addr) =
             static_cast<trig_fn>(wrapped_positive_vary_int(randval, g_num_trig_functions, gene[i].mutate));
@@ -398,7 +398,7 @@ void vary_trig(GeneBase gene[], int randval, int i)
 
 void vary_inv(GeneBase gene[], int randval, int i)
 {
-    if (gene[i].mutate != variations::NONE)
+    if (gene[i].mutate != Variations::NONE)
     {
         vary_dbl(gene, randval, i);
     }
@@ -458,19 +458,19 @@ choose_vars_restart:
     case ID_KEY_F2: // set all off
         for (int num = MAX_PARAMS; num < NUM_GENES; num++)
         {
-            gene[num].mutate = variations::NONE;
+            gene[num].mutate = Variations::NONE;
         }
         goto choose_vars_restart;
     case ID_KEY_F3: // set all on..alternate x and y for field map
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
-            gene[num].mutate = static_cast<variations>((num % 2) + 1);
+            gene[num].mutate = static_cast<Variations>((num % 2) + 1);
         }
         goto choose_vars_restart;
     case ID_KEY_F4: // Randomize all
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
-            gene[num].mutate = static_cast<variations>(std::rand() % static_cast<int>(variations::NUM));
+            gene[num].mutate = static_cast<Variations>(std::rand() % static_cast<int>(Variations::NUM));
         }
         goto choose_vars_restart;
     case -1:
@@ -482,18 +482,18 @@ choose_vars_restart:
     // read out values
     for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
     {
-        gene[num].mutate = static_cast<variations>(choices.read_list());
+        gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
 
     for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
     {
-        gene[num].mutate = static_cast<variations>(choices.read_list());
+        gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
 
     if (g_cur_fractal_specific->calctype == standard_fractal &&
         bit_set(g_cur_fractal_specific->flags, fractal_flags::BAILTEST))
     {
-        gene[NUM_GENES - 1].mutate = static_cast<variations>(choices.read_list());
+        gene[NUM_GENES - 1].mutate = static_cast<Variations>(choices.read_list());
     }
 
     copy_genes_to_bank(gene);
@@ -605,19 +605,19 @@ choose_vars_restart:
     case ID_KEY_F2: // set all off
         for (int num = 0; num < MAX_PARAMS; num++)
         {
-            gene[num].mutate = variations::NONE;
+            gene[num].mutate = Variations::NONE;
         }
         goto choose_vars_restart;
     case ID_KEY_F3: // set all on..alternate x and y for field map
         for (int num = 0; num < MAX_PARAMS; num ++)
         {
-            gene[num].mutate = static_cast<variations>((num % 2) + 1);
+            gene[num].mutate = static_cast<Variations>((num % 2) + 1);
         }
         goto choose_vars_restart;
     case ID_KEY_F4: // Randomize all
         for (int num =0; num < MAX_PARAMS; num ++)
         {
-            gene[num].mutate = static_cast<variations>(std::rand() % static_cast<int>(variations::NUM));
+            gene[num].mutate = static_cast<Variations>(std::rand() % static_cast<int>(Variations::NUM));
         }
         goto choose_vars_restart;
     case ID_KEY_F6: // go to second screen, put array away first
@@ -641,7 +641,7 @@ choose_vars_restart:
                 continue;
             }
         }
-        gene[num].mutate = static_cast<variations>(choices.read_list());
+        gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
 
     copy_genes_to_bank(gene);
@@ -656,11 +656,11 @@ void set_mutation_level(int strength)
     {
         if (elem.level <= strength)
         {
-            elem.mutate = variations::RANDOM;
+            elem.mutate = Variations::RANDOM;
         }
         else
         {
-            elem.mutate = variations::NONE;
+            elem.mutate = Variations::NONE;
         }
     }
 }
@@ -951,7 +951,7 @@ static bool explore_check()
     // needed
     for (auto &elem : g_gene_bank)
     {
-        if ((elem.mutate != variations::NONE) && (elem.mutate < variations::RANDOM))
+        if ((elem.mutate != Variations::NONE) && (elem.mutate < Variations::RANDOM))
         {
             return true;
         }

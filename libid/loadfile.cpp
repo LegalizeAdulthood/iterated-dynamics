@@ -911,22 +911,22 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             for (int i = 0; i < NUM_GENES; i++)
             {
-                gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i]);
+                gene[i].mutate = static_cast<Variations>(blk_6_info.mutate[i]);
             }
         }
         else
         {
             for (int i = 0; i < 6; i++)
             {
-                gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i]);
+                gene[i].mutate = static_cast<Variations>(blk_6_info.mutate[i]);
             }
             for (int i = 6; i < 10; i++)
             {
-                gene[i].mutate = variations::NONE;
+                gene[i].mutate = Variations::NONE;
             }
             for (int i = 10; i < NUM_GENES; i++)
             {
-                gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i-4]);
+                gene[i].mutate = static_cast<Variations>(blk_6_info.mutate[i-4]);
             }
         }
         copy_genes_to_bank(gene);

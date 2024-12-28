@@ -319,14 +319,14 @@ static main_state toggle_gene_variation(MainContext &context)
 {
     for (GeneBase &gene : g_gene_bank)
     {
-        if (gene.mutate == variations::RANDOM)
+        if (gene.mutate == Variations::RANDOM)
         {
-            gene.mutate = variations::WEIGHTED_RANDOM;
+            gene.mutate = Variations::WEIGHTED_RANDOM;
             continue;
         }
-        if (gene.mutate == variations::WEIGHTED_RANDOM)
+        if (gene.mutate == Variations::WEIGHTED_RANDOM)
         {
-            gene.mutate = variations::RANDOM;
+            gene.mutate = Variations::RANDOM;
         }
     }
     context.more_keys = false;

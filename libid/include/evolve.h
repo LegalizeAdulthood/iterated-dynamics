@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-enum class variations
+enum class Variations
 {
     NONE = 0,       // don't vary
     X,              // vary with x axis
@@ -22,7 +22,7 @@ struct GeneBase
     void *addr;             // address of variable to be referenced
     void (*varyfunc)(GeneBase *genes, int randval, int gene); // pointer to func used to vary it
                             // takes random number and pointer to var
-    variations mutate;      // flag to switch on variation of this variable
+    Variations mutate;      // flag to switch on variation of this variable
     char name[16];          // name of variable (for menu )
     char level;             // mutation level at which this should become active
 };
