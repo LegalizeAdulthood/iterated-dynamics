@@ -262,7 +262,7 @@ main_state big_while_loop(MainContext &context)
         {
             // loading an image
             g_out_line_cleanup = nullptr;          // outln routine can set this
-            if (g_display_3d != display_3d_modes::NONE)                 // set up 3D decoding
+            if (g_display_3d != Display3DMode::NONE)                 // set up 3D decoding
             {
                 g_out_line = call_line3d;
             }
@@ -362,7 +362,7 @@ main_state big_while_loop(MainContext &context)
             }
             if (g_loaded_3d)      // 'r' of image created with '3'
             {
-                g_display_3d = display_3d_modes::YES;  // so set flag for 'b' command
+                g_display_3d = Display3DMode::YES;  // so set flag for 'b' command
             }
         }
         else

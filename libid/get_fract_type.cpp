@@ -800,7 +800,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val = g_is_mandelbrot ? 1 : 0;
     }
 
-    if (prompt_for_type_params && (g_display_3d > display_3d_modes::NONE))
+    if (prompt_for_type_params && (g_display_3d > Display3DMode::NONE))
     {
         stop_msg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Current type has no type-specific parameters");
         goto gfp_exit;

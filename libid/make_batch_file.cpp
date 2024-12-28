@@ -671,7 +671,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
     {
         goto docolors;
     }
-    if (g_display_3d <= display_3d_modes::NONE)
+    if (g_display_3d <= Display3DMode::NONE)
     {
         // a fractal was generated
 
@@ -1172,10 +1172,10 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         }
     }
 
-    if (g_display_3d >= display_3d_modes::YES)
+    if (g_display_3d >= Display3DMode::YES)
     {
         //**** 3d transform only parameters in this section ****
-        if (g_display_3d == display_3d_modes::B_COMMAND)
+        if (g_display_3d == Display3DMode::B_COMMAND)
         {
             put_param(" %s=%s", "3d", "overlay");
         }
@@ -1257,11 +1257,11 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         }
     }
 
-    if (g_display_3d != display_3d_modes::NONE)
+    if (g_display_3d != Display3DMode::NONE)
     {
         // universal 3d
         //**** common (fractal & transform) 3d parameters in this section ****
-        if (!g_sphere || g_display_3d < display_3d_modes::NONE)
+        if (!g_sphere || g_display_3d < Display3DMode::NONE)
         {
             put_param(" %s=%d/%d/%d", "rotation", g_x_rot, g_y_rot, g_z_rot);
         }

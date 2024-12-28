@@ -132,7 +132,7 @@ int g_base_hertz{};                                    // sound=x/y/x hertz valu
 int g_cycle_limit{};                                   // color-rotator upper limit
 int g_fill_color{};                                    // fillcolor: -1=normal
 bool g_finite_attractor{};                             // finite attractor logic
-display_3d_modes g_display_3d{display_3d_modes::NONE}; // 3D display flag: 0 = OFF
+Display3DMode g_display_3d{Display3DMode::NONE}; // 3D display flag: 0 = OFF
 bool g_overlay_3d{};                                   // 3D overlay flag
 bool g_check_cur_dir{};                                // flag to check current dir for files
 BatchMode g_init_batch{BatchMode::NONE};           // 1 if batch run (no kbd)
@@ -552,7 +552,7 @@ static void init_vars_fractal()
     g_orbit_corner_3_y = g_cur_fractal_specific->ymin;              //
     g_math_tol[0] = 0.05;                                           //
     g_math_tol[1] = 0.05;                                           //
-    g_display_3d = display_3d_modes::NONE;                          // 3D display is off
+    g_display_3d = Display3DMode::NONE;                          // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
     g_bail_out_test = Bailout::MOD;                                //
@@ -1197,9 +1197,9 @@ static CmdArgFlags cmd_3d(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_display_3d = yes_no != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
+    g_display_3d = yes_no != 0 ? Display3DMode::YES : Display3DMode::NONE;
     init_vars3d();
-    return g_display_3d != display_3d_modes::NONE ? CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D
+    return g_display_3d != Display3DMode::NONE ? CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D
                                                   : CmdArgFlags::PARAM_3D;
 }
 
@@ -1557,7 +1557,7 @@ static CmdArgFlags parse_colors(char const *value)
         {
             goto badcolor;
         }
-        if (g_display_3d != display_3d_modes::NONE)
+        if (g_display_3d != Display3DMode::NONE)
         {
             g_map_set = true;
         }
@@ -1968,7 +1968,7 @@ static CmdArgFlags cmd_file_name(const Command &cmd)
         return cmd.bad_arg();
     }
     if (cmd.mode == CmdFile::AT_AFTER_STARTUP &&
-        g_display_3d == display_3d_modes::NONE) // can't do this in @ command
+        g_display_3d == Display3DMode::NONE) // can't do this in @ command
     {
         return cmd.bad_arg();
     }

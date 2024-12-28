@@ -185,7 +185,7 @@ main_state restore_from_image(MainContext &context)
             g_compare_gif = false;
             g_overlay_3d = false;
         }
-        g_display_3d = display_3d_modes::NONE;
+        g_display_3d = Display3DMode::NONE;
     }
     driver_stack_screen();            // save graphics image
     context.stacked = !g_overlay_3d;

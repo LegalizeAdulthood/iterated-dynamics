@@ -517,7 +517,7 @@ static void fix_inversion(double *x) // make double converted from string look o
 int calc_fract()
 {
     g_attractors = 0;          // default to no known finite attractors
-    g_display_3d = display_3d_modes::NONE;
+    g_display_3d = Display3DMode::NONE;
     g_basin = 0;
     g_put_color = put_color_a;
     if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)

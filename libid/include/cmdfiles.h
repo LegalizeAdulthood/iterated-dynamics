@@ -170,7 +170,7 @@ enum class BatchMode
     BAILOUT_INTERRUPTED_SAVE
 };
 
-enum class display_3d_modes
+enum class Display3DMode
 {
     MINUS_ONE = -1,
     NONE = 0,
@@ -204,7 +204,7 @@ extern FractalSpecific *g_cur_fractal_specific;
 extern int                   g_cycle_limit;
 extern int                   g_decomp[];
 extern int                   g_bf_digits;
-extern display_3d_modes      g_display_3d;
+extern Display3DMode      g_display_3d;
 extern long                  g_distance_estimator;
 extern int                   g_distance_estimator_width_factor;
 extern int                   g_distance_estimator_x_dots;

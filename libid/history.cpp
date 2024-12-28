@@ -75,7 +75,7 @@ struct ImageHistory
     bool disk_16_bit;
     int release;
     int save_release;
-    display_3d_modes display_3d;
+    Display3DMode display_3d;
     int transparent_color_3d[2];
     int ambient;
     int haze;

@@ -297,7 +297,7 @@ top:
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
     int s_row = 2;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
-    if (g_display_3d > display_3d_modes::NONE)
+    if (g_display_3d > Display3DMode::NONE)
     {
         driver_put_string(s_row, 16, C_GENERAL_HI, "3D Transform");
     }
@@ -376,7 +376,7 @@ top:
     ++s_row;
 
     int j = 0;
-    if (g_display_3d > display_3d_modes::NONE)
+    if (g_display_3d > Display3DMode::NONE)
     {
         if (g_user_float_flag)
         {

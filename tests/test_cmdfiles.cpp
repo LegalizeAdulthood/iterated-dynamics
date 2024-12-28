@@ -3192,50 +3192,50 @@ TEST_F(TestParameterCommand, xyAdjust)
 TEST_F(TestParameterCommand, threeDNo)
 {
     VALUE_UNCHANGED(g_overlay_3d, true);
-    ValueSaver saved_display_3d{g_display_3d, display_3d_modes::YES};
+    ValueSaver saved_display_3d{g_display_3d, Display3DMode::YES};
 
     exec_cmd_arg("3d=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(display_3d_modes::NONE, g_display_3d);
+    EXPECT_EQ(Display3DMode::NONE, g_display_3d);
 }
 
 TEST_F(TestParameterCommand, threeDYes)
 {
     ValueSaver saved_overlay_3d{g_overlay_3d, false};
-    ValueSaver saved_display_3d{g_display_3d, display_3d_modes::MINUS_ONE};
+    ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
 
     exec_cmd_arg("3d=yes");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
     EXPECT_FALSE(g_overlay_3d);
-    EXPECT_EQ(display_3d_modes::YES, g_display_3d);
+    EXPECT_EQ(Display3DMode::YES, g_display_3d);
 }
 
 TEST_F(TestParameterCommand, threeDOverlayWithFractal)
 {
     ValueSaver saved_overlay_3d{g_overlay_3d, false};
-    ValueSaver saved_display_3d{g_display_3d, display_3d_modes::MINUS_ONE};
+    ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
     ValueSaver saved_calc_status{g_calc_status, calc_status_value::PARAMS_CHANGED};
 
     exec_cmd_arg("3d=overlay");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
     EXPECT_TRUE(g_overlay_3d);
-    EXPECT_EQ(display_3d_modes::YES, g_display_3d);
+    EXPECT_EQ(Display3DMode::YES, g_display_3d);
 }
 
 TEST_F(TestParameterCommand, threeDOverlayNoFractal)
 {
     ValueSaver saved_overlay_3d{g_overlay_3d, false};
-    ValueSaver saved_display_3d{g_display_3d, display_3d_modes::MINUS_ONE};
+    ValueSaver saved_display_3d{g_display_3d, Display3DMode::MINUS_ONE};
     ValueSaver saved_calc_status{g_calc_status, calc_status_value::NO_FRACTAL};
 
     exec_cmd_arg("3d=overlay");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D | CmdArgFlags::YES_3D, m_result);
     EXPECT_FALSE(g_overlay_3d);
-    EXPECT_EQ(display_3d_modes::YES, g_display_3d);
+    EXPECT_EQ(Display3DMode::YES, g_display_3d);
 }
 
 TEST_F(TestParameterCommand, sphereNo)

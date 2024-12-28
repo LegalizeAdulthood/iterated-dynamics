@@ -136,7 +136,7 @@ static std::string heading_detail(FractalInfo const *info, ExtBlock3 const *blk_
         {
             ++nameptr;
         }
-        if (g_display_3d != display_3d_modes::NONE)
+        if (g_display_3d != Display3DMode::NONE)
         {
             nameptr = "3D Transform";
         }

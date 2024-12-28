@@ -458,7 +458,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 1)
     {
-        if (g_display_3d == display_3d_modes::NONE //
+        if (g_display_3d == Display3DMode::NONE //
             && (read_info.version <= 4             //
                    || read_info.display_3d > 0     //
                    || bit_set(g_cur_fractal_specific->flags, fractal_flags::PARMS3D)))
@@ -551,7 +551,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_file_aspect_ratio = g_screen_aspect;
         }
         g_save_system = 0;
-        if (g_display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
+        if (g_display_3d == Display3DMode::NONE && read_info.display_3d > 0)
         {
             g_loaded_3d       = true;
             g_ambient        = read_info.ambient;
@@ -732,7 +732,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     backwards_v19();
     backwards_v20();
 
-    if (g_display_3d != display_3d_modes::NONE)
+    if (g_display_3d != Display3DMode::NONE)
     {
         g_user_float_flag = old_float_flag;
     }
@@ -749,9 +749,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     else
     {
-        display_3d_modes const old_display_ed = g_display_3d;
+        Display3DMode const old_display_ed = g_display_3d;
         bool const old_float_flag2 = g_float_flag;
-        g_display_3d = g_loaded_3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
+        g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
         g_float_flag = g_user_float_flag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
@@ -771,7 +771,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    if (g_display_3d != display_3d_modes::NONE)
+    if (g_display_3d != Display3DMode::NONE)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         g_fractal_type = FractalType::PLASMA;

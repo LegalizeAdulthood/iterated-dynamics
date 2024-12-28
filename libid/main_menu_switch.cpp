@@ -548,11 +548,11 @@ static main_state restore_from_3d(MainContext &context)
 {
     if (g_overlay_3d)
     {
-        g_display_3d = display_3d_modes::B_COMMAND; // for <b> command
+        g_display_3d = Display3DMode::B_COMMAND; // for <b> command
     }
     else
     {
-        g_display_3d = display_3d_modes::YES;
+        g_display_3d = Display3DMode::YES;
     }
     return restore_from_image(context);
 }

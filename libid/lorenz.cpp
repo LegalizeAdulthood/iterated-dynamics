@@ -2396,7 +2396,7 @@ int funny_glasses_call(int (*calc)())
         s_real_time = false;
         goto done;
     }
-    if (g_glasses_type && status == 0 && g_display_3d != display_3d_modes::NONE)
+    if (g_glasses_type && status == 0 && g_display_3d != Display3DMode::NONE)
     {
         if (g_glasses_type == 3)
         {
@@ -2886,21 +2886,21 @@ static void setup_matrix(MATRIX doublemat)
 
 int orbit3d_float()
 {
-    g_display_3d = display_3d_modes::MINUS_ONE ;
+    g_display_3d = Display3DMode::MINUS_ONE ;
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     return funny_glasses_call(orbit3d_float_calc);
 }
 
 int orbit3d_long()
 {
-    g_display_3d = display_3d_modes::MINUS_ONE ;
+    g_display_3d = Display3DMode::MINUS_ONE ;
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     return funny_glasses_call(orbit3d_long_calc);
 }
 
 static int ifs3d()
 {
-    g_display_3d = display_3d_modes::MINUS_ONE;
+    g_display_3d = Display3DMode::MINUS_ONE;
 
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     if (g_float_flag)

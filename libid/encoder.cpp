@@ -548,7 +548,7 @@ bool encoder()
     {
         save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
     }
-    if (g_display_3d <= display_3d_modes::NONE && g_iteration_ranges_len)
+    if (g_display_3d <= Display3DMode::NONE && g_iteration_ranges_len)
     {
         // ranges block, 004
         int const num_bytes = g_iteration_ranges_len*2;
