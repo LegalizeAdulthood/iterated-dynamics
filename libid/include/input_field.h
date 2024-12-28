@@ -2,7 +2,7 @@
 //
 #pragma once
 
-enum input_field_flags
+enum InputFieldFlags
 {
     INPUTFIELD_NUMERIC  = 1,
     INPUTFIELD_INTEGER  = 2,
