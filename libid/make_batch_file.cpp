@@ -1197,7 +1197,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         put_param(" %s=%d/%d", "scalexyz", g_x_scale, g_y_scale);
         put_param(" %s=%d", "roughness", g_rough);
         put_param(" %s=%d", "waterline", g_water_line);
-        if (g_fill_type != fill_type::POINTS)
+        if (g_fill_type != FillType::POINTS)
         {
             put_param(" %s=%d", "filltype", +g_fill_type);
         }
@@ -1222,7 +1222,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
                 put_param(" %s=y", "brief");
             }
         }
-        if (g_fill_type > fill_type::SOLID_FILL)
+        if (g_fill_type > FillType::SOLID_FILL)
         {
             put_param(" %s=%d/%d/%d", "lightsource", g_light_x, g_light_y, g_light_z);
             if (g_light_avg)

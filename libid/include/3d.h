@@ -25,7 +25,7 @@ inline double dot_product(VECTOR v1, VECTOR v2)
     return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
 
-enum class fill_type
+enum class FillType
 {
     SURFACE_GRID = -1,
     POINTS = 0,
@@ -36,7 +36,7 @@ enum class fill_type
     LIGHT_SOURCE_BEFORE = 5,
     LIGHT_SOURCE_AFTER = 6
 };
-constexpr int operator+(fill_type value)
+constexpr int operator+(FillType value)
 {
     return static_cast<int>(value);
 }
@@ -57,7 +57,7 @@ extern int g_sphere_radius;    // should be user input
 // common parameters
 extern int g_rough;      // scale z-axis, 30 percent
 extern int g_water_line; // water level
-extern fill_type g_fill_type;  // fill type
+extern FillType g_fill_type;  // fill type
 extern int g_viewer_z;   // perspective view point
 extern int g_shift_x;    // x shift
 extern int g_shift_y;    // y shift
@@ -68,7 +68,7 @@ extern int g_light_avg;  // number of points to average
 
 inline bool illumine()
 {
-    return g_fill_type > fill_type::SOLID_FILL; // illumination model
+    return g_fill_type > FillType::SOLID_FILL; // illumination model
 }
 
 void identity(MATRIX m);

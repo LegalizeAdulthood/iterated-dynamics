@@ -2011,11 +2011,11 @@ static cmdarg_flags cmd_fill_color(const Command &cmd)
 // filltype=?
 static cmdarg_flags cmd_fill_type(const Command &cmd)
 {
-    if (cmd.num_val < +fill_type::SURFACE_GRID || cmd.num_val > +fill_type::LIGHT_SOURCE_AFTER)
+    if (cmd.num_val < +FillType::SURFACE_GRID || cmd.num_val > +FillType::LIGHT_SOURCE_AFTER)
     {
         return cmd.bad_arg();
     }
-    g_fill_type = static_cast<fill_type>(cmd.num_val);
+    g_fill_type = static_cast<FillType>(cmd.num_val);
     return cmdarg_flags::PARAM_3D;
 }
 
@@ -3983,7 +3983,7 @@ void set_3d_defaults()
         g_sphere_theta_min    =  -90;
         g_sphere_theta_max    =  90;
         g_sphere_radius    =  100;
-        g_fill_type  = fill_type::SURFACE_INTERPOLATED;
+        g_fill_type  = FillType::SURFACE_INTERPOLATED;
         g_light_x    = 1;
         g_light_y    = 1;
         g_light_z    = 1;
@@ -3995,7 +3995,7 @@ void set_3d_defaults()
         g_z_rot      = 0;
         g_x_scale    = 90;
         g_y_scale    = 90;
-        g_fill_type  = fill_type::POINTS;
+        g_fill_type  = FillType::POINTS;
         g_light_x    = 1;
         g_light_y    = -1;
         g_light_z    = 1;

@@ -476,7 +476,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_sphere_radius = read_info.init3d[5];                     // should be user input
             g_rough = read_info.init3d[6];                             // scale z-axis, 30 percent
             g_water_line = read_info.init3d[7];                        // water level
-            g_fill_type = static_cast<fill_type>(read_info.init3d[8]); // fill type
+            g_fill_type = static_cast<FillType>(read_info.init3d[8]); // fill type
             g_viewer_z = read_info.init3d[9];                          // perspective view point
             g_shift_x = read_info.init3d[10];                          // x shift
             g_shift_y = read_info.init3d[11];                          // y shift

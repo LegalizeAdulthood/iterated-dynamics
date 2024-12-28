@@ -79,7 +79,7 @@ int g_sphere_radius{};    // should be user input
 // common parameters
 int g_rough{};           // scale z-axis, 30 percent
 int g_water_line{};      // water level
-fill_type g_fill_type{}; // fill type
+FillType g_fill_type{};  // fill type
 int g_viewer_z{};        // perspective view point
 int g_shift_x{};         // x shift
 int g_shift_y{};         // y shift

@@ -387,7 +387,7 @@ void restore_history_info(int i)
     g_sphere_radius = last.init_3d[5];                     // should be user input
     g_rough = last.init_3d[6];                             // scale z-axis, 30 percent
     g_water_line = last.init_3d[7];                        // water level
-    g_fill_type = static_cast<fill_type>(last.init_3d[8]); // fill type
+    g_fill_type = static_cast<FillType>(last.init_3d[8]); // fill type
     g_viewer_z = last.init_3d[9];                          // perspective view point
     g_shift_x = last.init_3d[10];                          // x shift
     g_shift_y = last.init_3d[11];                          // y shift
