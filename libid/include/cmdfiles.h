@@ -80,11 +80,11 @@ enum text_colors
 #define C_PRIMARY         (g_text_color[29])
 #define C_CONTRIB         (g_text_color[30])
 
-enum class init_orbit_mode
+enum class InitOrbitMode
 {
-    normal = 0,
-    value = 1,
-    pixel = 2
+    NORMAL = 0,
+    VALUE = 1,
+    PIXEL = 2
 };
 
 enum class true_color_mode
@@ -270,7 +270,7 @@ extern int                   g_transparent_color_3d[];
 extern true_color_mode       g_true_mode;
 extern bool                  g_truecolor;
 extern bool                  g_use_center_mag;
-extern init_orbit_mode       g_use_init_orbit;
+extern InitOrbitMode       g_use_init_orbit;
 extern int                   g_user_biomorph_value;
 extern std::string           g_working_dir;
 

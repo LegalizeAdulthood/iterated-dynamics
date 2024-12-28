@@ -46,7 +46,7 @@ mandel_setup()           // Mandelbrot Routine
         && g_biomorph == -1
         && g_inside_color > ZMAG
         && g_outside_color >= ITER
-        && g_use_init_orbit != init_orbit_mode::value
+        && g_use_init_orbit != InitOrbitMode::VALUE
         && !g_using_jiim
         && g_bail_out_test == Bailout::MOD
         && (g_orbit_save_flags & osf_midi) == 0)
@@ -153,7 +153,7 @@ mandel_fp_setup()
             && g_biomorph == -1
             && (g_inside_color >= ITER)
             && g_outside_color >= ATAN
-            && g_use_init_orbit != init_orbit_mode::value
+            && g_use_init_orbit != InitOrbitMode::VALUE
             && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && !g_using_jiim
             && g_bail_out_test == Bailout::MOD
@@ -291,7 +291,7 @@ julia_fp_setup()
             && g_biomorph == -1
             && (g_inside_color >= ITER)
             && g_outside_color >= ATAN
-            && g_use_init_orbit != init_orbit_mode::value
+            && g_use_init_orbit != InitOrbitMode::VALUE
             && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && !g_finite_attractor
             && !g_using_jiim

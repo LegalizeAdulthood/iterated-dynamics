@@ -430,7 +430,7 @@ int long_mandel_per_pixel()
         g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
 
-    if (g_use_init_orbit == init_orbit_mode::value)
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
         g_l_old_z = g_l_init_orbit;
     }
@@ -534,11 +534,11 @@ int mandel_per_pixel()
     }
 
     // alter init value
-    if (g_use_init_orbit == init_orbit_mode::value)
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
         g_l_old_z = g_l_init_orbit;
     }
-    else if (g_use_init_orbit == init_orbit_mode::pixel)
+    else if (g_use_init_orbit == InitOrbitMode::PIXEL)
     {
         g_l_old_z = g_l_init;
     }
@@ -594,11 +594,11 @@ int mandel_fp_per_pixel()
     }
 
     // alter init value
-    if (g_use_init_orbit == init_orbit_mode::value)
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
         g_old_z = g_init_orbit;
     }
-    else if (g_use_init_orbit == init_orbit_mode::pixel)
+    else if (g_use_init_orbit == InitOrbitMode::PIXEL)
     {
         g_old_z = g_init;
     }
@@ -700,7 +700,7 @@ int other_mandel_fp_per_pixel()
         g_init.y = g_dy_pixel();
     }
 
-    if (g_use_init_orbit == init_orbit_mode::value)
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
         g_old_z = g_init_orbit;
     }

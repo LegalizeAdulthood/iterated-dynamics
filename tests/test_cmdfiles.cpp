@@ -1680,65 +1680,65 @@ TEST_F(TestParameterCommand, miimBreadthFirstLeftToRight)
 
 TEST_F(TestParameterCommand, initOrbitPixel)
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::value};
+    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::VALUE};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
     exec_cmd_arg("initorbit=pixel");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(init_orbit_mode::pixel, g_use_init_orbit);
+    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
 }
 
 TEST_F(TestParameterCommand, initOrbitValue)
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
+    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
     exec_cmd_arg("initorbit=10/20");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(init_orbit_mode::value, g_use_init_orbit);
+    EXPECT_EQ(InitOrbitMode::VALUE, g_use_init_orbit);
     EXPECT_EQ(10.0, g_init_orbit.x);
     EXPECT_EQ(20.0, g_init_orbit.y);
 }
 
 TEST_F(TestParameterCommandError, initOrbitTooFewParameters)
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
+    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
     exec_cmd_arg("initorbit=10");
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
-    EXPECT_EQ(init_orbit_mode::pixel, g_use_init_orbit);
+    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
 }
 
 TEST_F(TestParameterCommandError, initOrbitTooFewFloatParameters)
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
+    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
     exec_cmd_arg("initorbit=10/fmeh");
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
-    EXPECT_EQ(init_orbit_mode::pixel, g_use_init_orbit);
+    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
 }
 
 TEST_F(TestParameterCommandError, initOrbitTooManyParameters)
 {
-    ValueSaver saved_use_init_orbit{g_use_init_orbit, init_orbit_mode::pixel};
+    ValueSaver saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::PIXEL};
     ValueSaver saved_init_orbit{g_init_orbit, DComplex{111.0, 222.0}};
 
     exec_cmd_arg("initorbit=10/20/30");
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
-    EXPECT_EQ(init_orbit_mode::pixel, g_use_init_orbit);
+    EXPECT_EQ(InitOrbitMode::PIXEL, g_use_init_orbit);
     EXPECT_EQ(111.0, g_init_orbit.x);
     EXPECT_EQ(222.0, g_init_orbit.y);
 }

@@ -1389,7 +1389,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     // really fractal specific, but we'll leave it here
     if (!g_integer_fractal)
     {
-        if (g_use_init_orbit == init_orbit_mode::value)
+        if (g_use_init_orbit == InitOrbitMode::VALUE)
         {
             s_saved = g_init_orbit;
         }
@@ -1437,7 +1437,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     else
     {
-        if (g_use_init_orbit == init_orbit_mode::value)
+        if (g_use_init_orbit == InitOrbitMode::VALUE)
         {
             lsaved = g_l_init_orbit;
         }
@@ -2780,9 +2780,9 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
     {
         return;
     }
-    bool parmszero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != init_orbit_mode::value);
-    bool parmsnoreal = (g_param_z1.x == 0.0 && g_use_init_orbit != init_orbit_mode::value);
-    bool parmsnoimag = (g_param_z1.y == 0.0 && g_use_init_orbit != init_orbit_mode::value);
+    bool parmszero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
+    bool parmsnoreal = (g_param_z1.x == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
+    bool parmsnoimag = (g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
     switch (g_fractal_type)
     {
     case FractalType::LMANLAMFNFN:      // These need only P1 checked.

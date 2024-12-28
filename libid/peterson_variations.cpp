@@ -209,7 +209,7 @@ int marks_mandel_per_pixel()
         g_l_init.y = g_l_y_pixel();
     }
 
-    if (g_use_init_orbit == init_orbit_mode::value)
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
         g_l_old_z = g_l_init_orbit;
     }
@@ -260,7 +260,7 @@ int marks_mandel_fp_per_pixel()
         g_init.y = g_dy_pixel();
     }
 
-    if (g_use_init_orbit == init_orbit_mode::value)
+    if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
         g_old_z = g_init_orbit;
     }

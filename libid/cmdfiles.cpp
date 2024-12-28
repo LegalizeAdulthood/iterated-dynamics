@@ -138,7 +138,7 @@ bool g_check_cur_dir{};                                // flag to check current 
 batch_modes g_init_batch{batch_modes::NONE};           // 1 if batch run (no kbd)
 int g_init_save_time{};                                // autosave minutes
 DComplex g_init_orbit{};                               // initial orbitvalue
-init_orbit_mode g_use_init_orbit{init_orbit_mode::normal};    // flag for initorbit
+InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for initorbit
 int g_init_mode{};                                            // initial video mode
 int g_init_cycle_limit{};                                     // initial cycle limit
 bool g_use_center_mag{};                                      // use center-mag corners
@@ -504,7 +504,7 @@ static void init_vars_fractal()
     init_param_flags();                                  //
     g_bail_out = 0;                                      // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
-    g_use_init_orbit = init_orbit_mode::normal;          //
+    g_use_init_orbit = InitOrbitMode::NORMAL;          //
     std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
     std::fill(&g_potential_params[0], &g_potential_params[3], 0.0); // initial potential values
     std::fill(std::begin(g_inversion), std::end(g_inversion), 0.0); // initial invert values
@@ -2163,7 +2163,7 @@ static cmdarg_flags cmd_init_orbit(const Command &cmd)
     const std::string_view value{cmd.value};
     if (value == "pixel")
     {
-        g_use_init_orbit = init_orbit_mode::pixel;
+        g_use_init_orbit = InitOrbitMode::PIXEL;
     }
     else
     {
@@ -2173,7 +2173,7 @@ static cmdarg_flags cmd_init_orbit(const Command &cmd)
         }
         g_init_orbit.x = cmd.float_vals[0];
         g_init_orbit.y = cmd.float_vals[1];
-        g_use_init_orbit = init_orbit_mode::value;
+        g_use_init_orbit = InitOrbitMode::VALUE;
     }
     return cmdarg_flags::FRACTAL_PARAM;
 }

@@ -118,7 +118,7 @@ struct ImageHistory
     char  max_function;
     char user_std_calc_mode;
     bool three_pass;
-    init_orbit_mode use_init_orbit;
+    InitOrbitMode use_init_orbit;
     int log_map_fly_calculate;
     int stop_pass;
     bool is_mandelbrot;

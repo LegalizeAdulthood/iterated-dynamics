@@ -896,11 +896,11 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
         }
 
-        if (g_use_init_orbit == init_orbit_mode::pixel)
+        if (g_use_init_orbit == InitOrbitMode::PIXEL)
         {
             put_param(" %s=pixel", "initorbit");
         }
-        else if (g_use_init_orbit == init_orbit_mode::value)
+        else if (g_use_init_orbit == InitOrbitMode::VALUE)
         {
             put_param(" %s=%.15g/%.15g", "initorbit", g_init_orbit.x, g_init_orbit.y);
         }
