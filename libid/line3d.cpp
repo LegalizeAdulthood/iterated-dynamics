@@ -1482,14 +1482,14 @@ int targa_color(int x, int y, int color)
 
     switch (g_true_mode)
     {
-    case true_color_mode::default_color:
+    case TrueColorMode::DEFAULT_COLOR:
     default:
         RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); // Move color space to
         RGB[1] = (BYTE)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
         RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); // from 64 colors
         break;
 
-    case true_color_mode::iterate:
+    case TrueColorMode::ITERATE:
         RGB[0] = (BYTE)((g_real_color_iter >> 16) & 0xff);  // red
         RGB[1] = (BYTE)((g_real_color_iter >> 8) & 0xff);   // green
         RGB[2] = (BYTE)((g_real_color_iter) & 0xff);        // blue

@@ -139,7 +139,7 @@ void make_batch_file()
 
     maxcolor = g_colors;
     std::strcpy(colorspec, "y");
-    if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
+    if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {
         --maxcolor;
         if (g_inside_color > COLOR_BLACK && g_inside_color > maxcolor)
@@ -246,7 +246,7 @@ prompt_user:
         choices[promptnum] = "Fourth comment";
         paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[3];
-        if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
+        if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
         {
             choices[promptnum] = "Record colors?";
             paramvalues[promptnum].type = 0x100 + 13;
@@ -299,7 +299,7 @@ prompt_user:
         {
             g_command_comment[i] = inpcomment[i];
         }
-        if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
+        if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
         {
             if (paramvalues[maxcolorindex].uval.ival > 0 &&
                     paramvalues[maxcolorindex].uval.ival <= 256)

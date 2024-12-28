@@ -157,7 +157,7 @@ bool g_read_color{true};                                      // flag for readin
 double g_math_tol[2]{.05, .05};                               // For math transition
 bool g_targa_out{};                                           // 3D fullcolor flag
 bool g_truecolor{};                                           // escape time truecolor flag
-true_color_mode g_true_mode{true_color_mode::default_color};  // truecolor coloring scheme
+TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // truecolor coloring scheme
 std::string g_color_file;                                     // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded{};                    // if function loaded for new bifs
 float g_screen_aspect{DEFAULT_ASPECT};                        // aspect ratio of the screen
@@ -479,7 +479,7 @@ static void init_vars_restart() // <ins> key init
     g_major_method = Major::breadth_first;            // default inverse julia methods
     g_inverse_julia_minor_method = Minor::left_first; // default inverse julia methods
     g_truecolor = false;                              // truecolor output flag
-    g_true_mode = true_color_mode::default_color;     //
+    g_true_mode = TrueColorMode::DEFAULT_COLOR;     //
 }
 
 // init vars affecting calculation
@@ -3511,14 +3511,14 @@ static cmdarg_flags cmd_true_color(const Command &cmd)
 // truemode=?
 static cmdarg_flags cmd_true_mode(const Command &cmd)
 {
-    g_true_mode = true_color_mode::default_color;
+    g_true_mode = TrueColorMode::DEFAULT_COLOR;
     if (cmd.char_val[0] == 'd')
     {
-        g_true_mode = true_color_mode::default_color;
+        g_true_mode = TrueColorMode::DEFAULT_COLOR;
     }
     if (cmd.char_val[0] == 'i' || cmd.int_vals[0] == 1)
     {
-        g_true_mode = true_color_mode::iterate;
+        g_true_mode = TrueColorMode::ITERATE;
     }
     return cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D;
 }

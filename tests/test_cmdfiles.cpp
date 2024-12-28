@@ -3479,32 +3479,32 @@ TEST_F(TestParameterCommand, trueColorNo)
 
 TEST_F(TestParameterCommand, trueModeDefaultColor)
 {
-    ValueSaver saved_true_mode{g_true_mode, true_color_mode::iterate};
+    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::ITERATE};
 
     exec_cmd_arg("truemode=d");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
-    EXPECT_EQ(true_color_mode::default_color, g_true_mode);
+    EXPECT_EQ(TrueColorMode::DEFAULT_COLOR, g_true_mode);
 }
 
 TEST_F(TestParameterCommand, trueModeIterate)
 {
-    ValueSaver saved_true_mode{g_true_mode, true_color_mode::default_color};
+    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::DEFAULT_COLOR};
 
     exec_cmd_arg("truemode=i");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
-    EXPECT_EQ(true_color_mode::iterate, g_true_mode);
+    EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
 }
 
 TEST_F(TestParameterCommand, trueModeValue)
 {
-    ValueSaver saved_true_mode{g_true_mode, true_color_mode::default_color};
+    ValueSaver saved_true_mode{g_true_mode, TrueColorMode::DEFAULT_COLOR};
 
     exec_cmd_arg("truemode=1");
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
-    EXPECT_EQ(true_color_mode::iterate, g_true_mode);
+    EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
 }
 
 TEST_F(TestParameterCommand, useGrayScaleNo)

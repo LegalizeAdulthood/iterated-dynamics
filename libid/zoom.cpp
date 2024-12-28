@@ -71,7 +71,7 @@ void display_box()
     int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
-        if (g_is_true_color && g_true_mode != true_color_mode::default_color)
+        if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)
         {
             driver_get_truecolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, &rgb[0], &rgb[1], &rgb[2], nullptr);
             driver_put_truecolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset,
@@ -85,7 +85,7 @@ void display_box()
 
     // There is an interaction between getcolor and putcolor, so separate them
     // don't need this for truecolor with truemode set
-    if (!(g_is_true_color && g_true_mode != true_color_mode::default_color))
+    if (!(g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR))
     {
         for (int i = 0; i < g_box_count; i++)
         {
@@ -103,7 +103,7 @@ void display_box()
 
 void clear_box()
 {
-    if (g_is_true_color && g_true_mode != true_color_mode::default_color)
+    if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)
     {
         display_box();
     }

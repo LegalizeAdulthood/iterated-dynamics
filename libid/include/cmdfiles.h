@@ -87,10 +87,10 @@ enum class InitOrbitMode
     PIXEL = 2
 };
 
-enum class true_color_mode
+enum class TrueColorMode
 {
-    default_color = 0,
-    iterate = 1
+    DEFAULT_COLOR = 0,
+    ITERATE = 1
 };
 
 enum class record_colors_mode
@@ -267,7 +267,7 @@ extern bool                  g_targa_out;
 extern std::string           g_temp_dir;
 extern BYTE                  g_text_color[];
 extern int                   g_transparent_color_3d[];
-extern true_color_mode       g_true_mode;
+extern TrueColorMode       g_true_mode;
 extern bool                  g_truecolor;
 extern bool                  g_use_center_mag;
 extern InitOrbitMode       g_use_init_orbit;

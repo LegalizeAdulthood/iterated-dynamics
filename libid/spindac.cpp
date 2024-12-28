@@ -25,7 +25,7 @@ void spin_dac(int dir, int inc)
 {
     if (g_colors < 16)
         return;
-    if (g_is_true_color && g_true_mode != true_color_mode::default_color)
+    if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)
         return;
     if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
     {

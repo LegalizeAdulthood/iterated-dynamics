@@ -520,7 +520,7 @@ int calc_fract()
     g_display_3d = display_3d_modes::NONE;
     g_basin = 0;
     g_put_color = put_color_a;
-    if (g_is_true_color && g_true_mode != true_color_mode::default_color)
+    if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)
     {
         // Have to force passes = 1
         g_std_calc_mode = '1';
