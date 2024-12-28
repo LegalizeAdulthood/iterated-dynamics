@@ -24,7 +24,7 @@ struct SearchPath
 
 } // namespace id
 
-enum text_colors
+enum TextColors
 {
     BLACK = 0,
     BLUE,
