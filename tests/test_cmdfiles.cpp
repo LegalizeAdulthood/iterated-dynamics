@@ -1016,61 +1016,61 @@ TEST_F(TestParameterCommand, noBoFYes)
 
 TEST_F(TestParameterCommand, functionSin)
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], trig_fn::IDENT};
+    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
     exec_cmd_arg("function=sin", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
+    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
 }
 
 TEST_F(TestParameterCommand, functionSinCos)
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], trig_fn::IDENT};
-    ValueSaver saved_trig_index1{g_trig_index[1], trig_fn::IDENT};
+    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
+    ValueSaver saved_trig_index1{g_trig_index[1], TrigFn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
     exec_cmd_arg("function=sin/cos", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
-    EXPECT_EQ(trig_fn::COS, g_trig_index[1]);
+    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
+    EXPECT_EQ(TrigFn::COS, g_trig_index[1]);
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
 }
 
 TEST_F(TestParameterCommand, functionSinCosTan)
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], trig_fn::IDENT};
-    ValueSaver saved_trig_index1{g_trig_index[1], trig_fn::IDENT};
-    ValueSaver saved_trig_index2{g_trig_index[2], trig_fn::IDENT};
+    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
+    ValueSaver saved_trig_index1{g_trig_index[1], TrigFn::IDENT};
+    ValueSaver saved_trig_index2{g_trig_index[2], TrigFn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
     exec_cmd_arg("function=sin/cos/tan", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
-    EXPECT_EQ(trig_fn::COS, g_trig_index[1]);
-    EXPECT_EQ(trig_fn::TAN, g_trig_index[2]);
+    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
+    EXPECT_EQ(TrigFn::COS, g_trig_index[1]);
+    EXPECT_EQ(TrigFn::TAN, g_trig_index[2]);
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
 }
 
 TEST_F(TestParameterCommand, functionSinCosTanCot)
 {
-    ValueSaver saved_trig_index0{g_trig_index[0], trig_fn::IDENT};
-    ValueSaver saved_trig_index1{g_trig_index[1], trig_fn::IDENT};
-    ValueSaver saved_trig_index2{g_trig_index[2], trig_fn::IDENT};
-    ValueSaver saved_trig_index3{g_trig_index[3], trig_fn::IDENT};
+    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
+    ValueSaver saved_trig_index1{g_trig_index[1], TrigFn::IDENT};
+    ValueSaver saved_trig_index2{g_trig_index[2], TrigFn::IDENT};
+    ValueSaver saved_trig_index3{g_trig_index[3], TrigFn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
     exec_cmd_arg("function=sin/cos/tan/cotan", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
-    EXPECT_EQ(trig_fn::COS, g_trig_index[1]);
-    EXPECT_EQ(trig_fn::TAN, g_trig_index[2]);
-    EXPECT_EQ(trig_fn::COTAN, g_trig_index[3]);
+    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
+    EXPECT_EQ(TrigFn::COS, g_trig_index[1]);
+    EXPECT_EQ(TrigFn::TAN, g_trig_index[2]);
+    EXPECT_EQ(TrigFn::COTAN, g_trig_index[3]);
     EXPECT_TRUE(g_new_bifurcation_functions_loaded);
 }
 

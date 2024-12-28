@@ -57,9 +57,9 @@ NamedTrigFunction g_trig_fn[] =
 
 const int g_num_trig_functions{std::size(g_trig_fn)};
 
-trig_fn g_trig_index[] =
+TrigFn g_trig_index[] =
 {
-    trig_fn::SIN, trig_fn::SQR, trig_fn::SINH, trig_fn::COSH
+    TrigFn::SIN, TrigFn::SQR, TrigFn::SINH, TrigFn::COSH
 };
 void (*g_l_trig0)(){l_stk_sin};
 void (*g_l_trig1)(){l_stk_sqr};
@@ -136,7 +136,7 @@ int set_trig_array(int k, char const *name)
     {
         if (std::strcmp(trigname, g_trig_fn[i].name) == 0)
         {
-            g_trig_index[k] = static_cast<trig_fn>(i);
+            g_trig_index[k] = static_cast<TrigFn>(i);
             set_trig_pointers(k);
             break;
         }

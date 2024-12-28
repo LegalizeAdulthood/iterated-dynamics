@@ -68,7 +68,7 @@ struct ImageHistory
     double x_3rd;
     double y_3rd;
     long dist_est;
-    trig_fn trig_index[4];
+    TrigFn trig_index[4];
     bool finite_attractor;
     double init_orbit[2];
     int periodicity_check;

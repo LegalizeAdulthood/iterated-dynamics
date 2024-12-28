@@ -525,10 +525,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_user_float_flag   = read_info.floatflag != 0;
         g_bail_out     = read_info.bailoutold;
         g_calc_time    = read_info.calctime;
-        g_trig_index[0]  = static_cast<trig_fn>(read_info.trigndx[0]);
-        g_trig_index[1]  = static_cast<trig_fn>(read_info.trigndx[1]);
-        g_trig_index[2]  = static_cast<trig_fn>(read_info.trigndx[2]);
-        g_trig_index[3]  = static_cast<trig_fn>(read_info.trigndx[3]);
+        g_trig_index[0]  = static_cast<TrigFn>(read_info.trigndx[0]);
+        g_trig_index[1]  = static_cast<TrigFn>(read_info.trigndx[1]);
+        g_trig_index[2]  = static_cast<TrigFn>(read_info.trigndx[2]);
+        g_trig_index[3]  = static_cast<TrigFn>(read_info.trigndx[3]);
         g_finite_attractor  = read_info.finattract != 0;
         g_init_orbit.x = read_info.initorbit[0];
         g_init_orbit.y = read_info.initorbit[1];
@@ -1336,83 +1336,83 @@ static void backwards_compat(FractalInfo *info)
     {
     case FractalType::LAMBDASINE:
         g_fractal_type = FractalType::LAMBDATRIGFP;
-        g_trig_index[0] = trig_fn::SIN;
+        g_trig_index[0] = TrigFn::SIN;
         break;
     case FractalType::LAMBDACOS:
         g_fractal_type = FractalType::LAMBDATRIGFP;
-        g_trig_index[0] = trig_fn::COSXX;
+        g_trig_index[0] = TrigFn::COSXX;
         break;
     case FractalType::LAMBDAEXP:
         g_fractal_type = FractalType::LAMBDATRIGFP;
-        g_trig_index[0] = trig_fn::EXP;
+        g_trig_index[0] = TrigFn::EXP;
         break;
     case FractalType::MANDELSINE:
         g_fractal_type = FractalType::MANDELTRIGFP;
-        g_trig_index[0] = trig_fn::SIN;
+        g_trig_index[0] = TrigFn::SIN;
         break;
     case FractalType::MANDELCOS:
         g_fractal_type = FractalType::MANDELTRIGFP;
-        g_trig_index[0] = trig_fn::COSXX;
+        g_trig_index[0] = TrigFn::COSXX;
         break;
     case FractalType::MANDELEXP:
         g_fractal_type = FractalType::MANDELTRIGFP;
-        g_trig_index[0] = trig_fn::EXP;
+        g_trig_index[0] = TrigFn::EXP;
         break;
     case FractalType::MANDELSINH:
         g_fractal_type = FractalType::MANDELTRIGFP;
-        g_trig_index[0] = trig_fn::SINH;
+        g_trig_index[0] = TrigFn::SINH;
         break;
     case FractalType::LAMBDASINH:
         g_fractal_type = FractalType::LAMBDATRIGFP;
-        g_trig_index[0] = trig_fn::SINH;
+        g_trig_index[0] = TrigFn::SINH;
         break;
     case FractalType::MANDELCOSH:
         g_fractal_type = FractalType::MANDELTRIGFP;
-        g_trig_index[0] = trig_fn::COSH;
+        g_trig_index[0] = TrigFn::COSH;
         break;
     case FractalType::LAMBDACOSH:
         g_fractal_type = FractalType::LAMBDATRIGFP;
-        g_trig_index[0] = trig_fn::COSH;
+        g_trig_index[0] = TrigFn::COSH;
         break;
     case FractalType::LMANDELSINE:
         g_fractal_type = FractalType::MANDELTRIG;
-        g_trig_index[0] = trig_fn::SIN;
+        g_trig_index[0] = TrigFn::SIN;
         break;
     case FractalType::LLAMBDASINE:
         g_fractal_type = FractalType::LAMBDATRIG;
-        g_trig_index[0] = trig_fn::SIN;
+        g_trig_index[0] = TrigFn::SIN;
         break;
     case FractalType::LMANDELCOS:
         g_fractal_type = FractalType::MANDELTRIG;
-        g_trig_index[0] = trig_fn::COSXX;
+        g_trig_index[0] = TrigFn::COSXX;
         break;
     case FractalType::LLAMBDACOS:
         g_fractal_type = FractalType::LAMBDATRIG;
-        g_trig_index[0] = trig_fn::COSXX;
+        g_trig_index[0] = TrigFn::COSXX;
         break;
     case FractalType::LMANDELSINH:
         g_fractal_type = FractalType::MANDELTRIG;
-        g_trig_index[0] = trig_fn::SINH;
+        g_trig_index[0] = TrigFn::SINH;
         break;
     case FractalType::LLAMBDASINH:
         g_fractal_type = FractalType::LAMBDATRIG;
-        g_trig_index[0] = trig_fn::SINH;
+        g_trig_index[0] = TrigFn::SINH;
         break;
     case FractalType::LMANDELCOSH:
         g_fractal_type = FractalType::MANDELTRIG;
-        g_trig_index[0] = trig_fn::COSH;
+        g_trig_index[0] = TrigFn::COSH;
         break;
     case FractalType::LLAMBDACOSH:
         g_fractal_type = FractalType::LAMBDATRIG;
-        g_trig_index[0] = trig_fn::COSH;
+        g_trig_index[0] = TrigFn::COSH;
         break;
     case FractalType::LMANDELEXP:
         g_fractal_type = FractalType::MANDELTRIG;
-        g_trig_index[0] = trig_fn::EXP;
+        g_trig_index[0] = TrigFn::EXP;
         break;
     case FractalType::LLAMBDAEXP:
         g_fractal_type = FractalType::LAMBDATRIG;
-        g_trig_index[0] = trig_fn::EXP;
+        g_trig_index[0] = TrigFn::EXP;
         break;
     case FractalType::DEMM:
         g_fractal_type = FractalType::MANDELFP;
@@ -2253,7 +2253,7 @@ static bool function_ok(FractalInfo const *info, int numfn)
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++)
     {
-        if (static_cast<trig_fn>(info->trigndx[i]) != g_trig_index[i])
+        if (static_cast<TrigFn>(info->trigndx[i]) != g_trig_index[i])
         {
             mzmatch++;
         }

@@ -224,7 +224,7 @@ mandel_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[0] == TrigFn::FLIP))
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -242,19 +242,19 @@ mandel_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_trig_index[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
         break;
     case FractalType::TIMSERRORFP:
-        if (g_trig_index[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
         break;
     case FractalType::MARKSMANDELPWRFP:
-        if (g_trig_index[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -353,7 +353,7 @@ julia_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[0] == TrigFn::FLIP))
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -364,7 +364,7 @@ julia_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_trig_index[0] != trig_fn::SQR)
+        if (g_trig_index[0] != TrigFn::SQR)
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -380,10 +380,10 @@ julia_fp_setup()
     case FractalType::FPPOPCORNJUL:
     {
         bool default_functions = false;
-        if (g_trig_index[0] == trig_fn::SIN
-            && g_trig_index[1] == trig_fn::TAN
-            && g_trig_index[2] == trig_fn::SIN
-            && g_trig_index[3] == trig_fn::TAN
+        if (g_trig_index[0] == TrigFn::SIN
+            && g_trig_index[1] == TrigFn::TAN
+            && g_trig_index[2] == TrigFn::SIN
+            && g_trig_index[3] == TrigFn::TAN
             && std::fabs(g_param_z2.x - 3.0) < .0001
             && g_param_z2.y == 0
             && g_param_z1.y == 0)
@@ -469,21 +469,21 @@ mandel_long_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[0] == TrigFn::FLIP))
         {
             g_symmetry = SymmetryType::NONE;
         }
     }
     if (g_fractal_type == FractalType::TIMSERROR)
     {
-        if (g_trig_index[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
     }
     if (g_fractal_type == FractalType::MARKSMANDELPWR)
     {
-        if (g_trig_index[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -532,7 +532,7 @@ julia_long_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[0] == TrigFn::FLIP))
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -542,10 +542,10 @@ julia_long_setup()
     case FractalType::LPOPCORNJUL:
     {
         bool default_functions = false;
-        if (g_trig_index[0] == trig_fn::SIN
-            && g_trig_index[1] == trig_fn::TAN
-            && g_trig_index[2] == trig_fn::SIN
-            && g_trig_index[3] == trig_fn::TAN
+        if (g_trig_index[0] == TrigFn::SIN
+            && g_trig_index[1] == TrigFn::TAN
+            && g_trig_index[2] == TrigFn::SIN
+            && g_trig_index[3] == TrigFn::TAN
             && std::fabs(g_param_z2.x - 3.0) < .0001
             && g_param_z2.y == 0
             && g_param_z1.y == 0)

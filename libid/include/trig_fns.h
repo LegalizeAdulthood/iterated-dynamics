@@ -5,7 +5,7 @@
 #include <string>
 
 // The values must match the values in the trigfn array in prompts1
-enum class trig_fn
+enum class TrigFn
 {
     SIN = 0,
     COSXX,
@@ -40,7 +40,7 @@ enum class trig_fn
     ONE
 };
 
-inline int operator+(trig_fn value)
+inline int operator+(TrigFn value)
 {
     return static_cast<int>(value);
 }
@@ -54,7 +54,7 @@ struct NamedTrigFunction
 };
 
 extern NamedTrigFunction     g_trig_fn[];
-extern trig_fn               g_trig_index[];
+extern TrigFn                g_trig_index[];
 extern const int             g_num_trig_functions;
 extern void                (*g_l_trig0)();
 extern void                (*g_l_trig1)();

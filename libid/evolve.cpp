@@ -248,10 +248,10 @@ void restore_param_history()
     g_inversion[1] = s_old_history.invert1;
     g_inversion[2] = s_old_history.invert2;
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
-    g_trig_index[0] = static_cast<trig_fn>(s_old_history.trigndx0);
-    g_trig_index[1] = static_cast<trig_fn>(s_old_history.trigndx1);
-    g_trig_index[2] = static_cast<trig_fn>(s_old_history.trigndx2);
-    g_trig_index[3] = static_cast<trig_fn>(s_old_history.trigndx3);
+    g_trig_index[0] = static_cast<TrigFn>(s_old_history.trigndx0);
+    g_trig_index[1] = static_cast<TrigFn>(s_old_history.trigndx1);
+    g_trig_index[2] = static_cast<TrigFn>(s_old_history.trigndx2);
+    g_trig_index[3] = static_cast<TrigFn>(s_old_history.trigndx3);
     g_bail_out_test = static_cast<Bailout>(s_old_history.bailoutest);
 }
 
@@ -390,8 +390,8 @@ void vary_trig(GeneBase gene[], int randval, int i)
 {
     if (gene[i].mutate != Variations::NONE)
     {
-        *static_cast<trig_fn *>(gene[i].addr) =
-            static_cast<trig_fn>(wrapped_positive_vary_int(randval, g_num_trig_functions, gene[i].mutate));
+        *static_cast<TrigFn *>(gene[i].addr) =
+            static_cast<TrigFn>(wrapped_positive_vary_int(randval, g_num_trig_functions, gene[i].mutate));
     }
     set_trig_pointers(5); //set all trig ptrs up
 }

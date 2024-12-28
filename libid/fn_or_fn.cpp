@@ -17,7 +17,7 @@ bool mandel_trig_or_trig_setup()
     // default symmetry is X_AXIS_NO_PARAM
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    if ((g_trig_index[0] == trig_fn::FLIP) || (g_trig_index[1] == trig_fn::FLIP))
+    if ((g_trig_index[0] == TrigFn::FLIP) || (g_trig_index[1] == TrigFn::FLIP))
     {
         g_symmetry = SymmetryType::NONE;
     }
@@ -30,11 +30,11 @@ bool man_lam_trig_or_trig_setup()
     // default symmetry is X_AXIS
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    if (g_trig_index[0] == trig_fn::SQR)
+    if (g_trig_index[0] == TrigFn::SQR)
     {
         g_symmetry = SymmetryType::NONE;
     }
-    if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
+    if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[1] == TrigFn::LOG))
     {
         g_symmetry = SymmetryType::NONE;
     }
@@ -46,11 +46,11 @@ bool lambda_trig_or_trig_setup()
     // default symmetry is ORIGIN
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
-    if ((g_trig_index[0] == trig_fn::EXP) || (g_trig_index[1] == trig_fn::EXP))
+    if ((g_trig_index[0] == TrigFn::EXP) || (g_trig_index[1] == TrigFn::EXP))
     {
         g_symmetry = SymmetryType::NONE;
     }
-    if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
+    if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[1] == TrigFn::LOG))
     {
         g_symmetry = SymmetryType::X_AXIS;
     }
@@ -105,7 +105,7 @@ bool julia_trig_or_trig_setup()
     {
         g_symmetry = SymmetryType::NONE;
     }
-    if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
+    if (g_trig_index[0] == TrigFn::FLIP || g_trig_index[1] == TrigFn::FLIP)
     {
         g_symmetry = SymmetryType::NONE;
     }

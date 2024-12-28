@@ -223,12 +223,12 @@ bool julia_fn_plus_z_sqrd_setup()
 
     switch (g_trig_index[0]) // fix sqr symmetry & add additional functions
     {
-    case trig_fn::COSXX: // cosxx
-    case trig_fn::COSH:
-    case trig_fn::SQR:
-    case trig_fn::COS:
-    case trig_fn::TAN:
-    case trig_fn::TANH:
+    case TrigFn::COSXX: // cosxx
+    case TrigFn::COSH:
+    case TrigFn::SQR:
+    case TrigFn::COS:
+    case TrigFn::TAN:
+    case TrigFn::TANH:
         g_symmetry = SymmetryType::ORIGIN;
         break;
         // default is for NONE symmetry

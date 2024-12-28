@@ -103,7 +103,7 @@ static int skinner_trig_sub_trig_fractal()
 bool trig_plus_trig_long_setup()
 {
     fn_plus_fn_sym();
-    if (g_trig_index[1] == trig_fn::SQR)
+    if (g_trig_index[1] == TrigFn::SQR)
     {
         return trig_plus_sqr_long_setup();
     }
@@ -195,7 +195,7 @@ static int skinner_trig_sub_trig_fp_fractal()
 bool trig_plus_trig_fp_setup()
 {
     fn_plus_fn_sym();
-    if (g_trig_index[1] == trig_fn::SQR)
+    if (g_trig_index[1] == TrigFn::SQR)
     {
         return trig_plus_sqr_fp_setup();
     }
@@ -254,11 +254,11 @@ bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
     };
     if (g_param_z1.y == 0.0 && g_param_z2.y == 0.0)
     {
-        if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] < trig_fn::SQR)    // bounds of array
+        if (g_trig_index[0] <= TrigFn::SQR && g_trig_index[1] < TrigFn::SQR)    // bounds of array
         {
             g_symmetry = fnplusfn[+g_trig_index[0]][+g_trig_index[1]];
         }
-        if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
+        if (g_trig_index[0] == TrigFn::FLIP || g_trig_index[1] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -284,29 +284,29 @@ bool fn_x_fn_setup()
         /* log */ {SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::NONE,    SymmetryType::X_AXIS, SymmetryType::NONE},
         /* sqr */ {SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::XY_AXIS, SymmetryType::NONE,   SymmetryType::XY_AXIS},
     };
-    if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] <= trig_fn::SQR)    // bounds of array
+    if (g_trig_index[0] <= TrigFn::SQR && g_trig_index[1] <= TrigFn::SQR)    // bounds of array
     {
         g_symmetry = fnxfn[+g_trig_index[0]][+g_trig_index[1]];
         // defaults to X_AXIS symmetry
     }
     else
     {
-        if (g_trig_index[0] == trig_fn::LOG || g_trig_index[1] == trig_fn::LOG)
+        if (g_trig_index[0] == TrigFn::LOG || g_trig_index[1] == TrigFn::LOG)
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_trig_index[0] == trig_fn::COS || g_trig_index[1] == trig_fn::COS)
+        if (g_trig_index[0] == TrigFn::COS || g_trig_index[1] == TrigFn::COS)
         {
-            if (g_trig_index[0] == trig_fn::SIN || g_trig_index[1] == trig_fn::SIN)
+            if (g_trig_index[0] == TrigFn::SIN || g_trig_index[1] == TrigFn::SIN)
             {
                 g_symmetry = SymmetryType::PI_SYM;
             }
-            if (g_trig_index[0] == trig_fn::COSXX || g_trig_index[1] == trig_fn::COSXX)
+            if (g_trig_index[0] == TrigFn::COSXX || g_trig_index[1] == TrigFn::COSXX)
             {
                 g_symmetry = SymmetryType::PI_SYM;
             }
         }
-        if (g_trig_index[0] == trig_fn::COS && g_trig_index[1] == trig_fn::COS)
+        if (g_trig_index[0] == TrigFn::COS && g_trig_index[1] == TrigFn::COS)
         {
             g_symmetry = SymmetryType::PI_SYM;
         }
@@ -379,9 +379,9 @@ bool sqr_trig_setup()
     //           {PI_SYM, PI_SYM, XY_AXIS, XY_AXIS, XY_AXIS, X_AXIS, X_AXIS};
     switch (g_trig_index[0]) // fix sqr symmetry & add additional functions
     {
-    case trig_fn::SIN:
-    case trig_fn::COSXX: // cosxx
-    case trig_fn::COS:   // 'real' cos
+    case TrigFn::SIN:
+    case TrigFn::COSXX: // cosxx
+    case TrigFn::COS:   // 'real' cos
         g_symmetry = SymmetryType::PI_SYM;
         break;
         // default is for X_AXIS symmetry
@@ -483,16 +483,16 @@ bool z_x_trig_plus_z_setup()
         //      symmetry = ZXTrigPlusZSym1[g_trig_index[0]];
         switch (g_trig_index[0])
         {
-        case trig_fn::COSXX:
-        case trig_fn::COSH:
-        case trig_fn::SQR:
-        case trig_fn::COS:
+        case TrigFn::COSXX:
+        case TrigFn::COSH:
+        case TrigFn::SQR:
+        case TrigFn::COS:
             g_symmetry = SymmetryType::XY_AXIS;
             break;
-        case trig_fn::FLIP:
+        case TrigFn::FLIP:
             g_symmetry = SymmetryType::Y_AXIS;
             break;
-        case trig_fn::LOG:
+        case TrigFn::LOG:
             g_symmetry = SymmetryType::NONE;
             break;
         default:
@@ -505,13 +505,13 @@ bool z_x_trig_plus_z_setup()
         //      symmetry = ZXTrigPlusZSym2[g_trig_index[0]];
         switch (g_trig_index[0])
         {
-        case trig_fn::COSXX:
-        case trig_fn::COSH:
-        case trig_fn::SQR:
-        case trig_fn::COS:
+        case TrigFn::COSXX:
+        case TrigFn::COSH:
+        case TrigFn::SQR:
+        case TrigFn::COS:
             g_symmetry = SymmetryType::ORIGIN;
             break;
-        case trig_fn::FLIP:
+        case TrigFn::FLIP:
             g_symmetry = SymmetryType::NONE;
             break;
         default:

@@ -200,9 +200,9 @@ bool lambda_trig_setup()
     }
     switch (g_trig_index[0])
     {
-    case trig_fn::SIN:
-    case trig_fn::COSXX:
-    case trig_fn::COS:
+    case TrigFn::SIN:
+    case TrigFn::COSXX:
+    case TrigFn::COS:
         g_symmetry = SymmetryType::PI_SYM;
         if (isinteger)
         {
@@ -213,8 +213,8 @@ bool lambda_trig_setup()
             g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal1;
         }
         break;
-    case trig_fn::SINH:
-    case trig_fn::COSH:
+    case TrigFn::SINH:
+    case TrigFn::COSH:
         g_symmetry = SymmetryType::ORIGIN;
         if (isinteger)
         {
@@ -225,10 +225,10 @@ bool lambda_trig_setup()
             g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal2;
         }
         break;
-    case trig_fn::SQR:
+    case TrigFn::SQR:
         g_symmetry = SymmetryType::ORIGIN;
         break;
-    case trig_fn::EXP:
+    case TrigFn::EXP:
         if (isinteger)
         {
             g_cur_fractal_specific->orbitcalc =  long_lambda_exponent_fractal;
@@ -239,7 +239,7 @@ bool lambda_trig_setup()
         }
         g_symmetry = SymmetryType::NONE;
         break;
-    case trig_fn::LOG:
+    case TrigFn::LOG:
         g_symmetry = SymmetryType::NONE;
         break;
     default:   // default for additional functions
@@ -271,8 +271,8 @@ bool mandel_trig_setup()
     g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
     {
-    case trig_fn::SIN:
-    case trig_fn::COSXX:
+    case TrigFn::SIN:
+    case TrigFn::COSXX:
         if (isinteger)
         {
             g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal1;
@@ -282,8 +282,8 @@ bool mandel_trig_setup()
             g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal1;
         }
         break;
-    case trig_fn::SINH:
-    case trig_fn::COSH:
+    case TrigFn::SINH:
+    case TrigFn::COSH:
         if (isinteger)
         {
             g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal2;
@@ -293,7 +293,7 @@ bool mandel_trig_setup()
             g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal2;
         }
         break;
-    case trig_fn::EXP:
+    case TrigFn::EXP:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         if (isinteger)
         {
@@ -304,7 +304,7 @@ bool mandel_trig_setup()
             g_cur_fractal_specific->orbitcalc =  lambda_exponent_fractal;
         }
         break;
-    case trig_fn::LOG:
+    case TrigFn::LOG:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         break;
     default:
