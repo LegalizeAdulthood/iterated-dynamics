@@ -101,10 +101,10 @@ enum class RecordColorsMode
     YES = 'y'
 };
 
-enum orbit_save_flags
+enum OrbitSaveFlags
 {
-    osf_raw = 1,
-    osf_midi = 2
+    OSF_RAW = 1,
+    OSF_MIDI = 2
 };
 
 enum sound_flags

@@ -3227,7 +3227,7 @@ static std::FILE *open_orbit_save()
 {
     check_write_file(g_orbit_save_name, ".raw");
     std::FILE *fp;
-    if ((g_orbit_save_flags & osf_raw) && (fp = open_save_file(g_orbit_save_name, "w")) != nullptr)
+    if ((g_orbit_save_flags & OSF_RAW) && (fp = open_save_file(g_orbit_save_name, "w")) != nullptr)
     {
         std::fprintf(fp, "pointlist x y z color\n");
         return fp;

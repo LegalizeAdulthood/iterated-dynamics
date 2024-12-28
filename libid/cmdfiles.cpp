@@ -2680,13 +2680,13 @@ static CmdArgFlags cmd_orbit_save(const Command &cmd)
 {
     if (cmd.char_val[0] == 's')
     {
-        g_orbit_save_flags |= osf_midi;
+        g_orbit_save_flags |= OSF_MIDI;
     }
     else if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_orbit_save_flags |= (cmd.yes_no_val[0] ? osf_raw : 0);
+    g_orbit_save_flags |= (cmd.yes_no_val[0] ? OSF_RAW : 0);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

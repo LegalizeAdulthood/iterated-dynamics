@@ -2343,7 +2343,7 @@ TEST_F(TestParameterCommand, orbitSaveRaw)
     exec_cmd_arg("orbitsave=y");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(osf_raw, g_orbit_save_flags);
+    EXPECT_EQ(OSF_RAW, g_orbit_save_flags);
 }
 
 TEST_F(TestParameterCommand, orbitSaveMidi)
@@ -2353,7 +2353,7 @@ TEST_F(TestParameterCommand, orbitSaveMidi)
     exec_cmd_arg("orbitsave=s");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(osf_midi | osf_raw, g_orbit_save_flags);
+    EXPECT_EQ(OSF_MIDI | OSF_RAW, g_orbit_save_flags);
 }
 
 TEST_F(TestParameterCommand, orbitSaveName)

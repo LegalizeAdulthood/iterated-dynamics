@@ -32,7 +32,7 @@ static std::FILE *s_snd_fp{};
 bool sound_open()
 {
     std::string soundname{"sound001.txt"};
-    if ((g_orbit_save_flags & osf_midi) != 0 && s_snd_fp == nullptr)
+    if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
     {
         s_snd_fp = open_save_file(soundname, "w");
         if (s_snd_fp == nullptr)
@@ -51,7 +51,7 @@ bool sound_open()
    if the orbitsave variable is turned on */
 void write_sound(int tone)
 {
-    if ((g_orbit_save_flags & osf_midi) != 0)
+    if ((g_orbit_save_flags & OSF_MIDI) != 0)
     {
         // cppcheck-suppress leakNoVarFunctionCall
         if (sound_open())
