@@ -68,7 +68,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         // & cmdfiles hasn't finished 1st try
 #ifdef XFRACT
         driver_set_for_text();
-        driver_buzzer(buzzer_codes::PROBLEM);
+        driver_buzzer(Buzzer::PROBLEM);
         driver_put_string(0, 0, 15, "*** Error during startup:");
         driver_put_string(2, 0, 15, msg);
         driver_move_cursor(8, 0);

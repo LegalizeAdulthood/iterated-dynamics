@@ -166,7 +166,7 @@ public:
     void unstack_screen() override;
     void discard_screen() override;
     int init_fm() override;
-    void buzzer(buzzer_codes kind) override;
+    void buzzer(Buzzer kind) override;
     bool sound_on(int frequency) override;
     void sound_off() override;
     void mute() override;
@@ -2553,7 +2553,7 @@ int X11Driver::init_fm()
     return 0;
 }
 
-void X11Driver::buzzer(buzzer_codes kind)
+void X11Driver::buzzer(Buzzer kind)
 {
     // TODO
     std::fprintf(stderr, "X11Driver::buzzer(%d)\n", static_cast<int>(kind));
