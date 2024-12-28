@@ -24,7 +24,7 @@ protected:
     void SetUp() override;
 
     std::string m_path;
-    cmd_file m_mode{cmd_file::AT_CMD_LINE};
+    CmdFile m_mode{CmdFile::AT_CMD_LINE};
     fs::path m_existing_dir{ID_TEST_DATA_DIR};
     fs::path m_non_existing_dir{m_existing_dir / "goink"};
 };

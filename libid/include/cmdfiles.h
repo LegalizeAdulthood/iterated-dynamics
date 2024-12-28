@@ -122,7 +122,7 @@ enum sound_flags
     SOUNDFLAG_MASK      = 0x7F
 };
 
-enum class cmd_file
+enum class CmdFile
 {
     AT_CMD_LINE = 0,         // command line @filename
     SSTOOLS_INI = 1,         // sstools.ini
@@ -277,6 +277,6 @@ extern std::string           g_working_dir;
 int cmd_files(int argc, char const *const *argv);
 cmdarg_flags load_commands(std::FILE *);
 void set_3d_defaults();
-int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode);
-cmdarg_flags cmd_arg(char *curarg, cmd_file mode);
+int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode);
+cmdarg_flags cmd_arg(char *curarg, CmdFile mode);
 int get_power10(LDBL x);

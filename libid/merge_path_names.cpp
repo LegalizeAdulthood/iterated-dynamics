@@ -27,7 +27,7 @@ namespace fs = std::filesystem;
 // (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)
 // attempts to extract directory and test for existence
 // (modes AT_CMD_LINE and SSTOOLS_INI)
-int merge_path_names(char *oldfullpath, char const *new_filename, cmd_file mode)
+int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
 {
     char newfilename[FILE_MAX_PATH];
     std::strcpy(newfilename, fs::path(new_filename).make_preferred().string().c_str());
@@ -100,7 +100,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, cmd_file mode)
     char ext1[FILE_MAX_EXT];
     split_path(oldfullpath, drive1, dir1, fname1, ext1);
 
-    bool const get_path = (mode == cmd_file::AT_CMD_LINE) || (mode == cmd_file::SSTOOLS_INI);
+    bool const get_path = (mode == CmdFile::AT_CMD_LINE) || (mode == CmdFile::SSTOOLS_INI);
     if (get_path)
     {
         if ((int) std::strlen(drive) != 0)
@@ -145,7 +145,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, cmd_file mode)
     return isadir_error ? -1 : (isadir ? 1 : 0);
 }
 
-int merge_path_names(std::string &oldfullpath, char const *new_filename, cmd_file mode)
+int merge_path_names(std::string &oldfullpath, char const *new_filename, CmdFile mode)
 {
     char buff[FILE_MAX_PATH];
     std::strcpy(buff, oldfullpath.c_str());

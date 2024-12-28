@@ -53,13 +53,13 @@ public:
     ~TestParameterCommand() override = default;
 
 protected:
-    void exec_cmd_arg(const std::string &curarg, cmd_file mode = cmd_file::AT_AFTER_STARTUP);
+    void exec_cmd_arg(const std::string &curarg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
     std::vector<char> m_buffer;
     cmdarg_flags m_result{};
 };
 
-void TestParameterCommand::exec_cmd_arg(const std::string &curarg, cmd_file mode)
+void TestParameterCommand::exec_cmd_arg(const std::string &curarg, CmdFile mode)
 {
     m_buffer.resize(curarg.size() + 1);
     std::strcpy(m_buffer.data(), curarg.c_str());
@@ -95,14 +95,14 @@ void TestParameterCommandError::TearDown()
 
 TEST_F(TestParameterCommandError, parameterTooLong)
 {
-    exec_cmd_arg("maximumoftwentycharactersinparametername", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("maximumoftwentycharactersinparametername", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, batchBadArg)
 {
-    exec_cmd_arg("batch=g", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("batch=g", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -111,7 +111,7 @@ TEST_F(TestParameterCommand, batchYes)
 {
     ValueSaver saved_init_batch{g_init_batch, batch_modes::NONE};
 
-    exec_cmd_arg("batch=yes", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("batch=yes", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     EXPECT_EQ(batch_modes::NORMAL, g_init_batch);
@@ -121,7 +121,7 @@ TEST_F(TestParameterCommand, batchNo)
 {
     ValueSaver saved_init_batch{g_init_batch, batch_modes::NORMAL};
 
-    exec_cmd_arg("batch=no", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("batch=no", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     EXPECT_EQ(batch_modes::NONE, g_init_batch);
@@ -140,7 +140,7 @@ TEST_F(TestParameterCommandError, maxHistoryNonNumeric)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
 
-    exec_cmd_arg("maxhistory=yes", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("maxhistory=yes", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -149,7 +149,7 @@ TEST_F(TestParameterCommandError, maxHistoryNegative)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
 
-    exec_cmd_arg("maxhistory=-10", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("maxhistory=-10", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -158,7 +158,7 @@ TEST_F(TestParameterCommand, maxHistory)
 {
     ValueSaver saved_max_image_history{g_max_image_history, 0};
 
-    exec_cmd_arg("maxhistory=10", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("maxhistory=10", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     EXPECT_EQ(10, g_max_image_history);
@@ -208,7 +208,7 @@ TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
     EXPECT_CALL(m_print_document, Call(StrEq("id.txt"), NotNull()));
     EXPECT_CALL(m_goodbye, Call());
 
-    exec_cmd_arg("makedoc", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("makedoc", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::GOODBYE, m_result);
 }
@@ -218,21 +218,21 @@ TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
     EXPECT_CALL(m_print_document, Call(StrEq("foo.txt"), NotNull()));
     EXPECT_CALL(m_goodbye, Call());
 
-    exec_cmd_arg("makedoc=foo.txt", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("makedoc=foo.txt", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::GOODBYE, m_result);
 }
 
 TEST_F(TestParameterCommandError, makeParTooFewValues)
 {
-    exec_cmd_arg("makepar", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("makepar", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommandError, makeParTooManyValues)
 {
-    exec_cmd_arg("makepar=foo/bar/fmeh", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("makepar=foo/bar/fmeh", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -285,7 +285,7 @@ TEST_F(TestParameterCommandError, mapTooLong)
     ValueSaver saved_map_name{g_map_name, "foo.map"};
     const std::string too_long{"map=" + std::string(FILE_MAX_PATH, 'f') + ".map"};
 
-    exec_cmd_arg(too_long, cmd_file::SSTOOLS_INI);
+    exec_cmd_arg(too_long, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ("foo.map", g_map_name);
@@ -296,7 +296,7 @@ TEST_F(TestParameterCommand, mapSpecifiesSubdir)
     ValueSaver saved_map_name{g_map_name, "foo.map"};
     current_path_saver cur_dir(ID_TEST_HOME_DIR);
 
-    exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR, cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(ID_TEST_MAP_SUBDIR SLASH "foo.map", g_map_name);
@@ -307,7 +307,7 @@ TEST_F(TestParameterCommand, mapSpecifiesExistingFile)
     ValueSaver saved_map_name{g_map_name, "foo.map"};
     current_path_saver cur_dir(ID_TEST_HOME_DIR);
 
-    exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, g_map_name);
@@ -317,7 +317,7 @@ TEST_F(TestParameterCommand, adapterDeprecatedValues)
 {
     for (const std::string arg : {"egamono", "hgc", "ega", "cga", "mcga", "vga"})
     {
-        exec_cmd_arg("adapter=" + arg, cmd_file::SSTOOLS_INI);
+        exec_cmd_arg("adapter=" + arg, CmdFile::SSTOOLS_INI);
 
         EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     }
@@ -325,14 +325,14 @@ TEST_F(TestParameterCommand, adapterDeprecatedValues)
 
 TEST_F(TestParameterCommandError, adapterBadValue)
 {
-    exec_cmd_arg("adapter=bad", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("adapter=bad", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, afiValueIgnored)
 {
-    exec_cmd_arg("afi=anything", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("afi=anything", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
 }
@@ -344,7 +344,7 @@ TEST_F(TestParameterCommand, textSafeDeprecatedValues)
 
     for (char val : std::string_view{"nybs"})
     {
-        exec_cmd_arg(arg + val, cmd_file::SSTOOLS_INI);
+        exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
 
         EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     }
@@ -354,7 +354,7 @@ TEST_F(TestParameterCommandError, textSafeInvalidValue)
 {
     ValueSaver saved_first_init{g_first_init, true};
 
-    exec_cmd_arg("textsafe=!", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("textsafe=!", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -365,7 +365,7 @@ TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
 
     for (char val : std::string_view{"ny"})
     {
-        exec_cmd_arg(arg + val, cmd_file::SSTOOLS_INI);
+        exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
 
         EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     }
@@ -373,7 +373,7 @@ TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
 
 TEST_F(TestParameterCommandError, vesaDetectInvalidValue)
 {
-    exec_cmd_arg("vesadetect=!", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("vesadetect=!", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -382,7 +382,7 @@ TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
 {
     for (char arg : std::string_view{"ny"})
     {
-        exec_cmd_arg("biospalette=" + std::string{arg}, cmd_file::SSTOOLS_INI);
+        exec_cmd_arg("biospalette=" + std::string{arg}, CmdFile::SSTOOLS_INI);
 
         EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     }
@@ -390,21 +390,21 @@ TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
 
 TEST_F(TestParameterCommandError, biosPaletteDetectInvalidValue)
 {
-    exec_cmd_arg("biospalette=!", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("biospalette=!", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, fpuDetectDeprecatedValue)
 {
-    exec_cmd_arg("fpu=387", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("fpu=387", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, fpuDetectInvalidValue)
 {
-    exec_cmd_arg("fpu=487", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("fpu=487", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -413,7 +413,7 @@ TEST_F(TestParameterCommand, exitNoAskNo)
 {
     ValueSaver saved_escape_exit{g_escape_exit, true};
 
-    exec_cmd_arg("exitnoask=n", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("exitnoask=n", CmdFile::SSTOOLS_INI);
 
     EXPECT_FALSE(g_escape_exit);
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
@@ -423,7 +423,7 @@ TEST_F(TestParameterCommand, exitNoAskYes)
 {
     ValueSaver saved_escape_exit{g_escape_exit, false};
 
-    exec_cmd_arg("exitnoask=y", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("exitnoask=y", CmdFile::SSTOOLS_INI);
 
     EXPECT_TRUE(g_escape_exit);
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
@@ -433,7 +433,7 @@ TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
 {
     const bool saved_escape_exit{g_escape_exit};
 
-    exec_cmd_arg("exitnoask=!", cmd_file::SSTOOLS_INI);
+    exec_cmd_arg("exitnoask=!", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(saved_escape_exit, g_escape_exit);
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
@@ -443,7 +443,7 @@ TEST_F(TestParameterCommand, filenameMask)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.foo"};
 
-    exec_cmd_arg("filename=.pot", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("filename=.pot", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ("*.pot", g_gif_filename_mask);
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
@@ -457,7 +457,7 @@ TEST_F(TestParameterCommandError, filenameTooLong)
     const std::string saved_browse_name{g_browse_name};
     const std::string too_long{"filename=" + std::string(1024, 'f')};
 
-    exec_cmd_arg(too_long, cmd_file::AT_CMD_LINE);
+    exec_cmd_arg(too_long, CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(saved_gif_filename_mask, g_gif_filename_mask);
@@ -467,7 +467,7 @@ TEST_F(TestParameterCommandError, filenameTooLong)
 
 TEST_F(TestParameterCommandError, videoBadName)
 {
-    exec_cmd_arg("video=fmeh", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("video=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -477,7 +477,7 @@ TEST_F(TestParameterCommandError, videoNoModes)
     ValueSaver saved_video_table_len{g_video_table_len, 0};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
-    exec_cmd_arg("video=F1", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(-1, g_init_mode);
@@ -491,7 +491,7 @@ TEST_F(TestParameterCommandError, videoNoMatchingMode)
     ValueSaver saved_video_mode{g_video_table[0], test_mode};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
-    exec_cmd_arg("video=F1", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(-1, g_init_mode);
@@ -505,7 +505,7 @@ TEST_F(TestParameterCommand, videoMatchingMode)
     ValueSaver saved_video_mode{g_video_table[0], test_mode};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
-    exec_cmd_arg("video=F1", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("video=F1", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM | cmdarg_flags::PARAM_3D, m_result);
     EXPECT_EQ(0, g_init_mode);
@@ -547,7 +547,7 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
         g_dac_box[i][2] = 0x30;
     }
 
-    exec_cmd_arg("colors", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("colors", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(40, g_dac_box[0][0]);
@@ -562,7 +562,7 @@ TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 {
     ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
-    exec_cmd_arg("recordcolors=p", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("recordcolors=p", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(RecordColorsMode::NONE, g_record_colors);
@@ -572,7 +572,7 @@ TEST_F(TestParameterCommand, recordColorsAutomatic)
 {
     ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
-    exec_cmd_arg("recordcolors=a", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("recordcolors=a", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(RecordColorsMode::AUTOMATIC, g_record_colors);
@@ -582,7 +582,7 @@ TEST_F(TestParameterCommand, recordColorsComment)
 {
     ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
-    exec_cmd_arg("recordcolors=c", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("recordcolors=c", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(RecordColorsMode::COMMENT, g_record_colors);
@@ -592,7 +592,7 @@ TEST_F(TestParameterCommand, recordColorsYes)
 {
     ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
-    exec_cmd_arg("recordcolors=y", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("recordcolors=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(RecordColorsMode::YES, g_record_colors);
@@ -603,7 +603,7 @@ TEST_F(TestParameterCommandError, maxLineLengthTooSmall)
     ValueSaver saved_max_line_length{g_max_line_length, 0};
     const std::string arg{"maxlinelength=" + std::to_string(MIN_MAX_LINE_LENGTH - 1)};
 
-    exec_cmd_arg(arg, cmd_file::AT_CMD_LINE);
+    exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(0, g_max_line_length);
@@ -614,7 +614,7 @@ TEST_F(TestParameterCommandError, maxLineLengthTooLarge)
     ValueSaver saved_max_line_length{g_max_line_length, 0};
     const std::string arg{"maxlinelength=" + std::to_string(MAX_MAX_LINE_LENGTH + 1)};
 
-    exec_cmd_arg(arg, cmd_file::AT_CMD_LINE);
+    exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(0, g_max_line_length);
@@ -626,7 +626,7 @@ TEST_F(TestParameterCommand, maxLineLength)
     const int value{(MIN_MAX_LINE_LENGTH + MAX_MAX_LINE_LENGTH) / 2};
     const std::string arg{"maxlinelength=" + std::to_string(value)};
 
-    exec_cmd_arg(arg, cmd_file::AT_CMD_LINE);
+    exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(value, g_max_line_length);
@@ -634,35 +634,35 @@ TEST_F(TestParameterCommand, maxLineLength)
 
 TEST_F(TestParameterCommandError, tplusInvalidValue)
 {
-    exec_cmd_arg("tplus=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("tplus=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, tplusYes)
 {
-    exec_cmd_arg("tplus=y", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("tplus=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, nonInterlacedInvalidValue)
 {
-    exec_cmd_arg("noninterlaced=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("noninterlaced=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, nonInterlacedYes)
 {
-    exec_cmd_arg("noninterlaced=y", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("noninterlaced=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, maxColorResInvalidValue)
 {
-    exec_cmd_arg("maxcolorres=3", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("maxcolorres=3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
@@ -673,7 +673,7 @@ TEST_F(TestParameterCommand, maxColorResValidValue)
     {
         const std::string arg{"maxcolorres=" + std::to_string(v)};
 
-        exec_cmd_arg(arg, cmd_file::AT_CMD_LINE);
+        exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);
 
         EXPECT_EQ(cmdarg_flags::NONE, m_result);
     }
@@ -681,14 +681,14 @@ TEST_F(TestParameterCommand, maxColorResValidValue)
 
 TEST_F(TestParameterCommandError, pixelZoomInvalidValue)
 {
-    exec_cmd_arg("pixelzoom=5", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("pixelzoom=5", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, pixelZoomValidValue)
 {
-    exec_cmd_arg("pixelzoom=4", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("pixelzoom=4", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
@@ -697,7 +697,7 @@ TEST_F(TestParameterCommandError, warnInvalidValue)
 {
     ValueSaver saved_overwrite_file{g_overwrite_file, false};
 
-    exec_cmd_arg("warn=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("warn=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_FALSE(g_overwrite_file);
@@ -707,7 +707,7 @@ TEST_F(TestParameterCommand, warnNo)
 {
     ValueSaver saved_overwrite_file{g_overwrite_file, false};
 
-    exec_cmd_arg("warn=n", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("warn=n", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_TRUE(g_overwrite_file);
@@ -717,7 +717,7 @@ TEST_F(TestParameterCommand, warnYes)
 {
     ValueSaver saved_overwrite_file{g_overwrite_file, true};
 
-    exec_cmd_arg("warn=yes", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("warn=yes", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_FALSE(g_overwrite_file);
@@ -727,7 +727,7 @@ TEST_F(TestParameterCommandError, overwriteInvalidValue)
 {
     ValueSaver saved_overwrite_file{g_overwrite_file, true};
 
-    exec_cmd_arg("overwrite=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("overwrite=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_TRUE(g_overwrite_file);
@@ -737,7 +737,7 @@ TEST_F(TestParameterCommand, overwriteNo)
 {
     ValueSaver saved_overwrite_file{g_overwrite_file, false};
 
-    exec_cmd_arg("overwrite=n", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("overwrite=n", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_FALSE(g_overwrite_file);
@@ -747,7 +747,7 @@ TEST_F(TestParameterCommand, overwriteYes)
 {
     ValueSaver saved_overwrite_file{g_overwrite_file, true};
 
-    exec_cmd_arg("overwrite=yes", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("overwrite=yes", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_TRUE(g_overwrite_file);
@@ -755,21 +755,21 @@ TEST_F(TestParameterCommand, overwriteYes)
 
 TEST_F(TestParameterCommandError, gif87aInvalidValue)
 {
-    exec_cmd_arg("gif87a=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("gif87a=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
 }
 
 TEST_F(TestParameterCommand, gif87aNo)
 {
-    exec_cmd_arg("gif87a=n", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("gif87a=n", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommand, gif87aYes)
 {
-    exec_cmd_arg("gif87a=yes", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("gif87a=yes", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
@@ -778,7 +778,7 @@ TEST_F(TestParameterCommandError, ditherInvalidValue)
 {
     const bool saved_dither_flag{g_dither_flag};
 
-    exec_cmd_arg("dither=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("dither=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(saved_dither_flag, g_dither_flag);
@@ -788,7 +788,7 @@ TEST_F(TestParameterCommand, ditherNo)
 {
     ValueSaver saved_dither_flag{g_dither_flag, true};
 
-    exec_cmd_arg("dither=n", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("dither=n", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_FALSE(g_dither_flag);
@@ -798,7 +798,7 @@ TEST_F(TestParameterCommand, ditherYes)
 {
     ValueSaver saved_dither_flag{g_dither_flag, false};
 
-    exec_cmd_arg("dither=yes", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("dither=yes", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_TRUE(g_dither_flag);
@@ -806,7 +806,7 @@ TEST_F(TestParameterCommand, ditherYes)
 
 TEST_F(TestParameterCommand, saveTime)
 {
-    exec_cmd_arg("savetime=20", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("savetime=20", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(20, g_init_save_time);
@@ -816,7 +816,7 @@ TEST_F(TestParameterCommandError, autoKeyInvalidValue)
 {
     ValueSaver saved_slides{g_slides, slides_mode::RECORD};
 
-    exec_cmd_arg("autokey=fmeh", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("autokey=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(slides_mode::RECORD, g_slides);
@@ -826,7 +826,7 @@ TEST_F(TestParameterCommand, autoKeyRecord)
 {
     ValueSaver saved_slides{g_slides, slides_mode::OFF};
 
-    exec_cmd_arg("autokey=record", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("autokey=record", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(slides_mode::RECORD, g_slides);
@@ -836,7 +836,7 @@ TEST_F(TestParameterCommand, autoKeyPlay)
 {
     ValueSaver saved_slides{g_slides, slides_mode::OFF};
 
-    exec_cmd_arg("autokey=play", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("autokey=play", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(slides_mode::PLAY, g_slides);
@@ -846,7 +846,7 @@ TEST_F(TestParameterCommand, autoKeyName)
 {
     ValueSaver saved_auto_key_name{g_auto_name, "foo.key"};
 
-    exec_cmd_arg("autokeyname=baz.key", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("autokeyname=baz.key", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ("baz.key", g_auto_name);
@@ -886,7 +886,7 @@ TEST_F(TestParameterCommand, typeSierpinski)
     double params[MAX_PARAMS]{111.0, 222.0, 333.0, 444.0, 555.0, 666.0, 777.0, 888.0, 999.0, 101010.0};
     ParamSaver saved_params(params);
 
-    exec_cmd_arg("type=sierpinski", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("type=sierpinski", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
@@ -908,7 +908,7 @@ TEST_F(TestParameterCommandError, insideInvalidValue)
 {
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
-    exec_cmd_arg("inside=foo", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("inside=foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(-9999, g_inside_color);
@@ -918,7 +918,7 @@ TEST_F(TestParameterCommand, insideZMag)
 {
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
-    exec_cmd_arg("inside=zmag", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("inside=zmag", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(ZMAG, g_inside_color);
@@ -928,7 +928,7 @@ TEST_F(TestParameterCommand, insideNumber)
 {
     ValueSaver saved_inside_color{g_inside_color, -100};
 
-    exec_cmd_arg("inside=100", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("inside=100", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_inside_color);
@@ -938,7 +938,7 @@ TEST_F(TestParameterCommand, proximity)
 {
     ValueSaver saved_close_proximity{g_close_proximity, -123.0};
 
-    exec_cmd_arg("proximity=423", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("proximity=423", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(423.0, g_close_proximity);
@@ -948,7 +948,7 @@ TEST_F(TestParameterCommand, fillColorNormal)
 {
     ValueSaver saved_fill_color{g_fill_color, 999};
 
-    exec_cmd_arg("fillcolor=normal", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("fillcolor=normal", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(-1, g_fill_color);
@@ -958,7 +958,7 @@ TEST_F(TestParameterCommandError, fillColorInvalid)
 {
     ValueSaver saved_fill_color{g_fill_color, 999};
 
-    exec_cmd_arg("fillcolor=fmeh", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("fillcolor=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(999, g_fill_color);
@@ -968,7 +968,7 @@ TEST_F(TestParameterCommand, fillColorNumber)
 {
     ValueSaver saved_fill_color{g_fill_color, 999};
 
-    exec_cmd_arg("fillcolor=100", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("fillcolor=100", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_fill_color);
@@ -978,7 +978,7 @@ TEST_F(TestParameterCommandError, finAttractInvalidValue)
 {
     ValueSaver saved_finite_attractor{g_finite_attractor, true};
 
-    exec_cmd_arg("finattract=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("finattract=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_TRUE(g_finite_attractor);
@@ -988,7 +988,7 @@ TEST_F(TestParameterCommand, finAttractYes)
 {
     ValueSaver saved_finite_attractor{g_finite_attractor, false};
 
-    exec_cmd_arg("finattract=y", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("finattract=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_finite_attractor);
@@ -998,7 +998,7 @@ TEST_F(TestParameterCommandError, noBoFInvalidValue)
 {
     ValueSaver saved_bof_match_book_images{g_bof_match_book_images, true};
 
-    exec_cmd_arg("nobof=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("nobof=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_TRUE(g_bof_match_book_images);
@@ -1008,7 +1008,7 @@ TEST_F(TestParameterCommand, noBoFYes)
 {
     ValueSaver saved_bof_match_book_images{g_bof_match_book_images, true};
 
-    exec_cmd_arg("nobof=y", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("nobof=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_bof_match_book_images);
@@ -1019,7 +1019,7 @@ TEST_F(TestParameterCommand, functionSin)
     ValueSaver saved_trig_index0{g_trig_index[0], trig_fn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
-    exec_cmd_arg("function=sin", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("function=sin", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
@@ -1032,7 +1032,7 @@ TEST_F(TestParameterCommand, functionSinCos)
     ValueSaver saved_trig_index1{g_trig_index[1], trig_fn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
-    exec_cmd_arg("function=sin/cos", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("function=sin/cos", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
@@ -1047,7 +1047,7 @@ TEST_F(TestParameterCommand, functionSinCosTan)
     ValueSaver saved_trig_index2{g_trig_index[2], trig_fn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
-    exec_cmd_arg("function=sin/cos/tan", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("function=sin/cos/tan", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
@@ -1064,7 +1064,7 @@ TEST_F(TestParameterCommand, functionSinCosTanCot)
     ValueSaver saved_trig_index3{g_trig_index[3], trig_fn::IDENT};
     ValueSaver saved_trig_fns_loaded{g_new_bifurcation_functions_loaded, false};
 
-    exec_cmd_arg("function=sin/cos/tan/cotan", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("function=sin/cos/tan/cotan", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(trig_fn::SIN, g_trig_index[0]);
@@ -1078,7 +1078,7 @@ TEST_F(TestParameterCommand, outsideReal)
 {
     ValueSaver saved_outside{g_outside_color, -9999};
 
-    exec_cmd_arg("outside=real", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("outside=real", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(REAL, g_outside_color);
@@ -1088,7 +1088,7 @@ TEST_F(TestParameterCommand, outsideNumber)
 {
     ValueSaver saved_outside{g_outside_color, -9999};
 
-    exec_cmd_arg("outside=100", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("outside=100", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_outside_color);
@@ -1098,7 +1098,7 @@ TEST_F(TestParameterCommandError, outsideInvalidName)
 {
     ValueSaver saved_outside{g_outside_color, -9999};
 
-    exec_cmd_arg("outside=zmag", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("outside=zmag", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(-9999, g_outside_color);
@@ -1108,7 +1108,7 @@ TEST_F(TestParameterCommand, bfDigitsNumber)
 {
     ValueSaver saved_outside{g_bf_digits, 9999};
 
-    exec_cmd_arg("bfdigits=200", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("bfdigits=200", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(200, g_bf_digits);
@@ -1118,7 +1118,7 @@ TEST_F(TestParameterCommandError, bfDigitsInvalidValue)
 {
     ValueSaver saved_outside{g_bf_digits, 9999};
 
-    exec_cmd_arg("bfdigits=fmeh", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("bfdigits=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_bf_digits);
@@ -1128,7 +1128,7 @@ TEST_F(TestParameterCommandError, bfDigitsTooSmall)
 {
     ValueSaver saved_outside{g_bf_digits, 9999};
 
-    exec_cmd_arg("bfdigits=-1", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("bfdigits=-1", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_bf_digits);
@@ -1138,7 +1138,7 @@ TEST_F(TestParameterCommandError, bfDigitsTooLarge)
 {
     ValueSaver saved_outside{g_bf_digits, 9999};
 
-    exec_cmd_arg("bfdigits=2001", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("bfdigits=2001", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_bf_digits);
@@ -1148,7 +1148,7 @@ TEST_F(TestParameterCommand, maxIterNumber)
 {
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
 
-    exec_cmd_arg("maxiter=20", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("maxiter=20", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(20, g_max_iterations);
@@ -1158,7 +1158,7 @@ TEST_F(TestParameterCommandError, maxIterNumberTooSmall)
 {
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
 
-    exec_cmd_arg("maxiter=1", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("maxiter=1", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_max_iterations);
@@ -1168,7 +1168,7 @@ TEST_F(TestParameterCommandError, maxIterNotNumber)
 {
     ValueSaver saved_max_iterations{g_max_iterations, 9999};
 
-    exec_cmd_arg("maxiter=fmeh", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("maxiter=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_max_iterations);
@@ -1176,7 +1176,7 @@ TEST_F(TestParameterCommandError, maxIterNotNumber)
 
 TEST_F(TestParameterCommand, iterIncrIgnored)
 {
-    exec_cmd_arg("iterincr=fmeh", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("iterincr=fmeh", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
@@ -1185,7 +1185,7 @@ TEST_F(TestParameterCommandError, passesInvalidValue)
 {
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
 
-    exec_cmd_arg("passes=!", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("passes=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ('Z', g_user_std_calc_mode);
@@ -1195,7 +1195,7 @@ TEST_F(TestParameterCommand, passesBoundaryTrace)
 {
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
 
-    exec_cmd_arg("passes=b", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("passes=b", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('b', g_user_std_calc_mode);
@@ -1206,7 +1206,7 @@ TEST_F(TestParameterCommand, passesSolidGuess3)
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
     ValueSaver saved_stop_pass{g_stop_pass, -1};
 
-    exec_cmd_arg("passes=g3", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("passes=g3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('g', g_user_std_calc_mode);
@@ -1217,7 +1217,7 @@ TEST_F(TestParameterCommand, passesPerturbation)
 {
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'Z'};
 
-    exec_cmd_arg("passes=p", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("passes=p", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ('p', g_user_std_calc_mode);
@@ -1227,7 +1227,7 @@ TEST_F(TestParameterCommand, isMandYes)
 {
     ValueSaver saved_is_mandelbrot{g_is_mandelbrot, false};
 
-    exec_cmd_arg("ismand=y", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("ismand=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_is_mandelbrot);
@@ -1237,7 +1237,7 @@ TEST_F(TestParameterCommandError, cycleLimitTooLow)
 {
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
 
-    exec_cmd_arg("cyclelimit=1", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclelimit=1", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_init_cycle_limit);
@@ -1247,7 +1247,7 @@ TEST_F(TestParameterCommandError, cycleLimitTooHigh)
 {
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
 
-    exec_cmd_arg("cyclelimit=257", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclelimit=257", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_init_cycle_limit);
@@ -1257,7 +1257,7 @@ TEST_F(TestParameterCommand, cycleLimitNumber)
 {
     ValueSaver saved_cycle_limit{g_init_cycle_limit, 9999};
 
-    exec_cmd_arg("cyclelimit=100", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclelimit=100", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(100, g_init_cycle_limit);
@@ -1268,7 +1268,7 @@ TEST_F(TestParameterCommand, cycleRangeNoParams)
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
-    exec_cmd_arg("cyclerange", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclerange", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(1, g_color_cycle_range_lo);
@@ -1280,7 +1280,7 @@ TEST_F(TestParameterCommand, cycleRangeOneParam)
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
-    exec_cmd_arg("cyclerange=10", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclerange=10", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(10, g_color_cycle_range_lo);
@@ -1292,7 +1292,7 @@ TEST_F(TestParameterCommand, cycleRangeTwoParams)
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
-    exec_cmd_arg("cyclerange=10/20", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclerange=10/20", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ(10, g_color_cycle_range_lo);
@@ -1304,7 +1304,7 @@ TEST_F(TestParameterCommandError, cycleRangeLoTooLow)
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
-    exec_cmd_arg("cyclerange=-1/20", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclerange=-1/20", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_color_cycle_range_lo);
@@ -1316,7 +1316,7 @@ TEST_F(TestParameterCommandError, cycleRangeHiTooHigh)
     ValueSaver saved_cycle_range_lo{g_color_cycle_range_lo, 9999};
     ValueSaver saved_cycle_range_hi{g_color_cycle_range_hi, 9999};
 
-    exec_cmd_arg("cyclerange=10/256", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("cyclerange=10/256", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_color_cycle_range_lo);
@@ -1327,7 +1327,7 @@ TEST_F(TestParameterCommandError, rangesInvalidParamCount)
 {
     ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
 
-    exec_cmd_arg("ranges=100/102/foo", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("ranges=100/102/foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
     EXPECT_EQ(9999, g_log_map_flag);
@@ -1337,7 +1337,7 @@ TEST_F(TestParameterCommand, rangesNoStriping)
 {
     ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
 
-    exec_cmd_arg("ranges=10/20/30", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("ranges=10/20/30", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(0, g_log_map_flag);
@@ -1348,7 +1348,7 @@ TEST_F(TestParameterCommand, rangesOneStripe)
 {
     ValueSaver saved_log_map_flag(g_log_map_flag, 9999);
 
-    exec_cmd_arg("ranges=10/-20/30", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("ranges=10/-20/30", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(0, g_log_map_flag);
@@ -1359,7 +1359,7 @@ TEST_F(TestParameterCommand, saveNameOnFirstInit)
 {
     ValueSaver saved_first_init{g_first_init, true};
 
-    exec_cmd_arg("savename=test.gif", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("savename=test.gif", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ("test.gif", g_save_filename);
@@ -1381,7 +1381,7 @@ TEST_F(TestParameterCommand, saveNameOtherwise)
     ValueSaver saved_first_init{g_first_init, false};
     ValueSaver saved_save_filename{g_save_filename, "bar.gif"};
 
-    exec_cmd_arg("savename=test.gif", cmd_file::AT_CMD_LINE_SET_NAME);
+    exec_cmd_arg("savename=test.gif", CmdFile::AT_CMD_LINE_SET_NAME);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ("bar.gif", g_save_filename);
@@ -3566,7 +3566,7 @@ TEST_F(TestParameterCommand, lightNameFirstInit)
     ValueSaver saved_first_init{g_first_init, true};
     ValueSaver saved_light_name{g_light_name, "fmeh"};
 
-    exec_cmd_arg("lightname=foo", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
     EXPECT_EQ("foo", g_light_name);
@@ -3588,7 +3588,7 @@ TEST_F(TestParameterCommand, lightNameNotSet)
     ValueSaver saved_first_init{g_first_init, false};
     VALUE_UNCHANGED(g_light_name, std::string{"fmeh"});
 
-    exec_cmd_arg("lightname=foo", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
 }
@@ -3597,7 +3597,7 @@ TEST_F(TestParameterCommand, ray)
 {
     ValueSaver saved_raytrace_format{g_raytrace_format, raytrace_formats::none};
 
-    exec_cmd_arg("ray=3", cmd_file::AT_CMD_LINE);
+    exec_cmd_arg("ray=3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::PARAM_3D, m_result);
     EXPECT_EQ(raytrace_formats::raw, g_raytrace_format);

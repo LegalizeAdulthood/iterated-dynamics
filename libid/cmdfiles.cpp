@@ -79,15 +79,15 @@
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
 static int get_max_cur_arg_len(char const *const floatvalstr[], int num_args);
-static cmdarg_flags command_file(std::FILE *handle, cmd_file mode);
+static cmdarg_flags command_file(std::FILE *handle, CmdFile mode);
 static int  next_command(
     char *cmdbuf,
     int maxlen,
     std::FILE *handle,
     char *linebuf,
     int *lineoffset,
-    cmd_file mode);
-static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode);
+    CmdFile mode);
+static bool next_line(std::FILE *handle, char *linebuf, CmdFile mode);
 static void arg_error(char const *);
 static void init_vars_run();
 static void init_vars_restart();
@@ -259,7 +259,7 @@ static void process_sstools_ini()
         std::FILE *initfile = std::fopen(sstools_ini.c_str(), "r");
         if (initfile != nullptr)
         {
-            command_file(initfile, cmd_file::SSTOOLS_INI);           // process it
+            command_file(initfile, CmdFile::SSTOOLS_INI);           // process it
         }
     }
 }
@@ -298,16 +298,16 @@ static void process_simple_command(char *curarg)
     }
     if (!processed)
     {
-        cmd_arg(curarg, cmd_file::AT_CMD_LINE);           // process simple command
+        cmd_arg(curarg, CmdFile::AT_CMD_LINE);           // process simple command
     }
 }
 
 static void process_file_set_name(const char *curarg, char *sptr)
 {
     *sptr = 0;
-    if (merge_path_names(g_command_file, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
+    if (merge_path_names(g_command_file, &curarg[1], CmdFile::AT_CMD_LINE) < 0)
     {
-        init_msg("", g_command_file.c_str(), cmd_file::AT_CMD_LINE);
+        init_msg("", g_command_file.c_str(), CmdFile::AT_CMD_LINE);
     }
     g_command_name = &sptr[1];
     std::FILE *initfile = nullptr;
@@ -317,7 +317,7 @@ static void process_file_set_name(const char *curarg, char *sptr)
     }
     else
     {
-        command_file(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
+        command_file(initfile, CmdFile::AT_CMD_LINE_SET_NAME);
     }
 }
 
@@ -328,7 +328,7 @@ static void process_file(char *curarg)
     {
         arg_error(curarg);
     }
-    command_file(initfile, cmd_file::AT_CMD_LINE);
+    command_file(initfile, CmdFile::AT_CMD_LINE);
 }
 
 int cmd_files(int argc, char const *const *argv)
@@ -373,7 +373,7 @@ int cmd_files(int argc, char const *const *argv)
         g_show_file = 1;  // nor startup image file
     }
 
-    init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
+    init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
     if (g_debug_flag != debug_flags::allow_init_commands_anytime)
     {
@@ -403,7 +403,7 @@ static void init_param_flags()
 cmdarg_flags load_commands(std::FILE *infile)
 {
     init_param_flags(); // reset flags for type=
-    const cmdarg_flags ret = command_file(infile, cmd_file::AT_AFTER_STARTUP);
+    const cmdarg_flags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !(g_colors_preloaded && g_show_file == 0);
@@ -621,9 +621,9 @@ static void reset_ifs_defn()
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
 // note that cmdfile could be open as text OR as binary
 // binary is used in @ command processing for reasonable speed note/point
-static cmdarg_flags command_file(std::FILE *handle, cmd_file mode)
+static cmdarg_flags command_file(std::FILE *handle, CmdFile mode)
 {
-    if (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
+    if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
     {
         int i;
         while ((i = getc(handle)) != '{' && i != EOF)
@@ -639,7 +639,7 @@ static cmdarg_flags command_file(std::FILE *handle, cmd_file mode)
     cmdarg_flags changeflag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
     while (next_command(cmdbuf, std::size(cmdbuf), handle, linebuf, &lineoffset, mode) > 0)
     {
-        if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && std::strcmp(cmdbuf, "}") == 0)
+        if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && std::strcmp(cmdbuf, "}") == 0)
         {
             break;
         }
@@ -667,7 +667,7 @@ static int next_command(
     std::FILE *handle,
     char *linebuf,
     int *lineoffset,
-    cmd_file mode)
+    CmdFile mode)
 {
     int cmdlen{};
     char *lineptr = linebuf + *lineoffset;
@@ -688,7 +688,7 @@ static int next_command(
             if (*lineptr == ';' || *lineptr == 0)
             {
                 if (*lineptr == ';'
-                    && (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
+                    && (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
                     && (g_command_comment[0].empty() || g_command_comment[1].empty()
                         || g_command_comment[2].empty() || g_command_comment[3].empty()))
                 {
@@ -742,12 +742,12 @@ static int next_command(
     }
 }
 
-static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode)
+static bool next_line(std::FILE *handle, char *linebuf, CmdFile mode)
 {
     bool tools_section = true;
     while (file_gets(linebuf, 512, handle) >= 0)
     {
-        if (mode == cmd_file::SSTOOLS_INI && linebuf[0] == '[')   // check for [id]
+        if (mode == CmdFile::SSTOOLS_INI && linebuf[0] == '[')   // check for [id]
         {
             char tmpbuf[11];
             std::strncpy(tmpbuf, &linebuf[1], 4);
@@ -810,11 +810,11 @@ void set_print_document(const PrintDocFn &fn)
 
 struct Command
 {
-    Command(char *curarg, cmd_file a_mode);
+    Command(char *curarg, CmdFile a_mode);
     cmdarg_flags bad_arg() const;
 
     char *arg;
-    cmd_file mode{};
+    CmdFile mode{};
     char *value{};
     std::string variable;
     int value_len{};                  // length of value
@@ -830,7 +830,7 @@ struct Command
     cmdarg_flags status{cmdarg_flags::NONE};
 };
 
-Command::Command(char *curarg, cmd_file a_mode) :
+Command::Command(char *curarg, CmdFile a_mode) :
     arg(curarg),
     mode(a_mode)
 {
@@ -1549,9 +1549,9 @@ static cmdarg_flags parse_colors(char const *value)
 {
     if (*value == '@')
     {
-        if (merge_path_names(g_map_name, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+        if (merge_path_names(g_map_name, &value[1], CmdFile::AT_CMD_LINE_SET_NAME) < 0)
         {
-            init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
+            init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
         }
         if ((int)std::strlen(value) > FILE_MAX_PATH || validate_luts(g_map_name.c_str()))
         {
@@ -1563,9 +1563,9 @@ static cmdarg_flags parse_colors(char const *value)
         }
         else
         {
-            if (merge_path_names(g_color_file, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+            if (merge_path_names(g_color_file, &value[1], CmdFile::AT_CMD_LINE_SET_NAME) < 0)
             {
-                init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
+                init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
             }
             g_color_state = color_state::MAP_FILE;
         }
@@ -1967,7 +1967,7 @@ static cmdarg_flags cmd_file_name(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (cmd.mode == cmd_file::AT_AFTER_STARTUP &&
+    if (cmd.mode == CmdFile::AT_AFTER_STARTUP &&
         g_display_3d == display_3d_modes::NONE) // can't do this in @ command
     {
         return cmd.bad_arg();
@@ -2339,7 +2339,7 @@ static cmdarg_flags cmd_light_name(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (g_first_init || cmd.mode == cmd_file::AT_AFTER_STARTUP)
+    if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
         g_light_name = cmd.value;
     }
@@ -3092,7 +3092,7 @@ static cmdarg_flags cmd_save_name(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (g_first_init || cmd.mode == cmd_file::AT_AFTER_STARTUP)
+    if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
         if (merge_path_names(g_save_filename, cmd.value, cmd.mode) < 0)
         {
@@ -3911,7 +3911,7 @@ std::optional<cmdarg_flags> handle_command(const std::array<CommandHandler, N> &
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-cmdarg_flags cmd_arg(char *curarg, cmd_file mode) // process a single argument
+cmdarg_flags cmd_arg(char *curarg, CmdFile mode) // process a single argument
 {
     Command cmd{curarg, mode};
     if (cmd.status != cmdarg_flags::NONE)
@@ -3919,7 +3919,7 @@ cmdarg_flags cmd_arg(char *curarg, cmd_file mode) // process a single argument
         return cmd.status;
     }
 
-    if (mode != cmd_file::AT_AFTER_STARTUP || g_debug_flag == debug_flags::allow_init_commands_anytime)
+    if (mode != CmdFile::AT_AFTER_STARTUP || g_debug_flag == debug_flags::allow_init_commands_anytime)
     {
         if (const std::optional handled{handle_command(s_startup_commands, cmd)}; handled.has_value())
         {
@@ -4047,7 +4047,7 @@ static int get_max_cur_arg_len(const char *const floatvalstr[], int num_args)
     return max_str;
 }
 
-static std::string to_string(cmd_file value)
+static std::string to_string(CmdFile value)
 {
     static char const *const modestr[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
     return modestr[static_cast<int>(value)];
@@ -4059,7 +4059,7 @@ static std::string to_string(cmd_file value)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
+int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode)
 {
     static int row = 1;
 
