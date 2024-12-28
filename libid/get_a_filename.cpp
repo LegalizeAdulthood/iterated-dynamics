@@ -40,11 +40,16 @@ enum
     MAXNUMFILES = 2977L
 };
 
-struct CHOICE
+namespace
+{
+
+struct Choice
 {
     char full_name[FILE_MAX_PATH];
     bool subdir;
 };
+
+} // namespace
 
 static int check_f6_key(int curkey, int choice);
 static int filename_speed_str(int row, int col, int vid, char const *speedstring, int speed_match);
@@ -65,8 +70,8 @@ bool get_a_file_name(char const *hdg, char const *file_template, std::string &fl
     int out;
     int retried;
     // Only the first 13 characters of file names are displayed...
-    CHOICE storage[MAXNUMFILES];
-    CHOICE *choices[MAXNUMFILES];
+    Choice storage[MAXNUMFILES];
+    Choice *choices[MAXNUMFILES];
     int attributes[MAXNUMFILES];
     int filecount;   // how many files
     int dircount;    // how many directories
@@ -199,7 +204,7 @@ retry_dir:
     if (dosort)
     {
         std::strcat(instr, "off");
-        shell_sort(&choices, filecount, sizeof(CHOICE *)); // sort file list
+        shell_sort(&choices, filecount, sizeof(Choice *)); // sort file list
     }
     else
     {
