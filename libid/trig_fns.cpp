@@ -15,7 +15,7 @@
 #include <cstring>
 #include <string>
 
-// The index into this array must correspond to enum trig_fn
+// The index into this array must correspond to enum TrigFn
 // changing the order of these alters meaning of GIF extensions
 // maximum 6 characters in function names or recheck all related code
 NamedTrigFunction g_trig_fn[] =
