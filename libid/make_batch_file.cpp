@@ -1508,12 +1508,6 @@ docolors:
             int diff2[4][3];
             force = 0;
             curc = force;
-#ifdef XFRACT
-            if (g_fake_lut && g_true_mode == true_color_mode::default_color)
-            {
-                load_dac(); // stupid kludge
-            }
-#endif
             while (true)
             {
                 // emit color in rgb 3 char encoded form
