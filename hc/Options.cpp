@@ -17,9 +17,9 @@ Options parse_options(int argc, char **argv)
             arg.erase(0, 1); // drop '/' or '-'
             if (arg == "a")
             {
-                if (result.mode == modes::NONE)
+                if (result.mode == Mode::NONE)
                 {
-                    result.mode = modes::APPEND;
+                    result.mode = Mode::APPEND;
                 }
                 else
                 {
@@ -28,9 +28,9 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "adoc")
             {
-                if (result.mode == modes::NONE)
+                if (result.mode == Mode::NONE)
                 {
-                    result.mode = modes::ASCII_DOC;
+                    result.mode = Mode::ASCII_DOC;
                 }
                 else
                 {
@@ -39,9 +39,9 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "c")
             {
-                if (result.mode == modes::NONE)
+                if (result.mode == Mode::NONE)
                 {
-                    result.mode = modes::COMPILE;
+                    result.mode = Mode::COMPILE;
                 }
                 else
                 {
@@ -50,9 +50,9 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "d")
             {
-                if (result.mode == modes::NONE)
+                if (result.mode == Mode::NONE)
                 {
-                    result.mode = modes::DELETE;
+                    result.mode = Mode::DELETE;
                 }
                 else
                 {
@@ -61,9 +61,9 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "h")
             {
-                if (result.mode == modes::NONE)
+                if (result.mode == Mode::NONE)
                 {
-                    result.mode = modes::HTML;
+                    result.mode = Mode::HTML;
                 }
                 else
                 {
@@ -84,7 +84,7 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "m")
             {
-                if (result.mode == modes::COMPILE)
+                if (result.mode == Mode::COMPILE)
                 {
                     result.show_mem = true;
                 }
@@ -105,7 +105,7 @@ Options parse_options(int argc, char **argv)
                 {
                     throw std::runtime_error("Missing argument for /o");
                 }
-                if (result.mode == modes::HTML || result.mode == modes::ASCII_DOC)
+                if (result.mode == Mode::HTML || result.mode == Mode::ASCII_DOC)
                 {
                     result.output_dir = output_dir;
                 }
@@ -116,9 +116,9 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "p")
             {
-                if (result.mode == modes::NONE)
+                if (result.mode == Mode::NONE)
                 {
-                    result.mode = modes::PRINT;
+                    result.mode = Mode::PRINT;
                 }
                 else
                 {
@@ -127,7 +127,7 @@ Options parse_options(int argc, char **argv)
             }
             else if (arg == "s")
             {
-                if (result.mode == modes::COMPILE)
+                if (result.mode == Mode::COMPILE)
                 {
                     result.show_stats = true;
                 }
@@ -148,8 +148,8 @@ Options parse_options(int argc, char **argv)
                 {
                     throw std::runtime_error("Missing argument for /r");
                 }
-                if (result.mode == modes::COMPILE || result.mode == modes::PRINT ||
-                    result.mode == modes::ASCII_DOC)
+                if (result.mode == Mode::COMPILE || result.mode == Mode::PRINT ||
+                    result.mode == Mode::ASCII_DOC)
                 {
                     result.swap_path = swap_path;
                 }

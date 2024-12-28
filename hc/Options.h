@@ -12,7 +12,7 @@ namespace hc
 
 struct Options
 {
-    modes mode{modes::NONE};
+    Mode mode{Mode::NONE};
     std::string fname1;
     std::string fname2;
     std::string swap_path;

@@ -9,7 +9,7 @@ namespace hc
 
 std::shared_ptr<Compiler> create_compiler(const Options &options)
 {
-    return options.mode == modes::ASCII_DOC ? std::make_shared<AsciiDocCompiler>(options)
+    return options.mode == Mode::ASCII_DOC ? std::make_shared<AsciiDocCompiler>(options)
                                             : std::make_shared<HelpCompiler>(options);
 }
 

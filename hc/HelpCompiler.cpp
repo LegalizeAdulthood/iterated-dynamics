@@ -1417,27 +1417,27 @@ int HelpCompiler::process()
 
     switch (m_options.mode)
     {
-    case modes::NONE:
+    case Mode::NONE:
         usage();
         break;
 
-    case modes::COMPILE:
+    case Mode::COMPILE:
         compile();
         break;
 
-    case modes::PRINT:
+    case Mode::PRINT:
         print();
         break;
 
-    case modes::APPEND:
+    case Mode::APPEND:
         add_hlp_to_exe();
         break;
 
-    case modes::DELETE:
+    case Mode::DELETE:
         delete_hlp_from_exe();
         break;
 
-    case modes::HTML:
+    case Mode::HTML:
         render_html();
         break;
     }

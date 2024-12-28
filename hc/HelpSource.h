@@ -179,6 +179,6 @@ struct HelpSource
 extern HelpSource g_src;
 
 int find_topic_title(char const *title);
-void read_src(std::string const &fname, modes mode);
+void read_src(std::string const &fname, Mode mode);
 
 } // namespace hc

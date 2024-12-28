@@ -7,7 +7,7 @@
 TEST(TestAsciiDoc, createCompiler)
 {
     hc::Options options{};
-    options.mode = hc::modes::ASCII_DOC;
+    options.mode = hc::Mode::ASCII_DOC;
 
     std::shared_ptr compiler{create_compiler(options)};
 

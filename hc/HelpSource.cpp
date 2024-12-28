@@ -756,9 +756,9 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
     g_src.add_topic(t);
 }
 
-void process_doc_contents(modes mode)
+void process_doc_contents(Mode mode)
 {
-    if (mode == modes::HTML)
+    if (mode == Mode::HTML)
     {
         process_doc_contents(
             [](char *buffer, Content &c)
@@ -768,7 +768,7 @@ void process_doc_contents(modes mode)
                 return buffer + (int) std::strlen(buffer);
             });
     }
-    else if (mode == modes::ASCII_DOC)
+    else if (mode == Mode::ASCII_DOC)
     {
         process_doc_contents(
             [](char *buffer, Content &c)
@@ -1298,7 +1298,7 @@ static void toggle_mode(std::string tag, help_commands cmd, bool &flag, int eoff
     }
 }
 
-void read_src(std::string const &fname, modes mode)
+void read_src(std::string const &fname, Mode mode)
 {
     int    ch;
     char  *ptr;

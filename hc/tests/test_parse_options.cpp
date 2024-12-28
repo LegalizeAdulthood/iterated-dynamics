@@ -40,23 +40,23 @@ void PrintTo(const std::vector<const char *> &options, std::ostream *str)
 namespace hc
 {
 
-std::ostream &operator<<(std::ostream &str, hc::modes value)
+std::ostream &operator<<(std::ostream &str, hc::Mode value)
 {
     switch (value)
     {
-    case modes::NONE:
+    case Mode::NONE:
         return str << "NONE";
-    case modes::COMPILE:
+    case Mode::COMPILE:
         return str << "COMPILE";
-    case modes::PRINT:
+    case Mode::PRINT:
         return str << "PRINT";
-    case modes::APPEND:
+    case Mode::APPEND:
         return str << "APPEND";
-    case modes::DELETE:
+    case Mode::DELETE:
         return str << "DELETE";
-    case modes::HTML:
+    case Mode::HTML:
         return str << "HTML";
-    case modes::ASCII_DOC:
+    case Mode::ASCII_DOC:
         return str << "ASCII_DOC";
     }
 
@@ -89,49 +89,49 @@ TEST_F(TestParseCompilerOptions, modeCompile)
 {
     parse_options({"/c"});
 
-    EXPECT_EQ(hc::modes::COMPILE, m_options.mode);
+    EXPECT_EQ(hc::Mode::COMPILE, m_options.mode);
 }
 
 TEST_F(TestParseCompilerOptions, modePrint)
 {
     parse_options({"/p"});
 
-    EXPECT_EQ(hc::modes::PRINT, m_options.mode);
+    EXPECT_EQ(hc::Mode::PRINT, m_options.mode);
 }
 
 TEST_F(TestParseCompilerOptions, modeAppend)
 {
     parse_options({"/a"});
 
-    EXPECT_EQ(hc::modes::APPEND, m_options.mode);
+    EXPECT_EQ(hc::Mode::APPEND, m_options.mode);
 }
 
 TEST_F(TestParseCompilerOptions, modeDelete)
 {
     parse_options({"/d"});
 
-    EXPECT_EQ(hc::modes::DELETE, m_options.mode);
+    EXPECT_EQ(hc::Mode::DELETE, m_options.mode);
 }
 
 TEST_F(TestParseCompilerOptions, modeHTML)
 {
     parse_options({"/h"});
 
-    EXPECT_EQ(hc::modes::HTML, m_options.mode);
+    EXPECT_EQ(hc::Mode::HTML, m_options.mode);
 }
 
 TEST_F(TestParseCompilerOptions, modeAsciiDoc)
 {
     parse_options({"/adoc"});
 
-    EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
+    EXPECT_EQ(hc::Mode::ASCII_DOC, m_options.mode);
 }
 
 TEST_F(TestParseCompilerOptions, asciiDocOutputDir)
 {
     parse_options({"/adoc", "/o", "out"});
 
-    EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
+    EXPECT_EQ(hc::Mode::ASCII_DOC, m_options.mode);
     EXPECT_EQ("out", m_options.output_dir);
 }
 
@@ -139,7 +139,7 @@ TEST_F(TestParseCompilerOptions, asciiDocSwapPath)
 {
     parse_options({"/adoc", "/r", "swap"});
 
-    EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
+    EXPECT_EQ(hc::Mode::ASCII_DOC, m_options.mode);
     EXPECT_EQ("swap", m_options.swap_path);
 }
 

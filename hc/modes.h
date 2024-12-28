@@ -5,7 +5,7 @@
 namespace hc
 {
 
-enum class modes
+enum class Mode
 {
     NONE = 0,
     COMPILE,
