@@ -135,7 +135,7 @@ bool g_finite_attractor{};                             // finite attractor logic
 display_3d_modes g_display_3d{display_3d_modes::NONE}; // 3D display flag: 0 = OFF
 bool g_overlay_3d{};                                   // 3D overlay flag
 bool g_check_cur_dir{};                                // flag to check current dir for files
-batch_modes g_init_batch{batch_modes::NONE};           // 1 if batch run (no kbd)
+BatchMode g_init_batch{BatchMode::NONE};           // 1 if batch run (no kbd)
 int g_init_save_time{};                                // autosave minutes
 DComplex g_init_orbit{};                               // initial orbitvalue
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for initorbit
@@ -441,7 +441,7 @@ static void init_vars_restart() // <ins> key init
     g_ask_video = true;                                // turn on video-prompt flag
     g_overwrite_file = false;                          // don't overwrite
     g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
-    g_init_batch = batch_modes::NONE;                  // not in batch mode
+    g_init_batch = BatchMode::NONE;                  // not in batch mode
     g_check_cur_dir = false;                           // flag to check current dire for files
     g_init_save_time = 0;                              // no auto-save
     g_init_mode = -1;                                  // no initial video mode
@@ -1011,7 +1011,7 @@ static CmdArgFlags cmd_batch(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_init_batch = cmd.yes_no_val[0] == 0 ? batch_modes::NONE : batch_modes::NORMAL;
+    g_init_batch = cmd.yes_no_val[0] == 0 ? BatchMode::NONE : BatchMode::NORMAL;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3953,9 +3953,9 @@ static void arg_error(char const *badarg)      // oops. couldn't decode this
                " argument list with descriptions)";
     }
     cmd_files_test::s_stop_msg(stopmsg_flags::NONE, msg);
-    if (g_init_batch != batch_modes::NONE)
+    if (g_init_batch != BatchMode::NONE)
     {
-        g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
+        g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;
         cmd_files_test::s_goodbye();
     }
 }
@@ -4063,7 +4063,7 @@ int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode)
 {
     static int row = 1;
 
-    if (g_init_batch == batch_modes::NORMAL)
+    if (g_init_batch == BatchMode::NORMAL)
     {
         // in batch mode
         if (badfilename)

@@ -109,27 +109,27 @@ TEST_F(TestParameterCommandError, batchBadArg)
 
 TEST_F(TestParameterCommand, batchYes)
 {
-    ValueSaver saved_init_batch{g_init_batch, batch_modes::NONE};
+    ValueSaver saved_init_batch{g_init_batch, BatchMode::NONE};
 
     exec_cmd_arg("batch=yes", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(batch_modes::NORMAL, g_init_batch);
+    EXPECT_EQ(BatchMode::NORMAL, g_init_batch);
 }
 
 TEST_F(TestParameterCommand, batchNo)
 {
-    ValueSaver saved_init_batch{g_init_batch, batch_modes::NORMAL};
+    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
 
     exec_cmd_arg("batch=no", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(batch_modes::NONE, g_init_batch);
+    EXPECT_EQ(BatchMode::NONE, g_init_batch);
 }
 
 TEST_F(TestParameterCommandError, batchAfterStartup)
 {
-    ValueSaver saved_init_batch{g_init_batch, batch_modes::NONE};
+    ValueSaver saved_init_batch{g_init_batch, BatchMode::NONE};
 
     exec_cmd_arg("batch=yes");
 

@@ -274,16 +274,16 @@ restart:
     if (interrupted)
     {
         text_temp_msg(" *interrupted* save ");
-        if (g_init_batch >= batch_modes::NORMAL)
+        if (g_init_batch >= BatchMode::NORMAL)
         {
-            g_init_batch = batch_modes::BAILOUT_ERROR_NO_SAVE;         // if batch mode, set error level
+            g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;         // if batch mode, set error level
         }
         return -1;
     }
     if (g_timed_save == 0)
     {
         driver_buzzer(buzzer_codes::COMPLETE);
-        if (g_init_batch == batch_modes::NONE)
+        if (g_init_batch == BatchMode::NONE)
         {
             text_temp_msg((" File saved as " + extract_file_name(open_file.string().c_str()) + ' ').c_str());
         }
@@ -304,7 +304,7 @@ bool encoder()
     BYTE x;
     FractalInfo save_info;
 
-    if (g_init_batch != batch_modes::NONE)                 // flush any impending keystrokes
+    if (g_init_batch != BatchMode::NONE)                 // flush any impending keystrokes
     {
         while (driver_key_pressed())
         {

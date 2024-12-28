@@ -159,7 +159,7 @@ inline bool bit_set(CmdArgFlags flags, CmdArgFlags bit)
 }
 
 // for init_batch
-enum class batch_modes
+enum class BatchMode
 {
     FINISH_CALC_BEFORE_SAVE = -1,
     NONE,
@@ -223,7 +223,7 @@ extern std::vector<float>    g_ifs_definition;
 extern std::string           g_ifs_filename;
 extern std::string           g_ifs_name;
 extern bool                  g_ifs_type;
-extern batch_modes           g_init_batch;
+extern BatchMode           g_init_batch;
 extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;
 extern DComplex              g_init_orbit;

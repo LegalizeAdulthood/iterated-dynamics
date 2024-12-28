@@ -15,7 +15,7 @@ void do_pause(int action)
     switch (action)
     {
     case 0:
-        if (g_init_batch == batch_modes::NONE)
+        if (g_init_batch == BatchMode::NONE)
         {
             if (needpause == 1)
             {

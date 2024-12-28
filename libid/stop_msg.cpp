@@ -55,9 +55,9 @@ bool stop_msg(stopmsg_flags flags, const std::string &msg)
     int toprow;
     int color;
     static bool batchmode = false;
-    if (g_debug_flag != debug_flags::none || g_init_batch >= batch_modes::NORMAL)
+    if (g_debug_flag != debug_flags::none || g_init_batch >= BatchMode::NORMAL)
     {
-        if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == batch_modes::NONE ? "w" : "a"))
+        if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == BatchMode::NONE ? "w" : "a"))
         {
             std::fprintf(fp, "%s\n", msg.c_str());
             std::fclose(fp);
@@ -81,10 +81,10 @@ bool stop_msg(stopmsg_flags flags, const std::string &msg)
         return false;
 #endif
     }
-    if (g_init_batch >= batch_modes::NORMAL || batchmode)
+    if (g_init_batch >= BatchMode::NORMAL || batchmode)
     {
         // in batch mode
-        g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE; // used to set errorlevel
+        g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE; // used to set errorlevel
         batchmode = true; // fixes *second* stopmsg in batch mode bug
         return true;
     }

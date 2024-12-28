@@ -267,7 +267,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     }
 
     gotrealmode = false;
-    if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == batch_modes::NONE))) && !g_make_parameter_file)
+    if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == BatchMode::NONE))) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
         std::sort(s_video_choices.begin(), s_video_choices.end(), video_choice_less);
@@ -511,7 +511,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     }
     if (!g_make_parameter_file
         && !g_fast_restore
-        && (g_init_batch == batch_modes::NONE)
+        && (g_init_batch == BatchMode::NONE)
         && (std::fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
         stop_msg(stopmsg_flags::NO_BUZZER,

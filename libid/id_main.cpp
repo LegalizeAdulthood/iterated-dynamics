@@ -298,7 +298,7 @@ static bool main_restore_start(MainContext &context)
     g_help_mode = HelpLabels::HELP_MENU; // now use this help mode
     g_tab_mode = true;
     g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
-    if (((g_overlay_3d && (g_init_batch == batch_modes::NONE)) || context.stacked) &&
+    if (((g_overlay_3d && (g_init_batch == BatchMode::NONE)) || context.stacked) &&
         g_init_mode < 0) // overlay command failed
     {
         driver_unstack_screen(); // restore the graphics screen
@@ -337,7 +337,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    if (g_init_batch == batch_modes::NONE)
+    if (g_init_batch == BatchMode::NONE)
     {
         g_look_at_mouse = -ID_KEY_PAGE_UP;           // just mouse left button, == pgup
     }
@@ -348,9 +348,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     while (g_adapter < 0)                // cycle through instructions
     {
-        if (g_init_batch != batch_modes::NONE)                          // batch, nothing to do
+        if (g_init_batch != BatchMode::NONE)                          // batch, nothing to do
         {
-            g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;                 // exit with error condition set
+            g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;                 // exit with error condition set
             goodbye();
         }
         int kbdchar = main_menu(false);

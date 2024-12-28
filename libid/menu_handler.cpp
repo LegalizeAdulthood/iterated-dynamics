@@ -133,7 +133,7 @@ main_state color_cycle(MainContext &context)
 
 main_state color_editing(MainContext &context)
 {
-    if (g_is_true_color && (g_init_batch == batch_modes::NONE))
+    if (g_is_true_color && (g_init_batch == BatchMode::NONE))
     {
         // don't enter palette editor
         if (!load_palette())
@@ -172,7 +172,7 @@ main_state restore_from_image(MainContext &context)
         {
             g_compare_gif = true;
             g_overlay_3d = true;
-            if (g_init_batch == batch_modes::SAVE)
+            if (g_init_batch == BatchMode::SAVE)
             {
                 driver_stack_screen();   // save graphics image
                 g_read_filename = g_save_filename;

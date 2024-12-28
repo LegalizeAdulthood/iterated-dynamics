@@ -149,7 +149,7 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     status = FreeLibrary(debughlp);
     _ASSERTE(status);
 
-    if (g_init_batch != batch_modes::NORMAL)
+    if (g_init_batch != BatchMode::NORMAL)
     {
         char msg[MAX_PATH * 2];
         std::sprintf(msg,

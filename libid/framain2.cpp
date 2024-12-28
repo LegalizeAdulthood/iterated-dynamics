@@ -103,7 +103,7 @@ main_state big_while_loop(MainContext &context)
 
             std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
 
-            if (g_overlay_3d && (g_init_batch == batch_modes::NONE))
+            if (g_overlay_3d && (g_init_batch == BatchMode::NONE))
             {
                 driver_unstack_screen();            // restore old graphics image
                 g_overlay_3d = false;
@@ -253,7 +253,7 @@ main_state big_while_loop(MainContext &context)
         }
         // assume we save next time (except jb)
         g_save_dac = (g_save_dac == 0) ? 2 : 1;
-        if (g_init_batch == batch_modes::NONE)
+        if (g_init_batch == BatchMode::NONE)
         {
             g_look_at_mouse = -ID_KEY_PAGE_UP;        // mouse left button == pgup
         }
@@ -356,9 +356,9 @@ main_state big_while_loop(MainContext &context)
         {
             // image has been loaded
             g_show_file = 1;
-            if (g_init_batch == batch_modes::NORMAL && g_calc_status == calc_status_value::RESUMABLE)
+            if (g_init_batch == BatchMode::NORMAL && g_calc_status == calc_status_value::RESUMABLE)
             {
-                g_init_batch = batch_modes::FINISH_CALC_BEFORE_SAVE;
+                g_init_batch = BatchMode::FINISH_CALC_BEFORE_SAVE;
             }
             if (g_loaded_3d)      // 'r' of image created with '3'
             {
@@ -553,7 +553,7 @@ resumeloop:                             // return here on failed overlays
                     context.key = ID_KEY_ENTER;
                 }
             }
-            else if (g_init_batch == batch_modes::NONE)      // not batch mode
+            else if (g_init_batch == BatchMode::NONE)      // not batch mode
             {
                 g_look_at_mouse = g_zoom_box_width == 0 ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
@@ -612,28 +612,28 @@ resumeloop:                             // return here on failed overlays
                 // init_batch == BAILOUT_INTERRUPTED_SAVE       was BAILOUT_INTERRUPTED_TRY_SAVE, now do a save
                 // clang-format on
 
-                if (g_init_batch == batch_modes::FINISH_CALC_BEFORE_SAVE)
+                if (g_init_batch == BatchMode::FINISH_CALC_BEFORE_SAVE)
                 {
                     context.key = ID_KEY_ENTER;
-                    g_init_batch = batch_modes::NORMAL;
+                    g_init_batch = BatchMode::NORMAL;
                 }
-                else if (g_init_batch == batch_modes::NORMAL || g_init_batch == batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
+                else if (g_init_batch == BatchMode::NORMAL || g_init_batch == BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
                 {
                     context.key = (g_debug_flag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
-                    if (g_init_batch == batch_modes::NORMAL)
+                    if (g_init_batch == BatchMode::NORMAL)
                     {
-                        g_init_batch = batch_modes::SAVE;
+                        g_init_batch = BatchMode::SAVE;
                     }
-                    if (g_init_batch == batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE)
+                    if (g_init_batch == BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE)
                     {
-                        g_init_batch = batch_modes::BAILOUT_INTERRUPTED_SAVE;
+                        g_init_batch = BatchMode::BAILOUT_INTERRUPTED_SAVE;
                     }
                 }
                 else
                 {
                     if (g_calc_status != calc_status_value::COMPLETED)
                     {
-                        g_init_batch = batch_modes::BAILOUT_ERROR_NO_SAVE; // bailout with error
+                        g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE; // bailout with error
                     }
                     goodbye();               // done, exit
                 }
@@ -700,7 +700,7 @@ static int cmp_line(BYTE *pixels, int linelen)
     if (row == 0)
     {
         s_err_count = 0;
-        s_cmp_fp = dir_fopen(g_working_dir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
+        s_cmp_fp = dir_fopen(g_working_dir.c_str(), "cmperr", (g_init_batch != BatchMode::NONE) ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
     if (g_potential_16bit)
@@ -726,7 +726,7 @@ static int cmp_line(BYTE *pixels, int linelen)
                 g_put_color(col, row, 1);
             }
             ++s_err_count;
-            if (g_init_batch == batch_modes::NONE)
+            if (g_init_batch == BatchMode::NONE)
             {
                 std::fprintf(s_cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
                         s_err_count, col, row, oldcolor, pixels[col]);
@@ -740,7 +740,7 @@ static void cmp_line_cleanup()
 {
     char *timestring;
     time_t ltime;
-    if (g_init_batch != batch_modes::NONE)
+    if (g_init_batch != BatchMode::NONE)
     {
         time(&ltime);
         timestring = ctime(&ltime);
