@@ -1214,7 +1214,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             put_param(" %s=%d", "coarse", g_preview_factor);
         }
-        if (g_raytrace_format != raytrace_formats::none)
+        if (g_raytrace_format != RayTraceFormat::NONE)
         {
             put_param(" %s=%d", "ray", static_cast<int>(g_raytrace_format));
             if (g_brief)

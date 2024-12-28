@@ -115,10 +115,10 @@ restart_1:
     sphere = uvalues[k++].uval.ch.val;
     g_glasses_type = uvalues[k++].uval.ival;
     k++;
-    g_raytrace_format = static_cast<raytrace_formats>(uvalues[k++].uval.ival);
+    g_raytrace_format = static_cast<RayTraceFormat>(uvalues[k++].uval.ival);
     k++;
     {
-        if (g_raytrace_format == raytrace_formats::povray)
+        if (g_raytrace_format == RayTraceFormat::POVRAY)
         {
             stop_msg("DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
                     "the online documentation.");
@@ -167,14 +167,14 @@ restart_1:
 
     if (static_cast<int>(g_raytrace_format) < 0)
     {
-        g_raytrace_format = raytrace_formats::none;
+        g_raytrace_format = RayTraceFormat::NONE;
     }
-    if (g_raytrace_format > raytrace_formats::dxf)
+    if (g_raytrace_format > RayTraceFormat::DXF)
     {
-        g_raytrace_format = raytrace_formats::dxf;
+        g_raytrace_format = RayTraceFormat::DXF;
     }
 
-    if (g_raytrace_format == raytrace_formats::none)
+    if (g_raytrace_format == RayTraceFormat::NONE)
     {
         k = 0;
         choices[k++] = "make a surface grid";
@@ -234,7 +234,7 @@ restart_3:
     else
     {
         k = -1;
-        if (g_raytrace_format == raytrace_formats::none)
+        if (g_raytrace_format == RayTraceFormat::NONE)
         {
             prompts3d[++k] = "X-axis rotation in degrees";
             prompts3d[++k] = "Y-axis rotation in degrees";
@@ -244,7 +244,7 @@ restart_3:
         prompts3d[++k] = "Y-axis scaling factor in pct";
     }
     k = -1;
-    if (!(g_raytrace_format != raytrace_formats::none && !g_sphere))
+    if (!(g_raytrace_format != RayTraceFormat::NONE && !g_sphere))
     {
         uvalues[++k].uval.ival   = g_x_rot    ;
         uvalues[k].type = 'i';
@@ -267,7 +267,7 @@ restart_3:
     uvalues[k].type = 'i';
     uvalues[k].uval.ival = g_water_line ;
 
-    if (g_raytrace_format == raytrace_formats::none)
+    if (g_raytrace_format == RayTraceFormat::NONE)
     {
         prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
         uvalues[k].type = 'i';
@@ -324,7 +324,7 @@ restart_3:
     }
 
     k = 0;
-    if (!(g_raytrace_format != raytrace_formats::none && !g_sphere))
+    if (!(g_raytrace_format != RayTraceFormat::NONE && !g_sphere))
     {
         g_x_rot    = uvalues[k++].uval.ival;
         g_y_rot    = uvalues[k++].uval.ival;
@@ -334,7 +334,7 @@ restart_3:
     g_y_scale     = uvalues[k++].uval.ival;
     g_rough      = uvalues[k++].uval.ival;
     g_water_line  = uvalues[k++].uval.ival;
-    if (g_raytrace_format == raytrace_formats::none)
+    if (g_raytrace_format == RayTraceFormat::NONE)
     {
         g_viewer_z = uvalues[k++].uval.ival;
         g_shift_x     = uvalues[k++].uval.ival;
@@ -354,7 +354,7 @@ restart_3:
         g_randomize_3d = 0;
     }
 
-    if (g_targa_out || illumine() || g_raytrace_format != raytrace_formats::none)
+    if (g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE)
     {
         if (get_light_params())
         {
@@ -375,20 +375,20 @@ static bool get_light_params()
 
     k = -1;
 
-    if (illumine() || g_raytrace_format != raytrace_formats::none)
+    if (illumine() || g_raytrace_format != RayTraceFormat::NONE)
     {
         builder.int_number("X value light vector", g_light_x)
             .int_number("Y value light vector", g_light_y)
             .int_number("Z value light vector", g_light_z);
 
-        if (g_raytrace_format == raytrace_formats::none)
+        if (g_raytrace_format == RayTraceFormat::NONE)
         {
             builder.int_number("Light Source Smoothing Factor", g_light_avg);
             builder.int_number("Ambient", g_ambient);
         }
     }
 
-    if (g_targa_out && g_raytrace_format == raytrace_formats::none)
+    if (g_targa_out && g_raytrace_format == RayTraceFormat::NONE)
     {
         builder.int_number("Haze Factor        (0 - 100, '0' disables)", g_haze);
 
@@ -420,7 +420,7 @@ static bool get_light_params()
         g_light_x   = builder.read_int_number();
         g_light_y   = builder.read_int_number();
         g_light_z   = builder.read_int_number();
-        if (g_raytrace_format == raytrace_formats::none)
+        if (g_raytrace_format == RayTraceFormat::NONE)
         {
             g_light_avg = builder.read_int_number();
             g_ambient  = builder.read_int_number();
@@ -435,7 +435,7 @@ static bool get_light_params()
         }
     }
 
-    if (g_targa_out && g_raytrace_format == raytrace_formats::none)
+    if (g_targa_out && g_raytrace_format == RayTraceFormat::NONE)
     {
         g_haze = builder.read_int_number();
         if (g_haze >= 100)

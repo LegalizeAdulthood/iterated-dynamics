@@ -3595,12 +3595,12 @@ TEST_F(TestParameterCommand, lightNameNotSet)
 
 TEST_F(TestParameterCommand, ray)
 {
-    ValueSaver saved_raytrace_format{g_raytrace_format, raytrace_formats::none};
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::NONE};
 
     exec_cmd_arg("ray=3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(raytrace_formats::raw, g_raytrace_format);
+    EXPECT_EQ(RayTraceFormat::RAW, g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, briefNo)

@@ -589,7 +589,7 @@ static void init_vars_fractal()
 // init vars affecting 3d
 static void init_vars3d()
 {
-    g_raytrace_format = raytrace_formats::none;
+    g_raytrace_format = RayTraceFormat::NONE;
     g_brief   = false;
     g_sphere = false;
     g_preview = false;
@@ -3019,7 +3019,7 @@ static CmdArgFlags cmd_ray(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_raytrace_format = static_cast<raytrace_formats>(cmd.num_val);
+    g_raytrace_format = static_cast<RayTraceFormat>(cmd.num_val);
     return CmdArgFlags::PARAM_3D;
 }
 

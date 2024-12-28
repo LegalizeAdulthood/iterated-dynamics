@@ -7,16 +7,16 @@
 
 #include "3d.h"
 
-enum class raytrace_formats
+enum class RayTraceFormat
 {
-    none = 0,
-    povray = 1,
-    vivid = 2,
-    raw = 3,
-    mtv = 4,
-    rayshade = 5,
-    acrospin = 6,
-    dxf = 7
+    NONE = 0,
+    POVRAY = 1,
+    VIVID = 2,
+    RAW = 3,
+    MTV = 4,
+    RAYSHADE = 5,
+    ACROSPIN = 6,
+    DXF = 7
 };
 
 extern int                   g_ambient;             // Ambient= parameter value
@@ -32,7 +32,7 @@ extern bool                  g_preview;
 extern int                   g_preview_factor;
 extern int                   g_randomize_3d;
 extern std::string           g_raytrace_filename;
-extern raytrace_formats      g_raytrace_format;
+extern RayTraceFormat        g_raytrace_format;
 extern bool                  g_show_box;
 extern void                (*g_standard_plot)(int, int, int);
 extern bool                  g_targa_overlay;
