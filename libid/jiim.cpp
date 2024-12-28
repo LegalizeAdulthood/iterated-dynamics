@@ -519,7 +519,7 @@ void jiim(jiim_types which)
         return;
     }
     const ValueSaver saved_help_mode{
-        g_help_mode, which == jiim_types::JIIM ? help_labels::HELP_JIIM : help_labels::HELP_ORBITS};
+        g_help_mode, which == jiim_types::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
     if (which == jiim_types::ORBIT)
     {
         g_has_inverse = true;

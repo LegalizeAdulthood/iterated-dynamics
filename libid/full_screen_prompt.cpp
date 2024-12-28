@@ -460,7 +460,7 @@ int full_screen_prompt(        // full-screen prompting routine
         put_string_center(instr_row++, 0, 80, C_PROMPT_BKGRD,
                         "No changeable parameters;");
         put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
-                (g_help_mode > help_labels::HELP_INDEX) ?
+                (g_help_mode > HelpLabels::HELP_INDEX) ?
                 "Press ENTER to exit, ESC to back out, F1 for help"
                 : "Press ENTER to exit");
         driver_hide_text_cursor();
@@ -581,7 +581,7 @@ int full_screen_prompt(        // full-screen prompting routine
                         "Use <Up> and <Down> to select values to change");
     }
     put_string_center(instr_row+1, 0, 80, C_PROMPT_BKGRD,
-            (g_help_mode > help_labels::HELP_INDEX) ?
+            (g_help_mode > HelpLabels::HELP_INDEX) ?
             "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 

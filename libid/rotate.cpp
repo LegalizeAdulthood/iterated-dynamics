@@ -88,7 +88,7 @@ void rotate(int direction)      // rotate-the-palette routine
         return;
     }
 
-    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_CYCLING};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_CYCLING};
 
     s_paused = false;                      // not paused
     fkey = 0;                            // no random coloring
@@ -632,7 +632,7 @@ void save_palette()
     std::strcpy(palname, g_map_name.c_str());
     driver_stack_screen();
     char filename[256] = { 0 };
-    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COLORMAP};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
     i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
@@ -670,7 +670,7 @@ void save_palette()
 
 bool load_palette()
 {
-    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COLORMAP};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
     std::string filename{g_map_name};
     driver_stack_screen();
     const bool i = get_a_file_name("Select a MAP File", "*.map", filename);

@@ -135,7 +135,7 @@ void make_batch_file()
     }
 
     driver_stack_screen();
-    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_PARMFILE};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARMFILE};
 
     maxcolor = g_colors;
     std::strcpy(colorspec, "y");

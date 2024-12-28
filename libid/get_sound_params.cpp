@@ -60,7 +60,7 @@ get_sound_restart:
         .comment("Press F4 to reset to default values");
 
     {
-        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_SOUND};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_SOUND};
         i = builder.prompt("Sound Control Screen", 255);
     }
     if (i < 0)
@@ -139,7 +139,7 @@ get_map_restart:
         .comment("Press F4 to reset to default values");
 
     {
-        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_MUSIC};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_MUSIC};
         i = builder.prompt("Scale Mapping Screen", 255);
     }
     if (i < 0)
@@ -178,7 +178,7 @@ static int get_music_params()
 {
     ChoiceBuilder<11> builder;
     const char *attenmodes[] = {"none", "low", "mid", "high"};
-    help_labels oldhelpmode;
+    HelpLabels oldhelpmode;
     int i;
 
     s_menu2++;
@@ -197,7 +197,7 @@ get_music_restart:
         .comment("Press F4 to reset to default values");
 
     oldhelpmode = g_help_mode; /* this prevents HELP from activating */
-    g_help_mode = help_labels::HELP_MUSIC;
+    g_help_mode = HelpLabels::HELP_MUSIC;
     i = builder.prompt("FM Synth Card Control Screen", 255);
     g_help_mode = oldhelpmode; /* re-enable HELP */
     if (i < 0)

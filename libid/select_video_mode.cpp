@@ -91,7 +91,7 @@ int select_video_mode(int curmode)
 
     {
         ValueSaver saved_tab_mode{g_tab_mode, false};
-        ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_VIDEO_MODE};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_VIDEO_MODE};
         s_modes_changed = false;
         i = full_screen_choice(CHOICE_HELP, "Select Video Mode",
             "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,

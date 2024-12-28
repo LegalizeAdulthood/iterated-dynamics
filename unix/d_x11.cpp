@@ -2033,7 +2033,7 @@ void X11Driver::write_pixel(int x, int y, int color)
         xlastcolor = color;
     }
     XPutPixel(m_image, x, y, do_fake_lut(m_pixtab[color]));
-    if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
+    if (m_fast_mode && g_help_mode != HelpLabels::HELP_PALETTE_EDITOR)
     {
         if (!m_alarm_on)
         {
@@ -2118,7 +2118,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     {
         XPutPixel(m_image, x+i, y, do_fake_lut(pixline[i]));
     }
-    if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
+    if (m_fast_mode && g_help_mode != HelpLabels::HELP_PALETTE_EDITOR)
     {
         if (!m_alarm_on)
         {

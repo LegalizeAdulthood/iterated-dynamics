@@ -367,7 +367,7 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
     }
 
-    if (g_help_mode == help_labels::HELP_CYCLING)
+    if (g_help_mode == HelpLabels::HELP_CYCLING)
     {
         driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }

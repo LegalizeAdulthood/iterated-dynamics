@@ -319,7 +319,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 
         int i;
         {
-            ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_LOADFILE};
+            ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_LOADFILE};
             i = full_screen_choice(0, heading,
                 "key...name......................err...xdot..ydot.clr.comment..................",
                 instructions.c_str(), g_video_table_len, nullptr, &attributes[0], 1, 13, 78, 0,

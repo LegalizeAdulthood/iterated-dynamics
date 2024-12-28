@@ -272,7 +272,7 @@ bool auto_stereo_convert()
     std::time(&ltime);
     std::srand((unsigned int)ltime);
 
-    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_RDS_KEYS};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
     driver_save_graphics();                      // save graphics image
     std::memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 

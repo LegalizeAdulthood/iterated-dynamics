@@ -828,7 +828,7 @@ int help()
     int       flags;
     History      next;
 
-    if (g_help_mode == help_labels::NONE)   // is help disabled?
+    if (g_help_mode == HelpLabels::NONE)   // is help disabled?
     {
         return 0;
     }
@@ -860,7 +860,7 @@ int help()
     g_timer_start -= std::clock();
     driver_stack_screen();
 
-    if (g_help_mode >= help_labels::HELP_INDEX)
+    if (g_help_mode >= HelpLabels::HELP_INDEX)
     {
         next.topic_num = s_label[static_cast<int>(g_help_mode)].topic_num;
         next.topic_off = s_label[static_cast<int>(g_help_mode)].topic_off;
@@ -871,7 +871,7 @@ int help()
         next.topic_off = 0;
     }
 
-    const help_labels old_help_mode = g_help_mode;
+    const HelpLabels old_help_mode = g_help_mode;
 
     if (s_curr_hist <= 0)
     {
@@ -900,8 +900,8 @@ int help()
             break;
 
         case ACTION_INDEX:
-            next.topic_num = s_label[static_cast<int>(help_labels::HELP_INDEX)].topic_num;
-            next.topic_off = s_label[static_cast<int>(help_labels::HELP_INDEX)].topic_off;
+            next.topic_num = s_label[static_cast<int>(HelpLabels::HELP_INDEX)].topic_num;
+            next.topic_off = s_label[static_cast<int>(HelpLabels::HELP_INDEX)].topic_off;
             // fall-through
 
         case ACTION_CALL:
@@ -911,7 +911,7 @@ int help()
         } // switch
 
         flags = 0;
-        if (curr.topic_num == s_label[static_cast<int>(help_labels::HELP_INDEX)].topic_num)
+        if (curr.topic_num == s_label[static_cast<int>(HelpLabels::HELP_INDEX)].topic_num)
         {
             flags |= F_INDEX;
         }
@@ -1055,7 +1055,7 @@ static int read_help_topic(int topic, int off, int len, void *buf)
  * to end of topic.  On "EOF" returns a negative number representing
  * number of bytes not read.
  */
-int read_help_topic(help_labels label_num, int off, int len, void *buf)
+int read_help_topic(HelpLabels label_num, int off, int len, void *buf)
 {
     return read_help_topic(s_label[static_cast<int>(label_num)].topic_num,
         s_label[static_cast<int>(label_num)].topic_off + off, len, buf);

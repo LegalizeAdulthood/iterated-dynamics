@@ -670,7 +670,7 @@ void write_header_file(char const *fname, std::FILE *file)
         "#define %-32s %3d\n"
         "\n"
         "// labels\n"
-        "enum class help_labels\n"
+        "enum class HelpLabels\n"
         "{\n"
         "    SPECIAL_IFS                      =  -4,\n"
         "    SPECIAL_L_SYSTEM                 =  -3,\n"
@@ -782,7 +782,7 @@ void HelpCompiler::write_link_source()
             "\n"
             "struct HelpLink\n"
             "{\n"
-            "    help_labels label;\n"
+            "    HelpLabels label;\n"
             "    std::string_view link;\n"
             "};\n"
             "\n"
@@ -832,7 +832,7 @@ void HelpCompiler::write_link_source()
         };
         for (std::pair<int, Label> &item : topics)
         {
-            src << "    HelpLink{ help_labels::" << item.second.name << ", \""
+            src << "    HelpLink{ HelpLabels::" << item.second.name << ", \""
                       << link_for_title(g_src.topics[item.first].title) << "\" },\n";
         }
         src << "};\n"

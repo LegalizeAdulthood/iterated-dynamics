@@ -31,7 +31,7 @@ enum class config_status
     BAD_NO_MESSAGE = -1
 };
 
-enum class help_labels;
+enum class HelpLabels;
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
@@ -59,7 +59,7 @@ extern float                 g_final_aspect_ratio;
 extern std::string           g_fractal_search_dir1;
 extern std::string           g_fractal_search_dir2;
 extern bool                  g_has_inverse;
-extern help_labels           g_help_mode;
+extern HelpLabels           g_help_mode;
 extern int                   g_integer_fractal;
 extern bool                  g_keep_aspect_ratio;
 extern long                  g_l_delta_min;

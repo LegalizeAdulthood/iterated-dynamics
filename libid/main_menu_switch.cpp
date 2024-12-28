@@ -49,8 +49,8 @@
 
 static bool look(MainContext &context)
 {
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_BROWSE;
+    HelpLabels const old_help_mode = g_help_mode;
+    g_help_mode = HelpLabels::HELP_BROWSE;
     switch (file_get_window())
     {
     case ID_KEY_ENTER:

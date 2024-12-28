@@ -22,7 +22,7 @@ struct HelpSignature
     std::uint32_t base;
 };
 
-enum class help_labels;
+enum class HelpLabels;
 
 /*
  * commands embedded in the help text
@@ -143,7 +143,7 @@ token_types find_token_length(
 int find_line_width(token_modes mode, char const *curr, unsigned len);
 bool process_document(token_modes mode, PD_FUNC *get_info, PD_FUNC *output, void *info);
 int help();
-int read_help_topic(help_labels label, int , int , void *);
+int read_help_topic(HelpLabels label, int , int , void *);
 bool make_doc_msg_func(int pnum, int num_pages);
 void print_document(char const *outfname, bool (*msg_func)(int, int));
 int init_help();

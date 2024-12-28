@@ -138,7 +138,7 @@ static fractal_type select_fract_type(fractal_type t)
     s_ft_choices = &choices[0];
 
     // setup context sensitive help
-    ValueSaver save_help_mode(g_help_mode, help_labels::HELP_FRACTALS);
+    ValueSaver save_help_mode(g_help_mode, HelpLabels::HELP_FRACTALS);
     if (t == fractal_type::IFS3D)
     {
         t = fractal_type::IFS;
@@ -296,7 +296,7 @@ sel_type_restart:
 
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
-        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_LSYS);
+        ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_LSYS);
         if (get_file_entry(gfe_type::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
         {
             return true;
@@ -304,7 +304,7 @@ sel_type_restart:
     }
     else if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
-        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_FORMULA);
+        ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_FORMULA);
         if (get_file_entry(gfe_type::FORMULA, "Formula", "*.frm", g_formula_filename, g_formula_name) < 0)
         {
             return true;
@@ -312,7 +312,7 @@ sel_type_restart:
     }
     else if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
     {
-        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_IFS);
+        ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_IFS);
         if (get_file_entry(gfe_type::IFS, "IFS", "*.ifs", g_ifs_filename, g_ifs_name) < 0)
         {
             return true;
@@ -396,20 +396,20 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     }
     g_cur_fractal_specific = &g_fractal_specific[+curtype];
     s_tmp_stack[0] = 0;
-    help_labels help_formula = g_cur_fractal_specific->helpformula;
-    if (help_formula < help_labels::NONE)
+    HelpLabels help_formula = g_cur_fractal_specific->helpformula;
+    if (help_formula < HelpLabels::NONE)
     {
-        if (help_formula == help_labels::SPECIAL_FORMULA)
+        if (help_formula == HelpLabels::SPECIAL_FORMULA)
         {
             // special for formula
             entryname = g_formula_name.c_str();
         }
-        else if (help_formula == help_labels::SPECIAL_L_SYSTEM)
+        else if (help_formula == HelpLabels::SPECIAL_L_SYSTEM)
         {
             // special for lsystem
             entryname = g_l_system_name.c_str();
         }
-        else if (help_formula == help_labels::SPECIAL_IFS)
+        else if (help_formula == HelpLabels::SPECIAL_IFS)
         {
             // special for ifs
             entryname = g_ifs_name.c_str();
@@ -419,30 +419,30 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             // this shouldn't happen
             entryname = nullptr;
         }
-        auto item_for_help = [](help_labels label)
+        auto item_for_help = [](HelpLabels label)
         {
             switch (label)
             {
-            case help_labels::SPECIAL_IFS:
+            case HelpLabels::SPECIAL_IFS:
                 return gfe_type::IFS;
-            case help_labels::SPECIAL_L_SYSTEM:
+            case HelpLabels::SPECIAL_L_SYSTEM:
                 return gfe_type::L_SYSTEM;
-            case help_labels::SPECIAL_FORMULA:
+            case HelpLabels::SPECIAL_FORMULA:
                 return gfe_type::FORMULA;
             default:
                 throw std::runtime_error(
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        auto item_file = [](help_labels label) -> std::string &
+        auto item_file = [](HelpLabels label) -> std::string &
         {
             switch (label)
             {
-            case help_labels::SPECIAL_IFS:
+            case HelpLabels::SPECIAL_IFS:
                 return g_ifs_filename;
-            case help_labels::SPECIAL_L_SYSTEM:
+            case HelpLabels::SPECIAL_L_SYSTEM:
                 return g_l_system_filename;
-            case help_labels::SPECIAL_FORMULA:
+            case HelpLabels::SPECIAL_FORMULA:
                 return g_formula_filename;
             default:
                 throw std::runtime_error(
@@ -459,7 +459,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             }
         }
     }
-    else if (help_formula >= help_labels::HELP_INDEX)
+    else if (help_formula >= HelpLabels::HELP_INDEX)
     {
         int c;
         int lines;

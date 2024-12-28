@@ -142,7 +142,7 @@ int get_star_field_params()
         .float_number("Percent Clumpiness", s_star_field_values[1])
         .float_number("Ratio of Dim stars to Bright", s_star_field_values[2]);
     driver_stack_screen();
-    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_STARFIELD};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_STARFIELD};
     int const choice = builder.prompt("Starfield Parameters");
     driver_unstack_screen();
     if (choice < 0)
