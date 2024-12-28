@@ -45,7 +45,7 @@ inline int operator+(trig_fn value)
     return static_cast<int>(value);
 }
 
-struct trig_funct_lst
+struct NamedTrigFunction
 {
     char const *name;
     void (*lfunct)();
@@ -53,7 +53,7 @@ struct trig_funct_lst
     void (*mfunct)();
 };
 
-extern trig_funct_lst        g_trig_fn[];
+extern NamedTrigFunction     g_trig_fn[];
 extern trig_fn               g_trig_index[];
 extern const int             g_num_trig_functions;
 extern void                (*g_l_trig0)();
