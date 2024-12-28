@@ -560,42 +560,42 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 {
-    ValueSaver saved_record_colors{g_record_colors, record_colors_mode::none};
+    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
     exec_cmd_arg("recordcolors=p", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::ERROR, m_result);
-    EXPECT_EQ(record_colors_mode::none, g_record_colors);
+    EXPECT_EQ(RecordColorsMode::NONE, g_record_colors);
 }
 
 TEST_F(TestParameterCommand, recordColorsAutomatic)
 {
-    ValueSaver saved_record_colors{g_record_colors, record_colors_mode::none};
+    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
     exec_cmd_arg("recordcolors=a", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
-    EXPECT_EQ(record_colors_mode::automatic, g_record_colors);
+    EXPECT_EQ(RecordColorsMode::AUTOMATIC, g_record_colors);
 }
 
 TEST_F(TestParameterCommand, recordColorsComment)
 {
-    ValueSaver saved_record_colors{g_record_colors, record_colors_mode::none};
+    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
     exec_cmd_arg("recordcolors=c", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
-    EXPECT_EQ(record_colors_mode::comment, g_record_colors);
+    EXPECT_EQ(RecordColorsMode::COMMENT, g_record_colors);
 }
 
 TEST_F(TestParameterCommand, recordColorsYes)
 {
-    ValueSaver saved_record_colors{g_record_colors, record_colors_mode::none};
+    ValueSaver saved_record_colors{g_record_colors, RecordColorsMode::NONE};
 
     exec_cmd_arg("recordcolors=y", cmd_file::AT_CMD_LINE);
 
     EXPECT_EQ(cmdarg_flags::NONE, m_result);
-    EXPECT_EQ(record_colors_mode::yes, g_record_colors);
+    EXPECT_EQ(RecordColorsMode::YES, g_record_colors);
 }
 
 TEST_F(TestParameterCommandError, maxLineLengthTooSmall)

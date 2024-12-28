@@ -104,7 +104,7 @@ int g_distance_estimator_y_dots{};                            // ydots to use fo
 int g_bf_digits{};                                            // digits to use (force) for g_bf_math
 int g_show_dot{-1};                                           // color to show crawling graphics cursor
 int g_size_dot{};                                             // size of dot crawling cursor
-record_colors_mode g_record_colors{record_colors_mode::none}; // default PAR color-writing method
+RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 char g_auto_show_dot{};                                       // dark, medium, bright
 bool g_start_show_orbit{};                                    // show orbits on at start of fractal
 std::string g_read_filename;                                  // name of fractal input file
@@ -436,7 +436,7 @@ static void init_vars_run()              // once per run init
 
 static void init_vars_restart() // <ins> key init
 {
-    g_record_colors = record_colors_mode::automatic;   // use mapfiles in PARs
+    g_record_colors = RecordColorsMode::AUTOMATIC;   // use mapfiles in PARs
     g_dither_flag = false;                             // no dithering
     g_ask_video = true;                                // turn on video-prompt flag
     g_overwrite_file = false;                          // don't overwrite
@@ -3029,7 +3029,7 @@ static cmdarg_flags cmd_record_colors(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_record_colors = static_cast<record_colors_mode>(*cmd.value);
+    g_record_colors = static_cast<RecordColorsMode>(*cmd.value);
     return cmdarg_flags::NONE;
 }
 

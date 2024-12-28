@@ -1484,7 +1484,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 
     if (*colorinf != 'n')
     {
-        if (g_record_colors == record_colors_mode::comment && *colorinf == '@')
+        if (g_record_colors == RecordColorsMode::COMMENT && *colorinf == '@')
         {
             put_param_line();
             put_param("; %s=", "colors");
@@ -1493,7 +1493,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         }
 docolors:
         put_param(" %s=", "colors");
-        if (g_record_colors != record_colors_mode::comment && g_record_colors != record_colors_mode::yes && *colorinf == '@')
+        if (g_record_colors != RecordColorsMode::COMMENT && g_record_colors != RecordColorsMode::YES && *colorinf == '@')
         {
             put_param(colorinf);
         }

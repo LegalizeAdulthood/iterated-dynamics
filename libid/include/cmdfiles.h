@@ -93,12 +93,12 @@ enum class TrueColorMode
     ITERATE = 1
 };
 
-enum class record_colors_mode
+enum class RecordColorsMode
 {
-    none = 0,
-    automatic = 'a',
-    comment = 'c',
-    yes = 'y'
+    NONE = 0,
+    AUTOMATIC = 'a',
+    COMMENT = 'c',
+    YES = 'y'
 };
 
 enum orbit_save_flags
@@ -253,7 +253,7 @@ extern int                   g_random_seed;
 extern bool                  g_random_seed_flag;
 extern bool                  g_read_color;
 extern std::string           g_read_filename;
-extern record_colors_mode    g_record_colors;
+extern RecordColorsMode    g_record_colors;
 extern std::string           g_save_filename;
 extern float                 g_screen_aspect;
 extern id::SearchPath        g_search_for;
