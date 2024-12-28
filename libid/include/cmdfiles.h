@@ -107,7 +107,7 @@ enum OrbitSaveFlags
     OSF_MIDI = 2
 };
 
-enum sound_flags
+enum SoundFlags
 {
     SOUNDFLAG_OFF       = 0,
     SOUNDFLAG_BEEP      = 1,
