@@ -70,13 +70,13 @@
 
 constexpr double DEM_BAILOUT{535.5};
 
-enum class show_dot_action
+enum class ShowDotAction
 {
     SAVE = 1,
     RESTORE = 2
 };
 
-enum class show_dot_direction
+enum class ShowDotDirection
 {
     JUST_A_POINT = 0,
     LOWER_RIGHT = 1,
@@ -357,11 +357,11 @@ static void show_dot_save_restore(
     int stopx,
     int starty,
     int stopy,
-    show_dot_direction direction,
-    show_dot_action action)
+    ShowDotDirection direction,
+    ShowDotAction action)
 {
     int ct = 0;
-    if (direction != show_dot_direction::JUST_A_POINT)
+    if (direction != ShowDotDirection::JUST_A_POINT)
     {
         if (s_save_dots.empty())
         {
@@ -376,10 +376,10 @@ static void show_dot_save_restore(
     }
     switch (direction)
     {
-    case show_dot_direction::LOWER_RIGHT:
+    case ShowDotDirection::LOWER_RIGHT:
         for (int j = starty; j <= stopy; startx++, j++)
         {
-            if (action == show_dot_action::SAVE)
+            if (action == ShowDotAction::SAVE)
             {
                 read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
@@ -391,10 +391,10 @@ static void show_dot_save_restore(
             ct += stopx-startx+1;
         }
         break;
-    case show_dot_direction::UPPER_RIGHT:
+    case ShowDotDirection::UPPER_RIGHT:
         for (int j = starty; j >= stopy; startx++, j--)
         {
-            if (action == show_dot_action::SAVE)
+            if (action == ShowDotAction::SAVE)
             {
                 read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
@@ -406,10 +406,10 @@ static void show_dot_save_restore(
             ct += stopx-startx+1;
         }
         break;
-    case show_dot_direction::LOWER_LEFT:
+    case ShowDotDirection::LOWER_LEFT:
         for (int j = starty; j <= stopy; stopx--, j++)
         {
-            if (action == show_dot_action::SAVE)
+            if (action == ShowDotAction::SAVE)
             {
                 read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
@@ -421,10 +421,10 @@ static void show_dot_save_restore(
             ct += stopx-startx+1;
         }
         break;
-    case show_dot_direction::UPPER_LEFT:
+    case ShowDotDirection::UPPER_LEFT:
         for (int j = starty; j >= stopy; stopx--, j--)
         {
-            if (action == show_dot_action::SAVE)
+            if (action == ShowDotAction::SAVE)
             {
                 read_span(j, startx, stopx, &s_save_dots[0] + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
@@ -436,10 +436,10 @@ static void show_dot_save_restore(
             ct += stopx-startx+1;
         }
         break;
-    case show_dot_direction::JUST_A_POINT:
+    case ShowDotDirection::JUST_A_POINT:
         break;
     }
-    if (action == show_dot_action::SAVE)
+    if (action == ShowDotAction::SAVE)
     {
         (*g_plot)(g_col, g_row, s_show_dot_color);
     }
@@ -453,7 +453,7 @@ static int calc_type_show_dot()
     int stopx;
     int stopy;
     int width;
-    show_dot_direction direction = show_dot_direction::JUST_A_POINT;
+    ShowDotDirection direction = ShowDotDirection::JUST_A_POINT;
     stopx = g_col;
     startx = g_col;
     stopy = g_row;
@@ -464,7 +464,7 @@ static int calc_type_show_dot()
         if (g_col+width <= g_i_x_stop && g_row+width <= g_i_y_stop)
         {
             // preferred show dot shape
-            direction = show_dot_direction::UPPER_LEFT;
+            direction = ShowDotDirection::UPPER_LEFT;
             startx = g_col;
             stopx  = g_col+width;
             starty = g_row+width;
@@ -473,7 +473,7 @@ static int calc_type_show_dot()
         else if (g_col-width >= g_i_x_start && g_row+width <= g_i_y_stop)
         {
             // second choice
-            direction = show_dot_direction::UPPER_RIGHT;
+            direction = ShowDotDirection::UPPER_RIGHT;
             startx = g_col-width;
             stopx  = g_col;
             starty = g_row+width;
@@ -481,7 +481,7 @@ static int calc_type_show_dot()
         }
         else if (g_col-width >= g_i_x_start && g_row-width >= g_i_y_start)
         {
-            direction = show_dot_direction::LOWER_RIGHT;
+            direction = ShowDotDirection::LOWER_RIGHT;
             startx = g_col-width;
             stopx  = g_col;
             starty = g_row-width;
@@ -489,20 +489,20 @@ static int calc_type_show_dot()
         }
         else if (g_col+width <= g_i_x_stop && g_row-width >= g_i_y_start)
         {
-            direction = show_dot_direction::LOWER_LEFT;
+            direction = ShowDotDirection::LOWER_LEFT;
             startx = g_col;
             stopx  = g_col+width;
             starty = g_row-width;
             stopy  = g_row-1;
         }
     }
-    show_dot_save_restore(startx, stopx, starty, stopy, direction, show_dot_action::SAVE);
+    show_dot_save_restore(startx, stopx, starty, stopy, direction, ShowDotAction::SAVE);
     if (g_orbit_delay > 0)
     {
         sleep_ms(g_orbit_delay);
     }
     out = (*s_calc_type_tmp)();
-    show_dot_save_restore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);
+    show_dot_save_restore(startx, stopx, starty, stopy, direction, ShowDotAction::RESTORE);
     return out;
 }
 
