@@ -60,6 +60,7 @@ add_library(libid
     lorenz.cpp include/lorenz.h
     lsys.cpp include/lsys_fns.h
     lsysf.cpp
+    lyapunov.cpp include/lyapunov.h
     magnet.cpp include/magnet.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
     miscfrac.cpp include/miscfrac.h
@@ -69,6 +70,7 @@ add_library(libid
     pickover_mandelbrot.cpp include/pickover_mandelbrot.h
     plasma.cpp include/plasma.h
     popcorn.cpp include/popcorn.h
+    population.cpp include/population.h
     quartic_mandelbrot.cpp include/quartic_mandelbrot.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     sierpinski_gasket.cpp include/sierpinski_gasket.h
@@ -322,6 +324,7 @@ source_group("Header Files/fractal specific" FILES
     include/lsys.h
     include/lsysf.h
     include/lsys_fns.h
+    include/lyapunov.h
     include/magnet.h
     include/mandelbrot_mix.h
     include/miscfrac.h
@@ -331,6 +334,7 @@ source_group("Header Files/fractal specific" FILES
     include/pickover_mandelbrot.h
     include/plasma.h
     include/popcorn.h
+    include/population.h
     include/quartic_mandelbrot.h
     include/quaternion_mandelbrot.h
     include/sierpinski_gasket.h
@@ -358,6 +362,7 @@ source_group("Source Files/fractal specific" FILES
     lorenz.cpp
     lsys.cpp
     lsysf.cpp
+    lyapunov.cpp
     magnet.cpp
     mandelbrot_mix.cpp
     miscfrac.cpp
@@ -367,6 +372,7 @@ source_group("Source Files/fractal specific" FILES
     pickover_mandelbrot.cpp
     plasma.cpp
     popcorn.cpp
+    population.cpp
     quartic_mandelbrot.cpp
     quaternion_mandelbrot.cpp
     sierpinski_gasket.cpp

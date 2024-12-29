@@ -38,6 +38,7 @@
 #include "id.h"
 #include "id_data.h"
 #include "line3d.h"
+#include "lyapunov.h"
 #include "miscfrac.h"
 #include "mpmath_c.h"
 #include "newton.h"

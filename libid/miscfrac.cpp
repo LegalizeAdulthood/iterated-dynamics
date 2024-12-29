@@ -20,6 +20,7 @@ Miscellaneous fractal-specific code
 #include "mpmath.h"
 #include "newton.h"
 #include "pixel_grid.h"
+#include "population.h"
 #include "resume.h"
 #include "stop_msg.h"
 
@@ -47,7 +48,6 @@ static std::vector<int> s_verhulst_array;
 static unsigned long s_filter_cycles{};
 static bool s_half_time_check{};
 static long s_population_l{}, s_rate_l{};
-static double s_population{}, s_rate{};
 static bool s_mono{};
 static int s_outside_x{};
 static long s_pi_l{};
@@ -56,8 +56,6 @@ static double s_bif_close_enough{}, s_bif_saved_pop{};
 static int s_bif_saved_inc{};
 static long s_bif_saved_and{};
 static long s_beta{};
-static int s_lya_length{}, s_lya_seed_ok{};
-static int s_lya_rxy[34]{};
 
 //*********** standalone engine for "bifurcation" types **************
 
@@ -89,17 +87,6 @@ static int s_lya_rxy[34]{};
 // is desirable (e.g. in case of errors, or the series tending
 // to infinity).                Have fun !
 //*************************************************************
-
-inline bool population_exceeded()
-{
-    constexpr double limit{100000.0};
-    return std::fabs(s_population) > limit;
-}
-
-inline int population_orbit()
-{
-    return population_exceeded() ? 1 : 0;
-}
 
 int bifurcation()
 {
@@ -183,7 +170,7 @@ int bifurcation()
         }
         else
         {
-            s_rate = (double)(g_x_min + x*g_delta_x);
+            g_rate = (double)(g_x_min + x*g_delta_x);
         }
         verhulst();        // calculate array once per column
 
@@ -222,7 +209,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
     else
     {
-        s_population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
+        g_population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
     }
 
     g_overflow = false;
@@ -279,7 +266,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
         else
         {
-            pixel_row = g_i_y_stop - (int)((s_population - g_init.y) / g_delta_y);
+            pixel_row = g_i_y_stop - (int)((g_population - g_init.y) / g_delta_y);
         }
 
         // if it's visible on the screen, save it in the column array
@@ -326,7 +313,7 @@ static bool bif_periodic(long time)
         }
         else
         {
-            s_bif_saved_pop =  s_population;
+            s_bif_saved_pop =  g_population;
         }
         if (--s_bif_saved_inc == 0)
         {
@@ -345,7 +332,7 @@ static bool bif_periodic(long time)
         }
         else
         {
-            if (std::fabs(s_bif_saved_pop-s_population) <= s_bif_close_enough)
+            if (std::fabs(s_bif_saved_pop-g_population) <= s_bif_close_enough)
             {
                 return true;
             }
@@ -359,19 +346,13 @@ static bool bif_periodic(long time)
 // The following are Bifurcation "orbitcalc" routines...
 /*                                                                                                    */
 //********************************************************************
-int lyapunov_orbit()
-{
-    s_population = s_rate * s_population * (1 - s_population);
-    return population_orbit();
-}
-
 int bifurc_verhulst_trig()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
-    g_tmp_z.x = s_population;
+    g_tmp_z.x = g_population;
     g_tmp_z.y = 0;
     cmplx_trig0(g_tmp_z, g_tmp_z);
-    s_population += s_rate * g_tmp_z.x * (1 - g_tmp_z.x);
+    g_population += g_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
 
@@ -388,10 +369,10 @@ int long_bifurc_verhulst_trig()
 int bifurc_stewart_trig()
 {
     //  Population = (Rate * fn(Population) * fn(Population)) - 1.0
-    g_tmp_z.x = s_population;
+    g_tmp_z.x = g_population;
     g_tmp_z.y = 0;
     cmplx_trig0(g_tmp_z, g_tmp_z);
-    s_population = (s_rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
+    g_population = (g_rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
     return population_orbit();
 }
 
@@ -408,10 +389,10 @@ int long_bifurc_stewart_trig()
 
 int bifurc_set_trig_pi()
 {
-    g_tmp_z.x = s_population * PI;
+    g_tmp_z.x = g_population * PI;
     g_tmp_z.y = 0;
     cmplx_trig0(g_tmp_z, g_tmp_z);
-    s_population = s_rate * g_tmp_z.x;
+    g_population = g_rate * g_tmp_z.x;
     return population_orbit();
 }
 
@@ -426,10 +407,10 @@ int long_bifurc_set_trig_pi()
 
 int bifurc_add_trig_pi()
 {
-    g_tmp_z.x = s_population * PI;
+    g_tmp_z.x = g_population * PI;
     g_tmp_z.y = 0;
     cmplx_trig0(g_tmp_z, g_tmp_z);
-    s_population += s_rate * g_tmp_z.x;
+    g_population += g_rate * g_tmp_z.x;
     return population_orbit();
 }
 
@@ -445,10 +426,10 @@ int long_bifurc_add_trig_pi()
 int bifurc_lambda_trig()
 {
     //  Population = Rate * fn(Population) * (1 - fn(Population))
-    g_tmp_z.x = s_population;
+    g_tmp_z.x = g_population;
     g_tmp_z.y = 0;
     cmplx_trig0(g_tmp_z, g_tmp_z);
-    s_population = s_rate * g_tmp_z.x * (1 - g_tmp_z.x);
+    g_population = g_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
 
@@ -466,9 +447,9 @@ int bifurc_may()
 {
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
-    g_tmp_z.x = 1.0 + s_population;
+    g_tmp_z.x = 1.0 + g_population;
     g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with mpmath.h
-    s_population = (s_rate * s_population) * g_tmp_z.x;
+    g_population = (g_rate * g_population) * g_tmp_z.x;
     return population_orbit();
 }
 
@@ -500,206 +481,3 @@ bool bifurc_may_setup()
 // Here Endeth the Generalised Bifurcation Fractal Engine
 
 // END Phil Wilson's Code (modified slightly by Kev Allen et. al. !)
-
-//****************** standalone engine for "lyapunov" ********************
-//** save_release behavior:                                             **
-//**    1730 & prior: ignores inside=, calcmode='1', (a,b)->(x,y)       **
-//**    1731: other calcmodes and inside=nnn                            **
-//**    1732: the infamous axis swap: (b,a)->(x,y),                     **
-//**            the order parameter becomes a long int                  **
-//************************************************************************
-
-static int lyapunov_cycles(long filter_cycles, double a, double b);
-
-int lyapunov()
-{
-    double a;
-    double b;
-
-    if (driver_key_pressed())
-    {
-        return -1;
-    }
-    g_overflow = false;
-    if (g_params[1] == 1)
-    {
-        s_population = (1.0+std::rand())/(2.0+RAND_MAX);
-    }
-    else if (g_params[1] == 0)
-    {
-        if (population_exceeded() || s_population == 0 || s_population == 1)
-        {
-            s_population = (1.0+std::rand())/(2.0+RAND_MAX);
-        }
-    }
-    else
-    {
-        s_population = g_params[1];
-    }
-    (*g_plot)(g_col, g_row, 1);
-    if (g_invert != 0)
-    {
-        invertz2(&g_init);
-        a = g_init.y;
-        b = g_init.x;
-    }
-    else
-    {
-        a = g_dy_pixel();
-        b = g_dx_pixel();
-    }
-    g_color = lyapunov_cycles(s_filter_cycles, a, b);
-    if (g_inside_color > COLOR_BLACK && g_color == 0)
-    {
-        g_color = g_inside_color;
-    }
-    else if (g_color>=g_colors)
-    {
-        g_color = g_colors-1;
-    }
-    (*g_plot)(g_col, g_row, g_color);
-    return g_color;
-}
-
-bool lya_setup()
-{
-    /* This routine sets up the sequence for forcing the Rate parameter
-        to vary between the two values.  It fills the array lyaRxy[] and
-        sets lyaLength to the length of the sequence.
-
-        The sequence is coded in the bit pattern in an integer.
-        Briefly, the sequence starts with an A the leading zero bits
-        are ignored and the remaining bit sequence is decoded.  The
-        sequence ends with a B.  Not all possible sequences can be
-        represented in this manner, but every possible sequence is
-        either represented as itself, as a rotation of one of the
-        representable sequences, or as the inverse of a representable
-        sequence (swapping 0s and 1s in the array.)  Sequences that
-        are the rotation and/or inverses of another sequence will generate
-        the same lyapunov exponents.
-
-        A few examples follow:
-            number    sequence
-                0       ab
-                1       aab
-                2       aabb
-                3       aaab
-                4       aabbb
-                5       aabab
-                6       aaabb (this is a duplicate of 4, a rotated inverse)
-                7       aaaab
-                8       aabbbb  etc.
-         */
-
-    long i;
-
-    s_filter_cycles = (long)g_params[2];
-    if (s_filter_cycles == 0)
-    {
-        s_filter_cycles = g_max_iterations/2;
-    }
-    s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::force_standard_fractal;
-    s_lya_length = 1;
-
-    i = (long)g_params[0];
-    s_lya_rxy[0] = 1;
-    int t;
-    for (t = 31; t >= 0; t--)
-    {
-        if (i & (1 << t))
-        {
-            break;
-        }
-    }
-    for (; t >= 0; t--)
-    {
-        s_lya_rxy[s_lya_length++] = (i & (1<<t)) != 0;
-    }
-    s_lya_rxy[s_lya_length++] = 0;
-    if (g_inside_color < COLOR_BLACK)
-    {
-        stop_msg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
-        g_inside_color = 1;
-    }
-    if (g_user_std_calc_mode == 'o')
-    {
-        // Oops,lyapunov type
-        g_user_std_calc_mode = '1';  // doesn't use new & breaks orbits
-        g_std_calc_mode = '1';
-    }
-    return true;
-}
-
-static int lyapunov_cycles(long filter_cycles, double a, double b)
-{
-    int color;
-    int lnadjust;
-    double total;
-    double temp;
-    // e10=22026.4657948  e-10=0.0000453999297625
-
-    total = 1.0;
-    lnadjust = 0;
-    long i;
-    for (i = 0; i < filter_cycles; i++)
-    {
-        for (int count = 0; count < s_lya_length; count++)
-        {
-            s_rate = s_lya_rxy[count] ? a : b;
-            if (g_cur_fractal_specific->orbitcalc())
-            {
-                g_overflow = true;
-                goto jumpout;
-            }
-        }
-    }
-    for (i = 0; i < g_max_iterations/2; i++)
-    {
-        for (int count = 0; count < s_lya_length; count++)
-        {
-            s_rate = s_lya_rxy[count] ? a : b;
-            if (g_cur_fractal_specific->orbitcalc())
-            {
-                g_overflow = true;
-                goto jumpout;
-            }
-            temp = std::fabs(s_rate-2.0*s_rate*s_population);
-            total *= temp;
-            if (total == 0)
-            {
-                g_overflow = true;
-                goto jumpout;
-            }
-        }
-        while (total > 22026.4657948)
-        {
-            total *= 0.0000453999297625;
-            lnadjust += 10;
-        }
-        while (total < 0.0000453999297625)
-        {
-            total *= 22026.4657948;
-            lnadjust -= 10;
-        }
-    }
-
-jumpout:
-    if (g_overflow || total <= 0 || (temp = std::log(total) + lnadjust) > 0)
-    {
-        color = 0;
-    }
-    else
-    {
-        double lyap;
-        if (g_log_map_flag)
-        {
-            lyap = -temp/((double) s_lya_length*i);
-        }
-        else
-        {
-            lyap = 1 - std::exp(temp/((double) s_lya_length*i));
-        }
-        color = 1 + (int)(lyap * (g_colors-1));
-    }
-    return color;
-}

@@ -18,6 +18,7 @@
 #include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "lyapunov.h"
 #include "miscfrac.h"
 #include "os.h"
 #include "resume.h"
