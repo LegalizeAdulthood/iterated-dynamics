@@ -13,6 +13,7 @@
 #include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"
+#include "diffusion.h"
 #include "divide_brot.h"
 #include "escher.h"
 #include "fn_or_fn.h"

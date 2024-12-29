@@ -19,7 +19,6 @@ int long_bifurc_set_trig_pi();
 int long_bifurc_stewart_trig();
 int long_bifurc_verhulst_trig();
 
-int diffusion();
 bool lya_setup();
 int lyapunov();
 int plasma();
