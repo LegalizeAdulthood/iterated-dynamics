@@ -990,9 +990,9 @@ static CmdArgFlags cmd_deprecated(const Command &)
 static CmdArgFlags cmd_adapter(const Command &cmd)
 {
     const std::string_view value{cmd.value};
-    if (std::strcmp(cmd.value, "egamono") != 0 && std::strcmp(cmd.value, "hgc") != 0 &&
-        std::strcmp(cmd.value, "ega") != 0 && std::strcmp(cmd.value, "cga") != 0 &&
-        std::strcmp(cmd.value, "mcga") != 0 && std::strcmp(cmd.value, "vga") != 0)
+    if (value != "egamono" && value != "hgc" //
+        && value != "ega" && value != "cga"  //
+        && value != "mcga" && value != "vga")
     {
         return cmd.bad_arg();
     }
@@ -1208,7 +1208,7 @@ static CmdArgFlags cmd_3d_mode(const Command &cmd)
     int julibrot_mode = -1;
     for (int i = 0; i < 4; i++)
     {
-        if (g_julibrot_3d_options[i] == std::string{cmd.value})
+        if (g_julibrot_3d_options[i] == std::string_view{cmd.value})
         {
             julibrot_mode = i;
             break;
@@ -2182,7 +2182,7 @@ static CmdArgFlags cmd_inside(const Command &cmd)
 {
     struct Inside
     {
-        const char *arg;
+        std::string_view arg;
         int inside;
     };
     const Inside inside_names[] = {
@@ -2198,7 +2198,7 @@ static CmdArgFlags cmd_inside(const Command &cmd)
     };
     for (const Inside &arg : inside_names)
     {
-        if (std::strcmp(cmd.value, arg.arg) == 0)
+        if (arg.arg == cmd.value)
         {
             g_inside_color = arg.inside;
             return CmdArgFlags::FRACTAL_PARAM;
@@ -2718,7 +2718,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
 {
     struct Outside
     {
-        char const *arg;
+        std::string_view arg;
         int outside;
     };
     static const Outside args[] = {
@@ -2733,7 +2733,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
     };
     for (const Outside &arg : args)
     {
-        if (std::strcmp(cmd.value, arg.arg) == 0)
+        if (cmd.value == arg.arg)
         {
             g_outside_color = arg.outside;
             return CmdArgFlags::FRACTAL_PARAM;
@@ -2904,7 +2904,7 @@ static CmdArgFlags cmd_potential(const Command &cmd)
     g_potential_16bit = false;
     if (k < 99)
     {
-        if (std::strcmp(value, "16bit") != 0)
+        if (std::string_view{value} != "16bit")
         {
             return cmd.bad_arg();
         }
