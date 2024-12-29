@@ -7,7 +7,11 @@
 
 // Number of bytes to use for integer part for fixed decimal math,
 // does not effect floating point math at all.
-#define BN_INT_LENGTH 4
+enum
+{
+    BN_INT_LENGTH = 4
+};
+
 /* #define CALCULATING_BIG_PI */ /* define for generating g_big_pi[] table */
 /****************************************************************
  The rest is handled by the compiler
@@ -236,11 +240,14 @@ bf_t mult_a_bf_int(bf_t r, U16 u);
 bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u);
 bf_t div_a_bf_int(bf_t r, U16 u);
 
-#define MATHBITS      32
-#define MATHBYTES     (MATHBITS/8)
-#define NUMVARS       30            // room for this many on stack
-#define CURRENTREZ    1
-#define MAXREZ        0
+enum
+{
+    MATHBITS = 32,
+    MATHBYTES = MATHBITS / 8,
+    NUMVARS = 30, // room for this many on stack
+    CURRENTREZ = 1,
+    MAXREZ = 0
+};
 
 // used by other routines
 // g_bn_length
