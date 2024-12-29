@@ -10,14 +10,7 @@
 
 #include "port_config.h"
 
-#include <cstdint>
-
-using S8 = std::int8_t;
-using U16 = std::uint16_t;
-using S16 = std::int16_t;
-using U32 = std::uint32_t;
-using S32 = std::int32_t;
-using BYTE = std::uint8_t;
+using BYTE = unsigned char;
 
 #if defined(_WIN32)
 #include <crtdbg.h>

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "port.h"
+#include "sized_types.h"
 
 enum class MemoryLocation
 {

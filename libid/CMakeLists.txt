@@ -221,6 +221,7 @@ add_library(libid
     include/rand15.h
     include/read_ticker.h
     include/sign.h
+    include/sized_types.h
     include/stack_avail.h
     include/value_saver.h
 )
@@ -467,7 +468,9 @@ source_group("Header Files/plumbing" FILES
     include/memory.h
     include/os.h
     include/prototyp.h
+    include/rand15.h
     include/read_ticker.h
+    include/sized_types.h
     include/special_dirs.h
     include/stack_avail.h
     include/value_saver.h
