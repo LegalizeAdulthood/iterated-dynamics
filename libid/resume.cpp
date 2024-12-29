@@ -42,7 +42,7 @@ int alloc_resume(int max_size, int version)
     g_resume_data.clear();
     g_resume_data.resize(sizeof(int)*max_size);
     g_resume_len = 0;
-    put_resume(sizeof(version), &version, 0);
+    put_resume_t(version);
     g_calc_status = CalcStatus::RESUMABLE;
     return 0;
 }
@@ -75,7 +75,7 @@ int start_resume()
         return -1;
     }
     s_resume_offset = 0;
-    get_resume(sizeof(version), &version, 0);
+    get_resume_t(version);
     return version;
 }
 

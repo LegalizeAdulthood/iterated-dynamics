@@ -99,7 +99,7 @@ int test()
     if (g_resuming)
     {
         start_resume();
-        get_resume(sizeof(startrow), &startrow, sizeof(startpass), &startpass, 0);
+        get_resume_t(startrow, startpass);
         end_resume();
     }
     if (test_start())   // assume it was stand-alone, doesn't want passes logic
@@ -120,7 +120,7 @@ int test()
                 {
                     test_end();
                     alloc_resume(20, 1);
-                    put_resume(sizeof(g_row), &g_row, sizeof(passes), &passes, 0);
+                    put_resume_t(g_row, passes);
                     return -1;
                 }
                 color = test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
@@ -763,13 +763,11 @@ int diffusion()
         start_resume();
         if (mode != 2)
         {
-            get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
-                       sizeof(ymin), &ymin, 0);
+            get_resume_t(xmax, xmin, ymax, ymin);
         }
         else
         {
-            get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
-                       sizeof(radius), &radius, 0);
+            get_resume_t(xmax, xmin, ymax, radius);
         }
         end_resume();
     }
@@ -901,13 +899,11 @@ int diffusion()
                     alloc_resume(20, 1);
                     if (mode != 2)
                     {
-                        put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
-                                   sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
+                        put_resume_t(xmax, xmin, ymax, ymin);
                     }
                     else
                     {
-                        put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
-                                   sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
+                        put_resume_t(xmax, xmin, ymax, radius);
                     }
 
                     s_plasma_check--;
@@ -1037,7 +1033,7 @@ int bifurcation()
     if (g_resuming)
     {
         start_resume();
-        get_resume(sizeof(x), &x, 0);
+        get_resume_t(x);
         end_resume();
     }
     bool resized = false;
@@ -1103,7 +1099,7 @@ int bifurcation()
         {
             s_verhulst_array.clear();
             alloc_resume(10, 1);
-            put_resume(sizeof(x), &x, 0);
+            put_resume_t(x);
             return -1;
         }
 
@@ -1440,7 +1436,7 @@ int popcorn()   // subset of std engine
     if (g_resuming)
     {
         start_resume();
-        get_resume(sizeof(start_row), &start_row, 0);
+        get_resume_t(start_row);
         end_resume();
     }
     g_keyboard_check_interval = g_max_keyboard_check_interval;
@@ -1455,7 +1451,7 @@ int popcorn()   // subset of std engine
             if (standard_fractal() == -1) // interrupted
             {
                 alloc_resume(10, 1);
-                put_resume(sizeof(g_row), &g_row, 0);
+                put_resume_t(g_row);
                 return -1;
             }
             g_reset_periodicity = false;
