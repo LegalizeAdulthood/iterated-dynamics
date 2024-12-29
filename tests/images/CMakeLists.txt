@@ -35,7 +35,7 @@ function(add_random_fractal_type_image_test)
 endfunction()
 
 add_fractal_type_image_test(
-    barnsleyj1 barnsleyj2 barnsleyj3 barnsleym1 barnsleym2 barnsleym3
+    barnsleyj1 barnsleyj2 barnsleyj3 barnsleym1 barnsleym2 barnsleym3 burning-ship
     cellular circle cmplxmarksjul cmplxmarksmand complexbasin complexnewton
     dividebrot5
     escher_julia
