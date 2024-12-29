@@ -47,13 +47,13 @@ using BYTE = std::uint8_t;
 
 #if defined(_WIN32)
 // ================================== Win32 definitions
-#define LOBYTEFIRST    1
-#define SLASHC         '\\'
-#define SLASH          "\\"
-#define SLASHSLASH     "\\\\"
-#define SLASHDOT       "\\."
-#define DOTSLASH       ".\\"
-#define DOTDOTSLASH    "..\\"
+#define LOW_BYTE_FIRST    1
+#define SLASH_CH         '\\'
+#define SLASH            "\\"
+#define SLASH_SLASH      "\\\\"
+#define SLASH_DOT        "\\."
+#define DOT_SLASH        ".\\"
+#define DOT_DOT_SLASH    "..\\"
 // ================================== Win32 definitions
 #else
 // ================================== linux definitions
@@ -67,12 +67,12 @@ using BYTE = std::uint8_t;
 
 typedef int sigfunc(int);
 
-#       define SLASHC         '/'
-#       define SLASH          "/"
-#       define SLASHSLASH     "//"
-#       define SLASHDOT       "/."
-#       define DOTSLASH       "./"
-#       define DOTDOTSLASH    "../"
+#define SLASH_CH      '/'
+#define SLASH         "/"
+#define SLASH_SLASH   "//"
+#define SLASH_DOT     "/."
+#define DOT_SLASH     "./"
+#define DOT_DOT_SLASH "../"
 
 #if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20
@@ -97,7 +97,7 @@ char *strupr(char *s);
 #if BYTE_ORDER == BIG_ENDIAN
 #define ACCESS_BY_BYTE
 #endif
-#ifdef LOBYTEFIRST
+#ifdef LOW_BYTE_FIRST
 #define GET16(c, i)              (i) = *((U16*)(&(c)))
 #else
 #define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\

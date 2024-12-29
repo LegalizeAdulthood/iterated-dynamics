@@ -97,7 +97,7 @@ restart:  // return here if template or directory changes
     tmpmask[0] = 0;
     if (flname[0] == 0)
     {
-        flname = DOTSLASH;
+        flname = DOT_SLASH;
     }
     split_path(flname , drive, dir, fname, ext);
     make_fname_ext(filename, fname, ext);
@@ -111,7 +111,7 @@ retry_dir:
     expand_dir_name(dir, drive);
     make_drive_dir(tmpmask, drive, dir);
     fix_dir_name(tmpmask);
-    if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOTSLASH))
+    if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOT_SLASH))
     {
         int j = (int) std::strlen(tmpmask) - 1;
         tmpmask[j] = 0; // strip trailing backslash
@@ -119,11 +119,11 @@ retry_dir:
             || fr_find_first(tmpmask) != 0
             || (g_dta.attribute & SUB_DIR) == 0)
         {
-            std::strcpy(dir, DOTSLASH);
+            std::strcpy(dir, DOT_SLASH);
             ++retried;
             goto retry_dir;
         }
-        tmpmask[j] = SLASHC;
+        tmpmask[j] = SLASH_CH;
     }
     if (file_template[0])
     {
@@ -210,7 +210,7 @@ retry_dir:
     {
         std::strcat(instr, "on");
     }
-    if (!notroot && dir[0] && dir[0] != SLASHC) // must be in root directory
+    if (!notroot && dir[0] && dir[0] != SLASH_CH) // must be in root directory
     {
         split_path(tmpmask, drive, dir, fname, ext);
         std::strcpy(dir, SLASH);
@@ -277,17 +277,17 @@ retry_dir:
         {
             if (std::strcmp(choices[i]->full_name, "..") == 0) // go up a directory
             {
-                if (std::strcmp(dir, DOTSLASH) == 0)
+                if (std::strcmp(dir, DOT_SLASH) == 0)
                 {
-                    std::strcpy(dir, DOTDOTSLASH);
+                    std::strcpy(dir, DOT_DOT_SLASH);
                 }
                 else
                 {
-                    char *s = std::strrchr(dir, SLASHC);
+                    char *s = std::strrchr(dir, SLASH_CH);
                     if (s != nullptr) // trailing slash
                     {
                         *s = 0;
-                        s = std::strrchr(dir, SLASHC);
+                        s = std::strrchr(dir, SLASH_CH);
                         if (s != nullptr)
                         {
                             *(s + 1) = 0;
@@ -359,7 +359,7 @@ retry_dir:
             {
                 // failed, make diagnostic useful:
                 flname = speedstr;
-                if (std::strchr(speedstr, SLASHC) == nullptr)
+                if (std::strchr(speedstr, SLASH_CH) == nullptr)
                 {
                     split_fname_ext(speedstr, fname, ext);
                     flname = make_path(drive, dir, fname, ext);

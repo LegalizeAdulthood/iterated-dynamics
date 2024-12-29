@@ -189,7 +189,7 @@ void make_batch_file()
 
         if (sptr && colorspec[0] == '@')
         {
-            sptr2 = std::strrchr(sptr, SLASHC);
+            sptr2 = std::strrchr(sptr, SLASH_CH);
             if (sptr2 != nullptr)
             {
                 sptr = sptr2 + 1;
@@ -1650,7 +1650,7 @@ static void put_file_name(char const *keyword, char const *fname)
     char const *p;
     if (*fname && !ends_with_slash(fname))
     {
-        p = std::strrchr(fname, SLASHC);
+        p = std::strrchr(fname, SLASH_CH);
         if (p != nullptr)
         {
             fname = p+1;

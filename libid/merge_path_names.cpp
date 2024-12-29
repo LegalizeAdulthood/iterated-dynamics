@@ -34,7 +34,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
 
     // no dot or slash so assume a file
     bool isafile = std::strchr(newfilename, '.') == nullptr
-        && std::strchr(newfilename, SLASHC) == nullptr;
+        && std::strchr(newfilename, SLASH_CH) == nullptr;
     bool isadir = is_a_directory(newfilename);
     if (isadir)
     {
@@ -42,7 +42,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
     }
 
     // if dot, slash, NUL, it's the current directory, set up full path
-    if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
+    if (newfilename[0] == '.' && newfilename[1] == SLASH_CH && newfilename[2] == 0)
     {
         char temp_drive[FILE_MAX_PATH];
         expand_dir_name(newfilename, temp_drive);
@@ -52,7 +52,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
     }
 
     // if dot, slash, its relative to the current directory, set up full path
-    if (newfilename[0] == '.' && newfilename[1] == SLASHC)
+    if (newfilename[0] == '.' && newfilename[1] == SLASH_CH)
     {
         bool test_dir = false;
         char temp_drive[FILE_MAX_PATH];
@@ -130,7 +130,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
             char save;
             // strip trailing slash
             save = oldfullpath[len-1];
-            if (save == SLASHC)
+            if (save == SLASH_CH)
             {
                 oldfullpath[len-1] = 0;
             }

@@ -16,7 +16,7 @@ void fix_dir_name(char *dirname)
     // make sure dirname ends with a slash
     if (length > 0)
     {
-        if (dirname[length-1] == SLASHC)
+        if (dirname[length-1] == SLASH_CH)
         {
             return;
         }

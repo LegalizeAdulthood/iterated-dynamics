@@ -69,7 +69,7 @@ int get_rds_params()
             {
                 elem = ' ';
             }
-            auto p = g_stereo_map_filename.find(SLASHC);
+            auto p = g_stereo_map_filename.find(SLASH_CH);
             if (p == std::string::npos ||
                     (int) g_stereo_map_filename.length() < sizeof(rds6)-2)
             {

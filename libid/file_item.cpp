@@ -81,7 +81,7 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
 
         if (!found && g_check_cur_dir)
         {
-            make_path(fullpath, "", DOTSLASH, fname, ext);
+            make_path(fullpath, "", DOT_SLASH, fname, ext);
             infile = std::fopen(fullpath, "rb");
             if (infile != nullptr)
             {

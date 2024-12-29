@@ -470,7 +470,7 @@ static void init_vars_restart() // <ins> key init
     reset_ifs_defn();                                  //
     g_random_seed_flag = false;                        // not a fixed srand() seed
     g_random_seed = init_rseed;                        //
-    g_read_filename = DOTSLASH;                        // initially current directory
+    g_read_filename = DOT_SLASH;                        // initially current directory
     g_show_file = 1;                                   //
     // next should perhaps be fractal re-init, not just <ins> ?
     g_init_cycle_limit = 55;                          // spin-DAC default speed limit
@@ -1073,7 +1073,7 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     {
         g_command_file += ".par";
     }
-    if (g_read_filename == DOTSLASH)
+    if (g_read_filename == DOT_SLASH)
     {
         g_read_filename = "";
     }
@@ -1954,7 +1954,7 @@ static CmdArgFlags cmd_fast_restore(const Command &cmd)
 
 static CmdArgFlags cmd_file_name(const Command &cmd)
 {
-    if (cmd.char_val[0] == '.' && cmd.value[1] != SLASHC)
+    if (cmd.char_val[0] == '.' && cmd.value[1] != SLASH_CH)
     {
         if (cmd.value_len > 4)
         {

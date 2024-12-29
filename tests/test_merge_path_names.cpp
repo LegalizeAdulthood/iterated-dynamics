@@ -93,7 +93,7 @@ TEST_F(TestMergePathNames, expandsDotSlashGetPath)
     const int result = merge_path_names(m_path, new_filename.c_str(), m_mode);
 
     EXPECT_EQ(1, result);
-    EXPECT_EQ(fs::path{ID_TEST_DATA_DIR}.make_preferred().string() + SLASHC, m_path);
+    EXPECT_EQ(fs::path{ID_TEST_DATA_DIR}.make_preferred().string() + SLASH_CH, m_path);
 }
 
 TEST_F(TestMergePathNames, expandsDotSlashSubDirGetPath)
@@ -104,7 +104,7 @@ TEST_F(TestMergePathNames, expandsDotSlashSubDirGetPath)
     const int result = merge_path_names(m_path, new_filename.c_str(), m_mode);
 
     EXPECT_EQ(1, result);
-    EXPECT_EQ(fs::path{ID_TEST_DATA_SUBDIR}.make_preferred().string() + SLASHC, m_path);
+    EXPECT_EQ(fs::path{ID_TEST_DATA_SUBDIR}.make_preferred().string() + SLASH_CH, m_path);
 }
 
 TEST_F(TestMergePathNames, fileInCurrentDirectoryGetPath)
@@ -124,7 +124,7 @@ TEST_F(TestMergePathNames, directoryGetPath)
     const int result = merge_path_names(m_path, new_filename.c_str(), m_mode);
 
     EXPECT_EQ(1, result);
-    EXPECT_EQ(new_filename + SLASHC, m_path);
+    EXPECT_EQ(new_filename + SLASH_CH, m_path);
 }
 
 TEST_F(TestMergePathNames, replaceDirectoryGetPath)

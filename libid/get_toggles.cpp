@@ -182,7 +182,7 @@ int get_toggles()
     choices[++k] = "Savename (.GIF implied)";
     uvalues[k].type = 's';
     std::strcpy(prevsavename, g_save_filename.c_str());
-    savenameptr = std::strrchr(g_save_filename.c_str(), SLASHC);
+    savenameptr = std::strrchr(g_save_filename.c_str(), SLASH_CH);
     if (savenameptr == nullptr)
     {
         savenameptr = g_save_filename.c_str();

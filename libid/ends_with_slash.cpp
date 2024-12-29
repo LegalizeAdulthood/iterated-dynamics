@@ -12,7 +12,7 @@ int ends_with_slash(char const *fl)
     len = (int) std::strlen(fl);
     if (len)
     {
-        if (fl[--len] == SLASHC)
+        if (fl[--len] == SLASH_CH)
         {
             return 1;
         }
