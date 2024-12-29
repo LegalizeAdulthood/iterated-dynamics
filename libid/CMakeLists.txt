@@ -67,6 +67,7 @@ add_library(libid
     peterson_variations.cpp include/peterson_variations.h
     phoenix.cpp include/phoenix.h
     pickover_mandelbrot.cpp include/pickover_mandelbrot.h
+    plasma.cpp include/plasma.h
     popcorn.cpp include/popcorn.h
     quartic_mandelbrot.cpp include/quartic_mandelbrot.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
@@ -328,6 +329,7 @@ source_group("Header Files/fractal specific" FILES
     include/peterson_variations.h
     include/phoenix.h
     include/pickover_mandelbrot.h
+    include/plasma.h
     include/popcorn.h
     include/quartic_mandelbrot.h
     include/quaternion_mandelbrot.h
@@ -363,6 +365,7 @@ source_group("Source Files/fractal specific" FILES
     peterson_variations.cpp
     phoenix.cpp
     pickover_mandelbrot.cpp
+    plasma.cpp
     popcorn.cpp
     quartic_mandelbrot.cpp
     quaternion_mandelbrot.cpp

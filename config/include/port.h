@@ -11,6 +11,7 @@
 #include "port_config.h"
 
 #include <cstdint>
+#include <cstdlib>
 
 using S8 = std::int8_t;
 using U16 = std::uint16_t;

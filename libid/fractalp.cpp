@@ -39,6 +39,7 @@
 #include "peterson_variations.h"
 #include "phoenix.h"
 #include "pickover_mandelbrot.h"
+#include "plasma.h"
 #include "popcorn.h"
 #include "quartic_mandelbrot.h"
 #include "quaternion_mandelbrot.h"
