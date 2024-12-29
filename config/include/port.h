@@ -53,9 +53,6 @@ using BYTE = std::uint8_t;
 #else
 // ================================== linux definitions
 
-#define _snprintf snprintf
-#define _vsnprintf vsnprintf
-#define _alloca alloca
 #ifndef unix
 #define unix
 #endif
