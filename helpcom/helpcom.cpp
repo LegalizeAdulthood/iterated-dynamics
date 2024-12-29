@@ -4,12 +4,9 @@
  * Common help code
  *
  */
-#include "port.h"
 #include "helpcom.h"
 
 #include <cassert>
-#include <cstdio>
-#include <cstring>
 #include <string>
 
 bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
