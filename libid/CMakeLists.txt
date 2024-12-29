@@ -218,6 +218,7 @@ add_library(libid
     include/mpmath.h
     include/pixel_limits.h
     include/prototyp.h
+    include/rand15.h
     include/read_ticker.h
     include/sign.h
     include/stack_avail.h

@@ -34,6 +34,7 @@
 #include "mpmath_c.h"
 #include "newton.h"
 #include "pixel_grid.h"
+#include "rand15.h"
 #include "save_file.h"
 #include "sign.h"
 #include "stop_msg.h"

@@ -11,7 +11,6 @@
 #include "port_config.h"
 
 #include <cstdint>
-#include <cstdlib>
 
 using S8 = std::int8_t;
 using U16 = std::uint16_t;
@@ -40,8 +39,6 @@ using BYTE = std::uint8_t;
 #define BYTE_ORDER LITTLE_ENDIAN
 #endif
 #endif
-
-#define rand15() (std::rand() & 0x7FFF)
 
 #if defined(_WIN32)
 // ================================== Win32 definitions

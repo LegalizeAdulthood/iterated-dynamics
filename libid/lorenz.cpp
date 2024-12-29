@@ -28,6 +28,7 @@
 #include "mpmath.h"
 #include "not_disk_msg.h"
 #include "plot3d.h"
+#include "rand15.h"
 #include "resume.h"
 #include "save_file.h"
 #include "sign.h"

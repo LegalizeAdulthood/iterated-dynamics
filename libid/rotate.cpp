@@ -22,6 +22,7 @@
 #endif
 #include "get_a_filename.h"
 #include "id_keys.h"
+#include "rand15.h"
 #include "save_file.h"
 #include "spindac.h"
 #include "value_saver.h"

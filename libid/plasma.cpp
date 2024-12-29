@@ -15,6 +15,7 @@ Miscellaneous fractal-specific code
 #include "fractals.h"
 #include "id_data.h"
 #include "port.h"
+#include "rand15.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"

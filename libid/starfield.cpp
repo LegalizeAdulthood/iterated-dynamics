@@ -13,6 +13,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadmap.h"
+#include "rand15.h"
 #include "slideshw.h"
 #include "spindac.h"
 #include "stop_msg.h"

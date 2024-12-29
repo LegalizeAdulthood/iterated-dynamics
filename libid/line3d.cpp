@@ -28,6 +28,7 @@
 #include "os.h"
 #include "pixel_limits.h"
 #include "plot3d.h"
+#include "rand15.h"
 #include "rotate.h"
 #include "save_file.h"
 #include "stereo.h"
