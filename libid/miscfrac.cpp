@@ -359,7 +359,7 @@ static bool bif_periodic(long time)
 // The following are Bifurcation "orbitcalc" routines...
 /*                                                                                                    */
 //********************************************************************
-int bifurc_lambda() // Used by lyanupov
+int lyapunov_orbit()
 {
     s_population = s_rate * s_population * (1 - s_population);
     return population_orbit();

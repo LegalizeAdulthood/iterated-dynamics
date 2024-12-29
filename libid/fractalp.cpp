@@ -1696,7 +1696,7 @@ FractalSpecific g_fractal_specific[] =
         HelpLabels::HT_LYAPUNOV, HelpLabels::HT_LYAPUNOV, FractalFlags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
         0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
-        bifurc_lambda, nullptr, lya_setup, lyapunov,
+        lyapunov_orbit, nullptr, lya_setup, lyapunov,
         NO_BAIL_OUT
     },
 
