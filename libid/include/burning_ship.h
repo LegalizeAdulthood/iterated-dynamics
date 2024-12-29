@@ -3,14 +3,6 @@
 #pragma once
 
 #include "big.h"
-#include "cmplx.h"
-#include "id_data.h"
-#include "calcfrac.h"
-#include "fractals.h"
-#include "bailout_formula.h"
-#include "biginit.h"
-#include "fractalb.h"
-#include "complex_fn.h"
 
 #include <complex>
 

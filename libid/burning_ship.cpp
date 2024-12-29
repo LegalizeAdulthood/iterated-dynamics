@@ -2,18 +2,28 @@
 //
 #include "burning_ship.h"
 
+#include "bailout_formula.h"
+#include "biginit.h"
+#include "calcfrac.h"
+#include "complex_fn.h"
+#include "fractals.h"
+#include "id_data.h"
+
+#include <cmath>
+#include <stdexcept>
+#include <string>
+
 int burning_ship_fp_fractal()
 {
     DComplex q;
-    double real_imag;
     const int degree = (int) g_params[2];
     q.x = g_init.x;
     q.y = g_init.y;
-    if (degree == 2) 
+    if (degree == 2)
     {
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
-        real_imag = std::fabs(g_old_z.x * g_old_z.y);
+        const double real_imag = std::fabs(g_old_z.x * g_old_z.y);
         g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;
         g_new_z.y = real_imag + real_imag - q.y;
     }
@@ -31,28 +41,19 @@ int burning_ship_fp_fractal()
 
 static double diff_abs(const double c, const double d)
 {
-    double cd = c + d;
+    const double cd = c + d;
 
     if (c >= 0.0)
     {
-        if (cd >= 0.0)
-            return d;
-        else
-            return -d - 2.0 * c;
+        return cd >= 0.0 ? d : -d - 2.0 * c;
     }
-    else
-    {
-        if (cd > 0.0)
-            return d + 2.0 * c;
-        else
-            return -d;
-    }
+    return cd > 0.0 ? d + 2.0 * c : -d;
 }
 
 void burning_ship_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0)
 {
-    int degree = (int) g_params[2];
+    const int degree = (int) g_params[2];
     const double r{ref.real()};
     const double i{ref.imag()};
     const double r2 = r * r;
@@ -63,64 +64,114 @@ void burning_ship_perturb(
     const double b2 = b * b;
     const double a0{delta0.real()};
     const double b0{delta0.imag()};
-    double dnr, dni, ab;
 
     switch (degree)
     {
-        case 2:
-            delta_n.real(2.0 * a * r + a2 - 2.0 * b * i - b2);
-            delta_n.imag(diff_abs(r * i, r * b + i * a + a * b) * 2);
-            delta_n += delta0;
-            break;
-        case 3: // Cubic Burning Ship
-        {
-            dnr = diff_abs(r, a);
-            ab = r + a;
-            dnr = (r * r - 3 * i * i) * dnr + (2 * a * r + a2 - 6 * i * b - 3 * b2) * fabs(ab) + a0;
-            dni = diff_abs(i, b);
-            ab = i + b;
-            dni = (3 * r * r - i * i) * dni + (6 * r * a + 3 * a2 - 2 * i * b - b2) * std::fabs(ab) + b0;
+    case 2:
+        delta_n.real(2.0 * a * r + a2 - 2.0 * b * i - b2);
+        delta_n.imag(diff_abs(r * i, r * b + i * a + a * b) * 2);
+        delta_n += delta0;
+        break;
 
-            delta_n.imag(dni);
-            delta_n.real(dnr);
-        }
-            break;
-        case 4: // 4th Power Burning Ship
-            dnr = 4 * r2 * r * a + 6 * r2 * a2 + 4 * r * a2 * a + a2 * a2 + 4 * i2 * i * b + 6 * i2 * b2 +
-                4 * i * b2 * b + b2 * b2 - 12 * r2 * i * b - 6 * r2 * b2 - 12 * r * a * i2 - 24 * r * a * i * b -
-                12 * r * a * b2 - 6 * a2 * i2 - 12 * a2 * i * b - 6 * a2 * b2 + a0;
-            dni = diff_abs(r * i, r * b + a * i + a * b);
-            dni = 4 * (r2 - i2) * (dni) + 4 * std::fabs(r * i + r * b + a * i + a * b) * (2 * a * r + a2 - 2 * b * i - b2) + b0;
+    case 3:
+    {
+        double dnr = diff_abs(r, a);
+        double ab = r + a;
+        dnr = (r * r - 3 * i * i) * dnr                        //
+            + (2 * a * r + a2 - 6 * i * b - 3 * b2) * fabs(ab) //
+            + a0;
+        double dni = diff_abs(i, b);
+        ab = i + b;
+        dni = (3 * r * r - i * i) * dni                             //
+            + (6 * r * a + 3 * a2 - 2 * i * b - b2) * std::fabs(ab) //
+            + b0;
+        delta_n.imag(dni);
+        delta_n.real(dnr);
+        break;
+    }
 
-            delta_n.imag(dni);
-            delta_n.real(dnr);
-            break;
-        case 5: // 5th Power Burning Ship
-            dnr = diff_abs(r, a);
-            dnr = (dnr) * (r * r * r * r - 10 * r * r * i * i + 5 * i * i * i * i) + std::fabs(r + a) *
-                    (4 * r * r * r * a + 6 * r * r * a2 + 4 * r * a2 * a + a2 * a2 - 20 * r2 * i * b -
-                        10 * r2 * b2 - 20 * r * a * i2 - 40 * r * a * i * b - 20 * r * a * b2 - 10 * a2 * i2 -
-                        20 * a2 * i * b - 10 * a2 * b2 + 20 * i2 * i * b + 30 * i2 * b2 + 20 * i * b2 * b +
-                        5 * b2 * b2) +
-                a0;
-            dni = diff_abs(i, b);
-            dni = (dni) * (5 * r2 * r2 - 10 * r2 * i2 + i2 * i2) + std::fabs(i + b) *
-                    (20 * r2 * r * a + 30 * r2 * a2 + 20 * r * a2 * a + 5 * a2 * a2 - 20 * r2 * i * b -
-                        10 * r2 * b2 - 20 * r * a * i2 - 40 * r * a * i * b - 20 * r * a * b2 - 10 * a2 * i2 -
-                        20 * a2 * i * b - 10 * a2 * b2 + 4 * i2 * i * b + 6 * i2 * b2 + 4 * i * b2 * b +
-                        b2 * b2) +
-                b0;
+    case 4:
+    {
+        const double dnr = 4 * r2 * r * a //
+            + 6 * r2 * a2                 //
+            + 4 * r * a2 * a              //
+            + a2 * a2                     //
+            + 4 * i2 * i * b              //
+            + 6 * i2 * b2                 //
+            + 4 * i * b2 * b              //
+            + b2 * b2                     //
+            - 12 * r2 * i * b             //
+            - 6 * r2 * b2                 //
+            - 12 * r * a * i2             //
+            - 24 * r * a * i * b          //
+            - 12 * r * a * b2             //
+            - 6 * a2 * i2                 //
+            - 12 * a2 * i * b             //
+            - 6 * a2 * b2                 //
+            + a0;
+        double dni = diff_abs(r * i, r * b + a * i + a * b);
+        dni = 4 * (r2 - i2) * dni                                                              //
+            + 4 * std::fabs(r * i + r * b + a * i + a * b) * (2 * a * r + a2 - 2 * b * i - b2) //
+            + b0;
+        delta_n.imag(dni);
+        delta_n.real(dnr);
+        break;
+    }
 
-            delta_n.imag(dni);
-            delta_n.real(dnr);
-            break;
+    case 5:
+    {
+        double dnr = diff_abs(r, a);
+        dnr = dnr * (r * r * r * r - 10 * r * r * i * i + 5 * i * i * i * i) //
+            + std::fabs(r + a) *
+                (4 * r * r * r * a       //
+                    + 6 * r * r * a2     //
+                    + 4 * r * a2 * a     //
+                    + a2 * a2            //
+                    - 20 * r2 * i * b    //
+                    - 10 * r2 * b2       //
+                    - 20 * r * a * i2    //
+                    - 40 * r * a * i * b //
+                    - 20 * r * a * b2    //
+                    - 10 * a2 * i2       //
+                    - 20 * a2 * i * b    //
+                    - 10 * a2 * b2       //
+                    + 20 * i2 * i * b    //
+                    + 30 * i2 * b2       //
+                    + 20 * i * b2 * b    //
+                    + 5 * b2 * b2)       //
+            + a0;
+        const double dni = diff_abs(i, b) * (5 * r2 * r2 - 10 * r2 * i2 + i2 * i2) + //
+            std::fabs(i + b) *
+                (20 * r2 * r * a         //
+                    + 30 * r2 * a2       //
+                    + 20 * r * a2 * a    //
+                    + 5 * a2 * a2        //
+                    - 20 * r2 * i * b    //
+                    - 10 * r2 * b2       //
+                    - 20 * r * a * i2    //
+                    - 40 * r * a * i * b //
+                    - 20 * r * a * b2    //
+                    - 10 * a2 * i2       //
+                    - 20 * a2 * i * b    //
+                    - 10 * a2 * b2       //
+                    + 4 * i2 * i * b     //
+                    + 6 * i2 * b2        //
+                    + 4 * i * b2 * b     //
+                    + b2 * b2)           //
+            + b0;
+        delta_n.imag(dni);
+        delta_n.real(dnr);
+        break;
+    }
+
+    default:
+        throw std::runtime_error("Unexpected degree " + std::to_string(degree));
     }
 }
 
-
 void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
-    int degree = (int) g_params[2];
+    const int degree = (int) g_params[2];
     if (degree == 2)
     {
         const double real_sqr = sqr(z.real());
@@ -133,7 +184,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
     }
     else if (degree > 2)
     {
-        DComplex   temp, temp_z;      // cludge until DComplex is replaced with std::complex<double>
+        DComplex temp, temp_z;
         temp.x = std::fabs(z.real());
         temp.y = std::fabs(z.imag());
         cpower(&temp, degree, &temp_z);
@@ -145,7 +196,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
 
 void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
-    int degree = (int) g_params[2];
+    const int degree = (int) g_params[2];
     BigStackSaver saved;
     bf_t temp_real = alloc_stack(g_r_bf_length + 2);
     bf_t real_sqr = alloc_stack(g_r_bf_length + 2);
@@ -178,8 +229,7 @@ void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 
 int burning_ship_bf_fractal()
 {
-    int degree = (int) g_params[2];
-    BFComplex big_z;
+    const int degree = (int) g_params[2];
     BigStackSaver saved;
 
     if (degree == 2) // Burning Ship
@@ -195,13 +245,13 @@ int burning_ship_bf_fractal()
     }
     else if (degree > 2) // Burning Ship to higher power
     {
+        BFComplex big_z;
         big_z.x = alloc_stack(g_bf_length + 2);
         big_z.y = alloc_stack(g_bf_length + 2);
         abs_bf(big_z.x, g_old_z_bf.x);
         abs_bf(big_z.y, g_old_z_bf.y);
         neg_a_bf(big_z.y);
         power(g_new_z_bf, big_z, degree);
-//        cmplx_poly_bf(&g_new_z_bf, big_z, degree);
         add_a_bf(g_new_z_bf.x, g_parm_z_bf.x);
         add_a_bf(g_new_z_bf.y, g_parm_z_bf.y);
     }
