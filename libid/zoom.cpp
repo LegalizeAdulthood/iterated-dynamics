@@ -6,6 +6,7 @@
 */
 #include "zoom.h"
 
+#include "big.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -19,8 +20,6 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "lyapunov.h"
-#include "miscfrac.h"
-#include "os.h"
 #include "resume.h"
 #include "spindac.h"
 #include "ssg_block_size.h"

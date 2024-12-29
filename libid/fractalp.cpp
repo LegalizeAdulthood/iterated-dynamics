@@ -10,6 +10,7 @@
 
 #include "ant.h"
 #include "barnsley.h"
+#include "bifurcation.h"
 #include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"
@@ -33,7 +34,6 @@
 #include "lyapunov.h"
 #include "magnet.h"
 #include "mandelbrot_mix.h"
-#include "miscfrac.h"
 #include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"

@@ -14,7 +14,6 @@
 //
 #include "calcfrac.h"
 
-#include "port.h"
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "boundary_trace.h"
@@ -23,7 +22,6 @@
 #include "check_key.h"
 #include "check_write_file.h"
 #include "cmdfiles.h"
-#include "cmplx.h"
 #include "debug_flags.h"
 #include "diffusion_scan.h"
 #include "diskvid.h"
@@ -33,13 +31,11 @@
 #include "fractalb.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "frothy_basin.h"
-#include "id.h"
 #include "id_data.h"
 #include "line3d.h"
 #include "lyapunov.h"
-#include "miscfrac.h"
+#include "mpmath.h"
 #include "mpmath_c.h"
 #include "newton.h"
 #include "one_or_two_pass.h"
@@ -65,8 +61,8 @@
 #include <climits>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
+#include <new>
 #include <vector>
 
 constexpr double DEM_BAILOUT{535.5};
@@ -615,7 +611,7 @@ int calc_fract()
             g_log_map_table.resize(g_log_map_table_max_size + 1);
             resized = true;
         }
-        catch (std::bad_alloc const&)
+        catch (const std::bad_alloc &)
         {
         }
 
@@ -701,8 +697,7 @@ int calc_fract()
 
         if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(std::fabs(g_x_max - g_x_min),
-                                    std::fabs(g_y_max - g_y_min)) / 6.0;
+            g_inversion[0] = std::min(std::fabs(g_x_max - g_x_min), std::fabs(g_y_max - g_y_min)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];
         }
@@ -1132,7 +1127,7 @@ static void perform_work_list()
                     s_save_dots.resize(s_save_dots_len);
                     resized = true;
                 }
-                catch (std::bad_alloc const&)
+                catch (const std::bad_alloc &)
                 {
                 }
 
@@ -1182,9 +1177,12 @@ static void perform_work_list()
             boundary_trace();
             break;
         case 'g':
-            if (g_calc_status != CalcStatus::COMPLETED)      // horrible cludge preventing crash when
-                                                                    // coming back from perturbation and math = bignum/bigflt in fractalb.cpp
+            // TODO: fix this
+            // horrible cludge preventing crash when coming back from perturbation and math = bignum/bigflt
+            if (g_calc_status != CalcStatus::COMPLETED)
+            {
                 solid_guess();
+            }
             break;
         case 'd':
             diffusion_scan();

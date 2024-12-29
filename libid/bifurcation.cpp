@@ -5,11 +5,10 @@
 Miscellaneous fractal-specific code
 
 */
-#include "miscfrac.h"
+#include "bifurcation.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "debug_flags.h"
 #include "drivers.h"
 #include "engine_timer.h"
 #include "fixed_pt.h"
@@ -18,18 +17,13 @@ Miscellaneous fractal-specific code
 #include "id.h"
 #include "id_data.h"
 #include "mpmath.h"
-#include "newton.h"
-#include "pixel_grid.h"
 #include "population.h"
 #include "resume.h"
 #include "stop_msg.h"
 
 #include <cmath>
-#include <cstdlib>
 #include <new>
 #include <vector>
-
-// routines in this module
 
 static void verhulst();
 static void bif_period_init();
@@ -477,7 +471,3 @@ bool bifurc_may_setup()
     timer(TimerType::ENGINE, g_cur_fractal_specific->calctype);
     return false;
 }
-
-// Here Endeth the Generalised Bifurcation Fractal Engine
-
-// END Phil Wilson's Code (modified slightly by Kev Allen et. al. !)

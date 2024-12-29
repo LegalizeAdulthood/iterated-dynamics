@@ -45,6 +45,7 @@ add_library(libid
 
     ant.cpp include/ant.h
     barnsley.cpp include/barnsley.h
+    bifurcation.cpp include/bifurcation.h
     cellular.cpp include/cellular.h
     circle_pattern.cpp include/circle_pattern.h
     diffusion.cpp include/diffusion.h
@@ -63,7 +64,6 @@ add_library(libid
     lyapunov.cpp include/lyapunov.h
     magnet.cpp include/magnet.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
-    miscfrac.cpp include/miscfrac.h
     newton.cpp include/newton.h
     peterson_variations.cpp include/peterson_variations.h
     phoenix.cpp include/phoenix.h
@@ -307,6 +307,7 @@ source_group("Source Files/engine" FILES
 source_group("Header Files/fractal specific" FILES
     include/ant.h
     include/barnsley.h
+    include/bifurcation.h
     include/cellular.h
     include/circle_pattern.h
     include/diffusion.h
@@ -327,7 +328,6 @@ source_group("Header Files/fractal specific" FILES
     include/lyapunov.h
     include/magnet.h
     include/mandelbrot_mix.h
-    include/miscfrac.h
     include/newton.h
     include/peterson_variations.h
     include/phoenix.h
@@ -346,6 +346,7 @@ source_group("Header Files/fractal specific" FILES
 source_group("Source Files/fractal specific" FILES
     ant.cpp
     barnsley.cpp
+    bifurcation.cpp
     cellular.cpp
     circle_pattern.cpp
     diffusion.cpp
@@ -365,7 +366,6 @@ source_group("Source Files/fractal specific" FILES
     lyapunov.cpp
     magnet.cpp
     mandelbrot_mix.cpp
-    miscfrac.cpp
     newton.cpp
     peterson_variations.cpp
     phoenix.cpp

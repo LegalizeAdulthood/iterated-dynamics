@@ -6,9 +6,6 @@
  *
  *  The J-set is generated in a fixed-size window, a third of the screen.
  */
-#include "port.h"
-#include "prototyp.h"
-
 #include "jiim.h"
 
 #include "calcfrac.h"
@@ -21,25 +18,19 @@
 #include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "frothy_basin.h"
 #include "get_a_number.h"
-#include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "lorenz.h"
-#include "miscfrac.h"
 #include "mouse.h"
-#include "os.h"
 #include "pixel_grid.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "value_saver.h"
 #include "video.h"
-#include "zoom.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
