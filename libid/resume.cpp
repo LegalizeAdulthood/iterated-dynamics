@@ -16,7 +16,7 @@ std::vector<BYTE> g_resume_data; // resume info
 bool g_resuming{};               // true if resuming after interrupt
 int g_resume_len{};              // length of resume info
 
-int put_resume(int len, ...)
+int put_resume_len(int len, ...)
 {
     std::va_list arg_marker;
 
@@ -42,12 +42,12 @@ int alloc_resume(int max_size, int version)
     g_resume_data.clear();
     g_resume_data.resize(sizeof(int)*max_size);
     g_resume_len = 0;
-    put_resume_t(version);
+    put_resume(version);
     g_calc_status = CalcStatus::RESUMABLE;
     return 0;
 }
 
-int get_resume(int len, ...)
+int get_resume_len(int len, ...)
 {
     std::va_list arg_marker;
 
@@ -75,7 +75,7 @@ int start_resume()
         return -1;
     }
     s_resume_offset = 0;
-    get_resume_t(version);
+    get_resume(version);
     return version;
 }
 

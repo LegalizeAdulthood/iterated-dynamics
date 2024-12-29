@@ -957,7 +957,7 @@ static void perform_work_list()
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         int version = start_resume();
-        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
+        get_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
         end_resume();
         if (version < 2)
         {
@@ -1213,7 +1213,7 @@ static void perform_work_list()
     {
         // interrupted, resumable
         alloc_resume(sizeof(g_work_list)+20, 2);
-        put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
+        put_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     }
     else
     {

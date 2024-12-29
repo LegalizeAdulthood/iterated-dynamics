@@ -267,7 +267,7 @@ int cellular()
     if (g_resuming && !g_cellular_next_screen && !s_last_screen_flag)
     {
         start_resume();
-        get_resume_t(start_row);
+        get_resume(start_row);
         end_resume();
         read_span(start_row, 0, g_i_x_stop, &s_cell_array[filled][0]);
     }
@@ -435,7 +435,7 @@ contloop:
         {
             abort_cellular(CELLULAR_DONE, 0);
             alloc_resume(10, 1);
-            put_resume_t(g_row);
+            put_resume(g_row);
             return -1;
         }
     }

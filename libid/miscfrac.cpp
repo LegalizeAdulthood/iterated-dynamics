@@ -99,7 +99,7 @@ int test()
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(startrow, startpass);
+        get_resume(startrow, startpass);
         end_resume();
     }
     if (test_start())   // assume it was stand-alone, doesn't want passes logic
@@ -120,7 +120,7 @@ int test()
                 {
                     test_end();
                     alloc_resume(20, 1);
-                    put_resume_t(g_row, passes);
+                    put_resume(g_row, passes);
                     return -1;
                 }
                 color = test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
@@ -763,11 +763,11 @@ int diffusion()
         start_resume();
         if (mode != 2)
         {
-            get_resume_t(xmax, xmin, ymax, ymin);
+            get_resume(xmax, xmin, ymax, ymin);
         }
         else
         {
-            get_resume_t(xmax, xmin, ymax, radius);
+            get_resume(xmax, xmin, ymax, radius);
         }
         end_resume();
     }
@@ -899,11 +899,11 @@ int diffusion()
                     alloc_resume(20, 1);
                     if (mode != 2)
                     {
-                        put_resume_t(xmax, xmin, ymax, ymin);
+                        put_resume(xmax, xmin, ymax, ymin);
                     }
                     else
                     {
-                        put_resume_t(xmax, xmin, ymax, radius);
+                        put_resume(xmax, xmin, ymax, radius);
                     }
 
                     s_plasma_check--;
@@ -1033,7 +1033,7 @@ int bifurcation()
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(x);
+        get_resume(x);
         end_resume();
     }
     bool resized = false;
@@ -1099,7 +1099,7 @@ int bifurcation()
         {
             s_verhulst_array.clear();
             alloc_resume(10, 1);
-            put_resume_t(x);
+            put_resume(x);
             return -1;
         }
 
@@ -1436,7 +1436,7 @@ int popcorn()   // subset of std engine
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(start_row);
+        get_resume(start_row);
         end_resume();
     }
     g_keyboard_check_interval = g_max_keyboard_check_interval;
@@ -1451,7 +1451,7 @@ int popcorn()   // subset of std engine
             if (standard_fractal() == -1) // interrupted
             {
                 alloc_resume(10, 1);
-                put_resume_t(g_row);
+                put_resume(g_row);
                 return -1;
             }
             g_reset_periodicity = false;

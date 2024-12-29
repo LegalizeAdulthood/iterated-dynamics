@@ -70,34 +70,34 @@ extern int                   g_resume_len;
 // panning (the worklist stuff), and are on their own for save/resume.
 //
 
-int put_resume(int len, ...);
-int get_resume(int len, ...);
+int put_resume_len(int len, ...);
+int get_resume_len(int len, ...);
 int alloc_resume(int max_size, int version);
 int start_resume();
 void end_resume();
 
 template <typename T>
-void get_resume_t(T &value)
+void get_resume(T &value)
 {
-    get_resume(sizeof(T), &value, 0);
+    get_resume_len(sizeof(T), &value, 0);
 }
 
 template <typename Head, typename... Tail>
-void get_resume_t(Head &head, Tail &...tail)
+void get_resume(Head &head, Tail &...tail)
 {
-    get_resume_t(head);
-    get_resume_t(tail...);
+    get_resume(head);
+    get_resume(tail...);
 }
 
 template <typename T>
-void put_resume_t(const T &value)
+void put_resume(const T &value)
 {
-    put_resume(sizeof(T), &value, 0);
+    put_resume_len(sizeof(T), &value, 0);
 }
 
 template <typename Head, typename... Tail>
-void put_resume_t(const Head &head, const Tail &...tail)
+void put_resume(const Head &head, const Tail &...tail)
 {
-    put_resume_t(head);
-    put_resume_t(tail...);
+    put_resume(head);
+    put_resume(tail...);
 }

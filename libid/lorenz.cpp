@@ -1500,7 +1500,7 @@ int orbit2d_float()
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit, g_color_iter);
+        get_resume(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit, g_color_iter);
         end_resume();
     }
 
@@ -1510,7 +1510,7 @@ int orbit2d_float()
         {
             driver_mute();
             alloc_resume(100, 1);
-            put_resume_t(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit, g_color_iter);
+            put_resume(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit, g_color_iter);
             ret = -1;
             break;
         }
@@ -1659,7 +1659,7 @@ int orbit2d_long()
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit_l, g_color_iter);
+        get_resume(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit_l, g_color_iter);
         end_resume();
     }
 
@@ -1670,7 +1670,7 @@ int orbit2d_long()
         {
             driver_mute();
             alloc_resume(100, 1);
-            put_resume_t(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit_l, g_color_iter);
+            put_resume(count, color, oldrow, oldcol, x, y, z, s_t, s_orbit_l, g_color_iter);
             ret = -1;
             break;
         }
@@ -2073,7 +2073,7 @@ int dynam2d_float()
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(count, color, oldrow, oldcol, x, y, xstep, ystep);
+        get_resume(count, color, oldrow, oldcol, x, y, xstep, ystep);
         end_resume();
     }
 
@@ -2084,7 +2084,7 @@ int dynam2d_float()
         {
             driver_mute();
             alloc_resume(100, 1);
-            put_resume_t(count, color, oldrow, oldcol, x, y, xstep, ystep);
+            put_resume(count, color, oldrow, oldcol, x, y, xstep, ystep);
             ret = -1;
             break;
         }
@@ -2279,7 +2279,7 @@ int plot_orbits2d_float()
     {
         driver_mute();
         alloc_resume(100, 1);
-        put_resume_t(s_o_color);
+        put_resume(s_o_color);
         return -1;
     }
 
@@ -2303,7 +2303,7 @@ int plot_orbits2d_float()
     if (g_resuming)
     {
         start_resume();
-        get_resume_t(s_o_color);
+        get_resume(s_o_color);
         end_resume();
     }
 
