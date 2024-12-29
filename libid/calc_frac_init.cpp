@@ -150,11 +150,8 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
         FractalType tofloat = g_cur_fractal_specific->tofloat;
-        if (tofloat == FractalType::NOFRACTAL)
-        {
-            g_bf_math = BFMathType::NONE;
-        }
-        else if (bit_clear(g_fractal_specific[+tofloat].flags, FractalFlags::BF_MATH))
+        if (tofloat == FractalType::NOFRACTAL ||
+            bit_clear(g_fractal_specific[+tofloat].flags, FractalFlags::BF_MATH))
         {
             g_bf_math = BFMathType::NONE;
         }
