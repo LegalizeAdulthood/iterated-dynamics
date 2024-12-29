@@ -1055,40 +1055,6 @@ bool bifurc_may_setup()
 
 // END Phil Wilson's Code (modified slightly by Kev Allen et. al. !)
 
-//****************** standalone engine for "popcorn" *******************
-
-int popcorn()   // subset of std engine
-{
-    int start_row;
-    start_row = 0;
-    if (g_resuming)
-    {
-        start_resume();
-        get_resume(start_row);
-        end_resume();
-    }
-    g_keyboard_check_interval = g_max_keyboard_check_interval;
-    g_plot = no_plot;
-    g_l_temp_sqr_x = 0;
-    g_temp_sqr_x = g_l_temp_sqr_x;
-    for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
-    {
-        g_reset_periodicity = true;
-        for (g_col = 0; g_col <= g_i_x_stop; g_col++)
-        {
-            if (standard_fractal() == -1) // interrupted
-            {
-                alloc_resume(10, 1);
-                put_resume(g_row);
-                return -1;
-            }
-            g_reset_periodicity = false;
-        }
-    }
-    g_calc_status = CalcStatus::COMPLETED;
-    return 0;
-}
-
 //****************** standalone engine for "lyapunov" ********************
 //** save_release behavior:                                             **
 //**    1730 & prior: ignores inside=, calcmode='1', (a,b)->(x,y)       **

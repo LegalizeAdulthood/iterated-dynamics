@@ -2,9 +2,6 @@
 //
 #include "popcorn.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "fpu087.h"
 #include "fractals.h"
@@ -12,8 +9,43 @@
 #include "id_data.h"
 #include "mpmath.h"
 #include "orbit.h"
+#include "resume.h"
 
 #include <cmath>
+
+// standalone engine for "popcorn"
+// subset of std engine
+int popcorn()
+{
+    int start_row;
+    start_row = 0;
+    if (g_resuming)
+    {
+        start_resume();
+        get_resume(start_row);
+        end_resume();
+    }
+    g_keyboard_check_interval = g_max_keyboard_check_interval;
+    g_plot = no_plot;
+    g_l_temp_sqr_x = 0;
+    g_temp_sqr_x = g_l_temp_sqr_x;
+    for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
+    {
+        g_reset_periodicity = true;
+        for (g_col = 0; g_col <= g_i_x_stop; g_col++)
+        {
+            if (standard_fractal() == -1) // interrupted
+            {
+                alloc_resume(10, 1);
+                put_resume(g_row);
+                return -1;
+            }
+            g_reset_periodicity = false;
+        }
+    }
+    g_calc_status = CalcStatus::COMPLETED;
+    return 0;
+}
 
 int popcorn_fractal_old()
 {

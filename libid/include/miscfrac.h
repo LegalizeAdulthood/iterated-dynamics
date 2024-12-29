@@ -22,4 +22,3 @@ int long_bifurc_verhulst_trig();
 bool lya_setup();
 int lyapunov();
 int plasma();
-int popcorn();
