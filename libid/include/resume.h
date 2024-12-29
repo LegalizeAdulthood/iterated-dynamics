@@ -75,3 +75,29 @@ int get_resume(int len, ...);
 int alloc_resume(int max_size, int version);
 int start_resume();
 void end_resume();
+
+template <typename T>
+void get_resume_t(T &value)
+{
+    get_resume(sizeof(T), &value, 0);
+}
+
+template <typename Head, typename... Tail>
+void get_resume_t(Head &head, Tail &...tail)
+{
+    get_resume_t(head);
+    get_resume_t(tail...);
+}
+
+template <typename T>
+void put_resume_t(const T &value)
+{
+    put_resume(sizeof(T), &value, 0);
+}
+
+template <typename Head, typename... Tail>
+void put_resume_t(const Head &head, const Tail &...tail)
+{
+    put_resume_t(head);
+    put_resume_t(tail...);
+}
