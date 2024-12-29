@@ -62,6 +62,13 @@
 #include <system_error>
 #include <vector>
 
+#ifdef LOW_BYTE_FIRST
+#define GET16(c, i)              (i) = *((U16*)(&(c)))
+#else
+#define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\
+                                ((*((unsigned char*)&(c)+1)) << 8)
+#endif
+
 namespace
 {
 

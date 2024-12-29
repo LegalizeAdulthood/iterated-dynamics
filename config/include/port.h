@@ -92,11 +92,6 @@ char *strupr(char *s);
 #if BYTE_ORDER == BIG_ENDIAN
 #define ACCESS_BY_BYTE
 #endif
-#ifdef LOW_BYTE_FIRST
-#define GET16(c, i)              (i) = *((U16*)(&(c)))
-#else
-#define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\
-                                ((*((unsigned char*)&(c)+1)) << 8)
-#endif
+
 // MSVC on x64 doesn't have a distinct type for long double vs. double
 using LDBL = long double;
