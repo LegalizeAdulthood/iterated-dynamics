@@ -45,7 +45,7 @@ void TestResume::SetUp()
     Test::SetUp();
     m_data.datum1 = 123;
     m_data.datum2 = 64;
-    m_data.datum3 = 65536;
+    m_data.datum3 = 65536U;
     alloc_resume(sizeof(ResumeData) + 20, 3);
 }
 
