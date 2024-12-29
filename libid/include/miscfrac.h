@@ -23,4 +23,3 @@ bool lya_setup();
 int lyapunov();
 int plasma();
 int popcorn();
-int test();

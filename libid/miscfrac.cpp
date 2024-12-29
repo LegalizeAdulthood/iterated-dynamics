@@ -34,7 +34,6 @@ Miscellaneous fractal-specific code
 #include "spindac.h"
 #include "sqr.h"
 #include "stop_msg.h"
-#include "testpt.h"
 #include "trig_fns.h"
 #include "video.h"
 
@@ -89,65 +88,6 @@ static int s_lya_length{}, s_lya_seed_ok{};
 static int s_lya_rxy[34]{};
 
 using PlotFn = void(*)(int, int, int);
-
-//**************** standalone engine for "test" *******************
-
-int test()
-{
-    int startpass = 0;
-    int startrow = startpass;
-    if (g_resuming)
-    {
-        start_resume();
-        get_resume(startrow, startpass);
-        end_resume();
-    }
-    if (test_start())   // assume it was stand-alone, doesn't want passes logic
-    {
-        return 0;
-    }
-    int numpasses = (g_std_calc_mode == '1') ? 0 : 1;
-    for (int passes = startpass; passes <= numpasses ; passes++)
-    {
-        for (g_row = startrow; g_row <= g_i_y_stop; g_row = g_row+1+numpasses)
-        {
-            for (g_col = 0; g_col <= g_i_x_stop; g_col++)       // look at each point on screen
-            {
-                int color;
-                g_init.x = g_dx_pixel();
-                g_init.y = g_dy_pixel();
-                if (driver_key_pressed())
-                {
-                    test_end();
-                    alloc_resume(20, 1);
-                    put_resume(g_row, passes);
-                    return -1;
-                }
-                color = test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
-                if (color >= g_colors)
-                {
-                    // avoid trouble if color is 0
-                    if (g_colors < 16)
-                    {
-                        color &= g_and_color;
-                    }
-                    else
-                    {
-                        color = ((color-1) % g_and_color) + 1; // skip color zero
-                    }
-                }
-                (*g_plot)(g_col, g_row, color);
-                if (numpasses && (passes == 0))
-                {
-                    (*g_plot)(g_col, g_row+1, color);
-                }
-            }
-        }
-        startrow = passes + 1;
-    }
-    test_end();
-    return 0;
-}
 
 //**************** standalone engine for "plasma" *******************
 
