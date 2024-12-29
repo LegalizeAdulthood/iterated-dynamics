@@ -956,11 +956,10 @@ static void perform_work_list()
     g_work_list[0].pass = 0;
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
-        int vsn;
-        vsn = start_resume();
+        int version = start_resume();
         get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
         end_resume();
-        if (vsn < 2)
+        if (version < 2)
         {
             g_xx_begin = 0;
         }
