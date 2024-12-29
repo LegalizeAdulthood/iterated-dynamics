@@ -31,8 +31,8 @@
 
 enum
 {
-    FUDGEFACTOR = 29, // fudge all values up by 2**this
-    FUDGEFACTOR2 = 24 // (or maybe this)
+    FUDGE_FACTOR = 29, // fudge all values up by 2**this
+    FUDGE_FACTOR2 = 24 // (or maybe this)
 };
 
 static long   fudge_to_long(double d);
@@ -375,7 +375,7 @@ init_restart:
     }
 
     // set up bitshift for integer math
-    g_bit_shift = FUDGEFACTOR2; // by default, the smaller shift
+    g_bit_shift = FUDGE_FACTOR2; // by default, the smaller shift
     if (g_integer_fractal > 1)    // use specific override from table
     {
         g_bit_shift = g_integer_fractal;
@@ -411,7 +411,7 @@ init_restart:
             && g_close_proximity <= 2.0             // and g_close_proximity not too large
             && g_bail_out_test == Bailout::MOD)    // and bailout test = mod
         {
-            g_bit_shift = FUDGEFACTOR;                     // use the larger bitshift
+            g_bit_shift = FUDGE_FACTOR;                     // use the larger bitshift
         }
     }
 
