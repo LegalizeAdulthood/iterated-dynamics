@@ -7,48 +7,29 @@ Miscellaneous fractal-specific code
 */
 #include "miscfrac.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
-#include "check_key.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine_timer.h"
 #include "fixed_pt.h"
-#include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "id.h"
 #include "id_data.h"
-#include "loadmap.h"
 #include "mpmath.h"
 #include "newton.h"
-#include "not_disk_msg.h"
-#include "parser.h"
 #include "pixel_grid.h"
 #include "resume.h"
-#include "rotate.h"
-#include "spindac.h"
-#include "sqr.h"
 #include "stop_msg.h"
-#include "trig_fns.h"
-#include "video.h"
 
-#include <algorithm>
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <new>
 #include <vector>
 
 // routines in this module
 
-static void set_plasma_palette();
-static U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
-static void sub_divide(int x1, int y1, int x2, int y2);
 static void verhulst();
 static void bif_period_init();
 static bool bif_periodic(long time);
@@ -62,7 +43,6 @@ enum
 
 constexpr double SEED{0.66}; // starting value for population
 
-static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
 static std::vector<int> s_verhulst_array;
 static unsigned long s_filter_cycles{};
 static bool s_half_time_check{};
@@ -136,7 +116,7 @@ int bifurcation()
         s_verhulst_array.resize(g_i_y_stop + 1);
         resized = true;
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
     }
     if (!resized)
