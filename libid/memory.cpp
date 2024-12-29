@@ -144,7 +144,7 @@ bool MemoryHandle::from_memory(BYTE const *buffer, U16 size, long count, long of
         while (tomove > DISK_WRITE_LEN)
         {
             memcpy(diskbuf, buffer, (U16) DISK_WRITE_LEN);
-            numwritten = (U16) write1(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            numwritten = (U16) std::fwrite(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
             if (numwritten != 1)
             {
                 which_disk_error(3);
@@ -154,7 +154,7 @@ bool MemoryHandle::from_memory(BYTE const *buffer, U16 size, long count, long of
             buffer += DISK_WRITE_LEN;
         }
         memcpy(diskbuf, buffer, (U16) tomove);
-        numwritten = (U16) write1(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
+        numwritten = (U16) std::fwrite(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
         if (numwritten != 1)
         {
             which_disk_error(3);
@@ -282,7 +282,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
         fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (tomove > DISK_WRITE_LEN)
         {
-            numwritten = (U16) write1(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            numwritten = (U16) std::fwrite(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
             if (numwritten != 1)
             {
                 which_disk_error(2);
@@ -290,7 +290,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
             }
             tomove -= DISK_WRITE_LEN;
         }
-        numwritten = (U16) write1(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
+        numwritten = (U16) std::fwrite(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
         if (numwritten != 1)
         {
             which_disk_error(2);

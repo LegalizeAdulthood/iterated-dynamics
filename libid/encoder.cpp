@@ -356,16 +356,16 @@ bool encoder()
         rowlimit <<= 1;
         width <<= 1;
     }
-    if (write2(&width, 2, 1, g_outfile) != 1)
+    if (std::fwrite(&width, 2, 1, g_outfile) != 1)
     {
         goto oops;                // screen descriptor
     }
-    if (write2(&g_logical_screen_y_dots, 2, 1, g_outfile) != 1)
+    if (std::fwrite(&g_logical_screen_y_dots, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
     x = (BYTE)(128 + ((6 - 1) << 4) + (bitsperpixel - 1));      // color resolution == 6 bits worth
-    if (write1(&x, 1, 1, g_outfile) != 1)
+    if (std::fwrite(&x, 1, 1, g_outfile) != 1)
     {
         goto oops;
     }
@@ -475,30 +475,30 @@ bool encoder()
         goto oops;                // Image Descriptor
     }
     i = 0;
-    if (write2(&i, 2, 1, g_outfile) != 1)
+    if (std::fwrite(&i, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
-    if (write2(&i, 2, 1, g_outfile) != 1)
+    if (std::fwrite(&i, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
-    if (write2(&width, 2, 1, g_outfile) != 1)
+    if (std::fwrite(&width, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
-    if (write2(&g_logical_screen_y_dots, 2, 1, g_outfile) != 1)
+    if (std::fwrite(&g_logical_screen_y_dots, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
-    if (write1(&i, 1, 1, g_outfile) != 1)
+    if (std::fwrite(&i, 1, 1, g_outfile) != 1)
     {
         goto oops;
     }
 
     bitsperpixel = (BYTE)(s_start_bits - 1);
 
-    if (write1(&bitsperpixel, 1, 1, g_outfile) != 1)
+    if (std::fwrite(&bitsperpixel, 1, 1, g_outfile) != 1)
     {
         goto oops;
     }

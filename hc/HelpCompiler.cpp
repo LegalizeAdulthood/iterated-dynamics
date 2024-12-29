@@ -1338,7 +1338,7 @@ void HelpCompiler::add_hlp_to_exe()
     {
         close(hlp);
         close(exe);
-        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed write2");
+        throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed std::fwrite");
     }
 
     off_t offset = lseek(exe, 0L, SEEK_CUR);
