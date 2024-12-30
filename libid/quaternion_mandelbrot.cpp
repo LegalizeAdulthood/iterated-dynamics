@@ -2,9 +2,6 @@
 //
 #include "quaternion_mandelbrot.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "fractals.h"
 #include "id_data.h"
