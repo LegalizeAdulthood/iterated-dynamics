@@ -2,8 +2,6 @@
 //
 #include "has_ext.h"
 
-#include "port.h"
-
 #include "id.h"
 #include "split_path.h"
 
