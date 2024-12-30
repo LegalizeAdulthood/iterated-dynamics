@@ -2,9 +2,7 @@
 //
 #include "history.h"
 
-#include "port.h"
-#include "prototyp.h"
-
+#include "3d.h"
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -15,7 +13,6 @@
 #include "jb.h"
 #include "line3d.h"
 #include "lorenz.h"
-#include "merge_path_names.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "resume.h"
@@ -26,7 +23,6 @@
 #include "version.h"
 
 #include <cstring>
-#include <ctime>
 #include <string>
 #include <vector>
 
