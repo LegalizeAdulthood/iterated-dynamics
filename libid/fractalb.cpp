@@ -13,20 +13,17 @@
 #include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "frasetup.h"
 #include "goodbye.h"
 #include "id.h"
 #include "id_data.h"
-#include "port.h"
-#include "prototyp.h"
 #include "stop_msg.h"
 #include "type_has_param.h"
 
-#include <array>
+#include <array> // std::size
+#include <cmath>
 #include <cstdio>
 #include <cstring>
-#include <string>
 
 BFMathType g_bf_math{};
 
