@@ -1,10 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-/*
-
-Miscellaneous fractal-specific code
-
-*/
 #include "plasma.h"
 
 #include "calcfrac.h"
@@ -14,12 +9,15 @@ Miscellaneous fractal-specific code
 #include "drivers.h"
 #include "fractals.h"
 #include "id_data.h"
-#include "port.h"
 #include "rand15.h"
 #include "rotate.h"
+#include "sized_types.h"
 #include "spindac.h"
 #include "stop_msg.h"
 #include "video.h"
+
+#include <algorithm>
+#include <cstdlib>
 
 // routines in this module
 
