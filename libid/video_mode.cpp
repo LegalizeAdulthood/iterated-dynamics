@@ -2,9 +2,6 @@
 //
 #include "video_mode.h"
 
-#include "port.h"
-
-#include "id.h"
 #include "id_keys.h"
 
 #include <cstdio>
