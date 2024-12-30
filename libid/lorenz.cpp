@@ -5,9 +5,6 @@
    generators - IFS and LORENZ3D, along with code to generate
    red/blue 3D images.
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "lorenz.h"
 
 #include "3d.h"
@@ -15,9 +12,11 @@
 #include "check_key.h"
 #include "check_write_file.h"
 #include "cmdfiles.h"
+#include "cmplx.h"
 #include "debug_flags.h"
 #include "drivers.h"
 #include "encoder.h"
+#include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
@@ -40,6 +39,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <new>
 #include <vector>
 
 template <typename T>
