@@ -2,12 +2,9 @@
 //
 #include "fn_or_fn.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
+#include "calcfrac.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "get_julia_attractor.h"
 #include "mpmath.h"
 #include "trig_fns.h"
