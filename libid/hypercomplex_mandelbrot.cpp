@@ -2,14 +2,10 @@
 //
 #include "hypercomplex_mandelbrot.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmplx.h"
 #include "fractals.h"
 #include "hcmplx.h"
-#include "sqr.h"
 
 int hyper_complex_fp_fractal()
 {
