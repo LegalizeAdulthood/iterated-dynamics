@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // some hyper complex functions
-#include "port.h"
-#include "prototyp.h"
-
 #include "hcmplx.h"
 
 #include "mpmath.h"
