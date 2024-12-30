@@ -2,23 +2,19 @@
 //
 #include "stop_msg.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "dir_file.h"
-#include "do_pause.h"
 #include "drivers.h"
 #include "get_key_no_help.h"
-#include "id_data.h"
 #include "id_keys.h"
 #include "mouse.h"
-#include "os.h"
 #include "text_screen.h"
 #include "value_saver.h"
+#include "wait_until.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #ifdef XFRACT
 #include <unistd.h>
