@@ -2,12 +2,8 @@
 //
 #include "load_params.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "find_extra_param.h"
 #include "fractalp.h"
-#include "id.h"
 #include "id_data.h"
 
 void load_params(FractalType fractype)
