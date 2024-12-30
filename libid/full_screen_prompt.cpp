@@ -2,9 +2,6 @@
 //
 #include "full_screen_prompt.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "double_to_string.h"
 #include "drivers.h"
@@ -12,22 +9,20 @@
 #include "fractype.h"
 #include "help_title.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "input_field.h"
 #include "load_entry_text.h"
 #include "mouse.h"
-#include "os.h"
 #include "put_string_center.h"
 #include "round_float_double.h"
 #include "text_screen.h"
 #include "value_saver.h"
 
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 static int prompt_check_key(int curkey);
 static int prompt_check_key_scroll(int curkey);
