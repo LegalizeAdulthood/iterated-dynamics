@@ -2,18 +2,15 @@
 //
 #include "get_toggles2.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "full_screen_prompt.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "id_data.h"
 
+#include <array> // std::size
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
