@@ -5,6 +5,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "expand_dirname.h"
 #include "find_file.h"
 #include "find_path.h"

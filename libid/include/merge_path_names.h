@@ -2,7 +2,9 @@
 //
 #pragma once
 
-#include "cmdfiles.h"
+#include <string>
+
+enum class CmdFile;
 
 // copies the proposed new filename to the fullpath variable
 // does not copy directories for PAR files

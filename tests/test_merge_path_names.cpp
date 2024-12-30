@@ -5,6 +5,8 @@
 #include "current_path_saver.h"
 #include "test_data.h"
 
+#include <cmdfiles.h>
+
 #include <gtest/gtest.h>
 
 #include <cstring>
