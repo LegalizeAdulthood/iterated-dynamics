@@ -1,35 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
+#include "helpcom.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "engine_timer.h"
 #include "find_path.h"
 #include "help_title.h"
-#include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_io.h"
 #include "id_keys.h"
 #include "mouse.h"
-#include "os.h"
+#include "port.h"
 #include "put_string_center.h"
 #include "save_file.h"
 #include "stop_msg.h"
 #include "text_screen.h"
 #include "value_saver.h"
-#include "version.h"
 
 #include <fcntl.h>
 
-#include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdio>
-#include <cstring>
 #include <ctime>
 #include <filesystem>
+#include <new>
 #include <system_error>
 #include <vector>
 
