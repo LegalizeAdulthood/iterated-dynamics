@@ -2,14 +2,10 @@
 //
 #include "sierpinski_gasket.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "fixed_pt.h"
 #include "fractals.h"
-#include "id_data.h"
 
 bool sierpinski_setup()
 {
