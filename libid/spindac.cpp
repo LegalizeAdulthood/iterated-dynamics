@@ -2,9 +2,6 @@
 //
 #include "spindac.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
