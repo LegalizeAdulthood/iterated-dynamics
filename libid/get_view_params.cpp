@@ -2,14 +2,10 @@
 //
 #include "get_view_params.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "full_screen_prompt.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "value_saver.h"
