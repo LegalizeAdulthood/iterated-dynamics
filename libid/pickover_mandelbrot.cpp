@@ -14,6 +14,7 @@
 #include "fractalb.h"
 #include "fractalp.h"
 #include "frasetup.h"
+#include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "trig_fns.h"

@@ -3,13 +3,11 @@
 #pragma once
 
 #include "calcfrac.h"
-#include "cmplx.h"
 #include "fixed_pt.h"
 #include "fpu087.h"
 #include "fractals.h"
-#include "id_data.h"
 #include "parser.h"
-#include "sqr.h"
+#include "port.h"
 #include "trig_fns.h"
 
 #include <cstdint>
