@@ -3,16 +3,12 @@
 /*
         This module consists only of the fractalspecific structure
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "fractalp.h"
 
 #include "ant.h"
 #include "barnsley.h"
 #include "bifurcation.h"
 #include "burning_ship.h"
-#include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"
 #include "diffusion.h"
@@ -21,13 +17,10 @@
 #include "fn_or_fn.h"
 #include "fractalb.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "frasetup.h"
 #include "frothy_basin.h"
 #include "halley.h"
-#include "helpdefs.h"
 #include "hypercomplex_mandelbrot.h"
-#include "id.h"
 #include "jb.h"
 #include "lambda_fn.h"
 #include "lorenz.h"
@@ -35,7 +28,6 @@
 #include "lyapunov.h"
 #include "magnet.h"
 #include "mandelbrot_mix.h"
-#include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"
 #include "peterson_variations.h"
