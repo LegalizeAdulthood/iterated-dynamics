@@ -2,17 +2,14 @@
 //
 #include "merge_path_names.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "expand_dirname.h"
 #include "find_file.h"
-#include "find_path.h"
 #include "fix_dirname.h"
 #include "id.h"
 #include "is_directory.h"
 #include "make_path.h"
+#include "port.h"
 #include "split_path.h"
 
 #include <cstring>
