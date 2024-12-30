@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "port.h"
+
 #include <string>
 
 extern BYTE                  g_dac_box[256][3];
