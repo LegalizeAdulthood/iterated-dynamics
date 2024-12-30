@@ -2599,7 +2599,7 @@ static int ifs2d()
         localifs.resize(g_num_affine_transforms*NUM_IFS_PARAMS);
         resized = true;
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
     }
     if (!resized)
@@ -2715,7 +2715,7 @@ static int ifs3d_long()
     {
         localifs.resize(g_num_affine_transforms*NUM_IFS_3D_PARAMS);
     }
-    catch (std::bad_alloc const &)
+    catch (const std::bad_alloc &)
     {
         stop_msg("Insufficient memory for IFS");
         return -1;
