@@ -18,22 +18,13 @@
      Southington, CT 06489
      (203) 276-9721
 */
-#include "port.h"
-#include "prototyp.h"
+#include "mpmath_c.h"
 
-#include "mpmath.h"
-
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"
-#include "fractals.h"
 #include "id_data.h"
-#include "jiim.h"
 #include "loadfile.h"
-#include "mpmath_c.h"
-#include "parser.h"
 
-#include <algorithm>
 #include <cassert>
 #include <cmath>
 
