@@ -2,13 +2,9 @@
 //
 #include "thinking.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "help_title.h"
-#include "os.h"
 #include "text_screen.h"
 
 #include <cstring>
