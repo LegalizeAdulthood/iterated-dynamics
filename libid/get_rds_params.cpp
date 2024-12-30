@@ -2,9 +2,6 @@
 //
 #include "get_rds_params.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "drivers.h"
 #include "full_screen_prompt.h"
 #include "get_a_filename.h"
