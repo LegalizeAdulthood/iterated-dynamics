@@ -2,37 +2,20 @@
 //
 #include "get_fract_type.h"
 
-/*
-        Various routines that prompt for things.
-*/
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
-#include "calcfrac.h"
-#include "calc_frac_init.h"
 #include "cmdfiles.h"
-#include "drivers.h"
-#include "find_extra_param.h"
+#include "file_item.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "full_screen_choice.h"
 #include "full_screen_prompt.h"
 #include "get_corners.h"
-#include "file_item.h"
-#include "get_key_no_help.h"
 #include "helpcom.h"
-#include "helpdefs.h"
-#include "help_title.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "jb.h"
 #include "load_entry_text.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "lsys_fns.h"
-#include "os.h"
 #include "param_not_used.h"
 #include "parser.h"
 #include "set_default_parms.h"
@@ -41,9 +24,8 @@
 #include "trig_fns.h"
 #include "type_has_param.h"
 #include "value_saver.h"
-#include "zoom.h"
 
-#include <cassert>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
