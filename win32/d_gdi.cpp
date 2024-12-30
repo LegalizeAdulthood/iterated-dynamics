@@ -4,31 +4,22 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "port.h"
-
-#include "calcfrac.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
-#include "drivers.h"
-#include "id_data.h"
-#include "os.h"
-#include "rotate.h"
-#include "spindac.h"
-#include "video.h"
-#include "video_mode.h"
-
 #include "d_win32.h"
 #include "frame.h"
 #include "instance.h"
 #include "ods.h"
 #include "plot.h"
-#include "win_text.h"
 
-#include "win_defines.h"
-#include <Windows.h>
+#include "calcfrac.h"
+#include "cmdfiles.h"
+#include "diskvid.h"
+#include "id_data.h"
+#include "rotate.h"
+#include "spindac.h"
+#include "video.h"
+#include "video_mode.h"
 
-#include <array>
-#include <cassert>
+#include <array> // for std::size
 
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1
