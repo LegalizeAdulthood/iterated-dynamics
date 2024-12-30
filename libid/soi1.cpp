@@ -11,25 +11,19 @@
  * <http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
-#include "port.h"
-#include "prototyp.h"
-
-#include "soi.h"
-
 #include "calcfrac.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "id_data.h"
-#include "sqr.h"
+#include "soi.h"
 #include "stack_avail.h"
 
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <iterator>
 
 enum
 {
