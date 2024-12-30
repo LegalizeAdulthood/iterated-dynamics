@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "port.h"
+
 #include <string>
 
 extern int                   g_auto_stereo_depth;
