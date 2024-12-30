@@ -132,7 +132,7 @@ enum class CmdFile
 
 enum class CmdArgFlags
 {
-    ERROR            = -1,
+    BAD_ARG          = -1,
     NONE             = 0,
     FRACTAL_PARAM    = 1,
     PARAM_3D         = 2,

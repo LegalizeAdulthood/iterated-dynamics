@@ -645,7 +645,7 @@ static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
             break;
         }
         const CmdArgFlags i = cmd_arg(cmdbuf, mode);
-        if (i == CmdArgFlags::ERROR)
+        if (i == CmdArgFlags::BAD_ARG)
         {
             break;
         }
@@ -850,7 +850,7 @@ Command::Command(char *curarg, CmdFile a_mode) :
     if (j > 20)
     {
         arg_error(curarg); // keyword too long
-        status = CmdArgFlags::ERROR;
+        status = CmdArgFlags::BAD_ARG;
         return;
     }
     variable = std::string(curarg, j);
@@ -972,7 +972,7 @@ Command::Command(char *curarg, CmdFile a_mode) :
 CmdArgFlags Command::bad_arg() const
 {
     arg_error(arg);
-    return CmdArgFlags::ERROR;
+    return CmdArgFlags::BAD_ARG;
 }
 
 struct CommandHandler
@@ -1688,13 +1688,13 @@ static CmdArgFlags parse_colors(char const *value)
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);
     return CmdArgFlags::NONE;
 badcolor:
-    return CmdArgFlags::ERROR;
+    return CmdArgFlags::BAD_ARG;
 }
 
 // colors=, set current colors
 static CmdArgFlags cmd_colors(const Command &cmd)
 {
-    if (parse_colors(cmd.value) == CmdArgFlags::ERROR)
+    if (parse_colors(cmd.value) == CmdArgFlags::BAD_ARG)
     {
         return cmd.bad_arg();
     }
@@ -3021,7 +3021,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     if (!resized)
     {
         stop_msg(StopMsgFlags::NO_STACK, "Insufficient memory for ranges=");
-        return CmdArgFlags::ERROR;
+        return CmdArgFlags::BAD_ARG;
     }
     g_iteration_ranges_len = entries;
     for (int i2 = 0; i2 < g_iteration_ranges_len; ++i2)
