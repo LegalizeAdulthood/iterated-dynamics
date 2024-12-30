@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "intro.h"
-
 /*
  * intro screen (authors & credits)
  */
-#include "port.h"
-#include "prototyp.h"
+#include "intro.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
