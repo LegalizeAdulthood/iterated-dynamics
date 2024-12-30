@@ -1,23 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
+#include "plot.h"
 
-#include "id.h"
+#include "frame.h"
+
 #include "id_data.h"
 #include "plot3d.h"
 #include "rotate.h"
 
-#include "frame.h"
-#include "plot.h"
-#include "ods.h"
-
-#include "win_defines.h"
 #include <crtdbg.h>
-#include <Windows.h>
 #include <windowsx.h>
 
-#include <cassert>
-#include <cstdlib>
 #include <cstring>
 
 #define PLOT_TIMER_ID 1

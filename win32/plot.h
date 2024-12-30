@@ -2,6 +2,12 @@
 //
 #pragma once
 
+#include "port.h"
+
+#include "win_defines.h"
+#include <Windows.h>
+
+#include <string>
 #include <vector>
 
 struct Plot
