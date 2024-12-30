@@ -2,11 +2,7 @@
 //
 #include "get_corners.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calc_frac_init.h"
-#include "calcfrac.h"
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
@@ -17,6 +13,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "lorenz.h"
+#include "port.h"
 #include "sticky_orbits.h"
 #include "value_saver.h"
 #include "zoom.h"
