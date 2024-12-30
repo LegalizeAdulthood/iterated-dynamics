@@ -5,4 +5,6 @@
 #ifdef XFRACT
 #include "unixprot.h"
 #else
+// for stricmp, strnicmp
+#include <string.h>
 #endif
