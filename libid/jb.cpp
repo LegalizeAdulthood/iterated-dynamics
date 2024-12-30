@@ -1,12 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "jb.h"
 
-#include "calcfrac.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
 #include "fixed_pt.h"
@@ -15,7 +10,6 @@
 #include "fractype.h"
 #include "get_3d_params.h"
 #include "get_julia_attractor.h"
-#include "helpdefs.h"
 #include "id_data.h"
 #include "loadmap.h"
 #include "pickover_mandelbrot.h"
