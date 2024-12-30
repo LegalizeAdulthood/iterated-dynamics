@@ -2,10 +2,6 @@
 //
 #include "get_key_no_help.h"
 
-#include "port.h"
-
-#include "id.h"
-
 #include "drivers.h"
 #include "id_keys.h"
 
