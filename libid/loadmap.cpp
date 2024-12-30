@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "loadmap.h"
 
 #include "cmdfiles.h"
@@ -10,10 +7,11 @@
 #include "has_ext.h"
 #include "id.h"
 #include "merge_path_names.h"
+#include "port.h"
 #include "rotate.h"
 #include "stop_msg.h"
 
-#include <array>
+#include <array> // std::size
 #include <cstdio>
 #include <cstring>
 
