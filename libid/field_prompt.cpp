@@ -2,14 +2,10 @@
 //
 #include "field_prompt.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "help_title.h"
 #include "input_field.h"
-#include "os.h"
 #include "put_string_center.h"
 #include "text_screen.h"
 
