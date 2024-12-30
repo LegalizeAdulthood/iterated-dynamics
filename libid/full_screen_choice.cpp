@@ -2,18 +2,12 @@
 //
 #include "full_screen_choice.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "ends_with_slash.h"
 #include "help_title.h"
-#include "id.h"
-#include "id_data.h"
 #include "id_keys.h"
 #include "mouse.h"
-#include "os.h"
 #include "put_string_center.h"
 #include "string_case_compare.h"
 #include "text_screen.h"
@@ -21,7 +15,6 @@
 
 #include <cctype>
 #include <cstring>
-#include <string>
 
 std::string const g_speed_prompt{"Speed key string"};
 
