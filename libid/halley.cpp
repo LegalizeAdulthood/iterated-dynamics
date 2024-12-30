@@ -2,14 +2,10 @@
 //
 #include "halley.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fractalp.h"
-#include "fractals.h"
 #include "fractype.h"
+#include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "newton.h"
