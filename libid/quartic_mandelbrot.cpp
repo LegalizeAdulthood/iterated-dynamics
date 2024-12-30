@@ -2,9 +2,6 @@
 //
 #include "quartic_mandelbrot.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "fixed_pt.h"
