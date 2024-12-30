@@ -2,9 +2,6 @@
 //
 #include "unity.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "fixed_pt.h"
 #include "fractals.h"
