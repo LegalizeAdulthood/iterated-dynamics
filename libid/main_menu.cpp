@@ -2,16 +2,14 @@
 //
 #include "main_menu.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractalp.h"
+#include "fractype.h"
 #include "full_screen_choice.h"
 #include "goodbye.h"
 #include "help_title.h"
-#include "id.h"
+#include "helpcom.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "put_string_center.h"
@@ -21,7 +19,6 @@
 #include "video_mode.h"
 
 #include <cstring>
-#include <helpcom.h>
 
 enum
 {
