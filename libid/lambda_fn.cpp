@@ -2,18 +2,15 @@
 //
 #include "lambda_fn.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "frasetup.h"
 #include "get_julia_attractor.h"
 #include "mpmath.h"
-#include "trig_fns.h"
 
 #include <cmath>
 
