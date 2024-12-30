@@ -2,6 +2,7 @@
 //
 #include <cmdfiles_test.h>
 
+#include "MockDriver.h"
 #include "current_path_saver.h"
 #include "test_data.h"
 #include "value_unchanged.h"
@@ -186,6 +187,8 @@ protected:
     StrictMock<MockFunction<cmd_files_test::PrintDoc>> m_print_document;
     cmd_files_test::GoodbyeFn m_prev_goodbye;
     cmd_files_test::PrintDocFn m_prev_print_document;
+    Driver *m_prev_driver{};
+    MockDriver m_driver;
 };
 
 void TestParameterCommandMakeDoc::SetUp()
@@ -195,9 +198,18 @@ void TestParameterCommandMakeDoc::SetUp()
     m_prev_print_document = cmd_files_test::get_print_document();
     cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
     cmd_files_test::set_print_document(m_print_document.AsStdFunction());
+    m_prev_driver = g_driver;
+    g_driver = &m_driver;
+    EXPECT_CALL(m_driver, set_clear());
+    EXPECT_CALL(m_driver, put_string(0, 0, _, HasSubstr("Iterated Dynamics")));
+    EXPECT_CALL(m_driver, set_attr(1, 0, C_DVID_BKGRD, 80*24));
+    EXPECT_CALL(m_driver, set_attr(_, 11, C_DVID_LO, 57)).Times(12);
+    EXPECT_CALL(m_driver, put_string(8, 15, C_DVID_HI, HasSubstr("Creating Help Document")));
+    EXPECT_CALL(m_driver, put_string(12, 15, C_DVID_LO, HasSubstr("Status:")));
 }
 void TestParameterCommandMakeDoc::TearDown()
 {
+    g_driver = m_prev_driver;
     cmd_files_test::set_print_document(m_prev_print_document);
     cmd_files_test::set_goodbye(m_prev_goodbye);
     TestParameterCommand::TearDown();
@@ -205,6 +217,7 @@ void TestParameterCommandMakeDoc::TearDown()
 
 TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
 {
+    EXPECT_CALL(m_driver, put_string(10, 15, C_DVID_LO, HasSubstr("Save name: id.txt")));
     EXPECT_CALL(m_print_document, Call(StrEq("id.txt"), NotNull()));
     EXPECT_CALL(m_goodbye, Call());
 
@@ -215,6 +228,7 @@ TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
 
 TEST_F(TestParameterCommandMakeDoc, makeDocCustomFile)
 {
+    EXPECT_CALL(m_driver, put_string(10, 15, C_DVID_LO, HasSubstr("Save name: foo.txt")));
     EXPECT_CALL(m_print_document, Call(StrEq("foo.txt"), NotNull()));
     EXPECT_CALL(m_goodbye, Call());
 

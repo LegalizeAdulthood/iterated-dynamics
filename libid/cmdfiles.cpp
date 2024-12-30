@@ -30,6 +30,7 @@
 #include "get_prec_big_float.h"
 #include "goodbye.h"
 #include "has_ext.h"
+#include "help_title.h"
 #include "helpcom.h"
 #include "history.h"
 #include "id.h"
@@ -1049,7 +1050,25 @@ static CmdArgFlags cmd_fpu(const Command &cmd)
 
 static CmdArgFlags cmd_make_doc(const Command &cmd)
 {
-    cmd_files_test::s_print_document(*cmd.value ? cmd.value : "id.txt", make_doc_msg_func);
+    enum
+    {
+        BOX_ROW = 6,
+        BOX_COL = 11,
+        BOX_WIDTH = 57,
+        BOX_DEPTH = 12,
+    };
+    help_title();
+    driver_set_attr(1, 0, C_DVID_BKGRD, 24 * 80); // init rest to background
+                                                  // init box
+    for (int i = 0; i < BOX_DEPTH; ++i)
+    {
+        driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);
+    }
+    driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "Creating Help Document");
+    std::string file{*cmd.value ? cmd.value : "id.txt"};
+    driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Save name: " + file);
+    driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Status:");
+    cmd_files_test::s_print_document(file.c_str(), make_doc_msg_func);
     cmd_files_test::s_goodbye();
     return CmdArgFlags::GOODBYE;
 }

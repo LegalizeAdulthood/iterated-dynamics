@@ -1314,24 +1314,25 @@ static bool print_doc_msg_func(int pnum, int num_pages)
 
 bool make_doc_msg_func(int pnum, int num_pages)
 {
-    char buffer[80] = "";
-    bool result = false;
-
+    enum
+    {
+        BOX_ROW = 6,
+        BOX_COL = 11,
+    };
     if (pnum >= 0)
     {
-        std::snprintf(buffer, std::size(buffer), "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
-        if (pnum == num_pages)
-        {
-            std::strcat(buffer, "\n");
-        }
-        result = true;
+        char buffer[80] = "";
+        std::snprintf(buffer, std::size(buffer), "completed %d%%", (int)((100.0 / num_pages) * pnum));
+        driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buffer);
+        driver_key_pressed(); // pumps messages to force screen update
+        return true;
     }
-    else if (pnum == -2)
+    if (pnum == -2)
     {
-        std::snprintf(buffer, std::size(buffer), "\n*** aborted\n");
+        stop_msg("*** aborted");
+        return false;
     }
-    std::printf("%s", buffer);
-    return result;
+    return false;
 }
 
 void print_document(char const *outfname, bool (*msg_func)(int, int))
