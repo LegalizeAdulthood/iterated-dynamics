@@ -40,28 +40,20 @@ to the 'fractalspecific' structure, writing (or re-using one of the existing)
 an appropriate setup, per_image, per_pixel, and orbit routines.
 
 --------------------------------------------------------------------   */
-#include "port.h"
-#include "prototyp.h"
-
 #include "fractals.h"
 
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fpu087.h"
 #include "fractype.h"
-#include "hcmplx.h"
-#include "id_data.h"
 #include "magnet.h"
+#include "mpmath.h"
 #include "mpmath_c.h"
 #include "newton.h"
-#include "parser.h"
 #include "pixel_grid.h"
 
-#include <cfloat>
 #include <cmath>
-#include <cstdlib>
 
 inline void conjugate(DComplex &pz)
 {
@@ -585,7 +577,7 @@ int mandel_fp_per_pixel()
         break;
     case FractalType::MAGNET2M:
         float_pre_calc_magnet2();
-    case FractalType::MAGNET1M:
+    case FractalType::MAGNET1M:  // NOLINT(clang-diagnostic-implicit-fallthrough)
         g_old_z.y = 0.0;       // Critical Val Zero both, but neither
         g_old_z.x = g_old_z.y; // is of the form f(Z,C) = Z*g(Z)+C
         break;
