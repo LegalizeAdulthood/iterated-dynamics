@@ -2,16 +2,8 @@
 //
 #include "put_string_center.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "find_path.h"
-#include "memory.h"
-#include "os.h"
 
-#include <cstdio>
 #include <cstring>
 
 int put_string_center(int row, int col, int width, int attr, char const *msg)
