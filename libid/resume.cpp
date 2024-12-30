@@ -2,13 +2,10 @@
 //
 #include "resume.h"
 
-#include "port.h"
-
 #include "id_data.h"
 
 #include <algorithm>
 #include <cstdarg>
-#include <vector>
 
 static int s_resume_offset{}; // offset in resume info gets
 
