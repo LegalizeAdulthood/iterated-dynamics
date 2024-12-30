@@ -2,9 +2,6 @@
 //
 #include "sound.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "save_file.h"
@@ -14,6 +11,7 @@
 
 #include <cstdio>
 #include <ctime>
+#include <string>
 
 int g_fm_attack{};
 int g_fm_decay{};
