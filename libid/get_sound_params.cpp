@@ -2,9 +2,6 @@
 //
 #include "get_sound_params.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -15,7 +12,7 @@
 #include "value_saver.h"
 
 #include <algorithm>
-#include <cstdlib>
+#include <cmath>
 
 static int get_music_params();
 static int get_scale_map();
