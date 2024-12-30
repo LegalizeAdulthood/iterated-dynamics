@@ -2,10 +2,7 @@
 //
 #include "find_special_colors.h"
 
-#include "port.h"
-
 #include "id_data.h"
-#include "os.h"
 #include "rotate.h"
 
 int g_color_dark{};   // darkest color in palette
