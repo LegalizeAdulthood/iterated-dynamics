@@ -424,7 +424,7 @@ static bool save_axiom(char const *text)
         s_axiom = text;
         return false;
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
         return true;
     }
@@ -439,7 +439,7 @@ static bool save_rule(char const *rule, int index)
         s_rules[index] = rule;
         return false;
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
         return true;
     }
@@ -453,7 +453,7 @@ static bool append_rule(char const *rule, int index)
         s_rules[index] += rule;
         return false;
     }
-    catch (std::bad_alloc const &)
+    catch (const std::bad_alloc &)
     {
         return true;
     }
