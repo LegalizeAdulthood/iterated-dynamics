@@ -15,7 +15,6 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "fractalp.h"
 #include "fractype.h"
 #include "goodbye.h"
-#include "port.h"
 #include "stop_msg.h"
 
 #include <cstring>
