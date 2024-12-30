@@ -4,17 +4,17 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "port.h"
+#include "d_win32.h"
+
+#include "frame.h"
+#include "instance.h"
+#include "ods.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
-#include "drivers.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "helpcom.h"
 #include "id_data.h"
-#include "os.h"
+#include "read_ticker.h"
 #include "rotate.h"
 #include "slideshw.h"
 #include "spindac.h"
@@ -22,22 +22,8 @@
 #include "text_screen.h"
 #include "video.h"
 
-#include "win_defines.h"
-#include <Windows.h>
-
-#include <array>
 #include <cassert>
-#include <cstdio>
 #include <ctime>
-
-#include "d_win32.h"
-#include "frame.h"
-#include "instance.h"
-#include "ods.h"
-#include "plot.h"
-#include "win_text.h"
-
-#include <read_ticker.h>
 
 static void flush_output()
 {
@@ -132,7 +118,7 @@ int Win32BaseDriver::key_pressed()
  */
 void Win32BaseDriver::unget_key(int key)
 {
-    _ASSERTE(0 == m_key_buffer);
+    assert(0 == m_key_buffer);
     m_key_buffer = key;
 }
 

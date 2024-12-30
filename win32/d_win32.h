@@ -2,8 +2,11 @@
 //
 #pragma once
 
-#include "frame.h"
 #include "win_text.h"
+
+#include "drivers.h"
+
+#include <vector>
 
 class Win32BaseDriver : public Driver
 {
