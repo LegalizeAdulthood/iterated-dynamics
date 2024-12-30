@@ -2,17 +2,12 @@
 //
 #include "make_mig.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "cmdfiles.h"
-#include "id.h"
 #include "rotate.h"
 #include "save_file.h"
 
-#include <array>
-#include <cstring>
+#include <array> // std::size
 #include <cstdio>
+#include <cstring>
 
 inline char par_key(unsigned int x)
 {
