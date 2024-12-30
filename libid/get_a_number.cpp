@@ -2,9 +2,6 @@
 //
 #include "get_a_number.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "choice_builder.h"
 #include "drivers.h"
 
