@@ -2,16 +2,13 @@
 //
 #include "id_main.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "do_pause.h"
 #include "drivers.h"
 #include "evolve.h"
 #include "fixed_pt.h"
-#include "fractals.h"
+#include "fractype.h"
 #include "framain2.h"
 #include "get_3d_params.h"
 #include "get_a_filename.h"
@@ -24,6 +21,7 @@
 #include "get_toggles2.h"
 #include "get_view_params.h"
 #include "goodbye.h"
+#include "helpcom.h"
 #include "helpdefs.h"
 #include "history.h"
 #include "id.h"
@@ -37,6 +35,7 @@
 #include "main_state.h"
 #include "memory.h"
 #include "mouse.h"
+#include "port.h"
 #include "rotate.h"
 #include "select_video_mode.h"
 #include "stop_msg.h"
@@ -44,9 +43,9 @@
 
 #include <cctype>
 #include <csignal>
+#include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <helpcom.h>
 #include <init_failure.h>
 #include <string>
 
