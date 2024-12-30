@@ -2,14 +2,11 @@
 //
 #include "help_title.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
-#include "id.h"
 #include "drivers.h"
+#include "id.h"
+#include "port_config.h"
 #include "put_string_center.h"
-#include "version.h"
 
 #include <cstdio>
 #include <cstring>
