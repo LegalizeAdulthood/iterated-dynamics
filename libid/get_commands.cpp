@@ -2,10 +2,6 @@
 //
 #include "get_commands.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "cmdfiles.h"
 #include "file_item.h"
 #include "helpdefs.h"
 #include "id_data.h"
