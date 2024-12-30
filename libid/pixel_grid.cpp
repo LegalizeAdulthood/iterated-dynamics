@@ -2,13 +2,8 @@
 //
 #include "pixel_grid.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "id_data.h"
-
-#include <vector>
 
 bool g_use_grid{};
 // note that integer grid is set when integerfractal && !invert;
