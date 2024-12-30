@@ -2,12 +2,8 @@
 //
 #include "starfield.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "choice_builder.h"
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "fixed_pt.h"
 #include "helpdefs.h"
@@ -19,8 +15,6 @@
 #include "stop_msg.h"
 #include "value_saver.h"
 #include "video.h"
-
-#include <cstdlib>
 
 const std::string_view g_altern_map_file{"altern.map"};
 
