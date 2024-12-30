@@ -4,9 +4,6 @@
 subroutines which belong primarily to calcfrac and
 fractals, i.e. which are non-fractal-specific fractal engine subroutines.
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "wait_until.h"
 
 #include "drivers.h"
