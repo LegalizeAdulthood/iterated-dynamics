@@ -2,9 +2,6 @@
 //
 #include "select_video_mode.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "drivers.h"
 #include "find_path.h"
 #include "full_screen_choice.h"
@@ -24,6 +21,7 @@
 #include <filesystem>
 #include <numeric>
 #include <string>
+#include <vector>
 
 namespace fs = std::filesystem;
 
