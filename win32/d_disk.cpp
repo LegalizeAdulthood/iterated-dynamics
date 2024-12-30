@@ -4,29 +4,20 @@
  *
  * Routines for a Win32 disk video mode driver for id.
  */
-#include "port.h"
+#include "d_win32.h"
+#include "frame.h"
+#include "ods.h"
+#include "win_text.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
-#include "drivers.h"
 #include "id_data.h"
-#include "os.h"
 #include "plot3d.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "video.h"
 #include "video_mode.h"
-
-#include "win_defines.h"
-#include <Windows.h>
-
-#include <cassert>
-
-#include "win_text.h"
-#include "frame.h"
-#include "d_win32.h"
-#include "ods.h"
 
 enum
 {
