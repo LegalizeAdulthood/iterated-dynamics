@@ -1,29 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-
-#include "drivers.h"
-#include "goodbye.h"
-#include "id.h"
-#include "id_keys.h"
-#include "mouse.h"
-
-#include "win_defines.h"
-#include <tchar.h>
-#include <Windows.h>
-#include <windowsx.h>
-
 #include "frame.h"
-#include "mouse.h"
+
 #include "resource.h"
 #include "win_text.h"
 
+#include "drivers.h"
+#include "goodbye.h"
+#include "id_keys.h"
+
+#include "win_defines.h"
+#include <Windows.h>
 #include <atlbase.h>
 #include <tchar.h>
+#include <windowsx.h>
 
 #include <cctype>
 #include <stdexcept>
-#include <string>
 
 Frame g_frame{};
 
