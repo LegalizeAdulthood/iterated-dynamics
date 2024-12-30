@@ -2,13 +2,9 @@
 //
 #include "ifs.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "file_gets.h"
 #include "file_item.h"
-#include "id.h"
 #include "stop_msg.h"
 
 #include <cstdio>
