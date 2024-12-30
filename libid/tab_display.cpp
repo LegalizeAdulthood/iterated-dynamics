@@ -2,12 +2,6 @@
 //
 #include "tab_display.h"
 
-/*
-        Resident odds and ends that don't fit anywhere else.
-*/
-#include "port.h"
-#include "prototyp.h"
-
 #include "biginit.h"
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
@@ -15,22 +9,15 @@
 #include "diffusion_scan.h"
 #include "drivers.h"
 #include "engine_timer.h"
-#include "file_gets.h"
-#include "find_file.h"
-#include "file_item.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "get_calculation_time.h"
 #include "get_key_no_help.h"
 #include "help_title.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "make_path.h"
 #include "param_not_used.h"
 #include "parser.h"
 #include "pixel_grid.h"
@@ -38,27 +25,19 @@
 #include "rotate.h"
 #include "slideshw.h"
 #include "soi.h"
-#include "split_path.h"
 #include "stop_msg.h"
-#include "temp_msg.h"
 #include "trig_fns.h"
 #include "trim_filename.h"
 #include "type_has_param.h"
-#include "update_save_name.h"
 #include "version.h"
 #include "video.h"
 #include "video_mode.h"
 
-#include <array>
-#include <cassert>
-#include <cctype>
-#include <cmath>
+#include <algorithm>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-#include <filesystem>
-#include <string>
 
 static void area();
 
