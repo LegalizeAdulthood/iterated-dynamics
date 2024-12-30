@@ -2,10 +2,6 @@
 //
 #include "find_path.h"
 
-#include "port.h"
-
-#include "id.h"
-
 #include "cmdfiles.h"
 #include "id_data.h"
 #include "search_path.h"
