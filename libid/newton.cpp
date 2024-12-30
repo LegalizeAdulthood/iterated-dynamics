@@ -2,26 +2,21 @@
 //
 #include "newton.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "cmplx.h"
 #include "debug_flags.h"
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
-#include "id.h"
 #include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "pixel_grid.h"
-#include "sqr.h"
 
-#include <cmath>
 #include <cfloat>
+#include <cmath>
+#include <vector>
 
 static double                s_degree_minus_1_over_degree{};
 static std::vector<MPC>      s_mpc_roots;
