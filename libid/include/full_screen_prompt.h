@@ -5,12 +5,12 @@
 // structure passed to fullscreen_prompts
 struct FullScreenValues
 {
-    int type;   // 'd' for double, 'f' for float, 's' for string,
-    // 'D' for integer in double, '*' for comment
-    // 'i' for integer, 'y' for yes=1 no=0
-    // 0x100+n for string of length n
-    // 'l' for one of a list of strings
-    // 'L' for long
+    int type; // 'd' for double, 'f' for float, 's' for string,
+              // 'D' for integer in double, '*' for comment
+              // 'i' for integer, 'y' for yes=1 no=0
+              // 0x100+n for string of length n
+              // 'l' for one of a list of strings
+              // 'L' for long
     union
     {
         double dval;        // when type 'd' or 'f'
