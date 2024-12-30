@@ -2,8 +2,6 @@
 //
 #include "file_item.h"
 
-#include "port.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "find_file.h"
@@ -29,7 +27,6 @@
 #include "text_screen.h"
 #include "trim_filename.h"
 
-#include <cassert>
 #include <cctype>
 #include <cstdio>
 #include <cstring>
