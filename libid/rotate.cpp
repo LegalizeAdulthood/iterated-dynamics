@@ -3,22 +3,19 @@
 /*
     Routines that manipulate the Video DAC on VGA Adapters
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "rotate.h"
 
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "field_prompt.h"
+#include "get_a_filename.h"
 #include "helpdefs.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "loadmap.h"
 #include "merge_path_names.h"
-#include "get_a_filename.h"
-#include "id_keys.h"
 #include "rand15.h"
 #include "save_file.h"
 #include "spindac.h"
