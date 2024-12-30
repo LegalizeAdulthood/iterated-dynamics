@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "lsys.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fixed_pt.h"
-#include "fractals.h"
-#include "id.h"
 #include "id_data.h"
 #include "lsys_fns.h"
 #include "stack_avail.h"
@@ -17,6 +12,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <vector>
 
 #ifdef max
 #undef max
