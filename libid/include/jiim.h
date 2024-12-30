@@ -20,12 +20,6 @@ LComplex pop_long();
 DComplex pop_float();
 LComplex dequeue_long();
 DComplex dequeue_float();
-LComplex complex_sqrt_long(long, long);
-DComplex complex_sqrt_float(double, double);
-inline DComplex complex_sqrt_float(const DComplex &z)
-{
-    return complex_sqrt_float(z.x, z.y);
-}
 bool init_queue(unsigned long);
 void   free_queue();
 void   clear_queue();

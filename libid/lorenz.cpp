@@ -26,6 +26,7 @@
 #include "jiim.h"
 #include "line3d.h"
 #include "mpmath.h"
+#include "mpmath_c.h"
 #include "not_disk_msg.h"
 #include "plot3d.h"
 #include "rand15.h"

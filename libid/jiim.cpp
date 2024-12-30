@@ -24,6 +24,7 @@
 #include "id_keys.h"
 #include "lorenz.h"
 #include "mouse.h"
+#include "mpmath_c.h"
 #include "pixel_grid.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
