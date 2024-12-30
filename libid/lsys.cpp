@@ -1,19 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "lsys.h"
 
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "file_gets.h"
 #include "file_item.h"
 #include "fixed_pt.h"
 #include "fpu087.h"
-#include "fractals.h"
-#include "id.h"
 #include "id_data.h"
 #include "lsys_fns.h"
 #include "stack_avail.h"
@@ -21,10 +15,10 @@
 #include "thinking.h"
 
 #include <cassert>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <new>
 #include <string>
 #include <vector>
 
