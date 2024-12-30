@@ -2,9 +2,6 @@
 //
 #include "get_toggles.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fractype.h"
