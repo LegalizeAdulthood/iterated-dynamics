@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "fpu087.h"
 
 #include "fixed_pt.h"
@@ -107,7 +104,7 @@ void fpu_cmplx_log(const DComplex *x, DComplex *z)
     }
     if (x->y == 0.0)// x is real
     {
-        z->x = logl(x->x);
+        z->x = std::logl(x->x);
         z->y = 0.0;
         return;
     }
