@@ -5,12 +5,8 @@
 // by the decoder. The purpose is to apply various 3D transformations
 // before displaying points. Called once per line of the input file.
 //**********************************************************************
-#include "port.h"
-#include "prototyp.h"
-
 #include "line3d.h"
 
-#include "3d.h"
 #include "calcfrac.h"
 #include "check_write_file.h"
 #include "cmdfiles.h"
@@ -19,13 +15,11 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "fixed_pt.h"
-#include "fractals.h"
 #include "framain2.h"
 #include "gifview.h"
 #include "id.h"
 #include "id_data.h"
 #include "loadfile.h"
-#include "os.h"
 #include "pixel_limits.h"
 #include "plot3d.h"
 #include "rand15.h"
@@ -37,9 +31,9 @@
 #include "video.h"
 
 #include <algorithm>
-#include <array>
 #include <climits>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <vector>
 
