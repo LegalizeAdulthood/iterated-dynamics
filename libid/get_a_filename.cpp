@@ -2,9 +2,6 @@
 //
 #include "get_a_filename.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "expand_dirname.h"
@@ -25,7 +22,6 @@
 #include "trim_filename.h"
 
 #include <cstring>
-#include <string>
 
 // speed key state values
 enum
