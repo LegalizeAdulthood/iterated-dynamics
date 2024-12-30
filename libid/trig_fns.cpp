@@ -2,18 +2,14 @@
 //
 #include "trig_fns.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "fractalp.h"
+#include "fractype.h"
 #include "jb.h"
 #include "parser.h"
 
-#include <array>
 #include <cstdio>
 #include <cstring>
-#include <string>
 
 // The index into this array must correspond to enum TrigFn
 // changing the order of these alters meaning of GIF extensions
