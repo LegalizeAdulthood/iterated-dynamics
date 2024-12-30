@@ -24,6 +24,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <ctime>
 #include <filesystem>
 #include <new>
@@ -1319,13 +1320,17 @@ bool make_doc_msg_func(int pnum, int num_pages)
     if (pnum >= 0)
     {
         std::snprintf(buffer, std::size(buffer), "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
+        if (pnum == num_pages)
+        {
+            std::strcat(buffer, "\n");
+        }
         result = true;
     }
     else if (pnum == -2)
     {
         std::snprintf(buffer, std::size(buffer), "\n*** aborted\n");
     }
-    stop_msg(buffer);
+    std::printf("%s", buffer);
     return result;
 }
 

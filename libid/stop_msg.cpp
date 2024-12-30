@@ -16,9 +16,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#ifdef XFRACT
-#include <unistd.h>
-#endif
 
 static void blank_rows(int row, int count, int attr)
 {
@@ -62,20 +59,14 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     if (g_first_init)
     {
         // & cmdfiles hasn't finished 1st try
-#ifdef XFRACT
         driver_set_for_text();
         driver_buzzer(Buzzer::PROBLEM);
         driver_put_string(0, 0, 15, "*** Error during startup:");
         driver_put_string(2, 0, 15, msg);
         driver_move_cursor(8, 0);
-        sleep(1);
+        sleep_ms(10000);
         close_drivers();
-        exit(1);
-#else
-        std::printf("%s\n", msg.c_str());
-        do_pause(1); // pause deferred until after cmdfiles
-        return false;
-#endif
+        std::exit(1);
     }
     if (g_init_batch >= BatchMode::NORMAL || batchmode)
     {
