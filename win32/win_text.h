@@ -2,11 +2,12 @@
 //
 #pragma once
 
+#include "port.h"
+
 #include "win_defines.h"
 #include <Windows.h>
 
 #include <array>
-#include <vector>
 
 enum
 {

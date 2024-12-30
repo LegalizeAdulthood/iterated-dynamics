@@ -1,27 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <crtdbg.h>
-
-#include "win_defines.h"
-#include <Windows.h>
-#include <windowsx.h>
-
-#include <array>
-#include <cassert>
-#include <cstdlib>
-#include <cstring>
-
-#include "port.h"
-#include "id.h"
+#include "win_text.h"
 
 #include "frame.h"
 #include "ods.h"
-#include "win_text.h"
 
-#include "drivers.h"
+#include <crtdbg.h>
+#include <windowsx.h>
 
+#include <array> // std::size
 #include <algorithm>
-#include <string>
+#include <cstring>
 
 #define TIMER_ID 1
 
