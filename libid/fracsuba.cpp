@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "fracsuba.h"
 
 #include "calcfrac.h"
@@ -10,7 +7,6 @@
 #include "fractals.h"
 
 #include <cmath>
-#include <cstdlib>
 
 int long_mod_bailout()
 {
