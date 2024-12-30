@@ -844,7 +844,7 @@ int help()
         s_page_table.resize(s_max_pages);
         resized = true;
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
     }
     if (!resized)
@@ -1434,7 +1434,7 @@ int init_help()
         s_hist.resize(MAX_HIST);
         resized = true;
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
     }
 
