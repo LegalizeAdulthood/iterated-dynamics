@@ -2,16 +2,13 @@
 //
 #include "get_julia_attractor.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "cmplx.h"
 #include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "id_data.h"
-#include "sqr.h"
 
 #include <cmath>
 
