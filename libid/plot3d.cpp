@@ -4,9 +4,6 @@
     This file includes miscellaneous plot functions and logic
     for 3D, used by lorenz and line3d
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "plot3d.h"
 
 #include "calcfrac.h"
@@ -16,10 +13,12 @@
 #include "id_data.h"
 #include "line3d.h"
 #include "loadmap.h"
-#include "os.h"
+#include "port.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "video.h"
+
+#include <cmath>
 
 // Use these palette indices for red/blue - same on ega/vga
 #define PAL_BLUE    1
