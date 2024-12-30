@@ -2,9 +2,6 @@
 //
 #include "orbit.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
