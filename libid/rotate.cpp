@@ -17,9 +17,6 @@
 #include "id_data.h"
 #include "loadmap.h"
 #include "merge_path_names.h"
-#ifdef XFRACT
-#include "os.h"
-#endif
 #include "get_a_filename.h"
 #include "id_keys.h"
 #include "rand15.h"
@@ -77,11 +74,7 @@ void rotate(int direction)      // rotate-the-palette routine
 
     static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys)
 
-#ifndef XFRACT
     if (!g_got_real_dac                 // ??? no DAC to rotate!
-#else
-    if (!(g_got_real_dac || g_fake_lut)   // ??? no DAC to rotate!
-#endif
         || g_colors < 16)
     {
         // strange things happen in 2x modes
@@ -241,43 +234,7 @@ void rotate(int direction)      // rotate-the-palette routine
         case ID_KEY_F8:
         case ID_KEY_F9:
         case ID_KEY_F10:
-#ifndef XFRACT
             fkey = kbdchar - (ID_KEY_F1 - 1);
-#else
-            switch (kbdchar)
-            {
-            case ID_KEY_F1:
-                fkey = 1;
-                break;
-            case ID_KEY_F2:
-                fkey = 2;
-                break;
-            case ID_KEY_F3:
-                fkey = 3;
-                break;
-            case ID_KEY_F4:
-                fkey = 4;
-                break;
-            case ID_KEY_F5:
-                fkey = 5;
-                break;
-            case ID_KEY_F6:
-                fkey = 6;
-                break;
-            case ID_KEY_F7:
-                fkey = 7;
-                break;
-            case ID_KEY_F8:
-                fkey = 8;
-                break;
-            case ID_KEY_F9:
-                fkey = 9;
-                break;
-            case ID_KEY_F10:
-                fkey = 10;
-                break;
-            }
-#endif
             fstep = 1;
             incr = 999;
             break;
@@ -395,9 +352,7 @@ void rotate(int direction)      // rotate-the-palette routine
             pause_rotate();              // update palette and pause
             break;
         case 'l':                      // load colors from a specified map
-#ifndef XFRACT // L is used for ID_KEY_RIGHT_ARROW in Unix keyboard mapping
         case 'L':
-#endif
             load_palette();
             fkey = 0;                   // disable random generation
             pause_rotate();              // update palette and pause
@@ -650,11 +605,7 @@ void save_palette()
         }
         else
         {
-#ifndef XFRACT
             for (i = 0; i < g_colors; i++)
-#else
-            for (i = 0; i < 256; i++)
-#endif
             {
                 std::fprintf(dacfile, "%3d %3d %3d\n",
                         g_dac_box[i][0] << 2,
