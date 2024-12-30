@@ -2,9 +2,6 @@
 //
 #include "goodbye.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "ant.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
@@ -17,7 +14,6 @@
 #include "resume.h"
 #include "slideshw.h"
 
-#include <cstdio>
 #include <cstdlib>
 
 #if defined(_WIN32)
