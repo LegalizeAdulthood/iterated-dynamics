@@ -15,16 +15,12 @@
         to 1 for every 2nd pixel, 2 for every 3rd, etc
 
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "get_video_mode.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractalp.h"
 #include "full_screen_choice.h"
-#include "helpdefs.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "make_batch_file.h"
@@ -35,12 +31,12 @@
 #include "video_mode.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <sstream>
 #include <string>
+#include <vector>
 
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */
