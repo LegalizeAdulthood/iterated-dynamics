@@ -2,15 +2,9 @@
 //
 #include "flip_image.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractalp.h"
-#include "framain2.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "video.h"
