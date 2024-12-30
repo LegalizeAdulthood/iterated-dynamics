@@ -2,14 +2,10 @@
 //
 #include "get_cmd_string.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "field_prompt.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "value_saver.h"
