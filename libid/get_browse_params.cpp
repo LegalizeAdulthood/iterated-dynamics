@@ -2,18 +2,15 @@
 //
 #include "get_browse_params.h"
 
-#include "port.h"
-#include "prototyp.h" // for stricmp
-
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "evolve.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "prototyp.h" // for stricmp
 #include "value_saver.h"
 
-#include <cstring>
 #include <string>
 
 // get browse parameters, returns 3 if anything changes.
