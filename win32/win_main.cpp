@@ -2,18 +2,14 @@
 //
 #include "id_main.h"
 
-#include "win_defines.h"
-#include <Windows.h>
-#include <Shlwapi.h>
-#include <DbgHelp.h>
-#include <crtdbg.h>
-
-#include <cctype>
-#include <cstdarg>
-
 #include "create_minidump.h"
 #include "instance.h"
 #include "tos.h"
+
+#include "win_defines.h"
+#include <Windows.h>
+#include <Shlwapi.h>
+#include <crtdbg.h>
 
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
