@@ -2,22 +2,17 @@
 //
 #include "load_config.h"
 
-#include "port.h"
-
 #include "drivers.h"
 #include "find_path.h"
-#include "id.h"
 #include "id_data.h"
 #include "pixel_limits.h"
 #include "video_mode.h"
 
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
 
 int g_cfg_line_nums[MAX_VIDEO_MODES]{};
 
