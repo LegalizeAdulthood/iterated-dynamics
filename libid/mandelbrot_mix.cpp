@@ -2,11 +2,9 @@
 //
 #include "mandelbrot_mix.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "cmdfiles.h"
+#include "cmplx.h"
 #include "debug_flags.h"
 #include "id_data.h"
 #include "mpmath.h"
