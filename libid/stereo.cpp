@@ -5,9 +5,6 @@
     Written in Borland 'C++' by Paul de Leeuw.
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "stereo.h"
 
 #include "calcfrac.h"
