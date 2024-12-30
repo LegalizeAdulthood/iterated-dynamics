@@ -2,10 +2,6 @@
 //
 #include "passes_options.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "full_screen_prompt.h"
 #include "get_corners.h"
