@@ -1,12 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "framain2.h"
 
 #include "calc_frac_init.h"
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "decoder.h"
@@ -16,7 +12,6 @@
 #include "evolve.h"
 #include "evolver_menu_switch.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "get_fract_type.h"
 #include "gifview.h"
 #include "goodbye.h"
@@ -30,7 +25,7 @@
 #include "main_menu.h"
 #include "main_menu_switch.h"
 #include "mouse.h"
-#include "os.h"
+#include "port.h"
 #include "read_ticker.h"
 #include "rotate.h"
 #include "spindac.h"
@@ -40,13 +35,12 @@
 #include "video_mode.h"
 #include "zoom.h"
 
-#include <array>
+#include <array> // std::size
 #include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-#include <string>
 
 static int call_line3d(BYTE *pixels, int linelen);
 static void cmp_line_cleanup();
