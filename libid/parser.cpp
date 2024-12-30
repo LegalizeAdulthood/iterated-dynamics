@@ -15,13 +15,11 @@
 
     Mark C. Peterson
 */
-#include "port.h"
-#include "prototyp.h" // for stricmp
-
 #include "parser.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "cmplx.h"
 #include "convert_center_mag.h"
 #include "debug_flags.h"
 #include "drivers.h"
@@ -29,8 +27,10 @@
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"
+#include "id.h"
 #include "id_data.h"
 #include "jiim.h"
+#include "mpmath.h"
 #include "mpmath_c.h"
 #include "newton.h"
 #include "pixel_grid.h"
@@ -38,7 +38,6 @@
 #include "save_file.h"
 #include "sign.h"
 #include "stop_msg.h"
-#include "trig_fns.h"
 
 #include <algorithm>
 #include <array>
@@ -50,9 +49,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <iterator>
 #include <stdexcept>
-#include <string>
+#include <vector>
 
 // ** Formula Declarations **
 enum class MathType
