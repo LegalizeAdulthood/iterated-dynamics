@@ -4,28 +4,21 @@
 
 #include "frothy_basin.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "check_key.h"
 #include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "fixed_pt.h"
 #include "fractals.h"
-#include "id.h"
 #include "id_data.h"
 #include "loadmap.h"
 #include "newton.h"
 #include "orbit.h"
 #include "pixel_grid.h"
 #include "spindac.h"
-#include "sqr.h"
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 
 constexpr int FROTH_BITSHIFT{28};
 constexpr long froth_d_to_l(double x)
