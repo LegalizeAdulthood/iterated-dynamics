@@ -1,42 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-
-#include "calcfrac.h"
-#include "cmdfiles.h"
-#include "cmplx.h"
-#include "diskvid.h"
-#include "drivers.h"
-#include "find_file.h"
-#include "id.h"
-#include "helpdefs.h"
-#include "id_data.h"
-#include "id_main.h"
-#include "init_failure.h"
-#include "make_path.h"
-#include "mpmath.h"
-#include "read_ticker.h"
-#include "rotate.h"
-#include "special_dirs.h"
-#include "stack_avail.h"
-#include "zoom.h"
-
 #include "create_minidump.h"
 #include "instance.h"
 #include "tos.h"
 
+#include "cmdfiles.h"
+#include "port.h"
+#include "special_dirs.h"
+
 #include "win_defines.h"
-#include <direct.h>
-#include <io.h>
 #include <Windows.h>
-#include <Shlwapi.h>
 #include <DbgHelp.h>
 
-#include <cassert>
-#include <cctype>
 #include <cstdarg>
 #include <cstdio>
-#include <cstring>
 #include <filesystem>
 
 HINSTANCE g_instance{};
