@@ -2,8 +2,6 @@
 //
 #include <expand_dirname.h>
 
-#include <port.h>
-
 #include <id.h>
 
 #include "current_path_saver.h"
