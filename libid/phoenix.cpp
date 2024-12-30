@@ -2,13 +2,12 @@
 //
 #include "phoenix.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "cmplx.h"
+#include "fixed_pt.h"
+#include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "id_data.h"
