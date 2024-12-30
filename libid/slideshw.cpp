@@ -7,10 +7,6 @@
 #include "slideshw.h"
 
 #include "check_write_file.h"
-#include "port.h"
-#include "prototyp.h"
-
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "helpcom.h"
 #include "helpdefs.h"
@@ -24,7 +20,6 @@
 #include "video_mode.h"
 
 #include <algorithm>
-#include <array>
 #include <cctype>
 #include <chrono>
 #include <cstdio>
