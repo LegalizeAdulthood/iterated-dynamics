@@ -14,10 +14,6 @@
 #include <cstdio>
 #include <cstring>
 
-#ifdef XFRACT
-#include <unistd.h>
-#endif
-
 int put_string_center(int row, int col, int width, int attr, char const *msg)
 {
     char buf[81];
@@ -25,12 +21,6 @@ int put_string_center(int row, int col, int width, int attr, char const *msg)
     int j;
     int k;
     i = 0;
-#ifdef XFRACT
-    if (width >= 80)
-    {
-        width = 79; // Some systems choke in column 80
-    }
-#endif
     while (msg[i])
     {
         ++i; // std::strlen for a
