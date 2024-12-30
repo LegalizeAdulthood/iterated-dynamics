@@ -2,9 +2,6 @@
 //
 #include "volterra_lotka.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "fractals.h"
