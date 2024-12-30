@@ -3,14 +3,12 @@
 /*
         load an existing fractal image, control level
 */
-#include "port.h"
-#include "prototyp.h" // for stricmp
-
 #include "loadfile.h"
 
+#include "3d.h"
 #include "bailout_formula.h"
+#include "big.h"
 #include "biginit.h"
-#include "calcfrac.h"
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
@@ -22,13 +20,11 @@
 #include "find_file.h"
 #include "find_special_colors.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "framain2.h"
 #include "get_3d_params.h"
 #include "get_browse_params.h"
 #include "get_video_mode.h"
 #include "has_ext.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "jb.h"
@@ -38,11 +34,12 @@
 #include "make_path.h"
 #include "parser.h"
 #include "plot3d.h"
+#include "port.h"
+#include "prototyp.h" // for stricmp
 #include "resume.h"
-#include "split_path.h"
 #include "rotate.h"
 #include "round_float_double.h"
-#include "sqr.h"
+#include "split_path.h"
 #include "sticky_orbits.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
@@ -50,7 +47,6 @@
 #include "zoom.h"
 
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -58,7 +54,7 @@
 #include <cstring>
 #include <ctime>
 #include <filesystem>
-#include <string>
+#include <iterator>
 #include <system_error>
 #include <vector>
 
