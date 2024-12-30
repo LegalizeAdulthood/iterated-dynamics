@@ -2,7 +2,7 @@
 //
 #include "plot.h"
 
-#include "frame.h"
+#include "Frame.h"
 
 #include "id_data.h"
 #include "plot3d.h"

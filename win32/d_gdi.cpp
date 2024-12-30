@@ -5,7 +5,7 @@
  * Routines for a Win32 GDI driver for id.
  */
 #include "d_win32.h"
-#include "frame.h"
+#include "Frame.h"
 #include "instance.h"
 #include "ods.h"
 #include "plot.h"

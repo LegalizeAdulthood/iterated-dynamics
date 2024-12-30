@@ -15,8 +15,8 @@ add_library(os STATIC
     d_gdi.cpp
     d_win32.h
     d_win32.cpp
-    frame.h
-    frame.cpp
+    Frame.h
+    Frame.cpp
     os_win32.cpp
     plot.h
     plot.cpp

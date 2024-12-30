@@ -2,7 +2,7 @@
 //
 #include "win_text.h"
 
-#include "frame.h"
+#include "Frame.h"
 #include "ods.h"
 
 #include <crtdbg.h>

@@ -5,7 +5,7 @@
  * Routines for a Win32 disk video mode driver for id.
  */
 #include "d_win32.h"
-#include "frame.h"
+#include "Frame.h"
 #include "ods.h"
 #include "win_text.h"
 

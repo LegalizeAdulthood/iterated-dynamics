@@ -6,7 +6,7 @@
  */
 #include "d_win32.h"
 
-#include "frame.h"
+#include "Frame.h"
 #include "instance.h"
 #include "ods.h"
 
