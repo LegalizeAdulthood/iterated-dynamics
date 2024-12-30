@@ -2,18 +2,14 @@
 //
 #include "temp_msg.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
 #include "find_special_colors.h"
 #include "id_data.h"
-#include "os.h"
+#include "port.h"
 #include "video.h"
-#include "zoom.h"
 
 #include <cstdio>
 #include <cstring>
