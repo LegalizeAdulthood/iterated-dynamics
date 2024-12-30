@@ -2,10 +2,9 @@
 //
 #include "make_batch_file.h"
 
-#include "port.h"
-#include "prototyp.h" // for stricmp
-
+#include "3d.h"
 #include "bailout_formula.h"
+#include "big.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -16,7 +15,6 @@
 #include "drivers.h"
 #include "ends_with_slash.h"
 #include "file_gets.h"
-#include "find_path.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "full_screen_prompt.h"
@@ -29,9 +27,9 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "os.h"
 #include "parser.h"
 #include "plot3d.h"
+#include "prototyp.h" // stricmp
 #include "rotate.h"
 #include "save_file.h"
 #include "sign.h"
