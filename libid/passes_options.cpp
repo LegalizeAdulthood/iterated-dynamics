@@ -70,7 +70,7 @@ pass_option_restart:
     old_drawmode = g_draw_mode;
 
     {
-        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_POPTS};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PASSES_OPTIONS};
         i = full_screen_prompt("Passes Options\n"
                               "(not all combinations make sense)\n"
                               "(Press F2 for corner parameters)\n"

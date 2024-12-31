@@ -352,7 +352,7 @@ radius and center coordinates of the inversion circle.  A default choice of
 the screen.  The default values for Xcenter and Ycenter use the
 coordinates currently mapped to the center of the screen.
 
-Try this one out with a {=HT_NEWT Newton} plot, so its radial "spokes"
+Try this one out with a {=HT_NEWTON Newton} plot, so its radial "spokes"
 will give you
 something to hang on to.  Plot a Newton-method image, then set the
 inversion radius to 1, with default center coordinates.  The center

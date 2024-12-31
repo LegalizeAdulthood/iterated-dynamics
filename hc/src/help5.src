@@ -876,7 +876,7 @@ palette editing see {Freestyle mode tutorial}
 ;
 ;
 ;
-~Topic=Selecting a video mode when loading a file, Label=HELP_LOADFILE
+~Topic=Selecting a video mode when loading a file, Label=HELP_LOAD_FILE
 ; This topic is only online, context-sensitive.
 ~Format-
 

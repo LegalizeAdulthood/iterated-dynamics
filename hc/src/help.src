@@ -682,7 +682,7 @@ before trying this option if you want to see anything interesting.
 
 <J>\
 Toggle between Julia escape time fractal and the Inverse Julia orbit
-fractal.  See {=HT_INVERSE Inverse Julias}
+fractal.  See {=HT_INVERSE_JULIA Inverse Julias}
 
 <Enter>\
 Enter is used to resume calculation after a pause.  It is only
@@ -823,7 +823,7 @@ do not support rotation and skewing - nothing happens when you try it.
 ;
 ;
 ;
-~Topic=Image Save/Restore Commands, Label=HELP_SAVEREST
+~Topic=Image Save/Restore Commands, Label=HELP_SAVE_RESTORE
 
 <S> saves the current image to disk.  All parameters required to recreate
 the image are saved with it.  Progress is marked by colored lines moving
@@ -871,7 +871,7 @@ it will be reduced by using only every Nth pixel during the restore.
 ;
 ;
 ;
-~Topic=Parameter Save/Restore Commands, Label=HELP_PARMFILE
+~Topic=Parameter Save/Restore Commands, Label=HELP_PARAM_FILE
 
 Parameter files can be used to save/restore all options and settings
 required to recreate particular images.  The parameters required to
@@ -1024,7 +1024,7 @@ point is in use is shown on the <Tab> status screen.
    Color cycling range - see {Color Cycling Commands}\
 ;
 ;
-~Topic=<P> Options Screen, Label=HELP_POPTS
+~Topic=<P> Options Screen, Label=HELP_PASSES_OPTIONS
 ; This topic is online context-sensitive only.
 
    Periodicity - see {Passes Parameters}\

@@ -278,7 +278,7 @@ sel_type_restart:
 
     if (g_fractal_type == FractalType::L_SYSTEM)
     {
-        ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_LSYS);
+        ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_L_SYSTEM);
         if (get_file_entry(ItemType::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
         {
             return true;

@@ -257,7 +257,7 @@ static bool main_restore_start(MainContext &context)
             else
             {
                 hdg = "Select File to Restore";
-                g_help_mode = HelpLabels::HELP_SAVEREST;
+                g_help_mode = HelpLabels::HELP_SAVE_RESTORE;
             }
             if (g_show_file < 0 && get_a_file_name(hdg, g_gif_filename_mask.c_str(), g_read_filename))
             {

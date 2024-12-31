@@ -197,7 +197,7 @@ enum class FractalType
     ANT                         = 165,
     CHIP                        = 166,
     QUADRUP_TWO                 = 167,
-    THREE_PLY                   = 168,
+    THREEPLY                    = 168,
     VL                          = 169,
     ESCHER                      = 170,
     LATOO                       = 171,

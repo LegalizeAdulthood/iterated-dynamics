@@ -595,7 +595,7 @@ bool orbit3d_float_setup()
         || g_fractal_type == FractalType::MARTIN_FP
         || g_fractal_type == FractalType::CHIP
         || g_fractal_type == FractalType::QUADRUP_TWO
-        || g_fractal_type == FractalType::THREE_PLY)
+        || g_fractal_type == FractalType::THREEPLY)
     {
         s_init_orbit_fp[0] = 0;  // initial conditions
         s_init_orbit_fp[1] = 0;
@@ -605,7 +605,7 @@ bool orbit3d_float_setup()
         s_b =  g_params[1];
         s_c =  g_params[2];
         s_d =  g_params[3];
-        if (g_fractal_type == FractalType::THREE_PLY)
+        if (g_fractal_type == FractalType::THREEPLY)
         {
             cos_b = std::cos(s_b);
             sin_sum_a_b_c = std::sin(s_a + s_b + s_c);
