@@ -27,7 +27,7 @@ static void sub_divide(int x1, int y1, int x2, int y2);
 
 enum
 {
-    DEFAULTFILTER = 1000     /* "Beauty of Fractals" recommends using 5000
+    DEFAULT_FILTER = 1000     /* "Beauty of Fractals" recommends using 5000
                                (p.25), but that seems unnecessary. Can
                                override this value with a nonzero param1 */
 };
