@@ -34,7 +34,7 @@
 
 enum : int
 {
-    MAXENTRIES = 2000
+    MAX_ENTRIES = 2000
 };
 
 struct FileEntry
@@ -423,9 +423,9 @@ top:
                 {
                     std::strcpy(choices[numentries].name, buf);
                     choices[numentries].point = name_offset;
-                    if (++numentries >= MAXENTRIES)
+                    if (++numentries >= MAX_ENTRIES)
                     {
-                        std::sprintf(buf, "Too many entries in file, first %d used", MAXENTRIES);
+                        std::sprintf(buf, "Too many entries in file, first %d used", MAX_ENTRIES);
                         stop_msg(buf);
                         break;
                     }
@@ -677,9 +677,9 @@ static long gfe_choose_entry(ItemType type, char const *title, const std::string
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
     char buf[101];
-    FileEntry storage[MAXENTRIES + 1]{};
-    FileEntry *choices[MAXENTRIES + 1] = { nullptr };
-    int attributes[MAXENTRIES + 1] = { 0 };
+    FileEntry storage[MAX_ENTRIES + 1]{};
+    FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
+    int attributes[MAX_ENTRIES + 1] = { 0 };
     void (*formatitem)(int, char *);
     int boxwidth;
     int boxdepth;
@@ -692,7 +692,7 @@ static long gfe_choose_entry(ItemType type, char const *title, const std::string
     s_gfe_title = title;
 
 retry:
-    for (int i = 0; i < MAXENTRIES+1; i++)
+    for (int i = 0; i < MAX_ENTRIES+1; i++)
     {
         choices[i] = &storage[i];
         attributes[i] = 1;
