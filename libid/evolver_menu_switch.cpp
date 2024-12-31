@@ -128,7 +128,7 @@ static MainState move_evolver_selection(MainContext &context)
     // borrow ctrl cursor keys for moving selection box in evolver mode
     GeneBase gene[NUM_GENES];
     copy_genes_from_bank(gene);
-    if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
+    if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
     {
         if (context.key == ID_KEY_CTL_LEFT_ARROW)
         {
@@ -162,7 +162,7 @@ static MainState move_evolver_selection(MainContext &context)
         {
             g_evolve_param_grid_y = 0;
         }
-        const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
+        const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
         g_logical_screen_x_offset = g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
         g_logical_screen_y_offset = g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
 
@@ -222,11 +222,11 @@ static MainState evolver_zoom_in(MainContext &)
             g_zoom_box_y = 0.0;
             find_special_colors();
             g_box_color = g_color_bright;
-            if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
+            if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
             {
                 // set screen view params back (previously changed to allow full screen saves in viewwindow
                 // mode)
-                const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
+                const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
                 g_logical_screen_x_offset =
                     g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
                 g_logical_screen_y_offset =
@@ -252,7 +252,7 @@ static MainState evolver_zoom_out(MainContext &)
         {
             // end zoombox
             g_zoom_box_width = 0;
-            if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
+            if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
             {
                 draw_param_box(1); // clear boxes off screen
                 release_param_box();

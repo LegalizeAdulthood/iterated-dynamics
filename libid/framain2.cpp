@@ -209,7 +209,7 @@ MainState big_while_loop(MainContext &context)
                 }
                 // changed test to 1, so a 2x2 window will work with the sound feature
                 else if ((g_logical_screen_x_dots <= 1 || g_logical_screen_y_dots <= 1) &&
-                    !bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
+                    !bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
@@ -218,18 +218,18 @@ MainState big_while_loop(MainContext &context)
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP) &&
+                if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                     bit_set(g_cur_fractal_specific->flags, FractalFlags::INFCALC))
                 {
                     stop_msg("Fractal doesn't terminate! switching off evolution.");
-                    g_evolving ^= EvolutionModeFlags::FIELDMAP;
+                    g_evolving ^= EvolutionModeFlags::FIELD_MAP;
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if (bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
+                if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
                 {
-                    const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
+                    const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
                     g_logical_screen_x_dots = (g_screen_x_dots / g_evolve_image_grid_size) - grout;
                     // trim to multiple of 4 for SSG
                     g_logical_screen_x_dots = g_logical_screen_x_dots - (g_logical_screen_x_dots % 4);
@@ -378,7 +378,7 @@ MainState big_while_loop(MainContext &context)
             //rb
             g_filename_stack_index = -1;   // reset pointer
             g_browse_name.clear();
-            if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELDMAP) &&
+            if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                 g_calc_status != CalcStatus::COMPLETED)
             {
                 // generate a set of images with varied parameters on each one
@@ -433,7 +433,7 @@ MainState big_while_loop(MainContext &context)
                 g_evolve_param_box_count = 0;
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
-                const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
+                const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
                 tmpxdots = g_logical_screen_x_dots+grout;
                 tmpydots = g_logical_screen_y_dots+grout;
                 gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;

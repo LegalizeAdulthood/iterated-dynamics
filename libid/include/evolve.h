@@ -70,12 +70,12 @@ inline bool operator!=(const EvolutionInfo &lhs, const EvolutionInfo &rhs)
 // bitmasks for evolution mode flag
 enum class EvolutionModeFlags
 {
-    NONE = 0,      //
-    FIELDMAP = 1,  // steady field varyiations across screen
-    RANDWALK = 2,  // newparm = lastparm +- rand()
-    RANDPARAM = 4, // newparm = constant +- rand()
-    NOGROUT = 8,   // no gaps between images
-    PARMBOX = 128, //
+    NONE = 0,        //
+    FIELD_MAP = 1,   // steady field variations across screen
+    RAND_WALK = 2,   // new param = last param +- rand()
+    RAND_PARAM = 4,  // new param = constant +- rand()
+    NO_GROUT = 8,    // no gaps between images
+    PARAM_BOX = 128, //
 };
 inline int operator+(EvolutionModeFlags value)
 {

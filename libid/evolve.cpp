@@ -684,8 +684,8 @@ int get_evolve_params()
 
 get_evol_restart:
 
-    if (bit_set(g_evolving, EvolutionModeFlags::RANDWALK) ||
-        bit_set(g_evolving, EvolutionModeFlags::RANDPARAM))
+    if (bit_set(g_evolving, EvolutionModeFlags::RAND_WALK) ||
+        bit_set(g_evolving, EvolutionModeFlags::RAND_PARAM))
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
@@ -697,14 +697,14 @@ get_evol_restart:
     }
 
     choices.reset()
-        .yes_no("Evolution mode? (no for full screen)", bit_set(g_evolving, EvolutionModeFlags::FIELDMAP))
+        .yes_no("Evolution mode? (no for full screen)", bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
         .int_number("Image grid size (odd numbers only)", g_evolve_image_grid_size);
 
     if (explore_check())
     {
         // test to see if any parms are set to linear
         // variation 'explore mode'
-        choices.yes_no("Show parameter zoom box?", bit_set(g_evolving, EvolutionModeFlags::PARMBOX))
+        choices.yes_no("Show parameter zoom box?", bit_set(g_evolving, EvolutionModeFlags::PARAM_BOX))
             .float_number("x parameter range (across screen)", g_evolve_x_parameter_range)
             .float_number("x parameter offset (left hand edge)", g_evolve_x_parameter_offset)
             .float_number("y parameter range (up screen)", g_evolve_y_parameter_range)
@@ -713,7 +713,7 @@ get_evol_restart:
 
     choices.float_number("Max random mutation", g_evolve_max_random_mutation)
         .float_number("Mutation reduction factor (between generations)", g_evolve_mutation_reduction_factor)
-        .yes_no("Grouting? ", !bit_set(g_evolving, EvolutionModeFlags::NOGROUT))
+        .yes_no("Grouting? ", !bit_set(g_evolving, EvolutionModeFlags::NO_GROUT))
         .comment("")
         .comment("Press F4 to reset view parameters to defaults.")
         .comment("Press F2 to halve mutation levels")
@@ -774,7 +774,7 @@ get_evol_restart:
     j = i;
 
     // now check out the results
-    g_evolving = choices.read_yes_no() ? EvolutionModeFlags::FIELDMAP : EvolutionModeFlags::NONE;
+    g_evolving = choices.read_yes_no() ? EvolutionModeFlags::FIELD_MAP : EvolutionModeFlags::NONE;
     g_view_window = g_evolving != EvolutionModeFlags::NONE;
 
     if (g_evolving == EvolutionModeFlags::NONE && i != ID_KEY_F6)    // don't need any of the other parameters
@@ -801,7 +801,7 @@ get_evol_restart:
     g_evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
-        g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::PARMBOX : EvolutionModeFlags::NONE;
+        g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::PARAM_BOX : EvolutionModeFlags::NONE;
         g_evolve_x_parameter_range = choices.read_float_number();
         g_evolve_x_parameter_offset = choices.read_float_number();
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset;
@@ -812,7 +812,7 @@ get_evol_restart:
 
     g_evolve_max_random_mutation = choices.read_float_number();
     g_evolve_mutation_reduction_factor = choices.read_float_number();
-    g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::NONE : EvolutionModeFlags::NOGROUT;
+    g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::NONE : EvolutionModeFlags::NO_GROUT;
     g_view_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-2;
     g_view_y_dots = (g_screen_y_dots / g_evolve_image_grid_size)-2;
     if (!g_view_window)
@@ -852,7 +852,7 @@ get_evol_restart:
         if (old_variations > 0)
         {
             g_view_window = true;
-            g_evolving |= EvolutionModeFlags::FIELDMAP;   // leave other settings alone
+            g_evolving |= EvolutionModeFlags::FIELD_MAP;   // leave other settings alone
         }
         g_evolve_max_random_mutation = 1;
         g_evolve_mutation_reduction_factor = 1.0;
@@ -964,11 +964,11 @@ void draw_param_box(int mode)
     // draws parameter zoom box in evolver mode
     // clears boxes off screen if mode = 1, otherwise, redraws boxes
     Coord tl, tr, bl, br;
-    if (!bit_set(g_evolving, EvolutionModeFlags::PARMBOX))
+    if (!bit_set(g_evolving, EvolutionModeFlags::PARAM_BOX))
     {
         return; // don't draw if not asked to!
     }
-    const int grout = bit_set(g_evolving, EvolutionModeFlags::NOGROUT) ? 0 : 1;
+    const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
     s_image_box_count = g_box_count;
     if (g_box_count)
     {

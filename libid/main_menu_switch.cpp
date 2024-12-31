@@ -535,7 +535,7 @@ static MainState request_make_batch_file(MainContext &)
 
 static MainState start_evolution(MainContext &context)
 {
-    g_evolving = EvolutionModeFlags::FIELDMAP;
+    g_evolving = EvolutionModeFlags::FIELD_MAP;
     g_view_window = true;
     set_mutation_level(context.key - ID_KEY_ALT_1 + 1);
     save_param_history();
