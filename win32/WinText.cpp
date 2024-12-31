@@ -11,6 +11,8 @@
 #include <array> // std::size
 #include <algorithm>
 #include <cstring>
+#include <stdexcept>
+#include <string>
 
 #define TIMER_ID 1
 
@@ -343,7 +345,7 @@ void WinText::on_kill_focus(HWND window, HWND old_focus)
 void WinText::on_paint(HWND window)
 {
     PAINTSTRUCT ps;
-    HDC hDC = BeginPaint(window, &ps);
+    BeginPaint(window, &ps);
 
     // the routine below handles *all* window updates
     int xmin = ps.rcPaint.left/m_char_width;
@@ -741,7 +743,7 @@ void WinText::schedule_alarm(int secs)
     if (!result)
     {
         DWORD error = GetLastError();
-        _ASSERTE(result);
+        throw std::runtime_error("SetTimer failed: " + std::to_string(error));
     }
 }
 

@@ -12,6 +12,8 @@
 #include <windowsx.h>
 
 #include <cstring>
+#include <stdexcept>
+#include <string>
 
 #define PLOT_TIMER_ID 1
 
@@ -529,8 +531,8 @@ void Plot::schedule_alarm(int secs)
     UINT_PTR result = SetTimer(m_window, PLOT_TIMER_ID, secs, redraw_window);
     if (!result)
     {
-        DWORD error = GetLastError();
-        _ASSERTE(result);
+        const DWORD error = GetLastError();
+        throw std::runtime_error("SetTimer failed: " + std::to_string(error));
     }
 }
 

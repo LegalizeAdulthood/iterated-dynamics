@@ -106,7 +106,7 @@ void Frame::on_paint(HWND window)
     }
 
     PAINTSTRUCT ps;
-    HDC hDC = BeginPaint(window, &ps);
+    BeginPaint(window, &ps);
     EndPaint(window, &ps);
 }
 
@@ -1372,6 +1372,6 @@ void Frame::set_keyboard_timeout(int ms)
     if (!result)
     {
         DWORD error = GetLastError();
-        _ASSERTE(result);
+        throw std::runtime_error("SetTimer failed: " + std::to_string(error));
     }
 }

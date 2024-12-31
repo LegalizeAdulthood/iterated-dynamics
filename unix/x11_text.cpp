@@ -896,8 +896,6 @@ void X11TextWindow::repaint(int xmin, int xmax, int ymin, int ymax)
     */
     int istart = 0;
     int jstart = 0;
-    unsigned char foreground = 0;
-    unsigned char background = 0;
     for (int j = ymin; j <= ymax; j++)
     {
         int length = 0;
@@ -910,8 +908,8 @@ void X11TextWindow::repaint(int xmin, int xmax, int ymin, int ymax)
             {
                 k = attributes_[j][i];
             }
-            foreground = static_cast<unsigned char>(k & 15);
-            background = static_cast<unsigned char>(k >> 4);
+            unsigned char foreground = static_cast<unsigned char>(k & 15);
+            unsigned char background = static_cast<unsigned char>(k >> 4);
             if (i > xmax || foreground != (int)oldfg || background != (int)oldbk)
             {
                 if (length > 0)

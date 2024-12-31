@@ -121,7 +121,6 @@ inline void count_to_int(unsigned long C, int &x, int &y, int dif_offset)
     x += s_dif_la[tC & 0xFF];
     y <<= 4;
     y += s_dif_lb[tC & 0xFF];
-    tC >>= 8;
     x >>= dif_offset;
     y >>= dif_offset;
 }

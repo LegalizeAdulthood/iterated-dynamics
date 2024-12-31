@@ -355,7 +355,6 @@ void AsciiDocProcessor::print_inside_key(char c)
                 }
                 else if (m_key_name.back() == ']')
                 {
-                    const char last = m_key_name.back();
                     m_key_name.pop_back();
                     m_key_name += R"(\])";
                 }

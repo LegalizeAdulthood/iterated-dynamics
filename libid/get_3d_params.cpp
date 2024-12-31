@@ -369,12 +369,7 @@ static bool get_light_params()
 {
     ChoiceBuilder<13> builder;
 
-    int k;
-
     // defaults go here
-
-    k = -1;
-
     if (illumine() || g_raytrace_format != RayTraceFormat::NONE)
     {
         builder.int_number("X value light vector", g_light_x)
@@ -407,14 +402,12 @@ static bool get_light_params()
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_LIGHT};
-        k = builder.prompt("Light Source Parameters");
-    }
-    if (k < 0)
-    {
-        return true;
+        if (builder.prompt("Light Source Parameters") < 0)
+        {
+            return true;
+        }
     }
 
-    k = 0;
     if (illumine())
     {
         g_light_x   = builder.read_int_number();
@@ -448,7 +441,6 @@ static bool get_light_params()
         }
         g_light_name = builder.read_string();
         /* In case light_name conflicts with an existing name it is checked again in line3d */
-        k++;
         g_background_color[0] = (char)(builder.read_int_number() % 255);
         g_background_color[1] = (char)(builder.read_int_number() % 255);
         g_background_color[2] = (char)(builder.read_int_number() % 255);
