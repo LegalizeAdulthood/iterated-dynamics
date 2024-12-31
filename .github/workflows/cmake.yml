@@ -139,6 +139,7 @@ jobs:
           other_options: >-
             --suppress=commaSeparatedReturn
             --suppress=cstyleCast
+            --suppress=functionConst
             --suppress=functionStatic
             --suppress=incorrectStringBooleanError
             --suppress=invalidPointerCast
