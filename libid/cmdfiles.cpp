@@ -766,7 +766,7 @@ static bool next_line(std::FILE *handle, char *linebuf, CmdFile mode)
 
 enum
 {
-    NONNUMERIC = -32767
+    NON_NUMERIC = -32767
 };
 
 namespace cmd_files_test
@@ -883,7 +883,7 @@ Command::Command(char *curarg, CmdFile a_mode) :
         }
         if (total_params == 0)
         {
-            num_val = NONNUMERIC;
+            num_val = NON_NUMERIC;
         }
         if (total_params < 16)
         {
@@ -1144,7 +1144,7 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
 
 static CmdArgFlags cmd_max_history(const Command &cmd)
 {
-    if (cmd.num_val == NONNUMERIC)
+    if (cmd.num_val == NON_NUMERIC)
     {
         return cmd.bad_arg();
     }
@@ -1405,7 +1405,7 @@ static CmdArgFlags cmd_bail_out_test(const Command &cmd)
 
 static CmdArgFlags cmd_bf_digits(const Command &cmd)
 {
-    if (cmd.num_val == NONNUMERIC || (cmd.num_val < 0 || cmd.num_val > 2000))
+    if (cmd.num_val == NON_NUMERIC || (cmd.num_val < 0 || cmd.num_val > 2000))
     {
         return cmd.bad_arg();
     }
@@ -2015,7 +2015,7 @@ static CmdArgFlags cmd_fill_color(const Command &cmd)
     {
         g_fill_color = -1;
     }
-    else if (cmd.num_val == NONNUMERIC)
+    else if (cmd.num_val == NON_NUMERIC)
     {
         return cmd.bad_arg();
     }
@@ -2222,7 +2222,7 @@ static CmdArgFlags cmd_inside(const Command &cmd)
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
-    if (cmd.num_val == NONNUMERIC)
+    if (cmd.num_val == NON_NUMERIC)
     {
         return cmd.bad_arg();
     }
@@ -2757,7 +2757,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
-    if (cmd.num_val == NONNUMERIC || (cmd.num_val < TDIS || cmd.num_val > 255))
+    if (cmd.num_val == NON_NUMERIC || (cmd.num_val < TDIS || cmd.num_val > 255))
     {
         return cmd.bad_arg();
     }
@@ -2844,7 +2844,7 @@ static CmdArgFlags cmd_periodicity(const Command &cmd)
     {
         g_user_periodicity_value = -1;
     }
-    else if (cmd.num_val == NONNUMERIC)
+    else if (cmd.num_val == NON_NUMERIC)
     {
         return cmd.bad_arg();
     }
@@ -2866,7 +2866,7 @@ static CmdArgFlags cmd_periodicity(const Command &cmd)
 // perspective=?
 static CmdArgFlags cmd_perspective(const Command &cmd)
 {
-    if (cmd.num_val == NONNUMERIC)
+    if (cmd.num_val == NON_NUMERIC)
     {
         return cmd.bad_arg();
     }
