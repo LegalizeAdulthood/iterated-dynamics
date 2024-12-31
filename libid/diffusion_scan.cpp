@@ -14,7 +14,7 @@
 static int diffusion_engine();
 
 // lookup tables to avoid too much bit fiddling :
-static char s_dif_la[] =
+static constexpr int s_dif_la[] =
 {
     0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
     2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
@@ -28,7 +28,7 @@ static char s_dif_la[] =
     1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-static char s_dif_lb[] =
+static constexpr int s_dif_lb[] =
 {
     0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
     6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
