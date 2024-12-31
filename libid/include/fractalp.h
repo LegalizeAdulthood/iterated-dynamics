@@ -29,24 +29,24 @@ struct MoreParams
 // bitmask values for fractalspecific flags
 enum class FractalFlags
 {
-    NONE = 0,        // no flags
-    NOZOOM = 1,      // zoombox not allowed at all
-    NOGUESS = 2,     // solid guessing not allowed
-    NOTRACE = 4,     // boundary tracing not allowed
-    NOROTATE = 8,    // zoombox rotate/stretch not allowed
-    NORESUME = 16,   // can't interrupt and resume
-    INFCALC = 32,    // this type calculates forever
-    TRIG1 = 64,      // number of trig functions in formula
-    TRIG2 = 128,     //
-    TRIG3 = 192,     //
-    TRIG4 = 256,     //
-    PARMS3D = 1024,  // uses 3d parameters
-    OKJB = 2048,     // works with Julibrot
-    MORE = 4096,     // more than 4 parms
-    BAILTEST = 8192, // can use different bailout tests
-    BF_MATH = 16384, // supports arbitrary precision
-    LD_MATH = 32768, // supports long double
-    PERTURB = 65536  // supports perturbation
+    NONE = 0,         // no flags
+    NO_ZOOM = 1,      // zoom box not allowed at all
+    NO_GUESS = 2,     // solid guessing not allowed
+    NO_TRACE = 4,     // boundary tracing not allowed
+    NO_ROTATE = 8,    // zoom box rotate/stretch not allowed
+    NO_RESUME = 16,   // can't interrupt and resume
+    INF_CALC = 32,    // this type calculates forever
+    TRIG1 = 64,       // number of trig functions in formula
+    TRIG2 = 128,      //
+    TRIG3 = 192,      //
+    TRIG4 = 256,      //
+    PARAMS_3D = 1024, // uses 3d parameters
+    OK_JB = 2048,     // works with Julibrot
+    MORE = 4096,      // more than 4 params
+    BAIL_TEST = 8192, // can use different bailout tests
+    BF_MATH = 16384,  // supports arbitrary precision
+    LD_MATH = 32768,  // supports long double
+    PERTURB = 65536   // supports perturbation
 };
 inline int operator+(FractalFlags value)
 {

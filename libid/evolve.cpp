@@ -441,7 +441,7 @@ choose_vars_restart:
     }
 
     if (g_cur_fractal_specific->calctype == standard_fractal &&
-        bit_set(g_cur_fractal_specific->flags, FractalFlags::BAILTEST))
+        bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         choices.list(gene[NUM_GENES - 1].name, 7, 7, evolvmodes, static_cast<int>(gene[NUM_GENES - 1].mutate));
     }
@@ -491,7 +491,7 @@ choose_vars_restart:
     }
 
     if (g_cur_fractal_specific->calctype == standard_fractal &&
-        bit_set(g_cur_fractal_specific->flags, FractalFlags::BAILTEST))
+        bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         gene[NUM_GENES - 1].mutate = static_cast<Variations>(choices.read_list());
     }

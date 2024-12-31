@@ -464,7 +464,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         if (g_display_3d == Display3DMode::NONE //
             && (read_info.version <= 4             //
                    || read_info.display_3d > 0     //
-                   || bit_set(g_cur_fractal_specific->flags, FractalFlags::PARMS3D)))
+                   || bit_set(g_cur_fractal_specific->flags, FractalFlags::PARAMS_3D)))
         {
             g_sphere = read_info.init3d[0] != 0;                       // sphere? 1 = yes, 0 = no
             g_x_rot = read_info.init3d[1];                             // rotate x-axis 60 degrees

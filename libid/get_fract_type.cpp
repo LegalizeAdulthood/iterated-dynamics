@@ -132,7 +132,7 @@ static FractalType select_fract_type(FractalType t)
         {
             if (g_julibrot)
             {
-                if (!(bit_set(g_fractal_specific[i].flags, FractalFlags::OKJB) && *g_fractal_specific[i].name != '*'))
+                if (!(bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && *g_fractal_specific[i].name != '*'))
                 {
                     continue;
                 }
@@ -650,7 +650,7 @@ gfp_top:
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
     if (orbit_bailout != 0                                      //
         && g_cur_fractal_specific->calctype == standard_fractal //
-        && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAILTEST))
+        && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_bail_out_test);
@@ -865,7 +865,7 @@ gfp_top:
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
     if (orbit_bailout != 0                                      //
         && g_cur_fractal_specific->calctype == standard_fractal //
-        && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAILTEST))
+        && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_bail_out_test))
         {

@@ -673,7 +673,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return 1; // btm, align on any pixel
     }
-    if (g_std_calc_mode != 'g' || bit_set(g_cur_fractal_specific->flags, FractalFlags::NOGUESS))
+    if (g_std_calc_mode != 'g' || bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
     {
         if (g_std_calc_mode == '2' || g_std_calc_mode == '3')   // align on even pixel for 2pass
         {
@@ -1111,7 +1111,7 @@ MainState request_zoom_out(MainContext &context)
 
 MainState skew_zoom_left(MainContext &)
 {
-    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         const int i = key_count(ID_KEY_CTL_HOME);
         if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
@@ -1124,7 +1124,7 @@ MainState skew_zoom_left(MainContext &)
 
 MainState skew_zoom_right(MainContext &)
 {
-    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         const int i = key_count(ID_KEY_CTL_END);
         if ((g_zoom_box_skew += 0.02 * i) > 0.48)
@@ -1198,7 +1198,7 @@ MainState zoom_box_out(MainContext &)
 
 MainState zoom_box_increase_rotation(MainContext &)
 {
-    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
     }
@@ -1207,7 +1207,7 @@ MainState zoom_box_increase_rotation(MainContext &)
 
 MainState zoom_box_decrease_rotation(MainContext &)
 {
-    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
+    if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
     }

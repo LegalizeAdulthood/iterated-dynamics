@@ -352,7 +352,7 @@ init_restart:
         }
     }
 
-    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NOROTATE))
+    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         // ensure min<max and unrotated rectangle
         if (g_x_min > g_x_max)

@@ -21,7 +21,7 @@ MainState flip_image(MainContext &context)
     int tempdot;
 
     // fractal must be rotate-able and be finished
-    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NOROTATE) //
+    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE) //
         || g_calc_status == CalcStatus::IN_PROGRESS              //
         || g_calc_status == CalcStatus::RESUMABLE)
     {

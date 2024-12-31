@@ -927,11 +927,11 @@ static void perform_work_list()
             }
         }
     }
-    if (g_std_calc_mode == 'b' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NOTRACE))
+    if (g_std_calc_mode == 'b' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_TRACE))
     {
         g_std_calc_mode = '1';
     }
-    if (g_std_calc_mode == 'g' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NOGUESS))
+    if (g_std_calc_mode == 'g' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
     {
         g_std_calc_mode = '1';
     }

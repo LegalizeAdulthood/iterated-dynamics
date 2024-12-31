@@ -390,7 +390,7 @@ top:
 
     if (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE)
     {
-        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NORESUME))
+        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
         {
             driver_put_string(s_row++, 2, C_GENERAL_HI,
                               "Note: can't resume this type after interrupts other than <tab> and <F1>");
@@ -496,7 +496,7 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
-    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INFCALC) && g_color_iter != 0)
+    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC) && g_color_iter != 0)
     {
         driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
         std::sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
@@ -518,7 +518,7 @@ top:
                 g_video_entry.comment);
         driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     }
-    if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::NOZOOM))
+    if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM))
     {
         adjust_corner(); // make bottom left exact if very near exact
         if (g_bf_math != BFMathType::NONE)

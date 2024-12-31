@@ -219,7 +219,7 @@ MainState big_while_loop(MainContext &context)
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
                 if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
-                    bit_set(g_cur_fractal_specific->flags, FractalFlags::INFCALC))
+                    bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
                 {
                     stop_msg("Fractal doesn't terminate! switching off evolution.");
                     g_evolving ^= EvolutionModeFlags::FIELD_MAP;
@@ -321,7 +321,7 @@ MainState big_while_loop(MainContext &context)
         }
 
         // for these cases disable zooming
-        g_zoom_enabled = !driver_diskp() && !bit_set(g_cur_fractal_specific->flags, FractalFlags::NOZOOM);
+        g_zoom_enabled = !driver_diskp() && !bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM);
         if (g_evolving == EvolutionModeFlags::NONE)
         {
             calc_frac_init();
@@ -363,7 +363,7 @@ MainState big_while_loop(MainContext &context)
         {
             // draw an image
             if (g_init_save_time != 0 // autosave and resumable?
-                && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NORESUME))
+                && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
             {
                 s_save_base = read_ticker(); // calc's start time
                 s_save_ticks = std::abs(g_init_save_time);
