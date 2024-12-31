@@ -106,6 +106,9 @@ Once your change is ready, prepare a pull request and submit it back for
 incorporation into the main repository.  We couldn't have gotten this far
 without contributions from many persons!
 
+To ensure your code will fit in wth the existing code base, check our
+[Style Guide](Style.md) and adjust your code to match.
+
 # Code Structure
 
 Most of the source code is in a library named `libid` in a folder by the same
