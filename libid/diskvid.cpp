@@ -28,16 +28,16 @@
 
 enum
 {
-    BOXROW = 6,
-    BOXCOL = 11,
-    BOXWIDTH = 57,
-    BOXDEPTH = 12,
-    BLOCKLEN = 2048, // must be a power of 2, must match next
-    BLOCKSHIFT = 11, // must match above
-    CACHEMIN = 64,   // minimum cache size in Kbytes
-    CACHEMAX = 4096, // maximum cache size in Kbytes
-    FREEMEM = 33,    // try to leave this much memory unallocated
-    HASHSIZE = 2048 // power of 2, near CACHEMAX/(BLOCKLEN+8)
+    BOX_ROW = 6,
+    BOX_COL = 11,
+    BOX_WIDTH = 57,
+    BOX_DEPTH = 12,
+    BLOCK_LEN = 2048, // must be a power of 2, must match next
+    BLOCK_SHIFT = 11, // must match above
+    CACHE_MIN = 64,   // minimum cache size in Kbytes
+    CACHE_MAX = 4096, // maximum cache size in Kbytes
+    FREE_MEM = 33,    // try to leave this much memory unallocated
+    HASH_SIZE = 2048  // power of 2, near CACHEMAX/(BLOCKLEN+8)
 };
 
 namespace
@@ -47,7 +47,7 @@ namespace
 struct Cache
 {
     long offset;           // pixel offset in image
-    BYTE pixel[BLOCKLEN];  // one pixel per byte
+    BYTE pixel[BLOCK_LEN];  // one pixel per byte
     unsigned int hashlink; // ptr to next cache entry with same hash
     bool dirty;            // changed since read?
     bool lru;              // recently used?
@@ -71,7 +71,7 @@ static long s_seek_offset{};                // what we'll get next if we don't s
 static long s_cur_offset{};                 // offset of last block referenced
 static int s_cur_row{};                     //
 static long s_cur_row_base{};               //
-static unsigned int s_hash_ptr[HASHSIZE]{}; //
+static unsigned int s_hash_ptr[HASH_SIZE]{}; //
 static int s_pixel_shift{};                 //
 static int s_header_length{};               //
 static int s_row_size{};                    // doubles as a disk video not ok flag
@@ -146,12 +146,12 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     {
         help_title();
         driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
-        for (int i = 0; i < BOXDEPTH; ++i)
+        for (int i = 0; i < BOX_DEPTH; ++i)
         {
-            driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
+            driver_set_attr(BOX_ROW+i, BOX_COL, C_DVID_LO, BOX_WIDTH);  // init box
         }
-        driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
-        driver_put_string(BOXROW + 4, BOXCOL + 4, C_DVID_LO,
+        driver_put_string(BOX_ROW+2, BOX_COL+4, C_DVID_HI, "'Disk-Video' mode");
+        driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO,
             "Screen resolution: " + std::to_string(g_screen_x_dots) + " x " + std::to_string(g_screen_y_dots));
         if (g_disk_targa)
         {
@@ -162,8 +162,8 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
             driver_put_string(-1, -1, C_DVID_LO, std::to_string(colors));
         }
-        driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, "Save name: " + g_save_filename);
-        driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
+        driver_put_string(BOX_ROW+8, BOX_COL+4, C_DVID_LO, "Save name: " + g_save_filename);
+        driver_put_string(BOX_ROW+10, BOX_COL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");
     }
     s_high_offset = -1;
@@ -186,7 +186,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
     s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;  // time-to-g_driver-status counter
 
-    constexpr unsigned int cache_size = CACHEMAX;
+    constexpr unsigned int cache_size = CACHE_MAX;
     long longtmp = (long) cache_size << 10;
     s_cache_start = (Cache *)malloc(longtmp);
     if (cache_size == 64)
@@ -195,7 +195,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
     s_cache_lru = s_cache_start;
     s_cache_end = s_cache_lru + longtmp/sizeof(*s_cache_start);
-    s_mem_buf.resize(BLOCKLEN);
+    s_mem_buf.resize(BLOCK_LEN);
     if (s_cache_start == nullptr)
     {
         stop_msg("*** insufficient free memory for cache buffers ***");
@@ -203,7 +203,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
     if (driver_diskp())
     {
-        driver_put_string(BOXROW + 6, BOXCOL + 4, C_DVID_LO, "Cache size: " + std::to_string(cache_size) + "K");
+        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Cache size: " + std::to_string(cache_size) + "K");
     }
 
     // preset cache to all invalid entries so we don't need free list logic
@@ -216,8 +216,8 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     {
         ptr1->dirty = false;
         ptr1->lru = false;
-        longtmp += BLOCKLEN;
-        unsigned int *fwd_link = &s_hash_ptr[((unsigned short) longtmp >> BLOCKSHIFT) & (HASHSIZE - 1)];
+        longtmp += BLOCK_LEN;
+        unsigned int *fwd_link = &s_hash_ptr[((unsigned short) longtmp >> BLOCK_SHIFT) & (HASH_SIZE - 1)];
         ptr1->offset = longtmp;
         ptr1->hashlink = *fwd_link;
         *fwd_link = (int)((char *)ptr1 - (char *)s_cache_start);
@@ -225,14 +225,14 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
 
     long memorysize = (long) (newcolsize) *newrowsize + s_header_length;
     {
-        const int i = (short) memorysize & (BLOCKLEN - 1);
+        const int i = (short) memorysize & (BLOCK_LEN - 1);
         if (i != 0)
         {
-            memorysize += BLOCKLEN - i;
+            memorysize += BLOCK_LEN - i;
         }
     }
     memorysize >>= s_pixel_shift;
-    memorysize >>= BLOCKSHIFT;
+    memorysize >>= BLOCK_SHIFT;
     g_disk_flag = true;
     s_row_size = (unsigned int) newrowsize;
     s_col_size = (unsigned int) newcolsize;
@@ -246,11 +246,11 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
             s_mem_buf[i] = (BYTE)fgetc(s_fp);
         }
         std::fclose(s_fp);
-        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, MemoryLocation::DISK);
+        s_dv_handle = memory_alloc((U16) BLOCK_LEN, memorysize, MemoryLocation::DISK);
     }
     else
     {
-        s_dv_handle = memory_alloc((U16) BLOCKLEN, memorysize, MemoryLocation::MEMORY);
+        s_dv_handle = memory_alloc((U16) BLOCK_LEN, memorysize, MemoryLocation::MEMORY);
     }
     if (!s_dv_handle)
     {
@@ -262,7 +262,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
 
     if (driver_diskp())
     {
-        driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
+        driver_put_string(BOX_ROW+2, BOX_COL+23, C_DVID_LO,
                           (memory_type(s_dv_handle) == MemoryLocation::DISK) ? "Using your Disk Drive" : "Using your memory");
     }
 
@@ -277,7 +277,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     {
         for (long offset = 0; offset < memorysize; offset++)
         {
-            s_dv_handle.set(0, (U16)BLOCKLEN, 1L, offset);
+            s_dv_handle.set(0, (U16)BLOCK_LEN, 1L, offset);
             if (driver_key_pressed())           // user interrupt
             {
                 // esc to cancel, else continue
@@ -368,24 +368,24 @@ int disk_read_pixel(int col, int row)
         return 0;
     }
     offset = s_cur_row_base + col;
-    col_subscr = (short) offset & (BLOCKLEN-1); // offset within cache entry
-    if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
+    col_subscr = (short) offset & (BLOCK_LEN-1); // offset within cache entry
+    if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
     {
-        find_load_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCK_LEN));
     }
     return s_cur_cache->pixel[col_subscr];
 }
 
 bool from_mem_disk(long offset, int size, void *dest)
 {
-    int col_subscr = (int)(offset & (BLOCKLEN - 1));
-    if (col_subscr + size > BLOCKLEN)            // access violates  a
+    int col_subscr = (int)(offset & (BLOCK_LEN - 1));
+    if (col_subscr + size > BLOCK_LEN)            // access violates  a
     {
         return false;                                 //   cache boundary
     }
-    if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
+    if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
     {
-        find_load_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCK_LEN));
     }
     std::memcpy(dest, (void *) &s_cur_cache->pixel[col_subscr], size);
     s_cur_cache->dirty = false;
@@ -429,10 +429,10 @@ void disk_write_pixel(int col, int row, int color)
         return;
     }
     offset = s_cur_row_base + col;
-    col_subscr = (short) offset & (BLOCKLEN-1);
-    if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
+    col_subscr = (short) offset & (BLOCK_LEN-1);
+    if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
     {
-        find_load_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCK_LEN));
     }
     if (s_cur_cache->pixel[col_subscr] != (color & 0xff))
     {
@@ -443,16 +443,16 @@ void disk_write_pixel(int col, int row, int color)
 
 bool to_mem_disk(long offset, int size, void *src)
 {
-    int col_subscr = (int)(offset & (BLOCKLEN - 1));
+    int col_subscr = (int)(offset & (BLOCK_LEN - 1));
 
-    if (col_subscr + size > BLOCKLEN)           // access violates  a
+    if (col_subscr + size > BLOCK_LEN)           // access violates  a
     {
         return false;                           //   cache boundary
     }
 
-    if (s_cur_offset != (offset & (0L-BLOCKLEN))) // same entry as last ref?
+    if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
     {
-        find_load_cache(offset & (0L-BLOCKLEN));
+        find_load_cache(offset & (0L-BLOCK_LEN));
     }
 
     std::memcpy((void *) &s_cur_cache->pixel[col_subscr], src, size);
@@ -474,7 +474,7 @@ static void find_load_cache(long offset) // used by read/write
     BYTE *pixelptr = nullptr;
     s_cur_offset = offset; // note this for next reference
     // check if required entry is in cache - lookup by hash
-    tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
+    tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1) ];
     while (tbloffset != 0xffff)  // follow the hash chain
     {
         s_cur_cache = (Cache *)((char *)s_cache_start + tbloffset);
@@ -503,7 +503,7 @@ static void find_load_cache(long offset) // used by read/write
         write_cache_lru();
     }
     // remove block at cache_lru from its hash chain
-    fwd_link = &s_hash_ptr[(((unsigned short)s_cache_lru->offset >> BLOCKSHIFT) & (HASHSIZE-1))];
+    fwd_link = &s_hash_ptr[(((unsigned short)s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
     tbloffset = (int)((char *)s_cache_lru - (char *)s_cache_start);
     while (*fwd_link != tbloffset)
     {
@@ -518,7 +518,7 @@ static void find_load_cache(long offset) // used by read/write
     if (offset > s_high_offset)  // never been this high before, just clear it
     {
         s_high_offset = offset;
-        std::memset(pixelptr, 0, BLOCKLEN);
+        std::memset(pixelptr, 0, BLOCK_LEN);
     }
     else
     {
@@ -526,18 +526,18 @@ static void find_load_cache(long offset) // used by read/write
         {
             mem_seek(offset >> s_pixel_shift);
         }
-        s_seek_offset = offset + BLOCKLEN;
+        s_seek_offset = offset + BLOCK_LEN;
         switch (s_pixel_shift)
         {
         case 0:
-            for (int i = 0; i < BLOCKLEN; ++i)
+            for (int i = 0; i < BLOCK_LEN; ++i)
             {
                 *(pixelptr++) = mem_getc();
             }
             break;
 
         case 1:
-            for (int i = 0; i < BLOCKLEN/2; ++i)
+            for (int i = 0; i < BLOCK_LEN/2; ++i)
             {
                 BYTE const tmpchar = mem_getc();
                 *(pixelptr++) = (BYTE)(tmpchar >> 4);
@@ -545,7 +545,7 @@ static void find_load_cache(long offset) // used by read/write
             }
             break;
         case 2:
-            for (int i = 0; i < BLOCKLEN/4; ++i)
+            for (int i = 0; i < BLOCK_LEN/4; ++i)
             {
                 BYTE const tmpchar = mem_getc();
                 for (int j = 6; j >= 0; j -= 2)
@@ -555,7 +555,7 @@ static void find_load_cache(long offset) // used by read/write
             }
             break;
         case 3:
-            for (int i = 0; i < BLOCKLEN/8; ++i)
+            for (int i = 0; i < BLOCK_LEN/8; ++i)
             {
                 BYTE const tmpchar = mem_getc();
                 for (int j = 7; j >= 0; --j)
@@ -567,7 +567,7 @@ static void find_load_cache(long offset) // used by read/write
         }
     }
     // add new block to its hash chain
-    fwd_link = &s_hash_ptr[(((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1))];
+    fwd_link = &s_hash_ptr[(((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
     s_cache_lru->hashlink = *fwd_link;
     *fwd_link = (int)((char *)s_cache_lru - (char *)s_cache_start);
     s_cur_cache = s_cache_lru;
@@ -578,7 +578,7 @@ static Cache *find_cache(long offset)
 {
     unsigned int tbloffset;
     Cache *ptr1;
-    tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1)];
+    tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1)];
     while (tbloffset != 0xffff)
     {
         ptr1 = (Cache *)((char *)s_cache_start + tbloffset);
@@ -610,7 +610,7 @@ static void  write_cache_lru()
     i = 0;
     while (++i <= WRITEGAP)
     {
-        offset -= BLOCKLEN;
+        offset -= BLOCK_LEN;
         ptr2 = find_cache(offset);
         if (ptr2 != nullptr && ptr2->dirty)
         {
@@ -629,13 +629,13 @@ write_stuff:
     switch (s_pixel_shift)
     {
     case 0:
-        for (int j = 0; j < BLOCKLEN; ++j)
+        for (int j = 0; j < BLOCK_LEN; ++j)
         {
             mem_putc(*(pixelptr++));
         }
         break;
     case 1:
-        for (int j = 0; j < BLOCKLEN/2; ++j)
+        for (int j = 0; j < BLOCK_LEN/2; ++j)
         {
             tmpchar = (BYTE)(*(pixelptr++) << 4);
             tmpchar = (BYTE)(tmpchar + *(pixelptr++));
@@ -643,7 +643,7 @@ write_stuff:
         }
         break;
     case 2:
-        for (int j = 0; j < BLOCKLEN/4; ++j)
+        for (int j = 0; j < BLOCK_LEN/4; ++j)
         {
             for (int k = 6; k >= 0; k -= 2)
             {
@@ -653,7 +653,7 @@ write_stuff:
         }
         break;
     case 3:
-        for (int j = 0; j < BLOCKLEN/8; ++j)
+        for (int j = 0; j < BLOCK_LEN/8; ++j)
         {
             // clang-format off
             mem_putc((BYTE)
@@ -671,7 +671,7 @@ write_stuff:
         break;
     }
     ptr1->dirty = false;
-    offset = ptr1->offset + BLOCKLEN;
+    offset = ptr1->offset + BLOCK_LEN;
     ptr1 = find_cache(offset);
     if (ptr1 != nullptr && ptr1->dirty)
     {
@@ -680,7 +680,7 @@ write_stuff:
     i = 1;
     while (++i <= WRITEGAP)
     {
-        offset += BLOCKLEN;
+        offset += BLOCK_LEN;
         ptr1 = find_cache(offset);
         if (ptr1 != nullptr && ptr1->dirty)
         {
@@ -698,23 +698,23 @@ write_stuff:
 static void mem_seek(long offset)        // mem seek
 {
     offset += s_header_length;
-    s_mem_offset = offset >> BLOCKSHIFT;
+    s_mem_offset = offset >> BLOCK_SHIFT;
     if (s_mem_offset != s_old_mem_offset)
     {
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_old_mem_offset);
-        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_old_mem_offset);
+        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
     }
     s_old_mem_offset = s_mem_offset;
-    s_mem_buf_ptr = &s_mem_buf[0] + (offset & (BLOCKLEN - 1));
+    s_mem_buf_ptr = &s_mem_buf[0] + (offset & (BLOCK_LEN - 1));
 }
 
 static BYTE  mem_getc()                     // memory get_char
 {
-    if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCKLEN)
+    if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCK_LEN)
     {
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
         s_mem_offset++;
-        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset);
+        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
         s_mem_buf_ptr = &s_mem_buf[0];
         s_old_mem_offset = s_mem_offset;
     }
@@ -723,11 +723,11 @@ static BYTE  mem_getc()                     // memory get_char
 
 static void mem_putc(BYTE c)     // memory get_char
 {
-    if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCKLEN)
+    if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCK_LEN)
     {
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
         s_mem_offset++;
-        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCKLEN, 1L, s_mem_offset);
+        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
         s_mem_buf_ptr = &s_mem_buf[0];
         s_old_mem_offset = s_mem_offset;
     }
@@ -753,6 +753,6 @@ void dvid_status(int line, char const *msg)
         line -= 100;
         attrib = C_STOP_ERR;
     }
-    driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buff);
+    driver_put_string(BOX_ROW+10+line, BOX_COL+12, attrib, buff);
     driver_hide_text_cursor();
 }
