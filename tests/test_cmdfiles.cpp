@@ -1682,14 +1682,14 @@ TEST_F(TestParameterCommand, paramsTwoValues)
 
 TEST_F(TestParameterCommand, miimBreadthFirstLeftToRight)
 {
-    ValueSaver saved_major_method{g_major_method, Major::random_run};
-    ValueSaver saved_minor_method{g_inverse_julia_minor_method, Minor::right_first};
+    ValueSaver saved_major_method{g_major_method, Major::RANDOM_RUN};
+    ValueSaver saved_minor_method{g_inverse_julia_minor_method, Minor::RIGHT_FIRST};
 
     exec_cmd_arg("miim=b/l");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(Major::breadth_first, g_major_method);
-    EXPECT_EQ(Minor::left_first, g_inverse_julia_minor_method);
+    EXPECT_EQ(Major::BREADTH_FIRST, g_major_method);
+    EXPECT_EQ(Minor::LEFT_FIRST, g_inverse_julia_minor_method);
 }
 
 TEST_F(TestParameterCommand, initOrbitPixel)

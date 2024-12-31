@@ -476,8 +476,8 @@ static void init_vars_restart() // <ins> key init
     g_init_cycle_limit = 55;                          // spin-DAC default speed limit
     g_map_set = false;                                // no map= name active
     g_map_specified = false;                          //
-    g_major_method = Major::breadth_first;            // default inverse julia methods
-    g_inverse_julia_minor_method = Minor::left_first; // default inverse julia methods
+    g_major_method = Major::BREADTH_FIRST;            // default inverse julia methods
+    g_inverse_julia_minor_method = Minor::LEFT_FIRST; // default inverse julia methods
     g_truecolor = false;                              // truecolor output flag
     g_true_mode = TrueColorMode::DEFAULT_COLOR;     //
 }
@@ -2539,15 +2539,15 @@ static CmdArgFlags cmd_miim(const Command &cmd)
     }
     if (cmd.char_val[0] == 'b')
     {
-        g_major_method = Major::breadth_first;
+        g_major_method = Major::BREADTH_FIRST;
     }
     else if (cmd.char_val[0] == 'd')
     {
-        g_major_method = Major::depth_first;
+        g_major_method = Major::DEPTH_FIRST;
     }
     else if (cmd.char_val[0] == 'w')
     {
-        g_major_method = Major::random_walk;
+        g_major_method = Major::RANDOM_WALK;
     }
 #ifdef RANDOM_RUN
     else if (cmd.charval[0] == 'r')
@@ -2562,11 +2562,11 @@ static CmdArgFlags cmd_miim(const Command &cmd)
 
     if (cmd.char_val[1] == 'l')
     {
-        g_inverse_julia_minor_method = Minor::left_first;
+        g_inverse_julia_minor_method = Minor::LEFT_FIRST;
     }
     else if (cmd.char_val[1] == 'r')
     {
-        g_inverse_julia_minor_method = Minor::right_first;
+        g_inverse_julia_minor_method = Minor::RIGHT_FIRST;
     }
     else
     {

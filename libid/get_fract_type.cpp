@@ -51,14 +51,14 @@ static char const *s_jiim_method[]{
 #else
 static const char *s_jiim_method_prompt{"Breadth first, Depth first, Random Walk"};
 static const char *s_jiim_method[]{
-    to_string(Major::breadth_first), //
-    to_string(Major::depth_first),   //
-    to_string(Major::random_walk)    //
+    to_string(Major::BREADTH_FIRST), //
+    to_string(Major::DEPTH_FIRST),   //
+    to_string(Major::RANDOM_WALK)    //
 };
 #endif
 static char const *s_jiim_left_right_names[]{
-    to_string(Minor::left_first), //
-    to_string(Minor::right_first) //
+    to_string(Minor::LEFT_FIRST), //
+    to_string(Minor::RIGHT_FIRST) //
 };
 static char s_tmp_stack[4096]{};
 

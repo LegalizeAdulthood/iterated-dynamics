@@ -15,16 +15,16 @@ struct Affine
 
 enum class Major
 {
-    breadth_first,
-    depth_first,
-    random_walk,
-    random_run
+    BREADTH_FIRST,
+    DEPTH_FIRST,
+    RANDOM_WALK,
+    RANDOM_RUN
 };
 
 enum class Minor
 {
-    left_first,
-    right_first
+    LEFT_FIRST,
+    RIGHT_FIRST
 };
 
 extern Minor                 g_inverse_julia_minor_method;
@@ -45,20 +45,20 @@ constexpr const char *to_string(Major value)
     switch(value)
     {
     default:
-    case Major::breadth_first:
+    case Major::BREADTH_FIRST:
         return "breadth";
-    case Major::depth_first:
+    case Major::DEPTH_FIRST:
         return "depth";
-    case Major::random_walk:
+    case Major::RANDOM_WALK:
         return "walk";
-    case Major::random_run:
+    case Major::RANDOM_RUN:
         return "run";
     }
 }
 
 constexpr const char *to_string(Minor value)
 {
-    return value == Minor::left_first ? "left" : "right";
+    return value == Minor::LEFT_FIRST ? "left" : "right";
 }
 
 bool orbit3d_long_setup();
