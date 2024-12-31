@@ -1561,7 +1561,7 @@ TEST_F(TestParameterCommand, textColorsMono)
     }
     for (int i : {0, 2, 5, 11, 16, 17, 22, 24, 25})
     {
-        EXPECT_EQ(BLACK * 16 + L_WHITE, g_text_color[i]) << i;
+        EXPECT_EQ(BLACK * 16 + LT_WHITE, g_text_color[i]) << i;
     }
 }
 

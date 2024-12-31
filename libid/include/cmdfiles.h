@@ -37,15 +37,15 @@ enum TextColors
 
     // use values below this for foreground only, they don't work background
     GRAY, // don't use this much - is black on cga
-    L_BLUE,
-    L_GREEN,
-    L_CYAN,
-    L_RED,
-    L_MAGENTA,
+    LT_BLUE,
+    LT_GREEN,
+    LT_CYAN,
+    LT_RED,
+    LT_MAGENTA,
     YELLOW,
-    L_WHITE,
-    INVERSE = 0x8000, // when 640x200x2 text or mode 7, inverse
-    BRIGHT = 0x4000 // when mode 7, bright
+    LT_WHITE,
+    INVERSE = 0x8000,
+    BRIGHT = 0x4000
 };
 // and their use:
 #define C_TITLE           (g_text_color[0] | BRIGHT)
