@@ -638,29 +638,29 @@ int full_screen_prompt(        // full-screen prompting routine
         }
         else
         {
-            int j = 0;
+            InputFieldFlags j{};
             if (cur_type == 'i')
             {
-                j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+                j = InputFieldFlags::NUMERIC | InputFieldFlags::INTEGER;
             }
             if (cur_type == 'L')
             {
-                j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+                j = InputFieldFlags::NUMERIC | InputFieldFlags::INTEGER;
             }
             if (cur_type == 'd')
             {
-                j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
+                j = InputFieldFlags::NUMERIC | InputFieldFlags::DOUBLE;
             }
             if (cur_type == 'D')
             {
-                j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
+                j = InputFieldFlags::NUMERIC | InputFieldFlags::DOUBLE | InputFieldFlags::INTEGER;
             }
             if (cur_type == 'f')
             {
-                j = INPUTFIELD_NUMERIC;
+                j = InputFieldFlags::NUMERIC;
             }
-            i = input_field(j, C_PROMPT_INPUT, buf, cur_len,
-                            prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
+            i = input_field(j, C_PROMPT_INPUT, buf, cur_len, prompt_row + cur_choice, value_col,
+                in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
             switch (values[cur_choice].type)
             {
             case 'd':

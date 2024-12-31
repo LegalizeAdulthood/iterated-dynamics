@@ -12,14 +12,13 @@
 #include <cstdio>
 #include <cstring>
 
-int input_field(
-    int options,          // &1 numeric, &2 integer, &4 double
-    int attr,             // display attribute
-    char *fld,            // the field itself
-    int len,              // field length (declare as 1 larger for \0)
-    int row,              // display row
-    int col,              // display column
-    int (*checkkey)(int curkey)  // routine to check non data keys, or nullptr
+int input_field(InputFieldFlags options, //
+    int attr,                            // display attribute
+    char *fld,                           // the field itself
+    int len,                             // field length (declare as 1 larger for \0)
+    int row,                             // display row
+    int col,                             // display column
+    int (*check_key)(int key)            // routine to check non data keys, or nullptr
 )
 {
     char savefld[81];
@@ -121,7 +120,7 @@ int input_field(
         default:
             if (non_alpha(curkey))
             {
-                if (checkkey && (ret = (*checkkey)(curkey)) != 0)
+                if (check_key && (ret = (*check_key)(curkey)) != 0)
                 {
                     goto inpfld_end;
                 }
@@ -135,11 +134,11 @@ int input_field(
             {
                 break;                                // insert & full
             }
-            if ((options & INPUTFIELD_NUMERIC)
+            if (bit_set(options , InputFieldFlags::NUMERIC)
                 && (curkey < '0' || curkey > '9')
                 && curkey != '+' && curkey != '-')
             {
-                if (options & INPUTFIELD_INTEGER)
+                if (bit_set(options, InputFieldFlags::INTEGER))
                 {
                     break;
                 }
@@ -170,7 +169,7 @@ int input_field(
             }
             fld[offset++] = (char)curkey;
             // if "e" or "p" in first col make number e or pi
-            if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC)
+            if ((options & (InputFieldFlags::NUMERIC | InputFieldFlags::INTEGER)) == InputFieldFlags::NUMERIC)
             {
                 // floating point
                 double tmpd;
@@ -188,7 +187,7 @@ int input_field(
                 }
                 if (specialv)
                 {
-                    if ((options & INPUTFIELD_DOUBLE) == 0)
+                    if (!bit_set(options, InputFieldFlags::DOUBLE))
                     {
                         round_float_double(&tmpd);
                     }

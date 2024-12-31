@@ -90,6 +90,5 @@ int field_prompt(
     {
         put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
     }
-    return input_field(0, C_PROMPT_INPUT, fld, len,
-                       titlerow+titlelines+1, promptcol, checkkey);
+    return input_field(InputFieldFlags::NONE, C_PROMPT_INPUT, fld, len, titlerow + titlelines + 1, promptcol, checkkey);
 }
