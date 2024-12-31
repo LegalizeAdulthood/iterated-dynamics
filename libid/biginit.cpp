@@ -265,7 +265,7 @@ static void init_bf2()
     // sanity check
     // leave room for NUMVARS variables allocated from stack
     // also leave room for the safe area at top of segment
-    if (ptr + NUMVARS*(g_bf_length+2) > g_max_stack)
+    if (ptr + NUM_VARS*(g_bf_length+2) > g_max_stack)
     {
         stop_msg("Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
         goodbye();

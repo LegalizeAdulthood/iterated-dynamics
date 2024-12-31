@@ -56,7 +56,7 @@ static int get_prec_dbl(int rezflag)
     LDBL ydel2;
     int digits;
     LDBL rez;
-    if (rezflag == MAXREZ)
+    if (rezflag == MAX_REZ)
     {
         rez = OLD_MAX_PIXELS -1;
     }
@@ -68,7 +68,7 @@ static int get_prec_dbl(int rezflag)
     xdel = ((LDBL)g_x_max - (LDBL)g_x_3rd)/rez;
     ydel2 = ((LDBL)g_y_3rd - (LDBL)g_y_min)/rez;
 
-    if (rezflag == CURRENTREZ)
+    if (rezflag == CURRENT_REZ)
     {
         rez = g_logical_screen_y_dots-1;
     }
@@ -101,7 +101,7 @@ static int get_prec_dbl(int rezflag)
 
 void fractal_float_to_bf()
 {
-    init_bf_dec(get_prec_dbl(CURRENTREZ));
+    init_bf_dec(get_prec_dbl(CURRENT_REZ));
     float_to_bf(g_bf_x_min, g_x_min);
     float_to_bf(g_bf_x_max, g_x_max);
     float_to_bf(g_bf_y_min, g_y_min);
@@ -165,7 +165,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     // switch back to double when zooming out if using arbitrary precision
     if (g_bf_math != BFMathType::NONE)
     {
-        int gotprec = get_prec_bf(CURRENTREZ);
+        int gotprec = get_prec_bf(CURRENT_REZ);
         if ((gotprec <= DBL_DIG+1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) || g_math_tol[1] >= 1.0)
         {
             bf_corners_to_float();

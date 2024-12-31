@@ -67,7 +67,7 @@ int get_prec_bf(int rezflag)
     bfyydel   = alloc_stack(g_bf_length+2);
     bfyydel2  = alloc_stack(g_bf_length+2);
     float_to_bf(one, 1.0);
-    if (rezflag == MAXREZ)
+    if (rezflag == MAX_REZ)
     {
         rez = OLD_MAX_PIXELS -1;
     }
@@ -84,7 +84,7 @@ int get_prec_bf(int rezflag)
     sub_bf(bfyydel2, g_bf_y_3rd, g_bf_y_min);
     div_a_bf_int(bfyydel2, (U16)rez);
 
-    if (rezflag == CURRENTREZ)
+    if (rezflag == CURRENT_REZ)
     {
         rez = g_logical_screen_y_dots-1;
     }

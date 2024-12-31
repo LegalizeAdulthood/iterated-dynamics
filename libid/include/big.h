@@ -244,11 +244,11 @@ bf_t div_a_bf_int(bf_t r, U16 u);
 
 enum
 {
-    MATHBITS = 32,
-    MATHBYTES = MATHBITS / 8,
-    NUMVARS = 30, // room for this many on stack
-    CURRENTREZ = 1,
-    MAXREZ = 0
+    MATH_BITS = 32,
+    MATH_BYTES = MATH_BITS / 8,
+    NUM_VARS = 30, // room for this many on stack
+    CURRENT_REZ = 1,
+    MAX_REZ = 0
 };
 
 // used by other routines
