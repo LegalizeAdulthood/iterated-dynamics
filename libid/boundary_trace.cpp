@@ -13,10 +13,10 @@
 
 enum class Direction
 {
-    North,
-    East,
-    South,
-    West
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST
 };
 inline int operator+(Direction value)
 {
@@ -41,19 +41,19 @@ static void step_col_row()
 {
     switch (s_going_to)
     {
-    case Direction::North:
+    case Direction::NORTH:
         g_col = s_trail_col;
         g_row = s_trail_row - 1;
         break;
-    case Direction::East:
+    case Direction::EAST:
         g_col = s_trail_col + 1;
         g_row = s_trail_row;
         break;
-    case Direction::South:
+    case Direction::SOUTH:
         g_col = s_trail_col;
         g_row = s_trail_row + 1;
         break;
-    case Direction::West:
+    case Direction::WEST:
         g_col = s_trail_col - 1;
         g_row = s_trail_row;
         break;
@@ -117,8 +117,8 @@ int boundary_trace()
             s_trail_col = cur_col;
             trail_color = g_color;
             const int fill_color_used = g_fill_color > 0 ? g_fill_color : trail_color;
-            Direction coming_from = Direction::West;
-            s_going_to = Direction::East;
+            Direction coming_from = Direction::WEST;
+            s_going_to = Direction::EAST;
             unsigned int matches_found = 0;
             bool continue_loop = true;
             do
@@ -180,8 +180,8 @@ int boundary_trace()
             // whenever going_to is South or West
             s_trail_row = cur_row;
             s_trail_col = cur_col;
-            coming_from = Direction::West;
-            s_going_to = Direction::East;
+            coming_from = Direction::WEST;
+            s_going_to = Direction::EAST;
             do
             {
                 bool match_found = false;
@@ -194,8 +194,8 @@ int boundary_trace()
                         && g_row <= g_i_y_stop                    //
                         && get_color(g_col, g_row) == trail_color) // getcolor() must be last
                     {
-                        if (s_going_to == Direction::South ||
-                            (s_going_to == Direction::West && coming_from != Direction::East))
+                        if (s_going_to == Direction::SOUTH ||
+                            (s_going_to == Direction::WEST && coming_from != Direction::EAST))
                         {
                             // fill a row, but only once
                             int right = g_col;
