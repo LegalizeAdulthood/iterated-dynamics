@@ -1463,45 +1463,45 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
     s_init_corners = true;
     // dec = get_max_curarg_len(floatvalstr, totparms);
-    LDBL Magnification;
-    std::sscanf(cmd.float_val_strs[2], "%Lf", &Magnification);
+    LDBL magnification;
+    std::sscanf(cmd.float_val_strs[2], "%Lf", &magnification);
 
     // I don't know if this is portable, but something needs to
     // be used in case compiler's LDBL_MAX is not big enough
-    if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
+    if (magnification > LDBL_MAX || magnification < -LDBL_MAX)
     {
-        return cmd.bad_arg(); // ie: Magnification is +-1.#INF
+        return cmd.bad_arg(); // ie: magnification is +-1.#INF
     }
 
-    const int dec = get_power10(Magnification) + 4; // 4 digits of padding sounds good
+    const int dec = get_power10(magnification) + 4; // 4 digits of padding sounds good
 
     if ((dec <= DBL_DIG + 1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) ||
         g_debug_flag == DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         // rough estimate that double is OK
-        double Xctr = cmd.float_vals[0];
-        double Yctr = cmd.float_vals[1];
-        double Xmagfactor = 1;
-        double Rotation = 0;
-        double Skew = 0;
+        double x_ctr = cmd.float_vals[0];
+        double y_ctr = cmd.float_vals[1];
+        double x_mag_factor = 1;
+        double rotation = 0;
+        double skew = 0;
         if (cmd.num_float_params > 3)
         {
-            Xmagfactor = cmd.float_vals[3];
+            x_mag_factor = cmd.float_vals[3];
         }
-        if (Xmagfactor == 0)
+        if (x_mag_factor == 0)
         {
-            Xmagfactor = 1;
+            x_mag_factor = 1;
         }
         if (cmd.num_float_params > 4)
         {
-            Rotation = cmd.float_vals[4];
+            rotation = cmd.float_vals[4];
         }
         if (cmd.num_float_params > 5)
         {
-            Skew = cmd.float_vals[5];
+            skew = cmd.float_vals[5];
         }
         // calculate bounds
-        cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+        cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         return CmdArgFlags::FRACTAL_PARAM;
     }
 
@@ -1526,27 +1526,27 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     bf_t bYctr = alloc_stack(g_bf_length + 2);
     get_bf(bXctr, cmd.float_val_strs[0]);
     get_bf(bYctr, cmd.float_val_strs[1]);
-    double Xmagfactor = 1;
-    double Rotation = 0;
-    double Skew = 0;
+    double x_mag_factor = 1;
+    double rotation = 0;
+    double skew = 0;
     if (cmd.num_float_params > 3)
     {
-        Xmagfactor = cmd.float_vals[3];
+        x_mag_factor = cmd.float_vals[3];
     }
-    if (Xmagfactor == 0)
+    if (x_mag_factor == 0)
     {
-        Xmagfactor = 1;
+        x_mag_factor = 1;
     }
     if (cmd.num_float_params > 4)
     {
-        Rotation = cmd.float_vals[4];
+        rotation = cmd.float_vals[4];
     }
     if (cmd.num_float_params > 5)
     {
-        Skew = cmd.float_vals[5];
+        skew = cmd.float_vals[5];
     }
     // calculate bounds
-    cvt_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+    cvt_corners_bf(bXctr, bYctr, magnification, x_mag_factor, rotation, skew);
     bf_corners_to_float();
     restore_stack(saved);
     return CmdArgFlags::FRACTAL_PARAM;
@@ -1780,7 +1780,7 @@ static CmdArgFlags cmd_corners(const Command &cmd)
         dec = get_prec_bf_mag();
         if (dec < 0)
         {
-            return cmd.bad_arg(); // ie: Magnification is +-1.#INF
+            return cmd.bad_arg(); // ie: magnification is +-1.#INF
         }
 
         if (dec > g_decimals) // get corners again if need more precision

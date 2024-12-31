@@ -2465,12 +2465,12 @@ static bool parse_formula_text(char const *text)
     int mdstk = 0;
     double const_pi;
     double const_e;
-    double Xctr;
-    double Yctr;
-    double Xmagfactor;
-    double Rotation;
-    double Skew;
-    LDBL Magnification;
+    double x_ctr;
+    double y_ctr;
+    double x_mag_factor;
+    double rotation;
+    double skew;
+    LDBL magnification;
     s_set_random = false;
     s_randomized = false;
     s_uses_jump = false;
@@ -2651,7 +2651,7 @@ static bool parse_formula_text(char const *text)
         s_vars[g_variable_index].s = s_variables[g_variable_index];
         s_vars[g_variable_index].len = (int) std::strlen(s_variables[g_variable_index]);
     }
-    cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+    cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     const_pi = std::atan(1.0) * 4;
     const_e  = std::exp(1.0);
     s_vars[7].a.d.y = 0.0;
@@ -2662,12 +2662,12 @@ static bool parse_formula_text(char const *text)
     s_vars[12].a.d.y = 0;
     s_vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
     s_vars[13].a.d.y = 0;
-    s_vars[14].a.d.x = Xctr;
-    s_vars[14].a.d.y = Yctr;
-    s_vars[15].a.d.x = (double)Magnification;
-    s_vars[15].a.d.y = Xmagfactor;
-    s_vars[16].a.d.x = Rotation;
-    s_vars[16].a.d.y = Skew;
+    s_vars[14].a.d.x = x_ctr;
+    s_vars[14].a.d.y = y_ctr;
+    s_vars[15].a.d.x = (double)magnification;
+    s_vars[15].a.d.y = x_mag_factor;
+    s_vars[16].a.d.x = rotation;
+    s_vars[16].a.d.y = skew;
 
     switch (s_math_type)
     {

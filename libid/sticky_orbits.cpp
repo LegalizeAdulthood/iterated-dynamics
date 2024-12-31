@@ -193,12 +193,12 @@ int sticky_orbits()
 
     case 'f':  // this code does not yet work???
     {
-        double Xctr;
-        double Yctr;
-        LDBL Magnification; // LDBL not really needed here, but used to match function parameters
-        double Xmagfactor;
-        double Rotation;
-        double Skew;
+        double x_ctr;
+        double y_ctr;
+        LDBL magnification; // LDBL not really needed here, but used to match function parameters
+        double x_mag_factor;
+        double rotation;
+        double skew;
         int angle;
         double factor = PI / 180.0;
         double theta;
@@ -207,17 +207,17 @@ int sticky_orbits()
 
         angle = g_xx_begin;  // save angle in x parameter
 
-        cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-        if (Rotation <= 0)
+        cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
+        if (rotation <= 0)
         {
-            Rotation += 360;
+            rotation += 360;
         }
 
-        while (angle < Rotation)
+        while (angle < rotation)
         {
             theta = (double)angle * factor;
-            g_col = (int)(xfactor + (Xctr + Xmagfactor * std::cos(theta)));
-            g_row = (int)(yfactor + (Yctr + Xmagfactor * std::sin(theta)));
+            g_col = (int)(xfactor + (x_ctr + x_mag_factor * std::cos(theta)));
+            g_row = (int)(yfactor + (y_ctr + x_mag_factor * std::sin(theta)));
             if (plot_orbits2d_float() == -1)
             {
                 add_work_list(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);

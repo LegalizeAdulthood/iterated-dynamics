@@ -643,12 +643,12 @@ static int get_prec(double a, double b, double c)
 
 static void write_batch_params(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
-    double Xctr;
-    double Yctr;
-    LDBL Magnification;
-    double Xmagfactor;
-    double Rotation;
-    double Skew;
+    double x_ctr;
+    double y_ctr;
+    LDBL magnification;
+    double x_mag_factor;
+    double rotation;
+    double skew;
     char const *sptr;
     char buf[81];
     bf_t bfXctr = nullptr;
@@ -763,7 +763,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             if (g_bf_math != BFMathType::NONE)
             {
                 int digits;
-                cvt_center_mag_bf(bfXctr, bfYctr, Magnification, Xmagfactor, Rotation, Skew);
+                cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
                 digits = get_prec_bf(MAX_REZ);
                 put_param(" %s=", "center-mag");
                 put_bf(0, bfXctr, digits);
@@ -771,43 +771,43 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             else // !g_bf_math
             {
-                cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+                cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
                 put_param(" %s=", "center-mag");
                 //          convert 1000 fudged long to double, 1000/1<<24 = 6e-5
-                put_param(g_delta_min > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
+                put_param(g_delta_min > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", x_ctr, y_ctr);
             }
-            put_param("/%.7Lg", Magnification); // precision of magnification not critical, but magnitude is
+            put_param("/%.7Lg", magnification); // precision of magnification not critical, but magnitude is
             // Round to avoid ugly decimals, precision here is not critical
-            // Don't round Xmagfactor if it's small
-            if (std::fabs(Xmagfactor) > 0.5)   // or so, exact value isn't important
+            // Don't round x_mag_factor if it's small
+            if (std::fabs(x_mag_factor) > 0.5)   // or so, exact value isn't important
             {
-                Xmagfactor = (sign(Xmagfactor) * (long)(std::fabs(Xmagfactor) * 1e4 + 0.5)) / 1e4;
+                x_mag_factor = (sign(x_mag_factor) * (long)(std::fabs(x_mag_factor) * 1e4 + 0.5)) / 1e4;
             }
             // Just truncate these angles.  Who cares about 1/1000 of a degree
             // Somebody does.  Some rotated and/or skewed images are slightly
             // off when recreated from a PAR using 1/1000.
-            if (Xmagfactor != 1 || Rotation != 0 || Skew != 0)
+            if (x_mag_factor != 1 || rotation != 0 || skew != 0)
             {
                 // Only put what is necessary
-                // The difference with Xmagfactor is that it is normally
+                // The difference with x_mag_factor is that it is normally
                 // near 1 while the others are normally near 0
-                if (std::fabs(Xmagfactor) >= 1)
+                if (std::fabs(x_mag_factor) >= 1)
                 {
-                    put_float(1, Xmagfactor, 5); // put_float() uses %g
+                    put_float(1, x_mag_factor, 5); // put_float() uses %g
                 }
-                else     // abs(Xmagfactor) is < 1
+                else     // abs(x_mag_factor) is < 1
                 {
-                    put_float(1, Xmagfactor, 4); // put_float() uses %g
+                    put_float(1, x_mag_factor, 4); // put_float() uses %g
                 }
-                if (Rotation != 0 || Skew != 0)
+                if (rotation != 0 || skew != 0)
                 {
                     // Use precision=6 here.  These angle have already been rounded
                     // to 3 decimal places, but angles like 123.456 degrees need 6
                     // sig figs to get 3 decimal places.  Trailing 0's are dropped anyway.
-                    put_float(1, Rotation, 18);
-                    if (Skew != 0)
+                    put_float(1, rotation, 18);
+                    if (skew != 0)
                     {
-                        put_float(1, Skew, 18);
+                        put_float(1, skew, 18);
                     }
                 }
             }

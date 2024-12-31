@@ -22,7 +22,7 @@ inline double rad_to_deg(double x)
 /*
 convert corners to center/mag
 Rotation angles indicate how much the IMAGE has been rotated, not the
-zoom box.  Same goes for the Skew angles
+zoom box.  Same goes for the skew angles
 */
 void cvt_center_mag(double &ctr_x, double &ctr_y, LDBL &mag, double &x_mag_factor, double &rot, double &skew)
 {

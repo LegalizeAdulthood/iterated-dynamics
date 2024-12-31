@@ -228,12 +228,12 @@ bool tab_display2(char *msg)
 int tab_display()       // display the status of the current image
 {
     int addrow = 0;
-    double Xctr;
-    double Yctr;
-    LDBL Magnification;
-    double Xmagfactor;
-    double Rotation;
-    double Skew;
+    double x_ctr;
+    double y_ctr;
+    LDBL magnification;
+    double x_mag_factor;
+    double rotation;
+    double skew;
     bf_t bfXctr = nullptr;
     bf_t bfYctr = nullptr;
     char msg[350];
@@ -526,7 +526,7 @@ top:
             int truncaterow;
             int dec = std::min(320, g_decimals);
             adjust_corner_bf(); // make bottom left exact if very near exact
-            cvt_center_mag_bf(bfXctr, bfYctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
             // find alignment information
             msg[0] = 0;
             bool truncate = false;
@@ -549,16 +549,16 @@ top:
                 driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Mag");
-            std::sprintf(msg, "%10.8Le", Magnification);
+            std::sprintf(msg, "%10.8Le", magnification);
             driver_put_string(-1, 11, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
-            std::sprintf(msg, "%11.4f   ", Xmagfactor);
+            std::sprintf(msg, "%11.4f   ", x_mag_factor);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
-            std::sprintf(msg, "%9.3f   ", Rotation);
+            std::sprintf(msg, "%9.3f   ", rotation);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
-            std::sprintf(msg, "%9.3f", Skew);
+            std::sprintf(msg, "%9.3f", skew);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
         }
         else // bf != 1
@@ -577,21 +577,21 @@ top:
                 std::sprintf(msg, "%20.16f  %20.16f", g_x_3rd, g_y_3rd);
                 driver_put_string(-1, 17, C_GENERAL_HI, msg);
             }
-            cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
             driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Ctr");
-            std::sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
+            std::sprintf(msg, "%20.16f %20.16f  ", x_ctr, y_ctr);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Mag");
-            std::sprintf(msg, " %10.8Le", Magnification);
+            std::sprintf(msg, " %10.8Le", magnification);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
-            std::sprintf(msg, "%11.4f   ", Xmagfactor);
+            std::sprintf(msg, "%11.4f   ", x_mag_factor);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
-            std::sprintf(msg, "%9.3f   ", Rotation);
+            std::sprintf(msg, "%9.3f   ", rotation);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
-            std::sprintf(msg, "%9.3f", Skew);
+            std::sprintf(msg, "%9.3f", skew);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
         }
     }

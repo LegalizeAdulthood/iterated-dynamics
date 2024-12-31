@@ -92,15 +92,15 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
     if (rot == 0.0 && skew == 0.0)
     {
         // simple, faster case
-        // xx3rd = xxmin = Xctr - w;
+        // xx3rd = xxmin = x_ctr - w;
         sub_bf(g_bf_x_min, ctr_x, bfw);
         copy_bf(g_bf_x_3rd, g_bf_x_min);
-        // xxmax = Xctr + w;
+        // xxmax = x_ctr + w;
         add_bf(g_bf_x_max, ctr_x, bfw);
-        // yy3rd = yymin = Yctr - h;
+        // yy3rd = yymin = y_ctr - h;
         sub_bf(g_bf_y_min, ctr_y, bfh);
         copy_bf(g_bf_y_3rd, g_bf_y_min);
-        // yymax = Yctr + h;
+        // yymax = y_ctr + h;
         add_bf(g_bf_y_max, ctr_y, bfh);
         restore_stack(saved);
         return;
@@ -124,30 +124,30 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
     // top left
     LDBL x = xmin * cosrot + ymax * sinrot;
     LDBL y = -xmin * sinrot + ymax * cosrot;
-    // xxmin = x + Xctr;
+    // xxmin = x + x_ctr;
     float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_min, g_bf_tmp, ctr_x);
-    // yymax = y + Yctr;
+    // yymax = y + y_ctr;
     float_to_bf(g_bf_tmp, y);
     add_bf(g_bf_y_max, g_bf_tmp, ctr_y);
 
     // bottom right
     x =  xmax * cosrot + ymin *  sinrot;
     y = -xmax * sinrot + ymin *  cosrot;
-    // xxmax = x + Xctr;
+    // xxmax = x + x_ctr;
     float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_max, g_bf_tmp, ctr_x);
-    // yymin = y + Yctr;
+    // yymin = y + y_ctr;
     float_to_bf(g_bf_tmp, y);
     add_bf(g_bf_y_min, g_bf_tmp, ctr_y);
 
     // bottom left
     x =  x3rd * cosrot + y3rd *  sinrot;
     y = -x3rd * sinrot + y3rd *  cosrot;
-    // xx3rd = x + Xctr;
+    // xx3rd = x + x_ctr;
     float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_3rd, g_bf_tmp, ctr_x);
-    // yy3rd = y + Yctr;
+    // yy3rd = y + y_ctr;
     float_to_bf(g_bf_tmp, y);
     add_bf(g_bf_y_3rd, g_bf_tmp, ctr_y);
 

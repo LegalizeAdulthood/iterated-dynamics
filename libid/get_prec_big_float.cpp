@@ -15,10 +15,10 @@
 
 int get_prec_bf_mag()
 {
-    double Xmagfactor;
-    double Rotation;
-    double Skew;
-    LDBL Magnification;
+    double x_mag_factor;
+    double rotation;
+    double skew;
+    LDBL magnification;
     bf_t bXctr;
     bf_t bYctr;
     int saved;
@@ -27,18 +27,18 @@ int get_prec_bf_mag()
     saved = save_stack();
     bXctr            = alloc_stack(g_bf_length+2);
     bYctr            = alloc_stack(g_bf_length+2);
-    // this is just to find Magnification
-    cvt_center_mag_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+    // this is just to find magnification
+    cvt_center_mag_bf(bXctr, bYctr, magnification, x_mag_factor, rotation, skew);
     restore_stack(saved);
 
     // I don't know if this is portable, but something needs to
     // be used in case compiler's LDBL_MAX is not big enough
-    if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
+    if (magnification > LDBL_MAX || magnification < -LDBL_MAX)
     {
         return -1;
     }
 
-    dec = get_power10(Magnification) + 4; // 4 digits of padding sounds good
+    dec = get_power10(magnification) + 4; // 4 digits of padding sounds good
     return dec;
 }
 

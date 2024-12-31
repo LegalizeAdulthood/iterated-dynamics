@@ -45,9 +45,9 @@ int get_corners()
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
     int cmag;
-    double Xctr, Yctr;
-    LDBL Magnification; // LDBL not really needed here, but used to match function parameters
-    double Xmagfactor, Rotation, Skew;
+    double x_ctr, y_ctr;
+    LDBL magnification; // LDBL not really needed here, but used to match function parameters
+    double x_mag_factor, rotation, skew;
     double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
 
     bool const ousemag = g_use_center_mag;
@@ -64,19 +64,19 @@ gc_loop:
     {
         cmag = 0;
     }
-    cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+    cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
 
     builder.reset();
     // 10 items
     if (cmag)
     {
         // 8 items
-        builder.double_number("Center X", Xctr)
-            .double_number("Center Y", Yctr)
-            .double_number("Magnification", (double) Magnification)
-            .double_number("X Magnification Factor", Xmagfactor)
-            .double_number("Rotation Angle (degrees)", Rotation)
-            .double_number("Skew Angle (degrees)", Skew)
+        builder.double_number("Center X", x_ctr)
+            .double_number("Center Y", y_ctr)
+            .double_number("Magnification", (double) magnification)
+            .double_number("X Magnification Factor", x_mag_factor)
+            .double_number("Rotation Angle (degrees)", rotation)
+            .double_number("Skew Angle (degrees)", skew)
             .comment("")
             .comment("Press F7 to switch to \"corners\" mode");
     }
@@ -163,24 +163,24 @@ gc_loop:
         const double new_x_mag_factor = builder.read_double_number();
         const double new_rotation = builder.read_double_number();
         const double new_skew = builder.read_double_number();
-        if (cmp_dbl(Xctr, new_x_center)                           //
-            || cmp_dbl(Yctr, new_y_center)                        //
-            || cmp_dbl((double) Magnification, new_magnification) //
-            || cmp_dbl(Xmagfactor, new_x_mag_factor)              //
-            || cmp_dbl(Rotation, new_rotation)                    //
-            || cmp_dbl(Skew, new_skew))
+        if (cmp_dbl(x_ctr, new_x_center)                          //
+            || cmp_dbl(y_ctr, new_y_center)                       //
+            || cmp_dbl((double) magnification, new_magnification) //
+            || cmp_dbl(x_mag_factor, new_x_mag_factor)            //
+            || cmp_dbl(rotation, new_rotation)                    //
+            || cmp_dbl(skew, new_skew))
         {
-            Xctr          = new_x_center;
-            Yctr          = new_y_center;
-            Magnification = new_magnification;
-            Xmagfactor    = new_x_mag_factor;
-            Rotation      = new_rotation;
-            Skew          = new_skew;
-            if (Xmagfactor == 0)
+            x_ctr         = new_x_center;
+            y_ctr         = new_y_center;
+            magnification = new_magnification;
+            x_mag_factor  = new_x_mag_factor;
+            rotation      = new_rotation;
+            skew          = new_skew;
+            if (x_mag_factor == 0)
             {
-                Xmagfactor = 1;
+                x_mag_factor = 1;
             }
-            cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         }
     }
     else
@@ -218,7 +218,7 @@ gc_loop:
         // toggle corners/center-mag mode
         if (!g_use_center_mag)
         {
-            cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
             g_use_center_mag = true;
         }
         else
@@ -251,9 +251,9 @@ int get_screen_corners()
     char yprompt[] = "          Y";
     int prompt_ret;
     int cmag;
-    double Xctr, Yctr;
-    LDBL Magnification; // LDBL not really needed here, but used to match function parameters
-    double Xmagfactor, Rotation, Skew;
+    double x_ctr, y_ctr;
+    LDBL magnification; // LDBL not really needed here, but used to match function parameters
+    double x_mag_factor, rotation, skew;
     double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
     double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;
 
@@ -292,17 +292,17 @@ int get_screen_corners()
 
 gsc_loop:
     cmag = g_use_center_mag ? 1 : 0;
-    cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+    cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
 
     builder.reset();
     if (cmag)
     {
-        builder.double_number("Center X", Xctr)
-            .double_number("Center Y", Yctr)
-            .double_number("Magnification", static_cast<double>(Magnification))
-            .double_number("X Magnification Factor", Xmagfactor)
-            .double_number("Rotation Angle (degrees)", Rotation)
-            .double_number("Skew Angle (degrees)", Skew)
+        builder.double_number("Center X", x_ctr)
+            .double_number("Center Y", y_ctr)
+            .double_number("Magnification", static_cast<double>(magnification))
+            .double_number("X Magnification Factor", x_mag_factor)
+            .double_number("Rotation Angle (degrees)", rotation)
+            .double_number("Skew Angle (degrees)", skew)
             .comment("")
             .comment("Press F7 to switch to \"corners\" mode");
     }
@@ -387,24 +387,24 @@ gsc_loop:
         const double new_x_mag_factor = builder.read_double_number();
         const double new_rotation = builder.read_double_number();
         const double new_skew = builder.read_double_number();
-        if (cmp_dbl(Xctr, new_x_center)                           //
-            || cmp_dbl(Yctr, new_y_center)                        //
-            || cmp_dbl((double) Magnification, new_magnification) //
-            || cmp_dbl(Xmagfactor, new_x_mag_factor)              //
-            || cmp_dbl(Rotation, new_rotation)                    //
-            || cmp_dbl(Skew, new_skew))
+        if (cmp_dbl(x_ctr, new_x_center)                          //
+            || cmp_dbl(y_ctr, new_y_center)                       //
+            || cmp_dbl((double) magnification, new_magnification) //
+            || cmp_dbl(x_mag_factor, new_x_mag_factor)            //
+            || cmp_dbl(rotation, new_rotation)                    //
+            || cmp_dbl(skew, new_skew))
         {
-            Xctr          = new_x_center;
-            Yctr          = new_y_center;
-            Magnification = new_magnification;
-            Xmagfactor    = new_x_mag_factor;
-            Rotation      = new_rotation;
-            Skew          = new_skew;
-            if (Xmagfactor == 0)
+            x_ctr          = new_x_center;
+            y_ctr          = new_y_center;
+            magnification = new_magnification;
+            x_mag_factor    = new_x_mag_factor;
+            rotation      = new_rotation;
+            skew          = new_skew;
+            if (x_mag_factor == 0)
             {
-                Xmagfactor = 1;
+                x_mag_factor = 1;
             }
-            cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
             // set screen corners
             g_orbit_corner_min_x = g_x_min;
             g_orbit_corner_max_x = g_x_max;
@@ -437,7 +437,7 @@ gsc_loop:
         // toggle corners/center-mag mode
         if (!g_use_center_mag)
         {
-            cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
             g_use_center_mag = true;
         }
         else

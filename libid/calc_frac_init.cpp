@@ -660,10 +660,10 @@ void adjust_corner_bf()
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
     double ftemp;
-    double Xmagfactor;
-    double Rotation;
-    double Skew;
-    LDBL Magnification;
+    double x_mag_factor;
+    double rotation;
+    double skew;
+    LDBL magnification;
 
     bf_t bftemp;
     bf_t bftemp2;
@@ -674,14 +674,14 @@ void adjust_corner_bf()
     bftemp2 = alloc_stack(g_r_bf_length+2);
     btmp1  =  alloc_stack(g_r_bf_length+2);
 
-    // While we're at it, let's adjust the Xmagfactor as well
+    // While we're at it, let's adjust the x_mag_factor as well
     // use bftemp, bftemp2 as bfXctr, bfYctr
-    cvt_center_mag_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
-    ftemp = std::fabs(Xmagfactor);
+    cvt_center_mag_bf(bftemp, bftemp2, magnification, x_mag_factor, rotation, skew);
+    ftemp = std::fabs(x_mag_factor);
     if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
     {
-        Xmagfactor = sign(Xmagfactor);
-        cvt_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
+        x_mag_factor = sign(x_mag_factor);
+        cvt_corners_bf(bftemp, bftemp2, magnification, x_mag_factor, rotation, skew);
     }
 
     // ftemp=fabs(xx3rd-xxmin);
@@ -745,22 +745,22 @@ void adjust_corner()
     // to avoid problems when delta per axis makes too large a ratio
     double ftemp;
     double ftemp2;
-    double Xctr;
-    double Yctr;
-    double Xmagfactor;
-    double Rotation;
-    double Skew;
-    LDBL Magnification;
+    double x_ctr;
+    double y_ctr;
+    double x_mag_factor;
+    double rotation;
+    double skew;
+    LDBL magnification;
 
     if (!g_integer_fractal)
     {
-        // While we're at it, let's adjust the Xmagfactor as well
-        cvt_center_mag(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-        ftemp = std::fabs(Xmagfactor);
+        // While we're at it, let's adjust the x_mag_factor as well
+        cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
+        ftemp = std::fabs(x_mag_factor);
         if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
         {
-            Xmagfactor = sign(Xmagfactor);
-            cvt_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+            x_mag_factor = sign(x_mag_factor);
+            cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         }
     }
 
