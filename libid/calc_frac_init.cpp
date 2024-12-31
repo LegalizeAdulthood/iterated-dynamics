@@ -150,7 +150,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
         FractalType tofloat = g_cur_fractal_specific->tofloat;
-        if (tofloat == FractalType::NOFRACTAL ||
+        if (tofloat == FractalType::NO_FRACTAL ||
             bit_clear(g_fractal_specific[+tofloat].flags, FractalFlags::BF_MATH))
         {
             g_bf_math = BFMathType::NONE;
@@ -176,35 +176,35 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
             init_bf_dec(gotprec);
         }
     }
-    else if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDELFP)
+    else if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
         && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
     {
-        g_fractal_type = FractalType::MANDELFP;
-        g_cur_fractal_specific = &g_fractal_specific[+FractalType::MANDELFP];
+        g_fractal_type = FractalType::MANDEL_FP;
+        g_cur_fractal_specific = &g_fractal_specific[+FractalType::MANDEL_FP];
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIAFP)
+    else if ((g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
         && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
     {
-        g_fractal_type = FractalType::JULIAFP;
-        g_cur_fractal_specific = &g_fractal_specific[+FractalType::JULIAFP];
+        g_fractal_type = FractalType::JULIA_FP;
+        g_cur_fractal_specific = &g_fractal_specific[+FractalType::JULIA_FP];
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == FractalType::LMANDELZPOWER || g_fractal_type == FractalType::FPMANDELZPOWER)
+    else if ((g_fractal_type == FractalType::MANDEL_Z_POWER_L || g_fractal_type == FractalType::MANDEL_Z_POWER_FP)
         && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
     {
-        g_fractal_type = FractalType::FPMANDELZPOWER;
-        g_cur_fractal_specific = &g_fractal_specific[+FractalType::FPMANDELZPOWER];
+        g_fractal_type = FractalType::MANDEL_Z_POWER_FP;
+        g_cur_fractal_specific = &g_fractal_specific[+FractalType::MANDEL_Z_POWER_FP];
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == FractalType::LJULIAZPOWER || g_fractal_type == FractalType::FPJULIAZPOWER)
+    else if ((g_fractal_type == FractalType::JULIA_Z_POWER_L || g_fractal_type == FractalType::JULIA_Z_POWER_FP)
         && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
     {
-        g_fractal_type = FractalType::FPJULIAZPOWER;
-        g_cur_fractal_specific = &g_fractal_specific[+FractalType::FPJULIAZPOWER];
+        g_fractal_type = FractalType::JULIA_Z_POWER_FP;
+        g_cur_fractal_specific = &g_fractal_specific[+FractalType::JULIA_Z_POWER_FP];
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
@@ -233,13 +233,13 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         g_float_flag = g_cur_fractal_specific->isinteger == 0;
     }
     // if floating pt only, set floatflag for TAB screen
-    if (!g_cur_fractal_specific->isinteger && g_cur_fractal_specific->tofloat == FractalType::NOFRACTAL)
+    if (!g_cur_fractal_specific->isinteger && g_cur_fractal_specific->tofloat == FractalType::NO_FRACTAL)
     {
         g_float_flag = true;
     }
     if (g_user_std_calc_mode == 's')
     {
-        if (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDELFP)
+        if (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
         {
             g_float_flag = true;
         }
@@ -285,7 +285,7 @@ init_restart:
     {
         // ensure type matches floatflag
         if (g_cur_fractal_specific->isinteger != 0
-            && g_cur_fractal_specific->tofloat != FractalType::NOFRACTAL)
+            && g_cur_fractal_specific->tofloat != FractalType::NO_FRACTAL)
         {
             g_fractal_type = g_cur_fractal_specific->tofloat;
         }
@@ -293,16 +293,16 @@ init_restart:
     else
     {
         if (g_cur_fractal_specific->isinteger == 0
-            && g_cur_fractal_specific->tofloat != FractalType::NOFRACTAL)
+            && g_cur_fractal_specific->tofloat != FractalType::NO_FRACTAL)
         {
             g_fractal_type = g_cur_fractal_specific->tofloat;
         }
     }
     // match Julibrot with integer mode of orbit
-    if (g_fractal_type == FractalType::JULIBROTFP && g_fractal_specific[+g_new_orbit_type].isinteger)
+    if (g_fractal_type == FractalType::JULIBROT_FP && g_fractal_specific[+g_new_orbit_type].isinteger)
     {
         FractalType i = g_fractal_specific[+g_new_orbit_type].tofloat;
-        if (i != FractalType::NOFRACTAL)
+        if (i != FractalType::NO_FRACTAL)
         {
             g_new_orbit_type = i;
         }
@@ -314,13 +314,13 @@ init_restart:
     else if (g_fractal_type == FractalType::JULIBROT && g_fractal_specific[+g_new_orbit_type].isinteger == 0)
     {
         FractalType i = g_fractal_specific[+g_new_orbit_type].tofloat;
-        if (i != FractalType::NOFRACTAL)
+        if (i != FractalType::NO_FRACTAL)
         {
             g_new_orbit_type = i;
         }
         else
         {
-            g_fractal_type = FractalType::JULIBROTFP;
+            g_fractal_type = FractalType::JULIBROT_FP;
         }
     }
 
@@ -381,7 +381,7 @@ init_restart:
     {
         // float?
         FractalType i = g_cur_fractal_specific->tofloat;
-        if (i != FractalType::NOFRACTAL) // -> int?
+        if (i != FractalType::NO_FRACTAL) // -> int?
         {
             if (g_fractal_specific[+i].isinteger > 1)   // specific shift?
             {
@@ -453,8 +453,8 @@ init_restart:
     if (g_fractal_type != FractalType::PLASMA
         && g_bf_math == BFMathType::NONE
         && g_fractal_type != FractalType::IFS
-        && g_fractal_type != FractalType::IFS3D
-        && g_fractal_type != FractalType::LSYSTEM)
+        && g_fractal_type != FractalType::IFS_3D
+        && g_fractal_type != FractalType::L_SYSTEM)
     {
         if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {
@@ -475,7 +475,7 @@ init_restart:
             {
 expand_retry:
                 if (g_integer_fractal          // integer fractal type?
-                    && g_cur_fractal_specific->tofloat != FractalType::NOFRACTAL)
+                    && g_cur_fractal_specific->tofloat != FractalType::NO_FRACTAL)
                 {
                     g_float_flag = true;       // switch to floating pt
                 }

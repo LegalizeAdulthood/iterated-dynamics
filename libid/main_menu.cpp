@@ -30,17 +30,17 @@ static bool s_full_menu{};
 
 static bool has_julia_toggle()
 {
-    return (g_cur_fractal_specific->tojulia != FractalType::NOFRACTAL && //
+    return (g_cur_fractal_specific->tojulia != FractalType::NO_FRACTAL && //
                g_params[0] == 0.0 &&                                      //
                g_params[1] == 0.0) ||
-        g_cur_fractal_specific->tomandel != FractalType::NOFRACTAL;
+        g_cur_fractal_specific->tomandel != FractalType::NO_FRACTAL;
 }
 
 static bool is_julia()
 {
     return g_fractal_type == FractalType::JULIA   //
-        || g_fractal_type == FractalType::JULIAFP //
-        || g_fractal_type == FractalType::INVERSEJULIA;
+        || g_fractal_type == FractalType::JULIA_FP //
+        || g_fractal_type == FractalType::INVERSE_JULIA;
 }
 
 static int menu_check_key(int curkey, int /*choice*/)

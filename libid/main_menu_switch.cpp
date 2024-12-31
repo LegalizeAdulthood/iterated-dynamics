@@ -134,27 +134,27 @@ static void toggle_mandelbrot_julia(MainContext &context)
     static double s_j_x_3rd;
     static double s_j_y_3rd;
 
-    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
+    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
         if (g_is_mandelbrot)
         {
             g_fractal_specific[+g_fractal_type].tojulia = g_fractal_type;
-            g_fractal_specific[+g_fractal_type].tomandel = FractalType::NOFRACTAL;
+            g_fractal_specific[+g_fractal_type].tomandel = FractalType::NO_FRACTAL;
             g_is_mandelbrot = false;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].tojulia = FractalType::NOFRACTAL;
+            g_fractal_specific[+g_fractal_type].tojulia = FractalType::NO_FRACTAL;
             g_fractal_specific[+g_fractal_type].tomandel = g_fractal_type;
             g_is_mandelbrot = true;
         }
     }
-    if (g_cur_fractal_specific->tojulia != FractalType::NOFRACTAL && g_params[0] == 0.0 &&
+    if (g_cur_fractal_specific->tojulia != FractalType::NO_FRACTAL && g_params[0] == 0.0 &&
         g_params[1] == 0.0)
     {
         // switch to corresponding Julia set
         g_has_inverse =
-            (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDELFP) &&
+            (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP) &&
             g_bf_math == BFMathType::NONE;
         clear_zoom_box();
         jiim(JIIMType::JIIM);
@@ -204,7 +204,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
     }
-    else if (g_cur_fractal_specific->tomandel != FractalType::NOFRACTAL)
+    else if (g_cur_fractal_specific->tomandel != FractalType::NO_FRACTAL)
     {
         // switch to corresponding Mandel set
         g_fractal_type = g_cur_fractal_specific->tomandel;
@@ -386,7 +386,7 @@ static MainState show_orbit_window(MainContext &)
     if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
             || g_fractal_specific[+g_fractal_type].calctype == calc_froth)
         && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
-             g_fractal_specific[+g_fractal_type].tofloat != FractalType::NOFRACTAL)
+             g_fractal_specific[+g_fractal_type].tofloat != FractalType::NO_FRACTAL)
         && (g_bf_math == BFMathType::NONE) // for now no arbitrary precision support
         && !(g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR))
     {
@@ -420,18 +420,18 @@ static MainState space_command(MainContext &context)
 static MainState inverse_julia_toggle(MainContext &context)
 {
     // if the inverse types proliferate, something more elegant will be needed
-    if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIAFP ||
-        g_fractal_type == FractalType::INVERSEJULIA)
+    if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP ||
+        g_fractal_type == FractalType::INVERSE_JULIA)
     {
-        static FractalType oldtype = FractalType::NOFRACTAL;
-        if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIAFP)
+        static FractalType oldtype = FractalType::NO_FRACTAL;
+        if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
         {
             oldtype = g_fractal_type;
-            g_fractal_type = FractalType::INVERSEJULIA;
+            g_fractal_type = FractalType::INVERSE_JULIA;
         }
-        else if (g_fractal_type == FractalType::INVERSEJULIA)
+        else if (g_fractal_type == FractalType::INVERSE_JULIA)
         {
-            if (oldtype != FractalType::NOFRACTAL)
+            if (oldtype != FractalType::NO_FRACTAL)
             {
                 g_fractal_type = oldtype;
             }

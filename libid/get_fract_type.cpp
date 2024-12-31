@@ -76,7 +76,7 @@ int get_fract_type()
     while (true)
     {
         t = select_fract_type(g_fractal_type);
-        if (t == FractalType::NOFRACTAL)
+        if (t == FractalType::NO_FRACTAL)
         {
             break;
         }
@@ -121,7 +121,7 @@ static FractalType select_fract_type(FractalType t)
 
     // setup context sensitive help
     ValueSaver save_help_mode(g_help_mode, HelpLabels::HELP_FRACTALS);
-    if (t == FractalType::IFS3D)
+    if (t == FractalType::IFS_3D)
     {
         t = FractalType::IFS;
     }
@@ -162,20 +162,20 @@ static FractalType select_fract_type(FractalType t)
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
         "Press F2 for a description of the highlighted type", numtypes, (char const **) choices, attributes,
         0, 0, 0, j, nullptr, tname, nullptr, sel_fract_type_help);
-    FractalType result = FractalType::NOFRACTAL;
+    FractalType result = FractalType::NO_FRACTAL;
     if (done >= 0)
     {
         result = static_cast<FractalType>(choices[done]->num);
-        if ((result == FractalType::FORMULA || result == FractalType::FFORMULA) &&
+        if ((result == FractalType::FORMULA || result == FractalType::FORMULA_FP) &&
             g_formula_filename == g_command_file)
         {
             g_formula_filename = g_search_for.frm;
         }
-        if (result == FractalType::LSYSTEM && g_l_system_filename == g_command_file)
+        if (result == FractalType::L_SYSTEM && g_l_system_filename == g_command_file)
         {
             g_l_system_filename = g_search_for.lsys;
         }
-        if ((result == FractalType::IFS || result == FractalType::IFS3D) && g_ifs_filename == g_command_file)
+        if ((result == FractalType::IFS || result == FractalType::IFS_3D) && g_ifs_filename == g_command_file)
         {
             g_ifs_filename = g_search_for.ifs;
         }
@@ -199,40 +199,40 @@ void set_fractal_default_functions(FractalType previous)
     switch (g_fractal_type)
     {
     case FractalType::BIFURCATION:
-    case FractalType::LBIFURCATION:
-        if (!(previous == FractalType::BIFURCATION || previous == FractalType::LBIFURCATION))
+    case FractalType::BIFURCATION_L:
+        if (!(previous == FractalType::BIFURCATION || previous == FractalType::BIFURCATION_L))
         {
             set_trig_array(0, "ident");
         }
         break;
 
-    case FractalType::BIFSTEWART:
-    case FractalType::LBIFSTEWART:
-        if (!(previous == FractalType::BIFSTEWART || previous == FractalType::LBIFSTEWART))
+    case FractalType::BIF_STEWART:
+    case FractalType::BIF_STEWART_L:
+        if (!(previous == FractalType::BIF_STEWART || previous == FractalType::BIF_STEWART_L))
         {
             set_trig_array(0, "ident");
         }
         break;
 
-    case FractalType::BIFLAMBDA:
-    case FractalType::LBIFLAMBDA:
-        if (!(previous == FractalType::BIFLAMBDA || previous == FractalType::LBIFLAMBDA))
+    case FractalType::BIF_LAMBDA:
+    case FractalType::BIF_LAMBDA_L:
+        if (!(previous == FractalType::BIF_LAMBDA || previous == FractalType::BIF_LAMBDA_L))
         {
             set_trig_array(0, "ident");
         }
         break;
 
-    case FractalType::BIFEQSINPI:
-    case FractalType::LBIFEQSINPI:
-        if (!(previous == FractalType::BIFEQSINPI || previous == FractalType::LBIFEQSINPI))
+    case FractalType::BIF_EQ_SIN_PI:
+    case FractalType::BIF_EQ_SIN_PI_L:
+        if (!(previous == FractalType::BIF_EQ_SIN_PI || previous == FractalType::BIF_EQ_SIN_PI_L))
         {
             set_trig_array(0, "sin");
         }
         break;
 
-    case FractalType::BIFADSINPI:
-    case FractalType::LBIFADSINPI:
-        if (!(previous == FractalType::BIFADSINPI || previous == FractalType::LBIFADSINPI))
+    case FractalType::BIF_PLUS_SIN_PI:
+    case FractalType::BIF_PLUS_SIN_PI_L:
+        if (!(previous == FractalType::BIF_PLUS_SIN_PI || previous == FractalType::BIF_PLUS_SIN_PI_L))
         {
             set_trig_array(0, "sin");
         }
@@ -240,12 +240,12 @@ void set_fractal_default_functions(FractalType previous)
 
     // Next assumes that user going between popcorn and popcornjul
     // might not want to change function variables
-    case FractalType::FPPOPCORN:
-    case FractalType::LPOPCORN:
-    case FractalType::FPPOPCORNJUL:
-    case FractalType::LPOPCORNJUL:
-        if (!(previous == FractalType::FPPOPCORN || previous == FractalType::LPOPCORN ||
-                previous == FractalType::FPPOPCORNJUL || previous == FractalType::LPOPCORNJUL))
+    case FractalType::POPCORN_FP:
+    case FractalType::POPCORN_L:
+    case FractalType::POPCORN_JUL_FP:
+    case FractalType::POPCORN_JUL_L:
+        if (!(previous == FractalType::POPCORN_FP || previous == FractalType::POPCORN_L ||
+                previous == FractalType::POPCORN_JUL_FP || previous == FractalType::POPCORN_JUL_L))
         {
             set_function_parm_defaults();
         }
@@ -276,7 +276,7 @@ sel_type_restart:
     g_fractal_type = newfractype;
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
-    if (g_fractal_type == FractalType::LSYSTEM)
+    if (g_fractal_type == FractalType::L_SYSTEM)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_LSYS);
         if (get_file_entry(ItemType::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
@@ -284,7 +284,7 @@ sel_type_restart:
             return true;
         }
     }
-    else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
+    else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_FORMULA);
         if (get_file_entry(ItemType::FORMULA, "Formula", "*.frm", g_formula_filename, g_formula_name) < 0)
@@ -292,7 +292,7 @@ sel_type_restart:
             return true;
         }
     }
-    else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS3D)
+    else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_IFS);
         if (get_file_entry(ItemType::IFS, "IFS", "*.ifs", g_ifs_filename, g_ifs_name) < 0)
@@ -306,9 +306,9 @@ sel_type_restart:
 
     if (get_fract_params(false) < 0)
     {
-        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA
-            || g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS3D
-            || g_fractal_type == FractalType::LSYSTEM)
+        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP
+            || g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D
+            || g_fractal_type == FractalType::L_SYSTEM)
         {
             goto sel_type_restart;
         }
@@ -365,12 +365,12 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     int fkeymask = 0;
 
     oldbailout = g_bail_out;
-    g_julibrot = g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROTFP;
+    g_julibrot = g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP;
     FractalType curtype = g_fractal_type;
     {
         int i;
         if (g_cur_fractal_specific->name[0] == '*'
-            && (i = +g_cur_fractal_specific->tofloat) != +FractalType::NOFRACTAL
+            && (i = +g_cur_fractal_specific->tofloat) != +FractalType::NO_FRACTAL
             && g_fractal_specific[i].name[0] != '*')
         {
             curtype = static_cast<FractalType>(i);
@@ -435,7 +435,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
         {
             load_entry_text(entryfile, s_tmp_stack, 17, 0, 0);
             std::fclose(entryfile);
-            if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
+            if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
             {
                 frm_get_param_stuff(entryname); // no error check, should be okay, from above
             }
@@ -499,7 +499,7 @@ gfp_top:
     if (g_julibrot)
     {
         FractalType i = select_fract_type(g_new_orbit_type);
-        if (i == FractalType::NOFRACTAL)
+        if (i == FractalType::NO_FRACTAL)
         {
             if (ret == 0)
             {
@@ -516,7 +516,7 @@ gfp_top:
         juliorbitname = jborbit->name;
     }
 
-    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FFORMULA)
+    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
         if (g_frm_uses_p1)    // set first parameter
         {
@@ -565,14 +565,14 @@ gfp_top:
     {
         g_cur_fractal_specific = jborbit;
         firstparm = 2; // in most case Julibrot does not need first two parms
-        if (g_new_orbit_type == FractalType::QUATJULFP        // all parameters needed
-            || g_new_orbit_type == FractalType::HYPERCMPLXJFP)
+        if (g_new_orbit_type == FractalType::QUAT_JUL_FP        // all parameters needed
+            || g_new_orbit_type == FractalType::HYPER_CMPLX_J_FP)
         {
             firstparm = 0;
             lastparm = 4;
         }
-        if (g_new_orbit_type == FractalType::QUATFP           // no parameters needed
-            || g_new_orbit_type == FractalType::HYPERCMPLXFP)
+        if (g_new_orbit_type == FractalType::QUAT_FP           // no parameters needed
+            || g_new_orbit_type == FractalType::HYPER_CMPLX_FP)
         {
             firstparm = 4;
         }
@@ -585,7 +585,7 @@ gfp_top:
             char tmpbuf[30];
             if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
             {
-                if (curtype == FractalType::FORMULA || curtype == FractalType::FFORMULA)
+                if (curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP)
                 {
                     if (param_not_used(i))
                     {
@@ -616,13 +616,13 @@ gfp_top:
     /* The following is a goofy kludge to make reading in the formula
      * parameters work.
      */
-    if (curtype == FractalType::FORMULA || curtype == FractalType::FFORMULA)
+    if (curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP)
     {
         numparams = lastparm - firstparm;
     }
 
     numtrig = (+g_cur_fractal_specific->flags >> 6) & 7;
-    if (curtype == FractalType::FORMULA || curtype == FractalType::FFORMULA)
+    if (curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP)
     {
         numtrig = g_max_function;
     }
@@ -688,15 +688,15 @@ gfp_top:
     {
         switch (g_new_orbit_type)
         {
-        case FractalType::QUATFP:
-        case FractalType::HYPERCMPLXFP:
+        case FractalType::QUAT_FP:
+        case FractalType::HYPER_CMPLX_FP:
             v0 = "From cj (3rd dim)";
             v1 = "From ck (4th dim)";
             v2 = "To   cj (3rd dim)";
             v3 = "To   ck (4th dim)";
             break;
-        case FractalType::QUATJULFP:
-        case FractalType::HYPERCMPLXJFP:
+        case FractalType::QUAT_JUL_FP:
+        case FractalType::HYPER_CMPLX_J_FP:
             v0 = "From zj (3rd dim)";
             v1 = "From zk (4th dim)";
             v2 = "To   zj (3rd dim)";
@@ -754,7 +754,7 @@ gfp_top:
         choices[promptnum++] = "Distance to Screen";
     }
 
-    if (curtype == FractalType::INVERSEJULIA || curtype == FractalType::INVERSEJULIAFP)
+    if (curtype == FractalType::INVERSE_JULIA || curtype == FractalType::INVERSE_JULIA_FP)
     {
         choices[promptnum] = s_jiim_method_prompt;
         paramvalues[promptnum].type = 'l';
@@ -775,7 +775,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val  = static_cast<int>(g_inverse_julia_minor_method);
     }
 
-    if ((curtype == FractalType::FORMULA || curtype == FractalType::FFORMULA) && g_frm_uses_ismand)
+    if ((curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP) && g_frm_uses_ismand)
     {
         choices[promptnum] = "ismand";
         paramvalues[promptnum].type = 'y';
@@ -832,7 +832,7 @@ gfp_top:
     promptnum = 0;
     for (int i = firstparm; i < numparams+firstparm; i++)
     {
-        if (curtype == FractalType::FORMULA || curtype == FractalType::FFORMULA)
+        if (curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP)
         {
             if (param_not_used(i))
             {
@@ -917,7 +917,7 @@ gfp_top:
         g_julibrot_dist_fp     = (float)paramvalues[promptnum++].uval.dval;
         ret = 1;  // force new calc since not resumable anyway
     }
-    if (curtype == FractalType::INVERSEJULIA || curtype == FractalType::INVERSEJULIAFP)
+    if (curtype == FractalType::INVERSE_JULIA || curtype == FractalType::INVERSE_JULIA_FP)
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_major_method)
             || paramvalues[promptnum+1].uval.ch.val != static_cast<int>(g_inverse_julia_minor_method))
@@ -927,7 +927,7 @@ gfp_top:
         g_major_method = static_cast<Major>(paramvalues[promptnum++].uval.ch.val);
         g_inverse_julia_minor_method = static_cast<Minor>(paramvalues[promptnum++].uval.ch.val);
     }
-    if ((curtype == FractalType::FORMULA || curtype == FractalType::FFORMULA) && g_frm_uses_ismand)
+    if ((curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP) && g_frm_uses_ismand)
     {
         if (g_is_mandelbrot != (paramvalues[promptnum].uval.ch.val != 0))
         {

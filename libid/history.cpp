@@ -284,16 +284,16 @@ void save_history_info()
     switch (g_fractal_type)
     {
     case FractalType::FORMULA:
-    case FractalType::FFORMULA:
+    case FractalType::FORMULA_FP:
         current.filename = g_formula_filename;
         current.file_item_name = g_formula_name;
         break;
     case FractalType::IFS:
-    case FractalType::IFS3D:
+    case FractalType::IFS_3D:
         current.filename = g_ifs_filename;
         current.file_item_name = g_ifs_name;
         break;
-    case FractalType::LSYSTEM:
+    case FractalType::L_SYSTEM:
         current.filename = g_l_system_filename;
         current.file_item_name = g_l_system_name;
         break;
@@ -491,7 +491,7 @@ void restore_history_info(int i)
         }
     }
     spin_dac(0, 1);
-    if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROTFP)
+    if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
     {
         g_save_dac = 0;
     }
@@ -502,7 +502,7 @@ void restore_history_info(int i)
     switch (g_fractal_type)
     {
     case FractalType::FORMULA:
-    case FractalType::FFORMULA:
+    case FractalType::FORMULA_FP:
         g_formula_filename = last.filename;
         g_formula_name = last.file_item_name;
         if (g_formula_name.length() > ITEM_NAME_LEN)
@@ -511,7 +511,7 @@ void restore_history_info(int i)
         }
         break;
     case FractalType::IFS:
-    case FractalType::IFS3D:
+    case FractalType::IFS_3D:
         g_ifs_filename = last.filename;
         g_ifs_name = last.file_item_name;
         if (g_ifs_name.length() > ITEM_NAME_LEN)
@@ -519,7 +519,7 @@ void restore_history_info(int i)
             g_ifs_name.resize(ITEM_NAME_LEN);
         }
         break;
-    case FractalType::LSYSTEM:
+    case FractalType::L_SYSTEM:
         g_l_system_filename = last.filename;
         g_l_system_name = last.file_item_name;
         if (g_l_system_name.length() > ITEM_NAME_LEN)

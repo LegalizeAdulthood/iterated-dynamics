@@ -141,18 +141,18 @@ enum
 MoreParams g_more_fractal_params[] =
 {
     {FractalType::ICON,                {"Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
-    {FractalType::ICON3D,              {"Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
-    {FractalType::HYPERCMPLXJFP,       {"zj", "zk", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::QUATJULFP,           {"zj", "zk", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::PHOENIXCPLX,         {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::PHOENIXFPCPLX,       {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::MANDPHOENIXCPLX,     {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::MANDPHOENIXFPCPLX,   {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::ICON_3D,              {"Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+    {FractalType::HYPER_CMPLX_J_FP,       {"zj", "zk", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::QUAT_JUL_FP,           {"zj", "zk", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::PHOENIX_CPLX,         {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::PHOENIX_FP_CPLX,       {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::MAND_PHOENIX_CPLX,     {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::MAND_PHOENIX_FP_CPLX,   {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
     {FractalType::FORMULA,             {s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::FFORMULA,            {s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::FORMULA_FP,            {s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
     {FractalType::ANT,                 {"+Wrap?", s_random_seed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
-    {FractalType::MANDELBROTMIX4,      {s_p3_real, s_p3_imag, "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::NOFRACTAL,           {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr    }, {0, 0, 0, 0, 0, 0}}
+    {FractalType::MANDELBROT_MIX4,      {s_p3_real, s_p3_imag, "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::NO_FRACTAL,           {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr    }, {0, 0, 0, 0, 0, 0}}
 };
 // clang-format on
 
@@ -162,8 +162,8 @@ AlternateMath g_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
-    {FractalType::JULIAFP, BFMathType::BIGNUM, julia_bn_fractal, julia_bn_per_pixel,  mandel_bn_setup},
-    {FractalType::MANDELFP, BFMathType::BIGNUM, julia_bn_fractal, mandel_bn_per_pixel, mandel_bn_setup},
+    {FractalType::JULIA_FP, BFMathType::BIGNUM, julia_bn_fractal, julia_bn_per_pixel,  mandel_bn_setup},
+    {FractalType::MANDEL_FP, BFMathType::BIGNUM, julia_bn_fractal, mandel_bn_per_pixel, mandel_bn_setup},
 #else
     {fractal_type::JULIAFP, bf_math_type::BIGFLT, julia_bf_fractal, julia_bf_per_pixel,  mandel_bf_setup},
     {fractal_type::MANDELFP, bf_math_type::BIGFLT, julia_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
@@ -174,11 +174,11 @@ AlternateMath g_alternate_math[] =
           of the usual BIGFLT (2), then set bfdigits on the command to
           increase the precision.
     */
-    {FractalType::FPJULIAZPOWER, BFMathType::BIGFLT, julia_z_power_bf_fractal, julia_bf_per_pixel, mandel_bf_setup},
-    {FractalType::FPMANDELZPOWER, BFMathType::BIGFLT, julia_z_power_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
+    {FractalType::JULIA_Z_POWER_FP, BFMathType::BIGFLT, julia_z_power_bf_fractal, julia_bf_per_pixel, mandel_bf_setup},
+    {FractalType::MANDEL_Z_POWER_FP, BFMathType::BIGFLT, julia_z_power_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
     {FractalType::DIVIDE_BROT5, BFMathType::BIGFLT, divide_brot5_bf_fractal, divide_brot5_bf_per_pixel, mandel_bf_setup},
     {FractalType::BURNING_SHIP, BFMathType::BIGFLT, burning_ship_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
-    {FractalType::NOFRACTAL, BFMathType::NONE, nullptr, nullptr, nullptr}
+    {FractalType::NO_FRACTAL, BFMathType::NONE, nullptr, nullptr, nullptr}
 };
 
 // These are only needed for types with both integer and float variations
@@ -275,7 +275,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL, HelpLabels::HF_MANDEL, FractalFlags::BAILTEST | FractalFlags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::JULIA, FractalType::NOFRACTAL, FractalType::MANDELFP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::JULIA, FractalType::NO_FRACTAL, FractalType::MANDEL_FP, SymmetryType::X_AXIS_NO_PARAM,
         julia_fractal, mandel_per_pixel, mandel_setup, standard_fractal,
         STD_BAIL_OUT,
         mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb
@@ -287,7 +287,7 @@ FractalSpecific g_fractal_specific[] =
         {0.3, 0.6, 0, 0},
         HelpLabels::HT_JULIA, HelpLabels::HF_JULIA, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MANDEL, FractalType::JULIAFP, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::MANDEL, FractalType::JULIA_FP, SymmetryType::ORIGIN,
         julia_fractal, julia_per_pixel, julia_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -298,7 +298,7 @@ FractalSpecific g_fractal_specific[] =
         {3, 0, 0, 0},
         HelpLabels::HT_NEWTBAS, HelpLabels::HF_NEWTBAS, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::MPNEWTBASIN, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NEWT_BASIN_MP, SymmetryType::NONE,
         newton_fractal2, other_julia_fp_per_pixel, newton_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -309,7 +309,7 @@ FractalSpecific g_fractal_specific[] =
         {0.85, 0.6, 0, 0},
         HelpLabels::HT_LAMBDA, HelpLabels::HF_LAMBDA, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -1.5F, 2.5F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MANDELLAMBDA, FractalType::LAMBDAFP, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::MANDEL_LAMBDA, FractalType::LAMBDA_FP, SymmetryType::NONE,
         lambda_fractal, julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -320,7 +320,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL, HelpLabels::HF_MANDEL, FractalFlags::BAILTEST|FractalFlags::BF_MATH|FractalFlags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::JULIAFP, FractalType::NOFRACTAL, FractalType::MANDEL, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::JULIA_FP, FractalType::NO_FRACTAL, FractalType::MANDEL, SymmetryType::X_AXIS_NO_PARAM,
         julia_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT,
         mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb
@@ -332,7 +332,7 @@ FractalSpecific g_fractal_specific[] =
         {3, 0, 0, 0},
         HelpLabels::HT_NEWT, HelpLabels::HF_NEWT, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::MPNEWTON, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NEWTON_MP, SymmetryType::X_AXIS,
         newton_fractal2, other_julia_fp_per_pixel, newton_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -343,7 +343,7 @@ FractalSpecific g_fractal_specific[] =
         {0.3, 0.6, 0, 0},
         HelpLabels::HT_JULIA, HelpLabels::HF_JULIA, FractalFlags::OKJB|FractalFlags::BAILTEST|FractalFlags::BF_MATH,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDELFP, FractalType::JULIA, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::MANDEL_FP, FractalType::JULIA, SymmetryType::ORIGIN,
         julia_fp_fractal, julia_fp_per_pixel,  julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -359,7 +359,7 @@ FractalSpecific g_fractal_specific[] =
         {2, 0, 0, 0},
         HelpLabels::HT_PLASMA, HelpLabels::HF_PLASMA, FractalFlags::NOZOOM|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, plasma,
         NO_BAIL_OUT
     },
@@ -370,7 +370,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MANDFN, HelpLabels::HF_MANDFN, FractalFlags::TRIG1,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        0, FractalType::LAMBDATRIGFP, FractalType::NOFRACTAL, FractalType::MANDELTRIG, SymmetryType::XY_AXIS_NO_PARAM,
+        0, FractalType::LAMBDA_TRIG_FP, FractalType::NO_FRACTAL, FractalType::MANDEL_TRIG, SymmetryType::XY_AXIS_NO_PARAM,
         lambda_trig_fp_fractal, other_mandel_fp_per_pixel, mandel_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -382,7 +382,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_MANOWAR, FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::MANOWARJFP, FractalType::NOFRACTAL, FractalType::MANOWAR, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::MAN_O_WAR_J_FP, FractalType::NO_FRACTAL, FractalType::MAN_O_WAR, SymmetryType::X_AXIS_NO_PARAM,
         man_o_war_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -393,7 +393,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_MANOWAR, FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::MANOWARJ, FractalType::NOFRACTAL, FractalType::MANOWARFP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::MAN_O_WAR_J, FractalType::NO_FRACTAL, FractalType::MAN_O_WAR_FP, SymmetryType::X_AXIS_NO_PARAM,
         man_o_war_fractal, mandel_per_pixel, mandel_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -409,7 +409,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_TEST, HelpLabels::HF_TEST, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, test,
         STD_BAIL_OUT
     },
@@ -420,7 +420,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SIER, HelpLabels::HF_SIER, FractalFlags::NONE,
         -4.0F/3.0F, 96.0F/45.0F, -0.9F, 1.7F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SIERPINSKIFP, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SIERPINSKI_FP, SymmetryType::NONE,
         sierpinski_fractal, long_julia_per_pixel, sierpinski_setup,
         standard_fractal,
         127
@@ -432,7 +432,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSM1, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::BARNSLEYJ1, FractalType::NOFRACTAL, FractalType::BARNSLEYM1FP, SymmetryType::XY_AXIS_NO_PARAM,
+        1, FractalType::BARNSLEY_J1, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1_FP, SymmetryType::XY_AXIS_NO_PARAM,
         barnsley1_fractal, long_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -444,7 +444,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSJ1, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::BARNSLEYM1, FractalType::BARNSLEYJ1FP, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1, FractalType::BARNSLEY_J1_FP, SymmetryType::ORIGIN,
         barnsley1_fractal, long_julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -455,7 +455,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSM2, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::BARNSLEYJ2, FractalType::NOFRACTAL, FractalType::BARNSLEYM2FP, SymmetryType::Y_AXIS_NO_PARAM,
+        1, FractalType::BARNSLEY_J2, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2_FP, SymmetryType::Y_AXIS_NO_PARAM,
         barnsley2_fractal, long_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -467,7 +467,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSJ2, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::BARNSLEYM2, FractalType::BARNSLEYJ2FP, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2, FractalType::BARNSLEY_J2_FP, SymmetryType::ORIGIN,
         barnsley2_fractal, long_julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -478,7 +478,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_SQRFN, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SQRTRIGFP, SymmetryType::X_AXIS,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_TRIG_FP, SymmetryType::X_AXIS,
         sqr_trig_fractal, long_julia_per_pixel, sqr_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
     },
@@ -489,7 +489,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_SQRFN, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SQRTRIG, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_TRIG, SymmetryType::X_AXIS,
         sqr_trig_fp_fractal, other_julia_fp_per_pixel, sqr_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
     },
@@ -500,7 +500,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0, 1, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNPLUSFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TRIGPLUSTRIGFP, SymmetryType::X_AXIS,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_PLUS_TRIG_FP, SymmetryType::X_AXIS,
         trig_plus_trig_fractal, long_julia_per_pixel, trig_plus_trig_long_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -512,7 +512,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MLAMBDA, HelpLabels::HF_MLAMBDA, FractalFlags::BAILTEST,
         -3.0F, 5.0F, -3.0F, 3.0F,
-        1, FractalType::LAMBDA, FractalType::NOFRACTAL, FractalType::MANDELLAMBDAFP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::LAMBDA, FractalType::NO_FRACTAL, FractalType::MANDEL_LAMBDA_FP, SymmetryType::X_AXIS_NO_PARAM,
         lambda_fractal, mandel_per_pixel, mandel_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -523,7 +523,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 1, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_MARKSMAND, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::MARKSJULIA, FractalType::NOFRACTAL, FractalType::MARKSMANDELFP, SymmetryType::NONE,
+        1, FractalType::MARKS_JULIA, FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL_FP, SymmetryType::NONE,
         marks_lambda_fractal, marks_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -535,7 +535,7 @@ FractalSpecific g_fractal_specific[] =
         {0.1, 0.9, 1, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_MARKSJULIA, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MARKSMANDEL, FractalType::MARKSJULIAFP, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL, FractalType::MARKS_JULIA_FP, SymmetryType::ORIGIN,
         marks_lambda_fractal, julia_per_pixel, marks_julia_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -546,7 +546,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_UNITY, HelpLabels::HF_UNITY, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::UNITYFP, SymmetryType::XY_AXIS,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::UNITY_FP, SymmetryType::XY_AXIS,
         unity_fractal, long_julia_per_pixel, unity_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -557,7 +557,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MANDJUL4, HelpLabels::HF_MANDEL4, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::JULIA4, FractalType::NOFRACTAL, FractalType::MANDEL4FP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::JULIA4, FractalType::NO_FRACTAL, FractalType::MANDEL4_FP, SymmetryType::X_AXIS_NO_PARAM,
         mandel4_fractal, mandel_per_pixel, mandel_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -568,7 +568,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 0.55, 0, 0},
         HelpLabels::HT_MANDJUL4, HelpLabels::HF_JULIA4, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MANDEL4, FractalType::JULIA4FP, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::MANDEL4, FractalType::JULIA4_FP, SymmetryType::ORIGIN,
         mandel4_fractal, julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -579,7 +579,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::INFCALC,
         -8.0F, 8.0F, -1.0F, 11.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, ifs,
         NO_BAIL_OUT
     },
@@ -590,7 +590,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -11.0F, 11.0F, -11.0F, 11.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, ifs,
         NO_BAIL_OUT
     },
@@ -601,7 +601,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSM3, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::BARNSLEYJ3, FractalType::NOFRACTAL, FractalType::BARNSLEYM3FP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::BARNSLEY_J3, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3_FP, SymmetryType::X_AXIS_NO_PARAM,
         barnsley3_fractal, long_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -613,7 +613,7 @@ FractalSpecific g_fractal_specific[] =
         {0.1, 0.36, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSJ3, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::BARNSLEYM3, FractalType::BARNSLEYJ3FP, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3, FractalType::BARNSLEY_J3_FP, SymmetryType::NONE,
         barnsley3_fractal, long_julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -624,7 +624,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNZTIMESZ, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TRIGSQRFP, SymmetryType::XY_AXIS,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR_FP, SymmetryType::XY_AXIS,
         trig_z_sqrd_fractal, julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -635,7 +635,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNZTIMESZ, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TRIGSQR, SymmetryType::XY_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR, SymmetryType::XY_AXIS,
         trig_z_sqrd_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -646,7 +646,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFURCATION, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         1.9F, 3.0F, 0.0F, 1.34F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LBIFURCATION, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIFURCATION_L, SymmetryType::NONE,
         bifurc_verhulst_trig, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -657,7 +657,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0, 1, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNPLUSFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TRIGPLUSTRIG, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_PLUS_TRIG, SymmetryType::X_AXIS,
         trig_plus_trig_fp_fractal, other_julia_fp_per_pixel, trig_plus_trig_fp_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -669,7 +669,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNTIMESFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TRIGXTRIGFP, SymmetryType::X_AXIS,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_X_TRIG_FP, SymmetryType::X_AXIS,
         trig_x_trig_fractal, long_julia_per_pixel, fn_x_fn_setup, standard_fractal,
         LTRIG_BAIL_OUT
     },
@@ -680,7 +680,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNTIMESFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TRIGXTRIG, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_X_TRIG, SymmetryType::X_AXIS,
         trig_x_trig_fp_fractal, other_julia_fp_per_pixel, fn_x_fn_setup, standard_fractal,
         LTRIG_BAIL_OUT
     },
@@ -691,7 +691,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_SQROVFN, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SQR1OVERTRIGFP, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_FP, SymmetryType::NONE,
         sqr_1_over_trig_fractal, long_julia_per_pixel, sqr_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -703,7 +703,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_SQROVFN, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SQR1OVERTRIG, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG, SymmetryType::NONE,
         sqr_1_over_trig_fp_fractal, other_julia_fp_per_pixel, sqr_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -715,7 +715,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0, 1, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNXZPLUSZ, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::ZXTRIGPLUSZFP, SymmetryType::X_AXIS,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::Z_X_TRIG_PLUS_Z_FP, SymmetryType::X_AXIS,
         z_x_trig_plus_z_fractal, julia_per_pixel, z_x_trig_plus_z_setup, standard_fractal,
         LTRIG_BAIL_OUT
     },
@@ -726,7 +726,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0, 1, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNXZPLUSZ, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::ZXTRIGPLUSZ, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::Z_X_TRIG_PLUS_Z, SymmetryType::X_AXIS,
         z_x_trig_plus_z_fp_fractal, julia_fp_per_pixel, z_x_trig_plus_z_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -738,7 +738,7 @@ FractalSpecific g_fractal_specific[] =
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NOGUESS|FractalFlags::NOTRACE,
         -1.0F, 1.0F, -.75F, .75F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::KAM, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::KAM, SymmetryType::NONE,
         (VF)kam_torus_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -749,7 +749,7 @@ FractalSpecific g_fractal_specific[] =
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NOGUESS|FractalFlags::NOTRACE,
         -1.0F, 1.0F, -.75F, .75F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::KAMFP, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::KAM_FP, SymmetryType::NONE,
         (VF)kam_torus_long_orbit, nullptr, orbit3d_long_setup, orbit2d_long,
         NO_BAIL_OUT
     },
@@ -760,7 +760,7 @@ FractalSpecific g_fractal_specific[] =
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D,
         -3.0F, 3.0F, -1.0F, 3.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::KAM3D, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::KAM_3D, SymmetryType::NONE,
         (VF)kam_torus_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -771,7 +771,7 @@ FractalSpecific g_fractal_specific[] =
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D,
         -3.0F, 3.0F, -1.0F, 3.5F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::KAM3DFP, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::KAM_3D_FP, SymmetryType::NONE,
         (VF)kam_torus_long_orbit, nullptr, orbit3d_long_setup, orbit3d_long,
         NO_BAIL_OUT
     },
@@ -782,7 +782,7 @@ FractalSpecific g_fractal_specific[] =
         {1.0, 0.4, 0, 0},
         HelpLabels::HT_LAMBDAFN, HelpLabels::HF_LAMBDAFN, FractalFlags::TRIG1|FractalFlags::OKJB,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::MANDELTRIG, FractalType::LAMBDATRIGFP, SymmetryType::PI_SYM,
+        16, FractalType::NO_FRACTAL, FractalType::MANDEL_TRIG, FractalType::LAMBDA_TRIG_FP, SymmetryType::PI_SYM,
         lambda_trig_fractal, long_julia_per_pixel, lambda_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -794,7 +794,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANDFNPLUSZSQRD, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        16, FractalType::LJULTRIGPLUSZSQRD, FractalType::NOFRACTAL, FractalType::FPMANTRIGPLUSZSQRD, SymmetryType::X_AXIS_NO_PARAM,
+        16, FractalType::JUL_TRIG_PLUS_Z_SQRD_L, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_Z_SQRD_FP, SymmetryType::X_AXIS_NO_PARAM,
         trig_plus_z_squared_fractal, mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -806,7 +806,7 @@ FractalSpecific g_fractal_specific[] =
         {-0.5, 0.5, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULFNPLUSZSQRD, FractalFlags::TRIG1|FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        16, FractalType::NOFRACTAL, FractalType::LMANTRIGPLUSZSQRD, FractalType::FPJULTRIGPLUSZSQRD, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_Z_SQRD_L, FractalType::JUL_TRIG_PLUS_Z_SQRD_FP, SymmetryType::NONE,
         trig_plus_z_squared_fractal, julia_per_pixel, julia_fn_plus_z_sqrd_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -818,7 +818,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANDFNPLUSZSQRD, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::FPJULTRIGPLUSZSQRD, FractalType::NOFRACTAL, FractalType::LMANTRIGPLUSZSQRD, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::JUL_TRIG_PLUS_Z_SQRD_FP, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_Z_SQRD_L, SymmetryType::X_AXIS_NO_PARAM,
         trig_plus_z_squared_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -830,7 +830,7 @@ FractalSpecific g_fractal_specific[] =
         {-0.5, 0.5, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULFNPLUSZSQRD, FractalFlags::TRIG1|FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::FPMANTRIGPLUSZSQRD, FractalType::LJULTRIGPLUSZSQRD, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_Z_SQRD_FP, FractalType::JUL_TRIG_PLUS_Z_SQRD_L, SymmetryType::NONE,
         trig_plus_z_squared_fp_fractal, julia_fp_per_pixel, julia_fn_plus_z_sqrd_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -842,7 +842,7 @@ FractalSpecific g_fractal_specific[] =
         {1.0, 0.4, 0, 0},
         HelpLabels::HT_LAMBDAFN, HelpLabels::HF_LAMBDAFN, FractalFlags::TRIG1|FractalFlags::OKJB,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDELTRIGFP, FractalType::LAMBDATRIG, SymmetryType::PI_SYM,
+        0, FractalType::NO_FRACTAL, FractalType::MANDEL_TRIG_FP, FractalType::LAMBDA_TRIG, SymmetryType::PI_SYM,
         lambda_trig_fp_fractal, other_julia_fp_per_pixel, lambda_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -854,7 +854,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MANDFN, HelpLabels::HF_MANDFN, FractalFlags::TRIG1,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        16, FractalType::LAMBDATRIG, FractalType::NOFRACTAL, FractalType::MANDELTRIGFP, SymmetryType::XY_AXIS_NO_PARAM,
+        16, FractalType::LAMBDA_TRIG, FractalType::NO_FRACTAL, FractalType::MANDEL_TRIG_FP, SymmetryType::XY_AXIS_NO_PARAM,
         lambda_trig_fractal, long_mandel_per_pixel, mandel_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -866,7 +866,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 2, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANZPOWER, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::LJULIAZPOWER, FractalType::NOFRACTAL, FractalType::FPMANDELZPOWER, SymmetryType::X_AXIS_NO_IMAG,
+        1, FractalType::JULIA_Z_POWER_L, FractalType::NO_FRACTAL, FractalType::MANDEL_Z_POWER_FP, SymmetryType::X_AXIS_NO_IMAG,
         long_z_power_fractal, long_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -878,7 +878,7 @@ FractalSpecific g_fractal_specific[] =
         {0.3, 0.6, 2, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULZPOWER, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::LMANDELZPOWER, FractalType::FPJULIAZPOWER, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::MANDEL_Z_POWER_L, FractalType::JULIA_Z_POWER_FP, SymmetryType::ORIGIN,
         long_z_power_fractal, long_julia_per_pixel, julia_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -890,7 +890,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 2, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANZPOWER, FractalFlags::BAILTEST|FractalFlags::BF_MATH|FractalFlags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::FPJULIAZPOWER, FractalType::NOFRACTAL, FractalType::LMANDELZPOWER, SymmetryType::X_AXIS_NO_IMAG,
+        0, FractalType::JULIA_Z_POWER_FP, FractalType::NO_FRACTAL, FractalType::MANDEL_Z_POWER_L, SymmetryType::X_AXIS_NO_IMAG,
         float_z_power_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT,
@@ -903,7 +903,7 @@ FractalSpecific g_fractal_specific[] =
         {0.3, 0.6, 2, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULZPOWER, FractalFlags::OKJB|FractalFlags::BAILTEST|FractalFlags::BF_MATH,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::FPMANDELZPOWER, FractalType::LJULIAZPOWER, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::MANDEL_Z_POWER_FP, FractalType::JULIA_Z_POWER_L, SymmetryType::ORIGIN,
         float_z_power_fractal, other_julia_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -915,7 +915,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 2, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANZZPWR, FractalFlags::BAILTEST|FractalFlags::BF_MATH,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::FPJULZTOZPLUSZPWR, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::JUL_Z_TO_Z_PLUS_Z_PWR_FP, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::X_AXIS_NO_PARAM,
         float_z_to_z_plus_z_pwr_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -927,7 +927,7 @@ FractalSpecific g_fractal_specific[] =
         {-0.3, 0.3, 2, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULZZPWR, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::FPMANZTOZPLUSZPWR, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::MAN_Z_TO_Z_PLUS_Z_PWR_FP, FractalType::NO_FRACTAL, SymmetryType::NONE,
         float_z_to_z_plus_z_pwr_fractal, other_julia_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -939,7 +939,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANDFNPLUSEXP, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        16, FractalType::LJULTRIGPLUSEXP, FractalType::NOFRACTAL, FractalType::FPMANTRIGPLUSEXP, SymmetryType::X_AXIS_NO_PARAM,
+        16, FractalType::JUL_TRIG_PLUS_EXP_L, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_EXP_FP, SymmetryType::X_AXIS_NO_PARAM,
         long_trig_plus_exponent_fractal, long_mandel_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -951,7 +951,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULFNPLUSEXP, FractalFlags::TRIG1|FractalFlags::OKJB|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::LMANTRIGPLUSEXP, FractalType::FPJULTRIGPLUSEXP, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_EXP_L, FractalType::JUL_TRIG_PLUS_EXP_FP, SymmetryType::NONE,
         long_trig_plus_exponent_fractal, long_julia_per_pixel, julia_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -963,7 +963,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_MANDFNPLUSEXP, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        0, FractalType::FPJULTRIGPLUSEXP, FractalType::NOFRACTAL, FractalType::LMANTRIGPLUSEXP, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::JUL_TRIG_PLUS_EXP_FP, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_EXP_L, SymmetryType::X_AXIS_NO_PARAM,
         float_trig_plus_exponent_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -975,7 +975,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_PICKMJ, HelpLabels::HF_JULFNPLUSEXP, FractalFlags::TRIG1|FractalFlags::OKJB|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::FPMANTRIGPLUSEXP, FractalType::LJULTRIGPLUSEXP, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::MAN_TRIG_PLUS_EXP_FP, FractalType::JUL_TRIG_PLUS_EXP_L, SymmetryType::NONE,
         float_trig_plus_exponent_fractal, other_julia_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -987,7 +987,7 @@ FractalSpecific g_fractal_specific[] =
         {0.05, 0, 3.00, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LPOPCORN, SymmetryType::NO_PLOT,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::POPCORN_L, SymmetryType::NO_PLOT,
         popcorn_fractal_fn, other_julia_fp_per_pixel, julia_fp_setup, popcorn,
         STD_BAIL_OUT
     },
@@ -998,7 +998,7 @@ FractalSpecific g_fractal_specific[] =
         {0.05, 0, 3.00, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FPPOPCORN, SymmetryType::NO_PLOT,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::POPCORN_FP, SymmetryType::NO_PLOT,
         long_popcorn_fractal_fn, long_julia_per_pixel, julia_long_setup, popcorn,
         STD_BAIL_OUT
     },
@@ -1009,7 +1009,7 @@ FractalSpecific g_fractal_specific[] =
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -15.0F, 15.0F, 0.0F, 30.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LLORENZ, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::LORENZ_L, SymmetryType::NONE,
         (VF)lorenz3d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -1020,7 +1020,7 @@ FractalSpecific g_fractal_specific[] =
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -15.0F, 15.0F, 0.0F, 30.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FPLORENZ, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::LORENZ_FP, SymmetryType::NONE,
         (VF)lorenz3d_long_orbit, nullptr, orbit3d_long_setup, orbit2d_long,
         NO_BAIL_OUT
     },
@@ -1031,7 +1031,7 @@ FractalSpecific g_fractal_specific[] =
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FPLORENZ3D, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::LORENZ_3D_FP, SymmetryType::NONE,
         (VF)lorenz3d_long_orbit, nullptr, orbit3d_long_setup, orbit3d_long,
         NO_BAIL_OUT
     },
@@ -1042,7 +1042,7 @@ FractalSpecific g_fractal_specific[] =
         {3, 0, 0, 0},
         HelpLabels::HT_NEWT, HelpLabels::HF_NEWT, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NEWTON, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NEWTON, SymmetryType::X_AXIS,
         mpc_newton_fractal, mpc_julia_per_pixel, newton_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -1053,7 +1053,7 @@ FractalSpecific g_fractal_specific[] =
         {3, 0, 0, 0},
         HelpLabels::HT_NEWTBAS, HelpLabels::HF_NEWTBAS, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NEWTBASIN, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NEWT_BASIN, SymmetryType::NONE,
         mpc_newton_fractal, mpc_julia_per_pixel, newton_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -1064,7 +1064,7 @@ FractalSpecific g_fractal_specific[] =
         {3, 0, 1, 0},
         HelpLabels::HT_NEWTCMPLX, HelpLabels::HF_COMPLEXNEWT, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         complex_newton, other_julia_fp_per_pixel, complex_newton_setup,
         standard_fractal,
         NO_BAIL_OUT
@@ -1076,7 +1076,7 @@ FractalSpecific g_fractal_specific[] =
         {3, 0, 1, 0},
         HelpLabels::HT_NEWTCMPLX, HelpLabels::HF_COMPLEXNEWT, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         complex_basin, other_julia_fp_per_pixel, complex_newton_setup,
         standard_fractal,
         NO_BAIL_OUT
@@ -1088,7 +1088,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 1, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_CMPLXMARKSMAND, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::COMPLEXMARKSJUL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::COMPLEX_MARKS_JUL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         marks_cplx_mand, marks_cplx_mand_perp, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1099,7 +1099,7 @@ FractalSpecific g_fractal_specific[] =
         {0.3, 0.6, 1, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_CMPLXMARKSJUL, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::COMPLEXMARKSMAND, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::COMPLEX_MARKS_MAND, FractalType::NO_FRACTAL, SymmetryType::NONE,
         marks_cplx_mand, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1110,7 +1110,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_FORMULA, HelpLabels::SPECIAL_FORMULA, FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FFORMULA, SymmetryType::SETUP,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::FORMULA_FP, SymmetryType::SETUP,
         formula, form_per_pixel, formula_setup_l, standard_fractal,
         0
     },
@@ -1121,7 +1121,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_FORMULA, HelpLabels::SPECIAL_FORMULA, FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FORMULA, SymmetryType::SETUP,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::FORMULA, SymmetryType::SETUP,
         formula, form_per_pixel, formula_setup_fp, standard_fractal,
         0
     },
@@ -1132,7 +1132,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SIER, HelpLabels::HF_SIER, FractalFlags::NONE,
         -4.0F/3.0F, 96.0F/45.0F, -0.9F, 1.7F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SIERPINSKI, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SIERPINSKI, SymmetryType::NONE,
         sierpinski_fp_fractal, other_julia_fp_per_pixel, sierpinski_fp_setup,
         standard_fractal,
         127
@@ -1144,7 +1144,7 @@ FractalSpecific g_fractal_specific[] =
         {0.85, 0.6, 0, 0},
         HelpLabels::HT_LAMBDA, HelpLabels::HF_LAMBDA, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDELLAMBDAFP, FractalType::LAMBDA, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::MANDEL_LAMBDA_FP, FractalType::LAMBDA, SymmetryType::NONE,
         lambda_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1155,7 +1155,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSM1, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::BARNSLEYJ1FP, FractalType::NOFRACTAL, FractalType::BARNSLEYM1, SymmetryType::XY_AXIS_NO_PARAM,
+        0, FractalType::BARNSLEY_J1_FP, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1, SymmetryType::XY_AXIS_NO_PARAM,
         barnsley1_fp_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1167,7 +1167,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSJ1, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::BARNSLEYM1FP, FractalType::BARNSLEYJ1, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1_FP, FractalType::BARNSLEY_J1, SymmetryType::ORIGIN,
         barnsley1_fp_fractal, other_julia_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1179,7 +1179,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSM2, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::BARNSLEYJ2FP, FractalType::NOFRACTAL, FractalType::BARNSLEYM2, SymmetryType::Y_AXIS_NO_PARAM,
+        0, FractalType::BARNSLEY_J2_FP, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2, SymmetryType::Y_AXIS_NO_PARAM,
         barnsley2_fp_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1191,7 +1191,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSJ2, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::BARNSLEYM2FP, FractalType::BARNSLEYJ2, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2_FP, FractalType::BARNSLEY_J2, SymmetryType::ORIGIN,
         barnsley2_fp_fractal, other_julia_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1203,7 +1203,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSM3, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::BARNSLEYJ3FP, FractalType::NOFRACTAL, FractalType::BARNSLEYM3, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::BARNSLEY_J3_FP, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3, SymmetryType::X_AXIS_NO_PARAM,
         barnsley3_fp_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1215,7 +1215,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNS, HelpLabels::HF_BARNSJ3, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::BARNSLEYM3FP, FractalType::BARNSLEYJ3, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3_FP, FractalType::BARNSLEY_J3, SymmetryType::NONE,
         barnsley3_fp_fractal, other_julia_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1227,7 +1227,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MLAMBDA, HelpLabels::HF_MLAMBDA, FractalFlags::BAILTEST,
         -3.0F, 5.0F, -3.0F, 3.0F,
-        0, FractalType::LAMBDAFP, FractalType::NOFRACTAL, FractalType::MANDELLAMBDA, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::LAMBDA_FP, FractalType::NO_FRACTAL, FractalType::MANDEL_LAMBDA, SymmetryType::X_AXIS_NO_PARAM,
         lambda_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1238,7 +1238,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_JULIBROT, HelpLabels::NONE, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE|FractalFlags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::JULIBROTFP, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::JULIBROT_FP, SymmetryType::NONE,
         julia_fractal, jb_per_pixel, julibrot_setup, std_4d_fractal,
         STD_BAIL_OUT
     },
@@ -1249,7 +1249,7 @@ FractalSpecific g_fractal_specific[] =
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LLORENZ3D, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::LORENZ_3D_L, SymmetryType::NONE,
         (VF)lorenz3d_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -1260,7 +1260,7 @@ FractalSpecific g_fractal_specific[] =
         {.04, .2, .2, 5.7},
         HelpLabels::HT_ROSS, HelpLabels::HF_ROSS, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -20.0F, 40.0F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FPROSSLER, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::ROSSLER_FP, SymmetryType::NONE,
         (VF)rossler_long_orbit, nullptr, orbit3d_long_setup, orbit3d_long,
         NO_BAIL_OUT
     },
@@ -1271,7 +1271,7 @@ FractalSpecific g_fractal_specific[] =
         {.04, .2, .2, 5.7},
         HelpLabels::HT_ROSS, HelpLabels::HF_ROSS, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -20.0F, 40.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LROSSLER, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::ROSSLER_L, SymmetryType::NONE,
         (VF)rossler_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -1282,7 +1282,7 @@ FractalSpecific g_fractal_specific[] =
         {1.4, .3, 0, 0},
         HelpLabels::HT_HENON, HelpLabels::HF_HENON, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -1.4F, 1.4F, -.5F, .5F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FPHENON, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::HENON_FP, SymmetryType::NONE,
         (VF)henon_long_orbit, nullptr, orbit3d_long_setup, orbit2d_long,
         NO_BAIL_OUT
     },
@@ -1293,7 +1293,7 @@ FractalSpecific g_fractal_specific[] =
         {1.4, .3, 0, 0},
         HelpLabels::HT_HENON, HelpLabels::HF_HENON, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -1.4F, 1.4F, -.5F, .5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LHENON, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::HENON_L, SymmetryType::NONE,
         (VF)henon_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -1304,7 +1304,7 @@ FractalSpecific g_fractal_specific[] =
         {2.24, .43, -.65, -2.43},
         HelpLabels::HT_PICK, HelpLabels::HF_PICKOVER, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D,
         -8.0F/3.0F, 8.0F/3.0F, -2.0F, 2.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)pickover_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -1315,7 +1315,7 @@ FractalSpecific g_fractal_specific[] =
         {-.1, 0, 0, 0},
         HelpLabels::HT_GINGER, HelpLabels::HF_GINGER, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -4.5F, 8.5F, -4.5F, 8.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)ginger_bread_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -1331,7 +1331,7 @@ FractalSpecific g_fractal_specific[] =
         {10, 0, 0, 0},
         HelpLabels::HT_DIFFUS, HelpLabels::HF_DIFFUS, FractalFlags::NOZOOM|FractalFlags::NOGUESS|FractalFlags::NOTRACE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, diffusion,
         NO_BAIL_OUT
     },
@@ -1342,7 +1342,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_UNITY, HelpLabels::HF_UNITY, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::UNITY, SymmetryType::XY_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::UNITY, SymmetryType::XY_AXIS,
         unity_fp_fractal, other_julia_fp_per_pixel, standard_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -1353,7 +1353,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_SPIDER, FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SPIDER, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SPIDER, SymmetryType::X_AXIS_NO_PARAM,
         spider_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1364,7 +1364,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_SPIDER, FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::SPIDERFP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SPIDER_FP, SymmetryType::X_AXIS_NO_PARAM,
         spider_fractal, mandel_per_pixel, mandel_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1375,7 +1375,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_TETRATE, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::X_AXIS_NO_IMAG,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::X_AXIS_NO_IMAG,
         tetrate_fp_fractal, other_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1387,7 +1387,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGM1, FractalFlags::NONE,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::MAGNET1J, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::MAGNET_1J, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::X_AXIS_NO_PARAM,
         magnet1_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         100
     },
@@ -1398,7 +1398,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGJ1, FractalFlags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        0, FractalType::NOFRACTAL, FractalType::MAGNET1M, FractalType::NOFRACTAL, SymmetryType::X_AXIS_NO_IMAG,
+        0, FractalType::NO_FRACTAL, FractalType::MAGNET_1M, FractalType::NO_FRACTAL, SymmetryType::X_AXIS_NO_IMAG,
         magnet1_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         100
     },
@@ -1409,7 +1409,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGM2, FractalFlags::NONE,
         -1.5F, 3.7F, -1.95F, 1.95F,
-        0, FractalType::MAGNET2J, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::MAGNET_2J, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::X_AXIS_NO_PARAM,
         magnet2_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         100
     },
@@ -1420,7 +1420,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGJ2, FractalFlags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        0, FractalType::NOFRACTAL, FractalType::MAGNET2M, FractalType::NOFRACTAL, SymmetryType::X_AXIS_NO_IMAG,
+        0, FractalType::NO_FRACTAL, FractalType::MAGNET_2M, FractalType::NO_FRACTAL, SymmetryType::X_AXIS_NO_IMAG,
         magnet2_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         100
     },
@@ -1431,7 +1431,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFURCATION, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         1.9F, 3.0F, 0.0F, 1.34F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::BIFURCATION, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIFURCATION, SymmetryType::NONE,
         long_bifurc_verhulst_trig, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1442,7 +1442,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFLAMBDA, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         -2.0F, 4.0F, -1.0F, 2.0F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::BIFLAMBDA, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_LAMBDA, SymmetryType::NONE,
         long_bifurc_lambda_trig, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1453,7 +1453,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFLAMBDA, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         -2.0F, 4.0F, -1.0F, 2.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LBIFLAMBDA, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_LAMBDA_L, SymmetryType::NONE,
         bifurc_lambda_trig, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1464,7 +1464,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFPLUSSINPI, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         0.275F, 1.45F, 0.0F, 2.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LBIFADSINPI, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_PLUS_SIN_PI_L, SymmetryType::NONE,
         bifurc_add_trig_pi, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1475,7 +1475,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFEQSINPI, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         -2.5F, 2.5F, -3.5F, 3.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LBIFEQSINPI, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_EQ_SIN_PI_L, SymmetryType::NONE,
         bifurc_set_trig_pi, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1486,7 +1486,7 @@ FractalSpecific g_fractal_specific[] =
         {0.05, 0, 3.00, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCJUL, FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LPOPCORNJUL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::POPCORN_JUL_L, SymmetryType::NONE,
         popcorn_fractal_fn, other_julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1497,7 +1497,7 @@ FractalSpecific g_fractal_specific[] =
         {0.05, 0, 3.0, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCJUL, FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FPPOPCORNJUL, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::POPCORN_JUL_FP, SymmetryType::NONE,
         long_popcorn_fractal_fn, long_julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1508,7 +1508,7 @@ FractalSpecific g_fractal_specific[] =
         {2, 0, 0, 0},
         HelpLabels::HT_LSYS, HelpLabels::SPECIAL_L_SYSTEM, FractalFlags::NOZOOM|FractalFlags::NORESUME|FractalFlags::NOGUESS|FractalFlags::NOTRACE,
         -1.0F, 1.0F, -1.0F, 1.0F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, lsystem,
         NO_BAIL_OUT
     },
@@ -1519,7 +1519,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_MANOWARJ, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANOWARFP, FractalType::MANOWARJ, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::MAN_O_WAR_FP, FractalType::MAN_O_WAR_J, SymmetryType::NONE,
         man_o_war_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1530,7 +1530,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_MANOWARJ, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MANOWAR, FractalType::MANOWARJFP, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::MAN_O_WAR, FractalType::MAN_O_WAR_J_FP, SymmetryType::NONE,
         man_o_war_fractal, julia_per_pixel, julia_long_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -1541,7 +1541,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 1, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNPLUSFNPIX, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -3.6F, 3.6F, -2.7F, 2.7F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FNPLUSFNPIXLONG, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::FN_PLUS_FN_PIX_LONG, SymmetryType::NONE,
         richard_8_fp_fractal, other_richard_8_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -1553,7 +1553,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 1, 0},
         HelpLabels::HT_SCOTSKIN, HelpLabels::HF_FNPLUSFNPIX, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -3.6F, 3.6F, -2.7F, 2.7F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FNPLUSFNPIXFP, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::FN_PLUS_FN_PIX_FP, SymmetryType::NONE,
         richard_8_fractal, long_richard_8_per_pixel, mandel_long_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -1565,7 +1565,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_MARKSMANDPWR, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::MARKSMANDELPWR, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL_PWR, SymmetryType::X_AXIS_NO_PARAM,
         marks_mandel_pwr_fp_fractal, marks_mandel_pwr_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1577,7 +1577,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_MARKSMANDPWR, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::MARKSMANDELPWRFP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL_PWR_FP, SymmetryType::X_AXIS_NO_PARAM,
         marks_mandel_pwr_fractal, marks_mandel_pwr_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1589,7 +1589,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_TIMSERR, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -2.9F, 4.3F, -2.7F, 2.7F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TIMSERROR, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TIMS_ERROR, SymmetryType::X_AXIS_NO_PARAM,
         tims_error_fp_fractal, marks_mandel_pwr_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1601,7 +1601,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_TIMSERR, FractalFlags::TRIG1|FractalFlags::BAILTEST,
         -2.9F, 4.3F, -2.7F, 2.7F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::TIMSERRORFP, SymmetryType::X_AXIS_NO_PARAM,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TIMS_ERROR_FP, SymmetryType::X_AXIS_NO_PARAM,
         tims_error_fractal, marks_mandel_pwr_per_pixel, mandel_long_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -1613,7 +1613,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFEQSINPI, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         -2.5F, 2.5F, -3.5F, 3.5F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::BIFEQSINPI, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_EQ_SIN_PI, SymmetryType::NONE,
         long_bifurc_set_trig_pi, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1624,7 +1624,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFPLUSSINPI, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         0.275F, 1.45F, 0.0F, 2.0F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::BIFADSINPI, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_PLUS_SIN_PI, SymmetryType::NONE,
         long_bifurc_add_trig_pi, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1635,7 +1635,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFSTEWART, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         0.7F, 2.0F, -1.1F, 1.1F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LBIFSTEWART, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_STEWART_L, SymmetryType::NONE,
         bifurc_stewart_trig, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1646,7 +1646,7 @@ FractalSpecific g_fractal_specific[] =
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFSTEWART, FractalFlags::TRIG1|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         0.7F, 2.0F, -1.1F, 1.1F,
-        1, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::BIFSTEWART, SymmetryType::NONE,
+        1, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_STEWART, SymmetryType::NONE,
         long_bifurc_stewart_trig, nullptr, standalone_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1657,7 +1657,7 @@ FractalSpecific g_fractal_specific[] =
         {.4, 1, 0, 0},
         HelpLabels::HT_MARTIN, HelpLabels::HF_HOPALONG, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -2.0F, 3.0F, -1.625F, 2.625F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)hopalong2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -1668,7 +1668,7 @@ FractalSpecific g_fractal_specific[] =
         {200000L, 0, 0, 0},
         HelpLabels::HT_CIRCLE, HelpLabels::HF_CIRCLE, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::XY_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::XY_AXIS,
         circle_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -1679,7 +1679,7 @@ FractalSpecific g_fractal_specific[] =
         {3.14, 0, 0, 0},
         HelpLabels::HT_MARTIN, HelpLabels::HF_MARTIN, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -32.0F, 32.0F, -24.0F, 24.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)martin2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -1690,7 +1690,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0.5, 0, 0},
         HelpLabels::HT_LYAPUNOV, HelpLabels::HT_LYAPUNOV, FractalFlags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         lyapunov_orbit, nullptr, lya_setup, lyapunov,
         NO_BAIL_OUT
     },
@@ -1702,7 +1702,7 @@ FractalSpecific g_fractal_specific[] =
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ3D1,
         FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)lorenz3d1_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -1714,7 +1714,7 @@ FractalSpecific g_fractal_specific[] =
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ3D3,
         FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)lorenz3d3_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -1726,7 +1726,7 @@ FractalSpecific g_fractal_specific[] =
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ3D4,
         FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::PARMS3D|FractalFlags::INFCALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)lorenz3d4_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -1737,7 +1737,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0.1, 1, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_LAMBDAFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::LMANLAMFNFN, FractalType::FPLAMBDAFNFN, SymmetryType::ORIGIN,
+        16, FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN_L, FractalType::LAMBDA_FN_FN_FP, SymmetryType::ORIGIN,
         lambda_trig_or_trig_fractal, long_julia_per_pixel, lambda_trig_or_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -1749,7 +1749,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0.1, 1, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_LAMBDAFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::FPMANLAMFNFN, FractalType::LLAMBDAFNFN, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN_FP, FractalType::LAMBDA_FN_FN_L, SymmetryType::ORIGIN,
         lambda_trig_or_trig_fp_fractal, other_julia_fp_per_pixel,
         lambda_trig_or_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
@@ -1761,7 +1761,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 8, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_JULIAFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::NOFRACTAL, FractalType::LMANFNFN, FractalType::FPJULFNFN, SymmetryType::X_AXIS,
+        16, FractalType::NO_FRACTAL, FractalType::MAN_FN_FN_L, FractalType::JUL_FN_FN_FP, SymmetryType::X_AXIS,
         julia_trig_or_trig_fractal, long_julia_per_pixel, julia_trig_or_trig_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -1773,7 +1773,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 8, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_JULIAFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::NOFRACTAL, FractalType::FPMANFNFN, FractalType::LJULFNFN, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::MAN_FN_FN_FP, FractalType::JUL_FN_FN_L, SymmetryType::X_AXIS,
         julia_trig_or_trig_fp_fractal, other_julia_fp_per_pixel,
         julia_trig_or_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
@@ -1785,7 +1785,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 10, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_MANLAMFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::LLAMBDAFNFN, FractalType::NOFRACTAL, FractalType::FPMANLAMFNFN, SymmetryType::X_AXIS_NO_PARAM,
+        16, FractalType::LAMBDA_FN_FN_L, FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN_FP, SymmetryType::X_AXIS_NO_PARAM,
         lambda_trig_or_trig_fractal, long_mandel_per_pixel,
         man_lam_trig_or_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
@@ -1797,7 +1797,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 10, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_MANLAMFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::FPLAMBDAFNFN, FractalType::NOFRACTAL, FractalType::LMANLAMFNFN, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::LAMBDA_FN_FN_FP, FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN_L, SymmetryType::X_AXIS_NO_PARAM,
         lambda_trig_or_trig_fp_fractal, other_mandel_fp_per_pixel,
         man_lam_trig_or_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
@@ -1809,7 +1809,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0.5, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_MANDELFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        16, FractalType::LJULFNFN, FractalType::NOFRACTAL, FractalType::FPMANFNFN, SymmetryType::X_AXIS_NO_PARAM,
+        16, FractalType::JUL_FN_FN_L, FractalType::NO_FRACTAL, FractalType::MAN_FN_FN_FP, SymmetryType::X_AXIS_NO_PARAM,
         julia_trig_or_trig_fractal, long_mandel_per_pixel,
         mandel_trig_or_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
@@ -1821,7 +1821,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0.5, 0},
         HelpLabels::HT_FNORFN, HelpLabels::HF_MANDELFNFN, FractalFlags::TRIG2|FractalFlags::BAILTEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
-        0, FractalType::FPJULFNFN, FractalType::NOFRACTAL, FractalType::LMANFNFN, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::JUL_FN_FN_FP, FractalType::NO_FRACTAL, FractalType::MAN_FN_FN_L, SymmetryType::X_AXIS_NO_PARAM,
         julia_trig_or_trig_fp_fractal, other_mandel_fp_per_pixel,
         mandel_trig_or_trig_setup, standard_fractal,
         LTRIG_BAIL_OUT
@@ -1833,7 +1833,7 @@ FractalSpecific g_fractal_specific[] =
         {300.0, 0.9, 5, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFMAY, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         -3.5F, -0.9F, -0.5F, 3.2F,
-        16, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::BIFMAY, SymmetryType::NONE,
+        16, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_MAY, SymmetryType::NONE,
         long_bifurc_may, nullptr, bifurc_may_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1844,7 +1844,7 @@ FractalSpecific g_fractal_specific[] =
         {300.0, 0.9, 5, 0},
         HelpLabels::HT_BIF, HelpLabels::HF_BIFMAY, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE,
         -3.5F, -0.9F, -0.5F, 3.2F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::LBIFMAY, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::BIF_MAY_L, SymmetryType::NONE,
         bifurc_may, nullptr, bifurc_may_setup, bifurcation,
         NO_BAIL_OUT
     },
@@ -1855,7 +1855,7 @@ FractalSpecific g_fractal_specific[] =
         {6, 1.0, 0.0001, 0},
         HelpLabels::HT_HALLEY, HelpLabels::HF_HALLEY, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::HALLEY, SymmetryType::XY_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::HALLEY, SymmetryType::XY_AXIS,
         mpc_halley_fractal, mpc_halley_per_pixel, halley_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -1866,7 +1866,7 @@ FractalSpecific g_fractal_specific[] =
         {6, 1.0, 0.0001, 0},
         HelpLabels::HT_HALLEY, HelpLabels::HF_HALLEY, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::MPHALLEY, SymmetryType::XY_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::HALLEY_MP, SymmetryType::XY_AXIS,
         halley_fractal, halley_per_pixel, halley_setup, standard_fractal,
         NO_BAIL_OUT
     },
@@ -1877,7 +1877,7 @@ FractalSpecific g_fractal_specific[] =
         {50, .1, 1, 3},
         HelpLabels::HT_DYNAM, HelpLabels::HF_DYNAM, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::TRIG1,
         -20.0F, 20.0F, -20.0F, 20.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)dynam_float, nullptr, dynam2d_float_setup, dynam2d_float,
         NO_BAIL_OUT
     },
@@ -1888,7 +1888,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_QUAT, HelpLabels::HF_QUAT, FractalFlags::OKJB,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::QUATJULFP, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::X_AXIS,
+        0, FractalType::QUAT_JUL_FP, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::X_AXIS,
         quaternion_fp_fractal, quaternion_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -1900,7 +1900,7 @@ FractalSpecific g_fractal_specific[] =
         {-.745, 0, .113, .05},
         HelpLabels::HT_QUAT, HelpLabels::HF_QUATJ, FractalFlags::OKJB|FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::QUATFP, FractalType::NOFRACTAL, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::QUAT_FP, FractalType::NO_FRACTAL, SymmetryType::ORIGIN,
         quaternion_fp_fractal, quaternion_jul_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -1912,7 +1912,7 @@ FractalSpecific g_fractal_specific[] =
         {11.0, 3311100320.0, 41.0, 0},
         HelpLabels::HT_CELLULAR, HelpLabels::HF_CELLULAR, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOZOOM,
         -1.0F, 1.0F, -1.0F, 1.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, cellular_setup, cellular,
         NO_BAIL_OUT
     },
@@ -1923,7 +1923,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_JULIBROT, HelpLabels::NONE, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NOROTATE|FractalFlags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::JULIBROT, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::JULIBROT, SymmetryType::NONE,
         julia_fp_fractal, jb_fp_per_pixel, julibrot_setup, std_4d_fp_fractal,
         STD_BAIL_OUT
     },
@@ -1957,7 +1957,7 @@ FractalSpecific g_fractal_specific[] =
         {-0.11, 0.6557, 4, 1024},
         HelpLabels::HT_INVERSE, HelpLabels::HF_INVERSE, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC|FractalFlags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        24, FractalType::NOFRACTAL, FractalType::MANDEL, FractalType::INVERSEJULIAFP, SymmetryType::NONE,
+        24, FractalType::NO_FRACTAL, FractalType::MANDEL, FractalType::INVERSE_JULIA_FP, SymmetryType::NONE,
         l_inverse_julia_orbit, nullptr, orbit3d_long_setup, inverse_julia_per_image,
         NO_BAIL_OUT
     },
@@ -1968,7 +1968,7 @@ FractalSpecific g_fractal_specific[] =
         {-0.11, 0.6557, 4, 1024},
         HelpLabels::HT_INVERSE, HelpLabels::HF_INVERSE, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC|FractalFlags::NORESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDEL, FractalType::INVERSEJULIA, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::MANDEL, FractalType::INVERSE_JULIA, SymmetryType::NONE,
         m_inverse_julia_orbit, nullptr, orbit3d_float_setup, inverse_julia_per_image,
         NO_BAIL_OUT
     },
@@ -1981,7 +1981,7 @@ FractalSpecific g_fractal_specific[] =
         {50, 0, 0, 0},
         HelpLabels::HT_MANDELCLOUD, HelpLabels::HF_MANDELCLOUD, FractalFlags::NOGUESS|FractalFlags::NOTRACE,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)mandel_cloud_float, nullptr, dynam2d_float_setup, dynam2d_float,
         NO_BAIL_OUT
     },
@@ -1992,7 +1992,7 @@ FractalSpecific g_fractal_specific[] =
         {0.56667, -0.5, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIX, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MANDPHOENIX, FractalType::PHOENIXFP, SymmetryType::X_AXIS,
+        1, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX, FractalType::PHOENIX_FP, SymmetryType::X_AXIS,
         long_phoenix_fractal, long_phoenix_per_pixel, phoenix_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2004,7 +2004,7 @@ FractalSpecific g_fractal_specific[] =
         {0.56667, -0.5, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIX, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDPHOENIXFP, FractalType::PHOENIX, SymmetryType::X_AXIS,
+        0, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_FP, FractalType::PHOENIX, SymmetryType::X_AXIS,
         phoenix_fractal, phoenix_per_pixel, phoenix_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -2015,7 +2015,7 @@ FractalSpecific g_fractal_specific[] =
         {0.0, 0.0, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDPHOENIX, FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::PHOENIX, FractalType::NOFRACTAL, FractalType::MANDPHOENIXFP, SymmetryType::NONE,
+        1, FractalType::PHOENIX, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_FP, SymmetryType::NONE,
         long_phoenix_fractal, long_mand_phoenix_per_pixel, mand_phoenix_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2027,7 +2027,7 @@ FractalSpecific g_fractal_specific[] =
         {0.0, 0.0, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDPHOENIX, FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::PHOENIXFP, FractalType::NOFRACTAL, FractalType::MANDPHOENIX, SymmetryType::NONE,
+        0, FractalType::PHOENIX_FP, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX, SymmetryType::NONE,
         phoenix_fractal, mand_phoenix_per_pixel, mand_phoenix_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2039,7 +2039,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_HYPERC, HelpLabels::HF_HYPERC, FractalFlags::OKJB|FractalFlags::TRIG1,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::HYPERCMPLXJFP, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::X_AXIS,
+        0, FractalType::HYPER_CMPLX_J_FP, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::X_AXIS,
         hyper_complex_fp_fractal, quaternion_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -2051,7 +2051,7 @@ FractalSpecific g_fractal_specific[] =
         {-.745, 0, .113, .05},
         HelpLabels::HT_HYPERC, HelpLabels::HF_HYPERCJ, FractalFlags::OKJB|FractalFlags::TRIG1|FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::HYPERCMPLXFP, FractalType::NOFRACTAL, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::HYPER_CMPLX_FP, FractalType::NO_FRACTAL, SymmetryType::ORIGIN,
         hyper_complex_fp_fractal, quaternion_jul_fp_per_pixel, julia_fp_setup,
         standard_fractal,
         LTRIG_BAIL_OUT
@@ -2063,7 +2063,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0, 1.028713768218725, 0},
         HelpLabels::HT_FROTH, HelpLabels::HF_FROTH, FractalFlags::NOTRACE,
         -2.8F, 2.8F, -2.355F, 1.845F,
-        28, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FROTHFP, SymmetryType::NONE,
+        28, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::FROTH_FP, SymmetryType::NONE,
         froth_per_orbit, froth_per_pixel, froth_setup, calc_froth,
         FROTH_BAIL_OUT
     },
@@ -2074,7 +2074,7 @@ FractalSpecific g_fractal_specific[] =
         {1, 0, 1.028713768218725, 0},
         HelpLabels::HT_FROTH, HelpLabels::HF_FROTH, FractalFlags::NOTRACE,
         -2.8F, 2.8F, -2.355F, 1.845F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::FROTH, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::FROTH, SymmetryType::NONE,
         froth_per_orbit, froth_per_pixel, froth_setup, calc_froth,
         FROTH_BAIL_OUT
     },
@@ -2085,7 +2085,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::HT_MANDJUL4, HelpLabels::HF_MANDEL4, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::JULIA4FP, FractalType::NOFRACTAL, FractalType::MANDEL4, SymmetryType::X_AXIS_NO_PARAM,
+        0, FractalType::JULIA4_FP, FractalType::NO_FRACTAL, FractalType::MANDEL4, SymmetryType::X_AXIS_NO_PARAM,
         mandel4_fp_fractal, mandel_fp_per_pixel, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -2096,7 +2096,7 @@ FractalSpecific g_fractal_specific[] =
         {0.6, 0.55, 0, 0},
         HelpLabels::HT_MANDJUL4, HelpLabels::HF_JULIA4, FractalFlags::OKJB|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDEL4FP, FractalType::JULIA4, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::MANDEL4_FP, FractalType::JULIA4, SymmetryType::ORIGIN,
         mandel4_fp_fractal, julia_fp_per_pixel, julia_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -2107,7 +2107,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 1, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_MARKSMAND, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::MARKSJULIAFP, FractalType::NOFRACTAL, FractalType::MARKSMANDEL, SymmetryType::NONE,
+        0, FractalType::MARKS_JULIA_FP, FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL, SymmetryType::NONE,
         marks_lambda_fp_fractal, marks_mandel_fp_per_pixel, mandel_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2119,7 +2119,7 @@ FractalSpecific g_fractal_specific[] =
         {0.1, 0.9, 1, 0},
         HelpLabels::HT_MARKS, HelpLabels::HF_MARKSJULIA, FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MARKSMANDELFP, FractalType::MARKSJULIA, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL_FP, FractalType::MARKS_JULIA, SymmetryType::ORIGIN,
         marks_lambda_fp_fractal, julia_fp_per_pixel, marks_julia_fp_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2131,7 +2131,7 @@ FractalSpecific g_fractal_specific[] =
         {-2.34, 2.0, 0.2, 0.1},
         HelpLabels::HT_ICON, HelpLabels::HF_ICON, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC|FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)icon_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -2142,7 +2142,7 @@ FractalSpecific g_fractal_specific[] =
         {-2.34, 2.0, 0.2, 0.1},
         HelpLabels::HT_ICON, HelpLabels::HF_ICON, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC|FractalFlags::PARMS3D|FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)icon_float_orbit, nullptr, orbit3d_float_setup, orbit3d_float,
         NO_BAIL_OUT
     },
@@ -2153,7 +2153,7 @@ FractalSpecific g_fractal_specific[] =
         {0.2, 0, 0.3, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIXCPLX, FractalFlags::MORE|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        1, FractalType::NOFRACTAL, FractalType::MANDPHOENIXCPLX, FractalType::PHOENIXFPCPLX, SymmetryType::ORIGIN,
+        1, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_CPLX, FractalType::PHOENIX_FP_CPLX, SymmetryType::ORIGIN,
         long_phoenix_fractal_cplx, long_phoenix_per_pixel, phoenix_cplx_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2165,7 +2165,7 @@ FractalSpecific g_fractal_specific[] =
         {0.2, 0, 0.3, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIXCPLX, FractalFlags::MORE|FractalFlags::BAILTEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::MANDPHOENIXFPCPLX, FractalType::PHOENIXCPLX, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_FP_CPLX, FractalType::PHOENIX_CPLX, SymmetryType::ORIGIN,
         phoenix_fractal_cplx, phoenix_per_pixel, phoenix_cplx_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2177,7 +2177,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0.5, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDPHOENIXCPLX, FractalFlags::MORE|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        1, FractalType::PHOENIXCPLX, FractalType::NOFRACTAL, FractalType::MANDPHOENIXFPCPLX, SymmetryType::X_AXIS,
+        1, FractalType::PHOENIX_CPLX, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_FP_CPLX, SymmetryType::X_AXIS,
         long_phoenix_fractal_cplx, long_mand_phoenix_per_pixel,
         mand_phoenix_cplx_setup, standard_fractal,
         STD_BAIL_OUT
@@ -2189,7 +2189,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0.5, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDPHOENIXCPLX, FractalFlags::MORE|FractalFlags::BAILTEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::PHOENIXFPCPLX, FractalType::NOFRACTAL, FractalType::MANDPHOENIXCPLX, SymmetryType::X_AXIS,
+        0, FractalType::PHOENIX_FP_CPLX, FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_CPLX, SymmetryType::X_AXIS,
         phoenix_fractal_cplx, mand_phoenix_per_pixel, mand_phoenix_cplx_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2206,7 +2206,7 @@ FractalSpecific g_fractal_specific[] =
         {1100, 1.0E9, 1, 1},
         HelpLabels::HT_ANT, HelpLabels::HF_ANT, FractalFlags::NOZOOM|FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::NORESUME|FractalFlags::MORE,
         -1.0F, 1.0F, -1.0F, 1.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, standalone_setup, ant,
         NO_BAIL_OUT
     },
@@ -2217,7 +2217,7 @@ FractalSpecific g_fractal_specific[] =
         {-15, -19, 1, 0},
         HelpLabels::HT_MARTIN, HelpLabels::HF_CHIP, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -760.0F, 760.0F, -570.0F, 570.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)chip2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -2228,7 +2228,7 @@ FractalSpecific g_fractal_specific[] =
         {34, 1, 5, 0},
         HelpLabels::HT_MARTIN, HelpLabels::HF_QUADRUPTWO, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -82.93367F, 112.2749F, -55.76383F, 90.64257F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)quadrup_two2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -2239,7 +2239,7 @@ FractalSpecific g_fractal_specific[] =
         {-55, -1, -42, 0},
         HelpLabels::HT_MARTIN, HelpLabels::HF_THREEPLY, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC,
         -8000.0F, 8000.0F, -6000.0F, 6000.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)three_ply2d_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -2250,7 +2250,7 @@ FractalSpecific g_fractal_specific[] =
         {0.739, 0.739, 0, 0},
         HelpLabels::HT_VL, HelpLabels::HF_VL, FractalFlags::NONE,
         0.0F, 6.0F, 0.0F, 4.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         vl_fp_fractal, other_julia_fp_per_pixel, vl_setup, standard_fractal,
         256
     },
@@ -2261,7 +2261,7 @@ FractalSpecific g_fractal_specific[] =
         {0.32, 0.043, 0, 0},
         HelpLabels::HT_ESCHER, HelpLabels::HF_ESCHER, FractalFlags::NONE,
         -1.6F, 1.6F, -1.2F, 1.2F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::ORIGIN,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::ORIGIN,
         escher_fp_fractal, julia_fp_per_pixel, standard_setup,
         standard_fractal,
         STD_BAIL_OUT
@@ -2277,7 +2277,7 @@ FractalSpecific g_fractal_specific[] =
         {-0.966918, 2.879879, 0.765145, 0.744728},
         HelpLabels::HT_LATOO, HelpLabels::HF_LATOO, FractalFlags::NOGUESS|FractalFlags::NOTRACE|FractalFlags::INFCALC|FractalFlags::TRIG4,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         (VF)latoo_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,
         NO_BAIL_OUT
     },
@@ -2287,7 +2287,7 @@ FractalSpecific g_fractal_specific[] =
         {2.0, 0.0, 0.0, 0.0},
         HelpLabels::HT_DIVIDEBROT5, HelpLabels::HF_DIVIDEBROT5, FractalFlags::BAILTEST|FractalFlags::BF_MATH,
         -2.5f, 1.5f, -1.5f, 1.5f,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         divide_brot5_fp_fractal, divide_brot5_fp_per_pixel, divide_brot5_setup, standard_fractal,
         16
     },
@@ -2297,7 +2297,7 @@ FractalSpecific g_fractal_specific[] =
         {0.05, 3, -1.5, -2},
         HelpLabels::HT_MANDELBROTMIX4, HelpLabels::HF_MANDELBROTMIX4, FractalFlags::BAILTEST|FractalFlags::TRIG1|FractalFlags::MORE,
         -2.5F, 1.5F, -1.5F, 1.5F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         mandelbrot_mix4_fp_fractal, mandelbrot_mix4_fp_per_pixel, mandelbrot_mix4_setup, standard_fractal,
         STD_BAIL_OUT
     },
@@ -2307,7 +2307,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 2, 0},
         HelpLabels::HT_BURNING_SHIP, HelpLabels::HF_BURNING_SHIP, FractalFlags::BAILTEST|FractalFlags::PERTURB|FractalFlags::BF_MATH,
         -2.5f, 1.5f, -1.2f, 1.8f,
-        0, FractalType::BURNING_SHIP, FractalType::NOFRACTAL, FractalType::BURNING_SHIP, SymmetryType::NONE,
+        0, FractalType::BURNING_SHIP, FractalType::NO_FRACTAL, FractalType::BURNING_SHIP, SymmetryType::NONE,
         burning_ship_fp_fractal, other_mandel_fp_per_pixel, mandel_setup, standard_fractal,
         STD_BAIL_OUT,
         burning_ship_ref_pt, burning_ship_ref_pt_bf, burning_ship_perturb
@@ -2318,7 +2318,7 @@ FractalSpecific g_fractal_specific[] =
         {0, 0, 0, 0},
         HelpLabels::NONE, HelpLabels::NONE, FractalFlags::NONE,
         0.0F, 0.0F, 0.0F, 0.0F,
-        0, FractalType::NOFRACTAL, FractalType::NOFRACTAL, FractalType::NOFRACTAL, SymmetryType::NONE,
+        0, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
         nullptr, nullptr, nullptr, nullptr,
         0
     }

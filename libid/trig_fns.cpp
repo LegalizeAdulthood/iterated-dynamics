@@ -86,7 +86,7 @@ void trig_details(char *buf)
 {
     int numfn;
     char tmpbuf[20];
-    if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROTFP)
+    if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
     {
         numfn = (+g_fractal_specific[+g_new_orbit_type].flags >> 6) & 7;
     }
@@ -95,7 +95,7 @@ void trig_details(char *buf)
         numfn = (+g_cur_fractal_specific->flags >> 6) & 7;
     }
     if (g_cur_fractal_specific == &g_fractal_specific[+FractalType::FORMULA]
-        || g_cur_fractal_specific == &g_fractal_specific[+FractalType::FFORMULA])
+        || g_cur_fractal_specific == &g_fractal_specific[+FractalType::FORMULA_FP])
     {
         numfn = g_max_function;
     }

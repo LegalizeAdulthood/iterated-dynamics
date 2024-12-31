@@ -30,7 +30,7 @@ void set_default_parms()
         g_params[i] = g_cur_fractal_specific->paramvalue[i];
         if (g_fractal_type != FractalType::CELLULAR
             && g_fractal_type != FractalType::FROTH
-            && g_fractal_type != FractalType::FROTHFP
+            && g_fractal_type != FractalType::FROTH_FP
             && g_fractal_type != FractalType::ANT)
         {
             round_float_double(&g_params[i]); // don't round cellular, frothybasin or ant

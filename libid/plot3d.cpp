@@ -436,7 +436,7 @@ void plot_setup()
     case 2:
         if (g_colors == 256)
         {
-            if (g_fractal_type != FractalType::IFS3D)
+            if (g_fractal_type != FractalType::IFS_3D)
             {
                 g_standard_plot = plot3d_superimpose256;
             }

@@ -91,7 +91,7 @@ int newton_fractal2()
 
     if (distance1(g_new_z) < s_threshold)
     {
-        if (g_fractal_type == FractalType::NEWTBASIN || g_fractal_type == FractalType::MPNEWTBASIN)
+        if (g_fractal_type == FractalType::NEWT_BASIN || g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
             long tmpcolor;
             tmpcolor = -1;
@@ -262,13 +262,13 @@ bool newton_setup()
 {
     if (g_debug_flag != DebugFlags::allow_mp_newton_type)
     {
-        if (g_fractal_type == FractalType::MPNEWTON)
+        if (g_fractal_type == FractalType::NEWTON_MP)
         {
             g_fractal_type = FractalType::NEWTON;
         }
-        else if (g_fractal_type == FractalType::MPNEWTBASIN)
+        else if (g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
-            g_fractal_type = FractalType::NEWTBASIN;
+            g_fractal_type = FractalType::NEWT_BASIN;
         }
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     }
@@ -284,7 +284,7 @@ bool newton_setup()
     s_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
     g_max_color     = 0;
     s_threshold    = .3*PI/g_degree; // less than half distance between roots
-    if (g_fractal_type == FractalType::MPNEWTON || g_fractal_type == FractalType::MPNEWTBASIN)
+    if (g_fractal_type == FractalType::NEWTON_MP || g_fractal_type == FractalType::NEWT_BASIN_MP)
     {
         s_newton_mp_r_over_d = *d_to_mp(s_newton_r_over_d);
         s_mp_degree_minus_1_over_degree = *d_to_mp(s_degree_minus_1_over_degree);
@@ -294,7 +294,7 @@ bool newton_setup()
 
     g_basin = 0;
     s_roots.resize(16);
-    if (g_fractal_type == FractalType::NEWTBASIN)
+    if (g_fractal_type == FractalType::NEWT_BASIN)
     {
         if (g_param_z1.y)
         {
@@ -313,7 +313,7 @@ bool newton_setup()
             s_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
         }
     }
-    else if (g_fractal_type == FractalType::MPNEWTBASIN)
+    else if (g_fractal_type == FractalType::NEWT_BASIN_MP)
     {
         if (g_param_z1.y)
         {
@@ -360,7 +360,7 @@ int mpc_newton_fractal()
     s_mpc_temp1.y = *mp_sub(mpcnew.y, g_mpc_one.y);
     if (mp_cmp(mpc_mod(s_mpc_temp1), s_mp_threshold) < 0)
     {
-        if (g_fractal_type == FractalType::MPNEWTBASIN)
+        if (g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
             long tmpcolor;
             tmpcolor = -1;

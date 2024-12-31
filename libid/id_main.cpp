@@ -66,7 +66,7 @@ int g_zoom_box_rotation{};                                             // zoombo
 double g_zoom_box_x{}, g_zoom_box_y{};                                 // topleft of zoombox
 double g_zoom_box_width{}, g_zoom_box_height{};                        // zoombox size
 double g_zoom_box_skew{};                                              // zoombox shape
-FractalType g_fractal_type{FractalType::NOFRACTAL};                  // if == 0, use Mandelbrot
+FractalType g_fractal_type{FractalType::NO_FRACTAL};                  // if == 0, use Mandelbrot
 char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
 long g_l_delta_x{}, g_l_delta_y{};                                     // screen pixel increments
 long g_l_delta_x2{}, g_l_delta_y2{};                                   // screen pixel increments

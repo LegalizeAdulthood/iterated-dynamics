@@ -370,7 +370,7 @@ int z_line_fp(double x, double y)
     for (zpixel = 0; zpixel < g_julibrot_z_dots; zpixel++)
     {
         // Special initialization for Mandelbrot types
-        if (g_new_orbit_type == FractalType::QUATFP || g_new_orbit_type == FractalType::HYPERCMPLXFP)
+        if (g_new_orbit_type == FractalType::QUAT_FP || g_new_orbit_type == FractalType::HYPER_CMPLX_FP)
         {
             g_old_z.x = 0.0;
             g_old_z.y = 0.0;
@@ -449,7 +449,7 @@ int std_4d_fractal()
 {
     long x;
     g_c_exponent = (int)g_params[2];
-    if (g_new_orbit_type == FractalType::LJULIAZPOWER)
+    if (g_new_orbit_type == FractalType::JULIA_Z_POWER_L)
     {
         if (g_c_exponent < 1)
         {
@@ -505,7 +505,7 @@ int std_4d_fp_fractal()
     double x;
     g_c_exponent = (int)g_params[2];
 
-    if (g_new_orbit_type == FractalType::FPJULIAZPOWER)
+    if (g_new_orbit_type == FractalType::JULIA_Z_POWER_FP)
     {
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
         {

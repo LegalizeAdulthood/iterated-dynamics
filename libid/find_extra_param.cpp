@@ -11,7 +11,7 @@ int find_extra_param(FractalType type)
     {
         FractalType curtyp;
         int i = -1;
-        while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != FractalType::NOFRACTAL);
+        while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != FractalType::NO_FRACTAL);
         if (curtyp == type)
         {
             ret = i;

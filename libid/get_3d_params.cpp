@@ -515,7 +515,7 @@ static bool get_funny_glasses_params()
     }
     if (g_eye_separation == 0)
     {
-        if (g_fractal_type == FractalType::IFS3D || g_fractal_type == FractalType::LLORENZ3D || g_fractal_type == FractalType::FPLORENZ3D)
+        if (g_fractal_type == FractalType::IFS_3D || g_fractal_type == FractalType::LORENZ_3D_L || g_fractal_type == FractalType::LORENZ_3D_FP)
         {
             g_eye_separation =  2;
             g_converge_x_adjust       = -2;

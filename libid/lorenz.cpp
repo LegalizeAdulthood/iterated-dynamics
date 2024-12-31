@@ -356,18 +356,18 @@ bool orbit3d_long_setup()
     s_connect = true;
     s_waste = 100;
     s_projection = 2;
-    if (g_fractal_type == FractalType::LHENON
+    if (g_fractal_type == FractalType::HENON_L
         || g_fractal_type == FractalType::KAM
-        || g_fractal_type == FractalType::KAM3D
-        || g_fractal_type == FractalType::INVERSEJULIA)
+        || g_fractal_type == FractalType::KAM_3D
+        || g_fractal_type == FractalType::INVERSE_JULIA)
     {
         s_connect = false;
     }
-    if (g_fractal_type == FractalType::LROSSLER)
+    if (g_fractal_type == FractalType::ROSSLER_L)
     {
         s_waste = 500;
     }
-    if (g_fractal_type == FractalType::LLORENZ)
+    if (g_fractal_type == FractalType::LORENZ_L)
     {
         s_projection = 1;
     }
@@ -376,14 +376,14 @@ bool orbit3d_long_setup()
     s_init_orbit_long[1] = g_fudge_factor;
     s_init_orbit_long[2] = g_fudge_factor;
 
-    if (g_fractal_type == FractalType::LHENON)
+    if (g_fractal_type == FractalType::HENON_L)
     {
         s_l_a = (long)(g_params[0]*g_fudge_factor);
         s_l_b = (long)(g_params[1]*g_fudge_factor);
         s_l_c = (long)(g_params[2]*g_fudge_factor);
         s_l_d = (long)(g_params[3]*g_fudge_factor);
     }
-    else if (g_fractal_type == FractalType::KAM || g_fractal_type == FractalType::KAM3D)
+    else if (g_fractal_type == FractalType::KAM || g_fractal_type == FractalType::KAM_3D)
     {
         g_max_count = 1L;
         s_a   = g_params[0];           // angle
@@ -403,7 +403,7 @@ bool orbit3d_long_setup()
         s_init_orbit_long[1] = 0;
         s_init_orbit_long[2] = 0;
     }
-    else if (g_fractal_type == FractalType::INVERSEJULIA)
+    else if (g_fractal_type == FractalType::INVERSE_JULIA)
     {
         LComplex Sqrt;
 
@@ -506,27 +506,27 @@ bool orbit3d_float_setup()
     s_waste = 100;
     s_projection = 2;
 
-    if (g_fractal_type == FractalType::FPHENON
-        || g_fractal_type == FractalType::FPPICKOVER
-        || g_fractal_type == FractalType::FPGINGERBREAD
-        || g_fractal_type == FractalType::KAMFP
-        || g_fractal_type == FractalType::KAM3DFP
-        || g_fractal_type == FractalType::FPHOPALONG
-        || g_fractal_type == FractalType::INVERSEJULIAFP)
+    if (g_fractal_type == FractalType::HENON_FP
+        || g_fractal_type == FractalType::PICKOVER_FP
+        || g_fractal_type == FractalType::GINGERBREAD_FP
+        || g_fractal_type == FractalType::KAM_FP
+        || g_fractal_type == FractalType::KAM_3D_FP
+        || g_fractal_type == FractalType::HOPALONG_FP
+        || g_fractal_type == FractalType::INVERSE_JULIA_FP)
     {
         s_connect = false;
     }
-    if (g_fractal_type == FractalType::FPLORENZ3D1
-        || g_fractal_type == FractalType::FPLORENZ3D3
-        || g_fractal_type == FractalType::FPLORENZ3D4)
+    if (g_fractal_type == FractalType::LORENZ_3D1_FP
+        || g_fractal_type == FractalType::LORENZ_3D3_FP
+        || g_fractal_type == FractalType::LORENZ_3D4_FP)
     {
         s_waste = 750;
     }
-    if (g_fractal_type == FractalType::FPROSSLER)
+    if (g_fractal_type == FractalType::ROSSLER_FP)
     {
         s_waste = 500;
     }
-    if (g_fractal_type == FractalType::FPLORENZ)
+    if (g_fractal_type == FractalType::LORENZ_FP)
     {
         s_projection = 1; // plot x and z
     }
@@ -534,13 +534,13 @@ bool orbit3d_float_setup()
     s_init_orbit_fp[0] = 1;  // initial conditions
     s_init_orbit_fp[1] = 1;
     s_init_orbit_fp[2] = 1;
-    if (g_fractal_type == FractalType::FPGINGERBREAD)
+    if (g_fractal_type == FractalType::GINGERBREAD_FP)
     {
         s_init_orbit_fp[0] = g_params[0];        // initial conditions
         s_init_orbit_fp[1] = g_params[1];
     }
 
-    if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON3D)
+    if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON_3D)
     {
         s_init_orbit_fp[0] = 0.01;  // initial conditions
         s_init_orbit_fp[1] = 0.003;
@@ -553,14 +553,14 @@ bool orbit3d_float_setup()
         s_connect = false;
     }
 
-    if (g_fractal_type == FractalType::FPHENON || g_fractal_type == FractalType::FPPICKOVER)
+    if (g_fractal_type == FractalType::HENON_FP || g_fractal_type == FractalType::PICKOVER_FP)
     {
         s_a =  g_params[0];
         s_b =  g_params[1];
         s_c =  g_params[2];
         s_d =  g_params[3];
     }
-    else if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON3D)
+    else if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON_3D)
     {
         s_init_orbit_fp[0] = 0.01;  // initial conditions
         s_init_orbit_fp[1] = 0.003;
@@ -572,7 +572,7 @@ bool orbit3d_float_setup()
         s_c  =   g_params[2];
         s_d  =   g_params[3];
     }
-    else if (g_fractal_type == FractalType::KAMFP || g_fractal_type == FractalType::KAM3DFP)
+    else if (g_fractal_type == FractalType::KAM_FP || g_fractal_type == FractalType::KAM_3D_FP)
     {
         g_max_count = 1L;
         s_a = g_params[0];           // angle
@@ -591,11 +591,11 @@ bool orbit3d_float_setup()
         s_init_orbit_fp[1] = 0;
         s_init_orbit_fp[2] = 0;
     }
-    else if (g_fractal_type == FractalType::FPHOPALONG
-        || g_fractal_type == FractalType::FPMARTIN
+    else if (g_fractal_type == FractalType::HOPALONG_FP
+        || g_fractal_type == FractalType::MARTIN_FP
         || g_fractal_type == FractalType::CHIP
-        || g_fractal_type == FractalType::QUADRUPTWO
-        || g_fractal_type == FractalType::THREEPLY)
+        || g_fractal_type == FractalType::QUADRUP_TWO
+        || g_fractal_type == FractalType::THREE_PLY)
     {
         s_init_orbit_fp[0] = 0;  // initial conditions
         s_init_orbit_fp[1] = 0;
@@ -605,13 +605,13 @@ bool orbit3d_float_setup()
         s_b =  g_params[1];
         s_c =  g_params[2];
         s_d =  g_params[3];
-        if (g_fractal_type == FractalType::THREEPLY)
+        if (g_fractal_type == FractalType::THREE_PLY)
         {
             cos_b = std::cos(s_b);
             sin_sum_a_b_c = std::sin(s_a + s_b + s_c);
         }
     }
-    else if (g_fractal_type == FractalType::INVERSEJULIAFP)
+    else if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
     {
         DComplex Sqrt;
 
@@ -2001,7 +2001,7 @@ bool dynam2d_float_setup()
     {
         s_d = 1;
     }
-    if (g_fractal_type == FractalType::DYNAMICFP)
+    if (g_fractal_type == FractalType::DYNAMIC_FP)
     {
         s_a = g_params[2]; // parameter
         s_b = g_params[3]; // parameter
@@ -2109,7 +2109,7 @@ int dynam2d_float()
         const double ypixel = g_logical_screen_y_size_dots * (ystep + .5) / s_d;
         x = (double)((g_x_min+g_delta_x*xpixel) + (g_delta_x2*ypixel));
         y = (double)((g_y_max-g_delta_y*ypixel) + (-g_delta_y2*xpixel));
-        if (g_fractal_type == FractalType::MANDELCLOUD)
+        if (g_fractal_type == FractalType::MANDEL_CLOUD)
         {
             s_a = x;
             s_b = y;
@@ -2146,7 +2146,7 @@ int dynam2d_float()
                     {
                         driver_draw_line(col, row, oldcol, oldrow, color%g_colors);
                     }
-                    else if (count > 0 || g_fractal_type != FractalType::MANDELCLOUD)
+                    else if (count > 0 || g_fractal_type != FractalType::MANDEL_CLOUD)
                     {
                         (*g_plot)(col, row, color%g_colors);
                     }
@@ -2229,7 +2229,7 @@ int plot_orbits2d_setup()
     if (g_cur_fractal_specific->isinteger != 0)
     {
         const FractalType tofloat = g_cur_fractal_specific->tofloat;
-        if (tofloat == FractalType::NOFRACTAL)
+        if (tofloat == FractalType::NO_FRACTAL)
         {
             return -1;
         }
