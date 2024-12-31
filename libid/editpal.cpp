@@ -46,16 +46,16 @@ enum
     CURSOR_BLINK_RATE = 300, // timer ticks between cursor blinks
     FAR_RESERVE = 8192L,     // amount of mem we will leave avail.
     TITLE_LEN = 17,
-    CEditor_WIDTH = 8 * 3 + 4,
-    CEditor_DEPTH = 8 + 4,
+    EDITOR_WIDTH = 8 * 3 + 4,
+    EDITOR_DEPTH = 8 + 4,
     STATUS_LEN = 4,
     CURS_INC = 1,
-    RGBEditor_WIDTH = 62,
-    RGBEditor_DEPTH = 1 + 1 + CEditor_DEPTH * 3 - 2 + 2,
-    RGBEditor_BWIDTH = RGBEditor_WIDTH - (2 + CEditor_WIDTH + 1 + 2),
-    RGBEditor_BDEPTH = RGBEditor_DEPTH - 4,
-    PalTable_PALX = 1,
-    PalTable_PALY = 2 + RGBEditor_DEPTH + 2,
+    RGB_EDITOR_WIDTH = 62,
+    RGB_EDITOR_DEPTH = 1 + 1 + EDITOR_DEPTH * 3 - 2 + 2,
+    RGB_EDITOR_BWIDTH = RGB_EDITOR_WIDTH - (2 + EDITOR_WIDTH + 1 + 2),
+    RGB_EDITOR_BDEPTH = RGB_EDITOR_DEPTH - 4,
+    PAL_TABLE_PAL_X = 1,
+    PAL_TABLE_PAL_Y = 2 + RGB_EDITOR_DEPTH + 2,
     UNDO_DATA = 1,
     UNDO_DATA_SINGLE = 2,
     UNDO_ROTATE = 3,
@@ -797,7 +797,7 @@ int ColorEditor::edit()
     if (!m_hidden)
     {
         s_cursor.hide();
-        rect(m_x, m_y, CEditor_WIDTH, CEditor_DEPTH, s_fg_color);
+        rect(m_x, m_y, EDITOR_WIDTH, EDITOR_DEPTH, s_fg_color);
         s_cursor.show();
     }
 
@@ -904,7 +904,7 @@ int ColorEditor::edit()
     if (!m_hidden)
     {
         s_cursor.hide();
-        rect(m_x, m_y, CEditor_WIDTH, CEditor_DEPTH, s_bg_color);
+        rect(m_x, m_y, EDITOR_WIDTH, EDITOR_DEPTH, s_bg_color);
         s_cursor.show();
     }
 
@@ -1278,8 +1278,8 @@ void RGBEditor::set_pos(int x, int y)
     m_x = x;
     m_y = y;
     m_color[0].set_pos(x + 2, y + 2);
-    m_color[1].set_pos(x + 2, y + 2 + CEditor_DEPTH - 1);
-    m_color[2].set_pos(x + 2, y + 2 + CEditor_DEPTH - 1 + CEditor_DEPTH - 1);
+    m_color[1].set_pos(x + 2, y + 2 + EDITOR_DEPTH - 1);
+    m_color[2].set_pos(x + 2, y + 2 + EDITOR_DEPTH - 1 + EDITOR_DEPTH - 1);
 }
 
 void RGBEditor::set_hidden(bool hidden)
@@ -1299,7 +1299,7 @@ void RGBEditor::blank_sample_box()
 
     s_cursor.hide();
     fill_rect(
-        m_x + 2 + CEditor_WIDTH + 1 + 1, m_y + 2 + 1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
+        m_x + 2 + EDITOR_WIDTH + 1 + 1, m_y + 2 + 1, RGB_EDITOR_BWIDTH - 2, RGB_EDITOR_BDEPTH - 2, s_bg_color);
     s_cursor.show();
 }
 
@@ -1310,29 +1310,29 @@ void RGBEditor::update()
         return;
     }
 
-    int x1 = m_x + 2 + CEditor_WIDTH + 1 + 1;
+    int x1 = m_x + 2 + EDITOR_WIDTH + 1 + 1;
     int y1 = m_y + 2 + 1;
 
     s_cursor.hide();
 
     if (m_pal >= g_colors)
     {
-        fill_rect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
-        draw_diamond(x1 + (RGBEditor_BWIDTH - 5) / 2, y1 + (RGBEditor_BDEPTH - 5) / 2, s_fg_color);
+        fill_rect(x1, y1, RGB_EDITOR_BWIDTH - 2, RGB_EDITOR_BDEPTH - 2, s_bg_color);
+        draw_diamond(x1 + (RGB_EDITOR_BWIDTH - 5) / 2, y1 + (RGB_EDITOR_BDEPTH - 5) / 2, s_fg_color);
     }
 
     else if (is_reserved(m_pal))
     {
-        int x2 = x1 + RGBEditor_BWIDTH - 3;
-        int y2 = y1 + RGBEditor_BDEPTH - 3;
+        int x2 = x1 + RGB_EDITOR_BWIDTH - 3;
+        int y2 = y1 + RGB_EDITOR_BDEPTH - 3;
 
-        fill_rect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, s_bg_color);
+        fill_rect(x1, y1, RGB_EDITOR_BWIDTH - 2, RGB_EDITOR_BDEPTH - 2, s_bg_color);
         driver_draw_line(x1, y1, x2, y2, s_fg_color);
         driver_draw_line(x1, y2, x2, y1, s_fg_color);
     }
     else
     {
-        fill_rect(x1, y1, RGBEditor_BWIDTH - 2, RGBEditor_BDEPTH - 2, m_pal);
+        fill_rect(x1, y1, RGB_EDITOR_BWIDTH - 2, RGB_EDITOR_BDEPTH - 2, m_pal);
     }
 
     m_color[0].draw();
@@ -1349,9 +1349,9 @@ void RGBEditor::draw()
     }
 
     s_cursor.hide();
-    dot_rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH);
-    fill_rect(m_x + 1, m_y + 1, RGBEditor_WIDTH - 2, RGBEditor_DEPTH - 2, s_bg_color);
-    rect(m_x + 1 + CEditor_WIDTH + 2, m_y + 2, RGBEditor_BWIDTH, RGBEditor_BDEPTH, s_fg_color);
+    dot_rect(m_x, m_y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
+    fill_rect(m_x + 1, m_y + 1, RGB_EDITOR_WIDTH - 2, RGB_EDITOR_DEPTH - 2, s_bg_color);
+    rect(m_x + 1 + EDITOR_WIDTH + 2, m_y + 2, RGB_EDITOR_BWIDTH, RGB_EDITOR_BDEPTH, s_fg_color);
     update();
     s_cursor.show();
 }
@@ -1365,7 +1365,7 @@ int RGBEditor::edit()
     if (!m_hidden)
     {
         s_cursor.hide();
-        rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH, s_fg_color);
+        rect(m_x, m_y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH, s_fg_color);
         s_cursor.show();
     }
 
@@ -1377,7 +1377,7 @@ int RGBEditor::edit()
     if (!m_hidden)
     {
         s_cursor.hide();
-        dot_rect(m_x, m_y, RGBEditor_WIDTH, RGBEditor_DEPTH);
+        dot_rect(m_x, m_y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
         s_cursor.show();
     }
 
@@ -1535,10 +1535,10 @@ void PalTable::draw_status(bool stripe_mode)
 {
     int width = 1 + (m_csize * 16) + 1 + 1;
 
-    if (!m_hidden && (width - (RGBEditor_WIDTH * 2 + 4) >= STATUS_LEN * 8))
+    if (!m_hidden && (width - (RGB_EDITOR_WIDTH * 2 + 4) >= STATUS_LEN * 8))
     {
-        int x = m_x + 2 + RGBEditor_WIDTH;
-        int y = m_y + PalTable_PALY - 10;
+        int x = m_x + 2 + RGB_EDITOR_WIDTH;
+        int y = m_y + PAL_TABLE_PAL_Y - 10;
         int color = get_cursor_color();
         if (color < 0 || color >= g_colors) // hmm, the border returns -1
         {
@@ -1570,8 +1570,8 @@ void PalTable::hl_pal(int pnum, int color)
         return;
     }
 
-    int x = m_x + PalTable_PALX + (pnum % 16) * m_csize;
-    int y = m_y + PalTable_PALY + (pnum / 16) * m_csize;
+    int x = m_x + PAL_TABLE_PAL_X + (pnum % 16) * m_csize;
+    int y = m_y + PAL_TABLE_PAL_Y + (pnum / 16) * m_csize;
 
     s_cursor.hide();
 
@@ -1599,17 +1599,17 @@ void PalTable::draw()
 
     int width = 1 + (m_csize * 16) + 1 + 1;
 
-    rect(m_x, m_y, width, 2 + RGBEditor_DEPTH + 2 + (m_csize * 16) + 1 + 1, s_fg_color);
+    rect(m_x, m_y, width, 2 + RGB_EDITOR_DEPTH + 2 + (m_csize * 16) + 1 + 1, s_fg_color);
 
-    fill_rect(m_x + 1, m_y + 1, width - 2, 2 + RGBEditor_DEPTH + 2 + (m_csize * 16) + 1 + 1 - 2, s_bg_color);
+    fill_rect(m_x + 1, m_y + 1, width - 2, 2 + RGB_EDITOR_DEPTH + 2 + (m_csize * 16) + 1 + 1 - 2, s_bg_color);
 
-    hor_line(m_x, m_y + PalTable_PALY - 1, width, s_fg_color);
+    hor_line(m_x, m_y + PAL_TABLE_PAL_Y - 1, width, s_fg_color);
 
-    if (width - (RGBEditor_WIDTH * 2 + 4) >= TITLE_LEN * 8)
+    if (width - (RGB_EDITOR_WIDTH * 2 + 4) >= TITLE_LEN * 8)
     {
         int center = (width - TITLE_LEN * 8) / 2;
 
-        displayf(m_x + center, m_y + RGBEditor_DEPTH / 2 - 12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
+        displayf(m_x + center, m_y + RGB_EDITOR_DEPTH / 2 - 12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
     }
 
     m_rgb[0].draw();
@@ -1617,8 +1617,8 @@ void PalTable::draw()
 
     for (int pal = 0; pal < 256; pal++)
     {
-        int xoff = PalTable_PALX + (pal % 16) * m_csize;
-        int yoff = PalTable_PALY + (pal / 16) * m_csize;
+        int xoff = PAL_TABLE_PAL_X + (pal % 16) * m_csize;
+        int yoff = PAL_TABLE_PAL_Y + (pal / 16) * m_csize;
 
         if (pal >= g_colors)
         {
@@ -1733,8 +1733,8 @@ void PalTable::set_curr(int which, int curr)
 
 void PalTable::save_rect()
 {
-    int const width = PalTable_PALX + m_csize * 16 + 1 + 1;
-    int const depth = PalTable_PALY + m_csize * 16 + 1 + 1;
+    int const width = PAL_TABLE_PAL_X + m_csize * 16 + 1 + 1;
+    int const depth = PAL_TABLE_PAL_Y + m_csize * 16 + 1 + 1;
 
     m_saved_pixel.resize(width * depth);
     s_cursor.hide();
@@ -1753,8 +1753,8 @@ void PalTable::restore_rect()
         return;
     }
 
-    int width = PalTable_PALX + m_csize * 16 + 1 + 1;
-    int depth = PalTable_PALY + m_csize * 16 + 1 + 1;
+    int width = PAL_TABLE_PAL_X + m_csize * 16 + 1 + 1;
+    int depth = PAL_TABLE_PAL_Y + m_csize * 16 + 1 + 1;
 
     s_cursor.hide();
     for (int yoff = 0; yoff < depth; yoff++)
@@ -1766,13 +1766,13 @@ void PalTable::restore_rect()
 
 void PalTable::set_pos(int x, int y)
 {
-    int width = PalTable_PALX + m_csize * 16 + 1 + 1;
+    int width = PAL_TABLE_PAL_X + m_csize * 16 + 1 + 1;
 
     m_x = x;
     m_y = y;
 
     m_rgb[0].set_pos(x + 2, y + 2);
-    m_rgb[1].set_pos(x + width - 2 - RGBEditor_WIDTH, y + 2);
+    m_rgb[1].set_pos(x + width - 2 - RGB_EDITOR_WIDTH, y + 2);
 }
 
 void PalTable::set_csize(int csize)
@@ -1790,11 +1790,11 @@ int PalTable::get_cursor_color() const
     if (is_reserved(color))
     {
         if (is_in_box(
-                x, y, m_x, m_y, 1 + (m_csize * 16) + 1 + 1, 2 + RGBEditor_DEPTH + 2 + (m_csize * 16) + 1 + 1))
+                x, y, m_x, m_y, 1 + (m_csize * 16) + 1 + 1, 2 + RGB_EDITOR_DEPTH + 2 + (m_csize * 16) + 1 + 1))
         {
             // is the cursor over the editor?
-            x -= m_x + PalTable_PALX;
-            y -= m_y + PalTable_PALY;
+            x -= m_x + PAL_TABLE_PAL_X;
+            y -= m_y + PAL_TABLE_PAL_Y;
             int size = m_csize;
 
             if (x < 0 || y < 0 || x > size * 16 || y > size * 16)
@@ -2858,10 +2858,10 @@ void PalTable::change(RGBEditor *rgb)
 }
 
 PalTable::PalTable() :
-    m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PalTable_PALY + 1 + 1)) / (2 * 16))),
+    m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PAL_TABLE_PAL_Y + 1 + 1)) / (2 * 16))),
     m_curr({1, 1}),
     m_rgb({RGBEditor(0, 0, this), RGBEditor(0, 0, this)}),
-    m_move_box(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1)
+    m_move_box(0, 0, 0, PAL_TABLE_PAL_X + 1, PAL_TABLE_PAL_Y + 1)
 {
     m_fs_color.red = 42;
     m_fs_color.green = 42;
