@@ -4,15 +4,15 @@
 
 #include <filesystem>
 
-class current_path_saver
+class CurrentPathSaver
 {
 public:
-    explicit current_path_saver(const std::filesystem::path &new_path) :
+    explicit CurrentPathSaver(const std::filesystem::path &new_path) :
         m_old_path(std::filesystem::current_path())
     {
         current_path(new_path);
     }
-    ~current_path_saver()
+    ~CurrentPathSaver()
     {
         current_path(m_old_path);
     }

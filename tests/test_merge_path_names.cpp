@@ -2,7 +2,7 @@
 //
 #include <merge_path_names.h>
 
-#include "current_path_saver.h"
+#include "CurrentPathSaver.h"
 #include "test_data.h"
 
 #include <cmdfiles.h>
@@ -89,7 +89,7 @@ TEST_F(TestMergePathNames, newPathIsDirectoryGetPath)
 
 TEST_F(TestMergePathNames, expandsDotSlashGetPath)
 {
-    current_path_saver saver{ID_TEST_DATA_DIR};
+    CurrentPathSaver saver{ID_TEST_DATA_DIR};
     const std::string new_filename{fs::path{"./"}.make_preferred().string()};
 
     const int result = merge_path_names(m_path, new_filename.c_str(), m_mode);
@@ -100,7 +100,7 @@ TEST_F(TestMergePathNames, expandsDotSlashGetPath)
 
 TEST_F(TestMergePathNames, expandsDotSlashSubDirGetPath)
 {
-    current_path_saver saver{ID_TEST_DATA_DIR};
+    CurrentPathSaver saver{ID_TEST_DATA_DIR};
     const std::string new_filename{fs::path{"./" ID_TEST_DATA_SUBDIR_NAME}.make_preferred().string()};
 
     const int result = merge_path_names(m_path, new_filename.c_str(), m_mode);
@@ -111,7 +111,7 @@ TEST_F(TestMergePathNames, expandsDotSlashSubDirGetPath)
 
 TEST_F(TestMergePathNames, fileInCurrentDirectoryGetPath)
 {
-    current_path_saver saver{ID_TEST_DATA_DIR};
+    CurrentPathSaver saver{ID_TEST_DATA_DIR};
 
     const int result = merge_path_names(m_path, ID_TEST_IFS_FILE, m_mode);
 

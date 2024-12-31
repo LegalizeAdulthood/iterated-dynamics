@@ -4,7 +4,7 @@
 
 #include <id.h>
 
-#include "current_path_saver.h"
+#include "CurrentPathSaver.h"
 #include "test_data.h"
 
 #include <gtest/gtest.h>
@@ -42,7 +42,7 @@ void TestExpandDirName::SetUp()
 
 TEST_F(TestExpandDirName, resolvesRelativeDir)
 {
-    current_path_saver saver(ID_TEST_DATA_DIR);
+    CurrentPathSaver saver(ID_TEST_DATA_DIR);
     std::strcpy(m_dir_name, ID_TEST_DATA_SUBDIR_NAME);
     std::strcpy(m_drive, m_test_data_dir.root_name().string().c_str());
 
@@ -53,7 +53,7 @@ TEST_F(TestExpandDirName, resolvesRelativeDir)
 
 TEST_F(TestExpandDirName, setsDriveToCurrentDrive)
 {
-    current_path_saver saver(ID_TEST_DATA_DIR);
+    CurrentPathSaver saver(ID_TEST_DATA_DIR);
     std::strcpy(m_dir_name, ID_TEST_DATA_SUBDIR_NAME);
 
     expand_dir_name(m_dir_name, m_drive);

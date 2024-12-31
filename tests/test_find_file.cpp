@@ -2,7 +2,7 @@
 //
 #include <find_file.h>
 
-#include "current_path_saver.h"
+#include "CurrentPathSaver.h"
 #include "test_data.h"
 
 #include <gmock/gmock.h>
@@ -76,7 +76,7 @@ TEST(TestFindFile, findSubDir)
 
 TEST(TestFindFile, findFileCurrentDirectory)
 {
-    current_path_saver saver{ID_TEST_DATA_FIND_FILE_DIR};
+    CurrentPathSaver saver{ID_TEST_DATA_FIND_FILE_DIR};
 
     const int result = fr_find_first(ID_TEST_FIND_FILE1);
 
@@ -89,7 +89,7 @@ TEST(TestFindFile, caseInsensitiveExtension)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
-    current_path_saver saver{search_dir};
+    CurrentPathSaver saver{search_dir};
 
     const int result = fr_find_first("*.txt");
 
@@ -102,7 +102,7 @@ TEST(TestFindFile, caseInsensitiveExtensionWildcard)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
-    current_path_saver saver{search_dir};
+    CurrentPathSaver saver{search_dir};
 
     const int result = fr_find_first("*.?xt");
 
@@ -115,7 +115,7 @@ TEST(TestFindFile, caseInsensitiveExtensionWildcardRegex)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
-    current_path_saver saver{search_dir};
+    CurrentPathSaver saver{search_dir};
 
     const int result = fr_find_first("*.?x*");
 
@@ -128,7 +128,7 @@ TEST(TestFindFile, caseInsensitiveFilename)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
-    current_path_saver saver{search_dir};
+    CurrentPathSaver saver{search_dir};
     const std::string filename{algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME} + ".*")};
 
     const int result = fr_find_first(filename.c_str());
@@ -142,7 +142,7 @@ TEST(TestFindFile, caseInsensitiveFilenameWildcard)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
-    current_path_saver saver{search_dir};
+    CurrentPathSaver saver{search_dir};
     const std::string filename{
         '?' + algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(1)};
 
@@ -157,7 +157,7 @@ TEST(TestFindFile, caseInsensitiveFilenameWildcardRegex)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
-    current_path_saver saver{search_dir};
+    CurrentPathSaver saver{search_dir};
     const std::string filename{
         "?*" + algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(2)};
 

@@ -2,7 +2,7 @@
 //
 #include <split_path.h>
 
-#include "current_path_saver.h"
+#include "CurrentPathSaver.h"
 #include "test_data.h"
 
 #include <id.h>
@@ -45,7 +45,7 @@ TEST_F(TestSplitPath, absolutePath)
 
 TEST_F(TestSplitPath, relativePath)
 {
-    current_path_saver saver{ID_TEST_DATA_DIR};
+    CurrentPathSaver saver{ID_TEST_DATA_DIR};
     m_file_template = ID_TEST_DATA_SUBDIR_NAME;
 
     split_path(m_file_template.string(), m_drive, m_dir, m_filename, m_ext);

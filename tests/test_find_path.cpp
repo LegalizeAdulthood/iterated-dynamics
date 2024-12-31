@@ -6,7 +6,7 @@
 #include <id_data.h>
 #include <search_path.h>
 
-#include "current_path_saver.h"
+#include "CurrentPathSaver.h"
 #include "test_data.h"
 
 #include <gtest/gtest.h>
@@ -46,7 +46,7 @@ void TestFindPath::SetUp()
 
 TEST_F(TestFindPath, fileFoundInCurrentDirectory)
 {
-    current_path_saver cd(ID_TEST_DATA_DIR);
+    CurrentPathSaver cd(ID_TEST_DATA_DIR);
     g_check_cur_dir = true;
 
     const std::string result = find_path(ID_TEST_IFS_FILE, m_empty_env);
@@ -56,7 +56,7 @@ TEST_F(TestFindPath, fileFoundInCurrentDirectory)
 
 TEST_F(TestFindPath, filePathFoundInCurrentDirectory)
 {
-    current_path_saver cd(ID_TEST_DATA_DIR);
+    CurrentPathSaver cd(ID_TEST_DATA_DIR);
     g_check_cur_dir = true;
     const fs::path relativeFile{fs::path{ID_TEST_DATA_SUBDIR}.filename() / ID_TEST_IFS_FILE};
 
@@ -67,7 +67,7 @@ TEST_F(TestFindPath, filePathFoundInCurrentDirectory)
 
 TEST_F(TestFindPath, notFoundInCurrentDirectory)
 {
-    current_path_saver cd(ID_TEST_DATA_DIR);
+    CurrentPathSaver cd(ID_TEST_DATA_DIR);
     g_check_cur_dir = true;
 
     const std::string result = find_path(m_non_existent, m_empty_env);

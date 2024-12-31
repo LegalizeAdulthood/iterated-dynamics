@@ -3,7 +3,7 @@
 #include <cmdfiles_test.h>
 
 #include "MockDriver.h"
-#include "current_path_saver.h"
+#include "CurrentPathSaver.h"
 #include "test_data.h"
 #include "value_unchanged.h"
 
@@ -308,7 +308,7 @@ TEST_F(TestParameterCommandError, mapTooLong)
 TEST_F(TestParameterCommand, mapSpecifiesSubdir)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
-    current_path_saver cur_dir(ID_TEST_HOME_DIR);
+    CurrentPathSaver cur_dir(ID_TEST_HOME_DIR);
 
     exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR, CmdFile::SSTOOLS_INI);
 
@@ -319,7 +319,7 @@ TEST_F(TestParameterCommand, mapSpecifiesSubdir)
 TEST_F(TestParameterCommand, mapSpecifiesExistingFile)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
-    current_path_saver cur_dir(ID_TEST_HOME_DIR);
+    CurrentPathSaver cur_dir(ID_TEST_HOME_DIR);
 
     exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
 
