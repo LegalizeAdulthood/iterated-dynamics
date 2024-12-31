@@ -19,6 +19,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     CurrentPathSaver.h
     MockDriver.h
+    ValueUnchanged.h
     test_config_data.h.in
     test_data.h.in
     test_check_write_file.cpp

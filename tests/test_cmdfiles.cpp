@@ -5,7 +5,7 @@
 #include "MockDriver.h"
 #include "CurrentPathSaver.h"
 #include "test_data.h"
-#include "value_unchanged.h"
+#include "ValueUnchanged.h"
 
 #include <3d.h>
 #include <bailout_formula.h>
