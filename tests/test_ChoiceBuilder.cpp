@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <choice_builder.h>
+#include <ChoiceBuilder.h>
 
 #include <id_keys.h>
 

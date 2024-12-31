@@ -2,7 +2,7 @@
 //
 #include "get_browse_params.h"
 
-#include "choice_builder.h"
+#include "ChoiceBuilder.h"
 #include "cmdfiles.h"
 #include "evolve.h"
 #include "helpdefs.h"

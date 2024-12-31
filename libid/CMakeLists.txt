@@ -124,7 +124,7 @@ add_library(libid
     check_orbit_name.cpp include/check_orbit_name.h
     check_write_file.cpp include/check_write_file.h
     comments.cpp include/comments.h
-    include/choice_builder.h
+    include/ChoiceBuilder.h
     dir_file.cpp include/dir_file.h
     double_to_string.cpp include/double_to_string.h
     ends_with_slash.cpp include/ends_with_slash.h
@@ -485,7 +485,7 @@ source_group("Header Files/ui" FILES
     include/check_key.h
     include/check_orbit_name.h
     include/check_write_file.h
-    include/choice_builder.h
+    include/ChoiceBuilder.h
     include/dir_file.h
     include/double_to_string.h
     include/ends_with_slash.h

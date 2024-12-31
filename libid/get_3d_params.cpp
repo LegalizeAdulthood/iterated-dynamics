@@ -3,7 +3,7 @@
 #include "get_3d_params.h"
 
 #include "check_write_file.h"
-#include "choice_builder.h"
+#include "ChoiceBuilder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "field_prompt.h"

@@ -2,7 +2,7 @@
 //
 #include "get_sound_params.h"
 
-#include "choice_builder.h"
+#include "ChoiceBuilder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "helpdefs.h"

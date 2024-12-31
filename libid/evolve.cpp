@@ -4,7 +4,7 @@
 
 #include "bailout_formula.h"
 #include "calcfrac.h"
-#include "choice_builder.h"
+#include "ChoiceBuilder.h"
 #include "cmdfiles.h"
 #include "fractalp.h"
 #include "fractype.h"

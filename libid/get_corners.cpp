@@ -3,7 +3,7 @@
 #include "get_corners.h"
 
 #include "calc_frac_init.h"
-#include "choice_builder.h"
+#include "ChoiceBuilder.h"
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
 #include "convert_corners.h"

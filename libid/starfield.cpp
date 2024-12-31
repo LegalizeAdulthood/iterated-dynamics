@@ -3,7 +3,7 @@
 #include "starfield.h"
 
 #include "calcfrac.h"
-#include "choice_builder.h"
+#include "ChoiceBuilder.h"
 #include "drivers.h"
 #include "fixed_pt.h"
 #include "helpdefs.h"
