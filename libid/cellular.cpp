@@ -32,14 +32,10 @@ enum
     BAD_MEM = 2,
     STRING1 = 3,
     STRING2 = 4,
-    TABLEK = 5,
-    TYPEKR = 6,
-    RULELENGTH = 7,
-    INTERUPT = 8
-};
-
-enum
-{
+    TABLE_K = 5,
+    TYPE_KR = 6,
+    RULE_LENGTH = 7,
+    INTERRUPT = 8,
     CELLULAR_DONE = 10
 };
 
@@ -82,19 +78,19 @@ void abort_cellular(int err, int t)
         stop_msg(msg);
     }
     break;
-    case TABLEK:
+    case TABLE_K:
     {
         static char msg[] = {"Make Rule with 0's through  's" };
         msg[27] = (char)(s_k_1 + 48); // turn into a character value
         stop_msg(msg);
     }
     break;
-    case TYPEKR:
+    case TYPE_KR:
     {
         stop_msg("Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
     }
     break;
-    case RULELENGTH:
+    case RULE_LENGTH:
     {
         static char msg[] = {"Rule must be    digits long" };
         i = s_rule_digits / 10;
@@ -110,7 +106,7 @@ void abort_cellular(int err, int t)
         stop_msg(msg);
     }
     break;
-    case INTERUPT:
+    case INTERRUPT:
     {
         stop_msg("Interrupted, can't resume");
     }
@@ -160,7 +156,7 @@ int cellular()
     case 27:
         break;
     default:
-        abort_cellular(TYPEKR, 0);
+        abort_cellular(TYPE_KR, 0);
         return -1;
     }
 
@@ -224,7 +220,7 @@ int cellular()
     if (s_rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller
-        abort_cellular(RULELENGTH, 0);
+        abort_cellular(RULE_LENGTH, 0);
         return -1;
     }
     for (int i = 0; i < s_rule_digits; i++)   // zero the table
@@ -237,7 +233,7 @@ int cellular()
         cell_table[i] = (U16)(buf[t-i-1] - 48); // change character to number
         if (cell_table[i]>(U16)s_k_1)
         {
-            abort_cellular(TABLEK, 0);
+            abort_cellular(TABLE_K, 0);
             return -1;
         }
     }
@@ -368,7 +364,7 @@ int cellular()
             if (driver_key_pressed())
             {
                 thinking(0, nullptr);
-                abort_cellular(INTERUPT, 0);
+                abort_cellular(INTERRUPT, 0);
                 return -1;
             }
         }
