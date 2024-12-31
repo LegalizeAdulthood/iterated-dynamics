@@ -9,7 +9,7 @@
 
 enum
 {
-    MAXFRACTALS = 25
+    MAX_FRACTALS = 25
 };
 
 static int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
@@ -26,7 +26,7 @@ static int build_fractal_list(int fractals[], int *last_val, char const *nameptr
             }
             nameptr[numfractals] = g_fractal_specific[i].name;
             numfractals++;
-            if (numfractals >= MAXFRACTALS)
+            if (numfractals >= MAX_FRACTALS)
             {
                 break;
             }
@@ -38,8 +38,8 @@ static int build_fractal_list(int fractals[], int *last_val, char const *nameptr
 bool check_orbit_name(char const *orbit_name)
 {
     int numtypes;
-    char const *nameptr[MAXFRACTALS];
-    int fractals[MAXFRACTALS];
+    char const *nameptr[MAX_FRACTALS];
+    int fractals[MAX_FRACTALS];
     int last_val;
 
     numtypes = build_fractal_list(fractals, &last_val, nameptr);
