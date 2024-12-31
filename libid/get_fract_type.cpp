@@ -158,10 +158,10 @@ static FractalType select_fract_type(FractalType t)
     }
 
     tname[0] = 0;
-    const int done = full_screen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
+    const int done = full_screen_choice(ChoiceFlags::HELP | ChoiceFlags::INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
-        "Press F2 for a description of the highlighted type", numtypes, (char const **) choices,
-        attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fract_type_help);
+        "Press F2 for a description of the highlighted type", numtypes, (char const **) choices, attributes,
+        0, 0, 0, j, nullptr, tname, nullptr, sel_fract_type_help);
     FractalType result = FractalType::NOFRACTAL;
     if (done >= 0)
     {

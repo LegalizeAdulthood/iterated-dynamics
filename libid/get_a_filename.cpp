@@ -237,9 +237,9 @@ retry_dir:
         }
     }
 
-    i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-        heading.c_str(), nullptr, instr, filecount, (char const **) choices,
-        attributes, 0, 99, 0, i, nullptr, speedstr, filename_speed_str, check_f6_key);
+    i = full_screen_choice(ChoiceFlags::INSTRUCTIONS | (dosort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
+        heading.c_str(), nullptr, instr, filecount, (char const **) choices, attributes, 0, 99, 0, i, nullptr,
+        speedstr, filename_speed_str, check_f6_key);
     if (i == -ID_KEY_F4)
     {
         dosort = !dosort;

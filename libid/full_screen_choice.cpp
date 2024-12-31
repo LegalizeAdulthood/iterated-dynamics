@@ -25,15 +25,17 @@ inline int is_a_dir_name(char const *name)
     return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
 
-static void footer_msg(int *i, int options, char const *speedstring)
+static void footer_msg(int *i, ChoiceFlags flags, char const *speedstring)
 {
     put_string_center((*i)++, 0, 80, C_PROMPT_BKGRD,
-                    (speedstring) ? "Use the cursor keys or type a value to make a selection"
+        speedstring ? "Use the cursor keys or type a value to make a selection"
                     : "Use the cursor keys to highlight your selection");
     put_string_center(*(i++), 0, 80, C_PROMPT_BKGRD,
-                    (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or F1 for help"
-                    : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
-                       : "Press ENTER for highlighted choice, or ESCAPE to back out"));
+        bit_set(flags, ChoiceFlags::MENU)
+            ? "Press ENTER for highlighted choice, or F1 for help"
+            : (bit_set(flags, ChoiceFlags::HELP)
+                      ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
+                      : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
 static void show_speed_string(
@@ -78,11 +80,11 @@ static void show_speed_string(
 }
 
 static void process_speed_string(char *speedstring, //
-    char const **choices,                          // array of choice strings
-    int curkey,                                    //
-    int *pcurrent,                                 //
-    int numchoices,                                //
-    int is_unsorted)
+    char const **choices,                           // array of choice strings
+    int curkey,                                     //
+    int *pcurrent,                                  //
+    int numchoices,                                 //
+    bool is_unsorted)
 {
     int i = (int) std::strlen(speedstring);
     if (curkey == 8 && i > 0)   // backspace
@@ -161,25 +163,13 @@ static void process_speed_string(char *speedstring, //
               k for check_key routine return value k (if not 0 nor -1)
               speed_string[0] != 0 on return if string is present
 */
-int full_screen_choice(
-    int options,
-    char const *hdg,
-    char const *hdg2,
-    char const *instr,
-    int num_choices,
-    char const **choices,
-    int *attributes,
-    int box_width,
-    int box_depth,
-    int col_width,
-    int current,
-    void (*format_item)(int choice, char *buf),
-    char *speed_string,
+int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, char const *instr,
+    int num_choices, char const **choices, int *attributes, int box_width, int box_depth, int col_width,
+    int current, void (*format_item)(int choice, char *buf), char *speed_string,
     int (*speed_prompt)(int row, int col, int vid, char const *speed_string, int speed_match),
-    int (*check_key)(int key, int choice)
-    )
+    int (*check_key)(int key, int choice))
 {
-    const int scrunch = (options & CHOICE_CRUNCH) ? 1 : 0; // scrunch up a line
+    const int scrunch = bit_set(flags, ChoiceFlags::CRUNCH) ? 1 : 0; // scrunch up a line
     ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     int ret = -1;
     // preset current to passed string
@@ -187,7 +177,7 @@ int full_screen_choice(
     if (speed_len > 0)
     {
         current = 0;
-        if (options & CHOICE_NOT_SORTED)
+        if (bit_set(flags, ChoiceFlags::NOT_SORTED))
         {
             int k;
             while (current < num_choices && (k = strncasecmp(speed_string, choices[current], speed_len)) != 0)
@@ -279,7 +269,7 @@ int full_screen_choice(
                 ++reqdrows;
             }
         }
-        if ((options & CHOICE_INSTRUCTIONS))          // show std instr too
+        if (bit_set(flags , ChoiceFlags::INSTRUCTIONS))          // show std instr too
         {
             reqdrows += 2;
         }
@@ -382,7 +372,7 @@ int full_screen_choice(
     int speedrow = 0;  // speed key prompt
     {
         int i = topleftrow + box_depth + 1;
-        if (instr == nullptr || (options & CHOICE_INSTRUCTIONS))   // display default instructions
+        if (instr == nullptr || bit_set(flags, ChoiceFlags::INSTRUCTIONS)) // display default instructions
         {
             if (i < 20)
             {
@@ -398,7 +388,7 @@ int full_screen_choice(
                 }
             }
             i -= scrunch;
-            footer_msg(&i, options, speed_string);
+            footer_msg(&i, flags, speed_string);
         }
         if (instr)                            // display caller's instructions
         {
@@ -735,8 +725,8 @@ int full_screen_choice(
             ret = -1;
             if (speed_string)
             {
-                process_speed_string(speed_string, choices, curkey, &current,
-                                    num_choices, options & CHOICE_NOT_SORTED);
+                process_speed_string(speed_string, choices, curkey, &current, num_choices,
+                    bit_set(flags, ChoiceFlags::NOT_SORTED));
             }
             break;
         }

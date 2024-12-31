@@ -244,7 +244,7 @@ int MainMenu::prompt()
         {
             m_next_left = m_next_right + 1;
         }
-        i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, m_next_left,
+        i = full_screen_choice(ChoiceFlags::MENU | ChoiceFlags::CRUNCH, "MAIN MENU", nullptr, nullptr, m_next_left,
             m_choices, m_attributes, 2, m_next_left / 2, 29, 0, nullptr, nullptr, nullptr, menu_check_key);
         if (i == -1)     // escape
         {
