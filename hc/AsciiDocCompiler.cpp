@@ -33,7 +33,7 @@ int AsciiDocCompiler::process()
 
     if (g_errors == 0)
     {
-        paginate_html_document();
+        paginate_ascii_doc();
     }
     if (!g_errors)
     {
@@ -53,6 +53,145 @@ int AsciiDocCompiler::process()
     }
 
     return 0;
+}
+
+void AsciiDocCompiler::paginate_ascii_doc()
+{
+    if (g_src.contents.empty())
+    {
+        return;
+    }
+
+    int size;
+    int width;
+
+    msg("Paginating HTML.");
+
+    for (Topic &t : g_src.topics)
+    {
+        if (bit_set(t.flags, TopicFlags::DATA))
+        {
+            continue;    // don't paginate data topics
+        }
+
+        const char *text = t.get_topic_text();
+        const char *curr = text;
+        unsigned int len = t.text_len;
+
+        const char *start = curr;
+        bool skip_blanks = false;
+        int lnum = 0;
+        int num_links = 0;
+        int col = 0;
+
+        while (len > 0)
+        {
+            TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
+
+            switch (tok)
+            {
+            case TokenType::TOK_PARA:
+            {
+                ++curr;
+                int const indent = *curr++;
+                int const margin = *curr++;
+                len -= 3;
+                col = indent;
+                while (true)
+                {
+                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
+
+                    if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
+                    {
+                        break;
+                    }
+
+                    if (tok == TokenType::TOK_PARA)
+                    {
+                        col = 0;   // fake a nl
+                        ++lnum;
+                        break;
+                    }
+
+                    if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
+                    {
+                        curr += size;
+                        len -= size;
+                        continue;
+                    }
+
+                    // now tok is SPACE or LINK or WORD
+                    if (col+width > SCREEN_WIDTH)
+                    {
+                        // go to next line...
+                        if (tok == TokenType::TOK_SPACE)
+                        {
+                            width = 0;    // skip spaces at start of a line
+                        }
+
+                        col = margin;
+                    }
+
+                    col += width;
+                    curr += size;
+                    len -= size;
+                }
+
+                skip_blanks = false;
+                size = 0;
+                width = size;
+                break;
+            }
+
+            case TokenType::TOK_NL:
+                if (skip_blanks && col == 0)
+                {
+                    start += size;
+                    break;
+                }
+                ++lnum;
+                col = 0;
+                break;
+
+            case TokenType::TOK_FF:
+                col = 0;
+                if (skip_blanks)
+                {
+                    start += size;
+                    break;
+                }
+                start = curr + size;
+                num_links = 0;
+                break;
+
+            case TokenType::TOK_DONE:
+            case TokenType::TOK_XONLINE:   // skip
+            case TokenType::TOK_XDOC:      // ignore
+            case TokenType::TOK_CENTER:    // ignore
+                break;
+
+            case TokenType::TOK_LINK:
+                ++num_links;
+
+                // fall-through
+
+            default:    // SPACE, LINK, WORD
+                skip_blanks = false;
+                break;
+            } // switch
+
+            curr += size;
+            len  -= size;
+            col  += width;
+        } // while
+
+        if (m_max_pages < t.num_page)
+        {
+            m_max_pages = t.num_page;
+        }
+
+        t.release_topic_text(false);
+    } // for
 }
 
 class AsciiDocProcessor

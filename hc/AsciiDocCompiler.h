@@ -18,6 +18,7 @@ public:
     int process() override;
 
 private:
+    void paginate_ascii_doc();
     void print_ascii_doc();
 };
 

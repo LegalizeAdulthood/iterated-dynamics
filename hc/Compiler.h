@@ -2,12 +2,12 @@
 //
 #pragma once
 
-#include "Options.h"
-
 #include <memory>
 
 namespace hc
 {
+
+struct Options;
 
 class Compiler
 {

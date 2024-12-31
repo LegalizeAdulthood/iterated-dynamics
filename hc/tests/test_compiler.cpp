@@ -2,6 +2,8 @@
 //
 #include <Compiler.h>
 
+#include <Options.h>
+
 #include <gtest/gtest.h>
 
 TEST(TestAsciiDoc, createCompiler)

@@ -2,7 +2,6 @@
 //
 #include "HelpSource.h"
 
-#include "HTMLProcessor.h"
 #include "messages.h"
 #include "modes.h"
 
@@ -758,17 +757,7 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
 void process_doc_contents(Mode mode)
 {
-    if (mode == Mode::HTML)
-    {
-        process_doc_contents(
-            [](char *buffer, Content &c)
-            {
-                std::sprintf(buffer, "%s", rst_name(c.name).c_str());
-                c.page_num_pos = 0U;
-                return buffer + (int) std::strlen(buffer);
-            });
-    }
-    else if (mode == Mode::ASCII_DOC)
+    if (mode == Mode::ASCII_DOC)
     {
         process_doc_contents(
             [](char *buffer, Content &c)

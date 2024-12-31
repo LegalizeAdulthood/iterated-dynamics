@@ -23,7 +23,7 @@ Options parse_options(int argc, char **argv)
                 }
                 else
                 {
-                    throw std::runtime_error("Cannot have /a with /adoc, /c, /d, /h or /p");
+                    throw std::runtime_error("Cannot have /a with /adoc, /c, /d or /p");
                 }
             }
             else if (arg == "adoc")
@@ -34,7 +34,7 @@ Options parse_options(int argc, char **argv)
                 }
                 else
                 {
-                    throw std::runtime_error("Cannot have /adoc with /a, /c, /d, /h or /p");
+                    throw std::runtime_error("Cannot have /adoc with /a, /c, /d or /p");
                 }
             }
             else if (arg == "c")
@@ -45,7 +45,7 @@ Options parse_options(int argc, char **argv)
                 }
                 else
                 {
-                    throw std::runtime_error("Cannot have /c with /a, /adoc, /d, /h or /p");
+                    throw std::runtime_error("Cannot have /c with /a, /adoc, /d or /p");
                 }
             }
             else if (arg == "d")
@@ -56,18 +56,7 @@ Options parse_options(int argc, char **argv)
                 }
                 else
                 {
-                    throw std::runtime_error("Cannot have /d with /a, /adoc, /c, /h or /p");
-                }
-            }
-            else if (arg == "h")
-            {
-                if (result.mode == Mode::NONE)
-                {
-                    result.mode = Mode::HTML;
-                }
-                else
-                {
-                    throw std::runtime_error("Cannot have /h with /a, /adoc, /c, /d or /p");
+                    throw std::runtime_error("Cannot have /d with /a, /adoc, /c or /p");
                 }
             }
             else if (arg == "i")
@@ -105,13 +94,13 @@ Options parse_options(int argc, char **argv)
                 {
                     throw std::runtime_error("Missing argument for /o");
                 }
-                if (result.mode == Mode::HTML || result.mode == Mode::ASCII_DOC)
+                if (result.mode == Mode::ASCII_DOC)
                 {
                     result.output_dir = output_dir;
                 }
                 else
                 {
-                    throw std::runtime_error("/o switch allowed only when writing HTML (/h) or ASCII doc (/adoc)");
+                    throw std::runtime_error("/o switch allowed only when writing ASCII doc (/adoc)");
                 }
             }
             else if (arg == "p")
@@ -122,7 +111,7 @@ Options parse_options(int argc, char **argv)
                 }
                 else
                 {
-                    throw std::runtime_error("Cannot have /p with /a, /adoc, /c, /h or /d");
+                    throw std::runtime_error("Cannot have /p with /a, /adoc, /c or /d");
                 }
             }
             else if (arg == "s")

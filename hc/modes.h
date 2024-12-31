@@ -12,8 +12,7 @@ enum class Mode
     PRINT,
     APPEND,
     DELETE,
-    HTML,
     ASCII_DOC
 };
 
-}
+} // namespace hc

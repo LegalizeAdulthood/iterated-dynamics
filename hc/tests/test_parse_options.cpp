@@ -2,6 +2,8 @@
 //
 #include <Compiler.h>
 
+#include <Options.h>
+
 #include <gtest/gtest.h>
 
 #include <algorithm>
@@ -54,8 +56,6 @@ std::ostream &operator<<(std::ostream &str, hc::Mode value)
         return str << "APPEND";
     case Mode::DELETE:
         return str << "DELETE";
-    case Mode::HTML:
-        return str << "HTML";
     case Mode::ASCII_DOC:
         return str << "ASCII_DOC";
     }
@@ -113,13 +113,6 @@ TEST_F(TestParseCompilerOptions, modeDelete)
     EXPECT_EQ(hc::Mode::DELETE, m_options.mode);
 }
 
-TEST_F(TestParseCompilerOptions, modeHTML)
-{
-    parse_options({"/h"});
-
-    EXPECT_EQ(hc::Mode::HTML, m_options.mode);
-}
-
 TEST_F(TestParseCompilerOptions, modeAsciiDoc)
 {
     parse_options({"/adoc"});
@@ -171,7 +164,6 @@ static std::vector<const char *> s_invalid_options[]{
     {"/a", "/adoc"},          //
     {"/a", "/c"},             //
     {"/a", "/d"},             //
-    {"/a", "/h"},             //
     {"/a", "/m"},             //
     {"/a", "/o", "."},        //
     {"/a", "/p"},             //
@@ -180,40 +172,27 @@ static std::vector<const char *> s_invalid_options[]{
     {"/adoc", "/a"},          //
     {"/adoc", "/c"},          //
     {"/adoc", "/d"},          //
-    {"/adoc", "/h"},          //
     {"/adoc", "/m"},          //
     {"/adoc", "/p"},          //
     {"/adoc", "/s"},          //
     {"/c", "/a"},             //
     {"/c", "/adoc"},          //
     {"/c", "/d"},             //
-    {"/c", "/h"},             //
     {"/c", "/o", "."},        //
     {"/c", "/p"},             //
     {"/d", "/a"},             //
     {"/d", "/adoc"},          //
     {"/d", "/c"},             //
-    {"/d", "/h"},             //
     {"/d", "/m"},             //
     {"/d", "/o", "."},        //
     {"/d", "/p"},             //
     {"/d", "/r", "."},        //
     {"/d", "/s"},             //
-    {"/h", "/a"},             //
-    {"/h", "/adoc"},          //
-    {"/h", "/c"},             //
-    {"/h", "/d"},             //
-    {"/h", "/m"},             //
-    {"/h", "/o"},             //
-    {"/h", "/p"},             //
-    {"/h", "/r", "."},        //
-    {"/h", "/s"},             //
     {"/i"},                   //
     {"/o"},                   //
     {"/p", "/a"},             //
     {"/p", "/adoc"},          //
     {"/p", "/d"},             //
-    {"/p", "/h"},             //
     {"/p", "/m"},             //
     {"/p", "/o", "."},        //
     {"/p", "/s"},             //

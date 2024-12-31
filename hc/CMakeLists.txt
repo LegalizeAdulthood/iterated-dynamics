@@ -13,8 +13,6 @@ add_library(libhc
     HelpCompiler.cpp
     HelpSource.h
     HelpSource.cpp
-    HTMLProcessor.h
-    HTMLProcessor.cpp
     messages.h
     messages.cpp
     modes.h

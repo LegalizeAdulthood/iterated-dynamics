@@ -7,7 +7,6 @@
 #include "HelpCompiler.h"
 
 #include "HelpSource.h"
-#include "HTMLProcessor.h"
 #include "messages.h"
 
 #include <port.h>
@@ -55,7 +54,6 @@ char const *const DEFAULT_SRC_FNAME{"help.src"};
 char const *const DEFAULT_HLP_FNAME{"id.hlp"};
 char const *const DEFAULT_EXE_FNAME{"id.exe"};
 char const *const DEFAULT_DOC_FNAME{"id.txt"};
-std::string const DEFAULT_HTML_FNAME{"index.rst"};
 char const *const TEMP_FNAME{"hc.tmp"};
 char const *const SWAP_FNAME{"hcswap.tmp"};
 
@@ -83,7 +81,6 @@ struct PrintDocInfo : DocInfo
     int spaces;
 };
 
-int g_max_pages{};                   // max. pages in any topic
 int g_num_doc_pages{};               // total number of pages in document
 
 static std::string s_src_filename;   // command-line .SRC filename
@@ -383,9 +380,9 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
             t.add_page_break(start_margin, text, start, curr, num_links);
         }
 
-        if (g_max_pages < t.num_page)
+        if (m_max_pages < t.num_page)
         {
-            g_max_pages = t.num_page;
+            m_max_pages = t.num_page;
         }
 
         t.release_topic_text(false);
@@ -905,7 +902,7 @@ void HelpCompiler::write_help(std::FILE *file)
 
     // write max_pages & max_links
 
-    putw(g_max_pages, file);
+    putw(m_max_pages, file);
     putw(g_src.max_links, file);
 
     // write num_topic, num_label and num_contents
@@ -1430,10 +1427,6 @@ int HelpCompiler::process()
     case Mode::DELETE:
         delete_hlp_from_exe();
         break;
-
-    case Mode::HTML:
-        render_html();
-        break;
     }
 
     return g_errors;     // return the number of errors
@@ -1575,177 +1568,6 @@ void HelpCompiler::print()
     {
         report_errors();
     }
-}
-
-void HelpCompiler::render_html()
-{
-    read_source_file();
-    make_hot_links();
-
-    if (g_errors == 0)
-    {
-        paginate_html_document();
-    }
-    if (!g_errors)
-    {
-        calc_offsets();
-    }
-    if (!g_errors)
-    {
-        g_src.sort_labels();
-    }
-    if (g_errors == 0)
-    {
-        print_html_document(m_options.fname2.empty() ? DEFAULT_HTML_FNAME : m_options.fname2);
-    }
-    if (g_errors > 0 || g_warnings > 0)
-    {
-        report_errors();
-    }
-}
-
-void HelpCompiler::paginate_html_document()
-{
-    if (g_src.contents.empty())
-    {
-        return;
-    }
-
-    int size;
-    int width;
-
-    msg("Paginating HTML.");
-
-    for (Topic &t : g_src.topics)
-    {
-        if (bit_set(t.flags, TopicFlags::DATA))
-        {
-            continue;    // don't paginate data topics
-        }
-
-        const char *text = t.get_topic_text();
-        const char *curr = text;
-        unsigned int len = t.text_len;
-
-        const char *start = curr;
-        bool skip_blanks = false;
-        int lnum = 0;
-        int num_links = 0;
-        int col = 0;
-
-        while (len > 0)
-        {
-            TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
-
-            switch (tok)
-            {
-            case TokenType::TOK_PARA:
-            {
-                ++curr;
-                int const indent = *curr++;
-                int const margin = *curr++;
-                len -= 3;
-                col = indent;
-                while (true)
-                {
-                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
-
-                    if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
-                    {
-                        break;
-                    }
-
-                    if (tok == TokenType::TOK_PARA)
-                    {
-                        col = 0;   // fake a nl
-                        ++lnum;
-                        break;
-                    }
-
-                    if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
-                    {
-                        curr += size;
-                        len -= size;
-                        continue;
-                    }
-
-                    // now tok is SPACE or LINK or WORD
-                    if (col+width > SCREEN_WIDTH)
-                    {
-                        // go to next line...
-                        if (tok == TokenType::TOK_SPACE)
-                        {
-                            width = 0;    // skip spaces at start of a line
-                        }
-
-                        col = margin;
-                    }
-
-                    col += width;
-                    curr += size;
-                    len -= size;
-                }
-
-                skip_blanks = false;
-                size = 0;
-                width = size;
-                break;
-            }
-
-            case TokenType::TOK_NL:
-                if (skip_blanks && col == 0)
-                {
-                    start += size;
-                    break;
-                }
-                ++lnum;
-                col = 0;
-                break;
-
-            case TokenType::TOK_FF:
-                col = 0;
-                if (skip_blanks)
-                {
-                    start += size;
-                    break;
-                }
-                start = curr + size;
-                num_links = 0;
-                break;
-
-            case TokenType::TOK_DONE:
-            case TokenType::TOK_XONLINE:   // skip
-            case TokenType::TOK_XDOC:      // ignore
-            case TokenType::TOK_CENTER:    // ignore
-                break;
-
-            case TokenType::TOK_LINK:
-                ++num_links;
-
-                // fall-through
-
-            default:    // SPACE, LINK, WORD
-                skip_blanks = false;
-                break;
-            } // switch
-
-            curr += size;
-            len  -= size;
-            col  += width;
-        } // while
-
-        if (g_max_pages < t.num_page)
-        {
-            g_max_pages = t.num_page;
-        }
-
-        t.release_topic_text(false);
-    } // for
-}
-
-void HelpCompiler::print_html_document(std::string const &output_filename)
-{
-    HTMLProcessor(output_filename).process();
 }
 
 } // namespace hc

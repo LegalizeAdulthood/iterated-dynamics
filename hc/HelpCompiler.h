@@ -3,9 +3,9 @@
 #pragma once
 
 #include "Compiler.h"
+#include "Options.h"
 
 #include <cstdio>
-#include <string>
 
 namespace hc
 {
@@ -21,16 +21,15 @@ public:
 protected:
     void read_source_file();
     void make_hot_links();
-    void paginate_html_document();
     void calc_offsets();
 
     Options m_options;
+    int m_max_pages{};                   // max. pages in any topic
 
 private:
     void usage();
     void compile();
     void print();
-    void render_html();
     void paginate_online();
     void set_hot_link_doc_page();
     void set_content_doc_page();
@@ -44,7 +43,6 @@ private:
     void delete_hlp_from_exe();
     void print_document();
     void report_memory();
-    void print_html_document(const std::string &output_filename);
 };
 
 } // namespace hc
