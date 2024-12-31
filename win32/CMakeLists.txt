@@ -12,7 +12,7 @@ set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 
 add_library(os STATIC
     DiskDriver.cpp
-    d_gdi.cpp
+    GDIDriver.cpp
     Frame.h
     Frame.cpp
     os_win32.cpp
