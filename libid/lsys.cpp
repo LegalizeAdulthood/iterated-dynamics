@@ -118,7 +118,7 @@ LDBL get_number(char const **str)
     }
     if (root)
     {
-        ret = std::sqrtl(ret);
+        ret = std::sqrt(ret);
     }
     if (inverse)
     {

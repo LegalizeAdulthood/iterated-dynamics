@@ -169,7 +169,7 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
         sub_bf(tmp_y_bf, g_bf_y_min, g_bf_y_3rd);
         tmpy1 = bf_to_float(tmp_y_bf);
         const LDBL a2 = tmpx1 * tmpx1 + tmpy1 * tmpy1;
-        const LDBL a = std::sqrtl(a2);
+        const LDBL a = std::sqrt(a2);
 
         // divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used
         // atan2() only depends on the ratio, this puts it in double's range
@@ -188,7 +188,7 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_3rd);
         const LDBL tmpy2 = bf_to_float(tmp_y_bf);
         const LDBL b2 = tmpx2 * tmpx2 + tmpy2 * tmpy2;
-        const LDBL b = std::sqrtl(b2);
+        const LDBL b = std::sqrt(b2);
 
         const double tmpa = std::acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
         skew = 90 - rad_to_deg(tmpa);

@@ -783,7 +783,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         clear_bn(r); // sqrt(0) = 0
         return r;
     }
-    f = std::sqrtl(f); // approximate square root
+    f = std::sqrt(f); // approximate square root
     // no need to check overflow
 
     // With Newton's Method, there is no need to calculate all the digits
