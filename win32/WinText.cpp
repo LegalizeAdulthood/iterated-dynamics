@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "win_text.h"
+#include "WinText.h"
 
 #include "Frame.h"
 #include "ods.h"

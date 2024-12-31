@@ -3,7 +3,7 @@
 #include "Frame.h"
 
 #include "resource.h"
-#include "win_text.h"
+#include "WinText.h"
 
 #include "drivers.h"
 #include "goodbye.h"

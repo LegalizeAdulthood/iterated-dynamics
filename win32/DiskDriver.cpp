@@ -7,7 +7,7 @@
 #include "Win32BaseDriver.h"
 #include "Frame.h"
 #include "ods.h"
-#include "win_text.h"
+#include "WinText.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"

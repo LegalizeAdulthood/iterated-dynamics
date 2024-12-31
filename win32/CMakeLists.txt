@@ -20,8 +20,8 @@ add_library(os STATIC
     Plot.cpp
     Win32BaseDriver.h
     Win32BaseDriver.cpp
-    win_text.h
-    win_text.cpp
+    WinText.h
+    WinText.cpp
     create_minidump.h
     instance.h
     ods.h
