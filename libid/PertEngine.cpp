@@ -381,8 +381,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             default:
                 if (g_potential_flag)
                 {
-                    const double magnitude{mag_squared(w)};
-                    index = potential(magnitude, iteration);
+                    index = potential(mag_squared(w), iteration);
                 }
                 else // no filter
                 {
