@@ -28,12 +28,12 @@ enum
 {
     MATCHING = 0,   // string matches list - speed key mode
     TEMPLATE = -2,  // wild cards present - building template
-    SEARCHPATH = -3 // no match - building path search name
+    SEARCH_PATH = -3 // no match - building path search name
 };
 
 enum
 {
-    MAXNUMFILES = 2977L
+    MAX_NUM_FILES = 2977L
 };
 
 namespace
@@ -66,9 +66,9 @@ bool get_a_file_name(char const *hdg, char const *file_template, std::string &fl
     int out;
     int retried;
     // Only the first 13 characters of file names are displayed...
-    Choice storage[MAXNUMFILES];
-    Choice *choices[MAXNUMFILES];
-    int attributes[MAXNUMFILES];
+    Choice storage[MAX_NUM_FILES];
+    Choice *choices[MAX_NUM_FILES];
+    int attributes[MAX_NUM_FILES];
     int filecount;   // how many files
     int dircount;    // how many directories
     bool notroot;     // not the root directory
@@ -81,7 +81,7 @@ bool get_a_file_name(char const *hdg, char const *file_template, std::string &fl
     static bool dosort = true;
 
     rds = (g_stereo_map_filename == flname) ? 1 : 0;
-    for (int i = 0; i < MAXNUMFILES; i++)
+    for (int i = 0; i < MAX_NUM_FILES; i++)
     {
         attributes[i] = 1;
         choices[i] = &storage[i];
@@ -136,7 +136,7 @@ retry_dir:
     masklen = (int) std::strlen(tmpmask);
     std::strcat(tmpmask, "*.*");
     out = fr_find_first(tmpmask);
-    while (out == 0 && filecount < MAXNUMFILES)
+    while (out == 0 && filecount < MAX_NUM_FILES)
     {
         if ((g_dta.attribute & SUB_DIR) && g_dta.filename != ".")
         {
@@ -167,7 +167,7 @@ retry_dir:
             std::strcpy(&(tmpmask[masklen]), s_masks[j]);
         }
         out = fr_find_first(tmpmask);
-        while (out == 0 && filecount < MAXNUMFILES)
+        while (out == 0 && filecount < MAX_NUM_FILES)
         {
             if (!(g_dta.attribute & SUB_DIR))
             {
@@ -304,7 +304,7 @@ retry_dir:
     }
     else
     {
-        if (s_speed_state == SEARCHPATH
+        if (s_speed_state == SEARCH_PATH
             && std::strchr(speedstr, '*') == nullptr && std::strchr(speedstr, '?') == nullptr
             && ((fr_find_first(speedstr) == 0 && (g_dta.attribute & SUB_DIR))
                 || std::strcmp(speedstr, SLASH) == 0)) // it is a directory
@@ -393,7 +393,7 @@ static int filename_speed_str(int row, int col, int vid, char const *speedstring
     }
     else if (speed_match)
     {
-        s_speed_state = SEARCHPATH; // does not match list
+        s_speed_state = SEARCH_PATH; // does not match list
         prompt = "Search Path for";
     }
     else
