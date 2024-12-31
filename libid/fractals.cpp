@@ -53,6 +53,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "newton.h"
 #include "pixel_grid.h"
 
+#include <cfloat>
 #include <cmath>
 
 inline void conjugate(DComplex &pz)
