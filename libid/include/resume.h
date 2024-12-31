@@ -6,7 +6,7 @@
 
 #include <vector>
 
-extern std::vector<BYTE>     g_resume_data;
+extern std::vector<Byte>     g_resume_data;
 extern bool                  g_resuming;
 extern int                   g_resume_len;
 

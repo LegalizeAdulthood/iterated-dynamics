@@ -22,7 +22,7 @@ enum class RayTraceFormat
 
 extern int                   g_ambient;             // Ambient= parameter value
 extern int const             g_bad_value;
-extern BYTE                  g_background_color[];
+extern Byte                  g_background_color[];
 extern bool                  g_brief;
 extern int                   g_converge_x_adjust;
 extern int                   g_converge_y_adjust;
@@ -43,7 +43,7 @@ extern int                   g_xx_adjust;
 extern int                   g_y_shift;
 extern int                   g_yy_adjust;
 
-int line3d(BYTE * pixels, unsigned linelen);
+int line3d(Byte * pixels, unsigned linelen);
 int targa_color(int x, int y, int color);
 bool targa_validate(char const *File_Name);
 bool start_disk1(const std::string &filename, std::FILE *source, bool overlay);

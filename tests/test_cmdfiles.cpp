@@ -548,7 +548,7 @@ public:
     }
 
 private:
-    BYTE m_dac_box[256][3];
+    Byte m_dac_box[256][3];
 };
 
 TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
@@ -1531,7 +1531,7 @@ public:
     ~TextColorSaver();
 
 private:
-    BYTE m_text_color[31]{};
+    Byte m_text_color[31]{};
 };
 
 TextColorSaver::TextColorSaver()

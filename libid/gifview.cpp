@@ -61,9 +61,9 @@ constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 constexpr int DECODERLINE_WIDTH{MAX_PIXELS};
 
 static void close_file();
-static int out_line_dither(BYTE *, int);
-static int out_line_migs(BYTE *, int);
-static int out_line_too_wide(BYTE *, int);
+static int out_line_dither(Byte *, int);
+static int out_line_migs(Byte *, int);
+static int out_line_too_wide(Byte *, int);
 
 static std::FILE *s_fp_in{};
 static int s_col_count{};                    // keeps track of current column for wide images
@@ -80,7 +80,7 @@ int get_byte()
     return getc(s_fp_in); // EOF is -1, as desired
 }
 
-int get_bytes(BYTE *where, int how_many)
+int get_bytes(Byte *where, int how_many)
 {
     return (int) std::fread((char *)where, 1, how_many, s_fp_in); // EOF is -1, as desired
 }
@@ -89,12 +89,12 @@ int get_bytes(BYTE *where, int how_many)
 
 int gif_view()
 {
-    BYTE buffer[16];
+    Byte buffer[16];
     unsigned top;
     unsigned left;
     unsigned width;
     char temp1[FILE_MAX_DIR];
-    BYTE byte_buf[257]; // for decoder
+    Byte byte_buf[257]; // for decoder
     int status;
     int planes;
 
@@ -147,7 +147,7 @@ int gif_view()
     for (int i = 0; i < 13; i++)
     {
         int tmp = get_byte();
-        buffer[i] = (BYTE) tmp;
+        buffer[i] = (Byte) tmp;
         if (tmp < 0)
         {
             close_file();
@@ -194,7 +194,7 @@ int gif_view()
             if ((g_display_3d == Display3DMode::NONE || (g_glasses_type != 1 && g_glasses_type != 2))
                 && g_read_color)
             {
-                g_dac_box[i][j] = (BYTE)(k >> 2); // TODO: don't right shift color table by 2
+                g_dac_box[i][j] = (Byte)(k >> 2); // TODO: don't right shift color table by 2
             }
         }
     }
@@ -250,7 +250,7 @@ int gif_view()
             for (int i = 0; i < 9; i++)
             {
                 int tmp = get_byte();
-                buffer[i] = (BYTE) tmp;
+                buffer[i] = (Byte) tmp;
                 if (tmp < 0)
                 {
                     status = -1;
@@ -382,7 +382,7 @@ static void close_file()
 
 // routine for MIGS that generates partial output lines
 
-static int out_line_migs(BYTE *pixels, int linelen)
+static int out_line_migs(Byte *pixels, int linelen)
 {
     int row;
     int startcol;
@@ -397,7 +397,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
     return 0;
 }
 
-static int out_line_dither(BYTE *pixels, int linelen)
+static int out_line_dither(Byte *pixels, int linelen)
 {
     int nexterr;
     int brt;
@@ -430,7 +430,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 
 // routine for images wider than the row buffer
 
-static int out_line_too_wide(BYTE *pixels, int linelen)
+static int out_line_too_wide(Byte *pixels, int linelen)
 {
     int twidth = g_logical_screen_x_dots;
     int extra;
@@ -459,7 +459,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
     return 0;
 }
 
-static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
+static bool put_sound_line(int row, int colstart, int colstop, Byte *pixels)
 {
     for (int col = colstart; col <= colstop; col++)
     {
@@ -478,7 +478,7 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
     return false;
 }
 
-int sound_line(BYTE *pixels, int linelen)
+int sound_line(Byte *pixels, int linelen)
 {
     int twidth = g_logical_screen_x_dots;
     int extra;
@@ -519,7 +519,7 @@ int sound_line(BYTE *pixels, int linelen)
     return ret;
 }
 
-int pot_line(BYTE *pixels, int linelen)
+int pot_line(Byte *pixels, int linelen)
 {
     int row;
     int saverowcount;

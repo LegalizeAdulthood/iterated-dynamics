@@ -49,7 +49,7 @@ static constexpr int s_dif_lb[] =
 //   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
-static BYTE s_stack[4096]{}; // common temp, two put_line calls
+static Byte s_stack[4096]{}; // common temp, two put_line calls
 
 // vars for diffusion scan
 unsigned int g_diffusion_bits{};     // number of bits in the counter

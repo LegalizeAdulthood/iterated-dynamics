@@ -43,7 +43,7 @@ static short get_next_code();
 // occurs in an odd place in the GIF file...  In any case, linelen will be
 // equal to the number of pixels passed...
 //
-int (*g_out_line)(BYTE *, int){out_line};
+int (*g_out_line)(Byte *, int){out_line};
 
 // Various error codes used by decoder
 // and my own routines...   It's okay
@@ -68,8 +68,8 @@ enum
 static short s_curr_size{};       // The current code size
 static short s_num_avail_bytes{}; // # bytes left in block
 static short s_num_bits_left{};   // # bits left in current byte
-static BYTE *s_byte_buff{};       // Current block, reuse shared mem
-static BYTE *s_ptr_bytes{};       // Pointer to next byte in block
+static Byte *s_byte_buff{};       // Current block, reuse shared mem
+static Byte *s_ptr_bytes{};       // Pointer to next byte in block
 static short s_code_mask[13] =
 {
     0,
@@ -80,7 +80,7 @@ static short s_code_mask[13] =
     0x01FF, 0x03FF,
     0x07FF, 0x0FFF
 };
-static BYTE s_suffix[10000]{};
+static Byte s_suffix[10000]{};
 
 // bad_code_count;
 //
@@ -90,7 +90,7 @@ static BYTE s_suffix[10000]{};
 //
 
 static int s_bad_code_count{};
-static BYTE s_decoder_line[MAX_PIXELS]{};
+static Byte s_decoder_line[MAX_PIXELS]{};
 
 // The reason we have these separated like this instead of using
 // a structure like the original Wilhite code did, is because this
@@ -124,7 +124,7 @@ static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 short decoder(short linewidth)
 {
     U16 prefix[MAX_CODES+1] = { 0 };     // Prefix linked list
-    BYTE *sp;
+    Byte *sp;
     short code;
     short old_code;
     short ret;
@@ -136,12 +136,12 @@ short decoder(short linewidth)
     short xskip;
     short slot;                  // Last read code
     short newcodes;              // First available code
-    BYTE *bufptr;
+    Byte *bufptr;
     short yskip;
     short top_slot;              // Highest code for current size
     short clear;                 // Value for a clear code
     short ending;                // Value for a ending code
-    BYTE out_value;
+    Byte out_value;
 
     // Initialize for decoding a new image...
 
@@ -177,7 +177,7 @@ short decoder(short linewidth)
     // happen, but we'll try and decode it anyway...)
 
     // Set up the stack pointer and decode buffer pointer
-    BYTE decode_stack[4096] = { 0 };
+    Byte decode_stack[4096] = { 0 };
     sp = decode_stack;
     bufptr = s_decoder_line;
     bufcnt = linewidth;
@@ -230,10 +230,10 @@ short decoder(short linewidth)
             }
 
             old_code = c;
-            out_value = (BYTE) old_code;
+            out_value = (Byte) old_code;
 
             // And let us not forget to put the char into the buffer...
-            *sp++ = (BYTE) c;
+            *sp++ = (Byte) c;
         }
         else
         {
@@ -278,7 +278,7 @@ short decoder(short linewidth)
                         code = prefix[code];
                     }
                     while (--j > 0);
-                    *bufptr = (BYTE) code;
+                    *bufptr = (Byte) code;
                     bufptr += ++i;
                     bufcnt -= i;
                     if (bufcnt == 0) // finished an input row?
@@ -316,13 +316,13 @@ short decoder(short linewidth)
             // overwrite the last code...
             if (fastloop == NOPE)
             {
-                *sp++ = (BYTE) code;
+                *sp++ = (Byte) code;
             }
 
             if (slot < top_slot)
             {
                 s_sizeof_string[slot] = (short)(s_sizeof_string[old_code] + 1);
-                out_value = (BYTE) code;
+                out_value = (Byte) code;
                 s_suffix[slot] = out_value;
                 prefix[slot++] = old_code;
                 old_code = c;
@@ -374,7 +374,7 @@ short decoder(short linewidth)
 //
 static short get_next_code()
 {
-    static BYTE b1;              // Current byte
+    static Byte b1;              // Current byte
     static unsigned short ret_code;
 
     if (s_num_bits_left == 0)
@@ -427,7 +427,7 @@ static short get_next_code()
 }
 
 // called in parent reoutine to set byte_buff
-void set_byte_buff(BYTE * ptr)
+void set_byte_buff(Byte * ptr)
 {
     s_byte_buff = ptr;
 }

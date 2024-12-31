@@ -18,7 +18,7 @@ static int tess_col(int, int, int);
 static int tess_row(int, int, int);
 
 static bool s_guess_plot{};  // paint 1st pass row at a time?
-static BYTE s_stack[4096]{}; // common temp, two put_line calls
+static Byte s_stack[4096]{}; // common temp, two put_line calls
 
 // tesseral method by CJLT begins here
 

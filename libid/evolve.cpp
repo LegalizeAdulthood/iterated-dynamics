@@ -52,10 +52,10 @@ struct ParamHistory
     double invert0;
     double invert1;
     double invert2;
-    BYTE trigndx0;
-    BYTE trigndx1;
-    BYTE trigndx2;
-    BYTE trigndx3;
+    Byte trigndx0;
+    Byte trigndx1;
+    Byte trigndx2;
+    Byte trigndx3;
     Bailout bailoutest;
 };
 
@@ -221,10 +221,10 @@ void save_param_history()
     s_old_history.invert0 = g_inversion[0];
     s_old_history.invert1 = g_inversion[1];
     s_old_history.invert2 = g_inversion[2];
-    s_old_history.trigndx0 = static_cast<BYTE>(g_trig_index[0]);
-    s_old_history.trigndx1 = static_cast<BYTE>(g_trig_index[1]);
-    s_old_history.trigndx2 = static_cast<BYTE>(g_trig_index[2]);
-    s_old_history.trigndx3 = static_cast<BYTE>(g_trig_index[3]);
+    s_old_history.trigndx0 = static_cast<Byte>(g_trig_index[0]);
+    s_old_history.trigndx1 = static_cast<Byte>(g_trig_index[1]);
+    s_old_history.trigndx2 = static_cast<Byte>(g_trig_index[2]);
+    s_old_history.trigndx3 = static_cast<Byte>(g_trig_index[3]);
     s_old_history.bailoutest = g_bail_out_test;
 }
 

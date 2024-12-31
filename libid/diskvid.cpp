@@ -47,7 +47,7 @@ namespace
 struct Cache
 {
     long offset;           // pixel offset in image
-    BYTE pixel[BLOCK_LEN];  // one pixel per byte
+    Byte pixel[BLOCK_LEN];  // one pixel per byte
     unsigned int hashlink; // ptr to next cache entry with same hash
     bool dirty;            // changed since read?
     bool lru;              // recently used?
@@ -76,17 +76,17 @@ static int s_pixel_shift{};                 //
 static int s_header_length{};               //
 static int s_row_size{};                    // doubles as a disk video not ok flag
 static int s_col_size{};                    // sydots, *2 when pot16bit
-static std::vector<BYTE> s_mem_buf;         //
+static std::vector<Byte> s_mem_buf;         //
 static MemoryHandle s_dv_handle{};          //
 static long s_mem_offset{};                 //
 static long s_old_mem_offset{};             //
-static BYTE *s_mem_buf_ptr{};               //
+static Byte *s_mem_buf_ptr{};               //
 
 static void find_load_cache(long);
 static Cache *find_cache(long);
 static void write_cache_lru();
-static void mem_putc(BYTE);
-static BYTE mem_getc();
+static void mem_putc(Byte);
+static Byte mem_getc();
 static void mem_seek(long);
 
 int start_disk()
@@ -243,7 +243,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
         std::fseek(s_fp, 0L, SEEK_SET);
         for (int i = 0; i < s_header_length; i++)
         {
-            s_mem_buf[i] = (BYTE)fgetc(s_fp);
+            s_mem_buf[i] = (Byte)fgetc(s_fp);
         }
         std::fclose(s_fp);
         s_dv_handle = memory_alloc((U16) BLOCK_LEN, memorysize, MemoryLocation::DISK);
@@ -392,12 +392,12 @@ bool from_mem_disk(long offset, int size, void *dest)
     return true;
 }
 
-void targa_read_disk(unsigned int col, unsigned int row, BYTE *red, BYTE *green, BYTE *blue)
+void targa_read_disk(unsigned int col, unsigned int row, Byte *red, Byte *green, Byte *blue)
 {
     col *= 3;
-    *blue  = (BYTE)disk_read_pixel(col, row);
-    *green = (BYTE)disk_read_pixel(++col, row);
-    *red   = (BYTE)disk_read_pixel(col+1, row);
+    *blue  = (Byte)disk_read_pixel(col, row);
+    *green = (Byte)disk_read_pixel(++col, row);
+    *red   = (Byte)disk_read_pixel(col+1, row);
 }
 
 void disk_write_pixel(int col, int row, int color)
@@ -436,7 +436,7 @@ void disk_write_pixel(int col, int row, int color)
     }
     if (s_cur_cache->pixel[col_subscr] != (color & 0xff))
     {
-        s_cur_cache->pixel[col_subscr] = (BYTE) color;
+        s_cur_cache->pixel[col_subscr] = (Byte) color;
         s_cur_cache->dirty = true;
     }
 }
@@ -460,7 +460,7 @@ bool to_mem_disk(long offset, int size, void *src)
     return true;
 }
 
-void targa_write_disk(unsigned int col, unsigned int row, BYTE red, BYTE green, BYTE blue)
+void targa_write_disk(unsigned int col, unsigned int row, Byte red, Byte green, Byte blue)
 {
     disk_write_pixel(col *= 3, row, blue);
     disk_write_pixel(++col, row, green);
@@ -471,7 +471,7 @@ static void find_load_cache(long offset) // used by read/write
 {
     unsigned int tbloffset;
     unsigned int *fwd_link;
-    BYTE *pixelptr = nullptr;
+    Byte *pixelptr = nullptr;
     s_cur_offset = offset; // note this for next reference
     // check if required entry is in cache - lookup by hash
     tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1) ];
@@ -539,28 +539,28 @@ static void find_load_cache(long offset) // used by read/write
         case 1:
             for (int i = 0; i < BLOCK_LEN/2; ++i)
             {
-                BYTE const tmpchar = mem_getc();
-                *(pixelptr++) = (BYTE)(tmpchar >> 4);
-                *(pixelptr++) = (BYTE)(tmpchar & 15);
+                Byte const tmpchar = mem_getc();
+                *(pixelptr++) = (Byte)(tmpchar >> 4);
+                *(pixelptr++) = (Byte)(tmpchar & 15);
             }
             break;
         case 2:
             for (int i = 0; i < BLOCK_LEN/4; ++i)
             {
-                BYTE const tmpchar = mem_getc();
+                Byte const tmpchar = mem_getc();
                 for (int j = 6; j >= 0; j -= 2)
                 {
-                    *(pixelptr++) = (BYTE)((tmpchar >> j) & 3);
+                    *(pixelptr++) = (Byte)((tmpchar >> j) & 3);
                 }
             }
             break;
         case 3:
             for (int i = 0; i < BLOCK_LEN/8; ++i)
             {
-                BYTE const tmpchar = mem_getc();
+                Byte const tmpchar = mem_getc();
                 for (int j = 7; j >= 0; --j)
                 {
-                    *(pixelptr++) = (BYTE)((tmpchar >> j) & 1);
+                    *(pixelptr++) = (Byte)((tmpchar >> j) & 1);
                 }
             }
             break;
@@ -599,9 +599,9 @@ enum
 static void  write_cache_lru()
 {
     int i;
-    BYTE *pixelptr;
+    Byte *pixelptr;
     long offset;
-    BYTE tmpchar = 0;
+    Byte tmpchar = 0;
     Cache *ptr1;
     Cache *ptr2;
     // scan back to also write any preceding dirty blocks, skipping small gaps
@@ -637,8 +637,8 @@ write_stuff:
     case 1:
         for (int j = 0; j < BLOCK_LEN/2; ++j)
         {
-            tmpchar = (BYTE)(*(pixelptr++) << 4);
-            tmpchar = (BYTE)(tmpchar + *(pixelptr++));
+            tmpchar = (Byte)(*(pixelptr++) << 4);
+            tmpchar = (Byte)(tmpchar + *(pixelptr++));
             mem_putc(tmpchar);
         }
         break;
@@ -647,7 +647,7 @@ write_stuff:
         {
             for (int k = 6; k >= 0; k -= 2)
             {
-                tmpchar = (BYTE)((tmpchar << 2) + *(pixelptr++));
+                tmpchar = (Byte)((tmpchar << 2) + *(pixelptr++));
             }
             mem_putc(tmpchar);
         }
@@ -656,7 +656,7 @@ write_stuff:
         for (int j = 0; j < BLOCK_LEN/8; ++j)
         {
             // clang-format off
-            mem_putc((BYTE)
+            mem_putc((Byte)
                 (((((((*pixelptr << 1
                     | *(pixelptr + 1)) << 1
                     | *(pixelptr + 2)) << 1
@@ -708,7 +708,7 @@ static void mem_seek(long offset)        // mem seek
     s_mem_buf_ptr = &s_mem_buf[0] + (offset & (BLOCK_LEN - 1));
 }
 
-static BYTE  mem_getc()                     // memory get_char
+static Byte  mem_getc()                     // memory get_char
 {
     if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCK_LEN)
     {
@@ -721,7 +721,7 @@ static BYTE  mem_getc()                     // memory get_char
     return *(s_mem_buf_ptr++);
 }
 
-static void mem_putc(BYTE c)     // memory get_char
+static void mem_putc(Byte c)     // memory get_char
 {
     if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCK_LEN)
     {

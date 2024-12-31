@@ -56,7 +56,7 @@ namespace
 
 struct Link
 {
-    BYTE r, c;
+    Byte r, c;
     int           width;
     unsigned      offset;
     int           topic_num;
@@ -240,8 +240,8 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
                     display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
                     if (num_link != nullptr)
                     {
-                        link[*num_link].r         = (BYTE)row;
-                        link[*num_link].c         = (BYTE)col;
+                        link[*num_link].r         = (Byte)row;
+                        link[*num_link].c         = (Byte)col;
                         link[*num_link].topic_num = get_int(curr+1);
                         link[*num_link].topic_off = get_int(curr+1+sizeof(int));
                         link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
@@ -282,8 +282,8 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
             if (num_link != nullptr)
             {
-                link[*num_link].r         = (BYTE)row;
-                link[*num_link].c         = (BYTE)col;
+                link[*num_link].r         = (Byte)row;
+                link[*num_link].c         = (Byte)col;
                 link[*num_link].topic_num = get_int(curr+1);
                 link[*num_link].topic_off = get_int(curr+1+sizeof(int));
                 link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
@@ -621,7 +621,7 @@ static int help_topic(History *curr, History *next, int flags)
     long      where;
     int       draw_page;
     int       action;
-    BYTE ch;
+    Byte ch;
 
     where     = s_topic_offset[curr->topic_num]+sizeof(int); // to skip flags
     curr_link = curr->link;
@@ -1115,7 +1115,7 @@ static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, voi
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     int t;
-    BYTE ch;
+    Byte ch;
 
     switch (cmd)
     {

@@ -514,9 +514,9 @@ void WinText::scroll_up(int top, int bot)
     for (int row = top; row < bot; row++)
     {
         char *chars = &m_screen.chars(row, 0);
-        BYTE *attrs = &m_screen.attrs(row, 0);
+        Byte *attrs = &m_screen.attrs(row, 0);
         char *next_chars = &m_screen.chars(row+1, 0);
-        BYTE *next_attrs = &m_screen.attrs(row+1, 0);
+        Byte *next_attrs = &m_screen.attrs(row+1, 0);
         for (int col = 0; col < WINTEXT_MAX_COL; col++)
         {
             *chars++ = *next_chars++;
@@ -562,7 +562,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
             for (int row = 0; row < m_char_ychars; row++)
             {
                 m_screen.chars(row, col) = ' ';
-                m_screen.attrs(row, col) = static_cast<BYTE>(k);
+                m_screen.attrs(row, col) = static_cast<Byte>(k);
             }
         }
     }
@@ -689,7 +689,7 @@ void WinText::set_attr(int row, int col, int attr, int count)
     ymin = ymax;
     for (int i = 0; i < count; i++)
     {
-        m_screen.attrs(row, col+i) = static_cast<BYTE>(attr & 0xFF);
+        m_screen.attrs(row, col+i) = static_cast<Byte>(attr & 0xFF);
     }
     if (xmin + count >= WINTEXT_MAX_COL)
     {
@@ -755,7 +755,7 @@ int WinText::get_char_attr(int row, int col)
 void WinText::put_char_attr(int row, int col, int char_attr)
 {
     m_screen.chars(row, col) = static_cast<char>((char_attr >> 8) & 0xFF);
-    m_screen.attrs(row, col) = static_cast<BYTE>(char_attr & 0xFF);
+    m_screen.attrs(row, col) = static_cast<Byte>(char_attr & 0xFF);
 }
 
 void WinText::resume()

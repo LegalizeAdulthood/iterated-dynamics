@@ -689,7 +689,7 @@ void put_formula_info(GifFileType *gif, const FormulaInfo &info)
 
 std::vector<int> get_ranges_info(GifFileType *gif)
 {
-    std::vector<BYTE> bytes;
+    std::vector<Byte> bytes;
     for (int i = 0; i < gif->ExtensionBlockCount; ++i)
     {
         const ExtensionBlock &block{gif->ExtensionBlocks[i]};
@@ -714,7 +714,7 @@ std::vector<int> get_ranges_info(GifFileType *gif)
 
     std::vector<int> result;
     result.resize(bytes.size() / 2);
-    const BYTE *src{bytes.data()};
+    const Byte *src{bytes.data()};
     for (int &i : result)
     {
         i = extract_int16(src);
@@ -738,7 +738,7 @@ void put_ranges_info(GifFileType *gif, const std::vector<int> &info)
 
 std::vector<char> get_extended_param_info(GifFileType *gif)
 {
-    std::vector<BYTE> bytes;
+    std::vector<Byte> bytes;
     for (int i = 0; i < gif->ExtensionBlockCount; ++i)
     {
         const ExtensionBlock &block{gif->ExtensionBlocks[i]};
@@ -758,7 +758,7 @@ std::vector<char> get_extended_param_info(GifFileType *gif)
 
     std::vector<char> parameters;
     parameters.resize(bytes.size());
-    std::transform(bytes.begin(), bytes.end(), parameters.begin(), [](BYTE byte) { return static_cast<char>(byte); });
+    std::transform(bytes.begin(), bytes.end(), parameters.begin(), [](Byte byte) { return static_cast<char>(byte); });
     return parameters;
 }
 

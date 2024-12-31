@@ -593,7 +593,7 @@ void put_spaces(int how_many)
         }
 
         *g_src.curr++ = CMD_SPACE;
-        *g_src.curr++ = (BYTE)how_many;
+        *g_src.curr++ = (Byte)how_many;
     }
     else
     {

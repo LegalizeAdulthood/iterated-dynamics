@@ -4,7 +4,7 @@
 
 #include "port.h"
 
-extern int                 (*g_out_line)(BYTE *, int);
+extern int                 (*g_out_line)(Byte *, int);
 
 short decoder(short);
-void set_byte_buff(BYTE *ptr);
+void set_byte_buff(Byte *ptr);

@@ -22,9 +22,9 @@ namespace
 
 struct PaletteType
 {
-    BYTE red;
-    BYTE green;
-    BYTE blue;
+    Byte red;
+    Byte green;
+    Byte blue;
 };
 
 } // namespace
@@ -63,9 +63,9 @@ bool validate_luts(char const *fn)
         }
         std::sscanf(line, "%u %u %u", &r, &g, &b);
         //* load global dac values *
-        dac[index].red   = (BYTE)((r%256) >> 2);// maps default to 8 bits
-        dac[index].green = (BYTE)((g%256) >> 2);// DAC wants 6 bits
-        dac[index].blue  = (BYTE)((b%256) >> 2);
+        dac[index].red   = (Byte)((r%256) >> 2);// maps default to 8 bits
+        dac[index].green = (Byte)((g%256) >> 2);// DAC wants 6 bits
+        dac[index].blue  = (Byte)((b%256) >> 2);
     }
     std::fclose(f);
     while (index < 256)

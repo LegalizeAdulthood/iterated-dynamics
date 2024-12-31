@@ -149,9 +149,9 @@ int g_color_cycle_range_lo{};                                 //
 int g_color_cycle_range_hi{};                                 // cycling color range
 std::vector<int> g_iteration_ranges;                          // iter->color ranges mapping
 int g_iteration_ranges_len{};                                 // size of ranges array
-BYTE g_map_clut[256][3];                                      // map= (default colors)
+Byte g_map_clut[256][3];                                      // map= (default colors)
 bool g_map_specified{};                                       // map= specified
-BYTE *mapdacbox{};                                            // map= (default colors)
+Byte *mapdacbox{};                                            // map= (default colors)
 ColorState g_color_state{ColorState::DEFAULT};              // g_dac_box matches default (bios or map=)
 bool g_colors_preloaded{};                                    // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                      // flag for reading color from GIF
@@ -193,7 +193,7 @@ std::string g_ifs_name;              // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;         //
 std::vector<float> g_ifs_definition; // ifs parameters
 bool g_ifs_type{};                   // false=2d, true=3d
-BYTE g_text_color[31] = {
+Byte g_text_color[31] = {
     BLUE * 16 + LT_WHITE,    // C_TITLE           title background
     BLUE * 16 + LT_GREEN,    // C_TITLE_DEV       development vsn foreground
     GREEN * 16 + YELLOW,     // C_HELP_HDG        help page title line
@@ -1346,9 +1346,9 @@ static CmdArgFlags cmd_background(const Command &cmd)
             return cmd.bad_arg();
         }
     }
-    g_background_color[0] = (BYTE) cmd.int_vals[0];
-    g_background_color[1] = (BYTE) cmd.int_vals[1];
-    g_background_color[2] = (BYTE) cmd.int_vals[2];
+    g_background_color[0] = (Byte) cmd.int_vals[0];
+    g_background_color[1] = (Byte) cmd.int_vals[1];
+    g_background_color[2] = (Byte) cmd.int_vals[2];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1639,7 +1639,7 @@ static CmdArgFlags parse_colors(char const *value)
                     {
                         k -= ('_'-36);
                     }
-                    g_dac_box[i][j] = (BYTE)k;
+                    g_dac_box[i][j] = (Byte)k;
                     if (smooth)
                     {
                         int spread = smooth + 1;
@@ -1649,7 +1649,7 @@ static CmdArgFlags parse_colors(char const *value)
                         {
                             while (++cnum < spread)
                             {
-                                g_dac_box[start+cnum][j] = (BYTE)k;
+                                g_dac_box[start+cnum][j] = (Byte)k;
                             }
                         }
                         else
@@ -1657,10 +1657,10 @@ static CmdArgFlags parse_colors(char const *value)
                             while (++cnum < spread)
                             {
                                 g_dac_box[start+cnum][j] =
-                                    (BYTE)((cnum *g_dac_box[i][j]
+                                    (Byte)((cnum *g_dac_box[i][j]
                                             + (i-(start+cnum))*g_dac_box[start][j]
                                             + spread/2)
-                                           / (BYTE) spread);
+                                           / (Byte) spread);
                             }
                         }
                     }
@@ -3434,7 +3434,7 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
     char const *value = cmd.value;
     if (std::string_view(value) == "mono")
     {
-        for (BYTE &elem : g_text_color)
+        for (Byte &elem : g_text_color)
         {
             elem = BLACK * 16 + WHITE;
         }
@@ -3474,7 +3474,7 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
                 {
                     j = 15;
                 }
-                g_text_color[k] = (BYTE) (i * 16 + j);
+                g_text_color[k] = (Byte) (i * 16 + j);
                 value = std::strchr(value, '/');
                 if (value == nullptr)
                 {

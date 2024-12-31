@@ -41,7 +41,7 @@ namespace
 
 struct LinearMemory
 {
-    BYTE *memory;
+    Byte *memory;
 };
 
 struct Disk
@@ -108,9 +108,9 @@ static void which_disk_error(int I_O)
 // to start moving the contents of buffer to
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MemoryHandle::from_memory(BYTE const *buffer, U16 size, long count, long offset)
+bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long offset)
 {
-    BYTE diskbuf[DISK_WRITE_LEN];
+    Byte diskbuf[DISK_WRITE_LEN];
     long start;  // offset to first location to move to
     long tomove; // number of bytes to move
     U16 numwritten;
@@ -175,9 +175,9 @@ diskerror:
 // offset is the number of units from the beginning of buffer to start moving
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MemoryHandle::to_memory(BYTE *buffer, U16 size, long count, long offset)
+bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
 {
-    BYTE diskbuf[DISK_WRITE_LEN];
+    Byte diskbuf[DISK_WRITE_LEN];
     long start;  // first location to move
     long tomove; // number of bytes to move
     U16 numread;
@@ -247,7 +247,7 @@ diskerror:
 // Returns true if successful, false if failure
 bool MemoryHandle::set(int value, U16 size, long count, long offset)
 {
-    BYTE diskbuf[DISK_WRITE_LEN];
+    Byte diskbuf[DISK_WRITE_LEN];
     long start;  // first location to set
     long tomove; // number of bytes to set
     U16 numwritten;
@@ -509,7 +509,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
 
     case MemoryLocation::MEMORY: // MemoryAlloc
         // Availability of memory checked in check_for_mem()
-        s_handles[handle].linear.memory = (BYTE *)malloc(toallocate);
+        s_handles[handle].linear.memory = (Byte *)malloc(toallocate);
         s_handles[handle].size = toallocate;
         s_handles[handle].stored_at = MemoryLocation::MEMORY;
         s_num_total_handles++;

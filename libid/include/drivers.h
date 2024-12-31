@@ -74,8 +74,8 @@ public:
     virtual int write_palette() = 0;                                    // write g_dac_box into palette
     virtual int read_pixel(int x, int y) = 0;                           // reads a single pixel
     virtual void write_pixel(int x, int y, int color) = 0;              // writes a single pixel
-    virtual void read_span(int y, int x, int lastx, BYTE *pixels) = 0;  // reads a span of pixel
-    virtual void write_span(int y, int x, int lastx, BYTE *pixels) = 0; // writes a span of pixels
+    virtual void read_span(int y, int x, int lastx, Byte *pixels) = 0;  // reads a span of pixel
+    virtual void write_span(int y, int x, int lastx, Byte *pixels) = 0; // writes a span of pixels
     virtual void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) = 0; //
     virtual void put_truecolor(int x, int y, int r, int g, int b, int a) = 0;     //
     virtual void set_line_mode(int mode) = 0;                                     // set copy/xor line
@@ -190,11 +190,11 @@ inline void driver_write_pixel(int x, int y, int color)
 {
     g_driver->write_pixel(x, y, color);
 }
-inline void driver_read_span(int y, int x, int lastx, BYTE *pixels)
+inline void driver_read_span(int y, int x, int lastx, Byte *pixels)
 {
     g_driver->read_span(y, x, lastx, pixels);
 }
-inline void driver_write_span(int y, int x, int lastx, BYTE *pixels)
+inline void driver_write_span(int y, int x, int lastx, Byte *pixels)
 {
     g_driver->write_span(y, x, lastx, pixels);
 }

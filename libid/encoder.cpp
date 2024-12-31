@@ -51,7 +51,7 @@
 #include <string>
 
 static bool compress(int rowlimit);
-static int shift_write(BYTE const *color, int numcolors);
+static int shift_write(Byte const *color, int numcolors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
@@ -87,21 +87,21 @@ static int s_out_color_1s{};
 static int s_out_color_2s{};
 static int s_start_bits{};
 
-static BYTE s_palette_bw[] =
+static Byte s_palette_bw[] =
 {
     // B&W palette
     0, 0, 0, 63, 63, 63,
 };
 
 #ifndef XFRACT
-static BYTE s_palette_cga[] =
+static Byte s_palette_cga[] =
 {
     // 4-color (CGA) palette
     0, 0, 0, 21, 63, 63, 63, 21, 63, 63, 63, 63,
 };
 #endif
 
-static BYTE s_palette_ega[] =
+static Byte s_palette_ega[] =
 {
     // 16-color (EGA/CGA) pal
     0, 0, 0, 0, 0, 42, 0, 42, 0, 0, 42, 42,
@@ -300,8 +300,8 @@ bool encoder()
     bool interrupted;
     int width;
     int rowlimit;
-    BYTE bitsperpixel;
-    BYTE x;
+    Byte bitsperpixel;
+    Byte x;
     FractalInfo save_info;
 
     if (g_init_batch != BatchMode::NONE)                 // flush any impending keystrokes
@@ -364,7 +364,7 @@ bool encoder()
     {
         goto oops;
     }
-    x = (BYTE)(128 + ((6 - 1) << 4) + (bitsperpixel - 1));      // color resolution == 6 bits worth
+    x = (Byte)(128 + ((6 - 1) << 4) + (bitsperpixel - 1));      // color resolution == 6 bits worth
     if (std::fwrite(&x, 1, 1, s_outfile) != 1)
     {
         goto oops;
@@ -404,7 +404,7 @@ bool encoder()
         if (g_got_real_dac)
         {
             // got a DAC - must be a VGA
-            if (!shift_write((BYTE *) g_dac_box, g_colors))
+            if (!shift_write((Byte *) g_dac_box, g_colors))
             {
                 goto oops;
             }
@@ -414,7 +414,7 @@ bool encoder()
         if (g_got_real_dac || g_fake_lut)
         {
             // got a DAC - must be a VGA
-            if (!shift_write((BYTE *) g_dac_box, 256))
+            if (!shift_write((Byte *) g_dac_box, 256))
             {
                 goto oops;
             }
@@ -425,7 +425,7 @@ bool encoder()
             // uh oh - better fake it
             for (int j = 0; j < 256; j += 16)
             {
-                if (!shift_write((BYTE *)s_palette_ega, 16))
+                if (!shift_write((Byte *)s_palette_ega, 16))
                 {
                     goto oops;
                 }
@@ -435,7 +435,7 @@ bool encoder()
     if (g_colors == 2)
     {
         // write out the B&W palette
-        if (!shift_write((BYTE *)s_palette_bw, g_colors))
+        if (!shift_write((Byte *)s_palette_bw, g_colors))
         {
             goto oops;
         }
@@ -444,7 +444,7 @@ bool encoder()
     if (g_colors == 4)
     {
         // write out the CGA palette
-        if (!shift_write((BYTE *)s_palette_cga, g_colors))
+        if (!shift_write((Byte *)s_palette_cga, g_colors))
         {
             goto oops;
         }
@@ -454,7 +454,7 @@ bool encoder()
         // Either EGA or VGA
         if (g_got_real_dac)
         {
-            if (!shift_write((BYTE *) g_dac_box, g_colors))
+            if (!shift_write((Byte *) g_dac_box, g_colors))
             {
                 goto oops;
             }
@@ -462,7 +462,7 @@ bool encoder()
         else
         {
             // no DAC - must be an EGA
-            if (!shift_write((BYTE *)s_palette_ega, g_colors))
+            if (!shift_write((Byte *)s_palette_ega, g_colors))
             {
                 goto oops;
             }
@@ -496,7 +496,7 @@ bool encoder()
         goto oops;
     }
 
-    bitsperpixel = (BYTE)(s_start_bits - 1);
+    bitsperpixel = (Byte)(s_start_bits - 1);
 
     if (std::fwrite(&bitsperpixel, 1, 1, s_outfile) != 1)
     {
@@ -689,15 +689,15 @@ oops:
 
 // TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
 // shift IBM colors to GIF
-static int shift_write(BYTE const *color, int numcolors)
+static int shift_write(Byte const *color, int numcolors)
 {
     for (int i = 0; i < numcolors; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            BYTE thiscolor = color[3 * i + j];
-            thiscolor = (BYTE)(thiscolor << 2);
-            thiscolor = (BYTE)(thiscolor + (BYTE)(thiscolor >> 6));
+            Byte thiscolor = color[3 * i + j];
+            thiscolor = (Byte)(thiscolor << 2);
+            thiscolor = (Byte)(thiscolor + (Byte)(thiscolor >> 6));
             if (std::fputc(thiscolor, s_outfile) != (int) thiscolor)
             {
                 return 0;
@@ -897,10 +897,10 @@ static void setup_save_info(FractalInfo *save_info)
     }
 
     save_info->calctime = g_calc_time;
-    save_info->trigndx[0] = static_cast<BYTE>(g_trig_index[0]);
-    save_info->trigndx[1] = static_cast<BYTE>(g_trig_index[1]);
-    save_info->trigndx[2] = static_cast<BYTE>(g_trig_index[2]);
-    save_info->trigndx[3] = static_cast<BYTE>(g_trig_index[3]);
+    save_info->trigndx[0] = static_cast<Byte>(g_trig_index[0]);
+    save_info->trigndx[1] = static_cast<Byte>(g_trig_index[1]);
+    save_info->trigndx[2] = static_cast<Byte>(g_trig_index[2]);
+    save_info->trigndx[3] = static_cast<Byte>(g_trig_index[3]);
     save_info->finattract = (short) (g_finite_attractor ? 1 : 0);
     save_info->initorbit[0] = g_init_orbit.x;
     save_info->initorbit[1] = g_init_orbit.y;
@@ -1004,7 +1004,7 @@ constexpr int max_code(int n_bits)
     return (1 << n_bits) - 1;
 }
 
-BYTE g_block[4096]{};
+Byte g_block[4096]{};
 
 static long s_h_tab[HSIZE]{};
 static unsigned short s_code_tab[10240]{};

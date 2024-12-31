@@ -26,7 +26,7 @@ inline int operator+(Direction value)
 static Direction s_going_to{};
 static int s_trail_row{};
 static int s_trail_col{};
-static BYTE s_stack[4096]{}; // common temp, two put_line calls
+static Byte s_stack[4096]{}; // common temp, two put_line calls
 
 // boundary trace method
 constexpr int BK_COLOR{};

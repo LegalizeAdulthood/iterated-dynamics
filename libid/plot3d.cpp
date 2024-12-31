@@ -45,7 +45,7 @@ static int s_red_local_left{};
 static int s_red_local_right{};
 static int s_blue_local_left{};
 static int s_blue_local_right{};
-static BYTE s_t_red{};
+static Byte s_t_red{};
 
 static void plot3d_superimpose16(int x, int y, int color);
 static void plot3d_superimpose256(int x, int y, int color);
@@ -220,9 +220,9 @@ static void plot3d_superimpose16(int x, int y, int color)
 static void plot3d_superimpose256(int x, int y, int color)
 {
     int tmp;
-    BYTE t_c;
+    Byte t_c;
 
-    t_c = (BYTE)(255-color);
+    t_c = (Byte)(255-color);
 
     if (color != 0)         // Keeps index 0 still 0
     {
@@ -266,7 +266,7 @@ static void plot3d_superimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (Byte *)&tmp, (Byte *)&tmp);
                     targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
@@ -277,9 +277,9 @@ static void plot3d_superimpose256(int x, int y, int color)
 static void plot_ifs3d_superimpose256(int x, int y, int color)
 {
     int tmp;
-    BYTE t_c;
+    Byte t_c;
 
-    t_c = (BYTE)(255-color);
+    t_c = (Byte)(255-color);
 
     if (color != 0)         // Keeps index 0 still 0
     {
@@ -322,7 +322,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (Byte *)&tmp, (Byte *)&tmp);
                     targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
@@ -332,9 +332,9 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
 
 static void plot3d_alternate(int x, int y, int color)
 {
-    BYTE t_c;
+    Byte t_c;
 
-    t_c = (BYTE)(255-color);
+    t_c = (Byte)(255-color);
     // lorez high color red/blue 3D plot function
     // if which image = 1, compresses color to lower 128 colors
 
@@ -545,8 +545,8 @@ void plot_setup()
             }
             for (auto &elem : g_dac_box)
             {
-                elem[0] = (BYTE)(elem[0] * d_red_bright);
-                elem[2] = (BYTE)(elem[2] * d_blue_bright);
+                elem[0] = (Byte)(elem[0] * d_red_bright);
+                elem[2] = (Byte)(elem[2] * d_blue_bright);
             }
         }
         spin_dac(0, 1); // load it, but don't spin

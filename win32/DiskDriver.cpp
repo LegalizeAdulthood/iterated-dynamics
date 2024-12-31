@@ -40,8 +40,8 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void write_span(int y, int x, int lastx, BYTE *pixels) override;
-    void read_span(int y, int x, int lastx, BYTE *pixels) override;
+    void write_span(int y, int x, int lastx, Byte *pixels) override;
+    void read_span(int y, int x, int lastx, Byte *pixels) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
@@ -300,7 +300,7 @@ int DiskDriver::read_pixel(int x, int y)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::write_span(int y, int x, int lastx, BYTE *pixels)
+void DiskDriver::write_span(int y, int x, int lastx, Byte *pixels)
 {
     int width = lastx-x+1;
     ODS3("DiskDriver::write_span (%d,%d,%d)", y, x, lastx);
@@ -326,7 +326,7 @@ void DiskDriver::write_span(int y, int x, int lastx, BYTE *pixels)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::read_span(int y, int x, int lastx, BYTE *pixels)
+void DiskDriver::read_span(int y, int x, int lastx, Byte *pixels)
 {
     ODS3("DiskDriver::read_span (%d,%d,%d)", y, x, lastx);
     int width = lastx-x+1;

@@ -57,11 +57,11 @@ struct MinMax
 // routines in this module
 static int first_time(int, VECTOR);
 static void hsv_to_rgb(
-    BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long sat, unsigned long val);
+    Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val);
 static int line3d_mem();
 static int rgb_to_hsv(
-    BYTE red, BYTE green, BYTE blue, unsigned long *hue, unsigned long *sat, unsigned long *val);
-static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
+    Byte red, Byte green, Byte blue, unsigned long *hue, unsigned long *sat, unsigned long *val);
+static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen);
 static void set_upr_lwr();
 static int end_object(bool triout);
 static int off_screen(PointColor);
@@ -96,7 +96,7 @@ static float s_two_cos_delta_phi{};                      //
 static float s_cos_phi{}, s_sin_phi{};                   // precalculated sin/cos of longitude
 static float s_old_cos_phi1{}, s_old_sin_phi1{};         //
 static float s_old_cos_phi2{}, s_old_sin_phi2{};         //
-static std::vector<BYTE> s_fraction;                     // float version of pixels array
+static std::vector<Byte> s_fraction;                     // float version of pixels array
 static float s_min_xyz[3]{}, s_max_xyz[3]{};             // For Raytrace output
 static int s_line_length1{};                             //
 static int s_targa_header_24 = 18;                       // Size of current Targa-24 header
@@ -104,12 +104,12 @@ static std::FILE *s_file_ptr1{};                         //
 static unsigned int s_i_ambient{};                       //
 static int s_rand_factor{};                              //
 static int s_haze_mult{};                                //
-static BYTE s_t24 = 24;                                  //
-static BYTE s_t32 = 32;                                  //
-static BYTE s_upr_lwr[4]{};                              //
+static Byte s_t24 = 24;                                  //
+static Byte s_t32 = 32;                                  //
+static Byte s_upr_lwr[4]{};                              //
 static bool s_t_safe{};                          // Original Targa Image successfully copied to targa_temp
 static VECTOR s_light_direction{};               //
-static BYTE s_real_color{};                      // Actual color of cur pixel
+static Byte s_real_color{};                      // Actual color of cur pixel
 static int s_ro{}, s_co{}, s_co_max{};           // For use in Acrospin support
 static int s_local_preview_factor{};             //
 static int s_z_coord = 256;                      //
@@ -143,7 +143,7 @@ int g_randomize_3d{};
 int g_haze{};
 std::string g_light_name{"fract001"};
 bool g_targa_overlay{};
-BYTE g_background_color[3]{};
+Byte g_background_color[3]{};
 std::string g_raytrace_filename{"fract001"};
 bool g_preview{};
 bool g_show_box{};
@@ -159,7 +159,7 @@ RayTraceFormat g_raytrace_format{};  // Flag to generate Ray trace compatible fi
 bool g_brief{};                        // 1 = short ray trace files
 VECTOR g_view{};                       // position of observer for perspective
 
-int line3d(BYTE * pixels, unsigned linelen)
+int line3d(Byte * pixels, unsigned linelen)
 {
     int RND;
     float f_water = 0.0F;       // transformed WATERLINE for ray trace files
@@ -253,7 +253,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                    (int) g_dac_box[colornum][1] * 151 +
                    (int) g_dac_box[colornum][2] * 28);
             pal >>= 6;
-            pixels[col] = (BYTE) pal;
+            pixels[col] = (Byte) pal;
         }
     }
     crossnotinit = true;
@@ -349,7 +349,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
         if (cur.color > 0 && cur.color < g_water_line)
         {
-            s_real_color = (BYTE) g_water_line;
+            s_real_color = (Byte) g_water_line;
             cur.color = s_real_color;
             f_cur.color = (float) cur.color;  // "lake"
         }
@@ -570,7 +570,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 {
                     cur.color = cur.color + RND;
                 }
-                s_real_color = (BYTE)cur.color;
+                s_real_color = (Byte)cur.color;
             }
         }
 
@@ -1468,26 +1468,26 @@ int targa_color(int x, int y, int color)
     unsigned long H;
     unsigned long S;
     unsigned long V;
-    BYTE RGB[3];
+    Byte RGB[3];
 
     if (g_fill_type == FillType::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_truecolor)
     {
-        s_real_color = (BYTE)color;       // So Targa gets interpolated color
+        s_real_color = (Byte)color;       // So Targa gets interpolated color
     }
 
     switch (g_true_mode)
     {
     case TrueColorMode::DEFAULT_COLOR:
     default:
-        RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); // Move color space to
-        RGB[1] = (BYTE)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
-        RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); // from 64 colors
+        RGB[0] = (Byte)(g_dac_box[s_real_color][0] << 2); // Move color space to
+        RGB[1] = (Byte)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
+        RGB[2] = (Byte)(g_dac_box[s_real_color][2] << 2); // from 64 colors
         break;
 
     case TrueColorMode::ITERATE:
-        RGB[0] = (BYTE)((g_real_color_iter >> 16) & 0xff);  // red
-        RGB[1] = (BYTE)((g_real_color_iter >> 8) & 0xff);   // green
-        RGB[2] = (BYTE)((g_real_color_iter) & 0xff);        // blue
+        RGB[0] = (Byte)((g_real_color_iter >> 16) & 0xff);  // red
+        RGB[1] = (Byte)((g_real_color_iter >> 8) & 0xff);   // green
+        RGB[2] = (Byte)((g_real_color_iter) & 0xff);        // blue
         break;
     }
 
@@ -1533,7 +1533,7 @@ int targa_color(int x, int y, int color)
     return (int)(255 - V);
 }
 
-static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
+static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen)
 {
     if ((s_even_odd_row++ & 1) == 0) // even rows are color value
     {
@@ -1545,7 +1545,7 @@ static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
     }
     else // swap
     {
-        BYTE tmp;
+        Byte tmp;
         for (int i = 0; i < (int) linelen; i++)       // swap so pixel has color
         {
             tmp = pixels[i];
@@ -1644,7 +1644,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
             }
         }
         // Write image size
-        for (BYTE &elem : s_upr_lwr)
+        for (Byte &elem : s_upr_lwr)
         {
             std::fputc(elem, fps);
         }
@@ -1655,10 +1655,10 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
 
     if (g_truecolor) // write maxit
     {
-        std::fputc((BYTE)(g_max_iterations       & 0xff), fps);
-        std::fputc((BYTE)((g_max_iterations >> 8) & 0xff), fps);
-        std::fputc((BYTE)((g_max_iterations >> 16) & 0xff), fps);
-        std::fputc((BYTE)((g_max_iterations >> 24) & 0xff), fps);
+        std::fputc((Byte)(g_max_iterations       & 0xff), fps);
+        std::fputc((Byte)((g_max_iterations >> 8) & 0xff), fps);
+        std::fputc((Byte)((g_max_iterations >> 16) & 0xff), fps);
+        std::fputc((Byte)((g_max_iterations >> 24) & 0xff), fps);
     }
 
     // Finished with the header, now lets work on the display area
@@ -1778,13 +1778,13 @@ bool targa_validate(char const *File_Name)
 }
 
 static int rgb_to_hsv(
-    BYTE red, BYTE green, BYTE blue, unsigned long *hue, unsigned long *sat, unsigned long *val)
+    Byte red, Byte green, Byte blue, unsigned long *hue, unsigned long *sat, unsigned long *val)
 {
     unsigned long R1;
     unsigned long G1;
     unsigned long B1;
     unsigned long DENOM;
-    BYTE MIN;
+    Byte MIN;
 
     *val = red;
     MIN = green;
@@ -1874,7 +1874,7 @@ static int rgb_to_hsv(
 }
 
 static void hsv_to_rgb(
-    BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long sat, unsigned long val)
+    Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val)
 {
     unsigned long P1;
     unsigned long P2;
@@ -1896,34 +1896,34 @@ static void hsv_to_rgb(
     switch (I)
     {
     case 0:
-        *red = (BYTE) val;
-        *green = (BYTE) P3;
-        *blue = (BYTE) P1;
+        *red = (Byte) val;
+        *green = (Byte) P3;
+        *blue = (Byte) P1;
         break;
     case 1:
-        *red = (BYTE) P2;
-        *green = (BYTE) val;
-        *blue = (BYTE) P1;
+        *red = (Byte) P2;
+        *green = (Byte) val;
+        *blue = (Byte) P1;
         break;
     case 2:
-        *red = (BYTE) P1;
-        *green = (BYTE) val;
-        *blue = (BYTE) P3;
+        *red = (Byte) P1;
+        *green = (Byte) val;
+        *blue = (Byte) P3;
         break;
     case 3:
-        *red = (BYTE) P1;
-        *green = (BYTE) P2;
-        *blue = (BYTE) val;
+        *red = (Byte) P1;
+        *green = (Byte) P2;
+        *blue = (Byte) val;
         break;
     case 4:
-        *red = (BYTE) P3;
-        *green = (BYTE) P1;
-        *blue = (BYTE) val;
+        *red = (Byte) P3;
+        *green = (Byte) P1;
+        *blue = (Byte) val;
         break;
     case 5:
-        *red = (BYTE) val;
-        *green = (BYTE) P1;
-        *blue = (BYTE) P2;
+        *red = (Byte) val;
+        *green = (Byte) P1;
+        *blue = (Byte) P2;
         break;
     }
 }
@@ -2410,10 +2410,10 @@ static void line3d_cleanup()
 
 static void set_upr_lwr()
 {
-    s_upr_lwr[0] = (BYTE)(g_logical_screen_x_dots & 0xff);
-    s_upr_lwr[1] = (BYTE)(g_logical_screen_x_dots >> 8);
-    s_upr_lwr[2] = (BYTE)(g_logical_screen_y_dots & 0xff);
-    s_upr_lwr[3] = (BYTE)(g_logical_screen_y_dots >> 8);
+    s_upr_lwr[0] = (Byte)(g_logical_screen_x_dots & 0xff);
+    s_upr_lwr[1] = (Byte)(g_logical_screen_x_dots >> 8);
+    s_upr_lwr[2] = (Byte)(g_logical_screen_y_dots & 0xff);
+    s_upr_lwr[3] = (Byte)(g_logical_screen_y_dots >> 8);
     s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 

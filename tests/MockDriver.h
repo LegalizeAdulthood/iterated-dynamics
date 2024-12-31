@@ -25,8 +25,8 @@ public:
     MOCK_METHOD(int, write_palette, (), (override));
     MOCK_METHOD(int, read_pixel, (int, int), (override));
     MOCK_METHOD(void, write_pixel, (int, int, int), (override));
-    MOCK_METHOD(void, read_span, (int, int, int, BYTE *), (override));
-    MOCK_METHOD(void, write_span, (int, int, int, BYTE *), (override));
+    MOCK_METHOD(void, read_span, (int, int, int, Byte *), (override));
+    MOCK_METHOD(void, write_span, (int, int, int, Byte *), (override));
     MOCK_METHOD(void, get_truecolor, (int, int, int *, int *, int *, int *), (override));
     MOCK_METHOD(void, put_truecolor, (int, int, int, int, int, int), (override));
     MOCK_METHOD(void, set_line_mode, (int), (override));

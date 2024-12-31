@@ -36,7 +36,7 @@ void bf_hex_dump(bf_t r)
 
 bf_t str_to_bf(bf_t r, char const *s)
 {
-    BYTE onesbyte;
+    Byte onesbyte;
     bool signflag = false;
     char const *l;
     char const *d;
@@ -75,7 +75,7 @@ bf_t str_to_bf(bf_t r, char const *s)
     {
         while (*l >= '0' && *l <= '9') // while a digit
         {
-            onesbyte = (BYTE)(*(l--) - '0');
+            onesbyte = (Byte)(*(l--) - '0');
             int_to_bf(g_bf_tmp1, onesbyte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             div_a_bf_int(r, 10);
@@ -86,7 +86,7 @@ bf_t str_to_bf(bf_t r, char const *s)
             bool keeplooping = *l >= '0' && *l <= '9' && l >= s;
             while (keeplooping) // while a digit
             {
-                onesbyte = (BYTE)(*(l--) - '0');
+                onesbyte = (Byte)(*(l--) - '0');
                 int_to_bf(g_bf_tmp1, onesbyte);
                 unsafe_add_a_bf(r, g_bf_tmp1);
                 keeplooping = *l >= '0' && *l <= '9' && l >= s;
@@ -103,7 +103,7 @@ bf_t str_to_bf(bf_t r, char const *s)
         bool keeplooping = *l >= '0' && *l <= '9' && l >= s;
         while (keeplooping) // while a digit
         {
-            onesbyte = (BYTE)(*(l--) - '0');
+            onesbyte = (Byte)(*(l--) - '0');
             int_to_bf(g_bf_tmp1, onesbyte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             keeplooping = *l >= '0' && *l <= '9' && l >= s;
@@ -237,7 +237,7 @@ bn_t bf_to_bn(bn_t n, bf_t f)
 {
     int fexp;
     int movebytes;
-    BYTE hibyte;
+    Byte hibyte;
 
     fexp = (S16)big_access16(f+g_bf_length);
     if (fexp >= g_int_length)
@@ -273,7 +273,7 @@ bf_t bn_to_bf(bf_t f, bn_t n)
 {
     std::memcpy(f+g_bf_length-g_bn_length-1, n, g_bn_length);
     std::memset(f, 0, g_bf_length - g_bn_length - 1);
-    *(f+g_bf_length-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
+    *(f+g_bf_length-1) = (Byte)(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
     big_set16(f+g_bf_length, (S16)(g_int_length - 1)); // exp
     norm_bf(f);
     return f;
@@ -1362,7 +1362,7 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
 // normalize big float
 bf_t norm_bf(bf_t r)
 {
-    BYTE hi_byte;
+    Byte hi_byte;
     S16 *rexp;
 
     rexp  = (S16 *)(r+g_bf_length);
@@ -1372,7 +1372,7 @@ bf_t norm_bf(bf_t r)
     if (hi_byte != 0x00 && hi_byte != 0xFF)
     {
         std::memmove(r, r+1, g_bf_length-1);
-        r[g_bf_length-1] = (BYTE)(hi_byte & 0x80 ? 0xFF : 0x00);
+        r[g_bf_length-1] = (Byte)(hi_byte & 0x80 ? 0xFF : 0x00);
         big_setS16(rexp, big_accessS16(rexp)+(S16)1);   // exp
     }
 
@@ -1410,7 +1410,7 @@ bf_t norm_bf(bf_t r)
 void norm_sign_bf(bf_t r, bool positive)
 {
     norm_bf(r);
-    r[g_bf_length-1] = (BYTE)(positive ? 0x00 : 0xFF);
+    r[g_bf_length-1] = (Byte)(positive ? 0x00 : 0xFF);
 }
 /******************************************************/
 // adjust n1, n2 for before addition or subtraction
@@ -2247,7 +2247,7 @@ n <><------------- dec --------------><> <->
 /**********************************************************************/
 // unsafe_bftobf10() - converts a bigfloat into a bigfloat10
 //   n - pointer to a bigfloat
-//   r - result array of BYTE big enough to hold the bf10_t number
+//   r - result array of Byte big enough to hold the bf10_t number
 // dec - number of decimals, not including the one extra for rounding
 //  SIDE-EFFECTS: n is changed to |n|.  Make copy of n if necessary.
 
@@ -2262,7 +2262,7 @@ bf10_t unsafe_bf_to_bf10(bf10_t r, int dec, bf_t n)
     if (is_bf_zero(n))
     {
         // in scientific notation, the leading digit can't be zero
-        r[1] = (BYTE)0; // unless the number is zero
+        r[1] = (Byte)0; // unless the number is zero
         return r;
     }
 
@@ -2380,18 +2380,18 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
     for (int d = dec; d > 0; d--)
     {
         value = r[d] * n + overflow;
-        r[d] = (BYTE)(value % 10);
+        r[d] = (Byte)(value % 10);
         overflow = value / 10;
     }
     while (overflow)
     {
         p++;
         std::memmove(r+2, r+1, dec-1);
-        r[1] = (BYTE)(overflow % 10);
+        r[1] = (Byte)(overflow % 10);
         overflow = overflow / 10;
     }
     big_set16(power10, (U16)p); // save power of ten
-    r[0] = (BYTE)signflag; // restore sign flag
+    r[0] = (Byte)signflag; // restore sign flag
     return r;
 }
 
@@ -2422,7 +2422,7 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
     for (int src = 1; src <= dec; dest++, src++)
     {
         value = 10*remainder + r[src];
-        r[dest] = (BYTE)(value / n);
+        r[dest] = (Byte)(value / n);
         remainder = value % n;
         if (dest == 1 && r[dest] == 0)
         {
@@ -2433,7 +2433,7 @@ bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
     for (; dest <= dec; dest++)
     {
         value = 10*remainder;
-        r[dest] = (BYTE)(value / n);
+        r[dest] = (Byte)(value / n);
         remainder = value % n;
         if (dest == 1 && r[dest] == 0)
         {

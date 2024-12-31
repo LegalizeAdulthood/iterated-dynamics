@@ -17,9 +17,9 @@ struct Plot
     void create_window(HWND parent);
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y);
-    void write_span(int y, int x, int lastx, const BYTE *pixels);
+    void write_span(int y, int x, int lastx, const Byte *pixels);
     void flush();
-    void read_span(int y, int x, int lastx, BYTE *pixels);
+    void read_span(int y, int x, int lastx, Byte *pixels);
     void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
     int resize();
@@ -64,8 +64,8 @@ private:
     RECT m_dirty_region{};
     BITMAPINFO m_bmi{};                     // contains first clut entry too
     RGBQUAD m_bmi_colors[255]{};             // color look up table
-    std::vector<BYTE> m_pixels;
-    std::vector<BYTE> m_saved_pixels;
+    std::vector<Byte> m_pixels;
+    std::vector<Byte> m_saved_pixels;
     size_t m_pixels_len{};
     size_t m_row_len{};
     int m_width{};

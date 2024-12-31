@@ -137,8 +137,8 @@ public:
     int write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
-    void read_span(int y, int x, int lastx, BYTE *pixels) override;
-    void write_span(int y, int x, int lastx, BYTE *pixels) override;
+    void read_span(int y, int x, int lastx, Byte *pixels) override;
+    void write_span(int y, int x, int lastx, Byte *pixels) override;
     void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) override;
     void put_truecolor(int x, int y, int r, int g, int b, int a) override;
     void set_line_mode(int mode) override;
@@ -254,7 +254,7 @@ private:
     Window m_root_window{None};       //
     int xlastcolor{-1};               //
     int xlastfcn{GXcopy};             //
-    std::vector<BYTE> m_pixels;       //
+    std::vector<Byte> m_pixels;       //
     XColor m_colors[256]{};           //
     std::string x_font_name{FONT};    //
     XFontStruct *m_font_info{};       //
@@ -2065,7 +2065,7 @@ void X11Driver::write_pixel(int x, int y, int color)
  *
  *----------------------------------------------------------------------
  */
-void X11Driver::read_span(int y, int x, int lastx, BYTE *pixels)
+void X11Driver::read_span(int y, int x, int lastx, Byte *pixels)
 {
     int width = lastx-x+1;
     for (int i = 0; i < width; i++)
@@ -2089,10 +2089,10 @@ void X11Driver::read_span(int y, int x, int lastx, BYTE *pixels)
  *
  *----------------------------------------------------------------------
  */
-void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
+void X11Driver::write_span(int y, int x, int lastx, Byte *pixels)
 {
     int width;
-    const BYTE *pixline;
+    const Byte *pixline;
 
 #if 1
     if (x == lastx)

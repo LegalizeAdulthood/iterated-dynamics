@@ -736,19 +736,19 @@ void wintext_clear(WinText *me)
     InvalidateRect(me->hWndCopy, nullptr, FALSE);
 }
 
-BYTE *wintext_screen_get(WinText *me)
+Byte *wintext_screen_get(WinText *me)
 {
-    size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
-    BYTE *copy = (BYTE *) malloc(count*2);
+    size_t count = sizeof(Byte)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
+    Byte *copy = (Byte *) malloc(count*2);
     _ASSERTE(copy);
     std::memcpy(copy, me->chars, count);
     std::memcpy(copy + count, me->attrs, count);
     return copy;
 }
 
-void wintext_screen_set(WinText *me, const BYTE *copy)
+void wintext_screen_set(WinText *me, const Byte *copy)
 {
-    size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
+    size_t count = sizeof(Byte)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
     std::memcpy(me->chars, copy, count);
     std::memcpy(me->attrs, copy + count, count);
     InvalidateRect(me->hWndCopy, nullptr, FALSE);

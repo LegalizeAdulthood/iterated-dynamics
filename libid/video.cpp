@@ -39,8 +39,8 @@
 
 static void (*s_write_pixel)(int x, int y, int color){};
 static int (*s_read_pixel)(int x, int y){};
-static void (*s_write_span)(int y, int x, int lastx, BYTE const *pixels){};
-static void (*s_read_span)(int y, int x, int lastx, BYTE *pixels){};
+static void (*s_write_span)(int y, int x, int lastx, Byte const *pixels){};
+static void (*s_read_span)(int y, int x, int lastx, Byte *pixels){};
 
 // Global variables (yuck!)
 int g_row_count{};
@@ -49,13 +49,13 @@ int g_vesa_y_res{};
 int g_video_start_x{};
 int g_video_start_y{};
 
-// read_span(int row, int startcol, int stopcol, BYTE *pixels)
+// read_span(int row, int startcol, int stopcol, Byte *pixels)
 //
 // This routine is a 'span' analog of 'getcolor()', and gets a horizontal
 // span of pixels from the screen and stores it in pixels[] at one byte per
 // pixel
 //
-void read_span(int row, int startcol, int stopcol, BYTE *pixels)
+void read_span(int row, int startcol, int stopcol, Byte *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
     {
@@ -65,13 +65,13 @@ void read_span(int row, int startcol, int stopcol, BYTE *pixels)
     (*s_read_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
-// write_span(int row, int startcol, int stopcol, BYTE *pixels)
+// write_span(int row, int startcol, int stopcol, Byte *pixels)
 //
 // This routine is a 'span' analog of 'putcolor()', and puts a horizontal
 // span of pixels to the screen from pixels[] at one byte per pixel
 // Called by the GIF decoder
 //
-void write_span(int row, int startcol, int stopcol, BYTE const *pixels)
+void write_span(int row, int startcol, int stopcol, Byte const *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
     {
@@ -81,7 +81,7 @@ void write_span(int row, int startcol, int stopcol, BYTE const *pixels)
     (*s_write_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
-static void normal_write_span(int y, int x, int lastx, BYTE const *pixels)
+static void normal_write_span(int y, int x, int lastx, Byte const *pixels)
 {
     int width = lastx - x + 1;
     assert(s_write_pixel);
@@ -91,7 +91,7 @@ static void normal_write_span(int y, int x, int lastx, BYTE const *pixels)
     }
 }
 
-static void normal_read_span(int y, int x, int lastx, BYTE *pixels)
+static void normal_read_span(int y, int x, int lastx, Byte *pixels)
 {
     int width = lastx - x + 1;
     assert(s_read_pixel);
@@ -167,7 +167,7 @@ void put_color_a(int xdot, int ydot, int color)
 // entire line of pixels to the screen (0 <= xdot < xdots) at a clip
 // Called by the GIF decoder
 //
-int out_line(BYTE *pixels, int linelen)
+int out_line(Byte *pixels, int linelen)
 {
 #ifdef WIN32
     assert(_CrtCheckMemory());

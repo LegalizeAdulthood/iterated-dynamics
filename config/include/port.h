@@ -10,7 +10,7 @@
 
 #include "port_config.h"
 
-using BYTE = unsigned char;
+using Byte = unsigned char;
 
 #if defined(_WIN32)
 #include <crtdbg.h>

@@ -21,14 +21,14 @@ struct Screen
     {
         return m_chars[row * WINTEXT_MAX_COL + col];
     }
-    BYTE &attrs(int row, int col)
+    Byte &attrs(int row, int col)
     {
         return m_attrs[row * WINTEXT_MAX_COL + col];
     }
 
     static constexpr size_t size{static_cast<size_t>(WINTEXT_MAX_ROW * WINTEXT_MAX_COL)};
     std::array<char, size> m_chars;
-    std::array<BYTE, size> m_attrs;
+    std::array<Byte, size> m_attrs;
 };
 
 class WinText

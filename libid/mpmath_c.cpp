@@ -35,7 +35,7 @@ static unsigned long s_lf{};
 bool g_mp_overflow{};
 MP g_mp_one{};
 MPC g_mpc_one{{0x3fff, 0X80000000L}, {0, 0L}};
-std::vector<BYTE> g_log_map_table;
+std::vector<Byte> g_log_map_table;
 long g_log_map_table_max_size{};
 bool g_log_map_calculate{};
 
@@ -468,7 +468,7 @@ void setup_log_table()
         g_log_map_calculate = true;   // turn it on
         for (unsigned long prev = 0U; prev <= (unsigned long)g_log_map_table_max_size; prev++)
         {
-            g_log_map_table[prev] = (BYTE)log_table_calc((long)prev);
+            g_log_map_table[prev] = (Byte)log_table_calc((long)prev);
         }
         g_log_map_calculate = false;   // turn it off, again
         return;
@@ -502,7 +502,7 @@ void setup_log_table()
             }
             while (prev <= limit)
             {
-                g_log_map_table[prev++] = (BYTE)n;
+                g_log_map_table[prev++] = (Byte)n;
             }
         }
     }
@@ -534,7 +534,7 @@ void setup_log_table()
             }
             while (prev <= limit)
             {
-                g_log_map_table[prev++] = (BYTE)n;
+                g_log_map_table[prev++] = (Byte)n;
             }
         }
     }
@@ -545,7 +545,7 @@ void setup_log_table()
         {
             if (g_log_map_table[sptop] > g_log_map_table[sptop-1])
             {
-                g_log_map_table[sptop] = (BYTE)(g_log_map_table[sptop-1]+1);
+                g_log_map_table[sptop] = (Byte)(g_log_map_table[sptop-1]+1);
             }
         }
     }

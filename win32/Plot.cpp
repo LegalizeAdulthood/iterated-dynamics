@@ -20,7 +20,7 @@
 static Plot *s_plot{};
 static const char *const s_window_class{"IdPlot"};
 
-static const BYTE font_8x8[8][1024/8] =
+static const Byte font_8x8[8][1024/8] =
 {
     {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -219,7 +219,7 @@ void Plot::init_pixels()
     m_saved_pixels.clear();
     m_width = g_screen_x_dots;
     m_height = g_screen_y_dots;
-    m_row_len = m_width * sizeof(BYTE);
+    m_row_len = m_width * sizeof(Byte);
     m_row_len = ((m_row_len + 3)/4)*4;
     m_pixels_len = m_row_len * m_height;
     _ASSERTE(m_pixels_len > 0);
@@ -418,7 +418,7 @@ void Plot::write_pixel(int x, int y, int color)
     {
         return;
     }
-    m_pixels[(m_height - y - 1)*m_row_len + x] = (BYTE)(color & 0xFF);
+    m_pixels[(m_height - y - 1)*m_row_len + x] = (Byte)(color & 0xFF);
     set_dirty_region(x, y, x+1, y+1);
 }
 
@@ -432,7 +432,7 @@ int Plot::read_pixel(int x, int y)
     return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
 }
 
-void Plot::write_span(int y, int x, int lastx, const BYTE *pixels)
+void Plot::write_span(int y, int x, int lastx, const Byte *pixels)
 {
     int width = lastx-x+1;
 
@@ -454,7 +454,7 @@ void Plot::flush()
     }
 }
 
-void Plot::read_span(int y, int x, int lastx, BYTE *pixels)
+void Plot::read_span(int y, int x, int lastx, Byte *pixels)
 {
     flush();
     int width = lastx - x + 1;
@@ -557,7 +557,7 @@ void Plot::display_string(int x, int y, int fg, int bg, char const *text)
         {
             int x1 = x;
             int col = 8;
-            BYTE pixel = font_8x8[row][static_cast<unsigned char>(*text)];
+            Byte pixel = font_8x8[row][static_cast<unsigned char>(*text)];
             while (col-- > 0)
             {
                 int color = (pixel & (1 << col)) ? fg : bg;

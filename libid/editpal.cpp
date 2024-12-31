@@ -66,9 +66,9 @@ constexpr int MAX_WIDTH{1024}; // palette editor cannot be wider than this
 // basic data types
 struct PalEntry
 {
-    BYTE red;
-    BYTE green;
-    BYTE blue;
+    Byte red;
+    Byte green;
+    Byte blue;
 };
 
 //
@@ -348,11 +348,11 @@ private:
 };
 
 bool g_using_jiim{};
-std::vector<BYTE> g_line_buff;
+std::vector<Byte> g_line_buff;
 
 static const char *s_undo_file{"id.$$2"};  // file where undo list is stored
-static BYTE s_fg_color{};
-static BYTE s_bg_color{};
+static Byte s_fg_color{};
+static Byte s_bg_color{};
 static bool s_reserve_colors{};
 static bool s_inverse{};
 static float s_gamma_val{1.0f};
@@ -364,9 +364,9 @@ static int clip_get_color(int x, int y);
 // Interface to graphics stuff
 static void set_pal(int pal, int r, int g, int b)
 {
-    g_dac_box[pal][0] = (BYTE)r;
-    g_dac_box[pal][1] = (BYTE)g;
-    g_dac_box[pal][2] = (BYTE)b;
+    g_dac_box[pal][0] = (Byte)r;
+    g_dac_box[pal][1] = (Byte)g;
+    g_dac_box[pal][2] = (Byte)b;
     spin_dac(0, 1);
 }
 
@@ -410,7 +410,7 @@ static void rotate_pal(PalEntry *pal, int dir, int lo, int hi)
     }
 }
 
-static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
+static void clip_put_line(int row, int start, int stop, Byte const *pixels)
 {
     if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
@@ -436,7 +436,7 @@ static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
     write_span(row, start, stop, pixels);
 }
 
-static void clip_get_line(int row, int start, int stop, BYTE *pixels)
+static void clip_get_line(int row, int start, int stop, Byte *pixels)
 {
     if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
@@ -498,12 +498,12 @@ static void ver_line(int x, int y, int depth, int color)
 
 void get_row(int x, int y, int width, char *buff)
 {
-    clip_get_line(y, x, x+width-1, (BYTE *)buff);
+    clip_get_line(y, x, x+width-1, (Byte *)buff);
 }
 
 void put_row(int x, int y, int width, char const *buff)
 {
-    clip_put_line(y, x, x+width-1, (BYTE *)buff);
+    clip_put_line(y, x, x+width-1, (Byte *)buff);
 }
 
 static void ver_get_row(int x, int y, int depth, char *buff)
@@ -518,7 +518,7 @@ static void ver_put_row(int x, int y, int depth, char const *buff)
 {
     while (depth-- > 0)
     {
-        clip_put_color(x, y++, (BYTE)(*buff++));
+        clip_put_color(x, y++, (Byte)(*buff++));
     }
 }
 
@@ -563,20 +563,20 @@ static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, in
     {
         if (s_gamma_val == 1)
         {
-            pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
+            pal[curr].red   = (Byte)((p1->red   == p2->red) ? p1->red   :
                                      (int) p1->red   + (int)(rm * curr));
-            pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
+            pal[curr].green = (Byte)((p1->green == p2->green) ? p1->green :
                                      (int) p1->green + (int)(gm * curr));
-            pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
+            pal[curr].blue  = (Byte)((p1->blue  == p2->blue) ? p1->blue  :
                                      (int) p1->blue  + (int)(bm * curr));
         }
         else
         {
-            pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
+            pal[curr].red   = (Byte)((p1->red   == p2->red) ? p1->red   :
                                      (int)(p1->red   + std::pow(curr/(double)(num-1), static_cast<double>(s_gamma_val))*num*rm));
-            pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
+            pal[curr].green = (Byte)((p1->green == p2->green) ? p1->green :
                                      (int)(p1->green + std::pow(curr/(double)(num-1), static_cast<double>(s_gamma_val))*num*gm));
-            pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
+            pal[curr].blue  = (Byte)((p1->blue  == p2->blue) ? p1->blue  :
                                      (int)(p1->blue  + std::pow(curr/(double)(num-1), static_cast<double>(s_gamma_val))*num*bm));
         }
     }
@@ -589,7 +589,7 @@ static void rot_col_r_g(PalEntry pal[], int num)
     {
         int dummy = pal[curr].red;
         pal[curr].red = pal[curr].green;
-        pal[curr].green = (BYTE)dummy;
+        pal[curr].green = (Byte)dummy;
     }
 }
 
@@ -599,7 +599,7 @@ static void rot_col_g_b(PalEntry pal[], int num)
     {
         int const dummy = pal[curr].green;
         pal[curr].green = pal[curr].blue;
-        pal[curr].blue = (BYTE)dummy;
+        pal[curr].blue = (Byte)dummy;
     }
 }
 
@@ -609,7 +609,7 @@ static void rot_col_b_r(PalEntry pal[], int num)
     {
         int const dummy = pal[curr].red;
         pal[curr].red = pal[curr].blue;
-        pal[curr].blue = (BYTE)dummy;
+        pal[curr].blue = (Byte)dummy;
     }
 }
 
@@ -618,8 +618,8 @@ static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        BYTE val = (BYTE)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
-        curr->blue = (BYTE)val;
+        Byte val = (Byte)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
+        curr->blue = (Byte)val;
         curr->green = curr->blue;
         curr->red = curr->green;
     }
@@ -630,19 +630,19 @@ static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        curr->red   = (BYTE)(63 - curr->red);
-        curr->green = (BYTE)(63 - curr->green);
-        curr->blue  = (BYTE)(63 - curr->blue);
+        curr->red   = (Byte)(63 - curr->red);
+        curr->green = (Byte)(63 - curr->green);
+        curr->blue  = (Byte)(63 - curr->blue);
     }
 }
 
 // draw and horizontal/vertical dotted lines
 static void hor_dot_line(int x, int y, int width)
 {
-    BYTE *ptr = &g_line_buff[0];
+    Byte *ptr = &g_line_buff[0];
     for (int ctr = 0; ctr < width; ctr++, ptr++)
     {
-        *ptr = (BYTE)((ctr&2) ? s_bg_color : s_fg_color);
+        *ptr = (Byte)((ctr&2) ? s_bg_color : s_fg_color);
     }
 
     put_row(x, y, width, (char *) &g_line_buff[0]);
@@ -1396,9 +1396,9 @@ PalEntry RGBEditor::get_rgb() const
 {
     PalEntry pal;
 
-    pal.red = (BYTE) m_color[0].get_val();
-    pal.green = (BYTE) m_color[1].get_val();
-    pal.blue = (BYTE) m_color[2].get_val();
+    pal.red = (Byte) m_color[0].get_val();
+    pal.green = (Byte) m_color[1].get_val();
+    pal.blue = (Byte) m_color[2].get_val();
 
     return pal;
 }
@@ -2544,8 +2544,8 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             break;
         }
 
-        s_fg_color = (BYTE) m_curr[0];
-        s_bg_color = (BYTE) m_curr[1];
+        s_fg_color = (Byte) m_curr[0];
+        s_bg_color = (Byte) m_curr[1];
 
         if (!m_hidden)
         {
@@ -2905,8 +2905,8 @@ void edit_palette()
 
     s_reserve_colors = true;
     s_inverse = false;
-    s_fg_color = (BYTE)(255%g_colors);
-    s_bg_color = (BYTE)(s_fg_color-1);
+    s_fg_color = (Byte)(255%g_colors);
+    s_bg_color = (Byte)(s_fg_color-1);
 
     s_cursor = CrossHairCursor();
     PalTable pt;

@@ -27,23 +27,23 @@
 #include <ctime>
 
 static void pause_rotate();
-static void set_palette(BYTE start[3], BYTE finish[3]);
-static void set_palette2(BYTE start[3], BYTE finish[3]);
-static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
+static void set_palette(Byte start[3], Byte finish[3]);
+static void set_palette2(Byte start[3], Byte finish[3]);
+static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3]);
 
 static bool s_paused{};         // rotate-is-paused flag
-static BYTE s_red[3]{63, 0, 0}; // for shifted-Fkeys
-static BYTE s_green[3]{0, 63, 0};
-static BYTE s_blue[3]{0, 0, 63};
-static BYTE s_black[3]{0, 0, 0};
-static BYTE s_white[3]{63, 63, 63};
-static BYTE s_yellow[3]{63, 63, 0};
-static BYTE s_brown[3]{31, 31, 0};
+static Byte s_red[3]{63, 0, 0}; // for shifted-Fkeys
+static Byte s_green[3]{0, 63, 0};
+static Byte s_blue[3]{0, 0, 63};
+static Byte s_black[3]{0, 0, 0};
+static Byte s_white[3]{63, 63, 63};
+static Byte s_yellow[3]{63, 63, 0};
+static Byte s_brown[3]{31, 31, 0};
 
 std::string g_map_name;
 bool g_map_set{};
-BYTE g_dac_box[256][3]{};
-BYTE g_old_dac_box[256][3]{};
+Byte g_dac_box[256][3]{};
+Byte g_old_dac_box[256][3]{};
 bool g_dac_learn{};
 bool g_got_real_dac{}; // true if load_dac has a dacbox
 
@@ -149,9 +149,9 @@ void rotate(int direction)      // rotate-the-palette routine
                             togreen   = rand15() >> 9;
                             toblue    = rand15() >> 9;
                         }
-                        g_dac_box[jstep][0] = (BYTE)(fromred   + (((tored    - fromred)*incr)/fstep));
-                        g_dac_box[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
-                        g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue)*incr)/fstep));
+                        g_dac_box[jstep][0] = (Byte)(fromred   + (((tored    - fromred)*incr)/fstep));
+                        g_dac_box[jstep][1] = (Byte)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
+                        g_dac_box[jstep][2] = (Byte)(fromblue  + (((toblue  - fromblue)*incr)/fstep));
                     }
                 }
                 if (step >= rotate_size)
@@ -287,7 +287,7 @@ void rotate(int direction)      // rotate-the-palette routine
             }
             for (int i = 1; i < 256; i++)
             {
-                g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
+                g_dac_box[i][changecolor] = (Byte)(g_dac_box[i][changecolor] + changedirection);
                 if (g_dac_box[i][changecolor] == 64)
                 {
                     g_dac_box[i][changecolor] = 63;
@@ -505,9 +505,9 @@ static void pause_rotate()               // pause-the-rotate routine
     {
         // else set border, wait for a key
         int olddaccount = g_dac_count;  // saved dac-count value goes here
-        BYTE olddac0 = g_dac_box[0][0];
-        BYTE olddac1 = g_dac_box[0][1];
-        BYTE olddac2 = g_dac_box[0][2];
+        Byte olddac0 = g_dac_box[0][0];
+        Byte olddac1 = g_dac_box[0][1];
+        Byte olddac2 = g_dac_box[0][2];
         g_dac_count = 256;
         g_dac_box[0][0] = 48;
         g_dac_box[0][1] = 48;
@@ -532,7 +532,7 @@ static void pause_rotate()               // pause-the-rotate routine
     }
 }
 
-static void set_palette(BYTE start[3], BYTE finish[3])
+static void set_palette(Byte start[3], Byte finish[3])
 {
     g_dac_box[0][2] = 0;
     g_dac_box[0][1] = g_dac_box[0][2];
@@ -541,12 +541,12 @@ static void set_palette(BYTE start[3], BYTE finish[3])
     {
         for (int j = 0; j < 3; j++)
         {
-            g_dac_box[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
+            g_dac_box[i][j] = (Byte)((i*start[j] + (256-i)*finish[j])/255);
         }
     }
 }
 
-static void set_palette2(BYTE start[3], BYTE finish[3])
+static void set_palette2(Byte start[3], Byte finish[3])
 {
     g_dac_box[0][2] = 0;
     g_dac_box[0][1] = g_dac_box[0][2];
@@ -555,13 +555,13 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
     {
         for (int j = 0; j < 3; j++)
         {
-            g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
-            g_dac_box[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
+            g_dac_box[i][j]     = (Byte)((i*finish[j] + (128-i)*start[j])/128);
+            g_dac_box[i+127][j] = (Byte)((i*start[j]  + (128-i)*finish[j])/128);
         }
     }
 }
 
-static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
+static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 {
     g_dac_box[0][2] = 0;
     g_dac_box[0][1] = g_dac_box[0][2];
@@ -570,9 +570,9 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
     {
         for (int j = 0; j < 3; j++)
         {
-            g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j])/85);
-            g_dac_box[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
-            g_dac_box[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
+            g_dac_box[i][j]     = (Byte)((i*middle[j] + (86-i)*start[j])/85);
+            g_dac_box[i+85][j]  = (Byte)((i*finish[j] + (86-i)*middle[j])/85);
+            g_dac_box[i+170][j] = (Byte)((i*start[j]  + (86-i)*finish[j])/85);
         }
     }
 }

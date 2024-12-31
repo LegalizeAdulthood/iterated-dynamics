@@ -42,9 +42,9 @@
 #include <cstring>
 #include <ctime>
 
-static int call_line3d(BYTE *pixels, int linelen);
+static int call_line3d(Byte *pixels, int linelen);
 static void cmp_line_cleanup();
-static int cmp_line(BYTE *pixels, int linelen);
+static int cmp_line(Byte *pixels, int linelen);
 
 static long s_save_base{}; // base clock ticks
 static long s_save_ticks{};  // save after this many ticks
@@ -679,14 +679,14 @@ resumeloop:                             // return here on failed overlays
     }
 }
 
-static int call_line3d(BYTE *pixels, int linelen)
+static int call_line3d(Byte *pixels, int linelen)
 {
     // this routine exists because line3d might be in an overlay
     return line3d(pixels, linelen);
 }
 
 // displays differences between current image file and new image
-static int cmp_line(BYTE *pixels, int linelen)
+static int cmp_line(Byte *pixels, int linelen)
 {
     int row;
     int oldcolor;

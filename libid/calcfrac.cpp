@@ -98,8 +98,8 @@ static double s_dem_delta{};          //
 static double s_dem_width{};          // distance estimator variables
 static double s_dem_too_big{};        //
 static bool s_dem_mandel{};           //
-static std::vector<BYTE> s_save_dots; //
-static BYTE *s_fill_buff{};           //
+static std::vector<Byte> s_save_dots; //
+static Byte *s_fill_buff{};           //
 static int s_save_dots_len{};         //
 static int s_show_dot_color{};        //
 static int s_show_dot_width{};        //
@@ -250,12 +250,12 @@ static double fmod_test()
 
 // The sym_fill_line() routine was pulled out of the boundary tracing
 // code for re-use with show dot. It's purpose is to fill a line with a
-// solid color. This assumes that BYTE *str is already filled
+// solid color. This assumes that Byte *str is already filled
 // with the color. The routine does write the line using symmetry
 // in all cases, however the symmetry logic assumes that the line
 // is one color; it is not general enough to handle a row of
 // pixels of different colors.
-void sym_fill_line(int row, int left, int right, BYTE *str)
+void sym_fill_line(int row, int left, int right, Byte *str)
 {
     int length;
     length = right-left+1;
@@ -322,7 +322,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 // The sym_put_line() routine is the symmetry-aware version of put_line().
 // It only works efficiently in the no symmetry or X_AXIS symmetry case,
 // otherwise it just writes the pixels one-by-one.
-static void sym_put_line(int row, int left, int right, BYTE *str)
+static void sym_put_line(int row, int left, int right, Byte *str)
 {
     int length = right-left+1;
     write_span(row, left, right, str);
@@ -657,7 +657,7 @@ int calc_fract()
                 }
                 while (l <= numval)
                 {
-                    g_log_map_table[l++] = (BYTE)(k + flip);
+                    g_log_map_table[l++] = (Byte)(k + flip);
                     if (++m >= altern)
                     {
                         flip ^= 1;            // Alternate colors

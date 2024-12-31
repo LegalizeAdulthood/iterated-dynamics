@@ -79,7 +79,7 @@ struct ExtBlock2
 {
     bool got_data;
     int length;
-    std::vector<BYTE> resume_data;
+    std::vector<Byte> resume_data;
 };
 
 struct ExtBlock4
@@ -977,7 +977,7 @@ static int find_fractal_info(const std::string &gif_file, //
     ExtBlock6 *blk_6_info,                                //
     ExtBlock7 *blk_7_info)                                //
 {
-    BYTE gifstart[18];
+    Byte gifstart[18];
     char temp1[81];
     int block_len;
     int data_len;
@@ -1039,7 +1039,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 {
                     break;
                 }
-                g_dac_box[i][j] = (BYTE)(k >> 2);
+                g_dac_box[i][j] = (Byte)(k >> 2);
             }
             if (k < 0)
             {

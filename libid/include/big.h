@@ -113,11 +113,11 @@ LDBL scale256(LDBL f, int n);
 // functions defined in bignum.c
 #ifdef ACCESS_BY_BYTE
 // prototypes
-U32 big_access32(BYTE *addr);
-U16 big_access16(BYTE *addr);
+U32 big_access32(Byte *addr);
+U16 big_access16(Byte *addr);
 S16 big_accessS16(S16 *addr);
-U32 big_set32(BYTE *addr, U32 val);
-U16 big_set16(BYTE *addr, U16 val);
+U32 big_set32(Byte *addr, U32 val);
+U16 big_set16(Byte *addr, U16 val);
 S16 big_setS16(S16 *addr, S16 val);
 #else
 // equivalent defines

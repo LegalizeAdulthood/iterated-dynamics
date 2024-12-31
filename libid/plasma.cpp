@@ -150,9 +150,9 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
 
     struct Sub
     {
-        BYTE t; // top of stack
+        Byte t; // top of stack
         int v[16]; // subdivided value
-        BYTE r[16];  // recursion level
+        Byte r[16];  // recursion level
     };
 
     static Sub subx;
@@ -180,7 +180,7 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 return true;
             }
         }
-        while (suby.r[suby.t-1] < (BYTE)recur)
+        while (suby.r[suby.t-1] < (Byte)recur)
         {
             //     1.  Create new entry at top of the stack
             //     2.  Copy old top value to new top value.
@@ -197,7 +197,7 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
             suby.r[suby.t] = suby.r[suby.t-1];
             suby.v[suby.t-1]   = (ny1 + ny) >> 1;
             y    = suby.v[suby.t-1];
-            suby.r[suby.t-1]   = (BYTE)(std::max(suby.r[suby.t], suby.r[suby.t-2])+1);
+            suby.r[suby.t-1]   = (Byte)(std::max(suby.r[suby.t], suby.r[suby.t-2])+1);
         }
         subx.t = 2;
         subx.v[0] = x2;
@@ -212,7 +212,7 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
 
         while (subx.t >= 1)
         {
-            while (subx.r[subx.t-1] < (BYTE)recur)
+            while (subx.r[subx.t-1] < (Byte)recur)
             {
                 subx.t++; // move the top ofthe stack up 1
                 subx.v[subx.t] = subx.v[subx.t-1];
@@ -221,7 +221,7 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 subx.r[subx.t] = subx.r[subx.t-1];
                 subx.v[subx.t-1]   = (nx1 + nx) >> 1;
                 x    = subx.v[subx.t-1];
-                subx.r[subx.t-1]   = (BYTE)(std::max(subx.r[subx.t], subx.r[subx.t-2])+1);
+                subx.r[subx.t-1]   = (Byte)(std::max(subx.r[subx.t], subx.r[subx.t-2])+1);
             }
 
             i = s_get_pix(nx, y);
@@ -254,15 +254,15 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 g_plot(x, y, (U16)((v + 2) >> 2));
             }
 
-            if (subx.r[subx.t-1] == (BYTE)recur)
+            if (subx.r[subx.t-1] == (Byte)recur)
             {
-                subx.t = (BYTE)(subx.t - 2);
+                subx.t = (Byte)(subx.t - 2);
             }
         }
 
-        if (suby.r[suby.t-1] == (BYTE)recur)
+        if (suby.r[suby.t-1] == (Byte)recur)
         {
-            suby.t = (BYTE)(suby.t - 2);
+            suby.t = (Byte)(suby.t - 2);
         }
     }
     return false;
@@ -542,9 +542,9 @@ done:
 
 static void set_plasma_palette()
 {
-    static BYTE const Red[3]   = { 63, 0, 0 };
-    static BYTE const Green[3] = { 0, 63, 0 };
-    static BYTE const Blue[3]  = { 0,  0, 63 };
+    static Byte const Red[3]   = { 63, 0, 0 };
+    static Byte const Green[3] = { 0, 63, 0 };
+    static Byte const Blue[3]  = { 0,  0, 63 };
 
     if (g_map_specified || g_colors_preloaded)
     {
@@ -556,16 +556,16 @@ static void set_plasma_palette()
     g_dac_box[0][2] = 0;
     for (int i = 1; i <= 85; i++)
     {
-        g_dac_box[i][0] = (BYTE)((i*Green[0] + (86-i)*Blue[0])/85);
-        g_dac_box[i][1] = (BYTE)((i*Green[1] + (86-i)*Blue[1])/85);
-        g_dac_box[i][2] = (BYTE)((i*Green[2] + (86-i)*Blue[2])/85);
+        g_dac_box[i][0] = (Byte)((i*Green[0] + (86-i)*Blue[0])/85);
+        g_dac_box[i][1] = (Byte)((i*Green[1] + (86-i)*Blue[1])/85);
+        g_dac_box[i][2] = (Byte)((i*Green[2] + (86-i)*Blue[2])/85);
 
-        g_dac_box[i+85][0] = (BYTE)((i*Red[0] + (86-i)*Green[0])/85);
-        g_dac_box[i+85][1] = (BYTE)((i*Red[1] + (86-i)*Green[1])/85);
-        g_dac_box[i+85][2] = (BYTE)((i*Red[2] + (86-i)*Green[2])/85);
-        g_dac_box[i+170][0] = (BYTE)((i*Blue[0] + (86-i)*Red[0])/85);
-        g_dac_box[i+170][1] = (BYTE)((i*Blue[1] + (86-i)*Red[1])/85);
-        g_dac_box[i+170][2] = (BYTE)((i*Blue[2] + (86-i)*Red[2])/85);
+        g_dac_box[i+85][0] = (Byte)((i*Red[0] + (86-i)*Green[0])/85);
+        g_dac_box[i+85][1] = (Byte)((i*Red[1] + (86-i)*Green[1])/85);
+        g_dac_box[i+85][2] = (Byte)((i*Red[2] + (86-i)*Green[2])/85);
+        g_dac_box[i+170][0] = (Byte)((i*Blue[0] + (86-i)*Red[0])/85);
+        g_dac_box[i+170][1] = (Byte)((i*Blue[1] + (86-i)*Red[1])/85);
+        g_dac_box[i+170][2] = (Byte)((i*Blue[2] + (86-i)*Red[2])/85);
     }
     spin_dac(0, 1);
 }

@@ -704,7 +704,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 // move a row on the screen
 static void move_row(int fromrow, int torow, int col)
 {
-    std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
+    std::vector<Byte> temp(g_logical_screen_x_dots, 0);
     if (fromrow >= 0 && fromrow < g_logical_screen_y_dots)
     {
         int startcol = 0;
@@ -849,7 +849,7 @@ static void restart_window(int index)
     const int x_start = std::max(0, g_work_list[index].xxstart);
     const int y_stop = std::min(g_logical_screen_y_dots - 1, g_work_list[index].yystop);
     const int x_stop = std::min(g_logical_screen_x_dots - 1, g_work_list[index].xxstop);
-    std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
+    std::vector<Byte> temp(g_logical_screen_x_dots, 0);
     for (int y = y_start; y <= y_stop; ++y)
     {
         write_span(y, x_start, x_stop, temp.data());

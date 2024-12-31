@@ -6,7 +6,7 @@
 
 #include <string>
 
-extern BYTE                  g_block[];
+extern Byte                  g_block[];
 
 int save_image(std::string &filename);
 bool encoder();

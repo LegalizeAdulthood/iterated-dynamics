@@ -934,14 +934,14 @@ void HelpCompiler::write_help(std::FILE *file)
         putw(cp.flags, file);
 
         int t = (int) cp.id.length();
-        putc((BYTE)t, file);
+        putc((Byte)t, file);
         std::fwrite(cp.id.c_str(), 1, t, file);
 
         t = (int) cp.name.length();
-        putc((BYTE)t, file);
+        putc((Byte)t, file);
         std::fwrite(cp.name.c_str(), 1, t, file);
 
-        putc((BYTE)cp.num_topic, file);
+        putc((Byte)cp.num_topic, file);
         std::fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
     }
 
@@ -963,7 +963,7 @@ void HelpCompiler::write_help(std::FILE *file)
 
         // write the help title
 
-        putc((BYTE)tp.title_len, file);
+        putc((Byte)tp.title_len, file);
         std::fwrite(tp.title.c_str(), 1, tp.title_len, file);
 
         // insert hot-link info & write the help text

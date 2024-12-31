@@ -59,7 +59,7 @@ private:
     char m_right[CURSOR_SIZE];
 };
 
-extern std::vector<BYTE>     g_line_buff;
+extern std::vector<Byte>     g_line_buff;
 extern bool                  g_using_jiim;
 
 void edit_palette();

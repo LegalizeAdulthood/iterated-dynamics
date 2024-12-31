@@ -61,10 +61,10 @@ struct StereoData
     int y1;
     int y2;
     int ycen;
-    BYTE *savedac;
+    Byte *savedac;
 };
 
-using DACBox = BYTE (*)[256][3];
+using DACBox = Byte (*)[256][3];
 
 static StereoData *s_data{};
 
@@ -172,7 +172,7 @@ static void toggle_bars(bool *bars, int barwidth, int const *colour)
     *bars = !*bars;
 }
 
-int out_line_stereo(BYTE *pixels, int linelen)
+int out_line_stereo(Byte *pixels, int linelen)
 {
     if ((Y) >= g_logical_screen_y_dots)
     {
@@ -251,7 +251,7 @@ bool auto_stereo_convert()
 {
     // TODO: replace this stack variable with static data s_data
     StereoData v;
-    BYTE savedacbox[256*3];
+    Byte savedacbox[256*3];
     bool ret = false;
     bool bars;
     int ct;
@@ -340,7 +340,7 @@ bool auto_stereo_convert()
     }
     else
     {
-        std::vector<BYTE> buf;
+        std::vector<Byte> buf;
         buf.resize(g_logical_screen_x_dots);
         while (Y < g_logical_screen_y_dots)
         {

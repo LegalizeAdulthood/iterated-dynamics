@@ -235,7 +235,7 @@ static int gravity;
 static Window Xroot;
 static int xlastcolor = -1;
 static int xlastfcn = GXcopy;
-static BYTE *pixbuf = nullptr;
+static Byte *pixbuf = nullptr;
 
 static int step = 0;
 static int cyclic[][3] = {
@@ -719,7 +719,7 @@ resize_window()
         {
             free(pixbuf);
         }
-        pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
+        pixbuf = (Byte *) malloc(Xwinwidth *sizeof(Byte));
         if (Ximage != nullptr)
             XDestroyImage(Ximage);
         Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,

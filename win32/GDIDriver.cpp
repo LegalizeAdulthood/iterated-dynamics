@@ -41,8 +41,8 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void write_span(int y, int x, int lastx, BYTE *pixels) override;
-    void read_span(int y, int x, int lastx, BYTE *pixels) override;
+    void write_span(int y, int x, int lastx, Byte *pixels) override;
+    void read_span(int y, int x, int lastx, Byte *pixels) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
@@ -246,12 +246,12 @@ int GDIDriver::read_pixel(int x, int y)
     return plot.read_pixel(x,y);
 }
 
-void GDIDriver::write_span(int y, int x, int lastx, BYTE *pixels)
+void GDIDriver::write_span(int y, int x, int lastx, Byte *pixels)
 {
     plot.write_span(y, x, lastx, pixels);
 }
 
-void GDIDriver::read_span(int y, int x, int lastx, BYTE *pixels)
+void GDIDriver::read_span(int y, int x, int lastx, Byte *pixels)
 {
     plot.read_span(y, x, lastx, pixels);
 }

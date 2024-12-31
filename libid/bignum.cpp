@@ -148,41 +148,41 @@ double wide number can then be ignored.
 * the bignumber format could be reversed.
 **************************************************************************/
 #ifdef ACCESS_BY_BYTE
-U32 big_access32(BYTE *addr)
+U32 big_access32(Byte *addr)
 {
     return addr[0] | ((U32)addr[1] << 8) | ((U32)addr[2] << 16) | ((U32)addr[3] << 24);
 }
 
-U16 big_access16(BYTE *addr)
+U16 big_access16(Byte *addr)
 {
     return (U16)addr[0] | ((U16)addr[1] << 8);
 }
 
 S16 big_accessS16(S16 *addr)
 {
-    return (S16)((BYTE *)addr)[0] | ((S16)((BYTE *)addr)[1] << 8);
+    return (S16)((Byte *)addr)[0] | ((S16)((Byte *)addr)[1] << 8);
 }
 
-U32 big_set32(BYTE *addr, U32 val)
+U32 big_set32(Byte *addr, U32 val)
 {
-    addr[0] = (BYTE)(val&0xff);
-    addr[1] = (BYTE)((val >> 8)&0xff);
-    addr[2] = (BYTE)((val >> 16)&0xff);
-    addr[3] = (BYTE)((val >> 24)&0xff);
+    addr[0] = (Byte)(val&0xff);
+    addr[1] = (Byte)((val >> 8)&0xff);
+    addr[2] = (Byte)((val >> 16)&0xff);
+    addr[3] = (Byte)((val >> 24)&0xff);
     return val;
 }
 
-U16 big_set16(BYTE *addr, U16 val)
+U16 big_set16(Byte *addr, U16 val)
 {
-    addr[0] = (BYTE)(val&0xff);
-    addr[1] = (BYTE)((val >> 8)&0xff);
+    addr[0] = (Byte)(val&0xff);
+    addr[1] = (Byte)((val >> 8)&0xff);
     return val;
 }
 
 S16 big_setS16(S16 *addr, S16 val)
 {
-    ((BYTE *)addr)[0] = (BYTE)(val&0xff);
-    ((BYTE *)addr)[1] = (BYTE)((val >> 8)&0xff);
+    ((Byte *)addr)[0] = (Byte)(val&0xff);
+    ((Byte *)addr)[1] = (Byte)((val >> 8)&0xff);
     return val;
 }
 
@@ -267,7 +267,7 @@ bn_t str_to_bn(bn_t r, char *s)
         int l = (int) std::strlen(s) - 1;      // start with the last digit
         while (s[l] >= '0' && s[l] <= '9') // while a digit
         {
-            *onesbyte = (BYTE)(s[l--] - '0');
+            *onesbyte = (Byte)(s[l--] - '0');
             div_a_bn_int(r, 10);
         }
 
@@ -278,7 +278,7 @@ bn_t str_to_bn(bn_t r, char *s)
             {
                 // only 1, 2, or 4 are allowed
             case 1:
-                *onesbyte = (BYTE)longval;
+                *onesbyte = (Byte)longval;
                 break;
             case 2:
                 big_set16(onesbyte, (U16)longval);
@@ -296,7 +296,7 @@ bn_t str_to_bn(bn_t r, char *s)
         {
             // only 1, 2, or 4 are allowed
         case 1:
-            *onesbyte = (BYTE)longval;
+            *onesbyte = (Byte)longval;
             break;
         case 2:
             big_set16(onesbyte, (U16)longval);
@@ -390,7 +390,7 @@ char *unsafe_bn_to_str(char *s, int dec, bn_t r)
         {
             break;
         }
-        s[l++] = (BYTE)(*onesbyte + '0');
+        s[l++] = (Byte)(*onesbyte + '0');
     }
     s[l] = '\0'; // don't forget nul char
 
@@ -410,7 +410,7 @@ bn_t int_to_bn(bn_t r, long longval)
     {
         // only 1, 2, or 4 are allowed
     case 1:
-        *onesbyte = (BYTE)longval;
+        *onesbyte = (Byte)longval;
         break;
     case 2:
         big_set16(onesbyte, (U16)longval);
@@ -468,7 +468,7 @@ bn_t float_to_bn(bn_t r, LDBL f)
     {
         // only 1, 2, or 4 are allowed
     case 1:
-        *onesbyte = (BYTE)f;
+        *onesbyte = (Byte)f;
         break;
     case 2:
         big_set16(onesbyte, (U16)f);
@@ -482,8 +482,8 @@ bn_t float_to_bn(bn_t r, LDBL f)
     for (int i = g_bn_length-g_int_length-1; i >= 0 && f != 0.0; i--)
     {
         f *= 256;
-        r[i] = (BYTE)f;  // keep use the integer part
-        f -= (BYTE)f; // now throw away the integer part
+        r[i] = (Byte)f;  // keep use the integer part
+        f -= (Byte)f; // now throw away the integer part
     }
 
     if (signflag)

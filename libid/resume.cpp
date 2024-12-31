@@ -9,7 +9,7 @@
 
 static int s_resume_offset{}; // offset in resume info gets
 
-std::vector<BYTE> g_resume_data; // resume info
+std::vector<Byte> g_resume_data; // resume info
 bool g_resuming{};               // true if resuming after interrupt
 int g_resume_len{};              // length of resume info
 
@@ -25,7 +25,7 @@ int put_resume_len(int len, ...)
     va_start(arg_marker, len);
     while (len)
     {
-        BYTE const *source_ptr = va_arg(arg_marker, BYTE *);
+        Byte const *source_ptr = va_arg(arg_marker, Byte *);
         std::copy(&source_ptr[0], &source_ptr[len], &g_resume_data[g_resume_len]);
         g_resume_len += len;
         len = va_arg(arg_marker, int);
@@ -55,7 +55,7 @@ int get_resume_len(int len, ...)
     va_start(arg_marker, len);
     while (len)
     {
-        BYTE *dest_ptr = va_arg(arg_marker, BYTE *);
+        Byte *dest_ptr = va_arg(arg_marker, Byte *);
         std::copy(&g_resume_data[s_resume_offset], &g_resume_data[s_resume_offset + len], &dest_ptr[0]);
         s_resume_offset += len;
         len = va_arg(arg_marker, int);

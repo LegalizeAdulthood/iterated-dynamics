@@ -41,7 +41,7 @@ enum
 
 static void set_cellular_palette();
 
-static std::vector<BYTE> s_cell_array[2];
+static std::vector<Byte> s_cell_array[2];
 static S16 s_s_r{};
 static S16 s_k_1{};
 static S16 s_rule_digits{};
@@ -281,7 +281,7 @@ int cellular()
         {
             for (g_col = 0; g_col <= g_i_x_stop; g_col++)
             {
-                s_cell_array[filled][g_col] = (BYTE)(std::rand()%(int)k);
+                s_cell_array[filled][g_col] = (Byte)(std::rand()%(int)k);
             }
         } // end of if random
 
@@ -296,7 +296,7 @@ int cellular()
             for (g_col = (g_i_x_stop-16)/2; g_col < (g_i_x_stop+16)/2; g_col++)
             {
                 // insert initial
-                s_cell_array[filled][g_col] = (BYTE)init_string[i++];    // string
+                s_cell_array[filled][g_col] = (Byte)init_string[i++];    // string
             }
         } // end of if not random
         s_last_screen_flag = lnnmbr != 0;
@@ -317,8 +317,8 @@ int cellular()
                 // Use a random border
                 for (int i = 0; i <= s_s_r; i++)
                 {
-                    s_cell_array[notfilled][i] = (BYTE)(std::rand()%(int)k);
-                    s_cell_array[notfilled][g_i_x_stop-i] = (BYTE)(std::rand()%(int)k);
+                    s_cell_array[notfilled][i] = (Byte)(std::rand()%(int)k);
+                    s_cell_array[notfilled][g_i_x_stop-i] = (Byte)(std::rand()%(int)k);
                 }
             }
             else
@@ -343,7 +343,7 @@ int cellular()
                 abort_cellular(BAD_T, t);
                 return -1;
             }
-            s_cell_array[notfilled][s_s_r] = (BYTE)cell_table[t];
+            s_cell_array[notfilled][s_s_r] = (Byte)cell_table[t];
 
             // use a rolling sum in t
             for (g_col = s_s_r+1; g_col < g_i_x_stop-s_s_r; g_col++)
@@ -356,7 +356,7 @@ int cellular()
                     abort_cellular(BAD_T, t);
                     return -1;
                 }
-                s_cell_array[notfilled][g_col] = (BYTE)cell_table[t];
+                s_cell_array[notfilled][g_col] = (Byte)cell_table[t];
             }
 
             filled = notfilled;
@@ -382,8 +382,8 @@ contloop:
             // Use a random border
             for (int i = 0; i <= s_s_r; i++)
             {
-                s_cell_array[notfilled][i] = (BYTE)(std::rand()%(int)k);
-                s_cell_array[notfilled][g_i_x_stop-i] = (BYTE)(std::rand()%(int)k);
+                s_cell_array[notfilled][i] = (Byte)(std::rand()%(int)k);
+                s_cell_array[notfilled][g_i_x_stop-i] = (Byte)(std::rand()%(int)k);
             }
         }
         else
@@ -408,7 +408,7 @@ contloop:
             abort_cellular(BAD_T, t);
             return -1;
         }
-        s_cell_array[notfilled][s_s_r] = (BYTE)cell_table[t];
+        s_cell_array[notfilled][s_s_r] = (Byte)cell_table[t];
 
         // use a rolling sum in t
         for (g_col = s_s_r+1; g_col < g_i_x_stop-s_s_r; g_col++)
@@ -421,7 +421,7 @@ contloop:
                 abort_cellular(BAD_T, t);
                 return -1;
             }
-            s_cell_array[notfilled][g_col] = (BYTE)cell_table[t];
+            s_cell_array[notfilled][g_col] = (Byte)cell_table[t];
         }
 
         filled = notfilled;
@@ -457,11 +457,11 @@ bool cellular_setup()
 
 static void set_cellular_palette()
 {
-    static BYTE const Red[3]    = { 42, 0, 0 };
-    static BYTE const Green[3]  = { 10, 35, 10 };
-    static BYTE const Blue[3]   = { 13, 12, 29 };
-    static BYTE const Yellow[3] = { 60, 58, 18 };
-    static BYTE const Brown[3]  = { 42, 21, 0 };
+    static Byte const Red[3]    = { 42, 0, 0 };
+    static Byte const Green[3]  = { 10, 35, 10 };
+    static Byte const Blue[3]   = { 13, 12, 29 };
+    static Byte const Yellow[3] = { 60, 58, 18 };
+    static Byte const Brown[3]  = { 42, 21, 0 };
 
     if (g_map_specified && g_color_state != ColorState::DEFAULT)
     {

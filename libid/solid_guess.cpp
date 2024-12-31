@@ -27,7 +27,7 @@ static bool s_right_guess{};                               //
 static int s_max_block{};                                  //
 static int s_half_block{};                                 //
 static unsigned int s_t_prefix[2][MAX_Y_BLK][MAX_X_BLK]{}; // common temp
-static BYTE s_stack[4096]{};                               // common temp, two put_line calls
+static Byte s_stack[4096]{};                               // common temp, two put_line calls
 
 // super solid guessing
 
@@ -582,11 +582,11 @@ static bool guess_row(bool firstpass, int y, int blocksize)
                 color = s_stack[i];
                 j = g_i_x_stop - (i - g_xx_start);
                 s_stack[i] = s_stack[j];
-                s_stack[j] = (BYTE)color;
+                s_stack[j] = (Byte)color;
                 j += OLD_MAX_PIXELS;
                 color = s_stack[i + OLD_MAX_PIXELS];
                 s_stack[i + OLD_MAX_PIXELS] = s_stack[j];
-                s_stack[j] = (BYTE)color;
+                s_stack[j] = (Byte)color;
             }
         }
         for (int i = 0; i < s_half_block; ++i)
@@ -610,7 +610,7 @@ static bool guess_row(bool firstpass, int y, int blocksize)
     return false;
 }
 
-inline void fill_dstack(int x1, int x2, BYTE value)
+inline void fill_dstack(int x1, int x2, Byte value)
 {
     const int begin = std::min(x1, x2);
     const int end = std::max(x1, x2);
@@ -630,11 +630,11 @@ static void plot_block(int buildrow, int x, int y, int color)
     {
         if (buildrow == 0)
         {
-            fill_dstack(x, xlim, (BYTE) color);
+            fill_dstack(x, xlim, (Byte) color);
         }
         else
         {
-            fill_dstack(x + OLD_MAX_PIXELS, xlim + OLD_MAX_PIXELS, (BYTE) color);
+            fill_dstack(x + OLD_MAX_PIXELS, xlim + OLD_MAX_PIXELS, (Byte) color);
         }
         if (x >= g_xx_start)   // when x reduced for alignment, paint those dots too
         {
