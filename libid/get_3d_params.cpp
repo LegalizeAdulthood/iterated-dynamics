@@ -29,7 +29,7 @@ static  bool get_light_params();
 static  bool check_map_file();
 static  bool get_funny_glasses_params();
 
-static std::string g_funny_glasses_map_name;
+static std::string s_funny_glasses_map_name;
 
 std::string const g_glasses1_map{"glasses1.map"};
 
@@ -470,7 +470,7 @@ static bool check_map_file()
     }
     else
     {
-        merge_path_names(buff, g_funny_glasses_map_name.c_str(), CmdFile::AT_CMD_LINE);
+        merge_path_names(buff, s_funny_glasses_map_name.c_str(), CmdFile::AT_CMD_LINE);
     }
 
     while (true)
@@ -529,19 +529,19 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == 1)
     {
-        g_funny_glasses_map_name = g_glasses1_map;
+        s_funny_glasses_map_name = g_glasses1_map;
     }
     else if (g_glasses_type == 2)
     {
         if (g_fill_type == FillType::SURFACE_GRID)
         {
-            g_funny_glasses_map_name = "grid.map";
+            s_funny_glasses_map_name = "grid.map";
         }
         else
         {
             std::string glasses2_map{g_glasses1_map};
             glasses2_map.replace(glasses2_map.find('1'), 1, "2");
-            g_funny_glasses_map_name = glasses2_map;
+            s_funny_glasses_map_name = glasses2_map;
         }
     }
 
@@ -556,7 +556,7 @@ static bool get_funny_glasses_params()
         .int_number("Blue brightness factor (%)", g_blue_bright);
     if (g_glasses_type == 1 || g_glasses_type == 2)
     {
-        builder.string("Map file name", g_funny_glasses_map_name.c_str());
+        builder.string("Map file name", s_funny_glasses_map_name.c_str());
     }
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_GLASSES};
@@ -578,7 +578,7 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == 1 || g_glasses_type == 2)
     {
-        g_funny_glasses_map_name = builder.read_string();
+        s_funny_glasses_map_name = builder.read_string();
     }
     return false;
 }

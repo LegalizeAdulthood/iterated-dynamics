@@ -228,7 +228,7 @@ BYTE g_text_color[31] = {
 };
 static_assert(std::size(g_text_color) == 31);
 
-static int init_rseed{};        //
+static int s_init_rseed{};      //
 static bool s_init_corners{};   // corners set via corners= or center-mag=?
 static bool s_init_params{};    // params set via params=?
 static bool s_init_functions{}; // trig functions set via function=?
@@ -413,7 +413,7 @@ CmdArgFlags load_commands(std::FILE *infile)
 
 static void init_vars_run()              // once per run init
 {
-    init_rseed = (int)std::time(nullptr);
+    s_init_rseed = (int)std::time(nullptr);
     init_comments();
     char const *p = getenv("TMP");
     if (p == nullptr)
@@ -469,8 +469,8 @@ static void init_vars_restart() // <ins> key init
     g_ifs_name.clear();                                //
     reset_ifs_defn();                                  //
     g_random_seed_flag = false;                        // not a fixed srand() seed
-    g_random_seed = init_rseed;                        //
-    g_read_filename = DOT_SLASH;                        // initially current directory
+    g_random_seed = s_init_rseed;                      //
+    g_read_filename = DOT_SLASH;                       // initially current directory
     g_show_file = 1;                                   //
     // next should perhaps be fractal re-init, not just <ins> ?
     g_init_cycle_limit = 55;                          // spin-DAC default speed limit

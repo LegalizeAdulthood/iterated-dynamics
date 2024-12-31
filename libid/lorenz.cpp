@@ -496,8 +496,8 @@ lrwalk:
     return true;
 }
 
-static double &cos_b{s_dx};
-static double &sin_sum_a_b_c{s_dy};
+static double &s_cos_b{s_dx};
+static double &s_sin_sum_a_b_c{s_dy};
 
 bool orbit3d_float_setup()
 {
@@ -607,8 +607,8 @@ bool orbit3d_float_setup()
         s_d =  g_params[3];
         if (g_fractal_type == FractalType::THREEPLY)
         {
-            cos_b = std::cos(s_b);
-            sin_sum_a_b_c = std::sin(s_a + s_b + s_c);
+            s_cos_b = std::cos(s_b);
+            s_sin_sum_a_b_c = std::sin(s_a + s_b + s_c);
         }
     }
     else if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
@@ -1270,7 +1270,7 @@ int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
 int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*cos_b+s_c-(*x)*sin_sum_a_b_c));
+    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*s_cos_b+s_c-(*x)*s_sin_sum_a_b_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;
