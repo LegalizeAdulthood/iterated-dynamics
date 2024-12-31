@@ -1,3 +1,6 @@
+<!--
+SPDX-License-Identifier: GPL-3.0-only
+-->
 [![CMake workflow](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/cmake.yml/badge.svg)](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/cmake.yml)
 
 # Iterated Dynamics
