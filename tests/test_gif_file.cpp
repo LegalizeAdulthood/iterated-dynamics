@@ -32,7 +32,7 @@ public:
         m_name(ID_TEST_GIF_EXT1_FILE)
     {
     }
-    TestOpenGIF(const char *name) :
+    explicit TestOpenGIF(const char *name) :
         m_name(name)
     {
     }
@@ -76,7 +76,7 @@ int TestOpenGIF::extension_total(int begin, int end) const
 class TestSlurpGIF : public TestOpenGIF
 {
 public:
-    TestSlurpGIF(const char *name);
+    explicit TestSlurpGIF(const char *name);
     ~TestSlurpGIF() override = default;
 
 protected:
@@ -170,7 +170,7 @@ template <typename T, size_t N>
 class array_printer
 {
 public:
-    array_printer(const T (&value)[N]) :
+    explicit array_printer(const T (&value)[N]) :
         m_value(value)
     {
     }
@@ -423,7 +423,7 @@ std::ostream &operator<<(std::ostream &str, const OrbitsInfo &value)
 class GIFOutputFile
 {
 public:
-    GIFOutputFile(const char *path) :
+    explicit GIFOutputFile(const char *path) :
         m_gif(EGifOpenFileName(path, false, &m_gif_error))
     {
         if (m_gif_error != E_GIF_SUCCEEDED)

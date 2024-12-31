@@ -134,7 +134,7 @@ private:
 class MoveBoxNotification : public NullMouseNotification
 {
 public:
-    MoveBoxNotification(MoveBox &box) :
+    explicit MoveBoxNotification(MoveBox &box) :
         m_box(box)
     {
     }

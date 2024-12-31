@@ -869,7 +869,7 @@ TEST_F(TestParameterCommand, autoKeyName)
 class ParamSaver
 {
 public:
-    ParamSaver(double params[MAX_PARAMS]);
+    explicit ParamSaver(double params[MAX_PARAMS]);
     ~ParamSaver();
 
 private:

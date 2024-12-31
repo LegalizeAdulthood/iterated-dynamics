@@ -102,7 +102,7 @@ namespace
 
 struct MainMenu
 {
-    MainMenu(bool full_menu);
+    explicit MainMenu(bool full_menu);
 
     int prompt();
 
