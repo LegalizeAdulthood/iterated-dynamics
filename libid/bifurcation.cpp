@@ -31,7 +31,7 @@ static bool bif_periodic(long time);
 
 enum
 {
-    DEFAULTFILTER = 1000     /* "Beauty of Fractals" recommends using 5000
+    DEFAULT_FILTER = 1000     /* "Beauty of Fractals" recommends using 5000
                                (p.25), but that seems unnecessary. Can
                                override this value with a nonzero param1 */
 };
@@ -131,7 +131,7 @@ int bifurcation()
         }
     }
 
-    s_filter_cycles = (g_param_z1.x <= 0) ? DEFAULTFILTER : (long)g_param_z1.x;
+    s_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long)g_param_z1.x;
     s_half_time_check = false;
     if (g_periodicity_check && (unsigned long)g_max_iterations < s_filter_cycles)
     {
