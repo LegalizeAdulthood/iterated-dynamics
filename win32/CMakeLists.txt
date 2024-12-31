@@ -13,13 +13,13 @@ set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 add_library(os STATIC
     d_disk.cpp
     d_gdi.cpp
-    d_win32.h
-    d_win32.cpp
     Frame.h
     Frame.cpp
     os_win32.cpp
     plot.h
     plot.cpp
+    Win32BaseDriver.h
+    Win32BaseDriver.cpp
     win_text.h
     win_text.cpp
     create_minidump.h
