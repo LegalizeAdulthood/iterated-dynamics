@@ -14,7 +14,7 @@
 #include "parser.h"
 #include "pixel_grid.h"
 
-LDBL g_b_const{};
+LDouble g_b_const{};
 
 int divide_brot5_bn_per_pixel()
 {

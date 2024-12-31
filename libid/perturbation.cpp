@@ -24,7 +24,7 @@ bool perturbation()
     double x_mag_factor{};
     double rotation{};
     double skew{};
-    LDBL magnification{};
+    LDouble magnification{};
     if (g_bf_math != BFMathType::NONE)
     {
         center_bf.x = alloc_stack(g_bf_length + 2);
@@ -34,7 +34,7 @@ bool perturbation()
     }
     else
     {
-        LDBL magnification_ld;
+        LDouble magnification_ld;
         cvt_center_mag(center.x, center.y, magnification_ld, x_mag_factor, rotation, skew);
         center.y = -center.y;
     }

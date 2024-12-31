@@ -9,6 +9,6 @@ inline bool is_pow2(int n)
     return n == (n & -n);
 }
 
-LDBL  get_number(char const **str);
+LDouble  get_number(char const **str);
 int lsystem();
 bool lsystem_load();

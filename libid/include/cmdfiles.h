@@ -279,4 +279,4 @@ CmdArgFlags load_commands(std::FILE *);
 void set_3d_defaults();
 int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode);
 CmdArgFlags cmd_arg(char *curarg, CmdFile mode);
-int get_power10(LDBL x);
+int get_power10(LDouble x);

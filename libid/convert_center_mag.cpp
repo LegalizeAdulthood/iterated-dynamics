@@ -24,7 +24,7 @@ convert corners to center/mag
 Rotation angles indicate how much the IMAGE has been rotated, not the
 zoom box.  Same goes for the skew angles
 */
-void cvt_center_mag(double &ctr_x, double &ctr_y, LDBL &mag, double &x_mag_factor, double &rot, double &skew)
+void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew)
 {
     // simple normal case first
     if (g_x_3rd == g_x_min && g_y_3rd == g_y_min)
@@ -115,9 +115,9 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDBL &mag, double &x_mag_facto
 }
 
 // convert corners to center/mag using bf
-void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, double &rot, double &skew)
+void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew)
 {
-    // needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits
+    // needs to be LDouble or won't work past 307 (-DBL_MIN_10_EXP) or so digits
     BigStackSaver saved;
 
     // simple normal case first
@@ -129,10 +129,10 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
         const bf_t height_bf = alloc_stack(g_bf_length+2);
         // width  = g_x_max - g_x_min;
         sub_bf(width_bf, g_bf_x_max, g_bf_x_min);
-        const LDBL width = bf_to_float(width_bf);
+        const LDouble width = bf_to_float(width_bf);
         // height = g_y_max - g_y_min;
         sub_bf(height_bf, g_bf_y_max, g_bf_y_min);
-        const LDBL height = bf_to_float(height_bf);
+        const LDouble height = bf_to_float(height_bf);
         // *ctr_x = (g_x_min + g_x_max)/2;
         add_bf(ctr_x, g_bf_x_min, g_bf_x_max);
         half_a_bf(ctr_x);
@@ -155,11 +155,11 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
 
         // tmpx = g_x_max - g_x_min;
         sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_min);
-        LDBL tmpx1 = bf_to_float(tmp_x_bf);
+        LDouble tmpx1 = bf_to_float(tmp_x_bf);
         // tmpy = g_y_max - g_y_min;
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_min);
-        LDBL tmpy1 = bf_to_float(tmp_y_bf);
-        const LDBL c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        LDouble tmpy1 = bf_to_float(tmp_y_bf);
+        const LDouble c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
         // tmpx = g_x_max - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_3rd);
@@ -168,13 +168,13 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
         // tmpy = g_y_min - g_y_3rd;
         sub_bf(tmp_y_bf, g_bf_y_min, g_bf_y_3rd);
         tmpy1 = bf_to_float(tmp_y_bf);
-        const LDBL a2 = tmpx1 * tmpx1 + tmpy1 * tmpy1;
-        const LDBL a = std::sqrt(a2);
+        const LDouble a2 = tmpx1 * tmpx1 + tmpy1 * tmpy1;
+        const LDouble a = std::sqrt(a2);
 
         // divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used
         // atan2() only depends on the ratio, this puts it in double's range
         const int sign_x = sign(tmpx1);
-        LDBL tmpy = 0.0;
+        LDouble tmpy = 0.0;
         if (sign_x)
         {
             tmpy = tmpy1/tmpx1 * sign_x;    // tmpy = tmpy / |tmpx|
@@ -183,12 +183,12 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
 
         // tmpx = g_x_min - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_min, g_bf_x_3rd);
-        const LDBL tmpx2 = bf_to_float(tmp_x_bf);
+        const LDouble tmpx2 = bf_to_float(tmp_x_bf);
         // tmpy = g_y_max - g_y_3rd;
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_3rd);
-        const LDBL tmpy2 = bf_to_float(tmp_y_bf);
-        const LDBL b2 = tmpx2 * tmpx2 + tmpy2 * tmpy2;
-        const LDBL b = std::sqrt(b2);
+        const LDouble tmpy2 = bf_to_float(tmp_y_bf);
+        const LDouble b2 = tmpx2 * tmpx2 + tmpy2 * tmpy2;
+        const LDouble b = std::sqrt(b2);
 
         const double tmpa = std::acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
         skew = 90 - rad_to_deg(tmpa);
@@ -201,7 +201,7 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDBL &mag, double &x_mag_factor, 
         add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
         half_a_bf(ctr_y);
 
-        const LDBL height = b * std::sin(tmpa);
+        const LDouble height = b * std::sin(tmpa);
         mag  = 2/height; // 1/(h/2)
         x_mag_factor = (double)(height / (DEFAULT_ASPECT * a));
 

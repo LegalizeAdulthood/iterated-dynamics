@@ -167,7 +167,7 @@ int strlen_needed_bf()
 
 char *unsafe_bf_to_str(char *s, int dec, bf_t r)
 {
-    LDBL value;
+    LDouble value;
     int power;
 
     value = bf_to_float(r);
@@ -195,7 +195,7 @@ char *unsafe_bf_to_str(char *s, int dec, bf_t r)
 // the e version puts it in scientific notation, (like printf's %e)
 char *unsafe_bf_to_str_e(char *s, int dec, bf_t r)
 {
-    LDBL value;
+    LDouble value;
 
     value = bf_to_float(r);
     if (value == 0.0)
@@ -214,7 +214,7 @@ char *unsafe_bf_to_str_e(char *s, int dec, bf_t r)
 // the f version puts it in decimal notation, (like printf's %f)
 char *unsafe_bf_to_str_f(char *s, int dec, bf_t r)
 {
-    LDBL value;
+    LDouble value;
 
     value = bf_to_float(r);
     if (value == 0.0)
@@ -355,7 +355,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     bool signflag = false;
     int fexp;
     int rexp;
-    LDBL f;
+    LDouble f;
     bf_t orig_r;
     bf_t orig_n; // orig_bftmp1 not needed here
     int orig_bflength;
@@ -375,7 +375,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     }
 
     fexp = (S16)big_access16(n+g_bf_length);
-    big_set16(n+g_bf_length, (S16)0); // put within LDBL range
+    big_set16(n+g_bf_length, (S16)0); // put within LDouble range
 
     f = bf_to_float(n);
     if (f == 0) // division by zero
@@ -472,13 +472,13 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
     int aexp;
     int bexp;
     int rexp;
-    LDBL a;
-    LDBL b;
+    LDouble a;
+    LDouble b;
 
     // first, check for valid data
 
     aexp = (S16)big_access16(n1+g_bf_length);
-    big_set16(n1+g_bf_length, (S16)0); // put within LDBL range
+    big_set16(n1+g_bf_length, (S16)0); // put within LDouble range
 
     a = bf_to_float(n1);
     if (a == 0) // division into zero
@@ -488,7 +488,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
     }
 
     bexp = (S16)big_access16(n2+g_bf_length);
-    big_set16(n2+g_bf_length, (S16)0); // put within LDBL range
+    big_set16(n2+g_bf_length, (S16)0); // put within LDouble range
 
     b = bf_to_float(n2);
     if (b == 0) // division by zero
@@ -516,7 +516,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 {
     int almost_match = 0;
-    LDBL f;
+    LDouble f;
     bf_t orig_r;
     bf_t orig_n;
     int orig_bflength;
@@ -658,7 +658,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 bf_t unsafe_ln_bf(bf_t r, bf_t n)
 {
     int almost_match = 0;
-    LDBL f;
+    LDouble f;
     bf_t orig_r;
     bf_t orig_n;
     bf_t orig_bftmp5;
@@ -952,7 +952,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 {
     int almost_match = 0;
     bool signflag = false;
-    LDBL f;
+    LDouble f;
     bf_t orig_r;
     bf_t orig_n;
     bf_t orig_bf_pi;
@@ -2110,13 +2110,13 @@ bf_t div_a_bf_int(bf_t r, U16 u)
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<b and f = m*b^n
 // n is stored in *exp_ptr and m is returned, sort of like frexp()
-LDBL extract_value(LDBL f, LDBL b, int *exp_ptr)
+LDouble extract_value(LDouble f, LDouble b, int *exp_ptr)
 {
     int n;
-    LDBL af;
-    LDBL ff;
-    LDBL orig_b;
-    LDBL value[15];
+    LDouble af;
+    LDouble ff;
+    LDouble orig_b;
+    LDouble value[15];
     unsigned powertwo;
 
     if (b <= 0 || f == 0)
@@ -2164,9 +2164,9 @@ LDBL extract_value(LDBL f, LDBL b, int *exp_ptr)
 /********************************************************************/
 // calculates and returns the value of f*b^n
 // sort of like ldexp()
-LDBL scale_value(LDBL f, LDBL b , int n)
+LDouble scale_value(LDouble f, LDouble b , int n)
 {
-    LDBL total = 1;
+    LDouble total = 1;
     int an;
 
     if (b == 0 || f == 0)
@@ -2206,7 +2206,7 @@ LDBL scale_value(LDBL f, LDBL b , int n)
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<10 and f = m*10^n
 // n is stored in *exp_ptr and m is returned, sort of like frexp()
-LDBL extract_10(LDBL f, int *exp_ptr)
+LDouble extract_10(LDouble f, int *exp_ptr)
 {
     return extract_value(f, 10, exp_ptr);
 }
@@ -2214,7 +2214,7 @@ LDBL extract_10(LDBL f, int *exp_ptr)
 /********************************************************************/
 // calculates and returns the value of f*10^n
 // sort of like ldexp()
-LDBL scale_10(LDBL f, int n)
+LDouble scale_10(LDouble f, int n)
 {
     return scale_value(f, 10, n);
 }

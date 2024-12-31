@@ -244,7 +244,7 @@ void show_aspect(char const *s)
 }
 
 // compare a double and bignumber
-void compare_values(char const *s, LDBL x, bn_t bnx)
+void compare_values(char const *s, LDouble x, bn_t bnx)
 {
     int dec = 40;
     char msg[100];
@@ -257,7 +257,7 @@ void compare_values(char const *s, LDBL x, bn_t bnx)
     }
 }
 // compare a double and bignumber
-void compare_values_bf(char const *s, LDBL x, bf_t bfx)
+void compare_values_bf(char const *s, LDouble x, bf_t bfx)
 {
     int dec = 40;
     char msg[300];

@@ -241,7 +241,7 @@ static bool s_init_functions{}; // trig functions set via function=?
 // getpower10(x) returns the magnitude of x.  This rounds
 // a little so 9.95 rounds to 10, but we're using a binary base anyway,
 // so there's nothing magic about changing to the next power of 10.
-int get_power10(LDBL x)
+int get_power10(LDouble x)
 {
     char string[11]; // space for "+x.xe-xxxx"
     int p;
@@ -1463,7 +1463,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
     s_init_corners = true;
     // dec = get_max_curarg_len(floatvalstr, totparms);
-    LDBL magnification;
+    LDouble magnification;
     std::sscanf(cmd.float_val_strs[2], "%Lf", &magnification);
 
     // I don't know if this is portable, but something needs to

@@ -44,15 +44,15 @@ struct LSysTurtleStateF
     bool stackoflow;
     // dmaxangle is maxangle - 1
     char maxangle, dmaxangle, curcolor, dummy;  // dummy ensures longword alignment
-    LDBL size;
-    LDBL realangle;
-    LDBL xpos, ypos;
-    LDBL xmin, ymin, xmax, ymax;
-    LDBL aspect; // aspect ratio of each pixel, ysize/xsize
+    LDouble size;
+    LDouble realangle;
+    LDouble xpos, ypos;
+    LDouble xmin, ymin, xmax, ymax;
+    LDouble aspect; // aspect ratio of each pixel, ysize/xsize
     union
     {
         long n;
-        LDBL nf;
+        LDouble nf;
     } parm;
 };
 

@@ -4,7 +4,7 @@
 
 #include "port.h"
 
-extern LDBL g_b_const;
+extern LDouble g_b_const;
 
 int divide_brot5_bf_per_pixel();
 int divide_brot5_bn_per_pixel();

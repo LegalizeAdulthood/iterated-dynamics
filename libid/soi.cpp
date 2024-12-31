@@ -41,16 +41,16 @@ namespace
 
 struct LongDoubleComplex
 {
-    LDBL re;
-    LDBL im;
+    LDouble re;
+    LDouble im;
 };
 
 struct SOILongDoubleState
 {
     LongDoubleComplex z;
     LongDoubleComplex step;
-    LDBL interstep;
-    LDBL helpre;
+    LDouble interstep;
+    LDouble helpre;
     LongDoubleComplex scan_z;
     LongDoubleComplex b1[3];
     LongDoubleComplex b2[3];
@@ -72,21 +72,21 @@ inline LongDoubleComplex zsqr(LongDoubleComplex z)
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-inline LDBL interpolate(
-    LDBL x0, LDBL x1, LDBL x2,
-    LDBL w0, LDBL w1, LDBL w2,
-    LDBL t)
+inline LDouble interpolate(
+    LDouble x0, LDouble x1, LDouble x2,
+    LDouble w0, LDouble w1, LDouble w2,
+    LDouble t)
 {
-    const LDBL b = (w1 - w0)/(x1 - x0);
+    const LDouble b = (w1 - w0)/(x1 - x0);
     return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
 }
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
 inline void interpolate(
-    LDBL x0, LDBL x1, LDBL x2,
-    LDBL w0, LDBL w1, LDBL w2,
-    LDBL &b0, LDBL &b1, LDBL &b2)
+    LDouble x0, LDouble x1, LDouble x2,
+    LDouble w0, LDouble w1, LDouble w2,
+    LDouble &b0, LDouble &b1, LDouble &b2)
 {
     b0 = w0;
     b1 = (w1 - w0)/(x1 - x0);
@@ -94,36 +94,36 @@ inline void interpolate(
 }
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-inline LDBL evaluate(
-    LDBL x0, LDBL x1,
-    LDBL b0, LDBL b1, LDBL b2,
-    LDBL t)
+inline LDouble evaluate(
+    LDouble x0, LDouble x1,
+    LDouble b0, LDouble b1, LDouble b2,
+    LDouble t)
 {
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
 static LongDoubleComplex s_zi[9]{};
 static SOILongDoubleState s_state{};
-static LDBL s_t_width{};
-static LDBL s_equal{};
+static LDouble s_t_width{};
+static LDouble s_equal{};
 static bool s_ba_x_in_xx{};
 
 static long iteration(
-    LDBL cr, LDBL ci,
-    LDBL re, LDBL im,
+    LDouble cr, LDouble ci,
+    LDouble re, LDouble im,
     long start)
 {
     long iter;
     long offset = 0;
-    LDBL ren;
-    LDBL imn;
-    LDBL mag;
+    LDouble ren;
+    LDouble imn;
+    LDouble mag;
     int exponent;
 
     if (s_ba_x_in_xx)
     {
-        LDBL sre = re;
-        LDBL sim = im;
+        LDouble sre = re;
+        LDouble sim = im;
         ren = re*re;
         imn = im*im;
         if (start != 0)
@@ -337,7 +337,7 @@ static long iteration(
     };
 
     s_ba_x_in_xx = false;
-    LDBL d = mag;
+    LDouble d = mag;
     frexpl(d, &exponent);
     return g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]);
 }
@@ -462,11 +462,11 @@ enum
     assert(status)
 
 static int rhombus(
-    LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
+    LDouble cre1, LDouble cre2, LDouble cim1, LDouble cim2,
     int x1, int x2, int y1, int y2, long iter);
 
 static int rhombus_aux(
-    LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
+    LDouble cre1, LDouble cre2, LDouble cim1, LDouble cim2,
     int x1, int x2, int y1, int y2, long iter)
 {
     // The following variables do not need their values saved
@@ -485,8 +485,8 @@ static int rhombus_aux(
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
-    LDBL midr = (cre1 + cre2)/2;
-    LDBL midi = (cim1 + cim2)/2;
+    LDouble midr = (cre1 + cre2)/2;
+    LDouble midi = (cim1 + cim2)/2;
 
     LongDoubleComplex s[9];
 
@@ -818,50 +818,50 @@ scan:
 
     // compute key values for subsequent rectangles
 
-    LDBL re10 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
-    LDBL im10 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
+    LDouble re10 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
+    LDouble im10 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
 
-    LDBL re11 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
-    LDBL im11 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
+    LDouble re11 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
+    LDouble im11 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
 
-    LDBL re20 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
-    LDBL im20 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
+    LDouble re20 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
+    LDouble im20 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
 
-    LDBL re21 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
-    LDBL im21 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
+    LDouble re21 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
+    LDouble im21 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
 
-    LDBL re15 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
-    LDBL im15 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
+    LDouble re15 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
+    LDouble im15 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
 
-    LDBL re16 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
-    LDBL im16 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
+    LDouble re16 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
+    LDouble im16 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
 
-    LDBL re12 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
-    LDBL im12 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
+    LDouble re12 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
+    LDouble im12 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
 
-    LDBL re14 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
-    LDBL im14 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
+    LDouble re14 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
+    LDouble im14 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
 
-    LDBL re17 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
-    LDBL im17 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
+    LDouble re17 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
+    LDouble im17 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
 
-    LDBL re19 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
-    LDBL im19 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
+    LDouble re19 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
+    LDouble im19 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
 
-    LDBL re13 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
-    LDBL im13 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
+    LDouble re13 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
+    LDouble im13 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
 
-    LDBL re18 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
-    LDBL im18 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
+    LDouble re18 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
+    LDouble im18 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
 
-    LDBL re91 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[0].im);
-    LDBL im91 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[0].im);
-    LDBL re92 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[0].im);
-    LDBL im92 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[0].im);
-    LDBL re93 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[1].im);
-    LDBL im93 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[1].im);
-    LDBL re94 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[1].im);
-    LDBL im94 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[1].im);
+    LDouble re91 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[0].im);
+    LDouble im91 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[0].im);
+    LDouble re92 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[0].im);
+    LDouble im92 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[0].im);
+    LDouble re93 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[1].im);
+    LDouble im93 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[1].im);
+    LDouble re94 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[1].im);
+    LDouble im94 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[1].im);
 
     RHOMBUS(cre1, midr, cim1, midi, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
             s[0].re, s[0].im,
@@ -912,7 +912,7 @@ scan:
 }
 
 static int rhombus(
-    LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
+    LDouble cre1, LDouble cre2, LDouble cim1, LDouble cim2,
     int x1, int x2, int y1, int y2, long iter)
 {
     ++g_rhombus_depth;
@@ -925,13 +925,13 @@ void soi_ldbl()
 {
     // cppcheck-suppress unreadVariable
     bool status;
-    LDBL tolerance = 0.1;
-    LDBL stepx;
-    LDBL stepy;
-    LDBL xxminl;
-    LDBL xxmaxl;
-    LDBL yyminl;
-    LDBL yymaxl;
+    LDouble tolerance = 0.1;
+    LDouble stepx;
+    LDouble stepy;
+    LDouble xxminl;
+    LDouble xxmaxl;
+    LDouble yyminl;
+    LDouble yymaxl;
     g_soi_min_stack_available = 30000;
     g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;

@@ -105,11 +105,11 @@ bn_t div_a_bn_int(bn_t r, U16 u);
 // used to be in bigflta.asm or bigfltc.c
 bf_t clear_bf(bf_t r);
 bf_t copy_bf(bf_t r, bf_t n);
-bf_t float_to_bf(bf_t r, LDBL f);
-LDBL bf_to_float(bf_t n);
-LDBL bn_to_float(bn_t n);
-LDBL extract256(LDBL f, int *exp_ptr);
-LDBL scale256(LDBL f, int n);
+bf_t float_to_bf(bf_t r, LDouble f);
+LDouble bf_to_float(bf_t n);
+LDouble bn_to_float(bn_t n);
+LDouble extract256(LDouble f, int *exp_ptr);
+LDouble scale256(LDouble f, int n);
 // functions defined in bignum.c
 #ifdef ACCESS_BY_BYTE
 // prototypes
@@ -160,7 +160,7 @@ bn_t atan_bn(bn_t r, bn_t n);
 bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 // misc
 bool is_bn_zero(bn_t n);
-bn_t float_to_bn(bn_t r, LDBL f);
+bn_t float_to_bn(bn_t r, LDouble f);
 /************/
 // bigflt.c
 void bf_hex_dump(bf_t r);
@@ -206,10 +206,10 @@ bf_t atan_bf(bf_t r, bf_t n);
 bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx);
 bool is_bf_zero(bf_t n);
 int convert_bf(bf_t new_n, bf_t old, int newbflength, int oldbflength);
-LDBL extract_value(LDBL f, LDBL b, int *exp_ptr);
-LDBL scale_value(LDBL f, LDBL b , int n);
-LDBL extract_10(LDBL f, int *exp_ptr);
-LDBL scale_10(LDBL f, int n);
+LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
+LDouble scale_value(LDouble f, LDouble b , int n);
+LDouble extract_10(LDouble f, int *exp_ptr);
+LDouble scale_10(LDouble f, int n);
 bf10_t unsafe_bf_to_bf10(bf10_t s, int dec, bf_t n);
 bf10_t mult_a_bf10_int(bf10_t s, int dec, U16 n);
 bf10_t div_a_bf10_int(bf10_t s, int dec, U16 n);

@@ -21,8 +21,8 @@ inline DComplex cmplx_bf_to_float(const BFComplex &s)
     return t;
 }
 
-void compare_values(char const *s, LDBL x, bn_t bnx);
-void compare_values_bf(char const *s, LDBL x, bf_t bfx);
+void compare_values(char const *s, LDouble x, bn_t bnx);
+void compare_values_bf(char const *s, LDouble x, bf_t bfx);
 void show_var_bf(char const *s, bf_t n);
 void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits);
 void bf_corners_to_float();

@@ -15,7 +15,7 @@ inline double deg_to_rad(double x)
 }
 
 // convert center/mag to corners
-void cvt_corners(double ctr_x, double ctr_y, LDBL mag, double x_mag_factor, double rot, double skew)
+void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
 {
     if (x_mag_factor == 0.0)
     {
@@ -72,7 +72,7 @@ void cvt_corners(double ctr_x, double ctr_y, LDBL mag, double x_mag_factor, doub
 }
 
 // convert center/mag to corners using bf
-void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, double rot, double skew)
+void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
 {
     const int saved = save_stack();
     bf_t bfh = alloc_stack(g_bf_length + 2);
@@ -84,9 +84,9 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
     }
 
     // half height, width
-    const LDBL h = 1 / mag;
+    const LDouble h = 1 / mag;
     float_to_bf(bfh, h);
-    const LDBL w = h / (DEFAULT_ASPECT * x_mag_factor);
+    const LDouble w = h / (DEFAULT_ASPECT * x_mag_factor);
     float_to_bf(bfw, w);
 
     if (rot == 0.0 && skew == 0.0)
@@ -109,12 +109,12 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
     bf_t g_bf_tmp = alloc_stack(g_bf_length + 2);
     // in unrotated, untranslated coordinate system
     const double tanskew = std::tan(deg_to_rad(skew));
-    const LDBL xmin = -w + h * tanskew;
-    const LDBL xmax = w - h * tanskew;
-    const LDBL x3rd = -w - h * tanskew;
-    const LDBL ymax = h;
-    const LDBL ymin = -h;
-    const LDBL y3rd = ymin;
+    const LDouble xmin = -w + h * tanskew;
+    const LDouble xmax = w - h * tanskew;
+    const LDouble x3rd = -w - h * tanskew;
+    const LDouble ymax = h;
+    const LDouble ymin = -h;
+    const LDouble y3rd = ymin;
 
     // rotate coord system and then translate it
     rot = deg_to_rad(rot);
@@ -122,8 +122,8 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDBL mag, double x_mag_factor, doubl
     const double cosrot = std::cos(rot);
 
     // top left
-    LDBL x = xmin * cosrot + ymax * sinrot;
-    LDBL y = -xmin * sinrot + ymax * cosrot;
+    LDouble x = xmin * cosrot + ymax * sinrot;
+    LDouble y = -xmin * sinrot + ymax * cosrot;
     // xxmin = x + x_ctr;
     float_to_bf(g_bf_tmp, x);
     add_bf(g_bf_x_min, g_bf_tmp, ctr_x);

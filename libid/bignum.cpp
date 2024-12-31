@@ -450,7 +450,7 @@ long bn_to_int(bn_t n)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bignumber
-bn_t float_to_bn(bn_t r, LDBL f)
+bn_t float_to_bn(bn_t r, LDouble f)
 {
     bn_t onesbyte;
     bool signflag = false;
@@ -532,7 +532,7 @@ bn_t abs_a_bn(bn_t r)
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
     long maxval;
-    LDBL f;
+    LDouble f;
     bn_t orig_r;
     bn_t orig_n; // orig_bntmp1 not needed here
     int orig_bnlength;
@@ -648,9 +648,9 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     int scale2;
     int i;
     long maxval;
-    LDBL a;
-    LDBL b;
-    LDBL f;
+    LDouble a;
+    LDouble b;
+    LDouble f;
 
     // first, check for valid data
     a = bn_to_float(n1);
@@ -760,7 +760,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
-    LDBL f;
+    LDouble f;
     bn_t orig_r;
     bn_t orig_n;
     int orig_bnlength;
@@ -895,7 +895,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
     long maxval;
-    LDBL f;
+    LDouble f;
     bn_t orig_r;
     bn_t orig_n;
     bn_t orig_bntmp5;
@@ -1181,7 +1181,7 @@ bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n)
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
-    LDBL f;
+    LDouble f;
     bn_t orig_r;
     bn_t orig_n;
     bn_t orig_bn_pi;

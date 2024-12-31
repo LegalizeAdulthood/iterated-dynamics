@@ -894,11 +894,11 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 /*********************************************************************/
 //  f = b
 //  Converts a bignumber to a double
-LDBL bn_to_float(bn_t n)
+LDouble bn_to_float(bn_t n)
 {
     int expon;
     bn_t getbyte;
-    LDBL f = 0;
+    LDouble f = 0;
 
     bool signflag = false;
     if (is_bn_neg(n))
@@ -916,7 +916,7 @@ LDBL bn_to_float(bn_t n)
     }
 
     // There is no need to use all g_bn_length bytes.  To get the full
-    // precision of LDBL, all you need is LDBL_MANT_DIG/8+1.
+    // precision of LDouble, all you need is LDBL_MANT_DIG/8+1.
     for (int i = 0; i < (LDBL_MANT_DIG/8+1) && getbyte >= n; i++, getbyte--)
     {
         f += scale256(*getbyte, -i);
@@ -954,7 +954,7 @@ bf_t copy_bf(bf_t r, bf_t n)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bigfloat
-bf_t float_to_bf(bf_t r, LDBL f)
+bf_t float_to_bf(bf_t r, LDouble f)
 {
     int power;
     int bnl;
@@ -984,7 +984,7 @@ bf_t float_to_bf(bf_t r, LDBL f)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bigfloat
-bf_t float_to_bf1(bf_t r, LDBL f)
+bf_t float_to_bf1(bf_t r, LDouble f)
 {
     char msg[80];
     std::snprintf(msg, std::size(msg), "%-.22Le", f);
@@ -995,12 +995,12 @@ bf_t float_to_bf1(bf_t r, LDBL f)
 /*********************************************************************/
 //  f = b
 //  Converts a bigfloat to a double
-LDBL bf_to_float(bf_t n)
+LDouble bf_to_float(bf_t n)
 {
     int power;
     int bnl;
     int il;
-    LDBL f;
+    LDouble f;
 
     bnl = g_bn_length;
     g_bn_length = g_bf_length;
@@ -1020,7 +1020,7 @@ LDBL bf_to_float(bf_t n)
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<256 and f = m*256^n
 // n is stored in *exp_ptr and m is returned, sort of like frexp()
-LDBL extract256(LDBL f, int *exp_ptr)
+LDouble extract256(LDouble f, int *exp_ptr)
 {
     return extract_value(f, 256, exp_ptr);
 }
@@ -1031,7 +1031,7 @@ LDBL extract256(LDBL f, int *exp_ptr)
 //
 // n must be in the range -2^12 <= n < 2^12 (2^12=4096),
 // which should not be a problem
-LDBL scale256(LDBL f, int n)
+LDouble scale256(LDouble f, int n)
 {
     return scale_value(f, 256, n);
 }

@@ -25,14 +25,14 @@ struct LSysFCmd
     union
     {
         long n;
-        LDBL nf;
+        LDouble nf;
     } parm;
     char ch;
 };
 
-static std::vector<LDBL> s_sin_table_f;
-static std::vector<LDBL> s_cos_table_f;
-static constexpr LDBL PI_DIV_180{PI / 180.0L};
+static std::vector<LDouble> s_sin_table_f;
+static std::vector<LDouble> s_cos_table_f;
+static constexpr LDouble PI_DIV_180{PI / 180.0L};
 
 static LSysFCmd *find_size(LSysFCmd *, LSysTurtleStateF *, LSysFCmd **, int);
 
@@ -345,10 +345,10 @@ find_size(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
             {
                 char const saveang = ts->angle;
                 char const saverev = ts->reverse;
-                LDBL const savesize = ts->size;
-                LDBL const saverang = ts->realangle;
-                LDBL const savex = ts->xpos;
-                LDBL const savey = ts->ypos;
+                LDouble const savesize = ts->size;
+                LDouble const saverang = ts->realangle;
+                LDouble const savex = ts->xpos;
+                LDouble const savey = ts->ypos;
                 command = find_size(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
@@ -384,10 +384,10 @@ lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int 
     ts->size = 1;
     LSysFCmd *fsret = find_size(command, ts, rules, depth);
     thinking(0, nullptr); // erase thinking message if any
-    LDBL xmin = ts->xmin;
-    LDBL xmax = ts->xmax;
-    LDBL ymin = ts->ymin;
-    LDBL ymax = ts->ymax;
+    LDouble xmin = ts->xmin;
+    LDouble xmax = ts->xmax;
+    LDouble ymin = ts->ymin;
+    LDouble ymax = ts->ymax;
     if (fsret == nullptr)
     {
         return false;
@@ -410,7 +410,7 @@ lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int 
     {
         vert = (float)((g_logical_screen_y_dots-6) /(ymax-ymin));
     }
-    LDBL const locsize = (vert < horiz) ? vert : horiz;
+    LDouble const locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
     {
@@ -496,10 +496,10 @@ draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
             {
                 char const saveang = ts->angle;
                 char const saverev = ts->reverse;
-                LDBL const savesize = ts->size;
-                LDBL const saverang = ts->realangle;
-                LDBL const savex = ts->xpos;
-                LDBL const savey = ts->ypos;
+                LDouble const savesize = ts->size;
+                LDouble const saverang = ts->realangle;
+                LDouble const savex = ts->xpos;
+                LDouble const savey = ts->ypos;
                 char const savecolor = ts->curcolor;
                 command = draw_lsysf(command+1, ts, rules, depth);
                 if (command == nullptr)
@@ -645,7 +645,7 @@ LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
     while (*s)
     {
         void (*f)(LSysTurtleStateF *) = nullptr;
-        LDBL num = 0;
+        LDouble num = 0;
         int ptype = 4;
         ret[n].ch = *s;
         switch (*s)
@@ -752,10 +752,10 @@ LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
 
 void lsysf_do_sin_cos()
 {
-    LDBL locaspect;
-    LDBL TWOPI = 2.0 * PI;
-    LDBL twopimax;
-    LDBL twopimaxi;
+    LDouble locaspect;
+    LDouble TWOPI = 2.0 * PI;
+    LDouble twopimax;
+    LDouble twopimaxi;
 
     locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     twopimax = TWOPI / g_max_angle;

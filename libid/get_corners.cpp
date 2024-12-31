@@ -46,7 +46,7 @@ int get_corners()
     char yprompt[] = "          Y";
     int cmag;
     double x_ctr, y_ctr;
-    LDBL magnification; // LDBL not really needed here, but used to match function parameters
+    LDouble magnification; // LDouble not really needed here, but used to match function parameters
     double x_mag_factor, rotation, skew;
     double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
 
@@ -252,7 +252,7 @@ int get_screen_corners()
     int prompt_ret;
     int cmag;
     double x_ctr, y_ctr;
-    LDBL magnification; // LDBL not really needed here, but used to match function parameters
+    LDouble magnification; // LDouble not really needed here, but used to match function parameters
     double x_mag_factor, rotation, skew;
     double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
     double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;

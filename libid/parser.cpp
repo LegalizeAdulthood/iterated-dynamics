@@ -2470,7 +2470,7 @@ static bool parse_formula_text(char const *text)
     double x_mag_factor;
     double rotation;
     double skew;
-    LDBL magnification;
+    LDouble magnification;
     s_set_random = false;
     s_randomized = false;
     s_uses_jump = false;

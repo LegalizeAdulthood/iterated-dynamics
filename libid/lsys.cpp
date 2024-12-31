@@ -73,7 +73,7 @@ static bool s_loaded{};
 
 char g_max_angle{};
 
-LDBL get_number(char const **str)
+LDouble get_number(char const **str)
 {
     bool root = false;
     bool inverse = false;
@@ -111,7 +111,7 @@ LDBL get_number(char const **str)
     }
     (*str)--;
     numstr[i] = 0;
-    LDBL ret = std::atof(numstr);
+    LDouble ret = std::atof(numstr);
     if (ret <= 0.0)   // this is a sanity check
     {
         return 0;

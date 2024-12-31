@@ -230,7 +230,7 @@ int tab_display()       // display the status of the current image
     int addrow = 0;
     double x_ctr;
     double y_ctr;
-    LDBL magnification;
+    LDouble magnification;
     double x_mag_factor;
     double rotation;
     double skew;

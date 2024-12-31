@@ -18,7 +18,7 @@ int get_prec_bf_mag()
     double x_mag_factor;
     double rotation;
     double skew;
-    LDBL magnification;
+    LDouble magnification;
     bf_t bXctr;
     bf_t bYctr;
     int saved;

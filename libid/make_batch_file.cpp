@@ -645,7 +645,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 {
     double x_ctr;
     double y_ctr;
-    LDBL magnification;
+    LDouble magnification;
     double x_mag_factor;
     double rotation;
     double skew;

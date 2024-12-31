@@ -48,14 +48,14 @@ static void   smallest_add_bf(bf_t num);
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 static int get_prec_dbl(int rezflag)
 {
-    LDBL del1;
-    LDBL del2;
-    LDBL xdel;
-    LDBL xdel2;
-    LDBL ydel;
-    LDBL ydel2;
+    LDouble del1;
+    LDouble del2;
+    LDouble xdel;
+    LDouble xdel2;
+    LDouble ydel;
+    LDouble ydel2;
     int digits;
-    LDBL rez;
+    LDouble rez;
     if (rezflag == MAX_REZ)
     {
         rez = OLD_MAX_PIXELS -1;
@@ -65,16 +65,16 @@ static int get_prec_dbl(int rezflag)
         rez = g_logical_screen_x_dots-1;
     }
 
-    xdel = ((LDBL)g_x_max - (LDBL)g_x_3rd)/rez;
-    ydel2 = ((LDBL)g_y_3rd - (LDBL)g_y_min)/rez;
+    xdel = ((LDouble)g_x_max - (LDouble)g_x_3rd)/rez;
+    ydel2 = ((LDouble)g_y_3rd - (LDouble)g_y_min)/rez;
 
     if (rezflag == CURRENT_REZ)
     {
         rez = g_logical_screen_y_dots-1;
     }
 
-    ydel = ((LDBL)g_y_max - (LDBL)g_y_3rd)/rez;
-    xdel2 = ((LDBL)g_x_3rd - (LDBL)g_x_min)/rez;
+    ydel = ((LDouble)g_y_max - (LDouble)g_y_3rd)/rez;
+    xdel2 = ((LDouble)g_x_3rd - (LDouble)g_x_min)/rez;
 
     del1 = std::fabs(xdel) + std::fabs(xdel2);
     del2 = std::fabs(ydel) + std::fabs(ydel2);
@@ -425,10 +425,10 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        g_delta_x  = (LDBL)(g_x_max - g_x_3rd) / (LDBL)g_logical_screen_x_size_dots; // calculate stepsizes
-        g_delta_y  = (LDBL)(g_y_max - g_y_3rd) / (LDBL)g_logical_screen_y_size_dots;
-        g_delta_x2 = (LDBL)(g_x_3rd - g_x_min) / (LDBL)g_logical_screen_y_size_dots;
-        g_delta_y2 = (LDBL)(g_y_3rd - g_y_min) / (LDBL)g_logical_screen_x_size_dots;
+        g_delta_x  = (LDouble)(g_x_max - g_x_3rd) / (LDouble)g_logical_screen_x_size_dots; // calculate stepsizes
+        g_delta_y  = (LDouble)(g_y_max - g_y_3rd) / (LDouble)g_logical_screen_y_size_dots;
+        g_delta_x2 = (LDouble)(g_x_3rd - g_x_min) / (LDouble)g_logical_screen_y_size_dots;
+        g_delta_y2 = (LDouble)(g_y_3rd - g_y_min) / (LDouble)g_logical_screen_x_size_dots;
         fill_dx_array();
     }
 
@@ -663,7 +663,7 @@ void adjust_corner_bf()
     double x_mag_factor;
     double rotation;
     double skew;
-    LDBL magnification;
+    LDouble magnification;
 
     bf_t bftemp;
     bf_t bftemp2;
@@ -750,7 +750,7 @@ void adjust_corner()
     double x_mag_factor;
     double rotation;
     double skew;
-    LDBL magnification;
+    LDouble magnification;
 
     if (!g_integer_fractal)
     {
@@ -797,7 +797,7 @@ void adjust_corner()
 
 static void adjust_to_limits_bf(double expand)
 {
-    LDBL limit;
+    LDouble limit;
     bf_t bcornerx[4];
     bf_t bcornery[4];
     bf_t blowx;

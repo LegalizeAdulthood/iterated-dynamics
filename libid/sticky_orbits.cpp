@@ -195,7 +195,7 @@ int sticky_orbits()
     {
         double x_ctr;
         double y_ctr;
-        LDBL magnification; // LDBL not really needed here, but used to match function parameters
+        LDouble magnification; // LDouble not really needed here, but used to match function parameters
         double x_mag_factor;
         double rotation;
         double skew;

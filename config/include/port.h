@@ -84,4 +84,4 @@ char *strupr(char *s);
 #endif
 
 // MSVC on x64 doesn't have a distinct type for long double vs. double
-using LDBL = long double;
+using LDouble = long double;
