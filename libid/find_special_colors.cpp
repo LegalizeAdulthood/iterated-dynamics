@@ -33,11 +33,7 @@ void find_special_colors()
         return;
     }
 
-#ifdef XFRACT
-    if (!(g_got_real_dac || g_fake_lut))
-#else
     if (!g_got_real_dac)
-#endif
     {
         return;
     }
