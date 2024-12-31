@@ -197,7 +197,7 @@ void parse_comments(char *value)
 
 enum
 {
-    MAXVNAME = 13
+    MAX_VAR_NAME = 13
 };
 
 // extract comments from the comments= command
@@ -206,7 +206,7 @@ static std::string expand_comments(char const *source)
     int escape = 0;
     char c;
     char oldc;
-    char varname[MAXVNAME];
+    char varname[MAX_VAR_NAME];
     int k = 0;
     int i = 0;
     oldc = 0;
@@ -230,7 +230,7 @@ static std::string expand_comments(char const *source)
         }
         if (c != ESC && escape != 0) // if true, building variable name
         {
-            if (k < MAXVNAME-1)
+            if (k < MAX_VAR_NAME-1)
             {
                 varname[k++] = c;
             }
