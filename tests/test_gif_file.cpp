@@ -167,10 +167,10 @@ public:
 };
 
 template <typename T, size_t N>
-class array_printer
+class ArrayPrinter
 {
 public:
-    explicit array_printer(const T (&value)[N]) :
+    explicit ArrayPrinter(const T (&value)[N]) :
         m_value(value)
     {
     }
@@ -179,7 +179,7 @@ public:
 };
 
 template <size_t N, typename T>
-std::ostream &operator<<(std::ostream &str, const array_printer<T, N> &value)
+std::ostream &operator<<(std::ostream &str, const ArrayPrinter<T, N> &value)
 {
     str << "[ ";
     bool first{true};
@@ -196,7 +196,7 @@ std::ostream &operator<<(std::ostream &str, const array_printer<T, N> &value)
 }
 
 template <size_t N>
-std::ostream &operator<<(std::ostream &str, const array_printer<std::uint8_t, N> &value)
+std::ostream &operator<<(std::ostream &str, const ArrayPrinter<std::uint8_t, N> &value)
 {
     str << "[ ";
     bool first{true};
@@ -243,16 +243,16 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "version": )" << value.version                        //
                << R"(, "parm3": )" << value.parm3                            //
                << R"(, "parm4": )" << value.parm4                            //
-               << R"(, "potential": )" << array_printer(value.potential)     //
+               << R"(, "potential": )" << ArrayPrinter(value.potential)     //
                << R"(, "rseed": )" << value.rseed                            //
                << R"(, "rflag": )" << value.rflag                            //
                << R"(, "biomorph": )" << value.biomorph                      //
                << R"(, "inside": )" << value.inside                          //
                << R"(, "logmapold": )" << value.logmapold                    //
-               << R"(, "invert": )" << array_printer(value.invert)           //
-               << R"(, "decomp": )" << array_printer(value.decomp)           //
+               << R"(, "invert": )" << ArrayPrinter(value.invert)           //
+               << R"(, "decomp": )" << ArrayPrinter(value.decomp)           //
                << R"(, "symmetry": )" << value.symmetry                      //
-               << R"(, "init3d": )" << array_printer(value.init3d)           //
+               << R"(, "init3d": )" << ArrayPrinter(value.init3d)           //
                << R"(, "previewfactor": )" << value.previewfactor            //
                << R"(, "xtrans": )" << value.xtrans                          //
                << R"(, "ytrans": )" << value.ytrans                          //
@@ -276,16 +276,16 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "floatflag": )" << value.floatflag                    //
                << R"(, "bailoutold": )" << value.bailoutold                  //
                << R"(, "calctime": )" << value.calctime                      //
-               << R"(, "trigndx": )" << array_printer(value.trigndx)         //
+               << R"(, "trigndx": )" << ArrayPrinter(value.trigndx)         //
                << R"(, "finattract": )" << value.finattract                  //
-               << R"(, "initorbit": )" << array_printer(value.initorbit)     //
+               << R"(, "initorbit": )" << ArrayPrinter(value.initorbit)     //
                << R"(, "periodicity": )" << value.periodicity                //
                << R"(, "pot16bit": )" << value.pot16bit                      //
                << R"(, "faspectratio": )" << value.faspectratio              //
                << R"(, "system": )" << value.system                          //
                << R"(, "release": )" << value.release                        //
                << R"(, "display_3d": )" << value.display_3d                  //
-               << R"(, "transparent": )" << array_printer(value.transparent) //
+               << R"(, "transparent": )" << ArrayPrinter(value.transparent) //
                << R"(, "ambient": )" << value.ambient                        //
                << R"(, "haze": )" << value.haze                              //
                << R"(, "randomize": )" << value.randomize                    //
@@ -325,7 +325,7 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "old_demm_colors": )" << value.old_demm_colors        //
                << R"(, "logmap": )" << value.logmap                          //
                << R"(, "distest": )" << value.distest                        //
-               << R"(, "dinvert": )" << array_printer(value.dinvert)         //
+               << R"(, "dinvert": )" << ArrayPrinter(value.dinvert)         //
                << R"(, "logcalc": )" << value.logcalc                        //
                << R"(, "stoppass": )" << value.stoppass                      //
                << R"(, "quick_calc": )" << value.quick_calc                  //
@@ -333,7 +333,7 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "nobof": )" << value.nobof                            //
                << R"(, "orbit_interval": )" << value.orbit_interval          //
                << R"(, "orbit_delay": )" << value.orbit_delay                //
-               << R"(, "math_tol": )" << array_printer(value.math_tol)       //
+               << R"(, "math_tol": )" << ArrayPrinter(value.math_tol)       //
                << " }";                                                      //
 }
 
@@ -401,7 +401,7 @@ std::ostream &operator<<(std::ostream&str, const EvolutionInfo &value)
         << R"(, "syoffs": )" << value.syoffs                                           //
         << R"(, "xdots": )" << value.xdots                                             //
         << R"(, "ydots": )" << value.ydots                                             //
-        << R"(, "mutate": )" << array_printer(value.mutate)                            //
+        << R"(, "mutate": )" << ArrayPrinter(value.mutate)                            //
         << R"(, "ecount": )" << value.ecount                                           //
         << " }";                                                                       //
 }
