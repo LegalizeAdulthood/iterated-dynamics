@@ -351,17 +351,17 @@ std::ostream &operator<<(std::ostream &str, const FormulaInfo &value)
 }
 
 template <typename T>
-class vec_printer
+class VecPrinter
 {
 public:
-    vec_printer(const std::vector<T> &values) :
+    VecPrinter(const std::vector<T> &values) :
         m_values(values)
     {
     }
     const std::vector<T> &m_values;
 };
 
-std::ostream &operator<<(std::ostream &str, const vec_printer<int> &value)
+std::ostream &operator<<(std::ostream &str, const VecPrinter<int> &value)
 {
     if (value.m_values.empty())
     {
@@ -758,7 +758,7 @@ TEST_F(TestGIFRangesInfoExtension, encode)
     put_ranges_info(out, info1);
 
     const std::vector info2{get_ranges_info(out)};
-    EXPECT_EQ(info1, info2) << vec_printer(info1) << " != " << vec_printer(info2);
+    EXPECT_EQ(info1, info2) << VecPrinter(info1) << " != " << VecPrinter(info2);
 }
 
 TEST_F(TestGIFBigNumParametersExtension, check)
