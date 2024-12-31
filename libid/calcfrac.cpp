@@ -860,7 +860,7 @@ int calc_fract()
     {
         froth_cleanup();
     }
-    if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)   // close sound write file
+    if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)   // close sound write file
     {
         close_sound();
     }
@@ -1498,7 +1498,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         lastz.y = g_old_z.y;
     }
 
-    if (((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
+    if (((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
     {
         check_freq = 16;
     }

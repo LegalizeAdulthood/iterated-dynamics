@@ -154,7 +154,7 @@ mandel_fp_setup()
             && (g_inside_color >= ITER)
             && g_outside_color >= ATAN
             && g_use_init_orbit != InitOrbitMode::VALUE
-            && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+            && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X
             && !g_using_jiim
             && g_bail_out_test == Bailout::MOD
             && (g_orbit_save_flags & OSF_MIDI) == 0)
@@ -292,7 +292,7 @@ julia_fp_setup()
             && (g_inside_color >= ITER)
             && g_outside_color >= ATAN
             && g_use_init_orbit != InitOrbitMode::VALUE
-            && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+            && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X
             && !g_finite_attractor
             && !g_using_jiim
             && g_bail_out_test == Bailout::MOD

@@ -3260,7 +3260,7 @@ static CmdArgFlags cmd_sound(const Command &cmd)
     //  (according to the western, even tempered system anyway)
     if (cmd.char_val[0] == 'n' || cmd.char_val[0] == 'o')
     {
-        g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
+        g_sound_flag &= ~SOUNDFLAG_ORBIT_MASK;
     }
     else if ((std::strncmp(cmd.value, "ye", 2) == 0) || (cmd.char_val[0] == 'b'))
     {
@@ -3284,7 +3284,7 @@ static CmdArgFlags cmd_sound(const Command &cmd)
     }
     if (cmd.total_params > 1)
     {
-        g_sound_flag &= SOUNDFLAG_ORBITMASK; // reset options
+        g_sound_flag &= SOUNDFLAG_ORBIT_MASK; // reset options
         for (int i = 1; i < cmd.total_params; i++)
         {
             // this is for 2 or more options at the same time

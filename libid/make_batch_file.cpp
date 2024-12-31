@@ -1311,27 +1311,27 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 
         if (g_sound_flag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
         {
-            if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+            if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_OFF)
             {
                 put_param(" %s=%s", "sound", "off");
             }
-            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+            else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_BEEP)
             {
                 put_param(" %s=%s", "sound", "beep");
             }
-            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+            else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
             {
                 put_param(" %s=%s", "sound", "x");
             }
-            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+            else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
             {
                 put_param(" %s=%s", "sound", "y");
             }
-            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+            else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
             {
                 put_param(" %s=%s", "sound", "z");
             }
-            if ((g_sound_flag & SOUNDFLAG_ORBITMASK) && (g_sound_flag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+            if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) <= SOUNDFLAG_Z)
             {
                 if (g_sound_flag & SOUNDFLAG_SPEAKER)
                 {

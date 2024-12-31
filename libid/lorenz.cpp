@@ -1462,7 +1462,7 @@ int orbit2d_float()
         break;
     }
     const double *soundvar = nullptr;
-    switch (g_sound_flag & SOUNDFLAG_ORBITMASK)
+    switch (g_sound_flag & SOUNDFLAG_ORBIT_MASK)
     {
     case SOUNDFLAG_X:
         soundvar = &x;
@@ -1530,7 +1530,7 @@ int orbit2d_float()
         const int row = (int)(cvt.c * x + cvt.d * y + cvt.f);
         if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
         {
-            if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+            if (soundvar && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
             {
                 write_sound((int)(*soundvar*100 + g_base_hertz));
             }
@@ -1617,7 +1617,7 @@ int orbit2d_long()
     }
 
     const long *soundvar = nullptr;
-    switch (g_sound_flag & SOUNDFLAG_ORBITMASK)
+    switch (g_sound_flag & SOUNDFLAG_ORBIT_MASK)
     {
     case SOUNDFLAG_X:
         soundvar = &x;
@@ -1695,7 +1695,7 @@ int orbit2d_long()
         }
         if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
         {
-            if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+            if (soundvar && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
             {
                 double yy;
                 yy = *soundvar;
@@ -1810,10 +1810,10 @@ static int orbit3d_long_calc()
                 {
                     g_which_image = StereoImage::RED;
                 }
-                if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+                if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
                 {
                     double yy;
-                    yy = inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
+                    yy = inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)];
                     yy = yy/g_fudge_factor;
                     write_sound((int)(yy*100+g_base_hertz));
                 }
@@ -1935,9 +1935,9 @@ static int orbit3d_float_calc()
                 {
                     g_which_image = StereoImage::RED;
                 }
-                if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+                if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
                 {
-                    write_sound((int)(inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+g_base_hertz));
+                    write_sound((int)(inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)]*100+g_base_hertz));
                 }
                 if (oldcol != -1 && s_connect)
                 {
@@ -2045,15 +2045,15 @@ int dynam2d_float()
     double *p1 = &y;
 
     const double *soundvar = nullptr;
-    if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+    if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
     {
         soundvar = &x;
     }
-    else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
     {
         soundvar = &y;
     }
-    else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
     {
         soundvar = &z;
     }
@@ -2135,7 +2135,7 @@ int dynam2d_float()
             const int row = (int)(cvt.c * x + cvt.d * y + cvt.f);
             if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
             {
-                if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+                if (soundvar && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
                 {
                     write_sound((int)(*soundvar*100+g_base_hertz));
                 }
@@ -2289,15 +2289,15 @@ int plot_orbits2d_float()
     double y = 0.0;
     double z = 0.0;
     const double *soundvar = nullptr;
-    if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+    if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
     {
         soundvar = &x;
     }
-    else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
     {
         soundvar = &y;
     }
-    else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+    else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
     {
         soundvar = &z;
     }
@@ -2343,7 +2343,7 @@ int plot_orbits2d_float()
         if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < g_logical_screen_y_dots)
         {
             // plot if on the screen
-            if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+            if (soundvar && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
             {
                 write_sound((int)(*soundvar*100+g_base_hertz));
             }

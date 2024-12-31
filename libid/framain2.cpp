@@ -281,7 +281,7 @@ MainState big_while_loop(MainContext &context)
                 }
                 g_out_line = pot_line;
             }
-            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP &&
+            else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP &&
                 g_evolving == EvolutionModeFlags::NONE) // regular gif/fra input file
             {
                 g_out_line = sound_line;      // sound decoding

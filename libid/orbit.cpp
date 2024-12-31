@@ -86,11 +86,11 @@ static void plot_d_orbit(double dx, double dy, int color)
     g_logical_screen_y_offset = save_syoffs;
     if (g_debug_flag == DebugFlags::FORCE_SCALED_SOUND_FORMULA)
     {
-        if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
+        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
         {
             write_sound((int)(i*1000/g_logical_screen_x_dots+g_base_hertz));
         }
-        else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X)     // sound = y or z
+        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X)     // sound = y or z
         {
             write_sound((int)(j*1000/g_logical_screen_y_dots+g_base_hertz));
         }
@@ -101,15 +101,15 @@ static void plot_d_orbit(double dx, double dy, int color)
     }
     else
     {
-        if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
+        if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
         {
             write_sound((int)(i+g_base_hertz));
         }
-        else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)     // sound = y
+        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)     // sound = y
         {
             write_sound((int)(j+g_base_hertz));
         }
-        else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)     // sound = z
+        else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)     // sound = z
         {
             write_sound((int)(i+j+g_base_hertz));
         }

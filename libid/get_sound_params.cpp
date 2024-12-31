@@ -44,7 +44,7 @@ int get_sound_params()
 get_sound_restart:
     s_menu2 = 0;
     builder.reset()
-        .list("Sound (off, beep, x, y, z)", 5, 4, soundmodes, g_sound_flag & SOUNDFLAG_ORBITMASK)
+        .list("Sound (off, beep, x, y, z)", 5, 4, soundmodes, g_sound_flag & SOUNDFLAG_ORBIT_MASK)
         .yes_no("Use PC internal speaker?", (g_sound_flag & SOUNDFLAG_SPEAKER) != 0)
         .yes_no("Use sound card output?", (g_sound_flag & SOUNDFLAG_OPL3_FM) != 0)
         .yes_no("Midi...not implemented yet", (g_sound_flag & SOUNDFLAG_MIDI) != 0)
@@ -106,7 +106,7 @@ get_sound_restart:
     }
 
     return g_sound_flag != old_soundflag &&
-            ((g_sound_flag & SOUNDFLAG_ORBITMASK) > 1 || (old_soundflag & SOUNDFLAG_ORBITMASK) > 1)
+            ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > 1 || (old_soundflag & SOUNDFLAG_ORBIT_MASK) > 1)
         ? 1
         : 0;
 }
