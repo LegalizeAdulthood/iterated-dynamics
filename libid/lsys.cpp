@@ -38,7 +38,7 @@ struct LSysCmd
 static bool read_lsystem_file(char const *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
-static bool save_axiom(char const *axiom);
+static bool save_axiom(char const *text);
 static bool save_rule(char const *rule, int index);
 static bool append_rule(char const *rule, int index);
 static void free_lcmds();
