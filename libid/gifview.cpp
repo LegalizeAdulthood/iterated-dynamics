@@ -42,7 +42,7 @@
 
 enum
 {
-    MAXCOLORS = 256
+    MAX_COLORS = 256
 };
 
 constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
