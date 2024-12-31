@@ -54,7 +54,7 @@ int solid_guess()
         || ((g_plot == g_put_color || g_plot == sym_plot2) && g_i_x_stop+1 == g_logical_screen_x_dots));
 
     // there seems to be a bug in solid guessing at bottom and side
-    if (g_debug_flag != DebugFlags::force_solid_guess_error)
+    if (g_debug_flag != DebugFlags::FORCE_SOLID_GUESS_ERROR)
     {
         s_bottom_guess = false;
         s_right_guess = false;

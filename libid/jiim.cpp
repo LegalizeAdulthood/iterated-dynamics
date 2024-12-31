@@ -539,7 +539,7 @@ void jiim(JIIMType which)
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
     s_ok_to_miim  = false;
-    if (which == JIIMType::JIIM && g_debug_flag != DebugFlags::prevent_miim)
+    if (which == JIIMType::JIIM && g_debug_flag != DebugFlags::PREVENT_MIIM)
     {
         s_ok_to_miim = init_queue(8*1024UL); // Queue Set-up Successful?
     }

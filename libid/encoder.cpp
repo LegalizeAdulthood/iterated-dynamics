@@ -198,7 +198,7 @@ restart:
 
     g_busy = true;
 
-    if (g_debug_flag != DebugFlags::benchmark_encoder)
+    if (g_debug_flag != DebugFlags::BENCHMARK_ENCODER)
     {
         interrupted = encoder() ? 1 : 0;
     }

@@ -482,7 +482,7 @@ int plasma()
             elem = rand16();
         }
     }
-    if (g_debug_flag == DebugFlags::prevent_plasma_random)
+    if (g_debug_flag == DebugFlags::PREVENT_PLASMA_RANDOM)
     {
         for (auto &elem : rnd)
         {

@@ -455,7 +455,7 @@ int std_4d_fractal()
         {
             g_c_exponent = 1;
         }
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_new_orbit_type].orbitcalc = long_z_power_fractal;
         }
@@ -507,7 +507,7 @@ int std_4d_fp_fractal()
 
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER_FP)
     {
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::force_complex_power && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_new_orbit_type].orbitcalc = float_z_power_fractal;
         }

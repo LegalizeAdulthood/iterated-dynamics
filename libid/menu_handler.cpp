@@ -168,7 +168,7 @@ MainState restore_from_image(MainContext &context)
     g_browsing = false;
     if (context.key == 'r')
     {
-        if (g_debug_flag == DebugFlags::force_disk_restore_not_save)
+        if (g_debug_flag == DebugFlags::FORCE_DISK_RESTORE_NOT_SAVE)
         {
             g_compare_gif = true;
             g_overlay_3d = true;

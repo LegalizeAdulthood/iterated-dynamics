@@ -84,7 +84,7 @@ static void plot_d_orbit(double dx, double dy, int color)
     }
     g_logical_screen_x_offset = save_sxoffs;
     g_logical_screen_y_offset = save_syoffs;
-    if (g_debug_flag == DebugFlags::force_scaled_sound_formula)
+    if (g_debug_flag == DebugFlags::FORCE_SCALED_SOUND_FORMULA)
     {
         if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
         {

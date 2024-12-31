@@ -134,7 +134,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     long xytemp = g_logical_screen_x_dots + g_logical_screen_y_dots;
     if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768))
         || (g_user_float_flag && (xytemp*sizeof(double) > 32768))
-        || g_debug_flag == DebugFlags::prevent_coordinate_grid)
+        || g_debug_flag == DebugFlags::PREVENT_COORDINATE_GRID)
     {
         g_use_grid = false;
         g_float_flag = true;
@@ -166,7 +166,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     if (g_bf_math != BFMathType::NONE)
     {
         int gotprec = get_prec_bf(CURRENTREZ);
-        if ((gotprec <= DBL_DIG+1 && g_debug_flag != DebugFlags::force_arbitrary_precision_math) || g_math_tol[1] >= 1.0)
+        if ((gotprec <= DBL_DIG+1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) || g_math_tol[1] >= 1.0)
         {
             bf_corners_to_float();
             g_bf_math = BFMathType::NONE;
@@ -177,7 +177,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         }
     }
     else if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
-        && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
+        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         g_fractal_type = FractalType::MANDEL_FP;
         g_cur_fractal_specific = &g_fractal_specific[+FractalType::MANDEL_FP];
@@ -185,7 +185,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
-        && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
+        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         g_fractal_type = FractalType::JULIA_FP;
         g_cur_fractal_specific = &g_fractal_specific[+FractalType::JULIA_FP];
@@ -193,7 +193,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == FractalType::MANDEL_Z_POWER_L || g_fractal_type == FractalType::MANDEL_Z_POWER_FP)
-        && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
+        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         g_fractal_type = FractalType::MANDEL_Z_POWER_FP;
         g_cur_fractal_specific = &g_fractal_specific[+FractalType::MANDEL_Z_POWER_FP];
@@ -201,7 +201,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == FractalType::JULIA_Z_POWER_L || g_fractal_type == FractalType::JULIA_Z_POWER_FP)
-        && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
+        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         g_fractal_type = FractalType::JULIA_Z_POWER_FP;
         g_cur_fractal_specific = &g_fractal_specific[+FractalType::JULIA_Z_POWER_FP];
@@ -209,7 +209,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         g_user_float_flag = true;
     }
     else if (g_fractal_type == FractalType::DIVIDE_BROT5 //
-        && g_debug_flag == DebugFlags::force_arbitrary_precision_math)
+        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         g_cur_fractal_specific = &g_fractal_specific[+FractalType::DIVIDE_BROT5];
         fractal_float_to_bf();
@@ -404,7 +404,7 @@ init_restart:
             && g_biomorph == -1                     // and not biomorphing
             && g_magnitude_limit <= 4.0                         // and bailout not too high
             && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
-            && g_debug_flag != DebugFlags::force_smaller_bitshift // and not debugging
+            && g_debug_flag != DebugFlags::FORCE_SMALLER_BITSHIFT // and not debugging
             && g_close_proximity <= 2.0             // and g_close_proximity not too large
             && g_bail_out_test == Bailout::MOD)    // and bailout test = mod
         {
@@ -1252,7 +1252,7 @@ static int ratio_bad(double actual, double desired)
     {
         return 0;
     }
-    if (desired != 0 && g_debug_flag != DebugFlags::prevent_arbitrary_precision_math)
+    if (desired != 0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         double ftemp = actual / desired;
         if (ftemp < (1.0-tol) || ftemp > (1.0+tol))

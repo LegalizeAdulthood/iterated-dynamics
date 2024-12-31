@@ -628,10 +628,10 @@ static int get_prec(double a, double b, double c)
         diff = temp;
     }
     digits = 7;
-    if (g_debug_flag >= DebugFlags::force_precision_0_digits &&
-        g_debug_flag < DebugFlags::force_precision_20_digits)
+    if (g_debug_flag >= DebugFlags::FORCE_PRECISION_0_DIGITS &&
+        g_debug_flag < DebugFlags::FORCE_PRECISION_20_DIGITS)
     {
-        digits = +g_debug_flag - +DebugFlags::force_precision_0_digits;
+        digits = +g_debug_flag - +DebugFlags::FORCE_PRECISION_0_DIGITS;
     }
     while (diff < 1.0 && digits <= DBL_DIG+1)
     {
@@ -865,7 +865,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             else
             {
-                if (g_debug_flag == DebugFlags::force_long_double_param_output)
+                if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
                 {
                     put_param(" %s=%.17Lg", "params", (long double)g_params[0]);
                 }
@@ -882,7 +882,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
                 }
                 else
                 {
-                    if (g_debug_flag == DebugFlags::force_long_double_param_output)
+                    if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
                     {
                         put_param("/%.17Lg", (long double)g_params[j]);
                     }
@@ -1532,7 +1532,7 @@ docolors:
                 {
                     break;
                 }
-                if (g_debug_flag == DebugFlags::force_lossless_colormap)    // lossless compression
+                if (g_debug_flag == DebugFlags::FORCE_LOSSLESS_COLORMAP)    // lossless compression
                 {
                     continue;
                 }
@@ -1566,7 +1566,7 @@ docolors:
                         for (j = 0; j < 3; ++j)
                         {
                             // check pattern of chg per color
-                            if (g_debug_flag != DebugFlags::allow_large_colormap_changes
+                            if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES
                                 && scanc > (curc+4) && scanc < maxcolor-5)
                             {
                                 if (std::abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]

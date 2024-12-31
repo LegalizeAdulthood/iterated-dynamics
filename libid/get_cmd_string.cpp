@@ -26,7 +26,7 @@ int get_cmd_string()
     if (i >= 0 && cmdbuf[0] != 0)
     {
         i = +cmd_arg(cmdbuf, CmdFile::AT_AFTER_STARTUP);
-        if (g_debug_flag == DebugFlags::write_formula_debug_information)
+        if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
         {
             backwards_v18();
             backwards_v19();

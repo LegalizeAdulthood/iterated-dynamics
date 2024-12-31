@@ -2,4 +2,4 @@
 //
 #include "debug_flags.h"
 
-DebugFlags g_debug_flag{DebugFlags::none}; // internal use only - you didn't see this
+DebugFlags g_debug_flag{DebugFlags::NONE}; // internal use only - you didn't see this

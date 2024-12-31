@@ -48,7 +48,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     int toprow;
     int color;
     static bool batchmode = false;
-    if (g_debug_flag != DebugFlags::none || g_init_batch >= BatchMode::NORMAL)
+    if (g_debug_flag != DebugFlags::NONE || g_init_batch >= BatchMode::NORMAL)
     {
         if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == BatchMode::NONE ? "w" : "a"))
         {
@@ -110,7 +110,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         driver_get_key();
     }
     bool ret = false;
-    if (g_debug_flag != DebugFlags::show_formula_info_after_compile)
+    if (g_debug_flag != DebugFlags::SHOW_FORMULA_INFO_AFTER_COMPILE)
     {
         if (get_a_key_no_help() == ID_KEY_ESC)
         {

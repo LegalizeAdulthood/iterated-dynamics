@@ -123,7 +123,7 @@ bool lya_setup()
     {
         s_filter_cycles = g_max_iterations/2;
     }
-    s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::force_standard_fractal;
+    s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL;
     s_lya_length = 1;
 
     i = (long)g_params[0];
