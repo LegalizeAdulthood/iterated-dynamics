@@ -7,7 +7,7 @@
 extern std::string const     g_speed_prompt;
 
 // fullscreen_choice options
-enum choice_flags
+enum ChoiceFlags
 {
     CHOICE_RETURN_KEY   = 1,
     CHOICE_MENU         = 2,
