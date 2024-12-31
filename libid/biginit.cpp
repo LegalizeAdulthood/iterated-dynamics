@@ -159,20 +159,20 @@ static void init_bf2()
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-    if (int i = find_alternate_math(g_fractal_type, BFMathType::BIGNUM); i > -1)
+    if (int i = find_alternate_math(g_fractal_type, BFMathType::BIG_NUM); i > -1)
     {
         g_bf_math = g_alternate_math[i].math;
     }
     else
     {
-        i = find_alternate_math(g_fractal_type, BFMathType::BIGFLT);
+        i = find_alternate_math(g_fractal_type, BFMathType::BIG_FLT);
         if (i > -1)
         {
             g_bf_math = g_alternate_math[i].math;
         }
         else
         {
-            g_bf_math = BFMathType::BIGNUM; // maybe called from cmdfiles.c and g_fractal_type not set
+            g_bf_math = BFMathType::BIG_NUM; // maybe called from cmdfiles.c and g_fractal_type not set
         }
     }
 
@@ -206,7 +206,7 @@ static void init_bf2()
     g_bn_tmp_copy1 = alloc_size((g_r_length*2));
     g_bn_tmp_copy2 = alloc_size((g_r_length*2));
 
-    if (g_bf_math == BFMathType::BIGNUM)
+    if (g_bf_math == BFMathType::BIG_NUM)
     {
         g_x_min_bn = alloc_size(g_bn_length);
         g_x_max_bn = alloc_size(g_bn_length);
@@ -231,7 +231,7 @@ static void init_bf2()
         g_tmp_sqr_y_bn = alloc_size(g_r_length);
         g_bn_tmp = alloc_size(g_r_length);
     }
-    else if (g_bf_math == BFMathType::BIGFLT)
+    else if (g_bf_math == BFMathType::BIG_FLT)
     {
         g_delta_x_bf = alloc_size(g_bf_length+2);
         g_delta_y_bf = alloc_size(g_bf_length+2);

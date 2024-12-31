@@ -840,7 +840,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_5_info.got_data)
     {
-        g_bf_math = BFMathType::BIGNUM;
+        g_bf_math = BFMathType::BIG_NUM;
         init_bf_length(read_info.g_bf_length);
         std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
@@ -1569,7 +1569,7 @@ int file_get_window()
     int saved;
 
     s_old_bf_math = g_bf_math;
-    g_bf_math = BFMathType::BIGFLT;
+    g_bf_math = BFMathType::BIG_FLT;
     if (s_old_bf_math == BFMathType::NONE)
     {
         CalcStatus oldcalc_status = g_calc_status; // kludge because next sets it = 0

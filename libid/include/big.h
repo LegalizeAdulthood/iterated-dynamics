@@ -27,8 +27,8 @@ enum class BFMathType
 {
     // cppcheck-suppress variableHidingEnum
     NONE = 0,
-    BIGNUM = 1,         // g_bf_math is being used with bn_t numbers
-    BIGFLT = 2          // g_bf_math is being used with bf_t numbers
+    BIG_NUM = 1,         // g_bf_math is being used with bn_t numbers
+    BIG_FLT = 2          // g_bf_math is being used with bf_t numbers
 };
 
 using big_t = unsigned char *;

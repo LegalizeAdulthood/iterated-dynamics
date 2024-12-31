@@ -621,7 +621,7 @@ bool mandel_bn_setup()
     bf_to_bn(g_x_3rd_bn, g_bf_x_3rd);
     bf_to_bn(g_y_3rd_bn, g_bf_y_3rd);
 
-    g_bf_math = BFMathType::BIGNUM;
+    g_bf_math = BFMathType::BIG_NUM;
 
     // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
     sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
@@ -732,7 +732,7 @@ bool mandel_bf_setup()
     bf_t bftemp1{alloc_stack(g_bf_length + 2)};
     bf_t bftemp2{alloc_stack(g_bf_length + 2)};
 
-    g_bf_math = BFMathType::BIGFLT;
+    g_bf_math = BFMathType::BIG_FLT;
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
     sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);

@@ -162,8 +162,8 @@ AlternateMath g_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
-    {FractalType::JULIA_FP, BFMathType::BIGNUM, julia_bn_fractal, julia_bn_per_pixel,  mandel_bn_setup},
-    {FractalType::MANDEL_FP, BFMathType::BIGNUM, julia_bn_fractal, mandel_bn_per_pixel, mandel_bn_setup},
+    {FractalType::JULIA_FP, BFMathType::BIG_NUM, julia_bn_fractal, julia_bn_per_pixel,  mandel_bn_setup},
+    {FractalType::MANDEL_FP, BFMathType::BIG_NUM, julia_bn_fractal, mandel_bn_per_pixel, mandel_bn_setup},
 #else
     {fractal_type::JULIAFP, bf_math_type::BIGFLT, julia_bf_fractal, julia_bf_per_pixel,  mandel_bf_setup},
     {fractal_type::MANDELFP, bf_math_type::BIGFLT, julia_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
@@ -174,10 +174,10 @@ AlternateMath g_alternate_math[] =
           of the usual BIGFLT (2), then set bfdigits on the command to
           increase the precision.
     */
-    {FractalType::JULIA_Z_POWER_FP, BFMathType::BIGFLT, julia_z_power_bf_fractal, julia_bf_per_pixel, mandel_bf_setup},
-    {FractalType::MANDEL_Z_POWER_FP, BFMathType::BIGFLT, julia_z_power_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
-    {FractalType::DIVIDE_BROT5, BFMathType::BIGFLT, divide_brot5_bf_fractal, divide_brot5_bf_per_pixel, mandel_bf_setup},
-    {FractalType::BURNING_SHIP, BFMathType::BIGFLT, burning_ship_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
+    {FractalType::JULIA_Z_POWER_FP, BFMathType::BIG_FLT, julia_z_power_bf_fractal, julia_bf_per_pixel, mandel_bf_setup},
+    {FractalType::MANDEL_Z_POWER_FP, BFMathType::BIG_FLT, julia_z_power_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
+    {FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, divide_brot5_bf_fractal, divide_brot5_bf_per_pixel, mandel_bf_setup},
+    {FractalType::BURNING_SHIP, BFMathType::BIG_FLT, burning_ship_bf_fractal, mandel_bf_per_pixel, mandel_bf_setup},
     {FractalType::NO_FRACTAL, BFMathType::NONE, nullptr, nullptr, nullptr}
 };
 
