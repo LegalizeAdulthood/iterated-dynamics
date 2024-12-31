@@ -40,7 +40,7 @@
 
 enum
 {
-    MAXRECT = 1024      // largest width of SaveRect/RestoreRect
+    MAX_RECT = 1024      // largest width of SaveRect/RestoreRect
 };
 
 enum class JuliaWindowStyle
@@ -570,7 +570,7 @@ void jiim(JIIMType which)
         || g_logical_screen_y_dots == g_vesa_y_res
         || g_vesa_x_res-g_logical_screen_x_dots < g_vesa_x_res/3
         || g_vesa_y_res-g_logical_screen_y_dots < g_vesa_y_res/3
-        || g_logical_screen_x_dots >= MAXRECT)
+        || g_logical_screen_x_dots >= MAX_RECT)
     {
         /* this mode puts orbit/julia in an overlapping window 1/3 the size of
            the physical screen */
