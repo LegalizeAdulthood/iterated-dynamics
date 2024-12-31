@@ -15,6 +15,7 @@
 #include "thinking.h"
 
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -117,7 +118,7 @@ LDBL get_number(char const **str)
     }
     if (root)
     {
-        ret = sqrtl(ret);
+        ret = std::sqrtl(ret);
     }
     if (inverse)
     {

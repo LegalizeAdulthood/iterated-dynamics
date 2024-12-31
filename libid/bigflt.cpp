@@ -541,7 +541,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         clear_bf(r); // sqrt(0) = 0
         return r;
     }
-    f = sqrtl(f); // approximate square root
+    f = std::sqrtl(f); // approximate square root
     // no need to check overflow
 
     // With Newton's Method, there is no need to calculate all the digits
