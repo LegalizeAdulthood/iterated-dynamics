@@ -6,7 +6,6 @@
 //
 #include "HelpCompiler.h"
 
-#include "AsciiDocCompiler.h"
 #include "HelpSource.h"
 #include "HTMLProcessor.h"
 #include "messages.h"
@@ -18,20 +17,15 @@
 #include <algorithm>
 #include <cassert>
 #include <cctype>
-#include <cerrno>
-#include <cstdarg>
-#include <cstdio>
 #include <cstdint>
 #include <cstring>
 #include <fcntl.h>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
-#include <iterator>
+#include <ios>
 #include <numeric>
 #include <sstream>
 #include <stdexcept>
-#include <string>
 #include <system_error>
 #include <utility>
 #include <vector>

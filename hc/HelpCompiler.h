@@ -5,6 +5,7 @@
 #include "Compiler.h"
 
 #include <cstdio>
+#include <string>
 
 namespace hc
 {
