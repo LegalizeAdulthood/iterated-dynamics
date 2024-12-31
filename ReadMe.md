@@ -51,6 +51,9 @@ the following fractal types:
 - Volterra-Lotka
 - Escher-like Julia sets
 - L-systems
+- Divide Brot5
+- Mandelbrot Mix4
+- Burning Ship
 
 See the [on-line help](http://legalizeadulthood.github.io/iterated-dynamics/)
 for more of what the software can do.
