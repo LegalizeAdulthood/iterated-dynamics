@@ -11,7 +11,7 @@ target_link_libraries(os-hc INTERFACE helpcom config)
 set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 
 add_library(os STATIC
-    d_disk.cpp
+    DiskDriver.cpp
     d_gdi.cpp
     Frame.h
     Frame.cpp
