@@ -54,13 +54,13 @@ install(TARGETS id
         POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
 )
 
-add_custom_target(doc-file ALL SOURCES "${CMAKE_CURRENT_BINARY_DIR}/id.txt")
+add_custom_target(txt-doc ALL SOURCES "${CMAKE_CURRENT_BINARY_DIR}/id.txt")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
     COMMAND id savedir=. makedoc
     COMMENT "Building documentation text file"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS native-help
 )
-set_target_properties(doc-file PROPERTIES FOLDER Docs)
+set_target_properties(txt-doc PROPERTIES FOLDER Docs)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/id.txt" DESTINATION .)
 set_property(INSTALL "id.txt" PROPERTY CPACK_START_MENU_SHORTCUTS "Documentation")
