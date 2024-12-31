@@ -104,7 +104,7 @@ void fpu_cmplx_log(const DComplex *x, DComplex *z)
     }
     if (x->y == 0.0)// x is real
     {
-        z->x = std::logl(x->x);
+        z->x = std::log(x->x);
         z->y = 0.0;
         return;
     }

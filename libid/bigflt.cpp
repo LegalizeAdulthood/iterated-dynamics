@@ -680,7 +680,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     }
 
     f = bf_to_float(n);
-    f = logl(f); // approximate ln(x)
+    f = std::log(f); // approximate ln(x)
     // no need to check overflow
     // appears to be ok, do ln
 

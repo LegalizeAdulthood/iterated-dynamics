@@ -916,7 +916,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     }
 
     f = bn_to_float(n);
-    f = logl(f); // approximate ln(x)
+    f = std::log(f); // approximate ln(x)
     maxval = (1L << ((g_int_length << 3)-1)) - 1;
     if (f > maxval) // check for overflow
     {
