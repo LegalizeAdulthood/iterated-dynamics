@@ -2208,8 +2208,8 @@ static CmdArgFlags cmd_inside(const Command &cmd)
         {"zmag", ZMAG},             //
         {"bof60", BOF60},           //
         {"bof61", BOF61},           //
-        {"epsiloncross", EPSCROSS}, //
-        {"startrail", STARTRAIL},   //
+        {"epsiloncross", EPS_CROSS}, //
+        {"startrail", STAR_TRAIL},   //
         {"period", PERIOD},         //
         {"fmod", FMODI},            //
         {"atan", ATANI},            //

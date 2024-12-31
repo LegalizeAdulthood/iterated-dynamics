@@ -341,7 +341,7 @@ int wrapped_positive_vary_int(int randvalue, int limit, Variations mode)
 
 void vary_inside(GeneBase gene[], int randval, int i)
 {
-    int choices[9] = { ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, FMODI, ATANI, ITER };
+    int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != Variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];

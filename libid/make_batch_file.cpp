@@ -974,11 +974,11 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             {
                 put_param("bof61");
             }
-            else if (g_inside_color == EPSCROSS)
+            else if (g_inside_color == EPS_CROSS)
             {
                 put_param("epsiloncross");
             }
-            else if (g_inside_color == STARTRAIL)
+            else if (g_inside_color == STAR_TRAIL)
             {
                 put_param("startrail");
             }
@@ -1000,7 +1000,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
         }
         if (g_close_proximity != 0.01
-            && (g_inside_color == EPSCROSS || g_inside_color == FMODI || g_outside_color == FMOD))
+            && (g_inside_color == EPS_CROSS || g_inside_color == FMODI || g_outside_color == FMOD))
         {
             put_param(" %s=%.15g", "proximity", g_close_proximity);
         }

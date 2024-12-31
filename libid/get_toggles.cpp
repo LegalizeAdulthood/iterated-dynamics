@@ -128,11 +128,11 @@ int get_toggles()
     {
         uvalues[k].uval.ch.val = 4;
     }
-    else if (g_inside_color == EPSCROSS)
+    else if (g_inside_color == EPS_CROSS)
     {
         uvalues[k].uval.ch.val = 5;
     }
-    else if (g_inside_color == STARTRAIL)
+    else if (g_inside_color == STAR_TRAIL)
     {
         uvalues[k].uval.ch.val = 6;
     }
@@ -327,10 +327,10 @@ int get_toggles()
                 g_inside_color = BOF61;
                 break;
             case 5:
-                g_inside_color = EPSCROSS;
+                g_inside_color = EPS_CROSS;
                 break;
             case 6:
-                g_inside_color = STARTRAIL;
+                g_inside_color = STAR_TRAIL;
                 break;
             case 7:
                 g_inside_color = PERIOD;

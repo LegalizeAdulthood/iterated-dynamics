@@ -1354,12 +1354,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     lcloseprox = (long)(g_close_proximity*g_fudge_factor);
     savemaxit = g_max_iterations;
-    if (g_inside_color == STARTRAIL)
+    if (g_inside_color == STAR_TRAIL)
     {
         std::fill(std::begin(tantable), std::end(tantable), 0.0);
         g_max_iterations = 16;
     }
-    if (g_periodicity_check == 0 || g_inside_color == ZMAG || g_inside_color == STARTRAIL)
+    if (g_periodicity_check == 0 || g_inside_color == ZMAG || g_inside_color == STAR_TRAIL)
     {
         g_old_color_iter = 2147483647L;       // don't check periodicity at all
     }
@@ -1580,7 +1580,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
 
         // the usual case
-        else if ((g_cur_fractal_specific->orbitcalc() && g_inside_color != STARTRAIL) || g_overflow)
+        else if ((g_cur_fractal_specific->orbitcalc() && g_inside_color != STAR_TRAIL) || g_overflow)
         {
             break;
         }
@@ -1613,7 +1613,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 g_new_z = cmplx_bf_to_float(g_new_z_bf);
             }
-            if (g_inside_color == STARTRAIL)
+            if (g_inside_color == STAR_TRAIL)
             {
                 if (0 < g_color_iter && g_color_iter < 16)
                 {
@@ -1652,7 +1652,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     }
                 }
             }
-            else if (g_inside_color == EPSCROSS)
+            else if (g_inside_color == EPS_CROSS)
             {
                 hooper = 0;
                 if (g_integer_fractal)
@@ -2087,7 +2087,7 @@ plot_inside: // we're "inside"
     }
     else
     {
-        if (g_inside_color == STARTRAIL)
+        if (g_inside_color == STAR_TRAIL)
         {
             double diff;
             g_color_iter = 0;
@@ -2112,7 +2112,7 @@ plot_inside: // we're "inside"
                 g_color_iter = g_max_iterations;
             }
         }
-        else if (g_inside_color == EPSCROSS)
+        else if (g_inside_color == EPS_CROSS)
         {
             if (hooper == 1)
             {

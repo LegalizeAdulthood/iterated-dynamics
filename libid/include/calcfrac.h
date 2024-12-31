@@ -50,8 +50,8 @@ enum
     ZMAG = -59,
     BOF60 = -60,
     BOF61 = -61,
-    EPSCROSS = -100,
-    STARTRAIL = -101,
+    EPS_CROSS = -100,
+    STAR_TRAIL = -101,
     PERIOD = -102,
     FMODI = -103,
     ATANI = -104

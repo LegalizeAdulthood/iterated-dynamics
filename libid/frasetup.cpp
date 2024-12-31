@@ -407,7 +407,7 @@ julia_fp_setup()
     }
 
     case FractalType::CIRCLE_FP:
-        if (g_inside_color == STARTRAIL)   // FPCIRCLE locks up when used with STARTRAIL
+        if (g_inside_color == STAR_TRAIL)   // FPCIRCLE locks up when used with STARTRAIL
         {
             g_inside_color = COLOR_BLACK; // arbitrarily set inside = NUMB
         }
