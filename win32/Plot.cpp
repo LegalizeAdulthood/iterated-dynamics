@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "plot.h"
+#include "Plot.h"
 
 #include "Frame.h"
 

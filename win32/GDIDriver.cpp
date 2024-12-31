@@ -8,7 +8,7 @@
 #include "Frame.h"
 #include "instance.h"
 #include "ods.h"
-#include "plot.h"
+#include "Plot.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"

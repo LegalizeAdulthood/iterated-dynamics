@@ -16,8 +16,8 @@ add_library(os STATIC
     Frame.h
     Frame.cpp
     os_win32.cpp
-    plot.h
-    plot.cpp
+    Plot.h
+    Plot.cpp
     Win32BaseDriver.h
     Win32BaseDriver.cpp
     win_text.h
