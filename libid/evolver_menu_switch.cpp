@@ -19,7 +19,7 @@
 #include "passes_options.h"
 #include "pixel_limits.h"
 #include "select_video_mode.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "zoom.h"
 
 #include <algorithm>

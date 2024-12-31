@@ -28,7 +28,7 @@
 #include "pixel_grid.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video.h"
 
 #include <algorithm>

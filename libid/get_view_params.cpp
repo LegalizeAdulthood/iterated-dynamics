@@ -8,7 +8,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video_mode.h"
 #include "zoom.h"
 

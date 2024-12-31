@@ -19,7 +19,7 @@
 #include "sqr.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "zoom.h"
 
 #include <algorithm>

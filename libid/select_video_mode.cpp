@@ -11,7 +11,7 @@
 #include "load_config.h"
 #include "save_file.h"
 #include "stop_msg.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video_mode.h"
 
 #include <algorithm>

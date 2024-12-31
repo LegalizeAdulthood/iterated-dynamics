@@ -26,7 +26,7 @@
 #include "make_batch_file.h"
 #include "stop_msg.h"
 #include "trim_filename.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "version.h"
 #include "video_mode.h"
 

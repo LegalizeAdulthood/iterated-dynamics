@@ -16,7 +16,7 @@
 #include "stop_msg.h"
 #include "tab_display.h"
 #include "temp_msg.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video_mode.h"
 
 #include <algorithm>

@@ -19,7 +19,7 @@
 #include "rand15.h"
 #include "save_file.h"
 #include "spindac.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 
 #include <cstdio>
 #include <cstdlib>

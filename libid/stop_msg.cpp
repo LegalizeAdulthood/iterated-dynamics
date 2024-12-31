@@ -10,7 +10,7 @@
 #include "id_keys.h"
 #include "mouse.h"
 #include "text_screen.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "wait_until.h"
 
 #include <cstdio>

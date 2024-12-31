@@ -49,7 +49,7 @@ add_executable(test-id
     test_split_path.cpp
     test_trim_filename.cpp
     test_update_save_name.cpp
-    test_value_saver.cpp
+    test_ValueSaver.cpp
     test_version.cpp
 )
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")

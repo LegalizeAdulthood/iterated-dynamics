@@ -15,7 +15,7 @@
 #include "lorenz.h"
 #include "port.h"
 #include "sticky_orbits.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "zoom.h"
 
 #include <cfloat>

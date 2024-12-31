@@ -20,7 +20,7 @@
 #include "read_ticker.h"
 #include "rotate.h"
 #include "spindac.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video.h"
 #include "zoom.h"
 

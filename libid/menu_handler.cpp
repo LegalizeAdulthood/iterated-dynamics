@@ -19,7 +19,7 @@
 #include "rotate.h"
 #include "spindac.h"
 #include "update_save_name.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video_mode.h"
 #include "zoom.h"
 

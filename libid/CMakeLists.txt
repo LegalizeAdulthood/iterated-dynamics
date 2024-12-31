@@ -223,7 +223,7 @@ add_library(libid
     include/sign.h
     include/sized_types.h
     include/stack_avail.h
-    include/value_saver.h
+    include/ValueSaver.h
 )
 
 source_group("Header Files/3d" FILES
@@ -473,7 +473,7 @@ source_group("Header Files/plumbing" FILES
     include/sized_types.h
     include/special_dirs.h
     include/stack_avail.h
-    include/value_saver.h
+    include/ValueSaver.h
 )
 source_group("Source Files/plumbing" FILES
     debug_flags.cpp

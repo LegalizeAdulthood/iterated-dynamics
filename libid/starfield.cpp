@@ -13,7 +13,7 @@
 #include "slideshw.h"
 #include "spindac.h"
 #include "stop_msg.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 #include "video.h"
 
 const std::string_view g_altern_map_file{"altern.map"};

@@ -8,7 +8,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadfile.h"
-#include "value_saver.h"
+#include "ValueSaver.h"
 
 /*
     get_cmd_string() is called whenever the 'g' key is pressed.  Return codes are:
