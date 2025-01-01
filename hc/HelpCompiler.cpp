@@ -29,6 +29,13 @@
 #include <utility>
 #include <vector>
 
+// for getpid
+#ifdef WIN32
+#include <process.h>
+#else
+#include <unistd.h>
+#endif
+
 namespace fs = std::filesystem;
 
 #if !defined(O_BINARY)
@@ -1446,8 +1453,7 @@ void HelpCompiler::usage()
                 "         /r[path] = set swap file path.\n"
                 "         src_file = .SRC file.  Default is \"%s\"\n",
         DEFAULT_SRC_FNAME);
-    std::printf("         out_file = Filename to print to. Default is \"%s\"\n",
-        DEFAULT_DOC_FNAME);
+    std::printf("         out_file = Filename to print to. Default is \"%s\"\n", DEFAULT_DOC_FNAME);
     std::printf("To append a .HLP file to an .EXE file:\n"
                 "      HC /a [hlp_file] [exe_file]\n"
                 "         hlp_file = .HLP file.  Default is \"%s\"\n",
@@ -1461,12 +1467,19 @@ void HelpCompiler::usage()
                 "Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
+static std::filesystem::path get_unique_swap_name()
+{
+    std::filesystem::path name{SWAP_FNAME};
+    name.replace_filename(name.stem().string() + std::to_string(::getpid()) + name.extension().string());
+    return name;
+}
+
 void HelpCompiler::read_source_file()
 {
     s_src_filename = m_options.fname1.empty() ? DEFAULT_SRC_FNAME : m_options.fname1;
 
     std::filesystem::path swap_path{m_options.swap_path};
-    swap_path /= SWAP_FNAME;
+    swap_path /= get_unique_swap_name();
     m_options.swap_path = swap_path.string();
 
     g_src.swap_file = std::fopen(m_options.swap_path.c_str(), "w+b");
