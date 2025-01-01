@@ -693,8 +693,10 @@ static int next_command(
                         || g_command_comment[2].empty() || g_command_comment[3].empty()))
                 {
                     // save comment
-                    while (*(++lineptr) && (*lineptr == ' ' || *lineptr == '\t'))
+                    ++lineptr;
+                    while (*lineptr && (*lineptr == ' ' || *lineptr == '\t'))
                     {
+                        ++lineptr;
                     }
                     if (*lineptr)
                     {
