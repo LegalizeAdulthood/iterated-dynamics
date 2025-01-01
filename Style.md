@@ -162,6 +162,15 @@ Adding new global variables should be avoided.  Global variables
 hinder the evolution towards multi-threading.  Iterated Dynamics has
 too much global data already `:)`.
 
+### Test Cases
+
+Id uses [Google Test](https://google.github.io/googletest/) for unit
+tests.  Google Test prohibits test fixture names and test case
+names from containing an underscore (see the
+[TEST and TEST_F reference](https://google.github.io/googletest/reference/testing.html#TEST)).
+Use `UpperCamelCase` for the names of test suites and fixtures and
+`lowerCamelCase` for the names of test cases.
+
 ## Files
 
 In general, files are named according to the main item inside the
