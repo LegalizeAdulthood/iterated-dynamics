@@ -1695,9 +1695,10 @@ static void put_param_line()
     int c;
     if (len > nice_line_length())
     {
-        len = nice_line_length()+1;
-        while (--len != 0 && s_wbdata.buf[len] != ' ')
+        len = nice_line_length();
+        while (len != 0 && s_wbdata.buf[len] != ' ')
         {
+            --len;
         }
         if (len == 0)
         {

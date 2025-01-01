@@ -48,6 +48,61 @@
 
 using namespace testing;
 
+static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
+{
+    if (value == CmdArgFlags::BAD_ARG)
+    {
+        return str << "BAD_ARG";
+    }
+    if (value == CmdArgFlags::NONE)
+    {
+        return str << "NONE";
+    }
+
+    bool emitted{false};
+    if (bit_set(value, CmdArgFlags::FRACTAL_PARAM))
+    {
+        str << "FRACTAL_PARAM";
+        emitted = true;
+    }
+    if (bit_set(value, CmdArgFlags::PARAM_3D))
+    {
+        if (emitted)
+        {
+            str << " | ";
+        }
+        str << "PARAM_3D";
+        emitted = true;
+    }
+    if (bit_set(value, CmdArgFlags::YES_3D))
+    {
+        if (emitted)
+        {
+            str << " | ";
+        }
+        str << "YES_3D";
+        emitted = true;
+    }
+    if (bit_set(value, CmdArgFlags::RESET))
+    {
+        if (emitted)
+        {
+            str << " | ";
+        }
+        str << "RESET";
+        emitted = true;
+    }
+    if (bit_set(value, CmdArgFlags::GOODBYE))
+    {
+        if (emitted)
+        {
+            str << " | ";
+        }
+        str << "GOODBYE";
+    }
+    return str;
+}
+
 class TestParameterCommand : public Test
 {
 public:
@@ -174,7 +229,33 @@ TEST_F(TestParameterCommandError, maxHistoryAfterStartup)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-class TestParameterCommandMakeDoc : public TestParameterCommand
+class TestParameterGoodbye : public TestParameterCommand
+{
+public:
+    ~TestParameterGoodbye() override = default;
+
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    StrictMock<MockFunction<cmd_files_test::Goodbye>> m_goodbye;
+    cmd_files_test::GoodbyeFn m_prev_goodbye;
+};
+
+void TestParameterGoodbye::SetUp()
+{
+    TestParameterCommand::SetUp();
+    m_prev_goodbye = cmd_files_test::get_goodbye();
+    cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
+}
+
+void TestParameterGoodbye::TearDown()
+{
+    cmd_files_test::set_goodbye(m_prev_goodbye);
+    TestParameterCommand::TearDown();
+}
+
+class TestParameterCommandMakeDoc : public TestParameterGoodbye
 {
 public:
     ~TestParameterCommandMakeDoc() override = default;
@@ -183,9 +264,7 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    StrictMock<MockFunction<cmd_files_test::Goodbye>> m_goodbye;
     StrictMock<MockFunction<cmd_files_test::PrintDoc>> m_print_document;
-    cmd_files_test::GoodbyeFn m_prev_goodbye;
     cmd_files_test::PrintDocFn m_prev_print_document;
     Driver *m_prev_driver{};
     MockDriver m_driver;
@@ -193,10 +272,8 @@ protected:
 
 void TestParameterCommandMakeDoc::SetUp()
 {
-    TestParameterCommand::SetUp();
-    m_prev_goodbye = cmd_files_test::get_goodbye();
+    TestParameterGoodbye::SetUp();
     m_prev_print_document = cmd_files_test::get_print_document();
-    cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
     cmd_files_test::set_print_document(m_print_document.AsStdFunction());
     m_prev_driver = g_driver;
     g_driver = &m_driver;
@@ -211,8 +288,7 @@ void TestParameterCommandMakeDoc::TearDown()
 {
     g_driver = m_prev_driver;
     cmd_files_test::set_print_document(m_prev_print_document);
-    cmd_files_test::set_goodbye(m_prev_goodbye);
-    TestParameterCommand::TearDown();
+    TestParameterGoodbye::TearDown();
 }
 
 TEST_F(TestParameterCommandMakeDoc, makeDocDefaultFile)
@@ -251,7 +327,23 @@ TEST_F(TestParameterCommandError, makeParTooManyValues)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-// TODO: test makepar with valid arguments
+TEST_F(TestParameterGoodbye, makePar)
+{
+    ValueSaver saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific, &g_fractal_specific[+g_fractal_type]};
+    ValueSaver saved_x_dots{g_file_x_dots, 800};
+    ValueSaver saved_y_dots{g_file_y_dots, 600};
+    MockDriver driver;
+    ValueSaver saved_driver{g_driver, &driver};
+    EXPECT_CALL(driver, stack_screen());
+    EXPECT_CALL(driver, unstack_screen());
+    EXPECT_CALL(m_goodbye, Call());
+    
+    exec_cmd_arg("makepar=foo.par/bar", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+}
 
 TEST_F(TestParameterCommandError, resetBadArg)
 {
