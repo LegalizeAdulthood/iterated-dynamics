@@ -4,6 +4,7 @@
 
 #include <functional>
 #include <string>
+#include <ctime>
 
 enum
 {
@@ -22,6 +23,7 @@ inline void clear_command_comments()
     }
 }
 
-std::string expand_command_comment(int i);
+const std::string &expand_command_comment(int i, std::time_t local_time);
+const std::string &expand_command_comment(int i);
 void init_comments();
 void parse_comments(char *value);

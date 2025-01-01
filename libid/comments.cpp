@@ -10,20 +10,18 @@
 
 #include <libcpuid/libcpuid.h>
 
-#include <array>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 static std::string get_cpu_id();
 
 std::string g_command_comment[4];
 char g_par_comment[4][MAX_COMMENT_LEN]{};
 std::function<std::string()> g_get_cpu_id{get_cpu_id};
-
-constexpr char ESC{'$'};
 
 static std::string get_cpu_id()
 {
@@ -59,108 +57,88 @@ static std::string get_cpu_id()
     return cpu_id;
 }
 
-static char const *expand_var(char const *var, char *buf)
+static std::string_view expand_time(std::time_t local_time)
 {
-    std::time_t ltime;
-    char *str;
-    char const *out;
+    return std::ctime(&local_time);
+}
 
-    std::time(&ltime);
-    str = std::ctime(&ltime);
+static std::string expand_time(std::time_t local_time, int start, int count)
+{
+    const std::string_view str{expand_time(local_time)};
+    return std::string{str.substr(start, count)};
+}
 
+static std::string expand_var(const std::string &var, std::time_t local_time)
+{
     // ctime format
     // Sat Aug 17 21:34:14 1996
     // 012345678901234567890123
     //           1         2
-    if (std::strcmp(var, "year") == 0)       // 4 chars
+    if (var == "year")       // 4 chars
     {
-        str[24] = '\0';
-        out = &str[20];
+        return expand_time(local_time, 20, 4);
     }
-    else if (std::strcmp(var, "month") == 0) // 3 chars
+    if (var == "month") // 3 chars
     {
-        str[7] = '\0';
-        out = &str[4];
+        return expand_time(local_time, 4, 3);
     }
-    else if (std::strcmp(var, "day") == 0)   // 2 chars
+    if (var == "day")   // 2 chars
     {
-        str[10] = '\0';
-        out = &str[8];
+        return expand_time(local_time, 8, 2);
     }
-    else if (std::strcmp(var, "hour") == 0)  // 2 chars
+    if (var == "hour")  // 2 chars
     {
-        str[13] = '\0';
-        out = &str[11];
+        return expand_time(local_time, 11, 2);
     }
-    else if (std::strcmp(var, "min") == 0)   // 2 chars
+    if (var == "min")   // 2 chars
     {
-        str[16] = '\0';
-        out = &str[14];
+        return expand_time(local_time, 14, 2);
     }
-    else if (std::strcmp(var, "sec") == 0)   // 2 chars
+    if (var == "sec")   // 2 chars
     {
-        str[19] = '\0';
-        out = &str[17];
+        return expand_time(local_time, 17, 2);
     }
-    else if (std::strcmp(var, "time") == 0)  // 8 chars
+    if (var == "time")  // 8 chars
     {
-        str[19] = '\0';
-        out = &str[11];
+        return expand_time(local_time, 11, 8);
     }
-    else if (std::strcmp(var, "date") == 0)
+    if (var == "date")
     {
-        str[10] = '\0';
-        str[24] = '\0';
-        char *dest = &str[4];
-        std::strcat(dest, ", ");
-        std::strcat(dest, &str[20]);
-        out = dest;
+        const std::string str{expand_time(local_time)};
+        return str.substr(4, 6) + ", " + str.substr(20, 4);
     }
-    else if (std::strcmp(var, "calctime") == 0)
+    if (var == "calctime")
     {
-        strcpy(buf, get_calculation_time(g_calc_time).c_str());
-        out = buf;
+        return get_calculation_time(g_calc_time);
     }
-    else if (std::strcmp(var, "version") == 0)  // 4 chars
+    if (var == "version")  // 4 chars
     {
-        std::sprintf(buf, "%d", g_release);
-        out = buf;
+        return std::to_string(g_release);
     }
-    else if (std::strcmp(var, "patch") == 0)   // 1 or 2 chars
+    if (var == "patch")   // 1 or 2 chars
     {
-        std::sprintf(buf, "%d", g_patch_level);
-        out = buf;
+        return std::to_string(g_patch_level);
     }
-    else if (std::strcmp(var, "xdots") == 0)   // 2 to 4 chars
+    if (var == "xdots")   // 2 to 4 chars
     {
-        std::sprintf(buf, "%d", g_logical_screen_x_dots);
-        out = buf;
+        return std::to_string(g_logical_screen_x_dots);
     }
-    else if (std::strcmp(var, "ydots") == 0)   // 2 to 4 chars
+    if (var == "ydots")   // 2 to 4 chars
     {
-        std::sprintf(buf, "%d", g_logical_screen_y_dots);
-        out = buf;
+        return std::to_string(g_logical_screen_y_dots);
     }
-    else if (std::strcmp(var, "vidkey") == 0)   // 2 to 3 chars
+    if (var == "vidkey")   // 2 to 3 chars
     {
         char vidmde[5];
         vid_mode_key_name(g_video_entry.keynum, vidmde);
-        std::sprintf(buf, "%s", vidmde);
-        out = buf;
+        return vidmde;
     }
-    else if (std::strcmp(var, "cpu") == 0)
+    if (var == "cpu")
     {
-        std::strcpy(buf, g_get_cpu_id().c_str());
-        out = buf;
+        return g_get_cpu_id();
     }
-    else
-    {
-        char buff[80];
-        std::snprintf(buff, std::size(buff), "Unknown comment variable %s", var);
-        stop_msg(buff);
-        out = "";
-    }
-    return out;
+    stop_msg("Unknown comment variable " + var);
+    return {};
 }
 
 // extract comments from the comments= command
@@ -195,76 +173,67 @@ void parse_comments(char *value)
     }
 }
 
-enum
+// expands comments from the comments= command
+static std::string expand_comments(const std::string_view source, std::time_t local_time)
 {
-    MAX_VAR_NAME = 13
-};
-
-// extract comments from the comments= command
-static std::string expand_comments(char const *source)
-{
-    int escape = 0;
-    char c;
-    char oldc;
-    char varname[MAX_VAR_NAME];
-    int k = 0;
-    int i = 0;
-    oldc = 0;
+    constexpr char QUOTE{'\\'};    // used to quote the next character (_, \ or $) from special interpretation
+    constexpr char DELIMITER{'$'}; // delimits variable names
+    bool in_variable{};
+    std::string var_name;
+    char last_c{};
     std::string target;
-    while (i < MAX_COMMENT_LEN && (c = *(source + i++)) != '\0')
+    for (char c : source)
     {
-        if (c == '\\' && oldc != '\\')
+        if (c == QUOTE && last_c != QUOTE)
         {
-            oldc = c;
+            last_c = c;
             continue;
         }
         // expand underscores to blanks
-        if (c == '_' && oldc != '\\')
+        if (c == '_' && last_c != QUOTE)
         {
             c = ' ';
         }
-        // esc_char marks start and end of variable names
-        if (c == ESC && oldc != '\\')
+        // DELIMITER marks start and end of variable names
+        if (c == DELIMITER && last_c != QUOTE)
         {
-            escape = 1 - escape;
+            in_variable = !in_variable;
         }
-        if (c != ESC && escape != 0) // if true, building variable name
+        if (c != DELIMITER && in_variable) // if true, building variable name
         {
-            if (k < MAX_VAR_NAME-1)
-            {
-                varname[k++] = c;
-            }
+            var_name += c;
         }
         // got variable name
-        else if (c == ESC && escape == 0 && oldc != '\\')
+        else if (c == DELIMITER && !in_variable && last_c != QUOTE)
         {
-            char buf[100];
-            varname[k] = 0;
-            target += expand_var(varname, buf);
+            target += expand_var(var_name, local_time);
         }
-        else if (c == ESC && escape != 0 && oldc != '\\')
-        {
-            k = 0;
-        }
-        else if ((c != ESC || oldc == '\\') && escape == 0)
+        else if ((c != DELIMITER || last_c == QUOTE) && !in_variable)
         {
             target += c;
         }
-        oldc = c;
+        last_c = c == QUOTE && last_c == QUOTE ? '\0' : c;
     }
     return target;
 }
 
-std::string expand_command_comment(int i)
+const std::string &expand_command_comment(int i, std::time_t local_time)
 {
-    g_command_comment[i] = expand_comments(g_par_comment[i]);
+    g_command_comment[i] = expand_comments(g_par_comment[i], local_time);
     return g_command_comment[i];
+}
+
+const std::string &expand_command_comment(int i)
+{
+    std::time_t now;
+    std::time(&now);
+    return expand_command_comment(i, now);    
 }
 
 void init_comments()
 {
-    for (char *elem : g_par_comment)
+    for (char *comment : g_par_comment)
     {
-        elem[0] = '\0';
+        comment[0] = '\0';
     }
 }
