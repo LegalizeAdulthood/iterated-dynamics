@@ -26,6 +26,7 @@ set_target_properties(libhc PROPERTIES FOLDER Libraries)
 
 add_executable(hc hc.cpp)
 target_link_libraries(hc PUBLIC libhc)
+set_property(TARGET hc PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 add_library(help-defs INTERFACE)
 target_sources(help-defs INTERFACE
