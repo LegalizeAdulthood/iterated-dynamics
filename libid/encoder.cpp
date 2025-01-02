@@ -980,12 +980,12 @@ enum
 //
 // Based on: compress.c - File compression ala IEEE Computer, June 1984.
 //
-// By Authors:  Spencer W. Thomas       (decvax!harpo!utah-cs!utah-gr!thomas)
-//              Jim McKie               (decvax!mcvax!jim)
-//              Steve Davies            (decvax!vax135!petsd!peora!srd)
-//              Ken Turkowski           (decvax!decwrl!turtlevax!ken)
-//              James A. Woods          (decvax!ihnp4!ames!jaw)
-//              Joe Orost               (decvax!vax135!petsd!joe)
+// By Authors:  Spencer W. Thomas
+//              Jim McKie
+//              Steve Davies
+//              Ken Turkowski
+//              James A. Woods
+//              Joe Orost
 //
 
 // prototypes
