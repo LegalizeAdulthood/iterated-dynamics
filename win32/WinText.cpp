@@ -408,17 +408,17 @@ static void wintext_on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info)
     s_me->on_get_min_max_info(hwnd, min_max_info);
 }
 
-static void wintext_on_l_button_up(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
-static void wintext_on_r_button_up(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
-static void wintext_on_m_button_up(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
@@ -446,13 +446,13 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
         HANDLE_WM_PAINT(window, wp, lp, wintext_on_paint);
         break;
     case WM_LBUTTONUP:
-        HANDLE_WM_LBUTTONUP(window, wp, lp, wintext_on_l_button_up);
+        HANDLE_WM_LBUTTONUP(window, wp, lp, wintext_on_primary_button_up);
         break;
     case WM_RBUTTONUP:
-        HANDLE_WM_RBUTTONUP(window, wp, lp, wintext_on_r_button_up);
+        HANDLE_WM_RBUTTONUP(window, wp, lp, wintext_on_secondary_button_up);
         break;
     case WM_MBUTTONUP:
-        HANDLE_WM_MBUTTONUP(window, wp, lp, wintext_on_m_button_up);
+        HANDLE_WM_MBUTTONUP(window, wp, lp, wintext_on_middle_button_up);
         break;
     default:
         return DefWindowProc(window, message, wp, lp);

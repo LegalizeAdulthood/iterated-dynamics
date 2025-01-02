@@ -41,19 +41,19 @@ void mouse_unsubscribe(int id)
     s_subscribers.erase(id);
 }
 
-void mouse_notify_left_down(bool double_click, int x, int y, int key_flags)
+void mouse_notify_primary_down(bool double_click, int x, int y, int key_flags)
 {
     for (const auto &entry : s_subscribers)
     {
-        entry.second->left_down(double_click, x, y, key_flags);
+        entry.second->primary_down(double_click, x, y, key_flags);
     }
 }
 
-void mouse_notify_right_down(int x, int y, int key_flags)
+void mouse_notify_secondary_down(int x, int y, int key_flags)
 {
     for (const auto &entry : s_subscribers)
     {
-        entry.second->right_down(x, y, key_flags);
+        entry.second->secondary_down(x, y, key_flags);
     }
 }
 

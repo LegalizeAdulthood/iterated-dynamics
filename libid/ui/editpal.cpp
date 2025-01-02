@@ -144,7 +144,7 @@ public:
         m_box.set_pos(x, y);
         m_box.draw();
     }
-    void left_down(bool double_click, int x, int y, int key_flags) override
+    void primary_down(bool double_click, int x, int y, int key_flags) override
     {
         if (!double_click)
         {

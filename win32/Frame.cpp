@@ -391,7 +391,7 @@ static void frame_on_secondary_button_up(HWND window, int x, int y, UINT key_fla
     g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
-static void frame_on_m_button_up(HWND window, int x, int y, UINT key_flags)
+static void frame_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
@@ -399,6 +399,11 @@ static void frame_on_m_button_up(HWND window, int x, int y, UINT key_flags)
 static void frame_on_mouse_move(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_mouse_move(window,x, y, key_flags);
+}
+
+static void frame_on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+{
+    g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
 
 static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -439,7 +444,7 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
         HANDLE_WM_RBUTTONUP(window, wp, lp, frame_on_secondary_button_up);
         break;
     case WM_MBUTTONUP:
-        HANDLE_WM_MBUTTONUP(window, wp, lp, frame_on_m_button_up);
+        HANDLE_WM_MBUTTONUP(window, wp, lp, frame_on_middle_button_up);
         break;
     case WM_MOUSEMOVE:
         HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_on_mouse_move);
@@ -454,7 +459,7 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
         break;
     case WM_MBUTTONDOWN:
     case WM_MBUTTONDBLCLK:
-        HANDLE_WM_MBUTTONDOWN(window, wp, lp, frame_on_m_button_down);
+        HANDLE_WM_MBUTTONDOWN(window, wp, lp, frame_on_middle_button_down);
         break;
     default:
         return DefWindowProc(window, message, wp, lp);
@@ -1332,14 +1337,14 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
 
 void Frame::on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
-    mouse_notify_left_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
+    mouse_notify_primary_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "left down: (double)" : "left down: ") + std::to_string(x) + "," +
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }
 
 void Frame::on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
-    mouse_notify_right_down(x, y, static_cast<int>(key_flags));
+    mouse_notify_secondary_down(x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "right down: (double)" : "right down: ") + std::to_string(x) + "," +
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }

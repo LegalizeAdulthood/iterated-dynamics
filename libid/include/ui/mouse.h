@@ -31,8 +31,8 @@ class MouseNotification
 public:
     virtual ~MouseNotification() = default;
 
-    virtual void left_down(bool double_click, int x, int y, int key_flags) = 0;
-    virtual void right_down(int x, int y, int key_flags) = 0;
+    virtual void primary_down(bool double_click, int x, int y, int key_flags) = 0;
+    virtual void secondary_down(int x, int y, int key_flags) = 0;
     virtual void move(int x, int y, int key_flags) = 0;
 };
 
@@ -40,10 +40,10 @@ class NullMouseNotification : public MouseNotification
 {
 public:
     ~NullMouseNotification() override = default;
-    void left_down(bool double_click, int x, int y, int key_flags) override
+    void primary_down(bool double_click, int x, int y, int key_flags) override
     {
     }
-    void right_down(int x, int y, int key_flags) override
+    void secondary_down(int x, int y, int key_flags) override
     {
     }
     void move(int x, int y, int key_flags) override
@@ -53,8 +53,8 @@ public:
 
 int mouse_subscribe(std::shared_ptr<MouseNotification> subscriber);
 void mouse_unsubscribe(int id);
-void mouse_notify_left_down(bool double_click, int x, int y, int key_flags);
-void mouse_notify_right_down(int x, int y, int key_flags);
+void mouse_notify_primary_down(bool double_click, int x, int y, int key_flags);
+void mouse_notify_secondary_down(int x, int y, int key_flags);
 void mouse_notify_move(int x, int y, int key_flags);
 
 class MouseSubscription
