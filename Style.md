@@ -7,6 +7,8 @@ SPDX-License-Identifier: GPL-3.0-only
   - [SOLID](#solid)
   - [DRY](#dry)
 - [C++ Standard](#c-standard)
+- [The Standard Library](#the-standard-library)
+- [Third Party Libraries](#third-party-libraries)
 - [Names](#names)
   - [Types](#types)
   - [Macros](#macros)
@@ -17,6 +19,8 @@ SPDX-License-Identifier: GPL-3.0-only
     - [Member Variables](#member-variables)
     - [Static Variables](#static-variables)
     - [Global Variables](#global-variables)
+  - [Namespaces](#namespaces)
+  - [Test Cases](#test-cases)
   - [Files](#files)
     - [Plain Functions](#plain-functions)
     - [Classes](#classes)
@@ -26,7 +30,6 @@ SPDX-License-Identifier: GPL-3.0-only
 - [Header Guards](#header-guards)
 - [License Comment](#license-comment)
 - [Additional Guidelines](#additional-guidelines)
-
 
 # Design Principles
 
@@ -78,6 +81,26 @@ library and the
 [`<string_view>`](https://en.cppreference.com/w/cpp/header/string_view),
 and [`<variant>`](https://en.cppreference.com/w/cpp/header/variant)
 headers.  Any valid C++17 code is permitted.
+
+# The Standard Library
+
+For C standard library headers, e.g. `<stdio.h>`, use the C++ form
+that declares all identifiers in namespace `std`, e.g. `<cstdio>`.
+
+Reference all data and functions from the C or C++ standard library
+with an explicit `std::` namespace qualifier or with the appropriate
+namespace alias.  For instance, the namespace alias `fs` is often
+used for the `std::filesystem` namespace.
+
+For math functions, prefer the plain C++ functions that are overloaded
+by type rather than the type suffixed functions from C.  For instance,
+use `std::sin(float arg)` instead of `std::sinf(float arg)`.
+
+# Third Party Libraries
+
+Id uses [vcpkg](https://vcpkg.io) for consuming third-party dependencies.
+Packages must be supported on Windows and linux to preserve cross-platform
+compatibility.
 
 # Names
 
@@ -162,7 +185,13 @@ Adding new global variables should be avoided.  Global variables
 hinder the evolution towards multi-threading.  Iterated Dynamics has
 too much global data already `:)`.
 
-### Test Cases
+## Namespaces
+
+Namespaces and namespace aliases use `all_lower_case` names.
+Currently most Id code lies in the global namespace.  Over time all
+data and code will be moved into the namespace `id`.
+
+## Test Cases
 
 Id uses [Google Test](https://google.github.io/googletest/) for unit
 tests.  Google Test prohibits test fixture names and test case
