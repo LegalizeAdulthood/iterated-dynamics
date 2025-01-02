@@ -107,15 +107,10 @@ void make_batch_file()
     double piece_x_min{};
     double piece_y_min{};
     char video_mode_key_name[5];
-    int prompt_num;
-    int pieces_prompts;
     bool have_3rd{};
     char input_command_file[80];
     char input_command_name[ITEM_NAME_LEN + 1];
     char input_comment[4][MAX_COMMENT_LEN];
-    constexpr int MAX_PROMPTS{18};
-    FullScreenValues param_values[MAX_PROMPTS];
-    char const      *choices[MAX_PROMPTS];
     fs::path out_name;
     char             buf[256];
     char             buf2[128];
@@ -123,7 +118,6 @@ void make_batch_file()
     std::FILE *bat_file{};
     char color_spec[14];
     int max_color;
-    int max_color_index{};
     char const *sptr{};
     char const *sptr2;
 
@@ -225,7 +219,12 @@ void make_batch_file()
     while (true)
     {
 prompt_user:
-        prompt_num = 0;
+        int prompt_num = 0;
+        constexpr int MAX_PROMPTS{18};
+        FullScreenValues param_values[MAX_PROMPTS];
+        char const      *choices[MAX_PROMPTS];
+        int max_color_index{};
+        int pieces_prompts;
         choices[prompt_num] = "Parameter file";
         param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
         param_values[prompt_num++].uval.sbuf = input_command_file;
