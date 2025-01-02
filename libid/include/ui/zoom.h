@@ -29,7 +29,7 @@ void resize_box(int steps);
 void change_box(int dw, int dd);
 void zoom_out();
 void aspect_ratio_crop(float old_aspect, float new_aspect);
-int init_pan_or_recalc(bool do_zoom_out);
+void init_pan_or_recalc(bool do_zoom_out);
 void draw_lines(Coord fr, Coord to, int dx, int dy);
 void add_box(Coord point);
 void clear_box();

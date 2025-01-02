@@ -728,12 +728,12 @@ static void move_row(int from_row, int to_row, int col)
 }
 
 // decide to recalc, or to chg worklist & pan
-int init_pan_or_recalc(bool do_zoom_out)
+void init_pan_or_recalc(bool do_zoom_out)
 {
     // no zoombox, leave g_calc_status as is
     if (g_zoom_box_width == 0.0)
     {
-        return 0;
+        return;
     }
     // got a zoombox
     const int align_mask = check_pan() - 1;
@@ -742,14 +742,14 @@ int init_pan_or_recalc(bool do_zoom_out)
     if (align_mask < 0 || g_evolving != EvolutionModeFlags::NONE)
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
-        return 0;
+        return;
     }
 
     // box is full screen, leave g_calc_status as is
     if (g_zoom_box_x == 0.0 && g_zoom_box_y == 0.0)
     {
         clear_box();
-        return 0;
+        return;
     }
 
     int col = (int) (g_zoom_box_x *
@@ -764,7 +764,7 @@ int init_pan_or_recalc(bool do_zoom_out)
     if ((row&align_mask) != 0 || (col&align_mask) != 0)
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
-        return 0;
+        return;
     }
 
     // pan
@@ -820,7 +820,7 @@ int init_pan_or_recalc(bool do_zoom_out)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED; // trigger recalc
         }
-        return 0;
+        return;
     }
     // now we're committed
     g_calc_status = CalcStatus::RESUMABLE;
@@ -842,7 +842,6 @@ int init_pan_or_recalc(bool do_zoom_out)
     fix_work_list(); // fixup any out of bounds worklist entries
     alloc_resume(sizeof(g_work_list)+20, 2); // post the new worklist
     put_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-    return 0;
 }
 
 // force a worklist entry to restart
