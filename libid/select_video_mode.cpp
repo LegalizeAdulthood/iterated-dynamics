@@ -2,16 +2,17 @@
 //
 #include "select_video_mode.h"
 
+#include "ValueSaver.h"
 #include "drivers.h"
 #include "find_path.h"
 #include "full_screen_choice.h"
 #include "get_key_no_help.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "is_writeable.h"
 #include "load_config.h"
 #include "save_file.h"
 #include "stop_msg.h"
-#include "ValueSaver.h"
 #include "video_mode.h"
 
 #include <algorithm>
@@ -31,12 +32,6 @@ static bool s_modes_changed{};
 static int check_mode_key(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
-
-inline bool is_writeable(const std::string &path)
-{
-    const fs::perms read_write = fs::perms::owner_read | fs::perms::owner_write;
-    return (fs::status(path).permissions() & read_write) == read_write;
-}
 
 static void format_vid_table(int choice, char *buf)
 {

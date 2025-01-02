@@ -23,6 +23,7 @@
 #include "helpdefs.h"
 #include "id.h"
 #include "id_data.h"
+#include "is_writeable.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
@@ -84,12 +85,6 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 inline char par_key(int x)
 {
     return static_cast<char>(x < 10 ? '0' + x : 'a' - 10 + x);
-}
-
-inline bool is_writeable(const std::string &path)
-{
-    const fs::perms read_write = fs::perms::owner_read | fs::perms::owner_write;
-    return (fs::status(path).permissions() & read_write) == read_write;
 }
 
 void make_batch_file()

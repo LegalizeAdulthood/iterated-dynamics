@@ -214,6 +214,7 @@ add_library(libid
     include/id_data.h
     include/id_keys.h
     include/is_directory.h
+    include/is_writeable.h
     include/lsys.h
     include/mpmath.h
     include/pixel_limits.h
@@ -400,6 +401,8 @@ source_group("Header Files/IO" FILES
     include/get_video_mode.h
     include/gif_file.h
     include/gifview.h
+    include/is_directory.h
+    include/is_writeable.h
     include/loadfile.h
     include/loadmap.h
     include/lowerize_parameter.h
@@ -530,7 +533,6 @@ source_group("Header Files/ui" FILES
     include/id_main.h
     include/input_field.h
     include/intro.h
-    include/is_directory.h
     include/load_config.h
     include/load_entry_text.h
     include/load_params.h
