@@ -43,6 +43,8 @@
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <fstream>
+#include <sstream>
 #include <string_view>
 #include <vector>
 
@@ -327,22 +329,95 @@ TEST_F(TestParameterCommandError, makeParTooManyValues)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-TEST_F(TestParameterGoodbye, makePar)
+static std::string read_file_contents(const std::filesystem::path &path)
 {
-    ValueSaver saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
-    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific, &g_fractal_specific[+g_fractal_type]};
-    ValueSaver saved_x_dots{g_file_x_dots, 800};
-    ValueSaver saved_y_dots{g_file_y_dots, 600};
+    std::ifstream file{path};
+    std::ostringstream str;
+    str << file.rdbuf();
+    return str.str();
+}
+
+struct TestCommandMakePar : TestParameterGoodbye
+{
+    ~TestCommandMakePar() override = default;
+
+protected:
+    void SetUp() override;
+
+    ValueSaver<std::string> saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
+    ValueSaver<FractalType> saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver<FractalSpecific *> saved_cur_fractal_specific{g_cur_fractal_specific, &g_fractal_specific[+g_fractal_type]};
+    ValueSaver<int> saved_x_dots{g_file_x_dots, 800};
+    ValueSaver<int> saved_y_dots{g_file_y_dots, 600};
     MockDriver driver;
-    ValueSaver saved_driver{g_driver, &driver};
+    ValueSaver<Driver *> saved_driver{g_driver, &driver};
+};
+
+void TestCommandMakePar::SetUp()
+{
+    TestParameterGoodbye::SetUp();
     EXPECT_CALL(driver, stack_screen());
     EXPECT_CALL(driver, unstack_screen());
     EXPECT_CALL(m_goodbye, Call());
+}
+
+TEST_F(TestCommandMakePar, makeParNewFile)
+{
+    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "foo.par"};
+    remove(path);
     
     exec_cmd_arg("makepar=foo.par/bar", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(R"par(bar                {
+  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
+  decay=0 sustain=0 srelease=0 orbitinterval=0
+}
+
+)par",
+        read_file_contents(path));
+}
+
+static void set_file_contents(const std::filesystem::path &path, std::string_view contents)
+{
+    remove(path);
+    std::ofstream file{path};
+    file << contents;
+}
+
+TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
+{
+    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "bar.par"};
+    set_file_contents(path, R"par(bar                {
+  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
+  decay=0 sustain=0 srelease=0 orbitinterval=0
+}
+
+)par");
+    
+    exec_cmd_arg("makepar=bar.par/foo", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_EQ(R"par(bar                {
+  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
+  decay=0 sustain=0 srelease=0 orbitinterval=0
+}
+
+foo                {
+  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
+  decay=0 sustain=0 srelease=0 orbitinterval=0
+}
+
+)par",
+        read_file_contents(path));
 }
 
 TEST_F(TestParameterCommandError, resetBadArg)

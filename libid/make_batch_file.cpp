@@ -95,10 +95,10 @@ void make_batch_file()
     double piece_delta_y{};
     double piece_delta_x2{};
     double piece_delta_y2{};
-    unsigned int piece_x_dots;
-    unsigned int piece_y_dots;
-    unsigned int x_multiple;
-    unsigned int y_multiple;
+    int piece_x_dots;
+    int piece_y_dots;
+    int x_multiple;
+    int y_multiple;
     double piece_x_min{};
     double piece_y_min{};
     char video_mode_key_name[5];
@@ -106,8 +106,8 @@ void make_batch_file()
     char input_command_file[80];
     char input_command_name[ITEM_NAME_LEN + 1];
     char input_comment[4][MAX_COMMENT_LEN];
-    fs::path out_name;
-    char             buf[256];
+    fs::path in_path;
+    fs::path out_path;
     char             buf2[128];
     std::FILE *infile{};
     std::FILE *bat_file{};
@@ -381,38 +381,37 @@ skip_ui:
                 max_color = g_file_colors;
             }
         }
-        out_name = g_command_file;
-        bool got_infile{};
-        if (fs::exists(g_command_file))
+        out_path = get_save_name(g_command_file);
+        if (exists(out_path))
         {
             // file exists
-            got_infile = true;
-            if (!is_writeable(g_command_file))
+            if (!is_writeable(out_path))
             {
-                std::snprintf(buf, std::size(buf), "Can't write %s", g_command_file.c_str());
-                stop_msg(buf);
+                stop_msg("Can't write " + out_path.string());
                 continue;
             }
-            out_name.replace_filename("id.tmp");
-            infile = std::fopen(g_command_file.c_str(), "rt");
+            in_path = out_path;
+            infile = std::fopen(in_path.string().c_str(), "rt");
+            out_path.replace_filename("id.tmp");
         }
-        s_parm_file = open_save_file(out_name.string(), "wt");
+        s_parm_file = std::fopen(out_path.string().c_str(), "wt");
         if (s_parm_file == nullptr)
         {
-            stop_msg("Can't create " + out_name.string());
-            if (got_infile)
+            stop_msg("Can't create " + out_path.string());
+            if (infile != nullptr)
             {
                 std::fclose(infile);
             }
             continue;
         }
 
-        if (got_infile)
+        if (infile != nullptr)
         {
-            while (file_gets(buf, 255, infile) >= 0)
+            char line[256];
+            while (file_gets(line, 255, infile) >= 0)
             {
-                if (std::strchr(buf, '{')// entry heading?
-                    && std::sscanf(buf, " %40[^ \t({]", buf2)
+                if (std::strchr(line, '{')// entry heading?
+                    && std::sscanf(line, " %40[^ \t({]", buf2)
                     && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
@@ -423,18 +422,19 @@ skip_ui:
                     {
                         // cancel
                         std::fclose(infile);
+                        infile = nullptr;
                         std::fclose(s_parm_file);
-                        remove(out_name);
+                        s_parm_file = nullptr;
+                        remove(out_path);
                         goto prompt_user;
                     }
-                    while (std::strchr(buf, '}') == nullptr
-                        && file_gets(buf, 255, infile) > 0)
+                    while (std::strchr(line, '}') == nullptr && file_gets(line, 255, infile) > 0)
                     {
                         ; // skip to end of set
                     }
                     break;
                 }
-                std::fputs(buf, s_parm_file);
+                std::fputs(line, s_parm_file);
                 std::fputc('\n', s_parm_file);
             }
         }
@@ -445,10 +445,10 @@ skip_ui:
             bat_file = dir_fopen(g_working_dir.c_str(), "makemig.bat", "w");
             if (bat_file == nullptr)
             {
+                x_multiple = 0;
                 y_multiple = 0;
-                x_multiple = y_multiple;
             }
-            piece_delta_x  = (g_x_max - g_x_3rd) / (x_multiple * piece_x_dots - 1);   // calculate stepsizes
+            piece_delta_x  = (g_x_max - g_x_3rd) / (x_multiple * piece_x_dots - 1);   // calculate step sizes
             piece_delta_y  = (g_y_max - g_y_3rd) / (y_multiple * piece_y_dots - 1);
             piece_delta_x2 = (g_x_3rd - g_x_min) / (y_multiple * piece_y_dots - 1);
             piece_delta_y2 = (g_y_3rd - g_y_min) / (x_multiple * piece_x_dots - 1);
@@ -457,19 +457,17 @@ skip_ui:
             piece_x_min = g_x_min;
             piece_y_min = g_y_max;
         }
-        for (int i = 0; i < (int)x_multiple; i++)    // columns
+        for (int col = 0; col < x_multiple; col++)
         {
-            for (int j = 0; j < (int)y_multiple; j++)  // rows
+            for (int row = 0; row < y_multiple; row++)
             {
                 if (x_multiple > 1 || y_multiple > 1)
                 {
-                    int w;
-                    char c;
                     char piece_command_name[80];
-                    w = 0;
+                    int w{};
                     while (w < (int)g_command_name.length())
                     {
-                        c = g_command_name[w];
+                        const char c = g_command_name[w];
                         if (std::isspace(c) || c == 0)
                         {
                             break;
@@ -480,18 +478,18 @@ skip_ui:
                     piece_command_name[w] = 0;
                     {
                         char tmpbuff[20];
-                        std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", par_key(i), par_key(j));
+                        std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", par_key(col), par_key(row));
                         std::strcat(piece_command_name, tmpbuff);
                     }
                     std::fprintf(s_parm_file, "%-19s{", piece_command_name);
-                    g_x_min = piece_x_min + piece_delta_x*(i*piece_x_dots) + piece_delta_x2*(j*piece_y_dots);
-                    g_x_max = piece_x_min + piece_delta_x*((i+1)*piece_x_dots - 1) + piece_delta_x2*((j+1)*piece_y_dots - 1);
-                    g_y_min = piece_y_min - piece_delta_y*((j+1)*piece_y_dots - 1) - piece_delta_y2*((i+1)*piece_x_dots - 1);
-                    g_y_max = piece_y_min - piece_delta_y*(j*piece_y_dots) - piece_delta_y2*(i*piece_x_dots);
+                    g_x_min = piece_x_min + piece_delta_x*(col*piece_x_dots) + piece_delta_x2*(row*piece_y_dots);
+                    g_x_max = piece_x_min + piece_delta_x*((col+1)*piece_x_dots - 1) + piece_delta_x2*((row+1)*piece_y_dots - 1);
+                    g_y_min = piece_y_min - piece_delta_y*((row+1)*piece_y_dots - 1) - piece_delta_y2*((col+1)*piece_x_dots - 1);
+                    g_y_max = piece_y_min - piece_delta_y*(row*piece_y_dots) - piece_delta_y2*(col*piece_x_dots);
                     if (have_3rd)
                     {
-                        g_x_3rd = piece_x_min + piece_delta_x*(i*piece_x_dots) + piece_delta_x2*((j+1)*piece_y_dots - 1);
-                        g_y_3rd = piece_y_min - piece_delta_y*((j+1)*piece_y_dots - 1) - piece_delta_y2*(i*piece_x_dots);
+                        g_x_3rd = piece_x_min + piece_delta_x*(col*piece_x_dots) + piece_delta_x2*((row+1)*piece_y_dots - 1);
+                        g_y_3rd = piece_y_min - piece_delta_y*((row+1)*piece_y_dots - 1) - piece_delta_y2*(col*piece_x_dots);
                     }
                     else
                     {
@@ -546,11 +544,11 @@ skip_ui:
                         std::fprintf(s_parm_file, "%s id Version %d Patchlevel %d\n", tmp_buff, g_release, g_patch_level);
                     }
                 }
-                write_batch_params(color_spec, colors_only, max_color, i, j);
+                write_batch_params(color_spec, colors_only, max_color, col, row);
                 if (x_multiple > 1 || y_multiple > 1)
                 {
                     std::fprintf(s_parm_file, "  video=%s", video_mode_key_name);
-                    std::fprintf(s_parm_file, " savename=frmig_%c%c\n", par_key(i), par_key(j));
+                    std::fprintf(s_parm_file, " savename=frmig_%c%c\n", par_key(col), par_key(row));
                 }
                 std::fprintf(s_parm_file, "}\n\n");
             }
@@ -563,29 +561,30 @@ skip_ui:
         }
         //******end here
 
-        if (got_infile)
+        if (infile != nullptr)
         {
             // copy the rest of the file
+            char line[256];
             int i;
             do
             {
-                i = file_gets(buf, 255, infile);
+                i = file_gets(line, 255, infile);
             }
             while (i == 0); // skip blanks
             while (i >= 0)
             {
-                std::fputs(buf, s_parm_file);
+                std::fputs(line, s_parm_file);
                 std::fputc('\n', s_parm_file);
-                i = file_gets(buf, 255, infile);
+                i = file_gets(line, 255, infile);
             }
             std::fclose(infile);
         }
         std::fclose(s_parm_file);
-        if (got_infile)
+        if (infile != nullptr)
         {
             // replace the original file with the new
-            std::remove(g_command_file.c_str()); // success assumed on these lines
-            rename(out_name, g_command_file);     // since we checked earlier with access
+            remove(in_path);           // success assumed on these lines
+            rename(out_path, in_path); // since we checked earlier
         }
         break;
     }
