@@ -197,15 +197,12 @@ void Win32BaseDriver::set_video_mode(VideoInfo *mode)
     g_vesa_x_res = 0;                   // reset indicators used for
     g_vesa_y_res = 0;                   // virtual screen limits estimation
     g_good_mode = true;
-    if (g_dot_mode != 0)
-    {
-        g_and_color = g_colors-1;
-        g_box_count = 0;
-        g_dac_learn = true;
-        g_dac_count = g_cycle_limit;
-        g_got_real_dac = true;          // we are "VGA"
-        read_palette();
-    }
+    g_and_color = g_colors - 1;
+    g_box_count = 0;
+    g_dac_learn = true;
+    g_dac_count = g_cycle_limit;
+    g_got_real_dac = true; // we are "VGA"
+    read_palette();
 
     resize();
     if (g_disk_flag)

@@ -72,7 +72,6 @@ static int iocount;
 
 // external variables (set in the id.cfg file, but findable here
 
-extern  int g_dot_mode;        // video access method (= 19)
 extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
 extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset of drawing area
 extern  int g_colors;         // maximum colors available

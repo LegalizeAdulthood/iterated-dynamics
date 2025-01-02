@@ -70,7 +70,6 @@
 
 // external variables (set in the id.cfg file, but findable here
 
-extern  int g_dot_mode;        // video access method (= 19)
 extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
 extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset of drawing area
 extern  int g_colors;         // maximum colors available
@@ -2404,29 +2403,16 @@ void X11Driver::shell()
 void X11Driver::set_video_mode(VideoInfo *mode)
 {
     if (g_disk_flag)
+    {
         end_disk();
+    }
     end_video();
     g_good_mode = true;
-    switch (g_dot_mode)
-    {
-    case 0:               // text
-        break;
-
-    case 19: // X window
-        start_video();
-        set_for_graphics();
-        break;
-
-    default:
-        std::printf("Bad mode %d\n", g_dot_mode);
-        exit(-1);
-    }
-    if (g_dot_mode != 0)
-    {
-        read_palette();
-        g_and_color = g_colors-1;
-        g_box_count = 0;
-    }
+    start_video();
+    set_for_graphics();
+    read_palette();
+    g_and_color = g_colors-1;
+    g_box_count = 0;
 }
 
 void X11Driver::put_string(int row, int col, int attr, char const *msg)

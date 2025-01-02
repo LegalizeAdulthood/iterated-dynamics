@@ -52,7 +52,6 @@ extern LDouble                  g_delta_x2;
 extern LDouble                  g_delta_x;
 extern LDouble                  g_delta_y2;
 extern LDouble                  g_delta_y;
-extern int                   g_dot_mode;
 extern std::string           g_file_name_stack[16];
 extern int                   g_filename_stack_index;
 extern float                 g_final_aspect_ratio;

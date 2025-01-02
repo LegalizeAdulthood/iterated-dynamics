@@ -804,7 +804,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->videomodebx = 0;
     save_info->videomodecx = 0;
     save_info->videomodedx = 0;
-    save_info->dotmode = (short)(g_dot_mode % 100);
+    constexpr short LEGACY_DOT_MODE{19};
+    save_info->dotmode = LEGACY_DOT_MODE;
     save_info->xdots = (short) g_video_entry.xdots;
     save_info->ydots = (short) g_video_entry.ydots;
     save_info->colors = (short) g_video_entry.colors;

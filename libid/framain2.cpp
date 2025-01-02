@@ -84,11 +84,9 @@ MainState big_while_loop(MainContext &context)
         {
             std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
-            g_dot_mode = 19;     // assembler dot read/write
             g_logical_screen_x_dots   = g_video_entry.xdots;       // # dots across the screen
             g_logical_screen_y_dots   = g_video_entry.ydots;       // # dots down the screen
             g_colors  = g_video_entry.colors;      // # colors available
-            g_dot_mode %= 100;
             g_screen_x_dots  = g_logical_screen_x_dots;
             g_screen_y_dots  = g_logical_screen_y_dots;
             g_logical_screen_y_offset = 0;

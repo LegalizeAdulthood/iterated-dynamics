@@ -199,7 +199,7 @@ bool tab_display2(char *msg)
     /*
         write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
     */
-    write_row(row++, "%dx%d dm=%d %s (%s)", g_logical_screen_x_dots, g_logical_screen_y_dots, g_dot_mode,
+    write_row(row++, "%dx%d %s (%s)", g_logical_screen_x_dots, g_logical_screen_y_dots,
               g_driver->get_name().c_str(), g_driver->get_description().c_str());
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
