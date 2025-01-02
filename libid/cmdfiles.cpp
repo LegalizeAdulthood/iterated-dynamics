@@ -2458,7 +2458,8 @@ static CmdArgFlags cmd_make_mig(const Command &cmd)
     const int xmult = cmd.int_vals[0];
     const int ymult = cmd.int_vals[1];
     make_mig(xmult, ymult);
-    exit(0);
+    cmd_files_test::s_goodbye();
+    return CmdArgFlags::GOODBYE;
 }
 
 // map=, set default colors
