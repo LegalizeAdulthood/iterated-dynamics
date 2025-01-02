@@ -89,7 +89,7 @@ inline char par_key(int x)
 
 void make_batch_file()
 {
-    bool colors_only{};
+    bool colors_only{g_make_parameter_file_map}; // makepar map case
     // added for pieces feature
     double piece_delta_x{};
     double piece_delta_y{};
@@ -115,11 +115,6 @@ void make_batch_file()
     int max_color;
     char const *sptr{};
     char const *sptr2;
-
-    if (g_make_parameter_file_map)   // makepar map case
-    {
-        colors_only = true;
-    }
 
     driver_stack_screen();
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
