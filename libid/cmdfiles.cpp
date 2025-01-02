@@ -1095,7 +1095,7 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     }
     if (g_read_filename == DOT_SLASH)
     {
-        g_read_filename = "";
+        g_read_filename.clear();
     }
     if (next == nullptr)
     {
