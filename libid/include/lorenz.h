@@ -20,12 +20,20 @@ enum class Major
     RANDOM_WALK,
     RANDOM_RUN
 };
+inline int operator+(Major value)
+{
+    return static_cast<int>(value);
+}
 
 enum class Minor
 {
     LEFT_FIRST,
     RIGHT_FIRST
 };
+inline int operator+(Minor value)
+{
+    return static_cast<int>(value);
+}
 
 extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;

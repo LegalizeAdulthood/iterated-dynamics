@@ -587,19 +587,22 @@ bool encoder()
             esave_info.y_parameter_range = g_evolve_y_parameter_range;
             esave_info.x_parameter_offset = g_evolve_x_parameter_offset;
             esave_info.y_parameter_offset = g_evolve_y_parameter_offset;
-            esave_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
-            esave_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
-            esave_info.px              = (short)g_evolve_param_grid_x;
-            esave_info.py              = (short)g_evolve_param_grid_y;
-            esave_info.sxoffs          = (short)g_logical_screen_x_offset;
-            esave_info.syoffs          = (short)g_logical_screen_y_offset;
-            esave_info.xdots           = (short)g_logical_screen_x_dots;
-            esave_info.ydots           = (short)g_logical_screen_y_dots;
-            esave_info.image_grid_size = (short) g_evolve_image_grid_size;
-            esave_info.evolving        = (short) +g_evolving;
-            esave_info.this_generation_random_seed = (unsigned short) g_evolve_this_generation_random_seed;
+            esave_info.discrete_x_parameter_offset =
+                static_cast<std::int16_t>(g_evolve_discrete_x_parameter_offset);
+            esave_info.discrete_y_paramter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
+            esave_info.px              = static_cast<std::int16_t>(g_evolve_param_grid_x);
+            esave_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
+            esave_info.sxoffs          = static_cast<std::int16_t>(g_logical_screen_x_offset);
+            esave_info.syoffs          = static_cast<std::int16_t>(g_logical_screen_y_offset);
+            esave_info.xdots           = static_cast<std::int16_t>(g_logical_screen_x_dots);
+            esave_info.ydots           = static_cast<std::int16_t>(g_logical_screen_y_dots);
+            esave_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
+            esave_info.evolving        = static_cast<std::int16_t>(+g_evolving);
+            esave_info.this_generation_random_seed =
+                static_cast<std::uint16_t>(g_evolve_this_generation_random_seed);
             esave_info.max_random_mutation = g_evolve_max_random_mutation;
-            esave_info.ecount          = (short)(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done
+            esave_info.ecount          =
+                static_cast<std::int16_t>(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done
         }
         else
         {
@@ -608,26 +611,26 @@ bool encoder()
             esave_info.y_parameter_range = g_evolve_info.y_parameter_range;
             esave_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
             esave_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
-            esave_info.discrete_x_parameter_offset = (short)g_evolve_info.discrete_x_parameter_offset;
-            esave_info.discrete_y_paramter_offset = (short)g_evolve_info.discrete_y_paramter_offset;
-            esave_info.px              = (short)g_evolve_info.px;
-            esave_info.py              = (short)g_evolve_info.py;
-            esave_info.sxoffs          = (short)g_evolve_info.sxoffs;
-            esave_info.syoffs          = (short)g_evolve_info.syoffs;
-            esave_info.xdots           = (short)g_evolve_info.xdots;
-            esave_info.ydots           = (short)g_evolve_info.ydots;
-            esave_info.image_grid_size = (short)g_evolve_info.image_grid_size;
-            esave_info.evolving        = (short)g_evolve_info.evolving;
-            esave_info.this_generation_random_seed = (unsigned short)g_evolve_info.this_generation_random_seed;
+            esave_info.discrete_x_parameter_offset = g_evolve_info.discrete_x_parameter_offset;
+            esave_info.discrete_y_paramter_offset = g_evolve_info.discrete_y_paramter_offset;
+            esave_info.px              = g_evolve_info.px;
+            esave_info.py              = g_evolve_info.py;
+            esave_info.sxoffs          = g_evolve_info.sxoffs;
+            esave_info.syoffs          = g_evolve_info.syoffs;
+            esave_info.xdots           = g_evolve_info.xdots;
+            esave_info.ydots           = g_evolve_info.ydots;
+            esave_info.image_grid_size = g_evolve_info.image_grid_size;
+            esave_info.evolving        = g_evolve_info.evolving;
+            esave_info.this_generation_random_seed = g_evolve_info.this_generation_random_seed;
             esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
             esave_info.ecount          = g_evolve_info.ecount;
         }
         for (int j = 0; j < NUM_GENES; j++)
         {
-            esave_info.mutate[j] = (short)g_gene_bank[j].mutate;
+            esave_info.mutate[j] = static_cast<std::int16_t>(g_gene_bank[j].mutate);
         }
 
-        for (int j = 0; j < sizeof(esave_info.future) / sizeof(short); j++)
+        for (int j = 0; j < sizeof(esave_info.future) / sizeof(std::int16_t); j++)
         {
             esave_info.future[j] = 0;
         }
@@ -651,7 +654,7 @@ bool encoder()
         osave_info.oymax     = g_orbit_corner_max_y;
         osave_info.ox3rd     = g_orbit_corner_3_x;
         osave_info.oy3rd     = g_orbit_corner_3_y;
-        osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
+        osave_info.keep_scrn_coords = static_cast<std::int16_t>(g_keep_screen_coords);
         osave_info.drawmode  = g_draw_mode;
 
         // some big-endian logic for the doubles needed here
@@ -747,16 +750,16 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
 static int store_item_name(char const *name)
 {
     FormulaInfo fsave_info{};
-    std::strcpy(fsave_info.form_name, name);
+    std::strncpy(fsave_info.form_name, name, std::size(fsave_info.form_name));
     if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
-        fsave_info.uses_p1 = (short) (g_frm_uses_p1 ? 1 : 0);
-        fsave_info.uses_p2 = (short) (g_frm_uses_p2 ? 1 : 0);
-        fsave_info.uses_p3 = (short) (g_frm_uses_p3 ? 1 : 0);
-        fsave_info.uses_ismand = (short) (g_frm_uses_ismand ? 1 : 0);
-        fsave_info.ismand = (short) (g_is_mandelbrot ? 1 : 0);
-        fsave_info.uses_p4 = (short) (g_frm_uses_p4 ? 1 : 0);
-        fsave_info.uses_p5 = (short) (g_frm_uses_p5 ? 1 : 0);
+        fsave_info.uses_p1 = static_cast<std::int16_t>(g_frm_uses_p1);
+        fsave_info.uses_p2 = static_cast<std::int16_t>(g_frm_uses_p2);
+        fsave_info.uses_p3 = static_cast<std::int16_t>(g_frm_uses_p3);
+        fsave_info.uses_ismand = static_cast<std::int16_t>(g_frm_uses_ismand);
+        fsave_info.ismand = static_cast<std::int16_t>(g_is_mandelbrot);
+        fsave_info.uses_p4 = static_cast<std::int16_t>(g_frm_uses_p4);
+        fsave_info.uses_p5 = static_cast<std::int16_t>(g_frm_uses_p5);
     }
     else
     {
@@ -783,17 +786,9 @@ static void setup_save_info(FractalInfo *save_info)
     // set save parameters in save structure
     std::strcpy(save_info->info_id, INFO_ID);
     save_info->version = FRACTAL_INFO_VERSION;
-
-    if (g_max_iterations <= SHRT_MAX)
-    {
-        save_info->iterationsold = (short) g_max_iterations;
-    }
-    else
-    {
-        save_info->iterationsold = (short) SHRT_MAX;
-    }
-
-    save_info->fractal_type = +g_fractal_type;
+    save_info->iterationsold =
+        static_cast<std::int16_t>(g_max_iterations <= SHRT_MAX ? g_max_iterations : SHRT_MAX);
+    save_info->fractal_type = static_cast<std::int16_t>(+g_fractal_type);
     save_info->xmin = g_x_min;
     save_info->xmax = g_x_max;
     save_info->ymin = g_y_min;
@@ -804,11 +799,11 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->videomodebx = 0;
     save_info->videomodecx = 0;
     save_info->videomodedx = 0;
-    constexpr short LEGACY_DOT_MODE{19};
+    constexpr std::int16_t LEGACY_DOT_MODE{19};
     save_info->dotmode = LEGACY_DOT_MODE;
-    save_info->xdots = (short) g_video_entry.xdots;
-    save_info->ydots = (short) g_video_entry.ydots;
-    save_info->colors = (short) g_video_entry.colors;
+    save_info->xdots = static_cast<std::int16_t>(g_video_entry.xdots);
+    save_info->ydots = static_cast<std::int16_t>(g_video_entry.ydots);
+    save_info->colors = static_cast<std::int16_t>(g_video_entry.colors);
     save_info->parm3 = 0;        // pre version==7 fields
     save_info->parm4 = 0;
     save_info->dparm3 = g_params[2];
@@ -819,146 +814,123 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->dparm8 = g_params[7];
     save_info->dparm9 = g_params[8];
     save_info->dparm10 = g_params[9];
-    save_info->fillcolor = (short) g_fill_color;
-    save_info->potential[0] = (float) g_potential_params[0];
-    save_info->potential[1] = (float) g_potential_params[1];
-    save_info->potential[2] = (float) g_potential_params[2];
-    save_info->rflag = (short) (g_random_seed_flag ? 1 : 0);
-    save_info->rseed = (short) g_random_seed;
-    save_info->inside = (short) g_inside_color;
-    if (g_log_map_flag <= SHRT_MAX)
-    {
-        save_info->logmapold = (short) g_log_map_flag;
-    }
-    else
-    {
-        save_info->logmapold = (short) SHRT_MAX;
-    }
-    save_info->invert[0] = (float) g_inversion[0];
-    save_info->invert[1] = (float) g_inversion[1];
-    save_info->invert[2] = (float) g_inversion[2];
-    save_info->decomp[0] = (short) g_decomp[0];
-    save_info->biomorph = (short) g_user_biomorph_value;
-    save_info->symmetry = (short) g_force_symmetry;
-    save_info->init3d[0] = (std::int16_t) g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
-    save_info->init3d[1] = (std::int16_t) g_x_rot;            // rotate x-axis 60 degrees
-    save_info->init3d[2] = (std::int16_t) g_y_rot;            // rotate y-axis 90 degrees
-    save_info->init3d[3] = (std::int16_t) g_z_rot;            // rotate x-axis  0 degrees
-    save_info->init3d[4] = (std::int16_t) g_x_scale;          // scale x-axis, 90 percent
-    save_info->init3d[5] = (std::int16_t) g_y_scale;          // scale y-axis, 90 percent
-    save_info->init3d[1] = (std::int16_t) g_sphere_phi_min;   // longitude start, 180
-    save_info->init3d[2] = (std::int16_t) g_sphere_phi_max;   // longitude end ,   0
-    save_info->init3d[3] = (std::int16_t) g_sphere_theta_min; // latitude start,-90 degrees
-    save_info->init3d[4] = (std::int16_t) g_sphere_theta_max; // latitude stop,  90 degrees
-    save_info->init3d[5] = (std::int16_t) g_sphere_radius;    // should be user input
-    save_info->init3d[6] = (std::int16_t) g_rough;            // scale z-axis, 30 percent
-    save_info->init3d[7] = (std::int16_t) g_water_line;       // water level
-    save_info->init3d[8] = (std::int16_t) g_fill_type;        // fill type
-    save_info->init3d[9] = (std::int16_t) g_viewer_z;         // perspective view point
-    save_info->init3d[10] = (std::int16_t) g_shift_x;         // x shift
-    save_info->init3d[11] = (std::int16_t) g_shift_y;         // y shift
-    save_info->init3d[12] = (std::int16_t) g_light_x;         // x light vector coordinate
-    save_info->init3d[13] = (std::int16_t) g_light_y;         // y light vector coordinate
-    save_info->init3d[14] = (std::int16_t) g_light_z;         // z light vector coordinate
-    save_info->init3d[15] = (std::int16_t) g_light_avg;       // number of points to average
-    save_info->previewfactor = (short) g_preview_factor;
-    save_info->xtrans = (short) g_adjust_3d_x;
-    save_info->ytrans = (short) g_adjust_3d_y;
-    save_info->red_crop_left = (short) g_red_crop_left;
-    save_info->red_crop_right = (short) g_red_crop_right;
-    save_info->blue_crop_left = (short) g_blue_crop_left;
-    save_info->blue_crop_right = (short) g_blue_crop_right;
-    save_info->red_bright = (short) g_red_bright;
-    save_info->blue_bright = (short) g_blue_bright;
-    save_info->xadjust = (short) g_converge_x_adjust;
-    save_info->yadjust = (short) g_converge_y_adjust;
-    save_info->eyeseparation = (short) g_eye_separation;
-    save_info->glassestype = (short) g_glasses_type;
-    save_info->outside = (short) g_outside_color;
+    save_info->fillcolor = static_cast<std::int16_t>(g_fill_color);
+    save_info->potential[0] = static_cast<float>(g_potential_params[0]);
+    save_info->potential[1] = static_cast<float>(g_potential_params[1]);
+    save_info->potential[2] = static_cast<float>(g_potential_params[2]);
+    save_info->rflag = static_cast<std::int16_t>(g_random_seed_flag ? 1 : 0);
+    save_info->rseed = static_cast<std::int16_t>(g_random_seed);
+    save_info->inside = static_cast<std::int16_t>(g_inside_color);
+    save_info->logmapold = static_cast<std::int16_t>(g_log_map_flag <= SHRT_MAX ? g_log_map_flag : SHRT_MAX);
+    save_info->invert[0] = static_cast<float>(g_inversion[0]);
+    save_info->invert[1] = static_cast<float>(g_inversion[1]);
+    save_info->invert[2] = static_cast<float>(g_inversion[2]);
+    save_info->decomp[0] = static_cast<std::int16_t>(g_decomp[0]);
+    save_info->biomorph = static_cast<std::int16_t>(g_user_biomorph_value);
+    save_info->symmetry = static_cast<std::int16_t>(g_force_symmetry);
+    save_info->init3d[0] = static_cast<std::int16_t>(g_sphere ? 1 : 0);  // sphere? 1 = yes, 0 = no
+    save_info->init3d[1] = static_cast<std::int16_t>(g_x_rot);            // rotate x-axis 60 degrees
+    save_info->init3d[2] = static_cast<std::int16_t>(g_y_rot);            // rotate y-axis 90 degrees
+    save_info->init3d[3] = static_cast<std::int16_t>(g_z_rot);            // rotate x-axis  0 degrees
+    save_info->init3d[4] = static_cast<std::int16_t>(g_x_scale);          // scale x-axis, 90 percent
+    save_info->init3d[5] = static_cast<std::int16_t>(g_y_scale);          // scale y-axis, 90 percent
+    save_info->init3d[1] = static_cast<std::int16_t>(g_sphere_phi_min);   // longitude start, 180
+    save_info->init3d[2] = static_cast<std::int16_t>(g_sphere_phi_max);   // longitude end ,   0
+    save_info->init3d[3] = static_cast<std::int16_t>(g_sphere_theta_min); // latitude start,-90 degrees
+    save_info->init3d[4] = static_cast<std::int16_t>(g_sphere_theta_max); // latitude stop,  90 degrees
+    save_info->init3d[5] = static_cast<std::int16_t>(g_sphere_radius);    // should be user input
+    save_info->init3d[6] = static_cast<std::int16_t>(g_rough);            // scale z-axis, 30 percent
+    save_info->init3d[7] = static_cast<std::int16_t>(g_water_line);       // water level
+    save_info->init3d[8] = static_cast<std::int16_t>(g_fill_type);        // fill type
+    save_info->init3d[9] = static_cast<std::int16_t>(g_viewer_z);         // perspective view point
+    save_info->init3d[10] = static_cast<std::int16_t>(g_shift_x);         // x shift
+    save_info->init3d[11] = static_cast<std::int16_t>(g_shift_y);         // y shift
+    save_info->init3d[12] = static_cast<std::int16_t>(g_light_x);         // x light vector coordinate
+    save_info->init3d[13] = static_cast<std::int16_t>(g_light_y);         // y light vector coordinate
+    save_info->init3d[14] = static_cast<std::int16_t>(g_light_z);         // z light vector coordinate
+    save_info->init3d[15] = static_cast<std::int16_t>(g_light_avg);       // number of points to average
+    save_info->previewfactor = static_cast<std::int16_t>(g_preview_factor);
+    save_info->xtrans = static_cast<std::int16_t>(g_adjust_3d_x);
+    save_info->ytrans = static_cast<std::int16_t>(g_adjust_3d_y);
+    save_info->red_crop_left = static_cast<std::int16_t>(g_red_crop_left);
+    save_info->red_crop_right = static_cast<std::int16_t>(g_red_crop_right);
+    save_info->blue_crop_left = static_cast<short>(g_blue_crop_left);
+    save_info->blue_crop_right = static_cast<std::int16_t>(g_blue_crop_right);
+    save_info->red_bright = static_cast<std::int16_t>(g_red_bright);
+    save_info->blue_bright = static_cast<std::int16_t>(g_blue_bright);
+    save_info->xadjust = static_cast<std::int16_t>(g_converge_x_adjust);
+    save_info->yadjust = static_cast<std::int16_t>(g_converge_y_adjust);
+    save_info->eyeseparation = static_cast<std::int16_t>(g_eye_separation);
+    save_info->glassestype = static_cast<std::int16_t>(g_glasses_type);
+    save_info->outside = static_cast<std::int16_t>(g_outside_color);
     save_info->x3rd = g_x_3rd;
     save_info->y3rd = g_y_3rd;
-    save_info->calc_status = (short) g_calc_status;
-    save_info->stdcalcmode = (char)((g_three_pass && g_std_calc_mode == '3') ? 127 : g_std_calc_mode);
-    if (g_distance_estimator <= 32000)
-    {
-        save_info->distestold = (short) g_distance_estimator;
-    }
-    else
-    {
-        save_info->distestold = 32000;
-    }
-    save_info->floatflag = g_float_flag ? 1 : 0;
-    if (g_bail_out >= 4 && g_bail_out <= 32000)
-    {
-        save_info->bailoutold = (short) g_bail_out;
-    }
-    else
-    {
-        save_info->bailoutold = 0;
-    }
-
-    save_info->calctime = g_calc_time;
+    save_info->calc_status = static_cast<std::int16_t>(g_calc_status);
+    save_info->stdcalcmode =
+        static_cast<char>(g_three_pass && g_std_calc_mode == '3' ? 127 : g_std_calc_mode);
+    save_info->distestold =
+        static_cast<std::int16_t>(g_distance_estimator <= 32000 ? g_distance_estimator : 32000);
+    save_info->floatflag = static_cast<std::int16_t>(g_float_flag ? 1 : 0);
+    save_info->bailoutold = static_cast<std::int16_t>(g_bail_out >= 4 && g_bail_out <= 32000 ? g_bail_out : 0);
+    save_info->calctime = static_cast<std::int32_t>(g_calc_time);
     save_info->trigndx[0] = static_cast<Byte>(g_trig_index[0]);
     save_info->trigndx[1] = static_cast<Byte>(g_trig_index[1]);
     save_info->trigndx[2] = static_cast<Byte>(g_trig_index[2]);
     save_info->trigndx[3] = static_cast<Byte>(g_trig_index[3]);
-    save_info->finattract = (short) (g_finite_attractor ? 1 : 0);
+    save_info->finattract = static_cast<std::int16_t>(g_finite_attractor ? 1 : 0);
     save_info->initorbit[0] = g_init_orbit.x;
     save_info->initorbit[1] = g_init_orbit.y;
     save_info->useinitorbit = static_cast<char>(g_use_init_orbit);
-    save_info->periodicity = (short) g_periodicity_check;
-    save_info->pot16bit = (short) (g_disk_16_bit ? 1 : 0);
+    save_info->periodicity = static_cast<std::int16_t>(g_periodicity_check);
+    save_info->pot16bit = static_cast<std::int16_t>(g_disk_16_bit ? 1 : 0);
     save_info->faspectratio = g_final_aspect_ratio;
-    save_info->system = (short) g_save_system;
-    save_info->release = g_release;
-    save_info->display_3d = (short) g_display_3d;
-    save_info->ambient = (short) g_ambient;
-    save_info->randomize = (short) g_randomize_3d;
-    save_info->haze = (short) g_haze;
-    save_info->transparent[0] = (short) g_transparent_color_3d[0];
-    save_info->transparent[1] = (short) g_transparent_color_3d[1];
-    save_info->rotate_lo = (short) g_color_cycle_range_lo;
-    save_info->rotate_hi = (short) g_color_cycle_range_hi;
-    save_info->distestwidth = (short) g_distance_estimator_width_factor;
+    save_info->system = static_cast<std::int16_t>(g_save_system);
+    save_info->release = static_cast<std::int16_t>(g_release);
+    save_info->display_3d = static_cast<std::int16_t>(g_display_3d);
+    save_info->ambient = static_cast<std::int16_t>(g_ambient);
+    save_info->randomize = static_cast<std::int16_t>(g_randomize_3d);
+    save_info->haze = static_cast<std::int16_t>(g_haze);
+    save_info->transparent[0] = static_cast<std::int16_t>(g_transparent_color_3d[0]);
+    save_info->transparent[1] = static_cast<std::int16_t>(g_transparent_color_3d[1]);
+    save_info->rotate_lo = static_cast<std::int16_t>(g_color_cycle_range_lo);
+    save_info->rotate_hi = static_cast<std::int16_t>(g_color_cycle_range_hi);
+    save_info->distestwidth = static_cast<std::int16_t>(g_distance_estimator_width_factor);
     save_info->mxmaxfp = g_julibrot_x_max;
     save_info->mxminfp = g_julibrot_x_min;
     save_info->mymaxfp = g_julibrot_y_max;
     save_info->myminfp = g_julibrot_y_min;
-    save_info->zdots = (short) g_julibrot_z_dots;
+    save_info->zdots = static_cast<std::int16_t>(g_julibrot_z_dots);
     save_info->originfp = g_julibrot_origin_fp;
     save_info->depthfp = g_julibrot_depth_fp;
     save_info->heightfp = g_julibrot_height_fp;
     save_info->widthfp = g_julibrot_width_fp;
     save_info->distfp = g_julibrot_dist_fp;
     save_info->eyesfp = g_eyes_fp;
-    save_info->orbittype = (short) g_new_orbit_type;
+    save_info->orbittype = static_cast<std::int16_t>(g_new_orbit_type);
     save_info->juli3Dmode = static_cast<short>(g_julibrot_3d_mode);
-    save_info->maxfn = g_max_function;
-    save_info->inversejulia = (short)((static_cast<int>(g_major_method) << 8) + static_cast<int>(g_inverse_julia_minor_method));
-    save_info->bailout = g_bail_out;
-    save_info->bailoutest = (short) g_bail_out_test;
-    save_info->iterations = g_max_iterations;
-    save_info->g_bf_length = (short) g_bn_length;
-    save_info->bf_math = (short) g_bf_math;
-    save_info->old_demm_colors = (short) (g_old_demm_colors ? 1 : 0);
-    save_info->logmap = g_log_map_flag;
-    save_info->distest = g_distance_estimator;
+    save_info->maxfn = static_cast<std::int16_t>(g_max_function);
+    save_info->inversejulia = static_cast<std::int16_t>((+g_major_method << 8) + +g_inverse_julia_minor_method);
+    save_info->bailout = static_cast<std::int32_t>(g_bail_out);
+    save_info->bailoutest = static_cast<std::int16_t>(g_bail_out_test);
+    save_info->iterations = static_cast<std::int32_t>(g_max_iterations);
+    save_info->g_bf_length = static_cast<std::int16_t>(g_bn_length);
+    save_info->bf_math = static_cast<std::int16_t>(g_bf_math);
+    save_info->old_demm_colors = static_cast<std::int16_t>(g_old_demm_colors ? 1 : 0);
+    save_info->logmap = static_cast<std::int32_t>(g_log_map_flag);
+    save_info->distest = static_cast<std::int32_t>(g_distance_estimator);
     save_info->dinvert[0] = g_inversion[0];
     save_info->dinvert[1] = g_inversion[1];
     save_info->dinvert[2] = g_inversion[2];
-    save_info->logcalc = (short) g_log_map_fly_calculate;
-    save_info->stoppass = (short) g_stop_pass;
-    save_info->quick_calc = (short) (g_quick_calc ? 1 : 0);
+    save_info->logcalc = static_cast<std::int16_t>(g_log_map_fly_calculate);
+    save_info->stoppass = static_cast<std::int16_t>(g_stop_pass);
+    save_info->quick_calc = static_cast<std::int16_t>(g_quick_calc ? 1 : 0);
     save_info->closeprox = g_close_proximity;
-    save_info->nobof = (short) (g_bof_match_book_images ? 0 : 1);
-    save_info->orbit_interval = g_orbit_interval;
-    save_info->orbit_delay = (short) g_orbit_delay;
+    save_info->nobof = static_cast<std::int16_t>(g_bof_match_book_images ? 0 : 1);
+    save_info->orbit_interval = static_cast<std::int32_t>(g_orbit_interval);
+    save_info->orbit_delay = static_cast<std::int16_t>(g_orbit_delay);
     save_info->math_tol[0] = g_math_tol[0];
     save_info->math_tol[1] = g_math_tol[1];
-    for (int i = 0; i < sizeof(save_info->future)/sizeof(short); i++)
-    {
-        save_info->future[i] = 0;
-    }
+    std::fill(std::begin(save_info->future), std::end(save_info->future), static_cast<std::int16_t>(0));
 }
 
 //
