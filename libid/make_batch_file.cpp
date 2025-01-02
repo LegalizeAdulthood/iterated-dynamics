@@ -94,75 +94,75 @@ inline bool is_writeable(const std::string &path)
 
 void make_batch_file()
 {
-    constexpr int MAXPROMPTS = 18;
-    bool colorsonly{};
+    bool colors_only{};
     // added for pieces feature
-    double pdelx{};
-    double pdely{};
-    double pdelx2{};
-    double pdely2{};
-    unsigned int pxdots;
-    unsigned int pydots;
-    unsigned int xm;
-    unsigned int ym;
-    double pxxmin{};
-    double pyymax{};
-    char vidmde[5];
-    int promptnum;
-    int piecespromts;
-    bool have3rd{};
-    char inpcommandfile[80];
-    char inpcommandname[ITEM_NAME_LEN + 1];
-    char inpcomment[4][MAX_COMMENT_LEN];
-    FullScreenValues paramvalues[MAXPROMPTS];
-    char const      *choices[MAXPROMPTS];
+    double piece_delta_x{};
+    double piece_delta_y{};
+    double piece_delta_x2{};
+    double piece_delta_y2{};
+    unsigned int piece_x_dots;
+    unsigned int piece_y_dots;
+    unsigned int x_multiple;
+    unsigned int y_multiple;
+    double piece_x_min{};
+    double piece_y_min{};
+    char video_mode_key_name[5];
+    int prompt_num;
+    int pieces_prompts;
+    bool have_3rd{};
+    char input_command_file[80];
+    char input_command_name[ITEM_NAME_LEN + 1];
+    char input_comment[4][MAX_COMMENT_LEN];
+    constexpr int MAX_PROMPTS{18};
+    FullScreenValues param_values[MAX_PROMPTS];
+    char const      *choices[MAX_PROMPTS];
     fs::path out_name;
     char             buf[256];
     char             buf2[128];
     std::FILE *infile{};
-    std::FILE *fpbat{};
-    char colorspec[14];
-    int maxcolor;
-    int maxcolorindex{};
+    std::FILE *bat_file{};
+    char color_spec[14];
+    int max_color;
+    int max_color_index{};
     char const *sptr{};
     char const *sptr2;
 
     if (g_make_parameter_file_map)   // makepar map case
     {
-        colorsonly = true;
+        colors_only = true;
     }
 
     driver_stack_screen();
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
 
-    maxcolor = g_colors;
-    std::strcpy(colorspec, "y");
+    max_color = g_colors;
+    std::strcpy(color_spec, "y");
     if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {
-        --maxcolor;
-        if (g_inside_color > COLOR_BLACK && g_inside_color > maxcolor)
+        --max_color;
+        if (g_inside_color > COLOR_BLACK && g_inside_color > max_color)
         {
-            maxcolor = g_inside_color;
+            max_color = g_inside_color;
         }
-        if (g_outside_color > COLOR_BLACK && g_outside_color > maxcolor)
+        if (g_outside_color > COLOR_BLACK && g_outside_color > max_color)
         {
-            maxcolor = g_outside_color;
+            max_color = g_outside_color;
         }
-        if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > maxcolor)
+        if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > max_color)
         {
-            maxcolor = (int)(0 - g_distance_estimator);
+            max_color = (int)(0 - g_distance_estimator);
         }
-        if (g_decomp[0] > maxcolor)
+        if (g_decomp[0] > max_color)
         {
-            maxcolor = g_decomp[0] - 1;
+            max_color = g_decomp[0] - 1;
         }
-        if (g_potential_flag && g_potential_params[0] >= maxcolor)
+        if (g_potential_flag && g_potential_params[0] >= max_color)
         {
-            maxcolor = (int)g_potential_params[0];
+            max_color = (int)g_potential_params[0];
         }
-        if (++maxcolor > 256)
+        if (++max_color > 256)
         {
-            maxcolor = 256;
+            max_color = 256;
         }
 
         if (g_color_state == ColorState::DEFAULT)
@@ -170,22 +170,22 @@ void make_batch_file()
             // default colors
             if (g_map_specified)
             {
-                colorspec[0] = '@';
+                color_spec[0] = '@';
                 sptr = g_map_name.c_str();
             }
         }
         else if (g_color_state == ColorState::MAP_FILE)
         {
             // colors match colorfile
-            colorspec[0] = '@';
+            color_spec[0] = '@';
             sptr = g_color_file.c_str();
         }
         else                        // colors match no .map that we know of
         {
-            std::strcpy(colorspec, "y");
+            std::strcpy(color_spec, "y");
         }
 
-        if (sptr && colorspec[0] == '@')
+        if (sptr && color_spec[0] == '@')
         {
             sptr2 = std::strrchr(sptr, SLASH_CH);
             if (sptr2 != nullptr)
@@ -197,119 +197,119 @@ void make_batch_file()
             {
                 sptr = sptr2 + 1;
             }
-            std::strncpy(&colorspec[1], sptr, 12);
-            colorspec[13] = 0;
+            std::strncpy(&color_spec[1], sptr, 12);
+            color_spec[13] = 0;
         }
     }
-    std::strcpy(inpcommandfile, g_command_file.c_str());
-    std::strcpy(inpcommandname, g_command_name.c_str());
+    std::strcpy(input_command_file, g_command_file.c_str());
+    std::strcpy(input_command_name, g_command_name.c_str());
     for (int i = 0; i < 4; i++)
     {
-        std::strcpy(inpcomment[i], expand_command_comment(i).c_str());
+        std::strcpy(input_comment[i], expand_command_comment(i).c_str());
     }
 
     if (g_command_name.empty())
     {
-        std::strcpy(inpcommandname, "test");
+        std::strcpy(input_command_name, "test");
     }
-    pxdots = g_logical_screen_x_dots;
-    pydots = g_logical_screen_y_dots;
-    ym = 1;
-    xm = 1;
+    piece_x_dots = g_logical_screen_x_dots;
+    piece_y_dots = g_logical_screen_y_dots;
+    y_multiple = 1;
+    x_multiple = 1;
     if (g_make_parameter_file)
     {
-        goto skip_UI;
+        goto skip_ui;
     }
 
-    vid_mode_key_name(g_video_entry.keynum, vidmde);
+    vid_mode_key_name(g_video_entry.keynum, video_mode_key_name);
     while (true)
     {
 prompt_user:
-        promptnum = 0;
-        choices[promptnum] = "Parameter file";
-        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
-        paramvalues[promptnum++].uval.sbuf = inpcommandfile;
-        choices[promptnum] = "Name";
-        paramvalues[promptnum].type = 0x100 + ITEM_NAME_LEN;
-        paramvalues[promptnum++].uval.sbuf = inpcommandname;
-        choices[promptnum] = "Main comment";
-        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
-        paramvalues[promptnum++].uval.sbuf = inpcomment[0];
-        choices[promptnum] = "Second comment";
-        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
-        paramvalues[promptnum++].uval.sbuf = inpcomment[1];
-        choices[promptnum] = "Third comment";
-        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
-        paramvalues[promptnum++].uval.sbuf = inpcomment[2];
-        choices[promptnum] = "Fourth comment";
-        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
-        paramvalues[promptnum++].uval.sbuf = inpcomment[3];
+        prompt_num = 0;
+        choices[prompt_num] = "Parameter file";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_command_file;
+        choices[prompt_num] = "Name";
+        param_values[prompt_num].type = 0x100 + ITEM_NAME_LEN;
+        param_values[prompt_num++].uval.sbuf = input_command_name;
+        choices[prompt_num] = "Main comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[0];
+        choices[prompt_num] = "Second comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[1];
+        choices[prompt_num] = "Third comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[2];
+        choices[prompt_num] = "Fourth comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[3];
         if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
         {
-            choices[promptnum] = "Record colors?";
-            paramvalues[promptnum].type = 0x100 + 13;
-            paramvalues[promptnum++].uval.sbuf = colorspec;
-            choices[promptnum] = "    (no | yes | only for full info | @filename to point to a map file)";
-            paramvalues[promptnum++].type = '*';
-            choices[promptnum] = "# of colors";
-            maxcolorindex = promptnum;
-            paramvalues[promptnum].type = 'i';
-            paramvalues[promptnum++].uval.ival = maxcolor;
-            choices[promptnum] = "    (if recording full color info)";
-            paramvalues[promptnum++].type = '*';
+            choices[prompt_num] = "Record colors?";
+            param_values[prompt_num].type = 0x100 + 13;
+            param_values[prompt_num++].uval.sbuf = color_spec;
+            choices[prompt_num] = "    (no | yes | only for full info | @filename to point to a map file)";
+            param_values[prompt_num++].type = '*';
+            choices[prompt_num] = "# of colors";
+            max_color_index = prompt_num;
+            param_values[prompt_num].type = 'i';
+            param_values[prompt_num++].uval.ival = max_color;
+            choices[prompt_num] = "    (if recording full color info)";
+            param_values[prompt_num++].type = '*';
         }
-        choices[promptnum] = "Maximum line length";
-        paramvalues[promptnum].type = 'i';
-        paramvalues[promptnum++].uval.ival = g_max_line_length;
-        choices[promptnum] = "";
-        paramvalues[promptnum++].type = '*';
-        choices[promptnum] = "    **** The following is for generating images in pieces ****";
-        paramvalues[promptnum++].type = '*';
-        choices[promptnum] = "X Multiples";
-        piecespromts = promptnum;
-        paramvalues[promptnum].type = 'i';
-        paramvalues[promptnum++].uval.ival = xm;
-        choices[promptnum] = "Y Multiples";
-        paramvalues[promptnum].type = 'i';
-        paramvalues[promptnum++].uval.ival = ym;
-        choices[promptnum] = "Video mode";
-        paramvalues[promptnum].type = 0x100 + 4;
-        paramvalues[promptnum++].uval.sbuf = vidmde;
+        choices[prompt_num] = "Maximum line length";
+        param_values[prompt_num].type = 'i';
+        param_values[prompt_num++].uval.ival = g_max_line_length;
+        choices[prompt_num] = "";
+        param_values[prompt_num++].type = '*';
+        choices[prompt_num] = "    **** The following is for generating images in pieces ****";
+        param_values[prompt_num++].type = '*';
+        choices[prompt_num] = "X Multiples";
+        pieces_prompts = prompt_num;
+        param_values[prompt_num].type = 'i';
+        param_values[prompt_num++].uval.ival = x_multiple;
+        choices[prompt_num] = "Y Multiples";
+        param_values[prompt_num].type = 'i';
+        param_values[prompt_num++].uval.ival = y_multiple;
+        choices[prompt_num] = "Video mode";
+        param_values[prompt_num].type = 0x100 + 4;
+        param_values[prompt_num++].uval.sbuf = video_mode_key_name;
 
-        if (full_screen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, nullptr) < 0)
+        if (full_screen_prompt("Save Current Parameters", prompt_num, choices, param_values, 0, nullptr) < 0)
         {
             break;
         }
 
-        if (*colorspec == 'o' || g_make_parameter_file_map)
+        if (*color_spec == 'o' || g_make_parameter_file_map)
         {
-            std::strcpy(colorspec, "y");
-            colorsonly = true;
+            std::strcpy(color_spec, "y");
+            colors_only = true;
         }
 
-        g_command_file = inpcommandfile;
+        g_command_file = input_command_file;
         if (has_ext(g_command_file.c_str()) == nullptr)
         {
             g_command_file += ".par";   // default extension .par
         }
-        g_command_name = inpcommandname;
+        g_command_name = input_command_name;
         for (int i = 0; i < 4; i++)
         {
-            g_command_comment[i] = inpcomment[i];
+            g_command_comment[i] = input_comment[i];
         }
         if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
         {
-            if (paramvalues[maxcolorindex].uval.ival > 0 &&
-                    paramvalues[maxcolorindex].uval.ival <= 256)
+            if (param_values[max_color_index].uval.ival > 0 &&
+                    param_values[max_color_index].uval.ival <= 256)
             {
-                maxcolor = paramvalues[maxcolorindex].uval.ival;
+                max_color = param_values[max_color_index].uval.ival;
             }
         }
 
-        promptnum = piecespromts;
+        prompt_num = pieces_prompts;
         {
             int newmaxlinelength;
-            newmaxlinelength = paramvalues[promptnum-3].uval.ival;
+            newmaxlinelength = param_values[prompt_num-3].uval.ival;
             if (g_max_line_length != newmaxlinelength
                 && newmaxlinelength >= MIN_MAX_LINE_LENGTH
                 && newmaxlinelength <= MAX_MAX_LINE_LENGTH)
@@ -317,30 +317,30 @@ prompt_user:
                 g_max_line_length = newmaxlinelength;
             }
         }
-        xm = paramvalues[promptnum++].uval.ival;
-        ym = paramvalues[promptnum++].uval.ival;
+        x_multiple = param_values[prompt_num++].uval.ival;
+        y_multiple = param_values[prompt_num++].uval.ival;
 
         // sanity checks
         {
-            long xtotal;
-            long ytotal;
+            long x_total;
+            long y_total;
             int i;
 
             // get resolution from the video name (which must be valid)
-            pydots = 0;
-            pxdots = 0;
-            i = check_vid_mode_key_name(vidmde);
+            piece_y_dots = 0;
+            piece_x_dots = 0;
+            i = check_vid_mode_key_name(video_mode_key_name);
             if (i > 0)
             {
                 i = check_vid_mode_key(0, i);
                 if (i >= 0)
                 {
                     // get the resolution of this video mode
-                    pxdots = g_video_table[i].xdots;
-                    pydots = g_video_table[i].ydots;
+                    piece_x_dots = g_video_table[i].xdots;
+                    piece_y_dots = g_video_table[i].ydots;
                 }
             }
-            if (pxdots == 0 && (xm > 1 || ym > 1))
+            if (piece_x_dots == 0 && (x_multiple > 1 || y_multiple > 1))
             {
                 // no corresponding video mode!
                 stop_msg("Invalid video mode entry!");
@@ -348,49 +348,49 @@ prompt_user:
             }
 
             // bounds range on xm, ym
-            if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
+            if (x_multiple < 1 || x_multiple > 36 || y_multiple < 1 || y_multiple > 36)
             {
                 stop_msg("X and Y components must be 1 to 36");
                 goto prompt_user;
             }
 
             // another sanity check: total resolution cannot exceed 65535
-            xtotal = xm;
-            ytotal = ym;
-            xtotal *= pxdots;
-            ytotal *= pydots;
-            if (xtotal > 65535L || ytotal > 65535L)
+            x_total = x_multiple;
+            y_total = y_multiple;
+            x_total *= piece_x_dots;
+            y_total *= piece_y_dots;
+            if (x_total > 65535L || y_total > 65535L)
             {
                 stop_msg("Total resolution (X or Y) cannot exceed 65535");
                 goto prompt_user;
             }
         }
-skip_UI:
+skip_ui:
         if (g_make_parameter_file)
         {
             if (g_file_colors > 0)
             {
-                std::strcpy(colorspec, "y");
+                std::strcpy(color_spec, "y");
             }
             else
             {
-                std::strcpy(colorspec, "n");
+                std::strcpy(color_spec, "n");
             }
             if (g_make_parameter_file_map)
             {
-                maxcolor = 256;
+                max_color = 256;
             }
             else
             {
-                maxcolor = g_file_colors;
+                max_color = g_file_colors;
             }
         }
         out_name = g_command_file;
-        bool gotinfile{};
+        bool got_infile{};
         if (fs::exists(g_command_file))
         {
             // file exists
-            gotinfile = true;
+            got_infile = true;
             if (!is_writeable(g_command_file))
             {
                 std::snprintf(buf, std::size(buf), "Can't write %s", g_command_file.c_str());
@@ -404,14 +404,14 @@ skip_UI:
         if (s_parm_file == nullptr)
         {
             stop_msg("Can't create " + out_name.string());
-            if (gotinfile)
+            if (got_infile)
             {
                 std::fclose(infile);
             }
             continue;
         }
 
-        if (gotinfile)
+        if (got_infile)
         {
             while (file_gets(buf, 255, infile) >= 0)
             {
@@ -443,33 +443,33 @@ skip_UI:
             }
         }
         //**** start here
-        if (xm > 1 || ym > 1)
+        if (x_multiple > 1 || y_multiple > 1)
         {
-            have3rd = g_x_min != g_x_3rd || g_y_min != g_y_3rd;
-            fpbat = dir_fopen(g_working_dir.c_str(), "makemig.bat", "w");
-            if (fpbat == nullptr)
+            have_3rd = g_x_min != g_x_3rd || g_y_min != g_y_3rd;
+            bat_file = dir_fopen(g_working_dir.c_str(), "makemig.bat", "w");
+            if (bat_file == nullptr)
             {
-                ym = 0;
-                xm = ym;
+                y_multiple = 0;
+                x_multiple = y_multiple;
             }
-            pdelx  = (g_x_max - g_x_3rd) / (xm * pxdots - 1);   // calculate stepsizes
-            pdely  = (g_y_max - g_y_3rd) / (ym * pydots - 1);
-            pdelx2 = (g_x_3rd - g_x_min) / (ym * pydots - 1);
-            pdely2 = (g_y_3rd - g_y_min) / (xm * pxdots - 1);
+            piece_delta_x  = (g_x_max - g_x_3rd) / (x_multiple * piece_x_dots - 1);   // calculate stepsizes
+            piece_delta_y  = (g_y_max - g_y_3rd) / (y_multiple * piece_y_dots - 1);
+            piece_delta_x2 = (g_x_3rd - g_x_min) / (y_multiple * piece_y_dots - 1);
+            piece_delta_y2 = (g_y_3rd - g_y_min) / (x_multiple * piece_x_dots - 1);
 
             // save corners
-            pxxmin = g_x_min;
-            pyymax = g_y_max;
+            piece_x_min = g_x_min;
+            piece_y_min = g_y_max;
         }
-        for (int i = 0; i < (int)xm; i++)    // columns
+        for (int i = 0; i < (int)x_multiple; i++)    // columns
         {
-            for (int j = 0; j < (int)ym; j++)  // rows
+            for (int j = 0; j < (int)y_multiple; j++)  // rows
             {
-                if (xm > 1 || ym > 1)
+                if (x_multiple > 1 || y_multiple > 1)
                 {
                     int w;
                     char c;
-                    char PCommandName[80];
+                    char piece_command_name[80];
                     w = 0;
                     while (w < (int)g_command_name.length())
                     {
@@ -478,32 +478,32 @@ skip_UI:
                         {
                             break;
                         }
-                        PCommandName[w] = c;
+                        piece_command_name[w] = c;
                         w++;
                     }
-                    PCommandName[w] = 0;
+                    piece_command_name[w] = 0;
                     {
                         char tmpbuff[20];
                         std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", par_key(i), par_key(j));
-                        std::strcat(PCommandName, tmpbuff);
+                        std::strcat(piece_command_name, tmpbuff);
                     }
-                    std::fprintf(s_parm_file, "%-19s{", PCommandName);
-                    g_x_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-                    g_x_max = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
-                    g_y_min = pyymax - pdely*((j+1)*pydots - 1) - pdely2*((i+1)*pxdots - 1);
-                    g_y_max = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
-                    if (have3rd)
+                    std::fprintf(s_parm_file, "%-19s{", piece_command_name);
+                    g_x_min = piece_x_min + piece_delta_x*(i*piece_x_dots) + piece_delta_x2*(j*piece_y_dots);
+                    g_x_max = piece_x_min + piece_delta_x*((i+1)*piece_x_dots - 1) + piece_delta_x2*((j+1)*piece_y_dots - 1);
+                    g_y_min = piece_y_min - piece_delta_y*((j+1)*piece_y_dots - 1) - piece_delta_y2*((i+1)*piece_x_dots - 1);
+                    g_y_max = piece_y_min - piece_delta_y*(j*piece_y_dots) - piece_delta_y2*(i*piece_x_dots);
+                    if (have_3rd)
                     {
-                        g_x_3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j+1)*pydots - 1);
-                        g_y_3rd = pyymax - pdely*((j+1)*pydots - 1) - pdely2*(i*pxdots);
+                        g_x_3rd = piece_x_min + piece_delta_x*(i*piece_x_dots) + piece_delta_x2*((j+1)*piece_y_dots - 1);
+                        g_y_3rd = piece_y_min - piece_delta_y*((j+1)*piece_y_dots - 1) - piece_delta_y2*(i*piece_x_dots);
                     }
                     else
                     {
                         g_x_3rd = g_x_min;
                         g_y_3rd = g_y_min;
                     }
-                    std::fprintf(fpbat, "start/wait id batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
-                    std::fprintf(fpbat, "if errorlevel 2 goto oops\n");
+                    std::fprintf(bat_file, "start/wait id batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), piece_command_name);
+                    std::fprintf(bat_file, "if errorlevel 2 goto oops\n");
                 }
                 else
                 {
@@ -534,40 +534,40 @@ skip_UI:
                 }
                 std::fputc('\n', s_parm_file);
                 {
-                    char tmpbuff[25];
-                    std::memset(tmpbuff, ' ', 23);
-                    tmpbuff[23] = 0;
-                    tmpbuff[21] = ';';
+                    char tmp_buff[25];
+                    std::memset(tmp_buff, ' ', 23);
+                    tmp_buff[23] = 0;
+                    tmp_buff[21] = ';';
                     for (int k = 1; k < 4; k++)
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            std::fprintf(s_parm_file, "%s%s\n", tmpbuff, g_command_comment[k].c_str());
+                            std::fprintf(s_parm_file, "%s%s\n", tmp_buff, g_command_comment[k].c_str());
                         }
                     }
-                    if (g_patch_level != 0 && !colorsonly)
+                    if (g_patch_level != 0 && !colors_only)
                     {
-                        std::fprintf(s_parm_file, "%s id Version %d Patchlevel %d\n", tmpbuff, g_release, g_patch_level);
+                        std::fprintf(s_parm_file, "%s id Version %d Patchlevel %d\n", tmp_buff, g_release, g_patch_level);
                     }
                 }
-                write_batch_params(colorspec, colorsonly, maxcolor, i, j);
-                if (xm > 1 || ym > 1)
+                write_batch_params(color_spec, colors_only, max_color, i, j);
+                if (x_multiple > 1 || y_multiple > 1)
                 {
-                    std::fprintf(s_parm_file, "  video=%s", vidmde);
+                    std::fprintf(s_parm_file, "  video=%s", video_mode_key_name);
                     std::fprintf(s_parm_file, " savename=frmig_%c%c\n", par_key(i), par_key(j));
                 }
                 std::fprintf(s_parm_file, "}\n\n");
             }
         }
-        if (xm > 1 || ym > 1)
+        if (x_multiple > 1 || y_multiple > 1)
         {
-            std::fprintf(fpbat, "start/wait id makemig=%u/%u\n", xm, ym);
-            std::fprintf(fpbat, ":oops\n");
-            std::fclose(fpbat);
+            std::fprintf(bat_file, "start/wait id makemig=%u/%u\n", x_multiple, y_multiple);
+            std::fprintf(bat_file, ":oops\n");
+            std::fclose(bat_file);
         }
         //******end here
 
-        if (gotinfile)
+        if (got_infile)
         {
             // copy the rest of the file
             int i;
@@ -585,7 +585,7 @@ skip_UI:
             std::fclose(infile);
         }
         std::fclose(s_parm_file);
-        if (gotinfile)
+        if (got_infile)
         {
             // replace the original file with the new
             std::remove(g_command_file.c_str()); // success assumed on these lines
