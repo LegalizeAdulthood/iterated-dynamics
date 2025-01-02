@@ -87,39 +87,26 @@ inline char par_key(int x)
     return static_cast<char>(x < 10 ? '0' + x : 'a' - 10 + x);
 }
 
-void make_batch_file()
+struct MakeParParams
 {
+    MakeParParams();
+    bool prompt();
+    
     bool colors_only{g_make_parameter_file_map}; // makepar map case
-    // added for pieces feature
-    double piece_delta_x{};
-    double piece_delta_y{};
-    double piece_delta_x2{};
-    double piece_delta_y2{};
-    int piece_x_dots;
-    int piece_y_dots;
-    int x_multiple;
-    int y_multiple;
-    double piece_x_min{};
-    double piece_y_min{};
-    char video_mode_key_name[5];
-    bool have_3rd{};
+    int max_color{g_colors};
+    char color_spec[14]{};
     char input_command_file[80];
     char input_command_name[ITEM_NAME_LEN + 1];
     char input_comment[4][MAX_COMMENT_LEN];
-    fs::path in_path;
-    fs::path out_path;
-    char             buf2[128];
-    std::FILE *infile{};
-    std::FILE *bat_file{};
-    char color_spec[14];
-    int max_color;
-    char const *sptr{};
-    char const *sptr2;
+    char video_mode_key_name[5];
+    int piece_x_dots{g_logical_screen_x_dots};
+    int piece_y_dots{g_logical_screen_y_dots};
+    int x_multiple{1};
+    int y_multiple{1};
+};
 
-    driver_stack_screen();
-    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
-
-    max_color = g_colors;
+MakeParParams::MakeParParams()
+{
     std::strcpy(color_spec, "y");
     if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {
@@ -134,7 +121,7 @@ void make_batch_file()
         }
         if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > max_color)
         {
-            max_color = (int)(0 - g_distance_estimator);
+            max_color = (int) (0 - g_distance_estimator);
         }
         if (g_decomp[0] > max_color)
         {
@@ -142,13 +129,14 @@ void make_batch_file()
         }
         if (g_potential_flag && g_potential_params[0] >= max_color)
         {
-            max_color = (int)g_potential_params[0];
+            max_color = (int) g_potential_params[0];
         }
         if (++max_color > 256)
         {
             max_color = 256;
         }
 
+        char const *sptr{};
         if (g_color_state == ColorState::DEFAULT)
         {
             // default colors
@@ -164,14 +152,14 @@ void make_batch_file()
             color_spec[0] = '@';
             sptr = g_color_file.c_str();
         }
-        else                        // colors match no .map that we know of
+        else // colors match no .map that we know of
         {
             std::strcpy(color_spec, "y");
         }
 
         if (sptr && color_spec[0] == '@')
         {
-            sptr2 = std::strrchr(sptr, SLASH_CH);
+            char const *sptr2 = std::strrchr(sptr, SLASH_CH);
             if (sptr2 != nullptr)
             {
                 sptr = sptr2 + 1;
@@ -196,187 +184,214 @@ void make_batch_file()
     {
         std::strcpy(input_command_name, "test");
     }
-    piece_x_dots = g_logical_screen_x_dots;
-    piece_y_dots = g_logical_screen_y_dots;
-    y_multiple = 1;
-    x_multiple = 1;
+    vid_mode_key_name(g_video_entry.keynum, video_mode_key_name);
+}
+
+bool MakeParParams::prompt()
+{
+    while (true)
+    {
+        int prompt_num{};
+        constexpr int MAX_PROMPTS{18};
+        FullScreenValues param_values[MAX_PROMPTS];
+        char const      *choices[MAX_PROMPTS];
+        choices[prompt_num] = "Parameter file";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_command_file;
+        choices[prompt_num] = "Name";
+        param_values[prompt_num].type = 0x100 + ITEM_NAME_LEN;
+        param_values[prompt_num++].uval.sbuf = input_command_name;
+        choices[prompt_num] = "Main comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[0];
+        choices[prompt_num] = "Second comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[1];
+        choices[prompt_num] = "Third comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[2];
+        choices[prompt_num] = "Fourth comment";
+        param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
+        param_values[prompt_num++].uval.sbuf = input_comment[3];
+        int max_color_index{};
+        if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
+        {
+            choices[prompt_num] = "Record colors?";
+            param_values[prompt_num].type = 0x100 + 13;
+            param_values[prompt_num++].uval.sbuf = color_spec;
+            choices[prompt_num] = "    (no | yes | only for full info | @filename to point to a map file)";
+            param_values[prompt_num++].type = '*';
+            choices[prompt_num] = "# of colors";
+            max_color_index = prompt_num;
+            param_values[prompt_num].type = 'i';
+            param_values[prompt_num++].uval.ival = max_color;
+            choices[prompt_num] = "    (if recording full color info)";
+            param_values[prompt_num++].type = '*';
+        }
+        choices[prompt_num] = "Maximum line length";
+        param_values[prompt_num].type = 'i';
+        param_values[prompt_num++].uval.ival = g_max_line_length;
+        choices[prompt_num] = "";
+        param_values[prompt_num++].type = '*';
+        choices[prompt_num] = "    **** The following is for generating images in pieces ****";
+        param_values[prompt_num++].type = '*';
+        choices[prompt_num] = "X Multiples";
+        int pieces_prompts = prompt_num;
+        param_values[prompt_num].type = 'i';
+        param_values[prompt_num++].uval.ival = x_multiple;
+        choices[prompt_num] = "Y Multiples";
+        param_values[prompt_num].type = 'i';
+        param_values[prompt_num++].uval.ival = y_multiple;
+        choices[prompt_num] = "Video mode";
+        param_values[prompt_num].type = 0x100 + 4;
+        param_values[prompt_num++].uval.sbuf = video_mode_key_name;
+
+        if (full_screen_prompt("Save Current Parameters", prompt_num, choices, param_values, 0, nullptr) < 0)
+        {
+            return true;
+        }
+
+        if (*color_spec == 'o' || g_make_parameter_file_map)
+        {
+            std::strcpy(color_spec, "y");
+            colors_only = true;
+        }
+
+        g_command_file = input_command_file;
+        if (has_ext(g_command_file.c_str()) == nullptr)
+        {
+            g_command_file += ".par";   // default extension .par
+        }
+        g_command_name = input_command_name;
+        for (int i = 0; i < 4; i++)
+        {
+            g_command_comment[i] = input_comment[i];
+        }
+        if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
+        {
+            if (param_values[max_color_index].uval.ival > 0 &&
+                    param_values[max_color_index].uval.ival <= 256)
+            {
+                max_color = param_values[max_color_index].uval.ival;
+            }
+        }
+
+        prompt_num = pieces_prompts;
+        {
+            int newmaxlinelength;
+            newmaxlinelength = param_values[prompt_num-3].uval.ival;
+            if (g_max_line_length != newmaxlinelength
+                && newmaxlinelength >= MIN_MAX_LINE_LENGTH
+                && newmaxlinelength <= MAX_MAX_LINE_LENGTH)
+            {
+                g_max_line_length = newmaxlinelength;
+            }
+        }
+        x_multiple = param_values[prompt_num++].uval.ival;
+        y_multiple = param_values[prompt_num++].uval.ival;
+
+        // sanity checks
+        {
+            long x_total;
+            long y_total;
+            int i;
+
+            // get resolution from the video name (which must be valid)
+            piece_y_dots = 0;
+            piece_x_dots = 0;
+            i = check_vid_mode_key_name(video_mode_key_name);
+            if (i > 0)
+            {
+                i = check_vid_mode_key(0, i);
+                if (i >= 0)
+                {
+                    // get the resolution of this video mode
+                    piece_x_dots = g_video_table[i].xdots;
+                    piece_y_dots = g_video_table[i].ydots;
+                }
+            }
+            if (piece_x_dots == 0 && (x_multiple > 1 || y_multiple > 1))
+            {
+                // no corresponding video mode!
+                stop_msg("Invalid video mode entry!");
+                continue;
+            }
+
+            // bounds range on xm, ym
+            if (x_multiple < 1 || x_multiple > 36 || y_multiple < 1 || y_multiple > 36)
+            {
+                stop_msg("X and Y components must be 1 to 36");
+                continue;
+            }
+
+            // another sanity check: total resolution cannot exceed 65535
+            x_total = x_multiple;
+            y_total = y_multiple;
+            x_total *= piece_x_dots;
+            y_total *= piece_y_dots;
+            if (x_total > 65535L || y_total > 65535L)
+            {
+                stop_msg("Total resolution (X or Y) cannot exceed 65535");
+                continue;
+            }
+        }
+
+        return false;
+    }
+}
+
+void make_batch_file()
+{
+    // added for pieces feature
+    double piece_delta_x{};
+    double piece_delta_y{};
+    double piece_delta_x2{};
+    double piece_delta_y2{};
+    double piece_x_min{};
+    double piece_y_min{};
+    bool have_3rd{};
+    fs::path in_path;
+    char buf2[128];
+    std::FILE *infile{};
+    std::FILE *bat_file{};
+
+    driver_stack_screen();
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
+    MakeParParams params;
+
     if (g_make_parameter_file)
     {
         goto skip_ui;
     }
 
-    vid_mode_key_name(g_video_entry.keynum, video_mode_key_name);
     while (true)
     {
 prompt_user:
+        if (params.prompt())
         {
-            int prompt_num{};
-            constexpr int MAX_PROMPTS{18};
-            FullScreenValues param_values[MAX_PROMPTS];
-            char const      *choices[MAX_PROMPTS];
-            int max_color_index{};
-            int pieces_prompts;
-            choices[prompt_num] = "Parameter file";
-            param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
-            param_values[prompt_num++].uval.sbuf = input_command_file;
-            choices[prompt_num] = "Name";
-            param_values[prompt_num].type = 0x100 + ITEM_NAME_LEN;
-            param_values[prompt_num++].uval.sbuf = input_command_name;
-            choices[prompt_num] = "Main comment";
-            param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
-            param_values[prompt_num++].uval.sbuf = input_comment[0];
-            choices[prompt_num] = "Second comment";
-            param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
-            param_values[prompt_num++].uval.sbuf = input_comment[1];
-            choices[prompt_num] = "Third comment";
-            param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
-            param_values[prompt_num++].uval.sbuf = input_comment[2];
-            choices[prompt_num] = "Fourth comment";
-            param_values[prompt_num].type = 0x100 + MAX_COMMENT_LEN - 1;
-            param_values[prompt_num++].uval.sbuf = input_comment[3];
-            if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
-            {
-                choices[prompt_num] = "Record colors?";
-                param_values[prompt_num].type = 0x100 + 13;
-                param_values[prompt_num++].uval.sbuf = color_spec;
-                choices[prompt_num] = "    (no | yes | only for full info | @filename to point to a map file)";
-                param_values[prompt_num++].type = '*';
-                choices[prompt_num] = "# of colors";
-                max_color_index = prompt_num;
-                param_values[prompt_num].type = 'i';
-                param_values[prompt_num++].uval.ival = max_color;
-                choices[prompt_num] = "    (if recording full color info)";
-                param_values[prompt_num++].type = '*';
-            }
-            choices[prompt_num] = "Maximum line length";
-            param_values[prompt_num].type = 'i';
-            param_values[prompt_num++].uval.ival = g_max_line_length;
-            choices[prompt_num] = "";
-            param_values[prompt_num++].type = '*';
-            choices[prompt_num] = "    **** The following is for generating images in pieces ****";
-            param_values[prompt_num++].type = '*';
-            choices[prompt_num] = "X Multiples";
-            pieces_prompts = prompt_num;
-            param_values[prompt_num].type = 'i';
-            param_values[prompt_num++].uval.ival = x_multiple;
-            choices[prompt_num] = "Y Multiples";
-            param_values[prompt_num].type = 'i';
-            param_values[prompt_num++].uval.ival = y_multiple;
-            choices[prompt_num] = "Video mode";
-            param_values[prompt_num].type = 0x100 + 4;
-            param_values[prompt_num++].uval.sbuf = video_mode_key_name;
-
-            if (full_screen_prompt("Save Current Parameters", prompt_num, choices, param_values, 0, nullptr) < 0)
-            {
-                break;
-            }
-
-            if (*color_spec == 'o' || g_make_parameter_file_map)
-            {
-                std::strcpy(color_spec, "y");
-                colors_only = true;
-            }
-
-            g_command_file = input_command_file;
-            if (has_ext(g_command_file.c_str()) == nullptr)
-            {
-                g_command_file += ".par";   // default extension .par
-            }
-            g_command_name = input_command_name;
-            for (int i = 0; i < 4; i++)
-            {
-                g_command_comment[i] = input_comment[i];
-            }
-            if (g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR))
-            {
-                if (param_values[max_color_index].uval.ival > 0 &&
-                        param_values[max_color_index].uval.ival <= 256)
-                {
-                    max_color = param_values[max_color_index].uval.ival;
-                }
-            }
-
-            prompt_num = pieces_prompts;
-            {
-                int newmaxlinelength;
-                newmaxlinelength = param_values[prompt_num-3].uval.ival;
-                if (g_max_line_length != newmaxlinelength
-                    && newmaxlinelength >= MIN_MAX_LINE_LENGTH
-                    && newmaxlinelength <= MAX_MAX_LINE_LENGTH)
-                {
-                    g_max_line_length = newmaxlinelength;
-                }
-            }
-            x_multiple = param_values[prompt_num++].uval.ival;
-            y_multiple = param_values[prompt_num++].uval.ival;
-
-            // sanity checks
-            {
-                long x_total;
-                long y_total;
-                int i;
-
-                // get resolution from the video name (which must be valid)
-                piece_y_dots = 0;
-                piece_x_dots = 0;
-                i = check_vid_mode_key_name(video_mode_key_name);
-                if (i > 0)
-                {
-                    i = check_vid_mode_key(0, i);
-                    if (i >= 0)
-                    {
-                        // get the resolution of this video mode
-                        piece_x_dots = g_video_table[i].xdots;
-                        piece_y_dots = g_video_table[i].ydots;
-                    }
-                }
-                if (piece_x_dots == 0 && (x_multiple > 1 || y_multiple > 1))
-                {
-                    // no corresponding video mode!
-                    stop_msg("Invalid video mode entry!");
-                    goto prompt_user;
-                }
-
-                // bounds range on xm, ym
-                if (x_multiple < 1 || x_multiple > 36 || y_multiple < 1 || y_multiple > 36)
-                {
-                    stop_msg("X and Y components must be 1 to 36");
-                    goto prompt_user;
-                }
-
-                // another sanity check: total resolution cannot exceed 65535
-                x_total = x_multiple;
-                y_total = y_multiple;
-                x_total *= piece_x_dots;
-                y_total *= piece_y_dots;
-                if (x_total > 65535L || y_total > 65535L)
-                {
-                    stop_msg("Total resolution (X or Y) cannot exceed 65535");
-                    goto prompt_user;
-                }
-            }
+            break;
         }
 skip_ui:
         if (g_make_parameter_file)
         {
             if (g_file_colors > 0)
             {
-                std::strcpy(color_spec, "y");
+                std::strcpy(params.color_spec, "y");
             }
             else
             {
-                std::strcpy(color_spec, "n");
+                std::strcpy(params.color_spec, "n");
             }
             if (g_make_parameter_file_map)
             {
-                max_color = 256;
+                params.max_color = 256;
             }
             else
             {
-                max_color = g_file_colors;
+                params.max_color = g_file_colors;
             }
         }
-        out_path = get_save_name(g_command_file);
+        fs::path out_path = get_save_name(g_command_file);
         if (exists(out_path))
         {
             // file exists
@@ -434,29 +449,29 @@ skip_ui:
             }
         }
         //**** start here
-        if (x_multiple > 1 || y_multiple > 1)
+        if (params.x_multiple > 1 || params.y_multiple > 1)
         {
             have_3rd = g_x_min != g_x_3rd || g_y_min != g_y_3rd;
             bat_file = dir_fopen(g_working_dir.c_str(), "makemig.bat", "w");
             if (bat_file == nullptr)
             {
-                x_multiple = 0;
-                y_multiple = 0;
+                params.x_multiple = 0;
+                params.y_multiple = 0;
             }
-            piece_delta_x  = (g_x_max - g_x_3rd) / (x_multiple * piece_x_dots - 1);   // calculate step sizes
-            piece_delta_y  = (g_y_max - g_y_3rd) / (y_multiple * piece_y_dots - 1);
-            piece_delta_x2 = (g_x_3rd - g_x_min) / (y_multiple * piece_y_dots - 1);
-            piece_delta_y2 = (g_y_3rd - g_y_min) / (x_multiple * piece_x_dots - 1);
+            piece_delta_x  = (g_x_max - g_x_3rd) / (params.x_multiple * params.piece_x_dots - 1);   // calculate step sizes
+            piece_delta_y  = (g_y_max - g_y_3rd) / (params.y_multiple * params.piece_y_dots - 1);
+            piece_delta_x2 = (g_x_3rd - g_x_min) / (params.y_multiple * params.piece_y_dots - 1);
+            piece_delta_y2 = (g_y_3rd - g_y_min) / (params.x_multiple * params.piece_x_dots - 1);
 
             // save corners
             piece_x_min = g_x_min;
             piece_y_min = g_y_max;
         }
-        for (int col = 0; col < x_multiple; col++)
+        for (int col = 0; col < params.x_multiple; col++)
         {
-            for (int row = 0; row < y_multiple; row++)
+            for (int row = 0; row < params.y_multiple; row++)
             {
-                if (x_multiple > 1 || y_multiple > 1)
+                if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
                     char piece_command_name[80];
                     int w{};
@@ -477,14 +492,14 @@ skip_ui:
                         std::strcat(piece_command_name, tmpbuff);
                     }
                     std::fprintf(s_parm_file, "%-19s{", piece_command_name);
-                    g_x_min = piece_x_min + piece_delta_x*(col*piece_x_dots) + piece_delta_x2*(row*piece_y_dots);
-                    g_x_max = piece_x_min + piece_delta_x*((col+1)*piece_x_dots - 1) + piece_delta_x2*((row+1)*piece_y_dots - 1);
-                    g_y_min = piece_y_min - piece_delta_y*((row+1)*piece_y_dots - 1) - piece_delta_y2*((col+1)*piece_x_dots - 1);
-                    g_y_max = piece_y_min - piece_delta_y*(row*piece_y_dots) - piece_delta_y2*(col*piece_x_dots);
+                    g_x_min = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
+                    g_x_max = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
+                    g_y_min = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*((col+1)*params.piece_x_dots - 1);
+                    g_y_max = piece_y_min - piece_delta_y*(row*params.piece_y_dots) - piece_delta_y2*(col*params.piece_x_dots);
                     if (have_3rd)
                     {
-                        g_x_3rd = piece_x_min + piece_delta_x*(col*piece_x_dots) + piece_delta_x2*((row+1)*piece_y_dots - 1);
-                        g_y_3rd = piece_y_min - piece_delta_y*((row+1)*piece_y_dots - 1) - piece_delta_y2*(col*piece_x_dots);
+                        g_x_3rd = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
+                        g_y_3rd = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*(col*params.piece_x_dots);
                     }
                     else
                     {
@@ -534,23 +549,23 @@ skip_ui:
                             std::fprintf(s_parm_file, "%s%s\n", tmp_buff, g_command_comment[k].c_str());
                         }
                     }
-                    if (g_patch_level != 0 && !colors_only)
+                    if (g_patch_level != 0 && !params.colors_only)
                     {
                         std::fprintf(s_parm_file, "%s id Version %d Patchlevel %d\n", tmp_buff, g_release, g_patch_level);
                     }
                 }
-                write_batch_params(color_spec, colors_only, max_color, col, row);
-                if (x_multiple > 1 || y_multiple > 1)
+                write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);
+                if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
-                    std::fprintf(s_parm_file, "  video=%s", video_mode_key_name);
+                    std::fprintf(s_parm_file, "  video=%s", params.video_mode_key_name);
                     std::fprintf(s_parm_file, " savename=frmig_%c%c\n", par_key(col), par_key(row));
                 }
                 std::fprintf(s_parm_file, "}\n\n");
             }
         }
-        if (x_multiple > 1 || y_multiple > 1)
+        if (params.x_multiple > 1 || params.y_multiple > 1)
         {
-            std::fprintf(bat_file, "start/wait id makemig=%u/%u\n", x_multiple, y_multiple);
+            std::fprintf(bat_file, "start/wait id makemig=%u/%u\n", params.x_multiple, params.y_multiple);
             std::fprintf(bat_file, ":oops\n");
             std::fclose(bat_file);
         }
