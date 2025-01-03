@@ -790,7 +790,7 @@ int calc_fract()
             g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             set_symmetry(g_symmetry, false);
-            timer(TimerType::ENGINE, g_calc_type); // non-standard fractal engine
+            engine_timer(g_calc_type); // non-standard fractal engine
         }
         if (check_key())
         {
@@ -806,6 +806,11 @@ int calc_fract()
     }
     else // standard escape-time engine
     {
+        auto timer_work_list{[]
+            {
+                perform_work_list();
+                return 0;
+            }};
         if (g_std_calc_mode == '3')  // convoluted 'g' + '2' hybrid
         {
             const int old_calc_mode = g_std_calc_mode;
@@ -813,7 +818,7 @@ int calc_fract()
             {
                 g_std_calc_mode = 'g';
                 g_three_pass = true;
-                timer(TimerType::ENGINE, (int(*)())perform_work_list);
+                engine_timer(timer_work_list);
                 if (g_calc_status == CalcStatus::COMPLETED)
                 {
                     if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low rez
@@ -824,7 +829,7 @@ int calc_fract()
                     {
                         g_std_calc_mode = '1';
                     }
-                    timer(TimerType::ENGINE, (int(*)())perform_work_list);
+                    engine_timer(timer_work_list);
                     g_three_pass = false;
                 }
             }
@@ -838,14 +843,14 @@ int calc_fract()
                 {
                     g_std_calc_mode = '1';
                 }
-                timer(TimerType::ENGINE, (int(*)())perform_work_list);
+                engine_timer(timer_work_list);
             }
             g_std_calc_mode = (char)old_calc_mode;
         }
         else // main case, much nicer!
         {
             g_three_pass = false;
-            timer(TimerType::ENGINE, (int(*)())perform_work_list);
+            engine_timer(timer_work_list);
         }
     }
     g_calc_time += g_timer_interval;

@@ -468,6 +468,6 @@ bool bifurc_may_setup()
     }
     g_params[2] = (double)s_beta;
 
-    timer(TimerType::ENGINE, g_cur_fractal_specific->calctype);
+    engine_timer(g_cur_fractal_specific->calctype);
     return false;
 }

@@ -204,7 +204,7 @@ restart:
     }
     else
     {
-        interrupted = timer(TimerType::ENCODER, nullptr);     // invoke encoder() via timer
+        interrupted = encoder_timer();     // invoke encoder() via timer
     }
 
     g_busy = false;

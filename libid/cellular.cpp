@@ -451,7 +451,7 @@ bool cellular_setup()
     {
         g_cellular_next_screen = false; // initialize flag
     }
-    timer(TimerType::ENGINE, g_cur_fractal_specific->calctype);
+    engine_timer(g_cur_fractal_specific->calctype);
     return false;
 }
 
