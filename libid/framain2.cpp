@@ -61,7 +61,6 @@ bool g_virtual_screens{};
 
 MainState big_while_loop(MainContext &context)
 {
-    double  ftemp;                       // fp temp
     int     i = 0;                           // temporary loop counters
     MainState mms_value;
 
@@ -175,7 +174,8 @@ MainState big_while_loop(MainContext &context)
             if (g_view_window)
             {
                 // bypass for VESA virtual screen
-                ftemp = g_final_aspect_ratio*(((double) g_screen_y_dots)/((double) g_screen_x_dots)/g_screen_aspect);
+                const double ftemp{g_final_aspect_ratio *
+                    (((double) g_screen_y_dots) / ((double) g_screen_x_dots) / g_screen_aspect)};
                 g_logical_screen_x_dots = g_view_x_dots;
                 if (g_logical_screen_x_dots != 0)
                 {
