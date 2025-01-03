@@ -21,6 +21,7 @@ Miscellaneous fractal-specific code
 #include "resume.h"
 #include "stop_msg.h"
 
+#include <algorithm>
 #include <cmath>
 #include <new>
 #include <vector>
@@ -460,14 +461,8 @@ int long_bifurc_may()
 
 bool bifurc_may_setup()
 {
-
-    s_beta = (long)g_params[2];
-    if (s_beta < 2)
-    {
-        s_beta = 2;
-    }
-    g_params[2] = (double)s_beta;
-
+    g_params[2] = std::max(g_params[2], 2.0);
+    s_beta = static_cast<long>(g_params[2]);
     engine_timer(g_cur_fractal_specific->calctype);
     return false;
 }
