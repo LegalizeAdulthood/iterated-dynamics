@@ -10,6 +10,7 @@
 #include "fractals.h"
 #include "id_data.h"
 
+#include <algorithm>
 #include <cmath>
 
 void get_julia_attractor(double real, double imag)
@@ -47,10 +48,8 @@ void get_julia_attractor(double real, double imag)
     g_l_temp_sqr_x = g_l_temp_sqr_x << g_bit_shift;
     g_l_temp_sqr_y = g_l_temp_sqr_y << g_bit_shift;
 
-    if (g_max_iterations < 500)           // we're going to try at least this hard
-    {
-        g_max_iterations = 500;
-    }
+    // we're going to try at least this hard
+    g_max_iterations = std::max(g_max_iterations, 500L);
     g_color_iter = 0;
     g_overflow = false;
     while (++g_color_iter < g_max_iterations)
