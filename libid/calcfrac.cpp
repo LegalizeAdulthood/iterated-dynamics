@@ -574,12 +574,11 @@ int calc_fract()
     }
     else
     {
-        g_periodicity_next_saved_incr = (int)std::log10(static_cast<double>(g_max_iterations)); // works better than log()
-        if (g_periodicity_next_saved_incr < 4)
-        {
-            g_periodicity_next_saved_incr = 4; // maintains image with low iterations
-        }
-        g_first_saved_and = (long)((g_periodicity_next_saved_incr*2) + 1);
+        // works better than log()
+        g_periodicity_next_saved_incr = (int) std::log10(static_cast<double>(g_max_iterations));
+        // maintains image with low iterations
+        g_periodicity_next_saved_incr = std::max(g_periodicity_next_saved_incr, 4);
+        g_first_saved_and = (long) (g_periodicity_next_saved_incr * 2 + 1);
     }
 
     g_log_map_table.clear();
@@ -999,10 +998,7 @@ static void perform_work_list()
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
-            if (g_magnitude_limit < DEM_BAILOUT)           // so go straight for dem bailout
-            {
-                g_magnitude_limit = DEM_BAILOUT;
-            }
+            g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
         }
         // must be mandel type, formula, or old PAR/GIF
         s_dem_mandel = g_cur_fractal_specific->tojulia != FractalType::NO_FRACTAL
@@ -1011,10 +1007,7 @@ static void perform_work_list()
             || g_fractal_type == FractalType::FORMULA_FP;
         s_dem_delta = sqr(delxx) + sqr(delyy2);
         ftemp = sqr(delyy) + sqr(delxx2);
-        if (ftemp > s_dem_delta)
-        {
-            s_dem_delta = ftemp;
-        }
+        s_dem_delta = std::max(ftemp, s_dem_delta);
         if (g_distance_estimator_width_factor == 0)
         {
             g_distance_estimator_width_factor = 1;
@@ -1379,15 +1372,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     // Jonathan - how about this idea ? skips first saved value which never works
 #ifdef MINSAVEDAND
-    if (g_old_color_iter < MINSAVEDAND)
-    {
-        g_old_color_iter = MINSAVEDAND;
-    }
+    g_old_color_iter = std::max<long>(g_old_color_iter, MINSAVEDAND);
 #else
-    if (g_old_color_iter < g_first_saved_and)   // I like it!
-    {
-        g_old_color_iter = g_first_saved_and;
-    }
+    g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
 #endif
     // really fractal specific, but we'll leave it here
     if (!g_integer_fractal)
@@ -1426,10 +1413,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 g_magnitude_limit = s_rq_lim_save;
                 if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
                 {
-                    if (g_magnitude_limit < DEM_BAILOUT)     // so go straight for dem bailout
-                    {
-                        g_magnitude_limit = DEM_BAILOUT;
-                    }
+                    // so go straight for dem bailout
+                    g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
                 }
                 dem_color = -1;
             }
@@ -1630,22 +1615,10 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         g_new_z.y /= g_fudge_factor;
                     }
 
-                    if (g_new_z.x > STARTRAILMAX)
-                    {
-                        g_new_z.x = STARTRAILMAX;
-                    }
-                    if (g_new_z.x < -STARTRAILMAX)
-                    {
-                        g_new_z.x = -STARTRAILMAX;
-                    }
-                    if (g_new_z.y > STARTRAILMAX)
-                    {
-                        g_new_z.y = STARTRAILMAX;
-                    }
-                    if (g_new_z.y < -STARTRAILMAX)
-                    {
-                        g_new_z.y = -STARTRAILMAX;
-                    }
+                    g_new_z.x = std::min<double>(g_new_z.x, STARTRAILMAX);
+                    g_new_z.x = std::max<double>(g_new_z.x, -STARTRAILMAX);
+                    g_new_z.y = std::min<double>(g_new_z.y, STARTRAILMAX);
+                    g_new_z.y = std::max<double>(g_new_z.y, -STARTRAILMAX);
                     g_temp_sqr_x = g_new_z.x * g_new_z.x;
                     g_temp_sqr_y = g_new_z.y * g_new_z.y;
                     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
@@ -2575,10 +2548,7 @@ int potential(double mag, long iterations)
         {
             pot = (float)(g_potential_params[0] - 1.0);
         }
-        if (pot < 1.0F)
-        {
-            pot = 1.0F; // avoid color 0
-        }
+        pot = std::max(pot, 1.0f); // avoid color 0
     }
     else if (g_inside_color >= COLOR_BLACK)
     {
@@ -3032,11 +3002,8 @@ originsym:
             g_pi_in_pixels = (int)((PI/std::fabs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
         }
 
-        g_i_x_stop = g_xx_start+g_pi_in_pixels-1;
-        if (g_i_x_stop > g_xx_stop)
-        {
-            g_i_x_stop = g_xx_stop;
-        }
+        g_i_x_stop = g_xx_start + g_pi_in_pixels - 1;
+        g_i_x_stop = std::min(g_i_x_stop, g_xx_stop);
         i = (g_xx_start+g_xx_stop)/2;
         if (g_plot == sym_pi_plot4j && g_i_x_stop > i)
         {
