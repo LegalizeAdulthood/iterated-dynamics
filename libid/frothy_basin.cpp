@@ -184,10 +184,7 @@ bool froth_setup()
 
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
-    if (g_magnitude_limit < 7.0)
-    {
-        g_magnitude_limit = 7.0;
-    }
+    g_magnitude_limit = std::max(g_magnitude_limit, 7.0);
     set_froth_palette();
     // make the best of the .map situation
     if (s_fsp.attractors != 6 && g_colors >= 16)
@@ -558,10 +555,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
         {
             if (!s_fsp.altcolor)
             {
-                if (g_color_iter > s_fsp.shades)
-                {
-                    g_color_iter = s_fsp.shades;
-                }
+                g_color_iter = std::min<long>(g_color_iter, s_fsp.shades);
             }
             else
             {
