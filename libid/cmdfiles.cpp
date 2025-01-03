@@ -59,8 +59,8 @@
 #include "trig_fns.h"
 #include "video_mode.h"
 
-#include <array>
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <cfloat>
@@ -2676,14 +2676,8 @@ static CmdArgFlags cmd_orbit_draw_mode(const Command &cmd)
 static CmdArgFlags cmd_orbit_interval(const Command &cmd)
 {
     g_orbit_interval = cmd.num_val;
-    if (g_orbit_interval < 1)
-    {
-        g_orbit_interval = 1;
-    }
-    if (g_orbit_interval > 255)
-    {
-        g_orbit_interval = 255;
-    }
+    g_orbit_interval = std::max(g_orbit_interval, 1L);
+    g_orbit_interval = std::min(g_orbit_interval, 255L);
     return CmdArgFlags::NONE;
 }
 
@@ -2854,14 +2848,8 @@ static CmdArgFlags cmd_periodicity(const Command &cmd)
     else
     {
         g_user_periodicity_value = cmd.num_val;
-        if (g_user_periodicity_value > 255)
-        {
-            g_user_periodicity_value = 255;
-        }
-        if (g_user_periodicity_value < -255)
-        {
-            g_user_periodicity_value = -255;
-        }
+        g_user_periodicity_value = std::min(g_user_periodicity_value, 255);
+        g_user_periodicity_value = std::max(g_user_periodicity_value, -255);
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -3214,10 +3202,7 @@ static CmdArgFlags cmd_show_dot(const Command &cmd)
         {
             g_size_dot = cmd.int_vals[1];
         }
-        if (g_size_dot < 0)
-        {
-            g_size_dot = 0;
-        }
+        g_size_dot = std::max(g_size_dot, 0);
     }
     return CmdArgFlags::NONE;
 }
@@ -4060,10 +4045,7 @@ static int get_max_cur_arg_len(const char *const floatvalstr[], int num_args)
     for (int i = 0; i < num_args; i++)
     {
         int tmp = get_cur_arg_len(floatvalstr[i]);
-        if (tmp > max_str)
-        {
-            max_str = tmp;
-        }
+        max_str = std::max(tmp, max_str);
     }
     return max_str;
 }
