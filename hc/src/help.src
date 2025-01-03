@@ -282,9 +282,22 @@ o Perturbation drawing algorithm.  Paul de Leeuw contributed an
 o The color palette editor can be positioned using the mouse and the
   current pixel whose color is displayed in the editor can also be
   selected with the mouse.  (Fixes #150)
+o Disk video rendering performance and robustness improved.  Requested
+  memory buffers are now unlimited in disk video mode and only fall back
+  to using a disk file if memory allocation fails.  The operating
+  system's virtual memory will perform better than manual disk caches.
+  Disk cache files are unique per-process, allowing multiple instances of
+  Id to be running simultaneously without interfering with each other.
+  The the status screen will now update at most ten times per second.  This
+  prevents GUI updates from being the bottleneck on disk video rendering.
+  (Fixes #173, #174)
 
 Bugs Fixed in Version 1.1:
 
+o The makepar parameter, or <B> commnd, now saves any generated parameter
+  and batch files to the savedir location.  (Fixes #176, #177)
+o Generated parameter file comments now properly handle escaped backslashes
+  preceding another special character.  (Fixes #175)
 o The version number is now correctly displayed in the title of help
   screens.  (Fixes #154)
 o When run from the Visual Studio debugger, the working directory of
