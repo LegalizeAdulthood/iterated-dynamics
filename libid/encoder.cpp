@@ -930,7 +930,11 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->orbit_delay = static_cast<std::int16_t>(g_orbit_delay);
     save_info->math_tol[0] = g_math_tol[0];
     save_info->math_tol[1] = g_math_tol[1];
-    std::fill(std::begin(save_info->future), std::end(save_info->future), static_cast<std::int16_t>(0));
+    // NOTE: can't use std::fill here on gcc due to packed constraints.
+    for (int i = 0; i < 7; ++i)
+    {
+        save_info->future[i] = 0;
+    }
 }
 
 //
