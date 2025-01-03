@@ -27,7 +27,7 @@ int timer(TimerType timertype, int(*subrtn)(), ...)
 {
     std::va_list arg_marker;  // variable arg list
     char *timestring;
-    time_t ltime;
+    std::time_t ltime;
     std::FILE *fp = nullptr;
     int out = 0;
     int i;
@@ -62,8 +62,8 @@ int timer(TimerType timertype, int(*subrtn)(), ...)
 
     if (do_bench)
     {
-        time(&ltime);
-        timestring = ctime(&ltime);
+        std::time(&ltime);
+        timestring = std::ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
         switch (timertype)
         {
