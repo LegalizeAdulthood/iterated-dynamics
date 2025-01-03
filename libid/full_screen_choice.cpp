@@ -13,6 +13,7 @@
 #include "text_screen.h"
 #include "ValueSaver.h"
 
+#include <algorithm>
 #include <cctype>
 #include <cstring>
 
@@ -246,10 +247,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         for (int i = 0; i < num_choices; ++i)
         {
             const int len = (int) std::strlen(choices[i]);
-            if (len > col_width)
-            {
-                col_width = len;
-            }
+            col_width = std::max(len, col_width);
         }
     }
     // title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?)
@@ -284,10 +282,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
     }
     {
         int const max_depth = 25 - reqdrows;
-        if (box_depth > max_depth) // limit the depth to max
-        {
-            box_depth = max_depth;
-        }
+        box_depth = std::min(box_depth, max_depth); // limit the depth to max
         if (box_width == 0)           // pick box width and depth
         {
             if (num_choices <= max_depth - 2)  // single column is 1st choice if we can
@@ -304,10 +299,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
                 {
                     box_width = 80 / (col_width + 1); // last gasp, full width
                     box_depth = (num_choices + box_width - 1)/box_width;
-                    if (box_depth > max_depth)
-                    {
-                        box_depth = max_depth;
-                    }
+                    box_depth = std::min(box_depth, max_depth);
                 }
             }
         }
@@ -320,24 +312,12 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         {
             i = 1;
         }
-        if (i < 0)
-        {
-            i = 0;
-        }
-        if (i > 3)
-        {
-            i = 3;
-        }
+        i = std::max(i, 0);
+        i = std::min(i, 3);
         col_width += i;
         int j = box_width*col_width + i;     // overall width of box
-        if (j < titlewidth+2)
-        {
-            j = titlewidth + 2;
-        }
-        if (j > 80)
-        {
-            j = 80;
-        }
+        j = std::max(j, titlewidth + 2);
+        j = std::min(j, 80);
         if (j <= 70 && box_width == 2)         // special case makes menus nicer
         {
             ++j;
@@ -755,10 +735,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         {
             topleftchoice = ((num_choices + box_width - 1)/box_width)*box_width - boxitems;
         }
-        if (topleftchoice < 0)
-        {
-            topleftchoice = 0;
-        }
+        topleftchoice = std::max(topleftchoice, 0);
         while (current < topleftchoice)
         {
             topleftchoice -= box_width;
