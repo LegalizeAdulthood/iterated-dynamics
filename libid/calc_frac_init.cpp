@@ -24,6 +24,7 @@
 #include "stop_msg.h"
 #include "type_has_param.h"
 
+#include <algorithm>
 #include <array>
 #include <cfloat>
 #include <cmath>
@@ -78,10 +79,7 @@ static int get_prec_dbl(int rezflag)
 
     del1 = std::fabs(xdel) + std::fabs(xdel2);
     del2 = std::fabs(ydel) + std::fabs(ydel2);
-    if (del2 < del1)
-    {
-        del1 = del2;
-    }
+    del1 = std::min(del2, del1);
     if (del1 == 0)
     {
 #ifndef NDEBUG
@@ -346,10 +344,7 @@ init_restart:
     }
     if (g_integer_fractal)   // the bailout limit mustn't be too high here
     {
-        if (g_magnitude_limit > 127.0)
-        {
-            g_magnitude_limit = 127.0;
-        }
+        g_magnitude_limit = std::min(g_magnitude_limit, 127.0);
     }
 
     if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
@@ -599,16 +594,10 @@ expand_retry:
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
     g_delta_min = std::fabs((double)g_delta_x);
-    if (std::fabs((double)g_delta_x2) > g_delta_min)
-    {
-        g_delta_min = std::fabs((double)g_delta_x2);
-    }
+    g_delta_min = std::max(std::fabs((double) g_delta_x2), g_delta_min);
     if (std::fabs((double)g_delta_y) > std::fabs((double)g_delta_y2))
     {
-        if (std::fabs((double)g_delta_y) < g_delta_min)
-        {
-            g_delta_min = std::fabs((double)g_delta_y);
-        }
+        g_delta_min = std::min(std::fabs((double) g_delta_y), g_delta_min);
     }
     else if (std::fabs((double)g_delta_y2) < g_delta_min)
     {
@@ -1143,31 +1132,15 @@ static void adjust_to_limits(double expand)
 
     for (int i = 1; i < 4; ++i)
     {
-        if (cornerx[i] < lowx)
-        {
-            lowx  = cornerx[i];
-        }
-        if (cornerx[i] > highx)
-        {
-            highx = cornerx[i];
-        }
-        if (cornery[i] < lowy)
-        {
-            lowy  = cornery[i];
-        }
-        if (cornery[i] > highy)
-        {
-            highy = cornery[i];
-        }
+        lowx = std::min(cornerx[i], lowx);
+        highx = std::max(cornerx[i], highx);
+        lowy = std::min(cornery[i], lowy);
+        highy = std::max(cornery[i], highy);
     }
 
     // if image is too large, downsize it maintaining center
-    ftemp = highx-lowx;
-
-    if (highy-lowy > ftemp)
-    {
-        ftemp = highy-lowy;
-    }
+    ftemp = highx - lowx;
+    ftemp = std::max(highy - lowy, ftemp);
 
     // if image is too large, downsize it maintaining center
     ftemp = limit*2/ftemp;
