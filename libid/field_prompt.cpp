@@ -9,6 +9,8 @@
 #include "put_string_center.h"
 #include "text_screen.h"
 
+#include <algorithm>
+
 int field_prompt(
     char const *hdg,        // heading, \n delimited lines
     char const *instr,      // additional instructions or nullptr
@@ -44,10 +46,7 @@ int field_prompt(
             boxwidth = i;
         }
     }
-    if (len > boxwidth)
-    {
-        boxwidth = len;
-    }
+    boxwidth = std::max(len, boxwidth);
     i = titlelines + 4;                    // total rows in box
     titlerow = (25 - i) / 2;               // top row of it all when centered
     titlerow -= titlerow / 4;              // higher is better if lots extra
@@ -56,10 +55,7 @@ int field_prompt(
     promptcol = titlecol - (boxwidth-len)/2;
     j = titlecol;                          // add margin at each side of box
     i = (82-boxwidth)/4;
-    if (i > 3)
-    {
-        i = 3;
-    }
+    i = std::min(i, 3);
     j -= i;
     boxwidth += i * 2;
     for (int k = -1; k < titlelines + 3; ++k) // draw empty box
