@@ -19,6 +19,7 @@
 #include "text_screen.h"
 #include "ValueSaver.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -267,31 +268,19 @@ int full_screen_prompt(        // full-screen prompting routine
         int j = (int) std::strlen(prompts[i]);
         if (values[i].type == '*')
         {
-            if (j > max_comment)
-            {
-                max_comment = j;
-            }
+            max_comment = std::max(j, max_comment);
         }
         else
         {
             any_input = true;
-            if (j > max_prompt_width)
-            {
-                max_prompt_width = j;
-            }
+            max_prompt_width = std::max(j, max_prompt_width);
             char buf[81];
             j = prompt_value_string(buf, &values[i]);
-            if (j > max_field_width)
-            {
-                max_field_width = j;
-            }
+            max_field_width = std::max(j, max_field_width);
         }
     }
     int box_width = max_prompt_width + max_field_width + 2;
-    if (max_comment > box_width)
-    {
-        box_width = max_comment;
-    }
+    box_width = std::max(max_comment, box_width);
     if ((box_width += 4) > 80)
     {
         box_width = 80;
@@ -307,10 +296,7 @@ int full_screen_prompt(        // full-screen prompting routine
     }
     {
         int j = title_width;
-        if (j < extra_width)
-        {
-            j = extra_width;
-        }
+        j = std::max(j, extra_width);
         int i = j + 4 - box_width;
         if (i > 0)
         {
@@ -518,10 +504,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
                 {
                     s_scroll_row_status += extra_lines - 2;
-                    if (s_scroll_row_status > vertical_scroll_limit)
-                    {
-                        s_scroll_row_status = vertical_scroll_limit;
-                    }
+                    s_scroll_row_status = std::min(s_scroll_row_status, vertical_scroll_limit);
                     rewrite_extra_info = true;
                 }
                 break;
@@ -529,10 +512,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 if (in_scrolling_mode && s_scroll_row_status > 0)
                 {
                     s_scroll_row_status -= extra_lines - 2;
-                    if (s_scroll_row_status < 0)
-                    {
-                        s_scroll_row_status = 0;
-                    }
+                    s_scroll_row_status = std::max(s_scroll_row_status, 0);
                     rewrite_extra_info = true;
                 }
                 break;
@@ -766,10 +746,7 @@ int full_screen_prompt(        // full-screen prompting routine
             if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
             {
                 s_scroll_row_status += extra_lines - 2;
-                if (s_scroll_row_status > vertical_scroll_limit)
-                {
-                    s_scroll_row_status = vertical_scroll_limit;
-                }
+                s_scroll_row_status = std::min(s_scroll_row_status, vertical_scroll_limit);
                 rewrite_extra_info = true;
             }
             break;
@@ -777,10 +754,7 @@ int full_screen_prompt(        // full-screen prompting routine
             if (in_scrolling_mode && s_scroll_row_status > 0)
             {
                 s_scroll_row_status -= extra_lines - 2;
-                if (s_scroll_row_status < 0)
-                {
-                    s_scroll_row_status = 0;
-                }
+                s_scroll_row_status = std::max(s_scroll_row_status, 0);
                 rewrite_extra_info = true;
             }
             break;
