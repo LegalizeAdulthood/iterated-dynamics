@@ -83,10 +83,7 @@ void set_wait(long *wait)
             clear_temp_msg();
             return;
         }
-        if (*wait < 0)
-        {
-            *wait = 0;
-        }
+        *wait = std::max(*wait, 0L);
     }
 }
 
