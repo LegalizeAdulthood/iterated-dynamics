@@ -182,10 +182,7 @@ static MainState evolve_param_zoom_decrease(MainContext &)
     if (g_evolve_param_box_count)
     {
         g_evolve_param_zoom -= 1.0;
-        if (g_evolve_param_zoom < 1.0)
-        {
-            g_evolve_param_zoom = 1.0;
-        }
+        g_evolve_param_zoom = std::max(g_evolve_param_zoom, 1.0);
         draw_param_box(0);
         set_evolve_ranges();
     }
@@ -197,10 +194,7 @@ static MainState evolve_param_zoom_increase(MainContext &)
     if (g_evolve_param_box_count)
     {
         g_evolve_param_zoom += 1.0;
-        if (g_evolve_param_zoom > (double) g_evolve_image_grid_size / 2.0)
-        {
-            g_evolve_param_zoom = (double) g_evolve_image_grid_size / 2.0;
-        }
+        g_evolve_param_zoom = std::min(g_evolve_param_zoom, g_evolve_image_grid_size / 2.0);
         draw_param_box(0);
         set_evolve_ranges();
     }
