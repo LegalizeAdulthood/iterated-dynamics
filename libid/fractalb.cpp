@@ -20,6 +20,7 @@
 #include "stop_msg.h"
 #include "type_has_param.h"
 
+#include <algorithm>
 #include <array> // std::size
 #include <cmath>
 #include <cstdio>
@@ -119,10 +120,7 @@ void show_corners_bf(char const *s)
     char msg[100];
     char msg1[200];
     char msg3[600];
-    if (dec > 20)
-    {
-        dec = 20;
-    }
+    dec = std::min(dec, 20);
     bf_to_str(msg, dec, g_bf_x_min);
     std::snprintf(msg1, std::size(msg1),
         "bf_x_min=%s\n"                                //
