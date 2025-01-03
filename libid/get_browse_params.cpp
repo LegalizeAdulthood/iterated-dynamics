@@ -11,6 +11,7 @@
 #include "prototyp.h" // for stricmp
 #include "ValueSaver.h"
 
+#include <algorithm>
 #include <string>
 
 // get browse parameters, returns 3 if anything changes.
@@ -68,19 +69,10 @@ get_brws_restart:
     g_browse_check_fractal_params = choices.read_yes_no();
     g_confirm_file_deletes = choices.read_yes_no();
     g_smallest_window_display_size = choices.read_float_number();
-    if (g_smallest_window_display_size < 0)
-    {
-        g_smallest_window_display_size = 0;
-    }
+    g_smallest_window_display_size = std::max(g_smallest_window_display_size, 0.0);
     g_smallest_box_size_shown = choices.read_int_number();
-    if (g_smallest_box_size_shown < 1)
-    {
-        g_smallest_box_size_shown = 1;
-    }
-    if (g_smallest_box_size_shown > 10)
-    {
-        g_smallest_box_size_shown = 10;
-    }
+    g_smallest_box_size_shown = std::max(g_smallest_box_size_shown, 1);
+    g_smallest_box_size_shown = std::min(g_smallest_box_size_shown, 10);
 
     g_browse_mask = choices.read_string();
 
