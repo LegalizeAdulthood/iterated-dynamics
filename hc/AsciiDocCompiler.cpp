@@ -185,10 +185,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
             col  += width;
         } // while
 
-        if (m_max_pages < t.num_page)
-        {
-            m_max_pages = t.num_page;
-        }
+        m_max_pages = std::max(m_max_pages, t.num_page);
 
         t.release_topic_text(false);
     } // for
