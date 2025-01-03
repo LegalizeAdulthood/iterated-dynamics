@@ -813,10 +813,7 @@ int ColorEditor::edit()
             if (m_val < 63)
             {
                 m_val += 5;
-                if (m_val > 63)
-                {
-                    m_val = 63;
-                }
+                m_val = std::min(m_val, 63);
                 draw();
                 m_observer->change(this);
             }
@@ -833,10 +830,7 @@ int ColorEditor::edit()
             if (m_val < 63)
             {
                 m_val += diff;
-                if (m_val > 63)
-                {
-                    m_val = 63;
-                }
+                m_val = std::min(m_val, 63);
                 draw();
                 m_observer->change(this);
             }
@@ -846,10 +840,7 @@ int ColorEditor::edit()
             if (m_val > 0)
             {
                 m_val -= 5;
-                if (m_val < 0)
-                {
-                    m_val = 0;
-                }
+                m_val = std::max(m_val, 0);
                 draw();
                 m_observer->change(this);
             }
@@ -866,10 +857,7 @@ int ColorEditor::edit()
             if (m_val > 0)
             {
                 m_val -= diff;
-                if (m_val < 0)
-                {
-                    m_val = 0;
-                }
+                m_val = std::max(m_val, 0);
                 draw();
                 m_observer->change(this);
             }
@@ -886,10 +874,7 @@ int ColorEditor::edit()
         case '8':
         case '9':
             m_val = (key - '0') * 10;
-            if (m_val > 63)
-            {
-                m_val = 63;
-            }
+            m_val = std::min(m_val, 63);
             draw();
             m_observer->change(this);
             break;
@@ -968,14 +953,8 @@ void MoveBox::move(int key)
     xoff += m_x;
     yoff += m_y; // (xoff,yoff) = new position
 
-    if (xoff < 0)
-    {
-        xoff = 0;
-    }
-    if (yoff < 0)
-    {
-        yoff = 0;
-    }
+    xoff = std::max(xoff, 0);
+    yoff = std::max(yoff, 0);
 
     if (xoff + m_base_width + m_csize * 16 + 1 > g_screen_x_dots)
     {
@@ -1037,10 +1016,7 @@ bool MoveBox::process()
                 int t = m_csize - CSIZE_INC;
                 int change;
 
-                if (t < CSIZE_MIN)
-                {
-                    t = CSIZE_MIN;
-                }
+                t = std::max<int>(t, CSIZE_MIN);
 
                 erase();
 
@@ -1071,14 +1047,8 @@ bool MoveBox::process()
                 {
                     m_x = max_width - (m_base_width + m_csize * 16 + 1);
                 }
-                if (m_y < 0)
-                {
-                    m_y = 0;
-                }
-                if (m_x < 0)
-                {
-                    m_x = 0;
-                }
+                m_y = std::max(m_y, 0);
+                m_x = std::max(m_x, 0);
                 draw();
             }
         }
@@ -1154,22 +1124,10 @@ void CrossHairCursor::move(int xoff, int yoff)
     m_x += xoff;
     m_y += yoff;
 
-    if (m_x < 0)
-    {
-        m_x = 0;
-    }
-    if (m_y < 0)
-    {
-        m_y = 0;
-    }
-    if (m_x >= g_screen_x_dots)
-    {
-        m_x = g_screen_x_dots-1;
-    }
-    if (m_y >= g_screen_y_dots)
-    {
-        m_y = g_screen_y_dots-1;
-    }
+    m_x = std::max(m_x, 0);
+    m_y = std::max(m_y, 0);
+    m_x = std::min(m_x, g_screen_x_dots - 1);
+    m_y = std::min(m_y, g_screen_y_dots - 1);
 
     if (!m_hidden)
     {
