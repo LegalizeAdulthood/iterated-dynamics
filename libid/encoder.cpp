@@ -384,14 +384,8 @@ bool encoder()
     {
         i = (int)((((double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots) / g_final_aspect_ratio) * 64 - 14.5);
     }
-    if (i < 1)
-    {
-        i = 1;
-    }
-    if (i > 255)
-    {
-        i = 255;
-    }
+    i = std::max(i, 1);
+    i = std::min(i, 255);
     if (std::fputc(i, s_outfile) != i)
     {
         goto oops;                // pixel aspect ratio
