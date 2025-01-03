@@ -22,6 +22,7 @@
 #include "stop_msg.h"
 #include "ValueSaver.h"
 
+#include <algorithm>
 #include <cstring>
 #include <string>
 
@@ -132,14 +133,8 @@ restart_1:
     g_gray_flag  = uvalues[k++].uval.ch.val != 0;
 
     // check ranges
-    if (g_preview_factor < 2)
-    {
-        g_preview_factor = 2;
-    }
-    if (g_preview_factor > 2000)
-    {
-        g_preview_factor = 2000;
-    }
+    g_preview_factor = std::max(g_preview_factor, 2);
+    g_preview_factor = std::min(g_preview_factor, 2000);
 
     if (sphere && !g_sphere)
     {
@@ -152,14 +147,8 @@ restart_1:
         set_3d_defaults();
     }
 
-    if (g_glasses_type < 0)
-    {
-        g_glasses_type = 0;
-    }
-    if (g_glasses_type > 4)
-    {
-        g_glasses_type = 4;
-    }
+    g_glasses_type = std::max(g_glasses_type, 0);
+    g_glasses_type = std::min(g_glasses_type, 4);
     if (g_glasses_type)
     {
         g_which_image = StereoImage::RED;
@@ -169,10 +158,7 @@ restart_1:
     {
         g_raytrace_format = RayTraceFormat::NONE;
     }
-    if (g_raytrace_format > RayTraceFormat::DXF)
-    {
-        g_raytrace_format = RayTraceFormat::DXF;
-    }
+    g_raytrace_format = std::min(g_raytrace_format, RayTraceFormat::DXF);
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
@@ -345,14 +331,8 @@ restart_3:
         g_transparent_color_3d[1] = uvalues[k++].uval.ival;
     }
     g_randomize_3d  = uvalues[k++].uval.ival;
-    if (g_randomize_3d >= 7)
-    {
-        g_randomize_3d = 7;
-    }
-    if (g_randomize_3d <= 0)
-    {
-        g_randomize_3d = 0;
-    }
+    g_randomize_3d = std::min(g_randomize_3d, 7);
+    g_randomize_3d = std::max(g_randomize_3d, 0);
 
     if (g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE)
     {
@@ -417,28 +397,16 @@ static bool get_light_params()
         {
             g_light_avg = builder.read_int_number();
             g_ambient  = builder.read_int_number();
-            if (g_ambient >= 100)
-            {
-                g_ambient = 100;
-            }
-            if (g_ambient <= 0)
-            {
-                g_ambient = 0;
-            }
+            g_ambient = std::min(g_ambient, 100);
+            g_ambient = std::max(g_ambient, 0);
         }
     }
 
     if (g_targa_out && g_raytrace_format == RayTraceFormat::NONE)
     {
         g_haze = builder.read_int_number();
-        if (g_haze >= 100)
-        {
-            g_haze = 100;
-        }
-        if (g_haze <= 0)
-        {
-            g_haze = 0;
-        }
+        g_haze = std::min(g_haze, 100);
+        g_haze = std::max(g_haze, 0);
         g_light_name = builder.read_string();
         /* In case light_name conflicts with an existing name it is checked again in line3d */
         g_background_color[0] = (char)(builder.read_int_number() % 255);
