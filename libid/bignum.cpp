@@ -583,10 +583,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -600,10 +597,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bnlength - g_bn_length;
         n = orig_n + orig_bnlength - g_bn_length;
@@ -700,20 +694,14 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         i--;
     }
     scale1 = g_bn_length - i - 2;
-    if (scale1 < 0)
-    {
-        scale1 = 0;
-    }
+    scale1 = std::max(scale1, 0);
     i = g_bn_length-1;
     while (i >= 0 && n2[i] == 0)
     {
         i--;
     }
     scale2 = g_bn_length - i - 2;
-    if (scale2 < 0)
-    {
-        scale2 = 0;
-    }
+    scale2 = std::max(scale2, 0);
 
     // shift n1, n2
     // important!, use std::memmove(), not std::memcpy()
@@ -798,10 +786,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -814,10 +799,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bnlength - g_bn_length;
         n = orig_n + orig_bnlength - g_bn_length;
@@ -947,10 +929,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -966,10 +945,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bnlength - g_bn_length;
         n = orig_n + orig_bnlength - g_bn_length;
@@ -1228,10 +1204,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -1249,10 +1222,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bnlength - g_bn_length;
         n = orig_n + orig_bnlength - g_bn_length;
