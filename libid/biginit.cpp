@@ -17,6 +17,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "goodbye.h"
 #include "stop_msg.h"
 
+#include <algorithm>
 #include <cstring>
 #include <string>
 
@@ -414,10 +415,7 @@ bn_t alloc_stack(size_t size)
         goodbye();
     }
     // keep track of max ptr
-    if (stack_addr > g_bignum_max_stack_addr)
-    {
-        g_bignum_max_stack_addr = stack_addr;
-    }
+    g_bignum_max_stack_addr = std::max(stack_addr, g_bignum_max_stack_addr);
     s_stack_ptr += size;   // increment stack pointer
     return s_stack_ptr - size;
 }
