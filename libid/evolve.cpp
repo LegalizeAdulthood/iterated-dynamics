@@ -786,18 +786,9 @@ get_evol_restart:
     tmp = g_screen_x_dots / (MIN_PIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
-    if (g_evolve_image_grid_size > EVOLVE_MAX_GRID_SIZE)
-    {
-        g_evolve_image_grid_size = EVOLVE_MAX_GRID_SIZE;
-    }
-    if (g_evolve_image_grid_size > tmp)
-    {
-        g_evolve_image_grid_size = tmp;
-    }
-    if (g_evolve_image_grid_size < 3)
-    {
-        g_evolve_image_grid_size = 3;
-    }
+    g_evolve_image_grid_size = std::min<int>(g_evolve_image_grid_size, EVOLVE_MAX_GRID_SIZE);
+    g_evolve_image_grid_size = std::min(g_evolve_image_grid_size, tmp);
+    g_evolve_image_grid_size = std::max(g_evolve_image_grid_size, 3);
     g_evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
