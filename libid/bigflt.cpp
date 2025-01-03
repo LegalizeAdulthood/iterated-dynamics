@@ -7,6 +7,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
 #include "big.h"
 
+#include <algorithm>
 #include <cfloat>
 #include <cmath>
 #include <cstdio>
@@ -400,10 +401,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -416,10 +414,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bflength - g_bf_length;
         n = orig_n + orig_bflength - g_bf_length;
@@ -558,10 +553,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -573,10 +565,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bflength - g_bf_length;
         n = orig_n + orig_bflength - g_bf_length;
@@ -699,10 +688,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -717,10 +703,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bflength - g_bf_length;
         n = orig_n + orig_bflength - g_bf_length;
@@ -1003,10 +986,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
-    if (g_bn_length > orig_bnlength)
-    {
-        g_bn_length = orig_bnlength;
-    }
+    g_bn_length = std::min(g_bn_length, orig_bnlength);
     calc_lengths();
 
     // adjust pointers
@@ -1024,10 +1004,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     {
         // adjust lengths
         g_bn_length <<= 1; // double precision
-        if (g_bn_length > orig_bnlength)
-        {
-            g_bn_length = orig_bnlength;
-        }
+        g_bn_length = std::min(g_bn_length, orig_bnlength);
         calc_lengths();
         r = orig_r + orig_bflength - g_bf_length;
         n = orig_n + orig_bflength - g_bf_length;
@@ -2474,10 +2451,7 @@ char *bf10_to_str_e(char *s, int dec, bf10_t n)
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
     {
         dec = dec + p;
-        if (dec < 8)   // let's keep at least a few
-        {
-            dec = 8;
-        }
+        dec = std::max(dec, 8); // let's keep at least a few
     }
 
     if (n[0] == 1)   // sign flag
@@ -2530,10 +2504,7 @@ char *bf10_to_str_f(char *s, int dec, bf10_t n)
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
     {
         dec = dec + p;
-        if (dec < 8)   // let's keep at least a few
-        {
-            dec = 8;
-        }
+        dec = std::max(dec, 8); // let's keep at least a few
     }
 
     if (n[0] == 1)   // sign flag
