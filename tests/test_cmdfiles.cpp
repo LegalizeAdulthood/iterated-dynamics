@@ -630,7 +630,6 @@ TEST_F(TestParameterCommand, filenameMask)
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
-// TODO: why does this test cause a crash?
 TEST_F(TestParameterCommandError, filenameTooLong)
 {
     const std::string saved_gif_filename_mask{g_gif_filename_mask};
