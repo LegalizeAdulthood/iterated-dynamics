@@ -189,10 +189,7 @@ void Topic::add_page_break(int margin, char const *text, char const *start, char
     p.margin = margin;
     add_page(p);
 
-    if (g_src.max_links < num_links)
-    {
-        g_src.max_links = num_links;
-    }
+    g_src.max_links = std::max(g_src.max_links, num_links);
 }
 
 char *Topic::get_topic_text()
