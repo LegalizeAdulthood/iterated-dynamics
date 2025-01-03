@@ -5,6 +5,8 @@
 #include "id_data.h"
 #include "rotate.h"
 
+#include <algorithm>
+
 int g_color_dark{};   // darkest color in palette
 int g_color_bright{}; // brightest color in palette
 int g_color_medium{}; // nearest to medbright grey in palette
@@ -63,14 +65,8 @@ void find_special_colors()
             {
                 mingun = (int) g_dac_box[i][1];
             }
-            if ((int) g_dac_box[i][2] > maxgun)
-            {
-                maxgun = (int) g_dac_box[i][2];
-            }
-            if ((int) g_dac_box[i][2] < mingun)
-            {
-                mingun = (int) g_dac_box[i][2];
-            }
+            maxgun = std::max((int) g_dac_box[i][2], maxgun);
+            mingun = std::min((int) g_dac_box[i][2], mingun);
             if (brt - (maxgun - mingun) / 2 > med)
             {
                 g_color_medium = i;
