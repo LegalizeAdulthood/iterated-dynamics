@@ -27,6 +27,7 @@
 #include "text_screen.h"
 #include "trim_filename.h"
 
+#include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <cstring>
@@ -619,10 +620,7 @@ static int check_gfe_key(int curkey, int choice)
                     if (in_scrolling_mode && top_line < lines_in_entry - 17)
                     {
                         top_line += 17;
-                        if (top_line > lines_in_entry - 17)
-                        {
-                            top_line = lines_in_entry - 17;
-                        }
+                        top_line = std::min(top_line, lines_in_entry - 17);
                         rewrite_infbuf = true;
                     }
                     break;
@@ -631,10 +629,7 @@ static int check_gfe_key(int curkey, int choice)
                     if (in_scrolling_mode && top_line > 0)
                     {
                         top_line -= 17;
-                        if (top_line < 0)
-                        {
-                            top_line = 0;
-                        }
+                        top_line = std::max(top_line, 0);
                         rewrite_infbuf = true;
                     }
                     break;
