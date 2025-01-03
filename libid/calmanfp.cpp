@@ -15,6 +15,7 @@
 #include "id_data.h"
 #include "orbit.h"
 
+#include <algorithm>
 #include <cmath>
 
 static int s_inside_color{};
@@ -53,10 +54,9 @@ long calc_mand_fp_asm()
     }
 
     tmpfsd = g_max_iterations - g_first_saved_and;
-    if (g_old_color_iter > tmpfsd) // this defeats checking periodicity immediately
-    {
-        g_old_color_iter = tmpfsd; // but matches the code in standard_fractal()
-    }
+    // this defeats checking periodicity immediately
+    // but matches the code in standard_fractal()
+    g_old_color_iter = std::min(g_old_color_iter, tmpfsd);
 
     // initparms
     savedx = 0;
