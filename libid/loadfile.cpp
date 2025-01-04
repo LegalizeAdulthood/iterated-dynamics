@@ -1942,10 +1942,7 @@ static void draw_window(int colour, Window const *info)
     {
         // draw crosshairs
         int cross_size = g_logical_screen_y_dots / 45;
-        if (cross_size < 2)
-        {
-            cross_size = 2;
-        }
+        cross_size = std::max(cross_size, 2);
         itr.x = info->itl.x - cross_size;
         itr.y = info->itl.y;
         ibl.y = info->itl.y - cross_size;
