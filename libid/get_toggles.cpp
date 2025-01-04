@@ -10,6 +10,7 @@
 #include "id.h"
 #include "id_data.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -287,10 +288,7 @@ int get_toggles()
     {
         g_max_iterations = old_maxit;
     }
-    if (g_max_iterations < 2)
-    {
-        g_max_iterations = 2;
-    }
+    g_max_iterations = std::max(g_max_iterations, 2L);
 
     if (g_max_iterations != old_maxit)
     {
