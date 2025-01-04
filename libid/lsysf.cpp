@@ -10,6 +10,7 @@
 #include "stack_avail.h"
 #include "thinking.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <vector>
@@ -168,22 +169,10 @@ static void lsysf_do_size_dm(LSysTurtleStateF *cmd)
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
 
-    if (cmd->xpos > cmd->xmax)
-    {
-        cmd->xmax = cmd->xpos;
-    }
-    if (cmd->ypos > cmd->ymax)
-    {
-        cmd->ymax = cmd->ypos;
-    }
-    if (cmd->xpos < cmd->xmin)
-    {
-        cmd->xmin = cmd->xpos;
-    }
-    if (cmd->ypos < cmd->ymin)
-    {
-        cmd->ymin = cmd->ypos;
-    }
+    cmd->xmax = std::max(cmd->xpos, cmd->xmax);
+    cmd->ymax = std::max(cmd->ypos, cmd->ymax);
+    cmd->xmin = std::min(cmd->xpos, cmd->xmin);
+    cmd->ymin = std::min(cmd->ypos, cmd->ymin);
 }
 
 static void lsysf_do_size_gf(LSysTurtleStateF *cmd)
@@ -191,22 +180,10 @@ static void lsysf_do_size_gf(LSysTurtleStateF *cmd)
     cmd->xpos += cmd->size * s_cos_table_f[(int)cmd->angle];
     cmd->ypos += cmd->size * s_sin_table_f[(int)cmd->angle];
 
-    if (cmd->xpos > cmd->xmax)
-    {
-        cmd->xmax = cmd->xpos;
-    }
-    if (cmd->ypos > cmd->ymax)
-    {
-        cmd->ymax = cmd->ypos;
-    }
-    if (cmd->xpos < cmd->xmin)
-    {
-        cmd->xmin = cmd->xpos;
-    }
-    if (cmd->ypos < cmd->ymin)
-    {
-        cmd->ymin = cmd->ypos;
-    }
+    cmd->xmax = std::max(cmd->xpos, cmd->xmax);
+    cmd->ymax = std::max(cmd->ypos, cmd->ymax);
+    cmd->xmin = std::min(cmd->xpos, cmd->xmin);
+    cmd->ymin = std::min(cmd->ypos, cmd->ymin);
 }
 
 static void lsysf_do_draw_d(LSysTurtleStateF *cmd)
