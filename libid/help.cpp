@@ -19,13 +19,13 @@
 #include "text_screen.h"
 #include "ValueSaver.h"
 
-#include <fcntl.h>
-
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <fcntl.h>
 #include <filesystem>
 #include <new>
 #include <system_error>
@@ -267,10 +267,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         case TokenType::TOK_CENTER:
             col = find_line_width(TokenMode::ONLINE, curr, len);
             col = (SCREEN_WIDTH - col)/2;
-            if (col < 0)
-            {
-                col = 0;
-            }
+            col = std::max(col, 0);
             break;
 
         case TokenType::TOK_NL:
