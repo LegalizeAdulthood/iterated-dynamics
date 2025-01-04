@@ -2,6 +2,7 @@
 //
 #include "passes_options.h"
 
+#include "ValueSaver.h"
 #include "cmdfiles.h"
 #include "full_screen_prompt.h"
 #include "get_corners.h"
@@ -10,7 +11,8 @@
 #include "id_keys.h"
 #include "lorenz.h"
 #include "sticky_orbits.h"
-#include "ValueSaver.h"
+
+#include <algorithm>
 
 /*
      passes_options invoked by <p> key
@@ -86,14 +88,8 @@ pass_option_restart:
     j = 0;   // return code
 
     g_user_periodicity_value = uvalues[++k].uval.ival;
-    if (g_user_periodicity_value > 255)
-    {
-        g_user_periodicity_value = 255;
-    }
-    if (g_user_periodicity_value < -255)
-    {
-        g_user_periodicity_value = -255;
-    }
+    g_user_periodicity_value = std::min(g_user_periodicity_value, 255);
+    g_user_periodicity_value = std::max(g_user_periodicity_value, -255);
     if (g_user_periodicity_value != old_periodicity)
     {
         j = 1;
@@ -106,14 +102,8 @@ pass_option_restart:
     }
 
     g_orbit_interval = uvalues[++k].uval.ival;
-    if (g_orbit_interval > 255)
-    {
-        g_orbit_interval = 255;
-    }
-    if (g_orbit_interval < 1)
-    {
-        g_orbit_interval = 1;
-    }
+    g_orbit_interval = std::min(g_orbit_interval, 255L);
+    g_orbit_interval = std::max(g_orbit_interval, 1L);
     if (g_orbit_interval != old_orbit_interval)
     {
         j = 1;
