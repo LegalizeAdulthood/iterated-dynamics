@@ -11,6 +11,7 @@
 #include "newton.h"
 #include "pixel_grid.h"
 
+#include <algorithm>
 #include <cmath>
 
 static MPC s_mpc_old{};
@@ -39,10 +40,7 @@ bool halley_setup()
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
     g_degree = (int)g_param_z1.x;
-    if (g_degree < 2)
-    {
-        g_degree = 2;
-    }
+    g_degree = std::max(g_degree, 2);
     g_params[0] = (double)g_degree;
 
     //  precalculated values
