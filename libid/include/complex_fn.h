@@ -5,6 +5,7 @@
 #include "big.h"
 #include "sqr.h"
 
+#include <algorithm>
 #include <complex>
 
 // |z|^2
@@ -50,10 +51,7 @@ inline std::complex<double> power(const std::complex<double> &base, int exp)
     double yt = base.imag();
 
     std::complex<double> result;
-    if (exp < 0)
-    {
-        exp = 0;
-    }
+    exp = std::max(exp, 0);
     if (exp & 1)
     {
         result.real(xt);
@@ -93,10 +91,7 @@ inline void power(BFComplex &result, const BFComplex &z, int degree)
     bf_t t3 = alloc_stack(g_r_bf_length + 2);
     bf_t t4 = alloc_stack(g_r_bf_length + 2);
 
-    if (degree < 0)
-    {
-        degree = 0;
-    }
+    degree = std::max(degree, 0);
 
     copy_bf(t1, z.x); // BigTemp1 = xt
     copy_bf(t2, z.y); // BigTemp2 = yt
