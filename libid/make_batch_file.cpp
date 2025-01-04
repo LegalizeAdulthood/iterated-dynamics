@@ -45,6 +45,7 @@
 #include "version.h"
 #include "video_mode.h"
 
+#include <algorithm>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
@@ -575,19 +576,13 @@ static int get_prec(double a, double b, double c)
     {
         temp = highv;
     }
-    if (temp < diff)
-    {
-        diff = temp;
-    }
+    diff = std::min(temp, diff);
     temp = std::fabs(b - c);
     if (temp == 0.0)
     {
         temp = highv;
     }
-    if (temp < diff)
-    {
-        diff = temp;
-    }
+    diff = std::min(temp, diff);
     digits = 7;
     if (g_debug_flag >= DebugFlags::FORCE_PRECISION_0_DIGITS &&
         g_debug_flag < DebugFlags::FORCE_PRECISION_20_DIGITS)
@@ -1517,10 +1512,7 @@ docolors:
                 {
                     // scan while same diff to next
                     int i = scanc - curc;
-                    if (i > 3)   // check spans up to 4 steps
-                    {
-                        i = 3;
-                    }
+                    i = std::min(i, 3); // check spans up to 4 steps
                     for (k = 0; k <= i; ++k)
                     {
                         int j;
