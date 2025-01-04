@@ -12,6 +12,7 @@
 #include "video_mode.h"
 #include "zoom.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 
@@ -183,10 +184,7 @@ get_view_restart:
     {
         g_screen_x_dots = (int) xmax;
     }
-    if (g_screen_x_dots < 2)
-    {
-        g_screen_x_dots = 2;
-    }
+    g_screen_x_dots = std::max(g_screen_x_dots, 2);
     if (g_screen_y_dots == 0) // auto by aspect ratio request
     {
         if (g_final_aspect_ratio == 0.0)
@@ -200,10 +198,7 @@ get_view_restart:
     {
         g_screen_y_dots = ymax;
     }
-    if (g_screen_y_dots < 2)
-    {
-        g_screen_y_dots = 2;
-    }
+    g_screen_y_dots = std::max(g_screen_y_dots, 2);
 
     if (driver_diskp())
     {
