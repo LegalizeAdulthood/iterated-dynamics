@@ -14,6 +14,7 @@
 #include "stop_msg.h"
 #include "thinking.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -275,10 +276,7 @@ int lsystem()
     g_overflow = false;           // reset integer math overflow flag
 
     order = (int)g_params[0];
-    if (order <= 0)
-    {
-        order = 0;
-    }
+    order = std::max(order, 0);
     if (g_user_float_flag)
     {
         g_overflow = true;
@@ -612,22 +610,10 @@ static void lsysi_do_size_dm(LSysTurtleStateI *cmd)
 
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    if (cmd->xpos > cmd->xmax)
-    {
-        cmd->xmax = cmd->xpos;
-    }
-    if (cmd->ypos > cmd->ymax)
-    {
-        cmd->ymax = cmd->ypos;
-    }
-    if (cmd->xpos < cmd->xmin)
-    {
-        cmd->xmin = cmd->xpos;
-    }
-    if (cmd->ypos < cmd->ymin)
-    {
-        cmd->ymin = cmd->ypos;
-    }
+    cmd->xmax = std::max(cmd->xpos, cmd->xmax);
+    cmd->ymax = std::max(cmd->ypos, cmd->ymax);
+    cmd->xmin = std::min(cmd->xpos, cmd->xmin);
+    cmd->ymin = std::min(cmd->ypos, cmd->ymin);
 }
 
 static void lsysi_do_size_gf(LSysTurtleStateI *cmd)
@@ -636,22 +622,10 @@ static void lsysi_do_size_gf(LSysTurtleStateI *cmd)
     cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
-    if (cmd->xpos > cmd->xmax)
-    {
-        cmd->xmax = cmd->xpos;
-    }
-    if (cmd->ypos > cmd->ymax)
-    {
-        cmd->ymax = cmd->ypos;
-    }
-    if (cmd->xpos < cmd->xmin)
-    {
-        cmd->xmin = cmd->xpos;
-    }
-    if (cmd->ypos < cmd->ymin)
-    {
-        cmd->ymin = cmd->ypos;
-    }
+    cmd->xmax = std::max(cmd->xpos, cmd->xmax);
+    cmd->ymax = std::max(cmd->ypos, cmd->ymax);
+    cmd->xmin = std::min(cmd->xpos, cmd->xmin);
+    cmd->ymin = std::min(cmd->ypos, cmd->ymin);
 }
 
 static void lsysi_do_draw_d(LSysTurtleStateI *cmd)
