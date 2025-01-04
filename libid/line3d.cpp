@@ -342,10 +342,7 @@ int line3d(Byte * pixels, unsigned linelen)
         {
             next = col + 1;
         }
-        if (next >= lastdot)
-        {
-            next = lastdot;
-        }
+        next = std::min(next, lastdot);
 
         if (cur.color > 0 && cur.color < g_water_line)
         {
@@ -649,10 +646,7 @@ int line3d(Byte * pixels, unsigned linelen)
             {
                 std::fprintf(s_file_ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
                         f_cur.x, f_cur.y, static_cast<double>(f_cur.color), s_ro, s_co);
-                if (s_co > s_co_max)
-                {
-                    s_co_max = s_co;
-                }
+                s_co_max = std::max(s_co, s_co_max);
                 s_co++;
             }
             goto loopbottom;
@@ -761,18 +755,12 @@ int line3d(Byte * pixels, unsigned linelen)
                 old.x = (int)((lv[0] + 32768L) >> 16);
                 old.y = (int)((lv[1] + 32768L) >> 16);
             }
-            if (old.x < 0)
-            {
-                old.x = 0;
-            }
+            old.x = std::max(old.x, 0);
             if (old.x >= g_logical_screen_x_dots)
             {
                 old.x = g_logical_screen_x_dots - 1;
             }
-            if (old.y < 0)
-            {
-                old.y = 0;
-            }
+            old.y = std::max(old.y, 0);
             if (old.y >= g_logical_screen_y_dots)
             {
                 old.y = g_logical_screen_y_dots - 1;
@@ -858,14 +846,10 @@ int line3d(Byte * pixels, unsigned linelen)
                  * but avoid background index. This makes colors "opaque" so
                  * SOMETHING plots. These conditions shouldn't happen but just
                  * in case                                        */
-                if (cur.color < 1)         // prevent transparent colors
-                {
-                    cur.color = 1;// avoid background
-                }
-                if (cur.color > g_colors - 1)
-                {
-                    cur.color = g_colors - 1;
-                }
+                // prevent transparent colors
+                // avoid background
+                cur.color = std::max(cur.color, 1);
+                cur.color = std::min(cur.color, g_colors - 1);
 
                 // why "col < 2"? So we have sufficient geometry for the fill
                 // algorithm, which needs previous point in same row to have
@@ -1001,54 +985,18 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
         vec_mat_mul(S[1][i], m, S[1][i]);
 
         // update minimums and maximums
-        if (S[0][i][0] <= *pxmin)
-        {
-            *pxmin = S[0][i][0];
-        }
-        if (S[0][i][0] >= *pxmax)
-        {
-            *pxmax = S[0][i][0];
-        }
-        if (S[1][i][0] <= *pxmin)
-        {
-            *pxmin = S[1][i][0];
-        }
-        if (S[1][i][0] >= *pxmax)
-        {
-            *pxmax = S[1][i][0];
-        }
-        if (S[0][i][1] <= *pymin)
-        {
-            *pymin = S[0][i][1];
-        }
-        if (S[0][i][1] >= *pymax)
-        {
-            *pymax = S[0][i][1];
-        }
-        if (S[1][i][1] <= *pymin)
-        {
-            *pymin = S[1][i][1];
-        }
-        if (S[1][i][1] >= *pymax)
-        {
-            *pymax = S[1][i][1];
-        }
-        if (S[0][i][2] <= *pzmin)
-        {
-            *pzmin = S[0][i][2];
-        }
-        if (S[0][i][2] >= *pzmax)
-        {
-            *pzmax = S[0][i][2];
-        }
-        if (S[1][i][2] <= *pzmin)
-        {
-            *pzmin = S[1][i][2];
-        }
-        if (S[1][i][2] >= *pzmax)
-        {
-            *pzmax = S[1][i][2];
-        }
+        *pxmin = std::min(S[0][i][0], *pxmin);
+        *pxmax = std::max(S[0][i][0], *pxmax);
+        *pxmin = std::min(S[1][i][0], *pxmin);
+        *pxmax = std::max(S[1][i][0], *pxmax);
+        *pymin = std::min(S[0][i][1], *pymin);
+        *pymax = std::max(S[0][i][1], *pymax);
+        *pymin = std::min(S[1][i][1], *pymin);
+        *pymax = std::max(S[1][i][1], *pymax);
+        *pzmin = std::min(S[0][i][2], *pzmin);
+        *pzmax = std::max(S[0][i][2], *pzmax);
+        *pzmin = std::min(S[1][i][2], *pzmin);
+        *pzmax = std::max(S[1][i][2], *pzmax);
     }
 
     if (show)
@@ -1206,14 +1154,8 @@ static void put_min_max(int x, int y, int /*color*/)
 {
     if (y >= 0 && y < g_logical_screen_y_dots)
     {
-        if (x < s_min_max_x[y].minx)
-        {
-            s_min_max_x[y].minx = x;
-        }
-        if (x > s_min_max_x[y].maxx)
-        {
-            s_min_max_x[y].maxx = x;
-        }
+        s_min_max_x[y].minx = std::min(x, s_min_max_x[y].minx);
+        s_min_max_x[y].maxx = std::max(x, s_min_max_x[y].maxx);
     }
 }
 
@@ -1284,10 +1226,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
     }
 
     // only worried about values on screen
-    if (miny < 0)
-    {
-        miny = 0;
-    }
+    miny = std::max(miny, 0);
     if (maxy >= g_logical_screen_y_dots)
     {
         maxy = g_logical_screen_y_dots - 1;
@@ -2237,14 +2176,8 @@ static void triangle_bounds(float pt_t[3][3])
     {
         for (int j = 0; j <= 2; j++)
         {
-            if (pt_t[i][j] < s_min_xyz[j])
-            {
-                s_min_xyz[j] = pt_t[i][j];
-            }
-            if (pt_t[i][j] > s_max_xyz[j])
-            {
-                s_max_xyz[j] = pt_t[i][j];
-            }
+            s_min_xyz[j] = std::min(pt_t[i][j], s_min_xyz[j]);
+            s_max_xyz[j] = std::max(pt_t[i][j], s_max_xyz[j]);
         }
     }
 }
@@ -2450,10 +2383,7 @@ static int first_time(int linelen, VECTOR v)
     g_calc_status = CalcStatus::IN_PROGRESS;
 
     s_i_ambient = (unsigned int)(255 * (float)(100 - g_ambient) / 100.0);
-    if (s_i_ambient < 1)
-    {
-        s_i_ambient = 1;
-    }
+    s_i_ambient = std::max<unsigned int>(s_i_ambient, 1);
 
     s_num_tris = 0;
 
