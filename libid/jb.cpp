@@ -2,6 +2,8 @@
 //
 #include "jb.h"
 
+#include <algorithm>
+
 #include "debug_flags.h"
 #include "drivers.h"
 #include "fixed_pt.h"
@@ -313,14 +315,8 @@ int z_line(long x, long y)
                 else
                 {
                     g_color = (int)(multiply((long) g_color << 16, s_br_ratio, 16) >> 16);
-                    if (g_color < 1)
-                    {
-                        g_color = 1;
-                    }
-                    if (g_color > 127)
-                    {
-                        g_color = 127;
-                    }
+                    g_color = std::max(g_color, 1);
+                    g_color = std::min(g_color, 127);
                     (*g_plot)(g_col, g_row, 127 + s_b_base - g_color);
                 }
             }
@@ -418,14 +414,8 @@ int z_line_fp(double x, double y)
                 else
                 {
                     g_color = (int)(g_color * s_br_ratio_fp);
-                    if (g_color < 1)
-                    {
-                        g_color = 1;
-                    }
-                    if (g_color > 127)
-                    {
-                        g_color = 127;
-                    }
+                    g_color = std::max(g_color, 1);
+                    g_color = std::min(g_color, 127);
                     (*g_plot)(g_col, g_row, 127 + s_b_base - g_color);
                 }
             }
@@ -451,10 +441,7 @@ int std_4d_fractal()
     g_c_exponent = (int)g_params[2];
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER_L)
     {
-        if (g_c_exponent < 1)
-        {
-            g_c_exponent = 1;
-        }
+        g_c_exponent = std::max(g_c_exponent, 1);
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
             g_fractal_specific[+g_new_orbit_type].orbitcalc = long_z_power_fractal;
