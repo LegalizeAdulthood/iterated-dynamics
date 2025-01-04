@@ -41,6 +41,7 @@
 #include "stop_msg.h"
 #include "video_mode.h"
 
+#include <algorithm>
 #include <cctype>
 #include <csignal>
 #include <cstdlib>
@@ -329,10 +330,8 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
 
     if (g_show_file)
     {
-        if (g_calc_status > CalcStatus::PARAMS_CHANGED)                // goto image_start implies re-calc
-        {
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-        }
+        // goto image_start implies re-calc
+        g_calc_status = std::min(g_calc_status, CalcStatus::PARAMS_CHANGED);
     }
 
     if (g_init_batch == BatchMode::NONE)
