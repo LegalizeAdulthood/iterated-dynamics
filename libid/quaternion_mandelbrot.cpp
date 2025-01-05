@@ -35,23 +35,15 @@ int quaternion_fp_per_pixel()
 
 int quaternion_fp_fractal()
 {
-    double a0;
-    double a1;
-    double a2;
-    double a3;
-    double n0;
-    double n1;
-    double n2;
-    double n3;
-    a0 = g_old_z.x;
-    a1 = g_old_z.y;
-    a2 = g_float_param->x;
-    a3 = g_float_param->y;
+    double a0 = g_old_z.x;
+    double a1 = g_old_z.y;
+    double a2 = g_float_param->x;
+    double a3 = g_float_param->y;
 
-    n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
-    n1 = 2*a0*a1 + g_quaternion_ci;
-    n2 = 2*a0*a2 + g_quaternion_cj;
-    n3 = 2*a0*a3 + g_quaternion_ck;
+    double n0 = a0 * a0 - a1 * a1 - a2 * a2 - a3 * a3 + g_quaternion_c;
+    double n1 = 2 * a0 * a1 + g_quaternion_ci;
+    double n2 = 2 * a0 * a2 + g_quaternion_cj;
+    double n3 = 2 * a0 * a3 + g_quaternion_ck;
     // Check bailout
     g_magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
     if (g_magnitude > g_magnitude_limit)
