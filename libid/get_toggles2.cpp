@@ -23,12 +23,8 @@ int get_toggles2()
 {
     char const *choices[18];
     FullScreenValues uvalues[23];
-    int old_rotate_lo;
-    int old_rotate_hi;
-    int old_distestwidth;
     double old_potparam[3];
     double old_inversion[3];
-    long old_usr_distest;
 
     // fill up the choices (and previous values) arrays
     int k = -1;
@@ -58,12 +54,12 @@ int get_toggles2()
 
     choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
     uvalues[k].type = 'L';
-    old_usr_distest = g_user_distance_estimator_value;
+    long old_usr_distest = g_user_distance_estimator_value;
     uvalues[k].uval.Lval = old_usr_distest;
 
     choices[++k] = "          width factor:";
     uvalues[k].type = 'i';
-    old_distestwidth = g_distance_estimator_width_factor;
+    int old_distestwidth = g_distance_estimator_width_factor;
     uvalues[k].uval.ival = old_distestwidth;
 
     choices[++k] = "Inversion radius or \"auto\" (0 means off)";
@@ -91,12 +87,12 @@ int get_toggles2()
 
     choices[++k] = "Color cycling from color (0 ... 254)";
     uvalues[k].type = 'i';
-    old_rotate_lo = g_color_cycle_range_lo;
+    int old_rotate_lo = g_color_cycle_range_lo;
     uvalues[k].uval.ival = old_rotate_lo;
 
     choices[++k] = "              to   color (1 ... 255)";
     uvalues[k].type = 'i';
-    old_rotate_hi = g_color_cycle_range_hi;
+    int old_rotate_hi = g_color_cycle_range_hi;
     uvalues[k].uval.ival = old_rotate_hi;
 
     HelpLabels const old_help_mode = g_help_mode;
