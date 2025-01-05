@@ -87,7 +87,7 @@ void set_wait(long *wait)
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
-void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
+void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long wait)
 {
     int ix;
     int iy;
@@ -142,7 +142,7 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
         // close the cycle
         next_col[g_color] = 0;
     }
-    for (g_color = maxtur; g_color; g_color--)
+    for (g_color = max_ants; g_color; g_color--)
     {
         // init the various turmites N.B. non usa
         // x[0], y[0], dir[0]
@@ -159,8 +159,8 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
             y[g_color] = random(g_logical_screen_y_dots);
         }
     }
-    maxpts = maxpts / (long) INNER_LOOP;
-    for (long count = 0; count < maxpts; count++)
+    max_pts = max_pts / (long) INNER_LOOP;
+    for (long count = 0; count < max_pts; count++)
     {
         // check for a key only every inner_loop times
         int kbdchar = driver_key_pressed();
@@ -206,7 +206,7 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
         {
             if (wait > 0 && step == 0)
             {
-                for (int color = maxtur; color; color--)
+                for (int color = max_ants; color; color--)
                 {
                     // move the various turmites
                     ix = x[color];   // temp vars
@@ -236,7 +236,7 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
             }
             else
             {
-                for (int color = maxtur; color; color--)
+                for (int color = max_ants; color; color--)
                 {
                     // move the various turmites without delay
                     ix = x[color];   // temp vars
@@ -275,7 +275,7 @@ static unsigned rotate_left_one(unsigned value)
 }
 
 // this one ignore the color of the current cell is more like a white ant
-void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
+void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long wait)
 {
     int dir[MAX_ANTS + 1];
     int x[MAX_ANTS + 1];
@@ -328,8 +328,8 @@ void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait
     // use this rule when a black pixel is found
     rule[0] = 0;
     unsigned rule_mask = 1U;
-    maxpts = maxpts / (long) INNER_LOOP;
-    for (long count = 0; count < maxpts; count++)
+    max_pts = max_pts / (long) INNER_LOOP;
+    for (long count = 0; count < max_pts; count++)
     {
         // check for a key only every inner_loop times
         int kbdchar = driver_key_pressed();
@@ -373,7 +373,7 @@ void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait
         }
         for (int i = INNER_LOOP; i; i--)
         {
-            for (int color = maxtur; color; color--)
+            for (int color = max_ants; color; color--)
             {
                 // move the various turmites
                 int ix = x[color];      // temp vars
@@ -488,7 +488,7 @@ int ant()
     }
     s_inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
     ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
-    long const maxpts = labs(static_cast<long>(g_params[1]));
+    long const max_pts = labs(static_cast<long>(g_params[1]));
     long const wait = std::abs(g_orbit_delay);
     std::string rule{get_rule()};
     int rule_len = (int) rule.length();
@@ -528,14 +528,14 @@ int ant()
         ++g_random_seed;
     }
 
-    int maxants = static_cast<int>(g_params[2]);
-    if (maxants < 1)               // if maxants == 0 maxants random
+    int max_ants = static_cast<int>(g_params[2]);
+    if (max_ants < 1)               // if maxants == 0 maxants random
     {
-        maxants = 2 + random(256 - 2);
+        max_ants = 2 + random(256 - 2);
     }
-    else if (maxants > MAX_ANTS)
+    else if (max_ants > MAX_ANTS)
     {
-        maxants = MAX_ANTS;
+        max_ants = MAX_ANTS;
         g_params[2] = MAX_ANTS;
     }
     int type = static_cast<int>(g_params[3]);
@@ -546,10 +546,10 @@ int ant()
     switch (type)
     {
     case 1:
-        turk_mite1(maxants, rule_len, rule.c_str(), maxpts, wait);
+        turk_mite1(max_ants, rule_len, rule.c_str(), max_pts, wait);
         break;
     case 2:
-        turk_mite2(maxants, rule_len, rule.c_str(), maxpts, wait);
+        turk_mite2(max_ants, rule_len, rule.c_str(), max_pts, wait);
         break;
     default:
         break;
