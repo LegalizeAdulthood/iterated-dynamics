@@ -13,8 +13,6 @@ static int  standard_calc(int);
 
 int one_or_two_pass()
 {
-    int i;
-
     g_total_passes = 1;
     if (g_std_calc_mode == '2')
     {
@@ -39,6 +37,7 @@ int one_or_two_pass()
     // second or only pass
     if (standard_calc(2) == -1)
     {
+        int i;
         i = g_yy_stop;
         if (g_i_y_stop != g_yy_stop)   // must be due to symmetry
         {
