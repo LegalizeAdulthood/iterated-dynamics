@@ -895,8 +895,6 @@ void insert_real_link_info(char *curr, unsigned int len)
 
 void HelpCompiler::write_help(std::FILE *file)
 {
-    char                 *text;
-
     // write the signature and version
     HelpSignature hs{};
     hs.sig = HELP_SIG;
@@ -972,7 +970,7 @@ void HelpCompiler::write_help(std::FILE *file)
 
         // insert hot-link info & write the help text
 
-        text = tp.get_topic_text();
+        char *text = tp.get_topic_text();
 
         if (!bit_set(tp.flags, TopicFlags::DATA))     // don't process data topics...
         {
@@ -1250,20 +1248,15 @@ void HelpCompiler::add_hlp_to_exe()
     char const *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
     char const *exe_fname{m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str()};
 
-    int exe;
-    int // handles
-        hlp;
-    long                 len;
-    int                  size;
     HelpSignature hs{};
 
-    exe = open(exe_fname, O_RDWR|O_BINARY);
+    int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
     {
         throw std::runtime_error("Unable to open \"" + std::string{exe_fname} + "\"");
     }
 
-    hlp = open(hlp_fname, O_RDONLY|O_BINARY);
+    int hlp = open(hlp_fname, O_RDONLY | O_BINARY);
     if (hlp == -1)
     {
         throw std::runtime_error("Unable to open \"" + std::string{hlp_fname} + "\"");
@@ -1311,11 +1304,11 @@ void HelpCompiler::add_hlp_to_exe()
 
     lseek(exe, hs.base, SEEK_SET);
 
-    len = filelength(hlp) - sizeof(HelpSignature); // adjust for the file signature & version
+    long len = filelength(hlp) - sizeof(HelpSignature); // adjust for the file signature & version
 
     for (int count = 0; count < len;)
     {
-        size = (int) std::min((long)BUFFER_SIZE, len-count);
+        int size = (int) std::min((long) BUFFER_SIZE, len - count);
         if (read(hlp, g_src.buffer.data(), size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read");
