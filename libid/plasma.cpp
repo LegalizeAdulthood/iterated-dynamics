@@ -32,8 +32,6 @@ enum
                                override this value with a nonzero param1 */
 };
 
-constexpr double SEED{0.66}; // starting value for population
-
 static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
 static U16 (*s_get_pix)(int x, int y){s_get_color};
 static int s_i_parm_x{};     // iparmx = parm.x * 8
