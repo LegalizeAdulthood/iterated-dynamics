@@ -85,7 +85,6 @@ std::string show_trig()
 void trig_details(char *buf)
 {
     int numfn;
-    char tmpbuf[20];
     if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
     {
         numfn = (+g_fractal_specific[+g_new_orbit_type].flags >> 6) & 7;
@@ -106,6 +105,7 @@ void trig_details(char *buf)
         int i = 0;
         while (++i < numfn)
         {
+            char tmpbuf[20];
             std::snprintf(tmpbuf, std::size(tmpbuf), "/%s", g_trig_fn[+g_trig_index[i]].name);
             std::strcat(buf, tmpbuf);
         }
