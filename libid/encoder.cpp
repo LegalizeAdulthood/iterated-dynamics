@@ -520,7 +520,7 @@ bool encoder()
     {
         // resume info block, 002
         save_info.tot_extend_len += extend_blk_len(g_resume_len);
-        std::copy(&g_resume_data[0], &g_resume_data[g_resume_len], &g_block[0]);
+        std::copy(g_resume_data.data(), &g_resume_data[g_resume_len], &g_block[0]);
         if (!put_extend_blk(2, g_resume_len, (char *)g_block))
         {
             goto oops;
@@ -554,7 +554,7 @@ bool encoder()
             buffer.push_back(range & 0xFF);
             buffer.push_back(static_cast<unsigned>(range & 0xFFFF) >> 8);
         }
-        if (!put_extend_blk(4, num_bytes, &buffer[0]))
+        if (!put_extend_blk(4, num_bytes, buffer.data()))
         {
             goto oops;
         }
