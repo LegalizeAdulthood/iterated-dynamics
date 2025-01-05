@@ -91,14 +91,13 @@ inline double froth_top_x_mapping(double x)
 // color maps which attempt to replicate the images of James Alexander.
 static void set_froth_palette()
 {
-    char const *mapname;
-
     if (g_color_state != ColorState::DEFAULT)   // 0 means g_dac_box matches default
     {
         return;
     }
     if (g_colors >= 16)
     {
+        char const *mapname;
         if (g_colors >= 256)
         {
             if (s_fsp.attractors == 6)
