@@ -2212,24 +2212,18 @@ static bool params_ok(FractalInfo const *info)
         tmpparm9 = 0.0;
         tmpparm10 = 0.0;
     }
-    if (std::fabs(info->creal - g_params[0]) < MIN_DIF
-        && std::fabs(info->cimag - g_params[1]) < MIN_DIF
-        && std::fabs(tmpparm3 - g_params[2]) < MIN_DIF
-        && std::fabs(tmpparm4 - g_params[3]) < MIN_DIF
-        && std::fabs(tmpparm5 - g_params[4]) < MIN_DIF
-        && std::fabs(tmpparm6 - g_params[5]) < MIN_DIF
-        && std::fabs(tmpparm7 - g_params[6]) < MIN_DIF
-        && std::fabs(tmpparm8 - g_params[7]) < MIN_DIF
-        && std::fabs(tmpparm9 - g_params[8]) < MIN_DIF
-        && std::fabs(tmpparm10 - g_params[9]) < MIN_DIF
-        && info->invert[0] - g_inversion[0] < MIN_DIF)
-    {
-        return true; // parameters are in range
-    }
-    else
-    {
-        return false;
-    }
+    // parameters are in range?
+    return std::fabs(info->creal - g_params[0]) < MIN_DIF //
+        && std::fabs(info->cimag - g_params[1]) < MIN_DIF //
+        && std::fabs(tmpparm3 - g_params[2]) < MIN_DIF    //
+        && std::fabs(tmpparm4 - g_params[3]) < MIN_DIF    //
+        && std::fabs(tmpparm5 - g_params[4]) < MIN_DIF    //
+        && std::fabs(tmpparm6 - g_params[5]) < MIN_DIF    //
+        && std::fabs(tmpparm7 - g_params[6]) < MIN_DIF    //
+        && std::fabs(tmpparm8 - g_params[7]) < MIN_DIF    //
+        && std::fabs(tmpparm9 - g_params[8]) < MIN_DIF    //
+        && std::fabs(tmpparm10 - g_params[9]) < MIN_DIF   //
+        && info->invert[0] - g_inversion[0] < MIN_DIF;
 }
 
 static bool function_ok(FractalInfo const *info, int numfn)
