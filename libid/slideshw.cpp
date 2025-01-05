@@ -156,7 +156,6 @@ static void message(int secs, char const *buf)
 int slide_show()
 {
     int out;
-    int i;
     char buffer[81];
     if (s_calc_wait)
     {
@@ -245,7 +244,7 @@ start:
         return out;
     }
 
-    i = 0;
+    int i = 0;
     while (true) // get a token
     {
         if (i < 80)
@@ -277,14 +276,13 @@ start:
         }
         else
         {
-            int len;
             char buf[41];
             buf[40] = 0;
             if (std::fgets(buf, std::size(buf), s_slide_show_file) == nullptr)
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }
-            len = (int) std::strlen(buf);
+            int len = (int) std::strlen(buf);
             buf[len-1] = 0; // zap newline
             message(secs, buf);
         }
@@ -386,8 +384,7 @@ void stop_slide_show()
 void record_show(int key)
 {
     char mn[MAX_MNEMONIC];
-    float dt;
-    dt = (float)s_ticks;      // save time of last call
+    float dt = (float) s_ticks;      // save time of last call
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
     {
