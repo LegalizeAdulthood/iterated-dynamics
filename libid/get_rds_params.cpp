@@ -19,7 +19,6 @@ int get_rds_params()
 {
     char rds6[60];
     char const *stereobars[] = {"none", "middle", "top"};
-    FullScreenValues uvalues[7];
     char const *rds_prompts[7] =
     {
         "Depth Effect (negative reverses front and back)",
@@ -35,6 +34,7 @@ int get_rds_params()
     driver_stack_screen();
     while (true)
     {
+        FullScreenValues uvalues[7];
         ret = 0;
 
         int k = 0;
