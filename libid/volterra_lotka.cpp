@@ -2,6 +2,8 @@
 //
 #include "volterra_lotka.h"
 
+#include <algorithm>
+
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "fractals.h"
@@ -32,22 +34,10 @@ int vl_fp_fractal()
 
 bool vl_setup()
 {
-    if (g_params[0] < 0.0)
-    {
-        g_params[0] = 0.0;
-    }
-    if (g_params[1] < 0.0)
-    {
-        g_params[1] = 0.0;
-    }
-    if (g_params[0] > 1.0)
-    {
-        g_params[0] = 1.0;
-    }
-    if (g_params[1] > 1.0)
-    {
-        g_params[1] = 1.0;
-    }
+    g_params[0] = std::max(g_params[0], 0.0);
+    g_params[1] = std::max(g_params[1], 0.0);
+    g_params[0] = std::min(g_params[0], 1.0);
+    g_params[1] = std::min(g_params[1], 1.0);
     g_float_param = &g_param_z1;
     return true;
 }
