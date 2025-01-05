@@ -340,7 +340,7 @@ bool encoder()
 #endif
 
     int i = 0;
-    if (std::fwrite("GIF89a", 6, 1, s_outfile) != 1)
+    if (std::fputs("GIF89a", s_outfile) < 0)
     {
         goto oops; // new GIF Signature
     }
@@ -464,7 +464,7 @@ bool encoder()
     }
 #endif
 
-    if (std::fwrite(",", 1, 1, s_outfile) != 1)
+    if (std::fputs(",", s_outfile) < 0)
     {
         goto oops;                // Image Descriptor
     }
@@ -669,7 +669,7 @@ bool encoder()
         goto oops;
     }
 
-    if (std::fwrite(";", 1, 1, s_outfile) != 1)
+    if (std::fputs(";", s_outfile) < 0)
     {
         goto oops;                // GIF Terminator
     }
