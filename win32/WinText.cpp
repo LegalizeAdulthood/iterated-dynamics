@@ -233,9 +233,9 @@ void WinText::destroy()
         return;
     }
 
-    for (int i = 0; i < 3; i++)
+    for (HBITMAP &bm : m_bitmap)
     {
-        DeleteObject((HANDLE) m_bitmap[i]);
+        DeleteObject(bm);
     }
     m_text_mode = 0;
     m_alt_f4_hit = false;
