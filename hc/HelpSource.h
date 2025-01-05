@@ -74,15 +74,15 @@ struct Link
     void link_topic();
     void link_label();
 
-    LinkTypes type;         // 0 = name is topic title, 1 = name is label,
-                            //   2 = "special topic"; name is nullptr and
-                            //   topic_num/topic_off is valid
-    int      topic_num;     // topic number to link to
-    unsigned topic_off;     // offset into topic to link to
-    int      doc_page;      // document page # to link to
-    std::string name;       // name of label or title of topic to link to
-    std::string srcfile;    // .SRC file link appears in
-    int      srcline;       // .SRC file line # link appears in
+    LinkTypes type;       // 0 = name is topic title, 1 = name is label,
+                          //   2 = "special topic"; name is nullptr and
+                          //   topic_num/topic_off is valid
+    int topic_num;        // topic number to link to
+    unsigned topic_off;   // offset into topic to link to
+    int doc_page;         // document page # to link to
+    std::string name;     // name of label or title of topic to link to
+    std::string src_file; // .SRC file link appears in
+    int src_line;         // .SRC file line # link appears in
 };
 
 struct Page

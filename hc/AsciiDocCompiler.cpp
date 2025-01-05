@@ -279,8 +279,8 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
         {
             if (m_link_dest_warn)
             {
-                g_current_src_filename = link.srcfile;
-                g_src_line = link.srcline;
+                g_current_src_filename = link.src_file;
+                g_src_line = link.src_line;
                 warn(0, "Hot-link destination is not in the document.");
                 g_src_line = -1;
             }

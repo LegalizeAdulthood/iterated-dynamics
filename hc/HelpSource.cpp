@@ -126,8 +126,8 @@ void Link::link_topic()
     int const t = find_topic_title(name.c_str());
     if (t == -1)
     {
-        g_current_src_filename = srcfile;
-        g_src_line = srcline; // pretend we are still in the source...
+        g_current_src_filename = src_file;
+        g_src_line = src_line; // pretend we are still in the source...
         error(0, "Cannot find implicit hot-link \"%s\".", name.c_str());
         g_src_line = -1;  // back to reality
     }
@@ -145,8 +145,8 @@ void Link::link_label()
     {
         if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::DATA))
         {
-            g_current_src_filename = srcfile;
-            g_src_line = srcline;
+            g_current_src_filename = src_file;
+            g_src_line = src_line;
             error(0, "Label \"%s\" is a data-only topic.", name.c_str());
             g_src_line = -1;
         }
@@ -159,8 +159,8 @@ void Link::link_label()
     }
     else
     {
-        g_current_src_filename = srcfile;
-        g_src_line = srcline; // pretend again
+        g_current_src_filename = src_file;
+        g_src_line = src_line; // pretend again
         error(0, "Cannot find explicit hot-link \"%s\".", name.c_str());
         g_src_line = -1;
     }
@@ -778,8 +778,8 @@ int parse_link()   // returns length of link or 0 on error
     int   err_offset;
 
     Link l;
-    l.srcfile  = g_current_src_filename;
-    l.srcline  = g_src_line;
+    l.src_file  = g_current_src_filename;
+    l.src_line  = g_src_line;
     l.doc_page = -1;
 
     char *end = read_until(s_cmd, 128, "}\n");   // get the entire hot-link

@@ -439,8 +439,8 @@ void HelpCompiler::set_hot_link_doc_page()
         case LinkTypes::LT_TOPIC:
             if (int t = find_topic_title(l.name.c_str()); t == -1)
             {
-                g_current_src_filename = l.srcfile;
-                g_src_line = l.srcline; // pretend we are still in the source...
+                g_current_src_filename = l.src_file;
+                g_src_line = l.src_line; // pretend we are still in the source...
                 error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
                 g_src_line = -1;  // back to reality
             }
@@ -453,8 +453,8 @@ void HelpCompiler::set_hot_link_doc_page()
         case LinkTypes::LT_LABEL:
             if (Label *lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
             {
-                g_current_src_filename = l.srcfile;
-                g_src_line = l.srcline; // pretend again
+                g_current_src_filename = l.src_file;
+                g_src_line = l.src_line; // pretend again
                 error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
                 g_src_line = -1;
             }
@@ -527,8 +527,8 @@ bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
         {
             if (info.link_dest_warn)
             {
-                g_current_src_filename = link.srcfile;
-                g_src_line    = link.srcline;
+                g_current_src_filename = link.src_file;
+                g_src_line    = link.src_line;
                 warn(0, "Hot-link destination is not in the document.");
                 g_src_line = -1;
             }
