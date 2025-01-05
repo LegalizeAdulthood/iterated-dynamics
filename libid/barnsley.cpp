@@ -12,20 +12,20 @@ int barnsley1_fractal()
     // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
     // calculate intermediate products
-    const long oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
-    const long oldyinity   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
-    const long oldxinity   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
-    const long oldyinitx   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
+    const long old_x_init_x   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
+    const long old_y_init_y   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
+    const long old_x_init_y   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
+    const long old_y_init_x   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
     // orbit calculation
     if (g_l_old_z.x >= 0)
     {
-        g_l_new_z.x = (oldxinitx - g_long_param->x - oldyinity);
-        g_l_new_z.y = (oldyinitx - g_long_param->y + oldxinity);
+        g_l_new_z.x = (old_x_init_x - g_long_param->x - old_y_init_y);
+        g_l_new_z.y = (old_y_init_x - g_long_param->y + old_x_init_y);
     }
     else
     {
-        g_l_new_z.x = (oldxinitx + g_long_param->x - oldyinity);
-        g_l_new_z.y = (oldyinitx + g_long_param->y + oldxinity);
+        g_l_new_z.x = (old_x_init_x + g_long_param->x - old_y_init_y);
+        g_l_new_z.y = (old_y_init_x + g_long_param->y + old_x_init_y);
     }
     return g_bailout_long();
 }
@@ -35,20 +35,20 @@ int barnsley1_fp_fractal()
     // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
     // calculate intermediate products
-    const double foldxinitx = g_old_z.x * g_float_param->x;
-    const double foldyinity = g_old_z.y * g_float_param->y;
-    const double foldxinity = g_old_z.x * g_float_param->y;
-    const double foldyinitx = g_old_z.y * g_float_param->x;
+    const double old_x_init_x = g_old_z.x * g_float_param->x;
+    const double old_y_init_y = g_old_z.y * g_float_param->y;
+    const double old_x_init_y = g_old_z.x * g_float_param->y;
+    const double old_y_init_x = g_old_z.y * g_float_param->x;
     // orbit calculation
     if (g_old_z.x >= 0)
     {
-        g_new_z.x = (foldxinitx - g_float_param->x - foldyinity);
-        g_new_z.y = (foldyinitx - g_float_param->y + foldxinity);
+        g_new_z.x = (old_x_init_x - g_float_param->x - old_y_init_y);
+        g_new_z.y = (old_y_init_x - g_float_param->y + old_x_init_y);
     }
     else
     {
-        g_new_z.x = (foldxinitx + g_float_param->x - foldyinity);
-        g_new_z.y = (foldyinitx + g_float_param->y + foldxinity);
+        g_new_z.x = (old_x_init_x + g_float_param->x - old_y_init_y);
+        g_new_z.y = (old_y_init_x + g_float_param->y + old_x_init_y);
     }
     return g_bailout_float();
 }
@@ -59,21 +59,21 @@ int barnsley2_fractal()
     // example 4.2
 
     // calculate intermediate products
-    const long oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
-    const long oldyinity   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
-    const long oldxinity   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
-    const long oldyinitx   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
+    const long old_x_init_x   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
+    const long old_y_init_y   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
+    const long old_x_init_y   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
+    const long old_y_init_x   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
 
     // orbit calculation
-    if (oldxinity + oldyinitx >= 0)
+    if (old_x_init_y + old_y_init_x >= 0)
     {
-        g_l_new_z.x = oldxinitx - g_long_param->x - oldyinity;
-        g_l_new_z.y = oldyinitx - g_long_param->y + oldxinity;
+        g_l_new_z.x = old_x_init_x - g_long_param->x - old_y_init_y;
+        g_l_new_z.y = old_y_init_x - g_long_param->y + old_x_init_y;
     }
     else
     {
-        g_l_new_z.x = oldxinitx + g_long_param->x - oldyinity;
-        g_l_new_z.y = oldyinitx + g_long_param->y + oldxinity;
+        g_l_new_z.x = old_x_init_x + g_long_param->x - old_y_init_y;
+        g_l_new_z.y = old_y_init_x + g_long_param->y + old_x_init_y;
     }
     return g_bailout_long();
 }
@@ -84,21 +84,21 @@ int barnsley2_fp_fractal()
     // example 4.2
 
     // calculate intermediate products
-    const double foldxinitx = g_old_z.x * g_float_param->x;
-    const double foldyinity = g_old_z.y * g_float_param->y;
-    const double foldxinity = g_old_z.x * g_float_param->y;
-    const double foldyinitx = g_old_z.y * g_float_param->x;
+    const double old_x_init_x = g_old_z.x * g_float_param->x;
+    const double old_y_init_y = g_old_z.y * g_float_param->y;
+    const double old_x_init_y = g_old_z.x * g_float_param->y;
+    const double old_y_init_x = g_old_z.y * g_float_param->x;
 
     // orbit calculation
-    if (foldxinity + foldyinitx >= 0)
+    if (old_x_init_y + old_y_init_x >= 0)
     {
-        g_new_z.x = foldxinitx - g_float_param->x - foldyinity;
-        g_new_z.y = foldyinitx - g_float_param->y + foldxinity;
+        g_new_z.x = old_x_init_x - g_float_param->x - old_y_init_y;
+        g_new_z.y = old_y_init_x - g_float_param->y + old_x_init_y;
     }
     else
     {
-        g_new_z.x = foldxinitx + g_float_param->x - foldyinity;
-        g_new_z.y = foldyinitx + g_float_param->y + foldxinity;
+        g_new_z.x = old_x_init_x + g_float_param->x - old_y_init_y;
+        g_new_z.y = old_y_init_x + g_float_param->y + old_x_init_y;
     }
     return g_bailout_float();
 }
@@ -109,21 +109,21 @@ int barnsley3_fractal()
     // example 4.1
 
     // calculate intermediate products
-    const long oldxinitx   = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
-    const long oldyinity   = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    const long oldxinity   = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
+    const long old_x_init_x   = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
+    const long old_y_init_y   = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
+    const long old_x_init_y   = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
 
     // orbit calculation
     if (g_l_old_z.x > 0)
     {
-        g_l_new_z.x = oldxinitx   - oldyinity - g_fudge_factor;
-        g_l_new_z.y = oldxinity << 1;
+        g_l_new_z.x = old_x_init_x   - old_y_init_y - g_fudge_factor;
+        g_l_new_z.y = old_x_init_y << 1;
     }
     else
     {
-        g_l_new_z.x = oldxinitx - oldyinity - g_fudge_factor
+        g_l_new_z.x = old_x_init_x - old_y_init_y - g_fudge_factor
                  + multiply(g_long_param->x, g_l_old_z.x, g_bit_shift);
-        g_l_new_z.y = oldxinity <<1;
+        g_l_new_z.y = old_x_init_y <<1;
 
         /* This term added by Tim Wegner to make dependent on the
            imaginary part of the parameter. (Otherwise Mandelbrot
@@ -139,20 +139,20 @@ int barnsley3_fp_fractal()
     // example 4.1
 
     // calculate intermediate products
-    const double foldxinitx  = g_old_z.x * g_old_z.x;
-    const double foldyinity  = g_old_z.y * g_old_z.y;
-    const double foldxinity  = g_old_z.x * g_old_z.y;
+    const double old_x_init_x  = g_old_z.x * g_old_z.x;
+    const double old_y_init_y  = g_old_z.y * g_old_z.y;
+    const double old_x_init_y  = g_old_z.x * g_old_z.y;
 
     // orbit calculation
     if (g_old_z.x > 0)
     {
-        g_new_z.x = foldxinitx - foldyinity - 1.0;
-        g_new_z.y = foldxinity * 2;
+        g_new_z.x = old_x_init_x - old_y_init_y - 1.0;
+        g_new_z.y = old_x_init_y * 2;
     }
     else
     {
-        g_new_z.x = foldxinitx - foldyinity -1.0 + g_float_param->x * g_old_z.x;
-        g_new_z.y = foldxinity * 2;
+        g_new_z.x = old_x_init_x - old_y_init_y -1.0 + g_float_param->x * g_old_z.x;
+        g_new_z.y = old_x_init_y * 2;
 
         /* This term added by Tim Wegner to make dependent on the
            imaginary part of the parameter. (Otherwise Mandelbrot
