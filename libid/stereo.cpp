@@ -251,7 +251,6 @@ bool auto_stereo_convert()
     std::time_t ltime;
     std::vector<int> colour;
     colour.resize(g_logical_screen_x_dots);
-    bool done = false;
 
     s_data = &v;   // set static vars to stack structure
     s_data->savedac = savedacbox;
@@ -348,6 +347,7 @@ bool auto_stereo_convert()
     AVG /= AVGCT;
     AVG /= 2;
     {
+        bool done = false;
         int ct = 0;
         const int barwidth = 1 + g_logical_screen_x_dots / 200;
         for (int i = XCEN; i < XCEN + barwidth; i++)
@@ -363,8 +363,7 @@ bool auto_stereo_convert()
         while (!done)
         {
             driver_wait_key_pressed(0);
-            int kbdchar = driver_get_key();
-            switch (kbdchar)
+            switch (int kbdchar = driver_get_key(); kbdchar)
             {
             case ID_KEY_ENTER:   // toggle bars
             case ID_KEY_SPACE:
