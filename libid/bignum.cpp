@@ -193,12 +193,9 @@ S16 big_setS16(S16 *addr, S16 val)
 int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
                int oldbnlength, int oldintlength)
 {
-    int savebnlength;
-    int saveintlength;
-
     // save lengths so not dependent on external environment
-    saveintlength = g_int_length;
-    savebnlength  = g_bn_length;
+    int saveintlength = g_int_length;
+    int savebnlength = g_bn_length;
 
     g_int_length     = newintlength;
     g_bn_length      = newbnlength;
@@ -245,12 +242,11 @@ void bn_hex_dump(bn_t r)
 
 bn_t str_to_bn(bn_t r, char *s)
 {
-    bn_t onesbyte;
     bool signflag = false;
     long longval;
 
     clear_bn(r);
-    onesbyte = r + g_bn_length - g_int_length;
+    bn_t onesbyte = r + g_bn_length - g_int_length;
 
     if (s[0] == '+')    // for + sign
     {
@@ -352,14 +348,13 @@ int strlen_needed()
 char *unsafe_bn_to_str(char *s, int dec, bn_t r)
 {
     int l = 0;
-    bn_t onesbyte;
     long longval = 0;
 
     if (dec == 0)
     {
         dec = g_decimals;
     }
-    onesbyte = r + g_bn_length - g_int_length;
+    bn_t onesbyte = r + g_bn_length - g_int_length;
 
     if (is_bn_neg(r))
     {
@@ -402,10 +397,8 @@ char *unsafe_bn_to_str(char *s, int dec, bn_t r)
 //  Converts a long to a bignumber
 bn_t int_to_bn(bn_t r, long longval)
 {
-    bn_t onesbyte;
-
     clear_bn(r);
-    onesbyte = r + g_bn_length - g_int_length;
+    bn_t onesbyte = r + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -427,10 +420,9 @@ bn_t int_to_bn(bn_t r, long longval)
 //  Converts the integer part a bignumber to a long
 long bn_to_int(bn_t n)
 {
-    bn_t onesbyte;
     long longval = 0;
 
-    onesbyte = n + g_bn_length - g_int_length;
+    bn_t onesbyte = n + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -452,11 +444,10 @@ long bn_to_int(bn_t n)
 //  Converts a double to a bignumber
 bn_t float_to_bn(bn_t r, LDouble f)
 {
-    bn_t onesbyte;
     bool signflag = false;
 
     clear_bn(r);
-    onesbyte = r + g_bn_length - g_int_length;
+    bn_t onesbyte = r + g_bn_length - g_int_length;
 
     if (f < 0)
     {
@@ -531,15 +522,6 @@ bn_t abs_a_bn(bn_t r)
 //      n ends up as |n|    Make copy first if necessary.
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
-    long maxval;
-    LDouble f;
-    bn_t orig_r;
-    bn_t orig_n; // orig_bntmp1 not needed here
-    int orig_bnlength;
-    int orig_padding;
-    int orig_rlength;
-    int orig_shiftfactor;
-
     // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
     bool signflag = false;
@@ -550,14 +532,14 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         neg_a_bn(n);
     }
 
-    f = bn_to_float(n);
+    LDouble f = bn_to_float(n);
     if (f == 0) // division by zero
     {
         max_bn(r);
         return r;
     }
     f = 1/f; // approximate inverse
-    maxval = (1L << ((g_int_length << 3)-1)) - 1;
+    long maxval = (1L << ((g_int_length << 3) - 1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -573,12 +555,13 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = g_bn_length;
-    orig_padding       = g_padding;
-    orig_rlength       = g_r_length;
-    orig_shiftfactor   = g_shift_factor;
-    orig_r             = r;
-    orig_n             = n;
+    // orig_bntmp1 not needed here
+    int orig_bnlength = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_rlength = g_r_length;
+    int orig_shiftfactor = g_shift_factor;
+    bn_t orig_r = r;
+    bn_t orig_n = n;
     // orig_bntmp1        = g_bn_tmp1;
 
     // calculate new starting values
@@ -638,29 +621,21 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 //      Make copies first if necessary.
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int scale1;
-    int scale2;
-    int i;
-    long maxval;
-    LDouble a;
-    LDouble b;
-    LDouble f;
-
     // first, check for valid data
-    a = bn_to_float(n1);
+    LDouble a = bn_to_float(n1);
     if (a == 0) // division into zero
     {
         clear_bn(r); // return 0
         return r;
     }
-    b = bn_to_float(n2);
+    LDouble b = bn_to_float(n2);
     if (b == 0) // division by zero
     {
         max_bn(r);
         return r;
     }
-    f = a/b; // approximate quotient
-    maxval = (1L << ((g_int_length << 3)-1)) - 1;
+    LDouble f = a / b; // approximate quotient
+    long maxval = (1L << ((g_int_length << 3) - 1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -688,19 +663,19 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 
     // scale n1 and n2 so: |n| >= 1/256
     // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
-    i = g_bn_length-1;
+    int i = g_bn_length - 1;
     while (i >= 0 && n1[i] == 0)
     {
         i--;
     }
-    scale1 = g_bn_length - i - 2;
+    int scale1 = g_bn_length - i - 2;
     scale1 = std::max(scale1, 0);
     i = g_bn_length-1;
     while (i >= 0 && n2[i] == 0)
     {
         i--;
     }
-    scale2 = g_bn_length - i - 2;
+    int scale2 = g_bn_length - i - 2;
     scale2 = std::max(scale2, 0);
 
     // shift n1, n2
@@ -748,13 +723,6 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
-    LDouble f;
-    bn_t orig_r;
-    bn_t orig_n;
-    int orig_bnlength;
-    int orig_padding;
-    int orig_rlength;
-    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
@@ -765,7 +733,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         return r;
     }
 
-    f = bn_to_float(n);
+    LDouble f = bn_to_float(n);
     if (f == 0) // division by zero will occur
     {
         clear_bn(r); // sqrt(0) = 0
@@ -777,12 +745,12 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = g_bn_length;
-    orig_padding       = g_padding;
-    orig_rlength       = g_r_length;
-    orig_shiftfactor   = g_shift_factor;
-    orig_r             = r;
-    orig_n             = n;
+    int orig_bnlength = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_rlength = g_r_length;
+    int orig_shiftfactor = g_shift_factor;
+    bn_t orig_r = r;
+    bn_t orig_n = n;
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
@@ -876,16 +844,6 @@ bn_t exp_bn(bn_t r, bn_t n)
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
-    long maxval;
-    LDouble f;
-    bn_t orig_r;
-    bn_t orig_n;
-    bn_t orig_bntmp5;
-    bn_t orig_bntmp4;
-    int orig_bnlength;
-    int orig_padding;
-    int orig_rlength;
-    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
@@ -897,9 +855,9 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         return r;
     }
 
-    f = bn_to_float(n);
+    LDouble f = bn_to_float(n);
     f = std::log(f); // approximate ln(x)
-    maxval = (1L << ((g_int_length << 3)-1)) - 1;
+    long maxval = (1L << ((g_int_length << 3) - 1)) - 1;
     if (f > maxval) // check for overflow
     {
         max_bn(r);
@@ -916,14 +874,14 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = g_bn_length;
-    orig_padding       = g_padding;
-    orig_rlength       = g_r_length;
-    orig_shiftfactor   = g_shift_factor;
-    orig_r             = r;
-    orig_n             = n;
-    orig_bntmp5        = g_bn_tmp5;
-    orig_bntmp4        = g_bn_tmp4;
+    int orig_bnlength = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_rlength = g_r_length;
+    int orig_shiftfactor = g_shift_factor;
+    bn_t orig_r = r;
+    bn_t orig_n = n;
+    bn_t orig_bntmp5 = g_bn_tmp5;
+    bn_t orig_bntmp4 = g_bn_tmp4;
 
     int_to_bn(g_bn_tmp4, 1); // set before setting new values
 
@@ -1157,15 +1115,6 @@ bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n)
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
-    LDouble f;
-    bn_t orig_r;
-    bn_t orig_n;
-    bn_t orig_bn_pi;
-    bn_t orig_bntmp3;
-    int orig_bnlength;
-    int orig_padding;
-    int orig_rlength;
-    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r))
     bool signflag = false;
@@ -1179,7 +1128,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // good enough initial guess for Newton's Method.  If it is larger than
     // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
-    f = bn_to_float(n);
+    LDouble f = bn_to_float(n);
     bool large_arg = f > 1.0;
     if (large_arg)
     {
@@ -1193,14 +1142,14 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     // With Newton's Method, there is no need to calculate all the digits
     // every time.  The precision approximately doubles each iteration.
     // Save original values.
-    orig_bnlength      = g_bn_length;
-    orig_padding       = g_padding;
-    orig_rlength       = g_r_length;
-    orig_shiftfactor   = g_shift_factor;
-    orig_bn_pi         = g_bn_pi;
-    orig_r             = r;
-    orig_n             = n;
-    orig_bntmp3        = g_bn_tmp3;
+    int orig_bnlength = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_rlength = g_r_length;
+    int orig_shiftfactor = g_shift_factor;
+    bn_t orig_bn_pi = g_bn_pi;
+    bn_t orig_r = r;
+    bn_t orig_n = n;
+    bn_t orig_bntmp3 = g_bn_tmp3;
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
@@ -1301,11 +1250,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bigfloats
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 {
-    int signx;
-    int signy;
-
-    signx = sign_bn(nx);
-    signy = sign_bn(ny);
+    int signx = sign_bn(nx);
+    int signy = sign_bn(ny);
 
     if (signy == 0)
     {
