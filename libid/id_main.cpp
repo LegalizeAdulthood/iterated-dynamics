@@ -240,10 +240,10 @@ static bool main_restore_start(MainContext &context)
     g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
     while (g_show_file <= 0) // image is to be loaded
     {
-        char const *hdg;
         g_tab_mode = false;
         if (!g_browsing) /*RB*/
         {
+            char const *hdg;
             if (g_overlay_3d)
             {
                 hdg = "Select File for 3D Overlay";
