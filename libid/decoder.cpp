@@ -124,28 +124,12 @@ static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 short decoder(short linewidth)
 {
     U16 prefix[MAX_CODES+1] = { 0 };     // Prefix linked list
-    Byte *sp;
-    short code;
-    short old_code;
     short ret;
     short c;
-    short size;
-    short j;
-    short fastloop;
-    short bufcnt;                // how many empty spaces left in buffer
-    short xskip;
-    short slot;                  // Last read code
-    short newcodes;              // First available code
-    Byte *bufptr;
-    short yskip;
-    short top_slot;              // Highest code for current size
-    short clear;                 // Value for a clear code
-    short ending;                // Value for a ending code
-    Byte out_value;
 
     // Initialize for decoding a new image...
 
-    size = (short) get_byte();
+    short size = (short) get_byte();
     if (size < 0)
     {
         return size;
@@ -156,18 +140,18 @@ short decoder(short linewidth)
     }
 
     s_curr_size = (short)(size + 1);
-    top_slot = (short)(1 << s_curr_size);
-    clear = (short)(1 << size);
-    ending = (short)(clear + 1);
-    newcodes = (short)(ending + 1);
-    slot = newcodes;
-    old_code = 0;
-    yskip = old_code;
-    xskip = yskip;
+    short top_slot = (short) (1 << s_curr_size); // Highest code for current size
+    short clear = (short) (1 << size);           // Value for a clear code
+    short ending = (short) (clear + 1);          // Value for a ending code
+    short newcodes = (short) (ending + 1);       // First available code
+    short slot = newcodes;                       // Last read code
+    short old_code = 0;
+    short yskip = old_code;
+    short xskip = yskip;
     s_sizeof_string[slot] = xskip;
     s_num_bits_left = s_sizeof_string[slot];
     s_num_avail_bytes = s_num_bits_left;
-    out_value = 0;
+    Byte out_value = 0;
     for (short i = 0; i < slot; i++)
     {
         s_sizeof_string[i] = 0;
@@ -178,9 +162,9 @@ short decoder(short linewidth)
 
     // Set up the stack pointer and decode buffer pointer
     Byte decode_stack[4096] = { 0 };
-    sp = decode_stack;
-    bufptr = s_decoder_line;
-    bufcnt = linewidth;
+    Byte *sp = decode_stack;
+    Byte *bufptr = s_decoder_line;
+    short bufcnt = linewidth; // how many empty spaces left in buffer
 
     // This is the main loop.  For each code we get we pass through the linked
     // list of prefix codes, pushing the corresponding "character" for each
@@ -240,7 +224,7 @@ short decoder(short linewidth)
             // In this case, it's not a clear code or an ending code, so it must
             // be a code code...  So we can now decode the code into a stack of
             // character codes. (Clear as mud, right?)
-            code = c;
+            short code = c;
 
             // Here we go again with one of those off chances...  If, on the off
             // chance, the code we got is beyond the range of those already set
@@ -263,11 +247,11 @@ short decoder(short linewidth)
             // them into the stack until we are down to enough characters that
             // they do fit.  Output the line then fall through to unstack the
             // ones that would not fit.
-            fastloop = NOPE;
+            short fastloop = NOPE;
             while (code >= newcodes)
             {
                 int i = s_sizeof_string[code];
-                j = i;
+                short j = i;
                 if (i > 0 && bufcnt - i > 0 && g_skip_x_dots == 0)
                 {
                     fastloop = YUP;
