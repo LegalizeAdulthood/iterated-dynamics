@@ -157,9 +157,8 @@ int long_phoenix_cplx_plus_fractal()
 int phoenix_cplx_plus_fractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    DComplex oldplus;
     DComplex newminus;
-    oldplus = g_old_z;
+    DComplex oldplus = g_old_z;
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
     {
