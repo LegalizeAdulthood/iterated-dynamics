@@ -62,8 +62,8 @@ private:
     HFONT m_font{};
     bool m_dirty{};
     RECT m_dirty_region{};
-    BITMAPINFO m_bmi{};                     // contains first clut entry too
-    RGBQUAD m_bmi_colors[255]{};             // color look up table
+    BITMAPINFO m_bmi{};          // contains first clut entry too
+    RGBQUAD m_bmi_colors[255]{}; // color look up table NOLINT(clang-diagnostic-unused-private-field)
     std::vector<Byte> m_pixels;
     std::vector<Byte> m_saved_pixels;
     size_t m_pixels_len{};
