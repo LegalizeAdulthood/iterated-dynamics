@@ -18,7 +18,7 @@
 #include "lorenz.h"
 #include "param_not_used.h"
 #include "parser.h"
-#include "set_default_parms.h"
+#include "set_default_params.h"
 #include "shell_sort.h"
 #include "stop_msg.h"
 #include "trig_fns.h"

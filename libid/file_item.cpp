@@ -19,7 +19,7 @@
 #include "make_path.h"
 #include "parser.h"
 #include "prototyp.h" // for stricmp
-#include "set_default_parms.h"
+#include "set_default_params.h"
 #include "shell_sort.h"
 #include "split_path.h"
 #include "stop_msg.h"
