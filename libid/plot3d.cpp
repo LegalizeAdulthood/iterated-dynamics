@@ -21,9 +21,12 @@
 #include <cmath>
 
 // Use these palette indices for red/blue - same on ega/vga
-#define PAL_BLUE    1
-#define PAL_RED 2
-#define PAL_MAGENTA 3
+enum
+{
+    PAL_BLUE = 1,
+    PAL_RED = 2,
+    PAL_MAGENTA = 3
+};
 
 StereoImage g_which_image;
 int g_xx_adjust1{};
