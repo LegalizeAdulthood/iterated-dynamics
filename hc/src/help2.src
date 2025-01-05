@@ -226,7 +226,7 @@ SUMMARY OF FRACTAL TYPES
     of z(0) and factor p, and the functions fn1, and fn2.
 
 {=HT_TAYLOR_SKINNER_VARIATIONS fn(z*z)}
-~Label=HF_FNZTIMESZ
+~Label=HF_FN_Z_TIMES_Z
       z(0) = pixel;
       z(n+1) = fn(z(n)*z(n))
     One parameter: the function fn.
@@ -238,7 +238,7 @@ SUMMARY OF FRACTAL TYPES
     Two parameters: the functions fn1 and fn2.
 
 {=HT_TAYLOR_SKINNER_VARIATIONS fn*z+z}
-~Label=HF_FNXZPLUSZ
+~Label=HF_FN_X_Z_PLUS_Z
       z(0) = pixel; z(n+1) = p1*fn(z(n))*z(n) + p2*z(n)
     Five parameters: the real and imaginary components of
     p1 and p2, and the function fn.
