@@ -348,13 +348,15 @@ bool auto_stereo_convert()
     find_special_colors();
     AVG /= AVGCT;
     AVG /= 2;
-    int ct = 0;
-    for (int i = XCEN; i < XCEN + barwidth; i++)
     {
-        for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
+        int ct = 0;
+        for (int i = XCEN; i < XCEN + barwidth; i++)
         {
-            colour[ct++] = get_color(i + (int)(AVG), j);
-            colour[ct++] = get_color(i - (int)(AVG), j);
+            for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
+            {
+                colour[ct++] = get_color(i + (int)(AVG), j);
+                colour[ct++] = get_color(i - (int)(AVG), j);
+            }
         }
     }
     bars = g_calibrate != 0;
