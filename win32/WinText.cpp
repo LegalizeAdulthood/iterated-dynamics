@@ -151,8 +151,6 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
 {
     ODS("WinText::initialize");
 
-    HDC hDC;
-    HFONT hOldFont;
     TEXTMETRIC TextMetric;
     WNDCLASS  wc;
 
@@ -180,8 +178,8 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     // set up the font characteristics
     m_char_font = OEM_FIXED_FONT;
     m_font = static_cast<HFONT>(GetStockObject(m_char_font));
-    hDC = GetDC(parent);
-    hOldFont = static_cast<HFONT>(SelectObject(hDC, m_font));
+    HDC hDC = GetDC(parent);
+    HFONT hOldFont = static_cast<HFONT>(SelectObject(hDC, m_font));
     GetTextMetricsA(hDC, &TextMetric);
     SelectObject(hDC, hOldFont);
     ReleaseDC(parent, hDC);
@@ -535,12 +533,8 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
 {
     int istart;
     int jstart;
-    int length;
-    int foreground;
-    int background;
     unsigned char oldbk;
     unsigned char oldfg;
-    HDC hDC;
 
     ODS("WinText::paint_screen");
 
@@ -570,7 +564,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
     ymin = std::max(ymin, 0);
     ymax = std::min(ymax, m_char_ychars - 1);
 
-    hDC = GetDC(m_window);
+    HDC hDC = GetDC(m_window);
     SelectObject(hDC, m_font);
     SetBkMode(hDC, OPAQUE);
     SetTextAlign(hDC, TA_LEFT | TA_TOP);
@@ -589,7 +583,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
     */
     for (int j = ymin; j <= ymax; j++)
     {
-        length = 0;
+        int length = 0;
         oldbk = 99;
         oldfg = 99;
         for (int i = xmin; i <= xmax+1; i++)
@@ -599,8 +593,8 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
             {
                 k = m_screen.attrs(j, i);
             }
-            foreground = (k & 15);
-            background = (k >> 4);
+            int foreground = (k & 15);
+            int background = (k >> 4);
             if (i > xmax || foreground != (int)oldfg || background != (int)oldbk)
             {
                 if (length > 0)
@@ -671,14 +665,10 @@ void WinText::cursor(int xpos, int ypos, int cursor_type)
 
 void WinText::set_attr(int row, int col, int attr, int count)
 {
-    int xmin;
-    int xmax;
-    int ymin;
-    int ymax;
-    xmax = col;
-    xmin = xmax;
-    ymax = row;
-    ymin = ymax;
+    int xmax = col;
+    int xmin = xmax;
+    int ymax = row;
+    int ymin = ymax;
     for (int i = 0; i < count; i++)
     {
         m_screen.attrs(row, col+i) = static_cast<Byte>(attr & 0xFF);
