@@ -144,7 +144,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n);
 bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n);
 bn_t unsafe_atan_bn(bn_t r, bn_t n);
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
-int convert_bn(bn_t new_n, bn_t old, int newbnlength, int newintlength, int oldbnlength, int oldintlength);
+int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength, int oldbnlength, int oldintlength);
 // "safe" versions
 bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2);
 bn_t mult_bn(bn_t r, bn_t n1, bn_t n2);
