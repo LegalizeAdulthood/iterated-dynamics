@@ -1549,9 +1549,6 @@ int file_get_window()
     Affine stack_cvt;
     std::time_t thistime;
     std::time_t lastime;
-    char mesg[40];
-    char newname[60];
-    char oldname[60];
     int c;
     int done;
     int wincount;
@@ -1663,6 +1660,7 @@ rescan:  // entry for changed browse parms
     c = 0;
     if (wincount)
     {
+        char newname[60];
         driver_buzzer(Buzzer::COMPLETE); //let user know we've finished
         int index = 0;
         done = 0;
@@ -1674,6 +1672,8 @@ rescan:  // entry for changed browse parms
                                  done = 3 for rescan
                                  done = 4 for set boxes and exit to save image */
         {
+            char mesg[40];
+            char oldname[60];
 #ifdef XFRACT
             U32 blinks = 1;
 #endif
@@ -1920,8 +1920,6 @@ rescan:  // entry for changed browse parms
 
 static void draw_window(int colour, Window const *info)
 {
-    Coord ibl, itr;
-
     g_box_color = colour;
     g_box_count = 0;
     if (info->win_size >= g_smallest_box_size_shown)
@@ -1938,6 +1936,8 @@ static void draw_window(int colour, Window const *info)
     }
     else
     {
+        Coord ibl;
+        Coord itr;
         // draw crosshairs
         int cross_size = g_logical_screen_y_dots / 45;
         cross_size = std::max(cross_size, 2);
