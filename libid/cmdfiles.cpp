@@ -244,10 +244,9 @@ static bool s_init_functions{}; // trig functions set via function=?
 int get_power10(LDouble x)
 {
     char string[11]; // space for "+x.xe-xxxx"
-    int p;
 
     std::snprintf(string, std::size(string), "%+.1Le", x);
-    p = std::atoi(string+5);
+    int p = std::atoi(string + 5);
     return p;
 }
 
@@ -1508,7 +1507,6 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
 
     // use arbitrary precision
-    int saved;
     s_init_corners = true;
     BFMathType old_bf_math = g_bf_math;
     if (g_bf_math == BFMathType::NONE || dec > g_decimals)
@@ -1523,7 +1521,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         }
     }
     g_use_center_mag = true;
-    saved = save_stack();
+    int saved = save_stack();
     bf_t bXctr = alloc_stack(g_bf_length + 2);
     bf_t bYctr = alloc_stack(g_bf_length + 2);
     get_bf(bXctr, cmd.float_val_strs[0]);
@@ -4011,8 +4009,7 @@ void set_3d_defaults()
 // copy a big number from a string, up to slash
 static int get_bf(bf_t bf, char const *curarg)
 {
-    char const *s;
-    s = std::strchr(curarg, '/');
+    char const *s = std::strchr(curarg, '/');
     if (s)
     {
         std::string buff(curarg, s);
@@ -4028,8 +4025,7 @@ static int get_bf(bf_t bf, char const *curarg)
 // Get length of current args
 static int get_cur_arg_len(char const *curarg)
 {
-    char const *s;
-    s = std::strchr(curarg, '/');
+    char const *s = std::strchr(curarg, '/');
     if (s)
     {
         return static_cast<int>(s - curarg);
