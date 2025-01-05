@@ -113,8 +113,7 @@ pass_option_restart:
     }
 
     {
-        int tmp = uvalues[++k].uval.ch.val;
-        switch (tmp)
+        switch (uvalues[++k].uval.ch.val)
         {
         default:
         case 0:
