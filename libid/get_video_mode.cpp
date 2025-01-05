@@ -378,7 +378,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             g_view_y_dots = 0;
             g_view_x_dots = g_view_y_dots; // easier to use auto reduction
         }
-        g_view_reduction = (float)((int)(g_view_reduction + 0.5)); // need integer value
+        g_view_reduction = std::round(g_view_reduction); // need integer value
         g_skip_y_dots = (short)(g_view_reduction - 1);
         g_skip_x_dots = g_skip_y_dots;
         return 0;
@@ -481,17 +481,17 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         int j;
         if (g_final_aspect_ratio <= g_screen_aspect)
         {
-            i = (int)((double)g_video_entry.xdots / (double)g_file_x_dots * 20.0 + 0.5);
+            i = (int) std::lround((double) g_video_entry.xdots / (double) g_file_x_dots * 20.0);
             tmpreduce = (float)(i/20.0); // chop precision to nearest .05
-            i = (int)((double)g_video_entry.xdots / tmpreduce + 0.5);
-            j = (int)((double)i * ftemp + 0.5);
+            i = (int) std::lround((double) g_video_entry.xdots / tmpreduce);
+            j = (int) std::lround((double) i * ftemp);
         }
         else
         {
-            i = (int)((double)g_video_entry.ydots / (double)g_file_y_dots * 20.0 + 0.5);
+            i = (int) std::lround((double) g_video_entry.ydots / (double) g_file_y_dots * 20.0);
             tmpreduce = (float)(i/20.0); // chop precision to nearest .05
-            j = (int)((double)g_video_entry.ydots / tmpreduce + 0.5);
-            i = (int)((double)j / ftemp + 0.5);
+            j = (int) std::lround((double) g_video_entry.ydots / tmpreduce);
+            i = (int) std::lround((double) j / ftemp);
         }
         if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit
         {
