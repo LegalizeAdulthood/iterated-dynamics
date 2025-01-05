@@ -1228,8 +1228,8 @@ static void stk_lod()
 static void stk_clr()
 {
     s_stack[0] = *g_arg1;
-    g_arg1 = &s_stack[0];
-    g_arg2 = &s_stack[0];
+    g_arg1 = s_stack.data();
+    g_arg2 = s_stack.data();
     g_arg2--;
 }
 
@@ -2932,8 +2932,8 @@ int formula()
         }
     }
 
-    g_arg1 = &s_stack[0];
-    g_arg2 = &s_stack[0];
+    g_arg1 = s_stack.data();
+    g_arg2 = s_stack.data();
     --g_arg2;
     while (s_op_ptr < (int)s_op_count)
     {
@@ -2974,8 +2974,8 @@ int form_per_pixel()
     s_op_ptr = 0;
     g_store_index = 0;
     g_load_index = 0;
-    g_arg1 = &s_stack[0];
-    g_arg2 = &s_stack[0];
+    g_arg1 = s_stack.data();
+    g_arg2 = s_stack.data();
     g_arg2--;
 
     s_vars[10].a.d.x = (double)g_col;
