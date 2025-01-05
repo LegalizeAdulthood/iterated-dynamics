@@ -414,19 +414,6 @@ scan:
     {
         std::copy(std::begin(s_zi), std::end(s_zi), std::begin(s));
 
-#define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc) \
-    tempsqrx = rq;                              \
-    tempsqry = iq;                              \
-    old.x = zr;                                 \
-    old.y = zi;                                 \
-    g_float_param->x = cr;                      \
-    g_float_param->y = ci;                      \
-    (esc) = ORBITCALC();                        \
-    (rq) = tempsqrx;                            \
-    (iq) = tempsqry;                            \
-    (zr) = new.x;                               \
-    (zi) = new.y
-
 #define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc)  \
     (zi) = ((zi) + (zi))*(zr) + (ci);           \
     (zr) = (rq) - (iq) + (cr);                  \
