@@ -730,7 +730,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             // Don't round x_mag_factor if it's small
             if (std::fabs(x_mag_factor) > 0.5)   // or so, exact value isn't important
             {
-                x_mag_factor = (sign(x_mag_factor) * (long)(std::fabs(x_mag_factor) * 1e4 + 0.5)) / 1e4;
+                x_mag_factor = sign(x_mag_factor) * std::lround(std::fabs(x_mag_factor) * 1e4) / 1e4;
             }
             // Just truncate these angles.  Who cares about 1/1000 of a degree
             // Somebody does.  Some rotated and/or skewed images are slightly
