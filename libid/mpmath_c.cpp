@@ -67,9 +67,7 @@ MPC mpc_mul(MPC x, MPC y)
 
 MPC mpc_div(MPC x, MPC y)
 {
-    MP mod;
-
-    mod = mpc_mod(y);
+    MP mod = mpc_mod(y);
     y.y.Exp ^= 0x8000;
     y.x = *mp_div(y.x, mod);
     y.y = *mp_div(y.y, mod);
@@ -614,11 +612,8 @@ long log_table_calc(long citer)
 long exp_float14(long xx)
 {
     static float fLogTwo = 0.6931472F;
-    int f;
-    long Ans;
-
-    f = 23 - (int)reg_float_to_fg(reg_div_float(xx, *(long*)&fLogTwo), 0);
-    Ans = exp_fudged(reg_float_to_fg(xx, 16), f);
+    int f = 23 - (int) reg_float_to_fg(reg_div_float(xx, *(long *) &fLogTwo), 0);
+    long Ans = exp_fudged(reg_float_to_fg(xx, 16), f);
     return reg_fg_to_float(Ans, (char)f);
 }
 
