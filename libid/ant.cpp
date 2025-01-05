@@ -191,7 +191,7 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
             }
             if (done)
             {
-                goto exit_ant;
+                return;
             }
             if (driver_key_pressed())
             {
@@ -222,7 +222,7 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
                             || (idir == 2 && iy == 0)
                             || (idir == 3 && ix == 0))
                         {
-                            goto exit_ant;
+                            return;
                         }
                     }
                     x[color] = s_inc_x[idir][ix];
@@ -249,7 +249,7 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
                             || (idir == 2 && iy == 0)
                             || (idir == 3 && ix == 0))
                         {
-                            goto exit_ant;
+                            return;
                         }
                     }
                     x[color] = s_inc_x[idir][ix];
@@ -259,8 +259,6 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
             }
         }
     }
-exit_ant:
-    return;
 }
 
 static unsigned rotate_left_one(unsigned value)
@@ -360,7 +358,7 @@ void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long w
             }
             if (done)
             {
-                goto exit_ant;
+                return;
             }
             if (driver_key_pressed())
             {
@@ -403,7 +401,7 @@ void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long w
                         || (idir == 2 && iy == 0)
                         || (idir == 3 && ix == 0))
                     {
-                        goto exit_ant;
+                        return;
                     }
                 }
                 x[color] = s_inc_x[idir][ix];
@@ -413,8 +411,6 @@ void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long w
             rule_mask = rotate_left_one(rule_mask);
         }
     }
-exit_ant:
-    return;
 }
 
 void free_ant_storage()
