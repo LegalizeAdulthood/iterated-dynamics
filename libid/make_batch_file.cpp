@@ -1724,12 +1724,12 @@ static void put_bf(int slash, bf_t r, int prec)
 {
     std::vector<char> buf;              // "/-1.xxxxxxE-1234"
     buf.resize(5000);
-    char *bptr = &buf[0];
+    char *bptr = buf.data();
     if (slash)
     {
         *(bptr++) = '/';
     }
     bf_to_str(bptr, prec, r);
     strip_zeros(bptr);
-    put_param(&buf[0]);
+    put_param(buf.data());
 }
