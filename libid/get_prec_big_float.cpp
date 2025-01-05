@@ -19,14 +19,10 @@ int get_prec_bf_mag()
     double rotation;
     double skew;
     LDouble magnification;
-    bf_t bXctr;
-    bf_t bYctr;
-    int saved;
-    int dec;
 
-    saved = save_stack();
-    bXctr            = alloc_stack(g_bf_length+2);
-    bYctr            = alloc_stack(g_bf_length+2);
+    int saved = save_stack();
+    bf_t bXctr = alloc_stack(g_bf_length + 2);
+    bf_t bYctr = alloc_stack(g_bf_length + 2);
     // this is just to find magnification
     cvt_center_mag_bf(bXctr, bYctr, magnification, x_mag_factor, rotation, skew);
     restore_stack(saved);
@@ -38,7 +34,7 @@ int get_prec_bf_mag()
         return -1;
     }
 
-    dec = get_power10(magnification) + 4; // 4 digits of padding sounds good
+    int dec = get_power10(magnification) + 4; // 4 digits of padding sounds good
     return dec;
 }
 
@@ -47,25 +43,15 @@ int get_prec_bf_mag()
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 int get_prec_bf(int rezflag)
 {
-    bf_t del1;
-    bf_t del2;
-    bf_t one;
-    bf_t bfxxdel;
-    bf_t bfxxdel2;
-    bf_t bfyydel;
-    bf_t bfyydel2;
-    int digits;
-    int dec;
-    int saved;
     int rez;
-    saved    = save_stack();
-    del1     = alloc_stack(g_bf_length+2);
-    del2     = alloc_stack(g_bf_length+2);
-    one      = alloc_stack(g_bf_length+2);
-    bfxxdel   = alloc_stack(g_bf_length+2);
-    bfxxdel2  = alloc_stack(g_bf_length+2);
-    bfyydel   = alloc_stack(g_bf_length+2);
-    bfyydel2  = alloc_stack(g_bf_length+2);
+    int saved = save_stack();
+    bf_t del1 = alloc_stack(g_bf_length + 2);
+    bf_t del2 = alloc_stack(g_bf_length + 2);
+    bf_t one = alloc_stack(g_bf_length + 2);
+    bf_t bfxxdel = alloc_stack(g_bf_length + 2);
+    bf_t bfxxdel2 = alloc_stack(g_bf_length + 2);
+    bf_t bfyydel = alloc_stack(g_bf_length + 2);
+    bf_t bfyydel2 = alloc_stack(g_bf_length + 2);
     float_to_bf(one, 1.0);
     if (rezflag == MAX_REZ)
     {
@@ -108,7 +94,7 @@ int get_prec_bf(int rezflag)
         restore_stack(saved);
         return -1;
     }
-    digits = 1;
+    int digits = 1;
     while (cmp_bf(del1, one) < 0)
     {
         digits++;
@@ -116,6 +102,6 @@ int get_prec_bf(int rezflag)
     }
     digits = std::max(digits, 3);
     restore_stack(saved);
-    dec = get_prec_bf_mag();
+    int dec = get_prec_bf_mag();
     return std::max(digits, dec);
 }
