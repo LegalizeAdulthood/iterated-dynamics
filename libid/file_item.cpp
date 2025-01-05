@@ -166,9 +166,8 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     if (!found)
     {
         // search for file
-        int out;
         make_path(fullpath, drive, dir, "*", defaultextension);
-        out = fr_find_first(fullpath);
+        int out = fr_find_first(fullpath);
         while (out == 0)
         {
             char msg[200];
@@ -300,18 +299,14 @@ static int scan_entries(std::FILE *infile, FileEntry *choices, char const *itemn
     // the entry is found, 0 otherwise.
     char buf[101];
     int exclude_entry;
-    long name_offset;
-    long temp_offset;
     long file_offset = -1;
     int numentries = 0;
 
     while (true)
     {
         // scan the file for entry names
-        int c;
-        int len;
 top:
-        c = skip_white_space(infile, &file_offset);
+        int c = skip_white_space(infile, &file_offset);
         if (c == ';')
         {
             c = skip_comment(infile, &file_offset);
@@ -321,10 +316,10 @@ top:
             }
             continue;
         }
-        temp_offset = file_offset;
-        name_offset = file_offset;
+        long temp_offset = file_offset;
+        long name_offset = file_offset;
         // next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf)
-        len = 0;
+        int len = 0;
         // allow spaces in entry names in next
         while (c != ' ' && c != '\t' && c != '(' && c != ';'
             && c != '{' && c != '\n' && c != '\r' && c != EOF)
@@ -449,7 +444,6 @@ bool search_for_entry(std::FILE *infile, char const *itemname)
 static void format_param_file_line(int choice, char *buf)
 {
     int c;
-    int i;
     char line[80];
     std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
     while (getc(s_gfe_file) != '{')
@@ -460,7 +454,7 @@ static void format_param_file_line(int choice, char *buf)
         c = getc(s_gfe_file);
     }
     while (c == ' ' || c == '\t' || c == ';');
-    i = 0;
+    int i = 0;
     while (i < 56 && c != '\n' && c != '\r' && c != EOF)
     {
         line[i++] = (char)((c == '\t') ? ' ' : c);
@@ -670,15 +664,10 @@ static int check_gfe_key(int curkey, int choice)
 static long gfe_choose_entry(ItemType type, char const *title, const std::string &filename, std::string &entryname)
 {
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
-    int numentries;
     char buf[101];
     FileEntry storage[MAX_ENTRIES + 1]{};
     FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
     int attributes[MAX_ENTRIES + 1] = { 0 };
-    void (*formatitem)(int, char *);
-    int boxwidth;
-    int boxdepth;
-    int colwidth;
     char instr[80];
 
     static bool dosort = true;
@@ -695,7 +684,7 @@ retry:
 
     help_title(); // to display a clue when file big and next is slow
 
-    numentries = scan_entries(s_gfe_file, &storage[0], nullptr);
+    int numentries = scan_entries(s_gfe_file, &storage[0], nullptr);
     if (numentries == 0)
     {
         stop_msg("File doesn't contain any valid entries");
@@ -716,10 +705,10 @@ retry:
     std::strcpy(buf, entryname.c_str()); // preset to last choice made
     std::string const heading{std::string{title} + " Selection\n"
         + "File: " + trim_file_name(filename, 68)};
-    formatitem = nullptr;
-    boxdepth = 0;
-    colwidth = boxdepth;
-    boxwidth = colwidth;
+    void (*formatitem)(int, char *) = nullptr;
+    int boxdepth = 0;
+    int colwidth = boxdepth;
+    int boxwidth = colwidth;
     if (type == ItemType::PARM)
     {
         formatitem = format_param_file_line;
@@ -753,12 +742,10 @@ long get_file_entry(ItemType type, char const *title, char const *fmask,
 {
     // Formula, LSystem, etc type structure, select from file
     // containing definitions in the form    name { ... }
-    bool firsttry;
-    long entry_pointer;
     bool newfile = false;
     while (true)
     {
-        firsttry = false;
+        bool firsttry = false;
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
         while (newfile || (s_gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
@@ -778,7 +765,7 @@ long get_file_entry(ItemType type, char const *title, char const *fmask,
             firsttry = true; // if around open loop again it is an error
         }
         newfile = false;
-        entry_pointer = gfe_choose_entry(type, title, filename, entryname);
+        long entry_pointer = gfe_choose_entry(type, title, filename, entryname);
         if (entry_pointer == -2)
         {
             newfile = true; // go to file list,
