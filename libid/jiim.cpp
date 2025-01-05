@@ -212,7 +212,7 @@ static void fill_rect(int x, int y, int width, int depth, int color)
         {
             return;
         }
-        put_row(x, y++, width, &row[0]);
+        put_row(x, y++, width, row.data());
     }
 }
 
@@ -450,7 +450,7 @@ static void save_rect(int x, int y, int width, int depth)
     for (int yoff = 0; yoff < depth; yoff++)
     {
         get_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
-        put_row(x, y+yoff, width, &background[0]);
+        put_row(x, y+yoff, width, background.data());
     }
     s_cursor.show();
 }
