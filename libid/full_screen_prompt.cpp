@@ -398,7 +398,7 @@ int full_screen_prompt(        // full-screen prompting routine
         std::string::size_type line_begin{};
         for (int i = 1; i < extra_lines-1; ++i)
         {
-            const std::string::size_type line_end = extra_text.find("\n", line_begin);
+            const std::string::size_type line_end = extra_text.find('\n', line_begin);
             const std::string line{extra_text.substr(line_begin, line_end - line_begin)};
             driver_put_string(extra_row + i, 0, C_PROMPT_TEXT, line.c_str());
             line_begin = line_end + 1;
