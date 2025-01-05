@@ -123,7 +123,7 @@ static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 
 short decoder(short linewidth)
 {
-    U16 prefix[MAX_CODES+1] = { 0 };     // Prefix linked list
+    U16 prefix[MAX_CODES+1]{};     // Prefix linked list
     short ret;
     short c;
 
@@ -161,7 +161,7 @@ short decoder(short linewidth)
     // happen, but we'll try and decode it anyway...)
 
     // Set up the stack pointer and decode buffer pointer
-    Byte decode_stack[4096] = { 0 };
+    Byte decode_stack[4096]{};
     Byte *sp = decode_stack;
     Byte *bufptr = s_decoder_line;
     short bufcnt = linewidth; // how many empty spaces left in buffer
