@@ -327,8 +327,7 @@ static int vary_int(int randvalue, int limit, Variations mode)
 
 int wrapped_positive_vary_int(int randvalue, int limit, Variations mode)
 {
-    int i;
-    i = vary_int(randvalue, limit, mode);
+    int i = vary_int(randvalue, limit, mode);
     if (i < 0)
     {
         return limit + i;
@@ -417,12 +416,11 @@ static int get_the_rest()
 {
     ChoiceBuilder<20> choices;
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
-    int i, numtrig;
     GeneBase gene[NUM_GENES];
 
     copy_genes_from_bank(gene);
 
-    numtrig = (+g_cur_fractal_specific->flags >> 6) & 7;
+    int numtrig = (+g_cur_fractal_specific->flags >> 6) & 7;
     if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
         numtrig = g_max_function;
@@ -451,7 +449,7 @@ choose_vars_restart:
     choices.comment("Press F3 to set all on");
     choices.comment("Press F4 to randomize all");
 
-    i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4);
+    int i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4);
 
     switch (i)
     {
@@ -503,7 +501,7 @@ choose_vars_restart:
 int get_variations()
 {
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
-    int k, numparams;
+    int k;
     ChoiceBuilder<20> choices;
     GeneBase gene[NUM_GENES];
     int firstparm = 0;
@@ -557,7 +555,7 @@ int get_variations()
         }
     }
 
-    numparams = 0;
+    int numparams = 0;
     for (int i = firstparm; i < lastparm; i++)
     {
         if (type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, nullptr) == 0)
@@ -668,19 +666,17 @@ void set_mutation_level(int strength)
 int get_evolve_params()
 {
     ChoiceBuilder<20> choices;
-    int i, j, tmp;
-    int old_image_grid_size;
+    int i;
     int old_variations = 0;
-    double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_max_random_mutation;
 
     // fill up the previous values arrays
     EvolutionModeFlags old_evolving = g_evolving;
-    old_image_grid_size = g_evolve_image_grid_size;
-    old_x_parameter_range = g_evolve_x_parameter_range;
-    old_y_parameter_range = g_evolve_y_parameter_range;
-    old_x_parameter_offset = g_evolve_x_parameter_offset;
-    old_y_parameter_offset = g_evolve_y_parameter_offset;
-    old_max_random_mutation = g_evolve_max_random_mutation;
+    int old_image_grid_size = g_evolve_image_grid_size;
+    double old_x_parameter_range = g_evolve_x_parameter_range;
+    double old_y_parameter_range = g_evolve_y_parameter_range;
+    double old_x_parameter_offset = g_evolve_x_parameter_offset;
+    double old_y_parameter_offset = g_evolve_y_parameter_offset;
+    double old_max_random_mutation = g_evolve_max_random_mutation;
 
 get_evol_restart:
 
@@ -758,12 +754,11 @@ get_evol_restart:
     }
     if (i == ID_KEY_F3)
     {
-        double centerx, centery;
-        centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
+        double centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
         g_evolve_new_x_parameter_offset = centerx - g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-        centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+        double centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
         g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
@@ -771,7 +766,7 @@ get_evol_restart:
         goto get_evol_restart;
     }
 
-    j = i;
+    int j = i;
 
     // now check out the results
     g_evolving = choices.read_yes_no() ? EvolutionModeFlags::FIELD_MAP : EvolutionModeFlags::NONE;
@@ -783,7 +778,7 @@ get_evol_restart:
     }
 
     g_evolve_image_grid_size = choices.read_int_number();
-    tmp = g_screen_x_dots / (MIN_PIXELS << 1);
+    int tmp = g_screen_x_dots / (MIN_PIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
     g_evolve_image_grid_size = std::min<int>(g_evolve_image_grid_size, EVOLVE_MAX_GRID_SIZE);
@@ -1040,9 +1035,8 @@ void spiral_map(int count)
     // maps out a clockwise spiral for a prettier and possibly
     // more intuitively useful order of drawing the sub images.
     // All the malarky with count is to allow resuming
-    int i, mid;
-    i = 0;
-    mid = g_evolve_image_grid_size / 2;
+    int i = 0;
+    int mid = g_evolve_image_grid_size / 2;
     if (count == 0)
     {
         // start in the middle
@@ -1097,10 +1091,9 @@ int unspiral_map()
     // unmaps the clockwise spiral
     // All this malarky is to allow selecting different subimages
     // Returns the count from the center subimage to the current px & py
-    int mid;
     static int old_image_grid_size = 0;
 
-    mid = g_evolve_image_grid_size / 2;
+    int mid = g_evolve_image_grid_size / 2;
     if ((g_evolve_param_grid_x == mid && g_evolve_param_grid_y == mid) || (old_image_grid_size != g_evolve_image_grid_size))
     {
         // set up array and return
