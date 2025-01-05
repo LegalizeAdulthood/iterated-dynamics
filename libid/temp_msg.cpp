@@ -45,8 +45,6 @@ bool show_temp_msg(char const *msgparm)
 {
     static size_t size = 0;
     char msg[41];
-    int save_sxoffs;
-    int save_syoffs;
 
     std::strncpy(msg, msgparm, 40);
     msg[40] = 0; // ensure max message len of 40 chars
@@ -72,8 +70,8 @@ bool show_temp_msg(char const *msgparm)
     {
         s_text_save.clear();
     }
-    save_sxoffs = g_logical_screen_x_offset;
-    save_syoffs = g_logical_screen_y_offset;
+    int save_sxoffs = g_logical_screen_x_offset;
+    int save_syoffs = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     if (s_text_save.empty()) // only save screen first time called
