@@ -46,10 +46,10 @@ enum
 // for x 0, 1, 0, -1
 // for y 1, 0, -1, 0
 //
-static std::vector<int> s_incx[DIRS];   // table for 4 directions
-static std::vector<int> s_incy[DIRS];
-static int s_last_xdots{};
-static int s_last_ydots{};
+static std::vector<int> s_inc_x[DIRS];   // table for 4 directions
+static std::vector<int> s_inc_y[DIRS];
+static int s_last_x_dots{};
+static int s_last_y_dots{};
 
 void set_wait(long *wait)
 {
@@ -229,8 +229,8 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
                             goto exit_ant;
                         }
                     }
-                    x[color] = s_incx[idir][ix];
-                    y[color] = s_incy[idir][iy];
+                    x[color] = s_inc_x[idir][ix];
+                    y[color] = s_inc_y[idir][iy];
                     dir[color] = idir;
                 }
             }
@@ -256,8 +256,8 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
                             goto exit_ant;
                         }
                     }
-                    x[color] = s_incx[idir][ix];
-                    y[color] = s_incy[idir][iy];
+                    x[color] = s_inc_x[idir][ix];
+                    y[color] = s_inc_y[idir][iy];
                     dir[color] = idir;
                 }
             }
@@ -410,8 +410,8 @@ void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait
                         goto exit_ant;
                     }
                 }
-                x[color] = s_incx[idir][ix];
-                y[color] = s_incy[idir][iy];
+                x[color] = s_inc_x[idir][ix];
+                y[color] = s_inc_y[idir][iy];
                 dir[color] = idir;
             }
             rule_mask = rotate_left_one(rule_mask);
@@ -425,8 +425,8 @@ void free_ant_storage()
 {
     for (int i = 0; i < DIRS; ++i)
     {
-        s_incx[i].clear();
-        s_incy[i].clear();
+        s_inc_x[i].clear();
+        s_inc_y[i].clear();
     }
 }
 
@@ -439,16 +439,16 @@ static std::string get_rule()
 
 int ant()
 {
-    if (g_logical_screen_x_dots != s_last_xdots || g_logical_screen_y_dots != s_last_ydots)
+    if (g_logical_screen_x_dots != s_last_x_dots || g_logical_screen_y_dots != s_last_y_dots)
     {
-        s_last_xdots = g_logical_screen_x_dots;
-        s_last_ydots = g_logical_screen_y_dots;
+        s_last_x_dots = g_logical_screen_x_dots;
+        s_last_y_dots = g_logical_screen_y_dots;
 
         free_ant_storage();
         for (int i = 0; i < DIRS; i++)
         {
-            s_incx[i].resize(g_logical_screen_x_dots + 2);
-            s_incy[i].resize(g_logical_screen_y_dots + 2);
+            s_inc_x[i].resize(g_logical_screen_x_dots + 2);
+            s_inc_y[i].resize(g_logical_screen_y_dots + 2);
         }
     }
 
@@ -456,37 +456,37 @@ int ant()
     // Wrap them from a side to the other instead of simply end calculation
     for (int i = 0; i < g_logical_screen_x_dots; i++)
     {
-        s_incx[0][i] = i;
-        s_incx[2][i] = i;
+        s_inc_x[0][i] = i;
+        s_inc_x[2][i] = i;
     }
 
     for (int i = 0; i < g_logical_screen_x_dots; i++)
     {
-        s_incx[3][i] = i + 1;
+        s_inc_x[3][i] = i + 1;
     }
-    s_incx[3][g_logical_screen_x_dots-1] = 0; // wrap from right of the screen to left
+    s_inc_x[3][g_logical_screen_x_dots-1] = 0; // wrap from right of the screen to left
 
     for (int i = 1; i < g_logical_screen_x_dots; i++)
     {
-        s_incx[1][i] = i - 1;
+        s_inc_x[1][i] = i - 1;
     }
-    s_incx[1][0] = g_logical_screen_x_dots-1; // wrap from left of the screen to right
+    s_inc_x[1][0] = g_logical_screen_x_dots-1; // wrap from left of the screen to right
 
     for (int i = 0; i < g_logical_screen_y_dots; i++)
     {
-        s_incy[1][i] = i;
-        s_incy[3][i] = i;
+        s_inc_y[1][i] = i;
+        s_inc_y[3][i] = i;
     }
     for (int i = 0; i < g_logical_screen_y_dots; i++)
     {
-        s_incy[0][i] = i + 1;
+        s_inc_y[0][i] = i + 1;
     }
-    s_incy[0][g_logical_screen_y_dots - 1] = 0; // wrap from the top of the screen to the bottom
+    s_inc_y[0][g_logical_screen_y_dots - 1] = 0; // wrap from the top of the screen to the bottom
     for (int i = 1; i < g_logical_screen_y_dots; i++)
     {
-        s_incy[2][i] = i - 1;
+        s_inc_y[2][i] = i - 1;
     }
-    s_incy[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
+    s_inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
     ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
     long const maxpts = labs(static_cast<long>(g_params[1]));
     long const wait = std::abs(g_orbit_delay);
