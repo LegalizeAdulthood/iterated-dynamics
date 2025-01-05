@@ -296,16 +296,12 @@ The same technique can be applied to the second set of equations:
 
 bool setup_convert_to_screen(Affine *scrn_cnvt)
 {
-    double det;
-    double xd;
-    double yd;
-
-    det = (g_x_3rd-g_x_min)*(g_y_min-g_y_max) + (g_y_max-g_y_3rd)*(g_x_max-g_x_min);
+    double det = (g_x_3rd - g_x_min) * (g_y_min - g_y_max) + (g_y_max - g_y_3rd) * (g_x_max - g_x_min);
     if (det == 0)
     {
         return true;
     }
-    xd = g_logical_screen_x_size_dots/det;
+    double xd = g_logical_screen_x_size_dots / det;
     scrn_cnvt->a =  xd*(g_y_max-g_y_3rd);
     scrn_cnvt->b =  xd*(g_x_3rd-g_x_min);
     scrn_cnvt->e = -scrn_cnvt->a*g_x_min - scrn_cnvt->b*g_y_max;
@@ -315,7 +311,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     {
         return true;
     }
-    yd = g_logical_screen_y_size_dots/det;
+    double yd = g_logical_screen_y_size_dots / det;
     scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
     scrn_cnvt->d =  yd*(g_x_3rd-g_x_max);
     scrn_cnvt->f = -scrn_cnvt->c*g_x_min - scrn_cnvt->d*g_y_max;
@@ -405,8 +401,6 @@ bool orbit3d_long_setup()
     }
     else if (g_fractal_type == FractalType::INVERSE_JULIA)
     {
-        LComplex Sqrt;
-
         s_Cx_l = (long)(g_params[0] * g_fudge_factor);
         s_Cy_l = (long)(g_params[1] * g_fudge_factor);
 
@@ -432,7 +426,7 @@ bool orbit3d_long_setup()
         s_l_cvt.e = (long)(s_cvt.e * (1L << 21));
         s_l_cvt.f = (long)(s_cvt.f * (1L << 21));
 
-        Sqrt = complex_sqrt_long(g_fudge_factor - 4 * s_Cx_l, -4 * s_Cy_l);
+        LComplex Sqrt = complex_sqrt_long(g_fudge_factor - 4 * s_Cx_l, -4 * s_Cy_l);
 
         switch (g_major_method)
         {
@@ -613,8 +607,6 @@ bool orbit3d_float_setup()
     }
     else if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
     {
-        DComplex Sqrt;
-
         s_Cx = g_params[0];
         s_Cy = g_params[1];
 
@@ -633,7 +625,7 @@ bool orbit3d_float_setup()
         setup_convert_to_screen(&s_cvt);
 
         // find fixed points: guaranteed to be in the set
-        Sqrt = complex_sqrt_float(1 - 4 * s_Cx, -4 * s_Cy);
+        DComplex Sqrt = complex_sqrt_float(1 - 4 * s_Cx, -4 * s_Cy);
         switch (g_major_method)
         {
         case Major::BREADTH_FIRST:
@@ -705,10 +697,6 @@ int m_inverse_julia_orbit()
 {
     static int random_dir = 0;
     static int random_len = 0;
-    int newrow;
-    int newcol;
-    int color;
-    int leftright;
 
     /*
      * First, compute new point
@@ -738,15 +726,15 @@ int m_inverse_julia_orbit()
     /*
      * Next, find its pixel position
      */
-    newcol = (int)(s_cvt.a * g_new_z.x + s_cvt.b * g_new_z.y + s_cvt.e);
-    newrow = (int)(s_cvt.c * g_new_z.x + s_cvt.d * g_new_z.y + s_cvt.f);
+    int newcol = (int) (s_cvt.a * g_new_z.x + s_cvt.b * g_new_z.y + s_cvt.e);
+    int newrow = (int) (s_cvt.c * g_new_z.x + s_cvt.d * g_new_z.y + s_cvt.f);
 
     /*
      * Now find the next point(s), and flip a coin to choose one.
      */
 
     g_new_z       = complex_sqrt_float(g_new_z.x - s_Cx, g_new_z.y - s_Cy);
-    leftright = (random(2)) ? 1 : -1;
+    int leftright = (random(2)) ? 1 : -1;
 
     if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= g_logical_screen_y_dots)
     {
@@ -773,7 +761,7 @@ int m_inverse_julia_orbit()
      * For MIIM, if color >= mxhits, discard the point
      *           else put the point's children onto the queue
      */
-    color  = get_color(newcol, newrow);
+    int color = get_color(newcol, newrow);
     switch (g_major_method)
     {
     case Major::BREADTH_FIRST:
@@ -854,8 +842,6 @@ int l_inverse_julia_orbit()
 {
     static int random_dir = 0;
     static int random_len = 0;
-    int newrow;
-    int newcol;
     int    color;
 
     /*
@@ -917,10 +903,12 @@ int l_inverse_julia_orbit()
      * otherwise the values of lcvt were truncated.  Used bitshift
      * of 24 otherwise, for increased precision.
      */
-    newcol = (int)((multiply(s_l_cvt.a, g_l_new_z.x >> (g_bit_shift - 21), 21) +
-                    multiply(s_l_cvt.b, g_l_new_z.y >> (g_bit_shift - 21), 21) + s_l_cvt.e) >> 21);
-    newrow = (int)((multiply(s_l_cvt.c, g_l_new_z.x >> (g_bit_shift - 21), 21) +
-                    multiply(s_l_cvt.d, g_l_new_z.y >> (g_bit_shift - 21), 21) + s_l_cvt.f) >> 21);
+    int newcol = (int) ((multiply(s_l_cvt.a, g_l_new_z.x >> (g_bit_shift - 21), 21) +
+                            multiply(s_l_cvt.b, g_l_new_z.y >> (g_bit_shift - 21), 21) + s_l_cvt.e) >>
+        21);
+    int newrow = (int) ((multiply(s_l_cvt.c, g_l_new_z.x >> (g_bit_shift - 21), 21) +
+                            multiply(s_l_cvt.d, g_l_new_z.y >> (g_bit_shift - 21), 21) + s_l_cvt.f) >>
+        21);
 
     if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= g_logical_screen_y_dots)
     {
@@ -1031,14 +1019,12 @@ int lorenz3d_long_orbit(long *l_x, long *l_y, long *l_z)
 
 int lorenz3d1_float_orbit(double *x, double *y, double *z)
 {
-    double norm;
-
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
     s_zdt = (*z)*s_dt;
 
     // 1-lobe Lorenz
-    norm = std::sqrt((*x)*(*x)+(*y)*(*y));
+    double norm = std::sqrt((*x) * (*x) + (*y) * (*y));
     s_dx   = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
     s_dy   = (s_bdt-s_adt)*(*x) - (s_adt+s_dt)*(*y) + (s_bdt+s_adt)*norm - s_xdt*(*z) -
            norm*s_zdt;
@@ -1069,14 +1055,12 @@ int lorenz3d_float_orbit(double *x, double *y, double *z)
 
 int lorenz3d3_float_orbit(double *x, double *y, double *z)
 {
-    double norm;
-
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
     s_zdt = (*z)*s_dt;
 
     // 3-lobe Lorenz
-    norm = std::sqrt((*x)*(*x)+(*y)*(*y));
+    double norm = std::sqrt((*x) * (*x) + (*y) * (*y));
     s_dx   = (-(s_adt+s_dt)*(*x) + (s_adt-s_bdt+s_zdt)*(*y)) / 3 +
            ((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
             2*(s_bdt+s_adt-s_zdt)*(*x)*(*y))/(3*norm);
@@ -1114,10 +1098,8 @@ int lorenz3d4_float_orbit(double *x, double *y, double *z)
 
 int henon_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double newx;
-    double newy;
-    newx  = 1 + *y - s_a*(*x)*(*x);
-    newy  = s_b*(*x);
+    double newx = 1 + *y - s_a * (*x) * (*x);
+    double newy = s_b * (*x);
     *x = newx;
     *y = newy;
     return 0;
@@ -1125,12 +1107,10 @@ int henon_float_orbit(double *x, double *y, double * /*z*/)
 
 int henon_long_orbit(long *l_x, long *l_y, long * /*l_z*/)
 {
-    long newx;
-    long newy;
-    newx = multiply(*l_x, *l_x, g_bit_shift);
+    long newx = multiply(*l_x, *l_x, g_bit_shift);
     newx = multiply(newx, s_l_a, g_bit_shift);
     newx  = g_fudge_factor + *l_y - newx;
-    newy  = multiply(s_l_b, *l_x, g_bit_shift);
+    long newy = multiply(s_l_b, *l_x, g_bit_shift);
     *l_x = newx;
     *l_y = newy;
     return 0;
@@ -1153,12 +1133,9 @@ int rossler_float_orbit(double *x, double *y, double *z)
 
 int pickover_float_orbit(double *x, double *y, double *z)
 {
-    double newx;
-    double newy;
-    double newz;
-    newx = std::sin(s_a*(*y)) - (*z)*std::cos(s_b*(*x));
-    newy = (*z)*std::sin(s_c*(*x)) - std::cos(s_d*(*y));
-    newz = std::sin(*x);
+    double newx = std::sin(s_a * (*y)) - (*z) * std::cos(s_b * (*x));
+    double newy = (*z) * std::sin(s_c * (*x)) - std::cos(s_d * (*y));
+    double newz = std::sin(*x);
     *x = newx;
     *y = newy;
     *z = newz;
@@ -1168,8 +1145,7 @@ int pickover_float_orbit(double *x, double *y, double *z)
 // page 149 "Science of Fractal Images"
 int ginger_bread_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double newx;
-    newx = 1 - (*y) + std::fabs(*x);
+    double newx = 1 - (*y) + std::fabs(*x);
     *y = *x;
     *x = newx;
     return 0;
@@ -1198,7 +1174,6 @@ int rossler_long_orbit(long *l_x, long *l_y, long *l_z)
 // a      = Angle
 int kam_torus_float_orbit(double *r, double *s, double *z)
 {
-    double srr;
     if (s_t++ >= s_l_d)
     {
         s_orbit += s_b;
@@ -1211,7 +1186,7 @@ int kam_torus_float_orbit(double *r, double *s, double *z)
             return 1;
         }
     }
-    srr = (*s)-(*r)*(*r);
+    double srr = (*s) - (*r) * (*r);
     (*s) = (*r)*g_sin_x+srr*g_cos_x;
     (*r) = (*r)*g_cos_x-srr*g_sin_x;
     return 0;
@@ -1219,7 +1194,6 @@ int kam_torus_float_orbit(double *r, double *s, double *z)
 
 int kam_torus_long_orbit(long *r, long *s, long *z)
 {
-    long srr;
     if (s_t++ >= s_l_d)
     {
         s_orbit_l += s_l_b;
@@ -1232,7 +1206,7 @@ int kam_torus_long_orbit(long *r, long *s, long *z)
             return 1;
         }
     }
-    srr = (*s)-multiply((*r), (*r), g_bit_shift);
+    long srr = (*s) - multiply((*r), (*r), g_bit_shift);
     (*s) = multiply((*r), s_sin_x_l, g_bit_shift)+multiply(srr, s_cos_x_l, g_bit_shift);
     (*r) = multiply((*r), s_cos_x_l, g_bit_shift)-multiply(srr, s_sin_x_l, g_bit_shift);
     return 0;
@@ -1240,8 +1214,7 @@ int kam_torus_long_orbit(long *r, long *s, long *z)
 
 int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp;
-    tmp = *y - sign(*x)*std::sqrt(std::fabs(s_b*(*x)-s_c));
+    double tmp = *y - sign(*x) * std::sqrt(std::fabs(s_b * (*x) - s_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1249,9 +1222,9 @@ int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
 
 int chip2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp;
-    tmp = *y - sign(*x) * std::cos(sqr(std::log(std::fabs(s_b*(*x)-s_c))))
-          * std::atan(sqr(std::log(std::fabs(s_c*(*x)-s_b))));
+    double tmp = *y -
+        sign(*x) * std::cos(sqr(std::log(std::fabs(s_b * (*x) - s_c)))) *
+            std::atan(sqr(std::log(std::fabs(s_c * (*x) - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1259,9 +1232,9 @@ int chip2d_float_orbit(double *x, double *y, double * /*z*/)
 
 int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp;
-    tmp = *y - sign(*x) * std::sin(std::log(std::fabs(s_b*(*x)-s_c)))
-          * std::atan(sqr(std::log(std::fabs(s_c*(*x)-s_b))));
+    double tmp = *y -
+        sign(*x) * std::sin(std::log(std::fabs(s_b * (*x) - s_c))) *
+            std::atan(sqr(std::log(std::fabs(s_c * (*x) - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1269,8 +1242,7 @@ int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
 
 int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp;
-    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*s_cos_b+s_c-(*x)*s_sin_sum_a_b_c));
+    double tmp = *y - sign(*x) * (std::fabs(std::sin(*x) * s_cos_b + s_c - (*x) * s_sin_sum_a_b_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1278,8 +1250,7 @@ int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
 
 int martin2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp;
-    tmp = *y - std::sin(*x);
+    double tmp = *y - std::sin(*x);
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1287,18 +1258,14 @@ int martin2d_float_orbit(double *x, double *y, double * /*z*/)
 
 int mandel_cloud_float(double *x, double *y, double * /*z*/)
 {
-    double newx;
-    double newy;
-    double x2;
-    double y2;
-    x2 = (*x)*(*x);
-    y2 = (*y)*(*y);
+    double x2 = (*x) * (*x);
+    double y2 = (*y) * (*y);
     if (x2+y2 > 2)
     {
         return 1;
     }
-    newx = x2-y2+s_a;
-    newy = 2*(*x)*(*y)+s_b;
+    double newx = x2 - y2 + s_a;
+    double newy = 2 * (*x) * (*y) + s_b;
     *x = newx;
     *y = newy;
     return 0;
@@ -1308,12 +1275,10 @@ int dynam_float(double *x, double *y, double * /*z*/)
 {
     DComplex cp;
     DComplex tmp;
-    double newx;
-    double newy;
     cp.x = s_b* *x;
     cp.y = 0;
     cmplx_trig0(cp, tmp);
-    newy = *y + s_dt*std::sin(*x + s_a*tmp.x);
+    double newy = *y + s_dt * std::sin(*x + s_a * tmp.x);
     if (s_euler)
     {
         *y = newy;
@@ -1322,7 +1287,7 @@ int dynam_float(double *x, double *y, double * /*z*/)
     cp.x = s_b* *y;
     cp.y = 0;
     cmplx_trig0(cp, tmp);
-    newx = *x - s_dt*std::sin(*y + s_a*tmp.x);
+    double newx = *x - s_dt * std::sin(*y + s_a * tmp.x);
     *x = newx;
     *y = newy;
     return 0;
@@ -1337,32 +1302,22 @@ static const double &DEGREE{g_params[5]};
 
 int icon_float_orbit(double *x, double *y, double *z)
 {
-    double oldx;
-    double oldy;
-    double zzbar;
-    double zreal;
-    double zimag;
-    double za;
-    double zb;
-    double zn;
-    double p;
+    double oldx = *x;
+    double oldy = *y;
 
-    oldx = *x;
-    oldy = *y;
-
-    zzbar = oldx * oldx + oldy * oldy;
-    zreal = oldx;
-    zimag = oldy;
+    double zzbar = oldx * oldx + oldy * oldy;
+    double zreal = oldx;
+    double zimag = oldy;
 
     for (int i = 1; i <= DEGREE-2; i++)
     {
-        za = zreal * oldx - zimag * oldy;
-        zb = zimag * oldx + zreal * oldy;
+        double za = zreal * oldx - zimag * oldy;
+        double zb = zimag * oldx + zreal * oldy;
         zreal = za;
         zimag = zb;
     }
-    zn = oldx * zreal - oldy * zimag;
-    p = LAMBDA + ALPHA * zzbar + BETA * zn;
+    double zn = oldx * zreal - oldy * zimag;
+    double p = LAMBDA + ALPHA * zzbar + BETA * zn;
     *x = p * oldx + GAMMA * zreal - OMEGA * oldy;
     *y = p * oldy - GAMMA * zimag + OMEGA * oldx;
 
@@ -1697,8 +1652,7 @@ int orbit2d_long()
         {
             if (soundvar && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
             {
-                double yy;
-                yy = *soundvar;
+                double yy = *soundvar;
                 yy = yy/g_fudge_factor;
                 write_sound((int)(yy*100+g_base_hertz));
             }
@@ -1812,8 +1766,7 @@ static int orbit3d_long_calc()
                 }
                 if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
                 {
-                    double yy;
-                    yy = inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)];
+                    double yy = inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)];
                     yy = yy/g_fudge_factor;
                     write_sound((int)(yy*100+g_base_hertz));
                 }
@@ -2424,24 +2377,20 @@ done:
 // double version - mainly for testing
 static int ifs3d_float()
 {
-    int color_method;
-    std::FILE *fp;
     int color;
 
     double newx;
     double newy;
     double newz;
-    double r;
 
     int k;
-    int ret;
 
     ViewTransform3DFloat inf;
 
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
     std::srand(1);
-    color_method = (int)g_params[0];
+    int color_method = (int) g_params[0];
     if (driver_diskp())                  // this would KILL a disk drive!
     {
         not_disk_msg();
@@ -2451,9 +2400,9 @@ static int ifs3d_float()
     inf.orbit[1] = 0;
     inf.orbit[2] = 0;
 
-    fp = open_orbit_save();
+    std::FILE *fp = open_orbit_save();
 
-    ret = 0;
+    int ret = 0;
     if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
@@ -2470,7 +2419,7 @@ static int ifs3d_float()
             ret = -1;
             break;
         }
-        r = std::rand();      // generate a random number between 0 and 1
+        double r = std::rand();      // generate a random number between 0 and 1
         r /= RAND_MAX;
 
         // pick which iterated function to execute, weighted by probability
@@ -2572,27 +2521,14 @@ int ifs()                       // front-end for ifs2d and ifs3d
 // IFS logic shamelessly converted to integer math
 static int ifs2d()
 {
-    int color_method;
-    std::FILE *fp;
-    int col;
-    int row;
     int color;
-    int ret;
     std::vector<long> localifs;
-    long *lfptr;
-    long x;
-    long y;
-    long newx;
-    long newy;
-    long r;
-    long sum;
-    long tempr;
     LAffine cvt;
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&cvt);
 
     std::srand(1);
-    color_method = (int)g_params[0];
+    int color_method = (int) g_params[0];
     bool resized = false;
     try
     {
@@ -2616,13 +2552,13 @@ static int ifs2d()
         }
     }
 
-    tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
+    long tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
 
-    fp = open_orbit_save();
+    std::FILE *fp = open_orbit_save();
 
-    x = 0;
-    y = 0;
-    ret = 0;
+    long x = 0;
+    long y = 0;
+    int ret = 0;
     if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
@@ -2639,22 +2575,20 @@ static int ifs2d()
             ret = -1;
             break;
         }
-        r = rand15();      // generate fudged random number between 0 and 1
+        long r = rand15();      // generate fudged random number between 0 and 1
         r *= tempr;
 
         // pick which iterated function to execute, weighted by probability
-        sum = localifs[6];  // [0][6]
+        long sum = localifs[6];  // [0][6]
         int k = 0;
         while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
         {
             sum += localifs[++k*NUM_IFS_PARAMS+6];
         }
         // calculate image of last point under selected iterated function
-        lfptr = &localifs[0] + k*NUM_IFS_PARAMS; // point to first parm in row
-        newx = multiply(lfptr[0], x, g_bit_shift) +
-               multiply(lfptr[1], y, g_bit_shift) + lfptr[4];
-        newy = multiply(lfptr[2], x, g_bit_shift) +
-               multiply(lfptr[3], y, g_bit_shift) + lfptr[5];
+        long *lfptr = &localifs[0] + k * NUM_IFS_PARAMS; // point to first parm in row
+        long newx = multiply(lfptr[0], x, g_bit_shift) + multiply(lfptr[1], y, g_bit_shift) + lfptr[4];
+        long newy = multiply(lfptr[2], x, g_bit_shift) + multiply(lfptr[3], y, g_bit_shift) + lfptr[5];
         x = newx;
         y = newy;
         if (fp)
@@ -2663,8 +2597,10 @@ static int ifs2d()
         }
 
         // plot if inside window
-        col = (int)((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
-        row = (int)((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
+        int col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >>
+            g_bit_shift);
+        int row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >>
+            g_bit_shift);
         if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
         {
             // color is count of hits on this pixel
@@ -2695,22 +2631,12 @@ static int ifs2d()
 
 static int ifs3d_long()
 {
-    int color_method;
-    std::FILE *fp;
     int color;
-    int ret;
     std::vector<long> localifs;
-    long *lfptr;
-    long newx;
-    long newy;
-    long newz;
-    long r;
-    long sum;
-    long tempr;
     ViewTransform3DLong inf;
 
     std::srand(1);
-    color_method = (int)g_params[0];
+    int color_method = (int) g_params[0];
     try
     {
         localifs.resize(g_num_affine_transforms*NUM_IFS_3D_PARAMS);
@@ -2732,15 +2658,15 @@ static int ifs3d_long()
         }
     }
 
-    tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
+    long tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
 
     inf.orbit[0] = 0;
     inf.orbit[1] = 0;
     inf.orbit[2] = 0;
 
-    fp = open_orbit_save();
+    std::FILE *fp = open_orbit_save();
 
-    ret = 0;
+    int ret = 0;
     if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
@@ -2757,11 +2683,11 @@ static int ifs3d_long()
             ret = -1;
             break;
         }
-        r = rand15();      // generate fudged random number between 0 and 1
+        long r = rand15();      // generate fudged random number between 0 and 1
         r *= tempr;
 
         // pick which iterated function to execute, weighted by probability
-        sum = localifs[12];  // [0][12]
+        long sum = localifs[12];  // [0][12]
         int k = 0;
         while (sum < r && ++k < g_num_affine_transforms*NUM_IFS_3D_PARAMS)
         {
@@ -2773,18 +2699,18 @@ static int ifs3d_long()
         }
 
         // calculate image of last point under selected iterated function
-        lfptr = &localifs[0] + k*NUM_IFS_3D_PARAMS; // point to first parm in row
+        long *lfptr = &localifs[0] + k * NUM_IFS_3D_PARAMS; // point to first parm in row
 
         // calculate image of last point under selected iterated function
-        newx = multiply(lfptr[0], inf.orbit[0], g_bit_shift) +
-               multiply(lfptr[1], inf.orbit[1], g_bit_shift) +
-               multiply(lfptr[2], inf.orbit[2], g_bit_shift) + lfptr[9];
-        newy = multiply(lfptr[3], inf.orbit[0], g_bit_shift) +
-               multiply(lfptr[4], inf.orbit[1], g_bit_shift) +
-               multiply(lfptr[5], inf.orbit[2], g_bit_shift) + lfptr[10];
-        newz = multiply(lfptr[6], inf.orbit[0], g_bit_shift) +
-               multiply(lfptr[7], inf.orbit[1], g_bit_shift) +
-               multiply(lfptr[8], inf.orbit[2], g_bit_shift) + lfptr[11];
+        long newx = multiply(lfptr[0], inf.orbit[0], g_bit_shift) +
+            multiply(lfptr[1], inf.orbit[1], g_bit_shift) + multiply(lfptr[2], inf.orbit[2], g_bit_shift) +
+            lfptr[9];
+        long newy = multiply(lfptr[3], inf.orbit[0], g_bit_shift) +
+            multiply(lfptr[4], inf.orbit[1], g_bit_shift) + multiply(lfptr[5], inf.orbit[2], g_bit_shift) +
+            lfptr[10];
+        long newz = multiply(lfptr[6], inf.orbit[0], g_bit_shift) +
+            multiply(lfptr[7], inf.orbit[1], g_bit_shift) + multiply(lfptr[8], inf.orbit[2], g_bit_shift) +
+            lfptr[11];
 
         inf.orbit[0] = newx;
         inf.orbit[1] = newy;
