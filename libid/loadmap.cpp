@@ -31,7 +31,7 @@ struct PaletteType
 
 #define dac ((PaletteType *)g_dac_box)
 
-bool validate_luts(char const *fn)
+bool validate_luts(char const *mapname)
 {
     unsigned r;
     unsigned g;
@@ -39,7 +39,7 @@ bool validate_luts(char const *fn)
     char    temp[FILE_MAX_PATH+1];
     char    temp_fn[FILE_MAX_PATH];
     std::strcpy(temp, g_map_name.c_str());
-    std::strcpy(temp_fn, fn);
+    std::strcpy(temp_fn, mapname);
     merge_path_names(temp, temp_fn, CmdFile::AT_CMD_LINE);
     if (has_ext(temp) == nullptr)   // Did name have an extension?
     {
@@ -49,7 +49,7 @@ bool validate_luts(char const *fn)
     if (f == nullptr)
     {
         char line[160];
-        std::snprintf(line, std::size(line), "Could not load color map %s", fn);
+        std::snprintf(line, std::size(line), "Could not load color map %s", mapname);
         stop_msg(line);
         return true;
     }
@@ -77,7 +77,7 @@ bool validate_luts(char const *fn)
         ++index;
     }
     g_color_state = ColorState::MAP_FILE;
-    g_color_file = fn;
+    g_color_file = mapname;
     return false;
 }
 
