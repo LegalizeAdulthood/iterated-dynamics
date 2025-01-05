@@ -25,13 +25,11 @@ int get_sound_params()
     ChoiceBuilder<15> builder;
     /* routine to get sound settings  */
     const char *soundmodes[]{"off", "beep", "x", "y", "z"};
-    int old_soundflag, old_orbit_delay;
     int i;
-    bool old_start_showorbit;
 
-    old_soundflag = g_sound_flag;
-    old_orbit_delay = g_orbit_delay;
-    old_start_showorbit = g_start_show_orbit;
+    int old_soundflag = g_sound_flag;
+    int old_orbit_delay = g_orbit_delay;
+    bool old_start_showorbit = g_start_show_orbit;
 
     /* g_sound_flag bits 0..7 used as thus:
        bit 0,1,2 controls sound beep/off and x,y,z
@@ -175,8 +173,6 @@ static int get_music_params()
 {
     ChoiceBuilder<11> builder;
     const char *attenmodes[] = {"none", "low", "mid", "high"};
-    HelpLabels oldhelpmode;
-    int i;
 
     s_menu2++;
 get_music_restart:
@@ -193,9 +189,9 @@ get_music_restart:
         .comment("Press F7 for scale mappings")
         .comment("Press F4 to reset to default values");
 
-    oldhelpmode = g_help_mode; /* this prevents HELP from activating */
+    HelpLabels oldhelpmode = g_help_mode; /* this prevents HELP from activating */
     g_help_mode = HelpLabels::HELP_MUSIC;
-    i = builder.prompt("FM Synth Card Control Screen", 255);
+    int i = builder.prompt("FM Synth Card Control Screen", 255);
     g_help_mode = oldhelpmode; /* re-enable HELP */
     if (i < 0)
     {
