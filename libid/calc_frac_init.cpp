@@ -49,13 +49,6 @@ static void   smallest_add_bf(bf_t num);
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 static int get_prec_dbl(int rezflag)
 {
-    LDouble del1;
-    LDouble del2;
-    LDouble xdel;
-    LDouble xdel2;
-    LDouble ydel;
-    LDouble ydel2;
-    int digits;
     LDouble rez;
     if (rezflag == MAX_REZ)
     {
@@ -66,19 +59,19 @@ static int get_prec_dbl(int rezflag)
         rez = g_logical_screen_x_dots-1;
     }
 
-    xdel = ((LDouble)g_x_max - (LDouble)g_x_3rd)/rez;
-    ydel2 = ((LDouble)g_y_3rd - (LDouble)g_y_min)/rez;
+    LDouble xdel = ((LDouble) g_x_max - (LDouble) g_x_3rd) / rez;
+    LDouble ydel2 = ((LDouble) g_y_3rd - (LDouble) g_y_min) / rez;
 
     if (rezflag == CURRENT_REZ)
     {
         rez = g_logical_screen_y_dots-1;
     }
 
-    ydel = ((LDouble)g_y_max - (LDouble)g_y_3rd)/rez;
-    xdel2 = ((LDouble)g_x_3rd - (LDouble)g_x_min)/rez;
+    LDouble ydel = ((LDouble) g_y_max - (LDouble) g_y_3rd) / rez;
+    LDouble xdel2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / rez;
 
-    del1 = std::fabs(xdel) + std::fabs(xdel2);
-    del2 = std::fabs(ydel) + std::fabs(ydel2);
+    LDouble del1 = std::fabs(xdel) + std::fabs(xdel2);
+    LDouble del2 = std::fabs(ydel) + std::fabs(ydel2);
     del1 = std::min(del2, del1);
     if (del1 == 0)
     {
@@ -87,7 +80,7 @@ static int get_prec_dbl(int rezflag)
 #endif
         return -1;
     }
-    digits = 1;
+    int digits = 1;
     while (del1 < 1.0)
     {
         digits++;
@@ -499,16 +492,12 @@ expand_retry:
         } // end if (integerfractal && !invert && use_grid)
         else
         {
-            double dx0;
-            double dy0;
-            double dx1;
-            double dy1;
             // set up dx0 and dy0 analogs of lx0 and ly0
             // put fractal parameters in doubles
-            dx0 = g_x_min;                // fill up the x, y grids
-            dy0 = g_y_max;
-            dy1 = 0;
-            dx1 = 0;
+            double dx0 = g_x_min;                // fill up the x, y grids
+            double dy0 = g_y_max;
+            double dy1 = 0;
+            double dx1 = 0;
             /* this way of defining the dx and dy arrays is not the most
                accurate, but it is kept because it is used to determine
                the limit of resolution */
@@ -648,25 +637,20 @@ void adjust_corner_bf()
 {
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
-    double ftemp;
     double x_mag_factor;
     double rotation;
     double skew;
     LDouble magnification;
 
-    bf_t bftemp;
-    bf_t bftemp2;
-    bf_t btmp1;
-    int saved;
-    saved = save_stack();
-    bftemp  = alloc_stack(g_r_bf_length+2);
-    bftemp2 = alloc_stack(g_r_bf_length+2);
-    btmp1  =  alloc_stack(g_r_bf_length+2);
+    int saved = save_stack();
+    bf_t bftemp = alloc_stack(g_r_bf_length + 2);
+    bf_t bftemp2 = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp1 = alloc_stack(g_r_bf_length + 2);
 
     // While we're at it, let's adjust the x_mag_factor as well
     // use bftemp, bftemp2 as bfXctr, bfYctr
     cvt_center_mag_bf(bftemp, bftemp2, magnification, x_mag_factor, rotation, skew);
-    ftemp = std::fabs(x_mag_factor);
+    double ftemp = std::fabs(x_mag_factor);
     if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
     {
         x_mag_factor = sign(x_mag_factor);
@@ -733,7 +717,6 @@ void adjust_corner()
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
     double ftemp;
-    double ftemp2;
     double x_ctr;
     double y_ctr;
     double x_mag_factor;
@@ -754,7 +737,7 @@ void adjust_corner()
     }
 
     ftemp = std::fabs(g_x_3rd-g_x_min);
-    ftemp2 = std::fabs(g_x_max-g_x_3rd);
+    double ftemp2 = std::fabs(g_x_max - g_x_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && g_y_3rd != g_y_max)
@@ -786,24 +769,9 @@ void adjust_corner()
 
 static void adjust_to_limits_bf(double expand)
 {
-    LDouble limit;
     bf_t bcornerx[4];
     bf_t bcornery[4];
-    bf_t blowx;
-    bf_t bhighx;
-    bf_t blowy;
-    bf_t bhighy;
-    bf_t blimit;
-    bf_t bftemp;
-    bf_t bcenterx;
-    bf_t bcentery;
-    bf_t badjx;
-    bf_t badjy;
-    bf_t btmp1;
-    bf_t btmp2;
-    bf_t bexpand;
-    int saved;
-    saved = save_stack();
+    int saved = save_stack();
     bcornerx[0] = alloc_stack(g_r_bf_length+2);
     bcornerx[1] = alloc_stack(g_r_bf_length+2);
     bcornerx[2] = alloc_stack(g_r_bf_length+2);
@@ -812,21 +780,21 @@ static void adjust_to_limits_bf(double expand)
     bcornery[1] = alloc_stack(g_r_bf_length+2);
     bcornery[2] = alloc_stack(g_r_bf_length+2);
     bcornery[3] = alloc_stack(g_r_bf_length+2);
-    blowx       = alloc_stack(g_r_bf_length+2);
-    bhighx      = alloc_stack(g_r_bf_length+2);
-    blowy       = alloc_stack(g_r_bf_length+2);
-    bhighy      = alloc_stack(g_r_bf_length+2);
-    blimit      = alloc_stack(g_r_bf_length+2);
-    bftemp      = alloc_stack(g_r_bf_length+2);
-    bcenterx    = alloc_stack(g_r_bf_length+2);
-    bcentery    = alloc_stack(g_r_bf_length+2);
-    badjx       = alloc_stack(g_r_bf_length+2);
-    badjy       = alloc_stack(g_r_bf_length+2);
-    btmp1       = alloc_stack(g_r_bf_length+2);
-    btmp2       = alloc_stack(g_r_bf_length+2);
-    bexpand     = alloc_stack(g_r_bf_length+2);
+    bf_t blowx = alloc_stack(g_r_bf_length + 2);
+    bf_t bhighx = alloc_stack(g_r_bf_length + 2);
+    bf_t blowy = alloc_stack(g_r_bf_length + 2);
+    bf_t bhighy = alloc_stack(g_r_bf_length + 2);
+    bf_t blimit = alloc_stack(g_r_bf_length + 2);
+    bf_t bftemp = alloc_stack(g_r_bf_length + 2);
+    bf_t bcenterx = alloc_stack(g_r_bf_length + 2);
+    bf_t bcentery = alloc_stack(g_r_bf_length + 2);
+    bf_t badjx = alloc_stack(g_r_bf_length + 2);
+    bf_t badjy = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t btmp2 = alloc_stack(g_r_bf_length + 2);
+    bf_t bexpand = alloc_stack(g_r_bf_length + 2);
 
-    limit = 32767.99;
+    LDouble limit = 32767.99;
 
     /*   if (bitshift >= 24) limit = 31.99;
        if (bitshift >= 29) limit = 3.99; */
@@ -1051,18 +1019,8 @@ static void adjust_to_limits(double expand)
 {
     double cornerx[4];
     double cornery[4];
-    double lowx;
-    double highx;
-    double lowy;
-    double highy;
-    double limit;
-    double ftemp;
-    double centerx;
-    double centery;
-    double adjx;
-    double adjy;
 
-    limit = 32767.99;
+    double limit = 32767.99;
 
     if (g_integer_fractal)
     {
@@ -1078,8 +1036,8 @@ static void adjust_to_limits(double expand)
         }
     }
 
-    centerx = (g_x_min+g_x_max)/2;
-    centery = (g_y_min+g_y_max)/2;
+    double centerx = (g_x_min + g_x_max) / 2;
+    double centery = (g_y_min + g_y_max) / 2;
 
     if (g_x_min == centerx)
     {
@@ -1125,10 +1083,10 @@ static void adjust_to_limits(double expand)
         }
     }
     // get min/max x/y values
-    highx = cornerx[0];
-    lowx = cornerx[0];
-    highy = cornery[0];
-    lowy = cornery[0];
+    double highx = cornerx[0];
+    double lowx = cornerx[0];
+    double highy = cornery[0];
+    double lowy = cornery[0];
 
     for (int i = 1; i < 4; ++i)
     {
@@ -1139,7 +1097,7 @@ static void adjust_to_limits(double expand)
     }
 
     // if image is too large, downsize it maintaining center
-    ftemp = highx - lowx;
+    double ftemp = highx - lowx;
     ftemp = std::max(highy - lowy, ftemp);
 
     // if image is too large, downsize it maintaining center
@@ -1154,8 +1112,8 @@ static void adjust_to_limits(double expand)
     }
 
     // if any corner has x or y past limit, move the image
-    adjy = 0;
-    adjx = 0;
+    double adjy = 0;
+    double adjx = 0;
 
     for (int i = 0; i < 4; ++i)
     {
@@ -1197,10 +1155,8 @@ static void smallest_add(double *num)
 
 static void smallest_add_bf(bf_t num)
 {
-    bf_t btmp1;
-    int saved;
-    saved = save_stack();
-    btmp1 = alloc_stack(g_bf_length+2);
+    int saved = save_stack();
+    bf_t btmp1 = alloc_stack(g_bf_length + 2);
     mult_bf(btmp1, float_to_bf(btmp1, 5.0e-16), num);
     add_a_bf(num, btmp1);
     restore_stack(saved);
