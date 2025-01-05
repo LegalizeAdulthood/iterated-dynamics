@@ -268,7 +268,7 @@ private:
     bool topic();
     bool topic_paragraph();
     bool topic_newline();
-    bool topic_formfeed();
+    bool topic_form_feed();
     bool topic_center();
     bool topic_link();
     bool topic_word();
@@ -736,7 +736,7 @@ bool DocumentProcessor::topic_newline()
     return true;
 }
 
-bool DocumentProcessor::topic_formfeed()
+bool DocumentProcessor::topic_form_feed()
 {
     if (!footing())
     {
@@ -824,7 +824,7 @@ bool DocumentProcessor::topic_token()
             break;
         }
 
-        if (!topic_formfeed())
+        if (!topic_form_feed())
         {
             return false;
         }
