@@ -96,10 +96,9 @@ int float_z_power_fractal()
 // Generate Pascal's Triangle coefficients
 void pascal_triangle()
 {
-    long j;
     long c = 1L;
 
-    for (j = 0; j <= g_c_exponent; j++)
+    for (long j = 0; j <= g_c_exponent; j++)
     {
         if (j == 0)
         {
