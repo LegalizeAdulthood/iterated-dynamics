@@ -265,7 +265,6 @@ static bool read_lsystem_file(char const *str)
 
 int lsystem()
 {
-    int order;
     bool stackoflow = false;
 
     if (!s_loaded && lsystem_load())
@@ -275,7 +274,7 @@ int lsystem()
 
     g_overflow = false;           // reset integer math overflow flag
 
-    order = (int)g_params[0];
+    int order = (int) g_params[0];
     order = std::max(order, 0);
     if (g_user_float_flag)
     {
@@ -598,12 +597,10 @@ static void lsysi_do_size_dm(LSysTurtleStateI *cmd)
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
     double s;
     double c;
-    long fixedsin;
-    long fixedcos;
 
     sin_cos(&angle, &s, &c);
-    fixedsin = (long)(s * FIXEDLT1);
-    fixedcos = (long)(c * FIXEDLT1);
+    long fixedsin = (long) (s * FIXEDLT1);
+    long fixedcos = (long) (c * FIXEDLT1);
 
     cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
     cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
@@ -633,17 +630,13 @@ static void lsysi_do_draw_d(LSysTurtleStateI *cmd)
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
     double s;
     double c;
-    long fixedsin;
-    long fixedcos;
-    int lastx;
-    int lasty;
 
     sin_cos(&angle, &s, &c);
-    fixedsin = (long)(s * FIXEDLT1);
-    fixedcos = (long)(c * FIXEDLT1);
+    long fixedsin = (long) (s * FIXEDLT1);
+    long fixedcos = (long) (c * FIXEDLT1);
 
-    lastx = (int)(cmd->xpos >> 19);
-    lasty = (int)(cmd->ypos >> 19);
+    int lastx = (int) (cmd->xpos >> 19);
+    int lasty = (int) (cmd->ypos >> 19);
     cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
     cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
     // xpos+=size*aspect*cos(realangle*PI/180);
@@ -656,12 +649,10 @@ static void lsysi_do_draw_m(LSysTurtleStateI *cmd)
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
     double s;
     double c;
-    long fixedsin;
-    long fixedcos;
 
     sin_cos(&angle, &s, &c);
-    fixedsin = (long)(s * FIXEDLT1);
-    fixedcos = (long)(c * FIXEDLT1);
+    long fixedsin = (long) (s * FIXEDLT1);
+    long fixedcos = (long) (c * FIXEDLT1);
 
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
@@ -790,15 +781,8 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
 {
     float horiz;
     float vert;
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
-    double locsize;
-    double locaspect;
-    LSysCmd *fsret;
 
-    locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
+    double locaspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
     ts->aspect = FIXEDPT(locaspect);
     ts->counter = 0;
     ts->reverse = ts->counter;
@@ -811,12 +795,12 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
     ts->ypos = ts->xmin;
     ts->xpos = ts->ypos;
     ts->size = FIXEDPT(1L);
-    fsret = find_size(command, ts, rules, depth);
+    LSysCmd *fsret = find_size(command, ts, rules, depth);
     thinking(0, nullptr); // erase thinking message if any
-    xmin = (double) ts->xmin / FIXEDMUL;
-    xmax = (double) ts->xmax / FIXEDMUL;
-    ymin = (double) ts->ymin / FIXEDMUL;
-    ymax = (double) ts->ymax / FIXEDMUL;
+    double xmin = (double) ts->xmin / FIXEDMUL;
+    double xmax = (double) ts->xmax / FIXEDMUL;
+    double ymin = (double) ts->ymin / FIXEDMUL;
+    double ymax = (double) ts->ymax / FIXEDMUL;
     if (fsret == nullptr)
     {
         return false;
@@ -837,7 +821,7 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
     {
         vert = (float)((g_logical_screen_y_dots-6) /(ymax-ymin));
     }
-    locsize = (vert < horiz) ? vert : horiz;
+    double locsize = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
     {
@@ -864,8 +848,6 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
 
 static LSysCmd *draw_lsysi(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth)
 {
-    bool tran;
-
     if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
@@ -888,7 +870,7 @@ static LSysCmd *draw_lsysi(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rul
                 return nullptr;
             }
         }
-        tran = false;
+        bool tran = false;
         if (depth)
         {
             for (LSysCmd **rulind = rules; *rulind; rulind++)
@@ -1154,15 +1136,13 @@ static LSysCmd *lsysi_draw_transform(char const *s, LSysTurtleStateI *ts)
 
 static void lsysi_do_sin_cos()
 {
-    double locaspect;
     double TWOPI = 2.0 * PI;
-    double twopimax;
     double twopimaxi;
     double s;
     double c;
 
-    locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
-    twopimax = TWOPI / g_max_angle;
+    double locaspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
+    double twopimax = TWOPI / g_max_angle;
     s_sin_table.resize(g_max_angle);
     r_cos_table.resize(g_max_angle);
     for (int i = 0; i < g_max_angle; i++)
