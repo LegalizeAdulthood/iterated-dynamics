@@ -141,10 +141,8 @@ void scale(double sx, double sy, double sz, MATRIX m)
 void x_rot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta;
-    double costheta;
-    sintheta = std::sin(theta);
-    costheta = std::cos(theta);
+    double sintheta = std::sin(theta);
+    double costheta = std::cos(theta);
     identity(rot);
     rot[1][1] = costheta;
     rot[1][2] = -sintheta;
@@ -157,10 +155,8 @@ void x_rot(double theta, MATRIX m)
 void y_rot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta;
-    double costheta;
-    sintheta = std::sin(theta);
-    costheta = std::cos(theta);
+    double sintheta = std::sin(theta);
+    double costheta = std::cos(theta);
     identity(rot);
     rot[0][0] = costheta;
     rot[0][2] = sintheta;
@@ -173,10 +169,8 @@ void y_rot(double theta, MATRIX m)
 void z_rot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta;
-    double costheta;
-    sintheta = std::sin(theta);
-    costheta = std::cos(theta);
+    double sintheta = std::sin(theta);
+    double costheta = std::cos(theta);
     identity(rot);
     rot[0][0] = costheta;
     rot[0][1] = -sintheta;
@@ -212,8 +206,7 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 // normalize a vector to length 1
 bool normalize_vector(VECTOR v)
 {
-    double vlength;
-    vlength = dot_product(v, v);
+    double vlength = dot_product(v, v);
 
     // bailout if zero vlength
     if (vlength < FLT_MIN || vlength > FLT_MAX)
@@ -276,8 +269,7 @@ void vec_g_mat_mul(VECTOR s)
 // perspective projection of vector v with respect to viewpoint vector view
 int perspective(VECTOR v)
 {
-    double denom;
-    denom = g_view[2] - v[2];
+    double denom = g_view[2] - v[2];
 
     if (denom >= 0.0)
     {
@@ -304,9 +296,8 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     // lview: perspective viewer coordinates
     // bitshift: fixed point conversion bitshift
     LVECTOR tmp;
-    int k;
     g_overflow = false;
-    k = CMAX-1;                  // shorten the math if non-perspective and non-illum
+    int k = CMAX - 1;                  // shorten the math if non-perspective and non-illum
     if (lview[2] == 0 && t0[0] == 0)
     {
         k--;
@@ -331,11 +322,8 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     }
     if (lview[2] != 0)           // perspective 3D
     {
-
         LVECTOR tmpview;
-        long denom;
-
-        denom = lview[2] - tmp[2];
+        long denom = lview[2] - tmp[2];
         if (denom >= 0)           // bail out if point is "behind" us
         {
             t[0] = g_bad_value;
@@ -370,9 +358,8 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
 int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift)
 {
     LVECTOR tmpview;
-    long denom;
     g_overflow = false;
-    denom = lview[2] - lv[2];
+    long denom = lview[2] - lv[2];
     if (denom >= 0)              // bail out if point is "behind" us
     {
         lv[0] = g_bad_value;
@@ -399,9 +386,8 @@ int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift)
 int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
 {
     LVECTOR tmp;
-    int k;
     g_overflow = false;
-    k = CMAX-1;
+    int k = CMAX - 1;
 
     for (int j = 0; j < k; j++)
     {
