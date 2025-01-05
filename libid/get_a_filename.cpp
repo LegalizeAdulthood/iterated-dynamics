@@ -56,7 +56,7 @@ static char const *s_masks[]{"*.pot", "*.gif"};
 bool get_a_file_name(char const *hdg, char const *file_template, std::string &flname)
 {
     char user_file_template[FILE_MAX_PATH] = { 0 };
-    int rds;  // if getting an RDS image map
+    // if getting an RDS image map
     char instr[80];
     int masklen;
     char filename[FILE_MAX_PATH];
@@ -80,7 +80,7 @@ bool get_a_file_name(char const *hdg, char const *file_template, std::string &fl
     static int numtemplates = 1;
     static bool dosort = true;
 
-    rds = (g_stereo_map_filename == flname) ? 1 : 0;
+    bool rds = g_stereo_map_filename == flname;
     for (int i = 0; i < MAX_NUM_FILES; i++)
     {
         attributes[i] = 1;
