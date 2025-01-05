@@ -930,14 +930,10 @@ reallythebottom:
 // vector version of line draw
 static void vec_draw_line(double *v1, double *v2, int color)
 {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-    x1 = (int) v1[0];
-    y1 = (int) v1[1];
-    x2 = (int) v2[0];
-    y2 = (int) v2[1];
+    int x1 = (int) v1[0];
+    int y1 = (int) v1[1];
+    int x2 = (int) v2[0];
+    int y2 = (int) v2[1];
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
@@ -1037,7 +1033,6 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
 static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 {
     VECTOR S[2][4] = { 0 };
-    double temp;
 
     S[0][0][0] = origin[0];
     S[1][0][0] = S[0][0][0];
@@ -1070,7 +1065,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     }
 
     // always use perspective to aid viewing
-    temp = g_view[2];              // save perspective distance for a later restore
+    double temp = g_view[2];              // save perspective distance for a later restore
     g_view[2] = -s_p * 300.0 / 100.0;
 
     for (int i = 0; i < 4; i++)
@@ -1168,10 +1163,6 @@ static void put_min_max(int x, int y, int /*color*/)
 
 static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
 {
-    int miny;
-    int maxy;
-    int xlim;
-
     // Too many points off the screen?
     if ((off_screen(pt1) + off_screen(pt2) + off_screen(pt3)) > MAXOFFSCREEN)
     {
@@ -1206,8 +1197,8 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
     }
 
     // find min max y
-    maxy = s_p1.y;
-    miny = maxy;
+    int maxy = s_p1.y;
+    int miny = maxy;
     if (s_p2.y < miny)
     {
         miny = s_p2.y;
@@ -1248,7 +1239,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 
     for (int y = miny; y <= maxy; y++)
     {
-        xlim = s_min_max_x[y].maxx;
+        int xlim = s_min_max_x[y].maxx;
         for (int x = s_min_max_x[y].minx; x <= xlim; x++)
         {
             (*s_fill_plot)(x, y, color);
@@ -1335,20 +1326,15 @@ static void transparent_clip_color(int x, int y, int color)
 
 static void interp_color(int x, int y, int color)
 {
-    int D;
-    int d1;
-    int d2;
-    int d3;
-
     /* this distance formula is not the usual one - but it has the virtue that
      * it uses ONLY additions (almost) and it DOES go to zero as the points
      * get close. */
 
-    d1 = std::abs(s_p1.x - x) + std::abs(s_p1.y - y);
-    d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
-    d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
+    int d1 = std::abs(s_p1.x - x) + std::abs(s_p1.y - y);
+    int d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
+    int d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
 
-    D = (d1 + d2 + d3) << 1;
+    int D = (d1 + d2 + d3) << 1;
     if (D)
     {
         /* calculate a weighted average of colors long casts prevent integer
@@ -1484,10 +1470,9 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen)
     }
     else // swap
     {
-        Byte tmp;
         for (int i = 0; i < (int) linelen; i++)       // swap so pixel has color
         {
-            tmp = pixels[i];
+            Byte tmp = pixels[i];
             pixels[i] = fraction[i];
             fraction[i] = tmp;
         }
@@ -1719,14 +1704,8 @@ bool targa_validate(char const *File_Name)
 static int rgb_to_hsv(
     Byte red, Byte green, Byte blue, unsigned long *hue, unsigned long *sat, unsigned long *val)
 {
-    unsigned long R1;
-    unsigned long G1;
-    unsigned long B1;
-    unsigned long DENOM;
-    Byte MIN;
-
     *val = red;
-    MIN = green;
+    Byte MIN = green;
     if (red < green)
     {
         *val = green;
@@ -1751,7 +1730,7 @@ static int rgb_to_hsv(
             *val = blue;
         }
     }
-    DENOM = *val - MIN;
+    unsigned long DENOM = *val - MIN;
     if (*val != 0 && DENOM != 0)
     {
         *sat = ((DENOM << 16) / *val) - 1;
@@ -1772,9 +1751,9 @@ static int rgb_to_hsv(
         *val = *val << 8;
         return 0;
     }
-    R1 = (((*val - red) * 60) << 6) / DENOM; // distance of color from red
-    G1 = (((*val - green) * 60) << 6) / DENOM; // distance of color from green
-    B1 = (((*val - blue) * 60) << 6) / DENOM; // distance of color from blue
+    unsigned long R1 = (((*val - red) * 60) << 6) / DENOM; // distance of color from red
+    unsigned long G1 = (((*val - green) * 60) << 6) / DENOM; // distance of color from green
+    unsigned long B1 = (((*val - blue) * 60) << 6) / DENOM; // distance of color from blue
     if (*val == red)
     {
         if (MIN == green)
@@ -1815,22 +1794,16 @@ static int rgb_to_hsv(
 static void hsv_to_rgb(
     Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val)
 {
-    unsigned long P1;
-    unsigned long P2;
-    unsigned long P3;
-    int RMD;
-    int I;
-
     if (hue >= 23040)
     {
         hue = hue % 23040;            // Makes h circular
     }
-    I = (int)(hue / 3840);
-    RMD = (int)(hue % 3840);       // RMD = fractional part of H
+    int I = (int) (hue / 3840);
+    int RMD = (int) (hue % 3840);       // RMD = fractional part of H
 
-    P1 = ((val * (65535L - sat)) / 65280L) >> 8;
-    P2 = (((val * (65535L - (sat * RMD) / 3840)) / 65280L) - 1) >> 8;
-    P3 = (((val * (65535L - (sat * (3840 - RMD)) / 3840)) / 65280L)) >> 8;
+    unsigned long P1 = ((val * (65535L - sat)) / 65280L) >> 8;
+    unsigned long P2 = (((val * (65535L - (sat * RMD) / 3840)) / 65280L) - 1) >> 8;
+    unsigned long P3 = (((val * (65535L - (sat * (3840 - RMD)) / 3840)) / 65280L)) >> 8;
     val = val >> 8;
     switch (I)
     {
@@ -2352,12 +2325,8 @@ static void set_upr_lwr()
 
 static int first_time(int linelen, VECTOR v)
 {
-    int err;
     MATRIX lightm;               // m w/no trans, keeps obj. on screen
-    float twocosdeltatheta;
-    double xval;
-    double yval;
-    double zval; // rotation values
+                   // rotation values
     // corners of transformed xdotx by ydots x colors box
     double xmin;
     double ymin;
@@ -2365,16 +2334,12 @@ static int first_time(int linelen, VECTOR v)
     double xmax;
     double ymax;
     double zmax;
-    double v_length;
     VECTOR origin;
     VECTOR direct;
     VECTOR tmp;
-    float theta;
-    float theta1;
-    float theta2;     // current,start,stop latitude
-    float phi1;
-    float phi2;       // current start,stop longitude
-    float deltatheta; // increment of latitude
+    // current,start,stop latitude
+    // current start,stop longitude
+    // increment of latitude
     g_out_line_cleanup = line3d_cleanup;
 
     s_even_odd_row = 0;
@@ -2435,7 +2400,7 @@ static int first_time(int linelen, VECTOR v)
 
     s_z_coord = g_file_colors;
 
-    err = line3d_mem();
+    int err = line3d_mem();
     if (err != 0)
     {
         return err;
@@ -2486,9 +2451,9 @@ static int first_time(int linelen, VECTOR v)
         scale(s_scale_x, s_scale_y, s_scale_z, lightm);
 
         // rotation values - converting from degrees to radians
-        xval = g_x_rot / 57.29577;
-        yval = g_y_rot / 57.29577;
-        zval = g_z_rot / 57.29577;
+        double xval = g_x_rot / 57.29577;
+        double yval = g_y_rot / 57.29577;
+        double zval = g_z_rot / 57.29577;
 
         if (g_raytrace_format != RayTraceFormat::NONE)
         {
@@ -2575,14 +2540,14 @@ static int first_time(int linelen, VECTOR v)
          * latitude; bottom 90 degrees */
 
         // Map X to this LATITUDE range
-        theta1 = (float)(g_sphere_theta_min * PI / 180.0);
-        theta2 = (float)(g_sphere_theta_max * PI / 180.0);
+        float theta1 = (float) (g_sphere_theta_min * PI / 180.0);
+        float theta2 = (float) (g_sphere_theta_max * PI / 180.0);
 
         // Map Y to this LONGITUDE range
-        phi1 = (float)(g_sphere_phi_min * PI / 180.0);
-        phi2 = (float)(g_sphere_phi_max * PI / 180.0);
+        float phi1 = (float) (g_sphere_phi_min * PI / 180.0);
+        float phi2 = (float) (g_sphere_phi_max * PI / 180.0);
 
-        theta = theta1;
+        float theta = theta1;
 
         //*******************************************************************
         // Thanks to Hugh Bray for the following idea: when calculating
@@ -2602,7 +2567,7 @@ static int first_time(int linelen, VECTOR v)
         // Similarly for cosine. Neat!
         //*******************************************************************
 
-        deltatheta = (float)(theta2 - theta1) / (float) linelen;
+        float deltatheta = (float) (theta2 - theta1) / (float) linelen;
 
         // initial sin,cos theta
         s_sin_theta_array[0] = (float) std::sin((double) theta);
@@ -2611,7 +2576,7 @@ static int first_time(int linelen, VECTOR v)
         s_cos_theta_array[1] = (float) std::cos((double)(theta + deltatheta));
 
         // sin,cos delta theta
-        twocosdeltatheta = (float)(2.0 * std::cos((double) deltatheta));
+        float twocosdeltatheta = (float) (2.0 * std::cos((double) deltatheta));
 
         // build table of other sin,cos with trig identity
         for (int i = 2; i < (int) linelen; i++)
@@ -2661,10 +2626,6 @@ static int first_time(int linelen, VECTOR v)
 
         if (s_persp)                // precalculate fudge factor
         {
-            double radius;
-            double zview;
-            double angle;
-
             s_x_center = s_x_center << 16;
             s_y_center = s_y_center << 16;
 
@@ -2673,9 +2634,9 @@ static int first_time(int linelen, VECTOR v)
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
-            zview = -(long)((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
-            radius = (double)(g_logical_screen_y_dots) / 2;
-            angle = std::atan(-radius / (zview + radius));
+            double zview = -(long) ((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+            double radius = (double) (g_logical_screen_y_dots) / 2;
+            double angle = std::atan(-radius / (zview + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
             s_z_cutoff *= 1.1;        // for safety
             s_z_cutoff *= 65536L;
@@ -2747,7 +2708,7 @@ static int first_time(int linelen, VECTOR v)
 
         origin[2] = 0.0;
 
-        v_length = std::min(g_logical_screen_x_dots, g_logical_screen_y_dots) / 2;
+        double v_length = std::min(g_logical_screen_x_dots, g_logical_screen_y_dots) / 2;
         if (s_persp && g_viewer_z <= s_p)
         {
             v_length *= (long)(s_p + 600) / ((long)(g_viewer_z + 600) * 2);
