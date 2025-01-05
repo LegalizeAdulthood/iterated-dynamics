@@ -64,15 +64,10 @@ bn_t copy_bn(bn_t r, bn_t n)
 //  if n1 < n2 returns a negative (bytes left to go when mismatch occured)
 int cmp_bn(bn_t n1, bn_t n2)
 {
-    S16 Svalue1;
-    S16 Svalue2;
-    U16 value1;
-    U16 value2;
-
     // two bytes at a time
     // signed comparison for msb
-    Svalue1 = big_accessS16((S16 *)(n1+g_bn_length-2));
-    Svalue2 = big_accessS16((S16 *)(n2+g_bn_length-2));
+    S16 Svalue1 = big_accessS16((S16 *) (n1 + g_bn_length - 2));
+    S16 Svalue2 = big_accessS16((S16 *) (n2 + g_bn_length - 2));
     if (Svalue1 > Svalue2)
     {
         // now determine which of the two bytes was different
@@ -97,8 +92,8 @@ int cmp_bn(bn_t n1, bn_t n2)
     // unsigned comparison for the rest
     for (int i = g_bn_length-4; i >= 0; i -= 2)
     {
-        value1 = big_access16(n1+i);
-        value2 = big_access16(n2+i);
+        U16 value1 = big_access16(n1 + i);
+        U16 value2 = big_access16(n2 + i);
         if (value1 > value2)
         {
             // now determine which of the two bytes was different
@@ -216,13 +211,12 @@ bn_t sub_a_bn(bn_t r, bn_t n)
 bn_t neg_bn(bn_t r, bn_t n)
 {
     int i;
-    U16 t_short;
     U32 neg = 1; // to get the 2's complement started
 
     // two bytes at a time
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
-        t_short = ~big_access16(n+i);
+        U16 t_short = ~big_access16(n + i);
         neg += ((U32)t_short); // two's complement
         big_set16(r+i, (U16)neg);   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
@@ -241,13 +235,12 @@ bn_t neg_bn(bn_t r, bn_t n)
 bn_t neg_a_bn(bn_t r)
 {
     int i;
-    U16 t_short;
     U32 neg = 1; // to get the 2's complement started
 
     // two bytes at a time
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
-        t_short = ~big_access16(r+i);
+        U16 t_short = ~big_access16(r + i);
         neg += ((U32)t_short); // two's complement
         big_set16(r+i, (U16)neg);   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
@@ -354,16 +347,10 @@ bn_t half_a_bn(bn_t r)
 bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
-    int steps;
     int doublesteps;
-    int carry_steps;
-    bn_t n1p;
-    bn_t n2p;           // pointers for n1, n2
-    bn_t rp1;
+    // pointers for n1, n2
     bn_t rp2;
-    bn_t rp3; // pointers for r
-    U32 prod;
-    U32 sum;
+    // pointers for r
 
     bool sign1 = is_bn_neg(n1);
     if (sign1) // =, not ==
@@ -380,23 +367,23 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
         }
     }
 
-    n1p = n1;
-    steps = g_bn_length >> 1; // two bytes at a time
-    carry_steps = doublesteps = (steps << 1) - 2;
+    bn_t n1p = n1;
+    int steps = g_bn_length >> 1; // two bytes at a time
+    int carry_steps = doublesteps = (steps << 1) - 2;
     g_bn_length <<= 1;
     clear_bn(r);        // double width
     g_bn_length >>= 1;
-    rp1 = rp2 = r;
+    bn_t rp1 = rp2 = r;
     for (int i = 0; i < steps; i++)
     {
-        n2p = n2;
+        bn_t n2p = n2;
         for (int j = 0; j < steps; j++)
         {
-            prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); // U16*U16=U32
-            sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
+            U32 prod = (U32) big_access16(n1p) * (U32) big_access16(n2p); // U16*U16=U32
+            U32 sum = (U32) big_access16(rp2) + prod; // add to previous, including overflow
             big_set16(rp2, (U16)sum); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
-            rp3 = rp2 + 2;          // move over 2 bytes
+            bn_t rp3 = rp2 + 2;          // move over 2 bytes
             sum += big_access16(rp3);     // add what was the upper two bytes
             big_set16(rp3 , (U16)sum); // save what was the upper two bytes
             sum >>= 16;             // keep just the overflow
@@ -435,20 +422,11 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
-    int steps;
     int doublesteps;
-    int carry_steps;
-    int skips;
-    bn_t n1p;
-    bn_t n2p;           // pointers for n1, n2
+    // pointers for n1, n2
     bn_t rp1;
-    bn_t rp2;
-    bn_t rp3; // pointers for r
-    U32 prod;
-    U32 sum;
-    int bnl; // temp g_bn_length holder
 
-    bnl = g_bn_length;
+    int bnl = g_bn_length;
     bool sign1 = is_bn_neg(n1);
     if (sign1 != 0)   // =, not ==
     {
@@ -463,27 +441,27 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
             neg_a_bn(n2);
         }
     }
-    n1p = n1;
+    bn_t n1p = n1;
     n2 += (g_bn_length << 1) - g_r_length;  // shift n2 over to where it is needed
 
     g_bn_length = g_r_length;
     clear_bn(r);        // zero out r, g_r_length width
     g_bn_length = bnl;
 
-    steps = (g_r_length-g_bn_length) >> 1;
-    skips = (g_bn_length >> 1) - steps;
-    carry_steps = doublesteps = (g_r_length >> 1)-2;
-    rp2 = rp1 = r;
+    int steps = (g_r_length - g_bn_length) >> 1;
+    int skips = (g_bn_length >> 1) - steps;
+    int carry_steps = doublesteps = (g_r_length >> 1) - 2;
+    bn_t rp2 = rp1 = r;
     for (int i = g_bn_length >> 1; i > 0; i--)
     {
-        n2p = n2;
+        bn_t n2p = n2;
         for (int j = 0; j < steps; j++)
         {
-            prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); // U16*U16=U32
-            sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
+            U32 prod = (U32) big_access16(n1p) * (U32) big_access16(n2p); // U16*U16=U32
+            U32 sum = (U32) big_access16(rp2) + prod; // add to previous, including overflow
             big_set16(rp2, (U16)sum); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
-            rp3 = rp2 + 2;          // move over 2 bytes
+            bn_t rp3 = rp2 + 2;          // move over 2 bytes
             sum += big_access16(rp3);     // add what was the upper two bytes
             big_set16(rp3, (U16)sum); // save what was the upper two bytes
             sum >>= 16;             // keep just the overflow
@@ -537,13 +515,8 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 // SIDE-EFFECTS: n is changed to its absolute value
 bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 {
-    int steps;
     int doublesteps;
-    int carry_steps;
-    bn_t n1p;
-    bn_t n2p;
     bn_t rp1;
-    bn_t rp2;
     bn_t rp3;
     U32 prod;
     U32 sum;
@@ -557,12 +530,13 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     clear_bn(r);        // zero out r, double width
     g_bn_length >>= 1;
 
-    steps = (g_bn_length >> 1)-1;
-    carry_steps = doublesteps = (steps << 1) - 1;
-    rp2 = rp1 = r + 2;  // start with second two-byte word
-    n1p = n;
+    int steps = (g_bn_length >> 1) - 1;
+    int carry_steps = doublesteps = (steps << 1) - 1;
+    bn_t rp2 = rp1 = r + 2;  // start with second two-byte word
+    bn_t n1p = n;
     if (steps != 0) // if zero, then skip all the middle term calculations
     {
+        bn_t n2p;
         for (int i = steps; i > 0; i--) // steps gets altered, count backwards
         {
             n2p = n1p + 2;  // set n2p pointer to 1 step beyond n1p
@@ -643,20 +617,12 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 // SIDE-EFFECTS: n is changed to its absolute value
 bn_t unsafe_square_bn(bn_t r, bn_t n)
 {
-    int steps;
     int doublesteps;
-    int carry_steps;
-    int skips;
-    int rodd;
-    bn_t n1p;
     bn_t n2p;
-    bn_t n3p;
     bn_t rp1;
-    bn_t rp2;
     bn_t rp3;
     U32 prod;
     U32 sum;
-    int bnl;
 
     // This whole procedure would be a great deal simpler if we could assume that
     // g_r_length < 2*g_bn_length (that is, not =).  Therefore, we will take the
@@ -671,20 +637,20 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
         neg_a_bn(n);   // answer must be positive.
     }
 
-    bnl = g_bn_length;
+    int bnl = g_bn_length;
     g_bn_length = g_r_length;
     clear_bn(r);        // zero out r, of width g_r_length
     g_bn_length = bnl;
 
     // determine whether r is on an odd or even two-byte word in the number
-    rodd = (U16)(((g_bn_length << 1)-g_r_length) >> 1) & 0x0001;
+    int rodd = (U16) (((g_bn_length << 1) - g_r_length) >> 1) & 0x0001;
     int i = (g_bn_length >> 1)-1;
-    steps = (g_r_length-g_bn_length) >> 1;
-    carry_steps = doublesteps = (g_bn_length >> 1)+steps-2;
-    skips = (i - steps) >> 1;     // how long to skip over pointer shifts
-    rp2 = rp1 = r;
-    n1p = n;
-    n3p = n2p = n1p + (((g_bn_length >> 1)-steps) << 1);    // n2p = n1p + 2*(g_bn_length/2 - steps)
+    int steps = (g_r_length - g_bn_length) >> 1;
+    int carry_steps = doublesteps = (g_bn_length >> 1) + steps - 2;
+    int skips = (i - steps) >> 1;     // how long to skip over pointer shifts
+    bn_t rp2 = rp1 = r;
+    bn_t n1p = n;
+    bn_t n3p = n2p = n1p + (((g_bn_length >> 1) - steps) << 1);    // n2p = n1p + 2*(g_bn_length/2 - steps)
     if (i != 0) // if zero, skip middle term calculations
     {
         // i is already set
@@ -815,8 +781,6 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 // r = n / u  where u is an unsigned integer
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
-    U32 full_number;
-    U16 quot;
     U16 rem = 0;
 
     bool sign = is_bn_neg(n);
@@ -838,8 +802,8 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
     // two bytes at a time
     for (int i = g_bn_length-2; i >= 0; i -= 2)
     {
-        full_number = ((U32)rem << 16) + (U32)big_access16(n+i);
-        quot = (U16)(full_number / u);
+        U32 full_number = ((U32) rem << 16) + (U32) big_access16(n + i);
+        U16 quot = (U16) (full_number / u);
         rem  = (U16)(full_number % u);
         big_set16(r+i, quot);
     }
@@ -855,8 +819,6 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 // r /= u  where u is an unsigned integer
 bn_t div_a_bn_int(bn_t r, U16 u)
 {
-    U32 full_number;
-    U16 quot;
     U16 rem = 0;
 
     bool sign = is_bn_neg(r);
@@ -878,8 +840,8 @@ bn_t div_a_bn_int(bn_t r, U16 u)
     // two bytes at a time
     for (int i = g_bn_length-2; i >= 0; i -= 2)
     {
-        full_number = ((U32)rem << 16) + (U32)big_access16(r+i);
-        quot = (U16)(full_number / u);
+        U32 full_number = ((U32) rem << 16) + (U32) big_access16(r + i);
+        U16 quot = (U16) (full_number / u);
         rem  = (U16)(full_number % u);
         big_set16(r+i, quot);
     }
@@ -896,8 +858,6 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 //  Converts a bignumber to a double
 LDouble bn_to_float(bn_t n)
 {
-    int expon;
-    bn_t getbyte;
     LDouble f = 0;
 
     bool signflag = false;
@@ -907,8 +867,8 @@ LDouble bn_to_float(bn_t n)
         neg_a_bn(n);
     }
 
-    expon = g_int_length - 1;
-    getbyte = n + g_bn_length - 1;
+    int expon = g_int_length - 1;
+    bn_t getbyte = n + g_bn_length - 1;
     while (*getbyte == 0 && getbyte >= n)
     {
         getbyte--;
@@ -957,8 +917,6 @@ bf_t copy_bf(bf_t r, bf_t n)
 bf_t float_to_bf(bf_t r, LDouble f)
 {
     int power;
-    int bnl;
-    int il;
     if (f == 0)
     {
         clear_bf(r);
@@ -968,9 +926,9 @@ bf_t float_to_bf(bf_t r, LDouble f)
     // remove the exp part
     f = extract256(f, &power);
 
-    bnl = g_bn_length;
+    int bnl = g_bn_length;
     g_bn_length = g_bf_length;
-    il = g_int_length;
+    int il = g_int_length;
     g_int_length = 2;
     float_to_bn(r, f);
     g_bn_length = bnl;
@@ -997,20 +955,15 @@ bf_t float_to_bf1(bf_t r, LDouble f)
 //  Converts a bigfloat to a double
 LDouble bf_to_float(bf_t n)
 {
-    int power;
-    int bnl;
-    int il;
-    LDouble f;
-
-    bnl = g_bn_length;
+    int bnl = g_bn_length;
     g_bn_length = g_bf_length;
-    il = g_int_length;
+    int il = g_int_length;
     g_int_length = 2;
-    f = bn_to_float(n);
+    LDouble f = bn_to_float(n);
     g_bn_length = bnl;
     g_int_length = il;
 
-    power = (S16)big_access16(n + g_bf_length);
+    int power = (S16) big_access16(n + g_bf_length);
     f = scale256(f, power);
 
     return f;
