@@ -86,9 +86,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
 
         while (len > 0)
         {
-            TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
-
-            switch (tok)
+            switch (TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
             {
             case TokenType::TOK_PARA:
             {
