@@ -224,7 +224,7 @@ void Plot::init_pixels()
     m_pixels_len = m_row_len * m_height;
     _ASSERTE(m_pixels_len > 0);
     m_pixels.resize(m_pixels_len);
-    std::memset(&m_pixels[0], 0, m_pixels_len);
+    std::memset(m_pixels.data(), 0, m_pixels_len);
     m_dirty = false;
     {
         RECT dirty_rect = { -1, -1, -1, -1 };
@@ -255,7 +255,7 @@ void Plot::on_paint(HWND window)
     _ASSERTE(width >= 0 && height >= 0);
     if (width > 0 && height > 0)
     {
-        DWORD status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, &m_pixels[0],
+        DWORD status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, m_pixels.data(),
             &m_bmi, DIB_RGB_COLORS, SRCCOPY);
         _ASSERTE(status != GDI_ERROR);
     }
@@ -539,7 +539,7 @@ void Plot::clear()
     RECT r = { 0, 0, m_width, m_height };
     m_dirty_region = r;
     m_dirty = true;
-    std::memset(&m_pixels[0], 0, m_pixels_len);
+    std::memset(m_pixels.data(), 0, m_pixels_len);
 }
 
 void Plot::redraw()
