@@ -26,31 +26,22 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 {
     unsigned int xres;
     unsigned int yres;
-    unsigned int allxres;
-    unsigned int allyres;
     unsigned int xtot;
     unsigned int ytot;
     unsigned int xloc;
     unsigned int yloc;
-    unsigned char ichar;
-    unsigned int allitbl;
-    unsigned int itbl;
     unsigned int i;
     char gifin[15];
     char gifout[15];
-    int errorflag;
-    int inputerrorflag;
     unsigned char *temp;
-    std::FILE *out;
-    std::FILE *in;
 
-    errorflag = 0;                          // no errors so
-    inputerrorflag = 0;
-    allitbl = 0;
-    allyres = allitbl;
-    allxres = allyres;
-    in = nullptr;
-    out = in;
+    int errorflag = 0;                          // no errors so
+    int inputerrorflag = 0;
+    unsigned int allitbl = 0;
+    unsigned int allyres = allitbl;
+    unsigned int allxres = allyres;
+    std::FILE *in = nullptr;
+    std::FILE *out = in;
 
     std::strcpy(gifout, "fractmig.gif");
 
@@ -106,8 +97,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 }
             }                           // end of first-time-through
 
-            ichar = (char)(temp[10] & 0x07);        // find the color table size
-            itbl = 1 << (++ichar);
+            unsigned char ichar = (char) (temp[10] & 0x07);        // find the color table size
+            unsigned int itbl = 1 << (++ichar);
             ichar = (char)(temp[10] & 0x80);        // is there a global color table?
             if (xstep == 0 && ystep == 0)   // first time through?
             {
