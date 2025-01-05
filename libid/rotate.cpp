@@ -581,7 +581,7 @@ void save_palette()
     int i;
     std::strcpy(palname, g_map_name.c_str());
     driver_stack_screen();
-    char filename[256] = { 0 };
+    char filename[256]{};
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
     i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
