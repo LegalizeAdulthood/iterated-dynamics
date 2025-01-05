@@ -39,9 +39,7 @@ static double s_star_field_values[4]{30.0, 100.0, 5.0, 0.0};
 //
 static int gaussian_number(int probability, int range)
 {
-    long p;
-
-    p = divide((long)probability << 16, (long)range << 16, 16);
+    long p = divide((long) probability << 16, (long) range << 16, 16);
     p = multiply(p, s_concentration, 16);
     p = multiply((long)s_distribution << 16, p, 16);
     if (!(rand15() % (s_distribution - (int)(p >> 16) + 1)))
@@ -65,7 +63,6 @@ static int gaussian_number(int probability, int range)
 
 int star_field()
 {
-    int c;
     g_busy = true;
     s_star_field_values[0] = std::max(s_star_field_values[0], 1.0);
     s_star_field_values[0] = std::min(s_star_field_values[0], 100.0);
@@ -95,7 +92,7 @@ int star_field()
                 g_busy = false;
                 return 1;
             }
-            c = get_color(g_col, g_row);
+            int c = get_color(g_col, g_row);
             if (c == g_inside_color)
             {
                 c = g_colors-1;
