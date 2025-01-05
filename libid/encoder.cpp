@@ -712,7 +712,6 @@ static int extend_blk_len(int datalen)
 
 static int put_extend_blk(int block_id, int block_len, char const *block_data)
 {
-    int i;
     int j;
     char header[15];
     std::strcpy(header, "!\377\013fractint");
@@ -721,7 +720,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     {
         return 0;
     }
-    i = (block_len + 254) / 255;
+    int i = (block_len + 254) / 255;
     while (--i >= 0)
     {
         block_len -= (j = std::min(block_len, 255));
@@ -1015,19 +1014,12 @@ static char s_accum[256]{};
 
 static bool compress(int rowlimit)
 {
-    int outcolor1;
-    int outcolor2;
-    int ent;
-    int disp;
-    int hsize_reg;
-    int hshift;
     int color;
     int in_count = 0;
     bool interrupted = false;
-    int tempkey;
 
-    outcolor1 = 0;               // use these colors to show progress
-    outcolor2 = 1;               // (this has nothing to do with GIF)
+    int outcolor1 = 0;               // use these colors to show progress
+    int outcolor2 = 1;               // (this has nothing to do with GIF)
 
     if (g_colors > 2)
     {
@@ -1048,7 +1040,7 @@ static bool compress(int rowlimit)
     s_cur_accum = 0;
     s_cur_bits = 0;
     s_clear_flag = false;
-    ent = 0;
+    int ent = 0;
     s_n_bits = s_start_bits;
     s_max_code = max_code(s_n_bits);
 
@@ -1057,7 +1049,7 @@ static bool compress(int rowlimit)
     s_free_ent = s_clear_code + 2;
 
     s_a_count = 0;
-    hshift = 0;
+    int hshift = 0;
     for (long fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
     {
         hshift++;
@@ -1065,7 +1057,7 @@ static bool compress(int rowlimit)
     hshift = 8 - hshift;                // set hash code range bound
 
     std::memset(s_h_tab, 0xff, (unsigned)HSIZE*sizeof(long));
-    hsize_reg = HSIZE;
+    int hsize_reg = HSIZE;
 
     output((int)s_clear_code);
 
@@ -1102,7 +1094,7 @@ static bool compress(int rowlimit)
                 {
                     goto nomatch;
                 }
-                disp = hsize_reg - i;           // secondary hash (after G. Knott)
+                int disp = hsize_reg - i;           // secondary hash (after G. Knott)
                 if (i == 0)
                 {
                     disp = 1;
@@ -1160,7 +1152,7 @@ nomatch:
                 }
                 s_last_color_bar = ydot;
             } // end if !driver_diskp()
-            tempkey = driver_key_pressed();
+            int tempkey = driver_key_pressed();
             if (tempkey && (tempkey != 's'))  // keyboard hit - bail out
             {
                 interrupted = true;
