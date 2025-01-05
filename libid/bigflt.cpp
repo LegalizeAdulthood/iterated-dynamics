@@ -876,7 +876,6 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 {
     int almost_match = 0;
     bool signflag = false;
-    LDouble f;
 
     // use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r))
 
@@ -890,7 +889,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     // good enough initial guess for Newton's Method.  If it is larger than
     // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
-    f = bf_to_float(n);
+    LDouble f = bf_to_float(n);
     bool large_arg = f > 1.0;
     if (large_arg)
     {
