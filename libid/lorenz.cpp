@@ -2586,7 +2586,7 @@ static int ifs2d()
             sum += localifs[++k*NUM_IFS_PARAMS+6];
         }
         // calculate image of last point under selected iterated function
-        long *lfptr = &localifs[0] + k * NUM_IFS_PARAMS; // point to first parm in row
+        long *lfptr = localifs.data() + k * NUM_IFS_PARAMS; // point to first parm in row
         long newx = multiply(lfptr[0], x, g_bit_shift) + multiply(lfptr[1], y, g_bit_shift) + lfptr[4];
         long newy = multiply(lfptr[2], x, g_bit_shift) + multiply(lfptr[3], y, g_bit_shift) + lfptr[5];
         x = newx;
@@ -2699,7 +2699,7 @@ static int ifs3d_long()
         }
 
         // calculate image of last point under selected iterated function
-        long *lfptr = &localifs[0] + k * NUM_IFS_3D_PARAMS; // point to first parm in row
+        long *lfptr = localifs.data() + k * NUM_IFS_3D_PARAMS; // point to first parm in row
 
         // calculate image of last point under selected iterated function
         long newx = multiply(lfptr[0], inf.orbit[0], g_bit_shift) +
