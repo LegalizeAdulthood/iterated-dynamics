@@ -114,11 +114,11 @@ static void lsysf_do_slash(LSysTurtleStateF *cmd)
 {
     if (cmd->reverse)
     {
-        cmd->realangle -= cmd->parm.nf;
+        cmd->realangle -= cmd->param.nf;
     }
     else
     {
-        cmd->realangle += cmd->parm.nf;
+        cmd->realangle += cmd->param.nf;
     }
 }
 
@@ -126,17 +126,17 @@ static void lsysf_do_bslash(LSysTurtleStateF *cmd)
 {
     if (cmd->reverse)
     {
-        cmd->realangle += cmd->parm.nf;
+        cmd->realangle += cmd->param.nf;
     }
     else
     {
-        cmd->realangle -= cmd->parm.nf;
+        cmd->realangle -= cmd->param.nf;
     }
 }
 
 static void lsysf_do_at(LSysTurtleStateF *cmd)
 {
-    cmd->size *= cmd->parm.nf;
+    cmd->size *= cmd->param.nf;
 }
 
 static void
@@ -227,12 +227,12 @@ static void lsysf_do_draw_f(LSysTurtleStateF *cmd)
 
 static void lsysf_do_draw_c(LSysTurtleStateF *cmd)
 {
-    cmd->curcolor = (char)(((int) cmd->parm.n) % g_colors);
+    cmd->curcolor = (char)(((int) cmd->param.n) % g_colors);
 }
 
 static void lsysf_do_draw_gt(LSysTurtleStateF *cmd)
 {
-    cmd->curcolor = (char)(cmd->curcolor - cmd->parm.n);
+    cmd->curcolor = (char)(cmd->curcolor - cmd->param.n);
     cmd->curcolor %= g_colors;
     if (cmd->curcolor == 0)
     {
@@ -242,7 +242,7 @@ static void lsysf_do_draw_gt(LSysTurtleStateF *cmd)
 
 static void lsysf_do_draw_lt(LSysTurtleStateF *cmd)
 {
-    cmd->curcolor = (char)(cmd->curcolor + cmd->parm.n);
+    cmd->curcolor = (char)(cmd->curcolor + cmd->param.n);
     cmd->curcolor %= g_colors;
     if (cmd->curcolor == 0)
     {
@@ -298,10 +298,10 @@ find_size(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
                 switch (command->ptype)
                 {
                 case 4:
-                    ts->parm.n = command->parm.n;
+                    ts->param.n = command->parm.n;
                     break;
                 case 10:
-                    ts->parm.nf = command->parm.nf;
+                    ts->param.nf = command->parm.nf;
                     break;
                 default:
                     break;
@@ -447,10 +447,10 @@ draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
                 switch (command->ptype)
                 {
                 case 4:
-                    ts->parm.n = command->parm.n;
+                    ts->param.n = command->parm.n;
                     break;
                 case 10:
-                    ts->parm.nf = command->parm.nf;
+                    ts->param.nf = command->parm.nf;
                     break;
                 default:
                     break;

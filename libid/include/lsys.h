@@ -56,7 +56,7 @@ struct LSysTurtleStateF
     {
         long n;
         LDouble nf;
-    } parm;
+    } param;
 };
 
 extern char g_max_angle;
