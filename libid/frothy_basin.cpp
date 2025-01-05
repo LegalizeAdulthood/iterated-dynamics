@@ -570,12 +570,11 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
         else if (g_colors >= 16)
         {
             // only alternate coloring scheme available for 16 colors
-            long lshade;
 
             // Trying to make a better 16 color distribution.
             // Since their are only a few possiblities, just handle each case.
             // This is a mostly guess work here.
-            lshade = (g_color_iter<<16)/g_max_iterations;
+            long lshade = (g_color_iter << 16) / g_max_iterations;
             if (s_fsp.attractors != 6) // either 2 or 3 attractors
             {
                 if (lshade < 2622)         // 0.04
