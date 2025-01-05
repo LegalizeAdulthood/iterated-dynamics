@@ -252,7 +252,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
         const char *start = curr;
         bool skip_blanks = false;
-        int lnum = 0;
+        int line_num = 0;
         int num_links = 0;
         int col = 0;
         int start_margin = -1;
@@ -280,7 +280,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                     if (tok == TokenType::TOK_PARA)
                     {
                         col = 0;   // fake a nl
-                        ++lnum;
+                        ++line_num;
                         break;
                     }
 
@@ -295,13 +295,13 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                     if (col+width > SCREEN_WIDTH)
                     {
                         // go to next line...
-                        if (++lnum >= SCREEN_DEPTH)
+                        if (++line_num >= SCREEN_DEPTH)
                         {
                             // go to next page...
                             t.add_page_break(start_margin, text, start, curr, num_links);
                             start = curr + ((tok == TokenType::TOK_SPACE) ? size : 0);
                             start_margin = margin;
-                            lnum = 0;
+                            line_num = 0;
                             num_links = 0;
                         }
                         if (tok == TokenType::TOK_SPACE)
@@ -329,13 +329,13 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                     start += size;
                     break;
                 }
-                ++lnum;
-                if (lnum >= SCREEN_DEPTH || (col == 0 && lnum == SCREEN_DEPTH-1))
+                ++line_num;
+                if (line_num >= SCREEN_DEPTH || (col == 0 && line_num == SCREEN_DEPTH-1))
                 {
                     t.add_page_break(start_margin, text, start, curr, num_links);
                     start = curr + size;
                     start_margin = -1;
-                    lnum = 0;
+                    line_num = 0;
                     num_links = 0;
                     skip_blanks = true;
                 }
@@ -352,7 +352,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                 t.add_page_break(start_margin, text, start, curr, num_links);
                 start_margin = -1;
                 start = curr + size;
-                lnum = 0;
+                line_num = 0;
                 num_links = 0;
                 break;
 
@@ -474,9 +474,9 @@ void HelpCompiler::set_hot_link_doc_page()
 // insert page #'s in the DocContents
 void HelpCompiler::set_content_doc_page()
 {
-    const int tnum = find_topic_title(DOCCONTENTS_TITLE);
-    assert(tnum >= 0);
-    Topic &t = g_src.topics[tnum];
+    const int topic_num = find_topic_title(DOCCONTENTS_TITLE);
+    assert(topic_num >= 0);
+    Topic &t = g_src.topics[topic_num];
     char *base = t.get_topic_text();
     for (const Content &c : g_src.contents)
     {
