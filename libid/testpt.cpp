@@ -52,7 +52,6 @@ int test()
         {
             for (g_col = 0; g_col <= g_i_x_stop; g_col++)       // look at each point on screen
             {
-                int color;
                 g_init.x = g_dx_pixel();
                 g_init.y = g_dy_pixel();
                 if (driver_key_pressed())
@@ -62,7 +61,8 @@ int test()
                     put_resume(g_row, passes);
                     return -1;
                 }
-                color = test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
+                int color =
+                    test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
                 if (color >= g_colors)
                 {
                     // avoid trouble if color is 0
@@ -101,20 +101,14 @@ void test_end()       // this routine is called just after the fractal ends
 // (note: possibly using the dual-pass / solid-guessing options
 int test_pt(double initreal, double initimag, double parm1, double parm2, long maxit, int inside)
 {
-    double oldreal;
-    double oldimag;
-    double newreal;
-    double newimag;
-    double magnitude;
-    long color;
-    oldreal = parm1;
-    oldimag = parm2;
-    magnitude = 0.0;
-    color = 0;
+    double oldreal = parm1;
+    double oldimag = parm2;
+    double magnitude = 0.0;
+    long color = 0;
     while ((magnitude < 4.0) && (color < maxit))
     {
-        newreal = oldreal * oldreal - oldimag * oldimag + initreal;
-        newimag = 2 * oldreal * oldimag + initimag;
+        double newreal = oldreal * oldreal - oldimag * oldimag + initreal;
+        double newimag = 2 * oldreal * oldimag + initimag;
         color++;
         oldreal = newreal;
         oldimag = newimag;
