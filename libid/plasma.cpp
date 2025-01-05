@@ -55,19 +55,13 @@ U16 rand16()
     value = (U16)rand15();
     value <<= 1;
     value = (U16)(value + (rand15()&1));
-    if (value < 1)
-    {
-        value = 1;
-    }
+    value = std::max<U16>(value, 1U);
     return value;
 }
 
 static void put_pot(int x, int y, U16 color)
 {
-    if (color < 1)
-    {
-        color = 1;
-    }
+    color = std::max<U16>(color, 1U);
     g_put_color(x, y, (color >> 8) ? (color >> 8) : 1);  // don't write 0
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
@@ -95,10 +89,7 @@ static void put_color_border(int x, int y, int color)
     {
         color = g_outside_color;
     }
-    if (color < 1)
-    {
-        color = 1;
-    }
+    color = std::max(color, 1);
     g_put_color(x, y, color);
 }
 
@@ -129,10 +120,7 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
     {
         pseudorandom = s_max_plasma;
     }
-    if (pseudorandom < 1)
-    {
-        pseudorandom = 1;
-    }
+    pseudorandom = std::max<S32>(pseudorandom, 1);
     g_plot(x, y, (U16)pseudorandom);
     return (U16)pseudorandom;
 }
@@ -350,30 +338,13 @@ int plasma()
         s_i_parm_x = 800;
     }
     g_params[0] = (double)s_i_parm_x / 8.0;  // let user know what was used
-    if (g_params[1] < 0)
-    {
-        g_params[1] = 0;  // limit parameter values
-    }
-    if (g_params[1] > 1)
-    {
-        g_params[1] = 1;
-    }
-    if (g_params[2] < 0)
-    {
-        g_params[2] = 0;  // limit parameter values
-    }
-    if (g_params[2] > 1)
-    {
-        g_params[2] = 1;
-    }
-    if (g_params[3] < 0)
-    {
-        g_params[3] = 0;  // limit parameter values
-    }
-    if (g_params[3] > 1)
-    {
-        g_params[3] = 1;
-    }
+    // limit parameter values
+    g_params[1] = std::max(g_params[1], 0.0);
+    g_params[1] = std::min(g_params[1], 1.0);
+    g_params[2] = std::max(g_params[2], 0.0);
+    g_params[2] = std::min(g_params[2], 1.0);
+    g_params[3] = std::max(g_params[3], 0.0);
+    g_params[3] = std::min(g_params[3], 1.0);
 
     if (!g_random_seed_flag && g_params[2] == 1)
     {
