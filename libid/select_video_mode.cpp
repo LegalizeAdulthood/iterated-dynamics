@@ -203,7 +203,6 @@ static bool ent_less(const int lhs, const int rhs)
 static void update_id_cfg()
 {
     char buf[121];
-    char kname[5];
     int i;
     int j;
 
@@ -230,11 +229,12 @@ static void update_id_cfg()
     int nextlinenum = g_cfg_line_nums[0];
     while (std::fgets(buf, std::size(buf), cfgfile))
     {
-        char colorsbuf[10];
         ++linenum;
         // replace this line?
         if (linenum == nextlinenum)
         {
+            char kname[5];
+            char colorsbuf[10];
             VideoInfo vident = g_video_table[nextmode];
             vid_mode_key_name(vident.keynum, kname);
             std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
