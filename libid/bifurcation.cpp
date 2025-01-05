@@ -171,8 +171,7 @@ int bifurcation()
 
         for (int y = g_i_y_stop; y >= 0; y--) // should be iystop & >=0
         {
-            int color;
-            color = s_verhulst_array[y];
+            int color = s_verhulst_array[y];
             if (color && s_mono)
             {
                 color = g_inside_color;
