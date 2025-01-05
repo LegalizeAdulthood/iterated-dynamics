@@ -13,6 +13,7 @@
 #include "zoom.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 
@@ -185,7 +186,7 @@ get_view_restart:
             g_final_aspect_ratio = (g_view_window && g_view_x_dots != 0 && g_view_y_dots != 0) ?
                                ((float) g_view_y_dots)/((float) g_view_x_dots) : old_aspectratio;
         }
-        g_screen_y_dots = (int)(g_final_aspect_ratio*g_screen_x_dots + 0.5);
+        g_screen_y_dots = (int) std::lround(g_final_aspect_ratio * g_screen_x_dots);
     }
     if ((ymax != -1) && (g_screen_y_dots > ymax))
     {
