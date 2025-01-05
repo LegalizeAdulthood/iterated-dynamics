@@ -70,12 +70,11 @@ static bool select_type_params(FractalType newfractype, FractalType oldfractype)
 // prompt for and select fractal type
 int get_fract_type()
 {
-    FractalType t;
     int done = -1;
     FractalType oldfractype = g_fractal_type;
     while (true)
     {
-        t = select_fract_type(g_fractal_type);
+        FractalType t = select_fract_type(g_fractal_type);
         if (t == FractalType::NO_FRACTAL)
         {
             break;
@@ -269,10 +268,8 @@ static bool select_type_params( // prompt for new fractal type parameters
     FractalType oldfractype         // previous fractal type
 )
 {
-    bool ret;
-
 sel_type_restart:
-    ret = false;
+    bool ret = false;
     g_fractal_type = newfractype;
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
