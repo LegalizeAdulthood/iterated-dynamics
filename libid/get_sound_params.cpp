@@ -99,7 +99,7 @@ get_sound_restart:
         g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* reset to default */
         g_orbit_delay = 0;
         g_base_hertz = 440;
-        g_start_show_orbit = 0;
+        g_start_show_orbit = false;
         goto get_sound_restart;
     }
 
