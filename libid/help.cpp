@@ -975,7 +975,7 @@ static bool can_read_file(const std::string &path)
 
 static std::string find_file(char const *filename)
 {
-    const std::string path{(fs::path(SRCDIR) / filename).string()};
+    std::string path{(fs::path(SRCDIR) / filename).string()};
     if (can_read_file(path))
     {
         return path;
