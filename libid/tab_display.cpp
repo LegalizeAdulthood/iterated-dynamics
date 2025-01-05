@@ -50,16 +50,11 @@ static void area();
 // returns false if success, true if hit maxrow before done
 static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
-    char save1;
-    char save2;
-    int length;
     int decpt;
-    int g_padding;
-    int startrow;
     bool done = false;
-    startrow = *row;
-    length = (int) std::strlen(str);
-    g_padding = 3; // space between col1 and decimal.
+    int startrow = *row;
+    int length = (int) std::strlen(str);
+    int g_padding = 3; // space between col1 and decimal.
     // find decimal point
     for (decpt = 0; decpt < length; decpt++)
     {
@@ -87,8 +82,8 @@ static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, 
         if (col2-col1 < length)
         {
             done = (*row - startrow + 1) >= maxrow;
-            save1 = str[col2-col1+1];
-            save2 = str[col2-col1+2];
+            char save1 = str[col2 - col1 + 1];
+            char save2 = str[col2 - col1 + 2];
             if (done)
             {
                 str[col2-col1+1]   = '+';
@@ -145,13 +140,12 @@ static void write_row(int row, char const *format, ...)
 
 bool tab_display2(char *msg)
 {
-    int row;
     int key = 0;
 
     help_title();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
 
-    row = 1;
+    int row = 1;
     put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
     write_row(++row, "Version %d patch %d", g_release, g_patch_level);
@@ -240,7 +234,6 @@ int tab_display()       // display the status of the current image
     char const *msgptr;
     int key;
     int saved = 0;
-    int k;
     int hasformparam = 0;
 
     if (g_calc_status < CalcStatus::PARAMS_CHANGED)        // no active fractal image
@@ -270,7 +263,7 @@ int tab_display()       // display the status of the current image
     }
 
 top:
-    k = 0; /* initialize here so parameter line displays correctly on return
+    int k = 0; /* initialize here so parameter line displays correctly on return
                 from control-tab */
     help_title();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
@@ -523,7 +516,6 @@ top:
         adjust_corner(); // make bottom left exact if very near exact
         if (g_bf_math != BFMathType::NONE)
         {
-            int truncaterow;
             int dec = std::min(320, g_decimals);
             adjust_corner_bf(); // make bottom left exact if very near exact
             cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
@@ -534,7 +526,7 @@ top:
             {
                 truncate = true;
             }
-            truncaterow = g_row;
+            int truncaterow = g_row;
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(s_row, 8, C_GENERAL_MED, "x");
             bf_to_str(msg, dec, bfXctr);
