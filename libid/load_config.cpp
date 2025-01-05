@@ -34,13 +34,6 @@ void load_config(const std::string &cfg_path)
 {
     std::FILE   *cfgfile;
     VideoInfo    vident;
-    int          linenum;
-    long xdots;
-    long ydots;
-    int          i;
-    int          j;
-    int          keynum;
-    int          colors;
     char        *fields[5]{};
 
     if (cfg_path.empty()                                             // can't find the file
@@ -50,7 +43,7 @@ void load_config(const std::string &cfg_path)
         return;
     }
 
-    linenum = 0;
+    int linenum = 0;
     char tempstring[150];
     while (g_video_table_len < MAX_VIDEO_MODES
         && std::fgets(tempstring, std::size(tempstring), cfgfile))
@@ -67,8 +60,8 @@ void load_config(const std::string &cfg_path)
         }
         tempstring[120] = 0;
         tempstring[(int) std::strlen(tempstring)-1] = 0; // zap trailing \n
-        j = -1;
-        i = j;
+        int j = -1;
+        int i = j;
         // key, 0: mode name, 1: x, 2: y, 3: colors, 4: driver, 5: comments
         while (true)
         {
@@ -87,13 +80,13 @@ void load_config(const std::string &cfg_path)
                 tempstring[i] = 0;   // make field a separate string
             }
         }
-        keynum = check_vid_mode_key_name(tempstring);
+        int keynum = check_vid_mode_key_name(tempstring);
         assert(fields[0]);
-        xdots = std::atol(fields[0]);
+        long xdots = std::atol(fields[0]);
         assert(fields[1]);
-        ydots = std::atol(fields[1]);
+        long ydots = std::atol(fields[1]);
         assert(fields[2]);
-        colors = std::atoi(fields[2]);
+        int colors = std::atoi(fields[2]);
 
         if (j < 4 ||
                 keynum < 0 ||
