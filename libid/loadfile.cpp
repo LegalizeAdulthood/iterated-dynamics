@@ -2057,8 +2057,8 @@ static bool is_visible_window(
         tl.y = info->ymax;
         transform(&tl);
     }
-    list->itl.x = (int)(tl.x + 0.5);
-    list->itl.y = (int)(tl.y + 0.5);
+    list->itl.x = (int) std::lround(tl.x);
+    list->itl.y = (int) std::lround(tl.y);
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -2081,8 +2081,8 @@ static bool is_visible_window(
         tr.y = (info->ymax)+(info->ymin-info->y3rd);
         transform(&tr);
     }
-    list->itr.x = (int)(tr.x + 0.5);
-    list->itr.y = (int)(tr.y + 0.5);
+    list->itr.x = (int) std::lround(tr.x);
+    list->itr.y = (int) std::lround(tr.y);
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -2103,8 +2103,8 @@ static bool is_visible_window(
         bl.y = info->y3rd;
         transform(&bl);
     }
-    list->ibl.x = (int)(bl.x + 0.5);
-    list->ibl.y = (int)(bl.y + 0.5);
+    list->ibl.x = (int) std::lround(bl.x);
+    list->ibl.y = (int) std::lround(bl.y);
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -2125,8 +2125,8 @@ static bool is_visible_window(
         br.y = info->ymin;
         transform(&br);
     }
-    list->ibr.x = (int)(br.x + 0.5);
-    list->ibr.y = (int)(br.y + 0.5);
+    list->ibr.x = (int) std::lround(br.x);
+    list->ibr.y = (int) std::lround(br.y);
 
     double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
