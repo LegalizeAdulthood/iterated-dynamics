@@ -2,6 +2,8 @@
 //
 #include "peterson_variations.h"
 
+#include <algorithm>
+
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -21,10 +23,7 @@ static LComplex s_l_coefficient{};
 
 bool marks_julia_setup()
 {
-    if (g_params[2] < 1)
-    {
-        g_params[2] = 1;
-    }
+    g_params[2] = std::max(g_params[2], 1.0);
     g_c_exponent = (int)g_params[2];
     g_long_param = &g_l_param;
     g_l_old_z = *g_long_param;
@@ -52,10 +51,7 @@ bool marks_julia_setup()
 
 bool marks_julia_fp_setup()
 {
-    if (g_params[2] < 1)
-    {
-        g_params[2] = 1;
-    }
+    g_params[2] = std::max(g_params[2], 1.0);
     g_c_exponent = (int)g_params[2];
     g_float_param = &g_param_z1;
     g_old_z = *g_float_param;
