@@ -1156,7 +1156,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     blk_2_info->resume_data.resize(data_len);
                     fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)g_block, data_len);
-                    std::copy(&g_block[0], &g_block[data_len], &blk_2_info->resume_data[0]);
+                    std::copy(&g_block[0], &g_block[data_len], blk_2_info->resume_data.data());
                     blk_2_info->length = data_len;
                     blk_2_info->got_data = true;
                     break;
@@ -1198,7 +1198,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     fseek(s_fp, (long) -block_len, SEEK_CUR);
                     {
                         std::vector<char> buffer(data_len, 0);
-                        load_ext_blk(&buffer[0], data_len);
+                        load_ext_blk(buffer.data(), data_len);
                         for (int i = 0; i < blk_4_info->length; ++i)
                         {
                             // int16 stored in little-endian byte order
@@ -2021,7 +2021,7 @@ static bool is_visible_window(
         bf_t bt_t5 = alloc_stack(two_di_len);
         bf_t bt_t6 = alloc_stack(two_di_len);
 
-        std::memcpy(bt_t1, &blk_5_info->apm_data[0], two_di_len);
+        std::memcpy(bt_t1, blk_5_info->apm_data.data(), two_di_len);
         std::memcpy(bt_t2, &blk_5_info->apm_data[two_di_len], two_di_len);
         std::memcpy(bt_t3, &blk_5_info->apm_data[2*two_di_len], two_di_len);
         std::memcpy(bt_t4, &blk_5_info->apm_data[3*two_di_len], two_di_len);
