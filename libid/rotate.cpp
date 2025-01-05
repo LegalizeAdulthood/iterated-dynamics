@@ -578,12 +578,11 @@ static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 void save_palette()
 {
     char palname[FILE_MAX_PATH];
-    int i;
     std::strcpy(palname, g_map_name.c_str());
     driver_stack_screen();
     char filename[256]{};
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
-    i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
+    int i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
     {
