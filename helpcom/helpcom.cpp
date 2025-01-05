@@ -797,8 +797,7 @@ bool DocumentProcessor::topic_token()
 
     m_size = 0;
     m_width = 0;
-    TokenType tok = find_token_length(m_token_mode, m_pd.curr, m_pd.len, &m_size, &m_width);
-    switch (tok)
+    switch (find_token_length(m_token_mode, m_pd.curr, m_pd.len, &m_size, &m_width))
     {
     case TokenType::TOK_PARA:
         if (!topic_paragraph())
