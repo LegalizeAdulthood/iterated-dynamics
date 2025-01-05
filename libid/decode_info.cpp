@@ -41,7 +41,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
 {
     std::vector<unsigned char> info_buff;
     info_buff.resize(sizeof(FractalInfo));
-    unsigned char *buf = &info_buff[0];
+    unsigned char *buf = info_buff.data();
     unsigned char *bufPtr = buf;
     std::memcpy(buf, info, sizeof(FractalInfo));
 
@@ -435,7 +435,7 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     unsigned char *bufPtr;
 
     evolution_info_buff.resize(sizeof(EvolutionInfo));
-    unsigned char *buf = &evolution_info_buff[0];
+    unsigned char *buf = evolution_info_buff.data();
     bufPtr = buf;
     std::memcpy((char *)buf, (char *)info, sizeof(EvolutionInfo));
 
@@ -483,7 +483,7 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     unsigned char *bufPtr;
 
     orbits_info_buff.resize(sizeof(OrbitsInfo));
-    unsigned char *buf = &orbits_info_buff[0];
+    unsigned char *buf = orbits_info_buff.data();
     bufPtr = buf;
     std::memcpy((char *)buf, (char *)info, sizeof(OrbitsInfo));
 
