@@ -45,28 +45,24 @@ static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
 
 static void plot_d_orbit(double dx, double dy, int color)
 {
-    int i;
-    int j;
-    int save_sxoffs;
-    int save_syoffs;
     if (g_orbit_save_index >= NUM_SAVE_ORBIT-3)
     {
         return;
     }
-    i = (int)(dy * g_plot_mx1 - dx * g_plot_mx2);
+    int i = (int) (dy * g_plot_mx1 - dx * g_plot_mx2);
     i += g_logical_screen_x_offset;
     if (i < 0 || i >= g_screen_x_dots)
     {
         return;
     }
-    j = (int)(dx * g_plot_my1 - dy * g_plot_my2);
+    int j = (int) (dx * g_plot_my1 - dy * g_plot_my2);
     j += g_logical_screen_y_offset;
     if (j < 0 || j >= g_screen_y_dots)
     {
         return;
     }
-    save_sxoffs = g_logical_screen_x_offset;
-    save_syoffs = g_logical_screen_y_offset;
+    int save_sxoffs = g_logical_screen_x_offset;
+    int save_syoffs = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     // save orbit value
@@ -134,21 +130,16 @@ void plot_orbit(double real, double imag, int color)
 
 void scrub_orbit()
 {
-    int i;
-    int j;
-    int c;
-    int save_sxoffs;
-    int save_syoffs;
     driver_mute();
-    save_sxoffs = g_logical_screen_x_offset;
-    save_syoffs = g_logical_screen_y_offset;
+    int save_sxoffs = g_logical_screen_x_offset;
+    int save_syoffs = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     while (g_orbit_save_index >= 3)
     {
-        c = s_save_orbit[--g_orbit_save_index];
-        j = s_save_orbit[--g_orbit_save_index];
-        i = s_save_orbit[--g_orbit_save_index];
+        int c = s_save_orbit[--g_orbit_save_index];
+        int j = s_save_orbit[--g_orbit_save_index];
+        int i = s_save_orbit[--g_orbit_save_index];
         g_put_color(i, j, c);
     }
     g_logical_screen_x_offset = save_sxoffs;
