@@ -58,8 +58,7 @@ void set_wait(long *wait)
         std::ostringstream msg;
         msg << "Delay " << std::setw(4) << *wait << "     ";
         show_temp_msg(msg.str());
-        int kbdchar = driver_get_key();
-        switch (kbdchar)
+        switch (driver_get_key())
         {
         case ID_KEY_CTL_RIGHT_ARROW:
         case ID_KEY_CTL_UP_ARROW:
