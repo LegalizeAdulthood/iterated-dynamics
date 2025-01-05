@@ -2334,9 +2334,7 @@ static int first_time(int linelen, VECTOR v)
     double xmax;
     double ymax;
     double zmax;
-    VECTOR origin;
     VECTOR direct;
-    VECTOR tmp;
     // current,start,stop latitude
     // current start,stop longitude
     // increment of latitude
@@ -2696,6 +2694,8 @@ static int first_time(int linelen, VECTOR v)
 
     if (g_preview && g_show_box)
     {
+        VECTOR origin;
+        VECTOR tmp;
         normalize_vector(direct);
 
         // move light vector to be more clear with grey scale maps
