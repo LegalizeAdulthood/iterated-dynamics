@@ -555,7 +555,7 @@ Commands marked with an '*' are also available at the credits screen.
   L(ook)                Enter Browsing Mode
 
 {Evolver Commands}
-  Ctrl+E                Bring up {=HELP_EVOL explorer/evolver} control screen
+  Ctrl+E                Bring up {=HELP_EVOLVER explorer/evolver} control screen
   Alt+1 ... Alt+7       Enter evolver mode with selected level of
                         mutation: Alt+1 = low level, Alt+7 = maximum.
                         (dont use the keypad, just the 'top row' numbers)
@@ -1962,7 +1962,7 @@ image.
 
 ;
 ;
-~Topic=Parameter Explorer/Evolver, Label=HELP_EVOL
+~Topic=Parameter Explorer/Evolver, Label=HELP_EVOLVER
 
 Since Id is such a wonderfully complex program it has more than a few
 parameters to tweak and options to select.  To the inexperienced
