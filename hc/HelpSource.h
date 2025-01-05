@@ -36,8 +36,8 @@ struct Content
     bool is_label[MAX_CONTENT_TOPIC];
     std::string topic_name[MAX_CONTENT_TOPIC];
     int topic_num[MAX_CONTENT_TOPIC];
-    std::string srcfile;
-    int srcline;
+    std::string src_file;
+    int src_line;
 };
 
 struct Label

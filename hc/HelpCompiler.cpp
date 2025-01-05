@@ -103,8 +103,8 @@ std::ostream &operator<<(std::ostream &str, const Content &content)
             << "    Name: <" << content.topic_name[i] << ">\n"
             << "    Topic Num: " << content.topic_num[i] << '\n';
     }
-    return str << "Source File: <" << content.srcfile << ">\n"
-        << "Source Line: " << content.srcline << '\n';
+    return str << "Source File: <" << content.src_file << ">\n"
+        << "Source Line: " << content.src_line << '\n';
 }
 
 std::ostream &operator<<(std::ostream &str, const Page &page)

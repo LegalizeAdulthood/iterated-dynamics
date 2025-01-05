@@ -68,8 +68,8 @@ void Content::label_topic(int ctr)
     {
         if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::DATA))
         {
-            g_current_src_filename = srcfile;
-            g_src_line = srcline;
+            g_current_src_filename = src_file;
+            g_src_line = src_line;
             error(0, "Label \"%s\" is a data-only topic.", topic_name[ctr].c_str());
             g_src_line = -1;
         }
@@ -89,8 +89,8 @@ void Content::label_topic(int ctr)
     }
     else
     {
-        g_current_src_filename = srcfile;
-        g_src_line = srcline;
+        g_current_src_filename = src_file;
+        g_src_line = src_line;
         error(0, "Cannot find DocContent label \"%s\".", topic_name[ctr].c_str());
         g_src_line = -1;
     }
@@ -101,8 +101,8 @@ void Content::content_topic(int ctr)
     int const t = find_topic_title(topic_name[ctr].c_str());
     if (t == -1)
     {
-        g_current_src_filename = srcfile;
-        g_src_line = srcline;
+        g_current_src_filename = src_file;
+        g_src_line = src_line;
         error(0, "Cannot find DocContent topic \"%s\".", topic_name[ctr].c_str());
         g_src_line = -1;  // back to reality
     }
@@ -627,7 +627,7 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
     c.num_topic = 1;
     c.is_label[0] = false;
     c.topic_name[0] = DOC_CONTENTS_TITLE;
-    c.srcline = -1;
+    c.src_line = -1;
     g_src.add_content(c);
 
     while (true)
@@ -638,8 +638,8 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
             c.flags = 0;
             c.num_topic = 0;
             c.doc_page = -1;
-            c.srcfile = g_current_src_filename;
-            c.srcline = g_src_line;
+            c.src_file = g_current_src_filename;
+            c.src_line = g_src_line;
 
             if (get_next_item())
             {
