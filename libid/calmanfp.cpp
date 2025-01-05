@@ -30,10 +30,6 @@ void calc_mand_fp_asm_start()
 
 long calc_mand_fp_asm()
 {
-    long cx;
-    long savedand;
-    int savedincr;
-    long tmpfsd;
     double x;
     double y;
     double x2;
@@ -41,8 +37,6 @@ long calc_mand_fp_asm()
     double xy;
     double Cx;
     double Cy;
-    double savedx;
-    double savedy;
 
     if (g_periodicity_check == 0)
     {
@@ -53,23 +47,22 @@ long calc_mand_fp_asm()
         g_old_color_iter = g_max_iterations - 255;
     }
 
-    tmpfsd = g_max_iterations - g_first_saved_and;
+    long tmpfsd = g_max_iterations - g_first_saved_and;
     // this defeats checking periodicity immediately
     // but matches the code in standard_fractal()
     g_old_color_iter = std::min(g_old_color_iter, tmpfsd);
 
     // initparms
-    savedx = 0;
-    savedy = 0;
+    double savedx = 0;
+    double savedy = 0;
     g_orbit_save_index = 0;
-    savedand = g_first_saved_and;
-    savedincr = 1;             // start checking the very first time
+    long savedand = g_first_saved_and;
+    int savedincr = 1;             // start checking the very first time
     g_keyboard_check_interval--;                // Only check the keyboard sometimes
     if (g_keyboard_check_interval < 0)
     {
-        int key;
         g_keyboard_check_interval = 1000;
-        key = driver_key_pressed();
+        int key = driver_key_pressed();
         if (key)
         {
             if (key == 'o' || key == 'O')
@@ -85,7 +78,7 @@ long calc_mand_fp_asm()
         }
     }
 
-    cx = g_max_iterations;
+    long cx = g_max_iterations;
     if (g_fractal_type != FractalType::JULIA_FP && g_fractal_type != FractalType::JULIA)
     {
         // Mandelbrot_87
