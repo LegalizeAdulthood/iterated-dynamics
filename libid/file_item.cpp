@@ -667,7 +667,7 @@ static long gfe_choose_entry(ItemType type, char const *title, const std::string
     char buf[101];
     FileEntry storage[MAX_ENTRIES + 1]{};
     FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
-    int attributes[MAX_ENTRIES + 1] = { 0 };
+    int attributes[MAX_ENTRIES + 1]{};
     char instr[80];
 
     static bool dosort = true;
