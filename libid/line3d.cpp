@@ -644,7 +644,7 @@ int line3d(Byte * pixels, unsigned linelen)
 
             if (g_raytrace_format == RayTraceFormat::ACROSPIN)       // Output vertex info for Acrospin
             {
-                std::fprintf(s_file_ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
+                std::fprintf(s_file_ptr1, "%4.4f %4.4f %4.4f R%dC%d\n",
                         f_cur.x, f_cur.y, static_cast<double>(f_cur.color), s_ro, s_co);
                 s_co_max = std::max(s_co, s_co_max);
                 s_co++;
@@ -2018,7 +2018,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     {
         for (int i = 0; i <= 2; i++)
         {
-            std::fprintf(s_file_ptr1, "% #4.4f ", c[i]);
+            std::fprintf(s_file_ptr1, "%4.4f ", c[i]);
         }
     }
 
@@ -2086,11 +2086,11 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
             }
             else if (!(g_raytrace_format == RayTraceFormat::MTV || g_raytrace_format == RayTraceFormat::RAYSHADE))
             {
-                std::fprintf(s_file_ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
+                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[i][j]); // Right handed
             }
             else
             {
-                std::fprintf(s_file_ptr1, "% #4.4f ", pt_t[2 - i][j]);     // Left handed
+                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[2 - i][j]);     // Left handed
             }
         }
 
@@ -2111,7 +2111,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
         {
             std::fprintf(s_file_ptr1,
                     "  TEXTURE\n"
-                    "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
+                    "   COLOR  RED%4.4f GREEN%4.4f BLUE%4.4f\n"
                     "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
                     c[0], c[1], c[2]);
         }
@@ -2216,12 +2216,12 @@ static int end_object(bool triout)
 
             // Add the bounding box info
             std::fprintf(s_file_ptr1, " BOUNDED_BY\n  INTERSECTION\n");
-            std::fprintf(s_file_ptr1, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -s_min_xyz[0]);
-            std::fprintf(s_file_ptr1, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  s_max_xyz[0]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -s_min_xyz[1]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  s_max_xyz[1]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -s_min_xyz[2]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  s_max_xyz[2]);
+            std::fprintf(s_file_ptr1, "   PLANE <-1.0  0.0  0.0 > %4.3f END_PLANE\n", -s_min_xyz[0]);
+            std::fprintf(s_file_ptr1, "   PLANE < 1.0  0.0  0.0 > %4.3f END_PLANE\n",  s_max_xyz[0]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0 -1.0  0.0 > %4.3f END_PLANE\n", -s_min_xyz[1]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0  1.0  0.0 > %4.3f END_PLANE\n",  s_max_xyz[1]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0 -1.0 > %4.3f END_PLANE\n", -s_min_xyz[2]);
+            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0  1.0 > %4.3f END_PLANE\n",  s_max_xyz[2]);
             std::fprintf(s_file_ptr1, "  END_INTERSECTION\n END_BOUND\n");
         }
 
