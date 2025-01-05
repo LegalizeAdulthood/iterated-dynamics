@@ -25,6 +25,7 @@
 #include "ValueSaver.h"
 #include "video.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -135,14 +136,8 @@ static bool get_min_max()
         for (int xd = 0; xd < g_logical_screen_x_dots; xd++)
         {
             int ldepth = get_depth(xd, yd);
-            if (ldepth < MINC)
-            {
-                MINC = ldepth;
-            }
-            if (ldepth > MAXC)
-            {
-                MAXC = ldepth;
-            }
+            MINC = std::min(ldepth, MINC);
+            MAXC = std::max(ldepth, MAXC);
         }
     }
     clear_temp_msg();
@@ -283,10 +278,7 @@ bool auto_stereo_convert()
 
     // empircally determined adjustment to make WIDTH scale correctly
     WIDTH = g_auto_stereo_width*.67;
-    if (WIDTH < 1)
-    {
-        WIDTH = 1;
-    }
+    WIDTH = std::max(WIDTH, 1.0);
     GROUND = g_logical_screen_x_dots / 8;
     if (g_auto_stereo_depth < 0)
     {
