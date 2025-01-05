@@ -810,7 +810,6 @@ int help()
 {
     int action{};
     History      curr = { -1 };
-    int old_look_at_mouse;
     History      next;
 
     if (g_help_mode == HelpLabels::NONE)   // is help disabled?

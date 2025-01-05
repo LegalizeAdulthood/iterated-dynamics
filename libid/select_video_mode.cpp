@@ -203,9 +203,6 @@ static bool ent_less(const int lhs, const int rhs)
 static void update_id_cfg()
 {
     char buf[121];
-    int i;
-    int j;
-
     const std::string cfgname = find_path("id.cfg");
 
     if (!is_writeable(cfgname))

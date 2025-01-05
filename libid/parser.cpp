@@ -421,7 +421,6 @@ static FunctionPtr s_and{d_stk_and};
 static FunctionPtr s_log{d_stk_log};
 static FunctionPtr s_exp{d_stk_exp};
 static FunctionPtr s_pwr{d_stk_pwr};
-static FunctionPtr s_end_init{end_init};
 static FunctionPtr s_jump_on_false{d_stk_jump_on_false};
 static FunctionPtr s_jump_on_true{d_stk_jump_on_true};
 static FunctionPtr s_trig0{d_stk_sin};

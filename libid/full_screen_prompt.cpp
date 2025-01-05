@@ -780,10 +780,9 @@ int full_screen_prompt(        // full-screen prompting routine
     return full_screen_exit();
 }
 
+// format value into buf, return field width
 static int prompt_value_string(char *buf, FullScreenValues const *val)
 {
-    // format value into buf, return field width
-    int i;
     int ret;
     switch (val->type)
     {

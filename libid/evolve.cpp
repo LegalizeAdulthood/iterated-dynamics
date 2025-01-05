@@ -499,7 +499,6 @@ choose_vars_restart:
 int get_variations()
 {
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
-    int k;
     ChoiceBuilder<20> choices;
     GeneBase gene[NUM_GENES];
     int firstparm = 0;
