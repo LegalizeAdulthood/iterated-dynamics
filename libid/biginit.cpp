@@ -80,7 +80,7 @@ bf_t g_close_enough_bf{};
 bf_t g_tmp_sqr_x_bf{};
 bf_t g_tmp_sqr_y_bf{};
 // g_bf_length+2
-BFComplex g_parm_z_bf{};
+BFComplex g_param_z_bf{};
 BFComplex g_saved_z_bf{};
 // g_r_bf_length+2
 BFComplex g_old_z_bf{};
@@ -100,7 +100,7 @@ bf_t g_bf_save_y_min{};
 bf_t g_bf_save_y_max{};
 bf_t g_bf_save_x_3rd{};
 bf_t g_bf_save_y_3rd{};
-bf_t g_bf_parms[10]{}; // (g_bf_length + 2)*10
+bf_t g_bf_params[10]{}; // (g_bf_length + 2)*10
 bf_t g_bf_tmp{};
 bf_t g_bf10_tmp{}; // g_bf_decimals + 4
 
@@ -245,8 +245,8 @@ static void init_bf2()
         g_saved_z_bf.x = alloc_size(g_bf_length+2);
         g_saved_z_bf.y = alloc_size(g_bf_length+2);
         g_close_enough_bf = alloc_size(g_bf_length+2);
-        g_parm_z_bf.x = alloc_size(g_bf_length+2);
-        g_parm_z_bf.y = alloc_size(g_bf_length+2);
+        g_param_z_bf.x = alloc_size(g_bf_length+2);
+        g_param_z_bf.y = alloc_size(g_bf_length+2);
         g_tmp_sqr_x_bf = alloc_size(g_r_bf_length+2);
         g_tmp_sqr_y_bf = alloc_size(g_r_bf_length+2);
         g_big_pi = alloc_size(g_bf_length+2);
@@ -282,7 +282,7 @@ static void init_bf2()
     g_bf_y_max = alloc_size(g_bf_length+2);
     g_bf_x_3rd = alloc_size(g_bf_length+2);
     g_bf_y_3rd = alloc_size(g_bf_length+2);
-    for (bf_t &param : g_bf_parms)
+    for (bf_t &param : g_bf_params)
     {
         param = s_bn_root + ptr;
         ptr += g_bf_length + 2;
@@ -355,7 +355,7 @@ static int restore_bf_vars()
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    for (bf_t &param : g_bf_parms)
+    for (bf_t &param : g_bf_params)
     {
         convert_bf(param, ptr, g_bf_length, g_bf_save_len);
         ptr += g_bf_save_len + 2;

@@ -237,11 +237,11 @@ int burning_ship_bf_fractal()
         square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
         square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
         sub_bf(g_bf_tmp, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-        add_bf(g_new_z_bf.x, g_bf_tmp, g_parm_z_bf.x);
+        add_bf(g_new_z_bf.x, g_bf_tmp, g_param_z_bf.x);
         mult_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y);
         double_a_bf(g_bf_tmp);
         abs_a_bf(g_bf_tmp);
-        sub_bf(g_new_z_bf.y, g_bf_tmp, g_parm_z_bf.y);
+        sub_bf(g_new_z_bf.y, g_bf_tmp, g_param_z_bf.y);
     }
     else if (degree > 2) // Burning Ship to higher power
     {
@@ -252,8 +252,8 @@ int burning_ship_bf_fractal()
         abs_bf(big_z.y, g_old_z_bf.y);
         neg_a_bf(big_z.y);
         power(g_new_z_bf, big_z, degree);
-        add_a_bf(g_new_z_bf.x, g_parm_z_bf.x);
-        add_a_bf(g_new_z_bf.y, g_parm_z_bf.y);
+        add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
+        add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
     }
     return g_bailout_bigfloat();
 }

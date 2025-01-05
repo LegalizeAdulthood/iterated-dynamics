@@ -43,18 +43,18 @@ int divide_brot5_bn_per_pixel()
 int divide_brot5_bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
-    mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16) g_col);
+    mult_bf_int(g_param_z_bf.x, g_delta_x_bf, (U16) g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16) g_row);
 
-    add_a_bf(g_parm_z_bf.x, g_bf_tmp);
-    add_a_bf(g_parm_z_bf.x, g_bf_x_min);
+    add_a_bf(g_param_z_bf.x, g_bf_tmp);
+    add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, g_old_z_bf is just used as a temporary variable */
     mult_bf_int(g_old_z_bf.x, g_delta_y_bf, (U16) g_row);
     mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, (U16) g_col);
     add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
-    sub_bf(g_parm_z_bf.y, g_bf_y_max, g_old_z_bf.x);
+    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
     clear_bf(g_tmp_sqr_x_bf);
     clear_bf(g_tmp_sqr_y_bf);
@@ -143,8 +143,8 @@ int divide_brot5_bf_fractal()
     /* sqr(z)/(z^(a)+b) */
     cmplx_div_bf(&g_new_z_bf, &bfnumer, &bftmpnew);
 
-    add_a_bf(g_new_z_bf.x, g_parm_z_bf.x);
-    add_a_bf(g_new_z_bf.y, g_parm_z_bf.y);
+    add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
+    add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
 
     restore_stack(saved);
     return g_bailout_bigfloat();

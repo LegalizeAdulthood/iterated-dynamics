@@ -279,7 +279,7 @@ extern bf_t g_delta2_y_bf;
 extern bf_t g_close_enough_bf;
 extern bf_t g_tmp_sqr_x_bf;
 extern bf_t g_tmp_sqr_y_bf;
-extern BFComplex g_parm_z_bf;
+extern BFComplex g_param_z_bf;
 extern BFComplex g_saved_z_bf;
 extern BFComplex g_old_z_bf;
 extern BFComplex g_new_z_bf;
@@ -299,4 +299,4 @@ extern bf_t g_bf_save_y_min;
 extern bf_t g_bf_save_y_max;
 extern bf_t g_bf_save_x_3rd;
 extern bf_t g_bf_save_y_3rd;
-extern bf_t g_bf_parms[10];                                 // (g_bf_length+2)*10
+extern bf_t g_bf_params[10];                                 // (g_bf_length+2)*10

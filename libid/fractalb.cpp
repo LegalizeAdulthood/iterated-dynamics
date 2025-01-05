@@ -294,7 +294,7 @@ void bf_corners_to_float()
     {
         if (type_has_param(g_fractal_type, i, nullptr))
         {
-            g_params[i] = (double)bf_to_float(g_bf_parms[i]);
+            g_params[i] = (double)bf_to_float(g_bf_params[i]);
         }
     }
 }
@@ -635,8 +635,8 @@ bool mandel_bn_setup()
     switch (g_fractal_type)
     {
     case FractalType::JULIA_FP:
-        bf_to_bn(g_param_z_bn.x, g_bf_parms[0]);
-        bf_to_bn(g_param_z_bn.y, g_bf_parms[1]);
+        bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
+        bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
         break;
 
     case FractalType::MANDEL_Z_POWER_FP:
@@ -653,8 +653,8 @@ bool mandel_bn_setup()
 
     case FractalType::JULIA_Z_POWER_FP:
         init_big_pi();
-        bf_to_bn(g_param_z_bn.x, g_bf_parms[0]);
-        bf_to_bn(g_param_z_bn.y, g_bf_parms[1]);
+        bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
+        bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
@@ -748,8 +748,8 @@ bool mandel_bf_setup()
         break;
 
     case FractalType::JULIA_FP:
-        copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
-        copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
+        copy_bf(g_param_z_bf.x, g_bf_params[0]);
+        copy_bf(g_param_z_bf.y, g_bf_params[1]);
         break;
 
     case FractalType::MANDEL_Z_POWER_FP:
@@ -779,8 +779,8 @@ bool mandel_bf_setup()
 
     case FractalType::JULIA_Z_POWER_FP:
         init_big_pi();
-        copy_bf(g_parm_z_bf.x, g_bf_parms[0]);
-        copy_bf(g_parm_z_bf.y, g_bf_parms[1]);
+        copy_bf(g_param_z_bf.x, g_bf_params[0]);
+        copy_bf(g_param_z_bf.y, g_bf_params[1]);
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
@@ -856,21 +856,21 @@ int mandel_bf_per_pixel()
     if (g_bf_math == BFMathType::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
         return mandel_fp_per_pixel();
     // parm.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(g_parm_z_bf.x, g_delta_x_bf, (U16)g_col);
+    mult_bf_int(g_param_z_bf.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);
 
-    add_a_bf(g_parm_z_bf.x, g_bf_tmp);
-    add_a_bf(g_parm_z_bf.x, g_bf_x_min);
+    add_a_bf(g_param_z_bf.x, g_bf_tmp);
+    add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
     mult_bf_int(g_old_z_bf.x, g_delta_y_bf, (U16)g_row);
     mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, (U16)g_col);
     add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
-    sub_bf(g_parm_z_bf.y, g_bf_y_max, g_old_z_bf.x);
+    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
-    copy_bf(g_old_z_bf.x, g_parm_z_bf.x);
-    copy_bf(g_old_z_bf.y, g_parm_z_bf.y);
+    copy_bf(g_old_z_bf.x, g_param_z_bf.x);
+    copy_bf(g_old_z_bf.y, g_param_z_bf.y);
 
     if ((g_inside_color == BOF60 || g_inside_color == BOF61) && g_bof_match_book_images)
     {
@@ -981,12 +981,12 @@ julia_bf_fractal()
 {
     // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bf(g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
-    add_bf(g_new_z_bf.x, g_tmp_sqr_x_bf, g_parm_z_bf.x);
+    add_bf(g_new_z_bf.x, g_tmp_sqr_x_bf, g_param_z_bf.x);
 
     // new.y = 2 * g_old_z_bf.x * g_old_z_bf.y + parm.y;
     mult_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y); // ok to use unsafe here
     double_a_bf(g_bf_tmp);
-    add_bf(g_new_z_bf.y, g_bf_tmp, g_parm_z_bf.y);
+    add_bf(g_new_z_bf.y, g_bf_tmp, g_param_z_bf.y);
     return g_bailout_bigfloat();
 }
 
@@ -1020,8 +1020,8 @@ julia_z_power_bf_fractal()
     float_to_bf(parm2.x, g_params[2]);
     float_to_bf(parm2.y, g_params[3]);
     cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
-    add_bf(g_new_z_bf.x, g_parm_z_bf.x, g_new_z_bf.x);
-    add_bf(g_new_z_bf.y, g_parm_z_bf.y, g_new_z_bf.y);
+    add_bf(g_new_z_bf.x, g_param_z_bf.x, g_new_z_bf.x);
+    add_bf(g_new_z_bf.y, g_param_z_bf.y, g_new_z_bf.y);
     restore_stack(saved);
     return g_bailout_bigfloat();
 }

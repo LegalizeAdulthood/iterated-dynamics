@@ -104,7 +104,7 @@ void fractal_float_to_bf()
     {
         if (type_has_param(g_fractal_type, i, nullptr))
         {
-            float_to_bf(g_bf_parms[i], g_params[i]);
+            float_to_bf(g_bf_params[i], g_params[i]);
         }
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;
