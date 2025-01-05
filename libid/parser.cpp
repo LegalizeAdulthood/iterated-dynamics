@@ -681,12 +681,11 @@ static void m_stk_funct(FunctionPtr fct)
 // call l_stk via d_stk
 static void l_stk_funct(FunctionPtr fct)
 {
-    double y;
     /*
        intermediate variable needed for safety because of
        different size of double and long in Arg union
     */
-    y = (double)g_arg1->l.y / s_fudge;
+    double y = (double) g_arg1->l.y / s_fudge;
     g_arg1->d.x = (double)g_arg1->l.x / s_fudge;
     g_arg1->d.y = y;
     (*fct)();
@@ -715,26 +714,20 @@ static void l_random()
 
 static void d_random()
 {
-    long x;
-    long y;
-
     /* Use the same algorithm as for fixed math so that they will generate
            the same fractals when the srand() function is used. */
-    x = new_random_num() >> (32 - g_bit_shift);
-    y = new_random_num() >> (32 - g_bit_shift);
+    long x = new_random_num() >> (32 - g_bit_shift);
+    long y = new_random_num() >> (32 - g_bit_shift);
     s_vars[7].a.d.x = ((double)x / (1L << g_bit_shift));
     s_vars[7].a.d.y = ((double)y / (1L << g_bit_shift));
 }
 
 static void m_random()
 {
-    long x;
-    long y;
-
     /* Use the same algorithm as for fixed math so that they will generate
        the same fractals when the srand() function is used. */
-    x = new_random_num() >> (32 - g_bit_shift);
-    y = new_random_num() >> (32 - g_bit_shift);
+    long x = new_random_num() >> (32 - g_bit_shift);
+    long y = new_random_num() >> (32 - g_bit_shift);
     s_vars[7].a.m.x = *fg_to_mp(x, g_bit_shift);
     s_vars[7].a.m.y = *fg_to_mp(y, g_bit_shift);
 }
@@ -1023,10 +1016,8 @@ void l_stk_trunc()
 {
     /* shifting and shifting back truncates positive numbers,
        so we make the numbers positive */
-    int signx;
-    int signy;
-    signx = sign(g_arg1->l.x);
-    signy = sign(g_arg1->l.y);
+    int signx = sign(g_arg1->l.x);
+    int signy = sign(g_arg1->l.y);
     g_arg1->l.x = labs(g_arg1->l.x);
     g_arg1->l.y = labs(g_arg1->l.y);
     g_arg1->l.x = (g_arg1->l.x) >> g_bit_shift;
@@ -1183,18 +1174,12 @@ static void m_stk_div()
 
 static void l_stk_div()
 {
-    long x;
-    long y;
-    long mod;
-    long x2;
-    long y2;
-
-    mod = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift) +
-          multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
-    x = divide(g_arg1->l.x, mod, g_bit_shift);
-    y = -divide(g_arg1->l.y, mod, g_bit_shift);
-    x2 = multiply(g_arg2->l.x, x, g_bit_shift) - multiply(g_arg2->l.y, y, g_bit_shift);
-    y2 = multiply(g_arg2->l.y, x, g_bit_shift) + multiply(g_arg2->l.x, y, g_bit_shift);
+    long mod =
+        multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift) + multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
+    long x = divide(g_arg1->l.x, mod, g_bit_shift);
+    long y = -divide(g_arg1->l.y, mod, g_bit_shift);
+    long x2 = multiply(g_arg2->l.x, x, g_bit_shift) - multiply(g_arg2->l.y, y, g_bit_shift);
+    long y2 = multiply(g_arg2->l.y, x, g_bit_shift) + multiply(g_arg2->l.x, y, g_bit_shift);
     g_arg2->l.x = x2;
     g_arg2->l.y = y2;
     g_arg1--;
@@ -1250,27 +1235,21 @@ static void stk_clr()
 
 void d_stk_flip()
 {
-    double t;
-
-    t = g_arg1->d.x;
+    double t = g_arg1->d.x;
     g_arg1->d.x = g_arg1->d.y;
     g_arg1->d.y = t;
 }
 
 void m_stk_flip()
 {
-    MP t;
-
-    t = g_arg1->m.x;
+    MP t = g_arg1->m.x;
     g_arg1->m.x = g_arg1->m.y;
     g_arg1->m.y = t;
 }
 
 void l_stk_flip()
 {
-    long t;
-
-    t = g_arg1->l.x;
+    long t = g_arg1->l.x;
     g_arg1->l.x = g_arg1->l.y;
     g_arg1->l.y = t;
 }
@@ -1295,14 +1274,12 @@ void m_stk_sin()
 
 void l_stk_sin()
 {
-    long x;
-    long y;
     long sinx;
     long cosx;
     long sinhy;
     long coshy;
-    x = g_arg1->l.x >> s_delta16;
-    y = g_arg1->l.y >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     sin_cos(x, &sinx, &cosx);
     sinh_cosh(y, &sinhy, &coshy);
     g_arg1->l.x = multiply(sinx, coshy, s_shift_back);
@@ -1318,12 +1295,11 @@ void d_stk_tan()
     double cosx;
     double sinhy;
     double coshy;
-    double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
     sin_cos(&g_arg1->d.x, &sinx, &cosx);
     sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
-    denom = cosx + coshy;
+    double denom = cosx + coshy;
     if (check_denom(denom))
     {
         return;
@@ -1339,20 +1315,17 @@ void m_stk_tan()
 
 void l_stk_tan()
 {
-    long x;
-    long y;
     long sinx;
     long cosx;
     long sinhy;
     long coshy;
-    long denom;
-    x = g_arg1->l.x >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
-    y = g_arg1->l.y >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
     sin_cos(x, &sinx, &cosx);
     sinh_cosh(y, &sinhy, &coshy);
-    denom = cosx + coshy;
+    long denom = cosx + coshy;
     if (check_denom(denom))
     {
         return;
@@ -1367,12 +1340,11 @@ void d_stk_tanh()
     double cosy;
     double sinhx;
     double coshx;
-    double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
     sin_cos(&g_arg1->d.y, &siny, &cosy);
     sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
-    denom = coshx + cosy;
+    double denom = coshx + cosy;
     if (check_denom(denom))
     {
         return;
@@ -1388,20 +1360,17 @@ void m_stk_tanh()
 
 void l_stk_tanh()
 {
-    long x;
-    long y;
     long siny;
     long cosy;
     long sinhx;
     long coshx;
-    long denom;
-    x = g_arg1->l.x >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
-    y = g_arg1->l.y >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
     sin_cos(y, &siny, &cosy);
     sinh_cosh(x, &sinhx, &coshx);
-    denom = coshx + cosy;
+    long denom = coshx + cosy;
     if (check_denom(denom))
     {
         return;
@@ -1416,12 +1385,11 @@ void d_stk_cotan()
     double cosx;
     double sinhy;
     double coshy;
-    double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
     sin_cos(&g_arg1->d.x, &sinx, &cosx);
     sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
-    denom = coshy - cosx;
+    double denom = coshy - cosx;
     if (check_denom(denom))
     {
         return;
@@ -1437,20 +1405,17 @@ void m_stk_cotan()
 
 void l_stk_cotan()
 {
-    long x;
-    long y;
     long sinx;
     long cosx;
     long sinhy;
     long coshy;
-    long denom;
-    x = g_arg1->l.x >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
-    y = g_arg1->l.y >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
     sin_cos(x, &sinx, &cosx);
     sinh_cosh(y, &sinhy, &coshy);
-    denom = coshy - cosx;
+    long denom = coshy - cosx;
     if (check_denom(denom))
     {
         return;
@@ -1465,12 +1430,11 @@ void d_stk_cotanh()
     double cosy;
     double sinhx;
     double coshx;
-    double denom;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
     sin_cos(&g_arg1->d.y, &siny, &cosy);
     sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
-    denom = coshx - cosy;
+    double denom = coshx - cosy;
     if (check_denom(denom))
     {
         return;
@@ -1486,20 +1450,17 @@ void m_stk_cotanh()
 
 void l_stk_cotanh()
 {
-    long x;
-    long y;
     long siny;
     long cosy;
     long sinhx;
     long coshx;
-    long denom;
-    x = g_arg1->l.x >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
-    y = g_arg1->l.y >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
     sin_cos(y, &siny, &cosy);
     sinh_cosh(x, &sinhx, &coshx);
-    denom = coshx - cosy;
+    long denom = coshx - cosy;
     if (check_denom(denom))
     {
         return;
@@ -1517,8 +1478,7 @@ void l_stk_cotanh()
 
 void d_stk_recip()
 {
-    double mod;
-    mod =g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
+    double mod = g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
     if (check_denom(mod))
     {
         return;
@@ -1529,8 +1489,7 @@ void d_stk_recip()
 
 void m_stk_recip()
 {
-    MP mod;
-    mod = *mp_add(*mp_mul(g_arg1->m.x, g_arg1->m.x), *mp_mul(g_arg1->m.y, g_arg1->m.y));
+    MP mod = *mp_add(*mp_mul(g_arg1->m.x, g_arg1->m.x), *mp_mul(g_arg1->m.y, g_arg1->m.y));
     if (mod.Mant == 0L)
     {
         g_overflow = true;
@@ -1543,9 +1502,8 @@ void m_stk_recip()
 
 void l_stk_recip()
 {
-    long mod;
-    mod = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift)
-          + multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
+    long mod =
+        multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift) + multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
     if (check_denom(mod))
     {
         return;
@@ -1579,15 +1537,13 @@ void m_stk_sinh()
 
 void l_stk_sinh()
 {
-    long x;
-    long y;
     long sinhx;
     long coshx;
     long siny;
     long cosy;
 
-    x = g_arg1->l.x >> s_delta16;
-    y = g_arg1->l.y >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     sin_cos(y, &siny, &cosy);
     sinh_cosh(x, &sinhx, &coshx);
     g_arg1->l.x = multiply(cosy, sinhx, s_shift_back);
@@ -1614,15 +1570,13 @@ void m_stk_cos()
 
 void l_stk_cos()
 {
-    long x;
-    long y;
     long sinx;
     long cosx;
     long sinhy;
     long coshy;
 
-    x = g_arg1->l.x >> s_delta16;
-    y = g_arg1->l.y >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     sin_cos(x, &sinx, &cosx);
     sinh_cosh(y, &sinhy, &coshy);
     g_arg1->l.x = multiply(cosx, coshy, s_shift_back);
@@ -1668,15 +1622,13 @@ void m_stk_cosh()
 
 void l_stk_cosh()
 {
-    long x;
-    long y;
     long sinhx;
     long coshx;
     long siny;
     long cosy;
 
-    x = g_arg1->l.x >> s_delta16;
-    y = g_arg1->l.y >> s_delta16;
+    long x = g_arg1->l.x >> s_delta16;
+    long y = g_arg1->l.y >> s_delta16;
     sin_cos(y, &siny, &cosy);
     sinh_cosh(x, &sinhx, &coshx);
     g_arg1->l.x = multiply(cosy, coshx, s_shift_back);
@@ -1864,9 +1816,7 @@ static void d_stk_lte()
 
 static void m_stk_lte()
 {
-    int comp;
-
-    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp == -1 || comp == 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
@@ -1892,9 +1842,7 @@ static void d_stk_gte()
 
 static void m_stk_gte()
 {
-    int comp;
-
-    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp == 1 || comp == 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
@@ -1920,9 +1868,7 @@ static void d_stk_eq()
 
 static void m_stk_eq()
 {
-    int comp;
-
-    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp == 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
@@ -1948,9 +1894,7 @@ static void d_stk_ne()
 
 static void m_stk_ne()
 {
-    int comp;
-
-    comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
+    int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp != 0), 0);
     g_arg2->m.y.Exp = 0;
     g_arg2->m.y.Mant = 0;
@@ -2055,11 +1999,8 @@ void d_stk_pwr()
 
 void m_stk_pwr()
 {
-    DComplex x;
-    DComplex y;
-
-    x = mpc_to_cmplx(g_arg2->m);
-    y = mpc_to_cmplx(g_arg1->m);
+    DComplex x = mpc_to_cmplx(g_arg2->m);
+    DComplex y = mpc_to_cmplx(g_arg1->m);
     x = complex_power(x, y);
     g_arg2->m = cmplx_to_mpc(x);
     g_arg1--;
@@ -2204,7 +2145,6 @@ static unsigned int skip_white_space(char const *Str)
 static bool is_const_pair(char const *Str)
 {
     int n;
-    int j;
     bool answer = false;
     // skip past first number
     for (n = 0; std::isdigit(Str[n]) || Str[n] == '.'; n++)
@@ -2212,7 +2152,7 @@ static bool is_const_pair(char const *Str)
     }
     if (Str[n] == ',')
     {
-        j = n + skip_white_space(&Str[n+1]) + 1;
+        int j = n + skip_white_space(&Str[n + 1]) + 1;
         if (std::isdigit(Str[j])
             || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
             || Str[j] == '.')
@@ -2457,14 +2397,11 @@ inline void push_pending_op(FunctionPtr f, int p)
 
 static bool parse_formula_text(char const *text)
 {
-    ConstArg *c;
     int ModFlag = 999;
     int Len;
     int Equals = 0;
     std::array<int, 20> Mods{};
     int mdstk = 0;
-    double const_pi;
-    double const_e;
     double x_ctr;
     double y_ctr;
     double x_mag_factor;
@@ -2652,8 +2589,8 @@ static bool parse_formula_text(char const *text)
         s_vars[g_variable_index].len = (int) std::strlen(s_variables[g_variable_index]);
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-    const_pi = std::atan(1.0) * 4;
-    const_e  = std::exp(1.0);
+    double const_pi = std::atan(1.0) * 4;
+    double const_e = std::exp(1.0);
     s_vars[7].a.d.y = 0.0;
     s_vars[7].a.d.x = s_vars[7].a.d.y;
     s_vars[11].a.d.x = (double)g_logical_screen_x_dots;
@@ -2941,7 +2878,7 @@ static bool parse_formula_text(char const *text)
                 }
                 else
                 {
-                    c = is_const(&text[s_init_n], Len);
+                    ConstArg *c = is_const(&text[s_init_n], Len);
                     s_load[g_load_index++] = &(c->a);
                     push_pending_op(stk_lod, 1 - (s_paren + Equals)*15);
                     s_n = s_init_n + c->len - 1;
@@ -3386,7 +3323,6 @@ static void get_var_info(Token *tok)
 // returns 1 on success, 0 on NOT_A_TOKEN
 static bool frm_get_constant(std::FILE *openfile, Token *tok)
 {
-    int c;
     int i = 1;
     bool getting_base = true;
     long filepos = std::ftell(openfile);
@@ -3400,7 +3336,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
     }
     while (!done)
     {
-        c = frm_get_char(openfile);
+        int c = frm_get_char(openfile);
         switch (c)
         {
         case EOF:
@@ -3485,15 +3421,13 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
 {
     assert(tok->str[0] == '(');
     Token temp_tok;
-    long filepos;
-    int c;
     int sign_value = 1;
     bool done = false;
     bool getting_real = true;
     std::FILE * debug_token = nullptr;
     tok->str[1] = (char) 0;  // so we can concatenate later
 
-    filepos = std::ftell(openfile);
+    long filepos = std::ftell(openfile);
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         debug_token = open_save_file("frmconst.txt", "at");
@@ -3501,7 +3435,7 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
 
     while (!done)
     {
-        c = frm_get_char(openfile);
+        int c = frm_get_char(openfile);
         switch (c)
         {
 CASE_NUM :
@@ -3614,11 +3548,10 @@ static bool frm_get_alpha(std::FILE *openfile, Token *tok)
     int c;
     int i = 1;
     bool var_name_too_long = false;
-    long filepos;
     long last_filepos = std::ftell(openfile);
     while ((c = frm_get_char(openfile)) != EOF)
     {
-        filepos = std::ftell(openfile);
+        long filepos = std::ftell(openfile);
         switch (c)
         {
 CASE_ALPHA:
@@ -3988,11 +3921,10 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 {
     long filepos = std::ftell(open_file);
     int c;
-    int i;
     bool at_end_of_name = false;
 
     // first, test name
-    i = 0;
+    int i = 0;
     bool done = false;
     while (!done)
     {
@@ -4378,18 +4310,14 @@ static void frm_error(std::FILE * open_file, long begin_frm)
     Token tok;
     int chars_to_error = 0;
     int chars_in_error = 0;
-    int token_count;
-    int statement_len;
-    int line_number;
     char msgbuf[900];
-    long filepos;
     std::strcpy(msgbuf, "\n");
 
     for (int j = 0; j < 3 && s_errors[j].start_pos; j++)
     {
         bool const initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
         std::fseek(open_file, begin_frm, SEEK_SET);
-        line_number = 1;
+        int line_number = 1;
         while (std::ftell(open_file) != s_errors[j].error_pos)
         {
             int i = fgetc(open_file);
@@ -4408,12 +4336,12 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         std::sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number));
         int i = (int) std::strlen(msgbuf);
         std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
-        token_count = 0;
-        statement_len = token_count;
+        int token_count = 0;
+        int statement_len = token_count;
         bool done = false;
         while (!done)
         {
-            filepos = std::ftell(open_file);
+            long filepos = std::ftell(open_file);
             if (filepos == s_errors[j].error_pos)
             {
                 chars_to_error = statement_len;
