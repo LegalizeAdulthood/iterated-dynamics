@@ -85,7 +85,7 @@ void display_box()
 
     // There is an interaction between getcolor and putcolor, so separate them
     // don't need this for truecolor with truemode set
-    if (!(g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR))
+    if (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR)
     {
         for (int i = 0; i < g_box_count; i++)
         {
