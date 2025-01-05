@@ -907,10 +907,7 @@ static int input_field_list(
 )
 {
     int initval;
-    int curval;
     char buf[81];
-    int curkey;
-    int ret;
     ValueSaver save_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     for (initval = 0; initval < llen; ++initval)
     {
@@ -923,8 +920,8 @@ static int input_field_list(
     {
         initval = 0;
     }
-    curval = initval;
-    ret = -1;
+    int curval = initval;
+    int ret = -1;
     while (true)
     {
         std::strcpy(buf, list[curval]);
@@ -937,7 +934,7 @@ static int input_field_list(
         }
         buf[vlen] = 0;
         driver_put_string(row, col, attr, buf);
-        curkey = driver_key_cursor(row, col); // get a keystroke
+        int curkey = driver_key_cursor(row, col); // get a keystroke
         switch (curkey)
         {
         case ID_KEY_ENTER:
