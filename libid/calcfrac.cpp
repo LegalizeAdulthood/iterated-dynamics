@@ -257,8 +257,7 @@ static double fmod_test()
 // pixels of different colors.
 void sym_fill_line(int row, int left, int right, Byte *str)
 {
-    int length;
-    length = right-left+1;
+    int length = right - left + 1;
     write_span(row, left, right, str);
     // here's where all the symmetry goes
     if (g_plot == g_put_color)
@@ -444,18 +443,12 @@ static void show_dot_save_restore(
 
 static int calc_type_show_dot()
 {
-    int out;
-    int startx;
-    int starty;
-    int stopx;
-    int stopy;
-    int width;
     ShowDotDirection direction = ShowDotDirection::JUST_A_POINT;
-    stopx = g_col;
-    startx = g_col;
-    stopy = g_row;
-    starty = g_row;
-    width = s_show_dot_width+1;
+    int stopx = g_col;
+    int startx = g_col;
+    int stopy = g_row;
+    int starty = g_row;
+    int width = s_show_dot_width + 1;
     if (width > 0)
     {
         if (g_col+width <= g_i_x_stop && g_row+width <= g_i_y_stop)
@@ -498,7 +491,7 @@ static int calc_type_show_dot()
     {
         sleep_ms(g_orbit_delay);
     }
-    out = (*s_calc_type_tmp)();
+    int out = (*s_calc_type_tmp)();
     show_dot_save_restore(startx, stopx, starty, stopy, direction, ShowDotAction::RESTORE);
     return out;
 }
@@ -631,20 +624,16 @@ int calc_fract()
         else if (g_iteration_ranges_len)
         {
             // Can't do ranges if MaxLTSize > 32767
-            int m;
-            int numval;
-            int flip;
-            int altern;
             int l = 0;
             int k = 0;
             int i = 0;
             g_log_map_flag = 0; // ranges overrides logmap
             while (i < g_iteration_ranges_len)
             {
-                flip = 0;
-                m = 0;
-                altern = 32767;
-                numval = g_iteration_ranges[i++];
+                int flip = 0;
+                int m = 0;
+                int altern = 32767;
+                int numval = g_iteration_ranges[i++];
                 if (numval < 0)
                 {
                     altern = g_iteration_ranges[i++];    // sub-range iterations
@@ -967,12 +956,6 @@ static void perform_work_list()
 
     if (g_distance_estimator) // setup stuff for distance estimator
     {
-        double ftemp;
-        double ftemp2;
-        double delxx;
-        double delyy2;
-        double delyy;
-        double delxx2;
         double d_x_size;
         double d_y_size;
         double aspect;
@@ -989,10 +972,10 @@ static void perform_work_list()
             d_y_size = g_logical_screen_y_dots-1;
         }
 
-        delxx  = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
-        delyy  = (g_y_max - g_y_3rd) / d_y_size;
-        delxx2 = (g_x_3rd - g_x_min) / d_y_size;
-        delyy2 = (g_y_3rd - g_y_min) / d_x_size;
+        double delxx = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
+        double delyy = (g_y_max - g_y_3rd) / d_y_size;
+        double delxx2 = (g_x_3rd - g_x_min) / d_y_size;
+        double delyy2 = (g_y_3rd - g_y_min) / d_x_size;
 
         g_use_old_distance_estimator = false;
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
@@ -1006,7 +989,7 @@ static void perform_work_list()
             || g_fractal_type == FractalType::FORMULA
             || g_fractal_type == FractalType::FORMULA_FP;
         s_dem_delta = sqr(delxx) + sqr(delyy2);
-        ftemp = sqr(delyy) + sqr(delxx2);
+        double ftemp = sqr(delyy) + sqr(delxx2);
         s_dem_delta = std::max(ftemp, s_dem_delta);
         if (g_distance_estimator_width_factor == 0)
         {
@@ -1025,7 +1008,7 @@ static void perform_work_list()
                      + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
         ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
         ftemp += 3; // bailout plus just a bit
-        ftemp2 = std::log(ftemp);
+        double ftemp2 = std::log(ftemp);
         if (g_use_old_distance_estimator)
         {
             s_dem_too_big = sqr(ftemp) * sqr(ftemp2) * 4 / s_dem_delta;
@@ -1090,8 +1073,7 @@ static void perform_work_list()
             }
             else
             {
-                double dshowdot_width;
-                dshowdot_width = (double)g_size_dot*g_logical_screen_x_dots/1024.0;
+                double dshowdot_width = (double) g_size_dot * g_logical_screen_x_dots / 1024.0;
 
                 // Arbitrary sanity limit, however showdot_width will
                 // overflow if dshowdot width gets near 256.
@@ -2490,10 +2472,8 @@ static void decomposition()
 //
 int potential(double mag, long iterations)
 {
-    float f_mag;
     float f_tmp;
     float pot;
-    int i_pot;
     long l_pot;
 
     if (iterations < g_max_iterations)
@@ -2508,7 +2488,7 @@ int potential(double mag, long iterations)
         {
             if (l_pot < 120 && !g_float_flag) // empirically determined limit of fShift
             {
-                f_mag = (float)mag;
+                float f_mag = (float) mag;
                 f_log14(f_mag, f_tmp); // this SHOULD be non-negative
                 f_shift(f_tmp, (char)-l_pot, pot);
             }
@@ -2560,7 +2540,7 @@ int potential(double mag, long iterations)
     }
 
     l_pot = (long) (pot * 256);
-    i_pot = (int) (l_pot >> 8);
+    int i_pot = (int) (l_pot >> 8);
     if (i_pot >= g_colors)
     {
         i_pot = g_colors - 1;
@@ -2689,8 +2669,7 @@ static bool y_sym_split(int yaxis_col, bool yaxis_between)
 static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmetrical plot functions
 {
     int i;
-    int xaxis_row;
-    int yaxis_col; // pixel number for origin
+    // pixel number for origin
     bool xaxis_between = false;
     bool yaxis_between = false;         // if axis between 2 pixels, not on one
     bool xaxis_on_screen = false;
@@ -2784,8 +2763,8 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
     default:   // Check P2 for the rest
         parmszero = (parmszero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
     }
-    yaxis_col = -1;
-    xaxis_row = -1;
+    int yaxis_col = -1;
+    int xaxis_row = -1;
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
@@ -3025,14 +3004,12 @@ originsym:
 static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
-    long mincolour;
     int xstop = g_logical_screen_x_dots - 1; // don't use symetry
     int ystop = g_logical_screen_y_dots - 1; // don't use symetry
-    long old_maxit;
-    mincolour = LONG_MAX;
+    long mincolour = LONG_MAX;
     g_row = 0;
     g_reset_periodicity = false;
-    old_maxit = g_max_iterations;
+    long old_maxit = g_max_iterations;
     for (g_col = 0; g_col < xstop; g_col++) // top row
     {
         g_color = (*g_calc_type)();
@@ -3147,12 +3124,11 @@ void sym_pi_plot(int x, int y, int color)
 // Symmetry plot for period PI plus Origin Symmetry
 void sym_pi_plot2j(int x, int y, int color)
 {
-    int i;
     int j;
     while (x <= g_xx_stop)
     {
         g_put_color(x, y, color) ;
-        i = g_yy_stop-(y-g_yy_start);
+        int i = g_yy_stop - (y - g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots
             && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
         {
@@ -3165,17 +3141,15 @@ void sym_pi_plot2j(int x, int y, int color)
 // Symmetry plot for period PI plus Both Axis Symmetry
 void sym_pi_plot4j(int x, int y, int color)
 {
-    int i;
-    int j;
     while (x <= (g_xx_start+g_xx_stop)/2)
     {
-        j = g_xx_stop-(x-g_xx_start);
+        int j = g_xx_stop - (x - g_xx_start);
         g_put_color(x , y , color) ;
         if (j < g_logical_screen_x_dots)
         {
             g_put_color(j , y , color) ;
         }
-        i = g_yy_stop-(y-g_yy_start);
+        int i = g_yy_stop - (y - g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots)
         {
             g_put_color(x , i , color) ;
@@ -3191,9 +3165,8 @@ void sym_pi_plot4j(int x, int y, int color)
 // Symmetry plot for X Axis Symmetry
 void sym_plot2(int x, int y, int color)
 {
-    int i;
     g_put_color(x, y, color) ;
-    i = g_yy_stop-(y-g_yy_start);
+    int i = g_yy_stop - (y - g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots)
     {
         g_put_color(x, i, color) ;
@@ -3203,9 +3176,8 @@ void sym_plot2(int x, int y, int color)
 // Symmetry plot for Y Axis Symmetry
 void sym_plot2y(int x, int y, int color)
 {
-    int i;
     g_put_color(x, y, color) ;
-    i = g_xx_stop-(x-g_xx_start);
+    int i = g_xx_stop - (x - g_xx_start);
     if (i < g_logical_screen_x_dots)
     {
         g_put_color(i, y, color) ;
@@ -3215,10 +3187,9 @@ void sym_plot2y(int x, int y, int color)
 // Symmetry plot for Origin Symmetry
 void sym_plot2j(int x, int y, int color)
 {
-    int i;
     int j;
     g_put_color(x, y, color) ;
-    i = g_yy_stop-(y-g_yy_start);
+    int i = g_yy_stop - (y - g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots
         && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
     {
@@ -3229,15 +3200,13 @@ void sym_plot2j(int x, int y, int color)
 // Symmetry plot for Both Axis Symmetry
 void sym_plot4(int x, int y, int color)
 {
-    int i;
-    int j;
-    j = g_xx_stop-(x-g_xx_start);
+    int j = g_xx_stop - (x - g_xx_start);
     g_put_color(x , y, color) ;
     if (j < g_logical_screen_x_dots)
     {
         g_put_color(j , y, color) ;
     }
-    i = g_yy_stop-(y-g_yy_start);
+    int i = g_yy_stop - (y - g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots)
     {
         g_put_color(x , i, color) ;
@@ -3251,7 +3220,6 @@ void sym_plot4(int x, int y, int color)
 // Symmetry plot for X Axis Symmetry - Striped Newtbasin version
 void sym_plot2_basin(int x, int y, int color)
 {
-    int i;
     int stripe;
     g_put_color(x, y, color) ;
     if (g_basin == 2 && color > 8)
@@ -3262,7 +3230,7 @@ void sym_plot2_basin(int x, int y, int color)
     {
         stripe = 0;
     }
-    i = g_yy_stop-(y-g_yy_start);
+    int i = g_yy_stop - (y - g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots)
     {
         color -= stripe;                    // reconstruct unstriped color
@@ -3275,8 +3243,6 @@ void sym_plot2_basin(int x, int y, int color)
 // Symmetry plot for Both Axis Symmetry  - Newtbasin version
 void sym_plot4_basin(int x, int y, int color)
 {
-    int i;
-    int j;
     int color1;
     int stripe;
     if (color == 0) // assumed to be "inside" color
@@ -3301,13 +3267,13 @@ void sym_plot4_basin(int x, int y, int color)
     {
         color1 = g_degree/2+g_degree+2 - color;
     }
-    j = g_xx_stop-(x-g_xx_start);
+    int j = g_xx_stop - (x - g_xx_start);
     g_put_color(x, y, color+stripe) ;
     if (j < g_logical_screen_x_dots)
     {
         g_put_color(j, y, color1+stripe) ;
     }
-    i = g_yy_stop-(y-g_yy_start);
+    int i = g_yy_stop - (y - g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots)
     {
         g_put_color(x, i, stripe + (g_degree+1 - color)%g_degree+1) ;
