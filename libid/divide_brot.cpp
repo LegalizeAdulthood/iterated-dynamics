@@ -67,9 +67,7 @@ int divide_brot5_bf_per_pixel()
 int divide_brot5_bn_fractal()
 {
     BNComplex bntmpnew, bnnumer, bnc_exp;
-    bn_t tmp1, tmp2;
-    int saved;
-    saved = save_stack();
+    int saved = save_stack();
 
     bntmpnew.x = alloc_stack(g_r_length);
     bntmpnew.y = alloc_stack(g_r_length);
@@ -77,8 +75,8 @@ int divide_brot5_bn_fractal()
     bnnumer.y = alloc_stack(g_r_length);
     bnc_exp.x = alloc_stack(g_bn_length);
     bnc_exp.y = alloc_stack(g_bn_length);
-    tmp1 = alloc_stack(g_bn_length);
-    tmp2 = alloc_stack(g_r_length);
+    bn_t tmp1 = alloc_stack(g_bn_length);
+    bn_t tmp2 = alloc_stack(g_r_length);
 
     /* g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to */
     /* this function, so they must be shifted.                           */
@@ -116,9 +114,7 @@ int divide_brot5_bn_fractal()
 int divide_brot5_bf_fractal()
 {
     BFComplex bftmpnew, bfnumer, bfc_exp;
-    bf_t tmp1;
-    int saved;
-    saved = save_stack();
+    int saved = save_stack();
 
     bftmpnew.x = alloc_stack(g_r_bf_length + 2);
     bftmpnew.y = alloc_stack(g_r_bf_length + 2);
@@ -126,7 +122,7 @@ int divide_brot5_bf_fractal()
     bfnumer.y = alloc_stack(g_r_bf_length + 2);
     bfc_exp.x = alloc_stack(g_bf_length + 2);
     bfc_exp.y = alloc_stack(g_bf_length + 2);
-    tmp1 = alloc_stack(g_bf_length + 2);
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */
