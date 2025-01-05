@@ -1068,6 +1068,7 @@ static bool compress(int rowlimit)
         {
             for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++)
             {
+                int disp{};
                 if (s_save_16bit == 0 || ydot < g_logical_screen_y_dots)
                 {
                     color = get_color(xdot, ydot);
@@ -1094,7 +1095,7 @@ static bool compress(int rowlimit)
                 {
                     goto nomatch;
                 }
-                int disp = hsize_reg - i;           // secondary hash (after G. Knott)
+                disp = hsize_reg - i;           // secondary hash (after G. Knott)
                 if (i == 0)
                 {
                     disp = 1;
