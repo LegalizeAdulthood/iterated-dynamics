@@ -118,8 +118,7 @@ static long iteration(
 
 static void put_hor_line(int x1, int y1, int x2, int color)
 {
-    int x;
-    for (x = x1; x <= x2; x++)
+    for (int x = x1; x <= x2; x++)
     {
         (*g_plot)(x, y1, color);
     }
@@ -748,8 +747,6 @@ void soi()
     // cppcheck-suppress unreadVariable
     bool status;
     double tolerance = 0.1;
-    double stepx;
-    double stepy;
     double xxminl;
     double xxmaxl;
     double yyminl;
@@ -772,8 +769,8 @@ void soi()
         yymaxl = g_y_max;
     }
     s_t_width = tolerance/(g_logical_screen_x_dots - 1);
-    stepx = (xxmaxl - xxminl)/g_logical_screen_x_dots;
-    stepy = (yyminl - yymaxl)/g_logical_screen_y_dots;
+    double stepx = (xxmaxl - xxminl) / g_logical_screen_x_dots;
+    double stepy = (yyminl - yymaxl) / g_logical_screen_y_dots;
     s_equal = (stepx < stepy ? stepx : stepy);
 
     RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
