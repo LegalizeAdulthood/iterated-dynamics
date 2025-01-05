@@ -58,20 +58,17 @@ bool get_a_file_name(char const *hdg, char const *file_template, std::string &fl
     char user_file_template[FILE_MAX_PATH] = { 0 };
     // if getting an RDS image map
     char instr[80];
-    int masklen;
     char filename[FILE_MAX_PATH];
     char speedstr[81];
     char tmpmask[FILE_MAX_PATH];   // used to locate next file in list
     char old_flname[FILE_MAX_PATH];
-    int out;
-    int retried;
     // Only the first 13 characters of file names are displayed...
     Choice storage[MAX_NUM_FILES];
     Choice *choices[MAX_NUM_FILES];
     int attributes[MAX_NUM_FILES];
-    int filecount;   // how many files
-    int dircount;    // how many directories
-    bool notroot;     // not the root directory
+    // how many files
+    // how many directories
+    // not the root directory
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -97,7 +94,7 @@ restart:  // return here if template or directory changes
     }
     split_path(flname , drive, dir, fname, ext);
     make_fname_ext(filename, fname, ext);
-    retried = 0;
+    int retried = 0;
 
 retry_dir:
     if (dir[0] == 0)
@@ -130,12 +127,12 @@ retry_dir:
     {
         numtemplates = sizeof(s_masks)/sizeof(s_masks[0]);
     }
-    filecount = -1;
-    dircount  = 0;
-    notroot   = false;
-    masklen = (int) std::strlen(tmpmask);
+    int filecount = -1;
+    int dircount = 0;
+    bool notroot = false;
+    int masklen = (int) std::strlen(tmpmask);
     std::strcat(tmpmask, "*.*");
-    out = fr_find_first(tmpmask);
+    int out = fr_find_first(tmpmask);
     while (out == 0 && filecount < MAX_NUM_FILES)
     {
         if ((g_dta.attribute & SUB_DIR) && g_dta.filename != ".")
