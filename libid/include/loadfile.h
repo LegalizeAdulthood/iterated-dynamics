@@ -12,8 +12,12 @@
  * to do special processing of the FractalInfo structure in decode_info.cpp.
  * Make sure changes to the structure here get reflected there.
  */
-#define FRACTAL_INFO_VERSION 17  // file version, independent of system
-// increment this EVERY time the fractal_info structure changes
+enum
+{
+    FRACTAL_INFO_VERSION = 17
+    // file version, independent of system
+    // increment this EVERY time the fractal_info structure changes
+};
 
 // TODO: instead of hacking the padding here, adjust the code that reads this structure
 #if defined(_WIN32)
