@@ -1962,9 +1962,8 @@ void PalTable::save_undo_rotate(int dir, int first, int last)
 void PalTable::undo_process(int delta)
 {
     // delta = -1 for undo, +1 for redo
-    int cmd = getc(m_undo_file);
 
-    switch (cmd)
+    switch (int cmd = getc(m_undo_file); cmd)
     {
     case UNDO_DATA:
     case UNDO_DATA_SINGLE:
