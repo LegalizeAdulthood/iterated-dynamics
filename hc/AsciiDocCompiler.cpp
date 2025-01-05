@@ -80,7 +80,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
 
         const char *start = curr;
         bool skip_blanks = false;
-        int lnum = 0;
+        int line_num = 0;
         int num_links = 0;
         int col = 0;
 
@@ -107,7 +107,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
                     if (tok == TokenType::TOK_PARA)
                     {
                         col = 0;   // fake a nl
-                        ++lnum;
+                        ++ line_num;
                         break;
                     }
 
@@ -147,7 +147,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
                     start += size;
                     break;
                 }
-                ++lnum;
+                ++line_num;
                 col = 0;
                 break;
 
