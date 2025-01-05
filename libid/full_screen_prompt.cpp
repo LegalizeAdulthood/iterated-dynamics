@@ -20,6 +20,7 @@
 #include "ValueSaver.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -791,15 +792,7 @@ static int prompt_value_string(char *buf, FullScreenValues const *val)
         double_to_string(buf, val->uval.dval);
         break;
     case 'D':
-        if (val->uval.dval < 0)
-        {
-            // We have to round the right way
-            std::sprintf(buf, "%ld", (long)(val->uval.dval-.5));
-        }
-        else
-        {
-            std::sprintf(buf, "%ld", (long)(val->uval.dval+.5));
-        }
+        std::sprintf(buf, "%ld", std::lround(val->uval.dval));
         ret = 20;
         break;
     case 'f':
