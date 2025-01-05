@@ -316,7 +316,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_LOAD_FILE};
             i = full_screen_choice(ChoiceFlags::NONE, heading,
                 "key...name......................err...xdot..ydot.clr.comment..................",
-                instructions.c_str(), g_video_table_len, nullptr, &attributes[0], 1, 13, 78, 0, format_item,
+                instructions.c_str(), g_video_table_len, nullptr, attributes.data(), 1, 13, 78, 0, format_item,
                 nullptr, nullptr, check_mode_key);
         }
         if (i == -1)
