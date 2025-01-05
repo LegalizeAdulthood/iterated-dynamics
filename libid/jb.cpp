@@ -135,12 +135,6 @@ bool julibrot_setup()
 
     if (g_fractal_specific[+g_fractal_type].isinteger > 0)
     {
-        long jxmin;
-        long jxmax;
-        long jymin;
-        long jymax;
-        long mxmax;
-        long mymax;
         if (g_fractal_specific[+g_new_orbit_type].isinteger == 0)
         {
             stop_msg("Julibrot orbit type isinteger mismatch");
@@ -151,16 +145,16 @@ bool julibrot_setup()
         }
         s_fg = (double)(1L << g_bit_shift);
         s_fg16 = (double)(1L << 16);
-        jxmin = (long)(g_x_min * s_fg);
-        jxmax = (long)(g_x_max * s_fg);
+        long jxmin = (long) (g_x_min * s_fg);
+        long jxmax = (long) (g_x_max * s_fg);
         s_jb.x_offset = (jxmax + jxmin) / 2;    // Calculate average
-        jymin = (long)(g_y_min * s_fg);
-        jymax = (long)(g_y_max * s_fg);
+        long jymin = (long) (g_y_min * s_fg);
+        long jymax = (long) (g_y_max * s_fg);
         s_jb.y_offset = (jymax + jymin) / 2;    // Calculate average
         s_mx_min = (long)(g_julibrot_x_min * s_fg);
-        mxmax = (long)(g_julibrot_x_max * s_fg);
+        long mxmax = (long) (g_julibrot_x_max * s_fg);
         s_my_min = (long)(g_julibrot_y_min * s_fg);
-        mymax = (long)(g_julibrot_y_max * s_fg);
+        long mymax = (long) (g_julibrot_y_max * s_fg);
         long origin = (long)(g_julibrot_origin_fp * s_fg16);
         s_depth = (long)(g_julibrot_depth_fp * s_fg16);
         s_width = (long)(g_julibrot_width_fp * s_fg16);
@@ -437,7 +431,6 @@ int z_line_fp(double x, double y)
 
 int std_4d_fractal()
 {
-    long x;
     g_c_exponent = (int)g_params[2];
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER_L)
     {
@@ -456,7 +449,7 @@ int std_4d_fractal()
     for (int ydot = (g_logical_screen_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_jb.inch_per_y_dot)
     {
         plotted = 0;
-        x = -(s_width >> 1);
+        long x = -(s_width >> 1);
         for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++, x += s_jb.inch_per_x_dot)
         {
             g_col = xdot;
@@ -489,7 +482,6 @@ int std_4d_fractal()
 
 int std_4d_fp_fractal()
 {
-    double x;
     g_c_exponent = (int)g_params[2];
 
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER_FP)
@@ -509,7 +501,7 @@ int std_4d_fp_fractal()
     for (int ydot = (g_logical_screen_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_jb_fp.inch_per_y_dot)
     {
         plotted = 0;
-        x = -g_julibrot_width_fp / 2;
+        double x = -g_julibrot_width_fp / 2;
         for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++, x += s_jb_fp.inch_per_x_dot)
         {
             g_col = xdot;
