@@ -463,7 +463,7 @@ TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
     const FractalInfo lhs{};
     FractalInfo rhs{};
     std::int16_t value{16};
-    for (size_t i = 0; i < std::size(rhs.future); ++i)
+    for (size_t i = 0; i < std::size(rhs.future); ++i)  // NOLINT(modernize-loop-convert)
     {
         rhs.future[i] = value;
         ++value;
@@ -477,7 +477,7 @@ TEST(TestCompareFormulaInfo, futureFieldsAreIgnored)
     const FormulaInfo lhs{};
     FormulaInfo rhs{};
     std::int16_t value{16};
-    for (size_t i = 0; i < std::size(rhs.future); ++i)
+    for (size_t i = 0; i < std::size(rhs.future); ++i)  // NOLINT(modernize-loop-convert)
     {
         rhs.future[i] = value;
         ++value;

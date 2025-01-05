@@ -2057,7 +2057,7 @@ void PalTable::redo()
 
 void PalTable::mk_default_palettes()
 {
-    for (int i = 0; i < 8; i++) // copy original palette to save areas
+    for (int i = 0; i < 8; i++) // copy original palette to save areas NOLINT(modernize-loop-convert)
     {
         std::memcpy(m_save_pal[i], m_pal, 256 * sizeof(PalEntry));
     }

@@ -194,7 +194,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     m_max_height = m_char_ychars*m_char_height;
 
     // set up the font and caret information
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)  // NOLINT(modernize-loop-convert)
     {
         const size_t count{std::size(m_cursor_pattern[0]) * sizeof(m_cursor_pattern[0][0])};
         std::memset(&m_cursor_pattern[i][0], 0, count);

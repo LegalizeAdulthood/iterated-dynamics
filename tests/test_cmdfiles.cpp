@@ -720,7 +720,7 @@ private:
 TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 {
     DACSaver saved_dac_box;
-    for (int i = 0; i < 256; ++i)
+    for (int i = 0; i < 256; ++i)  // NOLINT(modernize-loop-convert)
     {
         g_dac_box[i][0] = 0x10;
         g_dac_box[i][1] = 0x20;

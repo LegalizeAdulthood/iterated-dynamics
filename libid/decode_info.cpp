@@ -91,7 +91,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_int16(&info->decomp[0], &bufPtr, dir);
     get_int16(&info->decomp[1], &bufPtr, dir);
     get_int16(&info->symmetry, &bufPtr, dir);
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < 16; i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->init3d[i], &bufPtr, dir);
     }
@@ -122,7 +122,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_int16(&info->floatflag, &bufPtr, dir);
     get_int16(&info->bailoutold, &bufPtr, dir);
     get_int32(&info->calctime, &bufPtr, dir);
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)  // NOLINT(modernize-loop-convert)
     {
         get_uint8(&info->trigndx[i], &bufPtr, dir);
     }
@@ -189,7 +189,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_double(&info->math_tol[0], &bufPtr, dir);
     get_double(&info->math_tol[1], &bufPtr, dir);
 
-    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)
+    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->future[i], &bufPtr, dir);
     }
@@ -455,13 +455,13 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     get_int16(&info->syoffs, &bufPtr, dir);
     get_int16(&info->xdots, &bufPtr, dir);
     get_int16(&info->ydots, &bufPtr, dir);
-    for (int i = 0; i < NUM_GENES; i++)
+    for (int i = 0; i < NUM_GENES; i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->mutate[i], &bufPtr, dir);
     }
     get_int16(&info->ecount, &bufPtr, dir);
 
-    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)
+    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->future[i], &bufPtr, dir);
     }
@@ -497,7 +497,7 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     get_uint8((unsigned char *) &info->drawmode, &bufPtr, dir);
     get_uint8((unsigned char *) &info->dummy, &bufPtr, dir);
 
-    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)
+    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->future[i], &bufPtr, dir);
     }

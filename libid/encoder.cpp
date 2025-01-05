@@ -624,7 +624,7 @@ bool encoder()
             esave_info.mutate[j] = static_cast<std::int16_t>(g_gene_bank[j].mutate);
         }
 
-        for (int j = 0; j < sizeof(esave_info.future) / sizeof(std::int16_t); j++)
+        for (int j = 0; j < sizeof(esave_info.future) / sizeof(std::int16_t); j++)  // NOLINT(modernize-loop-convert)
         {
             esave_info.future[j] = 0;
         }
@@ -924,7 +924,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->math_tol[0] = g_math_tol[0];
     save_info->math_tol[1] = g_math_tol[1];
     // NOTE: can't use std::fill here on gcc due to packed constraints.
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 7; ++i)  // NOLINT(modernize-loop-convert)
     {
         save_info->future[i] = 0;
     }
