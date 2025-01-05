@@ -338,12 +338,11 @@ static int save_bf_vars()
 // copy current corners and parameters from save location
 static int restore_bf_vars()
 {
-    bf_t ptr;
     if (g_bf_save_len == 0)
     {
         return -1;
     }
-    ptr  = s_bn_root;
+    bf_t ptr = s_bn_root;
     convert_bf(g_bf_x_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_x_max, ptr, g_bf_length, g_bf_save_len);
@@ -522,8 +521,6 @@ void init_big_pi()
 {
     // What, don't you recognize the first 700 digits of pi,
     // in base 256, in reverse order?
-    int length;
-    int pi_offset;
     static Byte pi_table[] =
     {
         0x44, 0xD5, 0xDB, 0x69, 0x17, 0xDF, 0x2E, 0x56, 0x87, 0x1A,
@@ -601,8 +598,8 @@ void init_big_pi()
         // or bf_t int length of 2 + 2 byte exp
     };
 
-    length = g_bf_length+2; // 2 byte exp
-    pi_offset = sizeof pi_table - length;
+    int length = g_bf_length + 2; // 2 byte exp
+    int pi_offset = sizeof pi_table - length;
     std::memcpy(g_big_pi, pi_table + pi_offset, length);
 
     // notice that g_bf_pi and g_bn_pi can share the same memory space
