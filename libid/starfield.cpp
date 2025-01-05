@@ -2,8 +2,11 @@
 //
 #include "starfield.h"
 
-#include "calcfrac.h"
+#include <algorithm>
+
 #include "ChoiceBuilder.h"
+#include "ValueSaver.h"
+#include "calcfrac.h"
 #include "drivers.h"
 #include "fixed_pt.h"
 #include "helpdefs.h"
@@ -13,7 +16,6 @@
 #include "slideshw.h"
 #include "spindac.h"
 #include "stop_msg.h"
-#include "ValueSaver.h"
 #include "video.h"
 
 const std::string_view g_altern_map_file{"altern.map"};
@@ -65,30 +67,12 @@ int star_field()
 {
     int c;
     g_busy = true;
-    if (s_star_field_values[0] <   1.0)
-    {
-        s_star_field_values[0] =   1.0;
-    }
-    if (s_star_field_values[0] > 100.0)
-    {
-        s_star_field_values[0] = 100.0;
-    }
-    if (s_star_field_values[1] <   1.0)
-    {
-        s_star_field_values[1] =   1.0;
-    }
-    if (s_star_field_values[1] > 100.0)
-    {
-        s_star_field_values[1] = 100.0;
-    }
-    if (s_star_field_values[2] <   1.0)
-    {
-        s_star_field_values[2] =   1.0;
-    }
-    if (s_star_field_values[2] > 100.0)
-    {
-        s_star_field_values[2] = 100.0;
-    }
+    s_star_field_values[0] = std::max(s_star_field_values[0], 1.0);
+    s_star_field_values[0] = std::min(s_star_field_values[0], 100.0);
+    s_star_field_values[1] = std::max(s_star_field_values[1], 1.0);
+    s_star_field_values[1] = std::min(s_star_field_values[1], 100.0);
+    s_star_field_values[2] = std::max(s_star_field_values[2], 1.0);
+    s_star_field_values[2] = std::min(s_star_field_values[2], 100.0);
 
     s_distribution = (int)(s_star_field_values[0]);
     s_concentration  = (long)(((s_star_field_values[1]) / 100.0) * (1L << 16));
