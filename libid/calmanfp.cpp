@@ -62,8 +62,7 @@ long calc_mand_fp_asm()
     if (g_keyboard_check_interval < 0)
     {
         g_keyboard_check_interval = 1000;
-        int key = driver_key_pressed();
-        if (key)
+        if (int key = driver_key_pressed(); key)
         {
             if (key == 'o' || key == 'O')
             {
