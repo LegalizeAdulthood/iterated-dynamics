@@ -160,7 +160,10 @@ void init_failure(char const *message)
     MessageBoxA(nullptr, message, "Id: Fatal Error", MB_OK);
 }
 
-#define WIN32_STACK_SIZE 1024*1024
+enum
+{
+    WIN32_STACK_SIZE = 1024 * 1024
+};
 
 // Return available stack space ... shouldn't be needed in Win32, should it?
 long stack_avail()
