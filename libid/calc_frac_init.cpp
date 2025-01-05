@@ -717,15 +717,15 @@ void adjust_corner()
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
     double ftemp;
-    double x_ctr;
-    double y_ctr;
-    double x_mag_factor;
-    double rotation;
-    double skew;
-    LDouble magnification;
 
     if (!g_integer_fractal)
     {
+        double x_ctr;
+        double y_ctr;
+        double x_mag_factor;
+        double rotation;
+        double skew;
+        LDouble magnification;
         // While we're at it, let's adjust the x_mag_factor as well
         cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         ftemp = std::fabs(x_mag_factor);
