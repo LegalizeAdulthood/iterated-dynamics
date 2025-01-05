@@ -36,18 +36,9 @@ int diffusion()
     int ymax;
     int xmin;
     int ymin;   // Current maximum coordinates
-    int border; // Distance between release point and fractal
-    int mode;   // Determines diffusion type:  0 = central (classic)
-    //                             1 = falling particles
-    //                             2 = square cavity
-    int colorshift; // If zero, select colors at random, otherwise shift the color every colorshift points
-    int colorcount;
-    int currentcolor;
     double cosine;
     double sine;
     double angle;
-    int x;
-    int y;
     float r;
     float radius;
 
@@ -56,17 +47,20 @@ int diffusion()
         not_disk_msg();
     }
 
-    y = -1;
-    x = y;
+    int y = -1;
+    int x = y;
     g_bit_shift = 16;
     g_fudge_factor = 1L << 16;
 
-    border = (int)g_params[0];
-    mode = (int)g_params[1];
-    colorshift = (int)g_params[2];
+    int border = (int) g_params[0]; // Distance between release point and fractal
+    int mode = (int) g_params[1];   // Determines diffusion type:  0 = central (classic)
+    //                                 1 = falling particles
+    //                                 2 = square cavity
+    // If zero, select colors at random, otherwise shift the color every colorshift points
+    int colorshift = (int) g_params[2];
 
-    colorcount = colorshift; // Counts down from colorshift
-    currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
+    int colorcount = colorshift; // Counts down from colorshift
+    int currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 
     if (mode > 2)
     {
