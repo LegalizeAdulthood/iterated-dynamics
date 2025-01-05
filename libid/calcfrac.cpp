@@ -2731,9 +2731,9 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
     {
         return;
     }
-    bool parmszero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
-    bool parmsnoreal = (g_param_z1.x == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
-    bool parmsnoimag = (g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
+    bool params_zero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
+    bool params_no_real = (g_param_z1.x == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
+    bool params_no_imag = (g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
     switch (g_fractal_type)
     {
     case FractalType::MAN_LAM_FN_FN_L:      // These need only P1 checked.
@@ -2750,17 +2750,17 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
         break;
     case FractalType::FORMULA:  // Check P2, P3, P4 and P5
     case FractalType::FORMULA_FP:
-        parmszero = (parmszero && g_params[2] == 0.0 && g_params[3] == 0.0
+        params_zero = (params_zero && g_params[2] == 0.0 && g_params[3] == 0.0
             && g_params[4] == 0.0 && g_params[5] == 0.0
             && g_params[6] == 0.0 && g_params[7] == 0.0
             && g_params[8] == 0.0 && g_params[9] == 0.0);
-        parmsnoreal = (parmsnoreal && g_params[2] == 0.0 && g_params[4] == 0.0
+        params_no_real = (params_no_real && g_params[2] == 0.0 && g_params[4] == 0.0
             && g_params[6] == 0.0 && g_params[8] == 0.0);
-        parmsnoimag = (parmsnoimag && g_params[3] == 0.0 && g_params[5] == 0.0
+        params_no_imag = (params_no_imag && g_params[3] == 0.0 && g_params[5] == 0.0
             && g_params[7] == 0.0 && g_params[9] == 0.0);
         break;
     default:   // Check P2 for the rest
-        parmszero = (parmszero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
+        params_zero = (params_zero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
     }
     int yaxis_col = -1;
     int xaxis_row = -1;
@@ -2823,19 +2823,19 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
     switch (sym)       // symmetry switch
     {
     case SymmetryType::X_AXIS_NO_REAL:    // X-axis Symmetry (no real param)
-        if (!parmsnoreal)
+        if (!params_no_real)
         {
             break;
         }
         goto xsym;
     case SymmetryType::X_AXIS_NO_IMAG:    // X-axis Symmetry (no imag param)
-        if (!parmsnoimag)
+        if (!params_no_imag)
         {
             break;
         }
         goto xsym;
     case SymmetryType::X_AXIS_NO_PARAM:                        // X-axis Symmetry  (no params)
-        if (!parmszero)
+        if (!params_zero)
         {
             break;
         }
@@ -2854,7 +2854,7 @@ xsym:
         }
         break;
     case SymmetryType::Y_AXIS_NO_PARAM:                        // Y-axis Symmetry (No Parms)
-        if (!parmszero)
+        if (!params_zero)
         {
             break;
         }
@@ -2865,7 +2865,7 @@ xsym:
         }
         break;
     case SymmetryType::XY_AXIS_NO_PARAM:                       // X-axis AND Y-axis Symmetry (no parms)
-        if (!parmszero)
+        if (!params_zero)
         {
             break;
         }
@@ -2907,7 +2907,7 @@ xsym:
         }
         break;
     case SymmetryType::ORIGIN_NO_PARAM:                       // Origin Symmetry (no parms)
-        if (!parmszero)
+        if (!params_zero)
         {
             break;
         }
@@ -2927,7 +2927,7 @@ originsym:
         }
         break;
     case SymmetryType::PI_SYM_NO_PARAM:
-        if (!parmszero)
+        if (!params_zero)
         {
             break;
         }
