@@ -332,7 +332,7 @@ private:
     {
         m_pd.s = &ch;
         m_pd.i = n;
-        return m_output(PrintDocCommand::PD_PRINTN, &m_pd, m_info);
+        return m_output(PrintDocCommand::PD_PRINT_N, &m_pd, m_info);
     }
 
     TokenMode m_token_mode{};

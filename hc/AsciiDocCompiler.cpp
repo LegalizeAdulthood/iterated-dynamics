@@ -314,7 +314,7 @@ bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
         print_string(pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_PRINTN:
+    case PrintDocCommand::PD_PRINT_N:
         print_char(*pd->s, pd->i);
         return true;
 

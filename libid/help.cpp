@@ -1219,7 +1219,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         printer_str(info, pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_PRINTN:
+    case PrintDocCommand::PD_PRINT_N:
         printer_ch(info, *pd->s, pd->i);
         return true;
 

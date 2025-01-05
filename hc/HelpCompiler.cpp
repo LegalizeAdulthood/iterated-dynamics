@@ -558,7 +558,7 @@ bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *con
     {
     case PrintDocCommand::PD_FOOTING:
     case PrintDocCommand::PD_PRINT:
-    case PrintDocCommand::PD_PRINTN:
+    case PrintDocCommand::PD_PRINT_N:
     case PrintDocCommand::PD_PRINT_SEC:
         return true;
 
@@ -1084,7 +1084,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         printer_str(info, pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_PRINTN:
+    case PrintDocCommand::PD_PRINT_N:
         printer_ch(info, *pd->s, pd->i);
         return true;
 

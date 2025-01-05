@@ -123,10 +123,10 @@ struct ProcessDocumentInfo
 enum class PrintDocCommand
 {
     // commands sent to pd_output
-    PD_HEADING,         // call at the top of each page
+    PD_HEADING,          // call at the top of each page
     PD_FOOTING,          // called at the end of each page
     PD_PRINT,            // called to send text to the printer
-    PD_PRINTN,           // called to print a char n times
+    PD_PRINT_N,          // called to print a char n times
     PD_PRINT_SEC,        // called to print the section title line
     PD_START_SECTION,    // called at the start of each section
     PD_START_TOPIC,      // called at the start of each topic
