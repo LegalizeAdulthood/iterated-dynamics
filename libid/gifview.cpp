@@ -92,16 +92,13 @@ int gif_view()
     Byte buffer[16];
     unsigned top;
     unsigned left;
-    unsigned width;
     char temp1[FILE_MAX_DIR];
     Byte byte_buf[257]; // for decoder
-    int status;
-    int planes;
 
     // using stack for decoder byte buf rather than static mem
     set_byte_buff(byte_buf);
 
-    status = 0;
+    int status = 0;
 
     // initialize the col and row count for write-lines
     g_row_count = 0;
@@ -164,9 +161,9 @@ int gif_view()
         return -1;
     }
 
-    width  = buffer[6] | (buffer[7] << 8);
+    unsigned width = buffer[6] | (buffer[7] << 8);
     g_height = buffer[8] | (buffer[9] << 8);
-    planes = (buffer[10] & 0x0F) + 1;
+    int planes = (buffer[10] & 0x0F) + 1;
     s_gifview_image_width = width;
 
     if ((buffer[10] & 0x80) == 0)    // color map (better be!)
@@ -302,9 +299,9 @@ int gif_view()
             if ((buffer[8] & 0x80) == 0x80)
             {
                 // local map?
-                int numcolors;    // make this local
+                // make this local
                 planes = (buffer[8] & 0x0F) + 1;
-                numcolors = 1 << planes;
+                int numcolors = 1 << planes;
                 // skip local map
                 for (int i = 0; i < numcolors; i++)
                 {
@@ -384,13 +381,9 @@ static void close_file()
 
 static int out_line_migs(Byte *pixels, int linelen)
 {
-    int row;
-    int startcol;
-    int stopcol;
-
-    row = s_gifview_image_top + g_row_count;
-    startcol = s_gifview_image_left;
-    stopcol = startcol+linelen-1;
+    int row = s_gifview_image_top + g_row_count;
+    int startcol = s_gifview_image_left;
+    int stopcol = startcol + linelen - 1;
     write_span(row, startcol, stopcol, pixels);
     g_row_count++;
 
@@ -399,17 +392,15 @@ static int out_line_migs(Byte *pixels, int linelen)
 
 static int out_line_dither(Byte *pixels, int linelen)
 {
-    int nexterr;
-    int brt;
     int err;
     s_dither_buf.resize(linelen + 1);
     std::fill(s_dither_buf.begin(), s_dither_buf.end(), 0);
 
-    nexterr = (std::rand()&0x1f)-16;
+    int nexterr = (std::rand() & 0x1f) - 16;
     for (int i = 0; i < linelen; i++)
     {
-        brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
-               g_dac_box[pixels[i]][2]*2) >> 4; // brightness from 0 to 63
+        int brt = (g_dac_box[pixels[i]][0] * 5 + g_dac_box[pixels[i]][1] * 9 + g_dac_box[pixels[i]][2] * 2) >>
+            4; // brightness from 0 to 63
         brt += nexterr;
         if (brt > 32)
         {
@@ -433,10 +424,9 @@ static int out_line_dither(Byte *pixels, int linelen)
 static int out_line_too_wide(Byte *pixels, int linelen)
 {
     int twidth = g_logical_screen_x_dots;
-    int extra;
     while (linelen > 0)
     {
-        extra = s_col_count+linelen-twidth;
+        int extra = s_col_count + linelen - twidth;
         if (extra > 0) // line wraps
         {
             write_span(g_row_count, s_col_count, twidth-1, pixels);
@@ -481,11 +471,10 @@ static bool put_sound_line(int row, int colstart, int colstop, Byte *pixels)
 int sound_line(Byte *pixels, int linelen)
 {
     int twidth = g_logical_screen_x_dots;
-    int extra;
     int ret = 0;
     while (linelen > 0)
     {
-        extra = s_col_count+linelen-twidth;
+        int extra = s_col_count + linelen - twidth;
         if (extra > 0) // line wraps
         {
             if (put_sound_line(g_row_count, s_col_count, twidth-1, pixels))
@@ -521,8 +510,6 @@ int sound_line(Byte *pixels, int linelen)
 
 int pot_line(Byte *pixels, int linelen)
 {
-    int row;
-    int saverowcount;
     if (g_row_count == 0)
     {
         if (pot_start_disk() < 0)
@@ -530,9 +517,9 @@ int pot_line(Byte *pixels, int linelen)
             return -1;
         }
     }
-    saverowcount = g_row_count;
+    int saverowcount = g_row_count;
     g_row_count >>= 1;
-    row = g_row_count;
+    int row = g_row_count;
     if ((saverowcount & 1) != 0)   // odd line
     {
         row += g_logical_screen_y_dots;
