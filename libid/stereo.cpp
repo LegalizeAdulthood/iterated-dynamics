@@ -295,7 +295,6 @@ bool auto_stereo_convert()
     MAXCC = MAXC - MINC + 1;
     AVGCT = 0L;
     AVG = AVGCT;
-    int barwidth = 1 + g_logical_screen_x_dots / 200;
     BARHEIGHT = 1 + g_logical_screen_y_dots / 20;
     XCEN = g_logical_screen_x_dots/2;
     if (g_calibrate > 1)
@@ -350,6 +349,7 @@ bool auto_stereo_convert()
     AVG /= 2;
     {
         int ct = 0;
+        const int barwidth = 1 + g_logical_screen_x_dots / 200;
         for (int i = XCEN; i < XCEN + barwidth; i++)
         {
             for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
@@ -358,37 +358,37 @@ bool auto_stereo_convert()
                 colour[ct++] = get_color(i - (int)(AVG), j);
             }
         }
-    }
-    bars = g_calibrate != 0;
-    toggle_bars(&bars, barwidth, &colour[0]);
-    while (!done)
-    {
-        driver_wait_key_pressed(0);
-        int kbdchar = driver_get_key();
-        switch (kbdchar)
+        bars = g_calibrate != 0;
+        toggle_bars(&bars, barwidth, &colour[0]);
+        while (!done)
         {
-        case ID_KEY_ENTER:   // toggle bars
-        case ID_KEY_SPACE:
-            toggle_bars(&bars, barwidth, &colour[0]);
-            break;
-        case 'c':
-        case '+':
-        case '-':
-            rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-            break;
-        case 's':
-        case 'S':
-            save_image(g_save_filename);
-            break;
-        default:
-            if (kbdchar == ID_KEY_ESC)     // if ESC avoid returning to menu
+            driver_wait_key_pressed(0);
+            int kbdchar = driver_get_key();
+            switch (kbdchar)
             {
-                kbdchar = 255;
+            case ID_KEY_ENTER:   // toggle bars
+            case ID_KEY_SPACE:
+                toggle_bars(&bars, barwidth, &colour[0]);
+                break;
+            case 'c':
+            case '+':
+            case '-':
+                rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
+                break;
+            case 's':
+            case 'S':
+                save_image(g_save_filename);
+                break;
+            default:
+                if (kbdchar == ID_KEY_ESC)     // if ESC avoid returning to menu
+                {
+                    kbdchar = 255;
+                }
+                driver_unget_key(kbdchar);
+                driver_buzzer(Buzzer::COMPLETE);
+                done = true;
+                break;
             }
-            driver_unget_key(kbdchar);
-            driver_buzzer(Buzzer::COMPLETE);
-            done = true;
-            break;
         }
     }
 
