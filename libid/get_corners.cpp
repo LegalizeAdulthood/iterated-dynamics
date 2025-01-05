@@ -44,22 +44,20 @@ int get_corners()
     ChoiceBuilder<11> builder;
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
-    int cmag;
     double x_ctr, y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
     double x_mag_factor, rotation, skew;
-    double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
 
     bool const ousemag = g_use_center_mag;
-    oxxmin = g_x_min;
-    oxxmax = g_x_max;
-    oyymin = g_y_min;
-    oyymax = g_y_max;
-    oxx3rd = g_x_3rd;
-    oyy3rd = g_y_3rd;
+    double oxxmin = g_x_min;
+    double oxxmax = g_x_max;
+    double oyymin = g_y_min;
+    double oyymax = g_y_max;
+    double oxx3rd = g_x_3rd;
+    double oyy3rd = g_y_3rd;
 
 gc_loop:
-    cmag = g_use_center_mag ? 1 : 0;
+    int cmag = g_use_center_mag ? 1 : 0;
     if (g_draw_mode == 'l')
     {
         cmag = 0;
@@ -250,21 +248,18 @@ int get_screen_corners()
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
     int prompt_ret;
-    int cmag;
     double x_ctr, y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
     double x_mag_factor, rotation, skew;
-    double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
-    double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;
 
     bool const ousemag = g_use_center_mag;
 
-    svxxmin = g_x_min;  // save these for later since cvtcorners modifies them
-    svxxmax = g_x_max;  // and we need to set them for cvtcentermag to work
-    svxx3rd = g_x_3rd;
-    svyymin = g_y_min;
-    svyymax = g_y_max;
-    svyy3rd = g_y_3rd;
+    double svxxmin = g_x_min;  // save these for later since cvtcorners modifies them
+    double svxxmax = g_x_max;  // and we need to set them for cvtcentermag to work
+    double svxx3rd = g_x_3rd;
+    double svyymin = g_y_min;
+    double svyymax = g_y_max;
+    double svyy3rd = g_y_3rd;
 
     if (!g_set_orbit_corners && !g_keep_screen_coords)
     {
@@ -276,12 +271,12 @@ int get_screen_corners()
         g_orbit_corner_3_y = g_y_3rd;
     }
 
-    oxxmin = g_orbit_corner_min_x;
-    oxxmax = g_orbit_corner_max_x;
-    oyymin = g_orbit_corner_min_y;
-    oyymax = g_orbit_corner_max_y;
-    oxx3rd = g_orbit_corner_3_x;
-    oyy3rd = g_orbit_corner_3_y;
+    double oxxmin = g_orbit_corner_min_x;
+    double oxxmax = g_orbit_corner_max_x;
+    double oyymin = g_orbit_corner_min_y;
+    double oyymax = g_orbit_corner_max_y;
+    double oxx3rd = g_orbit_corner_3_x;
+    double oyy3rd = g_orbit_corner_3_y;
 
     g_x_min = g_orbit_corner_min_x;
     g_x_max = g_orbit_corner_max_x;
@@ -291,7 +286,7 @@ int get_screen_corners()
     g_y_3rd = g_orbit_corner_3_y;
 
 gsc_loop:
-    cmag = g_use_center_mag ? 1 : 0;
+    int cmag = g_use_center_mag ? 1 : 0;
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
 
     builder.reset();
