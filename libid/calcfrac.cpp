@@ -377,12 +377,12 @@ static void show_dot_save_restore(
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, s_save_dots.data() + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
             }
             ct += stopx-startx+1;
         }
@@ -392,12 +392,12 @@ static void show_dot_save_restore(
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, s_save_dots.data() + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
             }
             ct += stopx-startx+1;
         }
@@ -407,12 +407,12 @@ static void show_dot_save_restore(
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, s_save_dots.data() + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
             }
             ct += stopx-startx+1;
         }
@@ -422,12 +422,12 @@ static void show_dot_save_restore(
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, &s_save_dots[0] + ct);
+                read_span(j, startx, stopx, s_save_dots.data() + ct);
                 sym_fill_line(j, startx, stopx, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, &s_save_dots[0] + ct);
+                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
             }
             ct += stopx-startx+1;
         }
@@ -1114,7 +1114,7 @@ static void perform_work_list()
                 if (resized)
                 {
                     s_save_dots_len /= 2;
-                    s_fill_buff = &s_save_dots[0] + s_save_dots_len;
+                    s_fill_buff = s_save_dots.data() + s_save_dots_len;
                     std::memset(s_fill_buff, s_show_dot_color, s_save_dots_len);
                     break;
                 }
