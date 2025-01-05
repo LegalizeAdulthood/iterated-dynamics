@@ -151,7 +151,7 @@ static bool read_lsystem_file(char const *str)
 
     g_max_angle = 0;
     int rulind = 0;
-    char msgbuf[481] = { 0 }; // enough for 6 full lines
+    char msgbuf[481]{}; // enough for 6 full lines
 
     int linenum = 0;
     while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars
