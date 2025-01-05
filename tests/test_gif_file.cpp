@@ -241,8 +241,8 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "ydots": )" << value.ydots                            //
                << R"(, "colors": )" << value.colors                          //
                << R"(, "version": )" << value.version                        //
-               << R"(, "parm3": )" << value.parm3                            //
-               << R"(, "parm4": )" << value.parm4                            //
+               << R"(, "parm3": )" << value.param3                            //
+               << R"(, "parm4": )" << value.param4                            //
                << R"(, "potential": )" << ArrayPrinter(value.potential)     //
                << R"(, "rseed": )" << value.rseed                            //
                << R"(, "rflag": )" << value.rflag                            //
@@ -538,8 +538,8 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(480, info.ydots);
     EXPECT_EQ(256, info.colors);
     EXPECT_EQ(17, info.version);
-    EXPECT_NEAR(0.0f, info.parm3, eps);
-    EXPECT_NEAR(0.0f, info.parm4, eps);
+    EXPECT_NEAR(0.0f, info.param3, eps);
+    EXPECT_NEAR(0.0f, info.param4, eps);
     EXPECT_NEAR(0.0f, info.potential[0], eps);
     EXPECT_NEAR(0.0f, info.potential[1], eps);
     EXPECT_NEAR(0.0f, info.potential[2], eps);

@@ -46,8 +46,8 @@ struct FractalInfo         // for saving data in GIF file
     std::int16_t ydots;
     std::int16_t colors;
     std::int16_t version;          // used to be 'future[0]'
-    float parm3;
-    float parm4;
+    float param3;
+    float param4;
     float potential[3];
     std::int16_t rseed;
     std::int16_t rflag;
@@ -231,7 +231,7 @@ extern short                 g_skip_y_dots;
 
 int read_overlay();
 void set_if_old_bif();
-void set_function_parm_defaults();
+void set_function_param_defaults();
 int file_get_window();
 void backwards_v18();
 void backwards_v19();

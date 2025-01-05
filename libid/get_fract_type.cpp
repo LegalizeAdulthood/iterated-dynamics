@@ -246,7 +246,7 @@ void set_fractal_default_functions(FractalType previous)
         if (!(previous == FractalType::POPCORN_FP || previous == FractalType::POPCORN_L ||
                 previous == FractalType::POPCORN_JUL_FP || previous == FractalType::POPCORN_JUL_L))
         {
-            set_function_parm_defaults();
+            set_function_param_defaults();
         }
         break;
 
@@ -254,7 +254,7 @@ void set_fractal_default_functions(FractalType previous)
     case FractalType::LATOO:
         if (previous != FractalType::LATOO)
         {
-            set_function_parm_defaults();
+            set_function_param_defaults();
         }
         break;
 

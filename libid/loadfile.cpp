@@ -259,8 +259,8 @@ bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
         && lhs.ydots == rhs.ydots                         //
         && lhs.colors == rhs.colors                       //
         && lhs.version == rhs.version                     //
-        && within_eps(lhs.parm3, rhs.parm3)               //
-        && within_eps(lhs.parm4, rhs.parm4)               //
+        && within_eps(lhs.param3, rhs.param3)               //
+        && within_eps(lhs.param4, rhs.param4)               //
         && equal(lhs.potential, rhs.potential)            //
         && lhs.rseed == rhs.rseed                         //
         && lhs.rflag == rhs.rflag                         //
@@ -430,9 +430,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_invert = 0;
     if (read_info.version > 0)
     {
-        g_params[2]      = read_info.parm3;
+        g_params[2]      = read_info.param3;
         round_float_double(&g_params[2]);
-        g_params[3]      = read_info.parm4;
+        g_params[3]      = read_info.param4;
         round_float_double(&g_params[3]);
         g_potential_params[0]   = read_info.potential[0];
         g_potential_params[1]   = read_info.potential[1];
@@ -1462,7 +1462,7 @@ void set_if_old_bif()
 }
 
 // miscellaneous function variable defaults
-void set_function_parm_defaults()
+void set_function_param_defaults()
 {
     switch (g_fractal_type)
     {
@@ -1513,7 +1513,7 @@ void backwards_v20()
         && (g_debug_flag == DebugFlags::FORCE_LD_CHECK);
     if (!g_new_bifurcation_functions_loaded)
     {
-        set_function_parm_defaults();
+        set_function_param_defaults();
     }
 }
 
@@ -2189,9 +2189,9 @@ static bool params_ok(FractalInfo const *info)
     }
     else
     {
-        tmpparm3 = info->parm3;
+        tmpparm3 = info->param3;
         round_float_double(&tmpparm3);
-        tmpparm4 = info->parm4;
+        tmpparm4 = info->param4;
         round_float_double(&tmpparm4);
     }
     if (info->version > 8)

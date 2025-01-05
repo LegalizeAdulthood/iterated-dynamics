@@ -237,8 +237,8 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.ydots = deser.extract_int16();
     result.colors = deser.extract_int16();
     result.version = deser.extract_int16();
-    result.parm3 = deser.extract_float();
-    result.parm4 = deser.extract_float();
+    result.param3 = deser.extract_float();
+    result.param4 = deser.extract_float();
     {
         // TODO: when FractalInfo struct is no longer packed, we can avoid the intermediate copy
         // TODO: error: cannot bind packed field
@@ -551,8 +551,8 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.insert_int16(info.ydots);
     ser.insert_int16(info.colors);
     ser.insert_int16(info.version);
-    ser.insert_float(info.parm3);
-    ser.insert_float(info.parm4);
+    ser.insert_float(info.param3);
+    ser.insert_float(info.param4);
     ser.insert_float(info.potential);
     ser.insert_int16(info.rseed);
     ser.insert_int16(info.rflag);

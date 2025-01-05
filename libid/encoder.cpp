@@ -797,8 +797,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->xdots = static_cast<std::int16_t>(g_video_entry.xdots);
     save_info->ydots = static_cast<std::int16_t>(g_video_entry.ydots);
     save_info->colors = static_cast<std::int16_t>(g_video_entry.colors);
-    save_info->parm3 = 0;        // pre version==7 fields
-    save_info->parm4 = 0;
+    save_info->param3 = 0;        // pre version==7 fields
+    save_info->param4 = 0;
     save_info->dparm3 = g_params[2];
     save_info->dparm4 = g_params[3];
     save_info->dparm5 = g_params[4];
