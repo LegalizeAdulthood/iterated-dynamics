@@ -139,9 +139,8 @@ std::ostream &operator<<(std::ostream &str, const Topic &topic)
     {
         int size = 0;
         int width = 0;
-        TokenType const tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
-        switch (tok)
+        switch (const TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
         {
         case TokenType::TOK_DONE:
             str << "  done\n";
@@ -263,9 +262,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
         while (len > 0)
         {
-            TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
-
-            switch (tok)
+            switch (TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
             {
             case TokenType::TOK_PARA:
             {
