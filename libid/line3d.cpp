@@ -236,7 +236,7 @@ int line3d(Byte * pixels, unsigned linelen)
     // copies pixels buffer to float type fraction buffer for fill purposes
     if (g_potential_16bit)
     {
-        if (set_pixel_buff(pixels, &s_fraction[0], linelen))
+        if (set_pixel_buff(pixels, s_fraction.data(), linelen))
         {
             return 0;
         }
