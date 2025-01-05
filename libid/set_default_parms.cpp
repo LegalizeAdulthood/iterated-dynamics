@@ -12,7 +12,7 @@
 #include "round_float_double.h"
 #include "zoom.h"
 
-void set_default_parms()
+void set_default_params()
 {
     g_x_min = g_cur_fractal_specific->xmin;
     g_x_max = g_cur_fractal_specific->xmax;

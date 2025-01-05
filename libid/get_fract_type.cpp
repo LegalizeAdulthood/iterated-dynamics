@@ -299,7 +299,7 @@ sel_type_restart:
     }
 
     set_fractal_default_functions(oldfractype);
-    set_default_parms();
+    set_default_params();
 
     if (get_fract_params(false) < 0)
     {

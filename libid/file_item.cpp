@@ -794,7 +794,7 @@ long get_file_entry(ItemType type, char const *title, char const *fmask,
             {
                 g_fractal_type = !g_ifs_type ? FractalType::IFS : FractalType::IFS_3D;
                 g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-                set_default_parms(); // to correct them if 3d
+                set_default_params(); // to correct them if 3d
                 return 0;
             }
             break;

@@ -2,4 +2,4 @@
 //
 #pragma once
 
-void set_default_parms();
+void set_default_params();
