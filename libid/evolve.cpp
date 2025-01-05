@@ -930,14 +930,8 @@ static bool explore_check()
     // checks through gene array to see if any of the parameters are set to
     // one of the non random variation modes. Used to see if parmzoom box is
     // needed
-    for (auto &elem : g_gene_bank)
-    {
-        if ((elem.mutate != Variations::NONE) && (elem.mutate < Variations::RANDOM))
-        {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(std::begin(g_gene_bank), std::end(g_gene_bank), [](const GeneBase &gene)
+        { return (gene.mutate != Variations::NONE) && (gene.mutate < Variations::RANDOM); });
 }
 
 void draw_param_box(int mode)
