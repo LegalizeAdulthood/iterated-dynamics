@@ -2165,7 +2165,6 @@ static bool is_const_pair(char const *Str)
 
 static ConstArg *is_const(char const *Str, int Len)
 {
-    DComplex z;
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_variable_index; n++)
     {
@@ -2241,6 +2240,7 @@ static ConstArg *is_const(char const *Str, int Len)
         || (Str[0] == '-' && (std::isdigit(Str[1]) || Str[1] == '.'))
         || Str[0] == '.')
     {
+        DComplex z;
         assert(g_operation_index > 0);
         assert(g_operation_index == s_op.size());
         if (s_op.back().f == s_neg)
@@ -3336,8 +3336,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
     }
     while (!done)
     {
-        int c = frm_get_char(openfile);
-        switch (c)
+        switch (int c = frm_get_char(openfile); c)
         {
         case EOF:
             tok->str[i] = (char) 0;
@@ -3678,8 +3677,7 @@ static bool frm_get_token(std::FILE *openfile, Token *this_token)
     int i = 1;
     long filepos;
 
-    int c = frm_get_char(openfile);
-    switch (c)
+    switch (int c = frm_get_char(openfile); c)
     {
 CASE_NUM:
     case '.':
