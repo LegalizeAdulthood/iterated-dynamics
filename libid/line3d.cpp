@@ -360,7 +360,7 @@ int line3d(Byte * pixels, unsigned linelen)
             sintheta = s_sin_theta_array[col];
             costheta = s_cos_theta_array[col];
 
-            if (s_sin_phi < 0 && !(g_raytrace_format != RayTraceFormat::NONE|| g_fill_type < FillType::POINTS))
+            if (s_sin_phi < 0 && g_raytrace_format == RayTraceFormat::NONE && g_fill_type >= FillType::POINTS)
             {
                 cur = s_bad;
                 f_cur = s_f_bad;
@@ -415,7 +415,7 @@ int line3d(Byte * pixels, unsigned linelen)
                     f_cur.y = (float)(ycenter0 + costheta * s_cos_phi * s_scale_y * r0);
                     f_cur.color = (float)(-r0 * costheta * s_sin_phi);
                 }
-                if (!(g_user_float_flag || g_raytrace_format != RayTraceFormat::NONE))
+                if (!g_user_float_flag && g_raytrace_format == RayTraceFormat::NONE)
                 {
                     if (long_persp(lv, s_l_view, 16) == -1)
                     {
