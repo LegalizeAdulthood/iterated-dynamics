@@ -21,6 +21,7 @@
 #include "spindac.h"
 #include "ValueSaver.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -216,10 +217,7 @@ void rotate(int direction)      // rotate-the-palette routine
         case '8':
         case '9':
             step = kbdchar - '0';   // change step-size
-            if (step > rotate_size)
-            {
-                step = rotate_size;
-            }
+            step = std::min(step, rotate_size);
             break;
         case ID_KEY_F1:                       // ID_KEY_F1 - ID_KEY_F10:
         case ID_KEY_F2:                       // select a shading factor
