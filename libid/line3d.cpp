@@ -532,8 +532,8 @@ int line3d(Byte * pixels, unsigned linelen)
                 {
                     perspective(v);
                 }
-                cur.x = (int)(v[0] + g_xx_adjust + .5);
-                cur.y = (int)(v[1] + g_yy_adjust + .5);
+                cur.x = (int) std::lround(v[0] + g_xx_adjust);
+                cur.y = (int) std::lround(v[1] + g_yy_adjust);
 
                 v[0] = 0;
                 v[1] = 0;
