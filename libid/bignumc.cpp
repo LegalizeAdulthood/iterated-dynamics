@@ -536,10 +536,9 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     bn_t n1p = n;
     if (steps != 0) // if zero, then skip all the middle term calculations
     {
-        bn_t n2p;
         for (int i = steps; i > 0; i--) // steps gets altered, count backwards
         {
-            n2p = n1p + 2;  // set n2p pointer to 1 step beyond n1p
+            bn_t n2p = n1p + 2;  // set n2p pointer to 1 step beyond n1p
             for (int j = 0; j < steps; j++)
             {
                 prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); // U16*U16=U32
