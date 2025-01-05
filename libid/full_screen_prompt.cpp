@@ -86,9 +86,9 @@ int full_screen_prompt(        // full-screen prompting routine
 
     // initialize widest_entry_line and lines_in_entry
     int lines_in_entry = 0;    // total lines in entry to be scrolled
-    int widest_entry_line = 0; // length of longest line in entry
     if (in_scrolling_mode && scroll_file != nullptr)
     {
+        int widest_entry_line = 0;
         bool comment = false;
         int c = 0;
         int line_width = -1;
@@ -934,8 +934,7 @@ static int input_field_list(
         }
         buf[vlen] = 0;
         driver_put_string(row, col, attr, buf);
-        int curkey = driver_key_cursor(row, col); // get a keystroke
-        switch (curkey)
+        switch (int curkey = driver_key_cursor(row, col); curkey)
         {
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
