@@ -19,21 +19,13 @@ int field_prompt(
     int (*checkkey)(int curkey) // routine to check non data keys, or nullptr
 )
 {
-    char const *charptr;
-    int boxwidth;
-    int titlelines;
-    int titlecol;
-    int titlerow;
-    int promptcol;
-    int i;
-    int j;
     char buf[81] = { 0 };
     help_title();                                   // clear screen, display title
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
-    charptr = hdg;                                  // count title lines, find widest
-    boxwidth = 0;
-    i = boxwidth;
-    titlelines = 1;
+    char const *charptr = hdg;                                  // count title lines, find widest
+    int boxwidth = 0;
+    int i = boxwidth;
+    int titlelines = 1;
     while (*charptr)
     {
         if (*(charptr++) == '\n')
@@ -48,12 +40,12 @@ int field_prompt(
     }
     boxwidth = std::max(len, boxwidth);
     i = titlelines + 4;                    // total rows in box
-    titlerow = (25 - i) / 2;               // top row of it all when centered
+    int titlerow = (25 - i) / 2;               // top row of it all when centered
     titlerow -= titlerow / 4;              // higher is better if lots extra
-    titlecol = (80 - boxwidth) / 2;        // center the box
+    int titlecol = (80 - boxwidth) / 2;        // center the box
     titlecol -= (90 - boxwidth) / 20;
-    promptcol = titlecol - (boxwidth-len)/2;
-    j = titlecol;                          // add margin at each side of box
+    int promptcol = titlecol - (boxwidth - len) / 2;
+    int j = titlecol;                          // add margin at each side of box
     i = (82-boxwidth)/4;
     i = std::min(i, 3);
     j -= i;
