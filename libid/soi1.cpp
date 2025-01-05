@@ -269,14 +269,8 @@ static int rhombus_aux(
 
     bool status = false;
     avail = stack_avail();
-    if (avail < g_soi_min_stack_available)
-    {
-        g_soi_min_stack_available = avail;
-    }
-    if (g_rhombus_depth > g_max_rhombus_depth)
-    {
-        g_max_rhombus_depth = g_rhombus_depth;
-    }
+    g_soi_min_stack_available = std::min(avail, g_soi_min_stack_available);
+    g_max_rhombus_depth = std::max(g_rhombus_depth, g_max_rhombus_depth);
     g_rhombus_stack[g_rhombus_depth] = avail;
 
     if (driver_key_pressed())
