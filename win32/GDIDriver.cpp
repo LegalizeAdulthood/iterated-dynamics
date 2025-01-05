@@ -172,12 +172,11 @@ bool GDIDriver::init(int *argc, char **argv)
         int width, height;
         get_max_screen(width, height);
 
-        for (int m = 0; m < std::size(modes); m++)
+        for (VideoInfo &mode : modes)
         {
-            if ((modes[m].xdots <= width)
-                && (modes[m].ydots <= height))
+            if (mode.xdots <= width && mode.ydots <= height)
             {
-                add_video_mode(this, &modes[m]);
+                add_video_mode(this, &mode);
             }
         }
     }
