@@ -102,8 +102,7 @@ static StereoData *s_data{};
 
 static int get_depth(int xd, int yd)
 {
-    int pal;
-    pal = get_color(xd, yd);
+    int pal = get_color(xd, yd);
     if (g_gray_flag)
     {
         // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
@@ -249,9 +248,6 @@ bool auto_stereo_convert()
     Byte savedacbox[256*3];
     bool ret = false;
     bool bars;
-    int ct;
-    int kbdchar;
-    int barwidth;
     std::time_t ltime;
     std::vector<int> colour;
     colour.resize(g_logical_screen_x_dots);
@@ -299,7 +295,7 @@ bool auto_stereo_convert()
     MAXCC = MAXC - MINC + 1;
     AVGCT = 0L;
     AVG = AVGCT;
-    barwidth  = 1 + g_logical_screen_x_dots / 200;
+    int barwidth = 1 + g_logical_screen_x_dots / 200;
     BARHEIGHT = 1 + g_logical_screen_y_dots / 20;
     XCEN = g_logical_screen_x_dots/2;
     if (g_calibrate > 1)
@@ -352,7 +348,7 @@ bool auto_stereo_convert()
     find_special_colors();
     AVG /= AVGCT;
     AVG /= 2;
-    ct = 0;
+    int ct = 0;
     for (int i = XCEN; i < XCEN + barwidth; i++)
     {
         for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
@@ -366,7 +362,7 @@ bool auto_stereo_convert()
     while (!done)
     {
         driver_wait_key_pressed(0);
-        kbdchar = driver_get_key();
+        int kbdchar = driver_get_key();
         switch (kbdchar)
         {
         case ID_KEY_ENTER:   // toggle bars
