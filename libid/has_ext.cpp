@@ -12,7 +12,7 @@
 char const *has_ext(char const *source)
 {
     char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT] = { 0 };
+    char ext[FILE_MAX_EXT]{};
     split_fname_ext(source, fname, ext);
     char const *ret = nullptr;
     if (ext[0] != 0)
