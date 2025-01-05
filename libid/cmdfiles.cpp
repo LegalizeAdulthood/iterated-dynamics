@@ -631,7 +631,7 @@ static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
         clear_command_comments();
     }
 
-    char cmdbuf[10000] = { 0 };
+    char cmdbuf[10000]{};
     char linebuf[513];
     linebuf[0] = 0;
     int lineoffset{};
