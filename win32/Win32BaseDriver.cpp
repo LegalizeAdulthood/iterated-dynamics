@@ -157,7 +157,7 @@ void  Win32BaseDriver::shell()
     {
         sizeof(si)
     };
-    PROCESS_INFORMATION pi = { 0 };
+    PROCESS_INFORMATION pi{};
     const char *comspec = getenv("COMSPEC");
     if (comspec == nullptr)
     {
