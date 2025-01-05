@@ -574,9 +574,9 @@ gfp_top:
         int j = 0;
         for (int i = firstparm; i < lastparm; i++)
         {
-            char parmprompt[MAX_PARAMS][55];
+            char param_prompt[MAX_PARAMS][55];
             char tmpbuf[30];
-            if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
+            if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, param_prompt[j]))
             {
                 if (curtype == FractalType::FORMULA || curtype == FractalType::FORMULA_FP)
                 {
@@ -588,7 +588,7 @@ gfp_top:
                 break;
             }
             numparams++;
-            choices[promptnum] = parmprompt[j++];
+            choices[promptnum] = param_prompt[j++];
             paramvalues[promptnum].type = 'd';
 
             if (choices[promptnum][0] == '+')
