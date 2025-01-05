@@ -330,28 +330,21 @@ sel_type_restart:
 
 int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific parms
 {
-    char const *v0 = "From cx (real part)";
-    char const *v1 = "From cy (imaginary part)";
-    char const *v2 = "To   cx (real part)";
-    char const *v3 = "To   cy (imaginary part)";
     char const *juliorbitname = nullptr;
     int numparams;
     int numtrig;
     FullScreenValues paramvalues[30];
     char const *choices[30];
+    char bailoutmsg[50];
     long oldbailout = 0L;
     int promptnum;
     char msg[120];
     char const *type_name;
-    char const *tmpptr;
-    char bailoutmsg[50];
     int ret = 0;
-    char parmprompt[MAX_PARAMS][55];
     static char const *trg[] =
     {
         "First Function", "Second Function", "Third Function", "Fourth Function"
     };
-    char const *entryname;
     std::FILE *entryfile;
     std::vector<char const *> trignameptr;
     char const *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
@@ -378,6 +371,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     HelpLabels help_formula = g_cur_fractal_specific->helpformula;
     if (help_formula < HelpLabels::NONE)
     {
+        char const *entryname;
         if (help_formula == HelpLabels::SPECIAL_FORMULA)
         {
             // special for formula
@@ -579,6 +573,7 @@ gfp_top:
         int j = 0;
         for (int i = firstparm; i < lastparm; i++)
         {
+            char parmprompt[MAX_PARAMS][55];
             char tmpbuf[30];
             if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
             {
@@ -666,6 +661,7 @@ gfp_top:
         }
         else
         {
+            char const *tmpptr;
             choices[promptnum] = "Bailout value (0 means use default)";
             paramvalues[promptnum].type = 'L';
             oldbailout = g_bail_out;
@@ -683,6 +679,10 @@ gfp_top:
     }
     if (g_julibrot)
     {
+        char const *v0 = "From cx (real part)";
+        char const *v1 = "From cy (imaginary part)";
+        char const *v2 = "To   cx (real part)";
+        char const *v3 = "To   cy (imaginary part)";
         switch (g_new_orbit_type)
         {
         case FractalType::QUAT_FP:
