@@ -340,7 +340,7 @@ bool auto_stereo_convert()
             {
                 buf[i] = (unsigned char)(std::rand()%g_colors);
             }
-            out_line_stereo(&buf[0], g_logical_screen_x_dots);
+            out_line_stereo(buf.data(), g_logical_screen_x_dots);
         }
     }
 
@@ -359,7 +359,7 @@ bool auto_stereo_convert()
             }
         }
         bars = g_calibrate != 0;
-        toggle_bars(&bars, barwidth, &colour[0]);
+        toggle_bars(&bars, barwidth, colour.data());
         while (!done)
         {
             driver_wait_key_pressed(0);
@@ -368,7 +368,7 @@ bool auto_stereo_convert()
             {
             case ID_KEY_ENTER:   // toggle bars
             case ID_KEY_SPACE:
-                toggle_bars(&bars, barwidth, &colour[0]);
+                toggle_bars(&bars, barwidth, colour.data());
                 break;
             case 'c':
             case '+':
