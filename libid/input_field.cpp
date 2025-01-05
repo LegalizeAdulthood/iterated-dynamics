@@ -23,8 +23,6 @@ int input_field(InputFieldFlags options, //
 {
     char savefld[81];
     char buf[81];
-    int curkey;
-    int i;
     int j;
     ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     int ret = -1;
@@ -36,7 +34,7 @@ int input_field(InputFieldFlags options, //
     while (true)
     {
         std::strcpy(buf, fld);
-        i = (int) std::strlen(buf);
+        int i = (int) std::strlen(buf);
         while (i < len)
         {
             buf[i++] = ' ';
@@ -48,7 +46,7 @@ int input_field(InputFieldFlags options, //
             driver_put_string(row, col, attr, buf);
             display = false;
         }
-        curkey = driver_key_cursor(row+insert, col+offset);  // get a keystroke
+        int curkey = driver_key_cursor(row + insert, col + offset);  // get a keystroke
         if (curkey == 1047)
         {
             curkey = 47; // numeric slash
