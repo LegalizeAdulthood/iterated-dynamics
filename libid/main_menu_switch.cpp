@@ -388,7 +388,7 @@ static MainState show_orbit_window(MainContext &)
         && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
              g_fractal_specific[+g_fractal_type].tofloat != FractalType::NO_FRACTAL)
         && (g_bf_math == BFMathType::NONE) // for now no arbitrary precision support
-        && !(g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR))
+        && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {
         clear_zoom_box();
         jiim(JIIMType::ORBIT);
