@@ -118,7 +118,7 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
         std::strcpy(defaultextension, ".ifs");
         split_drive_dir(g_search_for.ifs, drive, dir);
         break;
-    case ItemType::PARM:
+    case ItemType::PAR_SET:
     default:
         par_search_name = itemname;
         std::strcpy(defaultextension, ".par");
@@ -709,7 +709,7 @@ retry:
     int boxdepth = 0;
     int colwidth = boxdepth;
     int boxwidth = colwidth;
-    if (type == ItemType::PARM)
+    if (type == ItemType::PAR_SET)
     {
         formatitem = format_param_file_line;
         boxwidth = 1;
@@ -798,7 +798,7 @@ long get_file_entry(ItemType type, char const *title, char const *fmask,
                 return 0;
             }
             break;
-        case ItemType::PARM:
+        case ItemType::PAR_SET:
             return entry_pointer;
         }
     }

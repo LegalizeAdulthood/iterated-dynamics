@@ -7,7 +7,7 @@
 
 enum class ItemType
 {
-    PARM = 0,
+    PAR_SET = 0,
     FORMULA = 1,
     L_SYSTEM = 2,
     IFS = 3,
