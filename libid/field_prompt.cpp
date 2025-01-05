@@ -19,7 +19,7 @@ int field_prompt(
     int (*checkkey)(int curkey) // routine to check non data keys, or nullptr
 )
 {
-    char buf[81] = { 0 };
+    char buf[81]{};
     help_title();                                   // clear screen, display title
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
     char const *charptr = hdg;                                  // count title lines, find widest
