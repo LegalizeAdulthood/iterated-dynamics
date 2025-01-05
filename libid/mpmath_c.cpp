@@ -125,10 +125,9 @@ MPC mpc_pow(MPC x, int exp)
 
 int mpc_cmp(MPC x, MPC y)
 {
-    MPC z;
-
     if (mp_cmp(x.x, y.x) || mp_cmp(x.y, y.y))
     {
+        MPC z;
         z.x = mpc_mod(x);
         z.y = mpc_mod(y);
         return mp_cmp(z.x, z.y);
