@@ -116,11 +116,10 @@ void trig_details(char *buf)
 int set_trig_array(int k, char const *name)
 {
     char trigname[10];
-    char *slash;
     std::strncpy(trigname, name, 6);
     trigname[6] = 0; // safety first
 
-    slash = std::strchr(trigname, '/');
+    char *slash = std::strchr(trigname, '/');
     if (slash != nullptr)
     {
         *slash = 0;
