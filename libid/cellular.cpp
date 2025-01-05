@@ -51,7 +51,6 @@ bool g_cellular_next_screen{};             // for cellular next screen generatio
 
 void abort_cellular(int err, int t)
 {
-    int i;
     switch (err)
     {
     case BAD_T:
@@ -93,7 +92,7 @@ void abort_cellular(int err, int t)
     case RULE_LENGTH:
     {
         static char msg[] = {"Rule must be    digits long" };
-        i = s_rule_digits / 10;
+        int i = s_rule_digits / 10;
         if (i == 0)
         {
             msg[14] = (char)(s_rule_digits + 48);
@@ -118,26 +117,18 @@ void abort_cellular(int err, int t)
 
 int cellular()
 {
-    S16 start_row;
-    S16 filled;
-    S16 notfilled;
     U16 cell_table[32];
     U16 init_string[16];
-    U16 kr;
-    U16 k;
-    U32 lnnmbr;
     U16 twor;
     S16 t;
-    S16 t2;
-    S32 randparam;
     double n;
     char buf[512];
 
     set_cellular_palette();
 
-    randparam = (S32)g_params[0];
-    lnnmbr = (U32)g_params[3];
-    kr = (U16)g_params[2];
+    S32 randparam = (S32) g_params[0];
+    U32 lnnmbr = (U32) g_params[3];
+    U16 kr = (U16) g_params[2];
     switch (kr)
     {
     case 21:
@@ -161,7 +152,7 @@ int cellular()
     }
 
     s_s_r = (S16)(kr % 10); // Number of nearest neighbors to sum
-    k = (U16)(kr / 10); // Number of different states, k=3 has states 0,1,2
+    U16 k = (U16) (kr / 10); // Number of different states, k=3 has states 0,1,2
     s_k_1 = (S16)(k - 1); // Highest state value, k=3 has highest state value of 2
     s_rule_digits = (S16)((s_s_r * 2 + 1) * s_k_1 + 1); // Number of digits in the rule
 
@@ -183,7 +174,7 @@ int cellular()
         {
             elem = 0; // zero the array
         }
-        t2 = (S16)((16 - t)/2);
+        S16 t2 = (S16) ((16 - t) / 2);
         for (int i = 0; i < t; i++)
         {
             // center initial string in array
@@ -238,7 +229,7 @@ int cellular()
         }
     }
 
-    start_row = 0;
+    S16 start_row = 0;
     bool resized = false;
     try
     {
@@ -258,8 +249,8 @@ int cellular()
     // nxtscreenflag toggled by space bar, true for continuous
     // false to stop on next screen
 
-    filled = 0;
-    notfilled = (S16)(1-filled);
+    S16 filled = 0;
+    S16 notfilled = (S16) (1 - filled);
     if (g_resuming && !g_cellular_next_screen && !s_last_screen_flag)
     {
         start_resume();
