@@ -160,11 +160,9 @@ static void lsysf_do_bang(LSysTurtleStateF *cmd)
 static void lsysf_do_size_dm(LSysTurtleStateF *cmd)
 {
     double angle = (double) cmd->realangle;
-    double s;
-    double c;
 
-    s = std::sin(angle);
-    c = std::cos(angle);
+    double s = std::sin(angle);
+    double c = std::cos(angle);
 
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
@@ -189,15 +187,11 @@ static void lsysf_do_size_gf(LSysTurtleStateF *cmd)
 static void lsysf_do_draw_d(LSysTurtleStateF *cmd)
 {
     double angle = (double) cmd->realangle;
-    double s;
-    double c;
-    int lastx;
-    int lasty;
-    s = std::sin(angle);
-    c = std::cos(angle);
+    double s = std::sin(angle);
+    double c = std::cos(angle);
 
-    lastx = (int) cmd->xpos;
-    lasty = (int) cmd->ypos;
+    int lastx = (int) cmd->xpos;
+    int lasty = (int) cmd->ypos;
 
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
@@ -208,11 +202,9 @@ static void lsysf_do_draw_d(LSysTurtleStateF *cmd)
 static void lsysf_do_draw_m(LSysTurtleStateF *cmd)
 {
     double angle = (double) cmd->realangle;
-    double s;
-    double c;
 
-    s = std::sin(angle);
-    c = std::cos(angle);
+    double s = std::sin(angle);
+    double c = std::cos(angle);
 
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
@@ -261,8 +253,6 @@ static void lsysf_do_draw_lt(LSysTurtleStateF *cmd)
 static LSysFCmd *
 find_size(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
 {
-    bool tran;
-
     if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
@@ -286,7 +276,7 @@ find_size(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
                 return nullptr;
             }
         }
-        tran = false;
+        bool tran = false;
         if (depth)
         {
             for (LSysFCmd **rulind = rules; *rulind; rulind++)
@@ -413,8 +403,6 @@ lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int 
 LSysFCmd *
 draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
 {
-    bool tran;
-
     if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
@@ -437,7 +425,7 @@ draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth)
                 return nullptr;
             }
         }
-        tran = false;
+        bool tran = false;
         if (depth)
         {
             for (LSysFCmd **rulind = rules; *rulind; rulind++)
@@ -729,18 +717,15 @@ LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts)
 
 void lsysf_do_sin_cos()
 {
-    LDouble locaspect;
     LDouble TWOPI = 2.0 * PI;
-    LDouble twopimax;
-    LDouble twopimaxi;
 
-    locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
-    twopimax = TWOPI / g_max_angle;
+    LDouble locaspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
+    LDouble twopimax = TWOPI / g_max_angle;
     s_sin_table_f.resize(g_max_angle);
     s_cos_table_f.resize(g_max_angle);
     for (int i = 0; i < g_max_angle; i++)
     {
-        twopimaxi = i * twopimax;
+        LDouble twopimaxi = i * twopimax;
         s_sin_table_f[i] = sinl(twopimaxi);
         s_cos_table_f[i] = locaspect * cosl(twopimaxi);
     }
