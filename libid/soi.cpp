@@ -920,8 +920,6 @@ void soi_ldbl()
     // cppcheck-suppress unreadVariable
     bool status;
     LDouble tolerance = 0.1;
-    LDouble stepx;
-    LDouble stepy;
     LDouble xxminl;
     LDouble xxmaxl;
     LDouble yyminl;
@@ -944,8 +942,8 @@ void soi_ldbl()
         yymaxl = g_y_max;
     }
     s_t_width = tolerance/(g_logical_screen_x_dots - 1);
-    stepx = (xxmaxl - xxminl) / g_logical_screen_x_dots;
-    stepy = (yyminl - yymaxl) / g_logical_screen_y_dots;
+    LDouble stepx = (xxmaxl - xxminl) / g_logical_screen_x_dots;
+    LDouble stepy = (yyminl - yymaxl) / g_logical_screen_y_dots;
     s_equal = (stepx < stepy ? stepx : stepy);
 
     RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
