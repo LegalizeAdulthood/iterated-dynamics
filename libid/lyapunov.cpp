@@ -116,8 +116,6 @@ int lyapunov()
 //
 bool lya_setup()
 {
-    long i;
-
     s_filter_cycles = (long)g_params[2];
     if (s_filter_cycles == 0)
     {
@@ -126,7 +124,7 @@ bool lya_setup()
     s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL;
     s_lya_length = 1;
 
-    i = (long)g_params[0];
+    long i = (long) g_params[0];
     s_lya_rxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)
@@ -158,13 +156,11 @@ bool lya_setup()
 static int lyapunov_cycles(long filter_cycles, double a, double b)
 {
     int color;
-    int lnadjust;
-    double total;
     double temp;
     // e10=22026.4657948  e-10=0.0000453999297625
 
-    total = 1.0;
-    lnadjust = 0;
+    double total = 1.0;
+    int lnadjust = 0;
     long i;
     for (i = 0; i < filter_cycles; i++)
     {
