@@ -303,9 +303,6 @@ void bf_corners_to_float()
 //    Bignumber Bailout Routines
 // --------------------------------------------------------------------
 
-// mandel_bntoint() can only be used for g_int_length of 1
-#define mandel_bntoint(n) (*(n + g_bn_length - 1)) // assumes g_int_length of 1
-
 // Note:
 // No need to set magnitude
 // as color schemes that need it calculate it later.
