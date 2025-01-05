@@ -362,8 +362,6 @@ void unread_char(int ch)
 
 int read_char_aux()
 {
-    int ch;
-
     if (g_src_line <= 0)
     {
         g_src_line = 1;
@@ -389,7 +387,7 @@ int read_char_aux()
 
     while (true)
     {
-        ch = getc(s_src_file);
+        int ch = getc(s_src_file);
 
         switch (ch)
         {
@@ -437,9 +435,7 @@ int read_char_aux()
 
 int read_char()
 {
-    int ch;
-
-    ch = read_char_aux();
+    int ch = read_char_aux();
 
     while (ch == ';' && s_src_col == 1)    // skip over comments
     {
@@ -511,11 +507,9 @@ bool validate_label_name(char const *name)
 
 char *read_until(char *buff, int len, char const *stop_chars)
 {
-    int ch;
-
     while (--len > 0)
     {
-        ch = read_char();
+        int ch = read_char();
 
         if (ch == -1)
         {
@@ -545,11 +539,9 @@ char *read_until(char *buff, int len, char const *stop_chars)
 
 void skip_over(char const *skip)
 {
-    int ch;
-
     while (true)
     {
-        ch = read_char();
+        int ch = read_char();
 
         if (ch == -1)
         {
@@ -901,20 +893,13 @@ int parse_link()   // returns length of link or 0 on error
 
 int create_table()
 {
-    char  *ptr;
     int    width;
     int    cols;
     int    start_off;
-    int    first_link;
-    int    rows;
     int    ch;
-    int    len;
-    int    lnum;
-    int    count;
     std::vector<std::string> title;
-    char  *table_start;
 
-    ptr = std::strchr(s_cmd, '=');
+    char *ptr = std::strchr(s_cmd, '=');
 
     if (ptr == nullptr)
     {
@@ -923,7 +908,7 @@ int create_table()
 
     ptr++;
 
-    len = std::sscanf(ptr, " %d %d %d", &width, &cols, &start_off);
+    int len = std::sscanf(ptr, " %d %d %d", &width, &cols, &start_off);
 
     if (len < 3)
     {
@@ -939,9 +924,9 @@ int create_table()
 
     bool done = false;
 
-    first_link = static_cast<int>(g_src.all_links.size());
-    table_start = g_src.curr;
-    count = 0;
+    int first_link = static_cast<int>(g_src.all_links.size());
+    char *table_start = g_src.curr;
+    int count = 0;
 
     // first, read all the links in the table
 
@@ -1032,14 +1017,14 @@ int create_table()
 
     // now, put all the links into the buffer...
 
-    rows = 1 + (count / cols);
+    int rows = 1 + (count / cols);
 
     for (int r = 0; r < rows; r++)
     {
         put_spaces(start_off);
         for (int c = 0; c < cols; c++)
         {
-            lnum = c*rows + r;
+            int lnum = c * rows + r;
 
             if (first_link+lnum >= static_cast<int>(g_src.all_links.size()))
             {
@@ -1067,16 +1052,13 @@ int create_table()
 
 void process_comment()
 {
-    int ch;
-
     while (true)
     {
-        ch = read_char();
+        int ch = read_char();
 
         if (ch == '~')
         {
             bool imbedded;
-            char *ptr;
 
             ch = read_char();
 
@@ -1090,7 +1072,7 @@ void process_comment()
                 unread_char(ch);
             }
 
-            ptr = read_until(s_cmd, 128, ")\n,");
+            char *ptr = read_until(s_cmd, 128, ")\n,");
 
             ch = *ptr;
             *ptr = '\0';
@@ -1118,17 +1100,14 @@ void process_comment()
 
 void process_bininc()
 {
-    int  handle;
-    long len;
-
-    handle = open(&s_cmd[7], O_RDONLY|O_BINARY);
+    int handle = open(&s_cmd[7], O_RDONLY | O_BINARY);
     if (handle == -1)
     {
         error(0, "Unable to open \"%s\"", &s_cmd[7]);
         return ;
     }
 
-    len = filelength(handle);
+    long len = filelength(handle);
 
     if (len >= BUFFER_SIZE)
     {
