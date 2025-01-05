@@ -151,17 +151,15 @@ static void display_text(int row, int col, int color, char const *text, unsigned
 
 static void display_parse_text(char const *text, unsigned len, int start_margin, int *num_link, Link *link)
 {
-    char const *curr;
-    int row, col;
     TokenType tok;
     int size, width;
 
     g_text_cbase = SCREEN_INDENT;
     g_text_rbase = TEXT_START_ROW;
 
-    curr = text;
-    row = 0;
-    col = 0;
+    char const *curr = text;
+    int row = 0;
+    int col = 0;
 
     width = 0;
     size = width;
@@ -461,13 +459,11 @@ static int dist1(int a, int b)
 
 static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
 {
-    int curr_c2, best_overlap = 0, temp_overlap;
-    Link *curr, *best;
-    int temp_dist;
+    int best_overlap = 0;
 
-    curr    = &link[curr_link];
-    best    = nullptr;
-    curr_c2 = curr->c + curr->width - 1;
+    Link *curr = &link[curr_link];
+    Link *best = nullptr;
+    int curr_c2 = curr->c + curr->width - 1;
 
     Link *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
@@ -475,9 +471,9 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
         if (ctr != curr_link
             && ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
         {
-            temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c+temp->width-1);
+            int temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c + temp->width - 1);
             // if >= 3 lines between, prioritize on vertical distance:
-            temp_dist = dist1(temp->r, curr->r);
+            int temp_dist = dist1(temp->r, curr->r);
             if (temp_dist >= 4)
             {
                 temp_overlap -= temp_dist*100;
@@ -515,22 +511,21 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
 
 static int find_link_left_right(Link *link, int num_link, int curr_link, int left)
 {
-    int curr_c2, best_c2 = 0, temp_c2, best_dist = 0, temp_dist;
-    Link *curr, *best;
+    int best_c2 = 0, best_dist = 0;
 
-    curr    = &link[curr_link];
-    best    = nullptr;
-    curr_c2 = curr->c + curr->width - 1;
+    Link *curr = &link[curr_link];
+    Link *best = nullptr;
+    int curr_c2 = curr->c + curr->width - 1;
 
     Link *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
     {
-        temp_c2 = temp->c + temp->width - 1;
+        int temp_c2 = temp->c + temp->width - 1;
 
         if (ctr != curr_link
             && ((left && temp_c2 < (int) curr->c) || (!left && (int) temp->c > curr_c2)))
         {
-            temp_dist = dist1(curr->r, temp->r);
+            int temp_dist = dist1(curr->r, temp->r);
 
             if (best != nullptr)
             {
@@ -609,18 +604,14 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 
 static int help_topic(History *curr, History *next, int flags)
 {
-    int       len;
     int       key;
     int       num_pages;
     int       num_link;
     int       curr_link;
     char      title[81];
-    long      where;
-    int       draw_page;
-    int       action;
     Byte ch;
 
-    where     = s_topic_offset[curr->topic_num]+sizeof(int); // to skip flags
+    long where = s_topic_offset[curr->topic_num] + sizeof(int); // to skip flags
     curr_link = curr->link;
 
     help_seek(where);
@@ -631,7 +622,7 @@ static int help_topic(History *curr, History *next, int flags)
     freader(&s_page_table[0], 3*sizeof(int), num_pages, s_help_file);
 
     freader(&ch, sizeof(char), 1, s_help_file);
-    len = ch;
+    int len = ch;
     assert(len < 81);
     freader(title, sizeof(char), len, s_help_file);
     title[len] = '\0';
@@ -650,8 +641,8 @@ static int help_topic(History *curr, History *next, int flags)
 
     assert(page < num_pages);
 
-    action = -1;
-    draw_page = 2;
+    int action = -1;
+    int draw_page = 2;
 
     do
     {
@@ -820,7 +811,6 @@ int help()
     int action{};
     History      curr = { -1 };
     int old_look_at_mouse;
-    int       flags;
     History      next;
 
     if (g_help_mode == HelpLabels::NONE)   // is help disabled?
@@ -905,7 +895,7 @@ int help()
             break;
         } // switch
 
-        flags = 0;
+        int flags = 0;
         if (curr.topic_num == s_label[static_cast<int>(HelpLabels::HELP_INDEX)].topic_num)
         {
             flags |= F_INDEX;
@@ -1001,7 +991,6 @@ static int read_help_topic(int topic, int off, int len, void *buf)
     static int  curr_topic = -1;
     static long curr_base;
     static int  curr_len;
-    int         read_len;
 
     if (topic != curr_topic)
     {
@@ -1034,7 +1023,7 @@ static int read_help_topic(int topic, int off, int len, void *buf)
         curr_base += sizeof(int);
     }
 
-    read_len = (off+len > curr_len) ? curr_len - off : len;
+    int read_len = (off + len > curr_len) ? curr_len - off : len;
 
     if (read_len > 0)
     {
@@ -1264,7 +1253,6 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
 static bool print_doc_msg_func(int pnum, int num_pages)
 {
     char temp[10];
-    int  key;
 
     if (pnum == -1)      // successful completion
     {
@@ -1299,7 +1287,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
 
     while (driver_key_pressed())
     {
-        key = driver_get_key();
+        int key = driver_get_key();
         if (key == ID_KEY_ESC)
         {
             return false;    // user abort
