@@ -58,9 +58,7 @@ unsigned long g_diffusion_limit{};   // the diffusion counter
 
 int diffusion_scan()
 {
-    double log2;
-
-    log2 = (double) std::log(2.0);
+    double log2 = std::log(2.0);
 
     g_got_status = StatusValues::DIFFUSION;
 
@@ -135,31 +133,20 @@ inline void count_to_int(unsigned long C, int &x, int &y, int dif_offset)
 static int diffusion_engine()
 {
     double log2 = (double) std::log(2.0);
-
     int i;
     int j;
-
-    int nx;
-    int ny; // number of tyles to build in x and y dirs
-    // made this to complete the area that is not
-    // a square with sides like 2 ** n
-    int rem_x;
-    int rem_y; // what is left on the last tile to draw
-
-    int dif_offset; // offset for adjusting looked-up values
-
     int sqsz;  // size of the block being filled
-
     int colo;
     int rowo; // original col and row
-
     int s = 1 << (g_diffusion_bits/2); // size of the square
-
-    nx = (int) floor(static_cast<double>((g_i_x_stop-g_i_x_start+1)/s));
-    ny = (int) floor(static_cast<double>((g_i_y_stop-g_i_y_start+1)/s));
-
-    rem_x = (g_i_x_stop-g_i_x_start+1) - nx * s;
-    rem_y = (g_i_y_stop-g_i_y_start+1) - ny * s;
+    // number of tiles to build in x and y dirs
+    int nx = (int) floor(static_cast<double>((g_i_x_stop - g_i_x_start + 1) / s));
+    int ny = (int) floor(static_cast<double>((g_i_y_stop - g_i_y_start + 1) / s));
+    // made this to complete the area that is not
+    // a square with sides like 2 ** n
+    // what is left on the last tile to draw
+    int rem_x = (g_i_x_stop - g_i_x_start + 1) - nx * s;
+    int rem_y = (g_i_y_stop - g_i_y_start + 1) - ny * s;
 
     if (g_yy_begin == g_i_y_start && g_work_pass == 0)
     {
@@ -172,7 +159,7 @@ static int diffusion_engine()
         g_diffusion_counter = (((long)((unsigned)g_yy_begin)) << 16) | ((unsigned)g_work_pass);
     }
 
-    dif_offset = 12-(g_diffusion_bits/2); // offset to adjust coordinates
+    int dif_offset = 12 - (g_diffusion_bits / 2); // offset to adjust coordinates
     // (*) for 4 bytes use 16 for 3 use 12 etc.
 
     // only the points (dithering only) :
