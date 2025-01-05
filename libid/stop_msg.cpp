@@ -46,7 +46,6 @@ static void blank_rows(int row, int count, int attr)
 bool stop_msg(StopMsgFlags flags, const std::string &msg)
 {
     int toprow;
-    int color;
     static bool batchmode = false;
     if (g_debug_flag != DebugFlags::NONE || g_init_batch >= BatchMode::NORMAL)
     {
@@ -97,7 +96,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         driver_put_string(g_text_row+2, 0, 7, "Any key to continue...");
     }
     g_text_cbase = 0; // back to full line
-    color = bit_set(flags, StopMsgFlags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
+    int color = bit_set(flags, StopMsgFlags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
     driver_set_attr(toprow, 0, color, (g_text_row+1-toprow)*80);
     driver_hide_text_cursor();   // cursor off
     if (!bit_set(flags, StopMsgFlags::NO_BUZZER))
