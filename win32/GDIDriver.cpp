@@ -22,7 +22,6 @@
 #include <array> // for std::size
 
 #define DRAW_INTERVAL 6
-#define TIMER_ID 1
 
 class GDIDriver : public Win32BaseDriver
 {
