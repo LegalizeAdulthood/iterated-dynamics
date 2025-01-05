@@ -1096,7 +1096,7 @@ void process_comment()
     }
 }
 
-void process_bininc()
+void process_bin_inc()
 {
     int handle = open(&s_cmd[7], O_RDONLY | O_BINARY);
     if (handle == -1)
@@ -1933,7 +1933,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        process_bininc();
+                        process_bin_inc();
                     }
                 }
                 else
