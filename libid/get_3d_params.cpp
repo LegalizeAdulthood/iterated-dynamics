@@ -422,7 +422,6 @@ static bool get_light_params()
 static bool check_map_file()
 {
     bool askflag = false;
-    int i;
     if (!g_read_color)
     {
         return false;
@@ -446,8 +445,8 @@ static bool check_map_file()
         if (askflag)
         {
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::NONE};
-            i = field_prompt("Enter name of .map file to use,\n"
-                             "or '*' to use palette from the image to be loaded.",
+            int i = field_prompt("Enter name of .map file to use,\n"
+                                 "or '*' to use palette from the image to be loaded.",
                 nullptr, buff, 60, nullptr);
             if (i < 0)
             {
