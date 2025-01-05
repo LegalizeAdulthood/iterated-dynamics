@@ -21,7 +21,10 @@
 
 #include <array> // for std::size
 
-#define DRAW_INTERVAL 6
+enum
+{
+    DRAW_INTERVAL = 6
+};
 
 class GDIDriver : public Win32BaseDriver
 {
