@@ -214,7 +214,7 @@ int find_line_width(TokenMode mode, char const *curr, unsigned len)
 {
     int size   = 0;
     int width  = 0;
-    int lwidth = 0;
+    int line_width = 0;
     bool done = false;
 
     do
@@ -236,7 +236,7 @@ int find_line_width(TokenMode mode, char const *curr, unsigned len)
             break;
 
         default:   /* SPACE, LINK or WORD */
-            lwidth += width;
+            line_width += width;
             curr += size;
             len -= size;
             break;
@@ -244,7 +244,7 @@ int find_line_width(TokenMode mode, char const *curr, unsigned len)
     }
     while (!done);
 
-    return lwidth;
+    return line_width;
 }
 
 namespace
