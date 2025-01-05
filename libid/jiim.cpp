@@ -619,8 +619,8 @@ void jiim(JIIMType which)
     setup_convert_to_screen(&cvt);
 
     // reuse last location if inside window
-    g_col = (int)(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
-    g_row = (int)(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
+    g_col = (int) std::lround(cvt.a * g_save_c.x + cvt.b * g_save_c.y + cvt.e);
+    g_row = (int) std::lround(cvt.c * g_save_c.x + cvt.d * g_save_c.y + cvt.f);
     if (g_col < 0 || g_col >= g_logical_screen_x_dots
         || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
@@ -636,8 +636,8 @@ void jiim(JIIMType which)
     old_y = -1;
     old_x = -1;
 
-    g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-    g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+    g_col = (int) std::lround(cvt.a * cr + cvt.b * ci + cvt.e);
+    g_row = (int) std::lround(cvt.c * cr + cvt.d * ci + cvt.f);
 
     // possible extraseg arrays have been trashed, so set up again
     if (g_integer_fractal)
@@ -780,8 +780,8 @@ void jiim(JIIMType which)
                 case 'P':
                     get_a_number(&cr, &ci);
                     exact = true;
-                    g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-                    g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+                    g_col = (int) std::lround(cvt.a * cr + cvt.b * ci + cvt.e);
+                    g_row = (int) std::lround(cvt.c * cr + cvt.d * ci + cvt.f);
                     drow = 0;
                     dcol = 0;
                     break;
