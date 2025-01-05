@@ -562,16 +562,13 @@ static WriteBatchData s_wbdata;
 
 static int get_prec(double a, double b, double c)
 {
-    double diff;
-    double temp;
-    int digits;
     double highv = 1.0E20;
-    diff = std::fabs(a - b);
+    double diff = std::fabs(a - b);
     if (diff == 0.0)
     {
         diff = highv;
     }
-    temp = std::fabs(a - c);
+    double temp = std::fabs(a - c);
     if (temp == 0.0)
     {
         temp = highv;
@@ -583,7 +580,7 @@ static int get_prec(double a, double b, double c)
         temp = highv;
     }
     diff = std::min(temp, diff);
-    digits = 7;
+    int digits = 7;
     if (g_debug_flag >= DebugFlags::FORCE_PRECISION_0_DIGITS &&
         g_debug_flag < DebugFlags::FORCE_PRECISION_20_DIGITS)
     {
@@ -605,12 +602,10 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
     double x_mag_factor;
     double rotation;
     double skew;
-    char const *sptr;
     char buf[81];
     bf_t bfXctr = nullptr;
     bf_t bfYctr = nullptr;
-    int saved;
-    saved = save_stack();
+    int saved = save_stack();
     if (g_bf_math != BFMathType::NONE)
     {
         bfXctr = alloc_stack(g_bf_length+2);
@@ -633,7 +628,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         put_param(" reset");
         put_param("=%d", g_release);
 
-        sptr = g_cur_fractal_specific->name;
+        char const *sptr = g_cur_fractal_specific->name;
         if (*sptr == '*')
         {
             ++sptr;
@@ -661,8 +656,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             if (g_new_orbit_type != FractalType::JULIA)
             {
-                char const *name;
-                name = g_fractal_specific[+g_new_orbit_type].name;
+                char const *name = g_fractal_specific[+g_new_orbit_type].name;
                 if (*name == '*')
                 {
                     name++;
@@ -718,9 +712,8 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         {
             if (g_bf_math != BFMathType::NONE)
             {
-                int digits;
                 cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
-                digits = get_prec_bf(MAX_REZ);
+                int digits = get_prec_bf(MAX_REZ);
                 put_param(" %s=", "center-mag");
                 put_bf(0, bfXctr, digits);
                 put_bf(1, bfYctr, digits);
@@ -773,8 +766,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             put_param(" %s=", "corners");
             if (g_bf_math != BFMathType::NONE)
             {
-                int digits;
-                digits = get_prec_bf(MAX_REZ);
+                int digits = get_prec_bf(MAX_REZ);
                 put_bf(0, g_bf_x_min, digits);
                 put_bf(1, g_bf_x_max, digits);
                 put_bf(1, g_bf_y_min, digits);
@@ -787,10 +779,8 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             else
             {
-                int xdigits;
-                int ydigits;
-                xdigits = get_prec(g_x_min, g_x_max, g_x_3rd);
-                ydigits = get_prec(g_y_min, g_y_max, g_y_3rd);
+                int xdigits = get_prec(g_x_min, g_x_max, g_x_3rd);
+                int ydigits = get_prec(g_y_min, g_y_max, g_y_3rd);
                 put_float(0, g_x_min, xdigits);
                 put_float(1, g_x_max, xdigits);
                 put_float(1, g_y_min, ydigits);
@@ -1409,11 +1399,9 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 
         if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
-            int xdigits;
-            int ydigits;
             put_param(" %s=", "orbitcorners");
-            xdigits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3_x);
-            ydigits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3_y);
+            int xdigits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3_x);
+            int ydigits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3_y);
             put_float(0, g_orbit_corner_min_x, xdigits);
             put_float(1, g_orbit_corner_max_x, xdigits);
             put_float(1, g_orbit_corner_min_y, ydigits);
@@ -1453,15 +1441,11 @@ docolors:
         }
         else
         {
-            int curc;
-            int scanc;
-            int force;
             int diffmag = -1;
-            int delta;
             int diff1[4][3];
             int diff2[4][3];
-            force = 0;
-            curc = force;
+            int force = 0;
+            int curc = force;
             while (true)
             {
                 // emit color in rgb 3 char encoded form
@@ -1506,7 +1490,7 @@ docolors:
                     --force;
                     continue;
                 }
-                scanc = curc;
+                int scanc = curc;
                 int k;
                 while (scanc < maxcolor)
                 {
@@ -1528,7 +1512,7 @@ docolors:
                                     break;
                                 }
                             }
-                            delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
+                            int delta = (int) g_dac_box[scanc][j] - (int) g_dac_box[scanc - k - 1][j];
                             if (k == scanc - curc)
                             {
                                 diff2[k][j] = delta;
@@ -1598,10 +1582,9 @@ docolors:
 
 static void put_file_name(char const *keyword, char const *fname)
 {
-    char const *p;
     if (*fname && !ends_with_slash(fname))
     {
-        p = std::strrchr(fname, SLASH_CH);
+        char const *p = std::strrchr(fname, SLASH_CH);
         if (p != nullptr)
         {
             fname = p+1;
@@ -1616,7 +1599,6 @@ static void put_file_name(char const *keyword, char const *fname)
 
 static void put_param(char const *parm, ...)
 {
-    char *bufptr;
     std::va_list args;
 
     va_start(args, parm);
@@ -1625,7 +1607,7 @@ static void put_param(char const *parm, ...)
     {
         ++parm;
     }
-    bufptr = s_wbdata.buf + s_wbdata.len;
+    char *bufptr = s_wbdata.buf + s_wbdata.len;
     std::vsprintf(bufptr, parm, args);
     while (*(bufptr++))
     {
@@ -1645,7 +1627,6 @@ inline int nice_line_length()
 static void put_param_line()
 {
     int len = s_wbdata.len;
-    int c;
     if (len > nice_line_length())
     {
         len = nice_line_length();
@@ -1663,7 +1644,7 @@ static void put_param_line()
             }
         }
     }
-    c = s_wbdata.buf[len];
+    int c = s_wbdata.buf[len];
     s_wbdata.buf[len] = 0;
     std::fputs("  ", s_parm_file);
     std::fputs(s_wbdata.buf, s_parm_file);
@@ -1718,8 +1699,7 @@ static void strip_zeros(char *buf)
 static void put_float(int slash, double fnum, int prec)
 {
     char buf[40];
-    char *bptr;
-    bptr = buf;
+    char *bptr = buf;
     if (slash)
     {
         *(bptr++) = '/';
