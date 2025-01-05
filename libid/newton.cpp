@@ -93,8 +93,7 @@ int newton_fractal2()
     {
         if (g_fractal_type == FractalType::NEWT_BASIN || g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
-            long tmpcolor;
-            tmpcolor = -1;
+            long tmpcolor = -1;
             /* this code determines which degree-th root of root the
                Newton formula converges to. The roots of a 1 are
                distributed on a circle of radius 1 about the origin. */
@@ -362,8 +361,7 @@ int mpc_newton_fractal()
     {
         if (g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
-            long tmpcolor;
-            tmpcolor = -1;
+            long tmpcolor = -1;
             for (int i = 0; i < g_degree; i++)
                 if (mp_cmp(mp_distance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
                 {
