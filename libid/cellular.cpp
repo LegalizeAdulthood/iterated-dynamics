@@ -256,13 +256,13 @@ int cellular()
         start_resume();
         get_resume(start_row);
         end_resume();
-        read_span(start_row, 0, g_i_x_stop, &s_cell_array[filled][0]);
+        read_span(start_row, 0, g_i_x_stop, s_cell_array[filled].data());
     }
     else if (g_cellular_next_screen && !s_last_screen_flag)
     {
         start_resume();
         end_resume();
-        read_span(g_i_y_stop, 0, g_i_x_stop, &s_cell_array[filled][0]);
+        read_span(g_i_y_stop, 0, g_i_x_stop, s_cell_array[filled].data());
         g_params[3] += g_i_y_stop + 1;
         start_row = -1; // after 1st iteration its = 0
     }
@@ -291,7 +291,7 @@ int cellular()
             }
         } // end of if not random
         s_last_screen_flag = lnnmbr != 0;
-        write_span(start_row, 0, g_i_x_stop, &s_cell_array[filled][0]);
+        write_span(start_row, 0, g_i_x_stop, s_cell_array[filled].data());
     }
     start_row++;
 
@@ -417,7 +417,7 @@ contloop:
 
         filled = notfilled;
         notfilled = (S16)(1-filled);
-        write_span(g_row, 0, g_i_x_stop, &s_cell_array[filled][0]);
+        write_span(g_row, 0, g_i_x_stop, s_cell_array[filled].data());
         if (driver_key_pressed())
         {
             abort_cellular(CELLULAR_DONE, 0);
