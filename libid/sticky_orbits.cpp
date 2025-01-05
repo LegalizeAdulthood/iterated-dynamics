@@ -50,20 +50,13 @@ int sticky_orbits()
         break;
     case 'l':
     {
-        int dX;
-        int dY;    // vector components
-        int final;
-        int // final row or column number
-            G;
-        int // used to test for new row or column
-            inc1;
-        int       // G increment when row or column doesn't change
-            inc2; // G increment when row or column changes
-        char pos_slope;
-
-        dX = g_i_x_stop - g_i_x_start;                   // find vector components
-        dY = g_i_y_stop - g_i_y_start;
-        pos_slope = (char)(dX > 0);                   // is slope positive?
+        int final; // final row or column number
+        int G;     // used to test for new row or column
+        int inc1;  // G increment when row or column doesn't change
+        int inc2;  // G increment when row or column changes
+        int dX = g_i_x_stop - g_i_x_start;                   // find vector components
+        int dY = g_i_y_stop - g_i_y_start;
+        char pos_slope = (char) (dX > 0);                   // is slope positive?
         if (dY < 0)
         {
             pos_slope = (char)!pos_slope;
@@ -199,13 +192,11 @@ int sticky_orbits()
         double x_mag_factor;
         double rotation;
         double skew;
-        int angle;
         double factor = PI / 180.0;
-        double theta;
         double xfactor = g_logical_screen_x_dots / 2.0;
         double yfactor = g_logical_screen_y_dots / 2.0;
 
-        angle = g_xx_begin;  // save angle in x parameter
+        int angle = g_xx_begin;  // save angle in x parameter
 
         cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         if (rotation <= 0)
@@ -215,7 +206,7 @@ int sticky_orbits()
 
         while (angle < rotation)
         {
-            theta = (double)angle * factor;
+            double theta = (double) angle * factor;
             g_col = (int)(xfactor + (x_ctr + x_mag_factor * std::cos(theta)));
             g_row = (int)(yfactor + (y_ctr + x_mag_factor * std::sin(theta)));
             if (plot_orbits2d_float() == -1)
