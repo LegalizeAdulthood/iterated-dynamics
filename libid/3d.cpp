@@ -207,22 +207,22 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 // normalize a vector to length 1
 bool normalize_vector(VECTOR v)
 {
-    double vlength = dot_product(v, v);
+    double length = dot_product(v, v);
 
-    // bailout if zero vlength
-    if (vlength < FLT_MIN || vlength > FLT_MAX)
+    // bailout if zero length
+    if (length < FLT_MIN || length > FLT_MAX)
     {
         return true;
     }
-    vlength = std::sqrt(vlength);
-    if (vlength < FLT_MIN)
+    length = std::sqrt(length);
+    if (length < FLT_MIN)
     {
         return true;
     }
 
-    v[0] /= vlength;
-    v[1] /= vlength;
-    v[2] /= vlength;
+    v[0] /= length;
+    v[1] /= length;
+    v[2] /= length;
     return false;
 }
 
