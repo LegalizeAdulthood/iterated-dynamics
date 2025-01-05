@@ -167,8 +167,8 @@ int line3d(Byte * pixels, unsigned linelen)
     int xcenter0 = 0;
     int ycenter0 = 0;      // Unfudged versions
     double r;                    // sphere radius
-    float costheta;
-    float sintheta; // precalculated sin/cos of latitude
+    float cos_theta;
+    float sin_theta; // precalculated sin/cos of latitude
     int next;       // used by preview and grid
     int col;        // current column (original GIF)
     PointColor cur;      // current pixels
@@ -357,8 +357,8 @@ int line3d(Byte * pixels, unsigned linelen)
 
         if (g_sphere)            // sphere case
         {
-            sintheta = s_sin_theta_array[col];
-            costheta = s_cos_theta_array[col];
+            sin_theta = s_sin_theta_array[col];
+            cos_theta = s_cos_theta_array[col];
 
             if (s_sin_phi < 0 && g_raytrace_format == RayTraceFormat::NONE && g_fill_type >= FillType::POINTS)
             {
@@ -374,17 +374,17 @@ int line3d(Byte * pixels, unsigned linelen)
             // r = 1.0-rscale+((double)cur.color/(double)zcoord)*rscale;
             // R = (double)ydots/2;
             // r = r*R;
-            // cur.x = xdots/2 + sclx*r*sintheta*aspect + xup ;
-            // cur.y = ydots/2 + scly*r*costheta*cosphi - yup ;
+            // cur.x = xdots/2 + sclx*r*sin_theta*aspect + xup ;
+            // cur.y = ydots/2 + scly*r*cos_theta*cosphi - yup ;
             //**********************************************************
 
             if (s_r_scale < 0.0)
             {
-                r = s_radius + s_radius_factor * (double) f_cur.color * costheta;
+                r = s_radius + s_radius_factor * (double) f_cur.color * cos_theta;
             }
             else if (s_r_scale > 0.0)
             {
-                r = s_radius - s_rXr_scale + s_radius_factor * (double) f_cur.color * costheta;
+                r = s_radius - s_rXr_scale + s_radius_factor * (double) f_cur.color * cos_theta;
             }
             else
             {
@@ -396,24 +396,24 @@ int line3d(Byte * pixels, unsigned linelen)
                 // how do lv[] and cur and f_cur all relate
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
-                lv[2] = (long)(-s_radius - r * costheta * s_sin_phi);      // z
+                lv[2] = (long)(-s_radius - r * cos_theta * s_sin_phi);      // z
                 if ((lv[2] > s_z_cutoff) && !(g_fill_type < FillType::POINTS))
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
                     goto loopbottom;      // another goto !
                 }
-                lv[0] = (long)(s_x_center + sintheta * s_scale_x * r);   // x
-                lv[1] = (long)(s_y_center + costheta * s_cos_phi * s_scale_y * r);  // y
+                lv[0] = (long)(s_x_center + sin_theta * s_scale_x * r);   // x
+                lv[1] = (long)(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
 
                 if ((g_fill_type >= FillType::LIGHT_SOURCE_BEFORE) || g_raytrace_format != RayTraceFormat::NONE)
                 {
                     // calculate illumination normal before persp
 
                     r0 = r / 65536L;
-                    f_cur.x = (float)(xcenter0 + sintheta * s_scale_x * r0);
-                    f_cur.y = (float)(ycenter0 + costheta * s_cos_phi * s_scale_y * r0);
-                    f_cur.color = (float)(-r0 * costheta * s_sin_phi);
+                    f_cur.x = (float)(xcenter0 + sin_theta * s_scale_x * r0);
+                    f_cur.y = (float)(ycenter0 + cos_theta * s_cos_phi * s_scale_y * r0);
+                    f_cur.color = (float)(-r0 * cos_theta * s_sin_phi);
                 }
                 if (!g_user_float_flag && g_raytrace_format == RayTraceFormat::NONE)
                 {
@@ -443,13 +443,13 @@ int line3d(Byte * pixels, unsigned linelen)
             else
             {
                 // Why the xx- and yyadjust here and not above?
-                f_cur.x = (float) (s_x_center + sintheta*s_scale_x*r + g_xx_adjust);
+                f_cur.x = (float) (s_x_center + sin_theta*s_scale_x*r + g_xx_adjust);
                 cur.x = (int) f_cur.x;
-                f_cur.y = (float)(s_y_center + costheta*s_cos_phi*s_scale_y*r + g_yy_adjust);
+                f_cur.y = (float)(s_y_center + cos_theta*s_cos_phi*s_scale_y*r + g_yy_adjust);
                 cur.y = (int) f_cur.y;
                 if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE || g_raytrace_format != RayTraceFormat::NONE)          // why do we do this for filltype>5?
                 {
-                    f_cur.color = (float)(-r * costheta * s_sin_phi * s_scale_z);
+                    f_cur.color = (float)(-r * cos_theta * s_sin_phi * s_scale_z);
                 }
                 v[2] = 0;               // Why do we do this?
                 v[1] = v[2];

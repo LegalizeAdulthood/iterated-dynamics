@@ -142,13 +142,13 @@ void scale(double sx, double sy, double sz, MATRIX m)
 void x_rot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta = std::sin(theta);
-    double costheta = std::cos(theta);
+    double sin_theta = std::sin(theta);
+    double cos_theta = std::cos(theta);
     identity(rot);
-    rot[1][1] = costheta;
-    rot[1][2] = -sintheta;
-    rot[2][1] = sintheta;
-    rot[2][2] = costheta;
+    rot[1][1] = cos_theta;
+    rot[1][2] = -sin_theta;
+    rot[2][1] = sin_theta;
+    rot[2][2] = cos_theta;
     mat_mul(m, rot, m);
 }
 
@@ -156,13 +156,13 @@ void x_rot(double theta, MATRIX m)
 void y_rot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta = std::sin(theta);
-    double costheta = std::cos(theta);
+    double sin_theta = std::sin(theta);
+    double cos_theta = std::cos(theta);
     identity(rot);
-    rot[0][0] = costheta;
-    rot[0][2] = sintheta;
-    rot[2][0] = -sintheta;
-    rot[2][2] = costheta;
+    rot[0][0] = cos_theta;
+    rot[0][2] = sin_theta;
+    rot[2][0] = -sin_theta;
+    rot[2][2] = cos_theta;
     mat_mul(m, rot, m);
 }
 
@@ -170,13 +170,13 @@ void y_rot(double theta, MATRIX m)
 void z_rot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta = std::sin(theta);
-    double costheta = std::cos(theta);
+    double sin_theta = std::sin(theta);
+    double cos_theta = std::cos(theta);
     identity(rot);
-    rot[0][0] = costheta;
-    rot[0][1] = -sintheta;
-    rot[1][0] = sintheta;
-    rot[1][1] = costheta;
+    rot[0][0] = cos_theta;
+    rot[0][1] = -sin_theta;
+    rot[1][0] = sin_theta;
+    rot[1][1] = cos_theta;
     mat_mul(m, rot, m);
 }
 
