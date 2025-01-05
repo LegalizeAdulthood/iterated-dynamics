@@ -94,7 +94,7 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
     int next_col[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
     int dir[MAX_ANTS + 1];
-    bool antwrap = g_params[4] != 0;
+    bool ant_wrap = g_params[4] != 0;
     int step = (int) wait;
     if (step == 1)
     {
@@ -215,7 +215,7 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
                     g_put_color(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
-                    if (!antwrap)
+                    if (!ant_wrap)
                     {
                         if ((idir == 0 && iy == g_logical_screen_y_dots - 1)
                             || (idir == 1 && ix == g_logical_screen_x_dots - 1)
@@ -242,7 +242,7 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
                     g_put_color(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
-                    if (!antwrap)
+                    if (!ant_wrap)
                     {
                         if ((idir == 0 && iy == g_logical_screen_y_dots - 1)
                             || (idir == 1 && ix == g_logical_screen_x_dots - 1)
@@ -275,7 +275,7 @@ void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long w
     int x[MAX_ANTS + 1];
     int y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
-    bool antwrap = g_params[4] != 0;
+    bool ant_wrap = g_params[4] != 0;
 
     int step = (int) wait;
     if (step == 1)
@@ -394,7 +394,7 @@ void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long w
                     g_put_color(ix, iy, color);
                 }
                 idir &= 3;
-                if (!antwrap)
+                if (!ant_wrap)
                 {
                     if ((idir == 0 && iy == g_logical_screen_y_dots - 1)
                         || (idir == 1 && ix == g_logical_screen_x_dots - 1)
