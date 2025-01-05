@@ -1294,22 +1294,22 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     return true;   // AOK -- continue
 }
 
-bool make_doc_msg_func(int pnum, int num_pages)
+bool make_doc_msg_func(int page_num, int num_pages)
 {
     enum
     {
         BOX_ROW = 6,
         BOX_COL = 11,
     };
-    if (pnum >= 0)
+    if (page_num >= 0)
     {
         char buffer[80] = "";
-        std::snprintf(buffer, std::size(buffer), "completed %d%%", (int)((100.0 / num_pages) * pnum));
+        std::snprintf(buffer, std::size(buffer), "completed %d%%", (int)((100.0 / num_pages) * page_num));
         driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buffer);
         driver_key_pressed(); // pumps messages to force screen update
         return true;
     }
-    if (pnum == -2)
+    if (page_num == -2)
     {
         stop_msg("*** aborted");
         return false;
@@ -1317,7 +1317,7 @@ bool make_doc_msg_func(int pnum, int num_pages)
     return false;
 }
 
-void print_document(char const *outfname, bool (*msg_func)(int, int))
+void print_document(char const *filename, bool (*msg_func)(int, int))
 {
     PrintDocInfo info;
     bool success = false;
@@ -1337,7 +1337,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int))
         msg_func(0, info.num_page);   // initialize
     }
 
-    info.file = open_save_file(outfname, "wt");
+    info.file = open_save_file(filename, "wt");
     if (info.file == nullptr)
     {
         msg = "Unable to create output file.\n";
