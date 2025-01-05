@@ -125,9 +125,8 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
         int len = (int) std::strlen(oldfullpath);
         if (len > 0)
         {
-            char save;
             // strip trailing slash
-            save = oldfullpath[len-1];
+            char save = oldfullpath[len - 1];
             if (save == SLASH_CH)
             {
                 oldfullpath[len-1] = 0;
