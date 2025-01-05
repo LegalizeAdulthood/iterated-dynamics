@@ -55,7 +55,7 @@ static char const *s_masks[]{"*.pot", "*.gif"};
 
 bool get_a_file_name(char const *hdg, char const *file_template, std::string &flname)
 {
-    char user_file_template[FILE_MAX_PATH] = { 0 };
+    char user_file_template[FILE_MAX_PATH]{};
     // if getting an RDS image map
     char instr[80];
     char filename[FILE_MAX_PATH];
