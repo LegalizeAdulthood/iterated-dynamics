@@ -160,11 +160,10 @@ int  fp_and_bailout()
 
 int  fp_manh_bailout()
 {
-    double manhmag;
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    manhmag = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
+    double manhmag = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
     if ((manhmag * manhmag) >= g_magnitude_limit)
     {
         return 1;
@@ -175,11 +174,10 @@ int  fp_manh_bailout()
 
 int  fp_manr_bailout()
 {
-    double manrmag;
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    manrmag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
+    double manrmag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
     if ((manrmag * manrmag) >= g_magnitude_limit)
     {
         return 1;
