@@ -21,8 +21,6 @@ void find_special_colors()
     int maxb = 0;
     int minb = 9999;
     int med = 0;
-    int maxgun;
-    int mingun;
 
     g_color_dark = 0;
     g_color_medium = 7;
@@ -55,8 +53,8 @@ void find_special_colors()
         }
         if (brt < 150 && brt > 80)
         {
-            mingun = (int) g_dac_box[i][0];
-            maxgun = mingun;
+            int mingun = (int) g_dac_box[i][0];
+            int maxgun = mingun;
             if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
             {
                 maxgun = (int) g_dac_box[i][1];
