@@ -49,8 +49,6 @@ enum
     MAX_NUM_TOPIC_SEC = 10,    // max. number of topics under any single section (CONTENT)
 };
 
-constexpr char const *TEMP_FILE_NAME{"HELP.$$$"}; // temp file while printing document
-
 namespace
 {
 
