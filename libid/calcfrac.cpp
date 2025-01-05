@@ -1307,7 +1307,7 @@ int calc_mand_fp()
 int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 {
     long savemaxit = 0;
-    double tantable[16] = { 0.0 };
+    double tantable[16]{};
     int hooper = 0;
     long lcloseprox = 0;
     double memvalue = 0.0;
@@ -1318,16 +1318,16 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     bool caught_a_cycle = false;
     long savedand = 0;
     int savedincr = 0;                  // for periodicity checking
-    LComplex lsaved = { 0 };
+    LComplex lsaved{};
     bool attracted = false;
-    LComplex lat = { 0 };
-    DComplex  at = { 0.0 };
-    DComplex deriv = { 0.0 };
+    LComplex lat{};
+    DComplex  at{};
+    DComplex deriv{};
     long dem_color = -1;
-    DComplex dem_new = { 0 };
+    DComplex dem_new{};
     int check_freq = 0;
     double totaldist = 0.0;
-    DComplex lastz = { 0.0 };
+    DComplex lastz{};
 
     lcloseprox = (long)(g_close_proximity*g_fudge_factor);
     savemaxit = g_max_iterations;
