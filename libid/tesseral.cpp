@@ -30,10 +30,8 @@ struct Tess             // one of these per box to be done gets stacked
 
 int tesseral()
 {
-    Tess *tp;
-
     s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
-    tp = (Tess *)&s_stack[0];
+    Tess *tp = (Tess *) &s_stack[0];
     tp->x1 = g_i_x_start;                              // set up initial box
     tp->x2 = g_i_x_stop;
     tp->y1 = g_i_y_start;
@@ -54,26 +52,20 @@ int tesseral()
     }
     else // resuming, rebuild work stack
     {
-        int i;
         int mid;
-        int curx;
-        int cury;
-        int xsize;
-        int ysize;
-        Tess *tp2;
         tp->rgt = -2;
         tp->lft = -2;
         tp->bot = -2;
         tp->top = -2;
-        cury = g_yy_begin & 0xfff;
-        ysize = 1;
-        i = (unsigned)g_yy_begin >> 12;
+        int cury = g_yy_begin & 0xfff;
+        int ysize = 1;
+        int i = (unsigned) g_yy_begin >> 12;
         while (--i >= 0)
         {
             ysize <<= 1;
         }
-        curx = g_work_pass & 0xfff;
-        xsize = 1;
+        int curx = g_work_pass & 0xfff;
+        int xsize = 1;
         i = (unsigned)g_work_pass >> 12;
         while (--i >= 0)
         {
@@ -81,7 +73,7 @@ int tesseral()
         }
         while (true)
         {
-            tp2 = tp;
+            Tess *tp2 = tp;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // next divide down middle
@@ -190,9 +182,8 @@ int tesseral()
 
         {
             // all 4 edges are the same color, fill in
-            int i;
             int j;
-            i = 0;
+            int i = 0;
             if (g_fill_color != 0)
             {
                 if (g_fill_color > 0)
@@ -333,12 +324,9 @@ tess_end:
     if (tp >= (Tess *)&s_stack[0])
     {
         // didn't complete
-        int i;
-        int xsize;
-        int ysize;
-        ysize = 1;
-        xsize = 1;
-        i = 2;
+        int ysize = 1;
+        int xsize = 1;
+        int i = 2;
         while (tp->x2 - tp->x1 - 2 >= i)
         {
             i <<= 1;
@@ -359,8 +347,7 @@ tess_end:
 
 static int tess_check_col(int x, int y1, int y2)
 {
-    int i;
-    i = get_color(x, ++y1);
+    int i = get_color(x, ++y1);
     while (--y2 > y1)
     {
         if (get_color(x, y2) != i)
@@ -373,8 +360,7 @@ static int tess_check_col(int x, int y1, int y2)
 
 static int tess_check_row(int x1, int x2, int y)
 {
-    int i;
-    i = get_color(x1, y);
+    int i = get_color(x1, y);
     while (x2 > x1)
     {
         if (get_color(x2, y) != i)
@@ -388,18 +374,16 @@ static int tess_check_row(int x1, int x2, int y)
 
 static int tess_col(int x, int y1, int y2)
 {
-    int colcolor;
-    int i;
     g_col = x;
     g_row = y1;
     g_reset_periodicity = true;
-    colcolor = (*g_calc_type)();
+    int colcolor = (*g_calc_type)();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_row <= y2)
     {
         // generate the column
-        i = (*g_calc_type)();
+        int i = (*g_calc_type)();
         if (i < 0)
         {
             return -3;
@@ -414,18 +398,16 @@ static int tess_col(int x, int y1, int y2)
 
 static int tess_row(int x1, int x2, int y)
 {
-    int rowcolor;
-    int i;
     g_row = y;
     g_col = x1;
     g_reset_periodicity = true;
-    rowcolor = (*g_calc_type)();
+    int rowcolor = (*g_calc_type)();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_col <= x2)
     {
         // generate the row
-        i = (*g_calc_type)();
+        int i = (*g_calc_type)();
         if (i < 0)
         {
             return -3;
