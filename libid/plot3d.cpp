@@ -56,19 +56,17 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
 
 {
     // uses Bresenham algorithm to draw a line
-    int dX;
-    int dY; // vector components
+    // vector components
     int row;
     int col;
     int final; // final row or column number
     int G;     // used to test for new row or column
     int inc1;  // G increment when row or column doesn't change
     int inc2;  // G increment when row or column changes
-    char pos_slope;
 
-    dX = x2 - x1;                   // find vector components
-    dY = y2 - y1;
-    pos_slope = (char)(dX > 0);                   // is slope positive?
+    int dX = x2 - x1;                   // find vector components
+    int dY = y2 - y1;
+    char pos_slope = (char) (dX > 0);                   // is slope positive?
     if (dY < 0)
     {
         pos_slope = (char)!pos_slope;
@@ -220,9 +218,8 @@ static void plot3d_superimpose16(int x, int y, int color)
 static void plot3d_superimpose256(int x, int y, int color)
 {
     int tmp;
-    Byte t_c;
 
-    t_c = (Byte)(255-color);
+    Byte t_c = (Byte) (255 - color);
 
     if (color != 0)         // Keeps index 0 still 0
     {
@@ -277,9 +274,8 @@ static void plot3d_superimpose256(int x, int y, int color)
 static void plot_ifs3d_superimpose256(int x, int y, int color)
 {
     int tmp;
-    Byte t_c;
 
-    t_c = (Byte)(255-color);
+    Byte t_c = (Byte) (255 - color);
 
     if (color != 0)         // Keeps index 0 still 0
     {
@@ -332,9 +328,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
 
 static void plot3d_alternate(int x, int y, int color)
 {
-    Byte t_c;
-
-    t_c = (Byte)(255-color);
+    Byte t_c = (Byte) (255 - color);
     // lorez high color red/blue 3D plot function
     // if which image = 1, compresses color to lower 128 colors
 
