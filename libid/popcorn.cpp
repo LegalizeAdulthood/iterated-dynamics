@@ -17,8 +17,7 @@
 // subset of std engine
 int popcorn()
 {
-    int start_row;
-    start_row = 0;
+    int start_row = 0;
     if (g_resuming)
     {
         start_resume();
@@ -125,8 +124,7 @@ static void ltrig_arg(long &val)
 {
     if (trig16_check(val))
     {
-        double tmp;
-        tmp = val;
+        double tmp = val;
         tmp /= g_fudge_factor;
         tmp = std::fmod(tmp, PI * 2.0);
         tmp *= g_fudge_factor;
