@@ -449,9 +449,7 @@ choose_vars_restart:
     choices.comment("Press F3 to set all on");
     choices.comment("Press F4 to randomize all");
 
-    int i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4);
-
-    switch (i)
+    switch (int i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4); i)
     {
     case ID_KEY_F2: // set all off
         for (int num = MAX_PARAMS; num < NUM_GENES; num++)
@@ -596,9 +594,7 @@ choose_vars_restart:
         .comment("Press F4 to randomize all")
         .comment("Press F6 for second page"); // F5 gets eaten
 
-    int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4);
-
-    switch (i)
+    switch (int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4); i)
     {
     case ID_KEY_F2: // set all off
         for (int num = 0; num < MAX_PARAMS; num++)
