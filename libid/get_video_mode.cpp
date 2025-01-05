@@ -157,7 +157,7 @@ static std::string save_release_detail()
         buff[i] = (char)((g_release%10) + '0');
         buff[i+1] = 0;
     }
-    return std::string(buff);
+    return buff;
 }
 
 int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
