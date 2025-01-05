@@ -128,7 +128,7 @@ static void show_str_var(char const *name, char const *var, int *row, char *msg)
 
 static void write_row(int row, char const *format, ...)
 {
-    char text[78] = { 0 };
+    char text[78]{};
     std::va_list args;
 
     va_start(args, format);
