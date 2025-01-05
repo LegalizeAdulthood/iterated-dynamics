@@ -656,7 +656,7 @@ void write_header_file(char const *fname, std::FILE *file)
         fs::path{s_src_filename}.filename().string().c_str());
     std::fprintf(file, //
         "// current help file version\n"
-        "#define %-32s %3d\n"
+        "#define %-32s %3d  // NOLINT(modernize-macro-to-enum)\n"
         "\n"
         "// labels\n"
         "enum class HelpLabels\n"

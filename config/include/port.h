@@ -35,8 +35,8 @@ using Byte = unsigned char;
 
 #if defined(_WIN32)
 // ================================== Win32 definitions
-#define LOW_BYTE_FIRST    1
-#define SLASH_CH         '\\'
+#define LOW_BYTE_FIRST    1     // NOLINT(modernize-macro-to-enum)
+#define SLASH_CH         '\\'   // NOLINT(modernize-macro-to-enum)
 #define SLASH            "\\"
 #define SLASH_SLASH      "\\\\"
 #define SLASH_DOT        "\\."
