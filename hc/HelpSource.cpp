@@ -559,11 +559,11 @@ char *pchar(int ch)
 
     if (ch >= 0x20 && ch <= 0x7E)
     {
-        std::sprintf(buff, "\'%c\'", ch);
+        std::sprintf(buff, "'%c'", ch);
     }
     else
     {
-        std::sprintf(buff, "\'\\x%02X\'", ch&0xFF);
+        std::sprintf(buff, R"('\x%02X')", ch&0xFF);
     }
 
     return buff;
