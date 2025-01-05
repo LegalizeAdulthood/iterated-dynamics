@@ -98,7 +98,6 @@ int start_disk()
 
 int pot_start_disk()
 {
-    int i;
     if (driver_diskp())         // ditch the original disk file
     {
         end_disk();
@@ -109,7 +108,7 @@ int pot_start_disk()
     }
     s_header_length = 0;
     g_disk_targa = false;
-    i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
+    int i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
     clear_temp_msg();
     if (i == 0)
     {
@@ -121,7 +120,6 @@ int pot_start_disk()
 
 int targa_start_disk(std::FILE *targafp, int overhead)
 {
-    int i;
     if (driver_diskp()) // ditch the original file, make just the targa
     {
         end_disk();      // close the 'screen'
@@ -130,7 +128,7 @@ int targa_start_disk(std::FILE *targafp, int overhead)
     s_header_length = overhead;
     s_fp = targafp;
     g_disk_targa = true;
-    i = common_start_disk(g_logical_screen_x_dots*3, g_logical_screen_y_dots, g_colors);
+    int i = common_start_disk(g_logical_screen_x_dots * 3, g_logical_screen_y_dots, g_colors);
     s_high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;
@@ -334,8 +332,6 @@ void end_disk()
 
 int disk_read_pixel(int col, int row)
 {
-    int col_subscr;
-    long offset;
     char buf[41];
     if (--s_time_to_display < 0)  // time to g_driver status?
     {
@@ -367,8 +363,8 @@ int disk_read_pixel(int col, int row)
     {
         return 0;
     }
-    offset = s_cur_row_base + col;
-    col_subscr = (short) offset & (BLOCK_LEN-1); // offset within cache entry
+    long offset = s_cur_row_base + col;
+    int col_subscr = (short) offset & (BLOCK_LEN - 1); // offset within cache entry
     if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
     {
         find_load_cache(offset & (0L-BLOCK_LEN));
@@ -402,8 +398,6 @@ void targa_read_disk(unsigned int col, unsigned int row, Byte *red, Byte *green,
 
 void disk_write_pixel(int col, int row, int color)
 {
-    int col_subscr;
-    long offset;
     char buf[41];
     if (--s_time_to_display < 0)  // time to display status?
     {
@@ -428,8 +422,8 @@ void disk_write_pixel(int col, int row, int color)
     {
         return;
     }
-    offset = s_cur_row_base + col;
-    col_subscr = (short) offset & (BLOCK_LEN-1);
+    long offset = s_cur_row_base + col;
+    int col_subscr = (short) offset & (BLOCK_LEN - 1);
     if (s_cur_offset != (offset & (0L-BLOCK_LEN))) // same entry as last ref?
     {
         find_load_cache(offset & (0L-BLOCK_LEN));
@@ -469,12 +463,10 @@ void targa_write_disk(unsigned int col, unsigned int row, Byte red, Byte green, 
 
 static void find_load_cache(long offset) // used by read/write
 {
-    unsigned int tbloffset;
-    unsigned int *fwd_link;
     Byte *pixelptr = nullptr;
     s_cur_offset = offset; // note this for next reference
     // check if required entry is in cache - lookup by hash
-    tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1) ];
+    unsigned int tbloffset = s_hash_ptr[((unsigned short) offset >> BLOCK_SHIFT) & (HASH_SIZE - 1)];
     while (tbloffset != 0xffff)  // follow the hash chain
     {
         s_cur_cache = (Cache *)((char *)s_cache_start + tbloffset);
@@ -503,7 +495,8 @@ static void find_load_cache(long offset) // used by read/write
         write_cache_lru();
     }
     // remove block at cache_lru from its hash chain
-    fwd_link = &s_hash_ptr[(((unsigned short)s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
+    unsigned int *fwd_link =
+        &s_hash_ptr[(((unsigned short) s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE - 1))];
     tbloffset = (int)((char *)s_cache_lru - (char *)s_cache_start);
     while (*fwd_link != tbloffset)
     {
@@ -576,12 +569,10 @@ static void find_load_cache(long offset) // used by read/write
 // lookup for write_cache_lru
 static Cache *find_cache(long offset)
 {
-    unsigned int tbloffset;
-    Cache *ptr1;
-    tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1)];
+    unsigned int tbloffset = s_hash_ptr[((unsigned short) offset >> BLOCK_SHIFT) & (HASH_SIZE - 1)];
     while (tbloffset != 0xffff)
     {
-        ptr1 = (Cache *)((char *)s_cache_start + tbloffset);
+        Cache *ptr1 = (Cache *) ((char *) s_cache_start + tbloffset);
         if (ptr1->offset == offset)
         {
             return ptr1;
@@ -598,20 +589,15 @@ enum
 
 static void  write_cache_lru()
 {
-    int i;
-    Byte *pixelptr;
-    long offset;
     Byte tmpchar = 0;
-    Cache *ptr1;
-    Cache *ptr2;
     // scan back to also write any preceding dirty blocks, skipping small gaps
-    ptr1 = s_cache_lru;
-    offset = ptr1->offset;
-    i = 0;
+    Cache *ptr1 = s_cache_lru;
+    long offset = ptr1->offset;
+    int i = 0;
     while (++i <= WRITEGAP)
     {
         offset -= BLOCK_LEN;
-        ptr2 = find_cache(offset);
+        Cache *ptr2 = find_cache(offset);
         if (ptr2 != nullptr && ptr2->dirty)
         {
             ptr1 = ptr2;
@@ -625,7 +611,7 @@ write_seek:
     mem_seek(ptr1->offset >> s_pixel_shift);
 
 write_stuff:
-    pixelptr = &ptr1->pixel[0];
+    Byte *pixelptr = &ptr1->pixel[0];
     switch (s_pixel_shift)
     {
     case 0:
