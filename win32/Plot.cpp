@@ -255,9 +255,8 @@ void Plot::on_paint(HWND window)
     _ASSERTE(width >= 0 && height >= 0);
     if (width > 0 && height > 0)
     {
-        DWORD status;
-        status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, &m_pixels[0], &m_bmi,
-            DIB_RGB_COLORS, SRCCOPY);
+        DWORD status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, &m_pixels[0],
+            &m_bmi, DIB_RGB_COLORS, SRCCOPY);
         _ASSERTE(status != GDI_ERROR);
     }
     EndPaint(window, &ps);
@@ -332,12 +331,11 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
 int Plot::init(HINSTANCE instance, LPCSTR title)
 {
     WNDCLASS  wc;
-    int result;
 
     m_instance = instance;
     m_title = title;
 
-    result = GetClassInfoA(m_instance, s_window_class, &wc);
+    int result = GetClassInfoA(m_instance, s_window_class, &wc);
     if (!result)
     {
         wc.style = 0;
