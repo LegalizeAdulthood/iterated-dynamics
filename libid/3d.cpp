@@ -356,30 +356,30 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
 
 // Long version of perspective. Because of use of fixed point math, there
 // is danger of overflow and underflow
-int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift)
+int long_persp(LVECTOR v, LVECTOR view, int bit_shift)
 {
     g_overflow = false;
-    long denom = lview[2] - lv[2];
+    long denom = view[2] - v[2];
     if (denom >= 0)              // bail out if point is "behind" us
     {
-        lv[0] = g_bad_value;
-        lv[0] = lv[0] << bit_shift;
-        lv[1] = lv[0];
-        lv[2] = lv[0];
+        v[0] = g_bad_value;
+        v[0] = v[0] << bit_shift;
+        v[1] = v[0];
+        v[2] = v[0];
         return -1;
     }
 
     // doing math in this order helps prevent overflow
     LVECTOR tmp_view;
-    tmp_view[0] = divide(lview[0], denom, bit_shift);
-    tmp_view[1] = divide(lview[1], denom, bit_shift);
-    tmp_view[2] = divide(lview[2], denom, bit_shift);
+    tmp_view[0] = divide(view[0], denom, bit_shift);
+    tmp_view[1] = divide(view[1], denom, bit_shift);
+    tmp_view[2] = divide(view[2], denom, bit_shift);
 
-    lv[0] = multiply(lv[0], tmp_view[2], bit_shift) -
-            multiply(tmp_view[0], lv[2], bit_shift);
+    v[0] = multiply(v[0], tmp_view[2], bit_shift) -
+            multiply(tmp_view[0], v[2], bit_shift);
 
-    lv[1] = multiply(lv[1], tmp_view[2], bit_shift) -
-            multiply(tmp_view[1], lv[2], bit_shift);
+    v[1] = multiply(v[1], tmp_view[2], bit_shift) -
+            multiply(tmp_view[1], v[2], bit_shift);
 
     return g_overflow ? 1 : 0;
 }
