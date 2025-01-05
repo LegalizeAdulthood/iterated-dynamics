@@ -15,7 +15,10 @@
 #include <stdexcept>
 #include <string>
 
-#define PLOT_TIMER_ID 1
+enum
+{
+    PLOT_TIMER_ID = 1
+};
 
 static Plot *s_plot{};
 static const char *const s_window_class{"IdPlot"};
