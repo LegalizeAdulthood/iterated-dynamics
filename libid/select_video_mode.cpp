@@ -49,7 +49,6 @@ static void format_vid_table(int choice, char *buf)
 int select_video_mode(int curmode)
 {
     std::vector<int> attributes;
-    int ret;
 
     attributes.resize(g_video_table_len);
     s_entry_nums.resize(g_video_table_len);
@@ -119,7 +118,7 @@ int select_video_mode(int curmode)
             }
         }
     }
-    ret = k;
+    int ret = k;
     if (k == 0)  // selected entry not a copied (assigned to key) one
     {
         std::memcpy((char *)&g_video_table[MAX_VIDEO_MODES-1],
@@ -205,14 +204,8 @@ static void update_id_cfg()
 {
     char buf[121];
     char kname[5];
-    std::FILE *cfgfile;
-    std::FILE *outfile;
     int i;
     int j;
-    int linenum;
-    int nextlinenum;
-    int nextmode;
-    VideoInfo vident{};
 
     const std::string cfgname = find_path("id.cfg");
 
@@ -223,18 +216,18 @@ static void update_id_cfg()
         return;
     }
     const std::string outname{(fs::path{cfgname}.parent_path() / "id.tmp").string()};
-    outfile = open_save_file(outname, "w");
+    std::FILE *outfile = open_save_file(outname, "w");
     if (outfile == nullptr)
     {
         std::snprintf(buf, std::size(buf), "Can't create %s", outname.c_str());
         stop_msg(buf);
         return;
     }
-    cfgfile = std::fopen(cfgname.c_str(), "r");
+    std::FILE *cfgfile = std::fopen(cfgname.c_str(), "r");
 
-    nextmode = 0;
-    linenum = nextmode;
-    nextlinenum = g_cfg_line_nums[0];
+    int nextmode = 0;
+    int linenum = nextmode;
+    int nextlinenum = g_cfg_line_nums[0];
     while (std::fgets(buf, std::size(buf), cfgfile))
     {
         char colorsbuf[10];
@@ -242,7 +235,7 @@ static void update_id_cfg()
         // replace this line?
         if (linenum == nextlinenum)
         {
-            vident = g_video_table[nextmode];
+            VideoInfo vident = g_video_table[nextmode];
             vid_mode_key_name(vident.keynum, kname);
             std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
             std::fprintf(outfile, "%-4s,%4d,%5d,%s,%s,%s\n",
