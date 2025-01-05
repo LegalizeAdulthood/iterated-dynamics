@@ -124,11 +124,11 @@ static int c_get_color(int x, int y)
     {
         return 1000;
     }
-    if (y >= g_screen_y_dots - s_show_numbers)   // avoid overreading coords
+    if (y >= g_screen_y_dots - s_show_numbers)   // avoid over reading coords
     {
         return 1000;
     }
-    if (s_window_style == JuliaWindowStyle::FULL_SCREEN)   // avoid overreading fractal
+    if (s_window_style == JuliaWindowStyle::FULL_SCREEN)   // avoid over reading fractal
     {
         if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
         {

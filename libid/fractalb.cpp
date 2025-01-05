@@ -828,7 +828,7 @@ int mandel_bn_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        float_to_bn(g_old_z_bn.x, g_params[0]); // initial pertubation of parameters set
+        float_to_bn(g_old_z_bn.x, g_params[0]); // initial perturbation of parameters set
         float_to_bn(g_old_z_bn.y, g_params[1]);
         g_color_iter = -1;
     }
@@ -879,7 +879,7 @@ int mandel_bf_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        float_to_bf(g_old_z_bf.x, g_params[0]); // initial pertubation of parameters set
+        float_to_bf(g_old_z_bf.x, g_params[0]); // initial perturbation of parameters set
         float_to_bf(g_old_z_bf.y, g_params[1]);
         g_color_iter = -1;
     }

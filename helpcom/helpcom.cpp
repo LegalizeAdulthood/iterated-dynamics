@@ -11,7 +11,7 @@
 
 bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 {
-    /* checkes for "--" and " -" */
+    /* checks for "--" and " -" */
     if (*ptr != '-')
     {
         return false;    /* that was easy! */

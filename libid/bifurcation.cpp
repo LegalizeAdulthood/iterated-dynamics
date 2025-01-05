@@ -68,10 +68,10 @@ static long s_beta{};
 // and f.p renditions of bifurcations of r*sin(Pi*p), which
 // spurred Mitchel Feigenbaum on to discover his Number).
 
-// To add further types, extend the fractalspecific[] array in
+// To add further types, extend the FractalSpecific[] array in
 // usual way, with Bifurcation as the engine, and the name of
 // the routine that calculates the next bifurcation generation
-// as the "orbitcalc" routine in the fractalspecific[] entry.
+// as the "orbitcalc" routine in the FractalSpecific[] entry.
 
 // Bifurcation "orbitcalc" routines get called once per screen
 // pixel column.  They should calculate the next generation

@@ -23,7 +23,7 @@ bool mandel_trig_or_trig_setup()
 
 bool man_lam_trig_or_trig_setup()
 {
-    // psuedo
+    // pseudo
     // default symmetry is X_AXIS
     g_long_param = &g_l_init;
     g_float_param = &g_init;

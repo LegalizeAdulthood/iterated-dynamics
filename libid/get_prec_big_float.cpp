@@ -38,7 +38,7 @@ int get_prec_bf_mag()
     return dec;
 }
 
-/* This function calculates the precision needed to distiguish adjacent
+/* This function calculates the precision needed to distinguish adjacent
    pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 int get_prec_bf(int rezflag)

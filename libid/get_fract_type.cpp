@@ -328,7 +328,7 @@ sel_type_restart:
     return ret;
 }
 
-int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific parms
+int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific params
 {
     char const *juliorbitname = nullptr;
     int numparams;

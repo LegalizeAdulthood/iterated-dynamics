@@ -418,7 +418,7 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
         }
         if (kbdchar == 'z')
         {
-            // type specific parms
+            // type specific params
             get_fract_params(true);
             return MainState::IMAGE_START;
         }
@@ -430,13 +430,13 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
         }
         if (kbdchar == ID_KEY_CTL_B)
         {
-            /* ctrl B = browse parms*/
+            /* ctrl B = browse params*/
             get_browse_params();
             return MainState::IMAGE_START;
         }
         if (kbdchar == ID_KEY_CTL_F)
         {
-            /* ctrl f = sound parms*/
+            /* ctrl f = sound params*/
             get_sound_params();
             return MainState::IMAGE_START;
         }
@@ -448,7 +448,7 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
         }
         if (kbdchar == 'i')
         {
-            // set 3d fractal parms
+            // set 3d fractal params
             get_fract3d_params(); // get the parameters
             return MainState::IMAGE_START;
         }

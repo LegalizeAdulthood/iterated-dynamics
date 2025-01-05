@@ -84,7 +84,7 @@ get_sound_restart:
 
     if (i == ID_KEY_F6)
     {
-        get_music_params(); /* see below, for controling fmsynth */
+        get_music_params(); /* see below, for controlling fmsynth */
         goto get_sound_restart;
     }
 
@@ -149,7 +149,7 @@ get_map_restart:
 
     if (i == ID_KEY_F6 && s_menu2 == 1)
     {
-        get_music_params(); /* see below, for controling fmsynth */
+        get_music_params(); /* see below, for controlling fmsynth */
         goto get_map_restart;
     }
     if (i == ID_KEY_F6 && s_menu2 == 2)

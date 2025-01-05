@@ -63,7 +63,7 @@ int diffusion_scan()
     g_got_status = StatusValues::DIFFUSION;
 
     // note: the max size of 2048x2048 gives us a 22 bit counter that will
-    // fit any 32 bit architecture, the maxinum limit for this case would
+    // fit any 32 bit architecture, the maximum limit for this case would
     // be 65536x65536
 
     g_diffusion_bits = (unsigned)(std::min(std::log(static_cast<double>(g_i_y_stop-g_i_y_start+1)), std::log(static_cast<double>(g_i_x_stop-g_i_x_start+1)))/log2);

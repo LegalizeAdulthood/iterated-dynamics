@@ -107,7 +107,7 @@ static Byte s_decoder_line[MAX_PIXELS]{};
 // will generate a call to out_line(), which is a user specific function
 // to display a line of pixels.  The function gets its codes from
 // get_next_code() which is responsible for reading blocks of data and
-// seperating them into the proper size codes.  Finally, get_byte() is
+// separating them into the proper size codes.  Finally, get_byte() is
 // the global routine to read the next byte from the GIF file.
 //
 // It is generally a good idea to have linewidth correspond to the actual
@@ -410,7 +410,7 @@ static short get_next_code()
     return (short)(ret_code & s_code_mask[s_curr_size]);
 }
 
-// called in parent reoutine to set byte_buff
+// called in parent routine to set byte_buff
 void set_byte_buff(Byte * ptr)
 {
     s_byte_buff = ptr;

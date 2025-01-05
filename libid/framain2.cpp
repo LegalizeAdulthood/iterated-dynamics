@@ -423,7 +423,7 @@ MainState big_while_loop(MainContext &context)
                     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
                     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
                     g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
-                    g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
+                    g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete params like inside, outside, trigfn etc
                 }
                 g_evolve_param_box_count = 0;
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);

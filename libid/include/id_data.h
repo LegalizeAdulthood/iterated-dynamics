@@ -9,7 +9,7 @@
 struct VideoInfo;
 
 // -1 no fractal
-//  0 parms changed, recalc reqd
+//  0 params changed, recalculation required
 //  1 actively calculating
 //  2 interrupted, resumable
 //  3 interrupted, not resumable
