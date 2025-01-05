@@ -135,7 +135,6 @@ static int diffusion_engine()
     double log2 = (double) std::log(2.0);
     int i;
     int j;
-    int sqsz;  // size of the block being filled
     int colo;
     int rowo; // original col and row
     int s = 1 << (g_diffusion_bits/2); // size of the square
@@ -217,7 +216,9 @@ static int diffusion_engine()
         // with progressive filling :
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
-            sqsz = 1 << ((int)(g_diffusion_bits-(int)(std::log(g_diffusion_counter+0.5)/log2)-1)/2);
+            // size of the block being filled
+            int sqsz =
+                1 << ((int) (g_diffusion_bits - (int) (std::log(g_diffusion_counter + 0.5) / log2) - 1) / 2);
 
             count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
 
