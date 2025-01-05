@@ -162,9 +162,7 @@ static std::string save_release_detail()
 
 int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 {
-    bool gotrealmode;
     double ftemp;
-    unsigned tmpflags;
 
     g_init_mode = -1;
 
@@ -206,7 +204,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     for (int i = 0; i < g_video_table_len; ++i)
     {
         g_video_entry = g_video_table[i];
-        tmpflags = VI_EXACT;
+        unsigned tmpflags = VI_EXACT;
         if (g_video_entry.driver != nullptr && g_video_entry.driver->diskp())
         {
             tmpflags |= VI_DISK;
@@ -262,7 +260,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         g_init_mode = g_adapter;
     }
 
-    gotrealmode = false;
+    bool gotrealmode = false;
     if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == BatchMode::NONE))) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
@@ -520,9 +518,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 static void format_item(int choice, char *buf)
 {
     char errbuf[10];
-    unsigned tmpflags;
     errbuf[0] = 0;
-    tmpflags = s_video_choices[choice].flags;
+    unsigned tmpflags = s_video_choices[choice].flags;
     if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
     {
         std::strcat(errbuf, "*");
