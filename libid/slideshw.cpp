@@ -383,7 +383,6 @@ void stop_slide_show()
 
 void record_show(int key)
 {
-    char mn[MAX_MNEMONIC];
     float dt = (float) s_ticks;      // save time of last call
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
@@ -422,6 +421,7 @@ void record_show(int key)
             std::fprintf(s_slide_show_file, "\"\n");
             s_quotes = false;
         }
+        char mn[MAX_MNEMONIC]{};
         get_mnemonic(key, mn);
         if (*mn)
         {
