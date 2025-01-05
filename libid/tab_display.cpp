@@ -222,12 +222,6 @@ bool tab_display2(char *msg)
 int tab_display()       // display the status of the current image
 {
     int addrow = 0;
-    double x_ctr;
-    double y_ctr;
-    LDouble magnification;
-    double x_mag_factor;
-    double rotation;
-    double skew;
     bf_t bfXctr = nullptr;
     bf_t bfYctr = nullptr;
     char msg[350];
@@ -513,6 +507,10 @@ top:
     }
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM))
     {
+        LDouble magnification;
+        double x_mag_factor;
+        double rotation;
+        double skew;
         adjust_corner(); // make bottom left exact if very near exact
         if (g_bf_math != BFMathType::NONE)
         {
@@ -555,6 +553,8 @@ top:
         }
         else // bf != 1
         {
+            double x_ctr;
+            double y_ctr;
             driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
             driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
             std::sprintf(msg, "%20.16f  %20.16f", g_x_min, g_y_max);
