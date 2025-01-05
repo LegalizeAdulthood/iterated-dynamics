@@ -8,8 +8,7 @@
 
 int ends_with_slash(char const *fl)
 {
-    int len;
-    len = (int) std::strlen(fl);
+    int len = (int) std::strlen(fl);
     if (len)
     {
         if (fl[--len] == SLASH_CH)
