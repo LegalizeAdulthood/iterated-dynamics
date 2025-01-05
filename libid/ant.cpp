@@ -159,15 +159,15 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
     for (long count = 0; count < max_pts; count++)
     {
         // check for a key only every inner_loop times
-        int kbdchar = driver_key_pressed();
-        if (kbdchar || step)
+        int key = driver_key_pressed();
+        if (key || step)
         {
             bool done = false;
-            if (kbdchar == 0)
+            if (key == 0)
             {
-                kbdchar = driver_get_key();
+                key = driver_get_key();
             }
-            switch (kbdchar)
+            switch (key)
             {
             case ID_KEY_SPACE:
                 step = 1 - step;
@@ -326,15 +326,15 @@ void turk_mite2(int max_ants, int rule_len, char const *ru, long max_pts, long w
     for (long count = 0; count < max_pts; count++)
     {
         // check for a key only every inner_loop times
-        int kbdchar = driver_key_pressed();
-        if (kbdchar || step)
+        int key = driver_key_pressed();
+        if (key || step)
         {
             bool done = false;
-            if (kbdchar == 0)
+            if (key == 0)
             {
-                kbdchar = driver_get_key();
+                key = driver_get_key();
             }
-            switch (kbdchar)
+            switch (key)
             {
             case ID_KEY_SPACE:
                 step = 1 - step;
