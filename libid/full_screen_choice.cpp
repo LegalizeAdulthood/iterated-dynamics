@@ -455,8 +455,8 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
             redisplay = false;
         }
 
-        char curitem[81];
         char const *itemptr;
+        char curitem[81];
         {
             int i = current - topleftchoice;           // highlight the current choice
             if (format_item)
