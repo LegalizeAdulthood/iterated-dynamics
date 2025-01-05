@@ -10,7 +10,7 @@
  *  formula.  If the parameter is used, or not a formula fractal,
  *  a 0 is returned.  Note: this routine only works for formula types.
  */
-bool param_not_used(int parm)
+bool param_not_used(int param)
 {
     bool ret = false;
 
@@ -20,7 +20,7 @@ bool param_not_used(int parm)
         return false;
     }
 
-    switch (parm/2)
+    switch (param/2)
     {
     case 0:
         if (!g_frm_uses_p1)
