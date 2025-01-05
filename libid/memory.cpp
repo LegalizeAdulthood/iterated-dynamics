@@ -111,11 +111,9 @@ static void which_disk_error(int I_O)
 bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long offset)
 {
     Byte diskbuf[DISK_WRITE_LEN];
-    long start;  // offset to first location to move to
-    long tomove; // number of bytes to move
     U16 numwritten;
-    start = (long) offset * size;
-    tomove = (long) count * size;
+    long start = offset * size; // offset to first location to move to
+    long tomove = count * size; // number of bytes to move
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
         if (check_bounds(start, tomove, index))
@@ -178,11 +176,9 @@ diskerror:
 bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
 {
     Byte diskbuf[DISK_WRITE_LEN];
-    long start;  // first location to move
-    long tomove; // number of bytes to move
     U16 numread;
-    start = (long) offset * size;
-    tomove = (long) count * size;
+    long start = offset * size;// first location to move
+    long tomove = count * size; // number of bytes to move
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
         if (check_bounds(start, tomove, index))
@@ -248,11 +244,9 @@ diskerror:
 bool MemoryHandle::set(int value, U16 size, long count, long offset)
 {
     Byte diskbuf[DISK_WRITE_LEN];
-    long start;  // first location to set
-    long tomove; // number of bytes to set
     U16 numwritten;
-    start = (long) offset * size;
-    tomove = (long) count * size;
+    long start = offset * size; // first location to set
+    long tomove = count * size; // number of bytes to set
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
         if (check_bounds(start, tomove, index))
