@@ -8,8 +8,8 @@
 #include <crtdbg.h>
 #include <windowsx.h>
 
-#include <array> // std::size
 #include <algorithm>
+#include <array> // std::size
 #include <cstring>
 #include <stdexcept>
 #include <string>
@@ -493,10 +493,8 @@ void WinText::put_string(int xpos, int ypos, int attrib, char const *string, int
                     row++;
                 col = xpos;
             }
-            if (maxrow < row)
-                maxrow = row;
-            if (maxcol < col)
-                maxcol = col;
+            maxrow = std::max(maxrow, row);
+            maxcol = std::max(maxcol, col);
             m_screen.chars(row, col) = xc;
             m_screen.attrs(row, col) = xa;
         }
@@ -567,14 +565,10 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
         }
     }
 
-    if (xmin < 0)
-        xmin = 0;
-    if (xmax >= m_char_xchars)
-        xmax = m_char_xchars-1;
-    if (ymin < 0)
-        ymin = 0;
-    if (ymax >= m_char_ychars)
-        ymax = m_char_ychars-1;
+    xmin = std::max(xmin, 0);
+    xmax = std::min(xmax, m_char_xchars - 1);
+    ymin = std::max(ymin, 0);
+    ymax = std::min(ymax, m_char_ychars - 1);
 
     hDC = GetDC(m_window);
     SelectObject(hDC, m_font);
@@ -653,10 +647,8 @@ void WinText::cursor(int xpos, int ypos, int cursor_type)
     m_cursor_y = ypos;
     if (cursor_type >= 0)
         m_cursor_type = cursor_type;
-    if (m_cursor_type < 0)
-        m_cursor_type = 0;
-    if (m_cursor_type > 2)
-        m_cursor_type = 2;
+    m_cursor_type = std::max(m_cursor_type, 0);
+    m_cursor_type = std::min(m_cursor_type, 2);
     if (m_showing_cursor == FALSE)
     {
         x = m_cursor_x*m_char_width;
