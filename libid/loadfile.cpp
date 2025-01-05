@@ -981,7 +981,6 @@ static int find_fractal_info(const std::string &gif_file, //
     char temp1[81];
     int block_len;
     int data_len;
-    int fractinf_len;
     int hdr_offset;
     FormulaInfo fload_info;
     EvolutionInfo eload_info;
@@ -1076,7 +1075,7 @@ static int find_fractal_info(const std::string &gif_file, //
     */
 
     std::memset(info, 0, sizeof(FractalInfo));
-    fractinf_len = sizeof(FractalInfo) + (sizeof(FractalInfo)+254)/255;
+    int fractinf_len = sizeof(FractalInfo) + (sizeof(FractalInfo) + 254) / 255;
     std::fseek(s_fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FractalInfo structure for the platform */
@@ -1089,10 +1088,9 @@ static int find_fractal_info(const std::string &gif_file, //
     else
     {
         // didn't work 1st try, maybe an older vsn, maybe junk at eof, scan:
-        int offset;
         char tmpbuf[110];
         hdr_offset = 0;
-        offset = 80; // don't even check last 80 bytes of file for id
+        int offset = 80; // don't even check last 80 bytes of file for id
         while (offset < fractinf_len+513)
         {
             // allow 512 garbage at eof
@@ -1956,8 +1954,7 @@ static void draw_window(int colour, Window const *info)
 // maps points onto view screen
 static void transform(DblCoords *point)
 {
-    double tmp_pt_x;
-    tmp_pt_x = s_cvt->a * point->x + s_cvt->b * point->y + s_cvt->e;
+    double tmp_pt_x = s_cvt->a * point->x + s_cvt->b * point->y + s_cvt->e;
     point->y = s_cvt->c * point->x + s_cvt->d * point->y + s_cvt->f;
     point->x = tmp_pt_x;
 }
@@ -1968,47 +1965,34 @@ static bool is_visible_window(
     ExtBlock5 const *blk_5_info)
 {
     DblCoords tl, tr, bl, br;
-    bf_t bt_x, bt_y;
-    bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
-    int saved;
-    int two_len;
-    int cornercount;
-    bool cant_see;
-    int  orig_bflength,
-         orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor,
-         orig_rbflength;
-    double toobig, tmp_sqrt;
-    toobig = std::sqrt(sqr((double)g_screen_x_dots)+sqr((double)g_screen_y_dots)) * 1.5;
+    double toobig = std::sqrt(sqr((double) g_screen_x_dots) + sqr((double) g_screen_y_dots)) * 1.5;
     // arbitrary value... stops browser zooming out too far
-    cornercount = 0;
-    cant_see = false;
+    int cornercount = 0;
+    bool cant_see = false;
 
-    saved = save_stack();
+    int saved = save_stack();
     // Save original values.
-    orig_bflength      = g_bf_length;
-    orig_bnlength      = g_bn_length;
-    orig_padding       = g_padding;
-    orig_rlength       = g_r_length;
-    orig_shiftfactor   = g_shift_factor;
-    orig_rbflength     = g_r_bf_length;
+    int orig_bflength = g_bf_length;
+    int orig_bnlength = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_rlength = g_r_length;
+    int orig_shiftfactor = g_shift_factor;
+    int orig_rbflength = g_r_bf_length;
     /*
        if (oldbf_math && info->bf_math && (g_bn_length+4 < info->g_bf_length)) {
           g_bn_length = info->g_bf_length;
           calc_lengths();
        }
     */
-    two_len = g_bf_length + 2;
-    bt_x = alloc_stack(two_len);
-    bt_y = alloc_stack(two_len);
-    bt_xmin = alloc_stack(two_len);
-    bt_xmax = alloc_stack(two_len);
-    bt_ymin = alloc_stack(two_len);
-    bt_ymax = alloc_stack(two_len);
-    bt_x3rd = alloc_stack(two_len);
-    bt_y3rd = alloc_stack(two_len);
+    int two_len = g_bf_length + 2;
+    bf_t bt_x = alloc_stack(two_len);
+    bf_t bt_y = alloc_stack(two_len);
+    bf_t bt_xmin = alloc_stack(two_len);
+    bf_t bt_xmax = alloc_stack(two_len);
+    bf_t bt_ymin = alloc_stack(two_len);
+    bf_t bt_ymax = alloc_stack(two_len);
+    bf_t bt_x3rd = alloc_stack(two_len);
+    bf_t bt_y3rd = alloc_stack(two_len);
 
     if (info->bf_math)
     {
@@ -2144,7 +2128,7 @@ static bool is_visible_window(
     list->ibr.x = (int)(br.x + 0.5);
     list->ibr.y = (int)(br.y + 0.5);
 
-    tmp_sqrt = std::sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
+    double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
     if ((tmp_sqrt < g_smallest_window_display_size) || (tmp_sqrt > toobig))
@@ -2323,18 +2307,15 @@ static void bf_setup_convert_to_screen()
 {
     // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
-    bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
-    bf_t   bt_inter1, bt_inter2;
-    int saved;
 
-    saved = save_stack();
-    bt_inter1 = alloc_stack(g_r_bf_length+2);
-    bt_inter2 = alloc_stack(g_r_bf_length+2);
-    bt_det = alloc_stack(g_r_bf_length+2);
-    bt_xd  = alloc_stack(g_r_bf_length+2);
-    bt_yd  = alloc_stack(g_r_bf_length+2);
-    bt_tmp1 = alloc_stack(g_r_bf_length+2);
-    bt_tmp2 = alloc_stack(g_r_bf_length+2);
+    int saved = save_stack();
+    bf_t bt_inter1 = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_inter2 = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_det = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_xd = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_yd = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_tmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_tmp2 = alloc_stack(g_r_bf_length + 2);
 
     // xx3rd-xxmin
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
@@ -2410,12 +2391,9 @@ static void bf_setup_convert_to_screen()
 // maps points onto view screen
 static void bf_transform(bf_t bt_x, bf_t bt_y, DblCoords *point)
 {
-    bf_t   bt_tmp1, bt_tmp2;
-    int saved;
-
-    saved = save_stack();
-    bt_tmp1 = alloc_stack(g_r_bf_length+2);
-    bt_tmp2 = alloc_stack(g_r_bf_length+2);
+    int saved = save_stack();
+    bf_t bt_tmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t bt_tmp2 = alloc_stack(g_r_bf_length + 2);
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
     mult_bf(bt_tmp1, s_n_a, bt_x);
