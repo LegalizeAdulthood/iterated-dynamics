@@ -4009,8 +4009,7 @@ void set_3d_defaults()
 // copy a big number from a string, up to slash
 static int get_bf(bf_t bf, char const *curarg)
 {
-    char const *s = std::strchr(curarg, '/');
-    if (s)
+    if (char const *s = std::strchr(curarg, '/'); s)
     {
         std::string buff(curarg, s);
         str_to_bf(bf, buff.c_str());
@@ -4025,8 +4024,7 @@ static int get_bf(bf_t bf, char const *curarg)
 // Get length of current args
 static int get_cur_arg_len(char const *curarg)
 {
-    char const *s = std::strchr(curarg, '/');
-    if (s)
+    if (char const *s = std::strchr(curarg, '/'); s)
     {
         return static_cast<int>(s - curarg);
     }
