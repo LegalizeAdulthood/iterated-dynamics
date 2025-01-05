@@ -171,13 +171,9 @@ static void plot8(int x, int y, int color)
 
 static void circle(int radius, int color)
 {
-    int x;
-    int y;
-    int sum;
-
-    x = 0;
-    y = radius << 1;
-    sum = 0;
+    int x = 0;
+    int y = radius << 1;
+    int sum = 0;
 
     while (x <= y)
     {
