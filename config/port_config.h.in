@@ -10,11 +10,13 @@
 
 #cmakedefine ID_HAVE_STRNCASECMP
 
-#define ID_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
-#define ID_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#define ID_VERSION_PATCH @PROJECT_VERSION_PATCH@
-#define ID_VERSION_TWEAK @PROJECT_VERSION_TWEAK@
+constexpr int ID_VERSION_MAJOR{@PROJECT_VERSION_MAJOR@};
+constexpr int ID_VERSION_MINOR{@PROJECT_VERSION_MINOR@};
+constexpr int ID_VERSION_PATCH{@PROJECT_VERSION_PATCH@};
+constexpr int ID_VERSION_TWEAK{@PROJECT_VERSION_TWEAK@};
 
+// Use macros for these strings so that they can be concatenated
+// with adjacent string literals.
 #define ID_GIT_HASH     "@ID_GIT_HASH@"
 
 #define ID_PROGRAM_NAME "@ID_PROGRAM_NAME@"
