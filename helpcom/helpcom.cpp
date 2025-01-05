@@ -515,8 +515,8 @@ bool DocumentProcessor::topic()
 
 bool DocumentProcessor::topic_paragraph()
 {
-    unsigned int holdlen = 0;
-    char const *holdcurr = nullptr;
+    unsigned int hold_len = 0;
+    char const *hold_curr = nullptr;
     int in_link = 0;
 
     ++m_pd.curr;
@@ -580,16 +580,16 @@ bool DocumentProcessor::topic_paragraph()
                 }
                 else if (in_link == 3)
                 {
-                    m_pd.curr = holdcurr;
-                    m_pd.len = holdlen;
+                    m_pd.curr = hold_curr;
+                    m_pd.len = hold_len;
                     in_link = 0;
                     continue;
                 }
             }
             else
             {
-                m_pd.curr = holdcurr;
-                m_pd.len = holdlen;
+                m_pd.curr = hold_curr;
+                m_pd.len = hold_len;
                 in_link = 0;
                 continue;
             }
@@ -626,8 +626,8 @@ bool DocumentProcessor::topic_paragraph()
             {
                 in_link = 3;
             }
-            holdcurr = m_pd.curr + m_size;
-            holdlen = m_pd.len - m_size;
+            hold_curr = m_pd.curr + m_size;
+            hold_len = m_pd.len - m_size;
             m_pd.len = m_size - 2 - 3 * sizeof(int);
             m_pd.curr += 1 + 3 * sizeof(int);
             continue;
