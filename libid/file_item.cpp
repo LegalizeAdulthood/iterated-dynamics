@@ -466,8 +466,6 @@ static void format_param_file_line(int choice, char *buf)
 
 static int check_gfe_key(int curkey, int choice)
 {
-    char infhdg[60];
-    char infbuf[25*80];
     char blanks[79];         // used to clear the entry portion of screen
     std::memset(blanks, ' ', 78);
     blanks[78] = (char) 0;
@@ -482,6 +480,8 @@ static int check_gfe_key(int curkey, int choice)
     }
     if (curkey == ID_KEY_F2)
     {
+        char infhdg[60];
+        char infbuf[25 * 80];
         int widest_entry_line = 0;
         int lines_in_entry = 0;
         bool comment = false;
