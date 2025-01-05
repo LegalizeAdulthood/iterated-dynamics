@@ -230,7 +230,7 @@ restart_3:
         prompts3d[++k] = "Y-axis scaling factor in pct";
     }
     k = -1;
-    if (!(g_raytrace_format != RayTraceFormat::NONE && !g_sphere))
+    if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
         uvalues[++k].uval.ival   = g_x_rot    ;
         uvalues[k].type = 'i';
@@ -310,7 +310,7 @@ restart_3:
     }
 
     k = 0;
-    if (!(g_raytrace_format != RayTraceFormat::NONE && !g_sphere))
+    if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
         g_x_rot    = uvalues[k++].uval.ival;
         g_y_rot    = uvalues[k++].uval.ival;
