@@ -41,8 +41,8 @@ extern std::string g_current_src_filename;
 
 void report_errors();
 void show_line(unsigned int line);
-void error_msg(int diff, char const *format, ...);
-void warn_msg(int diff, char const *format, ...);
+void error_msg(int line_offset, char const *format, ...);
+void warn_msg(int line_offset, char const *format, ...);
 void notice_msg(char const *format, ...);
 void msg_msg(char const *format, ...);
 

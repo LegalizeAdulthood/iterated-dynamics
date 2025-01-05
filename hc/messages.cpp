@@ -26,14 +26,14 @@ void report_errors()
     std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
 
-void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
+void print_msg(char const *type, int line_num, char const *format, std::va_list arg)
 {
     if (type != nullptr)
     {
         std::printf("   %s", type);
-        if (lnum > 0)
+        if (line_num > 0)
         {
-            std::printf(" %s %d", g_current_src_filename.c_str(), lnum);
+            std::printf(" %s %d", g_current_src_filename.c_str(), line_num);
         }
         std::printf(": ");
     }
@@ -42,12 +42,12 @@ void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
     std::fflush(stdout);
 }
 
-void fatal_msg(int diff, char const *format, ...)
+void fatal_msg(int line_offset, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
 
-    print_msg("Fatal", g_src_line-diff, format, arg);
+    print_msg("Fatal", g_src_line-line_offset, format, arg);
     va_end(arg);
 
     if (g_errors || g_warnings)
@@ -58,12 +58,12 @@ void fatal_msg(int diff, char const *format, ...)
     std::exit(g_errors + 1);
 }
 
-void error_msg(int diff, char const *format, ...)
+void error_msg(int line_offset, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
 
-    print_msg("Error", g_src_line-diff, format, arg);
+    print_msg("Error", g_src_line-line_offset, format, arg);
     va_end(arg);
 
     if (++g_errors >= MAX_ERRORS)
@@ -72,12 +72,12 @@ void error_msg(int diff, char const *format, ...)
     }
 }
 
-void warn_msg(int diff, char const *format, ...)
+void warn_msg(int line_offset, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
 
-    print_msg("Warning", g_src_line-diff, format, arg);
+    print_msg("Warning", g_src_line-line_offset, format, arg);
     va_end(arg);
 
     if (++g_warnings >= MAX_WARNINGS)

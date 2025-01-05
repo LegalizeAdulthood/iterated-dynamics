@@ -775,7 +775,7 @@ int parse_link()   // returns length of link or 0 on error
     char *ptr;
     bool bad = false;
     int   len;
-    int   err_off;
+    int   err_offset;
 
     Link l;
     l.srcfile  = g_current_src_filename;
@@ -792,12 +792,12 @@ int parse_link()   // returns length of link or 0 on error
 
     if (*end == '\n')
     {
-        err_off = 1;
+        err_offset = 1;
         warn(1, "Hot-link has no closing curly-brace (\'}\').");
     }
     else
     {
-        err_off = 0;
+        err_offset = 0;
     }
 
     *end = '\0';
@@ -829,11 +829,11 @@ int parse_link()   // returns length of link or 0 on error
             l.type = LinkTypes::LT_LABEL;
             if ((int)std::strlen(s_cmd) > 32)
             {
-                warn(err_off, "Label is long.");
+                warn(err_offset, "Label is long.");
             }
             if (s_cmd[1] == '\0')
             {
-                error(err_off, "Explicit hot-link has no Label.");
+                error(err_offset, "Explicit hot-link has no Label.");
                 bad = true;
             }
             else
@@ -843,7 +843,7 @@ int parse_link()   // returns length of link or 0 on error
         }
         if (len == 0)
         {
-            warn(err_off, "Explicit hot-link has no title.");
+            warn(err_offset, "Explicit hot-link has no title.");
         }
     }
     else
@@ -853,7 +853,7 @@ int parse_link()   // returns length of link or 0 on error
         len = (int)(end - ptr);
         if (len == 0)
         {
-            error(err_off, "Implicit hot-link has no title.");
+            error(err_offset, "Implicit hot-link has no title.");
             bad = true;
         }
         while (*ptr == ' ')
@@ -1195,11 +1195,11 @@ enum class ParseStates // states for FSM's
     SPACES
 };
 
-void check_command_length(int eoff, int len)
+void check_command_length(int err_offset, int len)
 {
     if ((int) std::strlen(s_cmd) != len)
     {
-        error(eoff, "Invalid text after a command \"%s\"", s_cmd+len);
+        error(err_offset, "Invalid text after a command \"%s\"", s_cmd+len);
     }
 }
 
@@ -1221,7 +1221,7 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
-static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int eoff)
+static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_offset)
 {
     if (strnicmp(s_cmd, tag.data(), tag.length()) != 0)
     {
@@ -1230,7 +1230,7 @@ static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int eoff)
 
     if (s_cmd[tag.length()] == '+')
     {
-        check_command_length(eoff, static_cast<int>(tag.length() + 1));
+        check_command_length(err_offset, static_cast<int>(tag.length() + 1));
 
         if (flag)
         {
@@ -1239,12 +1239,12 @@ static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int eoff)
         }
         else
         {
-            warn(eoff, ("\"" + tag + "+\" already in effect.").c_str());
+            warn(err_offset, ("\"" + tag + "+\" already in effect.").c_str());
         }
     }
     else if (s_cmd[tag.length()] == '-')
     {
-        check_command_length(eoff, static_cast<int>(tag.length() + 1));
+        check_command_length(err_offset, static_cast<int>(tag.length() + 1));
         if (!flag)
         {
             *g_src.curr++ = cmd;
@@ -1252,12 +1252,12 @@ static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int eoff)
         }
         else
         {
-            warn(eoff, ("\"" + tag + "-\" already in effect.").c_str());
+            warn(err_offset, ("\"" + tag + "-\" already in effect.").c_str());
         }
     }
     else
     {
-        error(eoff, ("Invalid argument to " + tag + ".").c_str());
+        error(err_offset, ("Invalid argument to " + tag + ".").c_str());
     }
 }
 
@@ -1339,7 +1339,7 @@ void read_src(std::string const &fname, Mode mode)
 
             bool done = false;
 
-            int eoff{};
+            int err_offset{};
             while (!done)
             {
                 do
@@ -1359,12 +1359,12 @@ void read_src(std::string const &fname, Mode mode)
 
                 if (*ptr == '\n')
                 {
-                    ++eoff;
+                    ++err_offset;
                 }
 
                 if (embedded && *ptr == '\n')
                 {
-                    error(eoff, "Embedded command has no closing paren (\')\')");
+                    error(err_offset, "Embedded command has no closing paren (\')\')");
                 }
 
                 done = (*ptr != ',');   // we done if it's not a comma
@@ -1393,20 +1393,20 @@ void read_src(std::string const &fname, Mode mode)
                     size_t const title_len = std::strlen(topic_title);
                     if (title_len == 0)
                     {
-                        warn(eoff, "Topic has no title.");
+                        warn(err_offset, "Topic has no title.");
                     }
                     else if (title_len > 70)
                     {
-                        error(eoff, "Topic title is too long.");
+                        error(err_offset, "Topic title is too long.");
                     }
                     else if (title_len > 60)
                     {
-                        warn(eoff, "Topic title is long.");
+                        warn(err_offset, "Topic title is long.");
                     }
 
                     if (find_topic_title(topic_title) != -1)
                     {
-                        error(eoff, "Topic title already exists.");
+                        error(err_offset, "Topic title already exists.");
                     }
 
                     t.start(topic_title, static_cast<int>(title_len));
@@ -1435,24 +1435,24 @@ void read_src(std::string const &fname, Mode mode)
                     char const *data = &s_cmd[5];
                     if (data[0] == '\0')
                     {
-                        warn(eoff, "Data topic has no label.");
+                        warn(err_offset, "Data topic has no label.");
                     }
 
                     if (!validate_label_name(data))
                     {
-                        error(eoff, "Label \"%s\" contains illegal characters.", data);
+                        error(err_offset, "Label \"%s\" contains illegal characters.", data);
                         continue;
                     }
 
                     if (g_src.find_label(data) != nullptr)
                     {
-                        error(eoff, "Label \"%s\" already exists", data);
+                        error(err_offset, "Label \"%s\" already exists", data);
                         continue;
                     }
 
                     if (s_cmd[5] == '@')
                     {
-                        warn(eoff, "Data topic has a local label.");
+                        warn(err_offset, "Data topic has a local label.");
                     }
 
                     t.start("", 0);
@@ -1460,7 +1460,7 @@ void read_src(std::string const &fname, Mode mode)
 
                     if ((int)std::strlen(data) > 32)
                     {
-                        warn(eoff, "Label name is long.");
+                        warn(err_offset, "Label name is long.");
                     }
 
                     lbl.name      = data;
@@ -1482,7 +1482,7 @@ void read_src(std::string const &fname, Mode mode)
                 }
                 if (strnicmp(s_cmd, "DocContents", 11) == 0)
                 {
-                    check_command_length(eoff, 11);
+                    check_command_length(err_offset, 11);
                     if (in_topic)  // if we're in a topic, finish it
                     {
                         end_topic(t);
@@ -1510,7 +1510,7 @@ void read_src(std::string const &fname, Mode mode)
                 {
                     if (s_cmd[13] == '-')
                     {
-                        check_command_length(eoff, 14);
+                        check_command_length(err_offset, 14);
                         if (in_topic)
                         {
                             if (lformat_exclude > 0)
@@ -1519,7 +1519,7 @@ void read_src(std::string const &fname, Mode mode)
                             }
                             else
                             {
-                                warn(eoff, "\"FormatExclude-\" is already in effect.");
+                                warn(err_offset, "\"FormatExclude-\" is already in effect.");
                             }
                         }
                         else
@@ -1530,13 +1530,13 @@ void read_src(std::string const &fname, Mode mode)
                             }
                             else
                             {
-                                warn(eoff, "\"FormatExclude-\" is already in effect.");
+                                warn(err_offset, "\"FormatExclude-\" is already in effect.");
                             }
                         }
                     }
                     else if (s_cmd[13] == '+')
                     {
-                        check_command_length(eoff, 14);
+                        check_command_length(err_offset, 14);
                         if (in_topic)
                         {
                             if (lformat_exclude < 0)
@@ -1545,7 +1545,7 @@ void read_src(std::string const &fname, Mode mode)
                             }
                             else
                             {
-                                warn(eoff, "\"FormatExclude+\" is already in effect.");
+                                warn(err_offset, "\"FormatExclude+\" is already in effect.");
                             }
                         }
                         else
@@ -1556,7 +1556,7 @@ void read_src(std::string const &fname, Mode mode)
                             }
                             else
                             {
-                                warn(eoff, "\"FormatExclude+\" is already in effect.");
+                                warn(err_offset, "\"FormatExclude+\" is already in effect.");
                             }
                         }
                     }
@@ -1564,7 +1564,7 @@ void read_src(std::string const &fname, Mode mode)
                     {
                         if (s_cmd[14] == 'n' || s_cmd[14] == 'N')
                         {
-                            check_command_length(eoff, 15);
+                            check_command_length(err_offset, 15);
                             if (in_topic)
                             {
                                 lformat_exclude = 0;
@@ -1586,7 +1586,7 @@ void read_src(std::string const &fname, Mode mode)
 
                             if (lformat_exclude <= 0)
                             {
-                                error(eoff, "Invalid argument to FormatExclude=");
+                                error(err_offset, "Invalid argument to FormatExclude=");
                                 lformat_exclude = 0;
                             }
 
@@ -1600,7 +1600,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        error(eoff, "Invalid format for FormatExclude");
+                        error(err_offset, "Invalid format for FormatExclude");
                     }
 
                     continue;
@@ -1623,7 +1623,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        error(eoff, "Unable to open \"%s\"", file_name.c_str());
+                        error(err_offset, "Unable to open \"%s\"", file_name.c_str());
                     }
                     continue;
                 }
@@ -1636,7 +1636,7 @@ void read_src(std::string const &fname, Mode mode)
                     {
                         if (!g_src.hdr_filename.empty())
                         {
-                            warn(eoff, "Header Filename has already been defined.");
+                            warn(err_offset, "Header Filename has already been defined.");
                         }
                         g_src.hdr_filename = &s_cmd[8];
                     }
@@ -1644,7 +1644,7 @@ void read_src(std::string const &fname, Mode mode)
                     {
                         if (!g_src.hlp_filename.empty())
                         {
-                            warn(eoff, "Help Filename has already been defined.");
+                            warn(err_offset, "Help Filename has already been defined.");
                         }
                         g_src.hlp_filename = &s_cmd[8];
                     }
@@ -1652,13 +1652,13 @@ void read_src(std::string const &fname, Mode mode)
                     {
                         if (g_src.version != -1)   // an unlikely value
                         {
-                            warn(eoff, "Help version has already been defined");
+                            warn(err_offset, "Help version has already been defined");
                         }
                         g_src.version = std::atoi(&s_cmd[8]);
                     }
                     else
                     {
-                        error(eoff, "Bad or unexpected command \"%s\"", s_cmd);
+                        error(err_offset, "Bad or unexpected command \"%s\"", s_cmd);
                     }
 
                     continue;
@@ -1666,7 +1666,7 @@ void read_src(std::string const &fname, Mode mode)
                 // commands allowed only in a topic...
                 if (strnicmp(s_cmd, "FF", 2) == 0)
                 {
-                    check_command_length(eoff, 2);
+                    check_command_length(err_offset, 2);
                     if (in_para)
                     {
                         *g_src.curr++ = '\n';    // finish off current paragraph
@@ -1678,7 +1678,7 @@ void read_src(std::string const &fname, Mode mode)
                 }
                 else if (strnicmp(s_cmd, "DocFF", 5) == 0)
                 {
-                    check_command_length(eoff, 5);
+                    check_command_length(err_offset, 5);
                     if (in_para)
                     {
                         *g_src.curr++ = '\n';    // finish off current paragraph
@@ -1698,7 +1698,7 @@ void read_src(std::string const &fname, Mode mode)
                 }
                 else if (strnicmp(s_cmd, "OnlineFF", 8) == 0)
                 {
-                    check_command_length(eoff, 8);
+                    check_command_length(err_offset, 8);
                     if (in_para)
                     {
                         *g_src.curr++ = '\n';    // finish off current paragraph
@@ -1721,26 +1721,26 @@ void read_src(std::string const &fname, Mode mode)
                     char const *label_name = &s_cmd[6];
                     if ((int)std::strlen(label_name) <= 0)
                     {
-                        error(eoff, "Label has no name.");
+                        error(err_offset, "Label has no name.");
                     }
                     else if (!validate_label_name(label_name))
                     {
-                        error(eoff, "Label \"%s\" contains illegal characters.", label_name);
+                        error(err_offset, "Label \"%s\" contains illegal characters.", label_name);
                     }
                     else if (g_src.find_label(label_name) != nullptr)
                     {
-                        error(eoff, "Label \"%s\" already exists", label_name);
+                        error(err_offset, "Label \"%s\" already exists", label_name);
                     }
                     else
                     {
                         if ((int)std::strlen(label_name) > 32)
                         {
-                            warn(eoff, "Label name is long.");
+                            warn(err_offset, "Label name is long.");
                         }
 
                         if (bit_set(t.flags, TopicFlags::DATA) && s_cmd[6] == '@')
                         {
-                            warn(eoff, "Data topic has a local label.");
+                            warn(err_offset, "Data topic has a local label.");
                         }
 
                         lbl.name      = label_name;
@@ -1776,7 +1776,7 @@ void read_src(std::string const &fname, Mode mode)
                 {
                     if (s_cmd[13] == '-')
                     {
-                        check_command_length(eoff, 14);
+                        check_command_length(err_offset, 14);
                         if (lformat_exclude > 0)
                         {
                             lformat_exclude = -lformat_exclude;
@@ -1788,7 +1788,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else if (s_cmd[13] == '+')
                     {
-                        check_command_length(eoff, 14);
+                        check_command_length(err_offset, 14);
                         if (lformat_exclude < 0)
                         {
                             lformat_exclude = -lformat_exclude;
@@ -1800,14 +1800,14 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        error(eoff, "Unexpected or invalid argument to FormatExclude.");
+                        error(err_offset, "Unexpected or invalid argument to FormatExclude.");
                     }
                 }
                 else if (strnicmp(s_cmd, "Format", 6) == 0)
                 {
                     if (s_cmd[6] == '+')
                     {
-                        check_command_length(eoff, 7);
+                        check_command_length(err_offset, 7);
                         if (!formatting)
                         {
                             formatting = true;
@@ -1817,12 +1817,12 @@ void read_src(std::string const &fname, Mode mode)
                         }
                         else
                         {
-                            warn(eoff, "\"Format+\" is already in effect.");
+                            warn(err_offset, "\"Format+\" is already in effect.");
                         }
                     }
                     else if (s_cmd[6] == '-')
                     {
-                        check_command_length(eoff, 7);
+                        check_command_length(err_offset, 7);
                         if (formatting)
                         {
                             if (in_para)
@@ -1836,31 +1836,31 @@ void read_src(std::string const &fname, Mode mode)
                         }
                         else
                         {
-                            warn(eoff, "\"Format-\" is already in effect.");
+                            warn(err_offset, "\"Format-\" is already in effect.");
                         }
                     }
                     else
                     {
-                        error(eoff, "Invalid argument to Format.");
+                        error(err_offset, "Invalid argument to Format.");
                     }
                 }
                 else if (strnicmp(s_cmd, "Online", 6) == 0)
                 {
-                    toggle_mode("Online", CMD_XONLINE, s_xonline, eoff);
+                    toggle_mode("Online", CMD_XONLINE, s_xonline, err_offset);
                 }
                 else if (strnicmp(s_cmd, "Doc", 3) == 0)
                 {
-                    toggle_mode("Doc", CMD_XDOC, s_xdoc, eoff);
+                    toggle_mode("Doc", CMD_XDOC, s_xdoc, err_offset);
                 }
                 else if (strnicmp(s_cmd, "ADoc", 4) == 0)
                 {
-                    toggle_mode("ADoc", CMD_XADOC, s_xadoc, eoff);
+                    toggle_mode("ADoc", CMD_XADOC, s_xadoc, err_offset);
                 }
                 else if (strnicmp(s_cmd, "Center", 6) == 0)
                 {
                     if (s_cmd[6] == '+')
                     {
-                        check_command_length(eoff, 7);
+                        check_command_length(err_offset, 7);
                         if (!centering)
                         {
                             centering = true;
@@ -1873,12 +1873,12 @@ void read_src(std::string const &fname, Mode mode)
                         }
                         else
                         {
-                            warn(eoff, "\"Center+\" already in effect.");
+                            warn(err_offset, "\"Center+\" already in effect.");
                         }
                     }
                     else if (s_cmd[6] == '-')
                     {
-                        check_command_length(eoff, 7);
+                        check_command_length(err_offset, 7);
                         if (centering)
                         {
                             centering = false;
@@ -1886,23 +1886,23 @@ void read_src(std::string const &fname, Mode mode)
                         }
                         else
                         {
-                            warn(eoff, "\"Center-\" already in effect.");
+                            warn(err_offset, "\"Center-\" already in effect.");
                         }
                     }
                     else
                     {
-                        error(eoff, "Invalid argument to Center.");
+                        error(err_offset, "Invalid argument to Center.");
                     }
                 }
                 else if (strnicmp(s_cmd, "CompressSpaces", 14) == 0)
                 {
-                    check_command_length(eoff, 15);
+                    check_command_length(err_offset, 15);
 
                     if (s_cmd[14] == '+')
                     {
                         if (s_compress_spaces)
                         {
-                            warn(eoff, "\"CompressSpaces+\" is already in effect.");
+                            warn(err_offset, "\"CompressSpaces+\" is already in effect.");
                         }
                         else
                         {
@@ -1913,7 +1913,7 @@ void read_src(std::string const &fname, Mode mode)
                     {
                         if (!s_compress_spaces)
                         {
-                            warn(eoff, "\"CompressSpaces-\" is already in effect.");
+                            warn(err_offset, "\"CompressSpaces-\" is already in effect.");
                         }
                         else
                         {
@@ -1922,14 +1922,14 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        error(eoff, "Invalid argument to CompressSpaces.");
+                        error(err_offset, "Invalid argument to CompressSpaces.");
                     }
                 }
                 else if (strnicmp("BinInc ", s_cmd, 7) == 0)
                 {
                     if (!bit_set(t.flags, TopicFlags::DATA))
                     {
-                        error(eoff, "BinInc allowed only in Data topics.");
+                        error(err_offset, "BinInc allowed only in Data topics.");
                     }
                     else
                     {
@@ -1938,7 +1938,7 @@ void read_src(std::string const &fname, Mode mode)
                 }
                 else
                 {
-                    error(eoff, "Bad or unexpected command \"%s\".", s_cmd);
+                    error(err_offset, "Bad or unexpected command \"%s\".", s_cmd);
                 }
                 // else
             } // while (!done)
