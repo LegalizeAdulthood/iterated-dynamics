@@ -993,15 +993,15 @@ julia_bf_fractal()
 int
 julia_z_power_bn_fractal()
 {
-    BNComplex parm2;
+    BNComplex param2;
     int saved = save_stack();
 
-    parm2.x = alloc_stack(g_bn_length);
-    parm2.y = alloc_stack(g_bn_length);
+    param2.x = alloc_stack(g_bn_length);
+    param2.y = alloc_stack(g_bn_length);
 
-    float_to_bn(parm2.x, g_params[2]);
-    float_to_bn(parm2.y, g_params[3]);
-    cmplx_pow_bn(&g_new_z_bn, &g_old_z_bn, &parm2);
+    float_to_bn(param2.x, g_params[2]);
+    float_to_bn(param2.y, g_params[3]);
+    cmplx_pow_bn(&g_new_z_bn, &g_old_z_bn, &param2);
     add_bn(g_new_z_bn.x, g_param_z_bn.x, g_new_z_bn.x+g_shift_factor);
     add_bn(g_new_z_bn.y, g_param_z_bn.y, g_new_z_bn.y+g_shift_factor);
     restore_stack(saved);
@@ -1011,15 +1011,15 @@ julia_z_power_bn_fractal()
 int
 julia_z_power_bf_fractal()
 {
-    BFComplex parm2;
+    BFComplex param2;
     int saved = save_stack();
 
-    parm2.x = alloc_stack(g_bf_length+2);
-    parm2.y = alloc_stack(g_bf_length+2);
+    param2.x = alloc_stack(g_bf_length+2);
+    param2.y = alloc_stack(g_bf_length+2);
 
-    float_to_bf(parm2.x, g_params[2]);
-    float_to_bf(parm2.y, g_params[3]);
-    cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &parm2);
+    float_to_bf(param2.x, g_params[2]);
+    float_to_bf(param2.y, g_params[3]);
+    cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &param2);
     add_bf(g_new_z_bf.x, g_param_z_bf.x, g_new_z_bf.x);
     add_bf(g_new_z_bf.y, g_param_z_bf.y, g_new_z_bf.y);
     restore_stack(saved);
