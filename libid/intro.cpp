@@ -28,7 +28,7 @@ void intro()
     // following overlayed data safe if "putstrings" are resident
     static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
     std::vector<int> authors;
-    char credits[32768] = { 0 };
+    char credits[32768]{};
     char screen_text[32768];
 
     g_timer_start -= std::clock();       // "time out" during help
