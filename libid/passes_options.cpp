@@ -25,35 +25,28 @@ int passes_options()
 
     FullScreenValues uvalues[25];
     int i;
-    int j;
-    int k;
-    int ret;
 
-    int old_periodicity;
-    int old_orbit_delay;
-    int old_orbit_interval;
     bool const old_keep_scrn_coords = g_keep_screen_coords;
-    char old_drawmode;
 
-    ret = 0;
+    int ret = 0;
 
 pass_option_restart:
     // fill up the choices (and previous values) arrays
-    k = -1;
+    int k = -1;
 
     choices[++k] = "Periodicity (0=off, <0=show, >0=on, -255..+255)";
     uvalues[k].type = 'i';
-    old_periodicity = g_user_periodicity_value;
+    int old_periodicity = g_user_periodicity_value;
     uvalues[k].uval.ival = old_periodicity;
 
     choices[++k] = "Orbit delay (0 = none)";
     uvalues[k].type = 'i';
-    old_orbit_delay = g_orbit_delay;
+    int old_orbit_delay = g_orbit_delay;
     uvalues[k].uval.ival = old_orbit_delay;
 
     choices[++k] = "Orbit interval (1 ... 255)";
     uvalues[k].type = 'i';
-    old_orbit_interval = (int)g_orbit_interval;
+    int old_orbit_interval = (int) g_orbit_interval;
     uvalues[k].uval.ival = old_orbit_interval;
 
     choices[++k] = "Maintain screen coordinates";
@@ -69,7 +62,7 @@ pass_option_restart:
     uvalues[k].uval.ch.val = (g_draw_mode == 'r') ? 0
                              : (g_draw_mode == 'l') ? 1
                              :   /* function */    2;
-    old_drawmode = g_draw_mode;
+    char old_drawmode = g_draw_mode;
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PASSES_OPTIONS};
@@ -85,7 +78,7 @@ pass_option_restart:
 
     // now check out the results (*hopefully* in the same order <grin>)
     k = -1;
-    j = 0;   // return code
+    int j = 0;   // return code
 
     g_user_periodicity_value = uvalues[++k].uval.ival;
     g_user_periodicity_value = std::min(g_user_periodicity_value, 255);
