@@ -310,7 +310,7 @@ static void process_file_set_name(const char *curarg, char *sptr)
     }
     g_command_name = &sptr[1];
     std::FILE *initfile = nullptr;
-    if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ItemType::PARM) || initfile == nullptr)
+    if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ItemType::PAR_SET) || initfile == nullptr)
     {
         arg_error(curarg);
     }
