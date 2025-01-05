@@ -33,33 +33,17 @@
 int get_toggles()
 {
     char const *choices[20];
-    char prevsavename[FILE_MAX_DIR+1];
-    char const *savenameptr;
+    char prevsavename[FILE_MAX_DIR + 1];
     FullScreenValues uvalues[25];
-    int i;
-    int j;
-    int k;
-    char old_usr_stdcalcmode;
-    long old_maxit;
-    long old_logflag;
-    int old_inside;
-    int old_outside;
     int old_soundflag;
-    int old_biomorph;
-    int old_decomp;
-    int old_fillcolor;
-    int old_stoppass;
-    double old_closeprox;
-    char const *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
+    char const *calcmodes[] = {
+        "1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
     char const *soundmodes[5] = {"off", "beep", "x", "y", "z"};
-    char const *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
-                          "startrail", "period", "atan", "fmod"
-                         };
-    char const *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan",
-                           "fmod", "tdis"
-                          };
+    char const *insidemodes[] = {
+        "numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross", "startrail", "period", "atan", "fmod"};
+    char const *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan", "fmod", "tdis"};
 
-    k = -1;
+    int k = -1;
 
     choices[++k] = "Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])";
     uvalues[k].type = 'l';
@@ -83,14 +67,14 @@ int get_toggles()
         : (g_user_std_calc_mode == 'd') ? 13
         : (g_user_std_calc_mode == 'o') ? 14
         :        /* "p"erturbation */     15;
-    old_usr_stdcalcmode = g_user_std_calc_mode;
-    old_stoppass = g_stop_pass;
+    char old_usr_stdcalcmode = g_user_std_calc_mode;
+    int old_stoppass = g_stop_pass;
     choices[++k] = "Floating Point Algorithm";
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_user_float_flag ? 1 : 0;
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     uvalues[k].type = 'L';
-    old_maxit = g_max_iterations;
+    long old_maxit = g_max_iterations;
     uvalues[k].uval.Lval = old_maxit;
 
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
@@ -149,7 +133,7 @@ int get_toggles()
     {
         uvalues[k].uval.ch.val = 9;
     }
-    old_inside = g_inside_color;
+    int old_inside = g_inside_color;
 
     choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
     uvalues[k].type = 'i';
@@ -175,12 +159,12 @@ int get_toggles()
     {
         uvalues[k].uval.ch.val = -g_outside_color;
     }
-    old_outside = g_outside_color;
+    int old_outside = g_outside_color;
 
     choices[++k] = "Savename (.GIF implied)";
     uvalues[k].type = 's';
     std::strcpy(prevsavename, g_save_filename.c_str());
-    savenameptr = std::strrchr(g_save_filename.c_str(), SLASH_CH);
+    char const *savenameptr = std::strrchr(g_save_filename.c_str(), SLASH_CH);
     if (savenameptr == nullptr)
     {
         savenameptr = g_save_filename.c_str();
@@ -212,17 +196,17 @@ int get_toggles()
         choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
         uvalues[k].type = '*';
     }
-    old_logflag = g_log_map_flag;
+    long old_logflag = g_log_map_flag;
     uvalues[k].uval.Lval = old_logflag;
 
     choices[++k] = "Biomorph Color (-1 means OFF)";
     uvalues[k].type = 'i';
-    old_biomorph = g_user_biomorph_value;
+    int old_biomorph = g_user_biomorph_value;
     uvalues[k].uval.ival = old_biomorph;
 
     choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
     uvalues[k].type = 'i';
-    old_decomp = g_decomp[0];
+    int old_decomp = g_decomp[0];
     uvalues[k].uval.ival = old_decomp;
 
     choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
@@ -235,16 +219,17 @@ int get_toggles()
     {
         std::sprintf(uvalues[k].uval.sval, "%d", g_fill_color);
     }
-    old_fillcolor = g_fill_color;
+    int old_fillcolor = g_fill_color;
 
     choices[++k] = "Proximity value for inside=epscross and fmod";
     uvalues[k].type = 'f'; // should be 'd', but prompts get messed up
-    old_closeprox = g_close_proximity;
+    double old_closeprox = g_close_proximity;
     uvalues[k].uval.dval = old_closeprox;
 
     HelpLabels const old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_X_OPTIONS;
-    i = full_screen_prompt("Basic Options\n(not all combinations make sense)", k+1, choices, uvalues, 0, nullptr);
+    int i = full_screen_prompt(
+        "Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (i < 0)
     {
@@ -253,7 +238,7 @@ int get_toggles()
 
     // now check out the results (*hopefully* in the same order <grin>)
     k = -1;
-    j = 0;   // return code
+    int j = 0;   // return code
 
     g_user_std_calc_mode = calcmodes[uvalues[++k].uval.ch.val][0];
     g_stop_pass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
@@ -306,8 +291,7 @@ int get_toggles()
     }
 
     {
-        int tmp;
-        tmp = uvalues[++k].uval.ch.val;
+        int tmp = uvalues[++k].uval.ch.val;
         if (tmp > 0)
         {
             switch (tmp)
@@ -358,8 +342,7 @@ int get_toggles()
     }
 
     {
-        int tmp;
-        tmp = uvalues[++k].uval.ch.val;
+        int tmp = uvalues[++k].uval.ch.val;
         if (tmp > 0)
         {
             g_outside_color = -tmp;
