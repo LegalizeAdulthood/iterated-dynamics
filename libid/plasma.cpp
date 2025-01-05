@@ -51,8 +51,7 @@ using PlotFn = void(*)(int, int, int);
 // returns a random 16 bit value that is never 0
 U16 rand16()
 {
-    U16 value;
-    value = (U16)rand15();
+    U16 value = (U16) rand15();
     value <<= 1;
     value = (U16)(value + (rand15()&1));
     value = std::max<U16>(value, 1U);
@@ -95,17 +94,14 @@ static void put_color_border(int x, int y, int color)
 
 static U16 get_pot(int x, int y)
 {
-    U16 color;
-
-    color = (U16)disk_read_pixel(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset);
+    U16 color = (U16) disk_read_pixel(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset);
     color = (U16)((color << 8) + (U16) disk_read_pixel(x+g_logical_screen_x_offset, y+g_screen_y_dots+g_logical_screen_y_offset));
     return color;
 }
 
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
-    S32 pseudorandom;
-    pseudorandom = ((S32)s_i_parm_x)*((rand15()-16383));
+    S32 pseudorandom = ((S32) s_i_parm_x) * ((rand15() - 16383));
     pseudorandom = pseudorandom * s_recur1;
     pseudorandom = pseudorandom >> s_shift_value;
     pseudorandom = (((S32)s_get_pix(xa, ya)+(S32)s_get_pix(xb, yb)+1) >> 1)+pseudorandom;
@@ -127,15 +123,6 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 
 static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
 {
-    int x;
-    int y;
-    int nx1;
-    int nx;
-    int ny1;
-    int ny;
-    S32 i;
-    S32 v;
-
     struct Sub
     {
         Byte t; // top of stack
@@ -149,14 +136,14 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
     s_recur1 = (int)(320L >> recur);
     suby.t = 2;
     suby.v[0] = y2;
-    ny   = suby.v[0];
+    int ny = suby.v[0];
     suby.v[2] = y1;
-    ny1 = suby.v[2];
+    int ny1 = suby.v[2];
     suby.r[2] = 0;
     suby.r[0] = suby.r[2];
     suby.r[1] = 1;
     suby.v[1] = (ny1 + ny) >> 1;
-    y = suby.v[1];
+    int y = suby.v[1];
 
     while (suby.t >= 1)
     {
@@ -189,14 +176,14 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
         }
         subx.t = 2;
         subx.v[0] = x2;
-        nx  = subx.v[0];
+        int nx = subx.v[0];
         subx.v[2] = x1;
-        nx1 = subx.v[2];
+        int nx1 = subx.v[2];
         subx.r[2] = 0;
         subx.r[0] = subx.r[2];
         subx.r[1] = 1;
         subx.v[1] = (nx1 + nx) >> 1;
-        x = subx.v[1];
+        int x = subx.v[1];
 
         while (subx.t >= 1)
         {
@@ -212,13 +199,13 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 subx.r[subx.t-1]   = (Byte)(std::max(subx.r[subx.t], subx.r[subx.t-2])+1);
             }
 
-            i = s_get_pix(nx, y);
+            S32 i = s_get_pix(nx, y);
             if (i == 0)
             {
                 i = adjust(nx, ny1, nx, y , nx, ny);
             }
             // cppcheck-suppress AssignmentIntegerToAddress
-            v = i;
+            S32 v = i;
             i = s_get_pix(x, ny);
             if (i == 0)
             {
@@ -258,10 +245,6 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
 
 static void sub_divide(int x1, int y1, int x2, int y2)
 {
-    int x;
-    int y;
-    S32 v;
-    S32 i;
     if ((++s_kbd_check & 0x7f) == 1)
     {
         if (driver_key_pressed())
@@ -277,14 +260,14 @@ static void sub_divide(int x1, int y1, int x2, int y2)
     s_recur_level++;
     s_recur1 = (int)(320L >> s_recur_level);
 
-    x = (x1+x2) >> 1;
-    y = (y1+y2) >> 1;
-    v = s_get_pix(x, y1);
+    int x = (x1 + x2) >> 1;
+    int y = (y1 + y2) >> 1;
+    S32 v = s_get_pix(x, y1);
     if (v == 0)
     {
         v = adjust(x1, y1, x , y1, x2, y1);
     }
-    i = v;
+    S32 i = v;
     v = s_get_pix(x2, y);
     if (v == 0)
     {
