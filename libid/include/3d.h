@@ -83,6 +83,6 @@ bool normalize_vector(VECTOR v);
 int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t);
 void vec_g_mat_mul(VECTOR s);
 int perspective(VECTOR v);
-int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bit_shift);
+int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR view, int bit_shift);
 int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift);
 int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift);

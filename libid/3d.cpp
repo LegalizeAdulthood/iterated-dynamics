@@ -288,7 +288,7 @@ int perspective(VECTOR v)
 }
 
 // long version of vmult and perspective combined for speed
-int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bit_shift)
+int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR view, int bit_shift)
 {
     // s: source vector
     // m: transformation matrix
@@ -299,7 +299,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     LVECTOR tmp;
     g_overflow = false;
     int k = CMAX - 1;                  // shorten the math if non-perspective and non-illum
-    if (lview[2] == 0 && t0[0] == 0)
+    if (view[2] == 0 && t0[0] == 0)
     {
         k--;
     }
@@ -321,10 +321,10 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
         t0[1] = tmp[1];
         t0[2] = tmp[2];
     }
-    if (lview[2] != 0)           // perspective 3D
+    if (view[2] != 0)           // perspective 3D
     {
         LVECTOR tmpview;
-        long denom = lview[2] - tmp[2];
+        long denom = view[2] - tmp[2];
         if (denom >= 0)           // bail out if point is "behind" us
         {
             t[0] = g_bad_value;
@@ -335,9 +335,9 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
         }
 
         // doing math in this order helps prevent overflow
-        tmpview[0] = divide(lview[0], denom, bit_shift);
-        tmpview[1] = divide(lview[1], denom, bit_shift);
-        tmpview[2] = divide(lview[2], denom, bit_shift);
+        tmpview[0] = divide(view[0], denom, bit_shift);
+        tmpview[1] = divide(view[1], denom, bit_shift);
+        tmpview[2] = divide(view[2], denom, bit_shift);
 
         tmp[0] = multiply(tmp[0], tmpview[2], bit_shift) -
                  multiply(tmpview[0], tmp[2], bit_shift);
