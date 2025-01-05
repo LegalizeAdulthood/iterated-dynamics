@@ -553,7 +553,7 @@ void skip_over(char const *skip)
     }
 }
 
-char *pchar(int ch)
+char *char_lit(int ch)
 {
     static char buff[16];
 
@@ -1007,7 +1007,7 @@ int create_table()
         break;
 
         default:
-            error(0, "Unexpected character %s.", pchar(ch));
+            error(0, "Unexpected character %s.", char_lit(ch));
             break;
         }
     }
