@@ -171,7 +171,6 @@ int input_field(InputFieldFlags options, //
             {
                 // floating point
                 double tmpd;
-                char tmpfld[30];
                 bool specialv = false;
                 if (*fld == 'e' || *fld == 'E')
                 {
@@ -185,6 +184,7 @@ int input_field(InputFieldFlags options, //
                 }
                 if (specialv)
                 {
+                    char tmpfld[30];
                     if (!bit_set(options, InputFieldFlags::DOUBLE))
                     {
                         round_float_double(&tmpd);
