@@ -273,7 +273,7 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
     }
 
     // use this call only for non-ASCII keys
-    if (!(vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) && (j == 0))
+    if (vk != VK_SHIFT && vk != VK_CONTROL && vk != VK_MENU && j == 0)
     {
         add_key_press(i);
         debug_key_strokes("OnKeyDown key: " + std::to_string(i));
