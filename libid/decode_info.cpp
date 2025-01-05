@@ -432,11 +432,10 @@ static void get_float(float *dst, unsigned char **src, int dir)
 void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
 {
     std::vector<unsigned char> evolution_info_buff;
-    unsigned char *buf;
     unsigned char *bufPtr;
 
     evolution_info_buff.resize(sizeof(EvolutionInfo));
-    buf = &evolution_info_buff[0];
+    unsigned char *buf = &evolution_info_buff[0];
     bufPtr = buf;
     std::memcpy((char *)buf, (char *)info, sizeof(EvolutionInfo));
 
@@ -481,11 +480,10 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
 void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
 {
     std::vector<unsigned char> orbits_info_buff;
-    unsigned char *buf;
     unsigned char *bufPtr;
 
     orbits_info_buff.resize(sizeof(OrbitsInfo));
-    buf = &orbits_info_buff[0];
+    unsigned char *buf = &orbits_info_buff[0];
     bufPtr = buf;
     std::memcpy((char *)buf, (char *)info, sizeof(OrbitsInfo));
 
