@@ -39,14 +39,6 @@ static Byte s_stack[4096]{};                               // common temp, two p
 // faster, but is also more accurate. Harrumph!
 int solid_guess()
 {
-    int i;
-    int xlim;
-    int ylim;
-    int blocksize;
-    unsigned int *pfxp0;
-    unsigned int *pfxp1;
-    unsigned int u;
-
     s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2 && g_plot != sym_plot2j);
     // check if guessing at bottom & right edges is ok
     s_bottom_guess = (g_plot == sym_plot2 || (g_plot == g_put_color && g_i_y_stop+1 == g_logical_screen_y_dots));
@@ -60,9 +52,9 @@ int solid_guess()
         s_right_guess = false;
     }
 
-    blocksize = ssg_blocksize();
+    int blocksize = ssg_blocksize();
     s_max_block = blocksize;
-    i = blocksize;
+    int i = blocksize;
     g_total_passes = 1;
     while ((i >>= 1) > 1)
     {
@@ -140,8 +132,8 @@ int solid_guess()
         g_i_y_start = g_yy_start & (-1 - (s_max_block-1));
 
         // calculate skip flags for skippable blocks
-        xlim = (g_i_x_stop+s_max_block)/s_max_block+1;
-        ylim = ((g_i_y_stop+s_max_block)/s_max_block+15)/16+1;
+        int xlim = (g_i_x_stop + s_max_block) / s_max_block + 1;
+        int ylim = ((g_i_y_stop + s_max_block) / s_max_block + 15) / 16 + 1;
         if (!s_right_guess)         // no right edge guessing, zap border
         {
             for (int y = 0; y <= ylim; ++y)
@@ -162,12 +154,12 @@ int solid_guess()
         // set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1]
         for (int y = 0; ++y < ylim;)
         {
-            pfxp0 = (unsigned int *)&s_t_prefix[0][y][0];
-            pfxp1 = (unsigned int *)&s_t_prefix[1][y][0];
+            unsigned int *pfxp0 = (unsigned int *) &s_t_prefix[0][y][0];
+            unsigned int *pfxp1 = (unsigned int *) &s_t_prefix[1][y][0];
             for (int x = 0; ++x < xlim;)
             {
                 ++pfxp1;
-                u = *(pfxp1-1)|*pfxp1|*(pfxp1+1);
+                unsigned int u = *(pfxp1 - 1) | *pfxp1 | *(pfxp1 + 1);
                 *(++pfxp0) = u|(u >> 1)|(u << 1)
                              |((*(pfxp1-(MAX_X_BLK+1))|*(pfxp1-MAX_X_BLK)|*(pfxp1-(MAX_X_BLK-1))) >> 15)
                              |((*(pfxp1+(MAX_X_BLK-1))|*(pfxp1+MAX_X_BLK)|*(pfxp1+(MAX_X_BLK+1))) << 15);
@@ -613,9 +605,7 @@ inline void fill_dstack(int x1, int x2, Byte value)
 
 static void plot_block(int buildrow, int x, int y, int color)
 {
-    int xlim;
-    int ylim;
-    xlim = x+s_half_block;
+    int xlim = x + s_half_block;
     if (xlim > g_i_x_stop)
     {
         xlim = g_i_x_stop+1;
@@ -636,7 +626,7 @@ static void plot_block(int buildrow, int x, int y, int color)
         }
     }
     // paint it
-    ylim = y+s_half_block;
+    int ylim = y + s_half_block;
     if (ylim > g_i_y_stop)
     {
         if (y > g_i_y_stop)
