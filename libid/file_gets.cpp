@@ -6,18 +6,16 @@
 
 int file_gets(char *buf, int maxlen, std::FILE *infile)
 {
-    int len;
-    int c;
     // similar to 'fgets', but file may be in either text or binary mode
     // returns -1 at eof, length of string otherwise
     if (std::feof(infile))
     {
         return -1;
     }
-    len = 0;
+    int len = 0;
     while (len < maxlen)
     {
-        c = getc(infile);
+        int c = getc(infile);
         if (c == EOF)
         {
             if (len)
