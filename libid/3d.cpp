@@ -323,7 +323,6 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     }
     if (view[2] != 0)           // perspective 3D
     {
-        LVECTOR tmpview;
         long denom = view[2] - tmp[2];
         if (denom >= 0)           // bail out if point is "behind" us
         {
@@ -335,15 +334,16 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
         }
 
         // doing math in this order helps prevent overflow
-        tmpview[0] = divide(view[0], denom, bit_shift);
-        tmpview[1] = divide(view[1], denom, bit_shift);
-        tmpview[2] = divide(view[2], denom, bit_shift);
+        LVECTOR tmp_view;
+        tmp_view[0] = divide(view[0], denom, bit_shift);
+        tmp_view[1] = divide(view[1], denom, bit_shift);
+        tmp_view[2] = divide(view[2], denom, bit_shift);
 
-        tmp[0] = multiply(tmp[0], tmpview[2], bit_shift) -
-                 multiply(tmpview[0], tmp[2], bit_shift);
+        tmp[0] = multiply(tmp[0], tmp_view[2], bit_shift) -
+                 multiply(tmp_view[0], tmp[2], bit_shift);
 
-        tmp[1] = multiply(tmp[1], tmpview[2], bit_shift) -
-                 multiply(tmpview[1], tmp[2], bit_shift);
+        tmp[1] = multiply(tmp[1], tmp_view[2], bit_shift) -
+                 multiply(tmp_view[1], tmp[2], bit_shift);
     }
 
     // set target = tmp. Necessary to use tmp in case source = target
@@ -358,7 +358,6 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
 // is danger of overflow and underflow
 int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift)
 {
-    LVECTOR tmpview;
     g_overflow = false;
     long denom = lview[2] - lv[2];
     if (denom >= 0)              // bail out if point is "behind" us
@@ -371,15 +370,16 @@ int long_persp(LVECTOR lv, LVECTOR lview, int bit_shift)
     }
 
     // doing math in this order helps prevent overflow
-    tmpview[0] = divide(lview[0], denom, bit_shift);
-    tmpview[1] = divide(lview[1], denom, bit_shift);
-    tmpview[2] = divide(lview[2], denom, bit_shift);
+    LVECTOR tmp_view;
+    tmp_view[0] = divide(lview[0], denom, bit_shift);
+    tmp_view[1] = divide(lview[1], denom, bit_shift);
+    tmp_view[2] = divide(lview[2], denom, bit_shift);
 
-    lv[0] = multiply(lv[0], tmpview[2], bit_shift) -
-            multiply(tmpview[0], lv[2], bit_shift);
+    lv[0] = multiply(lv[0], tmp_view[2], bit_shift) -
+            multiply(tmp_view[0], lv[2], bit_shift);
 
-    lv[1] = multiply(lv[1], tmpview[2], bit_shift) -
-            multiply(tmpview[1], lv[2], bit_shift);
+    lv[1] = multiply(lv[1], tmp_view[2], bit_shift) -
+            multiply(tmp_view[1], lv[2], bit_shift);
 
     return g_overflow ? 1 : 0;
 }
