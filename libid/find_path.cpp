@@ -38,14 +38,14 @@ std::string find_path(const char *filename,
     };
 
     // check FRACTDIR
-    const std::string dir1_path{check_dir(g_fractal_search_dir1)};
+    std::string dir1_path{check_dir(g_fractal_search_dir1)};
     if (!dir1_path.empty())
     {
         return dir1_path;
     }
 
     // check SRCDIR
-    const std::string dir2_path{check_dir(g_fractal_search_dir2)};
+    std::string dir2_path{check_dir(g_fractal_search_dir2)};
     if (!dir2_path.empty())
     {
         return dir2_path;
