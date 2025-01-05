@@ -226,7 +226,6 @@ inline int calc_a_dot(int x, int y)
 static bool guess_row(bool firstpass, int y, int blocksize)
 {
     int j;
-    int color;
     int xplushalf;
     int xplusblock;
     int ylessblock;
@@ -563,6 +562,7 @@ static bool guess_row(bool firstpass, int y, int blocksize)
     {
         if (g_plot == sym_plot2j)   // origin sym, reverse lines
         {
+            int color;
             for (int i = (g_i_x_stop+g_xx_start+1)/2; --i >= g_xx_start;)
             {
                 color = s_stack[i];
