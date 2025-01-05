@@ -2,7 +2,10 @@
 //
 #pragma once
 
-#define MAX_CALC_WORK 12
+enum
+{
+    MAX_CALC_WORK = 12
+};
 
 struct WorkList     // work list entry for std escape time engines
 {
