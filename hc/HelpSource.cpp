@@ -1275,7 +1275,7 @@ void read_src(std::string const &fname, Mode mode)
     int    margin     = 0;
     bool in_para = false;
     bool centering = false;
-    int    lformat_exclude = s_format_exclude;
+    int    format_exclude = s_format_exclude;
 
     s_xonline = false;
     s_xdoc = false;
@@ -1417,7 +1417,7 @@ void read_src(std::string const &fname, Mode mode)
                     num_spaces = 0;
                     s_xonline = false;
                     s_xdoc = false;
-                    lformat_exclude = s_format_exclude;
+                    format_exclude = s_format_exclude;
                     s_compress_spaces = true;
                     continue;
                 }
@@ -1476,7 +1476,7 @@ void read_src(std::string const &fname, Mode mode)
                     num_spaces = 0;
                     s_xonline = false;
                     s_xdoc = false;
-                    lformat_exclude = s_format_exclude;
+                    format_exclude = s_format_exclude;
                     s_compress_spaces = false;
                     continue;
                 }
@@ -1513,9 +1513,9 @@ void read_src(std::string const &fname, Mode mode)
                         check_command_length(err_offset, 14);
                         if (in_topic)
                         {
-                            if (lformat_exclude > 0)
+                            if (format_exclude > 0)
                             {
-                                lformat_exclude = -lformat_exclude;
+                                format_exclude = -format_exclude;
                             }
                             else
                             {
@@ -1539,9 +1539,9 @@ void read_src(std::string const &fname, Mode mode)
                         check_command_length(err_offset, 14);
                         if (in_topic)
                         {
-                            if (lformat_exclude < 0)
+                            if (format_exclude < 0)
                             {
-                                lformat_exclude = -lformat_exclude;
+                                format_exclude = -format_exclude;
                             }
                             else
                             {
@@ -1567,7 +1567,7 @@ void read_src(std::string const &fname, Mode mode)
                             check_command_length(err_offset, 15);
                             if (in_topic)
                             {
-                                lformat_exclude = 0;
+                                format_exclude = 0;
                             }
                             else
                             {
@@ -1576,25 +1576,25 @@ void read_src(std::string const &fname, Mode mode)
                         }
                         else if (s_cmd[14] == '\0')
                         {
-                            lformat_exclude = s_format_exclude;
+                            format_exclude = s_format_exclude;
                         }
                         else
                         {
-                            int n = ((in_topic ? lformat_exclude : s_format_exclude) < 0) ? -1 : 1;
+                            int n = ((in_topic ? format_exclude : s_format_exclude) < 0) ? -1 : 1;
 
-                            lformat_exclude = std::atoi(&s_cmd[14]);
+                            format_exclude = std::atoi(&s_cmd[14]);
 
-                            if (lformat_exclude <= 0)
+                            if (format_exclude <= 0)
                             {
                                 error(err_offset, "Invalid argument to FormatExclude=");
-                                lformat_exclude = 0;
+                                format_exclude = 0;
                             }
 
-                            lformat_exclude *= n;
+                            format_exclude *= n;
 
                             if (!in_topic)
                             {
-                                s_format_exclude = lformat_exclude;
+                                s_format_exclude = format_exclude;
                             }
                         }
                     }
@@ -1777,9 +1777,9 @@ void read_src(std::string const &fname, Mode mode)
                     if (s_cmd[13] == '-')
                     {
                         check_command_length(err_offset, 14);
-                        if (lformat_exclude > 0)
+                        if (format_exclude > 0)
                         {
-                            lformat_exclude = -lformat_exclude;
+                            format_exclude = -format_exclude;
                         }
                         else
                         {
@@ -1789,9 +1789,9 @@ void read_src(std::string const &fname, Mode mode)
                     else if (s_cmd[13] == '+')
                     {
                         check_command_length(err_offset, 14);
-                        if (lformat_exclude < 0)
+                        if (format_exclude < 0)
                         {
-                            lformat_exclude = -lformat_exclude;
+                            format_exclude = -format_exclude;
                         }
                         else
                         {
@@ -2024,7 +2024,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
+                        if (format_exclude > 0 && num_spaces >= format_exclude)
                         {
                             put_spaces(num_spaces);
                             num_spaces = 0;
@@ -2094,7 +2094,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     else
                     {
-                        if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
+                        if (format_exclude > 0 && num_spaces >= format_exclude)
                         {
                             *g_src.curr++ = '\n';
                             in_para = false;
