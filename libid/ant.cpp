@@ -89,10 +89,6 @@ void set_wait(long *wait)
 //
 void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long wait)
 {
-    int ix;
-    int iy;
-    int idir;
-    int pixel;
     int x[MAX_ANTS + 1];
     int y[MAX_ANTS + 1];
     int next_col[MAX_ANTS + 1];
@@ -209,11 +205,11 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
                 for (int color = max_ants; color; color--)
                 {
                     // move the various turmites
-                    ix = x[color];   // temp vars
-                    iy = y[color];
-                    idir = dir[color];
+                    int ix = x[color];   // temp vars
+                    int iy = y[color];
+                    int idir = dir[color];
 
-                    pixel = get_color(ix, iy);
+                    int pixel = get_color(ix, iy);
                     g_put_color(ix, iy, 15);
                     sleep_ms(wait);
                     g_put_color(ix, iy, next_col[pixel]);
@@ -239,10 +235,10 @@ void turk_mite1(int max_ants, int rule_len, char const *ru, long max_pts, long w
                 for (int color = max_ants; color; color--)
                 {
                     // move the various turmites without delay
-                    ix = x[color];   // temp vars
-                    iy = y[color];
-                    idir = dir[color];
-                    pixel = get_color(ix, iy);
+                    int ix = x[color];   // temp vars
+                    int iy = y[color];
+                    int idir = dir[color];
+                    int pixel = get_color(ix, iy);
                     g_put_color(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
