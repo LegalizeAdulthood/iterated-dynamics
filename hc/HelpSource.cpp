@@ -966,17 +966,17 @@ int create_table()
 
         case '~':
         {
-            bool imbedded;
+            bool embedded;
 
             ch = read_char();
 
             if (ch == '(')
             {
-                imbedded = true;
+                embedded = true;
             }
             else
             {
-                imbedded = false;
+                embedded = false;
                 unread_char(ch);
             }
 
@@ -997,7 +997,7 @@ int create_table()
 
             if (ch == ',')
             {
-                if (imbedded)
+                if (embedded)
                 {
                     unread_char('(');
                 }
@@ -1056,17 +1056,17 @@ void process_comment()
 
         if (ch == '~')
         {
-            bool imbedded;
+            bool embedded;
 
             ch = read_char();
 
             if (ch == '(')
             {
-                imbedded = true;
+                embedded = true;
             }
             else
             {
-                imbedded = false;
+                embedded = false;
                 unread_char(ch);
             }
 
@@ -1079,7 +1079,7 @@ void process_comment()
             {
                 if (ch == ',')
                 {
-                    if (imbedded)
+                    if (embedded)
                     {
                         unread_char('(');
                     }
@@ -1324,16 +1324,16 @@ void read_src(std::string const &fname, Mode mode)
 
         if (ch == '~')   // is is a command?
         {
-            bool imbedded;
+            bool embedded;
 
             ch = read_char();
             if (ch == '(')
             {
-                imbedded = true;
+                embedded = true;
             }
             else
             {
-                imbedded = false;
+                embedded = false;
                 unread_char(ch);
             }
 
@@ -1349,7 +1349,7 @@ void read_src(std::string const &fname, Mode mode)
                 while (ch == ' ');
                 unread_char(ch);
 
-                ptr = read_until(s_cmd, 128, imbedded ? ")\n," : "\n,");
+                ptr = read_until(s_cmd, 128, embedded ? ")\n," : "\n,");
 
                 if (*ptr == '\0')
                 {
@@ -1362,7 +1362,7 @@ void read_src(std::string const &fname, Mode mode)
                     ++eoff;
                 }
 
-                if (imbedded && *ptr == '\n')
+                if (embedded && *ptr == '\n')
                 {
                     error(eoff, "Embedded command has no closing paren (\')\')");
                 }
@@ -1489,7 +1489,7 @@ void read_src(std::string const &fname, Mode mode)
                     }
                     if (!done)
                     {
-                        if (imbedded)
+                        if (embedded)
                         {
                             unread_char('(');
                         }
@@ -1762,7 +1762,7 @@ void read_src(std::string const &fname, Mode mode)
 
                     if (!done)
                     {
-                        if (imbedded)
+                        if (embedded)
                         {
                             unread_char('(');
                         }
