@@ -1159,7 +1159,10 @@ static void put_min_max(int x, int y, int /*color*/)
         each row are calculated by calling the line function for the sides.
         Then rows are filled in with horizontal lines
 */
-#define MAXOFFSCREEN  2    // allow two of three points to be off screen
+enum
+{
+    MAXOFFSCREEN = 2    // allow two of three points to be off screen
+};
 
 static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
 {
