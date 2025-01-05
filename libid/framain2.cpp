@@ -59,6 +59,11 @@ char g_old_std_calc_mode{};
 void (*g_out_line_cleanup)(){};
 bool g_virtual_screens{};
 
+inline int iround(double value)
+{
+    return static_cast<int>(std::lround(value));
+}
+
 MainState big_while_loop(MainContext &context)
 {
     int     i = 0;                           // temporary loop counters
@@ -183,18 +188,18 @@ MainState big_while_loop(MainContext &context)
                     g_logical_screen_y_dots = g_view_y_dots;
                     if (g_logical_screen_y_dots == 0) // calc ydots?
                     {
-                        g_logical_screen_y_dots = (int)((double)g_logical_screen_x_dots * ftemp + 0.5);
+                        g_logical_screen_y_dots = iround(g_logical_screen_x_dots * ftemp);
                     }
                 }
                 else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
-                    g_logical_screen_x_dots = (int)((double)g_screen_x_dots / g_view_reduction + 0.5);
-                    g_logical_screen_y_dots = (int)((double)g_logical_screen_x_dots * ftemp + 0.5);
+                    g_logical_screen_x_dots = iround((double) g_screen_x_dots / g_view_reduction);
+                    g_logical_screen_y_dots = iround(g_logical_screen_x_dots * ftemp);
                 }
                 else
                 {
-                    g_logical_screen_y_dots = (int)((double)g_screen_y_dots / g_view_reduction + 0.5);
-                    g_logical_screen_x_dots = (int)((double)g_logical_screen_y_dots / ftemp + 0.5);
+                    g_logical_screen_y_dots = iround((double) g_screen_y_dots / g_view_reduction);
+                    g_logical_screen_x_dots = iround(g_logical_screen_y_dots / ftemp);
                 }
                 if (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots)
                 {
