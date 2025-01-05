@@ -954,7 +954,7 @@ int create_table()
             }
             len = parse_link();
             g_src.curr = table_start;   // reset to the start...
-            title.push_back(std::string(g_src.curr+3*sizeof(int)+1, len+1));
+            title.emplace_back(g_src.curr+3*sizeof(int)+1, len+ 1);
             if (len >= width)
             {
                 warn(1, "Link is too long; truncating.");
