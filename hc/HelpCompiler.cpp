@@ -474,7 +474,7 @@ void HelpCompiler::set_hot_link_doc_page()
 // insert page #'s in the DocContents
 void HelpCompiler::set_content_doc_page()
 {
-    const int topic_num = find_topic_title(DOCCONTENTS_TITLE);
+    const int topic_num = find_topic_title(DOC_CONTENTS_TITLE);
     assert(topic_num >= 0);
     Topic &t = g_src.topics[topic_num];
     char *base = t.get_topic_text();

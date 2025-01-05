@@ -611,8 +611,8 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 {
     Topic t;
     t.flags     = TopicFlags::NONE;
-    t.title_len = (unsigned) std::strlen(DOCCONTENTS_TITLE)+1;
-    t.title     = DOCCONTENTS_TITLE;
+    t.title_len = (unsigned) std::strlen(DOC_CONTENTS_TITLE)+1;
+    t.title     = DOC_CONTENTS_TITLE;
     t.doc_page  = -1;
     t.num_page  = 0;
 
@@ -626,7 +626,7 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
     c.page_num_pos = 0;
     c.num_topic = 1;
     c.is_label[0] = false;
-    c.topic_name[0] = DOCCONTENTS_TITLE;
+    c.topic_name[0] = DOC_CONTENTS_TITLE;
     c.srcline = -1;
     g_src.add_content(c);
 

@@ -641,7 +641,7 @@ void AsciiDocCompiler::print_ascii_doc()
     {
         throw std::runtime_error("First content block contains multiple topics.");
     }
-    if (toc.topic_name[0] != DOCCONTENTS_TITLE)
+    if (toc.topic_name[0] != DOC_CONTENTS_TITLE)
     {
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
