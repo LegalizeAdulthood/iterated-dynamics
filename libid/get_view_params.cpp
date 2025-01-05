@@ -36,13 +36,6 @@ int get_view_params()
     char const *choices[16];
     FullScreenValues uvalues[25];
     int i;
-    int k;
-    float old_viewreduction;
-    float old_aspectratio;
-    int old_viewxdots;
-    int old_viewydots;
-    int old_sxdots;
-    int old_sydots;
     int xmax;
     int ymax;
     char dim1[50];
@@ -51,16 +44,16 @@ int get_view_params()
     driver_get_max_screen(&xmax, &ymax);
 
     bool const old_viewwindow    = g_view_window;
-    old_viewreduction = g_view_reduction;
-    old_aspectratio   = g_final_aspect_ratio;
-    old_viewxdots     = g_view_x_dots;
-    old_viewydots     = g_view_y_dots;
-    old_sxdots        = g_screen_x_dots;
-    old_sydots        = g_screen_y_dots;
+    float old_viewreduction = g_view_reduction;
+    float old_aspectratio = g_final_aspect_ratio;
+    int old_viewxdots = g_view_x_dots;
+    int old_viewydots = g_view_y_dots;
+    int old_sxdots = g_screen_x_dots;
+    int old_sydots = g_screen_y_dots;
 
 get_view_restart:
     // fill up the previous values arrays
-    k = -1;
+    int k = -1;
 
     if (!driver_diskp())
     {
