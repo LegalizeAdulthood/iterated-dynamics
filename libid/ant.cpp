@@ -53,14 +53,12 @@ static int s_last_ydots{};
 
 void set_wait(long *wait)
 {
-    int kbdchar;
-
     while (true)
     {
         std::ostringstream msg;
         msg << "Delay " << std::setw(4) << *wait << "     ";
         show_temp_msg(msg.str());
-        kbdchar = driver_get_key();
+        int kbdchar = driver_get_key();
         switch (kbdchar)
         {
         case ID_KEY_CTL_RIGHT_ARROW:
@@ -96,16 +94,13 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
     int iy;
     int idir;
     int pixel;
-    int kbdchar;
-    int step;
-    bool antwrap;
     int x[MAX_ANTS + 1];
     int y[MAX_ANTS + 1];
     int next_col[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
     int dir[MAX_ANTS + 1];
-    antwrap = g_params[4] != 0;
-    step = (int) wait;
+    bool antwrap = g_params[4] != 0;
+    int step = (int) wait;
     if (step == 1)
     {
         wait = 0;
@@ -169,7 +164,7 @@ void turk_mite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait
     for (long count = 0; count < maxpts; count++)
     {
         // check for a key only every inner_loop times
-        kbdchar = driver_key_pressed();
+        int kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
             bool done = false;
@@ -283,19 +278,13 @@ static unsigned rotate_left_one(unsigned value)
 // this one ignore the color of the current cell is more like a white ant
 void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
-    int ix;
-    int iy;
-    int idir;
-    int pixel;
     int dir[MAX_ANTS + 1];
-    int kbdchar;
-    int step;
     int x[MAX_ANTS + 1];
     int y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
     bool antwrap = g_params[4] != 0;
 
-    step = (int) wait;
+    int step = (int) wait;
     if (step == 1)
     {
         wait = 0;
@@ -344,7 +333,7 @@ void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait
     for (long count = 0; count < maxpts; count++)
     {
         // check for a key only every inner_loop times
-        kbdchar = driver_key_pressed();
+        int kbdchar = driver_key_pressed();
         if (kbdchar || step)
         {
             bool done = false;
@@ -388,10 +377,10 @@ void turk_mite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait
             for (int color = maxtur; color; color--)
             {
                 // move the various turmites
-                ix = x[color];      // temp vars
-                iy = y[color];
-                idir = dir[color];
-                pixel = get_color(ix, iy);
+                int ix = x[color];      // temp vars
+                int iy = y[color];
+                int idir = dir[color];
+                int pixel = get_color(ix, iy);
                 g_put_color(ix, iy, 15);
 
                 if (wait > 0 && step == 0)
