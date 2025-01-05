@@ -381,9 +381,6 @@ MainState big_while_loop(MainContext &context)
             {
                 // generate a set of images with varied parameters on each one
                 int ecount;
-                int tmpxdots;
-                int tmpydots;
-                int gridsqr;
                 GeneBase gene[NUM_GENES];
                 copy_genes_from_bank(gene);
                 if (g_have_evolve_info && (g_calc_status == CalcStatus::RESUMABLE))
@@ -432,9 +429,9 @@ MainState big_while_loop(MainContext &context)
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
                 const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                tmpxdots = g_logical_screen_x_dots+grout;
-                tmpydots = g_logical_screen_y_dots+grout;
-                gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
+                int tmpxdots = g_logical_screen_x_dots + grout;
+                int tmpydots = g_logical_screen_y_dots + grout;
+                int gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
                 while (ecount < gridsqr)
                 {
                     spiral_map(ecount); // sets px & py
@@ -686,9 +683,7 @@ static int call_line3d(Byte *pixels, int linelen)
 // displays differences between current image file and new image
 static int cmp_line(Byte *pixels, int linelen)
 {
-    int row;
-    int oldcolor;
-    row = g_row_count++;
+    int row = g_row_count++;
     if (row == 0)
     {
         s_err_count = 0;
@@ -706,7 +701,7 @@ static int cmp_line(Byte *pixels, int linelen)
     }
     for (int col = 0; col < linelen; col++)
     {
-        oldcolor = get_color(col, row);
+        int oldcolor = get_color(col, row);
         if (oldcolor == (int)pixels[col])
         {
             g_put_color(col, row, 0);
@@ -730,12 +725,11 @@ static int cmp_line(Byte *pixels, int linelen)
 
 static void cmp_line_cleanup()
 {
-    char *timestring;
     time_t ltime;
     if (g_init_batch != BatchMode::NONE)
     {
         time(&ltime);
-        timestring = ctime(&ltime);
+        char *timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
         std::fprintf(s_cmp_fp, "%s compare to %s has %5d errs\n",
                 timestring, g_read_filename.c_str(), s_err_count);
@@ -747,8 +741,7 @@ static void cmp_line_cleanup()
 // used to catch up when moving zoombox is slower than keyboard
 int key_count(int keynum)
 {
-    int ctr;
-    ctr = 1;
+    int ctr = 1;
     while (driver_key_pressed() == keynum)
     {
         driver_get_key();
