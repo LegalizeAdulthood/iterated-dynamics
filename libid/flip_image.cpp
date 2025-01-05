@@ -16,8 +16,6 @@
    is still valid. */
 MainState flip_image(MainContext &context)
 {
-    int ixhalf;
-    int iyhalf;
     int tempdot;
 
     // fractal must be rotate-able and be finished
@@ -31,8 +29,8 @@ MainState flip_image(MainContext &context)
     {
         clear_zoom_box(); // clear, don't copy, the zoombox
     }
-    ixhalf = g_logical_screen_x_dots / 2;
-    iyhalf = g_logical_screen_y_dots / 2;
+    int ixhalf = g_logical_screen_x_dots / 2;
+    int iyhalf = g_logical_screen_y_dots / 2;
     switch (context.key)
     {
     case ID_KEY_CTL_X:            // control-X - reverse X-axis
