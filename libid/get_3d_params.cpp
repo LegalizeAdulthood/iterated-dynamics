@@ -36,8 +36,6 @@ std::string const g_glasses1_map{"glasses1.map"};
 
 int get_3d_params()     // prompt for 3D parameters
 {
-    char const *choices[11];
-    int attributes[21];
     int sphere;
     char const *s;
     char const *prompts3d[21];
@@ -162,6 +160,8 @@ restart_1:
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
+        char const *choices[11];
+        int attributes[21];
         k = 0;
         choices[k++] = "make a surface grid";
         choices[k++] = "just draw the points";
