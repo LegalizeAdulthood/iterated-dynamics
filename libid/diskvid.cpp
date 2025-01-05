@@ -264,12 +264,12 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
                           (memory_type(s_dv_handle) == MemoryLocation::DISK) ? "Using your Disk Drive" : "Using your memory");
     }
 
-    s_mem_buf_ptr = &s_mem_buf[0];
+    s_mem_buf_ptr = s_mem_buf.data();
 
     if (g_disk_targa)
     {
         // Put header information in the file
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)s_header_length, 1L, 0);
+        s_dv_handle.from_memory(s_mem_buf.data(), (U16)s_header_length, 1L, 0);
     }
     else
     {
@@ -687,21 +687,21 @@ static void mem_seek(long offset)        // mem seek
     s_mem_offset = offset >> BLOCK_SHIFT;
     if (s_mem_offset != s_old_mem_offset)
     {
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_old_mem_offset);
-        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_old_mem_offset);
+        s_dv_handle.to_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
     }
     s_old_mem_offset = s_mem_offset;
-    s_mem_buf_ptr = &s_mem_buf[0] + (offset & (BLOCK_LEN - 1));
+    s_mem_buf_ptr = s_mem_buf.data() + (offset & (BLOCK_LEN - 1));
 }
 
 static Byte  mem_getc()                     // memory get_char
 {
-    if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCK_LEN)
+    if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
     {
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
         s_mem_offset++;
-        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
-        s_mem_buf_ptr = &s_mem_buf[0];
+        s_dv_handle.to_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_mem_buf_ptr = s_mem_buf.data();
         s_old_mem_offset = s_mem_offset;
     }
     return *(s_mem_buf_ptr++);
@@ -709,12 +709,12 @@ static Byte  mem_getc()                     // memory get_char
 
 static void mem_putc(Byte c)     // memory get_char
 {
-    if (s_mem_buf_ptr - &s_mem_buf[0] >= BLOCK_LEN)
+    if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
     {
-        s_dv_handle.from_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
         s_mem_offset++;
-        s_dv_handle.to_memory(&s_mem_buf[0], (U16)BLOCK_LEN, 1L, s_mem_offset);
-        s_mem_buf_ptr = &s_mem_buf[0];
+        s_dv_handle.to_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_mem_buf_ptr = s_mem_buf.data();
         s_old_mem_offset = s_mem_offset;
     }
     *(s_mem_buf_ptr++) = c;
