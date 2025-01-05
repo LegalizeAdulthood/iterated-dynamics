@@ -42,9 +42,6 @@ namespace fs = std::filesystem;
 #define O_BINARY 0
 #endif
 
-#define MAXFILE _MAX_FNAME
-#define MAXEXT  _MAX_EXT
-
 #ifdef XFRACT
 extern int filelength(int);
 #endif
