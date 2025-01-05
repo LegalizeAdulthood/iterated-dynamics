@@ -596,12 +596,6 @@ static int get_prec(double a, double b, double c)
 
 static void write_batch_params(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
-    double x_ctr;
-    double y_ctr;
-    LDouble magnification;
-    double x_mag_factor;
-    double rotation;
-    double skew;
     char buf[81];
     bf_t bfXctr = nullptr;
     bf_t bfYctr = nullptr;
@@ -710,6 +704,10 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
 
         if (g_use_center_mag)
         {
+            LDouble magnification;
+            double x_mag_factor;
+            double rotation;
+            double skew;
             if (g_bf_math != BFMathType::NONE)
             {
                 cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
@@ -720,6 +718,8 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             else // !g_bf_math
             {
+                double x_ctr;
+                double y_ctr;
                 cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
                 put_param(" %s=", "center-mag");
                 //          convert 1000 fudged long to double, 1000/1<<24 = 6e-5
