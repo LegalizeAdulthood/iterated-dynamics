@@ -578,7 +578,6 @@ static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 void save_palette()
 {
     char palname[FILE_MAX_PATH];
-    std::FILE *dacfile;
     int i;
     std::strcpy(palname, g_map_name.c_str());
     driver_stack_screen();
@@ -593,7 +592,7 @@ void save_palette()
             std::strcat(filename, ".map");
         }
         merge_path_names(palname, filename, CmdFile::AT_AFTER_STARTUP);
-        dacfile = open_save_file(palname, "w");
+        std::FILE *dacfile = open_save_file(palname, "w");
         if (dacfile == nullptr)
         {
             driver_buzzer(Buzzer::PROBLEM);
