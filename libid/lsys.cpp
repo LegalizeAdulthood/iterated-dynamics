@@ -200,9 +200,9 @@ static bool read_lsystem_file(char const *str)
                 }
                 char const *temp = std::strtok(nullptr, " =\t\n");
                 int const index = rule_present(*word);
-                char fixed[MAX_LSYS_LINE_LEN+1];
                 if (!index)
                 {
+                    char fixed[MAX_LSYS_LINE_LEN + 1];
                     std::strcpy(fixed, word);
                     if (temp)
                     {
