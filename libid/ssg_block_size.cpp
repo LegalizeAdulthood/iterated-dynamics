@@ -6,11 +6,9 @@
 
 int ssg_blocksize() // used by solidguessing and by zoom panning
 {
-    int blocksize;
-    int i;
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
-    blocksize = 4;
-    i = 300;
+    int blocksize = 4;
+    int i = 300;
     while (i <= g_logical_screen_y_dots)
     {
         blocksize += blocksize;
