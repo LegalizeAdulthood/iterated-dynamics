@@ -110,7 +110,7 @@ LDouble bf_to_float(bf_t n);
 LDouble bn_to_float(bn_t n);
 LDouble extract256(LDouble f, int *exp_ptr);
 LDouble scale256(LDouble f, int n);
-// functions defined in bignum.c
+
 #ifdef ACCESS_BY_BYTE
 // prototypes
 U32 big_access32(Byte *addr);
@@ -161,8 +161,7 @@ bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 // misc
 bool is_bn_zero(bn_t n);
 bn_t float_to_bn(bn_t r, LDouble f);
-/************/
-// bigflt.c
+
 void bf_hex_dump(bf_t r);
 bf_t str_to_bf(bf_t r, char const *s);
 int strlen_needed_bf();
@@ -215,7 +214,7 @@ bf10_t mult_a_bf10_int(bf10_t s, int dec, U16 n);
 bf10_t div_a_bf10_int(bf10_t s, int dec, U16 n);
 char  *bf10_to_str_e(char *s, int dec, bf10_t n);
 char  *bf10_to_str_f(char *s, int dec, bf10_t n);
-// functions defined in bigfltc.c
+
 bf_t norm_bf(bf_t r);
 void norm_sign_bf(bf_t r, bool positive);
 S16 adjust_bf_add(bf_t n1, bf_t n2);
