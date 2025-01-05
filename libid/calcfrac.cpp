@@ -1306,9 +1306,6 @@ int calc_mand_fp()
 
 int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 {
-    int const green = 2;
-    int const yellow = 6;
-
     long savemaxit = 0;
     double tantable[16] = { 0.0 };
     int hooper = 0;
@@ -2076,10 +2073,12 @@ plot_inside: // we're "inside"
         {
             if (hooper == 1)
             {
+                int const green = 2;
                 g_color_iter = green;
             }
             else if (hooper == 2)
             {
+                int const yellow = 6;
                 g_color_iter = yellow;
             }
             else if (hooper == 0)
@@ -2208,8 +2207,6 @@ static void decomposition()
     static long reset_fudge = -1;
     int temp = 0;
     int save_temp = 0;
-    LComplex lalt;
-    DComplex alt;
     g_color_iter = 0;
     if (g_integer_fractal) // the only case
     {
@@ -2256,6 +2253,7 @@ static void decomposition()
 
         if (g_decomp[0] >= 8)
         {
+            LComplex lalt;
             temp <<= 1;
             if (g_l_new_z.x < g_l_new_z.y)
             {
@@ -2360,6 +2358,7 @@ static void decomposition()
         }
         if (g_decomp[0] >= 8)
         {
+            DComplex alt;
             temp <<= 1;
             if (g_new_z.x < g_new_z.y)
             {
@@ -2472,12 +2471,12 @@ static void decomposition()
 //
 int potential(double mag, long iterations)
 {
-    float f_tmp;
     float pot;
     long l_pot;
 
     if (iterations < g_max_iterations)
     {
+        float f_tmp;
         l_pot = iterations+2;
         pot = (float) l_pot;
         if (l_pot <= 0 || mag <= 1.0)
