@@ -17,8 +17,6 @@ void get_julia_attractor(double real, double imag)
 {
     LComplex lresult = { 0 };
     DComplex result = { 0.0 };
-    int savper;
-    long savmaxit;
 
     if (g_attractors == 0 && !g_finite_attractor)   // not magnet & not requested
     {
@@ -30,8 +28,8 @@ void get_julia_attractor(double real, double imag)
         return;                  // Bad luck - no room left !
     }
 
-    savper = g_periodicity_check;
-    savmaxit = g_max_iterations;
+    int savper = g_periodicity_check;
+    long savmaxit = g_max_iterations;
     g_periodicity_check = 0;
     g_old_z.x = real;                    // prepare for f.p orbit calc
     g_old_z.y = imag;
