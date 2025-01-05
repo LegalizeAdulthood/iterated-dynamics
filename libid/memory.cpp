@@ -581,7 +581,7 @@ void memory_release(MemoryHandle handle)
 
     case MemoryLocation::DISK: // MemoryRelease
         std::fclose(s_handles[index].disk.file);
-        dir_remove(g_temp_dir.c_str(), mem_file_name(index));
+        dir_remove(g_temp_dir, mem_file_name(index));
         s_handles[index].disk.file = nullptr;
         s_handles[index].size = 0;
         s_handles[index].stored_at = MemoryLocation::NOWHERE;
