@@ -12,7 +12,6 @@
 int escher_fp_fractal() // Science of Fractal Images pp. 185, 187
 {
     DComplex oldtest;
-    DComplex newtest;
     DComplex testsqr;
     double testsize = 0.0;
     long testiter = 0;
@@ -25,6 +24,7 @@ int escher_fp_fractal() // Science of Fractal Images pp. 185, 187
     testsqr.y = sqr(oldtest.y);  //    ... Julia as the target set
     while (testsize <= g_magnitude_limit && testiter < g_max_iterations) // nested Julia loop
     {
+        DComplex newtest;
         newtest.x = testsqr.x - testsqr.y + g_params[0];
         newtest.y = 2.0 * oldtest.x * oldtest.y + g_params[1];
         testsqr.x = sqr(newtest.x);
