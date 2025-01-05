@@ -14,9 +14,7 @@ void shell_sort(void *v1, int n, unsigned sz)
         return stricmp(*choice1, *choice2);
     };
 
-    void *temp;
-    char *v;
-    v = (char *)v1;
+    char *v = (char *) v1;
     for (int gap = n/2; gap > 0; gap /= 2)
     {
         for (int i = gap; i < n; i++)
@@ -27,7 +25,7 @@ void shell_sort(void *v1, int n, unsigned sz)
                 {
                     break;
                 }
-                temp = *(char **)(v+j*sz);
+                void *temp = *(char **) (v + j * sz);
                 *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);
                 *(char **)(v+(j+gap)*sz) = static_cast<char *>(temp);
             }
