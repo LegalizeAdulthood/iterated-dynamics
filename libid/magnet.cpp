@@ -42,7 +42,6 @@ int magnet1_fractal()
     DComplex top;
     DComplex bot;
     DComplex tmp;
-    double div;
 
     top.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x - 1; // top = Z**2+C-1
     top.y = g_old_z.x * g_old_z.y;
@@ -51,7 +50,7 @@ int magnet1_fractal()
     bot.x = g_old_z.x + g_old_z.x + g_float_param->x - 2;       // bot = 2*Z+C-2
     bot.y = g_old_z.y + g_old_z.y + g_float_param->y;
 
-    div = bot.x*bot.x + bot.y*bot.y;                // tmp = top/bot
+    double div = bot.x * bot.x + bot.y * bot.y;                // tmp = top/bot
     if (div < FLT_MIN)
     {
         return 1;
@@ -74,7 +73,6 @@ int magnet2_fractal()
     DComplex top;
     DComplex bot;
     DComplex tmp;
-    double div;
 
     top.x = g_old_z.x * (g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + s_t_cm1.x)
             - g_old_z.y * s_t_cm1.y + s_t_cm1_cm2.x;
@@ -91,7 +89,7 @@ int magnet2_fractal()
             + g_old_z.x * s_t_cm2.y + g_old_z.y * s_t_cm2.x
             + s_t_cm1_cm2.y;
 
-    div = bot.x*bot.x + bot.y*bot.y;                // tmp = top/bot
+    double div = bot.x * bot.x + bot.y * bot.y;                // tmp = top/bot
     if (div < FLT_MIN)
     {
         return 1;
