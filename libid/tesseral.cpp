@@ -183,9 +183,9 @@ int tesseral()
         {
             // all 4 edges are the same color, fill in
             int j;
-            int i = 0;
             if (g_fill_color != 0)
             {
+                int i = 0;
                 if (g_fill_color > 0)
                 {
                     tp->top = g_fill_color %g_colors;
