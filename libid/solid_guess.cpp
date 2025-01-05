@@ -125,10 +125,7 @@ int solid_guess()
             g_reset_periodicity = false;
             if (i == -1 || guess_row(true, y, blocksize)) // interrupted?
             {
-                if (y < g_yy_start)
-                {
-                    y = g_yy_start;
-                }
+                y = std::max(y, g_yy_start);
                 add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, g_work_symmetry);
                 goto exit_solidguess;
             }
@@ -208,10 +205,7 @@ int solid_guess()
             g_current_row = y;
             if (guess_row(false, y, blocksize))
             {
-                if (y < g_yy_start)
-                {
-                    y = g_yy_start;
-                }
+                y = std::max(y, g_yy_start);
                 add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, g_work_pass, g_work_symmetry);
                 goto exit_solidguess;
             }
