@@ -6,8 +6,6 @@
 
 #include <filesystem>
 
-namespace fs = std::filesystem;
-
 TEST(TestTrimFilename, fitsInRequestedSize)
 {
     const std::string filename{R"(C:\iterated-dynamics\foo.par)"};

@@ -8,8 +8,6 @@
 #include <filesystem>
 #include <vector>
 
-namespace fs = std::filesystem;
-
 TEST(TestPatternMatch, all)
 {
     MatchFn all = match_fn("*.*");
