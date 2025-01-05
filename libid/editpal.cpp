@@ -385,9 +385,8 @@ static void rotate_pal(PalEntry *pal, int dir, int lo, int hi)
 {
     // rotate in either direction
     PalEntry hold;
-    int      size;
 
-    size  = 1 + (hi-lo);
+    int size = 1 + (hi - lo);
 
     if (dir > 0)
     {
@@ -1014,13 +1013,12 @@ bool MoveBox::process()
             if (m_csize > CSIZE_MIN)
             {
                 int t = m_csize - CSIZE_INC;
-                int change;
 
                 t = std::max<int>(t, CSIZE_MIN);
 
                 erase();
 
-                change = m_csize - t;
+                int change = m_csize - t;
                 m_csize = t;
                 m_x += (change * 16) / 2;
                 m_y += (change * 16) / 2;
@@ -1067,10 +1065,8 @@ bool MoveBox::process()
 
 void CrossHairCursor::draw()
 {
-    int color;
-
     find_special_colors();
-    color = m_blink ? g_color_medium : g_color_dark;
+    int color = m_blink ? g_color_medium : g_color_dark;
 
     ver_line(m_x, m_y-CURSOR_SIZE-1, CURSOR_SIZE, color);
     ver_line(m_x, m_y+2,             CURSOR_SIZE, color);
@@ -1925,9 +1921,7 @@ void PalTable::save_undo_data(int first, int last)
         return;
     }
 
-    int num;
-
-    num = (last - first) + 1;
+    int num = (last - first) + 1;
     std::fseek(m_undo_file, 0, SEEK_CUR);
     if (num == 1)
     {
@@ -1977,7 +1971,6 @@ void PalTable::undo_process(int delta)
     {
         int first;
         int last;
-        int num;
         PalEntry temp[256];
 
         if (cmd == UNDO_DATA)
@@ -1991,7 +1984,7 @@ void PalTable::undo_process(int delta)
             first = last;
         }
 
-        num = (last - first) + 1;
+        int num = (last - first) + 1;
         if (std::fread(temp, 3, num, m_undo_file) != num)
         {
             throw std::system_error(errno, std::system_category(), "UndoProcess  failed fread");
@@ -2030,9 +2023,6 @@ void PalTable::undo_process(int delta)
 
 void PalTable::undo()
 {
-    int size;
-    long pos;
-
     if (std::ftell(m_undo_file) <= 0) // at beginning of file?
     {
         //   nothing to undo -- exit
@@ -2041,10 +2031,10 @@ void PalTable::undo()
 
     std::fseek(m_undo_file, -(int) sizeof(int), SEEK_CUR); // go back to get size
 
-    size = getw(m_undo_file);
+    int size = getw(m_undo_file);
     std::fseek(m_undo_file, -size, SEEK_CUR); // go to start of undo
 
-    pos = std::ftell(m_undo_file);
+    long pos = std::ftell(m_undo_file);
 
     undo_process(-1);
 
@@ -2390,11 +2380,10 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'M': // set gamma
     case 'm':
     {
-        int i;
         char buf[20];
         std::snprintf(buf, std::size(buf), "%.3f", 1. / s_gamma_val);
         driver_stack_screen();
-        i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
+        int i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();
         if (i != -1)
         {
@@ -2440,8 +2429,6 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case '>': // continuous rotation (until a key is pressed)
     case '<':
     {
-        int dir;
-        long tick;
         int diff = 0;
 
         s_cursor.hide();
@@ -2456,11 +2443,11 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
         do
         {
-            dir = (key == '>') ? 1 : -1;
+            int dir = (key == '>') ? 1 : -1;
 
             while (!driver_key_pressed())
             {
-                tick = read_ticker();
+                long tick = read_ticker();
                 rotate(dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
                 diff += dir;
                 while (read_ticker() == tick) // wait until a tick passes
@@ -2751,19 +2738,15 @@ void PalTable::other_key(int key, RGBEditor *rgb)
 
 void PalTable::put_band(PalEntry *pal)
 {
-    int r;
-    int b;
-    int a;
-
     // clip top and bottom values to stop them running off the end of the DAC
 
     calc_top_bottom();
 
     // put bands either side of current colour
 
-    a = m_curr[m_active];
-    b = m_bottom;
-    r = m_top;
+    int a = m_curr[m_active];
+    int b = m_bottom;
+    int r = m_top;
 
     pal[a] = m_fs_color;
 
