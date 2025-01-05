@@ -483,8 +483,8 @@ static int clip_get_color(int x, int y)
 
 static void hor_line(int x, int y, int width, int color)
 {
-    std::memset(&g_line_buff[0], color, width);
-    clip_put_line(y, x, x+width-1, &g_line_buff[0]);
+    std::memset(g_line_buff.data(), color, width);
+    clip_put_line(y, x, x+width-1, g_line_buff.data());
 }
 
 static void ver_line(int x, int y, int depth, int color)
@@ -638,13 +638,13 @@ static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
 // draw and horizontal/vertical dotted lines
 static void hor_dot_line(int x, int y, int width)
 {
-    Byte *ptr = &g_line_buff[0];
+    Byte *ptr = g_line_buff.data();
     for (int ctr = 0; ctr < width; ctr++, ptr++)
     {
         *ptr = (Byte)((ctr&2) ? s_bg_color : s_fg_color);
     }
 
-    put_row(x, y, width, (char *) &g_line_buff[0]);
+    put_row(x, y, width, (char *) g_line_buff.data());
 }
 
 static void ver_dot_line(int x, int y, int depth)
@@ -715,11 +715,11 @@ void MoveBox::draw()
     int width = m_base_width + m_csize * 16 + 1;
     int depth = m_base_depth + m_csize * 16 + 1;
 
-    get_row(m_x, m_y, width, &m_t[0]);
-    get_row(m_x, m_y + depth - 1, width, &m_b[0]);
+    get_row(m_x, m_y, width, m_t.data());
+    get_row(m_x, m_y + depth - 1, width, m_b.data());
 
-    ver_get_row(m_x, m_y, depth, &m_l[0]);
-    ver_get_row(m_x + width - 1, m_y, depth, &m_r[0]);
+    ver_get_row(m_x, m_y, depth, m_l.data());
+    ver_get_row(m_x + width - 1, m_y, depth, m_r.data());
 
     hor_dot_line(m_x, m_y, width);
     hor_dot_line(m_x, m_y + depth - 1, width);
@@ -733,11 +733,11 @@ void MoveBox::erase()
     int width = m_base_width + m_csize * 16 + 1;
     int depth = m_base_depth + m_csize * 16 + 1;
 
-    ver_put_row(m_x, m_y, depth, &m_l[0]);
-    ver_put_row(m_x + width - 1, m_y, depth, &m_r[0]);
+    ver_put_row(m_x, m_y, depth, m_l.data());
+    ver_put_row(m_x + width - 1, m_y, depth, m_r.data());
 
-    put_row(m_x, m_y, width, &m_t[0]);
-    put_row(m_x, m_y + depth - 1, width, &m_b[0]);
+    put_row(m_x, m_y, width, m_t.data());
+    put_row(m_x, m_y + depth - 1, width, m_b.data());
 }
 
 ColorEditor::ColorEditor(int x, int y, char letter, ColorEditorNotification *observer) :
