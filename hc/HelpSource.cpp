@@ -387,9 +387,7 @@ int read_char_aux()
 
     while (true)
     {
-        int ch = getc(s_src_file);
-
-        switch (ch)
+        switch (const int ch = getc(s_src_file); ch)
         {
         case '\t':    // expand a tab
         {
