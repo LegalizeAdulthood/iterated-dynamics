@@ -13,7 +13,10 @@
  /*
  * help file signature
  */
-#define HELP_SIG           (0xAFBC1823UL)
+enum : unsigned long
+{
+    HELP_SIG = 0xAFBC1823UL
+};
 
 struct HelpSignature
 {
