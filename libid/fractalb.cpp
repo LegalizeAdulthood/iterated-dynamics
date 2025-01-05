@@ -216,16 +216,12 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
 // for aspect ratio debugging
 void show_aspect(char const *s)
 {
-    bf_t bt1;
-    bf_t bt2;
-    bf_t aspect;
     char msg[300];
     char str[100];
-    int saved;
-    saved = save_stack();
-    bt1    = alloc_stack(g_r_bf_length+2);
-    bt2    = alloc_stack(g_r_bf_length+2);
-    aspect = alloc_stack(g_r_bf_length+2);
+    int saved = save_stack();
+    bf_t bt1 = alloc_stack(g_r_bf_length + 2);
+    bf_t bt2 = alloc_stack(g_r_bf_length + 2);
+    bf_t aspect = alloc_stack(g_r_bf_length + 2);
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
@@ -316,13 +312,11 @@ void bf_corners_to_float()
 
 int  bn_mod_bailout()
 {
-    long longmagnitude;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
-    longmagnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
+    long longmagnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
     if (longmagnitude >= (long)g_magnitude_limit)
     {
         return 1;
@@ -334,11 +328,9 @@ int  bn_mod_bailout()
 
 int  bn_real_bailout()
 {
-    long longtempsqrx;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqrx = bn_to_int(g_tmp_sqr_x_bn+g_shift_factor);
+    long longtempsqrx = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
@@ -350,11 +342,9 @@ int  bn_real_bailout()
 
 int  bn_imag_bailout()
 {
-    long longtempsqry;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqry = bn_to_int(g_tmp_sqr_y_bn+g_shift_factor);
+    long longtempsqry = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
     if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -366,13 +356,10 @@ int  bn_imag_bailout()
 
 int  bn_or_bailout()
 {
-    long longtempsqrx;
-    long longtempsqry;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqrx = bn_to_int(g_tmp_sqr_x_bn+g_shift_factor);
-    longtempsqry = bn_to_int(g_tmp_sqr_y_bn+g_shift_factor);
+    long longtempsqrx = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    long longtempsqry = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -384,13 +371,10 @@ int  bn_or_bailout()
 
 int  bn_and_bailout()
 {
-    long longtempsqrx;
-    long longtempsqry;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    longtempsqrx = bn_to_int(g_tmp_sqr_x_bn+g_shift_factor);
-    longtempsqry = bn_to_int(g_tmp_sqr_y_bn+g_shift_factor);
+    long longtempsqrx = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    long longtempsqry = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
     if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
@@ -402,8 +386,6 @@ int  bn_and_bailout()
 
 int  bn_manh_bailout()
 {
-    long longtempmag;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     // note: in next five lines, g_old_z_bn is just used as a temporary variable
@@ -411,7 +393,7 @@ int  bn_manh_bailout()
     abs_bn(g_old_z_bn.y, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    longtempmag = bn_to_int(g_old_z_bn.x+g_shift_factor);
+    long longtempmag = bn_to_int(g_old_z_bn.x + g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
@@ -423,14 +405,12 @@ int  bn_manh_bailout()
 
 int  bn_manr_bailout()
 {
-    long longtempmag;
-
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    longtempmag = bn_to_int(g_old_z_bn.x+g_shift_factor);
+    long longtempmag = bn_to_int(g_old_z_bn.x + g_shift_factor);
     if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
@@ -442,10 +422,8 @@ int  bn_manr_bailout()
 
 int  bf_mod_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -464,10 +442,8 @@ int  bf_mod_bailout()
 
 int  bf_real_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -487,10 +463,8 @@ int  bf_real_bailout()
 
 int  bf_imag_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -509,10 +483,8 @@ int  bf_imag_bailout()
 
 int  bf_or_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -531,10 +503,8 @@ int  bf_or_bailout()
 
 int  bf_and_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -553,10 +523,8 @@ int  bf_and_bailout()
 
 int  bf_manh_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -580,10 +548,8 @@ int  bf_manh_bailout()
 
 int  bf_manr_bailout()
 {
-    int saved;
-    bf_t tmp1;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -607,10 +573,8 @@ bool mandel_bn_setup()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
-    bn_t bntemp1;
-    bn_t bntemp2;
-    bntemp1 = alloc_stack(g_bn_length);
-    bntemp2 = alloc_stack(g_bn_length);
+    bn_t bntemp1 = alloc_stack(g_bn_length);
+    bn_t bntemp2 = alloc_stack(g_bn_length);
 
     bf_to_bn(g_x_min_bn, g_bf_x_min);
     bf_to_bn(g_x_max_bn, g_bf_x_max);
@@ -654,8 +618,7 @@ bool mandel_bn_setup()
         copy_bn(g_close_enough_bn, bntemp2);
     }
     {
-        int t;
-        t = std::abs(g_periodicity_check);
+        int t = std::abs(g_periodicity_check);
         while (t--)
         {
             half_a_bn(g_close_enough_bn);
@@ -1034,8 +997,7 @@ int
 julia_z_power_bn_fractal()
 {
     BNComplex parm2;
-    int saved;
-    saved = save_stack();
+    int saved = save_stack();
 
     parm2.x = alloc_stack(g_bn_length);
     parm2.y = alloc_stack(g_bn_length);
@@ -1053,8 +1015,7 @@ int
 julia_z_power_bf_fractal()
 {
     BFComplex parm2;
-    int saved;
-    saved = save_stack();
+    int saved = save_stack();
 
     parm2.x = alloc_stack(g_bf_length+2);
     parm2.y = alloc_stack(g_bf_length+2);
@@ -1089,10 +1050,8 @@ BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
 
 BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
-    bf_t tmp1;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_r_bf_length+2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_r_bf_length + 2);
     mult_bf(t->x, x->x, y->x);
     mult_bf(t->y, x->y, y->y);
     sub_bf(t->x, t->x, t->y);
@@ -1106,11 +1065,9 @@ BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 
 BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
-    bf_t tmp1, denom;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_r_bf_length + 2);
-    denom = alloc_stack(g_r_bf_length + 2);
+    int saved = save_stack();
+    bf_t tmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t denom = alloc_stack(g_r_bf_length + 2);
 
     square_bf(t->x, y->x);
     square_bf(t->y, y->y);
@@ -1140,14 +1097,10 @@ BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
     BFComplex tmp;
-    bf_t e2x;
-    bf_t siny;
-    bf_t cosy;
-    int saved;
-    saved = save_stack();
-    e2x  = alloc_stack(g_r_bf_length+2);
-    siny = alloc_stack(g_r_bf_length+2);
-    cosy = alloc_stack(g_r_bf_length+2);
+    int saved = save_stack();
+    bf_t e2x = alloc_stack(g_r_bf_length + 2);
+    bf_t siny = alloc_stack(g_r_bf_length + 2);
+    bf_t cosy = alloc_stack(g_r_bf_length + 2);
     tmp.x = alloc_stack(g_r_bf_length+2);
     tmp.y = alloc_stack(g_r_bf_length+2);
 
@@ -1188,10 +1141,8 @@ BNComplex *cmplx_log_bn(BNComplex *t, BNComplex *s)
 
 BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
-    bn_t tmp1;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_r_length);
+    int saved = save_stack();
+    bn_t tmp1 = alloc_stack(g_r_length);
     mult_bn(t->x, x->x, y->x);
     mult_bn(t->y, x->y, y->y);
     sub_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
@@ -1205,12 +1156,10 @@ BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 
 BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
-    bn_t tmp1, tmp2, denom;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(g_r_length);
-    tmp2 = alloc_stack(g_r_length);
-    denom = alloc_stack(g_r_length);
+    int saved = save_stack();
+    bn_t tmp1 = alloc_stack(g_r_length);
+    bn_t tmp2 = alloc_stack(g_r_length);
+    bn_t denom = alloc_stack(g_r_length);
 
     square_bn(tmp1, y->x);
     square_bn(tmp2, y->y);
@@ -1246,14 +1195,10 @@ BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
     BNComplex tmp;
-    bn_t e2x;
-    bn_t siny;
-    bn_t cosy;
-    int saved;
-    saved = save_stack();
-    e2x = alloc_stack(g_r_length);
-    siny = alloc_stack(g_r_length);
-    cosy = alloc_stack(g_r_length);
+    int saved = save_stack();
+    bn_t e2x = alloc_stack(g_r_length);
+    bn_t siny = alloc_stack(g_r_length);
+    bn_t cosy = alloc_stack(g_r_length);
     tmp.x = alloc_stack(g_r_length);
     tmp.y = alloc_stack(g_r_length);
 
