@@ -390,7 +390,7 @@ bool DocumentProcessor::content()
     }
     else
     {
-        if (m_pd.line_num + 2 > PAGE_DEPTH - CONTENT_BREAK)
+        if (m_pd.line_num + 2 > PAGE_HEIGHT - CONTENT_BREAK)
         {
             if (!footing())
             {
@@ -471,7 +471,7 @@ bool DocumentProcessor::topic()
         }
     }
 
-    if (m_pd.line_num > PAGE_DEPTH - TOPIC_BREAK)
+    if (m_pd.line_num > PAGE_HEIGHT - TOPIC_BREAK)
     {
         if (!footing())
         {
@@ -642,7 +642,7 @@ bool DocumentProcessor::topic_paragraph()
             {
                 return false;
             }
-            if (++m_pd.line_num >= PAGE_DEPTH)
+            if (++m_pd.line_num >= PAGE_HEIGHT)
             {
                 if (!footing())
                 {
@@ -702,7 +702,7 @@ bool DocumentProcessor::topic_newline()
 {
     ++m_pd.line_num;
 
-    if (m_pd.line_num >= PAGE_DEPTH || (m_col == 0 && m_pd.line_num >= PAGE_DEPTH - BLANK_BREAK))
+    if (m_pd.line_num >= PAGE_HEIGHT || (m_col == 0 && m_pd.line_num >= PAGE_HEIGHT - BLANK_BREAK))
     {
         if (m_col != 0) /* if last wasn't a blank line... */
         {
