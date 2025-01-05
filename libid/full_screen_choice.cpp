@@ -456,6 +456,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         }
 
         char const *itemptr;
+        // ReSharper disable once CppTooWideScope
         char curitem[81];
         {
             int i = current - topleftchoice;           // highlight the current choice

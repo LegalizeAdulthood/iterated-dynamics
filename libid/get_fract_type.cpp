@@ -335,6 +335,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     int numtrig;
     FullScreenValues paramvalues[30];
     char const *choices[30];
+    // ReSharper disable once CppTooWideScope
     char bailoutmsg[50];
     long oldbailout = 0L;
     int promptnum;
