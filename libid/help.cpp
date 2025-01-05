@@ -619,7 +619,7 @@ static int help_topic(History *curr, History *next, int flags)
     freader(&num_pages, sizeof(int), 1, s_help_file);
     assert(num_pages > 0 && num_pages <= s_max_pages);
 
-    freader(&s_page_table[0], 3*sizeof(int), num_pages, s_help_file);
+    freader(s_page_table.data(), 3*sizeof(int), num_pages, s_help_file);
 
     freader(&ch, sizeof(char), 1, s_help_file);
     int len = ch;
@@ -653,8 +653,8 @@ static int help_topic(History *curr, History *next, int flags)
             freader(s_buffer.data(), sizeof(char), s_page_table[page].len, s_help_file);
 
             num_link = 0;
-            display_page(title, &s_buffer[0], s_page_table[page].len, page, num_pages,
-                         s_page_table[page].margin, &num_link, &s_link_table[0]);
+            display_page(title, s_buffer.data(), s_page_table[page].len, page, num_pages,
+                         s_page_table[page].margin, &num_link, s_link_table.data());
 
             if (draw_page == 2)
             {
@@ -708,7 +708,7 @@ static int help_topic(History *curr, History *next, int flags)
             }
             else
             {
-                do_move_link(&s_link_table[0], num_link, &curr_link, nullptr, 0);
+                do_move_link(s_link_table.data(), num_link, &curr_link, nullptr, 0);
             }
             break;
 
@@ -720,12 +720,12 @@ static int help_topic(History *curr, History *next, int flags)
             }
             else
             {
-                do_move_link(&s_link_table[0], num_link, &curr_link, nullptr, num_link-1);
+                do_move_link(s_link_table.data(), num_link, &curr_link, nullptr, num_link-1);
             }
             break;
 
         case ID_KEY_TAB:
-            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_key, key)
+            if (!do_move_link(s_link_table.data(), num_link, &curr_link, find_link_key, key)
                 && page < num_pages-1)
             {
                 ++page;
@@ -734,7 +734,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_SHF_TAB:
-            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_key, key)
+            if (!do_move_link(s_link_table.data(), num_link, &curr_link, find_link_key, key)
                 && page > 0)
             {
                 --page;
@@ -743,7 +743,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_DOWN_ARROW:
-            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_up_down, 0)
+            if (!do_move_link(s_link_table.data(), num_link, &curr_link, find_link_up_down, 0)
                 && page < num_pages-1)
             {
                 ++page;
@@ -752,7 +752,7 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_UP_ARROW:
-            if (!do_move_link(&s_link_table[0], num_link, &curr_link, find_link_up_down, 1)
+            if (!do_move_link(s_link_table.data(), num_link, &curr_link, find_link_up_down, 1)
                 && page > 0)
             {
                 --page;
@@ -761,11 +761,11 @@ static int help_topic(History *curr, History *next, int flags)
             break;
 
         case ID_KEY_LEFT_ARROW:
-            do_move_link(&s_link_table[0], num_link, &curr_link, find_link_left_right, 1);
+            do_move_link(s_link_table.data(), num_link, &curr_link, find_link_left_right, 1);
             break;
 
         case ID_KEY_RIGHT_ARROW:
-            do_move_link(&s_link_table[0], num_link, &curr_link, find_link_left_right, 0);
+            do_move_link(s_link_table.data(), num_link, &curr_link, find_link_left_right, 0);
             break;
 
         case ID_KEY_ESC:         // exit help
@@ -1439,8 +1439,8 @@ int init_help()
     }
 
     // read in the tables...
-    freader(&s_topic_offset[0], sizeof(long), s_num_topic, s_help_file);
-    freader(&s_label[0], sizeof(Label), s_num_label, s_help_file);
+    freader(s_topic_offset.data(), sizeof(long), s_num_topic, s_help_file);
+    freader(s_label.data(), sizeof(Label), s_num_label, s_help_file);
 
     // finished!
 
