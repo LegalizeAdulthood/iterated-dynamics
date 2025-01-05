@@ -184,13 +184,9 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
     s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;  // time-to-g_driver-status counter
 
-    constexpr unsigned int cache_size = CACHE_MAX;
-    long longtmp = (long) cache_size << 10;
+    constexpr unsigned int CACHE_SIZE{CACHE_MAX};
+    long longtmp = (long) CACHE_SIZE << 10;
     s_cache_start = (Cache *)malloc(longtmp);
-    if (cache_size == 64)
-    {
-        --longtmp; // safety for next line
-    }
     s_cache_lru = s_cache_start;
     s_cache_end = s_cache_lru + longtmp/sizeof(*s_cache_start);
     s_mem_buf.resize(BLOCK_LEN);
@@ -201,7 +197,7 @@ int common_start_disk(long newrowsize, long newcolsize, int colors)
     }
     if (driver_diskp())
     {
-        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Cache size: " + std::to_string(cache_size) + "K");
+        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Cache size: " + std::to_string(CACHE_SIZE) + "K");
     }
 
     // preset cache to all invalid entries so we don't need free list logic
