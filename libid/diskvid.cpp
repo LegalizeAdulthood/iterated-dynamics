@@ -332,11 +332,11 @@ void end_disk()
 
 int disk_read_pixel(int col, int row)
 {
-    char buf[41];
     if (--s_time_to_display < 0)  // time to g_driver status?
     {
         if (driver_diskp())
         {
+            char buf[41];
             std::snprintf(buf, std::size(buf), " reading line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
@@ -398,11 +398,11 @@ void targa_read_disk(unsigned int col, unsigned int row, Byte *red, Byte *green,
 
 void disk_write_pixel(int col, int row, int color)
 {
-    char buf[41];
     if (--s_time_to_display < 0)  // time to display status?
     {
         if (driver_diskp())
         {
+            char buf[41];
             std::snprintf(buf, std::size(buf), " writing line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
