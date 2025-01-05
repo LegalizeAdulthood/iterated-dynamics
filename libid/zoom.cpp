@@ -688,10 +688,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     int i = 9;
     for (int j = 0; j < g_num_work_list; ++j)   // find lowest pass in any pending window
     {
-        if (g_work_list[j].pass < i)
-        {
-            i = g_work_list[j].pass;
-        }
+        i = std::min(g_work_list[j].pass, i);
     }
     int j = ssg_blocksize(); // worst-case alignment requirement
     while (--i >= 0)
@@ -986,22 +983,10 @@ static void fix_work_list()
             }
             wk->xxstop = j;
         }
-        if (wk->yybegin < wk->yystart)
-        {
-            wk->yybegin = wk->yystart;
-        }
-        if (wk->yybegin > wk->yystop)
-        {
-            wk->yybegin = wk->yystop;
-        }
-        if (wk->xxbegin < wk->xxstart)
-        {
-            wk->xxbegin = wk->xxstart;
-        }
-        if (wk->xxbegin > wk->xxstop)
-        {
-            wk->xxbegin = wk->xxstop;
-        }
+        wk->yybegin = std::max(wk->yybegin, wk->yystart);
+        wk->yybegin = std::min(wk->yybegin, wk->yystop);
+        wk->xxbegin = std::max(wk->xxbegin, wk->xxstart);
+        wk->xxbegin = std::min(wk->xxbegin, wk->xxstop);
     }
     tidy_work_list(); // combine where possible, re-sort
 }
