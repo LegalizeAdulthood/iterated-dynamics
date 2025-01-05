@@ -72,7 +72,7 @@ inline bool illumine()
 }
 
 void identity(MATRIX m);
-void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3);
+void mat_mul(MATRIX lhs, MATRIX rhs, MATRIX result);
 void scale(double sx, double sy, double sz, MATRIX m);
 void x_rot(double theta, MATRIX m);
 void y_rot(double theta, MATRIX m);

@@ -108,22 +108,23 @@ void identity(MATRIX m)
 }
 
 // Multiply two matrices
-void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
+void mat_mul(MATRIX lhs, MATRIX rhs, MATRIX result)
 {
-    // result stored in MATRIX new to avoid problems
+    // result stored in product to avoid problems
     //  in case parameter mat3 == mat2 or mat 1
-    MATRIX newmat;
+    MATRIX product;
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            newmat[j][i] =  mat1[j][0]*mat2[0][i]+
-                            mat1[j][1]*mat2[1][i]+
-                            mat1[j][2]*mat2[2][i]+
-                            mat1[j][3]*mat2[3][i];
+            product[j][i] =             //
+                lhs[j][0] * rhs[0][i] + //
+                lhs[j][1] * rhs[1][i] + //
+                lhs[j][2] * rhs[2][i] + //
+                lhs[j][3] * rhs[3][i];
         }
     }
-    std::memcpy(mat3, newmat, sizeof(newmat));
+    std::memcpy(result, product, sizeof(product));
 }
 
 // multiply a matrix by a scalar
