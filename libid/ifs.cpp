@@ -19,36 +19,36 @@ enum
 
 static const char *const s_token_separators{" \t\n\r"};
 
-char *get_ifs_token(char *buf, std::FILE *ifsfile)
+char *get_ifs_token(char *buf, std::FILE *ifs_file)
 {
     while (true)
     {
-        if (file_gets(buf, 200, ifsfile) < 0)
+        if (file_gets(buf, 200, ifs_file) < 0)
         {
             return nullptr;
         }
 
-        char* bufptr = std::strchr(buf, ';');
-        if (bufptr != nullptr) // use ';' as comment to eol
+        char* buf_ptr = std::strchr(buf, ';');
+        if (buf_ptr != nullptr) // use ';' as comment to eol
         {
-            *bufptr = 0;
+            *buf_ptr = 0;
         }
-        bufptr = std::strtok(buf, s_token_separators);
-        if (bufptr != nullptr)
+        buf_ptr = std::strtok(buf, s_token_separators);
+        if (buf_ptr != nullptr)
         {
-            return bufptr;
+            return buf_ptr;
         }
     }
 }
 
-char *get_next_ifs_token(char *buf, std::FILE *ifsfile)
+char *get_next_ifs_token(char *buf, std::FILE *ifs_file)
 {
-    char *bufptr = std::strtok(nullptr, s_token_separators);
-    if (bufptr != nullptr)
+    char *buf_ptr = std::strtok(nullptr, s_token_separators);
+    if (buf_ptr != nullptr)
     {
-        return bufptr;
+        return buf_ptr;
     }
-    return get_ifs_token(buf, ifsfile);
+    return get_ifs_token(buf, ifs_file);
 }
 
 int ifs_load()                   // read in IFS parameters
@@ -56,18 +56,18 @@ int ifs_load()                   // read in IFS parameters
     // release prior params
     g_ifs_definition.clear();
     g_ifs_type = false;
-    std::FILE *ifsfile;
-    if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, ItemType::IFS))
+    std::FILE *ifs_file;
+    if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifs_file, ItemType::IFS))
     {
         return -1;
     }
 
     char  buf[201];
-    file_gets(buf, 200, ifsfile);
-    char *bufptr = std::strchr(buf, ';');
-    if (bufptr != nullptr)   // use ';' as comment to eol
+    file_gets(buf, 200, ifs_file);
+    char *buf_ptr = std::strchr(buf, ';');
+    if (buf_ptr != nullptr)   // use ';' as comment to eol
     {
-        *bufptr = 0;
+        *buf_ptr = 0;
     }
 
     strlwr(buf);
@@ -76,11 +76,11 @@ int ifs_load()                   // read in IFS parameters
 
     int ret = 0;
     int i = ret;
-    bufptr = get_ifs_token(buf, ifsfile);
-    while (bufptr != nullptr)
+    buf_ptr = get_ifs_token(buf, ifs_file);
+    while (buf_ptr != nullptr)
     {
         float value = 0.0f;
-        if (std::sscanf(bufptr, " %f ", &value) != 1)
+        if (std::sscanf(buf_ptr, " %f ", &value) != 1)
         {
             break;
         }
@@ -91,19 +91,19 @@ int ifs_load()                   // read in IFS parameters
             ret = -1;
             break;
         }
-        bufptr = get_next_ifs_token(buf, ifsfile);
-        if (bufptr == nullptr)
+        buf_ptr = get_next_ifs_token(buf, ifs_file);
+        if (buf_ptr == nullptr)
         {
             ret = -1;
             break;
         }
-        if (*bufptr == '}')
+        if (*buf_ptr == '}')
         {
             break;
         }
     }
 
-    if ((i % row_size) != 0 || (bufptr && *bufptr != '}'))
+    if ((i % row_size) != 0 || (buf_ptr && *buf_ptr != '}'))
     {
         stop_msg("invalid IFS definition");
         ret = -1;
@@ -113,7 +113,7 @@ int ifs_load()                   // read in IFS parameters
         stop_msg("Empty IFS definition");
         ret = -1;
     }
-    std::fclose(ifsfile);
+    std::fclose(ifs_file);
 
     if (ret == 0)
     {
