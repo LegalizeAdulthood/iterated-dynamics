@@ -21,10 +21,10 @@ int get_prec_bf_mag()
     LDouble magnification;
 
     int saved = save_stack();
-    bf_t bXctr = alloc_stack(g_bf_length + 2);
-    bf_t bYctr = alloc_stack(g_bf_length + 2);
+    bf_t b_x_ctr = alloc_stack(g_bf_length + 2);
+    bf_t b_y_ctr = alloc_stack(g_bf_length + 2);
     // this is just to find magnification
-    cvt_center_mag_bf(bXctr, bYctr, magnification, x_mag_factor, rotation, skew);
+    cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
     restore_stack(saved);
 
     // I don't know if this is portable, but something needs to
@@ -48,10 +48,10 @@ int get_prec_bf(ResolutionFlag flag)
     bf_t del1 = alloc_stack(g_bf_length + 2);
     bf_t del2 = alloc_stack(g_bf_length + 2);
     bf_t one = alloc_stack(g_bf_length + 2);
-    bf_t bfxxdel = alloc_stack(g_bf_length + 2);
-    bf_t bfxxdel2 = alloc_stack(g_bf_length + 2);
-    bf_t bfyydel = alloc_stack(g_bf_length + 2);
-    bf_t bfyydel2 = alloc_stack(g_bf_length + 2);
+    bf_t bf_x_delta = alloc_stack(g_bf_length + 2);
+    bf_t bf_x_delta2 = alloc_stack(g_bf_length + 2);
+    bf_t bf_y_delta = alloc_stack(g_bf_length + 2);
+    bf_t bf_y_delta2 = alloc_stack(g_bf_length + 2);
     float_to_bf(one, 1.0);
     if (flag == ResolutionFlag::MAX)
     {
@@ -63,12 +63,12 @@ int get_prec_bf(ResolutionFlag flag)
     }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
-    sub_bf(bfxxdel, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(bfxxdel, (U16)res);
+    sub_bf(bf_x_delta, g_bf_x_max, g_bf_x_3rd);
+    div_a_bf_int(bf_x_delta, (U16)res);
 
     // bfyydel2 = (bfy3rd - bfymin)/(xdots-1)
-    sub_bf(bfyydel2, g_bf_y_3rd, g_bf_y_min);
-    div_a_bf_int(bfyydel2, (U16)res);
+    sub_bf(bf_y_delta2, g_bf_y_3rd, g_bf_y_min);
+    div_a_bf_int(bf_y_delta2, (U16)res);
 
     if (flag == ResolutionFlag::CURRENT)
     {
@@ -76,15 +76,15 @@ int get_prec_bf(ResolutionFlag flag)
     }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
-    sub_bf(bfyydel, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(bfyydel, (U16)res);
+    sub_bf(bf_y_delta, g_bf_y_max, g_bf_y_3rd);
+    div_a_bf_int(bf_y_delta, (U16)res);
 
     // bfxxdel2 = (bfx3rd - bfxmin)/(ydots-1)
-    sub_bf(bfxxdel2, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(bfxxdel2, (U16)res);
+    sub_bf(bf_x_delta2, g_bf_x_3rd, g_bf_x_min);
+    div_a_bf_int(bf_x_delta2, (U16)res);
 
-    abs_a_bf(add_bf(del1, bfxxdel, bfxxdel2));
-    abs_a_bf(add_bf(del2, bfyydel, bfyydel2));
+    abs_a_bf(add_bf(del1, bf_x_delta, bf_x_delta2));
+    abs_a_bf(add_bf(del2, bf_y_delta, bf_y_delta2));
     if (cmp_bf(del2, del1) < 0)
     {
         copy_bf(del1, del2);
