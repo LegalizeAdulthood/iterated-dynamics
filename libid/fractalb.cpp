@@ -313,8 +313,8 @@ int  bn_mod_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
-    long longmagnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
-    if (longmagnitude >= (long)g_magnitude_limit)
+    long long_magnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
+    if (long_magnitude >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -327,8 +327,8 @@ int  bn_real_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long longtempsqrx = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    if (longtempsqrx >= (long)g_magnitude_limit)
+    long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    if (long_temp_sqr_x >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -341,8 +341,8 @@ int  bn_imag_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long longtempsqry = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (longtempsqry >= (long)g_magnitude_limit)
+    long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
+    if (long_temp_sqr_y >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -355,9 +355,9 @@ int  bn_or_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long longtempsqrx = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    long longtempsqry = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
+    long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
+    if (long_temp_sqr_x >= (long)g_magnitude_limit || long_temp_sqr_y >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -370,9 +370,9 @@ int  bn_and_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long longtempsqrx = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    long longtempsqry = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
+    long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
+    if (long_temp_sqr_x >= (long)g_magnitude_limit && long_temp_sqr_y >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -390,8 +390,8 @@ int  bn_manh_bailout()
     abs_bn(g_old_z_bn.y, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    long longtempmag = bn_to_int(g_old_z_bn.x + g_shift_factor);
-    if (longtempmag >= (long)g_magnitude_limit)
+    long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
+    if (long_temp_mag >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -407,8 +407,8 @@ int  bn_manr_bailout()
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    long longtempmag = bn_to_int(g_old_z_bn.x + g_shift_factor);
-    if (longtempmag >= (long)g_magnitude_limit)
+    long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
+    if (long_temp_mag >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -570,8 +570,8 @@ bool mandel_bn_setup()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
-    bn_t bntemp1 = alloc_stack(g_bn_length);
-    bn_t bntemp2 = alloc_stack(g_bn_length);
+    bn_t bn_temp1 = alloc_stack(g_bn_length);
+    bn_t bn_temp2 = alloc_stack(g_bn_length);
 
     bf_to_bn(g_x_min_bn, g_bf_x_min);
     bf_to_bn(g_x_max_bn, g_bf_x_max);
@@ -599,20 +599,20 @@ bool mandel_bn_setup()
     div_a_bn_int(g_delta2_y_bn, (U16) (g_logical_screen_x_dots - 1));
 
     abs_bn(g_close_enough_bn, g_delta_x_bn);
-    if (cmp_bn(abs_bn(bntemp1, g_delta2_x_bn), g_close_enough_bn) > 0)
+    if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn) > 0)
     {
-        copy_bn(g_close_enough_bn, bntemp1);
+        copy_bn(g_close_enough_bn, bn_temp1);
     }
-    if (cmp_bn(abs_bn(bntemp1, g_delta_y_bn), abs_bn(bntemp2, g_delta2_y_bn)) > 0)
+    if (cmp_bn(abs_bn(bn_temp1, g_delta_y_bn), abs_bn(bn_temp2, g_delta2_y_bn)) > 0)
     {
-        if (cmp_bn(bntemp1, g_close_enough_bn) > 0)
+        if (cmp_bn(bn_temp1, g_close_enough_bn) > 0)
         {
-            copy_bn(g_close_enough_bn, bntemp1);
+            copy_bn(g_close_enough_bn, bn_temp1);
         }
     }
-    else if (cmp_bn(bntemp2, g_close_enough_bn) > 0)
+    else if (cmp_bn(bn_temp2, g_close_enough_bn) > 0)
     {
-        copy_bn(g_close_enough_bn, bntemp2);
+        copy_bn(g_close_enough_bn, bn_temp2);
     }
     {
         int t = std::abs(g_periodicity_check);
@@ -687,8 +687,8 @@ bool mandel_bf_setup()
 
     // this should be set up dynamically based on corners
     BigStackSaver saved;
-    bf_t bftemp1{alloc_stack(g_bf_length + 2)};
-    bf_t bftemp2{alloc_stack(g_bf_length + 2)};
+    bf_t bf_temp1{alloc_stack(g_bf_length + 2)};
+    bf_t bf_temp2{alloc_stack(g_bf_length + 2)};
 
     g_bf_math = BFMathType::BIG_FLT;
 
@@ -709,20 +709,20 @@ bool mandel_bf_setup()
     div_a_bf_int(g_delta2_y_bf, (U16)(g_logical_screen_x_dots - 1));
 
     abs_bf(g_close_enough_bf, g_delta_x_bf);
-    if (cmp_bf(abs_bf(bftemp1, g_delta2_x_bf), g_close_enough_bf) > 0)
+    if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf) > 0)
     {
-        copy_bf(g_close_enough_bf, bftemp1);
+        copy_bf(g_close_enough_bf, bf_temp1);
     }
-    if (cmp_bf(abs_bf(bftemp1, g_delta_y_bf), abs_bf(bftemp2, g_delta2_y_bf)) > 0)
+    if (cmp_bf(abs_bf(bf_temp1, g_delta_y_bf), abs_bf(bf_temp2, g_delta2_y_bf)) > 0)
     {
-        if (cmp_bf(bftemp1, g_close_enough_bf) > 0)
+        if (cmp_bf(bf_temp1, g_close_enough_bf) > 0)
         {
-            copy_bf(g_close_enough_bf, bftemp1);
+            copy_bf(g_close_enough_bf, bf_temp1);
         }
     }
-    else if (cmp_bf(bftemp2, g_close_enough_bf) > 0)
+    else if (cmp_bf(bf_temp2, g_close_enough_bf) > 0)
     {
-        copy_bf(g_close_enough_bf, bftemp2);
+        copy_bf(g_close_enough_bf, bf_temp2);
     }
     {
         int t{std::abs(g_periodicity_check)};
@@ -1096,8 +1096,8 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     BFComplex tmp;
     int saved = save_stack();
     bf_t e2x = alloc_stack(g_r_bf_length + 2);
-    bf_t siny = alloc_stack(g_r_bf_length + 2);
-    bf_t cosy = alloc_stack(g_r_bf_length + 2);
+    bf_t sin_y = alloc_stack(g_r_bf_length + 2);
+    bf_t cos_y = alloc_stack(g_r_bf_length + 2);
     tmp.x = alloc_stack(g_r_bf_length+2);
     tmp.y = alloc_stack(g_r_bf_length+2);
 
@@ -1112,9 +1112,9 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     cmplx_log_bf(t, xx);
     cmplx_mul_bf(&tmp, t, yy);
     exp_bf(e2x, tmp.x);
-    sin_cos_bf(siny, cosy, tmp.y);
-    mult_bf(t->x, e2x, cosy);
-    mult_bf(t->y, e2x, siny);
+    sin_cos_bf(sin_y, cos_y, tmp.y);
+    mult_bf(t->x, e2x, cos_y);
+    mult_bf(t->y, e2x, sin_y);
     restore_stack(saved);
     return t;
 }
@@ -1194,8 +1194,8 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     BNComplex tmp;
     int saved = save_stack();
     bn_t e2x = alloc_stack(g_r_length);
-    bn_t siny = alloc_stack(g_r_length);
-    bn_t cosy = alloc_stack(g_r_length);
+    bn_t sin_y = alloc_stack(g_r_length);
+    bn_t cos_y = alloc_stack(g_r_length);
     tmp.x = alloc_stack(g_r_length);
     tmp.y = alloc_stack(g_r_length);
 
@@ -1211,9 +1211,9 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     cmplx_log_bn(t, xx);
     cmplx_mul_bn(&tmp, t, yy);
     exp_bn(e2x, tmp.x);
-    sin_cos_bn(siny, cosy, tmp.y);
-    mult_bn(t->x, e2x, cosy);
-    mult_bn(t->y, e2x, siny);
+    sin_cos_bn(sin_y, cos_y, tmp.y);
+    mult_bn(t->x, e2x, cos_y);
+    mult_bn(t->y, e2x, sin_y);
     restore_stack(saved);
     return t;
 }
