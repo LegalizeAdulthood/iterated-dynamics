@@ -42,16 +42,16 @@
    these bits represent the sort sequence for video mode list */
 enum
 {
-    VI_EXACT = 0x8000, // unless the one and only exact match
-    VI_DISK = 1024,    // if video mode is disk video
-    VI_NOKEY = 512,    // if no function key assigned
-    VI_SSMALL = 128,   // screen smaller than file's screen
-    VI_SBIG = 64,      // screen bigger than file's screen
-    VI_VSMALL = 32,    // screen smaller than file's view
-    VI_VBIG = 16,      // screen bigger than file's view
-    VI_CSMALL = 8,     // mode has too few colors
-    VI_CBIG = 4,       // mode has excess colors
-    VI_ASPECT = 1      // aspect ratio bad
+    VI_EXACT = 0x8000,       // unless the one and only exact match
+    VI_DISK = 1024,          // if video mode is disk video
+    VI_NO_KEY = 512,         // if no function key assigned
+    VI_SCREEN_SMALLER = 128, // screen smaller than file's screen
+    VI_SCREEN_BIGGER = 64,   // screen bigger than file's screen
+    VI_VIEW_SMALLER = 32,    // screen smaller than file's view
+    VI_VIEW_BIGGER = 16,     // screen bigger than file's view
+    VI_COLORS_SMALLER = 8,   // mode has too few colors
+    VI_COLORS_BIGGER = 4,    // mode has excess colors
+    VI_BAD_ASPECT = 1        // aspect ratio bad
 };
 
 namespace
@@ -211,43 +211,43 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (g_video_entry.keynum == 0)
         {
-            tmpflags |= VI_NOKEY;
+            tmpflags |= VI_NO_KEY;
         }
         if (info->xdots > g_video_entry.xdots || info->ydots > g_video_entry.ydots)
         {
-            tmpflags |= VI_SSMALL;
+            tmpflags |= VI_SCREEN_SMALLER;
         }
         else if (info->xdots < g_video_entry.xdots || info->ydots < g_video_entry.ydots)
         {
-            tmpflags |= VI_SBIG;
+            tmpflags |= VI_SCREEN_BIGGER;
         }
         if (g_file_x_dots > g_video_entry.xdots || g_file_y_dots > g_video_entry.ydots)
         {
-            tmpflags |= VI_VSMALL;
+            tmpflags |= VI_VIEW_SMALLER;
         }
         else if (g_file_x_dots < g_video_entry.xdots || g_file_y_dots < g_video_entry.ydots)
         {
-            tmpflags |= VI_VBIG;
+            tmpflags |= VI_VIEW_BIGGER;
         }
         if (g_file_colors > g_video_entry.colors)
         {
-            tmpflags |= VI_CSMALL;
+            tmpflags |= VI_COLORS_SMALLER;
         }
         if (g_file_colors < g_video_entry.colors)
         {
-            tmpflags |= VI_CBIG;
+            tmpflags |= VI_COLORS_BIGGER;
         }
         if (i == g_init_mode)
         {
             tmpflags -= VI_EXACT;
         }
-        if (g_file_aspect_ratio != 0.0f && (tmpflags & VI_VSMALL) == 0)
+        if (g_file_aspect_ratio != 0.0f && (tmpflags & VI_VIEW_SMALLER) == 0)
         {
             ftemp = video_aspect(g_file_x_dots, g_file_y_dots);
             if (ftemp < g_file_aspect_ratio * 0.98
                 || ftemp > g_file_aspect_ratio * 1.02)
             {
-                tmpflags |= VI_ASPECT;
+                tmpflags |= VI_BAD_ASPECT;
             }
         }
         s_video_choices[i].entry_num = i;
@@ -520,7 +520,7 @@ static void format_item(int choice, char *buf)
     char errbuf[10];
     errbuf[0] = 0;
     unsigned tmpflags = s_video_choices[choice].flags;
-    if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
+    if (tmpflags & (VI_VIEW_SMALLER+VI_COLORS_SMALLER+VI_BAD_ASPECT))
     {
         std::strcat(errbuf, "*");
     }
@@ -528,23 +528,23 @@ static void format_item(int choice, char *buf)
     {
         std::strcat(errbuf, "D");
     }
-    if (tmpflags & VI_VSMALL)
+    if (tmpflags & VI_VIEW_SMALLER)
     {
         std::strcat(errbuf, "R");
     }
-    if (tmpflags & VI_CSMALL)
+    if (tmpflags & VI_COLORS_SMALLER)
     {
         std::strcat(errbuf, "C");
     }
-    if (tmpflags & VI_ASPECT)
+    if (tmpflags & VI_BAD_ASPECT)
     {
         std::strcat(errbuf, "A");
     }
-    if (tmpflags & VI_VBIG)
+    if (tmpflags & VI_VIEW_BIGGER)
     {
         std::strcat(errbuf, "v");
     }
-    if (tmpflags & VI_CBIG)
+    if (tmpflags & VI_COLORS_BIGGER)
     {
         std::strcat(errbuf, "c");
     }
