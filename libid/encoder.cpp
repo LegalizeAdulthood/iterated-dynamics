@@ -50,9 +50,9 @@
 #include <iterator>
 #include <string>
 
-static bool compress(int rowlimit);
-static int shift_write(Byte const *color, int numcolors);
-static int extend_blk_len(int datalen);
+static bool compress(int row_limit);
+static int shift_write(Byte const *color, int num_colors);
+static int extend_blk_len(int data_len);
 static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
 static void setup_save_info(FractalInfo *save_info);
@@ -242,27 +242,27 @@ restart:
     if (!driver_diskp())
     {
         // supress this on disk-video
-        int outcolor1 = s_out_color_1s;
-        int outcolor2 = s_out_color_2s;
+        int out_color1 = s_out_color_1s;
+        int out_color2 = s_out_color_2s;
         for (int j = 0; j <= s_last_color_bar; j++)
         {
             if ((j & 4) == 0)
             {
-                if (++outcolor1 >= g_colors)
+                if (++out_color1 >= g_colors)
                 {
-                    outcolor1 = 0;
+                    out_color1 = 0;
                 }
-                if (++outcolor2 >= g_colors)
+                if (++out_color2 >= g_colors)
                 {
-                    outcolor2 = 0;
+                    out_color2 = 0;
                 }
             }
             for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
             {
                 // clear vert status bars
-                g_put_color(i, j, get_color(i, j) ^ outcolor1);
+                g_put_color(i, j, get_color(i, j) ^ out_color1);
                 g_put_color(g_logical_screen_x_dots - 1 - i, j,
-                         get_color(g_logical_screen_x_dots - 1 - i, j) ^ outcolor2);
+                         get_color(g_logical_screen_x_dots - 1 - i, j) ^ out_color2);
             }
         }
     }
@@ -299,8 +299,8 @@ bool encoder()
 {
     bool interrupted;
     int width;
-    int rowlimit;
-    Byte bitsperpixel;
+    int row_limit;
+    Byte bits_per_pixel;
     Byte x;
     FractalInfo save_info;
 
@@ -315,13 +315,13 @@ bool encoder()
     setup_save_info(&save_info);
 
 #ifndef XFRACT
-    bitsperpixel = 0;            // calculate bits / pixel
+    bits_per_pixel = 0;            // calculate bits / pixel
     for (int i = g_colors; i >= 2; i /= 2)
     {
-        bitsperpixel++;
+        bits_per_pixel++;
     }
 
-    s_start_bits = bitsperpixel + 1;// start coding with this many bits
+    s_start_bits = bits_per_pixel + 1;// start coding with this many bits
     if (g_colors == 2)
     {
         s_start_bits++;    // B&W Klooge
@@ -346,14 +346,14 @@ bool encoder()
     }
 
     width = g_logical_screen_x_dots;
-    rowlimit = g_logical_screen_y_dots;
+    row_limit = g_logical_screen_y_dots;
     if (s_save_16bit)
     {
         // pot16bit info is stored as: file:    double width rows, right side
         // of row is low 8 bits diskvid: ydots rows of colors followed by ydots
         // rows of low 8 bits decoder: returns (row of color info then row of
         // low 8 bits) * ydots
-        rowlimit <<= 1;
+        row_limit <<= 1;
         width <<= 1;
     }
     if (std::fwrite(&width, 2, 1, s_outfile) != 1)
@@ -364,7 +364,7 @@ bool encoder()
     {
         goto oops;
     }
-    x = (Byte)(128 + ((6 - 1) << 4) + (bitsperpixel - 1));      // color resolution == 6 bits worth
+    x = (Byte)(128 + ((6 - 1) << 4) + (bits_per_pixel - 1));      // color resolution == 6 bits worth
     if (std::fwrite(&x, 1, 1, s_outfile) != 1)
     {
         goto oops;
@@ -490,14 +490,14 @@ bool encoder()
         goto oops;
     }
 
-    bitsperpixel = (Byte)(s_start_bits - 1);
+    bits_per_pixel = (Byte)(s_start_bits - 1);
 
-    if (std::fwrite(&bitsperpixel, 1, 1, s_outfile) != 1)
+    if (std::fwrite(&bits_per_pixel, 1, 1, s_outfile) != 1)
     {
         goto oops;
     }
 
-    interrupted = compress(rowlimit);
+    interrupted = compress(row_limit);
 
     if (ferror(s_outfile))
     {
@@ -574,65 +574,65 @@ bool encoder()
     // Extended parameters block 006
     if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
     {
-        EvolutionInfo esave_info;
+        EvolutionInfo evolution_info;
         if (!g_have_evolve_info || g_calc_status == CalcStatus::COMPLETED)
         {
-            esave_info.x_parameter_range = g_evolve_x_parameter_range;
-            esave_info.y_parameter_range = g_evolve_y_parameter_range;
-            esave_info.x_parameter_offset = g_evolve_x_parameter_offset;
-            esave_info.y_parameter_offset = g_evolve_y_parameter_offset;
-            esave_info.discrete_x_parameter_offset =
+            evolution_info.x_parameter_range = g_evolve_x_parameter_range;
+            evolution_info.y_parameter_range = g_evolve_y_parameter_range;
+            evolution_info.x_parameter_offset = g_evolve_x_parameter_offset;
+            evolution_info.y_parameter_offset = g_evolve_y_parameter_offset;
+            evolution_info.discrete_x_parameter_offset =
                 static_cast<std::int16_t>(g_evolve_discrete_x_parameter_offset);
-            esave_info.discrete_y_paramter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
-            esave_info.px              = static_cast<std::int16_t>(g_evolve_param_grid_x);
-            esave_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
-            esave_info.sxoffs          = static_cast<std::int16_t>(g_logical_screen_x_offset);
-            esave_info.syoffs          = static_cast<std::int16_t>(g_logical_screen_y_offset);
-            esave_info.xdots           = static_cast<std::int16_t>(g_logical_screen_x_dots);
-            esave_info.ydots           = static_cast<std::int16_t>(g_logical_screen_y_dots);
-            esave_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
-            esave_info.evolving        = static_cast<std::int16_t>(+g_evolving);
-            esave_info.this_generation_random_seed =
+            evolution_info.discrete_y_paramter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
+            evolution_info.px              = static_cast<std::int16_t>(g_evolve_param_grid_x);
+            evolution_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
+            evolution_info.sxoffs          = static_cast<std::int16_t>(g_logical_screen_x_offset);
+            evolution_info.syoffs          = static_cast<std::int16_t>(g_logical_screen_y_offset);
+            evolution_info.xdots           = static_cast<std::int16_t>(g_logical_screen_x_dots);
+            evolution_info.ydots           = static_cast<std::int16_t>(g_logical_screen_y_dots);
+            evolution_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
+            evolution_info.evolving        = static_cast<std::int16_t>(+g_evolving);
+            evolution_info.this_generation_random_seed =
                 static_cast<std::uint16_t>(g_evolve_this_generation_random_seed);
-            esave_info.max_random_mutation = g_evolve_max_random_mutation;
-            esave_info.ecount          =
+            evolution_info.max_random_mutation = g_evolve_max_random_mutation;
+            evolution_info.ecount          =
                 static_cast<std::int16_t>(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done
         }
         else
         {
             // we will need the resuming information
-            esave_info.x_parameter_range = g_evolve_info.x_parameter_range;
-            esave_info.y_parameter_range = g_evolve_info.y_parameter_range;
-            esave_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
-            esave_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
-            esave_info.discrete_x_parameter_offset = g_evolve_info.discrete_x_parameter_offset;
-            esave_info.discrete_y_paramter_offset = g_evolve_info.discrete_y_paramter_offset;
-            esave_info.px              = g_evolve_info.px;
-            esave_info.py              = g_evolve_info.py;
-            esave_info.sxoffs          = g_evolve_info.sxoffs;
-            esave_info.syoffs          = g_evolve_info.syoffs;
-            esave_info.xdots           = g_evolve_info.xdots;
-            esave_info.ydots           = g_evolve_info.ydots;
-            esave_info.image_grid_size = g_evolve_info.image_grid_size;
-            esave_info.evolving        = g_evolve_info.evolving;
-            esave_info.this_generation_random_seed = g_evolve_info.this_generation_random_seed;
-            esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
-            esave_info.ecount          = g_evolve_info.ecount;
+            evolution_info.x_parameter_range = g_evolve_info.x_parameter_range;
+            evolution_info.y_parameter_range = g_evolve_info.y_parameter_range;
+            evolution_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
+            evolution_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
+            evolution_info.discrete_x_parameter_offset = g_evolve_info.discrete_x_parameter_offset;
+            evolution_info.discrete_y_paramter_offset = g_evolve_info.discrete_y_paramter_offset;
+            evolution_info.px              = g_evolve_info.px;
+            evolution_info.py              = g_evolve_info.py;
+            evolution_info.sxoffs          = g_evolve_info.sxoffs;
+            evolution_info.syoffs          = g_evolve_info.syoffs;
+            evolution_info.xdots           = g_evolve_info.xdots;
+            evolution_info.ydots           = g_evolve_info.ydots;
+            evolution_info.image_grid_size = g_evolve_info.image_grid_size;
+            evolution_info.evolving        = g_evolve_info.evolving;
+            evolution_info.this_generation_random_seed = g_evolve_info.this_generation_random_seed;
+            evolution_info.max_random_mutation = g_evolve_info.max_random_mutation;
+            evolution_info.ecount          = g_evolve_info.ecount;
         }
         for (int j = 0; j < NUM_GENES; j++)
         {
-            esave_info.mutate[j] = static_cast<std::int16_t>(g_gene_bank[j].mutate);
+            evolution_info.mutate[j] = static_cast<std::int16_t>(g_gene_bank[j].mutate);
         }
 
-        for (int j = 0; j < sizeof(esave_info.future) / sizeof(std::int16_t); j++)  // NOLINT(modernize-loop-convert)
+        for (int j = 0; j < sizeof(evolution_info.future) / sizeof(std::int16_t); j++)  // NOLINT(modernize-loop-convert)
         {
-            esave_info.future[j] = 0;
+            evolution_info.future[j] = 0;
         }
 
-        decode_evolver_info(&esave_info, 0);
+        decode_evolver_info(&evolution_info, 0);
         // evolution info block, 006
-        save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
-        if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
+        save_info.tot_extend_len += extend_blk_len(sizeof(evolution_info));
+        if (!put_extend_blk(6, sizeof(evolution_info), (char *) &evolution_info))
         {
             goto oops;
         }
@@ -641,21 +641,21 @@ bool encoder()
     // Extended parameters block 007
     if (g_std_calc_mode == 'o')
     {
-        OrbitsInfo osave_info{};
-        osave_info.oxmin     = g_orbit_corner_min_x;
-        osave_info.oxmax     = g_orbit_corner_max_x;
-        osave_info.oymin     = g_orbit_corner_min_y;
-        osave_info.oymax     = g_orbit_corner_max_y;
-        osave_info.ox3rd     = g_orbit_corner_3_x;
-        osave_info.oy3rd     = g_orbit_corner_3_y;
-        osave_info.keep_scrn_coords = static_cast<std::int16_t>(g_keep_screen_coords);
-        osave_info.drawmode  = g_draw_mode;
+        OrbitsInfo orbits_info{};
+        orbits_info.oxmin     = g_orbit_corner_min_x;
+        orbits_info.oxmax     = g_orbit_corner_max_x;
+        orbits_info.oymin     = g_orbit_corner_min_y;
+        orbits_info.oymax     = g_orbit_corner_max_y;
+        orbits_info.ox3rd     = g_orbit_corner_3_x;
+        orbits_info.oy3rd     = g_orbit_corner_3_y;
+        orbits_info.keep_scrn_coords = static_cast<std::int16_t>(g_keep_screen_coords);
+        orbits_info.drawmode  = g_draw_mode;
 
         // some big-endian logic for the doubles needed here
-        decode_orbits_info(&osave_info, 0);
+        decode_orbits_info(&orbits_info, 0);
         // orbits info block, 007
-        save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
-        if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
+        save_info.tot_extend_len += extend_blk_len(sizeof(orbits_info));
+        if (!put_extend_blk(7, sizeof(orbits_info), (char *) &orbits_info))
         {
             goto oops;
         }
@@ -686,16 +686,16 @@ oops:
 
 // TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
 // shift IBM colors to GIF
-static int shift_write(Byte const *color, int numcolors)
+static int shift_write(Byte const *color, int num_colors)
 {
-    for (int i = 0; i < numcolors; i++)
+    for (int i = 0; i < num_colors; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            Byte thiscolor = color[3 * i + j];
-            thiscolor = (Byte)(thiscolor << 2);
-            thiscolor = (Byte)(thiscolor + (Byte)(thiscolor >> 6));
-            if (std::fputc(thiscolor, s_outfile) != (int) thiscolor)
+            Byte this_color = color[3 * i + j];
+            this_color = (Byte)(this_color << 2);
+            this_color = (Byte)(this_color + (Byte)(this_color >> 6));
+            if (std::fputc(this_color, s_outfile) != (int) this_color)
             {
                 return 0;
             }
@@ -704,9 +704,9 @@ static int shift_write(Byte const *color, int numcolors)
     return 1;
 }
 
-static int extend_blk_len(int datalen)
+static int extend_blk_len(int data_len)
 {
-    return datalen + (datalen + 254) / 255 + 15;
+    return data_len + (data_len + 254) / 255 + 15;
     // data   +     1.per.block   + 14 for id + 1 for null at end
 }
 
@@ -742,32 +742,32 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
 
 static int store_item_name(char const *name)
 {
-    FormulaInfo fsave_info{};
-    std::strncpy(fsave_info.form_name, name, std::size(fsave_info.form_name));
+    FormulaInfo formula_info{};
+    std::strncpy(formula_info.form_name, name, std::size(formula_info.form_name));
     if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
-        fsave_info.uses_p1 = static_cast<std::int16_t>(g_frm_uses_p1);
-        fsave_info.uses_p2 = static_cast<std::int16_t>(g_frm_uses_p2);
-        fsave_info.uses_p3 = static_cast<std::int16_t>(g_frm_uses_p3);
-        fsave_info.uses_ismand = static_cast<std::int16_t>(g_frm_uses_ismand);
-        fsave_info.ismand = static_cast<std::int16_t>(g_is_mandelbrot);
-        fsave_info.uses_p4 = static_cast<std::int16_t>(g_frm_uses_p4);
-        fsave_info.uses_p5 = static_cast<std::int16_t>(g_frm_uses_p5);
+        formula_info.uses_p1 = static_cast<std::int16_t>(g_frm_uses_p1);
+        formula_info.uses_p2 = static_cast<std::int16_t>(g_frm_uses_p2);
+        formula_info.uses_p3 = static_cast<std::int16_t>(g_frm_uses_p3);
+        formula_info.uses_ismand = static_cast<std::int16_t>(g_frm_uses_ismand);
+        formula_info.ismand = static_cast<std::int16_t>(g_is_mandelbrot);
+        formula_info.uses_p4 = static_cast<std::int16_t>(g_frm_uses_p4);
+        formula_info.uses_p5 = static_cast<std::int16_t>(g_frm_uses_p5);
     }
     else
     {
-        fsave_info.uses_p1 = 0;
-        fsave_info.uses_p2 = 0;
-        fsave_info.uses_p3 = 0;
-        fsave_info.uses_ismand = 0;
-        fsave_info.ismand = 0;
-        fsave_info.uses_p4 = 0;
-        fsave_info.uses_p5 = 0;
+        formula_info.uses_p1 = 0;
+        formula_info.uses_p2 = 0;
+        formula_info.uses_p3 = 0;
+        formula_info.uses_ismand = 0;
+        formula_info.ismand = 0;
+        formula_info.uses_p4 = 0;
+        formula_info.uses_p5 = 0;
     }
 
     // formula/lsys/ifs info block, 003
-    put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
-    return extend_blk_len(sizeof(fsave_info));
+    put_extend_blk(3, sizeof(formula_info), (char *) &formula_info);
+    return extend_blk_len(sizeof(formula_info));
 }
 
 static void setup_save_info(FractalInfo *save_info)
@@ -941,8 +941,8 @@ static void setup_save_info(FractalInfo *save_info)
 
 enum
 {
-    BITSF = 12,
-    HSIZE = 5003            // 80% occupancy
+    BITS_F = 12,
+    H_SIZE = 5003            // 80% occupancy
 };
 
 // GIF Image compression - modified 'compress'
@@ -965,9 +965,9 @@ static void flush_char();
 static void cl_block();
 
 static int s_n_bits{};                     // number of bits/code
-static int s_max_bits{BITSF};               // user settable max # bits/code
+static int s_max_bits{BITS_F};               // user settable max # bits/code
 static int s_max_code{};                    // maximum code, given n_bits
-static int s_max_max_cde{(int) 1 << BITSF}; // should NEVER generate this code
+static int s_max_max_cde{(int) 1 << BITS_F}; // should NEVER generate this code
 
 constexpr int max_code(int n_bits)
 {
@@ -976,7 +976,7 @@ constexpr int max_code(int n_bits)
 
 Byte g_block[4096]{};
 
-static long s_h_tab[HSIZE]{};
+static long s_h_tab[H_SIZE]{};
 static unsigned short s_code_tab[10240]{};
 
 static int s_free_ent{};                  // first unused entry
@@ -1012,29 +1012,29 @@ static int s_cur_bits{};
 //
 static char s_accum[256]{};
 
-static bool compress(int rowlimit)
+static bool compress(int row_limit)
 {
     int color;
     int in_count = 0;
     bool interrupted = false;
 
-    int outcolor1 = 0;               // use these colors to show progress
-    int outcolor2 = 1;               // (this has nothing to do with GIF)
+    int out_color1 = 0;               // use these colors to show progress
+    int out_color2 = 1;               // (this has nothing to do with GIF)
 
     if (g_colors > 2)
     {
-        outcolor1 = 2;
-        outcolor2 = 3;
+        out_color1 = 2;
+        out_color2 = 3;
     }
     if (((++s_num_saves) & 1) == 0)
     {
         // reverse the colors on alt saves
-        int i = outcolor1;
-        outcolor1 = outcolor2;
-        outcolor2 = i;
+        int i = out_color1;
+        out_color1 = out_color2;
+        out_color2 = i;
     }
-    s_out_color_1s = outcolor1;
-    s_out_color_2s = outcolor2;
+    s_out_color_1s = out_color1;
+    s_out_color_2s = out_color2;
 
     // Set up the necessary values
     s_cur_accum = 0;
@@ -1049,33 +1049,33 @@ static bool compress(int rowlimit)
     s_free_ent = s_clear_code + 2;
 
     s_a_count = 0;
-    int hshift = 0;
-    for (long fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
+    int h_shift = 0;
+    for (long f_code = (long) H_SIZE;  f_code < 65536L; f_code *= 2L)
     {
-        hshift++;
+        h_shift++;
     }
-    hshift = 8 - hshift;                // set hash code range bound
+    h_shift = 8 - h_shift;                // set hash code range bound
 
-    std::memset(s_h_tab, 0xff, (unsigned)HSIZE*sizeof(long));
-    int hsize_reg = HSIZE;
+    std::memset(s_h_tab, 0xff, (unsigned)H_SIZE*sizeof(long));
+    int h_size_reg = H_SIZE;
 
     output((int)s_clear_code);
 
-    for (int rownum = 0; rownum < g_logical_screen_y_dots; rownum++)
+    for (int row_num = 0; row_num < g_logical_screen_y_dots; row_num++)
     {
         // scan through the dots
-        for (int ydot = rownum; ydot < rowlimit; ydot += g_logical_screen_y_dots)
+        for (int y_dot = row_num; y_dot < row_limit; y_dot += g_logical_screen_y_dots)
         {
-            for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++)
+            for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++)
             {
                 int disp{};
-                if (s_save_16bit == 0 || ydot < g_logical_screen_y_dots)
+                if (s_save_16bit == 0 || y_dot < g_logical_screen_y_dots)
                 {
-                    color = get_color(xdot, ydot);
+                    color = get_color(x_dot, y_dot);
                 }
                 else
                 {
-                    color = disk_read_pixel(xdot + g_logical_screen_x_offset, ydot + g_logical_screen_y_offset);
+                    color = disk_read_pixel(x_dot + g_logical_screen_x_offset, y_dot + g_logical_screen_y_offset);
                 }
                 if (in_count == 0)
                 {
@@ -1083,10 +1083,10 @@ static bool compress(int rowlimit)
                     ent = color;
                     continue;
                 }
-                long fcode = (long)(((long) color << s_max_bits) + ent);
-                int i = (((int)color << hshift) ^ ent);    // xor hashing
+                long f_code = (long)(((long) color << s_max_bits) + ent);
+                int i = (((int)color << h_shift) ^ ent);    // xor hashing
 
-                if (s_h_tab[i] == fcode)
+                if (s_h_tab[i] == f_code)
                 {
                     ent = s_code_tab[i];
                     continue;
@@ -1095,7 +1095,7 @@ static bool compress(int rowlimit)
                 {
                     goto nomatch;
                 }
-                disp = hsize_reg - i;           // secondary hash (after G. Knott)
+                disp = h_size_reg - i;           // secondary hash (after G. Knott)
                 if (i == 0)
                 {
                     disp = 1;
@@ -1103,10 +1103,10 @@ static bool compress(int rowlimit)
 probe:
                 if ((i -= disp) < 0)
                 {
-                    i += hsize_reg;
+                    i += h_size_reg;
                 }
 
-                if (s_h_tab[i] == fcode)
+                if (s_h_tab[i] == f_code)
                 {
                     ent = s_code_tab[i];
                     continue;
@@ -1122,7 +1122,7 @@ nomatch:
                 {
                     // code -> hashtable
                     s_code_tab[i] = (unsigned short)s_free_ent++;
-                    s_h_tab[i] = fcode;
+                    s_h_tab[i] = f_code;
                 }
                 else
                 {
@@ -1130,37 +1130,37 @@ nomatch:
                 }
             } // end for xdot
             if (! driver_diskp()       // supress this on disk-video
-                && ydot == rownum)
+                && y_dot == row_num)
             {
-                if ((ydot & 4) == 0)
+                if ((y_dot & 4) == 0)
                 {
-                    if (++outcolor1 >= g_colors)
+                    if (++out_color1 >= g_colors)
                     {
-                        outcolor1 = 0;
+                        out_color1 = 0;
                     }
-                    if (++outcolor2 >= g_colors)
+                    if (++out_color2 >= g_colors)
                     {
-                        outcolor2 = 0;
+                        out_color2 = 0;
                     }
                 }
                 for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
                 {
                     // display vert status bars
                     // (this is NOT GIF-related)
-                    g_put_color(i, ydot, get_color(i, ydot) ^ outcolor1);
-                    g_put_color(g_logical_screen_x_dots - 1 - i, ydot,
-                             get_color(g_logical_screen_x_dots - 1 - i, ydot) ^ outcolor2);
+                    g_put_color(i, y_dot, get_color(i, y_dot) ^ out_color1);
+                    g_put_color(g_logical_screen_x_dots - 1 - i, y_dot,
+                             get_color(g_logical_screen_x_dots - 1 - i, y_dot) ^ out_color2);
                 }
-                s_last_color_bar = ydot;
+                s_last_color_bar = y_dot;
             } // end if !driver_diskp()
-            int tempkey = driver_key_pressed();
-            if (tempkey && (tempkey != 's'))  // keyboard hit - bail out
+            int key = driver_key_pressed();
+            if (key && (key != 's'))  // keyboard hit - bail out
             {
                 interrupted = true;
-                rownum = g_logical_screen_y_dots;
+                row_num = g_logical_screen_y_dots;
                 break;
             }
-            if (tempkey == 's')
+            if (key == 's')
             {
                 driver_get_key();   // eat the keystroke
             }
@@ -1265,7 +1265,7 @@ static void output(int code)
 //
 static void cl_block()             // table clear for block compress
 {
-    std::memset(s_h_tab, 0xff, (unsigned)HSIZE*sizeof(long));
+    std::memset(s_h_tab, 0xff, (unsigned)H_SIZE*sizeof(long));
     s_free_ent = s_clear_code + 2;
     s_clear_flag = true;
     output((int)s_clear_code);
