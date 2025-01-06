@@ -25,7 +25,7 @@ namespace fs = std::filesystem;
 // (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)
 // attempts to extract directory and test for existence
 // (modes AT_CMD_LINE and SSTOOLS_INI)
-int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
+int merge_path_names(char *old_full_path, char const *new_filename, CmdFile mode)
 {
     char newfilename[FILE_MAX_PATH];
     std::strcpy(newfilename, fs::path(new_filename).make_preferred().string().c_str());
@@ -96,7 +96,7 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
     char dir1[FILE_MAX_DIR];
     char fname1[FILE_MAX_FNAME];
     char ext1[FILE_MAX_EXT];
-    split_path(oldfullpath, drive1, dir1, fname1, ext1);
+    split_path(old_full_path, drive1, dir1, fname1, ext1);
 
     bool const get_path = (mode == CmdFile::AT_CMD_LINE) || (mode == CmdFile::SSTOOLS_INI);
     if (get_path)
@@ -121,32 +121,32 @@ int merge_path_names(char *oldfullpath, char const *new_filename, CmdFile mode)
     bool isadir_error = false;
     if (!isadir && !isafile && get_path)
     {
-        make_drive_dir(oldfullpath, drive1, dir1);
-        int len = (int) std::strlen(oldfullpath);
+        make_drive_dir(old_full_path, drive1, dir1);
+        int len = (int) std::strlen(old_full_path);
         if (len > 0)
         {
             // strip trailing slash
-            char save = oldfullpath[len - 1];
+            char save = old_full_path[len - 1];
             if (save == SLASH_CH)
             {
-                oldfullpath[len-1] = 0;
+                old_full_path[len-1] = 0;
             }
-            if (!fs::exists(oldfullpath))
+            if (!fs::exists(old_full_path))
             {
                 isadir_error = true;
             }
-            oldfullpath[len-1] = save;
+            old_full_path[len-1] = save;
         }
     }
-    make_path(oldfullpath, drive1, dir1, fname1, ext1);
+    make_path(old_full_path, drive1, dir1, fname1, ext1);
     return isadir_error ? -1 : (isadir ? 1 : 0);
 }
 
-int merge_path_names(std::string &oldfullpath, char const *new_filename, CmdFile mode)
+int merge_path_names(std::string &old_full_path, char const *new_filename, CmdFile mode)
 {
     char buff[FILE_MAX_PATH];
-    std::strcpy(buff, oldfullpath.c_str());
+    std::strcpy(buff, old_full_path.c_str());
     int const result = merge_path_names(buff, new_filename, mode);
-    oldfullpath = buff;
+    old_full_path = buff;
     return result;
 }
