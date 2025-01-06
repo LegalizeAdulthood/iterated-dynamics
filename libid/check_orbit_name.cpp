@@ -12,40 +12,40 @@ enum
     MAX_FRACTALS = 25
 };
 
-static int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
+static int build_fractal_list(int fractals[], int *last_val, char const *name_ptr[])
 {
-    int numfractals = 0;
+    int num_fractals = 0;
     for (int i = 0; i < g_num_fractal_types; i++)
     {
         if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && *g_fractal_specific[i].name != '*')
         {
-            fractals[numfractals] = i;
+            fractals[num_fractals] = i;
             if (i == +g_new_orbit_type || i == +g_fractal_specific[+g_new_orbit_type].tofloat)
             {
-                *last_val = numfractals;
+                *last_val = num_fractals;
             }
-            nameptr[numfractals] = g_fractal_specific[i].name;
-            numfractals++;
-            if (numfractals >= MAX_FRACTALS)
+            name_ptr[num_fractals] = g_fractal_specific[i].name;
+            num_fractals++;
+            if (num_fractals >= MAX_FRACTALS)
             {
                 break;
             }
         }
     }
-    return numfractals;
+    return num_fractals;
 }
 
 bool check_orbit_name(char const *orbit_name)
 {
-    char const *nameptr[MAX_FRACTALS];
+    char const *name_ptr[MAX_FRACTALS];
     int fractals[MAX_FRACTALS];
     int last_val;
 
-    int numtypes = build_fractal_list(fractals, &last_val, nameptr);
+    int num_types = build_fractal_list(fractals, &last_val, name_ptr);
     bool bad = true;
-    for (int i = 0; i < numtypes; i++)
+    for (int i = 0; i < num_types; i++)
     {
-        if (std::strcmp(orbit_name, nameptr[i]) == 0)
+        if (std::strcmp(orbit_name, name_ptr[i]) == 0)
         {
             g_new_orbit_type = static_cast<FractalType>(fractals[i]);
             bad = false;
