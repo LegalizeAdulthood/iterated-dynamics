@@ -4,4 +4,4 @@
 
 #include <cstdio>
 
-int file_gets(char *buf, int maxlen, std::FILE *infile);
+int file_gets(char *buf, int max_len, std::FILE *infile);
