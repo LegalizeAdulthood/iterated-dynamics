@@ -220,14 +220,14 @@ FullScreenValuePredicate has_list(int list_len, int list_value_len, const char *
     {
         bool result{check_type(listener, value, 'l')};
 
-        if (value.uval.ch.llen != list_len)
+        if (value.uval.ch.list_len != list_len)
         {
-            *listener << "; expected list length " << list_len << ", got " << value.uval.ch.llen;
+            *listener << "; expected list length " << list_len << ", got " << value.uval.ch.list_len;
             result = false;
         }
         else
         {
-            *listener << "; has list length " << value.uval.ch.llen;
+            *listener << "; has list length " << value.uval.ch.list_len;
         }
 
         if (value.uval.ch.vlen != list_value_len)
@@ -352,7 +352,7 @@ protected:
         {
             static const char *yesno[] = {"no", "yes"};
             uvalues[index].type = 'l';
-            uvalues[index].uval.ch.llen = 2;
+            uvalues[index].uval.ch.list_len = 2;
             uvalues[index].uval.ch.vlen = 3;
             uvalues[index].uval.ch.list = yesno;
             uvalues[index].uval.ch.val = expected ? 1 : 0;

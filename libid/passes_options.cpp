@@ -57,7 +57,7 @@ pass_option_restart:
     //   choices[++k] = "Orbit pass shape (rect,line,func)";
     uvalues[k].type = 'l';
     uvalues[k].uval.ch.vlen = 5;
-    uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
+    uvalues[k].uval.ch.list_len = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
     uvalues[k].uval.ch.list = passcalcmodes;
     uvalues[k].uval.ch.val = (g_draw_mode == 'r') ? 0
                              : (g_draw_mode == 'l') ? 1

@@ -13,17 +13,17 @@ struct FullScreenValues
               // 'L' for long
     union
     {
-        double dval;        // when type 'd' or 'f'
-        int    ival;        // when type is 'i'
-        long   Lval;        // when type is 'L'
-        char   sval[16];    // when type is 's'
-        char  *sbuf;        // when type is 0x100+n
-        struct              // when type is 'l'
+        double dval;   // when type 'd' or 'f'
+        int ival;      // when type is 'i'
+        long Lval;     // when type is 'L'
+        char sval[16]; // when type is 's'
+        char *sbuf;    // when type is 0x100+n
+        struct         // when type is 'l'
         {
-            int  val;       // selected choice
-            int  vlen;      // char len per choice
-            char const **list;  // list of values
-            int  llen;      // number of values
+            int val;           // selected choice
+            int vlen;          // char len per choice
+            char const **list; // list of values
+            int list_len;      // number of values
         } ch;
     } uval;
 };

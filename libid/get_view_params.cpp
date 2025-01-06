@@ -105,7 +105,7 @@ get_view_restart:
         choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
         values[k].type = 'l';
         values[k].uval.ch.vlen = 7;
-        values[k].uval.ch.llen = sizeof(scroll_types)/sizeof(*scroll_types);
+        values[k].uval.ch.list_len = sizeof(scroll_types)/sizeof(*scroll_types);
         values[k].uval.ch.list = scroll_types;
         values[k].uval.ch.val = g_z_scroll ? 1 : 0;
     }

@@ -264,7 +264,7 @@ int full_screen_prompt(        // full-screen prompting routine
             values[i].type = 'l';
             values[i].uval.ch.vlen = 3;
             values[i].uval.ch.list = noyes;
-            values[i].uval.ch.llen = 2;
+            values[i].uval.ch.list_len = 2;
         }
         int j = (int) std::strlen(prompts[i]);
         if (values[i].type == '*')
@@ -605,10 +605,10 @@ int full_screen_prompt(        // full-screen prompting routine
         {
             i = input_field_list(
                     C_PROMPT_CHOOSE, buf, cur_len,
-                    values[cur_choice].uval.ch.list, values[cur_choice].uval.ch.llen,
+                    values[cur_choice].uval.ch.list, values[cur_choice].uval.ch.list_len,
                     prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
             int j;
-            for (j = 0; j < values[cur_choice].uval.ch.llen; ++j)
+            for (j = 0; j < values[cur_choice].uval.ch.list_len; ++j)
             {
                 if (std::strcmp(buf, values[cur_choice].uval.ch.list[j]) == 0)
                 {

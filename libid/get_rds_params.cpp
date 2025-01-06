@@ -50,7 +50,7 @@ int get_rds_params()
         values[k].type = 'l';
         values[k].uval.ch.list = stereo_bars;
         values[k].uval.ch.vlen = 6;
-        values[k].uval.ch.llen = 3;
+        values[k].uval.ch.list_len = 3;
         values[k++].uval.ch.val  = g_calibrate;
 
         values[k].uval.ch.val = g_image_map ? 1 : 0;

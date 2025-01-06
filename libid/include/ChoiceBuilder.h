@@ -82,7 +82,7 @@ public:
         check_build_overflow();
         choices[m_current_build] = choice;
         values[m_current_build].type = 'l';
-        values[m_current_build].uval.ch.llen = list_len;
+        values[m_current_build].uval.ch.list_len = list_len;
         values[m_current_build].uval.ch.vlen = list_value_len;
         values[m_current_build].uval.ch.list = list;
         values[m_current_build].uval.ch.val = value;

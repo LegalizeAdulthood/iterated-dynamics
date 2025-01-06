@@ -629,7 +629,7 @@ gfp_top:
     {
         param_values[prompt_num].type = 'l';
         param_values[prompt_num].uval.ch.val  = +g_trig_index[i];
-        param_values[prompt_num].uval.ch.llen = g_num_trig_functions;
+        param_values[prompt_num].uval.ch.list_len = g_num_trig_functions;
         param_values[prompt_num].uval.ch.vlen = 6;
         param_values[prompt_num].uval.ch.list = trig_name_ptr.data();
         choices[prompt_num++] = trg[i];
@@ -647,7 +647,7 @@ gfp_top:
     {
         param_values[prompt_num].type = 'l';
         param_values[prompt_num].uval.ch.val  = static_cast<int>(g_bail_out_test);
-        param_values[prompt_num].uval.ch.llen = 7;
+        param_values[prompt_num].uval.ch.list_len = 7;
         param_values[prompt_num].uval.ch.vlen = 6;
         param_values[prompt_num].uval.ch.list = bail_name_ptr;
         choices[prompt_num++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
@@ -727,7 +727,7 @@ gfp_top:
 
         param_values[prompt_num].type = 'l';
         param_values[prompt_num].uval.ch.val  = static_cast<int>(g_julibrot_3d_mode);
-        param_values[prompt_num].uval.ch.llen = 4;
+        param_values[prompt_num].uval.ch.list_len = 4;
         param_values[prompt_num].uval.ch.vlen = 9;
         param_values[prompt_num].uval.ch.list = g_julibrot_3d_options;
         choices[prompt_num++] = "3D Mode";
@@ -761,7 +761,7 @@ gfp_top:
 #ifdef RANDOM_RUN
         paramvalues[promptnum].uval.ch.llen = 4;
 #else
-        param_values[prompt_num].uval.ch.llen = 3; // disable random run
+        param_values[prompt_num].uval.ch.list_len = 3; // disable random run
 #endif
         param_values[prompt_num++].uval.ch.val  = static_cast<int>(g_major_method);
 
@@ -769,7 +769,7 @@ gfp_top:
         param_values[prompt_num].type = 'l';
         param_values[prompt_num].uval.ch.list = s_jiim_left_right_names;
         param_values[prompt_num].uval.ch.vlen = 5;
-        param_values[prompt_num].uval.ch.llen = 2;
+        param_values[prompt_num].uval.ch.list_len = 2;
         param_values[prompt_num++].uval.ch.val  = static_cast<int>(g_inverse_julia_minor_method);
     }
 
