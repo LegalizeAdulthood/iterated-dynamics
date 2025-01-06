@@ -48,11 +48,11 @@ void fpu_cmplx_div(DComplex const *x, DComplex const *y, DComplex *z)
     }
     else
     {
-        const double yxmod = y->x / mod;
-        const double yymod = -y->y / mod;
+        const double y_x_mod = y->x / mod;
+        const double y_y_mod = -y->y / mod;
         // Need to compute into temporaries to avoid pointer aliasing
-        const double tx = x->x * yxmod - x->y * yymod;
-        const double ty = x->x * yymod + x->y * yxmod;
+        const double tx = x->x * y_x_mod - x->y * y_y_mod;
+        const double ty = x->x * y_y_mod + x->y * y_x_mod;
         z->x = tx;
         z->y = ty;
     }
