@@ -13,12 +13,9 @@ enum
 
 struct DirSearch
 {
-    std::string path;           // path and filespec
-    char attribute;             // File attributes wanted
-    int  ftime;                 // File creation time
-    int  fdate;                 // File creation date
-    long size;                  // File size in bytes
-    std::string filename;       // Filename and extension
+    std::string path;     // path and filespec
+    char attribute;       // File attributes wanted
+    std::string filename; // Filename and extension
 };
 
 extern DirSearch g_dta;
