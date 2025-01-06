@@ -73,9 +73,9 @@ int boundary_trace()
         return -1;
     }
 
-    int last_fillcolor_used = -1;
+    int last_fill_color_used = -1;
     g_got_status = StatusValues::BOUNDARY_TRACE;
-    int max_putline_length = 0; // reset max_putline_length
+    int max_put_line_length = 0; // reset max_putline_length
     for (int cur_row = g_i_y_start; cur_row <= g_i_y_stop; cur_row++)
     {
         g_reset_periodicity = true; // reset for a new row
@@ -220,12 +220,12 @@ int boundary_trace()
                                 {
                                     // fill the line to the left
                                     const int length = right - left + 1;
-                                    if (fill_color_used != last_fillcolor_used || length > max_putline_length)
+                                    if (fill_color_used != last_fill_color_used || length > max_put_line_length)
                                     {
                                         // only reset dstack if necessary
                                         std::memset(s_stack, fill_color_used, length);
-                                        last_fillcolor_used = fill_color_used;
-                                        max_putline_length = length;
+                                        last_fill_color_used = fill_color_used;
+                                        max_put_line_length = length;
                                     }
                                     sym_fill_line(g_row, left, right, s_stack);
                                 }
