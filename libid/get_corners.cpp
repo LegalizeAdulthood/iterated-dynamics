@@ -42,31 +42,31 @@ static int cmp_dbl(double old, double new_val)
 int get_corners()
 {
     ChoiceBuilder<11> builder;
-    char xprompt[] = "          X";
-    char yprompt[] = "          Y";
+    char x_prompt[] = "          X";
+    char y_prompt[] = "          Y";
     double x_ctr, y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
     double x_mag_factor, rotation, skew;
 
-    bool const ousemag = g_use_center_mag;
-    double oxxmin = g_x_min;
-    double oxxmax = g_x_max;
-    double oyymin = g_y_min;
-    double oyymax = g_y_max;
-    double oxx3rd = g_x_3rd;
-    double oyy3rd = g_y_3rd;
+    bool const old_use_center_mag = g_use_center_mag;
+    double old_x_min = g_x_min;
+    double old_x_max = g_x_max;
+    double old_y_min = g_y_min;
+    double old_y_max = g_y_max;
+    double old_x_3rd = g_x_3rd;
+    double old_y_3rd = g_y_3rd;
 
 gc_loop:
-    int cmag = g_use_center_mag ? 1 : 0;
+    int use_center_mag = g_use_center_mag ? 1 : 0;
     if (g_draw_mode == 'l')
     {
-        cmag = 0;
+        use_center_mag = 0;
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
 
     builder.reset();
     // 10 items
-    if (cmag)
+    if (use_center_mag)
     {
         // 8 items
         builder.double_number("Center X", x_ctr)
@@ -85,21 +85,21 @@ gc_loop:
         {
             // 6 items
             builder.comment("Left End Point")
-                .double_number(xprompt, g_x_min)
-                .double_number(yprompt, g_y_max)
+                .double_number(x_prompt, g_x_min)
+                .double_number(y_prompt, g_y_max)
                 .comment("Right End Point")
-                .double_number(xprompt, g_x_max)
-                .double_number(yprompt, g_y_min);
+                .double_number(x_prompt, g_x_max)
+                .double_number(y_prompt, g_y_min);
         }
         else
         {
             // 6 items
             builder.comment("Top-Left Corner")
-                .double_number(xprompt, g_x_min)
-                .double_number(yprompt, g_y_max)
+                .double_number(x_prompt, g_x_min)
+                .double_number(y_prompt, g_y_max)
                 .comment("Bottom-Right Corner")
-                .double_number(xprompt, g_x_max)
-                .double_number(yprompt, g_y_min);
+                .double_number(x_prompt, g_x_max)
+                .double_number(y_prompt, g_y_min);
             if (g_x_min == g_x_3rd && g_y_min == g_y_3rd)
             {
                 g_y_3rd = 0;
@@ -107,8 +107,8 @@ gc_loop:
             }
             // 4 items
             builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
-                .double_number(xprompt, g_x_3rd)
-                .double_number(yprompt, g_y_3rd)
+                .double_number(x_prompt, g_x_3rd)
+                .double_number(y_prompt, g_y_3rd)
                 .comment("Press F7 to switch to \"center-mag\" mode");
         }
     }
@@ -123,13 +123,13 @@ gc_loop:
 
     if (prompt_ret < 0)
     {
-        g_use_center_mag = ousemag;
-        g_x_min = oxxmin;
-        g_x_max = oxxmax;
-        g_y_min = oyymin;
-        g_y_max = oyymax;
-        g_x_3rd = oxx3rd;
-        g_y_3rd = oyy3rd;
+        g_use_center_mag = old_use_center_mag;
+        g_x_min = old_x_min;
+        g_x_max = old_x_max;
+        g_y_min = old_y_min;
+        g_y_max = old_y_max;
+        g_x_3rd = old_x_3rd;
+        g_y_3rd = old_y_3rd;
         return -1;
     }
 
@@ -153,7 +153,7 @@ gc_loop:
         goto gc_loop;
     }
 
-    if (cmag)
+    if (use_center_mag)
     {
         const double new_x_center = builder.read_double_number();
         const double new_y_center = builder.read_double_number();
@@ -226,16 +226,16 @@ gc_loop:
         goto gc_loop;
     }
 
-    if (!cmp_dbl(oxxmin, g_x_min) && !cmp_dbl(oxxmax, g_x_max) && !cmp_dbl(oyymin, g_y_min) &&
-            !cmp_dbl(oyymax, g_y_max) && !cmp_dbl(oxx3rd, g_x_3rd) && !cmp_dbl(oyy3rd, g_y_3rd))
+    if (!cmp_dbl(old_x_min, g_x_min) && !cmp_dbl(old_x_max, g_x_max) && !cmp_dbl(old_y_min, g_y_min) &&
+            !cmp_dbl(old_y_max, g_y_max) && !cmp_dbl(old_x_3rd, g_x_3rd) && !cmp_dbl(old_y_3rd, g_y_3rd))
     {
         // no change, restore values to avoid drift
-        g_x_min = oxxmin;
-        g_x_max = oxxmax;
-        g_y_min = oyymin;
-        g_y_max = oyymax;
-        g_x_3rd = oxx3rd;
-        g_y_3rd = oyy3rd;
+        g_x_min = old_x_min;
+        g_x_max = old_x_max;
+        g_y_min = old_y_min;
+        g_y_max = old_y_max;
+        g_x_3rd = old_x_3rd;
+        g_y_3rd = old_y_3rd;
         return 0;
     }
 
@@ -245,21 +245,21 @@ gc_loop:
 int get_screen_corners()
 {
     ChoiceBuilder<15> builder;
-    char xprompt[] = "          X";
-    char yprompt[] = "          Y";
+    char x_prompt[] = "          X";
+    char y_prompt[] = "          Y";
     int prompt_ret;
     double x_ctr, y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
     double x_mag_factor, rotation, skew;
 
-    bool const ousemag = g_use_center_mag;
+    bool const old_use_center_mag = g_use_center_mag;
 
-    double svxxmin = g_x_min;  // save these for later since cvtcorners modifies them
-    double svxxmax = g_x_max;  // and we need to set them for cvtcentermag to work
-    double svxx3rd = g_x_3rd;
-    double svyymin = g_y_min;
-    double svyymax = g_y_max;
-    double svyy3rd = g_y_3rd;
+    double save_x_min = g_x_min;  // save these for later since cvtcorners modifies them
+    double save_x_max = g_x_max;  // and we need to set them for cvtcentermag to work
+    double save_x_3rd = g_x_3rd;
+    double save_y_min = g_y_min;
+    double save_y_max = g_y_max;
+    double save_y_3rd = g_y_3rd;
 
     if (!g_set_orbit_corners && !g_keep_screen_coords)
     {
@@ -271,12 +271,12 @@ int get_screen_corners()
         g_orbit_corner_3_y = g_y_3rd;
     }
 
-    double oxxmin = g_orbit_corner_min_x;
-    double oxxmax = g_orbit_corner_max_x;
-    double oyymin = g_orbit_corner_min_y;
-    double oyymax = g_orbit_corner_max_y;
-    double oxx3rd = g_orbit_corner_3_x;
-    double oyy3rd = g_orbit_corner_3_y;
+    double old_x_min = g_orbit_corner_min_x;
+    double old_x_max = g_orbit_corner_max_x;
+    double old_y_min = g_orbit_corner_min_y;
+    double old_y_max = g_orbit_corner_max_y;
+    double old_x_3rd = g_orbit_corner_3_x;
+    double old_y_3rd = g_orbit_corner_3_y;
 
     g_x_min = g_orbit_corner_min_x;
     g_x_max = g_orbit_corner_max_x;
@@ -286,11 +286,11 @@ int get_screen_corners()
     g_y_3rd = g_orbit_corner_3_y;
 
 gsc_loop:
-    int cmag = g_use_center_mag ? 1 : 0;
+    int use_center_mag = g_use_center_mag ? 1 : 0;
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
 
     builder.reset();
-    if (cmag)
+    if (use_center_mag)
     {
         builder.double_number("Center X", x_ctr)
             .double_number("Center Y", y_ctr)
@@ -304,19 +304,19 @@ gsc_loop:
     else
     {
         builder.comment("Top-Left Corner")
-            .double_number(xprompt, g_orbit_corner_min_x)
-            .double_number(yprompt, g_orbit_corner_max_y)
+            .double_number(x_prompt, g_orbit_corner_min_x)
+            .double_number(y_prompt, g_orbit_corner_max_y)
             .comment("Bottom-Right Corner")
-            .double_number(xprompt, g_orbit_corner_max_x)
-            .double_number(yprompt, g_orbit_corner_min_y);
+            .double_number(x_prompt, g_orbit_corner_max_x)
+            .double_number(y_prompt, g_orbit_corner_min_y);
         if (g_orbit_corner_min_x == g_orbit_corner_3_x && g_orbit_corner_min_y == g_orbit_corner_3_y)
         {
             g_orbit_corner_3_y = 0;
             g_orbit_corner_3_x = g_orbit_corner_3_y;
         }
         builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
-            .double_number(xprompt, g_orbit_corner_3_x)
-            .double_number(yprompt, g_orbit_corner_3_y)
+            .double_number(x_prompt, g_orbit_corner_3_x)
+            .double_number(y_prompt, g_orbit_corner_3_y)
             .comment("Press F7 to switch to \"center-mag\" mode");
     }
     builder.comment("Press F4 to reset to type default values");
@@ -328,20 +328,20 @@ gsc_loop:
 
     if (prompt_ret < 0)
     {
-        g_use_center_mag = ousemag;
-        g_orbit_corner_min_x = oxxmin;
-        g_orbit_corner_max_x = oxxmax;
-        g_orbit_corner_min_y = oyymin;
-        g_orbit_corner_max_y = oyymax;
-        g_orbit_corner_3_x = oxx3rd;
-        g_orbit_corner_3_y = oyy3rd;
+        g_use_center_mag = old_use_center_mag;
+        g_orbit_corner_min_x = old_x_min;
+        g_orbit_corner_max_x = old_x_max;
+        g_orbit_corner_min_y = old_y_min;
+        g_orbit_corner_max_y = old_y_max;
+        g_orbit_corner_3_x = old_x_3rd;
+        g_orbit_corner_3_y = old_y_3rd;
         // restore corners
-        g_x_min = svxxmin;
-        g_x_max = svxxmax;
-        g_y_min = svyymin;
-        g_y_max = svyymax;
-        g_x_3rd = svxx3rd;
-        g_y_3rd = svyy3rd;
+        g_x_min = save_x_min;
+        g_x_max = save_x_max;
+        g_y_min = save_y_min;
+        g_y_max = save_y_max;
+        g_x_3rd = save_x_3rd;
+        g_y_3rd = save_y_3rd;
         return -1;
     }
 
@@ -374,7 +374,7 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (cmag)
+    if (use_center_mag)
     {
         const double new_x_center = builder.read_double_number();
         const double new_y_center = builder.read_double_number();
@@ -442,23 +442,23 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (!cmp_dbl(oxxmin, g_orbit_corner_min_x) && !cmp_dbl(oxxmax, g_orbit_corner_max_x) && !cmp_dbl(oyymin, g_orbit_corner_min_y) &&
-            !cmp_dbl(oyymax, g_orbit_corner_max_y) && !cmp_dbl(oxx3rd, g_orbit_corner_3_x) && !cmp_dbl(oyy3rd, g_orbit_corner_3_y))
+    if (!cmp_dbl(old_x_min, g_orbit_corner_min_x) && !cmp_dbl(old_x_max, g_orbit_corner_max_x) && !cmp_dbl(old_y_min, g_orbit_corner_min_y) &&
+            !cmp_dbl(old_y_max, g_orbit_corner_max_y) && !cmp_dbl(old_x_3rd, g_orbit_corner_3_x) && !cmp_dbl(old_y_3rd, g_orbit_corner_3_y))
     {
         // no change, restore values to avoid drift
-        g_orbit_corner_min_x = oxxmin;
-        g_orbit_corner_max_x = oxxmax;
-        g_orbit_corner_min_y = oyymin;
-        g_orbit_corner_max_y = oyymax;
-        g_orbit_corner_3_x = oxx3rd;
-        g_orbit_corner_3_y = oyy3rd;
+        g_orbit_corner_min_x = old_x_min;
+        g_orbit_corner_max_x = old_x_max;
+        g_orbit_corner_min_y = old_y_min;
+        g_orbit_corner_max_y = old_y_max;
+        g_orbit_corner_3_x = old_x_3rd;
+        g_orbit_corner_3_y = old_y_3rd;
         // restore corners
-        g_x_min = svxxmin;
-        g_x_max = svxxmax;
-        g_y_min = svyymin;
-        g_y_max = svyymax;
-        g_x_3rd = svxx3rd;
-        g_y_3rd = svyy3rd;
+        g_x_min = save_x_min;
+        g_x_max = save_x_max;
+        g_y_min = save_y_min;
+        g_y_max = save_y_max;
+        g_x_3rd = save_x_3rd;
+        g_y_3rd = save_y_3rd;
         return 0;
     }
     else
@@ -466,12 +466,12 @@ gsc_loop:
         g_set_orbit_corners = true;
         g_keep_screen_coords = true;
         // restore corners
-        g_x_min = svxxmin;
-        g_x_max = svxxmax;
-        g_y_min = svyymin;
-        g_y_max = svyymax;
-        g_x_3rd = svxx3rd;
-        g_y_3rd = svyy3rd;
+        g_x_min = save_x_min;
+        g_x_max = save_x_max;
+        g_y_min = save_y_min;
+        g_y_max = save_y_max;
+        g_x_3rd = save_x_3rd;
+        g_y_3rd = save_y_3rd;
         return 1;
     }
 }
