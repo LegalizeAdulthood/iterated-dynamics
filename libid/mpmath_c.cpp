@@ -42,7 +42,7 @@ bool g_log_map_calculate{};
 MP *mp_abs(MP x)
 {
     s_ans = x;
-    s_ans.Exp &= 0x7fff;
+    s_ans.exp &= 0x7fff;
     return &s_ans;
 }
 
@@ -52,7 +52,7 @@ MPC mpc_sqr(MPC x)
 
     z.x = *mp_sub(*mp_mul(x.x, x.x), *mp_mul(x.y, x.y));
     z.y = *mp_mul(x.x, x.y);
-    z.y.Exp++;
+    z.y.exp++;
     return z;
 }
 
@@ -68,7 +68,7 @@ MPC mpc_mul(MPC x, MPC y)
 MPC mpc_div(MPC x, MPC y)
 {
     MP mod = mpc_mod(y);
-    y.y.Exp ^= 0x8000;
+    y.y.exp ^= 0x8000;
     y.x = *mp_div(y.x, mod);
     y.y = *mp_div(y.y, mod);
     return mpc_mul(x, y);
@@ -110,7 +110,7 @@ MPC mpc_pow(MPC x, int exp)
     {
         zz.x = *mp_sub(*mp_mul(x.x, x.x), *mp_mul(x.y, x.y));
         zz.y = *mp_mul(x.x, x.y);
-        zz.y.Exp++;
+        zz.y.exp++;
         x = zz;
         if (exp & 1)
         {

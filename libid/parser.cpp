@@ -771,8 +771,8 @@ static void l_stk_srand()
 
 static void m_stk_srand()
 {
-    g_arg1->l.x = g_arg1->m.x.Mant ^ (long)g_arg1->m.x.Exp;
-    g_arg1->l.y = g_arg1->m.y.Mant ^ (long)g_arg1->m.y.Exp;
+    g_arg1->l.x = g_arg1->m.x.mant ^ (long)g_arg1->m.x.exp;
+    g_arg1->l.y = g_arg1->m.y.mant ^ (long)g_arg1->m.y.exp;
     set_random();
     m_random();
     g_arg1->m = s_vars[7].a.m;
@@ -847,13 +847,13 @@ void d_stk_abs()
 
 void m_stk_abs()
 {
-    if (g_arg1->m.x.Exp < 0)
+    if (g_arg1->m.x.exp < 0)
     {
-        g_arg1->m.x.Exp = -g_arg1->m.x.Exp;
+        g_arg1->m.x.exp = -g_arg1->m.x.exp;
     }
-    if (g_arg1->m.y.Exp < 0)
+    if (g_arg1->m.y.exp < 0)
     {
-        g_arg1->m.y.Exp = -g_arg1->m.y.Exp;
+        g_arg1->m.y.exp = -g_arg1->m.y.exp;
     }
 }
 
@@ -878,11 +878,11 @@ void m_stk_sqr()
     LastSqr.m.x = *mp_mul(g_arg1->m.x, g_arg1->m.x);
     LastSqr.m.y = *mp_mul(g_arg1->m.y, g_arg1->m.y);
     g_arg1->m.y = *mp_mul(g_arg1->m.x, g_arg1->m.y);
-    g_arg1->m.y.Exp++;
+    g_arg1->m.y.exp++;
     g_arg1->m.x = *mp_sub(LastSqr.m.x, LastSqr.m.y);
     LastSqr.m.x = *mp_add(LastSqr.m.x, LastSqr.m.y);
-    LastSqr.m.y.Exp = 0;
-    LastSqr.m.y.Mant = 0;
+    LastSqr.m.y.exp = 0;
+    LastSqr.m.y.mant = 0;
 }
 
 void l_stk_sqr()
@@ -948,7 +948,7 @@ void d_stk_conj()
 
 void m_stk_conj()
 {
-    g_arg1->m.y.Exp ^= 0x8000;
+    g_arg1->m.y.exp ^= 0x8000;
 }
 
 void l_stk_conj()
@@ -1054,10 +1054,10 @@ void d_stk_zero()
 
 void m_stk_zero()
 {
-    g_arg1->m.x.Exp = 0;
-    g_arg1->m.x.Mant = 0;
-    g_arg1->m.y.Exp = 0;
-    g_arg1->m.y.Mant = 0;
+    g_arg1->m.x.exp = 0;
+    g_arg1->m.x.mant = 0;
+    g_arg1->m.y.exp = 0;
+    g_arg1->m.y.mant = 0;
 }
 
 void l_stk_zero()
@@ -1090,8 +1090,8 @@ static void d_stk_real()
 
 static void m_stk_real()
 {
-    g_arg1->m.y.Exp = 0;
-    g_arg1->m.y.Mant = 0;
+    g_arg1->m.y.exp = 0;
+    g_arg1->m.y.mant = 0;
 }
 
 static void l_stk_real()
@@ -1108,8 +1108,8 @@ static void d_stk_imag()
 static void m_stk_imag()
 {
     g_arg1->m.x = g_arg1->m.y;
-    g_arg1->m.y.Exp = 0;
-    g_arg1->m.y.Mant = 0;
+    g_arg1->m.y.exp = 0;
+    g_arg1->m.y.mant = 0;
 }
 
 static void l_stk_imag()
@@ -1126,8 +1126,8 @@ static void d_stk_neg()
 
 static void m_stk_neg()
 {
-    g_arg1->m.x.Exp ^= 0x8000;
-    g_arg1->m.y.Exp ^= 0x8000;
+    g_arg1->m.x.exp ^= 0x8000;
+    g_arg1->m.y.exp ^= 0x8000;
 }
 
 static void l_stk_neg()
@@ -1194,8 +1194,8 @@ static void d_stk_mod()
 static void m_stk_mod()
 {
     g_arg1->m.x = mpc_mod(g_arg1->m);
-    g_arg1->m.y.Exp = 0;
-    g_arg1->m.y.Mant = 0;
+    g_arg1->m.y.exp = 0;
+    g_arg1->m.y.mant = 0;
 }
 
 static void l_stk_mod()
@@ -1489,14 +1489,14 @@ void d_stk_recip()
 void m_stk_recip()
 {
     MP mod = *mp_add(*mp_mul(g_arg1->m.x, g_arg1->m.x), *mp_mul(g_arg1->m.y, g_arg1->m.y));
-    if (mod.Mant == 0L)
+    if (mod.mant == 0L)
     {
         g_overflow = true;
         return;
     }
     g_arg1->m.x = *mp_div(g_arg1->m.x, mod);
     g_arg1->m.y = *mp_div(g_arg1->m.y, mod);
-    g_arg1->m.y.Exp ^= 0x8000;
+    g_arg1->m.y.exp ^= 0x8000;
 }
 
 void l_stk_recip()
@@ -1766,8 +1766,8 @@ static void d_stk_lt()
 static void m_stk_lt()
 {
     g_arg2->m.x = *fg_to_mp((long)(mp_cmp(g_arg2->m.x, g_arg1->m.x) == -1), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1791,8 +1791,8 @@ static void d_stk_gt()
 static void m_stk_gt()
 {
     g_arg2->m.x = *fg_to_mp((long)(mp_cmp(g_arg2->m.x, g_arg1->m.x) == 1), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1817,8 +1817,8 @@ static void m_stk_lte()
 {
     int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp == -1 || comp == 0), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1843,8 +1843,8 @@ static void m_stk_gte()
 {
     int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp == 1 || comp == 0), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1869,8 +1869,8 @@ static void m_stk_eq()
 {
     int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp == 0), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1895,8 +1895,8 @@ static void m_stk_ne()
 {
     int comp = mp_cmp(g_arg2->m.x, g_arg1->m.x);
     g_arg2->m.x = *fg_to_mp((long)(comp != 0), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1919,9 +1919,9 @@ static void d_stk_or()
 
 static void m_stk_or()
 {
-    g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.Mant || g_arg1->m.x.Mant), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.mant || g_arg1->m.x.mant), 0);
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -1944,9 +1944,9 @@ static void d_stk_and()
 
 static void m_stk_and()
 {
-    g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.Mant && g_arg1->m.x.Mant), 0);
-    g_arg2->m.y.Exp = 0;
-    g_arg2->m.y.Mant = 0;
+    g_arg2->m.x = *fg_to_mp((long)(g_arg2->m.x.mant && g_arg1->m.x.mant), 0);
+    g_arg2->m.y.exp = 0;
+    g_arg2->m.y.mant = 0;
     g_arg1--;
     g_arg2--;
 }
@@ -2057,7 +2057,7 @@ static void d_stk_jump_on_false()
 
 static void m_stk_jump_on_false()
 {
-    if (g_arg1->m.x.Mant == 0)
+    if (g_arg1->m.x.mant == 0)
     {
         stk_jump();
     }
@@ -2093,7 +2093,7 @@ static void d_stk_jump_on_true()
 
 static void m_stk_jump_on_true()
 {
-    if (g_arg1->m.x.Mant)
+    if (g_arg1->m.x.mant)
     {
         stk_jump();
     }
@@ -2222,10 +2222,10 @@ static ConstArg *is_const(char const *Str, int Len)
     switch (s_math_type)
     {
     case MathType::MPC:
-        s_vars[g_variable_index].a.m.x.Exp = 0;
-        s_vars[g_variable_index].a.m.x.Mant = 0;
-        s_vars[g_variable_index].a.m.y.Exp = 0;
-        s_vars[g_variable_index].a.m.y.Mant = 0;
+        s_vars[g_variable_index].a.m.x.exp = 0;
+        s_vars[g_variable_index].a.m.x.mant = 0;
+        s_vars[g_variable_index].a.m.y.exp = 0;
+        s_vars[g_variable_index].a.m.y.mant = 0;
         break;
     case MathType::LONG:
         s_vars[g_variable_index].a.l.y = 0;
@@ -2949,7 +2949,7 @@ int formula()
     case MathType::MPC:
         g_new_z = mpc_to_cmplx(s_vars[3].a.m);
         g_old_z = g_new_z;
-        return g_arg1->m.x.Exp == 0 && g_arg1->m.x.Mant == 0;
+        return g_arg1->m.x.exp == 0 && g_arg1->m.x.mant == 0;
     case MathType::LONG:
         g_l_new_z = s_vars[3].a.l;
         g_l_old_z = g_l_new_z;
@@ -3001,10 +3001,10 @@ int form_per_pixel()
         }
         else
         {
-            s_vars[9].a.m.x.Exp = 0;
-            s_vars[9].a.m.x.Mant = 0;
-            s_vars[9].a.m.y.Exp = 0;
-            s_vars[9].a.m.y.Mant = 0;
+            s_vars[9].a.m.x.exp = 0;
+            s_vars[9].a.m.x.mant = 0;
+            s_vars[9].a.m.y.exp = 0;
+            s_vars[9].a.m.y.mant = 0;
         }
         s_vars[10].a.m = cmplx_to_mpc(s_vars[10].a.d);
         break;

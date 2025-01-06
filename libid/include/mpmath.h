@@ -15,8 +15,8 @@
 
 struct MP
 {
-    std::int16_t Exp;
-    std::uint32_t Mant;
+    std::int16_t exp;
+    std::uint32_t mant;
 };
 
 struct MPC

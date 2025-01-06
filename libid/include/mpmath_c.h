@@ -18,7 +18,7 @@ MP *fg_to_mp(long, int);// Convert fudged to type MP
 
 inline MP *mp_sub(MP x, MP y)
 {
-    y.Exp ^= 0x8000;
+    y.exp ^= 0x8000;
     return mp_add(x, y);
 }
 
