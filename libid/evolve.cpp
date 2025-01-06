@@ -52,11 +52,11 @@ struct ParamHistory
     double invert0;
     double invert1;
     double invert2;
-    Byte trigndx0;
-    Byte trigndx1;
-    Byte trigndx2;
-    Byte trigndx3;
-    Bailout bailoutest;
+    Byte trig_index0;
+    Byte trig_index1;
+    Byte trig_index2;
+    Byte trig_index3;
+    Bailout bail_out_test;
 };
 
 GeneBase g_gene_bank[NUM_GENES];
@@ -101,7 +101,7 @@ char g_evolve_new_discrete_y_parameter_offset;
 
 int g_evolve_param_box_count;
 
-static int s_ecount_box[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
+static int s_evol_count_box[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 static std::vector<int> s_param_box_x;
 static std::vector<int> s_param_box_y;
 static std::vector<int> s_param_box_values;
@@ -111,15 +111,15 @@ static std::vector<int> s_image_box_y;
 static std::vector<int> s_image_box_values;
 static ParamHistory s_old_history{};
 
-static void vary_dbl(GeneBase gene[], int randval, int i);
-static int vary_int(int randvalue, int limit, Variations mode);
-static int wrapped_positive_vary_int(int randvalue, int limit, Variations mode);
-static void vary_inside(GeneBase gene[], int randval, int i);
-static void vary_outside(GeneBase gene[], int randval, int i);
-static void vary_pwr2(GeneBase gene[], int randval, int i);
-static void vary_trig(GeneBase gene[], int randval, int i);
-static void vary_bo_test(GeneBase gene[], int randval, int i);
-static void vary_inv(GeneBase gene[], int randval, int i);
+static void vary_dbl(GeneBase gene[], int rand_val, int i);
+static int vary_int(int rand_value, int limit, Variations mode);
+static int wrapped_positive_vary_int(int rand_value, int limit, Variations mode);
+static void vary_inside(GeneBase gene[], int rand_val, int i);
+static void vary_outside(GeneBase gene[], int rand_val, int i);
+static void vary_pwr2(GeneBase gene[], int rand_val, int i);
+static void vary_trig(GeneBase gene[], int rand_val, int i);
+static void vary_bo_test(GeneBase gene[], int rand_val, int i);
+static void vary_inv(GeneBase gene[], int rand_val, int i);
 static bool explore_check();
 static void set_random(int);
 
@@ -221,11 +221,11 @@ void save_param_history()
     s_old_history.invert0 = g_inversion[0];
     s_old_history.invert1 = g_inversion[1];
     s_old_history.invert2 = g_inversion[2];
-    s_old_history.trigndx0 = static_cast<Byte>(g_trig_index[0]);
-    s_old_history.trigndx1 = static_cast<Byte>(g_trig_index[1]);
-    s_old_history.trigndx2 = static_cast<Byte>(g_trig_index[2]);
-    s_old_history.trigndx3 = static_cast<Byte>(g_trig_index[3]);
-    s_old_history.bailoutest = g_bail_out_test;
+    s_old_history.trig_index0 = static_cast<Byte>(g_trig_index[0]);
+    s_old_history.trig_index1 = static_cast<Byte>(g_trig_index[1]);
+    s_old_history.trig_index2 = static_cast<Byte>(g_trig_index[2]);
+    s_old_history.trig_index3 = static_cast<Byte>(g_trig_index[3]);
+    s_old_history.bail_out_test = g_bail_out_test;
 }
 
 void restore_param_history()
@@ -248,17 +248,17 @@ void restore_param_history()
     g_inversion[1] = s_old_history.invert1;
     g_inversion[2] = s_old_history.invert2;
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
-    g_trig_index[0] = static_cast<TrigFn>(s_old_history.trigndx0);
-    g_trig_index[1] = static_cast<TrigFn>(s_old_history.trigndx1);
-    g_trig_index[2] = static_cast<TrigFn>(s_old_history.trigndx2);
-    g_trig_index[3] = static_cast<TrigFn>(s_old_history.trigndx3);
-    g_bail_out_test = static_cast<Bailout>(s_old_history.bailoutest);
+    g_trig_index[0] = static_cast<TrigFn>(s_old_history.trig_index0);
+    g_trig_index[1] = static_cast<TrigFn>(s_old_history.trig_index1);
+    g_trig_index[2] = static_cast<TrigFn>(s_old_history.trig_index2);
+    g_trig_index[3] = static_cast<TrigFn>(s_old_history.trig_index3);
+    g_bail_out_test = static_cast<Bailout>(s_old_history.bail_out_test);
 }
 
 // routine to vary doubles
-void vary_dbl(GeneBase gene[], int randval, int i)
+void vary_dbl(GeneBase gene[], int rand_val, int i)
 {
-    int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
+    int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (gene[i].mutate)
     {
     default:
@@ -268,31 +268,31 @@ void vary_dbl(GeneBase gene[], int randval, int i)
         *(double *)gene[i].addr = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
         break;
     case Variations::Y:
-        *(double *)gene[i].addr = lclpy * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
+        *(double *)gene[i].addr = delta_y * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
         break;
     case Variations::X_PLUS_Y:
-        *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +(lclpy*g_evolve_dist_per_y)+ g_evolve_y_parameter_offset; //and x+y
+        *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +(delta_y*g_evolve_dist_per_y)+ g_evolve_y_parameter_offset; //and x+y
         break;
     case Variations::X_MINUS_Y:
-        *(double *)gene[i].addr = (g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset)-(lclpy*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
+        *(double *)gene[i].addr = (g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset)-(delta_y*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
         break;
     case Variations::RANDOM:
-        *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation;
+        *(double *)gene[i].addr += (((double)rand_val / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation;
         break;
     case Variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
-        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
-        *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius;
+        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
+        *(double *)gene[i].addr += ((((double)rand_val / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius;
     }
     break;
     }
 }
 
-static int vary_int(int randvalue, int limit, Variations mode)
+static int vary_int(int rand_value, int limit, Variations mode)
 {
     int ret = 0;
-    int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
+    int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (mode)
     {
     default:
@@ -302,22 +302,22 @@ static int vary_int(int randvalue, int limit, Variations mode)
         ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)%limit;
         break;
     case Variations::Y:
-        ret = (g_evolve_discrete_y_parameter_offset +lclpy)%limit;
+        ret = (g_evolve_discrete_y_parameter_offset +delta_y)%limit;
         break;
     case Variations::X_PLUS_Y:
-        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x+ g_evolve_discrete_y_parameter_offset +lclpy)%limit;
+        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x+ g_evolve_discrete_y_parameter_offset +delta_y)%limit;
         break;
     case Variations::X_MINUS_Y:
-        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)-(g_evolve_discrete_y_parameter_offset +lclpy)%limit;
+        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)-(g_evolve_discrete_y_parameter_offset +delta_y)%limit;
         break;
     case Variations::RANDOM:
-        ret = randvalue % limit;
+        ret = rand_value % limit;
         break;
     case Variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
-        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
-        ret = (int)((((randvalue / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius);
+        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
+        ret = (int)((((rand_value / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius);
         ret %= limit;
         break;
     }
@@ -325,9 +325,9 @@ static int vary_int(int randvalue, int limit, Variations mode)
     return ret;
 }
 
-int wrapped_positive_vary_int(int randvalue, int limit, Variations mode)
+int wrapped_positive_vary_int(int rand_value, int limit, Variations mode)
 {
-    int i = vary_int(randvalue, limit, mode);
+    int i = vary_int(rand_value, limit, mode);
     if (i < 0)
     {
         return limit + i;
@@ -338,25 +338,25 @@ int wrapped_positive_vary_int(int randvalue, int limit, Variations mode)
     }
 }
 
-void vary_inside(GeneBase gene[], int randval, int i)
+void vary_inside(GeneBase gene[], int rand_val, int i)
 {
     int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
     }
 }
 
-void vary_outside(GeneBase gene[], int randval, int i)
+void vary_outside(GeneBase gene[], int rand_val, int i)
 {
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];
     }
 }
 
-void vary_bo_test(GeneBase gene[], int randval, int i)
+void vary_bo_test(GeneBase gene[], int rand_val, int i)
 {
     int choices[7] =
     {
@@ -370,36 +370,36 @@ void vary_bo_test(GeneBase gene[], int randval, int i)
     };
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
         set_bailout_formula(g_bail_out_test);
     }
 }
 
-void vary_pwr2(GeneBase gene[], int randval, int i)
+void vary_pwr2(GeneBase gene[], int rand_val, int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
+        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
     }
 }
 
-void vary_trig(GeneBase gene[], int randval, int i)
+void vary_trig(GeneBase gene[], int rand_val, int i)
 {
     if (gene[i].mutate != Variations::NONE)
     {
         *static_cast<TrigFn *>(gene[i].addr) =
-            static_cast<TrigFn>(wrapped_positive_vary_int(randval, g_num_trig_functions, gene[i].mutate));
+            static_cast<TrigFn>(wrapped_positive_vary_int(rand_val, g_num_trig_functions, gene[i].mutate));
     }
     set_trig_pointers(5); //set all trig ptrs up
 }
 
-void vary_inv(GeneBase gene[], int randval, int i)
+void vary_inv(GeneBase gene[], int rand_val, int i)
 {
     if (gene[i].mutate != Variations::NONE)
     {
-        vary_dbl(gene, randval, i);
+        vary_dbl(gene, rand_val, i);
     }
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 }
@@ -415,33 +415,33 @@ void vary_inv(GeneBase gene[], int randval, int i)
 static int get_the_rest()
 {
     ChoiceBuilder<20> choices;
-    char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    char const *evolve_modes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     GeneBase gene[NUM_GENES];
 
     copy_genes_from_bank(gene);
 
-    int numtrig = (+g_cur_fractal_specific->flags >> 6) & 7;
+    int num_trig = (+g_cur_fractal_specific->flags >> 6) & 7;
     if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
-        numtrig = g_max_function;
+        num_trig = g_max_function;
     }
 
 choose_vars_restart:
     choices.reset();
     for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
     {
-        choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
+        choices.list(gene[num].name, 7, 7, evolve_modes, static_cast<int>(gene[num].mutate));
     }
 
-    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
+    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + num_trig); num++)
     {
-        choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
+        choices.list(gene[num].name, 7, 7, evolve_modes, static_cast<int>(gene[num].mutate));
     }
 
     if (g_cur_fractal_specific->calctype == standard_fractal &&
         bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
-        choices.list(gene[NUM_GENES - 1].name, 7, 7, evolvmodes, static_cast<int>(gene[NUM_GENES - 1].mutate));
+        choices.list(gene[NUM_GENES - 1].name, 7, 7, evolve_modes, static_cast<int>(gene[NUM_GENES - 1].mutate));
     }
 
     choices.comment("");
@@ -481,7 +481,7 @@ choose_vars_restart:
         gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
 
-    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
+    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + num_trig); num++)
     {
         gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
@@ -498,12 +498,12 @@ choose_vars_restart:
 
 int get_variations()
 {
-    char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    char const *evolve_modes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     ChoiceBuilder<20> choices;
     GeneBase gene[NUM_GENES];
-    int firstparm = 0;
-    int lastparm  = MAX_PARAMS;
-    int chngd = -1;
+    int first_param = 0;
+    int last_param  = MAX_PARAMS;
+    int changed = -1;
 
     copy_genes_from_bank(gene);
 
@@ -511,49 +511,49 @@ int get_variations()
     {
         if (g_frm_uses_p1)    // set first parameter
         {
-            firstparm = 0;
+            first_param = 0;
         }
         else if (g_frm_uses_p2)
         {
-            firstparm = 2;
+            first_param = 2;
         }
         else if (g_frm_uses_p3)
         {
-            firstparm = 4;
+            first_param = 4;
         }
         else if (g_frm_uses_p4)
         {
-            firstparm = 6;
+            first_param = 6;
         }
         else
         {
-            firstparm = 8; // uses_p5 or no parameter
+            first_param = 8; // uses_p5 or no parameter
         }
 
         if (g_frm_uses_p5)   // set last parameter
         {
-            lastparm = 10;
+            last_param = 10;
         }
         else if (g_frm_uses_p4)
         {
-            lastparm = 8;
+            last_param = 8;
         }
         else if (g_frm_uses_p3)
         {
-            lastparm = 6;
+            last_param = 6;
         }
         else if (g_frm_uses_p2)
         {
-            lastparm = 4;
+            last_param = 4;
         }
         else
         {
-            lastparm = 2; // uses_p1 or no parameter
+            last_param = 2; // uses_p1 or no parameter
         }
     }
 
-    int numparams = 0;
-    for (int i = firstparm; i < lastparm; i++)
+    int num_params = 0;
+    for (int i = first_param; i < last_param; i++)
     {
         if (type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, nullptr) == 0)
         {
@@ -566,17 +566,17 @@ int get_variations()
             }
             break;
         }
-        numparams++;
+        num_params++;
     }
 
     if (g_fractal_type != FractalType::FORMULA && g_fractal_type != FractalType::FORMULA_FP)
     {
-        lastparm = numparams;
+        last_param = num_params;
     }
 
 choose_vars_restart:
     choices.reset();
-    for (int num = firstparm; num < lastparm; num++)
+    for (int num = first_param; num < last_param; num++)
     {
         if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
         {
@@ -585,7 +585,7 @@ choose_vars_restart:
                 continue;
             }
         }
-        choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
+        choices.list(gene[num].name, 7, 7, evolve_modes, static_cast<int>(gene[num].mutate));
     }
     choices.comment("")
         .comment("Press F2 to set all to off")
@@ -615,17 +615,17 @@ choose_vars_restart:
         goto choose_vars_restart;
     case ID_KEY_F6: // go to second screen, put array away first
         copy_genes_to_bank(gene);
-        chngd = get_the_rest();
+        changed = get_the_rest();
         copy_genes_from_bank(gene);
         goto choose_vars_restart;
     case -1:
-        return chngd;
+        return changed;
     default:
         break;
     }
 
     // read out values
-    for (int num = firstparm; num < lastparm; num++)
+    for (int num = first_param; num < last_param; num++)
     {
         if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
         {
@@ -749,13 +749,13 @@ get_evol_restart:
     }
     if (i == ID_KEY_F3)
     {
-        double centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
+        double center_x = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
-        g_evolve_new_x_parameter_offset = centerx - g_evolve_x_parameter_range / 2;
+        g_evolve_new_x_parameter_offset = center_x - g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-        double centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+        double center_y = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
-        g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
+        g_evolve_new_y_parameter_offset = center_y - g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
         goto get_evol_restart;
@@ -879,7 +879,7 @@ void set_current_params()
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
 }
 
-void fiddle_params(GeneBase gene[], int ecount)
+void fiddle_params(GeneBase gene[], int count)
 {
     // call with px, py ... parameter set co-ords
     // set random seed then call rnd enough times to get to px, py
@@ -901,7 +901,7 @@ void fiddle_params(GeneBase gene[], int ecount)
         return;
     }
 
-    set_random(ecount);   // generate the right number of pseudo randoms
+    set_random(count);   // generate the right number of pseudo randoms
 
     for (int i = 0; i < NUM_GENES; i++)
     {
@@ -909,14 +909,14 @@ void fiddle_params(GeneBase gene[], int ecount)
     }
 }
 
-static void set_random(int ecount)
+static void set_random(int count)
 {
     // This must be called with ecount set correctly for the spiral map.
     // Call this routine to set the random # to the proper value
     // if it may have changed, before fiddleparms() is called.
     // Now called by fiddleparms().
     std::srand(g_evolve_this_generation_random_seed);
-    for (int index = 0; index < ecount; index++)
+    for (int index = 0; index < count; index++)
     {
         for (int i = 0; i < NUM_GENES; i++)
         {
@@ -1008,15 +1008,15 @@ void draw_param_box(int mode)
 
 void set_evolve_ranges()
 {
-    int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
+    int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     // set up ranges and offsets for parameter explorer/evolver
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
     g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
     g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)g_evolve_param_grid_x-g_evolve_param_zoom)*g_evolve_dist_per_x);
-    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)lclpy-g_evolve_param_zoom)*g_evolve_dist_per_y);
+    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)delta_y-g_evolve_param_zoom)*g_evolve_dist_per_y);
 
     g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(g_evolve_param_grid_x- g_evolve_image_grid_size /2));
-    g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
+    g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(delta_y- g_evolve_image_grid_size /2));
 }
 
 void spiral_map(int count)
@@ -1086,17 +1086,17 @@ int unspiral_map()
     if ((g_evolve_param_grid_x == mid && g_evolve_param_grid_y == mid) || (old_image_grid_size != g_evolve_image_grid_size))
     {
         // set up array and return
-        int gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
-        s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
-        for (int i = 1; i < gridsqr; i++)
+        int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
+        s_evol_count_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
+        for (int i = 1; i < grid_sqr; i++)
         {
             spiral_map(i);
-            s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = i;
+            s_evol_count_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = i;
         }
         old_image_grid_size = g_evolve_image_grid_size;
         g_evolve_param_grid_y = mid;
         g_evolve_param_grid_x = g_evolve_param_grid_y;
         return 0;
     }
-    return s_ecount_box[g_evolve_param_grid_x][g_evolve_param_grid_y];
+    return s_evol_count_box[g_evolve_param_grid_x][g_evolve_param_grid_y];
 }

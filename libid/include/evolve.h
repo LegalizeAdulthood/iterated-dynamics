@@ -135,7 +135,7 @@ void restore_param_history();
 int get_variations();
 int get_evolve_params();
 void set_current_params();
-void fiddle_params(GeneBase gene[], int ecount);
+void fiddle_params(GeneBase gene[], int count);
 void set_evolve_ranges();
 void set_mutation_level(int);
 void draw_param_box(int);
