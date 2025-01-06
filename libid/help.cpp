@@ -81,16 +81,16 @@ struct History
     int      link;
 };
 
-using PrintDocMessageFunc = bool(int pnum, int num_page);
+using PrintDocMessageFunc = bool(int page_num, int num_pages);
 
 struct PrintDocInfo
 {
-    int cnum;                         // current Content num
-    int tnum;                         // current topic num
+    int current_content;              // current Content num
+    int current_topic;                // current topic num
     long content_pos;                 // current Content item offset in file
     int num_page;                     // total number of pages in document
-    int num_contents,                 // total number of Content entries
-        num_topic;                    // number of topics in current Content
+    int num_contents;                 // total number of Content entries
+    int num_topic;                    // number of topics in current Content
     int topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current Content entry
     char buffer[PRINT_BUFFER_SIZE];   // text buffer
     char id[81];                      // buffer to store id in
@@ -121,7 +121,7 @@ static std::vector<Link> s_link_table;   // 10*max_links
 static std::vector<Page> s_page_table;   // 4*max_pages
 
 // forward declarations
-static bool print_doc_msg_func(int pnum, int num_pages);
+static bool print_doc_msg_func(int page_num, int num_pages);
 
 static void help_seek(long pos)
 {
@@ -340,11 +340,11 @@ static void color_link(Link *link, int color)
 #endif
 #endif
 
-static void put_key(char const *name, char const *descrip)
+static void put_key(char const *name, char const *description)
 {
     driver_put_string(-1, -1, C_HELP_INSTR, name);
     driver_put_string(-1, -1, C_HELP_INSTR, ":");
-    driver_put_string(-1, -1, C_HELP_INSTR, descrip);
+    driver_put_string(-1, -1, C_HELP_INSTR, description);
     driver_put_string(-1, -1, C_HELP_INSTR, "  ");
 }
 
@@ -592,9 +592,9 @@ static int do_move_link(Link *link, int num_link, int *curr, int (*f)(Link *, in
     return 0;
 }
 
-inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
+inline void freader(void *ptr, size_t size, size_t num, std::FILE *stream)
 {
-    if (std::fread(ptr, size, nmemb, stream) != nmemb)
+    if (std::fread(ptr, size, num, stream) != num)
     {
         throw std::system_error(errno, std::system_category(), "failed fread");
     }
@@ -1103,7 +1103,7 @@ static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, voi
     switch (cmd)
     {
     case PrintDocCommand::PD_GET_CONTENT:
-        if (++info->cnum >= info->num_contents)
+        if (++info->current_content >= info->num_contents)
         {
             return false;
         }
@@ -1136,19 +1136,19 @@ static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, voi
         info->num_topic = t;
         info->content_pos += 1 + t*sizeof(int);
 
-        info->tnum = -1;
+        info->current_topic = -1;
 
         pd->id = info->id;
         pd->title = info->title;
         return true;
 
     case PrintDocCommand::PD_GET_TOPIC:
-        if (++info->tnum >= info->num_topic)
+        if (++info->current_topic >= info->num_topic)
         {
             return false;
         }
 
-        t = read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
+        t = read_help_topic(info->topic_num[info->current_topic], 0, PRINT_BUFFER_SIZE, info->buffer);
 
         assert(t <= 0);
 
@@ -1247,11 +1247,11 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
     }
 }
 
-static bool print_doc_msg_func(int pnum, int num_pages)
+static bool print_doc_msg_func(int page_num, int num_pages)
 {
     char temp[10];
 
-    if (pnum == -1)      // successful completion
+    if (page_num == -1)      // successful completion
     {
         driver_buzzer(Buzzer::COMPLETE);
         put_string_center(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
@@ -1259,7 +1259,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         return false;
     }
 
-    if (pnum == -2)     // aborted
+    if (page_num == -2)     // aborted
     {
         driver_buzzer(Buzzer::INTERRUPT);
         put_string_center(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
@@ -1267,7 +1267,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         return false;
     }
 
-    if (pnum == 0)   // initialization
+    if (page_num == 0)   // initialization
     {
         help_title();
         print_instr();
@@ -1279,7 +1279,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         driver_hide_text_cursor();
     }
 
-    std::snprintf(temp, std::size(temp), "%d%%", (int)((100.0 / num_pages) * pnum));
+    std::snprintf(temp, std::size(temp), "%d%%", (int)((100.0 / num_pages) * page_num));
     driver_put_string(7, 41, C_HELP_LINK, temp);
 
     while (driver_key_pressed())
@@ -1327,8 +1327,8 @@ void print_document(char const *filename, bool (*msg_func)(int, int))
     freader(&info.num_contents, sizeof(int), 1, s_help_file);
     freader(&info.num_page, sizeof(int), 1, s_help_file);
 
-    info.tnum = -1;
-    info.cnum = info.tnum;
+    info.current_topic = -1;
+    info.current_content = info.current_topic;
     info.content_pos = 6*sizeof(int) + s_num_topic*sizeof(long) + s_num_label*2*sizeof(int);
     info.msg_func = msg_func;
 
