@@ -42,9 +42,9 @@
 #include <cstring>
 #include <ctime>
 
-static int call_line3d(Byte *pixels, int linelen);
+static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();
-static int cmp_line(Byte *pixels, int linelen);
+static int cmp_line(Byte *pixels, int line_len);
 
 static long s_save_base{}; // base clock ticks
 static long s_save_ticks{};  // save after this many ticks
@@ -179,7 +179,7 @@ MainState big_while_loop(MainContext &context)
             if (g_view_window)
             {
                 // bypass for VESA virtual screen
-                const double ftemp{g_final_aspect_ratio *
+                const double f_temp{g_final_aspect_ratio *
                     (((double) g_screen_y_dots) / ((double) g_screen_x_dots) / g_screen_aspect)};
                 g_logical_screen_x_dots = g_view_x_dots;
                 if (g_logical_screen_x_dots != 0)
@@ -188,18 +188,18 @@ MainState big_while_loop(MainContext &context)
                     g_logical_screen_y_dots = g_view_y_dots;
                     if (g_logical_screen_y_dots == 0) // calc ydots?
                     {
-                        g_logical_screen_y_dots = iround(g_logical_screen_x_dots * ftemp);
+                        g_logical_screen_y_dots = iround(g_logical_screen_x_dots * f_temp);
                     }
                 }
                 else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
                     g_logical_screen_x_dots = iround((double) g_screen_x_dots / g_view_reduction);
-                    g_logical_screen_y_dots = iround(g_logical_screen_x_dots * ftemp);
+                    g_logical_screen_y_dots = iround(g_logical_screen_x_dots * f_temp);
                 }
                 else
                 {
                     g_logical_screen_y_dots = iround((double) g_screen_y_dots / g_view_reduction);
-                    g_logical_screen_x_dots = iround(g_logical_screen_y_dots / ftemp);
+                    g_logical_screen_x_dots = iround(g_logical_screen_y_dots / f_temp);
                 }
                 if (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots)
                 {
@@ -385,7 +385,7 @@ MainState big_while_loop(MainContext &context)
                 g_calc_status != CalcStatus::COMPLETED)
             {
                 // generate a set of images with varied parameters on each one
-                int ecount;
+                int count;
                 GeneBase gene[NUM_GENES];
                 copy_genes_from_bank(gene);
                 if (g_have_evolve_info && (g_calc_status == CalcStatus::RESUMABLE))
@@ -411,7 +411,7 @@ MainState big_while_loop(MainContext &context)
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
                     g_evolving = static_cast<EvolutionModeFlags>(g_evolve_info.evolving);
                     g_view_window = g_evolving != EvolutionModeFlags::NONE;
-                    ecount       = g_evolve_info.ecount;
+                    count       = g_evolve_info.ecount;
                     g_have_evolve_info = false;
                 }
                 else
@@ -423,7 +423,7 @@ MainState big_while_loop(MainContext &context)
                         g_evolve_this_generation_random_seed = (unsigned int)std::clock(); // time for new set
                     }
                     save_param_history();
-                    ecount = 0;
+                    count = 0;
                     g_evolve_max_random_mutation = g_evolve_max_random_mutation * g_evolve_mutation_reduction_factor;
                     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
                     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
@@ -434,29 +434,29 @@ MainState big_while_loop(MainContext &context)
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
                 const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                int tmpxdots = g_logical_screen_x_dots + grout;
-                int tmpydots = g_logical_screen_y_dots + grout;
-                int gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
-                while (ecount < gridsqr)
+                int tmp_x_dots = g_logical_screen_x_dots + grout;
+                int tmp_y_dots = g_logical_screen_y_dots + grout;
+                int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
+                while (count < grid_sqr)
                 {
-                    spiral_map(ecount); // sets px & py
-                    g_logical_screen_x_offset = tmpxdots * g_evolve_param_grid_x;
-                    g_logical_screen_y_offset = tmpydots * g_evolve_param_grid_y;
+                    spiral_map(count); // sets px & py
+                    g_logical_screen_x_offset = tmp_x_dots * g_evolve_param_grid_x;
+                    g_logical_screen_y_offset = tmp_y_dots * g_evolve_param_grid_y;
                     restore_param_history();
-                    fiddle_params(gene, ecount);
+                    fiddle_params(gene, count);
                     calc_frac_init();
                     if (calc_fract() == -1)
                     {
                         goto done;
                     }
-                    ecount ++;
+                    count ++;
                 }
 done:
 #if defined(_WIN32)
                 _ASSERTE(_CrtCheckMemory());
 #endif
 
-                if (ecount == gridsqr)
+                if (count == grid_sqr)
                 {
                     i = 0;
                     driver_buzzer(Buzzer::COMPLETE); // finished!!
@@ -479,7 +479,7 @@ done:
                     g_evolve_info.this_generation_random_seed = (short) g_evolve_this_generation_random_seed;
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
                     g_evolve_info.evolving        = (short) +g_evolving;
-                    g_evolve_info.ecount          = (short) ecount;
+                    g_evolve_info.ecount          = (short) count;
                     g_have_evolve_info = true;
                 }
                 g_logical_screen_y_offset = 0;
@@ -679,14 +679,14 @@ resumeloop:                             // return here on failed overlays
     }
 }
 
-static int call_line3d(Byte *pixels, int linelen)
+static int call_line3d(Byte *pixels, int line_len)
 {
     // this routine exists because line3d might be in an overlay
-    return line3d(pixels, linelen);
+    return line3d(pixels, line_len);
 }
 
 // displays differences between current image file and new image
-static int cmp_line(Byte *pixels, int linelen)
+static int cmp_line(Byte *pixels, int line_len)
 {
     int row = g_row_count++;
     if (row == 0)
@@ -704,16 +704,16 @@ static int cmp_line(Byte *pixels, int linelen)
         }
         row >>= 1;
     }
-    for (int col = 0; col < linelen; col++)
+    for (int col = 0; col < line_len; col++)
     {
-        int oldcolor = get_color(col, row);
-        if (oldcolor == (int)pixels[col])
+        int old_color = get_color(col, row);
+        if (old_color == (int)pixels[col])
         {
             g_put_color(col, row, 0);
         }
         else
         {
-            if (oldcolor == 0)
+            if (old_color == 0)
             {
                 g_put_color(col, row, 1);
             }
@@ -721,7 +721,7 @@ static int cmp_line(Byte *pixels, int linelen)
             if (g_init_batch == BatchMode::NONE)
             {
                 std::fprintf(s_cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
-                        s_err_count, col, row, oldcolor, pixels[col]);
+                        s_err_count, col, row, old_color, pixels[col]);
             }
         }
     }
@@ -730,24 +730,24 @@ static int cmp_line(Byte *pixels, int linelen)
 
 static void cmp_line_cleanup()
 {
-    time_t ltime;
+    time_t now;
     if (g_init_batch != BatchMode::NONE)
     {
-        time(&ltime);
-        char *timestring = ctime(&ltime);
-        timestring[24] = 0; //clobber newline in time string
+        time(&now);
+        char *times_text = ctime(&now);
+        times_text[24] = 0; //clobber newline in time string
         std::fprintf(s_cmp_fp, "%s compare to %s has %5d errs\n",
-                timestring, g_read_filename.c_str(), s_err_count);
+                times_text, g_read_filename.c_str(), s_err_count);
     }
     std::fclose(s_cmp_fp);
 }
 
 // read keystrokes while = specified key, return 1+count;
 // used to catch up when moving zoombox is slower than keyboard
-int key_count(int keynum)
+int key_count(int key)
 {
     int ctr = 1;
-    while (driver_key_pressed() == keynum)
+    while (driver_key_pressed() == key)
     {
         driver_get_key();
         ++ctr;

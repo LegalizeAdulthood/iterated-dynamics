@@ -17,4 +17,4 @@ extern bool                  g_virtual_screens;
 MainState big_while_loop(bool &kbd_more, bool &stacked, bool resume_flag);
 MainState big_while_loop(MainContext &context);
 
-int key_count(int keynum);
+int key_count(int key);
