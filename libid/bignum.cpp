@@ -190,30 +190,30 @@ S16 big_setS16(S16 *addr, S16 val)
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(bn_t new_num, bn_t old, int new_bn_length, int new_int_length,
-               int old_bn_length, int old_int_length)
+int convert_bn(bn_t new_num, bn_t old_num, int new_bn_len, int new_int_len,
+               int old_bn_len, int old_int_len)
 {
     // save lengths so not dependent on external environment
     int save_int_length = g_int_length;
     int save_bn_length = g_bn_length;
 
-    g_int_length     = new_int_length;
-    g_bn_length      = new_bn_length;
+    g_int_length     = new_int_len;
+    g_bn_length      = new_bn_len;
     clear_bn(new_num);
 
-    if (new_bn_length - new_int_length > old_bn_length - old_int_length)
+    if (new_bn_len - new_int_len > old_bn_len - old_int_len)
     {
 
         // This will keep the integer part from overflowing past the array.
-        g_bn_length = old_bn_length - old_int_length + std::min(old_int_length, new_int_length);
+        g_bn_length = old_bn_len - old_int_len + std::min(old_int_len, new_int_len);
 
-        std::memcpy(new_num+new_bn_length-new_int_length-old_bn_length+old_int_length,
-               old, g_bn_length);
+        std::memcpy(new_num+new_bn_len-new_int_len-old_bn_len+old_int_len,
+               old_num, g_bn_length);
     }
     else
     {
-        g_bn_length = new_bn_length - new_int_length + std::min(old_int_length, new_int_length);
-        std::memcpy(new_num, old+old_bn_length-old_int_length-new_bn_length+new_int_length,
+        g_bn_length = new_bn_len - new_int_len + std::min(old_int_len, new_int_len);
+        std::memcpy(new_num, old_num+old_bn_len-old_int_len-new_bn_len+new_int_len,
                g_bn_length);
     }
     g_int_length = save_int_length;

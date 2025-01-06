@@ -144,7 +144,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n);
 bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n);
 bn_t unsafe_atan_bn(bn_t r, bn_t n);
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
-int convert_bn(bn_t new_num, bn_t old, int newbnlength, int newintlength, int oldbnlength, int oldintlength);
+int convert_bn(bn_t new_num, bn_t old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
 // "safe" versions
 bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2);
 bn_t mult_bn(bn_t r, bn_t n1, bn_t n2);
@@ -204,7 +204,7 @@ bf_t sin_cos_bf(bf_t s, bf_t c, bf_t n);
 bf_t atan_bf(bf_t r, bf_t n);
 bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx);
 bool is_bf_zero(bf_t n);
-int convert_bf(bf_t new_num, bf_t old, int newbflength, int oldbflength);
+int convert_bf(bf_t new_num, bf_t old_num, int new_bf_len, int old_bf_len);
 LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
 LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
