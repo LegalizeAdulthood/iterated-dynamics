@@ -135,8 +135,8 @@ static int diffusion_engine()
     double log2 = (double) std::log(2.0);
     int i;
     int j;
-    int colo;
-    int rowo; // original col and row
+    int orig_col;
+    int orig_row;
     int s = 1 << (g_diffusion_bits/2); // size of the square
     // number of tiles to build in x and y dirs
     int nx = (int) floor(static_cast<double>((g_i_x_stop - g_i_x_start + 1) / s));
@@ -166,14 +166,14 @@ static int diffusion_engine()
     {
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
-            count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
+            count_to_int(g_diffusion_counter, orig_col, orig_row, dif_offset);
 
             i = 0;
-            g_col = g_i_x_start + colo; // get the right tiles
+            g_col = g_i_x_start + orig_col; // get the right tiles
             do
             {
                 j = 0;
-                g_row = g_i_y_start + rowo ;
+                g_row = g_i_y_start + orig_row ;
                 do
                 {
                     calculate;
@@ -182,7 +182,7 @@ static int diffusion_engine()
                     g_row += s;                  // next tile
                 } while (j < ny);
                 // in the last y tile we may not need to plot the point
-                if (rowo < rem_y)
+                if (orig_row < rem_y)
                 {
                     calculate;
                     (*g_plot)(g_col, g_row, g_color);
@@ -191,9 +191,9 @@ static int diffusion_engine()
                 g_col += s;
             } while (i < nx);
             // in the last x tiles we may not need to plot the point
-            if (colo < rem_x)
+            if (orig_col < rem_x)
             {
-                g_row = g_i_y_start + rowo;
+                g_row = g_i_y_start + orig_row;
                 j = 0;
                 do
                 {
@@ -202,7 +202,7 @@ static int diffusion_engine()
                     j++;
                     g_row += s; // next tile
                 } while (j < ny);
-                if (rowo < rem_y)
+                if (orig_row < rem_y)
                 {
                     calculate;
                     (*g_plot)(g_col, g_row, g_color);
@@ -217,10 +217,10 @@ static int diffusion_engine()
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
             // size of the block being filled
-            int sqsz =
+            int sq_size =
                 1 << ((int) (g_diffusion_bits - (int) (std::log(g_diffusion_counter + 0.5) / log2) - 1) / 2);
 
-            count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
+            count_to_int(g_diffusion_counter, orig_col, orig_row, dif_offset);
 
             i = 0;
             do
@@ -228,42 +228,42 @@ static int diffusion_engine()
                 j = 0;
                 do
                 {
-                    g_col = g_i_x_start + colo + i * s; // get the right tiles
-                    g_row = g_i_y_start + rowo + j * s;
+                    g_col = g_i_x_start + orig_col + i * s; // get the right tiles
+                    g_row = g_i_y_start + orig_row + j * s;
 
                     calculate;
-                    plot_block(g_col, g_row, sqsz, g_color);
+                    plot_block(g_col, g_row, sq_size, g_color);
                     j++;
                 } while (j < ny);
                 // in the last tile we may not need to plot the point
-                if (rowo < rem_y)
+                if (orig_row < rem_y)
                 {
-                    g_row = g_i_y_start + rowo + ny * s;
+                    g_row = g_i_y_start + orig_row + ny * s;
 
                     calculate;
-                    plot_block_lim(g_col, g_row, sqsz, g_color);
+                    plot_block_lim(g_col, g_row, sq_size, g_color);
                 }
                 i++;
             } while (i < nx);
             // in the last tile we may not need to plot the point
-            if (colo < rem_x)
+            if (orig_col < rem_x)
             {
-                g_col = g_i_x_start + colo + nx * s;
+                g_col = g_i_x_start + orig_col + nx * s;
                 j = 0;
                 do
                 {
-                    g_row = g_i_y_start + rowo + j * s; // get the right tiles
+                    g_row = g_i_y_start + orig_row + j * s; // get the right tiles
 
                     calculate;
-                    plot_block_lim(g_col, g_row, sqsz, g_color);
+                    plot_block_lim(g_col, g_row, sq_size, g_color);
                     j++;
                 } while (j < ny);
-                if (rowo < rem_y)
+                if (orig_row < rem_y)
                 {
-                    g_row = g_i_y_start + rowo + ny * s;
+                    g_row = g_i_y_start + orig_row + ny * s;
 
                     calculate;
-                    plot_block_lim(g_col, g_row, sqsz, g_color);
+                    plot_block_lim(g_col, g_row, sq_size, g_color);
                 }
             }
 
@@ -273,7 +273,7 @@ static int diffusion_engine()
     // from half dif_limit on we only plot 1x1 points :-)
     while (g_diffusion_counter < g_diffusion_limit)
     {
-        count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
+        count_to_int(g_diffusion_counter, orig_col, orig_row, dif_offset);
 
         i = 0;
         do
@@ -281,17 +281,17 @@ static int diffusion_engine()
             j = 0;
             do
             {
-                g_col = g_i_x_start + colo + i * s; // get the right tiles
-                g_row = g_i_y_start + rowo + j * s;
+                g_col = g_i_x_start + orig_col + i * s; // get the right tiles
+                g_row = g_i_y_start + orig_row + j * s;
 
                 calculate;
                 (*g_plot)(g_col, g_row, g_color);
                 j++;
             } while (j < ny);
             // in the last tile we may not need to plot the point
-            if (rowo < rem_y)
+            if (orig_row < rem_y)
             {
-                g_row = g_i_y_start + rowo + ny * s;
+                g_row = g_i_y_start + orig_row + ny * s;
 
                 calculate;
                 (*g_plot)(g_col, g_row, g_color);
@@ -299,21 +299,21 @@ static int diffusion_engine()
             i++;
         } while (i < nx);
         // in the last tile we may nnt need to plot the point
-        if (colo < rem_x)
+        if (orig_col < rem_x)
         {
-            g_col = g_i_x_start + colo + nx * s;
+            g_col = g_i_x_start + orig_col + nx * s;
             j = 0;
             do
             {
-                g_row = g_i_y_start + rowo + j * s; // get the right tiles
+                g_row = g_i_y_start + orig_row + j * s; // get the right tiles
 
                 calculate;
                 (*g_plot)(g_col, g_row, g_color);
                 j++;
             } while (j < ny);
-            if (rowo < rem_y)
+            if (orig_row < rem_y)
             {
-                g_row = g_i_y_start + rowo + ny * s;
+                g_row = g_i_y_start + orig_row + ny * s;
 
                 calculate;
                 (*g_plot)(g_col, g_row, g_color);
