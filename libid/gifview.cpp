@@ -58,7 +58,7 @@ constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-constexpr int DECODERLINE_WIDTH{MAX_PIXELS};
+constexpr int DECODER_LINE_WIDTH{MAX_PIXELS};
 
 static void close_file();
 static int out_line_dither(Byte *, int);
@@ -67,9 +67,9 @@ static int out_line_too_wide(Byte *, int);
 
 static std::FILE *s_fp_in{};
 static int s_col_count{};                    // keeps track of current column for wide images
-static unsigned int s_gifview_image_top{};   // (for migs)
-static unsigned int s_gifview_image_left{};  // (for migs)
-static unsigned int s_gifview_image_width{}; // (for migs)
+static unsigned int s_gif_view_image_top{};   // (for migs)
+static unsigned int s_gif_view_image_left{};  // (for migs)
+static unsigned int s_gif_view_image_width{}; // (for migs)
 static std::vector<char> s_dither_buf;
 
 unsigned int g_height{};
@@ -164,7 +164,7 @@ int gif_view()
     unsigned width = buffer[6] | (buffer[7] << 8);
     g_height = buffer[8] | (buffer[9] << 8);
     int planes = (buffer[10] & 0x0F) + 1;
-    s_gifview_image_width = width;
+    s_gif_view_image_width = width;
 
     if ((buffer[10] & 0x80) == 0)    // color map (better be!)
     {
@@ -266,25 +266,25 @@ int gif_view()
             g_height = buffer[6] | (buffer[7] << 8);
 
             // adjustments for handling MIGs
-            s_gifview_image_top  = top;
+            s_gif_view_image_top  = top;
             if (g_skip_x_dots > 0)
             {
-                s_gifview_image_top /= (g_skip_y_dots+1);
+                s_gif_view_image_top /= (g_skip_y_dots+1);
             }
-            s_gifview_image_left = left;
+            s_gif_view_image_left = left;
             if (g_skip_y_dots > 0)
             {
-                s_gifview_image_left /= (g_skip_x_dots+1);
+                s_gif_view_image_left /= (g_skip_x_dots+1);
             }
             if (g_out_line == out_line)
             {
                 // what about continuous potential????
-                if (width != s_gifview_image_width || top != 0)
+                if (width != s_gif_view_image_width || top != 0)
                 {
                     // we're using normal decoding and we have a MIG
                     g_out_line = out_line_migs;
                 }
-                else if (width > DECODERLINE_WIDTH && g_skip_x_dots == 0)
+                else if (width > DECODER_LINE_WIDTH && g_skip_x_dots == 0)
                 {
                     g_out_line = out_line_too_wide;
                 }
@@ -301,9 +301,9 @@ int gif_view()
                 // local map?
                 // make this local
                 planes = (buffer[8] & 0x0F) + 1;
-                int numcolors = 1 << planes;
+                int num_colors = 1 << planes;
                 // skip local map
-                for (int i = 0; i < numcolors; i++)
+                for (int i = 0; i < num_colors; i++)
                 {
                     for (int j = 0; j < 3; j++)
                     {
@@ -330,7 +330,7 @@ int gif_view()
              */
             if (g_skip_x_dots == 0)
             {
-                width = std::min(width, static_cast<unsigned>(DECODERLINE_WIDTH));
+                width = std::min(width, static_cast<unsigned>(DECODER_LINE_WIDTH));
             }
             status = decoder_timer(width);
             g_busy = false;      // for slideshow CALCWAIT
@@ -379,29 +379,29 @@ static void close_file()
 
 // routine for MIGS that generates partial output lines
 
-static int out_line_migs(Byte *pixels, int linelen)
+static int out_line_migs(Byte *pixels, int line_len)
 {
-    int row = s_gifview_image_top + g_row_count;
-    int startcol = s_gifview_image_left;
-    int stopcol = startcol + linelen - 1;
-    write_span(row, startcol, stopcol, pixels);
+    int row = s_gif_view_image_top + g_row_count;
+    int start_col = s_gif_view_image_left;
+    int stop_col = start_col + line_len - 1;
+    write_span(row, start_col, stop_col, pixels);
     g_row_count++;
 
     return 0;
 }
 
-static int out_line_dither(Byte *pixels, int linelen)
+static int out_line_dither(Byte *pixels, int line_len)
 {
     int err;
-    s_dither_buf.resize(linelen + 1);
+    s_dither_buf.resize(line_len + 1);
     std::fill(s_dither_buf.begin(), s_dither_buf.end(), 0);
 
-    int nexterr = (std::rand() & 0x1f) - 16;
-    for (int i = 0; i < linelen; i++)
+    int next_err = (std::rand() & 0x1f) - 16;
+    for (int i = 0; i < line_len; i++)
     {
         int brt = (g_dac_box[pixels[i]][0] * 5 + g_dac_box[pixels[i]][1] * 9 + g_dac_box[pixels[i]][2] * 2) >>
             4; // brightness from 0 to 63
-        brt += nexterr;
+        brt += next_err;
         if (brt > 32)
         {
             pixels[i] = 1;
@@ -412,35 +412,35 @@ static int out_line_dither(Byte *pixels, int linelen)
             pixels[i] = 0;
             err = brt;
         }
-        nexterr = s_dither_buf[i+1]+err/3;
+        next_err = s_dither_buf[i+1]+err/3;
         s_dither_buf[i] = (char)(err/3);
         s_dither_buf[i+1] = (char)(err/3);
     }
-    return out_line(pixels, linelen);
+    return out_line(pixels, line_len);
 }
 
 // routine for images wider than the row buffer
 
-static int out_line_too_wide(Byte *pixels, int linelen)
+static int out_line_too_wide(Byte *pixels, int line_len)
 {
-    int twidth = g_logical_screen_x_dots;
-    while (linelen > 0)
+    int width = g_logical_screen_x_dots;
+    while (line_len > 0)
     {
-        int extra = s_col_count + linelen - twidth;
+        int extra = s_col_count + line_len - width;
         if (extra > 0) // line wraps
         {
-            write_span(g_row_count, s_col_count, twidth-1, pixels);
-            pixels += twidth-s_col_count;
-            linelen -= twidth-s_col_count;
-            s_col_count = twidth;
+            write_span(g_row_count, s_col_count, width-1, pixels);
+            pixels += width-s_col_count;
+            line_len -= width-s_col_count;
+            s_col_count = width;
         }
         else
         {
-            write_span(g_row_count, s_col_count, s_col_count+linelen-1, pixels);
-            s_col_count += linelen;
-            linelen = 0;
+            write_span(g_row_count, s_col_count, s_col_count+line_len-1, pixels);
+            s_col_count += line_len;
+            line_len = 0;
         }
-        if (s_col_count >= twidth)
+        if (s_col_count >= width)
         {
             s_col_count = 0;
             g_row_count++;
@@ -449,9 +449,9 @@ static int out_line_too_wide(Byte *pixels, int linelen)
     return 0;
 }
 
-static bool put_sound_line(int row, int colstart, int colstop, Byte *pixels)
+static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
 {
-    for (int col = colstart; col <= colstop; col++)
+    for (int col = col_start; col <= col_stop; col++)
     {
         g_put_color(col, row, *pixels);
         if (g_orbit_delay > 0)
@@ -468,33 +468,33 @@ static bool put_sound_line(int row, int colstart, int colstop, Byte *pixels)
     return false;
 }
 
-int sound_line(Byte *pixels, int linelen)
+int sound_line(Byte *pixels, int line_len)
 {
-    int twidth = g_logical_screen_x_dots;
+    int width = g_logical_screen_x_dots;
     int ret = 0;
-    while (linelen > 0)
+    while (line_len > 0)
     {
-        int extra = s_col_count + linelen - twidth;
+        int extra = s_col_count + line_len - width;
         if (extra > 0) // line wraps
         {
-            if (put_sound_line(g_row_count, s_col_count, twidth-1, pixels))
+            if (put_sound_line(g_row_count, s_col_count, width-1, pixels))
             {
                 break;
             }
-            pixels += twidth-s_col_count;
-            linelen -= twidth-s_col_count;
-            s_col_count = twidth;
+            pixels += width-s_col_count;
+            line_len -= width-s_col_count;
+            s_col_count = width;
         }
         else
         {
-            if (put_sound_line(g_row_count, s_col_count, s_col_count+linelen-1, pixels))
+            if (put_sound_line(g_row_count, s_col_count, s_col_count+line_len-1, pixels))
             {
                 break;
             }
-            s_col_count += linelen;
-            linelen = 0;
+            s_col_count += line_len;
+            line_len = 0;
         }
-        if (s_col_count >= twidth)
+        if (s_col_count >= width)
         {
             s_col_count = 0;
             g_row_count++;
@@ -508,7 +508,7 @@ int sound_line(Byte *pixels, int linelen)
     return ret;
 }
 
-int pot_line(Byte *pixels, int linelen)
+int pot_line(Byte *pixels, int line_len)
 {
     if (g_row_count == 0)
     {
@@ -517,21 +517,21 @@ int pot_line(Byte *pixels, int linelen)
             return -1;
         }
     }
-    int saverowcount = g_row_count;
+    int save_row_count = g_row_count;
     g_row_count >>= 1;
     int row = g_row_count;
-    if ((saverowcount & 1) != 0)   // odd line
+    if ((save_row_count & 1) != 0)   // odd line
     {
         row += g_logical_screen_y_dots;
     }
     else if (!driver_diskp())     // even line - display the line too
     {
-        out_line(pixels, linelen);
+        out_line(pixels, line_len);
     }
     for (int col = 0; col < g_logical_screen_x_dots; ++col)
     {
         disk_write_pixel(col+g_logical_screen_x_offset, row+g_logical_screen_y_offset, *(pixels+col));
     }
-    g_row_count = saverowcount + 1;
+    g_row_count = save_row_count + 1;
     return 0;
 }
