@@ -35,18 +35,17 @@ enum class TimerType
      timer(timer_type::DECODER,nullptr,int width)        decoder
      timer(timer_type::ENCODER)                          encoder
   */
-static int timer(TimerType timertype, int (*subrtn)(), ...)
+static int timer(TimerType type, int (*fn)(), ...)
 {
     std::va_list arg_marker; // variable arg list
-    std::time_t ltime;
     std::FILE *fp = nullptr;
     int out = 0;
     int i;
 
-    va_start(arg_marker, subrtn);
+    va_start(arg_marker, fn);
 
     bool do_bench = g_timer_flag;        // record time?
-    if (timertype == TimerType::ENCODER) // encoder, record time only if debug flag set
+    if (type == TimerType::ENCODER) // encoder, record time only if debug flag set
     {
         do_bench = (g_debug_flag == DebugFlags::BENCHMARK_ENCODER);
     }
@@ -55,10 +54,10 @@ static int timer(TimerType timertype, int (*subrtn)(), ...)
         fp = dir_fopen(g_working_dir.c_str(), "bench", "a");
     }
     g_timer_start = std::clock();
-    switch (timertype)
+    switch (type)
     {
     case TimerType::ENGINE:
-        out = subrtn();
+        out = fn();
         break;
     case TimerType::DECODER:
         i = va_arg(arg_marker, int);
@@ -73,10 +72,11 @@ static int timer(TimerType timertype, int (*subrtn)(), ...)
 
     if (do_bench)
     {
-        std::time(&ltime);
-        char *timestring = std::ctime(&ltime);
-        timestring[24] = 0; // clobber newline in time string
-        switch (timertype)
+        std::time_t now;
+        std::time(&now);
+        char *text = std::ctime(&now);
+        text[24] = 0; // clobber newline in time string
+        switch (type)
         {
         case TimerType::DECODER:
             std::fprintf(fp, "decode ");
@@ -87,7 +87,7 @@ static int timer(TimerType timertype, int (*subrtn)(), ...)
         default:
             break;
         }
-        std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld", timestring,
+        std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld", text,
             g_cur_fractal_specific->name, g_logical_screen_x_dots, g_logical_screen_y_dots, g_max_iterations);
         std::fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval / 100, g_timer_interval % 100);
         std::fclose(fp);
