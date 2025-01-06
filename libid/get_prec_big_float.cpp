@@ -40,10 +40,10 @@ int get_prec_bf_mag()
 
 /* This function calculates the precision needed to distinguish adjacent
    pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
-   (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
-int get_prec_bf(int rezflag)
+   (if res==Resolution::MAX) or at current resolution (if res==Resolution::CURRENT)    */
+int get_prec_bf(ResolutionFlag flag)
 {
-    int rez;
+    int res;
     int saved = save_stack();
     bf_t del1 = alloc_stack(g_bf_length + 2);
     bf_t del2 = alloc_stack(g_bf_length + 2);
@@ -53,35 +53,35 @@ int get_prec_bf(int rezflag)
     bf_t bfyydel = alloc_stack(g_bf_length + 2);
     bf_t bfyydel2 = alloc_stack(g_bf_length + 2);
     float_to_bf(one, 1.0);
-    if (rezflag == MAX_REZ)
+    if (flag == ResolutionFlag::MAX)
     {
-        rez = OLD_MAX_PIXELS -1;
+        res = OLD_MAX_PIXELS -1;
     }
     else
     {
-        rez = g_logical_screen_x_dots-1;
+        res = g_logical_screen_x_dots-1;
     }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
     sub_bf(bfxxdel, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(bfxxdel, (U16)rez);
+    div_a_bf_int(bfxxdel, (U16)res);
 
     // bfyydel2 = (bfy3rd - bfymin)/(xdots-1)
     sub_bf(bfyydel2, g_bf_y_3rd, g_bf_y_min);
-    div_a_bf_int(bfyydel2, (U16)rez);
+    div_a_bf_int(bfyydel2, (U16)res);
 
-    if (rezflag == CURRENT_REZ)
+    if (flag == ResolutionFlag::CURRENT)
     {
-        rez = g_logical_screen_y_dots-1;
+        res = g_logical_screen_y_dots-1;
     }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
     sub_bf(bfyydel, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(bfyydel, (U16)rez);
+    div_a_bf_int(bfyydel, (U16)res);
 
     // bfxxdel2 = (bfx3rd - bfxmin)/(ydots-1)
     sub_bf(bfxxdel2, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(bfxxdel2, (U16)rez);
+    div_a_bf_int(bfxxdel2, (U16)res);
 
     abs_a_bf(add_bf(del1, bfxxdel, bfxxdel2));
     abs_a_bf(add_bf(del2, bfyydel, bfyydel2));

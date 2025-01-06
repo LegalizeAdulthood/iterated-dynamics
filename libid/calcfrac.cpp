@@ -809,7 +809,7 @@ int calc_fract()
                 engine_timer(timer_work_list);
                 if (g_calc_status == CalcStatus::COMPLETED)
                 {
-                    if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low rez
+                    if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low res
                     {
                         g_std_calc_mode = '2';
                     }

@@ -369,7 +369,7 @@ top:
     }
     else
     {
-        std::sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(CURRENTREZ)*/);
+        std::sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(Resolution::CURRENT)*/);
         driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }

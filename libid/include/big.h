@@ -246,8 +246,14 @@ enum
     MATH_BITS = 32,
     MATH_BYTES = MATH_BITS / 8,
     NUM_VARS = 30, // room for this many on stack
-    CURRENT_REZ = 1,
-    MAX_REZ = 0
+};
+
+// Request the precision needed to distinguish adjacent pixels at the
+// maximum resolution of MAX_PIXELS by MAX_PIXELS or at current resolution
+enum class ResolutionFlag
+{
+    MAX = 0,
+    CURRENT = 1,
 };
 
 // used by other routines

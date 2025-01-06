@@ -46,29 +46,29 @@ static void   smallest_add_bf(bf_t num);
 
 /* This function calculates the precision needed to distinguish adjacent
    pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
-   (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
-static int get_prec_dbl(int rezflag)
+   (if res==Resolution::MAX) or at current resolution (if res==Resolution::CURRENT)    */
+static int get_prec_dbl(ResolutionFlag flag)
 {
-    LDouble rez;
-    if (rezflag == MAX_REZ)
+    LDouble res;
+    if (flag == ResolutionFlag::MAX)
     {
-        rez = OLD_MAX_PIXELS -1;
+        res = OLD_MAX_PIXELS -1;
     }
     else
     {
-        rez = g_logical_screen_x_dots-1;
+        res = g_logical_screen_x_dots-1;
     }
 
-    LDouble xdel = ((LDouble) g_x_max - (LDouble) g_x_3rd) / rez;
-    LDouble ydel2 = ((LDouble) g_y_3rd - (LDouble) g_y_min) / rez;
+    LDouble xdel = ((LDouble) g_x_max - (LDouble) g_x_3rd) / res;
+    LDouble ydel2 = ((LDouble) g_y_3rd - (LDouble) g_y_min) / res;
 
-    if (rezflag == CURRENT_REZ)
+    if (flag == ResolutionFlag::CURRENT)
     {
-        rez = g_logical_screen_y_dots-1;
+        res = g_logical_screen_y_dots-1;
     }
 
-    LDouble ydel = ((LDouble) g_y_max - (LDouble) g_y_3rd) / rez;
-    LDouble xdel2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / rez;
+    LDouble ydel = ((LDouble) g_y_max - (LDouble) g_y_3rd) / res;
+    LDouble xdel2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / res;
 
     LDouble del1 = std::fabs(xdel) + std::fabs(xdel2);
     LDouble del2 = std::fabs(ydel) + std::fabs(ydel2);
@@ -92,7 +92,7 @@ static int get_prec_dbl(int rezflag)
 
 void fractal_float_to_bf()
 {
-    init_bf_dec(get_prec_dbl(CURRENT_REZ));
+    init_bf_dec(get_prec_dbl(ResolutionFlag::CURRENT));
     float_to_bf(g_bf_x_min, g_x_min);
     float_to_bf(g_bf_x_max, g_x_max);
     float_to_bf(g_bf_y_min, g_y_min);
@@ -156,7 +156,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     // switch back to double when zooming out if using arbitrary precision
     if (g_bf_math != BFMathType::NONE)
     {
-        int gotprec = get_prec_bf(CURRENT_REZ);
+        int gotprec = get_prec_bf(ResolutionFlag::CURRENT);
         if ((gotprec <= DBL_DIG+1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) || g_math_tol[1] >= 1.0)
         {
             bf_corners_to_float();

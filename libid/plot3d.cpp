@@ -332,7 +332,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
 static void plot3d_alternate(int x, int y, int color)
 {
     Byte t_c = (Byte) (255 - color);
-    // lorez high color red/blue 3D plot function
+    // low res high color red/blue 3D plot function
     // if which image = 1, compresses color to lower 128 colors
 
     // my mind is STILL fried - lower indices = darker colors is EASIER!

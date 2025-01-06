@@ -711,7 +711,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             if (g_bf_math != BFMathType::NONE)
             {
                 cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
-                int digits = get_prec_bf(MAX_REZ);
+                int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_param(" %s=", "center-mag");
                 put_bf(0, bfXctr, digits);
                 put_bf(1, bfYctr, digits);
@@ -766,7 +766,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             put_param(" %s=", "corners");
             if (g_bf_math != BFMathType::NONE)
             {
-                int digits = get_prec_bf(MAX_REZ);
+                int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_bf(0, g_bf_x_min, digits);
                 put_bf(1, g_bf_x_max, digits);
                 put_bf(1, g_bf_y_min, digits);
