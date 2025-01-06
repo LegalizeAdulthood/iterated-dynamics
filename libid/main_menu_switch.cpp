@@ -297,16 +297,16 @@ static MainState prompt_options(MainContext &context)
         i = get_cmd_string();
     }
     driver_unstack_screen();
-    if (g_evolving != EvolutionModeFlags::NONE && g_truecolor)
+    if (g_evolving != EvolutionModeFlags::NONE && g_true_color)
     {
-        g_truecolor = false;          // truecolor doesn't play well with the evolver
+        g_true_color = false;          // truecolor doesn't play well with the evolver
     }
     if (g_max_iterations > old_maxit
         && g_inside_color >= COLOR_BLACK
         && g_calc_status == CalcStatus::COMPLETED
         && g_cur_fractal_specific->calctype == standard_fractal
         && !g_log_map_flag
-        && !g_truecolor     // recalc not yet implemented with truecolor
+        && !g_true_color     // recalc not yet implemented with truecolor
         && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
         && g_user_std_calc_mode != 'o'
         && i == 1 // nothing else changed

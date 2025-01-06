@@ -1398,7 +1398,7 @@ int targa_color(int x, int y, int color)
     unsigned long V;
     Byte RGB[3];
 
-    if (g_fill_type == FillType::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_truecolor)
+    if (g_fill_type == FillType::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_true_color)
     {
         s_real_color = (Byte)color;       // So Targa gets interpolated color
     }
@@ -1555,7 +1555,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
         // ID field size = 0, No color map, Targa type 2 file
         for (int i = 0; i < 12; i++)
         {
-            if (i == 0 && g_truecolor)
+            if (i == 0 && g_true_color)
             {
                 set_upr_lwr();
                 std::fputc(4, fps); // make room to write an extra number
@@ -1580,7 +1580,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
         inc = 3;
     }
 
-    if (g_truecolor) // write maxit
+    if (g_true_color) // write maxit
     {
         std::fputc((Byte)(g_max_iterations       & 0xff), fps);
         std::fputc((Byte)((g_max_iterations >> 8) & 0xff), fps);

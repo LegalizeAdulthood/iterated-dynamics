@@ -79,89 +79,89 @@
 
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
-static int get_max_cur_arg_len(char const *const floatvalstr[], int num_args);
+static int get_max_cur_arg_len(char const *const float_val_str[], int num_args);
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
 static int  next_command(
-    char *cmdbuf,
-    int maxlen,
+    char *cmd_buf,
+    int max_len,
     std::FILE *handle,
-    char *linebuf,
-    int *lineoffset,
+    char *line_buf,
+    int *line_offset,
     CmdFile mode);
-static bool next_line(std::FILE *handle, char *linebuf, CmdFile mode);
+static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode);
 static void arg_error(char const *);
 static void init_vars_run();
 static void init_vars_restart();
 static void init_vars_fractal();
 static void init_vars3d();
-static void reset_ifs_defn();
-static int  get_bf(bf_t bf, char const *curarg);
+static void reset_ifs_definition();
+static int  get_bf(bf_t bf, char const *cur_arg);
 static bool is_a_big_float(char const *str);
 
 // variables defined by the command line/files processor
-int g_stop_pass{};                                            // stop at this guessing pass early
-int g_distance_estimator_x_dots{};                            // xdots to use for video independence
-int g_distance_estimator_y_dots{};                            // ydots to use for video independence
-int g_bf_digits{};                                            // digits to use (force) for g_bf_math
-int g_show_dot{-1};                                           // color to show crawling graphics cursor
-int g_size_dot{};                                             // size of dot crawling cursor
+int g_stop_pass{};                                        // stop at this guessing pass early
+int g_distance_estimator_x_dots{};                        // x dots to use for video independence
+int g_distance_estimator_y_dots{};                        // y dots to use for video independence
+int g_bf_digits{};                                        // digits to use (force) for g_bf_math
+int g_show_dot{-1};                                       // color to show crawling graphics cursor
+int g_size_dot{};                                         // size of dot crawling cursor
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
-char g_auto_show_dot{};                                       // dark, medium, bright
-bool g_start_show_orbit{};                                    // show orbits on at start of fractal
-std::string g_read_filename;                                  // name of fractal input file
-std::string g_temp_dir;                                       // name of temporary directory
-std::string g_working_dir;                                    // name of directory for misc files
-std::string g_organize_formulas_dir;                          // name of directory for orgfrm files
-std::string g_gif_filename_mask;                              //
-std::string g_save_filename{"fract001"};                      // save files using this name
-bool g_potential_flag{};                                      // continuous potential enabled?
-bool g_potential_16bit{};                                     // store 16 bit continuous potential values
-bool g_dither_flag{};                                         // true if want to dither GIFs
-bool g_ask_video{};                                           // flag for video prompting
-bool g_float_flag{};                                          //
-int g_biomorph{};                                             // flag for biomorph
-int g_user_biomorph_value{};                                  //
-int g_show_file{};                                            // zero if file display pending
-bool g_random_seed_flag{};                                    //
-int g_random_seed{};                                          // Random number seeding flag and value
-int g_decomp[2]{};                                            // Decomposition coloring
-long g_distance_estimator{};                                  //
-int g_distance_estimator_width_factor{};                      //
-bool g_overwrite_file{};                                      // true if file overwrite allowed
-int g_sound_flag{};                                    // sound control bitfield... see sound.c for useage
-int g_base_hertz{};                                    // sound=x/y/x hertz value
-int g_cycle_limit{};                                   // color-rotator upper limit
-int g_fill_color{};                                    // fillcolor: -1=normal
-bool g_finite_attractor{};                             // finite attractor logic
-Display3DMode g_display_3d{Display3DMode::NONE}; // 3D display flag: 0 = OFF
-bool g_overlay_3d{};                                   // 3D overlay flag
-bool g_check_cur_dir{};                                // flag to check current dir for files
-BatchMode g_init_batch{BatchMode::NONE};           // 1 if batch run (no kbd)
-int g_init_save_time{};                                // autosave minutes
-DComplex g_init_orbit{};                               // initial orbitvalue
-InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for initorbit
-int g_init_mode{};                                            // initial video mode
-int g_init_cycle_limit{};                                     // initial cycle limit
-bool g_use_center_mag{};                                      // use center-mag corners
-long g_bail_out{};                                            // user input bailout value
-double g_inversion[3]{};                                      // radius, xcenter, ycenter
-int g_color_cycle_range_lo{};                                 //
-int g_color_cycle_range_hi{};                                 // cycling color range
-std::vector<int> g_iteration_ranges;                          // iter->color ranges mapping
-int g_iteration_ranges_len{};                                 // size of ranges array
-Byte g_map_clut[256][3];                                      // map= (default colors)
-bool g_map_specified{};                                       // map= specified
-Byte *mapdacbox{};                                            // map= (default colors)
-ColorState g_color_state{ColorState::DEFAULT};              // g_dac_box matches default (bios or map=)
-bool g_colors_preloaded{};                                    // if g_dac_box preloaded for next mode select
-bool g_read_color{true};                                      // flag for reading color from GIF
-double g_math_tol[2]{.05, .05};                               // For math transition
-bool g_targa_out{};                                           // 3D fullcolor flag
-bool g_truecolor{};                                           // escape time truecolor flag
-TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // truecolor coloring scheme
-std::string g_color_file;                                     // from last <l> <s> or colors=@filename
-bool g_new_bifurcation_functions_loaded{};                    // if function loaded for new bifs
-float g_screen_aspect{DEFAULT_ASPECT};                        // aspect ratio of the screen
+char g_auto_show_dot{};                                   // dark, medium, bright
+bool g_start_show_orbit{};                                // show orbits on at start of fractal
+std::string g_read_filename;                              // name of fractal input file
+std::string g_temp_dir;                                   // name of temporary directory
+std::string g_working_dir;                                // name of directory for misc files
+std::string g_organize_formulas_dir;                      // name of directory for orgfrm files
+std::string g_gif_filename_mask;                          //
+std::string g_save_filename{"fract001"};                  // save files using this name
+bool g_potential_flag{};                                  // continuous potential enabled?
+bool g_potential_16bit{};                                 // store 16 bit continuous potential values
+bool g_dither_flag{};                                     // true if want to dither GIFs
+bool g_ask_video{};                                       // flag for video prompting
+bool g_float_flag{};                                      //
+int g_biomorph{};                                         // flag for biomorph
+int g_user_biomorph_value{};                              //
+int g_show_file{};                                        // zero if file display pending
+bool g_random_seed_flag{};                                //
+int g_random_seed{};                                      // Random number seeding flag and value
+int g_decomp[2]{};                                        // Decomposition coloring
+long g_distance_estimator{};                              //
+int g_distance_estimator_width_factor{};                  //
+bool g_overwrite_file{};                                  // true if file overwrite allowed
+int g_sound_flag{};                                       // sound control bitfield... see sound.c for useage
+int g_base_hertz{};                                       // sound=x/y/x hertz value
+int g_cycle_limit{};                                      // color-rotator upper limit
+int g_fill_color{};                                       // fill color: -1=normal
+bool g_finite_attractor{};                                // finite attractor logic
+Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
+bool g_overlay_3d{};                                      // 3D overlay flag
+bool g_check_cur_dir{};                                   // flag to check current dir for files
+BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
+int g_init_save_time{};                                   // autosave minutes
+DComplex g_init_orbit{};                                  // initial orbit value
+InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
+int g_init_mode{};                                        // initial video mode
+int g_init_cycle_limit{};                                 // initial cycle limit
+bool g_use_center_mag{};                                  // use center-mag corners
+long g_bail_out{};                                        // user input bailout value
+double g_inversion[3]{};                                  // radius, x center, y center
+int g_color_cycle_range_lo{};                             //
+int g_color_cycle_range_hi{};                             // cycling color range
+std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
+int g_iteration_ranges_len{};                             // size of ranges array
+Byte g_map_clut[256][3];                                  // map= (default colors)
+bool g_map_specified{};                                   // map= specified
+Byte *map_dac_box{};                                      // map= (default colors)
+ColorState g_color_state{ColorState::DEFAULT};            // g_dac_box matches default (bios or map=)
+bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
+bool g_read_color{true};                                  // flag for reading color from GIF
+double g_math_tol[2]{.05, .05};                           // For math transition
+bool g_targa_out{};                                       // 3D full color flag
+bool g_true_color{};                                      // escape time true color flag
+TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // true color coloring scheme
+std::string g_color_file;                                 // from last <l> <s> or colors=@filename
+bool g_new_bifurcation_functions_loaded{};                // if function loaded for new bifs
+float g_screen_aspect{DEFAULT_ASPECT};                    // aspect ratio of the screen
 float g_aspect_drift{DEFAULT_ASPECT_DRIFT}; // how much drift is allowed and still forced to g_screen_aspect
 
 // true - reset viewwindows prior to a restore and
@@ -228,10 +228,10 @@ Byte g_text_color[31] = {
 };
 static_assert(std::size(g_text_color) == 31);
 
-static int s_init_rseed{};      //
-static bool s_init_corners{};   // corners set via corners= or center-mag=?
-static bool s_init_params{};    // params set via params=?
-static bool s_init_functions{}; // trig functions set via function=?
+static int s_init_random_seed{}; //
+static bool s_init_corners{};    // corners set via corners= or center-mag=?
+static bool s_init_params{};     // params set via params=?
+static bool s_init_functions{};  // trig functions set via function=?
 
 // cmdfiles(argc,argv) process the command-line arguments
 // it also processes the 'sstools.ini' file and any
@@ -255,29 +255,29 @@ static void process_sstools_ini()
     std::string const sstools_ini = find_path("sstools.ini"); // look for SSTOOLS.INI
     if (!sstools_ini.empty())              // found it!
     {
-        std::FILE *initfile = std::fopen(sstools_ini.c_str(), "r");
-        if (initfile != nullptr)
+        std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r");
+        if (init_file != nullptr)
         {
-            command_file(initfile, CmdFile::SSTOOLS_INI);           // process it
+            command_file(init_file, CmdFile::SSTOOLS_INI);           // process it
         }
     }
 }
 
-static void process_simple_command(char *curarg)
+static void process_simple_command(char *cur_arg)
 {
     bool processed{};
-    if (std::strchr(curarg, '=') == nullptr)
+    if (std::strchr(cur_arg, '=') == nullptr)
     {
         // not xxx=yyy, so check for gif
-        std::string filename = curarg;
-        if (has_ext(curarg) == nullptr)
+        std::string filename = cur_arg;
+        if (has_ext(cur_arg) == nullptr)
         {
             filename += ".gif";
         }
-        if (std::FILE *initfile = std::fopen(filename.c_str(), "rb"))
+        if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))
         {
             char signature[6];
-            if (std::fread(signature, 1, 6, initfile) != 6)
+            if (std::fread(signature, 1, 6, init_file) != 6)
             {
                 throw std::system_error(errno, std::system_category(), "process_simple_command failed fread");
             }
@@ -287,47 +287,47 @@ static void process_simple_command(char *curarg)
                 && signature[3] >= '8' && signature[3] <= '9'
                 && signature[4] >= '0' && signature[4] <= '9')
             {
-                g_read_filename = curarg;
+                g_read_filename = cur_arg;
                 g_browse_name = extract_file_name(g_read_filename.c_str());
                 g_show_file = 0;
                 processed = true;
             }
-            std::fclose(initfile);
+            std::fclose(init_file);
         }
     }
     if (!processed)
     {
-        cmd_arg(curarg, CmdFile::AT_CMD_LINE);           // process simple command
+        cmd_arg(cur_arg, CmdFile::AT_CMD_LINE);           // process simple command
     }
 }
 
-static void process_file_set_name(const char *curarg, char *sptr)
+static void process_file_set_name(const char *cur_arg, char *slash)
 {
-    *sptr = 0;
-    if (merge_path_names(g_command_file, &curarg[1], CmdFile::AT_CMD_LINE) < 0)
+    *slash = 0;
+    if (merge_path_names(g_command_file, &cur_arg[1], CmdFile::AT_CMD_LINE) < 0)
     {
         init_msg("", g_command_file.c_str(), CmdFile::AT_CMD_LINE);
     }
-    g_command_name = &sptr[1];
-    std::FILE *initfile = nullptr;
-    if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ItemType::PAR_SET) || initfile == nullptr)
+    g_command_name = &slash[1];
+    std::FILE *init_file = nullptr;
+    if (find_file_item(g_command_file, g_command_name.c_str(), &init_file, ItemType::PAR_SET) || init_file == nullptr)
     {
-        arg_error(curarg);
+        arg_error(cur_arg);
     }
     else
     {
-        command_file(initfile, CmdFile::AT_CMD_LINE_SET_NAME);
+        command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
     }
 }
 
-static void process_file(char *curarg)
+static void process_file(char *cur_arg)
 {
-    std::FILE *initfile = std::fopen(&curarg[1], "r");
-    if (initfile == nullptr)
+    std::FILE *init_file = std::fopen(&cur_arg[1], "r");
+    if (init_file == nullptr)
     {
-        arg_error(curarg);
+        arg_error(cur_arg);
     }
-    command_file(initfile, CmdFile::AT_CMD_LINE);
+    command_file(init_file, CmdFile::AT_CMD_LINE);
 }
 
 int cmd_files(int argc, char const *const *argv)
@@ -344,25 +344,25 @@ int cmd_files(int argc, char const *const *argv)
     // cycle through args
     for (int i = 1; i < argc; i++)
     {
-        char curarg[141];
-        std::strcpy(curarg, argv[i]);
-        if (curarg[0] == ';')             // start of comments?
+        char cur_arg[141];
+        std::strcpy(cur_arg, argv[i]);
+        if (cur_arg[0] == ';')             // start of comments?
         {
             break;
         }
-        if (curarg[0] != '@')
+        if (cur_arg[0] != '@')
         {
-            process_simple_command(curarg);
+            process_simple_command(cur_arg);
         }
         // @filename/setname?
-        else if (char *sptr = std::strchr(curarg, '/'))
+        else if (char *slash = std::strchr(cur_arg, '/'))
         {
-            process_file_set_name(curarg, sptr);
+            process_file_set_name(cur_arg, slash);
         }
         // @filename
         else
         {
-            process_file(curarg);
+            process_file(cur_arg);
         }
     }
 
@@ -412,7 +412,7 @@ CmdArgFlags load_commands(std::FILE *infile)
 
 static void init_vars_run()              // once per run init
 {
-    s_init_rseed = (int)std::time(nullptr);
+    s_init_random_seed = (int)std::time(nullptr);
     init_comments();
     char const *p = getenv("TMP");
     if (p == nullptr)
@@ -466,9 +466,9 @@ static void init_vars_restart() // <ins> key init
     clear_command_comments();                          //
     g_ifs_filename = "id.ifs";                         //
     g_ifs_name.clear();                                //
-    reset_ifs_defn();                                  //
+    reset_ifs_definition();                                  //
     g_random_seed_flag = false;                        // not a fixed srand() seed
-    g_random_seed = s_init_rseed;                      //
+    g_random_seed = s_init_random_seed;                      //
     g_read_filename = DOT_SLASH;                       // initially current directory
     g_show_file = 1;                                   //
     // next should perhaps be fractal re-init, not just <ins> ?
@@ -477,7 +477,7 @@ static void init_vars_restart() // <ins> key init
     g_map_specified = false;                          //
     g_major_method = Major::BREADTH_FIRST;            // default inverse julia methods
     g_inverse_julia_minor_method = Minor::LEFT_FIRST; // default inverse julia methods
-    g_truecolor = false;                              // truecolor output flag
+    g_true_color = false;                              // truecolor output flag
     g_true_mode = TrueColorMode::DEFAULT_COLOR;     //
 }
 
@@ -609,7 +609,7 @@ static void init_vars3d()
     set_3d_defaults();
 }
 
-static void reset_ifs_defn()
+static void reset_ifs_definition()
 {
     g_ifs_definition.clear();
 }
@@ -631,130 +631,130 @@ static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
         clear_command_comments();
     }
 
-    char cmdbuf[10000]{};
-    char linebuf[513];
-    linebuf[0] = 0;
-    int lineoffset{};
-    CmdArgFlags changeflag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
-    while (next_command(cmdbuf, std::size(cmdbuf), handle, linebuf, &lineoffset, mode) > 0)
+    char cmd_buf[10000]{};
+    char line_buf[513];
+    line_buf[0] = 0;
+    int line_offset{};
+    CmdArgFlags change_flag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
+    while (next_command(cmd_buf, std::size(cmd_buf), handle, line_buf, &line_offset, mode) > 0)
     {
-        if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && std::strcmp(cmdbuf, "}") == 0)
+        if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && std::strcmp(cmd_buf, "}") == 0)
         {
             break;
         }
-        const CmdArgFlags i = cmd_arg(cmdbuf, mode);
+        const CmdArgFlags i = cmd_arg(cmd_buf, mode);
         if (i == CmdArgFlags::BAD_ARG)
         {
             break;
         }
-        changeflag |= i;
+        change_flag |= i;
     }
     std::fclose(handle);
 
-    if (bit_set(changeflag, CmdArgFlags::FRACTAL_PARAM))
+    if (bit_set(change_flag, CmdArgFlags::FRACTAL_PARAM))
     {
         backwards_v18();
         backwards_v19();
         backwards_v20();
     }
-    return changeflag;
+    return change_flag;
 }
 
 static int next_command(
-    char *cmdbuf,
-    int maxlen,
+    char *cmd_buf,
+    int max_len,
     std::FILE *handle,
-    char *linebuf,
-    int *lineoffset,
+    char *line_buf,
+    int *line_offset,
     CmdFile mode)
 {
-    int cmdlen{};
-    char *lineptr = linebuf + *lineoffset;
+    int cmd_len{};
+    char *line_ptr = line_buf + *line_offset;
     while (true)
     {
-        while (*lineptr <= ' ' || *lineptr == ';')
+        while (*line_ptr <= ' ' || *line_ptr == ';')
         {
-            if (cmdlen)                 // space or ; marks end of command
+            if (cmd_len)                 // space or ; marks end of command
             {
-                cmdbuf[cmdlen] = 0;
-                *lineoffset = (int)(lineptr - linebuf);
-                return cmdlen;
+                cmd_buf[cmd_len] = 0;
+                *line_offset = (int)(line_ptr - line_buf);
+                return cmd_len;
             }
-            while (*lineptr && *lineptr <= ' ')
+            while (*line_ptr && *line_ptr <= ' ')
             {
-                ++lineptr;                  // skip spaces and tabs
+                ++line_ptr;                  // skip spaces and tabs
             }
-            if (*lineptr == ';' || *lineptr == 0)
+            if (*line_ptr == ';' || *line_ptr == 0)
             {
-                if (*lineptr == ';'
+                if (*line_ptr == ';'
                     && (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
                     && (g_command_comment[0].empty() || g_command_comment[1].empty()
                         || g_command_comment[2].empty() || g_command_comment[3].empty()))
                 {
                     // save comment
-                    ++lineptr;
-                    while (*lineptr && (*lineptr == ' ' || *lineptr == '\t'))
+                    ++line_ptr;
+                    while (*line_ptr && (*line_ptr == ' ' || *line_ptr == '\t'))
                     {
-                        ++lineptr;
+                        ++line_ptr;
                     }
-                    if (*lineptr)
+                    if (*line_ptr)
                     {
-                        if ((int)std::strlen(lineptr) >= MAX_COMMENT_LEN)
+                        if ((int)std::strlen(line_ptr) >= MAX_COMMENT_LEN)
                         {
-                            *(lineptr+MAX_COMMENT_LEN-1) = 0;
+                            *(line_ptr+MAX_COMMENT_LEN-1) = 0;
                         }
                         for (std::string &elem : g_command_comment)
                         {
                             if (elem.empty())
                             {
-                                elem = lineptr;
+                                elem = line_ptr;
                                 break;
                             }
                         }
                     }
                 }
-                if (next_line(handle, linebuf, mode))
+                if (next_line(handle, line_buf, mode))
                 {
                     return -1; // eof
                 }
-                lineptr = linebuf; // start new line
+                line_ptr = line_buf; // start new line
             }
         }
-        if (*lineptr == '\\' && *(lineptr+1) == 0)              // continuation onto next line?
+        if (*line_ptr == '\\' && *(line_ptr+1) == 0)              // continuation onto next line?
         {
-            if (next_line(handle, linebuf, mode))
+            if (next_line(handle, line_buf, mode))
             {
-                arg_error(cmdbuf);           // missing continuation
+                arg_error(cmd_buf);           // missing continuation
                 return -1;
             }
-            lineptr = linebuf;
-            while (*lineptr && *lineptr <= ' ')
+            line_ptr = line_buf;
+            while (*line_ptr && *line_ptr <= ' ')
             {
-                ++lineptr;                  // skip white space @ start next line
+                ++line_ptr;                  // skip white space @ start next line
             }
             continue;                      // loop to check end of line again
         }
-        cmdbuf[cmdlen] = *(lineptr++);    // copy character to command buffer
-        if (++cmdlen >= maxlen)         // command too long?
+        cmd_buf[cmd_len] = *(line_ptr++);    // copy character to command buffer
+        if (++cmd_len >= max_len)         // command too long?
         {
-            arg_error(cmdbuf);
+            arg_error(cmd_buf);
             return -1;
         }
     }
 }
 
-static bool next_line(std::FILE *handle, char *linebuf, CmdFile mode)
+static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode)
 {
     bool tools_section = true;
-    while (file_gets(linebuf, 512, handle) >= 0)
+    while (file_gets(line_buf, 512, handle) >= 0)
     {
-        if (mode == CmdFile::SSTOOLS_INI && linebuf[0] == '[')   // check for [id]
+        if (mode == CmdFile::SSTOOLS_INI && line_buf[0] == '[')   // check for [id]
         {
-            char tmpbuf[11];
-            std::strncpy(tmpbuf, &linebuf[1], 4);
-            tmpbuf[4] = 0;
-            strlwr(tmpbuf);
-            tools_section = std::strncmp(tmpbuf, "id]", 3) == 0;
+            char tmp_buf[11];
+            std::strncpy(tmp_buf, &line_buf[1], 4);
+            tmp_buf[4] = 0;
+            strlwr(tmp_buf);
+            tools_section = std::strncmp(tmp_buf, "id]", 3) == 0;
             continue;                              // skip tools section heading
         }
         if (tools_section)
@@ -811,7 +811,7 @@ void set_print_document(const PrintDocFn &fn)
 
 struct Command
 {
-    Command(char *curarg, CmdFile a_mode);
+    Command(char *cur_arg, CmdFile a_mode);
     CmdArgFlags bad_arg() const;
 
     char *arg;
@@ -831,29 +831,29 @@ struct Command
     CmdArgFlags status{CmdArgFlags::NONE};
 };
 
-Command::Command(char *curarg, CmdFile a_mode) :
-    arg(curarg),
+Command::Command(char *cur_arg, CmdFile a_mode) :
+    arg(cur_arg),
     mode(a_mode)
 {
-    lowerize_parameter(curarg);
+    lowerize_parameter(cur_arg);
     int j;
-    value = std::strchr(&curarg[1], '=');
+    value = std::strchr(&cur_arg[1], '=');
     if (value != nullptr)
     {
-        j = (int) (value++ - curarg);
+        j = (int) (value++ - cur_arg);
     }
     else
     {
-        j = (int) std::strlen(curarg);
-        value = curarg + j;
+        j = (int) std::strlen(cur_arg);
+        value = cur_arg + j;
     }
     if (j > 20)
     {
-        arg_error(curarg); // keyword too long
+        arg_error(cur_arg); // keyword too long
         status = CmdArgFlags::BAD_ARG;
         return;
     }
-    variable = std::string(curarg, j);
+    variable = std::string(cur_arg, j);
     value_len = (int) std::strlen(value); // note value's length
     char_val[0] = value[0];               // first letter of value
     yes_no_val[0] = -1;                    // note yes|no value
@@ -866,20 +866,20 @@ Command::Command(char *curarg, CmdFile a_mode) :
         yes_no_val[0] = 1;
     }
 
-    char *argptr = value;
+    char *arg_ptr = value;
     num_float_params = 0;
     num_int_params = 0;
     total_params = 0;
     num_val = 0;
-    while (*argptr) // count and pre-parse parms
+    while (*arg_ptr) // count and pre-parse parms
     {
         long ll;
         bool last_arg{};
-        char *argptr2 = std::strchr(argptr, '/');
-        if (argptr2 == nullptr) // find next '/'
+        char *arg_ptr2 = std::strchr(arg_ptr, '/');
+        if (arg_ptr2 == nullptr) // find next '/'
         {
-            argptr2 = argptr + std::strlen(argptr);
-            *argptr2 = '/';
+            arg_ptr2 = arg_ptr + std::strlen(arg_ptr);
+            *arg_ptr2 = '/';
             last_arg = true;
         }
         if (total_params == 0)
@@ -888,7 +888,7 @@ Command::Command(char *curarg, CmdFile a_mode) :
         }
         if (total_params < 16)
         {
-            char_val[total_params] = *argptr; // first letter of value
+            char_val[total_params] = *arg_ptr; // first letter of value
             if (char_val[total_params] == 'n')
             {
                 yes_no_val[total_params] = 0;
@@ -899,9 +899,9 @@ Command::Command(char *curarg, CmdFile a_mode) :
             }
         }
         char next{};
-        char tmpc{};
-        if (std::sscanf(argptr, "%c%c", &next, &tmpc) > 0 // NULL entry
-            && (next == '/' || next == '=') && tmpc == '/')
+        char tmp_c{};
+        if (std::sscanf(arg_ptr, "%c%c", &next, &tmp_c) > 0 // NULL entry
+            && (next == '/' || next == '=') && tmp_c == '/')
         {
             j = 0;
             ++num_float_params;
@@ -920,15 +920,15 @@ Command::Command(char *curarg, CmdFile a_mode) :
                 num_val = j;
             }
         }
-        else if (std::sscanf(argptr, "%ld%c", &ll, &tmpc) > 0 // got an integer
-            && tmpc == '/')                                   // needs a long int, ll, here for lyapunov
+        else if (std::sscanf(arg_ptr, "%ld%c", &ll, &tmp_c) > 0 // got an integer
+            && tmp_c == '/')                                   // needs a long int, ll, here for lyapunov
         {
             ++num_float_params;
             ++num_int_params;
             if (total_params < 16)
             {
                 float_vals[total_params] = ll;
-                float_val_strs[total_params] = argptr;
+                float_val_strs[total_params] = arg_ptr;
             }
             if (total_params < 64)
             {
@@ -939,33 +939,33 @@ Command::Command(char *curarg, CmdFile a_mode) :
                 num_val = (int) ll;
             }
         }
-        else if (double ftemp{}; std::sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0 // got a float
-                 && tmpc == '/')
+        else if (double f_temp{}; std::sscanf(arg_ptr, "%lg%c", &f_temp, &tmp_c) > 0 // got a float
+                 && tmp_c == '/')
         {
             ++num_float_params;
             if (total_params < 16)
             {
-                float_vals[total_params] = ftemp;
-                float_val_strs[total_params] = argptr;
+                float_vals[total_params] = f_temp;
+                float_val_strs[total_params] = arg_ptr;
             }
         }
         // using arbitrary precision and above failed
-        else if (((int) std::strlen(argptr) > 513) // very long command
-            || (total_params > 0 && float_vals[total_params - 1] == FLT_MAX && total_params < 6) || is_a_big_float(argptr))
+        else if (((int) std::strlen(arg_ptr) > 513) // very long command
+            || (total_params > 0 && float_vals[total_params - 1] == FLT_MAX && total_params < 6) || is_a_big_float(arg_ptr))
         {
             ++num_float_params;
             float_vals[total_params] = FLT_MAX;
-            float_val_strs[total_params] = argptr;
+            float_val_strs[total_params] = arg_ptr;
         }
         ++total_params;
-        argptr = argptr2; // on to the next
+        arg_ptr = arg_ptr2; // on to the next
         if (last_arg)
         {
-            *argptr = 0;
+            *arg_ptr = 0;
         }
         else
         {
-            ++argptr;
+            ++arg_ptr;
         }
     }
 }
@@ -1522,10 +1522,10 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
     g_use_center_mag = true;
     int saved = save_stack();
-    bf_t bXctr = alloc_stack(g_bf_length + 2);
-    bf_t bYctr = alloc_stack(g_bf_length + 2);
-    get_bf(bXctr, cmd.float_val_strs[0]);
-    get_bf(bYctr, cmd.float_val_strs[1]);
+    bf_t b_x_ctr = alloc_stack(g_bf_length + 2);
+    bf_t b_y_ctr = alloc_stack(g_bf_length + 2);
+    get_bf(b_x_ctr, cmd.float_val_strs[0]);
+    get_bf(b_y_ctr, cmd.float_val_strs[1]);
     double x_mag_factor = 1;
     double rotation = 0;
     double skew = 0;
@@ -1546,7 +1546,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         skew = cmd.float_vals[5];
     }
     // calculate bounds
-    cvt_corners_bf(bXctr, bYctr, magnification, x_mag_factor, rotation, skew);
+    cvt_corners_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
     bf_corners_to_float();
     restore_stack(saved);
     return CmdArgFlags::FRACTAL_PARAM;
@@ -1644,21 +1644,21 @@ static CmdArgFlags parse_colors(char const *value)
                     {
                         int spread = smooth + 1;
                         int start = i - spread;
-                        int cnum{};
+                        int c_num{};
                         if ((k - (int)g_dac_box[start][j]) == 0)
                         {
-                            while (++cnum < spread)
+                            while (++c_num < spread)
                             {
-                                g_dac_box[start+cnum][j] = (Byte)k;
+                                g_dac_box[start+c_num][j] = (Byte)k;
                             }
                         }
                         else
                         {
-                            while (++cnum < spread)
+                            while (++c_num < spread)
                             {
-                                g_dac_box[start+cnum][j] =
-                                    (Byte)((cnum *g_dac_box[i][j]
-                                            + (i-(start+cnum))*g_dac_box[start][j]
+                                g_dac_box[start+c_num][j] =
+                                    (Byte)((c_num *g_dac_box[i][j]
+                                            + (i-(start+c_num))*g_dac_box[start][j]
                                             + spread/2)
                                            / (Byte) spread);
                             }
@@ -2153,7 +2153,7 @@ static CmdArgFlags cmd_ifs(const Command &cmd)
         return cmd.bad_arg();
     }
     g_ifs_name = cmd.value;
-    reset_ifs_defn();
+    reset_ifs_definition();
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -2166,7 +2166,7 @@ static CmdArgFlags cmd_ifs_file(const Command &cmd)
     }
     if (const int exist_dir = merge_path_names(g_ifs_filename, cmd.value, cmd.mode); exist_dir == 0)
     {
-        reset_ifs_defn();
+        reset_ifs_definition();
     }
     else if (exist_dir < 0)
     {
@@ -2453,9 +2453,9 @@ static CmdArgFlags cmd_make_mig(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    const int xmult = cmd.int_vals[0];
-    const int ymult = cmd.int_vals[1];
-    make_mig(xmult, ymult);
+    const int x_mult = cmd.int_vals[0];
+    const int y_mult = cmd.int_vals[1];
+    make_mig(x_mult, y_mult);
     cmd_files_test::s_goodbye();
     return CmdArgFlags::GOODBYE;
 }
@@ -2971,7 +2971,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     int prev = i;
     int entries = prev;
     g_log_map_flag = 0; // ranges overrides logmap
-    int tmpranges[128];
+    int tmp_ranges[128];
     while (i < cmd.total_params)
     {
         int k = cmd.int_vals[i++];
@@ -2982,8 +2982,8 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
             {
                 return cmd.bad_arg();
             }
-            tmpranges[entries++] = -1; // {-1,width,limit} for striping
-            tmpranges[entries++] = k;
+            tmp_ranges[entries++] = -1; // {-1,width,limit} for striping
+            tmp_ranges[entries++] = k;
             k = cmd.int_vals[i++];
         }
         if (k < prev)
@@ -2991,7 +2991,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
             return cmd.bad_arg();
         }
         prev = k;
-        tmpranges[entries++] = k;
+        tmp_ranges[entries++] = k;
     }
     if (prev == 0)
     {
@@ -3014,7 +3014,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     g_iteration_ranges_len = entries;
     for (int i2 = 0; i2 < g_iteration_ranges_len; ++i2)
     {
-        g_iteration_ranges[i2] = tmpranges[i2];
+        g_iteration_ranges[i2] = tmp_ranges[i2];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -3452,10 +3452,10 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
             }
             if (*value != '/')
             {
-                unsigned int hexval;
-                std::sscanf(value, "%x", &hexval);
-                unsigned int i = (hexval / 16) & 7;
-                unsigned int j = hexval & 15;
+                unsigned int hex_val;
+                std::sscanf(value, "%x", &hex_val);
+                unsigned int i = (hex_val / 16) & 7;
+                unsigned int j = hex_val & 15;
                 if (i == j || (i == 0 && j == 8)) // force contrast
                 {
                     j = 15;
@@ -3508,7 +3508,7 @@ static CmdArgFlags cmd_true_color(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_truecolor = cmd.yes_no_val[0] != 0;
+    g_true_color = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3915,9 +3915,9 @@ std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler, N> &h
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-CmdArgFlags cmd_arg(char *curarg, CmdFile mode) // process a single argument
+CmdArgFlags cmd_arg(char *cur_arg, CmdFile mode) // process a single argument
 {
-    Command cmd{curarg, mode};
+    Command cmd{cur_arg, mode};
     if (cmd.status != CmdArgFlags::NONE)
     {
         return cmd.status;
@@ -3939,9 +3939,9 @@ CmdArgFlags cmd_arg(char *curarg, CmdFile mode) // process a single argument
     return cmd.bad_arg();
 }
 
-static void arg_error(char const *badarg)      // oops. couldn't decode this
+static void arg_error(char const *bad_arg)      // oops. couldn't decode this
 {
-    std::string spillover{badarg};
+    std::string spillover{bad_arg};
     if (spillover.length() > 70)
     {
         spillover = spillover.substr(0, 70);
@@ -4007,38 +4007,38 @@ void set_3d_defaults()
 }
 
 // copy a big number from a string, up to slash
-static int get_bf(bf_t bf, char const *curarg)
+static int get_bf(bf_t bf, char const *cur_arg)
 {
-    if (char const *s = std::strchr(curarg, '/'); s)
+    if (char const *s = std::strchr(cur_arg, '/'); s)
     {
-        std::string buff(curarg, s);
+        std::string buff(cur_arg, s);
         str_to_bf(bf, buff.c_str());
     }
     else
     {
-        str_to_bf(bf, curarg);
+        str_to_bf(bf, cur_arg);
     }
     return 0;
 }
 
 // Get length of current args
-static int get_cur_arg_len(char const *curarg)
+static int get_cur_arg_len(char const *cur_arg)
 {
-    if (char const *s = std::strchr(curarg, '/'); s)
+    if (char const *s = std::strchr(cur_arg, '/'); s)
     {
-        return static_cast<int>(s - curarg);
+        return static_cast<int>(s - cur_arg);
     }
 
-    return static_cast<int>(std::strlen(curarg));
+    return static_cast<int>(std::strlen(cur_arg));
 }
 
 // Get max length of current args
-static int get_max_cur_arg_len(const char *const floatvalstr[], int num_args)
+static int get_max_cur_arg_len(const char *const float_val_str[], int num_args)
 {
     int max_str = 0;
     for (int i = 0; i < num_args; i++)
     {
-        int tmp = get_cur_arg_len(floatvalstr[i]);
+        int tmp = get_cur_arg_len(float_val_str[i]);
         max_str = std::max(tmp, max_str);
     }
     return max_str;
@@ -4046,8 +4046,8 @@ static int get_max_cur_arg_len(const char *const floatvalstr[], int num_args)
 
 static std::string to_string(CmdFile value)
 {
-    static char const *const modestr[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
-    return modestr[static_cast<int>(value)];
+    static char const *const mode_str[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
+    return mode_str[static_cast<int>(value)];
 }
 
 // mode = 0 command line @filename
@@ -4056,20 +4056,20 @@ static std::string to_string(CmdFile value)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode)
+int init_msg(char const *cmd_str, char const *bad_filename, CmdFile mode)
 {
     static int row = 1;
 
     if (g_init_batch == BatchMode::NORMAL)
     {
         // in batch mode
-        if (badfilename)
+        if (bad_filename)
         {
             return -1;
         }
     }
     char cmd[80];
-    std::strncpy(cmd, cmdstr, 30);
+    std::strncpy(cmd, cmd_str, 30);
     cmd[29] = 0;
 
     if (*cmd)
@@ -4077,19 +4077,19 @@ int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode)
         std::strcat(cmd, "=");
     }
     std::string msg;
-    if (badfilename)
+    if (bad_filename)
     {
-        msg = std::string {"Can't find "} + cmd + badfilename + ", please check " + to_string(mode);
+        msg = std::string {"Can't find "} + cmd + bad_filename + ", please check " + to_string(mode);
     }
     if (g_first_init)
     {
         // & cmdfiles hasn't finished 1st try
-        if (row == 1 && badfilename)
+        if (row == 1 && bad_filename)
         {
             driver_set_for_text();
             driver_put_string(0, 0, 15, "Id found the following problems when parsing commands: ");
         }
-        if (badfilename)
+        if (bad_filename)
         {
             driver_put_string(row++, 0, 7, msg);
         }
@@ -4100,7 +4100,7 @@ int init_msg(char const *cmdstr, char const *badfilename, CmdFile mode)
             do_pause(2);  // defer getakeynohelp until after parsing
         }
     }
-    else if (badfilename)
+    else if (bad_filename)
     {
         stop_msg(msg);
     }
@@ -4114,22 +4114,22 @@ static bool is_a_big_float(char const *str)
     // [+|-]numbers][.]numbers[+|-][e|g]numbers
     bool result = true;
     char const *s = str;
-    int numdot{};
-    int nume{};
-    int numsign{};
+    int num_dot{};
+    int num_e{};
+    int num_sign{};
     while (*s != 0 && *s != '/' && *s != ' ')
     {
         if (*s == '-' || *s == '+')
         {
-            numsign++;
+            num_sign++;
         }
         else if (*s == '.')
         {
-            numdot++;
+            num_dot++;
         }
         else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G')
         {
-            nume++;
+            num_e++;
         }
         else if (!std::isdigit(*s))
         {
@@ -4138,7 +4138,7 @@ static bool is_a_big_float(char const *str)
         }
         s++;
     }
-    if (numdot > 1 || numsign > 2 || nume > 1)
+    if (num_dot > 1 || num_sign > 2 || num_e > 1)
     {
         result = false;
     }

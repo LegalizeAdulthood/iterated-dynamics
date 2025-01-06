@@ -3649,12 +3649,12 @@ TEST_F(TestParameterCommand, fullColorNo)
 
 TEST_F(TestParameterCommand, trueColorNo)
 {
-    ValueSaver saved_truecolor{g_truecolor, true};
+    ValueSaver saved_truecolor{g_true_color, true};
 
     exec_cmd_arg("truecolor=no");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_truecolor);
+    EXPECT_FALSE(g_true_color);
 }
 
 TEST_F(TestParameterCommand, trueModeDefaultColor)

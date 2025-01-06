@@ -511,7 +511,7 @@ int calc_fract()
         g_std_calc_mode = '1';
         g_user_std_calc_mode = g_std_calc_mode;
     }
-    if (g_truecolor)
+    if (g_true_color)
     {
         check_write_file(g_light_name, ".tga");
         if (!start_disk1(g_light_name, nullptr, false))
@@ -523,7 +523,7 @@ int calc_fract()
         }
         else
         {
-            g_truecolor = false;
+            g_true_color = false;
         }
     }
     if (!g_use_grid)
@@ -852,7 +852,7 @@ int calc_fract()
     {
         close_sound();
     }
-    if (g_truecolor)
+    if (g_true_color)
     {
         end_disk();
     }

@@ -93,9 +93,9 @@ static MainState prompt_evolver_options(MainContext &context)
         i = get_cmd_string();
     }
     driver_unstack_screen();
-    if (g_evolving != EvolutionModeFlags::NONE && g_truecolor)
+    if (g_evolving != EvolutionModeFlags::NONE && g_true_color)
     {
-        g_truecolor = false; // truecolor doesn't play well with the evolver
+        g_true_color = false; // truecolor doesn't play well with the evolver
     }
     if (i > 0)
     {
