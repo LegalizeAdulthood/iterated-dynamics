@@ -20,22 +20,22 @@
 #include <algorithm>
 #include <cmath>
 
-constexpr int FROTH_BITSHIFT{28};
+constexpr int FROTH_BIT_SHIFT{28};
 constexpr long froth_d_to_l(double x)
 {
-    return (long) (x * (1L << FROTH_BITSHIFT));
+    return (long) (x * (1L << FROTH_BIT_SHIFT));
 }
 constexpr double FROTH_CLOSE{1e-6};                     // seems like a good value
-constexpr long FROTH_LCLOSE{froth_d_to_l(FROTH_CLOSE)}; //
+constexpr long FROTH_L_CLOSE{froth_d_to_l(FROTH_CLOSE)}; //
 constexpr double SQRT3{1.732050807568877193};           //
 constexpr double FROTH_SLOPE{SQRT3};                    //
-constexpr long FROTH_LSLOPE{froth_d_to_l(FROTH_SLOPE)}; //
+constexpr long FROTH_L_SLOPE{froth_d_to_l(FROTH_SLOPE)}; //
 constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
 struct FrothDouble
 {
     double a;
-    double halfa;
+    double half_a;
     double top_x1;
     double top_x2;
     double top_x3;
@@ -53,7 +53,7 @@ struct FrothDouble
 struct FrothLong
 {
     long a;
-    long halfa;
+    long half_a;
     long top_x1;
     long top_x2;
     long top_x3;
@@ -71,7 +71,7 @@ struct FrothLong
 struct Froth
 {
     int repeat_mapping;
-    int altcolor;
+    int alt_color;
     int attractors;
     int shades;
     union
@@ -97,30 +97,30 @@ static void set_froth_palette()
     }
     if (g_colors >= 16)
     {
-        char const *mapname;
+        char const *map_name;
         if (g_colors >= 256)
         {
             if (s_fsp.attractors == 6)
             {
-                mapname = "froth6.map";
+                map_name = "froth6.map";
             }
             else
             {
-                mapname = "froth3.map";
+                map_name = "froth3.map";
             }
         }
         else // colors >= 16
         {
             if (s_fsp.attractors == 6)
             {
-                mapname = "froth616.map";
+                map_name = "froth616.map";
             }
             else
             {
-                mapname = "froth316.map";
+                map_name = "froth316.map";
             }
         }
-        if (validate_luts(mapname))
+        if (validate_luts(map_name))
         {
             return;
         }
@@ -144,7 +144,7 @@ bool froth_setup()
         g_params[1] = 1;
     }
     s_fsp.repeat_mapping = (int)g_params[0] == 2;
-    s_fsp.altcolor = (int)g_params[1];
+    s_fsp.alt_color = (int)g_params[1];
     s_fsp.fl.f.a = g_params[2];
     if (std::fabs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A)
     {
@@ -159,8 +159,8 @@ bool froth_setup()
     // 0.5 is the value that causes the mapping to reach a minimum
     constexpr double x0 = 0.5;
     // a/2 is the value that causes the y value to be invariant over the mappings
-    s_fsp.fl.f.halfa = s_fsp.fl.f.a/2;
-    const double y0 = s_fsp.fl.f.halfa;
+    s_fsp.fl.f.half_a = s_fsp.fl.f.a/2;
+    const double y0 = s_fsp.fl.f.half_a;
     s_fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
     s_fsp.fl.f.top_x2 = froth_top_x_mapping(s_fsp.fl.f.top_x1);
     s_fsp.fl.f.top_x3 = froth_top_x_mapping(s_fsp.fl.f.top_x2);
@@ -200,7 +200,7 @@ bool froth_setup()
         FrothLong tmp_l;
 
         tmp_l.a        = froth_d_to_l(s_fsp.fl.f.a);
-        tmp_l.halfa    = froth_d_to_l(s_fsp.fl.f.halfa);
+        tmp_l.half_a    = froth_d_to_l(s_fsp.fl.f.half_a);
 
         tmp_l.top_x1   = froth_d_to_l(s_fsp.fl.f.top_x1);
         tmp_l.top_x2   = froth_d_to_l(s_fsp.fl.f.top_x2);
@@ -284,7 +284,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                 plot_orbit(g_old_z.x, g_old_z.y, -1);
             }
 
-            if (std::fabs(s_fsp.fl.f.halfa-g_old_z.y) < FROTH_CLOSE
+            if (std::fabs(s_fsp.fl.f.half_a-g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x >= s_fsp.fl.f.top_x1
                 && g_old_z.x <= s_fsp.fl.f.top_x2)
             {
@@ -432,7 +432,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                 iplot_orbit(g_l_old_z.x, g_l_old_z.y, -1);
             }
 
-            if (labs(s_fsp.fl.l.halfa-g_l_old_z.y) < FROTH_LCLOSE
+            if (labs(s_fsp.fl.l.half_a-g_l_old_z.y) < FROTH_L_CLOSE
                 && g_l_old_z.x > s_fsp.fl.l.top_x1
                 && g_l_old_z.x < s_fsp.fl.l.top_x2)
             {
@@ -457,7 +457,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(FROTH_LSLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE
+            else if (labs(multiply(FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE
                 && g_l_old_z.x <= s_fsp.fl.l.right_x1
                 && g_l_old_z.x >= s_fsp.fl.l.right_x2)
             {
@@ -492,7 +492,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(-FROTH_LSLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE)
+            else if (labs(multiply(-FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE)
             {
                 if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
                 {
@@ -552,7 +552,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
     {
         if (g_colors >= 256)
         {
-            if (!s_fsp.altcolor)
+            if (!s_fsp.alt_color)
             {
                 g_color_iter = std::min<long>(g_color_iter, s_fsp.shades);
             }
@@ -573,22 +573,22 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
             // Trying to make a better 16 color distribution.
             // Since their are only a few possibilities, just handle each case.
             // This is a mostly guess work here.
-            long lshade = (g_color_iter << 16) / g_max_iterations;
+            long l_shade = (g_color_iter << 16) / g_max_iterations;
             if (s_fsp.attractors != 6) // either 2 or 3 attractors
             {
-                if (lshade < 2622)         // 0.04
+                if (l_shade < 2622)         // 0.04
                 {
                     g_color_iter = 1;
                 }
-                else if (lshade < 10486)     // 0.16
+                else if (l_shade < 10486)     // 0.16
                 {
                     g_color_iter = 2;
                 }
-                else if (lshade < 23593)     // 0.36
+                else if (l_shade < 23593)     // 0.36
                 {
                     g_color_iter = 3;
                 }
-                else if (lshade < 41943L)     // 0.64
+                else if (l_shade < 41943L)     // 0.64
                 {
                     g_color_iter = 4;
                 }
@@ -600,7 +600,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
             }
             else // 6 attractors
             {
-                if (lshade < 10486)        // 0.16
+                if (l_shade < 10486)        // 0.16
                 {
                     g_color_iter = 1;
                 }
