@@ -633,7 +633,7 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
     while (true)
     {
         int const ch = read_char();
-        if (ch == '{')   // process a CONTENT entry
+        if (ch == '{')   // process a Content entry
         {
             c.flags = 0;
             c.num_topic = 0;

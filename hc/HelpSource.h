@@ -15,7 +15,7 @@ constexpr const char *DOC_CONTENTS_TITLE{"DocContent"};
 constexpr char const *INDEX_LABEL{"HELP_INDEX"};
 constexpr int BUFFER_SIZE{1024 * 1024}; // 1 MB
 
-// values for CONTENT.flags
+// values for Content.flags
 enum
 {
     CF_NEW_PAGE = 1         // true if section starts on a new page

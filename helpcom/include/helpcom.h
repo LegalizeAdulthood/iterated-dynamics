@@ -60,7 +60,7 @@ enum
     PAGE_HEIGHT = PAGE_TOTAL_HEIGHT - PAGE_HEADING_HEIGHT, // height of text
 
     // Document page-break values.  Goto to next page if this close (or closer)
-    // to end of page when starting a CONTENT, TOPIC, or at a BLANK line.
+    // to end of page when starting a Content, Topic, or at a BLANK line.
     CONTENT_BREAK = 7, // start of a "DocContent" entry
     TOPIC_BREAK = 4,   // start of each topic under a DocContent entry
     BLANK_BREAK = 2    // a blank line

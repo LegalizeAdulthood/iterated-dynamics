@@ -46,7 +46,7 @@ enum
     MAX_PAGE_SIZE = 80 * 25,   // no page of text may be larger
     TEXT_START_ROW = 2,        // start print the help text here
     PRINT_BUFFER_SIZE = 32767, // max. size of help topic in doc.
-    MAX_NUM_TOPIC_SEC = 10,    // max. number of topics under any single section (CONTENT)
+    MAX_NUM_TOPIC_SEC = 10,    // max. number of topics under any single section (Content)
 };
 
 namespace
@@ -85,13 +85,13 @@ using PrintDocMessageFunc = bool(int pnum, int num_page);
 
 struct PrintDocInfo
 {
-    int cnum;                         // current CONTENT num
+    int cnum;                         // current Content num
     int tnum;                         // current topic num
-    long content_pos;                 // current CONTENT item offset in file
+    long content_pos;                 // current Content item offset in file
     int num_page;                     // total number of pages in document
-    int num_contents,                 // total number of CONTENT entries
-        num_topic;                    // number of topics in current CONTENT
-    int topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current CONTENT entry
+    int num_contents,                 // total number of Content entries
+        num_topic;                    // number of topics in current Content
+    int topic_num[MAX_NUM_TOPIC_SEC]; // topic_num[] for current Content entry
     char buffer[PRINT_BUFFER_SIZE];   // text buffer
     char id[81];                      // buffer to store id in
     char title[81];                   // buffer to store title in
