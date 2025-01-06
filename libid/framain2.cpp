@@ -730,11 +730,11 @@ static int cmp_line(Byte *pixels, int line_len)
 
 static void cmp_line_cleanup()
 {
-    time_t now;
     if (g_init_batch != BatchMode::NONE)
     {
-        time(&now);
-        char *times_text = ctime(&now);
+        time_t now;
+        std::time(&now);
+        char *times_text = std::ctime(&now);
         times_text[24] = 0; //clobber newline in time string
         std::fprintf(s_cmp_fp, "%s compare to %s has %5d errs\n",
                 times_text, g_read_filename.c_str(), s_err_count);
