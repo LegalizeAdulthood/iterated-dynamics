@@ -75,8 +75,8 @@ enum TextColors
 #define C_STOP_ERR        (g_text_color[24] | BRIGHT)
 #define C_STOP_INFO       (g_text_color[25] | BRIGHT)
 #define C_TITLE_LOW       (g_text_color[26])
-#define C_AUTHDIV1        (g_text_color[27] | INVERSE)
-#define C_AUTHDIV2        (g_text_color[28] | INVERSE)
+#define C_AUTH_DIV1       (g_text_color[27] | INVERSE)
+#define C_AUTH_DIV2       (g_text_color[28] | INVERSE)
 #define C_PRIMARY         (g_text_color[29])
 #define C_CONTRIB         (g_text_color[30])
 
