@@ -2,4 +2,4 @@
 //
 #pragma once
 
-void lowerize_parameter(char *curarg);
+void lowerize_parameter(char *cur_arg);

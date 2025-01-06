@@ -11,25 +11,25 @@ static constexpr const char *const s_unchanged_params[] = {"autokeyname", "color
     "formulafile", "ifsfile", "lfile", "lightname", "makedoc", "makepar", "map", "orbitsavename", "orgfrmdir",
     "parmfile", "savename", "savedir", "tempdir", "workdir"};
 
-void lowerize_parameter(char *curarg)
+void lowerize_parameter(char *cur_arg)
 {
-    char *argptr = curarg;
-    while (*argptr)
+    char *arg_ptr = cur_arg;
+    while (*arg_ptr)
     {
         // convert to lower case
-        if (*argptr >= 'A' && *argptr <= 'Z')
+        if (*arg_ptr >= 'A' && *arg_ptr <= 'Z')
         {
-            *argptr += 'a' - 'A';
+            *arg_ptr += 'a' - 'A';
         }
-        else if (*argptr == '=')
+        else if (*arg_ptr == '=')
         {
             auto it = std::find_if(std::begin(s_unchanged_params), std::end(s_unchanged_params),
-                [param = std::string(curarg, argptr)](const char *str) { return param == str; });
+                [param = std::string(cur_arg, arg_ptr)](const char *str) { return param == str; });
             if (it != std::end(s_unchanged_params))
             {
                 break;
             }
         }
-        ++argptr;
+        ++arg_ptr;
     }
 }
