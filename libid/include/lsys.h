@@ -23,7 +23,6 @@
 #define ANGLE2DOUBLE    (2.0*PI / 4294967296.0)
 enum
 {
-    MAXRULES = 27,          // this limits rules to 25
     MAX_LSYS_LINE_LEN = 255 // this limits line length to 255
 };
 
