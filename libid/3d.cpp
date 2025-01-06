@@ -91,9 +91,9 @@ int g_light_avg{};       // number of points to average
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)
 {
-    for (int i = 0 ; i < CMAX; i++)
+    for (int i = 0 ; i < COL_MAX; i++)
     {
-        for (int j = 0; j < RMAX; j++)
+        for (int j = 0; j < ROW_MAX; j++)
         {
             if (i == j)
             {
@@ -231,10 +231,10 @@ bool normalize_vector(VECTOR v)
 int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t)
 {
     VECTOR tmp;
-    for (int j = 0; j < CMAX-1; j++)
+    for (int j = 0; j < COL_MAX-1; j++)
     {
         tmp[j] = 0.0;
-        for (int i = 0; i < RMAX-1; i++)
+        for (int i = 0; i < ROW_MAX-1; i++)
         {
             tmp[j] += s[i]*m[i][j];
         }
@@ -253,10 +253,10 @@ int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t)
 void vec_g_mat_mul(VECTOR s)
 {
     VECTOR tmp;
-    for (int j = 0; j < CMAX-1; j++)
+    for (int j = 0; j < COL_MAX-1; j++)
     {
         tmp[j] = 0.0;
-        for (int i = 0; i < RMAX-1; i++)
+        for (int i = 0; i < ROW_MAX-1; i++)
         {
             tmp[j] += s[i]*g_m[i][j];
         }
@@ -298,7 +298,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     // bitshift: fixed point conversion bitshift
     LVECTOR tmp;
     g_overflow = false;
-    int k = CMAX - 1;                  // shorten the math if non-perspective and non-illum
+    int k = COL_MAX - 1;                  // shorten the math if non-perspective and non-illum
     if (view[2] == 0 && t0[0] == 0)
     {
         k--;
@@ -307,7 +307,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     for (int j = 0; j < k; j++)
     {
         tmp[j] = 0;
-        for (int i = 0; i < RMAX-1; i++)
+        for (int i = 0; i < ROW_MAX-1; i++)
         {
             tmp[j] += multiply(s[i], m[i][j], bit_shift);
         }
@@ -388,12 +388,12 @@ int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
 {
     LVECTOR tmp;
     g_overflow = false;
-    int k = CMAX - 1;
+    int k = COL_MAX - 1;
 
     for (int j = 0; j < k; j++)
     {
         tmp[j] = 0;
-        for (int i = 0; i < RMAX-1; i++)
+        for (int i = 0; i < ROW_MAX-1; i++)
         {
             tmp[j] += multiply(s[i], m[i][j], bit_shift);
         }

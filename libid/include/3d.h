@@ -4,12 +4,12 @@
 
 enum
 {
-    CMAX = 4, // maximum column (4 x 4 matrix)
-    RMAX = 4   // maximum row    (4 x 4 matrix)
+    COL_MAX = 4, // maximum column (4 x 4 matrix)
+    ROW_MAX = 4  // maximum row    (4 x 4 matrix)
 };
-using MATRIX = double[RMAX][CMAX];  // matrix of doubles
-using IMATRIX = int[RMAX][CMAX];  // matrix of ints
-using LMATRIX = long[RMAX][CMAX];  // matrix of longs
+using MATRIX = double[ROW_MAX][COL_MAX];  // matrix of doubles
+using IMATRIX = int[ROW_MAX][COL_MAX];  // matrix of ints
+using LMATRIX = long[ROW_MAX][COL_MAX];  // matrix of longs
 /* A MATRIX is used to describe a transformation from one coordinate
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
