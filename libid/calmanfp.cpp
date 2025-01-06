@@ -47,17 +47,17 @@ long calc_mand_fp_asm()
         g_old_color_iter = g_max_iterations - 255;
     }
 
-    long tmpfsd = g_max_iterations - g_first_saved_and;
+    long tmp_fsd = g_max_iterations - g_first_saved_and;
     // this defeats checking periodicity immediately
     // but matches the code in standard_fractal()
-    g_old_color_iter = std::min(g_old_color_iter, tmpfsd);
+    g_old_color_iter = std::min(g_old_color_iter, tmp_fsd);
 
     // initparms
-    double savedx = 0;
-    double savedy = 0;
+    double saved_x = 0;
+    double saved_y = 0;
     g_orbit_save_index = 0;
-    long savedand = g_first_saved_and;
-    int savedincr = 1;             // start checking the very first time
+    long saved_and = g_first_saved_and;
+    int saved_incr = 1;             // start checking the very first time
     g_keyboard_check_interval--;                // Only check the keyboard sometimes
     if (g_keyboard_check_interval < 0)
     {
@@ -121,20 +121,20 @@ long calc_mand_fp_asm()
         // no_save_new_xy_87
         if (cx < g_old_color_iter)  // check periodicity
         {
-            if (((g_max_iterations - cx) & savedand) == 0)
+            if (((g_max_iterations - cx) & saved_and) == 0)
             {
-                savedx = x;
-                savedy = y;
-                savedincr--;
-                if (savedincr == 0)
+                saved_x = x;
+                saved_y = y;
+                saved_incr--;
+                if (saved_incr == 0)
                 {
-                    savedand = (savedand << 1) + 1;
-                    savedincr = g_periodicity_next_saved_incr;
+                    saved_and = (saved_and << 1) + 1;
+                    saved_incr = g_periodicity_next_saved_incr;
                 }
             }
             else
             {
-                if (std::abs(savedx-x) < g_close_enough && std::abs(savedy-y) < g_close_enough)
+                if (std::abs(saved_x-x) < g_close_enough && std::abs(saved_y-y) < g_close_enough)
                 {
                     //          oldcoloriter = 65535;
                     g_old_color_iter = g_max_iterations;
