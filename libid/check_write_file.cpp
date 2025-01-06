@@ -14,14 +14,14 @@ void check_write_file(std::string &name, char const *ext)
 {
     do
     {
-        fs::path openfile{name};
-        if (!openfile.has_extension())
+        fs::path open_file{name};
+        if (!open_file.has_extension())
         {
-            openfile.replace_extension(ext);
+            open_file.replace_extension(ext);
         }
-        if (!exists(openfile))
+        if (!exists(open_file))
         {
-            name = openfile.string();
+            name = open_file.string();
             return;
         }
         // file already exists
