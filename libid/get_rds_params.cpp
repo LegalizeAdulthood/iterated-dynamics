@@ -18,7 +18,7 @@ static char const *s_masks[] = {"*.pot", "*.gif"};
 int get_rds_params()
 {
     char rds6[60];
-    char const *stereobars[] = {"none", "middle", "top"};
+    char const *stereo_bars[] = {"none", "middle", "top"};
     char const *rds_prompts[7] =
     {
         "Depth Effect (negative reverses front and back)",
@@ -34,34 +34,34 @@ int get_rds_params()
     driver_stack_screen();
     while (true)
     {
-        FullScreenValues uvalues[7];
+        FullScreenValues values[7];
         ret = 0;
 
         int k = 0;
-        uvalues[k].uval.ival = g_auto_stereo_depth;
-        uvalues[k++].type = 'i';
+        values[k].uval.ival = g_auto_stereo_depth;
+        values[k++].type = 'i';
 
-        uvalues[k].uval.dval = g_auto_stereo_width;
-        uvalues[k++].type = 'f';
+        values[k].uval.dval = g_auto_stereo_width;
+        values[k++].type = 'f';
 
-        uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
-        uvalues[k++].type = 'y';
+        values[k].uval.ch.val = g_gray_flag ? 1 : 0;
+        values[k++].type = 'y';
 
-        uvalues[k].type = 'l';
-        uvalues[k].uval.ch.list = stereobars;
-        uvalues[k].uval.ch.vlen = 6;
-        uvalues[k].uval.ch.llen = 3;
-        uvalues[k++].uval.ch.val  = g_calibrate;
+        values[k].type = 'l';
+        values[k].uval.ch.list = stereo_bars;
+        values[k].uval.ch.vlen = 6;
+        values[k].uval.ch.llen = 3;
+        values[k++].uval.ch.val  = g_calibrate;
 
-        uvalues[k].uval.ch.val = g_image_map ? 1 : 0;
-        uvalues[k++].type = 'y';
+        values[k].uval.ch.val = g_image_map ? 1 : 0;
+        values[k++].type = 'y';
 
         if (!g_stereo_map_filename.empty() && g_image_map)
         {
-            uvalues[k].uval.ch.val = reuse;
-            uvalues[k++].type = 'y';
+            values[k].uval.ch.val = reuse;
+            values[k++].type = 'y';
 
-            uvalues[k++].type = '*';
+            values[k++].type = '*';
             for (auto & elem : rds6)
             {
                 elem = ' ';
@@ -89,7 +89,7 @@ int get_rds_params()
         int choice;
         {
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS};
-            choice = full_screen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
+            choice = full_screen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, values, 0, nullptr);
         }
         if (choice < 0)
         {
@@ -99,14 +99,14 @@ int get_rds_params()
         else
         {
             k = 0;
-            g_auto_stereo_depth = uvalues[k++].uval.ival;
-            g_auto_stereo_width = uvalues[k++].uval.dval;
-            g_gray_flag         = uvalues[k++].uval.ch.val != 0;
-            g_calibrate        = (char)uvalues[k++].uval.ch.val;
-            g_image_map        = uvalues[k++].uval.ch.val != 0;
+            g_auto_stereo_depth = values[k++].uval.ival;
+            g_auto_stereo_width = values[k++].uval.dval;
+            g_gray_flag         = values[k++].uval.ch.val != 0;
+            g_calibrate        = (char)values[k++].uval.ch.val;
+            g_image_map        = values[k++].uval.ch.val != 0;
             if (!g_stereo_map_filename.empty() && g_image_map)
             {
-                reuse         = (char)uvalues[k++].uval.ch.val;
+                reuse         = (char)values[k++].uval.ch.val;
             }
             else
             {
