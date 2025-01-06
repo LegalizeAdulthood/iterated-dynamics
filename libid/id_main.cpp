@@ -315,7 +315,7 @@ static bool main_restore_start(MainContext &context)
     return false;
 }
 
-static MainState main_image_start(bool &stacked, bool &resumeflag)
+static MainState main_image_start(bool &stacked, bool &resume_flag)
 {
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
@@ -350,22 +350,22 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
             g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE;                 // exit with error condition set
             goodbye();
         }
-        int kbdchar = main_menu(false);
-        if (kbdchar == ID_KEY_INSERT)
+        int key = main_menu(false);
+        if (key == ID_KEY_INSERT)
         {
             return MainState::RESTART;      // restart pgm on Insert Key
         }
-        if (kbdchar == ID_KEY_DELETE)                      // select video mode list
+        if (key == ID_KEY_DELETE)                      // select video mode list
         {
-            kbdchar = select_video_mode(-1);
+            key = select_video_mode(-1);
         }
-        g_adapter = check_vid_mode_key(0, kbdchar);
+        g_adapter = check_vid_mode_key(0, key);
         if (g_adapter >= 0)
         {
             break;                                 // got a video mode now
         }
-        kbdchar = std::tolower(kbdchar);
-        if (kbdchar == 'd')
+        key = std::tolower(key);
+        if (key == 'd')
         {
             // shell to DOS
             driver_set_clear();
@@ -373,19 +373,19 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
             return MainState::IMAGE_START;
         }
 
-        if (kbdchar == '@' || kbdchar == '2')
+        if (key == '@' || key == '2')
         {
             // execute commands
             if (!bit_set(get_commands(), CmdArgFlags::YES_3D))
             {
                 return MainState::IMAGE_START;
             }
-            kbdchar = '3';                         // 3d=y so fall thru '3' code
+            key = '3';                         // 3d=y so fall thru '3' code
         }
-        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
+        if (key == 'r' || key == '3' || key == '#')
         {
             g_display_3d = Display3DMode::NONE;
-            if (kbdchar == '3' || kbdchar == '#' || kbdchar == ID_KEY_F3)
+            if (key == '3' || key == '#' || key == ID_KEY_F3)
             {
                 g_display_3d = Display3DMode::YES;
             }
@@ -397,62 +397,62 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
             g_show_file = -1;
             return MainState::RESTORE_START;
         }
-        if (kbdchar == 't')
+        if (key == 't')
         {
             // set fractal type
             g_julibrot = false;
             get_fract_type();
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'x')
+        if (key == 'x')
         {
             // generic toggle switch
             get_toggles();
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'y')
+        if (key == 'y')
         {
             // generic toggle switch
             get_toggles2();
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'z')
+        if (key == 'z')
         {
             // type specific params
             get_fract_params(true);
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'v')
+        if (key == 'v')
         {
             // view parameters
             get_view_params();
             return MainState::IMAGE_START;
         }
-        if (kbdchar == ID_KEY_CTL_B)
+        if (key == ID_KEY_CTL_B)
         {
             /* ctrl B = browse params*/
             get_browse_params();
             return MainState::IMAGE_START;
         }
-        if (kbdchar == ID_KEY_CTL_F)
+        if (key == ID_KEY_CTL_F)
         {
             /* ctrl f = sound params*/
             get_sound_params();
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'f')
+        if (key == 'f')
         {
             // floating pt toggle
             g_user_float_flag = !g_user_float_flag;
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'i')
+        if (key == 'i')
         {
             // set 3d fractal params
             get_fract3d_params(); // get the parameters
             return MainState::IMAGE_START;
         }
-        if (kbdchar == 'g')
+        if (key == 'g')
         {
             get_cmd_string(); // get command string
             return MainState::IMAGE_START;
@@ -461,7 +461,7 @@ static MainState main_image_start(bool &stacked, bool &resumeflag)
 
     g_zoom_enabled = true;
     g_help_mode = HelpLabels::HELP_MAIN; // now use this help mode
-    resumeflag = false;                   // allows taking goto inside big_while_loop()
+    resume_flag = false;                   // allows taking goto inside big_while_loop()
 
     return MainState::CONTINUE;
 }
