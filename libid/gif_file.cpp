@@ -309,11 +309,11 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.finattract = deser.extract_int16();
     {
         // TODO: error: cannot bind packed field
-        double initorbit[2];
-        deser.extract_double(initorbit);
-        for (size_t i = 0; i < std::size(initorbit); ++i)
+        double init_orbit[2];
+        deser.extract_double(init_orbit);
+        for (size_t i = 0; i < std::size(init_orbit); ++i)
         {
-            result.initorbit[i] = initorbit[i];
+            result.initorbit[i] = init_orbit[i];
         }
     }
     result.periodicity = deser.extract_int16();
@@ -372,11 +372,11 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.distest = deser.extract_int32();
     {
         // TODO: error: cannot bind packed field
-        double dinvert[3];
-        deser.extract_double(dinvert);
-        for (size_t i = 0; i < std::size(dinvert); ++i)
+        double d_invert[3];
+        deser.extract_double(d_invert);
+        for (size_t i = 0; i < std::size(d_invert); ++i)
         {
-            result.dinvert[i] = dinvert[i];
+            result.dinvert[i] = d_invert[i];
         }
     }
     result.logcalc = deser.extract_int16();
