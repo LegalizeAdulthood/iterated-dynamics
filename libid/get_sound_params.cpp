@@ -24,12 +24,12 @@ int get_sound_params()
 {
     ChoiceBuilder<15> builder;
     /* routine to get sound settings  */
-    const char *soundmodes[]{"off", "beep", "x", "y", "z"};
+    const char *sound_modes[]{"off", "beep", "x", "y", "z"};
     int i;
 
-    int old_soundflag = g_sound_flag;
+    int old_sound_flag = g_sound_flag;
     int old_orbit_delay = g_orbit_delay;
-    bool old_start_showorbit = g_start_show_orbit;
+    bool old_start_show_orbit = g_start_show_orbit;
 
     /* g_sound_flag bits 0..7 used as thus:
        bit 0,1,2 controls sound beep/off and x,y,z
@@ -42,7 +42,7 @@ int get_sound_params()
 get_sound_restart:
     s_menu2 = 0;
     builder.reset()
-        .list("Sound (off, beep, x, y, z)", 5, 4, soundmodes, g_sound_flag & SOUNDFLAG_ORBIT_MASK)
+        .list("Sound (off, beep, x, y, z)", 5, 4, sound_modes, g_sound_flag & SOUNDFLAG_ORBIT_MASK)
         .yes_no("Use PC internal speaker?", (g_sound_flag & SOUNDFLAG_SPEAKER) != 0)
         .yes_no("Use sound card output?", (g_sound_flag & SOUNDFLAG_OPL3_FM) != 0)
         .yes_no("Midi...not implemented yet", (g_sound_flag & SOUNDFLAG_MIDI) != 0)
@@ -60,9 +60,9 @@ get_sound_restart:
     }
     if (i < 0)
     {
-        g_sound_flag = old_soundflag;
+        g_sound_flag = old_sound_flag;
         g_orbit_delay = old_orbit_delay;
-        g_start_show_orbit = old_start_showorbit;
+        g_start_show_orbit = old_start_show_orbit;
         return -1; /*escaped */
     }
 
@@ -77,7 +77,7 @@ get_sound_restart:
     g_start_show_orbit = builder.read_yes_no();
 
     /* now do any initialization needed and check for soundcard */
-    if ((g_sound_flag & SOUNDFLAG_OPL3_FM) && !(old_soundflag & SOUNDFLAG_OPL3_FM))
+    if ((g_sound_flag & SOUNDFLAG_OPL3_FM) && !(old_sound_flag & SOUNDFLAG_OPL3_FM))
     {
         driver_init_fm();
     }
@@ -103,8 +103,8 @@ get_sound_restart:
         goto get_sound_restart;
     }
 
-    return g_sound_flag != old_soundflag &&
-            ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > 1 || (old_soundflag & SOUNDFLAG_ORBIT_MASK) > 1)
+    return g_sound_flag != old_sound_flag &&
+            ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > 1 || (old_sound_flag & SOUNDFLAG_ORBIT_MASK) > 1)
         ? 1
         : 0;
 }
@@ -172,7 +172,7 @@ get_map_restart:
 static int get_music_params()
 {
     ChoiceBuilder<11> builder;
-    const char *attenmodes[] = {"none", "low", "mid", "high"};
+    const char *attenuation_modes[] = {"none", "low", "mid", "high"};
 
     s_menu2++;
 get_music_restart:
@@ -184,15 +184,15 @@ get_music_restart:
         .int_number("Note sustain level 0..15", g_fm_sustain)
         .int_number("Note release time  0..15", g_fm_release)
         .int_number("Soundcard volume?  0..63", g_fm_volume)
-        .list("Hi pitch attenuation", 4, 4, attenmodes, g_hi_attenuation)
+        .list("Hi pitch attenuation", 4, 4, attenuation_modes, g_hi_attenuation)
         .comment("")
         .comment("Press F7 for scale mappings")
         .comment("Press F4 to reset to default values");
 
-    HelpLabels oldhelpmode = g_help_mode; /* this prevents HELP from activating */
+    HelpLabels old_help_mode = g_help_mode; /* this prevents HELP from activating */
     g_help_mode = HelpLabels::HELP_MUSIC;
     int i = builder.prompt("FM Synth Card Control Screen", 255);
-    g_help_mode = oldhelpmode; /* re-enable HELP */
+    g_help_mode = old_help_mode; /* re-enable HELP */
     if (i < 0)
     {
         return -1;
