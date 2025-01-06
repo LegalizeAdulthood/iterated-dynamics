@@ -388,7 +388,7 @@ init_restart:
             && g_biomorph == -1                     // and not biomorphing
             && g_magnitude_limit <= 4.0                         // and bailout not too high
             && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
-            && g_debug_flag != DebugFlags::FORCE_SMALLER_BITSHIFT // and not debugging
+            && g_debug_flag != DebugFlags::FORCE_SMALLER_BIT_SHIFT // and not debugging
             && g_close_proximity <= 2.0             // and g_close_proximity not too large
             && g_bail_out_test == Bailout::MOD)    // and bailout test = mod
         {

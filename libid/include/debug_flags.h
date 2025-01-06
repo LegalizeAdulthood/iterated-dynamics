@@ -27,7 +27,7 @@ enum class DebugFlags
     FORCE_LOSSLESS_COLORMAP             = 920,
     ALLOW_NEWTON_MP_TYPE                = 1010,
     MANDELBROT_MIX4_FLIP_SIGN           = 1012,
-    FORCE_SMALLER_BITSHIFT              = 1234,
+    FORCE_SMALLER_BIT_SHIFT             = 1234,
     SHOW_FLOAT_FLAG                     = 2224,
     FORCE_ARBITRARY_PRECISION_MATH      = 3200,
     PREVENT_ARBITRARY_PRECISION_MATH    = 3400,
