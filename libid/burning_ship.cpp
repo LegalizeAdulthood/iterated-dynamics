@@ -32,7 +32,7 @@ int burning_ship_fp_fractal()
         DComplex z;
         z.x = std::fabs(g_old_z.x);
         z.y = -std::fabs(g_old_z.y);
-        cpower(&z, degree, &z);
+        pow(&z, degree, &z);
         g_new_z.x = z.x + q.x;
         g_new_z.y = z.y + q.y;
     }
@@ -187,7 +187,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
         DComplex temp, temp_z;
         temp.x = std::fabs(z.real());
         temp.y = std::fabs(z.imag());
-        cpower(&temp, degree, &temp_z);
+        pow(&temp, degree, &temp_z);
         z.real(temp_z.x);
         z.imag(temp_z.y);
         z += center;

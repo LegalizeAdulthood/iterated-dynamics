@@ -86,7 +86,7 @@ int newton_fractal2()
     {
         start = 0;
     }
-    cpower(&g_old_z, g_degree-1, &g_tmp_z);
+    pow(&g_old_z, g_degree-1, &g_tmp_z);
     complex_mult(g_tmp_z, g_old_z, &g_new_z);
 
     if (distance1(g_new_z) < s_threshold)

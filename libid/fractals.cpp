@@ -193,14 +193,11 @@ static double xt;
 static double yt;
 static double t2;
 
-/* Raise complex number (base) to the (exp) power, storing the result
-** in complex (result).
-*/
-void cpower(DComplex *base, int exp, DComplex *result)
+void pow(DComplex *base, int exp, DComplex *result)
 {
     if (exp < 0)
     {
-        cpower(base, -exp, result);
+        pow(base, -exp, result);
         cmplx_recip(*result, *result);
         return;
     }
@@ -241,11 +238,11 @@ static long lxt;
 static long lyt;
 static long lt2;
 
-int lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
+int pow(LComplex *base, int exp, LComplex *result, int bitshift)
 {
     if (exp < 0)
     {
-        g_overflow = lcpower(base, -exp, result, bitshift) != 0;
+        g_overflow = pow(base, -exp, result, bitshift) != 0;
         lcmplx_recip(*result, *result);
         return g_overflow ? 1 : 0;
     }

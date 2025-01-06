@@ -75,7 +75,7 @@ int long_trig_plus_exponent_fractal()
 
 int long_z_power_fractal()
 {
-    if (lcpower(&g_l_old_z, g_c_exponent, &g_l_new_z, g_bit_shift))
+    if (pow(&g_l_old_z, g_c_exponent, &g_l_new_z, g_bit_shift))
     {
         g_l_new_z.y = 8L << g_bit_shift;
         g_l_new_z.x = g_l_new_z.y;
@@ -87,7 +87,7 @@ int long_z_power_fractal()
 
 int float_z_power_fractal()
 {
-    cpower(&g_old_z, g_c_exponent, &g_new_z);
+    pow(&g_old_z, g_c_exponent, &g_new_z);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return g_bailout_float();
@@ -205,7 +205,7 @@ void mandel_z_power_perturb(
 
 int float_z_to_z_plus_z_pwr_fractal()
 {
-    cpower(&g_old_z, (int)g_params[2], &g_new_z);
+    pow(&g_old_z, (int)g_params[2], &g_new_z);
     g_old_z = complex_power(g_old_z, g_old_z);
     g_new_z.x = g_new_z.x + g_old_z.x +g_float_param->x;
     g_new_z.y = g_new_z.y + g_old_z.y +g_float_param->y;

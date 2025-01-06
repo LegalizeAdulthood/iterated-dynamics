@@ -37,8 +37,9 @@ extern double                g_sin_x;
 extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;
 
-void cpower(DComplex *base, int exp, DComplex *result);
-int lcpower(LComplex *base, int exp, LComplex *result, int bitshift);
+// Raise complex number (base) to the (exp) power, storing the result in complex (result).
+void pow(DComplex *base, int exp, DComplex *result);
+int pow(LComplex *base, int exp, LComplex *result, int bitshift);
 int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
 int complex_div(DComplex numerator, DComplex denominator, DComplex *pout);
 int julia_fractal();

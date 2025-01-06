@@ -29,7 +29,7 @@ bool marks_julia_setup()
     g_l_old_z = *g_long_param;
     if (g_c_exponent > 3)
     {
-        lcpower(&g_l_old_z, g_c_exponent-1, &s_l_coefficient, g_bit_shift);
+        pow(&g_l_old_z, g_c_exponent-1, &s_l_coefficient, g_bit_shift);
     }
     else if (g_c_exponent == 3)
     {
@@ -57,7 +57,7 @@ bool marks_julia_fp_setup()
     g_old_z = *g_float_param;
     if (g_c_exponent > 3)
     {
-        cpower(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
+        pow(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
     }
     else if (g_c_exponent == 3)
     {
@@ -215,7 +215,7 @@ int marks_mandel_per_pixel()
 
     if (g_c_exponent > 3)
     {
-        lcpower(&g_l_old_z, g_c_exponent-1, &s_l_coefficient, g_bit_shift);
+        pow(&g_l_old_z, g_c_exponent-1, &s_l_coefficient, g_bit_shift);
     }
     else if (g_c_exponent == 3)
     {
@@ -269,7 +269,7 @@ int marks_mandel_fp_per_pixel()
 
     if (g_c_exponent > 3)
     {
-        cpower(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
+        pow(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
     }
     else if (g_c_exponent == 3)
     {
