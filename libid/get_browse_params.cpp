@@ -22,8 +22,8 @@ int get_browse_params()
 
     bool old_auto_browse = g_auto_browse;
     bool old_browse_check_fractal_type = g_browse_check_fractal_type;
-    bool old_brwscheckparms = g_browse_check_fractal_params;
-    bool old_doublecaution  = g_confirm_file_deletes;
+    bool old_browse_check_params = g_browse_check_fractal_params;
+    bool old_double_caution  = g_confirm_file_deletes;
     int old_smallest_box_size_shown = g_smallest_box_size_shown;
     double old_smallest_window_display_size = g_smallest_window_display_size;
     std::string old_browse_mask = g_browse_mask;
@@ -79,8 +79,8 @@ get_brws_restart:
     i = 0;
     if (g_auto_browse != old_auto_browse ||
             g_browse_check_fractal_type != old_browse_check_fractal_type ||
-            g_browse_check_fractal_params != old_brwscheckparms ||
-            g_confirm_file_deletes != old_doublecaution ||
+            g_browse_check_fractal_params != old_browse_check_params ||
+            g_confirm_file_deletes != old_double_caution ||
             g_smallest_window_display_size != old_smallest_window_display_size ||
             g_smallest_box_size_shown != old_smallest_box_size_shown ||
             !stricmp(g_browse_mask.c_str(), old_browse_mask.c_str()))
