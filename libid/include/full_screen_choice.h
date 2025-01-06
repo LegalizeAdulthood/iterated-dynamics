@@ -47,6 +47,6 @@ int full_screen_choice(ChoiceFlags flags,                   //
     char const *hdg, char const *hdg2, char const *instr,   //
     int num_choices, char const **choices, int *attributes, //
     int box_width, int box_depth, int col_width,            //
-    int current, void (*format_item)(int, char *), char *speed_string,
-    int (*speed_prompt)(int row, int col, int vid, char const *speedstring, int speed_match), //
-    int (*check_key)(int, int));
+    int current, void (*format_item)(int choice, char *buf), char *speed_string,
+    int (*speed_prompt)(int row, int col, int vid, char const *speed_string, int speed_match), //
+    int (*check_key)(int key, int choice));
