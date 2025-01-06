@@ -84,9 +84,9 @@ enum class ShowDotDirection
 
 static void perform_work_list();
 static void decomposition();
-static void set_symmetry(SymmetryType sym, bool uselist);
-static bool x_sym_split(int xaxis_row, bool xaxis_between);
-static bool y_sym_split(int yaxis_col, bool yaxis_between);
+static void set_symmetry(SymmetryType sym, bool use_list);
+static bool x_sym_split(int x_axis_row, bool x_axis_between);
+static bool y_sym_split(int y_axis_col, bool y_axis_between);
 static void put_true_color_disk(int, int, int);
 static long auto_log_map();
 
@@ -188,14 +188,14 @@ int g_and_color{};                               // "and" value used for color s
 
 static double fmod_test_bailout_or()
 {
-    double const tmpx = sqr(g_new_z.x);
-    double const tmpy = sqr(g_new_z.y);
-    if (tmpx > tmpy)
+    double const tmp_x = sqr(g_new_z.x);
+    double const tmp_y = sqr(g_new_z.y);
+    if (tmp_x > tmp_y)
     {
-        return tmpx;
+        return tmp_x;
     }
 
-    return tmpy;
+    return tmp_y;
 }
 
 // Makes the test condition for the FMOD coloring type
@@ -349,12 +349,7 @@ static void sym_put_line(int row, int left, int right, Byte *str)
 }
 
 static void show_dot_save_restore(
-    int startx,
-    int stopx,
-    int starty,
-    int stopy,
-    ShowDotDirection direction,
-    ShowDotAction action)
+    int start_x, int stop_x, int start_y, int stop_y, ShowDotDirection direction, ShowDotAction action)
 {
     int ct = 0;
     if (direction != ShowDotDirection::JUST_A_POINT)
@@ -373,63 +368,63 @@ static void show_dot_save_restore(
     switch (direction)
     {
     case ShowDotDirection::LOWER_RIGHT:
-        for (int j = starty; j <= stopy; startx++, j++)
+        for (int j = start_y; j <= stop_y; start_x++, j++)
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, s_save_dots.data() + ct);
-                sym_fill_line(j, startx, stopx, s_fill_buff);
+                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
+                sym_fill_line(j, start_x, stop_x, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
+                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
             }
-            ct += stopx-startx+1;
+            ct += stop_x-start_x+1;
         }
         break;
     case ShowDotDirection::UPPER_RIGHT:
-        for (int j = starty; j >= stopy; startx++, j--)
+        for (int j = start_y; j >= stop_y; start_x++, j--)
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, s_save_dots.data() + ct);
-                sym_fill_line(j, startx, stopx, s_fill_buff);
+                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
+                sym_fill_line(j, start_x, stop_x, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
+                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
             }
-            ct += stopx-startx+1;
+            ct += stop_x-start_x+1;
         }
         break;
     case ShowDotDirection::LOWER_LEFT:
-        for (int j = starty; j <= stopy; stopx--, j++)
+        for (int j = start_y; j <= stop_y; stop_x--, j++)
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, s_save_dots.data() + ct);
-                sym_fill_line(j, startx, stopx, s_fill_buff);
+                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
+                sym_fill_line(j, start_x, stop_x, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
+                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
             }
-            ct += stopx-startx+1;
+            ct += stop_x-start_x+1;
         }
         break;
     case ShowDotDirection::UPPER_LEFT:
-        for (int j = starty; j >= stopy; stopx--, j--)
+        for (int j = start_y; j >= stop_y; stop_x--, j--)
         {
             if (action == ShowDotAction::SAVE)
             {
-                read_span(j, startx, stopx, s_save_dots.data() + ct);
-                sym_fill_line(j, startx, stopx, s_fill_buff);
+                read_span(j, start_x, stop_x, s_save_dots.data() + ct);
+                sym_fill_line(j, start_x, stop_x, s_fill_buff);
             }
             else
             {
-                sym_put_line(j, startx, stopx, s_save_dots.data() + ct);
+                sym_put_line(j, start_x, stop_x, s_save_dots.data() + ct);
             }
-            ct += stopx-startx+1;
+            ct += stop_x-start_x+1;
         }
         break;
     case ShowDotDirection::JUST_A_POINT:
@@ -444,10 +439,10 @@ static void show_dot_save_restore(
 static int calc_type_show_dot()
 {
     ShowDotDirection direction = ShowDotDirection::JUST_A_POINT;
-    int stopx = g_col;
-    int startx = g_col;
-    int stopy = g_row;
-    int starty = g_row;
+    int stop_x = g_col;
+    int start_x = g_col;
+    int stop_y = g_row;
+    int start_y = g_row;
     int width = s_show_dot_width + 1;
     if (width > 0)
     {
@@ -455,44 +450,44 @@ static int calc_type_show_dot()
         {
             // preferred show dot shape
             direction = ShowDotDirection::UPPER_LEFT;
-            startx = g_col;
-            stopx  = g_col+width;
-            starty = g_row+width;
-            stopy  = g_row+1;
+            start_x = g_col;
+            stop_x  = g_col+width;
+            start_y = g_row+width;
+            stop_y  = g_row+1;
         }
         else if (g_col-width >= g_i_x_start && g_row+width <= g_i_y_stop)
         {
             // second choice
             direction = ShowDotDirection::UPPER_RIGHT;
-            startx = g_col-width;
-            stopx  = g_col;
-            starty = g_row+width;
-            stopy  = g_row+1;
+            start_x = g_col-width;
+            stop_x  = g_col;
+            start_y = g_row+width;
+            stop_y  = g_row+1;
         }
         else if (g_col-width >= g_i_x_start && g_row-width >= g_i_y_start)
         {
             direction = ShowDotDirection::LOWER_RIGHT;
-            startx = g_col-width;
-            stopx  = g_col;
-            starty = g_row-width;
-            stopy  = g_row-1;
+            start_x = g_col-width;
+            stop_x  = g_col;
+            start_y = g_row-width;
+            stop_y  = g_row-1;
         }
         else if (g_col+width <= g_i_x_stop && g_row-width >= g_i_y_start)
         {
             direction = ShowDotDirection::LOWER_LEFT;
-            startx = g_col;
-            stopx  = g_col+width;
-            starty = g_row-width;
-            stopy  = g_row-1;
+            start_x = g_col;
+            stop_x  = g_col+width;
+            start_y = g_row-width;
+            stop_y  = g_row-1;
         }
     }
-    show_dot_save_restore(startx, stopx, starty, stopy, direction, ShowDotAction::SAVE);
+    show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::SAVE);
     if (g_orbit_delay > 0)
     {
         sleep_ms(g_orbit_delay);
     }
     int out = (*s_calc_type_tmp)();
-    show_dot_save_restore(startx, stopx, starty, stopy, direction, ShowDotAction::RESTORE);
+    show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::RESTORE);
     return out;
 }
 
@@ -633,17 +628,17 @@ int calc_fract()
                 int flip = 0;
                 int m = 0;
                 int altern = 32767;
-                int numval = g_iteration_ranges[i++];
-                if (numval < 0)
+                int num_val = g_iteration_ranges[i++];
+                if (num_val < 0)
                 {
                     altern = g_iteration_ranges[i++];    // sub-range iterations
-                    numval = g_iteration_ranges[i++];
+                    num_val = g_iteration_ranges[i++];
                 }
-                if (numval > (int)g_log_map_table_max_size || i >= g_iteration_ranges_len)
+                if (num_val > (int)g_log_map_table_max_size || i >= g_iteration_ranges_len)
                 {
-                    numval = (int)g_log_map_table_max_size;
+                    num_val = (int)g_log_map_table_max_size;
                 }
-                while (l <= numval)
+                while (l <= num_val)
                 {
                     g_log_map_table[l++] = (Byte)(k + flip);
                     if (++m >= altern)
@@ -872,12 +867,12 @@ int find_alternate_math(FractalType type, BFMathType math)
         return -1;
     }
     int i = -1;
-    FractalType curtype;
-    while ((curtype = g_alternate_math[++i].type) != type && curtype != FractalType::NO_FRACTAL)
+    FractalType current;
+    while ((current = g_alternate_math[++i].type) != type && current != FractalType::NO_FRACTAL)
     {
     }
     int ret = -1;
-    if (curtype == type && g_alternate_math[i].math != BFMathType::NONE)
+    if (current == type && g_alternate_math[i].math != BFMathType::NONE)
     {
         ret = i;
     }
@@ -887,14 +882,14 @@ int find_alternate_math(FractalType type, BFMathType math)
 // general escape-time engine routines
 static void perform_work_list()
 {
-    int (*sv_orbitcalc)() = nullptr;  // function that calculates one orbit
+    int (*sv_orbit_calc)() = nullptr;  // function that calculates one orbit
     int (*sv_per_pixel)() = nullptr;  // once-per-pixel init
     bool (*sv_per_image)() = nullptr;  // once-per-image setup
     int alt = find_alternate_math(g_fractal_type, g_bf_math);
 
     if (alt > -1)
     {
-        sv_orbitcalc = g_cur_fractal_specific->orbitcalc;
+        sv_orbit_calc = g_cur_fractal_specific->orbitcalc;
         sv_per_pixel = g_cur_fractal_specific->per_pixel;
         sv_per_image = g_cur_fractal_specific->per_image;
         g_cur_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
@@ -908,7 +903,7 @@ static void perform_work_list()
 
     if (g_potential_flag && g_potential_16bit)
     {
-        int tmpcalcmode = g_std_calc_mode;
+        int tmp_calc_mode = g_std_calc_mode;
 
         g_std_calc_mode = '1'; // force 1 pass
         if (!g_resuming)
@@ -916,7 +911,7 @@ static void perform_work_list()
             if (pot_start_disk() < 0)
             {
                 g_potential_16bit = false;       // startdisk failed or cancelled
-                g_std_calc_mode = (char)tmpcalcmode;    // maybe we can carry on???
+                g_std_calc_mode = (char)tmp_calc_mode;    // maybe we can carry on???
             }
         }
     }
@@ -972,10 +967,10 @@ static void perform_work_list()
             d_y_size = g_logical_screen_y_dots-1;
         }
 
-        double delxx = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
-        double delyy = (g_y_max - g_y_3rd) / d_y_size;
-        double delxx2 = (g_x_3rd - g_x_min) / d_y_size;
-        double delyy2 = (g_y_3rd - g_y_min) / d_x_size;
+        double del_xx = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
+        double del_yy = (g_y_max - g_y_3rd) / d_y_size;
+        double del_xx2 = (g_x_3rd - g_x_min) / d_y_size;
+        double del_yy2 = (g_y_3rd - g_y_min) / d_x_size;
 
         g_use_old_distance_estimator = false;
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
@@ -988,34 +983,34 @@ static void perform_work_list()
             || g_use_old_distance_estimator
             || g_fractal_type == FractalType::FORMULA
             || g_fractal_type == FractalType::FORMULA_FP;
-        s_dem_delta = sqr(delxx) + sqr(delyy2);
-        double ftemp = sqr(delyy) + sqr(delxx2);
-        s_dem_delta = std::max(ftemp, s_dem_delta);
+        s_dem_delta = sqr(del_xx) + sqr(del_yy2);
+        double f_temp = sqr(del_yy) + sqr(del_xx2);
+        s_dem_delta = std::max(f_temp, s_dem_delta);
         if (g_distance_estimator_width_factor == 0)
         {
             g_distance_estimator_width_factor = 1;
         }
-        ftemp = g_distance_estimator_width_factor;
+        f_temp = g_distance_estimator_width_factor;
         if (g_distance_estimator_width_factor > 0)
         {
-            s_dem_delta *= sqr(ftemp)/10000; // multiply by thickness desired
+            s_dem_delta *= sqr(f_temp)/10000; // multiply by thickness desired
         }
         else
         {
-            s_dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
+            s_dem_delta *= 1/(sqr(f_temp)*10000); // multiply by thickness desired
         }
         s_dem_width = (std::sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
                      + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
-        ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
-        ftemp += 3; // bailout plus just a bit
-        double ftemp2 = std::log(ftemp);
+        f_temp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
+        f_temp += 3; // bailout plus just a bit
+        double f_temp2 = std::log(f_temp);
         if (g_use_old_distance_estimator)
         {
-            s_dem_too_big = sqr(ftemp) * sqr(ftemp2) * 4 / s_dem_delta;
+            s_dem_too_big = sqr(f_temp) * sqr(f_temp2) * 4 / s_dem_delta;
         }
         else
         {
-            s_dem_too_big = std::fabs(ftemp) * std::fabs(ftemp2) * 2 / std::sqrt(s_dem_delta);
+            s_dem_too_big = std::fabs(f_temp) * std::fabs(f_temp2) * 2 / std::sqrt(s_dem_delta);
         }
     }
 
@@ -1073,17 +1068,17 @@ static void perform_work_list()
             }
             else
             {
-                double dshowdot_width = (double) g_size_dot * g_logical_screen_x_dots / 1024.0;
+                double d_show_dot_width = (double) g_size_dot * g_logical_screen_x_dots / 1024.0;
 
                 // Arbitrary sanity limit, however showdot_width will
                 // overflow if dshowdot width gets near 256.
-                if (dshowdot_width > 150.0)
+                if (d_show_dot_width > 150.0)
                 {
                     s_show_dot_width = 150;
                 }
-                else if (dshowdot_width > 0.0)
+                else if (d_show_dot_width > 0.0)
                 {
-                    s_show_dot_width = (int)dshowdot_width;
+                    s_show_dot_width = (int)d_show_dot_width;
                 }
                 else
                 {
@@ -1198,9 +1193,9 @@ static void perform_work_list()
     {
         g_calc_status = CalcStatus::COMPLETED; // completed
     }
-    if (sv_orbitcalc != nullptr)
+    if (sv_orbit_calc != nullptr)
     {
-        g_cur_fractal_specific->orbitcalc = sv_orbitcalc;
+        g_cur_fractal_specific->orbitcalc = sv_orbit_calc;
         g_cur_fractal_specific->per_pixel = sv_per_pixel;
         g_cur_fractal_specific->per_image = sv_per_image;
     }
@@ -1302,23 +1297,23 @@ int calc_mand_fp()
     }
     return g_color;
 }
-#define STARTRAILMAX FLT_MAX   // just a convenient large number
+#define STAR_TRAIL_MAX FLT_MAX   // just a convenient large number
 
 int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 {
-    long savemaxit = 0;
-    double tantable[16]{};
+    long save_max_it = 0;
+    double tan_table[16]{};
     int hooper = 0;
-    long lcloseprox = 0;
-    double memvalue = 0.0;
+    long l_close_prox = 0;
+    double mem_value = 0.0;
     double min_orbit = 100000.0;        // orbit value closest to origin
     long   min_index = 0;               // iteration of min_orbit
-    long cyclelen = -1;
-    long savedcoloriter = 0;
+    long cycle_len = -1;
+    long saved_color_iter = 0;
     bool caught_a_cycle = false;
-    long savedand = 0;
-    int savedincr = 0;                  // for periodicity checking
-    LComplex lsaved{};
+    long saved_and = 0;
+    int saved_incr = 0;                  // for periodicity checking
+    LComplex l_saved{};
     bool attracted = false;
     LComplex lat{};
     DComplex  at{};
@@ -1326,14 +1321,14 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     long dem_color = -1;
     DComplex dem_new{};
     int check_freq = 0;
-    double totaldist = 0.0;
-    DComplex lastz{};
+    double total_dist = 0.0;
+    DComplex last_z{};
 
-    lcloseprox = (long)(g_close_proximity*g_fudge_factor);
-    savemaxit = g_max_iterations;
+    l_close_prox = (long)(g_close_proximity*g_fudge_factor);
+    save_max_it = g_max_iterations;
     if (g_inside_color == STAR_TRAIL)
     {
-        std::fill(std::begin(tantable), std::end(tantable), 0.0);
+        std::fill(std::begin(tan_table), std::end(tan_table), 0.0);
         g_max_iterations = 16;
     }
     if (g_periodicity_check == 0 || g_inside_color == ZMAG || g_inside_color == STAR_TRAIL)
@@ -1406,12 +1401,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (g_use_init_orbit == InitOrbitMode::VALUE)
         {
-            lsaved = g_l_init_orbit;
+            l_saved = g_l_init_orbit;
         }
         else
         {
-            lsaved.x = 0;
-            lsaved.y = 0;
+            l_saved.x = 0;
+            l_saved.y = 0;
         }
         g_l_init.y = g_l_y_pixel();
     }
@@ -1424,17 +1419,17 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     caught_a_cycle = false;
     if (g_inside_color == PERIOD)
     {
-        savedand = 16;           // begin checking every 16th cycle
+        saved_and = 16;           // begin checking every 16th cycle
     }
     else
     {
 #ifdef MINSAVEDAND
         savedand = MINSAVEDAND;
 #else
-        savedand = g_first_saved_and;                // begin checking every other cycle
+        saved_and = g_first_saved_and;                // begin checking every other cycle
 #endif
     }
-    savedincr = 1;               // start checking the very first time
+    saved_incr = 1;               // start checking the very first time
 
     if (g_inside_color <= BOF60 && g_inside_color >= BOF61)
     {
@@ -1463,8 +1458,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             g_old_z = cmplx_bf_to_float(g_old_z_bf);
         }
-        lastz.x = g_old_z.x;
-        lastz.y = g_old_z.y;
+        last_z.x = g_old_z.x;
+        last_z.y = g_old_z.y;
     }
 
     if (((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
@@ -1494,19 +1489,19 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
         if (g_distance_estimator)
         {
-            double ftemp;
+            double f_temp;
             // Distance estimator for points near Mandelbrot set
             // Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
             if (s_dem_mandel)
             {
-                ftemp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y) + 1;
+                f_temp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y) + 1;
             }
             else
             {
-                ftemp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y);
+                f_temp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y);
             }
             deriv.y = 2 * (g_old_z.y * deriv.x + g_old_z.x * deriv.y);
-            deriv.x = ftemp;
+            deriv.x = f_temp;
             if (g_use_old_distance_estimator)
             {
                 if (sqr(deriv.x)+sqr(deriv.y) > s_dem_too_big)
@@ -1594,18 +1589,18 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         g_new_z.y /= g_fudge_factor;
                     }
 
-                    g_new_z.x = std::min<double>(g_new_z.x, STARTRAILMAX);
-                    g_new_z.x = std::max<double>(g_new_z.x, -STARTRAILMAX);
-                    g_new_z.y = std::min<double>(g_new_z.y, STARTRAILMAX);
-                    g_new_z.y = std::max<double>(g_new_z.y, -STARTRAILMAX);
+                    g_new_z.x = std::min<double>(g_new_z.x, STAR_TRAIL_MAX);
+                    g_new_z.x = std::max<double>(g_new_z.x, -STAR_TRAIL_MAX);
+                    g_new_z.y = std::min<double>(g_new_z.y, STAR_TRAIL_MAX);
+                    g_new_z.y = std::max<double>(g_new_z.y, -STAR_TRAIL_MAX);
                     g_temp_sqr_x = g_new_z.x * g_new_z.x;
                     g_temp_sqr_y = g_new_z.y * g_new_z.y;
                     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
                     g_old_z = g_new_z;
                     {
-                        int tmpcolor;
-                        tmpcolor = (int)(((g_color_iter - 1) % g_and_color) + 1);
-                        tantable[tmpcolor-1] = g_new_z.y/(g_new_z.x+.000001);
+                        int tmp_color;
+                        tmp_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+                        tan_table[tmp_color-1] = g_new_z.y/(g_new_z.x+.000001);
                     }
                 }
             }
@@ -1614,14 +1609,14 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 hooper = 0;
                 if (g_integer_fractal)
                 {
-                    if (labs(g_l_new_z.x) < labs(lcloseprox))
+                    if (labs(g_l_new_z.x) < labs(l_close_prox))
                     {
-                        hooper = (lcloseprox > 0? 1 : -1); // close to y axis
+                        hooper = (l_close_prox > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
-                    else if (labs(g_l_new_z.y) < labs(lcloseprox))
+                    else if (labs(g_l_new_z.y) < labs(l_close_prox))
                     {
-                        hooper = (lcloseprox > 0 ? 2: -2); // close to x axis
+                        hooper = (l_close_prox > 0 ? 2: -2); // close to x axis
                         goto plot_inside;
                     }
                 }
@@ -1650,7 +1645,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 mag = fmod_test();
                 if (mag < g_close_proximity)
                 {
-                    memvalue = mag;
+                    mem_value = mag;
                 }
             }
             else if (g_inside_color <= BOF60 && g_inside_color >= BOF61)
@@ -1693,9 +1688,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                     g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
                 }
-                totaldist += std::sqrt(sqr(lastz.x-g_new_z.x)+sqr(lastz.y-g_new_z.y));
-                lastz.x = g_new_z.x;
-                lastz.y = g_new_z.y;
+                total_dist += std::sqrt(sqr(last_z.x-g_new_z.x)+sqr(last_z.y-g_new_z.y));
+                last_z.x = g_new_z.x;
+                last_z.y = g_new_z.y;
             }
             else if (g_outside_color == FMOD)
             {
@@ -1708,7 +1703,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 mag = fmod_test();
                 if (mag < g_close_proximity)
                 {
-                    memvalue = mag;
+                    mem_value = mag;
                 }
             }
         }
@@ -1774,12 +1769,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
         if (g_color_iter > g_old_color_iter) // check periodicity
         {
-            if ((g_color_iter & savedand) == 0)            // time to save a new value
+            if ((g_color_iter & saved_and) == 0)            // time to save a new value
             {
-                savedcoloriter = g_color_iter;
+                saved_color_iter = g_color_iter;
                 if (g_integer_fractal)
                 {
-                    lsaved = g_l_new_z;// integer fractals
+                    l_saved = g_l_new_z;// integer fractals
                 }
                 else if (g_bf_math == BFMathType::BIG_NUM)
                 {
@@ -1795,19 +1790,19 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     s_saved = g_new_z;  // floating pt fractals
                 }
-                if (--savedincr == 0)    // time to lengthen the periodicity?
+                if (--saved_incr == 0)    // time to lengthen the periodicity?
                 {
-                    savedand = (savedand << 1) + 1;       // longer periodicity
-                    savedincr = g_periodicity_next_saved_incr;// restart counter
+                    saved_and = (saved_and << 1) + 1;       // longer periodicity
+                    saved_incr = g_periodicity_next_saved_incr;// restart counter
                 }
             }
             else                // check against an old save
             {
                 if (g_integer_fractal)     // floating-pt periodicity chk
                 {
-                    if (labs(lsaved.x - g_l_new_z.x) < g_l_close_enough)
+                    if (labs(l_saved.x - g_l_new_z.x) < g_l_close_enough)
                     {
-                        if (labs(lsaved.y - g_l_new_z.y) < g_l_close_enough)
+                        if (labs(l_saved.y - g_l_new_z.y) < g_l_close_enough)
                         {
                             caught_a_cycle = true;
                         }
@@ -1845,7 +1840,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 if (caught_a_cycle)
                 {
-                    cyclelen = g_color_iter-savedcoloriter;
+                    cycle_len = g_color_iter-saved_color_iter;
                     g_color_iter = g_max_iterations - 1;
                 }
             }
@@ -1937,11 +1932,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_outside_color == FMOD)
         {
-            g_color_iter = (long)(memvalue * g_colors / g_close_proximity);
+            g_color_iter = (long)(mem_value * g_colors / g_close_proximity);
         }
         else if (g_outside_color == TDIS)
         {
-            g_color_iter = (long)(totaldist);
+            g_color_iter = (long)(total_dist);
         }
 
         // eliminate negative colors & wrap arounds
@@ -2050,7 +2045,7 @@ plot_inside: // we're "inside"
             g_color_iter = 0;
             for (int i = 1; i < 16; i++)
             {
-                diff = tantable[0] - tantable[i];
+                diff = tan_table[0] - tan_table[i];
                 if (std::fabs(diff) < .05)
                 {
                     g_color_iter = i;
@@ -2060,9 +2055,9 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_color == PERIOD)
         {
-            if (cyclelen > 0)
+            if (cycle_len > 0)
             {
-                g_color_iter = cyclelen;
+                g_color_iter = cycle_len;
             }
             else
             {
@@ -2092,7 +2087,7 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_color == FMODI)
         {
-            g_color_iter = (long)(memvalue * g_colors / g_close_proximity);
+            g_color_iter = (long)(mem_value * g_colors / g_close_proximity);
         }
         else if (g_inside_color == ATANI)            // "atan"
         {
@@ -2160,7 +2155,7 @@ plot_pixel:
     }
     (*g_plot)(g_col, g_row, g_color);
 
-    g_max_iterations = savemaxit;
+    g_max_iterations = save_max_it;
     if ((g_keyboard_check_interval -= std::abs((int)g_real_color_iter)) <= 0)
     {
         if (check_key())
@@ -2173,7 +2168,7 @@ plot_pixel:
 }
 
 #define cos45  sin45
-#define lcos45 lsin45
+#define l_cos45 l_sin45
 
 // standardfractal doodad subroutines
 static void decomposition()
@@ -2191,19 +2186,19 @@ static void decomposition()
     static double tan5_625  = 0.09849140335716425; // tan 5.625  degrees
     static double tan2_8125 = 0.04912684976946725; // tan 2.8125 degrees
     static double tan1_4063 = 0.02454862210892544; // tan 1.4063 degrees
-    // static long lcos45;      // cos 45   degrees
-    static long lsin45;         // sin 45     degrees
-    static long lcos22_5;       // cos 22.5   degrees
-    static long lsin22_5;       // sin 22.5   degrees
-    static long lcos11_25;      // cos 11.25  degrees
-    static long lsin11_25;      // sin 11.25  degrees
-    static long lcos5_625;      // cos 5.625  degrees
-    static long lsin5_625;      // sin 5.625  degrees
-    static long ltan22_5;       // tan 22.5   degrees
-    static long ltan11_25;      // tan 11.25  degrees
-    static long ltan5_625;      // tan 5.625  degrees
-    static long ltan2_8125;     // tan 2.8125 degrees
-    static long ltan1_4063;     // tan 1.4063 degrees
+    // static long l_cos45;      // cos 45   degrees
+    static long l_sin45;         // sin 45     degrees
+    static long l_cos22_5;       // cos 22.5   degrees
+    static long l_sin22_5;       // sin 22.5   degrees
+    static long l_cos11_25;      // cos 11.25  degrees
+    static long l_sin11_25;      // sin 11.25  degrees
+    static long l_cos5_625;      // cos 5.625  degrees
+    static long l_sin5_625;      // sin 5.625  degrees
+    static long l_tan22_5;       // tan 22.5   degrees
+    static long l_tan11_25;      // tan 11.25  degrees
+    static long l_tan5_625;      // tan 5.625  degrees
+    static long l_tan2_8125;     // tan 2.8125 degrees
+    static long l_tan1_4063;     // tan 1.4063 degrees
     static long reset_fudge = -1;
     int temp = 0;
     int save_temp = 0;
@@ -2213,19 +2208,19 @@ static void decomposition()
         if (reset_fudge != g_fudge_factor)
         {
             reset_fudge = g_fudge_factor;
-            // lcos45     = (long)(cos45 * fudge);
-            lsin45     = (long)(sin45 * g_fudge_factor);
-            lcos22_5   = (long)(cos22_5 * g_fudge_factor);
-            lsin22_5   = (long)(sin22_5 * g_fudge_factor);
-            lcos11_25  = (long)(cos11_25 * g_fudge_factor);
-            lsin11_25  = (long)(sin11_25 * g_fudge_factor);
-            lcos5_625  = (long)(cos5_625 * g_fudge_factor);
-            lsin5_625  = (long)(sin5_625 * g_fudge_factor);
-            ltan22_5   = (long)(tan22_5 * g_fudge_factor);
-            ltan11_25  = (long)(tan11_25 * g_fudge_factor);
-            ltan5_625  = (long)(tan5_625 * g_fudge_factor);
-            ltan2_8125 = (long)(tan2_8125 * g_fudge_factor);
-            ltan1_4063 = (long)(tan1_4063 * g_fudge_factor);
+            // l_cos45     = (long)(cos45 * fudge);
+            l_sin45     = (long)(sin45 * g_fudge_factor);
+            l_cos22_5   = (long)(cos22_5 * g_fudge_factor);
+            l_sin22_5   = (long)(sin22_5 * g_fudge_factor);
+            l_cos11_25  = (long)(cos11_25 * g_fudge_factor);
+            l_sin11_25  = (long)(sin11_25 * g_fudge_factor);
+            l_cos5_625  = (long)(cos5_625 * g_fudge_factor);
+            l_sin5_625  = (long)(sin5_625 * g_fudge_factor);
+            l_tan22_5   = (long)(tan22_5 * g_fudge_factor);
+            l_tan11_25  = (long)(tan11_25 * g_fudge_factor);
+            l_tan5_625  = (long)(tan5_625 * g_fudge_factor);
+            l_tan2_8125 = (long)(tan2_8125 * g_fudge_factor);
+            l_tan1_4063 = (long)(tan1_4063 * g_fudge_factor);
         }
         if (g_l_new_z.y < 0)
         {
@@ -2253,74 +2248,74 @@ static void decomposition()
 
         if (g_decomp[0] >= 8)
         {
-            LComplex lalt;
+            LComplex l_alt;
             temp <<= 1;
             if (g_l_new_z.x < g_l_new_z.y)
             {
                 ++temp;
-                lalt.x = g_l_new_z.x; // just
+                l_alt.x = g_l_new_z.x; // just
                 g_l_new_z.x = g_l_new_z.y; // swap
-                g_l_new_z.y = lalt.x; // them
+                g_l_new_z.y = l_alt.x; // them
             }
 
             if (g_decomp[0] >= 16)
             {
                 temp <<= 1;
-                if (multiply(g_l_new_z.x, ltan22_5, g_bit_shift) < g_l_new_z.y)
+                if (multiply(g_l_new_z.x, l_tan22_5, g_bit_shift) < g_l_new_z.y)
                 {
                     ++temp;
-                    lalt = g_l_new_z;
-                    g_l_new_z.x = multiply(lalt.x, lcos45, g_bit_shift) +
-                             multiply(lalt.y, lsin45, g_bit_shift);
-                    g_l_new_z.y = multiply(lalt.x, lsin45, g_bit_shift) -
-                             multiply(lalt.y, lcos45, g_bit_shift);
+                    l_alt = g_l_new_z;
+                    g_l_new_z.x = multiply(l_alt.x, l_cos45, g_bit_shift) +
+                             multiply(l_alt.y, l_sin45, g_bit_shift);
+                    g_l_new_z.y = multiply(l_alt.x, l_sin45, g_bit_shift) -
+                             multiply(l_alt.y, l_cos45, g_bit_shift);
                 }
 
                 if (g_decomp[0] >= 32)
                 {
                     temp <<= 1;
-                    if (multiply(g_l_new_z.x, ltan11_25, g_bit_shift) < g_l_new_z.y)
+                    if (multiply(g_l_new_z.x, l_tan11_25, g_bit_shift) < g_l_new_z.y)
                     {
                         ++temp;
-                        lalt = g_l_new_z;
-                        g_l_new_z.x = multiply(lalt.x, lcos22_5, g_bit_shift) +
-                                 multiply(lalt.y, lsin22_5, g_bit_shift);
-                        g_l_new_z.y = multiply(lalt.x, lsin22_5, g_bit_shift) -
-                                 multiply(lalt.y, lcos22_5, g_bit_shift);
+                        l_alt = g_l_new_z;
+                        g_l_new_z.x = multiply(l_alt.x, l_cos22_5, g_bit_shift) +
+                                 multiply(l_alt.y, l_sin22_5, g_bit_shift);
+                        g_l_new_z.y = multiply(l_alt.x, l_sin22_5, g_bit_shift) -
+                                 multiply(l_alt.y, l_cos22_5, g_bit_shift);
                     }
 
                     if (g_decomp[0] >= 64)
                     {
                         temp <<= 1;
-                        if (multiply(g_l_new_z.x, ltan5_625, g_bit_shift) < g_l_new_z.y)
+                        if (multiply(g_l_new_z.x, l_tan5_625, g_bit_shift) < g_l_new_z.y)
                         {
                             ++temp;
-                            lalt = g_l_new_z;
-                            g_l_new_z.x = multiply(lalt.x, lcos11_25, g_bit_shift) +
-                                     multiply(lalt.y, lsin11_25, g_bit_shift);
-                            g_l_new_z.y = multiply(lalt.x, lsin11_25, g_bit_shift) -
-                                     multiply(lalt.y, lcos11_25, g_bit_shift);
+                            l_alt = g_l_new_z;
+                            g_l_new_z.x = multiply(l_alt.x, l_cos11_25, g_bit_shift) +
+                                     multiply(l_alt.y, l_sin11_25, g_bit_shift);
+                            g_l_new_z.y = multiply(l_alt.x, l_sin11_25, g_bit_shift) -
+                                     multiply(l_alt.y, l_cos11_25, g_bit_shift);
                         }
 
                         if (g_decomp[0] >= 128)
                         {
                             temp <<= 1;
-                            if (multiply(g_l_new_z.x, ltan2_8125, g_bit_shift) < g_l_new_z.y)
+                            if (multiply(g_l_new_z.x, l_tan2_8125, g_bit_shift) < g_l_new_z.y)
                             {
                                 ++temp;
-                                lalt = g_l_new_z;
-                                g_l_new_z.x = multiply(lalt.x, lcos5_625, g_bit_shift) +
-                                         multiply(lalt.y, lsin5_625, g_bit_shift);
-                                g_l_new_z.y = multiply(lalt.x, lsin5_625, g_bit_shift) -
-                                         multiply(lalt.y, lcos5_625, g_bit_shift);
+                                l_alt = g_l_new_z;
+                                g_l_new_z.x = multiply(l_alt.x, l_cos5_625, g_bit_shift) +
+                                         multiply(l_alt.y, l_sin5_625, g_bit_shift);
+                                g_l_new_z.y = multiply(l_alt.x, l_sin5_625, g_bit_shift) -
+                                         multiply(l_alt.y, l_cos5_625, g_bit_shift);
                             }
 
                             if (g_decomp[0] == 256)
                             {
                                 temp <<= 1;
-                                if (multiply(g_l_new_z.x, ltan1_4063, g_bit_shift) < g_l_new_z.y)
+                                if (multiply(g_l_new_z.x, l_tan1_4063, g_bit_shift) < g_l_new_z.y)
                                 {
-                                    if ((g_l_new_z.x*ltan1_4063 < g_l_new_z.y))
+                                    if ((g_l_new_z.x*l_tan1_4063 < g_l_new_z.y))
                                     {
                                         ++temp;
                                     }
@@ -2559,7 +2554,7 @@ int potential(double mag, long iterations)
 }
 
 // symmetry plot setup
-static bool x_sym_split(int xaxis_row, bool xaxis_between)
+static bool x_sym_split(int x_axis_row, bool x_axis_between)
 {
     if ((g_work_symmetry&0x11) == 0x10)   // already decided not sym
     {
@@ -2572,12 +2567,12 @@ static bool x_sym_split(int xaxis_row, bool xaxis_between)
     else   // new window, decide
     {
         g_work_symmetry |= 0x10;
-        if (xaxis_row <= g_yy_start || xaxis_row >= g_yy_stop)
+        if (x_axis_row <= g_yy_start || x_axis_row >= g_yy_stop)
         {
             return true; // axis not in window
         }
-        int i = xaxis_row + (xaxis_row - g_yy_start);
-        if (xaxis_between)
+        int i = x_axis_row + (x_axis_row - g_yy_start);
+        if (x_axis_between)
         {
             ++i;
         }
@@ -2587,8 +2582,8 @@ static bool x_sym_split(int xaxis_row, bool xaxis_between)
             {
                 return true;
             }
-            g_i_y_stop = xaxis_row - (g_yy_stop - xaxis_row);
-            if (!xaxis_between)
+            g_i_y_stop = x_axis_row - (g_yy_stop - x_axis_row);
+            if (!x_axis_between)
             {
                 --g_i_y_stop;
             }
@@ -2605,14 +2600,14 @@ static bool x_sym_split(int xaxis_row, bool xaxis_between)
             add_work_list(g_xx_start, g_xx_stop, g_xx_start, i+1, g_yy_stop, i+1, g_work_pass, 0);
             g_yy_stop = i;
         }
-        g_i_y_stop = xaxis_row;
+        g_i_y_stop = x_axis_row;
         g_work_symmetry |= 1;
     }
     g_symmetry = SymmetryType::NONE;
     return false; // tell set_symmetry its a go
 }
 
-static bool y_sym_split(int yaxis_col, bool yaxis_between)
+static bool y_sym_split(int y_axis_col, bool y_axis_between)
 {
     if ((g_work_symmetry&0x22) == 0x20)   // already decided not sym
     {
@@ -2625,12 +2620,12 @@ static bool y_sym_split(int yaxis_col, bool yaxis_between)
     else   // new window, decide
     {
         g_work_symmetry |= 0x20;
-        if (yaxis_col <= g_xx_start || yaxis_col >= g_xx_stop)
+        if (y_axis_col <= g_xx_start || y_axis_col >= g_xx_stop)
         {
             return true; // axis not in window
         }
-        int i = yaxis_col + (yaxis_col - g_xx_start);
-        if (yaxis_between)
+        int i = y_axis_col + (y_axis_col - g_xx_start);
+        if (y_axis_between)
         {
             ++i;
         }
@@ -2640,8 +2635,8 @@ static bool y_sym_split(int yaxis_col, bool yaxis_between)
             {
                 return true;
             }
-            g_i_x_stop = yaxis_col - (g_xx_stop - yaxis_col);
-            if (!yaxis_between)
+            g_i_x_stop = y_axis_col - (g_xx_stop - y_axis_col);
+            if (!y_axis_between)
             {
                 --g_i_x_stop;
             }
@@ -2658,22 +2653,22 @@ static bool y_sym_split(int yaxis_col, bool yaxis_between)
             add_work_list(i+1, g_xx_stop, i+1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
             g_xx_stop = i;
         }
-        g_i_x_stop = yaxis_col;
+        g_i_x_stop = y_axis_col;
         g_work_symmetry |= 2;
     }
     g_symmetry = SymmetryType::NONE;
     return false; // tell set_symmetry its a go
 }
 
-static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmetrical plot functions
+static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symmetrical plot functions
 {
     int i;
     // pixel number for origin
-    bool xaxis_between = false;
-    bool yaxis_between = false;         // if axis between 2 pixels, not on one
-    bool xaxis_on_screen = false;
-    bool yaxis_on_screen = false;
-    double ftemp;
+    bool x_axis_between = false;
+    bool y_axis_between = false;         // if axis between 2 pixels, not on one
+    bool x_axis_on_screen = false;
+    bool y_axis_on_screen = false;
+    double f_temp;
     bf_t bft1;
     int saved = 0;
     g_symmetry = SymmetryType::X_AXIS;
@@ -2762,62 +2757,62 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
     default:   // Check P2 for the rest
         params_zero = (params_zero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
     }
-    int yaxis_col = -1;
-    int xaxis_row = -1;
+    int y_axis_col = -1;
+    int x_axis_row = -1;
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
         bft1    = alloc_stack(g_r_bf_length+2);
-        xaxis_on_screen = (sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max));
-        yaxis_on_screen = (sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max));
+        x_axis_on_screen = (sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max));
+        y_axis_on_screen = (sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max));
     }
     else
     {
-        xaxis_on_screen = (sign(g_y_min) != sign(g_y_max));
-        yaxis_on_screen = (sign(g_x_min) != sign(g_x_max));
+        x_axis_on_screen = (sign(g_y_min) != sign(g_y_max));
+        y_axis_on_screen = (sign(g_x_min) != sign(g_x_max));
     }
-    if (xaxis_on_screen) // axis is on screen
+    if (x_axis_on_screen) // axis is on screen
     {
         if (g_bf_math != BFMathType::NONE)
         {
             sub_bf(bft1, g_bf_y_min, g_bf_y_max);
             div_bf(bft1, g_bf_y_max, bft1);
             neg_a_bf(bft1);
-            ftemp = (double)bf_to_float(bft1);
+            f_temp = (double)bf_to_float(bft1);
         }
         else
         {
-            ftemp = (0.0-g_y_max) / (g_y_min-g_y_max);
+            f_temp = (0.0-g_y_max) / (g_y_min-g_y_max);
         }
-        ftemp *= (g_logical_screen_y_dots-1);
-        ftemp += 0.25;
-        xaxis_row = (int)ftemp;
-        xaxis_between = (ftemp - xaxis_row >= 0.5);
-        if (!uselist && (!xaxis_between || (xaxis_row+1)*2 != g_logical_screen_y_dots))
+        f_temp *= (g_logical_screen_y_dots-1);
+        f_temp += 0.25;
+        x_axis_row = (int)f_temp;
+        x_axis_between = (f_temp - x_axis_row >= 0.5);
+        if (!use_list && (!x_axis_between || (x_axis_row+1)*2 != g_logical_screen_y_dots))
         {
-            xaxis_row = -1; // can't split screen, so dead center or not at all
+            x_axis_row = -1; // can't split screen, so dead center or not at all
         }
     }
-    if (yaxis_on_screen) // axis is on screen
+    if (y_axis_on_screen) // axis is on screen
     {
         if (g_bf_math != BFMathType::NONE)
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             div_bf(bft1, g_bf_x_min, bft1);
             neg_a_bf(bft1);
-            ftemp = (double)bf_to_float(bft1);
+            f_temp = (double)bf_to_float(bft1);
         }
         else
         {
-            ftemp = (0.0-g_x_min) / (g_x_max-g_x_min);
+            f_temp = (0.0-g_x_min) / (g_x_max-g_x_min);
         }
-        ftemp *= (g_logical_screen_x_dots-1);
-        ftemp += 0.25;
-        yaxis_col = (int)ftemp;
-        yaxis_between = (ftemp - yaxis_col >= 0.5);
-        if (!uselist && (!yaxis_between || (yaxis_col+1)*2 != g_logical_screen_x_dots))
+        f_temp *= (g_logical_screen_x_dots-1);
+        f_temp += 0.25;
+        y_axis_col = (int)f_temp;
+        y_axis_between = (f_temp - y_axis_col >= 0.5);
+        if (!use_list && (!y_axis_between || (y_axis_col+1)*2 != g_logical_screen_x_dots))
         {
-            yaxis_col = -1; // can't split screen, so dead center or not at all
+            y_axis_col = -1; // can't split screen, so dead center or not at all
         }
     }
     switch (sym)       // symmetry switch
@@ -2841,7 +2836,7 @@ static void set_symmetry(SymmetryType sym, bool uselist) // set up proper symmet
         }
 xsym:
     case SymmetryType::X_AXIS:                       // X-axis Symmetry
-        if (!x_sym_split(xaxis_row, xaxis_between))
+        if (!x_sym_split(x_axis_row, x_axis_between))
         {
             if (g_basin)
             {
@@ -2859,7 +2854,7 @@ xsym:
             break;
         }
     case SymmetryType::Y_AXIS:                       // Y-axis Symmetry
-        if (!y_sym_split(yaxis_col, yaxis_between))
+        if (!y_sym_split(y_axis_col, y_axis_between))
         {
             g_plot = sym_plot2y;
         }
@@ -2870,8 +2865,8 @@ xsym:
             break;
         }
     case SymmetryType::XY_AXIS:                      // X-axis AND Y-axis Symmetry
-        x_sym_split(xaxis_row, xaxis_between);
-        y_sym_split(yaxis_col, yaxis_between);
+        x_sym_split(x_axis_row, x_axis_between);
+        y_sym_split(y_axis_col, y_axis_between);
         switch (g_work_symmetry & 3)
         {
         case 1: // just xaxis symmetry
@@ -2913,8 +2908,8 @@ xsym:
         }
     case SymmetryType::ORIGIN:                      // Origin Symmetry
 originsym:
-        if (!x_sym_split(xaxis_row, xaxis_between)
-            && !y_sym_split(yaxis_col, yaxis_between))
+        if (!x_sym_split(x_axis_row, x_axis_between)
+            && !y_sym_split(y_axis_col, y_axis_between))
         {
             g_plot = sym_plot2j;
             g_i_x_stop = g_xx_stop; // didn't want this changed
@@ -2952,8 +2947,8 @@ originsym:
         }
         g_plot = sym_pi_plot ;
         g_symmetry = SymmetryType::NONE;
-        if (!x_sym_split(xaxis_row, xaxis_between)
-            && !y_sym_split(yaxis_col, yaxis_between))
+        if (!x_sym_split(x_axis_row, x_axis_between)
+            && !y_sym_split(y_axis_col, y_axis_between))
         {
             if (g_param_z1.y == 0.0)
             {
@@ -3003,23 +2998,23 @@ originsym:
 static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
-    int xstop = g_logical_screen_x_dots - 1; // don't use symetry
-    int ystop = g_logical_screen_y_dots - 1; // don't use symetry
-    long mincolour = LONG_MAX;
+    int x_stop = g_logical_screen_x_dots - 1; // don't use symetry
+    int y_stop = g_logical_screen_y_dots - 1; // don't use symetry
+    long min_color = LONG_MAX;
     g_row = 0;
     g_reset_periodicity = false;
-    long old_maxit = g_max_iterations;
-    for (g_col = 0; g_col < xstop; g_col++) // top row
+    long old_max_it = g_max_iterations;
+    for (g_col = 0; g_col < x_stop; g_col++) // top row
     {
         g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
-        if (g_real_color_iter < mincolour)
+        if (g_real_color_iter < min_color)
         {
-            mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
+            min_color = g_real_color_iter ;
+            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
         }
         if (g_col >=32)
         {
@@ -3031,18 +3026,18 @@ static long auto_log_map()
         (*g_plot)(g_col-lag, g_row, 0);
     }
 
-    g_col = xstop;
-    for (g_row = 0; g_row < ystop; g_row++) // right  side
+    g_col = x_stop;
+    for (g_row = 0; g_row < y_stop; g_row++) // right  side
     {
         g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
-        if (g_real_color_iter < mincolour)
+        if (g_real_color_iter < min_color)
         {
-            mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
+            min_color = g_real_color_iter ;
+            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
         }
         if (g_row >=32)
         {
@@ -3055,17 +3050,17 @@ static long auto_log_map()
     }
 
     g_col = 0;
-    for (g_row = 0; g_row < ystop; g_row++) // left  side
+    for (g_row = 0; g_row < y_stop; g_row++) // left  side
     {
         g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
-        if (g_real_color_iter < mincolour)
+        if (g_real_color_iter < min_color)
         {
-            mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
+            min_color = g_real_color_iter ;
+            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
         }
         if (g_row >=32)
         {
@@ -3077,18 +3072,18 @@ static long auto_log_map()
         (*g_plot)(g_col, g_row-lag, 0);
     }
 
-    g_row = ystop ;
-    for (g_col = 0; g_col < xstop; g_col++) // bottom row
+    g_row = y_stop ;
+    for (g_col = 0; g_col < x_stop; g_col++) // bottom row
     {
         g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
-        if (g_real_color_iter < mincolour)
+        if (g_real_color_iter < min_color)
         {
-            mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
+            min_color = g_real_color_iter ;
+            g_max_iterations = std::max(2L, min_color); // speedup for when edges overlap lakes
         }
         if (g_col >=32)
         {
@@ -3101,13 +3096,13 @@ static long auto_log_map()
     }
 
 ack: // bailout here if key is pressed
-    if (mincolour == 2)      // insure autologmap not called again
+    if (min_color == 2)      // insure autologmap not called again
     {
         g_resuming = true;
     }
-    g_max_iterations = old_maxit;
+    g_max_iterations = old_max_it;
 
-    return mincolour ;
+    return min_color ;
 }
 
 // Symmetry plot for period PI
