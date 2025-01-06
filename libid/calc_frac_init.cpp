@@ -122,9 +122,9 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     // set up grid array compactly leaving space at end
     // space req for grid is 2(xdots+ydots)*sizeof(long or double)
     // space available in extraseg is 65536 Bytes
-    long xytemp = g_logical_screen_x_dots + g_logical_screen_y_dots;
-    if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768))
-        || (g_user_float_flag && (xytemp*sizeof(double) > 32768))
+    long xy_temp = g_logical_screen_x_dots + g_logical_screen_y_dots;
+    if ((!g_user_float_flag && (xy_temp*sizeof(long) > 32768))
+        || (g_user_float_flag && (xy_temp*sizeof(double) > 32768))
         || g_debug_flag == DebugFlags::PREVENT_COORDINATE_GRID)
     {
         g_use_grid = false;
@@ -140,31 +140,31 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
-        FractalType tofloat = g_cur_fractal_specific->tofloat;
-        if (tofloat == FractalType::NO_FRACTAL ||
-            bit_clear(g_fractal_specific[+tofloat].flags, FractalFlags::BF_MATH))
+        FractalType to_float = g_cur_fractal_specific->tofloat;
+        if (to_float == FractalType::NO_FRACTAL ||
+            bit_clear(g_fractal_specific[+to_float].flags, FractalFlags::BF_MATH))
         {
             g_bf_math = BFMathType::NONE;
         }
         else if (g_bf_math != BFMathType::NONE)
         {
-            g_cur_fractal_specific = &g_fractal_specific[+tofloat];
-            g_fractal_type = tofloat;
+            g_cur_fractal_specific = &g_fractal_specific[+to_float];
+            g_fractal_type = to_float;
         }
     }
 
     // switch back to double when zooming out if using arbitrary precision
     if (g_bf_math != BFMathType::NONE)
     {
-        int gotprec = get_prec_bf(ResolutionFlag::CURRENT);
-        if ((gotprec <= DBL_DIG+1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) || g_math_tol[1] >= 1.0)
+        int got_prec = get_prec_bf(ResolutionFlag::CURRENT);
+        if ((got_prec <= DBL_DIG+1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) || g_math_tol[1] >= 1.0)
         {
             bf_corners_to_float();
             g_bf_math = BFMathType::NONE;
         }
         else
         {
-            init_bf_dec(gotprec);
+            init_bf_dec(got_prec);
         }
     }
     else if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
@@ -528,17 +528,17 @@ expand_retry:
                        now only tests the larger of the two deltas in an attempt
                        to repair this bug. This should never make the transition
                        to arbitrary precision sooner, but always later.*/
-                    double testx_try;
-                    double testx_exact;
+                    double test_x_try;
+                    double test_x_exact;
                     if (std::fabs(g_x_max-g_x_3rd) > std::fabs(g_x_3rd-g_x_min))
                     {
-                        testx_exact  = g_x_max-g_x_3rd;
-                        testx_try    = dx0-g_x_min;
+                        test_x_exact  = g_x_max-g_x_3rd;
+                        test_x_try    = dx0-g_x_min;
                     }
                     else
                     {
-                        testx_exact  = g_x_3rd-g_x_min;
-                        testx_try    = dx1;
+                        test_x_exact  = g_x_3rd-g_x_min;
+                        test_x_try    = dx1;
                     }
                     double testy_try;
                     double testy_exact;
@@ -552,7 +552,7 @@ expand_retry:
                         testy_exact = g_y_min-g_y_3rd;
                         testy_try   = dy1;
                     }
-                    if (ratio_bad(testx_try, testx_exact)
+                    if (ratio_bad(test_x_try, test_x_exact)
                         || ratio_bad(testy_try, testy_exact))
                     {
                         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
@@ -592,14 +592,14 @@ expand_retry:
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
-    double ftemp = (double)((0.0-g_delta_y2) * g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots
+    double tmp = (double)((0.0-g_delta_y2) * g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots
                      - (g_x_max-g_x_3rd) * (g_y_3rd-g_y_max));
-    if (ftemp != 0)
+    if (tmp != 0)
     {
-        g_plot_mx1 = (double)(g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / ftemp);
-        g_plot_mx2 = (g_y_3rd-g_y_max) * g_logical_screen_x_size_dots / ftemp;
-        g_plot_my1 = (double)((0.0-g_delta_y2) * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / ftemp);
-        g_plot_my2 = (g_x_max-g_x_3rd) * g_logical_screen_y_size_dots / ftemp;
+        g_plot_mx1 = (double)(g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
+        g_plot_mx2 = (g_y_3rd-g_y_max) * g_logical_screen_x_size_dots / tmp;
+        g_plot_my1 = (double)((0.0-g_delta_y2) * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
+        g_plot_my2 = (g_x_max-g_x_3rd) * g_logical_screen_y_size_dots / tmp;
     }
     if (g_bf_math == BFMathType::NONE)
     {
@@ -639,31 +639,31 @@ void adjust_corner_bf()
     LDouble magnification;
 
     int saved = save_stack();
-    bf_t bftemp = alloc_stack(g_r_bf_length + 2);
-    bf_t bftemp2 = alloc_stack(g_r_bf_length + 2);
-    bf_t btmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t bf_temp = alloc_stack(g_r_bf_length + 2);
+    bf_t bf_temp2 = alloc_stack(g_r_bf_length + 2);
+    bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
 
     // While we're at it, let's adjust the x_mag_factor as well
-    // use bftemp, bftemp2 as bfXctr, bfYctr
-    cvt_center_mag_bf(bftemp, bftemp2, magnification, x_mag_factor, rotation, skew);
-    double ftemp = std::fabs(x_mag_factor);
-    if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
+    // use bf_temp, bftemp2 as bfXctr, bfYctr
+    cvt_center_mag_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
+    double f_temp = std::fabs(x_mag_factor);
+    if (f_temp != 1 && f_temp >= (1-g_aspect_drift) && f_temp <= (1+g_aspect_drift))
     {
         x_mag_factor = sign(x_mag_factor);
-        cvt_corners_bf(bftemp, bftemp2, magnification, x_mag_factor, rotation, skew);
+        cvt_corners_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
     }
 
     // ftemp=fabs(xx3rd-xxmin);
-    abs_a_bf(sub_bf(bftemp, g_bf_x_3rd, g_bf_x_min));
+    abs_a_bf(sub_bf(bf_temp, g_bf_x_3rd, g_bf_x_min));
 
     // ftemp2=fabs(xxmax-xx3rd);
-    abs_a_bf(sub_bf(bftemp2, g_bf_x_max, g_bf_x_3rd));
+    abs_a_bf(sub_bf(bf_temp2, g_bf_x_max, g_bf_x_3rd));
 
     // if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) )
-    if (cmp_bf(bftemp, bftemp2) < 0)
+    if (cmp_bf(bf_temp, bf_temp2) < 0)
     {
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
-        if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
+        if (cmp_bf(mult_bf_int(b_tmp1, bf_temp, 10000), bf_temp2) < 0
             && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
         {
             // xx3rd = xxmin;
@@ -672,7 +672,7 @@ void adjust_corner_bf()
     }
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
-    if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
+    if (cmp_bf(mult_bf_int(b_tmp1, bf_temp2, 10000), bf_temp) < 0
         && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
     {
         // xx3rd = xxmax;
@@ -680,16 +680,16 @@ void adjust_corner_bf()
     }
 
     // ftemp=fabs(yy3rd-yymin);
-    abs_a_bf(sub_bf(bftemp, g_bf_y_3rd, g_bf_y_min));
+    abs_a_bf(sub_bf(bf_temp, g_bf_y_3rd, g_bf_y_min));
 
     // ftemp2=fabs(yymax-yy3rd);
-    abs_a_bf(sub_bf(bftemp2, g_bf_y_max, g_bf_y_3rd));
+    abs_a_bf(sub_bf(bf_temp2, g_bf_y_max, g_bf_y_3rd));
 
     // if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) )
-    if (cmp_bf(bftemp, bftemp2) < 0)
+    if (cmp_bf(bf_temp, bf_temp2) < 0)
     {
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
-        if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
+        if (cmp_bf(mult_bf_int(b_tmp1, bf_temp, 10000), bf_temp2) < 0
             && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
         {
             // yy3rd = yymin;
@@ -698,7 +698,7 @@ void adjust_corner_bf()
     }
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
-    if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
+    if (cmp_bf(mult_bf_int(b_tmp1, bf_temp2, 10000), bf_temp) < 0
         && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
     {
         // yy3rd = yymax;
@@ -712,7 +712,7 @@ void adjust_corner()
 {
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
-    double ftemp;
+    double f_temp;
 
     if (!g_integer_fractal)
     {
@@ -724,40 +724,40 @@ void adjust_corner()
         LDouble magnification;
         // While we're at it, let's adjust the x_mag_factor as well
         cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-        ftemp = std::fabs(x_mag_factor);
-        if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
+        f_temp = std::fabs(x_mag_factor);
+        if (f_temp != 1 && f_temp >= (1-g_aspect_drift) && f_temp <= (1+g_aspect_drift))
         {
             x_mag_factor = sign(x_mag_factor);
             cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         }
     }
 
-    ftemp = std::fabs(g_x_3rd-g_x_min);
-    double ftemp2 = std::fabs(g_x_max - g_x_3rd);
-    if (ftemp < ftemp2)
+    f_temp = std::fabs(g_x_3rd-g_x_min);
+    double f_temp2 = std::fabs(g_x_max - g_x_3rd);
+    if (f_temp < f_temp2)
     {
-        if (ftemp*10000 < ftemp2 && g_y_3rd != g_y_max)
+        if (f_temp*10000 < f_temp2 && g_y_3rd != g_y_max)
         {
             g_x_3rd = g_x_min;
         }
     }
 
-    if (ftemp2*10000 < ftemp && g_y_3rd != g_y_min)
+    if (f_temp2*10000 < f_temp && g_y_3rd != g_y_min)
     {
         g_x_3rd = g_x_max;
     }
 
-    ftemp = std::fabs(g_y_3rd-g_y_min);
-    ftemp2 = std::fabs(g_y_max-g_y_3rd);
-    if (ftemp < ftemp2)
+    f_temp = std::fabs(g_y_3rd-g_y_min);
+    f_temp2 = std::fabs(g_y_max-g_y_3rd);
+    if (f_temp < f_temp2)
     {
-        if (ftemp*10000 < ftemp2 && g_x_3rd != g_x_max)
+        if (f_temp*10000 < f_temp2 && g_x_3rd != g_x_max)
         {
             g_y_3rd = g_y_min;
         }
     }
 
-    if (ftemp2*10000 < ftemp && g_x_3rd != g_x_min)
+    if (f_temp2*10000 < f_temp && g_x_3rd != g_x_min)
     {
         g_y_3rd = g_y_max;
     }
@@ -765,247 +765,247 @@ void adjust_corner()
 
 static void adjust_to_limits_bf(double expand)
 {
-    bf_t bcornerx[4];
-    bf_t bcornery[4];
+    bf_t b_corner_x[4];
+    bf_t b_corner_y[4];
     int saved = save_stack();
-    bcornerx[0] = alloc_stack(g_r_bf_length+2);
-    bcornerx[1] = alloc_stack(g_r_bf_length+2);
-    bcornerx[2] = alloc_stack(g_r_bf_length+2);
-    bcornerx[3] = alloc_stack(g_r_bf_length+2);
-    bcornery[0] = alloc_stack(g_r_bf_length+2);
-    bcornery[1] = alloc_stack(g_r_bf_length+2);
-    bcornery[2] = alloc_stack(g_r_bf_length+2);
-    bcornery[3] = alloc_stack(g_r_bf_length+2);
-    bf_t blowx = alloc_stack(g_r_bf_length + 2);
-    bf_t bhighx = alloc_stack(g_r_bf_length + 2);
-    bf_t blowy = alloc_stack(g_r_bf_length + 2);
-    bf_t bhighy = alloc_stack(g_r_bf_length + 2);
-    bf_t blimit = alloc_stack(g_r_bf_length + 2);
-    bf_t bftemp = alloc_stack(g_r_bf_length + 2);
-    bf_t bcenterx = alloc_stack(g_r_bf_length + 2);
-    bf_t bcentery = alloc_stack(g_r_bf_length + 2);
-    bf_t badjx = alloc_stack(g_r_bf_length + 2);
-    bf_t badjy = alloc_stack(g_r_bf_length + 2);
-    bf_t btmp1 = alloc_stack(g_r_bf_length + 2);
-    bf_t btmp2 = alloc_stack(g_r_bf_length + 2);
-    bf_t bexpand = alloc_stack(g_r_bf_length + 2);
+    b_corner_x[0] = alloc_stack(g_r_bf_length+2);
+    b_corner_x[1] = alloc_stack(g_r_bf_length+2);
+    b_corner_x[2] = alloc_stack(g_r_bf_length+2);
+    b_corner_x[3] = alloc_stack(g_r_bf_length+2);
+    b_corner_y[0] = alloc_stack(g_r_bf_length+2);
+    b_corner_y[1] = alloc_stack(g_r_bf_length+2);
+    b_corner_y[2] = alloc_stack(g_r_bf_length+2);
+    b_corner_y[3] = alloc_stack(g_r_bf_length+2);
+    bf_t b_low_x = alloc_stack(g_r_bf_length + 2);
+    bf_t b_high_x = alloc_stack(g_r_bf_length + 2);
+    bf_t b_low_y = alloc_stack(g_r_bf_length + 2);
+    bf_t b_high_y = alloc_stack(g_r_bf_length + 2);
+    bf_t b_limit = alloc_stack(g_r_bf_length + 2);
+    bf_t bf_temp = alloc_stack(g_r_bf_length + 2);
+    bf_t b_center_x = alloc_stack(g_r_bf_length + 2);
+    bf_t b_center_y = alloc_stack(g_r_bf_length + 2);
+    bf_t b_adj_x = alloc_stack(g_r_bf_length + 2);
+    bf_t b_adj_y = alloc_stack(g_r_bf_length + 2);
+    bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
+    bf_t b_tmp2 = alloc_stack(g_r_bf_length + 2);
+    bf_t b_expand = alloc_stack(g_r_bf_length + 2);
 
     LDouble limit = 32767.99;
 
     /*   if (bitshift >= 24) limit = 31.99;
        if (bitshift >= 29) limit = 3.99; */
-    float_to_bf(blimit, limit);
-    float_to_bf(bexpand, expand);
+    float_to_bf(b_limit, limit);
+    float_to_bf(b_expand, expand);
 
-    add_bf(bcenterx, g_bf_x_min, g_bf_x_max);
-    half_a_bf(bcenterx);
+    add_bf(b_center_x, g_bf_x_min, g_bf_x_max);
+    half_a_bf(b_center_x);
 
-    // centery = (yymin+yymax)/2;
-    add_bf(bcentery, g_bf_y_min, g_bf_y_max);
-    half_a_bf(bcentery);
+    // center_y = (yymin+yymax)/2;
+    add_bf(b_center_y, g_bf_y_min, g_bf_y_max);
+    half_a_bf(b_center_y);
 
-    // if (xxmin == centerx) {
-    if (cmp_bf(g_bf_x_min, bcenterx) == 0)
+    // if (xxmin == center_x) {
+    if (cmp_bf(g_bf_x_min, b_center_x) == 0)
     {
         // ohoh, infinitely thin, fix it
         smallest_add_bf(g_bf_x_max);
-        // bfxmin -= bfxmax-centerx;
-        sub_a_bf(g_bf_x_min, sub_bf(btmp1, g_bf_x_max, bcenterx));
+        // bfxmin -= bfxmax-center_x;
+        sub_a_bf(g_bf_x_min, sub_bf(b_tmp1, g_bf_x_max, b_center_x));
     }
 
-    // if (bfymin == centery)
-    if (cmp_bf(g_bf_y_min, bcentery) == 0)
+    // if (bfymin == center_y)
+    if (cmp_bf(g_bf_y_min, b_center_y) == 0)
     {
         smallest_add_bf(g_bf_y_max);
-        // bfymin -= bfymax-centery;
-        sub_a_bf(g_bf_y_min, sub_bf(btmp1, g_bf_y_max, bcentery));
+        // bfymin -= bfymax-center_y;
+        sub_a_bf(g_bf_y_min, sub_bf(b_tmp1, g_bf_y_max, b_center_y));
     }
 
-    // if (bfx3rd == centerx)
-    if (cmp_bf(g_bf_x_3rd, bcenterx) == 0)
+    // if (bfx3rd == center_x)
+    if (cmp_bf(g_bf_x_3rd, b_center_x) == 0)
     {
         smallest_add_bf(g_bf_x_3rd);
     }
 
-    // if (bfy3rd == centery)
-    if (cmp_bf(g_bf_y_3rd, bcentery) == 0)
+    // if (bfy3rd == center_y)
+    if (cmp_bf(g_bf_y_3rd, b_center_y) == 0)
     {
         smallest_add_bf(g_bf_y_3rd);
     }
 
     // setup array for easier manipulation
-    // cornerx[0] = xxmin;
-    copy_bf(bcornerx[0], g_bf_x_min);
+    // corner_x[0] = xxmin;
+    copy_bf(b_corner_x[0], g_bf_x_min);
 
-    // cornerx[1] = xxmax;
-    copy_bf(bcornerx[1], g_bf_x_max);
+    // corner_x[1] = xxmax;
+    copy_bf(b_corner_x[1], g_bf_x_max);
 
-    // cornerx[2] = xx3rd;
-    copy_bf(bcornerx[2], g_bf_x_3rd);
+    // corner_x[2] = xx3rd;
+    copy_bf(b_corner_x[2], g_bf_x_3rd);
 
-    // cornerx[3] = xxmin+(xxmax-xx3rd);
-    sub_bf(bcornerx[3], g_bf_x_max, g_bf_x_3rd);
-    add_a_bf(bcornerx[3], g_bf_x_min);
+    // corner_x[3] = xxmin+(xxmax-xx3rd);
+    sub_bf(b_corner_x[3], g_bf_x_max, g_bf_x_3rd);
+    add_a_bf(b_corner_x[3], g_bf_x_min);
 
-    // cornery[0] = yymax;
-    copy_bf(bcornery[0], g_bf_y_max);
+    // corner_y[0] = yymax;
+    copy_bf(b_corner_y[0], g_bf_y_max);
 
-    // cornery[1] = yymin;
-    copy_bf(bcornery[1], g_bf_y_min);
+    // corner_y[1] = yymin;
+    copy_bf(b_corner_y[1], g_bf_y_min);
 
-    // cornery[2] = yy3rd;
-    copy_bf(bcornery[2], g_bf_y_3rd);
+    // corner_y[2] = yy3rd;
+    copy_bf(b_corner_y[2], g_bf_y_3rd);
 
-    // cornery[3] = yymin+(yymax-yy3rd);
-    sub_bf(bcornery[3], g_bf_y_max, g_bf_y_3rd);
-    add_a_bf(bcornery[3], g_bf_y_min);
+    // corner_y[3] = yymin+(yymax-yy3rd);
+    sub_bf(b_corner_y[3], g_bf_y_max, g_bf_y_3rd);
+    add_a_bf(b_corner_y[3], g_bf_y_min);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
     {
         for (int i = 0; i < 4; ++i)
         {
-            // cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
-            sub_bf(btmp1, bcornerx[i], bcenterx);
-            mult_bf(bcornerx[i], btmp1, bexpand);
-            add_a_bf(bcornerx[i], bcenterx);
+            // corner_x[i] = center_x + (corner_x[i]-center_x)*expand;
+            sub_bf(b_tmp1, b_corner_x[i], b_center_x);
+            mult_bf(b_corner_x[i], b_tmp1, b_expand);
+            add_a_bf(b_corner_x[i], b_center_x);
 
-            // cornery[i] = centery + (cornery[i]-centery)*expand;
-            sub_bf(btmp1, bcornery[i], bcentery);
-            mult_bf(bcornery[i], btmp1, bexpand);
-            add_a_bf(bcornery[i], bcentery);
+            // corner_y[i] = center_y + (corner_y[i]-center_y)*expand;
+            sub_bf(b_tmp1, b_corner_y[i], b_center_y);
+            mult_bf(b_corner_y[i], b_tmp1, b_expand);
+            add_a_bf(b_corner_y[i], b_center_y);
         }
     }
 
     // get min/max x/y values
-    // lowx = highx = cornerx[0];
-    copy_bf(blowx, bcornerx[0]);
-    copy_bf(bhighx, bcornerx[0]);
+    // low_x = high_x = corner_x[0];
+    copy_bf(b_low_x, b_corner_x[0]);
+    copy_bf(b_high_x, b_corner_x[0]);
 
-    // lowy = highy = cornery[0];
-    copy_bf(blowy, bcornery[0]);
-    copy_bf(bhighy, bcornery[0]);
+    // low_y = high_y = corner_y[0];
+    copy_bf(b_low_y, b_corner_y[0]);
+    copy_bf(b_high_y, b_corner_y[0]);
 
     for (int i = 1; i < 4; ++i)
     {
-        // if (cornerx[i] < lowx)               lowx  = cornerx[i];
-        if (cmp_bf(bcornerx[i], blowx) < 0)
+        // if (corner_x[i] < low_x)               low_x  = corner_x[i];
+        if (cmp_bf(b_corner_x[i], b_low_x) < 0)
         {
-            copy_bf(blowx, bcornerx[i]);
+            copy_bf(b_low_x, b_corner_x[i]);
         }
 
-        // if (cornerx[i] > highx)              highx = cornerx[i];
-        if (cmp_bf(bcornerx[i], bhighx) > 0)
+        // if (corner_x[i] > high_x)              high_x = corner_x[i];
+        if (cmp_bf(b_corner_x[i], b_high_x) > 0)
         {
-            copy_bf(bhighx, bcornerx[i]);
+            copy_bf(b_high_x, b_corner_x[i]);
         }
 
-        // if (cornery[i] < lowy)               lowy  = cornery[i];
-        if (cmp_bf(bcornery[i], blowy) < 0)
+        // if (corner_y[i] < low_y)               low_y  = corner_y[i];
+        if (cmp_bf(b_corner_y[i], b_low_y) < 0)
         {
-            copy_bf(blowy, bcornery[i]);
+            copy_bf(b_low_y, b_corner_y[i]);
         }
 
-        // if (cornery[i] > highy)              highy = cornery[i];
-        if (cmp_bf(bcornery[i], bhighy) > 0)
+        // if (corner_y[i] > high_y)              high_y = corner_y[i];
+        if (cmp_bf(b_corner_y[i], b_high_y) > 0)
         {
-            copy_bf(bhighy, bcornery[i]);
+            copy_bf(b_high_y, b_corner_y[i]);
         }
     }
 
     // if image is too large, downsize it maintaining center
-    // ftemp = highx-lowx;
-    sub_bf(bftemp, bhighx, blowx);
+    // ftemp = high_x-low_x;
+    sub_bf(bf_temp, b_high_x, b_low_x);
 
-    // if (highy-lowy > ftemp) ftemp = highy-lowy;
-    if (cmp_bf(sub_bf(btmp1, bhighy, blowy), bftemp) > 0)
+    // if (high_y-low_y > ftemp) ftemp = high_y-low_y;
+    if (cmp_bf(sub_bf(b_tmp1, b_high_y, b_low_y), bf_temp) > 0)
     {
-        copy_bf(bftemp, btmp1);
+        copy_bf(bf_temp, b_tmp1);
     }
 
     // if image is too large, downsize it maintaining center
 
-    float_to_bf(btmp1, limit*2.0);
-    copy_bf(btmp2, bftemp);
-    div_bf(bftemp, btmp1, btmp2);
-    float_to_bf(btmp1, 1.0);
-    if (cmp_bf(bftemp, btmp1) < 0)
+    float_to_bf(b_tmp1, limit*2.0);
+    copy_bf(b_tmp2, bf_temp);
+    div_bf(bf_temp, b_tmp1, b_tmp2);
+    float_to_bf(b_tmp1, 1.0);
+    if (cmp_bf(bf_temp, b_tmp1) < 0)
     {
         for (int i = 0; i < 4; ++i)
         {
-            // cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
-            sub_bf(btmp1, bcornerx[i], bcenterx);
-            mult_bf(bcornerx[i], btmp1, bftemp);
-            add_a_bf(bcornerx[i], bcenterx);
+            // corner_x[i] = center_x + (corner_x[i]-center_x)*ftemp;
+            sub_bf(b_tmp1, b_corner_x[i], b_center_x);
+            mult_bf(b_corner_x[i], b_tmp1, bf_temp);
+            add_a_bf(b_corner_x[i], b_center_x);
 
-            // cornery[i] = centery + (cornery[i]-centery)*ftemp;
-            sub_bf(btmp1, bcornery[i], bcentery);
-            mult_bf(bcornery[i], btmp1, bftemp);
-            add_a_bf(bcornery[i], bcentery);
+            // corner_y[i] = center_y + (corner_y[i]-center_y)*ftemp;
+            sub_bf(b_tmp1, b_corner_y[i], b_center_y);
+            mult_bf(b_corner_y[i], b_tmp1, bf_temp);
+            add_a_bf(b_corner_y[i], b_center_y);
         }
     }
 
     // if any corner has x or y past limit, move the image
-    // adjx = adjy = 0;
-    clear_bf(badjx);
-    clear_bf(badjy);
+    // adj_x = adj_y = 0;
+    clear_bf(b_adj_x);
+    clear_bf(b_adj_y);
 
     for (int i = 0; i < 4; ++i)
     {
-        /* if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
-           adjx = ftemp; */
-        if (cmp_bf(bcornerx[i], blimit) > 0
-            && cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
+        /* if (corner_x[i] > limit && (ftemp = corner_x[i] - limit) > adj_x)
+           adj_x = ftemp; */
+        if (cmp_bf(b_corner_x[i], b_limit) > 0
+            && cmp_bf(sub_bf(bf_temp, b_corner_x[i], b_limit), b_adj_x) > 0)
         {
-            copy_bf(badjx, bftemp);
+            copy_bf(b_adj_x, bf_temp);
         }
 
-        /* if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
-           adjx = ftemp; */
-        if (cmp_bf(bcornerx[i], neg_bf(btmp1, blimit)) < 0
-            && cmp_bf(add_bf(bftemp, bcornerx[i], blimit), badjx) < 0)
+        /* if (corner_x[i] < 0.0-limit && (ftemp = corner_x[i] + limit) < adj_x)
+           adj_x = ftemp; */
+        if (cmp_bf(b_corner_x[i], neg_bf(b_tmp1, b_limit)) < 0
+            && cmp_bf(add_bf(bf_temp, b_corner_x[i], b_limit), b_adj_x) < 0)
         {
-            copy_bf(badjx, bftemp);
+            copy_bf(b_adj_x, bf_temp);
         }
 
-        /* if (cornery[i] > limit  && (ftemp = cornery[i] - limit) > adjy)
-           adjy = ftemp; */
-        if (cmp_bf(bcornery[i], blimit) > 0
-            && cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
+        /* if (corner_y[i] > limit  && (ftemp = corner_y[i] - limit) > adj_y)
+           adj_y = ftemp; */
+        if (cmp_bf(b_corner_y[i], b_limit) > 0
+            && cmp_bf(sub_bf(bf_temp, b_corner_y[i], b_limit), b_adj_y) > 0)
         {
-            copy_bf(badjy, bftemp);
+            copy_bf(b_adj_y, bf_temp);
         }
 
-        /* if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
-           adjy = ftemp; */
-        if (cmp_bf(bcornery[i], neg_bf(btmp1, blimit)) < 0
-            && cmp_bf(add_bf(bftemp, bcornery[i], blimit), badjy) < 0)
+        /* if (corner_y[i] < 0.0-limit && (ftemp = corner_y[i] + limit) < adj_y)
+           adj_y = ftemp; */
+        if (cmp_bf(b_corner_y[i], neg_bf(b_tmp1, b_limit)) < 0
+            && cmp_bf(add_bf(bf_temp, b_corner_y[i], b_limit), b_adj_y) < 0)
         {
-            copy_bf(badjy, bftemp);
+            copy_bf(b_adj_y, bf_temp);
         }
     }
 
-    /* if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
+    /* if (g_calc_status == calc_status_value::RESUMABLE && (adj_x != 0 || adj_y != 0) && (zoom_box_width == 1.0))
        g_calc_status = calc_status_value::PARAMS_CHANGED; */
     if (g_calc_status == CalcStatus::RESUMABLE
-        && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy))
+        && (is_bf_not_zero(b_adj_x)|| is_bf_not_zero(b_adj_y))
         && (g_zoom_box_width == 1.0))
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
 
-    // xxmin = cornerx[0] - adjx;
-    sub_bf(g_bf_x_min, bcornerx[0], badjx);
-    // xxmax = cornerx[1] - adjx;
-    sub_bf(g_bf_x_max, bcornerx[1], badjx);
-    // xx3rd = cornerx[2] - adjx;
-    sub_bf(g_bf_x_3rd, bcornerx[2], badjx);
-    // yymax = cornery[0] - adjy;
-    sub_bf(g_bf_y_max, bcornery[0], badjy);
-    // yymin = cornery[1] - adjy;
-    sub_bf(g_bf_y_min, bcornery[1], badjy);
-    // yy3rd = cornery[2] - adjy;
-    sub_bf(g_bf_y_3rd, bcornery[2], badjy);
+    // xxmin = corner_x[0] - adj_x;
+    sub_bf(g_bf_x_min, b_corner_x[0], b_adj_x);
+    // xxmax = corner_x[1] - adj_x;
+    sub_bf(g_bf_x_max, b_corner_x[1], b_adj_x);
+    // xx3rd = corner_x[2] - adj_x;
+    sub_bf(g_bf_x_3rd, b_corner_x[2], b_adj_x);
+    // yymax = corner_y[0] - adj_y;
+    sub_bf(g_bf_y_max, b_corner_y[0], b_adj_y);
+    // yymin = corner_y[1] - adj_y;
+    sub_bf(g_bf_y_min, b_corner_y[1], b_adj_y);
+    // yy3rd = corner_y[2] - adj_y;
+    sub_bf(g_bf_y_3rd, b_corner_y[2], b_adj_y);
 
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
     restore_stack(saved);
@@ -1013,8 +1013,8 @@ static void adjust_to_limits_bf(double expand)
 
 static void adjust_to_limits(double expand)
 {
-    double cornerx[4];
-    double cornery[4];
+    double corner_x[4];
+    double corner_y[4];
 
     double limit = 32767.99;
 
@@ -1032,114 +1032,114 @@ static void adjust_to_limits(double expand)
         }
     }
 
-    double centerx = (g_x_min + g_x_max) / 2;
-    double centery = (g_y_min + g_y_max) / 2;
+    double center_x = (g_x_min + g_x_max) / 2;
+    double center_y = (g_y_min + g_y_max) / 2;
 
-    if (g_x_min == centerx)
+    if (g_x_min == center_x)
     {
         // ohoh, infinitely thin, fix it
         smallest_add(&g_x_max);
-        g_x_min -= g_x_max-centerx;
+        g_x_min -= g_x_max-center_x;
     }
 
-    if (g_y_min == centery)
+    if (g_y_min == center_y)
     {
         smallest_add(&g_y_max);
-        g_y_min -= g_y_max-centery;
+        g_y_min -= g_y_max-center_y;
     }
 
-    if (g_x_3rd == centerx)
+    if (g_x_3rd == center_x)
     {
         smallest_add(&g_x_3rd);
     }
 
-    if (g_y_3rd == centery)
+    if (g_y_3rd == center_y)
     {
         smallest_add(&g_y_3rd);
     }
 
     // setup array for easier manipulation
-    cornerx[0] = g_x_min;
-    cornerx[1] = g_x_max;
-    cornerx[2] = g_x_3rd;
-    cornerx[3] = g_x_min+(g_x_max-g_x_3rd);
+    corner_x[0] = g_x_min;
+    corner_x[1] = g_x_max;
+    corner_x[2] = g_x_3rd;
+    corner_x[3] = g_x_min+(g_x_max-g_x_3rd);
 
-    cornery[0] = g_y_max;
-    cornery[1] = g_y_min;
-    cornery[2] = g_y_3rd;
-    cornery[3] = g_y_min+(g_y_max-g_y_3rd);
+    corner_y[0] = g_y_max;
+    corner_y[1] = g_y_min;
+    corner_y[2] = g_y_3rd;
+    corner_y[3] = g_y_min+(g_y_max-g_y_3rd);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
     {
         for (int i = 0; i < 4; ++i)
         {
-            cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
-            cornery[i] = centery + (cornery[i]-centery)*expand;
+            corner_x[i] = center_x + (corner_x[i]-center_x)*expand;
+            corner_y[i] = center_y + (corner_y[i]-center_y)*expand;
         }
     }
     // get min/max x/y values
-    double highx = cornerx[0];
-    double lowx = cornerx[0];
-    double highy = cornery[0];
-    double lowy = cornery[0];
+    double high_x = corner_x[0];
+    double low_x = corner_x[0];
+    double high_y = corner_y[0];
+    double low_y = corner_y[0];
 
     for (int i = 1; i < 4; ++i)
     {
-        lowx = std::min(cornerx[i], lowx);
-        highx = std::max(cornerx[i], highx);
-        lowy = std::min(cornery[i], lowy);
-        highy = std::max(cornery[i], highy);
+        low_x = std::min(corner_x[i], low_x);
+        high_x = std::max(corner_x[i], high_x);
+        low_y = std::min(corner_y[i], low_y);
+        high_y = std::max(corner_y[i], high_y);
     }
 
     // if image is too large, downsize it maintaining center
-    double ftemp = highx - lowx;
-    ftemp = std::max(highy - lowy, ftemp);
+    double f_temp = high_x - low_x;
+    f_temp = std::max(high_y - low_y, f_temp);
 
     // if image is too large, downsize it maintaining center
-    ftemp = limit*2/ftemp;
-    if (ftemp < 1.0)
+    f_temp = limit*2/f_temp;
+    if (f_temp < 1.0)
     {
         for (int i = 0; i < 4; ++i)
         {
-            cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
-            cornery[i] = centery + (cornery[i]-centery)*ftemp;
+            corner_x[i] = center_x + (corner_x[i]-center_x)*f_temp;
+            corner_y[i] = center_y + (corner_y[i]-center_y)*f_temp;
         }
     }
 
     // if any corner has x or y past limit, move the image
-    double adjy = 0;
-    double adjx = 0;
+    double adj_y = 0;
+    double adj_x = 0;
 
     for (int i = 0; i < 4; ++i)
     {
-        if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
+        if (corner_x[i] > limit && (f_temp = corner_x[i] - limit) > adj_x)
         {
-            adjx = ftemp;
+            adj_x = f_temp;
         }
-        if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
+        if (corner_x[i] < 0.0-limit && (f_temp = corner_x[i] + limit) < adj_x)
         {
-            adjx = ftemp;
+            adj_x = f_temp;
         }
-        if (cornery[i] > limit     && (ftemp = cornery[i] - limit) > adjy)
+        if (corner_y[i] > limit     && (f_temp = corner_y[i] - limit) > adj_y)
         {
-            adjy = ftemp;
+            adj_y = f_temp;
         }
-        if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
+        if (corner_y[i] < 0.0-limit && (f_temp = corner_y[i] + limit) < adj_y)
         {
-            adjy = ftemp;
+            adj_y = f_temp;
         }
     }
-    if (g_calc_status == CalcStatus::RESUMABLE && (adjx != 0 || adjy != 0) && (g_zoom_box_width == 1.0))
+    if (g_calc_status == CalcStatus::RESUMABLE && (adj_x != 0 || adj_y != 0) && (g_zoom_box_width == 1.0))
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
-    g_x_min = cornerx[0] - adjx;
-    g_x_max = cornerx[1] - adjx;
-    g_x_3rd = cornerx[2] - adjx;
-    g_y_max = cornery[0] - adjy;
-    g_y_min = cornery[1] - adjy;
-    g_y_3rd = cornery[2] - adjy;
+    g_x_min = corner_x[0] - adj_x;
+    g_x_max = corner_x[1] - adj_x;
+    g_x_3rd = corner_x[2] - adj_x;
+    g_y_max = corner_y[0] - adj_y;
+    g_y_min = corner_y[1] - adj_y;
+    g_y_3rd = corner_y[2] - adj_y;
 
     adjust_corner(); // make 3rd corner exact if very near other co-ords
 }
@@ -1152,9 +1152,9 @@ static void smallest_add(double *num)
 static void smallest_add_bf(bf_t num)
 {
     int saved = save_stack();
-    bf_t btmp1 = alloc_stack(g_bf_length + 2);
-    mult_bf(btmp1, float_to_bf(btmp1, 5.0e-16), num);
-    add_a_bf(num, btmp1);
+    bf_t b_tmp1 = alloc_stack(g_bf_length + 2);
+    mult_bf(b_tmp1, float_to_bf(b_tmp1, 5.0e-16), num);
+    add_a_bf(num, b_tmp1);
     restore_stack(saved);
 }
 
@@ -1179,8 +1179,8 @@ static int ratio_bad(double actual, double desired)
     }
     if (desired != 0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
-        double ftemp = actual / desired;
-        if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
+        double f_temp = actual / desired;
+        if (f_temp < (1.0-tol) || f_temp > (1.0+tol))
         {
             return 1;
         }
