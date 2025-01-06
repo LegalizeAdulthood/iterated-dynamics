@@ -960,9 +960,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
-inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
+inline void freader(void *ptr, size_t size, size_t num, std::FILE *stream)
 {
-    if (std::fread(ptr, size, nmemb, stream) != nmemb)
+    if (std::fread(ptr, size, num, stream) != num)
     {
         throw std::system_error(errno, std::system_category(), "failed fread");
     }
