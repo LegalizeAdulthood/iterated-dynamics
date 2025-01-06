@@ -29,7 +29,7 @@ namespace fs = std::filesystem;
 static std::vector<int> s_entry_nums;
 static bool s_modes_changed{};
 
-static int check_mode_key(int curkey, int choice);
+static int check_mode_key(int key, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
 
@@ -135,16 +135,16 @@ int select_video_mode(int curmode)
     return ret;
 }
 
-static int check_mode_key(int curkey, int choice)
+static int check_mode_key(int key, int choice)
 {
-    int i = check_vid_mode_key(1, curkey);
+    int i = check_vid_mode_key(1, key);
     if (i >= 0)
     {
         return -1-i;
     }
     i = s_entry_nums[choice];
     int ret = 0;
-    if ((curkey == '-' || curkey == '+')
+    if ((key == '-' || key == '+')
         && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
     {
         if (g_bad_config != ConfigStatus::OK)
@@ -153,7 +153,7 @@ static int check_mode_key(int curkey, int choice)
         }
         else
         {
-            if (curkey == '-')
+            if (key == '-')
             {
                 // deassign key?
                 if (g_video_table[i].keynum >= 1084)
