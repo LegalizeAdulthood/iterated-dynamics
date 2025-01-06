@@ -48,7 +48,7 @@ static std::FILE *s_gfe_file{};
 static FileEntry **s_gfe_choices{}; // for format_parmfile_line
 static char const *s_gfe_title{};
 
-bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, ItemType itemtype)
+bool find_file_item(std::string &filename, char const *item_name, std::FILE **file_ptr, ItemType item_type)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -56,17 +56,17 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
-    char fullpath[FILE_MAX_PATH];
-    char defaultextension[5];
+    char full_path[FILE_MAX_PATH];
+    char default_extension[5];
 
     split_path(filename, drive, dir, fname, ext);
-    make_fname_ext(fullpath, fname, ext);
+    make_fname_ext(full_path, fname, ext);
     if (stricmp(filename.c_str(), g_command_file.c_str()))
     {
         infile = std::fopen(filename.c_str(), "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, itemname))
+            if (search_for_entry(infile, item_name))
             {
                 found = true;
             }
@@ -79,13 +79,13 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
 
         if (!found && g_check_cur_dir)
         {
-            make_path(fullpath, "", DOT_SLASH, fname, ext);
-            infile = std::fopen(fullpath, "rb");
+            make_path(full_path, "", DOT_SLASH, fname, ext);
+            infile = std::fopen(full_path, "rb");
             if (infile != nullptr)
             {
-                if (search_for_entry(infile, itemname))
+                if (search_for_entry(infile, item_name))
                 {
-                    filename = fullpath;
+                    filename = full_path;
                     found = true;
                 }
                 else
@@ -98,30 +98,30 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     }
 
     std::string par_search_name;
-    switch (itemtype)
+    switch (item_type)
     {
     case ItemType::FORMULA:
         par_search_name = "frm:";
-        par_search_name += itemname;
-        std::strcpy(defaultextension, ".frm");
+        par_search_name += item_name;
+        std::strcpy(default_extension, ".frm");
         split_drive_dir(g_search_for.frm, drive, dir);
         break;
     case ItemType::L_SYSTEM:
         par_search_name = "lsys:";
-        par_search_name += itemname;
-        std::strcpy(defaultextension, ".l");
+        par_search_name += item_name;
+        std::strcpy(default_extension, ".l");
         split_drive_dir(g_search_for.lsys, drive, dir);
         break;
     case ItemType::IFS:
         par_search_name = "ifs:";
-        par_search_name += itemname;
-        std::strcpy(defaultextension, ".ifs");
+        par_search_name += item_name;
+        std::strcpy(default_extension, ".ifs");
         split_drive_dir(g_search_for.ifs, drive, dir);
         break;
     case ItemType::PAR_SET:
     default:
-        par_search_name = itemname;
-        std::strcpy(defaultextension, ".par");
+        par_search_name = item_name;
+        std::strcpy(default_extension, ".par");
         split_drive_dir(g_search_for.par, drive, dir);
         break;
     }
@@ -146,13 +146,13 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
 
     if (!found)
     {
-        make_path(fullpath, drive, dir, fname, ext);
-        infile = std::fopen(fullpath, "rb");
+        make_path(full_path, drive, dir, fname, ext);
+        infile = std::fopen(full_path, "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, itemname))
+            if (search_for_entry(infile, item_name))
             {
-                filename = fullpath;
+                filename = full_path;
                 found = true;
             }
             else
@@ -166,25 +166,25 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     if (!found)
     {
         // search for file
-        make_path(fullpath, drive, dir, "*", defaultextension);
-        int out = fr_find_first(fullpath);
+        make_path(full_path, drive, dir, "*", default_extension);
+        int out = fr_find_first(full_path);
         while (out == 0)
         {
             char msg[200];
-            std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), itemname);
+            std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), item_name);
             show_temp_msg(msg);
             if (!(g_dta.attribute & SUB_DIR)
                 && g_dta.filename != "."
                 && g_dta.filename != "..")
             {
                 split_fname_ext(g_dta.filename, fname, ext);
-                make_path(fullpath, drive, dir, fname, ext);
-                infile = std::fopen(fullpath, "rb");
+                make_path(full_path, drive, dir, fname, ext);
+                infile = std::fopen(full_path, "rb");
                 if (infile != nullptr)
                 {
-                    if (search_for_entry(infile, itemname))
+                    if (search_for_entry(infile, item_name))
                     {
-                        filename = fullpath;
+                        filename = full_path;
                         found = true;
                         break;
                     }
@@ -200,22 +200,22 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
         clear_temp_msg();
     }
 
-    if (!found && g_organize_formulas_search && itemtype == ItemType::L_SYSTEM)
+    if (!found && g_organize_formulas_search && item_type == ItemType::L_SYSTEM)
     {
         split_drive_dir(g_organize_formulas_dir, drive, dir);
         fname[0] = '_';
         fname[1] = (char) 0;
-        if (std::isalpha(itemname[0]))
+        if (std::isalpha(item_name[0]))
         {
-            if (strnicmp(itemname, "carr", 4))
+            if (strnicmp(item_name, "carr", 4))
             {
-                fname[1] = itemname[0];
+                fname[1] = item_name[0];
                 fname[2] = (char) 0;
             }
-            else if (std::isdigit(itemname[4]))
+            else if (std::isdigit(item_name[4]))
             {
                 std::strcat(fname, "rc");
-                fname[3] = itemname[4];
+                fname[3] = item_name[4];
                 fname[4] = (char) 0;
             }
             else
@@ -223,7 +223,7 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
                 std::strcat(fname, "rc");
             }
         }
-        else if (std::isdigit(itemname[0]))
+        else if (std::isdigit(item_name[0]))
         {
             std::strcat(fname, "num");
         }
@@ -231,13 +231,13 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
         {
             std::strcat(fname, "chr");
         }
-        make_path(fullpath, drive, dir, fname, defaultextension);
-        infile = std::fopen(fullpath, "rb");
+        make_path(full_path, drive, dir, fname, default_extension);
+        infile = std::fopen(full_path, "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, itemname))
+            if (search_for_entry(infile, item_name))
             {
-                filename = fullpath;
+                filename = full_path;
                 found = true;
             }
             else
@@ -250,14 +250,14 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
 
     if (!found)
     {
-        std::sprintf(fullpath, "'%s' file entry item not found", itemname);
-        stop_msg(fullpath);
+        std::sprintf(full_path, "'%s' file entry item not found", item_name);
+        stop_msg(full_path);
         return true;
     }
     // found file
-    if (fileptr != nullptr)
+    if (file_ptr != nullptr)
     {
-        *fileptr = infile;
+        *file_ptr = infile;
     }
     else if (infile != nullptr)
     {
@@ -292,7 +292,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
     return c;
 }
 
-static int scan_entries(std::FILE *infile, FileEntry *choices, char const *itemname)
+static int scan_entries(std::FILE *infile, FileEntry *choices, char const *item_name)
 {
     // returns the number of entries found; if a
     // specific entry is being looked for, returns -1 if
@@ -300,7 +300,7 @@ static int scan_entries(std::FILE *infile, FileEntry *choices, char const *itemn
     char buf[101];
     int exclude_entry;
     long file_offset = -1;
-    int numentries = 0;
+    int num_entries = 0;
 
     while (true)
     {
@@ -405,9 +405,9 @@ top:
             }
 
             buf[ITEM_NAME_LEN + exclude_entry] = 0;
-            if (itemname != nullptr)  // looking for one entry
+            if (item_name != nullptr)  // looking for one entry
             {
-                if (stricmp(buf, itemname) == 0)
+                if (stricmp(buf, item_name) == 0)
                 {
                     std::fseek(infile, name_offset + (long) exclude_entry, SEEK_SET);
                     return -1;
@@ -417,9 +417,9 @@ top:
             {
                 if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
                 {
-                    std::strcpy(choices[numentries].name, buf);
-                    choices[numentries].point = name_offset;
-                    if (++numentries >= MAX_ENTRIES)
+                    std::strcpy(choices[num_entries].name, buf);
+                    choices[num_entries].point = name_offset;
+                    if (++num_entries >= MAX_ENTRIES)
                     {
                         std::sprintf(buf, "Too many entries in file, first %d used", MAX_ENTRIES);
                         stop_msg(buf);
@@ -433,12 +433,12 @@ top:
             break;
         }
     }
-    return numentries;
+    return num_entries;
 }
 
-bool search_for_entry(std::FILE *infile, char const *itemname)
+bool search_for_entry(std::FILE *infile, char const *item_name)
 {
-    return scan_entries(infile, nullptr, itemname) == -1;
+    return scan_entries(infile, nullptr, item_name) == -1;
 }
 
 static void format_param_file_line(int choice, char *buf)
@@ -464,29 +464,29 @@ static void format_param_file_line(int choice, char *buf)
     std::sprintf(buf, "%-20s%-56s", s_gfe_choices[choice]->name, line);
 }
 
-static int check_gfe_key(int curkey, int choice)
+static int check_gfe_key(int key, int choice)
 {
     char blanks[79];         // used to clear the entry portion of screen
     std::memset(blanks, ' ', 78);
     blanks[78] = (char) 0;
 
-    if (curkey == ID_KEY_F6)
+    if (key == ID_KEY_F6)
     {
         return 0-ID_KEY_F6;
     }
-    if (curkey == ID_KEY_F4)
+    if (key == ID_KEY_F4)
     {
         return 0-ID_KEY_F4;
     }
-    if (curkey == ID_KEY_F2)
+    if (key == ID_KEY_F2)
     {
-        char infhdg[60];
-        char infbuf[25 * 80];
+        char inf_hdg[60];
+        char inf_buf[25 * 80];
         int widest_entry_line = 0;
         int lines_in_entry = 0;
         bool comment = false;
         int c = 0;
-        int widthct = 0;
+        int width_ct = 0;
         std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
         while ((c = fgetc(s_gfe_file)) != EOF)
         {
@@ -498,19 +498,19 @@ static int check_gfe_key(int curkey, int choice)
             {
                 comment = false;
                 lines_in_entry++;
-                widthct =  -1;
+                width_ct =  -1;
             }
             else if (c == '\t')
             {
-                widthct += 7 - widthct % 8;
+                width_ct += 7 - width_ct % 8;
             }
             else if (c == '\r')
             {
                 continue;
             }
-            if (++widthct > widest_entry_line)
+            if (++width_ct > widest_entry_line)
             {
-                widest_entry_line = widthct;
+                widest_entry_line = width_ct;
             }
             if (c == '}' && !comment)
             {
@@ -526,22 +526,22 @@ static int check_gfe_key(int curkey, int choice)
             in_scrolling_mode = false;
         }
         std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-        load_entry_text(s_gfe_file, infbuf, 17, 0, 0);
+        load_entry_text(s_gfe_file, inf_buf, 17, 0, 0);
         if (lines_in_entry > 17 || widest_entry_line > 74)
         {
             in_scrolling_mode = true;
         }
-        std::strcpy(infhdg, s_gfe_title);
-        std::strcat(infhdg, " file entry:\n\n");
+        std::strcpy(inf_hdg, s_gfe_title);
+        std::strcat(inf_hdg, " file entry:\n\n");
         // ... instead, call help with buffer?  heading added
         driver_stack_screen();
         help_title();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
         g_text_cbase = 0;
-        driver_put_string(2, 1, C_GENERAL_HI, infhdg);
+        driver_put_string(2, 1, C_GENERAL_HI, inf_hdg);
         g_text_cbase = 2; // left margin is 2
-        driver_put_string(4, 0, C_GENERAL_MED, infbuf);
+        driver_put_string(4, 0, C_GENERAL_MED, inf_buf);
         driver_put_string(-1, 0, C_GENERAL_LO,
             "\n"
             "\n"
@@ -551,19 +551,19 @@ static int check_gfe_key(int curkey, int choice)
         int top_line = 0;
         int left_column = 0;
         bool done = false;
-        bool rewrite_infbuf = false;  // if true: rewrite the entry portion of screen
+        bool rewrite_inf_buf = false;  // if true: rewrite the entry portion of screen
         while (!done)
         {
-            if (rewrite_infbuf)
+            if (rewrite_inf_buf)
             {
-                rewrite_infbuf = false;
+                rewrite_inf_buf = false;
                 std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-                load_entry_text(s_gfe_file, infbuf, 17, top_line, left_column);
+                load_entry_text(s_gfe_file, inf_buf, 17, top_line, left_column);
                 for (int i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                 {
                     driver_put_string(i, 0, C_GENERAL_MED, blanks);
                 }
-                driver_put_string(4, 0, C_GENERAL_MED, infbuf);
+                driver_put_string(4, 0, C_GENERAL_MED, inf_buf);
             }
             int i = get_a_key_no_help();
             if (i == ID_KEY_DOWN_ARROW        || i == ID_KEY_CTL_DOWN_ARROW
@@ -582,7 +582,7 @@ static int check_gfe_key(int curkey, int choice)
                     if (in_scrolling_mode && top_line < lines_in_entry - 17)
                     {
                         top_line++;
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_UP_ARROW:
@@ -590,7 +590,7 @@ static int check_gfe_key(int curkey, int choice)
                     if (in_scrolling_mode && top_line > 0)
                     {
                         top_line--;
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_LEFT_ARROW:
@@ -598,15 +598,15 @@ static int check_gfe_key(int curkey, int choice)
                     if (in_scrolling_mode && left_column > 0)
                     {
                         left_column--;
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_RIGHT_ARROW:
                 case ID_KEY_CTL_RIGHT_ARROW: // right one column
-                    if (in_scrolling_mode && std::strchr(infbuf, '\021') != nullptr)
+                    if (in_scrolling_mode && std::strchr(inf_buf, '\021') != nullptr)
                     {
                         left_column++;
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_PAGE_DOWN:
@@ -615,7 +615,7 @@ static int check_gfe_key(int curkey, int choice)
                     {
                         top_line += 17;
                         top_line = std::min(top_line, lines_in_entry - 17);
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_PAGE_UP:
@@ -624,7 +624,7 @@ static int check_gfe_key(int curkey, int choice)
                     {
                         top_line -= 17;
                         top_line = std::max(top_line, 0);
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_END:
@@ -633,7 +633,7 @@ static int check_gfe_key(int curkey, int choice)
                     {
                         top_line = lines_in_entry - 17;
                         left_column = 0;
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 case ID_KEY_HOME:
@@ -642,7 +642,7 @@ static int check_gfe_key(int curkey, int choice)
                     {
                         left_column = 0;
                         top_line = left_column;
-                        rewrite_infbuf = true;
+                        rewrite_inf_buf = true;
                     }
                     break;
                 default:
@@ -661,7 +661,7 @@ static int check_gfe_key(int curkey, int choice)
     return 0;
 }
 
-static long gfe_choose_entry(ItemType type, char const *title, const std::string &filename, std::string &entryname)
+static long gfe_choose_entry(ItemType type, char const *title, const std::string &filename, std::string &entry_name)
 {
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     char buf[101];
@@ -670,7 +670,7 @@ static long gfe_choose_entry(ItemType type, char const *title, const std::string
     int attributes[MAX_ENTRIES + 1]{};
     char instr[80];
 
-    static bool dosort = true;
+    static bool do_sort = true;
 
     s_gfe_choices = &choices[0];
     s_gfe_title = title;
@@ -684,47 +684,47 @@ retry:
 
     help_title(); // to display a clue when file big and next is slow
 
-    int numentries = scan_entries(s_gfe_file, &storage[0], nullptr);
-    if (numentries == 0)
+    int num_entries = scan_entries(s_gfe_file, &storage[0], nullptr);
+    if (num_entries == 0)
     {
         stop_msg("File doesn't contain any valid entries");
         std::fclose(s_gfe_file);
         return -2; // back to file list
     }
     std::strcpy(instr, o_instr);
-    if (dosort)
+    if (do_sort)
     {
         std::strcat(instr, "off");
-        shell_sort((char *) &choices, numentries, sizeof(FileEntry *));
+        shell_sort((char *) &choices, num_entries, sizeof(FileEntry *));
     }
     else
     {
         std::strcat(instr, "on");
     }
 
-    std::strcpy(buf, entryname.c_str()); // preset to last choice made
+    std::strcpy(buf, entry_name.c_str()); // preset to last choice made
     std::string const heading{std::string{title} + " Selection\n"
         + "File: " + trim_file_name(filename, 68)};
-    void (*formatitem)(int, char *) = nullptr;
-    int boxdepth = 0;
-    int colwidth = boxdepth;
-    int boxwidth = colwidth;
+    void (*format_item)(int, char *) = nullptr;
+    int box_depth = 0;
+    int col_width = box_depth;
+    int box_width = col_width;
     if (type == ItemType::PAR_SET)
     {
-        formatitem = format_param_file_line;
-        boxwidth = 1;
-        boxdepth = 16;
-        colwidth = 76;
+        format_item = format_param_file_line;
+        box_width = 1;
+        box_depth = 16;
+        col_width = 76;
     }
 
     const int i =
-        full_screen_choice(ChoiceFlags::INSTRUCTIONS | (dosort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
-            heading.c_str(), nullptr, instr, numentries, (char const **) choices, attributes, boxwidth,
-            boxdepth, colwidth, 0, formatitem, buf, nullptr, check_gfe_key);
+        full_screen_choice(ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
+            heading.c_str(), nullptr, instr, num_entries, (char const **) choices, attributes, box_width,
+            box_depth, col_width, 0, format_item, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
         std::rewind(s_gfe_file);
-        dosort = !dosort;
+        do_sort = !do_sort;
         goto retry;
     }
     std::fclose(s_gfe_file);
@@ -733,42 +733,42 @@ retry:
         // go back to file list or cancel
         return (i == -ID_KEY_F6) ? -2 : -1;
     }
-    entryname = choices[i]->name;
+    entry_name = choices[i]->name;
     return choices[i]->point;
 }
 
-long get_file_entry(ItemType type, char const *title, char const *fmask,
-    std::string &filename, std::string &entryname)
+long get_file_entry(
+    ItemType type, char const *title, char const *fn_key_mask, std::string &filename, std::string &entry_name)
 {
     // Formula, LSystem, etc type structure, select from file
     // containing definitions in the form    name { ... }
-    bool newfile = false;
+    bool new_file = false;
     while (true)
     {
-        bool firsttry = false;
+        bool first_try = false;
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
-        while (newfile || (s_gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
+        while (new_file || (s_gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
         {
             char buf[60];
-            newfile = false;
-            if (firsttry)
+            new_file = false;
+            if (first_try)
             {
                 stop_msg("Can't find " + filename);
             }
             std::sprintf(buf, "Select %s File", title);
-            if (get_a_file_name(buf, fmask, filename))
+            if (get_a_file_name(buf, fn_key_mask, filename))
             {
                 return -1;
             }
 
-            firsttry = true; // if around open loop again it is an error
+            first_try = true; // if around open loop again it is an error
         }
-        newfile = false;
-        long entry_pointer = gfe_choose_entry(type, title, filename, entryname);
+        new_file = false;
+        long entry_pointer = gfe_choose_entry(type, title, filename, entry_name);
         if (entry_pointer == -2)
         {
-            newfile = true; // go to file list,
+            new_file = true; // go to file list,
             continue;       // back to getafilename
         }
         if (entry_pointer == -1)
@@ -778,7 +778,7 @@ long get_file_entry(ItemType type, char const *title, char const *fmask,
         switch (type)
         {
         case ItemType::FORMULA:
-            if (!run_formula(entryname, true))
+            if (!run_formula(entry_name, true))
             {
                 return 0;
             }
