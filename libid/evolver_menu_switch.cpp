@@ -275,12 +275,12 @@ static MainState halve_mutation_params(MainContext &context)
 static MainState double_mutation_params(MainContext &context)
 {
     g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
-    const double centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
+    const double center_x = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
     g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
-    g_evolve_new_x_parameter_offset = centerx - g_evolve_x_parameter_range / 2;
-    const double centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+    g_evolve_new_x_parameter_offset = center_x - g_evolve_x_parameter_range / 2;
+    const double center_y = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
     g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
-    g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
+    g_evolve_new_y_parameter_offset = center_y - g_evolve_y_parameter_range / 2;
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     return MainState::NOTHING;
