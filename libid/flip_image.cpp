@@ -16,7 +16,7 @@
    is still valid. */
 MainState flip_image(MainContext &context)
 {
-    int tempdot;
+    int temp_dot;
 
     // fractal must be rotate-able and be finished
     if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE) //
@@ -29,12 +29,12 @@ MainState flip_image(MainContext &context)
     {
         clear_zoom_box(); // clear, don't copy, the zoombox
     }
-    int ixhalf = g_logical_screen_x_dots / 2;
-    int iyhalf = g_logical_screen_y_dots / 2;
+    int x_half = g_logical_screen_x_dots / 2;
+    int y_half = g_logical_screen_y_dots / 2;
     switch (context.key)
     {
     case ID_KEY_CTL_X:            // control-X - reverse X-axis
-        for (int i = 0; i < ixhalf; i++)
+        for (int i = 0; i < x_half; i++)
         {
             if (driver_key_pressed())
             {
@@ -42,9 +42,9 @@ MainState flip_image(MainContext &context)
             }
             for (int j = 0; j < g_logical_screen_y_dots; j++)
             {
-                tempdot = get_color(i, j);
+                temp_dot = get_color(i, j);
                 g_put_color(i, j, get_color(g_logical_screen_x_dots-1-i, j));
-                g_put_color(g_logical_screen_x_dots-1-i, j, tempdot);
+                g_put_color(g_logical_screen_x_dots-1-i, j, temp_dot);
             }
         }
         g_save_x_min = g_x_max + g_x_min - g_x_3rd;
@@ -66,7 +66,7 @@ MainState flip_image(MainContext &context)
         }
         break;
     case ID_KEY_CTL_Y:            // control-Y - reverse Y-aXis
-        for (int j = 0; j < iyhalf; j++)
+        for (int j = 0; j < y_half; j++)
         {
             if (driver_key_pressed())
             {
@@ -74,9 +74,9 @@ MainState flip_image(MainContext &context)
             }
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                tempdot = get_color(i, j);
+                temp_dot = get_color(i, j);
                 g_put_color(i, j, get_color(i, g_logical_screen_y_dots-1-j));
-                g_put_color(i, g_logical_screen_y_dots-1-j, tempdot);
+                g_put_color(i, g_logical_screen_y_dots-1-j, temp_dot);
             }
         }
         g_save_x_min = g_x_3rd;
@@ -98,7 +98,7 @@ MainState flip_image(MainContext &context)
         }
         break;
     case ID_KEY_CTL_Z:            // control-Z - reverse X and Y aXis
-        for (int i = 0; i < ixhalf; i++)
+        for (int i = 0; i < x_half; i++)
         {
             if (driver_key_pressed())
             {
@@ -106,9 +106,9 @@ MainState flip_image(MainContext &context)
             }
             for (int j = 0; j < g_logical_screen_y_dots; j++)
             {
-                tempdot = get_color(i, j);
+                temp_dot = get_color(i, j);
                 g_put_color(i, j, get_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j));
-                g_put_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j, tempdot);
+                g_put_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j, temp_dot);
             }
         }
         g_save_x_min = g_x_max;
