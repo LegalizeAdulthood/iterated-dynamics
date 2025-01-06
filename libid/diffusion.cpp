@@ -32,10 +32,10 @@ inline bool keyboard_check_needed()
 
 int diffusion()
 {
-    int xmax;
-    int ymax;
-    int xmin;
-    int ymin;   // Current maximum coordinates
+    int x_max;
+    int y_max;
+    int x_min;
+    int y_min;   // Current maximum coordinates
     double cosine;
     double sine;
     double angle;
@@ -57,10 +57,10 @@ int diffusion()
     //                                 1 = falling particles
     //                                 2 = square cavity
     // If zero, select colors at random, otherwise shift the color every colorshift points
-    int colorshift = (int) g_params[2];
+    int color_shift = (int) g_params[2];
 
-    int colorcount = colorshift; // Counts down from colorshift
-    int currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
+    int color_count = color_shift; // Counts down from colorshift
+    int current_color = 1;  // Start at color 1 (color 0 is probably invisible)
 
     if (mode > 2)
     {
@@ -80,16 +80,16 @@ int diffusion()
 
     if (mode == 0)
     {
-        xmax = g_logical_screen_x_dots / 2 + border;  // Initial box
-        xmin = g_logical_screen_x_dots / 2 - border;
-        ymax = g_logical_screen_y_dots / 2 + border;
-        ymin = g_logical_screen_y_dots / 2 - border;
+        x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
+        x_min = g_logical_screen_x_dots / 2 - border;
+        y_max = g_logical_screen_y_dots / 2 + border;
+        y_min = g_logical_screen_y_dots / 2 - border;
     }
     if (mode == 1)
     {
-        xmax = g_logical_screen_x_dots / 2 + border;  // Initial box
-        xmin = g_logical_screen_x_dots / 2 - border;
-        ymin = g_logical_screen_y_dots - border;
+        x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
+        x_min = g_logical_screen_x_dots / 2 - border;
+        y_min = g_logical_screen_y_dots - border;
     }
     if (mode == 2)
     {
@@ -107,11 +107,11 @@ int diffusion()
         start_resume();
         if (mode != 2)
         {
-            get_resume(xmax, xmin, ymax, ymin);
+            get_resume(x_max, x_min, y_max, y_min);
         }
         else
         {
-            get_resume(xmax, xmin, ymax, radius);
+            get_resume(x_max, x_min, y_max, radius);
         }
         end_resume();
     }
@@ -119,12 +119,12 @@ int diffusion()
     switch (mode)
     {
     case 0: // Single seed point in the center
-        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, currentcolor);
+        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, current_color);
         break;
     case 1: // Line along the bottom
         for (int i = 0; i <= g_logical_screen_x_dots; i++)
         {
-            g_put_color(i, g_logical_screen_y_dots-1, currentcolor);
+            g_put_color(i, g_logical_screen_y_dots-1, current_color);
         }
         break;
     case 2: // Large square that fills the screen
@@ -132,20 +132,20 @@ int diffusion()
         {
             for (int i = 0; i < g_logical_screen_y_dots; i++)
             {
-                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2 , i , currentcolor);
-                g_put_color(g_logical_screen_x_dots/2+g_logical_screen_y_dots/2 , i , currentcolor);
-                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2+i , 0 , currentcolor);
-                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2+i , g_logical_screen_y_dots-1 , currentcolor);
+                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2 , i , current_color);
+                g_put_color(g_logical_screen_x_dots/2+g_logical_screen_y_dots/2 , i , current_color);
+                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2+i , 0 , current_color);
+                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2+i , g_logical_screen_y_dots-1 , current_color);
             }
         }
         else
         {
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                g_put_color(0 , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2+i , currentcolor);
-                g_put_color(g_logical_screen_x_dots-1 , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2+i , currentcolor);
-                g_put_color(i , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2 , currentcolor);
-                g_put_color(i , g_logical_screen_y_dots/2+g_logical_screen_x_dots/2 , currentcolor);
+                g_put_color(0 , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2+i , current_color);
+                g_put_color(g_logical_screen_x_dots-1 , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2+i , current_color);
+                g_put_color(i , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2 , current_color);
+                g_put_color(i , g_logical_screen_y_dots/2+g_logical_screen_x_dots/2 , current_color);
             }
         }
         break;
@@ -158,15 +158,15 @@ int diffusion()
         case 0: // Release new point on a circle inside the box
             angle = 2*(double)std::rand()/(RAND_MAX/PI);
             sin_cos(&angle, &sine, &cosine);
-            x = (int)(cosine*(xmax-xmin) + g_logical_screen_x_dots);
-            y = (int)(sine  *(ymax-ymin) + g_logical_screen_y_dots);
+            x = (int)(cosine*(x_max-x_min) + g_logical_screen_x_dots);
+            y = (int)(sine  *(y_max-y_min) + g_logical_screen_y_dots);
             x = x >> 1; // divide by 2
             y = y >> 1;
             break;
         case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
-            y = ymin;
-            x = random(xmax-xmin) + (g_logical_screen_x_dots-xmax+xmin)/2;
+            y = y_min;
+            x = random(x_max-x_min) + (g_logical_screen_x_dots-x_max+x_min)/2;
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
@@ -196,19 +196,19 @@ int diffusion()
             if (mode == 0)
             {
                 // Make sure point is inside the box
-                if (x == xmax)
+                if (x == x_max)
                 {
                     x--;
                 }
-                else if (x == xmin)
+                else if (x == x_min)
                 {
                     x++;
                 }
-                if (y == ymax)
+                if (y == y_max)
                 {
                     y--;
                 }
-                else if (y == ymin)
+                else if (y == y_min)
                 {
                     y++;
                 }
@@ -225,7 +225,7 @@ int diffusion()
                 {
                     x++;
                 }
-                if (y < ymin)
+                if (y < y_min)
                 {
                     y++;
                 }
@@ -241,11 +241,11 @@ int diffusion()
                 alloc_resume(20, 1);
                 if (mode != 2)
                 {
-                    put_resume(xmax, xmin, ymax, ymin);
+                    put_resume(x_max, x_min, y_max, y_min);
                 }
                 else
                 {
-                    put_resume(xmax, xmin, ymax, radius);
+                    put_resume(x_max, x_min, y_max, radius);
                 }
 
                 s_kbd_check--;
@@ -261,21 +261,21 @@ int diffusion()
 
         /* If we're doing colorshifting then use currentcolor, otherwise
            pick one at random */
-        g_put_color(x, y, colorshift?currentcolor:random(g_colors-1)+1);
+        g_put_color(x, y, color_shift?current_color:random(g_colors-1)+1);
 
         // If we're doing colorshifting then check to see if we need to shift
-        if (colorshift)
+        if (color_shift)
         {
-            if (!--colorcount)
+            if (!--color_count)
             {
                 // If the counter reaches zero then shift
-                currentcolor++;      // Increase the current color and wrap
-                currentcolor %= g_colors;  // around skipping zero
-                if (!currentcolor)
+                current_color++;      // Increase the current color and wrap
+                current_color %= g_colors;  // around skipping zero
+                if (!current_color)
                 {
-                    currentcolor++;
+                    current_color++;
                 }
-                colorcount = colorshift;  // and reset the counter
+                color_count = color_shift;  // and reset the counter
             }
         }
 
@@ -286,26 +286,26 @@ int diffusion()
         switch (mode)
         {
         case 0:
-            if (((x+border) > xmax) || ((x-border) < xmin)
-                || ((y-border) < ymin) || ((y+border) > ymax))
+            if (((x+border) > x_max) || ((x-border) < x_min)
+                || ((y-border) < y_min) || ((y+border) > y_max))
             {
                 // Increase box size, but not past the edge of the screen
-                ymin--;
-                ymax++;
-                xmin--;
-                xmax++;
-                if ((ymin == 0) || (xmin == 0))
+                y_min--;
+                y_max++;
+                x_min--;
+                x_max++;
+                if ((y_min == 0) || (x_min == 0))
                 {
                     return 0;
                 }
             }
             break;
         case 1: // Decrease ymin, but not past top of screen
-            if (y-border < ymin)
+            if (y-border < y_min)
             {
-                ymin--;
+                y_min--;
             }
-            if (ymin == 0)
+            if (y_min == 0)
             {
                 return 0;
             }
