@@ -129,9 +129,9 @@ static std::string expand_var(const std::string &var, std::time_t local_time)
     }
     if (var == "vidkey")   // 2 to 3 chars
     {
-        char vidmde[5];
-        vid_mode_key_name(g_video_entry.keynum, vidmde);
-        return vidmde;
+        char vid_mode[5];
+        vid_mode_key_name(g_video_entry.keynum, vid_mode);
+        return vid_mode;
     }
     if (var == "cpu")
     {
