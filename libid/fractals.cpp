@@ -163,8 +163,8 @@ int  fp_manh_bailout()
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    double manhmag = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
-    if ((manhmag * manhmag) >= g_magnitude_limit)
+    double manh_mag = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
+    if ((manh_mag * manh_mag) >= g_magnitude_limit)
     {
         return 1;
     }
@@ -177,8 +177,8 @@ int  fp_manr_bailout()
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    double manrmag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
-    if ((manrmag * manrmag) >= g_magnitude_limit)
+    double manr_mag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
+    if ((manr_mag * manr_mag) >= g_magnitude_limit)
     {
         return 1;
     }
@@ -238,11 +238,11 @@ static long lxt;
 static long lyt;
 static long lt2;
 
-int pow(LComplex *base, int exp, LComplex *result, int bitshift)
+int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
 {
     if (exp < 0)
     {
-        g_overflow = pow(base, -exp, result, bitshift) != 0;
+        g_overflow = pow(base, -exp, result, bit_shift) != 0;
         lcmplx_recip(*result, *result);
         return g_overflow ? 1 : 0;
     }
@@ -258,14 +258,14 @@ int pow(LComplex *base, int exp, LComplex *result, int bitshift)
     }
     else
     {
-        result->x = 1L << bitshift;
+        result->x = 1L << bit_shift;
         result->y = 0L;
     }
 
     exp >>= 1;
     while (exp)
     {
-        lt2 = multiply(lxt, lxt, bitshift) - multiply(lyt, lyt, bitshift);
+        lt2 = multiply(lxt, lxt, bit_shift) - multiply(lyt, lyt, bit_shift);
         lyt = multiply(lxt, lyt, g_bit_shift_less_1);
         if (g_overflow)
         {
@@ -275,8 +275,8 @@ int pow(LComplex *base, int exp, LComplex *result, int bitshift)
 
         if (exp & 1)
         {
-            lt2 = multiply(lxt, result->x, bitshift) - multiply(lyt, result->y, bitshift);
-            result->y = multiply(result->y, lxt, bitshift) + multiply(lyt, result->x, bitshift);
+            lt2 = multiply(lxt, result->x, bit_shift) - multiply(lyt, result->y, bit_shift);
+            result->y = multiply(result->y, lxt, bit_shift) + multiply(lyt, result->x, bit_shift);
             result->x = lt2;
         }
         exp >>= 1;
