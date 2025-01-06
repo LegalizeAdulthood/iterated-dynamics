@@ -133,15 +133,15 @@ bool julibrot_setup()
     s_jb_fp.left_eye.zy = s_jb_fp.right_eye.zy;
     s_b_base = 128;
 
-    if (g_fractal_specific[+g_fractal_type].isinteger > 0)
+    if (g_fractal_specific[+g_fractal_type].is_integer > 0)
     {
-        if (g_fractal_specific[+g_new_orbit_type].isinteger == 0)
+        if (g_fractal_specific[+g_new_orbit_type].is_integer == 0)
         {
             stop_msg("Julibrot orbit type isinteger mismatch");
         }
-        if (g_fractal_specific[+g_new_orbit_type].isinteger > 1)
+        if (g_fractal_specific[+g_new_orbit_type].is_integer > 1)
         {
-            g_bit_shift = g_fractal_specific[+g_new_orbit_type].isinteger;
+            g_bit_shift = g_fractal_specific[+g_new_orbit_type].is_integer;
         }
         s_fg = (double)(1L << g_bit_shift);
         s_fg16 = (double)(1L << 16);
@@ -291,7 +291,7 @@ int z_line(long x, long y)
         g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
         for (n = 0; n < g_max_iterations; n++)
         {
-            if (g_fractal_specific[+g_new_orbit_type].orbitcalc())
+            if (g_fractal_specific[+g_new_orbit_type].orbit_calc())
             {
                 break;
             }
@@ -391,7 +391,7 @@ int z_line_fp(double x, double y)
 
         for (n = 0; n < g_max_iterations; n++)
         {
-            if (g_fractal_specific[+g_new_orbit_type].orbitcalc())
+            if (g_fractal_specific[+g_new_orbit_type].orbit_calc())
             {
                 break;
             }
@@ -437,11 +437,11 @@ int std_4d_fractal()
         g_c_exponent = std::max(g_c_exponent, 1);
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = long_z_power_fractal;
+            g_fractal_specific[+g_new_orbit_type].orbit_calc = long_z_power_fractal;
         }
         else
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = long_cmplx_z_power_fractal;
+            g_fractal_specific[+g_new_orbit_type].orbit_calc = long_cmplx_z_power_fractal;
         }
     }
 
@@ -488,11 +488,11 @@ int std_4d_fp_fractal()
     {
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = float_z_power_fractal;
+            g_fractal_specific[+g_new_orbit_type].orbit_calc = float_z_power_fractal;
         }
         else
         {
-            g_fractal_specific[+g_new_orbit_type].orbitcalc = float_cmplx_z_power_fractal;
+            g_fractal_specific[+g_new_orbit_type].orbit_calc = float_cmplx_z_power_fractal;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
     }

@@ -233,7 +233,7 @@ bool julia_fn_plus_z_sqrd_setup()
     default:
         break;
     }
-    if (g_cur_fractal_specific->isinteger)
+    if (g_cur_fractal_specific->is_integer)
     {
         return julia_long_setup();
     }

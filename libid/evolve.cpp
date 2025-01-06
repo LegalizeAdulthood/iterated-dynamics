@@ -438,7 +438,7 @@ choose_vars_restart:
         choices.list(gene[num].name, 7, 7, evolve_modes, static_cast<int>(gene[num].mutate));
     }
 
-    if (g_cur_fractal_specific->calctype == standard_fractal &&
+    if (g_cur_fractal_specific->calc_type == standard_fractal &&
         bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         choices.list(gene[NUM_GENES - 1].name, 7, 7, evolve_modes, static_cast<int>(gene[NUM_GENES - 1].mutate));
@@ -486,7 +486,7 @@ choose_vars_restart:
         gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
 
-    if (g_cur_fractal_specific->calctype == standard_fractal &&
+    if (g_cur_fractal_specific->calc_type == standard_fractal &&
         bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         gene[NUM_GENES - 1].mutate = static_cast<Variations>(choices.read_list());
@@ -871,10 +871,10 @@ void release_param_box()
 
 void set_current_params()
 {
-    g_evolve_x_parameter_range = g_cur_fractal_specific->xmax - g_cur_fractal_specific->xmin;
+    g_evolve_x_parameter_range = g_cur_fractal_specific->x_max - g_cur_fractal_specific->x_min;
     g_evolve_new_x_parameter_offset = - (g_evolve_x_parameter_range / 2);
     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-    g_evolve_y_parameter_range = g_cur_fractal_specific->ymax - g_cur_fractal_specific->ymin;
+    g_evolve_y_parameter_range = g_cur_fractal_specific->y_max - g_cur_fractal_specific->y_min;
     g_evolve_new_y_parameter_offset = - (g_evolve_y_parameter_range / 2);
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
 }

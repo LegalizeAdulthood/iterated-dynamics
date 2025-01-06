@@ -1072,15 +1072,15 @@ TEST_F(TestParameterCommand, typeSierpinski)
     EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
     EXPECT_EQ(g_cur_fractal_specific, &g_fractal_specific[+FractalType::SIERPINSKI]);
     const FractalSpecific &fractal{*g_cur_fractal_specific};
-    EXPECT_EQ(g_x_min, fractal.xmin);
-    EXPECT_EQ(g_x_max, fractal.xmax);
-    EXPECT_EQ(g_x_3rd, fractal.xmin);
-    EXPECT_EQ(g_y_min, fractal.ymin);
-    EXPECT_EQ(g_y_max, fractal.ymax);
-    EXPECT_EQ(g_y_3rd, fractal.ymin);
+    EXPECT_EQ(g_x_min, fractal.x_min);
+    EXPECT_EQ(g_x_max, fractal.x_max);
+    EXPECT_EQ(g_x_3rd, fractal.x_min);
+    EXPECT_EQ(g_y_min, fractal.y_min);
+    EXPECT_EQ(g_y_max, fractal.y_max);
+    EXPECT_EQ(g_y_3rd, fractal.y_min);
     for (int i = 0; i < 4; ++i)
     {
-        EXPECT_EQ(fractal.paramvalue[i], g_params[i]);
+        EXPECT_EQ(fractal.params[i], g_params[i]);
     }
 }
 

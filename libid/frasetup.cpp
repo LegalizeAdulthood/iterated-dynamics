@@ -94,7 +94,7 @@ julia_setup()            // Julia Routine
 bool
 standalone_setup()
 {
-    engine_timer(g_cur_fractal_specific->calctype);
+    engine_timer(g_cur_fractal_specific->calc_type);
     return false;               // effectively disable solid-guessing
 }
 
@@ -191,11 +191,11 @@ mandel_fp_setup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = float_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = float_z_power_fractal;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = float_cmplx_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = float_cmplx_z_power_fractal;
         }
         break;
     case FractalType::MAGNET_1M:
@@ -315,11 +315,11 @@ julia_fp_setup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = float_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = float_z_power_fractal;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = float_cmplx_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = float_cmplx_z_power_fractal;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
@@ -396,11 +396,11 @@ julia_fp_setup()
         }
         if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
         {
-            g_cur_fractal_specific->orbitcalc = popcorn_fractal;
+            g_cur_fractal_specific->orbit_calc = popcorn_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc = popcorn_fractal_fn;
+            g_cur_fractal_specific->orbit_calc = popcorn_fractal_fn;
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
@@ -448,11 +448,11 @@ mandel_long_setup()
     {
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = long_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = long_z_power_fractal;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = long_cmplx_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = long_cmplx_z_power_fractal;
         }
         if (g_params[3] != 0 || (double)g_c_exponent != g_params[2])
         {
@@ -505,11 +505,11 @@ julia_long_setup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = long_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = long_z_power_fractal;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].orbitcalc = long_cmplx_z_power_fractal;
+            g_fractal_specific[+g_fractal_type].orbit_calc = long_cmplx_z_power_fractal;
         }
         break;
     case FractalType::LAMBDA:
@@ -558,11 +558,11 @@ julia_long_setup()
         }
         if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
         {
-            g_cur_fractal_specific->orbitcalc = long_popcorn_fractal;
+            g_cur_fractal_specific->orbit_calc = long_popcorn_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc = long_popcorn_fractal_fn;
+            g_cur_fractal_specific->orbit_calc = long_popcorn_fractal_fn;
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;

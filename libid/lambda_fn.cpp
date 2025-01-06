@@ -186,14 +186,14 @@ static int lambda_exponent_fractal()
 
 bool lambda_trig_setup()
 {
-    bool const isinteger = g_cur_fractal_specific->isinteger != 0;
+    bool const isinteger = g_cur_fractal_specific->is_integer != 0;
     if (isinteger)
     {
-        g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal;
+        g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal;
     }
     else
     {
-        g_cur_fractal_specific->orbitcalc =  lambda_trig_fp_fractal;
+        g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal;
     }
     switch (g_trig_index[0])
     {
@@ -203,11 +203,11 @@ bool lambda_trig_setup()
         g_symmetry = SymmetryType::PI_SYM;
         if (isinteger)
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal1;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal1;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal1;
+            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal1;
         }
         break;
     case TrigFn::SINH:
@@ -215,11 +215,11 @@ bool lambda_trig_setup()
         g_symmetry = SymmetryType::ORIGIN;
         if (isinteger)
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal2;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal2;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal2;
+            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal2;
         }
         break;
     case TrigFn::SQR:
@@ -228,11 +228,11 @@ bool lambda_trig_setup()
     case TrigFn::EXP:
         if (isinteger)
         {
-            g_cur_fractal_specific->orbitcalc =  long_lambda_exponent_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_lambda_exponent_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_exponent_fractal;
+            g_cur_fractal_specific->orbit_calc =  lambda_exponent_fractal;
         }
         g_symmetry = SymmetryType::NONE;
         break;
@@ -256,14 +256,14 @@ bool lambda_trig_setup()
 
 bool mandel_trig_setup()
 {
-    bool const isinteger = g_cur_fractal_specific->isinteger != 0;
+    bool const isinteger = g_cur_fractal_specific->is_integer != 0;
     if (isinteger)
     {
-        g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal;
+        g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal;
     }
     else
     {
-        g_cur_fractal_specific->orbitcalc =  lambda_trig_fp_fractal;
+        g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal;
     }
     g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
@@ -272,33 +272,33 @@ bool mandel_trig_setup()
     case TrigFn::COSXX:
         if (isinteger)
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal1;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal1;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal1;
+            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal1;
         }
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
         if (isinteger)
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trig_fractal2;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal2;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_trigfp_fractal2;
+            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal2;
         }
         break;
     case TrigFn::EXP:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         if (isinteger)
         {
-            g_cur_fractal_specific->orbitcalc =  long_lambda_exponent_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_lambda_exponent_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  lambda_exponent_fractal;
+            g_cur_fractal_specific->orbit_calc =  lambda_exponent_fractal;
         }
         break;
     case TrigFn::LOG:

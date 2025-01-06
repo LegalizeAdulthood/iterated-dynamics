@@ -140,7 +140,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
-        FractalType to_float = g_cur_fractal_specific->tofloat;
+        FractalType to_float = g_cur_fractal_specific->to_float;
         if (to_float == FractalType::NO_FRACTAL ||
             bit_clear(g_fractal_specific[+to_float].flags, FractalFlags::BF_MATH))
         {
@@ -221,10 +221,10 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     if (g_calc_status == CalcStatus::RESUMABLE)
     {
         // on resume, ensure floatflag correct
-        g_float_flag = g_cur_fractal_specific->isinteger == 0;
+        g_float_flag = g_cur_fractal_specific->is_integer == 0;
     }
     // if floating pt only, set floatflag for TAB screen
-    if (!g_cur_fractal_specific->isinteger && g_cur_fractal_specific->tofloat == FractalType::NO_FRACTAL)
+    if (!g_cur_fractal_specific->is_integer && g_cur_fractal_specific->to_float == FractalType::NO_FRACTAL)
     {
         g_float_flag = true;
     }
@@ -258,9 +258,9 @@ init_restart:
     g_potential_flag = false;
     if (g_potential_params[0] != 0.0
         && g_colors >= 64
-        && (g_cur_fractal_specific->calctype == standard_fractal
-            || g_cur_fractal_specific->calctype == calc_mand
-            || g_cur_fractal_specific->calctype == calc_mand_fp))
+        && (g_cur_fractal_specific->calc_type == standard_fractal
+            || g_cur_fractal_specific->calc_type == calc_mand
+            || g_cur_fractal_specific->calc_type == calc_mand_fp))
     {
         g_potential_flag = true;
         g_user_distance_estimator_value = 0;
@@ -275,24 +275,24 @@ init_restart:
     if (g_float_flag)
     {
         // ensure type matches floatflag
-        if (g_cur_fractal_specific->isinteger != 0
-            && g_cur_fractal_specific->tofloat != FractalType::NO_FRACTAL)
+        if (g_cur_fractal_specific->is_integer != 0
+            && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
         {
-            g_fractal_type = g_cur_fractal_specific->tofloat;
+            g_fractal_type = g_cur_fractal_specific->to_float;
         }
     }
     else
     {
-        if (g_cur_fractal_specific->isinteger == 0
-            && g_cur_fractal_specific->tofloat != FractalType::NO_FRACTAL)
+        if (g_cur_fractal_specific->is_integer == 0
+            && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
         {
-            g_fractal_type = g_cur_fractal_specific->tofloat;
+            g_fractal_type = g_cur_fractal_specific->to_float;
         }
     }
     // match Julibrot with integer mode of orbit
-    if (g_fractal_type == FractalType::JULIBROT_FP && g_fractal_specific[+g_new_orbit_type].isinteger)
+    if (g_fractal_type == FractalType::JULIBROT_FP && g_fractal_specific[+g_new_orbit_type].is_integer)
     {
-        FractalType i = g_fractal_specific[+g_new_orbit_type].tofloat;
+        FractalType i = g_fractal_specific[+g_new_orbit_type].to_float;
         if (i != FractalType::NO_FRACTAL)
         {
             g_new_orbit_type = i;
@@ -302,9 +302,9 @@ init_restart:
             g_fractal_type = FractalType::JULIBROT;
         }
     }
-    else if (g_fractal_type == FractalType::JULIBROT && g_fractal_specific[+g_new_orbit_type].isinteger == 0)
+    else if (g_fractal_type == FractalType::JULIBROT && g_fractal_specific[+g_new_orbit_type].is_integer == 0)
     {
-        FractalType i = g_fractal_specific[+g_new_orbit_type].tofloat;
+        FractalType i = g_fractal_specific[+g_new_orbit_type].to_float;
         if (i != FractalType::NO_FRACTAL)
         {
             g_new_orbit_type = i;
@@ -317,7 +317,7 @@ init_restart:
 
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
-    g_integer_fractal = g_cur_fractal_specific->isinteger;
+    g_integer_fractal = g_cur_fractal_specific->is_integer;
 
     if (g_potential_flag && g_potential_params[2] != 0.0)
     {
@@ -364,12 +364,12 @@ init_restart:
     if (g_integer_fractal == 0)
     {
         // float?
-        FractalType i = g_cur_fractal_specific->tofloat;
+        FractalType i = g_cur_fractal_specific->to_float;
         if (i != FractalType::NO_FRACTAL) // -> int?
         {
-            if (g_fractal_specific[+i].isinteger > 1)   // specific shift?
+            if (g_fractal_specific[+i].is_integer > 1)   // specific shift?
             {
-                g_bit_shift = g_fractal_specific[+i].isinteger;
+                g_bit_shift = g_fractal_specific[+i].is_integer;
             }
         }
         else
@@ -459,7 +459,7 @@ init_restart:
             {
 expand_retry:
                 if (g_integer_fractal          // integer fractal type?
-                    && g_cur_fractal_specific->tofloat != FractalType::NO_FRACTAL)
+                    && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
                 {
                     g_float_flag = true;       // switch to floating pt
                 }

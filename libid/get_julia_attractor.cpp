@@ -52,7 +52,7 @@ void get_julia_attractor(double real, double imag)
     g_overflow = false;
     while (++g_color_iter < g_max_iterations)
     {
-        if (g_cur_fractal_specific->orbitcalc() || g_overflow)
+        if (g_cur_fractal_specific->orbit_calc() || g_overflow)
         {
             break;
         }
@@ -70,7 +70,7 @@ void get_julia_attractor(double real, double imag)
         for (int i = 0; i < 10; i++)
         {
             g_overflow = false;
-            if (!g_cur_fractal_specific->orbitcalc() && !g_overflow) // if it stays in the lake
+            if (!g_cur_fractal_specific->orbit_calc() && !g_overflow) // if it stays in the lake
             {
                 // and doesn't move far, probably
                 if (g_integer_fractal)   //   found a finite attractor

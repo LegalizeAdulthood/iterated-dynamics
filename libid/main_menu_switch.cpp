@@ -138,18 +138,18 @@ static void toggle_mandelbrot_julia(MainContext &context)
     {
         if (g_is_mandelbrot)
         {
-            g_fractal_specific[+g_fractal_type].tojulia = g_fractal_type;
-            g_fractal_specific[+g_fractal_type].tomandel = FractalType::NO_FRACTAL;
+            g_fractal_specific[+g_fractal_type].to_julia = g_fractal_type;
+            g_fractal_specific[+g_fractal_type].to_mandel = FractalType::NO_FRACTAL;
             g_is_mandelbrot = false;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].tojulia = FractalType::NO_FRACTAL;
-            g_fractal_specific[+g_fractal_type].tomandel = g_fractal_type;
+            g_fractal_specific[+g_fractal_type].to_julia = FractalType::NO_FRACTAL;
+            g_fractal_specific[+g_fractal_type].to_mandel = g_fractal_type;
             g_is_mandelbrot = true;
         }
     }
-    if (g_cur_fractal_specific->tojulia != FractalType::NO_FRACTAL && g_params[0] == 0.0 &&
+    if (g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL && g_params[0] == 0.0 &&
         g_params[1] == 0.0)
     {
         // switch to corresponding Julia set
@@ -164,7 +164,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
             driver_unget_key(key);
             return;
         }
-        g_fractal_type = g_cur_fractal_specific->tojulia;
+        g_fractal_type = g_cur_fractal_specific->to_julia;
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
         {
@@ -185,10 +185,10 @@ static void toggle_mandelbrot_julia(MainContext &context)
         s_j_x_3rd = g_save_x_3rd;
         s_j_y_3rd = g_save_y_3rd;
         context.from_mandel = true;
-        g_x_min = g_cur_fractal_specific->xmin;
-        g_x_max = g_cur_fractal_specific->xmax;
-        g_y_min = g_cur_fractal_specific->ymin;
-        g_y_max = g_cur_fractal_specific->ymax;
+        g_x_min = g_cur_fractal_specific->x_min;
+        g_x_max = g_cur_fractal_specific->x_max;
+        g_y_min = g_cur_fractal_specific->y_min;
+        g_y_max = g_cur_fractal_specific->y_max;
         g_x_3rd = g_x_min;
         g_y_3rd = g_y_min;
         if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
@@ -204,10 +204,10 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
     }
-    else if (g_cur_fractal_specific->tomandel != FractalType::NO_FRACTAL)
+    else if (g_cur_fractal_specific->to_mandel != FractalType::NO_FRACTAL)
     {
         // switch to corresponding Mandel set
-        g_fractal_type = g_cur_fractal_specific->tomandel;
+        g_fractal_type = g_cur_fractal_specific->to_mandel;
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         if (context.from_mandel)
         {
@@ -220,12 +220,12 @@ static void toggle_mandelbrot_julia(MainContext &context)
         }
         else
         {
-            g_x_3rd = g_cur_fractal_specific->xmin;
+            g_x_3rd = g_cur_fractal_specific->x_min;
             g_x_min = g_x_3rd;
-            g_x_max = g_cur_fractal_specific->xmax;
-            g_y_3rd = g_cur_fractal_specific->ymin;
+            g_x_max = g_cur_fractal_specific->x_max;
+            g_y_3rd = g_cur_fractal_specific->y_min;
             g_y_min = g_y_3rd;
-            g_y_max = g_cur_fractal_specific->ymax;
+            g_y_max = g_cur_fractal_specific->y_max;
         }
         g_save_c.x = g_params[0];
         g_save_c.y = g_params[1];
@@ -304,7 +304,7 @@ static MainState prompt_options(MainContext &context)
     if (g_max_iterations > old_maxit
         && g_inside_color >= COLOR_BLACK
         && g_calc_status == CalcStatus::COMPLETED
-        && g_cur_fractal_specific->calctype == standard_fractal
+        && g_cur_fractal_specific->calc_type == standard_fractal
         && !g_log_map_flag
         && !g_true_color     // recalc not yet implemented with truecolor
         && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
@@ -383,10 +383,10 @@ static MainState request_3d_fractal_params(MainContext &context)
 static MainState show_orbit_window(MainContext &)
 {
     // must use standard fractal and have a float variant
-    if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
-            || g_fractal_specific[+g_fractal_type].calctype == calc_froth)
-        && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
-             g_fractal_specific[+g_fractal_type].tofloat != FractalType::NO_FRACTAL)
+    if ((g_fractal_specific[+g_fractal_type].calc_type == standard_fractal
+            || g_fractal_specific[+g_fractal_type].calc_type == calc_froth)
+        && (g_fractal_specific[+g_fractal_type].is_integer == 0 ||
+             g_fractal_specific[+g_fractal_type].to_float != FractalType::NO_FRACTAL)
         && (g_bf_math == BFMathType::NONE) // for now no arbitrary precision support
         && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {

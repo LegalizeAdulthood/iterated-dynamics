@@ -619,7 +619,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_log_map_flag = 2;
         }
-        g_user_float_flag = g_cur_fractal_specific->isinteger == 0;
+        g_user_float_flag = g_cur_fractal_specific->is_integer == 0;
     }
 
     if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
@@ -2262,7 +2262,7 @@ static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
             return false; // two formulas but names don't match
         }
     }
-    else if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->tofloat)
+    else if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->to_float)
     {
         numfn = (+g_cur_fractal_specific->flags >> 6) & 7;
         if (numfn > 0)

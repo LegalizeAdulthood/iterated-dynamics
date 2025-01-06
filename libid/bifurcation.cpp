@@ -210,7 +210,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     for (unsigned long counter = 0UL; counter < s_filter_cycles ; counter++)
     {
-        if (g_cur_fractal_specific->orbitcalc())
+        if (g_cur_fractal_specific->orbit_calc())
         {
             return;
         }
@@ -221,7 +221,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         unsigned long counter;
         for (counter = 0; counter < (unsigned long)g_max_iterations ; counter++)
         {
-            if (g_cur_fractal_specific->orbitcalc())
+            if (g_cur_fractal_specific->orbit_calc())
             {
                 return;
             }
@@ -234,7 +234,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         {
             for (counter = 0; counter < s_filter_cycles ; counter++)
             {
-                if (g_cur_fractal_specific->orbitcalc())
+                if (g_cur_fractal_specific->orbit_calc())
                 {
                     return;
                 }
@@ -248,7 +248,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
     for (unsigned long counter = 0UL; counter < (unsigned long)g_max_iterations ; counter++)
     {
-        if (g_cur_fractal_specific->orbitcalc())
+        if (g_cur_fractal_specific->orbit_calc())
         {
             return;
         }
@@ -462,6 +462,6 @@ bool bifurc_may_setup()
 {
     g_params[2] = std::max(g_params[2], 2.0);
     s_beta = static_cast<long>(g_params[2]);
-    engine_timer(g_cur_fractal_specific->calctype);
+    engine_timer(g_cur_fractal_specific->calc_type);
     return false;
 }

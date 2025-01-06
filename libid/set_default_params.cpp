@@ -14,10 +14,10 @@
 
 void set_default_params()
 {
-    g_x_min = g_cur_fractal_specific->xmin;
-    g_x_max = g_cur_fractal_specific->xmax;
-    g_y_min = g_cur_fractal_specific->ymin;
-    g_y_max = g_cur_fractal_specific->ymax;
+    g_x_min = g_cur_fractal_specific->x_min;
+    g_x_max = g_cur_fractal_specific->x_max;
+    g_y_min = g_cur_fractal_specific->y_min;
+    g_y_max = g_cur_fractal_specific->y_max;
     g_x_3rd = g_x_min;
     g_y_3rd = g_y_min;
 
@@ -27,7 +27,7 @@ void set_default_params()
     }
     for (int i = 0; i < 4; i++)
     {
-        g_params[i] = g_cur_fractal_specific->paramvalue[i];
+        g_params[i] = g_cur_fractal_specific->params[i];
         if (g_fractal_type != FractalType::CELLULAR
             && g_fractal_type != FractalType::FROTH
             && g_fractal_type != FractalType::FROTH_FP
@@ -41,7 +41,7 @@ void set_default_params()
     {
         for (int i = 0; i < MAX_PARAMS-4; i++)
         {
-            g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
+            g_params[i+4] = g_more_fractal_params[extra].params[i];
         }
     }
     if (g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)

@@ -744,13 +744,13 @@ int calc_fract()
         g_calc_time = 0;
     }
 
-    if (g_cur_fractal_specific->calctype != standard_fractal
-        && g_cur_fractal_specific->calctype != calc_mand
-        && g_cur_fractal_specific->calctype != calc_mand_fp
-        && g_cur_fractal_specific->calctype != lyapunov
-        && g_cur_fractal_specific->calctype != calc_froth)
+    if (g_cur_fractal_specific->calc_type != standard_fractal
+        && g_cur_fractal_specific->calc_type != calc_mand
+        && g_cur_fractal_specific->calc_type != calc_mand_fp
+        && g_cur_fractal_specific->calc_type != lyapunov
+        && g_cur_fractal_specific->calc_type != calc_froth)
     {
-        g_calc_type = g_cur_fractal_specific->calctype; // per_image can override
+        g_calc_type = g_cur_fractal_specific->calc_type; // per_image can override
         g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
         g_xx_begin = 0;
@@ -844,7 +844,7 @@ int calc_fract()
     }
     free_work_area();
 
-    if (g_cur_fractal_specific->calctype == calc_froth)
+    if (g_cur_fractal_specific->calc_type == calc_froth)
     {
         froth_cleanup();
     }
@@ -889,10 +889,10 @@ static void perform_work_list()
 
     if (alt > -1)
     {
-        sv_orbit_calc = g_cur_fractal_specific->orbitcalc;
+        sv_orbit_calc = g_cur_fractal_specific->orbit_calc;
         sv_per_pixel = g_cur_fractal_specific->per_pixel;
         sv_per_image = g_cur_fractal_specific->per_image;
-        g_cur_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
+        g_cur_fractal_specific->orbit_calc = g_alternate_math[alt].orbit_calc;
         g_cur_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
         g_cur_fractal_specific->per_image = g_alternate_math[alt].per_image;
     }
@@ -923,7 +923,7 @@ static void perform_work_list()
     {
         g_std_calc_mode = '1';
     }
-    if (g_std_calc_mode == 'o' && (g_cur_fractal_specific->calctype != standard_fractal))
+    if (g_std_calc_mode == 'o' && (g_cur_fractal_specific->calc_type != standard_fractal))
     {
         g_std_calc_mode = '1';
     }
@@ -979,7 +979,7 @@ static void perform_work_list()
             g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
         }
         // must be mandel type, formula, or old PAR/GIF
-        s_dem_mandel = g_cur_fractal_specific->tojulia != FractalType::NO_FRACTAL
+        s_dem_mandel = g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL
             || g_use_old_distance_estimator
             || g_fractal_type == FractalType::FORMULA
             || g_fractal_type == FractalType::FORMULA_FP;
@@ -1017,7 +1017,7 @@ static void perform_work_list()
     while (g_num_work_list > 0)
     {
         // per_image can override
-        g_calc_type = g_cur_fractal_specific->calctype;
+        g_calc_type = g_cur_fractal_specific->calc_type;
         g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
 
@@ -1195,7 +1195,7 @@ static void perform_work_list()
     }
     if (sv_orbit_calc != nullptr)
     {
-        g_cur_fractal_specific->orbitcalc = sv_orbit_calc;
+        g_cur_fractal_specific->orbit_calc = sv_orbit_calc;
         g_cur_fractal_specific->per_pixel = sv_per_pixel;
         g_cur_fractal_specific->per_image = sv_per_image;
     }
@@ -1519,7 +1519,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             // if above exit taken, the later test vs dem_delta will place this
             // point on the boundary, because mag(old)<bailout just now
 
-            if (g_cur_fractal_specific->orbitcalc() || g_overflow)
+            if (g_cur_fractal_specific->orbit_calc() || g_overflow)
             {
                 if (g_use_old_distance_estimator)
                 {
@@ -1544,7 +1544,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
 
         // the usual case
-        else if ((g_cur_fractal_specific->orbitcalc() && g_inside_color != STAR_TRAIL) || g_overflow)
+        else if ((g_cur_fractal_specific->orbit_calc() && g_inside_color != STAR_TRAIL) || g_overflow)
         {
             break;
         }

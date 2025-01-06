@@ -498,12 +498,12 @@ static void init_vars_fractal()
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
     g_user_float_flag = true;                            // turn on the float flag
     g_finite_attractor = false;                          // disable finite attractor logic
-    g_fractal_type = FractalType::MANDEL;               // initial type Set flag
+    g_fractal_type = FractalType::MANDEL;                // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];     //
     init_param_flags();                                  //
     g_bail_out = 0;                                      // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
-    g_use_init_orbit = InitOrbitMode::NORMAL;          //
+    g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
     std::fill(&g_potential_params[0], &g_potential_params[3], 0.0); // initial potential values
     std::fill(std::begin(g_inversion), std::end(g_inversion), 0.0); // initial invert values
@@ -516,7 +516,7 @@ static void init_vars_fractal()
     g_distance_estimator_x_dots = 0;                                //
     g_distance_estimator_y_dots = 0;                                //
     g_distance_estimator_width_factor = 71;                         //
-    g_force_symmetry = SymmetryType::NOT_FORCED;                   //
+    g_force_symmetry = SymmetryType::NOT_FORCED;                    //
     g_x_min = -2.5;                                                 //
     g_x_3rd = g_x_min;                                              //
     g_x_max = 1.5;                                                  // initial corner values
@@ -534,7 +534,7 @@ static void init_vars_fractal()
     g_iteration_ranges.clear();                                     //
     g_iteration_ranges_len = 0;                                     //
     g_use_center_mag = true;                                        // use center-mag, not corners
-    g_color_state = ColorState::DEFAULT;                           //
+    g_color_state = ColorState::DEFAULT;                            //
     g_colors_preloaded = false;                                     //
     g_color_cycle_range_lo = 1;                                     //
     g_color_cycle_range_hi = 255;                                   // color cycling default range
@@ -543,22 +543,22 @@ static void init_vars_fractal()
     g_keep_screen_coords = false;                                   //
     g_draw_mode = 'r';                                              // passes=orbits draw mode
     g_set_orbit_corners = false;                                    //
-    g_orbit_corner_min_x = g_cur_fractal_specific->xmin;            //
-    g_orbit_corner_max_x = g_cur_fractal_specific->xmax;            //
-    g_orbit_corner_3_x = g_cur_fractal_specific->xmin;              //
-    g_orbit_corner_min_y = g_cur_fractal_specific->ymin;            //
-    g_orbit_corner_max_y = g_cur_fractal_specific->ymax;            //
-    g_orbit_corner_3_y = g_cur_fractal_specific->ymin;              //
+    g_orbit_corner_min_x = g_cur_fractal_specific->x_min;           //
+    g_orbit_corner_max_x = g_cur_fractal_specific->x_max;           //
+    g_orbit_corner_3_x = g_cur_fractal_specific->x_min;             //
+    g_orbit_corner_min_y = g_cur_fractal_specific->y_min;           //
+    g_orbit_corner_max_y = g_cur_fractal_specific->y_max;           //
+    g_orbit_corner_3_y = g_cur_fractal_specific->y_min;             //
     g_math_tol[0] = 0.05;                                           //
     g_math_tol[1] = 0.05;                                           //
-    g_display_3d = Display3DMode::NONE;                          // 3D display is off
+    g_display_3d = Display3DMode::NONE;                             // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
-    g_bail_out_test = Bailout::MOD;                                //
-    g_bailout_float = fp_mod_bailout;                                 //
-    g_bailout_long = long_mod_bailout;                                //
-    g_bailout_bignum = bn_mod_bailout;                                //
-    g_bailout_bigfloat = bf_mod_bailout;                              //
+    g_bail_out_test = Bailout::MOD;                                 //
+    g_bailout_float = fp_mod_bailout;                               //
+    g_bailout_long = long_mod_bailout;                              //
+    g_bailout_bignum = bn_mod_bailout;                              //
+    g_bailout_bigfloat = bf_mod_bailout;                            //
     g_new_bifurcation_functions_loaded = false;                     // for old bifs
     g_julibrot_x_min = -.83;                                        //
     g_julibrot_y_min = -.25;                                        //
@@ -570,7 +570,7 @@ static void init_vars_fractal()
     g_julibrot_dist_fp = 24;                                        //
     g_eyes_fp = 2.5F;                                               //
     g_julibrot_depth_fp = 8;                                        //
-    g_new_orbit_type = FractalType::JULIA;                         //
+    g_new_orbit_type = FractalType::JULIA;                          //
     g_julibrot_z_dots = 128;                                        //
     init_vars3d();                                                  //
     g_base_hertz = 440;                                             // basic hertz rate
@@ -3557,12 +3557,12 @@ static CmdArgFlags cmd_type(const Command &cmd)
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     if (!s_init_corners)
     {
-        g_x_min = g_cur_fractal_specific->xmin;
+        g_x_min = g_cur_fractal_specific->x_min;
         g_x_3rd = g_x_min;
-        g_x_max = g_cur_fractal_specific->xmax;
-        g_y_min = g_cur_fractal_specific->ymin;
+        g_x_max = g_cur_fractal_specific->x_max;
+        g_y_min = g_cur_fractal_specific->y_min;
         g_y_3rd = g_y_min;
-        g_y_max = g_cur_fractal_specific->ymax;
+        g_y_max = g_cur_fractal_specific->y_max;
     }
     if (!s_init_functions)
     {

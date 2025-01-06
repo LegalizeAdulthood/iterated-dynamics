@@ -63,16 +63,16 @@ static int skinner_trig_sub_sqr_fractal()
 static bool trig_plus_sqr_long_setup()
 {
     g_cur_fractal_specific->per_pixel =  julia_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  trig_plus_sqr_fractal;
+    g_cur_fractal_specific->orbit_calc =  trig_plus_sqr_fractal;
     if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
-            g_cur_fractal_specific->orbitcalc =  scott_trig_plus_sqr_fractal;
+            g_cur_fractal_specific->orbit_calc =  scott_trig_plus_sqr_fractal;
         }
         else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
         {
-            g_cur_fractal_specific->orbitcalc =  skinner_trig_sub_sqr_fractal;
+            g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_sqr_fractal;
         }
     }
     return julia_long_setup();
@@ -105,16 +105,16 @@ bool trig_plus_trig_long_setup()
         return trig_plus_sqr_long_setup();
     }
     g_cur_fractal_specific->per_pixel =  long_julia_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  trig_plus_trig_fractal;
+    g_cur_fractal_specific->orbit_calc =  trig_plus_trig_fractal;
     if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
-            g_cur_fractal_specific->orbitcalc =  scott_trig_plus_trig_fractal;
+            g_cur_fractal_specific->orbit_calc =  scott_trig_plus_trig_fractal;
         }
         else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
         {
-            g_cur_fractal_specific->orbitcalc =  skinner_trig_sub_trig_fractal;
+            g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_trig_fractal;
         }
     }
     return julia_long_setup();
@@ -154,16 +154,16 @@ static int skinner_trig_sub_sqr_fp_fractal()
 static bool trig_plus_sqr_fp_setup()
 {
     g_cur_fractal_specific->per_pixel =  julia_fp_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  trig_plus_sqr_fp_fractal;
+    g_cur_fractal_specific->orbit_calc =  trig_plus_sqr_fp_fractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
         {
-            g_cur_fractal_specific->orbitcalc =  scott_trig_plus_sqr_fp_fractal;
+            g_cur_fractal_specific->orbit_calc =  scott_trig_plus_sqr_fp_fractal;
         }
         else if (g_param_z2.x == -1.0)      // Skinner variant
         {
-            g_cur_fractal_specific->orbitcalc =  skinner_trig_sub_sqr_fp_fractal;
+            g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_sqr_fp_fractal;
         }
     }
     return julia_fp_setup();
@@ -197,16 +197,16 @@ bool trig_plus_trig_fp_setup()
         return trig_plus_sqr_fp_setup();
     }
     g_cur_fractal_specific->per_pixel =  other_julia_fp_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  trig_plus_trig_fp_fractal;
+    g_cur_fractal_specific->orbit_calc =  trig_plus_trig_fp_fractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
         {
-            g_cur_fractal_specific->orbitcalc =  scott_trig_plus_trig_fp_fractal;
+            g_cur_fractal_specific->orbit_calc =  scott_trig_plus_trig_fp_fractal;
         }
         else if (g_param_z2.x == -1.0)      // Skinner variant
         {
-            g_cur_fractal_specific->orbitcalc =  skinner_trig_sub_trig_fp_fractal;
+            g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_trig_fp_fractal;
         }
     }
     return julia_fp_setup();
@@ -308,7 +308,7 @@ bool fn_x_fn_setup()
             g_symmetry = SymmetryType::PI_SYM;
         }
     }
-    if (g_cur_fractal_specific->isinteger)
+    if (g_cur_fractal_specific->is_integer)
     {
         return julia_long_setup();
     }
@@ -386,7 +386,7 @@ bool sqr_trig_setup()
     default:
         break;
     }
-    if (g_cur_fractal_specific->isinteger)
+    if (g_cur_fractal_specific->is_integer)
     {
         return julia_long_setup();
     }
@@ -516,34 +516,34 @@ bool z_x_trig_plus_z_setup()
             break;
         }
     }
-    if (g_cur_fractal_specific->isinteger)
+    if (g_cur_fractal_specific->is_integer)
     {
-        g_cur_fractal_specific->orbitcalc =  z_x_trig_plus_z_fractal;
+        g_cur_fractal_specific->orbit_calc =  z_x_trig_plus_z_fractal;
         if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
         {
             if (g_l_param2.x == g_fudge_factor)       // Scott variant
             {
-                g_cur_fractal_specific->orbitcalc =  scott_z_x_trig_plus_z_fractal;
+                g_cur_fractal_specific->orbit_calc =  scott_z_x_trig_plus_z_fractal;
             }
             else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
             {
-                g_cur_fractal_specific->orbitcalc =  skinner_z_x_trig_sub_z_fractal;
+                g_cur_fractal_specific->orbit_calc =  skinner_z_x_trig_sub_z_fractal;
             }
         }
         return julia_long_setup();
     }
     else
     {
-        g_cur_fractal_specific->orbitcalc =  z_x_trig_plus_z_fp_fractal;
+        g_cur_fractal_specific->orbit_calc =  z_x_trig_plus_z_fp_fractal;
         if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
         {
             if (g_param_z2.x == 1.0)       // Scott variant
             {
-                g_cur_fractal_specific->orbitcalc =  scott_z_x_trig_plus_z_fp_fractal;
+                g_cur_fractal_specific->orbit_calc =  scott_z_x_trig_plus_z_fp_fractal;
             }
             else if (g_param_z2.x == -1.0)           // Skinner variant
             {
-                g_cur_fractal_specific->orbitcalc =  skinner_z_x_trig_sub_z_fp_fractal;
+                g_cur_fractal_specific->orbit_calc =  skinner_z_x_trig_sub_z_fp_fractal;
             }
         }
     }

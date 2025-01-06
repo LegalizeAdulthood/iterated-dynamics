@@ -4181,7 +4181,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
 {
     //  first set the pointers so they point to a fn which always returns 1
     g_cur_fractal_specific->per_pixel = bad_formula;
-    g_cur_fractal_specific->orbitcalc = bad_formula;
+    g_cur_fractal_specific->orbit_calc = bad_formula;
 
     if (g_formula_name.empty())
     {
@@ -4213,7 +4213,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
 
         // all parses succeeded so set the pointers back to good functions
         g_cur_fractal_specific->per_pixel = form_per_pixel;
-        g_cur_fractal_specific->orbitcalc = formula;
+        g_cur_fractal_specific->orbit_calc = formula;
         return false;
     }
     return true; // error in making string

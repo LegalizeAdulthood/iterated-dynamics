@@ -12,21 +12,21 @@
 
 struct AlternateMath
 {
-    FractalType type;                  // index in fractalname of the fractal
-    BFMathType math;                  // kind of math used
-    int (*orbitcalc)();                 // function that calculates one orbit
-    int (*per_pixel)();                 // once-per-pixel init
-    bool (*per_image)();                // once-per-image setup
+    FractalType type;    // index in fractalname of the fractal
+    BFMathType math;     // kind of math used
+    int (*orbit_calc)(); // function that calculates one orbit
+    int (*per_pixel)();  // once-per-pixel init
+    bool (*per_image)(); // once-per-image setup
 };
 
 struct MoreParams
 {
-    FractalType type;                  // index in fractalname of the fractal
-    char const *param[MAX_PARAMS-4];    // name of the parameters
-    double   paramvalue[MAX_PARAMS-4];  // default parameter values
+    FractalType type;                        // index in fractalname of the fractal
+    char const *param_names[MAX_PARAMS - 4]; // name of the parameters
+    double params[MAX_PARAMS - 4];           // default parameter values
 };
 
-// bitmask values for fractalspecific flags
+// bitmask values for FractalSpecific flags
 enum class FractalFlags
 {
     NONE = 0,         // no flags
@@ -86,24 +86,24 @@ struct FractalSpecific
 {
     char const *name;                       // name of the fractal
                                             // (leading "*" suppresses name display)
-    char const *param[4];                   // name of the parameters
-    double paramvalue[4];                   // default parameter values
-    HelpLabels helptext;                   // helpdefs.h HT_xxxx or NONE
-    HelpLabels helpformula;                // helpdefs.h HF_xxxx or NONE
-    FractalFlags flags;                    // constraints, bits defined above
-    float xmin;                             // default XMIN corner
-    float xmax;                             // default XMAX corner
-    float ymin;                             // default YMIN corner
-    float ymax;                             // default YMAX corner
-    int isinteger;                          // 1 if integer fractal, 0 otherwise
-    FractalType tojulia;                   // mandel-to-julia switch
-    FractalType tomandel;                  // julia-to-mandel switch
-    FractalType tofloat;                   // integer-to-floating switch
-    SymmetryType symmetry;                 // applicable symmetry logic
-    int (*orbitcalc)();                     // function that calculates one orbit
+    char const *param_names[4];             // name of the parameters
+    double params[4];                       // default parameter values
+    HelpLabels help_text;                   // helpdefs.h HT_xxxx or NONE
+    HelpLabels help_formula;                // helpdefs.h HF_xxxx or NONE
+    FractalFlags flags;                     // constraints, bits defined above
+    float x_min;                            // default XMIN corner
+    float x_max;                            // default XMAX corner
+    float y_min;                            // default YMIN corner
+    float y_max;                            // default YMAX corner
+    int is_integer;                         // 1 if integer fractal, 0 otherwise
+    FractalType to_julia;                   // mandel-to-julia switch
+    FractalType to_mandel;                  // julia-to-mandel switch
+    FractalType to_float;                   // integer-to-floating switch
+    SymmetryType symmetry;                  // applicable symmetry logic
+    int (*orbit_calc)();                    // function that calculates one orbit
     int (*per_pixel)();                     // once-per-pixel init
     bool (*per_image)();                    // once-per-image setup
-    int (*calctype)();                      // name of main fractal function
+    int (*calc_type)();                     // name of main fractal function
     int orbit_bailout;                      // usual bailout value for orbit calc
     PerturbationReference *pert_ref{};      // compute perturbation reference orbit
     PerturbationReferenceBF *pert_ref_bf{}; // compute BFComplex perturbation reference orbit
@@ -125,5 +125,5 @@ inline int per_pixel()
 }
 inline int orbit_calc()
 {
-    return g_fractal_specific[+g_fractal_type].orbitcalc();
+    return g_fractal_specific[+g_fractal_type].orbit_calc();
 }

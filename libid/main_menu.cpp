@@ -30,10 +30,10 @@ static bool s_full_menu{};
 
 static bool has_julia_toggle()
 {
-    return (g_cur_fractal_specific->tojulia != FractalType::NO_FRACTAL && //
+    return (g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL && //
                g_params[0] == 0.0 &&                                      //
                g_params[1] == 0.0) ||
-        g_cur_fractal_specific->tomandel != FractalType::NO_FRACTAL;
+        g_cur_fractal_specific->to_mandel != FractalType::NO_FRACTAL;
 }
 
 static bool is_julia()

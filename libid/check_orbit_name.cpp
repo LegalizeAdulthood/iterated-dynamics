@@ -20,7 +20,7 @@ static int build_fractal_list(int fractals[], int *last_val, char const *name_pt
         if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && *g_fractal_specific[i].name != '*')
         {
             fractals[num_fractals] = i;
-            if (i == +g_new_orbit_type || i == +g_fractal_specific[+g_new_orbit_type].tofloat)
+            if (i == +g_new_orbit_type || i == +g_fractal_specific[+g_new_orbit_type].to_float)
             {
                 *last_val = num_fractals;
             }

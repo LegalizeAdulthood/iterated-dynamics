@@ -167,7 +167,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
         for (int count = 0; count < s_lya_length; count++)
         {
             g_rate = s_lya_rxy[count] ? a : b;
-            if (g_cur_fractal_specific->orbitcalc())
+            if (g_cur_fractal_specific->orbit_calc())
             {
                 g_overflow = true;
                 goto jumpout;
@@ -179,7 +179,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
         for (int count = 0; count < s_lya_length; count++)
         {
             g_rate = s_lya_rxy[count] ? a : b;
-            if (g_cur_fractal_specific->orbitcalc())
+            if (g_cur_fractal_specific->orbit_calc())
             {
                 g_overflow = true;
                 goto jumpout;

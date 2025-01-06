@@ -150,7 +150,7 @@ static FractalType select_fract_type(FractalType t)
     int j = 0;
     for (int i = 0; i < num_types; ++i)   // find starting choice in sorted list
     {
-        if (choices[i]->num == +t || choices[i]->num == +g_fractal_specific[+t].tofloat)
+        if (choices[i]->num == +t || choices[i]->num == +g_fractal_specific[+t].to_float)
         {
             j = i;
         }
@@ -187,7 +187,7 @@ static int sel_fract_type_help(int key, int choice)
 {
     if (key == ID_KEY_F2)
     {
-        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[(*(s_ft_choices + choice))->num].helptext};
+        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[(*(s_ft_choices + choice))->num].help_text};
         help();
     }
     return 0;
@@ -361,7 +361,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     {
         int i;
         if (g_cur_fractal_specific->name[0] == '*'
-            && (i = +g_cur_fractal_specific->tofloat) != +FractalType::NO_FRACTAL
+            && (i = +g_cur_fractal_specific->to_float) != +FractalType::NO_FRACTAL
             && g_fractal_specific[i].name[0] != '*')
         {
             current_type = static_cast<FractalType>(i);
@@ -369,7 +369,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     }
     g_cur_fractal_specific = &g_fractal_specific[+current_type];
     s_tmp_stack[0] = 0;
-    HelpLabels help_formula = g_cur_fractal_specific->helpformula;
+    HelpLabels help_formula = g_cur_fractal_specific->help_formula;
     if (help_formula < HelpLabels::NONE)
     {
         char const *entry_name;
@@ -642,7 +642,7 @@ gfp_top:
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
     if (orbit_bailout != 0                                      //
-        && g_cur_fractal_specific->calctype == standard_fractal //
+        && g_cur_fractal_specific->calc_type == standard_fractal //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         param_values[prompt_num].type = 'l';
@@ -801,7 +801,7 @@ gfp_top:
     full_screen_reset_scrolling();
     while (true)
     {
-        ValueSaver saved_help_mode{g_help_mode, g_cur_fractal_specific->helptext};
+        ValueSaver saved_help_mode{g_help_mode, g_cur_fractal_specific->help_text};
         int i = full_screen_prompt(msg, prompt_num, choices, param_values, fn_key_mask, s_tmp_stack);
         if (i < 0)
         {
@@ -862,7 +862,7 @@ gfp_top:
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
     if (orbit_bailout != 0                                      //
-        && g_cur_fractal_specific->calctype == standard_fractal //
+        && g_cur_fractal_specific->calc_type == standard_fractal //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_bail_out_test))

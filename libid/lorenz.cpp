@@ -49,7 +49,7 @@ using OrbitCalc = int (*)(T *x, T *y, T *z);
 template <typename T>
 int orbit(T *x, T *y, T*z)
 {
-    return (*reinterpret_cast<OrbitCalc<T>>(g_cur_fractal_specific->orbitcalc))(x, y, z);
+    return (*reinterpret_cast<OrbitCalc<T>>(g_cur_fractal_specific->orbit_calc))(x, y, z);
 }
 
 template <typename T>
@@ -1378,7 +1378,7 @@ int inverse_julia_per_image()
             free_queue();
             return -1;
         }
-        color = g_cur_fractal_specific->orbitcalc();
+        color = g_cur_fractal_specific->orbit_calc();
         g_old_z = g_new_z;
     }
     free_queue();
@@ -2179,9 +2179,9 @@ int setup_orbits_to_screen(Affine *scrn_cnvt)
 
 int plot_orbits2d_setup()
 {
-    if (g_cur_fractal_specific->isinteger != 0)
+    if (g_cur_fractal_specific->is_integer != 0)
     {
-        const FractalType tofloat = g_cur_fractal_specific->tofloat;
+        const FractalType tofloat = g_cur_fractal_specific->to_float;
         if (tofloat == FractalType::NO_FRACTAL)
         {
             return -1;

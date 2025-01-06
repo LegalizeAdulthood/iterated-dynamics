@@ -442,7 +442,7 @@ bool cellular_setup()
     {
         g_cellular_next_screen = false; // initialize flag
     }
-    engine_timer(g_cur_fractal_specific->calctype);
+    engine_timer(g_cur_fractal_specific->calc_type);
     return false;
 }
 

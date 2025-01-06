@@ -349,11 +349,11 @@ bool phoenix_setup()
     {
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal;
         }
     }
     if (g_degree >= 2)
@@ -361,11 +361,11 @@ bool phoenix_setup()
         g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -373,11 +373,11 @@ bool phoenix_setup()
         g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_minus_fractal;
         }
     }
 
@@ -410,11 +410,11 @@ bool phoenix_cplx_setup()
         }
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_fractal_cplx;
+            g_cur_fractal_specific->orbit_calc =  phoenix_fractal_cplx;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal_cplx;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal_cplx;
         }
     }
     if (g_degree >= 2)
@@ -430,11 +430,11 @@ bool phoenix_cplx_setup()
         }
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -450,11 +450,11 @@ bool phoenix_cplx_setup()
         }
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_minus_fractal;
         }
     }
 
@@ -475,11 +475,11 @@ bool mand_phoenix_setup()
     {
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal;
         }
     }
     if (g_degree >= 2)
@@ -487,11 +487,11 @@ bool mand_phoenix_setup()
         g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -499,11 +499,11 @@ bool mand_phoenix_setup()
         g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_minus_fractal;
         }
     }
 
@@ -528,11 +528,11 @@ bool mand_phoenix_cplx_setup()
     {
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_fractal_cplx;
+            g_cur_fractal_specific->orbit_calc =  phoenix_fractal_cplx;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_fractal_cplx;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal_cplx;
         }
     }
     if (g_degree >= 2)
@@ -540,11 +540,11 @@ bool mand_phoenix_cplx_setup()
         g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_plus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_plus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_plus_fractal;
         }
     }
     if (g_degree <= -3)
@@ -552,11 +552,11 @@ bool mand_phoenix_cplx_setup()
         g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
-            g_cur_fractal_specific->orbitcalc =  phoenix_cplx_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_minus_fractal;
         }
         else
         {
-            g_cur_fractal_specific->orbitcalc =  long_phoenix_cplx_minus_fractal;
+            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_minus_fractal;
         }
     }
 
