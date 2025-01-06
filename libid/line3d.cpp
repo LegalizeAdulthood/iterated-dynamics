@@ -159,7 +159,7 @@ RayTraceFormat g_raytrace_format{};  // Flag to generate Ray trace compatible fi
 bool g_brief{};                        // 1 = short ray trace files
 VECTOR g_view{};                       // position of observer for perspective
 
-int line3d(Byte * pixels, unsigned linelen)
+int line3d(Byte * pixels, unsigned line_len)
 {
     int RND;
     float f_water = 0.0F;       // transformed WATERLINE for ray trace files
@@ -212,7 +212,7 @@ int line3d(Byte * pixels, unsigned linelen)
     //**********************************************************************
     if (g_row_count++ == 0)
     {
-        int err = first_time(linelen, v);
+        int err = first_time(line_len, v);
         if (err != 0)
         {
             return err;
@@ -236,14 +236,14 @@ int line3d(Byte * pixels, unsigned linelen)
     // copies pixels buffer to float type fraction buffer for fill purposes
     if (g_potential_16bit)
     {
-        if (set_pixel_buff(pixels, s_fraction.data(), linelen))
+        if (set_pixel_buff(pixels, s_fraction.data(), line_len))
         {
             return 0;
         }
     }
     else if (g_gray_flag)             // convert color numbers to grayscale values
     {
-        for (col = 0; col < (int) linelen; col++)
+        for (col = 0; col < (int) line_len; col++)
         {
             int pal;
             int colornum;
@@ -270,7 +270,7 @@ int line3d(Byte * pixels, unsigned linelen)
     // the effects of 3D transformations. Thanks to Marc Reinig for this idea
     // and code.
     //***********************************************************************
-    lastdot = std::min(g_logical_screen_x_dots - 1, (int) linelen - 1);
+    lastdot = std::min(g_logical_screen_x_dots - 1, (int) line_len - 1);
     if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)
     {
         if (g_haze && g_targa_out)
@@ -315,7 +315,7 @@ int line3d(Byte * pixels, unsigned linelen)
         start_object();
     }
     // PROCESS ROW LOOP BEGINS HERE
-    while (col < (int) linelen)
+    while (col < (int) line_len)
     {
         if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS)
             && (col != lastdot)             // if this is not the last col
@@ -1632,13 +1632,13 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     return false;
 }
 
-bool targa_validate(char const *File_Name)
+bool targa_validate(char const *filename)
 {
     // Attempt to open source file for reading
-    std::FILE *fp = dir_fopen(g_working_dir.c_str(), File_Name, "rb");
+    std::FILE *fp = dir_fopen(g_working_dir.c_str(), filename, "rb");
     if (fp == nullptr)
     {
-        file_error(File_Name, 1);
+        file_error(filename, 1);
         return true;              // Oops, file does not exist
     }
 
@@ -1646,13 +1646,13 @@ bool targa_validate(char const *File_Name)
 
     if (fgetc(fp))               // Make sure this is an unmapped file
     {
-        file_error(File_Name, 4);
+        file_error(filename, 4);
         return true;
     }
 
     if (fgetc(fp) != 2)          // Make sure it is a type 2 file
     {
-        file_error(File_Name, 4);
+        file_error(filename, 4);
         return true;
     }
 
@@ -1672,7 +1672,7 @@ bool targa_validate(char const *File_Name)
     {
         if (fgetc(fp) != (int) elem)
         {
-            file_error(File_Name, 3);
+            file_error(filename, 3);
             return true;
         }
     }
@@ -1687,7 +1687,7 @@ bool targa_validate(char const *File_Name)
     }
     if (s_error == 4)
     {
-        file_error(File_Name, 4);
+        file_error(filename, 4);
         return true;
     }
     std::rewind(fp);
