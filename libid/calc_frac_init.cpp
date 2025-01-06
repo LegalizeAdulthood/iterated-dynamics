@@ -345,15 +345,11 @@ init_restart:
         // ensure min<max and unrotated rectangle
         if (g_x_min > g_x_max)
         {
-            double ftemp = g_x_max;
-            g_x_max = g_x_min;
-            g_x_min = ftemp;
+            std::swap(g_x_min, g_x_max);
         }
         if (g_y_min > g_y_max)
         {
-            double ftemp = g_y_max;
-            g_y_max = g_y_min;
-            g_y_min = ftemp;
+            std::swap(g_y_min, g_y_max);
         }
         g_x_3rd = g_x_min;
         g_y_3rd = g_y_min;
