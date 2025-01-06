@@ -66,15 +66,15 @@ int divide_brot5_bf_per_pixel()
 
 int divide_brot5_bn_fractal()
 {
-    BNComplex bntmpnew, bnnumer, bnc_exp;
+    BNComplex bn_tmp_new, bn_numer, bn_c_exp;
     int saved = save_stack();
 
-    bntmpnew.x = alloc_stack(g_r_length);
-    bntmpnew.y = alloc_stack(g_r_length);
-    bnnumer.x = alloc_stack(g_r_length);
-    bnnumer.y = alloc_stack(g_r_length);
-    bnc_exp.x = alloc_stack(g_bn_length);
-    bnc_exp.y = alloc_stack(g_bn_length);
+    bn_tmp_new.x = alloc_stack(g_r_length);
+    bn_tmp_new.y = alloc_stack(g_r_length);
+    bn_numer.x = alloc_stack(g_r_length);
+    bn_numer.y = alloc_stack(g_r_length);
+    bn_c_exp.x = alloc_stack(g_bn_length);
+    bn_c_exp.y = alloc_stack(g_bn_length);
     bn_t tmp1 = alloc_stack(g_bn_length);
     bn_t tmp2 = alloc_stack(g_r_length);
 
@@ -83,26 +83,26 @@ int divide_brot5_bn_fractal()
 
     /* sqr(z) */
     /* bnnumer.x = g_tmp_sqr_x_bn - g_tmp_sqr_y_bn;   */
-    sub_bn(bnnumer.x, g_tmp_sqr_x_bn + g_shift_factor, g_tmp_sqr_y_bn + g_shift_factor);
+    sub_bn(bn_numer.x, g_tmp_sqr_x_bn + g_shift_factor, g_tmp_sqr_y_bn + g_shift_factor);
 
     /* bnnumer.y = 2 * g_old_z_bn.x * g_old_z_bn.y; */
     mult_bn(tmp2, g_old_z_bn.x, g_old_z_bn.y);
     double_a_bn(tmp2 + g_shift_factor);
-    copy_bn(bnnumer.y, tmp2 + g_shift_factor);
+    copy_bn(bn_numer.y, tmp2 + g_shift_factor);
 
     /* z^(a) */
-    int_to_bn(bnc_exp.x, g_c_exponent);
-    clear_bn(bnc_exp.y);
-    cmplx_pow_bn(&bntmpnew, &g_old_z_bn, &bnc_exp);
+    int_to_bn(bn_c_exp.x, g_c_exponent);
+    clear_bn(bn_c_exp.y);
+    cmplx_pow_bn(&bn_tmp_new, &g_old_z_bn, &bn_c_exp);
     /* then add b */
     float_to_bn(tmp1, g_b_const);
-    add_bn(bntmpnew.x, tmp1, bntmpnew.x + g_shift_factor);
+    add_bn(bn_tmp_new.x, tmp1, bn_tmp_new.x + g_shift_factor);
     /* need to g_shift_factor bntmpnew.y */
-    copy_bn(tmp2, bntmpnew.y + g_shift_factor);
-    copy_bn(bntmpnew.y, tmp2);
+    copy_bn(tmp2, bn_tmp_new.y + g_shift_factor);
+    copy_bn(bn_tmp_new.y, tmp2);
 
     /* sqr(z)/(z^(a)+b) */
-    cmplx_div_bn(&g_new_z_bn, &bnnumer, &bntmpnew);
+    cmplx_div_bn(&g_new_z_bn, &bn_numer, &bn_tmp_new);
 
     add_a_bn(g_new_z_bn.x, g_param_z_bn.x);
     add_a_bn(g_new_z_bn.y, g_param_z_bn.y);
@@ -113,35 +113,35 @@ int divide_brot5_bn_fractal()
 
 int divide_brot5_bf_fractal()
 {
-    BFComplex bftmpnew, bfnumer, bfc_exp;
+    BFComplex bf_tmp_new, bf_numer, bf_c_exp;
     int saved = save_stack();
 
-    bftmpnew.x = alloc_stack(g_r_bf_length + 2);
-    bftmpnew.y = alloc_stack(g_r_bf_length + 2);
-    bfnumer.x = alloc_stack(g_r_bf_length + 2);
-    bfnumer.y = alloc_stack(g_r_bf_length + 2);
-    bfc_exp.x = alloc_stack(g_bf_length + 2);
-    bfc_exp.y = alloc_stack(g_bf_length + 2);
+    bf_tmp_new.x = alloc_stack(g_r_bf_length + 2);
+    bf_tmp_new.y = alloc_stack(g_r_bf_length + 2);
+    bf_numer.x = alloc_stack(g_r_bf_length + 2);
+    bf_numer.y = alloc_stack(g_r_bf_length + 2);
+    bf_c_exp.x = alloc_stack(g_bf_length + 2);
+    bf_c_exp.y = alloc_stack(g_bf_length + 2);
     bf_t tmp1 = alloc_stack(g_bf_length + 2);
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */
-    sub_bf(bfnumer.x, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
+    sub_bf(bf_numer.x, g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
 
     /* bfnumer.y = 2 * g_old_z_bf.x * g_old_z_bf.y; */
-    mult_bf(bfnumer.y, g_old_z_bf.x, g_old_z_bf.y);
-    double_a_bf(bfnumer.y);
+    mult_bf(bf_numer.y, g_old_z_bf.x, g_old_z_bf.y);
+    double_a_bf(bf_numer.y);
 
     /* z^(a) */
-    int_to_bf(bfc_exp.x, g_c_exponent);
-    clear_bf(bfc_exp.y);
-    cmplx_pow_bf(&bftmpnew, &g_old_z_bf, &bfc_exp);
+    int_to_bf(bf_c_exp.x, g_c_exponent);
+    clear_bf(bf_c_exp.y);
+    cmplx_pow_bf(&bf_tmp_new, &g_old_z_bf, &bf_c_exp);
     /* then add b */
     float_to_bf(tmp1, g_b_const);
-    add_a_bf(bftmpnew.x, tmp1);
+    add_a_bf(bf_tmp_new.x, tmp1);
 
     /* sqr(z)/(z^(a)+b) */
-    cmplx_div_bf(&g_new_z_bf, &bfnumer, &bftmpnew);
+    cmplx_div_bf(&g_new_z_bf, &bf_numer, &bf_tmp_new);
 
     add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
     add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
