@@ -22,7 +22,7 @@ inline char par_key(unsigned int x)
    with the 'x' and 'y' parameters
 */
 
-void make_mig(unsigned int xmult, unsigned int ymult)
+void make_mig(unsigned int x_mult, unsigned int y_mult)
 {
     unsigned int xres;
     unsigned int yres;
@@ -48,14 +48,14 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     temp = &g_old_dac_box[0][0];                 // a safe place for our temp data
 
     // process each input image, one at a time
-    for (unsigned ystep = 0U; ystep < ymult; ystep++)
+    for (unsigned ystep = 0U; ystep < y_mult; ystep++)
     {
-        for (unsigned xstep = 0U; xstep < xmult; xstep++)
+        for (unsigned xstep = 0U; xstep < x_mult; xstep++)
         {
             if (xstep == 0 && ystep == 0)          // first time through?
             {
                 std::printf(" \n Generating multi-image GIF file %s using", gifout);
-                std::printf(" %u X and %u Y components\n\n", xmult, ymult);
+                std::printf(" %u X and %u Y components\n\n", x_mult, y_mult);
                 // attempt to create the output file
                 out = open_save_file(gifout, "wb");
                 if (out == nullptr)
@@ -86,8 +86,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             {
                 allxres = xres;             // save the "master" resolution
                 allyres = yres;
-                xtot = xres * xmult;        // adjust the image size
-                ytot = yres * ymult;
+                xtot = xres * x_mult;        // adjust the image size
+                ytot = yres * y_mult;
                 std::memcpy(&temp[6], &xtot, 2);
                 std::memcpy(&temp[8], &ytot, 2);
                 temp[12] = 0; // reserved
@@ -210,7 +210,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     {
                         inputerrorflag = 9;
                     }
-                    if (xstep == xmult-1 && ystep == ymult-1)
+                    if (xstep == x_mult-1 && ystep == y_mult-1)
                     {
                         if (std::fwrite(temp, 2, 1, out) != 1)
                         {
@@ -227,7 +227,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 10;
                         }
-                        if (xstep == xmult-1 && ystep == ymult-1)
+                        if (xstep == x_mult-1 && ystep == y_mult-1)
                         {
                             if (std::fwrite(temp, 1, 1, out) != 1)
                             {
@@ -243,7 +243,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 11;
                         }
-                        if (xstep == xmult-1 && ystep == ymult-1)
+                        if (xstep == x_mult-1 && ystep == y_mult-1)
                         {
                             if (std::fwrite(temp, i, 1, out) != 1)
                             {
@@ -303,9 +303,9 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     // now delete each input image, one at a time
     if (errorflag == 0 && inputerrorflag == 0)
     {
-        for (unsigned ystep = 0U; ystep < ymult; ystep++)
+        for (unsigned ystep = 0U; ystep < y_mult; ystep++)
         {
-            for (unsigned xstep = 0U; xstep < xmult; xstep++)
+            for (unsigned xstep = 0U; xstep < x_mult; xstep++)
             {
                 std::snprintf(gifin, std::size(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
                 std::remove(gifin);
