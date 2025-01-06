@@ -265,25 +265,25 @@ int get_screen_corners()
     {
         g_orbit_corner_min_x = g_x_min;
         g_orbit_corner_max_x = g_x_max;
-        g_orbit_corner_3_x = g_x_3rd;
+        g_orbit_corner_3rd_x = g_x_3rd;
         g_orbit_corner_min_y = g_y_min;
         g_orbit_corner_max_y = g_y_max;
-        g_orbit_corner_3_y = g_y_3rd;
+        g_orbit_corner_3rd_y = g_y_3rd;
     }
 
     double old_x_min = g_orbit_corner_min_x;
     double old_x_max = g_orbit_corner_max_x;
     double old_y_min = g_orbit_corner_min_y;
     double old_y_max = g_orbit_corner_max_y;
-    double old_x_3rd = g_orbit_corner_3_x;
-    double old_y_3rd = g_orbit_corner_3_y;
+    double old_x_3rd = g_orbit_corner_3rd_x;
+    double old_y_3rd = g_orbit_corner_3rd_y;
 
     g_x_min = g_orbit_corner_min_x;
     g_x_max = g_orbit_corner_max_x;
     g_y_min = g_orbit_corner_min_y;
     g_y_max = g_orbit_corner_max_y;
-    g_x_3rd = g_orbit_corner_3_x;
-    g_y_3rd = g_orbit_corner_3_y;
+    g_x_3rd = g_orbit_corner_3rd_x;
+    g_y_3rd = g_orbit_corner_3rd_y;
 
 gsc_loop:
     int use_center_mag = g_use_center_mag ? 1 : 0;
@@ -309,14 +309,14 @@ gsc_loop:
             .comment("Bottom-Right Corner")
             .double_number(x_prompt, g_orbit_corner_max_x)
             .double_number(y_prompt, g_orbit_corner_min_y);
-        if (g_orbit_corner_min_x == g_orbit_corner_3_x && g_orbit_corner_min_y == g_orbit_corner_3_y)
+        if (g_orbit_corner_min_x == g_orbit_corner_3rd_x && g_orbit_corner_min_y == g_orbit_corner_3rd_y)
         {
-            g_orbit_corner_3_y = 0;
-            g_orbit_corner_3_x = g_orbit_corner_3_y;
+            g_orbit_corner_3rd_y = 0;
+            g_orbit_corner_3rd_x = g_orbit_corner_3rd_y;
         }
         builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
-            .double_number(x_prompt, g_orbit_corner_3_x)
-            .double_number(y_prompt, g_orbit_corner_3_y)
+            .double_number(x_prompt, g_orbit_corner_3rd_x)
+            .double_number(y_prompt, g_orbit_corner_3rd_y)
             .comment("Press F7 to switch to \"center-mag\" mode");
     }
     builder.comment("Press F4 to reset to type default values");
@@ -333,8 +333,8 @@ gsc_loop:
         g_orbit_corner_max_x = old_x_max;
         g_orbit_corner_min_y = old_y_min;
         g_orbit_corner_max_y = old_y_max;
-        g_orbit_corner_3_x = old_x_3rd;
-        g_orbit_corner_3_y = old_y_3rd;
+        g_orbit_corner_3rd_x = old_x_3rd;
+        g_orbit_corner_3rd_y = old_y_3rd;
         // restore corners
         g_x_min = save_x_min;
         g_x_max = save_x_max;
@@ -349,17 +349,17 @@ gsc_loop:
     {
         // reset to type defaults
         g_orbit_corner_min_x = g_cur_fractal_specific->x_min;
-        g_orbit_corner_3_x = g_orbit_corner_min_x;
+        g_orbit_corner_3rd_x = g_orbit_corner_min_x;
         g_orbit_corner_max_x = g_cur_fractal_specific->x_max;
         g_orbit_corner_min_y = g_cur_fractal_specific->y_min;
-        g_orbit_corner_3_y = g_orbit_corner_min_y;
+        g_orbit_corner_3rd_y = g_orbit_corner_min_y;
         g_orbit_corner_max_y = g_cur_fractal_specific->y_max;
         g_x_min = g_orbit_corner_min_x;
         g_x_max = g_orbit_corner_max_x;
         g_y_min = g_orbit_corner_min_y;
         g_y_max = g_orbit_corner_max_y;
-        g_x_3rd = g_orbit_corner_3_x;
-        g_y_3rd = g_orbit_corner_3_y;
+        g_x_3rd = g_orbit_corner_3rd_x;
+        g_y_3rd = g_orbit_corner_3rd_y;
         if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
             aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
@@ -369,8 +369,8 @@ gsc_loop:
         g_orbit_corner_max_x = g_x_max;
         g_orbit_corner_min_y = g_y_min;
         g_orbit_corner_max_y = g_y_max;
-        g_orbit_corner_3_x = g_x_min;
-        g_orbit_corner_3_y = g_y_min;
+        g_orbit_corner_3rd_x = g_x_min;
+        g_orbit_corner_3rd_y = g_y_min;
         goto gsc_loop;
     }
 
@@ -405,8 +405,8 @@ gsc_loop:
             g_orbit_corner_max_x = g_x_max;
             g_orbit_corner_min_y = g_y_min;
             g_orbit_corner_max_y = g_y_max;
-            g_orbit_corner_3_x = g_x_3rd;
-            g_orbit_corner_3_y = g_y_3rd;
+            g_orbit_corner_3rd_x = g_x_3rd;
+            g_orbit_corner_3rd_y = g_y_3rd;
         }
     }
     else
@@ -418,12 +418,12 @@ gsc_loop:
         g_orbit_corner_max_x = builder.read_double_number();
         g_orbit_corner_min_y = builder.read_double_number();
         builder.read_comment();
-        g_orbit_corner_3_x = builder.read_double_number();
-        g_orbit_corner_3_y = builder.read_double_number();
-        if (g_orbit_corner_3_x == 0 && g_orbit_corner_3_y == 0)
+        g_orbit_corner_3rd_x = builder.read_double_number();
+        g_orbit_corner_3rd_y = builder.read_double_number();
+        if (g_orbit_corner_3rd_x == 0 && g_orbit_corner_3rd_y == 0)
         {
-            g_orbit_corner_3_x = g_orbit_corner_min_x;
-            g_orbit_corner_3_y = g_orbit_corner_min_y;
+            g_orbit_corner_3rd_x = g_orbit_corner_min_x;
+            g_orbit_corner_3rd_y = g_orbit_corner_min_y;
         }
     }
 
@@ -443,15 +443,15 @@ gsc_loop:
     }
 
     if (!cmp_dbl(old_x_min, g_orbit_corner_min_x) && !cmp_dbl(old_x_max, g_orbit_corner_max_x) && !cmp_dbl(old_y_min, g_orbit_corner_min_y) &&
-            !cmp_dbl(old_y_max, g_orbit_corner_max_y) && !cmp_dbl(old_x_3rd, g_orbit_corner_3_x) && !cmp_dbl(old_y_3rd, g_orbit_corner_3_y))
+            !cmp_dbl(old_y_max, g_orbit_corner_max_y) && !cmp_dbl(old_x_3rd, g_orbit_corner_3rd_x) && !cmp_dbl(old_y_3rd, g_orbit_corner_3rd_y))
     {
         // no change, restore values to avoid drift
         g_orbit_corner_min_x = old_x_min;
         g_orbit_corner_max_x = old_x_max;
         g_orbit_corner_min_y = old_y_min;
         g_orbit_corner_max_y = old_y_max;
-        g_orbit_corner_3_x = old_x_3rd;
-        g_orbit_corner_3_y = old_y_3rd;
+        g_orbit_corner_3rd_x = old_x_3rd;
+        g_orbit_corner_3rd_y = old_y_3rd;
         // restore corners
         g_x_min = save_x_min;
         g_x_max = save_x_max;

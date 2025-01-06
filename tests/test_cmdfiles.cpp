@@ -2118,10 +2118,10 @@ TEST_F(TestParameterCommand, orbitCornersFourValues)
     ValueSaver saved_set_orbit_corners{g_set_orbit_corners, false};
     ValueSaver saved_orbit_corner_min_x{g_orbit_corner_min_x, 999.0};
     ValueSaver saved_orbit_corner_max_x{g_orbit_corner_max_x, 999.0};
-    ValueSaver saved_orbit_corner_3_x{g_orbit_corner_3_x, 999.0};
+    ValueSaver saved_orbit_corner_3_x{g_orbit_corner_3rd_x, 999.0};
     ValueSaver saved_orbit_corner_min_y{g_orbit_corner_min_y, 999.0};
     ValueSaver saved_orbit_corner_max_y{g_orbit_corner_max_y, 999.0};
-    ValueSaver saved_orbit_corner_3_y{g_orbit_corner_3_y, 999.0};
+    ValueSaver saved_orbit_corner_3_y{g_orbit_corner_3rd_y, 999.0};
 
     exec_cmd_arg("orbitcorners=1/2/3/4");
 
@@ -2132,8 +2132,8 @@ TEST_F(TestParameterCommand, orbitCornersFourValues)
     EXPECT_EQ(2.0, g_orbit_corner_max_x);
     EXPECT_EQ(3.0, g_orbit_corner_min_y);
     EXPECT_EQ(4.0, g_orbit_corner_max_y);
-    EXPECT_EQ(1.0, g_orbit_corner_3_x);
-    EXPECT_EQ(3.0, g_orbit_corner_3_y);
+    EXPECT_EQ(1.0, g_orbit_corner_3rd_x);
+    EXPECT_EQ(3.0, g_orbit_corner_3rd_y);
 }
 
 TEST_F(TestParameterCommand, orbitCornersSixValues)
@@ -2141,10 +2141,10 @@ TEST_F(TestParameterCommand, orbitCornersSixValues)
     ValueSaver saved_set_orbit_corners{g_set_orbit_corners, false};
     ValueSaver saved_orbit_corner_min_x{g_orbit_corner_min_x, 999.0};
     ValueSaver saved_orbit_corner_max_x{g_orbit_corner_max_x, 999.0};
-    ValueSaver saved_orbit_corner_3_x{g_orbit_corner_3_x, 999.0};
+    ValueSaver saved_orbit_corner_3_x{g_orbit_corner_3rd_x, 999.0};
     ValueSaver saved_orbit_corner_min_y{g_orbit_corner_min_y, 999.0};
     ValueSaver saved_orbit_corner_max_y{g_orbit_corner_max_y, 999.0};
-    ValueSaver saved_orbit_corner_3_y{g_orbit_corner_3_y, 999.0};
+    ValueSaver saved_orbit_corner_3_y{g_orbit_corner_3rd_y, 999.0};
 
     exec_cmd_arg("orbitcorners=1/2/3/4/5/6");
 
@@ -2155,8 +2155,8 @@ TEST_F(TestParameterCommand, orbitCornersSixValues)
     EXPECT_EQ(2.0, g_orbit_corner_max_x);
     EXPECT_EQ(3.0, g_orbit_corner_min_y);
     EXPECT_EQ(4.0, g_orbit_corner_max_y);
-    EXPECT_EQ(5.0, g_orbit_corner_3_x);
-    EXPECT_EQ(6.0, g_orbit_corner_3_y);
+    EXPECT_EQ(5.0, g_orbit_corner_3rd_x);
+    EXPECT_EQ(6.0, g_orbit_corner_3rd_y);
 }
 
 TEST_F(TestParameterCommand, screenCoordsYes)

@@ -242,64 +242,64 @@ bool equal(const double (&lhs)[N], const double (&rhs)[N])
 bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
 {
     return equal(lhs.info_id, rhs.info_id)                //
-        && lhs.iterationsold == rhs.iterationsold         //
+        && lhs.iterations_old == rhs.iterations_old         //
         && lhs.fractal_type == rhs.fractal_type           //
-        && within_eps(lhs.xmin, rhs.xmin)                 //
-        && within_eps(lhs.xmax, rhs.xmax)                 //
-        && within_eps(lhs.ymin, rhs.ymin)                 //
-        && within_eps(lhs.ymax, rhs.ymax)                 //
-        && within_eps(lhs.creal, rhs.creal)               //
-        && within_eps(lhs.cimag, rhs.cimag)               //
-        && lhs.videomodeax == rhs.videomodeax             //
-        && lhs.videomodebx == rhs.videomodebx             //
-        && lhs.videomodecx == rhs.videomodecx             //
-        && lhs.videomodedx == rhs.videomodedx             //
-        && lhs.dotmode == rhs.dotmode                     //
-        && lhs.xdots == rhs.xdots                         //
-        && lhs.ydots == rhs.ydots                         //
+        && within_eps(lhs.x_min, rhs.x_min)                 //
+        && within_eps(lhs.x_max, rhs.x_max)                 //
+        && within_eps(lhs.y_min, rhs.y_min)                 //
+        && within_eps(lhs.y_max, rhs.y_max)                 //
+        && within_eps(lhs.c_real, rhs.c_real)               //
+        && within_eps(lhs.c_imag, rhs.c_imag)               //
+        && lhs.ax == rhs.ax             //
+        && lhs.bx == rhs.bx             //
+        && lhs.cx == rhs.cx             //
+        && lhs.dx == rhs.dx             //
+        && lhs.dot_mode == rhs.dot_mode                     //
+        && lhs.x_dots == rhs.x_dots                         //
+        && lhs.y_dots == rhs.y_dots                         //
         && lhs.colors == rhs.colors                       //
         && lhs.version == rhs.version                     //
         && within_eps(lhs.param3, rhs.param3)               //
         && within_eps(lhs.param4, rhs.param4)               //
         && equal(lhs.potential, rhs.potential)            //
-        && lhs.rseed == rhs.rseed                         //
-        && lhs.rflag == rhs.rflag                         //
+        && lhs.random_seed == rhs.random_seed                         //
+        && lhs.random_seed_flag == rhs.random_seed_flag                         //
         && lhs.biomorph == rhs.biomorph                   //
         && lhs.inside == rhs.inside                       //
-        && lhs.logmapold == rhs.logmapold                 //
+        && lhs.log_map_old == rhs.log_map_old                 //
         && equal(lhs.invert, rhs.invert)                  //
         && equal(lhs.decomp, rhs.decomp)                  //
         && lhs.symmetry == rhs.symmetry                   //
         && equal(lhs.init3d, rhs.init3d)                  //
-        && lhs.previewfactor == rhs.previewfactor         //
-        && lhs.xtrans == rhs.xtrans                       //
-        && lhs.ytrans == rhs.ytrans                       //
+        && lhs.preview_factor == rhs.preview_factor         //
+        && lhs.x_trans == rhs.x_trans                       //
+        && lhs.y_trans == rhs.y_trans                       //
         && lhs.red_crop_left == rhs.red_crop_left         //
         && lhs.red_crop_right == rhs.red_crop_right       //
         && lhs.blue_crop_left == rhs.blue_crop_left       //
         && lhs.blue_crop_right == rhs.blue_crop_right     //
         && lhs.red_bright == rhs.red_bright               //
         && lhs.blue_bright == rhs.blue_bright             //
-        && lhs.xadjust == rhs.xadjust                     //
-        && lhs.eyeseparation == rhs.eyeseparation         //
-        && lhs.glassestype == rhs.glassestype             //
+        && lhs.x_adjust == rhs.x_adjust                     //
+        && lhs.eye_separation == rhs.eye_separation         //
+        && lhs.glasses_type == rhs.glasses_type             //
         && lhs.outside == rhs.outside                     //
         && within_eps(lhs.x3rd, rhs.x3rd)                 //
         && within_eps(lhs.y3rd, rhs.y3rd)                 //
-        && lhs.stdcalcmode == rhs.stdcalcmode             //
-        && lhs.useinitorbit == rhs.useinitorbit           //
+        && lhs.std_calc_mode == rhs.std_calc_mode             //
+        && lhs.use_init_orbit == rhs.use_init_orbit           //
         && lhs.calc_status == rhs.calc_status             //
         && lhs.tot_extend_len == rhs.tot_extend_len       //
-        && lhs.distestold == rhs.distestold               //
-        && lhs.floatflag == rhs.floatflag                 //
-        && lhs.bailoutold == rhs.bailoutold               //
-        && lhs.calctime == rhs.calctime                   //
-        && equal(lhs.trigndx, rhs.trigndx)                //
-        && lhs.finattract == rhs.finattract               //
-        && equal(lhs.initorbit, rhs.initorbit)            //
+        && lhs.dist_est_old == rhs.dist_est_old               //
+        && lhs.float_flag == rhs.float_flag                 //
+        && lhs.bail_out_old == rhs.bail_out_old               //
+        && lhs.calc_time == rhs.calc_time                   //
+        && equal(lhs.trig_index, rhs.trig_index)                //
+        && lhs.finite_attractor == rhs.finite_attractor               //
+        && equal(lhs.init_orbit, rhs.init_orbit)            //
         && lhs.periodicity == rhs.periodicity             //
         && lhs.pot16bit == rhs.pot16bit                   //
-        && within_eps(lhs.faspectratio, rhs.faspectratio) //
+        && within_eps(lhs.final_aspect_ratio, rhs.final_aspect_ratio) //
         && lhs.system == rhs.system                       //
         && lhs.release == rhs.release                     //
         && lhs.display_3d == rhs.display_3d               //
@@ -309,46 +309,46 @@ bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
         && lhs.randomize == rhs.randomize                 //
         && lhs.rotate_lo == rhs.rotate_lo                 //
         && lhs.rotate_hi == rhs.rotate_hi                 //
-        && lhs.distestwidth == rhs.distestwidth           //
-        && within_eps(lhs.dparm3, rhs.dparm3)             //
-        && within_eps(lhs.dparm4, rhs.dparm4)             //
-        && lhs.fillcolor == rhs.fillcolor                 //
-        && within_eps(lhs.mxmaxfp, rhs.mxmaxfp)           //
-        && within_eps(lhs.mxminfp, rhs.mxminfp)           //
-        && within_eps(lhs.mymaxfp, rhs.mymaxfp)           //
-        && within_eps(lhs.myminfp, rhs.myminfp)           //
-        && lhs.zdots == rhs.zdots                         //
-        && within_eps(lhs.originfp, rhs.originfp)         //
-        && within_eps(lhs.depthfp, rhs.depthfp)           //
-        && within_eps(lhs.heightfp, rhs.heightfp)         //
-        && within_eps(lhs.widthfp, rhs.widthfp)           //
-        && within_eps(lhs.distfp, rhs.distfp)             //
-        && within_eps(lhs.eyesfp, rhs.eyesfp)             //
-        && lhs.orbittype == rhs.orbittype                 //
-        && lhs.juli3Dmode == rhs.juli3Dmode               //
-        && lhs.maxfn == rhs.maxfn                         //
-        && lhs.inversejulia == rhs.inversejulia           //
-        && within_eps(lhs.dparm5, rhs.dparm5)             //
-        && within_eps(lhs.dparm6, rhs.dparm6)             //
-        && within_eps(lhs.dparm7, rhs.dparm7)             //
-        && within_eps(lhs.dparm8, rhs.dparm8)             //
-        && within_eps(lhs.dparm9, rhs.dparm9)             //
-        && within_eps(lhs.dparm10, rhs.dparm10)           //
-        && lhs.bailout == rhs.bailout                     //
-        && lhs.bailoutest == rhs.bailoutest               //
+        && lhs.dist_est_width == rhs.dist_est_width           //
+        && within_eps(lhs.d_param3, rhs.d_param3)             //
+        && within_eps(lhs.d_param4, rhs.d_param4)             //
+        && lhs.fill_color == rhs.fill_color                 //
+        && within_eps(lhs.julibrot_x_max, rhs.julibrot_x_max)           //
+        && within_eps(lhs.julibrot_x_min, rhs.julibrot_x_min)           //
+        && within_eps(lhs.julibrot_y_max, rhs.julibrot_y_max)           //
+        && within_eps(lhs.julibrot_y_min, rhs.julibrot_y_min)           //
+        && lhs.julibrot_z_dots == rhs.julibrot_z_dots                         //
+        && within_eps(lhs.julibrot_origin_fp, rhs.julibrot_origin_fp)         //
+        && within_eps(lhs.julibrot_depth_fp, rhs.julibrot_depth_fp)           //
+        && within_eps(lhs.julibrot_height_fp, rhs.julibrot_height_fp)         //
+        && within_eps(lhs.julibrot_width_fp, rhs.julibrot_width_fp)           //
+        && within_eps(lhs.julibrot_dist_fp, rhs.julibrot_dist_fp)             //
+        && within_eps(lhs.eyes_fp, rhs.eyes_fp)             //
+        && lhs.orbit_type == rhs.orbit_type                 //
+        && lhs.juli3d_mode == rhs.juli3d_mode               //
+        && lhs.max_fn == rhs.max_fn                         //
+        && lhs.inverse_julia == rhs.inverse_julia           //
+        && within_eps(lhs.d_param5, rhs.d_param5)             //
+        && within_eps(lhs.d_param6, rhs.d_param6)             //
+        && within_eps(lhs.d_param7, rhs.d_param7)             //
+        && within_eps(lhs.d_param8, rhs.d_param8)             //
+        && within_eps(lhs.d_param9, rhs.d_param9)             //
+        && within_eps(lhs.d_param10, rhs.d_param10)           //
+        && lhs.bail_out == rhs.bail_out                     //
+        && lhs.bail_out_test == rhs.bail_out_test               //
         && lhs.iterations == rhs.iterations               //
         && lhs.bf_math == rhs.bf_math                     //
         && lhs.g_bf_length == rhs.g_bf_length                   //
-        && lhs.yadjust == rhs.yadjust                     //
+        && lhs.y_adjust == rhs.y_adjust                     //
         && lhs.old_demm_colors == rhs.old_demm_colors     //
-        && lhs.logmap == rhs.logmap                       //
-        && lhs.distest == rhs.distest                     //
-        && equal(lhs.dinvert, rhs.dinvert)                //
-        && lhs.logcalc == rhs.logcalc                     //
-        && lhs.stoppass == rhs.stoppass                   //
+        && lhs.log_map == rhs.log_map                       //
+        && lhs.dist_est == rhs.dist_est                     //
+        && equal(lhs.d_invert, rhs.d_invert)                //
+        && lhs.log_calc == rhs.log_calc                     //
+        && lhs.stop_pass == rhs.stop_pass                   //
         && lhs.quick_calc == rhs.quick_calc               //
-        && within_eps(lhs.closeprox, rhs.closeprox)       //
-        && lhs.nobof == rhs.nobof                         //
+        && within_eps(lhs.close_prox, rhs.close_prox)       //
+        && lhs.no_bof == rhs.no_bof                         //
         && lhs.orbit_interval == rhs.orbit_interval       //
         && lhs.orbit_delay == rhs.orbit_delay             //
         && equal(lhs.math_tol, rhs.math_tol);             //
@@ -368,14 +368,14 @@ bool operator==(const FormulaInfo &lhs, const FormulaInfo &rhs)
 
 bool operator==(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
 {
-    return lhs.oxmin == rhs.oxmin                       //
-        && lhs.oxmax == rhs.oxmax                       //
-        && lhs.oymin == rhs.oymin                       //
-        && lhs.oymax == rhs.oymax                       //
-        && lhs.ox3rd == rhs.ox3rd                       //
-        && lhs.oy3rd == rhs.oy3rd                       //
-        && lhs.keep_scrn_coords == rhs.keep_scrn_coords //
-        && lhs.drawmode == rhs.drawmode;                //
+    return lhs.orbit_corner_min_x == rhs.orbit_corner_min_x                       //
+        && lhs.orbit_corner_max_x == rhs.orbit_corner_max_x                       //
+        && lhs.orbit_corner_min_y == rhs.orbit_corner_min_y                       //
+        && lhs.orbit_corner_max_y == rhs.orbit_corner_max_y                       //
+        && lhs.orbit_corner_3rd_x == rhs.orbit_corner_3rd_x                       //
+        && lhs.orbit_corner_3rd_y == rhs.orbit_corner_3rd_y                       //
+        && lhs.keep_screen_coords == rhs.keep_screen_coords //
+        && lhs.draw_mode == rhs.draw_mode;                //
 }
 
 int read_overlay()      // read overlay/3D files, if reqr'd
@@ -411,7 +411,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         return -1;
     }
 
-    g_max_iterations        = read_info.iterationsold;
+    g_max_iterations        = read_info.iterations_old;
     int const read_fractype = read_info.fractal_type;
     if (read_fractype < 0 || read_fractype >= g_num_fractal_types)
     {
@@ -420,12 +420,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     g_fractal_type = static_cast<FractalType>(read_fractype);
     g_cur_fractal_specific = &g_fractal_specific[read_fractype];
-    g_x_min        = read_info.xmin;
-    g_x_max        = read_info.xmax;
-    g_y_min        = read_info.ymin;
-    g_y_max        = read_info.ymax;
-    g_params[0]     = read_info.creal;
-    g_params[1]     = read_info.cimag;
+    g_x_min        = read_info.x_min;
+    g_x_max        = read_info.x_max;
+    g_y_min        = read_info.y_min;
+    g_y_max        = read_info.y_max;
+    g_params[0]     = read_info.c_real;
+    g_params[1]     = read_info.c_imag;
 
     g_invert = 0;
     if (read_info.version > 0)
@@ -442,10 +442,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_colors = read_info.colors;
         }
         g_potential_flag       = (g_potential_params[0] != 0.0);
-        g_random_seed_flag         = read_info.rflag != 0;
-        g_random_seed         = read_info.rseed;
+        g_random_seed_flag         = read_info.random_seed_flag != 0;
+        g_random_seed         = read_info.random_seed;
         g_inside_color        = read_info.inside;
-        g_log_map_flag       = read_info.logmapold;
+        g_log_map_flag       = read_info.log_map_old;
         g_inversion[0]  = read_info.invert[0];
         g_inversion[1]  = read_info.invert[1];
         g_inversion[2]  = read_info.invert[2];
@@ -487,18 +487,18 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_light_y = read_info.init3d[13];                          // y light vector coordinate
             g_light_z = read_info.init3d[14];                          // z light vector coordinate
             g_light_avg = read_info.init3d[15];                        // number of points to average
-            g_preview_factor   = read_info.previewfactor;
-            g_adjust_3d_x          = read_info.xtrans;
-            g_adjust_3d_y          = read_info.ytrans;
+            g_preview_factor   = read_info.preview_factor;
+            g_adjust_3d_x          = read_info.x_trans;
+            g_adjust_3d_y          = read_info.y_trans;
             g_red_crop_left   = read_info.red_crop_left;
             g_red_crop_right  = read_info.red_crop_right;
             g_blue_crop_left  = read_info.blue_crop_left;
             g_blue_crop_right = read_info.blue_crop_right;
             g_red_bright      = read_info.red_bright;
             g_blue_bright     = read_info.blue_bright;
-            g_converge_x_adjust         = read_info.xadjust;
-            g_eye_separation   = read_info.eyeseparation;
-            g_glasses_type     = read_info.glassestype;
+            g_converge_x_adjust         = read_info.x_adjust;
+            g_eye_separation   = read_info.eye_separation;
+            g_glasses_type     = read_info.glasses_type;
         }
     }
 
@@ -517,25 +517,25 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_x_3rd       = read_info.x3rd;
         g_y_3rd       = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
-        g_user_std_calc_mode = read_info.stdcalcmode;
+        g_user_std_calc_mode = read_info.std_calc_mode;
         g_three_pass = false;
         if (g_user_std_calc_mode == 127)
         {
             g_three_pass = true;
             g_user_std_calc_mode = '3';
         }
-        g_user_distance_estimator_value     = read_info.distestold;
-        g_user_float_flag   = read_info.floatflag != 0;
-        g_bail_out     = read_info.bailoutold;
-        g_calc_time    = read_info.calctime;
-        g_trig_index[0]  = static_cast<TrigFn>(read_info.trigndx[0]);
-        g_trig_index[1]  = static_cast<TrigFn>(read_info.trigndx[1]);
-        g_trig_index[2]  = static_cast<TrigFn>(read_info.trigndx[2]);
-        g_trig_index[3]  = static_cast<TrigFn>(read_info.trigndx[3]);
-        g_finite_attractor  = read_info.finattract != 0;
-        g_init_orbit.x = read_info.initorbit[0];
-        g_init_orbit.y = read_info.initorbit[1];
-        g_use_init_orbit = static_cast<InitOrbitMode>(read_info.useinitorbit);
+        g_user_distance_estimator_value     = read_info.dist_est_old;
+        g_user_float_flag   = read_info.float_flag != 0;
+        g_bail_out     = read_info.bail_out_old;
+        g_calc_time    = read_info.calc_time;
+        g_trig_index[0]  = static_cast<TrigFn>(read_info.trig_index[0]);
+        g_trig_index[1]  = static_cast<TrigFn>(read_info.trig_index[1]);
+        g_trig_index[2]  = static_cast<TrigFn>(read_info.trig_index[2]);
+        g_trig_index[3]  = static_cast<TrigFn>(read_info.trig_index[3]);
+        g_finite_attractor  = read_info.finite_attractor != 0;
+        g_init_orbit.x = read_info.init_orbit[0];
+        g_init_orbit.y = read_info.init_orbit[1];
+        g_use_init_orbit = static_cast<InitOrbitMode>(read_info.use_init_orbit);
         g_user_periodicity_value = read_info.periodicity;
     }
 
@@ -548,7 +548,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_file_x_dots >>= 1;
         }
-        g_file_aspect_ratio = read_info.faspectratio;
+        g_file_aspect_ratio = read_info.final_aspect_ratio;
         if (g_file_aspect_ratio < 0.01)       // fix files produced in early v14.1
         {
             g_file_aspect_ratio = g_screen_aspect;
@@ -572,44 +572,44 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_color_cycle_range_lo         = read_info.rotate_lo;
         g_color_cycle_range_hi         = read_info.rotate_hi;
-        g_distance_estimator_width_factor      = read_info.distestwidth;
+        g_distance_estimator_width_factor      = read_info.dist_est_width;
     }
 
     if (read_info.version > 6)
     {
-        g_params[2]          = read_info.dparm3;
-        g_params[3]          = read_info.dparm4;
+        g_params[2]          = read_info.d_param3;
+        g_params[3]          = read_info.d_param4;
     }
 
     if (read_info.version > 7)
     {
-        g_fill_color         = read_info.fillcolor;
+        g_fill_color         = read_info.fill_color;
     }
 
     if (read_info.version > 8)
     {
-        g_julibrot_x_max   =  read_info.mxmaxfp        ;
-        g_julibrot_x_min   =  read_info.mxminfp        ;
-        g_julibrot_y_max   =  read_info.mymaxfp        ;
-        g_julibrot_y_min   =  read_info.myminfp        ;
-        g_julibrot_z_dots     =  read_info.zdots          ;
-        g_julibrot_origin_fp  =  read_info.originfp       ;
-        g_julibrot_depth_fp   =  read_info.depthfp        ;
-        g_julibrot_height_fp  =  read_info.heightfp       ;
-        g_julibrot_width_fp   =  read_info.widthfp        ;
-        g_julibrot_dist_fp    =  read_info.distfp         ;
-        g_eyes_fp    =  read_info.eyesfp         ;
-        g_new_orbit_type = static_cast<FractalType>(read_info.orbittype);
-        g_julibrot_3d_mode   = static_cast<Julibrot3DMode>(read_info.juli3Dmode);
-        g_max_function    = (char)read_info.maxfn          ;
-        g_major_method = static_cast<Major>(read_info.inversejulia >> 8);
-        g_inverse_julia_minor_method = static_cast<Minor>(read_info.inversejulia & 255);
-        g_params[4] = read_info.dparm5;
-        g_params[5] = read_info.dparm6;
-        g_params[6] = read_info.dparm7;
-        g_params[7] = read_info.dparm8;
-        g_params[8] = read_info.dparm9;
-        g_params[9] = read_info.dparm10;
+        g_julibrot_x_max   =  read_info.julibrot_x_max        ;
+        g_julibrot_x_min   =  read_info.julibrot_x_min        ;
+        g_julibrot_y_max   =  read_info.julibrot_y_max        ;
+        g_julibrot_y_min   =  read_info.julibrot_y_min        ;
+        g_julibrot_z_dots     =  read_info.julibrot_z_dots          ;
+        g_julibrot_origin_fp  =  read_info.julibrot_origin_fp       ;
+        g_julibrot_depth_fp   =  read_info.julibrot_depth_fp        ;
+        g_julibrot_height_fp  =  read_info.julibrot_height_fp       ;
+        g_julibrot_width_fp   =  read_info.julibrot_width_fp        ;
+        g_julibrot_dist_fp    =  read_info.julibrot_dist_fp         ;
+        g_eyes_fp    =  read_info.eyes_fp         ;
+        g_new_orbit_type = static_cast<FractalType>(read_info.orbit_type);
+        g_julibrot_3d_mode   = static_cast<Julibrot3DMode>(read_info.juli3d_mode);
+        g_max_function    = (char)read_info.max_fn          ;
+        g_major_method = static_cast<Major>(read_info.inverse_julia >> 8);
+        g_inverse_julia_minor_method = static_cast<Minor>(read_info.inverse_julia & 255);
+        g_params[4] = read_info.d_param5;
+        g_params[5] = read_info.d_param6;
+        g_params[6] = read_info.d_param7;
+        g_params[7] = read_info.d_param8;
+        g_params[8] = read_info.d_param9;
+        g_params[9] = read_info.d_param10;
     }
 
     if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0?
@@ -662,8 +662,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 9)
     {
         // post-version 18.22
-        g_bail_out     = read_info.bailout; // use long bailout
-        g_bail_out_test = static_cast<Bailout>(read_info.bailoutest);
+        g_bail_out     = read_info.bail_out; // use long bailout
+        g_bail_out_test = static_cast<Bailout>(read_info.bail_out_test);
     }
     else
     {
@@ -681,23 +681,23 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 10) // post-version 19.20
     {
-        g_log_map_flag = read_info.logmap;
-        g_user_distance_estimator_value = read_info.distest;
+        g_log_map_flag = read_info.log_map;
+        g_user_distance_estimator_value = read_info.dist_est;
     }
 
     if (read_info.version > 11) // post-version 19.20, inversion fix
     {
-        g_inversion[0] = read_info.dinvert[0];
-        g_inversion[1] = read_info.dinvert[1];
-        g_inversion[2] = read_info.dinvert[2];
-        g_log_map_fly_calculate = read_info.logcalc;
-        g_stop_pass     = read_info.stoppass;
+        g_inversion[0] = read_info.d_invert[0];
+        g_inversion[1] = read_info.d_invert[1];
+        g_inversion[2] = read_info.d_invert[2];
+        g_log_map_fly_calculate = read_info.log_calc;
+        g_stop_pass     = read_info.stop_pass;
     }
 
     if (read_info.version > 12) // post-version 19.60
     {
         g_quick_calc   = read_info.quick_calc != 0;
-        g_close_proximity    = read_info.closeprox;
+        g_close_proximity    = read_info.close_prox;
         if (g_fractal_type == FractalType::POPCORN_FP || g_fractal_type == FractalType::POPCORN_L ||
                 g_fractal_type == FractalType::POPCORN_JUL_FP || g_fractal_type == FractalType::POPCORN_JUL_L ||
                 g_fractal_type == FractalType::LATOO)
@@ -709,7 +709,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_bof_match_book_images = true;
     if (read_info.version > 13) // post-version 20.1.2
     {
-        g_bof_match_book_images = read_info.nobof == 0;
+        g_bof_match_book_images = read_info.no_bof == 0;
     }
 
     // if (read_info.version > 14)  post-version 20.1.12
@@ -946,8 +946,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_orbit_corner_max_x       = blk_7_info.ox_max;
         g_orbit_corner_min_y       = blk_7_info.oy_min;
         g_orbit_corner_max_y       = blk_7_info.oy_max;
-        g_orbit_corner_3_x       = blk_7_info.ox_3rd;
-        g_orbit_corner_3_y       = blk_7_info.oy_3rd;
+        g_orbit_corner_3rd_x       = blk_7_info.ox_3rd;
+        g_orbit_corner_3rd_y       = blk_7_info.oy_3rd;
         g_keep_screen_coords = blk_7_info.keep_screen_coords != 0;
         g_draw_mode    = blk_7_info.draw_mode;
         if (g_keep_screen_coords)
@@ -1251,14 +1251,14 @@ static int find_fractal_info(const std::string &gif_file, //
                     decode_orbits_info(&oload_info, 1);
                     blk_7_info->length = data_len;
                     blk_7_info->got_data = true;
-                    blk_7_info->ox_min           = oload_info.oxmin;
-                    blk_7_info->ox_max           = oload_info.oxmax;
-                    blk_7_info->oy_min           = oload_info.oymin;
-                    blk_7_info->oy_max           = oload_info.oymax;
-                    blk_7_info->ox_3rd           = oload_info.ox3rd;
-                    blk_7_info->oy_3rd           = oload_info.oy3rd;
-                    blk_7_info->keep_screen_coords= oload_info.keep_scrn_coords;
-                    blk_7_info->draw_mode        = oload_info.drawmode;
+                    blk_7_info->ox_min           = oload_info.orbit_corner_min_x;
+                    blk_7_info->ox_max           = oload_info.orbit_corner_max_x;
+                    blk_7_info->oy_min           = oload_info.orbit_corner_min_y;
+                    blk_7_info->oy_max           = oload_info.orbit_corner_max_y;
+                    blk_7_info->ox_3rd           = oload_info.orbit_corner_3rd_x;
+                    blk_7_info->oy_3rd           = oload_info.orbit_corner_3rd_y;
+                    blk_7_info->keep_screen_coords= oload_info.keep_screen_coords;
+                    blk_7_info->draw_mode        = oload_info.draw_mode;
                     break;
                 default:
                     skip_ext_blk(&block_len, &data_len);
@@ -1273,23 +1273,23 @@ static int find_fractal_info(const std::string &gif_file, //
 
     std::strcpy(info->info_id, "GIFFILE");
     info->iterations = 150;
-    info->iterationsold = 150;
+    info->iterations_old = 150;
     info->fractal_type = static_cast<short>(FractalType::PLASMA);
-    info->xmin = -1;
-    info->xmax = 1;
-    info->ymin = -1;
-    info->ymax = 1;
+    info->x_min = -1;
+    info->x_max = 1;
+    info->y_min = -1;
+    info->y_max = 1;
     info->x3rd = -1;
     info->y3rd = -1;
-    info->creal = 0;
-    info->cimag = 0;
-    info->videomodeax = 255;
-    info->videomodebx = 255;
-    info->videomodecx = 255;
-    info->videomodedx = 255;
-    info->dotmode = 0;
-    info->xdots = (short)g_file_x_dots;
-    info->ydots = (short)g_file_y_dots;
+    info->c_real = 0;
+    info->c_imag = 0;
+    info->ax = 255;
+    info->bx = 255;
+    info->cx = 255;
+    info->dx = 255;
+    info->dot_mode = 0;
+    info->x_dots = (short)g_file_x_dots;
+    info->y_dots = (short)g_file_y_dots;
     info->colors = (short)g_file_colors;
     info->version = 0; // this forces lots more init at calling end too
 
@@ -1417,11 +1417,11 @@ static void backwards_compat(FractalInfo *info)
         break;
     case FractalType::DEM_M:
         g_fractal_type = FractalType::MANDEL_FP;
-        g_user_distance_estimator_value = (info->ydots - 1) * 2;
+        g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
     case FractalType::DEM_J:
         g_fractal_type = FractalType::JULIA_FP;
-        g_user_distance_estimator_value = (info->ydots - 1) * 2;
+        g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
     case FractalType::MANDEL_LAMBDA:
         g_use_init_orbit = InitOrbitMode::PIXEL;
@@ -2041,8 +2041,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, info->xmin);
-            float_to_bf(bt_y, info->ymax);
+            float_to_bf(bt_x, info->x_min);
+            float_to_bf(bt_y, info->y_max);
         }
         else
         {
@@ -2053,8 +2053,8 @@ static bool is_visible_window(
     }
     else
     {
-        tl.x = info->xmin;
-        tl.y = info->ymax;
+        tl.x = info->x_min;
+        tl.y = info->y_max;
         transform(&tl);
     }
     list->itl.x = (int) std::lround(tl.x);
@@ -2063,8 +2063,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
-            float_to_bf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
+            float_to_bf(bt_x, (info->x_max)-(info->x3rd-info->x_min));
+            float_to_bf(bt_y, (info->y_max)+(info->y_min-info->y3rd));
         }
         else
         {
@@ -2077,8 +2077,8 @@ static bool is_visible_window(
     }
     else
     {
-        tr.x = (info->xmax)-(info->x3rd-info->xmin);
-        tr.y = (info->ymax)+(info->ymin-info->y3rd);
+        tr.x = (info->x_max)-(info->x3rd-info->x_min);
+        tr.y = (info->y_max)+(info->y_min-info->y3rd);
         transform(&tr);
     }
     list->itr.x = (int) std::lround(tr.x);
@@ -2109,8 +2109,8 @@ static bool is_visible_window(
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, info->xmax);
-            float_to_bf(bt_y, info->ymin);
+            float_to_bf(bt_x, info->x_max);
+            float_to_bf(bt_y, info->y_min);
         }
         else
         {
@@ -2121,8 +2121,8 @@ static bool is_visible_window(
     }
     else
     {
-        br.x = info->xmax;
-        br.y = info->ymin;
+        br.x = info->x_max;
+        br.y = info->y_min;
         transform(&br);
     }
     list->ibr.x = (int) std::lround(br.x);
@@ -2184,8 +2184,8 @@ static bool params_ok(FractalInfo const *info)
 
     if (info->version > 6)
     {
-        tmpparm3 = info->dparm3;
-        tmpparm4 = info->dparm4;
+        tmpparm3 = info->d_param3;
+        tmpparm4 = info->d_param4;
     }
     else
     {
@@ -2196,12 +2196,12 @@ static bool params_ok(FractalInfo const *info)
     }
     if (info->version > 8)
     {
-        tmpparm5 = info->dparm5;
-        tmpparm6 = info->dparm6;
-        tmpparm7 = info->dparm7;
-        tmpparm8 = info->dparm8;
-        tmpparm9 = info->dparm9;
-        tmpparm10 = info->dparm10;
+        tmpparm5 = info->d_param5;
+        tmpparm6 = info->d_param6;
+        tmpparm7 = info->d_param7;
+        tmpparm8 = info->d_param8;
+        tmpparm9 = info->d_param9;
+        tmpparm10 = info->d_param10;
     }
     else
     {
@@ -2213,8 +2213,8 @@ static bool params_ok(FractalInfo const *info)
         tmpparm10 = 0.0;
     }
     // parameters are in range?
-    return std::fabs(info->creal - g_params[0]) < MIN_DIF //
-        && std::fabs(info->cimag - g_params[1]) < MIN_DIF //
+    return std::fabs(info->c_real - g_params[0]) < MIN_DIF //
+        && std::fabs(info->c_imag - g_params[1]) < MIN_DIF //
         && std::fabs(tmpparm3 - g_params[2]) < MIN_DIF    //
         && std::fabs(tmpparm4 - g_params[3]) < MIN_DIF    //
         && std::fabs(tmpparm5 - g_params[4]) < MIN_DIF    //
@@ -2231,7 +2231,7 @@ static bool function_ok(FractalInfo const *info, int numfn)
     int mzmatch = 0;
     for (int i = 0; i < numfn; i++)
     {
-        if (static_cast<TrigFn>(info->trigndx[i]) != g_trig_index[i])
+        if (static_cast<TrigFn>(info->trig_index[i]) != g_trig_index[i])
         {
             mzmatch++;
         }

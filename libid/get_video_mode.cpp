@@ -172,8 +172,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     auto it = std::find_if(begin, end,
         [=](const VideoInfo &mode)
         {
-            return info->xdots == mode.xdots    //
-                && info->ydots == mode.ydots    //
+            return info->x_dots == mode.xdots    //
+                && info->y_dots == mode.ydots    //
                 && g_file_colors == mode.colors //
                 && mode.driver != nullptr       //
                 && !mode.driver->is_disk();
@@ -183,8 +183,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         it = std::find_if(begin, end,
             [=](const VideoInfo &mode)
             {
-                return info->xdots == mode.xdots //
-                    && info->ydots == mode.ydots //
+                return info->x_dots == mode.xdots //
+                    && info->y_dots == mode.ydots //
                     && g_file_colors == mode.colors;
             });
     }
@@ -213,11 +213,11 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         {
             tmp_flags |= VI_NO_KEY;
         }
-        if (info->xdots > g_video_entry.xdots || info->ydots > g_video_entry.ydots)
+        if (info->x_dots > g_video_entry.xdots || info->y_dots > g_video_entry.ydots)
         {
             tmp_flags |= VI_SCREEN_SMALLER;
         }
-        else if (info->xdots < g_video_entry.xdots || info->ydots < g_video_entry.ydots)
+        else if (info->x_dots < g_video_entry.xdots || info->y_dots < g_video_entry.ydots)
         {
             tmp_flags |= VI_SCREEN_BIGGER;
         }

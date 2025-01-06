@@ -224,64 +224,64 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
 {
     return str << "{ "                                                       //
                << R"("info_id": ")" << trim(value.info_id) << '"'            //
-               << R"(, "iterationsold": )" << value.iterationsold            //
+               << R"(, "iterationsold": )" << value.iterations_old            //
                << R"(, "fractal_type": )" << value.fractal_type              //
-               << R"(, "xmin": )" << value.xmin                              //
-               << R"(, "xmax": )" << value.xmax                              //
-               << R"(, "ymin": )" << value.ymin                              //
-               << R"(, "ymax": )" << value.ymax                              //
-               << R"(, "creal": )" << value.creal                            //
-               << R"(, "cimag": )" << value.cimag                            //
-               << R"(, "videomodeax": )" << value.videomodeax                //
-               << R"(, "videomodebx": )" << value.videomodebx                //
-               << R"(, "videomodecx": )" << value.videomodecx                //
-               << R"(, "videomodedx": )" << value.videomodedx                //
-               << R"(, "dotmode": )" << value.dotmode                        //
-               << R"(, "xdots": )" << value.xdots                            //
-               << R"(, "ydots": )" << value.ydots                            //
+               << R"(, "xmin": )" << value.x_min                              //
+               << R"(, "xmax": )" << value.x_max                              //
+               << R"(, "ymin": )" << value.y_min                              //
+               << R"(, "ymax": )" << value.y_max                              //
+               << R"(, "creal": )" << value.c_real                            //
+               << R"(, "cimag": )" << value.c_imag                            //
+               << R"(, "videomodeax": )" << value.ax                //
+               << R"(, "videomodebx": )" << value.bx                //
+               << R"(, "videomodecx": )" << value.cx                //
+               << R"(, "videomodedx": )" << value.dx                //
+               << R"(, "dotmode": )" << value.dot_mode                        //
+               << R"(, "xdots": )" << value.x_dots                            //
+               << R"(, "ydots": )" << value.y_dots                            //
                << R"(, "colors": )" << value.colors                          //
                << R"(, "version": )" << value.version                        //
                << R"(, "parm3": )" << value.param3                            //
                << R"(, "parm4": )" << value.param4                            //
                << R"(, "potential": )" << ArrayPrinter(value.potential)     //
-               << R"(, "rseed": )" << value.rseed                            //
-               << R"(, "rflag": )" << value.rflag                            //
+               << R"(, "rseed": )" << value.random_seed                            //
+               << R"(, "rflag": )" << value.random_seed_flag                            //
                << R"(, "biomorph": )" << value.biomorph                      //
                << R"(, "inside": )" << value.inside                          //
-               << R"(, "logmapold": )" << value.logmapold                    //
+               << R"(, "logmapold": )" << value.log_map_old                    //
                << R"(, "invert": )" << ArrayPrinter(value.invert)           //
                << R"(, "decomp": )" << ArrayPrinter(value.decomp)           //
                << R"(, "symmetry": )" << value.symmetry                      //
                << R"(, "init3d": )" << ArrayPrinter(value.init3d)           //
-               << R"(, "previewfactor": )" << value.previewfactor            //
-               << R"(, "xtrans": )" << value.xtrans                          //
-               << R"(, "ytrans": )" << value.ytrans                          //
+               << R"(, "previewfactor": )" << value.preview_factor            //
+               << R"(, "xtrans": )" << value.x_trans                          //
+               << R"(, "ytrans": )" << value.y_trans                          //
                << R"(, "red_crop_left": )" << value.red_crop_left            //
                << R"(, "red_crop_right": )" << value.red_crop_right          //
                << R"(, "blue_crop_left": )" << value.blue_crop_left          //
                << R"(, "blue_crop_right": )" << value.blue_crop_right        //
                << R"(, "red_bright": )" << value.red_bright                  //
                << R"(, "blue_bright": )" << value.blue_bright                //
-               << R"(, "xadjust": )" << value.xadjust                        //
-               << R"(, "eyeseparation": )" << value.eyeseparation            //
-               << R"(, "glassestype": )" << value.glassestype                //
+               << R"(, "xadjust": )" << value.x_adjust                        //
+               << R"(, "eyeseparation": )" << value.eye_separation            //
+               << R"(, "glassestype": )" << value.glasses_type                //
                << R"(, "outside": )" << value.outside                        //
                << R"(, "x3rd": )" << value.x3rd                              //
                << R"(, "y3rd": )" << value.y3rd                              //
-               << R"(, "stdcalcmode": )" << int(value.stdcalcmode)           //
-               << R"(, "useinitorbit": )" << int(value.useinitorbit)         //
+               << R"(, "stdcalcmode": )" << int(value.std_calc_mode)           //
+               << R"(, "useinitorbit": )" << int(value.use_init_orbit)         //
                << R"(, "calc_status": )" << value.calc_status                //
                << R"(, "tot_extend_len": )" << value.tot_extend_len          //
-               << R"(, "distestold": )" << value.distestold                  //
-               << R"(, "floatflag": )" << value.floatflag                    //
-               << R"(, "bailoutold": )" << value.bailoutold                  //
-               << R"(, "calctime": )" << value.calctime                      //
-               << R"(, "trigndx": )" << ArrayPrinter(value.trigndx)         //
-               << R"(, "finattract": )" << value.finattract                  //
-               << R"(, "initorbit": )" << ArrayPrinter(value.initorbit)     //
+               << R"(, "distestold": )" << value.dist_est_old                  //
+               << R"(, "floatflag": )" << value.float_flag                    //
+               << R"(, "bailoutold": )" << value.bail_out_old                  //
+               << R"(, "calctime": )" << value.calc_time                      //
+               << R"(, "trigndx": )" << ArrayPrinter(value.trig_index)         //
+               << R"(, "finattract": )" << value.finite_attractor                  //
+               << R"(, "initorbit": )" << ArrayPrinter(value.init_orbit)     //
                << R"(, "periodicity": )" << value.periodicity                //
                << R"(, "pot16bit": )" << value.pot16bit                      //
-               << R"(, "faspectratio": )" << value.faspectratio              //
+               << R"(, "faspectratio": )" << value.final_aspect_ratio              //
                << R"(, "system": )" << value.system                          //
                << R"(, "release": )" << value.release                        //
                << R"(, "display_3d": )" << value.display_3d                  //
@@ -291,46 +291,46 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "randomize": )" << value.randomize                    //
                << R"(, "rotate_lo": )" << value.rotate_lo                    //
                << R"(, "rotate_hi": )" << value.rotate_hi                    //
-               << R"(, "distestwidth": )" << value.distestwidth              //
-               << R"(, "dparm3": )" << value.dparm3                          //
-               << R"(, "dparm4": )" << value.dparm4                          //
-               << R"(, "fillcolor": )" << value.fillcolor                    //
-               << R"(, "mxmaxfp": )" << value.mxmaxfp                        //
-               << R"(, "mxminfp": )" << value.mxminfp                        //
-               << R"(, "mymaxfp": )" << value.mymaxfp                        //
-               << R"(, "myminfp": )" << value.myminfp                        //
-               << R"(, "zdots": )" << value.zdots                            //
-               << R"(, "originfp": )" << value.originfp                      //
-               << R"(, "depthfp": )" << value.depthfp                        //
-               << R"(, "heightfp": )" << value.heightfp                      //
-               << R"(, "widthfp": )" << value.widthfp                        //
-               << R"(, "distfp": )" << value.distfp                          //
-               << R"(, "eyesfp": )" << value.eyesfp                          //
-               << R"(, "orbittype": )" << value.orbittype                    //
-               << R"(, "juli3Dmode": )" << value.juli3Dmode                  //
-               << R"(, "maxfn": )" << value.maxfn                            //
-               << R"(, "inversejulia": )" << value.inversejulia              //
-               << R"(, "dparm5": )" << value.dparm5                          //
-               << R"(, "dparm6": )" << value.dparm6                          //
-               << R"(, "dparm7": )" << value.dparm7                          //
-               << R"(, "dparm8": )" << value.dparm8                          //
-               << R"(, "dparm9": )" << value.dparm9                          //
-               << R"(, "dparm10": )" << value.dparm10                        //
-               << R"(, "bailout": )" << value.bailout                        //
-               << R"(, "bailoutest": )" << value.bailoutest                  //
+               << R"(, "distestwidth": )" << value.dist_est_width              //
+               << R"(, "dparm3": )" << value.d_param3                          //
+               << R"(, "dparm4": )" << value.d_param4                          //
+               << R"(, "fillcolor": )" << value.fill_color                    //
+               << R"(, "mxmaxfp": )" << value.julibrot_x_max                        //
+               << R"(, "mxminfp": )" << value.julibrot_x_min                        //
+               << R"(, "mymaxfp": )" << value.julibrot_y_max                        //
+               << R"(, "myminfp": )" << value.julibrot_y_min                        //
+               << R"(, "zdots": )" << value.julibrot_z_dots                            //
+               << R"(, "originfp": )" << value.julibrot_origin_fp                      //
+               << R"(, "depthfp": )" << value.julibrot_depth_fp                        //
+               << R"(, "heightfp": )" << value.julibrot_height_fp                      //
+               << R"(, "widthfp": )" << value.julibrot_width_fp                        //
+               << R"(, "distfp": )" << value.julibrot_dist_fp                          //
+               << R"(, "eyesfp": )" << value.eyes_fp                          //
+               << R"(, "orbittype": )" << value.orbit_type                    //
+               << R"(, "juli3Dmode": )" << value.juli3d_mode                  //
+               << R"(, "maxfn": )" << value.max_fn                            //
+               << R"(, "inversejulia": )" << value.inverse_julia              //
+               << R"(, "dparm5": )" << value.d_param5                          //
+               << R"(, "dparm6": )" << value.d_param6                          //
+               << R"(, "dparm7": )" << value.d_param7                          //
+               << R"(, "dparm8": )" << value.d_param8                          //
+               << R"(, "dparm9": )" << value.d_param9                          //
+               << R"(, "dparm10": )" << value.d_param10                        //
+               << R"(, "bailout": )" << value.bail_out                        //
+               << R"(, "bailoutest": )" << value.bail_out_test                  //
                << R"(, "iterations": )" << value.iterations                  //
                << R"(, "bf_math": )" << value.bf_math                        //
                << R"(, "g_bf_length": )" << value.g_bf_length                      //
-               << R"(, "yadjust": )" << value.yadjust                        //
+               << R"(, "yadjust": )" << value.y_adjust                        //
                << R"(, "old_demm_colors": )" << value.old_demm_colors        //
-               << R"(, "logmap": )" << value.logmap                          //
-               << R"(, "distest": )" << value.distest                        //
-               << R"(, "dinvert": )" << ArrayPrinter(value.dinvert)         //
-               << R"(, "logcalc": )" << value.logcalc                        //
-               << R"(, "stoppass": )" << value.stoppass                      //
+               << R"(, "logmap": )" << value.log_map                          //
+               << R"(, "distest": )" << value.dist_est                        //
+               << R"(, "dinvert": )" << ArrayPrinter(value.d_invert)         //
+               << R"(, "logcalc": )" << value.log_calc                        //
+               << R"(, "stoppass": )" << value.stop_pass                      //
                << R"(, "quick_calc": )" << value.quick_calc                  //
-               << R"(, "closeprox": )" << value.closeprox                    //
-               << R"(, "nobof": )" << value.nobof                            //
+               << R"(, "closeprox": )" << value.close_prox                    //
+               << R"(, "nobof": )" << value.no_bof                            //
                << R"(, "orbit_interval": )" << value.orbit_interval          //
                << R"(, "orbit_delay": )" << value.orbit_delay                //
                << R"(, "math_tol": )" << ArrayPrinter(value.math_tol)       //
@@ -409,14 +409,14 @@ std::ostream &operator<<(std::ostream&str, const EvolutionInfo &value)
 std::ostream &operator<<(std::ostream &str, const OrbitsInfo &value)
 {
     return str                                                                            //
-        << R"({ "oxmin": )" << value.oxmin                                                //
-        << R"( "oxmax": )" << value.oxmax                                                 //
-        << R"( "oymin": )" << value.oymin                                                 //
-        << R"( "oymax": )" << value.oymax                                                 //
-        << R"( "ox3rd": )" << value.ox3rd                                                 //
-        << R"( "oy3rd": )" << value.oy3rd                                                 //
-        << R"( "keep_scrn_coords": )" << (value.keep_scrn_coords != 0 ? "true" : "false") //
-        << R"( "drawmode": ")" << value.drawmode << '"'                                   //
+        << R"({ "oxmin": )" << value.orbit_corner_min_x                                                //
+        << R"( "oxmax": )" << value.orbit_corner_max_x                                                 //
+        << R"( "oymin": )" << value.orbit_corner_min_y                                                 //
+        << R"( "oymax": )" << value.orbit_corner_max_y                                                 //
+        << R"( "ox3rd": )" << value.orbit_corner_3rd_x                                                 //
+        << R"( "oy3rd": )" << value.orbit_corner_3rd_y                                                 //
+        << R"( "keep_scrn_coords": )" << (value.keep_screen_coords != 0 ? "true" : "false") //
+        << R"( "drawmode": ")" << value.draw_mode << '"'                                   //
         << " }";                                                                          //
 }
 
@@ -521,21 +521,21 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     const FractalInfo info{get_fractal_info(m_gif)};
 
     EXPECT_EQ("Fractal", trim(info.info_id));
-    EXPECT_EQ(150, info.iterationsold);
+    EXPECT_EQ(150, info.iterations_old);
     EXPECT_EQ(+FractalType::MANDEL, info.fractal_type);
-    EXPECT_NEAR(-2.5, info.xmin, eps);
-    EXPECT_NEAR(1.5, info.xmax, eps);
-    EXPECT_NEAR(-1.5, info.ymin, eps);
-    EXPECT_NEAR(1.5, info.ymax, eps);
-    EXPECT_NEAR(0.0, info.creal, eps);
-    EXPECT_NEAR(0.0, info.cimag, eps);
-    EXPECT_EQ(0, info.videomodeax);
-    EXPECT_EQ(0, info.videomodebx);
-    EXPECT_EQ(0, info.videomodecx);
-    EXPECT_EQ(0, info.videomodedx);
-    EXPECT_EQ(27, info.dotmode);
-    EXPECT_EQ(640, info.xdots);
-    EXPECT_EQ(480, info.ydots);
+    EXPECT_NEAR(-2.5, info.x_min, eps);
+    EXPECT_NEAR(1.5, info.x_max, eps);
+    EXPECT_NEAR(-1.5, info.y_min, eps);
+    EXPECT_NEAR(1.5, info.y_max, eps);
+    EXPECT_NEAR(0.0, info.c_real, eps);
+    EXPECT_NEAR(0.0, info.c_imag, eps);
+    EXPECT_EQ(0, info.ax);
+    EXPECT_EQ(0, info.bx);
+    EXPECT_EQ(0, info.cx);
+    EXPECT_EQ(0, info.dx);
+    EXPECT_EQ(27, info.dot_mode);
+    EXPECT_EQ(640, info.x_dots);
+    EXPECT_EQ(480, info.y_dots);
     EXPECT_EQ(256, info.colors);
     EXPECT_EQ(17, info.version);
     EXPECT_NEAR(0.0f, info.param3, eps);
@@ -543,11 +543,11 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_NEAR(0.0f, info.potential[0], eps);
     EXPECT_NEAR(0.0f, info.potential[1], eps);
     EXPECT_NEAR(0.0f, info.potential[2], eps);
-    EXPECT_EQ(29582, info.rseed);
-    EXPECT_EQ(0, info.rflag);
+    EXPECT_EQ(29582, info.random_seed);
+    EXPECT_EQ(0, info.random_seed_flag);
     EXPECT_EQ(-1, info.biomorph);
     EXPECT_EQ(0, info.inside);
-    EXPECT_EQ(0, info.logmapold);
+    EXPECT_EQ(0, info.log_map_old);
     EXPECT_NEAR(0.0f, info.invert[0], eps);
     EXPECT_NEAR(0.0f, info.invert[1], eps);
     EXPECT_NEAR(0.0f, info.invert[2], eps);
@@ -570,39 +570,39 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(-1, info.init3d[13]);
     EXPECT_EQ(1, info.init3d[14]);
     EXPECT_EQ(0, info.init3d[15]);
-    EXPECT_EQ(20, info.previewfactor);
-    EXPECT_EQ(0, info.xtrans);
-    EXPECT_EQ(0, info.ytrans);
+    EXPECT_EQ(20, info.preview_factor);
+    EXPECT_EQ(0, info.x_trans);
+    EXPECT_EQ(0, info.y_trans);
     EXPECT_EQ(4, info.red_crop_left);
     EXPECT_EQ(0, info.red_crop_right);
     EXPECT_EQ(0, info.blue_crop_left);
     EXPECT_EQ(4, info.blue_crop_right);
     EXPECT_EQ(80, info.red_bright);
     EXPECT_EQ(100, info.blue_bright);
-    EXPECT_EQ(0, info.xadjust);
-    EXPECT_EQ(0, info.eyeseparation);
-    EXPECT_EQ(0, info.glassestype);
+    EXPECT_EQ(0, info.x_adjust);
+    EXPECT_EQ(0, info.eye_separation);
+    EXPECT_EQ(0, info.glasses_type);
     EXPECT_EQ(-1, info.outside);
     EXPECT_NEAR(-2.5, info.x3rd, eps);
     EXPECT_NEAR(-1.5, info.y3rd, eps);
-    EXPECT_EQ('g', info.stdcalcmode);
-    EXPECT_EQ(0, info.useinitorbit);
+    EXPECT_EQ('g', info.std_calc_mode);
+    EXPECT_EQ(0, info.use_init_orbit);
     EXPECT_EQ(4, info.calc_status);
     EXPECT_EQ(521, info.tot_extend_len);
-    EXPECT_EQ(0, info.distestold);
-    EXPECT_EQ(0, info.floatflag);
-    EXPECT_EQ(0, info.bailoutold);
-    EXPECT_EQ(105, info.calctime);
-    EXPECT_EQ(0, info.trigndx[0]);
-    EXPECT_EQ(6, info.trigndx[1]);
-    EXPECT_EQ(2, info.trigndx[2]);
-    EXPECT_EQ(3, info.trigndx[3]);
-    EXPECT_EQ(0, info.finattract);
-    EXPECT_NEAR(0.0, info.initorbit[0], eps);
-    EXPECT_NEAR(0.0, info.initorbit[1], eps);
+    EXPECT_EQ(0, info.dist_est_old);
+    EXPECT_EQ(0, info.float_flag);
+    EXPECT_EQ(0, info.bail_out_old);
+    EXPECT_EQ(105, info.calc_time);
+    EXPECT_EQ(0, info.trig_index[0]);
+    EXPECT_EQ(6, info.trig_index[1]);
+    EXPECT_EQ(2, info.trig_index[2]);
+    EXPECT_EQ(3, info.trig_index[3]);
+    EXPECT_EQ(0, info.finite_attractor);
+    EXPECT_NEAR(0.0, info.init_orbit[0], eps);
+    EXPECT_NEAR(0.0, info.init_orbit[1], eps);
     EXPECT_EQ(1, info.periodicity);
     EXPECT_EQ(0, info.pot16bit);
-    EXPECT_NEAR(0.75, info.faspectratio, eps);
+    EXPECT_NEAR(0.75, info.final_aspect_ratio, eps);
     EXPECT_EQ(0, info.system);
     EXPECT_EQ(2004, info.release);
     EXPECT_EQ(0, info.display_3d);
@@ -613,48 +613,48 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(0, info.randomize);
     EXPECT_EQ(1, info.rotate_lo);
     EXPECT_EQ(255, info.rotate_hi);
-    EXPECT_EQ(71, info.distestwidth);
-    EXPECT_NEAR(0.0, info.dparm3, eps);
-    EXPECT_NEAR(0.0, info.dparm4, eps);
-    EXPECT_EQ(-1, info.fillcolor);
-    EXPECT_NEAR(-0.83, info.mxmaxfp, eps);
-    EXPECT_NEAR(-0.83, info.mxminfp, eps);
-    EXPECT_NEAR(0.25, info.mymaxfp, eps);
-    EXPECT_NEAR(-0.25, info.myminfp, eps);
-    EXPECT_EQ(128, info.zdots);
-    EXPECT_NEAR(8.0, info.originfp, eps);
-    EXPECT_NEAR(8.0, info.depthfp, eps);
-    EXPECT_NEAR(7.0, info.heightfp, eps);
-    EXPECT_NEAR(10.0, info.widthfp, eps);
-    EXPECT_NEAR(24.0, info.distfp, eps);
-    EXPECT_NEAR(2.5, info.eyesfp, eps);
-    EXPECT_EQ(1, info.orbittype);
-    EXPECT_EQ(0, info.juli3Dmode);
-    EXPECT_EQ(0, info.maxfn);
-    EXPECT_EQ(0, info.inversejulia);
-    EXPECT_NEAR(0.0, info.dparm5, eps);
-    EXPECT_NEAR(0.0, info.dparm6, eps);
-    EXPECT_NEAR(0.0, info.dparm7, eps);
-    EXPECT_NEAR(0.0, info.dparm8, eps);
-    EXPECT_NEAR(0.0, info.dparm9, eps);
-    EXPECT_NEAR(0.0, info.dparm10, eps);
-    EXPECT_EQ(0, info.bailout);
-    EXPECT_EQ(0, info.bailoutest);
+    EXPECT_EQ(71, info.dist_est_width);
+    EXPECT_NEAR(0.0, info.d_param3, eps);
+    EXPECT_NEAR(0.0, info.d_param4, eps);
+    EXPECT_EQ(-1, info.fill_color);
+    EXPECT_NEAR(-0.83, info.julibrot_x_max, eps);
+    EXPECT_NEAR(-0.83, info.julibrot_x_min, eps);
+    EXPECT_NEAR(0.25, info.julibrot_y_max, eps);
+    EXPECT_NEAR(-0.25, info.julibrot_y_min, eps);
+    EXPECT_EQ(128, info.julibrot_z_dots);
+    EXPECT_NEAR(8.0, info.julibrot_origin_fp, eps);
+    EXPECT_NEAR(8.0, info.julibrot_depth_fp, eps);
+    EXPECT_NEAR(7.0, info.julibrot_height_fp, eps);
+    EXPECT_NEAR(10.0, info.julibrot_width_fp, eps);
+    EXPECT_NEAR(24.0, info.julibrot_dist_fp, eps);
+    EXPECT_NEAR(2.5, info.eyes_fp, eps);
+    EXPECT_EQ(1, info.orbit_type);
+    EXPECT_EQ(0, info.juli3d_mode);
+    EXPECT_EQ(0, info.max_fn);
+    EXPECT_EQ(0, info.inverse_julia);
+    EXPECT_NEAR(0.0, info.d_param5, eps);
+    EXPECT_NEAR(0.0, info.d_param6, eps);
+    EXPECT_NEAR(0.0, info.d_param7, eps);
+    EXPECT_NEAR(0.0, info.d_param8, eps);
+    EXPECT_NEAR(0.0, info.d_param9, eps);
+    EXPECT_NEAR(0.0, info.d_param10, eps);
+    EXPECT_EQ(0, info.bail_out);
+    EXPECT_EQ(0, info.bail_out_test);
     EXPECT_EQ(150, info.iterations);
     EXPECT_EQ(0, info.bf_math);
     EXPECT_EQ(0, info.g_bf_length);
-    EXPECT_EQ(0, info.yadjust);
+    EXPECT_EQ(0, info.y_adjust);
     EXPECT_EQ(0, info.old_demm_colors);
-    EXPECT_EQ(0, info.logmap);
-    EXPECT_EQ(0, info.distest);
-    EXPECT_NEAR(0, info.dinvert[0], eps);
-    EXPECT_NEAR(0, info.dinvert[1], eps);
-    EXPECT_NEAR(0, info.dinvert[2], eps);
-    EXPECT_EQ(0, info.logcalc);
-    EXPECT_EQ(0, info.stoppass);
+    EXPECT_EQ(0, info.log_map);
+    EXPECT_EQ(0, info.dist_est);
+    EXPECT_NEAR(0, info.d_invert[0], eps);
+    EXPECT_NEAR(0, info.d_invert[1], eps);
+    EXPECT_NEAR(0, info.d_invert[2], eps);
+    EXPECT_EQ(0, info.log_calc);
+    EXPECT_EQ(0, info.stop_pass);
     EXPECT_EQ(0, info.quick_calc);
-    EXPECT_NEAR(0.01, info.closeprox, eps);
-    EXPECT_EQ(0, info.nobof);
+    EXPECT_NEAR(0.01, info.close_prox, eps);
+    EXPECT_EQ(0, info.no_bof);
     EXPECT_EQ(1, info.orbit_interval);
     EXPECT_EQ(0, info.orbit_delay);
     EXPECT_NEAR(0.05, info.math_tol[0], eps);
@@ -862,14 +862,14 @@ TEST_F(TestGIFOrbitInfoExtension, check)
 TEST_F(TestGIFOrbitInfoExtension, decode)
 {
     const OrbitsInfo info{get_orbits_info(m_gif)};
-    EXPECT_NEAR(-1.0, info.oxmin, eps);
-    EXPECT_NEAR(1.0, info.oxmax, eps);
-    EXPECT_NEAR(-1.0, info.oymin, eps);
-    EXPECT_NEAR(1.0, info.oymax, eps);
-    EXPECT_NEAR(-1.0, info.ox3rd, eps);
-    EXPECT_NEAR(-1.0, info.oy3rd, eps);
-    EXPECT_EQ(1, info.keep_scrn_coords);
-    EXPECT_EQ('r', info.drawmode);
+    EXPECT_NEAR(-1.0, info.orbit_corner_min_x, eps);
+    EXPECT_NEAR(1.0, info.orbit_corner_max_x, eps);
+    EXPECT_NEAR(-1.0, info.orbit_corner_min_y, eps);
+    EXPECT_NEAR(1.0, info.orbit_corner_max_y, eps);
+    EXPECT_NEAR(-1.0, info.orbit_corner_3rd_x, eps);
+    EXPECT_NEAR(-1.0, info.orbit_corner_3rd_y, eps);
+    EXPECT_EQ(1, info.keep_screen_coords);
+    EXPECT_EQ('r', info.draw_mode);
 }
 
 TEST_F(TestGIFOrbitInfoExtension, encode)

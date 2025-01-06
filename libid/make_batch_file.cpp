@@ -1400,16 +1400,16 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
             put_param(" %s=", "orbitcorners");
-            int xdigits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3_x);
-            int ydigits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3_y);
+            int xdigits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
+            int ydigits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
             put_float(0, g_orbit_corner_min_x, xdigits);
             put_float(1, g_orbit_corner_max_x, xdigits);
             put_float(1, g_orbit_corner_min_y, ydigits);
             put_float(1, g_orbit_corner_max_y, ydigits);
-            if (g_orbit_corner_3_x != g_orbit_corner_min_x || g_orbit_corner_3_y != g_orbit_corner_min_y)
+            if (g_orbit_corner_3rd_x != g_orbit_corner_min_x || g_orbit_corner_3rd_y != g_orbit_corner_min_y)
             {
-                put_float(1, g_orbit_corner_3_x, xdigits);
-                put_float(1, g_orbit_corner_3_y, ydigits);
+                put_float(1, g_orbit_corner_3rd_x, xdigits);
+                put_float(1, g_orbit_corner_3rd_y, ydigits);
             }
         }
 

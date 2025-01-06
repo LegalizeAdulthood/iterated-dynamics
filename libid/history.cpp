@@ -276,8 +276,8 @@ void save_history_info()
     current.orbit_corner_max_x = g_orbit_corner_max_x;
     current.orbit_corner_min_y = g_orbit_corner_min_y;
     current.orbit_corner_max_y = g_orbit_corner_max_y;
-    current.orbit_corner_3_x = g_orbit_corner_3_x;
-    current.orbit_corner_3_y = g_orbit_corner_3_y;
+    current.orbit_corner_3_x = g_orbit_corner_3rd_x;
+    current.orbit_corner_3_y = g_orbit_corner_3rd_y;
     current.keep_screen_coords = g_keep_screen_coords;
     current.draw_mode = g_draw_mode;
     std::memcpy(current.dac_box, g_dac_box, 256*3);
@@ -470,8 +470,8 @@ void restore_history_info(int i)
     g_orbit_corner_max_x = last.orbit_corner_max_x;
     g_orbit_corner_min_y = last.orbit_corner_min_y;
     g_orbit_corner_max_y = last.orbit_corner_max_y;
-    g_orbit_corner_3_x = last.orbit_corner_3_x;
-    g_orbit_corner_3_y = last.orbit_corner_3_y;
+    g_orbit_corner_3rd_x = last.orbit_corner_3_x;
+    g_orbit_corner_3rd_y = last.orbit_corner_3_y;
     g_keep_screen_coords = last.keep_screen_coords;
     if (g_keep_screen_coords)
     {

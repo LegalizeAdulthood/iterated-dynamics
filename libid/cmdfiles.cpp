@@ -545,10 +545,10 @@ static void init_vars_fractal()
     g_set_orbit_corners = false;                                    //
     g_orbit_corner_min_x = g_cur_fractal_specific->x_min;           //
     g_orbit_corner_max_x = g_cur_fractal_specific->x_max;           //
-    g_orbit_corner_3_x = g_cur_fractal_specific->x_min;             //
+    g_orbit_corner_3rd_x = g_cur_fractal_specific->x_min;             //
     g_orbit_corner_min_y = g_cur_fractal_specific->y_min;           //
     g_orbit_corner_max_y = g_cur_fractal_specific->y_max;           //
-    g_orbit_corner_3_y = g_cur_fractal_specific->y_min;             //
+    g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min;             //
     g_math_tol[0] = 0.05;                                           //
     g_math_tol[1] = 0.05;                                           //
     g_display_3d = Display3DMode::NONE;                             // 3D display is off
@@ -2643,16 +2643,16 @@ static CmdArgFlags cmd_orbit_corners(const Command &cmd)
         return cmd.bad_arg();
     }
     g_orbit_corner_min_x = cmd.float_vals[0];
-    g_orbit_corner_3_x = cmd.float_vals[0];
+    g_orbit_corner_3rd_x = cmd.float_vals[0];
     g_orbit_corner_max_x = cmd.float_vals[1];
     g_orbit_corner_min_y = cmd.float_vals[2];
-    g_orbit_corner_3_y = cmd.float_vals[2];
+    g_orbit_corner_3rd_y = cmd.float_vals[2];
     g_orbit_corner_max_y = cmd.float_vals[3];
 
     if (cmd.total_params == 6)
     {
-        g_orbit_corner_3_x = cmd.float_vals[4];
-        g_orbit_corner_3_y = cmd.float_vals[5];
+        g_orbit_corner_3rd_x = cmd.float_vals[4];
+        g_orbit_corner_3rd_y = cmd.float_vals[5];
     }
     g_set_orbit_corners = true;
     g_keep_screen_coords = true;
