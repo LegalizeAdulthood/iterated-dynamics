@@ -15,7 +15,7 @@
 
 void get_julia_attractor(double real, double imag)
 {
-    LComplex lresult{};
+    LComplex l_result{};
     DComplex result = { 0.0 };
 
     if (g_attractors == 0 && !g_finite_attractor)   // not magnet & not requested
@@ -28,8 +28,8 @@ void get_julia_attractor(double real, double imag)
         return;                  // Bad luck - no room left !
     }
 
-    int savper = g_periodicity_check;
-    long savmaxit = g_max_iterations;
+    int save_periodicity_check = g_periodicity_check;
+    long save_max_iterations = g_max_iterations;
     g_periodicity_check = 0;
     g_old_z.x = real;                    // prepare for f.p orbit calc
     g_old_z.y = imag;
@@ -61,7 +61,7 @@ void get_julia_attractor(double real, double imag)
     {
         if (g_integer_fractal)     // remember where it went to
         {
-            lresult = g_l_new_z;
+            l_result = g_l_new_z;
         }
         else
         {
@@ -75,8 +75,8 @@ void get_julia_attractor(double real, double imag)
                 // and doesn't move far, probably
                 if (g_integer_fractal)   //   found a finite attractor
                 {
-                    if (labs(lresult.x-g_l_new_z.x) < g_l_close_enough
-                        && labs(lresult.y-g_l_new_z.y) < g_l_close_enough)
+                    if (labs(l_result.x-g_l_new_z.x) < g_l_close_enough
+                        && labs(l_result.y-g_l_new_z.y) < g_l_close_enough)
                     {
                         g_l_attractor[g_attractors] = g_l_new_z;
                         g_attractor_period[g_attractors] = i+1;
@@ -104,7 +104,7 @@ void get_julia_attractor(double real, double imag)
     }
     if (g_attractors == 0)
     {
-        g_periodicity_check = savper;
+        g_periodicity_check = save_periodicity_check;
     }
-    g_max_iterations = savmaxit;
+    g_max_iterations = save_max_iterations;
 }
