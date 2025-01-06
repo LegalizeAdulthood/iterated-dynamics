@@ -6,13 +6,13 @@
 #include "fractalp.h"
 #include "id_data.h"
 
-void load_params(FractalType fractype)
+void load_params(FractalType type)
 {
     for (int i = 0; i < 4; ++i)
     {
-        g_params[i] = g_fractal_specific[+fractype].params[i];
+        g_params[i] = g_fractal_specific[+type].params[i];
     }
-    if (const int extra = find_extra_param(fractype); extra > -1)
+    if (const int extra = find_extra_param(type); extra > -1)
     {
         for (int i = 0; i < MAX_PARAMS - 4; i++)
         {
