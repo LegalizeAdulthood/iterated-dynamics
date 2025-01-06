@@ -62,7 +62,7 @@ public:
     virtual const std::string &get_description() const = 0;             // driver description
     virtual bool init(int *argc, char **argv) = 0;                      // init the driver
     virtual bool validate_mode(VideoInfo *mode) = 0;                    // validate a id.cfg mode
-    virtual void get_max_screen(int &xmax, int &ymax) = 0;              // find max screen extents
+    virtual void get_max_screen(int &x_max, int &y_max) = 0;              // find max screen extents
     virtual void terminate() = 0;                                       // shutdown the driver
     virtual void pause() = 0;                                           // pause this driver
     virtual void resume() = 0;                                          // resume this driver
@@ -74,10 +74,10 @@ public:
     virtual int write_palette() = 0;                                    // write g_dac_box into palette
     virtual int read_pixel(int x, int y) = 0;                           // reads a single pixel
     virtual void write_pixel(int x, int y, int color) = 0;              // writes a single pixel
-    virtual void read_span(int y, int x, int lastx, Byte *pixels) = 0;  // reads a span of pixel
-    virtual void write_span(int y, int x, int lastx, Byte *pixels) = 0; // writes a span of pixels
-    virtual void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) = 0; //
-    virtual void put_truecolor(int x, int y, int r, int g, int b, int a) = 0;     //
+    virtual void read_span(int y, int x, int last_x, Byte *pixels) = 0;  // reads a span of pixel
+    virtual void write_span(int y, int x, int last_x, Byte *pixels) = 0; // writes a span of pixels
+    virtual void get_true_color(int x, int y, int *r, int *g, int *b, int *a) = 0; //
+    virtual void put_true_color(int x, int y, int r, int g, int b, int a) = 0;     //
     virtual void set_line_mode(int mode) = 0;                                     // set copy/xor line
     virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;        // draw line
     virtual void display_string(
@@ -108,7 +108,7 @@ public:
     virtual bool sound_on(int frequency) = 0;                                 //
     virtual void sound_off() = 0;                                             //
     virtual void mute() = 0;                                                  //
-    virtual bool diskp() const = 0;                                           // is a disk driver?
+    virtual bool is_disk() const = 0;                                           // is a disk driver?
     virtual int get_char_attr() = 0;                                          //
     virtual void put_char_attr(int char_attr) = 0;                            //
     virtual void delay(int ms) = 0;                                           //
@@ -148,11 +148,11 @@ inline bool driver_validate_mode(VideoInfo *mode)
 {
     return g_driver->validate_mode(mode);
 }
-inline void driver_get_max_screen(int *xmax, int *ymax)
+inline void driver_get_max_screen(int *x_max, int *y_max)
 {
-    assert(xmax != nullptr);
-    assert(ymax != nullptr);
-    g_driver->get_max_screen(*xmax, *ymax);
+    assert(x_max != nullptr);
+    assert(y_max != nullptr);
+    g_driver->get_max_screen(*x_max, *y_max);
 }
 inline void driver_terminate()
 {
@@ -190,13 +190,13 @@ inline void driver_write_pixel(int x, int y, int color)
 {
     g_driver->write_pixel(x, y, color);
 }
-inline void driver_read_span(int y, int x, int lastx, Byte *pixels)
+inline void driver_read_span(int y, int x, int last_x, Byte *pixels)
 {
-    g_driver->read_span(y, x, lastx, pixels);
+    g_driver->read_span(y, x, last_x, pixels);
 }
-inline void driver_write_span(int y, int x, int lastx, Byte *pixels)
+inline void driver_write_span(int y, int x, int last_x, Byte *pixels)
 {
-    g_driver->write_span(y, x, lastx, pixels);
+    g_driver->write_span(y, x, last_x, pixels);
 }
 inline void driver_set_line_mode(int mode)
 {
@@ -206,13 +206,13 @@ inline void driver_draw_line(int x1, int y1, int x2, int y2, int color)
 {
     g_driver->draw_line(x1, y1, x2, y2, color);
 }
-inline void driver_get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
+inline void driver_get_true_color(int x, int y, int *r, int *g, int *b, int *a)
 {
-    g_driver->get_truecolor(x, y, r, g, b, a);
+    g_driver->get_true_color(x, y, r, g, b, a);
 }
-inline void driver_put_truecolor(int x, int y, int r, int g, int b, int a)
+inline void driver_put_true_color(int x, int y, int r, int g, int b, int a)
 {
-    g_driver->put_truecolor(x, y, r, g, b, a);
+    g_driver->put_true_color(x, y, r, g, b, a);
 }
 inline int driver_get_key()
 {
@@ -322,9 +322,9 @@ inline void driver_mute()
 {
     g_driver->mute();
 }
-inline bool driver_diskp()
+inline bool driver_is_disk()
 {
-    return g_driver->diskp();
+    return g_driver->is_disk();
 }
 inline int driver_get_char_attr()
 {

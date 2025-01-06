@@ -303,7 +303,7 @@ int line3d(Byte * pixels, unsigned linelen)
         // Get init geometry in lightsource modes
         goto reallythebottom;     // skip over most of the line3d calcs
     }
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         char s[40];
         std::snprintf(s, std::size(s), "mapping to 3d, reading line %d", g_current_row);

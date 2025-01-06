@@ -207,7 +207,7 @@ int gif_view()
     {
         spin_dac(0, 1);       // update the DAC
     }
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         // disk-video
         dvid_status(1, "restoring " + std::filesystem::path(temp1).filename().string());
@@ -361,7 +361,7 @@ int gif_view()
         }
     }
     close_file();
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         // disk-video
         dvid_status(0, "Restore completed");
@@ -524,7 +524,7 @@ int pot_line(Byte *pixels, int line_len)
     {
         row += g_logical_screen_y_dots;
     }
-    else if (!driver_diskp())     // even line - display the line too
+    else if (!driver_is_disk())     // even line - display the line too
     {
         out_line(pixels, line_len);
     }

@@ -147,7 +147,7 @@ MainState color_editing(MainContext &context)
     }
 
     clear_zoom_box();
-    if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
+    if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_is_disk())
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PALETTE_EDITOR};
         std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);

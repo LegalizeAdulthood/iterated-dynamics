@@ -148,7 +148,7 @@ int get_toggles2()
         }
         else // turned it off
         {
-            if (!driver_diskp())   // ditch the disk video
+            if (!driver_is_disk())   // ditch the disk video
             {
                 end_disk();
             }

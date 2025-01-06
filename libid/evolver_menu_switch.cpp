@@ -28,7 +28,7 @@
 
 static MainState save_evolver_image(MainContext &)
 {
-    if (driver_diskp() && g_disk_targa)
+    if (driver_is_disk() && g_disk_targa)
     {
         // disk video and targa, nothing to save
         return MainState::NOTHING;

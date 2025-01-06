@@ -1299,7 +1299,7 @@ xhandleevents()
     static int shift_mode = 0;
     int bandx0, bandy0, bandx1, bandy1;
     static int bnum = 0;
-    static int lastx, lasty;
+    static int last_x, last_y;
     static int dx, dy;
 
     if (doredraw)
@@ -1482,10 +1482,10 @@ xhandleevents()
 
                 if (g_look_at_mouse == +MouseLook::POSITION && bnum != 0)
                 {
-                    dx += (xevent.xmotion.x-lastx)/MSCALE;
-                    dy += (xevent.xmotion.y-lasty)/MSCALE;
-                    lastx = xevent.xmotion.x;
-                    lasty = xevent.xmotion.y;
+                    dx += (xevent.xmotion.x-last_x)/MSCALE;
+                    dy += (xevent.xmotion.y-last_y)/MSCALE;
+                    last_x = xevent.xmotion.x;
+                    last_y = xevent.xmotion.y;
                 }
                 else
                 {
@@ -1502,8 +1502,8 @@ xhandleevents()
             int banding = 0;
             if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_enabled)
             {
-                lastx = xevent.xbutton.x;
-                lasty = xevent.xbutton.y;
+                last_x = xevent.xbutton.x;
+                last_y = xevent.xbutton.y;
                 break;
             }
             bandx0 = xevent.xbutton.x;

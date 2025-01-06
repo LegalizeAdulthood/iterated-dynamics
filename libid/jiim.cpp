@@ -247,7 +247,7 @@ void clear_queue()
 
 bool init_queue(unsigned long request)
 {
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         stop_msg("Don't try this in disk video mode, kids...\n");
         s_list_size = 0;

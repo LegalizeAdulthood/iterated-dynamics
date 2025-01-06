@@ -48,7 +48,7 @@ bool show_temp_msg(char const *msgparm)
 
     std::strncpy(msg, msgparm, 40);
     msg[40] = 0; // ensure max message len of 40 chars
-    if (driver_diskp())  // disk video, screen in text mode, easy
+    if (driver_is_disk())  // disk video, screen in text mode, easy
     {
         dvid_status(0, msg);
         return false;
@@ -93,7 +93,7 @@ bool show_temp_msg(char const *msgparm)
 
 void clear_temp_msg()
 {
-    if (driver_diskp()) // disk video, easy
+    if (driver_is_disk()) // disk video, easy
     {
         dvid_status(0, "");
     }

@@ -136,10 +136,10 @@ public:
     int write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
-    void read_span(int y, int x, int lastx, Byte *pixels) override;
-    void write_span(int y, int x, int lastx, Byte *pixels) override;
-    void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) override;
-    void put_truecolor(int x, int y, int r, int g, int b, int a) override;
+    void read_span(int y, int x, int last_x, Byte *pixels) override;
+    void write_span(int y, int x, int last_x, Byte *pixels) override;
+    void get_true_color(int x, int y, int *r, int *g, int *b, int *a) override;
+    void put_true_color(int x, int y, int r, int g, int b, int a) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
@@ -169,7 +169,7 @@ public:
     bool sound_on(int frequency) override;
     void sound_off() override;
     void mute() override;
-    bool diskp() const override;
+    bool is_disk() const override;
     int get_char_attr() override;
     void put_char_attr(int char_attr) override;
     void delay(int ms) override;
@@ -2064,9 +2064,9 @@ void X11Driver::write_pixel(int x, int y, int color)
  *
  *----------------------------------------------------------------------
  */
-void X11Driver::read_span(int y, int x, int lastx, Byte *pixels)
+void X11Driver::read_span(int y, int x, int last_x, Byte *pixels)
 {
-    int width = lastx-x+1;
+    int width = last_x-x+1;
     for (int i = 0; i < width; i++)
     {
         pixels[i] = read_pixel(x+i, y);
@@ -2088,18 +2088,18 @@ void X11Driver::read_span(int y, int x, int lastx, Byte *pixels)
  *
  *----------------------------------------------------------------------
  */
-void X11Driver::write_span(int y, int x, int lastx, Byte *pixels)
+void X11Driver::write_span(int y, int x, int last_x, Byte *pixels)
 {
     int width;
     const Byte *pixline;
 
 #if 1
-    if (x == lastx)
+    if (x == last_x)
     {
         write_pixel(x, y, pixels[0]);
         return;
     }
-    width = lastx-x+1;
+    width = last_x-x+1;
     if (m_use_pixtab)
     {
         m_pixels.resize(width);
@@ -2133,7 +2133,7 @@ void X11Driver::write_span(int y, int x, int lastx, Byte *pixels)
         }
     }
 #else
-    width = lastx-x+1;
+    width = last_x-x+1;
     for (int i = 0; i < width; i++)
     {
         write_pixel(x+i, y, pixels[i]);
@@ -2141,11 +2141,11 @@ void X11Driver::write_span(int y, int x, int lastx, Byte *pixels)
 #endif
 }
 
-void X11Driver::get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
+void X11Driver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
 {
 }
 
-void X11Driver::put_truecolor(int x, int y, int r, int g, int b, int a)
+void X11Driver::put_true_color(int x, int y, int r, int g, int b, int a)
 {
 }
 
@@ -2563,7 +2563,7 @@ void X11Driver::mute()
     // TODO
 }
 
-bool X11Driver::diskp() const
+bool X11Driver::is_disk() const
 {
     // TODO
     return false;

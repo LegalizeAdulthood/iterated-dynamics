@@ -110,7 +110,7 @@ MainState big_while_loop(MainContext &context)
                 // switching video modes may have changed drivers or disk flag...
                 if (!g_good_mode)
                 {
-                    if (driver_diskp())
+                    if (driver_is_disk())
                     {
                         g_ask_video = true;
                     }
@@ -169,7 +169,7 @@ MainState big_while_loop(MainContext &context)
                     }
                     spin_dac(0, 1);
                 }
-                else if ((driver_diskp() && g_colors == 256) || !g_colors)
+                else if ((driver_is_disk() && g_colors == 256) || !g_colors)
                 {
                     // disk video, setvideomode via bios didn't get it right, so:
                     validate_luts("default"); // read the default palette file
@@ -324,7 +324,7 @@ MainState big_while_loop(MainContext &context)
         }
 
         // for these cases disable zooming
-        g_zoom_enabled = !driver_diskp() && !bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM);
+        g_zoom_enabled = !driver_is_disk() && !bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM);
         if (g_evolving == EvolutionModeFlags::NONE)
         {
             calc_frac_init();
@@ -506,7 +506,7 @@ done:
             }
 
             s_save_ticks = 0;                 // turn off autosave timer
-            if (driver_diskp() && i == 0) // disk-video
+            if (driver_is_disk() && i == 0) // disk-video
             {
                 dvid_status(0, "Image has been completed");
             }

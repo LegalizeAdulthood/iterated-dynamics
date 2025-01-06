@@ -505,7 +505,7 @@ static MainState request_shell(MainContext &)
 
 static MainState request_save_image(MainContext &)
 {
-    if (driver_diskp() && g_disk_targa)
+    if (driver_is_disk() && g_disk_targa)
     {
         return MainState::CONTINUE; // disk video and targa, nothing to save
     }
@@ -515,7 +515,7 @@ static MainState request_save_image(MainContext &)
 
 static MainState look_for_files(MainContext &context)
 {
-    if ((g_zoom_box_width != 0) || driver_diskp())
+    if ((g_zoom_box_width != 0) || driver_is_disk())
     {
         g_browsing = false;
         driver_buzzer(Buzzer::PROBLEM);             // can't browse if zooming or disk video

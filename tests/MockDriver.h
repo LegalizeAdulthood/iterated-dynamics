@@ -27,8 +27,8 @@ public:
     MOCK_METHOD(void, write_pixel, (int, int, int), (override));
     MOCK_METHOD(void, read_span, (int, int, int, Byte *), (override));
     MOCK_METHOD(void, write_span, (int, int, int, Byte *), (override));
-    MOCK_METHOD(void, get_truecolor, (int, int, int *, int *, int *, int *), (override));
-    MOCK_METHOD(void, put_truecolor, (int, int, int, int, int, int), (override));
+    MOCK_METHOD(void, get_true_color, (int, int, int *, int *, int *, int *), (override));
+    MOCK_METHOD(void, put_true_color, (int, int, int, int, int, int), (override));
     MOCK_METHOD(void, set_line_mode, (int), (override));
     MOCK_METHOD(void, draw_line, (int, int, int, int, int), (override));
     MOCK_METHOD(void, display_string, (int, int, int, int, char const *), (override));
@@ -58,7 +58,7 @@ public:
     MOCK_METHOD(bool, sound_on, (int), (override));
     MOCK_METHOD(void, sound_off, (), (override));
     MOCK_METHOD(void, mute, (), (override));
-    MOCK_METHOD(bool, diskp, (), (const, override));
+    MOCK_METHOD(bool, is_disk, (), (const, override));
     MOCK_METHOD(int, get_char_attr, (), (override));
     MOCK_METHOD(void, put_char_attr, (int), (override));
     MOCK_METHOD(void, delay, (int), (override));

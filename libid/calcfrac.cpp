@@ -2543,7 +2543,7 @@ int potential(double mag, long iterations)
 
     if (g_potential_16bit)
     {
-        if (!driver_diskp())   // if putcolor won't be doing it for us
+        if (!driver_is_disk())   // if putcolor won't be doing it for us
         {
             disk_write_pixel(g_col+g_logical_screen_x_offset, g_row+g_logical_screen_y_offset, i_pot);
         }

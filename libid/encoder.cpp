@@ -182,7 +182,7 @@ restart:
         return -1;
     }
 
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         // disk-video
         dvid_status(1, "Saving " + extract_file_name(open_file.string().c_str()));
@@ -239,7 +239,7 @@ restart:
         std::filesystem::rename(tmp_file, open_file); // earlier with access
     }
 
-    if (!driver_diskp())
+    if (!driver_is_disk())
     {
         // supress this on disk-video
         int out_color1 = s_out_color_1s;
@@ -1128,7 +1128,7 @@ nomatch:
                     cl_block();
                 }
             } // end for xdot
-            if (! driver_diskp()       // supress this on disk-video
+            if (! driver_is_disk()       // supress this on disk-video
                 && y_dot == row_num)
             {
                 if ((y_dot & 4) == 0)

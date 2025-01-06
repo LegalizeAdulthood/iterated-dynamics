@@ -364,7 +364,7 @@ void Win32BaseDriver::mute()
     ODS("Win32BaseDriver::mute");
 }
 
-bool Win32BaseDriver::diskp() const
+bool Win32BaseDriver::is_disk() const
 {
     return false;
 }
@@ -434,12 +434,12 @@ void Win32BaseDriver::delay(int ms)
     }
 }
 
-void Win32BaseDriver::get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
+void Win32BaseDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
 {
     _ASSERTE(0 && "Win32BaseDriver::get_truecolor called.");
 }
 
-void Win32BaseDriver::put_truecolor(int x, int y, int r, int g, int b, int a)
+void Win32BaseDriver::put_true_color(int x, int y, int r, int g, int b, int a)
 {
     _ASSERTE(0 && "Win32BaseDriver::put_truecolor called.");
 }

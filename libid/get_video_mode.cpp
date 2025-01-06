@@ -176,7 +176,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 && info->ydots == mode.ydots    //
                 && g_file_colors == mode.colors //
                 && mode.driver != nullptr       //
-                && !mode.driver->diskp();
+                && !mode.driver->is_disk();
         });
     if (it == end)
     {
@@ -205,7 +205,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     {
         g_video_entry = g_video_table[i];
         unsigned tmp_flags = VI_EXACT;
-        if (g_video_entry.driver != nullptr && g_video_entry.driver->diskp())
+        if (g_video_entry.driver != nullptr && g_video_entry.driver->is_disk())
         {
             tmp_flags |= VI_DISK;
         }

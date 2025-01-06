@@ -20,7 +20,7 @@ bool check_key()
             return true;
         }
         driver_get_key();
-        if (!driver_diskp())
+        if (!driver_is_disk())
         {
             g_show_orbit = !g_show_orbit;
         }

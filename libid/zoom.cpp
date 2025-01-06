@@ -73,8 +73,8 @@ void display_box()
     {
         if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)
         {
-            driver_get_truecolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, &rgb[0], &rgb[1], &rgb[2], nullptr);
-            driver_put_truecolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset,
+            driver_get_true_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, &rgb[0], &rgb[1], &rgb[2], nullptr);
+            driver_put_true_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset,
                                  rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
         }
         else

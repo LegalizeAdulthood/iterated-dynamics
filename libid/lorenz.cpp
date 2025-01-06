@@ -1709,7 +1709,7 @@ static int orbit3d_long_calc()
     inf.orbit[1] = s_init_orbit_long[1];
     inf.orbit[2] = s_init_orbit_long[2];
 
-    if (driver_diskp())                  // this would KILL a disk drive!
+    if (driver_is_disk())                  // this would KILL a disk drive!
     {
         not_disk_msg();
     }
@@ -1832,7 +1832,7 @@ static int orbit3d_float_calc()
     inf.orbit[1] = s_init_orbit_fp[1];
     inf.orbit[2] = s_init_orbit_fp[2];
 
-    if (driver_diskp())                  // this would KILL a disk drive!
+    if (driver_is_disk())                  // this would KILL a disk drive!
     {
         not_disk_msg();
     }
@@ -2391,7 +2391,7 @@ static int ifs3d_float()
     setup_convert_to_screen(&inf.cvt);
     std::srand(1);
     int color_method = (int) g_params[0];
-    if (driver_diskp())                  // this would KILL a disk drive!
+    if (driver_is_disk())                  // this would KILL a disk drive!
     {
         not_disk_msg();
     }
@@ -2511,7 +2511,7 @@ int ifs()                       // front-end for ifs2d and ifs3d
     {
         return -1;
     }
-    if (driver_diskp())                  // this would KILL a disk drive!
+    if (driver_is_disk())                  // this would KILL a disk drive!
     {
         not_disk_msg();
     }

@@ -112,7 +112,7 @@ void rotate(int direction)      // rotate-the-palette routine
     bool more = true;
     while (more)
     {
-        if (driver_diskp())
+        if (driver_is_disk())
         {
             if (!s_paused)
             {
@@ -271,7 +271,7 @@ void rotate(int direction)      // rotate-the-palette routine
                 changecolor = 1;
             }
         case 'B':                      // color changes
-            if (driver_diskp())
+            if (driver_is_disk())
             {
                 break;
             }
@@ -511,13 +511,13 @@ static void pause_rotate()               // pause-the-rotate routine
         g_dac_box[0][1] = 48;
         g_dac_box[0][2] = 48;
         spin_dac(0, 1);                     // show white border
-        if (driver_diskp())
+        if (driver_is_disk())
         {
             dvid_status(100, " Paused in \"color cycling\" mode ");
         }
         driver_wait_key_pressed(0);                // wait for any key
 
-        if (driver_diskp())
+        if (driver_is_disk())
         {
             dvid_status(0, "");
         }

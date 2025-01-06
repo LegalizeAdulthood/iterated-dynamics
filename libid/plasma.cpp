@@ -62,7 +62,7 @@ static void put_pot(int x, int y, U16 color)
     g_put_color(x, y, (color >> 8) ? (color >> 8) : 1);  // don't write 0
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
-    if (!driver_diskp())
+    if (!driver_is_disk())
     {
         disk_write_pixel(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, color >> 8);    // upper 8 bits
     }

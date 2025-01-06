@@ -56,7 +56,7 @@ get_view_restart:
     // fill up the previous values arrays
     int k = -1;
 
-    if (!driver_diskp())
+    if (!driver_is_disk())
     {
         choices[++k] = "Preview display? (no for full screen)";
         values[k].type = 'y';
@@ -90,7 +90,7 @@ get_view_restart:
     values[k].type = 'i';
     values[k].uval.ival = g_screen_x_dots;
 
-    choices[++k] = driver_diskp() ?
+    choices[++k] = driver_is_disk() ?
                    "                     y pixels" :
                    "                     y pixels (0: by aspect ratio)";
     values[k].type = 'i';
@@ -124,7 +124,7 @@ get_view_restart:
     choices[++k] = "";
     values[k].type = '*';
 
-    if (!driver_diskp())
+    if (!driver_is_disk())
     {
         choices[++k] = "Press F4 to reset view parameters to defaults.";
         values[k].type = '*';
@@ -139,7 +139,7 @@ get_view_restart:
         return -1;
     }
 
-    if (i == ID_KEY_F4 && !driver_diskp())
+    if (i == ID_KEY_F4 && !driver_is_disk())
     {
         g_view_window = false;
         g_view_x_dots = 0;
@@ -157,7 +157,7 @@ get_view_restart:
     // now check out the results (*hopefully* in the same order <grin>)
     k = -1;
 
-    if (!driver_diskp())
+    if (!driver_is_disk())
     {
         g_view_window = values[++k].uval.ch.val != 0;
         g_view_reduction = (float) values[++k].uval.dval;
@@ -194,7 +194,7 @@ get_view_restart:
     }
     g_screen_y_dots = std::max(g_screen_y_dots, 2);
 
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         g_video_entry.xdots = g_screen_x_dots;
         g_video_entry.ydots = g_screen_y_dots;

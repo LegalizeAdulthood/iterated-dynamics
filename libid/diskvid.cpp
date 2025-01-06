@@ -98,7 +98,7 @@ int start_disk()
 
 int pot_start_disk()
 {
-    if (driver_diskp())         // ditch the original disk file
+    if (driver_is_disk())         // ditch the original disk file
     {
         end_disk();
     }
@@ -120,7 +120,7 @@ int pot_start_disk()
 
 int targa_start_disk(std::FILE *targa_fp, int overhead)
 {
-    if (driver_diskp()) // ditch the original file, make just the targa
+    if (driver_is_disk()) // ditch the original file, make just the targa
     {
         end_disk();      // close the 'screen'
         set_null_video(); // set readdot and writedot routines to do nothing
@@ -140,7 +140,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
     {
         end_disk();
     }
-    if (driver_diskp()) // otherwise, real screen also in use, don't hit it
+    if (driver_is_disk()) // otherwise, real screen also in use, don't hit it
     {
         help_title();
         driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
@@ -195,7 +195,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         stop_msg("*** insufficient free memory for cache buffers ***");
         return -1;
     }
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Cache size: " + std::to_string(CACHE_SIZE) + "K");
     }
@@ -254,7 +254,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         return -1;
     }
 
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         driver_put_string(BOX_ROW+2, BOX_COL+23, C_DVID_LO,
                           (memory_type(s_dv_handle) == MemoryLocation::DISK) ? "Using your Disk Drive" : "Using your memory");
@@ -285,7 +285,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         }
     }
 
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         dvid_status(0, "");
     }
@@ -330,7 +330,7 @@ int disk_read_pixel(int col, int row)
 {
     if (--s_time_to_display < 0)  // time to g_driver status?
     {
-        if (driver_diskp())
+        if (driver_is_disk())
         {
             char buf[41];
             std::snprintf(buf, std::size(buf), " reading line %4d",
@@ -396,7 +396,7 @@ void disk_write_pixel(int col, int row, int color)
 {
     if (--s_time_to_display < 0)  // time to display status?
     {
-        if (driver_diskp())
+        if (driver_is_disk())
         {
             char buf[41];
             std::snprintf(buf, std::size(buf), " writing line %4d",

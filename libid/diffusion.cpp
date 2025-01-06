@@ -42,7 +42,7 @@ int diffusion()
     float r;
     float radius;
 
-    if (driver_diskp())
+    if (driver_is_disk())
     {
         not_disk_msg();
     }
