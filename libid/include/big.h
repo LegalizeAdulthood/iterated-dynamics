@@ -131,7 +131,7 @@ S16 big_setS16(S16 *addr, S16 val);
 void bn_hex_dump(bn_t r);
 bn_t str_to_bn(bn_t r, char *s);
 char *unsafe_bn_to_str(char *s, int dec, bn_t r);
-bn_t int_to_bn(bn_t r, long longval);
+bn_t int_to_bn(bn_t r, long value);
 long bn_to_int(bn_t n);
 int  sign_bn(bn_t n);
 bn_t abs_bn(bn_t r, bn_t n);
@@ -144,7 +144,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n);
 bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n);
 bn_t unsafe_atan_bn(bn_t r, bn_t n);
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
-int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength, int oldbnlength, int oldintlength);
+int convert_bn(bn_t new_num, bn_t old, int newbnlength, int newintlength, int oldbnlength, int oldintlength);
 // "safe" versions
 bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2);
 bn_t mult_bn(bn_t r, bn_t n1, bn_t n2);
