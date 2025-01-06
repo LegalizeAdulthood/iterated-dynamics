@@ -78,8 +78,8 @@ void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out)
 
     DComplex a;
     DComplex b;
-    DComplex resulta;
-    DComplex resultb;
+    DComplex result_a;
+    DComplex result_b;
 
     // convert to duplex form
     a.x = h->x - h->t;
@@ -88,12 +88,12 @@ void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out)
     b.y = h->y - h->z;
 
     // apply function to each part
-    cmplx_trig0(a, resulta);
-    cmplx_trig0(b, resultb);
+    cmplx_trig0(a, result_a);
+    cmplx_trig0(b, result_b);
 
     // convert back
-    out->x = (resulta.x + resultb.x)/2;
-    out->y = (resulta.y + resultb.y)/2;
-    out->z = (resulta.y - resultb.y)/2;
-    out->t = (resultb.x - resulta.x)/2;
+    out->x = (result_a.x + result_b.x)/2;
+    out->y = (result_a.y + result_b.y)/2;
+    out->z = (result_a.y - result_b.y)/2;
+    out->t = (result_b.x - result_a.x)/2;
 }
