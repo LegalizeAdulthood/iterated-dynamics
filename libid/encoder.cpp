@@ -583,19 +583,19 @@ bool encoder()
             evolution_info.y_parameter_offset = g_evolve_y_parameter_offset;
             evolution_info.discrete_x_parameter_offset =
                 static_cast<std::int16_t>(g_evolve_discrete_x_parameter_offset);
-            evolution_info.discrete_y_paramter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
+            evolution_info.discrete_y_parameter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
             evolution_info.px              = static_cast<std::int16_t>(g_evolve_param_grid_x);
             evolution_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
-            evolution_info.sxoffs          = static_cast<std::int16_t>(g_logical_screen_x_offset);
-            evolution_info.syoffs          = static_cast<std::int16_t>(g_logical_screen_y_offset);
-            evolution_info.xdots           = static_cast<std::int16_t>(g_logical_screen_x_dots);
-            evolution_info.ydots           = static_cast<std::int16_t>(g_logical_screen_y_dots);
+            evolution_info.screen_x_offset          = static_cast<std::int16_t>(g_logical_screen_x_offset);
+            evolution_info.screen_y_offset          = static_cast<std::int16_t>(g_logical_screen_y_offset);
+            evolution_info.x_dots           = static_cast<std::int16_t>(g_logical_screen_x_dots);
+            evolution_info.y_dots           = static_cast<std::int16_t>(g_logical_screen_y_dots);
             evolution_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
             evolution_info.evolving        = static_cast<std::int16_t>(+g_evolving);
             evolution_info.this_generation_random_seed =
                 static_cast<std::uint16_t>(g_evolve_this_generation_random_seed);
             evolution_info.max_random_mutation = g_evolve_max_random_mutation;
-            evolution_info.ecount          =
+            evolution_info.count          =
                 static_cast<std::int16_t>(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done
         }
         else
@@ -606,18 +606,18 @@ bool encoder()
             evolution_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
             evolution_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
             evolution_info.discrete_x_parameter_offset = g_evolve_info.discrete_x_parameter_offset;
-            evolution_info.discrete_y_paramter_offset = g_evolve_info.discrete_y_paramter_offset;
-            evolution_info.px              = g_evolve_info.px;
-            evolution_info.py              = g_evolve_info.py;
-            evolution_info.sxoffs          = g_evolve_info.sxoffs;
-            evolution_info.syoffs          = g_evolve_info.syoffs;
-            evolution_info.xdots           = g_evolve_info.xdots;
-            evolution_info.ydots           = g_evolve_info.ydots;
+            evolution_info.discrete_y_parameter_offset = g_evolve_info.discrete_y_parameter_offset;
+            evolution_info.px = g_evolve_info.px;
+            evolution_info.py = g_evolve_info.py;
+            evolution_info.screen_x_offset = g_evolve_info.screen_x_offset;
+            evolution_info.screen_y_offset = g_evolve_info.screen_y_offset;
+            evolution_info.x_dots = g_evolve_info.x_dots;
+            evolution_info.y_dots = g_evolve_info.y_dots;
             evolution_info.image_grid_size = g_evolve_info.image_grid_size;
-            evolution_info.evolving        = g_evolve_info.evolving;
+            evolution_info.evolving = g_evolve_info.evolving;
             evolution_info.this_generation_random_seed = g_evolve_info.this_generation_random_seed;
             evolution_info.max_random_mutation = g_evolve_info.max_random_mutation;
-            evolution_info.ecount          = g_evolve_info.ecount;
+            evolution_info.count = g_evolve_info.count;
         }
         for (int j = 0; j < NUM_GENES; j++)
         {

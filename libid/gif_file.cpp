@@ -781,15 +781,15 @@ EvolutionInfo get_evolution_info(GifFileType *gif)
     result.x_parameter_offset = deser.extract_double();
     result.y_parameter_offset = deser.extract_double();
     result.discrete_x_parameter_offset = deser.extract_int16();
-    result.discrete_y_paramter_offset = deser.extract_int16();
+    result.discrete_y_parameter_offset = deser.extract_int16();
     result.px = deser.extract_int16();
     result.py = deser.extract_int16();
-    result.sxoffs = deser.extract_int16();
-    result.syoffs = deser.extract_int16();
-    result.xdots = deser.extract_int16();
-    result.ydots = deser.extract_int16();
+    result.screen_x_offset = deser.extract_int16();
+    result.screen_y_offset = deser.extract_int16();
+    result.x_dots = deser.extract_int16();
+    result.y_dots = deser.extract_int16();
     deser.extract_int16(result.mutate);
-    result.ecount = deser.extract_int16();
+    result.count = deser.extract_int16();
     return result;
 }
 
@@ -805,15 +805,15 @@ void put_evolution_info(GifFileType *gif, const EvolutionInfo &info)
     ser.insert_double(info.x_parameter_offset);
     ser.insert_double(info.y_parameter_offset);
     ser.insert_int16(info.discrete_x_parameter_offset);
-    ser.insert_int16(info.discrete_y_paramter_offset);
+    ser.insert_int16(info.discrete_y_parameter_offset);
     ser.insert_int16(info.px);
     ser.insert_int16(info.py);
-    ser.insert_int16(info.sxoffs);
-    ser.insert_int16(info.syoffs);
-    ser.insert_int16(info.xdots);
-    ser.insert_int16(info.ydots);
+    ser.insert_int16(info.screen_x_offset);
+    ser.insert_int16(info.screen_y_offset);
+    ser.insert_int16(info.x_dots);
+    ser.insert_int16(info.y_dots);
     ser.insert_int16(info.mutate);
-    ser.insert_int16(info.ecount);
+    ser.insert_int16(info.count);
     for (int16_t zero : info.future)
     {
         zero = 0;

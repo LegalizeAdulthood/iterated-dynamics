@@ -394,15 +394,15 @@ std::ostream &operator<<(std::ostream&str, const EvolutionInfo &value)
         << R"(, "x_parameter_offset": )" << value.x_parameter_offset                   //
         << R"(, "y_parameter_offset": )" << value.y_parameter_offset                   //
         << R"(, "discrete_x_parameter_offset": )" << value.discrete_x_parameter_offset //
-        << R"(, "discrete_y_paramter_offset": )" << value.discrete_y_paramter_offset   //
+        << R"(, "discrete_y_paramter_offset": )" << value.discrete_y_parameter_offset   //
         << R"(, "px": )" << value.px                                                   //
         << R"(, "py": )" << value.py                                                   //
-        << R"(, "sxoffs": )" << value.sxoffs                                           //
-        << R"(, "syoffs": )" << value.syoffs                                           //
-        << R"(, "xdots": )" << value.xdots                                             //
-        << R"(, "ydots": )" << value.ydots                                             //
+        << R"(, "sxoffs": )" << value.screen_x_offset                                           //
+        << R"(, "syoffs": )" << value.screen_y_offset                                           //
+        << R"(, "xdots": )" << value.x_dots                                             //
+        << R"(, "ydots": )" << value.y_dots                                             //
         << R"(, "mutate": )" << ArrayPrinter(value.mutate)                            //
-        << R"(, "ecount": )" << value.ecount                                           //
+        << R"(, "ecount": )" << value.count                                           //
         << " }";                                                                       //
 }
 
@@ -818,19 +818,19 @@ TEST_F(TestGIFEvolutionInfoExtension, decode)
     EXPECT_NEAR(-2.0, info.x_parameter_offset, eps);
     EXPECT_NEAR(-1.5, info.y_parameter_offset, eps);
     EXPECT_EQ(0, info.discrete_x_parameter_offset);
-    EXPECT_EQ(0, info.discrete_y_paramter_offset);
+    EXPECT_EQ(0, info.discrete_y_parameter_offset);
     EXPECT_EQ(4, info.px);
     EXPECT_EQ(4, info.py);
-    EXPECT_EQ(0, info.sxoffs);
-    EXPECT_EQ(0, info.syoffs);
-    EXPECT_EQ(640, info.xdots);
-    EXPECT_EQ(480, info.ydots);
+    EXPECT_EQ(0, info.screen_x_offset);
+    EXPECT_EQ(0, info.screen_y_offset);
+    EXPECT_EQ(640, info.x_dots);
+    EXPECT_EQ(480, info.y_dots);
     constexpr std::int16_t expected_mutate[NUM_GENES]{5, 5};
     for (size_t i = 0; i < std::size(expected_mutate); ++i)
     {
         EXPECT_EQ(expected_mutate[i], info.mutate[i]) << '[' << i << ']';
     }
-    EXPECT_EQ(81, info.ecount);
+    EXPECT_EQ(81, info.count);
 }
 
 TEST_F(TestGIFEvolutionInfoExtension, encode)

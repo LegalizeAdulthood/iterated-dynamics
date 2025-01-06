@@ -868,18 +868,18 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
             g_evolve_info.y_parameter_offset = blk_6_info.y_parameter_offset;
             g_evolve_info.discrete_x_parameter_offset = blk_6_info.discrete_x_parameter_offset;
-            g_evolve_info.discrete_y_paramter_offset = blk_6_info.discrete_y_parameter_offset;
+            g_evolve_info.discrete_y_parameter_offset = blk_6_info.discrete_y_parameter_offset;
             g_evolve_info.px           = blk_6_info.px;
             g_evolve_info.py           = blk_6_info.py;
-            g_evolve_info.sxoffs       = blk_6_info.sx_offs;
-            g_evolve_info.syoffs       = blk_6_info.sy_offs;
-            g_evolve_info.xdots        = blk_6_info.x_dots;
-            g_evolve_info.ydots        = blk_6_info.y_dots;
+            g_evolve_info.screen_x_offset       = blk_6_info.sx_offs;
+            g_evolve_info.screen_y_offset       = blk_6_info.sy_offs;
+            g_evolve_info.x_dots        = blk_6_info.x_dots;
+            g_evolve_info.y_dots        = blk_6_info.y_dots;
             g_evolve_info.image_grid_size = blk_6_info.image_grid_size;
             g_evolve_info.evolving     = blk_6_info.evolving;
             g_evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
             g_evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
-            g_evolve_info.ecount       = blk_6_info.e_count;
+            g_evolve_info.count       = blk_6_info.e_count;
             g_have_evolve_info = true;
         }
         else
@@ -1227,18 +1227,18 @@ static int find_fractal_info(const std::string &gif_file, //
                     blk_6_info->x_parameter_offset = eload_info.x_parameter_offset;
                     blk_6_info->y_parameter_offset = eload_info.y_parameter_offset;
                     blk_6_info->discrete_x_parameter_offset = (char)eload_info.discrete_x_parameter_offset;
-                    blk_6_info->discrete_y_parameter_offset = (char)eload_info.discrete_y_paramter_offset;
+                    blk_6_info->discrete_y_parameter_offset = (char)eload_info.discrete_y_parameter_offset;
                     blk_6_info->px              = eload_info.px;
                     blk_6_info->py              = eload_info.py;
-                    blk_6_info->sx_offs          = eload_info.sxoffs;
-                    blk_6_info->sy_offs          = eload_info.syoffs;
-                    blk_6_info->x_dots           = eload_info.xdots;
-                    blk_6_info->y_dots           = eload_info.ydots;
+                    blk_6_info->sx_offs          = eload_info.screen_x_offset;
+                    blk_6_info->sy_offs          = eload_info.screen_y_offset;
+                    blk_6_info->x_dots           = eload_info.x_dots;
+                    blk_6_info->y_dots           = eload_info.y_dots;
                     blk_6_info->image_grid_size = eload_info.image_grid_size;
                     blk_6_info->evolving        = eload_info.evolving;
                     blk_6_info->this_generation_random_seed = eload_info.this_generation_random_seed;
                     blk_6_info->max_random_mutation = eload_info.max_random_mutation;
-                    blk_6_info->e_count          = eload_info.ecount;
+                    blk_6_info->e_count          = eload_info.count;
                     for (int i = 0; i < NUM_GENES; i++)
                     {
                         blk_6_info->mutate[i]    = eload_info.mutate[i];

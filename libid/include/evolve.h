@@ -20,7 +20,7 @@ enum class Variations
 struct GeneBase
 {
     void *addr;             // address of variable to be referenced
-    void (*varyfunc)(GeneBase *genes, int randval, int gene); // pointer to func used to vary it
+    void (*vary_fn)(GeneBase *genes, int rand_val, int gene); // pointer to func used to vary it
                             // takes random number and pointer to var
     Variations mutate;      // flag to switch on variation of this variable
     char name[16];          // name of variable (for menu )
@@ -49,15 +49,15 @@ struct EvolutionInfo      // for saving evolution data in a GIF file
     double x_parameter_offset;
     double y_parameter_offset;
     std::int16_t discrete_x_parameter_offset;
-    std::int16_t discrete_y_paramter_offset;
+    std::int16_t discrete_y_parameter_offset;
     std::int16_t px;
     std::int16_t py;
-    std::int16_t sxoffs;
-    std::int16_t syoffs;
-    std::int16_t xdots;
-    std::int16_t ydots;
+    std::int16_t screen_x_offset;
+    std::int16_t screen_y_offset;
+    std::int16_t x_dots;
+    std::int16_t y_dots;
     std::int16_t mutate[NUM_GENES];
-    std::int16_t ecount; // count of how many images have been calc'ed so far
+    std::int16_t count; // count of how many images have been calc'ed so far
     std::int16_t future[66 - NUM_GENES];      // total of 200 bytes
 };
 

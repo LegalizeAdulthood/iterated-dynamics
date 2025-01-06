@@ -398,20 +398,20 @@ MainState big_while_loop(MainContext &context)
                     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
                     g_evolve_new_discrete_x_parameter_offset = (char)g_evolve_info.discrete_x_parameter_offset;
                     g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
-                    g_evolve_new_discrete_y_parameter_offset = (char)g_evolve_info.discrete_y_paramter_offset;
+                    g_evolve_new_discrete_y_parameter_offset = (char)g_evolve_info.discrete_y_parameter_offset;
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
                     g_evolve_param_grid_x           = g_evolve_info.px;
                     g_evolve_param_grid_y           = g_evolve_info.py;
-                    g_logical_screen_x_offset       = g_evolve_info.sxoffs;
-                    g_logical_screen_y_offset       = g_evolve_info.syoffs;
-                    g_logical_screen_x_dots        = g_evolve_info.xdots;
-                    g_logical_screen_y_dots        = g_evolve_info.ydots;
+                    g_logical_screen_x_offset       = g_evolve_info.screen_x_offset;
+                    g_logical_screen_y_offset       = g_evolve_info.screen_y_offset;
+                    g_logical_screen_x_dots        = g_evolve_info.x_dots;
+                    g_logical_screen_y_dots        = g_evolve_info.y_dots;
                     g_evolve_image_grid_size = g_evolve_info.image_grid_size;
                     g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
                     g_evolving = static_cast<EvolutionModeFlags>(g_evolve_info.evolving);
                     g_view_window = g_evolving != EvolutionModeFlags::NONE;
-                    count       = g_evolve_info.ecount;
+                    count       = g_evolve_info.count;
                     g_have_evolve_info = false;
                 }
                 else
@@ -468,18 +468,18 @@ done:
                     g_evolve_info.x_parameter_offset = g_evolve_x_parameter_offset;
                     g_evolve_info.y_parameter_offset = g_evolve_y_parameter_offset;
                     g_evolve_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
-                    g_evolve_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
+                    g_evolve_info.discrete_y_parameter_offset = (short) g_evolve_discrete_y_parameter_offset;
                     g_evolve_info.px              = (short)g_evolve_param_grid_x;
                     g_evolve_info.py              = (short)g_evolve_param_grid_y;
-                    g_evolve_info.sxoffs          = (short)g_logical_screen_x_offset;
-                    g_evolve_info.syoffs          = (short)g_logical_screen_y_offset;
-                    g_evolve_info.xdots           = (short)g_logical_screen_x_dots;
-                    g_evolve_info.ydots           = (short)g_logical_screen_y_dots;
+                    g_evolve_info.screen_x_offset          = (short)g_logical_screen_x_offset;
+                    g_evolve_info.screen_y_offset          = (short)g_logical_screen_y_offset;
+                    g_evolve_info.x_dots           = (short)g_logical_screen_x_dots;
+                    g_evolve_info.y_dots           = (short)g_logical_screen_y_dots;
                     g_evolve_info.image_grid_size = (short) g_evolve_image_grid_size;
                     g_evolve_info.this_generation_random_seed = (short) g_evolve_this_generation_random_seed;
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
                     g_evolve_info.evolving        = (short) +g_evolving;
-                    g_evolve_info.ecount          = (short) count;
+                    g_evolve_info.count          = (short) count;
                     g_have_evolve_info = true;
                 }
                 g_logical_screen_y_offset = 0;

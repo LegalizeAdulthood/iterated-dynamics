@@ -150,15 +150,15 @@ bool operator==(const EvolutionInfo &lhs, const EvolutionInfo &rhs)
         && within_eps(lhs.x_parameter_offset, rhs.x_parameter_offset)         //
         && within_eps(lhs.y_parameter_offset, rhs.y_parameter_offset)         //
         && lhs.discrete_x_parameter_offset == rhs.discrete_x_parameter_offset //
-        && lhs.discrete_y_paramter_offset == rhs.discrete_y_paramter_offset   //
+        && lhs.discrete_y_parameter_offset == rhs.discrete_y_parameter_offset //
         && lhs.px == rhs.px                                                   //
         && lhs.py == rhs.py                                                   //
-        && lhs.sxoffs == rhs.sxoffs                                           //
-        && lhs.syoffs == rhs.syoffs                                           //
-        && lhs.xdots == rhs.xdots                                             //
-        && lhs.ydots == rhs.ydots                                             //
+        && lhs.screen_x_offset == rhs.screen_x_offset                         //
+        && lhs.screen_y_offset == rhs.screen_y_offset                         //
+        && lhs.x_dots == rhs.x_dots                                           //
+        && lhs.y_dots == rhs.y_dots                                           //
         && equal(lhs.mutate, rhs.mutate)                                      //
-        && lhs.ecount == rhs.ecount;                                          //
+        && lhs.count == rhs.count;                                            //
 }
 
 void copy_genes_to_bank(GeneBase const gene[NUM_GENES])
@@ -905,7 +905,7 @@ void fiddle_params(GeneBase gene[], int count)
 
     for (int i = 0; i < NUM_GENES; i++)
     {
-        (*(gene[i].varyfunc))(gene, std::rand(), i);
+        (*(gene[i].vary_fn))(gene, std::rand(), i);
     }
 }
 

@@ -448,18 +448,18 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     get_double(&info->x_parameter_offset, &bufPtr, dir);
     get_double(&info->y_parameter_offset, &bufPtr, dir);
     get_int16(&info->discrete_x_parameter_offset, &bufPtr, dir);
-    get_int16(&info->discrete_y_paramter_offset, &bufPtr, dir);
+    get_int16(&info->discrete_y_parameter_offset, &bufPtr, dir);
     get_int16(&info->px, &bufPtr, dir);
     get_int16(&info->py, &bufPtr, dir);
-    get_int16(&info->sxoffs, &bufPtr, dir);
-    get_int16(&info->syoffs, &bufPtr, dir);
-    get_int16(&info->xdots, &bufPtr, dir);
-    get_int16(&info->ydots, &bufPtr, dir);
+    get_int16(&info->screen_x_offset, &bufPtr, dir);
+    get_int16(&info->screen_y_offset, &bufPtr, dir);
+    get_int16(&info->x_dots, &bufPtr, dir);
+    get_int16(&info->y_dots, &bufPtr, dir);
     for (int i = 0; i < NUM_GENES; i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->mutate[i], &bufPtr, dir);
     }
-    get_int16(&info->ecount, &bufPtr, dir);
+    get_int16(&info->count, &bufPtr, dir);
 
     for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
     {
