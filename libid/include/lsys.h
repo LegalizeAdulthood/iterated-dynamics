@@ -29,13 +29,13 @@ enum
 struct LSysTurtleStateI
 {
     char counter, angle, reverse;
-    bool stackoflow;
+    bool stack_overflow;
     // dmaxangle is maxangle - 1
-    char maxangle, dmaxangle, curcolor, dummy;  // dummy ensures longword alignment
+    char max_angle, d_max_angle, curr_color, dummy;  // dummy ensures longword alignment
     long size;
-    long realangle;
-    long xpos, ypos; // xpos and ypos are long, not fixed point
-    long xmin, ymin, xmax, ymax; // as are these
+    long real_angle;
+    long x_pos, y_pos; // xpos and ypos are long, not fixed point
+    long x_min, y_min, x_max, y_max; // as are these
     long aspect; // aspect ratio of each pixel, ysize/xsize
     long num;
 };
@@ -43,13 +43,13 @@ struct LSysTurtleStateI
 struct LSysTurtleStateF
 {
     char counter, angle, reverse;
-    bool stackoflow;
+    bool stack_overflow;
     // dmaxangle is maxangle - 1
-    char maxangle, dmaxangle, curcolor, dummy;  // dummy ensures longword alignment
+    char max_angle, d_max_angle, curr_color, dummy;  // dummy ensures longword alignment
     LDouble size;
-    LDouble realangle;
-    LDouble xpos, ypos;
-    LDouble xmin, ymin, xmax, ymax;
+    LDouble real_angle;
+    LDouble x_pos, y_pos;
+    LDouble x_min, y_min, x_max, y_max;
     LDouble aspect; // aspect ratio of each pixel, ysize/xsize
     union
     {

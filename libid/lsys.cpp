@@ -284,9 +284,9 @@ int lsystem()
     {
         LSysTurtleStateI ts;
 
-        ts.stackoflow = false;
-        ts.maxangle = g_max_angle;
-        ts.dmaxangle = (char)(g_max_angle - 1);
+        ts.stack_overflow = false;
+        ts.max_angle = g_max_angle;
+        ts.d_max_angle = (char)(g_max_angle - 1);
 
         s_rule_cmds.push_back(lsysi_size_transform(s_axiom.c_str(), &ts));
         for (auto const &rule : s_rules)
@@ -300,7 +300,7 @@ int lsystem()
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
-            ts.realangle = ts.angle;
+            ts.real_angle = ts.angle;
 
             free_lcmds();
             s_rule_cmds.push_back(lsysi_draw_transform(s_axiom.c_str(), &ts));
@@ -311,14 +311,14 @@ int lsystem()
             s_rule_cmds.push_back(nullptr);
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-            ts.curcolor = 15;
-            if (ts.curcolor > g_colors)
+            ts.curr_color = 15;
+            if (ts.curr_color > g_colors)
             {
-                ts.curcolor = (char)(g_colors-1);
+                ts.curr_color = (char)(g_colors-1);
             }
             draw_lsysi(s_rule_cmds[0], &ts, &s_rule_cmds[1], order);
         }
-        stackoflow = ts.stackoflow;
+        stackoflow = ts.stack_overflow;
     }
 
     if (stackoflow)
@@ -331,9 +331,9 @@ int lsystem()
 
         g_overflow = false;
 
-        ts.stackoflow = false;
-        ts.maxangle = g_max_angle;
-        ts.dmaxangle = (char)(g_max_angle - 1);
+        ts.stack_overflow = false;
+        ts.max_angle = g_max_angle;
+        ts.d_max_angle = (char)(g_max_angle - 1);
 
         s_rulef_cmds.push_back(lsysf_size_transform(s_axiom.c_str(), &ts));
         for (auto const &rule : s_rules)
@@ -347,7 +347,7 @@ int lsystem()
         {
             ts.reverse = 0;
             ts.angle = ts.reverse;
-            ts.realangle = ts.angle;
+            ts.real_angle = ts.angle;
 
             free_lcmds();
             s_rulef_cmds.push_back(lsysf_draw_transform(s_axiom.c_str(), &ts));
@@ -358,10 +358,10 @@ int lsystem()
             s_rulef_cmds.push_back(nullptr);
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
-            ts.curcolor = 15;
-            if (ts.curcolor > g_colors)
+            ts.curr_color = 15;
+            if (ts.curr_color > g_colors)
             {
-                ts.curcolor = (char)(g_colors-1);
+                ts.curr_color = (char)(g_colors-1);
             }
             draw_lsysf(s_rulef_cmds[0], &ts, &s_rulef_cmds[1], order);
         }
@@ -477,7 +477,7 @@ static void lsysi_do_plus(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
-        if (++cmd->angle == cmd->maxangle)
+        if (++cmd->angle == cmd->max_angle)
         {
             cmd->angle = 0;
         }
@@ -490,7 +490,7 @@ static void lsysi_do_plus(LSysTurtleStateI *cmd)
         }
         else
         {
-            cmd->angle = cmd->dmaxangle;
+            cmd->angle = cmd->d_max_angle;
         }
     }
 }
@@ -501,12 +501,12 @@ void lsysi_do_plus_pow2(LSysTurtleStateI *cmd)
     if (cmd->reverse)
     {
         cmd->angle++;
-        cmd->angle &= cmd->dmaxangle;
+        cmd->angle &= cmd->d_max_angle;
     }
     else
     {
         cmd->angle--;
-        cmd->angle &= cmd->dmaxangle;
+        cmd->angle &= cmd->d_max_angle;
     }
 }
 
@@ -520,12 +520,12 @@ void lsysi_do_minus(LSysTurtleStateI *cmd)
         }
         else
         {
-            cmd->angle = cmd->dmaxangle;
+            cmd->angle = cmd->d_max_angle;
         }
     }
     else
     {
-        if (++cmd->angle == cmd->maxangle)
+        if (++cmd->angle == cmd->max_angle)
         {
             cmd->angle = 0;
         }
@@ -537,12 +537,12 @@ void lsysi_do_minus_pow2(LSysTurtleStateI *cmd)
     if (cmd->reverse)
     {
         cmd->angle--;
-        cmd->angle &= cmd->dmaxangle;
+        cmd->angle &= cmd->d_max_angle;
     }
     else
     {
         cmd->angle++;
-        cmd->angle &= cmd->dmaxangle;
+        cmd->angle &= cmd->d_max_angle;
     }
 }
 
@@ -550,11 +550,11 @@ static void lsysi_do_slash(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
-        cmd->realangle -= cmd->num;
+        cmd->real_angle -= cmd->num;
     }
     else
     {
-        cmd->realangle += cmd->num;
+        cmd->real_angle += cmd->num;
     }
 }
 
@@ -562,11 +562,11 @@ static void lsysi_do_bslash(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
-        cmd->realangle += cmd->num;
+        cmd->real_angle += cmd->num;
     }
     else
     {
-        cmd->realangle -= cmd->num;
+        cmd->real_angle -= cmd->num;
     }
 }
 
@@ -577,14 +577,14 @@ static void lsysi_do_at(LSysTurtleStateI *cmd)
 
 static void lsysi_do_pipe(LSysTurtleStateI *cmd)
 {
-    cmd->angle = (char)(cmd->angle + (char)(cmd->maxangle / 2));
-    cmd->angle %= cmd->maxangle;
+    cmd->angle = (char)(cmd->angle + (char)(cmd->max_angle / 2));
+    cmd->angle %= cmd->max_angle;
 }
 
 static void lsysi_do_pipe_pow2(LSysTurtleStateI *cmd)
 {
-    cmd->angle += cmd->maxangle >> 1;
-    cmd->angle &= cmd->dmaxangle;
+    cmd->angle += cmd->max_angle >> 1;
+    cmd->angle &= cmd->d_max_angle;
 }
 
 static void lsysi_do_bang(LSysTurtleStateI *cmd)
@@ -594,7 +594,7 @@ static void lsysi_do_bang(LSysTurtleStateI *cmd)
 
 static void lsysi_do_size_dm(LSysTurtleStateI *cmd)
 {
-    double angle = (double) cmd->realangle * ANGLE2DOUBLE;
+    double angle = (double) cmd->real_angle * ANGLE2DOUBLE;
     double s;
     double c;
 
@@ -602,32 +602,32 @@ static void lsysi_do_size_dm(LSysTurtleStateI *cmd)
     long fixedsin = (long) (s * FIXEDLT1);
     long fixedcos = (long) (c * FIXEDLT1);
 
-    cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
+    cmd->x_pos = cmd->x_pos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
+    cmd->y_pos = cmd->y_pos + (multiply(cmd->size, fixedsin, 29));
 
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    cmd->xmax = std::max(cmd->xpos, cmd->xmax);
-    cmd->ymax = std::max(cmd->ypos, cmd->ymax);
-    cmd->xmin = std::min(cmd->xpos, cmd->xmin);
-    cmd->ymin = std::min(cmd->ypos, cmd->ymin);
+    cmd->x_max = std::max(cmd->x_pos, cmd->x_max);
+    cmd->y_max = std::max(cmd->y_pos, cmd->y_max);
+    cmd->x_min = std::min(cmd->x_pos, cmd->x_min);
+    cmd->y_min = std::min(cmd->y_pos, cmd->y_min);
 }
 
 static void lsysi_do_size_gf(LSysTurtleStateI *cmd)
 {
-    cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
+    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->y_pos = cmd->y_pos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
-    cmd->xmax = std::max(cmd->xpos, cmd->xmax);
-    cmd->ymax = std::max(cmd->ypos, cmd->ymax);
-    cmd->xmin = std::min(cmd->xpos, cmd->xmin);
-    cmd->ymin = std::min(cmd->ypos, cmd->ymin);
+    cmd->x_max = std::max(cmd->x_pos, cmd->x_max);
+    cmd->y_max = std::max(cmd->y_pos, cmd->y_max);
+    cmd->x_min = std::min(cmd->x_pos, cmd->x_min);
+    cmd->y_min = std::min(cmd->y_pos, cmd->y_min);
 }
 
 static void lsysi_do_draw_d(LSysTurtleStateI *cmd)
 {
-    double angle = (double) cmd->realangle * ANGLE2DOUBLE;
+    double angle = (double) cmd->real_angle * ANGLE2DOUBLE;
     double s;
     double c;
 
@@ -635,18 +635,18 @@ static void lsysi_do_draw_d(LSysTurtleStateI *cmd)
     long fixedsin = (long) (s * FIXEDLT1);
     long fixedcos = (long) (c * FIXEDLT1);
 
-    int lastx = (int) (cmd->xpos >> 19);
-    int lasty = (int) (cmd->ypos >> 19);
-    cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
+    int lastx = (int) (cmd->x_pos >> 19);
+    int lasty = (int) (cmd->y_pos >> 19);
+    cmd->x_pos = cmd->x_pos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
+    cmd->y_pos = cmd->y_pos + (multiply(cmd->size, fixedsin, 29));
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
+    driver_draw_line(lastx, lasty, (int)(cmd->x_pos >> 19), (int)(cmd->y_pos >> 19), cmd->curr_color);
 }
 
 static void lsysi_do_draw_m(LSysTurtleStateI *cmd)
 {
-    double angle = (double) cmd->realangle * ANGLE2DOUBLE;
+    double angle = (double) cmd->real_angle * ANGLE2DOUBLE;
     double s;
     double c;
 
@@ -656,51 +656,51 @@ static void lsysi_do_draw_m(LSysTurtleStateI *cmd)
 
     // xpos+=size*aspect*cos(realangle*PI/180);
     // ypos+=size*sin(realangle*PI/180);
-    cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
+    cmd->x_pos = cmd->x_pos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
+    cmd->y_pos = cmd->y_pos + (multiply(cmd->size, fixedsin, 29));
 }
 
 static void lsysi_do_draw_g(LSysTurtleStateI *cmd)
 {
-    cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
+    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->y_pos = cmd->y_pos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
 }
 
 static void lsysi_do_draw_f(LSysTurtleStateI *cmd)
 {
-    int lastx = (int)(cmd->xpos >> 19);
-    int lasty = (int)(cmd->ypos >> 19);
-    cmd->xpos = cmd->xpos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
-    cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
+    int lastx = (int)(cmd->x_pos >> 19);
+    int lasty = (int)(cmd->y_pos >> 19);
+    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->y_pos = cmd->y_pos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
-    driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
+    driver_draw_line(lastx, lasty, (int)(cmd->x_pos >> 19), (int)(cmd->y_pos >> 19), cmd->curr_color);
 }
 
 static void lsysi_do_draw_c(LSysTurtleStateI *cmd)
 {
-    cmd->curcolor = (char)(((int) cmd->num) % g_colors);
+    cmd->curr_color = (char)(((int) cmd->num) % g_colors);
 }
 
 static void lsysi_do_draw_gt(LSysTurtleStateI *cmd)
 {
-    cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
-    cmd->curcolor %= g_colors;
-    if (cmd->curcolor == 0)
+    cmd->curr_color = (char)(cmd->curr_color - (char)cmd->num);
+    cmd->curr_color %= g_colors;
+    if (cmd->curr_color == 0)
     {
-        cmd->curcolor = (char)(g_colors-1);
+        cmd->curr_color = (char)(g_colors-1);
     }
 }
 
 static void lsysi_do_draw_lt(LSysTurtleStateI *cmd)
 {
-    cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
-    cmd->curcolor %= g_colors;
-    if (cmd->curcolor == 0)
+    cmd->curr_color = (char)(cmd->curr_color + (char)cmd->num);
+    cmd->curr_color %= g_colors;
+    if (cmd->curr_color == 0)
     {
-        cmd->curcolor = 1;
+        cmd->curr_color = 1;
     }
 }
 
@@ -714,7 +714,7 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rule
     if (stack_avail() < 400)
     {
         // leave some margin for calling subrtns
-        ts->stackoflow = true;
+        ts->stack_overflow = true;
         return nullptr;
     }
 
@@ -756,9 +756,9 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rule
                 char const saveang = ts->angle;
                 char const saverev = ts->reverse;
                 long const savesize = ts->size;
-                unsigned long const saverang = ts->realangle;
-                long const savex = ts->xpos;
-                long const savey = ts->ypos;
+                unsigned long const saverang = ts->real_angle;
+                long const savex = ts->x_pos;
+                long const savey = ts->y_pos;
                 command = find_size(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
@@ -767,9 +767,9 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rule
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
-                ts->realangle = saverang;
-                ts->xpos = savex;
-                ts->ypos = savey;
+                ts->real_angle = saverang;
+                ts->x_pos = savex;
+                ts->y_pos = savey;
             }
         }
         command++;
@@ -787,20 +787,20 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
     ts->counter = 0;
     ts->reverse = ts->counter;
     ts->angle = ts->reverse;
-    ts->realangle = ts->angle;
-    ts->ymin = ts->realangle;
-    ts->ymax = ts->ymin;
-    ts->xmax = ts->ymax;
-    ts->xmin = ts->xmax;
-    ts->ypos = ts->xmin;
-    ts->xpos = ts->ypos;
+    ts->real_angle = ts->angle;
+    ts->y_min = ts->real_angle;
+    ts->y_max = ts->y_min;
+    ts->x_max = ts->y_max;
+    ts->x_min = ts->x_max;
+    ts->y_pos = ts->x_min;
+    ts->x_pos = ts->y_pos;
     ts->size = FIXEDPT(1L);
     LSysCmd *fsret = find_size(command, ts, rules, depth);
     thinking(0, nullptr); // erase thinking message if any
-    double xmin = (double) ts->xmin / FIXEDMUL;
-    double xmax = (double) ts->xmax / FIXEDMUL;
-    double ymin = (double) ts->ymin / FIXEDMUL;
-    double ymax = (double) ts->ymax / FIXEDMUL;
+    double xmin = (double) ts->x_min / FIXEDMUL;
+    double xmax = (double) ts->x_max / FIXEDMUL;
+    double ymin = (double) ts->y_min / FIXEDMUL;
+    double ymax = (double) ts->y_max / FIXEDMUL;
     if (fsret == nullptr)
     {
         return false;
@@ -825,21 +825,21 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
 
     if (horiz == 1E37)
     {
-        ts->xpos = FIXEDPT(g_logical_screen_x_dots/2);
+        ts->x_pos = FIXEDPT(g_logical_screen_x_dots/2);
     }
     else
     {
         //    ts->xpos = FIXEDPT(-xmin*(locsize)+5+((xdots-10)-(locsize)*(xmax-xmin))/2);
-        ts->xpos = FIXEDPT((g_logical_screen_x_dots-locsize*(xmax+xmin))/2);
+        ts->x_pos = FIXEDPT((g_logical_screen_x_dots-locsize*(xmax+xmin))/2);
     }
     if (vert == 1E37)
     {
-        ts->ypos = FIXEDPT(g_logical_screen_y_dots/2);
+        ts->y_pos = FIXEDPT(g_logical_screen_y_dots/2);
     }
     else
     {
         //    ts->ypos = FIXEDPT(-ymin*(locsize)+3+((ydots-6)-(locsize)*(ymax-ymin))/2);
-        ts->ypos = FIXEDPT((g_logical_screen_y_dots-locsize*(ymax+ymin))/2);
+        ts->y_pos = FIXEDPT((g_logical_screen_y_dots-locsize*(ymax+ymin))/2);
     }
     ts->size = FIXEDPT(locsize);
 
@@ -856,7 +856,7 @@ static LSysCmd *draw_lsysi(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rul
     if (stack_avail() < 400)
     {
         // leave some margin for calling subrtns
-        ts->stackoflow = true;
+        ts->stack_overflow = true;
         return nullptr;
     }
 
@@ -897,10 +897,10 @@ static LSysCmd *draw_lsysi(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rul
                 char const saveang = ts->angle;
                 char const saverev = ts->reverse;
                 long const savesize = ts->size;
-                unsigned long const saverang = ts->realangle;
-                long const savex = ts->xpos;
-                long const savey = ts->ypos;
-                char const savecolor = ts->curcolor;
+                unsigned long const saverang = ts->real_angle;
+                long const savex = ts->x_pos;
+                long const savey = ts->y_pos;
+                char const savecolor = ts->curr_color;
                 command = draw_lsysi(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
@@ -909,10 +909,10 @@ static LSysCmd *draw_lsysi(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rul
                 ts->angle = saveang;
                 ts->reverse = saverev;
                 ts->size = savesize;
-                ts->realangle = saverang;
-                ts->xpos = savex;
-                ts->ypos = savey;
-                ts->curcolor = savecolor;
+                ts->real_angle = saverang;
+                ts->x_pos = savex;
+                ts->y_pos = savey;
+                ts->curr_color = savecolor;
             }
         }
         command++;
@@ -925,14 +925,14 @@ static LSysCmd *lsysi_size_transform(char const *s, LSysTurtleStateI *ts)
     int maxval = 10;
     int n = 0;
 
-    auto const plus = is_pow2(ts->maxangle) ? lsysi_do_plus_pow2 : lsysi_do_plus;
-    auto const minus = is_pow2(ts->maxangle) ? lsysi_do_minus_pow2 : lsysi_do_minus;
-    auto const pipe = is_pow2(ts->maxangle) ? lsysi_do_pipe_pow2 : lsysi_do_pipe;
+    auto const plus = is_pow2(ts->max_angle) ? lsysi_do_plus_pow2 : lsysi_do_plus;
+    auto const minus = is_pow2(ts->max_angle) ? lsysi_do_minus_pow2 : lsysi_do_minus;
+    auto const pipe = is_pow2(ts->max_angle) ? lsysi_do_pipe_pow2 : lsysi_do_pipe;
 
     LSysCmd *ret = (LSysCmd *) malloc((long) maxval * sizeof(LSysCmd));
     if (ret == nullptr)
     {
-        ts->stackoflow = true;
+        ts->stack_overflow = true;
         return nullptr;
     }
     while (*s)
@@ -992,7 +992,7 @@ static LSysCmd *lsysi_size_transform(char const *s, LSysTurtleStateI *ts)
             if (doub == nullptr)
             {
                 free(ret);
-                ts->stackoflow = true;
+                ts->stack_overflow = true;
                 return nullptr;
             }
             std::memcpy(doub, ret, maxval*sizeof(LSysCmd));
@@ -1011,7 +1011,7 @@ static LSysCmd *lsysi_size_transform(char const *s, LSysTurtleStateI *ts)
     if (doub == nullptr)
     {
         free(ret);
-        ts->stackoflow = true;
+        ts->stack_overflow = true;
         return nullptr;
     }
     std::memcpy(doub, ret, n*sizeof(LSysCmd));
@@ -1024,14 +1024,14 @@ static LSysCmd *lsysi_draw_transform(char const *s, LSysTurtleStateI *ts)
     int maxval = 10;
     int n = 0;
 
-    auto const plus = is_pow2(ts->maxangle) ? lsysi_do_plus_pow2 : lsysi_do_plus;
-    auto const minus = is_pow2(ts->maxangle) ? lsysi_do_minus_pow2 : lsysi_do_minus;
-    auto const pipe = is_pow2(ts->maxangle) ? lsysi_do_pipe_pow2 : lsysi_do_pipe;
+    auto const plus = is_pow2(ts->max_angle) ? lsysi_do_plus_pow2 : lsysi_do_plus;
+    auto const minus = is_pow2(ts->max_angle) ? lsysi_do_minus_pow2 : lsysi_do_minus;
+    auto const pipe = is_pow2(ts->max_angle) ? lsysi_do_pipe_pow2 : lsysi_do_pipe;
 
     LSysCmd *ret = (LSysCmd *) malloc((long) maxval * sizeof(LSysCmd));
     if (ret == nullptr)
     {
-        ts->stackoflow = true;
+        ts->stack_overflow = true;
         return nullptr;
     }
     while (*s)
@@ -1107,7 +1107,7 @@ static LSysCmd *lsysi_draw_transform(char const *s, LSysTurtleStateI *ts)
             if (doub == nullptr)
             {
                 free(ret);
-                ts->stackoflow = true;
+                ts->stack_overflow = true;
                 return nullptr;
             }
             std::memcpy(doub, ret, maxval*sizeof(LSysCmd));
@@ -1126,7 +1126,7 @@ static LSysCmd *lsysi_draw_transform(char const *s, LSysTurtleStateI *ts)
     if (doub == nullptr)
     {
         free(ret);
-        ts->stackoflow = true;
+        ts->stack_overflow = true;
         return nullptr;
     }
     std::memcpy(doub, ret, n*sizeof(LSysCmd));
