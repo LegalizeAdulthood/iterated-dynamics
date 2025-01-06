@@ -245,7 +245,7 @@ private:
     std::array<ColorEditor, 3> m_color; // color editors 0=r, 1=g, 2=b
     RGBEditorNotification *m_observer;
     void change(ColorEditor *editor) override;
-    void other_key(int key, ColorEditor *ceditor) override;
+    void other_key(int key, ColorEditor *editor) override;
 };
 
 //
@@ -299,7 +299,7 @@ private:
     };
 
     void draw_status(bool stripe_mode);
-    void hl_pal(int pnum, int color);
+    void hl_pal(int pal_index, int color);
     void draw();
     void set_curr(int which, int curr);
     void save_rect();
@@ -538,7 +538,7 @@ static void rect(int x, int y, int width, int depth, int color)
     ver_line(x+width-1, y, depth, color);
 }
 
-static void displayf(int x, int y, int fg, int bg, char const *format, ...)
+static void display_fmt(int x, int y, int fg, int bg, char const *format, ...)
 {
     char buff[81];
 
@@ -756,7 +756,7 @@ void ColorEditor::draw()
     }
 
     s_cursor.hide();
-    displayf(m_x + 2, m_y + 2, s_fg_color, s_bg_color, "%c%02d", m_letter, m_val);
+    display_fmt(m_x + 2, m_y + 2, s_fg_color, s_bg_color, "%c%02d", m_letter, m_val);
     s_cursor.show();
 }
 
@@ -899,36 +899,36 @@ void MoveBox::move(int key)
 {
     bool done = false;
     bool first = true;
-    int xoff = 0;
-    int yoff = 0;
+    int x_offset = 0;
+    int y_offset = 0;
 
     while (!done)
     {
         switch (key)
         {
         case ID_KEY_CTL_RIGHT_ARROW:
-            xoff += BOX_INC * 4;
+            x_offset += BOX_INC * 4;
             break;
         case ID_KEY_RIGHT_ARROW:
-            xoff += BOX_INC;
+            x_offset += BOX_INC;
             break;
         case ID_KEY_CTL_LEFT_ARROW:
-            xoff -= BOX_INC * 4;
+            x_offset -= BOX_INC * 4;
             break;
         case ID_KEY_LEFT_ARROW:
-            xoff -= BOX_INC;
+            x_offset -= BOX_INC;
             break;
         case ID_KEY_CTL_DOWN_ARROW:
-            yoff += BOX_INC * 4;
+            y_offset += BOX_INC * 4;
             break;
         case ID_KEY_DOWN_ARROW:
-            yoff += BOX_INC;
+            y_offset += BOX_INC;
             break;
         case ID_KEY_CTL_UP_ARROW:
-            yoff -= BOX_INC * 4;
+            y_offset -= BOX_INC * 4;
             break;
         case ID_KEY_UP_ARROW:
-            yoff -= BOX_INC;
+            y_offset -= BOX_INC;
             break;
 
         default:
@@ -949,27 +949,27 @@ void MoveBox::move(int key)
         }
     }
 
-    xoff += m_x;
-    yoff += m_y; // (xoff,yoff) = new position
+    x_offset += m_x;
+    y_offset += m_y; // (xoff,yoff) = new position
 
-    xoff = std::max(xoff, 0);
-    yoff = std::max(yoff, 0);
+    x_offset = std::max(x_offset, 0);
+    y_offset = std::max(y_offset, 0);
 
-    if (xoff + m_base_width + m_csize * 16 + 1 > g_screen_x_dots)
+    if (x_offset + m_base_width + m_csize * 16 + 1 > g_screen_x_dots)
     {
-        xoff = g_screen_x_dots - (m_base_width + m_csize * 16 + 1);
+        x_offset = g_screen_x_dots - (m_base_width + m_csize * 16 + 1);
     }
 
-    if (yoff + m_base_depth + m_csize * 16 + 1 > g_screen_y_dots)
+    if (y_offset + m_base_depth + m_csize * 16 + 1 > g_screen_y_dots)
     {
-        yoff = g_screen_y_dots - (m_base_depth + m_csize * 16 + 1);
+        y_offset = g_screen_y_dots - (m_base_depth + m_csize * 16 + 1);
     }
 
-    if (xoff != m_x || yoff != m_y)
+    if (x_offset != m_x || y_offset != m_y)
     {
         erase();
-        m_y = yoff;
-        m_x = xoff;
+        m_y = y_offset;
+        m_x = x_offset;
         draw();
     }
 }
@@ -1110,15 +1110,15 @@ void CrossHairCursor::set_pos(int x, int y)
     }
 }
 
-void CrossHairCursor::move(int xoff, int yoff)
+void CrossHairCursor::move(int x_offset, int y_offset)
 {
     if (!m_hidden)
     {
         restore();
     }
 
-    m_x += xoff;
-    m_y += yoff;
+    m_x += x_offset;
+    m_y += y_offset;
 
     m_x = std::max(m_x, 0);
     m_y = std::max(m_y, 0);
@@ -1367,7 +1367,7 @@ void RGBEditor::change(ColorEditor *editor)
     m_observer->change(this);
 }
 
-void RGBEditor::other_key(int key, ColorEditor *ceditor)
+void RGBEditor::other_key(int key, ColorEditor *editor)
 {
     switch (key)
     {
@@ -1376,7 +1376,7 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         if (m_curr != 0)
         {
             m_curr = 0;
-            ceditor->set_done(true);
+            editor->set_done(true);
         }
         break;
 
@@ -1385,7 +1385,7 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         if (m_curr != 1)
         {
             m_curr = 1;
-            ceditor->set_done(true);
+            editor->set_done(true);
         }
         break;
 
@@ -1394,7 +1394,7 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         if (m_curr != 2)
         {
             m_curr = 2;
-            ceditor->set_done(true);
+            editor->set_done(true);
         }
         break;
 
@@ -1404,7 +1404,7 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         {
             m_curr = 0;
         }
-        ceditor->set_done(true);
+        editor->set_done(true);
         break;
 
     case ID_KEY_INSERT: // move to prev CEditor
@@ -1412,14 +1412,14 @@ void RGBEditor::other_key(int key, ColorEditor *ceditor)
         {
             m_curr = 2;
         }
-        ceditor->set_done(true);
+        editor->set_done(true);
         break;
 
     default:
         m_observer->other_key(key, this);
         if (m_done)
         {
-            ceditor->set_done(true);
+            editor->set_done(true);
         }
         break;
     }
@@ -1517,15 +1517,15 @@ void PalTable::draw_status(bool stripe_mode)
     }
 }
 
-void PalTable::hl_pal(int pnum, int color)
+void PalTable::hl_pal(int pal_index, int color)
 {
     if (m_hidden)
     {
         return;
     }
 
-    int x = m_x + PAL_TABLE_PAL_X + (pnum % 16) * m_csize;
-    int y = m_y + PAL_TABLE_PAL_Y + (pnum / 16) * m_csize;
+    int x = m_x + PAL_TABLE_PAL_X + (pal_index % 16) * m_csize;
+    int y = m_y + PAL_TABLE_PAL_Y + (pal_index / 16) * m_csize;
 
     s_cursor.hide();
 
@@ -1563,7 +1563,7 @@ void PalTable::draw()
     {
         int center = (width - TITLE_LEN * 8) / 2;
 
-        displayf(m_x + center, m_y + RGB_EDITOR_HEIGHT / 2 - 12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
+        display_fmt(m_x + center, m_y + RGB_EDITOR_HEIGHT / 2 - 12, s_fg_color, s_bg_color, ID_PROGRAM_NAME);
     }
 
     m_rgb[0].draw();
@@ -1571,28 +1571,28 @@ void PalTable::draw()
 
     for (int pal = 0; pal < 256; pal++)
     {
-        int xoff = PAL_TABLE_PAL_X + (pal % 16) * m_csize;
-        int yoff = PAL_TABLE_PAL_Y + (pal / 16) * m_csize;
+        int x_offset = PAL_TABLE_PAL_X + (pal % 16) * m_csize;
+        int y_offset = PAL_TABLE_PAL_Y + (pal / 16) * m_csize;
 
         if (pal >= g_colors)
         {
-            fill_rect(m_x + xoff + 1, m_y + yoff + 1, m_csize - 1, m_csize - 1, s_bg_color);
-            draw_diamond(m_x + xoff + m_csize / 2 - 1, m_y + yoff + m_csize / 2 - 1, s_fg_color);
+            fill_rect(m_x + x_offset + 1, m_y + y_offset + 1, m_csize - 1, m_csize - 1, s_bg_color);
+            draw_diamond(m_x + x_offset + m_csize / 2 - 1, m_y + y_offset + m_csize / 2 - 1, s_fg_color);
         }
 
         else if (is_reserved(pal))
         {
-            int x1 = m_x + xoff + 1;
-            int y1 = m_y + yoff + 1;
+            int x1 = m_x + x_offset + 1;
+            int y1 = m_y + y_offset + 1;
             int x2 = x1 + m_csize - 2;
             int y2 = y1 + m_csize - 2;
-            fill_rect(m_x + xoff + 1, m_y + yoff + 1, m_csize - 1, m_csize - 1, s_bg_color);
+            fill_rect(m_x + x_offset + 1, m_y + y_offset + 1, m_csize - 1, m_csize - 1, s_bg_color);
             driver_draw_line(x1, y1, x2, y2, s_fg_color);
             driver_draw_line(x1, y2, x2, y1, s_fg_color);
         }
         else
         {
-            fill_rect(m_x + xoff + 1, m_y + yoff + 1, m_csize - 1, m_csize - 1, pal);
+            fill_rect(m_x + x_offset + 1, m_y + y_offset + 1, m_csize - 1, m_csize - 1, pal);
         }
     }
 
@@ -1692,10 +1692,10 @@ void PalTable::save_rect()
 
     m_saved_pixel.resize(width * depth);
     s_cursor.hide();
-    for (int yoff = 0; yoff < depth; yoff++)
+    for (int y_offset = 0; y_offset < depth; y_offset++)
     {
-        get_row(m_x, m_y + yoff, width, &m_saved_pixel[yoff * width]);
-        hor_line(m_x, m_y + yoff, width, s_bg_color);
+        get_row(m_x, m_y + y_offset, width, &m_saved_pixel[y_offset * width]);
+        hor_line(m_x, m_y + y_offset, width, s_bg_color);
     }
     s_cursor.show();
 }
@@ -1711,9 +1711,9 @@ void PalTable::restore_rect()
     int depth = PAL_TABLE_PAL_Y + m_csize * 16 + 1 + 1;
 
     s_cursor.hide();
-    for (int yoff = 0; yoff < depth; yoff++)
+    for (int y_offset = 0; y_offset < depth; y_offset++)
     {
-        put_row(m_x, m_y + yoff, width, &m_saved_pixel[yoff * width]);
+        put_row(m_x, m_y + y_offset, width, &m_saved_pixel[y_offset * width]);
     }
     s_cursor.show();
 }
@@ -1787,36 +1787,36 @@ void PalTable::do_curs(int key)
 {
     bool done = false;
     bool first = true;
-    int xoff = 0;
-    int yoff = 0;
+    int x_offset = 0;
+    int y_offset = 0;
 
     while (!done)
     {
         switch (key)
         {
         case ID_KEY_CTL_RIGHT_ARROW:
-            xoff += CURS_INC * 4;
+            x_offset += CURS_INC * 4;
             break;
         case ID_KEY_RIGHT_ARROW:
-            xoff += CURS_INC;
+            x_offset += CURS_INC;
             break;
         case ID_KEY_CTL_LEFT_ARROW:
-            xoff -= CURS_INC * 4;
+            x_offset -= CURS_INC * 4;
             break;
         case ID_KEY_LEFT_ARROW:
-            xoff -= CURS_INC;
+            x_offset -= CURS_INC;
             break;
         case ID_KEY_CTL_DOWN_ARROW:
-            yoff += CURS_INC * 4;
+            y_offset += CURS_INC * 4;
             break;
         case ID_KEY_DOWN_ARROW:
-            yoff += CURS_INC;
+            y_offset += CURS_INC;
             break;
         case ID_KEY_CTL_UP_ARROW:
-            yoff -= CURS_INC * 4;
+            y_offset -= CURS_INC * 4;
             break;
         case ID_KEY_UP_ARROW:
-            yoff -= CURS_INC;
+            y_offset -= CURS_INC;
             break;
 
         default:
@@ -1837,7 +1837,7 @@ void PalTable::do_curs(int key)
         }
     }
 
-    s_cursor.move(xoff, yoff);
+    s_cursor.move(x_offset, y_offset);
 
     set_curr_from_cursor();
 }
@@ -2580,12 +2580,12 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'C': // color cycling sub-mode
     case 'c':
     {
-        bool oldhidden = m_hidden;
+        bool old_hidden = m_hidden;
 
         save_undo_data(0, 255);
 
         s_cursor.hide();
-        if (!oldhidden)
+        if (!old_hidden)
         {
             hide(rgb, true);
         }
@@ -2593,7 +2593,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         ::rotate(0);
         get_pal_range(0, g_colors, m_pal);
         update_dac();
-        if (!oldhidden)
+        if (!old_hidden)
         {
             m_rgb[0].set_rgb(m_curr[0], &(m_pal[m_curr[0]]));
             m_rgb[1].set_rgb(m_curr[1], &(m_pal[m_curr[1]]));
@@ -2766,7 +2766,7 @@ void PalTable::set_hidden(bool hidden)
 
 void PalTable::change(RGBEditor *rgb)
 {
-    int       pnum = m_curr[m_active];
+    int pal_index = m_curr[m_active];
 
     if (m_free_style)
     {
@@ -2777,11 +2777,11 @@ void PalTable::change(RGBEditor *rgb)
 
     if (!m_curr_changed)
     {
-        save_undo_data(pnum, pnum);
+        save_undo_data(pal_index, pal_index);
         m_curr_changed = true;
     }
 
-    m_pal[pnum] = rgb->get_rgb();
+    m_pal[pal_index] = rgb->get_rgb();
 
     if (m_curr[0] == m_curr[1])
     {

@@ -25,7 +25,7 @@ public:
     void save();
     void restore();
     void set_pos(int x, int y);
-    void move(int xoff, int yoff);
+    void move(int x_offset, int y_offset);
     int get_x() const
     {
         return m_x;
