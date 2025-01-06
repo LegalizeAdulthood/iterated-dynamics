@@ -43,35 +43,35 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     {
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
-        double tmpx1 = g_x_max - g_x_min;
-        double tmpy1 = g_y_max - g_y_min;
-        const double c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        double tmp_x1 = g_x_max - g_x_min;
+        double tmp_y1 = g_y_max - g_y_min;
+        const double c2 = tmp_x1*tmp_x1 + tmp_y1*tmp_y1;
 
-        tmpx1 = g_x_max - g_x_3rd;
-        tmpy1 = g_y_min - g_y_3rd;
-        const double a2 = tmpx1 * tmpx1 + tmpy1 * tmpy1;
+        tmp_x1 = g_x_max - g_x_3rd;
+        tmp_y1 = g_y_min - g_y_3rd;
+        const double a2 = tmp_x1 * tmp_x1 + tmp_y1 * tmp_y1;
         const double a = std::sqrt(a2);
-        rot = -rad_to_deg(std::atan2(tmpy1, tmpx1));   // negative for image rotation
+        rot = -rad_to_deg(std::atan2(tmp_y1, tmp_x1));   // negative for image rotation
 
-        const double tmpx2 = g_x_min - g_x_3rd;
-        const double tmpy2 = g_y_max - g_y_3rd;
-        const double b2 = tmpx2 * tmpx2 + tmpy2 * tmpy2;
+        const double tmp_x2 = g_x_min - g_x_3rd;
+        const double tmp_y2 = g_y_max - g_y_3rd;
+        const double b2 = tmp_x2 * tmp_x2 + tmp_y2 * tmp_y2;
         const double b = std::sqrt(b2);
 
-        const double tmpa = std::acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
-        skew = 90.0 - rad_to_deg(tmpa);
+        const double tmp_a = std::acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
+        skew = 90.0 - rad_to_deg(tmp_a);
 
         ctr_x = (g_x_min + g_x_max)*0.5;
         ctr_y = (g_y_min + g_y_max) * 0.5;
 
-        const double height = b * std::sin(tmpa);
+        const double height = b * std::sin(tmp_a);
 
         mag  = 2.0/height; // 1/(h/2)
         x_mag_factor = height / (DEFAULT_ASPECT * a);
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
-        if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
+        if (tmp_x1*tmp_y2 - tmp_x2*tmp_y1 < 0
             && g_debug_flag != DebugFlags::ALLOW_NEGATIVE_CROSS_PRODUCT)
         {
             skew = -skew;
@@ -87,29 +87,29 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     }
 #ifndef NDEBUG
     {
-        const double txmin = g_x_min;
-        const double txmax = g_x_max;
-        const double tx3rd = g_x_3rd;
-        const double tymin = g_y_min;
-        const double tymax = g_y_max;
-        const double ty3rd = g_y_3rd;
+        const double t_x_min = g_x_min;
+        const double t_x_max = g_x_max;
+        const double t_x_3rd = g_x_3rd;
+        const double t_y_min = g_y_min;
+        const double t_y_max = g_y_max;
+        const double t_y_3rd = g_y_3rd;
         cvt_corners(ctr_x, ctr_y, mag, x_mag_factor, rot, skew);
-        const double error = sqr(txmin - g_x_min) //
-            + sqr(txmax - g_x_max)                //
-            + sqr(tx3rd - g_x_3rd)                //
-            + sqr(tymin - g_y_min)                //
-            + sqr(tymax - g_y_max)                //
-            + sqr(ty3rd - g_y_3rd);               //
+        const double error = sqr(t_x_min - g_x_min) //
+            + sqr(t_x_max - g_x_max)                //
+            + sqr(t_x_3rd - g_x_3rd)                //
+            + sqr(t_y_min - g_y_min)                //
+            + sqr(t_y_max - g_y_max)                //
+            + sqr(t_y_3rd - g_y_3rd);               //
         if (error > .001)
         {
             show_corners_dbl("cvtcentermag problem");
         }
-        g_x_min = txmin;
-        g_x_max = txmax;
-        g_x_3rd = tx3rd;
-        g_y_min = tymin;
-        g_y_max = tymax;
-        g_y_3rd = ty3rd;
+        g_x_min = t_x_min;
+        g_x_max = t_x_max;
+        g_x_3rd = t_x_3rd;
+        g_y_min = t_y_min;
+        g_y_max = t_y_max;
+        g_y_3rd = t_y_3rd;
     }
 #endif
 }
@@ -155,43 +155,43 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDouble &mag, double &x_mag_facto
 
         // tmpx = g_x_max - g_x_min;
         sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_min);
-        LDouble tmpx1 = bf_to_float(tmp_x_bf);
+        LDouble tmp_x1 = bf_to_float(tmp_x_bf);
         // tmpy = g_y_max - g_y_min;
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_min);
-        LDouble tmpy1 = bf_to_float(tmp_y_bf);
-        const LDouble c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
+        LDouble tmp_y1 = bf_to_float(tmp_y_bf);
+        const LDouble c2 = tmp_x1*tmp_x1 + tmp_y1*tmp_y1;
 
         // tmpx = g_x_max - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_3rd);
-        tmpx1 = bf_to_float(tmp_x_bf);
+        tmp_x1 = bf_to_float(tmp_x_bf);
 
         // tmpy = g_y_min - g_y_3rd;
         sub_bf(tmp_y_bf, g_bf_y_min, g_bf_y_3rd);
-        tmpy1 = bf_to_float(tmp_y_bf);
-        const LDouble a2 = tmpx1 * tmpx1 + tmpy1 * tmpy1;
+        tmp_y1 = bf_to_float(tmp_y_bf);
+        const LDouble a2 = tmp_x1 * tmp_x1 + tmp_y1 * tmp_y1;
         const LDouble a = std::sqrt(a2);
 
         // divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used
         // atan2() only depends on the ratio, this puts it in double's range
-        const int sign_x = sign(tmpx1);
-        LDouble tmpy = 0.0;
+        const int sign_x = sign(tmp_x1);
+        LDouble tmp_y = 0.0;
         if (sign_x)
         {
-            tmpy = tmpy1/tmpx1 * sign_x;    // tmpy = tmpy / |tmpx|
+            tmp_y = tmp_y1/tmp_x1 * sign_x;    // tmpy = tmpy / |tmpx|
         }
-        rot = (double)(-rad_to_deg(std::atan2((double)tmpy, sign_x)));   // negative for image rotation
+        rot = (double)(-rad_to_deg(std::atan2((double)tmp_y, sign_x)));   // negative for image rotation
 
         // tmpx = g_x_min - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_min, g_bf_x_3rd);
-        const LDouble tmpx2 = bf_to_float(tmp_x_bf);
+        const LDouble tmp_x2 = bf_to_float(tmp_x_bf);
         // tmpy = g_y_max - g_y_3rd;
         sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_3rd);
-        const LDouble tmpy2 = bf_to_float(tmp_y_bf);
-        const LDouble b2 = tmpx2 * tmpx2 + tmpy2 * tmpy2;
+        const LDouble tmp_y2 = bf_to_float(tmp_y_bf);
+        const LDouble b2 = tmp_x2 * tmp_x2 + tmp_y2 * tmp_y2;
         const LDouble b = std::sqrt(b2);
 
-        const double tmpa = std::acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
-        skew = 90 - rad_to_deg(tmpa);
+        const double tmp_a = std::acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
+        skew = 90 - rad_to_deg(tmp_a);
 
         // these are the only two variables that must use big precision
         // *ctr_x = (g_x_min + g_x_max)/2;
@@ -201,13 +201,13 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDouble &mag, double &x_mag_facto
         add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
         half_a_bf(ctr_y);
 
-        const LDouble height = b * std::sin(tmpa);
+        const LDouble height = b * std::sin(tmp_a);
         mag  = 2/height; // 1/(h/2)
         x_mag_factor = (double)(height / (DEFAULT_ASPECT * a));
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
-        if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
+        if (tmp_x1*tmp_y2 - tmp_x2*tmp_y1 < 0
             && g_debug_flag != DebugFlags::ALLOW_NEGATIVE_CROSS_PRODUCT)
         {
             skew = -skew;
