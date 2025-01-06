@@ -11,17 +11,17 @@
 // defer pause until after parsing so we know if in batch mode
 void do_pause(int action)
 {
-    static unsigned char needpause = 0;
+    static int need_pause{};
     switch (action)
     {
     case 0:
         if (g_init_batch == BatchMode::NONE)
         {
-            if (needpause == 1)
+            if (need_pause == 1)
             {
                 driver_get_key();
             }
-            else if (needpause == 2)
+            else if (need_pause == 2)
             {
                 if (get_a_key_no_help() == ID_KEY_ESC)
                 {
@@ -29,11 +29,11 @@ void do_pause(int action)
                 }
             }
         }
-        needpause = 0;
+        need_pause = 0;
         break;
     case 1:
     case 2:
-        needpause = (char)action;
+        need_pause = action;
         break;
     default:
         break;
