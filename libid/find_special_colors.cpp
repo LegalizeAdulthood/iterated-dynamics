@@ -18,8 +18,8 @@ int g_color_medium{}; // nearest to medbright grey in palette
 //
 void find_special_colors()
 {
-    int maxb = 0;
-    int minb = 9999;
+    int max_b = 0;
+    int min_b = 9999;
     int med = 0;
 
     g_color_dark = 0;
@@ -41,34 +41,34 @@ void find_special_colors()
     for (int i = 0; i < g_colors; i++)
     {
         const int brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
-        if (brt > maxb)
+        if (brt > max_b)
         {
-            maxb = brt;
+            max_b = brt;
             g_color_bright = i;
         }
-        if (brt < minb)
+        if (brt < min_b)
         {
-            minb = brt;
+            min_b = brt;
             g_color_dark = i;
         }
         if (brt < 150 && brt > 80)
         {
-            int mingun = (int) g_dac_box[i][0];
-            int maxgun = mingun;
+            int min_gun = (int) g_dac_box[i][0];
+            int max_gun = min_gun;
             if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
             {
-                maxgun = (int) g_dac_box[i][1];
+                max_gun = (int) g_dac_box[i][1];
             }
             else
             {
-                mingun = (int) g_dac_box[i][1];
+                min_gun = (int) g_dac_box[i][1];
             }
-            maxgun = std::max((int) g_dac_box[i][2], maxgun);
-            mingun = std::min((int) g_dac_box[i][2], mingun);
-            if (brt - (maxgun - mingun) / 2 > med)
+            max_gun = std::max((int) g_dac_box[i][2], max_gun);
+            min_gun = std::min((int) g_dac_box[i][2], min_gun);
+            if (brt - (max_gun - min_gun) / 2 > med)
             {
                 g_color_medium = i;
-                med = brt - (maxgun - mingun) / 2;
+                med = brt - (max_gun - min_gun) / 2;
             }
         }
     }
