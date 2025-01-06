@@ -19,13 +19,13 @@
 
 int get_cmd_string()
 {
-    static char cmdbuf[61];
+    static char cmd_buf[61];
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COMMANDS};
-    int i = field_prompt("Enter command string to use.", nullptr, cmdbuf, 60, nullptr);
-    if (i >= 0 && cmdbuf[0] != 0)
+    int i = field_prompt("Enter command string to use.", nullptr, cmd_buf, 60, nullptr);
+    if (i >= 0 && cmd_buf[0] != 0)
     {
-        i = +cmd_arg(cmdbuf, CmdFile::AT_AFTER_STARTUP);
+        i = +cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP);
         if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
         {
             backwards_v18();
