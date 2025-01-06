@@ -121,7 +121,7 @@ static Byte s_decoder_line[MAX_PIXELS]{};
 // moved sizeofstring here for possible re-use elsewhere
 static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 
-short decoder(short linewidth)
+short decoder(short line_width)
 {
     U16 prefix[MAX_CODES+1]{};     // Prefix linked list
     short ret;
@@ -143,12 +143,12 @@ short decoder(short linewidth)
     short top_slot = (short) (1 << s_curr_size); // Highest code for current size
     short clear = (short) (1 << size);           // Value for a clear code
     short ending = (short) (clear + 1);          // Value for a ending code
-    short newcodes = (short) (ending + 1);       // First available code
-    short slot = newcodes;                       // Last read code
+    short new_codes = (short) (ending + 1);       // First available code
+    short slot = new_codes;                       // Last read code
     short old_code = 0;
-    short yskip = old_code;
-    short xskip = yskip;
-    s_sizeof_string[slot] = xskip;
+    short y_skip = 0;
+    short x_skip = 0;
+    s_sizeof_string[slot] = x_skip;
     s_num_bits_left = s_sizeof_string[slot];
     s_num_avail_bytes = s_num_bits_left;
     Byte out_value = 0;
@@ -163,8 +163,8 @@ short decoder(short linewidth)
     // Set up the stack pointer and decode buffer pointer
     Byte decode_stack[4096]{};
     Byte *sp = decode_stack;
-    Byte *bufptr = s_decoder_line;
-    short bufcnt = linewidth; // how many empty spaces left in buffer
+    Byte *buf_ptr = s_decoder_line;
+    short buf_cnt = line_width; // how many empty spaces left in buffer
 
     // This is the main loop.  For each code we get we pass through the linked
     // list of prefix codes, pushing the corresponding "character" for each
@@ -185,7 +185,7 @@ short decoder(short linewidth)
         if (c == clear)
         {
             s_curr_size = (short)(size + 1);
-            slot = newcodes;
+            slot = new_codes;
             s_sizeof_string[slot] = 0;
             top_slot = (short)(1 << s_curr_size);
 
@@ -247,42 +247,42 @@ short decoder(short linewidth)
             // them into the stack until we are down to enough characters that
             // they do fit.  Output the line then fall through to unstack the
             // ones that would not fit.
-            short fastloop = NOPE;
-            while (code >= newcodes)
+            short fast_loop = NOPE;
+            while (code >= new_codes)
             {
                 int i = s_sizeof_string[code];
                 short j = i;
-                if (i > 0 && bufcnt - i > 0 && g_skip_x_dots == 0)
+                if (i > 0 && buf_cnt - i > 0 && g_skip_x_dots == 0)
                 {
-                    fastloop = YUP;
+                    fast_loop = YUP;
 
                     do
                     {
-                        *(bufptr + j) = s_suffix[code];
+                        *(buf_ptr + j) = s_suffix[code];
                         code = prefix[code];
                     }
                     while (--j > 0);
-                    *bufptr = (Byte) code;
-                    bufptr += ++i;
-                    bufcnt -= i;
-                    if (bufcnt == 0) // finished an input row?
+                    *buf_ptr = (Byte) code;
+                    buf_ptr += ++i;
+                    buf_cnt -= i;
+                    if (buf_cnt == 0) // finished an input row?
                     {
-                        if (--yskip < 0)
+                        if (--y_skip < 0)
                         {
-                            ret = (short)((*g_out_line)(s_decoder_line, (int)(bufptr - s_decoder_line)));
+                            ret = (short)((*g_out_line)(s_decoder_line, (int)(buf_ptr - s_decoder_line)));
                             if (ret < 0)
                             {
                                 return ret;
                             }
-                            yskip = g_skip_y_dots;
+                            y_skip = g_skip_y_dots;
                         }
                         if (driver_key_pressed())
                         {
                             return -1;
                         }
-                        bufptr = s_decoder_line;
-                        bufcnt = linewidth;
-                        xskip = 0;
+                        buf_ptr = s_decoder_line;
+                        buf_cnt = line_width;
+                        x_skip = 0;
                     }
                 }
                 else
@@ -298,7 +298,7 @@ short decoder(short linewidth)
             // If we are all full, we *don't* save the new suffix and prefix...
             // I'm not certain if this is correct... it might be more proper to
             // overwrite the last code...
-            if (fastloop == NOPE)
+            if (fast_loop == NOPE)
             {
                 *sp++ = (Byte) code;
             }
@@ -323,29 +323,29 @@ short decoder(short linewidth)
         while (sp > decode_stack)
         {
             --sp;
-            if (--xskip < 0)
+            if (--x_skip < 0)
             {
-                xskip = g_skip_x_dots;
-                *bufptr++ = *sp;
+                x_skip = g_skip_x_dots;
+                *buf_ptr++ = *sp;
             }
-            if (--bufcnt == 0)     // finished an input row?
+            if (--buf_cnt == 0)     // finished an input row?
             {
-                if (--yskip < 0)
+                if (--y_skip < 0)
                 {
-                    ret = (short)((*g_out_line)(s_decoder_line, (int)(bufptr - s_decoder_line)));
+                    ret = (short)((*g_out_line)(s_decoder_line, (int)(buf_ptr - s_decoder_line)));
                     if (ret < 0)
                     {
                         return ret;
                     }
-                    yskip = g_skip_y_dots;
+                    y_skip = g_skip_y_dots;
                 }
                 if (driver_key_pressed())
                 {
                     return -1;
                 }
-                bufptr = s_decoder_line;
-                bufcnt = linewidth;
-                xskip = 0;
+                buf_ptr = s_decoder_line;
+                buf_cnt = line_width;
+                x_skip = 0;
             }
         }
     }
