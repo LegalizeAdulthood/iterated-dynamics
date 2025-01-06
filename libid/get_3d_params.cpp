@@ -39,7 +39,7 @@ int get_3d_params()     // prompt for 3D parameters
     int sphere;
     char const *s;
     char const *prompts3d[21];
-    FullScreenValues uvalues[21];
+    FullScreenValues values[21];
     int k;
 
 restart_1:
@@ -51,56 +51,56 @@ restart_1:
     k = -1;
 
     prompts3d[++k] = "Preview mode?";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_preview ? 1 : 0;
+    values[k].type = 'y';
+    values[k].uval.ch.val = g_preview ? 1 : 0;
 
     prompts3d[++k] = "    Show box?";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_show_box ? 1 : 0;
+    values[k].type = 'y';
+    values[k].uval.ch.val = g_show_box ? 1 : 0;
 
     prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_preview_factor;
+    values[k].type = 'i';
+    values[k].uval.ival = g_preview_factor;
 
     prompts3d[++k] = "Spherical projection?";
-    uvalues[k].type = 'y';
+    values[k].type = 'y';
     sphere = g_sphere ? 1 : 0;
-    uvalues[k].uval.ch.val = sphere;
+    values[k].uval.ch.val = sphere;
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_glasses_type;
+    values[k].type = 'i';
+    values[k].uval.ival = g_glasses_type;
 
     prompts3d[++k] = "                  3=photo,4=stereo pair)";
-    uvalues[k].type = '*';
+    values[k].type = '*';
 
     prompts3d[++k] = "Ray trace output? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = static_cast<int>(g_raytrace_format);
+    values[k].type = 'i';
+    values[k].uval.ival = static_cast<int>(g_raytrace_format);
 
     prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
-    uvalues[k].type = '*';
+    values[k].type = '*';
 
     prompts3d[++k] = "    Brief output?";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_brief ? 1 : 0;
+    values[k].type = 'y';
+    values[k].uval.ch.val = g_brief ? 1 : 0;
 
     check_write_file(g_raytrace_filename, ".ray");
     prompts3d[++k] = "    Output file name";
-    uvalues[k].type = 's';
-    std::strcpy(uvalues[k].uval.sval, g_raytrace_filename.c_str());
+    values[k].type = 's';
+    std::strcpy(values[k].uval.sval, g_raytrace_filename.c_str());
 
     prompts3d[++k] = "Targa output?";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_targa_out ? 1 : 0;
+    values[k].type = 'y';
+    values[k].uval.ch.val = g_targa_out ? 1 : 0;
 
     prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
+    values[k].type = 'y';
+    values[k].uval.ch.val = g_gray_flag ? 1 : 0;
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_MODE};
-        k = full_screen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
+        k = full_screen_prompt("3D Mode Selection", k+1, prompts3d, values, 0, nullptr);
     }
     if (k < 0)
     {
@@ -108,13 +108,13 @@ restart_1:
     }
 
     k = 0;
-    g_preview = uvalues[k++].uval.ch.val != 0;
-    g_show_box = uvalues[k++].uval.ch.val != 0;
-    g_preview_factor  = uvalues[k++].uval.ival;
-    sphere = uvalues[k++].uval.ch.val;
-    g_glasses_type = uvalues[k++].uval.ival;
+    g_preview = values[k++].uval.ch.val != 0;
+    g_show_box = values[k++].uval.ch.val != 0;
+    g_preview_factor  = values[k++].uval.ival;
+    sphere = values[k++].uval.ch.val;
+    g_glasses_type = values[k++].uval.ival;
     k++;
-    g_raytrace_format = static_cast<RayTraceFormat>(uvalues[k++].uval.ival);
+    g_raytrace_format = static_cast<RayTraceFormat>(values[k++].uval.ival);
     k++;
     {
         if (g_raytrace_format == RayTraceFormat::POVRAY)
@@ -123,12 +123,12 @@ restart_1:
                     "the online documentation.");
         }
     }
-    g_brief = uvalues[k++].uval.ch.val != 0;
+    g_brief = values[k++].uval.ch.val != 0;
 
-    g_raytrace_filename = uvalues[k++].uval.sval;
+    g_raytrace_filename = values[k++].uval.sval;
 
-    g_targa_out = uvalues[k++].uval.ch.val != 0;
-    g_gray_flag  = uvalues[k++].uval.ch.val != 0;
+    g_targa_out = values[k++].uval.ch.val != 0;
+    g_gray_flag  = values[k++].uval.ch.val != 0;
 
     // check ranges
     g_preview_factor = std::max(g_preview_factor, 2);
@@ -232,61 +232,61 @@ restart_3:
     k = -1;
     if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
-        uvalues[++k].uval.ival   = g_x_rot    ;
-        uvalues[k].type = 'i';
-        uvalues[++k].uval.ival   = g_y_rot    ;
-        uvalues[k].type = 'i';
-        uvalues[++k].uval.ival   = g_z_rot    ;
-        uvalues[k].type = 'i';
+        values[++k].uval.ival   = g_x_rot    ;
+        values[k].type = 'i';
+        values[++k].uval.ival   = g_y_rot    ;
+        values[k].type = 'i';
+        values[++k].uval.ival   = g_z_rot    ;
+        values[k].type = 'i';
     }
-    uvalues[++k].uval.ival   = g_x_scale    ;
-    uvalues[k].type = 'i';
+    values[++k].uval.ival   = g_x_scale    ;
+    values[k].type = 'i';
 
-    uvalues[++k].uval.ival   = g_y_scale    ;
-    uvalues[k].type = 'i';
+    values[++k].uval.ival   = g_y_scale    ;
+    values[k].type = 'i';
 
     prompts3d[++k] = "Surface Roughness scaling factor in pct";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_rough     ;
+    values[k].type = 'i';
+    values[k].uval.ival = g_rough     ;
 
     prompts3d[++k] = "'Water Level' (minimum color value)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_water_line ;
+    values[k].type = 'i';
+    values[k].uval.ival = g_water_line ;
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
         prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_viewer_z     ;
+        values[k].type = 'i';
+        values[k].uval.ival = g_viewer_z     ;
 
         prompts3d[++k] = "X shift with perspective (positive = right)";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_shift_x    ;
+        values[k].type = 'i';
+        values[k].uval.ival = g_shift_x    ;
 
         prompts3d[++k] = "Y shift with perspective (positive = up   )";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_shift_y    ;
+        values[k].type = 'i';
+        values[k].uval.ival = g_shift_y    ;
 
         prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_adjust_3d_x    ;
+        values[k].type = 'i';
+        values[k].uval.ival = g_adjust_3d_x    ;
 
         prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_adjust_3d_y    ;
+        values[k].type = 'i';
+        values[k].uval.ival = g_adjust_3d_y    ;
 
         prompts3d[++k] = "First transparent color";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_transparent_color_3d[0];
+        values[k].type = 'i';
+        values[k].uval.ival = g_transparent_color_3d[0];
 
         prompts3d[++k] = "Last transparent color";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_transparent_color_3d[1];
+        values[k].type = 'i';
+        values[k].uval.ival = g_transparent_color_3d[1];
     }
 
     prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = g_randomize_3d;
+    values[k].type = 'i';
+    values[k++].uval.ival = g_randomize_3d;
 
     if (g_sphere)
     {
@@ -302,7 +302,7 @@ restart_3:
     }
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_PARAMETERS};
-        k = full_screen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
+        k = full_screen_prompt(s, k, prompts3d, values, 0, nullptr);
     }
     if (k < 0)
     {
@@ -312,25 +312,25 @@ restart_3:
     k = 0;
     if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
-        g_x_rot    = uvalues[k++].uval.ival;
-        g_y_rot    = uvalues[k++].uval.ival;
-        g_z_rot    = uvalues[k++].uval.ival;
+        g_x_rot    = values[k++].uval.ival;
+        g_y_rot    = values[k++].uval.ival;
+        g_z_rot    = values[k++].uval.ival;
     }
-    g_x_scale     = uvalues[k++].uval.ival;
-    g_y_scale     = uvalues[k++].uval.ival;
-    g_rough      = uvalues[k++].uval.ival;
-    g_water_line  = uvalues[k++].uval.ival;
+    g_x_scale     = values[k++].uval.ival;
+    g_y_scale     = values[k++].uval.ival;
+    g_rough      = values[k++].uval.ival;
+    g_water_line  = values[k++].uval.ival;
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
-        g_viewer_z = uvalues[k++].uval.ival;
-        g_shift_x     = uvalues[k++].uval.ival;
-        g_shift_y     = uvalues[k++].uval.ival;
-        g_adjust_3d_x     = uvalues[k++].uval.ival;
-        g_adjust_3d_y     = uvalues[k++].uval.ival;
-        g_transparent_color_3d[0] = uvalues[k++].uval.ival;
-        g_transparent_color_3d[1] = uvalues[k++].uval.ival;
+        g_viewer_z = values[k++].uval.ival;
+        g_shift_x     = values[k++].uval.ival;
+        g_shift_y     = values[k++].uval.ival;
+        g_adjust_3d_x     = values[k++].uval.ival;
+        g_adjust_3d_y     = values[k++].uval.ival;
+        g_transparent_color_3d[0] = values[k++].uval.ival;
+        g_transparent_color_3d[1] = values[k++].uval.ival;
     }
-    g_randomize_3d  = uvalues[k++].uval.ival;
+    g_randomize_3d  = values[k++].uval.ival;
     g_randomize_3d = std::min(g_randomize_3d, 7);
     g_randomize_3d = std::max(g_randomize_3d, 0);
 
@@ -421,7 +421,7 @@ static bool get_light_params()
 
 static bool check_map_file()
 {
-    bool askflag = false;
+    bool ask_flag = false;
     if (!g_read_color)
     {
         return false;
@@ -433,7 +433,7 @@ static bool check_map_file()
     }
     if (!(g_glasses_type == 1 || g_glasses_type == 2))
     {
-        askflag = true;
+        ask_flag = true;
     }
     else
     {
@@ -442,7 +442,7 @@ static bool check_map_file()
 
     while (true)
     {
-        if (askflag)
+        if (ask_flag)
         {
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::NONE};
             int i = field_prompt("Enter name of .map file to use,\n"
@@ -463,7 +463,7 @@ static bool check_map_file()
         std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
         if (valid) // Oops, somethings wrong
         {
-            askflag = true;
+            ask_flag = true;
             continue;
         }
         g_map_set = true;
