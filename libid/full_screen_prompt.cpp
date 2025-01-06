@@ -26,10 +26,10 @@
 #include <cstring>
 #include <string>
 
-static int prompt_check_key(int curkey);
-static int prompt_check_key_scroll(int curkey);
-static  int input_field_list(int attr, char *fld, int vlen, char const **list, int llen,
-                             int row, int col, int (*checkkey)(int));
+static int prompt_check_key(int key);
+static int prompt_check_key_scroll(int key);
+static  int input_field_list(int attr, char *field, int field_len, char const **list, int list_len,
+                             int row, int col, int (*check_key)(int key));
 static int prompt_value_string(char *buf, FullScreenValues const *val);
 
 static int s_prompt_fn_keys{};
@@ -827,15 +827,15 @@ static int prompt_value_string(char *buf, FullScreenValues const *val)
     return ret;
 }
 
-static int prompt_check_key(int curkey)
+static int prompt_check_key(int key)
 {
-    switch (curkey)
+    switch (key)
     {
     case ID_KEY_PAGE_UP:
     case ID_KEY_DOWN_ARROW:
     case ID_KEY_PAGE_DOWN:
     case ID_KEY_UP_ARROW:
-        return curkey;
+        return key;
     case ID_KEY_F2:
     case ID_KEY_F3:
     case ID_KEY_F4:
@@ -845,17 +845,17 @@ static int prompt_check_key(int curkey)
     case ID_KEY_F8:
     case ID_KEY_F9:
     case ID_KEY_F10:
-        if (s_prompt_fn_keys & (1 << (curkey+1-ID_KEY_F1)))
+        if (s_prompt_fn_keys & (1 << (key+1-ID_KEY_F1)))
         {
-            return curkey;
+            return key;
         }
     }
     return 0;
 }
 
-static int prompt_check_key_scroll(int curkey)
+static int prompt_check_key_scroll(int key)
 {
-    switch (curkey)
+    switch (key)
     {
     case ID_KEY_PAGE_UP:
     case ID_KEY_DOWN_ARROW:
@@ -869,7 +869,7 @@ static int prompt_check_key_scroll(int curkey)
     case ID_KEY_CTL_PAGE_UP:
     case ID_KEY_CTL_END:
     case ID_KEY_CTL_HOME:
-        return curkey;
+        return key;
     case ID_KEY_F2:
     case ID_KEY_F3:
     case ID_KEY_F4:
@@ -879,54 +879,53 @@ static int prompt_check_key_scroll(int curkey)
     case ID_KEY_F8:
     case ID_KEY_F9:
     case ID_KEY_F10:
-        if (s_prompt_fn_keys & (1 << (curkey+1-ID_KEY_F1)))
+        if (s_prompt_fn_keys & (1 << (key+1-ID_KEY_F1)))
         {
-            return curkey;
+            return key;
         }
     }
     return 0;
 }
 
-static int input_field_list(
-    int attr,             // display attribute
-    char *fld,            // display form field value
-    int vlen,             // field length
-    char const **list,          // list of values
-    int llen,             // number of entries in list
-    int row,              // display row
-    int col,              // display column
-    int (*checkkey)(int)  // routine to check non data keys, or nullptr
+static int input_field_list(int attr, // display attribute
+    char *field,                      // display form field value
+    int field_len,                    // field length
+    char const **list,                // list of values
+    int list_len,                     // number of entries in list
+    int row,                          // display row
+    int col,                          // display column
+    int (*check_key)(int key)         // routine to check non data keys, or nullptr
 )
 {
-    int initval;
+    int init_val;
     char buf[81];
     ValueSaver save_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
-    for (initval = 0; initval < llen; ++initval)
+    for (init_val = 0; init_val < list_len; ++init_val)
     {
-        if (std::strcmp(fld, list[initval]) == 0)
+        if (std::strcmp(field, list[init_val]) == 0)
         {
             break;
         }
     }
-    if (initval >= llen)
+    if (init_val >= list_len)
     {
-        initval = 0;
+        init_val = 0;
     }
-    int curval = initval;
+    int cur_val = init_val;
     int ret = -1;
     while (true)
     {
-        std::strcpy(buf, list[curval]);
+        std::strcpy(buf, list[cur_val]);
         {
             int i = (int) std::strlen(buf);
-            while (i < vlen)
+            while (i < field_len)
             {
                 buf[i++] = ' ';
             }
         }
-        buf[vlen] = 0;
+        buf[field_len] = 0;
         driver_put_string(row, col, attr, buf);
-        switch (int curkey = driver_key_cursor(row, col); curkey)
+        switch (int key = driver_key_cursor(row, col); key)
         {
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
@@ -935,45 +934,45 @@ static int input_field_list(
         case ID_KEY_ESC:
             goto inpfldl_end;
         case ID_KEY_RIGHT_ARROW:
-            if (++curval >= llen)
+            if (++cur_val >= list_len)
             {
-                curval = 0;
+                cur_val = 0;
             }
             break;
         case ID_KEY_LEFT_ARROW:
-            if (--curval < 0)
+            if (--cur_val < 0)
             {
-                curval = llen - 1;
+                cur_val = list_len - 1;
             }
             break;
         case ID_KEY_F5:
-            curval = initval;
+            cur_val = init_val;
             break;
         default:
-            if (non_alpha(curkey))
+            if (non_alpha(key))
             {
-                if (checkkey && (ret = (*checkkey)(curkey)) != 0)
+                if (check_key && (ret = (*check_key)(key)) != 0)
                 {
                     goto inpfldl_end;
                 }
                 break;                                // non alphanum char
             }
-            int j = curval;
-            for (int i = 0; i < llen; ++i)
+            int j = cur_val;
+            for (int i = 0; i < list_len; ++i)
             {
-                if (++j >= llen)
+                if (++j >= list_len)
                 {
                     j = 0;
                 }
-                if ((*list[j] & 0xdf) == (curkey & 0xdf))
+                if ((*list[j] & 0xdf) == (key & 0xdf))
                 {
-                    curval = j;
+                    cur_val = j;
                     break;
                 }
             }
         }
     }
 inpfldl_end:
-    std::strcpy(fld, list[curval]);
+    std::strcpy(field, list[cur_val]);
     return ret;
 }
