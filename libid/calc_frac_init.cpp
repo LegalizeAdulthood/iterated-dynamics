@@ -59,19 +59,19 @@ static int get_prec_dbl(ResolutionFlag flag)
         res = g_logical_screen_x_dots-1;
     }
 
-    LDouble xdel = ((LDouble) g_x_max - (LDouble) g_x_3rd) / res;
-    LDouble ydel2 = ((LDouble) g_y_3rd - (LDouble) g_y_min) / res;
+    LDouble x_delta = ((LDouble) g_x_max - (LDouble) g_x_3rd) / res;
+    LDouble y_delta2 = ((LDouble) g_y_3rd - (LDouble) g_y_min) / res;
 
     if (flag == ResolutionFlag::CURRENT)
     {
         res = g_logical_screen_y_dots-1;
     }
 
-    LDouble ydel = ((LDouble) g_y_max - (LDouble) g_y_3rd) / res;
-    LDouble xdel2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / res;
+    LDouble y_delta = ((LDouble) g_y_max - (LDouble) g_y_3rd) / res;
+    LDouble x_delta2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / res;
 
-    LDouble del1 = std::fabs(xdel) + std::fabs(xdel2);
-    LDouble del2 = std::fabs(ydel) + std::fabs(ydel2);
+    LDouble del1 = std::fabs(x_delta) + std::fabs(x_delta2);
+    LDouble del2 = std::fabs(y_delta) + std::fabs(y_delta2);
     del1 = std::min(del2, del1);
     if (del1 == 0)
     {
