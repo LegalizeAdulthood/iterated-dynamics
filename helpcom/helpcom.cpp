@@ -253,7 +253,7 @@ namespace
 class DocumentProcessor
 {
 public:
-    DocumentProcessor(TokenMode mode, PD_FUNC *get_info, PD_FUNC *output, void *info) :
+    DocumentProcessor(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info) :
         m_token_mode(mode),
         m_get_info(get_info),
         m_output(output),
@@ -336,8 +336,8 @@ private:
     }
 
     TokenMode m_token_mode{};
-    PD_FUNC *m_get_info;
-    PD_FUNC *m_output;
+    PrintDocFn *m_get_info;
+    PrintDocFn *m_output;
     void *m_info;
     ProcessDocumentInfo m_pd{};
     std::string m_page_text;
@@ -873,7 +873,7 @@ bool DocumentProcessor::topic_token()
 
 } // namespace
 
-bool process_document(TokenMode mode, PD_FUNC *get_info, PD_FUNC *output, void *info)
+bool process_document(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info)
 {
     return DocumentProcessor(mode, get_info, output, info).process();
 }

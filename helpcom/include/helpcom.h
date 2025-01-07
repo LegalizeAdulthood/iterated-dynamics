@@ -140,11 +140,11 @@ enum class PrintDocCommand
     PD_GET_LINK_PAGE,
 };
 
-using PD_FUNC = bool(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info);
+using PrintDocFn = bool(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info);
 TokenType find_token_length(
     TokenMode mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
 int find_line_width(TokenMode mode, char const *curr, unsigned len);
-bool process_document(TokenMode mode, PD_FUNC *get_info, PD_FUNC *output, void *info);
+bool process_document(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info);
 int help();
 int read_help_topic(HelpLabels label, int , int , void *);
 bool make_doc_msg_func(int page_num, int num_pages);
