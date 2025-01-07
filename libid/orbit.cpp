@@ -61,8 +61,8 @@ static void plot_d_orbit(double dx, double dy, int color)
     {
         return;
     }
-    int save_sxoffs = g_logical_screen_x_offset;
-    int save_syoffs = g_logical_screen_y_offset;
+    int save_screen_x_offset = g_logical_screen_x_offset;
+    int save_screen_y_offset = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     // save orbit value
@@ -78,8 +78,8 @@ static void plot_d_orbit(double dx, double dy, int color)
     {
         g_put_color(i, j, color);
     }
-    g_logical_screen_x_offset = save_sxoffs;
-    g_logical_screen_y_offset = save_syoffs;
+    g_logical_screen_x_offset = save_screen_x_offset;
+    g_logical_screen_y_offset = save_screen_y_offset;
     if (g_debug_flag == DebugFlags::FORCE_SCALED_SOUND_FORMULA)
     {
         if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
@@ -131,8 +131,8 @@ void plot_orbit(double real, double imag, int color)
 void scrub_orbit()
 {
     driver_mute();
-    int save_sxoffs = g_logical_screen_x_offset;
-    int save_syoffs = g_logical_screen_y_offset;
+    int save_screen_x_offset = g_logical_screen_x_offset;
+    int save_screen_y_offset = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     while (g_orbit_save_index >= 3)
@@ -142,6 +142,6 @@ void scrub_orbit()
         int i = s_save_orbit[--g_orbit_save_index];
         g_put_color(i, j, c);
     }
-    g_logical_screen_x_offset = save_sxoffs;
-    g_logical_screen_y_offset = save_syoffs;
+    g_logical_screen_x_offset = save_screen_x_offset;
+    g_logical_screen_y_offset = save_screen_y_offset;
 }
