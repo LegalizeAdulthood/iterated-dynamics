@@ -35,14 +35,14 @@ static void update_id_cfg();
 
 static void format_vid_table(int choice, char *buf)
 {
-    char kname[5];
+    char key_name[5];
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[idx],
            sizeof(g_video_entry));
-    vid_mode_key_name(g_video_entry.key, kname);
+    vid_mode_key_name(g_video_entry.key, key_name);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
-        kname, g_video_entry.driver->get_description().c_str(), g_video_entry.x_dots, g_video_entry.y_dots,
+        key_name, g_video_entry.driver->get_description().c_str(), g_video_entry.x_dots, g_video_entry.y_dots,
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
 }
 
@@ -203,52 +203,52 @@ static bool ent_less(const int lhs, const int rhs)
 static void update_id_cfg()
 {
     char buf[121];
-    const std::string cfgname = find_path("id.cfg");
+    const std::string cfg_name = find_path("id.cfg");
 
-    if (!is_writeable(cfgname))
+    if (!is_writeable(cfg_name))
     {
-        std::snprintf(buf, std::size(buf), "Can't write %s", cfgname.c_str());
+        std::snprintf(buf, std::size(buf), "Can't write %s", cfg_name.c_str());
         stop_msg(buf);
         return;
     }
-    const std::string outname{(fs::path{cfgname}.parent_path() / "id.tmp").string()};
-    std::FILE *outfile = open_save_file(outname, "w");
+    const std::string out_name{(fs::path{cfg_name}.parent_path() / "id.tmp").string()};
+    std::FILE *outfile = open_save_file(out_name, "w");
     if (outfile == nullptr)
     {
-        std::snprintf(buf, std::size(buf), "Can't create %s", outname.c_str());
+        std::snprintf(buf, std::size(buf), "Can't create %s", out_name.c_str());
         stop_msg(buf);
         return;
     }
-    std::FILE *cfgfile = std::fopen(cfgname.c_str(), "r");
+    std::FILE *cfg_file = std::fopen(cfg_name.c_str(), "r");
 
-    int nextmode = 0;
-    int linenum = nextmode;
-    int nextlinenum = g_cfg_line_nums[0];
-    while (std::fgets(buf, std::size(buf), cfgfile))
+    int next_mode = 0;
+    int line_num = next_mode;
+    int next_line_num = g_cfg_line_nums[0];
+    while (std::fgets(buf, std::size(buf), cfg_file))
     {
-        ++linenum;
+        ++line_num;
         // replace this line?
-        if (linenum == nextlinenum)
+        if (line_num == next_line_num)
         {
-            char kname[5];
-            char colorsbuf[10];
-            VideoInfo vident = g_video_table[nextmode];
-            vid_mode_key_name(vident.key, kname);
-            std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
+            char key_name[5];
+            char colors_buff[10];
+            VideoInfo video_entry = g_video_table[next_mode];
+            vid_mode_key_name(video_entry.key, key_name);
+            std::snprintf(colors_buff, std::size(colors_buff), "%3d", video_entry.colors);
             std::fprintf(outfile, "%-4s,%4d,%5d,%s,%s,%s\n",
-                    kname,
-                    vident.x_dots,
-                    vident.y_dots,
-                    colorsbuf,
-                    vident.driver->get_name().c_str(),
-                    vident.comment);
-            if (++nextmode >= g_video_table_len)
+                    key_name,
+                    video_entry.x_dots,
+                    video_entry.y_dots,
+                    colors_buff,
+                    video_entry.driver->get_name().c_str(),
+                    video_entry.comment);
+            if (++next_mode >= g_video_table_len)
             {
-                nextlinenum = 32767;
+                next_line_num = 32767;
             }
             else
             {
-                nextlinenum = g_cfg_line_nums[nextmode];
+                next_line_num = g_cfg_line_nums[next_mode];
             }
         }
         else
@@ -257,10 +257,10 @@ static void update_id_cfg()
         }
     }
 
-    std::fclose(cfgfile);
+    std::fclose(cfg_file);
     std::fclose(outfile);
-    fs::remove(cfgname);         // success assumed on these lines
-    fs::rename(outname, cfgname); // since we checked earlier with access
+    fs::remove(cfg_name);         // success assumed on these lines
+    fs::rename(out_name, cfg_name); // since we checked earlier with access
 }
 
 void request_video_mode(int &kbd_char)
