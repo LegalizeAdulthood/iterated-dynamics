@@ -830,7 +830,7 @@ void jiim(JIIMType which)
                 g_col += d_col;
                 g_row += d_row;
 #ifdef XFRACT
-                if (kbdchar == ID_KEY_ENTER)
+                if (key == ID_KEY_ENTER)
                 {
                     // We want to use the position of the cursor
                     exact = false;
