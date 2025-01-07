@@ -11,7 +11,7 @@
 #include <Shlwapi.h>
 #include <crtdbg.h>
 
-int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
+int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmd_line, int show)
 {
     int result = 0;
 
