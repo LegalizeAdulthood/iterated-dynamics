@@ -14,4 +14,4 @@ extern bool                  g_image_map;
 extern std::string           g_stereo_map_filename;
 
 bool auto_stereo_convert();
-int out_line_stereo(Byte *pixels, int linelen);
+int out_line_stereo(Byte *pixels, int line_len);

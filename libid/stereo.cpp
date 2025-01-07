@@ -166,7 +166,7 @@ static void toggle_bars(bool *bars, int barwidth, int const *colour)
     *bars = !*bars;
 }
 
-int out_line_stereo(Byte *pixels, int linelen)
+int out_line_stereo(Byte *pixels, int line_len)
 {
     if ((Y) >= g_logical_screen_y_dots)
     {
@@ -225,7 +225,7 @@ int out_line_stereo(Byte *pixels, int linelen)
     {
         if (same[x] == x)
         {
-            colour[x] = (int)pixels[x%linelen];
+            colour[x] = (int)pixels[x%line_len];
         }
         else
         {
