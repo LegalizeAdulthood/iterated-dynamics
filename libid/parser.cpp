@@ -658,10 +658,10 @@ static char const *parse_error_text(ParseError which)
         R"msg(Only one ":" permitted in a formula)msg",
         "Invalid ParseErrs code",
     };
-    constexpr int lasterr = std::size(messages) - 1;
-    if (+which > lasterr)
+    constexpr int last_err = std::size(messages) - 1;
+    if (+which > last_err)
     {
-        which = static_cast<ParseError>(lasterr);
+        which = static_cast<ParseError>(last_err);
     }
     return messages[+which];
 }
@@ -750,11 +750,11 @@ static void set_random()
 
 static void random_seed()
 {
-    std::time_t ltime;
+    std::time_t now;
 
     // Use the current time to randomize the random number sequence.
-    std::time(&ltime);
-    std::srand((unsigned int)ltime);
+    std::time(&now);
+    std::srand((unsigned int)now);
 
     new_random_num();
     new_random_num();
@@ -1015,16 +1015,16 @@ void l_stk_trunc()
 {
     /* shifting and shifting back truncates positive numbers,
        so we make the numbers positive */
-    int signx = sign(g_arg1->l.x);
-    int signy = sign(g_arg1->l.y);
+    int sign_x = sign(g_arg1->l.x);
+    int sign_y = sign(g_arg1->l.y);
     g_arg1->l.x = labs(g_arg1->l.x);
     g_arg1->l.y = labs(g_arg1->l.y);
     g_arg1->l.x = (g_arg1->l.x) >> g_bit_shift;
     g_arg1->l.y = (g_arg1->l.y) >> g_bit_shift;
     g_arg1->l.x = (g_arg1->l.x) << g_bit_shift;
     g_arg1->l.y = (g_arg1->l.y) << g_bit_shift;
-    g_arg1->l.x = signx*g_arg1->l.x;
-    g_arg1->l.y = signy*g_arg1->l.y;
+    g_arg1->l.x = sign_x*g_arg1->l.x;
+    g_arg1->l.y = sign_y*g_arg1->l.y;
 }
 
 void d_stk_round()
@@ -1255,15 +1255,15 @@ void l_stk_flip()
 
 void d_stk_sin()
 {
-    double sinx;
-    double cosx;
-    double sinhy;
-    double coshy;
+    double sin_x;
+    double cos_x;
+    double sinh_y;
+    double cosh_y;
 
-    sin_cos(&g_arg1->d.x, &sinx, &cosx);
-    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
-    g_arg1->d.x = sinx*coshy;
-    g_arg1->d.y = cosx*sinhy;
+    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    g_arg1->d.x = sin_x*cosh_y;
+    g_arg1->d.y = cos_x*sinh_y;
 }
 
 void m_stk_sin()
@@ -1273,16 +1273,16 @@ void m_stk_sin()
 
 void l_stk_sin()
 {
-    long sinx;
-    long cosx;
-    long sinhy;
-    long coshy;
+    long sin_x;
+    long cos_x;
+    long sinh_y;
+    long cosh_y;
     long x = g_arg1->l.x >> s_delta16;
     long y = g_arg1->l.y >> s_delta16;
-    sin_cos(x, &sinx, &cosx);
-    sinh_cosh(y, &sinhy, &coshy);
-    g_arg1->l.x = multiply(sinx, coshy, s_shift_back);
-    g_arg1->l.y = multiply(cosx, sinhy, s_shift_back);
+    sin_cos(x, &sin_x, &cos_x);
+    sinh_cosh(y, &sinh_y, &cosh_y);
+    g_arg1->l.x = multiply(sin_x, cosh_y, s_shift_back);
+    g_arg1->l.y = multiply(cos_x, sinh_y, s_shift_back);
 }
 
 /* The following functions are supported by both the parser and for fn
@@ -1290,21 +1290,21 @@ void l_stk_sin()
 */
 void d_stk_tan()
 {
-    double sinx;
-    double cosx;
-    double sinhy;
-    double coshy;
+    double sin_x;
+    double cos_x;
+    double sinh_y;
+    double cosh_y;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.x, &sinx, &cosx);
-    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
-    double denom = cosx + coshy;
+    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    double denom = cos_x + cosh_y;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->d.x = sinx/denom;
-    g_arg1->d.y = sinhy/denom;
+    g_arg1->d.x = sin_x/denom;
+    g_arg1->d.y = sinh_y/denom;
 }
 
 void m_stk_tan()
@@ -1314,42 +1314,42 @@ void m_stk_tan()
 
 void l_stk_tan()
 {
-    long sinx;
-    long cosx;
-    long sinhy;
-    long coshy;
+    long sin_x;
+    long cos_x;
+    long sinh_y;
+    long cosh_y;
     long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
     long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    sin_cos(x, &sinx, &cosx);
-    sinh_cosh(y, &sinhy, &coshy);
-    long denom = cosx + coshy;
+    sin_cos(x, &sin_x, &cos_x);
+    sinh_cosh(y, &sinh_y, &cosh_y);
+    long denom = cos_x + cosh_y;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->l.x = divide(sinx, denom, g_bit_shift);
-    g_arg1->l.y = divide(sinhy, denom, g_bit_shift);
+    g_arg1->l.x = divide(sin_x, denom, g_bit_shift);
+    g_arg1->l.y = divide(sinh_y, denom, g_bit_shift);
 }
 
 void d_stk_tanh()
 {
-    double siny;
-    double cosy;
-    double sinhx;
-    double coshx;
+    double sin_y;
+    double cos_y;
+    double sinh_x;
+    double cosh_x;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.y, &siny, &cosy);
-    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
-    double denom = coshx + cosy;
+    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    double denom = cosh_x + cos_y;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->d.x = sinhx/denom;
-    g_arg1->d.y = siny/denom;
+    g_arg1->d.x = sinh_x/denom;
+    g_arg1->d.y = sin_y/denom;
 }
 
 void m_stk_tanh()
@@ -1359,42 +1359,42 @@ void m_stk_tanh()
 
 void l_stk_tanh()
 {
-    long siny;
-    long cosy;
-    long sinhx;
-    long coshx;
+    long sin_y;
+    long cos_y;
+    long sinh_x;
+    long cosh_x;
     long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
     long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    sin_cos(y, &siny, &cosy);
-    sinh_cosh(x, &sinhx, &coshx);
-    long denom = coshx + cosy;
+    sin_cos(y, &sin_y, &cos_y);
+    sinh_cosh(x, &sinh_x, &cosh_x);
+    long denom = cosh_x + cos_y;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->l.x = divide(sinhx, denom, g_bit_shift);
-    g_arg1->l.y = divide(siny, denom, g_bit_shift);
+    g_arg1->l.x = divide(sinh_x, denom, g_bit_shift);
+    g_arg1->l.y = divide(sin_y, denom, g_bit_shift);
 }
 
 void d_stk_cotan()
 {
-    double sinx;
-    double cosx;
-    double sinhy;
-    double coshy;
+    double sin_x;
+    double cos_x;
+    double sinh_y;
+    double cosh_y;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.x, &sinx, &cosx);
-    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
-    double denom = coshy - cosx;
+    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    double denom = cosh_y - cos_x;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->d.x = sinx/denom;
-    g_arg1->d.y = -sinhy/denom;
+    g_arg1->d.x = sin_x/denom;
+    g_arg1->d.y = -sinh_y/denom;
 }
 
 void m_stk_cotan()
@@ -1404,42 +1404,42 @@ void m_stk_cotan()
 
 void l_stk_cotan()
 {
-    long sinx;
-    long cosx;
-    long sinhy;
-    long coshy;
+    long sin_x;
+    long cos_x;
+    long sinh_y;
+    long cosh_y;
     long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
     long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    sin_cos(x, &sinx, &cosx);
-    sinh_cosh(y, &sinhy, &coshy);
-    long denom = coshy - cosx;
+    sin_cos(x, &sin_x, &cos_x);
+    sinh_cosh(y, &sinh_y, &cosh_y);
+    long denom = cosh_y - cos_x;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->l.x = divide(sinx, denom, g_bit_shift);
-    g_arg1->l.y = -divide(sinhy, denom, g_bit_shift);
+    g_arg1->l.x = divide(sin_x, denom, g_bit_shift);
+    g_arg1->l.y = -divide(sinh_y, denom, g_bit_shift);
 }
 
 void d_stk_cotanh()
 {
-    double siny;
-    double cosy;
-    double sinhx;
-    double coshx;
+    double sin_y;
+    double cos_y;
+    double sinh_x;
+    double cosh_x;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.y, &siny, &cosy);
-    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
-    double denom = coshx - cosy;
+    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    double denom = cosh_x - cos_y;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->d.x = sinhx/denom;
-    g_arg1->d.y = -siny/denom;
+    g_arg1->d.x = sinh_x/denom;
+    g_arg1->d.y = -sin_y/denom;
 }
 
 void m_stk_cotanh()
@@ -1449,23 +1449,23 @@ void m_stk_cotanh()
 
 void l_stk_cotanh()
 {
-    long siny;
-    long cosy;
-    long sinhx;
-    long coshx;
+    long sin_y;
+    long cos_y;
+    long sinh_x;
+    long cosh_x;
     long x = g_arg1->l.x >> s_delta16;
     x = x << 1;
     long y = g_arg1->l.y >> s_delta16;
     y = y << 1;
-    sin_cos(y, &siny, &cosy);
-    sinh_cosh(x, &sinhx, &coshx);
-    long denom = coshx - cosy;
+    sin_cos(y, &sin_y, &cos_y);
+    sinh_cosh(x, &sinh_x, &cosh_x);
+    long denom = cosh_x - cos_y;
     if (check_denom(denom))
     {
         return;
     }
-    g_arg1->l.x = divide(sinhx, denom, g_bit_shift);
-    g_arg1->l.y = -divide(siny, denom, g_bit_shift);
+    g_arg1->l.x = divide(sinh_x, denom, g_bit_shift);
+    g_arg1->l.y = -divide(sin_y, denom, g_bit_shift);
 }
 
 /* The following functions are not directly used by the parser - support
@@ -1518,15 +1518,15 @@ void stk_ident()
 
 void d_stk_sinh()
 {
-    double siny;
-    double cosy;
-    double sinhx;
-    double coshx;
+    double sin_y;
+    double cos_y;
+    double sinh_x;
+    double cosh_x;
 
-    sin_cos(&g_arg1->d.y, &siny, &cosy);
-    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
-    g_arg1->d.x = sinhx*cosy;
-    g_arg1->d.y = coshx*siny;
+    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    g_arg1->d.x = sinh_x*cos_y;
+    g_arg1->d.y = cosh_x*sin_y;
 }
 
 void m_stk_sinh()
@@ -1536,30 +1536,30 @@ void m_stk_sinh()
 
 void l_stk_sinh()
 {
-    long sinhx;
-    long coshx;
-    long siny;
-    long cosy;
+    long sinh_x;
+    long cosh_x;
+    long sin_y;
+    long cos_y;
 
     long x = g_arg1->l.x >> s_delta16;
     long y = g_arg1->l.y >> s_delta16;
-    sin_cos(y, &siny, &cosy);
-    sinh_cosh(x, &sinhx, &coshx);
-    g_arg1->l.x = multiply(cosy, sinhx, s_shift_back);
-    g_arg1->l.y = multiply(siny, coshx, s_shift_back);
+    sin_cos(y, &sin_y, &cos_y);
+    sinh_cosh(x, &sinh_x, &cosh_x);
+    g_arg1->l.x = multiply(cos_y, sinh_x, s_shift_back);
+    g_arg1->l.y = multiply(sin_y, cosh_x, s_shift_back);
 }
 
 void d_stk_cos()
 {
-    double sinx;
-    double cosx;
-    double sinhy;
-    double coshy;
+    double sin_x;
+    double cos_x;
+    double sinh_y;
+    double cosh_y;
 
-    sin_cos(&g_arg1->d.x, &sinx, &cosx);
-    sinh_cosh(&g_arg1->d.y, &sinhy, &coshy);
-    g_arg1->d.x = cosx*coshy;
-    g_arg1->d.y = -sinx*sinhy;
+    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    g_arg1->d.x = cos_x*cosh_y;
+    g_arg1->d.y = -sin_x*sinh_y;
 }
 
 void m_stk_cos()
@@ -1569,17 +1569,17 @@ void m_stk_cos()
 
 void l_stk_cos()
 {
-    long sinx;
-    long cosx;
-    long sinhy;
-    long coshy;
+    long sin_x;
+    long cos_x;
+    long sinh_y;
+    long cosh_y;
 
     long x = g_arg1->l.x >> s_delta16;
     long y = g_arg1->l.y >> s_delta16;
-    sin_cos(x, &sinx, &cosx);
-    sinh_cosh(y, &sinhy, &coshy);
-    g_arg1->l.x = multiply(cosx, coshy, s_shift_back);
-    g_arg1->l.y = -multiply(sinx, sinhy, s_shift_back);
+    sin_cos(x, &sin_x, &cos_x);
+    sinh_cosh(y, &sinh_y, &cosh_y);
+    g_arg1->l.x = multiply(cos_x, cosh_y, s_shift_back);
+    g_arg1->l.y = -multiply(sin_x, sinh_y, s_shift_back);
 }
 
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
@@ -1603,15 +1603,15 @@ void l_stk_cosxx()
 
 void d_stk_cosh()
 {
-    double siny;
-    double cosy;
-    double sinhx;
-    double coshx;
+    double sin_y;
+    double cos_y;
+    double sinh_x;
+    double cosh_x;
 
-    sin_cos(&g_arg1->d.y, &siny, &cosy);
-    sinh_cosh(&g_arg1->d.x, &sinhx, &coshx);
-    g_arg1->d.x = coshx*cosy;
-    g_arg1->d.y = sinhx*siny;
+    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    g_arg1->d.x = cosh_x*cos_y;
+    g_arg1->d.y = sinh_x*sin_y;
 }
 
 void m_stk_cosh()
@@ -1621,17 +1621,17 @@ void m_stk_cosh()
 
 void l_stk_cosh()
 {
-    long sinhx;
-    long coshx;
-    long siny;
-    long cosy;
+    long sinh_x;
+    long cosh_x;
+    long sin_y;
+    long cos_y;
 
     long x = g_arg1->l.x >> s_delta16;
     long y = g_arg1->l.y >> s_delta16;
-    sin_cos(y, &siny, &cosy);
-    sinh_cosh(x, &sinhx, &coshx);
-    g_arg1->l.x = multiply(cosy, coshx, s_shift_back);
-    g_arg1->l.y = multiply(siny, sinhx, s_shift_back);
+    sin_cos(y, &sin_y, &cos_y);
+    sinh_cosh(x, &sinh_x, &cosh_x);
+    g_arg1->l.x = multiply(cos_y, cosh_x, s_shift_back);
+    g_arg1->l.y = multiply(sin_y, sinh_x, s_shift_back);
 }
 
 void d_stk_asin()
@@ -2355,12 +2355,12 @@ static FunctionPtr is_func(char const *Str, int Len)
             if (!strnicmp(s_func_list[n].s, Str, Len))
             {
                 // count function variables
-                int functnum = which_fn(Str, Len);
-                if (functnum != 0)
+                int funct_num = which_fn(Str, Len);
+                if (funct_num != 0)
                 {
-                    if (functnum > g_max_function)
+                    if (funct_num > g_max_function)
                     {
-                        g_max_function = (char)functnum;
+                        g_max_function = (char)funct_num;
                     }
                 }
                 return *s_func_list[n].ptr;
@@ -2396,11 +2396,11 @@ inline void push_pending_op(FunctionPtr f, int p)
 
 static bool parse_formula_text(char const *text)
 {
-    int ModFlag = 999;
-    int Len;
-    int Equals = 0;
-    std::array<int, 20> Mods{};
-    int mdstk = 0;
+    int mod_flag = 999;
+    int len;
+    int equals = 0;
+    std::array<int, 20> mods{};
+    int m_d_stk = 0;
     double x_ctr;
     double y_ctr;
     double x_mag_factor;
@@ -2712,19 +2712,19 @@ static bool parse_formula_text(char const *text)
             {
                 s_expecting_arg = true;
                 s_n++;
-                push_pending_op(s_or, 7 - (s_paren + Equals) * 15);
+                push_pending_op(s_or, 7 - (s_paren + equals) * 15);
             }
-            else if (ModFlag == s_paren-1)
+            else if (mod_flag == s_paren-1)
             {
                 s_paren--;
-                ModFlag = Mods[--mdstk];
+                mod_flag = mods[--m_d_stk];
             }
             else
             {
-                assert(mdstk < Mods.size());
-                Mods[mdstk++] = ModFlag;
-                push_pending_op(s_mod, 2 - (s_paren + Equals) * 15);
-                ModFlag = s_paren++;
+                assert(m_d_stk < mods.size());
+                mods[m_d_stk++] = mod_flag;
+                push_pending_op(s_mod, 2 - (s_paren + equals) * 15);
+                mod_flag = s_paren++;
             }
             break;
         case ',':
@@ -2735,7 +2735,7 @@ static bool parse_formula_text(char const *text)
                 push_pending_op(nullptr, 15);
                 push_pending_op(stk_clr, -30000);
                 s_paren = 0;
-                Equals = s_paren;
+                equals = s_paren;
             }
             break;
         case ':':
@@ -2743,33 +2743,33 @@ static bool parse_formula_text(char const *text)
             push_pending_op(nullptr, 15);
             push_pending_op(end_init, -30000);
             s_paren = 0;
-            Equals = s_paren;
+            equals = s_paren;
             g_last_init_op = 10000;
             break;
         case '+':
             s_expecting_arg = true;
-            push_pending_op(s_add, 4 - (s_paren + Equals)*15);
+            push_pending_op(s_add, 4 - (s_paren + equals)*15);
             break;
         case '-':
             if (s_expecting_arg)
             {
-                push_pending_op(s_neg, 2 - (s_paren + Equals)*15);
+                push_pending_op(s_neg, 2 - (s_paren + equals)*15);
             }
             else
             {
-                push_pending_op(s_sub, 4 - (s_paren + Equals)*15);
+                push_pending_op(s_sub, 4 - (s_paren + equals)*15);
                 s_expecting_arg = true;
             }
             break;
         case '&':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(s_and, 7 - (s_paren + Equals)*15);
+            push_pending_op(s_and, 7 - (s_paren + equals)*15);
             break;
         case '!':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(s_ne, 6 - (s_paren + Equals)*15);
+            push_pending_op(s_ne, 6 - (s_paren + equals)*15);
             break;
         case '<':
             s_expecting_arg = true;
@@ -2784,7 +2784,7 @@ static bool parse_formula_text(char const *text)
                 {
                     fn = s_lt;
                 }
-                push_pending_op(fn, 6 - (s_paren + Equals) * 15);
+                push_pending_op(fn, 6 - (s_paren + equals) * 15);
             }
             break;
         case '>':
@@ -2800,34 +2800,34 @@ static bool parse_formula_text(char const *text)
                 {
                     fn = s_gt;
                 }
-                push_pending_op(fn, 6 - (s_paren + Equals) * 15);
+                push_pending_op(fn, 6 - (s_paren + equals) * 15);
             }
             break;
         case '*':
             s_expecting_arg = true;
-            push_pending_op(s_mul, 3 - (s_paren + Equals)*15);
+            push_pending_op(s_mul, 3 - (s_paren + equals)*15);
             break;
         case '/':
             s_expecting_arg = true;
-            push_pending_op(s_div, 3 - (s_paren + Equals)*15);
+            push_pending_op(s_div, 3 - (s_paren + equals)*15);
             break;
         case '^':
             s_expecting_arg = true;
-            push_pending_op(s_pwr, 2 - (s_paren + Equals)*15);
+            push_pending_op(s_pwr, 2 - (s_paren + equals)*15);
             break;
         case '=':
             s_expecting_arg = true;
             if (text[s_n+1] == '=')
             {
                 s_n++;
-                push_pending_op(s_eq, 6 - (s_paren + Equals)*15);
+                push_pending_op(s_eq, 6 - (s_paren + equals)*15);
             }
             else
             {
                 s_op[g_operation_index-1].f = stk_sto;
-                s_op[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
+                s_op[g_operation_index-1].p = 5 - (s_paren + equals)*15;
                 s_store[g_store_index++] = s_load[--g_load_index];
-                Equals++;
+                equals++;
             }
             break;
         default:
@@ -2835,9 +2835,9 @@ static bool parse_formula_text(char const *text)
             {
                 s_n++;
             }
-            Len = (s_n+1)-s_init_n;
+            len = (s_n+1)-s_init_n;
             s_expecting_arg = false;
-            if (const JumpControlType type = is_jump(&text[s_init_n], Len); type != JumpControlType::NONE)
+            if (const JumpControlType type = is_jump(&text[s_init_n], len); type != JumpControlType::NONE)
             {
                 s_uses_jump = true;
                 switch (type)
@@ -2870,16 +2870,16 @@ static bool parse_formula_text(char const *text)
             }
             else
             {
-                if (const FunctionPtr fn = is_func(&text[s_init_n], Len); fn != not_a_funct)
+                if (const FunctionPtr fn = is_func(&text[s_init_n], len); fn != not_a_funct)
                 {
-                    push_pending_op(fn,  1 - (s_paren + Equals)*15);
+                    push_pending_op(fn,  1 - (s_paren + equals)*15);
                     s_expecting_arg = true;
                 }
                 else
                 {
-                    ConstArg *c = is_const(&text[s_init_n], Len);
+                    ConstArg *c = is_const(&text[s_init_n], len);
                     s_load[g_load_index++] = &(c->a);
-                    push_pending_op(stk_lod, 1 - (s_paren + Equals)*15);
+                    push_pending_op(stk_lod, 1 - (s_paren + equals)*15);
                     s_n = s_init_n + c->len - 1;
                 }
             }
@@ -3135,10 +3135,10 @@ static bool fill_jump_struct()
     // Completes all entries in jump structure. Returns 1 on error)
     // On entry, jump_index is the number of jump functions in the formula
     int i = 0;
-    int loadcount = 0;
-    int storecount = 0;
-    bool checkforelse = false;
-    FunctionPtr JumpFunc = nullptr;
+    int load_count = 0;
+    int store_count = 0;
+    bool check_for_else = false;
+    FunctionPtr jump_func = nullptr;
     bool find_new_func = true;
 
     std::vector<JumpPtrs> jump_data;
@@ -3152,24 +3152,24 @@ static bool fill_jump_struct()
                 switch (s_jump_control[i].type)
                 {
                 case JumpControlType::IF:
-                    JumpFunc = s_jump_on_false;
+                    jump_func = s_jump_on_false;
                     break;
                 case JumpControlType::ELSE_IF:
-                    checkforelse = !checkforelse;
-                    if (checkforelse)
+                    check_for_else = !check_for_else;
+                    if (check_for_else)
                     {
-                        JumpFunc = stk_jump;
+                        jump_func = stk_jump;
                     }
                     else
                     {
-                        JumpFunc = s_jump_on_false;
+                        jump_func = s_jump_on_false;
                     }
                     break;
                 case JumpControlType::ELSE:
-                    JumpFunc = stk_jump;
+                    jump_func = stk_jump;
                     break;
                 case JumpControlType::END_IF:
-                    JumpFunc = stk_jump_label;
+                    jump_func = stk_jump_label;
                     break;
                 default:
                     break;
@@ -3179,18 +3179,18 @@ static bool fill_jump_struct()
         }
         if (*(s_fns[s_op_ptr]) == stk_lod)
         {
-            loadcount++;
+            load_count++;
         }
         else if (*(s_fns[s_op_ptr]) == stk_sto)
         {
-            storecount++;
+            store_count++;
         }
-        else if (*(s_fns[s_op_ptr]) == JumpFunc)
+        else if (*(s_fns[s_op_ptr]) == jump_func)
         {
             JumpPtrs value{};
             value.jump_op_ptr = s_op_ptr;
-            value.jump_lod_ptr = loadcount;
-            value.jump_sto_ptr = storecount;
+            value.jump_lod_ptr = load_count;
+            value.jump_sto_ptr = store_count;
             jump_data.push_back(value);
             i++;
             find_new_func = true;
@@ -3213,14 +3213,14 @@ static bool fill_jump_struct()
     return i < 0;
 }
 
-static int frm_get_char(std::FILE *openfile)
+static int frm_get_char(std::FILE *open_file)
 {
     int c;
     bool done = false;
-    bool linewrap = false;
+    bool line_wrap = false;
     while (!done)
     {
-        c = getc(openfile);
+        c = getc(open_file);
         switch (c)
         {
         case '\r':
@@ -3228,10 +3228,10 @@ static int frm_get_char(std::FILE *openfile)
         case '\t' :
             break;
         case '\\':
-            linewrap = true;
+            line_wrap = true;
             break;
         case ';' :
-            while ((c = getc(openfile)) != '\n' && c != EOF)
+            while ((c = getc(open_file)) != '\n' && c != EOF)
             {
             }
             if (c == EOF)
@@ -3239,11 +3239,11 @@ static int frm_get_char(std::FILE *openfile)
                 done = true;
             }
         case '\n' :
-            if (!linewrap)
+            if (!line_wrap)
             {
                 done = true;
             }
-            linewrap = false;
+            line_wrap = false;
             break;
         default:
             done = true;
@@ -3320,11 +3320,11 @@ static void get_var_info(Token *tok)
         of a complex constant. See is_complex_constant() below. */
 
 // returns 1 on success, 0 on NOT_A_TOKEN
-static bool frm_get_constant(std::FILE *openfile, Token *tok)
+static bool frm_get_constant(std::FILE *open_file, Token *tok)
 {
     int i = 1;
     bool getting_base = true;
-    long filepos = std::ftell(openfile);
+    long file_pos = std::ftell(open_file);
     bool got_decimal_already = false;
     bool done = false;
     tok->constant.x = 0.0;          //initialize values to 0
@@ -3335,7 +3335,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
     }
     while (!done)
     {
-        switch (int c = frm_get_char(openfile); c)
+        switch (int c = frm_get_char(open_file); c)
         {
         case EOF:
             tok->str[i] = (char) 0;
@@ -3344,7 +3344,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             return false;
         CASE_NUM:
             tok->str[i++] = (char) c;
-            filepos = std::ftell(openfile);
+            file_pos = std::ftell(open_file);
             break;
         case '.':
             if (got_decimal_already || !getting_base)
@@ -3357,7 +3357,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             }
             tok->str[i++] = (char) c;
             got_decimal_already = true;
-            filepos = std::ftell(openfile);
+            file_pos = std::ftell(open_file);
             break;
         default :
             if (c == 'e' && getting_base && (std::isdigit(tok->str[i-1]) || (tok->str[i-1] == '.' && i > 1)))
@@ -3365,16 +3365,16 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
                 tok->str[i++] = (char) c;
                 getting_base = false;
                 got_decimal_already = false;
-                filepos = std::ftell(openfile);
-                c = frm_get_char(openfile);
+                file_pos = std::ftell(open_file);
+                c = frm_get_char(open_file);
                 if (c == '-' || c == '+')
                 {
                     tok->str[i++] = (char) c;
-                    filepos = std::ftell(openfile);
+                    file_pos = std::ftell(open_file);
                 }
                 else
                 {
-                    std::fseek(openfile, filepos, SEEK_SET);
+                    std::fseek(open_file, file_pos, SEEK_SET);
                 }
             }
             else if (std::isalpha(c) || c == '_')
@@ -3395,7 +3395,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
             }
             else
             {
-                std::fseek(openfile, filepos, SEEK_SET);
+                std::fseek(open_file, file_pos, SEEK_SET);
                 tok->str[i++] = (char) 0;
                 done = true;
             }
@@ -3415,7 +3415,7 @@ static bool frm_get_constant(std::FILE *openfile, Token *tok)
     return true;
 }
 
-static void is_complex_constant(std::FILE *openfile, Token *tok)
+static void is_complex_constant(std::FILE *open_file, Token *tok)
 {
     assert(tok->str[0] == '(');
     Token temp_tok;
@@ -3425,7 +3425,7 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
     std::FILE * debug_token = nullptr;
     tok->str[1] = (char) 0;  // so we can concatenate later
 
-    long filepos = std::ftell(openfile);
+    long file_pos = std::ftell(open_file);
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         debug_token = open_save_file("frmconst.txt", "at");
@@ -3433,7 +3433,7 @@ static void is_complex_constant(std::FILE *openfile, Token *tok)
 
     while (!done)
     {
-        int c = frm_get_char(openfile);
+        int c = frm_get_char(open_file);
         switch (c)
         {
 CASE_NUM :
@@ -3450,7 +3450,7 @@ CASE_NUM :
                 std::fprintf(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
-            c = frm_get_char(openfile);
+            c = frm_get_char(open_file);
             if (c == '.' || std::isdigit(c))
             {
                 if (debug_token != nullptr)
@@ -3480,9 +3480,9 @@ CASE_NUM :
         {
             std::fprintf(debug_token,  "Calling frmgetconstant unless done is true; done is %s\n", done ? "true" : "false");
         }
-        if (!done && frm_get_constant(openfile, &temp_tok))
+        if (!done && frm_get_constant(open_file, &temp_tok))
         {
-            c = frm_get_char(openfile);
+            c = frm_get_char(open_file);
             if (debug_token != nullptr)
             {
                 std::fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
@@ -3528,7 +3528,7 @@ CASE_NUM :
             done = true;
         }
     }
-    std::fseek(openfile, filepos, SEEK_SET);
+    std::fseek(open_file, file_pos, SEEK_SET);
     tok->str[1] = (char) 0;
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
@@ -3541,15 +3541,15 @@ CASE_NUM :
     }
 }
 
-static bool frm_get_alpha(std::FILE *openfile, Token *tok)
+static bool frm_get_alpha(std::FILE *open_file, Token *tok)
 {
     int c;
     int i = 1;
     bool var_name_too_long = false;
-    long last_filepos = std::ftell(openfile);
-    while ((c = frm_get_char(openfile)) != EOF)
+    long last_file_pos = std::ftell(open_file);
+    while ((c = frm_get_char(open_file)) != EOF)
     {
-        long filepos = std::ftell(openfile);
+        long file_pos = std::ftell(open_file);
         switch (c)
         {
 CASE_ALPHA:
@@ -3567,7 +3567,7 @@ CASE_NUM:
             {
                 var_name_too_long = true;
             }
-            last_filepos = filepos;
+            last_file_pos = file_pos;
             break;
         default:
             if (c == '.')       // illegal character in variable or func name
@@ -3583,11 +3583,11 @@ CASE_NUM:
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = TokenId::TOKEN_TOO_LONG;
                 tok->str[i] = (char) 0;
-                std::fseek(openfile, last_filepos, SEEK_SET);
+                std::fseek(open_file, last_file_pos, SEEK_SET);
                 return false;
             }
             tok->str[i] = (char) 0;
-            std::fseek(openfile, last_filepos, SEEK_SET);
+            std::fseek(open_file, last_file_pos, SEEK_SET);
             get_func_info(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
             {
@@ -3639,18 +3639,18 @@ CASE_NUM:
     return false;
 }
 
-static void frm_get_eos(std::FILE *openfile, Token *this_token)
+static void frm_get_eos(std::FILE *open_file, Token *this_token)
 {
-    long last_filepos = std::ftell(openfile);
+    long last_file_pos = std::ftell(open_file);
     int c;
 
-    for (c = frm_get_char(openfile); (c == '\n' || c == ',' || c == ':'); c = frm_get_char(openfile))
+    for (c = frm_get_char(open_file); (c == '\n' || c == ',' || c == ':'); c = frm_get_char(open_file))
     {
         if (c == ':')
         {
             this_token->str[0] = ':';
         }
-        last_filepos = std::ftell(openfile);
+        last_file_pos = std::ftell(open_file);
     }
     if (c == '}')
     {
@@ -3660,7 +3660,7 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
     }
     else
     {
-        std::fseek(openfile, last_filepos, SEEK_SET);
+        std::fseek(open_file, last_file_pos, SEEK_SET);
         if (this_token->str[0] == '\n')
         {
             this_token->str[0] = ',';
@@ -3671,47 +3671,47 @@ static void frm_get_eos(std::FILE *openfile, Token *this_token)
 /*frmgettoken fills token structure; returns 1 on success and 0 on
   NOT_A_TOKEN and END_OF_FORMULA
 */
-static bool frm_get_token(std::FILE *openfile, Token *this_token)
+static bool frm_get_token(std::FILE *open_file, Token *this_token)
 {
     int i = 1;
-    long filepos;
+    long file_pos;
 
-    switch (int c = frm_get_char(openfile); c)
+    switch (int c = frm_get_char(open_file); c)
     {
 CASE_NUM:
     case '.':
         this_token->str[0] = (char) c;
-        return frm_get_constant(openfile, this_token);
+        return frm_get_constant(open_file, this_token);
 CASE_ALPHA:
     case '_':
         this_token->str[0] = (char) c;
-        return frm_get_alpha(openfile, this_token);
+        return frm_get_alpha(open_file, this_token);
 CASE_TERMINATOR:
         this_token->type = FormulaTokenType::OPERATOR; // this may be changed below
         this_token->str[0] = (char) c;
-        filepos = std::ftell(openfile);
+        file_pos = std::ftell(open_file);
         if (c == '<' || c == '>' || c == '=')
         {
-            c = frm_get_char(openfile);
+            c = frm_get_char(open_file);
             if (c == '=')
             {
                 this_token->str[i++] = (char) c;
             }
             else
             {
-                std::fseek(openfile, filepos, SEEK_SET);
+                std::fseek(open_file, file_pos, SEEK_SET);
             }
         }
         else if (c == '!')
         {
-            c = frm_get_char(openfile);
+            c = frm_get_char(open_file);
             if (c == '=')
             {
                 this_token->str[i++] = (char) c;
             }
             else
             {
-                std::fseek(openfile, filepos, SEEK_SET);
+                std::fseek(open_file, file_pos, SEEK_SET);
                 this_token->str[1] = (char) 0;
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
@@ -3720,26 +3720,26 @@ CASE_TERMINATOR:
         }
         else if (c == '|')
         {
-            c = frm_get_char(openfile);
+            c = frm_get_char(open_file);
             if (c == '|')
             {
                 this_token->str[i++] = (char) c;
             }
             else
             {
-                std::fseek(openfile, filepos, SEEK_SET);
+                std::fseek(open_file, file_pos, SEEK_SET);
             }
         }
         else if (c == '&')
         {
-            c = frm_get_char(openfile);
+            c = frm_get_char(open_file);
             if (c == '&')
             {
                 this_token->str[i++] = (char) c;
             }
             else
             {
-                std::fseek(openfile, filepos, SEEK_SET);
+                std::fseek(open_file, file_pos, SEEK_SET);
                 this_token->str[1] = (char) 0;
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
@@ -3755,7 +3755,7 @@ CASE_TERMINATOR:
             || this_token->str[0] == ','
             || this_token->str[0] == ':')
         {
-            frm_get_eos(openfile, this_token);
+            frm_get_eos(open_file, this_token);
         }
         else if (this_token->str[0] == ')')
         {
@@ -3767,7 +3767,7 @@ CASE_TERMINATOR:
             /* the following function will set token_type to PARENS and
                token_id to OPEN_PARENS if this is not the start of a
                complex constant */
-            is_complex_constant(openfile, this_token);
+            is_complex_constant(open_file, this_token);
             return true;
         }
         this_token->str[i] = (char) 0;
@@ -3916,7 +3916,7 @@ int frm_get_param_stuff(char const *Name)
 */
 static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 {
-    long filepos = std::ftell(open_file);
+    long file_pos = std::ftell(open_file);
     int c;
     bool at_end_of_name = false;
 
@@ -3956,16 +3956,16 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     {
         int j;
         int k = (int) std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
-        char msgbuf[100];
-        std::strcpy(msgbuf, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
-        std::strcat(msgbuf, ":\n   ");
-        std::fseek(open_file, filepos, SEEK_SET);
+        char msg_buff[100];
+        std::strcpy(msg_buff, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
+        std::strcat(msg_buff, ":\n   ");
+        std::fseek(open_file, file_pos, SEEK_SET);
         for (j = 0; j < i && j < 25; j++)
         {
-            msgbuf[j+k+2] = (char) getc(open_file);
+            msg_buff[j+k+2] = (char) getc(open_file);
         }
-        msgbuf[j+k+2] = (char) 0;
-        stop_msg(StopMsgFlags::FIXED_FONT, msgbuf);
+        msg_buff[j+k+2] = (char) 0;
+        stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
         return false;
     }
     // get symmetry
@@ -4016,10 +4016,10 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         }
         if (i == num_names && report_bad_sym)
         {
-            std::string msgbuf{parse_error_text(ParseError::INVALID_SYM_USING_NOSYM)};
-            msgbuf += ":\n   ";
-            msgbuf += sym_buf;
-            stop_msg(StopMsgFlags::FIXED_FONT, msgbuf);
+            std::string msg_buff{parse_error_text(ParseError::INVALID_SYM_USING_NOSYM)};
+            msg_buff += ":\n   ";
+            msg_buff += sym_buf;
+            stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
         }
     }
     if (c != '{')
@@ -4058,23 +4058,23 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 */
 static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
 {
-    const long filepos{std::ftell(file)};
+    const long file_pos{std::ftell(file)};
 
     // Test for a repeat
     if (!frm_check_name_and_sym(file, report_bad_sym))
     {
-        std::fseek(file, filepos, SEEK_SET);
+        std::fseek(file, file_pos, SEEK_SET);
         return {};
     }
     if (!frm_prescan(file))
     {
-        std::fseek(file, filepos, SEEK_SET);
+        std::fseek(file, file_pos, SEEK_SET);
         return {};
     }
 
     if (s_chars_in_formula > 8190)
     {
-        std::fseek(file, filepos, SEEK_SET);
+        std::fseek(file, file_pos, SEEK_SET);
         return {};
     }
 
@@ -4109,7 +4109,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         if (temp_tok.type == FormulaTokenType::NOT_A_TOKEN)
         {
             stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-            std::fseek(file, filepos, SEEK_SET);
+            std::fseek(file, file_pos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4119,7 +4119,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         if (temp_tok.type == FormulaTokenType::END_OF_FORMULA)
         {
             stop_msg(StopMsgFlags::FIXED_FONT, "Formula has no executable instructions\n");
-            std::fseek(file, filepos, SEEK_SET);
+            std::fseek(file, file_pos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4141,7 +4141,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         {
         case FormulaTokenType::NOT_A_TOKEN:
             stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
-            std::fseek(file, filepos, SEEK_SET);
+            std::fseek(file, file_pos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4149,7 +4149,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
             return {};
         case FormulaTokenType::END_OF_FORMULA:
             done = true;
-            std::fseek(file, filepos, SEEK_SET);
+            std::fseek(file, file_pos, SEEK_SET);
             break;
         default:
             formula_text += temp_tok.str;
@@ -4248,14 +4248,14 @@ bool formula_setup_l()
 
 void init_misc()
 {
-    static Arg argfirst;
-    static Arg argsecond;
+    static Arg arg_first;
+    static Arg arg_second;
     if (s_vars.empty())
     {
         s_vars.resize(5);
     }
-    g_arg1 = &argfirst;
-    g_arg2 = &argsecond; // needed by all the ?stk* functions
+    g_arg1 = &arg_first;
+    g_arg2 = &arg_second; // needed by all the ?stk* functions
     s_fudge = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / s_fudge;
     s_shift_back = 32 - g_bit_shift;
@@ -4307,8 +4307,8 @@ static void frm_error(std::FILE * open_file, long begin_frm)
     Token tok;
     int chars_to_error = 0;
     int chars_in_error = 0;
-    char msgbuf[900];
-    std::strcpy(msgbuf, "\n");
+    char msg_buff[900];
+    std::strcpy(msg_buff, "\n");
 
     for (int j = 0; j < 3 && s_errors[j].start_pos; j++)
     {
@@ -4330,16 +4330,16 @@ static void frm_error(std::FILE * open_file, long begin_frm)
                 return;
             }
         }
-        std::sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number));
-        int i = (int) std::strlen(msgbuf);
+        std::sprintf(&msg_buff[(int) std::strlen(msg_buff)], "Error(%d) at line %d:  %s\n  ", +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number));
+        int i = (int) std::strlen(msg_buff);
         std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
         int token_count = 0;
         int statement_len = token_count;
         bool done = false;
         while (!done)
         {
-            long filepos = std::ftell(open_file);
-            if (filepos == s_errors[j].error_pos)
+            long file_pos = std::ftell(open_file);
+            if (file_pos == s_errors[j].error_pos)
             {
                 chars_to_error = statement_len;
                 frm_get_token(open_file, &tok);
@@ -4380,34 +4380,34 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             chars_to_error = 0;
             token_count = 1;
         }
-        while ((int) std::strlen(&msgbuf[i]) <=74 && token_count--)
+        while ((int) std::strlen(&msg_buff[i]) <=74 && token_count--)
         {
             frm_get_token(open_file, &tok);
-            std::strcat(msgbuf, tok.str);
+            std::strcat(msg_buff, tok.str);
         }
         std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
         frm_get_token(open_file, &tok);
-        if ((int) std::strlen(&msgbuf[i]) > 74)
+        if ((int) std::strlen(&msg_buff[i]) > 74)
         {
-            msgbuf[i + 74] = (char) 0;
+            msg_buff[i + 74] = (char) 0;
         }
-        std::strcat(msgbuf, "\n");
-        i = (int) std::strlen(msgbuf);
+        std::strcat(msg_buff, "\n");
+        i = (int) std::strlen(msg_buff);
         while (chars_to_error-- > -2)
         {
-            std::strcat(msgbuf, " ");
+            std::strcat(msg_buff, " ");
         }
         if (s_errors[j].error_number == ParseError::TOKEN_TOO_LONG)
         {
             chars_in_error = 33;
         }
-        while (chars_in_error-- && (int) std::strlen(&msgbuf[i]) <=74)
+        while (chars_in_error-- && (int) std::strlen(&msg_buff[i]) <=74)
         {
-            std::strcat(msgbuf, "^");
+            std::strcat(msg_buff, "^");
         }
-        std::strcat(msgbuf, "\n");
+        std::strcat(msg_buff, "\n");
     }
-    stop_msg(StopMsgFlags::FIXED_FONT, msgbuf);
+    stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
 }
 
 /*frm_prescan() takes an open file with the file pointer positioned at
