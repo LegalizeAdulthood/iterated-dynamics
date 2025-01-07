@@ -44,8 +44,8 @@ static MPC s_mpc_temp1{};
 static double s_two_pi{};
 static DComplex s_temp{};
 static DComplex s_base_log{};
-static DComplex s_cdegree{3.0, 0.0};
-static DComplex s_croot{1.0, 0.0};
+static DComplex s_c_degree{3.0, 0.0};
+static DComplex s_c_root{1.0, 0.0};
 static MP s_newton_mp_r_over_d{};
 static MP s_mp_degree_minus_1_over_degree{};
 static MP s_mp_threshold{};
@@ -93,7 +93,7 @@ int newton_fractal2()
     {
         if (g_fractal_type == FractalType::NEWT_BASIN || g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
-            long tmpcolor = -1;
+            long tmp_color = -1;
             /* this code determines which degree-th root of root the
                Newton formula converges to. The roots of a 1 are
                distributed on a circle of radius 1 about the origin. */
@@ -105,22 +105,22 @@ int newton_fractal2()
                 {
                     if (g_basin == 2)
                     {
-                        tmpcolor = 1+(i&7)+((g_color_iter&1) << 3);
+                        tmp_color = 1+(i&7)+((g_color_iter&1) << 3);
                     }
                     else
                     {
-                        tmpcolor = 1+i;
+                        tmp_color = 1+i;
                     }
                     break;
                 }
             }
-            if (tmpcolor == -1)
+            if (tmp_color == -1)
             {
                 g_color_iter = g_max_color;
             }
             else
             {
-                g_color_iter = tmpcolor;
+                g_color_iter = tmp_color;
             }
         }
         return 1;
@@ -152,11 +152,11 @@ bool complex_newton_setup()
         || g_params[2] != 0.0
         || g_params[3] != 0.0)
     {
-        s_croot.x = g_params[2];
-        s_croot.y = g_params[3];
-        s_cdegree.x = g_params[0];
-        s_cdegree.y = g_params[1];
-        fpu_cmplx_log(&s_croot, &s_base_log);
+        s_c_root.x = g_params[2];
+        s_c_root.y = g_params[3];
+        s_c_degree.x = g_params[0];
+        s_c_degree.y = g_params[1];
+        fpu_cmplx_log(&s_c_root, &s_base_log);
         s_two_pi = std::asin(1.0) * 4;
     }
     return true;
@@ -170,24 +170,24 @@ int complex_newton()
              ----------------------------------
                   cdegree * old**(cdegree-1)         */
 
-    cd1.x = s_cdegree.x - 1.0;
-    cd1.y = s_cdegree.y;
+    cd1.x = s_c_degree.x - 1.0;
+    cd1.y = s_c_degree.y;
 
     s_temp = complex_power(g_old_z, cd1);
     fpu_cmplx_mul(&s_temp, &g_old_z, &g_new_z);
 
-    g_tmp_z.x = g_new_z.x - s_croot.x;
-    g_tmp_z.y = g_new_z.y - s_croot.y;
+    g_tmp_z.x = g_new_z.x - s_c_root.x;
+    g_tmp_z.y = g_new_z.y - s_c_root.y;
     if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
     {
         return 1;
     }
 
     fpu_cmplx_mul(&g_new_z, &cd1, &g_tmp_z);
-    g_tmp_z.x += s_croot.x;
-    g_tmp_z.y += s_croot.y;
+    g_tmp_z.x += s_c_root.x;
+    g_tmp_z.y += s_c_root.y;
 
-    fpu_cmplx_mul(&s_temp, &s_cdegree, &cd1);
+    fpu_cmplx_mul(&s_temp, &s_c_degree, &cd1);
     fpu_cmplx_div(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
@@ -205,14 +205,14 @@ int complex_basin()
              ----------------------------------
                   cdegree * old**(cdegree-1)         */
 
-    cd1.x = s_cdegree.x - 1.0;
-    cd1.y = s_cdegree.y;
+    cd1.x = s_c_degree.x - 1.0;
+    cd1.y = s_c_degree.y;
 
     s_temp = complex_power(g_old_z, cd1);
     fpu_cmplx_mul(&s_temp, &g_old_z, &g_new_z);
 
-    g_tmp_z.x = g_new_z.x - s_croot.x;
-    g_tmp_z.y = g_new_z.y - s_croot.y;
+    g_tmp_z.x = g_new_z.x - s_c_root.x;
+    g_tmp_z.y = g_new_z.y - s_c_root.y;
     if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
     {
         if (std::fabs(g_old_z.y) < .01)
@@ -220,7 +220,7 @@ int complex_basin()
             g_old_z.y = 0.0;
         }
         fpu_cmplx_log(&g_old_z, &s_temp);
-        fpu_cmplx_mul(&s_temp, &s_cdegree, &g_tmp_z);
+        fpu_cmplx_mul(&s_temp, &s_c_degree, &g_tmp_z);
         double mod = g_tmp_z.y/s_two_pi;
         g_color_iter = (long)mod;
         if (std::fabs(mod - g_color_iter) > 0.5)
@@ -243,10 +243,10 @@ int complex_basin()
     }
 
     fpu_cmplx_mul(&g_new_z, &cd1, &g_tmp_z);
-    g_tmp_z.x += s_croot.x;
-    g_tmp_z.y += s_croot.y;
+    g_tmp_z.x += s_c_root.x;
+    g_tmp_z.y += s_c_root.y;
 
-    fpu_cmplx_mul(&s_temp, &s_cdegree, &cd1);
+    fpu_cmplx_mul(&s_temp, &s_c_degree, &cd1);
     fpu_cmplx_div(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
@@ -350,49 +350,49 @@ bool newton_setup()
 int mpc_newton_fractal()
 {
     g_mp_overflow = false;
-    MPC mpctmp = mpc_pow(s_mpc_old, g_degree - 1);
+    MPC mpc_tmp = mpc_pow(s_mpc_old, g_degree - 1);
 
-    MPC mpcnew;
-    mpcnew.x = *mp_sub(*mp_mul(mpctmp.x, s_mpc_old.x), *mp_mul(mpctmp.y, s_mpc_old.y));
-    mpcnew.y = *mp_add(*mp_mul(mpctmp.x, s_mpc_old.y), *mp_mul(mpctmp.y, s_mpc_old.x));
-    s_mpc_temp1.x = *mp_sub(mpcnew.x, g_mpc_one.x);
-    s_mpc_temp1.y = *mp_sub(mpcnew.y, g_mpc_one.y);
+    MPC mpc_new;
+    mpc_new.x = *mp_sub(*mp_mul(mpc_tmp.x, s_mpc_old.x), *mp_mul(mpc_tmp.y, s_mpc_old.y));
+    mpc_new.y = *mp_add(*mp_mul(mpc_tmp.x, s_mpc_old.y), *mp_mul(mpc_tmp.y, s_mpc_old.x));
+    s_mpc_temp1.x = *mp_sub(mpc_new.x, g_mpc_one.x);
+    s_mpc_temp1.y = *mp_sub(mpc_new.y, g_mpc_one.y);
     if (mp_cmp(mpc_mod(s_mpc_temp1), s_mp_threshold) < 0)
     {
         if (g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
-            long tmpcolor = -1;
+            long tmp_color = -1;
             for (int i = 0; i < g_degree; i++)
                 if (mp_cmp(mp_distance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
                     {
-                        tmpcolor = 1+(i&7) + ((g_color_iter&1) << 3);
+                        tmp_color = 1+(i&7) + ((g_color_iter&1) << 3);
                     }
                     else
                     {
-                        tmpcolor = 1+i;
+                        tmp_color = 1+i;
                     }
                     break;
                 }
-            if (tmpcolor == -1)
+            if (tmp_color == -1)
             {
                 g_color_iter = g_max_color;
             }
             else
             {
-                g_color_iter = tmpcolor;
+                g_color_iter = tmp_color;
             }
         }
         return 1;
     }
 
-    mpcnew.x = *mp_add(*mp_mul(s_mp_degree_minus_1_over_degree, mpcnew.x), s_newton_mp_r_over_d);
-    mpcnew.y = *mp_mul(mpcnew.y, s_mp_degree_minus_1_over_degree);
-    MP temp2 = mpc_mod(mpctmp);
+    mpc_new.x = *mp_add(*mp_mul(s_mp_degree_minus_1_over_degree, mpc_new.x), s_newton_mp_r_over_d);
+    mpc_new.y = *mp_mul(mpc_new.y, s_mp_degree_minus_1_over_degree);
+    MP temp2 = mpc_mod(mpc_tmp);
     temp2 = *mp_div(g_mp_one, temp2);
-    s_mpc_old.x = *mp_mul(temp2, (*mp_add(*mp_mul(mpcnew.x, mpctmp.x), *mp_mul(mpcnew.y, mpctmp.y))));
-    s_mpc_old.y = *mp_mul(temp2, (*mp_sub(*mp_mul(mpcnew.y, mpctmp.x), *mp_mul(mpcnew.x, mpctmp.y))));
+    s_mpc_old.x = *mp_mul(temp2, (*mp_add(*mp_mul(mpc_new.x, mpc_tmp.x), *mp_mul(mpc_new.y, mpc_tmp.y))));
+    s_mpc_old.y = *mp_mul(temp2, (*mp_sub(*mp_mul(mpc_new.y, mpc_tmp.x), *mp_mul(mpc_new.x, mpc_tmp.y))));
     g_new_z.x = *mp_to_d(s_mpc_old.x);
     g_new_z.y = *mp_to_d(s_mpc_old.y);
     return g_mp_overflow ? 1 : 0;
