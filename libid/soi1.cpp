@@ -43,12 +43,12 @@ struct DoubleComplex
 struct SOIDoubleState
 {
     bool esc[9];
-    bool tesc[4];
+    bool t_esc[4];
 
     DoubleComplex z;
     DoubleComplex step;
-    double interstep;
-    double helpre;
+    double interleave_step;
+    double help_real;
     DoubleComplex scan_z;
     DoubleComplex b1[3];
     DoubleComplex b2[3];
@@ -62,7 +62,7 @@ struct SOIDoubleState
 
 } // namespace
 
-inline DoubleComplex zsqr(DoubleComplex z)
+inline DoubleComplex z_sqr(DoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
 }
@@ -147,43 +147,43 @@ enum
 
 // compute the value of the interpolation polynomial at (x,y)
 #define GET_REAL(x, y) \
-    interpolate(cim1, midi, cim2, \
-        interpolate(cre1, midr, cre2, s_zi[0].re, s_zi[4].re, s_zi[1].re, x), \
-        interpolate(cre1, midr, cre2, s_zi[5].re, s_zi[8].re, s_zi[6].re, x), \
-        interpolate(cre1, midr, cre2, s_zi[2].re, s_zi[7].re, s_zi[3].re, x), y)
+    interpolate(c_im1, mid_i, c_im2, \
+        interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, x), \
+        interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, x), \
+        interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, x), y)
 #define GET_IMAG(x, y) \
-    interpolate(cre1, midr, cre2, \
-        interpolate(cim1, midi, cim2, s_zi[0].im, s_zi[5].im, s_zi[2].im, y), \
-        interpolate(cim1, midi, cim2, s_zi[4].im, s_zi[8].im, s_zi[7].im, y), \
-        interpolate(cim1, midi, cim2, s_zi[1].im, s_zi[6].im, s_zi[3].im, y), x)
+    interpolate(c_re1, mid_r, c_re2, \
+        interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, y), \
+        interpolate(c_im1, mid_i, c_im2, s_zi[4].im, s_zi[8].im, s_zi[7].im, y), \
+        interpolate(c_im1, mid_i, c_im2, s_zi[1].im, s_zi[6].im, s_zi[3].im, y), x)
 
 /* compute the value of the interpolation polynomial at (x,y)
    from saved values before interpolation failed to stay within tolerance */
 #define GET_SAVED_REAL(x, y) \
-    interpolate(cim1, midi, cim2, \
-        interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, x), \
-        interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, x), \
-        interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, x), y)
+    interpolate(c_im1, mid_i, c_im2, \
+        interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, x), \
+        interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, x), \
+        interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, x), y)
 #define GET_SAVED_IMAG(x, y) \
-    interpolate(cre1, midr, cre2, \
-        interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, y), \
-        interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, y), \
-        interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, y), x)
+    interpolate(c_re1, mid_r, c_re2, \
+        interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, y), \
+        interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, y), \
+        interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, y), x)
 
 /* compute the value of the interpolation polynomial at (x,y)
    during scanning. Here, key values do not change, so we can precompute
    coefficients in one direction and simply evaluate the polynomial
    during scanning. */
 #define GET_SCAN_REAL(x, y) \
-    interpolate(cim1, midi, cim2, \
-        evaluate(cre1, midr, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re, x), \
-        evaluate(cre1, midr, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re, x), \
-        evaluate(cre1, midr, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re, x), y)
+    interpolate(c_im1, mid_i, c_im2, \
+        evaluate(c_re1, mid_r, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re, x), \
+        evaluate(c_re1, mid_r, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re, x), \
+        evaluate(c_re1, mid_r, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re, x), y)
 #define GET_SCAN_IMAG(x, y) \
-    interpolate(cre1, midr, cre2, \
-        evaluate(cim1, midi, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im, y), \
-        evaluate(cim1, midi, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im, y), \
-        evaluate(cim1, midi, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im, y), x)
+    interpolate(c_re1, mid_r, c_re2, \
+        evaluate(c_im1, mid_i, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im, y), \
+        evaluate(c_im1, mid_i, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im, y), \
+        evaluate(c_im1, mid_i, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im, y), x)
 
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
@@ -199,11 +199,11 @@ static inline double interpolate(
 
 // SOICompute - Perform simultaneous orbit iteration for a given rectangle
 //
-// Input: cre1..cim2 : values defining the four corners of the rectangle
+// Input: c_re1..c_im2 : values defining the four corners of the rectangle
 //        x1..y2     : corresponding pixel values
 //    s_zi[0..8].re,im  : intermediate iterated values of the key points (key values)
 //
-// (cre1,cim1)                                    (cre2,cim1)
+// (c_re1,c_im1)                                    (c_re2,c_im1)
 // (s_zi[0].re,s_zi[0].im)   (s_zi[4].re,s_zi[4].im)  (s_zi[1].re,s_zi[1].im)
 //     +--------------------------+--------------------+
 //     |                          |                    |
@@ -213,7 +213,7 @@ static inline double interpolate(
 //     |                          |                    |
 //     +--------------------------+--------------------+
 // (s_zi[2].re,s_zi[2].im)   (s_zi[7].re,s_zi[7].im)  (s_zi[3].re,s_zi[3].im)
-// (cre1,cim2)                                    (cre2,cim2)
+// (c_re1,c_im2)                                    (c_re2,c_im2)
 //
 // iter       : current number of iterations
 
@@ -238,22 +238,22 @@ static inline double interpolate(
     assert(status)
 
 static int rhombus(
-    double cre1, double cre2, double cim1, double cim2,
+    double c_re1, double c_re2, double c_im1, double c_im2,
     int x1, int x2, int y1, int y2, long iter);
 
 static int rhombus_aux(
-    double cre1, double cre2, double cim1, double cim2,
+    double c_re1, double c_re2, double c_im1, double c_im2,
     int x1, int x2, int y1, int y2, long iter)
 {
     // The following variables do not need their values saved
     // used in scanning
-    static long savecolor;
+    static long save_color;
     static long color;
-    static long helpcolor;
+    static long help_color;
     static int x;
     static int y;
     static int z;
-    static int savex;
+    static int save_x;
 
     // number of iterations before SOI iteration cycle
     static long before;
@@ -261,8 +261,8 @@ static int rhombus_aux(
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
-    double midr = (cre1 + cre2)/2;
-    double midi = (cim1 + cim2)/2;
+    double mid_r = (c_re1 + c_re2)/2;
+    double mid_i = (c_im1 + c_im2)/2;
 
     DoubleComplex s[9];
 
@@ -286,34 +286,34 @@ static int rhombus_aux(
     {
         // finish up the image by scanning the rectangle
 scan:
-        interpolate(cre1, midr, cre2, s_zi[0].re, s_zi[4].re, s_zi[1].re, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re);
-        interpolate(cre1, midr, cre2, s_zi[5].re, s_zi[8].re, s_zi[6].re, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re);
-        interpolate(cre1, midr, cre2, s_zi[2].re, s_zi[7].re, s_zi[3].re, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re);
+        interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re);
+        interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re);
+        interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re);
 
-        interpolate(cim1, midi, cim2, s_zi[0].im, s_zi[5].im, s_zi[2].im, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im);
-        interpolate(cim1, midi, cim2, s_zi[4].im, s_zi[8].im, s_zi[7].im, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im);
-        interpolate(cim1, midi, cim2, s_zi[1].im, s_zi[6].im, s_zi[3].im, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im);
+        interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im);
+        interpolate(c_im1, mid_i, c_im2, s_zi[4].im, s_zi[8].im, s_zi[7].im, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im);
+        interpolate(c_im1, mid_i, c_im2, s_zi[1].im, s_zi[6].im, s_zi[3].im, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im);
 
-        s_state.step.re = (cre2 - cre1)/(x2 - x1);
-        s_state.step.im = (cim2 - cim1)/(y2 - y1);
-        s_state.interstep = INTERLEAVE*s_state.step.re;
+        s_state.step.re = (c_re2 - c_re1)/(x2 - x1);
+        s_state.step.im = (c_im2 - c_im1)/(y2 - y1);
+        s_state.interleave_step = INTERLEAVE*s_state.step.re;
 
-        for (y = y1, s_state.z.im = cim1; y < y2; y++, s_state.z.im += s_state.step.im)
+        for (y = y1, s_state.z.im = c_im1; y < y2; y++, s_state.z.im += s_state.step.im)
         {
             if (driver_key_pressed())
             {
                 return 1;
             }
-            s_state.scan_z.re = GET_SCAN_REAL(cre1, s_state.z.im);
-            s_state.scan_z.im = GET_SCAN_IMAG(cre1, s_state.z.im);
-            savecolor = iteration(cre1, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
-            if (savecolor < 0)
+            s_state.scan_z.re = GET_SCAN_REAL(c_re1, s_state.z.im);
+            s_state.scan_z.im = GET_SCAN_IMAG(c_re1, s_state.z.im);
+            save_color = iteration(c_re1, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+            if (save_color < 0)
             {
                 return 1;
             }
-            savex = x1;
-            for (x = x1 + INTERLEAVE, s_state.z.re = cre1 + s_state.interstep; x < x2;
-                    x += INTERLEAVE, s_state.z.re += s_state.interstep)
+            save_x = x1;
+            for (x = x1 + INTERLEAVE, s_state.z.re = c_re1 + s_state.interleave_step; x < x2;
+                    x += INTERLEAVE, s_state.z.re += s_state.interleave_step)
             {
                 s_state.scan_z.re = GET_SCAN_REAL(s_state.z.re, s_state.z.im);
                 s_state.scan_z.im = GET_SCAN_IMAG(s_state.z.re, s_state.z.im);
@@ -323,76 +323,76 @@ scan:
                 {
                     return 1;
                 }
-                if (color == savecolor)
+                if (color == save_color)
                 {
                     continue;
                 }
 
-                for (z = x - 1, s_state.helpre = s_state.z.re - s_state.step.re; z > x - INTERLEAVE; z--, s_state.helpre -= s_state.step.re)
+                for (z = x - 1, s_state.help_real = s_state.z.re - s_state.step.re; z > x - INTERLEAVE; z--, s_state.help_real -= s_state.step.re)
                 {
-                    s_state.scan_z.re = GET_SCAN_REAL(s_state.helpre, s_state.z.im);
-                    s_state.scan_z.im = GET_SCAN_IMAG(s_state.helpre, s_state.z.im);
-                    helpcolor = iteration(s_state.helpre, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
-                    if (helpcolor < 0)
+                    s_state.scan_z.re = GET_SCAN_REAL(s_state.help_real, s_state.z.im);
+                    s_state.scan_z.im = GET_SCAN_IMAG(s_state.help_real, s_state.z.im);
+                    help_color = iteration(s_state.help_real, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+                    if (help_color < 0)
                     {
                         return 1;
                     }
-                    if (helpcolor == savecolor)
+                    if (help_color == save_color)
                     {
                         break;
                     }
-                    (*g_plot)(z, y, (int)(helpcolor&255));
+                    (*g_plot)(z, y, (int)(help_color&255));
                 }
 
-                if (savex < z)
+                if (save_x < z)
                 {
-                    put_hor_line(savex, y, z, (int)(savecolor&255));
+                    put_hor_line(save_x, y, z, (int)(save_color&255));
                 }
                 else
                 {
-                    (*g_plot)(savex, y, (int)(savecolor&255));
+                    (*g_plot)(save_x, y, (int)(save_color&255));
                 }
 
-                savex = x;
-                savecolor = color;
+                save_x = x;
+                save_color = color;
             }
 
-            for (z = x2 - 1, s_state.helpre = cre2 - s_state.step.re; z > savex; z--, s_state.helpre -= s_state.step.re)
+            for (z = x2 - 1, s_state.help_real = c_re2 - s_state.step.re; z > save_x; z--, s_state.help_real -= s_state.step.re)
             {
-                s_state.scan_z.re = GET_SCAN_REAL(s_state.helpre, s_state.z.im);
-                s_state.scan_z.im = GET_SCAN_IMAG(s_state.helpre, s_state.z.im);
-                helpcolor = iteration(s_state.helpre, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
-                if (helpcolor < 0)
+                s_state.scan_z.re = GET_SCAN_REAL(s_state.help_real, s_state.z.im);
+                s_state.scan_z.im = GET_SCAN_IMAG(s_state.help_real, s_state.z.im);
+                help_color = iteration(s_state.help_real, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
+                if (help_color < 0)
                 {
                     return 1;
                 }
-                if (helpcolor == savecolor)
+                if (help_color == save_color)
                 {
                     break;
                 }
 
-                (*g_plot)(z, y, (int)(helpcolor&255));
+                (*g_plot)(z, y, (int)(help_color&255));
             }
 
-            if (savex < z)
+            if (save_x < z)
             {
-                put_hor_line(savex, y, z, (int)(savecolor&255));
+                put_hor_line(save_x, y, z, (int)(save_color&255));
             }
             else
             {
-                (*g_plot)(savex, y, (int)(savecolor&255));
+                (*g_plot)(save_x, y, (int)(save_color&255));
             }
         }
 
         return 0;
     }
 
-    std::transform(std::begin(s_zi), std::end(s_zi), std::begin(s_state.rq), zsqr);
+    std::transform(std::begin(s_zi), std::end(s_zi), std::begin(s_state.rq), z_sqr);
 
-    s_state.corner[0].re = 0.75*cre1 + 0.25*cre2;
-    s_state.corner[0].im = 0.75*cim1 + 0.25*cim2;
-    s_state.corner[1].re = 0.25*cre1 + 0.75*cre2;
-    s_state.corner[1].im = 0.25*cim1 + 0.75*cim2;
+    s_state.corner[0].re = 0.75*c_re1 + 0.25*c_re2;
+    s_state.corner[0].im = 0.75*c_im1 + 0.25*c_im2;
+    s_state.corner[1].re = 0.25*c_re1 + 0.75*c_re2;
+    s_state.corner[1].im = 0.25*c_im1 + 0.75*c_im2;
 
     s_state.tz[0].re = GET_REAL(s_state.corner[0].re, s_state.corner[0].im);
     s_state.tz[0].im = GET_IMAG(s_state.corner[0].re, s_state.corner[0].im);
@@ -406,7 +406,7 @@ scan:
     s_state.tz[3].re = GET_REAL(s_state.corner[1].re, s_state.corner[1].im);
     s_state.tz[3].im = GET_IMAG(s_state.corner[1].re, s_state.corner[1].im);
 
-    std::transform(std::begin(s_state.tz), std::end(s_state.tz), std::begin(s_state.tq), zsqr);
+    std::transform(std::begin(s_state.tz), std::end(s_state.tz), std::begin(s_state.tq), z_sqr);
 
     before = iter;
 
@@ -422,71 +422,71 @@ scan:
     (esc) = (((rq) + (iq)) > 16.0)
 
         // iterate key values
-        SOI_ORBIT(s_zi[0].re, s_state.rq[0].re, s_zi[0].im, s_state.rq[0].im, cre1, cim1, s_state.esc[0]);
+        SOI_ORBIT(s_zi[0].re, s_state.rq[0].re, s_zi[0].im, s_state.rq[0].im, c_re1, c_im1, s_state.esc[0]);
         /*
-              zim1=(zim1+zim1)*zre1+cim1;
-              zre1=rq1-iq1+cre1;
+              zim1=(zim1+zim1)*zre1+c_im1;
+              zre1=rq1-iq1+c_re1;
               rq1=zre1*zre1;
               iq1=zim1*zim1;
         */
-        SOI_ORBIT(s_zi[1].re, s_state.rq[1].re, s_zi[1].im, s_state.rq[1].im, cre2, cim1, s_state.esc[1]);
+        SOI_ORBIT(s_zi[1].re, s_state.rq[1].re, s_zi[1].im, s_state.rq[1].im, c_re2, c_im1, s_state.esc[1]);
         /*
-              zim2=(zim2+zim2)*zre2+cim1;
-              zre2=rq2-iq2+cre2;
+              zim2=(zim2+zim2)*zre2+c_im1;
+              zre2=rq2-iq2+c_re2;
               rq2=zre2*zre2;
               iq2=zim2*zim2;
         */
-        SOI_ORBIT(s_zi[2].re, s_state.rq[2].re, s_zi[2].im, s_state.rq[2].im, cre1, cim2, s_state.esc[2]);
+        SOI_ORBIT(s_zi[2].re, s_state.rq[2].re, s_zi[2].im, s_state.rq[2].im, c_re1, c_im2, s_state.esc[2]);
         /*
-              zim3=(zim3+zim3)*zre3+cim2;
-              zre3=rq3-iq3+cre1;
+              zim3=(zim3+zim3)*zre3+c_im2;
+              zre3=rq3-iq3+c_re1;
               rq3=zre3*zre3;
               iq3=zim3*zim3;
         */
-        SOI_ORBIT(s_zi[3].re, s_state.rq[3].re, s_zi[3].im, s_state.rq[3].im, cre2, cim2, s_state.esc[3]);
+        SOI_ORBIT(s_zi[3].re, s_state.rq[3].re, s_zi[3].im, s_state.rq[3].im, c_re2, c_im2, s_state.esc[3]);
         /*
-              zim4=(zim4+zim4)*zre4+cim2;
-              zre4=rq4-iq4+cre2;
+              zim4=(zim4+zim4)*zre4+c_im2;
+              zre4=rq4-iq4+c_re2;
               rq4=zre4*zre4;
               iq4=zim4*zim4;
         */
-        SOI_ORBIT(s_zi[4].re, s_state.rq[4].re, s_zi[4].im, s_state.rq[4].im, midr, cim1, s_state.esc[4]);
+        SOI_ORBIT(s_zi[4].re, s_state.rq[4].re, s_zi[4].im, s_state.rq[4].im, mid_r, c_im1, s_state.esc[4]);
         /*
-              zim5=(zim5+zim5)*zre5+cim1;
-              zre5=rq5-iq5+midr;
+              zim5=(zim5+zim5)*zre5+c_im1;
+              zre5=rq5-iq5+mid_r;
               rq5=zre5*zre5;
               iq5=zim5*zim5;
         */
-        SOI_ORBIT(s_zi[5].re, s_state.rq[5].re, s_zi[5].im, s_state.rq[5].im, cre1, midi, s_state.esc[5]);
+        SOI_ORBIT(s_zi[5].re, s_state.rq[5].re, s_zi[5].im, s_state.rq[5].im, c_re1, mid_i, s_state.esc[5]);
         /*
-              zim6=(zim6+zim6)*zre6+midi;
-              zre6=rq6-iq6+cre1;
+              zim6=(zim6+zim6)*zre6+mid_i;
+              zre6=rq6-iq6+c_re1;
               rq6=zre6*zre6;
               iq6=zim6*zim6;
         */
-        SOI_ORBIT(s_zi[6].re, s_state.rq[6].re, s_zi[6].im, s_state.rq[6].im, cre2, midi, s_state.esc[6]);
+        SOI_ORBIT(s_zi[6].re, s_state.rq[6].re, s_zi[6].im, s_state.rq[6].im, c_re2, mid_i, s_state.esc[6]);
         /*
-              zim7=(zim7+zim7)*zre7+midi;
-              zre7=rq7-iq7+cre2;
+              zim7=(zim7+zim7)*zre7+mid_i;
+              zre7=rq7-iq7+c_re2;
               rq7=zre7*zre7;
               iq7=zim7*zim7;
         */
-        SOI_ORBIT(s_zi[7].re, s_state.rq[7].re, s_zi[7].im, s_state.rq[7].im, midr, cim2, s_state.esc[7]);
+        SOI_ORBIT(s_zi[7].re, s_state.rq[7].re, s_zi[7].im, s_state.rq[7].im, mid_r, c_im2, s_state.esc[7]);
         /*
-              zim8=(zim8+zim8)*zre8+cim2;
-              zre8=rq8-iq8+midr;
+              zim8=(zim8+zim8)*zre8+c_im2;
+              zre8=rq8-iq8+mid_r;
               rq8=zre8*zre8;
               iq8=zim8*zim8;
         */
-        SOI_ORBIT(s_zi[8].re, s_state.rq[8].re, s_zi[8].im, s_state.rq[8].im, midr, midi, s_state.esc[8]);
+        SOI_ORBIT(s_zi[8].re, s_state.rq[8].re, s_zi[8].im, s_state.rq[8].im, mid_r, mid_i, s_state.esc[8]);
         /*
-              zim9=(zim9+zim9)*zre9+midi;
-              zre9=rq9-iq9+midr;
+              zim9=(zim9+zim9)*zre9+mid_i;
+              zre9=rq9-iq9+mid_r;
               rq9=zre9*zre9;
               iq9=zim9*zim9;
         */
         // iterate test point
-        SOI_ORBIT(s_state.tz[0].re, s_state.tq[0].re, s_state.tz[0].im, s_state.tq[0].im, s_state.corner[0].re, s_state.corner[0].im, s_state.tesc[0]);
+        SOI_ORBIT(s_state.tz[0].re, s_state.tq[0].re, s_state.tz[0].im, s_state.tq[0].im, s_state.corner[0].re, s_state.corner[0].im, s_state.t_esc[0]);
         /*
               tzi1=(tzi1+tzi1)*tzr1+ci1;
               tzr1=trq1-tiq1+cr1;
@@ -494,21 +494,21 @@ scan:
               tiq1=tzi1*tzi1;
         */
 
-        SOI_ORBIT(s_state.tz[1].re, s_state.tq[1].re, s_state.tz[1].im, s_state.tq[1].im, s_state.corner[1].re, s_state.corner[0].im, s_state.tesc[1]);
+        SOI_ORBIT(s_state.tz[1].re, s_state.tq[1].re, s_state.tz[1].im, s_state.tq[1].im, s_state.corner[1].re, s_state.corner[0].im, s_state.t_esc[1]);
         /*
               tzi2=(tzi2+tzi2)*tzr2+ci1;
               tzr2=trq2-tiq2+cr2;
               trq2=tzr2*tzr2;
               tiq2=tzi2*tzi2;
         */
-        SOI_ORBIT(s_state.tz[2].re, s_state.tq[2].re, s_state.tz[2].im, s_state.tq[2].im, s_state.corner[0].re, s_state.corner[1].im, s_state.tesc[2]);
+        SOI_ORBIT(s_state.tz[2].re, s_state.tq[2].re, s_state.tz[2].im, s_state.tq[2].im, s_state.corner[0].re, s_state.corner[1].im, s_state.t_esc[2]);
         /*
               tzi3=(tzi3+tzi3)*tzr3+ci2;
               tzr3=trq3-tiq3+cr1;
               trq3=tzr3*tzr3;
               tiq3=tzi3*tzi3;
         */
-        SOI_ORBIT(s_state.tz[3].re, s_state.tq[3].re, s_state.tz[3].im, s_state.tq[3].im, s_state.corner[1].re, s_state.corner[1].im, s_state.tesc[3]);
+        SOI_ORBIT(s_state.tz[3].re, s_state.tq[3].re, s_state.tz[3].im, s_state.tq[3].im, s_state.corner[1].re, s_state.corner[1].im, s_state.t_esc[3]);
         /*
               tzi4=(tzi4+tzi4)*tzr4+ci2;
               tzr4=trq4-tiq4+cr2;
@@ -519,7 +519,7 @@ scan:
 
         // if one of the iterated values bails out, subdivide
         if (std::find(std::begin(s_state.esc), std::end(s_state.esc), true) != std::end(s_state.esc)
-            || std::find(std::begin(s_state.tesc), std::end(s_state.tesc), true) != std::end(s_state.tesc))
+            || std::find(std::begin(s_state.t_esc), std::end(s_state.t_esc), true) != std::end(s_state.t_esc))
         {
             break;
         }
@@ -619,41 +619,41 @@ scan:
 
     // compute key values for subsequent rectangles
 
-    double re10 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
-    double im10 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
+    double re10 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
+    double im10 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
 
-    double re11 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
-    double im11 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
+    double re11 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
+    double im11 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
 
-    double re20 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
-    double im20 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
+    double re20 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
+    double im20 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
 
-    double re21 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
-    double im21 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
+    double re21 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
+    double im21 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
 
-    double re15 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
-    double im15 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
+    double re15 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
+    double im15 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
 
-    double re16 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
-    double im16 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
+    double re16 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
+    double im16 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
 
-    double re12 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
-    double im12 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
+    double re12 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
+    double im12 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
 
-    double re14 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
-    double im14 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
+    double re14 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
+    double im14 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
 
-    double re17 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
-    double im17 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
+    double re17 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
+    double im17 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
 
-    double re19 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
-    double im19 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
+    double re19 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
+    double im19 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
 
-    double re13 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
-    double im13 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
+    double re13 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
+    double im13 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
 
-    double re18 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
-    double im18 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
+    double re18 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
+    double im18 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
 
     double re91 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[0].im);
     double im91 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[0].im);
@@ -664,7 +664,7 @@ scan:
     double re94 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[1].im);
     double im94 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[1].im);
 
-    RHOMBUS(cre1, midr, cim1, midi, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
+    RHOMBUS(c_re1, mid_r, c_im1, mid_i, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
             s[0].re, s[0].im,
             s[4].re, s[4].im,
             s[5].re, s[5].im,
@@ -675,7 +675,7 @@ scan:
             re15, im15,
             re91, im91,
             iter);
-    RHOMBUS(midr, cre2, cim1, midi, (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,
+    RHOMBUS(mid_r, c_re2, c_im1, mid_i, (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,
             s[4].re, s[4].im,
             s[1].re, s[1].im,
             s[8].re, s[8].im,
@@ -686,7 +686,7 @@ scan:
             re16, im16,
             re92, im92,
             iter);
-    RHOMBUS(cre1, midr, midi, cim2, x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,
+    RHOMBUS(c_re1, mid_r, mid_i, c_im2, x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,
             s[5].re, s[5].im,
             s[8].re, s[8].im,
             s[2].re, s[2].im,
@@ -697,7 +697,7 @@ scan:
             re20, im20,
             re93, im93,
             iter);
-    RHOMBUS(midr, cre2, midi, cim2, (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,
+    RHOMBUS(mid_r, c_re2, mid_i, c_im2, (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,
             s[8].re, s[8].im,
             s[6].re, s[6].im,
             s[7].re, s[7].im,
@@ -713,11 +713,11 @@ scan:
 }
 
 static int rhombus(
-    double cre1, double cre2, double cim1, double cim2,
+    double c_re1, double c_re2, double c_im1, double c_im2,
     int x1, int x2, int y1, int y2, long iter)
 {
     ++g_rhombus_depth;
-    const int result = rhombus_aux(cre1, cre2, cim1, cim2, x1, x2, y1, y2, iter);
+    const int result = rhombus_aux(c_re1, c_re2, c_im1, c_im2, x1, x2, y1, y2, iter);
     --g_rhombus_depth;
     return result;
 }
@@ -734,42 +734,42 @@ void soi()
     // cppcheck-suppress unreadVariable
     bool status;
     double tolerance = 0.1;
-    double xxminl;
-    double xxmaxl;
-    double yyminl;
-    double yymaxl;
+    double xx_min_l;
+    double xx_max_l;
+    double yy_min_l;
+    double yy_max_l;
     g_soi_min_stack_available = 30000;
     g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (g_bf_math != BFMathType::NONE)
     {
-        xxminl = (double)bf_to_float(g_bf_x_min);
-        yyminl = (double)bf_to_float(g_bf_y_min);
-        xxmaxl = (double)bf_to_float(g_bf_x_max);
-        yymaxl = (double)bf_to_float(g_bf_y_max);
+        xx_min_l = (double)bf_to_float(g_bf_x_min);
+        yy_min_l = (double)bf_to_float(g_bf_y_min);
+        xx_max_l = (double)bf_to_float(g_bf_x_max);
+        yy_max_l = (double)bf_to_float(g_bf_y_max);
     }
     else
     {
-        xxminl = g_x_min;
-        yyminl = g_y_min;
-        xxmaxl = g_x_max;
-        yymaxl = g_y_max;
+        xx_min_l = g_x_min;
+        yy_min_l = g_y_min;
+        xx_max_l = g_x_max;
+        yy_max_l = g_y_max;
     }
     s_t_width = tolerance/(g_logical_screen_x_dots - 1);
-    double stepx = (xxmaxl - xxminl) / g_logical_screen_x_dots;
-    double stepy = (yyminl - yymaxl) / g_logical_screen_y_dots;
-    s_equal = (stepx < stepy ? stepx : stepy);
+    double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
+    double step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
+    s_equal = (step_x < step_y ? step_x : step_y);
 
-    RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
+    RHOMBUS(xx_min_l, xx_max_l, yy_max_l, yy_min_l,
             0, g_logical_screen_x_dots, 0, g_logical_screen_y_dots,
-            xxminl, yymaxl,
-            xxmaxl, yymaxl,
-            xxminl, yyminl,
-            xxmaxl, yyminl,
-            (xxmaxl + xxminl)/2, yymaxl,
-            xxminl, (yymaxl + yyminl)/2,
-            xxmaxl, (yymaxl + yyminl)/2,
-            (xxmaxl + xxminl)/2, yyminl,
-            (xxminl + xxmaxl)/2, (yymaxl + yyminl)/2,
+            xx_min_l, yy_max_l,
+            xx_max_l, yy_max_l,
+            xx_min_l, yy_min_l,
+            xx_max_l, yy_min_l,
+            (xx_max_l + xx_min_l)/2, yy_max_l,
+            xx_min_l, (yy_max_l + yy_min_l)/2,
+            xx_max_l, (yy_max_l + yy_min_l)/2,
+            (xx_max_l + xx_min_l)/2, yy_min_l,
+            (xx_min_l + xx_max_l)/2, (yy_max_l + yy_min_l)/2,
             1);
 }
