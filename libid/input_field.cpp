@@ -47,7 +47,7 @@ int input_field(InputFieldFlags options, //
             display = false;
         }
         int curkey = driver_key_cursor(row + insert, col + offset);  // get a keystroke
-        if (curkey == 1047)
+        if (curkey == 1047) // numeric keypad /  TODO: map scan code to ID_KEY value
         {
             curkey = 47; // numeric slash
         }
