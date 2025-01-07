@@ -498,10 +498,10 @@ top:
     std::snprintf(
         msg, std::size(msg), "Driver: %s, %s", g_driver->get_name().c_str(), g_driver->get_description().c_str());
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
-    if (g_video_entry.xdots && g_bf_math == BFMathType::NONE)
+    if (g_video_entry.x_dots && g_bf_math == BFMathType::NONE)
     {
         std::sprintf(msg, "Video: %dx%dx%d %s",
-                g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
+                g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,
                 g_video_entry.comment);
         driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     }

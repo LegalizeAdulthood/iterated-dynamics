@@ -21,7 +21,7 @@ int check_vid_mode_key(int key)
         // check full g_video_table
         for (int i = 0; i < g_video_table_len; ++i)
         {
-            if (g_video_table[i].keynum == key)
+            if (g_video_table[i].key == key)
             {
                 return i;
             }

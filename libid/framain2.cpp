@@ -88,8 +88,8 @@ MainState big_while_loop(MainContext &context)
         {
             std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
-            g_logical_screen_x_dots   = g_video_entry.xdots;       // # dots across the screen
-            g_logical_screen_y_dots   = g_video_entry.ydots;       // # dots down the screen
+            g_logical_screen_x_dots   = g_video_entry.x_dots;       // # dots across the screen
+            g_logical_screen_y_dots   = g_video_entry.y_dots;       // # dots down the screen
             g_colors  = g_video_entry.colors;      // # colors available
             g_screen_x_dots  = g_logical_screen_x_dots;
             g_screen_y_dots  = g_logical_screen_y_dots;
@@ -145,8 +145,8 @@ MainState big_while_loop(MainContext &context)
                 }
                 g_logical_screen_x_dots = g_screen_x_dots;
                 g_logical_screen_y_dots = g_screen_y_dots;
-                g_video_entry.xdots = g_logical_screen_x_dots;
-                g_video_entry.ydots = g_logical_screen_y_dots;
+                g_video_entry.x_dots = g_logical_screen_x_dots;
+                g_video_entry.y_dots = g_logical_screen_y_dots;
             }
 
             if (g_save_dac || g_colors_preloaded)

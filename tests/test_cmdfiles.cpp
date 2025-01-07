@@ -667,7 +667,7 @@ TEST_F(TestParameterCommandError, videoNoMatchingMode)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 1};
     VideoInfo test_mode{};
-    test_mode.keynum = ID_KEY_F2;
+    test_mode.key = ID_KEY_F2;
     ValueSaver saved_video_mode{g_video_table[0], test_mode};
     ValueSaver saved_init_mode{g_init_mode, 0};
 
@@ -681,7 +681,7 @@ TEST_F(TestParameterCommand, videoMatchingMode)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 1};
     VideoInfo test_mode{};
-    test_mode.keynum = ID_KEY_F1;
+    test_mode.key = ID_KEY_F1;
     ValueSaver saved_video_mode{g_video_table[0], test_mode};
     ValueSaver saved_init_mode{g_init_mode, 0};
 

@@ -32,7 +32,7 @@ protected:
         m_saved_version = g_release;
         m_saved_x_dots = g_logical_screen_x_dots;
         m_saved_y_dots = g_logical_screen_y_dots;
-        m_saved_video_key = g_video_entry.keynum;
+        m_saved_video_key = g_video_entry.key;
         g_calc_time = 0;
         std::tm tm{};
         tm.tm_year = TEST_YEAR - 1900; // years since 1900
@@ -46,7 +46,7 @@ protected:
     void TearDown() override
     {
         init_comments();
-        g_video_entry.keynum = m_saved_video_key;
+        g_video_entry.key = m_saved_video_key;
         g_logical_screen_y_dots = m_saved_y_dots;
         g_logical_screen_x_dots = m_saved_x_dots;
         g_release = m_saved_version;
@@ -227,7 +227,7 @@ TEST_F(TestComments, expandYDots)
 
 TEST_F(TestComments, expandVidKey)
 {
-    g_video_entry.keynum = ID_KEY_F6;
+    g_video_entry.key = ID_KEY_F6;
     std::strcpy(g_par_comment[0], "$vidkey$");
 
     const std::string &result{expand_command_comment(0)};

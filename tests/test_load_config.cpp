@@ -48,16 +48,16 @@ TEST(TestLoadConfig, gdiDisk)
     ASSERT_EQ(2, g_video_table_len);
     const VideoInfo &gdi_mode{g_video_table[0]};
     EXPECT_STREQ(ID_TEST_GDI_COMMENT, gdi_mode.comment);
-    EXPECT_EQ(ID_TEST_GDI_FN_KEY, gdi_mode.keynum);
-    EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.xdots);
-    EXPECT_EQ(ID_TEST_GDI_HEIGHT, gdi_mode.ydots);
+    EXPECT_EQ(ID_TEST_GDI_FN_KEY, gdi_mode.key);
+    EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.x_dots);
+    EXPECT_EQ(ID_TEST_GDI_HEIGHT, gdi_mode.y_dots);
     EXPECT_EQ(ID_TEST_GDI_COLORS, gdi_mode.colors);
     EXPECT_EQ(&gdi, gdi_mode.driver);
     const VideoInfo &disk_mode{g_video_table[1]};
     EXPECT_STREQ(ID_TEST_DISK_COMMENT, disk_mode.comment);
-    EXPECT_EQ(ID_TEST_DISK_FN_KEY, disk_mode.keynum);
-    EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.xdots);
-    EXPECT_EQ(ID_TEST_DISK_HEIGHT, disk_mode.ydots);
+    EXPECT_EQ(ID_TEST_DISK_FN_KEY, disk_mode.key);
+    EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.x_dots);
+    EXPECT_EQ(ID_TEST_DISK_HEIGHT, disk_mode.y_dots);
     EXPECT_EQ(ID_TEST_DISK_COLORS, disk_mode.colors);
     EXPECT_EQ(&disk, disk_mode.driver);
 

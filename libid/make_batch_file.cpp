@@ -191,7 +191,7 @@ MakeParParams::MakeParParams()
     {
         std::strcpy(input_command_name, "test");
     }
-    vid_mode_key_name(g_video_entry.keynum, video_mode_key_name);
+    vid_mode_key_name(g_video_entry.key, video_mode_key_name);
 }
 
 bool MakeParParams::prompt()
@@ -268,8 +268,8 @@ bool MakeParParams::prompt()
             if (int i = check_vid_mode_key(key); i >= 0)
             {
                 // get the resolution of this video mode
-                piece_x_dots = g_video_table[i].xdots;
-                piece_y_dots = g_video_table[i].ydots;
+                piece_x_dots = g_video_table[i].x_dots;
+                piece_y_dots = g_video_table[i].y_dots;
             }
         }
         if (piece_x_dots == 0 && (x_multiple > 1 || y_multiple > 1))

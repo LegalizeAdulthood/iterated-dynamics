@@ -94,14 +94,14 @@ void GDIDriver::get_max_size(int *width, int *height, bool *center_x, bool *cent
 {
     *width = m_win_text.get_max_width();
     *height = m_win_text.get_max_height();
-    if (g_video_table[g_adapter].xdots > *width)
+    if (g_video_table[g_adapter].x_dots > *width)
     {
-        *width = g_video_table[g_adapter].xdots;
+        *width = g_video_table[g_adapter].x_dots;
         *center_x = false;
     }
-    if (g_video_table[g_adapter].ydots > *height)
+    if (g_video_table[g_adapter].y_dots > *height)
     {
-        *height = g_video_table[g_adapter].ydots;
+        *height = g_video_table[g_adapter].y_dots;
         *center_y = false;
     }
 }
@@ -177,7 +177,7 @@ bool GDIDriver::init(int *argc, char **argv)
 
         for (VideoInfo &mode : modes)
         {
-            if (mode.xdots <= width && mode.ydots <= height)
+            if (mode.x_dots <= width && mode.y_dots <= height)
             {
                 add_video_mode(this, &mode);
             }
@@ -198,8 +198,8 @@ bool GDIDriver::resize()
     bool center_graphics_x = true, center_graphics_y = true;
 
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
-    if (g_video_table[g_adapter].xdots == plot.get_width()     //
-        && g_video_table[g_adapter].ydots == plot.get_height() //
+    if (g_video_table[g_adapter].x_dots == plot.get_width()     //
+        && g_video_table[g_adapter].y_dots == plot.get_height() //
         && width == g_frame.get_width()                        //
         && height == g_frame.get_height())
     {
@@ -357,8 +357,8 @@ bool GDIDriver::validate_mode(VideoInfo *mode)
     get_max_screen(width, height);
 
     // allow modes <= size of screen with 256 colors
-    return (mode->xdots <= width)
-        && (mode->ydots <= height)
+    return (mode->x_dots <= width)
+        && (mode->y_dots <= height)
         && (mode->colors == 256);
 }
 

@@ -196,8 +196,8 @@ get_view_restart:
 
     if (driver_is_disk())
     {
-        g_video_entry.xdots = g_screen_x_dots;
-        g_video_entry.ydots = g_screen_y_dots;
+        g_video_entry.x_dots = g_screen_x_dots;
+        g_video_entry.y_dots = g_screen_y_dots;
         std::memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
         if (g_final_aspect_ratio == 0.0)
         {

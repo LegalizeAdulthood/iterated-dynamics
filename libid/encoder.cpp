@@ -794,8 +794,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->dx = 0;
     constexpr std::int16_t LEGACY_DOT_MODE{19};
     save_info->dot_mode = LEGACY_DOT_MODE;
-    save_info->x_dots = static_cast<std::int16_t>(g_video_entry.xdots);
-    save_info->y_dots = static_cast<std::int16_t>(g_video_entry.ydots);
+    save_info->x_dots = static_cast<std::int16_t>(g_video_entry.x_dots);
+    save_info->y_dots = static_cast<std::int16_t>(g_video_entry.y_dots);
     save_info->colors = static_cast<std::int16_t>(g_video_entry.colors);
     save_info->param3 = 0;        // pre version==7 fields
     save_info->param4 = 0;

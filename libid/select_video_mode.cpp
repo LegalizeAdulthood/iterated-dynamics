@@ -40,9 +40,9 @@ static void format_vid_table(int choice, char *buf)
     assert(idx < g_video_table_len);
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[idx],
            sizeof(g_video_entry));
-    vid_mode_key_name(g_video_entry.keynum, kname);
+    vid_mode_key_name(g_video_entry.key, kname);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
-        kname, g_video_entry.driver->get_description().c_str(), g_video_entry.xdots, g_video_entry.ydots,
+        kname, g_video_entry.driver->get_description().c_str(), g_video_entry.x_dots, g_video_entry.y_dots,
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
 }
 
@@ -110,11 +110,11 @@ int select_video_mode(int curmode)
     int k = 0;
     for (i = 0; i < g_video_table_len; ++i)
     {
-        if (g_video_table[i].keynum > 0)
+        if (g_video_table[i].key > 0)
         {
             if (std::memcmp((char *)&g_video_entry, (char *)&g_video_table[i], sizeof(g_video_entry)) == 0)
             {
-                k = g_video_table[i].keynum;
+                k = g_video_table[i].key;
             }
         }
     }
@@ -145,7 +145,7 @@ static int check_mode_key(int key, int choice)
     i = s_entry_nums[choice];
     int ret = 0;
     if ((key == '-' || key == '+')
-        && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
+        && (g_video_table[i].key == 0 || g_video_table[i].key >= 1084))
     {
         if (g_bad_config != ConfigStatus::OK)
         {
@@ -156,9 +156,9 @@ static int check_mode_key(int key, int choice)
             if (key == '-')
             {
                 // deassign key?
-                if (g_video_table[i].keynum >= 1084)
+                if (g_video_table[i].key >= 1084)
                 {
-                    g_video_table[i].keynum = 0;
+                    g_video_table[i].key = 0;
                     s_modes_changed = true;
                 }
             }
@@ -170,13 +170,13 @@ static int check_mode_key(int key, int choice)
                 {
                     for (int k = 0; k < g_video_table_len; ++k)
                     {
-                        if (g_video_table[k].keynum == j)
+                        if (g_video_table[k].key == j)
                         {
-                            g_video_table[k].keynum = 0;
+                            g_video_table[k].key = 0;
                             ret = -1; // force redisplay
                         }
                     }
-                    g_video_table[i].keynum = j;
+                    g_video_table[i].key = j;
                     s_modes_changed = true;
                 }
             }
@@ -187,12 +187,12 @@ static int check_mode_key(int key, int choice)
 
 static bool ent_less(const int lhs, const int rhs)
 {
-    int i = g_video_table[lhs].keynum;
+    int i = g_video_table[lhs].key;
     if (i == 0)
     {
         i = 9999;
     }
-    int j = g_video_table[rhs].keynum;
+    int j = g_video_table[rhs].key;
     if (j == 0)
     {
         j = 9999;
@@ -233,12 +233,12 @@ static void update_id_cfg()
             char kname[5];
             char colorsbuf[10];
             VideoInfo vident = g_video_table[nextmode];
-            vid_mode_key_name(vident.keynum, kname);
+            vid_mode_key_name(vident.key, kname);
             std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
             std::fprintf(outfile, "%-4s,%4d,%5d,%s,%s,%s\n",
                     kname,
-                    vident.xdots,
-                    vident.ydots,
+                    vident.x_dots,
+                    vident.y_dots,
                     colorsbuf,
                     vident.driver->get_name().c_str(),
                     vident.comment);

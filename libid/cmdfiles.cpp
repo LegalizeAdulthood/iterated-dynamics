@@ -3596,7 +3596,7 @@ static CmdArgFlags cmd_video(const Command &cmd)
     g_init_mode = -1;
     for (int i = 0; i < g_video_table_len; ++i)
     {
-        if (g_video_table[i].keynum == k)
+        if (g_video_table[i].key == k)
         {
             g_init_mode = i;
             break;

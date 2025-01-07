@@ -82,11 +82,11 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
     {
         return false;
     }
-    if (g_video_table[lhs.entry_num].keynum < g_video_table[rhs.entry_num].keynum)
+    if (g_video_table[lhs.entry_num].key < g_video_table[rhs.entry_num].key)
     {
         return true;
     }
-    if (g_video_table[lhs.entry_num].keynum > g_video_table[rhs.entry_num].keynum)
+    if (g_video_table[lhs.entry_num].key > g_video_table[rhs.entry_num].key)
     {
         return false;
     }
@@ -102,19 +102,19 @@ static void format_video_choice(int i, char const *err, char *buf)
     char key_name[5];
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
            sizeof(g_video_entry));
-    vid_mode_key_name(g_video_entry.keynum, key_name);
+    vid_mode_key_name(g_video_entry.key, key_name);
     std::sprintf(buf, "%-5s %-16s %-4s %5d %5d %3d %-25s",  // 67 chars
             key_name, g_video_entry.driver->get_description().c_str(), err,
-            g_video_entry.xdots, g_video_entry.ydots,
+            g_video_entry.x_dots, g_video_entry.y_dots,
             g_video_entry.colors, g_video_entry.comment);
-    g_video_entry.xdots = 0; // so tab_display knows to display nothing
+    g_video_entry.x_dots = 0; // so tab_display knows to display nothing
 }
 
 static double video_aspect(int try_x_dots, int try_y_dots)
 {
     // calc resulting aspect ratio for specified dots in current mode
     return (double)try_y_dots / (double)try_x_dots
-           * (double)g_video_entry.xdots / (double)g_video_entry.ydots
+           * (double)g_video_entry.x_dots / (double)g_video_entry.y_dots
            * g_screen_aspect;
 }
 
@@ -172,8 +172,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     auto it = std::find_if(begin, end,
         [=](const VideoInfo &mode)
         {
-            return info->x_dots == mode.xdots    //
-                && info->y_dots == mode.ydots    //
+            return info->x_dots == mode.x_dots    //
+                && info->y_dots == mode.y_dots    //
                 && g_file_colors == mode.colors //
                 && mode.driver != nullptr       //
                 && !mode.driver->is_disk();
@@ -183,8 +183,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         it = std::find_if(begin, end,
             [=](const VideoInfo &mode)
             {
-                return info->x_dots == mode.xdots //
-                    && info->y_dots == mode.ydots //
+                return info->x_dots == mode.x_dots //
+                    && info->y_dots == mode.y_dots //
                     && g_file_colors == mode.colors;
             });
     }
@@ -209,23 +209,23 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         {
             tmp_flags |= VI_DISK;
         }
-        if (g_video_entry.keynum == 0)
+        if (g_video_entry.key == 0)
         {
             tmp_flags |= VI_NO_KEY;
         }
-        if (info->x_dots > g_video_entry.xdots || info->y_dots > g_video_entry.ydots)
+        if (info->x_dots > g_video_entry.x_dots || info->y_dots > g_video_entry.y_dots)
         {
             tmp_flags |= VI_SCREEN_SMALLER;
         }
-        else if (info->x_dots < g_video_entry.xdots || info->y_dots < g_video_entry.ydots)
+        else if (info->x_dots < g_video_entry.x_dots || info->y_dots < g_video_entry.y_dots)
         {
             tmp_flags |= VI_SCREEN_BIGGER;
         }
-        if (g_file_x_dots > g_video_entry.xdots || g_file_y_dots > g_video_entry.ydots)
+        if (g_file_x_dots > g_video_entry.x_dots || g_file_y_dots > g_video_entry.y_dots)
         {
             tmp_flags |= VI_VIEW_SMALLER;
         }
-        else if (g_file_x_dots < g_video_entry.xdots || g_file_y_dots < g_video_entry.ydots)
+        else if (g_file_x_dots < g_video_entry.x_dots || g_file_y_dots < g_video_entry.y_dots)
         {
             tmp_flags |= VI_VIEW_BIGGER;
         }
@@ -337,12 +337,12 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     if (!got_real_mode)  // translate from temp table to permanent
     {
         int i = g_init_mode;
-        int j = g_video_table[i].keynum;
+        int j = g_video_table[i].key;
         if (j != 0)
         {
             for (g_init_mode = 0; g_init_mode < MAX_VIDEO_MODES-1; ++g_init_mode)
             {
-                if (g_video_table[g_init_mode].keynum == j)
+                if (g_video_table[g_init_mode].key == j)
                 {
                     break;
                 }
@@ -364,8 +364,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
            sizeof(g_video_entry));
 
     if (g_view_window
-        && g_file_x_dots == g_video_entry.xdots
-        && g_file_y_dots == g_video_entry.ydots)
+        && g_file_x_dots == g_video_entry.x_dots
+        && g_file_y_dots == g_video_entry.y_dots)
     {
         // pull image into a view window
         if (g_calc_status != CalcStatus::COMPLETED) // if not complete
@@ -374,7 +374,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (g_view_x_dots)
         {
-            g_view_reduction = (float)(g_video_entry.xdots / g_view_x_dots);
+            g_view_reduction = (float)(g_video_entry.x_dots / g_view_x_dots);
             g_view_y_dots = 0;
             g_view_x_dots = g_view_y_dots; // easier to use auto reduction
         }
@@ -386,7 +386,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 
     g_skip_y_dots = 0;
     g_skip_x_dots = g_skip_y_dots; // set for no reduction
-    if (g_video_entry.xdots < g_file_x_dots || g_video_entry.ydots < g_file_y_dots)
+    if (g_video_entry.x_dots < g_file_x_dots || g_video_entry.y_dots < g_file_y_dots)
     {
         // set up to load only every nth pixel to make image fit
         if (g_calc_status != CalcStatus::COMPLETED) // if not complete
@@ -395,11 +395,11 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         g_skip_y_dots = 1;
         g_skip_x_dots = g_skip_y_dots;
-        while (g_skip_x_dots * g_video_entry.xdots < g_file_x_dots)
+        while (g_skip_x_dots * g_video_entry.x_dots < g_file_x_dots)
         {
             ++g_skip_x_dots;
         }
-        while (g_skip_y_dots * g_video_entry.ydots < g_file_y_dots)
+        while (g_skip_y_dots * g_video_entry.y_dots < g_file_y_dots)
         {
             ++g_skip_y_dots;
         }
@@ -469,28 +469,28 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     g_view_window = false;
     g_view_x_dots = 0;
     g_view_y_dots = 0;
-    if (g_file_x_dots != g_video_entry.xdots || g_file_y_dots != g_video_entry.ydots)
+    if (g_file_x_dots != g_video_entry.x_dots || g_file_y_dots != g_video_entry.y_dots)
     {
         // image not exactly same size as screen
         g_view_window = true;
         f_temp = g_final_aspect_ratio
-                * (double)g_video_entry.ydots / (double)g_video_entry.xdots
+                * (double)g_video_entry.y_dots / (double)g_video_entry.x_dots
                 / g_screen_aspect;
         float tmp_reduce;
         int i;
         int j;
         if (g_final_aspect_ratio <= g_screen_aspect)
         {
-            i = (int) std::lround((double) g_video_entry.xdots / (double) g_file_x_dots * 20.0);
+            i = (int) std::lround((double) g_video_entry.x_dots / (double) g_file_x_dots * 20.0);
             tmp_reduce = (float)(i/20.0); // chop precision to nearest .05
-            i = (int) std::lround((double) g_video_entry.xdots / tmp_reduce);
+            i = (int) std::lround((double) g_video_entry.x_dots / tmp_reduce);
             j = (int) std::lround((double) i * f_temp);
         }
         else
         {
-            i = (int) std::lround((double) g_video_entry.ydots / (double) g_file_y_dots * 20.0);
+            i = (int) std::lround((double) g_video_entry.y_dots / (double) g_file_y_dots * 20.0);
             tmp_reduce = (float)(i/20.0); // chop precision to nearest .05
-            j = (int) std::lround((double) g_video_entry.ydots / tmp_reduce);
+            j = (int) std::lround((double) g_video_entry.y_dots / tmp_reduce);
             i = (int) std::lround((double) j / f_temp);
         }
         if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit

@@ -104,9 +104,9 @@ void load_config(const std::string &cfg_path)
         std::memset(&vident, 0, sizeof(vident));
         std::strncpy(&vident.comment[0], fields[4], std::size(vident.comment));
         vident.comment[25] = 0;
-        vident.keynum      = keynum;
-        vident.xdots       = (short)xdots;
-        vident.ydots       = (short)ydots;
+        vident.key      = keynum;
+        vident.x_dots       = (short)xdots;
+        vident.y_dots       = (short)ydots;
         vident.colors      = colors;
 
         // if valid, add to supported modes
@@ -121,12 +121,12 @@ void load_config(const std::string &cfg_path)
                 {
                     return mode.driver == vident.driver //
                         && mode.colors == vident.colors //
-                        && mode.xdots == vident.xdots   //
-                        && mode.ydots == vident.ydots;
+                        && mode.x_dots == vident.x_dots   //
+                        && mode.y_dots == vident.y_dots;
                 });
-            if (it != end && it->keynum == 0)
+            if (it != end && it->key == 0)
             {
-                it->keynum = vident.keynum;
+                it->key = vident.key;
             }
             else
             {
