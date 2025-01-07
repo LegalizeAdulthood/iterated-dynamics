@@ -55,14 +55,14 @@ int g_video_start_y{};
 // span of pixels from the screen and stores it in pixels[] at one byte per
 // pixel
 //
-void read_span(int row, int startcol, int stopcol, Byte *pixels)
+void read_span(int row, int start_col, int stop_col, Byte *pixels)
 {
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
+    if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
     {
         return;
     }
     assert(s_read_span);
-    (*s_read_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    (*s_read_span)(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
 // write_span(int row, int startcol, int stopcol, Byte *pixels)
@@ -71,14 +71,14 @@ void read_span(int row, int startcol, int stopcol, Byte *pixels)
 // span of pixels to the screen from pixels[] at one byte per pixel
 // Called by the GIF decoder
 //
-void write_span(int row, int startcol, int stopcol, Byte const *pixels)
+void write_span(int row, int start_col, int stop_col, Byte const *pixels)
 {
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
+    if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
     {
         return;
     }
     assert(s_write_span);
-    (*s_write_span)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    (*s_write_span)(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
 static void normal_write_span(int y, int x, int lastx, Byte const *pixels)
@@ -153,10 +153,10 @@ int get_color(int xdot, int ydot)
 
 // write the color on the screen at the (xdot, ydot) point
 //
-void put_color_a(int xdot, int ydot, int color)
+void put_color_a(int x, int y, int color)
 {
-    int x1 = xdot + g_logical_screen_x_offset;
-    int y1 = ydot + g_logical_screen_y_offset;
+    int x1 = x + g_logical_screen_x_offset;
+    int y1 = y + g_logical_screen_y_offset;
     assert(x1 >= 0 && x1 <= g_screen_x_dots);
     assert(y1 >= 0 && y1 <= g_screen_y_dots);
     assert(s_write_pixel);
@@ -167,7 +167,7 @@ void put_color_a(int xdot, int ydot, int color)
 // entire line of pixels to the screen (0 <= xdot < xdots) at a clip
 // Called by the GIF decoder
 //
-int out_line(Byte *pixels, int linelen)
+int out_line(Byte *pixels, int line_len)
 {
 #ifdef WIN32
     assert(_CrtCheckMemory());
@@ -177,7 +177,7 @@ int out_line(Byte *pixels, int linelen)
         return 0;
     }
     assert(s_write_span);
-    (*s_write_span)(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
+    (*s_write_span)(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, line_len + g_logical_screen_x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }
