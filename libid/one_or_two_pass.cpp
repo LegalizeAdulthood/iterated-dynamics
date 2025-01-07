@@ -49,10 +49,10 @@ int one_or_two_pass()
     return 0;
 }
 
-static int standard_calc(int passnum)
+static int standard_calc(int pass_num)
 {
     g_got_status = StatusValues::ONE_OR_TWO_PASS;
-    g_current_pass = passnum;
+    g_current_pass = pass_num;
     g_row = g_yy_begin;
     g_col = g_xx_begin;
 
@@ -72,7 +72,7 @@ static int standard_calc(int passnum)
                     continue;
                 }
             }
-            if (passnum == 1 || g_std_calc_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
+            if (pass_num == 1 || g_std_calc_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
             {
                 if ((*g_calc_type)() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
@@ -80,7 +80,7 @@ static int standard_calc(int passnum)
                 }
                 g_resuming = false;       // reset so quick_calc works
                 g_reset_periodicity = false;
-                if (passnum == 1)       // first pass, copy pixel and bump col
+                if (pass_num == 1)       // first pass, copy pixel and bump col
                 {
                     if ((g_row&1) == 0 && g_row < g_i_y_stop)
                     {
@@ -99,7 +99,7 @@ static int standard_calc(int passnum)
             ++g_col;
         }
         g_col = g_i_x_start;
-        if (passnum == 1 && (g_row&1) == 0)
+        if (pass_num == 1 && (g_row&1) == 0)
         {
             ++g_row;
         }
