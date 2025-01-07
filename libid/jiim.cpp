@@ -330,8 +330,8 @@ int push_float(float x, float y)
 DComplex pop_float()
 {
     DComplex pop;
-    float popx;
-    float popy;
+    float pop_x;
+    float pop_y;
 
     if (!queue_empty())
     {
@@ -340,11 +340,11 @@ DComplex pop_float()
         {
             s_list_front = s_list_size - 1;
         }
-        if (from_mem_disk(8*s_list_front, sizeof(popx), &popx)
-            && from_mem_disk(8*s_list_front +sizeof(popx), sizeof(popy), &popy))
+        if (from_mem_disk(8*s_list_front, sizeof(pop_x), &pop_x)
+            && from_mem_disk(8*s_list_front +sizeof(pop_x), sizeof(pop_y), &pop_y))
         {
-            pop.x = popx;
-            pop.y = popy;
+            pop.x = pop_x;
+            pop.y = pop_y;
             --s_l_size;
         }
         return pop;
@@ -390,17 +390,17 @@ int enqueue_long(long x, long y)
 DComplex dequeue_float()
 {
     DComplex out;
-    float outx;
-    float outy;
+    float out_x;
+    float out_y;
 
     if (s_list_back != s_list_front)
     {
-        if (from_mem_disk(8*s_list_back, sizeof(outx), &outx)
-            && from_mem_disk(8*s_list_back +sizeof(outx), sizeof(outy), &outy))
+        if (from_mem_disk(8*s_list_back, sizeof(out_x), &out_x)
+            && from_mem_disk(8*s_list_back +sizeof(out_x), sizeof(out_y), &out_y))
         {
             s_list_back = (s_list_back + 1) % s_list_size;
-            out.x = outx;
-            out.y = outy;
+            out.x = out_x;
+            out.y = out_y;
             s_l_size--;
         }
         return out;
@@ -447,10 +447,10 @@ static void save_rect(int x, int y, int width, int depth)
     std::vector<char> const background(width, char(g_color_dark));
     s_screen_rect.resize(width*depth);
     s_cursor.hide();
-    for (int yoff = 0; yoff < depth; yoff++)
+    for (int y_off = 0; y_off < depth; y_off++)
     {
-        get_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
-        put_row(x, y+yoff, width, background.data());
+        get_row(x, y+y_off, width, &s_screen_rect[width*y_off]);
+        put_row(x, y+y_off, width, background.data());
     }
     s_cursor.show();
 }
@@ -463,9 +463,9 @@ static void restore_rect(int x, int y, int width, int depth)
     }
 
     s_cursor.hide();
-    for (int yoff = 0; yoff < depth; yoff++)
+    for (int y_off = 0; y_off < depth; y_off++)
     {
-        put_row(x, y+yoff, width, &s_screen_rect[width*yoff]);
+        put_row(x, y+y_off, width, &s_screen_rect[width*y_off]);
     }
     s_cursor.show();
 }
@@ -476,17 +476,17 @@ void jiim(JIIMType which)
     bool exact = false;
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...
-    double cr;
-    double ci;
+    double c_real;
+    double c_imag;
     double r;
-    int xfactor;
-    int yfactor; // aspect ratio
+    int x_factor;
+    int y_factor; // aspect ratio
 
-    int xoff;
-    int yoff; // center of the window
+    int x_off;
+    int y_off; // center of the window
     int x;
     int y;
-    int kbdchar = -1;
+    int key = -1;
 
     long iter;
     int color;
@@ -494,8 +494,8 @@ void jiim(JIIMType which)
     int old_x;
     int old_y;
     double aspect;
-    static int randir = 0;
-    static int rancnt = 0;
+    static int ran_dir = 0;
+    static int ran_cnt = 0;
     bool actively_computing = true;
     bool first_time = true;
 
@@ -512,8 +512,8 @@ void jiim(JIIMType which)
     {
         g_has_inverse = true;
     }
-    const int oldsxoffs{g_logical_screen_x_offset};
-    const int oldsyoffs{g_logical_screen_y_offset};
+    const int old_screen_x_offset{g_logical_screen_x_offset};
+    const int old_screen_y_offset{g_logical_screen_y_offset};
     const ValueSaver saved_calc_type{g_calc_type};
     s_show_numbers = 0;
     g_using_jiim = true;
@@ -575,8 +575,8 @@ void jiim(JIIMType which)
         s_win_height = g_vesa_y_res / 3;
         s_corner_x = g_video_start_x + s_win_width * 2;
         s_corner_y = g_video_start_y + s_win_height * 2;
-        xoff = g_video_start_x + s_win_width * 5 / 2;
-        yoff = g_video_start_y + s_win_height * 5 / 2;
+        x_off = g_video_start_x + s_win_width * 5 / 2;
+        y_off = g_video_start_y + s_win_height * 5 / 2;
     }
     else if (g_logical_screen_x_dots > g_vesa_x_res/3 && g_logical_screen_y_dots > g_vesa_y_res/3)
     {
@@ -585,8 +585,8 @@ void jiim(JIIMType which)
         s_win_height = g_vesa_y_res - g_logical_screen_y_dots;
         s_corner_x = g_video_start_x + g_logical_screen_x_dots;
         s_corner_y = g_video_start_y + g_logical_screen_y_dots;
-        xoff = s_corner_x + s_win_width/2;
-        yoff = s_corner_y + s_win_height/2;
+        x_off = s_corner_x + s_win_width/2;
+        y_off = s_corner_y + s_win_height/2;
     }
     else
     {
@@ -595,12 +595,12 @@ void jiim(JIIMType which)
         s_win_height = g_vesa_y_res;
         s_corner_x = g_video_start_x;
         s_corner_y = g_video_start_y;
-        xoff = g_video_start_x + s_win_width/2;
-        yoff = g_video_start_y + s_win_height/2;
+        x_off = g_video_start_x + s_win_width/2;
+        y_off = g_video_start_y + s_win_height/2;
     }
 
-    xfactor = (int)(s_win_width/5.33);
-    yfactor = (int)(-s_win_height/4);
+    x_factor = (int)(s_win_width/5.33);
+    y_factor = (int)(-s_win_height/4);
 
     if (s_window_style == JuliaWindowStyle::LARGE)
     {
@@ -624,20 +624,20 @@ void jiim(JIIMType which)
     if (g_col < 0 || g_col >= g_logical_screen_x_dots
         || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
-        cr = (g_x_max + g_x_min) / 2.0;
-        ci = (g_y_max + g_y_min) / 2.0;
+        c_real = (g_x_max + g_x_min) / 2.0;
+        c_imag = (g_y_max + g_y_min) / 2.0;
     }
     else
     {
-        cr = g_save_c.x;
-        ci = g_save_c.y;
+        c_real = g_save_c.x;
+        c_imag = g_save_c.y;
     }
 
     old_y = -1;
     old_x = -1;
 
-    g_col = (int) std::lround(cvt.a * cr + cvt.b * ci + cvt.e);
-    g_row = (int) std::lround(cvt.c * cr + cvt.d * ci + cvt.f);
+    g_col = (int) std::lround(cvt.a * c_real + cvt.b * c_imag + cvt.e);
+    g_row = (int) std::lround(cvt.c * c_real + cvt.d * c_imag + cvt.f);
 
     // possible extraseg arrays have been trashed, so set up again
     if (g_integer_fractal)
@@ -675,72 +675,72 @@ void jiim(JIIMType which)
             while (driver_key_pressed())
             {
                 s_cursor.wait_key();
-                kbdchar = driver_get_key();
+                key = driver_get_key();
 
-                int dcol = 0;
-                int drow = 0;
+                int d_col = 0;
+                int d_row = 0;
                 g_julia_c_x = JULIA_C_NOT_SET;
                 g_julia_c_y = JULIA_C_NOT_SET;
-                switch (kbdchar)
+                switch (key)
                 {
                 case ID_KEY_CTL_KEYPAD_5:      // ctrl - keypad 5
                 case ID_KEY_KEYPAD_5:          // keypad 5
                     break;                  // do nothing
                 case ID_KEY_CTL_PAGE_UP:
-                    dcol = 4;
-                    drow = -4;
+                    d_col = 4;
+                    d_row = -4;
                     break;
                 case ID_KEY_CTL_PAGE_DOWN:
-                    dcol = 4;
-                    drow = 4;
+                    d_col = 4;
+                    d_row = 4;
                     break;
                 case ID_KEY_CTL_HOME:
-                    dcol = -4;
-                    drow = -4;
+                    d_col = -4;
+                    d_row = -4;
                     break;
                 case ID_KEY_CTL_END:
-                    dcol = -4;
-                    drow = 4;
+                    d_col = -4;
+                    d_row = 4;
                     break;
                 case ID_KEY_PAGE_UP:
-                    dcol = 1;
-                    drow = -1;
+                    d_col = 1;
+                    d_row = -1;
                     break;
                 case ID_KEY_PAGE_DOWN:
-                    dcol = 1;
-                    drow = 1;
+                    d_col = 1;
+                    d_row = 1;
                     break;
                 case ID_KEY_HOME:
-                    dcol = -1;
-                    drow = -1;
+                    d_col = -1;
+                    d_row = -1;
                     break;
                 case ID_KEY_END:
-                    dcol = -1;
-                    drow = 1;
+                    d_col = -1;
+                    d_row = 1;
                     break;
                 case ID_KEY_UP_ARROW:
-                    drow = -1;
+                    d_row = -1;
                     break;
                 case ID_KEY_DOWN_ARROW:
-                    drow = 1;
+                    d_row = 1;
                     break;
                 case ID_KEY_LEFT_ARROW:
-                    dcol = -1;
+                    d_col = -1;
                     break;
                 case ID_KEY_RIGHT_ARROW:
-                    dcol = 1;
+                    d_col = 1;
                     break;
                 case ID_KEY_CTL_UP_ARROW:
-                    drow = -4;
+                    d_row = -4;
                     break;
                 case ID_KEY_CTL_DOWN_ARROW:
-                    drow = 4;
+                    d_row = 4;
                     break;
                 case ID_KEY_CTL_LEFT_ARROW:
-                    dcol = -4;
+                    d_col = -4;
                     break;
                 case ID_KEY_CTL_RIGHT_ARROW:
-                    dcol = 4;
+                    d_col = 4;
                     break;
                 case 'z':
                 case 'Z':
@@ -755,8 +755,8 @@ void jiim(JIIMType which)
                     zoom *= 1.15F;
                     break;
                 case ID_KEY_SPACE:
-                    g_julia_c_x = cr;
-                    g_julia_c_y = ci;
+                    g_julia_c_x = c_real;
+                    g_julia_c_y = c_imag;
                     goto finish;
                 case 'c':   // circle toggle
                 case 'C':   // circle toggle
@@ -778,12 +778,12 @@ void jiim(JIIMType which)
                     break;
                 case 'p':
                 case 'P':
-                    get_a_number(&cr, &ci);
+                    get_a_number(&c_real, &c_imag);
                     exact = true;
-                    g_col = (int) std::lround(cvt.a * cr + cvt.b * ci + cvt.e);
-                    g_row = (int) std::lround(cvt.c * cr + cvt.d * ci + cvt.f);
-                    drow = 0;
-                    dcol = 0;
+                    g_col = (int) std::lround(cvt.a * c_real + cvt.b * c_imag + cvt.e);
+                    g_row = (int) std::lround(cvt.c * c_real + cvt.d * c_imag + cvt.f);
+                    d_row = 0;
+                    d_col = 0;
                     break;
                 case 'h':   // hide fractal toggle
                 case 'H':   // hide fractal toggle
@@ -813,22 +813,22 @@ void jiim(JIIMType which)
                 case '9':
                     if (which == JIIMType::JIIM)
                     {
-                        s_secret_experimental_mode = kbdchar - '0';
+                        s_secret_experimental_mode = key - '0';
                         break;
                     }
                 default:
                     still = false;
                 }  // switch
-                if (kbdchar == 's' || kbdchar == 'S')
+                if (key == 's' || key == 'S')
                 {
                     goto finish;
                 }
-                if (dcol > 0 || drow > 0)
+                if (d_col > 0 || d_row > 0)
                 {
                     exact = false;
                 }
-                g_col += dcol;
-                g_row += drow;
+                g_col += d_col;
+                g_row += d_row;
 #ifdef XFRACT
                 if (kbdchar == ID_KEY_ENTER)
                 {
@@ -868,22 +868,22 @@ void jiim(JIIMType which)
             {
                 if (g_integer_fractal)
                 {
-                    cr = g_l_x_pixel();
-                    ci = g_l_y_pixel();
-                    cr /= (1L << g_bit_shift);
-                    ci /= (1L << g_bit_shift);
+                    c_real = g_l_x_pixel();
+                    c_imag = g_l_y_pixel();
+                    c_real /= (1L << g_bit_shift);
+                    c_imag /= (1L << g_bit_shift);
                 }
                 else
                 {
-                    cr = g_dx_pixel();
-                    ci = g_dy_pixel();
+                    c_real = g_dx_pixel();
+                    c_imag = g_dy_pixel();
                 }
             }
             actively_computing = true;
             if (s_show_numbers) // write coordinates on screen
             {
                 char str[41];
-                std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", cr, ci, get_color(g_col, g_row));
+                std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", c_real, c_imag, get_color(g_col, g_row));
                 if (s_window_style == JuliaWindowStyle::LARGE)
                 {
                     /* show temp msg will clear self if new msg is a
@@ -908,12 +908,12 @@ void jiim(JIIMType which)
             g_l_old_z.x = 0;
             g_old_z.y = 0;
             g_old_z.x = 0;
-            g_init.x = cr;
-            g_save_c.x = cr;
-            g_init.y = ci;
-            g_save_c.y = ci;
-            g_l_init.x = (long)(cr*g_fudge_factor);
-            g_l_init.y = (long)(ci*g_fudge_factor);
+            g_init.x = c_real;
+            g_save_c.x = c_real;
+            g_init.y = c_imag;
+            g_save_c.y = c_imag;
+            g_l_init.x = (long)(c_real*g_fudge_factor);
+            g_l_init.y = (long)(c_imag*g_fudge_factor);
 
             old_y = -1;
             old_x = -1;
@@ -927,7 +927,7 @@ void jiim(JIIMType which)
                 DComplex f2;
                 DComplex Sqrt; // Fixed points of Julia
 
-                Sqrt = complex_sqrt_float(1 - 4 * cr, -4 * ci);
+                Sqrt = complex_sqrt_float(1 - 4 * c_real, -4 * c_imag);
                 f1.x = (1 + Sqrt.x) / 2;
                 f2.x = (1 - Sqrt.x) / 2;
                 f1.y =  Sqrt.y / 2;
@@ -958,7 +958,7 @@ void jiim(JIIMType which)
                 {
                     s_corner_x = g_video_start_x + s_win_width*2;
                 }
-                xoff = s_corner_x + s_win_width /  2;
+                x_off = s_corner_x + s_win_width /  2;
                 save_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
             }
             if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
@@ -1000,8 +1000,8 @@ void jiim(JIIMType which)
                         s_lucky_x = 0.0f;
                         for (int i = 0; i < 199; i++)
                         {
-                            g_old_z = complex_sqrt_float(g_old_z.x - cr, g_old_z.y - ci);
-                            g_new_z = complex_sqrt_float(g_new_z.x - cr, g_new_z.y - ci);
+                            g_old_z = complex_sqrt_float(g_old_z.x - c_real, g_old_z.y - c_imag);
+                            g_new_z = complex_sqrt_float(g_new_z.x - c_real, g_new_z.y - c_imag);
                             enqueue_float((float)g_new_z.x, (float)g_new_z.y);
                             enqueue_float((float)-g_old_z.x, (float)-g_old_z.y);
                         }
@@ -1015,13 +1015,13 @@ void jiim(JIIMType which)
 
                 g_old_z = dequeue_float();
 
-                x = (int)(g_old_z.x * xfactor * zoom + xoff);
-                y = (int)(g_old_z.y * yfactor * zoom + yoff);
+                x = (int)(g_old_z.x * x_factor * zoom + x_off);
+                y = (int)(g_old_z.y * y_factor * zoom + y_off);
                 color = c_get_color(x, y);
                 if (color < s_max_hits)
                 {
                     c_put_color(x, y, color + 1);
-                    g_new_z = complex_sqrt_float(g_old_z.x - cr, g_old_z.y - ci);
+                    g_new_z = complex_sqrt_float(g_old_z.x - c_real, g_old_z.y - c_imag);
                     enqueue_float((float)g_new_z.x, (float)g_new_z.y);
                     enqueue_float((float)-g_new_z.x, (float)-g_new_z.y);
                 }
@@ -1031,8 +1031,8 @@ void jiim(JIIMType which)
                 /*
                  * end Msnyder code, commence if not MIIM code.
                  */
-                g_old_z.x -= cr;
-                g_old_z.y -= ci;
+                g_old_z.x -= c_real;
+                g_old_z.y -= c_imag;
                 r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
                 if (r > 10.0)
                 {
@@ -1067,8 +1067,8 @@ void jiim(JIIMType which)
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
                 case 1:                     // always go one direction
                     if (g_save_c.y < 0)
@@ -1076,8 +1076,8 @@ void jiim(JIIMType which)
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
                 case 2:                     // go one dir, draw the other
                     if (g_save_c.y < 0)
@@ -1085,29 +1085,29 @@ void jiim(JIIMType which)
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(-g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(-g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(-g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(-g_new_z.y * y_factor * zoom + y_off);
                     break;
                 case 4:                     // go negative if max color
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     if (c_get_color(x, y) == g_colors - 1)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
-                        x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                        y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                        x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                        y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     }
                     break;
                 case 5:                     // go positive if max color
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     if (c_get_color(x, y) == g_colors - 1)
                     {
-                        x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                        y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                        x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                        y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     }
                     break;
                 case 7:
@@ -1116,8 +1116,8 @@ void jiim(JIIMType which)
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(-g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(-g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(-g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(-g_new_z.y * y_factor * zoom + y_off);
                     if (iter > 10)
                     {
                         if (mode == 0)                          // pixels
@@ -1137,24 +1137,24 @@ void jiim(JIIMType which)
                         old_x = x;
                         old_y = y;
                     }
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
                 case 8:                     // go in long zig zags
-                    if (rancnt >= 300)
+                    if (ran_cnt >= 300)
                     {
-                        rancnt = -300;
+                        ran_cnt = -300;
                     }
-                    if (rancnt < 0)
+                    if (ran_cnt < 0)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
                 case 9:                     // "random run"
-                    switch (randir)
+                    switch (ran_dir)
                     {
                     case 0:             // go random direction for a while
                         if (std::rand() % 2)
@@ -1162,16 +1162,16 @@ void jiim(JIIMType which)
                             g_new_z.x = -g_new_z.x;
                             g_new_z.y = -g_new_z.y;
                         }
-                        if (++rancnt > 1024)
+                        if (++ran_cnt > 1024)
                         {
-                            rancnt = 0;
+                            ran_cnt = 0;
                             if (std::rand() % 2)
                             {
-                                randir =  1;
+                                ran_dir =  1;
                             }
                             else
                             {
-                                randir = -1;
+                                ran_dir = -1;
                             }
                         }
                         break;
@@ -1180,15 +1180,15 @@ void jiim(JIIMType which)
                         g_new_z.y = -g_new_z.y;
                         // fall through
                     case -1:            // now go positive dir for a while
-                        if (++rancnt > 512)
+                        if (++ran_cnt > 512)
                         {
-                            rancnt = 0;
-                            randir = 0;
+                            ran_cnt = 0;
+                            ran_dir = 0;
                         }
                         break;
                     }
-                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
-                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * x_factor * zoom + x_off);
+                    y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
                 } // end switch SecretMode (sorry about the indentation)
             } // end if not MIIM
@@ -1205,8 +1205,8 @@ void jiim(JIIMType which)
                     g_old_z.y = g_l_old_z.y;
                     g_old_z.y /= g_fudge_factor;
                 }
-                x = (int)((g_old_z.x - g_init.x) * xfactor * 3 * zoom + xoff);
-                y = (int)((g_old_z.y - g_init.y) * yfactor * 3 * zoom + yoff);
+                x = (int)((g_old_z.x - g_init.x) * x_factor * 3 * zoom + x_off);
+                y = (int)((g_old_z.y - g_init.y) * y_factor * 3 * zoom + y_off);
                 if (orbit_calc())
                 {
                     iter = g_max_iterations;
@@ -1248,7 +1248,7 @@ void jiim(JIIMType which)
 finish:
     free_queue();
 
-    if (kbdchar != 's' && kbdchar != 'S')
+    if (key != 's' && key != 'S')
     {
         s_cursor.hide();
         if (s_window_style == JuliaWindowStyle::LARGE)
@@ -1274,8 +1274,8 @@ finish:
             s_cursor.hide();
             ValueSaver saved_has_inverse{g_has_inverse, true};
             save_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-            g_logical_screen_x_offset = oldsxoffs;
-            g_logical_screen_y_offset = oldsyoffs;
+            g_logical_screen_x_offset = old_screen_x_offset;
+            g_logical_screen_y_offset = old_screen_y_offset;
             restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
         }
     }
@@ -1283,7 +1283,7 @@ finish:
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;
-    if (kbdchar == 's' || kbdchar == 'S')
+    if (key == 's' || key == 'S')
     {
         g_view_window = false;
         g_view_x_dots = 0;
@@ -1304,7 +1304,7 @@ finish:
         clear_temp_msg();
     }
     s_show_numbers = 0;
-    driver_unget_key(kbdchar);
+    driver_unget_key(key);
 
     if (g_cur_fractal_specific->calc_type == calc_froth)
     {
