@@ -10,20 +10,18 @@ VideoInfo g_video_table[MAX_VIDEO_MODES]{};
 
 int g_video_table_len{};                 // number of entries in above
 
-int check_vid_mode_key(int k)
+int check_vid_mode_key(int key)
 {
-    // returns g_video_table entry number if the passed keystroke is a
-    // function key currently assigned to a video mode, -1 otherwise
-    if (k == 1400)                // special value from select_vid_mode
+    if (key == 1400)                // special value from select_vid_mode
     {
         return MAX_VIDEO_MODES-1; // for last entry with no key assigned
     }
-    if (k != 0)
+    if (key != 0)
     {
         // check full g_video_table
         for (int i = 0; i < g_video_table_len; ++i)
         {
-            if (g_video_table[i].keynum == k)
+            if (g_video_table[i].keynum == key)
             {
                 return i;
             }
@@ -32,82 +30,84 @@ int check_vid_mode_key(int k)
     return -1;
 }
 
-// returns key number for the passed keyname, 0 if not a keyname
-int check_vid_mode_key_name(char const *kname)
+int check_vid_mode_key_name(char const *key_name)
 {
-    int keyset = ID_KEY_F1 - 1;
-    if (*kname == 'S' || *kname == 's')
+    int key_set = ID_KEY_F1 - 1;
+    if (*key_name == 'S' || *key_name == 's')
     {
-        keyset = ID_KEY_SF1 - 1;
-        ++kname;
+        key_set = ID_KEY_SF1 - 1;
+        ++key_name;
     }
-    else if (*kname == 'C' || *kname == 'c')
+    else if (*key_name == 'C' || *key_name == 'c')
     {
-        keyset = ID_KEY_CTL_F1 - 1;
-        ++kname;
+        key_set = ID_KEY_CTL_F1 - 1;
+        ++key_name;
     }
-    else if (*kname == 'A' || *kname == 'a')
+    else if (*key_name == 'A' || *key_name == 'a')
     {
-        keyset = ID_KEY_ALT_F1 - 1;
-        ++kname;
+        key_set = ID_KEY_ALT_F1 - 1;
+        ++key_name;
     }
-    if (*kname != 'F' && *kname != 'f')
+    if (*key_name != 'F' && *key_name != 'f')
     {
         return 0;
     }
-    if (*++kname < '1' || *kname > '9')
+    if (*++key_name < '1' || *key_name > '9')
     {
         return 0;
     }
-    int i = *kname - '0';
-    if (*++kname != 0 && *kname != ' ')
+    int i = *key_name - '0';
+    if (*++key_name != 0 && *key_name != ' ')
     {
-        if (*kname != '0' || i != 1)
+        if (*key_name != '0' || i != 1)
         {
             return 0;
         }
         i = 10;
-        ++kname;
+        ++key_name;
     }
-    while (*kname)
+    while (*key_name)
     {
-        if (*(kname++) != ' ')
+        if (*(key_name++) != ' ')
         {
             return 0;
         }
     }
-    if ((i += keyset) < 2)
+    if ((i += key_set) < 2)
     {
         i = 0;
     }
     return i;
 }
 
-void vid_mode_key_name(int k, char *buf)
+void vid_mode_key_name(int key, char *buffer)
 {
-    // set buffer to name of passed key number
-    *buf = 0;
-    if (k > 0)
+    *buffer = 0;
+    if (key > 0)
     {
-        if (k >= ID_KEY_ALT_F1)
+        if (key >= ID_KEY_ALT_F1 && key <= ID_KEY_ALT_F10)
         {
-            *(buf++) = 'A';
-            k -= ID_KEY_ALT_F1 - 1;
+            *buffer++ = 'A';
+            key -= ID_KEY_ALT_F1 - 1;
         }
-        else if (k >= ID_KEY_CTL_F1)
+        else if (key >= ID_KEY_CTL_F1 && key <= ID_KEY_CTL_F10)
         {
-            *(buf++) = 'C';
-            k -= ID_KEY_CTL_F1 - 1;
+            *buffer++ = 'C';
+            key -= ID_KEY_CTL_F1 - 1;
         }
-        else if (k > ID_KEY_SF1 - 1)
+        else if (key >= ID_KEY_SF1 && key <= ID_KEY_SF10)
         {
-            *(buf++) = 'S';
-            k -= ID_KEY_SF1 - 1;
+            *buffer++ = 'S';
+            key -= ID_KEY_SF1 - 1;
+        }
+        else if (key >= ID_KEY_F1 && key <= ID_KEY_F10)
+        {
+            key -= ID_KEY_F1 - 1;
         }
         else
         {
-            k -= ID_KEY_F1 - 1;
+            return;
         }
-        std::sprintf(buf, "F%d", k);
+        std::sprintf(buffer, "F%d", key);
     }
 }

@@ -21,6 +21,12 @@ struct VideoInfo
 extern VideoInfo             g_video_table[];
 extern int                   g_video_table_len;
 
-int check_vid_mode_key(int);
-int check_vid_mode_key_name(char const *kname);
-void vid_mode_key_name(int k, char *buf);
+// returns g_video_table entry number if the passed keystroke is a
+// function key currently assigned to a video mode, -1 otherwise
+int check_vid_mode_key(int key);
+
+// returns key number for the passed key name, 0 if not a key name
+int check_vid_mode_key_name(const char *key_name);
+
+// set buffer to name of passed key number
+void vid_mode_key_name(int key, char *buffer);

@@ -53,6 +53,7 @@ add_executable(test-id
     test_update_save_name.cpp
     test_ValueSaver.cpp
     test_version.cpp
+    test_video_mode.cpp
 )
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
