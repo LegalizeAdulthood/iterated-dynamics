@@ -99,22 +99,22 @@ void test_end()       // this routine is called just after the fractal ends
 
 // this routine is called once for every pixel
 // (note: possibly using the dual-pass / solid-guessing options
-int test_pt(double initreal, double initimag, double parm1, double parm2, long maxit, int inside)
+int test_pt(double init_real, double init_imag, double param1, double param2, long max_iter, int inside)
 {
-    double oldreal = parm1;
-    double oldimag = parm2;
+    double oldreal = param1;
+    double oldimag = param2;
     double magnitude = 0.0;
     long color = 0;
-    while ((magnitude < 4.0) && (color < maxit))
+    while ((magnitude < 4.0) && (color < max_iter))
     {
-        double newreal = oldreal * oldreal - oldimag * oldimag + initreal;
-        double newimag = 2 * oldreal * oldimag + initimag;
+        double newreal = oldreal * oldreal - oldimag * oldimag + init_real;
+        double newimag = 2 * oldreal * oldimag + init_imag;
         color++;
         oldreal = newreal;
         oldimag = newimag;
         magnitude = newreal * newreal + newimag * newimag;
     }
-    if (color >= maxit)
+    if (color >= max_iter)
     {
         color = inside;
     }
