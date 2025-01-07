@@ -73,15 +73,15 @@ bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
 int g_max_line_length{72};
 
-static std::FILE *s_parm_file{};
+static std::FILE *s_param_file{};
 
-static void put_param(char const *parm, ...);
+static void put_param(char const *param, ...);
 static void put_param_line();
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_file_name(char const *keyword, char const *fname);
 static void strip_zeros(char *buf);
-static void write_batch_params(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj);
+static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj);
 
 inline char par_key(int x)
 {
@@ -143,40 +143,40 @@ MakeParParams::MakeParParams()
             max_color = 256;
         }
 
-        char const *sptr{};
+        char const *str_ptr{};
         if (g_color_state == ColorState::DEFAULT)
         {
             // default colors
             if (g_map_specified)
             {
                 color_spec[0] = '@';
-                sptr = g_map_name.c_str();
+                str_ptr = g_map_name.c_str();
             }
         }
         else if (g_color_state == ColorState::MAP_FILE)
         {
             // colors match colorfile
             color_spec[0] = '@';
-            sptr = g_color_file.c_str();
+            str_ptr = g_color_file.c_str();
         }
         else // colors match no .map that we know of
         {
             std::strcpy(color_spec, "y");
         }
 
-        if (sptr && color_spec[0] == '@')
+        if (str_ptr && color_spec[0] == '@')
         {
-            char const *sptr2 = std::strrchr(sptr, SLASH_CH);
-            if (sptr2 != nullptr)
+            char const *str_ptr2 = std::strrchr(str_ptr, SLASH_CH);
+            if (str_ptr2 != nullptr)
             {
-                sptr = sptr2 + 1;
+                str_ptr = str_ptr2 + 1;
             }
-            sptr2 = std::strrchr(sptr, ':');
-            if (sptr2 != nullptr)
+            str_ptr2 = std::strrchr(str_ptr, ':');
+            if (str_ptr2 != nullptr)
             {
-                sptr = sptr2 + 1;
+                str_ptr = str_ptr2 + 1;
             }
-            std::strncpy(&color_spec[1], sptr, 12);
+            std::strncpy(&color_spec[1], str_ptr, 12);
             color_spec[13] = 0;
         }
     }
@@ -361,8 +361,8 @@ skip_ui:
             infile = std::fopen(in_path.string().c_str(), "rt");
             out_path.replace_filename("id.tmp");
         }
-        s_parm_file = std::fopen(out_path.string().c_str(), "wt");
-        if (s_parm_file == nullptr)
+        s_param_file = std::fopen(out_path.string().c_str(), "wt");
+        if (s_param_file == nullptr)
         {
             stop_msg("Can't create " + out_path.string());
             if (infile != nullptr)
@@ -390,8 +390,8 @@ skip_ui:
                         // cancel
                         std::fclose(infile);
                         infile = nullptr;
-                        std::fclose(s_parm_file);
-                        s_parm_file = nullptr;
+                        std::fclose(s_param_file);
+                        s_param_file = nullptr;
                         remove(out_path);
                         goto prompt_user;
                     }
@@ -401,8 +401,8 @@ skip_ui:
                     }
                     break;
                 }
-                std::fputs(line, s_parm_file);
-                std::fputc('\n', s_parm_file);
+                std::fputs(line, s_param_file);
+                std::fputc('\n', s_param_file);
             }
         }
         //**** start here
@@ -444,11 +444,11 @@ skip_ui:
                     }
                     piece_command_name[w] = 0;
                     {
-                        char tmpbuff[20];
-                        std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", par_key(col), par_key(row));
-                        std::strcat(piece_command_name, tmpbuff);
+                        char tmp_buff[20];
+                        std::snprintf(tmp_buff, std::size(tmp_buff), "_%c%c", par_key(col), par_key(row));
+                        std::strcat(piece_command_name, tmp_buff);
                     }
-                    std::fprintf(s_parm_file, "%-19s{", piece_command_name);
+                    std::fprintf(s_param_file, "%-19s{", piece_command_name);
                     g_x_min = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
                     g_x_max = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
                     g_y_min = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*((col+1)*params.piece_x_dots - 1);
@@ -468,7 +468,7 @@ skip_ui:
                 }
                 else
                 {
-                    std::fprintf(s_parm_file, "%-19s{", g_command_name.c_str());
+                    std::fprintf(s_param_file, "%-19s{", g_command_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last
@@ -491,9 +491,9 @@ skip_ui:
                 }
                 if (!g_command_comment[0].empty())
                 {
-                    std::fprintf(s_parm_file, " ; %s", g_command_comment[0].c_str());
+                    std::fprintf(s_param_file, " ; %s", g_command_comment[0].c_str());
                 }
-                std::fputc('\n', s_parm_file);
+                std::fputc('\n', s_param_file);
                 {
                     char tmp_buff[25];
                     std::memset(tmp_buff, ' ', 23);
@@ -503,21 +503,21 @@ skip_ui:
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            std::fprintf(s_parm_file, "%s%s\n", tmp_buff, g_command_comment[k].c_str());
+                            std::fprintf(s_param_file, "%s%s\n", tmp_buff, g_command_comment[k].c_str());
                         }
                     }
                     if (g_patch_level != 0 && !params.colors_only)
                     {
-                        std::fprintf(s_parm_file, "%s id Version %d Patchlevel %d\n", tmp_buff, g_release, g_patch_level);
+                        std::fprintf(s_param_file, "%s id Version %d Patchlevel %d\n", tmp_buff, g_release, g_patch_level);
                     }
                 }
                 write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);
                 if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
-                    std::fprintf(s_parm_file, "  video=%s", params.video_mode_key_name);
-                    std::fprintf(s_parm_file, " savename=frmig_%c%c\n", par_key(col), par_key(row));
+                    std::fprintf(s_param_file, "  video=%s", params.video_mode_key_name);
+                    std::fprintf(s_param_file, " savename=frmig_%c%c\n", par_key(col), par_key(row));
                 }
-                std::fprintf(s_parm_file, "}\n\n");
+                std::fprintf(s_param_file, "}\n\n");
             }
         }
         if (params.x_multiple > 1 || params.y_multiple > 1)
@@ -540,13 +540,13 @@ skip_ui:
             while (i == 0); // skip blanks
             while (i >= 0)
             {
-                std::fputs(line, s_parm_file);
-                std::fputc('\n', s_parm_file);
+                std::fputs(line, s_param_file);
+                std::fputc('\n', s_param_file);
                 i = file_gets(line, 255, infile);
             }
             std::fclose(infile);
         }
-        std::fclose(s_parm_file);
+        std::fclose(s_param_file);
         if (infile != nullptr)
         {
             // replace the original file with the new
@@ -558,26 +558,26 @@ skip_ui:
     driver_unstack_screen();
 }
 
-static WriteBatchData s_wbdata;
+static WriteBatchData s_wb_data;
 
 static int get_prec(double a, double b, double c)
 {
-    double highv = 1.0E20;
+    double high_v = 1.0E20;
     double diff = std::fabs(a - b);
     if (diff == 0.0)
     {
-        diff = highv;
+        diff = high_v;
     }
     double temp = std::fabs(a - c);
     if (temp == 0.0)
     {
-        temp = highv;
+        temp = high_v;
     }
     diff = std::min(temp, diff);
     temp = std::fabs(b - c);
     if (temp == 0.0)
     {
-        temp = highv;
+        temp = high_v;
     }
     diff = std::min(temp, diff);
     int digits = 7;
@@ -594,23 +594,23 @@ static int get_prec(double a, double b, double c)
     return digits;
 }
 
-static void write_batch_params(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
+static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj)
 {
     char buf[81];
-    bf_t bfXctr = nullptr;
-    bf_t bfYctr = nullptr;
+    bf_t bf_x_ctr = nullptr;
+    bf_t bf_y_ctr = nullptr;
     int saved = save_stack();
     if (g_bf_math != BFMathType::NONE)
     {
-        bfXctr = alloc_stack(g_bf_length+2);
-        bfYctr = alloc_stack(g_bf_length+2);
+        bf_x_ctr = alloc_stack(g_bf_length+2);
+        bf_y_ctr = alloc_stack(g_bf_length+2);
     }
 
-    s_wbdata.len = 0; // force first parm to start on new line
+    s_wb_data.len = 0; // force first parm to start on new line
 
     // Using near string g_box_x for buffer after saving to extraseg
 
-    if (colorsonly)
+    if (colors_only)
     {
         goto docolors;
     }
@@ -622,12 +622,12 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         put_param(" reset");
         put_param("=%d", g_release);
 
-        char const *sptr = g_cur_fractal_specific->name;
-        if (*sptr == '*')
+        char const *str_ptr = g_cur_fractal_specific->name;
+        if (*str_ptr == '*')
         {
-            ++sptr;
+            ++str_ptr;
         }
-        put_param(" %s=%s", "type", sptr);
+        put_param(" %s=%s", "type", str_ptr);
 
         if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
         {
@@ -710,11 +710,11 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             double skew;
             if (g_bf_math != BFMathType::NONE)
             {
-                cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
+                cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
                 int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_param(" %s=", "center-mag");
-                put_bf(0, bfXctr, digits);
-                put_bf(1, bfYctr, digits);
+                put_bf(0, bf_x_ctr, digits);
+                put_bf(1, bf_y_ctr, digits);
             }
             else // !g_bf_math
             {
@@ -779,16 +779,16 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             }
             else
             {
-                int xdigits = get_prec(g_x_min, g_x_max, g_x_3rd);
-                int ydigits = get_prec(g_y_min, g_y_max, g_y_3rd);
-                put_float(0, g_x_min, xdigits);
-                put_float(1, g_x_max, xdigits);
-                put_float(1, g_y_min, ydigits);
-                put_float(1, g_y_max, ydigits);
+                int x_digits = get_prec(g_x_min, g_x_max, g_x_3rd);
+                int y_digits = get_prec(g_y_min, g_y_max, g_y_3rd);
+                put_float(0, g_x_min, x_digits);
+                put_float(1, g_x_max, x_digits);
+                put_float(1, g_y_min, y_digits);
+                put_float(1, g_y_max, y_digits);
                 if (g_x_3rd != g_x_min || g_y_3rd != g_y_min)
                 {
-                    put_float(1, g_x_3rd, xdigits);
-                    put_float(1, g_y_3rd, ydigits);
+                    put_float(1, g_x_3rd, x_digits);
+                    put_float(1, g_y_3rd, y_digits);
                 }
             }
         }
@@ -1243,7 +1243,7 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         put_param("/%d/%d", g_view_x_dots, g_view_y_dots);
     }
 
-    if (!colorsonly)
+    if (!colors_only)
     {
         if (g_color_cycle_range_lo != 1 || g_color_cycle_range_hi != 255)
         {
@@ -1400,16 +1400,16 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
             put_param(" %s=", "orbitcorners");
-            int xdigits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
-            int ydigits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
-            put_float(0, g_orbit_corner_min_x, xdigits);
-            put_float(1, g_orbit_corner_max_x, xdigits);
-            put_float(1, g_orbit_corner_min_y, ydigits);
-            put_float(1, g_orbit_corner_max_y, ydigits);
+            int x_digits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
+            int y_digits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
+            put_float(0, g_orbit_corner_min_x, x_digits);
+            put_float(1, g_orbit_corner_max_x, x_digits);
+            put_float(1, g_orbit_corner_min_y, y_digits);
+            put_float(1, g_orbit_corner_max_y, y_digits);
             if (g_orbit_corner_3rd_x != g_orbit_corner_min_x || g_orbit_corner_3rd_y != g_orbit_corner_min_y)
             {
-                put_float(1, g_orbit_corner_3rd_x, xdigits);
-                put_float(1, g_orbit_corner_3rd_y, ydigits);
+                put_float(1, g_orbit_corner_3rd_x, x_digits);
+                put_float(1, g_orbit_corner_3rd_y, y_digits);
             }
         }
 
@@ -1424,34 +1424,34 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
         }
     }
 
-    if (*colorinf != 'n')
+    if (*color_inf != 'n')
     {
-        if (g_record_colors == RecordColorsMode::COMMENT && *colorinf == '@')
+        if (g_record_colors == RecordColorsMode::COMMENT && *color_inf == '@')
         {
             put_param_line();
             put_param("; %s=", "colors");
-            put_param(colorinf);
+            put_param(color_inf);
             put_param_line();
         }
 docolors:
         put_param(" %s=", "colors");
-        if (g_record_colors != RecordColorsMode::COMMENT && g_record_colors != RecordColorsMode::YES && *colorinf == '@')
+        if (g_record_colors != RecordColorsMode::COMMENT && g_record_colors != RecordColorsMode::YES && *color_inf == '@')
         {
-            put_param(colorinf);
+            put_param(color_inf);
         }
         else
         {
-            int diffmag = -1;
+            int diff_mag = -1;
             int diff1[4][3];
             int diff2[4][3];
             int force = 0;
-            int curc = force;
+            int cur_color = force;
             while (true)
             {
                 // emit color in rgb 3 char encoded form
                 for (int j = 0; j < 3; ++j)
                 {
-                    int k = g_dac_box[curc][j];
+                    int k = g_dac_box[cur_color][j];
                     if (k < 10)
                     {
                         k += '0';
@@ -1468,7 +1468,7 @@ docolors:
                 }
                 buf[3] = 0;
                 put_param(buf);
-                if (++curc >= maxcolor)        // quit if done last color
+                if (++cur_color >= max_color)        // quit if done last color
                 {
                     break;
                 }
@@ -1490,12 +1490,12 @@ docolors:
                     --force;
                     continue;
                 }
-                int scanc = curc;
+                int scan_color = cur_color;
                 int k;
-                while (scanc < maxcolor)
+                while (scan_color < max_color)
                 {
                     // scan while same diff to next
-                    int i = scanc - curc;
+                    int i = scan_color - cur_color;
                     i = std::min(i, 3); // check spans up to 4 steps
                     for (k = 0; k <= i; ++k)
                     {
@@ -1504,24 +1504,24 @@ docolors:
                         {
                             // check pattern of chg per color
                             if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES
-                                && scanc > (curc+4) && scanc < maxcolor-5)
+                                && scan_color > (cur_color+4) && scan_color < max_color-5)
                             {
-                                if (std::abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
-                                        - g_dac_box[scanc+5][j]) >= 2)
+                                if (std::abs(2*g_dac_box[scan_color][j] - g_dac_box[scan_color-5][j]
+                                        - g_dac_box[scan_color+5][j]) >= 2)
                                 {
                                     break;
                                 }
                             }
-                            int delta = (int) g_dac_box[scanc][j] - (int) g_dac_box[scanc - k - 1][j];
-                            if (k == scanc - curc)
+                            int delta = (int) g_dac_box[scan_color][j] - (int) g_dac_box[scan_color - k - 1][j];
+                            if (k == scan_color - cur_color)
                             {
                                 diff2[k][j] = delta;
                                 diff1[k][j] = diff2[k][j];
                             }
                             else if (delta != diff1[k][j] && delta != diff2[k][j])
                             {
-                                diffmag = std::abs(delta - diff1[k][j]);
-                                if (diff1[k][j] != diff2[k][j] || diffmag != 1)
+                                diff_mag = std::abs(delta - diff1[k][j]);
+                                if (diff1[k][j] != diff2[k][j] || diff_mag != 1)
                                 {
                                     break;
                                 }
@@ -1537,31 +1537,31 @@ docolors:
                     {
                         break;   // must've exited from inner loop above
                     }
-                    ++scanc;
+                    ++scan_color;
                 }
                 // now scanc-1 is next color which must be written explicitly
-                if (scanc - curc > 2)
+                if (scan_color - cur_color > 2)
                 {
                     // good, we have a shaded range
-                    if (scanc != maxcolor)
+                    if (scan_color != max_color)
                     {
-                        if (diffmag < 3)
+                        if (diff_mag < 3)
                         {
                             // not a sharp slope change?
                             force = 2;       // force more between ranges, to stop
-                            --scanc;         // "drift" when load/store/load/store/
+                            --scan_color;         // "drift" when load/store/load/store/
                         }
                         if (k)
                         {
                             // more of the same
                             force += k;
-                            --scanc;
+                            --scan_color;
                         }
                     }
-                    if (--scanc - curc > 1)
+                    if (--scan_color - cur_color > 1)
                     {
-                        put_param("<%d>", scanc-curc);
-                        curc = scanc;
+                        put_param("<%d>", scan_color-cur_color);
+                        cur_color = scan_color;
                     }
                     else                  // changed our mind
                     {
@@ -1572,7 +1572,7 @@ docolors:
         }
     }
 
-    while (s_wbdata.len)   // flush the buffer
+    while (s_wb_data.len)   // flush the buffer
     {
         put_param_line();
     }
@@ -1597,23 +1597,23 @@ static void put_file_name(char const *keyword, char const *fname)
     }
 }
 
-static void put_param(char const *parm, ...)
+static void put_param(char const *param, ...)
 {
     std::va_list args;
 
-    va_start(args, parm);
-    if (*parm == ' '             // starting a new parm
-        && s_wbdata.len == 0)         // skip leading space
+    va_start(args, param);
+    if (*param == ' '             // starting a new parm
+        && s_wb_data.len == 0)         // skip leading space
     {
-        ++parm;
+        ++param;
     }
-    char *bufptr = s_wbdata.buf + s_wbdata.len;
-    std::vsprintf(bufptr, parm, args);
-    while (*(bufptr++))
+    char *buf_ptr = s_wb_data.buf + s_wb_data.len;
+    std::vsprintf(buf_ptr, param, args);
+    while (*(buf_ptr++))
     {
-        ++s_wbdata.len;
+        ++s_wb_data.len;
     }
-    while (s_wbdata.len > 200)
+    while (s_wb_data.len > 200)
     {
         put_param_line();
     }
@@ -1626,11 +1626,11 @@ inline int nice_line_length()
 
 static void put_param_line()
 {
-    int len = s_wbdata.len;
+    int len = s_wb_data.len;
     if (len > nice_line_length())
     {
         len = nice_line_length();
-        while (len != 0 && s_wbdata.buf[len] != ' ')
+        while (len != 0 && s_wb_data.buf[len] != ' ')
         {
             --len;
         }
@@ -1638,28 +1638,28 @@ static void put_param_line()
         {
             len = nice_line_length()-1;
             while (++len < g_max_line_length
-                && s_wbdata.buf[len]
-                && s_wbdata.buf[len] != ' ')
+                && s_wb_data.buf[len]
+                && s_wb_data.buf[len] != ' ')
             {
             }
         }
     }
-    int c = s_wbdata.buf[len];
-    s_wbdata.buf[len] = 0;
-    std::fputs("  ", s_parm_file);
-    std::fputs(s_wbdata.buf, s_parm_file);
+    int c = s_wb_data.buf[len];
+    s_wb_data.buf[len] = 0;
+    std::fputs("  ", s_param_file);
+    std::fputs(s_wb_data.buf, s_param_file);
     if (c && c != ' ')
     {
-        std::fputc('\\', s_parm_file);
+        std::fputc('\\', s_param_file);
     }
-    std::fputc('\n', s_parm_file);
-    s_wbdata.buf[len] = (char)c;
+    std::fputc('\n', s_param_file);
+    s_wb_data.buf[len] = (char)c;
     if (c == ' ')
     {
         ++len;
     }
-    s_wbdata.len -= len;
-    std::strcpy(s_wbdata.buf, s_wbdata.buf+len);
+    s_wb_data.len -= len;
+    std::strcpy(s_wb_data.buf, s_wb_data.buf+len);
 }
 
 /*
@@ -1671,38 +1671,38 @@ static void put_param_line()
 static void strip_zeros(char *buf)
 {
     strlwr(buf);
-    char *dptr = std::strchr(buf, '.');
-    if (dptr != nullptr)
+    char *dot_ptr = std::strchr(buf, '.');
+    if (dot_ptr != nullptr)
     {
-        char *bptr;
-        ++dptr;
-        char *exptr = std::strchr(buf, 'e');
-        if (exptr != nullptr)    // scientific notation with 'e'?
+        char *b_ptr;
+        ++dot_ptr;
+        char *exp_ptr = std::strchr(buf, 'e');
+        if (exp_ptr != nullptr)    // scientific notation with 'e'?
         {
-            bptr = exptr;
+            b_ptr = exp_ptr;
         }
         else
         {
-            bptr = buf + std::strlen(buf);
+            b_ptr = buf + std::strlen(buf);
         }
-        while (--bptr > dptr && *bptr == '0')
+        while (--b_ptr > dot_ptr && *b_ptr == '0')
         {
-            *bptr = 0;
+            *b_ptr = 0;
         }
-        if (exptr && bptr < exptr -1)
+        if (exp_ptr && b_ptr < exp_ptr -1)
         {
-            std::strcat(buf, exptr);
+            std::strcat(buf, exp_ptr);
         }
     }
 }
 
-static void put_float(int slash, double fnum, int prec)
+static void put_float(int slash, double value, int prec)
 {
     char buf[40];
-    char *bptr = buf;
+    char *buff_ptr = buf;
     if (slash)
     {
-        *(bptr++) = '/';
+        *(buff_ptr++) = '/';
     }
     /* Idea of long double cast is to squeeze out another digit or two
        which might be needed (we have found cases where this digit makes
@@ -1710,13 +1710,13 @@ static void put_float(int slash, double fnum, int prec)
 
     if (prec > 15)
     {
-        std::sprintf(bptr, "%1.*Lg", prec, (long double)fnum);
+        std::sprintf(buff_ptr, "%1.*Lg", prec, (long double)value);
     }
     else
     {
-        std::sprintf(bptr, "%1.*g", prec, (double)fnum);
+        std::sprintf(buff_ptr, "%1.*g", prec, (double)value);
     }
-    strip_zeros(bptr);
+    strip_zeros(buff_ptr);
     put_param(buf);
 }
 
@@ -1724,12 +1724,12 @@ static void put_bf(int slash, bf_t r, int prec)
 {
     std::vector<char> buf;              // "/-1.xxxxxxE-1234"
     buf.resize(5000);
-    char *bptr = buf.data();
+    char *buff_ptr = buf.data();
     if (slash)
     {
-        *(bptr++) = '/';
+        *(buff_ptr++) = '/';
     }
-    bf_to_str(bptr, prec, r);
-    strip_zeros(bptr);
+    bf_to_str(buff_ptr, prec, r);
+    strip_zeros(buff_ptr);
     put_param(buf.data());
 }
