@@ -21,12 +21,12 @@ int input_field(InputFieldFlags options, //
     int (*check_key)(int key)            // routine to check non data keys, or nullptr
 )
 {
-    char savefld[81];
+    char save_fld[81];
     char buf[81];
     int j;
     ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
     int ret = -1;
-    std::strcpy(savefld, fld);
+    std::strcpy(save_fld, fld);
     int insert = 0;
     bool started = false;
     int offset = 0;
@@ -46,12 +46,12 @@ int input_field(InputFieldFlags options, //
             driver_put_string(row, col, attr, buf);
             display = false;
         }
-        int curkey = driver_key_cursor(row + insert, col + offset);  // get a keystroke
-        if (curkey == 1047) // numeric keypad /  TODO: map scan code to ID_KEY value
+        int key = driver_key_cursor(row + insert, col + offset);  // get a keystroke
+        if (key == 1047) // numeric keypad /  TODO: map scan code to ID_KEY value
         {
-            curkey = 47; // numeric slash
+            key = 47; // numeric slash
         }
-        switch (curkey)
+        switch (key)
         {
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
@@ -109,16 +109,16 @@ int input_field(InputFieldFlags options, //
             started = true;
             break;
         case ID_KEY_F5:
-            std::strcpy(fld, savefld);
+            std::strcpy(fld, save_fld);
             offset = 0;
             insert = offset;
             started = false;
             display = true;
             break;
         default:
-            if (non_alpha(curkey))
+            if (non_alpha(key))
             {
-                if (check_key && (ret = (*check_key)(curkey)) != 0)
+                if (check_key && (ret = (*check_key)(key)) != 0)
                 {
                     goto inpfld_end;
                 }
@@ -133,17 +133,17 @@ int input_field(InputFieldFlags options, //
                 break;                                // insert & full
             }
             if (bit_set(options , InputFieldFlags::NUMERIC)
-                && (curkey < '0' || curkey > '9')
-                && curkey != '+' && curkey != '-')
+                && (key < '0' || key > '9')
+                && key != '+' && key != '-')
             {
                 if (bit_set(options, InputFieldFlags::INTEGER))
                 {
                     break;
                 }
                 // allow scientific notation, and specials "e" and "p"
-                if (((curkey != 'e' && curkey != 'E') || offset >= 18)
-                    && ((curkey != 'p' && curkey != 'P') || offset != 0)
-                    && curkey != '.')
+                if (((key != 'e' && key != 'E') || offset >= 18)
+                    && ((key != 'p' && key != 'P') || offset != 0)
+                    && key != '.')
                 {
                     break;
                 }
@@ -165,33 +165,33 @@ int input_field(InputFieldFlags options, //
             {
                 fld[offset+1] = 0;
             }
-            fld[offset++] = (char)curkey;
+            fld[offset++] = (char)key;
             // if "e" or "p" in first col make number e or pi
             if ((options & (InputFieldFlags::NUMERIC | InputFieldFlags::INTEGER)) == InputFieldFlags::NUMERIC)
             {
                 // floating point
-                double tmpd;
-                bool specialv = false;
+                double tmp_d;
+                bool special_val = false;
                 if (*fld == 'e' || *fld == 'E')
                 {
-                    tmpd = std::exp(1.0);
-                    specialv = true;
+                    tmp_d = std::exp(1.0);
+                    special_val = true;
                 }
                 if (*fld == 'p' || *fld == 'P')
                 {
-                    tmpd = std::atan(1.0) * 4;
-                    specialv = true;
+                    tmp_d = std::atan(1.0) * 4;
+                    special_val = true;
                 }
-                if (specialv)
+                if (special_val)
                 {
-                    char tmpfld[30];
+                    char tmp_fld[30];
                     if (!bit_set(options, InputFieldFlags::DOUBLE))
                     {
-                        round_float_double(&tmpd);
+                        round_float_double(&tmp_d);
                     }
-                    std::sprintf(tmpfld, "%.15g", tmpd);
-                    tmpfld[len-1] = 0; // safety, field should be long enough
-                    std::strcpy(fld, tmpfld);
+                    std::sprintf(tmp_fld, "%.15g", tmp_d);
+                    tmp_fld[len-1] = 0; // safety, field should be long enough
+                    std::strcpy(fld, tmp_fld);
                     offset = 0;
                 }
             }
