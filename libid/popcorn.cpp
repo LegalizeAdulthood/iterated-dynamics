@@ -52,14 +52,14 @@ int popcorn_fractal_old()
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
     sin_cos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
-    double siny;
-    double cosy;
-    sin_cos(&g_tmp_z.y, &siny, &cosy);
+    double sin_y;
+    double cos_y;
+    sin_cos(&g_tmp_z.y, &sin_y, &cos_y);
     g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
-    g_tmp_z.y = siny/cosy + g_old_z.y;
+    g_tmp_z.y = sin_y/cos_y + g_old_z.y;
     sin_cos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
-    sin_cos(&g_tmp_z.y, &siny, &cosy);
-    g_new_z.x = g_old_z.x - g_param_z1.x*siny;
+    sin_cos(&g_tmp_z.y, &sin_y, &cos_y);
+    g_new_z.x = g_old_z.x - g_param_z1.x*sin_y;
     g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
     if (g_plot == no_plot)
     {
@@ -86,14 +86,14 @@ int popcorn_fractal()
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
     sin_cos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
-    double siny;
-    double cosy;
-    sin_cos(&g_tmp_z.y, &siny, &cosy);
+    double sin_y;
+    double cos_y;
+    sin_cos(&g_tmp_z.y, &sin_y, &cos_y);
     g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
-    g_tmp_z.y = siny/cosy + g_old_z.y;
+    g_tmp_z.y = sin_y/cos_y + g_old_z.y;
     sin_cos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
-    sin_cos(&g_tmp_z.y, &siny, &cosy);
-    g_new_z.x = g_old_z.x - g_param_z1.x*siny;
+    sin_cos(&g_tmp_z.y, &sin_y, &cos_y);
+    g_new_z.x = g_old_z.x - g_param_z1.x*sin_y;
     g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
     if (g_plot == no_plot)
     {
@@ -115,9 +115,9 @@ int popcorn_fractal()
 
 inline bool trig16_check(long val)
 {
-    static constexpr long l16triglim = 8L << 16; // domain limit of fast trig functions
+    static constexpr long L16_TRIG_LIM = 8L << 16; // domain limit of fast trig functions
 
-    return labs(val) > l16triglim;
+    return labs(val) > L16_TRIG_LIM;
 }
 
 static void ltrig_arg(long &val)
@@ -139,20 +139,20 @@ int long_popcorn_fractal_old()
     g_l_temp.y *= 3L;
     ltrig_arg(g_l_temp.x);
     ltrig_arg(g_l_temp.y);
-    long lcosx;
-    long lsinx;
-    sin_cos(g_l_temp.x, &lsinx, &lcosx);
-    long lcosy;
-    long lsiny;
-    sin_cos(g_l_temp.y, &lsiny, &lcosy);
-    g_l_temp.x = divide(lsinx, lcosx, g_bit_shift) + g_l_old_z.x;
-    g_l_temp.y = divide(lsiny, lcosy, g_bit_shift) + g_l_old_z.y;
+    long l_cos_x;
+    long l_sin_x;
+    sin_cos(g_l_temp.x, &l_sin_x, &l_cos_x);
+    long l_cos_y;
+    long l_sin_y;
+    sin_cos(g_l_temp.y, &l_sin_y, &l_cos_y);
+    g_l_temp.x = divide(l_sin_x, l_cos_x, g_bit_shift) + g_l_old_z.x;
+    g_l_temp.y = divide(l_sin_y, l_cos_y, g_bit_shift) + g_l_old_z.y;
     ltrig_arg(g_l_temp.x);
     ltrig_arg(g_l_temp.y);
-    sin_cos(g_l_temp.x, &lsinx, &lcosx);
-    sin_cos(g_l_temp.y, &lsiny, &lcosy);
-    g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, lsiny, g_bit_shift);
-    g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, lsinx, g_bit_shift);
+    sin_cos(g_l_temp.x, &l_sin_x, &l_cos_x);
+    sin_cos(g_l_temp.y, &l_sin_y, &l_cos_y);
+    g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, l_sin_y, g_bit_shift);
+    g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, l_sin_x, g_bit_shift);
     if (g_plot == no_plot)
     {
         iplot_orbit(g_l_new_z.x, g_l_new_z.y, 1+g_row%g_colors);
@@ -182,20 +182,20 @@ int long_popcorn_fractal()
     g_l_temp.y *= 3L;
     ltrig_arg(g_l_temp.x);
     ltrig_arg(g_l_temp.y);
-    long lcosx;
-    long lsinx;
-    sin_cos(g_l_temp.x, &lsinx, &lcosx);
-    long lcosy;
-    long lsiny;
-    sin_cos(g_l_temp.y, &lsiny, &lcosy);
-    g_l_temp.x = divide(lsinx, lcosx, g_bit_shift) + g_l_old_z.x;
-    g_l_temp.y = divide(lsiny, lcosy, g_bit_shift) + g_l_old_z.y;
+    long l_cos_x;
+    long l_sin_x;
+    sin_cos(g_l_temp.x, &l_sin_x, &l_cos_x);
+    long l_cos_y;
+    long l_sin_y;
+    sin_cos(g_l_temp.y, &l_sin_y, &l_cos_y);
+    g_l_temp.x = divide(l_sin_x, l_cos_x, g_bit_shift) + g_l_old_z.x;
+    g_l_temp.y = divide(l_sin_y, l_cos_y, g_bit_shift) + g_l_old_z.y;
     ltrig_arg(g_l_temp.x);
     ltrig_arg(g_l_temp.y);
-    sin_cos(g_l_temp.x, &lsinx, &lcosx);
-    sin_cos(g_l_temp.y, &lsiny, &lcosy);
-    g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, lsiny, g_bit_shift);
-    g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, lsinx, g_bit_shift);
+    sin_cos(g_l_temp.x, &l_sin_x, &l_cos_x);
+    sin_cos(g_l_temp.y, &l_sin_y, &l_cos_y);
+    g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, l_sin_y, g_bit_shift);
+    g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, l_sin_x, g_bit_shift);
     if (g_plot == no_plot)
     {
         iplot_orbit(g_l_new_z.x, g_l_new_z.y, 1+g_row%g_colors);
@@ -220,26 +220,26 @@ int long_popcorn_fractal()
 
 int popcorn_fractal_fn()
 {
-    DComplex tmpx;
-    DComplex tmpy;
+    DComplex tmp_x;
+    DComplex tmp_y;
 
     // tmpx contains the generalized value of the old real "x" equation
     g_tmp_z = g_param_z2*g_old_z.y;  // tmp = (C * old.y)
-    cmplx_trig1(g_tmp_z, tmpx);             // tmpx = trig1(tmp)
-    tmpx.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
-    cmplx_trig0(tmpx, g_tmp_z);             // tmp = trig0(tmpx)
-    cmplx_mult(g_tmp_z, g_param_z1, tmpx);         // tmpx = tmp * h
+    cmplx_trig1(g_tmp_z, tmp_x);             // tmpx = trig1(tmp)
+    tmp_x.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
+    cmplx_trig0(tmp_x, g_tmp_z);             // tmp = trig0(tmpx)
+    cmplx_mult(g_tmp_z, g_param_z1, tmp_x);         // tmpx = tmp * h
 
     // tmpy contains the generalized value of the old real "y" equation
     g_tmp_z = g_param_z2*g_old_z.x;  // tmp = (C * old.x)
-    cmplx_trig3(g_tmp_z, tmpy);             // tmpy = trig3(tmp)
-    tmpy.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
-    cmplx_trig2(tmpy, g_tmp_z);             // tmp = trig2(tmpy)
+    cmplx_trig3(g_tmp_z, tmp_y);             // tmpy = trig3(tmp)
+    tmp_y.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
+    cmplx_trig2(tmp_y, g_tmp_z);             // tmp = trig2(tmpy)
 
-    cmplx_mult(g_tmp_z, g_param_z1, tmpy);         // tmpy = tmp * h
+    cmplx_mult(g_tmp_z, g_param_z1, tmp_y);         // tmpy = tmp * h
 
-    g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
-    g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
+    g_new_z.x = g_old_z.x - tmp_x.x - tmp_y.y;
+    g_new_z.y = g_old_z.y - tmp_y.x - tmp_x.y;
 
     if (g_plot == no_plot)
     {
@@ -272,31 +272,31 @@ inline void fix_overflow(LComplex &arg)
 
 int long_popcorn_fractal_fn()
 {
-    LComplex ltmpx;
-    LComplex ltmpy;
+    LComplex l_tmp_x;
+    LComplex l_tmp_y;
 
     g_overflow = false;
 
     // ltmpx contains the generalized value of the old real "x" equation
     lcmplx_times_real(g_l_param2, g_l_old_z.y, g_l_temp); // tmp = (C * old.y)
-    trig1(g_l_temp, ltmpx);                             // tmpx = trig1(tmp)
-    fix_overflow(ltmpx);                                //
-    ltmpx.x += g_l_old_z.y;                             // tmpx = old.y + trig1(tmp)
-    trig0(ltmpx, g_l_temp);                             // tmp = trig0(tmpx)
+    trig1(g_l_temp, l_tmp_x);                             // tmpx = trig1(tmp)
+    fix_overflow(l_tmp_x);                                //
+    l_tmp_x.x += g_l_old_z.y;                             // tmpx = old.y + trig1(tmp)
+    trig0(l_tmp_x, g_l_temp);                             // tmp = trig0(tmpx)
     fix_overflow(g_l_temp);                             //
-    ltmpx = g_l_temp * g_l_param;                       // tmpx = tmp * h
+    l_tmp_x = g_l_temp * g_l_param;                       // tmpx = tmp * h
 
     // ltmpy contains the generalized value of the old real "y" equation
     lcmplx_times_real(g_l_param2, g_l_old_z.x, g_l_temp); // tmp = (C * old.x)
-    trig3(g_l_temp, ltmpy);                             // tmpy = trig3(tmp)
-    fix_overflow(ltmpy);                                //
-    ltmpy.x += g_l_old_z.x;                             // tmpy = old.x + trig1(tmp)
-    trig2(ltmpy, g_l_temp);                             // tmp = trig2(tmpy)
+    trig3(g_l_temp, l_tmp_y);                             // tmpy = trig3(tmp)
+    fix_overflow(l_tmp_y);                                //
+    l_tmp_y.x += g_l_old_z.x;                             // tmpy = old.x + trig1(tmp)
+    trig2(l_tmp_y, g_l_temp);                             // tmp = trig2(tmpy)
     fix_overflow(g_l_temp);                             //
-    ltmpy = g_l_temp * g_l_param;                       // tmpy = tmp * h
+    l_tmp_y = g_l_temp * g_l_param;                       // tmpy = tmp * h
 
-    g_l_new_z.x = g_l_old_z.x - ltmpx.x - ltmpy.y;
-    g_l_new_z.y = g_l_old_z.y - ltmpy.x - ltmpx.y;
+    g_l_new_z.x = g_l_old_z.x - l_tmp_x.x - l_tmp_y.y;
+    g_l_new_z.y = g_l_old_z.y - l_tmp_y.x - l_tmp_x.y;
 
     if (g_plot == no_plot)
     {
