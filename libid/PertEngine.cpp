@@ -276,7 +276,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     if (!glitched)
     {
         int index;
-        const double rqlim2{std::sqrt(g_magnitude_limit)};
+        const double rq_lim2{std::sqrt(g_magnitude_limit)};
         const std::complex<double> w{m_xn[iteration] + delta_sub_n};
 
         if (g_biomorph >= 0)
@@ -287,7 +287,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             }
             else
             {
-                if (fabs(w.real()) < rqlim2 || fabs(w.imag()) < rqlim2)
+                if (fabs(w.real()) < rq_lim2 || fabs(w.imag()) < rq_lim2)
                 {
                     index = g_biomorph;
                 }
