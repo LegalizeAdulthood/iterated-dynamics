@@ -8,4 +8,4 @@ enum
     MAX_X_BLK = 202 // each maxnblk is oversize by 2 for a "border"
 };
 
-int ssg_blocksize();
+int ssg_block_size();

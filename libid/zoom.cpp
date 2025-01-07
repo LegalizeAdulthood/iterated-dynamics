@@ -690,7 +690,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         i = std::min(g_work_list[j].pass, i);
     }
-    int j = ssg_blocksize(); // worst-case alignment requirement
+    int j = ssg_block_size(); // worst-case alignment requirement
     while (--i >= 0)
     {
         j = j >> 1; // reduce requirement

@@ -52,7 +52,7 @@ int solid_guess()
         s_right_guess = false;
     }
 
-    int blocksize = ssg_blocksize();
+    int blocksize = ssg_block_size();
     s_max_block = blocksize;
     int i = blocksize;
     g_total_passes = 1;
