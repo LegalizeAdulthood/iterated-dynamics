@@ -46,7 +46,7 @@ static void format_vid_table(int choice, char *buf)
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
 }
 
-int select_video_mode(int curmode)
+int select_video_mode(int current_mode)
 {
     std::vector<int> attributes;
 
@@ -58,19 +58,19 @@ int select_video_mode(int curmode)
     std::sort(s_entry_nums.begin(), s_entry_nums.end(), ent_less);
 
     // pick default mode
-    if (curmode < 0)
+    if (current_mode < 0)
     {
         g_video_entry.colors = 256;
     }
     else
     {
-        std::memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
+        std::memcpy((char *) &g_video_entry, (char *) &g_video_table[current_mode], sizeof(g_video_entry));
     }
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
         if (g_video_entry.colors == g_video_table[s_entry_nums[i]].colors
-            && (curmode < 0
+            && (current_mode < 0
                 || std::memcmp((char *) &g_video_entry, (char *) &g_video_table[s_entry_nums[i]], sizeof(g_video_entry)) == 0))
         {
             break;
