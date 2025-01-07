@@ -65,7 +65,7 @@ static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
 static void which_disk_error(int);
-static void display_error(MemoryLocation stored_at, long howmuch);
+static void display_error(MemoryLocation stored_at, long how_much);
 static void display_handle(U16 handle);
 
 static int s_num_total_handles{};
@@ -110,13 +110,13 @@ static void which_disk_error(int I_O)
 // Returns true if successful, false if failure
 bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long offset)
 {
-    Byte diskbuf[DISK_WRITE_LEN];
-    U16 numwritten;
+    Byte disk_buff[DISK_WRITE_LEN];
+    U16 num_written;
     long start = offset * size; // offset to first location to move to
-    long tomove = count * size; // number of bytes to move
+    long to_move = count * size; // number of bytes to move
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
-        if (check_bounds(start, tomove, index))
+        if (check_bounds(start, to_move, index))
         {
             return false; // out of bounds, don't do it
         }
@@ -139,21 +139,21 @@ bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long of
     case MemoryLocation::DISK: // MoveToMemory
         rewind(s_handles[index].disk.file);
         fseek(s_handles[index].disk.file, start, SEEK_SET);
-        while (tomove > DISK_WRITE_LEN)
+        while (to_move > DISK_WRITE_LEN)
         {
-            memcpy(diskbuf, buffer, (U16) DISK_WRITE_LEN);
-            numwritten = (U16) std::fwrite(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
-            if (numwritten != 1)
+            memcpy(disk_buff, buffer, (U16) DISK_WRITE_LEN);
+            num_written = (U16) std::fwrite(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (num_written != 1)
             {
                 which_disk_error(3);
                 goto diskerror;
             }
-            tomove -= DISK_WRITE_LEN;
+            to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
-        memcpy(diskbuf, buffer, (U16) tomove);
-        numwritten = (U16) std::fwrite(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
-        if (numwritten != 1)
+        memcpy(disk_buff, buffer, (U16) to_move);
+        num_written = (U16) std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        if (num_written != 1)
         {
             which_disk_error(3);
             break;
@@ -175,13 +175,13 @@ diskerror:
 // Returns true if successful, false if failure
 bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
 {
-    Byte diskbuf[DISK_WRITE_LEN];
-    U16 numread;
+    Byte disk_buff[DISK_WRITE_LEN];
+    U16 num_read;
     long start = offset * size;// first location to move
-    long tomove = count * size; // number of bytes to move
+    long to_move = count * size; // number of bytes to move
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
-        if (check_bounds(start, tomove, index))
+        if (check_bounds(start, to_move, index))
         {
             return false; // out of bounds, don't do it
         }
@@ -206,25 +206,25 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
     case MemoryLocation::DISK: // MoveFromMemory
         rewind(s_handles[index].disk.file);
         fseek(s_handles[index].disk.file, start, SEEK_SET);
-        while (tomove > DISK_WRITE_LEN)
+        while (to_move > DISK_WRITE_LEN)
         {
-            numread = (U16) fread(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
-            if (numread != 1 && !feof(s_handles[index].disk.file))
+            num_read = (U16) fread(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (num_read != 1 && !feof(s_handles[index].disk.file))
             {
                 which_disk_error(4);
                 goto diskerror;
             }
-            memcpy(buffer, diskbuf, (U16) DISK_WRITE_LEN);
-            tomove -= DISK_WRITE_LEN;
+            memcpy(buffer, disk_buff, (U16) DISK_WRITE_LEN);
+            to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
-        numread = (U16) fread(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
-        if (numread != 1 && !feof(s_handles[index].disk.file))
+        num_read = (U16) fread(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        if (num_read != 1 && !feof(s_handles[index].disk.file))
         {
             which_disk_error(4);
             break;
         }
-        memcpy(buffer, diskbuf, (U16) tomove);
+        memcpy(buffer, disk_buff, (U16) to_move);
         success = true;
 diskerror:
         break;
@@ -243,13 +243,13 @@ diskerror:
 // Returns true if successful, false if failure
 bool MemoryHandle::set(int value, U16 size, long count, long offset)
 {
-    Byte diskbuf[DISK_WRITE_LEN];
-    U16 numwritten;
+    Byte disk_buff[DISK_WRITE_LEN];
+    U16 num_written;
     long start = offset * size; // first location to set
-    long tomove = count * size; // number of bytes to set
+    long to_move = count * size; // number of bytes to set
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
-        if (check_bounds(start, tomove, index))
+        if (check_bounds(start, to_move, index))
         {
             return false; // out of bounds, don't do it
         }
@@ -271,21 +271,21 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
         break;
 
     case MemoryLocation::DISK: // SetMemory
-        memset(diskbuf, value, (U16) DISK_WRITE_LEN);
+        memset(disk_buff, value, (U16) DISK_WRITE_LEN);
         rewind(s_handles[index].disk.file);
         fseek(s_handles[index].disk.file, start, SEEK_SET);
-        while (tomove > DISK_WRITE_LEN)
+        while (to_move > DISK_WRITE_LEN)
         {
-            numwritten = (U16) std::fwrite(diskbuf, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
-            if (numwritten != 1)
+            num_written = (U16) std::fwrite(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (num_written != 1)
             {
                 which_disk_error(2);
                 goto diskerror;
             }
-            tomove -= DISK_WRITE_LEN;
+            to_move -= DISK_WRITE_LEN;
         }
-        numwritten = (U16) std::fwrite(diskbuf, (U16) tomove, 1, s_handles[index].disk.file);
-        if (numwritten != 1)
+        num_written = (U16) std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        if (num_written != 1)
         {
             which_disk_error(2);
             break;
@@ -306,7 +306,7 @@ MemoryLocation memory_type(MemoryHandle handle)
     return s_handles[handle.index].stored_at;
 }
 
-static void display_error(MemoryLocation stored_at, long howmuch)
+static void display_error(MemoryLocation stored_at, long how_much)
 {
     // This routine is used to display an error message when the requested
     // memory type cannot be allocated due to insufficient memory, AND there
@@ -316,7 +316,7 @@ static void display_error(MemoryLocation stored_at, long howmuch)
     std::snprintf(buf, std::size(buf),
         "Allocating %ld Bytes of %s memory failed.\n"
         "Alternate disk space is also insufficient. Goodbye",
-        howmuch, memory_type(stored_at));
+        how_much, memory_type(stored_at));
     stop_msg(buf);
 }
 
@@ -469,15 +469,15 @@ static std::string mem_file_name(U16 handle)
 // Returns handle number if successful, 0 or nullptr if failure
 MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
 {
-    std::uint64_t toallocate = count * size;
+    std::uint64_t to_allocate = count * size;
 
     /* check structure for requested memory type (add em up) to see if
        sufficient amount is available to grant request */
 
-    MemoryLocation use_this_type = check_for_mem(stored_at, toallocate);
+    MemoryLocation use_this_type = check_for_mem(stored_at, to_allocate);
     if (use_this_type == MemoryLocation::NOWHERE)
     {
-        display_error(stored_at, toallocate);
+        display_error(stored_at, to_allocate);
         goodbye();
     }
 
@@ -503,8 +503,8 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
 
     case MemoryLocation::MEMORY: // MemoryAlloc
         // Availability of memory checked in check_for_mem()
-        s_handles[handle].linear.memory = (Byte *)malloc(toallocate);
-        s_handles[handle].size = toallocate;
+        s_handles[handle].linear.memory = (Byte *)malloc(to_allocate);
+        s_handles[handle].size = to_allocate;
         s_handles[handle].stored_at = MemoryLocation::MEMORY;
         s_num_total_handles++;
         success = true;
@@ -520,7 +520,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
             s_handles[handle].disk.file = dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "w+b");
         }
         std::rewind(s_handles[handle].disk.file);
-        if (std::fseek(s_handles[handle].disk.file, toallocate, SEEK_SET) != 0)
+        if (std::fseek(s_handles[handle].disk.file, to_allocate, SEEK_SET) != 0)
         {
             s_handles[handle].disk.file = nullptr;
         }
@@ -541,7 +541,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
             dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "r+b");
         // cppcheck-suppress useClosedFile
         std::rewind(s_handles[handle].disk.file);
-        s_handles[handle].size = toallocate;
+        s_handles[handle].size = to_allocate;
         s_handles[handle].stored_at = MemoryLocation::DISK;
         use_this_type = MemoryLocation::DISK;
         break;
@@ -551,7 +551,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
     {
         char buf[MSG_LEN * 2];
         std::snprintf(buf, std::size(buf), "Asked for %s, allocated %" PRIu64 " bytes of %s, handle = %u.",
-            memory_type(stored_at), toallocate, memory_type(use_this_type), handle);
+            memory_type(stored_at), to_allocate, memory_type(use_this_type), handle);
         stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, buf);
         display_memory();
     }
