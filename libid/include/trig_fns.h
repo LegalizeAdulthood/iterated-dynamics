@@ -48,9 +48,9 @@ inline int operator+(TrigFn value)
 struct NamedTrigFunction
 {
     char const *name;
-    void (*lfunct)();
-    void (*dfunct)();
-    void (*mfunct)();
+    void (*l_fn)();
+    void (*d_fn)();
+    void (*m_fn)();
 };
 
 extern NamedTrigFunction     g_trig_fn[];

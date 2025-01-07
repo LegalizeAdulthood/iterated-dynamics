@@ -145,24 +145,24 @@ void set_trig_pointers(int which)
     switch (which)
     {
     case 0:
-        g_l_trig0 = g_trig_fn[+g_trig_index[0]].lfunct;
-        g_m_trig0 = g_trig_fn[+g_trig_index[0]].mfunct;
-        g_d_trig0 = g_trig_fn[+g_trig_index[0]].dfunct;
+        g_l_trig0 = g_trig_fn[+g_trig_index[0]].l_fn;
+        g_m_trig0 = g_trig_fn[+g_trig_index[0]].m_fn;
+        g_d_trig0 = g_trig_fn[+g_trig_index[0]].d_fn;
         break;
     case 1:
-        g_l_trig1 = g_trig_fn[+g_trig_index[1]].lfunct;
-        g_m_trig1 = g_trig_fn[+g_trig_index[1]].mfunct;
-        g_d_trig1 = g_trig_fn[+g_trig_index[1]].dfunct;
+        g_l_trig1 = g_trig_fn[+g_trig_index[1]].l_fn;
+        g_m_trig1 = g_trig_fn[+g_trig_index[1]].m_fn;
+        g_d_trig1 = g_trig_fn[+g_trig_index[1]].d_fn;
         break;
     case 2:
-        g_l_trig2 = g_trig_fn[+g_trig_index[2]].lfunct;
-        g_m_trig2 = g_trig_fn[+g_trig_index[2]].mfunct;
-        g_d_trig2 = g_trig_fn[+g_trig_index[2]].dfunct;
+        g_l_trig2 = g_trig_fn[+g_trig_index[2]].l_fn;
+        g_m_trig2 = g_trig_fn[+g_trig_index[2]].m_fn;
+        g_d_trig2 = g_trig_fn[+g_trig_index[2]].d_fn;
         break;
     case 3:
-        g_l_trig3 = g_trig_fn[+g_trig_index[3]].lfunct;
-        g_m_trig3 = g_trig_fn[+g_trig_index[3]].mfunct;
-        g_d_trig3 = g_trig_fn[+g_trig_index[3]].dfunct;
+        g_l_trig3 = g_trig_fn[+g_trig_index[3]].l_fn;
+        g_m_trig3 = g_trig_fn[+g_trig_index[3]].m_fn;
+        g_d_trig3 = g_trig_fn[+g_trig_index[3]].d_fn;
         break;
     default: // do 'em all
         for (int i = 0; i < 4; i++)
