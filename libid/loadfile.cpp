@@ -1700,7 +1700,7 @@ rescan:  // entry for changed browse parms
 #ifdef XFRACT
             if ((blinks & 1) == 1)     // Need an odd # of blinks, so next one leaves box turned off
             {
-                draw_window(g_color_bright, &winlist);
+                draw_window(g_color_bright, &win_list);
             }
 #endif
 
@@ -1763,7 +1763,7 @@ rescan:  // entry for changed browse parms
             case 'L':
 #ifdef XFRACT
                 // Need all boxes turned on, turn last one back on.
-                draw_window(g_color_bright, &winlist);
+                draw_window(g_color_bright, &win_list);
 #endif
                 g_auto_browse = false;
                 done = 2;
