@@ -50,8 +50,8 @@ using FPointColor = PointColorT<float>;
 
 struct MinMax
 {
-    int minx;
-    int maxx;
+    int min_x;
+    int max_x;
 };
 
 // routines in this module
@@ -61,9 +61,9 @@ static void hsv_to_rgb(
 static int line3d_mem();
 static int rgb_to_hsv(
     Byte red, Byte green, Byte blue, unsigned long *hue, unsigned long *sat, unsigned long *val);
-static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen);
+static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len);
 static void set_upr_lwr();
-static int end_object(bool triout);
+static int end_object(bool tri_out);
 static int off_screen(PointColor);
 static int out_triangle(FPointColor, FPointColor, FPointColor, int, int, int);
 static int ray_header();
@@ -164,8 +164,8 @@ int line3d(Byte * pixels, unsigned line_len)
     int RND;
     float f_water = 0.0F;       // transformed WATERLINE for ray trace files
     double r0;
-    int xcenter0 = 0;
-    int ycenter0 = 0;      // Unfudged versions
+    int x_center0 = 0;
+    int y_center0 = 0;      // Unfudged versions
     double r;                    // sphere radius
     float cos_theta;
     float sin_theta; // precalculated sin/cos of latitude
@@ -178,11 +178,11 @@ int line3d(Byte * pixels, unsigned line_len)
     VECTOR v;                    // double vector
     VECTOR v1;
     VECTOR v2;
-    VECTOR crossavg;
-    bool crossnotinit;           // flag for crossavg init indication
+    VECTOR cross_avg;
+    bool cross_not_init;           // flag for crossavg init indication
     LVECTOR lv;                  // long equivalent of v
     LVECTOR lv0;                 // long equivalent of v
-    int lastdot;
+    int last_dot;
     long fudge;
 
     fudge = 1L << 16;
@@ -221,13 +221,13 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             return -1;
         }
-        crossavg[0] = 0;
-        crossavg[1] = 0;
-        crossavg[2] = 0;
+        cross_avg[0] = 0;
+        cross_avg[1] = 0;
+        cross_avg[2] = 0;
         s_x_center = g_logical_screen_x_dots / 2 + g_x_shift;
-        xcenter0 = (int) s_x_center;
+        x_center0 = (int) s_x_center;
         s_y_center = g_logical_screen_y_dots / 2 - g_y_shift;
-        ycenter0 = (int) s_y_center;
+        y_center0 = (int) s_y_center;
     }
     // make sure these pixel coordinates are out of range
     old = s_bad;
@@ -246,17 +246,17 @@ int line3d(Byte * pixels, unsigned line_len)
         for (col = 0; col < (int) line_len; col++)
         {
             int pal;
-            int colornum;
-            colornum = pixels[col];
+            int color_num;
+            color_num = pixels[col];
             // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
-            pal = ((int) g_dac_box[colornum][0] * 77 +
-                   (int) g_dac_box[colornum][1] * 151 +
-                   (int) g_dac_box[colornum][2] * 28);
+            pal = ((int) g_dac_box[color_num][0] * 77 +
+                   (int) g_dac_box[color_num][1] * 151 +
+                   (int) g_dac_box[color_num][2] * 28);
             pal >>= 6;
             pixels[col] = (Byte) pal;
         }
     }
-    crossnotinit = true;
+    cross_not_init = true;
     col = 0;
 
     s_co = 0;
@@ -270,7 +270,7 @@ int line3d(Byte * pixels, unsigned line_len)
     // the effects of 3D transformations. Thanks to Marc Reinig for this idea
     // and code.
     //***********************************************************************
-    lastdot = std::min(g_logical_screen_x_dots - 1, (int) line_len - 1);
+    last_dot = std::min(g_logical_screen_x_dots - 1, (int) line_len - 1);
     if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)
     {
         if (g_haze && g_targa_out)
@@ -283,9 +283,9 @@ int line3d(Byte * pixels, unsigned line_len)
         }
     }
 
-    if (g_preview_factor >= g_logical_screen_y_dots || g_preview_factor > lastdot)
+    if (g_preview_factor >= g_logical_screen_y_dots || g_preview_factor > last_dot)
     {
-        g_preview_factor = std::min(g_logical_screen_y_dots - 1, lastdot);
+        g_preview_factor = std::min(g_logical_screen_y_dots - 1, last_dot);
     }
 
     s_local_preview_factor = g_logical_screen_y_dots / g_preview_factor;
@@ -318,7 +318,7 @@ int line3d(Byte * pixels, unsigned line_len)
     while (col < (int) line_len)
     {
         if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS)
-            && (col != lastdot)             // if this is not the last col
+            && (col != last_dot)             // if this is not the last col
                                             // if not the 1st or mod factor col
             && (col % (int)(s_aspect * s_local_preview_factor))
             && !(g_raytrace_format == RayTraceFormat::NONE && g_fill_type > FillType::SOLID_FILL && col == 1))
@@ -342,7 +342,7 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             next = col + 1;
         }
-        next = std::min(next, lastdot);
+        next = std::min(next, last_dot);
 
         if (cur.color > 0 && cur.color < g_water_line)
         {
@@ -411,8 +411,8 @@ int line3d(Byte * pixels, unsigned line_len)
                     // calculate illumination normal before persp
 
                     r0 = r / 65536L;
-                    f_cur.x = (float)(xcenter0 + sin_theta * s_scale_x * r0);
-                    f_cur.y = (float)(ycenter0 + cos_theta * s_cos_phi * s_scale_y * r0);
+                    f_cur.x = (float)(x_center0 + sin_theta * s_scale_x * r0);
+                    f_cur.y = (float)(y_center0 + cos_theta * s_cos_phi * s_scale_y * r0);
                     f_cur.color = (float)(-r0 * cos_theta * s_sin_phi);
                 }
                 if (!g_user_float_flag && g_raytrace_format == RayTraceFormat::NONE)
@@ -606,7 +606,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 s_num_tris++;
             }
 
-            if (col < lastdot && g_current_row
+            if (col < last_dot && g_current_row
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
                 && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
@@ -711,7 +711,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     put_triangle(s_last_row[col], s_old_last, old, old.color);
                 }
 
-                if (col < lastdot)
+                if (col < last_dot)
                 {
                     put_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
@@ -804,19 +804,19 @@ int line3d(Byte * pixels, unsigned line_len)
                     // line-wise averaging scheme
                     if (g_light_avg > 0)
                     {
-                        if (crossnotinit)
+                        if (cross_not_init)
                         {
                             // initialize array of old normal vectors
-                            crossavg[0] = s_cross[0];
-                            crossavg[1] = s_cross[1];
-                            crossavg[2] = s_cross[2];
-                            crossnotinit = false;
+                            cross_avg[0] = s_cross[0];
+                            cross_avg[1] = s_cross[1];
+                            cross_avg[2] = s_cross[2];
+                            cross_not_init = false;
                         }
-                        s_tmp_cross[0] = (crossavg[0] * g_light_avg + s_cross[0]) /
+                        s_tmp_cross[0] = (cross_avg[0] * g_light_avg + s_cross[0]) /
                                       (g_light_avg + 1);
-                        s_tmp_cross[1] = (crossavg[1] * g_light_avg + s_cross[1]) /
+                        s_tmp_cross[1] = (cross_avg[1] * g_light_avg + s_cross[1]) /
                                       (g_light_avg + 1);
-                        s_tmp_cross[2] = (crossavg[2] * g_light_avg + s_cross[2]) /
+                        s_tmp_cross[2] = (cross_avg[2] * g_light_avg + s_cross[2]) /
                                       (g_light_avg + 1);
                         s_cross[0] = s_tmp_cross[0];
                         s_cross[1] = s_tmp_cross[1];
@@ -832,9 +832,9 @@ int line3d(Byte * pixels, unsigned line_len)
                             cur.color = (int) f_cur.color;
                         }
                     }
-                    crossavg[0] = s_tmp_cross[0];
-                    crossavg[1] = s_tmp_cross[1];
-                    crossavg[2] = s_tmp_cross[2];
+                    cross_avg[0] = s_tmp_cross[0];
+                    cross_avg[1] = s_tmp_cross[1];
+                    cross_avg[2] = s_tmp_cross[2];
 
                     // dot product of unit vectors is cos of angle between
                     // we will use this value to shade surface
@@ -865,7 +865,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     break;
                 }
 
-                if (col < lastdot)
+                if (col < last_dot)
                 {
                     put_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
                 }
@@ -886,7 +886,7 @@ loopbottom:
             // for illumination model purposes
             s_f_last_row[col] = f_cur;
             f_old = s_f_last_row[col];
-            if (g_current_row && g_raytrace_format != RayTraceFormat::NONE && col >= lastdot)
+            if (g_current_row && g_raytrace_format != RayTraceFormat::NONE && col >= last_dot)
                 // if we're at the end of a row, close the object
             {
                 end_object(tout);
@@ -937,7 +937,7 @@ static void vec_draw_line(double *v1, double *v2, int color)
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
-static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
+static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
 {
     VECTOR S[2][4];              // Holds the top an bottom points, S[0][]=bottom
 
@@ -945,12 +945,12 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
      * "bottom" - these points are the corners of the screen in the x-y plane.
      * The "t"'s stand for Top - they are the top of the cube where 255 color
      * points hit. */
-    *pzmin = (int) INT_MAX;
-    *pymin = *pzmin;
-    *pxmin = *pymin;
-    *pzmax = (int) INT_MIN;
-    *pymax = *pzmax;
-    *pxmax = *pymax;
+    *z_min = (int) INT_MAX;
+    *y_min = *z_min;
+    *x_min = *y_min;
+    *z_max = (int) INT_MIN;
+    *y_max = *z_max;
+    *x_max = *y_max;
 
     for (int j = 0; j < 4; ++j)
     {
@@ -981,18 +981,18 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
         vec_mat_mul(S[1][i], m, S[1][i]);
 
         // update minimums and maximums
-        *pxmin = std::min(S[0][i][0], *pxmin);
-        *pxmax = std::max(S[0][i][0], *pxmax);
-        *pxmin = std::min(S[1][i][0], *pxmin);
-        *pxmax = std::max(S[1][i][0], *pxmax);
-        *pymin = std::min(S[0][i][1], *pymin);
-        *pymax = std::max(S[0][i][1], *pymax);
-        *pymin = std::min(S[1][i][1], *pymin);
-        *pymax = std::max(S[1][i][1], *pymax);
-        *pzmin = std::min(S[0][i][2], *pzmin);
-        *pzmax = std::max(S[0][i][2], *pzmax);
-        *pzmin = std::min(S[1][i][2], *pzmin);
-        *pzmax = std::max(S[1][i][2], *pzmax);
+        *x_min = std::min(S[0][i][0], *x_min);
+        *x_max = std::max(S[0][i][0], *x_max);
+        *x_min = std::min(S[1][i][0], *x_min);
+        *x_max = std::max(S[1][i][0], *x_max);
+        *y_min = std::min(S[0][i][1], *y_min);
+        *y_max = std::max(S[0][i][1], *y_max);
+        *y_min = std::min(S[1][i][1], *y_min);
+        *y_max = std::max(S[1][i][1], *y_max);
+        *z_min = std::min(S[0][i][2], *z_min);
+        *z_max = std::max(S[0][i][2], *z_max);
+        *z_min = std::min(S[1][i][2], *z_min);
+        *z_max = std::max(S[1][i][2], *z_max);
     }
 
     if (show)
@@ -1149,8 +1149,8 @@ static void put_min_max(int x, int y, int /*color*/)
 {
     if (y >= 0 && y < g_logical_screen_y_dots)
     {
-        s_min_max_x[y].minx = std::min(x, s_min_max_x[y].minx);
-        s_min_max_x[y].maxx = std::max(x, s_min_max_x[y].maxx);
+        s_min_max_x[y].min_x = std::min(x, s_min_max_x[y].min_x);
+        s_min_max_x[y].max_x = std::max(x, s_min_max_x[y].max_x);
     }
 }
 
@@ -1228,8 +1228,8 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 
     for (int y = miny; y <= maxy; y++)
     {
-        s_min_max_x[y].minx = (int) INT_MAX;
-        s_min_max_x[y].maxx = (int) INT_MIN;
+        s_min_max_x[y].min_x = (int) INT_MAX;
+        s_min_max_x[y].max_x = (int) INT_MIN;
     }
 
     // set plot to "fake" plot function
@@ -1242,8 +1242,8 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 
     for (int y = miny; y <= maxy; y++)
     {
-        int xlim = s_min_max_x[y].maxx;
-        for (int x = s_min_max_x[y].minx; x <= xlim; x++)
+        int x_lim = s_min_max_x[y].max_x;
+        for (int x = s_min_max_x[y].min_x; x <= x_lim; x++)
         {
             (*s_fill_plot)(x, y, color);
         }
@@ -1461,11 +1461,11 @@ int targa_color(int x, int y, int color)
     return (int)(255 - V);
 }
 
-static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen)
+static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 {
     if ((s_even_odd_row++ & 1) == 0) // even rows are color value
     {
-        for (int i = 0; i < (int) linelen; i++)         // add the fractional part in odd row
+        for (int i = 0; i < (int) line_len; i++)         // add the fractional part in odd row
         {
             fraction[i] = pixels[i];
         }
@@ -1473,7 +1473,7 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen)
     }
     else // swap
     {
-        for (int i = 0; i < (int) linelen; i++)       // swap so pixel has color
+        for (int i = 0; i < (int) line_len; i++)       // swap so pixel has color
         {
             Byte tmp = pixels[i];
             pixels[i] = fraction[i];
@@ -1492,25 +1492,25 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned linelen)
 
 static void file_error(char const *File_Name1, int ERROR)
 {
-    char msgbuf[200];
+    char msg_buf[200];
 
     s_error = ERROR;
     switch (ERROR)
     {
     case 1:                      // Can't Open
-        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, couldn't open  < %s >", File_Name1);
+        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, couldn't open  < %s >", File_Name1);
         break;
     case 2:                      // Not enough room
-        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, ran out of disk space. < %s >", File_Name1);
+        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, ran out of disk space. < %s >", File_Name1);
         break;
     case 3:                      // Image wrong size
-        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, image wrong size\n");
+        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, image wrong size\n");
         break;
     case 4:                      // Wrong file type
-        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, can't handle this type of file.\n");
+        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, can't handle this type of file.\n");
         break;
     }
-    stop_msg(msgbuf);
+    stop_msg(msg_buf);
 }
 
 //**********************************************************************
@@ -2192,7 +2192,7 @@ static int start_object()
 //
 //******************************************************************
 
-static int end_object(bool triout)
+static int end_object(bool tri_out)
 {
     if (g_raytrace_format == RayTraceFormat::DXF)
     {
@@ -2200,7 +2200,7 @@ static int end_object(bool triout)
     }
     if (g_raytrace_format == RayTraceFormat::POVRAY)
     {
-        if (triout)
+        if (tri_out)
         {
             // Make sure the bounding box is slightly larger than the object
             for (int i = 0; i <= 2; i++)
@@ -2326,17 +2326,17 @@ static void set_upr_lwr()
     s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 
-static int first_time(int linelen, VECTOR v)
+static int first_time(int line_len, VECTOR v)
 {
-    MATRIX lightm;               // m w/no trans, keeps obj. on screen
+    MATRIX light_mat;               // m w/no trans, keeps obj. on screen
                    // rotation values
     // corners of transformed xdotx by ydots x colors box
-    double xmin;
-    double ymin;
-    double zmin;
-    double xmax;
-    double ymax;
-    double zmax;
+    double x_min;
+    double y_min;
+    double z_min;
+    double x_max;
+    double y_max;
+    double z_max;
     VECTOR direct;
     // current,start,stop latitude
     // current start,stop longitude
@@ -2438,43 +2438,43 @@ static int first_time(int linelen, VECTOR v)
 
         // start with identity
         identity(g_m);
-        identity(lightm);
+        identity(light_mat);
 
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
         trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
               (double) s_z_coord / (-2.0), g_m);
         trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
-              (double) s_z_coord / (-2.0), lightm);
+              (double) s_z_coord / (-2.0), light_mat);
 
         // apply scale factors
         scale(s_scale_x, s_scale_y, s_scale_z, g_m);
-        scale(s_scale_x, s_scale_y, s_scale_z, lightm);
+        scale(s_scale_x, s_scale_y, s_scale_z, light_mat);
 
         // rotation values - converting from degrees to radians
-        double xval = g_x_rot / 57.29577;
-        double yval = g_y_rot / 57.29577;
-        double zval = g_z_rot / 57.29577;
+        double x_val = g_x_rot / 57.29577;
+        double y_val = g_y_rot / 57.29577;
+        double z_val = g_z_rot / 57.29577;
 
         if (g_raytrace_format != RayTraceFormat::NONE)
         {
-            zval = 0;
-            yval = zval;
-            xval = yval;
+            z_val = 0;
+            y_val = z_val;
+            x_val = y_val;
         }
 
-        x_rot(xval, g_m);
-        x_rot(xval, lightm);
-        y_rot(yval, g_m);
-        y_rot(yval, lightm);
-        z_rot(zval, g_m);
-        z_rot(zval, lightm);
+        x_rot(x_val, g_m);
+        x_rot(x_val, light_mat);
+        y_rot(y_val, g_m);
+        y_rot(y_val, light_mat);
+        z_rot(z_val, g_m);
+        z_rot(z_val, light_mat);
 
         // Find values of translation that make all x,y,z negative
         // m current matrix
         // 0 means don't show box
         // returns minimum and maximum values of x,y,z in fractal
-        corners(g_m, false, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+        corners(g_m, false, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
     }
 
     // perspective 3D vector - lview[2] == 0 means no perspective
@@ -2501,7 +2501,7 @@ static int first_time(int linelen, VECTOR v)
     }
     else                             // non-sphere case
     {
-        s_l_view[2] = (long)((zmin - zmax) * (double) g_viewer_z / 100.0);
+        s_l_view[2] = (long)((z_min - z_max) * (double) g_viewer_z / 100.0);
     }
 
     g_view[0] = s_l_view[0];
@@ -2515,12 +2515,12 @@ static int first_time(int linelen, VECTOR v)
     {
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */
-        trans(((double) g_logical_screen_x_dots - xmax - xmin) / 2,
-              ((double) g_logical_screen_y_dots - ymax - ymin) / 2, -zmax, g_m);
+        trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
+              ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, g_m);
 
         // Keep the box centered and on screen regardless of shifts
-        trans(((double) g_logical_screen_x_dots - xmax - xmin) / 2,
-              ((double) g_logical_screen_y_dots - ymax - ymin) / 2, -zmax, lightm);
+        trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
+              ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, light_mat);
 
         trans((double)(g_x_shift), (double)(-g_y_shift), 0.0, g_m);
 
@@ -2568,23 +2568,23 @@ static int first_time(int linelen, VECTOR v)
         // Similarly for cosine. Neat!
         //*******************************************************************
 
-        float deltatheta = (float) (theta2 - theta1) / (float) linelen;
+        float delta_theta = (float) (theta2 - theta1) / (float) line_len;
 
         // initial sin,cos theta
         s_sin_theta_array[0] = (float) std::sin((double) theta);
         s_cos_theta_array[0] = (float) std::cos((double) theta);
-        s_sin_theta_array[1] = (float) std::sin((double)(theta + deltatheta));
-        s_cos_theta_array[1] = (float) std::cos((double)(theta + deltatheta));
+        s_sin_theta_array[1] = (float) std::sin((double)(theta + delta_theta));
+        s_cos_theta_array[1] = (float) std::cos((double)(theta + delta_theta));
 
         // sin,cos delta theta
-        float twocosdeltatheta = (float) (2.0 * std::cos((double) deltatheta));
+        float two_cos_delta_theta = (float) (2.0 * std::cos((double) delta_theta));
 
         // build table of other sin,cos with trig identity
-        for (int i = 2; i < (int) linelen; i++)
+        for (int i = 2; i < (int) line_len; i++)
         {
-            s_sin_theta_array[i] = s_sin_theta_array[i - 1] * twocosdeltatheta -
+            s_sin_theta_array[i] = s_sin_theta_array[i - 1] * two_cos_delta_theta -
                                s_sin_theta_array[i - 2];
-            s_cos_theta_array[i] = s_cos_theta_array[i - 1] * twocosdeltatheta -
+            s_cos_theta_array[i] = s_cos_theta_array[i - 1] * two_cos_delta_theta -
                                s_cos_theta_array[i - 2];
         }
 
@@ -2635,9 +2635,9 @@ static int first_time(int linelen, VECTOR v)
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
-            double zview = -(long) ((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+            double z_view = -(long) ((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
             double radius = (double) (g_logical_screen_y_dots) / 2;
-            double angle = std::atan(-radius / (zview + radius));
+            double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
             s_z_cutoff *= 1.1;        // for safety
             s_z_cutoff *= 65536L;
@@ -2734,12 +2734,12 @@ static int first_time(int linelen, VECTOR v)
 
         /* Draw light source vector and box containing it, draw_light_box will
          * transform them if necessary. */
-        draw_light_box(origin, direct, lightm);
+        draw_light_box(origin, direct, light_mat);
         /* draw box around original field of view to help visualize effect of
          * rotations 1 means show box - xmin etc. do nothing here */
         if (!g_sphere)
         {
-            corners(g_m, true, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+            corners(g_m, true, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
         }
     }
 
@@ -2750,7 +2750,7 @@ static int first_time(int linelen, VECTOR v)
     s_f_bad.y = (float) s_bad.y;
     s_bad.color = g_bad_value;
     s_f_bad.color = (float) s_bad.color;
-    for (int i = 0; i < (int) linelen; i++)
+    for (int i = 0; i < (int) line_len; i++)
     {
         s_last_row[i] = s_bad;
         s_f_last_row[i] = s_f_bad;
