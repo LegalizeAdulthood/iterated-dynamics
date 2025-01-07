@@ -400,7 +400,7 @@ static FunctionPtr s_cotan{d_stk_cotan};
 static FunctionPtr s_cotanh{d_stk_cotanh};
 static FunctionPtr s_sinh{d_stk_sinh};
 static FunctionPtr s_cos{d_stk_cos};
-static FunctionPtr s_cosxx{d_stk_coxx};
+static FunctionPtr s_cosxx{d_stk_cosxx};
 static FunctionPtr s_cosh{d_stk_cosh};
 static FunctionPtr s_asin{d_stk_asin};
 static FunctionPtr s_asinh{d_stk_asinh};
@@ -1584,7 +1584,7 @@ void l_stk_cos()
 
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
-void d_stk_coxx()
+void d_stk_cosxx()
 {
     d_stk_cos();
     g_arg1->d.y = -g_arg1->d.y;
@@ -1592,7 +1592,7 @@ void d_stk_coxx()
 
 void m_stk_cosxx()
 {
-    m_stk_funct(d_stk_coxx);
+    m_stk_funct(d_stk_cosxx);
 }
 
 void l_stk_cosxx()
@@ -2445,7 +2445,7 @@ static bool parse_formula_text(char const *text)
         s_tanh = d_stk_tanh;
         s_cotan = d_stk_cotan;
         s_cotanh = d_stk_cotanh;
-        s_cosxx = d_stk_coxx;
+        s_cosxx = d_stk_cosxx;
         s_gt  = d_stk_gt;
         s_gte = d_stk_gte;
         s_eq  = d_stk_eq;

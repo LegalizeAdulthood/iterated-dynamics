@@ -18,7 +18,7 @@ NamedTrigFunction g_trig_fn[] =
 // clang-format off
 {
     {"sin",     d_stk_sin,      d_stk_sin,      d_stk_sin   },
-    {"cosxx",   d_stk_coxx,     d_stk_coxx,     d_stk_coxx  },
+    {"cosxx",   d_stk_cosxx,     d_stk_cosxx,     d_stk_cosxx  },
     {"sinh",    d_stk_sinh,     d_stk_sinh,     d_stk_sinh  },
     {"cosh",    d_stk_cosh,     d_stk_cosh,     d_stk_cosh  },
     {"exp",     d_stk_exp,      d_stk_exp,      d_stk_exp   },

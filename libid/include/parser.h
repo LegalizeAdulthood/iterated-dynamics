@@ -66,7 +66,7 @@ void l_stk_sinh();
 void d_stk_cos();
 void m_stk_cos();
 void l_stk_cos();
-void d_stk_coxx();
+void d_stk_cosxx();
 void m_stk_cosxx();
 void l_stk_cosxx();
 void d_stk_cosh();
