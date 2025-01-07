@@ -82,7 +82,7 @@ static int lambda_trig_fractal1()
     return 0;
 }
 
-static int lambda_trigfp_fractal1()
+static int lambda_trig_fp_fractal1()
 {
     // sin,cos
     if (std::fabs(g_old_z.y) >= g_magnitude_limit2)
@@ -108,7 +108,7 @@ static int lambda_trig_fractal2()
     return 0;
 }
 
-static int lambda_trigfp_fractal2()
+static int lambda_trig_fp_fractal2()
 {
     // sinh,cosh
     if (std::fabs(g_old_z.x) >= g_magnitude_limit2)
@@ -133,18 +133,18 @@ static int long_lambda_exponent_fractal()
         return 1;
     }
 
-    long lsiny;
-    long lcosy;
-    sin_cos(g_l_old_z.y, &lsiny,  &lcosy);
+    long l_sin_y;
+    long l_cos_y;
+    sin_cos(g_l_old_z.y, &l_sin_y,  &l_cos_y);
 
-    if (g_l_old_z.x >= g_l_magnitude_limit && lcosy >= 0L)
+    if (g_l_old_z.x >= g_l_magnitude_limit && l_cos_y >= 0L)
     {
         return 1;
     }
-    long longtmp = exp_long(g_l_old_z.x);
+    long long_tmp = exp_long(g_l_old_z.x);
 
-    g_l_temp.x = multiply(longtmp,      lcosy,   g_bit_shift);
-    g_l_temp.y = multiply(longtmp,      lsiny,   g_bit_shift);
+    g_l_temp.x = multiply(long_tmp,      l_cos_y,   g_bit_shift);
+    g_l_temp.y = multiply(long_tmp,      l_sin_y,   g_bit_shift);
 
     g_l_new_z.x  = multiply(g_long_param->x, g_l_temp.x, g_bit_shift)
               - multiply(g_long_param->y, g_l_temp.y, g_bit_shift);
@@ -165,17 +165,17 @@ static int lambda_exponent_fractal()
     {
         return 1;
     }
-    double siny;
-    double cosy;
-    sin_cos(&g_old_z.y, &siny, &cosy);
+    double sin_y;
+    double cos_y;
+    sin_cos(&g_old_z.y, &sin_y, &cos_y);
 
-    if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
+    if (g_old_z.x >= g_magnitude_limit && cos_y >= 0.0)
     {
         return 1;
     }
-    const double tmpexp = std::exp(g_old_z.x);
-    g_tmp_z.x = tmpexp*cosy;
-    g_tmp_z.y = tmpexp*siny;
+    const double tmp_exp = std::exp(g_old_z.x);
+    g_tmp_z.x = tmp_exp*cos_y;
+    g_tmp_z.y = tmp_exp*sin_y;
 
     //multiply by lamda
     g_new_z.x = g_float_param->x*g_tmp_z.x - g_float_param->y*g_tmp_z.y;
@@ -186,8 +186,8 @@ static int lambda_exponent_fractal()
 
 bool lambda_trig_setup()
 {
-    bool const isinteger = g_cur_fractal_specific->is_integer != 0;
-    if (isinteger)
+    bool const is_integer = g_cur_fractal_specific->is_integer != 0;
+    if (is_integer)
     {
         g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal;
     }
@@ -201,32 +201,32 @@ bool lambda_trig_setup()
     case TrigFn::COSXX:
     case TrigFn::COS:
         g_symmetry = SymmetryType::PI_SYM;
-        if (isinteger)
+        if (is_integer)
         {
             g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal1;
         }
         else
         {
-            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal1;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal1;
         }
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
         g_symmetry = SymmetryType::ORIGIN;
-        if (isinteger)
+        if (is_integer)
         {
             g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal2;
         }
         else
         {
-            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal2;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal2;
         }
         break;
     case TrigFn::SQR:
         g_symmetry = SymmetryType::ORIGIN;
         break;
     case TrigFn::EXP:
-        if (isinteger)
+        if (is_integer)
         {
             g_cur_fractal_specific->orbit_calc =  long_lambda_exponent_fractal;
         }
@@ -244,7 +244,7 @@ bool lambda_trig_setup()
         break;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
-    if (isinteger)
+    if (is_integer)
     {
         return julia_long_setup();
     }
@@ -256,8 +256,8 @@ bool lambda_trig_setup()
 
 bool mandel_trig_setup()
 {
-    bool const isinteger = g_cur_fractal_specific->is_integer != 0;
-    if (isinteger)
+    bool const is_integer = g_cur_fractal_specific->is_integer != 0;
+    if (is_integer)
     {
         g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal;
     }
@@ -270,29 +270,29 @@ bool mandel_trig_setup()
     {
     case TrigFn::SIN:
     case TrigFn::COSXX:
-        if (isinteger)
+        if (is_integer)
         {
             g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal1;
         }
         else
         {
-            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal1;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal1;
         }
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
-        if (isinteger)
+        if (is_integer)
         {
             g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal2;
         }
         else
         {
-            g_cur_fractal_specific->orbit_calc =  lambda_trigfp_fractal2;
+            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal2;
         }
         break;
     case TrigFn::EXP:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
-        if (isinteger)
+        if (is_integer)
         {
             g_cur_fractal_specific->orbit_calc =  long_lambda_exponent_fractal;
         }
@@ -308,7 +308,7 @@ bool mandel_trig_setup()
         g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         break;
     }
-    if (isinteger)
+    if (is_integer)
     {
         return mandel_long_setup();
     }
