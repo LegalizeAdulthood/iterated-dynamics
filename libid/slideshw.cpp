@@ -427,7 +427,7 @@ void record_show(int key)
         {
             std::fprintf(s_slide_show_file, "%s", mn);
         }
-        else if (check_vid_mode_key(0, key) >= 0)
+        else if (check_vid_mode_key(key) >= 0)
         {
             char buf[10];
             vid_mode_key_name(key, buf);

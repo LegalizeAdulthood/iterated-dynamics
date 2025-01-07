@@ -553,6 +553,6 @@ static void format_item(int choice, char *buf)
 
 static int check_mode_key(int key, int /*choice*/)
 {
-    int i = check_vid_mode_key(0, key);
+    int i = check_vid_mode_key(key);
     return i >= 0 ? -100-i : 0;
 }

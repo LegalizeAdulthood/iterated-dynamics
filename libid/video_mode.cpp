@@ -10,7 +10,7 @@ VideoInfo g_video_table[MAX_VIDEO_MODES]{};
 
 int g_video_table_len{};                 // number of entries in above
 
-int check_vid_mode_key(int option, int k)
+int check_vid_mode_key(int k)
 {
     // returns g_video_table entry number if the passed keystroke is a
     // function key currently assigned to a video mode, -1 otherwise
@@ -20,26 +20,12 @@ int check_vid_mode_key(int option, int k)
     }
     if (k != 0)
     {
-        if (option == 0)
+        // check full g_video_table
+        for (int i = 0; i < g_video_table_len; ++i)
         {
-            // check resident video mode table
-            for (int i = 0; i < MAX_VIDEO_MODES; ++i)
+            if (g_video_table[i].keynum == k)
             {
-                if (g_video_table[i].keynum == k)
-                {
-                    return i;
-                }
-            }
-        }
-        else
-        {
-            // check full g_video_table
-            for (int i = 0; i < g_video_table_len; ++i)
-            {
-                if (g_video_table[i].keynum == k)
-                {
-                    return i;
-                }
+                return i;
             }
         }
     }

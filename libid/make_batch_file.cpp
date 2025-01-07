@@ -265,7 +265,7 @@ bool MakeParParams::prompt()
         piece_x_dots = 0;
         if (int key = check_vid_mode_key_name(builder.read_string_buff(4)); key > 0)
         {
-            if (int i = check_vid_mode_key(0, key); i >= 0)
+            if (int i = check_vid_mode_key(key); i >= 0)
             {
                 // get the resolution of this video mode
                 piece_x_dots = g_video_table[i].xdots;

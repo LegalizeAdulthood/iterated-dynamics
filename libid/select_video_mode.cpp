@@ -137,7 +137,7 @@ int select_video_mode(int curmode)
 
 static int check_mode_key(int key, int choice)
 {
-    int i = check_vid_mode_key(1, key);
+    int i = check_vid_mode_key(key);
     if (i >= 0)
     {
         return -1-i;
@@ -267,7 +267,7 @@ void request_video_mode(int &kbd_char)
 {
     driver_stack_screen();
     kbd_char = select_video_mode(g_adapter);
-    if (check_vid_mode_key(0, kbd_char) >= 0) // picked a new mode?
+    if (check_vid_mode_key(kbd_char) >= 0) // picked a new mode?
     {
         driver_discard_screen();
     }

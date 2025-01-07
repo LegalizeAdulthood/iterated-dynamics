@@ -201,7 +201,7 @@ MainState restore_from_image(MainContext &context)
 
 MainState requested_video_fn(MainContext &context)
 {
-    const int k = check_vid_mode_key(0, context.key);
+    const int k = check_vid_mode_key(context.key);
     if (k < 0)
     {
         return MainState::NOTHING;

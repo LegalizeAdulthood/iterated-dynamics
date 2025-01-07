@@ -576,7 +576,7 @@ resumeloop:                             // return here on failed overlays
                         context.key = main_menu(true);
                         if (context.key == '\\' || context.key == ID_KEY_CTL_BACKSLASH
                             || context.key == 'h' || context.key == ID_KEY_CTL_H
-                            || check_vid_mode_key(0, context.key) >= 0)
+                            || check_vid_mode_key(context.key) >= 0)
                         {
                             driver_discard_screen();
                         }

@@ -359,7 +359,7 @@ static MainState main_image_start(bool &stacked, bool &resume_flag)
         {
             key = select_video_mode(-1);
         }
-        g_adapter = check_vid_mode_key(0, key);
+        g_adapter = check_vid_mode_key(key);
         if (g_adapter >= 0)
         {
             break;                                 // got a video mode now
