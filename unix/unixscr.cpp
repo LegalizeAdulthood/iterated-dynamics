@@ -458,8 +458,8 @@ init_unix_window()
 
     write_video_palette();
 
-    x11_video_table[0].xdots = g_screen_x_dots;
-    x11_video_table[0].ydots = g_screen_y_dots;
+    x11_video_table[0].x_dots = g_screen_x_dots;
+    x11_video_table[0].y_dots = g_screen_y_dots;
     x11_video_table[0].colors = g_colors;
 }
 /*
@@ -690,8 +690,8 @@ resize_window()
     {
         g_screen_x_dots = width & -4;
         g_screen_y_dots = height & -4;
-        x11_video_table[0].xdots = g_screen_x_dots;
-        x11_video_table[0].ydots = g_screen_y_dots;
+        x11_video_table[0].x_dots = g_screen_x_dots;
+        x11_video_table[0].y_dots = g_screen_y_dots;
         oldx = g_screen_x_dots;
         oldy = g_screen_y_dots;
         Xwinwidth = g_screen_x_dots;

@@ -1536,7 +1536,7 @@ bool X11Driver::init(int *argc, char **argv)
 
         for (auto m : modes)
         {
-            if (m.xdots <= width && m.ydots <= height)
+            if (m.x_dots <= width && m.y_dots <= height)
             {
                 add_video_mode(this, &m);
             }
@@ -1591,14 +1591,14 @@ void X11Driver::get_max_size(unsigned *width, unsigned *height, bool *center_x, 
 {
     *width = m_text.max_width();
     *height = m_text.max_height();
-    if (g_video_table[g_adapter].xdots > *width)
+    if (g_video_table[g_adapter].x_dots > *width)
     {
-        *width = g_video_table[g_adapter].xdots;
+        *width = g_video_table[g_adapter].x_dots;
         *center_x = false;
     }
-    if (g_video_table[g_adapter].ydots > *height)
+    if (g_video_table[g_adapter].y_dots > *height)
     {
-        *height = g_video_table[g_adapter].ydots;
+        *height = g_video_table[g_adapter].y_dots;
         *center_y = false;
     }
 }
@@ -1736,8 +1736,8 @@ void X11Driver::create_window()
     flush();
     write_palette();
 
-    x11_video_table[0].xdots = g_screen_x_dots;
-    x11_video_table[0].ydots = g_screen_y_dots;
+    x11_video_table[0].x_dots = g_screen_x_dots;
+    x11_video_table[0].y_dots = g_screen_y_dots;
     x11_video_table[0].colors = g_colors;
 #endif
 }
@@ -1772,8 +1772,8 @@ bool X11Driver::resize()
     {
         g_screen_x_dots = width;
         g_screen_y_dots = height;
-        x11_video_table[0].xdots = g_screen_x_dots;
-        x11_video_table[0].ydots = g_screen_y_dots;
+        x11_video_table[0].x_dots = g_screen_x_dots;
+        x11_video_table[0].y_dots = g_screen_y_dots;
         oldx = g_screen_x_dots;
         oldy = g_screen_y_dots;
         m_min_width = g_screen_x_dots;
