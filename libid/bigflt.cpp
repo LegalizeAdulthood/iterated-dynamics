@@ -1323,12 +1323,12 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 
     // scale n1 or n2
     // compare exp's
-    S16 *n1exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2exp = (S16 *) (n2 + g_bf_length);
-    if (big_accessS16(n1exp) > big_accessS16(n2exp))
+    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
+    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
+    if (big_accessS16(n1_exp) > big_accessS16(n2_exp))
     {
         // scale n2
-        scale = big_accessS16(n1exp) - big_accessS16(n2exp); // n1exp - n2exp
+        scale = big_accessS16(n1_exp) - big_accessS16(n2_exp); // n1exp - n2exp
         if (scale < g_bf_length)
         {
             fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
@@ -1339,13 +1339,13 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         {
             clear_bf(n2);
         }
-        big_setS16(n2exp, big_accessS16(n1exp)); // *n2exp = *n1exp; set exp's =
-        r_exp = big_accessS16(n2exp);
+        big_setS16(n2_exp, big_accessS16(n1_exp)); // *n2exp = *n1exp; set exp's =
+        r_exp = big_accessS16(n2_exp);
     }
-    else if (big_accessS16(n1exp) < big_accessS16(n2exp))
+    else if (big_accessS16(n1_exp) < big_accessS16(n2_exp))
     {
         // scale n1
-        scale = big_accessS16(n2exp) - big_accessS16(n1exp);  // n2exp - n1exp
+        scale = big_accessS16(n2_exp) - big_accessS16(n1_exp);  // n2exp - n1exp
         if (scale < g_bf_length)
         {
             fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
@@ -1356,12 +1356,12 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         {
             clear_bf(n1);
         }
-        big_setS16(n1exp, big_accessS16(n2exp)); // *n1exp = *n2exp; set exp's =
-        r_exp = big_accessS16(n2exp);
+        big_setS16(n1_exp, big_accessS16(n2_exp)); // *n1exp = *n2exp; set exp's =
+        r_exp = big_accessS16(n2_exp);
     }
     else
     {
-        r_exp = big_accessS16(n1exp);
+        r_exp = big_accessS16(n1_exp);
     }
     return r_exp;
 }
@@ -1398,13 +1398,13 @@ int cmp_bf(bf_t n1, bf_t n2)
     // signs are the same
 
     // compare exponents, using signed comparisons
-    S16 *n1exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2exp = (S16 *) (n2 + g_bf_length);
-    if (big_accessS16(n1exp) > big_accessS16(n2exp))
+    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
+    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
+    if (big_accessS16(n1_exp) > big_accessS16(n2_exp))
     {
         return sign1*(g_bf_length);
     }
-    if (big_accessS16(n1exp) < big_accessS16(n2exp))
+    if (big_accessS16(n1_exp) < big_accessS16(n2_exp))
     {
         return -sign1*(g_bf_length);
     }
@@ -1675,10 +1675,10 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
     }
 
     S16 *r_exp = (S16 *) (r + 2 * g_bf_length);
-    S16 *n1exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2exp = (S16 *) (n2 + g_bf_length);
+    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
+    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
     // add exp's
-    big_setS16(r_exp, (S16)(big_accessS16(n1exp) + big_accessS16(n2exp)));
+    big_setS16(r_exp, (S16)(big_accessS16(n1_exp) + big_accessS16(n2_exp)));
 
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;
@@ -1704,10 +1704,10 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
     }
 
-    S16 *n1exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2exp = (S16 *) (n2 + g_bf_length);
+    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
+    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
     // add exp's
-    int r_exp = big_accessS16(n1exp) + big_accessS16(n2exp);
+    int r_exp = big_accessS16(n1_exp) + big_accessS16(n2_exp);
 
     const bool positive = (is_bf_neg(n1) == is_bf_neg(n2)); // are they the same sign?
 
