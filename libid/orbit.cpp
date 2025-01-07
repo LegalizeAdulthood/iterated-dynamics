@@ -118,9 +118,9 @@ static void plot_d_orbit(double dx, double dy, int color)
     // placing sleepms here delays each dot
 }
 
-void iplot_orbit(long ix, long iy, int color)
+void iplot_orbit(long real, long imag, int color)
 {
-    plot_d_orbit((double)ix/g_fudge_factor-g_x_min, (double)iy/g_fudge_factor-g_y_max, color);
+    plot_d_orbit((double)real/g_fudge_factor-g_x_min, (double)imag/g_fudge_factor-g_y_max, color);
 }
 
 void plot_orbit(double real, double imag, int color)
