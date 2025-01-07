@@ -32,66 +32,66 @@ void load_config()
 
 void load_config(const std::string &cfg_path)
 {
-    std::FILE   *cfgfile;
-    VideoInfo    vident;
+    std::FILE   *cfg_file;
+    VideoInfo    video_entry;
     char        *fields[5]{};
 
     if (cfg_path.empty()                                             // can't find the file
-        || (cfgfile = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
+        || (cfg_file = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
     {
         g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
         return;
     }
 
-    int linenum = 0;
-    char tempstring[150];
+    int line_num = 0;
+    char temp_string[150];
     while (g_video_table_len < MAX_VIDEO_MODES
-        && std::fgets(tempstring, std::size(tempstring), cfgfile))
+        && std::fgets(temp_string, std::size(temp_string), cfg_file))
     {
-        if (std::strchr(tempstring, '\n') == nullptr)
+        if (std::strchr(temp_string, '\n') == nullptr)
         {
             // finish reading the line
-            while (fgetc(cfgfile) != '\n' && !std::feof(cfgfile));
+            while (fgetc(cfg_file) != '\n' && !std::feof(cfg_file));
         }
-        ++linenum;
-        if (tempstring[0] == ';')
+        ++line_num;
+        if (temp_string[0] == ';')
         {
             continue;   // comment line
         }
-        tempstring[120] = 0;
-        tempstring[(int) std::strlen(tempstring)-1] = 0; // zap trailing \n
+        temp_string[120] = 0;
+        temp_string[(int) std::strlen(temp_string)-1] = 0; // zap trailing \n
         int j = -1;
         int i = j;
         // key, 0: mode name, 1: x, 2: y, 3: colors, 4: driver, 5: comments
         while (true)
         {
-            if (tempstring[++i] < ' ')
+            if (temp_string[++i] < ' ')
             {
-                if (tempstring[i] == 0)
+                if (temp_string[i] == 0)
                 {
                     break;
                 }
-                tempstring[i] = ' '; // convert tab (or whatever) to blank
+                temp_string[i] = ' '; // convert tab (or whatever) to blank
             }
-            else if (tempstring[i] == ',' && ++j < 6)
+            else if (temp_string[i] == ',' && ++j < 6)
             {
                 assert(j >= 0 && j < 11);
-                fields[j] = &tempstring[i+1]; // remember start of next field
-                tempstring[i] = 0;   // make field a separate string
+                fields[j] = &temp_string[i+1]; // remember start of next field
+                temp_string[i] = 0;   // make field a separate string
             }
         }
-        int keynum = check_vid_mode_key_name(tempstring);
+        int key = check_vid_mode_key_name(temp_string);
         assert(fields[0]);
-        long xdots = std::atol(fields[0]);
+        long x_dots = std::atol(fields[0]);
         assert(fields[1]);
-        long ydots = std::atol(fields[1]);
+        long y_dots = std::atol(fields[1]);
         assert(fields[2]);
         int colors = std::atoi(fields[2]);
 
         if (j < 4 ||
-                keynum < 0 ||
-                xdots < MIN_PIXELS || xdots > MAX_PIXELS ||
-                ydots < MIN_PIXELS || ydots > MAX_PIXELS ||
+                key < 0 ||
+                x_dots < MIN_PIXELS || x_dots > MAX_PIXELS ||
+                y_dots < MIN_PIXELS || y_dots > MAX_PIXELS ||
                 (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
                  colors != 256)
            )
@@ -99,19 +99,19 @@ void load_config(const std::string &cfg_path)
             g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
             return;
         }
-        g_cfg_line_nums[g_video_table_len] = linenum; // for update_id_cfg
+        g_cfg_line_nums[g_video_table_len] = line_num; // for update_id_cfg
 
-        std::memset(&vident, 0, sizeof(vident));
-        std::strncpy(&vident.comment[0], fields[4], std::size(vident.comment));
-        vident.comment[25] = 0;
-        vident.key      = keynum;
-        vident.x_dots       = (short)xdots;
-        vident.y_dots       = (short)ydots;
-        vident.colors      = colors;
+        std::memset(&video_entry, 0, sizeof(video_entry));
+        std::strncpy(&video_entry.comment[0], fields[4], std::size(video_entry.comment));
+        video_entry.comment[25] = 0;
+        video_entry.key      = key;
+        video_entry.x_dots       = (short)x_dots;
+        video_entry.y_dots       = (short)y_dots;
+        video_entry.colors      = colors;
 
         // if valid, add to supported modes
-        vident.driver = driver_find_by_name(fields[3]);
-        if (vident.driver != nullptr && vident.driver->validate_mode(&vident))
+        video_entry.driver = driver_find_by_name(fields[3]);
+        if (video_entry.driver != nullptr && video_entry.driver->validate_mode(&video_entry))
         {
             // look for a synonym mode and if found, overwrite its key
             VideoInfo *begin{&g_video_table[0]};
@@ -119,20 +119,20 @@ void load_config(const std::string &cfg_path)
             auto it = std::find_if(begin, end,
                 [&](const VideoInfo &mode)
                 {
-                    return mode.driver == vident.driver //
-                        && mode.colors == vident.colors //
-                        && mode.x_dots == vident.x_dots   //
-                        && mode.y_dots == vident.y_dots;
+                    return mode.driver == video_entry.driver //
+                        && mode.colors == video_entry.colors //
+                        && mode.x_dots == video_entry.x_dots   //
+                        && mode.y_dots == video_entry.y_dots;
                 });
             if (it != end && it->key == 0)
             {
-                it->key = vident.key;
+                it->key = video_entry.key;
             }
             else
             {
-                add_video_mode(vident.driver, &vident);
+                add_video_mode(video_entry.driver, &video_entry);
             }
         }
     }
-    std::fclose(cfgfile);
+    std::fclose(cfg_file);
 }
