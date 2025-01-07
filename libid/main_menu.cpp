@@ -43,56 +43,56 @@ static bool is_julia()
         || g_fractal_type == FractalType::INVERSE_JULIA;
 }
 
-static int menu_check_key(int curkey, int /*choice*/)
+static int menu_check_key(int key, int /*choice*/)
 {
-    int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
-    if (testkey == '2')
+    int test_key = (key >= 'A' && key <= 'Z') ? key+('a'-'A') : key;
+    if (test_key == '2')
     {
-        testkey = '@';
+        test_key = '@';
     }
-    if (std::strchr("#@2txyzgvir3dj", testkey)
-        || testkey == ID_KEY_INSERT || testkey == ID_KEY_CTL_B
-        || testkey == ID_KEY_ESC || testkey == ID_KEY_DELETE
-        || testkey == ID_KEY_CTL_F)
+    if (std::strchr("#@2txyzgvir3dj", test_key)
+        || test_key == ID_KEY_INSERT || test_key == ID_KEY_CTL_B
+        || test_key == ID_KEY_ESC || test_key == ID_KEY_DELETE
+        || test_key == ID_KEY_CTL_F)
     {
-        return -testkey;
+        return -test_key;
     }
     if (s_full_menu)
     {
-        if (std::strchr("\\sobkrh", testkey)
-            || testkey == ID_KEY_TAB || testkey == ID_KEY_CTL_A
-            || testkey == ID_KEY_CTL_E || testkey == ID_KEY_BACKSPACE
-            || testkey == ID_KEY_CTL_S || testkey == ID_KEY_CTL_U)   // Ctrl+A, E, H, S, U
+        if (std::strchr("\\sobkrh", test_key)
+            || test_key == ID_KEY_TAB || test_key == ID_KEY_CTL_A
+            || test_key == ID_KEY_CTL_E || test_key == ID_KEY_BACKSPACE
+            || test_key == ID_KEY_CTL_S || test_key == ID_KEY_CTL_U)   // Ctrl+A, E, H, S, U
         {
-            return -testkey;
+            return -test_key;
         }
-        if (testkey == ' ')
+        if (test_key == ' ')
         {
             if (has_julia_toggle())
             {
-                return -testkey;
+                return -test_key;
             }
         }
         if (g_got_real_dac && g_colors >= 16)
         {
-            if (std::strchr("c+-", testkey))
+            if (std::strchr("c+-", test_key))
             {
-                return -testkey;
+                return -test_key;
             }
-            if (g_colors > 16 && (testkey == 'a' || (testkey == 'e')))
+            if (g_colors > 16 && (test_key == 'a' || (test_key == 'e')))
             {
-                return -testkey;
+                return -test_key;
             }
         }
         // Alt+A and Alt+S
-        if (testkey == ID_KEY_ALT_A || testkey == ID_KEY_ALT_S)
+        if (test_key == ID_KEY_ALT_A || test_key == ID_KEY_ALT_S)
         {
-            return -testkey;
+            return -test_key;
         }
     }
-    if (check_vid_mode_key(testkey) >= 0)
+    if (check_vid_mode_key(test_key) >= 0)
     {
-        return -testkey;
+        return -test_key;
     }
     return 0;
 }
