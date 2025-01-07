@@ -27,61 +27,61 @@ namespace fs = std::filesystem;
 // (modes AT_CMD_LINE and SSTOOLS_INI)
 int merge_path_names(char *old_full_path, char const *new_filename, CmdFile mode)
 {
-    char newfilename[FILE_MAX_PATH];
-    std::strcpy(newfilename, fs::path(new_filename).make_preferred().string().c_str());
+    char buff[FILE_MAX_PATH];
+    std::strcpy(buff, fs::path(new_filename).make_preferred().string().c_str());
 
     // no dot or slash so assume a file
-    bool isafile = std::strchr(newfilename, '.') == nullptr
-        && std::strchr(newfilename, SLASH_CH) == nullptr;
-    bool isadir = is_a_directory(newfilename);
-    if (isadir)
+    bool is_a_file = std::strchr(buff, '.') == nullptr
+        && std::strchr(buff, SLASH_CH) == nullptr;
+    bool is_a_dir = is_a_directory(buff);
+    if (is_a_dir)
     {
-        fix_dir_name(newfilename);
+        fix_dir_name(buff);
     }
 
     // if dot, slash, NUL, it's the current directory, set up full path
-    if (newfilename[0] == '.' && newfilename[1] == SLASH_CH && newfilename[2] == 0)
+    if (buff[0] == '.' && buff[1] == SLASH_CH && buff[2] == 0)
     {
         char temp_drive[FILE_MAX_PATH];
-        expand_dir_name(newfilename, temp_drive);
-        std::strcat(temp_drive, newfilename);
-        std::strcpy(newfilename, temp_drive);
-        isadir = true;
+        expand_dir_name(buff, temp_drive);
+        std::strcat(temp_drive, buff);
+        std::strcpy(buff, temp_drive);
+        is_a_dir = true;
     }
 
     // if dot, slash, its relative to the current directory, set up full path
-    if (newfilename[0] == '.' && newfilename[1] == SLASH_CH)
+    if (buff[0] == '.' && buff[1] == SLASH_CH)
     {
         bool test_dir = false;
         char temp_drive[FILE_MAX_PATH];
-        if (std::strrchr(newfilename, '.') == newfilename)
+        if (std::strrchr(buff, '.') == buff)
         {
             test_dir = true;    // only one '.' assume it's a directory
         }
-        expand_dir_name(newfilename, temp_drive);
-        std::strcat(temp_drive, newfilename);
-        std::strcpy(newfilename, temp_drive);
+        expand_dir_name(buff, temp_drive);
+        std::strcat(temp_drive, buff);
+        std::strcpy(buff, temp_drive);
         if (!test_dir)
         {
-            int len = (int) std::strlen(newfilename);
-            newfilename[len-1] = 0; // get rid of slash added by expand_dirname
+            int len = (int) std::strlen(buff);
+            buff[len-1] = 0; // get rid of slash added by expand_dirname
         }
     }
 
     // check existence
-    if (!isadir || isafile)
+    if (!is_a_dir || is_a_file)
     {
-        if (fr_find_first(newfilename) == 0)
+        if (fr_find_first(buff) == 0)
         {
             if (g_dta.attribute & SUB_DIR) // exists and is dir
             {
-                fix_dir_name(newfilename);  // add trailing slash
-                isadir = true;
-                isafile = false;
+                fix_dir_name(buff);  // add trailing slash
+                is_a_dir = true;
+                is_a_file = false;
             }
             else
             {
-                isafile = true;
+                is_a_file = true;
             }
         }
     }
@@ -90,7 +90,7 @@ int merge_path_names(char *old_full_path, char const *new_filename, CmdFile mode
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
-    split_path(newfilename, drive, dir, fname, ext);
+    split_path(buff, drive, dir, fname, ext);
 
     char drive1[FILE_MAX_DRIVE];
     char dir1[FILE_MAX_DIR];
@@ -118,8 +118,8 @@ int merge_path_names(char *old_full_path, char const *new_filename, CmdFile mode
     {
         std::strcpy(ext1, ext);
     }
-    bool isadir_error = false;
-    if (!isadir && !isafile && get_path)
+    bool is_a_dir_error = false;
+    if (!is_a_dir && !is_a_file && get_path)
     {
         make_drive_dir(old_full_path, drive1, dir1);
         int len = (int) std::strlen(old_full_path);
@@ -133,13 +133,13 @@ int merge_path_names(char *old_full_path, char const *new_filename, CmdFile mode
             }
             if (!fs::exists(old_full_path))
             {
-                isadir_error = true;
+                is_a_dir_error = true;
             }
             old_full_path[len-1] = save;
         }
     }
     make_path(old_full_path, drive1, dir1, fname1, ext1);
-    return isadir_error ? -1 : (isadir ? 1 : 0);
+    return is_a_dir_error ? -1 : (is_a_dir ? 1 : 0);
 }
 
 int merge_path_names(std::string &old_full_path, char const *new_filename, CmdFile mode)
