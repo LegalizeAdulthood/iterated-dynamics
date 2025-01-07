@@ -367,7 +367,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
         }
     }
 
-    bn_t n1p = n1;
+    bn_t n1_p = n1;
     int steps = g_bn_length >> 1; // two bytes at a time
     int carry_steps = double_steps = (steps << 1) - 2;
     g_bn_length <<= 1;
@@ -376,10 +376,10 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
     bn_t rp1 = rp2 = r;
     for (int i = 0; i < steps; i++)
     {
-        bn_t n2p = n2;
+        bn_t n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
-            U32 prod = (U32) big_access16(n1p) * (U32) big_access16(n2p); // U16*U16=U32
+            U32 prod = (U32) big_access16(n1_p) * (U32) big_access16(n2_p); // U16*U16=U32
             U32 sum = (U32) big_access16(rp2) + prod; // add to previous, including overflow
             big_set16(rp2, (U16)sum); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
@@ -394,11 +394,11 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
                 big_set16(rp3, (U16)sum); // save what was the overflow
                 sum >>= 16;             // keep just the new overflow
             }
-            n2p += 2;       // to next word
+            n2_p += 2;       // to next word
             rp2 += 2;
             carry_steps--;  // use one less step
         }
-        n1p += 2;           // to next word
+        n1_p += 2;           // to next word
         rp2 = rp1 += 2;
         carry_steps = --double_steps; // decrease doubles steps and reset carry_steps
     }
@@ -441,7 +441,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
             neg_a_bn(n2);
         }
     }
-    bn_t n1p = n1;
+    bn_t n1_p = n1;
     n2 += (g_bn_length << 1) - g_r_length;  // shift n2 over to where it is needed
 
     g_bn_length = g_r_length;
@@ -454,10 +454,10 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
     bn_t rp2 = rp1 = r;
     for (int i = g_bn_length >> 1; i > 0; i--)
     {
-        bn_t n2p = n2;
+        bn_t n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
-            U32 prod = (U32) big_access16(n1p) * (U32) big_access16(n2p); // U16*U16=U32
+            U32 prod = (U32) big_access16(n1_p) * (U32) big_access16(n2_p); // U16*U16=U32
             U32 sum = (U32) big_access16(rp2) + prod; // add to previous, including overflow
             big_set16(rp2, (U16)sum); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
@@ -472,11 +472,11 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
                 big_set16(rp3, (U16)sum); // save what was the overflow
                 sum >>= 16;             // keep just the new overflow
             }
-            n2p += 2;                   // increase by two bytes
+            n2_p += 2;                   // increase by two bytes
             rp2 += 2;
             carry_steps--;
         }
-        n1p += 2;   // increase by two bytes
+        n1_p += 2;   // increase by two bytes
 
         if (skips != 0)
         {
@@ -533,15 +533,15 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     int steps = (g_bn_length >> 1) - 1;
     int carry_steps = double_steps = (steps << 1) - 1;
     bn_t rp2 = rp1 = r + 2;  // start with second two-byte word
-    bn_t n1p = n;
+    bn_t n1_p = n;
     if (steps != 0) // if zero, then skip all the middle term calculations
     {
         for (int i = steps; i > 0; i--) // steps gets altered, count backwards
         {
-            bn_t n2p = n1p + 2;  // set n2p pointer to 1 step beyond n1p
+            bn_t n2_p = n1_p + 2;  // set n2p pointer to 1 step beyond n1p
             for (int j = 0; j < steps; j++)
             {
-                prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); // U16*U16=U32
+                prod = (U32)big_access16(n1_p) * (U32)big_access16(n2_p); // U16*U16=U32
                 sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
                 big_set16(rp2, (U16)sum); // save the lower 2 bytes
                 sum >>= 16;             // keep just the upper 2 bytes
@@ -556,11 +556,11 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
                     big_set16(rp3, (U16)sum); // save what was the overflow
                     sum >>= 16;             // keep just the new overflow
                 }
-                n2p += 2;       // increase by two bytes
+                n2_p += 2;       // increase by two bytes
                 rp2 += 2;
                 carry_steps--;
             }
-            n1p += 2;           // increase by two bytes
+            n1_p += 2;           // increase by two bytes
             rp2 = rp1 += 4;     // increase by 2 * two bytes
             carry_steps = double_steps -= 2;   // reduce the carry steps needed
             steps--;
@@ -573,14 +573,14 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
     }
 
     // Now go back and add in the squared terms.
-    n1p = n;
+    n1_p = n;
     steps = (g_bn_length >> 1);
     carry_steps = double_steps = (steps << 1) - 2;
     rp1 = r;
     for (int i = 0; i < steps; i++)
     {
         // square it
-        prod = (U32)big_access16(n1p) * (U32)big_access16(n1p); // U16*U16=U32
+        prod = (U32)big_access16(n1_p) * (U32)big_access16(n1_p); // U16*U16=U32
         sum = (U32)big_access16(rp1) + prod; // add to previous, including overflow
         big_set16(rp1, (U16)sum); // save the lower 2 bytes
         sum >>= 16;             // keep just the upper 2 bytes
@@ -595,7 +595,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
             big_set16(rp3, (U16)sum); // save what was the overflow
             sum >>= 16;             // keep just the new overflow
         }
-        n1p += 2;       // increase by 2 bytes
+        n1_p += 2;       // increase by 2 bytes
         rp1 += 4;       // increase by 4 bytes
         carry_steps = double_steps -= 2;
     }
@@ -617,7 +617,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 bn_t unsafe_square_bn(bn_t r, bn_t n)
 {
     int double_steps;
-    bn_t n2p;
+    bn_t n2_p;
     bn_t rp1;
     bn_t rp3;
     U32 prod;
@@ -648,8 +648,8 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     int carry_steps = double_steps = (g_bn_length >> 1) + steps - 2;
     int skips = (i - steps) >> 1;     // how long to skip over pointer shifts
     bn_t rp2 = rp1 = r;
-    bn_t n1p = n;
-    bn_t n3p = n2p = n1p + (((g_bn_length >> 1) - steps) << 1);    // n2p = n1p + 2*(g_bn_length/2 - steps)
+    bn_t n1_p = n;
+    bn_t n3_p = n2_p = n1_p + (((g_bn_length >> 1) - steps) << 1);    // n2p = n1p + 2*(g_bn_length/2 - steps)
     if (i != 0) // if zero, skip middle term calculations
     {
         // i is already set
@@ -657,7 +657,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
         {
             for (int j = 0; j < steps; j++)
             {
-                prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); // U16*U16=U32
+                prod = (U32)big_access16(n1_p) * (U32)big_access16(n2_p); // U16*U16=U32
                 sum = (U32)big_access16(rp2) + prod; // add to previous, including overflow
                 big_set16(rp2, (U16)sum); // save the lower 2 bytes
                 sum >>= 16;             // keep just the upper 2 bytes
@@ -672,14 +672,14 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
                     big_set16(rp3, (U16)sum); // save what was the overflow
                     sum >>= 16;             // keep just the new overflow
                 }
-                n2p += 2;       // increase by 2-byte word size
+                n2_p += 2;       // increase by 2-byte word size
                 rp2 += 2;
                 carry_steps--;
             }
-            n1p += 2;       // increase by 2-byte word size
+            n1_p += 2;       // increase by 2-byte word size
             if (skips > 0)
             {
-                n2p = n3p -= 2;
+                n2_p = n3_p -= 2;
                 steps++;
                 skips--;
             }
@@ -688,7 +688,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
                 steps -= rodd;  // rodd is 1 or 0
                 double_steps -= rodd+1;
                 rp1 += (rodd+1) << 1;
-                n2p = n1p+2;
+                n2_p = n1_p+2;
                 skips--;
             }
             else // skips < 0
@@ -696,7 +696,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
                 steps--;
                 double_steps -= 2;
                 rp1 += 4;           // add two 2-byte words
-                n2p = n1p + 2;
+                n2_p = n1_p + 2;
             }
             rp2 = rp1;
             carry_steps = double_steps;
@@ -714,7 +714,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     i = (g_bn_length << 1)-g_r_length;
     rp1 = r + ((U16)i & (U16)0x0002);
     i = (U16)((i >> 1)+1) & (U16)0xFFFE;
-    n1p = n + i;
+    n1_p = n + i;
     // i here is no longer a temp var., but will be used as a loop counter
     i = (g_bn_length - i) >> 1;
     carry_steps = double_steps = (i << 1)-2;
@@ -722,7 +722,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
     for (; i > 0; i--)
     {
         // square it
-        prod = (U32)big_access16(n1p) * (U32)big_access16(n1p); // U16*U16=U32
+        prod = (U32)big_access16(n1_p) * (U32)big_access16(n1_p); // U16*U16=U32
         sum = (U32)big_access16(rp1) + prod; // add to previous, including overflow
         big_set16(rp1, (U16)sum); // save the lower 2 bytes
         sum >>= 16;             // keep just the upper 2 bytes
@@ -737,7 +737,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
             big_set16(rp3, (U16)sum); // save what was the overflow
             sum >>= 16;             // keep just the new overflow
         }
-        n1p += 2;
+        n1_p += 2;
         rp1 += 4;
         carry_steps = double_steps -= 2;
     }
