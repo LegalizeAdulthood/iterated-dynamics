@@ -187,20 +187,20 @@ DComplex complex_power(DComplex xx, DComplex yy)
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
 void asin_z(DComplex z, DComplex *rz)
 {
-    DComplex tempz1, tempz2;
+    DComplex temp_z1, temp_z2;
 
-    fpu_cmplx_mul(&z, &z, &tempz1);
-    tempz1.x = 1 - tempz1.x;
-    tempz1.y = -tempz1.y;  // tempz1 = 1 - tempz1
-    tempz1 = complex_sqrt_float(tempz1);
+    fpu_cmplx_mul(&z, &z, &temp_z1);
+    temp_z1.x = 1 - temp_z1.x;
+    temp_z1.y = -temp_z1.y;  // tempz1 = 1 - tempz1
+    temp_z1 = complex_sqrt_float(temp_z1);
 
-    tempz2.x = -z.y;
-    tempz2.y = z.x;                // tempz2 = i*z
-    tempz1.x += tempz2.x;
-    tempz1.y += tempz2.y;    // tempz1 += tempz2
-    fpu_cmplx_log(&tempz1, &tempz1);
-    rz->x = tempz1.y;
-    rz->y = -tempz1.x;           // rz = (-i)*tempz1
+    temp_z2.x = -z.y;
+    temp_z2.y = z.x;                // tempz2 = i*z
+    temp_z1.x += temp_z2.x;
+    temp_z1.y += temp_z2.y;    // tempz1 += tempz2
+    fpu_cmplx_log(&temp_z1, &temp_z1);
+    rz->x = temp_z1.y;
+    rz->y = -temp_z1.x;           // rz = (-i)*tempz1
 }   // end. Arcsinz
 
 // rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
@@ -235,13 +235,13 @@ void asinh_z(DComplex z, DComplex *rz)
 // rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
 void acosh_z(DComplex z, DComplex *rz)
 {
-    DComplex tempz;
-    fpu_cmplx_mul(&z, &z, &tempz);
-    tempz.x -= 1;                              // tempz = tempz - 1
-    tempz = complex_sqrt_float(tempz);
-    tempz.x = z.x + tempz.x;
-    tempz.y = z.y + tempz.y;  // tempz = z + tempz
-    fpu_cmplx_log(&tempz, rz);
+    DComplex temp_z;
+    fpu_cmplx_mul(&z, &z, &temp_z);
+    temp_z.x -= 1;                              // tempz = tempz - 1
+    temp_z = complex_sqrt_float(temp_z);
+    temp_z.x = z.x + temp_z.x;
+    temp_z.y = z.y + temp_z.y;  // tempz = z + tempz
+    fpu_cmplx_log(&temp_z, rz);
 }   // end. Arccoshz
 
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
@@ -379,21 +379,21 @@ long lsqrt(long f)
 LComplex complex_sqrt_long(long x, long y)
 {
     double theta;
-    long      maglong, thetalong;
+    long      mag_long, theta_long;
     LComplex    result;
 
 #ifndef LONGSQRT
     double mag = std::sqrt(std::sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge_factor +
                            ((double) multiply(y, y, g_bit_shift))/ g_fudge_factor));
-    maglong   = (long)(mag * g_fudge_factor);
+    mag_long   = (long)(mag * g_fudge_factor);
 #else
     maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift)+multiply(y, y, g_bit_shift)));
 #endif
     theta     = std::atan2((double) y/g_fudge_factor, (double) x/g_fudge_factor)/2;
-    thetalong = (long)(theta * SinCosFudge);
-    sin_cos(thetalong, &result.y, &result.x);
-    result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
-    result.y  = multiply(result.y << (g_bit_shift - 16), maglong, g_bit_shift);
+    theta_long = (long)(theta * SinCosFudge);
+    sin_cos(theta_long, &result.y, &result.x);
+    result.x  = multiply(result.x << (g_bit_shift - 16), mag_long, g_bit_shift);
+    result.y  = multiply(result.y << (g_bit_shift - 16), mag_long, g_bit_shift);
     return result;
 }
 
@@ -538,71 +538,71 @@ void setup_log_table()
     g_log_map_table[0] = 0;
     if (g_log_map_flag != -1)
     {
-        for (unsigned long sptop = 1U; sptop < (unsigned long)g_log_map_table_max_size; sptop++)   // spread top to incl unused colors
+        for (unsigned long sp_top = 1U; sp_top < (unsigned long)g_log_map_table_max_size; sp_top++)   // spread top to incl unused colors
         {
-            if (g_log_map_table[sptop] > g_log_map_table[sptop-1])
+            if (g_log_map_table[sp_top] > g_log_map_table[sp_top-1])
             {
-                g_log_map_table[sptop] = (Byte)(g_log_map_table[sptop-1]+1);
+                g_log_map_table[sp_top] = (Byte)(g_log_map_table[sp_top-1]+1);
             }
         }
     }
 }
 
-long log_table_calc(long citer)
+long log_table_calc(long color_iter)
 {
     long ret = 0;
 
     if (g_log_map_flag == 0 && !g_iteration_ranges_len)   // Oops, how did we get here?
     {
-        return citer;
+        return color_iter;
     }
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
-        return g_log_map_table[(long)std::min(citer, g_log_map_table_max_size)];
+        return g_log_map_table[(long)std::min(color_iter, g_log_map_table_max_size)];
     }
 
     if (g_log_map_flag > 0)
     {
         // new log function
-        if ((unsigned long)citer <= s_lf + 1)
+        if ((unsigned long)color_iter <= s_lf + 1)
         {
             ret = 1;
         }
-        else if ((citer - s_lf)/std::log(static_cast<double>(citer - s_lf)) <= s_mlf)
+        else if ((color_iter - s_lf)/std::log(static_cast<double>(color_iter - s_lf)) <= s_mlf)
         {
-            ret = (long)(citer - s_lf);
+            ret = (long)(color_iter - s_lf);
         }
         else
         {
-            ret = (long)(s_mlf * std::log(static_cast<double>(citer - s_lf))) + 1;
+            ret = (long)(s_mlf * std::log(static_cast<double>(color_iter - s_lf))) + 1;
         }
     }
     else if (g_log_map_flag == -1)
     {
         // old log function
-        if (citer == 0)
+        if (color_iter == 0)
         {
             ret = 1;
         }
         else
         {
-            ret = (long)(s_mlf * std::log(static_cast<double>(citer))) + 1;
+            ret = (long)(s_mlf * std::log(static_cast<double>(color_iter))) + 1;
         }
     }
     else if (g_log_map_flag <= -2)
     {
         // sqrt function
-        if ((unsigned long)citer <= s_lf)
+        if ((unsigned long)color_iter <= s_lf)
         {
             ret = 1;
         }
-        else if ((unsigned long)(citer - s_lf) <= (unsigned long)(s_mlf * s_mlf))
+        else if ((unsigned long)(color_iter - s_lf) <= (unsigned long)(s_mlf * s_mlf))
         {
-            ret = (long)(citer - s_lf + 1);
+            ret = (long)(color_iter - s_lf + 1);
         }
         else
         {
-            ret = (long)(s_mlf * std::sqrt(static_cast<double>(citer - s_lf))) + 1;
+            ret = (long)(s_mlf * std::sqrt(static_cast<double>(color_iter - s_lf))) + 1;
         }
     }
     return ret;
