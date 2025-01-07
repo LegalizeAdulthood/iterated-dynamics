@@ -1089,7 +1089,7 @@ FractalSpecific g_fractal_specific[] =
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_COMPLEX_MARKS_MAND, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, FractalType::COMPLEX_MARKS_JUL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, SymmetryType::NONE,
-        marks_cplx_mand, marks_cplx_mand_perp, mandel_fp_setup, standard_fractal,
+        marks_cplx_mand, marks_cplx_mand_per_pixel, mandel_fp_setup, standard_fractal,
         STD_BAIL_OUT
     },
 

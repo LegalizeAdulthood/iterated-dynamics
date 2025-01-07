@@ -298,7 +298,7 @@ int marks_mandel_pwr_fp_per_pixel()
     return 1;
 }
 
-int marks_cplx_mand_perp()
+int marks_cplx_mand_per_pixel()
 {
     if (g_invert != 0)
     {

@@ -19,4 +19,4 @@ int marks_mandel_pwr_per_pixel();
 int marks_mandel_per_pixel();
 int marks_mandel_fp_per_pixel();
 int marks_mandel_pwr_fp_per_pixel();
-int marks_cplx_mand_perp();
+int marks_cplx_mand_per_pixel();
