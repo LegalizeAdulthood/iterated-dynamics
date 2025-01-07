@@ -121,12 +121,12 @@ static void get_mnemonic(int code, char *mnemonic)
 // places a temporary message on the screen in text mode
 static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt)
 {
-    int savescrn[80];
+    int save_screen[80];
 
     for (int i = 0; i < 80; i++)
     {
         driver_move_cursor(row, i);
-        savescrn[i] = driver_get_char_attr();
+        save_screen[i] = driver_get_char_attr();
     }
     driver_put_string(row, col, attr, txt);
     driver_hide_text_cursor();
@@ -134,7 +134,7 @@ static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *t
     for (int i = 0; i < 80; i++)
     {
         driver_move_cursor(row, i);
-        driver_put_char_attr(savescrn[i]);
+        driver_put_char_attr(save_screen[i]);
     }
     return 0;
 }
@@ -320,13 +320,13 @@ start:
     }
     else if (std::strcmp("WAIT", buffer) == 0)
     {
-        float fticks;
-        const int count = std::fscanf(s_slide_show_file, "%f", &fticks); // how many seconds to wait
-        driver_set_keyboard_timeout((int)(fticks*1000.f)); // timeout in ms
-        fticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
+        float f_ticks;
+        const int count = std::fscanf(s_slide_show_file, "%f", &f_ticks); // how many seconds to wait
+        driver_set_keyboard_timeout((int)(f_ticks*1000.f)); // timeout in ms
+        f_ticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
         if (count == 1)
         {
-            s_ticks = (long)fticks;
+            s_ticks = (long)f_ticks;
             s_start_tick = now;  // start timing
         }
         else
@@ -461,10 +461,10 @@ static void sleep_secs(int secs)
 
 static void slide_show_err(char const *msg)
 {
-    char msgbuf[300] = { "Slideshow error:\n" };
+    char msg_buff[300] = { "Slideshow error:\n" };
     stop_slide_show();
-    std::strcat(msgbuf, msg);
-    stop_msg(msgbuf);
+    std::strcat(msg_buff, msg);
+    stop_msg(msg_buff);
 }
 
 // handle_special_keys
