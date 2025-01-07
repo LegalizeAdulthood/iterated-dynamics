@@ -30,7 +30,7 @@ struct PerspectiveT
 };
 
 using Perspective = PerspectiveT<long>;
-using Perspectivefp = PerspectiveT<double>;
+using PerspectiveFP = PerspectiveT<double>;
 
 template <typename T>
 struct JuliBrot
