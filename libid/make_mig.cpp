@@ -24,106 +24,106 @@ inline char par_key(unsigned int x)
 
 void make_mig(unsigned int x_mult, unsigned int y_mult)
 {
-    unsigned int xres;
-    unsigned int yres;
-    unsigned int xtot;
-    unsigned int ytot;
-    unsigned int xloc;
-    unsigned int yloc;
+    unsigned int x_res;
+    unsigned int y_res;
+    unsigned int x_tot;
+    unsigned int y_tot;
+    unsigned int x_loc;
+    unsigned int y_loc;
     unsigned int i;
-    char gifin[15];
-    char gifout[15];
+    char gif_in[15];
+    char gif_out[15];
     unsigned char *temp;
 
-    int errorflag = 0;                          // no errors so
-    int inputerrorflag = 0;
-    unsigned int allitbl = 0;
-    unsigned int allyres = allitbl;
-    unsigned int allxres = allyres;
+    int error_flag = 0;                          // no errors so
+    int input_error_flag = 0;
+    unsigned int all_i_tbl = 0;
+    unsigned int all_y_res = all_i_tbl;
+    unsigned int all_x_res = all_y_res;
     std::FILE *in = nullptr;
     std::FILE *out = in;
 
-    std::strcpy(gifout, "fractmig.gif");
+    std::strcpy(gif_out, "fractmig.gif");
 
     temp = &g_old_dac_box[0][0];                 // a safe place for our temp data
 
     // process each input image, one at a time
-    for (unsigned ystep = 0U; ystep < y_mult; ystep++)
+    for (unsigned y_step = 0U; y_step < y_mult; y_step++)
     {
-        for (unsigned xstep = 0U; xstep < x_mult; xstep++)
+        for (unsigned x_step = 0U; x_step < x_mult; x_step++)
         {
-            if (xstep == 0 && ystep == 0)          // first time through?
+            if (x_step == 0 && y_step == 0)          // first time through?
             {
-                std::printf(" \n Generating multi-image GIF file %s using", gifout);
+                std::printf(" \n Generating multi-image GIF file %s using", gif_out);
                 std::printf(" %u X and %u Y components\n\n", x_mult, y_mult);
                 // attempt to create the output file
-                out = open_save_file(gifout, "wb");
+                out = open_save_file(gif_out, "wb");
                 if (out == nullptr)
                 {
-                    std::printf("Cannot create output file %s!\n", gifout);
+                    std::printf("Cannot create output file %s!\n", gif_out);
                     exit(1);
                 }
             }
 
-            std::snprintf(gifin, std::size(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
+            std::snprintf(gif_in, std::size(gif_in), "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
 
-            in = std::fopen(gifin, "rb");
+            in = std::fopen(gif_in, "rb");
             if (in == nullptr)
             {
-                std::printf("Can't open file %s!\n", gifin);
+                std::printf("Can't open file %s!\n", gif_in);
                 exit(1);
             }
 
             // (read, but only copy this if it's the first time through)
             if (std::fread(temp, 13, 1, in) != 1)   // read the header and LDS
             {
-                inputerrorflag = 1;
+                input_error_flag = 1;
             }
-            std::memcpy(&xres, &temp[6], 2);     // X-resolution
-            std::memcpy(&yres, &temp[8], 2);     // Y-resolution
+            std::memcpy(&x_res, &temp[6], 2);     // X-resolution
+            std::memcpy(&y_res, &temp[8], 2);     // Y-resolution
 
-            if (xstep == 0 && ystep == 0)  // first time through?
+            if (x_step == 0 && y_step == 0)  // first time through?
             {
-                allxres = xres;             // save the "master" resolution
-                allyres = yres;
-                xtot = xres * x_mult;        // adjust the image size
-                ytot = yres * y_mult;
-                std::memcpy(&temp[6], &xtot, 2);
-                std::memcpy(&temp[8], &ytot, 2);
+                all_x_res = x_res;             // save the "master" resolution
+                all_y_res = y_res;
+                x_tot = x_res * x_mult;        // adjust the image size
+                y_tot = y_res * y_mult;
+                std::memcpy(&temp[6], &x_tot, 2);
+                std::memcpy(&temp[8], &y_tot, 2);
                 temp[12] = 0; // reserved
                 if (std::fwrite(temp, 13, 1, out) != 1)     // write out the header
                 {
-                    errorflag = 1;
+                    error_flag = 1;
                 }
             }                           // end of first-time-through
 
-            unsigned char ichar = (char) (temp[10] & 0x07);        // find the color table size
-            unsigned int itbl = 1 << (++ichar);
-            ichar = (char)(temp[10] & 0x80);        // is there a global color table?
-            if (xstep == 0 && ystep == 0)   // first time through?
+            unsigned char i_char = (char) (temp[10] & 0x07);        // find the color table size
+            unsigned int i_tbl = 1 << (++i_char);
+            i_char = (char)(temp[10] & 0x80);        // is there a global color table?
+            if (x_step == 0 && y_step == 0)   // first time through?
             {
-                allitbl = itbl;             // save the color table size
+                all_i_tbl = i_tbl;             // save the color table size
             }
-            if (ichar != 0)                // yup
+            if (i_char != 0)                // yup
             {
                 // (read, but only copy this if it's the first time through)
-                if (std::fread(temp, 3*itbl, 1, in) != 1)    // read the global color table
+                if (std::fread(temp, 3*i_tbl, 1, in) != 1)    // read the global color table
                 {
-                    inputerrorflag = 2;
+                    input_error_flag = 2;
                 }
-                if (xstep == 0 && ystep == 0)       // first time through?
+                if (x_step == 0 && y_step == 0)       // first time through?
                 {
-                    if (std::fwrite(temp, 3*itbl, 1, out) != 1)     // write out the GCT
+                    if (std::fwrite(temp, 3*i_tbl, 1, out) != 1)     // write out the GCT
                     {
-                        errorflag = 2;
+                        error_flag = 2;
                     }
                 }
             }
 
-            if (xres != allxres || yres != allyres || itbl != allitbl)
+            if (x_res != all_x_res || y_res != all_y_res || i_tbl != all_i_tbl)
             {
                 // Oops - our pieces don't match
-                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
+                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gif_in);
                 exit(1);
             }
 
@@ -132,60 +132,60 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                 std::memset(temp, 0, 10);
                 if (std::fread(temp, 1, 1, in) != 1)    // read the block identifier
                 {
-                    inputerrorflag = 3;
+                    input_error_flag = 3;
                 }
 
                 if (temp[0] == 0x2c)           // image descriptor block
                 {
                     if (std::fread(&temp[1], 9, 1, in) != 1)    // read the Image Descriptor
                     {
-                        inputerrorflag = 4;
+                        input_error_flag = 4;
                     }
-                    std::memcpy(&xloc, &temp[1], 2); // X-location
-                    std::memcpy(&yloc, &temp[3], 2); // Y-location
-                    xloc += (xstep * xres);     // adjust the locations
-                    yloc += (ystep * yres);
-                    std::memcpy(&temp[1], &xloc, 2);
-                    std::memcpy(&temp[3], &yloc, 2);
+                    std::memcpy(&x_loc, &temp[1], 2); // X-location
+                    std::memcpy(&y_loc, &temp[3], 2); // Y-location
+                    x_loc += (x_step * x_res);     // adjust the locations
+                    y_loc += (y_step * y_res);
+                    std::memcpy(&temp[1], &x_loc, 2);
+                    std::memcpy(&temp[3], &y_loc, 2);
                     if (std::fwrite(temp, 10, 1, out) != 1)     // write out the Image Descriptor
                     {
-                        errorflag = 4;
+                        error_flag = 4;
                     }
 
-                    ichar = (char)(temp[9] & 0x80);     // is there a local color table?
-                    if (ichar != 0)            // yup
+                    i_char = (char)(temp[9] & 0x80);     // is there a local color table?
+                    if (i_char != 0)            // yup
                     {
-                        if (std::fread(temp, 3*itbl, 1, in) != 1)       // read the local color table
+                        if (std::fread(temp, 3*i_tbl, 1, in) != 1)       // read the local color table
                         {
-                            inputerrorflag = 5;
+                            input_error_flag = 5;
                         }
-                        if (std::fwrite(temp, 3*itbl, 1, out) != 1)     // write out the LCT
+                        if (std::fwrite(temp, 3*i_tbl, 1, out) != 1)     // write out the LCT
                         {
-                            errorflag = 5;
+                            error_flag = 5;
                         }
                     }
 
                     if (std::fread(temp, 1, 1, in) != 1)        // LZH table size
                     {
-                        inputerrorflag = 6;
+                        input_error_flag = 6;
                     }
                     if (std::fwrite(temp, 1, 1, out) != 1)
                     {
-                        errorflag = 6;
+                        error_flag = 6;
                     }
                     while (true)
                     {
-                        if (errorflag != 0 || inputerrorflag != 0)      // oops - did something go wrong?
+                        if (error_flag != 0 || input_error_flag != 0)      // oops - did something go wrong?
                         {
                             break;
                         }
                         if (std::fread(temp, 1, 1, in) != 1)    // block size
                         {
-                            inputerrorflag = 7;
+                            input_error_flag = 7;
                         }
                         if (std::fwrite(temp, 1, 1, out) != 1)
                         {
-                            errorflag = 7;
+                            error_flag = 7;
                         }
                         i = temp[0];
                         if (i == 0)
@@ -194,11 +194,11 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                         }
                         if (std::fread(temp, i, 1, in) != 1)    // LZH data block
                         {
-                            inputerrorflag = 8;
+                            input_error_flag = 8;
                         }
                         if (std::fwrite(temp, i, 1, out) != 1)
                         {
-                            errorflag = 8;
+                            error_flag = 8;
                         }
                     }
                 }
@@ -208,30 +208,30 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                     // (read, but only copy this if it's the last time through)
                     if (std::fread(&temp[2], 1, 1, in) != 1)    // read the block type
                     {
-                        inputerrorflag = 9;
+                        input_error_flag = 9;
                     }
-                    if (xstep == x_mult-1 && ystep == y_mult-1)
+                    if (x_step == x_mult-1 && y_step == y_mult-1)
                     {
                         if (std::fwrite(temp, 2, 1, out) != 1)
                         {
-                            errorflag = 9;
+                            error_flag = 9;
                         }
                     }
                     while (true)
                     {
-                        if (errorflag != 0 || inputerrorflag != 0)      // oops - did something go wrong?
+                        if (error_flag != 0 || input_error_flag != 0)      // oops - did something go wrong?
                         {
                             break;
                         }
                         if (std::fread(temp, 1, 1, in) != 1)    // block size
                         {
-                            inputerrorflag = 10;
+                            input_error_flag = 10;
                         }
-                        if (xstep == x_mult-1 && ystep == y_mult-1)
+                        if (x_step == x_mult-1 && y_step == y_mult-1)
                         {
                             if (std::fwrite(temp, 1, 1, out) != 1)
                             {
-                                errorflag = 10;
+                                error_flag = 10;
                             }
                         }
                         i = temp[0];
@@ -241,13 +241,13 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                         }
                         if (std::fread(temp, i, 1, in) != 1)    // data block
                         {
-                            inputerrorflag = 11;
+                            input_error_flag = 11;
                         }
-                        if (xstep == x_mult-1 && ystep == y_mult-1)
+                        if (x_step == x_mult-1 && y_step == y_mult-1)
                         {
                             if (std::fwrite(temp, i, 1, out) != 1)
                             {
-                                errorflag = 11;
+                                error_flag = 11;
                             }
                         }
                     }
@@ -258,20 +258,20 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                     break;                      // done with this file
                 }
 
-                if (errorflag != 0 || inputerrorflag != 0)      // oops - did something go wrong?
+                if (error_flag != 0 || input_error_flag != 0)      // oops - did something go wrong?
                 {
                     break;
                 }
             }
             std::fclose(in);                     // done with an input GIF
 
-            if (errorflag != 0 || inputerrorflag != 0)      // oops - did something go wrong?
+            if (error_flag != 0 || input_error_flag != 0)      // oops - did something go wrong?
             {
                 break;
             }
         }
 
-        if (errorflag != 0 || inputerrorflag != 0)  // oops - did something go wrong?
+        if (error_flag != 0 || input_error_flag != 0)  // oops - did something go wrong?
         {
             break;
         }
@@ -280,19 +280,19 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     temp[0] = 0x3b;                 // end-of-stream indicator
     if (std::fwrite(temp, 1, 1, out) != 1)
     {
-        errorflag = 12;
+        error_flag = 12;
     }
     std::fclose(out);                    // done with the output GIF
 
-    if (inputerrorflag != 0)       // uh-oh - something failed
+    if (input_error_flag != 0)       // uh-oh - something failed
     {
-        std::printf("\007 Process failed = early EOF on input file %s\n", gifin);
+        std::printf("\007 Process failed = early EOF on input file %s\n", gif_in);
         /* following line was for debugging
             std::printf("inputerrorflag = %d\n", inputerrorflag);
         */
     }
 
-    if (errorflag != 0)            // uh-oh - something failed
+    if (error_flag != 0)            // uh-oh - something failed
     {
         std::printf("\007 Process failed = out of disk space?\n");
         /* following line was for debugging
@@ -301,21 +301,21 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     }
 
     // now delete each input image, one at a time
-    if (errorflag == 0 && inputerrorflag == 0)
+    if (error_flag == 0 && input_error_flag == 0)
     {
-        for (unsigned ystep = 0U; ystep < y_mult; ystep++)
+        for (unsigned y_step = 0U; y_step < y_mult; y_step++)
         {
-            for (unsigned xstep = 0U; xstep < x_mult; xstep++)
+            for (unsigned x_step = 0U; x_step < x_mult; x_step++)
             {
-                std::snprintf(gifin, std::size(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
-                std::remove(gifin);
+                std::snprintf(gif_in, std::size(gif_in), "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
+                std::remove(gif_in);
             }
         }
     }
 
     // tell the world we're done
-    if (errorflag == 0 && inputerrorflag == 0)
+    if (error_flag == 0 && input_error_flag == 0)
     {
-        std::printf("File %s has been created (and its component files deleted)\n", gifout);
+        std::printf("File %s has been created (and its component files deleted)\n", gif_out);
     }
 }
