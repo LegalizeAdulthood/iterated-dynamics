@@ -930,13 +930,13 @@ static void perform_work_list()
 
     // default setup a new worklist
     g_num_work_list = 1;
-    g_work_list[0].xxbegin = 0;
-    g_work_list[0].xxstart = 0;
-    g_work_list[0].yybegin = 0;
-    g_work_list[0].yystart = 0;
-    g_work_list[0].xxstop = g_logical_screen_x_dots - 1;
-    g_work_list[0].yystop = g_logical_screen_y_dots - 1;
-    g_work_list[0].sym = 0;
+    g_work_list[0].xx_begin = 0;
+    g_work_list[0].xx_start = 0;
+    g_work_list[0].yy_begin = 0;
+    g_work_list[0].yy_start = 0;
+    g_work_list[0].xx_stop = g_logical_screen_x_dots - 1;
+    g_work_list[0].yy_stop = g_logical_screen_y_dots - 1;
+    g_work_list[0].symmetry = 0;
     g_work_list[0].pass = 0;
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
@@ -1022,18 +1022,18 @@ static void perform_work_list()
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
 
         // pull top entry off worklist
-        g_xx_start = g_work_list[0].xxstart;
-        g_i_x_start = g_work_list[0].xxstart;
-        g_xx_stop  = g_work_list[0].xxstop;
-        g_i_x_stop  = g_work_list[0].xxstop;
-        g_xx_begin  = g_work_list[0].xxbegin;
-        g_yy_start = g_work_list[0].yystart;
-        g_i_y_start = g_work_list[0].yystart;
-        g_yy_stop  = g_work_list[0].yystop;
-        g_i_y_stop  = g_work_list[0].yystop;
-        g_yy_begin  = g_work_list[0].yybegin;
+        g_xx_start = g_work_list[0].xx_start;
+        g_i_x_start = g_work_list[0].xx_start;
+        g_xx_stop  = g_work_list[0].xx_stop;
+        g_i_x_stop  = g_work_list[0].xx_stop;
+        g_xx_begin  = g_work_list[0].xx_begin;
+        g_yy_start = g_work_list[0].yy_start;
+        g_i_y_start = g_work_list[0].yy_start;
+        g_yy_stop  = g_work_list[0].yy_stop;
+        g_i_y_stop  = g_work_list[0].yy_stop;
+        g_yy_begin  = g_work_list[0].yy_begin;
         g_work_pass = g_work_list[0].pass;
-        g_work_symmetry  = g_work_list[0].sym;
+        g_work_symmetry  = g_work_list[0].symmetry;
         --g_num_work_list;
         for (int i = 0; i < g_num_work_list; ++i)
         {

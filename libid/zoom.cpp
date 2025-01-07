@@ -772,12 +772,12 @@ int init_pan_or_recalc(bool do_zoom_out)
     // adjust existing worklist entries
     for (int i = 0; i < g_num_work_list; ++i)
     {
-        g_work_list[i].yystart -= row;
-        g_work_list[i].yystop  -= row;
-        g_work_list[i].yybegin -= row;
-        g_work_list[i].xxstart -= col;
-        g_work_list[i].xxstop  -= col;
-        g_work_list[i].xxbegin -= col;
+        g_work_list[i].yy_start -= row;
+        g_work_list[i].yy_stop  -= row;
+        g_work_list[i].yy_begin -= row;
+        g_work_list[i].xx_start -= col;
+        g_work_list[i].xx_stop  -= col;
+        g_work_list[i].xx_begin -= col;
     }
     // add worklist entries for the new edges
     int listfull = 0;
@@ -842,19 +842,19 @@ int init_pan_or_recalc(bool do_zoom_out)
 // force a worklist entry to restart
 static void restart_window(int index)
 {
-    const int y_start = std::max(0, g_work_list[index].yystart);
-    const int x_start = std::max(0, g_work_list[index].xxstart);
-    const int y_stop = std::min(g_logical_screen_y_dots - 1, g_work_list[index].yystop);
-    const int x_stop = std::min(g_logical_screen_x_dots - 1, g_work_list[index].xxstop);
+    const int y_start = std::max(0, g_work_list[index].yy_start);
+    const int x_start = std::max(0, g_work_list[index].xx_start);
+    const int y_stop = std::min(g_logical_screen_y_dots - 1, g_work_list[index].yy_stop);
+    const int x_stop = std::min(g_logical_screen_x_dots - 1, g_work_list[index].xx_stop);
     std::vector<Byte> temp(g_logical_screen_x_dots, 0);
     for (int y = y_start; y <= y_stop; ++y)
     {
         write_span(y, x_start, x_stop, temp.data());
     }
     g_work_list[index].pass = 0;
-    g_work_list[index].sym = g_work_list[index].pass;
-    g_work_list[index].yybegin = g_work_list[index].yystart;
-    g_work_list[index].xxbegin = g_work_list[index].xxstart;
+    g_work_list[index].symmetry = g_work_list[index].pass;
+    g_work_list[index].yy_begin = g_work_list[index].yy_start;
+    g_work_list[index].xx_begin = g_work_list[index].xx_start;
 }
 
 // fix out of bounds and symmetry related stuff
@@ -863,8 +863,8 @@ static void fix_work_list()
     for (int i = 0; i < g_num_work_list; ++i)
     {
         WorkList *wk = &g_work_list[i];
-        if (wk->yystart >= g_logical_screen_y_dots || wk->yystop < 0
-            || wk->xxstart >= g_logical_screen_x_dots || wk->xxstop < 0)
+        if (wk->yy_start >= g_logical_screen_y_dots || wk->yy_stop < 0
+            || wk->xx_start >= g_logical_screen_x_dots || wk->xx_stop < 0)
         {
             // offscreen, delete
             for (int j = i+1; j < g_num_work_list; ++j)
@@ -875,42 +875,42 @@ static void fix_work_list()
             --i;
             continue;
         }
-        if (wk->yystart < 0)
+        if (wk->yy_start < 0)
         {
             // partly off top edge
-            if ((wk->sym&1) == 0)
+            if ((wk->symmetry&1) == 0)
             {
                 // no sym, easy
-                wk->yystart = 0;
-                wk->xxbegin = 0;
+                wk->yy_start = 0;
+                wk->xx_begin = 0;
             }
             else
             {
                 // xaxis symmetry
-                int j = wk->yystop + wk->yystart;
+                int j = wk->yy_stop + wk->yy_start;
                 if (j > 0 && g_num_work_list < MAX_CALC_WORK)
                 {
                     // split the sym part
                     g_work_list[g_num_work_list] = g_work_list[i];
-                    g_work_list[g_num_work_list].yystart = 0;
-                    g_work_list[g_num_work_list++].yystop = j;
-                    wk->yystart = j+1;
+                    g_work_list[g_num_work_list].yy_start = 0;
+                    g_work_list[g_num_work_list++].yy_stop = j;
+                    wk->yy_start = j+1;
                 }
                 else
                 {
-                    wk->yystart = 0;
+                    wk->yy_start = 0;
                 }
                 restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->yystop >= g_logical_screen_y_dots)
+        if (wk->yy_stop >= g_logical_screen_y_dots)
         {
             // partly off bottom edge
             int j = g_logical_screen_y_dots-1;
-            if ((wk->sym&1) != 0)
+            if ((wk->symmetry&1) != 0)
             {
                 // uses xaxis symmetry
-                int k = wk->yystart + (wk->yystop - j);
+                int k = wk->yy_start + (wk->yy_stop - j);
                 if (k < j)
                 {
                     if (g_num_work_list >= MAX_CALC_WORK)   // no room to split
@@ -921,49 +921,49 @@ static void fix_work_list()
                     {
                         // split it
                         g_work_list[g_num_work_list] = g_work_list[i];
-                        g_work_list[g_num_work_list].yystart = k;
-                        g_work_list[g_num_work_list++].yystop = j;
+                        g_work_list[g_num_work_list].yy_start = k;
+                        g_work_list[g_num_work_list++].yy_stop = j;
                         j = k-1;
                     }
                 }
-                wk->sym &= -1 - 1;
+                wk->symmetry &= -1 - 1;
             }
-            wk->yystop = j;
+            wk->yy_stop = j;
         }
-        if (wk->xxstart < 0)
+        if (wk->xx_start < 0)
         {
             // partly off left edge
-            if ((wk->sym&2) == 0)   // no sym, easy
+            if ((wk->symmetry&2) == 0)   // no sym, easy
             {
-                wk->xxstart = 0;
+                wk->xx_start = 0;
             }
             else
             {
                 // yaxis symmetry
-                int j = wk->xxstop + wk->xxstart;
+                int j = wk->xx_stop + wk->xx_start;
                 if (j > 0 && g_num_work_list < MAX_CALC_WORK)
                 {
                     // split the sym part
                     g_work_list[g_num_work_list] = g_work_list[i];
-                    g_work_list[g_num_work_list].xxstart = 0;
-                    g_work_list[g_num_work_list++].xxstop = j;
-                    wk->xxstart = j+1;
+                    g_work_list[g_num_work_list].xx_start = 0;
+                    g_work_list[g_num_work_list++].xx_stop = j;
+                    wk->xx_start = j+1;
                 }
                 else
                 {
-                    wk->xxstart = 0;
+                    wk->xx_start = 0;
                 }
                 restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->xxstop >= g_logical_screen_x_dots)
+        if (wk->xx_stop >= g_logical_screen_x_dots)
         {
             // partly off right edge
             int j = g_logical_screen_x_dots-1;
-            if ((wk->sym&2) != 0)
+            if ((wk->symmetry&2) != 0)
             {
                 // uses xaxis symmetry
-                int k = wk->xxstart + (wk->xxstop - j);
+                int k = wk->xx_start + (wk->xx_stop - j);
                 if (k < j)
                 {
                     if (g_num_work_list >= MAX_CALC_WORK)   // no room to split
@@ -974,19 +974,19 @@ static void fix_work_list()
                     {
                         // split it
                         g_work_list[g_num_work_list] = g_work_list[i];
-                        g_work_list[g_num_work_list].xxstart = k;
-                        g_work_list[g_num_work_list++].xxstop = j;
+                        g_work_list[g_num_work_list].xx_start = k;
+                        g_work_list[g_num_work_list++].xx_stop = j;
                         j = k-1;
                     }
                 }
-                wk->sym &= -1 - 2;
+                wk->symmetry &= -1 - 2;
             }
-            wk->xxstop = j;
+            wk->xx_stop = j;
         }
-        wk->yybegin = std::max(wk->yybegin, wk->yystart);
-        wk->yybegin = std::min(wk->yybegin, wk->yystop);
-        wk->xxbegin = std::max(wk->xxbegin, wk->xxstart);
-        wk->xxbegin = std::min(wk->xxbegin, wk->xxstop);
+        wk->yy_begin = std::max(wk->yy_begin, wk->yy_start);
+        wk->yy_begin = std::min(wk->yy_begin, wk->yy_stop);
+        wk->xx_begin = std::max(wk->xx_begin, wk->xx_start);
+        wk->xx_begin = std::min(wk->xx_begin, wk->xx_stop);
     }
     tidy_work_list(); // combine where possible, re-sort
 }
