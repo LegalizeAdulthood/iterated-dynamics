@@ -34,7 +34,7 @@ enum
 
 static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
 static U16 (*s_get_pix)(int x, int y){s_get_color};
-static int s_i_parm_x{};     // iparmx = parm.x * 8
+static int s_i_param_x{};   // s_i_param_x = param.x * 8
 static int s_shift_value{}; // shift based on #colors
 static int s_recur1{1};
 static int s_p_colors{};
@@ -99,7 +99,7 @@ static U16 get_pot(int x, int y)
 
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
-    S32 pseudorandom = ((S32) s_i_parm_x) * ((rand15() - 16383));
+    S32 pseudorandom = ((S32) s_i_param_x) * ((rand15() - 16383));
     pseudorandom = pseudorandom * s_recur1;
     pseudorandom = pseudorandom >> s_shift_value;
     pseudorandom = (((S32)s_get_pix(xa, ya)+(S32)s_get_pix(xb, yb)+1) >> 1)+pseudorandom;
@@ -128,22 +128,22 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
         Byte r[16];  // recursion level
     };
 
-    static Sub subx;
-    static Sub suby;
+    static Sub sub_x;
+    static Sub sub_y;
 
     s_recur1 = (int)(320L >> recur);
-    suby.t = 2;
-    suby.v[0] = y2;
-    int ny = suby.v[0];
-    suby.v[2] = y1;
-    int ny1 = suby.v[2];
-    suby.r[2] = 0;
-    suby.r[0] = suby.r[2];
-    suby.r[1] = 1;
-    suby.v[1] = (ny1 + ny) >> 1;
-    int y = suby.v[1];
+    sub_y.t = 2;
+    sub_y.v[0] = y2;
+    int ny = sub_y.v[0];
+    sub_y.v[2] = y1;
+    int ny1 = sub_y.v[2];
+    sub_y.r[2] = 0;
+    sub_y.r[0] = sub_y.r[2];
+    sub_y.r[1] = 1;
+    sub_y.v[1] = (ny1 + ny) >> 1;
+    int y = sub_y.v[1];
 
-    while (suby.t >= 1)
+    while (sub_y.t >= 1)
     {
         if ((++s_kbd_check & 0x0f) == 1)
         {
@@ -153,7 +153,7 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 return true;
             }
         }
-        while (suby.r[suby.t-1] < (Byte)recur)
+        while (sub_y.r[sub_y.t-1] < (Byte)recur)
         {
             //     1.  Create new entry at top of the stack
             //     2.  Copy old top value to new top value.
@@ -163,38 +163,38 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
             //     5.  New mid point value is average
             //            of largest and smallest
 
-            suby.t++;
-            suby.v[suby.t] = suby.v[suby.t-1];
-            ny1  = suby.v[suby.t];
-            ny   = suby.v[suby.t-2];
-            suby.r[suby.t] = suby.r[suby.t-1];
-            suby.v[suby.t-1]   = (ny1 + ny) >> 1;
-            y    = suby.v[suby.t-1];
-            suby.r[suby.t-1]   = (Byte)(std::max(suby.r[suby.t], suby.r[suby.t-2])+1);
+            sub_y.t++;
+            sub_y.v[sub_y.t] = sub_y.v[sub_y.t-1];
+            ny1  = sub_y.v[sub_y.t];
+            ny   = sub_y.v[sub_y.t-2];
+            sub_y.r[sub_y.t] = sub_y.r[sub_y.t-1];
+            sub_y.v[sub_y.t-1]   = (ny1 + ny) >> 1;
+            y    = sub_y.v[sub_y.t-1];
+            sub_y.r[sub_y.t-1]   = (Byte)(std::max(sub_y.r[sub_y.t], sub_y.r[sub_y.t-2])+1);
         }
-        subx.t = 2;
-        subx.v[0] = x2;
-        int nx = subx.v[0];
-        subx.v[2] = x1;
-        int nx1 = subx.v[2];
-        subx.r[2] = 0;
-        subx.r[0] = subx.r[2];
-        subx.r[1] = 1;
-        subx.v[1] = (nx1 + nx) >> 1;
-        int x = subx.v[1];
+        sub_x.t = 2;
+        sub_x.v[0] = x2;
+        int nx = sub_x.v[0];
+        sub_x.v[2] = x1;
+        int nx1 = sub_x.v[2];
+        sub_x.r[2] = 0;
+        sub_x.r[0] = sub_x.r[2];
+        sub_x.r[1] = 1;
+        sub_x.v[1] = (nx1 + nx) >> 1;
+        int x = sub_x.v[1];
 
-        while (subx.t >= 1)
+        while (sub_x.t >= 1)
         {
-            while (subx.r[subx.t-1] < (Byte)recur)
+            while (sub_x.r[sub_x.t-1] < (Byte)recur)
             {
-                subx.t++; // move the top ofthe stack up 1
-                subx.v[subx.t] = subx.v[subx.t-1];
-                nx1  = subx.v[subx.t];
-                nx   = subx.v[subx.t-2];
-                subx.r[subx.t] = subx.r[subx.t-1];
-                subx.v[subx.t-1]   = (nx1 + nx) >> 1;
-                x    = subx.v[subx.t-1];
-                subx.r[subx.t-1]   = (Byte)(std::max(subx.r[subx.t], subx.r[subx.t-2])+1);
+                sub_x.t++; // move the top ofthe stack up 1
+                sub_x.v[sub_x.t] = sub_x.v[sub_x.t-1];
+                nx1  = sub_x.v[sub_x.t];
+                nx   = sub_x.v[sub_x.t-2];
+                sub_x.r[sub_x.t] = sub_x.r[sub_x.t-1];
+                sub_x.v[sub_x.t-1]   = (nx1 + nx) >> 1;
+                x    = sub_x.v[sub_x.t-1];
+                sub_x.r[sub_x.t-1]   = (Byte)(std::max(sub_x.r[sub_x.t], sub_x.r[sub_x.t-2])+1);
             }
 
             S32 i = s_get_pix(nx, y);
@@ -227,15 +227,15 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 g_plot(x, y, (U16)((v + 2) >> 2));
             }
 
-            if (subx.r[subx.t-1] == (Byte)recur)
+            if (sub_x.r[sub_x.t-1] == (Byte)recur)
             {
-                subx.t = (Byte)(subx.t - 2);
+                sub_x.t = (Byte)(sub_x.t - 2);
             }
         }
 
-        if (suby.r[suby.t-1] == (Byte)recur)
+        if (sub_y.r[sub_y.t-1] == (Byte)recur)
         {
-            suby.t = (Byte)(suby.t - 2);
+            sub_y.t = (Byte)(sub_y.t - 2);
         }
     }
     return false;
@@ -309,16 +309,16 @@ int plasma()
         stop_msg("Plasma Clouds can requires 4 or more color video");
         return -1;
     }
-    s_i_parm_x = (int)(g_params[0] * 8);
+    s_i_param_x = (int)(g_params[0] * 8);
     if (g_param_z1.x <= 0.0)
     {
-        s_i_parm_x = 0;
+        s_i_param_x = 0;
     }
     if (g_param_z1.x >= 100)
     {
-        s_i_parm_x = 800;
+        s_i_param_x = 800;
     }
-    g_params[0] = (double)s_i_parm_x / 8.0;  // let user know what was used
+    g_params[0] = (double)s_i_param_x / 8.0;  // let user know what was used
     // limit parameter values
     g_params[1] = std::max(g_params[1], 0.0);
     g_params[1] = std::min(g_params[1], 1.0);
