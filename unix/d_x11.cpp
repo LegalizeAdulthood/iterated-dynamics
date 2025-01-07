@@ -2427,8 +2427,8 @@ void X11Driver::put_string(int row, int col, int attr, char const *msg)
         g_text_col = col;
     }
 
-    int r = g_text_rbase + g_text_row;
-    int c = g_text_cbase + g_text_col;
+    int r = g_text_row_base + g_text_row;
+    int c = g_text_col_base + g_text_col;
     assert(r >= 0 && r < X11_TEXT_MAX_ROW);
     assert(c >= 0 && c < X11_TEXT_MAX_COL);
     m_text.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
