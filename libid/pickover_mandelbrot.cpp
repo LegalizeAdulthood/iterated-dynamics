@@ -34,23 +34,23 @@ int float_trig_plus_exponent_fractal()
     {
         return 1; // DOMAIN errors
     }
-    const double tmpexp = std::exp(g_old_z.x);
-    double siny;
-    double cosy;
-    sin_cos(&g_old_z.y, &siny, &cosy);
+    const double tmp_exp = std::exp(g_old_z.x);
+    double sin_y;
+    double cos_y;
+    sin_cos(&g_old_z.y, &sin_y, &cos_y);
     cmplx_trig0(g_old_z, g_new_z);
 
     //new =   trig(old) + e**old + C
-    g_new_z.x += tmpexp*cosy + g_float_param->x;
-    g_new_z.y += tmpexp*siny + g_float_param->y;
+    g_new_z.x += tmp_exp*cos_y + g_float_param->x;
+    g_new_z.y += tmp_exp*sin_y + g_float_param->y;
     return g_bailout_float();
 }
 
 inline bool trig16_check(long val)
 {
-    static constexpr long l16triglim = 8L << 16; // domain limit of fast trig functions
+    static constexpr long l16_trig_lim = 8L << 16; // domain limit of fast trig functions
 
-    return labs(val) > l16triglim;
+    return labs(val) > l16_trig_lim;
 }
 
 int long_trig_plus_exponent_fractal()
@@ -63,13 +63,13 @@ int long_trig_plus_exponent_fractal()
         return 1;
     }
 
-    const long longtmp = exp_long(g_l_old_z.x);
-    long lcosy;
-    long lsiny;
-    sin_cos(g_l_old_z.y, &lsiny,  &lcosy);
+    const long long_tmp = exp_long(g_l_old_z.x);
+    long l_cos_y;
+    long l_sin_y;
+    sin_cos(g_l_old_z.y, &l_sin_y,  &l_cos_y);
     trig0(g_l_old_z, g_l_new_z);
-    g_l_new_z.x += multiply(longtmp,    lcosy,   g_bit_shift) + g_long_param->x;
-    g_l_new_z.y += multiply(longtmp,    lsiny,   g_bit_shift) + g_long_param->y;
+    g_l_new_z.x += multiply(long_tmp,    l_cos_y,   g_bit_shift) + g_long_param->x;
+    g_l_new_z.y += multiply(long_tmp,    l_sin_y,   g_bit_shift) + g_long_param->y;
     return g_bailout_long();
 }
 
