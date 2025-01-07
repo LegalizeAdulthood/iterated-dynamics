@@ -243,7 +243,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
 
 static MainState prompt_options(MainContext &context)
 {
-    const long old_maxit = g_max_iterations;
+    const long old_max_iterations = g_max_iterations;
     clear_zoom_box();
     if (g_from_text)
     {
@@ -301,7 +301,7 @@ static MainState prompt_options(MainContext &context)
     {
         g_true_color = false;          // truecolor doesn't play well with the evolver
     }
-    if (g_max_iterations > old_maxit
+    if (g_max_iterations > old_max_iterations
         && g_inside_color >= COLOR_BLACK
         && g_calc_status == CalcStatus::COMPLETED
         && g_cur_fractal_specific->calc_type == standard_fractal
@@ -332,11 +332,11 @@ static MainState prompt_options(MainContext &context)
 static MainState begin_ant(MainContext &)
 {
     clear_zoom_box();
-    double oldparm[MAX_PARAMS];
-    FractalType oldtype = g_fractal_type;
+    double old_param[MAX_PARAMS];
+    FractalType old_type = g_fractal_type;
     for (int j = 0; j < MAX_PARAMS; ++j)
     {
-        oldparm[j] = g_params[j];
+        old_param[j] = g_params[j];
     }
     if (g_fractal_type != FractalType::ANT)
     {
@@ -362,10 +362,10 @@ static MainState begin_ant(MainContext &)
     {
         driver_unstack_screen();
     }
-    g_fractal_type = oldtype;
+    g_fractal_type = old_type;
     for (int j = 0; j < MAX_PARAMS; ++j)
     {
-        g_params[j] = oldparm[j];
+        g_params[j] = old_param[j];
     }
     return err >= 0 ? MainState::CONTINUE : MainState::NOTHING;
 }
@@ -423,17 +423,17 @@ static MainState inverse_julia_toggle(MainContext &context)
     if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP ||
         g_fractal_type == FractalType::INVERSE_JULIA)
     {
-        static FractalType oldtype = FractalType::NO_FRACTAL;
+        static FractalType old_type = FractalType::NO_FRACTAL;
         if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
         {
-            oldtype = g_fractal_type;
+            old_type = g_fractal_type;
             g_fractal_type = FractalType::INVERSE_JULIA;
         }
         else if (g_fractal_type == FractalType::INVERSE_JULIA)
         {
-            if (oldtype != FractalType::NO_FRACTAL)
+            if (old_type != FractalType::NO_FRACTAL)
             {
-                g_fractal_type = oldtype;
+                g_fractal_type = old_type;
             }
             else
             {
