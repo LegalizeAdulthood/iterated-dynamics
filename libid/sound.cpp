@@ -18,7 +18,7 @@ int g_fm_decay{};
 int g_fm_release{};
 int g_fm_sustain{};
 int g_fm_volume{};
-int g_fm_wavetype{};
+int g_fm_wave_type{};
 int g_hi_attenuation{};
 int g_polyphony{};
 // TODO: this doesn't appear to be used outside this file?

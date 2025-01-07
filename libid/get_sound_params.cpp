@@ -178,7 +178,7 @@ static int get_music_params()
 get_music_restart:
     builder.reset()
         .int_number("polyphony 1..9", g_polyphony + 1)
-        .int_number("Wave type 0..7", g_fm_wavetype)
+        .int_number("Wave type 0..7", g_fm_wave_type)
         .int_number("Note attack time   0..15", g_fm_attack)
         .int_number("Note decay time    0..15", g_fm_decay)
         .int_number("Note sustain level 0..15", g_fm_sustain)
@@ -199,7 +199,7 @@ get_music_restart:
     }
 
     g_polyphony = std::min(8, std::abs(builder.read_int_number() - 1));
-    g_fm_wavetype = (builder.read_int_number()) & 0x07;
+    g_fm_wave_type = (builder.read_int_number()) & 0x07;
     g_fm_attack = (builder.read_int_number()) & 0x0F;
     g_fm_decay = (builder.read_int_number()) & 0x0F;
     g_fm_sustain = (builder.read_int_number()) & 0x0F;
@@ -224,7 +224,7 @@ get_music_restart:
     if (i == ID_KEY_F4)
     {
         g_polyphony = 0;
-        g_fm_wavetype = 0;
+        g_fm_wave_type = 0;
         g_fm_attack = 5;
         g_fm_decay = 10;
         g_fm_sustain = 13;

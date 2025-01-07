@@ -2758,12 +2758,12 @@ TEST_F(TestParameterCommand, polyphonyValue)
 
 TEST_F(TestParameterCommand, waveTypeValue)
 {
-    ValueSaver saved_fm_wavetype{g_fm_wavetype, -999};
+    ValueSaver saved_fm_wavetype{g_fm_wave_type, -999};
 
     exec_cmd_arg("wavetype=4");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(4, g_fm_wavetype);
+    EXPECT_EQ(4, g_fm_wave_type);
 }
 
 TEST_F(TestParameterCommand, attackValue)

@@ -580,7 +580,7 @@ static void init_vars_fractal()
     g_fm_decay = 10;                                                // long decay
     g_fm_sustain = 13;                                              // fairly high sustain level
     g_fm_release = 5;                                               // short release
-    g_fm_wavetype = 0;                                              // sin wave
+    g_fm_wave_type = 0;                                              // sin wave
     g_polyphony = 0;                                                // no polyphony
     std::iota(&g_scale_map[0], &g_scale_map[11], 1);                // straight mapping of notes in octave
 }
@@ -3690,7 +3690,7 @@ static CmdArgFlags cmd_water_line(const Command &cmd)
 // wavetype=?
 static CmdArgFlags cmd_wave_type(const Command &cmd)
 {
-    g_fm_wavetype = cmd.num_val & 0x0F;
+    g_fm_wave_type = cmd.num_val & 0x0F;
     return CmdArgFlags::NONE;
 }
 

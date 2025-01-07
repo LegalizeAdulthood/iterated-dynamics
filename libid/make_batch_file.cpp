@@ -1328,9 +1328,9 @@ static void write_batch_params(char const *colorinf, bool colorsonly, int maxcol
             put_param(" %s=%d", "polyphony", g_polyphony+1);
         }
 
-        if (g_fm_wavetype != 0)
+        if (g_fm_wave_type != 0)
         {
-            put_param(" %s=%d", "wavetype", g_fm_wavetype);
+            put_param(" %s=%d", "wavetype", g_fm_wave_type);
         }
 
         if (g_fm_attack != 5)
