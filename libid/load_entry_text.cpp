@@ -55,12 +55,12 @@ void load_entry_text(
     }
 
     // write max_lines of entry
-    const int tabpos = 7 - start_col % 8;
+    const int tab_pos = 7 - start_col % 8;
     while (max_lines-- > 0)
     {
         bool comment = false;
         int c = 0;
-        int linelen = 0;
+        int line_len = 0;
 
         // skip line up to start_col
         int i = 0;
@@ -109,7 +109,7 @@ void load_entry_text(
             while (i-- > start_col)
             {
                 *buf++ = ' ';
-                linelen++;
+                line_len++;
             }
         }
 
@@ -128,11 +128,11 @@ void load_entry_text(
             {
                 if (c == '\t')
                 {
-                    while (linelen % 8 != tabpos && linelen < 75)
+                    while (line_len % 8 != tab_pos && line_len < 75)
                     {
                         // 76 wide max
                         *buf++ = ' ';
-                        ++linelen;
+                        ++line_len;
                     }
                     c = ' ';
                 }
@@ -141,9 +141,9 @@ void load_entry_text(
                     *buf++ = '\n';
                     break;
                 }
-                if (++linelen > 75)
+                if (++line_len > 75)
                 {
-                    if (linelen == 76)
+                    if (line_len == 76)
                     {
                         *buf++ = '\021';
                     }
