@@ -329,12 +329,12 @@ bool encoder()
 #else
     if (g_colors == 2)
     {
-        bitsperpixel = 1;
+        bits_per_pixel = 1;
         s_start_bits = 3;
     }
     else
     {
-        bitsperpixel = 8;
+        bits_per_pixel = 8;
         s_start_bits = 9;
     }
 #endif
