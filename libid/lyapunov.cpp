@@ -160,7 +160,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
     // e10=22026.4657948  e-10=0.0000453999297625
 
     double total = 1.0;
-    int lnadjust = 0;
+    int ln_adjust = 0;
     long i;
     for (i = 0; i < filter_cycles; i++)
     {
@@ -195,17 +195,17 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
         while (total > 22026.4657948)
         {
             total *= 0.0000453999297625;
-            lnadjust += 10;
+            ln_adjust += 10;
         }
         while (total < 0.0000453999297625)
         {
             total *= 22026.4657948;
-            lnadjust -= 10;
+            ln_adjust -= 10;
         }
     }
 
 jumpout:
-    if (g_overflow || total <= 0 || (temp = std::log(total) + lnadjust) > 0)
+    if (g_overflow || total <= 0 || (temp = std::log(total) + ln_adjust) > 0)
     {
         color = 0;
     }
