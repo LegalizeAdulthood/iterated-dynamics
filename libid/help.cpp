@@ -152,8 +152,8 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
     TokenType tok;
     int size, width;
 
-    g_text_cbase = SCREEN_INDENT;
-    g_text_rbase = TEXT_START_ROW;
+    g_text_col_base = SCREEN_INDENT;
+    g_text_row_base = TEXT_START_ROW;
 
     char const *curr = text;
     int row = 0;
@@ -309,19 +309,19 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
     } // while (true)
 
-    g_text_cbase = 0;
-    g_text_rbase = 0;
+    g_text_col_base = 0;
+    g_text_row_base = 0;
 }
 
 static void color_link(Link *link, int color)
 {
-    g_text_cbase = SCREEN_INDENT;
-    g_text_rbase = TEXT_START_ROW;
+    g_text_col_base = SCREEN_INDENT;
+    g_text_row_base = TEXT_START_ROW;
 
     driver_set_attr(link->r, link->c, color, link->width);
 
-    g_text_cbase = 0;
-    g_text_rbase = 0;
+    g_text_col_base = 0;
+    g_text_row_base = 0;
 }
 
 #if defined(_WIN32)

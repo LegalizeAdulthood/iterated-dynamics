@@ -53,9 +53,9 @@ int field_prompt(char const *hdg, // heading, \n delimited lines
     {
         driver_set_attr(title_row + k, j, C_PROMPT_LO, box_width);
     }
-    g_text_cbase = title_col;                  // set left margin for putstring
+    g_text_col_base = title_col;                  // set left margin for putstring
     driver_put_string(title_row, 0, C_PROMPT_HI, hdg); // display heading
-    g_text_cbase = 0;
+    g_text_col_base = 0;
     i = title_row + title_lines + 4;
     if (instr)
     {

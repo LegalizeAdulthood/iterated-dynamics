@@ -226,8 +226,8 @@ void Win32BaseDriver::put_string(int row, int col, int attr, char const *msg)
         g_text_col = col;
     }
     {
-        int abs_row = g_text_rbase + g_text_row;
-        int abs_col = g_text_cbase + g_text_col;
+        int abs_row = g_text_row_base + g_text_row;
+        int abs_col = g_text_col_base + g_text_col;
         _ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
         _ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
         m_win_text.put_string(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
@@ -255,7 +255,7 @@ void Win32BaseDriver::move_cursor(int row, int col)
         m_cursor_col = col;
         g_text_col = col;
     }
-    m_win_text.cursor(g_text_cbase + m_cursor_col, g_text_rbase + m_cursor_row, 1);
+    m_win_text.cursor(g_text_col_base + m_cursor_col, g_text_row_base + m_cursor_row, 1);
     m_cursor_shown = true;
 }
 
@@ -269,7 +269,7 @@ void Win32BaseDriver::set_attr(int row, int col, int attr, int count)
     {
         g_text_col = col;
     }
-    m_win_text.set_attr(g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
+    m_win_text.set_attr(g_text_row_base + g_text_row, g_text_col_base + g_text_col, attr, count);
 }
 
 /*

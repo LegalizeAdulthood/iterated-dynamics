@@ -538,9 +538,9 @@ static int check_gfe_key(int key, int choice)
         help_title();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
-        g_text_cbase = 0;
+        g_text_col_base = 0;
         driver_put_string(2, 1, C_GENERAL_HI, inf_hdg);
-        g_text_cbase = 2; // left margin is 2
+        g_text_col_base = 2; // left margin is 2
         driver_put_string(4, 0, C_GENERAL_MED, inf_buf);
         driver_put_string(-1, 0, C_GENERAL_LO,
             "\n"
@@ -654,7 +654,7 @@ static int check_gfe_key(int key, int choice)
                 done = true;  // a key other than scrolling key was pressed
             }
         }
-        g_text_cbase = 0;
+        g_text_col_base = 0;
         driver_hide_text_cursor();
         driver_unstack_screen();
     }

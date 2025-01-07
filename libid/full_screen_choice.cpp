@@ -340,10 +340,10 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
     }
     if (hdg)
     {
-        g_text_cbase = (80 - title_width) / 2;   // set left margin for putstring
-        g_text_cbase -= (90 - title_width) / 20; // put heading into box
+        g_text_col_base = (80 - title_width) / 2;   // set left margin for putstring
+        g_text_col_base -= (90 - title_width) / 20; // put heading into box
         driver_put_string(top_left_row - title_lines - 1, 0, C_PROMPT_HI, hdg);
-        g_text_cbase = 0;
+        g_text_col_base = 0;
     }
     if (hdg2)                               // display 2nd heading
     {

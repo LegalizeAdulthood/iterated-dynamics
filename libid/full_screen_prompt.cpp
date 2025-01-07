@@ -338,7 +338,7 @@ int full_screen_prompt(        // full-screen prompting routine
             }
             *next = '\0';
             title_width = (int) std::strlen(hdg_line);
-            g_text_cbase = box_col + (box_width - title_width) / 2;
+            g_text_col_base = box_col + (box_width - title_width) / 2;
             driver_put_string(title_row+i, 0, C_PROMPT_HI, hdg_line);
             *next = '\n';
             hdg_line = next+1;
@@ -351,7 +351,7 @@ int full_screen_prompt(        // full-screen prompting routine
         }
 
         title_width = (int) std::strlen(hdg_line);
-        g_text_cbase = box_col + (box_width - title_width) / 2;
+        g_text_col_base = box_col + (box_width - title_width) / 2;
         driver_put_string(title_row+i, 0, C_PROMPT_HI, hdg_line);
     }
 
@@ -376,24 +376,24 @@ int full_screen_prompt(        // full-screen prompting routine
         char buf[81];
         std::memset(buf, S1, 80);
         buf[box_width-2] = 0;
-        g_text_cbase = box_col + 1;
+        g_text_col_base = box_col + 1;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, buf);
         driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, buf);
-        --g_text_cbase;
+        --g_text_col_base;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S5);
         driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, S2);
-        g_text_cbase += box_width - 1;
+        g_text_col_base += box_width - 1;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S6);
         driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, S3);
 
-        g_text_cbase = box_col;
+        g_text_col_base = box_col;
 
         for (int i = 1; i < extra_lines-1; ++i)
         {
             driver_put_string(extra_row + i, 0, C_PROMPT_BKGRD, S4);
             driver_put_string(extra_row + i, box_width - 1, C_PROMPT_BKGRD, S4);
         }
-        g_text_cbase += (box_width - extra_width) / 2;
+        g_text_col_base += (box_width - extra_width) / 2;
         const std::string extra_text{extra_info};
         std::string::size_type line_begin{};
         for (int i = 1; i < extra_lines-1; ++i)
@@ -405,7 +405,7 @@ int full_screen_prompt(        // full-screen prompting routine
         }
     }
 
-    g_text_cbase = 0;
+    g_text_col_base = 0;
 
     // display empty box
     for (int i = 0; i < box_lines; ++i)
@@ -446,7 +446,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 "Press ENTER to exit, ESC to back out, F1 for help"
                 : "Press ENTER to exit");
         driver_hide_text_cursor();
-        g_text_cbase = 2;
+        g_text_col_base = 2;
         while (true)
         {
             if (rewrite_extra_info)
@@ -571,8 +571,8 @@ int full_screen_prompt(        // full-screen prompting routine
     {
         if (rewrite_extra_info)
         {
-            int j = g_text_cbase;
-            g_text_cbase = 2;
+            int j = g_text_col_base;
+            g_text_col_base = 2;
             std::fseek(scroll_file, scroll_file_start, SEEK_SET);
             load_entry_text(scroll_file, extra_info, extra_lines - 2,
                             s_scroll_row_status, s_scroll_column_status);
@@ -581,7 +581,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 driver_put_string(extra_row+i, 0, C_PROMPT_TEXT, blanks);
             }
             driver_put_string(extra_row+1, 0, C_PROMPT_TEXT, extra_info);
-            g_text_cbase = j;
+            g_text_col_base = j;
         }
 
         const int cur_type = values[cur_choice].type;

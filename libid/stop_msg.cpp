@@ -85,7 +85,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         toprow = 4;
         driver_move_cursor(4, 0);
     }
-    g_text_cbase = 2; // left margin is 2
+    g_text_col_base = 2; // left margin is 2
     driver_put_string(toprow, 0, 7, msg);
     if (bit_set(flags, StopMsgFlags::CANCEL))
     {
@@ -95,7 +95,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     {
         driver_put_string(g_text_row+2, 0, 7, "Any key to continue...");
     }
-    g_text_cbase = 0; // back to full line
+    g_text_col_base = 0; // back to full line
     int color = bit_set(flags, StopMsgFlags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
     driver_set_attr(toprow, 0, color, (g_text_row+1-toprow)*80);
     driver_hide_text_cursor();   // cursor off
