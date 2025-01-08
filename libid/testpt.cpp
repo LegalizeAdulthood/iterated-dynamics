@@ -33,22 +33,22 @@ The sample code below is a straightforward Mandelbrot routine.
 // standalone engine for "test"
 int test()
 {
-    int startpass = 0;
-    int startrow = startpass;
+    int start_pass = 0;
+    int start_row = start_pass;
     if (g_resuming)
     {
         start_resume();
-        get_resume(startrow, startpass);
+        get_resume(start_row, start_pass);
         end_resume();
     }
     if (test_start())   // assume it was stand-alone, doesn't want passes logic
     {
         return 0;
     }
-    int numpasses = (g_std_calc_mode == '1') ? 0 : 1;
-    for (int passes = startpass; passes <= numpasses ; passes++)
+    int num_passes = (g_std_calc_mode == '1') ? 0 : 1;
+    for (int passes = start_pass; passes <= num_passes ; passes++)
     {
-        for (g_row = startrow; g_row <= g_i_y_stop; g_row = g_row+1+numpasses)
+        for (g_row = start_row; g_row <= g_i_y_stop; g_row = g_row+1+num_passes)
         {
             for (g_col = 0; g_col <= g_i_x_stop; g_col++)       // look at each point on screen
             {
@@ -76,13 +76,13 @@ int test()
                     }
                 }
                 (*g_plot)(g_col, g_row, color);
-                if (numpasses && (passes == 0))
+                if (num_passes && (passes == 0))
                 {
                     (*g_plot)(g_col, g_row+1, color);
                 }
             }
         }
-        startrow = passes + 1;
+        start_row = passes + 1;
     }
     test_end();
     return 0;
@@ -101,18 +101,18 @@ void test_end()       // this routine is called just after the fractal ends
 // (note: possibly using the dual-pass / solid-guessing options
 int test_pt(double init_real, double init_imag, double param1, double param2, long max_iter, int inside)
 {
-    double oldreal = param1;
-    double oldimag = param2;
+    double old_real = param1;
+    double old_imag = param2;
     double magnitude = 0.0;
     long color = 0;
     while ((magnitude < 4.0) && (color < max_iter))
     {
-        double newreal = oldreal * oldreal - oldimag * oldimag + init_real;
-        double newimag = 2 * oldreal * oldimag + init_imag;
+        double new_real = old_real * old_real - old_imag * old_imag + init_real;
+        double new_imag = 2 * old_real * old_imag + init_imag;
         color++;
-        oldreal = newreal;
-        oldimag = newimag;
-        magnitude = newreal * newreal + newimag * newimag;
+        old_real = new_real;
+        old_imag = new_imag;
+        magnitude = new_real * new_real + new_imag * new_imag;
     }
     if (color >= max_iter)
     {
