@@ -29,17 +29,17 @@ static std::FILE *s_snd_fp{};
 // open sound file
 bool sound_open()
 {
-    std::string soundname{"sound001.txt"};
+    std::string sound_name{"sound001.txt"};
     if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
     {
-        s_snd_fp = open_save_file(soundname, "w");
+        s_snd_fp = open_save_file(sound_name, "w");
         if (s_snd_fp == nullptr)
         {
             stop_msg("Can't open sound*.txt");
         }
         else
         {
-            update_save_name(soundname);
+            update_save_name(sound_name);
         }
     }
     return s_snd_fp != nullptr;
