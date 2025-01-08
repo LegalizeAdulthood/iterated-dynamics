@@ -19,14 +19,9 @@ static std::vector<Byte> s_text_save;
 static int s_text_x_dots{};
 static int s_text_y_dots{};
 
-/* texttempmsg(msg) displays a text message of up to 40 characters, waits
-      for a key press, restores the prior display, and returns (without
-      eating the key).
-      It works in almost any video mode - does nothing in some very odd cases
-      (HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
-int text_temp_msg(char const *msgparm)
+int text_temp_msg(char const *msg)
 {
-    if (show_temp_msg(msgparm))
+    if (show_temp_msg(msg))
     {
         return -1;
     }
@@ -41,37 +36,37 @@ void free_temp_msg()
     s_text_save.clear();
 }
 
-bool show_temp_msg(char const *msgparm)
+bool show_temp_msg(char const *msg)
 {
     static size_t size = 0;
-    char msg[41];
+    char buffer[41];
 
-    std::strncpy(msg, msgparm, 40);
-    msg[40] = 0; // ensure max message len of 40 chars
+    std::strncpy(buffer, msg, 40);
+    buffer[40] = 0; // ensure max message len of 40 chars
     if (driver_is_disk())  // disk video, screen in text mode, easy
     {
-        dvid_status(0, msg);
+        dvid_status(0, buffer);
         return false;
     }
     if (g_first_init) // & cmdfiles hasn't finished 1st try
     {
         // TODO: handle this in an OS-specific way
-        std::printf("%s\n", msg);
+        std::printf("%s\n", buffer);
         return false;
     }
 
-    const int xrepeat = (g_screen_x_dots >= 640) ? 2 : 1;
-    const int yrepeat = (g_screen_y_dots >= 300) ? 2 : 1;
-    s_text_x_dots = (int) std::strlen(msg) * xrepeat * 8;
-    s_text_y_dots = yrepeat * 8;
+    const int x_repeat = (g_screen_x_dots >= 640) ? 2 : 1;
+    const int y_repeat = (g_screen_y_dots >= 300) ? 2 : 1;
+    s_text_x_dots = (int) std::strlen(buffer) * x_repeat * 8;
+    s_text_y_dots = y_repeat * 8;
 
     size = (long) s_text_x_dots * (long) s_text_y_dots;
     if (s_text_save.size() != size)
     {
         s_text_save.clear();
     }
-    int save_sxoffs = g_logical_screen_x_offset;
-    int save_syoffs = g_logical_screen_y_offset;
+    int save_screen_x_offset = g_logical_screen_x_offset;
+    int save_screen_y_offset = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
     g_logical_screen_x_offset = g_logical_screen_y_offset;
     if (s_text_save.empty()) // only save screen first time called
@@ -84,9 +79,9 @@ bool show_temp_msg(char const *msgparm)
     }
 
     find_special_colors(); // get g_color_dark & g_color_medium set
-    driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
-    g_logical_screen_x_offset = save_sxoffs;
-    g_logical_screen_y_offset = save_syoffs;
+    driver_display_string(0, 0, g_color_medium, g_color_dark, buffer);
+    g_logical_screen_x_offset = save_screen_x_offset;
+    g_logical_screen_y_offset = save_screen_y_offset;
 
     return false;
 }
@@ -99,8 +94,8 @@ void clear_temp_msg()
     }
     else if (!s_text_save.empty())
     {
-        int save_sxoffs = g_logical_screen_x_offset;
-        int save_syoffs = g_logical_screen_y_offset;
+        int save_screen_x_offset = g_logical_screen_x_offset;
+        int save_screen_y_offset = g_logical_screen_y_offset;
         g_logical_screen_y_offset = 0;
         g_logical_screen_x_offset = g_logical_screen_y_offset;
         for (int i = 0; i < s_text_y_dots; ++i)
@@ -111,7 +106,7 @@ void clear_temp_msg()
         {
             s_text_save.clear();
         }
-        g_logical_screen_x_offset = save_sxoffs;
-        g_logical_screen_y_offset = save_syoffs;
+        g_logical_screen_x_offset = save_screen_x_offset;
+        g_logical_screen_y_offset = save_screen_y_offset;
     }
 }
