@@ -1390,43 +1390,43 @@ xhandleevents()
                 return;
             case XK_F1:
             case XK_L1:
-                xbufkey = shift_mode ? ID_KEY_SF1 : ID_KEY_F1;
+                xbufkey = shift_mode ? ID_KEY_SHF_F1 : ID_KEY_F1;
                 return;
             case XK_F2:
             case XK_L2:
-                xbufkey = shift_mode ? ID_KEY_SF2: ID_KEY_F2;
+                xbufkey = shift_mode ? ID_KEY_SHF_F2: ID_KEY_F2;
                 return;
             case XK_F3:
             case XK_L3:
-                xbufkey = shift_mode ? ID_KEY_SF3: ID_KEY_F3;
+                xbufkey = shift_mode ? ID_KEY_SHF_F3: ID_KEY_F3;
                 return;
             case XK_F4:
             case XK_L4:
-                xbufkey = shift_mode ? ID_KEY_SF4: ID_KEY_F4;
+                xbufkey = shift_mode ? ID_KEY_SHF_F4: ID_KEY_F4;
                 return;
             case XK_F5:
             case XK_L5:
-                xbufkey = shift_mode ? ID_KEY_SF5: ID_KEY_F5;
+                xbufkey = shift_mode ? ID_KEY_SHF_F5: ID_KEY_F5;
                 return;
             case XK_F6:
             case XK_L6:
-                xbufkey = shift_mode ? ID_KEY_SF6: ID_KEY_F6;
+                xbufkey = shift_mode ? ID_KEY_SHF_F6: ID_KEY_F6;
                 return;
             case XK_F7:
             case XK_L7:
-                xbufkey = shift_mode ? ID_KEY_SF7: ID_KEY_F7;
+                xbufkey = shift_mode ? ID_KEY_SHF_F7: ID_KEY_F7;
                 return;
             case XK_F8:
             case XK_L8:
-                xbufkey = shift_mode ? ID_KEY_SF8: ID_KEY_F8;
+                xbufkey = shift_mode ? ID_KEY_SHF_F8: ID_KEY_F8;
                 return;
             case XK_F9:
             case XK_L9:
-                xbufkey = shift_mode ? ID_KEY_SF9: ID_KEY_F9;
+                xbufkey = shift_mode ? ID_KEY_SHF_F9: ID_KEY_F9;
                 return;
             case XK_F10:
             case XK_L10:
-                xbufkey = shift_mode ? ID_KEY_SF10: ID_KEY_F10;
+                xbufkey = shift_mode ? ID_KEY_SHF_F10: ID_KEY_F10;
                 return;
             case '+':
                 xbufkey = ctl_mode ? ID_KEY_CTL_PLUS : '+';

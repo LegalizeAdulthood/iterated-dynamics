@@ -35,7 +35,7 @@ int check_vid_mode_key_name(char const *key_name)
     int key_set = ID_KEY_F1 - 1;
     if (*key_name == 'S' || *key_name == 's')
     {
-        key_set = ID_KEY_SF1 - 1;
+        key_set = ID_KEY_SHF_F1 - 1;
         ++key_name;
     }
     else if (*key_name == 'C' || *key_name == 'c')
@@ -95,10 +95,10 @@ void vid_mode_key_name(int key, char *buffer)
             *buffer++ = 'C';
             key -= ID_KEY_CTL_F1 - 1;
         }
-        else if (key >= ID_KEY_SF1 && key <= ID_KEY_SF10)
+        else if (key >= ID_KEY_SHF_F1 && key <= ID_KEY_SHF_F10)
         {
             *buffer++ = 'S';
-            key -= ID_KEY_SF1 - 1;
+            key -= ID_KEY_SHF_F1 - 1;
         }
         else if (key >= ID_KEY_F1 && key <= ID_KEY_F10)
         {

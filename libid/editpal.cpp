@@ -2539,16 +2539,16 @@ void PalTable::other_key(int key, RGBEditor *rgb)
         break;
     }
 
-    case ID_KEY_SF2: // save a palette
-    case ID_KEY_SF3:
-    case ID_KEY_SF4:
-    case ID_KEY_SF5:
-    case ID_KEY_SF6:
-    case ID_KEY_SF7:
-    case ID_KEY_SF8:
-    case ID_KEY_SF9:
+    case ID_KEY_SHF_F2: // save a palette
+    case ID_KEY_SHF_F3:
+    case ID_KEY_SHF_F4:
+    case ID_KEY_SHF_F5:
+    case ID_KEY_SHF_F6:
+    case ID_KEY_SHF_F7:
+    case ID_KEY_SHF_F8:
+    case ID_KEY_SHF_F9:
     {
-        int which = key - ID_KEY_SF2;
+        int which = key - ID_KEY_SHF_F2;
         std::memcpy(m_save_pal[which], m_pal, 256 * sizeof(PalEntry));
         break;
     }

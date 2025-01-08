@@ -22,10 +22,10 @@ TEST(TestVideoMode, checkKeyNameFnKey)
 
 TEST(TestVideoMode, checkKeyNameShiftFnKey)
 {
-    EXPECT_EQ(ID_KEY_SF1, check_vid_mode_key_name("SF1"));
-    EXPECT_EQ(ID_KEY_SF2, check_vid_mode_key_name("sf2"));
-    EXPECT_EQ(ID_KEY_SF6, check_vid_mode_key_name("SF6   "));
-    EXPECT_EQ(ID_KEY_SF10, check_vid_mode_key_name("SF10"));
+    EXPECT_EQ(ID_KEY_SHF_F1, check_vid_mode_key_name("SF1"));
+    EXPECT_EQ(ID_KEY_SHF_F2, check_vid_mode_key_name("sf2"));
+    EXPECT_EQ(ID_KEY_SHF_F6, check_vid_mode_key_name("SF6   "));
+    EXPECT_EQ(ID_KEY_SHF_F10, check_vid_mode_key_name("SF10"));
     EXPECT_EQ(0, check_vid_mode_key_name("s"));
     EXPECT_EQ(0, check_vid_mode_key_name("sf"));
     EXPECT_EQ(0, check_vid_mode_key_name("sf0"));
@@ -65,8 +65,8 @@ TEST(TestVideoMode, checkKeyFnKeyNoModes)
     
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SF1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SF10));
+    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F1));
+    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F10));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F1));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F10));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F1));
@@ -85,12 +85,12 @@ static void push_modes(std::initializer_list<int> keys)
 TEST(TestVideoMode, checkKeyFnKeyNoMatchingModes)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
-    push_modes({ID_KEY_F2, ID_KEY_SF2, ID_KEY_CTL_F2, ID_KEY_ALT_F2});
+    push_modes({ID_KEY_F2, ID_KEY_SHF_F2, ID_KEY_CTL_F2, ID_KEY_ALT_F2});
     
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F10));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SF1));
-    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SF10));
+    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F1));
+    EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F10));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F1));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_CTL_F10));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F1));
@@ -101,14 +101,14 @@ TEST(TestVideoMode, checkKeyFnKeyMatchingModes)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
     push_modes({ID_KEY_F1, ID_KEY_F10, //
-        ID_KEY_SF1, ID_KEY_SF10,       //
+        ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
         ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
         ID_KEY_ALT_F1, ID_KEY_ALT_F10});
 
     EXPECT_EQ(0, check_vid_mode_key(ID_KEY_F1));
     EXPECT_EQ(1, check_vid_mode_key(ID_KEY_F10));
-    EXPECT_EQ(2, check_vid_mode_key(ID_KEY_SF1));
-    EXPECT_EQ(3, check_vid_mode_key(ID_KEY_SF10));
+    EXPECT_EQ(2, check_vid_mode_key(ID_KEY_SHF_F1));
+    EXPECT_EQ(3, check_vid_mode_key(ID_KEY_SHF_F10));
     EXPECT_EQ(4, check_vid_mode_key(ID_KEY_CTL_F1));
     EXPECT_EQ(5, check_vid_mode_key(ID_KEY_CTL_F10));
     EXPECT_EQ(6, check_vid_mode_key(ID_KEY_ALT_F1));
@@ -119,7 +119,7 @@ TEST(TestVideoMode, keyName)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
     push_modes({ID_KEY_F1, ID_KEY_F10, //
-        ID_KEY_SF1, ID_KEY_SF10,       //
+        ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
         ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
         ID_KEY_ALT_F1, ID_KEY_ALT_F10});
     char buffer[10];
@@ -131,8 +131,8 @@ TEST(TestVideoMode, keyName)
 
     EXPECT_STREQ("F1", key_name(ID_KEY_F1));
     EXPECT_STREQ("F10", key_name(ID_KEY_F10));
-    EXPECT_STREQ("SF1", key_name(ID_KEY_SF1));
-    EXPECT_STREQ("SF10", key_name(ID_KEY_SF10));
+    EXPECT_STREQ("SF1", key_name(ID_KEY_SHF_F1));
+    EXPECT_STREQ("SF10", key_name(ID_KEY_SHF_F10));
     EXPECT_STREQ("CF1", key_name(ID_KEY_CTL_F1));
     EXPECT_STREQ("CF10", key_name(ID_KEY_CTL_F10));
     EXPECT_STREQ("AF1", key_name(ID_KEY_ALT_F1));

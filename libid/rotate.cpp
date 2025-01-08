@@ -367,43 +367,43 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         default:                       // maybe a new palette
             f_key = 0;                   // disable random generation
-            if (key == ID_KEY_SF1)
+            if (key == ID_KEY_SHF_F1)
             {
                 set_palette(s_black, s_white);
             }
-            if (key == ID_KEY_SF2)
+            if (key == ID_KEY_SHF_F2)
             {
                 set_palette(s_red, s_yellow);
             }
-            if (key == ID_KEY_SF3)
+            if (key == ID_KEY_SHF_F3)
             {
                 set_palette(s_blue, s_green);
             }
-            if (key == ID_KEY_SF4)
+            if (key == ID_KEY_SHF_F4)
             {
                 set_palette(s_black, s_yellow);
             }
-            if (key == ID_KEY_SF5)
+            if (key == ID_KEY_SHF_F5)
             {
                 set_palette(s_black, s_red);
             }
-            if (key == ID_KEY_SF6)
+            if (key == ID_KEY_SHF_F6)
             {
                 set_palette(s_black, s_blue);
             }
-            if (key == ID_KEY_SF7)
+            if (key == ID_KEY_SHF_F7)
             {
                 set_palette(s_black, s_green);
             }
-            if (key == ID_KEY_SF8)
+            if (key == ID_KEY_SHF_F8)
             {
                 set_palette(s_blue, s_yellow);
             }
-            if (key == ID_KEY_SF9)
+            if (key == ID_KEY_SHF_F9)
             {
                 set_palette(s_red, s_green);
             }
-            if (key == ID_KEY_SF10)
+            if (key == ID_KEY_SHF_F10)
             {
                 set_palette(s_green, s_white);
             }

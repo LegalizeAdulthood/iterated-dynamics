@@ -177,7 +177,7 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
     {
         if (has_mod(VK_SHIFT))
         {
-            i = mod_key(VK_SHIFT, i, ID_KEY_SF1 + (vk - VK_F1));
+            i = mod_key(VK_SHIFT, i, ID_KEY_SHF_F1 + (vk - VK_F1));
         }
         else if (has_mod(VK_CONTROL))
         {
