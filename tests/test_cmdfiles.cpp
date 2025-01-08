@@ -111,16 +111,16 @@ public:
     ~TestParameterCommand() override = default;
 
 protected:
-    void exec_cmd_arg(const std::string &curarg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
+    void exec_cmd_arg(const std::string &cur_arg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
     std::vector<char> m_buffer;
     CmdArgFlags m_result{};
 };
 
-void TestParameterCommand::exec_cmd_arg(const std::string &curarg, CmdFile mode)
+void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, CmdFile mode)
 {
-    m_buffer.resize(curarg.size() + 1);
-    std::strcpy(m_buffer.data(), curarg.c_str());
+    m_buffer.resize(cur_arg.size() + 1);
+    std::strcpy(m_buffer.data(), cur_arg.c_str());
     m_result = cmd_arg(m_buffer.data(), mode);
 }
 
@@ -2758,7 +2758,7 @@ TEST_F(TestParameterCommand, polyphonyValue)
 
 TEST_F(TestParameterCommand, waveTypeValue)
 {
-    ValueSaver saved_fm_wavetype{g_fm_wave_type, -999};
+    ValueSaver saved_fm_wave_type{g_fm_wave_type, -999};
 
     exec_cmd_arg("wavetype=4");
 
@@ -3649,7 +3649,7 @@ TEST_F(TestParameterCommand, fullColorNo)
 
 TEST_F(TestParameterCommand, trueColorNo)
 {
-    ValueSaver saved_truecolor{g_true_color, true};
+    ValueSaver saved_true_color{g_true_color, true};
 
     exec_cmd_arg("truecolor=no");
 
