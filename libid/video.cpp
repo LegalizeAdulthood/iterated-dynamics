@@ -39,8 +39,8 @@
 
 static void (*s_write_pixel)(int x, int y, int color){};
 static int (*s_read_pixel)(int x, int y){};
-static void (*s_write_span)(int y, int x, int lastx, Byte const *pixels){};
-static void (*s_read_span)(int y, int x, int lastx, Byte *pixels){};
+static void (*s_write_span)(int y, int x, int last_x, Byte const *pixels){};
+static void (*s_read_span)(int y, int x, int last_x, Byte *pixels){};
 
 // Global variables (yuck!)
 int g_row_count{};
@@ -81,9 +81,9 @@ void write_span(int row, int start_col, int stop_col, Byte const *pixels)
     (*s_write_span)(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
-static void normal_write_span(int y, int x, int lastx, Byte const *pixels)
+static void normal_write_span(int y, int x, int last_x, Byte const *pixels)
 {
-    int width = lastx - x + 1;
+    int width = last_x - x + 1;
     assert(s_write_pixel);
     for (int i = 0; i < width; i++)
     {
@@ -91,9 +91,9 @@ static void normal_write_span(int y, int x, int lastx, Byte const *pixels)
     }
 }
 
-static void normal_read_span(int y, int x, int lastx, Byte *pixels)
+static void normal_read_span(int y, int x, int last_x, Byte *pixels)
 {
-    int width = lastx - x + 1;
+    int width = last_x - x + 1;
     assert(s_read_pixel);
     for (int i = 0; i < width; i++)
     {
@@ -138,10 +138,10 @@ void set_null_video()
 
 // Return the color on the screen at the (xdot, ydot) point
 //
-int get_color(int xdot, int ydot)
+int get_color(int x, int y)
 {
-    const int x1 = xdot + g_logical_screen_x_offset;
-    const int y1 = ydot + g_logical_screen_y_offset;
+    const int x1 = x + g_logical_screen_x_offset;
+    const int y1 = y + g_logical_screen_y_offset;
     if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
     {
         // this can happen in boundary trace
