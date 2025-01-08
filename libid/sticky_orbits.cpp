@@ -193,8 +193,8 @@ int sticky_orbits()
         double rotation;
         double skew;
         double factor = PI / 180.0;
-        double xfactor = g_logical_screen_x_dots / 2.0;
-        double yfactor = g_logical_screen_y_dots / 2.0;
+        double x_factor = g_logical_screen_x_dots / 2.0;
+        double y_factor = g_logical_screen_y_dots / 2.0;
 
         int angle = g_xx_begin;  // save angle in x parameter
 
@@ -207,8 +207,8 @@ int sticky_orbits()
         while (angle < rotation)
         {
             double theta = (double) angle * factor;
-            g_col = (int)(xfactor + (x_ctr + x_mag_factor * std::cos(theta)));
-            g_row = (int)(yfactor + (y_ctr + x_mag_factor * std::sin(theta)));
+            g_col = (int)(x_factor + (x_ctr + x_mag_factor * std::cos(theta)));
+            g_row = (int)(y_factor + (y_ctr + x_mag_factor * std::sin(theta)));
             if (plot_orbits2d_float() == -1)
             {
                 add_work_list(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
