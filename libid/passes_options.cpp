@@ -4,12 +4,12 @@
 
 #include "ValueSaver.h"
 #include "cmdfiles.h"
+#include "fractals/lorenz.h"
 #include "full_screen_prompt.h"
 #include "get_corners.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "lorenz.h"
 #include "sticky_orbits.h"
 
 #include <algorithm>

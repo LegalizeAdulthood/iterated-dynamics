@@ -4,9 +4,9 @@
 
 #include "calcfrac.h"
 #include "convert_center_mag.h"
+#include "fractals/lorenz.h"
 #include "id.h"
 #include "id_data.h"
-#include "lorenz.h"
 #include "work_list.h"
 
 #include <cmath>

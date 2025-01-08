@@ -4,7 +4,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "video.h"

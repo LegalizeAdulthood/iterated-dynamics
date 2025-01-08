@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #include <fpu087.h>
-#include <parser.h>
+
+#include <fixed_pt.h>
+#include <fractals/parser.h>
 
 #include <gtest/gtest.h>
 
 #include <cmath>
 #include <complex>
-#include <fixed_pt.h>
 
 namespace id
 {

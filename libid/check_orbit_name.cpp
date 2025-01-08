@@ -2,8 +2,8 @@
 //
 #include "check_orbit_name.h"
 
-#include "fractalp.h"
-#include "jb.h"
+#include "fractals/fractalp.h"
+#include "fractals/jb.h"
 
 #include <cstring>
 

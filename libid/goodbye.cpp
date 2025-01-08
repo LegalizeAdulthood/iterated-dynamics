@@ -2,11 +2,11 @@
 //
 #include "goodbye.h"
 
-#include "ant.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "fractals/ant.h"
 #include "helpcom.h"
 #include "make_batch_file.h"
 #include "memory.h"

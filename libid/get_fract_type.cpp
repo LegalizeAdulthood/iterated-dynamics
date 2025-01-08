@@ -2,28 +2,28 @@
 //
 #include "get_fract_type.h"
 
+#include "ValueSaver.h"
 #include "bailout_formula.h"
 #include "cmdfiles.h"
 #include "file_item.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
+#include "fractals/jb.h"
+#include "fractals/lorenz.h"
+#include "fractals/parser.h"
 #include "full_screen_choice.h"
 #include "full_screen_prompt.h"
 #include "get_corners.h"
 #include "helpcom.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "jb.h"
 #include "load_entry_text.h"
 #include "loadfile.h"
-#include "lorenz.h"
 #include "param_not_used.h"
-#include "parser.h"
 #include "set_default_params.h"
 #include "shell_sort.h"
 #include "stop_msg.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
-#include "ValueSaver.h"
 
 #include <cstdio>
 #include <cstdlib>

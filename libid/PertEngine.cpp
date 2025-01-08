@@ -15,10 +15,10 @@
 #include "cmdfiles.h"
 #include "complex_fn.h"
 #include "drivers.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
+#include "fractals/pickover_mandelbrot.h"
 #include "id.h"
 #include "id_data.h"
-#include "pickover_mandelbrot.h"
 
 #include <algorithm>
 #include <cmath>

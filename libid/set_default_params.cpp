@@ -6,7 +6,7 @@
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "find_extra_param.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 #include "fractype.h"
 #include "id_data.h"
 #include "round_float_double.h"

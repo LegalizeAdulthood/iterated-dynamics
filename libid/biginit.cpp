@@ -12,7 +12,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 #include "fractype.h"
 #include "goodbye.h"
 #include "stop_msg.h"

@@ -2,9 +2,10 @@
 //
 #include "main_menu.h"
 
+#include "ValueSaver.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 #include "fractype.h"
 #include "full_screen_choice.h"
 #include "goodbye.h"
@@ -15,7 +16,6 @@
 #include "put_string_center.h"
 #include "rotate.h"
 #include "tab_display.h"
-#include "ValueSaver.h"
 #include "video_mode.h"
 
 #include <cstring>

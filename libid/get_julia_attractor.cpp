@@ -6,8 +6,8 @@
 #include "cmdfiles.h"
 #include "cmplx.h"
 #include "fixed_pt.h"
-#include "fractalp.h"
 #include "fractals.h"
+#include "fractals/fractalp.h"
 #include "id_data.h"
 
 #include <algorithm>

@@ -2,7 +2,7 @@
 //
 #include "find_extra_param.h"
 
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 
 int find_extra_param(FractalType type)
 {

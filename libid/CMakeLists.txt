@@ -21,9 +21,8 @@ add_library(libid
     diffusion_scan.cpp include/diffusion_scan.h
     fracsuba.cpp include/fracsuba.h
     fractalb.cpp include/fractalb.h
-    fractalp.cpp include/fractalp.h
     fractals.cpp include/fractals.h
-    frasetup.cpp include/frasetup.h
+    fractals/frasetup.cpp include/fractals/frasetup.h
     get_julia_attractor.cpp include/get_julia_attractor.h
     one_or_two_pass.cpp include/one_or_two_pass.h
     orbit.cpp include/orbit.h
@@ -43,42 +42,44 @@ add_library(libid
     wait_until.cpp include/wait_until.h
     work_list.cpp include/work_list.h
 
-    ant.cpp include/ant.h
-    barnsley.cpp include/barnsley.h
-    bifurcation.cpp include/bifurcation.h
-    burning_ship.cpp include/burning_ship.h
-    cellular.cpp include/cellular.h
-    circle_pattern.cpp include/circle_pattern.h
-    diffusion.cpp include/diffusion.h
-    divide_brot.cpp include/divide_brot.h
-    escher.cpp include/escher.h
-    fn_or_fn.cpp include/fn_or_fn.h
-    frothy_basin.cpp include/frothy_basin.h
-    halley.cpp include/halley.h
-    hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
-    ifs.cpp include/ifs.h
-    jb.cpp include/jb.h
-    lambda_fn.cpp include/lambda_fn.h
-    lorenz.cpp include/lorenz.h
-    lsys.cpp include/lsys_fns.h
-    lsysf.cpp
-    lyapunov.cpp include/lyapunov.h
-    magnet.cpp include/magnet.h
-    mandelbrot_mix.cpp include/mandelbrot_mix.h
-    newton.cpp include/newton.h
-    peterson_variations.cpp include/peterson_variations.h
-    phoenix.cpp include/phoenix.h
-    pickover_mandelbrot.cpp include/pickover_mandelbrot.h
-    plasma.cpp include/plasma.h
-    popcorn.cpp include/popcorn.h
-    population.cpp include/population.h
-    quartic_mandelbrot.cpp include/quartic_mandelbrot.h
-    quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
-    sierpinski_gasket.cpp include/sierpinski_gasket.h
-    taylor_skinner_variations.cpp include/taylor_skinner_variations.h
-    testpt.cpp include/testpt.h
-    unity.cpp include/unity.h
-    volterra_lotka.cpp include/volterra_lotka.h
+    fractals/ant.cpp include/fractals/ant.h
+    fractals/barnsley.cpp include/fractals/barnsley.h
+    fractals/bifurcation.cpp include/fractals/bifurcation.h
+    fractals/burning_ship.cpp include/fractals/burning_ship.h
+    fractals/cellular.cpp include/fractals/cellular.h
+    fractals/circle_pattern.cpp include/fractals/circle_pattern.h
+    fractals/diffusion.cpp include/fractals/diffusion.h
+    fractals/divide_brot.cpp include/fractals/divide_brot.h
+    fractals/escher.cpp include/fractals/escher.h
+    fractals/fn_or_fn.cpp include/fractals/fn_or_fn.h
+    fractals/fractalp.cpp include/fractals/fractalp.h
+    fractals/frothy_basin.cpp include/fractals/frothy_basin.h
+    fractals/halley.cpp include/fractals/halley.h
+    fractals/hypercomplex_mandelbrot.cpp include/fractals/hypercomplex_mandelbrot.h
+    fractals/ifs.cpp include/fractals/ifs.h
+    fractals/jb.cpp include/fractals/jb.h
+    fractals/lambda_fn.cpp include/fractals/lambda_fn.h
+    fractals/lorenz.cpp include/fractals/lorenz.h
+    fractals/lsys.cpp include/fractals/lsys_fns.h
+    fractals/lsysf.cpp
+    fractals/lyapunov.cpp include/fractals/lyapunov.h
+    fractals/magnet.cpp include/fractals/magnet.h
+    fractals/mandelbrot_mix.cpp include/fractals/mandelbrot_mix.h
+    fractals/newton.cpp include/fractals/newton.h
+    fractals/parser.cpp include/fractals/parser.h
+    fractals/peterson_variations.cpp include/fractals/peterson_variations.h
+    fractals/phoenix.cpp include/fractals/phoenix.h
+    fractals/pickover_mandelbrot.cpp include/fractals/pickover_mandelbrot.h
+    fractals/plasma.cpp include/fractals/plasma.h
+    fractals/popcorn.cpp include/fractals/popcorn.h
+    fractals/population.cpp include/fractals/population.h
+    fractals/quartic_mandelbrot.cpp include/fractals/quartic_mandelbrot.h
+    fractals/quaternion_mandelbrot.cpp include/fractals/quaternion_mandelbrot.h
+    fractals/sierpinski_gasket.cpp include/fractals/sierpinski_gasket.h
+    fractals/taylor_skinner_variations.cpp include/fractals/taylor_skinner_variations.h
+    fractals/testpt.cpp include/fractals/testpt.h
+    fractals/unity.cpp include/fractals/unity.h
+    fractals/volterra_lotka.cpp include/fractals/volterra_lotka.h
 
     cmdfiles.cpp include/cmdfiles.h include/cmdfiles_test.h
     decode_info.cpp include/decode_info.h
@@ -94,7 +95,6 @@ add_library(libid
     loadfile.cpp include/loadfile.h
     loadmap.cpp include/loadmap.h
     lowerize_parameter.cpp include/lowerize_parameter.h
-    parser.cpp include/parser.h
     rotate.cpp include/rotate.h
     save_file.cpp include/save_file.h
     slideshw.cpp include/slideshw.h
@@ -215,7 +215,7 @@ add_library(libid
     include/id_keys.h
     include/is_directory.h
     include/is_writeable.h
-    include/lsys.h
+    include/fractals/lsys.h
     include/mpmath.h
     include/pixel_limits.h
     include/prototyp.h
@@ -250,12 +250,11 @@ source_group("Header Files/engine" FILES
     include/engine_timer.h
     include/fracsuba.h
     include/fractalb.h
-    include/fractalp.h
     include/fractals.h
     include/fractype.h
-    include/frasetup.h
     include/get_julia_attractor.h
     include/id_data.h
+    include/jiim.h
     include/one_or_two_pass.h
     include/orbit.h
     include/param_not_used.h
@@ -287,10 +286,9 @@ source_group("Source Files/engine" FILES
     engine_timer.cpp
     fracsuba.cpp
     fractalb.cpp
-    fractalp.cpp
     fractals.cpp
-    frasetup.cpp
     get_julia_attractor.cpp
+    jiim.cpp
     one_or_two_pass.cpp
     orbit.cpp
     param_not_used.cpp
@@ -309,83 +307,87 @@ source_group("Source Files/engine" FILES
     work_list.cpp
 )
 source_group("Header Files/fractal specific" FILES
-    include/ant.h
-    include/barnsley.h
-    include/bifurcation.h
-    include/burning_ship.h
-    include/cellular.h
-    include/circle_pattern.h
-    include/diffusion.h
-    include/divide_brot.h
-    include/escher.h
-    include/fn_or_fn.h
-    include/frothy_basin.h
-    include/halley.h
-    include/hypercomplex_mandelbrot.h
-    include/ifs.h
-    include/jb.h
-    include/jiim.h
-    include/lambda_fn.h
-    include/lorenz.h
-    include/lsys.h
-    include/lsysf.h
-    include/lsys_fns.h
-    include/lyapunov.h
-    include/magnet.h
-    include/mandelbrot_mix.h
-    include/newton.h
-    include/peterson_variations.h
-    include/phoenix.h
-    include/pickover_mandelbrot.h
-    include/plasma.h
-    include/popcorn.h
-    include/population.h
-    include/quartic_mandelbrot.h
-    include/quaternion_mandelbrot.h
-    include/sierpinski_gasket.h
-    include/taylor_skinner_variations.h
-    include/testpt.h
-    include/unity.h
-    include/volterra_lotka.h
+    include/fractals/ant.h
+    include/fractals/barnsley.h
+    include/fractals/bifurcation.h
+    include/fractals/burning_ship.h
+    include/fractals/cellular.h
+    include/fractals/circle_pattern.h
+    include/fractals/diffusion.h
+    include/fractals/divide_brot.h
+    include/fractals/escher.h
+    include/fractals/fn_or_fn.h
+    include/fractals/fractalp.h
+    include/fractals/frasetup.h
+    include/fractals/frothy_basin.h
+    include/fractals/halley.h
+    include/fractals/hypercomplex_mandelbrot.h
+    include/fractals/ifs.h
+    include/fractals/jb.h
+    include/fractals/lambda_fn.h
+    include/fractals/lorenz.h
+    include/fractals/lsys.h
+    include/fractals/lsysf.h
+    include/fractals/lsys_fns.h
+    include/fractals/lyapunov.h
+    include/fractals/magnet.h
+    include/fractals/mandelbrot_mix.h
+    include/fractals/newton.h
+    include/fractals/parser.h
+    include/fractals/peterson_variations.h
+    include/fractals/phoenix.h
+    include/fractals/pickover_mandelbrot.h
+    include/fractals/plasma.h
+    include/fractals/popcorn.h
+    include/fractals/population.h
+    include/fractals/quartic_mandelbrot.h
+    include/fractals/quaternion_mandelbrot.h
+    include/fractals/sierpinski_gasket.h
+    include/fractals/taylor_skinner_variations.h
+    include/fractals/testpt.h
+    include/fractals/unity.h
+    include/fractals/volterra_lotka.h
 )
 source_group("Source Files/fractal specific" FILES
-    ant.cpp
-    barnsley.cpp
-    bifurcation.cpp
-    burning_ship.cpp
-    cellular.cpp
-    circle_pattern.cpp
-    diffusion.cpp
-    divide_brot.cpp
-    escher.cpp
-    fn_or_fn.cpp
-    frothy_basin.cpp
-    halley.cpp
-    hypercomplex_mandelbrot.cpp
-    ifs.cpp
-    jb.cpp
-    jiim.cpp
-    lambda_fn.cpp
-    lorenz.cpp
-    lsys.cpp
-    lsysf.cpp
-    lyapunov.cpp
-    magnet.cpp
-    mandelbrot_mix.cpp
-    newton.cpp
-    peterson_variations.cpp
-    phoenix.cpp
-    pickover_mandelbrot.cpp
-    plasma.cpp
-    popcorn.cpp
-    population.cpp
-    quartic_mandelbrot.cpp
-    quaternion_mandelbrot.cpp
-    sierpinski_gasket.cpp
-    taylor_skinner_variations.cpp
-    testpt.cpp
-    unity.cpp
-    volterra_lotka.cpp
+    fractals/ant.cpp
+    fractals/barnsley.cpp
+    fractals/bifurcation.cpp
+    fractals/burning_ship.cpp
+    fractals/cellular.cpp
+    fractals/circle_pattern.cpp
+    fractals/diffusion.cpp
+    fractals/divide_brot.cpp
+    fractals/escher.cpp
+    fractals/fn_or_fn.cpp
+    fractals/fractalp.cpp
+    fractals/frasetup.cpp
+    fractals/frothy_basin.cpp
+    fractals/halley.cpp
+    fractals/hypercomplex_mandelbrot.cpp
+    fractals/ifs.cpp
+    fractals/jb.cpp
+    fractals/lambda_fn.cpp
+    fractals/lorenz.cpp
+    fractals/lsys.cpp
+    fractals/lsysf.cpp
+    fractals/lyapunov.cpp
+    fractals/magnet.cpp
+    fractals/mandelbrot_mix.cpp
+    fractals/newton.cpp
+    fractals/parser.cpp
+    fractals/peterson_variations.cpp
+    fractals/phoenix.cpp
+    fractals/pickover_mandelbrot.cpp
+    fractals/plasma.cpp
+    fractals/popcorn.cpp
+    fractals/population.cpp
+    fractals/quartic_mandelbrot.cpp
+    fractals/quaternion_mandelbrot.cpp
+    fractals/sierpinski_gasket.cpp
+    fractals/taylor_skinner_variations.cpp
+    fractals/testpt.cpp
+    fractals/unity.cpp
+    fractals/volterra_lotka.cpp
 )
 source_group("Header Files/IO" FILES
     include/cmdfiles.h
@@ -406,7 +408,6 @@ source_group("Header Files/IO" FILES
     include/loadfile.h
     include/loadmap.h
     include/lowerize_parameter.h
-    include/parser.h
     include/rotate.h
     include/save_file.h
     include/slideshw.h
@@ -431,7 +432,6 @@ source_group("Source Files/IO" FILES
     loadfile.cpp
     loadmap.cpp
     lowerize_parameter.cpp
-    parser.cpp
     rotate.cpp
     save_file.cpp
     slideshw.cpp

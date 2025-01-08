@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <ifs.h>
+#include <fractals/ifs.h>
 
 #include "test_data.h"
 

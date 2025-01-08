@@ -1,4 +1,4 @@
-#include <fractalp.h>
+#include <fractals/fractalp.h>
 
 #include <gtest/gtest.h>
 

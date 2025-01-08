@@ -3,7 +3,7 @@
 #include "param_not_used.h"
 
 #include "fractype.h"
-#include "parser.h"
+#include "fractals/parser.h"
 
 /*
  *  Returns 1 if the formula parameter is not used in the current

@@ -17,16 +17,16 @@
 */
 #include "get_video_mode.h"
 
+#include "ValueSaver.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 #include "full_screen_choice.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "make_batch_file.h"
 #include "stop_msg.h"
 #include "trim_filename.h"
-#include "ValueSaver.h"
 #include "version.h"
 #include "video_mode.h"
 

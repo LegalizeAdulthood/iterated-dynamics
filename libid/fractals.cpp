@@ -47,10 +47,10 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fractype.h"
-#include "magnet.h"
+#include "fractals/magnet.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
-#include "newton.h"
+#include "fractals/newton.h"
 #include "pixel_grid.h"
 
 #include <cfloat>

@@ -2,28 +2,29 @@
 //
 #include <cmdfiles_test.h>
 
-#include "MockDriver.h"
 #include "CurrentPathSaver.h"
-#include "test_data.h"
+#include "MockDriver.h"
 #include "ValueUnchanged.h"
+#include "test_data.h"
 
 #include <3d.h>
+#include <ValueSaver.h>
 #include <bailout_formula.h>
 #include <debug_flags.h>
 #include <engine_timer.h>
-#include <fractalp.h>
+#include <fractals/fractalp.h>
+#include <fractals/jb.h>
+#include <fractals/lorenz.h>
+#include <fractals/parser.h>
 #include <fractype.h>
 #include <framain2.h>
 #include <history.h>
 #include <id.h>
 #include <id_data.h>
 #include <id_keys.h>
-#include <jb.h>
 #include <line3d.h>
 #include <loadfile.h>
-#include <lorenz.h>
 #include <make_batch_file.h>
-#include <parser.h>
 #include <plot3d.h>
 #include <rotate.h>
 #include <slideshw.h>
@@ -34,7 +35,6 @@
 #include <sticky_orbits.h>
 #include <stop_msg.h>
 #include <trig_fns.h>
-#include <ValueSaver.h>
 #include <video_mode.h>
 
 #include <gmock/gmock.h>

@@ -3,10 +3,10 @@
 #include "trig_fns.h"
 
 #include "cmdfiles.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
+#include "fractals/jb.h"
+#include "fractals/parser.h"
 #include "fractype.h"
-#include "jb.h"
-#include "parser.h"
 
 #include <cstdio>
 #include <cstring>

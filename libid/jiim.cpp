@@ -8,6 +8,7 @@
  */
 #include "jiim.h"
 
+#include "ValueSaver.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
@@ -16,19 +17,18 @@
 #include "editpal.h"
 #include "find_special_colors.h"
 #include "fixed_pt.h"
-#include "fractalp.h"
 #include "fractals.h"
-#include "frothy_basin.h"
+#include "fractals/fractalp.h"
+#include "fractals/frothy_basin.h"
+#include "fractals/lorenz.h"
 #include "get_a_number.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "lorenz.h"
 #include "mouse.h"
 #include "mpmath_c.h"
 #include "pixel_grid.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
-#include "ValueSaver.h"
 #include "video.h"
 
 #include <algorithm>

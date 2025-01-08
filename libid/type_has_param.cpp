@@ -3,7 +3,7 @@
 #include "type_has_param.h"
 
 #include "find_extra_param.h"
-#include "fractalp.h"
+#include "fractals/fractalp.h"
 #include "param_not_used.h"
 
 #include <cstring>
