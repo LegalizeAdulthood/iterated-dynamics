@@ -71,20 +71,20 @@ namespace fs = std::filesystem;
 
 void create_minidump(EXCEPTION_POINTERS *ep)
 {
-    HMODULE debughlp = LoadLibraryA("dbghelp.dll");
-    if (debughlp == nullptr)
+    HMODULE debug_hlp = LoadLibraryA("dbghelp.dll");
+    if (debug_hlp == nullptr)
     {
         MessageBoxA(nullptr,
             "An unexpected error occurred while loading dbghelp.dll.\n" ID_PROGRAM_NAME " will now exit.",
             ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
         return;
     }
-    MiniDumpWriteDumpProc *dumper{(MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump")};
+    MiniDumpWriteDumpProc *dumper{(MiniDumpWriteDumpProc *) GetProcAddress(debug_hlp, "MiniDumpWriteDump")};
     if (dumper == nullptr)
     {
         MessageBoxA(
             nullptr, "Could not locate MiniDumpWriteDump", ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
-        ::FreeLibrary(debughlp);
+        ::FreeLibrary(debug_hlp);
         return;
     }
 
@@ -103,13 +103,13 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     {
         MessageBoxA(nullptr, ("Could not open dump file " + path.string() + " for writing.").c_str(),
             ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
-        ::FreeLibrary(debughlp);
+        ::FreeLibrary(debug_hlp);
         return;
     }
 
-    MINIDUMP_EXCEPTION_INFORMATION mdei{GetCurrentThreadId(), ep, FALSE};
+    MINIDUMP_EXCEPTION_INFORMATION dump_info{GetCurrentThreadId(), ep, FALSE};
     BOOL status{(*dumper)(
-        GetCurrentProcess(), GetCurrentProcessId(), dump_file, MiniDumpNormal, &mdei, nullptr, nullptr)};
+        GetCurrentProcess(), GetCurrentProcessId(), dump_file, MiniDumpNormal, &dump_info, nullptr, nullptr)};
     _ASSERTE(status);
     if (!status)
     {
@@ -123,7 +123,7 @@ void create_minidump(EXCEPTION_POINTERS *ep)
         _ASSERTE(status);
     }
     dumper = nullptr;
-    status = FreeLibrary(debughlp);
+    status = FreeLibrary(debug_hlp);
     _ASSERTE(status);
 
     if (g_init_batch != BatchMode::NORMAL)
