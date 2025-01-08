@@ -35,7 +35,7 @@ public:
     }
     ~GDIDriver() override = default;
     void terminate() override;
-    void get_max_screen(int &xmax, int &ymax) override;
+    void get_max_screen(int &x_max, int &y_max) override;
     bool init(int *argc, char **argv) override;
     bool resize() override;
     int read_palette() override;
@@ -43,8 +43,8 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void write_span(int y, int x, int lastx, Byte *pixels) override;
-    void read_span(int y, int x, int lastx, Byte *pixels) override;
+    void write_span(int y, int x, int last_x, Byte *pixels) override;
+    void read_span(int y, int x, int last_x, Byte *pixels) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
@@ -150,15 +150,15 @@ void GDIDriver::terminate()
     Win32BaseDriver::terminate();
 }
 
-void GDIDriver::get_max_screen(int &xmax, int &ymax)
+void GDIDriver::get_max_screen(int &x_max, int &y_max)
 {
     RECT desktop;
     GetClientRect(GetDesktopWindow(), &desktop);
     desktop.right -= GetSystemMetrics(SM_CXFRAME) * 2;
     desktop.bottom -= GetSystemMetrics(SM_CYFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION) - 1;
 
-    xmax = desktop.right;
-    ymax = desktop.bottom;
+    x_max = desktop.right;
+    y_max = desktop.bottom;
 }
 
 bool GDIDriver::init(int *argc, char **argv)
@@ -247,14 +247,14 @@ int GDIDriver::read_pixel(int x, int y)
     return plot.read_pixel(x,y);
 }
 
-void GDIDriver::write_span(int y, int x, int lastx, Byte *pixels)
+void GDIDriver::write_span(int y, int x, int last_x, Byte *pixels)
 {
-    plot.write_span(y, x, lastx, pixels);
+    plot.write_span(y, x, last_x, pixels);
 }
 
-void GDIDriver::read_span(int y, int x, int lastx, Byte *pixels)
+void GDIDriver::read_span(int y, int x, int last_x, Byte *pixels)
 {
-    plot.read_span(y, x, lastx, pixels);
+    plot.read_span(y, x, last_x, pixels);
 }
 
 void GDIDriver::set_line_mode(int mode)
