@@ -9,7 +9,7 @@
 #include "drivers.h"
 #include "fractals.h"
 #include "id_data.h"
-#include "rand15.h"
+#include "math/rand15.h"
 #include "rotate.h"
 #include "sized_types.h"
 #include "spindac.h"

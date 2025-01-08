@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fpu087.h"
+#include "math/fpu087.h"
 
-#include "fixed_pt.h"
+#include "math/fixed_pt.h"
 
 #include <cfloat>
 #include <cmath>

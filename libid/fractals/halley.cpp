@@ -7,8 +7,8 @@
 #include "fractals/newton.h"
 #include "fractype.h"
 #include "id_data.h"
-#include "mpmath.h"
-#include "mpmath_c.h"
+#include "math/mpmath.h"
+#include "math/mpmath_c.h"
 #include "pixel_grid.h"
 
 #include <algorithm>

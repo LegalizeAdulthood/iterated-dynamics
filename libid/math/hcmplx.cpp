@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // some hyper complex functions
-#include "hcmplx.h"
+#include "math/hcmplx.h"
 
-#include "mpmath.h"
+#include "math/mpmath.h"
 
 void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {

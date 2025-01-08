@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "cmplx.h"
+#include "math/cmplx.h"
 
 constexpr double ID_INFINITY{1.0e+300};
 

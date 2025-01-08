@@ -101,16 +101,21 @@ add_library(libid
     text_screen.cpp include/text_screen.h
     video.cpp include/video.h
 
-    bigflt.cpp
-    biginit.cpp include/biginit.h
-    bignum.cpp
-    bignumc.cpp
-    include/complex_fn.h
-    fixed_pt.cpp include/fixed_pt.h
-    fpu087.cpp include/fpu087.h
-    hcmplx.cpp include/hcmplx.h
-    mpmath_c.cpp include/mpmath_c.h
-    include/sqr.h
+    include/math/big.h
+    math/bigflt.cpp
+    math/biginit.cpp include/math/biginit.h
+    math/bignum.cpp
+    math/bignumc.cpp
+    include/math/cmplx.h
+    include/math/complex_fn.h
+    math/fixed_pt.cpp include/math/fixed_pt.h
+    math/fpu087.cpp include/math/fpu087.h
+    math/hcmplx.cpp include/math/hcmplx.h
+    include/math/mpmath.h
+    math/mpmath_c.cpp include/math/mpmath_c.h
+    include/math/rand15.h
+    include/math/sign.h
+    include/math/sqr.h
 
     debug_flags.cpp include/debug_flags.h
     drivers.cpp
@@ -203,9 +208,6 @@ add_library(libid
     video_mode.cpp include/video_mode.h
     zoom.cpp include/zoom.h
 
-    include/big.h
-    include/biginit.h
-    include/cmplx.h
     include/drivers.h
     include/fractype.h
     include/id.h
@@ -214,12 +216,9 @@ add_library(libid
     include/is_directory.h
     include/is_writeable.h
     include/fractals/lsys.h
-    include/mpmath.h
     include/pixel_limits.h
     include/prototyp.h
-    include/rand15.h
     include/read_ticker.h
-    include/sign.h
     include/sized_types.h
     include/stack_avail.h
     include/ValueSaver.h
@@ -435,27 +434,28 @@ source_group("Source Files/IO" FILES
     video.cpp
 )
 source_group("Header Files/math" FILES
-    include/big.h
-    include/biginit.h
-    include/cmplx.h
-    include/complex_fn.h
-    include/fixed_pt.h
-    include/fpu087.h
-    include/hcmplx.h
-    include/mpmath.h
-    include/mpmath_c.h
-    include/sign.h
-    include/sqr.h
+    include/math/big.h
+    include/math/biginit.h
+    include/math/cmplx.h
+    include/math/complex_fn.h
+    include/math/fixed_pt.h
+    include/math/fpu087.h
+    include/math/hcmplx.h
+    include/math/mpmath.h
+    include/math/mpmath_c.h
+    include/math/rand15.h
+    include/math/sign.h
+    include/math/sqr.h
 )
 source_group("Source Files/math" FILES
-    bigflt.cpp
-    biginit.cpp
-    bignum.cpp
-    bignumc.cpp
-    fixed_pt.cpp
-    fpu087.cpp
-    hcmplx.cpp
-    mpmath_c.cpp
+    math/bigflt.cpp
+    math/biginit.cpp
+    math/bignum.cpp
+    math/bignumc.cpp
+    math/fixed_pt.cpp
+    math/fpu087.cpp
+    math/hcmplx.cpp
+    math/mpmath_c.cpp
 )
 source_group("Header Files/plumbing" FILES
     include/debug_flags.h
@@ -465,7 +465,6 @@ source_group("Header Files/plumbing" FILES
     include/memory.h
     include/os.h
     include/prototyp.h
-    include/rand15.h
     include/read_ticker.h
     include/sized_types.h
     include/special_dirs.h

@@ -10,15 +10,15 @@
 
 #include "PertEngine.h"
 
-#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "complex_fn.h"
 #include "drivers.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "id.h"
 #include "id_data.h"
+#include "math/biginit.h"
+#include "math/complex_fn.h"
 
 #include <algorithm>
 #include <cmath>

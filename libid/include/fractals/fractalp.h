@@ -2,11 +2,11 @@
 //
 #pragma once
 
-#include "big.h"
 #include "calcfrac.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id.h"
+#include "math/big.h"
 
 #include <complex>
 

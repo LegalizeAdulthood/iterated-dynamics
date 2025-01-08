@@ -2,6 +2,6 @@
 //
 #pragma once
 
-#include "cmplx.h"
+#include "math/cmplx.h"
 
 void hcmplx_trig0(DHyperComplex *, DHyperComplex *);

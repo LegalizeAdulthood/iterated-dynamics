@@ -6,8 +6,6 @@
 */
 #include "zoom.h"
 
-#include "big.h"
-#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -20,6 +18,8 @@
 #include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "math/big.h"
+#include "math/biginit.h"
 #include "resume.h"
 #include "solid_guess.h"
 #include "spindac.h"

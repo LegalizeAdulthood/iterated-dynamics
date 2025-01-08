@@ -5,14 +5,14 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "cmplx.h"
-#include "fixed_pt.h"
-#include "fpu087.h"
+#include "math/fpu087.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "id_data.h"
-#include "mpmath.h"
+#include "math/cmplx.h"
+#include "math/fixed_pt.h"
+#include "math/mpmath.h"
 #include "pixel_grid.h"
 
 static LComplex s_l_tmp2{};

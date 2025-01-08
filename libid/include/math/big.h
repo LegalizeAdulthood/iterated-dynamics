@@ -3,7 +3,7 @@
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #pragma once
 
-#include "cmplx.h"
+#include "math/cmplx.h"
 #include "port.h"
 #include "sized_types.h"
 

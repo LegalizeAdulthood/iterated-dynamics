@@ -55,9 +55,9 @@
 //
 #include "3d.h"
 
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "line3d.h"
+#include "math/fixed_pt.h"
 
 #include <cfloat>
 #include <cmath>

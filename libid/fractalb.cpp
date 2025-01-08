@@ -6,10 +6,8 @@
 #include "fractalb.h"
 
 #include "bailout_formula.h"
-#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "fractals/divide_brot.h"
 #include "fractals/fractalp.h"
@@ -17,6 +15,8 @@
 #include "goodbye.h"
 #include "id.h"
 #include "id_data.h"
+#include "math/biginit.h"
+#include "math/fixed_pt.h"
 #include "stop_msg.h"
 #include "type_has_param.h"
 

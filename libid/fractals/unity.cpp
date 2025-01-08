@@ -3,10 +3,10 @@
 #include "fractals/unity.h"
 
 #include "calcfrac.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "id_data.h"
-#include "sqr.h"
+#include "math/fixed_pt.h"
+#include "math/sqr.h"
 
 #include <cmath>
 

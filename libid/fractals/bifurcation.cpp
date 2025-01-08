@@ -11,13 +11,13 @@ Miscellaneous fractal-specific code
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "engine_timer.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/population.h"
 #include "id.h"
 #include "id_data.h"
-#include "mpmath.h"
+#include "math/fixed_pt.h"
+#include "math/mpmath.h"
 #include "resume.h"
 #include "stop_msg.h"
 
@@ -442,7 +442,7 @@ int bifurc_may()
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
     g_tmp_z.x = 1.0 + g_population;
-    g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with mpmath.h
+    g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with math/mpmath.h
     g_population = (g_rate * g_population) * g_tmp_z.x;
     return population_orbit();
 }

@@ -5,7 +5,6 @@
 #include "cmdfiles_test.h"
 
 #include "bailout_formula.h"
-#include "biginit.h"
 #include "calc_frac_init.h"
 #include "calcfrac.h"
 #include "check_orbit_name.h"
@@ -46,6 +45,7 @@
 #include "lowerize_parameter.h"
 #include "make_batch_file.h"
 #include "make_mig.h"
+#include "math/biginit.h"
 #include "merge_path_names.h"
 #include "plot3d.h"
 #include "rotate.h"

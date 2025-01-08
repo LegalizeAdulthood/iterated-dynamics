@@ -2,14 +2,14 @@
 //
 #include "convert_center_mag.h"
 
-#include "biginit.h"
 #include "convert_corners.h"
 #include "debug_flags.h"
 #include "fractalb.h"
 #include "id.h"
 #include "id_data.h"
-#include "sign.h"
-#include "sqr.h"
+#include "math/biginit.h"
+#include "math/sign.h"
+#include "math/sqr.h"
 
 #include <cmath>
 

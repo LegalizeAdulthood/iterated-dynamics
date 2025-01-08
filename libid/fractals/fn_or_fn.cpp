@@ -6,7 +6,7 @@
 #include "calcfrac.h"
 #include "fractals.h"
 #include "get_julia_attractor.h"
-#include "mpmath.h"
+#include "math/mpmath.h"
 #include "trig_fns.h"
 
 bool mandel_trig_or_trig_setup()

@@ -4,11 +4,11 @@
 
 #include "bailout_formula.h"
 #include "cmdfiles.h"
-#include "cmplx.h"
+#include "math/cmplx.h"
 #include "debug_flags.h"
 #include "fractals/newton.h"
 #include "id_data.h"
-#include "mpmath.h"
+#include "math/mpmath.h"
 #include "pixel_grid.h"
 
 /* re-use static roots variable

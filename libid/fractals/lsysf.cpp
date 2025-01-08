@@ -4,9 +4,9 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fixed_pt.h"
 #include "fractals/lsys_fns.h"
 #include "id_data.h"
+#include "math/fixed_pt.h"
 #include "stack_avail.h"
 #include "thinking.h"
 

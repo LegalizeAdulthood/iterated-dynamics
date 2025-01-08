@@ -5,6 +5,7 @@
 */
 #include "rotate.h"
 
+#include "ValueSaver.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -15,11 +16,10 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "loadmap.h"
+#include "math/rand15.h"
 #include "merge_path_names.h"
-#include "rand15.h"
 #include "save_file.h"
 #include "spindac.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cstdio>

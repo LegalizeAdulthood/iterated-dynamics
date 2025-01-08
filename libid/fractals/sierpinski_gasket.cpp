@@ -4,8 +4,8 @@
 
 #include "bailout_formula.h"
 #include "calcfrac.h"
-#include "fixed_pt.h"
 #include "fractals.h"
+#include "math/fixed_pt.h"
 
 bool sierpinski_setup()
 {

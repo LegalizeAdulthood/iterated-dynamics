@@ -3,11 +3,11 @@
 #include "fractals/burning_ship.h"
 
 #include "bailout_formula.h"
-#include "biginit.h"
 #include "calcfrac.h"
-#include "complex_fn.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "math/biginit.h"
+#include "math/complex_fn.h"
 
 #include <cmath>
 #include <stdexcept>

@@ -4,7 +4,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "cmplx.h"
+#include "math/cmplx.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "find_file.h"
@@ -14,7 +14,7 @@
 #include "id_main.h"
 #include "init_failure.h"
 #include "make_path.h"
-#include "mpmath.h"
+#include "math/mpmath.h"
 #include "read_ticker.h"
 #include "rotate.h"
 #include "special_dirs.h"

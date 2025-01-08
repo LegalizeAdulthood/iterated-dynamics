@@ -43,14 +43,14 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "fractals.h"
 
 #include "bailout_formula.h"
-#include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fractype.h"
 #include "fractals/magnet.h"
-#include "mpmath.h"
-#include "mpmath_c.h"
 #include "fractals/newton.h"
+#include "fractype.h"
+#include "math/biginit.h"
+#include "math/mpmath.h"
+#include "math/mpmath_c.h"
 #include "pixel_grid.h"
 
 #include <cfloat>

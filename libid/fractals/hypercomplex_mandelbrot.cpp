@@ -3,9 +3,9 @@
 #include "fractals/hypercomplex_mandelbrot.h"
 
 #include "calcfrac.h"
-#include "cmplx.h"
+#include "math/cmplx.h"
 #include "fractals.h"
-#include "hcmplx.h"
+#include "math/hcmplx.h"
 
 int hyper_complex_fp_fractal()
 {

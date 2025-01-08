@@ -4,7 +4,6 @@
 
 #include "debug_flags.h"
 #include "drivers.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
@@ -13,8 +12,9 @@
 #include "get_julia_attractor.h"
 #include "id_data.h"
 #include "loadmap.h"
+#include "math/fixed_pt.h"
+#include "math/sqr.h"
 #include "spindac.h"
-#include "sqr.h"
 #include "starfield.h"
 #include "stop_msg.h"
 

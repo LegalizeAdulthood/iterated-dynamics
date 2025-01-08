@@ -3,11 +3,11 @@
 #include "fractals/popcorn.h"
 
 #include "calcfrac.h"
-#include "fpu087.h"
+#include "math/fpu087.h"
 #include "fractals.h"
 #include "id.h"
 #include "id_data.h"
-#include "mpmath.h"
+#include "math/mpmath.h"
 #include "orbit.h"
 #include "resume.h"
 

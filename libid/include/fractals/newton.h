@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "cmplx.h"
+#include "math/cmplx.h"
 
 void invertz2(DComplex *z);
 

@@ -2,8 +2,8 @@
 //
 #pragma once
 
-#include "big.h"
-#include "cmplx.h"
+#include "math/cmplx.h"
+#include "math/big.h"
 #include "port.h"
 
 enum class FractalType;

@@ -6,13 +6,13 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "id_data.h"
-#include "mpmath.h"
-#include "mpmath_c.h"
+#include "math/fixed_pt.h"
+#include "math/mpmath.h"
+#include "math/mpmath_c.h"
 
 // call float version of fractal if integer math overflow
 static int try_float_fractal(int (*fpFractal)())

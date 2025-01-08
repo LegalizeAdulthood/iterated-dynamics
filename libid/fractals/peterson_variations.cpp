@@ -7,14 +7,14 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fixed_pt.h"
-#include "fpu087.h"
+#include "math/fpu087.h"
 #include "fractals.h"
 #include "fractals/newton.h"
 #include "get_julia_attractor.h"
 #include "id_data.h"
-#include "mpmath.h"
-#include "mpmath_c.h"
+#include "math/fixed_pt.h"
+#include "math/mpmath.h"
+#include "math/mpmath_c.h"
 #include "pixel_grid.h"
 
 DComplex g_marks_coefficient{};

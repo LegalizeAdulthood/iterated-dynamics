@@ -7,8 +7,6 @@
 
 #include "3d.h"
 #include "bailout_formula.h"
-#include "big.h"
-#include "biginit.h"
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
@@ -33,6 +31,8 @@
 #include "line3d.h"
 #include "make_batch_file.h"
 #include "make_path.h"
+#include "math/big.h"
+#include "math/biginit.h"
 #include "plot3d.h"
 #include "port.h"
 #include "prototyp.h" // for stricmp

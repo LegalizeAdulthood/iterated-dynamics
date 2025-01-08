@@ -5,12 +5,12 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "get_julia_attractor.h"
-#include "mpmath.h"
+#include "math/fixed_pt.h"
+#include "math/mpmath.h"
 
 #include <cmath>
 

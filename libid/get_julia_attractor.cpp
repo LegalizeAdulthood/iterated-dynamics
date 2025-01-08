@@ -4,11 +4,11 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "cmplx.h"
-#include "fixed_pt.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "id_data.h"
+#include "math/cmplx.h"
+#include "math/fixed_pt.h"
 
 #include <algorithm>
 #include <cmath>

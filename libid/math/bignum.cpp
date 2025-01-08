@@ -129,7 +129,7 @@ double wide number can then be ignored.
 // 3) bignumc.c - portable C versions of routines in bignuma.asm
 //
 /************************************************************************/
-#include "big.h"
+#include "math/big.h"
 
 #include "port.h"
 

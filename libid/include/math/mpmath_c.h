@@ -2,8 +2,8 @@
 //
 #pragma once
 
-#include "cmplx.h"
-#include "mpmath.h"
+#include "math/cmplx.h"
+#include "math/mpmath.h"
 
 // Mark Peterson's expanded floating point operators. If
 // the operation results in an overflow (result < 2**(2**14), or division

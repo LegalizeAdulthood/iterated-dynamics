@@ -3,15 +3,15 @@
 #include "fractals/divide_brot.h"
 
 #include "bailout_formula.h"
-#include "big.h"
-#include "biginit.h"
 #include "calcfrac.h"
-#include "fpu087.h"
+#include "math/fpu087.h"
 #include "fractalb.h"
 #include "fractals.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"
 #include "id_data.h"
+#include "math/big.h"
+#include "math/biginit.h"
 #include "pixel_grid.h"
 
 LDouble g_b_const{};

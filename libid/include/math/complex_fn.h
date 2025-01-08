@@ -2,8 +2,9 @@
 //
 #pragma once
 
-#include "big.h"
-#include "sqr.h"
+#include "math/big.h"
+#include "math/biginit.h"
+#include "math/sqr.h"
 
 #include <algorithm>
 #include <complex>

@@ -2,7 +2,6 @@
 //
 #include "tab_display.h"
 
-#include "biginit.h"
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
@@ -19,6 +18,7 @@
 #include "id_keys.h"
 #include "line3d.h"
 #include "loadfile.h"
+#include "math/biginit.h"
 #include "param_not_used.h"
 #include "pixel_grid.h"
 #include "put_string_center.h"

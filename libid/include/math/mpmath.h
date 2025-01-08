@@ -3,10 +3,10 @@
 #pragma once
 
 #include "calcfrac.h"
-#include "fixed_pt.h"
-#include "fpu087.h"
+#include "math/fpu087.h"
 #include "fractals.h"
 #include "fractals/parser.h"
+#include "math/fixed_pt.h"
 #include "port.h"
 #include "trig_fns.h"
 

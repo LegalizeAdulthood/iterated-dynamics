@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <cmplx.h>
+#include <math/cmplx.h>
 
 #include <gtest/gtest.h>
 

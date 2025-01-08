@@ -5,13 +5,13 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "fpu087.h"
+#include "math/fpu087.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractype.h"
 #include "id_data.h"
-#include "mpmath.h"
-#include "mpmath_c.h"
+#include "math/mpmath.h"
+#include "math/mpmath_c.h"
 #include "pixel_grid.h"
 
 #include <cfloat>
