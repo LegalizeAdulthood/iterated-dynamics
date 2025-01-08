@@ -2228,15 +2228,14 @@ static bool params_ok(FractalInfo const *info)
 
 static bool function_ok(FractalInfo const *info, int num_fn)
 {
-    int mismatch = 0;
     for (int i = 0; i < num_fn; i++)
     {
-        if (static_cast<TrigFn>(info->trig_index[i]) != g_trig_index[i])
+        if (info->trig_index[i] != +g_trig_index[i])
         {
-            mismatch++;
+            return false;
         }
     }
-    return mismatch <= 0; // they all match
+    return true; // they all match
 }
 
 static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
