@@ -188,13 +188,13 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     ReleaseDC(parent, hDC);
     m_char_width  = TextMetric.tmMaxCharWidth;
     m_char_height = TextMetric.tmHeight;
-    m_char_xchars = WINTEXT_MAX_COL;
-    m_char_ychars = WINTEXT_MAX_ROW;
+    m_char_x_chars = WINTEXT_MAX_COL;
+    m_char_y_chars = WINTEXT_MAX_ROW;
 
     // maximum screen width
-    m_max_width = m_char_xchars*m_char_width;
+    m_max_width = m_char_x_chars*m_char_width;
     // maximum screen height
-    m_max_height = m_char_ychars*m_char_height;
+    m_max_height = m_char_y_chars*m_char_height;
 
     // set up the font and caret information
     for (int i = 0; i < 3; i++)  // NOLINT(modernize-loop-convert)
@@ -349,14 +349,14 @@ void WinText::on_paint(HWND window)
     BeginPaint(window, &ps);
 
     // the routine below handles *all* window updates
-    int xmin = ps.rcPaint.left/m_char_width;
-    int xmax = (ps.rcPaint.right + m_char_width - 1)/m_char_width;
-    int ymin = ps.rcPaint.top/m_char_height;
-    int ymax = (ps.rcPaint.bottom + m_char_height - 1)/m_char_height;
+    int x_min = ps.rcPaint.left/m_char_width;
+    int x_max = (ps.rcPaint.right + m_char_width - 1)/m_char_width;
+    int y_min = ps.rcPaint.top/m_char_height;
+    int y_max = (ps.rcPaint.bottom + m_char_height - 1)/m_char_height;
 
     ODS("wintext_OnPaint");
 
-    paint_screen(xmin, xmax, ymin, ymax);
+    paint_screen(x_min, x_max, y_min, y_max);
     EndPaint(window, &ps);
 }
 
@@ -465,17 +465,17 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
         general routine to send a string to the screen
 */
 
-void WinText::put_string(int xpos, int ypos, int attrib, char const *string, int *end_row, int *end_col)
+void WinText::put_string(int x_pos, int y_pos, int attrib, char const *string, int *end_row, int *end_col)
 {
     ODS("WinText::put_string");
 
     char xc;
 
     char xa = (attrib & 0x0ff);
-    int maxrow = ypos;
-    int row = maxrow;
-    int maxcol = xpos - 1;
-    int col = maxcol;
+    int max_row = y_pos;
+    int row = max_row;
+    int max_col = x_pos - 1;
+    int col = max_col;
 
     int i;
     for (i = 0; (xc = string[i]) != 0; i++)
@@ -484,7 +484,7 @@ void WinText::put_string(int xpos, int ypos, int attrib, char const *string, int
         {
             if (row < WINTEXT_MAX_ROW-1)
                 row++;
-            col = xpos-1;
+            col = x_pos-1;
         }
         else
         {
@@ -492,17 +492,17 @@ void WinText::put_string(int xpos, int ypos, int attrib, char const *string, int
             {
                 if (row < WINTEXT_MAX_ROW-1)
                     row++;
-                col = xpos;
+                col = x_pos;
             }
-            maxrow = std::max(maxrow, row);
-            maxcol = std::max(maxcol, col);
+            max_row = std::max(max_row, row);
+            max_col = std::max(max_col, col);
             m_screen.chars(row, col) = xc;
             m_screen.attrs(row, col) = xa;
         }
     }
     if (i > 0)
     {
-        invalidate(xpos, ypos, maxcol, maxrow);
+        invalidate(x_pos, y_pos, max_col, max_row);
         *end_row = row;
         *end_col = col+1;
     }
@@ -531,13 +531,13 @@ void WinText::scroll_up(int top, int bot)
      general routine to repaint the screen
 */
 
-void WinText::paint_screen(int xmin, int xmax, // update this rectangular section
-    int ymin, int ymax)                        // of the 'screen'
+void WinText::paint_screen(int x_min, int x_max, // update this rectangular section
+    int y_min, int y_max)                        // of the 'screen'
 {
-    int istart;
-    int jstart;
-    unsigned char oldbk;
-    unsigned char oldfg;
+    int i_start;
+    int j_start;
+    unsigned char old_bk;
+    unsigned char old_fg;
 
     ODS("WinText::paint_screen");
 
@@ -548,13 +548,13 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
     if (!m_buffer_init)
     {
         m_buffer_init = true;
-        oldbk = 0x00;
-        oldfg = 0x0f;
-        int k = (oldbk << 4) + oldfg;
+        old_bk = 0x00;
+        old_fg = 0x0f;
+        int k = (old_bk << 4) + old_fg;
         m_buffer_init = true;
-        for (int col = 0; col < m_char_xchars; col++)
+        for (int col = 0; col < m_char_x_chars; col++)
         {
-            for (int row = 0; row < m_char_ychars; row++)
+            for (int row = 0; row < m_char_y_chars; row++)
             {
                 m_screen.chars(row, col) = ' ';
                 m_screen.attrs(row, col) = static_cast<Byte>(k);
@@ -562,10 +562,10 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
         }
     }
 
-    xmin = std::max(xmin, 0);
-    xmax = std::min(xmax, m_char_xchars - 1);
-    ymin = std::max(ymin, 0);
-    ymax = std::min(ymax, m_char_ychars - 1);
+    x_min = std::max(x_min, 0);
+    x_max = std::min(x_max, m_char_x_chars - 1);
+    y_min = std::max(y_min, 0);
+    y_max = std::min(y_max, m_char_y_chars - 1);
 
     HDC hDC = GetDC(m_window);
     SelectObject(hDC, m_font);
@@ -584,36 +584,36 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
     'strings' of screen locations with common foreground
     and background colors
     */
-    for (int j = ymin; j <= ymax; j++)
+    for (int j = y_min; j <= y_max; j++)
     {
         int length = 0;
-        oldbk = 99;
-        oldfg = 99;
-        for (int i = xmin; i <= xmax+1; i++)
+        old_bk = 99;
+        old_fg = 99;
+        for (int i = x_min; i <= x_max+1; i++)
         {
             int k = -1;
-            if (i <= xmax)
+            if (i <= x_max)
             {
                 k = m_screen.attrs(j, i);
             }
             int foreground = (k & 15);
             int background = (k >> 4);
-            if (i > xmax || foreground != (int)oldfg || background != (int)oldbk)
+            if (i > x_max || foreground != (int)old_fg || background != (int)old_bk)
             {
                 if (length > 0)
                 {
-                    SetBkColor(hDC, wintext_color[oldbk]);
-                    SetTextColor(hDC, wintext_color[oldfg]);
+                    SetBkColor(hDC, wintext_color[old_bk]);
+                    SetTextColor(hDC, wintext_color[old_fg]);
                     TextOutA(hDC,
-                            istart*m_char_width,
-                            jstart*m_char_height,
-                            &m_screen.chars(jstart, istart),
+                            i_start*m_char_width,
+                            j_start*m_char_height,
+                            &m_screen.chars(j_start, i_start),
                             length);
                 }
-                oldbk = background;
-                oldfg = foreground;
-                istart = i;
-                jstart = j;
+                old_bk = background;
+                old_fg = foreground;
+                i_start = i;
+                j_start = j;
                 length = 0;
             }
             length++;
@@ -629,7 +629,7 @@ void WinText::paint_screen(int xmin, int xmax, // update this rectangular sectio
     ReleaseDC(m_window, hDC);
 }
 
-void WinText::cursor(int xpos, int ypos, int cursor_type)
+void WinText::cursor(int x_pos, int y_pos, int cursor_type)
 {
     ODS("WinText::cursor");
     int x;
@@ -640,8 +640,8 @@ void WinText::cursor(int xpos, int ypos, int cursor_type)
         return;
     }
 
-    m_cursor_x = xpos;
-    m_cursor_y = ypos;
+    m_cursor_x = x_pos;
+    m_cursor_y = y_pos;
     if (cursor_type >= 0)
         m_cursor_type = cursor_type;
     m_cursor_type = std::max(m_cursor_type, 0);
@@ -668,25 +668,25 @@ void WinText::cursor(int xpos, int ypos, int cursor_type)
 
 void WinText::set_attr(int row, int col, int attr, int count)
 {
-    int xmax = col;
-    int xmin = xmax;
-    int ymax = row;
-    int ymin = ymax;
+    int x_max = col;
+    int x_min = x_max;
+    int y_max = row;
+    int y_min = y_max;
     for (int i = 0; i < count; i++)
     {
         m_screen.attrs(row, col+i) = static_cast<Byte>(attr & 0xFF);
     }
-    if (xmin + count >= WINTEXT_MAX_COL)
+    if (x_min + count >= WINTEXT_MAX_COL)
     {
-        xmin = 0;
-        xmax = WINTEXT_MAX_COL-1;
-        ymax = (count + WINTEXT_MAX_COL - 1)/WINTEXT_MAX_COL;
+        x_min = 0;
+        x_max = WINTEXT_MAX_COL-1;
+        y_max = (count + WINTEXT_MAX_COL - 1)/WINTEXT_MAX_COL;
     }
     else
     {
-        xmax = xmin + count;
+        x_max = x_min + count;
     }
-    invalidate(xmin, ymin, xmax, ymax);
+    invalidate(x_min, y_min, x_max, y_max);
 }
 
 void WinText::clear()

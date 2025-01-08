@@ -38,10 +38,10 @@ public:
     void destroy();
     int text_on();
     int text_off();
-    void put_string(int xpos, int ypos, int attrib, char const *string, int *end_row, int *end_col);
+    void put_string(int x_pos, int y_pos, int attrib, char const *string, int *end_row, int *end_col);
     void scroll_up(int top, int bot);
-    void paint_screen(int xmin, int xmax, int ymin, int ymax);
-    void cursor(int xpos, int ypos, int cursor_type);
+    void paint_screen(int x_min, int x_max, int y_min, int y_max);
+    void cursor(int x_pos, int y_pos, int cursor_type);
     void set_attr(int row, int col, int attr, int count);
     void clear();
     Screen get_screen() const;
@@ -88,8 +88,8 @@ private:
     int m_char_font{};
     int m_char_width{};
     int m_char_height{};
-    int m_char_xchars{};
-    int m_char_ychars{};
+    int m_char_x_chars{};
+    int m_char_y_chars{};
     int m_max_width{};
     int m_max_height{};
     int m_cursor_x{};
