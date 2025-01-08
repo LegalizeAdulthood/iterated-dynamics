@@ -57,19 +57,19 @@ int tesseral()
         tp->lft = -2;
         tp->bot = -2;
         tp->top = -2;
-        int cury = g_yy_begin & 0xfff;
-        int ysize = 1;
+        int cur_y = g_yy_begin & 0xfff;
+        int y_size = 1;
         int i = (unsigned) g_yy_begin >> 12;
         while (--i >= 0)
         {
-            ysize <<= 1;
+            y_size <<= 1;
         }
-        int curx = g_work_pass & 0xfff;
-        int xsize = 1;
+        int cur_x = g_work_pass & 0xfff;
+        int x_size = 1;
         i = (unsigned)g_work_pass >> 12;
         while (--i >= 0)
         {
-            xsize <<= 1;
+            x_size <<= 1;
         }
         while (true)
         {
@@ -77,12 +77,12 @@ int tesseral()
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // next divide down middle
-                if (tp->x1 == curx && (tp->x2 - tp->x1 - 2) < xsize)
+                if (tp->x1 == cur_x && (tp->x2 - tp->x1 - 2) < x_size)
                 {
                     break;
                 }
                 mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
-                if (mid > curx)
+                if (mid > cur_x)
                 {
                     // stack right part
                     std::memcpy(++tp, tp2, sizeof(*tp));
@@ -93,12 +93,12 @@ int tesseral()
             else
             {
                 // next divide across
-                if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize)
+                if (tp->y1 == cur_y && (tp->y2 - tp->y1 - 2) < y_size)
                 {
                     break;
                 }
                 mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
-                if (mid > cury)
+                if (mid > cur_y)
                 {
                     // stack bottom part
                     std::memcpy(++tp, tp2, sizeof(*tp));
@@ -157,13 +157,13 @@ int tesseral()
 
         {
             int mid;
-            int midcolor;
+            int mid_color;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;           // Find mid point
-                midcolor = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
-                if (midcolor != tp->top)
+                mid_color = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
+                if (mid_color != tp->top)
                 {
                     goto tess_split;
                 }
@@ -172,8 +172,8 @@ int tesseral()
             {
                 // divide across the middle
                 mid = (tp->y1 + tp->y2) >> 1;           // Find mid point
-                midcolor = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
-                if (midcolor != tp->top)
+                mid_color = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
+                if (mid_color != tp->top)
                 {
                     goto tess_split;
                 }
@@ -243,14 +243,14 @@ tess_split:
         {
             // box not surrounded by same color, sub-divide
             int mid;
-            int midcolor;
+            int mid_color;
             Tess *tp2;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // divide down the middle
                 mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
-                midcolor = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
-                if (midcolor == -3)
+                mid_color = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
+                if (mid_color == -3)
                 {
                     goto tess_end;
                 }
@@ -271,10 +271,10 @@ tess_split:
                         // left part >= 1 col, stack right
                         std::memcpy(++tp, tp2, sizeof(*tp));
                         tp->x2 = mid;
-                        tp->rgt = midcolor;
+                        tp->rgt = mid_color;
                     }
                     tp2->x1 = mid;
-                    tp2->lft = midcolor;
+                    tp2->lft = mid_color;
                 }
                 else
                 {
@@ -285,8 +285,8 @@ tess_split:
             {
                 // divide across the middle
                 mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
-                midcolor = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
-                if (midcolor == -3)
+                mid_color = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
+                if (mid_color == -3)
                 {
                     goto tess_end;
                 }
@@ -307,10 +307,10 @@ tess_split:
                         // top also >= 1 col, stack bottom
                         std::memcpy(++tp, tp2, sizeof(*tp));
                         tp->y2 = mid;
-                        tp->bot = midcolor;
+                        tp->bot = mid_color;
                     }
                     tp2->y1 = mid;
-                    tp2->top = midcolor;
+                    tp2->top = mid_color;
                 }
                 else
                 {
@@ -324,22 +324,22 @@ tess_end:
     if (tp >= (Tess *)&s_stack[0])
     {
         // didn't complete
-        int ysize = 1;
-        int xsize = 1;
+        int y_size = 1;
+        int x_size = 1;
         int i = 2;
         while (tp->x2 - tp->x1 - 2 >= i)
         {
             i <<= 1;
-            ++xsize;
+            ++x_size;
         }
         i = 2;
         while (tp->y2 - tp->y1 - 2 >= i)
         {
             i <<= 1;
-            ++ysize;
+            ++y_size;
         }
         add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
-                     (ysize << 12)+tp->y1, (xsize << 12)+tp->x1, g_work_symmetry);
+                     (y_size << 12)+tp->y1, (x_size << 12)+tp->x1, g_work_symmetry);
         return -1;
     }
     return 0;
@@ -377,7 +377,7 @@ static int tess_col(int x, int y1, int y2)
     g_col = x;
     g_row = y1;
     g_reset_periodicity = true;
-    int colcolor = (*g_calc_type)();
+    int col_color = (*g_calc_type)();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_row <= y2)
@@ -388,12 +388,12 @@ static int tess_col(int x, int y1, int y2)
         {
             return -3;
         }
-        if (i != colcolor)
+        if (i != col_color)
         {
-            colcolor = -1;
+            col_color = -1;
         }
     }
-    return colcolor;
+    return col_color;
 }
 
 static int tess_row(int x1, int x2, int y)
@@ -401,7 +401,7 @@ static int tess_row(int x1, int x2, int y)
     g_row = y;
     g_col = x1;
     g_reset_periodicity = true;
-    int rowcolor = (*g_calc_type)();
+    int row_color = (*g_calc_type)();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_col <= x2)
@@ -412,10 +412,10 @@ static int tess_row(int x1, int x2, int y)
         {
             return -3;
         }
-        if (i != rowcolor)
+        if (i != row_color)
         {
-            rowcolor = -1;
+            row_color = -1;
         }
     }
-    return rowcolor;
+    return row_color;
 }
