@@ -171,41 +171,41 @@ static const Byte font_8x8[8][1024/8] =
     }
 };
 
-void Plot::set_dirty_region(int xmin, int ymin, int xmax, int ymax)
+void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 {
     RECT *r = &m_dirty_region;
 
-    _ASSERTE(xmin < xmax);
-    _ASSERTE(ymin < ymax);
+    _ASSERTE(x_min < x_max);
+    _ASSERTE(y_min < y_max);
     _ASSERTE((r->left <= r->right) && (r->top <= r->bottom));
     if (r->left < 0)
     {
-        r->left = xmin;
-        r->right = xmax;
-        r->top = ymin;
-        r->bottom = ymax;
+        r->left = x_min;
+        r->right = x_max;
+        r->top = y_min;
+        r->bottom = y_max;
         m_dirty = true;
     }
     else
     {
-        if (xmin < r->left)
+        if (x_min < r->left)
         {
-            r->left = xmin;
+            r->left = x_min;
             m_dirty = true;
         }
-        if (xmax > r->right)
+        if (x_max > r->right)
         {
-            r->right = xmax;
+            r->right = x_max;
             m_dirty = true;
         }
-        if (ymin < r->top)
+        if (y_min < r->top)
         {
-            r->top = ymin;
+            r->top = y_min;
             m_dirty = true;
         }
-        if (ymax > r->bottom)
+        if (y_max > r->bottom)
         {
-            r->bottom = ymax;
+            r->bottom = y_max;
             m_dirty = true;
         }
     }
@@ -433,15 +433,15 @@ int Plot::read_pixel(int x, int y)
     return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
 }
 
-void Plot::write_span(int y, int x, int lastx, const Byte *pixels)
+void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
 {
-    int width = lastx-x+1;
+    int width = last_x-x+1;
 
     for (int i = 0; i < width; i++)
     {
         write_pixel(x+i, y, pixels[i]);
     }
-    set_dirty_region(x, y, lastx+1, y+1);
+    set_dirty_region(x, y, last_x+1, y+1);
 }
 
 void Plot::flush()
@@ -455,10 +455,10 @@ void Plot::flush()
     }
 }
 
-void Plot::read_span(int y, int x, int lastx, Byte *pixels)
+void Plot::read_span(int y, int x, int last_x, Byte *pixels)
 {
     flush();
-    int width = lastx - x + 1;
+    int width = last_x - x + 1;
     for (int i = 0; i < width; i++)
     {
         pixels[i] = read_pixel(x + i, y);

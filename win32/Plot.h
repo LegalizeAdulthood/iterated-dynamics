@@ -17,9 +17,9 @@ struct Plot
     void create_window(HWND parent);
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y);
-    void write_span(int y, int x, int lastx, const Byte *pixels);
+    void write_span(int y, int x, int last_x, const Byte *pixels);
     void flush();
-    void read_span(int y, int x, int lastx, Byte *pixels);
+    void read_span(int y, int x, int last_x, Byte *pixels);
     void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
     int resize();
@@ -48,7 +48,7 @@ struct Plot
     void on_paint(HWND window);
 
 private:
-    void set_dirty_region(int xmin, int ymin, int xmax, int ymax);
+    void set_dirty_region(int x_min, int y_min, int x_max, int y_max);
     void init_pixels();
     void create_backing_store();
 
