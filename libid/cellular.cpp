@@ -448,11 +448,11 @@ bool cellular_setup()
 
 static void set_cellular_palette()
 {
-    static Byte const Red[3]    = { 42, 0, 0 };
-    static Byte const Green[3]  = { 10, 35, 10 };
-    static Byte const Blue[3]   = { 13, 12, 29 };
-    static Byte const Yellow[3] = { 60, 58, 18 };
-    static Byte const Brown[3]  = { 42, 21, 0 };
+    static Byte const RED[3]    = { 42, 0, 0 };
+    static Byte const GREEN[3]  = { 10, 35, 10 };
+    static Byte const BLUE[3]   = { 13, 12, 29 };
+    static Byte const YELLOW[3] = { 60, 58, 18 };
+    static Byte const BROWN[3]  = { 42, 21, 0 };
 
     if (g_map_specified && g_color_state != ColorState::DEFAULT)
     {
@@ -463,21 +463,21 @@ static void set_cellular_palette()
     g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;
 
-    g_dac_box[1][0] = Red[0];
-    g_dac_box[1][1] = Red[1];
-    g_dac_box[1][2] = Red[2];
-    g_dac_box[2][0] = Green[0];
-    g_dac_box[2][1] = Green[1];
-    g_dac_box[2][2] = Green[2];
-    g_dac_box[3][0] = Blue[0];
-    g_dac_box[3][1] = Blue[1];
-    g_dac_box[3][2] = Blue[2];
-    g_dac_box[4][0] = Yellow[0];
-    g_dac_box[4][1] = Yellow[1];
-    g_dac_box[4][2] = Yellow[2];
-    g_dac_box[5][0] = Brown[0];
-    g_dac_box[5][1] = Brown[1];
-    g_dac_box[5][2] = Brown[2];
+    g_dac_box[1][0] = RED[0];
+    g_dac_box[1][1] = RED[1];
+    g_dac_box[1][2] = RED[2];
+    g_dac_box[2][0] = GREEN[0];
+    g_dac_box[2][1] = GREEN[1];
+    g_dac_box[2][2] = GREEN[2];
+    g_dac_box[3][0] = BLUE[0];
+    g_dac_box[3][1] = BLUE[1];
+    g_dac_box[3][2] = BLUE[2];
+    g_dac_box[4][0] = YELLOW[0];
+    g_dac_box[4][1] = YELLOW[1];
+    g_dac_box[4][2] = YELLOW[2];
+    g_dac_box[5][0] = BROWN[0];
+    g_dac_box[5][1] = BROWN[1];
+    g_dac_box[5][2] = BROWN[2];
 
     spin_dac(0, 1);
 }
