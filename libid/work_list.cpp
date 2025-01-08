@@ -106,9 +106,9 @@ void tidy_work_list()
                             && g_work_list[j].xx_start <  g_work_list[i].xx_start))))
             {
                 // dumb sort, swap 2 entries to correct order
-                WorkList tempwork = g_work_list[i];
+                WorkList tmp = g_work_list[i];
                 g_work_list[i] = g_work_list[j];
-                g_work_list[j] = tempwork;
+                g_work_list[j] = tmp;
             }
         }
     }
