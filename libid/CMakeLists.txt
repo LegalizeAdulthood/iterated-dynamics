@@ -14,7 +14,6 @@ add_library(libid
     boundary_trace.cpp include/boundary_trace.h
     calc_frac_init.cpp include/calc_frac_init.h
     calcfrac.cpp include/calcfrac.h
-    calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
     convert_center_mag.cpp include/convert_center_mag.h
     convert_corners.cpp include/convert_corners.h
@@ -242,7 +241,6 @@ source_group("Header Files/engine" FILES
     include/boundary_trace.h
     include/calc_frac_init.h
     include/calcfrac.h
-    include/calcmand.h
     include/calmanfp.h
     include/convert_center_mag.h
     include/convert_corners.h
@@ -278,7 +276,6 @@ source_group("Source Files/engine" FILES
     boundary_trace.cpp
     calc_frac_init.cpp
     calcfrac.cpp
-    calcmand.cpp
     calmanfp.cpp
     convert_center_mag.cpp
     convert_corners.cpp

@@ -17,7 +17,6 @@
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "boundary_trace.h"
-#include "calcmand.h"
 #include "calmanfp.h"
 #include "check_key.h"
 #include "check_write_file.h"
@@ -1199,6 +1198,18 @@ static void perform_work_list()
         g_cur_fractal_specific->per_pixel = sv_per_pixel;
         g_cur_fractal_specific->per_image = sv_per_image;
     }
+}
+
+static long calc_mand_asm()
+{
+    static bool been_here = false;
+    if (!been_here)
+    {
+        stop_msg("This integer fractal type is unimplemented;\n"
+                "Use float=yes to get a real image.");
+        been_here = true;
+    }
+    return 0;
 }
 
 int calc_mand()              // fast per pixel 1/2/b/g, called with row & col set
