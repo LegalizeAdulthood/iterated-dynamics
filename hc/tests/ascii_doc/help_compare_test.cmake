@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()

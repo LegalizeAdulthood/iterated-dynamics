@@ -1,5 +1,6 @@
-
- @ID_TEST_FIRST_IFS_NAME@ { ; comment allowed here
+; SPDX-License-Identifier: GPL-3.0-only
+;
+@ID_TEST_FIRST_IFS_NAME@ { ; comment allowed here
   ; and here
   @ID_TEST_FIRST_IFS_PARAM1@  .0 .0 .5 -2.563477 -0.000003 .333333   ; also comment allowed here
   }

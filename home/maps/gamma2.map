@@ -1,6 +1,6 @@
-0 0 0   Pseudo-gray sequence optimized for images encoded at a gamma near 2.0
-0 0 4   Modification of the Peterson/Vigneau Sequence by Lee Daniel Crocker
-4 0 0
+0 0 0       SPDX-License-Identifier: GPL-3.0-only
+0 0 4       Pseudo-gray sequence optimized for images encoded at a gamma near 2.0
+4 0 0       Modification of the Peterson/Vigneau Sequence by Lee Daniel Crocker
 0 4 0
 4 4 4
 8 0 8

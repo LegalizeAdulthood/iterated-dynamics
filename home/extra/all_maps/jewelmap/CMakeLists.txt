@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 id_install_home(FILES
     bud4.map
     damien3.map

@@ -1,3 +1,5 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
 ; test.cfg file
 ; Don't use TABs when editing this file.
 ; The driver field is required or the mode will be skipped.

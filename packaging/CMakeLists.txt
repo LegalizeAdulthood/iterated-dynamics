@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 set(CPACK_PACKAGE_NAME                  "${ID_PROGRAM_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${ID_PROGRAM_NAME} fractal renderer")
 set(CPACK_PACKAGE_VENDOR                "${ID_VENDOR_NAME}")

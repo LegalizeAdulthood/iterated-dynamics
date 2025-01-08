@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 set(ID_DOC_INSTALL_DIR doc)
 
 function(id_install_doc)

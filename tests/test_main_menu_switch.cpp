@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "framain2.h"
 
 #include <main_menu_switch.h>

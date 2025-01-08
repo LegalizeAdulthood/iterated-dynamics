@@ -1,5 +1,5 @@
-252 252 252 ; color map to be used with alpha01.l L-system
-  0 168   0
+252 252 252     SPDX-License-Identifier: GPL-3.0-only
+  0 168   0     ; color map to be used with alpha01.l L-system
   0 168 168
 168   0   0
 168   0 168

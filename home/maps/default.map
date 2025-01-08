@@ -1,5 +1,5 @@
-0 0 0            The default VGA color map
-0 0 168
+0 0 0           SPDX-License-Identifier: GPL-3.0-only
+0 0 168         The default VGA color map
 0 168 0
 0 168 168
 168 0 0
