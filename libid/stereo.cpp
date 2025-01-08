@@ -45,24 +45,24 @@ bool g_image_map{};
 struct StereoData
 {
     long avg;
-    long avgct;
+    long avg_ct;
     long depth;
-    int barheight;
+    int bar_height;
     int ground;
-    int maxcc;
-    int maxc;
-    int minc;
+    int max_cc;
+    int max_c;
+    int min_c;
     int reverse;
     int sep;
     double width;
     int x1;
     int x2;
-    int xcen;
+    int x_center;
     int y;
     int y1;
     int y2;
-    int ycen;
-    Byte *savedac;
+    int y_center;
+    Byte *save_dac;
 };
 
 using DACBox = Byte (*)[256][3];
@@ -72,13 +72,13 @@ static StereoData *s_data{};
 // TODO: eliminate all these macros for structure access
 
 #define AVG         (s_data->avg)
-#define AVGCT       (s_data->avgct)
+#define AVG_CT      (s_data->avg_ct)
 #define DEPTH       (s_data->depth)
-#define BARHEIGHT   (s_data->barheight)
+#define BAR_HEIGHT  (s_data->bar_height)
 #define GROUND      (s_data->ground)
-#define MAXCC       (s_data->maxcc)
-#define MAXC        (s_data->maxc)
-#define MINC        (s_data->minc)
+#define MAX_CC      (s_data->max_cc)
+#define MAX_C       (s_data->max_c)
+#define MIN_C       (s_data->min_c)
 #define REVERSE     (s_data->reverse)
 #define SEP         (s_data->sep)
 #define WIDTH       (s_data->width)
@@ -87,8 +87,8 @@ static StereoData *s_data{};
 #define Y           (s_data->y)
 #define Y1          (s_data->y1)
 #define Y2          (s_data->y2)
-#define XCEN        (s_data->xcen)
-#define YCEN        (s_data->ycen)
+#define X_CENTER    (s_data->x_center)
+#define Y_CENTER    (s_data->y_center)
 
 /*
    The getdepth() function allows using the grayscale value of the color
@@ -98,7 +98,7 @@ static StereoData *s_data{};
    0 to 255.
 */
 
-#define dac   (*((DACBox)(s_data->savedac)))
+#define dac   (*((DACBox)(s_data->save_dac)))
 
 static int get_depth(int xd, int yd)
 {
@@ -120,8 +120,8 @@ static int get_depth(int xd, int yd)
 
 static bool get_min_max()
 {
-    MINC = g_colors;
-    MAXC = 0;
+    MIN_C = g_colors;
+    MAX_C = 0;
     for (int yd = 0; yd < g_logical_screen_y_dots; yd++)
     {
         if (driver_key_pressed())
@@ -134,22 +134,22 @@ static bool get_min_max()
         }
         for (int xd = 0; xd < g_logical_screen_x_dots; xd++)
         {
-            int ldepth = get_depth(xd, yd);
-            MINC = std::min(ldepth, MINC);
-            MAXC = std::max(ldepth, MAXC);
+            int depth = get_depth(xd, yd);
+            MIN_C = std::min(depth, MIN_C);
+            MAX_C = std::max(depth, MAX_C);
         }
     }
     clear_temp_msg();
     return false;
 }
 
-static void toggle_bars(bool *bars, int barwidth, int const *colour)
+static void toggle_bars(bool *bars, int bar_width, int const *colour)
 {
     find_special_colors();
     int ct = 0;
-    for (int i = XCEN; i < (XCEN) + barwidth; i++)
+    for (int i = X_CENTER; i < (X_CENTER) + bar_width; i++)
     {
-        for (int j = YCEN; j < (YCEN) + BARHEIGHT; j++)
+        for (int j = Y_CENTER; j < (Y_CENTER) + BAR_HEIGHT; j++)
         {
             if (*bars)
             {
@@ -185,11 +185,11 @@ int out_line_stereo(Byte *pixels, int line_len)
     {
         if (REVERSE)
         {
-            SEP = GROUND - (int)(DEPTH * (get_depth(x, Y) - MINC) / MAXCC);
+            SEP = GROUND - (int)(DEPTH * (get_depth(x, Y) - MIN_C) / MAX_CC);
         }
         else
         {
-            SEP = GROUND - (int)(DEPTH * (MAXCC - (get_depth(x, Y) - MINC)) / MAXCC);
+            SEP = GROUND - (int)(DEPTH * (MAX_CC - (get_depth(x, Y) - MIN_C)) / MAX_CC);
         }
         SEP = (int)((SEP * 10.0) / WIDTH);         // adjust for media WIDTH
 
@@ -197,7 +197,7 @@ int out_line_stereo(Byte *pixels, int line_len)
         if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)
         {
             AVG += SEP;
-            (AVGCT)++;
+            (AVG_CT)++;
         }
         int i = x - (SEP + (SEP & Y & 1)) / 2;
         int j = i + SEP;
@@ -245,23 +245,23 @@ bool auto_stereo_convert()
 {
     // TODO: replace this stack variable with static data s_data
     StereoData v;
-    Byte savedacbox[256*3];
+    Byte save_dac_box[256*3];
     bool ret = false;
     bool bars;
-    std::time_t ltime;
+    std::time_t now;
     std::vector<int> colour;
     colour.resize(g_logical_screen_x_dots);
 
     s_data = &v;   // set static vars to stack structure
-    s_data->savedac = savedacbox;
+    s_data->save_dac = save_dac_box;
 
     // Use the current time to randomize the random number sequence.
-    std::time(&ltime);
-    std::srand((unsigned int)ltime);
+    std::time(&now);
+    std::srand((unsigned int)now);
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
     driver_save_graphics();                      // save graphics image
-    std::memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
+    std::memcpy(save_dac_box, g_dac_box, 256 * 3);  // save colors
 
     if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
     {
@@ -291,25 +291,25 @@ bool auto_stereo_convert()
         ret = true;
         goto exit_stereo;
     }
-    MAXCC = MAXC - MINC + 1;
-    AVGCT = 0L;
-    AVG = AVGCT;
-    BARHEIGHT = 1 + g_logical_screen_y_dots / 20;
-    XCEN = g_logical_screen_x_dots/2;
+    MAX_CC = MAX_C - MIN_C + 1;
+    AVG_CT = 0L;
+    AVG = AVG_CT;
+    BAR_HEIGHT = 1 + g_logical_screen_y_dots / 20;
+    X_CENTER = g_logical_screen_x_dots/2;
     if (g_calibrate > 1)
     {
-        YCEN = BARHEIGHT/2;
+        Y_CENTER = BAR_HEIGHT/2;
     }
     else
     {
-        YCEN = g_logical_screen_y_dots/2;
+        Y_CENTER = g_logical_screen_y_dots/2;
     }
 
     // box to average for calibration bars
-    X1 = XCEN - g_logical_screen_x_dots/16;
-    X2 = XCEN + g_logical_screen_x_dots/16;
-    Y1 = YCEN - BARHEIGHT/2;
-    Y2 = YCEN + BARHEIGHT/2;
+    X1 = X_CENTER - g_logical_screen_x_dots/16;
+    X2 = X_CENTER + g_logical_screen_x_dots/16;
+    Y1 = Y_CENTER - BAR_HEIGHT/2;
+    Y2 = Y_CENTER + BAR_HEIGHT/2;
 
     Y = 0;
     if (g_image_map)
@@ -344,46 +344,46 @@ bool auto_stereo_convert()
     }
 
     find_special_colors();
-    AVG /= AVGCT;
+    AVG /= AVG_CT;
     AVG /= 2;
     {
         bool done = false;
         int ct = 0;
-        const int barwidth = 1 + g_logical_screen_x_dots / 200;
-        for (int i = XCEN; i < XCEN + barwidth; i++)
+        const int bar_width = 1 + g_logical_screen_x_dots / 200;
+        for (int i = X_CENTER; i < X_CENTER + bar_width; i++)
         {
-            for (int j = YCEN; j < YCEN + BARHEIGHT; j++)
+            for (int j = Y_CENTER; j < Y_CENTER + BAR_HEIGHT; j++)
             {
                 colour[ct++] = get_color(i + (int)(AVG), j);
                 colour[ct++] = get_color(i - (int)(AVG), j);
             }
         }
         bars = g_calibrate != 0;
-        toggle_bars(&bars, barwidth, colour.data());
+        toggle_bars(&bars, bar_width, colour.data());
         while (!done)
         {
             driver_wait_key_pressed(0);
-            switch (int kbdchar = driver_get_key(); kbdchar)
+            switch (int key = driver_get_key(); key)
             {
             case ID_KEY_ENTER:   // toggle bars
             case ID_KEY_SPACE:
-                toggle_bars(&bars, barwidth, colour.data());
+                toggle_bars(&bars, bar_width, colour.data());
                 break;
             case 'c':
             case '+':
             case '-':
-                rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
+                rotate((key == 'c') ? 0 : ((key == '+') ? 1 : -1));
                 break;
             case 's':
             case 'S':
                 save_image(g_save_filename);
                 break;
             default:
-                if (kbdchar == ID_KEY_ESC)     // if ESC avoid returning to menu
+                if (key == ID_KEY_ESC)     // if ESC avoid returning to menu
                 {
-                    kbdchar = 255;
+                    key = 255;
                 }
-                driver_unget_key(kbdchar);
+                driver_unget_key(key);
                 driver_buzzer(Buzzer::COMPLETE);
                 done = true;
                 break;
@@ -393,7 +393,7 @@ bool auto_stereo_convert()
 
 exit_stereo:
     driver_restore_graphics();
-    std::memcpy(g_dac_box, savedacbox, 256 * 3);
+    std::memcpy(g_dac_box, save_dac_box, 256 * 3);
     spin_dac(0, 1);
     return ret;
 }
