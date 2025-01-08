@@ -8,12 +8,17 @@
 #include "drivers.h"
 #include "id_data.h"
 #include "pixel_limits.h"
-#include "ssg_block_size.h"
 #include "video.h"
 #include "work_list.h"
 
 #include <algorithm>
 #include <cstring>
+
+enum
+{
+    MAX_Y_BLK = 7,  // MAX_X_BLK*MAX_Y_BLK*2 <= 4096, the size of "prefix"
+    MAX_X_BLK = 202 // each maxnblk is oversize by 2 for a "border"
+};
 
 // routines in this module
 static bool guess_row(bool first_pass, int y, int block_size);
@@ -29,7 +34,23 @@ static int s_half_block{};                                 //
 static unsigned int s_t_prefix[2][MAX_Y_BLK][MAX_X_BLK]{}; // common temp
 static Byte s_stack[4096]{};                               // common temp, two put_line calls
 
-// super solid guessing
+int ssg_block_size()
+{
+    // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
+    int block_size = 4;
+    int i = 300;
+    while (i <= g_logical_screen_y_dots)
+    {
+        block_size += block_size;
+        i += i;
+    }
+    // increase blocksize if prefix array not big enough
+    while (block_size*(MAX_X_BLK-2) < g_logical_screen_x_dots || block_size*(MAX_Y_BLK-2)*16 < g_logical_screen_y_dots)
+    {
+        block_size += block_size;
+    }
+    return block_size;
+}
 
 // Timothy Wegner invented this solid guessing idea and implemented it in
 // more or less the overall framework you see here.  Tim added this note

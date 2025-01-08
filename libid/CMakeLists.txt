@@ -34,7 +34,6 @@ add_library(libid
     soi.cpp include/soi.h
     soi1.cpp
     solid_guess.cpp include/solid_guess.h
-    ssg_block_size.cpp include/ssg_block_size.h
     sticky_orbits.cpp include/sticky_orbits.h
     tesseral.cpp include/tesseral.h
     type_has_param.cpp include/type_has_param.h
@@ -264,7 +263,6 @@ source_group("Header Files/engine" FILES
     include/resume.h
     include/soi.h
     include/solid_guess.h
-    include/ssg_block_size.h
     include/sticky_orbits.h
     include/tesseral.h
     include/type_has_param.h
@@ -296,7 +294,6 @@ source_group("Source Files/engine" FILES
     soi.cpp
     soi1.cpp
     solid_guess.cpp
-    ssg_block_size.cpp
     sticky_orbits.cpp
     tesseral.cpp
     type_has_param.cpp
