@@ -45,8 +45,8 @@ static void blank_rows(int row, int count, int attr)
    */
 bool stop_msg(StopMsgFlags flags, const std::string &msg)
 {
-    int toprow;
-    static bool batchmode = false;
+    int top_row;
+    static bool batch_mode = false;
     if (g_debug_flag != DebugFlags::NONE || g_init_batch >= BatchMode::NORMAL)
     {
         if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == BatchMode::NONE ? "w" : "a"))
@@ -67,26 +67,26 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         close_drivers();
         std::exit(1);
     }
-    if (g_init_batch >= BatchMode::NORMAL || batchmode)
+    if (g_init_batch >= BatchMode::NORMAL || batch_mode)
     {
         // in batch mode
         g_init_batch = BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE; // used to set errorlevel
-        batchmode = true; // fixes *second* stopmsg in batch mode bug
+        batch_mode = true; // fixes *second* stopmsg in batch mode bug
         return true;
     }
     ValueSaver saved_look_at_mouse{g_look_at_mouse, -ID_KEY_ENTER};
     if (bit_set(flags, StopMsgFlags::NO_STACK))
     {
-        blank_rows(toprow = 12, 10, 7);
+        blank_rows(top_row = 12, 10, 7);
     }
     else
     {
         driver_stack_screen();
-        toprow = 4;
+        top_row = 4;
         driver_move_cursor(4, 0);
     }
     g_text_col_base = 2; // left margin is 2
-    driver_put_string(toprow, 0, 7, msg);
+    driver_put_string(top_row, 0, 7, msg);
     if (bit_set(flags, StopMsgFlags::CANCEL))
     {
         driver_put_string(g_text_row+2, 0, 7, "Escape to cancel, any other key to continue...");
@@ -97,7 +97,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     }
     g_text_col_base = 0; // back to full line
     int color = bit_set(flags, StopMsgFlags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
-    driver_set_attr(toprow, 0, color, (g_text_row+1-toprow)*80);
+    driver_set_attr(top_row, 0, color, (g_text_row+1-top_row)*80);
     driver_hide_text_cursor();   // cursor off
     if (!bit_set(flags, StopMsgFlags::NO_BUZZER))
     {
@@ -118,7 +118,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     }
     if (bit_set(flags, StopMsgFlags::NO_STACK))
     {
-        blank_rows(toprow, 10, 7);
+        blank_rows(top_row, 10, 7);
     }
     else
     {
