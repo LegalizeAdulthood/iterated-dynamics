@@ -91,9 +91,9 @@ static int skinner_trig_sub_trig_fractal()
 {
     // z = trig(0, z) - trig1(z)
     trig0(g_l_old_z, g_l_temp);
-    LComplex ltmp2;
-    trig1(g_l_old_z, ltmp2);
-    g_l_new_z = g_l_temp - ltmp2;
+    LComplex tmp;
+    trig1(g_l_old_z, tmp);
+    g_l_new_z = g_l_temp - tmp;
     return g_bailout_long();
 }
 
@@ -217,9 +217,9 @@ int trig_plus_trig_fractal()
     // z = trig(0,z)*p1 + trig1(z)*p2
     trig0(g_l_old_z, g_l_temp);
     g_l_temp = g_l_param * g_l_temp;
-    LComplex ltmp2;
-    trig1(g_l_old_z, ltmp2);
-    g_l_old_z = g_l_param2 * ltmp2;
+    LComplex tmp;
+    trig1(g_l_old_z, tmp);
+    g_l_old_z = g_l_param2 * tmp;
     g_l_new_z = g_l_temp + g_l_old_z;
     return g_bailout_long();
 }
@@ -237,7 +237,7 @@ int trig_plus_trig_fp_fractal()
 
 bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
 {
-    static SymmetryType fnplusfn[7][7] =
+    static SymmetryType fn_plus_fn[7][7] =
     {
         // fn2 ->sin     cos    sinh    cosh   exp    log    sqr
         // fn1
@@ -253,7 +253,7 @@ bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
     {
         if (g_trig_index[0] <= TrigFn::SQR && g_trig_index[1] < TrigFn::SQR)    // bounds of array
         {
-            g_symmetry = fnplusfn[+g_trig_index[0]][+g_trig_index[1]];
+            g_symmetry = fn_plus_fn[+g_trig_index[0]][+g_trig_index[1]];
         }
         if (g_trig_index[0] == TrigFn::FLIP || g_trig_index[1] == TrigFn::FLIP)
         {
@@ -269,7 +269,7 @@ bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
 
 bool fn_x_fn_setup()
 {
-    static SymmetryType fnxfn[7][7] =
+    static SymmetryType fn_x_fn[7][7] =
     {
         // fn2 ->sin     cos    sinh    cosh  exp    log    sqr
         // fn1
@@ -283,7 +283,7 @@ bool fn_x_fn_setup()
     };
     if (g_trig_index[0] <= TrigFn::SQR && g_trig_index[1] <= TrigFn::SQR)    // bounds of array
     {
-        g_symmetry = fnxfn[+g_trig_index[0]][+g_trig_index[1]];
+        g_symmetry = fn_x_fn[+g_trig_index[0]][+g_trig_index[1]];
         // defaults to X_AXIS symmetry
     }
     else
@@ -320,11 +320,11 @@ bool fn_x_fn_setup()
 
 int trig_x_trig_fractal()
 {
-    LComplex ltmp3;
+    LComplex tmp;
     // z = trig0(z)*trig1(z)
     trig0(g_l_old_z, g_l_temp);
-    trig1(g_l_old_z, ltmp3);
-    g_l_new_z = g_l_temp * ltmp3;
+    trig1(g_l_old_z, tmp);
+    g_l_new_z = g_l_temp * tmp;
     if (g_overflow)
     {
         try_float_fractal(trig_x_trig_fp_fractal);
@@ -352,9 +352,9 @@ int trig_z_sqrd_fp_fractal()
 int trig_z_sqrd_fractal() // this doesn't work very well
 {
     // { z=pixel: z=trig(z*z), |z|<TEST }
-    long l16triglim_2 = 8L << 15;
+    long l16_trig_lim2 = 8L << 15;
     lcmplx_sqr_old(g_l_temp);
-    if (labs(g_l_temp.x) > l16triglim_2 || labs(g_l_temp.y) > l16triglim_2)
+    if (labs(g_l_temp.x) > l16_trig_lim2 || labs(g_l_temp.y) > l16_trig_lim2)
     {
         g_overflow = true;
     }
