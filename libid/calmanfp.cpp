@@ -35,8 +35,8 @@ long calc_mand_fp_asm()
     double x2;
     double y2;
     double xy;
-    double Cx;
-    double Cy;
+    double c_x;
+    double c_y;
 
     if (g_periodicity_check == 0)
     {
@@ -81,23 +81,23 @@ long calc_mand_fp_asm()
     if (g_fractal_type != FractalType::JULIA_FP && g_fractal_type != FractalType::JULIA)
     {
         // Mandelbrot_87
-        Cx = g_init.x;
-        Cy = g_init.y;
-        x = g_param_z1.x+Cx;
-        y = g_param_z1.y+Cy;
+        c_x = g_init.x;
+        c_y = g_init.y;
+        x = g_param_z1.x+c_x;
+        y = g_param_z1.y+c_y;
     }
     else
     {
         // dojulia_87
-        Cx = g_param_z1.x;
-        Cy = g_param_z1.y;
+        c_x = g_param_z1.x;
+        c_y = g_param_z1.y;
         x = g_init.x;
         y = g_init.y;
         x2 = x*x;
         y2 = y*y;
         xy = x*y;
-        x = x2-y2+Cx;
-        y = 2*xy+Cy;
+        x = x2-y2+c_x;
+        y = 2*xy+c_y;
     }
     x2 = x*x;
     y2 = y*y;
@@ -106,8 +106,8 @@ long calc_mand_fp_asm()
     // top_of_cs_loop_87
     while (--cx > 0)
     {
-        x = x2-y2+Cx;
-        y = 2*xy+Cy;
+        x = x2-y2+c_x;
+        y = 2*xy+c_y;
         x2 = x*x;
         y2 = y*y;
         xy = x*y;
