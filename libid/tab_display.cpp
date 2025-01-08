@@ -48,40 +48,40 @@ static void area();
 // color   -- attribute (same as for putstring)
 // maxrow -- max number of rows to write
 // returns false if success, true if hit maxrow before done
-static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, int maxrow)
+static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, int max_row)
 {
-    int decpt;
+    int dec_pt;
     bool done = false;
-    int startrow = *row;
+    int start_row = *row;
     int length = (int) std::strlen(str);
-    int g_padding = 3; // space between col1 and decimal.
+    int padding = 3; // space between col1 and decimal.
     // find decimal point
-    for (decpt = 0; decpt < length; decpt++)
+    for (dec_pt = 0; dec_pt < length; dec_pt++)
     {
-        if (str[decpt] == '.')
+        if (str[dec_pt] == '.')
         {
             break;
         }
     }
-    if (decpt >= length)
+    if (dec_pt >= length)
     {
-        decpt = 0;
+        dec_pt = 0;
     }
-    if (decpt < g_padding)
+    if (dec_pt < padding)
     {
-        g_padding -= decpt;
+        padding -= dec_pt;
     }
     else
     {
-        g_padding = 0;
+        padding = 0;
     }
-    col1 += g_padding;
-    decpt += col1+1; // column just past where decimal is
+    col1 += padding;
+    dec_pt += col1+1; // column just past where decimal is
     while (length > 0)
     {
         if (col2-col1 < length)
         {
-            done = (*row - startrow + 1) >= maxrow;
+            done = (*row - start_row + 1) >= max_row;
             char save1 = str[col2 - col1 + 1];
             char save2 = str[col2 - col1 + 2];
             if (done)
@@ -108,7 +108,7 @@ static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, 
             driver_put_string(*row, col1, color, str);
         }
         length -= col2-col1;
-        col1 = decpt; // align with decimal
+        col1 = dec_pt; // align with decimal
     }
     return done;
 }
@@ -221,14 +221,14 @@ bool tab_display2(char *msg)
 
 int tab_display()       // display the status of the current image
 {
-    int addrow = 0;
-    bf_t bfXctr = nullptr;
-    bf_t bfYctr = nullptr;
+    int add_row = 0;
+    bf_t bf_x_ctr = nullptr;
+    bf_t bf_y_ctr = nullptr;
     char msg[350];
-    char const *msgptr;
+    char const *msg_ptr;
     int key;
     int saved = 0;
-    int hasformparam = 0;
+    int has_form_param = 0;
 
     if (g_calc_status < CalcStatus::PARAMS_CHANGED)        // no active fractal image
     {
@@ -242,8 +242,8 @@ int tab_display()       // display the status of the current image
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
-        bfXctr = alloc_stack(g_bf_length+2);
-        bfYctr = alloc_stack(g_bf_length+2);
+        bf_x_ctr = alloc_stack(g_bf_length+2);
+        bf_y_ctr = alloc_stack(g_bf_length+2);
     }
     if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
@@ -251,7 +251,7 @@ int tab_display()       // display the status of the current image
         {
             if (!param_not_used(i))
             {
-                hasformparam++;
+                has_form_param++;
             }
         }
     }
@@ -279,7 +279,7 @@ top:
             driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name);
             i = static_cast<int>(g_formula_name.length() + 1);
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, trim_file_name(g_formula_filename, 29));
+            driver_put_string(s_row + 2 + add_row, 16, C_GENERAL_HI, trim_file_name(g_formula_filename, 29));
         }
         trig_details(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
@@ -290,9 +290,9 @@ top:
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) g_l_system_filename.length() >= 28)
             {
-                addrow = 1;
+                add_row = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_l_system_filename);
+            driver_put_string(s_row+2+add_row, 16, C_GENERAL_HI, g_l_system_filename);
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {
@@ -301,33 +301,33 @@ top:
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) g_ifs_filename.length() >= 28)
             {
-                addrow = 1;
+                add_row = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_ifs_filename);
+            driver_put_string(s_row+2+add_row, 16, C_GENERAL_HI, g_ifs_filename);
         }
     }
 
     switch (g_calc_status)
     {
     case CalcStatus::PARAMS_CHANGED:
-        msgptr = "Parms chgd since generated";
+        msg_ptr = "Parms chgd since generated";
         break;
     case CalcStatus::IN_PROGRESS:
-        msgptr = "Still being generated";
+        msg_ptr = "Still being generated";
         break;
     case CalcStatus::RESUMABLE:
-        msgptr = "Interrupted, resumable";
+        msg_ptr = "Interrupted, resumable";
         break;
     case CalcStatus::NON_RESUMABLE:
-        msgptr = "Interrupted, non-resumable";
+        msg_ptr = "Interrupted, non-resumable";
         break;
     case CalcStatus::COMPLETED:
-        msgptr = "Image completed";
+        msg_ptr = "Image completed";
         break;
     default:
-        msgptr = "";
+        msg_ptr = "";
     }
-    driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
+    driver_put_string(s_row, 45, C_GENERAL_HI, msg_ptr);
     if (g_init_batch != BatchMode::NONE && g_calc_status != CalcStatus::PARAMS_CHANGED)
     {
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
@@ -383,7 +383,7 @@ top:
                               "Note: can't resume this type after interrupts other than <tab> and <F1>");
         }
     }
-    s_row += addrow;
+    s_row += add_row;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
     driver_put_string(s_row, -1, C_GENERAL_HI, g_save_filename);
 
@@ -516,7 +516,7 @@ top:
         {
             int dec = std::min(320, g_decimals);
             adjust_corner_bf(); // make bottom left exact if very near exact
-            cvt_center_mag_bf(bfXctr, bfYctr, magnification, x_mag_factor, rotation, skew);
+            cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
             // find alignment information
             msg[0] = 0;
             bool truncate = false;
@@ -524,19 +524,19 @@ top:
             {
                 truncate = true;
             }
-            int truncaterow = g_row;
+            int truncate_row = g_row;
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(s_row, 8, C_GENERAL_MED, "x");
-            bf_to_str(msg, dec, bfXctr);
+            bf_to_str(msg, dec, bf_x_ctr);
             if (put_string_wrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5))
             {
                 truncate = true;
             }
             driver_put_string(++s_row, 8, C_GENERAL_MED, "y");
-            bf_to_str(msg, dec, bfYctr);
+            bf_to_str(msg, dec, bf_y_ctr);
             if (put_string_wrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
             {
-                driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
+                driver_put_string(truncate_row, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Mag");
             std::sprintf(msg, "%10.8Le", magnification);
@@ -588,7 +588,7 @@ top:
         }
     }
 
-    if (type_has_param(g_fractal_type, 0, msg) || hasformparam)
+    if (type_has_param(g_fractal_type, 0, msg) || has_form_param)
     {
         for (int i = 0; i < MAX_PARAMS; i++)
         {
