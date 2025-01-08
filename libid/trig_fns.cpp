@@ -73,41 +73,41 @@ void (*g_d_trig3)(){d_stk_cosh};
 // return display form of active trig functions
 std::string show_trig()
 {
-    char tmpbuf[30];
-    trig_details(tmpbuf);
-    if (tmpbuf[0])
+    char tmp_buff[30];
+    trig_details(tmp_buff);
+    if (tmp_buff[0])
     {
-        return std::string{" function="} + tmpbuf;
+        return std::string{" function="} + tmp_buff;
     }
     return {};
 }
 
 void trig_details(char *buf)
 {
-    int numfn;
+    int num_fn;
     if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
     {
-        numfn = (+g_fractal_specific[+g_new_orbit_type].flags >> 6) & 7;
+        num_fn = (+g_fractal_specific[+g_new_orbit_type].flags >> 6) & 7;
     }
     else
     {
-        numfn = (+g_cur_fractal_specific->flags >> 6) & 7;
+        num_fn = (+g_cur_fractal_specific->flags >> 6) & 7;
     }
     if (g_cur_fractal_specific == &g_fractal_specific[+FractalType::FORMULA]
         || g_cur_fractal_specific == &g_fractal_specific[+FractalType::FORMULA_FP])
     {
-        numfn = g_max_function;
+        num_fn = g_max_function;
     }
     *buf = 0; // null string if none
-    if (numfn > 0)
+    if (num_fn > 0)
     {
         std::strcpy(buf, g_trig_fn[+g_trig_index[0]].name);
         int i = 0;
-        while (++i < numfn)
+        while (++i < num_fn)
         {
-            char tmpbuf[20];
-            std::snprintf(tmpbuf, std::size(tmpbuf), "/%s", g_trig_fn[+g_trig_index[i]].name);
-            std::strcat(buf, tmpbuf);
+            char tmp_buff[20];
+            std::snprintf(tmp_buff, std::size(tmp_buff), "/%s", g_trig_fn[+g_trig_index[i]].name);
+            std::strcat(buf, tmp_buff);
         }
     }
 }
@@ -115,21 +115,21 @@ void trig_details(char *buf)
 // set array of trig function indices according to "function=" command
 int set_trig_array(int k, char const *name)
 {
-    char trigname[10];
-    std::strncpy(trigname, name, 6);
-    trigname[6] = 0; // safety first
+    char trig_name[10];
+    std::strncpy(trig_name, name, 6);
+    trig_name[6] = 0; // safety first
 
-    char *slash = std::strchr(trigname, '/');
+    char *slash = std::strchr(trig_name, '/');
     if (slash != nullptr)
     {
         *slash = 0;
     }
 
-    strlwr(trigname);
+    strlwr(trig_name);
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {
-        if (std::strcmp(trigname, g_trig_fn[i].name) == 0)
+        if (std::strcmp(trig_name, g_trig_fn[i].name) == 0)
         {
             g_trig_index[k] = static_cast<TrigFn>(i);
             set_trig_pointers(k);
