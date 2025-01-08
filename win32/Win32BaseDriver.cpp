@@ -158,12 +158,12 @@ void  Win32BaseDriver::shell()
         sizeof(si)
     };
     PROCESS_INFORMATION pi{};
-    const char *comspec = getenv("COMSPEC");
-    if (comspec == nullptr)
+    const char *com_spec = getenv("COMSPEC");
+    if (com_spec == nullptr)
     {
-        comspec = "cmd.exe";
+        com_spec = "cmd.exe";
     }
-    const std::string command_line(comspec);
+    const std::string command_line(com_spec);
     if (CreateProcessA(
             command_line.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
     {
