@@ -40,8 +40,8 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void write_span(int y, int x, int lastx, Byte *pixels) override;
-    void read_span(int y, int x, int lastx, Byte *pixels) override;
+    void write_span(int y, int x, int last_x, Byte *pixels) override;
+    void read_span(int y, int x, int last_x, Byte *pixels) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
@@ -58,7 +58,7 @@ public:
     void resume() override;
     void save_graphics() override;
     void restore_graphics() override;
-    void get_max_screen(int &xmax, int &ymax) override;
+    void get_max_screen(int &x_max, int &y_max) override;
     void flush() override;
 
 private:
@@ -102,7 +102,7 @@ static VideoInfo modes[] =
 *
 *----------------------------------------------------------------------
 */
-static void initdacbox()
+static void init_dac_box()
 {
     for (int i = 0; i < 256; i++)
     {
@@ -134,7 +134,7 @@ bool DiskDriver::init(int *argc, char **argv)
         return false;
     }
 
-    initdacbox();
+    init_dac_box();
 
     // add default list of video modes
     for (VideoInfo &mode : modes)
@@ -300,9 +300,9 @@ int DiskDriver::read_pixel(int x, int y)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::write_span(int y, int x, int lastx, Byte *pixels)
+void DiskDriver::write_span(int y, int x, int last_x, Byte *pixels)
 {
-    int width = lastx-x+1;
+    int width = last_x-x+1;
     ODS3("DiskDriver::write_span (%d,%d,%d)", y, x, lastx);
 
     for (int i = 0; i < width; i++)
@@ -326,10 +326,10 @@ void DiskDriver::write_span(int y, int x, int lastx, Byte *pixels)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::read_span(int y, int x, int lastx, Byte *pixels)
+void DiskDriver::read_span(int y, int x, int last_x, Byte *pixels)
 {
     ODS3("DiskDriver::read_span (%d,%d,%d)", y, x, lastx);
-    int width = lastx-x+1;
+    int width = last_x-x+1;
     for (int i = 0; i < width; i++)
     {
         pixels[i] = read_pixel(x+i, y);
@@ -458,10 +458,10 @@ void DiskDriver::restore_graphics()
 {
 }
 
-void DiskDriver::get_max_screen(int &xmax, int &ymax)
+void DiskDriver::get_max_screen(int &x_max, int &y_max)
 {
-    xmax = -1;
-    ymax = -1;
+    x_max = -1;
+    y_max = -1;
 }
 
 void DiskDriver::flush()
