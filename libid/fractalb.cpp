@@ -12,12 +12,12 @@
 #include "fractals/divide_brot.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
-#include "goodbye.h"
+#include "ui/goodbye.h"
 #include "id.h"
 #include "id_data.h"
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "type_has_param.h"
 
 #include <algorithm>

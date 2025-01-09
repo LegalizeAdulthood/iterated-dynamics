@@ -14,8 +14,8 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractype.h"
-#include "goodbye.h"
-#include "stop_msg.h"
+#include "ui/goodbye.h"
+#include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <cstring>

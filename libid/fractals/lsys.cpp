@@ -5,14 +5,14 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "file_gets.h"
-#include "file_item.h"
+#include "ui/file_item.h"
 #include "math/fpu087.h"
 #include "fractals/lsys_fns.h"
 #include "id_data.h"
 #include "math/fixed_pt.h"
 #include "stack_avail.h"
-#include "stop_msg.h"
-#include "thinking.h"
+#include "ui/stop_msg.h"
+#include "ui/thinking.h"
 
 #include <algorithm>
 #include <cassert>

@@ -21,7 +21,7 @@
 #include "port.h"
 #include "math/sign.h"
 #include "soi.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "type_has_param.h"
 
 #include <algorithm>

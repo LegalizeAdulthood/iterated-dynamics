@@ -22,7 +22,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "editpal.h"
-#include "goodbye.h"
+#include "ui/goodbye.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"

@@ -13,8 +13,8 @@
 #include "resume.h"
 #include "rotate.h"
 #include "spindac.h"
-#include "stop_msg.h"
-#include "thinking.h"
+#include "ui/stop_msg.h"
+#include "ui/thinking.h"
 #include "video.h"
 
 #include <array>

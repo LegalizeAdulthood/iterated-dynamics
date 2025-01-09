@@ -17,7 +17,7 @@
 #include "math/mpmath.h"
 #include "pixel_grid.h"
 #include "resume.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 
 #include <cmath>
 #include <cstdlib>

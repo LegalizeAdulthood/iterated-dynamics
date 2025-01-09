@@ -18,8 +18,8 @@
 #include "rotate.h"
 #include "slideshw.h"
 #include "spindac.h"
-#include "stop_msg.h"
-#include "text_screen.h"
+#include "ui/stop_msg.h"
+#include "ui/text_screen.h"
 #include "video.h"
 
 #include <cassert>

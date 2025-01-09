@@ -28,12 +28,12 @@
 #include "math/mpmath_c.h"
 #include "math/rand15.h"
 #include "math/sign.h"
-#include "not_disk_msg.h"
+#include "ui/not_disk_msg.h"
 #include "plot3d.h"
 #include "resume.h"
 #include "save_file.h"
 #include "sound.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "video.h"
 
 #include <cmath>

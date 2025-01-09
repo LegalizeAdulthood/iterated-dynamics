@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#include "ChoiceBuilder.h"
+#include "ui/ChoiceBuilder.h"
 #include "ValueSaver.h"
 #include "calcfrac.h"
 #include "drivers.h"
@@ -15,7 +15,7 @@
 #include "math/rand15.h"
 #include "slideshw.h"
 #include "spindac.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "video.h"
 
 const std::string_view g_altern_map_file{"altern.map"};

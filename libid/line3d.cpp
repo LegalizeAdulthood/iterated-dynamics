@@ -26,7 +26,7 @@
 #include "rotate.h"
 #include "save_file.h"
 #include "stereo.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "version.h"
 #include "video.h"
 

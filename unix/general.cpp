@@ -17,7 +17,7 @@
 #include "loadfile.h"
 #include "read_ticker.h"
 #include "slideshw.h"
-#include "tab_display.h"
+#include "ui/tab_display.h"
 
 #include <fcntl.h>
 #include <unistd.h>

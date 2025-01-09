@@ -3,7 +3,7 @@
 #pragma once
 
 #include "cmdfiles.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 
 #include <functional>
 

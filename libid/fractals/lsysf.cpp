@@ -8,7 +8,7 @@
 #include "id_data.h"
 #include "math/fixed_pt.h"
 #include "stack_avail.h"
-#include "thinking.h"
+#include "ui/thinking.h"
 
 #include <algorithm>
 #include <cmath>

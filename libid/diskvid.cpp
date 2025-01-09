@@ -11,12 +11,12 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "help_title.h"
+#include "ui/help_title.h"
 #include "id_data.h"
 #include "math/big.h"
 #include "memory.h"
-#include "stop_msg.h"
-#include "temp_msg.h"
+#include "ui/stop_msg.h"
+#include "ui/temp_msg.h"
 #include "video.h"
 
 #include <array>

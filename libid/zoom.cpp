@@ -23,7 +23,7 @@
 #include "resume.h"
 #include "solid_guess.h"
 #include "spindac.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "video.h"
 #include "work_list.h"
 

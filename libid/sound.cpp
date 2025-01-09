@@ -5,7 +5,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "save_file.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "update_save_name.h"
 #include "wait_until.h"
 

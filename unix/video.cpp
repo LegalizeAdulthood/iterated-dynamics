@@ -9,7 +9,7 @@
 #include "id_data.h"
 #include "rotate.h"
 #include "spindac.h"
-#include "text_screen.h"
+#include "ui/text_screen.h"
 #include "unixscr.h"
 #include "video.h"
 #include "video_mode.h"

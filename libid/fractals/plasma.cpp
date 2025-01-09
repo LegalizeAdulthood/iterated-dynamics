@@ -13,7 +13,7 @@
 #include "rotate.h"
 #include "sized_types.h"
 #include "spindac.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "video.h"
 
 #include <algorithm>

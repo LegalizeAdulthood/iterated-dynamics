@@ -20,8 +20,8 @@
 #include "pixel_limits.h"
 #include "rotate.h"
 #include "spindac.h"
-#include "stop_msg.h"
-#include "temp_msg.h"
+#include "ui/stop_msg.h"
+#include "ui/temp_msg.h"
 #include "ValueSaver.h"
 #include "video.h"
 

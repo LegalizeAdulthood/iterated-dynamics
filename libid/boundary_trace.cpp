@@ -5,7 +5,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "id_data.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "video.h"
 #include "work_list.h"
 

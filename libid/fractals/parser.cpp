@@ -22,7 +22,7 @@
 #include "convert_center_mag.h"
 #include "debug_flags.h"
 #include "drivers.h"
-#include "file_item.h"
+#include "ui/file_item.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
@@ -38,7 +38,7 @@
 #include "pixel_grid.h"
 #include "prototyp.h" // strnicmp
 #include "save_file.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <array>

@@ -22,7 +22,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "fractals.h"
-#include "goodbye.h"
+#include "ui/goodbye.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
@@ -31,7 +31,7 @@
 #include "os.h"
 #include "read_ticker.h"
 #include "slideshw.h"
-#include "text_screen.h"
+#include "ui/text_screen.h"
 #include "video_mode.h"
 #include "zoom.h"
 
@@ -62,7 +62,7 @@
 #include "x11_frame.h"
 #include "x11_text.h"
 #include "x11_plot.h"
-#include "intro.h"
+#include "ui/intro.h"
 
 #ifdef LINUX
 #define FNDELAY O_NDELAY

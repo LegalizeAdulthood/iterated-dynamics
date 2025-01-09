@@ -8,11 +8,11 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "get_disk_space.h"
-#include "goodbye.h"
+#include "ui/goodbye.h"
 #include "id.h"
 #include "line3d.h"
 #include "stack_avail.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 
 #include <cinttypes>
 #include <climits>

@@ -87,7 +87,6 @@ add_library(libid
     editpal.cpp include/editpal.h
     encoder.cpp include/encoder.h
     evolve.cpp include/evolve.h
-    get_video_mode.cpp include/get_video_mode.h
     gif_file.cpp include/gif_file.h
     gifview.cpp include/gifview.h
     loadfile.cpp include/loadfile.h
@@ -98,7 +97,6 @@ add_library(libid
     slideshw.cpp include/slideshw.h
     special_dirs.cpp include/special_dirs.h
     stereo.cpp include/stereo.h
-    text_screen.cpp include/text_screen.h
     video.cpp include/video.h
 
     include/math/big.h
@@ -127,7 +125,6 @@ add_library(libid
     check_orbit_name.cpp include/check_orbit_name.h
     check_write_file.cpp include/check_write_file.h
     comments.cpp include/comments.h
-    include/ChoiceBuilder.h
     dir_file.cpp include/dir_file.h
     double_to_string.cpp include/double_to_string.h
     ends_with_slash.cpp include/ends_with_slash.h
@@ -135,47 +132,25 @@ add_library(libid
     evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
     include/extract_filename.h
-    field_prompt.cpp include/field_prompt.h
     file_gets.cpp include/file_gets.h
     find_extra_param.cpp include/find_extra_param.h
     find_file.cpp include/find_file.h
-    file_item.cpp include/file_item.h
     find_path.cpp include/find_path.h
     find_special_colors.cpp include/find_special_colors.h
     fix_dirname.cpp include/fix_dirname.h
     flip_image.cpp include/flip_image.h
     framain2.cpp include/framain2.h
-    full_screen_choice.cpp include/full_screen_choice.h
-    full_screen_prompt.cpp include/full_screen_prompt.h
-    get_3d_params.cpp include/get_3d_params.h
-    get_a_filename.cpp include/get_a_filename.h
-    get_a_number.cpp include/get_a_number.h
-    get_browse_params.cpp include/get_browse_params.h
     get_calculation_time.cpp include/get_calculation_time.h
-    get_cmd_string.cpp include/get_cmd_string.h
     get_commands.cpp include/get_commands.h
-    get_corners.cpp include/get_corners.h
-    get_fract_type.cpp include/get_fract_type.h
     get_key_no_help.cpp include/get_key_no_help.h
     get_prec_big_float.cpp include/get_prec_big_float.h
-    get_rds_params.cpp include/get_rds_params.h
-    get_sound_params.cpp include/get_sound_params.h
-    get_toggles.cpp include/get_toggles.h
-    get_toggles2.cpp include/get_toggles2.h
-    get_view_params.cpp include/get_view_params.h
-    goodbye.cpp include/goodbye.h
     has_ext.cpp include/has_ext.h
-    help.cpp
-    help_title.cpp include/help_title.h
     history.cpp include/history.h
     id_main.cpp include/id_main.h
-    intro.cpp include/intro.h
-    input_field.cpp include/input_field.h
     jiim.cpp include/jiim.h
     load_config.cpp include/load_config.h
     load_entry_text.cpp include/load_entry_text.h
     load_params.cpp include/load_params.h
-    main_menu.cpp include/main_menu.h
     main_menu_switch.cpp include/main_menu_switch.h
     include/main_state.h
     make_batch_file.cpp include/make_batch_file.h
@@ -184,29 +159,55 @@ add_library(libid
     menu_handler.cpp include/menu_handler.h
     merge_path_names.cpp include/merge_path_names.h
     mouse.cpp include/mouse.h
-    not_disk_msg.cpp include/not_disk_msg.h
-    passes_options.cpp include/passes_options.h
     path_match.cpp include/path_match.h
-    put_string_center.cpp include/put_string_center.h
     round_float_double.cpp include/round_float_double.h
     search_path.cpp include/search_path.h
-    select_video_mode.cpp include/select_video_mode.h
     set_default_params.cpp include/set_default_params.h
     shell_sort.cpp include/shell_sort.h
     sound.cpp include/sound.h
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
     starfield.cpp include/starfield.h
-    stop_msg.cpp include/stop_msg.h
-    tab_display.cpp include/tab_display.h
-    temp_msg.cpp include/temp_msg.h
-    thinking.cpp include/thinking.h
     trig_fns.cpp include/trig_fns.h
     trim_filename.cpp include/trim_filename.h
     update_save_name.cpp include/update_save_name.h
     version.cpp include/version.h
     video_mode.cpp include/video_mode.h
     zoom.cpp include/zoom.h
+
+    include/ui/ChoiceBuilder.h
+    ui/get_video_mode.cpp include/ui/get_video_mode.h
+    ui/text_screen.cpp include/ui/text_screen.h
+    ui/field_prompt.cpp include/ui/field_prompt.h
+    ui/file_item.cpp include/ui/file_item.h
+    ui/full_screen_choice.cpp include/ui/full_screen_choice.h
+    ui/full_screen_prompt.cpp include/ui/full_screen_prompt.h
+    ui/get_3d_params.cpp include/ui/get_3d_params.h
+    ui/get_a_filename.cpp include/ui/get_a_filename.h
+    ui/get_a_number.cpp include/ui/get_a_number.h
+    ui/get_browse_params.cpp include/ui/get_browse_params.h
+    ui/get_cmd_string.cpp include/ui/get_cmd_string.h
+    ui/get_corners.cpp include/ui/get_corners.h
+    ui/get_fract_type.cpp include/ui/get_fract_type.h
+    ui/get_rds_params.cpp include/ui/get_rds_params.h
+    ui/get_sound_params.cpp include/ui/get_sound_params.h
+    ui/get_toggles.cpp include/ui/get_toggles.h
+    ui/get_toggles2.cpp include/ui/get_toggles2.h
+    ui/get_view_params.cpp include/ui/get_view_params.h
+    ui/goodbye.cpp include/ui/goodbye.h
+    ui/help.cpp
+    ui/help_title.cpp include/ui/help_title.h
+    ui/intro.cpp include/ui/intro.h
+    ui/input_field.cpp include/ui/input_field.h
+    ui/main_menu.cpp include/ui/main_menu.h
+    ui/not_disk_msg.cpp include/ui/not_disk_msg.h
+    ui/passes_options.cpp include/ui/passes_options.h
+    ui/put_string_center.cpp include/ui/put_string_center.h
+    ui/select_video_mode.cpp include/ui/select_video_mode.h
+    ui/stop_msg.cpp include/ui/stop_msg.h
+    ui/tab_display.cpp include/ui/tab_display.h
+    ui/temp_msg.cpp include/ui/temp_msg.h
+    ui/thinking.cpp include/ui/thinking.h
 
     include/drivers.h
     include/fractype.h
@@ -234,12 +235,13 @@ source_group("Source Files/3d" FILES
     line3d.cpp
     plot3d.cpp
 )
-source_group("Header Files/engine" FILES
+source_group("Header Files/Engine" FILES
     include/bailout_formula.h
     include/boundary_trace.h
     include/calc_frac_init.h
     include/calcfrac.h
     include/calmanfp.h
+    include/check_key.h
     include/convert_center_mag.h
     include/convert_corners.h
     include/diffusion_scan.h
@@ -268,12 +270,13 @@ source_group("Header Files/engine" FILES
     include/wait_until.h
     include/work_list.h
 )
-source_group("Source Files/engine" FILES
+source_group("Source Files/Engine" FILES
     bailout_formula.cpp
     boundary_trace.cpp
     calc_frac_init.cpp
     calcfrac.cpp
     calmanfp.cpp
+    check_key.cpp
     convert_center_mag.cpp
     convert_corners.cpp
     diffusion_scan.cpp
@@ -299,7 +302,7 @@ source_group("Source Files/engine" FILES
     wait_until.cpp
     work_list.cpp
 )
-source_group("Header Files/fractal specific" FILES
+source_group("Header Files/Fractal Specific" FILES
     include/fractals/ant.h
     include/fractals/barnsley.h
     include/fractals/bifurcation.h
@@ -341,7 +344,7 @@ source_group("Header Files/fractal specific" FILES
     include/fractals/unity.h
     include/fractals/volterra_lotka.h
 )
-source_group("Source Files/fractal specific" FILES
+source_group("Source Files/Fractal Specific" FILES
     fractals/ant.cpp
     fractals/barnsley.cpp
     fractals/bifurcation.cpp
@@ -393,7 +396,6 @@ source_group("Header Files/IO" FILES
     include/editpal.h
     include/encoder.h
     include/evolve.h
-    include/get_video_mode.h
     include/gif_file.h
     include/gifview.h
     include/is_directory.h
@@ -419,7 +421,6 @@ source_group("Source Files/IO" FILES
     editpal.cpp
     encoder.cpp
     evolve.cpp
-    get_video_mode.cpp
     gif_file.cpp
     gifview.cpp
     loadfile.cpp
@@ -433,7 +434,7 @@ source_group("Source Files/IO" FILES
     stereo.cpp
     video.cpp
 )
-source_group("Header Files/math" FILES
+source_group("Header Files/Math" FILES
     include/math/big.h
     include/math/biginit.h
     include/math/cmplx.h
@@ -447,7 +448,7 @@ source_group("Header Files/math" FILES
     include/math/sign.h
     include/math/sqr.h
 )
-source_group("Source Files/math" FILES
+source_group("Source Files/Math" FILES
     math/bigflt.cpp
     math/biginit.cpp
     math/bignum.cpp
@@ -457,7 +458,107 @@ source_group("Source Files/math" FILES
     math/hcmplx.cpp
     math/mpmath_c.cpp
 )
-source_group("Header Files/plumbing" FILES
+source_group("Header Files/Miscellaneous" FILES
+    include/check_orbit_name.h
+    include/check_write_file.h
+    include/dir_file.h
+    include/double_to_string.h
+    include/ends_with_slash.h
+    include/evolver_menu_switch.h
+    include/expand_dirname.h
+    include/extract_filename.h
+    include/file_gets.h
+    include/find_extra_param.h
+    include/find_file.h
+    include/find_path.h
+    include/find_special_colors.h
+    include/fix_dirname.h
+    include/flip_image.h
+    include/framain2.h
+    include/get_calculation_time.h
+    include/get_commands.h
+    include/get_key_no_help.h
+    include/get_prec_big_float.h
+    include/has_ext.h
+    include/history.h
+    include/id.h
+    include/id_keys.h
+    include/id_main.h
+    include/load_config.h
+    include/load_entry_text.h
+    include/load_params.h
+    include/main_menu_switch.h
+    include/main_state.h
+    include/make_batch_file.h
+    include/make_mig.h
+    include/make_path.h
+    include/menu_handler.h
+    include/merge_path_names.h
+    include/mouse.h
+    include/path_match.h
+    include/round_float_double.h
+    include/search_path.h
+    include/set_default_params.h
+    include/shell_sort.h
+    include/spindac.h
+    include/split_path.h
+    include/starfield.h
+    include/trig_fns.h
+    include/trim_filename.h
+    include/update_save_name.h
+    include/version.h
+    include/video_mode.h
+    include/zoom.h
+)
+source_group("Source Files/Miscellaneous" FILES
+    check_orbit_name.cpp
+    check_write_file.cpp
+    dir_file.cpp
+    double_to_string.cpp
+    ends_with_slash.cpp
+    evolver_menu_switch.cpp
+    expand_dirname.cpp
+    file_gets.cpp
+    find_extra_param.cpp
+    find_file.cpp
+    find_path.cpp
+    find_special_colors.cpp
+    fix_dirname.cpp
+    flip_image.cpp
+    framain2.cpp
+    get_calculation_time.cpp
+    get_commands.cpp
+    get_key_no_help.cpp
+    get_prec_big_float.cpp
+    has_ext.cpp
+    history.cpp
+    id_main.cpp
+    load_config.cpp
+    load_entry_text.cpp
+    load_params.cpp
+    main_menu_switch.cpp
+    make_batch_file.cpp
+    make_mig.cpp
+    make_path.cpp
+    menu_handler.cpp
+    merge_path_names.cpp
+    mouse.cpp
+    path_match.cpp
+    round_float_double.cpp
+    search_path.cpp
+    set_default_params.cpp
+    shell_sort.cpp
+    spindac.cpp
+    split_path.cpp
+    starfield.cpp
+    trig_fns.cpp
+    trim_filename.cpp
+    update_save_name.cpp
+    version.cpp
+    video_mode.cpp
+    zoom.cpp
+)
+source_group("Header Files/Plumbing" FILES
     include/debug_flags.h
     include/drivers.h
     include/get_disk_space.h
@@ -471,179 +572,83 @@ source_group("Header Files/plumbing" FILES
     include/stack_avail.h
     include/ValueSaver.h
 )
-source_group("Source Files/plumbing" FILES
+source_group("Source Files/Plumbing" FILES
     debug_flags.cpp
     drivers.cpp
     get_disk_space.cpp
     memory.cpp
 )
-source_group("Header Files/ui" FILES
-    include/check_key.h
-    include/check_orbit_name.h
-    include/check_write_file.h
-    include/ChoiceBuilder.h
-    include/dir_file.h
-    include/double_to_string.h
-    include/ends_with_slash.h
-    include/evolver_menu_switch.h
-    include/expand_dirname.h
-    include/extract_filename.h
-    include/field_prompt.h
-    include/file_gets.h
-    include/find_extra_param.h
-    include/find_file.h
-    include/file_item.h
-    include/find_path.h
-    include/find_special_colors.h
-    include/fix_dirname.h
-    include/flip_image.h
-    include/framain2.h
-    include/full_screen_choice.h
-    include/full_screen_prompt.h
-    include/get_3d_params.h
-    include/get_a_number.h
-    include/get_browse_params.h
-    include/get_a_filename.h
-    include/get_calculation_time.h
-    include/get_cmd_string.h
-    include/get_commands.h
-    include/get_corners.h
-    include/get_fract_type.h
-    include/get_key_no_help.h
-    include/get_prec_big_float.h
-    include/get_rds_params.h
-    include/get_sound_params.h
-    include/get_toggles.h
-    include/get_toggles2.h
-    include/get_view_params.h
-    include/goodbye.h
-    include/has_ext.h
-    include/help.h
-    include/help_title.h
-    include/history.h
-    include/id.h
-    include/id_keys.h
-    include/id_main.h
-    include/input_field.h
-    include/intro.h
-    include/load_config.h
-    include/load_entry_text.h
-    include/load_params.h
-    include/main_menu.h
-    include/main_menu_switch.h
-    include/main_state.h
-    include/make_batch_file.h
-    include/make_mig.h
-    include/make_path.h
-    include/menu_handler.h
-    include/merge_path_names.h
-    include/mouse.h
-    include/not_disk_msg.h
-    include/passes_options.h
-    include/path_match.h
-    include/put_string_center.h
-    include/round_float_double.h
-    include/search_path.h
-    include/select_video_mode.h
-    include/set_default_params.h
-    include/shell_sort.h
-    include/spindac.h
-    include/split_path.h
-    include/starfield.h
-    include/stop_msg.h
-    include/tab_display.h
-    include/temp_msg.h
-    include/text_screen.h
-    include/thinking.h
-    include/trig_fns.h
-    include/trim_filename.h
-    include/update_save_name.h
-    include/version.h
-    include/video_mode.h
-    include/zoom.h
+source_group("Header Files/UI" FILES
+    include/ui/ChoiceBuilder.h
+    include/ui/field_prompt.h
+    include/ui/file_item.h
+    include/ui/full_screen_choice.h
+    include/ui/full_screen_prompt.h
+    include/ui/get_3d_params.h
+    include/ui/get_a_number.h
+    include/ui/get_browse_params.h
+    include/ui/get_a_filename.h
+    include/ui/get_cmd_string.h
+    include/ui/get_corners.h
+    include/ui/get_fract_type.h
+    include/ui/get_rds_params.h
+    include/ui/get_sound_params.h
+    include/ui/get_toggles.h
+    include/ui/get_toggles2.h
+    include/ui/get_video_mode.h
+    include/ui/get_view_params.h
+    include/ui/goodbye.h
+    include/ui/help.h
+    include/ui/help_title.h
+    include/ui/input_field.h
+    include/ui/intro.h
+    include/ui/main_menu.h
+    include/ui/not_disk_msg.h
+    include/ui/passes_options.h
+    include/ui/put_string_center.h
+    include/ui/select_video_mode.h
+    include/ui/stop_msg.h
+    include/ui/tab_display.h
+    include/ui/temp_msg.h
+    include/ui/text_screen.h
+    include/ui/thinking.h
 )
-source_group("Source Files/ui" FILES
-    check_key.cpp
-    check_orbit_name.cpp
-    check_write_file.cpp
-    dir_file.cpp
-    double_to_string.cpp
-    ends_with_slash.cpp
-    evolver_menu_switch.cpp
-    expand_dirname.cpp
-    field_prompt.cpp
-    file_gets.cpp
-    find_extra_param.cpp
-    find_file.cpp
-    file_item.cpp
-    find_path.cpp
-    find_special_colors.cpp
-    fix_dirname.cpp
-    flip_image.cpp
-    framain2.cpp
-    full_screen_choice.cpp
-    full_screen_prompt.cpp
-    get_3d_params.cpp
-    get_a_filename.cpp
-    get_a_number.cpp
-    get_browse_params.cpp
-    get_calculation_time.cpp
-    get_cmd_string.cpp
-    get_commands.cpp
-    get_corners.cpp
-    get_fract_type.cpp
-    get_key_no_help.cpp
-    get_prec_big_float.cpp
-    get_rds_params.cpp
-    get_sound_params.cpp
-    get_toggles.cpp
-    get_toggles2.cpp
-    get_view_params.cpp
-    goodbye.cpp
-    has_ext.cpp
-    help.cpp
-    help_title.cpp
-    history.cpp
-    id_main.cpp
-    input_field.cpp
-    intro.cpp
-    load_config.cpp
-    load_entry_text.cpp
-    load_params.cpp
-    main_menu.cpp
-    main_menu_switch.cpp
-    make_batch_file.cpp
-    make_mig.cpp
-    make_path.cpp
-    menu_handler.cpp
-    merge_path_names.cpp
-    mouse.cpp
-    not_disk_msg.cpp
-    passes_options.cpp
-    path_match.cpp
-    put_string_center.cpp
-    round_float_double.cpp
-    search_path.cpp
-    select_video_mode.cpp
-    set_default_params.cpp
-    shell_sort.cpp
-    spindac.cpp
-    split_path.cpp
-    starfield.cpp
-    stop_msg.cpp
-    tab_display.cpp
-    temp_msg.cpp
-    text_screen.cpp
-    thinking.cpp
-    trig_fns.cpp
-    trim_filename.cpp
-    update_save_name.cpp
-    version.cpp
-    video_mode.cpp
-    zoom.cpp
+source_group("Source Files/UI" FILES
+    ui/field_prompt.cpp
+    ui/file_item.cpp
+    ui/full_screen_choice.cpp
+    ui/full_screen_prompt.cpp
+    ui/get_3d_params.cpp
+    ui/get_a_filename.cpp
+    ui/get_a_number.cpp
+    ui/get_browse_params.cpp
+    ui/get_cmd_string.cpp
+    ui/get_corners.cpp
+    ui/get_fract_type.cpp
+    ui/get_rds_params.cpp
+    ui/get_sound_params.cpp
+    ui/get_toggles.cpp
+    ui/get_toggles2.cpp
+    ui/get_view_params.cpp
+    ui/get_video_mode.cpp
+    ui/goodbye.cpp
+    ui/help.cpp
+    ui/help_title.cpp
+    ui/input_field.cpp
+    ui/intro.cpp
+    ui/main_menu.cpp
+    ui/not_disk_msg.cpp
+    ui/passes_options.cpp
+    ui/put_string_center.cpp
+    ui/select_video_mode.cpp
+    ui/stop_msg.cpp
+    ui/tab_display.cpp
+    ui/temp_msg.cpp
+    ui/text_screen.cpp
+    ui/thinking.cpp
 )
 
-set_src_dir(help.cpp)
+set_src_dir(ui/help.cpp)
 set_src_dir(id_main.cpp)
 
 target_compile_definitions(libid PUBLIC

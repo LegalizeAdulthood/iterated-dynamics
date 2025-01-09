@@ -4,8 +4,8 @@
 
 #include "cmdfiles.h"
 #include "file_gets.h"
-#include "file_item.h"
-#include "stop_msg.h"
+#include "ui/file_item.h"
+#include "ui/stop_msg.h"
 
 #include <cstdio>
 #include <cstring>

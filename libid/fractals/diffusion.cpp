@@ -10,7 +10,7 @@
 #include "id.h"
 #include "id_data.h"
 #include "math/fixed_pt.h"
-#include "not_disk_msg.h"
+#include "ui/not_disk_msg.h"
 #include "resume.h"
 #include "video.h"
 

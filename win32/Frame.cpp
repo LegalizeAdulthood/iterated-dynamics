@@ -6,7 +6,7 @@
 #include "WinText.h"
 
 #include "drivers.h"
-#include "goodbye.h"
+#include "ui/goodbye.h"
 #include "id_keys.h"
 
 #include "win_defines.h"

@@ -4,7 +4,7 @@
 
 #include "get_calculation_time.h"
 #include "id_data.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "version.h"
 #include "video_mode.h"
 

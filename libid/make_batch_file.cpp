@@ -3,7 +3,7 @@
 #include "make_batch_file.h"
 
 #include "3d.h"
-#include "ChoiceBuilder.h"
+#include "ui/ChoiceBuilder.h"
 #include "ValueSaver.h"
 #include "bailout_formula.h"
 #include "calcfrac.h"
@@ -39,7 +39,7 @@
 #include "spindac.h"
 #include "stereo.h"
 #include "sticky_orbits.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
 #include "version.h"

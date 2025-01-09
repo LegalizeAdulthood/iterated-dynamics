@@ -19,7 +19,7 @@ Miscellaneous fractal-specific code
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
 #include "resume.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <cmath>

@@ -2,7 +2,7 @@
 //
 #include "get_commands.h"
 
-#include "file_item.h"
+#include "ui/file_item.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "ValueSaver.h"

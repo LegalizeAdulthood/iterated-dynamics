@@ -12,7 +12,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
-#include "get_fract_type.h"
+#include "ui/get_fract_type.h"
 #include "history.h"
 #include "id_data.h"
 #include "id_keys.h"

@@ -48,7 +48,7 @@
 #include "sound.h"
 #include "spindac.h"
 #include "sticky_orbits.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 #include "tesseral.h"
 #include "update_save_name.h"
 #include "video.h"

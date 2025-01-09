@@ -9,7 +9,7 @@
 #include "merge_path_names.h"
 #include "port.h"
 #include "rotate.h"
-#include "stop_msg.h"
+#include "ui/stop_msg.h"
 
 #include <array> // std::size
 #include <cstdio>
