@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fix_dirname.h"
+#include "io/fix_dirname.h"
 
 #include "id.h"
 #include "port.h"

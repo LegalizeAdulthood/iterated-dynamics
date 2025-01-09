@@ -4,13 +4,13 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "file_gets.h"
-#include "ui/file_item.h"
-#include "math/fpu087.h"
 #include "fractals/lsys_fns.h"
 #include "id_data.h"
+#include "io/file_gets.h"
 #include "math/fixed_pt.h"
+#include "math/fpu087.h"
 #include "stack_avail.h"
+#include "ui/file_item.h"
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
 

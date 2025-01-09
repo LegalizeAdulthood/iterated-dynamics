@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <merge_path_names.h>
+#include <io/merge_path_names.h>
 
 #include "CurrentPathSaver.h"
 #include "test_data.h"

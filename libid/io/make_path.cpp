@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "make_path.h"
+#include "io/make_path.h"
 
 #include <filesystem>
 #include <string>

@@ -4,10 +4,10 @@
 
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "dir_file.h"
 #include "drivers.h"
 #include "get_key_no_help.h"
 #include "id_keys.h"
+#include "io/dir_file.h"
 #include "mouse.h"
 #include "ui/text_screen.h"
 #include "ValueSaver.h"

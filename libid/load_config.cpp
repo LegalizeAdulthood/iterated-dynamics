@@ -3,8 +3,8 @@
 #include "load_config.h"
 
 #include "drivers.h"
-#include "find_path.h"
 #include "id_data.h"
+#include "io/find_path.h"
 #include "pixel_limits.h"
 #include "video_mode.h"
 

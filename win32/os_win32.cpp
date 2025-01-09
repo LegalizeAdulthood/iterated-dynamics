@@ -5,12 +5,12 @@
 #include "tos.h"
 
 #include "cmdfiles.h"
+#include "io/special_dirs.h"
 #include "port.h"
-#include "special_dirs.h"
 
 #include "win_defines.h"
-#include <Windows.h>
 #include <DbgHelp.h>
+#include <Windows.h>
 
 #include <cstdarg>
 #include <cstdio>

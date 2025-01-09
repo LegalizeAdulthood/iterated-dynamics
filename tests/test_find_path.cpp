@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <find_path.h>
-
-#include <cmdfiles.h>
-#include <id_data.h>
-#include <search_path.h>
+#include <io/find_path.h>
 
 #include "CurrentPathSaver.h"
 #include "test_data.h"
+
+#include <cmdfiles.h>
+#include <id_data.h>
+#include <io/search_path.h>
 
 #include <gtest/gtest.h>
 

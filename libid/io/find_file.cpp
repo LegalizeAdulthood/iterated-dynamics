@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "find_file.h"
+#include "io/find_file.h"
 
-#include "path_match.h"
+#include "io/path_match.h"
 
 enum class DirPos
 {

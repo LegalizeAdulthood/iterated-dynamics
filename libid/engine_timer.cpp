@@ -5,10 +5,10 @@
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "decoder.h"
-#include "dir_file.h"
 #include "encoder.h"
 #include "fractals/fractalp.h"
 #include "id_data.h"
+#include "io/dir_file.h"
 
 #include <cstdarg>
 #include <cstdio>

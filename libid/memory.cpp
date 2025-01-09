@@ -4,14 +4,14 @@
 
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "dir_file.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "get_disk_space.h"
-#include "ui/goodbye.h"
 #include "id.h"
+#include "io/dir_file.h"
+#include "io/get_disk_space.h"
 #include "line3d.h"
 #include "stack_avail.h"
+#include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 
 #include <cinttypes>

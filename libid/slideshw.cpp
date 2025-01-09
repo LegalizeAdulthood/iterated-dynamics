@@ -6,13 +6,13 @@
 //*********************************************************************
 #include "slideshw.h"
 
-#include "check_write_file.h"
 #include "drivers.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
-#include "save_file.h"
+#include "io/check_write_file.h"
+#include "io/save_file.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 #include "ui/temp_msg.h"

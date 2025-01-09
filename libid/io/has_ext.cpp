@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "has_ext.h"
+#include "io/has_ext.h"
 
 #include "id.h"
-#include "split_path.h"
+#include "io/split_path.h"
 
 #include <cstring>
 

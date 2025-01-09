@@ -4,12 +4,12 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "ends_with_slash.h"
-#include "ui/help_title.h"
 #include "id_keys.h"
+#include "io/ends_with_slash.h"
 #include "mouse.h"
-#include "ui/put_string_center.h"
 #include "string_case_compare.h"
+#include "ui/help_title.h"
+#include "ui/put_string_center.h"
 #include "ui/text_screen.h"
 #include "ValueSaver.h"
 

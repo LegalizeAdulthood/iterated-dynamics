@@ -3,10 +3,10 @@
 #include "loadmap.h"
 
 #include "cmdfiles.h"
-#include "find_path.h"
-#include "has_ext.h"
 #include "id.h"
-#include "merge_path_names.h"
+#include "io/find_path.h"
+#include "io/has_ext.h"
+#include "io/merge_path_names.h"
 #include "port.h"
 #include "rotate.h"
 #include "ui/stop_msg.h"

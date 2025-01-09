@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "merge_path_names.h"
+#include "io/merge_path_names.h"
 
 #include "cmdfiles.h"
-#include "expand_dirname.h"
-#include "find_file.h"
-#include "fix_dirname.h"
 #include "id.h"
-#include "is_directory.h"
-#include "make_path.h"
+#include "io/expand_dirname.h"
+#include "io/find_file.h"
+#include "io/fix_dirname.h"
+#include "io/is_directory.h"
+#include "io/make_path.h"
+#include "io/split_path.h"
 #include "port.h"
-#include "split_path.h"
 
 #include <cstring>
 #include <filesystem>

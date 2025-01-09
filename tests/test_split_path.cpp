@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <split_path.h>
+#include <io/split_path.h>
 
 #include "CurrentPathSaver.h"
 #include "test_data.h"

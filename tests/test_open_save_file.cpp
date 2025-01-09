@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <save_file.h>
+#include <io/save_file.h>
 
 #include "test_data.h"
 
-#include <special_dirs.h>
+#include <io/special_dirs.h>
 #include <ValueSaver.h>
 
 #include <gtest/gtest.h>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "get_disk_space.h"
+#include "io/get_disk_space.h"
 
 #include <filesystem>
 #include <limits>

@@ -2,7 +2,6 @@
 //
 #include "menu_handler.h"
 
-#include "ValueSaver.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
@@ -12,14 +11,15 @@
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
-#include "ui/get_fract_type.h"
 #include "history.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "io/update_save_name.h"
 #include "loadfile.h"
 #include "rotate.h"
 #include "spindac.h"
-#include "update_save_name.h"
+#include "ui/get_fract_type.h"
+#include "ValueSaver.h"
 #include "video_mode.h"
 #include "zoom.h"
 

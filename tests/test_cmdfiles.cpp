@@ -30,7 +30,7 @@
 #include <slideshw.h>
 #include <soi.h>
 #include <sound.h>
-#include <special_dirs.h>
+#include <io/special_dirs.h>
 #include <stereo.h>
 #include <sticky_orbits.h>
 #include <ui/stop_msg.h>
