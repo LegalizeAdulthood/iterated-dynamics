@@ -16,13 +16,13 @@
 #include "id_data.h"
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
+#include "math/sign.h"
 #include "pixel_grid.h"
 #include "pixel_limits.h"
 #include "port.h"
-#include "math/sign.h"
 #include "soi.h"
-#include "ui/stop_msg.h"
 #include "type_has_param.h"
+#include "ui/stop_msg.h"
 
 #include <algorithm>
 #include <array>

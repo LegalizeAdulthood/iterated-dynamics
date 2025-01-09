@@ -6,13 +6,13 @@
 #include "WinText.h"
 
 #include "drivers.h"
-#include "ui/goodbye.h"
 #include "id_keys.h"
+#include "ui/goodbye.h"
 
 #include "win_defines.h"
-#include <Windows.h>
 #include <atlbase.h>
 #include <tchar.h>
+#include <Windows.h>
 #include <windowsx.h>
 
 #include <cctype>

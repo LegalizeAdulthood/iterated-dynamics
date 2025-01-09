@@ -8,7 +8,6 @@
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "fractype.h"
-#include "ui/get_3d_params.h"
 #include "get_julia_attractor.h"
 #include "id_data.h"
 #include "loadmap.h"
@@ -16,6 +15,7 @@
 #include "math/sqr.h"
 #include "spindac.h"
 #include "starfield.h"
+#include "ui/get_3d_params.h"
 #include "ui/stop_msg.h"
 
 #include <algorithm>

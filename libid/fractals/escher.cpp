@@ -4,9 +4,9 @@
 
 #include "bailout_formula.h"
 #include "calcfrac.h"
-#include "math/cmplx.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "math/cmplx.h"
 #include "math/sqr.h"
 
 int escher_fp_fractal() // Science of Fractal Images pp. 185, 187

@@ -21,9 +21,9 @@
 #include "math/mpmath_c.h"
 
 #include "cmdfiles.h"
-#include "math/fpu087.h"
 #include "id_data.h"
 #include "loadfile.h"
+#include "math/fpu087.h"
 
 #include <cassert>
 #include <cmath>

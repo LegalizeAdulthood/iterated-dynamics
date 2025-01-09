@@ -3,10 +3,10 @@
 #include "fractals/popcorn.h"
 
 #include "calcfrac.h"
-#include "math/fpu087.h"
 #include "fractals.h"
 #include "id.h"
 #include "id_data.h"
+#include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "orbit.h"
 #include "resume.h"

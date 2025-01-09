@@ -5,10 +5,10 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fractype.h"
-#include "ui/full_screen_prompt.h"
 #include "helpdefs.h"
 #include "id.h"
 #include "id_data.h"
+#include "ui/full_screen_prompt.h"
 
 #include <algorithm>
 #include <cstdlib>

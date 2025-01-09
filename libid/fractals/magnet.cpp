@@ -4,8 +4,8 @@
 
 #include "bailout_formula.h"
 #include "calcfrac.h"
-#include "math/cmplx.h"
 #include "fractals.h"
+#include "math/cmplx.h"
 
 #include <cfloat>
 

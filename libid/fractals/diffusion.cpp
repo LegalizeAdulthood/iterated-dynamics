@@ -6,12 +6,12 @@
 #include "check_key.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "math/fpu087.h"
 #include "id.h"
 #include "id_data.h"
 #include "math/fixed_pt.h"
-#include "ui/not_disk_msg.h"
+#include "math/fpu087.h"
 #include "resume.h"
+#include "ui/not_disk_msg.h"
 #include "video.h"
 
 #include <cstdlib>

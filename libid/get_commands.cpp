@@ -2,9 +2,9 @@
 //
 #include "get_commands.h"
 
-#include "ui/file_item.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "ui/file_item.h"
 #include "ValueSaver.h"
 
 #include <cstdio>

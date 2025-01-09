@@ -5,7 +5,6 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "math/fpu087.h"
 #include "fractalb.h"
 #include "fractals.h"
 #include "fractals/fractalp.h"
@@ -13,6 +12,7 @@
 #include "id_data.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
+#include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
 

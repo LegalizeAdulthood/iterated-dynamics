@@ -4,10 +4,10 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "ui/full_screen_prompt.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "ui/full_screen_prompt.h"
 #include "ValueSaver.h"
 #include "video_mode.h"
 #include "zoom.h"

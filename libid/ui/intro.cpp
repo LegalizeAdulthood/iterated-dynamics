@@ -8,12 +8,12 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "engine_timer.h"
-#include "ui/help_title.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "mouse.h"
+#include "ui/help_title.h"
 #include "ui/put_string_center.h"
 #include "ValueSaver.h"
 

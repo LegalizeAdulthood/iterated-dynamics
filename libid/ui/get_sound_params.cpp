@@ -2,13 +2,13 @@
 //
 #include "ui/get_sound_params.h"
 
-#include "ui/ChoiceBuilder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "sound.h"
+#include "ui/ChoiceBuilder.h"
 #include "ValueSaver.h"
 
 #include <algorithm>

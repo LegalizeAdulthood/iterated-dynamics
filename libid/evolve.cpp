@@ -2,8 +2,6 @@
 //
 #include "evolve.h"
 
-#include "ui/ChoiceBuilder.h"
-#include "ValueSaver.h"
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -20,6 +18,8 @@
 #include "port.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
+#include "ui/ChoiceBuilder.h"
+#include "ValueSaver.h"
 #include "zoom.h"
 
 #include <algorithm>
