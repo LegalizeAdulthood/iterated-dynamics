@@ -114,8 +114,10 @@ To ensure your code will fit in wth the existing code base, check our
 
 # Code Structure
 
-Most of the source code is in a library named `libid` in a folder by the same
-name.  The files are organized in the IDE into various categories:
+Most of the source code is in a library named `libid` in a directory by the same
+name.  Additional subdirectories serve to categorize the role of the source files in
+that directory.  Include files are similarly grouped in subdirectories of 
+`include`.  The subdirectories are:
 
 - **3d**
       Files containing 3D drawing support.  Eventually these should be
@@ -127,12 +129,11 @@ name.  The files are organized in the IDE into various categories:
       that are shared between multiple fractal types.  Also contains the
       big array that defines the available fractal types.
 
-- **fractal specific**
-      Files containing rendering code or user interaction code that is
-      specific to a particular fractal, such as the Lorenz fractal or
-      L-system type.
+- **fractals**
+      Files containing code to implement specific fractal types,
+      such as the Lorenz fractal or L-system type.
 
-- **IO**
+- **io**
       Anything related to doing external file I/O: saving and loading GIF
       files, dealing with overlay files, saving parameter files, etc.
 
@@ -140,7 +141,7 @@ name.  The files are organized in the IDE into various categories:
       Files containing math routines for arbitrary precision arithmetic,
       complex arithmetic, etc.
 
-- **plumbing**
+- **misc**
       Miscellaneous routines that don't fit elesewhere like memory and
       driver management.
 
@@ -150,18 +151,35 @@ name.  The files are organized in the IDE into various categories:
 
 Additional files are in the following directories:
 
+- `unix`
+    Files needed for the unix platform.
+
+- `win32`
+    Files needed for the Windows platform.
+
+- `hc`
+    Help source files with a custom build step on help.src to run the help
+    compiler on the source to generate new fractint.hlp and helpdefs.h
+    files.  Automated tests for `hc` are in the subdirectory `tests`.
+    Help compiler input source files are in the subdirectory `src`.
+
+- `tests`
+    Contains automated unit and image tests.  Unit tests are executable
+    code that tests other bits of code.  Image tests are performed by running
+    Id to generate an image and compare against a gold standard image.
+
+- `packaging`
+    Scripts and data files for building packaged releases of Id.
+
+- `.github/workflows`
+    Scripts that configure automated continuous integration jobs on github.
+
+- `home`
+    Data files, such as color maps, parameter files, formula files, and
+    so-on that are installed with Id.
+
 - `fractint`
   Miscellaneous files in the main fractint source folder.  These are not
   currently used for any of the compilation of the code and are placed
   here just for reference.
 
-- `hc`
-    Help source files with a custom build step on help.src to run the help
-    compiler on the source to generate new fractint.hlp and helpdefs.h
-    files.
-
-- `unix`
-    Files needed for the unix platform.
-
-- `win32`
-    Files needed for the Win32 platform.
