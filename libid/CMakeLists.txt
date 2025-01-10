@@ -18,12 +18,13 @@ add_library(libid
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp
+    include/engine/engine_timer.h engine/engine_timer.cpp
     include/engine/fracsuba.h engine/fracsuba.cpp
     include/engine/fractalb.h engine/fractalb.cpp
     include/engine/fractals.h engine/fractals.cpp
-    include/fractals/frasetup.h fractals/frasetup.cpp
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
     include/engine/id_data.h
+    include/engine/jiim.h engine/jiim.cpp
     include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp
     include/engine/orbit.h engine/orbit.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp
@@ -54,6 +55,7 @@ add_library(libid
     include/fractals/escher.h fractals/escher.cpp
     include/fractals/fn_or_fn.h fractals/fn_or_fn.cpp
     include/fractals/fractalp.h fractals/fractalp.cpp
+    include/fractals/frasetup.h fractals/frasetup.cpp
     include/fractals/frothy_basin.h fractals/frothy_basin.cpp
     include/fractals/halley.h fractals/halley.cpp
     include/fractals/hypercomplex_mandelbrot.h fractals/hypercomplex_mandelbrot.cpp
@@ -149,7 +151,6 @@ add_library(libid
     include/engine/check_key.h engine/check_key.cpp
     include/comments.h comments.cpp
     include/double_to_string.h double_to_string.cpp
-    include/engine/engine_timer.h engine/engine_timer.cpp
     include/evolver_menu_switch.h evolver_menu_switch.cpp
     include/find_extra_param.h find_extra_param.cpp
     include/find_special_colors.h find_special_colors.cpp
@@ -161,7 +162,6 @@ add_library(libid
     include/get_prec_big_float.h get_prec_big_float.cpp
     include/history.h history.cpp
     include/id_main.h id_main.cpp
-    include/engine/jiim.h engine/jiim.cpp
     include/load_config.h load_config.cpp
     include/load_entry_text.h load_entry_text.cpp
     include/load_params.h load_params.cpp
