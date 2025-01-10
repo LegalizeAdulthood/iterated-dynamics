@@ -16,7 +16,7 @@
 #include <fractals/jb.h>
 #include <fractals/lorenz.h>
 #include <fractals/parser.h>
-#include <fractype.h>
+#include <fractals/fractype.h>
 #include <framain2.h>
 #include <history.h>
 #include <id.h>

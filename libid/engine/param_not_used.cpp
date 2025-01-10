@@ -2,7 +2,7 @@
 //
 #include "engine/param_not_used.h"
 
-#include "fractype.h"
+#include "fractals/fractype.h"
 #include "fractals/parser.h"
 
 /*

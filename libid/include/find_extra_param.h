@@ -2,6 +2,6 @@
 //
 #pragma once
 
-#include "fractype.h"
+#include "fractals/fractype.h"
 
 int find_extra_param(FractalType type);

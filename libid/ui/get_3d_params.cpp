@@ -7,7 +7,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
-#include "fractype.h"
+#include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
 #include "io/merge_path_names.h"

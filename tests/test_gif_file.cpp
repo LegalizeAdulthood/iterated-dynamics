@@ -4,7 +4,7 @@
 
 #include "test_data.h"
 
-#include <fractype.h>
+#include <fractals/fractype.h>
 #include <loadfile.h>
 
 #include <boost/endian/buffers.hpp>

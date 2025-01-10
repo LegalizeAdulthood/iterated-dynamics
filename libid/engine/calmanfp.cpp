@@ -7,13 +7,13 @@
 //
 #include "engine/calmanfp.h"
 
-#include "engine/calcfrac.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "fractype.h"
-#include "id.h"
 #include "engine/id_data.h"
 #include "engine/orbit.h"
+#include "fractals/fractype.h"
+#include "id.h"
 
 #include <algorithm>
 #include <cmath>

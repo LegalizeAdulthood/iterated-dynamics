@@ -3,13 +3,13 @@
 #include "fractals/halley.h"
 
 #include "cmdfiles.h"
-#include "fractals/fractalp.h"
-#include "fractals/newton.h"
-#include "fractype.h"
 #include "engine/id_data.h"
+#include "engine/pixel_grid.h"
+#include "fractals/fractalp.h"
+#include "fractals/fractype.h"
+#include "fractals/newton.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
-#include "engine/pixel_grid.h"
 
 #include <algorithm>
 #include <cmath>

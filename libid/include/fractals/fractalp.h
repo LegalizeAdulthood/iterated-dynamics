@@ -3,7 +3,7 @@
 #pragma once
 
 #include "engine/calcfrac.h"
-#include "fractype.h"
+#include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "id.h"
 #include "math/big.h"

@@ -2,6 +2,6 @@
 //
 #pragma once
 
-#include "fractype.h"
+#include "fractals/fractype.h"
 
 void load_params(FractalType type);

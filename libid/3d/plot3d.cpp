@@ -11,7 +11,7 @@
 #include "diskvid.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "fractype.h"
+#include "fractals/fractype.h"
 #include "loadmap.h"
 #include "port.h"
 #include "rotate.h"

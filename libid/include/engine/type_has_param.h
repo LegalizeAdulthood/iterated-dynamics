@@ -2,6 +2,6 @@
 //
 #pragma once
 
-#include "fractype.h"
+#include "fractals/fractype.h"
 
 bool type_has_param(FractalType type, int param, char *buf);

@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "fractype.h"
+#include "fractals/fractype.h"
 
 int get_fract_type();
 int get_fract_params(bool prompt_for_type_params);

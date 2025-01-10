@@ -4,9 +4,9 @@
 
 #include "cmdfiles.h"
 #include "fractals/fractalp.h"
+#include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "fractals/parser.h"
-#include "fractype.h"
 
 #include <cstdio>
 #include <cstring>

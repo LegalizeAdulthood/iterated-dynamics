@@ -55,6 +55,7 @@ add_library(libid
     include/fractals/escher.h fractals/escher.cpp
     include/fractals/fn_or_fn.h fractals/fn_or_fn.cpp
     include/fractals/fractalp.h fractals/fractalp.cpp
+    include/fractals/fractype.h
     include/fractals/frasetup.h fractals/frasetup.cpp
     include/fractals/frothy_basin.h fractals/frothy_basin.cpp
     include/fractals/halley.h fractals/halley.cpp
@@ -217,7 +218,6 @@ add_library(libid
     include/ui/thinking.h ui/thinking.cpp
 
     include/drivers.h
-    include/fractype.h
     include/id.h
     include/id_keys.h
     include/prototyp.h
