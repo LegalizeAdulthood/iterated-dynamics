@@ -5,7 +5,7 @@
 #include "debug_flags.h"
 #include "engine/calc_frac_init.h"
 #include "engine/id_data.h"
-#include "find_extra_param.h"
+#include "engine/find_extra_param.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "round_float_double.h"

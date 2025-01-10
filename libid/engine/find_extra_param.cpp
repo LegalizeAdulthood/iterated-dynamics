@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "find_extra_param.h"
+#include "engine/find_extra_param.h"
 
 #include "fractals/fractalp.h"
 

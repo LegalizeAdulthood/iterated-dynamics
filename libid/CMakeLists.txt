@@ -19,6 +19,7 @@ add_library(libid
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp
     include/engine/engine_timer.h engine/engine_timer.cpp
+    include/engine/find_extra_param.h engine/find_extra_param.cpp
     include/engine/fracsuba.h engine/fracsuba.cpp
     include/engine/fractalb.h engine/fractalb.cpp
     include/engine/fractals.h engine/fractals.cpp
@@ -145,10 +146,9 @@ add_library(libid
     include/engine/check_key.h engine/check_key.cpp
     include/comments.h comments.cpp
     include/double_to_string.h double_to_string.cpp
-    include/find_extra_param.h find_extra_param.cpp
     include/get_calculation_time.h get_calculation_time.cpp
     include/get_commands.h get_commands.cpp
-    include/get_prec_big_float.h get_prec_big_float.cpp
+    include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
     include/load_params.h load_params.cpp
     include/main_state.h
     include/make_batch_file.h make_batch_file.cpp
@@ -231,10 +231,8 @@ source_group("Header Files/Miscellaneous" FILES
     include/cmdfiles_test.h
     include/comments.h
     include/double_to_string.h
-    include/find_extra_param.h
     include/get_calculation_time.h
     include/get_commands.h
-    include/get_prec_big_float.h
     include/id.h
     include/id_keys.h
     include/load_params.h
@@ -251,10 +249,8 @@ source_group("Header Files/Miscellaneous" FILES
 source_group("Source Files/Miscellaneous" FILES
     comments.cpp
     double_to_string.cpp
-    find_extra_param.cpp
     get_calculation_time.cpp
     get_commands.cpp
-    get_prec_big_float.cpp
     load_params.cpp
     lowerize_parameter.cpp
     make_batch_file.cpp
