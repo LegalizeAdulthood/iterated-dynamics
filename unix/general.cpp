@@ -6,14 +6,14 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
-#include "port.h"
-#include "prototyp.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/loadfile.h"
+#include "misc/drivers.h"
+#include "misc/prototyp.h"
+#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/read_ticker.h"
 #include "ui/slideshw.h"

@@ -11,14 +11,15 @@
  * <http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
-#include "engine/calcfrac.h"
-#include "debug_flags.h"
-#include "drivers.h"
-#include "engine/fractals.h"
-#include "fractals/fractalp.h"
-#include "engine/id_data.h"
 #include "engine/soi.h"
-#include "stack_avail.h"
+
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
+#include "fractals/fractalp.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/stack_avail.h"
 
 #include <algorithm>
 #include <cassert>

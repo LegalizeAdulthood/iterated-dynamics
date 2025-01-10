@@ -5,8 +5,6 @@
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
@@ -20,7 +18,6 @@
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "io/dir_file.h"
 #include "io/ends_with_slash.h"
 #include "io/file_gets.h"
@@ -31,7 +28,12 @@
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/sign.h"
-#include "prototyp.h" // stricmp
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
+#include "misc/prototyp.h" // stricmp
+#include "misc/ValueSaver.h"
+#include "misc/version.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
 #include "ui/comments.h"
@@ -42,8 +44,6 @@
 #include "ui/stop_msg.h"
 #include "ui/trig_fns.h"
 #include "ui/video_mode.h"
-#include "ValueSaver.h"
-#include "version.h"
 
 #include <algorithm>
 #include <cctype>

@@ -14,10 +14,10 @@
 #include "engine/soi.h"
 
 #include "engine/calcfrac.h"
-#include "drivers.h"
 #include "engine/id_data.h"
+#include "misc/drivers.h"
+#include "misc/stack_avail.h"
 #include "port.h"
-#include "stack_avail.h"
 
 #include <algorithm>
 #include <cassert>

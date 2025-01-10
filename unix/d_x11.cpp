@@ -14,16 +14,16 @@
  * Some of the zoombox code is from Bill Broadley.
  * David Sanderson straightened out a bunch of include file problems.
  */
-#include "port.h"
-#include "prototyp.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "math/fixed_pt.h"
-#include "os.h"
+#include "misc/drivers.h"
+#include "misc/os.h"
+#include "misc/prototyp.h"
+#include "port.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
@@ -987,7 +987,7 @@ int X11Driver::handle_esc()
 /* ev_key_press
  *
  * Translate keypress into appropriate character code,
- * according to defines in id.h
+ * according to defines in misc/id.h
  */
 int X11Driver::ev_key_press(XKeyEvent *xevent)
 {

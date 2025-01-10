@@ -17,8 +17,6 @@
 */
 #include "fractals/parser.h"
 
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
 #include "engine/fractals.h"
@@ -27,7 +25,6 @@
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
-#include "id.h"
 #include "io/save_file.h"
 #include "math/cmplx.h"
 #include "math/fpu087.h"
@@ -35,7 +32,10 @@
 #include "math/mpmath_c.h"
 #include "math/rand15.h"
 #include "math/sign.h"
-#include "prototyp.h" // strnicmp
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
+#include "misc/prototyp.h" // strnicmp
 #include "ui/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"

@@ -2,7 +2,7 @@
 //
 #include "ui/shell_sort.h"
 
-#include "prototyp.h" // for stricmp
+#include "misc/prototyp.h" // for stricmp
 
 void shell_sort(void *v1, int n, unsigned sz)
 {

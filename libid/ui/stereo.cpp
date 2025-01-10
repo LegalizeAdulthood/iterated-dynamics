@@ -7,7 +7,6 @@
 */
 #include "ui/stereo.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
@@ -15,6 +14,8 @@
 #include "io/decoder.h"
 #include "io/encoder.h"
 #include "io/gifview.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/find_special_colors.h"
 #include "ui/id_keys.h"
@@ -23,7 +24,6 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cstdlib>

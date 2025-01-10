@@ -10,13 +10,13 @@
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
+#include "misc/ValueSaver.h"
 #include "port.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
 #include "ui/double_to_string.h"
 #include "ui/id_keys.h"
 #include "ui/zoom.h"
-#include "ValueSaver.h"
 
 #include <cfloat>
 #include <cmath>

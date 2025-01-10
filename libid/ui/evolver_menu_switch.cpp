@@ -2,10 +2,11 @@
 //
 #include "ui/evolver_menu_switch.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "io/encoder.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
@@ -20,7 +21,6 @@
 #include "ui/passes_options.h"
 #include "ui/select_video_mode.h"
 #include "ui/zoom.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cassert>

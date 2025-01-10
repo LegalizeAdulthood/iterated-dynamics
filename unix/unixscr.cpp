@@ -16,13 +16,12 @@
  */
 #include "unixscr.h"
 
-#include "port.h"
-#include "prototyp.h"
-
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "os.h"
+#include "misc/drivers.h"
+#include "misc/os.h"
+#include "misc/prototyp.h"
+#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"

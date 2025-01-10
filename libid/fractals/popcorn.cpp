@@ -4,12 +4,12 @@
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "id.h"
 #include "engine/id_data.h"
-#include "math/fpu087.h"
-#include "math/mpmath.h"
 #include "engine/orbit.h"
 #include "engine/resume.h"
+#include "math/fpu087.h"
+#include "math/mpmath.h"
+#include "misc/id.h"
 
 #include <cmath>
 

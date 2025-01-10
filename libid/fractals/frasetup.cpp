@@ -2,7 +2,6 @@
 //
 #include "fractals/frasetup.h"
 
-#include "debug_flags.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/calmanfp.h"
@@ -19,7 +18,8 @@
 #include "fractals/popcorn.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
-#include "prototyp.h"
+#include "misc/debug_flags.h"
+#include "misc/prototyp.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/trig_fns.h"

@@ -5,9 +5,6 @@ find_package(GIF REQUIRED)
 find_package(cpuid CONFIG REQUIRED)
 
 add_library(libid
-    include/os.h
-
-
     include/3d/3d.h 3d/3d.cpp
     include/3d/line3d.h 3d/line3d.cpp
     include/3d/plot3d.h 3d/plot3d.cpp
@@ -141,11 +138,17 @@ add_library(libid
     include/math/sign.h
     include/math/sqr.h
 
-    include/debug_flags.h debug_flags.cpp
-    drivers.cpp
-    include/memory.h memory.cpp
-
-    include/version.h version.cpp
+    include/misc/debug_flags.h misc/debug_flags.cpp
+    include/misc/drivers.h misc/drivers.cpp
+    include/misc/id.h
+    include/misc/memory.h misc/memory.cpp
+    include/misc/os.h
+    include/misc/prototyp.h
+    include/misc/sized_types.h
+    include/misc/stack_avail.h
+    include/misc/unixprot.h
+    include/misc/ValueSaver.h
+    include/misc/version.h misc/version.cpp
 
     include/ui/ChoiceBuilder.h
     include/ui/cmdfiles.h ui/cmdfiles.cpp
@@ -219,37 +222,8 @@ add_library(libid
     include/ui/video.h ui/video.cpp
     include/ui/video_mode.h ui/video_mode.cpp
     include/ui/zoom.h ui/zoom.cpp
-
-    include/drivers.h
-    include/id.h
-    include/prototyp.h
-    include/sized_types.h
-    include/stack_avail.h
-    include/ValueSaver.h
 )
 
-source_group("Header Files/Miscellaneous" FILES
-    include/id.h
-    include/version.h
-)
-source_group("Source Files/Miscellaneous" FILES
-    version.cpp
-)
-source_group("Header Files/Plumbing" FILES
-    include/debug_flags.h
-    include/drivers.h
-    include/memory.h
-    include/os.h
-    include/prototyp.h
-    include/sized_types.h
-    include/stack_avail.h
-    include/ValueSaver.h
-)
-source_group("Source Files/Plumbing" FILES
-    debug_flags.cpp
-    drivers.cpp
-    memory.cpp
-)
 source_group("Header Files/3D" REGULAR_EXPRESSION "include/3d/.*")
 source_group("Source Files/3D" REGULAR_EXPRESSION "3d/.*")
 source_group("Header Files/Engine" REGULAR_EXPRESSION "include/engine/.*")
@@ -260,6 +234,8 @@ source_group("Header Files/IO" REGULAR_EXPRESSION "include/io/.*")
 source_group("Source Files/IO" REGULAR_EXPRESSION "io/.*")
 source_group("Header Files/Math" REGULAR_EXPRESSION "include/math/.*")
 source_group("Source Files/Math" REGULAR_EXPRESSION "math/.*")
+source_group("Header Files/Miscellaneous" REGULAR_EXPRESSION "include/misc/.*")
+source_group("Source Files/Miscellaneous" REGULAR_EXPRESSION "misc/.*")
 source_group("Header Files/UI" REGULAR_EXPRESSION "include/ui/.*")
 source_group("Source Files/UI" REGULAR_EXPRESSION "ui/.*")
 

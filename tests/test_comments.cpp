@@ -3,9 +3,9 @@
 #include <ui/comments.h>
 
 #include <engine/id_data.h>
+#include <misc/version.h>
 #include <ui/id_keys.h>
 #include <ui/video_mode.h>
-#include <version.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

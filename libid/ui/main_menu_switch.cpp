@@ -2,7 +2,6 @@
 //
 #include "ui/main_menu_switch.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/jiim.h"
@@ -12,11 +11,12 @@
 #include "fractals/fractype.h"
 #include "fractals/frothy_basin.h"
 #include "fractals/parser.h"
-#include "id.h"
 #include "io/encoder.h"
 #include "io/loadfile.h"
 #include "io/merge_path_names.h"
 #include "math/fixed_pt.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"

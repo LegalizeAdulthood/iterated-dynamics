@@ -2,12 +2,12 @@
 //
 #include "ui/goodbye.h"
 
-#include "drivers.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "fractals/ant.h"
 #include "helpcom.h"
-#include "memory.h"
+#include "misc/drivers.h"
+#include "misc/memory.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"

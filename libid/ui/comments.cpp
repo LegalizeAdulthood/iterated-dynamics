@@ -3,10 +3,10 @@
 #include "ui/comments.h"
 
 #include "engine/id_data.h"
+#include "misc/version.h"
 #include "ui/get_calculation_time.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
-#include "version.h"
 
 #include <libcpuid/libcpuid.h>
 

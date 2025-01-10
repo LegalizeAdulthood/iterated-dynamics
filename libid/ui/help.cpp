@@ -2,13 +2,14 @@
 //
 #include "helpcom.h"
 
-#include "drivers.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "id_io.h"
 #include "io/find_path.h"
 #include "io/save_file.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/help_title.h"
@@ -17,7 +18,6 @@
 #include "ui/put_string_center.h"
 #include "ui/stop_msg.h"
 #include "ui/text_screen.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cassert>

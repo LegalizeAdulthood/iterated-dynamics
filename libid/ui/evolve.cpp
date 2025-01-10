@@ -14,13 +14,13 @@
 #include "fractals/parser.h"
 #include "helpdefs.h"
 #include "math/sqr.h"
+#include "misc/ValueSaver.h"
 #include "port.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
 #include "ui/id_keys.h"
 #include "ui/trig_fns.h"
 #include "ui/zoom.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cmath>

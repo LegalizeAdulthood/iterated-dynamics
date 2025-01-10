@@ -2,8 +2,8 @@
 //
 #include <ui/video_mode.h>
 
+#include "misc/ValueSaver.h"
 #include "ui/id_keys.h"
-#include "ValueSaver.h"
 
 #include <gtest/gtest.h>
 

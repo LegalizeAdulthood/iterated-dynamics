@@ -3,7 +3,6 @@
 #include "ui/tab_display.h"
 
 #include "3d/line3d.h"
-#include "drivers.h"
 #include "engine/calc_frac_init.h"
 #include "engine/convert_center_mag.h"
 #include "engine/diffusion_scan.h"
@@ -19,6 +18,8 @@
 #include "io/loadfile.h"
 #include "io/trim_filename.h"
 #include "math/biginit.h"
+#include "misc/drivers.h"
+#include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/get_calculation_time.h"
 #include "ui/get_key_no_help.h"
@@ -31,7 +32,6 @@
 #include "ui/trig_fns.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
-#include "version.h"
 
 #include <algorithm>
 #include <cstdarg>

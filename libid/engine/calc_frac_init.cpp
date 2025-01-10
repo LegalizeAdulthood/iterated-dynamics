@@ -2,7 +2,6 @@
 //
 #include "engine/calc_frac_init.h"
 
-#include "debug_flags.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
@@ -16,10 +15,11 @@
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
-#include "id.h"
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
 #include "math/sign.h"
+#include "misc/debug_flags.h"
+#include "misc/id.h"
 #include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"

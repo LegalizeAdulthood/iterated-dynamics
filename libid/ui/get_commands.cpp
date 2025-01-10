@@ -2,10 +2,10 @@
 //
 #include "ui/get_commands.h"
 
-#include "helpdefs.h"
 #include "engine/id_data.h"
+#include "helpdefs.h"
+#include "misc/ValueSaver.h"
 #include "ui/file_item.h"
-#include "ValueSaver.h"
 
 #include <cstdio>
 

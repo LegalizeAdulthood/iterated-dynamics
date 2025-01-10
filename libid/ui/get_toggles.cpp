@@ -6,7 +6,7 @@
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
-#include "id.h"
+#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"
 

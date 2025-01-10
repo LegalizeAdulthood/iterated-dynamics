@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "memory.h"
+#include "misc/memory.h"
 
 #include "3d/line3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
-#include "id.h"
 #include "io/dir_file.h"
 #include "io/get_disk_space.h"
-#include "stack_avail.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
+#include "misc/stack_avail.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/goodbye.h"

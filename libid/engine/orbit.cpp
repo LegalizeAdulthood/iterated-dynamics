@@ -2,12 +2,12 @@
 //
 #include "engine/orbit.h"
 
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/wait_until.h"
 #include "math/fixed_pt.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
 #include "ui/cmdfiles.h"
 #include "ui/sound.h"
 #include "ui/video.h"

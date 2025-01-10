@@ -3,8 +3,6 @@
 #include "ui/framain2.h"
 
 #include "3d/line3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/calc_frac_init.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
@@ -14,6 +12,8 @@
 #include "io/gifview.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
 #include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

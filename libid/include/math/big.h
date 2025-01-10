@@ -4,8 +4,8 @@
 #pragma once
 
 #include "math/cmplx.h"
+#include "misc/sized_types.h"
 #include "port.h"
-#include "sized_types.h"
 
 // Number of bytes to use for integer part for fixed decimal math,
 // does not effect floating point math at all.

@@ -2,12 +2,13 @@
 //
 #include "ui/full_screen_prompt.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "io/load_entry_text.h"
 #include "math/round_float_double.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/double_to_string.h"
 #include "ui/file_item.h"
@@ -17,7 +18,6 @@
 #include "ui/mouse.h"
 #include "ui/put_string_center.h"
 #include "ui/text_screen.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cmath>

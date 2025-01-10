@@ -4,7 +4,6 @@
 
 #include "fractals/frothy_basin.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/check_key.h"
 #include "engine/fractals.h"
@@ -14,6 +13,7 @@
 #include "fractals/newton.h"
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
+#include "misc/drivers.h"
 #include "ui/cmdfiles.h"
 #include "ui/spindac.h"
 

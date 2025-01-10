@@ -2,8 +2,8 @@
 //
 #include "ui/spindac.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
+#include "misc/drivers.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 

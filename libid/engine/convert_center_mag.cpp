@@ -3,13 +3,13 @@
 #include "engine/convert_center_mag.h"
 
 #include "engine/convert_corners.h"
-#include "debug_flags.h"
 #include "engine/fractalb.h"
-#include "id.h"
 #include "engine/id_data.h"
 #include "math/biginit.h"
 #include "math/sign.h"
 #include "math/sqr.h"
+#include "misc/debug_flags.h"
+#include "misc/id.h"
 
 #include <cmath>
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "stack_avail.h"
+#include "misc/stack_avail.h"
 
 /*
  *----------------------------------------------------------------------

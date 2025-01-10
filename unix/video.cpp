@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "port.h"
-#include "prototyp.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "misc/drivers.h"
+#include "misc/prototyp.h"
+#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

@@ -2,11 +2,12 @@
 //
 #include "ui/main_menu.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "helpcom.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/goodbye.h"
@@ -16,7 +17,6 @@
 #include "ui/rotate.h"
 #include "ui/tab_display.h"
 #include "ui/video_mode.h"
-#include "ValueSaver.h"
 
 #include <cstring>
 

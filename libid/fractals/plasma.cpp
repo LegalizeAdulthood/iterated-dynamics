@@ -2,13 +2,13 @@
 //
 #include "fractals/plasma.h"
 
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "math/rand15.h"
-#include "sized_types.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/sized_types.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"

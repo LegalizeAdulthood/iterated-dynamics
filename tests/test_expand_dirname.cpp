@@ -2,10 +2,10 @@
 //
 #include <io/expand_dirname.h>
 
-#include <id.h>
-
 #include "CurrentPathSaver.h"
 #include "test_data.h"
+
+#include <misc/id.h>
 
 #include <gtest/gtest.h>
 

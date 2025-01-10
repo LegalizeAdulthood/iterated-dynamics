@@ -2,8 +2,6 @@
 //
 #include "fractals/jb.h"
 
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/id_data.h"
@@ -13,6 +11,8 @@
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/sqr.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
 #include "ui/get_3d_params.h"
 #include "ui/spindac.h"
 #include "ui/starfield.h"

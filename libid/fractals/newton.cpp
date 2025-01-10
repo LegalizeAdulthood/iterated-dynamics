@@ -2,7 +2,6 @@
 //
 #include "fractals/newton.h"
 
-#include "debug_flags.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
@@ -12,6 +11,7 @@
 #include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
+#include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
 #include <cfloat>

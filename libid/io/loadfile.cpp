@@ -8,8 +8,6 @@
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/id_data.h"
@@ -28,8 +26,10 @@
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/round_float_double.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
 #include "port.h"
-#include "prototyp.h" // for stricmp
+#include "misc/prototyp.h" // for stricmp
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/field_prompt.h"

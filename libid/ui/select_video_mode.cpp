@@ -2,18 +2,18 @@
 //
 #include "ui/select_video_mode.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/is_writeable.h"
 #include "io/load_config.h"
 #include "io/save_file.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_key_no_help.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cassert>

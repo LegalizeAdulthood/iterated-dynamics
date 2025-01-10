@@ -2,16 +2,16 @@
 //
 #include "ui/stop_msg.h"
 
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/wait_until.h"
 #include "io/dir_file.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/get_key_no_help.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/text_screen.h"
-#include "ValueSaver.h"
 
 #include <cstdio>
 #include <cstdlib>

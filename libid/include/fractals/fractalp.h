@@ -5,8 +5,8 @@
 #include "engine/calcfrac.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "math/big.h"
+#include "misc/id.h"
 
 #include <complex>
 

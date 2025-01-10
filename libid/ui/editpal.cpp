@@ -5,12 +5,13 @@
 //
 #include "ui/editpal.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "io/dir_file.h"
-#include "memory.h"
-#include "os.h"
+#include "misc/drivers.h"
+#include "misc/memory.h"
+#include "misc/os.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/field_prompt.h"
 #include "ui/find_special_colors.h"
@@ -22,7 +23,6 @@
 #include "ui/spindac.h"
 #include "ui/video.h"
 #include "ui/zoom.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <array>

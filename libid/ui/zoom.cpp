@@ -6,7 +6,6 @@
 */
 #include "ui/zoom.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/resume.h"
@@ -15,9 +14,10 @@
 #include "fractals/fractalp.h"
 #include "fractals/frothy_basin.h"
 #include "fractals/lyapunov.h"
-#include "id.h"
 #include "math/big.h"
 #include "math/biginit.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/find_special_colors.h"

@@ -7,8 +7,6 @@
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
@@ -19,15 +17,18 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
-#include "id.h"
 #include "io/decode_info.h"
 #include "io/extract_filename.h"
 #include "io/loadfile.h"
 #include "io/save_file.h"
 #include "io/update_save_name.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #if defined(XFRACT)
-#include "os.h"
+#include "misc/os.h"
 #endif
+#include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
@@ -40,7 +41,6 @@
 #include "ui/trig_fns.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
-#include "version.h"
 
 #include <algorithm>
 #include <climits>

@@ -7,7 +7,6 @@ Miscellaneous fractal-specific code
 */
 #include "fractals/bifurcation.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"
@@ -15,9 +14,10 @@ Miscellaneous fractal-specific code
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "fractals/population.h"
-#include "id.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
 

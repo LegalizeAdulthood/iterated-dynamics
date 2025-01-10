@@ -6,18 +6,18 @@
 //*********************************************************************
 #include "ui/slideshw.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
 #include "io/save_file.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/id_keys.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 #include "ui/temp_msg.h"
 #include "ui/video_mode.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cctype>

@@ -9,10 +9,10 @@
 //
 #include "ui/diskvid.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "math/big.h"
-#include "memory.h"
+#include "misc/drivers.h"
+#include "misc/memory.h"
 #include "ui/cmdfiles.h"
 #include "ui/help_title.h"
 #include "ui/stop_msg.h"

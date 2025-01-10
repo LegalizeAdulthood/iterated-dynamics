@@ -15,8 +15,6 @@
 #include "engine/calcfrac.h"
 
 #include "3d/line3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/bailout_formula.h"
 #include "engine/boundary_trace.h"
 #include "engine/calmanfp.h"
@@ -47,6 +45,8 @@
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
 #include "math/sign.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"

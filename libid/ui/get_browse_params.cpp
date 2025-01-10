@@ -4,12 +4,12 @@
 
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "prototyp.h" // for stricmp
+#include "misc/prototyp.h" // for stricmp
+#include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/id_keys.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <string>

@@ -2,13 +2,13 @@
 //
 #include "ui/get_cmd_string.h"
 
-#include "debug_flags.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/loadfile.h"
+#include "misc/debug_flags.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/field_prompt.h"
-#include "ValueSaver.h"
 
 /*
     get_cmd_string() is called whenever the 'g' key is pressed.  Return codes are:

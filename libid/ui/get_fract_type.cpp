@@ -13,6 +13,7 @@
 #include "helpcom.h"
 #include "io/load_entry_text.h"
 #include "io/loadfile.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/full_screen_choice.h"
@@ -23,7 +24,6 @@
 #include "ui/shell_sort.h"
 #include "ui/stop_msg.h"
 #include "ui/trig_fns.h"
-#include "ValueSaver.h"
 
 #include <cstdio>
 #include <cstdlib>

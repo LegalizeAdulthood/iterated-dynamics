@@ -2,14 +2,14 @@
 //
 #include "ui/get_sound_params.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
 #include "ui/id_keys.h"
 #include "ui/sound.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cmath>

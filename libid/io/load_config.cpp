@@ -2,10 +2,10 @@
 //
 #include "io/load_config.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "io/find_path.h"
+#include "misc/drivers.h"
 #include "ui/video_mode.h"
 
 #include <algorithm>

@@ -2,15 +2,15 @@
 //
 #include "ui/get_view_params.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
+#include "misc/drivers.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/id_keys.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cmath>

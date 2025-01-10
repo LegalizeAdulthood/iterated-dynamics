@@ -4,10 +4,10 @@
 
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
-#include "fractals/lorenz.h"
-#include "id.h"
 #include "engine/id_data.h"
 #include "engine/work_list.h"
+#include "fractals/lorenz.h"
+#include "misc/id.h"
 
 #include <cmath>
 

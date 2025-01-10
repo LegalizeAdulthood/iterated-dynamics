@@ -2,10 +2,10 @@
 //
 #include "io/loadmap.h"
 
-#include "id.h"
 #include "io/find_path.h"
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"
+#include "misc/id.h"
 #include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"

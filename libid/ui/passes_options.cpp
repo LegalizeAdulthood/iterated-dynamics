@@ -6,11 +6,11 @@
 #include "engine/sticky_orbits.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/get_corners.h"
 #include "ui/id_keys.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 

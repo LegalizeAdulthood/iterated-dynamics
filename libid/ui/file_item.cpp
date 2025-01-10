@@ -2,19 +2,19 @@
 //
 #include "ui/file_item.h"
 
-#include "drivers.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
 #include "fractals/lsys_fns.h"
 #include "fractals/parser.h"
-#include "id.h"
 #include "io/find_file.h"
 #include "io/load_entry_text.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
 #include "io/trim_filename.h"
-#include "prototyp.h" // for stricmp
+#include "misc/drivers.h"
+#include "misc/id.h"
+#include "misc/prototyp.h" // for stricmp
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_a_filename.h"

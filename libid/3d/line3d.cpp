@@ -8,12 +8,9 @@
 #include "3d/line3d.h"
 
 #include "3d/plot3d.h"
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "id.h"
 #include "io/check_write_file.h"
 #include "io/dir_file.h"
 #include "io/gifview.h"
@@ -21,6 +18,10 @@
 #include "io/save_file.h"
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
+#include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/framain2.h"
@@ -28,7 +29,6 @@
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "version.h"
 
 #include <algorithm>
 #include <climits>

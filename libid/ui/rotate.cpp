@@ -5,21 +5,21 @@
 */
 #include "ui/rotate.h"
 
-#include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
 #include "io/save_file.h"
 #include "math/rand15.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/field_prompt.h"
 #include "ui/get_a_filename.h"
 #include "ui/id_keys.h"
 #include "ui/spindac.h"
-#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cstdio>

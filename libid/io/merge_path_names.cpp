@@ -2,13 +2,13 @@
 //
 #include "io/merge_path_names.h"
 
-#include "id.h"
 #include "io/expand_dirname.h"
 #include "io/find_file.h"
 #include "io/fix_dirname.h"
 #include "io/is_directory.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
+#include "misc/id.h"
 #include "port.h"
 #include "ui/cmdfiles.h"
 

@@ -2,14 +2,14 @@
 //
 #include "fractals/diffusion.h"
 
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/check_key.h"
 #include "engine/id_data.h"
 #include "engine/resume.h"
-#include "id.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/not_disk_msg.h"
 #include "ui/video.h"

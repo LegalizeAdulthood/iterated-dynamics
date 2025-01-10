@@ -2,8 +2,6 @@
 //
 #include "fractals/lyapunov.h"
 
-#include "debug_flags.h"
-#include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"
@@ -13,9 +11,11 @@
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "fractals/population.h"
-#include "id.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
+#include "misc/debug_flags.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
 

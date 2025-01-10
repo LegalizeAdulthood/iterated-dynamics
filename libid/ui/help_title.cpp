@@ -2,8 +2,8 @@
 //
 #include "ui/help_title.h"
 
-#include "drivers.h"
-#include "id.h"
+#include "misc/drivers.h"
+#include "misc/id.h"
 #include "port_config.h"
 #include "ui/cmdfiles.h"
 #include "ui/put_string_center.h"

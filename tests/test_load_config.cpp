@@ -5,7 +5,7 @@
 #include "MockDriver.h"
 #include "test_config_data.h"
 
-#include <drivers.h>
+#include <misc/drivers.h>
 #include <ui/video_mode.h>
 
 #include <gmock/gmock.h>

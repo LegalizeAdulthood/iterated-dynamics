@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef XFRACT
-#include "unixprot.h"
+#include "misc/unixprot.h"
 #else
 // for stricmp, strnicmp
 #include <string.h>

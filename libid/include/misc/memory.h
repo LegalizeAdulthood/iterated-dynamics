@@ -2,8 +2,8 @@
 //
 #pragma once
 
+#include "misc/sized_types.h"
 #include "port.h"
-#include "sized_types.h"
 
 enum class MemoryLocation
 {

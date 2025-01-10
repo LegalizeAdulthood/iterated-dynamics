@@ -10,7 +10,6 @@
 #include <3d/3d.h>
 #include <3d/line3d.h>
 #include <3d/plot3d.h>
-#include <debug_flags.h>
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
@@ -21,9 +20,11 @@
 #include <fractals/jb.h>
 #include <fractals/lorenz.h>
 #include <fractals/parser.h>
-#include <id.h>
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
+#include <misc/debug_flags.h>
+#include <misc/id.h>
+#include <misc/ValueSaver.h>
 #include <ui/framain2.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
@@ -35,7 +36,6 @@
 #include <ui/stop_msg.h>
 #include <ui/trig_fns.h>
 #include <ui/video_mode.h>
-#include <ValueSaver.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

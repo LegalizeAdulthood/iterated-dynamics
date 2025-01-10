@@ -2,13 +2,13 @@
 //
 #include "fractals/mandelbrot_mix.h"
 
-#include "debug_flags.h"
 #include "engine/bailout_formula.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "math/cmplx.h"
 #include "math/mpmath.h"
+#include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
 /* re-use static roots variable

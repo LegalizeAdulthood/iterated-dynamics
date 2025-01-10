@@ -2,7 +2,6 @@
 //
 #include "fractals/taylor_skinner_variations.h"
 
-#include "debug_flags.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
@@ -12,6 +11,7 @@
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
+#include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
 // call float version of fractal if integer math overflow
