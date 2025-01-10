@@ -195,7 +195,7 @@ bool julibrot_setup()
     }
     else
     {
-        map_name = g_altern_map_file.data();
+        map_name = g_altern_map_file.c_str();
     }
     if (g_save_dac != 1)
     {

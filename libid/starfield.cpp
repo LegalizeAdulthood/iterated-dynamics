@@ -18,7 +18,7 @@
 #include "ValueSaver.h"
 #include "video.h"
 
-const std::string_view g_altern_map_file{"altern.map"};
+const std::string g_altern_map_file{"altern.map"};
 
 static int s_distribution{30};
 static int s_slope{25};
@@ -75,7 +75,7 @@ int star_field()
     s_concentration  = (long)(((s_star_field_values[1]) / 100.0) * (1L << 16));
     s_slope = (int)(s_star_field_values[2]);
 
-    if (validate_luts(g_altern_map_file.data()))
+    if (validate_luts(g_altern_map_file.c_str()))
     {
         stop_msg("Unable to load ALTERN.MAP");
         g_busy = false;
