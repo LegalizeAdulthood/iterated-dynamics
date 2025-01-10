@@ -6,7 +6,6 @@
 
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "check_orbit_name.h"
 #include "comments.h"
 #include "debug_flags.h"
 #include "do_pause.h"
@@ -22,6 +21,7 @@
 #include "engine/id_data.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
+#include "fractals/check_orbit_name.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"

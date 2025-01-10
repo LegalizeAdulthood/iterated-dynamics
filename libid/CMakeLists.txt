@@ -47,6 +47,7 @@ add_library(libid
     include/fractals/bifurcation.h fractals/bifurcation.cpp
     include/fractals/burning_ship.h fractals/burning_ship.cpp
     include/fractals/cellular.h fractals/cellular.cpp
+    include/fractals/check_orbit_name.h fractals/check_orbit_name.cpp
     include/fractals/circle_pattern.h fractals/circle_pattern.cpp
     include/fractals/diffusion.h fractals/diffusion.cpp
     include/fractals/divide_brot.h fractals/divide_brot.cpp
@@ -146,7 +147,6 @@ add_library(libid
 
     include/engine/bailout_formula.h engine/bailout_formula.cpp
     include/engine/check_key.h engine/check_key.cpp
-    include/check_orbit_name.h check_orbit_name.cpp
     include/comments.h comments.cpp
     include/double_to_string.h double_to_string.cpp
     include/engine/engine_timer.h engine/engine_timer.cpp
@@ -228,7 +228,6 @@ add_library(libid
 )
 
 source_group("Header Files/Miscellaneous" FILES
-    include/check_orbit_name.h
     include/cmdfiles.h
     include/cmdfiles_test.h
     include/comments.h
@@ -283,7 +282,6 @@ source_group("Header Files/Miscellaneous" FILES
     include/zoom.h
 )
 source_group("Source Files/Miscellaneous" FILES
-    check_orbit_name.cpp
     cmdfiles.cpp
     comments.cpp
     decode_info.cpp
