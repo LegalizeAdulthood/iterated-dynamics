@@ -36,7 +36,7 @@ enum
  * Note: because big-endian machines store structures differently, we have
  * to do special processing of the EVOLUTION_INFO structure as it is stored
  * in little-endian format.  If this structure changes, change the big-endian
- * marshalling routines in decode_info.h.
+ * marshalling routines in io/decode_info.h.
  */
 struct EvolutionInfo      // for saving evolution data in a GIF file
 {

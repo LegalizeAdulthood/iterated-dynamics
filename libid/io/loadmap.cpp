@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "loadmap.h"
+#include "io/loadmap.h"
 
 #include "cmdfiles.h"
 #include "id.h"

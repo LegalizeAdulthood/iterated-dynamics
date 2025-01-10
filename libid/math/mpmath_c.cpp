@@ -22,7 +22,7 @@
 
 #include "cmdfiles.h"
 #include "engine/id_data.h"
-#include "loadfile.h"
+#include "io/loadfile.h"
 #include "math/fpu087.h"
 
 #include <cassert>

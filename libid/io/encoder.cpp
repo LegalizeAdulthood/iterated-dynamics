@@ -2,14 +2,13 @@
 //
 //      GIF Encoder and associated routines
 //
-#include "encoder.h"
+#include "io/encoder.h"
 
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "decode_info.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "engine/bailout_formula.h"
@@ -25,10 +24,11 @@
 #include "fractals/parser.h"
 #include "framain2.h"
 #include "id.h"
+#include "io/decode_info.h"
 #include "io/extract_filename.h"
+#include "io/loadfile.h"
 #include "io/save_file.h"
 #include "io/update_save_name.h"
-#include "loadfile.h"
 #if defined(XFRACT)
 #include "os.h"
 #endif

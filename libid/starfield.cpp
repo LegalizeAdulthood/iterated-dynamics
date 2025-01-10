@@ -4,18 +4,18 @@
 
 #include <algorithm>
 
-#include "ui/ChoiceBuilder.h"
-#include "ValueSaver.h"
-#include "engine/calcfrac.h"
 #include "drivers.h"
-#include "helpdefs.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "loadmap.h"
+#include "helpdefs.h"
+#include "io/loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
 #include "slideshw.h"
 #include "spindac.h"
+#include "ui/ChoiceBuilder.h"
 #include "ui/stop_msg.h"
+#include "ValueSaver.h"
 #include "video.h"
 
 const std::string_view g_altern_map_file{"altern.map"};

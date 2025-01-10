@@ -10,11 +10,10 @@
  * GIF and 'Graphics Interchange Format' are trademarks (tm) of
  * Compuserve, Incorporated, an H&R Block Company.
  */
-#include "gifview.h"
+#include "io/gifview.h"
 
 #include "3d/plot3d.h"
 #include "cmdfiles.h"
-#include "decoder.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "engine/calcfrac.h"
@@ -23,9 +22,10 @@
 #include "engine/pixel_limits.h"
 #include "engine/wait_until.h"
 #include "id.h"
+#include "io/decoder.h"
 #include "io/has_ext.h"
-#include "loadfile.h"
-#include "loadmap.h"
+#include "io/loadfile.h"
+#include "io/loadmap.h"
 #include "rotate.h"
 #include "slideshw.h"
 #include "sound.h"

@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <load_config.h>
-#include <drivers.h>
+#include <io/load_config.h>
 
 #include "MockDriver.h"
 #include "test_config_data.h"
 
+#include <drivers.h>
 #include <video_mode.h>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 

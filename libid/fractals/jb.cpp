@@ -10,7 +10,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/pickover_mandelbrot.h"
-#include "loadmap.h"
+#include "io/loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/sqr.h"
 #include "spindac.h"

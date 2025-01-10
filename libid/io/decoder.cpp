@@ -18,12 +18,12 @@
 //
 // This routine was modified for use here.
 //
-#include "decoder.h"
+#include "io/decoder.h"
 
 #include "drivers.h"
-#include "gifview.h"
-#include "loadfile.h"
 #include "engine/pixel_limits.h"
+#include "io/gifview.h"
+#include "io/loadfile.h"
 #include "port.h"
 #include "sized_types.h"
 #include "video.h"

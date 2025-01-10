@@ -9,7 +9,7 @@
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "id_keys.h"
-#include "load_entry_text.h"
+#include "io/load_entry_text.h"
 #include "mouse.h"
 #include "round_float_double.h"
 #include "ui/file_item.h"

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "load_config.h"
+#include "io/load_config.h"
 
 #include "drivers.h"
 #include "engine/id_data.h"

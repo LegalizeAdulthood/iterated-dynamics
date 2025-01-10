@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "decode_info.h"
+#include "io/decode_info.h"
 
 #include "evolve.h"
-#include "loadfile.h"
+#include "io/loadfile.h"
 
 #include <cmath>
 #include <cstdio>

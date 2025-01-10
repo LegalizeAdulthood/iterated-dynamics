@@ -88,17 +88,10 @@ add_library(libid
 
     include/cmdfiles.h cmdfiles.cpp
     include/cmdfiles_test.h
-    include/decode_info.h decode_info.cpp
-    include/decoder.h decoder.cpp
     include/diskvid.h diskvid.cpp
     include/do_pause.h do_pause.cpp
     include/editpal.h editpal.cpp
-    include/encoder.h encoder.cpp
     include/evolve.h evolve.cpp
-    include/gif_file.h gif_file.cpp
-    include/gifview.h gifview.cpp
-    include/loadfile.h loadfile.cpp
-    include/loadmap.h loadmap.cpp
     include/lowerize_parameter.h lowerize_parameter.cpp
     include/rotate.h rotate.cpp
     include/slideshw.h slideshw.cpp
@@ -106,7 +99,10 @@ add_library(libid
     include/video.h video.cpp
 
     include/io/check_write_file.h io/check_write_file.cpp
+    include/io/decoder.h io/decoder.cpp
+    include/io/decode_info.h io/decode_info.cpp
     include/io/dir_file.h io/dir_file.cpp
+    include/io/encoder.h io/encoder.cpp
     include/io/ends_with_slash.h io/ends_with_slash.cpp
     include/io/expand_dirname.h io/expand_dirname.cpp
     include/io/get_disk_space.h io/get_disk_space.cpp
@@ -115,9 +111,15 @@ add_library(libid
     include/io/find_file.h io/find_file.cpp
     include/io/find_path.h io/find_path.cpp
     include/io/fix_dirname.h io/fix_dirname.cpp
+    include/io/gifview.h io/gifview.cpp
+    include/io/gif_file.h io/gif_file.cpp
     include/io/has_ext.h io/has_ext.cpp
     include/io/is_directory.h
     include/io/is_writeable.h
+    include/io/loadfile.h io/loadfile.cpp
+    include/io/loadmap.h io/loadmap.cpp
+    include/io/load_config.h io/load_config.cpp
+    include/io/load_entry_text.h io/load_entry_text.cpp
     include/io/make_path.h io/make_path.cpp
     include/io/merge_path_names.h io/merge_path_names.cpp
     include/io/path_match.h io/path_match.cpp
@@ -163,8 +165,6 @@ add_library(libid
     include/get_prec_big_float.h get_prec_big_float.cpp
     include/history.h history.cpp
     include/id_main.h id_main.cpp
-    include/load_config.h load_config.cpp
-    include/load_entry_text.h load_entry_text.cpp
     include/load_params.h load_params.cpp
     include/main_menu_switch.h main_menu_switch.cpp
     include/main_state.h
@@ -231,13 +231,10 @@ source_group("Header Files/Miscellaneous" FILES
     include/cmdfiles.h
     include/cmdfiles_test.h
     include/comments.h
-    include/decode_info.h
-    include/decoder.h
     include/double_to_string.h
     include/diskvid.h
     include/do_pause.h
     include/editpal.h
-    include/encoder.h
     include/evolve.h
     include/evolver_menu_switch.h
     include/find_extra_param.h
@@ -248,16 +245,10 @@ source_group("Header Files/Miscellaneous" FILES
     include/get_commands.h
     include/get_key_no_help.h
     include/get_prec_big_float.h
-    include/gif_file.h
-    include/gifview.h
     include/history.h
     include/id.h
     include/id_keys.h
     include/id_main.h
-    include/loadfile.h
-    include/loadmap.h
-    include/load_config.h
-    include/load_entry_text.h
     include/load_params.h
     include/lowerize_parameter.h
     include/main_menu_switch.h
@@ -284,13 +275,10 @@ source_group("Header Files/Miscellaneous" FILES
 source_group("Source Files/Miscellaneous" FILES
     cmdfiles.cpp
     comments.cpp
-    decode_info.cpp
-    decoder.cpp
     diskvid.cpp
     double_to_string.cpp
     do_pause.cpp
     editpal.cpp
-    encoder.cpp
     evolve.cpp
     evolver_menu_switch.cpp
     find_extra_param.cpp
@@ -303,12 +291,6 @@ source_group("Source Files/Miscellaneous" FILES
     get_prec_big_float.cpp
     history.cpp
     id_main.cpp
-    gif_file.cpp
-    gifview.cpp
-    loadfile.cpp
-    loadmap.cpp
-    load_config.cpp
-    load_entry_text.cpp
     load_params.cpp
     lowerize_parameter.cpp
     main_menu_switch.cpp
@@ -367,7 +349,7 @@ set_src_dir(id_main.cpp)
 target_compile_definitions(libid PUBLIC
     ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 # TODO: Figure out a better way to deal with converting packed structs on big-endian machines
-set_source_files_properties(decode_info.cpp
+set_source_files_properties(io/decode_info.cpp
     PROPERTIES
         COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})

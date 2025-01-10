@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "gif_file.h"
+#include "io/gif_file.h"
 
 #include "port.h"
 

@@ -12,7 +12,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
-#include "loadmap.h"
+#include "io/loadmap.h"
 #include "port.h"
 #include "rotate.h"
 #include "spindac.h"

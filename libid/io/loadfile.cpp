@@ -3,16 +3,14 @@
 /*
         load an existing fractal image, control level
 */
-#include "loadfile.h"
+#include "io/loadfile.h"
 
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "decode_info.h"
 #include "drivers.h"
-#include "encoder.h"
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/id_data.h"
@@ -26,6 +24,8 @@
 #include "fractals/parser.h"
 #include "framain2.h"
 #include "id_keys.h"
+#include "io/decode_info.h"
+#include "io/encoder.h"
 #include "io/find_file.h"
 #include "io/has_ext.h"
 #include "io/make_path.h"

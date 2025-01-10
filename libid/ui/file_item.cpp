@@ -13,10 +13,10 @@
 #include "id.h"
 #include "id_keys.h"
 #include "io/find_file.h"
+#include "io/load_entry_text.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
 #include "io/trim_filename.h"
-#include "load_entry_text.h"
 #include "prototyp.h" // for stricmp
 #include "set_default_params.h"
 #include "shell_sort.h"

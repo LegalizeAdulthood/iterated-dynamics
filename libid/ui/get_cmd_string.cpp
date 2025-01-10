@@ -4,9 +4,9 @@
 
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "helpdefs.h"
 #include "engine/id_data.h"
-#include "loadfile.h"
+#include "helpdefs.h"
+#include "io/loadfile.h"
 #include "ui/field_prompt.h"
 #include "ValueSaver.h"
 

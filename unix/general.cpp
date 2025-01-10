@@ -11,10 +11,10 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"
-#include "engine/id_data.h"
-#include "loadfile.h"
+#include "io/loadfile.h"
 #include "read_ticker.h"
 #include "slideshw.h"
 #include "ui/tab_display.h"

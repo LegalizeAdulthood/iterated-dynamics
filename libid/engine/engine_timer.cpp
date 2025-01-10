@@ -4,11 +4,11 @@
 
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "decoder.h"
-#include "encoder.h"
-#include "fractals/fractalp.h"
 #include "engine/id_data.h"
+#include "fractals/fractalp.h"
+#include "io/decoder.h"
 #include "io/dir_file.h"
+#include "io/encoder.h"
 
 #include <cstdarg>
 #include <cstdio>
