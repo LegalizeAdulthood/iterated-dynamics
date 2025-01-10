@@ -5,9 +5,9 @@
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "id_keys.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
+#include "ui/id_keys.h"
 #include "ui/sound.h"
 #include "ValueSaver.h"
 

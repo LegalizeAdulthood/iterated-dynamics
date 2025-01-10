@@ -8,7 +8,7 @@
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "port.h"
-#include "trig_fns.h"
+#include "ui/trig_fns.h"
 
 #include <cstdint>
 #include <vector>

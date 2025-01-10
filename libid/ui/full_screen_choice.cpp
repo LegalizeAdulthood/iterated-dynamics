@@ -3,11 +3,11 @@
 #include "ui/full_screen_choice.h"
 
 #include "drivers.h"
-#include "id_keys.h"
 #include "io/ends_with_slash.h"
 #include "string_case_compare.h"
 #include "ui/cmdfiles.h"
 #include "ui/help_title.h"
+#include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/put_string_center.h"
 #include "ui/text_screen.h"

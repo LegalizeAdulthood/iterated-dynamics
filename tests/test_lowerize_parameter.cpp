@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <lowerize_parameter.h>
+#include <ui/lowerize_parameter.h>
 
 #include <boost/algorithm/string/case_conv.hpp>
 

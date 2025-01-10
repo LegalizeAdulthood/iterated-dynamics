@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "set_default_params.h"
+#include "ui/set_default_params.h"
 
 #include "debug_flags.h"
 #include "engine/calc_frac_init.h"

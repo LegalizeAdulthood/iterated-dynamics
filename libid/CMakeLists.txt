@@ -7,6 +7,7 @@ find_package(cpuid CONFIG REQUIRED)
 add_library(libid
     include/os.h
 
+
     include/3d/3d.h 3d/3d.cpp
     include/3d/line3d.h 3d/line3d.cpp
     include/3d/plot3d.h 3d/plot3d.cpp
@@ -90,9 +91,6 @@ add_library(libid
     include/fractals/unity.h fractals/unity.cpp
     include/fractals/volterra_lotka.h fractals/volterra_lotka.cpp
 
-    include/cmdfiles_test.h
-    include/lowerize_parameter.h lowerize_parameter.cpp
-
     include/io/check_write_file.h io/check_write_file.cpp
     include/io/decoder.h io/decoder.cpp
     include/io/decode_info.h io/decode_info.cpp
@@ -115,6 +113,7 @@ add_library(libid
     include/io/loadmap.h io/loadmap.cpp
     include/io/load_config.h io/load_config.cpp
     include/io/load_entry_text.h io/load_entry_text.cpp
+    include/ui/lowerize_parameter.h ui/lowerize_parameter.cpp
     include/io/make_path.h io/make_path.cpp
     include/io/merge_path_names.h io/merge_path_names.cpp
     include/io/path_match.h io/path_match.cpp
@@ -146,22 +145,14 @@ add_library(libid
     drivers.cpp
     include/memory.h memory.cpp
 
-    include/comments.h comments.cpp
-    include/double_to_string.h double_to_string.cpp
-    include/get_calculation_time.h get_calculation_time.cpp
-    include/get_commands.h get_commands.cpp
-    include/load_params.h load_params.cpp
-    include/main_state.h
-    include/make_batch_file.h make_batch_file.cpp
-    include/make_mig.h make_mig.cpp
-    include/set_default_params.h set_default_params.cpp
-    include/shell_sort.h shell_sort.cpp
-    include/trig_fns.h trig_fns.cpp
     include/version.h version.cpp
 
     include/ui/ChoiceBuilder.h
     include/ui/cmdfiles.h ui/cmdfiles.cpp
+    include/ui/cmdfiles_test.h
+    include/ui/comments.h ui/comments.cpp
     include/ui/diskvid.h ui/diskvid.cpp
+    include/ui/double_to_string.h ui/double_to_string.cpp
     include/ui/do_pause.h ui/do_pause.cpp
     include/ui/editpal.h ui/editpal.cpp
     include/ui/evolve.h ui/evolve.cpp
@@ -177,7 +168,9 @@ add_library(libid
     include/ui/get_a_filename.h ui/get_a_filename.cpp
     include/ui/get_a_number.h ui/get_a_number.cpp
     include/ui/get_browse_params.h ui/get_browse_params.cpp
+    include/ui/get_calculation_time.h ui/get_calculation_time.cpp
     include/ui/get_cmd_string.h ui/get_cmd_string.cpp
+    include/ui/get_commands.h ui/get_commands.cpp
     include/ui/get_corners.h ui/get_corners.cpp
     include/ui/get_fract_type.h ui/get_fract_type.cpp
     include/ui/get_key_no_help.h ui/get_key_no_help.cpp
@@ -191,18 +184,27 @@ add_library(libid
     ui/help.cpp
     include/ui/help_title.h ui/help_title.cpp
     include/ui/history.h ui/history.cpp
+    include/ui/id_keys.h
     include/ui/id_main.h ui/id_main.cpp
+    include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
+    include/ui/load_params.h ui/load_params.cpp
+    include/ui/make_batch_file.h ui/make_batch_file.cpp
+    include/ui/make_mig.h ui/make_mig.cpp
     include/ui/main_menu.h ui/main_menu.cpp
     include/ui/main_menu_switch.h ui/main_menu_switch.cpp
+    include/ui/main_state.h
     include/ui/menu_handler.h ui/menu_handler.cpp
     include/ui/mouse.h ui/mouse.cpp
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
+    include/ui/read_ticker.h
     include/ui/rotate.h ui/rotate.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp
+    include/ui/set_default_params.h ui/set_default_params.cpp
+    include/ui/shell_sort.h ui/shell_sort.cpp
     include/ui/slideshw.h ui/slideshw.cpp
     include/ui/sound.h ui/sound.cpp
     include/ui/spindac.h ui/spindac.cpp
@@ -213,60 +215,32 @@ add_library(libid
     include/ui/temp_msg.h ui/temp_msg.cpp
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
+    include/ui/trig_fns.h ui/trig_fns.cpp
     include/ui/video.h ui/video.cpp
     include/ui/video_mode.h ui/video_mode.cpp
     include/ui/zoom.h ui/zoom.cpp
 
     include/drivers.h
     include/id.h
-    include/id_keys.h
     include/prototyp.h
-    include/read_ticker.h
     include/sized_types.h
     include/stack_avail.h
     include/ValueSaver.h
 )
 
 source_group("Header Files/Miscellaneous" FILES
-    include/cmdfiles_test.h
-    include/comments.h
-    include/double_to_string.h
-    include/get_calculation_time.h
-    include/get_commands.h
     include/id.h
-    include/id_keys.h
-    include/load_params.h
-    include/lowerize_parameter.h
-    include/main_state.h
-    include/make_batch_file.h
-    include/make_mig.h
-    include/set_default_params.h
-    include/shell_sort.h
-    include/trig_fns.h
     include/version.h
 )
 source_group("Source Files/Miscellaneous" FILES
-    comments.cpp
-    double_to_string.cpp
-    get_calculation_time.cpp
-    get_commands.cpp
-    load_params.cpp
-    lowerize_parameter.cpp
-    make_batch_file.cpp
-    make_mig.cpp
-    set_default_params.cpp
-    shell_sort.cpp
-    trig_fns.cpp
     version.cpp
 )
 source_group("Header Files/Plumbing" FILES
     include/debug_flags.h
     include/drivers.h
-    include/init_failure.h
     include/memory.h
     include/os.h
     include/prototyp.h
-    include/read_ticker.h
     include/sized_types.h
     include/stack_avail.h
     include/ValueSaver.h

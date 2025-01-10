@@ -15,11 +15,11 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
-#include "trig_fns.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
+#include "ui/trig_fns.h"
 #include "version.h"
 
 #include <cstring>

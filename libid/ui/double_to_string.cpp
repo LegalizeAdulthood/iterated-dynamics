@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "double_to_string.h"
+#include "ui/double_to_string.h"
 
 #include <cstdio>
 #include <cstring>

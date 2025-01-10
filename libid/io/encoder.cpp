@@ -25,12 +25,11 @@
 #include "io/loadfile.h"
 #include "io/save_file.h"
 #include "io/update_save_name.h"
-#include "ui/cmdfiles.h"
-#include "ui/diskvid.h"
 #if defined(XFRACT)
 #include "os.h"
 #endif
-#include "trig_fns.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/framain2.h"
 #include "ui/goodbye.h"
@@ -38,6 +37,7 @@
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
+#include "ui/trig_fns.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
 #include "version.h"

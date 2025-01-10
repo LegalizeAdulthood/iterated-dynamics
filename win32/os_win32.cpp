@@ -7,6 +7,7 @@
 #include "io/special_dirs.h"
 #include "port.h"
 #include "ui/cmdfiles.h"
+#include "ui/init_failure.h"
 
 #include "win_defines.h"
 #include <DbgHelp.h>

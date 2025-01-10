@@ -2,11 +2,10 @@
 //
 // Command-line / Command-File Parser Routines
 //
-#include "cmdfiles_test.h"
+#include "ui/cmdfiles_test.h"
 
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "comments.h"
 #include "debug_flags.h"
 #include "drivers.h"
 #include "engine/bailout_formula.h"
@@ -39,12 +38,8 @@
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
 #include "io/special_dirs.h"
-#include "load_params.h"
-#include "lowerize_parameter.h"
-#include "make_batch_file.h"
-#include "make_mig.h"
 #include "math/biginit.h"
-#include "trig_fns.h"
+#include "ui/comments.h"
 #include "ui/do_pause.h"
 #include "ui/file_item.h"
 #include "ui/framain2.h"
@@ -52,11 +47,16 @@
 #include "ui/goodbye.h"
 #include "ui/help_title.h"
 #include "ui/history.h"
+#include "ui/load_params.h"
+#include "ui/lowerize_parameter.h"
+#include "ui/make_batch_file.h"
+#include "ui/make_mig.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/sound.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include "ui/trig_fns.h"
 #include "ui/video_mode.h"
 
 #include <algorithm>

@@ -2,7 +2,7 @@
 //
 #include "ui/video_mode.h"
 
-#include "id_keys.h"
+#include "ui/id_keys.h"
 
 #include <cstdio>
 

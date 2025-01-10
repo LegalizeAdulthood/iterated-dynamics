@@ -3,10 +3,10 @@
 #include "ui/do_pause.h"
 
 #include "drivers.h"
-#include "id_keys.h"
 #include "ui/cmdfiles.h"
 #include "ui/get_key_no_help.h"
 #include "ui/goodbye.h"
+#include "ui/id_keys.h"
 
 // defer pause until after parsing so we know if in batch mode
 void do_pause(int action)

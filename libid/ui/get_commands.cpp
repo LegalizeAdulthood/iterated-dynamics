@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "get_commands.h"
+#include "ui/get_commands.h"
 
 #include "helpdefs.h"
 #include "engine/id_data.h"

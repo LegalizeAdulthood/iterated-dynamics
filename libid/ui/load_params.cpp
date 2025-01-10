@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "load_params.h"
+#include "ui/load_params.h"
 
 #include "engine/find_extra_param.h"
 #include "engine/id_data.h"

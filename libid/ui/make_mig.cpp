@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "make_mig.h"
+#include "ui/make_mig.h"
 
 #include "io/save_file.h"
 #include "ui/rotate.h"

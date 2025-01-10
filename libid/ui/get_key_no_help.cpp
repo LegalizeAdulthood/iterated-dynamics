@@ -3,7 +3,7 @@
 #include "ui/get_key_no_help.h"
 
 #include "drivers.h"
-#include "id_keys.h"
+#include "ui/id_keys.h"
 
 /*
  * This routine returns a key, ignoring F1

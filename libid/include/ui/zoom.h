@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #pragma once
-#include "main_state.h"
+
+#include "ui/main_state.h"
 
 struct Coord
 {

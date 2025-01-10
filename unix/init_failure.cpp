@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "init_failure.h"
+#include "ui/init_failure.h"
 
 #include <cstdio>
 

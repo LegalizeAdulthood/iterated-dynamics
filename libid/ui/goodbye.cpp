@@ -7,11 +7,11 @@
 #include "engine/resume.h"
 #include "fractals/ant.h"
 #include "helpcom.h"
-#include "make_batch_file.h"
 #include "memory.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
+#include "ui/make_batch_file.h"
 #include "ui/slideshw.h"
 
 #include <cstdlib>

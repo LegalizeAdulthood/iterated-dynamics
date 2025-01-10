@@ -12,9 +12,9 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "read_ticker.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
+#include "ui/read_ticker.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/spindac.h"

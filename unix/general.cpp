@@ -14,8 +14,8 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/loadfile.h"
-#include "read_ticker.h"
 #include "ui/cmdfiles.h"
+#include "ui/read_ticker.h"
 #include "ui/slideshw.h"
 #include "ui/tab_display.h"
 

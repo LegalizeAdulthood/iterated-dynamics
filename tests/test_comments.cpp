@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <comments.h>
+#include <ui/comments.h>
 
 #include <engine/id_data.h>
-#include <id_keys.h>
+#include <ui/id_keys.h>
 #include <ui/video_mode.h>
 #include <version.h>
 

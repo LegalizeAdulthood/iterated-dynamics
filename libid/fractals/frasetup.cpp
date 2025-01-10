@@ -20,9 +20,9 @@
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
 #include "prototyp.h"
-#include "trig_fns.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"
+#include "ui/trig_fns.h"
 
 #include <cmath>
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <cmdfiles_test.h>
+#include <ui/cmdfiles_test.h>
 
 #include "CurrentPathSaver.h"
 #include "MockDriver.h"
@@ -22,18 +22,18 @@
 #include <fractals/lorenz.h>
 #include <fractals/parser.h>
 #include <id.h>
-#include <id_keys.h>
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
-#include <make_batch_file.h>
-#include <trig_fns.h>
 #include <ui/framain2.h>
 #include <ui/history.h>
+#include <ui/id_keys.h>
+#include <ui/make_batch_file.h>
 #include <ui/rotate.h>
 #include <ui/slideshw.h>
 #include <ui/sound.h>
 #include <ui/stereo.h>
 #include <ui/stop_msg.h>
+#include <ui/trig_fns.h>
 #include <ui/video_mode.h>
 #include <ValueSaver.h>
 

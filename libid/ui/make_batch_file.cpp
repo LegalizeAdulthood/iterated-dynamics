@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "make_batch_file.h"
+#include "ui/make_batch_file.h"
 
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "comments.h"
 #include "debug_flags.h"
 #include "drivers.h"
 #include "engine/bailout_formula.h"
@@ -33,14 +32,15 @@
 #include "math/biginit.h"
 #include "math/sign.h"
 #include "prototyp.h" // stricmp
-#include "trig_fns.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
+#include "ui/comments.h"
 #include "ui/rotate.h"
 #include "ui/sound.h"
 #include "ui/spindac.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include "ui/trig_fns.h"
 #include "ui/video_mode.h"
 #include "ValueSaver.h"
 #include "version.h"

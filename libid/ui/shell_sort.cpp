@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "shell_sort.h"
+#include "ui/shell_sort.h"
 
 #include "prototyp.h" // for stricmp
 

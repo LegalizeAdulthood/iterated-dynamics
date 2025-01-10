@@ -7,14 +7,11 @@
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
-#include "get_commands.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id.h"
-#include "id_keys.h"
 #include "io/load_config.h"
 #include "io/loadfile.h"
-#include "main_state.h"
 #include "math/fixed_pt.h"
 #include "memory.h"
 #include "port.h"
@@ -26,6 +23,7 @@
 #include "ui/get_a_filename.h"
 #include "ui/get_browse_params.h"
 #include "ui/get_cmd_string.h"
+#include "ui/get_commands.h"
 #include "ui/get_fract_type.h"
 #include "ui/get_sound_params.h"
 #include "ui/get_toggles.h"
@@ -33,8 +31,11 @@
 #include "ui/get_view_params.h"
 #include "ui/goodbye.h"
 #include "ui/history.h"
+#include "ui/id_keys.h"
+#include "ui/init_failure.h"
 #include "ui/intro.h"
 #include "ui/main_menu.h"
+#include "ui/main_state.h"
 #include "ui/mouse.h"
 #include "ui/rotate.h"
 #include "ui/select_video_mode.h"
@@ -47,7 +48,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <init_failure.h>
 #include <string>
 
 VideoInfo g_video_entry{};                                    //

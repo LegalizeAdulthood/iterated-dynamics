@@ -9,7 +9,6 @@
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "id.h"
-#include "id_keys.h"
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
 #include "io/save_file.h"
@@ -18,6 +17,7 @@
 #include "ui/diskvid.h"
 #include "ui/field_prompt.h"
 #include "ui/get_a_filename.h"
+#include "ui/id_keys.h"
 #include "ui/spindac.h"
 #include "ValueSaver.h"
 

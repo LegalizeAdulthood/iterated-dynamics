@@ -6,8 +6,8 @@
 #include "WinText.h"
 
 #include "drivers.h"
-#include "id_keys.h"
 #include "ui/goodbye.h"
+#include "ui/id_keys.h"
 
 #include "win_defines.h"
 #include <atlbase.h>
