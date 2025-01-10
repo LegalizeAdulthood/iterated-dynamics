@@ -9,7 +9,7 @@
 #include "helpdefs.h"
 #include "id_keys.h"
 #include "io/load_entry_text.h"
-#include "round_float_double.h"
+#include "math/round_float_double.h"
 #include "ui/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/help_title.h"

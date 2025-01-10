@@ -29,9 +29,9 @@
 #include "make_batch_file.h"
 #include "math/big.h"
 #include "math/biginit.h"
+#include "math/round_float_double.h"
 #include "port.h"
 #include "prototyp.h" // for stricmp
-#include "round_float_double.h"
 #include "trig_fns.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"

@@ -11,10 +11,12 @@ add_library(libid
     include/3d/line3d.h 3d/line3d.cpp
     include/3d/plot3d.h 3d/plot3d.cpp
 
+    include/engine/bailout_formula.h engine/bailout_formula.cpp
     include/engine/boundary_trace.h engine/boundary_trace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
     include/engine/calcfrac.h engine/calcfrac.cpp
     include/engine/calmanfp.h engine/calmanfp.cpp
+    include/engine/check_key.h engine/check_key.cpp
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp
@@ -24,6 +26,7 @@ add_library(libid
     include/engine/fractalb.h engine/fractalb.cpp
     include/engine/fractals.h engine/fractals.cpp
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
+    include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
     include/engine/id_data.h
     include/engine/jiim.h engine/jiim.cpp
     include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp
@@ -135,6 +138,7 @@ add_library(libid
     include/math/mpmath.h
     include/math/mpmath_c.h math/mpmath_c.cpp
     include/math/rand15.h
+    include/math/round_float_double.h math/round_float_double.cpp
     include/math/sign.h
     include/math/sqr.h
 
@@ -142,18 +146,14 @@ add_library(libid
     drivers.cpp
     include/memory.h memory.cpp
 
-    include/engine/bailout_formula.h engine/bailout_formula.cpp
-    include/engine/check_key.h engine/check_key.cpp
     include/comments.h comments.cpp
     include/double_to_string.h double_to_string.cpp
     include/get_calculation_time.h get_calculation_time.cpp
     include/get_commands.h get_commands.cpp
-    include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
     include/load_params.h load_params.cpp
     include/main_state.h
     include/make_batch_file.h make_batch_file.cpp
     include/make_mig.h make_mig.cpp
-    include/round_float_double.h round_float_double.cpp
     include/set_default_params.h set_default_params.cpp
     include/shell_sort.h shell_sort.cpp
     include/trig_fns.h trig_fns.cpp
@@ -240,7 +240,6 @@ source_group("Header Files/Miscellaneous" FILES
     include/main_state.h
     include/make_batch_file.h
     include/make_mig.h
-    include/round_float_double.h
     include/set_default_params.h
     include/shell_sort.h
     include/trig_fns.h
@@ -255,7 +254,6 @@ source_group("Source Files/Miscellaneous" FILES
     lowerize_parameter.cpp
     make_batch_file.cpp
     make_mig.cpp
-    round_float_double.cpp
     set_default_params.cpp
     shell_sort.cpp
     trig_fns.cpp

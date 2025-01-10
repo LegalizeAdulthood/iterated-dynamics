@@ -4,11 +4,11 @@
 
 #include "debug_flags.h"
 #include "engine/calc_frac_init.h"
-#include "engine/id_data.h"
 #include "engine/find_extra_param.h"
+#include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
-#include "round_float_double.h"
+#include "math/round_float_double.h"
 #include "ui/cmdfiles.h"
 #include "ui/zoom.h"
 
