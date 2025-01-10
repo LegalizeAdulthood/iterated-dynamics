@@ -20,7 +20,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractals/fractalp.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "io/trim_filename.h"
 #include "loadfile.h"
 #include "make_batch_file.h"

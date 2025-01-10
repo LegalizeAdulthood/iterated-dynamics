@@ -10,8 +10,8 @@
 #include "helpcom.h"
 #include "make_batch_file.h"
 #include "memory.h"
-#include "pixel_grid.h"
-#include "resume.h"
+#include "engine/pixel_grid.h"
+#include "engine/resume.h"
 #include "slideshw.h"
 
 #include <cstdlib>

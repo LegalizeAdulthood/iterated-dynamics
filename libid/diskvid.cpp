@@ -11,7 +11,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/big.h"
 #include "memory.h"
 #include "ui/help_title.h"

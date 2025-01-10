@@ -2,14 +2,14 @@
 //
 #include "fractals/mandelbrot_mix.h"
 
-#include "bailout_formula.h"
+#include "engine/bailout_formula.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "fractals/newton.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/cmplx.h"
 #include "math/mpmath.h"
-#include "pixel_grid.h"
+#include "engine/pixel_grid.h"
 
 /* re-use static roots variable
    memory for mandelmix4 */

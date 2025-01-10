@@ -7,7 +7,7 @@
 */
 #include "stereo.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "decoder.h"
 #include "drivers.h"
@@ -15,9 +15,9 @@
 #include "find_special_colors.h"
 #include "gifview.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
-#include "pixel_limits.h"
+#include "engine/pixel_limits.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "ui/stop_msg.h"

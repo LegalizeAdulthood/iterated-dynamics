@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id.h"

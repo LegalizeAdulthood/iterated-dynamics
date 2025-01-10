@@ -6,10 +6,10 @@
 
 #include "ui/ChoiceBuilder.h"
 #include "ValueSaver.h"
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "drivers.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/rand15.h"

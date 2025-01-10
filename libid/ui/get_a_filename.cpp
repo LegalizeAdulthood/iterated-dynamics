@@ -5,7 +5,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/expand_dirname.h"
 #include "io/find_file.h"

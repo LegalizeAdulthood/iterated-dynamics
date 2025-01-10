@@ -4,18 +4,18 @@
 
 #include <algorithm>
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
-#include "fractals.h"
+#include "engine/fractals.h"
 #include "fractals/newton.h"
-#include "get_julia_attractor.h"
-#include "id_data.h"
+#include "engine/get_julia_attractor.h"
+#include "engine/id_data.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
-#include "pixel_grid.h"
+#include "engine/pixel_grid.h"
 
 DComplex g_marks_coefficient{};
 

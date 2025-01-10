@@ -4,7 +4,7 @@
 
 #include "find_extra_param.h"
 #include "fractals/fractalp.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 
 void load_params(FractalType type)
 {

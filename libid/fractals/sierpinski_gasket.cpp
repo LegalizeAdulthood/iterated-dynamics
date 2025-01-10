@@ -2,9 +2,9 @@
 //
 #include "fractals/sierpinski_gasket.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
-#include "fractals.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
 #include "math/fixed_pt.h"
 
 bool sierpinski_setup()

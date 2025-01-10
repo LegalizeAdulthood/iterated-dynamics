@@ -10,7 +10,7 @@
 #include "drivers.h"
 #include "helpdefs.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/merge_path_names.h"
 #include "io/save_file.h"

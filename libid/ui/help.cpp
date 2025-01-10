@@ -4,9 +4,9 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "engine_timer.h"
+#include "engine/engine_timer.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_io.h"
 #include "id_keys.h"
 #include "io/find_path.h"

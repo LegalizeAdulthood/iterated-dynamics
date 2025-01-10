@@ -2,10 +2,10 @@
 //
 #include "fractals/fn_or_fn.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
-#include "fractals.h"
-#include "get_julia_attractor.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/get_julia_attractor.h"
 #include "math/mpmath.h"
 #include "trig_fns.h"
 

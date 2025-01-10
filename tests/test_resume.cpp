@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <resume.h>
+#include <engine/resume.h>
 
-#include <id_data.h>
+#include <engine/id_data.h>
 
 #include <gtest/gtest.h>
 

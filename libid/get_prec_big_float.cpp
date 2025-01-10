@@ -3,11 +3,11 @@
 #include "get_prec_big_float.h"
 
 #include "cmdfiles.h"
-#include "convert_center_mag.h"
-#include "id_data.h"
+#include "engine/convert_center_mag.h"
+#include "engine/id_data.h"
 #include "math/big.h"
 #include "math/biginit.h"
-#include "pixel_limits.h"
+#include "engine/pixel_limits.h"
 #include "port.h"
 
 #include <algorithm>

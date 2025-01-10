@@ -2,10 +2,10 @@
 //
 #include "fractals/quaternion_mandelbrot.h"
 
-#include "calcfrac.h"
-#include "fractals.h"
-#include "id_data.h"
-#include "pixel_grid.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
+#include "engine/pixel_grid.h"
 
 int quaternion_jul_fp_per_pixel()
 {

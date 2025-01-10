@@ -6,11 +6,11 @@
 */
 #include "plot3d.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "fractype.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "line3d.h"
 #include "loadmap.h"
 #include "port.h"

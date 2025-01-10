@@ -2,21 +2,21 @@
 //
 #include "fractals/lyapunov.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
-#include "engine_timer.h"
-#include "fractals.h"
+#include "engine/engine_timer.h"
+#include "engine/fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "fractals/population.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
-#include "pixel_grid.h"
-#include "resume.h"
+#include "engine/pixel_grid.h"
+#include "engine/resume.h"
 #include "ui/stop_msg.h"
 
 #include <cmath>

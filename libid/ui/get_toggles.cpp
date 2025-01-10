@@ -2,12 +2,12 @@
 //
 #include "ui/get_toggles.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "ui/full_screen_prompt.h"
 
 #include <algorithm>

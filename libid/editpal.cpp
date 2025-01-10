@@ -5,12 +5,12 @@
 //
 #include "editpal.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "find_special_colors.h"
 #include "get_key_no_help.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/dir_file.h"
 #include "memory.h"

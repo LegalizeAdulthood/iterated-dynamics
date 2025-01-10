@@ -2,8 +2,8 @@
 //
 #include "fractals/hypercomplex_mandelbrot.h"
 
-#include "calcfrac.h"
-#include "fractals.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
 #include "math/cmplx.h"
 #include "math/hcmplx.h"
 

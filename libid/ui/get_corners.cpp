@@ -4,18 +4,18 @@
 
 #include "ui/ChoiceBuilder.h"
 #include "ValueSaver.h"
-#include "calc_frac_init.h"
+#include "engine/calc_frac_init.h"
 #include "cmdfiles.h"
-#include "convert_center_mag.h"
-#include "convert_corners.h"
+#include "engine/convert_center_mag.h"
+#include "engine/convert_corners.h"
 #include "double_to_string.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "port.h"
-#include "sticky_orbits.h"
+#include "engine/sticky_orbits.h"
 #include "zoom.h"
 
 #include <cfloat>

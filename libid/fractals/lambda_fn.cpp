@@ -2,13 +2,13 @@
 //
 #include "fractals/lambda_fn.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
-#include "fractals.h"
+#include "engine/fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
-#include "get_julia_attractor.h"
+#include "engine/get_julia_attractor.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
 

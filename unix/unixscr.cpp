@@ -23,7 +23,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "mouse.h"
 #include "os.h"

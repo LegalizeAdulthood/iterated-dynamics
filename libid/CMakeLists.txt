@@ -11,34 +11,36 @@ add_library(libid
     include/line3d.h line3d.cpp
     include/plot3d.h plot3d.cpp
 
-    include/boundary_trace.h boundary_trace.cpp
-    include/calc_frac_init.h calc_frac_init.cpp
-    include/calcfrac.h calcfrac.cpp
-    include/calmanfp.h calmanfp.cpp
-    include/convert_center_mag.h convert_center_mag.cpp
-    include/convert_corners.h convert_corners.cpp
-    include/diffusion_scan.h diffusion_scan.cpp
-    include/fracsuba.h fracsuba.cpp
-    include/fractalb.h fractalb.cpp
-    include/fractals.h fractals.cpp
+    include/engine/boundary_trace.h engine/boundary_trace.cpp
+    include/engine/calc_frac_init.h engine/calc_frac_init.cpp
+    include/engine/calcfrac.h engine/calcfrac.cpp
+    include/engine/calmanfp.h engine/calmanfp.cpp
+    include/engine/convert_center_mag.h engine/convert_center_mag.cpp
+    include/engine/convert_corners.h engine/convert_corners.cpp
+    include/engine/diffusion_scan.h engine/diffusion_scan.cpp
+    include/engine/fracsuba.h engine/fracsuba.cpp
+    include/engine/fractalb.h engine/fractalb.cpp
+    include/engine/fractals.h engine/fractals.cpp
     include/fractals/frasetup.h fractals/frasetup.cpp
-    include/get_julia_attractor.h get_julia_attractor.cpp
-    include/one_or_two_pass.h one_or_two_pass.cpp
-    include/orbit.h orbit.cpp
-    include/param_not_used.h param_not_used.cpp
-    include/PertEngine.h PertEngine.cpp
-    include/perturbation.h perturbation.cpp
-    include/pixel_grid.h pixel_grid.cpp
-    include/Point.h
-    include/resume.h resume.cpp
-    include/soi.h soi.cpp
-    soi1.cpp
-    include/solid_guess.h solid_guess.cpp
-    include/sticky_orbits.h sticky_orbits.cpp
-    include/tesseral.h tesseral.cpp
-    include/type_has_param.h type_has_param.cpp
-    include/wait_until.h wait_until.cpp
-    include/work_list.h work_list.cpp
+    include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
+    include/engine/id_data.h
+    include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp
+    include/engine/orbit.h engine/orbit.cpp
+    include/engine/param_not_used.h engine/param_not_used.cpp
+    include/engine/PertEngine.h engine/PertEngine.cpp
+    include/engine/perturbation.h engine/perturbation.cpp
+    include/engine/pixel_grid.h engine/pixel_grid.cpp
+    include/engine/pixel_limits.h
+    include/engine/Point.h
+    include/engine/resume.h engine/resume.cpp
+    include/engine/soi.h engine/soi.cpp
+    engine/soi1.cpp
+    include/engine/solid_guess.h engine/solid_guess.cpp
+    include/engine/sticky_orbits.h engine/sticky_orbits.cpp
+    include/engine/tesseral.h engine/tesseral.cpp
+    include/engine/type_has_param.h engine/type_has_param.cpp
+    include/engine/wait_until.h engine/wait_until.cpp
+    include/engine/work_list.h engine/work_list.cpp
 
     include/fractals/ant.h fractals/ant.cpp
     include/fractals/barnsley.h fractals/barnsley.cpp
@@ -58,7 +60,8 @@ add_library(libid
     include/fractals/jb.h fractals/jb.cpp
     include/fractals/lambda_fn.h fractals/lambda_fn.cpp
     include/fractals/lorenz.h fractals/lorenz.cpp
-    include/fractals/lsys_fns.h fractals/lsys.cpp
+    include/fractals/lsys.h fractals/lsys.cpp
+    include/fractals/lsys_fns.h
     fractals/lsysf.cpp
     include/fractals/lyapunov.h fractals/lyapunov.cpp
     include/fractals/magnet.h fractals/magnet.cpp
@@ -141,12 +144,12 @@ add_library(libid
     drivers.cpp
     include/memory.h memory.cpp
 
-    include/bailout_formula.h bailout_formula.cpp
-    include/check_key.h check_key.cpp
+    include/engine/bailout_formula.h engine/bailout_formula.cpp
+    include/engine/check_key.h engine/check_key.cpp
     include/check_orbit_name.h check_orbit_name.cpp
     include/comments.h comments.cpp
     include/double_to_string.h double_to_string.cpp
-    include/engine_timer.h engine_timer.cpp
+    include/engine/engine_timer.h engine/engine_timer.cpp
     include/evolver_menu_switch.h evolver_menu_switch.cpp
     include/find_extra_param.h find_extra_param.cpp
     include/find_special_colors.h find_special_colors.cpp
@@ -158,7 +161,7 @@ add_library(libid
     include/get_prec_big_float.h get_prec_big_float.cpp
     include/history.h history.cpp
     include/id_main.h id_main.cpp
-    include/jiim.h jiim.cpp
+    include/engine/jiim.h engine/jiim.cpp
     include/load_config.h load_config.cpp
     include/load_entry_text.h load_entry_text.cpp
     include/load_params.h load_params.cpp
@@ -216,10 +219,7 @@ add_library(libid
     include/drivers.h
     include/fractype.h
     include/id.h
-    include/id_data.h
     include/id_keys.h
-    include/fractals/lsys.h
-    include/pixel_limits.h
     include/prototyp.h
     include/read_ticker.h
     include/sized_types.h
@@ -236,73 +236,6 @@ source_group("Source Files/3d" FILES
     3d.cpp
     line3d.cpp
     plot3d.cpp
-)
-source_group("Header Files/Engine" FILES
-    include/bailout_formula.h
-    include/boundary_trace.h
-    include/calc_frac_init.h
-    include/calcfrac.h
-    include/calmanfp.h
-    include/check_key.h
-    include/convert_center_mag.h
-    include/convert_corners.h
-    include/diffusion_scan.h
-    include/engine_timer.h
-    include/fracsuba.h
-    include/fractalb.h
-    include/fractals.h
-    include/fractype.h
-    include/get_julia_attractor.h
-    include/id_data.h
-    include/jiim.h
-    include/one_or_two_pass.h
-    include/orbit.h
-    include/param_not_used.h
-    include/PertEngine.h
-    include/perturbation.h
-    include/pixel_grid.h
-    include/pixel_limits.h
-    include/Point.h
-    include/resume.h
-    include/soi.h
-    include/solid_guess.h
-    include/sticky_orbits.h
-    include/tesseral.h
-    include/type_has_param.h
-    include/wait_until.h
-    include/work_list.h
-)
-source_group("Source Files/Engine" FILES
-    bailout_formula.cpp
-    boundary_trace.cpp
-    calc_frac_init.cpp
-    calcfrac.cpp
-    calmanfp.cpp
-    check_key.cpp
-    convert_center_mag.cpp
-    convert_corners.cpp
-    diffusion_scan.cpp
-    engine_timer.cpp
-    fracsuba.cpp
-    fractalb.cpp
-    fractals.cpp
-    get_julia_attractor.cpp
-    jiim.cpp
-    one_or_two_pass.cpp
-    orbit.cpp
-    param_not_used.cpp
-    PertEngine.cpp
-    perturbation.cpp
-    pixel_grid.cpp
-    resume.cpp
-    soi.cpp
-    soi1.cpp
-    solid_guess.cpp
-    sticky_orbits.cpp
-    tesseral.cpp
-    type_has_param.cpp
-    wait_until.cpp
-    work_list.cpp
 )
 source_group("Header Files/Miscellaneous" FILES
     include/check_orbit_name.h
@@ -427,6 +360,8 @@ source_group("Source Files/Plumbing" FILES
     drivers.cpp
     memory.cpp
 )
+source_group("Header Files/Engine" REGULAR_EXPRESSION "include/engine/.*")
+source_group("Source Files/Engine" REGULAR_EXPRESSION "engine/.*")
 source_group("Header Files/Fractal Specific" REGULAR_EXPRESSION "include/fractals/.*")
 source_group("Source Files/Fractal Specific" REGULAR_EXPRESSION "fractals/.*")
 source_group("Header Files/IO" REGULAR_EXPRESSION "include/io/.*")

@@ -9,10 +9,10 @@
 #include "ods.h"
 #include "WinText.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "plot3d.h"
 #include "rotate.h"
 #include "spindac.h"

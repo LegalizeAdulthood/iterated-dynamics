@@ -12,18 +12,18 @@
  */
 #include "gifview.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "decoder.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "engine_timer.h"
+#include "engine/engine_timer.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "io/has_ext.h"
 #include "loadfile.h"
 #include "loadmap.h"
-#include "pixel_limits.h"
+#include "engine/pixel_limits.h"
 #include "plot3d.h"
 #include "rotate.h"
 #include "slideshw.h"
@@ -31,7 +31,7 @@
 #include "spindac.h"
 #include "stereo.h"
 #include "video.h"
-#include "wait_until.h"
+#include "engine/wait_until.h"
 
 #include <algorithm>
 #include <cstdio>

@@ -6,7 +6,7 @@
 #include "test_data.h"
 
 #include <cmdfiles.h>
-#include <id_data.h>
+#include <engine/id_data.h>
 #include <io/search_path.h>
 
 #include <gtest/gtest.h>

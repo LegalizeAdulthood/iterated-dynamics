@@ -2,7 +2,7 @@
 //
 #include "id_main.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "do_pause.h"
 #include "drivers.h"
@@ -15,7 +15,7 @@
 #include "helpdefs.h"
 #include "history.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "loadfile.h"
 #include "load_config.h"

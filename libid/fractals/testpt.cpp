@@ -23,12 +23,12 @@ The sample code below is a straightforward Mandelbrot routine.
 */
 #include "fractals/testpt.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "drivers.h"
-#include "fractals.h"
-#include "id_data.h"
-#include "pixel_grid.h"
-#include "resume.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
+#include "engine/pixel_grid.h"
+#include "engine/resume.h"
 
 // standalone engine for "test"
 int test()

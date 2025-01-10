@@ -6,7 +6,7 @@
 */
 #include "zoom.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "evolve.h"
@@ -16,16 +16,16 @@
 #include "fractals/lyapunov.h"
 #include "framain2.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "math/big.h"
 #include "math/biginit.h"
-#include "resume.h"
-#include "solid_guess.h"
+#include "engine/resume.h"
+#include "engine/solid_guess.h"
 #include "spindac.h"
 #include "ui/stop_msg.h"
 #include "video.h"
-#include "work_list.h"
+#include "engine/work_list.h"
 
 #include <algorithm>
 #include <cassert>

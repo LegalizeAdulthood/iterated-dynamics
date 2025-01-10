@@ -2,9 +2,9 @@
 //
 #include "fractals/unity.h"
 
-#include "calcfrac.h"
-#include "fractals.h"
-#include "id_data.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
 #include "math/fixed_pt.h"
 #include "math/sqr.h"
 

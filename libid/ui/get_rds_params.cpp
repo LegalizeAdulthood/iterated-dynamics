@@ -4,7 +4,7 @@
 
 #include "drivers.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "stereo.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/get_a_filename.h"

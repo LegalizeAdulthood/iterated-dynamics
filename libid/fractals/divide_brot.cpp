@@ -2,17 +2,17 @@
 //
 #include "fractals/divide_brot.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
-#include "fractalb.h"
-#include "fractals.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
+#include "engine/fractalb.h"
+#include "engine/fractals.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/fpu087.h"
-#include "pixel_grid.h"
+#include "engine/pixel_grid.h"
 
 LDouble g_b_const{};
 

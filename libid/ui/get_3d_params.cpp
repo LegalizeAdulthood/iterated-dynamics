@@ -6,7 +6,7 @@
 #include "drivers.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "io/check_write_file.h"
 #include "io/merge_path_names.h"
 #include "line3d.h"

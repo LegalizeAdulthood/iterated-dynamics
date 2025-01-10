@@ -4,10 +4,10 @@
 
 #include <algorithm>
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
-#include "fractals.h"
-#include "id_data.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
 
 // Beauty of Fractals pp. 125 - 127
 int vl_fp_fractal()

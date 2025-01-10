@@ -55,7 +55,7 @@
 //
 #include "3d.h"
 
-#include "fractals.h"
+#include "engine/fractals.h"
 #include "line3d.h"
 #include "math/fixed_pt.h"
 

@@ -9,9 +9,9 @@
 
 #include <3d.h>
 #include <ValueSaver.h>
-#include <bailout_formula.h>
+#include <engine/bailout_formula.h>
 #include <debug_flags.h>
-#include <engine_timer.h>
+#include <engine/engine_timer.h>
 #include <fractals/fractalp.h>
 #include <fractals/jb.h>
 #include <fractals/lorenz.h>
@@ -20,7 +20,7 @@
 #include <framain2.h>
 #include <history.h>
 #include <id.h>
-#include <id_data.h>
+#include <engine/id_data.h>
 #include <id_keys.h>
 #include <line3d.h>
 #include <loadfile.h>
@@ -28,11 +28,11 @@
 #include <plot3d.h>
 #include <rotate.h>
 #include <slideshw.h>
-#include <soi.h>
+#include <engine/soi.h>
 #include <sound.h>
 #include <io/special_dirs.h>
 #include <stereo.h>
-#include <sticky_orbits.h>
+#include <engine/sticky_orbits.h>
 #include <ui/stop_msg.h>
 #include <trig_fns.h>
 #include <video_mode.h>

@@ -3,7 +3,7 @@
 #include "comments.h"
 
 #include "get_calculation_time.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "ui/stop_msg.h"
 #include "version.h"
 #include "video_mode.h"

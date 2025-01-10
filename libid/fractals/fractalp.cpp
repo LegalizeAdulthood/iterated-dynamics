@@ -5,8 +5,8 @@
 */
 #include "fractals/fractalp.h"
 
-#include "fractalb.h"
-#include "fractals.h"
+#include "engine/fractalb.h"
+#include "engine/fractals.h"
 #include "fractals/ant.h"
 #include "fractals/barnsley.h"
 #include "fractals/bifurcation.h"

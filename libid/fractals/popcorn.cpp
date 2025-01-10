@@ -2,14 +2,14 @@
 //
 #include "fractals/popcorn.h"
 
-#include "calcfrac.h"
-#include "fractals.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "orbit.h"
-#include "resume.h"
+#include "engine/orbit.h"
+#include "engine/resume.h"
 
 #include <cmath>
 

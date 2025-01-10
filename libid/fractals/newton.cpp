@@ -2,17 +2,17 @@
 //
 #include "fractals/newton.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
-#include "fractals.h"
+#include "engine/fractals.h"
 #include "fractals/fractalp.h"
 #include "fractype.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
-#include "pixel_grid.h"
+#include "engine/pixel_grid.h"
 
 #include <cfloat>
 #include <cmath>

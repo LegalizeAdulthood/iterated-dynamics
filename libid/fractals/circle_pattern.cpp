@@ -2,9 +2,9 @@
 //
 #include "fractals/circle_pattern.h"
 
-#include "calcfrac.h"
-#include "fractals.h"
-#include "id_data.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
 
 int circle_fp_fractal()
 {

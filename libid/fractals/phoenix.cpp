@@ -2,18 +2,18 @@
 //
 #include "fractals/phoenix.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
-#include "fractals.h"
+#include "engine/fractals.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "pixel_grid.h"
+#include "engine/pixel_grid.h"
 
 static LComplex s_l_tmp2{};
 static DComplex s_tmp2{};

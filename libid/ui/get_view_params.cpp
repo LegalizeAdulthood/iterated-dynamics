@@ -5,7 +5,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "ui/full_screen_prompt.h"
 #include "ValueSaver.h"

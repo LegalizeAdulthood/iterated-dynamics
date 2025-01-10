@@ -2,10 +2,10 @@
 //
 #include "fractals/escher.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
-#include "fractals.h"
-#include "id_data.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
+#include "engine/id_data.h"
 #include "math/cmplx.h"
 #include "math/sqr.h"
 

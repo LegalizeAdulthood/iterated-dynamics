@@ -7,7 +7,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "find_special_colors.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "port.h"
 #include "video.h"
 

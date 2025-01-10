@@ -3,10 +3,10 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "ui/text_screen.h"

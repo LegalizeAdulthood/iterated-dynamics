@@ -2,13 +2,13 @@
 //
 #include "video.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "helpdefs.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_main.h"
 #include "init_failure.h"
 #include "io/find_file.h"

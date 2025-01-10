@@ -2,7 +2,7 @@
 //
 #include "menu_handler.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
@@ -12,7 +12,7 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "history.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/update_save_name.h"
 #include "loadfile.h"

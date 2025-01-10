@@ -2,7 +2,7 @@
 //
 #include "main_menu_switch.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -18,10 +18,10 @@
 #include "framain2.h"
 #include "get_commands.h"
 #include "id.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/merge_path_names.h"
-#include "jiim.h"
+#include "engine/jiim.h"
 #include "loadfile.h"
 #include "load_params.h"
 #include "make_batch_file.h"

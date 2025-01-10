@@ -2,7 +2,7 @@
 //
 #include "framain2.h"
 
-#include "calc_frac_init.h"
+#include "engine/calc_frac_init.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "decoder.h"
@@ -14,7 +14,7 @@
 #include "fractals/lorenz.h"
 #include "gifview.h"
 #include "history.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/dir_file.h"
 #include "line3d.h"

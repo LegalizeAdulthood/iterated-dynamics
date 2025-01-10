@@ -9,8 +9,8 @@ The biggest difference is in the allocations of memory for the big numbers.
 */
 #include "math/biginit.h"
 
-#include "bailout_formula.h"
-#include "calcfrac.h"
+#include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractype.h"

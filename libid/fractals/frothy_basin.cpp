@@ -4,17 +4,17 @@
 
 #include "fractals/frothy_basin.h"
 
-#include "calcfrac.h"
-#include "check_key.h"
+#include "engine/calcfrac.h"
+#include "engine/check_key.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fractals.h"
+#include "engine/fractals.h"
 #include "fractals/newton.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "loadmap.h"
 #include "math/fixed_pt.h"
-#include "orbit.h"
-#include "pixel_grid.h"
+#include "engine/orbit.h"
+#include "engine/pixel_grid.h"
 #include "spindac.h"
 
 #include <algorithm>

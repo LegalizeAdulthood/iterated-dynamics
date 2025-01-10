@@ -5,7 +5,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractals/lsys_fns.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/fixed_pt.h"
 #include "stack_avail.h"
 #include "ui/thinking.h"

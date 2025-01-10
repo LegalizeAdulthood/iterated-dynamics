@@ -10,10 +10,10 @@
 #include "instance.h"
 #include "ods.h"
 
-#include "calcfrac.h"
+#include "engine/calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "read_ticker.h"
 #include "rotate.h"
 #include "slideshw.h"

@@ -7,7 +7,7 @@
 #include "fractals/fractalp.h"
 #include "fractype.h"
 #include "helpcom.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "rotate.h"
 #include "ui/full_screen_choice.h"

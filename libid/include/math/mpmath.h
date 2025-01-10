@@ -2,8 +2,8 @@
 //
 #pragma once
 
-#include "calcfrac.h"
-#include "fractals.h"
+#include "engine/calcfrac.h"
+#include "engine/fractals.h"
 #include "fractals/parser.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"

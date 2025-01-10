@@ -6,10 +6,10 @@
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "fractype.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
-#include "pixel_grid.h"
+#include "engine/pixel_grid.h"
 
 #include <algorithm>
 #include <cmath>

@@ -5,7 +5,7 @@
 #include "cmdfiles.h"
 #include "evolve.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "id_keys.h"
 #include "prototyp.h" // for stricmp
 #include "ui/ChoiceBuilder.h"

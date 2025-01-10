@@ -23,7 +23,7 @@
 #include "drivers.h"
 #include "gifview.h"
 #include "loadfile.h"
-#include "pixel_limits.h"
+#include "engine/pixel_limits.h"
 #include "port.h"
 #include "sized_types.h"
 #include "video.h"

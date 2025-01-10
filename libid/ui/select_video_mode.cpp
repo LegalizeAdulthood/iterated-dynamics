@@ -5,7 +5,7 @@
 #include "drivers.h"
 #include "get_key_no_help.h"
 #include "helpdefs.h"
-#include "id_data.h"
+#include "engine/id_data.h"
 #include "io/find_path.h"
 #include "io/is_writeable.h"
 #include "io/save_file.h"
