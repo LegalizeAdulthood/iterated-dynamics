@@ -13,9 +13,9 @@
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/sqr.h"
-#include "spindac.h"
-#include "starfield.h"
 #include "ui/get_3d_params.h"
+#include "ui/spindac.h"
+#include "ui/starfield.h"
 #include "ui/stop_msg.h"
 
 #include <algorithm>

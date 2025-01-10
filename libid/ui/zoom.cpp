@@ -4,28 +4,28 @@
     routines for zoombox manipulation and for panning
 
 */
-#include "zoom.h"
+#include "ui/zoom.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "evolve.h"
-#include "find_special_colors.h"
+#include "engine/calcfrac.h"
+#include "engine/id_data.h"
+#include "engine/resume.h"
+#include "engine/solid_guess.h"
+#include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "fractals/frothy_basin.h"
 #include "fractals/lyapunov.h"
-#include "framain2.h"
 #include "id.h"
-#include "engine/id_data.h"
 #include "id_keys.h"
 #include "math/big.h"
 #include "math/biginit.h"
-#include "engine/resume.h"
-#include "engine/solid_guess.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/evolve.h"
+#include "ui/find_special_colors.h"
+#include "ui/framain2.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
-#include "video.h"
-#include "engine/work_list.h"
+#include "ui/video.h"
 
 #include <algorithm>
 #include <cassert>

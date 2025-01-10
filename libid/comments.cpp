@@ -2,11 +2,11 @@
 //
 #include "comments.h"
 
-#include "get_calculation_time.h"
 #include "engine/id_data.h"
+#include "get_calculation_time.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 #include "version.h"
-#include "video_mode.h"
 
 #include <libcpuid/libcpuid.h>
 

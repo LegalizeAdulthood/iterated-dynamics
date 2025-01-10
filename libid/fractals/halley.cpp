@@ -2,7 +2,6 @@
 //
 #include "fractals/halley.h"
 
-#include "cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
@@ -10,6 +9,7 @@
 #include "fractals/newton.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
+#include "ui/cmdfiles.h"
 
 #include <algorithm>
 #include <cmath>

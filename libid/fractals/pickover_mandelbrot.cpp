@@ -4,17 +4,17 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
+#include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
-#include "engine/id_data.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
+#include "ui/cmdfiles.h"
 
 #include <cmath>
 

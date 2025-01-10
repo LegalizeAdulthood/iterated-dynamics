@@ -2,7 +2,6 @@
 //
 #include "set_default_params.h"
 
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "engine/calc_frac_init.h"
 #include "engine/id_data.h"
@@ -10,7 +9,8 @@
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "round_float_double.h"
-#include "zoom.h"
+#include "ui/cmdfiles.h"
+#include "ui/zoom.h"
 
 void set_default_params()
 {

@@ -7,16 +7,16 @@
 #include "3d/plot3d.h"
 
 #include "3d/line3d.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "io/loadmap.h"
 #include "port.h"
-#include "rotate.h"
-#include "spindac.h"
-#include "video.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
+#include "ui/video.h"
 
 #include <cmath>
 

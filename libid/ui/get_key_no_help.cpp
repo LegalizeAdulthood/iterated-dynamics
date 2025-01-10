@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "get_key_no_help.h"
+#include "ui/get_key_no_help.h"
 
 #include "drivers.h"
 #include "id_keys.h"

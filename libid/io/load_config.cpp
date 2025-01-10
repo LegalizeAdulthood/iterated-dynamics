@@ -4,9 +4,9 @@
 
 #include "drivers.h"
 #include "engine/id_data.h"
-#include "io/find_path.h"
 #include "engine/pixel_limits.h"
-#include "video_mode.h"
+#include "io/find_path.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>

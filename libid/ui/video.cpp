@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "video.h"
+#include "ui/video.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
+#include "engine/id_data.h"
 #include "helpdefs.h"
 #include "id.h"
-#include "engine/id_data.h"
-#include "id_main.h"
 #include "init_failure.h"
 #include "io/find_file.h"
 #include "io/make_path.h"
@@ -17,9 +14,12 @@
 #include "math/cmplx.h"
 #include "math/mpmath.h"
 #include "read_ticker.h"
-#include "rotate.h"
 #include "stack_avail.h"
-#include "zoom.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/id_main.h"
+#include "ui/rotate.h"
+#include "ui/zoom.h"
 
 #ifdef WIN32
 #ifndef WIN32_LEAN_AND_MEAN

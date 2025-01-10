@@ -3,17 +3,17 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "rotate.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
 #include "ui/text_screen.h"
+#include "ui/video.h"
+#include "ui/video_mode.h"
+#include "ui/zoom.h"
 #include "unixscr.h"
-#include "video.h"
-#include "video_mode.h"
-#include "zoom.h"
 
 #include <cstdio>
 #include <cstring>

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "spindac.h"
+#include "ui/spindac.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
-#include "rotate.h"
+#include "ui/cmdfiles.h"
+#include "ui/rotate.h"
 
 #include <cstring>
 

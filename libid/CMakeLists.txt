@@ -86,17 +86,8 @@ add_library(libid
     include/fractals/unity.h fractals/unity.cpp
     include/fractals/volterra_lotka.h fractals/volterra_lotka.cpp
 
-    include/cmdfiles.h cmdfiles.cpp
     include/cmdfiles_test.h
-    include/diskvid.h diskvid.cpp
-    include/do_pause.h do_pause.cpp
-    include/editpal.h editpal.cpp
-    include/evolve.h evolve.cpp
     include/lowerize_parameter.h lowerize_parameter.cpp
-    include/rotate.h rotate.cpp
-    include/slideshw.h slideshw.cpp
-    include/stereo.h stereo.cpp
-    include/video.h video.cpp
 
     include/io/check_write_file.h io/check_write_file.cpp
     include/io/decoder.h io/decoder.cpp
@@ -154,40 +145,32 @@ add_library(libid
     include/engine/check_key.h engine/check_key.cpp
     include/comments.h comments.cpp
     include/double_to_string.h double_to_string.cpp
-    include/evolver_menu_switch.h evolver_menu_switch.cpp
     include/find_extra_param.h find_extra_param.cpp
-    include/find_special_colors.h find_special_colors.cpp
-    include/flip_image.h flip_image.cpp
-    include/framain2.h framain2.cpp
     include/get_calculation_time.h get_calculation_time.cpp
     include/get_commands.h get_commands.cpp
-    include/get_key_no_help.h get_key_no_help.cpp
     include/get_prec_big_float.h get_prec_big_float.cpp
-    include/history.h history.cpp
-    include/id_main.h id_main.cpp
     include/load_params.h load_params.cpp
-    include/main_menu_switch.h main_menu_switch.cpp
     include/main_state.h
     include/make_batch_file.h make_batch_file.cpp
     include/make_mig.h make_mig.cpp
-    include/menu_handler.h menu_handler.cpp
-    include/mouse.h mouse.cpp
     include/round_float_double.h round_float_double.cpp
     include/set_default_params.h set_default_params.cpp
     include/shell_sort.h shell_sort.cpp
-    include/sound.h sound.cpp
-    include/spindac.h spindac.cpp
-    include/starfield.h starfield.cpp
     include/trig_fns.h trig_fns.cpp
     include/version.h version.cpp
-    include/video_mode.h video_mode.cpp
-    include/zoom.h zoom.cpp
 
     include/ui/ChoiceBuilder.h
-    include/ui/get_video_mode.h ui/get_video_mode.cpp
-    include/ui/text_screen.h ui/text_screen.cpp
+    include/ui/cmdfiles.h ui/cmdfiles.cpp
+    include/ui/diskvid.h ui/diskvid.cpp
+    include/ui/do_pause.h ui/do_pause.cpp
+    include/ui/editpal.h ui/editpal.cpp
+    include/ui/evolve.h ui/evolve.cpp
+    include/ui/evolver_menu_switch.h ui/evolver_menu_switch.cpp
     include/ui/field_prompt.h ui/field_prompt.cpp
     include/ui/file_item.h ui/file_item.cpp
+    include/ui/find_special_colors.h ui/find_special_colors.cpp
+    include/ui/flip_image.h ui/flip_image.cpp
+    include/ui/framain2.h ui/framain2.cpp
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp
     include/ui/get_3d_params.h ui/get_3d_params.cpp
@@ -197,25 +180,42 @@ add_library(libid
     include/ui/get_cmd_string.h ui/get_cmd_string.cpp
     include/ui/get_corners.h ui/get_corners.cpp
     include/ui/get_fract_type.h ui/get_fract_type.cpp
+    include/ui/get_key_no_help.h ui/get_key_no_help.cpp
     include/ui/get_rds_params.h ui/get_rds_params.cpp
     include/ui/get_sound_params.h ui/get_sound_params.cpp
     include/ui/get_toggles.h ui/get_toggles.cpp
     include/ui/get_toggles2.h ui/get_toggles2.cpp
+    include/ui/get_video_mode.h ui/get_video_mode.cpp
     include/ui/get_view_params.h ui/get_view_params.cpp
     include/ui/goodbye.h ui/goodbye.cpp
     ui/help.cpp
     include/ui/help_title.h ui/help_title.cpp
+    include/ui/history.h ui/history.cpp
+    include/ui/id_main.h ui/id_main.cpp
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
     include/ui/main_menu.h ui/main_menu.cpp
+    include/ui/main_menu_switch.h ui/main_menu_switch.cpp
+    include/ui/menu_handler.h ui/menu_handler.cpp
+    include/ui/mouse.h ui/mouse.cpp
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
+    include/ui/rotate.h ui/rotate.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp
+    include/ui/slideshw.h ui/slideshw.cpp
+    include/ui/sound.h ui/sound.cpp
+    include/ui/spindac.h ui/spindac.cpp
+    include/ui/starfield.h ui/starfield.cpp
+    include/ui/stereo.h ui/stereo.cpp
     include/ui/stop_msg.h ui/stop_msg.cpp
     include/ui/tab_display.h ui/tab_display.cpp
     include/ui/temp_msg.h ui/temp_msg.cpp
+    include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
+    include/ui/video.h ui/video.cpp
+    include/ui/video_mode.h ui/video_mode.cpp
+    include/ui/zoom.h ui/zoom.cpp
 
     include/drivers.h
     include/id.h
@@ -228,90 +228,42 @@ add_library(libid
 )
 
 source_group("Header Files/Miscellaneous" FILES
-    include/cmdfiles.h
     include/cmdfiles_test.h
     include/comments.h
     include/double_to_string.h
-    include/diskvid.h
-    include/do_pause.h
-    include/editpal.h
-    include/evolve.h
-    include/evolver_menu_switch.h
     include/find_extra_param.h
-    include/find_special_colors.h
-    include/flip_image.h
-    include/framain2.h
     include/get_calculation_time.h
     include/get_commands.h
-    include/get_key_no_help.h
     include/get_prec_big_float.h
-    include/history.h
     include/id.h
     include/id_keys.h
-    include/id_main.h
     include/load_params.h
     include/lowerize_parameter.h
-    include/main_menu_switch.h
     include/main_state.h
     include/make_batch_file.h
     include/make_mig.h
-    include/menu_handler.h
-    include/mouse.h
     include/round_float_double.h
-    include/rotate.h
     include/set_default_params.h
     include/shell_sort.h
-    include/slideshw.h
-    include/sound.h
-    include/spindac.h
-    include/starfield.h
-    include/stereo.h
     include/trig_fns.h
     include/version.h
-    include/video.h
-    include/video_mode.h
-    include/zoom.h
 )
 source_group("Source Files/Miscellaneous" FILES
-    cmdfiles.cpp
     comments.cpp
-    diskvid.cpp
     double_to_string.cpp
-    do_pause.cpp
-    editpal.cpp
-    evolve.cpp
-    evolver_menu_switch.cpp
     find_extra_param.cpp
-    find_special_colors.cpp
-    flip_image.cpp
-    framain2.cpp
     get_calculation_time.cpp
     get_commands.cpp
-    get_key_no_help.cpp
     get_prec_big_float.cpp
-    history.cpp
-    id_main.cpp
     load_params.cpp
     lowerize_parameter.cpp
-    main_menu_switch.cpp
     make_batch_file.cpp
     make_mig.cpp
-    menu_handler.cpp
-    mouse.cpp
     round_float_double.cpp
-    rotate.cpp
     set_default_params.cpp
     shell_sort.cpp
-    slideshw.cpp
-    sound.cpp
-    spindac.cpp
-    starfield.cpp
-    stereo.cpp
     trig_fns.cpp
     version.cpp
-    video.cpp
-    video_mode.cpp
-    zoom.cpp
 )
 source_group("Header Files/Plumbing" FILES
     include/debug_flags.h
@@ -344,7 +296,7 @@ source_group("Header Files/UI" REGULAR_EXPRESSION "include/ui/.*")
 source_group("Source Files/UI" REGULAR_EXPRESSION "ui/.*")
 
 set_src_dir(ui/help.cpp)
-set_src_dir(id_main.cpp)
+set_src_dir(ui/id_main.cpp)
 
 target_compile_definitions(libid PUBLIC
     ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)

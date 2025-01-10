@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "do_pause.h"
+#include "ui/do_pause.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "get_key_no_help.h"
 #include "id_keys.h"
+#include "ui/cmdfiles.h"
+#include "ui/get_key_no_help.h"
 #include "ui/goodbye.h"
 
 // defer pause until after parsing so we know if in batch mode

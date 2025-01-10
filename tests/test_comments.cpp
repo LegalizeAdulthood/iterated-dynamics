@@ -4,8 +4,8 @@
 
 #include <engine/id_data.h>
 #include <id_keys.h>
+#include <ui/video_mode.h>
 #include <version.h>
-#include <video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

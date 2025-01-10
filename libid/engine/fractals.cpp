@@ -42,7 +42,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 --------------------------------------------------------------------   */
 #include "engine/fractals.h"
 
-#include "cmdfiles.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/pixel_grid.h"
@@ -52,6 +51,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "math/biginit.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
+#include "ui/cmdfiles.h"
 
 #include <cfloat>
 #include <cmath>

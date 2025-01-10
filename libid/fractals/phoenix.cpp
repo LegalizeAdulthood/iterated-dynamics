@@ -4,16 +4,16 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "engine/fractals.h"
+#include "engine/id_data.h"
+#include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
-#include "engine/id_data.h"
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "engine/pixel_grid.h"
+#include "ui/cmdfiles.h"
 
 static LComplex s_l_tmp2{};
 static DComplex s_tmp2{};

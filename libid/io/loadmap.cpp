@@ -2,13 +2,13 @@
 //
 #include "io/loadmap.h"
 
-#include "cmdfiles.h"
 #include "id.h"
 #include "io/find_path.h"
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"
 #include "port.h"
-#include "rotate.h"
+#include "ui/cmdfiles.h"
+#include "ui/rotate.h"
 #include "ui/stop_msg.h"
 
 #include <array> // std::size

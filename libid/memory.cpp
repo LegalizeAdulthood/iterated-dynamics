@@ -3,14 +3,14 @@
 #include "memory.h"
 
 #include "3d/line3d.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "id.h"
 #include "io/dir_file.h"
 #include "io/get_disk_space.h"
 #include "stack_avail.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 

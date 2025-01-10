@@ -4,13 +4,13 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "engine/fractals.h"
+#include "engine/get_julia_attractor.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
-#include "engine/get_julia_attractor.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
+#include "ui/cmdfiles.h"
 
 #include <cmath>
 

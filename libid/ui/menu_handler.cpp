@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "menu_handler.h"
+#include "ui/menu_handler.h"
 
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
-#include "editpal.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "evolve.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
-#include "history.h"
 #include "id_keys.h"
 #include "io/loadfile.h"
 #include "io/update_save_name.h"
-#include "rotate.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/editpal.h"
+#include "ui/evolve.h"
 #include "ui/get_fract_type.h"
+#include "ui/history.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
+#include "ui/video_mode.h"
+#include "ui/zoom.h"
 #include "ValueSaver.h"
-#include "video_mode.h"
-#include "zoom.h"
 
 #include <cstring>
 

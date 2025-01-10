@@ -3,26 +3,26 @@
 // Edits VGA 256-color palettes.
 //
 //
-#include "editpal.h"
+#include "ui/editpal.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "find_special_colors.h"
-#include "get_key_no_help.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/dir_file.h"
 #include "memory.h"
-#include "mouse.h"
 #include "os.h"
 #include "read_ticker.h"
-#include "rotate.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
 #include "ui/field_prompt.h"
+#include "ui/find_special_colors.h"
+#include "ui/get_key_no_help.h"
+#include "ui/mouse.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
+#include "ui/video.h"
+#include "ui/zoom.h"
 #include "ValueSaver.h"
-#include "video.h"
-#include "zoom.h"
 
 #include <algorithm>
 #include <array>

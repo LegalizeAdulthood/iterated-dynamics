@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "find_special_colors.h"
+#include "ui/find_special_colors.h"
 
 #include "engine/id_data.h"
-#include "rotate.h"
+#include "ui/rotate.h"
 
 #include <algorithm>
 

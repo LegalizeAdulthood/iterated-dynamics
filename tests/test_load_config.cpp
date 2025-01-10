@@ -6,7 +6,7 @@
 #include "test_config_data.h"
 
 #include <drivers.h>
-#include <video_mode.h>
+#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

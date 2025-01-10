@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ValueSaver.h"
-#include "id_keys.h"
+#include <ui/video_mode.h>
 
-#include <video_mode.h>
+#include "id_keys.h"
+#include "ValueSaver.h"
 
 #include <gtest/gtest.h>
 

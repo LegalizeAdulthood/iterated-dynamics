@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "evolver_menu_switch.h"
+#include "ui/evolver_menu_switch.h"
 
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "evolve.h"
-#include "find_special_colors.h"
-#include "framain2.h"
 #include "id_keys.h"
 #include "io/encoder.h"
-#include "menu_handler.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/evolve.h"
+#include "ui/find_special_colors.h"
+#include "ui/framain2.h"
 #include "ui/get_cmd_string.h"
 #include "ui/get_fract_type.h"
 #include "ui/get_toggles.h"
 #include "ui/get_toggles2.h"
+#include "ui/menu_handler.h"
 #include "ui/passes_options.h"
 #include "ui/select_video_mode.h"
+#include "ui/zoom.h"
 #include "ValueSaver.h"
-#include "zoom.h"
 
 #include <algorithm>
 #include <cassert>

@@ -2,15 +2,15 @@
 //
 #include "engine/orbit.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "math/fixed_pt.h"
-#include "sound.h"
-#include "video.h"
 #include "engine/wait_until.h"
+#include "math/fixed_pt.h"
+#include "ui/cmdfiles.h"
+#include "ui/sound.h"
+#include "ui/video.h"
 
 static void plot_d_orbit(double, double, int);
 

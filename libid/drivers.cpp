@@ -2,7 +2,7 @@
 //
 #include "drivers.h"
 
-#include "video_mode.h"
+#include "ui/video_mode.h"
 
 #include <cstring>
 

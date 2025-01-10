@@ -2,9 +2,7 @@
 //
 #include "fractals/frasetup.h"
 
-#include "cmdfiles.h"
 #include "debug_flags.h"
-#include "editpal.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/calmanfp.h"
@@ -23,6 +21,8 @@
 #include "math/mpmath_c.h"
 #include "prototyp.h"
 #include "trig_fns.h"
+#include "ui/cmdfiles.h"
+#include "ui/editpal.h"
 
 #include <cmath>
 

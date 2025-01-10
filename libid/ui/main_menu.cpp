@@ -2,21 +2,21 @@
 //
 #include "ui/main_menu.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "helpcom.h"
 #include "id_keys.h"
-#include "rotate.h"
+#include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/goodbye.h"
 #include "ui/help_title.h"
 #include "ui/put_string_center.h"
+#include "ui/rotate.h"
 #include "ui/tab_display.h"
+#include "ui/video_mode.h"
 #include "ValueSaver.h"
-#include "video_mode.h"
 
 #include <cstring>
 

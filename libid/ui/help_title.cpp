@@ -2,10 +2,10 @@
 //
 #include "ui/help_title.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "id.h"
 #include "port_config.h"
+#include "ui/cmdfiles.h"
 #include "ui/put_string_center.h"
 
 #include <cstdio>

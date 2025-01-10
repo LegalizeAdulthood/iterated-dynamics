@@ -26,7 +26,7 @@
 #include "io/loadfile.h"
 #include "port.h"
 #include "sized_types.h"
-#include "video.h"
+#include "ui/video.h"
 
 static short get_next_code();
 

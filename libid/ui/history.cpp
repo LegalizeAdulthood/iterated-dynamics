@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "history.h"
+#include "ui/history.h"
 
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
@@ -17,9 +15,11 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
-#include "rotate.h"
-#include "spindac.h"
 #include "trig_fns.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
 #include "version.h"
 
 #include <cstring>

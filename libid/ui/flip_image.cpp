@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "flip_image.h"
+#include "ui/flip_image.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "fractals/fractalp.h"
 #include "engine/id_data.h"
+#include "fractals/fractalp.h"
 #include "id_keys.h"
-#include "video.h"
-#include "zoom.h"
+#include "ui/cmdfiles.h"
+#include "ui/video.h"
+#include "ui/zoom.h"
 
 /* This routine copies the current screen to by flipping x-axis, y-axis,
    or both. Refuses to work if calculation in progress or if fractal

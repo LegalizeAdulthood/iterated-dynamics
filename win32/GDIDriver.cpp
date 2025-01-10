@@ -4,20 +4,20 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "Win32BaseDriver.h"
 #include "Frame.h"
 #include "instance.h"
 #include "ods.h"
 #include "Plot.h"
+#include "Win32BaseDriver.h"
 
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "engine/id_data.h"
-#include "rotate.h"
-#include "spindac.h"
-#include "video.h"
-#include "video_mode.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
+#include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <array> // for std::size
 

@@ -2,17 +2,17 @@
 //
 #include "fractals/taylor_skinner_variations.h"
 
+#include "debug_flags.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
-#include "debug_flags.h"
 #include "engine/fractals.h"
+#include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
-#include "engine/id_data.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
+#include "ui/cmdfiles.h"
 
 // call float version of fractal if integer math overflow
 static int try_float_fractal(int (*fpFractal)())

@@ -2,7 +2,6 @@
 //
 #include "ui/get_fract_type.h"
 
-#include "cmdfiles.h"
 #include "engine/bailout_formula.h"
 #include "engine/id_data.h"
 #include "engine/param_not_used.h"
@@ -13,11 +12,12 @@
 #include "fractals/parser.h"
 #include "helpcom.h"
 #include "id_keys.h"
-#include "io/loadfile.h"
 #include "io/load_entry_text.h"
+#include "io/loadfile.h"
 #include "set_default_params.h"
 #include "shell_sort.h"
 #include "trig_fns.h"
+#include "ui/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"

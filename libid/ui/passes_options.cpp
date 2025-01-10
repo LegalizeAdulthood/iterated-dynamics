@@ -2,12 +2,12 @@
 //
 #include "ui/passes_options.h"
 
-#include "cmdfiles.h"
+#include "engine/id_data.h"
+#include "engine/sticky_orbits.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
-#include "engine/id_data.h"
 #include "id_keys.h"
-#include "engine/sticky_orbits.h"
+#include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/get_corners.h"
 #include "ValueSaver.h"

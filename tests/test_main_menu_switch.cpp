@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "framain2.h"
+#include <ui/main_menu_switch.h>
 
-#include <main_menu_switch.h>
+#include "ValueUnchanged.h"
 
 #include <engine/calcfrac.h>
 #include <engine/id_data.h>
+#include <ui/framain2.h>
 #include <ValueSaver.h>
-
-#include "ValueUnchanged.h"
 
 #include <gtest/gtest.h>
 

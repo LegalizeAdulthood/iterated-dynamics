@@ -8,14 +8,11 @@
 #include "3d/line3d.h"
 
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "framain2.h"
 #include "id.h"
 #include "io/check_write_file.h"
 #include "io/dir_file.h"
@@ -24,11 +21,14 @@
 #include "io/save_file.h"
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
-#include "rotate.h"
-#include "stereo.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/framain2.h"
+#include "ui/rotate.h"
+#include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include "ui/video.h"
 #include "version.h"
-#include "video.h"
 
 #include <algorithm>
 #include <climits>

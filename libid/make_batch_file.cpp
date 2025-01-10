@@ -5,7 +5,6 @@
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
 #include "comments.h"
 #include "debug_flags.h"
 #include "drivers.h"
@@ -34,16 +33,17 @@
 #include "math/biginit.h"
 #include "math/sign.h"
 #include "prototyp.h" // stricmp
-#include "rotate.h"
-#include "sound.h"
-#include "spindac.h"
-#include "stereo.h"
 #include "trig_fns.h"
 #include "ui/ChoiceBuilder.h"
+#include "ui/cmdfiles.h"
+#include "ui/rotate.h"
+#include "ui/sound.h"
+#include "ui/spindac.h"
+#include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 #include "ValueSaver.h"
 #include "version.h"
-#include "video_mode.h"
 
 #include <algorithm>
 #include <cctype>

@@ -2,17 +2,17 @@
 //
 #include "ui/goodbye.h"
 
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
-#include "evolve.h"
+#include "engine/pixel_grid.h"
+#include "engine/resume.h"
 #include "fractals/ant.h"
 #include "helpcom.h"
 #include "make_batch_file.h"
 #include "memory.h"
-#include "engine/pixel_grid.h"
-#include "engine/resume.h"
-#include "slideshw.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/evolve.h"
+#include "ui/slideshw.h"
 
 #include <cstdlib>
 

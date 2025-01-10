@@ -20,10 +20,10 @@
 */
 #include "math/mpmath_c.h"
 
-#include "cmdfiles.h"
 #include "engine/id_data.h"
 #include "io/loadfile.h"
 #include "math/fpu087.h"
+#include "ui/cmdfiles.h"
 
 #include <cassert>
 #include <cmath>

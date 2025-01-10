@@ -4,20 +4,20 @@
 // These routines are called by driver_get_key to allow keystrokes that
 // control Iterated Dynamics to be read from a file.
 //*********************************************************************
-#include "slideshw.h"
+#include "ui/slideshw.h"
 
 #include "drivers.h"
+#include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"
-#include "engine/id_data.h"
 #include "id_keys.h"
 #include "io/check_write_file.h"
 #include "io/save_file.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 #include "ui/temp_msg.h"
+#include "ui/video_mode.h"
 #include "ValueSaver.h"
-#include "video_mode.h"
 
 #include <algorithm>
 #include <cctype>

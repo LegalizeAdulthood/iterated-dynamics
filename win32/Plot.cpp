@@ -6,7 +6,7 @@
 
 #include "3d/plot3d.h"
 #include "engine/id_data.h"
-#include "rotate.h"
+#include "ui/rotate.h"
 
 #include <crtdbg.h>
 #include <windowsx.h>

@@ -2,9 +2,9 @@
 //
 #include "io/find_path.h"
 
-#include "cmdfiles.h"
 #include "engine/id_data.h"
 #include "io/search_path.h"
+#include "ui/cmdfiles.h"
 
 #include <filesystem>
 

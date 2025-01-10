@@ -17,18 +17,18 @@
 */
 #include "ui/get_video_mode.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "io/loadfile.h"
 #include "io/trim_filename.h"
 #include "make_batch_file.h"
+#include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 #include "ValueSaver.h"
 #include "version.h"
-#include "video_mode.h"
 
 #include <algorithm>
 #include <cmath>

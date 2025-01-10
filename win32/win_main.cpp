@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "id_main.h"
+#include "ui/id_main.h"
 
 #include "create_minidump.h"
 #include "instance.h"

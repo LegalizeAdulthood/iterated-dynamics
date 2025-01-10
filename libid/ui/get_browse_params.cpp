@@ -2,13 +2,13 @@
 //
 #include "ui/get_browse_params.h"
 
-#include "cmdfiles.h"
-#include "evolve.h"
-#include "helpdefs.h"
 #include "engine/id_data.h"
+#include "helpdefs.h"
 #include "id_keys.h"
 #include "prototyp.h" // for stricmp
 #include "ui/ChoiceBuilder.h"
+#include "ui/cmdfiles.h"
+#include "ui/evolve.h"
 #include "ValueSaver.h"
 
 #include <algorithm>

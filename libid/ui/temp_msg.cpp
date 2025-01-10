@@ -2,14 +2,14 @@
 //
 #include "ui/temp_msg.h"
 
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
-#include "editpal.h"
-#include "find_special_colors.h"
 #include "engine/id_data.h"
 #include "port.h"
-#include "video.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/editpal.h"
+#include "ui/find_special_colors.h"
+#include "ui/video.h"
 
 #include <cstdio>
 #include <cstring>

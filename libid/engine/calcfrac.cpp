@@ -15,9 +15,7 @@
 #include "engine/calcfrac.h"
 
 #include "3d/line3d.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine/bailout_formula.h"
 #include "engine/boundary_trace.h"
@@ -38,7 +36,6 @@
 #include "engine/tesseral.h"
 #include "engine/wait_until.h"
 #include "engine/work_list.h"
-#include "find_special_colors.h"
 #include "fractals/fractalp.h"
 #include "fractals/frothy_basin.h"
 #include "fractals/lyapunov.h"
@@ -50,10 +47,13 @@
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
 #include "math/sign.h"
-#include "sound.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/find_special_colors.h"
+#include "ui/sound.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
-#include "video.h"
+#include "ui/video.h"
 
 #include <algorithm>
 #include <cfloat>

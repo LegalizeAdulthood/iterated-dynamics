@@ -2,11 +2,11 @@
 //
 #include "trig_fns.h"
 
-#include "cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "fractals/parser.h"
+#include "ui/cmdfiles.h"
 
 #include <cstdio>
 #include <cstring>

@@ -5,15 +5,15 @@
  */
 #include "ui/intro.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/engine_timer.h"
+#include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"
-#include "engine/id_data.h"
 #include "id_keys.h"
-#include "mouse.h"
+#include "ui/cmdfiles.h"
 #include "ui/help_title.h"
+#include "ui/mouse.h"
 #include "ui/put_string_center.h"
 #include "ValueSaver.h"
 

@@ -4,7 +4,6 @@
 
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
@@ -13,12 +12,13 @@
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
 #include "prototyp.h"
-#include "rotate.h"
-#include "stereo.h"
 #include "ui/ChoiceBuilder.h"
+#include "ui/cmdfiles.h"
 #include "ui/field_prompt.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"
+#include "ui/rotate.h"
+#include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ValueSaver.h"
 

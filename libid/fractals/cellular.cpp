@@ -4,18 +4,18 @@
 
 #include "fractals/cellular.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
-#include "fractals/fractalp.h"
 #include "engine/id_data.h"
 #include "engine/resume.h"
-#include "rotate.h"
-#include "spindac.h"
+#include "fractals/fractalp.h"
+#include "ui/cmdfiles.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
-#include "video.h"
+#include "ui/video.h"
 
 #include <array>
 #include <cstdio>

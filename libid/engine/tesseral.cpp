@@ -4,11 +4,11 @@
 
 #include "engine/calcfrac.h"
 #include "engine/check_key.h"
-#include "cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "video.h"
 #include "engine/work_list.h"
+#include "ui/cmdfiles.h"
+#include "ui/video.h"
 
 #include <cstring>
 

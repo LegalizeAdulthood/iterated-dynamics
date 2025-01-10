@@ -6,16 +6,16 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "engine/fractals.h"
-#include "fractals/newton.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/id_data.h"
+#include "engine/pixel_grid.h"
+#include "fractals/newton.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
 #include "math/mpmath_c.h"
-#include "engine/pixel_grid.h"
+#include "ui/cmdfiles.h"
 
 DComplex g_marks_coefficient{};
 

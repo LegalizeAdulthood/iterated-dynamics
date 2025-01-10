@@ -2,7 +2,6 @@
 //
 #include "ui/full_screen_prompt.h"
 
-#include "cmdfiles.h"
 #include "double_to_string.h"
 #include "drivers.h"
 #include "engine/id_data.h"
@@ -10,11 +9,12 @@
 #include "helpdefs.h"
 #include "id_keys.h"
 #include "io/load_entry_text.h"
-#include "mouse.h"
 #include "round_float_double.h"
+#include "ui/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/help_title.h"
 #include "ui/input_field.h"
+#include "ui/mouse.h"
 #include "ui/put_string_center.h"
 #include "ui/text_screen.h"
 #include "ValueSaver.h"

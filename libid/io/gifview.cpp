@@ -13,8 +13,6 @@
 #include "io/gifview.h"
 
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
@@ -26,12 +24,14 @@
 #include "io/has_ext.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
-#include "rotate.h"
-#include "slideshw.h"
-#include "sound.h"
-#include "spindac.h"
-#include "stereo.h"
-#include "video.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/slideshw.h"
+#include "ui/sound.h"
+#include "ui/spindac.h"
+#include "ui/stereo.h"
+#include "ui/video.h"
 
 #include <algorithm>
 #include <cstdio>

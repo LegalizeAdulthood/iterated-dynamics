@@ -2,21 +2,21 @@
 //
 #include "ui/get_corners.h"
 
-#include "ui/ChoiceBuilder.h"
-#include "ValueSaver.h"
+#include "double_to_string.h"
 #include "engine/calc_frac_init.h"
-#include "cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
-#include "double_to_string.h"
+#include "engine/id_data.h"
+#include "engine/sticky_orbits.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
-#include "engine/id_data.h"
 #include "id_keys.h"
 #include "port.h"
-#include "engine/sticky_orbits.h"
-#include "zoom.h"
+#include "ui/ChoiceBuilder.h"
+#include "ui/cmdfiles.h"
+#include "ui/zoom.h"
+#include "ValueSaver.h"
 
 #include <cfloat>
 #include <cmath>

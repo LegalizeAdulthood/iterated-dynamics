@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "starfield.h"
+#include "ui/starfield.h"
 
 #include <algorithm>
 
@@ -11,12 +11,12 @@
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
-#include "slideshw.h"
-#include "spindac.h"
 #include "ui/ChoiceBuilder.h"
+#include "ui/slideshw.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
+#include "ui/video.h"
 #include "ValueSaver.h"
-#include "video.h"
 
 const std::string g_altern_map_file{"altern.map"};
 

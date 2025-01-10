@@ -5,8 +5,8 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/resume.h"
-#include "video.h"
 #include "engine/work_list.h"
+#include "ui/video.h"
 
 // routines in this module
 static int  standard_calc(int);

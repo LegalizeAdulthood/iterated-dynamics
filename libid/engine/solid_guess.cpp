@@ -2,14 +2,14 @@
 //
 #include "engine/solid_guess.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "video.h"
 #include "engine/work_list.h"
+#include "ui/cmdfiles.h"
+#include "ui/video.h"
 
 #include <algorithm>
 #include <cstring>

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "evolve.h"
+#include "ui/evolve.h"
 
-#include "cmdfiles.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
@@ -19,8 +18,9 @@
 #include "port.h"
 #include "trig_fns.h"
 #include "ui/ChoiceBuilder.h"
+#include "ui/cmdfiles.h"
+#include "ui/zoom.h"
 #include "ValueSaver.h"
-#include "zoom.h"
 
 #include <algorithm>
 #include <cmath>

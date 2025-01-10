@@ -11,16 +11,16 @@
 #include "ods.h"
 
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "engine/id_data.h"
 #include "read_ticker.h"
-#include "rotate.h"
-#include "slideshw.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/slideshw.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/text_screen.h"
-#include "video.h"
+#include "ui/video.h"
 
 #include <cassert>
 #include <ctime>

@@ -8,16 +8,16 @@
 //
 #include "fractals/ant.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "helpdefs.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "id_keys.h"
-#include "ui/temp_msg.h"
-#include "ValueSaver.h"
-#include "video.h"
 #include "engine/wait_until.h"
+#include "helpdefs.h"
+#include "id_keys.h"
+#include "ui/cmdfiles.h"
+#include "ui/temp_msg.h"
+#include "ui/video.h"
+#include "ValueSaver.h"
 
 #include <algorithm>
 #include <cstdlib>

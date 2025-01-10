@@ -4,8 +4,8 @@
 
 #include "drivers.h"
 #include "id_keys.h"
-#include "mouse.h"
 #include "round_float_double.h"
+#include "ui/mouse.h"
 #include "ValueSaver.h"
 
 #include <cmath>

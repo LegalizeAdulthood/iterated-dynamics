@@ -2,13 +2,13 @@
 //
 #include "engine/engine_timer.h"
 
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "io/decoder.h"
 #include "io/dir_file.h"
 #include "io/encoder.h"
+#include "ui/cmdfiles.h"
 
 #include <cstdarg>
 #include <cstdio>

@@ -5,25 +5,25 @@
     Written in Borland 'C++' by Paul de Leeuw.
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
-#include "stereo.h"
+#include "ui/stereo.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "find_special_colors.h"
 #include "helpdefs.h"
 #include "id_keys.h"
 #include "io/decoder.h"
 #include "io/encoder.h"
 #include "io/gifview.h"
-#include "rotate.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/find_special_colors.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
+#include "ui/video.h"
 #include "ValueSaver.h"
-#include "video.h"
 
 #include <algorithm>
 #include <cstdlib>

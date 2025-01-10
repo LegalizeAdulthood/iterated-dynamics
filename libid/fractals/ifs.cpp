@@ -2,8 +2,8 @@
 //
 #include "fractals/ifs.h"
 
-#include "cmdfiles.h"
 #include "io/file_gets.h"
+#include "ui/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
 

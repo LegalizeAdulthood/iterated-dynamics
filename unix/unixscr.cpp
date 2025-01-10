@@ -19,19 +19,19 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
-#include "editpal.h"
-#include "helpdefs.h"
 #include "engine/id_data.h"
+#include "helpdefs.h"
 #include "id_keys.h"
-#include "mouse.h"
 #include "os.h"
-#include "rotate.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/editpal.h"
 #include "ui/goodbye.h"
-#include "video_mode.h"
-#include "zoom.h"
+#include "ui/mouse.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
+#include "ui/video_mode.h"
+#include "ui/zoom.h"
 
 #include <fcntl.h>
 #include <sys/ioctl.h>

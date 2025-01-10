@@ -3,12 +3,12 @@
 #include "engine/get_julia_attractor.h"
 
 #include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "engine/fractals.h"
-#include "fractals/fractalp.h"
 #include "engine/id_data.h"
+#include "fractals/fractalp.h"
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"
+#include "ui/cmdfiles.h"
 
 #include <algorithm>
 #include <cmath>

@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "mouse.h"
+#include "ui/mouse.h"
 
 #include "win_defines.h"
 #include <Windows.h>

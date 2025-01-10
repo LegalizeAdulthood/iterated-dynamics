@@ -7,17 +7,17 @@
 // Do timing tests for a variety of situations after any change.
 //
 //
-#include "diskvid.h"
+#include "ui/diskvid.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "math/big.h"
 #include "memory.h"
+#include "ui/cmdfiles.h"
 #include "ui/help_title.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
-#include "video.h"
+#include "ui/video.h"
 
 #include <array>
 #include <cassert>

@@ -4,9 +4,9 @@
 #include "instance.h"
 #include "tos.h"
 
-#include "cmdfiles.h"
 #include "io/special_dirs.h"
 #include "port.h"
+#include "ui/cmdfiles.h"
 
 #include "win_defines.h"
 #include <DbgHelp.h>

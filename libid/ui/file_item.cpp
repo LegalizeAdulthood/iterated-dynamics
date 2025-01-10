@@ -2,14 +2,12 @@
 //
 #include "ui/file_item.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
 #include "fractals/lsys_fns.h"
 #include "fractals/parser.h"
-#include "get_key_no_help.h"
 #include "id.h"
 #include "id_keys.h"
 #include "io/find_file.h"
@@ -20,8 +18,10 @@
 #include "prototyp.h" // for stricmp
 #include "set_default_params.h"
 #include "shell_sort.h"
+#include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_a_filename.h"
+#include "ui/get_key_no_help.h"
 #include "ui/help_title.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"

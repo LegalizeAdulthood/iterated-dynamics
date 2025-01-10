@@ -2,7 +2,6 @@
 //
 #include "ui/get_a_filename.h"
 
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "id.h"
@@ -17,9 +16,10 @@
 #include "io/split_path.h"
 #include "io/trim_filename.h"
 #include "shell_sort.h"
-#include "stereo.h"
+#include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/put_string_center.h"
+#include "ui/stereo.h"
 
 #include <cstring>
 

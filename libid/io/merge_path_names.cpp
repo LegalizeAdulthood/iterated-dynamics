@@ -2,7 +2,6 @@
 //
 #include "io/merge_path_names.h"
 
-#include "cmdfiles.h"
 #include "id.h"
 #include "io/expand_dirname.h"
 #include "io/find_file.h"
@@ -11,6 +10,7 @@
 #include "io/make_path.h"
 #include "io/split_path.h"
 #include "port.h"
+#include "ui/cmdfiles.h"
 
 #include <cstring>
 #include <filesystem>

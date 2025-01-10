@@ -3,10 +3,8 @@
 /*
     Routines that manipulate the Video DAC on VGA Adapters
 */
-#include "rotate.h"
+#include "ui/rotate.h"
 
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
@@ -16,9 +14,11 @@
 #include "io/merge_path_names.h"
 #include "io/save_file.h"
 #include "math/rand15.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
 #include "ui/field_prompt.h"
 #include "ui/get_a_filename.h"
+#include "ui/spindac.h"
 #include "ValueSaver.h"
 
 #include <algorithm>

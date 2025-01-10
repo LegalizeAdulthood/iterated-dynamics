@@ -2,19 +2,19 @@
 //
 #include "fractals/plasma.h"
 
-#include "engine/calcfrac.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
-#include "diskvid.h"
 #include "drivers.h"
+#include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "math/rand15.h"
-#include "rotate.h"
 #include "sized_types.h"
-#include "spindac.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
 #include "ui/stop_msg.h"
-#include "video.h"
+#include "ui/video.h"
 
 #include <algorithm>
 #include <cstdlib>

@@ -10,7 +10,6 @@
 #include "3d/3d.h"
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
 #include "engine/calcfrac.h"
@@ -31,10 +30,11 @@
 #include "math/mpmath_c.h"
 #include "math/rand15.h"
 #include "math/sign.h"
-#include "sound.h"
+#include "ui/cmdfiles.h"
 #include "ui/not_disk_msg.h"
+#include "ui/sound.h"
 #include "ui/stop_msg.h"
-#include "video.h"
+#include "ui/video.h"
 
 #include <cmath>
 #include <cstdio>

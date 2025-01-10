@@ -10,14 +10,14 @@
 #include "WinText.h"
 
 #include "3d/plot3d.h"
-#include "cmdfiles.h"
-#include "diskvid.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "rotate.h"
-#include "spindac.h"
-#include "video.h"
-#include "video_mode.h"
+#include "ui/cmdfiles.h"
+#include "ui/diskvid.h"
+#include "ui/rotate.h"
+#include "ui/spindac.h"
+#include "ui/video.h"
+#include "ui/video_mode.h"
 
 enum
 {
