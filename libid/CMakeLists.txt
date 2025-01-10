@@ -7,9 +7,9 @@ find_package(cpuid CONFIG REQUIRED)
 add_library(libid
     include/os.h
 
-    include/3d.h 3d.cpp
-    include/line3d.h line3d.cpp
-    include/plot3d.h plot3d.cpp
+    include/3d/3d.h 3d/3d.cpp
+    include/3d/line3d.h 3d/line3d.cpp
+    include/3d/plot3d.h 3d/plot3d.cpp
 
     include/engine/boundary_trace.h engine/boundary_trace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
@@ -227,16 +227,6 @@ add_library(libid
     include/ValueSaver.h
 )
 
-source_group("Header Files/3d" FILES
-    include/3d.h
-    include/line3d.h
-    include/plot3d.h
-)
-source_group("Source Files/3d" FILES
-    3d.cpp
-    line3d.cpp
-    plot3d.cpp
-)
 source_group("Header Files/Miscellaneous" FILES
     include/check_orbit_name.h
     include/cmdfiles.h
@@ -360,6 +350,8 @@ source_group("Source Files/Plumbing" FILES
     drivers.cpp
     memory.cpp
 )
+source_group("Header Files/3D" REGULAR_EXPRESSION "include/3d/.*")
+source_group("Source Files/3D" REGULAR_EXPRESSION "3d/.*")
 source_group("Header Files/Engine" REGULAR_EXPRESSION "include/engine/.*")
 source_group("Source Files/Engine" REGULAR_EXPRESSION "engine/.*")
 source_group("Header Files/Fractal Specific" REGULAR_EXPRESSION "include/fractals/.*")

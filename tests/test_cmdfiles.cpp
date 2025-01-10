@@ -7,7 +7,7 @@
 #include "ValueUnchanged.h"
 #include "test_data.h"
 
-#include <3d.h>
+#include <3d/3d.h>
 #include <ValueSaver.h>
 #include <engine/bailout_formula.h>
 #include <debug_flags.h>
@@ -22,10 +22,10 @@
 #include <id.h>
 #include <engine/id_data.h>
 #include <id_keys.h>
-#include <line3d.h>
+#include <3d/line3d.h>
 #include <loadfile.h>
 #include <make_batch_file.h>
-#include <plot3d.h>
+#include <3d/plot3d.h>
 #include <rotate.h>
 #include <slideshw.h>
 #include <engine/soi.h>

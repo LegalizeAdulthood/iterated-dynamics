@@ -4,8 +4,8 @@
 
 #include "Frame.h"
 
+#include "3d/plot3d.h"
 #include "engine/id_data.h"
-#include "plot3d.h"
 #include "rotate.h"
 
 #include <crtdbg.h>

@@ -53,10 +53,10 @@
 //                       0     0     1     0
 //                       0     0     0     1
 //
-#include "3d.h"
+#include "3d/3d.h"
 
+#include "3d/line3d.h"
 #include "engine/fractals.h"
-#include "line3d.h"
 #include "math/fixed_pt.h"
 
 #include <cfloat>

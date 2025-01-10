@@ -4,16 +4,16 @@
  *
  * Routines for a Win32 disk video mode driver for id.
  */
-#include "Win32BaseDriver.h"
 #include "Frame.h"
 #include "ods.h"
+#include "Win32BaseDriver.h"
 #include "WinText.h"
 
-#include "engine/calcfrac.h"
+#include "3d/plot3d.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "plot3d.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "video.h"
