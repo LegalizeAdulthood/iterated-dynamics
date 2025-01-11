@@ -10,23 +10,26 @@
 
 #include <cmath>
 
+static long s_fudge_one;
+static long s_fudge_two;
+
 bool unity_setup()
 {
     g_periodicity_check = 0;
-    g_fudge_one = (1L << g_bit_shift);
-    g_fudge_two = g_fudge_one + g_fudge_one;
+    s_fudge_one = (1L << g_bit_shift);
+    s_fudge_two = s_fudge_one + s_fudge_one;
     return true;
 }
 
 int unity_fractal()
 {
     const long xx_one = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    if ((xx_one > g_fudge_two) || (labs(xx_one - g_fudge_one) < g_l_delta_min))
+    if ((xx_one > s_fudge_two) || (labs(xx_one - s_fudge_one) < g_l_delta_min))
     {
         return 1;
     }
-    g_l_old_z.y = multiply(g_fudge_two - xx_one, g_l_old_z.x, g_bit_shift);
-    g_l_old_z.x = multiply(g_fudge_two - xx_one, g_l_old_z.y, g_bit_shift);
+    g_l_old_z.y = multiply(s_fudge_two - xx_one, g_l_old_z.x, g_bit_shift);
+    g_l_old_z.x = multiply(s_fudge_two - xx_one, g_l_old_z.y, g_bit_shift);
     g_l_new_z = g_l_old_z;
     return 0;
 }

@@ -315,9 +315,6 @@ int julia_fp_fractal()
     return g_bailout_float();
 }
 
-long g_fudge_one;
-long g_fudge_two;
-
 int long_cmplx_z_power_fractal()
 {
     DComplex x;

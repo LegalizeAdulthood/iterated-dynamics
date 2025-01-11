@@ -14,8 +14,6 @@ extern double                g_cos_x;
 extern int                   g_degree;
 extern DComplex *            g_float_param;
 extern long                  g_fudge_half;
-extern long                  g_fudge_one;
-extern long                  g_fudge_two;
 extern LComplex              g_l_init;
 extern LComplex              g_l_old_z;
 extern LComplex              g_l_new_z;
