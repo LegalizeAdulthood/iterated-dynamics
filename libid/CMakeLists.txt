@@ -10,6 +10,7 @@ add_library(libid
     include/3d/plot3d.h 3d/plot3d.cpp
 
     include/engine/bailout_formula.h engine/bailout_formula.cpp
+    include/engine/bailout_long.h engine/bailout_long.cpp
     include/engine/boundary_trace.h engine/boundary_trace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
     include/engine/calcfrac.h engine/calcfrac.cpp
@@ -20,7 +21,6 @@ add_library(libid
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp
     include/engine/engine_timer.h engine/engine_timer.cpp
     include/engine/find_extra_param.h engine/find_extra_param.cpp
-    include/engine/fracsuba.h engine/fracsuba.cpp
     include/engine/fractalb.h engine/fractalb.cpp
     include/engine/fractals.h engine/fractals.cpp
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp

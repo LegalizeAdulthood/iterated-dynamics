@@ -2,7 +2,7 @@
 //
 #include "engine/bailout_formula.h"
 
-#include "engine/fracsuba.h"
+#include "engine/bailout_long.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 

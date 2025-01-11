@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/fracsuba.h"
+#include "engine/bailout_long.h"
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
