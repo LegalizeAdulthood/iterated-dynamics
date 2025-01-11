@@ -435,12 +435,12 @@ static void init_vars_run()              // once per run init
 
 static void init_vars_restart() // <ins> key init
 {
-    g_record_colors = RecordColorsMode::AUTOMATIC;   // use mapfiles in PARs
+    g_record_colors = RecordColorsMode::AUTOMATIC;     // use mapfiles in PARs
     g_dither_flag = false;                             // no dithering
     g_ask_video = true;                                // turn on video-prompt flag
     g_overwrite_file = false;                          // don't overwrite
     g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
-    g_init_batch = BatchMode::NONE;                  // not in batch mode
+    g_init_batch = BatchMode::NONE;                    // not in batch mode
     g_check_cur_dir = false;                           // flag to check current dire for files
     g_init_save_time = 0;                              // no auto-save
     g_init_mode = -1;                                  // no initial video mode
@@ -455,7 +455,7 @@ static void init_vars_restart() // <ins> key init
     g_z_scroll = true;                                 // relaxed screen scrolling
     g_orbit_delay = 0;                                 // full speed orbits
     g_orbit_interval = 1;                              // plot all orbits
-    g_debug_flag = DebugFlags::NONE;                  // debugging flag(s) are off
+    g_debug_flag = DebugFlags::NONE;                   // debugging flag(s) are off
     g_timer_flag = false;                              // timer flags are off
     g_formula_filename = "id.frm";                     // default formula file
     g_formula_name.clear();                            //
@@ -466,9 +466,9 @@ static void init_vars_restart() // <ins> key init
     clear_command_comments();                          //
     g_ifs_filename = "id.ifs";                         //
     g_ifs_name.clear();                                //
-    reset_ifs_definition();                                  //
+    reset_ifs_definition();                            //
     g_random_seed_flag = false;                        // not a fixed srand() seed
-    g_random_seed = s_init_random_seed;                      //
+    g_random_seed = s_init_random_seed;                //
     g_read_filename = DOT_SLASH;                       // initially current directory
     g_show_file = 1;                                   //
     // next should perhaps be fractal re-init, not just <ins> ?
@@ -477,8 +477,8 @@ static void init_vars_restart() // <ins> key init
     g_map_specified = false;                          //
     g_major_method = Major::BREADTH_FIRST;            // default inverse julia methods
     g_inverse_julia_minor_method = Minor::LEFT_FIRST; // default inverse julia methods
-    g_true_color = false;                              // truecolor output flag
-    g_true_mode = TrueColorMode::DEFAULT_COLOR;     //
+    g_true_color = false;                             // truecolor output flag
+    g_true_mode = TrueColorMode::DEFAULT_COLOR;       //
 }
 
 // init vars affecting calculation
@@ -501,7 +501,7 @@ static void init_vars_fractal()
     g_fractal_type = FractalType::MANDEL;                // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];     //
     init_param_flags();                                  //
-    g_bailout = 0;                                      // no user-entered bailout
+    g_bailout = 0;                                       // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
@@ -545,16 +545,16 @@ static void init_vars_fractal()
     g_set_orbit_corners = false;                                    //
     g_orbit_corner_min_x = g_cur_fractal_specific->x_min;           //
     g_orbit_corner_max_x = g_cur_fractal_specific->x_max;           //
-    g_orbit_corner_3rd_x = g_cur_fractal_specific->x_min;             //
+    g_orbit_corner_3rd_x = g_cur_fractal_specific->x_min;           //
     g_orbit_corner_min_y = g_cur_fractal_specific->y_min;           //
     g_orbit_corner_max_y = g_cur_fractal_specific->y_max;           //
-    g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min;             //
+    g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min;           //
     g_math_tol[0] = 0.05;                                           //
     g_math_tol[1] = 0.05;                                           //
     g_display_3d = Display3DMode::NONE;                             // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
-    g_bailout_test = Bailout::MOD;                                 //
+    g_bailout_test = Bailout::MOD;                                  //
     g_bailout_float = fp_mod_bailout;                               //
     g_bailout_long = long_mod_bailout;                              //
     g_bailout_bignum = bn_mod_bailout;                              //
@@ -580,7 +580,7 @@ static void init_vars_fractal()
     g_fm_decay = 10;                                                // long decay
     g_fm_sustain = 13;                                              // fairly high sustain level
     g_fm_release = 5;                                               // short release
-    g_fm_wave_type = 0;                                              // sin wave
+    g_fm_wave_type = 0;                                             // sin wave
     g_polyphony = 0;                                                // no polyphony
     std::iota(&g_scale_map[0], &g_scale_map[11], 1);                // straight mapping of notes in octave
 }
