@@ -116,3 +116,8 @@ using DComplex = id::Complex<double>;
 using LComplex = id::Complex<long>;
 
 LComplex complex_sqrt_long(long, long);
+DComplex complex_sqrt_float(double x, double y);
+inline DComplex complex_sqrt_float(const DComplex &z)
+{
+    return complex_sqrt_float(z.x, z.y);
+}

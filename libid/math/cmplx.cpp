@@ -25,3 +25,22 @@ LComplex complex_sqrt_long(long x, long y)
     return result;
 }
 
+DComplex complex_sqrt_float(double x, double y)
+{
+    DComplex  result;
+
+    if (x == 0.0 && y == 0.0)
+    {
+        result.x = 0.0;
+        result.y = 0.0;
+    }
+    else
+    {
+        double mag = std::sqrt(std::sqrt(x*x + y*y));
+        double theta = std::atan2(y, x) / 2;
+        sin_cos(&theta, &result.y, &result.x);
+        result.x *= mag;
+        result.y *= mag;
+    }
+    return result;
+}

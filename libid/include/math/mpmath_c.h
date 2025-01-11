@@ -37,11 +37,6 @@ int mpc_cmp(MPC, MPC);
 DComplex mpc_to_cmplx(MPC);
 MPC cmplx_to_mpc(DComplex);
 
-DComplex complex_sqrt_float(double x, double y);
-inline DComplex complex_sqrt_float(const DComplex &z)
-{
-    return complex_sqrt_float(z.x, z.y);
-}
 DComplex complex_power(DComplex, DComplex);
 void setup_log_table();
 long log_table_calc(long);
