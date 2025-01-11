@@ -189,10 +189,6 @@ int  fp_manr_bailout()
 // --------------------------------------------------------------------
 //              Fractal (once per iteration) routines
 // --------------------------------------------------------------------
-static double xt;
-static double yt;
-static double t2;
-
 void pow(DComplex *base, int exp, DComplex *result)
 {
     if (exp < 0)
@@ -202,8 +198,8 @@ void pow(DComplex *base, int exp, DComplex *result)
         return;
     }
 
-    xt = base->x;
-    yt = base->y;
+    double xt = base->x;
+    double yt = base->y;
 
     if (exp & 1)
     {
@@ -219,7 +215,7 @@ void pow(DComplex *base, int exp, DComplex *result)
     exp >>= 1;
     while (exp)
     {
-        t2 = xt * xt - yt * yt;
+        double t2 = xt * xt - yt * yt;
         yt = 2 * xt * yt;
         xt = t2;
 
@@ -234,10 +230,6 @@ void pow(DComplex *base, int exp, DComplex *result)
 }
 
 // long version
-static long lxt;
-static long lyt;
-static long lt2;
-
 int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
 {
     if (exp < 0)
@@ -248,8 +240,8 @@ int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
     }
 
     g_overflow = false;
-    lxt = base->x;
-    lyt = base->y;
+    long lxt = base->x;
+    long lyt = base->y;
 
     if (exp & 1)
     {
@@ -265,7 +257,7 @@ int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
     exp >>= 1;
     while (exp)
     {
-        lt2 = multiply(lxt, lxt, bit_shift) - multiply(lyt, lyt, bit_shift);
+        long lt2 = multiply(lxt, lxt, bit_shift) - multiply(lyt, lyt, bit_shift);
         lyt = multiply(lxt, lyt, g_bit_shift_less_1);
         if (g_overflow)
         {
