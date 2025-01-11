@@ -114,3 +114,5 @@ using LHyperComplex = id::HyperComplex<long>;
 
 using DComplex = id::Complex<double>;
 using LComplex = id::Complex<long>;
+
+LComplex complex_sqrt_long(long, long);

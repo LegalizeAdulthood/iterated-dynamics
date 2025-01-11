@@ -125,7 +125,7 @@ add_library(libid
     include/math/biginit.h math/biginit.cpp
     math/bignum.cpp
     math/bignumc.cpp
-    include/math/cmplx.h
+    include/math/cmplx.h math/cmplx.cpp
     include/math/complex_fn.h
     include/math/fixed_pt.h math/fixed_pt.cpp
     include/math/fpu087.h math/fpu087.cpp

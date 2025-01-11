@@ -37,7 +37,6 @@ int mpc_cmp(MPC, MPC);
 DComplex mpc_to_cmplx(MPC);
 MPC cmplx_to_mpc(DComplex);
 
-LComplex complex_sqrt_long(long, long);
 DComplex complex_sqrt_float(double x, double y);
 inline DComplex complex_sqrt_float(const DComplex &z)
 {
