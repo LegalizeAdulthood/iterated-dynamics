@@ -120,7 +120,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
         info->dist_est = tmp;
     }
     get_int16(&info->float_flag, &bufPtr, dir);
-    get_int16(&info->bail_out_old, &bufPtr, dir);
+    get_int16(&info->bailout_old, &bufPtr, dir);
     get_int32(&info->calc_time, &bufPtr, dir);
     for (int i = 0; i < 4; i++)  // NOLINT(modernize-loop-convert)
     {
@@ -167,8 +167,8 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_double(&info->d_param8, &bufPtr, dir);
     get_double(&info->d_param9, &bufPtr, dir);
     get_double(&info->d_param10, &bufPtr, dir);
-    get_int32(&info->bail_out, &bufPtr, dir);
-    get_int16(&info->bail_out_test, &bufPtr, dir);
+    get_int32(&info->bailout, &bufPtr, dir);
+    get_int16(&info->bailout_test, &bufPtr, dir);
     get_int32(&info->iterations, &bufPtr, dir);
     get_int16(&info->bf_math, &bufPtr, dir);
     get_int16(&info->g_bf_length, &bufPtr, dir);

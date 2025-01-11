@@ -303,7 +303,7 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.tot_extend_len = deser.extract_int32();
     result.dist_est_old = deser.extract_int16();
     result.float_flag = deser.extract_int16();
-    result.bail_out_old = deser.extract_int16();
+    result.bailout_old = deser.extract_int16();
     result.calc_time = deser.extract_int32();
     deser.extract_byte(result.trig_index);
     result.finite_attractor = deser.extract_int16();
@@ -361,8 +361,8 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.d_param8 = deser.extract_double();
     result.d_param9 = deser.extract_double();
     result.d_param10 = deser.extract_double();
-    result.bail_out = deser.extract_int32();
-    result.bail_out_test = deser.extract_int16();
+    result.bailout = deser.extract_int32();
+    result.bailout_test = deser.extract_int16();
     result.iterations = deser.extract_int32();
     result.bf_math = deser.extract_int16();
     result.g_bf_length = deser.extract_int16();
@@ -585,7 +585,7 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.insert_int32(info.tot_extend_len);
     ser.insert_int16(info.dist_est_old);
     ser.insert_int16(info.float_flag);
-    ser.insert_int16(info.bail_out_old);
+    ser.insert_int16(info.bailout_old);
     ser.insert_int32(info.calc_time);
     ser.insert_byte(info.trig_index);
     ser.insert_int16(info.finite_attractor);
@@ -627,8 +627,8 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.insert_double(info.d_param8);
     ser.insert_double(info.d_param9);
     ser.insert_double(info.d_param10);
-    ser.insert_int32(info.bail_out);
-    ser.insert_int16(info.bail_out_test);
+    ser.insert_int32(info.bailout);
+    ser.insert_int16(info.bailout_test);
     ser.insert_int32(info.iterations);
     ser.insert_int16(info.bf_math);
     ser.insert_int16(info.g_bf_length);

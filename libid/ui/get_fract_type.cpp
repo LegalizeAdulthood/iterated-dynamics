@@ -336,8 +336,8 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     FullScreenValues param_values[30];
     char const *choices[30];
     // ReSharper disable once CppTooWideScope
-    char bail_out_msg[50];
-    long old_bail_out = 0L;
+    char bailout_msg[50];
+    long old_bailout = 0L;
     int prompt_num;
     char msg[120];
     char const *type_name;
@@ -355,7 +355,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     double old_param[MAX_PARAMS];
     int fn_key_mask = 0;
 
-    old_bail_out = g_bail_out;
+    old_bailout = g_bailout;
     g_julibrot = g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP;
     FractalType current_type = g_fractal_type;
     {
@@ -646,7 +646,7 @@ gfp_top:
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         param_values[prompt_num].type = 'l';
-        param_values[prompt_num].uval.ch.val  = static_cast<int>(g_bail_out_test);
+        param_values[prompt_num].uval.ch.val  = static_cast<int>(g_bailout_test);
         param_values[prompt_num].uval.ch.list_len = 7;
         param_values[prompt_num].uval.ch.vlen = 6;
         param_values[prompt_num].uval.ch.list = bail_name_ptr;
@@ -665,8 +665,8 @@ gfp_top:
             char const *tmp_ptr;
             choices[prompt_num] = "Bailout value (0 means use default)";
             param_values[prompt_num].type = 'L';
-            old_bail_out = g_bail_out;
-            param_values[prompt_num++].uval.Lval = old_bail_out;
+            old_bailout = g_bailout;
+            param_values[prompt_num++].uval.Lval = old_bailout;
             param_values[prompt_num].type = '*';
             tmp_ptr = type_name;
             if (g_user_biomorph_value != -1)
@@ -674,8 +674,8 @@ gfp_top:
                 orbit_bailout = 100;
                 tmp_ptr = "biomorph";
             }
-            std::sprintf(bail_out_msg, "    (%s default is %d)", tmp_ptr, orbit_bailout);
-            choices[prompt_num++] = bail_out_msg;
+            std::sprintf(bailout_msg, "    (%s default is %d)", tmp_ptr, orbit_bailout);
+            choices[prompt_num++] = bailout_msg;
         }
     }
     if (g_julibrot)
@@ -865,18 +865,18 @@ gfp_top:
         && g_cur_fractal_specific->calc_type == standard_fractal //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
-        if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_bail_out_test))
+        if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_bailout_test))
         {
-            g_bail_out_test = static_cast<Bailout>(param_values[prompt_num].uval.ch.val);
+            g_bailout_test = static_cast<Bailout>(param_values[prompt_num].uval.ch.val);
             ret = 1;
         }
         prompt_num++;
     }
     else
     {
-        g_bail_out_test = Bailout::MOD;
+        g_bailout_test = Bailout::MOD;
     }
-    set_bailout_formula(g_bail_out_test);
+    set_bailout_formula(g_bailout_test);
 
     if (orbit_bailout)
     {
@@ -886,12 +886,12 @@ gfp_top:
         }
         else
         {
-            g_bail_out = param_values[prompt_num++].uval.Lval;
-            if (g_bail_out != 0 && (g_bail_out < 1 || g_bail_out > 2100000000L))
+            g_bailout = param_values[prompt_num++].uval.Lval;
+            if (g_bailout != 0 && (g_bailout < 1 || g_bailout > 2100000000L))
             {
-                g_bail_out = old_bail_out;
+                g_bailout = old_bailout;
             }
-            if (g_bail_out != old_bail_out)
+            if (g_bailout != old_bailout)
             {
                 ret = 1;
             }

@@ -292,7 +292,7 @@ bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
         && lhs.tot_extend_len == rhs.tot_extend_len       //
         && lhs.dist_est_old == rhs.dist_est_old               //
         && lhs.float_flag == rhs.float_flag                 //
-        && lhs.bail_out_old == rhs.bail_out_old               //
+        && lhs.bailout_old == rhs.bailout_old               //
         && lhs.calc_time == rhs.calc_time                   //
         && equal(lhs.trig_index, rhs.trig_index)                //
         && lhs.finite_attractor == rhs.finite_attractor               //
@@ -334,8 +334,8 @@ bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
         && within_eps(lhs.d_param8, rhs.d_param8)             //
         && within_eps(lhs.d_param9, rhs.d_param9)             //
         && within_eps(lhs.d_param10, rhs.d_param10)           //
-        && lhs.bail_out == rhs.bail_out                     //
-        && lhs.bail_out_test == rhs.bail_out_test               //
+        && lhs.bailout == rhs.bailout                     //
+        && lhs.bailout_test == rhs.bailout_test               //
         && lhs.iterations == rhs.iterations               //
         && lhs.bf_math == rhs.bf_math                     //
         && lhs.g_bf_length == rhs.g_bf_length                   //
@@ -526,7 +526,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
         g_user_distance_estimator_value     = read_info.dist_est_old;
         g_user_float_flag   = read_info.float_flag != 0;
-        g_bail_out     = read_info.bail_out_old;
+        g_bailout     = read_info.bailout_old;
         g_calc_time    = read_info.calc_time;
         g_trig_index[0]  = static_cast<TrigFn>(read_info.trig_index[0]);
         g_trig_index[1]  = static_cast<TrigFn>(read_info.trig_index[1]);
@@ -630,7 +630,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
         if (g_decomp[0] > 0 && g_decomp[1] > 0)
         {
-            g_bail_out = g_decomp[1];
+            g_bailout = g_decomp[1];
         }
     }
     if (g_potential_flag) // in version 15.x and 16.x logmap didn't work with pot
@@ -662,14 +662,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 9)
     {
         // post-version 18.22
-        g_bail_out     = read_info.bail_out; // use long bailout
-        g_bail_out_test = static_cast<Bailout>(read_info.bail_out_test);
+        g_bailout     = read_info.bailout; // use long bailout
+        g_bailout_test = static_cast<Bailout>(read_info.bailout_test);
     }
     else
     {
-        g_bail_out_test = Bailout::MOD;
+        g_bailout_test = Bailout::MOD;
     }
-    set_bailout_formula(g_bail_out_test);
+    set_bailout_formula(g_bailout_test);
 
     if (read_info.version > 9)
     {

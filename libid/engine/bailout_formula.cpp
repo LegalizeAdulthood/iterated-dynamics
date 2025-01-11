@@ -6,7 +6,7 @@
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 
-Bailout g_bail_out_test{}; // test used for determining bailout
+Bailout g_bailout_test{}; // test used for determining bailout
 int (*g_bailout_float)(){};
 int (*g_bailout_long)(){};
 int (*g_bailout_bignum)(){};

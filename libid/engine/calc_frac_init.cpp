@@ -323,9 +323,9 @@ init_restart:
     {
         g_magnitude_limit = g_potential_params[2];
     }
-    else if (g_bail_out)     // user input bailout
+    else if (g_bailout)     // user input bailout
     {
-        g_magnitude_limit = g_bail_out;
+        g_magnitude_limit = g_bailout;
     }
     else if (g_biomorph != -1)     // biomorph benefits from larger bailout
     {
@@ -390,7 +390,7 @@ init_restart:
             && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
             && g_debug_flag != DebugFlags::FORCE_SMALLER_BIT_SHIFT // and not debugging
             && g_close_proximity <= 2.0             // and g_close_proximity not too large
-            && g_bail_out_test == Bailout::MOD)    // and bailout test = mod
+            && g_bailout_test == Bailout::MOD)    // and bailout test = mod
         {
             g_bit_shift = FUDGE_FACTOR;                     // use the larger bitshift
         }

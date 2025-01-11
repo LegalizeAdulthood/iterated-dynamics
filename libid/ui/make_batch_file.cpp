@@ -859,35 +859,35 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             put_param(" %s=%ld", "maxiter", g_max_iterations);
         }
 
-        if (g_bail_out && (!g_potential_flag || g_potential_params[2] == 0.0))
+        if (g_bailout && (!g_potential_flag || g_potential_params[2] == 0.0))
         {
-            put_param(" %s=%ld", "bailout", g_bail_out);
+            put_param(" %s=%ld", "bailout", g_bailout);
         }
 
-        if (g_bail_out_test != Bailout::MOD)
+        if (g_bailout_test != Bailout::MOD)
         {
             put_param(" %s=", "bailoutest");
-            if (g_bail_out_test == Bailout::REAL)
+            if (g_bailout_test == Bailout::REAL)
             {
                 put_param("real");
             }
-            else if (g_bail_out_test == Bailout::IMAG)
+            else if (g_bailout_test == Bailout::IMAG)
             {
                 put_param("imag");
             }
-            else if (g_bail_out_test == Bailout::OR)
+            else if (g_bailout_test == Bailout::OR)
             {
                 put_param("or");
             }
-            else if (g_bail_out_test == Bailout::AND)
+            else if (g_bailout_test == Bailout::AND)
             {
                 put_param("and");
             }
-            else if (g_bail_out_test == Bailout::MANH)
+            else if (g_bailout_test == Bailout::MANH)
             {
                 put_param("manh");
             }
-            else if (g_bail_out_test == Bailout::MANR)
+            else if (g_bailout_test == Bailout::MANR)
             {
                 put_param("manr");
             }

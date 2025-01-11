@@ -206,7 +206,7 @@ static double fmod_test()
 {
     double result;
 
-    switch (g_bail_out_test)
+    switch (g_bailout_test)
     {
     case Bailout::MOD:
         if (g_magnitude == 0.0 || g_magnitude_calc || g_integer_fractal)
@@ -2739,7 +2739,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         || g_outside_color == MULT
         || g_outside_color == SUM
         || g_outside_color == ATAN
-        || g_bail_out_test == Bailout::MANR
+        || g_bailout_test == Bailout::MANR
         || g_outside_color == FMOD)
     {
         return;

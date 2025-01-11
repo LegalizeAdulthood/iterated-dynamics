@@ -104,7 +104,7 @@ struct ImageHistory
     double d_param9;
     double d_param10;
     long bailout;
-    Bailout bail_out_test;
+    Bailout bailout_test;
     long iterations;
     int converge_y_adjust;
     bool old_demm_colors;
@@ -262,8 +262,8 @@ void save_history_info()
     current.max_function = g_max_function;
     current.major_method = g_major_method;
     current.inverse_julia_minor_method = g_inverse_julia_minor_method;
-    current.bailout = g_bail_out;
-    current.bail_out_test = g_bail_out_test;
+    current.bailout = g_bailout;
+    current.bailout_test = g_bailout_test;
     current.iterations = g_max_iterations;
     current.old_demm_colors = g_old_demm_colors;
     current.log_map_fly_calculate = g_log_map_fly_calculate;
@@ -450,8 +450,8 @@ void restore_history_info(int i)
     g_max_function = last.max_function;
     g_major_method = last.major_method;
     g_inverse_julia_minor_method = last.inverse_julia_minor_method;
-    g_bail_out = last.bailout;
-    g_bail_out_test = last.bail_out_test;
+    g_bailout = last.bailout;
+    g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];

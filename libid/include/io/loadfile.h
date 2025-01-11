@@ -82,7 +82,7 @@ struct FractalInfo         // for saving data in GIF file
     std::int32_t tot_extend_len;  // total length of extension blocks in .gif file
     std::int16_t dist_est_old;
     std::int16_t float_flag;
-    std::int16_t bail_out_old;
+    std::int16_t bailout_old;
     std::int32_t calc_time;
     std::uint8_t trig_index[4];      // which trig functions selected
     std::int16_t finite_attractor;
@@ -130,8 +130,8 @@ struct FractalInfo         // for saving data in GIF file
     double d_param9;
     double d_param10;
     // version 10 stuff, release 19
-    std::int32_t bail_out;
-    std::int16_t bail_out_test;
+    std::int32_t bailout;
+    std::int16_t bailout_test;
     std::int32_t iterations;
     std::int16_t bf_math;
     std::int16_t g_bf_length;

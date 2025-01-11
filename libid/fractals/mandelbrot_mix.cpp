@@ -117,7 +117,7 @@ bool MandelbrotMix::setup()
         g_tmp_z.y = -g_tmp_z.y;
     }
 
-    if (g_bail_out == 0)
+    if (g_bailout == 0)
     {
         g_magnitude_limit = l.x;
         g_magnitude_limit2 = g_magnitude_limit * g_magnitude_limit;

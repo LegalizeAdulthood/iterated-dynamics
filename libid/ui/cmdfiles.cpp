@@ -143,7 +143,7 @@ InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_mode{};                                        // initial video mode
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
-long g_bail_out{};                                        // user input bailout value
+long g_bailout{};                                        // user input bailout value
 double g_inversion[3]{};                                  // radius, x center, y center
 int g_color_cycle_range_lo{};                             //
 int g_color_cycle_range_hi{};                             // cycling color range
@@ -501,7 +501,7 @@ static void init_vars_fractal()
     g_fractal_type = FractalType::MANDEL;                // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];     //
     init_param_flags();                                  //
-    g_bail_out = 0;                                      // no user-entered bailout
+    g_bailout = 0;                                      // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
@@ -554,7 +554,7 @@ static void init_vars_fractal()
     g_display_3d = Display3DMode::NONE;                             // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
-    g_bail_out_test = Bailout::MOD;                                 //
+    g_bailout_test = Bailout::MOD;                                 //
     g_bailout_float = fp_mod_bailout;                               //
     g_bailout_long = long_mod_bailout;                              //
     g_bailout_bignum = bn_mod_bailout;                              //
@@ -1354,53 +1354,53 @@ static CmdArgFlags cmd_background(const Command &cmd)
 }
 
 // bailout=?
-static CmdArgFlags cmd_bail_out(const Command &cmd)
+static CmdArgFlags cmd_bailout(const Command &cmd)
 {
     if (cmd.float_vals[0] < 1 || cmd.float_vals[0] > 2100000000L)
     {
         return cmd.bad_arg();
     }
-    g_bail_out = (long) cmd.float_vals[0];
+    g_bailout = (long) cmd.float_vals[0];
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
 // bailoutest=?
-static CmdArgFlags cmd_bail_out_test(const Command &cmd)
+static CmdArgFlags cmd_bailout_test(const Command &cmd)
 {
     const std::string_view value{cmd.value};
     if (value == "mod")
     {
-        g_bail_out_test = Bailout::MOD;
+        g_bailout_test = Bailout::MOD;
     }
     else if (value == "real")
     {
-        g_bail_out_test = Bailout::REAL;
+        g_bailout_test = Bailout::REAL;
     }
     else if (value == "imag")
     {
-        g_bail_out_test = Bailout::IMAG;
+        g_bailout_test = Bailout::IMAG;
     }
     else if (value == "or")
     {
-        g_bail_out_test = Bailout::OR;
+        g_bailout_test = Bailout::OR;
     }
     else if (value == "and")
     {
-        g_bail_out_test = Bailout::AND;
+        g_bailout_test = Bailout::AND;
     }
     else if (value == "manh")
     {
-        g_bail_out_test = Bailout::MANH;
+        g_bailout_test = Bailout::MANH;
     }
     else if (value == "manr")
     {
-        g_bail_out_test = Bailout::MANR;
+        g_bailout_test = Bailout::MANR;
     }
     else
     {
         return cmd.bad_arg();
     }
-    set_bailout_formula(g_bail_out_test);
+    set_bailout_formula(g_bailout_test);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -1919,7 +1919,7 @@ static CmdArgFlags cmd_decomp(const Command &cmd)
     if (cmd.total_params > 1) // backward compatibility
     {
         g_decomp[1] = cmd.int_vals[1];
-        g_bail_out = g_decomp[1];
+        g_bailout = g_decomp[1];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -3745,8 +3745,8 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"autokey", cmd_auto_key},                //
     CommandHandler{"autokeyname", cmd_auto_key_name},       //
     CommandHandler{"background", cmd_background},           //
-    CommandHandler{"bailout", cmd_bail_out},                //
-    CommandHandler{"bailoutest", cmd_bail_out_test},        //
+    CommandHandler{"bailout", cmd_bailout},                //
+    CommandHandler{"bailoutest", cmd_bailout_test},        //
     CommandHandler{"bfdigits", cmd_bf_digits},              //
     CommandHandler{"biomorph", cmd_biomorph},               //
     CommandHandler{"brief", cmd_brief},                     //

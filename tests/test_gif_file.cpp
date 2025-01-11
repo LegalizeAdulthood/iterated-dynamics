@@ -274,7 +274,7 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "tot_extend_len": )" << value.tot_extend_len         //
                << R"(, "distestold": )" << value.dist_est_old               //
                << R"(, "floatflag": )" << value.float_flag                  //
-               << R"(, "bailoutold": )" << value.bail_out_old               //
+               << R"(, "bailoutold": )" << value.bailout_old               //
                << R"(, "calctime": )" << value.calc_time                    //
                << R"(, "trigndx": )" << ArrayPrinter(value.trig_index)      //
                << R"(, "finattract": )" << value.finite_attractor           //
@@ -316,8 +316,8 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "dparm8": )" << value.d_param8                       //
                << R"(, "dparm9": )" << value.d_param9                       //
                << R"(, "dparm10": )" << value.d_param10                     //
-               << R"(, "bailout": )" << value.bail_out                      //
-               << R"(, "bailoutest": )" << value.bail_out_test              //
+               << R"(, "bailout": )" << value.bailout                      //
+               << R"(, "bailoutest": )" << value.bailout_test              //
                << R"(, "iterations": )" << value.iterations                 //
                << R"(, "bf_math": )" << value.bf_math                       //
                << R"(, "g_bf_length": )" << value.g_bf_length               //
@@ -591,7 +591,7 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(521, info.tot_extend_len);
     EXPECT_EQ(0, info.dist_est_old);
     EXPECT_EQ(0, info.float_flag);
-    EXPECT_EQ(0, info.bail_out_old);
+    EXPECT_EQ(0, info.bailout_old);
     EXPECT_EQ(105, info.calc_time);
     EXPECT_EQ(0, info.trig_index[0]);
     EXPECT_EQ(6, info.trig_index[1]);
@@ -638,8 +638,8 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_NEAR(0.0, info.d_param8, eps);
     EXPECT_NEAR(0.0, info.d_param9, eps);
     EXPECT_NEAR(0.0, info.d_param10, eps);
-    EXPECT_EQ(0, info.bail_out);
-    EXPECT_EQ(0, info.bail_out_test);
+    EXPECT_EQ(0, info.bailout);
+    EXPECT_EQ(0, info.bailout_test);
     EXPECT_EQ(150, info.iterations);
     EXPECT_EQ(0, info.bf_math);
     EXPECT_EQ(0, info.g_bf_length);

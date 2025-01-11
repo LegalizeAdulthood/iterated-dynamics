@@ -188,7 +188,7 @@ enum class ColorState
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern char                  g_auto_show_dot;
-extern long                  g_bail_out;
+extern long                  g_bailout;
 extern int                   g_base_hertz;
 extern int                   g_biomorph;
 extern bool                  g_bof_match_book_images;

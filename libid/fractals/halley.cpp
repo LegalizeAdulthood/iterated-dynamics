@@ -80,9 +80,9 @@ static int halley_bailout()
 
 static bool mpc_halley_bailout()
 {
-    static MP mp_tmp_bail_out;
-    mp_tmp_bail_out = *mp_abs(*mp_sub(mpc_mod(s_mpc_new), mpc_mod(s_mpc_old)));
-    if (mp_cmp(mp_tmp_bail_out, s_mp_temp_param2_x) < 0)
+    static MP mp_tmp_bailout;
+    mp_tmp_bailout = *mp_abs(*mp_sub(mpc_mod(s_mpc_new), mpc_mod(s_mpc_old)));
+    if (mp_cmp(mp_tmp_bailout, s_mp_temp_param2_x) < 0)
     {
         return true;
     }

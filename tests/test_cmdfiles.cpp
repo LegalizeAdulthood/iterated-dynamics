@@ -2548,32 +2548,32 @@ TEST_F(TestParameterCommand, orbitSaveName)
 
 TEST_F(TestParameterCommand, bailOut)
 {
-    ValueSaver saved_bail_out{g_bail_out, -1};
+    ValueSaver saved_bailout{g_bailout, -1};
 
     exec_cmd_arg("bailout=50");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(50L, g_bail_out);
+    EXPECT_EQ(50L, g_bailout);
 }
 
 TEST_F(TestParameterCommand, bailOutTestMod)
 {
-    ValueSaver saved_bail_out_test{g_bail_out_test, Bailout::REAL};
+    ValueSaver saved_bailout_test{g_bailout_test, Bailout::REAL};
 
     exec_cmd_arg("bailoutest=mod");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(Bailout::MOD, g_bail_out_test);
+    EXPECT_EQ(Bailout::MOD, g_bailout_test);
 }
 
 TEST_F(TestParameterCommandError, bailOutTestBadValue)
 {
-    ValueSaver saved_bail_out_test{g_bail_out_test, Bailout::REAL};
+    ValueSaver saved_bailout_test{g_bailout_test, Bailout::REAL};
 
     exec_cmd_arg("bailoutest=foo");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(Bailout::REAL, g_bail_out_test);
+    EXPECT_EQ(Bailout::REAL, g_bailout_test);
 }
 
 TEST_F(TestParameterCommand, symmetryXAxis)
@@ -3112,7 +3112,7 @@ TEST_F(TestParameterCommand, decompValue)
 {
     ValueSaver save_decomp0{g_decomp[0], -99};
     ValueSaver save_decomp1{g_decomp[1], -99};
-    VALUE_UNCHANGED(g_bail_out, -99L);
+    VALUE_UNCHANGED(g_bailout, -99L);
 
     exec_cmd_arg("decomp=16");
 
@@ -3125,14 +3125,14 @@ TEST_F(TestParameterCommand, decompTwoValues)
 {
     ValueSaver save_decomp0{g_decomp[0], -99};
     ValueSaver save_decomp1{g_decomp[1], -99};
-    ValueSaver save_bail_out{g_bail_out, -99L};
+    ValueSaver save_bailout{g_bailout, -99L};
 
     exec_cmd_arg("decomp=16/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(16, g_decomp[0]);
     EXPECT_EQ(4, g_decomp[1]);
-    EXPECT_EQ(4, g_bail_out);
+    EXPECT_EQ(4, g_bailout);
 }
 
 TEST_F(TestParameterCommand, distEstOneValue)
