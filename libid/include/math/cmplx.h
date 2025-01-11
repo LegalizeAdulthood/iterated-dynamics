@@ -122,3 +122,10 @@ inline DComplex complex_sqrt_float(const DComplex &z)
     return complex_sqrt_float(z.x, z.y);
 }
 DComplex complex_power(DComplex xx, DComplex yy);
+
+void asin_z(DComplex z, DComplex *rz);
+void acos_z(DComplex z, DComplex *rz);
+void asinh_z(DComplex z, DComplex *rz);
+void acosh_z(DComplex z, DComplex *rz);
+void atanh_z(DComplex z, DComplex *rz);
+void atan_z(DComplex z, DComplex *rz);

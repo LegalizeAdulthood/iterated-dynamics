@@ -36,10 +36,3 @@ MPC mpc_pow(MPC, int);
 int mpc_cmp(MPC, MPC);
 DComplex mpc_to_cmplx(MPC);
 MPC cmplx_to_mpc(DComplex);
-
-void asin_z(DComplex z, DComplex *rz);
-void acos_z(DComplex z, DComplex *rz);
-void asinh_z(DComplex z, DComplex *rz);
-void acosh_z(DComplex z, DComplex *rz);
-void atanh_z(DComplex z, DComplex *rz);
-void atan_z(DComplex z, DComplex *rz);
