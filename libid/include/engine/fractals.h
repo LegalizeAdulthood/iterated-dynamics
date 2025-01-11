@@ -57,10 +57,3 @@ void mandel_perturb(
 int julia_fp_per_pixel();
 int other_mandel_fp_per_pixel();
 int other_julia_fp_per_pixel();
-int fp_mod_bailout();
-int fp_real_bailout();
-int fp_imag_bailout();
-int fp_or_bailout();
-int fp_and_bailout();
-int fp_manh_bailout();
-int fp_manr_bailout();

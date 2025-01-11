@@ -11,7 +11,6 @@
 #include "engine/calcfrac.h"
 #include "engine/convert_corners.h"
 #include "engine/engine_timer.h"
-#include "engine/bailout_long.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 #include "engine/get_prec_big_float.h"
@@ -555,10 +554,7 @@ static void init_vars_fractal()
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
     g_bailout_test = Bailout::MOD;                                  //
-    g_bailout_float = fp_mod_bailout;                               //
-    g_bailout_long = long_mod_bailout;                              //
-    g_bailout_bignum = bn_mod_bailout;                              //
-    g_bailout_bigfloat = bf_mod_bailout;                            //
+    set_bailout_formula(Bailout::MOD);                              //
     g_new_bifurcation_functions_loaded = false;                     // for old bifs
     g_julibrot_x_min = -.83;                                        //
     g_julibrot_y_min = -.25;                                        //

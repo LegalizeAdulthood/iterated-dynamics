@@ -14,8 +14,8 @@ enum class Bailout
 };
 
 extern Bailout    g_bailout_test;
-extern int      (*g_bailout_float)();
 extern int      (*g_bailout_long)();
+extern int      (*g_bailout_float)();
 extern int      (*g_bailout_bignum)();
 extern int      (*g_bailout_bigfloat)();
 

@@ -10,7 +10,6 @@ add_library(libid
     include/3d/plot3d.h 3d/plot3d.cpp
 
     include/engine/bailout_formula.h engine/bailout_formula.cpp
-    include/engine/bailout_long.h engine/bailout_long.cpp
     include/engine/boundary_trace.h engine/boundary_trace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
     include/engine/calcfrac.h engine/calcfrac.cpp
