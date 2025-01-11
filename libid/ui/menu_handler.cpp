@@ -37,7 +37,6 @@ MainState request_fractal_type(MainContext &context)
         g_magnitude_calc = true;
         g_use_old_periodicity = false;
         g_bad_outside = false;
-        g_ld_check = false;
         set_current_params();
         g_evolve_new_discrete_y_parameter_offset = 0;
         g_evolve_new_discrete_x_parameter_offset = 0;

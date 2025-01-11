@@ -156,28 +156,6 @@ MPC cmplx_to_mpc(DComplex z)
     return x;
 }
 
-DComplex complex_power(DComplex xx, DComplex yy)
-{
-    DComplex z;
-    DComplex cLog;
-    DComplex t;
-
-    if (!g_ld_check)
-    {
-        if (xx.x == 0 && xx.y == 0)
-        {
-            z.y = 0.0;
-            z.x = z.y;
-            return z;
-        }
-    }
-
-    fpu_cmplx_log(&xx, &cLog);
-    fpu_cmplx_mul(&cLog, &yy, &t);
-    fpu_cmplx_exp(&t, &z);
-    return z;
-}
-
 /*
 
   The following Complex function routines added by Tim Wegner November 1994.

@@ -2,6 +2,7 @@
 //
 #include "math/cmplx.h"
 
+#include "io/loadfile.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 
@@ -44,3 +45,23 @@ DComplex complex_sqrt_float(double x, double y)
     }
     return result;
 }
+
+DComplex complex_power(DComplex xx, DComplex yy)
+{
+    DComplex z;
+    DComplex cLog;
+    DComplex t;
+
+    if (xx.x == 0 && xx.y == 0)
+    {
+        z.y = 0.0;
+        z.x = z.y;
+        return z;
+    }
+
+    fpu_cmplx_log(&xx, &cLog);
+    fpu_cmplx_mul(&cLog, &yy, &t);
+    fpu_cmplx_exp(&t, &z);
+    return z;
+}
+

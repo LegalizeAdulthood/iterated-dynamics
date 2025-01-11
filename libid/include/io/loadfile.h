@@ -224,7 +224,6 @@ extern float                 g_file_aspect_ratio;
 extern int                   g_file_colors;
 extern int                   g_file_x_dots;
 extern int                   g_file_y_dots;
-extern bool                  g_ld_check;
 extern bool                  g_loaded_3d;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;

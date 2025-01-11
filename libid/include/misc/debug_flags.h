@@ -9,7 +9,6 @@ enum class DebugFlags
     FORCE_FLOAT_PERSPECTIVE             = 22,
     FORCE_DISK_RESTORE_NOT_SAVE         = 50,
     FORCE_STANDARD_FRACTAL              = 90,
-    FORCE_LD_CHECK                      = 94,
     FORCE_REAL_POPCORN                  = 96,
     WRITE_FORMULA_DEBUG_INFORMATION     = 98,
     ALLOW_INIT_COMMANDS_ANYTIME         = 110,

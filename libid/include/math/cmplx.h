@@ -121,3 +121,4 @@ inline DComplex complex_sqrt_float(const DComplex &z)
 {
     return complex_sqrt_float(z.x, z.y);
 }
+DComplex complex_power(DComplex xx, DComplex yy);

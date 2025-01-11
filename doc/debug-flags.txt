@@ -14,7 +14,6 @@ Example:
 90      force "C" mandel & julia code (no calcmand or calmanfp)
 90      force generic code for fn+fn etc types
 90      force "C" parser code even if FPU >= 387
-94      Use old buggy pwr()
 96      Use real formula for popcorn in the old case.
 96      write debug messages to disk files(3)
 98      write formula parser tokens to frmtokens.txt

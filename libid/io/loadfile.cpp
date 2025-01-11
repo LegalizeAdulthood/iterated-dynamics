@@ -206,7 +206,6 @@ float g_file_aspect_ratio{};
 short g_skip_x_dots{};
 short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
-bool g_ld_check{};
 std::string g_browse_name; // name for browse file
 
 inline bool within_eps(float lhs, float rhs)
@@ -1509,8 +1508,6 @@ void backwards_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
     g_bad_outside = false;
-    g_ld_check = (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
-        && (g_debug_flag == DebugFlags::FORCE_LD_CHECK);
     if (!g_new_bifurcation_functions_loaded)
     {
         set_function_param_defaults();

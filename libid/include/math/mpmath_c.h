@@ -37,7 +37,6 @@ int mpc_cmp(MPC, MPC);
 DComplex mpc_to_cmplx(MPC);
 MPC cmplx_to_mpc(DComplex);
 
-DComplex complex_power(DComplex, DComplex);
 void setup_log_table();
 long log_table_calc(long);
 long exp_float14(long);
