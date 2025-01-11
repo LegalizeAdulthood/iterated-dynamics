@@ -15,6 +15,7 @@
 #include "engine/fractals.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
+#include "engine/log_map.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "fractals/check_orbit_name.h"
@@ -174,9 +175,6 @@ int g_orbit_save_flags{};                    // for IFS and LORENZ to output acr
 std::string g_orbit_save_name{"orbits.raw"}; //
 int g_orbit_delay{};                         // clock ticks delating orbit release
 int g_transparent_color_3d[2]{};             // transparency min/max values
-long g_log_map_flag{};                       // Logarithmic palette flag: 0 = no
-int g_log_map_fly_calculate{};               // calculate logmap on-the-fly
-bool g_log_map_auto_calculate{};             // auto calculate logmap
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?

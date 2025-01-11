@@ -28,6 +28,7 @@
 #if defined(XFRACT)
 #include "misc/os.h"
 #endif
+#include "engine/log_map.h"
 #include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

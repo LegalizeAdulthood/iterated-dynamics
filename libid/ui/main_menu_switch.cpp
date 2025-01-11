@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/jiim.h"
+#include "engine/log_map.h"
 #include "fractals/ant.h"
 #include "fractals/cellular.h"
 #include "fractals/fractalp.h"

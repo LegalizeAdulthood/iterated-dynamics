@@ -26,6 +26,7 @@ add_library(libid
     include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
     include/engine/id_data.h
     include/engine/jiim.h engine/jiim.cpp
+    include/engine/log_map.h engine/log_map.cpp
     include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp
     include/engine/orbit.h engine/orbit.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp

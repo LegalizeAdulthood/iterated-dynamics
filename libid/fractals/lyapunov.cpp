@@ -6,6 +6,7 @@
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/log_map.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"

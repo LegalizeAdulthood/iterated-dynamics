@@ -3,6 +3,7 @@
 #include <ui/cmdfiles_test.h>
 
 #include "CurrentPathSaver.h"
+#include "engine/log_map.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "ValueUnchanged.h"

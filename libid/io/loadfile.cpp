@@ -11,6 +11,7 @@
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/id_data.h"
+#include "engine/log_map.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "fractals/fractalp.h"
@@ -28,8 +29,8 @@
 #include "math/round_float_double.h"
 #include "misc/debug_flags.h"
 #include "misc/drivers.h"
-#include "port.h"
 #include "misc/prototyp.h" // for stricmp
+#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/field_prompt.h"

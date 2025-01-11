@@ -4,6 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/log_map.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "misc/id.h"

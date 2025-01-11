@@ -24,6 +24,7 @@
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/log_map.h"
 #include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
