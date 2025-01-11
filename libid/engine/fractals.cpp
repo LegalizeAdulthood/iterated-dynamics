@@ -183,27 +183,6 @@ int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
     return g_overflow;
 }
 
-int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz)
-{
-    pz->x = arg1.x * arg2.x - arg1.y * arg2.y;
-    pz->y = arg1.x * arg2.y + arg1.y * arg2.x;
-    return 0;
-}
-
-int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
-{
-    double mod = modulus(denominator);
-    if (mod < FLT_MIN)
-    {
-        return 1;
-    }
-    conjugate(denominator);
-    complex_mult(numerator, denominator, pout);
-    pout->x = pout->x/mod;
-    pout->y = pout->y/mod;
-    return 0;
-}
-
 int julia_fractal()
 {
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;

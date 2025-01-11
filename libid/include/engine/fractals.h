@@ -38,8 +38,6 @@ extern double                g_temp_sqr_y;
 // Raise complex number (base) to the (exp) power, storing the result in complex (result).
 void pow(DComplex *base, int exp, DComplex *result);
 int pow(LComplex *base, int exp, LComplex *result, int bit_shift);
-int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
-int complex_div(DComplex numerator, DComplex denominator, DComplex *pout);
 int julia_fractal();
 int julia_fp_fractal();
 int burning_ship_fp_fractal();
