@@ -1132,10 +1132,10 @@ static void perform_work_list()
 
         set_symmetry(g_symmetry, true);
 
-        if (!g_resuming && (labs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
+        if (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
         {
             // calculate round screen edges to work out best start for logmap
-            g_log_map_flag = (auto_log_map() * (g_log_map_flag / labs(g_log_map_flag)));
+            g_log_map_flag = (auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag)));
             setup_log_table();
         }
 
@@ -1632,12 +1632,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 hooper = 0;
                 if (g_integer_fractal)
                 {
-                    if (labs(g_l_new_z.x) < labs(l_close_prox))
+                    if (std::abs(g_l_new_z.x) < std::abs(l_close_prox))
                     {
                         hooper = (l_close_prox > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
-                    else if (labs(g_l_new_z.y) < labs(l_close_prox))
+                    else if (std::abs(g_l_new_z.y) < std::abs(l_close_prox))
                     {
                         hooper = (l_close_prox > 0 ? 2: -2); // close to x axis
                         goto plot_inside;
@@ -1823,9 +1823,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (g_integer_fractal)     // floating-pt periodicity chk
                 {
-                    if (labs(l_saved.x - g_l_new_z.x) < g_l_close_enough)
+                    if (std::abs(l_saved.x - g_l_new_z.x) < g_l_close_enough)
                     {
-                        if (labs(l_saved.y - g_l_new_z.y) < g_l_close_enough)
+                        if (std::abs(l_saved.y - g_l_new_z.y) < g_l_close_enough)
                         {
                             caught_a_cycle = true;
                         }
@@ -2030,7 +2030,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (g_integer_fractal)
         {
-            if (labs(g_l_new_z.x) < g_l_magnitude_limit2 || labs(g_l_new_z.y) < g_l_magnitude_limit2)
+            if (std::abs(g_l_new_z.x) < g_l_magnitude_limit2 || std::abs(g_l_new_z.y) < g_l_magnitude_limit2)
             {
                 g_color_iter = g_biomorph;
             }
@@ -3021,8 +3021,8 @@ originsym:
 static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
-    int x_stop = g_logical_screen_x_dots - 1; // don't use symetry
-    int y_stop = g_logical_screen_y_dots - 1; // don't use symetry
+    int x_stop = g_logical_screen_x_dots - 1; // don't use symmetry
+    int y_stop = g_logical_screen_y_dots - 1; // don't use symmetry
     long min_color = LONG_MAX;
     g_row = 0;
     g_reset_periodicity = false;

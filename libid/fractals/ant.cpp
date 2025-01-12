@@ -20,6 +20,7 @@
 #include "ui/video.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <iomanip>
 #include <sstream>
@@ -480,7 +481,7 @@ int ant()
     }
     s_inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
     ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
-    long const max_pts = labs(static_cast<long>(g_params[1]));
+    long const max_pts = std::abs(static_cast<long>(g_params[1]));
     long const wait = std::abs(g_orbit_delay);
     std::string rule{get_rule()};
     int rule_len = (int) rule.length();

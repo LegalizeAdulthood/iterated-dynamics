@@ -319,7 +319,7 @@ static bool bif_periodic(long time)
     {
         if (g_integer_fractal)
         {
-            if (labs(s_bif_saved_pop_l-s_population_l) <= s_bif_close_enough_l)
+            if (std::abs(s_bif_saved_pop_l-s_population_l) <= s_bif_close_enough_l)
             {
                 return true;
             }

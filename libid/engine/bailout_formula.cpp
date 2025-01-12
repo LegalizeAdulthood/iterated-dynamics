@@ -23,8 +23,8 @@ static int long_mod_bailout()
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
     if (g_l_magnitude >= g_l_magnitude_limit
         || g_l_magnitude < 0
-        || labs(g_l_new_z.x) > g_l_magnitude_limit2
-        || labs(g_l_new_z.y) > g_l_magnitude_limit2
+        || std::abs(g_l_new_z.x) > g_l_magnitude_limit2
+        || std::abs(g_l_new_z.y) > g_l_magnitude_limit2
         || g_overflow)
     {
         g_overflow = false;

@@ -50,7 +50,7 @@ inline bool trig16_check(long val)
 {
     static constexpr long l16_trig_lim = 8L << 16; // domain limit of fast trig functions
 
-    return labs(val) > l16_trig_lim;
+    return std::abs(val) > l16_trig_lim;
 }
 
 int long_trig_plus_exponent_fractal()

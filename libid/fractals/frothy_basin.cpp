@@ -432,7 +432,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                 iplot_orbit(g_l_old_z.x, g_l_old_z.y, -1);
             }
 
-            if (labs(s_fsp.fl.l.half_a-g_l_old_z.y) < FROTH_L_CLOSE
+            if (std::abs(s_fsp.fl.l.half_a-g_l_old_z.y) < FROTH_L_CLOSE
                 && g_l_old_z.x > s_fsp.fl.l.top_x1
                 && g_l_old_z.x < s_fsp.fl.l.top_x2)
             {
@@ -457,7 +457,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE
+            else if (std::abs(multiply(FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE
                 && g_l_old_z.x <= s_fsp.fl.l.right_x1
                 && g_l_old_z.x >= s_fsp.fl.l.right_x2)
             {
@@ -492,7 +492,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(-FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE)
+            else if (std::abs(multiply(-FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE)
             {
                 if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
                 {

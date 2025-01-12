@@ -859,8 +859,8 @@ void m_stk_abs()
 
 void l_stk_abs()
 {
-    g_arg1->l.x = labs(g_arg1->l.x);
-    g_arg1->l.y = labs(g_arg1->l.y);
+    g_arg1->l.x = std::abs(g_arg1->l.x);
+    g_arg1->l.y = std::abs(g_arg1->l.y);
 }
 
 void d_stk_sqr()
@@ -1017,8 +1017,8 @@ void l_stk_trunc()
        so we make the numbers positive */
     int sign_x = sign(g_arg1->l.x);
     int sign_y = sign(g_arg1->l.y);
-    g_arg1->l.x = labs(g_arg1->l.x);
-    g_arg1->l.y = labs(g_arg1->l.y);
+    g_arg1->l.x = std::abs(g_arg1->l.x);
+    g_arg1->l.y = std::abs(g_arg1->l.y);
     g_arg1->l.x = (g_arg1->l.x) >> g_bit_shift;
     g_arg1->l.y = (g_arg1->l.y) >> g_bit_shift;
     g_arg1->l.x = (g_arg1->l.x) << g_bit_shift;

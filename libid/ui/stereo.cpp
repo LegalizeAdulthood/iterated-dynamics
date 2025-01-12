@@ -26,6 +26,7 @@
 #include "ui/video.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -284,7 +285,7 @@ bool auto_stereo_convert()
         REVERSE = 0;
     }
     DEPTH = ((long) g_logical_screen_x_dots * (long) g_auto_stereo_depth) / 4000L;
-    DEPTH = labs(DEPTH) + 1;
+    DEPTH = std::abs(DEPTH) + 1;
     if (get_min_max())
     {
         driver_buzzer(Buzzer::INTERRUPT);

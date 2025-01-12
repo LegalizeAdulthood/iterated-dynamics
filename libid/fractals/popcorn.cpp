@@ -117,7 +117,7 @@ inline bool trig16_check(long val)
 {
     static constexpr long L16_TRIG_LIM = 8L << 16; // domain limit of fast trig functions
 
-    return labs(val) > L16_TRIG_LIM;
+    return std::abs(val) > L16_TRIG_LIM;
 }
 
 static void ltrig_arg(long &val)
@@ -166,8 +166,8 @@ int long_popcorn_fractal_old()
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
     if (g_l_magnitude >= g_l_magnitude_limit
         || g_l_magnitude < 0
-        || labs(g_l_new_z.x) > g_l_magnitude_limit2
-        || labs(g_l_new_z.y) > g_l_magnitude_limit2)
+        || std::abs(g_l_new_z.x) > g_l_magnitude_limit2
+        || std::abs(g_l_new_z.y) > g_l_magnitude_limit2)
     {
         return 1;
     }
@@ -207,8 +207,8 @@ int long_popcorn_fractal()
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
     if (g_l_magnitude >= g_l_magnitude_limit
         || g_l_magnitude < 0
-        || labs(g_l_new_z.x) > g_l_magnitude_limit2
-        || labs(g_l_new_z.y) > g_l_magnitude_limit2)
+        || std::abs(g_l_new_z.x) > g_l_magnitude_limit2
+        || std::abs(g_l_new_z.y) > g_l_magnitude_limit2)
     {
         return 1;
     }
@@ -308,8 +308,8 @@ int long_popcorn_fractal_fn()
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
     if (g_l_magnitude >= g_l_magnitude_limit
         || g_l_magnitude < 0
-        || labs(g_l_new_z.x) > g_l_magnitude_limit2
-        || labs(g_l_new_z.y) > g_l_magnitude_limit2)
+        || std::abs(g_l_new_z.x) > g_l_magnitude_limit2
+        || std::abs(g_l_new_z.y) > g_l_magnitude_limit2)
     {
         return 1;
     }

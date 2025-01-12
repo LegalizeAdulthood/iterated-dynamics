@@ -14,6 +14,8 @@
 #include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
+#include <cmath>
+
 // call float version of fractal if integer math overflow
 static int try_float_fractal(int (*fpFractal)())
 {
@@ -354,7 +356,7 @@ int trig_z_sqrd_fractal() // this doesn't work very well
     // { z=pixel: z=trig(z*z), |z|<TEST }
     long l16_trig_lim2 = 8L << 15;
     lcmplx_sqr_old(g_l_temp);
-    if (labs(g_l_temp.x) > l16_trig_lim2 || labs(g_l_temp.y) > l16_trig_lim2)
+    if (std::abs(g_l_temp.x) > l16_trig_lim2 || std::abs(g_l_temp.y) > l16_trig_lim2)
     {
         g_overflow = true;
     }
