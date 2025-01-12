@@ -204,7 +204,7 @@ static long iteration(
             im = imn + ci;
             re += cr;
 
-            if (std::fabs(sre - re) < s_equal && std::fabs(sim - im) < s_equal)
+            if (std::abs(sre - re) < s_equal && std::abs(sim - im) < s_equal)
             {
                 return BASIN_COLOR;
             }
@@ -732,7 +732,7 @@ scan:
         s_state.limit.re = (s_state.tz[0].re == 0.0)?
            (s_state.limit.re == 0.0)?1.0:1000.0:
            s_state.limit.re/s_state.tz[0].re;
-        if (std::fabs(1.0 - s_state.limit.re) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
             break;
         }
@@ -741,7 +741,7 @@ scan:
         s_state.limit.im = (s_state.tz[0].im == 0.0)?
            (s_state.limit.im == 0.0)?1.0:1000.0:
            s_state.limit.im/s_state.tz[0].im;
-        if (std::fabs(1.0 - s_state.limit.im) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
             break;
         }
@@ -750,7 +750,7 @@ scan:
         s_state.limit.re = (s_state.tz[1].re == 0.0)?
            (s_state.limit.re == 0.0)?1.0:1000.0:
            s_state.limit.re/s_state.tz[1].re;
-        if (std::fabs(1.0 - s_state.limit.re) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
             break;
         }
@@ -759,7 +759,7 @@ scan:
         s_state.limit.im = (s_state.tz[1].im == 0.0)?
            (s_state.limit.im == 0.0)?1.0:1000.0:
            s_state.limit.im/s_state.tz[1].im;
-        if (std::fabs(1.0 - s_state.limit.im) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
             break;
         }
@@ -768,7 +768,7 @@ scan:
         s_state.limit.re = (s_state.tz[2].re == 0.0)?
            (s_state.limit.re == 0.0)?1.0:1000.0:
            s_state.limit.re/s_state.tz[2].re;
-        if (std::fabs(1.0 - s_state.limit.re) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
             break;
         }
@@ -777,7 +777,7 @@ scan:
         s_state.limit.im = (s_state.tz[2].im == 0.0)?
            (s_state.limit.im == 0.0)?1.0:1000.0:
            s_state.limit.im/s_state.tz[2].im;
-        if (std::fabs(1.0 - s_state.limit.im) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
             break;
         }
@@ -786,7 +786,7 @@ scan:
         s_state.limit.re = (s_state.tz[3].re == 0.0)?
            (s_state.limit.re == 0.0)?1.0:1000.0:
            s_state.limit.re/s_state.tz[3].re;
-        if (std::fabs(1.0 - s_state.limit.re) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
             break;
         }
@@ -795,7 +795,7 @@ scan:
         s_state.limit.im = (s_state.tz[3].im == 0.0)?
            (s_state.limit.im == 0.0)?1.0:1000.0:
            s_state.limit.im/s_state.tz[3].im;
-        if (std::fabs(1.0 - s_state.limit.im) > s_t_width)
+        if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
             break;
         }

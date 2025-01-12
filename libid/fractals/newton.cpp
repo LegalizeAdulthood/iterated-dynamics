@@ -59,7 +59,7 @@ void invertz2(DComplex *z)
     z->y -= g_f_y_center;  // Normalize values to center of circle
 
     g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius
-    if (std::fabs(g_temp_sqr_x) > FLT_MIN)
+    if (std::abs(g_temp_sqr_x) > FLT_MIN)
     {
         g_temp_sqr_x = g_f_radius / g_temp_sqr_x;
     }
@@ -222,7 +222,7 @@ int complex_basin()
     g_tmp_z.y = g_new_z.y - s_c_root.y;
     if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
     {
-        if (std::fabs(g_old_z.y) < .01)
+        if (std::abs(g_old_z.y) < .01)
         {
             g_old_z.y = 0.0;
         }
@@ -230,7 +230,7 @@ int complex_basin()
         fpu_cmplx_mul(&s_temp, &s_c_degree, &g_tmp_z);
         double mod = g_tmp_z.y/s_two_pi;
         g_color_iter = (long)mod;
-        if (std::fabs(mod - g_color_iter) > 0.5)
+        if (std::abs(mod - g_color_iter) > 0.5)
         {
             if (mod < 0.0)
             {

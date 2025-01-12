@@ -70,7 +70,7 @@ bool halley_setup()
 
 static int halley_bailout()
 {
-    if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
+    if (std::abs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
     {
         return 1;
     }

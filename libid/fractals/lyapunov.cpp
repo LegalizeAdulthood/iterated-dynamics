@@ -180,7 +180,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
                 g_overflow = true;
                 goto jumpout;
             }
-            temp = std::fabs(g_rate-2.0*g_rate*g_population);
+            temp = std::abs(g_rate-2.0*g_rate*g_population);
             total *= temp;
             if (total == 0)
             {

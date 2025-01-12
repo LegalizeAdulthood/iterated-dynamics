@@ -326,7 +326,7 @@ static bool bif_periodic(long time)
         }
         else
         {
-            if (std::fabs(s_bif_saved_pop-g_population) <= s_bif_close_enough)
+            if (std::abs(s_bif_saved_pop-g_population) <= s_bif_close_enough)
             {
                 return true;
             }

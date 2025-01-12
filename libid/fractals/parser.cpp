@@ -609,7 +609,7 @@ inline bool check_denom(long denom)
 
 inline bool check_denom(double denom)
 {
-    if (std::fabs(denom) <= DBL_MIN)
+    if (std::abs(denom) <= DBL_MIN)
     {
         g_overflow = true;
         return true;
@@ -688,7 +688,7 @@ static void l_stk_funct(FunctionPtr fct)
     g_arg1->d.x = (double)g_arg1->l.x / s_fudge;
     g_arg1->d.y = y;
     (*fct)();
-    if (std::fabs(g_arg1->d.x) < g_fudge_limit && std::fabs(g_arg1->d.y) < g_fudge_limit)
+    if (std::abs(g_arg1->d.x) < g_fudge_limit && std::abs(g_arg1->d.y) < g_fudge_limit)
     {
         g_arg1->l.x = (long)(g_arg1->d.x * s_fudge);
         g_arg1->l.y = (long)(g_arg1->d.y * s_fudge);
@@ -841,8 +841,8 @@ void d_stk_sqr3()
 
 void d_stk_abs()
 {
-    g_arg1->d.x = std::fabs(g_arg1->d.x);
-    g_arg1->d.y = std::fabs(g_arg1->d.y);
+    g_arg1->d.x = std::abs(g_arg1->d.x);
+    g_arg1->d.y = std::abs(g_arg1->d.y);
 }
 
 void m_stk_abs()
@@ -2016,7 +2016,7 @@ void l_stk_pwr()
     y.x = (double)g_arg1->l.x / s_fudge;
     y.y = (double)g_arg1->l.y / s_fudge;
     x = complex_power(x, y);
-    if (std::fabs(x.x) < g_fudge_limit && std::fabs(x.y) < g_fudge_limit)
+    if (std::abs(x.x) < g_fudge_limit && std::abs(x.y) < g_fudge_limit)
     {
         g_arg2->l.x = (long)(x.x * s_fudge);
         g_arg2->l.y = (long)(x.y * s_fudge);

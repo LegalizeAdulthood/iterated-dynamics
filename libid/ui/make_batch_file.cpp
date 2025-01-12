@@ -564,18 +564,18 @@ static WriteBatchData s_wb_data;
 static int get_prec(double a, double b, double c)
 {
     double high_v = 1.0E20;
-    double diff = std::fabs(a - b);
+    double diff = std::abs(a - b);
     if (diff == 0.0)
     {
         diff = high_v;
     }
-    double temp = std::fabs(a - c);
+    double temp = std::abs(a - c);
     if (temp == 0.0)
     {
         temp = high_v;
     }
     diff = std::min(temp, diff);
-    temp = std::fabs(b - c);
+    temp = std::abs(b - c);
     if (temp == 0.0)
     {
         temp = high_v;
@@ -729,9 +729,9 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             put_param("/%.7Lg", magnification); // precision of magnification not critical, but magnitude is
             // Round to avoid ugly decimals, precision here is not critical
             // Don't round x_mag_factor if it's small
-            if (std::fabs(x_mag_factor) > 0.5)   // or so, exact value isn't important
+            if (std::abs(x_mag_factor) > 0.5)   // or so, exact value isn't important
             {
-                x_mag_factor = sign(x_mag_factor) * std::lround(std::fabs(x_mag_factor) * 1e4) / 1e4;
+                x_mag_factor = sign(x_mag_factor) * std::lround(std::abs(x_mag_factor) * 1e4) / 1e4;
             }
             // Just truncate these angles.  Who cares about 1/1000 of a degree
             // Somebody does.  Some rotated and/or skewed images are slightly
@@ -741,7 +741,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
                 // Only put what is necessary
                 // The difference with x_mag_factor is that it is normally
                 // near 1 while the others are normally near 0
-                if (std::fabs(x_mag_factor) >= 1)
+                if (std::abs(x_mag_factor) >= 1)
                 {
                     put_float(1, x_mag_factor, 5); // put_float() uses %g
                 }

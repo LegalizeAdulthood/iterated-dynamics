@@ -58,7 +58,7 @@ int lambda_trig_fractal()
 
 int lambda_trig_fp_fractal()
 {
-    if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || std::fabs(g_old_z.y) >= g_magnitude_limit2)
+    if (std::abs(g_old_z.x) >= g_magnitude_limit2 || std::abs(g_old_z.y) >= g_magnitude_limit2)
     {
         return 1;
     }
@@ -85,7 +85,7 @@ static int lambda_trig_fractal1()
 static int lambda_trig_fp_fractal1()
 {
     // sin,cos
-    if (std::fabs(g_old_z.y) >= g_magnitude_limit2)
+    if (std::abs(g_old_z.y) >= g_magnitude_limit2)
     {
         return 1;
     }
@@ -111,7 +111,7 @@ static int lambda_trig_fractal2()
 static int lambda_trig_fp_fractal2()
 {
     // sinh,cosh
-    if (std::fabs(g_old_z.x) >= g_magnitude_limit2)
+    if (std::abs(g_old_z.x) >= g_magnitude_limit2)
     {
         return 1;
     }
@@ -157,11 +157,11 @@ static int long_lambda_exponent_fractal()
 static int lambda_exponent_fractal()
 {
     // found this in  "Science of Fractal Images"
-    if (std::fabs(g_old_z.y) >= 1.0e3)
+    if (std::abs(g_old_z.y) >= 1.0e3)
     {
         return 1;
     }
-    if (std::fabs(g_old_z.x) >= 8)
+    if (std::abs(g_old_z.x) >= 8)
     {
         return 1;
     }

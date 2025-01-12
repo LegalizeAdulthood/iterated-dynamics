@@ -36,7 +36,7 @@ static int cmp_dbl(double old, double new_val)
     double_to_string(buf, old);   // convert "old" to string
 
     old = std::atof(buf);                // convert back
-    return std::fabs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
+    return std::abs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
 }
 
 int get_corners()

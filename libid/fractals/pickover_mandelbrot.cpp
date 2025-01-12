@@ -30,7 +30,7 @@ int float_trig_plus_exponent_fractal()
     // another Scientific American biomorph type
     // z(n+1) = e**z(n) + trig(z(n)) + C
 
-    if (std::fabs(g_old_z.x) >= 6.4e2)
+    if (std::abs(g_old_z.x) >= 6.4e2)
     {
         return 1; // DOMAIN errors
     }

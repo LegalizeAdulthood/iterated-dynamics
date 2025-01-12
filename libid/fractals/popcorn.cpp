@@ -104,8 +104,8 @@ int popcorn_fractal()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude >= g_magnitude_limit
-        || std::fabs(g_new_z.x) > g_magnitude_limit2
-        || std::fabs(g_new_z.y) > g_magnitude_limit2)
+        || std::abs(g_new_z.x) > g_magnitude_limit2
+        || std::abs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -251,8 +251,8 @@ int popcorn_fractal_fn()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude >= g_magnitude_limit
-        || std::fabs(g_new_z.x) > g_magnitude_limit2
-        || std::fabs(g_new_z.y) > g_magnitude_limit2)
+        || std::abs(g_new_z.x) > g_magnitude_limit2
+        || std::abs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }

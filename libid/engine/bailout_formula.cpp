@@ -90,7 +90,7 @@ static int long_manh_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
+    g_magnitude = std::abs(g_new_z.x) + std::abs(g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -103,7 +103,7 @@ static int long_manr_bailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = std::fabs(g_new_z.x + g_new_z.y);
+    g_magnitude = std::abs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -182,7 +182,7 @@ static int fp_manh_bailout()
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    double manh_mag = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
+    double manh_mag = std::abs(g_new_z.x) + std::abs(g_new_z.y);
     if ((manh_mag * manh_mag) >= g_magnitude_limit)
     {
         return 1;

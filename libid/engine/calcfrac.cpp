@@ -233,7 +233,7 @@ static double fmod_test()
         break;
 
     case Bailout::MANH:
-        result = sqr(std::fabs(g_new_z.x) + std::fabs(g_new_z.y));
+        result = sqr(std::abs(g_new_z.x) + std::abs(g_new_z.y));
         break;
 
     case Bailout::MANR:
@@ -680,7 +680,7 @@ int calc_fract()
 
         if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(std::fabs(g_x_max - g_x_min), std::fabs(g_y_max - g_y_min)) / 6.0;
+            g_inversion[0] = std::min(std::abs(g_x_max - g_x_min), std::abs(g_y_max - g_y_min)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];
         }
@@ -690,7 +690,7 @@ int calc_fract()
             g_inversion[1] = (g_x_min + g_x_max) / 2.0;
             fix_inversion(&g_inversion[1]);
             g_f_x_center = g_inversion[1];
-            if (std::fabs(g_f_x_center) < std::fabs(g_x_max-g_x_min) / 100)
+            if (std::abs(g_f_x_center) < std::abs(g_x_max-g_x_min) / 100)
             {
                 g_f_x_center = 0.0;
                 g_inversion[1] = 0.0;
@@ -702,7 +702,7 @@ int calc_fract()
             g_inversion[2] = (g_y_min + g_y_max) / 2.0;
             fix_inversion(&g_inversion[2]);
             g_f_y_center = g_inversion[2];
-            if (std::fabs(g_f_y_center) < std::fabs(g_y_max-g_y_min) / 100)
+            if (std::abs(g_f_y_center) < std::abs(g_y_max-g_y_min) / 100)
             {
                 g_f_y_center = 0.0;
                 g_inversion[2] = 0.0;
@@ -1010,7 +1010,7 @@ static void perform_work_list()
         }
         else
         {
-            s_dem_too_big = std::fabs(f_temp) * std::fabs(f_temp2) * 2 / std::sqrt(s_dem_delta);
+            s_dem_too_big = std::abs(f_temp) * std::abs(f_temp2) * 2 / std::sqrt(s_dem_delta);
         }
     }
 
@@ -1534,7 +1534,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else
             {
-                if (std::max(std::fabs(deriv.x), std::fabs(deriv.y)) > s_dem_too_big)
+                if (std::max(std::abs(deriv.x), std::abs(deriv.y)) > s_dem_too_big)
                 {
                     break;
                 }
@@ -1645,12 +1645,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (std::fabs(g_new_z.x) < std::fabs(g_close_proximity))
+                    if (std::abs(g_new_z.x) < std::abs(g_close_proximity))
                     {
                         hooper = (g_close_proximity > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
-                    else if (std::fabs(g_new_z.y) < std::fabs(g_close_proximity))
+                    else if (std::abs(g_new_z.y) < std::abs(g_close_proximity))
                     {
                         hooper = (g_close_proximity > 0? 2 : -2); // close to x axis
                         goto plot_inside;
@@ -1853,9 +1853,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (std::fabs(s_saved.x - g_new_z.x) < g_close_enough)
+                    if (std::abs(s_saved.x - g_new_z.x) < g_close_enough)
                     {
-                        if (std::fabs(s_saved.y - g_new_z.y) < g_close_enough)
+                        if (std::abs(s_saved.y - g_new_z.y) < g_close_enough)
                         {
                             caught_a_cycle = true;
                         }
@@ -1951,7 +1951,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_outside_color == ATAN)              // "atan"
         {
-            g_color_iter = (long)std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+            g_color_iter = (long)std::abs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
         }
         else if (g_outside_color == FMOD)
         {
@@ -2035,7 +2035,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 g_color_iter = g_biomorph;
             }
         }
-        else if (std::fabs(g_new_z.x) < g_magnitude_limit2 || std::fabs(g_new_z.y) < g_magnitude_limit2)
+        else if (std::abs(g_new_z.x) < g_magnitude_limit2 || std::abs(g_new_z.y) < g_magnitude_limit2)
         {
             g_color_iter = g_biomorph;
         }
@@ -2069,7 +2069,7 @@ plot_inside: // we're "inside"
             for (int i = 1; i < 16; i++)
             {
                 diff = tan_table[0] - tan_table[i];
-                if (std::fabs(diff) < .05)
+                if (std::abs(diff) < .05)
                 {
                     g_color_iter = i;
                     break;
@@ -2118,11 +2118,11 @@ plot_inside: // we're "inside"
             {
                 g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                 g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
-                g_color_iter = (long)std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+                g_color_iter = (long)std::abs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
             }
             else
             {
-                g_color_iter = (long)std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+                g_color_iter = (long)std::abs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
             }
         }
         else if (g_inside_color == BOF60)
@@ -2959,7 +2959,7 @@ originsym:
         }
         else
         {
-            if (std::fabs(g_x_max - g_x_min) < PI/4)
+            if (std::abs(g_x_max - g_x_min) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -2995,7 +2995,7 @@ originsym:
         }
         else
         {
-            g_pi_in_pixels = (int)((PI/std::fabs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = (int)((PI/std::abs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_x_stop = g_xx_start + g_pi_in_pixels - 1;

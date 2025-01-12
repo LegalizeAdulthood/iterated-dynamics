@@ -1122,8 +1122,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 4; i++)
         {
-            if (std::fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * s_bad_check
-                && std::fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * s_bad_check)
+            if (std::abs(V[i][0] - V[(i + 1) % 4][0]) < -2 * s_bad_check
+                && std::abs(V[i][1] - V[(i + 1) % 4][1]) < -2 * s_bad_check)
             {
                 vec_draw_line(V[i], V[(i + 1) % 4], color);
             }
@@ -1134,8 +1134,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 3; i += 2)
         {
-            if (std::fabs(V[i][0] - V[i + 1][0]) < -2 * s_bad_check
-                && std::fabs(V[i][1] - V[i + 1][1]) < -2 * s_bad_check)
+            if (std::abs(V[i][0] - V[i + 1][0]) < -2 * s_bad_check
+                && std::abs(V[i][1] - V[i + 1][1]) < -2 * s_bad_check)
             {
                 vec_draw_line(V[i], V[i + 1], color);
             }

@@ -506,7 +506,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     if (!g_make_parameter_file
         && !g_fast_restore
         && (g_init_batch == BatchMode::NONE)
-        && (std::fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
+        && (std::abs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
         stop_msg(StopMsgFlags::NO_BUZZER,
             "Warning: <V>iew parameters are being set to non-standard values.\n"

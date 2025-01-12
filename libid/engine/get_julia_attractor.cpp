@@ -86,8 +86,8 @@ void get_julia_attractor(double real, double imag)
                 }
                 else
                 {
-                    if (std::fabs(result.x-g_new_z.x) < g_close_enough
-                        && std::fabs(result.y-g_new_z.y) < g_close_enough)
+                    if (std::abs(result.x-g_new_z.x) < g_close_enough
+                        && std::abs(result.y-g_new_z.y) < g_close_enough)
                     {
                         g_attractor[g_attractors] = g_new_z;
                         g_attractor_period[g_attractors] = i+1;

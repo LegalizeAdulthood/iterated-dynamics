@@ -143,10 +143,10 @@ void atanh_z(DComplex z, DComplex *rz)
     }
     else
     {
-        if (std::fabs(z.x) == 1.0 && z.y == 0.0)
+        if (std::abs(z.x) == 1.0 && z.y == 0.0)
         {
         }
-        else if (std::fabs(z.x) < 1.0 && z.y == 0.0)
+        else if (std::abs(z.x) < 1.0 && z.y == 0.0)
         {
             rz->x = std::log((1+z.x)/(1-z.x))/2;
             rz->y = 0;

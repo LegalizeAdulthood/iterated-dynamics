@@ -1145,7 +1145,7 @@ int pickover_float_orbit(double *x, double *y, double *z)
 // page 149 "Science of Fractal Images"
 int ginger_bread_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double new_x = 1 - (*y) + std::fabs(*x);
+    double new_x = 1 - (*y) + std::abs(*x);
     *y = *x;
     *x = new_x;
     return 0;
@@ -1214,7 +1214,7 @@ int kam_torus_long_orbit(long *r, long *s, long *z)
 
 int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - sign(*x) * std::sqrt(std::fabs(s_b * (*x) - s_c));
+    double tmp = *y - sign(*x) * std::sqrt(std::abs(s_b * (*x) - s_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1223,8 +1223,8 @@ int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
 int chip2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y -
-        sign(*x) * std::cos(sqr(std::log(std::fabs(s_b * (*x) - s_c)))) *
-            std::atan(sqr(std::log(std::fabs(s_c * (*x) - s_b))));
+        sign(*x) * std::cos(sqr(std::log(std::abs(s_b * (*x) - s_c)))) *
+            std::atan(sqr(std::log(std::abs(s_c * (*x) - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1233,8 +1233,8 @@ int chip2d_float_orbit(double *x, double *y, double * /*z*/)
 int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y -
-        sign(*x) * std::sin(std::log(std::fabs(s_b * (*x) - s_c))) *
-            std::atan(sqr(std::log(std::fabs(s_c * (*x) - s_b))));
+        sign(*x) * std::sin(std::log(std::abs(s_b * (*x) - s_c))) *
+            std::atan(sqr(std::log(std::abs(s_c * (*x) - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -1242,7 +1242,7 @@ int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
 
 int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - sign(*x) * (std::fabs(std::sin(*x) * s_cos_b + s_c - (*x) * s_sin_sum_a_b_c));
+    double tmp = *y - sign(*x) * (std::abs(std::sin(*x) * s_cos_b + s_c - (*x) * s_sin_sum_a_b_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;

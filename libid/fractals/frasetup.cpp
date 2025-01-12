@@ -384,7 +384,7 @@ julia_fp_setup()
             && g_trig_index[1] == TrigFn::TAN
             && g_trig_index[2] == TrigFn::SIN
             && g_trig_index[3] == TrigFn::TAN
-            && std::fabs(g_param_z2.x - 3.0) < .0001
+            && std::abs(g_param_z2.x - 3.0) < .0001
             && g_param_z2.y == 0
             && g_param_z1.y == 0)
         {
@@ -546,7 +546,7 @@ julia_long_setup()
             && g_trig_index[1] == TrigFn::TAN
             && g_trig_index[2] == TrigFn::SIN
             && g_trig_index[3] == TrigFn::TAN
-            && std::fabs(g_param_z2.x - 3.0) < .0001
+            && std::abs(g_param_z2.x - 3.0) < .0001
             && g_param_z2.y == 0
             && g_param_z1.y == 0)
         {

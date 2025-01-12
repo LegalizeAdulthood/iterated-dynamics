@@ -146,7 +146,7 @@ bool froth_setup()
     s_fsp.repeat_mapping = (int)g_params[0] == 2;
     s_fsp.alt_color = (int)g_params[1];
     s_fsp.fl.f.a = g_params[2];
-    if (std::fabs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A)
+    if (std::abs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A)
     {
         s_fsp.attractors = !s_fsp.repeat_mapping ? 3 : 6;
     }
@@ -284,7 +284,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                 plot_orbit(g_old_z.x, g_old_z.y, -1);
             }
 
-            if (std::fabs(s_fsp.fl.f.half_a-g_old_z.y) < FROTH_CLOSE
+            if (std::abs(s_fsp.fl.f.half_a-g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x >= s_fsp.fl.f.top_x1
                 && g_old_z.x <= s_fsp.fl.f.top_x2)
             {
@@ -309,7 +309,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (std::fabs(FROTH_SLOPE*g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
+            else if (std::abs(FROTH_SLOPE*g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x <= s_fsp.fl.f.right_x1
                 && g_old_z.x >= s_fsp.fl.f.right_x2)
             {
@@ -344,7 +344,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (std::fabs(-FROTH_SLOPE*g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
+            else if (std::abs(-FROTH_SLOPE*g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x <= s_fsp.fl.f.left_x1
                 && g_old_z.x >= s_fsp.fl.f.left_x2)
             {

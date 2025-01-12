@@ -34,6 +34,7 @@
 #include "ui/video_mode.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
@@ -621,7 +622,7 @@ top:
                 }
                 else
                 {
-                    if ((fabs(g_params[i]) < 0.00001 || fabs(g_params[i]) > 100000.0) && g_params[i] != 0.0)
+                    if ((std::abs(g_params[i]) < 0.00001 || std::abs(g_params[i]) > 100000.0) && g_params[i] != 0.0)
                         std::sprintf(msg, "%-12.9e", g_params[i]);
                     else
                         std::sprintf(msg, "%-12.9f", g_params[i]);

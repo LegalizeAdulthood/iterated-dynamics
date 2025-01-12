@@ -2211,16 +2211,16 @@ static bool params_ok(FractalInfo const *info)
         tmp_param10 = 0.0;
     }
     // parameters are in range?
-    return std::fabs(info->c_real - g_params[0]) < MIN_DIF //
-        && std::fabs(info->c_imag - g_params[1]) < MIN_DIF //
-        && std::fabs(tmp_param3 - g_params[2]) < MIN_DIF    //
-        && std::fabs(tmp_param4 - g_params[3]) < MIN_DIF    //
-        && std::fabs(tmp_param5 - g_params[4]) < MIN_DIF    //
-        && std::fabs(tmp_param6 - g_params[5]) < MIN_DIF    //
-        && std::fabs(tmp_param7 - g_params[6]) < MIN_DIF    //
-        && std::fabs(tmp_param8 - g_params[7]) < MIN_DIF    //
-        && std::fabs(tmp_param9 - g_params[8]) < MIN_DIF    //
-        && std::fabs(tmp_param10 - g_params[9]) < MIN_DIF   //
+    return std::abs(info->c_real - g_params[0]) < MIN_DIF //
+        && std::abs(info->c_imag - g_params[1]) < MIN_DIF //
+        && std::abs(tmp_param3 - g_params[2]) < MIN_DIF    //
+        && std::abs(tmp_param4 - g_params[3]) < MIN_DIF    //
+        && std::abs(tmp_param5 - g_params[4]) < MIN_DIF    //
+        && std::abs(tmp_param6 - g_params[5]) < MIN_DIF    //
+        && std::abs(tmp_param7 - g_params[6]) < MIN_DIF    //
+        && std::abs(tmp_param8 - g_params[7]) < MIN_DIF    //
+        && std::abs(tmp_param9 - g_params[8]) < MIN_DIF    //
+        && std::abs(tmp_param10 - g_params[9]) < MIN_DIF   //
         && info->invert[0] - g_inversion[0] < MIN_DIF;
 }
 

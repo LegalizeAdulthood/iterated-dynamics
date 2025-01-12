@@ -23,15 +23,15 @@ int burning_ship_fp_fractal()
     {
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
-        const double real_imag = std::fabs(g_old_z.x * g_old_z.y);
+        const double real_imag = std::abs(g_old_z.x * g_old_z.y);
         g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;
         g_new_z.y = real_imag + real_imag - q.y;
     }
     else if (degree > 2)
     {
         DComplex z;
-        z.x = std::fabs(g_old_z.x);
-        z.y = -std::fabs(g_old_z.y);
+        z.x = std::abs(g_old_z.x);
+        z.y = -std::abs(g_old_z.y);
         pow(&z, degree, &z);
         g_new_z.x = z.x + q.x;
         g_new_z.y = z.y + q.y;
@@ -77,13 +77,13 @@ void burning_ship_perturb(
     {
         double dnr = diff_abs(r, a);
         double ab = r + a;
-        dnr = (r * r - 3 * i * i) * dnr                        //
-            + (2 * a * r + a2 - 6 * i * b - 3 * b2) * fabs(ab) //
+        dnr = (r * r - 3 * i * i) * dnr                            //
+            + (2 * a * r + a2 - 6 * i * b - 3 * b2) * std::abs(ab) //
             + a0;
         double dni = diff_abs(i, b);
         ab = i + b;
         dni = (3 * r * r - i * i) * dni                             //
-            + (6 * r * a + 3 * a2 - 2 * i * b - b2) * std::fabs(ab) //
+            + (6 * r * a + 3 * a2 - 2 * i * b - b2) * std::abs(ab) //
             + b0;
         delta_n.imag(dni);
         delta_n.real(dnr);
@@ -111,7 +111,7 @@ void burning_ship_perturb(
             + a0;
         double dni = diff_abs(r * i, r * b + a * i + a * b);
         dni = 4 * (r2 - i2) * dni                                                              //
-            + 4 * std::fabs(r * i + r * b + a * i + a * b) * (2 * a * r + a2 - 2 * b * i - b2) //
+            + 4 * std::abs(r * i + r * b + a * i + a * b) * (2 * a * r + a2 - 2 * b * i - b2) //
             + b0;
         delta_n.imag(dni);
         delta_n.real(dnr);
@@ -122,7 +122,7 @@ void burning_ship_perturb(
     {
         double dnr = diff_abs(r, a);
         dnr = dnr * (r * r * r * r - 10 * r * r * i * i + 5 * i * i * i * i) //
-            + std::fabs(r + a) *
+            + std::abs(r + a) *
                 (4 * r * r * r * a       //
                     + 6 * r * r * a2     //
                     + 4 * r * a2 * a     //
@@ -141,7 +141,7 @@ void burning_ship_perturb(
                     + 5 * b2 * b2)       //
             + a0;
         const double dni = diff_abs(i, b) * (5 * r2 * r2 - 10 * r2 * i2 + i2 * i2) + //
-            std::fabs(i + b) *
+            std::abs(i + b) *
                 (20 * r2 * r * a         //
                     + 30 * r2 * a2       //
                     + 20 * r * a2 * a    //
@@ -177,7 +177,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
         const double real_sqr = sqr(z.real());
         const double imag_sqr = sqr(z.imag());
         const double real = real_sqr - imag_sqr + center.real();
-        const double temp = std::fabs(2.0 * z.real() * z.imag());
+        const double temp = std::abs(2.0 * z.real() * z.imag());
         const double imag = temp + center.imag();
         z.real(real);
         z.imag(imag);
@@ -185,8 +185,8 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
     else if (degree > 2)
     {
         DComplex temp, temp_z;
-        temp.x = std::fabs(z.real());
-        temp.y = std::fabs(z.imag());
+        temp.x = std::abs(z.real());
+        temp.y = std::abs(z.imag());
         pow(&temp, degree, &temp_z);
         z.real(temp_z.x);
         z.imag(temp_z.y);

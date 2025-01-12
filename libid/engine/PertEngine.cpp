@@ -287,7 +287,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             }
             else
             {
-                if (fabs(w.real()) < rq_lim2 || fabs(w.imag()) < rq_lim2)
+                if (std::abs(w.real()) < rq_lim2 || std::abs(w.imag()) < rq_lim2)
                 {
                     index = g_biomorph;
                 }
@@ -374,7 +374,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 }
                 else
                 {
-                    index = (long) fabs(atan2(w.imag(), w.real()) * 180.0 / PI);
+                    index = (long) std::abs(atan2(w.imag(), w.real()) * 180.0 / PI);
                 }
                 break;
 

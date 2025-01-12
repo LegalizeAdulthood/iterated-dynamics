@@ -10,7 +10,7 @@ extern double g_rate;
 inline bool population_exceeded()
 {
     constexpr double LIMIT{100000.0};
-    return std::fabs(g_population) > LIMIT;
+    return std::abs(g_population) > LIMIT;
 }
 
 inline int population_orbit()

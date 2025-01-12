@@ -70,8 +70,8 @@ static int get_prec_dbl(ResolutionFlag flag)
     LDouble y_delta = ((LDouble) g_y_max - (LDouble) g_y_3rd) / res;
     LDouble x_delta2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / res;
 
-    LDouble del1 = std::fabs(x_delta) + std::fabs(x_delta2);
-    LDouble del2 = std::fabs(y_delta) + std::fabs(y_delta2);
+    LDouble del1 = std::abs(x_delta) + std::abs(x_delta2);
+    LDouble del2 = std::abs(y_delta) + std::abs(y_delta2);
     del1 = std::min(del2, del1);
     if (del1 == 0)
     {
@@ -530,7 +530,7 @@ expand_retry:
                        to arbitrary precision sooner, but always later.*/
                     double test_x_try;
                     double test_x_exact;
-                    if (std::fabs(g_x_max-g_x_3rd) > std::fabs(g_x_3rd-g_x_min))
+                    if (std::abs(g_x_max-g_x_3rd) > std::abs(g_x_3rd-g_x_min))
                     {
                         test_x_exact  = g_x_max-g_x_3rd;
                         test_x_try    = dx0-g_x_min;
@@ -542,7 +542,7 @@ expand_retry:
                     }
                     double testy_try;
                     double testy_exact;
-                    if (std::fabs(g_y_3rd-g_y_max) > std::fabs(g_y_min-g_y_3rd))
+                    if (std::abs(g_y_3rd-g_y_max) > std::abs(g_y_min-g_y_3rd))
                     {
                         testy_exact = g_y_3rd-g_y_max;
                         testy_try   = dy0-g_y_max;
@@ -578,15 +578,15 @@ expand_retry:
 
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
-    g_delta_min = std::fabs((double)g_delta_x);
-    g_delta_min = std::max(std::fabs((double) g_delta_x2), g_delta_min);
-    if (std::fabs((double)g_delta_y) > std::fabs((double)g_delta_y2))
+    g_delta_min = std::abs((double)g_delta_x);
+    g_delta_min = std::max(std::abs((double) g_delta_x2), g_delta_min);
+    if (std::abs((double)g_delta_y) > std::abs((double)g_delta_y2))
     {
-        g_delta_min = std::min(std::fabs((double) g_delta_y), g_delta_min);
+        g_delta_min = std::min(std::abs((double) g_delta_y), g_delta_min);
     }
-    else if (std::fabs((double)g_delta_y2) < g_delta_min)
+    else if (std::abs((double)g_delta_y2) < g_delta_min)
     {
-        g_delta_min = std::fabs((double)g_delta_y2);
+        g_delta_min = std::abs((double)g_delta_y2);
     }
     g_l_delta_min = fudge_to_long(g_delta_min);
 
@@ -646,7 +646,7 @@ void adjust_corner_bf()
     // While we're at it, let's adjust the x_mag_factor as well
     // use bf_temp, bftemp2 as bfXctr, bfYctr
     cvt_center_mag_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
-    double f_temp = std::fabs(x_mag_factor);
+    double f_temp = std::abs(x_mag_factor);
     if (f_temp != 1 && f_temp >= (1-g_aspect_drift) && f_temp <= (1+g_aspect_drift))
     {
         x_mag_factor = sign(x_mag_factor);
@@ -724,7 +724,7 @@ void adjust_corner()
         LDouble magnification;
         // While we're at it, let's adjust the x_mag_factor as well
         cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-        f_temp = std::fabs(x_mag_factor);
+        f_temp = std::abs(x_mag_factor);
         if (f_temp != 1 && f_temp >= (1-g_aspect_drift) && f_temp <= (1+g_aspect_drift))
         {
             x_mag_factor = sign(x_mag_factor);
@@ -732,8 +732,8 @@ void adjust_corner()
         }
     }
 
-    f_temp = std::fabs(g_x_3rd-g_x_min);
-    double f_temp2 = std::fabs(g_x_max - g_x_3rd);
+    f_temp = std::abs(g_x_3rd-g_x_min);
+    double f_temp2 = std::abs(g_x_max - g_x_3rd);
     if (f_temp < f_temp2)
     {
         if (f_temp*10000 < f_temp2 && g_y_3rd != g_y_max)
@@ -747,8 +747,8 @@ void adjust_corner()
         g_x_3rd = g_x_max;
     }
 
-    f_temp = std::fabs(g_y_3rd-g_y_min);
-    f_temp2 = std::fabs(g_y_max-g_y_3rd);
+    f_temp = std::abs(g_y_3rd-g_y_min);
+    f_temp2 = std::abs(g_y_max-g_y_3rd);
     if (f_temp < f_temp2)
     {
         if (f_temp*10000 < f_temp2 && g_x_3rd != g_x_max)

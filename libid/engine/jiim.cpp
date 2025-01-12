@@ -82,7 +82,7 @@ static void set_aspect(double aspect)
 {
     s_x_aspect = 0;
     s_y_aspect = 0;
-    aspect = std::fabs(aspect);
+    aspect = std::abs(aspect);
     if (aspect != 1.0)
     {
         if (aspect > 1.0)
@@ -1050,13 +1050,13 @@ void jiim(JIIMType which)
 
                 //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
                 r = std::sqrt(r);
-                g_new_z.x = std::sqrt(std::fabs((r + g_old_z.x)/2));
+                g_new_z.x = std::sqrt(std::abs((r + g_old_z.x)/2));
                 if (g_old_z.y < 0)
                 {
                     g_new_z.x = -g_new_z.x;
                 }
 
-                g_new_z.y = std::sqrt(std::fabs((r - g_old_z.x)/2));
+                g_new_z.y = std::sqrt(std::abs((r - g_old_z.x)/2));
 
                 switch (s_secret_experimental_mode)
                 {

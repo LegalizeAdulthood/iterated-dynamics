@@ -37,7 +37,7 @@ int unity_fractal()
 int unity_fp_fractal()
 {
     const double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
-    if ((XXOne > 2.0) || (std::fabs(XXOne - 1.0) < g_delta_min))
+    if ((XXOne > 2.0) || (std::abs(XXOne - 1.0) < g_delta_min))
     {
         return 1;
     }
