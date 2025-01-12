@@ -44,7 +44,6 @@
 #include "io/update_save_name.h"
 #include "math/biginit.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/drivers.h"

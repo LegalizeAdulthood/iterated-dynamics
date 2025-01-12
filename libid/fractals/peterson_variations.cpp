@@ -14,7 +14,6 @@
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "ui/cmdfiles.h"
 
 DComplex g_marks_coefficient{};

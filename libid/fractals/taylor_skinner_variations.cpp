@@ -10,7 +10,6 @@
 #include "fractals/frasetup.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 

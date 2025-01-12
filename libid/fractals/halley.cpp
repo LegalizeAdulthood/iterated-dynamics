@@ -8,7 +8,6 @@
 #include "fractals/fractype.h"
 #include "fractals/newton.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "ui/cmdfiles.h"
 
 #include <algorithm>

@@ -17,7 +17,6 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "misc/debug_flags.h"
 #include "misc/prototyp.h"
 #include "ui/cmdfiles.h"

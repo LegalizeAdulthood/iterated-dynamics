@@ -13,7 +13,6 @@
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "ui/cmdfiles.h"
 
 #include <cmath>

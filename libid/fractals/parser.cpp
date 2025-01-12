@@ -29,7 +29,6 @@
 #include "math/cmplx.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"

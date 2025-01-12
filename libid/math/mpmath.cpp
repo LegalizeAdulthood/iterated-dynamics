@@ -18,7 +18,7 @@
      Southington, CT 06489
      (203) 276-9721
 */
-#include "math/mpmath_c.h"
+#include "math/mpmath.h"
 
 #include "engine/id_data.h"
 #include "io/loadfile.h"

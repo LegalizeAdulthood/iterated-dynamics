@@ -10,7 +10,6 @@
 #include "fractals/fractype.h"
 #include "math/fpu087.h"
 #include "math/mpmath.h"
-#include "math/mpmath_c.h"
 #include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
