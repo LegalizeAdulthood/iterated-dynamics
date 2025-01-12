@@ -198,6 +198,7 @@ long reg_div_float(long x, long y)
 // Instead of using exp/mant format, we'll just use floats.
 // Note: If sizeof(float) != sizeof(long), we're hosed.
 //
+static_assert(sizeof(float) == sizeof(long));
 long reg_fg_to_float(long x, int FudgeFact)
 {
     float f = (float) x / (float)(1 << FudgeFact);

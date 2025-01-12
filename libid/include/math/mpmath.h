@@ -30,25 +30,9 @@ extern MPC                   g_mpc_one;
 
 long exp_float14(long);
 
-inline void f_div(float x, float y, float &z)
-{
-    *(long*)&z = reg_div_float(*(long*)&x, *(long*)&y);
-}
-inline void f_mul16(float x, float y, float &z)
-{
-    *(long*)&z = r16_mul(*(long*)&x, *(long*)&y);
-}
 inline void f_shift(float x, int shift, float &z)
 {
     *(long*)&z = reg_sft_float(*(long*)&x, shift);
-}
-inline void fg_to_float(int x, long f, float &z)
-{
-    *(long*)&z = reg_fg_to_float(x, f);
-}
-inline long float_to_fg(float x, int f)
-{
-    return reg_float_to_fg(*(long*)&x, f);
 }
 inline void f_log14(float x, float &z)
 {
