@@ -38,6 +38,11 @@ function(set_src_dir src_file)
         PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
 endfunction()
 
+function(source_group_subdir group subdir)
+    source_group("Header Files/${group}" REGULAR_EXPRESSION "include/${subdir}/.*")
+    source_group("Source Files/${group}" REGULAR_EXPRESSION "${subdir}/.*")
+endfunction()
+
 set(ID_TARGET_DEFINITIONS "")
 set(ID_TARGET_DEFINITIONS_DEBUG "")
 set(ID_EXECUTABLE_TYPE "")

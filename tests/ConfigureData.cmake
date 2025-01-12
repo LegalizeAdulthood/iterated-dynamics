@@ -23,8 +23,8 @@ set(ID_TEST_DISK_COMMENT "fancier disk mode")
 set(ID_TEST_DISK_DRIVER "disk")
 
 set(ID_TEST_CONFIG_FILE "${ID_TEST_HOME_DIR}/test.cfg")
-configure_file("test.cfg.in" "${ID_TEST_CONFIG_FILE}" @ONLY)
-configure_file("test_config_data.h.in" "include/test_config_data.h" @ONLY)
+configure_file("home/test.cfg.in" "${ID_TEST_CONFIG_FILE}" @ONLY)
+configure_file("include/test_config_data.h.in" "include/test_config_data.h" @ONLY)
 
 # GIF file extensions test data
 set(ID_TEST_GIF_DIR "${ID_TEST_DATA_DIR}/gif")
@@ -47,12 +47,12 @@ set(ID_TEST_FIRST_IFS_NAME "binary")
 set(ID_TEST_FIRST_IFS_PARAM1 ".5")
 set(ID_TEST_SECOND_IFS_NAME "3dfern")
 set(ID_TEST_IFS_FILE "test.ifs")
-configure_file(test.ifs.in "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}")
+configure_file(home/test.ifs.in "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}")
 
 set(ID_TEST_DATA_SUBDIR_NAME    "subdir")
 set(ID_TEST_DATA_SUBDIR         "${ID_TEST_DATA_DIR}/${ID_TEST_DATA_SUBDIR_NAME}")
 set(ID_TEST_IFS_FILE2           "test2.ifs")
-configure_file(test.ifs.in      "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
+configure_file(home/test.ifs.in "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
 
 # find_file test data
 set(ID_TEST_FIND_FILE_SUBDIR            "test_data/find_file")
@@ -63,10 +63,10 @@ set(ID_TEST_FIND_FILE2                  "find_file2.txt")
 set(ID_TEST_FIND_FILE3                  "find_file3.txt")
 set(ID_TEST_FIND_FILE_CASE_FILENAME     "FIND_FILE4")
 set(ID_TEST_FIND_FILE_CASE              "${ID_TEST_FIND_FILE_CASE_FILENAME}.TXT")
-configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE1}")
-configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE2}")
-configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_DATA_SUBDIR_NAME}/${ID_TEST_FIND_FILE3}")
-configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE_CASEDIR}/${ID_TEST_FIND_FILE_CASE}")
+configure_file(io/test_find_file.txt.in "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE1}")
+configure_file(io/test_find_file.txt.in "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE2}")
+configure_file(io/test_find_file.txt.in "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_DATA_SUBDIR_NAME}/${ID_TEST_FIND_FILE3}")
+configure_file(io/test_find_file.txt.in "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE_CASEDIR}/${ID_TEST_FIND_FILE_CASE}")
 
 # check_writefile test data
 set(ID_TEST_CHECK_WRITE_FILE_DATA_DIR   "${ID_TEST_DATA_DIR}/check_writefile")
@@ -77,7 +77,7 @@ set(ID_TEST_CHECK_WRITE_FILE_OTHER_EXT  ".foo")
 set(ID_TEST_CHECK_WRITE_FILE_EXISTS1    "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract001.gif")
 set(ID_TEST_CHECK_WRITE_FILE_EXISTS2    "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract002.gif")
 set(ID_TEST_CHECK_WRITE_FILE3           "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract003.gif")
-configure_file(test_check_write_file_data.h.in "include/test_check_write_file_data.h" @ONLY)
+configure_file(io/test_check_write_file_data.h.in "include/test_check_write_file_data.h" @ONLY)
 configure_file("gif/extension1.gif"     "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract001.gif" COPYONLY)
 configure_file("gif/extension1.gif"     "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract002.gif" COPYONLY)
 file(REMOVE "${ID_TEST_CHECK_WRITE_FILE_NEW}")
@@ -85,7 +85,7 @@ file(REMOVE "${ID_TEST_CHECK_WRITE_FILE3}")
 
 # color map file test data
 set(ID_TEST_MAP_FILE "test.map")
-configure_file(test.map.in "${ID_TEST_MAP_DIR}/test.map" @ONLY)
+configure_file(home/test.map.in "${ID_TEST_MAP_DIR}/test.map" @ONLY)
 
 # Test data header
-configure_file(test_data.h.in include/test_data.h @ONLY)
+configure_file(include/test_data.h.in include/test_data.h @ONLY)
