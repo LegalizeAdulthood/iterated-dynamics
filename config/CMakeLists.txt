@@ -57,3 +57,5 @@ target_sources(config INTERFACE
 target_include_directories(config INTERFACE
     include
     "${CMAKE_CURRENT_BINARY_DIR}/include")
+
+add_subdirectory(tests)
