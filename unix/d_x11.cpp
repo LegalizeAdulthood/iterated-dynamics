@@ -21,7 +21,6 @@
 #include "helpdefs.h"
 #include "math/fixed_pt.h"
 #include "misc/drivers.h"
-#include "misc/os.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"

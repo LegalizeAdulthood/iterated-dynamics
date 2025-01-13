@@ -10,7 +10,6 @@
 #include "io/dir_file.h"
 #include "misc/drivers.h"
 #include "misc/memory.h"
-#include "misc/os.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/field_prompt.h"

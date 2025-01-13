@@ -141,7 +141,6 @@ add_library(libid
     include/misc/drivers.h misc/drivers.cpp
     include/misc/id.h
     include/misc/memory.h misc/memory.cpp
-    include/misc/os.h
     include/misc/sized_types.h
     include/misc/stack_avail.h
     include/misc/ValueSaver.h

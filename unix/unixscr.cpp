@@ -19,7 +19,6 @@
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/drivers.h"
-#include "misc/os.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
@@ -119,6 +118,8 @@ static int usepixtab = 0;
 static int ipixtab[256];
 static unsigned long pixtab[256];
 typedef unsigned long XPixel;
+
+bool g_fake_lut{};
 
 static XPixel cmap_pixtab[256]; // for faking a LUTs on non-LUT visuals
 static bool cmap_pixtab_alloced = false;

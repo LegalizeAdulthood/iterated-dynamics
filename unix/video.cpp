@@ -23,8 +23,6 @@
  * Copyright 1992 Ken Shirriff
  */
 
-bool g_fake_lut{};
-
 VideoInfo x11_video_table[] = {
     {999, 800, 600, 256, nullptr, "                         "},
 };
