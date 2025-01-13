@@ -4,6 +4,7 @@
 
 #include "engine/id_data.h"
 #include "math/mpmath.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 
 #include <cmath>
@@ -53,12 +54,12 @@ void setup_log_table()
     if (g_log_map_flag > 0)
     {
         // new log function
-        s_lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-        if (s_lf >= (unsigned long)g_log_map_table_max_size)
+        s_lf = g_log_map_flag > 1 ? g_log_map_flag : 0;
+        if (s_lf >= (unsigned long) g_log_map_table_max_size)
         {
             s_lf = g_log_map_table_max_size - 1;
         }
-        s_mlf = (g_colors - (s_lf?2:1)) / std::log(static_cast<double>(g_log_map_table_max_size - s_lf));
+        s_mlf = (g_colors - (s_lf ? 2 : 1)) / std::log(static_cast<double>(g_log_map_table_max_size - s_lf));
     }
     else if (g_log_map_flag == -1)
     {
@@ -69,7 +70,7 @@ void setup_log_table()
     {
         // sqrt function
         s_lf = 0 - g_log_map_flag;
-        if (s_lf >= (unsigned long)g_log_map_table_max_size)
+        if (s_lf >= (unsigned long) g_log_map_table_max_size)
         {
             s_lf = g_log_map_table_max_size - 1;
         }
@@ -81,91 +82,10 @@ void setup_log_table()
         return; // LogTable not defined, bail out now
     }
 
-    if (!g_log_map_calculate)
+    ValueSaver saved_log_map_calculate{g_log_map_calculate, true}; // turn it on
+    for (long i = 0U; i < static_cast<long>(g_log_map_table.size()); i++)
     {
-        g_log_map_calculate = true;   // turn it on
-        for (unsigned long prev = 0U; prev <= (unsigned long)g_log_map_table_max_size; prev++)
-        {
-            g_log_map_table[prev] = (Byte)log_table_calc((long)prev);
-        }
-        g_log_map_calculate = false;   // turn it off, again
-        return;
-    }
-
-    if (g_log_map_flag > -2)
-    {
-        s_lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-        if (s_lf >= (unsigned long)g_log_map_table_max_size)
-        {
-            s_lf = g_log_map_table_max_size - 1;
-        }
-        fg_to_float((long)(g_log_map_table_max_size-s_lf), 0, m);
-        f_log14(m, m);
-        fg_to_float((long)(g_colors-(s_lf?2:1)), 0, c);
-        f_div(m, c, m);
-        unsigned long prev;
-        for (prev = 1; prev <= s_lf; prev++)
-        {
-            g_log_map_table[prev] = 1;
-        }
-        for (unsigned n = (s_lf ? 2U : 1U); n < (unsigned int)g_colors; n++)
-        {
-            fg_to_float((long)n, 0, f);
-            f_mul16(f, m, f);
-            f_exp14(f, l);
-            limit = (unsigned long)float_to_fg(l, 0) + s_lf;
-            if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
-            {
-                limit = g_log_map_table_max_size;
-            }
-            while (prev <= limit)
-            {
-                g_log_map_table[prev++] = (Byte)n;
-            }
-        }
-    }
-    else
-    {
-        s_lf = 0 - g_log_map_flag;
-        if (s_lf >= (unsigned long)g_log_map_table_max_size)
-        {
-            s_lf = g_log_map_table_max_size - 1;
-        }
-        fg_to_float((long)(g_log_map_table_max_size-s_lf), 0, m);
-        f_sqrt14(m, m);
-        fg_to_float((long)(g_colors-2), 0, c);
-        f_div(m, c, m);
-        unsigned long prev;
-        for (prev = 1; prev <= s_lf; prev++)
-        {
-            g_log_map_table[prev] = 1;
-        }
-        for (unsigned n = 2U; n < (unsigned int)g_colors; n++)
-        {
-            fg_to_float((long)n, 0, f);
-            f_mul16(f, m, f);
-            f_mul16(f, f, l);
-            limit = (unsigned long)(float_to_fg(l, 0) + s_lf);
-            if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
-            {
-                limit = g_log_map_table_max_size;
-            }
-            while (prev <= limit)
-            {
-                g_log_map_table[prev++] = (Byte)n;
-            }
-        }
-    }
-    g_log_map_table[0] = 0;
-    if (g_log_map_flag != -1)
-    {
-        for (unsigned long sp_top = 1U; sp_top < (unsigned long)g_log_map_table_max_size; sp_top++)   // spread top to incl unused colors
-        {
-            if (g_log_map_table[sp_top] > g_log_map_table[sp_top-1])
-            {
-                g_log_map_table[sp_top] = (Byte)(g_log_map_table[sp_top-1]+1);
-            }
-        }
+        g_log_map_table[i] = static_cast<Byte>(log_table_calc(i));
     }
 }
 

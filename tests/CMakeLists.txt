@@ -22,6 +22,7 @@ add_executable(test-id
     include/ValueUnchanged.h
     include/test_config_data.h.in
     include/test_data.h.in
+    engine/test_log_map.cpp
     engine/test_resume.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
