@@ -25,9 +25,6 @@
 #include "misc/debug_flags.h"
 #include "misc/drivers.h"
 #include "misc/id.h"
-#if defined(XFRACT)
-#include "misc/os.h"
-#endif
 #include "engine/log_map.h"
 #include "misc/version.h"
 #include "ui/cmdfiles.h"
@@ -94,13 +91,11 @@ static Byte s_palette_bw[] =
     0, 0, 0, 63, 63, 63,
 };
 
-#ifndef XFRACT
 static Byte s_palette_cga[] =
 {
     // 4-color (CGA) palette
     0, 0, 0, 21, 63, 63, 63, 21, 63, 63, 63, 63,
 };
-#endif
 
 static Byte s_palette_ega[] =
 {
@@ -188,14 +183,6 @@ restart:
         // disk-video
         dvid_status(1, "Saving " + extract_file_name(open_file.string().c_str()));
     }
-#ifdef XFRACT
-    else
-    {
-        driver_put_string(3, 0, 0, "Saving to:");
-        driver_put_string(4, 0, 0, open_file.string());
-        driver_put_string(5, 0, 0, "               ");
-    }
-#endif
 
     g_busy = true;
 
@@ -315,7 +302,6 @@ bool encoder()
 
     setup_save_info(&save_info);
 
-#ifndef XFRACT
     bits_per_pixel = 0;            // calculate bits / pixel
     for (int i = g_colors; i >= 2; i /= 2)
     {
@@ -327,18 +313,6 @@ bool encoder()
     {
         s_start_bits++;    // B&W Klooge
     }
-#else
-    if (g_colors == 2)
-    {
-        bits_per_pixel = 1;
-        s_start_bits = 3;
-    }
-    else
-    {
-        bits_per_pixel = 8;
-        s_start_bits = 9;
-    }
-#endif
 
     int i = 0;
     if (std::fputs("GIF89a", s_outfile) < 0)
@@ -392,7 +366,6 @@ bool encoder()
         goto oops;                // pixel aspect ratio
     }
 
-#ifndef XFRACT
     if (g_colors == 256)
     {
         // write out the 256-color palette
@@ -403,17 +376,6 @@ bool encoder()
             {
                 goto oops;
             }
-#else
-    if (g_colors > 2)
-    {
-        if (g_got_real_dac || g_fake_lut)
-        {
-            // got a DAC - must be a VGA
-            if (!shift_write((Byte *) g_dac_box, 256))
-            {
-                goto oops;
-            }
-#endif
         }
         else
         {
@@ -435,7 +397,6 @@ bool encoder()
             goto oops;
         }
     }
-#ifndef XFRACT
     if (g_colors == 4)
     {
         // write out the CGA palette
@@ -463,7 +424,6 @@ bool encoder()
             }
         }
     }
-#endif
 
     if (std::fputs(",", s_outfile) < 0)
     {
