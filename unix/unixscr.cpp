@@ -21,7 +21,6 @@
 #include "misc/drivers.h"
 #include "misc/os.h"
 #include "misc/prototyp.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
@@ -31,6 +30,8 @@
 #include "ui/spindac.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
+
+#include <config/port.h>
 
 #include <fcntl.h>
 #include <sys/ioctl.h>

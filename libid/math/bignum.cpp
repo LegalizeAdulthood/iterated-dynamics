@@ -131,7 +131,7 @@ double wide number can then be ignored.
 /************************************************************************/
 #include "math/big.h"
 
-#include "port.h"
+#include <config/port.h>
 
 #include <algorithm>
 #include <cfloat>

@@ -7,8 +7,9 @@
 #include "engine/pixel_limits.h"
 #include "math/big.h"
 #include "math/biginit.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
+
+#include <config/port.h>
 
 #include <algorithm>
 #include <cfloat>

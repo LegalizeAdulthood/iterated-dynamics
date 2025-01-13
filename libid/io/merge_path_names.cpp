@@ -9,8 +9,9 @@
 #include "io/make_path.h"
 #include "io/split_path.h"
 #include "misc/id.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
+
+#include <config/port.h>
 
 #include <cstring>
 #include <filesystem>

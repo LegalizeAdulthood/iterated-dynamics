@@ -4,7 +4,8 @@
 
 #include "math/cmplx.h"
 #include "math/big.h"
-#include "port.h"
+
+#include <config/port.h>
 
 enum class FractalType;
 

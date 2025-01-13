@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "port.h"
+#include <config/port.h>
 
 extern unsigned int          g_height;
 extern unsigned              g_num_colors;

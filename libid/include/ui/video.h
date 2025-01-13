@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "port.h"
+#include <config/port.h>
 
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern int                   g_vesa_x_res;

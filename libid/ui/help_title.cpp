@@ -4,9 +4,10 @@
 
 #include "misc/drivers.h"
 #include "misc/id.h"
-#include "port_config.h"
 #include "ui/cmdfiles.h"
 #include "ui/put_string_center.h"
+
+#include <config/port_config.h>
 
 #include <cstdio>
 #include <cstring>

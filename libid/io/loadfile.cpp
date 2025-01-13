@@ -30,7 +30,6 @@
 #include "misc/debug_flags.h"
 #include "misc/drivers.h"
 #include "misc/prototyp.h" // for stricmp
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/field_prompt.h"
@@ -46,6 +45,8 @@
 #include "ui/temp_msg.h"
 #include "ui/trig_fns.h"
 #include "ui/zoom.h"
+
+#include <config/port.h>
 
 #include <algorithm>
 #include <cassert>

@@ -2,7 +2,7 @@
 //
 #include <misc/version.h>
 
-#include <port_config.h>
+#include <config/port_config.h>
 
 #include <gtest/gtest.h>
 

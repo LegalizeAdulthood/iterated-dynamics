@@ -20,9 +20,10 @@
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/id.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
+
+#include <config/port.h>
 
 #include <algorithm>
 #include <array>

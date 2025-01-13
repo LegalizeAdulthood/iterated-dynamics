@@ -5,7 +5,6 @@
 #include "engine/id_data.h"
 #include "misc/drivers.h"
 #include "misc/prototyp.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
@@ -14,6 +13,8 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 #include "unixscr.h"
+
+#include <config/port.h>
 
 #include <cstdio>
 #include <cstring>

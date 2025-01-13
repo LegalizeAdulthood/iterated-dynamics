@@ -3,7 +3,8 @@
 #pragma once
 
 #include "math/cmplx.h"
-#include "port.h"
+
+#include <config/port.h>
 
 #include <cstdio>
 #include <string>

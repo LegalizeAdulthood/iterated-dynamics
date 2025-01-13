@@ -5,7 +5,8 @@
 #pragma once
 
 #include "misc/id.h"
-#include "port.h"
+
+#include <config/port.h>
 
 /* Macro to take an FP number and turn it into a
  * 16/16-bit fixed-point number.

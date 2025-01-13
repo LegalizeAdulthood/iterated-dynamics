@@ -6,10 +6,11 @@
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"
 #include "misc/id.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/stop_msg.h"
+
+#include <config/port.h>
 
 #include <array> // std::size
 #include <cstdio>

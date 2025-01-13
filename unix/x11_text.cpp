@@ -4,7 +4,8 @@
 #include <array>
 #include <cassert>
 
-#include "port.h"
+#include <config/port.h>
+
 #include "x11_text.h"
 
 X11TextWindow::X11TextWindow()

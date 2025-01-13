@@ -14,7 +14,6 @@
 #include "io/loadmap.h"
 #include "misc/debug_flags.h"
 #include "misc/drivers.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
@@ -34,6 +33,8 @@
 #include "ui/video.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
+
+#include <config/port.h>
 
 #include <array> // std::size
 #include <cctype>

@@ -23,7 +23,6 @@
 #include "misc/drivers.h"
 #include "misc/os.h"
 #include "misc/prototyp.h"
-#include "port.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
@@ -34,6 +33,8 @@
 #include "ui/text_screen.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
+
+#include <config/port.h>
 
 #include <sys/ioctl.h>
 #include <sys/time.h>

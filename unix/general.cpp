@@ -13,11 +13,12 @@
 #include "io/loadfile.h"
 #include "misc/drivers.h"
 #include "misc/prototyp.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/read_ticker.h"
 #include "ui/slideshw.h"
 #include "ui/tab_display.h"
+
+#include <config/port.h>
 
 #include <fcntl.h>
 #include <unistd.h>

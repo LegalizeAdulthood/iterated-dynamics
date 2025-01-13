@@ -5,13 +5,14 @@
 #include "io/ends_with_slash.h"
 #include "misc/drivers.h"
 #include "misc/ValueSaver.h"
-#include "string_case_compare.h"
 #include "ui/cmdfiles.h"
 #include "ui/help_title.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/put_string_center.h"
 #include "ui/text_screen.h"
+
+#include <config/string_case_compare.h>
 
 #include <algorithm>
 #include <cctype>

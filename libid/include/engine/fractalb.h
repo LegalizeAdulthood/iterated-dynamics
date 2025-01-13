@@ -3,7 +3,8 @@
 #pragma once
 
 #include "math/big.h"
-#include "port.h"
+
+#include <config/port.h>
 
 inline DComplex cmplx_bn_to_float(const BNComplex &s)
 {

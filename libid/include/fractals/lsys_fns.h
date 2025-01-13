@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "port.h"
+#include <config/port.h>
 
 inline bool is_pow2(int n)
 {

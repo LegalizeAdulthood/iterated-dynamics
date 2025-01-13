@@ -3,7 +3,8 @@
 #include "io/fix_dirname.h"
 
 #include "misc/id.h"
-#include "port.h"
+
+#include <config/port.h>
 
 #include <cstring>
 

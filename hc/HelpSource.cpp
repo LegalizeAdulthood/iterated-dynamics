@@ -5,9 +5,9 @@
 #include "messages.h"
 #include "modes.h"
 
+#include <config/filelength.h>
+#include <config/port.h>
 #include <helpcom.h>
-#include <id_io.h>
-#include <port.h>
 
 #include <algorithm>
 #include <cstdio>

@@ -2,7 +2,7 @@
 //
 #include "misc/version.h"
 
-#include <port_config.h>
+#include <config/port_config.h>
 
 // g_release is pushed/popped on the history stack to provide backward compatibility with previous
 // behavior, so it can't be const.

@@ -25,8 +25,9 @@
 #include "io/loadfile.h"
 #include "misc/drivers.h"
 #include "misc/sized_types.h"
-#include "port.h"
 #include "ui/video.h"
+
+#include <config/port.h>
 
 static short get_next_code();
 

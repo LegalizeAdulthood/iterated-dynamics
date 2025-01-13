@@ -11,12 +11,13 @@
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "io/loadmap.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/video.h"
+
+#include <config/port.h>
 
 #include <cmath>
 

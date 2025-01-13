@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "port.h"
+#include <config/port.h>
 
 extern int                 (*g_out_line)(Byte *, int);
 

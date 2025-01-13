@@ -7,8 +7,9 @@
 #include "fractals/parser.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "port.h"
 #include "ui/trig_fns.h"
+
+#include <config/port.h>
 
 #include <cstdint>
 

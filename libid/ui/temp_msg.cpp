@@ -4,12 +4,13 @@
 
 #include "engine/id_data.h"
 #include "misc/drivers.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"
 #include "ui/video.h"
+
+#include <config/port.h>
 
 #include <cstdio>
 #include <cstring>

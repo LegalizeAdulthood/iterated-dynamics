@@ -2,7 +2,7 @@
 //
 #include "io/gif_file.h"
 
-#include "port.h"
+#include <config/port.h>
 
 #include <boost/endian/buffers.hpp>
 #include <boost/endian/conversion.hpp>

@@ -17,7 +17,8 @@
 #include "engine/id_data.h"
 #include "misc/drivers.h"
 #include "misc/stack_avail.h"
-#include "port.h"
+
+#include <config/port.h>
 
 #include <algorithm>
 #include <cassert>

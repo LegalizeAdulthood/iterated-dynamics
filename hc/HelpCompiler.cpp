@@ -9,8 +9,8 @@
 #include "HelpSource.h"
 #include "messages.h"
 
-#include <port.h>
-#include <id_io.h>
+#include <config/filelength.h>
+#include <config/port.h>
 #include <helpcom.h>
 
 #include <algorithm>

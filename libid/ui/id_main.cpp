@@ -14,7 +14,6 @@
 #include "misc/drivers.h"
 #include "misc/id.h"
 #include "misc/memory.h"
-#include "port.h"
 #include "ui/cmdfiles.h"
 #include "ui/do_pause.h"
 #include "ui/evolve.h"
@@ -41,6 +40,8 @@
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
+
+#include <config/port.h>
 
 #include <algorithm>
 #include <cctype>
