@@ -8,14 +8,14 @@ TEST(TestStringCaseCompareCount, firstStringEmpty)
 {
     char buffer[80]{"foo"};
     
-    EXPECT_NE(0, string_case_compare("", buffer, sizeof(buffer)));
+    EXPECT_GT(0, string_case_compare("", buffer, sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompareCount, secondStringEmpty)
 {
     char buffer[80]{"foo"};
     
-    EXPECT_NE(0, string_case_compare(buffer, "", sizeof(buffer)));
+    EXPECT_LT(0, string_case_compare(buffer, "", sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompareCount, firstStringExhaustedEqual)
@@ -44,7 +44,7 @@ TEST(TestStringCaseCompareCount, differOnlyByCaseEqual)
 
 TEST(TestStringCaseCompareCount, differNotZero)
 {
-    EXPECT_NE(0, string_case_compare("foo", "bar", 3));
+    EXPECT_LT(0, string_case_compare("foo", "bar", 3));
 }
 
 TEST(TestStringCaseCompareCount, lessNegative)
@@ -64,17 +64,17 @@ TEST(TestStringCaseCompareCount, prefixIsLessCount)
 
 TEST(TestStringCaseCompare, firstStringEmptyEqual)
 {
-    EXPECT_EQ(0, string_case_compare("", "foo"));
+    EXPECT_GT(0, string_case_compare("", "foo"));
 }
 
 TEST(TestStringCaseCompare, secondStringEmptyNotEqual)
 {
-    EXPECT_NE(0, string_case_compare("foo", ""));
+    EXPECT_LT(0, string_case_compare("foo", ""));
 }
 
 TEST(TestStringCaseCompare, firstStringExhaustedEqual)
 {
-    EXPECT_EQ(0, string_case_compare("foo", "foobar"));
+    EXPECT_GT(0, string_case_compare("foo", "foobar"));
 }
 
 TEST(TestStringCaseCompare, secondStringExhaustedGreater)
@@ -94,7 +94,7 @@ TEST(TestStringCaseCompare, differOnlyByCaseEqual)
 
 TEST(TestStringCaseCompare, differNotZero)
 {
-    EXPECT_NE(0, string_case_compare("foo", "bar"));
+    EXPECT_LT(0, string_case_compare("foo", "bar"));
 }
 
 TEST(TestStringCaseCompare, lessNegative)
@@ -109,5 +109,5 @@ TEST(TestStringCaseCompare, greaterPositive)
 
 TEST(TestStringCaseCompare, prefixIsLess)
 {
-    EXPECT_EQ(0, string_case_compare("frac", "fractint"));
+    EXPECT_GT(0, string_case_compare("frac", "fractint"));
 }

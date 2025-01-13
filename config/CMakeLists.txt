@@ -17,21 +17,18 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     configure_file(path_limits.windows.h.in include/config/path_limits.h @ONLY)
     configure_file(fdio.windows.h.in include/config/fdio.h @ONLY)
     configure_file(getpid.windows.h.in include/config/getpid.h @ONLY)
-    configure_file(string_case_compare.windows.h.in include/config/string_case_compare.h @ONLY)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(ID_HAVE_X11_DRIVER ON)
     configure_file(filelength.linux.h.in include/config/filelength.h @ONLY)
     configure_file(path_limits.linux.h.in include/config/path_limits.h @ONLY)
     configure_file(fdio.linux.h.in include/config/fdio.h @ONLY)
     configure_file(getpid.linux.h.in include/config/getpid.h @ONLY)
-    configure_file(string_case_compare.linux.h.in include/config/string_case_compare.h @ONLY)
 else()
     message(FATAL_ERROR "Unknown sytem name '${CMAKE_SYSTEM_NAME}'; expecting 'Windows' or 'Linux'")
 endif()
 configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
 
-add_library(config INTERFACE)
-target_sources(config INTERFACE
+add_library(config
     driver_types.h.in
     fdio.linux.h.in
     fdio.windows.h.in
@@ -43,9 +40,7 @@ target_sources(config INTERFACE
     path_limits.windows.h.in
     include/config/port.h
     port_config.h.in
-    string_case_compare.linux.h.in
-    string_case_compare.windows.h.in
-    "${CMAKE_CURRENT_BINARY_DIR}/include/config/string_case_compare.h"
+    include/config/string_case_compare.h string_case_compare.cpp
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/driver_types.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/fdio.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"
@@ -53,7 +48,9 @@ target_sources(config INTERFACE
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/path_limits.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
 )
-target_include_directories(config INTERFACE
+source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
+set_target_properties(config PROPERTIES FOLDER Libraries)
+target_include_directories(config PUBLIC
     include
     "${CMAKE_CURRENT_BINARY_DIR}/include")
 
