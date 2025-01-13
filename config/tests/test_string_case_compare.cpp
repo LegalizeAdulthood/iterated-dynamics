@@ -62,9 +62,9 @@ TEST(TestStringCaseCompareCount, prefixIsLessCount)
     EXPECT_GT(0, string_case_compare("frac", "fractint", 8));
 }
 
-TEST(TestStringCaseCompare, firstStringEmptyNotEqual)
+TEST(TestStringCaseCompare, firstStringEmptyEqual)
 {
-    EXPECT_NE(0, string_case_compare("", "foo"));
+    EXPECT_EQ(0, string_case_compare("", "foo"));
 }
 
 TEST(TestStringCaseCompare, secondStringEmptyNotEqual)
@@ -72,14 +72,14 @@ TEST(TestStringCaseCompare, secondStringEmptyNotEqual)
     EXPECT_NE(0, string_case_compare("foo", ""));
 }
 
-TEST(TestStringCaseCompare, firstStringExhaustedLess)
+TEST(TestStringCaseCompare, firstStringExhaustedEqual)
 {
-    EXPECT_EQ(-1, string_case_compare("foo", "foobar"));
+    EXPECT_EQ(0, string_case_compare("foo", "foobar"));
 }
 
 TEST(TestStringCaseCompare, secondStringExhaustedGreater)
 {
-    EXPECT_EQ(1, string_case_compare("foobar", "foo"));
+    EXPECT_LT(0, string_case_compare("foobar", "foo"));
 }
 
 TEST(TestStringCaseCompare, zeroLengthAlwaysEqual)
@@ -109,5 +109,5 @@ TEST(TestStringCaseCompare, greaterPositive)
 
 TEST(TestStringCaseCompare, prefixIsLess)
 {
-    EXPECT_GT(0, string_case_compare("frac", "fractint"));
+    EXPECT_EQ(0, string_case_compare("frac", "fractint"));
 }

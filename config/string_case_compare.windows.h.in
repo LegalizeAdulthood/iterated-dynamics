@@ -44,18 +44,8 @@ inline int string_case_compare(const char *s, const char *t)
     }
     if (!*s)
     {
-        if (!*t)
-        {
-            // both strings exhausted
-            return 0;
-        }
-        // first string exhausted, equal prefix is less
-        return -1;
-    }
-    if (!*t)
-    {
-        // second string exhausted, equal prefix is greater
-        return 1;
+        // first string exhausted, equal prefix
+        return 0;
     }
     // difference character
     return std::tolower(*s) - std::tolower(*t);
