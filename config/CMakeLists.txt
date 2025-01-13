@@ -40,7 +40,7 @@ add_library(config INTERFACE)
 target_sources(config INTERFACE
     driver_types.h.in
     filelength.io.h.in
-    filelength.unistd.h.in
+    filelength.stat.h.in
     path_limits.linux.h.in
     path_limits.windows.h.in
     port_config.h.in
