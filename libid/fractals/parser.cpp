@@ -2169,7 +2169,7 @@ static ConstArg *is_const(char const *Str, int Len)
     {
         if (s_vars[n].len == Len)
         {
-            if (!string_case_compare(s_vars[n].s, Str, Len))
+            if (string_case_equal(s_vars[n].s, Str, Len))
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
@@ -2306,7 +2306,7 @@ static JumpControlType is_jump(char const *Str, int Len)
 {
     for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++)
     {
-        if ((int) std::strlen(s_jump_list[i]) == Len && string_case_compare(s_jump_list[i], Str, Len) == 0)
+        if ((int) std::strlen(s_jump_list[i]) == Len && string_case_equal(s_jump_list[i], Str, Len))
         {
             return static_cast<JumpControlType>(i + 1);
         }
@@ -2330,7 +2330,7 @@ static int which_fn(char const *s, int len)
     {
         out = 0;
     }
-    else if (string_case_compare(s, "fn", 2))
+    else if (!string_case_equal(s, "fn", 2))
     {
         out = 0;
     }
@@ -2352,7 +2352,7 @@ static FunctionPtr is_func(char const *Str, int Len)
     {
         for (n = 0; n < static_cast<unsigned>(s_func_list.size()); n++)
         {
-            if (!string_case_compare(s_func_list[n].s, Str, Len))
+            if (string_case_equal(s_func_list[n].s, Str, Len))
             {
                 // count function variables
                 int funct_num = which_fn(Str, Len);
@@ -4008,7 +4008,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         constexpr int num_names{s_symmetry_names.size()};
         for (i = 0; i < num_names; i++)
         {
-            if (string_case_compare(s_symmetry_names[i].s, sym_buf) == 0)
+            if (string_case_equal(s_symmetry_names[i].s, sym_buf))
             {
                 g_symmetry = s_symmetry_names[i].n;
                 break;

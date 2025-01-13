@@ -1631,12 +1631,12 @@ rescan:  // entry for changed browse parms
         ExtBlock6 blk_6_info;
         ExtBlock7 blk_7_info;
         if (!find_fractal_info(tmp_mask, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info,
-                &blk_6_info, &blk_7_info)                                              //
-            && (type_ok(&read_info, &blk_3_info) || !g_browse_check_fractal_type)      //
-            && (params_ok(&read_info) || !g_browse_check_fractal_params)               //
-            && string_case_compare(g_browse_name.c_str(), g_dta.filename.c_str()) != 0 //
-            && !blk_6_info.got_data                                                    //
-            && is_visible_window(&win_list, &read_info, &blk_5_info))                  //
+                &blk_6_info, &blk_7_info)                                         //
+            && (type_ok(&read_info, &blk_3_info) || !g_browse_check_fractal_type) //
+            && (params_ok(&read_info) || !g_browse_check_fractal_params)          //
+            && !string_case_equal(g_browse_name.c_str(), g_dta.filename.c_str())  //
+            && !blk_6_info.got_data                                               //
+            && is_visible_window(&win_list, &read_info, &blk_5_info))             //
         {
             win_list.name = g_dta.filename;
             draw_window(color_of_box, &win_list);
@@ -2244,7 +2244,7 @@ static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
     if ((g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP) &&
         (info->fractal_type == +FractalType::FORMULA || info->fractal_type == +FractalType::FORMULA_FP))
     {
-        if (!string_case_compare(blk_3_info->form_name, g_formula_name.c_str()))
+        if (string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
         {
             num_fn = g_max_function;
             if (num_fn > 0)
@@ -2289,7 +2289,7 @@ static void check_history(char const *old_name, char const *new_name)
     //  file_name_stack[].
     for (int i = 0; i < g_filename_stack_index; i++)
     {
-        if (string_case_compare(g_file_name_stack[i].c_str(), old_name) == 0)   // we have a match
+        if (string_case_equal(g_file_name_stack[i].c_str(), old_name))   // we have a match
         {
             g_file_name_stack[i] = new_name;    // insert the new name
         }

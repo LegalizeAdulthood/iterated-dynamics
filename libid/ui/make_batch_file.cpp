@@ -379,9 +379,9 @@ skip_ui:
             char line[256];
             while (file_gets(line, 255, infile) >= 0)
             {
-                if (std::strchr(line, '{')// entry heading?
-                    && std::sscanf(line, " %40[^ \t({]", buf2)
-                    && string_case_compare(buf2, g_command_name.c_str()) == 0)
+                if (std::strchr(line, '{')                     // entry heading?
+                    && std::sscanf(line, " %40[^ \t({]", buf2) //
+                    && string_case_equal(buf2, g_command_name.c_str()))
                 {
                     // entry with same name
                     std::snprintf(buf2, std::size(buf2), "File already has an entry named %s\n%s",

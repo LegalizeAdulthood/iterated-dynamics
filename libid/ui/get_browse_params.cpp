@@ -84,7 +84,7 @@ get_brws_restart:
             g_confirm_file_deletes != old_double_caution ||
             g_smallest_window_display_size != old_smallest_window_display_size ||
             g_smallest_box_size_shown != old_smallest_box_size_shown ||
-            !string_case_compare(g_browse_mask.c_str(), old_browse_mask.c_str()))
+            string_case_equal(g_browse_mask.c_str(), old_browse_mask.c_str()) )
     {
         i = -3;
     }

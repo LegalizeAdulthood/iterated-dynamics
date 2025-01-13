@@ -129,7 +129,7 @@ static void process_speed_string(char *speed_string, //
             int temp = *current;
             while (++temp < num_choices)
             {
-                if (!choices[temp][i] && !string_case_compare(speed_string, choices[temp], i))
+                if (!choices[temp][i] && string_case_equal(speed_string, choices[temp], i))
                 {
                     *current = temp;
                     break;
