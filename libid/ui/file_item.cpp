@@ -13,7 +13,6 @@
 #include "io/split_path.h"
 #include "io/trim_filename.h"
 #include "misc/drivers.h"
-#include "misc/prototyp.h" // for stricmp
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_a_filename.h"
@@ -27,6 +26,7 @@
 #include "ui/text_screen.h"
 
 #include <config/path_limits.h>
+#include <config/string_case_compare.h>
 
 #include <algorithm>
 #include <cctype>
@@ -62,7 +62,7 @@ bool find_file_item(std::string &filename, char const *item_name, std::FILE **fi
 
     split_path(filename, drive, dir, fname, ext);
     make_fname_ext(full_path, fname, ext);
-    if (stricmp(filename.c_str(), g_command_file.c_str()))
+    if (string_case_compare(filename.c_str(), g_command_file.c_str()))
     {
         infile = std::fopen(filename.c_str(), "rb");
         if (infile != nullptr)
@@ -208,7 +208,7 @@ bool find_file_item(std::string &filename, char const *item_name, std::FILE **fi
         fname[1] = (char) 0;
         if (std::isalpha(item_name[0]))
         {
-            if (strnicmp(item_name, "carr", 4))
+            if (string_case_compare(item_name, "carr", 4))
             {
                 fname[1] = item_name[0];
                 fname[2] = (char) 0;
@@ -390,13 +390,13 @@ top:
                 break;
             }
 
-            if (strnicmp(buf, "frm:", 4) == 0 ||
-                    strnicmp(buf, "ifs:", 4) == 0 ||
-                    strnicmp(buf, "par:", 4) == 0)
+            if (string_case_compare(buf, "frm:", 4) == 0    //
+                || string_case_compare(buf, "ifs:", 4) == 0 //
+                || string_case_compare(buf, "par:", 4) == 0)
             {
                 exclude_entry = 4;
             }
-            else if (strnicmp(buf, "lsys:", 5) == 0)
+            else if (string_case_compare(buf, "lsys:", 5) == 0)
             {
                 exclude_entry = 5;
             }
@@ -408,7 +408,7 @@ top:
             buf[ITEM_NAME_LEN + exclude_entry] = 0;
             if (item_name != nullptr)  // looking for one entry
             {
-                if (stricmp(buf, item_name) == 0)
+                if (string_case_compare(buf, item_name) == 0)
                 {
                     std::fseek(infile, name_offset + (long) exclude_entry, SEEK_SET);
                     return -1;
@@ -416,7 +416,7 @@ top:
             }
             else // make a whole list of entries
             {
-                if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
+                if (buf[0] != 0 && string_case_compare(buf, "comment") != 0 && !exclude_entry)
                 {
                     std::strcpy(choices[num_entries].name, buf);
                     choices[num_entries].point = name_offset;

@@ -18,7 +18,6 @@
 #include "fractals/popcorn.h"
 #include "math/mpmath.h"
 #include "misc/debug_flags.h"
-#include "misc/prototyp.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/trig_fns.h"

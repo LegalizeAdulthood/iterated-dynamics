@@ -32,7 +32,6 @@
 #include "misc/debug_flags.h"
 #include "misc/drivers.h"
 #include "misc/id.h"
-#include "misc/prototyp.h" // stricmp
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "ui/ChoiceBuilder.h"
@@ -45,6 +44,8 @@
 #include "ui/stop_msg.h"
 #include "ui/trig_fns.h"
 #include "ui/video_mode.h"
+
+#include <config/string_case_compare.h>
 
 #include <algorithm>
 #include <cctype>
@@ -380,7 +381,7 @@ skip_ui:
             {
                 if (std::strchr(line, '{')// entry heading?
                     && std::sscanf(line, " %40[^ \t({]", buf2)
-                    && stricmp(buf2, g_command_name.c_str()) == 0)
+                    && string_case_compare(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
                     std::snprintf(buf2, std::size(buf2), "File already has an entry named %s\n%s",

@@ -12,7 +12,6 @@
 #include "helpdefs.h"
 #include "io/loadfile.h"
 #include "misc/drivers.h"
-#include "misc/prototyp.h"
 #include "ui/cmdfiles.h"
 #include "ui/read_ticker.h"
 #include "ui/slideshw.h"

@@ -4,12 +4,13 @@
 
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "misc/prototyp.h" // for stricmp
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/id_keys.h"
+
+#include <config/string_case_compare.h>
 
 #include <algorithm>
 #include <string>
@@ -83,7 +84,7 @@ get_brws_restart:
             g_confirm_file_deletes != old_double_caution ||
             g_smallest_window_display_size != old_smallest_window_display_size ||
             g_smallest_box_size_shown != old_smallest_box_size_shown ||
-            !stricmp(g_browse_mask.c_str(), old_browse_mask.c_str()))
+            !string_case_compare(g_browse_mask.c_str(), old_browse_mask.c_str()))
     {
         i = -3;
     }

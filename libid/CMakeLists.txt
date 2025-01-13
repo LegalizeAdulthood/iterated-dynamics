@@ -142,10 +142,8 @@ add_library(libid
     include/misc/id.h
     include/misc/memory.h misc/memory.cpp
     include/misc/os.h
-    include/misc/prototyp.h
     include/misc/sized_types.h
     include/misc/stack_avail.h
-    include/misc/unixprot.h
     include/misc/ValueSaver.h
     include/misc/version.h misc/version.cpp
 

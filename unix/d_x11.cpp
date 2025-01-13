@@ -22,7 +22,6 @@
 #include "math/fixed_pt.h"
 #include "misc/drivers.h"
 #include "misc/os.h"
-#include "misc/prototyp.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
