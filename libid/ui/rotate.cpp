@@ -12,7 +12,6 @@
 #include "io/save_file.h"
 #include "math/rand15.h"
 #include "misc/drivers.h"
-#include "misc/id.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
@@ -20,6 +19,8 @@
 #include "ui/get_a_filename.h"
 #include "ui/id_keys.h"
 #include "ui/spindac.h"
+
+#include <config/path_limits.h>
 
 #include <algorithm>
 #include <cstdio>
@@ -577,7 +578,7 @@ static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 
 void save_palette()
 {
-    char pal_name[FILE_MAX_PATH];
+    char pal_name[ID_FILE_MAX_PATH];
     std::strcpy(pal_name, g_map_name.c_str());
     driver_stack_screen();
     char filename[256]{};

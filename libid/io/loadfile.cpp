@@ -46,6 +46,7 @@
 #include "ui/trig_fns.h"
 #include "ui/zoom.h"
 
+#include <config/path_limits.h>
 #include <config/port.h>
 
 #include <algorithm>
@@ -1554,11 +1555,11 @@ int file_get_window()
     int toggle;
     int color_of_box;
     Window win_list;
-    char drive[FILE_MAX_DRIVE];
-    char dir[FILE_MAX_DIR];
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    char tmp_mask[FILE_MAX_PATH];
+    char drive[ID_FILE_MAX_DRIVE];
+    char dir[ID_FILE_MAX_DIR];
+    char fname[ID_FILE_MAX_FNAME];
+    char ext[ID_FILE_MAX_EXT];
+    char tmp_mask[ID_FILE_MAX_PATH];
     int vid_too_big = 0;
     int saved;
 

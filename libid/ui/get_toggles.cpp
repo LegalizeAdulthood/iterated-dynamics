@@ -7,9 +7,10 @@
 #include "engine/log_map.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
-#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"
+
+#include <config/path_limits.h>
 
 #include <algorithm>
 #include <cstdlib>
@@ -34,7 +35,7 @@
 int get_toggles()
 {
     char const *choices[20];
-    char prev_save_name[FILE_MAX_DIR + 1];
+    char prev_save_name[ID_FILE_MAX_DIR + 1];
     FullScreenValues values[25];
     int old_sound_flag;
     char const *calc_modes[] = {

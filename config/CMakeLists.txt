@@ -31,16 +31,27 @@ else()
 endif()
 configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    configure_file(path_limits.windows.h.in include/config/path_limits.h @ONLY)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    configure_file(path_limits.linux.h.in include/config/path_limits.h @ONLY)
+else()
+    message(FATAL_ERROR "Unknown sytem name '${CMAKE_SYSTEM_NAME}'; expecting 'Windows' or 'Linux'")
+endif()
+
 add_library(config INTERFACE)
 target_sources(config INTERFACE
     driver_types.h.in
     filelength.io.h.in
     filelength.unistd.h.in
+    path_limits.linux.h.in
+    path_limits.windows.h.in
     port_config.h.in
     include/config/port.h
     include/config/string_case_compare.h
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/driver_types.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/config/path_limits.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
 )
 target_include_directories(config INTERFACE

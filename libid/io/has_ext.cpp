@@ -3,7 +3,8 @@
 #include "io/has_ext.h"
 
 #include "io/split_path.h"
-#include "misc/id.h"
+
+#include <config/path_limits.h>
 
 #include <cstring>
 
@@ -11,8 +12,8 @@
 // returns pointer to period or nullptr
 char const *has_ext(char const *source)
 {
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT]{};
+    char fname[ID_FILE_MAX_FNAME];
+    char ext[ID_FILE_MAX_EXT]{};
     split_fname_ext(source, fname, ext);
     char const *ret = nullptr;
     if (ext[0] != 0)

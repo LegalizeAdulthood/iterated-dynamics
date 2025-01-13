@@ -18,9 +18,9 @@
 #include <cstdlib>
 #include <cstring>
 
-#define FILE_MAX_DIR   256       // max length of directory name
-#define FILE_MAX_FNAME  9       // max length of filename
-#define FILE_MAX_EXT    5       // max length of extension
+#define ID_FILE_MAX_DIR   256       // max length of directory name
+#define ID_FILE_MAX_FNAME  9       // max length of filename
+#define ID_FILE_MAX_EXT    5       // max length of extension
 
 /*
  *----------------------------------------------------------------------

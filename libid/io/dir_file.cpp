@@ -2,7 +2,7 @@
 //
 #include "io/dir_file.h"
 
-#include "misc/id.h"
+#include <config/path_limits.h>
 
 #include <cstdio>
 #include <cstring>
@@ -20,7 +20,7 @@ static void dir_name(char *target, char const *dir, char const *name)
 // removes file in dir directory
 int dir_remove(char const *dir, char const *filename)
 {
-    char tmp[FILE_MAX_PATH];
+    char tmp[ID_FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
     return std::remove(tmp);
 }
@@ -28,7 +28,7 @@ int dir_remove(char const *dir, char const *filename)
 // fopens file in dir directory
 std::FILE *dir_fopen(char const *dir, char const *filename, char const *mode)
 {
-    char tmp[FILE_MAX_PATH];
+    char tmp[ID_FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
     return std::fopen(tmp, mode);
 }

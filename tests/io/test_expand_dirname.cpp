@@ -5,7 +5,7 @@
 #include "CurrentPathSaver.h"
 #include "test_data.h"
 
-#include <misc/id.h>
+#include <config/path_limits.h>
 
 #include <gtest/gtest.h>
 
@@ -26,8 +26,8 @@ protected:
 
     fs::path m_test_data_dir{ID_TEST_DATA_DIR};
     fs::path m_test_data_subdir{ID_TEST_DATA_SUBDIR};
-    char m_dir_name[FILE_MAX_PATH]{};
-    char m_drive[FILE_MAX_PATH]{};
+    char m_dir_name[ID_FILE_MAX_PATH]{};
+    char m_drive[ID_FILE_MAX_PATH]{};
     char m_sep{fs::path::preferred_separator};
 };
 

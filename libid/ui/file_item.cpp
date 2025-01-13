@@ -13,7 +13,6 @@
 #include "io/split_path.h"
 #include "io/trim_filename.h"
 #include "misc/drivers.h"
-#include "misc/id.h"
 #include "misc/prototyp.h" // for stricmp
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
@@ -26,6 +25,8 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/text_screen.h"
+
+#include <config/path_limits.h>
 
 #include <algorithm>
 #include <cctype>
@@ -52,11 +53,11 @@ bool find_file_item(std::string &filename, char const *item_name, std::FILE **fi
 {
     std::FILE *infile = nullptr;
     bool found = false;
-    char drive[FILE_MAX_DRIVE];
-    char dir[FILE_MAX_DIR];
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    char full_path[FILE_MAX_PATH];
+    char drive[ID_FILE_MAX_DRIVE];
+    char dir[ID_FILE_MAX_DIR];
+    char fname[ID_FILE_MAX_FNAME];
+    char ext[ID_FILE_MAX_EXT];
+    char full_path[ID_FILE_MAX_PATH];
     char default_extension[5];
 
     split_path(filename, drive, dir, fname, ext);

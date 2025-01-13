@@ -5,7 +5,7 @@
 #include "CurrentPathSaver.h"
 #include "test_data.h"
 
-#include <misc/id.h>
+#include <config/path_limits.h>
 
 #include <gtest/gtest.h>
 
@@ -21,10 +21,10 @@ class TestSplitPath : public ::testing::Test
 {
 protected:
     fs::path m_file_template;
-    char m_drive[FILE_MAX_PATH]{};
-    char m_dir[FILE_MAX_PATH]{};
-    char m_filename[FILE_MAX_PATH]{};
-    char m_ext[FILE_MAX_PATH]{};
+    char m_drive[ID_FILE_MAX_PATH]{};
+    char m_dir[ID_FILE_MAX_PATH]{};
+    char m_filename[ID_FILE_MAX_PATH]{};
+    char m_ext[ID_FILE_MAX_PATH]{};
 };
 
 }

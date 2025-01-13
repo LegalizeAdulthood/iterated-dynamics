@@ -2,20 +2,6 @@
 //
 #pragma once
 
-// these are used to declare arrays for file names
-#if defined(_WIN32)
-#define FILE_MAX_PATH _MAX_PATH
-#define FILE_MAX_DIR _MAX_DIR
-#else
-#ifdef XFRACT
-#define FILE_MAX_PATH  256       // max length of path+filename
-#define FILE_MAX_DIR   256       // max length of directory name
-#else
-#define FILE_MAX_PATH  80       // max length of path+filename
-#define FILE_MAX_DIR   80       // max length of directory name
-#endif
-#endif
-
 //
 // The filename limits were increased in Xfract 3.02. But alas,
 // in this poor program that was originally developed on the
@@ -25,9 +11,6 @@
 //
 enum
 {
-    FILE_MAX_DRIVE = 3,  // max length of drive letter
-    FILE_MAX_FNAME = 64, // max length of filename
-    FILE_MAX_EXT = 64,   // max length of extension
     MSG_LEN = 80,        // handy buffer size for messages
     MAX_PARAMS = 10      // maximum number of parameters
 };

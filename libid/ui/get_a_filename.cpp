@@ -21,6 +21,8 @@
 #include "ui/shell_sort.h"
 #include "ui/stereo.h"
 
+#include <config/path_limits.h>
+
 #include <cstring>
 
 // speed key state values
@@ -41,7 +43,7 @@ namespace
 
 struct Choice
 {
-    char full_name[FILE_MAX_PATH];
+    char full_name[ID_FILE_MAX_PATH];
     bool sub_dir;
 };
 
@@ -55,13 +57,13 @@ static char const *s_masks[]{"*.pot", "*.gif"};
 
 bool get_a_file_name(char const *hdg, char const *file_template, std::string &result_filename)
 {
-    char user_file_template[FILE_MAX_PATH]{};
+    char user_file_template[ID_FILE_MAX_PATH]{};
     // if getting an RDS image map
     char instr[80];
-    char filename[FILE_MAX_PATH];
+    char filename[ID_FILE_MAX_PATH];
     char speed_str[81];
-    char tmp_mask[FILE_MAX_PATH];   // used to locate next file in list
-    char old_file_name[FILE_MAX_PATH];
+    char tmp_mask[ID_FILE_MAX_PATH];   // used to locate next file in list
+    char old_file_name[ID_FILE_MAX_PATH];
     // Only the first 13 characters of file names are displayed...
     Choice storage[MAX_NUM_FILES];
     Choice *choices[MAX_NUM_FILES];
@@ -69,10 +71,10 @@ bool get_a_file_name(char const *hdg, char const *file_template, std::string &re
     // how many files
     // how many directories
     // not the root directory
-    char drive[FILE_MAX_DRIVE];
-    char dir[FILE_MAX_DIR];
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
+    char drive[ID_FILE_MAX_DRIVE];
+    char dir[ID_FILE_MAX_DIR];
+    char fname[ID_FILE_MAX_FNAME];
+    char ext[ID_FILE_MAX_EXT];
 
     static int num_templates = 1;
     static bool do_sort = true;
@@ -314,10 +316,10 @@ retry_dir:
             /* extract from tempstr the pathname and template information,
                 being careful not to overwrite drive and directory if not
                 newly specified */
-            char drive1[FILE_MAX_DRIVE];
-            char dir1[FILE_MAX_DIR];
-            char fname1[FILE_MAX_FNAME];
-            char ext1[FILE_MAX_EXT];
+            char drive1[ID_FILE_MAX_DRIVE];
+            char dir1[ID_FILE_MAX_DIR];
+            char fname1[ID_FILE_MAX_FNAME];
+            char ext1[ID_FILE_MAX_EXT];
             split_path(speed_str, drive1, dir1, fname1, ext1);
             if (drive1[0])
             {

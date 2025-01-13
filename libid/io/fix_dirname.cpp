@@ -2,8 +2,7 @@
 //
 #include "io/fix_dirname.h"
 
-#include "misc/id.h"
-
+#include <config/path_limits.h>
 #include <config/port.h>
 
 #include <cstring>
@@ -26,7 +25,7 @@ void fix_dir_name(char *dirname)
 
 void fix_dir_name(std::string &dirname)
 {
-    char buff[FILE_MAX_PATH];
+    char buff[ID_FILE_MAX_PATH];
     std::strcpy(buff, dirname.c_str());
     fix_dir_name(buff);
     dirname = buff;

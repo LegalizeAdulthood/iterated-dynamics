@@ -11,6 +11,7 @@
 #include <3d/3d.h>
 #include <3d/line3d.h>
 #include <3d/plot3d.h>
+#include <config/path_limits.h>
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
@@ -454,7 +455,7 @@ TEST_F(TestParameterCommand, filenameExtension)
 TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
-    const std::string too_long{"filename=" + std::string(FILE_MAX_PATH, 'f') + ".gif"};
+    const std::string too_long{"filename=" + std::string(ID_FILE_MAX_PATH, 'f') + ".gif"};
 
     exec_cmd_arg(too_long);
 
@@ -465,7 +466,7 @@ TEST_F(TestParameterCommandError, filenameValueTooLong)
 TEST_F(TestParameterCommandError, mapTooLong)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
-    const std::string too_long{"map=" + std::string(FILE_MAX_PATH, 'f') + ".map"};
+    const std::string too_long{"map=" + std::string(ID_FILE_MAX_PATH, 'f') + ".map"};
 
     exec_cmd_arg(too_long, CmdFile::SSTOOLS_INI);
 

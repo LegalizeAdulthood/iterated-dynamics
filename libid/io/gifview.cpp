@@ -33,6 +33,8 @@
 #include "ui/stereo.h"
 #include "ui/video.h"
 
+#include <config/path_limits.h>
+
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
@@ -92,7 +94,7 @@ int gif_view()
     Byte buffer[16];
     unsigned top;
     unsigned left;
-    char temp1[FILE_MAX_DIR];
+    char temp1[ID_FILE_MAX_DIR];
     Byte byte_buf[257]; // for decoder
 
     // using stack for decoder byte buf rather than static mem

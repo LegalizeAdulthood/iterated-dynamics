@@ -5,11 +5,11 @@
 #include "io/find_path.h"
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"
-#include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/stop_msg.h"
 
+#include <config/path_limits.h>
 #include <config/port.h>
 
 #include <array> // std::size
@@ -37,8 +37,8 @@ bool validate_luts(char const *map_name)
     unsigned r;
     unsigned g;
     unsigned b;
-    char    temp[FILE_MAX_PATH+1];
-    char    temp_fn[FILE_MAX_PATH];
+    char    temp[ID_FILE_MAX_PATH+1];
+    char    temp_fn[ID_FILE_MAX_PATH];
     std::strcpy(temp, g_map_name.c_str());
     std::strcpy(temp_fn, map_name);
     merge_path_names(temp, temp_fn, CmdFile::AT_CMD_LINE);

@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from path_limits.windows.h.in
+//
+#pragma once
+
+#include <cstdlib>
+
+// these are used to declare arrays for file names
+constexpr int ID_FILE_MAX_PATH{_MAX_PATH}; // max length of path+filename
+constexpr int ID_FILE_MAX_DIR{_MAX_DIR};   // max length of directory name
+
+enum
+{
+    ID_FILE_MAX_DRIVE = 3,  // max length of drive letter
+    ID_FILE_MAX_FNAME = 64, // max length of filename
+    ID_FILE_MAX_EXT = 64,   // max length of extension
+};
