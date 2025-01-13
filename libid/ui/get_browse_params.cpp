@@ -74,17 +74,16 @@ get_brws_restart:
     g_smallest_box_size_shown = choices.read_int_number();
     g_smallest_box_size_shown = std::max(g_smallest_box_size_shown, 1);
     g_smallest_box_size_shown = std::min(g_smallest_box_size_shown, 10);
-
     g_browse_mask = choices.read_string();
 
     i = 0;
-    if (g_auto_browse != old_auto_browse ||
-            g_browse_check_fractal_type != old_browse_check_fractal_type ||
-            g_browse_check_fractal_params != old_browse_check_params ||
-            g_confirm_file_deletes != old_double_caution ||
-            g_smallest_window_display_size != old_smallest_window_display_size ||
-            g_smallest_box_size_shown != old_smallest_box_size_shown ||
-            string_case_equal(g_browse_mask.c_str(), old_browse_mask.c_str()) )
+    if (g_auto_browse != old_auto_browse                                      //
+        || g_browse_check_fractal_type != old_browse_check_fractal_type       //
+        || g_browse_check_fractal_params != old_browse_check_params           //
+        || g_confirm_file_deletes != old_double_caution                       //
+        || g_smallest_window_display_size != old_smallest_window_display_size //
+        || g_smallest_box_size_shown != old_smallest_box_size_shown           //
+        || g_browse_mask != old_browse_mask)
     {
         i = -3;
     }
