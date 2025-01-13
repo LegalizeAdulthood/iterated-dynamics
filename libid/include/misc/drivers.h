@@ -118,22 +118,6 @@ public:
     virtual void get_cursor_pos(int &x, int &y) const = 0; // get cursor position within frame
 };
 
-/* Define the drivers to be included in the compilation:
-    HAVE_CURSES_DRIVER      Curses based disk driver (no current implementation)
-    HAVE_X11_DRIVER         X11 code path
-    HAVE_GDI_DRIVER         Win32 GDI driver
-    HAVE_WIN32_DISK_DRIVER  Win32 disk driver
-*/
-#if defined(XFRACT)
-#define HAVE_X11_DRIVER         1
-#define HAVE_GDI_DRIVER         0
-#define HAVE_WIN32_DISK_DRIVER  0
-#endif
-#if defined(_WIN32)
-#define HAVE_X11_DRIVER         0
-#define HAVE_GDI_DRIVER         1
-#define HAVE_WIN32_DISK_DRIVER  1
-#endif
 void load_driver(Driver *drv, int *argc, char **argv);
 int init_drivers(int *argc, char **argv);
 void add_video_mode(Driver *drv, VideoInfo *mode);

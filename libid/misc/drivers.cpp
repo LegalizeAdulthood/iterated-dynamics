@@ -4,11 +4,19 @@
 
 #include "ui/video_mode.h"
 
+#include <config/driver_types.h>
+
 #include <cstring>
 
+#if ID_HAVE_X11_DRIVER
 extern Driver *x11_driver;
+#endif
+#if ID_HAVE_GDI_DRIVER
 extern Driver *g_gdi_driver;
+#endif
+#if ID_HAVE_WIN32_DISK_DRIVER
 extern Driver *g_disk_driver;
+#endif
 
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
@@ -45,15 +53,15 @@ void load_driver(Driver *drv, int *argc, char **argv)
 //
 int init_drivers(int *argc, char **argv)
 {
-#if HAVE_X11_DRIVER
+#if ID_HAVE_X11_DRIVER
     load_driver(x11_driver, argc, argv);
 #endif
 
-#if HAVE_WIN32_DISK_DRIVER
+#if ID_HAVE_WIN32_DISK_DRIVER
     load_driver(g_disk_driver, argc, argv);
 #endif
 
-#if HAVE_GDI_DRIVER
+#if ID_HAVE_GDI_DRIVER
     load_driver(g_gdi_driver, argc, argv);
 #endif
 

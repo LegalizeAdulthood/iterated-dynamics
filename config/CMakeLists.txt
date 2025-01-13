@@ -17,15 +17,31 @@ else()
     message(FATAL_ERROR "Couldn't find suitable filelength function")
 endif()
 
+set(ID_HAVE_CURSES_DRIVER OFF)
+set(ID_HAVE_X11_DRIVER OFF)
+set(ID_HAVE_GDI_DRIVER OFF)
+set(ID_HAVE_WIN32_DISK_DRIVER OFF)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(ID_HAVE_GDI_DRIVER ON)
+    set(ID_HAVE_WIN32_DISK_DRIVER ON)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(ID_HAVE_X11_DRIVER ON)
+else()
+    message(FATAL_ERROR "Unknown sytem name '${CMAKE_SYSTEM_NAME}'; expecting 'Windows' or 'Linux'")
+endif()
+configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
+
 add_library(config INTERFACE)
 target_sources(config INTERFACE
+    driver_types.h.in
     filelength.io.h.in
     filelength.unistd.h.in
     port_config.h.in
     include/config/port.h
     include/config/string_case_compare.h
-    "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/config/driver_types.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
 )
 target_include_directories(config INTERFACE
     include
