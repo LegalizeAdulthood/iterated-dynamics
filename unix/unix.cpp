@@ -135,28 +135,6 @@ strupr(char *s)
     return s;
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * filelength --
- *
- *      Find length of a file.
- *
- * Results:
- *      Length.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
-int filelength(int fd)
-{
-    struct stat buf;
-    fstat(fd, &buf);
-    return buf.st_size;
-}
-
 // tenths of millisecond timer routine
 static struct timeval tv_start;
 

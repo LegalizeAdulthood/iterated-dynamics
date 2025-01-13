@@ -6,5 +6,12 @@
 //
 #pragma once
 
-// for filelength
-#include <unistd.h>
+#include <sys/stat.h>
+
+// filelength -- Find length of a file associated with a descriptor.
+inline int filelength(int fd)
+{
+    stat buf;
+    fstat(fd, &buf);
+    return buf.st_size;
+}
