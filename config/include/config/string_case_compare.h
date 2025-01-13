@@ -2,12 +2,13 @@
 //
 #pragma once
 
+#include <cstring>
+
 #ifdef ID_HAVE_STRNCASECMP
 #include <strings.h>
 
 #else
 #include <cctype>
-#include <cstring>
 
 // case independent version of std::strncmp
 inline int strncasecmp(char const *s, char const *t, std::size_t ct)
@@ -32,3 +33,13 @@ inline int strcasecmp(const char *s, const char *t)
 }
 
 #endif
+
+inline int string_case_compare(char const *s, char const *t, std::size_t ct)
+{
+    return strncasecmp(s, t, ct);
+}
+
+inline int string_case_compare(const char *s, const char *t)
+{
+    return strncasecmp(s, t, std::strlen(s));
+}

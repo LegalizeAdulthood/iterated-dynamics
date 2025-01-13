@@ -105,7 +105,7 @@ static void process_speed_string(char *speed_string, //
         *current = 0;
         int comp_result;
         while (*current < num_choices
-            && (comp_result = strncasecmp(speed_string, choices[*current], i)) != 0)
+            && (comp_result = string_case_compare(speed_string, choices[*current], i)) != 0)
         {
             if (comp_result < 0 && !is_unsorted)
             {
@@ -129,7 +129,7 @@ static void process_speed_string(char *speed_string, //
             int temp = *current;
             while (++temp < num_choices)
             {
-                if (!choices[temp][i] && !strncasecmp(speed_string, choices[temp], i))
+                if (!choices[temp][i] && !string_case_compare(speed_string, choices[temp], i))
                 {
                     *current = temp;
                     break;
@@ -182,7 +182,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         if (bit_set(flags, ChoiceFlags::NOT_SORTED))
         {
             int k;
-            while (current < num_choices && (k = strncasecmp(speed_string, choices[current], speed_len)) != 0)
+            while (current < num_choices && (k = string_case_compare(speed_string, choices[current], speed_len)) != 0)
             {
                 ++current;
             }
@@ -194,7 +194,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         else
         {
             int k;
-            while (current < num_choices && (k = strncasecmp(speed_string, choices[current], speed_len)) > 0)
+            while (current < num_choices && (k = string_case_compare(speed_string, choices[current], speed_len)) > 0)
             {
                 ++current;
             }

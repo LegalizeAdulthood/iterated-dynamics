@@ -8,51 +8,51 @@ TEST(TestStringCaseCompare, firstStringEmpty)
 {
     char buffer[80]{"foo"};
     
-    EXPECT_NE(0, strncasecmp("", buffer, sizeof(buffer)));
+    EXPECT_NE(0, string_case_compare("", buffer, sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompare, secondStringEmpty)
 {
     char buffer[80]{"foo"};
     
-    EXPECT_NE(0, strncasecmp(buffer, "", sizeof(buffer)));
+    EXPECT_NE(0, string_case_compare(buffer, "", sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompare, firstStringExhaustedEqual)
 {
     char buffer[]{"foo"};
     
-    EXPECT_EQ(0, strncasecmp(buffer, "foobar", sizeof(buffer) - 1));
+    EXPECT_EQ(0, string_case_compare(buffer, "foobar", sizeof(buffer) - 1));
 }
 
 TEST(TestStringCaseCompare, secondStringExhaustedEqual)
 {
     char buffer[]{"foo"};
     
-    EXPECT_EQ(0, strncasecmp("foobar", buffer, sizeof(buffer) - 1));
+    EXPECT_EQ(0, string_case_compare("foobar", buffer, sizeof(buffer) - 1));
 }
 
 TEST(TestStringCaseCompare, zeroLengthAlwaysEqual)
 {
-    EXPECT_EQ(0, strncasecmp("foo", "bar", 0));
+    EXPECT_EQ(0, string_case_compare("foo", "bar", 0));
 }
 
 TEST(TestStringCaseCompare, differOnlyByCaseEqual)
 {
-    EXPECT_EQ(0, strncasecmp("foo", "FoO", 3));
+    EXPECT_EQ(0, string_case_compare("foo", "FoO", 3));
 }
 
 TEST(TestStringCaseCompare, differNotZero)
 {
-    EXPECT_NE(0, strncasecmp("foo", "bar", 3));
+    EXPECT_NE(0, string_case_compare("foo", "bar", 3));
 }
 
 TEST(TestStringCaseCompare, lessNegative)
 {
-    EXPECT_GT(0, strncasecmp("bar", "foo", 3));
+    EXPECT_GT(0, string_case_compare("bar", "foo", 3));
 }
 
 TEST(TestStringCaseCompare, greaterPositive)
 {
-    EXPECT_LT(0, strncasecmp("foo", "bar", 3));
+    EXPECT_LT(0, string_case_compare("foo", "bar", 3));
 }
