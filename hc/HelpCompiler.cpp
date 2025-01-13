@@ -9,7 +9,9 @@
 #include "HelpSource.h"
 #include "messages.h"
 
+#include <config/fdio.h>
 #include <config/filelength.h>
+#include <config/getpid.h>
 #include <config/port.h>
 #include <helpcom.h>
 
@@ -29,21 +31,10 @@
 #include <utility>
 #include <vector>
 
-// for getpid
-#ifdef WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-#endif
-
 namespace fs = std::filesystem;
 
 #if !defined(O_BINARY)
 #define O_BINARY 0
-#endif
-
-#ifdef XFRACT
-extern int filelength(int);
 #endif
 
 #if defined(_WIN32)

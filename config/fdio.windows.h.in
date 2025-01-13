@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from fdio.windows.h.in
+//
+#pragma once
+
+// POSIX file-descriptor style I/O functions
+#include <corecrt_io.h>

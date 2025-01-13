@@ -14,19 +14,14 @@
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 
+#include <config/getpid.h>
+
 #include <cinttypes>
 #include <climits>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
-
-// for getpid
-#ifdef WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-#endif
 
 // Memory allocation routines.
 

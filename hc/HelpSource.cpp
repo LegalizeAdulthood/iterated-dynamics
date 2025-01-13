@@ -5,6 +5,7 @@
 #include "messages.h"
 #include "modes.h"
 
+#include <config/fdio.h>
 #include <config/filelength.h>
 #include <config/port.h>
 #include <helpcom.h>
@@ -17,7 +18,6 @@
 #include <system_error>
 
 #ifdef XFRACT
-#include <unistd.h>
 #ifndef HAVESTRI
 extern int stricmp(char const *, char const *);
 extern int strnicmp(char const *, char const *, int);

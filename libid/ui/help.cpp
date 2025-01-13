@@ -17,6 +17,7 @@
 #include "ui/stop_msg.h"
 #include "ui/text_screen.h"
 
+#include <config/fdio.h>
 #include <config/filelength.h>
 #include <config/port.h>
 
