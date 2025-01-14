@@ -666,12 +666,6 @@ top:
     put_string_center(
         24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
     driver_hide_text_cursor();
-#ifdef XFRACT
-    while (driver_key_pressed())
-    {
-        driver_get_key();
-    }
-#endif
     key = get_a_key_no_help();
     if (key == ID_KEY_F6)
     {

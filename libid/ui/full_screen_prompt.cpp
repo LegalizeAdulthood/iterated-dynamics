@@ -358,21 +358,12 @@ int full_screen_prompt(        // full-screen prompting routine
     // display extra info
     if (extra_info)
     {
-#ifndef XFRACT
 #define S1 '\xC4'
 #define S2 "\xC0"
 #define S3 "\xD9"
 #define S4 "\xB3"
 #define S5 "\xDA"
 #define S6 "\xBF"
-#else
-#define S1 '-'
-#define S2 "+" // ll corner
-#define S3 "+" // lr corner
-#define S4 "|"
-#define S5 "+" // ul corner
-#define S6 "+" // ur corner
-#endif
         char buf[81];
         std::memset(buf, S1, 80);
         buf[box_width-2] = 0;

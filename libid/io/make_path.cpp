@@ -11,12 +11,10 @@ std::string make_path(char const *drive, char const *dir, char const *fname, cha
 {
     fs::path result;
     auto not_empty = [](const char *ptr) { return ptr != nullptr && ptr[0] != 0; };
-#ifndef XFRACT
     if (not_empty(drive))
     {
         result = drive;
     }
-#endif
     if (not_empty(dir))
     {
         result /= dir;

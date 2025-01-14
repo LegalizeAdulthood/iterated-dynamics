@@ -485,21 +485,6 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
 
         driver_wait_key_pressed(0); // enables help
         int key = driver_get_key();
-#ifdef XFRACT
-        if (key == ID_KEY_F10)
-        {
-            key = ')';
-        }
-        if (key == ID_KEY_F9)
-        {
-            key = '(';
-        }
-        if (key == ID_KEY_F8)
-        {
-            key = '*';
-        }
-#endif
-
         {
             int i = current - top_left_choice;           // unhighlight current choice
             int k = attributes[current] & 3;

@@ -797,10 +797,6 @@ void jiim(JIIMType which)
                         s_window_style = JuliaWindowStyle::FULL_SCREEN;
                     }
                     break;
-#ifdef XFRACT
-                case ID_KEY_ENTER:
-                    break;
-#endif
                 case '0':
                 case '1':
                 case '2':
@@ -829,15 +825,6 @@ void jiim(JIIMType which)
                 }
                 g_col += d_col;
                 g_row += d_row;
-#ifdef XFRACT
-                if (key == ID_KEY_ENTER)
-                {
-                    // We want to use the position of the cursor
-                    exact = false;
-                    g_col = s_cursor.get_x();
-                    g_row = s_cursor.get_y();
-                }
-#endif
 
                 // keep cursor in logical screen
                 if (g_col >= g_logical_screen_x_dots)

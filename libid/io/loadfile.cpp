@@ -1674,9 +1674,6 @@ rescan:  // entry for changed browse parms
         {
             char msg[40];
             char old_name[60];
-#ifdef XFRACT
-            U32 blinks = 1;
-#endif
             while (!driver_key_pressed())
             {
                 std::time(&this_time);
@@ -1693,16 +1690,7 @@ rescan:  // entry for changed browse parms
                 {
                     draw_window(g_color_dark, &win_list);
                 }
-#ifdef XFRACT
-                blinks++;
-#endif
             }
-#ifdef XFRACT
-            if ((blinks & 1) == 1)     // Need an odd # of blinks, so next one leaves box turned off
-            {
-                draw_window(g_color_bright, &win_list);
-            }
-#endif
 
             c = driver_get_key();
             switch (c)
@@ -1761,10 +1749,6 @@ rescan:  // entry for changed browse parms
             case ID_KEY_ESC:
             case 'l':
             case 'L':
-#ifdef XFRACT
-                // Need all boxes turned on, turn last one back on.
-                draw_window(g_color_bright, &win_list);
-#endif
                 g_auto_browse = false;
                 done = 2;
                 break;
