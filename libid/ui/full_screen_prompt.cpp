@@ -441,31 +441,31 @@ void Prompt::display_extra_info()
 {
     if (extra_info)
     {
-#define S1 '\xC4'
-#define S2 "\xC0"
-#define S3 "\xD9"
-#define S4 "\xB3"
-#define S5 "\xDA"
-#define S6 "\xBF"
+        constexpr char HORIZ_LINE{'\xC4'};
+        constexpr const char *LOWER_LEFT{"\xC0"};
+        constexpr const char *LOWER_RIGHT{"\xD9"};
+        constexpr const char *VERT_LINE{"\xB3"};
+        constexpr const char *UPPER_LEFT{"\xDA"};
+        constexpr const char *UPPER_RIGHT{"\xBF"};
         char buf[81];
-        std::memset(buf, S1, 80);
+        std::memset(buf, HORIZ_LINE, 80);
         buf[box_width - 2] = 0;
         g_text_col_base = box_col + 1;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, buf);
         driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, buf);
         --g_text_col_base;
-        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S5);
-        driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, S2);
+        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, UPPER_LEFT);
+        driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, LOWER_LEFT);
         g_text_col_base += box_width - 1;
-        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S6);
-        driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, S3);
+        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, UPPER_RIGHT);
+        driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, LOWER_RIGHT);
 
         g_text_col_base = box_col;
 
         for (int i = 1; i < extra_lines - 1; ++i)
         {
-            driver_put_string(extra_row + i, 0, C_PROMPT_BKGRD, S4);
-            driver_put_string(extra_row + i, box_width - 1, C_PROMPT_BKGRD, S4);
+            driver_put_string(extra_row + i, 0, C_PROMPT_BKGRD, VERT_LINE);
+            driver_put_string(extra_row + i, box_width - 1, C_PROMPT_BKGRD, VERT_LINE);
         }
         g_text_col_base += (box_width - extra_width) / 2;
         const std::string extra_text{extra_info};
