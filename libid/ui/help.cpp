@@ -326,22 +326,6 @@ static void color_link(Link *link, int color)
     g_text_row_base = 0;
 }
 
-#if defined(_WIN32)
-#define PUT_KEY(name_, desc_) put_key(name_, desc_)
-#else
-#if !defined(XFRACT)
-#define PUT_KEY(name, descrip)                              \
-    driver_put_string(-1, -1, C_HELP_INSTR, name),             \
-    driver_put_string(-1, -1, C_HELP_INSTR, ":" descrip "  ")
-#else
-#define PUT_KEY(name, descrip)                      \
-    driver_put_string(-1, -1, C_HELP_INSTR, name);     \
-    driver_put_string(-1, -1, C_HELP_INSTR, ":");      \
-    driver_put_string(-1, -1, C_HELP_INSTR, descrip);  \
-    driver_put_string(-1, -1, C_HELP_INSTR, "  ")
-#endif
-#endif
-
 static void put_key(char const *name, char const *description)
 {
     driver_put_string(-1, -1, C_HELP_INSTR, name);
@@ -358,15 +342,11 @@ static void help_instr()
     }
 
     driver_move_cursor(24, 1);
-    PUT_KEY("F1",               "Index");
-#if !defined(XFRACT) && !defined(_WIN32)
-    PUT_KEY("\030\031\033\032", "Select");
-#else
-    PUT_KEY("K J H L", "Select");
-#endif
-    PUT_KEY("Enter",            "Go to");
-    PUT_KEY("Backspace",        "Last topic");
-    PUT_KEY("Escape",           "Exit help");
+    put_key("F1", "Index");
+    put_key("Arrow Keys", "Select");
+    put_key("Enter", "Go to");
+    put_key("Backspace", "Last topic");
+    put_key("Esc", "Exit help");
 }
 
 static void print_instr()
@@ -377,10 +357,8 @@ static void print_instr()
     }
 
     driver_move_cursor(24, 1);
-    PUT_KEY("Escape", "Abort");
+    put_key("Escape", "Abort");
 }
-
-#undef PUT_KEY
 
 static void display_page(char const *title, char const *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
