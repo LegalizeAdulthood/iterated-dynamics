@@ -191,7 +191,7 @@ int full_screen_prompt(        // full-screen prompting routine
     if (in_scrolling_mode && s_scroll_row_status == 0
         && lines_in_entry == extra_lines - 2
         && s_scroll_column_status == 0
-        && std::strchr(extra_info, '\021') == nullptr)
+        && std::strchr(extra_info, SCROLL_MARKER) == nullptr)
     {
         in_scrolling_mode = false;
         std::fclose(scroll_file);
@@ -486,7 +486,7 @@ int full_screen_prompt(        // full-screen prompting routine
                 }
                 break;
             case ID_KEY_CTL_RIGHT_ARROW:   // scrolling key - right one column
-                if (in_scrolling_mode && std::strchr(extra_info, '\021') != nullptr)
+                if (in_scrolling_mode && std::strchr(extra_info, SCROLL_MARKER) != nullptr)
                 {
                     s_scroll_column_status++;
                     rewrite_extra_info = true;
@@ -728,7 +728,7 @@ int full_screen_prompt(        // full-screen prompting routine
             }
             break;
         case ID_KEY_CTL_RIGHT_ARROW:    // scrolling key - right one column
-            if (in_scrolling_mode && std::strchr(extra_info, '\021') != nullptr)
+            if (in_scrolling_mode && std::strchr(extra_info, SCROLL_MARKER) != nullptr)
             {
                 s_scroll_column_status++;
                 rewrite_extra_info = true;

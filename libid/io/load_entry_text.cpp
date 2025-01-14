@@ -145,7 +145,7 @@ void load_entry_text(
                 {
                     if (line_len == 76)
                     {
-                        *buf++ = '\021';
+                        *buf++ = SCROLL_MARKER;
                     }
                 }
                 else

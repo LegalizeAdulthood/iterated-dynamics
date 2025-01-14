@@ -604,7 +604,7 @@ static int check_gfe_key(int key, int choice)
                     break;
                 case ID_KEY_RIGHT_ARROW:
                 case ID_KEY_CTL_RIGHT_ARROW: // right one column
-                    if (in_scrolling_mode && std::strchr(inf_buf, '\021') != nullptr)
+                    if (in_scrolling_mode && std::strchr(inf_buf, SCROLL_MARKER) != nullptr)
                     {
                         left_column++;
                         rewrite_inf_buf = true;

@@ -4,6 +4,8 @@
 
 #include <cstdio>
 
+constexpr char SCROLL_MARKER = '\021';
+
 void load_entry_text(
     std::FILE *entry_file,
     char *buf,
