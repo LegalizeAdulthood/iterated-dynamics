@@ -85,8 +85,8 @@ TEST(TestLoadEntryText, columnZeroOneLine)
     int start_col{};
     std::filesystem::path frm{ID_TEST_FRM_DIR};
     frm /= ID_TEST_FRM_FILE;
-    std::FILE *entry_file{std::fopen(frm.string().c_str(), "rt")};
-    ASSERT_NE(nullptr, entry_file);
+    std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
+    ASSERT_NE(nullptr, entry_file) << "Couldn't open '" << frm.string() << "', errno=" << errno;
     ASSERT_NO_FATAL_FAILURE(position_to_line_starting_with(entry_file, "Fractint"));
 
     load_entry_text(entry_file, result, max_lines, start_row, start_col);
@@ -105,8 +105,8 @@ TEST(TestLoadEntryText, columnTwoOneLine)
     int start_col{2};
     std::filesystem::path frm{ID_TEST_FRM_DIR};
     frm /= ID_TEST_FRM_FILE;
-    std::FILE *entry_file{std::fopen(frm.string().c_str(), "rt")};
-    ASSERT_NE(nullptr, entry_file);
+    std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
+    ASSERT_NE(nullptr, entry_file) << "Couldn't open '" << frm.string() << "', errno=" << errno;
     ASSERT_NO_FATAL_FAILURE(position_to_line_starting_with(entry_file, "Fractint"));
 
     load_entry_text(entry_file, result, max_lines, start_row, start_col);

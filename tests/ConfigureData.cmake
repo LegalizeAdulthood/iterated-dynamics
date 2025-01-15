@@ -91,7 +91,7 @@ configure_file(home/test.map.in "${ID_TEST_MAP_DIR}/${ID_TEST_MAP_FILE}" @ONLY)
 
 # load_entry_text test data
 set(ID_TEST_FRM_FILE "test.frm")
-configure_file(home/test.frm.in "${ID_TEST_FRM_DIR}/${ID_TEST_FORMULA_FILE}" @ONLY)
+configure_file(home/test.frm.in "${ID_TEST_FRM_DIR}/${ID_TEST_FRM_FILE}" @ONLY)
 
 # Test data header
 configure_file(include/test_data.h.in include/test_data.h @ONLY)
