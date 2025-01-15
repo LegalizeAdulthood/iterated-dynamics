@@ -15,6 +15,7 @@
 #include <config/string_case_compare.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 #include <cstring>
 
@@ -332,6 +333,8 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         top_left_row = 3 + title_lines + i;        // row of topleft choice
 
         // now set up the overall display
+        assert(g_text_col_base == 0);
+        assert(g_text_row_base == 0);
         help_title();                                   // clear, display title line
         driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
         for (i = top_left_row - 1 - title_lines; i < top_left_row + box_depth + 1; ++i)
