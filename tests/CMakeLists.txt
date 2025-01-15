@@ -2,6 +2,7 @@
 #
 include(GoogleTest)
 
+find_package(Boost REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -35,6 +36,7 @@ add_executable(test-id
     io/test_gif_file.cpp
     io/test_is_directory.cpp
     io/test_load_config.cpp
+    io/test_load_entry_text.cpp
     io/test_make_path.cpp
     io/test_merge_path_names.cpp
     io/test_open_save_file.cpp
@@ -67,7 +69,7 @@ source_group_subdir("Math" "math")
 source_group_subdir("Miscellaneous" "misc")
 source_group_subdir("UI" "ui")
 target_include_directories(test-id PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/include")
-target_link_libraries(test-id PRIVATE GTest::gmock_main libid)
+target_link_libraries(test-id PRIVATE GTest::gmock_main Boost::boost libid)
 set_target_properties(test-id PROPERTIES FOLDER Tests)
 gtest_discover_tests(test-id PROPERTIES LABELS id)
 

@@ -63,53 +63,56 @@ void load_entry_text(
         int line_len = 0;
 
         // skip line up to start_col
-        int i = 0;
-        while (i++ < start_col && (c = fgetc(entry_file)) != EOF)
+        if (start_col > 0)
         {
-            if (c == ';')
+            int i = 0;
+            while (i++ < start_col && (c = fgetc(entry_file)) != EOF)
             {
-                comment = true;
+                if (c == ';')
+                {
+                    comment = true;
+                }
+                if (c == '}' && !comment)
+                {
+                    // reached end of entry
+                    *buf = 0;
+                    return;
+                }
+                if (c == '\r')
+                {
+                    i--;
+                    continue;
+                }
+                if (c == '\t')
+                {
+                    i += 7 - i % 8;
+                }
+                if (c == '\n')
+                {
+                    // need to insert '\n', even for short lines
+                    *buf++ = (char)c;
+                    break;
+                }
             }
-            if (c == '}' && !comment)
+            if (c == EOF)
             {
-                // reached end of entry
+                // unexpected end of file
                 *buf = 0;
                 return;
             }
-            if (c == '\r')
+            if (c == '\n')         // line is already completed
             {
-                i--;
                 continue;
             }
-            if (c == '\t')
-            {
-                i += 7 - i % 8;
-            }
-            if (c == '\n')
-            {
-                // need to insert '\n', even for short lines
-                *buf++ = (char)c;
-                break;
-            }
-        }
-        if (c == EOF)
-        {
-            // unexpected end of file
-            *buf = 0;
-            return;
-        }
-        if (c == '\n')         // line is already completed
-        {
-            continue;
-        }
 
-        if (i > start_col)
-        {
-            // can happen because of <tab> character
-            while (i-- > start_col)
+            if (i > start_col)
             {
-                *buf++ = ' ';
-                line_len++;
+                // can happen because of <tab> character
+                while (i-- > start_col)
+                {
+                    *buf++ = ' ';
+                    line_len++;
+                }
             }
         }
 

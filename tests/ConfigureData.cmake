@@ -4,6 +4,8 @@ set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 set(ID_TEST_HOME_DIR "${ID_TEST_DATA_DIR}/home")
 set(ID_TEST_MAP_SUBDIR "maps")
 set(ID_TEST_MAP_DIR "${ID_TEST_HOME_DIR}/${ID_TEST_MAP_SUBDIR}")
+set(ID_TEST_FRM_SUBDIR "formulas")
+set(ID_TEST_FRM_DIR "${ID_TEST_HOME_DIR}/${ID_TEST_FRM_SUBDIR}")
 
 # id.cfg test data
 set(ID_TEST_GDI_FN "F6")
@@ -85,7 +87,11 @@ file(REMOVE "${ID_TEST_CHECK_WRITE_FILE3}")
 
 # color map file test data
 set(ID_TEST_MAP_FILE "test.map")
-configure_file(home/test.map.in "${ID_TEST_MAP_DIR}/test.map" @ONLY)
+configure_file(home/test.map.in "${ID_TEST_MAP_DIR}/${ID_TEST_MAP_FILE}" @ONLY)
+
+# load_entry_text test data
+set(ID_TEST_FRM_FILE "test.frm")
+configure_file(home/test.frm.in "${ID_TEST_FRM_DIR}/${ID_TEST_FORMULA_FILE}" @ONLY)
 
 # Test data header
 configure_file(include/test_data.h.in include/test_data.h @ONLY)

@@ -48,3 +48,8 @@
 #define ID_TEST_MAP_DIR             "@ID_TEST_MAP_DIR@"
 #define ID_TEST_MAP_SUBDIR          "@ID_TEST_MAP_SUBDIR@"
 #define ID_TEST_MAP_FILE            "@ID_TEST_MAP_FILE@"
+
+// formula file data
+#define ID_TEST_FRM_DIR             "@ID_TEST_FRM_DIR@"
+#define ID_TEST_FRM_SUBDIR          "@ID_TEST_FRM_SUBDIR@"
+#define ID_TEST_FRM_FILE            "@ID_TEST_FRM_FILE@"
