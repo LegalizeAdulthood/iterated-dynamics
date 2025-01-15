@@ -96,3 +96,23 @@ TEST(TestLoadEntryText, columnZeroOneLine)
     EXPECT_EQ(1U, actual.size());
     EXPECT_EQ(expected[0], actual[0]);
 }
+
+TEST(TestLoadEntryText, columnTwoOneLine)
+{
+    char result[2048]{};
+    int max_lines{1};
+    int start_row{};
+    int start_col{2};
+    std::filesystem::path frm{ID_TEST_FRM_DIR};
+    frm /= ID_TEST_FRM_FILE;
+    std::FILE *entry_file{std::fopen(frm.string().c_str(), "rt")};
+    ASSERT_NE(nullptr, entry_file);
+    ASSERT_NO_FATAL_FAILURE(position_to_line_starting_with(entry_file, "Fractint"));
+
+    load_entry_text(entry_file, result, max_lines, start_row, start_col);
+
+    std::vector expected{split_lines(FRACTINT_FORMULA)};
+    std::vector actual{split_lines(result)};
+    EXPECT_EQ(1U, actual.size());
+    EXPECT_EQ(expected[0].substr(start_col), actual[0]);
+}

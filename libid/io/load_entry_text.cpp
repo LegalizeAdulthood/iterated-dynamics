@@ -66,8 +66,14 @@ void load_entry_text(
         if (start_col > 0)
         {
             int i = 0;
-            while (i++ < start_col && (c = fgetc(entry_file)) != EOF)
+            while (i < start_col)
             {
+               c = fgetc(entry_file);
+                if (c == EOF)
+                {
+                    break;
+                }
+                ++i;
                 if (c == ';')
                 {
                     comment = true;
@@ -144,9 +150,9 @@ void load_entry_text(
                     *buf++ = '\n';
                     break;
                 }
-                if (++line_len > 75)
+                if (++line_len > 77)
                 {
-                    if (line_len == 76)
+                    if (line_len == 78)
                     {
                         *buf++ = SCROLL_MARKER;
                     }
