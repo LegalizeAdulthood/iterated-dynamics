@@ -453,23 +453,26 @@ void Prompt::display_extra_info()
     char buf[81];
     std::memset(buf, HORIZ_LINE, 80);
     buf[box_width - 2] = 0;
+
     g_text_col_base = box_col + 1;
     driver_put_string(extra_row, 0, C_PROMPT_BKGRD, buf);
     driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, buf);
+
     --g_text_col_base;
     driver_put_string(extra_row, 0, C_PROMPT_BKGRD, UPPER_LEFT);
     driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, LOWER_LEFT);
-    g_text_col_base += box_width - 1;
+
+    g_text_col_base += box_width - 2;
     driver_put_string(extra_row, 0, C_PROMPT_BKGRD, UPPER_RIGHT);
     driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, LOWER_RIGHT);
 
     g_text_col_base = box_col;
-
     for (int i = 1; i < extra_lines - 1; ++i)
     {
         driver_put_string(extra_row + i, 0, C_PROMPT_BKGRD, VERT_LINE);
-        driver_put_string(extra_row + i, box_width - 1, C_PROMPT_BKGRD, VERT_LINE);
+        driver_put_string(extra_row + i, box_width - 2, C_PROMPT_BKGRD, VERT_LINE);
     }
+
     g_text_col_base += (box_width - extra_width) / 2;
     const std::string extra_text{extra_info};
     std::string::size_type line_begin{};
@@ -639,8 +642,7 @@ int Prompt::prompt_params()
     {
         if (rewrite_extra_info)
         {
-            int j = g_text_col_base;
-            g_text_col_base = 2;
+            ValueSaver saved_text_col_base{g_text_col_base, 2};
             std::fseek(scroll_file, scroll_file_start, SEEK_SET);
             load_entry_text(
                 scroll_file, extra_info, extra_lines - 2, s_scroll_row_status, s_scroll_column_status);
@@ -649,7 +651,6 @@ int Prompt::prompt_params()
                 driver_put_string(extra_row + i, 0, C_PROMPT_TEXT, blanks);
             }
             driver_put_string(extra_row + 1, 0, C_PROMPT_TEXT, extra_info);
-            g_text_col_base = j;
         }
 
         const int cur_type = values[cur_choice].type;
