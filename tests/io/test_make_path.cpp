@@ -33,11 +33,7 @@ TEST_F(TestMakePath, drive)
 {
     result = make_path("C:", nullptr, nullptr, nullptr);
 
-#if WIN32
     ASSERT_EQ("C:", result);
-#else
-    ASSERT_EQ("", result);
-#endif
 }
 
 TEST_F(TestMakePath, directory)
@@ -86,11 +82,7 @@ TEST_F(TestMakePath, driveDirectoryFilenameExtension)
 {
     result = make_path("C:", "tmp", "foo", ".gif");
 
-#if WIN32
     ASSERT_EQ(fs::path{"C:tmp/foo.gif"}.make_preferred().string(), result);
-#else
-    ASSERT_EQ(fs::path{"tmp/foo.gif"}.make_preferred().string(), result);
-#endif
 }
 
 TEST_F(TestMakePath, directoryWithTrailingSlash)
