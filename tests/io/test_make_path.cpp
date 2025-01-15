@@ -78,12 +78,15 @@ TEST_F(TestMakePath, directoryFilenameExtension)
     ASSERT_EQ(fs::path{"tmp/foo.gif"}.make_preferred().string(), result);
 }
 
+#ifdef WIN32
+// Drive letters are only present on Windows
 TEST_F(TestMakePath, driveDirectoryFilenameExtension)
 {
     result = make_path("C:", "tmp", "foo", ".gif");
 
     ASSERT_EQ(fs::path{"C:tmp/foo.gif"}.make_preferred().string(), result);
 }
+#endif
 
 TEST_F(TestMakePath, directoryWithTrailingSlash)
 {
