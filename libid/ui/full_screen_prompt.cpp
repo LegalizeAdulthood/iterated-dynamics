@@ -35,13 +35,13 @@ static int prompt_value_string(char *buf, FullScreenValues const *val);
 static int s_fn_key_mask{};
 
 // These need to be global because F6 exits fullscreen_prompt()
-static int s_scroll_row_status{};    // will be set to first line of extra info to be displayed (0 = top line)
-static int s_scroll_column_status{}; // will be set to first column of extra info to be displayed (0 = leftmost column)
+static int s_scroll_row{};    // will be set to first line of extra info to be displayed (0 = top line)
+static int s_scroll_column{}; // will be set to first column of extra info to be displayed (0 = leftmost column)
 
 void full_screen_reset_scrolling()
 {
-    s_scroll_row_status = 0; // make sure we start at beginning of entry
-    s_scroll_column_status = 0;
+    s_scroll_row = 0; // make sure we start at beginning of entry
+    s_scroll_column = 0;
 }
 
 namespace
@@ -262,9 +262,9 @@ void Prompt::count_extra_lines()
 bool Prompt::entry_fits()
 {
     return in_scrolling_mode                 //
-        && s_scroll_row_status == 0          //
+        && s_scroll_row == 0          //
         && lines_in_entry == extra_lines - 2 //
-        && s_scroll_column_status == 0       //
+        && s_scroll_column == 0       //
         && std::strchr(extra_info, SCROLL_MARKER) == nullptr;
 }
 
@@ -404,37 +404,33 @@ void Prompt::display_box_heading()
         driver_set_attr(i, box_col, C_PROMPT_HI, box_width);
     }
 
+    char buffer[256];
+    char *hdg_line = buffer;
+    // center each line of heading independently
+    int i;
+    std::strcpy(hdg_line, hdg);
+    for (i = 0; i < title_lines - 1; i++)
     {
-        char buffer[256];
-        char *hdg_line = buffer;
-        // center each line of heading independently
-        int i;
-        std::strcpy(hdg_line, hdg);
-        for (i = 0; i < title_lines - 1; i++)
+        char *next = std::strchr(hdg_line, '\n');
+        if (next == nullptr)
         {
-            char *next = std::strchr(hdg_line, '\n');
-            if (next == nullptr)
-            {
-                break; // shouldn't happen
-            }
-            *next = '\0';
-            title_width = (int) std::strlen(hdg_line);
-            g_text_col_base = box_col + (box_width - title_width) / 2;
-            driver_put_string(title_row + i, 0, C_PROMPT_HI, hdg_line);
-            *next = '\n';
-            hdg_line = next + 1;
+            break; // shouldn't happen
         }
-        // add scrolling key message, if applicable
-        if (in_scrolling_mode)
-        {
-            *(hdg_line + 31) = (char) 0; // replace the ')'
-            std::strcat(hdg_line, ". Ctrl+<arrow key> to scroll text.)");
-        }
-
+        *next = '\0';
         title_width = (int) std::strlen(hdg_line);
-        g_text_col_base = box_col + (box_width - title_width) / 2;
-        driver_put_string(title_row + i, 0, C_PROMPT_HI, hdg_line);
+        driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, hdg_line);
+        *next = '\n';
+        hdg_line = next + 1;
     }
+    // add scrolling key message, if applicable
+    if (in_scrolling_mode)
+    {
+        *(hdg_line + 31) = (char) 0; // replace the ')'
+        std::strcat(hdg_line, ". Ctrl+<arrow key> to scroll text.)");
+    }
+
+    title_width = (int) std::strlen(hdg_line);
+    driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, hdg_line);
 }
 
 void Prompt::display_extra_info()
@@ -454,41 +450,39 @@ void Prompt::display_extra_info()
     std::memset(buf, HORIZ_LINE, 80);
     buf[box_width - 2] = 0;
 
-    g_text_col_base = box_col + 1;
-    driver_put_string(extra_row, 0, C_PROMPT_BKGRD, buf);
-    driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, buf);
+    int col = box_col + 1;
+    driver_put_string(extra_row, col, C_PROMPT_BKGRD, buf);
+    driver_put_string(extra_row + extra_lines - 1, col, C_PROMPT_BKGRD, buf);
 
-    --g_text_col_base;
-    driver_put_string(extra_row, 0, C_PROMPT_BKGRD, UPPER_LEFT);
-    driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, LOWER_LEFT);
+    --col;
+    driver_put_string(extra_row, col, C_PROMPT_BKGRD, UPPER_LEFT);
+    driver_put_string(extra_row + extra_lines - 1, col, C_PROMPT_BKGRD, LOWER_LEFT);
 
-    g_text_col_base += box_width - 2;
-    driver_put_string(extra_row, 0, C_PROMPT_BKGRD, UPPER_RIGHT);
-    driver_put_string(extra_row + extra_lines - 1, 0, C_PROMPT_BKGRD, LOWER_RIGHT);
+    col += box_width - 2;
+    driver_put_string(extra_row, col, C_PROMPT_BKGRD, UPPER_RIGHT);
+    driver_put_string(extra_row + extra_lines - 1, col, C_PROMPT_BKGRD, LOWER_RIGHT);
 
-    g_text_col_base = box_col;
+    col = box_col;
     for (int i = 1; i < extra_lines - 1; ++i)
     {
-        driver_put_string(extra_row + i, 0, C_PROMPT_BKGRD, VERT_LINE);
-        driver_put_string(extra_row + i, box_width - 2, C_PROMPT_BKGRD, VERT_LINE);
+        driver_put_string(extra_row + i, col, C_PROMPT_BKGRD, VERT_LINE);
+        driver_put_string(extra_row + i, col + box_width - 2, C_PROMPT_BKGRD, VERT_LINE);
     }
 
-    g_text_col_base += (box_width - extra_width) / 2;
+    col += (box_width - extra_width) / 2 - 1;
     const std::string extra_text{extra_info};
     std::string::size_type line_begin{};
     for (int i = 1; i < extra_lines - 1; ++i)
     {
         const std::string::size_type line_end = extra_text.find('\n', line_begin);
         const std::string line{extra_text.substr(line_begin, line_end - line_begin)};
-        driver_put_string(extra_row + i, 0, C_PROMPT_TEXT, line.c_str());
+        driver_put_string(extra_row + i, col, C_PROMPT_TEXT, line.c_str());
         line_begin = line_end + 1;
     }
 }
 
 void Prompt::display_empty_box()
 {
-    g_text_col_base = 0;
-
     for (int i = 0; i < box_lines; ++i)
     {
         driver_set_attr(box_row + i, box_col, C_PROMPT_LO, box_width);
@@ -513,20 +507,18 @@ int Prompt::prompt_no_params()
         (g_help_mode > HelpLabels::HELP_INDEX) ? "Press ENTER to exit, ESC to back out, F1 for help"
                                                : "Press ENTER to exit");
     driver_hide_text_cursor();
-    g_text_col_base = 2;
     while (true)
     {
         if (rewrite_extra_info)
         {
             rewrite_extra_info = false;
             std::fseek(scroll_file, scroll_file_start, SEEK_SET);
-            load_entry_text(
-                scroll_file, extra_info, extra_lines - 2, s_scroll_row_status, s_scroll_column_status);
+            load_entry_text(scroll_file, extra_info, extra_lines - 2, s_scroll_row, s_scroll_column);
             for (int i = 1; i <= extra_lines - 2; i++)
             {
-                driver_put_string(extra_row + i, 0, C_PROMPT_TEXT, blanks);
+                driver_put_string(extra_row + i, 1, C_PROMPT_TEXT, blanks);
             }
-            driver_put_string(extra_row + 1, 0, C_PROMPT_TEXT, extra_info);
+            driver_put_string(extra_row + 1, 1, C_PROMPT_TEXT, extra_info);
         }
         // TODO: rework key interaction to blocking wait
         while (!driver_key_pressed())
@@ -541,62 +533,62 @@ int Prompt::prompt_no_params()
         case ID_KEY_ENTER_2:
             return full_screen_exit();
         case ID_KEY_CTL_DOWN_ARROW: // scrolling key - down one row
-            if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+            if (in_scrolling_mode && s_scroll_row < vertical_scroll_limit)
             {
-                s_scroll_row_status++;
+                s_scroll_row++;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_UP_ARROW: // scrolling key - up one row
-            if (in_scrolling_mode && s_scroll_row_status > 0)
+            if (in_scrolling_mode && s_scroll_row > 0)
             {
-                s_scroll_row_status--;
+                s_scroll_row--;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_LEFT_ARROW: // scrolling key - left one column
-            if (in_scrolling_mode && s_scroll_column_status > 0)
+            if (in_scrolling_mode && s_scroll_column > 0)
             {
-                s_scroll_column_status--;
+                s_scroll_column--;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_RIGHT_ARROW: // scrolling key - right one column
             if (in_scrolling_mode && std::strchr(extra_info, SCROLL_MARKER) != nullptr)
             {
-                s_scroll_column_status++;
+                s_scroll_column++;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_PAGE_DOWN: // scrolling key - down one screen
-            if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+            if (in_scrolling_mode && s_scroll_row < vertical_scroll_limit)
             {
-                s_scroll_row_status += extra_lines - 2;
-                s_scroll_row_status = std::min(s_scroll_row_status, vertical_scroll_limit);
+                s_scroll_row += extra_lines - 2;
+                s_scroll_row = std::min(s_scroll_row, vertical_scroll_limit);
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_PAGE_UP: // scrolling key - up one screen
-            if (in_scrolling_mode && s_scroll_row_status > 0)
+            if (in_scrolling_mode && s_scroll_row > 0)
             {
-                s_scroll_row_status -= extra_lines - 2;
-                s_scroll_row_status = std::max(s_scroll_row_status, 0);
+                s_scroll_row -= extra_lines - 2;
+                s_scroll_row = std::max(s_scroll_row, 0);
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_END: // scrolling key - to end of entry
             if (in_scrolling_mode)
             {
-                s_scroll_row_status = vertical_scroll_limit;
-                s_scroll_column_status = 0;
+                s_scroll_row = vertical_scroll_limit;
+                s_scroll_column = 0;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_HOME: // scrolling key - to beginning of entry
             if (in_scrolling_mode)
             {
-                s_scroll_column_status = 0;
-                s_scroll_row_status = 0;
+                s_scroll_column = 0;
+                s_scroll_row = 0;
                 rewrite_extra_info = true;
             }
             break;
@@ -642,10 +634,10 @@ int Prompt::prompt_params()
     {
         if (rewrite_extra_info)
         {
-            ValueSaver saved_text_col_base{g_text_col_base, 2};
+            ValueSaver saved_text_col_base{g_text_col_base, 1};
             std::fseek(scroll_file, scroll_file_start, SEEK_SET);
             load_entry_text(
-                scroll_file, extra_info, extra_lines - 2, s_scroll_row_status, s_scroll_column_status);
+                scroll_file, extra_info, extra_lines - 2, s_scroll_row, s_scroll_column);
             for (int i = 1; i <= extra_lines - 2; i++)
             {
                 driver_put_string(extra_row + i, 0, C_PROMPT_TEXT, blanks);
@@ -744,7 +736,7 @@ int Prompt::prompt_params()
         switch (i)
         {
         case 0: // enter
-            done = 13;
+            done = ID_KEY_ENTER;
             break;
         case -1: // escape
         case ID_KEY_F2:
@@ -781,62 +773,62 @@ int Prompt::prompt_params()
             } while (values[cur_choice].type == '*');
             break;
         case ID_KEY_CTL_DOWN_ARROW: // scrolling key - down one row
-            if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+            if (in_scrolling_mode && s_scroll_row < vertical_scroll_limit)
             {
-                s_scroll_row_status++;
+                s_scroll_row++;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_UP_ARROW: // scrolling key - up one row
-            if (in_scrolling_mode && s_scroll_row_status > 0)
+            if (in_scrolling_mode && s_scroll_row > 0)
             {
-                s_scroll_row_status--;
+                s_scroll_row--;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_LEFT_ARROW: // scrolling key - left one column
-            if (in_scrolling_mode && s_scroll_column_status > 0)
+            if (in_scrolling_mode && s_scroll_column > 0)
             {
-                s_scroll_column_status--;
+                s_scroll_column--;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_RIGHT_ARROW: // scrolling key - right one column
             if (in_scrolling_mode && std::strchr(extra_info, SCROLL_MARKER) != nullptr)
             {
-                s_scroll_column_status++;
+                s_scroll_column++;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_PAGE_DOWN: // scrolling key - down on screen
-            if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+            if (in_scrolling_mode && s_scroll_row < vertical_scroll_limit)
             {
-                s_scroll_row_status += extra_lines - 2;
-                s_scroll_row_status = std::min(s_scroll_row_status, vertical_scroll_limit);
+                s_scroll_row += extra_lines - 2;
+                s_scroll_row = std::min(s_scroll_row, vertical_scroll_limit);
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_PAGE_UP: // scrolling key - up one screen
-            if (in_scrolling_mode && s_scroll_row_status > 0)
+            if (in_scrolling_mode && s_scroll_row > 0)
             {
-                s_scroll_row_status -= extra_lines - 2;
-                s_scroll_row_status = std::max(s_scroll_row_status, 0);
+                s_scroll_row -= extra_lines - 2;
+                s_scroll_row = std::max(s_scroll_row, 0);
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_END: // scrolling key - go to end of entry
             if (in_scrolling_mode)
             {
-                s_scroll_row_status = vertical_scroll_limit;
-                s_scroll_column_status = 0;
+                s_scroll_row = vertical_scroll_limit;
+                s_scroll_column = 0;
                 rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_HOME: // scrolling key - go to beginning of entry
             if (in_scrolling_mode)
             {
-                s_scroll_column_status = 0;
-                s_scroll_row_status = 0;
+                s_scroll_column = 0;
+                s_scroll_row = 0;
                 rewrite_extra_info = true;
             }
             break;
