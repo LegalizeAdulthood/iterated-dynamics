@@ -52,7 +52,7 @@
 #include <string>
 
 VideoInfo g_video_entry{};                                    //
-HelpLabels g_help_mode{};                                    //
+HelpLabels g_help_mode{};                                     //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h
 std::string g_fractal_search_dir1;                            //
 std::string g_fractal_search_dir2;                            //
@@ -67,17 +67,17 @@ int g_zoom_box_rotation{};                                             // zoombo
 double g_zoom_box_x{}, g_zoom_box_y{};                                 // topleft of zoombox
 double g_zoom_box_width{}, g_zoom_box_height{};                        // zoombox size
 double g_zoom_box_skew{};                                              // zoombox shape
-FractalType g_fractal_type{FractalType::NO_FRACTAL};                  // if == 0, use Mandelbrot
+FractalType g_fractal_type{FractalType::NO_FRACTAL};                   // if == 0, use Mandelbrot
 char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
 long g_l_delta_x{}, g_l_delta_y{};                                     // screen pixel increments
 long g_l_delta_x2{}, g_l_delta_y2{};                                   // screen pixel increments
-LDouble g_delta_x{}, g_delta_y{};                                         // screen pixel increments
-LDouble g_delta_x2{}, g_delta_y2{};                                       // screen pixel increments
+LDouble g_delta_x{}, g_delta_y{};                                      // screen pixel increments
+LDouble g_delta_x2{}, g_delta_y2{};                                    // screen pixel increments
 long g_l_delta_min{};                                                  // for calcfrac/calcmand
 double g_delta_min{};                                                  // same as a double
 double g_params[MAX_PARAMS]{};                                         // parameters
 double g_potential_params[3]{};                                        // three potential parameters
-ConfigStatus g_bad_config{};                                          // 'id.cfg' ok?
+ConfigStatus g_bad_config{};                                           // 'id.cfg' ok?
 bool g_has_inverse{};                                                  //
 int g_integer_fractal{};                                               // TRUE if fractal uses integer math
                          // user_xxx is what the user wants, vs what we may be forced to do
