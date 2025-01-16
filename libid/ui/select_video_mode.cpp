@@ -12,6 +12,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_key_no_help.h"
+#include "ui/id_keys.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
 
@@ -145,7 +146,7 @@ static int check_mode_key(int key, int choice)
     i = s_entry_nums[choice];
     int ret = 0;
     if ((key == '-' || key == '+')
-        && (g_video_table[i].key == 0 || g_video_table[i].key >= 1084))
+        && (g_video_table[i].key == 0 || g_video_table[i].key >= ID_KEY_SHF_F1))
     {
         if (g_bad_config != ConfigStatus::OK)
         {
@@ -156,7 +157,7 @@ static int check_mode_key(int key, int choice)
             if (key == '-')
             {
                 // deassign key?
-                if (g_video_table[i].key >= 1084)
+                if (g_video_table[i].key >= ID_KEY_SHF_F1)
                 {
                     g_video_table[i].key = 0;
                     s_modes_changed = true;
@@ -166,7 +167,7 @@ static int check_mode_key(int key, int choice)
             {
                 // assign key?
                 int j = get_a_key_no_help();
-                if (j >= 1084 && j <= 1113)
+                if (j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
                 {
                     for (int k = 0; k < g_video_table_len; ++k)
                     {
