@@ -2,6 +2,7 @@
 #
 set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 set(ID_TEST_HOME_DIR "${ID_TEST_DATA_DIR}/home")
+set(ID_TEST_SAVE_DIR "${ID_TEST_DATA_DIR}/save")
 set(ID_TEST_MAP_SUBDIR "maps")
 set(ID_TEST_MAP_DIR "${ID_TEST_HOME_DIR}/${ID_TEST_MAP_SUBDIR}")
 set(ID_TEST_FRM_SUBDIR "formulas")
@@ -24,8 +25,23 @@ set(ID_TEST_DISK_COLORS 256)
 set(ID_TEST_DISK_COMMENT "fancier disk mode")
 set(ID_TEST_DISK_DRIVER "disk")
 
-set(ID_TEST_CONFIG_FILE "${ID_TEST_HOME_DIR}/test.cfg")
-configure_file("home/test.cfg.in" "${ID_TEST_CONFIG_FILE}" @ONLY)
+set(ID_TEST_SAVE_GDI_FN "SF6")
+set(ID_TEST_SAVE_GDI_FN_KEY "ID_KEY_SHF_F6")
+set(ID_TEST_SAVE_GDI_WIDTH 1600)
+set(ID_TEST_SAVE_GDI_HEIGHT 1200)
+set(ID_TEST_SAVE_GDI_COLORS 256)
+set(ID_TEST_SAVE_GDI_COMMENT "saved GDI mode")
+set(ID_TEST_SAVE_GDI_DRIVER "gdi")
+
+set(ID_TEST_INI "test.ini")
+set(ID_TEST_HOME_TOOLS_INI "${ID_TEST_HOME_DIR}/${ID_TEST_INI}")
+configure_file("home/test.ini.in" "${ID_TEST_HOME_TOOLS_INI}" @ONLY)
+
+set(ID_TEST_CFG "test.cfg")
+set(ID_TEST_HOME_CONFIG_FILE "${ID_TEST_HOME_DIR}/${ID_TEST_CFG}")
+set(ID_TEST_SAVE_CONFIG_FILE "${ID_TEST_SAVE_DIR}/${ID_TEST_CFG}")
+configure_file("home/test.cfg.in" "${ID_TEST_HOME_CONFIG_FILE}" @ONLY)
+configure_file("home/save.cfg.in" "${ID_TEST_SAVE_CONFIG_FILE}" @ONLY)
 configure_file("include/test_config_data.h.in" "include/test_config_data.h" @ONLY)
 
 # GIF file extensions test data

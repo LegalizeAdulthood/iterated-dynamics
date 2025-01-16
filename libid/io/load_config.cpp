@@ -5,6 +5,7 @@
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "io/find_path.h"
+#include "io/special_dirs.h"
 #include "misc/drivers.h"
 #include "ui/video_mode.h"
 
@@ -13,8 +14,28 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <initializer_list>
+#include <string_view>
 
 int g_cfg_line_nums[MAX_VIDEO_MODES]{};
+
+std::string locate_config_file(const std::string &name)
+{
+    const std::string current_dir{std::filesystem::current_path().string()};
+    std::initializer_list<std::string_view> dirs{g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2, current_dir};
+    for (std::string_view search_dir : dirs)
+    {
+        std::filesystem::path file_path{search_dir};
+        file_path /= name;
+        if (exists(file_path))
+        {
+            return file_path.string();
+        }
+    }
+
+    return {};
+}
 
 /* load_config
  *
