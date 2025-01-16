@@ -13,20 +13,6 @@
 
 using namespace testing;
 
-TEST(TestDriver, loadClose)
-{
-    MockDriver gdi;
-    EXPECT_CALL(gdi, init(nullptr, nullptr)).WillOnce(Return(true));
-    EXPECT_CALL(gdi, terminate());
-
-    load_driver(&gdi, nullptr, nullptr);
-
-    EXPECT_EQ(&gdi, g_driver);
-
-    close_drivers();
-    EXPECT_EQ(nullptr, g_driver);
-}
-
 TEST(TestLoadConfig, gdiDisk)
 {
     MockDriver gdi;

@@ -49,6 +49,7 @@ add_executable(test-id
     math/test_cmplx.cpp
     math/test_math.cpp
     math/test_math_lcmplx.cpp
+    misc/test_driver.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
