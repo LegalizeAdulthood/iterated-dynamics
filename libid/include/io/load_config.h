@@ -2,9 +2,11 @@
 //
 #pragma once
 
+#include "ui/video_mode.h"
+
 #include <string>
 
-extern int                   g_cfg_line_nums[];
+extern int                   g_cfg_line_nums[MAX_VIDEO_MODES];
 
 // Return full path to filename, or empty string if not found.
 std::string locate_config_file(const std::string &name);

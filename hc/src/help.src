@@ -279,6 +279,16 @@ o Perturbation drawing algorithm.  Paul de Leeuw contributed an
   for the Mandelbrot (type=mandel) and Mandelbrot power (type=manzpower)
   fractal types.  See {Drawing Method} and {Perturbation Algorithm} for
   details.  (PR #160)
+o Configuration files 'sstools.ini' and 'id.cfg' can now be loaded from
+  outside the installation directory.  The following locations are
+  searched in this order: user's Documents directory, FRACTDIR environment
+  variable location and then current directory.  The directory related
+  parameter values do not change this search order.  When video mode
+  key assignments are changed interactively, the updated id.cfg is
+  written to the location specified by the savedir parameter, defaulting
+  to the user's Documents directory.  Changing function key assignments
+  while selecting video modes saves the updated id.cfg file to the savedir,
+  defaulting to the user's Documents directory.  (Fixes #170)
 o The color palette editor can be positioned using the mouse and the
   current pixel whose color is displayed in the editor can also be
   selected with the mouse.  (Fixes #150)

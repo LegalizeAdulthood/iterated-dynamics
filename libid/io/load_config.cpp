@@ -16,6 +16,7 @@
 #include <cstring>
 #include <filesystem>
 #include <initializer_list>
+#include <iterator>
 #include <string_view>
 
 int g_cfg_line_nums[MAX_VIDEO_MODES]{};
@@ -48,7 +49,7 @@ std::string locate_config_file(const std::string &name)
  */
 void load_config()
 {
-    load_config(find_path("id.cfg"));
+    load_config(locate_config_file("id.cfg"));
 }
 
 void load_config(const std::string &cfg_path)
@@ -66,6 +67,7 @@ void load_config(const std::string &cfg_path)
 
     int line_num = 0;
     char temp_string[150];
+    std::fill(std::begin(g_cfg_line_nums), std::begin(g_cfg_line_nums) + g_video_table_len, -1);
     while (g_video_table_len < MAX_VIDEO_MODES
         && std::fgets(temp_string, std::size(temp_string), cfg_file))
     {

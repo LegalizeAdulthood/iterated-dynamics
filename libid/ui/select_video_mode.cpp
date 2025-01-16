@@ -206,29 +206,45 @@ static bool ent_less(const int lhs, const int rhs)
 
 static void update_id_cfg()
 {
-    char buf[121];
-    const std::string cfg_name = find_path("id.cfg");
+    const std::filesystem::path save_path{get_save_name("id.cfg")};
+    if (!is_writeable(save_path))
+    {
+        stop_msg("Can't write " + save_path.string());
+        return;
+    }
 
-    if (!is_writeable(cfg_name))
+    const std::filesystem::path cfg_path{locate_config_file("id.cfg")};
+    if (!exists(cfg_path))
     {
-        std::snprintf(buf, std::size(buf), "Can't write %s", cfg_name.c_str());
-        stop_msg(buf);
+        stop_msg("Couldn't locate id.cfg, expected " + cfg_path.string() + " to exist");
         return;
     }
-    const std::string out_name{(fs::path{cfg_name}.parent_path() / "id.tmp").string()};
-    std::FILE *outfile = open_save_file(out_name, "w");
-    if (outfile == nullptr)
+
+    std::FILE *cfg_file = std::fopen(cfg_path.string().c_str(), "r");
+    if (cfg_file == nullptr)
     {
-        std::snprintf(buf, std::size(buf), "Can't create %s", out_name.c_str());
-        stop_msg(buf);
+        stop_msg("Couldn't open " + cfg_path.string() + " for reading, error " + std::to_string(errno)  + ".");
         return;
     }
-    std::FILE *cfg_file = std::fopen(cfg_name.c_str(), "r");
+    
+    const std::filesystem::path out_path{save_path.parent_path() / "id.tmp"};
+    std::FILE *out_file = open_save_file(out_path.string(), "w");
+    if (out_file == nullptr)
+    {
+        stop_msg("Can't create " + out_path.string() + ", error " + std::to_string(errno));
+        std::fclose(cfg_file);
+        return;
+    }
 
     int next_mode = 0;
-    int line_num = next_mode;
-    int next_line_num = g_cfg_line_nums[0];
-    while (std::fgets(buf, std::size(buf), cfg_file))
+    while (g_cfg_line_nums[next_mode] == -1)
+    {
+        ++next_mode;
+    }
+    int line_num = 0;
+    int next_line_num = g_cfg_line_nums[next_mode];
+    char line[121];
+    while (std::fgets(line, std::size(line), cfg_file))
     {
         ++line_num;
         // replace this line?
@@ -239,13 +255,12 @@ static void update_id_cfg()
             VideoInfo video_entry = g_video_table[next_mode];
             vid_mode_key_name(video_entry.key, key_name);
             std::snprintf(colors_buff, std::size(colors_buff), "%3d", video_entry.colors);
-            std::fprintf(outfile, "%-4s,%4d,%5d,%s,%s,%s\n",
-                    key_name,
-                    video_entry.x_dots,
-                    video_entry.y_dots,
-                    colors_buff,
-                    video_entry.driver->get_name().c_str(),
-                    video_entry.comment);
+            std::fprintf(out_file, "%-4s,%4d,%5d,%s,%s,%s\n", //
+                key_name,                                    //
+                video_entry.x_dots, video_entry.y_dots,      //
+                colors_buff,                                 //
+                video_entry.driver->get_name().c_str(),      //
+                video_entry.comment);
             if (++next_mode >= g_video_table_len)
             {
                 next_line_num = 32767;
@@ -257,14 +272,14 @@ static void update_id_cfg()
         }
         else
         {
-            std::fputs(buf, outfile);
+            std::fputs(line, out_file);
         }
     }
 
     std::fclose(cfg_file);
-    std::fclose(outfile);
-    fs::remove(cfg_name);         // success assumed on these lines
-    fs::rename(out_name, cfg_name); // since we checked earlier with access
+    std::fclose(out_file);
+    fs::remove(save_path);           // success assumed on these lines
+    fs::rename(out_path, save_path); // since we checked earlier with access
 }
 
 void request_video_mode(int &kbd_char)

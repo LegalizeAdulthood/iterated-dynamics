@@ -31,6 +31,7 @@
 #include "io/fix_dirname.h"
 #include "io/has_ext.h"
 #include "io/is_directory.h"
+#include "io/load_config.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
@@ -250,14 +251,15 @@ int get_power10(LDouble x)
 
 static void process_sstools_ini()
 {
-    std::string const sstools_ini = find_path("sstools.ini"); // look for SSTOOLS.INI
-    if (!sstools_ini.empty())              // found it!
+    const std::string sstools_ini{locate_config_file("sstools.ini")}; // look for SSTOOLS.INI
+    if (sstools_ini.empty())
     {
-        std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r");
-        if (init_file != nullptr)
-        {
-            command_file(init_file, CmdFile::SSTOOLS_INI);           // process it
-        }
+        return;
+    }
+    
+    if (std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r"); init_file != nullptr)
+    {
+        command_file(init_file, CmdFile::SSTOOLS_INI); // process it
     }
 }
 
