@@ -138,50 +138,54 @@ int select_video_mode(int current_mode)
 
 static int check_mode_key(int key, int choice)
 {
-    int i = check_vid_mode_key(key);
-    if (i >= 0)
+    if (int i = check_vid_mode_key(key); i >= 0)
     {
-        return -1-i;
+        return -1 - i;
     }
-    i = s_entry_nums[choice];
-    int ret = 0;
-    if ((key == '-' || key == '+')
-        && (g_video_table[i].key == 0 || g_video_table[i].key >= ID_KEY_SHF_F1))
+
+    if (key != '-' && key != '+')
     {
-        if (g_bad_config != ConfigStatus::OK)
+        return 0;
+    }
+
+    const int i = s_entry_nums[choice];
+    if (g_video_table[i].key != 0 && g_video_table[i].key < ID_KEY_SHF_F1)
+    {
+        return 0;
+    }
+
+    if (g_bad_config != ConfigStatus::OK)
+    {
+        stop_msg("Missing or bad id.cfg file. Can't reassign keys.");
+        return 0;
+    }
+
+    if (key == '-')
+    {
+        // unassign key?
+        if (g_video_table[i].key >= ID_KEY_SHF_F1)
         {
-            stop_msg("Missing or bad id.cfg file. Can't reassign keys.");
+            g_video_table[i].key = 0;
+            s_modes_changed = true;
         }
-        else
+        return 0;
+    }
+
+    // assign key?
+    int j = get_a_key_no_help();
+    int ret = 0;
+    if (j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
+    {
+        for (int k = 0; k < g_video_table_len; ++k)
         {
-            if (key == '-')
+            if (g_video_table[k].key == j)
             {
-                // deassign key?
-                if (g_video_table[i].key >= ID_KEY_SHF_F1)
-                {
-                    g_video_table[i].key = 0;
-                    s_modes_changed = true;
-                }
-            }
-            else
-            {
-                // assign key?
-                int j = get_a_key_no_help();
-                if (j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
-                {
-                    for (int k = 0; k < g_video_table_len; ++k)
-                    {
-                        if (g_video_table[k].key == j)
-                        {
-                            g_video_table[k].key = 0;
-                            ret = -1; // force redisplay
-                        }
-                    }
-                    g_video_table[i].key = j;
-                    s_modes_changed = true;
-                }
+                g_video_table[k].key = 0;
+                ret = -1; // force redisplay
             }
         }
+        g_video_table[i].key = j;
+        s_modes_changed = true;
     }
     return ret;
 }
