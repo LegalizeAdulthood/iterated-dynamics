@@ -18,7 +18,7 @@ int g_cfg_line_nums[MAX_VIDEO_MODES]{};
 
 /* load_config
  *
- * Reads id.cfg, loading videoinfo entries into g_video_table.
+ * Reads id.cfg, loading VideoInfo entries into g_video_table.
  * Sets the number of entries, sets g_video_table_len.
  * Past g_video_table, g_cfg_line_nums are stored for update_id_cfg.
  * If id.cfg is not found or invalid, issues a message
