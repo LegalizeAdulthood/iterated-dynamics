@@ -141,10 +141,10 @@ static void process_speed_string(char *speed_string, //
 }
 
 /*
-    options:        &2 use menu coloring scheme
-                    &4 include F1 for help in instructions
-                    &8 add caller's instr after normal set
-                    &16 menu items up one line
+    flags:          MENU use menu coloring scheme
+                    HELP include F1 for help in instructions
+                    INSTRUCTIONS add caller's instr after normal set
+                    CRUNCH menu items up one line
     hdg:            heading info, \n delimited
     hdg2:           column heading or nullptr
     instr:          instructions, \n delimited, or nullptr
