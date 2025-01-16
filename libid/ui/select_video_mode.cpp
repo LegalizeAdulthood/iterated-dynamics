@@ -172,9 +172,8 @@ static int check_mode_key(int key, int choice)
     }
 
     // assign key?
-    int j = get_a_key_no_help();
     int ret = 0;
-    if (j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
+    if (int j = get_a_key_no_help(); j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
     {
         for (int k = 0; k < g_video_table_len; ++k)
         {
