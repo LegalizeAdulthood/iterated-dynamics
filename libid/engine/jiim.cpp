@@ -509,6 +509,9 @@ public:
     void process();
     
 private:
+    void start();
+    void finish();
+
     JIIMType m_which;
     Affine cvt{};
     bool exact{};
@@ -548,23 +551,17 @@ InverseJulia::InverseJulia(JIIMType which) :
 {
 }
 
-void InverseJulia::process()
+void InverseJulia::start()
 {
-    ValueSaver saved_debug_flag{g_debug_flag};
-    ValueSaver saved_help_mode{
-        g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
-    ValueSaver saved_calc_type{g_calc_type};
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
-
     if (m_which == JIIMType::ORBIT)
     {
         g_has_inverse = true;
     }
-    
+
     s_show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-    aspect = ((double)g_logical_screen_x_dots*3)/((double)g_logical_screen_y_dots*4);  // assumes 4:3
+    aspect = ((double) g_logical_screen_x_dots * 3) / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
     actively_computing = true;
     set_aspect(aspect);
 
@@ -579,13 +576,13 @@ void InverseJulia::process()
     s_ok_to_miim = false;
     if (m_which == JIIMType::JIIM && g_debug_flag != DebugFlags::PREVENT_MIIM)
     {
-        s_ok_to_miim = init_queue(8*1024UL); // Queue Set-up Successful?
+        s_ok_to_miim = init_queue(8 * 1024UL); // Queue Set-up Successful?
     }
 
     s_max_hits = 1;
     if (m_which == JIIMType::ORBIT)
     {
-        g_plot = c_put_color;                // for line with clipping
+        g_plot = c_put_color; // for line with clipping
     }
 
     g_vesa_x_res = g_screen_x_dots;
@@ -600,11 +597,9 @@ void InverseJulia::process()
         restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
     }
 
-    if (g_logical_screen_x_dots == g_vesa_x_res
-        || g_logical_screen_y_dots == g_vesa_y_res
-        || g_vesa_x_res-g_logical_screen_x_dots < g_vesa_x_res/3
-        || g_vesa_y_res-g_logical_screen_y_dots < g_vesa_y_res/3
-        || g_logical_screen_x_dots >= MAX_RECT)
+    if (g_logical_screen_x_dots == g_vesa_x_res || g_logical_screen_y_dots == g_vesa_y_res ||
+        g_vesa_x_res - g_logical_screen_x_dots < g_vesa_x_res / 3 ||
+        g_vesa_y_res - g_logical_screen_y_dots < g_vesa_y_res / 3 || g_logical_screen_x_dots >= MAX_RECT)
     {
         // this mode puts orbit/julia in an overlapping window 1/3 the size of the physical screen
         s_window_style = JuliaWindowStyle::LARGE;
@@ -615,15 +610,15 @@ void InverseJulia::process()
         x_off = g_video_start_x + s_win_width * 5 / 2;
         y_off = g_video_start_y + s_win_height * 5 / 2;
     }
-    else if (g_logical_screen_x_dots > g_vesa_x_res/3 && g_logical_screen_y_dots > g_vesa_y_res/3)
+    else if (g_logical_screen_x_dots > g_vesa_x_res / 3 && g_logical_screen_y_dots > g_vesa_y_res / 3)
     {
         s_window_style = JuliaWindowStyle::NO_OVERLAP;
         s_win_width = g_vesa_x_res - g_logical_screen_x_dots;
         s_win_height = g_vesa_y_res - g_logical_screen_y_dots;
         s_corner_x = g_video_start_x + g_logical_screen_x_dots;
         s_corner_y = g_video_start_y + g_logical_screen_y_dots;
-        x_off = s_corner_x + s_win_width/2;
-        y_off = s_corner_y + s_win_height/2;
+        x_off = s_corner_x + s_win_width / 2;
+        y_off = s_corner_y + s_win_height / 2;
     }
     else
     {
@@ -632,23 +627,25 @@ void InverseJulia::process()
         s_win_height = g_vesa_y_res;
         s_corner_x = g_video_start_x;
         s_corner_y = g_video_start_y;
-        x_off = g_video_start_x + s_win_width/2;
-        y_off = g_video_start_y + s_win_height/2;
+        x_off = g_video_start_x + s_win_width / 2;
+        y_off = g_video_start_y + s_win_height / 2;
     }
 
-    x_factor = (int)(s_win_width/5.33);
-    y_factor = (int)(-s_win_height/4);
+    x_factor = (int) (s_win_width / 5.33);
+    y_factor = (int) (-s_win_height / 4);
 
     if (s_window_style == JuliaWindowStyle::LARGE)
     {
         save_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
     }
-    else if (s_window_style == JuliaWindowStyle::FULL_SCREEN)    // leave the fractal
+    else if (s_window_style == JuliaWindowStyle::FULL_SCREEN) // leave the fractal
     {
-        fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
-        fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
+        fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width - g_logical_screen_x_dots, s_win_height,
+            g_color_dark);
+        fill_rect(s_corner_x, g_logical_screen_y_dots, g_logical_screen_x_dots,
+            s_win_height - g_logical_screen_y_dots, g_color_dark);
     }
-    else    // blank whole window
+    else // blank whole window
     {
         fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
     }
@@ -658,8 +655,7 @@ void InverseJulia::process()
     // reuse last location if inside window
     g_col = (int) std::lround(cvt.a * g_save_c.x + cvt.b * g_save_c.y + cvt.e);
     g_row = (int) std::lround(cvt.c * g_save_c.x + cvt.d * g_save_c.y + cvt.f);
-    if (g_col < 0 || g_col >= g_logical_screen_x_dots
-        || g_row < 0 || g_row >= g_logical_screen_y_dots)
+    if (g_col < 0 || g_col >= g_logical_screen_x_dots || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
         c_real = (g_x_max + g_x_min) / 2.0;
         c_imag = (g_y_max + g_y_min) / 2.0;
@@ -691,11 +687,22 @@ void InverseJulia::process()
     color = g_color_bright;
 
     iter = 1;
-    bool still{true};
     zoom = 1.0f;
 
     g_cursor_mouse_tracking = true;
+}
 
+void InverseJulia::process()
+{
+    ValueSaver saved_debug_flag{g_debug_flag};
+    ValueSaver saved_help_mode{
+        g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
+    ValueSaver saved_calc_type{g_calc_type};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
+
+    start();
+
+    bool still{true};
     while (still)
     {
         if (actively_computing)
@@ -1299,8 +1306,14 @@ void InverseJulia::process()
         }
         g_old_z = g_new_z;
         g_l_old_z = g_l_new_z;
-    } // end while (still)
+    }
+
 finish:
+    finish();
+}
+
+void InverseJulia::finish()
+{
     free_queue();
 
     if (key != 's' && key != 'S')
@@ -1314,8 +1327,10 @@ finish:
         {
             if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
             {
-                fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width-g_logical_screen_x_dots, s_win_height, g_color_dark);
-                fill_rect(s_corner_x   , g_logical_screen_y_dots, g_logical_screen_x_dots, s_win_height-g_logical_screen_y_dots, g_color_dark);
+                fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width - g_logical_screen_x_dots,
+                    s_win_height, g_color_dark);
+                fill_rect(s_corner_x, g_logical_screen_y_dots, g_logical_screen_x_dots,
+                    s_win_height - g_logical_screen_y_dots, g_color_dark);
             }
             else
             {
