@@ -470,12 +470,46 @@ static void restore_rect(int x, int y, int width, int depth)
     s_cursor.show();
 }
 
+namespace
+{
+
+enum class OrbitFlags
+{
+    POINT = 0,
+    CIRCLE = 1,
+    LINE = 2
+};
+
+int operator+(OrbitFlags value)
+{
+    return static_cast<int>(value);
+}
+OrbitFlags operator&(OrbitFlags lhs, OrbitFlags rhs)
+{
+    return static_cast<OrbitFlags>(+lhs & +rhs);
+}
+bool bit_set(OrbitFlags value, OrbitFlags bit)
+{
+    return (value & bit) == bit;
+}
+OrbitFlags operator^(OrbitFlags lhs, OrbitFlags rhs)
+{
+    return static_cast<OrbitFlags>(+lhs ^ +rhs);
+}
+OrbitFlags &operator^=(OrbitFlags &lhs, OrbitFlags rhs)
+{
+    lhs = lhs ^ rhs;
+    return lhs;
+}
+
+} // namespace
+
 void jiim(JIIMType which)
 {
     Affine cvt;
     bool exact = false;
-    int count = 0;            // coloring julia
-    static int mode = 0;      // point, circle, ...
+    int count = 0;           // coloring julia
+    static OrbitFlags mode{}; // point, circle, ...
     double c_real;
     double c_imag;
     double r;
@@ -779,14 +813,14 @@ void jiim(JIIMType which)
                     g_julia_c_y = c_imag;
                     goto finish;
                     
-                case 'c':   // circle toggle
-                case 'C':   // circle toggle
-                    mode = mode ^ 1;
+                case 'c':
+                case 'C':
+                    mode ^= OrbitFlags::CIRCLE;
                     break;
                     
                 case 'l':
                 case 'L':
-                    mode = mode ^ 2;
+                    mode ^= OrbitFlags::LINE;
                     break;
                     
                 case 'n':
@@ -1138,17 +1172,17 @@ void jiim(JIIMType which)
                     y = (int)(-g_new_z.y * y_factor * zoom + y_off);
                     if (iter > 10)
                     {
-                        if (mode == 0)                          // pixels
+                        if (mode == OrbitFlags::POINT)
                         {
                             c_put_color(x, y, color);
                         }
-                        else if (mode & 1)              // circles
+                        if (bit_set(mode, OrbitFlags::CIRCLE))
                         {
                             s_x_base = x;
                             s_y_base = y;
                             circle((int)(zoom*(s_win_width >> 1)/iter), color);
                         }
-                        if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+                        if (bit_set(mode, OrbitFlags::LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
                         {
                             driver_draw_line(x, y, old_x, old_y, color);
                         }
@@ -1243,17 +1277,17 @@ void jiim(JIIMType which)
         }
         if (which == JIIMType::ORBIT || iter > 10)
         {
-            if (mode == 0)                    // pixels
+            if (mode == OrbitFlags::POINT)
             {
                 c_put_color(x, y, color);
             }
-            else if (mode & 1)              // circles
+            if (bit_set(mode, OrbitFlags::CIRCLE))
             {
                 s_x_base = x;
                 s_y_base = y;
                 circle((int)(zoom*(s_win_width >> 1)/iter), color);
             }
-            if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+            if (bit_set(mode, OrbitFlags::LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
             {
                 driver_draw_line(x, y, old_x, old_y, color);
             }
