@@ -669,7 +669,7 @@ void jiim(JIIMType which)
         {
             s_cursor.wait_key();
         }
-        if (driver_key_pressed() || first_time) // prevent burning up UNIX CPU
+        if (driver_key_pressed() || first_time)
         {
             first_time = false;
             while (driver_key_pressed())
@@ -683,89 +683,112 @@ void jiim(JIIMType which)
                 g_julia_c_y = JULIA_C_NOT_SET;
                 switch (key)
                 {
-                case ID_KEY_CTL_KEYPAD_5:      // ctrl - keypad 5
-                case ID_KEY_KEYPAD_5:          // keypad 5
-                    break;                  // do nothing
+                case ID_KEY_CTL_KEYPAD_5: // ctrl - keypad 5
+                case ID_KEY_KEYPAD_5:     // keypad 5
+                    break;                // do nothing
+
                 case ID_KEY_CTL_PAGE_UP:
                     d_col = 4;
                     d_row = -4;
                     break;
+
                 case ID_KEY_CTL_PAGE_DOWN:
                     d_col = 4;
                     d_row = 4;
                     break;
+                    
                 case ID_KEY_CTL_HOME:
                     d_col = -4;
                     d_row = -4;
                     break;
+                    
                 case ID_KEY_CTL_END:
                     d_col = -4;
                     d_row = 4;
                     break;
+                    
                 case ID_KEY_PAGE_UP:
                     d_col = 1;
                     d_row = -1;
                     break;
+                    
                 case ID_KEY_PAGE_DOWN:
                     d_col = 1;
                     d_row = 1;
                     break;
+                    
                 case ID_KEY_HOME:
                     d_col = -1;
                     d_row = -1;
                     break;
+                    
                 case ID_KEY_END:
                     d_col = -1;
                     d_row = 1;
                     break;
+                    
                 case ID_KEY_UP_ARROW:
                     d_row = -1;
                     break;
+                    
                 case ID_KEY_DOWN_ARROW:
                     d_row = 1;
                     break;
+                    
                 case ID_KEY_LEFT_ARROW:
                     d_col = -1;
                     break;
+                    
                 case ID_KEY_RIGHT_ARROW:
                     d_col = 1;
                     break;
+                    
                 case ID_KEY_CTL_UP_ARROW:
                     d_row = -4;
                     break;
+                    
                 case ID_KEY_CTL_DOWN_ARROW:
                     d_row = 4;
                     break;
+                    
                 case ID_KEY_CTL_LEFT_ARROW:
                     d_col = -4;
                     break;
+                    
                 case ID_KEY_CTL_RIGHT_ARROW:
                     d_col = 4;
                     break;
+                    
                 case 'z':
                 case 'Z':
                     zoom = 1.0F;
                     break;
+                    
                 case '<':
                 case ',':
                     zoom /= 1.15F;
                     break;
+                    
                 case '>':
                 case '.':
                     zoom *= 1.15F;
                     break;
+                    
                 case ID_KEY_SPACE:
                     g_julia_c_x = c_real;
                     g_julia_c_y = c_imag;
                     goto finish;
+                    
                 case 'c':   // circle toggle
                 case 'C':   // circle toggle
                     mode = mode ^ 1;
                     break;
+                    
                 case 'l':
                 case 'L':
                     mode = mode ^ 2;
                     break;
+                    
                 case 'n':
                 case 'N':
                     s_show_numbers = 8 - s_show_numbers;
@@ -776,6 +799,7 @@ void jiim(JIIMType which)
                         s_cursor.show();
                     }
                     break;
+                    
                 case 'p':
                 case 'P':
                     get_a_number(&c_real, &c_imag);
@@ -785,6 +809,7 @@ void jiim(JIIMType which)
                     d_row = 0;
                     d_col = 0;
                     break;
+                    
                 case 'h':   // hide fractal toggle
                 case 'H':   // hide fractal toggle
                     if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
@@ -797,6 +822,7 @@ void jiim(JIIMType which)
                         s_window_style = JuliaWindowStyle::FULL_SCREEN;
                     }
                     break;
+                    
                 case '0':
                 case '1':
                 case '2':
@@ -812,13 +838,17 @@ void jiim(JIIMType which)
                         s_secret_experimental_mode = key - '0';
                         break;
                     }
+                    
                 default:
                     still = false;
+                    break;
                 }  // switch
+
                 if (key == 's' || key == 'S')
                 {
                     goto finish;
                 }
+                
                 if (d_col > 0 || d_row > 0)
                 {
                     exact = false;
@@ -866,6 +896,7 @@ void jiim(JIIMType which)
                     c_imag = g_dy_pixel();
                 }
             }
+            
             actively_computing = true;
             if (s_show_numbers) // write coordinates on screen
             {
