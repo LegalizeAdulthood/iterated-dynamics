@@ -546,12 +546,6 @@ void InverseJulia::process()
     bool first_time{true};
 
     const ValueSaver saved_debug_flag{g_debug_flag};
-    // must use standard fractal or be calcfroth
-    if (g_fractal_specific[+g_fractal_type].calc_type != standard_fractal
-        && g_fractal_specific[+g_fractal_type].calc_type != calc_froth)
-    {
-        return;
-    }
     const ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
     if (m_which == JIIMType::ORBIT)
@@ -1380,6 +1374,13 @@ finish:
 
 void jiim(JIIMType which)
 {
+    // must use standard fractal or be calcfroth
+    if (g_fractal_specific[+g_fractal_type].calc_type != standard_fractal &&
+        g_fractal_specific[+g_fractal_type].calc_type != calc_froth)
+    {
+        return;
+    }
+
     InverseJulia tool(which);
     tool.process();
 }
