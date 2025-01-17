@@ -159,8 +159,8 @@ static void toggle_mandelbrot_julia(MainContext &context)
             g_bf_math == BFMathType::NONE;
         clear_zoom_box();
         jiim(JIIMType::JIIM);
-        const int key = driver_get_key(); // flush keyboard buffer
-        if (key != ID_KEY_SPACE)
+        // flush keyboard buffer
+        if (const int key = driver_get_key(); key != ID_KEY_SPACE)
         {
             driver_unget_key(key);
             return;
