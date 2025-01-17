@@ -553,12 +553,13 @@ void InverseJulia::process()
     ValueSaver saved_debug_flag{g_debug_flag};
     ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
+    ValueSaver saved_calc_type{g_calc_type};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
 
     if (m_which == JIIMType::ORBIT)
     {
         g_has_inverse = true;
     }
-    ValueSaver saved_calc_type{g_calc_type};
     
     s_show_numbers = 0;
     g_using_jiim = true;
@@ -566,7 +567,6 @@ void InverseJulia::process()
     aspect = ((double)g_logical_screen_x_dots*3)/((double)g_logical_screen_y_dots*4);  // assumes 4:3
     actively_computing = true;
     set_aspect(aspect);
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
 
     if (m_which == JIIMType::ORBIT)
     {
