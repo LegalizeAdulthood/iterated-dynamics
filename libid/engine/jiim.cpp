@@ -51,6 +51,19 @@ enum class JuliaWindowStyle
     HIDDEN = 3,
 };
 
+enum class SecretMode
+{
+    UNMODIFIED_RANDOM_WALK = 0,
+    ALWAYS_GO_ONE_DIRECTION = 1,
+    GO_ONE_DIR_DRAW_OTHER_DIR = 2,
+    GO_NEGATIVE_IF_MAX_COLOR = 4,
+    GO_POSITIVE_IF_MAX_COLOR = 5,
+    SIX = 6,
+    SEVEN = 7,
+    GO_IN_LONG_ZIG_ZAGS = 8,
+    RANDOM_RUN = 9,
+};
+
 static int s_show_numbers{};              // toggle for display of coords
 static std::vector<char> s_screen_rect;   //
 static JuliaWindowStyle s_window_style{}; // windows management system
@@ -69,7 +82,7 @@ static long s_l_size{};                   // how many in queue (now, ever)
 static long s_l_max{};                    //
 static int s_max_hits{1};                 //
 static bool s_ok_to_miim{};               //
-static int s_secret_experimental_mode{};  //
+static SecretMode s_secret_mode{};        //
 static float s_lucky_x{};                 //
 static float s_lucky_y{};                 //
 static CrossHairCursor s_cursor;          //
@@ -881,9 +894,13 @@ void InverseJulia::process()
                 case '9':
                     if (m_which == JIIMType::JIIM)
                     {
-                        s_secret_experimental_mode = key - '0';
-                        break;
+                        s_secret_mode = static_cast<SecretMode>(key - '0');
                     }
+                    else
+                    {
+                        still = false;
+                    }
+                    break;
                     
                 default:
                     still = false;
@@ -1122,9 +1139,9 @@ void InverseJulia::process()
 
                 g_new_z.y = std::sqrt(std::abs((r - g_old_z.x)/2));
 
-                switch (s_secret_experimental_mode)
+                switch (s_secret_mode)
                 {
-                case 0:                     // unmodified random walk
+                case SecretMode::UNMODIFIED_RANDOM_WALK:
                 default:
                     if (std::rand() % 2)
                     {
@@ -1134,7 +1151,8 @@ void InverseJulia::process()
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
-                case 1:                     // always go one direction
+
+                case SecretMode::ALWAYS_GO_ONE_DIRECTION:
                     if (g_save_c.y < 0)
                     {
                         g_new_z.x = -g_new_z.x;
@@ -1143,7 +1161,8 @@ void InverseJulia::process()
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
-                case 2:                     // go one dir, draw the other
+                    
+                case SecretMode::GO_ONE_DIR_DRAW_OTHER_DIR:
                     if (g_save_c.y < 0)
                     {
                         g_new_z.x = -g_new_z.x;
@@ -1152,7 +1171,8 @@ void InverseJulia::process()
                     x = (int)(-g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(-g_new_z.y * y_factor * zoom + y_off);
                     break;
-                case 4:                     // go negative if max color
+                    
+                case SecretMode::GO_NEGATIVE_IF_MAX_COLOR:
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     if (c_get_color(x, y) == g_colors - 1)
@@ -1163,7 +1183,8 @@ void InverseJulia::process()
                         y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     }
                     break;
-                case 5:                     // go positive if max color
+                    
+                case SecretMode::GO_POSITIVE_IF_MAX_COLOR:
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
@@ -1174,7 +1195,8 @@ void InverseJulia::process()
                         y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     }
                     break;
-                case 7:
+                    
+                case SecretMode::SEVEN:
                     if (g_save_c.y < 0)
                     {
                         g_new_z.x = -g_new_z.x;
@@ -1204,7 +1226,8 @@ void InverseJulia::process()
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
-                case 8:                     // go in long zig zags
+                    
+                case SecretMode::GO_IN_LONG_ZIG_ZAGS:
                     if (ran_cnt >= 300)
                     {
                         ran_cnt = -300;
@@ -1217,7 +1240,8 @@ void InverseJulia::process()
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
-                case 9:                     // "random run"
+                    
+                case SecretMode::RANDOM_RUN:
                     switch (ran_dir)
                     {
                     case 0:             // go random direction for a while
@@ -1254,7 +1278,7 @@ void InverseJulia::process()
                     x = (int)(g_new_z.x * x_factor * zoom + x_off);
                     y = (int)(g_new_z.y * y_factor * zoom + y_off);
                     break;
-                } // end switch SecretMode (sorry about the indentation)
+                }
             } // end if not MIIM
         }
         else // orbits
