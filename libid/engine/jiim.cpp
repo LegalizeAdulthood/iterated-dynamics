@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-/*
- * Generates Inverse Julia in real time, lets move a cursor which determines
- * the J-set.
- *
- *  The J-set is generated in a fixed-size window, a third of the screen.
- */
+// Generates Inverse Julia in real time, lets move a cursor which determines
+// the J-set.
+//
+//  The J-set is generated in a fixed-size window, a third of the screen.
+//
 #include "engine/jiim.h"
 
 #include "engine/calcfrac.h"
@@ -204,13 +203,11 @@ static void circle(int radius, int color)
     }
 }
 
-/*
- * MIIM section:
- *
- * Global variables and service functions used for computing
- * MIIM Julias will be grouped here (and shared by code in LORENZ.C)
- *
- */
+// MIIM section:
+//
+// Global variables and service functions used for computing
+// MIIM Julias will be grouped here (and shared by code in LORENZ.C)
+//
 static void fill_rect(int x, int y, int width, int depth, int color)
 {
     // fast version of fillrect
@@ -229,12 +226,10 @@ static void fill_rect(int x, int y, int width, int depth, int color)
     }
 }
 
-/*
- * Queue/Stack Section:
- *
- * Defines a buffer that can be used as a FIFO queue or LIFO stack.
- */
-
+// Queue/Stack Section:
+//
+// Defines a buffer that can be used as a FIFO queue or LIFO stack.
+//
 int queue_empty()            // True if NO points remain in queue
 {
     return s_list_front == s_list_back;
@@ -253,11 +248,7 @@ void clear_queue()
     s_list_front = 0;
 }
 
-/*
- * Queue functions for MIIM julia:
- * move to JIIM.C when done
- */
-
+// Queue functions for MIIM julia:
 bool init_queue(unsigned long request)
 {
     if (driver_is_disk())
@@ -444,11 +435,6 @@ LComplex dequeue_long()
     return out;
 }
 
-
-/*
- * End MIIM section;
- */
-
 static void save_rect(int x, int y, int width, int depth)
 {
     if (!g_has_inverse)
@@ -589,11 +575,8 @@ void InverseJulia::process()
 
     s_cursor = CrossHairCursor();
 
-    /*
-     * MIIM code:
-     * Grab memory for Queue/Stack before SaveRect gets it.
-     */
-    s_ok_to_miim  = false;
+    // MIIM code: Grab memory for Queue/Stack before SaveRect gets it.
+    s_ok_to_miim = false;
     if (m_which == JIIMType::JIIM && g_debug_flag != DebugFlags::PREVENT_MIIM)
     {
         s_ok_to_miim = init_queue(8*1024UL); // Queue Set-up Successful?
@@ -604,10 +587,6 @@ void InverseJulia::process()
     {
         g_plot = c_put_color;                // for line with clipping
     }
-
-    /*
-     * end MIIM code.
-     */
 
     g_vesa_x_res = g_screen_x_dots;
     g_vesa_y_res = g_screen_y_dots;
@@ -627,8 +606,7 @@ void InverseJulia::process()
         || g_vesa_y_res-g_logical_screen_y_dots < g_vesa_y_res/3
         || g_logical_screen_x_dots >= MAX_RECT)
     {
-        /* this mode puts orbit/julia in an overlapping window 1/3 the size of
-           the physical screen */
+        // this mode puts orbit/julia in an overlapping window 1/3 the size of the physical screen
         s_window_style = JuliaWindowStyle::LARGE;
         s_win_width = g_vesa_x_res / 3;
         s_win_height = g_vesa_y_res / 3;
@@ -967,8 +945,7 @@ void InverseJulia::process()
                 std::snprintf(str, std::size(str), "%16.14f %16.14f %3d", c_real, c_imag, get_color(g_col, g_row));
                 if (s_window_style == JuliaWindowStyle::LARGE)
                 {
-                    /* show temp msg will clear self if new msg is a
-                       different length - pad to length 40*/
+                    // show temp msg will clear self if new msg is a different length - pad to length 40
                     while ((int)std::strlen(str) < 40)
                     {
                         std::strcat(str, " ");
@@ -998,10 +975,7 @@ void InverseJulia::process()
 
             old_y = -1;
             old_x = -1;
-            /*
-             * MIIM code:
-             * compute fixed points and use them as starting points of JIIM
-             */
+            // MIIM code: compute fixed points and use them as starting points of JIIM
             if (m_which == JIIMType::JIIM && s_ok_to_miim)
             {
                 DComplex f1;
@@ -1019,9 +993,7 @@ void InverseJulia::process()
                 enqueue_float((float)f1.x, (float)f1.y);
                 enqueue_float((float)f2.x, (float)f2.y);
             }
-            /*
-             * End MIIM code.
-             */
+            // End MIIM code.
             if (m_which == JIIMType::ORBIT)
             {
                 per_pixel();
@@ -1051,7 +1023,7 @@ void InverseJulia::process()
             {
                 fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
             }
-        } // end if (driver_key_pressed)
+        }
 
         if (m_which == JIIMType::JIIM)
         {
@@ -1059,10 +1031,7 @@ void InverseJulia::process()
             {
                 continue;
             }
-            /*
-             * MIIM code:
-             * If we have MIIM queue allocated, then use MIIM method.
-             */
+            // If we have MIIM queue allocated, then use MIIM method.
             if (s_ok_to_miim)
             {
                 if (queue_empty())
@@ -1109,9 +1078,7 @@ void InverseJulia::process()
             }
             else
             {
-                /*
-                 * end Msnyder code, commence if not MIIM code.
-                 */
+                // not MIIM code.
                 g_old_z.x -= c_real;
                 g_old_z.y -= c_imag;
                 r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
