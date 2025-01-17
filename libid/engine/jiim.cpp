@@ -502,9 +502,21 @@ OrbitFlags &operator^=(OrbitFlags &lhs, OrbitFlags rhs)
     return lhs;
 }
 
-} // namespace
+class InverseJulia
+{
+public:
+    InverseJulia(JIIMType which) :
+        m_which(which)
+    {
+    }
 
-void jiim(JIIMType which)
+    void process();
+    
+private:
+    JIIMType m_which;
+};
+
+void InverseJulia::process()
 {
     Affine cvt;
     bool exact = false;
@@ -541,8 +553,8 @@ void jiim(JIIMType which)
         return;
     }
     const ValueSaver saved_help_mode{
-        g_help_mode, which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
-    if (which == JIIMType::ORBIT)
+        g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
+    if (m_which == JIIMType::ORBIT)
     {
         g_has_inverse = true;
     }
@@ -557,7 +569,7 @@ void jiim(JIIMType which)
     set_aspect(aspect);
     ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
 
-    if (which == JIIMType::ORBIT)
+    if (m_which == JIIMType::ORBIT)
     {
         per_image();
     }
@@ -569,13 +581,13 @@ void jiim(JIIMType which)
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
     s_ok_to_miim  = false;
-    if (which == JIIMType::JIIM && g_debug_flag != DebugFlags::PREVENT_MIIM)
+    if (m_which == JIIMType::JIIM && g_debug_flag != DebugFlags::PREVENT_MIIM)
     {
         s_ok_to_miim = init_queue(8*1024UL); // Queue Set-up Successful?
     }
 
     s_max_hits = 1;
-    if (which == JIIMType::ORBIT)
+    if (m_which == JIIMType::ORBIT)
     {
         g_plot = c_put_color;                // for line with clipping
     }
@@ -867,7 +879,7 @@ void jiim(JIIMType which)
                 case '7':
                 case '8':
                 case '9':
-                    if (which == JIIMType::JIIM)
+                    if (m_which == JIIMType::JIIM)
                     {
                         s_secret_experimental_mode = key - '0';
                         break;
@@ -973,7 +985,7 @@ void jiim(JIIMType which)
              * MIIM code:
              * compute fixed points and use them as starting points of JIIM
              */
-            if (which == JIIMType::JIIM && s_ok_to_miim)
+            if (m_which == JIIMType::JIIM && s_ok_to_miim)
             {
                 DComplex f1;
                 DComplex f2;
@@ -993,7 +1005,7 @@ void jiim(JIIMType which)
             /*
              * End MIIM code.
              */
-            if (which == JIIMType::ORBIT)
+            if (m_which == JIIMType::ORBIT)
             {
                 per_pixel();
             }
@@ -1024,7 +1036,7 @@ void jiim(JIIMType which)
             }
         } // end if (driver_key_pressed)
 
-        if (which == JIIMType::JIIM)
+        if (m_which == JIIMType::JIIM)
         {
             if (!g_has_inverse)
             {
@@ -1275,7 +1287,7 @@ void jiim(JIIMType which)
                 actively_computing = false;
             }
         }
-        if (which == JIIMType::ORBIT || iter > 10)
+        if (m_which == JIIMType::ORBIT || iter > 10)
         {
             if (mode == OrbitFlags::POINT)
             {
@@ -1362,4 +1374,12 @@ finish:
     {
         froth_cleanup();
     }
+}
+
+} // namespace
+
+void jiim(JIIMType which)
+{
+    InverseJulia tool(which);
+    tool.process();
 }
