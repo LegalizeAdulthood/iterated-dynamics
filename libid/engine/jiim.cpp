@@ -518,32 +518,32 @@ private:
 
 void InverseJulia::process()
 {
-    Affine cvt;
-    bool exact = false;
-    int count = 0;           // coloring julia
+    Affine cvt{};
+    bool exact{};
+    int count{};           // coloring julia
     static OrbitFlags mode{}; // point, circle, ...
-    double c_real;
-    double c_imag;
-    double r;
-    int x_factor;
-    int y_factor; // aspect ratio
+    double c_real{};
+    double c_imag{};
+    double r{};
+    int x_factor{};
+    int y_factor{}; // aspect ratio
 
-    int x_off;
-    int y_off; // center of the window
-    int x;
-    int y;
-    int key = -1;
+    int x_off{};
+    int y_off{}; // center of the window
+    int x{};
+    int y{};
+    int key{-1};
 
-    long iter;
-    int color;
-    float zoom;
-    int old_x;
-    int old_y;
-    double aspect;
-    static int ran_dir = 0;
-    static int ran_cnt = 0;
-    bool actively_computing = true;
-    bool first_time = true;
+    long iter{};
+    int color{};
+    float zoom{};
+    int old_x{};
+    int old_y{};
+    double aspect{};
+    static int ran_dir{};
+    static int ran_cnt{};
+    bool actively_computing{true};
+    bool first_time{true};
 
     const ValueSaver saved_debug_flag{g_debug_flag};
     // must use standard fractal or be calcfroth
@@ -700,7 +700,7 @@ void InverseJulia::process()
     color = g_color_bright;
 
     iter = 1;
-    bool still = true;
+    bool still{true};
     zoom = 1.0f;
 
     g_cursor_mouse_tracking = true;
