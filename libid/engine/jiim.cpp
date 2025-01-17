@@ -505,56 +505,62 @@ OrbitFlags &operator^=(OrbitFlags &lhs, OrbitFlags rhs)
 class InverseJulia
 {
 public:
-    InverseJulia(JIIMType which) :
-        m_which(which)
-    {
-    }
+    InverseJulia(JIIMType which);
 
     void process();
     
 private:
     JIIMType m_which;
-};
-
-void InverseJulia::process()
-{
     Affine cvt{};
     bool exact{};
     int count{};           // coloring julia
-    static OrbitFlags mode{}; // point, circle, ...
     double c_real{};
     double c_imag{};
     double r{};
     int x_factor{};
     int y_factor{}; // aspect ratio
-
     int x_off{};
     int y_off{}; // center of the window
     int x{};
     int y{};
     int key{-1};
-
     long iter{};
     int color{};
     float zoom{};
     int old_x{};
     int old_y{};
     double aspect{};
-    static int ran_dir{};
-    static int ran_cnt{};
     bool actively_computing{true};
     bool first_time{true};
+    int old_screen_x_offset{g_logical_screen_x_offset};
+    int old_screen_y_offset{g_logical_screen_y_offset};
 
-    const ValueSaver saved_debug_flag{g_debug_flag};
-    const ValueSaver saved_help_mode{
+    static OrbitFlags mode; // point, circle, ...
+    static int ran_dir;
+    static int ran_cnt;
+};
+
+OrbitFlags InverseJulia::mode{};
+int InverseJulia::ran_dir{};
+int InverseJulia::ran_cnt{};
+
+InverseJulia::InverseJulia(JIIMType which) :
+    m_which(which)
+{
+}
+
+void InverseJulia::process()
+{
+    ValueSaver saved_debug_flag{g_debug_flag};
+    ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
+
     if (m_which == JIIMType::ORBIT)
     {
         g_has_inverse = true;
     }
-    const int old_screen_x_offset{g_logical_screen_x_offset};
-    const int old_screen_y_offset{g_logical_screen_y_offset};
-    const ValueSaver saved_calc_type{g_calc_type};
+    ValueSaver saved_calc_type{g_calc_type};
+    
     s_show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
