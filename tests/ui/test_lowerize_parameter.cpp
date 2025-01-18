@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+#include ,cstring>
+
 using namespace testing;
 using namespace boost::algorithm;
 

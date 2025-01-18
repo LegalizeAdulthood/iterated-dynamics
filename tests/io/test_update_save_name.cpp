@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cstring>
+
 TEST(TestUpdateSaveName, basic)
 {
     char filename[1024];
