@@ -257,14 +257,14 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
     case MemoryLocation::MEMORY: // SetMemory
         for (int i = 0; i < size; i++)
         {
-            memset(s_handles[index].linear.memory + start, value, (U16) count);
+            std::memset(s_handles[index].linear.memory + start, value, (U16) count);
             start += count;
         }
         success = true; // No way to gauge success or failure
         break;
 
     case MemoryLocation::DISK: // SetMemory
-        memset(disk_buff, value, (U16) DISK_WRITE_LEN);
+        std::memset(disk_buff, value, (U16) DISK_WRITE_LEN);
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
