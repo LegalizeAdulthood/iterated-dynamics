@@ -13,7 +13,7 @@ void X11PlotWindow::initialize(Display *dpy, int screen_num, Window parent)
     int y = 0;
     width_ = 800;
     height_ = 600;
-    XSetWindowAttributes attrs = { 0 };
+    XSetWindowAttributes attrs{};
     Screen *screen = ScreenOfDisplay(dpy, screen_num);
     attrs.background_pixel = BlackPixelOfScreen(screen);
     attrs.bit_gravity = StaticGravity;

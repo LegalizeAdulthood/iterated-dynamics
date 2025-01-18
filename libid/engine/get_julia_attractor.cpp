@@ -16,7 +16,7 @@
 void get_julia_attractor(double real, double imag)
 {
     LComplex l_result{};
-    DComplex result = { 0.0 };
+    DComplex result{};
 
     if (g_attractors == 0 && !g_finite_attractor)   // not magnet & not requested
     {

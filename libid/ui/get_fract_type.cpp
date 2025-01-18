@@ -104,7 +104,7 @@ static FractalType select_fract_type(FractalType t)
     int num_types;
 #define MAX_FRACT_TYPES 200
     char type_name[40];
-    FractalTypeChoice storage[MAX_FRACT_TYPES] = { 0 };
+    FractalTypeChoice storage[MAX_FRACT_TYPES]{};
     FractalTypeChoice *choices[MAX_FRACT_TYPES];
     int attributes[MAX_FRACT_TYPES];
 

@@ -173,7 +173,7 @@ int line3d(Byte * pixels, unsigned line_len)
     int col;        // current column (original GIF)
     PointColor cur;      // current pixels
     PointColor old;      // old pixels
-    FPointColor f_cur = { 0.0 };
+    FPointColor f_cur{};
     FPointColor f_old;
     VECTOR v;                    // double vector
     VECTOR v1;
@@ -1032,7 +1032,7 @@ static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z
 
 static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 {
-    VECTOR S[2][4] = { 0 };
+    VECTOR S[2][4]{};
 
     S[0][0][0] = origin[0];
     S[1][0][0] = S[0][0][0];
