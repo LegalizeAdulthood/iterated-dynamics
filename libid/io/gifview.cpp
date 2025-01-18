@@ -154,7 +154,7 @@ int gif_view()
         }
     }
 
-    if (std::strncmp((char *)buffer, "GIF87a", 3)             // use updated GIF specs
+    if (std::strncmp((char *)buffer, "GIF87a", 3) != 0 // use updated GIF specs
         || buffer[3] < '0' || buffer[3] > '9'
         || buffer[4] < '0' || buffer[4] > '9'
         || buffer[5] < 'A' || buffer[5] > 'z')

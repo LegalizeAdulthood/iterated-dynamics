@@ -106,7 +106,7 @@ retry_dir:
     expand_dir_name(dir, drive);
     make_drive_dir(tmp_mask, drive, dir);
     fix_dir_name(tmp_mask);
-    if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOT_SLASH))
+    if (retried == 0 && std::strcmp(dir, SLASH) != 0 && std::strcmp(dir, DOT_SLASH) != 0)
     {
         int j = (int) std::strlen(tmp_mask) - 1;
         tmp_mask[j] = 0; // strip trailing backslash

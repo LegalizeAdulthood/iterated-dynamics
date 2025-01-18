@@ -122,7 +122,7 @@ MainState color_cycle(MainContext &context)
     {
         rotate(context.key == '+' ? 1 : -1);
     }
-    if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+    if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
     {
         g_color_state = ColorState::UNKNOWN;
         save_history_info();

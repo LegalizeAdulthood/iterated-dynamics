@@ -317,7 +317,7 @@ void save_history_info()
     {
         g_history_flag = false;            // coming from user history command, don't save
     }
-    else if (std::memcmp(&current, &last, sizeof(ImageHistory)))
+    else if (std::memcmp(&current, &last, sizeof(ImageHistory)) != 0)
     {
         if (++s_save_ptr >= g_max_image_history)    // back to beginning of circular buffer
         {

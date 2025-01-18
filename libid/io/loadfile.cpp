@@ -1133,7 +1133,7 @@ static int find_fractal_info(const std::string &gif_file, //
             {
                 if (fgetc(s_fp) != '!' // if not what we expect just give up
                     || std::fread(temp1, 1, 13, s_fp) != 13
-                    || std::strncmp(&temp1[2], "fractint", 8))
+                    || std::strncmp(&temp1[2], "fractint", 8) != 0)
                 {
                     break;
                 }
