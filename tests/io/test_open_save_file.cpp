@@ -22,7 +22,7 @@ TEST(TestSaveDir, initialValue)
 
 TEST(TestOpenSaveFile, filename)
 {
-    constexpr std::string_view name{"tmp.txt"};
+    const std::string name{"tmp.txt"};
     if (fs::exists(name))
     {
         fs::remove(name);
@@ -34,7 +34,7 @@ TEST(TestOpenSaveFile, filename)
     }
     ValueSaver save_dir{g_save_dir, ID_TEST_DATA_DIR};
 
-    std::FILE *file{open_save_file(name.data(), "w")};
+    std::FILE *file{open_save_file(name, "w")};
 
     ASSERT_NE(nullptr, file);
     std::fclose(file);
