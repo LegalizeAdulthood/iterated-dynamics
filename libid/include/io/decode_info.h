@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <config/port_config.h>
+
 // This decoding functions handle big endian binary blobs.
 // Iterated Dynamics always stores binary blobs, e.g. FRACTINT
 // extension blocks in GIF files, etc., in little endian
