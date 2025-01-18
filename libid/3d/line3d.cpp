@@ -1859,6 +1859,46 @@ static void hsv_to_rgb(
 //
 //*************************************************************************
 
+constexpr const char *DXF_HEADER{R"(  0
+SECTION
+  2
+TABLES
+  0
+TABLE
+  2
+LAYER
+70
+     2
+  0
+LAYER
+  2
+0
+ 70
+     0
+ 62
+     7
+  6
+CONTINUOUS
+  0
+LAYER
+  2
+FRACTAL
+ 70
+    64
+ 62
+     1
+  6
+CONTINUOUS
+  0
+ENDTAB
+  0
+ENDSEC
+  0
+SECTION
+  2
+ENTITIES
+)"};
+
 //******************************************************************
 //
 //  This routine writes a header to a ray tracer data file. It
@@ -1894,10 +1934,7 @@ static int ray_header()
         std::fprintf(s_file_ptr1, "--");
     }
     if (g_raytrace_format == RayTraceFormat::DXF)
-        std::fprintf(s_file_ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
- 70\n     2\n  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n\
-  0\nLAYER\n  2\nFRACTAL\n 70\n    64\n 62\n     1\n  6\nCONTINUOUS\n  0\n\
-ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
+        std::fprintf(s_file_ptr1, DXF_HEADER);
 
     if (g_raytrace_format != RayTraceFormat::DXF)
     {
