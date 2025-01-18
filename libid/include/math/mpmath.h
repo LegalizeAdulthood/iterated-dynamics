@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "fractals/parser.h"
+#include "math/cmplx.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "ui/trig_fns.h"
@@ -254,7 +255,6 @@ inline void cmplx_sqr_old(DComplex &out)
 }
 inline void cmplx_pwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
-    extern DComplex complex_power(DComplex, DComplex);
     out = complex_power(arg1, arg2);
 }
 inline void cmplx_mult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
