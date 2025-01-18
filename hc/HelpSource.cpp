@@ -175,10 +175,10 @@ int Topic::add_page(const Page &p)
     return num_page++;
 }
 
-void Topic::add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links)
+void Topic::add_page_break(int margin, char const *str, char const *start, char const *curr, int num_links)
 {
     Page p;
-    p.offset = (unsigned)(start - text);
+    p.offset = (unsigned)(start - str);
     p.length = (unsigned)(curr - start);
     p.margin = margin;
     add_page(p);
@@ -207,11 +207,11 @@ void Topic::release_topic_text(bool save) const
     }
 }
 
-void Topic::start(char const *text, int len)
+void Topic::start(char const *str, int len)
 {
     flags = TopicFlags::NONE;
     title_len = len;
-    title.assign(text, len);
+    title.assign(str, len);
     doc_page = -1;
     num_page = 0;
     g_src.curr = g_src.buffer.data();

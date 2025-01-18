@@ -131,11 +131,11 @@ struct Topic
 {
     void alloc_topic_text(unsigned size);
     int add_page(const Page &p);
-    void add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links);
+    void add_page_break(int margin, char const *str, char const *start, char const *curr, int num_links);
     char *get_topic_text();
     const char *get_topic_text() const;
     void release_topic_text(bool save) const;
-    void start(char const *text, int len);
+    void start(char const *str, int len);
 
     TopicFlags flags;        // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts

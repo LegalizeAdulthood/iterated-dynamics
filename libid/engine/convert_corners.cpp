@@ -106,7 +106,7 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDouble mag, double x_mag_factor, do
         return;
     }
 
-    bf_t g_bf_tmp = alloc_stack(g_bf_length + 2);
+    bf_t bf_tmp = alloc_stack(g_bf_length + 2);
     // in unrotated, untranslated coordinate system
     const double tan_skew = std::tan(deg_to_rad(skew));
     const LDouble x_min = -w + h * tan_skew;
@@ -125,31 +125,31 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDouble mag, double x_mag_factor, do
     LDouble x = x_min * cos_rot + y_max * sin_rot;
     LDouble y = -x_min * sin_rot + y_max * cos_rot;
     // xxmin = x + x_ctr;
-    float_to_bf(g_bf_tmp, x);
-    add_bf(g_bf_x_min, g_bf_tmp, ctr_x);
+    float_to_bf(bf_tmp, x);
+    add_bf(g_bf_x_min, bf_tmp, ctr_x);
     // yymax = y + y_ctr;
-    float_to_bf(g_bf_tmp, y);
-    add_bf(g_bf_y_max, g_bf_tmp, ctr_y);
+    float_to_bf(bf_tmp, y);
+    add_bf(g_bf_y_max, bf_tmp, ctr_y);
 
     // bottom right
     x =  x_max * cos_rot + y_min *  sin_rot;
     y = -x_max * sin_rot + y_min *  cos_rot;
     // xxmax = x + x_ctr;
-    float_to_bf(g_bf_tmp, x);
-    add_bf(g_bf_x_max, g_bf_tmp, ctr_x);
+    float_to_bf(bf_tmp, x);
+    add_bf(g_bf_x_max, bf_tmp, ctr_x);
     // yymin = y + y_ctr;
-    float_to_bf(g_bf_tmp, y);
-    add_bf(g_bf_y_min, g_bf_tmp, ctr_y);
+    float_to_bf(bf_tmp, y);
+    add_bf(g_bf_y_min, bf_tmp, ctr_y);
 
     // bottom left
     x =  x_3rd * cos_rot + y_3rd *  sin_rot;
     y = -x_3rd * sin_rot + y_3rd *  cos_rot;
     // xx3rd = x + x_ctr;
-    float_to_bf(g_bf_tmp, x);
-    add_bf(g_bf_x_3rd, g_bf_tmp, ctr_x);
+    float_to_bf(bf_tmp, x);
+    add_bf(g_bf_x_3rd, bf_tmp, ctr_x);
     // yy3rd = y + y_ctr;
-    float_to_bf(g_bf_tmp, y);
-    add_bf(g_bf_y_3rd, g_bf_tmp, ctr_y);
+    float_to_bf(bf_tmp, y);
+    add_bf(g_bf_y_3rd, bf_tmp, ctr_y);
 
     restore_stack(saved);
 }

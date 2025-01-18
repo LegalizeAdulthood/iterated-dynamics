@@ -62,9 +62,9 @@ public:
     void flush() override;
 
 private:
-    int width{};
-    int height{};
-    unsigned char clut[256][3]{};
+    int m_width{};
+    int m_height{};
+    unsigned char m_clut[256][3]{};
 };
 
 #define DRIVER_MODE(width_, height_ ) \
@@ -153,8 +153,8 @@ bool DiskDriver::init(int *argc, char **argv)
 bool DiskDriver::resize()
 {
     g_frame.resize(m_win_text.get_max_width(), m_win_text.get_max_height());
-    if ((g_video_table[g_adapter].x_dots == width)
-        && (g_video_table[g_adapter].y_dots == height))
+    if ((g_video_table[g_adapter].x_dots == m_width)
+        && (g_video_table[g_adapter].y_dots == m_height))
     {
         return false;
     }
@@ -191,8 +191,8 @@ int DiskDriver::read_palette()
     }
     for (int i = 0; i < 256; i++)
     {
-        g_dac_box[i][0] = clut[i][0];
-        g_dac_box[i][2] = clut[i][2];
+        g_dac_box[i][0] = m_clut[i][0];
+        g_dac_box[i][2] = m_clut[i][2];
     }
     return 0;
 }
@@ -217,9 +217,9 @@ int DiskDriver::write_palette()
     ODS("DiskDriver::write_palette");
     for (int i = 0; i < 256; i++)
     {
-        clut[i][0] = g_dac_box[i][0];
-        clut[i][1] = g_dac_box[i][1];
-        clut[i][2] = g_dac_box[i][2];
+        m_clut[i][0] = g_dac_box[i][0];
+        m_clut[i][1] = g_dac_box[i][1];
+        m_clut[i][2] = g_dac_box[i][2];
     }
 
     return 0;

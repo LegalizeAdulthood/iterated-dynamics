@@ -92,22 +92,22 @@ int cmp_bn(bn_t n1, bn_t n2)
     // unsigned comparison for the rest
     for (int i = g_bn_length-4; i >= 0; i -= 2)
     {
-        U16 value1 = big_access16(n1 + i);
-        U16 value2 = big_access16(n2 + i);
-        if (value1 > value2)
+        U16 n1_value = big_access16(n1 + i);
+        U16 n2_value = big_access16(n2 + i);
+        if (n1_value > n2_value)
         {
             // now determine which of the two bytes was different
-            if ((value1&0xFF00) > (value2&0xFF00))     // compare just high bytes
+            if ((n1_value&0xFF00) > (n2_value&0xFF00))     // compare just high bytes
             {
                 return i+2; // high byte was different
             }
 
             return i+1; // low byte was different
         }
-        else if (value1 < value2)
+        else if (n1_value < n2_value)
         {
             // now determine which of the two bytes was different
-            if ((value1&0xFF00) < (value2&0xFF00))     // compare just high bytes
+            if ((n1_value&0xFF00) < (n2_value&0xFF00))     // compare just high bytes
             {
                 return -(i+2); // high byte was different
             }
