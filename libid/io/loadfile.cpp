@@ -1127,7 +1127,7 @@ static int find_fractal_info(const std::string &gif_file, //
                  might be over 255 chars, and thus earlier load might be bad
                  find exact endpoint, so scan back to start of ext blks works
                */
-            fseek(s_fp, (long)(hdr_offset-15), SEEK_END);
+            std::fseek(s_fp, (long)(hdr_offset-15), SEEK_END);
             int scan_extend = 1;
             while (scan_extend)
             {
@@ -1156,7 +1156,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 case 2: // resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
-                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
+                    std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)g_block, data_len);
                     std::copy(&g_block[0], &g_block[data_len], blk_2_info->resume_data.data());
                     blk_2_info->length = data_len;
@@ -1165,7 +1165,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 case 3: // formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     // check data_len for backward compatibility
-                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
+                    std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&formula_info, data_len);
                     std::strcpy(blk_3_info->form_name, formula_info.form_name);
                     blk_3_info->length = data_len;
@@ -1197,7 +1197,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
                     blk_4_info->length = data_len/2;
                     blk_4_info->range_data.resize(blk_4_info->length);
-                    fseek(s_fp, (long) -block_len, SEEK_CUR);
+                    std::fseek(s_fp, (long) -block_len, SEEK_CUR);
                     {
                         std::vector<char> buffer(data_len, 0);
                         load_ext_blk(buffer.data(), data_len);
@@ -1212,13 +1212,13 @@ static int find_fractal_info(const std::string &gif_file, //
                 case 5: // extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_5_info->apm_data.resize(data_len);
-                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
+                    std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk(blk_5_info->apm_data.data(), data_len);
                     blk_5_info->got_data = true;
                     break;
                 case 6: // evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
+                    std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&evolution_info, data_len);
                     decode_evolver_info(&evolution_info, 1);
                     blk_6_info->length = data_len;
@@ -1248,7 +1248,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     break;
                 case 7: // orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
-                    fseek(s_fp, (long)(0-block_len), SEEK_CUR);
+                    std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&orbits_info, data_len);
                     decode_orbits_info(&orbits_info, 1);
                     blk_7_info->length = data_len;
@@ -1326,7 +1326,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
     *block_len = 1;
     while ((len = fgetc(s_fp)) > 0)
     {
-        fseek(s_fp, (long)len, SEEK_CUR);
+        std::fseek(s_fp, (long)len, SEEK_CUR);
         *data_len += len;
         *block_len += len + 1;
     }

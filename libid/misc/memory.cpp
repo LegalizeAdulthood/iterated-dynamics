@@ -133,7 +133,7 @@ bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long of
 
     case MemoryLocation::DISK: // MoveToMemory
         rewind(s_handles[index].disk.file);
-        fseek(s_handles[index].disk.file, start, SEEK_SET);
+        std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
             memcpy(disk_buff, buffer, (U16) DISK_WRITE_LEN);
@@ -200,7 +200,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
 
     case MemoryLocation::DISK: // MoveFromMemory
         rewind(s_handles[index].disk.file);
-        fseek(s_handles[index].disk.file, start, SEEK_SET);
+        std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
             num_read = (U16) fread(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
@@ -268,7 +268,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
     case MemoryLocation::DISK: // SetMemory
         memset(disk_buff, value, (U16) DISK_WRITE_LEN);
         rewind(s_handles[index].disk.file);
-        fseek(s_handles[index].disk.file, start, SEEK_SET);
+        std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
             num_written = (U16) std::fwrite(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
