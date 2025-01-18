@@ -787,8 +787,8 @@ static int help_topic(History *curr, History *next, int flags)
 int help()
 {
     int action{};
-    History      curr = { -1 };
-    History      next;
+    History curr{-1, 0, 0};
+    History next;
 
     if (g_help_mode == HelpLabels::NONE)   // is help disabled?
     {

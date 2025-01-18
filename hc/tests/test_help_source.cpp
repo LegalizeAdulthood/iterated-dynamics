@@ -8,8 +8,8 @@ using namespace hc;
 
 TEST(TestLabels, indexLabelLeast)
 {
-    const Label idx{INDEX_LABEL};
-    const Label other{"HELP_OTHER"};
+    const Label idx{INDEX_LABEL, 0, 0, 0};
+    const Label other{"HELP_OTHER", 0, 0, 0};
 
     EXPECT_TRUE(idx < other);
     EXPECT_FALSE(other < idx);
@@ -17,8 +17,8 @@ TEST(TestLabels, indexLabelLeast)
 
 TEST(TestLabels, labelsSortByName)
 {
-    const Label smaller{"aardvark"};
-    const Label bigger{"zebra"};
+    const Label smaller{"aardvark", 0, 0, 0};
+    const Label bigger{"zebra", 0, 0, 0};
 
     EXPECT_TRUE(smaller < bigger);
     EXPECT_FALSE(bigger < smaller);

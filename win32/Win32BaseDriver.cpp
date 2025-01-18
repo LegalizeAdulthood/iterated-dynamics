@@ -153,10 +153,8 @@ int Win32BaseDriver::get_key()
 // Spawn a command prompt.
 void  Win32BaseDriver::shell()
 {
-    STARTUPINFO si =
-    {
-        sizeof(si)
-    };
+    STARTUPINFO si{};
+    si.cb = sizeof(si);
     PROCESS_INFORMATION pi{};
     const char *com_spec = getenv("COMSPEC");
     if (com_spec == nullptr)
