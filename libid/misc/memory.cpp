@@ -87,7 +87,7 @@ static void which_disk_error(int I_O)
     char buf[MSG_LEN];
     char const *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
         "Read file error %d:  %s"};
-    std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O - 1) : 0], errno, strerror(errno));
+    std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O - 1) : 0], errno, std::strerror(errno));
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
         if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER, buf))
