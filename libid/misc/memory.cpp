@@ -80,14 +80,14 @@ static const char *memory_type(MemoryLocation where)
     return s_memory_names[static_cast<int>(where)];
 }
 
-static void which_disk_error(int I_O)
+static void which_disk_error(int status)
 {
-    // Set I_O == 1 after a file create, I_O == 2 after a file set value
-    // Set I_O == 3 after a file write, I_O == 4 after a file read
+    // Set status == 1 after a file create, status == 2 after a file set value
+    // Set status == 3 after a file write, status == 4 after a file read
     char buf[MSG_LEN];
     char const *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
         "Read file error %d:  %s"};
-    std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O - 1) : 0], errno, std::strerror(errno));
+    std::snprintf(buf, std::size(buf), pats[(1 <= status && status <= 4) ? (status - 1) : 0], errno, std::strerror(errno));
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
         if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER, buf))
