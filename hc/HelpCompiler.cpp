@@ -1182,7 +1182,7 @@ void HelpCompiler::report_memory()
     for (const Content &c : g_src.contents)
     {
         int t = (MAX_CONTENT_TOPIC - c.num_topic) *
-            (sizeof(g_src.contents[0].is_label[0]) + sizeof(g_src.contents[0].topic_name[0]) + sizeof(g_src.contents[0].topic_num[0]));
+            (sizeof(g_src.contents[0].is_label[0]) + g_src.contents[0].topic_name[0].size() + sizeof(g_src.contents[0].topic_num[0]));
         data += sizeof(Content) - t;
         dead += t;
         bytes_in_strings += (long) c.id.length() + 1;
