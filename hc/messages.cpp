@@ -37,7 +37,7 @@ void print_msg(char const *type, int line_num, char const *format, std::va_list 
         }
         std::printf(": ");
     }
-    vprintf(format, arg);
+    std::vprintf(format, arg);
     std::printf("\n");
     std::fflush(stdout);
 }
