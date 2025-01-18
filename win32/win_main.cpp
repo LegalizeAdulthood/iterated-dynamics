@@ -15,7 +15,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmd_lin
 {
     int result = 0;
 
-    __try
+    __try  // NOLINT(clang-diagnostic-language-extension-token)
     {
         g_top_of_stack = (char *) &result;
         g_instance = instance;
