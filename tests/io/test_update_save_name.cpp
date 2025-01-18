@@ -7,7 +7,7 @@
 TEST(TestUpdateSaveName, basic)
 {
     char filename[1024];
-    strcpy(filename, "fract0001.gif");
+    std::strcpy(filename, "fract0001.gif");
 
     update_save_name(filename);
 
@@ -17,7 +17,7 @@ TEST(TestUpdateSaveName, basic)
 TEST(TestUpdateSaveName, noNumbersAtEnd)
 {
     char filename[1024];
-    strcpy(filename, "myfract.gif");
+    std::strcpy(filename, "myfract.gif");
 
     update_save_name(filename);
 
@@ -27,7 +27,7 @@ TEST(TestUpdateSaveName, noNumbersAtEnd)
 TEST(TestUpdateSaveName, singleNumberAtEnd)
 {
     char filename[1024];
-    strcpy(filename, "myfract1.gif");
+    std::strcpy(filename, "myfract1.gif");
 
     update_save_name(filename);
 
@@ -37,7 +37,7 @@ TEST(TestUpdateSaveName, singleNumberAtEnd)
 TEST(TestUpdateSaveName, nineAtEnd)
 {
     char filename[1024];
-    strcpy(filename, "myfract9.gif");
+    std::strcpy(filename, "myfract9.gif");
 
     update_save_name(filename);
 

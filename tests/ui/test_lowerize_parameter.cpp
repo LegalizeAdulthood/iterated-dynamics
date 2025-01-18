@@ -17,7 +17,7 @@ protected:
 
 TEST_F(TestLowerizeParameter, argumentLowered)
 {
-    strcpy(m_line, "FOO=SOME_ARG");
+    std::strcpy(m_line, "FOO=SOME_ARG");
 
     lowerize_parameter(m_line);
 
@@ -27,7 +27,7 @@ TEST_F(TestLowerizeParameter, argumentLowered)
 TEST_P(TestLowerizeParameter, valueUnchanged)
 {
     const std::string param{GetParam()};
-    strcpy(m_line, (to_upper_copy(param) + "=SOME_ARG").c_str());
+    std::strcpy(m_line, (to_upper_copy(param) + "=SOME_ARG").c_str());
 
     lowerize_parameter(m_line);
 
