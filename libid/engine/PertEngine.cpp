@@ -362,9 +362,13 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
 
             case SUM:
                 if (iteration == g_max_iterations)
+                {
                     index = g_max_iterations;
+                }
                 else
+                {
                     index = iteration + (long) (w.real() + w.imag());
+                }
                 break;
 
             case ATAN:

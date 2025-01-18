@@ -369,18 +369,20 @@ int mpc_newton_fractal()
         {
             long tmp_color = -1;
             for (int i = 0; i < g_degree; i++)
+            {
                 if (mp_cmp(mp_distance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
                     {
-                        tmp_color = 1+(i&7) + ((g_color_iter&1) << 3);
+                        tmp_color = 1 + (i & 7) + ((g_color_iter & 1) << 3);
                     }
                     else
                     {
-                        tmp_color = 1+i;
+                        tmp_color = 1 + i;
                     }
                     break;
                 }
+            }
             if (tmp_color == -1)
             {
                 g_color_iter = g_max_color;

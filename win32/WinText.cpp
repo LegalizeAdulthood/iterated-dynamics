@@ -483,7 +483,9 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, char const *string, i
         if (xc == 13 || xc == 10)
         {
             if (row < WINTEXT_MAX_ROW-1)
+            {
                 row++;
+            }
             col = x_pos-1;
         }
         else
@@ -491,7 +493,9 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, char const *string, i
             if ((++col) >= WINTEXT_MAX_COL)
             {
                 if (row < WINTEXT_MAX_ROW-1)
+                {
                     row++;
+                }
                 col = x_pos;
             }
             max_row = std::max(max_row, row);
@@ -542,7 +546,9 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
     ODS("WinText::paint_screen");
 
     if (m_text_mode != 2)  // not in the right mode
+    {
         return;
+    }
 
     // first time through?  Initialize the 'screen'
     if (!m_buffer_init)
@@ -643,7 +649,9 @@ void WinText::cursor(int x_pos, int y_pos, int cursor_type)
     m_cursor_x = x_pos;
     m_cursor_y = y_pos;
     if (cursor_type >= 0)
+    {
         m_cursor_type = cursor_type;
+    }
     m_cursor_type = std::max(m_cursor_type, 0);
     m_cursor_type = std::min(m_cursor_type, 2);
     if (m_showing_cursor == FALSE)

@@ -536,7 +536,9 @@ bool mandel_bf_setup()
 int mandel_bn_per_pixel()
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    {
         return true;
+    }
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bn_int(g_param_z_bn.x, g_delta_x_bn, (U16)g_col);
     mult_bn_int(g_bn_tmp, g_delta2_x_bn, (U16)g_row);
@@ -587,7 +589,9 @@ int mandel_bf_per_pixel()
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
     // the pointer to setup isn't.
     if (g_bf_math == BFMathType::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
+    {
         return mandel_fp_per_pixel();
+    }
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bf_int(g_param_z_bf.x, g_delta_x_bf, (U16)g_col);
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);

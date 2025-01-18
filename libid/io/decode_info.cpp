@@ -290,7 +290,9 @@ static void get_double(double *dst, unsigned char **src, int dir)
         for (i = 0; i < 8; i++)
         {
             if ((*src)[i] != 0)
+            {
                 break;
+            }
         }
         if (i == 8)
         {
@@ -371,7 +373,9 @@ static void get_float(float *dst, unsigned char **src, int dir)
         for (i = 0; i < 4; i++)
         {
             if ((*src)[i] != 0)
+            {
                 break;
+            }
         }
         if (i == 4)
         {

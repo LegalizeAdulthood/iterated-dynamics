@@ -1934,7 +1934,9 @@ static int ray_header()
         std::fprintf(s_file_ptr1, "--");
     }
     if (g_raytrace_format == RayTraceFormat::DXF)
+    {
         std::fprintf(s_file_ptr1, DXF_HEADER);
+    }
 
     if (g_raytrace_format != RayTraceFormat::DXF)
     {

@@ -74,7 +74,9 @@ void load_config(const std::string &cfg_path)
         if (std::strchr(temp_string, '\n') == nullptr)
         {
             // finish reading the line
-            while (fgetc(cfg_file) != '\n' && !std::feof(cfg_file));
+            while (fgetc(cfg_file) != '\n' && !std::feof(cfg_file))
+            {
+            }
         }
         ++line_num;
         if (temp_string[0] == ';')

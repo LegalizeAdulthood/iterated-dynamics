@@ -623,9 +623,13 @@ top:
                 else
                 {
                     if ((std::abs(g_params[i]) < 0.00001 || std::abs(g_params[i]) > 100000.0) && g_params[i] != 0.0)
+                    {
                         std::sprintf(msg, "%-12.9e", g_params[i]);
+                    }
                     else
+                    {
                         std::sprintf(msg, "%-12.9f", g_params[i]);
+                    }
                 }
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 k++;
