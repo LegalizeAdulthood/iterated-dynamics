@@ -127,7 +127,7 @@ bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long of
 #if defined(_WIN32)
         _ASSERTE(s_handles[index].size >= size * count + start);
 #endif
-        memcpy(s_handles[index].linear.memory + start, buffer, size * count);
+        std::memcpy(s_handles[index].linear.memory + start, buffer, size * count);
         success = true; // No way to gauge success or failure
         break;
 
@@ -135,7 +135,7 @@ bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long of
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            memcpy(disk_buff, buffer, (U16) DISK_WRITE_LEN);
+            std::memcpy(disk_buff, buffer, (U16) DISK_WRITE_LEN);
             num_written = (U16) std::fwrite(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
             if (num_written != 1)
             {
@@ -145,7 +145,7 @@ bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long of
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
-        memcpy(disk_buff, buffer, (U16) to_move);
+        std::memcpy(disk_buff, buffer, (U16) to_move);
         num_written = (U16) std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
         if (num_written != 1)
         {
@@ -190,7 +190,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
     case MemoryLocation::MEMORY: // MoveFromMemory
         for (int i = 0; i < size; i++)
         {
-            memcpy(buffer, s_handles[index].linear.memory + start, (U16) count);
+            std::memcpy(buffer, s_handles[index].linear.memory + start, (U16) count);
             start += count;
             buffer += count;
         }
@@ -207,7 +207,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
                 which_disk_error(4);
                 goto diskerror;
             }
-            memcpy(buffer, disk_buff, (U16) DISK_WRITE_LEN);
+            std::memcpy(buffer, disk_buff, (U16) DISK_WRITE_LEN);
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
@@ -217,7 +217,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
             which_disk_error(4);
             break;
         }
-        memcpy(buffer, disk_buff, (U16) to_move);
+        std::memcpy(buffer, disk_buff, (U16) to_move);
         success = true;
 diskerror:
         break;

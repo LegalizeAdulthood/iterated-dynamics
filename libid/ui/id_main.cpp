@@ -236,7 +236,7 @@ static bool main_restore_start(MainContext &context)
 #endif
     if (g_colors_preloaded)
     {
-        memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
+        std::memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
     }
     g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
     while (g_show_file <= 0) // image is to be loaded
