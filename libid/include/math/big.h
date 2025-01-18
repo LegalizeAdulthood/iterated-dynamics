@@ -76,9 +76,6 @@ extern bf10_t g_bf10_tmp; // dec+4
 extern big_t g_big_pi;
 
 void calc_lengths();
-void init_big_dec(int dec);
-void init_big_length(int bnl);
-void init_big_pi();
 bn_t clear_bn(bn_t r);
 bn_t max_bn(bn_t r);
 bn_t copy_bn(bn_t r, bn_t n);
