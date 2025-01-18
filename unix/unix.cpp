@@ -46,30 +46,6 @@ strlwr(char *s)
     }
     return s;
 }
-/*
- *----------------------------------------------------------------------
- *
- * strupr --
- *
- *      Convert string to upper case.
- *
- * Results:
- *      The string.
- *
- * Side effects:
- *      Modifies the string.
- *
- *----------------------------------------------------------------------
- */
-char *
-strupr(char *s)
-{
-    for (char *sptr = s; *sptr; ++sptr)
-    {
-        *sptr = std::toupper(*sptr);
-    }
-    return s;
-}
 
 // tenths of millisecond timer routine
 static struct timeval tv_start;

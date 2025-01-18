@@ -73,7 +73,6 @@ typedef float FLOAT4;
 #define connect connect1
 typedef void (*SignalHandler)(int);
 char *strlwr(char *s);
-char *strupr(char *s);
 
 // ================================== linux definitions
 #endif
