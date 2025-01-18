@@ -132,7 +132,6 @@ bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long of
         break;
 
     case MemoryLocation::DISK: // MoveToMemory
-        rewind(s_handles[index].disk.file);
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
@@ -199,7 +198,6 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
         break;
 
     case MemoryLocation::DISK: // MoveFromMemory
-        rewind(s_handles[index].disk.file);
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
@@ -267,7 +265,6 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
 
     case MemoryLocation::DISK: // SetMemory
         memset(disk_buff, value, (U16) DISK_WRITE_LEN);
-        rewind(s_handles[index].disk.file);
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
@@ -514,7 +511,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
         {
             s_handles[handle].disk.file = dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "w+b");
         }
-        std::rewind(s_handles[handle].disk.file);
+        std::fseek(s_handles[handle].disk.file, 0, SEEK_SET);
         if (std::fseek(s_handles[handle].disk.file, to_allocate, SEEK_SET) != 0)
         {
             s_handles[handle].disk.file = nullptr;
@@ -535,7 +532,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
             dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "r+b") :
             dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "r+b");
         // cppcheck-suppress useClosedFile
-        std::rewind(s_handles[handle].disk.file);
+        std::fseek(s_handles[handle].disk.file, 0, SEEK_SET);
         s_handles[handle].size = to_allocate;
         s_handles[handle].stored_at = MemoryLocation::DISK;
         use_this_type = MemoryLocation::DISK;

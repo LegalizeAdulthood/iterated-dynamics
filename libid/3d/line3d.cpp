@@ -1690,7 +1690,7 @@ bool targa_validate(char const *filename)
         file_error(filename, 4);
         return true;
     }
-    std::rewind(fp);
+    std::fseek(fp, 0, SEEK_SET);
 
     // Now that we know its a good file, create a working copy
     if (start_disk1(s_targa_temp, fp, true))

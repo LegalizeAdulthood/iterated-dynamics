@@ -298,7 +298,7 @@ start:
         else
         {
             char line[80];
-            std::rewind(s_slide_show_file);
+            std::fseek(s_slide_show_file, 0, SEEK_SET);
             std::strcat(buffer, ":");
             int count;
             do

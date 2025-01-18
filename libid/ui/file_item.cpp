@@ -724,7 +724,7 @@ retry:
             box_depth, col_width, 0, format_item, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
-        std::rewind(s_gfe_file);
+        std::fseek(s_gfe_file, 0, SEEK_SET);
         do_sort = !do_sort;
         goto retry;
     }
