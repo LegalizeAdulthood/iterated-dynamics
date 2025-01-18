@@ -215,7 +215,7 @@ bool tab_display2(char *msg)
     {
         driver_put_string(row, 2, C_GENERAL_HI, msg);
         key = get_a_key_no_help();
-        std::sprintf(msg, "%d (0x%04x)      ", key, key);
+        std::sprintf(msg, "%d (0x%04x)      ", key, static_cast<unsigned int>(key));
     }
     return key != ID_KEY_ESC;
 }

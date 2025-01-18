@@ -557,7 +557,7 @@ char *char_lit(int ch)
     }
     else
     {
-        std::sprintf(buff, R"('\x%02X')", ch&0xFF);
+        std::sprintf(buff, R"('\x%02X')", static_cast<unsigned int>(ch & 0xFF));
     }
 
     return buff;

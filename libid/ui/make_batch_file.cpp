@@ -524,7 +524,7 @@ skip_ui:
         }
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
-            std::fprintf(bat_file, "start/wait id makemig=%u/%u\n", params.x_multiple, params.y_multiple);
+            std::fprintf(bat_file, "start/wait id makemig=%d/%d\n", params.x_multiple, params.y_multiple);
             std::fprintf(bat_file, ":oops\n");
             std::fclose(bat_file);
         }
