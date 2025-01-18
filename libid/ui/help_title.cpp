@@ -29,6 +29,6 @@ void help_title()
         std::snprintf(buf, sizeof(buf), ".%d", ID_VERSION_TWEAK);
         std::strcat(msg, buf);
     }
-    strcat(msg, " (" ID_GIT_HASH ")");
+    std::strcat(msg, " (" ID_GIT_HASH ")");
     put_string_center(0, 0, 80, C_TITLE, msg);
 }
