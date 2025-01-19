@@ -181,13 +181,13 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
     }
 }   // draw_line
 
-static void plot3d_superimpose16(int x, int y, int color)
+static void plot3d_superimpose16(int x, int y, int /*color*/)
 {
     int tmp = get_color(x, y);
 
     if (g_which_image == StereoImage::RED) // RED
     {
-        color = PAL_RED;
+        int color = PAL_RED;
         if (tmp > 0 && tmp != color)
         {
             color = PAL_MAGENTA;
@@ -205,7 +205,7 @@ static void plot3d_superimpose16(int x, int y, int color)
     {
         if (s_blue_local_left < x && x < s_blue_local_right)
         {
-            color = PAL_BLUE;
+            int color = PAL_BLUE;
             if (tmp > 0 && tmp != color)
             {
                 color = PAL_MAGENTA;

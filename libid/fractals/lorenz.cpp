@@ -3140,9 +3140,9 @@ static std::FILE *open_orbit_save()
 }
 
 // Plot a histogram by incrementing the pixel each time it is touched
-static void plot_hist(int x, int y, int color)
+static void plot_hist(int x, int y, int /*color*/)
 {
-    color = get_color(x, y)+1;
+    int color = get_color(x, y)+1;
     if (color >= g_colors)
     {
         color = 1;
