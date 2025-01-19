@@ -27,6 +27,12 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
+    - name: Install System Dependencies
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      run: |
+        sudo apt-get update
+        sudo apt-get install libx11-dev
+
     - name: Run Workflow
       run: cmake --workflow --preset ci-html-docs
 
@@ -80,6 +86,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: html-docs
+
+    - name: Install System Dependencies
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      run: |
+        sudo apt-get update
+        sudo apt-get install libx11-dev
 
     - name: Run Workflow
       run: cmake --workflow --preset ci-${{matrix.preset}}
