@@ -153,7 +153,6 @@ std::vector<int> g_iteration_ranges;                      // iter->color ranges 
 int g_iteration_ranges_len{};                             // size of ranges array
 Byte g_map_clut[256][3];                                  // map= (default colors)
 bool g_map_specified{};                                   // map= specified
-Byte *map_dac_box{};                                      // map= (default colors)
 ColorState g_color_state{ColorState::DEFAULT};            // g_dac_box matches default (bios or map=)
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
