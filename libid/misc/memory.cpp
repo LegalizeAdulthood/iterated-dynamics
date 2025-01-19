@@ -399,7 +399,7 @@ static int check_bounds(long start, long length, U16 handle)
     return 0;
 }
 
-void display_memory()
+static void display_memory()
 {
     char buf[MSG_LEN];
     std::snprintf(buf, std::size(buf), "disk=%lu", get_disk_space());
