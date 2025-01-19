@@ -496,7 +496,7 @@ static void lsysi_do_plus(LSysTurtleStateI *cmd)
 }
 
 // This is the same as lsys_doplus, except maxangle is a power of 2.
-void lsysi_do_plus_pow2(LSysTurtleStateI *cmd)
+static void lsysi_do_plus_pow2(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -510,7 +510,7 @@ void lsysi_do_plus_pow2(LSysTurtleStateI *cmd)
     }
 }
 
-void lsysi_do_minus(LSysTurtleStateI *cmd)
+static void lsysi_do_minus(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
@@ -532,7 +532,7 @@ void lsysi_do_minus(LSysTurtleStateI *cmd)
     }
 }
 
-void lsysi_do_minus_pow2(LSysTurtleStateI *cmd)
+static void lsysi_do_minus_pow2(LSysTurtleStateI *cmd)
 {
     if (cmd->reverse)
     {
