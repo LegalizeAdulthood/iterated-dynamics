@@ -9,8 +9,8 @@ endif()
 find_package(X11)
 
 add_library(os-hc INTERFACE)
-target_compile_options(os-hc PRIVATE ${ID_TARGET_OPTIONS})
-target_link_libraries(os-hc PUBLIC helpcom config)
+target_compile_options(os-hc INTERFACE ${ID_TARGET_OPTIONS})
+target_link_libraries(os-hc INTERFACE helpcom config)
 set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 
 add_library(os STATIC
