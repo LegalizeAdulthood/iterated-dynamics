@@ -19,26 +19,6 @@ bool g_log_map_calculate{};
 static double s_mlf{};
 static unsigned long s_lf{};
 
-inline void f_div(float x, float y, float &z)
-{
-    *(long*)&z = reg_div_float(*(long*)&x, *(long*)&y);
-}
-
-inline void f_mul16(float x, float y, float &z)
-{
-    *(long*)&z = r16_mul(*(long*)&x, *(long*)&y);
-}
-
-inline void fg_to_float(int x, long f, float &z)
-{
-    *(long*)&z = reg_fg_to_float(x, f);
-}
-
-inline long float_to_fg(float x, int f)
-{
-    return reg_float_to_fg(*(long*)&x, f);
-}
-
 /* int LogFlag;
    LogFlag == 1  -- standard log palettes
    LogFlag == -1 -- 'old' log palettes
