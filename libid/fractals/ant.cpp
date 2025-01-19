@@ -28,7 +28,7 @@
 #include <vector>
 
 // Generate Random Number 0 <= r < n
-inline int random(int n)
+static int random(int n)
 {
     return (int) ((long) std::rand() * (long) n >> 15);
 }
@@ -52,7 +52,7 @@ static std::vector<int> s_inc_y[DIRS];
 static int s_last_x_dots{};
 static int s_last_y_dots{};
 
-void set_wait(long *wait)
+static void set_wait(long *wait)
 {
     while (true)
     {
@@ -88,7 +88,7 @@ void set_wait(long *wait)
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
-void turk_mite1(int max_ants, int rule_len, char const *rule, long max_pts, long wait)
+static void turk_mite1(int max_ants, int rule_len, char const *rule, long max_pts, long wait)
 {
     int ant_x[MAX_ANTS + 1];
     int ant_y[MAX_ANTS + 1];
@@ -270,7 +270,7 @@ static unsigned rotate_left_one(unsigned value)
 }
 
 // this one ignore the color of the current cell is more like a white ant
-void turk_mite2(int max_ants, int rule_len, char const *rule, long max_pts, long wait)
+static void turk_mite2(int max_ants, int rule_len, char const *rule, long max_pts, long wait)
 {
     int ant_dir[MAX_ANTS + 1];
     int ant_x[MAX_ANTS + 1];
