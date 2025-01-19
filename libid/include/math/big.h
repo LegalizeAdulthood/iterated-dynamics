@@ -128,6 +128,7 @@ S16 big_setS16(S16 *addr, S16 val);
 #endif
 void bn_hex_dump(bn_t r);
 bn_t str_to_bn(bn_t r, char *s);
+int strlen_needed_bn();
 char *unsafe_bn_to_str(char *s, int dec, bn_t r);
 bn_t int_to_bn(bn_t r, long value);
 long bn_to_int(bn_t n);

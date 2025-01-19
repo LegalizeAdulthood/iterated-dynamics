@@ -312,9 +312,9 @@ bn_t str_to_bn(bn_t r, char *s)
 }
 
 /********************************************************************/
-// std::strlen_needed() - returns string length needed to hold bignumber
+// std::strlen_needed_bn() - returns string length needed to hold bignumber
 
-int strlen_needed()
+int strlen_needed_bn()
 {
     int length = 3;
 
