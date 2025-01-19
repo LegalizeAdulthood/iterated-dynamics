@@ -32,6 +32,7 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+#include <config/driver_types.h>
 #include <config/port.h>
 
 #include <sys/ioctl.h>
@@ -2594,6 +2595,5 @@ void X11Driver::set_keyboard_timeout(int ms)
     // TODO
 }
 
-static X11Driver x11_driver_info;
-
-Driver *x11_driver = &x11_driver_info;
+static X11Driver s_x11_driver;
+Driver *g_x11_driver = &s_x11_driver;

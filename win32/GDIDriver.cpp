@@ -19,6 +19,8 @@
 #include "ui/video.h"
 #include "ui/video_mode.h"
 
+#include <config/driver_types.h>
+
 #include <array> // for std::size
 
 enum
