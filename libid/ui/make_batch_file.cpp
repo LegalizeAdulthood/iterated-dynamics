@@ -95,7 +95,7 @@ struct MakeParParams
 {
     MakeParParams();
     bool prompt();
-    
+
     bool colors_only{g_make_parameter_file_map}; // makepar map case
     char input_command_file[80];
     char input_command_name[ITEM_NAME_LEN + 1];

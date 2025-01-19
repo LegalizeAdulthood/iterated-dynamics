@@ -93,7 +93,7 @@ TEST_F(TestComments, emptyString)
 TEST_F(TestComments, replaceUnderscoresWithSpaces)
 {
     std::strcpy(g_par_comment[0], "every_word_separated_with_underscore");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("every word separated with underscore", result);
@@ -102,7 +102,7 @@ TEST_F(TestComments, replaceUnderscoresWithSpaces)
 TEST_F(TestComments, escapedUnderscore)
 {
     std::strcpy(g_par_comment[0], R"(escaped\_underscore)");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("escaped_underscore", result);
@@ -111,7 +111,7 @@ TEST_F(TestComments, escapedUnderscore)
 TEST_F(TestComments, escapedDollar)
 {
     std::strcpy(g_par_comment[0], R"(escaped\$_dollar)");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("escaped$ dollar", result);
@@ -120,7 +120,7 @@ TEST_F(TestComments, escapedDollar)
 TEST_F(TestComments, escapedBackslash)
 {
     std::strcpy(g_par_comment[0], R"(escaped\\_backslash)");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ(R"(escaped\ backslash)", result);
@@ -130,7 +130,7 @@ TEST_F(TestComments, expandZeroCalcTime)
 {
     g_calc_time = 0;
     std::strcpy(g_par_comment[0], "$calctime$");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("  0:00:00.00", result);
@@ -140,7 +140,7 @@ TEST_F(TestComments, expandHundredthsSecondsCalcTime)
 {
     g_calc_time = 42;
     std::strcpy(g_par_comment[0], "$calctime$");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("  0:00:00.42", result);
@@ -150,7 +150,7 @@ TEST_F(TestComments, expandSecondsCalcTime)
 {
     g_calc_time = 42 * 100 + 42;
     std::strcpy(g_par_comment[0], "$calctime$");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("  0:00:42.42", result);
@@ -160,7 +160,7 @@ TEST_F(TestComments, expandMinutesCalcTime)
 {
     g_calc_time = (42 * 60 + 42) * 100 + 42;
     std::strcpy(g_par_comment[0], "$calctime$");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("  0:42:42.42", result);
@@ -170,7 +170,7 @@ TEST_F(TestComments, expandHoursCalcTime)
 {
     g_calc_time = ((4 * 60 + 42) * 60 + 42) * 100 + 42;
     std::strcpy(g_par_comment[0], "$calctime$");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("  4:42:42.42", result);
@@ -180,7 +180,7 @@ TEST_F(TestComments, expandDaysCalcTime)
 {
     g_calc_time = (((4 * 24 + 4) * 60 + 42) * 60 + 42) * 100 + 42;
     std::strcpy(g_par_comment[0], "$calctime$");
-    
+
     const std::string &result{expand_command_comment(0)};
 
     EXPECT_EQ("100:42:42.42", result);
@@ -207,7 +207,7 @@ TEST_F(TestComments, expandPatch)
 
 TEST_F(TestComments, expandXDots)
 {
-    g_logical_screen_x_dots = 1964;    
+    g_logical_screen_x_dots = 1964;
     std::strcpy(g_par_comment[0], "$xdots$");
 
     const std::string &result{expand_command_comment(0)};
@@ -217,7 +217,7 @@ TEST_F(TestComments, expandXDots)
 
 TEST_F(TestComments, expandYDots)
 {
-    g_logical_screen_y_dots = 1964;    
+    g_logical_screen_y_dots = 1964;
     std::strcpy(g_par_comment[0], "$ydots$");
 
     const std::string &result{expand_command_comment(0)};

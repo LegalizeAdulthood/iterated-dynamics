@@ -62,7 +62,7 @@ TEST(TestVideoMode, checkKeyNameAltFnKey)
 TEST(TestVideoMode, checkKeyFnKeyNoModes)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
-    
+
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F10));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F1));
@@ -86,7 +86,7 @@ TEST(TestVideoMode, checkKeyFnKeyNoMatchingModes)
 {
     ValueSaver saved_video_table_len{g_video_table_len, 0};
     push_modes({ID_KEY_F2, ID_KEY_SHF_F2, ID_KEY_CTL_F2, ID_KEY_ALT_F2});
-    
+
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F1));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_F10));
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_SHF_F1));

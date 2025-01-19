@@ -433,7 +433,7 @@ void exit_check()
     {
         return;
     }
-    
+
     stop_msg("Error - not all memory released, I'll get it.");
     for (U16 i = 1; i < MAX_HANDLES; i++)
     {

@@ -256,7 +256,7 @@ static void process_sstools_ini()
     {
         return;
     }
-    
+
     if (std::FILE *init_file = std::fopen(sstools_ini.c_str(), "r"); init_file != nullptr)
     {
         command_file(init_file, CmdFile::SSTOOLS_INI); // process it

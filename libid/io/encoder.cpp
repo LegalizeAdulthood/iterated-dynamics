@@ -1046,7 +1046,7 @@ static bool compress(int row_limit)
                 long f_code = (long)(((long) color << s_max_bits) + ent);
                 int i = (((int)color << h_shift) ^ ent);    // xor hashing
                 int disp{};
-                
+
                 if (s_h_tab[i] == f_code)
                 {
                     ent = s_code_tab[i];

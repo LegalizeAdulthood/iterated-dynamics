@@ -367,7 +367,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 {
     std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "foo.par"};
     remove(path);
-    
+
     exec_cmd_arg("makepar=foo.par/bar", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
@@ -400,7 +400,7 @@ TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 }
 
 )par");
-    
+
     exec_cmd_arg("makepar=bar.par/foo", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);

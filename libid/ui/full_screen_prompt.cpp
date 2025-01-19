@@ -76,7 +76,7 @@ private:
     int prompt_params();
     void display_title();
     int full_screen_exit();
-    
+
     char const *hdg;             // heading, lines separated by \n
     int num_prompts;             // there are this many prompts (max)
     char const **prompts;        // array of prompting pointers
@@ -439,7 +439,7 @@ void Prompt::display_extra_info()
     {
         return;
     }
-    
+
     constexpr char HORIZ_LINE{'\xC4'};
     constexpr const char *LOWER_LEFT{"\xC0"};
     constexpr const char *LOWER_RIGHT{"\xD9"};

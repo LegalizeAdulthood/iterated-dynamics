@@ -226,7 +226,7 @@ static void update_id_cfg()
         stop_msg("Couldn't open " + cfg_path.string() + " for reading, error " + std::to_string(errno)  + ".");
         return;
     }
-    
+
     const std::filesystem::path out_path{save_path.parent_path() / "id.tmp"};
     std::FILE *out_file = open_save_file(out_path.string(), "w");
     if (out_file == nullptr)

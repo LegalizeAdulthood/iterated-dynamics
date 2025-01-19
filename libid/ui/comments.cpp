@@ -227,7 +227,7 @@ const std::string &expand_command_comment(int i)
 {
     std::time_t now;
     std::time(&now);
-    return expand_command_comment(i, now);    
+    return expand_command_comment(i, now);
 }
 
 void init_comments()

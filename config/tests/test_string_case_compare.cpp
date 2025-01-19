@@ -7,28 +7,28 @@
 TEST(TestStringCaseCompareCount, firstStringEmpty)
 {
     char buffer[80]{"foo"};
-    
+
     EXPECT_GT(0, string_case_compare("", buffer, sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompareCount, secondStringEmpty)
 {
     char buffer[80]{"foo"};
-    
+
     EXPECT_LT(0, string_case_compare(buffer, "", sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompareCount, firstStringExhaustedEqual)
 {
     char buffer[]{"foo"};
-    
+
     EXPECT_EQ(0, string_case_compare(buffer, "foobar", sizeof(buffer) - 1));
 }
 
 TEST(TestStringCaseCompareCount, secondStringExhaustedEqual)
 {
     char buffer[]{"foo"};
-    
+
     EXPECT_EQ(0, string_case_compare("foobar", buffer, sizeof(buffer) - 1));
 }
 

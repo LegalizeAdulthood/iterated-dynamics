@@ -1143,15 +1143,15 @@ static void perform_work_list()
         case 's':
             soi();
             break;
-            
+
         case 't':
             tesseral();
             break;
-            
+
         case 'b':
             boundary_trace();
             break;
-            
+
         case 'g':
             // TODO: fix this
             // horrible cludge preventing crash when coming back from perturbation and math = bignum/bigflt
@@ -1160,15 +1160,15 @@ static void perform_work_list()
                 solid_guess();
             }
             break;
-            
+
         case 'd':
             diffusion_scan();
             break;
-            
+
         case 'o':
             sticky_orbits();
             break;
-            
+
         case 'p':
             // we already finished perturbation
             if (bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
@@ -1176,7 +1176,7 @@ static void perform_work_list()
                 return;
             }
             break;
-            
+
         default:
             one_or_two_pass();
             break;
