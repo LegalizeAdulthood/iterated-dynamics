@@ -211,31 +211,31 @@ short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
 std::string g_browse_name; // name for browse file
 
-inline bool within_eps(float lhs, float rhs)
+static bool within_eps(float lhs, float rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
 
-inline bool within_eps(double lhs, double rhs)
+static bool within_eps(double lhs, double rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
 
 template <size_t N, typename T>
-bool equal(const T (&lhs)[N], const T (&rhs)[N])
+static bool equal(const T (&lhs)[N], const T (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs));
 }
 
 template <size_t N>
-bool equal(const float (&lhs)[N], const float (&rhs)[N])
+static bool equal(const float (&lhs)[N], const float (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
         [](float lhs, float rhs) { return within_eps(lhs, rhs); });
 }
 
 template <size_t N>
-bool equal(const double (&lhs)[N], const double (&rhs)[N])
+static bool equal(const double (&lhs)[N], const double (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
         [](double lhs, double rhs) { return within_eps(lhs, rhs); });
@@ -962,7 +962,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
-inline void file_read(void *ptr, size_t size, size_t num, std::FILE *stream)
+static void file_read(void *ptr, size_t size, size_t num, std::FILE *stream)
 {
     if (std::fread(ptr, size, num, stream) != num)
     {
@@ -1529,14 +1529,14 @@ static bool fix_period_bof()
 
 // browse code RB
 
-inline void save_box(int num_dots, int which)
+static void save_box(int num_dots, int which)
 {
     std::copy(&g_box_x[0], &g_box_x[num_dots], &s_browse_box_x[num_dots*which]);
     std::copy(&g_box_y[0], &g_box_y[num_dots], &s_browse_box_y[num_dots*which]);
     std::copy(&g_box_values[0], &g_box_values[num_dots], &s_browse_box_values[num_dots*which]);
 }
 
-inline void restore_box(int num_dots, int which)
+static void restore_box(int num_dots, int which)
 {
     std::copy(&s_browse_box_x[num_dots*which], &s_browse_box_x[num_dots*(which + 1)], &g_box_x[0]);
     std::copy(&s_browse_box_y[num_dots*which], &s_browse_box_y[num_dots*(which + 1)], &g_box_y[0]);
