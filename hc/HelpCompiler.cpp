@@ -76,7 +76,7 @@ struct PrintDocInfo : DocInfo
     int spaces;
 };
 
-int g_num_doc_pages{};               // total number of pages in document
+static int s_num_doc_pages{};               // total number of pages in document
 
 static std::string s_src_filename;   // command-line .SRC filename
 
@@ -378,7 +378,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
     } // for
 }
 
-Label *find_next_label_by_topic(int t)
+static Label *find_next_label_by_topic(int t)
 {
     Label *g = nullptr;
     for (Label &l : g_src.labels)
@@ -482,7 +482,7 @@ void HelpCompiler::set_content_doc_page()
 }
 
 // this function also used by print_document()
-bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     DocInfo &info = *static_cast<DocInfo *>(context);
     const Content *c;
@@ -542,7 +542,7 @@ bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
     }
 }
 
-bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PaginateDocIno *info = static_cast<PaginateDocIno *>(context);
     switch (cmd)
@@ -554,7 +554,7 @@ bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *con
         return true;
 
     case PrintDocCommand::PD_HEADING:
-        ++g_num_doc_pages;
+        ++s_num_doc_pages;
         return true;
 
     case PrintDocCommand::PD_START_SECTION:
@@ -610,7 +610,7 @@ void HelpCompiler::paginate_document()
 // file write stuff.
 
 // returns true if different
-bool compare_files(std::FILE *f1, std::FILE *f2)
+static bool compare_files(std::FILE *f1, std::FILE *f2)
 {
     if (filelength(fileno(f1)) != filelength(fileno(f2)))
     {
@@ -628,7 +628,7 @@ bool compare_files(std::FILE *f1, std::FILE *f2)
     return !(std::feof(f1) && std::feof(f2));
 }
 
-void write_header_file(char const *fname, std::FILE *file)
+static void write_header_file(char const *fname, std::FILE *file)
 {
     std::fprintf(file, //
         "// SPDX-License-Identifier: GPL-3.0-only\n"
@@ -858,7 +858,7 @@ void HelpCompiler::calc_offsets()    // calc file offset to each topic
 
 // Replaces link indexes in the help text with topic_num, topic_off and
 // doc_page info.
-void insert_real_link_info(char *curr, unsigned int len)
+static void insert_real_link_info(char *curr, unsigned int len)
 {
     while (len > 0)
     {
@@ -900,7 +900,7 @@ void HelpCompiler::write_help(std::FILE *file)
 
     // write num_doc_page
 
-    putw(g_num_doc_pages, file);
+    putw(s_num_doc_pages, file);
 
     // write the offsets to each topic
     for (const Topic &t : g_src.topics)
@@ -1224,7 +1224,7 @@ void HelpCompiler::report_stats()
     std::printf("%8d Private labels\n", static_cast<int>(g_src.private_labels.size()));
     std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_src.contents.size()));
     std::printf("%8d Online help pages\n", pages);
-    std::printf("%8d Document pages\n", g_num_doc_pages);
+    std::printf("%8d Document pages\n", s_num_doc_pages);
 }
 
 // add/delete help from .EXE functions.
