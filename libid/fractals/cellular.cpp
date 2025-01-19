@@ -49,7 +49,7 @@ static bool s_last_screen_flag{};
 
 bool g_cellular_next_screen{};             // for cellular next screen generation
 
-void abort_cellular(int err, int t)
+static void abort_cellular(int err, int t)
 {
     switch (err)
     {
