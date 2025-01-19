@@ -85,7 +85,7 @@ static void put_file_name(char const *keyword, char const *fname);
 static void strip_zeros(char *buf);
 static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj);
 
-inline char par_key(int x)
+static char par_key(int x)
 {
     return static_cast<char>(x < 10 ? '0' + x : 'a' - 10 + x);
 }
@@ -1621,7 +1621,7 @@ static void put_param(char const *param, ...)
     }
 }
 
-inline int nice_line_length()
+static int nice_line_length()
 {
     return g_max_line_length-4;
 }
