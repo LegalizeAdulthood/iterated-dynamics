@@ -10,15 +10,6 @@ namespace id
 {
 
 template <typename T>
-struct HyperComplex
-{
-    T x;
-    T y;
-    T z;
-    T t;
-};
-
-template <typename T>
 struct Complex
 {
     T x;
@@ -108,9 +99,6 @@ double modulus(const Complex<T> &z)
 }
 
 } // namespace id
-
-using DHyperComplex = id::HyperComplex<double>;
-using LHyperComplex = id::HyperComplex<long>;
 
 using DComplex = id::Complex<double>;
 using LComplex = id::Complex<long>;
