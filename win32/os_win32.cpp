@@ -14,7 +14,6 @@
 #include <DbgHelp.h>
 #include <Windows.h>
 
-#include <cstdarg>
 #include <cstdio>
 #include <filesystem>
 
@@ -102,24 +101,6 @@ void create_minidump(EXCEPTION_POINTERS *ep)
             minidump);
         MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
-}
-
-/* ods
- *
- * varargs version of OutputDebugString with file and line markers.
- */
-void ods(char const *file, unsigned int line, char const *format, ...)
-{
-    char full_msg[MAX_PATH+1];
-    char app_msg[MAX_PATH+1];
-    std::va_list args;
-
-    va_start(args, format);
-    std::vsnprintf(app_msg, MAX_PATH, format, args);
-    std::snprintf(full_msg, MAX_PATH, "%s(%u): %s\n", file, line, app_msg);
-    va_end(args);
-
-    OutputDebugStringA(full_msg);
 }
 
 void init_failure(char const *message)
