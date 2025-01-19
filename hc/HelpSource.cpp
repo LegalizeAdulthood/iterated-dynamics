@@ -1233,7 +1233,7 @@ static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_of
         }
         else
         {
-            warn(err_offset, ("\"" + tag + "+\" already in effect.").c_str());
+            warn(err_offset, ('"' + tag + R"msg(+" already in effect.)msg").c_str());
         }
     }
     else if (s_cmd[tag.length()] == '-')
@@ -1246,7 +1246,7 @@ static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_of
         }
         else
         {
-            warn(err_offset, ("\"" + tag + "-\" already in effect.").c_str());
+            warn(err_offset, ('"' + tag + R"msg(-" already in effect.)msg").c_str());
         }
     }
     else
@@ -1279,7 +1279,7 @@ void read_src(std::string const &fname, Mode mode)
     s_src_file = open_include(fname);
     if (s_src_file == nullptr)
     {
-        throw std::runtime_error("Unable to open \"" + fname + "\"");
+        throw std::runtime_error(R"msg(Unable to open ")msg" + fname + '"');
     }
 
     msg("Compiling: %s", fname.c_str());
@@ -1949,7 +1949,7 @@ void read_src(std::string const &fname, Mode mode)
                 unread_char('~');
             }
             *ptr = '\0';
-            error(0, "Text outside of any topic \"%s\".", s_cmd);
+            error(0, R"msg(Text outside any topic "%s".)msg", s_cmd);
             continue;
         }
 

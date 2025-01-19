@@ -685,7 +685,7 @@ void HelpCompiler::write_header()
         hdr = std::fopen(fname.c_str(), "wt");
         if (hdr == nullptr)
         {
-            throw std::runtime_error("Cannot create \"" + fname + "\".");
+            throw std::runtime_error(R"msg(Cannot create ")msg" + fname + R"msg(".)msg");
         }
         msg("Writing: %s", fname.c_str());
         write_header_file(fname.c_str(), hdr);
@@ -700,7 +700,7 @@ void HelpCompiler::write_header()
 
     if (temp == nullptr)
     {
-        throw std::runtime_error("Cannot create temporary file: \"" + std::string{TEMP_FNAME} + "\".");
+        throw std::runtime_error(R"msg(Cannot create temporary file: ")msg" + std::string{TEMP_FNAME} + R"msg(".)msg");
     }
 
     write_header_file(fname.c_str(), temp);
@@ -710,7 +710,7 @@ void HelpCompiler::write_header()
 
     if (temp == nullptr)
     {
-        throw std::runtime_error("Cannot open temporary file: \"" + std::string{TEMP_FNAME} + "\".");
+        throw std::runtime_error(R"msg(Cannot open temporary file: ")msg" + std::string{TEMP_FNAME} + R"msg(".)msg");
     }
 
     if (compare_files(temp, hdr)) // if they are different...
@@ -978,7 +978,7 @@ void HelpCompiler::write_help()
     std::FILE *hlp = std::fopen(fname, "wb");
     if (hlp == nullptr)
     {
-        throw std::runtime_error("Cannot create .HLP file: \"" + std::string{fname} + "\".");
+        throw std::runtime_error(R"msg(Cannot create .HLP file: ")msg" + std::string{fname} + R"msg(".)msg");
     }
 
     msg("Writing: %s", fname);
@@ -1121,7 +1121,7 @@ void HelpCompiler::print_document()
     info.file = std::fopen(fname, "wt");
     if (info.file == nullptr)
     {
-        throw std::runtime_error("Couldn't create \"" + std::string{fname} + "\"");
+        throw std::runtime_error(R"msg(Couldn't create ")msg" + std::string{fname} + '"');
     }
 
     info.margin = PAGE_INDENT;
@@ -1238,13 +1238,13 @@ void HelpCompiler::add_hlp_to_exe()
     int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
     {
-        throw std::runtime_error("Unable to open \"" + std::string{exe_fname} + "\"");
+        throw std::runtime_error(R"msg(Unable to open ")msg" + std::string{exe_fname} + '"');
     }
 
     int hlp = open(hlp_fname, O_RDONLY | O_BINARY);
     if (hlp == -1)
     {
-        throw std::runtime_error("Unable to open \"" + std::string{hlp_fname} + "\"");
+        throw std::runtime_error("Unable to open \"" + std::string{hlp_fname} + '"');
     }
 
     msg("Appending %s to %s", hlp_fname, exe_fname);
@@ -1330,7 +1330,7 @@ void HelpCompiler::delete_hlp_from_exe()
 {
     if (!m_options.fname2.empty())
     {
-        throw std::runtime_error("Unexpected argument \"" + m_options.fname2 + "\"");
+        throw std::runtime_error(R"msg(Unexpected argument ")msg" + m_options.fname2 + '"');
     }
     const char *exe_fname{m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str()};
     HelpSignature hs{};
@@ -1338,7 +1338,7 @@ void HelpCompiler::delete_hlp_from_exe()
     int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
     {
-        throw std::runtime_error("Unable to open \"" + std::string{exe_fname} + "\"");
+        throw std::runtime_error(R"msg(Unable to open ")msg" + std::string{exe_fname} + '"');
     }
 
     msg("Deleting help from %s", exe_fname);
@@ -1460,7 +1460,7 @@ void HelpCompiler::read_source_file()
     g_src.swap_file = std::fopen(m_options.swap_path.c_str(), "w+b");
     if (g_src.swap_file == nullptr)
     {
-        throw std::runtime_error("Cannot create swap file \"" + m_options.swap_path + "\"");
+        throw std::runtime_error(R"msg(Cannot create swap file ")msg" + m_options.swap_path + '"');
     }
     g_src.swap_pos = 0;
 
@@ -1471,7 +1471,7 @@ void HelpCompiler::compile()
 {
     if (!m_options.fname2.empty())
     {
-        throw std::runtime_error("Unexpected command-line argument \"" + m_options.fname2 + "\"");
+        throw std::runtime_error(R"msg(Unexpected command-line argument ")msg" + m_options.fname2 + '"');
     }
 
     read_source_file();

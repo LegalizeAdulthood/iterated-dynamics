@@ -23,7 +23,7 @@ int AsciiDocCompiler::process()
 {
     if (!m_options.fname2.empty())
     {
-        throw std::runtime_error("Unexpected command-line argument \"" + m_options.fname2 + "\"");
+        throw std::runtime_error(R"msg(Unexpected command-line argument ")msg" + m_options.fname2 + '"');
     }
 
     g_src.buffer.resize(BUFFER_SIZE);
