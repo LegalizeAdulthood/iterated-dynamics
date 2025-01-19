@@ -60,7 +60,7 @@ char g_old_std_calc_mode{};
 void (*g_out_line_cleanup)(){};
 bool g_virtual_screens{};
 
-inline int iround(double value)
+static int iround(double value)
 {
     return static_cast<int>(std::lround(value));
 }
