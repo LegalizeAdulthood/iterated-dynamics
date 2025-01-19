@@ -23,17 +23,17 @@ static double                s_newton_r_over_d{};
 static std::vector<DComplex> s_roots;
 static double                s_threshold{};
 
-inline double distance(const DComplex &z1, const DComplex &z2)
+static double distance(const DComplex &z1, const DComplex &z2)
 {
     return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
 }
 
-inline MP mp_sqr(MP z)
+static MP mp_sqr(MP z)
 {
     return *mp_mul(z, z);
 }
 
-inline MP mp_distance(const MPC &z1, const MPC &z2)
+static MP mp_distance(const MPC &z1, const MPC &z2)
 {
     return *mp_add(mp_sqr(*mp_sub(z1.x, z2.x)), mp_sqr(*mp_sub(z1.y, z2.y)));
 }
@@ -73,7 +73,7 @@ void invertz2(DComplex *z)
 }
 
 // Distance of complex z from unit circle
-inline double distance1(const DComplex &z)
+static double distance1(const DComplex &z)
 {
     return sqr(z.x - 1.0) + sqr(z.y);
 }
