@@ -63,14 +63,14 @@ struct SOIDoubleState
 
 } // namespace
 
-inline DoubleComplex z_sqr(DoubleComplex z)
+static DoubleComplex z_sqr(DoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
 }
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
-inline void interpolate(
+static void interpolate(
     double x0, double x1, double x2,
     double w0, double w1, double w2,
     double &b0, double &b1, double &b2)
@@ -81,7 +81,7 @@ inline void interpolate(
 }
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-inline double evaluate(
+static double evaluate(
     double x0, double x1,
     double b0, double b1, double b2,
     double t)
@@ -727,7 +727,6 @@ void soi()
 {
     if (g_debug_flag == DebugFlags::USE_SOI_LONG_DOUBLE)
     {
-        extern void soi_ldbl();
         soi_ldbl();
         return;
     }

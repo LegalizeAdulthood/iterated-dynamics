@@ -65,7 +65,7 @@ struct SOILongDoubleState
 
 } // namespace
 
-inline LongDoubleComplex z_sqr(LongDoubleComplex z)
+static LongDoubleComplex z_sqr(LongDoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
 }
@@ -73,7 +73,7 @@ inline LongDoubleComplex z_sqr(LongDoubleComplex z)
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-inline LDouble interpolate(
+static LDouble interpolate(
     LDouble x0, LDouble x1, LDouble x2,
     LDouble w0, LDouble w1, LDouble w2,
     LDouble t)
@@ -84,7 +84,7 @@ inline LDouble interpolate(
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
-inline void interpolate(
+static void interpolate(
     LDouble x0, LDouble x1, LDouble x2,
     LDouble w0, LDouble w1, LDouble w2,
     LDouble &b0, LDouble &b1, LDouble &b2)
@@ -95,7 +95,7 @@ inline void interpolate(
 }
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-inline LDouble evaluate(
+static LDouble evaluate(
     LDouble x0, LDouble x1,
     LDouble b0, LDouble b1, LDouble b2,
     LDouble t)
