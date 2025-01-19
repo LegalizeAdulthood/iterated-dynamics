@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <cstring>
 
-inline char par_key(unsigned int x)
+static char par_key(unsigned int x)
 {
     return x < 10 ? '0' + x : 'a' - 10 + x;
 }
