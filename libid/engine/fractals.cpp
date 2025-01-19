@@ -55,11 +55,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
-inline void conjugate(DComplex &pz)
-{
-    pz.y = - pz.y;
-}
-
 LComplex g_l_old_z{};
 LComplex g_l_new_z{};
 LComplex g_l_param{};
