@@ -127,12 +127,12 @@ void Frame::add_key_press(unsigned int key)
     m_key_press_count++;
 }
 
-inline bool has_mod(int modifier)
+static bool has_mod(int modifier)
 {
     return (GetKeyState(modifier) & 0x8000) != 0;
 }
 
-inline unsigned int mod_key(int modifier, int code, int id_key, unsigned int *j = nullptr)
+static unsigned int mod_key(int modifier, int code, int id_key, unsigned int *j = nullptr)
 {
     if (has_mod(modifier))
     {
@@ -147,12 +147,12 @@ inline unsigned int mod_key(int modifier, int code, int id_key, unsigned int *j 
 
 #undef ID_DEBUG_KEYSTROKES
 #ifdef ID_DEBUG_KEYSTROKES
-inline void debug_key_strokes(const std::string &text)
+static void debug_key_strokes(const std::string &text)
 {
     driver_debug_line(text);
 }
 #else
-inline void debug_key_strokes(const std::string &text)
+static void debug_key_strokes(const std::string &text)
 {
 }
 #endif
@@ -585,7 +585,7 @@ void Frame::on_kill_focus(HWND window, HWND /*old_focus*/)
     g_frame.m_has_focus = false;
 }
 
-std::string key_flags_string(UINT value)
+static std::string key_flags_string(UINT value)
 {
     std::string result;
     const auto append_flag = [&](UINT flag, const char *label)
