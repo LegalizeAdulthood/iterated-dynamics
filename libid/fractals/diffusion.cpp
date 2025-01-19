@@ -20,12 +20,12 @@ static int s_kbd_check{}; // to limit kbd checking
 
 //**************** standalone engine for "diffusion" *******************
 
-inline int random(int x)
+static int random(int x)
 {
     return std::rand() % x;
 }
 
-inline bool keyboard_check_needed()
+static bool keyboard_check_needed()
 {
     return (++s_kbd_check & 0x7f) == 1;
 }
