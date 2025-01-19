@@ -21,7 +21,7 @@
 #include <cmath>
 
 constexpr int FROTH_BIT_SHIFT{28};
-constexpr long froth_d_to_l(double x)
+constexpr static long froth_d_to_l(double x)
 {
     return (long) (x * (1L << FROTH_BIT_SHIFT));
 }
@@ -83,7 +83,7 @@ struct Froth
 
 static Froth s_fsp{};
 
-inline double froth_top_x_mapping(double x)
+static double froth_top_x_mapping(double x)
 {
     return x * x - x -3 * s_fsp.fl.f.a * s_fsp.fl.f.a / 4;
 }
