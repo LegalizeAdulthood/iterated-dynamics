@@ -11,23 +11,24 @@ target_link_libraries(os-hc INTERFACE helpcom config)
 set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 
 add_library(os STATIC
+    create_minidump.h
     DiskDriver.cpp
     GDIDriver.cpp
     Frame.h Frame.cpp
     init_failure.cpp
-    ods.cpp
+    instance.h instance.cpp
+    ods.h ods.cpp
     os_win32.cpp
     Plot.h Plot.cpp
     Win32BaseDriver.h Win32BaseDriver.cpp
     WinText.h WinText.cpp
-    create_minidump.h
     instance.h
-    ods.h
     tos.h tos.cpp
     special_dirs.cpp
     usec_clock.cpp
     win_defines.h
 )
+
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
