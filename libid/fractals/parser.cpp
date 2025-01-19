@@ -524,7 +524,7 @@ static constexpr std::array<SymmetryName, 14> s_symmetry_names
     SymmetryName{ "NOPLOT",        SymmetryType::NO_PLOT },
 };
 
-inline void push_jump(JumpControlType type)
+static void push_jump(JumpControlType type)
 {
     JumpControl value{};
     value.type = type;
@@ -593,7 +593,7 @@ inline void push_jump(JumpControlType type)
 #define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
 
-inline bool check_denom(long denom)
+static bool check_denom(long denom)
 {
     if (denom == 0 || g_overflow)
     {
@@ -607,7 +607,7 @@ inline bool check_denom(long denom)
     return false;
 }
 
-inline bool check_denom(double denom)
+static bool check_denom(double denom)
 {
     if (std::abs(denom) <= DBL_MIN)
     {
@@ -787,7 +787,7 @@ static void d_stk_srand()
     g_arg1->d = s_vars[7].a.d;
 }
 
-void d_stk_lod_dup()
+static void d_stk_lod_dup()
 {
     g_arg1 += 2;
     g_arg2 += 2;
@@ -796,7 +796,7 @@ void d_stk_lod_dup()
     g_load_index += 2;
 }
 
-void d_stk_lod_sqr()
+static void d_stk_lod_sqr()
 {
     g_arg1++;
     g_arg2++;
@@ -805,7 +805,7 @@ void d_stk_lod_sqr()
     g_load_index++;
 }
 
-void d_stk_lod_sqr2()
+static void d_stk_lod_sqr2()
 {
     g_arg1++;
     g_arg2++;
@@ -818,7 +818,7 @@ void d_stk_lod_sqr2()
     g_load_index++;
 }
 
-void d_stk_lod_dbl()
+static void d_stk_lod_dbl()
 {
     g_arg1++;
     g_arg2++;
@@ -827,14 +827,14 @@ void d_stk_lod_dbl()
     g_load_index++;
 }
 
-void d_stk_sqr0()
+static void d_stk_sqr0()
 {
     LastSqr.d.y = g_arg1->d.y * g_arg1->d.y; // use LastSqr as temp storage
     g_arg1->d.y = g_arg1->d.x * g_arg1->d.y * 2.0;
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x - LastSqr.d.y;
 }
 
-void d_stk_sqr3()
+static void d_stk_sqr3()
 {
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x;
 }
@@ -2387,7 +2387,7 @@ static void sort_precedence()
     ++s_op_ptr;
 }
 
-inline void push_pending_op(FunctionPtr f, int p)
+static void push_pending_op(FunctionPtr f, int p)
 {
     s_op.push_back(PendingOp{f, p});
     ++g_operation_index;
