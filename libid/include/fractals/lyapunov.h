@@ -4,3 +4,4 @@
 
 bool lya_setup();
 int lyapunov();
+int lyapunov_orbit();

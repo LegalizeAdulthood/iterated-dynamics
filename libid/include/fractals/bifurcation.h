@@ -4,7 +4,6 @@
 
 int bifurcation();
 int bifurc_add_trig_pi();
-int lyapunov_orbit();
 int bifurc_lambda_trig();
 int bifurc_may();
 bool bifurc_may_setup();
