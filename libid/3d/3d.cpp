@@ -2,7 +2,7 @@
 //
 // A word about the 3D library. Even though this library supports
 // three dimensions, the matrices are 4x4 for the following reason.
-// With normal 3 dimensional vectors, translation is an ADDITION,
+// With normal 3-dimensional vectors, translation is an ADDITION,
 // and rotation is a MULTIPLICATION. A vector {x,y,z} is represented
 // as a 4-tuple {x,y,z,1}. It is then possible to define a 4x4
 // matrix such that multiplying the vector by the matrix translates

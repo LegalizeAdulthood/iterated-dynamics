@@ -244,7 +244,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         }
     }
 
-    if (col_width == 0)             // find widest column
+    if (col_width == 0)             // find the widest column
     {
         for (int i = 0; i < num_choices; ++i)
         {

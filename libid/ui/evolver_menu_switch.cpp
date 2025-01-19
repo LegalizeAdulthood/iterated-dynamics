@@ -248,7 +248,7 @@ static MainState evolver_zoom_out(MainContext &)
             g_zoom_box_width = 0;
             if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
             {
-                draw_param_box(1); // clear boxes off screen
+                draw_param_box(1); // clear boxes off-screen
                 release_param_box();
             }
         }

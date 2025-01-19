@@ -104,7 +104,7 @@ static Byte s_decoder_line[MAX_PIXELS]{};
 //    short linewidth;              * Pixels per line of image *
 //
 // - This function decodes an LZW image, according to the method used
-// in the GIF spec.  Every *linewidth* "characters" (ie. pixels) decoded
+// in the GIF spec.  Every *linewidth* "characters" (i.e. pixels) decoded
 // will generate a call to out_line(), which is a user specific function
 // to display a line of pixels.  The function gets its codes from
 // get_next_code() which is responsible for reading blocks of data and
@@ -143,7 +143,7 @@ short decoder(short line_width)
     s_curr_size = (short)(size + 1);
     short top_slot = (short) (1 << s_curr_size); // Highest code for current size
     short clear = (short) (1 << size);           // Value for a clear code
-    short ending = (short) (clear + 1);          // Value for a ending code
+    short ending = (short) (clear + 1);          // Value for an ending code
     short new_codes = (short) (ending + 1);       // First available code
     short slot = new_codes;                       // Last read code
     short old_code = 0;
@@ -244,7 +244,7 @@ short decoder(short line_width)
             }
 
             // Here we scan back along the linked list of prefixes.  If they can
-            // fit into the output buffer then transfer them direct.  ELSE push
+            // fit into the output buffer than transfer them direct.  ELSE push
             // them into the stack until we are down to enough characters that
             // they do fit.  Output the line then fall through to unstack the
             // ones that would not fit.
@@ -298,7 +298,7 @@ short decoder(short line_width)
             // allowed by the current bit size, increase the bit size.  (NOTE -
             // If we are all full, we *don't* save the new suffix and prefix...
             // I'm not certain if this is correct... it might be more proper to
-            // overwrite the last code...
+            // overwrite the last code...)
             if (fast_loop == NOPE)
             {
                 *sp++ = (Byte) code;

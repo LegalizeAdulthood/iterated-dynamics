@@ -457,7 +457,7 @@ static void zoom_out_calc(bf_t bf_dx, bf_t bf_dy, //
     bf_t b_temp_y = alloc_stack(g_r_bf_length + 2);
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
-       are taken as (0,0) topleft thru (1,1) bottom right */
+       are taken as (0,0) topleft through (1,1) bottom right */
 
     // tempx = dy * plotmx1 - dx * plotmx2;
     mult_bf(b_tmp1, bf_dy, bf_plot_mx1);
@@ -495,7 +495,7 @@ static void zoom_out_calc(bf_t bf_dx, bf_t bf_dy, //
 static void zoom_out_calc(double dx, double dy, double *new_x, double *new_y, double f_temp)
 {
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
-       are taken as (0,0) topleft thru (1,1) bottom right */
+       are taken as (0,0) topleft through (1,1) bottom right */
     const double temp_x = dy * g_plot_mx1 - dx * g_plot_mx2;
     const double temp_y = dx * g_plot_my1 - dy * g_plot_my2;
 
@@ -506,8 +506,8 @@ static void zoom_out_calc(double dx, double dy, double *new_x, double *new_y, do
 
 static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 {
-    /* (xxmin,yymax), etc, are already set to zoombox corners;
-       (sxmin,symax), etc, are still the screen's corners;
+    /* (xxmin,yymax), etc., are already set to zoombox corners;
+       (sxmin,symax), etc., are still the screen's corners;
        use the same logic as plot_orbit stuff to first calculate current screen
        corners relative to the zoombox, as if the zoombox were a square with
        upper left (0,0) and width/depth 1; ie calc the current screen corners
@@ -564,8 +564,8 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
 
 static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
 {
-    /* (xxmin,yymax), etc, are already set to zoombox corners;
-       (sxmin,symax), etc, are still the screen's corners;
+    /* (xxmin,yymax), etc., are already set to zoombox corners;
+       (sxmin,symax), etc., are still the screen's corners;
        use the same logic as plot_orbit stuff to first calculate current screen
        corners relative to the zoombox, as if the zoombox were a square with
        upper left (0,0) and width/depth 1; ie calc the current screen corners
@@ -686,7 +686,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     get_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     // don't do end_resume! we're just looking
     int i = 9;
-    for (int j = 0; j < g_num_work_list; ++j)   // find lowest pass in any pending window
+    for (int j = 0; j < g_num_work_list; ++j)   // find the lowest pass in any pending window
     {
         i = std::min(g_work_list[j].pass, i);
     }

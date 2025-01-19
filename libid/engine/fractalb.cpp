@@ -411,7 +411,7 @@ bool mandel_bf_setup()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
-    // the pointer to setup isn't.
+    // the pointer to set up isn't.
     if (g_bf_math == BFMathType::NONE)
     {
         // kludge to prevent crash when math type = NONE and still call bigflt setup routine
@@ -587,7 +587,7 @@ int mandel_bf_per_pixel()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
-    // the pointer to setup isn't.
+    // the pointer to set up isn't.
     if (g_bf_math == BFMathType::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
     {
         return mandel_fp_per_pixel();

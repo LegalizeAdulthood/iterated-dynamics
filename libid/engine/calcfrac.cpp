@@ -248,7 +248,7 @@ static double fmod_test()
 }
 
 // The sym_fill_line() routine was pulled out of the boundary tracing
-// code for re-use with show dot. It's purpose is to fill a line with a
+// code for re-use with show dot. Its purpose is to fill a line with a
 // solid color. This assumes that Byte *str is already filled
 // with the color. The routine does write the line using symmetry
 // in all cases, however the symmetry logic assumes that the line
@@ -926,7 +926,7 @@ static void perform_work_list()
         g_std_calc_mode = '1';
     }
 
-    // default setup a new worklist
+    // default set up a new worklist
     g_num_work_list = 1;
     g_work_list[0].xx_begin = 0;
     g_work_list[0].xx_start = 0;
@@ -2625,7 +2625,7 @@ static bool x_sym_split(int x_axis_row, bool x_axis_between)
         g_work_symmetry |= 1;
     }
     g_symmetry = SymmetryType::NONE;
-    return false; // tell set_symmetry its a go
+    return false; // tell set_symmetry it's a go
 }
 
 static bool y_sym_split(int y_axis_col, bool y_axis_between)
@@ -2678,7 +2678,7 @@ static bool y_sym_split(int y_axis_col, bool y_axis_between)
         g_work_symmetry |= 2;
     }
     g_symmetry = SymmetryType::NONE;
-    return false; // tell set_symmetry its a go
+    return false; // tell set_symmetry it's a go
 }
 
 static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symmetrical plot functions

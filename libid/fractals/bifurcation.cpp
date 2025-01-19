@@ -56,8 +56,8 @@ static long s_beta{};
 
 //*************************************************************
 // The following code now forms a generalised Fractal Engine
-// for Bifurcation fractal typeS.  By rights it now belongs in
-// CALCFRACT.C, but it's easier for me to leave it here !
+// for Bifurcation fractal typeS.  By rights, it now belongs in
+// calcfract.cpp, but it's easier for me to leave it here !
 
 // Besides generalisation, enhancements include Periodicity
 // Checking during the plotting phase (AND halfway through the

@@ -1485,7 +1485,7 @@ docolors:
                    spans of 2 to 5 color numbers.  First time for each span size
                    the value change is noted.  After first time the change is
                    checked against noted change.  First time it differs, a
-                   a difference of 1 is tolerated and noted as an alternate
+                   difference of 1 is tolerated and noted as an alternate
                    acceptable change.  When change is not one of the tolerated
                    values, loop exits. */
                 if (force)
@@ -1709,7 +1709,7 @@ static void put_float(int slash, double value, int prec)
     }
     /* Idea of long double cast is to squeeze out another digit or two
        which might be needed (we have found cases where this digit makes
-       a difference.) But lets not do this at lower precision */
+       a difference.) But let's not do this at lower precision */
 
     if (prec > 15)
     {

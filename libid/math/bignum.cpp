@@ -6,7 +6,7 @@
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 The bignumber format is simply a signed integer of variable length.  The
-bytes are stored in reverse order (least significant byte first, most
+bytes are stored in reverse order (the least significant byte first, most
 significant byte last).  The sign bit is the highest bit of the most
 significant byte.  Negatives are stored in 2's complement form.  The byte
 length of the bignumbers must be a multiple of 4 for 386+ operations, and
@@ -15,10 +15,10 @@ a multiple of 2 for 8086/286 and non 80x86 machines.
 Some of the arithmetic operations coded here may alter some of the
 operands used.  Therefore, take note of the SIDE-EFFECTS listed with each
 procedure.  If the value of an operand needs to be retained, just use
-copy_bn() first.  This was done for speed sake to avoid unnecessary
+copy_bn() first.  This was done for speed's sake to avoid unnecessary
 copying.  If space is at such a premium that copying it would be
 difficult, some of the operations only change the sign of the value.  In
-this case, the original could be optained by calling neg_a_bn().
+this case, the original could be obtained by calling neg_a_bn().
 
 Most of the bignumber routines operate on true integers.  Some of the
 procedures, however, are designed specifically for fixed decimal point
@@ -30,7 +30,7 @@ designated for the integer part may be 1, 2, or 4.
 
 BIGNUMBER FORMAT:
 The following is a discription of the bignumber format and associated
-variables.  The number is stored in reverse order (Least Significant Byte,
+variables.  The number is stored in reverse order (The Least Significant Byte,
 LSB, stored first in memory, Most Significant Byte, MSB, stored last).
 Each '_' below represents a block of memory used for arithmetic (1 block =
 4 bytes on 386+, 2 bytes on 286-).  All lengths are given in bytes.

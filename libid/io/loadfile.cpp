@@ -1883,7 +1883,7 @@ rescan:  // entry for changed browse parms
     else
     {
         driver_buzzer(Buzzer::INTERRUPT); //no suitable files in directory!
-        text_temp_msg("Sorry.. I can't find anything");
+        text_temp_msg("Sorry... I can't find anything");
         g_browse_sub_images = false;
     }
 

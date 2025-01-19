@@ -20,7 +20,7 @@
 #include <crtdbg.h>
 #endif
 
-// we done.  Bail out
+// we're done.  Bail out
 [[noreturn]] void goodbye()
 {
     end_resume();

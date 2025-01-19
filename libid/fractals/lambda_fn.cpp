@@ -18,7 +18,7 @@ int lambda_fractal()
 {
     // variation of classical Mandelbrot/Julia
 
-    // in complex math) temp = Z * (1-Z)
+    // (in complex math) temp = Z * (1-Z)
     g_l_temp_sqr_x = g_l_old_z.x - g_l_temp_sqr_x + g_l_temp_sqr_y;
     g_l_temp_sqr_y = g_l_old_z.y
                 - multiply(g_l_old_z.y, g_l_old_z.x, g_bit_shift_less_1);

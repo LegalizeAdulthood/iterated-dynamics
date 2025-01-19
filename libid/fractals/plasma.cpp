@@ -158,9 +158,9 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
             //     1.  Create new entry at top of the stack
             //     2.  Copy old top value to new top value.
             //            This is largest y value.
-            //     3.  Smallest y is now old mid point
-            //     4.  Set new mid point recursion level
-            //     5.  New mid point value is average
+            //     3.  Smallest y is now old mid-point
+            //     4.  Set new mid-point recursion level
+            //     5.  New mid-point value is average
             //            of largest and smallest
 
             sub_y.t++;
@@ -306,7 +306,7 @@ int plasma()
 
     if (g_colors < 4)
     {
-        stop_msg("Plasma Clouds can requires 4 or more color video");
+        stop_msg("Plasma Clouds requires 4 or more color video");
         return -1;
     }
     s_i_param_x = (int)(g_params[0] * 8);

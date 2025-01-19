@@ -119,7 +119,7 @@ std::string g_gif_filename_mask;                          //
 std::string g_save_filename{"fract001"};                  // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
-bool g_dither_flag{};                                     // true if want to dither GIFs
+bool g_dither_flag{};                                     // true if we want to dither GIFs
 bool g_ask_video{};                                       // flag for video prompting
 bool g_float_flag{};                                      //
 int g_biomorph{};                                         // flag for biomorph
@@ -615,7 +615,7 @@ static void reset_ifs_definition()
 //        SSTOOLS_INI           sstools.ini
 //        AT_AFTER_STARTUP      <@> command after startup
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
-// note that cmdfile could be open as text OR as binary
+// note that cmdfile could be open as text OR as binary.
 // binary is used in @ command processing for reasonable speed note/point
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
 {
@@ -1780,7 +1780,7 @@ static CmdArgFlags cmd_corners(const Command &cmd)
             return cmd.bad_arg(); // ie: magnification is +-1.#INF
         }
 
-        if (dec > g_decimals) // get corners again if need more precision
+        if (dec > g_decimals) // get corners again if we need more precision
         {
             init_bf_dec(dec);
 

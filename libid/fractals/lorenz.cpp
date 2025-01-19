@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 /*
-   This file contains two 3 dimensional orbit-type fractal
+   This file contains two 3-dimensional orbit-type fractal
    generators - IFS and LORENZ3D, along with code to generate
    red/blue 3D images.
 */
@@ -213,7 +213,7 @@ static void fallback_to_random_walk()
    Conversion of complex plane to screen coordinates for rotating zoom box.
    Assume there is an affine transformation mapping complex zoom parallelogram
    to rectangular screen. We know this map must map parallelogram corners to
-   screen corners, so we have following equations:
+   screen corners, so we have the following equations:
 
       a*xxmin+b*yymax+e == 0        (upper left)
       c*xxmin+d*yymax+f == 0
@@ -2289,7 +2289,7 @@ int plot_orbits2d_float()
             continue;  // don't plot it
         }
 
-        // else count >= orbit_delay and we want to plot it
+        // else count >= orbit_delay, and we want to plot it
         const int col = (int)(s_o_cvt.a * g_new_z.x + s_o_cvt.b * g_new_z.y + s_o_cvt.e);
         const int row = (int)(s_o_cvt.c * g_new_z.x + s_o_cvt.d * g_new_z.y + s_o_cvt.f);
         if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < g_logical_screen_y_dots)
@@ -2304,7 +2304,7 @@ int plot_orbits2d_float()
         }
         else
         {
-            // off screen, don't continue unless periodicity=0
+            // off-screen, don't continue unless periodicity=0
             if (g_periodicity_check)
             {
                 return 0; // skip to next pixel
@@ -2831,7 +2831,7 @@ static bool long_view_transf3d(ViewTransform3DLong *inf)
         {
             setup_matrix(inf->double_mat1);
         }
-        // copy xform matrix to long for for fixed point math
+        // copy xform matrix to long for fixed point math
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -2903,7 +2903,7 @@ static bool long_view_transf3d(ViewTransform3DLong *inf)
                 g_view[i] = (double)inf->iview[i] / g_fudge_factor;
             }
 
-            // copy xform matrix to long for for fixed point math
+            // copy xform matrix to long for fixed point math
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
@@ -3139,7 +3139,7 @@ static std::FILE *open_orbit_save()
     return nullptr;
 }
 
-// Plot a histogram by incrementing the pixel each time it it touched
+// Plot a histogram by incrementing the pixel each time it is touched
 static void plot_hist(int x, int y, int color)
 {
     color = get_color(x, y)+1;

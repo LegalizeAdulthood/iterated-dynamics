@@ -2030,12 +2030,12 @@ LDouble scale_10(LDouble f, int n)
 
 /**********************************************************
 (Just when you thought it was safe to go back in the water.)
-Just when you thought you seen every type of format possible,
+Just when you thought you have seen every type of format possible,
 16 bit integer, 32 bit integer, double, long double, mpmath,
 bn_t, bf_t, I now give you bf10_t (big float base 10)!
 
 Why, because this is the only way (I can think of) to properly do a
-bftostr() without rounding errors.  With out this, then
+bftostr() without rounding errors.  Without this, then
    -1.9999999999( > LDBL_DIG of 9's)9999999123456789...
 will round to -2.0.  The good news is that we only need to do two
 mathematical operations: multiplication and division by integers

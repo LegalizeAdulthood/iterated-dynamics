@@ -114,7 +114,7 @@ int Win32BaseDriver::key_pressed()
 /* unget_key
  *
  * Unread a key!  The key buffer is only one character deep, so we
- * assert if its already full.  This should never happen in real life :-).
+ * assert if it's already full.  This should never happen in real life :-).
  */
 void Win32BaseDriver::unget_key(int key)
 {

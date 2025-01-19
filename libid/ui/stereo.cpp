@@ -204,7 +204,7 @@ int out_line_stereo(Byte *pixels, int line_len)
         int j = i + SEP;
         if (0 <= i && j < g_logical_screen_x_dots)
         {
-            // there are cases where next never terminates so we timeout
+            // there are cases where next never terminates so we time out
             int ct = 0;
             for (int s = same[i]; s != i && s != j && ct++ < g_logical_screen_x_dots; s = same[i])
             {

@@ -159,7 +159,7 @@ static void init_bf2()
     s_bn_root = (bf_t) &s_storage[0];
 
     /* at present time one call would suffice, but this logic allows
-       multiple kinds of alternate math eg long double */
+       multiple kinds of alternate math e.g. long double */
     if (int i = find_alternate_math(g_fractal_type, BFMathType::BIG_NUM); i > -1)
     {
         g_bf_math = g_alternate_math[i].math;

@@ -741,7 +741,7 @@ retry:
 long get_file_entry(
     ItemType type, char const *title, char const *fn_key_mask, std::string &filename, std::string &entry_name)
 {
-    // Formula, LSystem, etc type structure, select from file
+    // Formula, LSystem, etc. type structure, select from file
     // containing definitions in the form    name { ... }
     bool new_file = false;
     while (true)

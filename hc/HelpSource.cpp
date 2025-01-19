@@ -1109,7 +1109,7 @@ static void process_bin_inc()
     }
 
     /*
-     * Since we know len is less than BUFFER_SIZE (and therefore less then
+     * Since we know len is less than BUFFER_SIZE (and therefore less than
      * 64K) we can treat it as an unsigned.
      */
 
@@ -1361,7 +1361,7 @@ void read_src(std::string const &fname, Mode mode)
                     error(err_offset, "Embedded command has no closing paren (\')\')");
                 }
 
-                done = (*ptr != ',');   // we done if it's not a comma
+                done = (*ptr != ',');   // we're done if it's not a comma
 
                 if (*ptr != '\n' && *ptr != ')' && *ptr != ',')
                 {

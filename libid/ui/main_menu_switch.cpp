@@ -82,7 +82,7 @@ static bool look(MainContext &context)
     case '\\':
         if (g_filename_stack_index >= 1)
         {
-            // go back one file if somewhere to go (ie. browsing)
+            // go back one file if somewhere to go (i.e. browsing)
             g_filename_stack_index--;
             while (g_file_name_stack[g_filename_stack_index].empty()
                 && g_filename_stack_index >= 0)
@@ -460,7 +460,7 @@ static MainState unstack_file(bool &stacked)
         return MainState::NOTHING;
     }
 
-    // go back one file if somewhere to go (ie. browsing)
+    // go back one file if somewhere to go (i.e. browsing)
     g_filename_stack_index--;
     while (g_file_name_stack[g_filename_stack_index].empty() && g_filename_stack_index >= 0)
     {

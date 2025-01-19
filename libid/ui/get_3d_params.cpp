@@ -371,7 +371,7 @@ static bool get_light_params()
             check_write_file(g_light_name, ".tga");
         }
         builder.string("Targa File Name  (Assume .tga)", g_light_name.c_str())
-            .comment("Back Ground Color (0 - 255)")
+            .comment("Background Color (0 - 255)")
             .int_number("   Red", g_background_color[0])
             .int_number("   Green", g_background_color[1])
             .int_number("   Blue", g_background_color[2])
@@ -460,7 +460,7 @@ static bool check_map_file()
         std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
         bool valid = validate_luts(buff);
         std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
-        if (valid) // Oops, somethings wrong
+        if (valid) // Oops, something's wrong
         {
             ask_flag = true;
             continue;

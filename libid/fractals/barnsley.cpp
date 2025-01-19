@@ -127,7 +127,7 @@ int barnsley3_fractal()
 
         /* This term added by Tim Wegner to make dependent on the
            imaginary part of the parameter. (Otherwise Mandelbrot
-           is uninteresting. */
+           is uninteresting.) */
         g_l_new_z.y += multiply(g_long_param->y, g_l_old_z.x, g_bit_shift);
     }
     return g_bailout_long();
@@ -156,7 +156,7 @@ int barnsley3_fp_fractal()
 
         /* This term added by Tim Wegner to make dependent on the
            imaginary part of the parameter. (Otherwise Mandelbrot
-           is uninteresting. */
+           is uninteresting.) */
         g_new_z.y += g_float_param->y * g_old_z.x;
     }
     return g_bailout_float();

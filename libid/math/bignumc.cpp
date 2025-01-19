@@ -18,16 +18,16 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 *********************************************************************/
 
 /********************************************************************
- Note:  The C code must be able to detect over/underflow.  Therefore
- 32 bit integers must be used when doing 16 bit math.  All we really
+ Note:  The C code must be able to detect over/underflow.  Therefore,
+ 32-bit  integers must be used when doing 16 bit math.  All we really
  need is one more bit, such as is provided in asm with the carry bit.
  Functions that don't need the test for over/underflow, such as cmp_bn()
- and is_bn_not_zero(), can use 32 bit integers as as long as g_bn_step
+ and is_bn_not_zero(), can use 32-bit integers as long as g_bn_step
  is set to 4.
 
- The 16/32 bit compination of integer sizes could be increased to
+ The 16/32 bit combination of integer sizes could be increased to
  32/64 bit to improve efficiency, but since many compilers don't offer
- 64 bit integers, this option was not included.
+ 64-bit integers, this option was not included.
 
 *********************************************************************/
 

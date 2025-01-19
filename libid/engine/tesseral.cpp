@@ -81,7 +81,7 @@ int tesseral()
                 {
                     break;
                 }
-                mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
+                mid = (tp->x1 + tp->x2) >> 1;                // Find mid-point
                 if (mid > cur_x)
                 {
                     // stack right part
@@ -97,7 +97,7 @@ int tesseral()
                 {
                     break;
                 }
-                mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
+                mid = (tp->y1 + tp->y2) >> 1;                // Find mid-point
                 if (mid > cur_y)
                 {
                     // stack bottom part
@@ -161,7 +161,7 @@ int tesseral()
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // divide down the middle
-                mid = (tp->x1 + tp->x2) >> 1;           // Find mid point
+                mid = (tp->x1 + tp->x2) >> 1;           // Find mid-point
                 mid_color = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
                 if (mid_color != tp->top)
                 {
@@ -171,7 +171,7 @@ int tesseral()
             else
             {
                 // divide across the middle
-                mid = (tp->y1 + tp->y2) >> 1;           // Find mid point
+                mid = (tp->y1 + tp->y2) >> 1;           // Find mid-point
                 mid_color = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (mid_color != tp->top)
                 {
@@ -241,14 +241,14 @@ int tesseral()
 
 tess_split:
         {
-            // box not surrounded by same color, sub-divide
+            // box not surrounded by same color, subdivide
             int mid;
             int mid_color;
             Tess *tp2;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // divide down the middle
-                mid = (tp->x1 + tp->x2) >> 1;                // Find mid point
+                mid = (tp->x1 + tp->x2) >> 1;                // Find mid-point
                 mid_color = tess_col(mid, tp->y1+1, tp->y2-1); // Do mid column
                 if (mid_color == -3)
                 {
@@ -284,7 +284,7 @@ tess_split:
             else
             {
                 // divide across the middle
-                mid = (tp->y1 + tp->y2) >> 1;                // Find mid point
+                mid = (tp->y1 + tp->y2) >> 1;                // Find mid-point
                 mid_color = tess_row(tp->x1+1, tp->x2-1, mid); // Do mid row
                 if (mid_color == -3)
                 {

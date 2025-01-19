@@ -28,7 +28,7 @@ static_assert(sizeof(OrbitsInfo) == 200, "OrbitsInfo size is incorrect");
  * If we aren't on a PC, things are rough for decoding the fractal info
  * structure in the GIF file.  These routines look after converting the
  * MS_DOS format data into a form we can use.
- * If dir==0, we convert to MSDOS form.  Otherwise we convert from MSDOS.
+ * If dir==0, we convert to MSDOS form.  Otherwise, we convert from MSDOS.
  */
 
 static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir);

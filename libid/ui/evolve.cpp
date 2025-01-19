@@ -93,7 +93,7 @@ double g_evolve_max_random_mutation;
 double g_evolve_mutation_reduction_factor;
 double g_evolve_param_zoom;
 
-// offset for discrete parameters x and y..
+// offset for discrete parameters x and y...
 // used for things like inside or outside types, bailout tests, trig fn etc
 char g_evolve_discrete_x_parameter_offset;
 char g_evolve_discrete_y_parameter_offset;
@@ -458,7 +458,7 @@ choose_vars_restart:
             gene[num].mutate = Variations::NONE;
         }
         goto choose_vars_restart;
-    case ID_KEY_F3: // set all on..alternate x and y for field map
+    case ID_KEY_F3: // set all on...alternate x and y for field map
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
             gene[num].mutate = static_cast<Variations>((num % 2) + 1);
@@ -602,7 +602,7 @@ choose_vars_restart:
             gene[num].mutate = Variations::NONE;
         }
         goto choose_vars_restart;
-    case ID_KEY_F3: // set all on..alternate x and y for field map
+    case ID_KEY_F3: // set all on...alternate x and y for field map
         for (int num = 0; num < MAX_PARAMS; num ++)
         {
             gene[num].mutate = static_cast<Variations>((num % 2) + 1);
@@ -929,7 +929,7 @@ static void set_random(int count)
 static bool explore_check()
 {
     // checks through gene array to see if any of the parameters are set to
-    // one of the non random variation modes. Used to see if parmzoom box is
+    // one of the non-random variation modes. Used to see if parmzoom box is
     // needed
     return std::any_of(std::begin(g_gene_bank), std::end(g_gene_bank), [](const GeneBase &gene)
         { return (gene.mutate != Variations::NONE) && (gene.mutate < Variations::RANDOM); });
@@ -938,11 +938,11 @@ static bool explore_check()
 void draw_param_box(int mode)
 {
     // draws parameter zoom box in evolver mode
-    // clears boxes off screen if mode = 1, otherwise, redraws boxes
+    // clears boxes off-screen if mode = 1, otherwise, redraws boxes
     Coord tl, tr, bl, br;
     if (!bit_set(g_evolving, EvolutionModeFlags::PARAM_BOX))
     {
-        return; // don't draw if not asked to!
+        return; // don't draw if not asked!
     }
     const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
     s_image_box_count = g_box_count;

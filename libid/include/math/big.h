@@ -9,7 +9,7 @@
 #include <config/port.h>
 
 // Number of bytes to use for integer part for fixed decimal math,
-// does not effect floating point math at all.
+// does not affect floating point math at all.
 enum
 {
     BN_INT_LENGTH = 4

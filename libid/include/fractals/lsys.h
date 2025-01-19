@@ -16,7 +16,7 @@
 /* The number by which to multiply sines, cosines and other
  * values with magnitudes less than or equal to 1.
  * sins and coss are a 3/29 bit fixed-point scheme (so the
- * range is +/- 2, with good accuracy.  The range is to
+ * range is +/- 2), with good accuracy.  The range is to
  * avoid overflowing when the aspect ratio is taken into
  * account.
  */

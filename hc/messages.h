@@ -9,8 +9,8 @@
  * errors/warnings/messages are generated to be displayed at the start of
  * the line.
  *
- * Used when debugging HC.  Also useful for finding the line (in HC.C) that
- * generated a error or warning.
+ * Used when debugging HC.  Also, useful for finding the line (in HC.C) that
+ * generated an error or warning.
  */
 #define SHOW_ERROR_LINE
 

@@ -646,7 +646,7 @@ static char const *parse_error_text(ParseError which)
         "Error in parsing jump statements",
         "Formula has too many jump commands",
         "Formula name has too many characters",
-        "Only variables are allowed to left of assignment",
+        "Only variables are allowed to the left of assignment",
         "Illegal variable name",
         "Invalid constant expression",
         "This character not supported by parser",
@@ -3108,7 +3108,7 @@ static int fill_if_group(int endif_index, JumpPtrs *jump_data)
             s_jump_control[i].ptrs = jump_data[ljp];
             s_jump_control[i].dest_jump_index = ljp + 1;
             return i;
-        case JumpControlType::ELSE_IF:    //elseif* ( 2 jumps, the else and the if
+        case JumpControlType::ELSE_IF:    //elseif* (2 jumps, the 'else' and the 'if')
             // first, the "if" part
             s_jump_control[i].ptrs = jump_data[ljp];
             s_jump_control[i].dest_jump_index = ljp + 1;
@@ -3132,7 +3132,7 @@ static int fill_if_group(int endif_index, JumpPtrs *jump_data)
 
 static bool fill_jump_struct()
 {
-    // Completes all entries in jump structure. Returns 1 on error)
+    // Completes all entries in jump structure. Returns true on error.
     // On entry, jump_index is the number of jump functions in the formula
     int i = 0;
     int load_count = 0;

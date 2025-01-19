@@ -12,7 +12,7 @@
         physical screen, in this case also set viewreduction, viewxdots,
         viewydots, and finalaspectratio
       set skipxdots and skipydots, to 0 if all pixels are to be loaded,
-        to 1 for every 2nd pixel, 2 for every 3rd, etc
+        to 1 for every 2nd pixel, 2 for every 3rd, etc.
 
 */
 #include "ui/get_video_mode.h"

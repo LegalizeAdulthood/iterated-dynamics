@@ -206,7 +206,7 @@ int line3d(Byte * pixels, unsigned line_len)
 
     //**********************************************************************
     // This IF clause is executed ONCE per image. All precalculations are
-    // done here, with out any special concern about speed. DANGER -
+    // done here, without any special concern about speed. DANGER -
     // communication with the rest of the program is generally via static
     // or global variables.
     //**********************************************************************
@@ -439,7 +439,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     cur.y = (int)(v[1] + .5 + g_yy_adjust);
                 }
             }
-            // Not sure how this an 3rd if above relate
+            // Not sure how this a 3rd if above relate
             else
             {
                 // Why the xx- and yyadjust here and not above?
@@ -939,9 +939,9 @@ static void vec_draw_line(double *v1, double *v2, int color)
 
 static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
 {
-    VECTOR S[2][4];              // Holds the top an bottom points, S[0][]=bottom
+    VECTOR S[2][4];              // Holds the top and bottom points, S[0][]=bottom
 
-    /* define corners of box fractal is in in x,y,z plane "b" stands for
+    /* define corners of box fractal is in x,y,z plane "b" stands for
      * "bottom" - these points are the corners of the screen in the x-y plane.
      * The "t"'s stand for Top - they are the top of the cube where 255 color
      * points hit. */
@@ -1161,7 +1161,7 @@ static void put_min_max(int x, int y, int /*color*/)
 */
 enum
 {
-    MAXOFFSCREEN = 2    // allow two of three points to be off screen
+    MAXOFFSCREEN = 2    // allow two of three points to be off-screen
 };
 
 static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
@@ -1303,7 +1303,7 @@ static void transparent_clip_color(int x, int y, int color)
     if (0 <= x && x < g_logical_screen_x_dots       // is the point on screen?
         && 0 <= y && y < g_logical_screen_y_dots    // Yes?
         && 0 <= color && color < g_colors           // Colors in valid range?
-        // Lets make sure its not a transparent color
+        // Let's make sure it's not a transparent color
         && (g_transparent_color_3d[0] > color || color > g_transparent_color_3d[1]))
     {
         g_standard_plot(x, y, color);// I guess we can plot then
@@ -1383,11 +1383,11 @@ static void interp_color(int x, int y, int color)
 }
 
 /*
-        In non light source modes, both color and Real_Color contain the
+        In non-light source modes, both color and Real_Color contain the
         actual pixel color. In light source modes, color contains the
-        light value, and Real_Color contains the origninal color
+        light value, and Real_Color contains the original color
 
-        This routine takes a pixel modifies it for lightshading if appropriate
+        This routine takes a pixel modifies it for light shading if appropriate
         and plots it in a Targa file. Used in plot3d.c
 */
 
@@ -1536,7 +1536,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     if (fps == nullptr)
     {
         file_error(filename.c_str(), 1);
-        return true;            // Oops, somethings wrong!
+        return true;            // Oops, something's wrong!
     }
 
     int inc = 1;                // Assume we are overlaying a file
@@ -1692,7 +1692,7 @@ bool targa_validate(char const *filename)
     }
     std::fseek(fp, 0, SEEK_SET);
 
-    // Now that we know its a good file, create a working copy
+    // Now that we know it's a good file, create a working copy
     if (start_disk1(s_targa_temp, fp, true))
     {
         return true;
@@ -1914,7 +1914,7 @@ static int ray_header()
     s_file_ptr1 = open_save_file(g_raytrace_filename, "w");
     if (s_file_ptr1 == nullptr)
     {
-        return -1;              // Oops, somethings wrong!
+        return -1;              // Oops, something's wrong!
     }
 
     if (g_raytrace_format == RayTraceFormat::VIVID)
@@ -2128,11 +2128,11 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
             }
             else if (!(g_raytrace_format == RayTraceFormat::MTV || g_raytrace_format == RayTraceFormat::RAYSHADE))
             {
-                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[i][j]); // Right handed
+                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[i][j]); // Right-handed
             }
             else
             {
-                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[2 - i][j]);     // Left handed
+                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[2 - i][j]);     // Left-handed
             }
         }
 

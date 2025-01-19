@@ -84,7 +84,7 @@ private:
     char *extra_info;            // extra info box to display, \n separated
     std::FILE *scroll_file{};    // file with extra_info entry to scroll
     long scroll_file_start{};    // where entry starts in scroll_file
-    bool in_scrolling_mode{};    // will be true if need to scroll extra_info
+    bool in_scrolling_mode{};    // will be true if we need to scroll extra_info
     int lines_in_entry{};        // total lines in entry to be scrolled
     int title_width{};           // count title lines, find widest
     int title_lines{1};          //

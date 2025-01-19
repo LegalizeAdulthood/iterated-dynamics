@@ -21,7 +21,7 @@ inline long divide(long x, long y, int n)
     return (long) (((float) x) / ((float) y)*(float)(1 << n));
 }
 
-//  32 bit integer multiply with n bit shift.
+//  32-bit integer multiply with n bit shift.
 //  Note that we fake integer multiplication with floating point
 //  multiplication.
 //  Overflow condition returns 0x7fffffffh with overflow = 1;

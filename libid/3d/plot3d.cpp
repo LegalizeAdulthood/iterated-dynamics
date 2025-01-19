@@ -334,7 +334,7 @@ static void plot3d_alternate(int x, int y, int color)
 {
     Byte t_c = (Byte) (255 - color);
     // low res high color red/blue 3D plot function
-    // if which image = 1, compresses color to lower 128 colors
+    // if g_which_image = RED, compresses color to lower 128 colors
 
     // my mind is STILL fried - lower indices = darker colors is EASIER!
     color = g_colors - color;
