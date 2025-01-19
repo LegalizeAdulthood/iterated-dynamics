@@ -23,7 +23,7 @@ std::string const g_speed_prompt{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
-inline int is_a_dir_name(char const *name)
+static int is_a_dir_name(char const *name)
 {
     return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
