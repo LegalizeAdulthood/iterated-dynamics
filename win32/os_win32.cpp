@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #include "create_minidump.h"
-#include "instance.h"
 
 #include "io/special_dirs.h"
 #include "ui/cmdfiles.h"
@@ -15,8 +14,6 @@
 
 #include <cstdio>
 #include <filesystem>
-
-HINSTANCE g_instance{};
 
 /* Global functions
  *
