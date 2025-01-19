@@ -31,7 +31,7 @@ static Byte s_stack[4096]{}; // common temp, two put_line calls
 // boundary trace method
 constexpr int BK_COLOR{};
 
-inline Direction advance(Direction dir, int increment)
+static Direction advance(Direction dir, int increment)
 {
     return static_cast<Direction>((+dir + increment) & 0x03);
 }
