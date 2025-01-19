@@ -157,12 +157,12 @@ long exp_long(long x)
     return (long)(std::exp((double) x / (double)(1 << 16))*(double)(1 << 16));
 }
 
-inline float em_to_float(long l)
+static float em_to_float(long l)
 {
     return *(float *) &l;
 }
 
-inline long float_to_em(float f)
+static long float_to_em(float f)
 {
     return *(long *) &f;
 }
