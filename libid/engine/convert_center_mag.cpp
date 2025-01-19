@@ -13,8 +13,8 @@
 
 #include <cmath>
 
- // most people "think" in degrees
-inline double rad_to_deg(double x)
+// most people "think" in degrees
+static double rad_to_deg(double x)
 {
     return x * (180.0 / PI);
 }
