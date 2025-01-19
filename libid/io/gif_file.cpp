@@ -15,24 +15,24 @@
 #include <stdexcept>
 #include <string>
 
-inline std::int16_t extract_int16(const unsigned char *src)
+static std::int16_t extract_int16(const unsigned char *src)
 {
     return boost::endian::load_little_s16(src);
 }
 
-inline void insert_int16(unsigned char *dest, std::int16_t value)
+static void insert_int16(unsigned char *dest, std::int16_t value)
 {
     boost::endian::store_little_s16(dest, value);
 }
 
-inline bool is_fractint_extension(const ExtensionBlock &block, const char *name)
+static bool is_fractint_extension(const ExtensionBlock &block, const char *name)
 {
     return block.Function == APPLICATION_EXT_FUNC_CODE                           //
         && block.ByteCount == 11                                                 //
         && std::string(reinterpret_cast<const char *>(block.Bytes), 11) == name; //
 }
 
-void add_gif_extension(GifFileType *gif, const char *name, unsigned char *bytes, int length)
+static void add_gif_extension(GifFileType *gif, const char *name, unsigned char *bytes, int length)
 {
     GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, APPLICATION_EXT_FUNC_CODE, //
         11, reinterpret_cast<unsigned char *>(const_cast<char *>(name)));
