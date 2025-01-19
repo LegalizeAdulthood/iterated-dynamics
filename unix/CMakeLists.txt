@@ -25,6 +25,7 @@ add_library(os STATIC
     special_dirs.cpp
     stack_avail.cpp
     unixscr.cpp
+    usec_clock.cpp
     video.cpp)
 target_link_libraries(os PUBLIC help-defs os-hc X11::X11 m)
 target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)

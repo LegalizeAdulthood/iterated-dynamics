@@ -7,16 +7,12 @@ fractals, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "engine/wait_until.h"
 
 #include "misc/drivers.h"
+#include "misc/usec_clock.h"
 
 #include <algorithm>
 #include <iterator>
 #include <sys/timeb.h>
 
-// This is the only place where these are referenced from the OS layer.
-// TODO: replace with <chrono> clock.
-using uclock_t = unsigned long;
-uclock_t usec_clock();
-void restart_uclock();
 
 void sleep_ms(long ms)
 {

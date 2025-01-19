@@ -27,6 +27,7 @@ add_library(os STATIC
     ods.h
     tos.h
     special_dirs.cpp
+    usec_clock.cpp
     win_defines.h
 )
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
