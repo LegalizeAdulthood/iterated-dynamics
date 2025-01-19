@@ -930,7 +930,7 @@ static int s_max_bits{BITS_F};               // user settable max # bits/code
 static int s_max_code{};                    // maximum code, given n_bits
 static int s_max_max_cde{(int) 1 << BITS_F}; // should NEVER generate this code
 
-constexpr int max_code(int n_bits)
+constexpr static int max_code(int n_bits)
 {
     return (1 << n_bits) - 1;
 }
