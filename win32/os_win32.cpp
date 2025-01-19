@@ -103,11 +103,6 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     }
 }
 
-void init_failure(char const *message)
-{
-    MessageBoxA(nullptr, message, "Id: Fatal Error", MB_OK);
-}
-
 enum
 {
     WIN32_STACK_SIZE = 1024 * 1024

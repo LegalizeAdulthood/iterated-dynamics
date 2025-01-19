@@ -15,6 +15,7 @@ add_library(os STATIC
     GDIDriver.cpp
     Frame.h
     Frame.cpp
+    init_failure.cpp
     ods.cpp
     os_win32.cpp
     Plot.h
