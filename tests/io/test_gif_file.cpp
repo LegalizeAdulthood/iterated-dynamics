@@ -232,17 +232,17 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "ymax": )" << value.y_max                            //
                << R"(, "creal": )" << value.c_real                          //
                << R"(, "cimag": )" << value.c_imag                          //
-               << R"(, "videomodeax": )" << value.ax                        //
-               << R"(, "videomodebx": )" << value.bx                        //
-               << R"(, "videomodecx": )" << value.cx                        //
-               << R"(, "videomodedx": )" << value.dx                        //
+               << R"(, "ax": )" << value.ax                                 //
+               << R"(, "bx": )" << value.bx                                 //
+               << R"(, "cx": )" << value.cx                                 //
+               << R"(, "dx": )" << value.dx                                 //
                << R"(, "dotmode": )" << value.dot_mode                      //
                << R"(, "xdots": )" << value.x_dots                          //
                << R"(, "ydots": )" << value.y_dots                          //
                << R"(, "colors": )" << value.colors                         //
                << R"(, "version": )" << value.version                       //
-               << R"(, "parm3": )" << value.param3                          //
-               << R"(, "parm4": )" << value.param4                          //
+               << R"(, "param3": )" << value.param3                         //
+               << R"(, "param4": )" << value.param4                         //
                << R"(, "potential": )" << ArrayPrinter(value.potential)     //
                << R"(, "rseed": )" << value.random_seed                     //
                << R"(, "rflag": )" << value.random_seed_flag                //
@@ -274,7 +274,7 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "tot_extend_len": )" << value.tot_extend_len         //
                << R"(, "distestold": )" << value.dist_est_old               //
                << R"(, "floatflag": )" << value.float_flag                  //
-               << R"(, "bailoutold": )" << value.bailout_old               //
+               << R"(, "bailoutold": )" << value.bailout_old                //
                << R"(, "calctime": )" << value.calc_time                    //
                << R"(, "trigndx": )" << ArrayPrinter(value.trig_index)      //
                << R"(, "finattract": )" << value.finite_attractor           //
@@ -292,8 +292,8 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "rotate_lo": )" << value.rotate_lo                   //
                << R"(, "rotate_hi": )" << value.rotate_hi                   //
                << R"(, "distestwidth": )" << value.dist_est_width           //
-               << R"(, "dparm3": )" << value.d_param3                       //
-               << R"(, "dparm4": )" << value.d_param4                       //
+               << R"(, "d_param3": )" << value.d_param3                     //
+               << R"(, "d_param4": )" << value.d_param4                     //
                << R"(, "fillcolor": )" << value.fill_color                  //
                << R"(, "mxmaxfp": )" << value.julibrot_x_max                //
                << R"(, "mxminfp": )" << value.julibrot_x_min                //
@@ -310,14 +310,14 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "juli3Dmode": )" << value.juli3d_mode                //
                << R"(, "maxfn": )" << value.max_fn                          //
                << R"(, "inversejulia": )" << value.inverse_julia            //
-               << R"(, "dparm5": )" << value.d_param5                       //
-               << R"(, "dparm6": )" << value.d_param6                       //
-               << R"(, "dparm7": )" << value.d_param7                       //
-               << R"(, "dparm8": )" << value.d_param8                       //
-               << R"(, "dparm9": )" << value.d_param9                       //
-               << R"(, "dparm10": )" << value.d_param10                     //
-               << R"(, "bailout": )" << value.bailout                      //
-               << R"(, "bailoutest": )" << value.bailout_test              //
+               << R"(, "d_param5": )" << value.d_param5                     //
+               << R"(, "d_param6": )" << value.d_param6                     //
+               << R"(, "d_param7": )" << value.d_param7                     //
+               << R"(, "d_param8": )" << value.d_param8                     //
+               << R"(, "d_param9": )" << value.d_param9                     //
+               << R"(, "d_param10": )" << value.d_param10                   //
+               << R"(, "bailout": )" << value.bailout                       //
+               << R"(, "bailoutest": )" << value.bailout_test               //
                << R"(, "iterations": )" << value.iterations                 //
                << R"(, "bf_math": )" << value.bf_math                       //
                << R"(, "g_bf_length": )" << value.g_bf_length               //
