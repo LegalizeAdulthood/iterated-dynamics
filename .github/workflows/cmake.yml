@@ -28,7 +28,6 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Install System Dependencies
-      if: ${{matrix.os == 'ubuntu-latest'}}
       run: |
         sudo apt-get update
         sudo apt-get install libx11-dev
