@@ -3891,7 +3891,7 @@ static std::array<CommandHandler, 157> s_commands{
 };
 
 template <size_t N>
-std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler, N> &handlers, Command &cmd)
+static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler, N> &handlers, Command &cmd)
 {
     if (auto it = std::lower_bound(handlers.begin(), handlers.end(), cmd.variable,
             [](const CommandHandler &handler, const std::string &name) { return handler.name < name; });
