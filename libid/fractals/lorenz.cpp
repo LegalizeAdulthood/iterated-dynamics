@@ -46,18 +46,18 @@ using OrbitCalc = int (*)(T *x, T *y, T *z);
 
 // orbitcalc is declared with no arguments so jump through hoops here
 template <typename T>
-int orbit(T *x, T *y, T*z)
+static int orbit(T *x, T *y, T*z)
 {
     return (*reinterpret_cast<OrbitCalc<T>>(g_cur_fractal_specific->orbit_calc))(x, y, z);
 }
 
 template <typename T>
-int orbit(T *x, T *y)
+static int orbit(T *x, T *y)
 {
     return orbit(x, y, static_cast<T *>(nullptr));
 }
 
-inline int random(int x)
+static int random(int x)
 {
     return std::rand() % x;
 }
@@ -2147,7 +2147,7 @@ double g_orbit_corner_3rd_y{};
 static Affine s_o_cvt{};
 static int s_o_color{};
 
-int setup_orbits_to_screen(Affine *scrn_cnvt)
+static int setup_orbits_to_screen(Affine *scrn_cnvt)
 {
     double det = //
         (g_orbit_corner_3rd_x - g_orbit_corner_min_x) * (g_orbit_corner_min_y - g_orbit_corner_max_y) +
