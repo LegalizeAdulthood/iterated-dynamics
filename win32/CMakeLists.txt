@@ -11,14 +11,13 @@ target_link_libraries(os-hc INTERFACE helpcom config)
 set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 
 add_library(os STATIC
-    create_minidump.h
+    create_minidump.h create_minidump.cpp
     DiskDriver.cpp
     GDIDriver.cpp
     Frame.h Frame.cpp
     init_failure.cpp
     instance.h instance.cpp
     ods.h ods.cpp
-    os_win32.cpp
     Plot.h Plot.cpp
     Win32BaseDriver.h Win32BaseDriver.cpp
     WinText.h WinText.cpp
