@@ -17,7 +17,7 @@ enum
     NUM_IFS_FUNCTIONS = 64
 };
 
-static const char *const s_token_separators{" \t\n\r"};
+constexpr const char *TOKEN_SEPARATORS{" \t\n\r"};
 
 char *get_ifs_token(char *buf, std::FILE *ifs_file)
 {
@@ -33,7 +33,7 @@ char *get_ifs_token(char *buf, std::FILE *ifs_file)
         {
             *buf_ptr = 0;
         }
-        buf_ptr = std::strtok(buf, s_token_separators);
+        buf_ptr = std::strtok(buf, TOKEN_SEPARATORS);
         if (buf_ptr != nullptr)
         {
             return buf_ptr;
@@ -43,7 +43,7 @@ char *get_ifs_token(char *buf, std::FILE *ifs_file)
 
 char *get_next_ifs_token(char *buf, std::FILE *ifs_file)
 {
-    char *buf_ptr = std::strtok(nullptr, s_token_separators);
+    char *buf_ptr = std::strtok(nullptr, TOKEN_SEPARATORS);
     if (buf_ptr != nullptr)
     {
         return buf_ptr;
