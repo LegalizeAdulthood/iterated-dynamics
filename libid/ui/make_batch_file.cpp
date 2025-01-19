@@ -46,7 +46,7 @@
 #include "ui/video_mode.h"
 
 #include <config/string_case_compare.h>
-#include <config/strlwr.h>
+#include <config/string_lower.h>
 
 #include <algorithm>
 #include <cctype>
@@ -1673,7 +1673,7 @@ static void put_param_line()
 
 static void strip_zeros(char *buf)
 {
-    strlwr(buf);
+    string_lower(buf);
     char *dot_ptr = std::strchr(buf, '.');
     if (dot_ptr != nullptr)
     {

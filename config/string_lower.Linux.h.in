@@ -2,8 +2,8 @@
 //
 // DO NOT EDIT!
 //
-// Generated from strlwr.Windows.h.in
+// Generated from string_lower.Linux.h.in
 //
 #pragma once
 
-#include <string.h>
+char *string_lower(char *s);

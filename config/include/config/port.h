@@ -72,7 +72,6 @@ typedef float FLOAT4;
 // We get a problem with connect, since it is used by X
 #define connect connect1
 typedef void (*SignalHandler)(int);
-char *strlwr(char *s);
 
 // ================================== linux definitions
 #endif

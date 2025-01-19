@@ -3,7 +3,7 @@
 #include <cctype>
 
 // strlwr -- Convert string to lower case.
-char *strlwr(char *s)
+char *string_lower(char *s)
 {
     for (char *sptr = s; *sptr; ++sptr)
     {

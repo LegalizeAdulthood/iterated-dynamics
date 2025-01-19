@@ -14,7 +14,7 @@
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
 
-#include <config/strlwr.h>
+#include <config/string_lower.h>
 
 #include <algorithm>
 #include <cassert>
@@ -164,7 +164,7 @@ static bool read_lsystem_file(char const *str)
         {
             *word = 0;
         }
-        strlwr(inline1);
+        string_lower(inline1);
 
         if ((int)std::strspn(inline1, " \t\n") < (int)std::strlen(inline1)) // not a blank line
         {

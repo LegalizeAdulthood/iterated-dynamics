@@ -8,7 +8,7 @@
 #include "fractals/parser.h"
 #include "ui/cmdfiles.h"
 
-#include <config/strlwr.h>
+#include <config/string_lower.h>
 
 #include <cstdio>
 #include <cstring>
@@ -127,7 +127,7 @@ int set_trig_array(int k, char const *name)
         *slash = 0;
     }
 
-    strlwr(trig_name);
+    string_lower(trig_name);
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {

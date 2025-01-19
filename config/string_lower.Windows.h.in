@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from string_lower.Windows.h.in
+//
+#pragma once
+
+#include <string.h>
+
+inline char *string_lower(char *s)
+{
+    return strlwr(s);
+}

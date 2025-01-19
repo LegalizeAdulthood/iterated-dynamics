@@ -7,7 +7,7 @@
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
 
-#include <config/strlwr.h>
+#include <config/string_lower.h>
 
 #include <cstdio>
 #include <cstring>
@@ -72,7 +72,7 @@ int ifs_load()                   // read in IFS parameters
         *buf_ptr = 0;
     }
 
-    strlwr(buf);
+    string_lower(buf);
     int const row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_PARAMS;
     g_ifs_type = row_size == NUM_IFS_3D_PARAMS;
 

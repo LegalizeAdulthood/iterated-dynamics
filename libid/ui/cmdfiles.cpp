@@ -60,7 +60,7 @@
 #include "ui/video_mode.h"
 
 #include <config/path_limits.h>
-#include <config/strlwr.h>
+#include <config/string_lower.h>
 
 #include <algorithm>
 #include <array>
@@ -750,7 +750,7 @@ static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode)
             char tmp_buf[11];
             std::strncpy(tmp_buf, &line_buf[1], 4);
             tmp_buf[4] = 0;
-            strlwr(tmp_buf);
+            string_lower(tmp_buf);
             tools_section = std::strncmp(tmp_buf, "id]", 3) == 0;
             continue;                              // skip tools section heading
         }

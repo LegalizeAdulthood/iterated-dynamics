@@ -11,7 +11,7 @@
 #include "ui/full_screen_prompt.h"
 
 #include <config/path_limits.h>
-#include <config/strlwr.h>
+#include <config/string_lower.h>
 
 #include <algorithm>
 #include <cstdlib>
@@ -393,7 +393,7 @@ int get_toggles()
         j++;
     }
 
-    if (std::strncmp(strlwr(values[++k].uval.sval), "normal", 4) == 0)
+    if (std::strncmp(string_lower(values[++k].uval.sval), "normal", 4) == 0)
     {
         g_fill_color = -1;
     }
