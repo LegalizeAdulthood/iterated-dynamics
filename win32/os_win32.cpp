@@ -2,7 +2,6 @@
 //
 #include "create_minidump.h"
 #include "instance.h"
-#include "tos.h"
 
 #include "io/special_dirs.h"
 #include "ui/cmdfiles.h"
@@ -18,9 +17,6 @@
 #include <filesystem>
 
 HINSTANCE g_instance{};
-
-// Global variables (yuck!)
-char *g_top_of_stack{};
 
 /* Global functions
  *
@@ -101,16 +97,4 @@ void create_minidump(EXCEPTION_POINTERS *ep)
             minidump);
         MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
-}
-
-enum
-{
-    WIN32_STACK_SIZE = 1024 * 1024
-};
-
-// Return available stack space ... shouldn't be needed in Win32, should it?
-long stack_avail()
-{
-    char junk{};
-    return WIN32_STACK_SIZE - (long)(((char *) g_top_of_stack) - &junk);
 }

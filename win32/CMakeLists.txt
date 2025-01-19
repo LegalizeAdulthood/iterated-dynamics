@@ -13,21 +13,17 @@ set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 add_library(os STATIC
     DiskDriver.cpp
     GDIDriver.cpp
-    Frame.h
-    Frame.cpp
+    Frame.h Frame.cpp
     init_failure.cpp
     ods.cpp
     os_win32.cpp
-    Plot.h
-    Plot.cpp
-    Win32BaseDriver.h
-    Win32BaseDriver.cpp
-    WinText.h
-    WinText.cpp
+    Plot.h Plot.cpp
+    Win32BaseDriver.h Win32BaseDriver.cpp
+    WinText.h WinText.cpp
     create_minidump.h
     instance.h
     ods.h
-    tos.h
+    tos.h tos.cpp
     special_dirs.cpp
     usec_clock.cpp
     win_defines.h
