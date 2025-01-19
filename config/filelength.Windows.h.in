@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from filelength.Windows.h.in
+//
+#pragma once
+
+// for filelength
+#include <io.h>

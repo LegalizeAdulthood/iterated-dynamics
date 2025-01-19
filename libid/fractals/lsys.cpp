@@ -14,6 +14,8 @@
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
 
+#include <config/strlwr.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>

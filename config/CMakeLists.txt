@@ -13,40 +13,37 @@ set(ID_HAVE_WIN32_DISK_DRIVER OFF)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(ID_HAVE_GDI_DRIVER ON)
     set(ID_HAVE_WIN32_DISK_DRIVER ON)
-    configure_file(filelength.windows.h.in include/config/filelength.h @ONLY)
-    configure_file(path_limits.windows.h.in include/config/path_limits.h @ONLY)
-    configure_file(fdio.windows.h.in include/config/fdio.h @ONLY)
-    configure_file(getpid.windows.h.in include/config/getpid.h @ONLY)
+    set(ID_STRLWR_SOURCES "")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(ID_HAVE_X11_DRIVER ON)
-    configure_file(filelength.linux.h.in include/config/filelength.h @ONLY)
-    configure_file(path_limits.linux.h.in include/config/path_limits.h @ONLY)
-    configure_file(fdio.linux.h.in include/config/fdio.h @ONLY)
-    configure_file(getpid.linux.h.in include/config/getpid.h @ONLY)
+    set(ID_STRLWR_SOURCES "strlwr.cpp")
 else()
     message(FATAL_ERROR "Unknown sytem name '${CMAKE_SYSTEM_NAME}'; expecting 'Windows' or 'Linux'")
 endif()
-configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
+configure_file(driver_types.h.in                        include/config/driver_types.h @ONLY)
+configure_file(fdio.${CMAKE_SYSTEM_NAME}.h.in           include/config/fdio.h @ONLY)
+configure_file(filelength.${CMAKE_SYSTEM_NAME}.h.in     include/config/filelength.h @ONLY)
+configure_file(getpid.${CMAKE_SYSTEM_NAME}.h.in         include/config/getpid.h @ONLY)
+configure_file(path_limits.${CMAKE_SYSTEM_NAME}.h.in    include/config/path_limits.h @ONLY)
+configure_file(strlwr.${CMAKE_SYSTEM_NAME}.h.in         include/config/strlwr.h @ONLY)
 
 add_library(config
     driver_types.h.in
-    fdio.linux.h.in
-    fdio.windows.h.in
-    filelength.linux.h.in
-    filelength.windows.h.in
-    getpid.linux.h.in
-    getpid.windows.h.in
-    path_limits.linux.h.in
-    path_limits.windows.h.in
+    fdio.Linux.h.in fdio.Windows.h.in
+    filelength.Linux.h.in filelength.Windows.h.in
+    getpid.Linux.h.in getpid.Windows.h.in
+    path_limits.Linux.h.in path_limits.Windows.h.in
     include/config/port.h
     port_config.h.in
     include/config/string_case_compare.h string_case_compare.cpp
+    strlwr.Linux.h.in strlwr.Windows.h.in ${ID_STRLWR_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/driver_types.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/fdio.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/getpid.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/path_limits.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/config/strlwr.h"
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 set_target_properties(config PROPERTIES FOLDER Libraries)

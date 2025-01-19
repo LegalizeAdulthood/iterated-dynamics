@@ -7,6 +7,8 @@
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
 
+#include <config/strlwr.h>
+
 #include <cstdio>
 #include <cstring>
 

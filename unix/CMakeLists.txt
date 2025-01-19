@@ -8,10 +8,8 @@ endif()
 
 find_package(X11)
 
-add_library(os-hc STATIC unix.cpp)
-target_compile_definitions(os-hc PUBLIC ${OS_DEFINITIONS})
+add_library(os-hc INTERFACE)
 target_compile_options(os-hc PRIVATE ${ID_TARGET_OPTIONS})
-target_include_directories(os-hc PRIVATE ../headers)
 target_link_libraries(os-hc PUBLIC helpcom config)
 set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 

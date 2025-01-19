@@ -2,9 +2,8 @@
 //
 // DO NOT EDIT!
 //
-// Generated from getpid.linux.h.in
+// Generated from strlwr.Linux.h.in
 //
 #pragma once
 
-// getpid
-#include <unistd.h>
+char *strlwr(char *s);

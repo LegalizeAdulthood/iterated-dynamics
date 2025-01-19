@@ -8,6 +8,8 @@
 #include "fractals/parser.h"
 #include "ui/cmdfiles.h"
 
+#include <config/strlwr.h>
+
 #include <cstdio>
 #include <cstring>
 

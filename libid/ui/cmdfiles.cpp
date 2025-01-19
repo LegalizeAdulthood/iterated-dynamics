@@ -60,6 +60,7 @@
 #include "ui/video_mode.h"
 
 #include <config/path_limits.h>
+#include <config/strlwr.h>
 
 #include <algorithm>
 #include <array>

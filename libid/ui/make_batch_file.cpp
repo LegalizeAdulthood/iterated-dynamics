@@ -46,6 +46,7 @@
 #include "ui/video_mode.h"
 
 #include <config/string_case_compare.h>
+#include <config/strlwr.h>
 
 #include <algorithm>
 #include <cctype>

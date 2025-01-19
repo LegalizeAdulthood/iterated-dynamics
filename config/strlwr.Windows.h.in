@@ -2,9 +2,8 @@
 //
 // DO NOT EDIT!
 //
-// Generated from getpid.windows.h.in
+// Generated from strlwr.Windows.h.in
 //
 #pragma once
 
-// getpid
-#include <process.h>
+#include <string.h>

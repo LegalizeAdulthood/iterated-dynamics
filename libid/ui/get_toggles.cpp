@@ -11,6 +11,7 @@
 #include "ui/full_screen_prompt.h"
 
 #include <config/path_limits.h>
+#include <config/strlwr.h>
 
 #include <algorithm>
 #include <cstdlib>

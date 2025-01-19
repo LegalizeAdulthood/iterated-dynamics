@@ -2,9 +2,9 @@
 //
 // DO NOT EDIT!
 //
-// Generated from fdio.linux.h.in
+// Generated from fdio.Windows.h.in
 //
 #pragma once
 
 // POSIX file-descriptor style I/O functions
-#include <unistd.h>
+#include <corecrt_io.h>
