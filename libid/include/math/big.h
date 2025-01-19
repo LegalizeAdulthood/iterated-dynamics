@@ -104,6 +104,7 @@ bn_t div_a_bn_int(bn_t r, U16 u);
 bf_t clear_bf(bf_t r);
 bf_t copy_bf(bf_t r, bf_t n);
 bf_t float_to_bf(bf_t r, LDouble f);
+bf_t float_to_bf1(bf_t r, LDouble f);
 LDouble bf_to_float(bf_t n);
 LDouble bn_to_float(bn_t n);
 LDouble extract256(LDouble f, int *exp_ptr);

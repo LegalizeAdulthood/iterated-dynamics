@@ -940,7 +940,7 @@ bf_t float_to_bf(bf_t r, LDouble f)
 
 /*********************************************************************/
 //  b = f
-//  Converts a double to a bigfloat
+//  Converts a long double to a bigfloat
 bf_t float_to_bf1(bf_t r, LDouble f)
 {
     char msg[80];
