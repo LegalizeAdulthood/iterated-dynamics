@@ -137,7 +137,7 @@ bf_t str_to_bf(bf_t r, char const *s)
 }
 
 /********************************************************************/
-// std::strlen_needed() - returns string length needed to hold bigfloat
+// std::strlen_needed_bf() - returns string length needed to hold bigfloat
 
 int strlen_needed_bf()
 {
