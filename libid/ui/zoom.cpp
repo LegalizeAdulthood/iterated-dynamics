@@ -49,7 +49,7 @@ static void fix_work_list();
 static void move_row(int from_row, int to_row, int col);
 
 // big number declarations
-void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
+static void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
     const int saved = save_stack();
     const bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
