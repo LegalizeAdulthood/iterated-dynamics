@@ -130,12 +130,12 @@ void copy_genes_from_bank(GeneBase gene[NUM_GENES])
 }
 
 template <int N>
-bool equal(const std::int16_t (&lhs)[N], const std::int16_t (&rhs)[N])
+static bool equal(const std::int16_t (&lhs)[N], const std::int16_t (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs));
 }
 
-inline bool within_eps(double lhs, double rhs)
+static bool within_eps(double lhs, double rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
