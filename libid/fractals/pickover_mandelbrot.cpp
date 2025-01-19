@@ -45,7 +45,7 @@ int float_trig_plus_exponent_fractal()
     return g_bailout_float();
 }
 
-inline bool trig16_check(long val)
+static bool trig16_check(long val)
 {
     static constexpr long l16_trig_lim = 8L << 16; // domain limit of fast trig functions
 
