@@ -47,7 +47,7 @@ using PlotFn = void(*)(int, int, int);
 //**************** standalone engine for "plasma" *******************
 
 // returns a random 16 bit value that is never 0
-U16 rand16()
+static U16 rand16()
 {
     U16 value = (U16) rand15();
     value <<= 1;
