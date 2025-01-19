@@ -113,7 +113,7 @@ int popcorn_fractal()
     return 0;
 }
 
-inline bool trig16_check(long val)
+static bool trig16_check(long val)
 {
     static constexpr long L16_TRIG_LIM = 8L << 16; // domain limit of fast trig functions
 
@@ -260,7 +260,7 @@ int popcorn_fractal_fn()
     return 0;
 }
 
-inline void fix_overflow(LComplex &arg)
+static void fix_overflow(LComplex &arg)
 {
     if (g_overflow)
     {
