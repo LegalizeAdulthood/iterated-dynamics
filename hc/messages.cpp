@@ -26,7 +26,7 @@ void report_errors()
     std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
 
-void print_msg(char const *type, int line_num, char const *format, std::va_list arg)
+static void print_msg(char const *type, int line_num, char const *format, std::va_list arg)
 {
     if (type != nullptr)
     {
@@ -42,7 +42,7 @@ void print_msg(char const *type, int line_num, char const *format, std::va_list 
     std::fflush(stdout);
 }
 
-void fatal_msg(int line_offset, char const *format, ...)
+static void fatal_msg(int line_offset, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
