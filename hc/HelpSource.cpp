@@ -230,7 +230,7 @@ void Topic::read_topic_text() const
 #pragma warning(push)
 #pragma warning(disable : 4311)
 #endif
-void check_buffer(char const *curr, unsigned int off, char const *buffer)
+static void check_buffer(char const *curr, unsigned int off, char const *buffer)
 {
     if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
     {
@@ -241,7 +241,7 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 #pragma warning(pop)
 #endif
 
-inline void check_buffer(unsigned off)
+static void check_buffer(unsigned int off)
 {
     check_buffer(g_src.curr, off, g_src.buffer.data());
 }
@@ -342,7 +342,7 @@ int HelpSource::add_content(const Content &c)
 /*
  * Will not handle new-lines or tabs correctly!
  */
-void unread_char(int ch)
+static void unread_char(int ch)
 {
     if (s_read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
     {
@@ -354,7 +354,7 @@ void unread_char(int ch)
     --s_src_col;
 }
 
-int read_char_aux()
+static int read_char_aux()
 {
     if (g_src_line <= 0)
     {
@@ -425,7 +425,7 @@ int read_char_aux()
     }
 }
 
-int read_char()
+static int read_char()
 {
     int ch = read_char_aux();
 
@@ -479,7 +479,7 @@ int read_char()
 /*
  * .SRC file parser stuff
  */
-bool validate_label_name(char const *name)
+static bool validate_label_name(char const *name)
 {
     if (!std::isalpha(*name) && *name != '@' && *name != '_')
     {
@@ -497,7 +497,7 @@ bool validate_label_name(char const *name)
     return true;  // valid
 }
 
-char *read_until(char *buff, int len, char const *stop_chars)
+static char *read_until(char *buff, int len, char const *stop_chars)
 {
     while (--len > 0)
     {
@@ -529,7 +529,7 @@ char *read_until(char *buff, int len, char const *stop_chars)
     return buff-1;
 }
 
-void skip_over(char const *skip)
+static void skip_over(char const *skip)
 {
     while (true)
     {
@@ -547,7 +547,7 @@ void skip_over(char const *skip)
     }
 }
 
-char *char_lit(int ch)
+static char *char_lit(int ch)
 {
     static char buff[16];
 
@@ -563,7 +563,7 @@ char *char_lit(int ch)
     return buff;
 }
 
-void put_spaces(int how_many)
+static void put_spaces(int how_many)
 {
     if (how_many > 2 && s_compress_spaces)
     {
@@ -586,7 +586,7 @@ void put_spaces(int how_many)
 }
 
 // used by parse_contents()
-bool get_next_item()
+static bool get_next_item()
 {
     skip_over(" \t\r\n");
     char *ptr = read_until(s_cmd, 128, ",}");
@@ -601,7 +601,7 @@ bool get_next_item()
     return last;
 }
 
-void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
+static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 {
     Topic t;
     t.flags     = TopicFlags::NONE;
@@ -736,7 +736,7 @@ void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
     g_src.add_topic(t);
 }
 
-void process_doc_contents(Mode mode)
+static void process_doc_contents(Mode mode)
 {
     if (mode == Mode::ASCII_DOC)
     {
@@ -764,7 +764,7 @@ void process_doc_contents(Mode mode)
     }
 }
 
-int parse_link()   // returns length of link or 0 on error
+static int parse_link()   // returns length of link or 0 on error
 {
     char *ptr;
     bool bad = false;
@@ -883,7 +883,7 @@ int parse_link()   // returns length of link or 0 on error
     return 0;
 }
 
-int create_table()
+static int create_table()
 {
     int    width;
     int    cols;
@@ -1042,7 +1042,7 @@ int create_table()
     return 1;
 }
 
-void process_comment()
+static void process_comment()
 {
     while (true)
     {
@@ -1090,7 +1090,7 @@ void process_comment()
     }
 }
 
-void process_bin_inc()
+static void process_bin_inc()
 {
     int handle = open(&s_cmd[7], O_RDONLY | O_BINARY);
     if (handle == -1)
@@ -1125,13 +1125,13 @@ void process_bin_inc()
     close(handle);
 }
 
-void end_topic(Topic &t)
+static void end_topic(Topic &t)
 {
     t.alloc_topic_text((unsigned)(g_src.curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
-bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentence
+static bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentence
 {
     if (*ptr == ')')
     {
@@ -1146,7 +1146,7 @@ bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentenc
     return *ptr == '.' || *ptr == '?' || *ptr == '!';
 }
 
-void add_blank_for_split()   // add space at g_src.curr for merging two lines
+static void add_blank_for_split()   // add space at g_src.curr for merging two lines
 {
     if (!is_hyphen(g_src.curr-1))     // no spaces if it's a hyphen
     {
@@ -1158,7 +1158,7 @@ void add_blank_for_split()   // add space at g_src.curr for merging two lines
     }
 }
 
-void put_a_char(int ch, const Topic &t)
+static void put_a_char(int ch, const Topic &t)
 {
     if (ch == '{' && !bit_set(t.flags, TopicFlags::DATA)) // is it a hot-link?
     {
@@ -1189,7 +1189,7 @@ enum class ParseStates // states for FSM's
     SPACES
 };
 
-void check_command_length(int err_offset, int len)
+static void check_command_length(int err_offset, int len)
 {
     if ((int) std::strlen(s_cmd) != len)
     {
@@ -1197,7 +1197,7 @@ void check_command_length(int err_offset, int len)
     }
 }
 
-std::FILE *open_include(std::string const &file_name)
+static std::FILE *open_include(std::string const &file_name)
 {
     std::FILE *result = std::fopen(file_name.c_str(), "rt");
     if (result == nullptr)
