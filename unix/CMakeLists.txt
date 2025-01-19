@@ -6,6 +6,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
 endif()
 
+find_package(X11)
+
 add_library(os-hc STATIC unix.cpp)
 target_compile_definitions(os-hc PUBLIC ${OS_DEFINITIONS})
 target_compile_options(os-hc PRIVATE ${ID_TARGET_OPTIONS})
@@ -24,7 +26,7 @@ add_library(os STATIC
     stack_avail.cpp
     unixscr.cpp
     video.cpp)
-target_link_libraries(os PUBLIC help-defs os-hc X11 m)
+target_link_libraries(os PUBLIC help-defs os-hc X11::X11 m)
 target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_include_directories(os PRIVATE ../libid/include)
