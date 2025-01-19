@@ -9,7 +9,7 @@
 #include <cmath>
 
 // most people "think" in degrees
-inline double deg_to_rad(double x)
+static double deg_to_rad(double x)
 {
     return x * (PI / 180.0);
 }
