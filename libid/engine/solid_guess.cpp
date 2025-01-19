@@ -237,7 +237,7 @@ exit_solidguess:
     return 0;
 }
 
-inline int calc_a_dot(int x, int y)
+static int calc_a_dot(int x, int y)
 {
     g_col = x;
     g_row = y;
@@ -617,7 +617,7 @@ static bool guess_row(bool first_pass, int y, int block_size)
     return false;
 }
 
-inline void fill_d_stack(int x1, int x2, Byte value)
+static void fill_d_stack(int x1, int x2, Byte value)
 {
     const int begin = std::min(x1, x2);
     const int end = std::max(x1, x2);
