@@ -572,7 +572,7 @@ static int do_move_link(Link *link, int num_link, int *curr, int (*f)(Link *, in
     return 0;
 }
 
-inline void freader(void *ptr, size_t size, size_t num, std::FILE *stream)
+static void freader(void *ptr, size_t size, size_t num, std::FILE *stream)
 {
     if (std::fread(ptr, size, num, stream) != num)
     {
