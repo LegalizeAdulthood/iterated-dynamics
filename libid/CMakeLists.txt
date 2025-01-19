@@ -200,7 +200,7 @@ add_library(libid
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
-    include/ui/read_ticker.h
+    include/ui/read_ticker.h ui/read_ticker.cpp
     include/ui/rotate.h ui/rotate.cpp
     include/ui/select_video_mode.h ui/select_video_mode.cpp
     include/ui/set_default_params.h ui/set_default_params.cpp

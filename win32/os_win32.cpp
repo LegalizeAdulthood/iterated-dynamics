@@ -30,14 +30,6 @@ char *g_top_of_stack{};
  * here in a slower C form for portability.
  */
 
-/*
-; long read_ticker() returns current bios ticker value
-*/
-long read_ticker()
-{
-    return (long) GetTickCount();
-}
-
 using MiniDumpWriteDumpProc = BOOL(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
     PMINIDUMP_EXCEPTION_INFORMATION exceptions, PMINIDUMP_USER_STREAM_INFORMATION user,
     PMINIDUMP_CALLBACK_INFORMATION callback);

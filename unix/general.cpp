@@ -58,12 +58,3 @@ snd(int hertz)
 void
 nosnd()
 {}
-
-/*
-; long read_ticker() returns current bios ticker value
-*/
-long read_ticker()
-{
-    return std::clock();
-}
-
