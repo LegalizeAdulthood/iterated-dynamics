@@ -346,9 +346,9 @@ void Win32BaseDriver::buzzer(Buzzer kind)
     MessageBeep(beep);
 }
 
-bool Win32BaseDriver::sound_on(int freq)
+bool Win32BaseDriver::sound_on(int frequency)
 {
-    ODS1("Win32BaseDriver::sound_on %d", freq);
+    ODS1("Win32BaseDriver::sound_on %d", frequency);
     return false;
 }
 

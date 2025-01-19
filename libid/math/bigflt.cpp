@@ -1240,21 +1240,21 @@ bool is_bf_zero(bf_t n)
 
 /************************************************************************/
 // convert_bf  -- convert bigfloat numbers from old to new lengths
-int convert_bf(bf_t new_num, bf_t old_num, int new_bf_length, int old_bf_length)
+int convert_bf(bf_t new_num, bf_t old_num, int new_bf_len, int old_bf_len)
 {
     // save lengths so not dependent on external environment
     int save_bf_length = g_bf_length;
-    g_bf_length      = new_bf_length;
+    g_bf_length      = new_bf_len;
     clear_bf(new_num);
     g_bf_length      = save_bf_length;
 
-    if (new_bf_length > old_bf_length)
+    if (new_bf_len > old_bf_len)
     {
-        std::memcpy(new_num+new_bf_length-old_bf_length, old_num, old_bf_length+2);
+        std::memcpy(new_num+new_bf_len-old_bf_len, old_num, old_bf_len+2);
     }
     else
     {
-        std::memcpy(new_num, old_num+old_bf_length-new_bf_length, new_bf_length+2);
+        std::memcpy(new_num, old_num+old_bf_len-new_bf_len, new_bf_len+2);
     }
     return 0;
 }

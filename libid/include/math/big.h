@@ -209,9 +209,9 @@ LDouble extract_value(LDouble f, LDouble b, int *exp_ptr);
 LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
 LDouble scale_10(LDouble f, int n);
-bf10_t unsafe_bf_to_bf10(bf10_t s, int dec, bf_t n);
-bf10_t mult_a_bf10_int(bf10_t s, int dec, U16 n);
-bf10_t div_a_bf10_int(bf10_t s, int dec, U16 n);
+bf10_t unsafe_bf_to_bf10(bf10_t r, int dec, bf_t n);
+bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n);
+bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n);
 char  *bf10_to_str_e(char *s, int dec, bf10_t n);
 char  *bf10_to_str_f(char *s, int dec, bf10_t n);
 

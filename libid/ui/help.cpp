@@ -1016,10 +1016,10 @@ static int read_help_topic(int topic, int off, int len, void *buf)
  * to end of topic.  On "EOF" returns a negative number representing
  * number of bytes not read.
  */
-int read_help_topic(HelpLabels label_num, int off, int len, void *buf)
+int read_help_topic(HelpLabels label, int off, int len, void *buf)
 {
-    return read_help_topic(s_label[static_cast<int>(label_num)].topic_num,
-        s_label[static_cast<int>(label_num)].topic_off + off, len, buf);
+    return read_help_topic(s_label[static_cast<int>(label)].topic_num,
+        s_label[static_cast<int>(label)].topic_off + off, len, buf);
 }
 
 static void printer_ch(PrintDocInfo *info, int c, int n)
