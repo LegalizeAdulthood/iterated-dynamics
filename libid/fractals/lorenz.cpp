@@ -179,10 +179,10 @@ static int      s_run_length{};
 static Affine   s_cvt{};
 static LAffine s_l_cvt{};
 
-static double s_Cx{};
-static double s_Cy{};
-static long s_Cx_l{};
-static long s_Cy_l{};
+static double s_cx{};
+static double s_cy{};
+static long s_cx_l{};
+static long s_cy_l{};
 
 /*
  * end of Inverse Julia declarations;
@@ -400,8 +400,8 @@ bool orbit3d_long_setup()
     }
     else if (g_fractal_type == FractalType::INVERSE_JULIA)
     {
-        s_Cx_l = (long)(g_params[0] * g_fudge_factor);
-        s_Cy_l = (long)(g_params[1] * g_fudge_factor);
+        s_cx_l = (long)(g_params[0] * g_fudge_factor);
+        s_cy_l = (long)(g_params[1] * g_fudge_factor);
 
         s_max_hits    = (int) g_params[2];
         s_run_length = (int) g_params[3];
@@ -425,7 +425,7 @@ bool orbit3d_long_setup()
         s_l_cvt.e = (long)(s_cvt.e * (1L << 21));
         s_l_cvt.f = (long)(s_cvt.f * (1L << 21));
 
-        LComplex Sqrt = complex_sqrt_long(g_fudge_factor - 4 * s_Cx_l, -4 * s_Cy_l);
+        LComplex sqrt = complex_sqrt_long(g_fudge_factor - 4 * s_cx_l, -4 * s_cy_l);
 
         switch (g_major_method)
         {
@@ -436,8 +436,8 @@ bool orbit3d_long_setup()
                 fallback_to_random_walk();
                 goto lrwalk;
             }
-            enqueue_long((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
-            enqueue_long((g_fudge_factor - Sqrt.x) / 2, -Sqrt.y / 2);
+            enqueue_long((g_fudge_factor + sqrt.x) / 2,  sqrt.y / 2);
+            enqueue_long((g_fudge_factor - sqrt.x) / 2, -sqrt.y / 2);
             break;
 
         case Major::DEPTH_FIRST:
@@ -450,26 +450,26 @@ bool orbit3d_long_setup()
             switch (g_inverse_julia_minor_method)
             {
             case Minor::LEFT_FIRST:
-                push_long((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
-                push_long((g_fudge_factor - Sqrt.x) / 2, -Sqrt.y / 2);
+                push_long((g_fudge_factor + sqrt.x) / 2,  sqrt.y / 2);
+                push_long((g_fudge_factor - sqrt.x) / 2, -sqrt.y / 2);
                 break;
             case Minor::RIGHT_FIRST:
-                push_long((g_fudge_factor - Sqrt.x) / 2, -Sqrt.y / 2);
-                push_long((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
+                push_long((g_fudge_factor - sqrt.x) / 2, -sqrt.y / 2);
+                push_long((g_fudge_factor + sqrt.x) / 2,  sqrt.y / 2);
                 break;
             }
             break;
         case Major::RANDOM_WALK:
 lrwalk:
-            s_init_orbit_long[0] = g_fudge_factor + Sqrt.x / 2;
+            s_init_orbit_long[0] = g_fudge_factor + sqrt.x / 2;
             g_l_new_z.x = s_init_orbit_long[0];
-            s_init_orbit_long[1] =         Sqrt.y / 2;
+            s_init_orbit_long[1] =         sqrt.y / 2;
             g_l_new_z.y = s_init_orbit_long[1];
             break;
         case Major::RANDOM_RUN:
-            s_init_orbit_long[0] = g_fudge_factor + Sqrt.x / 2;
+            s_init_orbit_long[0] = g_fudge_factor + sqrt.x / 2;
             g_l_new_z.x = s_init_orbit_long[0];
-            s_init_orbit_long[1] =         Sqrt.y / 2;
+            s_init_orbit_long[1] =         sqrt.y / 2;
             g_l_new_z.y = s_init_orbit_long[1];
             break;
         }
@@ -606,8 +606,8 @@ bool orbit3d_float_setup()
     }
     else if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
     {
-        s_Cx = g_params[0];
-        s_Cy = g_params[1];
+        s_cx = g_params[0];
+        s_cy = g_params[1];
 
         s_max_hits    = (int) g_params[2];
         s_run_length = (int) g_params[3];
@@ -624,7 +624,7 @@ bool orbit3d_float_setup()
         setup_convert_to_screen(&s_cvt);
 
         // find fixed points: guaranteed to be in the set
-        DComplex Sqrt = complex_sqrt_float(1 - 4 * s_Cx, -4 * s_Cy);
+        DComplex sqrt = complex_sqrt_float(1 - 4 * s_cx, -4 * s_cy);
         switch (g_major_method)
         {
         case Major::BREADTH_FIRST:
@@ -634,8 +634,8 @@ bool orbit3d_float_setup()
                 fallback_to_random_walk();
                 goto rwalk;
             }
-            enqueue_float((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
-            enqueue_float((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
+            enqueue_float((float)((1 + sqrt.x) / 2), (float)(sqrt.y / 2));
+            enqueue_float((float)((1 - sqrt.x) / 2), (float)(-sqrt.y / 2));
             break;
         case Major::DEPTH_FIRST:                      // depth first (choose direction)
             if (!init_queue(32*1024UL))
@@ -647,27 +647,27 @@ bool orbit3d_float_setup()
             switch (g_inverse_julia_minor_method)
             {
             case Minor::LEFT_FIRST:
-                push_float((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
-                push_float((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
+                push_float((float)((1 + sqrt.x) / 2), (float)(sqrt.y / 2));
+                push_float((float)((1 - sqrt.x) / 2), (float)(-sqrt.y / 2));
                 break;
             case Minor::RIGHT_FIRST:
-                push_float((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
-                push_float((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
+                push_float((float)((1 - sqrt.x) / 2), (float)(-sqrt.y / 2));
+                push_float((float)((1 + sqrt.x) / 2), (float)(sqrt.y / 2));
                 break;
             }
             break;
         case Major::RANDOM_WALK:
 rwalk:
-            s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+            s_init_orbit_fp[0] = 1 + sqrt.x / 2;
             g_new_z.x = s_init_orbit_fp[0];
-            s_init_orbit_fp[1] = Sqrt.y / 2;
+            s_init_orbit_fp[1] = sqrt.y / 2;
             g_new_z.y = s_init_orbit_fp[1];
             break;
         case Major::RANDOM_RUN:       // random run, choose intervals
             g_major_method = Major::RANDOM_RUN;
-            s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+            s_init_orbit_fp[0] = 1 + sqrt.x / 2;
             g_new_z.x = s_init_orbit_fp[0];
-            s_init_orbit_fp[1] = Sqrt.y / 2;
+            s_init_orbit_fp[1] = sqrt.y / 2;
             g_new_z.y = s_init_orbit_fp[1];
             break;
         }
@@ -732,7 +732,7 @@ int m_inverse_julia_orbit()
      * Now find the next point(s), and flip a coin to choose one.
      */
 
-    g_new_z       = complex_sqrt_float(g_new_z.x - s_Cx, g_new_z.y - s_Cy);
+    g_new_z       = complex_sqrt_float(g_new_z.x - s_cx, g_new_z.y - s_cy);
     int left_right = (random(2)) ? 1 : -1;
 
     if (new_col < 1 || new_col >= g_logical_screen_x_dots || new_row < 1 || new_row >= g_logical_screen_y_dots)
@@ -863,7 +863,7 @@ int l_inverse_julia_orbit()
         g_l_new_z = pop_long();
         break;
     case Major::RANDOM_WALK:
-        g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
+        g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_cx_l, g_l_new_z.y - s_cy_l);
         if (random(2))
         {
             g_l_new_z.x = -g_l_new_z.x;
@@ -871,7 +871,7 @@ int l_inverse_julia_orbit()
         }
         break;
     case Major::RANDOM_RUN:
-        g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
+        g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_cx_l, g_l_new_z.y - s_cy_l);
         if (random_len == 0)
         {
             random_len = random(s_run_length);
@@ -926,11 +926,11 @@ int l_inverse_julia_orbit()
         switch (g_major_method)
         {
         case Major::BREADTH_FIRST:
-            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
+            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_cx_l, g_l_new_z.y - s_cy_l);
             enqueue_long(color * g_l_new_z.x, color * g_l_new_z.y);
             break;
         case Major::DEPTH_FIRST:
-            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
+            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_cx_l, g_l_new_z.y - s_cy_l);
             push_long(color * g_l_new_z.x, color * g_l_new_z.y);
             break;
         case Major::RANDOM_RUN:
@@ -953,7 +953,7 @@ int l_inverse_julia_orbit()
         if (color < s_max_hits)
         {
             g_put_color(new_col, new_row, color+1);
-            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
+            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_cx_l, g_l_new_z.y - s_cy_l);
             enqueue_long(g_l_new_z.x,  g_l_new_z.y);
             enqueue_long(-g_l_new_z.x, -g_l_new_z.y);
         }
@@ -962,7 +962,7 @@ int l_inverse_julia_orbit()
         if (color < s_max_hits)
         {
             g_put_color(new_col, new_row, color+1);
-            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
+            g_l_new_z = complex_sqrt_long(g_l_new_z.x - s_cx_l, g_l_new_z.y - s_cy_l);
             if (g_inverse_julia_minor_method == Minor::LEFT_FIRST)
             {
                 if (queue_full_almost())
