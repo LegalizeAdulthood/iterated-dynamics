@@ -366,7 +366,7 @@ static MainState evolver_get_history(MainContext &context)
 }
 
 // grabbed a couple of video mode keys, user can change to these using delete and the menu if necessary
-static const MenuHandler s_handlers[]{
+static const MenuHandler HANDLERS[]{
     {ID_KEY_CTL_E, prompt_evolver_options},             //
     {ID_KEY_CTL_H, evolver_get_history},                // return to prev image
     {ID_KEY_CTL_ENTER, request_zoom_out},               //
@@ -434,9 +434,9 @@ static const MenuHandler s_handlers[]{
 
 MainState evolver_menu_switch(MainContext &context)
 {
-    assert(std::is_sorted(std::begin(s_handlers), std::end(s_handlers)));
-    if (const auto it = std::lower_bound(std::cbegin(s_handlers), std::cend(s_handlers), context.key);
-        it != std::cend(s_handlers) && it->key == context.key)
+    assert(std::is_sorted(std::begin(HANDLERS), std::end(HANDLERS)));
+    if (const auto it = std::lower_bound(std::cbegin(HANDLERS), std::cend(HANDLERS), context.key);
+        it != std::cend(HANDLERS) && it->key == context.key)
     {
         return it->handler(context);
     }
