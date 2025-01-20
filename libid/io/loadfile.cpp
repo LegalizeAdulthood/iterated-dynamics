@@ -166,19 +166,19 @@ static int  find_fractal_info(const std::string &gif_file, FractalInfo *info,
     ExtBlock6 *blk_6_info,
     ExtBlock7 *blk_7_info);
 static void load_ext_blk(char *load_ptr, int load_len);
-static void skip_ext_blk(int *, int *);
+static void skip_ext_blk(int *block_len, int *data_len);
 static void backwards_compat(FractalInfo *info);
 static bool fix_bof();
 static bool fix_period_bof();
 static void draw_window(int colour, Window const *info);
 static bool is_visible_window(Window *list, FractalInfo const *info, ExtBlock5 const *blk_5_info);
-static void transform(DblCoords *);
+static void transform(DblCoords *point);
 static bool params_ok(FractalInfo const *info);
 static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info);
 static bool function_ok(FractalInfo const *info, int num_fn);
 static void check_history(char const *old_name, char const *new_name);
 static void bf_setup_convert_to_screen();
-static void bf_transform(BigFloat, BigFloat, DblCoords *);
+static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point);
 
 static std::FILE *s_fp{};
 static std::vector<Window> s_browse_windows;
