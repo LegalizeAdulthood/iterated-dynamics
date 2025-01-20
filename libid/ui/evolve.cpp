@@ -329,14 +329,7 @@ static int vary_int(int rand_value, int limit, Variations mode)
 int wrapped_positive_vary_int(int rand_value, int limit, Variations mode)
 {
     int i = vary_int(rand_value, limit, mode);
-    if (i < 0)
-    {
-        return limit + i;
-    }
-    else
-    {
-        return i;
-    }
+    return i < 0 ? limit + i : i;
 }
 
 void vary_inside(GeneBase gene[], int rand_val, int i)
