@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #include "Compiler.h"
+
 #include "AsciiDocCompiler.h"
 #include "HelpCompiler.h"
 
