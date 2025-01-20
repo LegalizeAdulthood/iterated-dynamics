@@ -22,7 +22,7 @@
  * here in a slower C form for portability.
  */
 
-using MiniDumpWriteDumpProc = BOOL(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
+using MiniDumpWriteDumpProc = BOOL(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dump_type,
     PMINIDUMP_EXCEPTION_INFORMATION exceptions, PMINIDUMP_USER_STREAM_INFORMATION user,
     PMINIDUMP_CALLBACK_INFORMATION callback);
 
