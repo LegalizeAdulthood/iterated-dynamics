@@ -152,7 +152,8 @@ static void display_text(int row, int col, int color, char const *text, unsigned
 static void display_parse_text(char const *text, unsigned len, int start_margin, int *num_link, Link *link)
 {
     TokenType tok;
-    int size, width;
+    int size;
+    int width;
 
     g_text_col_base = SCREEN_INDENT;
     g_text_row_base = TEXT_START_ROW;
@@ -179,7 +180,8 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         {
         case TokenType::TOK_PARA:
         {
-            int indent, margin;
+            int indent;
+            int margin;
 
             if (size > 0)
             {
@@ -489,7 +491,8 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
 
 static int find_link_left_right(Link *link, int num_link, int curr_link, int left)
 {
-    int best_c2 = 0, best_dist = 0;
+    int best_c2 = 0;
+    int best_dist = 0;
 
     Link *curr = &link[curr_link];
     Link *best = nullptr;
