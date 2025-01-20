@@ -49,7 +49,7 @@ struct KeyMnemonic
     char const *mnemonic;
 };
 
-static void sleep_secs(int);
+static void sleep_secs(int secs);
 static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt);
 static void message(int secs, char const *buf);
 static void slide_show_err(char const *msg);

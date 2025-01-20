@@ -18,5 +18,5 @@ extern SlidesMode            g_slides;
 int slide_show();
 SlidesMode start_slide_show();
 void stop_slide_show();
-void record_show(int);
+void record_show(int key);
 int handle_special_keys(int ch);
