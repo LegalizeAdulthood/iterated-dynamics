@@ -66,7 +66,7 @@ static void lsysi_do_draw_gt(LSysTurtleStateI *cmd);
 static void lsysi_do_draw_lt(LSysTurtleStateI *cmd);
 
 static std::vector<long> s_sin_table;
-static std::vector<long> r_cos_table;
+static std::vector<long> s_cos_table;
 constexpr long PI_DIV_180_L{11930465L};
 static std::string s_axiom;
 static std::vector<std::string> s_rules;
@@ -617,7 +617,7 @@ static void lsysi_do_size_dm(LSysTurtleStateI *cmd)
 
 static void lsysi_do_size_gf(LSysTurtleStateI *cmd)
 {
-    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, s_cos_table[(int)cmd->angle], 29));
     cmd->y_pos = cmd->y_pos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
@@ -664,7 +664,7 @@ static void lsysi_do_draw_m(LSysTurtleStateI *cmd)
 
 static void lsysi_do_draw_g(LSysTurtleStateI *cmd)
 {
-    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, s_cos_table[(int)cmd->angle], 29));
     cmd->y_pos = cmd->y_pos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
@@ -674,7 +674,7 @@ static void lsysi_do_draw_f(LSysTurtleStateI *cmd)
 {
     int last_x = (int)(cmd->x_pos >> 19);
     int last_y = (int)(cmd->y_pos >> 19);
-    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, r_cos_table[(int)cmd->angle], 29));
+    cmd->x_pos = cmd->x_pos + (multiply(cmd->size, s_cos_table[(int)cmd->angle], 29));
     cmd->y_pos = cmd->y_pos + (multiply(cmd->size, s_sin_table[(int)cmd->angle], 29));
     // xpos+=size*coss[angle];
     // ypos+=size*sins[angle];
@@ -1146,12 +1146,12 @@ static void lsysi_do_sin_cos()
     double local_aspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
     double two_pi_max = two_pi / g_max_angle;
     s_sin_table.resize(g_max_angle);
-    r_cos_table.resize(g_max_angle);
+    s_cos_table.resize(g_max_angle);
     for (int i = 0; i < g_max_angle; i++)
     {
         two_pi_max_i = i * two_pi_max;
         sin_cos(&two_pi_max_i, &s, &c);
         s_sin_table[i] = (long)(s * FIXEDLT1);
-        r_cos_table[i] = (long)((local_aspect * c) * FIXEDLT1);
+        s_cos_table[i] = (long)((local_aspect * c) * FIXEDLT1);
     }
 }
