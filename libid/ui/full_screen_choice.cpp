@@ -113,10 +113,7 @@ static void process_speed_string(char *speed_string, //
                 *current -= *current ? 1 : 0;
                 break;
             }
-            else
-            {
-                ++*current;
-            }
+            ++*current;
         }
         if (*current >= num_choices)   // bumped end of list
         {
