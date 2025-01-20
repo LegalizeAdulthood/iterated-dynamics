@@ -127,10 +127,7 @@ int mpc_cmp(MPC x, MPC y)
         z.y = mpc_mod(y);
         return mp_cmp(z.x, z.y);
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 DComplex mpc_to_cmplx(MPC x)
