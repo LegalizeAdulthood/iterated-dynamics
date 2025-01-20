@@ -2731,7 +2731,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
         std::string_view arg;
         int outside;
     };
-    static const Outside args[] = {
+    static const Outside OUTSIDES[] = {
         {"iter", ITER}, //
         {"real", REAL}, //
         {"imag", IMAG}, //
@@ -2741,7 +2741,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
         {"fmod", FMOD}, //
         {"tdis", TDIS}  //
     };
-    for (const Outside &arg : args)
+    for (const Outside &arg : OUTSIDES)
     {
         if (cmd.value == arg.arg)
         {
