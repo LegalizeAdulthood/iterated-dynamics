@@ -265,32 +265,32 @@ void Plot::on_paint(HWND window)
     EndPaint(window, &ps);
 }
 
-static void plot_OnPaint(HWND window)
+static void plot_on_paint(HWND window)
 {
     s_plot->on_paint(window);
 }
 
-static void plot_OnLButtonDown(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void plot_on_l_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     g_frame.on_left_button_down(window, double_click, x, y, key_flags);
 }
 
-static void plot_OnLButtonUp(HWND window, int x, int y, UINT key_flags)
+static void plot_on_l_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_left_button_up(window, x, y, key_flags);
 }
 
-static void plot_OnRButtonUp(HWND window, int x, int y, UINT key_flags)
+static void plot_on_r_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_right_button_up(window, x, y, key_flags);
 }
 
-static void plot_OnMButtonUp(HWND window, int x, int y, UINT key_flags)
+static void plot_on_m_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
 
-static void plot_OnMouseMove(HWND window, int x, int y, UINT key_flags)
+static void plot_on_mouse_move(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_mouse_move(window, x, y, key_flags);
 }
@@ -301,27 +301,27 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     switch (message)
     {
     case WM_PAINT:
-        HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint);
+        HANDLE_WM_PAINT(window, wp, lp, plot_on_paint);
         break;
 
     case WM_LBUTTONDOWN:
-        HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_OnLButtonDown);
+        HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_on_l_button_down);
         break;
 
     case WM_LBUTTONUP:
-        HANDLE_WM_LBUTTONUP(window, wp, lp, plot_OnLButtonUp);
+        HANDLE_WM_LBUTTONUP(window, wp, lp, plot_on_l_button_up);
         break;
 
     case WM_RBUTTONUP:
-        HANDLE_WM_RBUTTONUP(window, wp, lp, plot_OnRButtonUp);
+        HANDLE_WM_RBUTTONUP(window, wp, lp, plot_on_r_button_up);
         break;
 
     case WM_MBUTTONUP:
-        HANDLE_WM_MBUTTONUP(window, wp, lp, plot_OnMButtonUp);
+        HANDLE_WM_MBUTTONUP(window, wp, lp, plot_on_m_button_up);
         break;
 
     case WM_MOUSEMOVE:
-        HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_OnMouseMove);
+        HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_on_mouse_move);
         break;
 
     default:
@@ -521,7 +521,7 @@ int Plot::write_palette()
     return 0;
 }
 
-static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR /*id_event*/, DWORD time)
 {
     InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, PLOT_TIMER_ID);
