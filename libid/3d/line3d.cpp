@@ -1190,7 +1190,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
         g_plot = s_normal_plot;
         return;
     }
-    else if ((s_p3.y == s_p1.y && s_p3.x == s_p1.x) || (s_p3.y == s_p2.y && s_p3.x == s_p2.x))
+    if ((s_p3.y == s_p1.y && s_p3.x == s_p1.x) || (s_p3.y == s_p2.y && s_p3.x == s_p2.x))
     {
         g_plot = s_fill_plot;
         driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, color);
@@ -1464,20 +1464,18 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 {
     if ((s_even_odd_row++ & 1) == 0) // even rows are color value
     {
-        for (int i = 0; i < (int) line_len; i++)         // add the fractional part in odd row
+        for (int i = 0; i < (int) line_len; i++) // add the fractional part in odd row
         {
             fraction[i] = pixels[i];
         }
         return true;
     }
-    else // swap
+    // swap
+    for (int i = 0; i < (int) line_len; i++) // swap so pixel has color
     {
-        for (int i = 0; i < (int) line_len; i++)       // swap so pixel has color
-        {
-            Byte tmp = pixels[i];
-            pixels[i] = fraction[i];
-            fraction[i] = tmp;
-        }
+        Byte tmp = pixels[i];
+        pixels[i] = fraction[i];
+        fraction[i] = tmp;
     }
     return false;
 }
