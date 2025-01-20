@@ -330,7 +330,7 @@ static MainState prompt_options(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState begin_ant(MainContext &)
+static MainState begin_ant(MainContext &/*context*/)
 {
     clear_zoom_box();
     double old_param[MAX_PARAMS];
@@ -381,7 +381,7 @@ static MainState request_3d_fractal_params(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState show_orbit_window(MainContext &)
+static MainState show_orbit_window(MainContext &/*context*/)
 {
     // must use standard fractal and have a float variant
     if ((g_fractal_specific[+g_fractal_type].calc_type == standard_fractal
@@ -496,7 +496,7 @@ static MainState main_history(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState request_shell(MainContext &)
+static MainState request_shell(MainContext &/*context*/)
 {
     driver_stack_screen();
     driver_shell();
@@ -504,7 +504,7 @@ static MainState request_shell(MainContext &)
     return MainState::NOTHING;
 }
 
-static MainState request_save_image(MainContext &)
+static MainState request_save_image(MainContext &/*context*/)
 {
     if (driver_is_disk() && g_disk_targa)
     {
@@ -528,7 +528,7 @@ static MainState look_for_files(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState request_make_batch_file(MainContext &)
+static MainState request_make_batch_file(MainContext &/*context*/)
 {
     make_batch_file();
     return MainState::NOTHING;
@@ -609,7 +609,7 @@ static MainState execute_commands(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState random_dot_stereogram(MainContext &)
+static MainState random_dot_stereogram(MainContext &/*context*/)
 {
     clear_zoom_box();
     if (get_rds_params() >= 0)
@@ -623,7 +623,7 @@ static MainState random_dot_stereogram(MainContext &)
     return MainState::NOTHING;
 }
 
-static MainState request_star_field_params(MainContext &)
+static MainState request_star_field_params(MainContext &/*context*/)
 {
     clear_zoom_box();
     if (get_star_field_params() >= 0)
