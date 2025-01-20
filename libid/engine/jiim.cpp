@@ -980,13 +980,12 @@ bool InverseJulia::iterate()
         {
             DComplex f1;
             DComplex f2;
-            DComplex Sqrt; // Fixed points of Julia
-
-            Sqrt = complex_sqrt_float(1 - 4 * m_c_real, -4 * m_c_imag);
-            f1.x = (1 + Sqrt.x) / 2;
-            f2.x = (1 - Sqrt.x) / 2;
-            f1.y = Sqrt.y / 2;
-            f2.y = -Sqrt.y / 2;
+            // Fixed points of Julia
+            DComplex sqrt = complex_sqrt_float(1 - 4 * m_c_real, -4 * m_c_imag);
+            f1.x = (1 + sqrt.x) / 2;
+            f2.x = (1 - sqrt.x) / 2;
+            f1.y = sqrt.y / 2;
+            f2.y = -sqrt.y / 2;
 
             clear_queue();
             s_max_hits = 1;

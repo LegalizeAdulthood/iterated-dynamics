@@ -227,7 +227,6 @@ int tab_display()       // display the status of the current image
     BigFloat bf_y_ctr = nullptr;
     char msg[350];
     char const *msg_ptr;
-    int key;
     int saved = 0;
     int has_form_param = 0;
 
@@ -670,7 +669,7 @@ top:
     put_string_center(
         24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
     driver_hide_text_cursor();
-    key = get_a_key_no_help();
+    int key = get_a_key_no_help();
     if (key == ID_KEY_F6)
     {
         driver_stack_screen();
