@@ -49,9 +49,9 @@ using PlotFn = void(*)(int, int, int);
 // returns a random 16 bit value that is never 0
 static U16 rand16()
 {
-    U16 value = (U16) rand15();
+    U16 value = (U16) RAND15();
     value <<= 1;
-    value = (U16)(value + (rand15()&1));
+    value = (U16)(value + (RAND15()&1));
     value = std::max<U16>(value, 1U);
     return value;
 }
@@ -99,7 +99,7 @@ static U16 get_pot(int x, int y)
 
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
-    S32 pseudorandom = ((S32) s_i_param_x) * ((rand15() - 16383));
+    S32 pseudorandom = ((S32) s_i_param_x) * ((RAND15() - 16383));
     pseudorandom = pseudorandom * s_recur1;
     pseudorandom = pseudorandom >> s_shift_value;
     pseudorandom = (((S32)s_get_pix(xa, ya)+(S32)s_get_pix(xb, yb)+1) >> 1)+pseudorandom;
@@ -424,7 +424,7 @@ int plasma()
         s_p_colors = std::min(g_colors, 256);
         for (auto &elem : rnd)
         {
-            elem = (U16)(1+(((rand15()/s_p_colors)*(s_p_colors-1)) >> (s_shift_value-11)));
+            elem = (U16)(1+(((RAND15()/s_p_colors)*(s_p_colors-1)) >> (s_shift_value-11)));
         }
     }
     else

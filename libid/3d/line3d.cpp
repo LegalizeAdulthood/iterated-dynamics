@@ -546,7 +546,7 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             if (cur.color > g_water_line)
             {
-                rnd = rand15() >> 8;     // 7-bit number
+                rnd = RAND15() >> 8;     // 7-bit number
                 rnd = rnd * rnd >> s_rand_factor;  // n-bit number
 
                 if (std::rand() & 1)

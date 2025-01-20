@@ -701,7 +701,7 @@ static void l_stk_funct(FunctionPtr fct)
 
 static unsigned long new_random_num()
 {
-    s_rand_num = ((s_rand_num << 15) + rand15()) ^ s_rand_num;
+    s_rand_num = ((s_rand_num << 15) + RAND15()) ^ s_rand_num;
     return s_rand_num;
 }
 

@@ -143,13 +143,13 @@ void rotate(int direction)      // rotate-the-palette routine
                         {
                             // time to randomize
                             incr = 1;
-                            f_step = ((f_steps[f_key-1]* (rand15() >> 8)) >> 6) + 1;
+                            f_step = ((f_steps[f_key-1]* (RAND15() >> 8)) >> 6) + 1;
                             from_red   = g_dac_box[last][0];
                             from_green = g_dac_box[last][1];
                             from_blue  = g_dac_box[last][2];
-                            to_red     = rand15() >> 9;
-                            to_green   = rand15() >> 9;
-                            to_blue    = rand15() >> 9;
+                            to_red     = RAND15() >> 9;
+                            to_green   = RAND15() >> 9;
+                            to_blue    = RAND15() >> 9;
                         }
                         g_dac_box[j_step][0] = (Byte)(from_red   + (((to_red    - from_red)*incr)/f_step));
                         g_dac_box[j_step][1] = (Byte)(from_green + (((to_green - from_green)*incr)/f_step));
@@ -236,7 +236,7 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         case ID_KEY_ENTER:                    // enter key: randomize all colors
         case ID_KEY_ENTER_2:                  // also the Numeric-Keypad Enter
-            f_key = rand15()/3277 + 1;
+            f_key = RAND15()/3277 + 1;
             f_step = 1;
             incr = 999;
             old_step = step;

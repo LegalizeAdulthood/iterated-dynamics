@@ -42,12 +42,12 @@ static int gaussian_number(int probability, int range)
     long p = divide((long) probability << 16, (long) range << 16, 16);
     p = multiply(p, s_concentration, 16);
     p = multiply((long)s_distribution << 16, p, 16);
-    if (!(rand15() % (s_distribution - (int)(p >> 16) + 1)))
+    if (!(RAND15() % (s_distribution - (int)(p >> 16) + 1)))
     {
         long Accum = 0;
         for (int n = 0; n < s_slope; n++)
         {
-            Accum += rand15();
+            Accum += RAND15();
         }
         Accum /= s_slope;
         int r = (int)(multiply((long)range << 15, Accum, 15) >> 14);

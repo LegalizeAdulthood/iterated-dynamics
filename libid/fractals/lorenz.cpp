@@ -2574,7 +2574,7 @@ static int ifs2d()
             ret = -1;
             break;
         }
-        long r = rand15();      // generate fudged random number between 0 and 1
+        long r = RAND15();      // generate fudged random number between 0 and 1
         r *= temp_r;
 
         // pick which iterated function to execute, weighted by probability
@@ -2682,7 +2682,7 @@ static int ifs3d_long()
             ret = -1;
             break;
         }
-        long r = rand15();      // generate fudged random number between 0 and 1
+        long r = RAND15();      // generate fudged random number between 0 and 1
         r *= temp_r;
 
         // pick which iterated function to execute, weighted by probability
