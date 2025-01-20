@@ -109,7 +109,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 
 // function prototypes
 
-static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp);
 
 static const char *const WINDOW_CLASS{"IdText"};
 static WinText *s_me{};
