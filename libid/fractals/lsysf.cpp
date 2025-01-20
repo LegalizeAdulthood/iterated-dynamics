@@ -35,7 +35,7 @@ static std::vector<LDouble> s_sin_table_f;
 static std::vector<LDouble> s_cos_table_f;
 static constexpr LDouble PI_DIV_180{PI / 180.0L};
 
-static LSysFCmd *find_size(LSysFCmd *, LSysTurtleStateF *, LSysFCmd **, int);
+static LSysFCmd *find_size(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
 
 static void lsysf_do_plus(LSysTurtleStateF *cmd)
 {

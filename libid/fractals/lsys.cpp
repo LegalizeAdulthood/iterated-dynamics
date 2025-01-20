@@ -60,7 +60,7 @@ static bool save_axiom(char const *text);
 static bool save_rule(char const *rule, int index);
 static bool append_rule(char const *rule, int index);
 static void free_l_cmds();
-static LSysCmd *find_size(LSysCmd *, LSysTurtleStateI *, LSysCmd **, int);
+static LSysCmd *find_size(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth);
 static LSysCmd *draw_lsysi(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth);
 static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **rules, int depth);
 static LSysCmd *lsysi_size_transform(char const *s, LSysTurtleStateI *ts);
