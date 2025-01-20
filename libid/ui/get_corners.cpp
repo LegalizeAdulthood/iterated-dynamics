@@ -443,8 +443,9 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (!cmp_dbl(old_x_min, g_orbit_corner_min_x) && !cmp_dbl(old_x_max, g_orbit_corner_max_x) && !cmp_dbl(old_y_min, g_orbit_corner_min_y) &&
-            !cmp_dbl(old_y_max, g_orbit_corner_max_y) && !cmp_dbl(old_x_3rd, g_orbit_corner_3rd_x) && !cmp_dbl(old_y_3rd, g_orbit_corner_3rd_y))
+    if (!cmp_dbl(old_x_min, g_orbit_corner_min_x) && !cmp_dbl(old_x_max, g_orbit_corner_max_x) &&
+        !cmp_dbl(old_y_min, g_orbit_corner_min_y) && !cmp_dbl(old_y_max, g_orbit_corner_max_y) &&
+        !cmp_dbl(old_x_3rd, g_orbit_corner_3rd_x) && !cmp_dbl(old_y_3rd, g_orbit_corner_3rd_y))
     {
         // no change, restore values to avoid drift
         g_orbit_corner_min_x = old_x_min;
@@ -462,17 +463,14 @@ gsc_loop:
         g_y_3rd = save_y_3rd;
         return 0;
     }
-    else
-    {
-        g_set_orbit_corners = true;
-        g_keep_screen_coords = true;
-        // restore corners
-        g_x_min = save_x_min;
-        g_x_max = save_x_max;
-        g_y_min = save_y_min;
-        g_y_max = save_y_max;
-        g_x_3rd = save_x_3rd;
-        g_y_3rd = save_y_3rd;
-        return 1;
-    }
+    g_set_orbit_corners = true;
+    g_keep_screen_coords = true;
+    // restore corners
+    g_x_min = save_x_min;
+    g_x_max = save_x_max;
+    g_y_min = save_y_min;
+    g_y_max = save_y_max;
+    g_x_3rd = save_x_3rd;
+    g_y_3rd = save_y_3rd;
+    return 1;
 }
