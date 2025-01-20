@@ -51,19 +51,19 @@ int sticky_orbits()
     case 'l':
     {
         int final; // final row or column number
-        int G;     // used to test for new row or column
+        int g;     // used to test for new row or column
         int inc1;  // G increment when row or column doesn't change
         int inc2;  // G increment when row or column changes
-        int dX = g_i_x_stop - g_i_x_start;                   // find vector components
-        int dY = g_i_y_stop - g_i_y_start;
-        char pos_slope = (char) (dX > 0);                   // is slope positive?
-        if (dY < 0)
+        int dx = g_i_x_stop - g_i_x_start;                   // find vector components
+        int dy = g_i_y_stop - g_i_y_start;
+        char pos_slope = (char) (dx > 0);                   // is slope positive?
+        if (dy < 0)
         {
             pos_slope = (char)!pos_slope;
         }
-        if (std::abs(dX) > std::abs(dY))                  // shallow line case
+        if (std::abs(dx) > std::abs(dy))                  // shallow line case
         {
-            if (dX > 0)         // determine start point and last column
+            if (dx > 0)         // determine start point and last column
             {
                 g_col = g_xx_begin;
                 g_row = g_yy_begin;
@@ -75,9 +75,9 @@ int sticky_orbits()
                 g_row = g_i_y_stop;
                 final = g_xx_begin;
             }
-            inc1 = 2 * std::abs(dY);             // determine increments and initial G
-            G = inc1 - std::abs(dX);
-            inc2 = 2 * (std::abs(dY) - std::abs(dX));
+            inc1 = 2 * std::abs(dy);             // determine increments and initial G
+            g = inc1 - std::abs(dx);
+            inc2 = 2 * (std::abs(dy) - std::abs(dx));
             if (pos_slope)
             {
                 while (g_col <= final)    // step through columns checking for new row
@@ -88,14 +88,14 @@ int sticky_orbits()
                         return -1; // interrupted
                     }
                     g_col++;
-                    if (G >= 0)             // it's time to change rows
+                    if (g >= 0)             // it's time to change rows
                     {
                         g_row++;      // positive slope so increment through the rows
-                        G += inc2;
+                        g += inc2;
                     }
                     else                          // stay at the same row
                     {
-                        G += inc1;
+                        g += inc1;
                     }
                 }
             }
@@ -109,21 +109,21 @@ int sticky_orbits()
                         return -1; // interrupted
                     }
                     g_col++;
-                    if (G > 0)              // it's time to change rows
+                    if (g > 0)              // it's time to change rows
                     {
                         g_row--;      // negative slope so decrement through the rows
-                        G += inc2;
+                        g += inc2;
                     }
                     else                          // stay at the same row
                     {
-                        G += inc1;
+                        g += inc1;
                     }
                 }
             }
         }   // if |dX| > |dY|
         else                            // steep line case
         {
-            if (dY > 0)             // determine start point and last row
+            if (dy > 0)             // determine start point and last row
             {
                 g_col = g_xx_begin;
                 g_row = g_yy_begin;
@@ -135,9 +135,9 @@ int sticky_orbits()
                 g_row = g_i_y_stop;
                 final = g_yy_begin;
             }
-            inc1 = 2 * std::abs(dX);             // determine increments and initial G
-            G = inc1 - std::abs(dY);
-            inc2 = 2 * (std::abs(dX) - std::abs(dY));
+            inc1 = 2 * std::abs(dx);             // determine increments and initial G
+            g = inc1 - std::abs(dy);
+            inc2 = 2 * (std::abs(dx) - std::abs(dy));
             if (pos_slope)
             {
                 while (g_row <= final)    // step through rows checking for new column
@@ -148,14 +148,14 @@ int sticky_orbits()
                         return -1; // interrupted
                     }
                     g_row++;
-                    if (G >= 0)                 // it's time to change columns
+                    if (g >= 0)                 // it's time to change columns
                     {
                         g_col++;  // positive slope so increment through the columns
-                        G += inc2;
+                        g += inc2;
                     }
                     else                      // stay at the same column
                     {
-                        G += inc1;
+                        g += inc1;
                     }
                 }
             }
@@ -169,14 +169,14 @@ int sticky_orbits()
                         return -1; // interrupted
                     }
                     g_row++;
-                    if (G > 0)                  // it's time to change columns
+                    if (g > 0)                  // it's time to change columns
                     {
                         g_col--;  // negative slope so decrement through the columns
-                        G += inc2;
+                        g += inc2;
                     }
                     else                      // stay at the same column
                     {
-                        G += inc1;
+                        g += inc1;
                     }
                 }
             }
