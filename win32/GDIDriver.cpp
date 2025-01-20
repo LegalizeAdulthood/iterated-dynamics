@@ -68,8 +68,8 @@ private:
     void get_max_size(int *width, int *height, bool *center_x, bool *center_y) const;
     void center_windows(bool center_x, bool center_y);
 
-    Plot plot{};
-    bool text_not_graphics{true};
+    Plot m_plot{};
+    bool m_text_not_graphics{true};
 };
 
 #define DRIVER_MODE(width_, height_) \
@@ -115,7 +115,7 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
     if (center_x)
     {
-        plot_pos.x = (g_frame.get_width() - plot.get_width())/2;
+        plot_pos.x = (g_frame.get_width() - m_plot.get_width())/2;
     }
     else
     {
@@ -124,14 +124,14 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
     if (center_y)
     {
-        plot_pos.y = (g_frame.get_height() - plot.get_height())/2;
+        plot_pos.y = (g_frame.get_height() - m_plot.get_height())/2;
     }
     else
     {
         text_pos.y = (g_frame.get_height() - m_win_text.get_max_height())/2;
     }
 
-    bool status = SetWindowPos(plot.get_window(), nullptr,
+    bool status = SetWindowPos(m_plot.get_window(), nullptr,
         plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
     status = SetWindowPos(m_win_text.get_window(), nullptr,
@@ -148,7 +148,7 @@ void GDIDriver::terminate()
 {
     ODS("GDIDriver::terminate");
 
-    plot.terminate();
+    m_plot.terminate();
     Win32BaseDriver::terminate();
 }
 
@@ -170,7 +170,7 @@ bool GDIDriver::init(int *argc, char **argv)
         return false;
     };
 
-    plot.init(g_instance, "Plot");
+    m_plot.init(g_instance, "Plot");
 
     // add default list of video modes
     {
@@ -200,8 +200,8 @@ bool GDIDriver::resize()
     bool center_graphics_x = true, center_graphics_y = true;
 
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
-    if (g_video_table[g_adapter].x_dots == plot.get_width()     //
-        && g_video_table[g_adapter].y_dots == plot.get_height() //
+    if (g_video_table[g_adapter].x_dots == m_plot.get_width()     //
+        && g_video_table[g_adapter].y_dots == m_plot.get_height() //
         && width == g_frame.get_width()                        //
         && height == g_frame.get_height())
     {
@@ -209,7 +209,7 @@ bool GDIDriver::resize()
     }
 
     g_frame.resize(width, height);
-    plot.resize();
+    m_plot.resize();
     center_windows(center_graphics_x, center_graphics_y);
     return true;
 }
@@ -217,68 +217,68 @@ bool GDIDriver::resize()
 // Reads the current video palette into g_dac_box.
 int GDIDriver::read_palette()
 {
-    return plot.read_palette();
+    return m_plot.read_palette();
 }
 
 // Writes g_dac_box into the video palette.
 int GDIDriver::write_palette()
 {
-    return plot.write_palette();
+    return m_plot.write_palette();
 }
 
 void GDIDriver::schedule_alarm(int secs)
 {
     secs = (secs ? 1 : DRAW_INTERVAL)*1000;
-    if (text_not_graphics)
+    if (m_text_not_graphics)
     {
         m_win_text.schedule_alarm(secs);
     }
     else
     {
-        plot.schedule_alarm(secs);
+        m_plot.schedule_alarm(secs);
     }
 }
 
 void GDIDriver::write_pixel(int x, int y, int color)
 {
-    plot.write_pixel(x, y, color);
+    m_plot.write_pixel(x, y, color);
 }
 
 int GDIDriver::read_pixel(int x, int y)
 {
-    return plot.read_pixel(x,y);
+    return m_plot.read_pixel(x,y);
 }
 
 void GDIDriver::write_span(int y, int x, int last_x, Byte *pixels)
 {
-    plot.write_span(y, x, last_x, pixels);
+    m_plot.write_span(y, x, last_x, pixels);
 }
 
 void GDIDriver::read_span(int y, int x, int last_x, Byte *pixels)
 {
-    plot.read_span(y, x, last_x, pixels);
+    m_plot.read_span(y, x, last_x, pixels);
 }
 
 void GDIDriver::set_line_mode(int mode)
 {
-    plot.set_line_mode(mode);
+    m_plot.set_line_mode(mode);
 }
 
 void GDIDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    plot.draw_line(x1, y1, x2, y2, color);
+    m_plot.draw_line(x1, y1, x2, y2, color);
 }
 
 void GDIDriver::redraw()
 {
     ODS("GDIDriver::redraw");
-    if (text_not_graphics)
+    if (m_text_not_graphics)
     {
         m_win_text.paint_screen(0, 80, 0, 25);
     }
     else
     {
-        plot.redraw();
+        m_plot.redraw();
     }
     g_frame.pump_messages(false);
 }
@@ -293,37 +293,37 @@ void GDIDriver::create_window()
     g_frame.create_window(width, height);
     m_win_text.set_parent(g_frame.get_window());
     m_win_text.text_on();
-    plot.create_window(g_frame.get_window());
+    m_plot.create_window(g_frame.get_window());
     center_windows(center_x, center_y);
 }
 
 bool GDIDriver::is_text()
 {
-    return text_not_graphics;
+    return m_text_not_graphics;
 }
 
 void GDIDriver::set_for_text()
 {
-    text_not_graphics = true;
-    show_hide_windows(m_win_text.get_window(), plot.get_window());
+    m_text_not_graphics = true;
+    show_hide_windows(m_win_text.get_window(), m_plot.get_window());
 }
 
 void GDIDriver::set_for_graphics()
 {
-    text_not_graphics = false;
-    show_hide_windows(plot.get_window(), m_win_text.get_window());
+    m_text_not_graphics = false;
+    show_hide_windows(m_plot.get_window(), m_win_text.get_window());
     hide_text_cursor();
 }
 
 void GDIDriver::set_clear()
 {
-    if (text_not_graphics)
+    if (m_text_not_graphics)
     {
         m_win_text.clear();
     }
     else
     {
-        plot.clear();
+        m_plot.clear();
     }
 }
 
@@ -342,7 +342,7 @@ void GDIDriver::set_video_mode(VideoInfo *mode)
     read_palette();
 
     resize();
-    plot.clear();
+    m_plot.clear();
     if (g_disk_flag)
     {
         end_disk();
@@ -370,9 +370,9 @@ void GDIDriver::pause()
     {
         ShowWindow(m_win_text.get_window(), SW_HIDE);
     }
-    if (plot.get_window())
+    if (m_plot.get_window())
     {
-        ShowWindow(plot.get_window(), SW_HIDE);
+        ShowWindow(m_plot.get_window(), SW_HIDE);
     }
 }
 
@@ -389,22 +389,22 @@ void GDIDriver::resume()
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, char const *text)
 {
-    plot.display_string(x, y, fg, bg, text);
+    m_plot.display_string(x, y, fg, bg, text);
 }
 
 void GDIDriver::save_graphics()
 {
-    plot.save_graphics();
+    m_plot.save_graphics();
 }
 
 void GDIDriver::restore_graphics()
 {
-    plot.restore_graphics();
+    m_plot.restore_graphics();
 }
 
 void GDIDriver::flush()
 {
-    plot.flush();
+    m_plot.flush();
 }
 
 static GDIDriver s_gdi_driver{};
