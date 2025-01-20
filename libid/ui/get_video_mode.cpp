@@ -67,8 +67,8 @@ struct VideoModeChoice
 
 static std::vector<VideoModeChoice> s_video_choices;
 
-static void   format_item(int, char *);
-static int    check_mode_key(int, int);
+static void format_item(int choice, char *buf);
+static int    check_mode_key(int key, int /*choice*/);
 static void   format_video_choice(int i, char const *err, char *buf);
 static double video_aspect(int try_x_dots, int try_y_dots);
 
