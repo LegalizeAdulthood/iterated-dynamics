@@ -13,6 +13,6 @@ extern Byte                  g_old_dac_box[256][3];
 extern std::string           g_map_name;
 extern bool                  g_map_set;
 
-void rotate(int);
+void rotate(int direction);
 void save_palette();
 bool load_palette();
