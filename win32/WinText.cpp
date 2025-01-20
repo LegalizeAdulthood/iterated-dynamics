@@ -154,7 +154,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
 {
     ODS("WinText::initialize");
 
-    TEXTMETRIC TextMetric;
+    TEXTMETRIC text_metric;
     WNDCLASS  wc;
 
     m_instance = instance;
@@ -181,13 +181,13 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     // set up the font characteristics
     m_char_font = OEM_FIXED_FONT;
     m_font = static_cast<HFONT>(GetStockObject(m_char_font));
-    HDC hDC = GetDC(parent);
-    HFONT hOldFont = static_cast<HFONT>(SelectObject(hDC, m_font));
-    GetTextMetricsA(hDC, &TextMetric);
-    SelectObject(hDC, hOldFont);
-    ReleaseDC(parent, hDC);
-    m_char_width  = TextMetric.tmMaxCharWidth;
-    m_char_height = TextMetric.tmHeight;
+    HDC dc = GetDC(parent);
+    HFONT old_font = static_cast<HFONT>(SelectObject(dc, m_font));
+    GetTextMetricsA(dc, &text_metric);
+    SelectObject(dc, old_font);
+    ReleaseDC(parent, dc);
+    m_char_width  = text_metric.tmMaxCharWidth;
+    m_char_height = text_metric.tmHeight;
     m_char_x_chars = WINTEXT_MAX_COL;
     m_char_y_chars = WINTEXT_MAX_ROW;
 
@@ -372,54 +372,54 @@ void WinText::on_size(HWND window, UINT state, int cx, int cy)
     }
 }
 
-void WinText::on_get_min_max_info(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
+void WinText::on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info)
 {
     ODS("wintext_OnGetMinMaxInfo");
-    lpMinMaxInfo->ptMaxSize.x = s_me->m_max_width;
-    lpMinMaxInfo->ptMaxSize.y = s_me->m_max_height;
+    min_max_info->ptMaxSize.x = s_me->m_max_width;
+    min_max_info->ptMaxSize.y = s_me->m_max_height;
 }
 
-static void wintext_OnClose(HWND window)
+static void wintext_on_close(HWND window)
 {
     s_me->on_close(window);
 }
 
-static void wintext_OnSetFocus(HWND window, HWND old_focus)
+static void wintext_on_set_focus(HWND window, HWND old_focus)
 {
     s_me->on_set_focus(window, old_focus);
 }
 
-static void wintext_OnKillFocus(HWND window, HWND old_focus)
+static void wintext_on_kill_focus(HWND window, HWND old_focus)
 {
     s_me->on_kill_focus(window, old_focus);
 }
 
-static void wintext_OnPaint(HWND window)
+static void wintext_on_paint(HWND window)
 {
     s_me->on_paint(window);
 }
 
-static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
+static void wintext_on_size(HWND window, UINT state, int cx, int cy)
 {
     s_me->on_size(window, state, cx, cy);
 }
 
-static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
+static void wintext_on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info)
 {
-    s_me->on_get_min_max_info(hwnd,lpMinMaxInfo);
+    s_me->on_get_min_max_info(hwnd, min_max_info);
 }
 
-static void wintext_OnLButtonUp(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_l_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_left_button_up(window, x, y, key_flags);
 }
 
-static void wintext_OnRButtonUp(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_r_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_right_button_up(window, x, y, key_flags);
 }
 
-static void wintext_OnMButtonUp(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_m_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
@@ -429,31 +429,31 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
     switch (message)
     {
     case WM_GETMINMAXINFO:
-        HANDLE_WM_GETMINMAXINFO(window, wp, lp, wintext_OnGetMinMaxInfo);
+        HANDLE_WM_GETMINMAXINFO(window, wp, lp, wintext_on_get_min_max_info);
         break;
     case WM_CLOSE:
-        HANDLE_WM_CLOSE(window, wp, lp, wintext_OnClose);
+        HANDLE_WM_CLOSE(window, wp, lp, wintext_on_close);
         break;
     case WM_SIZE:
-        HANDLE_WM_SIZE(window, wp, lp, wintext_OnSize);
+        HANDLE_WM_SIZE(window, wp, lp, wintext_on_size);
         break;
     case WM_SETFOCUS:
-        HANDLE_WM_SETFOCUS(window, wp, lp, wintext_OnSetFocus);
+        HANDLE_WM_SETFOCUS(window, wp, lp, wintext_on_set_focus);
         break;
     case WM_KILLFOCUS:
-        HANDLE_WM_KILLFOCUS(window, wp, lp, wintext_OnKillFocus);
+        HANDLE_WM_KILLFOCUS(window, wp, lp, wintext_on_kill_focus);
         break;
     case WM_PAINT:
-        HANDLE_WM_PAINT(window, wp, lp, wintext_OnPaint);
+        HANDLE_WM_PAINT(window, wp, lp, wintext_on_paint);
         break;
     case WM_LBUTTONUP:
-        HANDLE_WM_LBUTTONUP(window, wp, lp, wintext_OnLButtonUp);
+        HANDLE_WM_LBUTTONUP(window, wp, lp, wintext_on_l_button_up);
         break;
     case WM_RBUTTONUP:
-        HANDLE_WM_RBUTTONUP(window, wp, lp, wintext_OnRButtonUp);
+        HANDLE_WM_RBUTTONUP(window, wp, lp, wintext_on_r_button_up);
         break;
     case WM_MBUTTONUP:
-        HANDLE_WM_MBUTTONUP(window, wp, lp, wintext_OnMButtonUp);
+        HANDLE_WM_MBUTTONUP(window, wp, lp, wintext_on_m_button_up);
         break;
     default:
         return DefWindowProc(window, message, wp, lp);
@@ -573,10 +573,10 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
     y_min = std::max(y_min, 0);
     y_max = std::min(y_max, m_char_y_chars - 1);
 
-    HDC hDC = GetDC(m_window);
-    SelectObject(hDC, m_font);
-    SetBkMode(hDC, OPAQUE);
-    SetTextAlign(hDC, TA_LEFT | TA_TOP);
+    HDC dc = GetDC(m_window);
+    SelectObject(dc, m_font);
+    SetBkMode(dc, OPAQUE);
+    SetTextAlign(dc, TA_LEFT | TA_TOP);
 
     if (TRUE == m_showing_cursor)
     {
@@ -608,9 +608,9 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
             {
                 if (length > 0)
                 {
-                    SetBkColor(hDC, s_wintext_color[old_bk]);
-                    SetTextColor(hDC, s_wintext_color[old_fg]);
-                    TextOutA(hDC,
+                    SetBkColor(dc, s_wintext_color[old_bk]);
+                    SetTextColor(dc, s_wintext_color[old_fg]);
+                    TextOutA(dc,
                             i_start*m_char_width,
                             j_start*m_char_height,
                             &m_screen.chars(j_start, i_start),
@@ -632,7 +632,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
         ShowCaret(m_window);
     }
 
-    ReleaseDC(m_window, hDC);
+    ReleaseDC(m_window, dc);
 }
 
 void WinText::cursor(int x_pos, int y_pos, int cursor_type)
@@ -724,7 +724,7 @@ void WinText::hide_cursor()
     }
 }
 
-static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR /*idEvent*/, DWORD /*dwTime*/)
 {
     InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, TIMER_ID);

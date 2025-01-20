@@ -26,9 +26,9 @@ struct Screen
         return m_attrs[row * WINTEXT_MAX_COL + col];
     }
 
-    static constexpr size_t size{static_cast<size_t>(WINTEXT_MAX_ROW * WINTEXT_MAX_COL)};
-    std::array<char, size> m_chars;
-    std::array<Byte, size> m_attrs;
+    static constexpr size_t SIZE{WINTEXT_MAX_ROW * WINTEXT_MAX_COL};
+    std::array<char, SIZE> m_chars;
+    std::array<Byte, SIZE> m_attrs;
 };
 
 class WinText
@@ -74,7 +74,7 @@ public:
     void on_kill_focus(HWND window, HWND old_focus);
     void on_paint(HWND window);
     void on_size(HWND window, UINT state, int cx, int cy);
-    void on_get_min_max_info(HWND hwnd, LPMINMAXINFO lpMinMaxInfo);
+    void on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info);
 
 private:
     void invalidate(int left, int bot, int right, int top);
