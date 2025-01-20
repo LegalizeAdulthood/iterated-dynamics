@@ -1784,7 +1784,7 @@ rescan:  // entry for changed browse parms
                         check_history(old_name, tmp_mask);
                         break;
                     }
-                    else if (errno == EACCES)
+                    if (errno == EACCES)
                     {
                         text_temp_msg("Sorry...it's a read only file, can't del");
                         show_temp_msg(win_list.name);
@@ -2235,32 +2235,20 @@ static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
             {
                 return function_ok(info, num_fn);
             }
-            else
-            {
-                return true; // match up formula names with no functions
-            }
+            return true; // match up formula names with no functions
         }
-        else
-        {
-            return false; // two formulas but names don't match
-        }
+        return false; // two formulas but names don't match
     }
-    else if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->to_float)
+    if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->to_float)
     {
         num_fn = (+g_cur_fractal_specific->flags >> 6) & 7;
         if (num_fn > 0)
         {
             return function_ok(info, num_fn);
         }
-        else
-        {
-            return true; // match types with no functions
-        }
+        return true; // match types with no functions
     }
-    else
-    {
-        return false; // no match
-    }
+    return false; // no match
 }
 
 static void check_history(char const *old_name, char const *new_name)
