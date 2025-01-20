@@ -30,7 +30,7 @@ struct PaletteType
 
 } // namespace
 
-#define dac ((PaletteType *)g_dac_box)
+#define DAC ((PaletteType *)g_dac_box)
 
 bool validate_luts(char const *map_name)
 {
@@ -64,17 +64,17 @@ bool validate_luts(char const *map_name)
         }
         std::sscanf(line, "%u %u %u", &r, &g, &b);
         //* load global dac values *
-        dac[index].red   = (Byte)((r%256) >> 2);// maps default to 8 bits
-        dac[index].green = (Byte)((g%256) >> 2);// DAC wants 6 bits
-        dac[index].blue  = (Byte)((b%256) >> 2);
+        DAC[index].red   = (Byte)((r%256) >> 2);// maps default to 8 bits
+        DAC[index].green = (Byte)((g%256) >> 2);// DAC wants 6 bits
+        DAC[index].blue  = (Byte)((b%256) >> 2);
     }
     std::fclose(f);
     while (index < 256)
     {
         // zap unset entries
-        dac[index].green = 40;
-        dac[index].blue = 40;
-        dac[index].red = 40;
+        DAC[index].green = 40;
+        DAC[index].blue = 40;
+        DAC[index].red = 40;
         ++index;
     }
     g_color_state = ColorState::MAP_FILE;
