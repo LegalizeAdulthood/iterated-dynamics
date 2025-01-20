@@ -134,7 +134,7 @@ struct FractalInfo         // for saving data in GIF file
     std::int16_t bailout_test;
     std::int32_t iterations;
     std::int16_t bf_math;
-    std::int16_t g_bf_length;
+    std::int16_t bf_length;
     std::int16_t y_adjust;        // yikes! we left this out ages ago!
     std::int16_t old_demm_colors;
     std::int32_t log_map;

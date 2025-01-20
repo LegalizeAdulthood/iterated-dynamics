@@ -867,7 +867,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->bailout = static_cast<std::int32_t>(g_bailout);
     save_info->bailout_test = static_cast<std::int16_t>(g_bailout_test);
     save_info->iterations = static_cast<std::int32_t>(g_max_iterations);
-    save_info->g_bf_length = static_cast<std::int16_t>(g_bn_length);
+    save_info->bf_length = static_cast<std::int16_t>(g_bn_length);
     save_info->bf_math = static_cast<std::int16_t>(g_bf_math);
     save_info->old_demm_colors = static_cast<std::int16_t>(g_old_demm_colors ? 1 : 0);
     save_info->log_map = static_cast<std::int32_t>(g_log_map_flag);

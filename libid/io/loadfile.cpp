@@ -340,7 +340,7 @@ bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
         && lhs.bailout_test == rhs.bailout_test               //
         && lhs.iterations == rhs.iterations               //
         && lhs.bf_math == rhs.bf_math                     //
-        && lhs.g_bf_length == rhs.g_bf_length                   //
+        && lhs.bf_length == rhs.bf_length                   //
         && lhs.y_adjust == rhs.y_adjust                     //
         && lhs.old_demm_colors == rhs.old_demm_colors     //
         && lhs.log_map == rhs.log_map                       //
@@ -843,7 +843,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_5_info.got_data)
     {
         g_bf_math = BFMathType::BIG_NUM;
-        init_bf_length(read_info.g_bf_length);
+        init_bf_length(read_info.bf_length);
         std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
     else
@@ -1980,7 +1980,7 @@ static bool is_visible_window(
 
     if (info->bf_math)
     {
-        const int di_bf_length = info->g_bf_length + g_bn_step;
+        const int di_bf_length = info->bf_length + g_bn_step;
         const int two_di_len = di_bf_length + 2;
         const int two_r_bf = g_r_bf_length + 2;
 
