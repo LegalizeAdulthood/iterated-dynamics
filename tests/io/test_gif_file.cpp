@@ -18,7 +18,7 @@
 #include <numeric>
 #include <string>
 
-constexpr double eps{1.0e-6};
+constexpr double EPS{1.0e-6};
 
 enum
 {
@@ -523,12 +523,12 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ("Fractal", trim(info.info_id));
     EXPECT_EQ(150, info.iterations_old);
     EXPECT_EQ(+FractalType::MANDEL, info.fractal_type);
-    EXPECT_NEAR(-2.5, info.x_min, eps);
-    EXPECT_NEAR(1.5, info.x_max, eps);
-    EXPECT_NEAR(-1.5, info.y_min, eps);
-    EXPECT_NEAR(1.5, info.y_max, eps);
-    EXPECT_NEAR(0.0, info.c_real, eps);
-    EXPECT_NEAR(0.0, info.c_imag, eps);
+    EXPECT_NEAR(-2.5, info.x_min, EPS);
+    EXPECT_NEAR(1.5, info.x_max, EPS);
+    EXPECT_NEAR(-1.5, info.y_min, EPS);
+    EXPECT_NEAR(1.5, info.y_max, EPS);
+    EXPECT_NEAR(0.0, info.c_real, EPS);
+    EXPECT_NEAR(0.0, info.c_imag, EPS);
     EXPECT_EQ(0, info.ax);
     EXPECT_EQ(0, info.bx);
     EXPECT_EQ(0, info.cx);
@@ -538,19 +538,19 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(480, info.y_dots);
     EXPECT_EQ(256, info.colors);
     EXPECT_EQ(17, info.version);
-    EXPECT_NEAR(0.0f, info.param3, eps);
-    EXPECT_NEAR(0.0f, info.param4, eps);
-    EXPECT_NEAR(0.0f, info.potential[0], eps);
-    EXPECT_NEAR(0.0f, info.potential[1], eps);
-    EXPECT_NEAR(0.0f, info.potential[2], eps);
+    EXPECT_NEAR(0.0f, info.param3, EPS);
+    EXPECT_NEAR(0.0f, info.param4, EPS);
+    EXPECT_NEAR(0.0f, info.potential[0], EPS);
+    EXPECT_NEAR(0.0f, info.potential[1], EPS);
+    EXPECT_NEAR(0.0f, info.potential[2], EPS);
     EXPECT_EQ(29582, info.random_seed);
     EXPECT_EQ(0, info.random_seed_flag);
     EXPECT_EQ(-1, info.biomorph);
     EXPECT_EQ(0, info.inside);
     EXPECT_EQ(0, info.log_map_old);
-    EXPECT_NEAR(0.0f, info.invert[0], eps);
-    EXPECT_NEAR(0.0f, info.invert[1], eps);
-    EXPECT_NEAR(0.0f, info.invert[2], eps);
+    EXPECT_NEAR(0.0f, info.invert[0], EPS);
+    EXPECT_NEAR(0.0f, info.invert[1], EPS);
+    EXPECT_NEAR(0.0f, info.invert[2], EPS);
     EXPECT_EQ(0, info.decomp[0]);
     EXPECT_EQ(192, info.decomp[1]);
     EXPECT_EQ(999, info.symmetry);
@@ -583,8 +583,8 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(0, info.eye_separation);
     EXPECT_EQ(0, info.glasses_type);
     EXPECT_EQ(-1, info.outside);
-    EXPECT_NEAR(-2.5, info.x3rd, eps);
-    EXPECT_NEAR(-1.5, info.y3rd, eps);
+    EXPECT_NEAR(-2.5, info.x3rd, EPS);
+    EXPECT_NEAR(-1.5, info.y3rd, EPS);
     EXPECT_EQ('g', info.std_calc_mode);
     EXPECT_EQ(0, info.use_init_orbit);
     EXPECT_EQ(4, info.calc_status);
@@ -598,11 +598,11 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(2, info.trig_index[2]);
     EXPECT_EQ(3, info.trig_index[3]);
     EXPECT_EQ(0, info.finite_attractor);
-    EXPECT_NEAR(0.0, info.init_orbit[0], eps);
-    EXPECT_NEAR(0.0, info.init_orbit[1], eps);
+    EXPECT_NEAR(0.0, info.init_orbit[0], EPS);
+    EXPECT_NEAR(0.0, info.init_orbit[1], EPS);
     EXPECT_EQ(1, info.periodicity);
     EXPECT_EQ(0, info.pot16bit);
-    EXPECT_NEAR(0.75, info.final_aspect_ratio, eps);
+    EXPECT_NEAR(0.75, info.final_aspect_ratio, EPS);
     EXPECT_EQ(0, info.system);
     EXPECT_EQ(2004, info.release);
     EXPECT_EQ(0, info.display_3d);
@@ -614,30 +614,30 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(1, info.rotate_lo);
     EXPECT_EQ(255, info.rotate_hi);
     EXPECT_EQ(71, info.dist_est_width);
-    EXPECT_NEAR(0.0, info.d_param3, eps);
-    EXPECT_NEAR(0.0, info.d_param4, eps);
+    EXPECT_NEAR(0.0, info.d_param3, EPS);
+    EXPECT_NEAR(0.0, info.d_param4, EPS);
     EXPECT_EQ(-1, info.fill_color);
-    EXPECT_NEAR(-0.83, info.julibrot_x_max, eps);
-    EXPECT_NEAR(-0.83, info.julibrot_x_min, eps);
-    EXPECT_NEAR(0.25, info.julibrot_y_max, eps);
-    EXPECT_NEAR(-0.25, info.julibrot_y_min, eps);
+    EXPECT_NEAR(-0.83, info.julibrot_x_max, EPS);
+    EXPECT_NEAR(-0.83, info.julibrot_x_min, EPS);
+    EXPECT_NEAR(0.25, info.julibrot_y_max, EPS);
+    EXPECT_NEAR(-0.25, info.julibrot_y_min, EPS);
     EXPECT_EQ(128, info.julibrot_z_dots);
-    EXPECT_NEAR(8.0, info.julibrot_origin_fp, eps);
-    EXPECT_NEAR(8.0, info.julibrot_depth_fp, eps);
-    EXPECT_NEAR(7.0, info.julibrot_height_fp, eps);
-    EXPECT_NEAR(10.0, info.julibrot_width_fp, eps);
-    EXPECT_NEAR(24.0, info.julibrot_dist_fp, eps);
-    EXPECT_NEAR(2.5, info.eyes_fp, eps);
+    EXPECT_NEAR(8.0, info.julibrot_origin_fp, EPS);
+    EXPECT_NEAR(8.0, info.julibrot_depth_fp, EPS);
+    EXPECT_NEAR(7.0, info.julibrot_height_fp, EPS);
+    EXPECT_NEAR(10.0, info.julibrot_width_fp, EPS);
+    EXPECT_NEAR(24.0, info.julibrot_dist_fp, EPS);
+    EXPECT_NEAR(2.5, info.eyes_fp, EPS);
     EXPECT_EQ(1, info.orbit_type);
     EXPECT_EQ(0, info.juli3d_mode);
     EXPECT_EQ(0, info.max_fn);
     EXPECT_EQ(0, info.inverse_julia);
-    EXPECT_NEAR(0.0, info.d_param5, eps);
-    EXPECT_NEAR(0.0, info.d_param6, eps);
-    EXPECT_NEAR(0.0, info.d_param7, eps);
-    EXPECT_NEAR(0.0, info.d_param8, eps);
-    EXPECT_NEAR(0.0, info.d_param9, eps);
-    EXPECT_NEAR(0.0, info.d_param10, eps);
+    EXPECT_NEAR(0.0, info.d_param5, EPS);
+    EXPECT_NEAR(0.0, info.d_param6, EPS);
+    EXPECT_NEAR(0.0, info.d_param7, EPS);
+    EXPECT_NEAR(0.0, info.d_param8, EPS);
+    EXPECT_NEAR(0.0, info.d_param9, EPS);
+    EXPECT_NEAR(0.0, info.d_param10, EPS);
     EXPECT_EQ(0, info.bailout);
     EXPECT_EQ(0, info.bailout_test);
     EXPECT_EQ(150, info.iterations);
@@ -647,18 +647,18 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(0, info.old_demm_colors);
     EXPECT_EQ(0, info.log_map);
     EXPECT_EQ(0, info.dist_est);
-    EXPECT_NEAR(0, info.d_invert[0], eps);
-    EXPECT_NEAR(0, info.d_invert[1], eps);
-    EXPECT_NEAR(0, info.d_invert[2], eps);
+    EXPECT_NEAR(0, info.d_invert[0], EPS);
+    EXPECT_NEAR(0, info.d_invert[1], EPS);
+    EXPECT_NEAR(0, info.d_invert[2], EPS);
     EXPECT_EQ(0, info.log_calc);
     EXPECT_EQ(0, info.stop_pass);
     EXPECT_EQ(0, info.quick_calc);
-    EXPECT_NEAR(0.01, info.close_prox, eps);
+    EXPECT_NEAR(0.01, info.close_prox, EPS);
     EXPECT_EQ(0, info.no_bof);
     EXPECT_EQ(1, info.orbit_interval);
     EXPECT_EQ(0, info.orbit_delay);
-    EXPECT_NEAR(0.05, info.math_tol[0], eps);
-    EXPECT_NEAR(0.05, info.math_tol[1], eps);
+    EXPECT_NEAR(0.05, info.math_tol[0], EPS);
+    EXPECT_NEAR(0.05, info.math_tol[1], EPS);
 }
 
 TEST_F(TestGIFFractalInfoExtension, encode)
@@ -812,11 +812,11 @@ TEST_F(TestGIFEvolutionInfoExtension, decode)
     EXPECT_EQ(1, info.evolving);
     EXPECT_EQ(9, info.image_grid_size);
     EXPECT_EQ(20596U, info.this_generation_random_seed);
-    EXPECT_NEAR(1.0, info.max_random_mutation, eps);
-    EXPECT_NEAR(4.0, info.x_parameter_range, eps);
-    EXPECT_NEAR(3.0, info.y_parameter_range, eps);
-    EXPECT_NEAR(-2.0, info.x_parameter_offset, eps);
-    EXPECT_NEAR(-1.5, info.y_parameter_offset, eps);
+    EXPECT_NEAR(1.0, info.max_random_mutation, EPS);
+    EXPECT_NEAR(4.0, info.x_parameter_range, EPS);
+    EXPECT_NEAR(3.0, info.y_parameter_range, EPS);
+    EXPECT_NEAR(-2.0, info.x_parameter_offset, EPS);
+    EXPECT_NEAR(-1.5, info.y_parameter_offset, EPS);
     EXPECT_EQ(0, info.discrete_x_parameter_offset);
     EXPECT_EQ(0, info.discrete_y_parameter_offset);
     EXPECT_EQ(4, info.px);
@@ -862,12 +862,12 @@ TEST_F(TestGIFOrbitInfoExtension, check)
 TEST_F(TestGIFOrbitInfoExtension, decode)
 {
     const OrbitsInfo info{get_orbits_info(m_gif)};
-    EXPECT_NEAR(-1.0, info.orbit_corner_min_x, eps);
-    EXPECT_NEAR(1.0, info.orbit_corner_max_x, eps);
-    EXPECT_NEAR(-1.0, info.orbit_corner_min_y, eps);
-    EXPECT_NEAR(1.0, info.orbit_corner_max_y, eps);
-    EXPECT_NEAR(-1.0, info.orbit_corner_3rd_x, eps);
-    EXPECT_NEAR(-1.0, info.orbit_corner_3rd_y, eps);
+    EXPECT_NEAR(-1.0, info.orbit_corner_min_x, EPS);
+    EXPECT_NEAR(1.0, info.orbit_corner_max_x, EPS);
+    EXPECT_NEAR(-1.0, info.orbit_corner_min_y, EPS);
+    EXPECT_NEAR(1.0, info.orbit_corner_max_y, EPS);
+    EXPECT_NEAR(-1.0, info.orbit_corner_3rd_x, EPS);
+    EXPECT_NEAR(-1.0, info.orbit_corner_3rd_y, EPS);
     EXPECT_EQ(1, info.keep_screen_coords);
     EXPECT_EQ('r', info.draw_mode);
 }

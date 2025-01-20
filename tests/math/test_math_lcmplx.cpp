@@ -23,12 +23,12 @@ class TestMathLComplex : public Test
 protected:
     // ReSharper disable once CppDeclaratorNeverUsed
     ValueSaver<int> m_saved_bit_shift{g_bit_shift, 16};
-    Arg arg1{};
-    Arg arg2{};
+    Arg m_arg1{};
+    Arg m_arg2{};
     // ReSharper disable once CppDeclaratorNeverUsed
-    ValueSaver<Arg *> m_saved_arg1{g_arg1, &arg1};
+    ValueSaver<Arg *> m_saved_arg1{g_arg1, &m_arg1};
     // ReSharper disable once CppDeclaratorNeverUsed
-    ValueSaver<Arg *> m_saved_arg2{g_arg2, &arg2};
+    ValueSaver<Arg *> m_saved_arg2{g_arg2, &m_arg2};
 };
 
 } // namespace

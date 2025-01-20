@@ -25,8 +25,8 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    void skipToken();
-    void skipFirstIFSDefinition();
+    void skip_token();
+    void skip_first_ifs_definition();
 
     fs::path m_ifs_file{fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE};
     std::FILE *m_file{};
@@ -45,18 +45,18 @@ void TestGetIFSToken::TearDown()
     Test::TearDown();
 }
 
-void TestGetIFSToken::skipToken()
+void TestGetIFSToken::skip_token()
 {
     get_next_ifs_token(m_buff.data(), m_file);
 }
 
-void TestGetIFSToken::skipFirstIFSDefinition()
+void TestGetIFSToken::skip_first_ifs_definition()
 {
     constexpr int num_first_tokens = 7 + 1 + 1; // {, params, }
     get_ifs_token(m_buff.data(), m_file);       // name
     for (int i = 0; i < num_first_tokens; ++i)
     {
-        skipToken();
+        skip_token();
     }
 }
 
@@ -83,7 +83,7 @@ TEST_F(TestGetIFSToken, secondTokenIsOpenBrace)
 TEST_F(TestGetIFSToken, thirdTokenIsFirstParam)
 {
     get_ifs_token(m_buff.data(), m_file);
-    skipToken();
+    skip_token();
 
     const char *result = get_next_ifs_token(m_buff.data(), m_file);
 
@@ -98,7 +98,7 @@ TEST_F(TestGetIFSToken, firstIFSDefinitionHasOneRow)
     get_ifs_token(m_buff.data(), m_file); // name
     for (int i = 0; i < num_param_tokens + num_open_brace_tokens; ++i)
     {
-        skipToken();
+        skip_token();
     }
 
     const char *result = get_next_ifs_token(m_buff.data(), m_file);
@@ -109,7 +109,7 @@ TEST_F(TestGetIFSToken, firstIFSDefinitionHasOneRow)
 
 TEST_F(TestGetIFSToken, secondIFSDefinitionName)
 {
-    skipFirstIFSDefinition();
+    skip_first_ifs_definition();
 
     const char *result = get_next_ifs_token(m_buff.data(), m_file);
 
@@ -119,8 +119,8 @@ TEST_F(TestGetIFSToken, secondIFSDefinitionName)
 
 TEST_F(TestGetIFSToken, secondIFSDefinition3DQualifier)
 {
-    skipFirstIFSDefinition();
-    skipToken();
+    skip_first_ifs_definition();
+    skip_token();
 
     const char *result = get_next_ifs_token(m_buff.data(), m_file);
 

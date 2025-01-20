@@ -333,7 +333,7 @@ class TestChoiceBuilderPrompting : public Test
 protected:
     void SetUp() override
     {
-        g_prompter = &prompter;
+        g_prompter = &m_prompter;
     }
     void TearDown() override
     {
@@ -341,11 +341,11 @@ protected:
     }
     void expect_choice_value(const char *choice, const FullScreenValuePredicate &pred)
     {
-        EXPECT_CALL(prompter, prompt(_, 1, has_choice(0, choice), has_value(0, pred), _, _))
+        EXPECT_CALL(m_prompter, prompt(_, 1, has_choice(0, choice), has_value(0, pred), _, _))
             .WillOnce(Return(ID_KEY_ENTER));
     }
 
-    MockPrompter prompter;
+    MockPrompter m_prompter;
     std::function<void(FullScreenValues *)> expect_yes_no(int index, bool expected)
     {
         return [=](FullScreenValues *values)
@@ -508,7 +508,7 @@ TEST_F(TestChoiceBuilderPrompting, stringBufferChoice)
 TEST_F(TestChoiceBuilderPrompting, multipleChoices)
 {
     ChoiceBuilder<2, Shim> builder;
-    EXPECT_CALL(prompter,
+    EXPECT_CALL(m_prompter,
         prompt(_, 2, AllOf(has_choice(0, "First"), has_choice(1, "Second")),
             AllOf(has_value(0, has_type('*')), has_value(1, has_type('*'))), _, _))
         .WillOnce(Return(ID_KEY_ENTER));
@@ -546,7 +546,7 @@ MATCHER_P(has_null_choice, n, "")
 TEST_F(TestChoiceBuilderPrompting, buildReset)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter,
+    EXPECT_CALL(m_prompter,
         prompt(_, 0, AllOf(NotNull(), has_null_choice(0)), AllOf(NotNull(), has_value(0, has_type(0))), _, _))
         .WillOnce(Return(ID_KEY_ENTER));
     builder.comment("First");
@@ -562,7 +562,7 @@ TEST_F(TestChoiceBuilderPrompting, promptCallsFullScreenPrompt)
     ChoiceBuilder<1, Shim> builder;
     char extra[20]{};
     builder.yes_no("Evolution mode? (no for full screen)", true);
-    EXPECT_CALL(prompter,
+    EXPECT_CALL(m_prompter,
         prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, extra))
         .WillOnce(Return(ID_KEY_ENTER));
 
@@ -574,7 +574,7 @@ TEST_F(TestChoiceBuilderPrompting, promptCallsFullScreenPrompt)
 TEST_F(TestChoiceBuilderPrompting, readChoiceWithoutPrompting)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).Times(0);
+    EXPECT_CALL(m_prompter, prompt(_, _, _, _, _, _)).Times(0);
     builder.yes_no("Evolution mode? (no for full screen)", true);
 
     EXPECT_THROW(builder.read_yes_no(), std::runtime_error);
@@ -583,7 +583,7 @@ TEST_F(TestChoiceBuilderPrompting, readChoiceWithoutPrompting)
 TEST_F(TestChoiceBuilderPrompting, readChoiceWrongType)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(ID_KEY_ENTER));
+    EXPECT_CALL(m_prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(ID_KEY_ENTER));
     builder.int_number("Image grid size (odd numbers only)", 50);
     builder.prompt("Evolution Mode Options", 255);
 
@@ -593,7 +593,7 @@ TEST_F(TestChoiceBuilderPrompting, readChoiceWrongType)
 TEST_F(TestChoiceBuilderPrompting, readTooManyChoices)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, _, _, _, _, _))
+    EXPECT_CALL(m_prompter, prompt(_, _, _, _, _, _))
         .WillOnce(DoAll(WithArg<3>(expect_yes_no(0, true)), Return(ID_KEY_ENTER)));
     builder.yes_no("Evolution mode? (no for full screen)", true);
     builder.prompt("Evolution Mode Options", 255);
@@ -605,7 +605,7 @@ TEST_F(TestChoiceBuilderPrompting, readTooManyChoices)
 TEST_F(TestChoiceBuilderPrompting, readYesNoChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, nullptr))
+    EXPECT_CALL(m_prompter, prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, nullptr))
         .WillOnce(DoAll(WithArg<3>(expect_yes_no(0, false)), Return(ID_KEY_ENTER)));
     builder.yes_no("Evolution mode? (no for full screen)", true);
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -619,7 +619,7 @@ TEST_F(TestChoiceBuilderPrompting, readYesNoChoice)
 TEST_F(TestChoiceBuilderPrompting, readIntChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { values[0].uval.ival = 12; }), Return(ID_KEY_ENTER)));
     builder.int_number("Image grid size (odd numbers only)", 50);
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -633,7 +633,7 @@ TEST_F(TestChoiceBuilderPrompting, readIntChoice)
 TEST_F(TestChoiceBuilderPrompting, readLongChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { values[0].uval.Lval = 46L; }), Return(ID_KEY_ENTER)));
     builder.long_number("Image grid size (odd numbers only)", 66L);
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -647,7 +647,7 @@ TEST_F(TestChoiceBuilderPrompting, readLongChoice)
 TEST_F(TestChoiceBuilderPrompting, readFloatChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { values[0].uval.dval = 46.5; }), Return(ID_KEY_ENTER)));
     builder.float_number("Image grid size (odd numbers only)", 66.0f);
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -661,7 +661,7 @@ TEST_F(TestChoiceBuilderPrompting, readFloatChoice)
 TEST_F(TestChoiceBuilderPrompting, readDoubleChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { values[0].uval.dval = 46.5; }), Return(ID_KEY_ENTER)));
     builder.double_number("Image grid size (odd numbers only)", 66.0);
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -675,7 +675,7 @@ TEST_F(TestChoiceBuilderPrompting, readDoubleChoice)
 TEST_F(TestChoiceBuilderPrompting, readIntDoubleChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { values[0].uval.dval = 46; }), Return(ID_KEY_ENTER)));
     builder.int_double_number("Image grid size (odd numbers only)", 66.0);
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -689,7 +689,7 @@ TEST_F(TestChoiceBuilderPrompting, readIntDoubleChoice)
 TEST_F(TestChoiceBuilderPrompting, readComment)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(ID_KEY_ENTER));
+    EXPECT_CALL(m_prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(ID_KEY_ENTER));
     builder.comment("Press F4 to reset view parameters to defaults.");
     const int result = builder.prompt("Evolution Mode Options", 255);
 
@@ -701,7 +701,7 @@ TEST_F(TestChoiceBuilderPrompting, readComment)
 TEST_F(TestChoiceBuilderPrompting, readList)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, NotNull(), _, _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { values[0].uval.ch.val = 0; }), Return(ID_KEY_ENTER)));
     const char *list[]{"one", "two", "three"};
     const int list_len = 3;
@@ -718,7 +718,7 @@ TEST_F(TestChoiceBuilderPrompting, readList)
 TEST_F(TestChoiceBuilderPrompting, readString)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, NotNull(), _, _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { std::strncpy(values[0].uval.sval, "*.pot", 16); }),
             Return(ID_KEY_ENTER)));
     builder.string("Browse search filename mask ", "*.gif");
@@ -733,7 +733,7 @@ TEST_F(TestChoiceBuilderPrompting, readString)
 TEST_F(TestChoiceBuilderPrompting, readStringBuff)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, 1, NotNull(), _, _, _))
+    EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
         .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { std::strcpy(values[0].uval.sbuf, "*.pot"); }),
             Return(ID_KEY_ENTER)));
     constexpr int len{80};

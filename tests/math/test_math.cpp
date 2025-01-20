@@ -141,13 +141,13 @@ TEST(TestMath, multiplyAliasing)
     fpu_cmplx_mul(&z, &z, &result);
     const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}*std::complex<double>{1.0, 2.0}};
 
-    DComplex aliasResult{1.0, 2.0};
-    fpu_cmplx_mul(&aliasResult, &aliasResult, &aliasResult);
+    DComplex alias_result{1.0, 2.0};
+    fpu_cmplx_mul(&alias_result, &alias_result, &alias_result);
 
     EXPECT_EQ(stdResult.real(), result.x);
     EXPECT_EQ(stdResult.imag(), result.y);
-    EXPECT_EQ(stdResult.real(), aliasResult.x);
-    EXPECT_EQ(stdResult.imag(), aliasResult.y);
+    EXPECT_EQ(stdResult.real(), alias_result.x);
+    EXPECT_EQ(stdResult.imag(), alias_result.y);
 }
 
 TEST(TestMath, divideAliasing)
@@ -158,15 +158,15 @@ TEST(TestMath, divideAliasing)
     fpu_cmplx_div(&num, &denom, &result);
     const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}/std::complex<double>{2.0, 4.0}};
 
-    DComplex aliasResult1{1.0, 2.0};
-    fpu_cmplx_div(&aliasResult1, &denom, &aliasResult1);
-    DComplex aliasResult2{2.0, 4.0};
-    fpu_cmplx_div(&num, &aliasResult2, &aliasResult2);
+    DComplex alias_result1{1.0, 2.0};
+    fpu_cmplx_div(&alias_result1, &denom, &alias_result1);
+    DComplex alias_result2{2.0, 4.0};
+    fpu_cmplx_div(&num, &alias_result2, &alias_result2);
 
     EXPECT_EQ(stdResult.real(), result.x);
     EXPECT_EQ(stdResult.imag(), result.y);
-    EXPECT_EQ(stdResult.real(), aliasResult1.x);
-    EXPECT_EQ(stdResult.imag(), aliasResult1.y);
-    EXPECT_EQ(stdResult.real(), aliasResult2.x);
-    EXPECT_EQ(stdResult.imag(), aliasResult2.y);
+    EXPECT_EQ(stdResult.real(), alias_result1.x);
+    EXPECT_EQ(stdResult.imag(), alias_result1.y);
+    EXPECT_EQ(stdResult.real(), alias_result2.x);
+    EXPECT_EQ(stdResult.imag(), alias_result2.y);
 }
