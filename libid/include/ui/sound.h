@@ -13,6 +13,6 @@ extern int                   g_polyphony;
 extern bool                  g_tab_or_help;
 
 bool sound_open();
-void write_sound(int);
+void write_sound(int tone);
 void sound_time_write();
 void close_sound();
