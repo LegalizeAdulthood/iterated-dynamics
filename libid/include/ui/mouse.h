@@ -56,7 +56,7 @@ void mouse_notify_move(int x, int y, int key_flags);
 class MouseSubscription
 {
 public:
-    MouseSubscription(std::shared_ptr<MouseNotification> subscriber) :
+    explicit MouseSubscription(std::shared_ptr<MouseNotification> subscriber) :
         m_id(mouse_subscribe(std::move(subscriber)))
     {
     }

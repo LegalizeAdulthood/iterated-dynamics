@@ -16,7 +16,7 @@ public:
         m_data = value;
     }
     // doesn't change current value, but captures it
-    ValueSaver(T &data) :
+    explicit ValueSaver(T &data) :
         m_saved(data),
         m_data(data)
     {

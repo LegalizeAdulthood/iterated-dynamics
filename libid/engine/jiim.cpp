@@ -504,7 +504,7 @@ OrbitFlags &operator^=(OrbitFlags &lhs, OrbitFlags rhs)
 class InverseJulia
 {
 public:
-    InverseJulia(JIIMType which);
+    explicit InverseJulia(JIIMType which);
 
     void process();
 

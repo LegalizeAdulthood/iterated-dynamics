@@ -354,7 +354,7 @@ template <typename T>
 class VecPrinter
 {
 public:
-    VecPrinter(const std::vector<T> &values) :
+    explicit VecPrinter(const std::vector<T> &values) :
         m_values(values)
     {
     }

@@ -10,7 +10,7 @@
 class GIFInputFile
 {
 public:
-    GIFInputFile(const std::string &path) :
+    explicit GIFInputFile(const std::string &path) :
         m_path(path),
         m_gif(DGifOpenFileName(m_path.c_str(), &m_gif_error))
     {
