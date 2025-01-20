@@ -1174,7 +1174,7 @@ static int ratio_bad(double actual, double desired)
     {
         return 1;
     }
-    else if (tol >= 1.0)
+    if (tol >= 1.0)
     {
         return 0;
     }
