@@ -77,7 +77,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
-static void vec_draw_line(double *, double *, int color);
+static void vec_draw_line(double *v1, double *v2, int color);
 static void file_error(char const *filename, int error);
 
 // static variables
