@@ -7,20 +7,20 @@ enum
     COL_MAX = 4, // maximum column (4 x 4 matrix)
     ROW_MAX = 4  // maximum row    (4 x 4 matrix)
 };
-using MATRIX = double[ROW_MAX][COL_MAX];  // matrix of doubles
-using IMATRIX = int[ROW_MAX][COL_MAX];  // matrix of ints
-using LMATRIX = long[ROW_MAX][COL_MAX];  // matrix of longs
-/* A MATRIX is used to describe a transformation from one coordinate
+using Matrix = double[ROW_MAX][COL_MAX];  // matrix of doubles
+using MatrixI = int[ROW_MAX][COL_MAX];  // matrix of ints
+using MatrixL = long[ROW_MAX][COL_MAX];  // matrix of longs
+/* A Matrix is used to describe a transformation from one coordinate
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
-using VECTOR = double[3];  // vector of doubles
-using IVECTOR = int[3];  // vector of ints
-using LVECTOR = long[3];  // vector of longs
-/* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
+using Vector = double[3];  // vector of doubles
+using VectorI = int[3];  // vector of ints
+using VectorL = long[3];  // vector of longs
+/* A Vector is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
 is not in the data structure */
 
-inline double dot_product(VECTOR v1, VECTOR v2)
+inline double dot_product(Vector v1, Vector v2)
 {
     return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
@@ -71,18 +71,18 @@ inline bool illumine()
     return g_fill_type > FillType::SOLID_FILL; // illumination model
 }
 
-void identity(MATRIX m);
-void mat_mul(MATRIX lhs, MATRIX rhs, MATRIX result);
-void scale(double sx, double sy, double sz, MATRIX m);
-void x_rot(double theta, MATRIX m);
-void y_rot(double theta, MATRIX m);
-void z_rot(double theta, MATRIX m);
-void trans(double tx, double ty, double tz, MATRIX m);
-int cross_product(VECTOR v, VECTOR w, VECTOR cross);
-bool normalize_vector(VECTOR v);
-int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t);
-void vec_g_mat_mul(VECTOR s);
-int perspective(VECTOR v);
-int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR view, int bit_shift);
-int long_persp(LVECTOR v, LVECTOR view, int bit_shift);
-int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift);
+void identity(Matrix m);
+void mat_mul(Matrix lhs, Matrix rhs, Matrix result);
+void scale(double sx, double sy, double sz, Matrix m);
+void x_rot(double theta, Matrix m);
+void y_rot(double theta, Matrix m);
+void z_rot(double theta, Matrix m);
+void trans(double tx, double ty, double tz, Matrix m);
+int cross_product(Vector v, Vector w, Vector cross);
+bool normalize_vector(Vector v);
+int vec_mat_mul(Vector s, Matrix m, Vector t);
+void vec_g_mat_mul(Vector s);
+int perspective(Vector v);
+int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, int bit_shift);
+int long_persp(VectorL v, VectorL view, int bit_shift);
+int long_vec_mat_mul(VectorL s, MatrixL m, VectorL t, int bit_shift);

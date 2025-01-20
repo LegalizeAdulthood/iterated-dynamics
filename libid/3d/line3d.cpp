@@ -55,7 +55,7 @@ struct MinMax
 };
 
 // routines in this module
-static int first_time(int line_len, VECTOR v);
+static int first_time(int line_len, Vector v);
 static void hsv_to_rgb(
     Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val);
 static int line3d_mem();
@@ -68,8 +68,8 @@ static int off_screen(PointColor pt);
 static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c1, int c2, int c3);
 static int ray_header();
 static int start_object();
-static void draw_light_box(double *origin, double *direct, MATRIX light_m);
-static void draw_rect(VECTOR v0, VECTOR v1, VECTOR v2, VECTOR v3, int color, bool rect);
+static void draw_light_box(double *origin, double *direct, Matrix light_m);
+static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect);
 static void line3d_cleanup();
 static void clip_color(int x, int y, int color);
 static void interp_color(int x, int y, int color);
@@ -89,8 +89,8 @@ static long s_x_center{}, s_y_center{};                  // circle center
 static double s_scale_x{}, s_scale_y{}, s_scale_z{};     // scale factors
 static double s_radius{};                                // radius values
 static double s_radius_factor{};                         // for intermediate calculation
-static LMATRIX s_llm{};                                  // ""
-static LVECTOR s_l_view{};                               // for perspective views
+static MatrixL s_llm{};                                  // ""
+static VectorL s_l_view{};                               // for perspective views
 static double s_z_cutoff{};                              // perspective backside cutoff value
 static float s_two_cos_delta_phi{};                      //
 static float s_cos_phi{}, s_sin_phi{};                   // precalculated sin/cos of longitude
@@ -108,7 +108,7 @@ static Byte s_t24 = 24;                                  //
 static Byte s_t32 = 32;                                  //
 static Byte s_upr_lwr[4]{};                              //
 static bool s_t_safe{};                          // Original Targa Image successfully copied to targa_temp
-static VECTOR s_light_direction{};               //
+static Vector s_light_direction{};               //
 static Byte s_real_color{};                      // Actual color of cur pixel
 static int s_ro{}, s_co{}, s_co_max{};           // For use in Acrospin support
 static int s_local_preview_factor{};             //
@@ -131,13 +131,13 @@ static int s_p = 250;                            // Perspective dist used when v
 static int const s_bad_check = -3000;            // check values against this to determine if good
 static std::vector<PointColor> s_last_row;       // this array remembers the previous line
 static std::vector<MinMax> s_min_max_x;          // array of min and max x values used in triangle fill
-static VECTOR s_cross{};                         //
-static VECTOR s_tmp_cross{};                     //
+static Vector s_cross{};                         //
+static Vector s_tmp_cross{};                     //
 static PointColor s_old_last{};                  // old pixels
 
 // global variables defined here
 void (*g_standard_plot)(int, int, int){};
-MATRIX g_m{}; // transformation matrix
+Matrix g_m{}; // transformation matrix
 int g_ambient{};
 int g_randomize_3d{};
 int g_haze{};
@@ -156,7 +156,7 @@ int g_x_shift{};
 int g_y_shift{};
 RayTraceFormat g_raytrace_format{};  // Flag to generate Ray trace compatible files in 3d
 bool g_brief{};                        // 1 = short ray trace files
-VECTOR g_view{};                       // position of observer for perspective
+Vector g_view{};                       // position of observer for perspective
 
 int line3d(Byte * pixels, unsigned line_len)
 {
@@ -174,13 +174,13 @@ int line3d(Byte * pixels, unsigned line_len)
     PointColor old;      // old pixels
     FPointColor f_cur{};
     FPointColor f_old;
-    VECTOR v;                    // double vector
-    VECTOR v1;
-    VECTOR v2;
-    VECTOR cross_avg;
+    Vector v;                    // double vector
+    Vector v1;
+    Vector v2;
+    Vector cross_avg;
     bool cross_not_init;           // flag for crossavg init indication
-    LVECTOR lv;                  // long equivalent of v
-    LVECTOR lv0;                 // long equivalent of v
+    VectorL lv;                  // long equivalent of v
+    VectorL lv0;                 // long equivalent of v
     int last_dot;
     long fudge;
 
@@ -936,9 +936,9 @@ static void vec_draw_line(double *v1, double *v2, int color)
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
-static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
+static void corners(Matrix m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
 {
-    VECTOR s[2][4];              // Holds the top and bottom points, S[0][]=bottom
+    Vector s[2][4];              // Holds the top and bottom points, S[0][]=bottom
 
     /* define corners of box fractal is in x,y,z plane "b" stands for
      * "bottom" - these points are the corners of the screen in the x-y plane.
@@ -1029,9 +1029,9 @@ static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z
         FILLTYPE.
 */
 
-static void draw_light_box(double *origin, double *direct, MATRIX light_m)
+static void draw_light_box(double *origin, double *direct, Matrix light_m)
 {
-    VECTOR s[2][4]{};
+    Vector s[2][4]{};
 
     s[0][0][0] = origin[0];
     s[1][0][0] = s[0][0][0];
@@ -1105,9 +1105,9 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     }
 }
 
-static void draw_rect(VECTOR v0, VECTOR v1, VECTOR v2, VECTOR v3, int color, bool rect)
+static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect)
 {
-    VECTOR v[4];
+    Vector v[4];
 
     // Since V[2] is not used by vdraw_line don't bother setting it
     for (int i = 0; i < 2; i++)
@@ -2364,9 +2364,9 @@ static void set_upr_lwr()
     s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 
-static int first_time(int line_len, VECTOR v)
+static int first_time(int line_len, Vector v)
 {
-    MATRIX light_mat;               // m w/no trans, keeps obj. on screen
+    Matrix light_mat;               // m w/no trans, keeps obj. on screen
                    // rotation values
     // corners of transformed xdotx by ydots x colors box
     double x_min;
@@ -2375,7 +2375,7 @@ static int first_time(int line_len, VECTOR v)
     double x_max;
     double y_max;
     double z_max;
-    VECTOR direct;
+    Vector direct;
     // current,start,stop latitude
     // current start,stop longitude
     // increment of latitude
@@ -2735,8 +2735,8 @@ static int first_time(int line_len, VECTOR v)
 
     if (g_preview && g_show_box)
     {
-        VECTOR origin;
-        VECTOR tmp;
+        Vector origin;
+        Vector tmp;
         normalize_vector(direct);
 
         // move light vector to be more clear with grey scale maps

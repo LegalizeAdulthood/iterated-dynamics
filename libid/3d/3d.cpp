@@ -89,7 +89,7 @@ int g_light_z{};         // z light vector coordinate
 int g_light_avg{};       // number of points to average
 
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
-void identity(MATRIX m)
+void identity(Matrix m)
 {
     for (int i = 0 ; i < COL_MAX; i++)
     {
@@ -108,11 +108,11 @@ void identity(MATRIX m)
 }
 
 // Multiply two matrices
-void mat_mul(MATRIX lhs, MATRIX rhs, MATRIX result)
+void mat_mul(Matrix lhs, Matrix rhs, Matrix result)
 {
     // result stored in product to avoid problems
     //  in case parameter mat3 == mat2 or mat 1
-    MATRIX product;
+    Matrix product;
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
@@ -128,9 +128,9 @@ void mat_mul(MATRIX lhs, MATRIX rhs, MATRIX result)
 }
 
 // multiply a matrix by a scalar
-void scale(double sx, double sy, double sz, MATRIX m)
+void scale(double sx, double sy, double sz, Matrix m)
 {
-    MATRIX scale;
+    Matrix scale;
     identity(scale);
     scale[0][0] = sx;
     scale[1][1] = sy;
@@ -139,9 +139,9 @@ void scale(double sx, double sy, double sz, MATRIX m)
 }
 
 // rotate about X axis
-void x_rot(double theta, MATRIX m)
+void x_rot(double theta, Matrix m)
 {
-    MATRIX rot;
+    Matrix rot;
     double sin_theta = std::sin(theta);
     double cos_theta = std::cos(theta);
     identity(rot);
@@ -153,9 +153,9 @@ void x_rot(double theta, MATRIX m)
 }
 
 // rotate about Y axis
-void y_rot(double theta, MATRIX m)
+void y_rot(double theta, Matrix m)
 {
-    MATRIX rot;
+    Matrix rot;
     double sin_theta = std::sin(theta);
     double cos_theta = std::cos(theta);
     identity(rot);
@@ -167,9 +167,9 @@ void y_rot(double theta, MATRIX m)
 }
 
 // rotate about Z axis
-void z_rot(double theta, MATRIX m)
+void z_rot(double theta, Matrix m)
 {
-    MATRIX rot;
+    Matrix rot;
     double sin_theta = std::sin(theta);
     double cos_theta = std::cos(theta);
     identity(rot);
@@ -181,9 +181,9 @@ void z_rot(double theta, MATRIX m)
 }
 
 // translate
-void trans(double tx, double ty, double tz, MATRIX m)
+void trans(double tx, double ty, double tz, Matrix m)
 {
-    MATRIX trans;
+    Matrix trans;
     identity(trans);
     trans[3][0] = tx;
     trans[3][1] = ty;
@@ -192,9 +192,9 @@ void trans(double tx, double ty, double tz, MATRIX m)
 }
 
 // cross product  - useful because cross is perpendicular to v and w
-int cross_product(VECTOR v, VECTOR w, VECTOR cross)
+int cross_product(Vector v, Vector w, Vector cross)
 {
-    VECTOR tmp;
+    Vector tmp;
     tmp[0] =  v[1]*w[2] - w[1]*v[2];
     tmp[1] =  w[0]*v[2] - v[0]*w[2];
     tmp[2] =  v[0]*w[1] - w[0]*v[1];
@@ -205,7 +205,7 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 }
 
 // normalize a vector to length 1
-bool normalize_vector(VECTOR v)
+bool normalize_vector(Vector v)
 {
     double length = dot_product(v, v);
 
@@ -228,9 +228,9 @@ bool normalize_vector(VECTOR v)
 
 // multiply source vector s by matrix m, result in target t
 // used to apply transformations to a vector
-int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t)
+int vec_mat_mul(Vector s, Matrix m, Vector t)
 {
-    VECTOR tmp;
+    Vector tmp;
     for (int j = 0; j < COL_MAX-1; j++)
     {
         tmp[j] = 0.0;
@@ -250,9 +250,9 @@ int vec_mat_mul(VECTOR s, MATRIX m, VECTOR t)
 // use with a function pointer in line3d.c
 // must coordinate calling conventions with
 // mult_vec in general.asm
-void vec_g_mat_mul(VECTOR s)
+void vec_g_mat_mul(Vector s)
 {
-    VECTOR tmp;
+    Vector tmp;
     for (int j = 0; j < COL_MAX-1; j++)
     {
         tmp[j] = 0.0;
@@ -268,7 +268,7 @@ void vec_g_mat_mul(VECTOR s)
 }
 
 // perspective projection of vector v with respect to viewpoint vector view
-int perspective(VECTOR v)
+int perspective(Vector v)
 {
     double denom = g_view[2] - v[2];
 
@@ -288,7 +288,7 @@ int perspective(VECTOR v)
 }
 
 // long version of vmult and perspective combined for speed
-int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR view, int bit_shift)
+int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, int bit_shift)
 {
     // s: source vector
     // m: transformation matrix
@@ -296,7 +296,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
     // t: target vector
     // lview: perspective viewer coordinates
     // bitshift: fixed point conversion bitshift
-    LVECTOR tmp;
+    VectorL tmp;
     g_overflow = false;
     int k = COL_MAX - 1;                  // shorten the math if non-perspective and non-illum
     if (view[2] == 0 && t0[0] == 0)
@@ -334,7 +334,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
         }
 
         // doing math in this order helps prevent overflow
-        LVECTOR tmp_view;
+        VectorL tmp_view;
         tmp_view[0] = divide(view[0], denom, bit_shift);
         tmp_view[1] = divide(view[1], denom, bit_shift);
         tmp_view[2] = divide(view[2], denom, bit_shift);
@@ -356,7 +356,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
 
 // Long version of perspective. Because of use of fixed point math, there
 // is danger of overflow and underflow
-int long_persp(LVECTOR v, LVECTOR view, int bit_shift)
+int long_persp(VectorL v, VectorL view, int bit_shift)
 {
     g_overflow = false;
     long denom = view[2] - v[2];
@@ -370,7 +370,7 @@ int long_persp(LVECTOR v, LVECTOR view, int bit_shift)
     }
 
     // doing math in this order helps prevent overflow
-    LVECTOR tmp_view;
+    VectorL tmp_view;
     tmp_view[0] = divide(view[0], denom, bit_shift);
     tmp_view[1] = divide(view[1], denom, bit_shift);
     tmp_view[2] = divide(view[2], denom, bit_shift);
@@ -384,9 +384,9 @@ int long_persp(LVECTOR v, LVECTOR view, int bit_shift)
     return g_overflow ? 1 : 0;
 }
 
-int long_vec_mat_mul(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
+int long_vec_mat_mul(VectorL s, MatrixL m, VectorL t, int bit_shift)
 {
-    LVECTOR tmp;
+    VectorL tmp;
     g_overflow = false;
     int k = COL_MAX - 1;
 

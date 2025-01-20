@@ -98,8 +98,8 @@ struct ViewTransform3DLong
     long view_vect1[3];   // orbit transformed for viewing
     long max_vals[3];     //
     long min_vals[3];     //
-    MATRIX double_mat;    // transformation matrix
-    MATRIX double_mat1;   // transformation matrix
+    Matrix double_mat;    // transformation matrix
+    Matrix double_mat1;   // transformation matrix
     long long_mat[4][4];  // long version of matrix
     long long_mat1[4][4]; // long version of matrix
     int row;              //
@@ -117,8 +117,8 @@ struct ViewTransform3DFloat
     double view_vect1[3]; // orbit transformed for viewing
     double max_vals[3];   //
     double min_vals[3];   //
-    MATRIX double_mat;    // transformation matrix
-    MATRIX double_mat1;   // transformation matrix
+    Matrix double_mat;    // transformation matrix
+    Matrix double_mat1;   // transformation matrix
     int row;              //
     int col;              // results
     int row1;             //
@@ -133,7 +133,7 @@ static int  ifs3d();
 static int  ifs3d_long();
 static int  ifs3d_float();
 static bool l_setup_convert_to_screen(LAffine *);
-static void setup_matrix(MATRIX);
+static void setup_matrix(Matrix);
 static bool long_view_transf3d(ViewTransform3DLong *inf);
 static bool float_view_transf3d(ViewTransform3DFloat *inf);
 static std::FILE *open_orbit_save();
@@ -2774,7 +2774,7 @@ static int ifs3d_long()
     return ret;
 }
 
-static void setup_matrix(MATRIX double_mat)
+static void setup_matrix(Matrix double_mat)
 {
     // build transformation matrix
     identity(double_mat);
@@ -2925,7 +2925,7 @@ static bool long_view_transf3d(ViewTransform3DLong *inf)
         if (g_debug_flag == DebugFlags::FORCE_FLOAT_PERSPECTIVE || g_viewer_z < 100) // use float for small persp
         {
             // use float perspective calc
-            VECTOR tmp_v;
+            Vector tmp_v;
             for (int i = 0; i < 3; i++)
             {
                 tmp_v[i] = (double)inf->view_vect[i] / g_fudge_factor;
