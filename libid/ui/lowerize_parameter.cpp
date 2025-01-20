@@ -7,7 +7,7 @@
 #include <string>
 
 // don't convert these parameter values
-static constexpr const char *const s_unchanged_params[] = {"autokeyname", "colors", "comment", "filename",
+static constexpr const char *const UNCHANGED_PARAMS[] = {"autokeyname", "colors", "comment", "filename",
     "formulafile", "ifsfile", "lfile", "lightname", "makedoc", "makepar", "map", "orbitsavename", "orgfrmdir",
     "parmfile", "savename", "savedir", "tempdir", "workdir"};
 
@@ -23,9 +23,9 @@ void lowerize_parameter(char *cur_arg)
         }
         else if (*arg_ptr == '=')
         {
-            auto it = std::find_if(std::begin(s_unchanged_params), std::end(s_unchanged_params),
+            auto it = std::find_if(std::begin(UNCHANGED_PARAMS), std::end(UNCHANGED_PARAMS),
                 [param = std::string(cur_arg, arg_ptr)](const char *str) { return param == str; });
-            if (it != std::end(s_unchanged_params))
+            if (it != std::end(UNCHANGED_PARAMS))
             {
                 break;
             }
