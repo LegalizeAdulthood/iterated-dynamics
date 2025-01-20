@@ -114,7 +114,7 @@ static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 static const char *const WINDOW_CLASS{"IdText"};
 static WinText *s_me{};
 
-static COLORREF wintext_color[]
+static COLORREF s_wintext_color[]
 {
     RGB(0, 0, 0),
     RGB(0, 0, 128),
@@ -608,8 +608,8 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
             {
                 if (length > 0)
                 {
-                    SetBkColor(hDC, wintext_color[old_bk]);
-                    SetTextColor(hDC, wintext_color[old_fg]);
+                    SetBkColor(hDC, s_wintext_color[old_bk]);
+                    SetTextColor(hDC, s_wintext_color[old_fg]);
                     TextOutA(hDC,
                             i_start*m_char_width,
                             j_start*m_char_height,
