@@ -184,7 +184,8 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
     }
     else if (degree > 2)
     {
-        DComplex temp, temp_z;
+        DComplex temp;
+        DComplex temp_z;
         temp.x = std::abs(z.real());
         temp.y = std::abs(z.imag());
         pow(&temp, degree, &temp_z);
