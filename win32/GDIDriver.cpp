@@ -174,7 +174,8 @@ bool GDIDriver::init(int *argc, char **argv)
 
     // add default list of video modes
     {
-        int width, height;
+        int width;
+        int height;
         get_max_screen(width, height);
 
         for (VideoInfo &mode : s_modes)
@@ -196,8 +197,10 @@ bool GDIDriver::init(int *argc, char **argv)
  */
 bool GDIDriver::resize()
 {
-    int width, height;
-    bool center_graphics_x = true, center_graphics_y = true;
+    int width;
+    int height;
+    bool center_graphics_x = true;
+    bool center_graphics_y = true;
 
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
     if (g_video_table[g_adapter].x_dots == m_plot.get_width()     //
@@ -287,7 +290,8 @@ void GDIDriver::create_window()
 {
     int width;
     int height;
-    bool center_x = true, center_y = true;
+    bool center_x = true;
+    bool center_y = true;
 
     get_max_size(&width, &height, &center_x, &center_y);
     g_frame.create_window(width, height);
@@ -355,7 +359,8 @@ void GDIDriver::set_video_mode(VideoInfo *mode)
 
 bool GDIDriver::validate_mode(VideoInfo *mode)
 {
-    int width, height;
+    int width;
+    int height;
     get_max_screen(width, height);
 
     // allow modes <= size of screen with 256 colors
