@@ -82,12 +82,12 @@ static long s_mem_offset{};                 //
 static long s_old_mem_offset{};             //
 static Byte *s_mem_buf_ptr{};               //
 
-static void find_load_cache(long);
-static Cache *find_cache(long);
+static void find_load_cache(long offset);
+static Cache *find_cache(long offset);
 static void write_cache_lru();
-static void mem_putc(Byte);
+static void mem_putc(Byte c);
 static Byte mem_getc();
-static void mem_seek(long);
+static void mem_seek(long offset);
 
 int start_disk()
 {
