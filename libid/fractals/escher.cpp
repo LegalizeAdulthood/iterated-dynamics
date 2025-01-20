@@ -37,9 +37,7 @@ int escher_fp_fractal() // Science of Fractal Images pp. 185, 187
     {
         return g_bailout_float(); // point not in target set
     }
-    else   // make distinct level sets if point stayed in target set
-    {
-        g_color_iter = ((3L * g_color_iter) % 255L) + 1L;
-        return 1;
-    }
+    // make distinct level sets if point stayed in target set
+    g_color_iter = ((3L * g_color_iter) % 255L) + 1L;
+    return 1;
 }
