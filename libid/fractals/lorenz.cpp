@@ -2807,14 +2807,7 @@ static int ifs3d()
     g_display_3d = Display3DMode::MINUS_ONE;
 
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
-    if (g_float_flag)
-    {
-        return funny_glasses_call(ifs3d_float); // double version of ifs3d
-    }
-    else
-    {
-        return funny_glasses_call(ifs3d_long); // long version of ifs3d
-    }
+    return funny_glasses_call(g_float_flag ? ifs3d_float : ifs3d_long); // double version of ifs3d
 }
 
 static bool long_view_transf3d(ViewTransform3DLong *inf)
