@@ -94,10 +94,16 @@ int mpc_halley_fractal()
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x,  relaxation coeff. = parm.y,  epsilon = parm2.x
 
-    MPC mpc_x_to_a_less_one, mpc_x_to_a;
+    MPC mpc_x_to_a_less_one;
+    MPC mpc_x_to_a;
     MPC mpc_x_to_a_plus_one; // a-1, a, a+1
-    MPC mpc_fx, mpc_f1_prime, mpc_f2_prime, mpc_numer1;
-    MPC mpc_numer2, mpc_denom, mpc_tmp2;
+    MPC mpc_fx;
+    MPC mpc_f1_prime;
+    MPC mpc_f2_prime;
+    MPC mpc_numer1;
+    MPC mpc_numer2;
+    MPC mpc_denom;
+    MPC mpc_tmp2;
 
     g_mp_overflow = false;
     mpc_x_to_a_less_one.x = s_mpc_old.x;
@@ -146,8 +152,15 @@ int halley_fractal()
 {
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x = degree, relaxation coeff. = parm.y, epsilon = parm2.x
-    DComplex x_to_a_less_one, x_to_a, x_to_a_plus_one; // a-1, a, a+1
-    DComplex fx, f1_prime, f2_prime, numer1, numer2, denom;
+    DComplex x_to_a_less_one;
+    DComplex x_to_a;
+    DComplex x_to_a_plus_one; // a-1, a, a+1
+    DComplex fx;
+    DComplex f1_prime;
+    DComplex f2_prime;
+    DComplex numer1;
+    DComplex numer2;
+    DComplex denom;
     DComplex relax;
 
     x_to_a_less_one = g_old_z;
