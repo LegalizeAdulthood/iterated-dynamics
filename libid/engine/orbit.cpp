@@ -12,7 +12,7 @@
 #include "ui/sound.h"
 #include "ui/video.h"
 
-static void plot_d_orbit(double, double, int);
+static void plot_d_orbit(double dx, double dy, int color);
 
 enum
 {
