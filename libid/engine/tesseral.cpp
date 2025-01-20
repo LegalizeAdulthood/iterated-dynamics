@@ -12,10 +12,10 @@
 
 #include <cstring>
 
-static int tess_check_col(int, int, int);
-static int tess_check_row(int, int, int);
-static int tess_col(int, int, int);
-static int tess_row(int, int, int);
+static int tess_check_col(int x, int y1, int y2);
+static int tess_check_row(int x1, int x2, int y);
+static int tess_col(int x, int y1, int y2);
+static int tess_row(int x1, int x2, int y);
 
 static bool s_guess_plot{};  // paint 1st pass row at a time?
 static Byte s_stack[4096]{}; // common temp, two put_line calls
