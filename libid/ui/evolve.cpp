@@ -932,7 +932,10 @@ void draw_param_box(int mode)
 {
     // draws parameter zoom box in evolver mode
     // clears boxes off-screen if mode = 1, otherwise, redraws boxes
-    Coord tl, tr, bl, br;
+    Coord tl;
+    Coord tr;
+    Coord bl;
+    Coord br;
     if (!bit_set(g_evolving, EvolutionModeFlags::PARAM_BOX))
     {
         return; // don't draw if not asked!
