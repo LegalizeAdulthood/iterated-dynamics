@@ -96,28 +96,25 @@ int get_rds_params()
             ret = -1;
             break;
         }
+        k = 0;
+        g_auto_stereo_depth = values[k++].uval.ival;
+        g_auto_stereo_width = values[k++].uval.dval;
+        g_gray_flag = values[k++].uval.ch.val != 0;
+        g_calibrate = (char) values[k++].uval.ch.val;
+        g_image_map = values[k++].uval.ch.val != 0;
+        if (!g_stereo_map_filename.empty() && g_image_map)
+        {
+            reuse = (char) values[k++].uval.ch.val;
+        }
         else
         {
-            k = 0;
-            g_auto_stereo_depth = values[k++].uval.ival;
-            g_auto_stereo_width = values[k++].uval.dval;
-            g_gray_flag         = values[k++].uval.ch.val != 0;
-            g_calibrate        = (char)values[k++].uval.ch.val;
-            g_image_map        = values[k++].uval.ch.val != 0;
-            if (!g_stereo_map_filename.empty() && g_image_map)
+            reuse = 0;
+        }
+        if (g_image_map && !reuse)
+        {
+            if (get_a_file_name("Select an Imagemap File", s_masks[1], g_stereo_map_filename))
             {
-                reuse         = (char)values[k++].uval.ch.val;
-            }
-            else
-            {
-                reuse = 0;
-            }
-            if (g_image_map && !reuse)
-            {
-                if (get_a_file_name("Select an Imagemap File", s_masks[1], g_stereo_map_filename))
-                {
-                    continue;
-                }
+                continue;
             }
         }
         break;
