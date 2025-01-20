@@ -1201,15 +1201,13 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
 #ifdef CALCULATING_BIG_PI
                 std::printf("atan() loop comp=%i\n", comp);
 #endif
-                if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
+                if (comp < 4              // perfect or near perfect match
+                    || almost_match == 1) // close enough for 2nd time
                 {
                     break;
                 }
-                else     // this is the first time they almost matched
-                {
-                    almost_match++;
-                }
+                // this is the first time they almost matched
+                almost_match++;
             }
 #ifdef CALCULATING_BIG_PI
             if (comp >= 8)
