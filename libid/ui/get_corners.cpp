@@ -45,9 +45,12 @@ int get_corners()
     ChoiceBuilder<11> builder;
     char x_prompt[] = "          X";
     char y_prompt[] = "          Y";
-    double x_ctr, y_ctr;
+    double x_ctr;
+    double y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
-    double x_mag_factor, rotation, skew;
+    double x_mag_factor;
+    double rotation;
+    double skew;
 
     bool const old_use_center_mag = g_use_center_mag;
     double old_x_min = g_x_min;
@@ -249,9 +252,12 @@ int get_screen_corners()
     char x_prompt[] = "          X";
     char y_prompt[] = "          Y";
     int prompt_ret;
-    double x_ctr, y_ctr;
+    double x_ctr;
+    double y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
-    double x_mag_factor, rotation, skew;
+    double x_mag_factor;
+    double rotation;
+    double skew;
 
     bool const old_use_center_mag = g_use_center_mag;
 
