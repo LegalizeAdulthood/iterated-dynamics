@@ -64,20 +64,20 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
     int row;
     int col;
     int final; // final row or column number
-    int G;     // used to test for new row or column
+    int g;     // used to test for new row or column
     int inc1;  // G increment when row or column doesn't change
     int inc2;  // G increment when row or column changes
 
-    int dX = x2 - x1;                   // find vector components
-    int dY = y2 - y1;
-    char pos_slope = (char) (dX > 0);                   // is slope positive?
-    if (dY < 0)
+    int dx = x2 - x1;                   // find vector components
+    int dy = y2 - y1;
+    char pos_slope = (char) (dx > 0);                   // is slope positive?
+    if (dy < 0)
     {
         pos_slope = (char)!pos_slope;
     }
-    if (std::abs(dX) > std::abs(dY))                  // shallow line case
+    if (std::abs(dx) > std::abs(dy))                  // shallow line case
     {
-        if (dX > 0)         // determine start point and last column
+        if (dx > 0)         // determine start point and last column
         {
             col = x1;
             row = y1;
@@ -89,23 +89,23 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
             row = y2;
             final = x1;
         }
-        inc1 = 2 * std::abs(dY);             // determine increments and initial G
-        G = inc1 - std::abs(dX);
-        inc2 = 2 * (std::abs(dY) - std::abs(dX));
+        inc1 = 2 * std::abs(dy);             // determine increments and initial G
+        g = inc1 - std::abs(dx);
+        inc2 = 2 * (std::abs(dy) - std::abs(dx));
         if (pos_slope)
         {
             while (col <= final)    // step through columns checking for new row
             {
                 (*g_plot)(col, row, color);
                 col++;
-                if (G >= 0)             // it's time to change rows
+                if (g >= 0)             // it's time to change rows
                 {
                     row++;      // positive slope so increment through the rows
-                    G += inc2;
+                    g += inc2;
                 }
                 else                          // stay at the same row
                 {
-                    G += inc1;
+                    g += inc1;
                 }
             }
         }
@@ -115,21 +115,21 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
             {
                 (*g_plot)(col, row, color);
                 col++;
-                if (G > 0)              // it's time to change rows
+                if (g > 0)              // it's time to change rows
                 {
                     row--;      // negative slope so decrement through the rows
-                    G += inc2;
+                    g += inc2;
                 }
                 else                          // stay at the same row
                 {
-                    G += inc1;
+                    g += inc1;
                 }
             }
         }
     }   // if |dX| > |dY|
     else                            // steep line case
     {
-        if (dY > 0)             // determine start point and last row
+        if (dy > 0)             // determine start point and last row
         {
             col = x1;
             row = y1;
@@ -141,23 +141,23 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
             row = y2;
             final = y1;
         }
-        inc1 = 2 * std::abs(dX);             // determine increments and initial G
-        G = inc1 - std::abs(dY);
-        inc2 = 2 * (std::abs(dX) - std::abs(dY));
+        inc1 = 2 * std::abs(dx);             // determine increments and initial G
+        g = inc1 - std::abs(dy);
+        inc2 = 2 * (std::abs(dx) - std::abs(dy));
         if (pos_slope)
         {
             while (row <= final)    // step through rows checking for new column
             {
                 (*g_plot)(col, row, color);
                 row++;
-                if (G >= 0)                 // it's time to change columns
+                if (g >= 0)                 // it's time to change columns
                 {
                     col++;  // positive slope so increment through the columns
-                    G += inc2;
+                    g += inc2;
                 }
                 else                      // stay at the same column
                 {
-                    G += inc1;
+                    g += inc1;
                 }
             }
         }
@@ -167,14 +167,14 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
             {
                 (*g_plot)(col, row, color);
                 row++;
-                if (G > 0)                  // it's time to change columns
+                if (g > 0)                  // it's time to change columns
                 {
                     col--;  // negative slope so decrement through the columns
-                    G += inc2;
+                    g += inc2;
                 }
                 else                      // stay at the same column
                 {
-                    G += inc1;
+                    g += inc1;
                 }
             }
         }
