@@ -17,7 +17,7 @@ int __stdcall WinMain(HINSTANCE hinstance, HINSTANCE /*prev_instance*/, LPSTR /*
 
     __try  // NOLINT(clang-diagnostic-language-extension-token)
     {
-        g_top_of_stack = (char *) &result;
+        g_top_of_stack = reinterpret_cast<char *>(&result);
         g_instance = hinstance;
         _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
         result = id_main(__argc, __argv);
