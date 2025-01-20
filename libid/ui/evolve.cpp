@@ -122,7 +122,7 @@ static void vary_trig(GeneBase gene[], int rand_val, int i);
 static void vary_bo_test(GeneBase gene[], int rand_val, int i);
 static void vary_inv(GeneBase gene[], int rand_val, int i);
 static bool explore_check();
-static void set_random(int);
+static void set_random(int count);
 
 void copy_genes_from_bank(GeneBase gene[NUM_GENES])
 {

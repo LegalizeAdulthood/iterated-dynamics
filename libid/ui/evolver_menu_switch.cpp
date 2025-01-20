@@ -26,7 +26,7 @@
 #include <cassert>
 #include <stdexcept>
 
-static MainState save_evolver_image(MainContext &)
+static MainState save_evolver_image(MainContext &/*context*/)
 {
     if (driver_is_disk() && g_disk_targa)
     {
@@ -177,7 +177,7 @@ static MainState move_evolver_selection(MainContext &context)
     return MainState::NOTHING;
 }
 
-static MainState evolve_param_zoom_decrease(MainContext &)
+static MainState evolve_param_zoom_decrease(MainContext &/*context*/)
 {
     if (g_evolve_param_box_count)
     {
@@ -189,7 +189,7 @@ static MainState evolve_param_zoom_decrease(MainContext &)
     return MainState::NOTHING;
 }
 
-static MainState evolve_param_zoom_increase(MainContext &)
+static MainState evolve_param_zoom_increase(MainContext &/*context*/)
 {
     if (g_evolve_param_box_count)
     {
@@ -201,7 +201,7 @@ static MainState evolve_param_zoom_increase(MainContext &)
     return MainState::NOTHING;
 }
 
-static MainState evolver_zoom_in(MainContext &)
+static MainState evolver_zoom_in(MainContext &/*context*/)
 {
     if (g_zoom_enabled)
     {
@@ -238,7 +238,7 @@ static MainState evolver_zoom_in(MainContext &)
     return MainState::NOTHING;
 }
 
-static MainState evolver_zoom_out(MainContext &)
+static MainState evolver_zoom_out(MainContext &/*context*/)
 {
     if (g_box_count)
     {
