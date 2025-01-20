@@ -1094,7 +1094,7 @@ MainState request_zoom_out(MainContext &context)
     return MainState::NOTHING;
 }
 
-MainState skew_zoom_left(MainContext &)
+MainState skew_zoom_left(MainContext &/*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
@@ -1107,7 +1107,7 @@ MainState skew_zoom_left(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState skew_zoom_right(MainContext &)
+MainState skew_zoom_right(MainContext &/*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
@@ -1120,7 +1120,7 @@ MainState skew_zoom_right(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState decrease_zoom_aspect(MainContext &)
+MainState decrease_zoom_aspect(MainContext &/*context*/)
 {
     if (g_box_count)
     {
@@ -1129,7 +1129,7 @@ MainState decrease_zoom_aspect(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState increase_zoom_aspect(MainContext &)
+MainState increase_zoom_aspect(MainContext &/*context*/)
 {
     if (g_box_count)
     {
@@ -1138,7 +1138,7 @@ MainState increase_zoom_aspect(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState zoom_box_in(MainContext &)
+MainState zoom_box_in(MainContext &/*context*/)
 {
     if (g_zoom_enabled)
     {
@@ -1165,7 +1165,7 @@ MainState zoom_box_in(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState zoom_box_out(MainContext &)
+MainState zoom_box_out(MainContext &/*context*/)
 {
     if (g_box_count)
     {
@@ -1181,7 +1181,7 @@ MainState zoom_box_out(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState zoom_box_increase_rotation(MainContext &)
+MainState zoom_box_increase_rotation(MainContext &/*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
@@ -1190,7 +1190,7 @@ MainState zoom_box_increase_rotation(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState zoom_box_decrease_rotation(MainContext &)
+MainState zoom_box_decrease_rotation(MainContext &/*context*/)
 {
     if (g_box_count && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
@@ -1199,13 +1199,13 @@ MainState zoom_box_decrease_rotation(MainContext &)
     return MainState::NOTHING;
 }
 
-MainState zoom_box_increase_color(MainContext &)
+MainState zoom_box_increase_color(MainContext &/*context*/)
 {
     g_box_color += key_count(ID_KEY_CTL_INSERT);
     return MainState::NOTHING;
 }
 
-MainState zoom_box_decrease_color(MainContext &)
+MainState zoom_box_decrease_color(MainContext &/*context*/)
 {
     g_box_color -= key_count(ID_KEY_CTL_DEL);
     return MainState::NOTHING;
