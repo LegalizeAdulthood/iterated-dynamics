@@ -309,14 +309,7 @@ bool fn_x_fn_setup()
             g_symmetry = SymmetryType::PI_SYM;
         }
     }
-    if (g_cur_fractal_specific->is_integer)
-    {
-        return julia_long_setup();
-    }
-    else
-    {
-        return julia_fp_setup();
-    }
+    return g_cur_fractal_specific->is_integer ? julia_long_setup() : julia_fp_setup();
 }
 
 int trig_x_trig_fractal()
@@ -387,14 +380,7 @@ bool sqr_trig_setup()
     default:
         break;
     }
-    if (g_cur_fractal_specific->is_integer)
-    {
-        return julia_long_setup();
-    }
-    else
-    {
-        return julia_fp_setup();
-    }
+    return g_cur_fractal_specific->is_integer ? julia_long_setup() : julia_fp_setup();
 }
 
 int sqr_trig_fractal()
