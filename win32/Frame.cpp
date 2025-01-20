@@ -325,77 +325,77 @@ void Frame::on_timer(HWND window, UINT id)
     m_timed_out = true;
 }
 
-static void frame_OnClose(HWND window)
+static void frame_on_close(HWND window)
 {
     g_frame.on_close(window);
 }
 
-static void frame_OnSetFocus(HWND window, HWND old_focus)
+static void frame_on_set_focus(HWND window, HWND old_focus)
 {
     g_frame.on_set_focus(window, old_focus);
 }
 
-static void frame_OnKillFocus(HWND window, HWND old_focus)
+static void frame_on_kill_focus(HWND window, HWND old_focus)
 {
     g_frame.on_kill_focus(window, old_focus);
 }
 
-static void frame_OnPaint(HWND window)
+static void frame_on_paint(HWND window)
 {
     g_frame.on_paint(window);
 }
 
-static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+static void frame_on_key_down(HWND hwnd, UINT vk, BOOL down, int repeat, UINT flags)
 {
-    g_frame.on_key_down(hwnd, vk, fDown, cRepeat, flags);
+    g_frame.on_key_down(hwnd, vk, down, repeat, flags);
 }
 
-static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
+static void frame_on_char(HWND hwnd, TCHAR ch, int repeat)
 {
-    g_frame.on_char(hwnd, ch, cRepeat);
+    g_frame.on_char(hwnd, ch, repeat);
 }
 
-static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
+static void frame_on_get_min_max_info(HWND hwnd, LPMINMAXINFO info)
 {
     g_frame.on_get_min_max_info(hwnd, info);
 }
 
-static void frame_OnTimer(HWND window, UINT id)
+static void frame_on_timer(HWND window, UINT id)
 {
     g_frame.on_timer(window, id);
 }
 
-static void frame_OnLButtonUp(HWND window, int x, int y, UINT key_flags)
+static void frame_on_l_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_left_button_up(window, x, y, key_flags);
 }
 
-static void frame_OnRButtonUp(HWND window, int x, int y, UINT key_flags)
+static void frame_on_r_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_right_button_up(window, x, y, key_flags);
 }
 
-static void frame_OnMButtonUp(HWND window, int x, int y, UINT key_flags)
+static void frame_on_m_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
 
-static void frame_OnMouseMove(HWND window, int x, int y, UINT key_flags)
+static void frame_on_mouse_move(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_mouse_move(window,x, y, key_flags);
 }
 
-static void frame_OnLButtonDown(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_l_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     g_frame.on_left_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_OnRButtonDown(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_r_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     g_frame.on_right_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_OnMButtonDown(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_m_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
@@ -405,55 +405,55 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
     switch (message)
     {
     case WM_CLOSE:
-        HANDLE_WM_CLOSE(window, wp, lp, frame_OnClose);
+        HANDLE_WM_CLOSE(window, wp, lp, frame_on_close);
         break;
     case WM_GETMINMAXINFO:
-        HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo);
+        HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_on_get_min_max_info);
         break;
     case WM_SETFOCUS:
-        HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);
+        HANDLE_WM_SETFOCUS(window, wp, lp, frame_on_set_focus);
         break;
     case WM_KILLFOCUS:
-        HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);
+        HANDLE_WM_KILLFOCUS(window, wp, lp, frame_on_kill_focus);
         break;
     case WM_PAINT:
-        HANDLE_WM_PAINT(window, wp, lp, frame_OnPaint);
+        HANDLE_WM_PAINT(window, wp, lp, frame_on_paint);
         break;
     case WM_KEYDOWN:
-        HANDLE_WM_KEYDOWN(window, wp, lp, frame_OnKeyDown);
+        HANDLE_WM_KEYDOWN(window, wp, lp, frame_on_key_down);
         break;
     case WM_SYSKEYDOWN:
-        HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);
+        HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_on_key_down);
         break;
     case WM_CHAR:
-        HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);
+        HANDLE_WM_CHAR(window, wp, lp, frame_on_char);
         break;
     case WM_TIMER:
-        HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);
+        HANDLE_WM_TIMER(window, wp, lp, frame_on_timer);
         break;
     case WM_LBUTTONUP:
-        HANDLE_WM_LBUTTONUP(window, wp, lp, frame_OnLButtonUp);
+        HANDLE_WM_LBUTTONUP(window, wp, lp, frame_on_l_button_up);
         break;
     case WM_RBUTTONUP:
-        HANDLE_WM_RBUTTONUP(window, wp, lp, frame_OnRButtonUp);
+        HANDLE_WM_RBUTTONUP(window, wp, lp, frame_on_r_button_up);
         break;
     case WM_MBUTTONUP:
-        HANDLE_WM_MBUTTONUP(window, wp, lp, frame_OnMButtonUp);
+        HANDLE_WM_MBUTTONUP(window, wp, lp, frame_on_m_button_up);
         break;
     case WM_MOUSEMOVE:
-        HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_OnMouseMove);
+        HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_on_mouse_move);
         break;
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
-        HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_OnLButtonDown);
+        HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_on_l_button_down);
         break;
     case WM_RBUTTONDOWN:
     case WM_RBUTTONDBLCLK:
-        HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_OnRButtonDown);
+        HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_on_r_button_down);
         break;
     case WM_MBUTTONDOWN:
     case WM_MBUTTONDBLCLK:
-        HANDLE_WM_MBUTTONDOWN(window, wp, lp, frame_OnMButtonDown);
+        HANDLE_WM_MBUTTONDOWN(window, wp, lp, frame_on_m_button_down);
         break;
     default:
         return DefWindowProc(window, message, wp, lp);
@@ -463,10 +463,10 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
 
 void Frame::init(HINSTANCE instance, LPCSTR title)
 {
-    LPCTSTR windowClass = _T("IdFrame");
+    LPCTSTR window_class = _T("IdFrame");
     WNDCLASS  wc;
 
-    bool status = GetClassInfo(instance, windowClass, &wc) != 0;
+    bool status = GetClassInfo(instance, window_class, &wc) != 0;
     if (!status)
     {
         m_instance = instance;
@@ -481,7 +481,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
         wc.lpszMenuName = m_title.c_str();
-        wc.lpszClassName = windowClass;
+        wc.lpszClassName = window_class;
 
         status = RegisterClass(&wc) != 0;
     }
@@ -1277,7 +1277,7 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
     }
 
     // [button][dir]
-    static constexpr int mouse_keys[4][4]{
+    static constexpr int MOUSE_KEYS[4][4]{
         {ID_KEY_RIGHT_ARROW, ID_KEY_LEFT_ARROW, ID_KEY_DOWN_ARROW, ID_KEY_UP_ARROW}, // movement
         {0, 0, ID_KEY_PAGE_DOWN, ID_KEY_PAGE_UP},                                    // left button
         {ID_KEY_CTL_PLUS, ID_KEY_CTL_MINUS, ID_KEY_CTL_DEL, ID_KEY_CTL_INSERT},      // right button
