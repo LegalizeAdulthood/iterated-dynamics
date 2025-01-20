@@ -92,7 +92,7 @@ static int  next_command(
     int *line_offset,
     CmdFile mode);
 static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode);
-static void arg_error(char const *);
+static void arg_error(char const *bad_arg);
 static void init_vars_run();
 static void init_vars_restart();
 static void init_vars_fractal();
@@ -979,7 +979,7 @@ struct CommandHandler
 };
 
 // For deprecated command parameters that are still parsed but ignored.
-static CmdArgFlags cmd_deprecated(const Command &)
+static CmdArgFlags cmd_deprecated(const Command &/*cmd*/)
 {
     return CmdArgFlags::NONE;
 }
@@ -998,7 +998,7 @@ static CmdArgFlags cmd_adapter(const Command &cmd)
 }
 
 // 8514 API no longer used; silently gobble any argument
-static CmdArgFlags cmd_afi(const Command &)
+static CmdArgFlags cmd_afi(const Command &/*cmd*/)
 {
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
