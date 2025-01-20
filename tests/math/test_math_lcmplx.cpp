@@ -10,7 +10,7 @@
 
 using namespace testing;
 
-inline long fixed_point(long value)
+static long fixed_point(long value)
 {
     return value << g_bit_shift;
 }

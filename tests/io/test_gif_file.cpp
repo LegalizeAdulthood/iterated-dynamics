@@ -213,7 +213,7 @@ std::ostream &operator<<(std::ostream &str, const ArrayPrinter<std::uint8_t, N> 
 }
 
 template <int N>
-std::string trim(const char (&field)[N])
+static std::string trim(const char (&field)[N])
 {
     const std::string text{field, N};
     const auto pos = text.find_last_not_of('\0');
