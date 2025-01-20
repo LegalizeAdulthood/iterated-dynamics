@@ -65,7 +65,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
     int size;
     int width;
 
-    msg("Paginating HTML.");
+    MSG_MSG("Paginating HTML.");
 
     for (Topic &t : g_src.topics)
     {
@@ -281,7 +281,7 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
             {
                 g_current_src_filename = link.src_file;
                 g_src_line = link.src_line;
-                warn(0, "Hot-link destination is not in the document.");
+                MSG_WARN(0, "Hot-link destination is not in the document.");
                 g_src_line = -1;
             }
             return false;
@@ -404,7 +404,7 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     {
         std::replace(m_link_markup.begin(), m_link_markup.end(), c, '_');
     }
-    constexpr const char *BAD_CHARS{R"bad_chars(=|/()<>@")bad_chars"};
+    constexpr const char *const BAD_CHARS{R"bad_chars(=|/()<>@")bad_chars"};
     for (auto pos = m_link_markup.find_first_of(BAD_CHARS); pos != std::string::npos;
          pos = m_link_markup.find_first_of(BAD_CHARS, pos))
     {
@@ -634,7 +634,7 @@ void AsciiDocCompiler::print_ascii_doc()
 
     const std::string fname{m_options.fname2.empty() ? DEFAULT_ADOC_FNAME : m_options.fname2};
 
-    msg(("Writing " + fname).c_str());
+    MSG_MSG(("Writing " + fname).c_str());
 
     const Content &toc = g_src.contents[0];
     if (toc.num_topic != 1)

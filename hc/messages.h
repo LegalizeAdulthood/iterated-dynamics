@@ -15,15 +15,15 @@
 #define SHOW_ERROR_LINE
 
 #ifdef SHOW_ERROR_LINE
-#   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
-#   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
-#   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
-#   define msg(...)    (g_quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
+#   define MSG_ERROR(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
+#   define MSG_WARN(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
+#   define MSG_NOTICE(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
+#   define MSG_MSG(...)    (g_quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
 #else
-#define error(...)  error_msg(__VA_ARGS__)
-#define warn(...)   warn_msg(__VA_ARGS__)
-#define notice(...) notice_msg(__VA_ARGS__)
-#define msg(...)    msg_msg(__VA_ARGS__)
+#define MSG_ERROR(...)  error_msg(__VA_ARGS__)
+#define MSG_WARN(...)   warn_msg(__VA_ARGS__)
+#define MSG_NOTICE(...) notice_msg(__VA_ARGS__)
+#define MSG_MSG(...)    msg_msg(__VA_ARGS__)
 #endif
 
 namespace hc

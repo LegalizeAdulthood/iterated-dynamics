@@ -182,7 +182,7 @@ std::ostream &operator<<(std::ostream &str, const Topic &topic)
 // calculate topic_num/topic_off for each link.
 void HelpCompiler::make_hot_links()
 {
-    msg("Making hot-links.");
+    MSG_MSG("Making hot-links.");
 
     // Calculate topic_num for all entries in DocContents.  Also set
     // "TF_IN_DOC" flag for all topics included in the document.
@@ -228,7 +228,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
     int size;
     int width;
 
-    msg("Paginating online help.");
+    MSG_MSG("Paginating online help.");
 
     for (Topic &t : g_src.topics)
     {
@@ -432,7 +432,7 @@ void HelpCompiler::set_hot_link_doc_page()
             {
                 g_current_src_filename = l.src_file;
                 g_src_line = l.src_line; // pretend we are still in the source...
-                error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
+                MSG_ERROR(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
                 g_src_line = -1;  // back to reality
             }
             else
@@ -446,7 +446,7 @@ void HelpCompiler::set_hot_link_doc_page()
             {
                 g_current_src_filename = l.src_file;
                 g_src_line = l.src_line; // pretend again
-                error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
+                MSG_ERROR(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
                 g_src_line = -1;
             }
             else
@@ -520,7 +520,7 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
             {
                 g_current_src_filename = link.src_file;
                 g_src_line    = link.src_line;
-                warn(0, "Hot-link destination is not in the document.");
+                MSG_WARN(0, "Hot-link destination is not in the document.");
                 g_src_line = -1;
             }
             return false;
@@ -594,7 +594,7 @@ void HelpCompiler::paginate_document()
         return;
     }
 
-    msg("Paginating document.");
+    MSG_MSG("Paginating document.");
 
     PaginateDocIno info;
     info.topic_num = -1;
@@ -687,14 +687,14 @@ void HelpCompiler::write_header()
         {
             throw std::runtime_error(R"msg(Cannot create ")msg" + fname + R"msg(".)msg");
         }
-        msg("Writing: %s", fname.c_str());
+        MSG_MSG("Writing: %s", fname.c_str());
         write_header_file(fname.c_str(), hdr);
         std::fclose(hdr);
-        notice("Id must be re-compiled.");
+        MSG_NOTICE("Id must be re-compiled.");
         return;
     }
 
-    msg("Comparing: %s", fname.c_str());
+    MSG_MSG("Comparing: %s", fname.c_str());
 
     std::FILE *temp = std::fopen(TEMP_FNAME, "wt");
 
@@ -715,12 +715,12 @@ void HelpCompiler::write_header()
 
     if (compare_files(temp, hdr)) // if they are different...
     {
-        msg("Updating: %s", fname.c_str());
+        MSG_MSG("Updating: %s", fname.c_str());
         std::fclose(temp);
         std::fclose(hdr);
         std::remove(fname.c_str());             // delete the old hdr file
         std::rename(TEMP_FNAME, fname.c_str()); // rename the temp to the hdr file
-        notice("Id must be re-compiled.");
+        MSG_NOTICE("Id must be re-compiled.");
     }
     else
     {
@@ -747,7 +747,7 @@ void HelpCompiler::write_link_source()
     }
 
     {
-        msg("Writing: help_links.h");
+        MSG_MSG("Writing: help_links.h");
         std::ofstream hdr{"help_links.h"};
         hdr << //
             "// SPDX-License-Identifier: GPL-3.0-only\n"
@@ -774,7 +774,7 @@ void HelpCompiler::write_link_source()
     }
 
     {
-        msg("Writing: help_links.cpp");
+        MSG_MSG("Writing: help_links.cpp");
         std::ofstream src{"help_links.cpp"};
         src << //
             "// SPDX-License-Identifier: GPL-3.0-only\n"
@@ -981,7 +981,7 @@ void HelpCompiler::write_help()
         throw std::runtime_error(R"msg(Cannot create .HLP file: ")msg" + std::string{fname} + R"msg(".)msg");
     }
 
-    msg("Writing: %s", fname);
+    MSG_MSG("Writing: %s", fname);
 
     write_help(hlp);
 
@@ -1112,7 +1112,7 @@ void HelpCompiler::print_document()
         throw std::runtime_error(".SRC has no DocContents.");
     }
 
-    msg("Printing to: %s", fname);
+    MSG_MSG("Printing to: %s", fname);
 
     PrintDocInfo info;
     info.topic_num = -1;
@@ -1247,7 +1247,7 @@ void HelpCompiler::add_hlp_to_exe()
         throw std::runtime_error("Unable to open \"" + std::string{hlp_fname} + '"');
     }
 
-    msg("Appending %s to %s", hlp_fname, exe_fname);
+    MSG_MSG("Appending %s to %s", hlp_fname, exe_fname);
 
     // first, check and see if any help is currently installed
 
@@ -1262,7 +1262,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     if (hs.sig == HELP_SIG)
     {
-        warn(0, "Overwriting previous help. (Version=%d)", static_cast<int>(hs.version));
+        MSG_WARN(0, "Overwriting previous help. (Version=%d)", static_cast<int>(hs.version));
     }
     else
     {
@@ -1283,7 +1283,7 @@ void HelpCompiler::add_hlp_to_exe()
         throw std::runtime_error("Help signature not found in " + std::string{hlp_fname});
     }
 
-    msg("Help file %s Version=%d", hlp_fname, hs.version);
+    MSG_MSG("Help file %s Version=%d", hlp_fname, hs.version);
 
     // append the help stuff, overwriting old help (if any)
 
@@ -1341,7 +1341,7 @@ void HelpCompiler::delete_hlp_from_exe()
         throw std::runtime_error(R"msg(Unable to open ")msg" + std::string{exe_fname} + '"');
     }
 
-    msg("Deleting help from %s", exe_fname);
+    MSG_MSG("Deleting help from %s", exe_fname);
 
     // see if any help is currently installed
 
@@ -1478,15 +1478,15 @@ void HelpCompiler::compile()
 
     if (g_src.hdr_filename.empty())
     {
-        error(0, "No .H file defined.  (Use \"~HdrFile=\")");
+        MSG_ERROR(0, "No .H file defined.  (Use \"~HdrFile=\")");
     }
     if (g_src.hlp_filename.empty())
     {
-        error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
+        MSG_ERROR(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
     }
     if (g_src.version == -1)
     {
-        warn(0, "No help version has been defined.  (Use \"~Version=\")");
+        MSG_WARN(0, "No help version has been defined.  (Use \"~Version=\")");
     }
 
     // order of these is very important...
