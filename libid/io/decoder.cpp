@@ -374,7 +374,7 @@ static short get_next_code()
             {
                 return s_num_avail_bytes;
             }
-            else if (s_num_avail_bytes)
+            if (s_num_avail_bytes)
             {
                 get_bytes(s_byte_buff, s_num_avail_bytes);
             }
@@ -397,7 +397,7 @@ static short get_next_code()
             {
                 return s_num_avail_bytes;
             }
-            else if (s_num_avail_bytes)
+            if (s_num_avail_bytes)
             {
                 get_bytes(s_byte_buff, s_num_avail_bytes);
             }
