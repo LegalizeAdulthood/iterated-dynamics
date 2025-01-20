@@ -1052,7 +1052,7 @@ static bool compress(int row_limit)
                     ent = s_code_tab[i];
                     continue;
                 }
-                else if ((long)s_h_tab[i] < 0)        // empty slot
+                if ((long) s_h_tab[i] < 0) // empty slot
                 {
                     goto nomatch;
                 }
