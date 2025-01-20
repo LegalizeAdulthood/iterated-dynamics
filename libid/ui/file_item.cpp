@@ -189,11 +189,8 @@ bool find_file_item(std::string &filename, char const *item_name, std::FILE **fi
                         found = true;
                         break;
                     }
-                    else
-                    {
-                        std::fclose(infile);
-                        infile = nullptr;
-                    }
+                    std::fclose(infile);
+                    infile = nullptr;
                 }
             }
             out = fr_find_next();
