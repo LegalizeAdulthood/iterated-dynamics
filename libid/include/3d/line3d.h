@@ -21,8 +21,9 @@ enum class RayTraceFormat
     DXF = 7
 };
 
-extern int                   g_ambient;             // Ambient= parameter value
-extern int const             g_bad_value;
+constexpr int BAD_VALUE{-10000}; // set bad values to this
+
+extern int                   g_ambient;                 // Ambient= parameter value
 extern Byte                  g_background_color[];
 extern bool                  g_brief;
 extern int                   g_converge_x_adjust;

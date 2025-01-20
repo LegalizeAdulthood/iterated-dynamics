@@ -274,9 +274,9 @@ int perspective(VECTOR v)
 
     if (denom >= 0.0)
     {
-        v[0] = g_bad_value;   // clipping will catch these values
-        v[1] = g_bad_value;   // so they won't plot values BEHIND viewer
-        v[2] = g_bad_value;
+        v[0] = BAD_VALUE;   // clipping will catch these values
+        v[1] = BAD_VALUE;   // so they won't plot values BEHIND viewer
+        v[2] = BAD_VALUE;
         return -1;
     }
     v[0] = (v[0]*g_view[2] - g_view[0]*v[2])/denom;
@@ -326,7 +326,7 @@ int long_vec_mat_mul_persp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR 
         long denom = view[2] - tmp[2];
         if (denom >= 0)           // bail out if point is "behind" us
         {
-            t[0] = g_bad_value;
+            t[0] = BAD_VALUE;
             t[0] = t[0] << bit_shift;
             t[1] = t[0];
             t[2] = t[0];
@@ -362,7 +362,7 @@ int long_persp(LVECTOR v, LVECTOR view, int bit_shift)
     long denom = view[2] - v[2];
     if (denom >= 0)              // bail out if point is "behind" us
     {
-        v[0] = g_bad_value;
+        v[0] = BAD_VALUE;
         v[0] = v[0] << bit_shift;
         v[1] = v[0];
         v[2] = v[0];

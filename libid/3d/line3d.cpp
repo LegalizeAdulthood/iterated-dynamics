@@ -55,7 +55,7 @@ struct MinMax
 };
 
 // routines in this module
-static int first_time(int, VECTOR);
+static int first_time(int line_len, VECTOR v);
 static void hsv_to_rgb(
     Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val);
 static int line3d_mem();
@@ -64,21 +64,21 @@ static int rgb_to_hsv(
 static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len);
 static void set_upr_lwr();
 static int end_object(bool tri_out);
-static int off_screen(PointColor);
-static int out_triangle(FPointColor, FPointColor, FPointColor, int, int, int);
+static int off_screen(PointColor pt);
+static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c1, int c2, int c3);
 static int ray_header();
 static int start_object();
-static void draw_light_box(double *, double *, MATRIX);
-static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect);
+static void draw_light_box(double *origin, double *direct, MATRIX light_m);
+static void draw_rect(VECTOR v0, VECTOR v1, VECTOR v2, VECTOR v3, int color, bool rect);
 static void line3d_cleanup();
-static void clip_color(int, int, int);
-static void interp_color(int, int, int);
-static void put_triangle(PointColor, PointColor, PointColor, int);
-static void put_min_max(int, int, int);
+static void clip_color(int x, int y, int color);
+static void interp_color(int x, int y, int color);
+static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color);
+static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
-static void transparent_clip_color(int, int, int);
+static void transparent_clip_color(int x, int y, int color);
 static void vec_draw_line(double *, double *, int color);
-static void file_error(char const *File_Name1, int ERROR);
+static void file_error(char const *filename, int error);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -117,23 +117,23 @@ static double s_aspect{};                        // aspect ratio
 static int s_even_odd_row{};                     //
 static std::vector<float> s_sin_theta_array;     // all sine thetas go here
 static std::vector<float> s_cos_theta_array;     // all cosine thetas go here
-static double s_rXr_scale{};                     // precalculation factor
+static double s_r_x_r_scale{};                   // precalculation factor
 static bool s_persp{};                           // flag for indicating perspective transformations
-static PointColor s_p1{}, s_p2{}, s_p3{};             //
-static FPointColor s_f_bad{};                        // out of range value
-static PointColor s_bad{};                            // out of range value
+static PointColor s_p1{}, s_p2{}, s_p3{};        //
+static FPointColor s_f_bad{};                    // out of range value
+static PointColor s_bad{};                       // out of range value
 static long s_num_tris{};                        // number of triangles output to ray trace file
-static std::vector<FPointColor> s_f_last_row;        //
+static std::vector<FPointColor> s_f_last_row;    //
 static int s_real_v{};                           // Actual value of V for fillytpe>4 monochrome images
 static int s_error{};                            //
 static std::string s_targa_temp("fractemp.tga"); //
 static int s_p = 250;                            // Perspective dist used when viewing light vector
 static int const s_bad_check = -3000;            // check values against this to determine if good
-static std::vector<PointColor> s_last_row;            // this array remembers the previous line
+static std::vector<PointColor> s_last_row;       // this array remembers the previous line
 static std::vector<MinMax> s_min_max_x;          // array of min and max x values used in triangle fill
 static VECTOR s_cross{};                         //
 static VECTOR s_tmp_cross{};                     //
-static PointColor s_old_last{};                       // old pixels
+static PointColor s_old_last{};                  // old pixels
 
 // global variables defined here
 void (*g_standard_plot)(int, int, int){};
@@ -154,14 +154,13 @@ int g_xx_adjust{};
 int g_yy_adjust{};
 int g_x_shift{};
 int g_y_shift{};
-int const g_bad_value{-10000};         // set bad values to this
 RayTraceFormat g_raytrace_format{};  // Flag to generate Ray trace compatible files in 3d
 bool g_brief{};                        // 1 = short ray trace files
 VECTOR g_view{};                       // position of observer for perspective
 
 int line3d(Byte * pixels, unsigned line_len)
 {
-    int RND;
+    int rnd;
     float f_water = 0.0F;       // transformed WATERLINE for ray trace files
     double r0;
     int x_center0 = 0;
@@ -384,7 +383,7 @@ int line3d(Byte * pixels, unsigned line_len)
             }
             else if (s_r_scale > 0.0)
             {
-                r = s_radius - s_rXr_scale + s_radius_factor * (double) f_cur.color * cos_theta;
+                r = s_radius - s_r_x_r_scale + s_radius_factor * (double) f_cur.color * cos_theta;
             }
             else
             {
@@ -547,25 +546,25 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             if (cur.color > g_water_line)
             {
-                RND = rand15() >> 8;     // 7-bit number
-                RND = RND * RND >> s_rand_factor;  // n-bit number
+                rnd = rand15() >> 8;     // 7-bit number
+                rnd = rnd * rnd >> s_rand_factor;  // n-bit number
 
                 if (std::rand() & 1)
                 {
-                    RND = -RND;   // Make +/- n-bit number
+                    rnd = -rnd;   // Make +/- n-bit number
                 }
 
-                if ((int)(cur.color) + RND >= g_colors)
+                if ((int)(cur.color) + rnd >= g_colors)
                 {
                     cur.color = g_colors - 2;
                 }
-                else if ((int)(cur.color) + RND <= g_water_line)
+                else if ((int)(cur.color) + rnd <= g_water_line)
                 {
                     cur.color = g_water_line + 1;
                 }
                 else
                 {
-                    cur.color = cur.color + RND;
+                    cur.color = cur.color + rnd;
                 }
                 s_real_color = (Byte)cur.color;
             }
@@ -939,7 +938,7 @@ static void vec_draw_line(double *v1, double *v2, int color)
 
 static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
 {
-    VECTOR S[2][4];              // Holds the top and bottom points, S[0][]=bottom
+    VECTOR s[2][4];              // Holds the top and bottom points, S[0][]=bottom
 
     /* define corners of box fractal is in x,y,z plane "b" stands for
      * "bottom" - these points are the corners of the screen in the x-y plane.
@@ -956,43 +955,43 @@ static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z
     {
         for (int i = 0; i < 3; i++)
         {
-            S[1][j][i] = 0;
-            S[0][j][i] = S[1][j][i];
+            s[1][j][i] = 0;
+            s[0][j][i] = s[1][j][i];
         }
     }
 
-    S[1][2][0] = g_logical_screen_x_dots - 1;
-    S[1][1][0] = S[1][2][0];
-    S[0][2][0] = S[1][1][0];
-    S[0][1][0] = S[0][2][0];
-    S[1][3][1] = g_logical_screen_y_dots - 1;
-    S[1][2][1] = S[1][3][1];
-    S[0][3][1] = S[1][2][1];
-    S[0][2][1] = S[0][3][1];
-    S[1][3][2] = s_z_coord - 1;
-    S[1][2][2] = S[1][3][2];
-    S[1][1][2] = S[1][2][2];
-    S[1][0][2] = S[1][1][2];
+    s[1][2][0] = g_logical_screen_x_dots - 1;
+    s[1][1][0] = s[1][2][0];
+    s[0][2][0] = s[1][1][0];
+    s[0][1][0] = s[0][2][0];
+    s[1][3][1] = g_logical_screen_y_dots - 1;
+    s[1][2][1] = s[1][3][1];
+    s[0][3][1] = s[1][2][1];
+    s[0][2][1] = s[0][3][1];
+    s[1][3][2] = s_z_coord - 1;
+    s[1][2][2] = s[1][3][2];
+    s[1][1][2] = s[1][2][2];
+    s[1][0][2] = s[1][1][2];
 
     for (int i = 0; i < 4; ++i)
     {
         // transform points
-        vec_mat_mul(S[0][i], m, S[0][i]);
-        vec_mat_mul(S[1][i], m, S[1][i]);
+        vec_mat_mul(s[0][i], m, s[0][i]);
+        vec_mat_mul(s[1][i], m, s[1][i]);
 
         // update minimums and maximums
-        *x_min = std::min(S[0][i][0], *x_min);
-        *x_max = std::max(S[0][i][0], *x_max);
-        *x_min = std::min(S[1][i][0], *x_min);
-        *x_max = std::max(S[1][i][0], *x_max);
-        *y_min = std::min(S[0][i][1], *y_min);
-        *y_max = std::max(S[0][i][1], *y_max);
-        *y_min = std::min(S[1][i][1], *y_min);
-        *y_max = std::max(S[1][i][1], *y_max);
-        *z_min = std::min(S[0][i][2], *z_min);
-        *z_max = std::max(S[0][i][2], *z_max);
-        *z_min = std::min(S[1][i][2], *z_min);
-        *z_max = std::max(S[1][i][2], *z_max);
+        *x_min = std::min(s[0][i][0], *x_min);
+        *x_max = std::max(s[0][i][0], *x_max);
+        *x_min = std::min(s[1][i][0], *x_min);
+        *x_max = std::max(s[1][i][0], *x_max);
+        *y_min = std::min(s[0][i][1], *y_min);
+        *y_max = std::max(s[0][i][1], *y_max);
+        *y_min = std::min(s[1][i][1], *y_min);
+        *y_max = std::max(s[1][i][1], *y_max);
+        *z_min = std::min(s[0][i][2], *z_min);
+        *z_max = std::max(s[0][i][2], *z_max);
+        *z_min = std::min(s[1][i][2], *z_min);
+        *z_max = std::max(s[1][i][2], *z_max);
     }
 
     if (show)
@@ -1001,13 +1000,13 @@ static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z
         {
             for (int i = 0; i < 4; i++)
             {
-                perspective(S[0][i]);
-                perspective(S[1][i]);
+                perspective(s[0][i]);
+                perspective(s[1][i]);
             }
         }
 
         // Keep the box surrounding the fractal
-        for (auto &elem : S)
+        for (auto &elem : s)
         {
             for (auto &elem_i : elem)
             {
@@ -1016,12 +1015,12 @@ static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z
             }
         }
 
-        draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);      // Bottom
+        draw_rect(s[0][0], s[0][1], s[0][2], s[0][3], 2, true);      // Bottom
 
-        draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 5, false);      // Sides
-        draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 6, false);
+        draw_rect(s[0][0], s[1][0], s[0][1], s[1][1], 5, false);      // Sides
+        draw_rect(s[0][2], s[1][2], s[0][3], s[1][3], 6, false);
 
-        draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 8, true);      // Top
+        draw_rect(s[1][0], s[1][1], s[1][2], s[1][3], 8, true);      // Top
     }
 }
 
@@ -1032,16 +1031,16 @@ static void corners(MATRIX m, bool show, double *x_min, double *y_min, double *z
 
 static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 {
-    VECTOR S[2][4]{};
+    VECTOR s[2][4]{};
 
-    S[0][0][0] = origin[0];
-    S[1][0][0] = S[0][0][0];
-    S[0][0][1] = origin[1];
-    S[1][0][1] = S[0][0][1];
+    s[0][0][0] = origin[0];
+    s[1][0][0] = s[0][0][0];
+    s[0][0][1] = origin[1];
+    s[1][0][1] = s[0][0][1];
 
-    S[1][0][2] = direct[2];
+    s[1][0][2] = direct[2];
 
-    for (auto &elem : S)
+    for (auto &elem : s)
     {
         elem[1][0] = elem[0][0];
         elem[1][1] = direct[1];
@@ -1059,8 +1058,8 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     {
         for (int i = 0; i < 4; i++)
         {
-            vec_mat_mul(S[0][i], light_m, S[0][i]);
-            vec_mat_mul(S[1][i], light_m, S[1][i]);
+            vec_mat_mul(s[0][i], light_m, s[0][i]);
+            vec_mat_mul(s[1][i], light_m, s[1][i]);
         }
     }
 
@@ -1070,28 +1069,28 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
     for (int i = 0; i < 4; i++)
     {
-        perspective(S[0][i]);
-        perspective(S[1][i]);
+        perspective(s[0][i]);
+        perspective(s[1][i]);
     }
     g_view[2] = temp;              // Restore perspective distance
 
     // Adjust for aspect
     for (int i = 0; i < 4; i++)
     {
-        S[0][i][0] = S[0][i][0] * s_aspect;
-        S[1][i][0] = S[1][i][0] * s_aspect;
+        s[0][i][0] = s[0][i][0] * s_aspect;
+        s[1][i][0] = s[1][i][0] * s_aspect;
     }
 
     // draw box connecting transformed points. NOTE order and COLORS
-    draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, true);
+    draw_rect(s[0][0], s[0][1], s[0][2], s[0][3], 2, true);
 
-    vec_draw_line(S[0][0], S[1][2], 8);
+    vec_draw_line(s[0][0], s[1][2], 8);
 
     // sides
-    draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 4, false);
-    draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 5, false);
+    draw_rect(s[0][0], s[1][0], s[0][1], s[1][1], 4, false);
+    draw_rect(s[0][2], s[1][2], s[0][3], s[1][3], 5, false);
 
-    draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 3, true);
+    draw_rect(s[1][0], s[1][1], s[1][2], s[1][3], 3, true);
 
     // Draw the "arrow head"
     for (int i = -3; i < 4; i++)
@@ -1100,32 +1099,32 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
         {
             if (std::abs(i) + std::abs(j) < 6)
             {
-                g_plot((int)(S[1][2][0] + i), (int)(S[1][2][1] + j), 10);
+                g_plot((int)(s[1][2][0] + i), (int)(s[1][2][1] + j), 10);
             }
         }
     }
 }
 
-static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, bool rect)
+static void draw_rect(VECTOR v0, VECTOR v1, VECTOR v2, VECTOR v3, int color, bool rect)
 {
-    VECTOR V[4];
+    VECTOR v[4];
 
     // Since V[2] is not used by vdraw_line don't bother setting it
     for (int i = 0; i < 2; i++)
     {
-        V[0][i] = V0[i];
-        V[1][i] = V1[i];
-        V[2][i] = V2[i];
-        V[3][i] = V3[i];
+        v[0][i] = v0[i];
+        v[1][i] = v1[i];
+        v[2][i] = v2[i];
+        v[3][i] = v3[i];
     }
     if (rect)                    // Draw a rectangle
     {
         for (int i = 0; i < 4; i++)
         {
-            if (std::abs(V[i][0] - V[(i + 1) % 4][0]) < -2 * s_bad_check
-                && std::abs(V[i][1] - V[(i + 1) % 4][1]) < -2 * s_bad_check)
+            if (std::abs(v[i][0] - v[(i + 1) % 4][0]) < -2 * s_bad_check
+                && std::abs(v[i][1] - v[(i + 1) % 4][1]) < -2 * s_bad_check)
             {
-                vec_draw_line(V[i], V[(i + 1) % 4], color);
+                vec_draw_line(v[i], v[(i + 1) % 4], color);
             }
         }
     }
@@ -1134,10 +1133,10 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 3; i += 2)
         {
-            if (std::abs(V[i][0] - V[i + 1][0]) < -2 * s_bad_check
-                && std::abs(V[i][1] - V[i + 1][1]) < -2 * s_bad_check)
+            if (std::abs(v[i][0] - v[i + 1][0]) < -2 * s_bad_check
+                && std::abs(v[i][1] - v[i + 1][1]) < -2 * s_bad_check)
             {
-                vec_draw_line(V[i], V[i + 1], color);
+                vec_draw_line(v[i], v[i + 1], color);
             }
         }
     }
@@ -1337,14 +1336,14 @@ static void interp_color(int x, int y, int color)
     int d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
     int d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
 
-    int D = (d1 + d2 + d3) << 1;
-    if (D)
+    int d = (d1 + d2 + d3) << 1;
+    if (d)
     {
         /* calculate a weighted average of colors long casts prevent integer
            overflow. This can evaluate to zero */
         color = (int)(((long)(d2 + d3) * (long) s_p1.color +
                        (long)(d1 + d3) * (long) s_p2.color +
-                       (long)(d1 + d2) * (long) s_p3.color) / D);
+                       (long)(d1 + d2) * (long) s_p3.color) / d);
     }
 
     if (0 <= x && x < g_logical_screen_x_dots
@@ -1359,7 +1358,7 @@ static void interp_color(int x, int y, int color)
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
             {
-                D = targa_color(x, y, color);
+                d = targa_color(x, y, color);
             }
         }
 
@@ -1367,7 +1366,7 @@ static void interp_color(int x, int y, int color)
         {
             if (s_real_v && g_targa_out)
             {
-                color = D;
+                color = d;
             }
             else
             {
@@ -1393,10 +1392,10 @@ static void interp_color(int x, int y, int color)
 
 int targa_color(int x, int y, int color)
 {
-    unsigned long H;
-    unsigned long S;
-    unsigned long V;
-    Byte RGB[3];
+    unsigned long hue;
+    unsigned long sat;
+    unsigned long val;
+    Byte rgb[3];
 
     if (g_fill_type == FillType::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_true_color)
     {
@@ -1407,58 +1406,58 @@ int targa_color(int x, int y, int color)
     {
     case TrueColorMode::DEFAULT_COLOR:
     default:
-        RGB[0] = (Byte)(g_dac_box[s_real_color][0] << 2); // Move color space to
-        RGB[1] = (Byte)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
-        RGB[2] = (Byte)(g_dac_box[s_real_color][2] << 2); // from 64 colors
+        rgb[0] = (Byte)(g_dac_box[s_real_color][0] << 2); // Move color space to
+        rgb[1] = (Byte)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
+        rgb[2] = (Byte)(g_dac_box[s_real_color][2] << 2); // from 64 colors
         break;
 
     case TrueColorMode::ITERATE:
-        RGB[0] = (Byte)((g_real_color_iter >> 16) & 0xff);  // red
-        RGB[1] = (Byte)((g_real_color_iter >> 8) & 0xff);   // green
-        RGB[2] = (Byte)((g_real_color_iter) & 0xff);        // blue
+        rgb[0] = (Byte)((g_real_color_iter >> 16) & 0xff);  // red
+        rgb[1] = (Byte)((g_real_color_iter >> 8) & 0xff);   // green
+        rgb[2] = (Byte)((g_real_color_iter) & 0xff);        // blue
         break;
     }
 
     // Now lets convert it to HSV
-    rgb_to_hsv(RGB[0], RGB[1], RGB[2], &H, &S, &V);
+    rgb_to_hsv(rgb[0], rgb[1], rgb[2], &hue, &sat, &val);
 
     // Modify original S and V components
     if (g_fill_type > FillType::SOLID_FILL && !(g_glasses_type == 1 || g_glasses_type == 2))
     {
         // Adjust for Ambient
-        V = (V * (65535L - (unsigned)(color * s_i_ambient))) / 65535L;
+        val = (val * (65535L - (unsigned)(color * s_i_ambient))) / 65535L;
     }
 
     if (g_haze)
     {
         // Haze lowers sat of colors
-        S = (unsigned long)(S * s_haze_mult) / 100;
-        if (V >= 32640)           // Haze reduces contrast
+        sat = (unsigned long)(sat * s_haze_mult) / 100;
+        if (val >= 32640)           // Haze reduces contrast
         {
-            V = V - 32640;
-            V = (unsigned long)((V * s_haze_mult) / 100);
-            V = V + 32640;
+            val = val - 32640;
+            val = (unsigned long)((val * s_haze_mult) / 100);
+            val = val + 32640;
         }
         else
         {
-            V = 32640 - V;
-            V = (unsigned long)((V * s_haze_mult) / 100);
-            V = 32640 - V;
+            val = 32640 - val;
+            val = (unsigned long)((val * s_haze_mult) / 100);
+            val = 32640 - val;
         }
     }
     // Now lets convert it back to RGB. Original Hue, modified Sat and Val
-    hsv_to_rgb(&RGB[0], &RGB[1], &RGB[2], H, S, V);
+    hsv_to_rgb(&rgb[0], &rgb[1], &rgb[2], hue, sat, val);
 
     if (s_real_v)
     {
-        V = (35 * (int) RGB[0] + 45 * (int) RGB[1] + 20 * (int) RGB[2]) / 100;
+        val = (35 * (int) rgb[0] + 45 * (int) rgb[1] + 20 * (int) rgb[2]) / 100;
     }
 
     // Now write the color triple to its transformed location
     // on the disk.
-    targa_write_disk(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset, RGB[0], RGB[1], RGB[2]);
+    targa_write_disk(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset, rgb[0], rgb[1], rgb[2]);
 
-    return (int)(255 - V);
+    return (int)(255 - val);
 }
 
 static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
@@ -1490,18 +1489,18 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 
 **************************************************************************/
 
-static void file_error(char const *File_Name1, int ERROR)
+static void file_error(char const *filename, int error)
 {
     char msg_buf[200];
 
-    s_error = ERROR;
-    switch (ERROR)
+    s_error = error;
+    switch (error)
     {
     case 1:                      // Can't Open
-        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, couldn't open  < %s >", File_Name1);
+        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, couldn't open  < %s >", filename);
         break;
     case 2:                      // Not enough room
-        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, ran out of disk space. < %s >", File_Name1);
+        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, ran out of disk space. < %s >", filename);
         break;
     case 3:                      // Image wrong size
         std::snprintf(msg_buf, std::size(msg_buf), "OOPS, image wrong size\n");
@@ -1708,35 +1707,35 @@ static int rgb_to_hsv(
     Byte red, Byte green, Byte blue, unsigned long *hue, unsigned long *sat, unsigned long *val)
 {
     *val = red;
-    Byte MIN = green;
+    Byte min = green;
     if (red < green)
     {
         *val = green;
-        MIN = red;
+        min = red;
         if (green < blue)
         {
             *val = blue;
         }
         if (blue < red)
         {
-            MIN = blue;
+            min = blue;
         }
     }
     else
     {
         if (blue < green)
         {
-            MIN = blue;
+            min = blue;
         }
         if (red < blue)
         {
             *val = blue;
         }
     }
-    unsigned long DENOM = *val - MIN;
-    if (*val != 0 && DENOM != 0)
+    unsigned long denom = *val - min;
+    if (*val != 0 && denom != 0)
     {
-        *sat = ((DENOM << 16) / *val) - 1;
+        *sat = ((denom << 16) / *val) - 1;
     }
     else
     {
@@ -1748,46 +1747,46 @@ static int rgb_to_hsv(
         *val = *val << 8;
         return 1;               // v or s or both are 0
     }
-    if (*val == MIN)
+    if (*val == min)
     {
         *hue = 0;
         *val = *val << 8;
         return 0;
     }
-    unsigned long R1 = (((*val - red) * 60) << 6) / DENOM; // distance of color from red
-    unsigned long G1 = (((*val - green) * 60) << 6) / DENOM; // distance of color from green
-    unsigned long B1 = (((*val - blue) * 60) << 6) / DENOM; // distance of color from blue
+    unsigned long r1 = (((*val - red) * 60) << 6) / denom; // distance of color from red
+    unsigned long g1 = (((*val - green) * 60) << 6) / denom; // distance of color from green
+    unsigned long b1 = (((*val - blue) * 60) << 6) / denom; // distance of color from blue
     if (*val == red)
     {
-        if (MIN == green)
+        if (min == green)
         {
-            *hue = (300 << 6) + B1;
+            *hue = (300 << 6) + b1;
         }
         else
         {
-            *hue = (60 << 6) - G1;
+            *hue = (60 << 6) - g1;
         }
     }
     if (*val == green)
     {
-        if (MIN == blue)
+        if (min == blue)
         {
-            *hue = (60 << 6) + R1;
+            *hue = (60 << 6) + r1;
         }
         else
         {
-            *hue = (180 << 6) - B1;
+            *hue = (180 << 6) - b1;
         }
     }
     if (*val == blue)
     {
-        if (MIN == red)
+        if (min == red)
         {
-            *hue = (180 << 6) + G1;
+            *hue = (180 << 6) + g1;
         }
         else
         {
-            *hue = (300 << 6) - R1;
+            *hue = (300 << 6) - r1;
         }
     }
     *val = *val << 8;
@@ -1801,44 +1800,44 @@ static void hsv_to_rgb(
     {
         hue = hue % 23040;            // Makes h circular
     }
-    int I = (int) (hue / 3840);
-    int RMD = (int) (hue % 3840);       // RMD = fractional part of H
+    int i = (int) (hue / 3840);
+    int rmd = (int) (hue % 3840);       // RMD = fractional part of H
 
-    unsigned long P1 = ((val * (65535L - sat)) / 65280L) >> 8;
-    unsigned long P2 = (((val * (65535L - (sat * RMD) / 3840)) / 65280L) - 1) >> 8;
-    unsigned long P3 = (((val * (65535L - (sat * (3840 - RMD)) / 3840)) / 65280L)) >> 8;
+    unsigned long p1 = ((val * (65535L - sat)) / 65280L) >> 8;
+    unsigned long p2 = (((val * (65535L - (sat * rmd) / 3840)) / 65280L) - 1) >> 8;
+    unsigned long p3 = (((val * (65535L - (sat * (3840 - rmd)) / 3840)) / 65280L)) >> 8;
     val = val >> 8;
-    switch (I)
+    switch (i)
     {
     case 0:
         *red = (Byte) val;
-        *green = (Byte) P3;
-        *blue = (Byte) P1;
+        *green = (Byte) p3;
+        *blue = (Byte) p1;
         break;
     case 1:
-        *red = (Byte) P2;
+        *red = (Byte) p2;
         *green = (Byte) val;
-        *blue = (Byte) P1;
+        *blue = (Byte) p1;
         break;
     case 2:
-        *red = (Byte) P1;
+        *red = (Byte) p1;
         *green = (Byte) val;
-        *blue = (Byte) P3;
+        *blue = (Byte) p3;
         break;
     case 3:
-        *red = (Byte) P1;
-        *green = (Byte) P2;
+        *red = (Byte) p1;
+        *green = (Byte) p2;
         *blue = (Byte) val;
         break;
     case 4:
-        *red = (Byte) P3;
-        *green = (Byte) P1;
+        *red = (Byte) p3;
+        *green = (Byte) p1;
         *blue = (Byte) val;
         break;
     case 5:
         *red = (Byte) val;
-        *green = (Byte) P1;
-        *blue = (Byte) P2;
+        *green = (Byte) p1;
+        *blue = (Byte) p2;
         break;
     }
 }
@@ -2652,7 +2651,7 @@ static int first_time(int line_len, VECTOR v)
         s_radius = (double)(g_logical_screen_y_dots) / 2;
 
         // precalculate factor
-        s_rXr_scale = s_radius * s_r_scale;
+        s_r_x_r_scale = s_radius * s_r_scale;
 
         s_scale_y = g_sphere_radius/100.0;
         s_scale_x = s_scale_y;
@@ -2783,11 +2782,11 @@ static int first_time(int line_len, VECTOR v)
     }
 
     // bad has values caught by clipping
-    s_bad.x = g_bad_value;
+    s_bad.x = BAD_VALUE;
     s_f_bad.x = (float) s_bad.x;
-    s_bad.y = g_bad_value;
+    s_bad.y = BAD_VALUE;
     s_f_bad.y = (float) s_bad.y;
-    s_bad.color = g_bad_value;
+    s_bad.color = BAD_VALUE;
     s_f_bad.color = (float) s_bad.color;
     for (int i = 0; i < (int) line_len; i++)
     {
