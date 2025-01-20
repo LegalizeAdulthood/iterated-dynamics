@@ -1948,7 +1948,10 @@ static bool is_visible_window(
     FractalInfo const *info,
     ExtBlock5 const *blk_5_info)
 {
-    DblCoords tl, tr, bl, br;
+    DblCoords tl;
+    DblCoords tr;
+    DblCoords bl;
+    DblCoords br;
     double too_big = std::sqrt(sqr((double) g_screen_x_dots) + sqr((double) g_screen_y_dots)) * 1.5;
     // arbitrary value... stops browser zooming out too far
     int corner_count = 0;
@@ -2161,10 +2164,14 @@ static bool is_visible_window(
 
 static bool params_ok(FractalInfo const *info)
 {
-    double tmp_param3, tmp_param4;
-    double tmp_param5, tmp_param6;
-    double tmp_param7, tmp_param8;
-    double tmp_param9, tmp_param10;
+    double tmp_param3;
+    double tmp_param4;
+    double tmp_param5;
+    double tmp_param6;
+    double tmp_param7;
+    double tmp_param8;
+    double tmp_param9;
+    double tmp_param10;
 
     if (info->version > 6)
     {
