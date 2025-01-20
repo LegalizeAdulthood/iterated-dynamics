@@ -22,7 +22,7 @@ enum
 
 // routines in this module
 static bool guess_row(bool first_pass, int y, int block_size);
-static void plot_block(int, int, int, int);
+static void plot_block(int build_row, int x, int y, int color);
 
 // MAX_X_BLK defn must match fracsubr.c
 
