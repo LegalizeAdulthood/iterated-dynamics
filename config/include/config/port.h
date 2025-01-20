@@ -75,7 +75,7 @@ typedef void (*SignalHandler)(int);
 
 // ================================== linux definitions
 #endif
-// Uses big_access32(), big_set32(), ... functions instead of macros.
+// Uses BIG_ACCESS32(), BIG_SET32(), ... functions instead of macros.
 // Some little endian machines may require this as well.
 #if BYTE_ORDER == BIG_ENDIAN
 #define ACCESS_BY_BYTE

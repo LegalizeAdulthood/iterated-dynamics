@@ -111,20 +111,20 @@ LDouble scale256(LDouble f, int n);
 
 #ifdef ACCESS_BY_BYTE
 // prototypes
-U32 big_access32(Byte *addr);
-U16 big_access16(Byte *addr);
-S16 big_accessS16(S16 *addr);
-U32 big_set32(Byte *addr, U32 val);
-U16 big_set16(Byte *addr, U16 val);
-S16 big_setS16(S16 *addr, S16 val);
+U32 BIG_ACCESS32(Byte *addr);
+U16 BIG_ACCESS16(Byte *addr);
+S16 BIG_ACCESS_S16(S16 *addr);
+U32 BIG_SET32(Byte *addr, U32 val);
+U16 BIG_SET16(Byte *addr, U16 val);
+S16 BIG_SET_S16(S16 *addr, S16 val);
 #else
 // equivalent defines
-#define big_access32(addr)   (*(U32 *)(addr))
-#define big_access16(addr)   (*(U16 *)(addr))
-#define big_accessS16(addr)   (*(S16 *)(addr))
-#define big_set32(addr, val) (*(U32 *)(addr) = (U32)(val))
-#define big_set16(addr, val) (*(U16 *)(addr) = (U16)(val))
-#define big_setS16(addr, val) (*(S16 *)(addr) = (S16)(val))
+#define BIG_ACCESS32(addr)   (*(U32 *)(addr))
+#define BIG_ACCESS16(addr)   (*(U16 *)(addr))
+#define BIG_ACCESS_S16(addr)   (*(S16 *)(addr))
+#define BIG_SET32(addr, val) (*(U32 *)(addr) = (U32)(val))
+#define BIG_SET16(addr, val) (*(U16 *)(addr) = (U16)(val))
+#define BIG_SET_S16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 void bn_hex_dump(BigNum r);
 BigNum str_to_bn(BigNum r, char *s);

@@ -148,22 +148,22 @@ double wide number can then be ignored.
 * the bignumber format could be reversed.
 **************************************************************************/
 #ifdef ACCESS_BY_BYTE
-U32 big_access32(Byte *addr)
+U32 BIG_ACCESS32(Byte *addr)
 {
     return addr[0] | ((U32)addr[1] << 8) | ((U32)addr[2] << 16) | ((U32)addr[3] << 24);
 }
 
-U16 big_access16(Byte *addr)
+U16 BIG_ACCESS16(Byte *addr)
 {
     return (U16)addr[0] | ((U16)addr[1] << 8);
 }
 
-S16 big_accessS16(S16 *addr)
+S16 BIG_ACCESS_S16(S16 *addr)
 {
     return (S16)((Byte *)addr)[0] | ((S16)((Byte *)addr)[1] << 8);
 }
 
-U32 big_set32(Byte *addr, U32 val)
+U32 BIG_SET32(Byte *addr, U32 val)
 {
     addr[0] = (Byte)(val&0xff);
     addr[1] = (Byte)((val >> 8)&0xff);
@@ -172,14 +172,14 @@ U32 big_set32(Byte *addr, U32 val)
     return val;
 }
 
-U16 big_set16(Byte *addr, U16 val)
+U16 BIG_SET16(Byte *addr, U16 val)
 {
     addr[0] = (Byte)(val&0xff);
     addr[1] = (Byte)((val >> 8)&0xff);
     return val;
 }
 
-S16 big_setS16(S16 *addr, S16 val)
+S16 BIG_SET_S16(S16 *addr, S16 val)
 {
     ((Byte *)addr)[0] = (Byte)(val&0xff);
     ((Byte *)addr)[1] = (Byte)((val >> 8)&0xff);
@@ -277,10 +277,10 @@ BigNum str_to_bn(BigNum r, char *s)
                 *ones_byte = (Byte)value;
                 break;
             case 2:
-                big_set16(ones_byte, (U16)value);
+                BIG_SET16(ones_byte, (U16)value);
                 break;
             case 4:
-                big_set32(ones_byte, value);
+                BIG_SET32(ones_byte, value);
                 break;
             }
         }
@@ -295,10 +295,10 @@ BigNum str_to_bn(BigNum r, char *s)
             *ones_byte = (Byte)value;
             break;
         case 2:
-            big_set16(ones_byte, (U16)value);
+            BIG_SET16(ones_byte, (U16)value);
             break;
         case 4:
-            big_set32(ones_byte, value);
+            BIG_SET32(ones_byte, value);
             break;
         }
     }
@@ -368,10 +368,10 @@ char *unsafe_bn_to_str(char *s, int dec, BigNum r)
         value = *ones_byte;
         break;
     case 2:
-        value = big_access16(ones_byte);
+        value = BIG_ACCESS16(ones_byte);
         break;
     case 4:
-        value = big_access32(ones_byte);
+        value = BIG_ACCESS32(ones_byte);
         break;
     }
     strcpy(s, std::to_string(value).c_str());
@@ -406,10 +406,10 @@ BigNum int_to_bn(BigNum r, long value)
         *ones_byte = (Byte)value;
         break;
     case 2:
-        big_set16(ones_byte, (U16)value);
+        BIG_SET16(ones_byte, (U16)value);
         break;
     case 4:
-        big_set32(ones_byte, value);
+        BIG_SET32(ones_byte, value);
         break;
     }
     return r;
@@ -430,10 +430,10 @@ long bn_to_int(BigNum n)
         value = *ones_byte;
         break;
     case 2:
-        value = big_access16(ones_byte);
+        value = BIG_ACCESS16(ones_byte);
         break;
     case 4:
-        value = big_access32(ones_byte);
+        value = BIG_ACCESS32(ones_byte);
         break;
     }
     return value;
@@ -462,10 +462,10 @@ BigNum float_to_bn(BigNum r, LDouble f)
         *ones_byte = (Byte)f;
         break;
     case 2:
-        big_set16(ones_byte, (U16)f);
+        BIG_SET16(ones_byte, (U16)f);
         break;
     case 4:
-        big_set32(ones_byte, (U32)f);
+        BIG_SET32(ones_byte, (U32)f);
         break;
     }
 
