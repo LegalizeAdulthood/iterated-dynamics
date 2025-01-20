@@ -72,4 +72,4 @@ extern void                (*g_m_trig3)();
 std::string show_trig();
 void trig_details(char *buf);
 int set_trig_array(int k, char const *name);
-void set_trig_pointers(int);
+void set_trig_pointers(int which);
