@@ -86,7 +86,7 @@ static void decomposition();
 static void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
 static bool y_sym_split(int y_axis_col, bool y_axis_between);
-static void put_true_color_disk(int, int, int);
+static void put_true_color_disk(int x, int y, int color);
 static long auto_log_map();
 
 static DComplex s_saved{};            //
@@ -3306,6 +3306,6 @@ static void put_true_color_disk(int x, int y, int color)
 }
 
 // Do nothing plot!!!
-void no_plot(int, int, int)
+void no_plot(int /*x*/, int /*y*/, int /*color*/)
 {
 }
