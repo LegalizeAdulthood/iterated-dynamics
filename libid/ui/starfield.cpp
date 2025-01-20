@@ -44,13 +44,13 @@ static int gaussian_number(int probability, int range)
     p = multiply((long)s_distribution << 16, p, 16);
     if (!(RAND15() % (s_distribution - (int)(p >> 16) + 1)))
     {
-        long Accum = 0;
+        long accum = 0;
         for (int n = 0; n < s_slope; n++)
         {
-            Accum += RAND15();
+            accum += RAND15();
         }
-        Accum /= s_slope;
-        int r = (int)(multiply((long)range << 15, Accum, 15) >> 14);
+        accum /= s_slope;
+        int r = (int)(multiply((long)range << 15, accum, 15) >> 14);
         r = r - range;
         if (r < 0)
         {
