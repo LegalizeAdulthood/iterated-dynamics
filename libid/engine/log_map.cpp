@@ -27,8 +27,6 @@ static unsigned long s_lf{};
 */
 void setup_log_table()
 {
-    float l, f, c, m;
-
     // set up on-the-fly variables
     if (g_log_map_flag > 0)
     {
