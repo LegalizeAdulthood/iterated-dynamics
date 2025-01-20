@@ -48,85 +48,85 @@
 //       # prefix denotes U32 parameters
 
 // for Mandelbrots
-static const char *const s_real_z0{"Real Perturbation of Z(0)"};
-static const char *const s_imag_z0{"Imaginary Perturbation of Z(0)"};
+static constexpr const char *REAL_Z0{"Real Perturbation of Z(0)"};
+static constexpr const char *IMAG_Z0{"Imaginary Perturbation of Z(0)"};
 
 // for Julias
-static const char *const s_real_param{"Real Part of Parameter"};
-static const char *const s_imag_param{"Imaginary Part of Parameter"};
+static constexpr const char *REAL_PARAM{"Real Part of Parameter"};
+static constexpr const char *IMAG_PARAM{"Imaginary Part of Parameter"};
 
 // for Newtons
-static const char *const s_newt_degree{"+Polynomial Degree (>= 2)"};
+static constexpr const char *NEWT_DEGREE{"+Polynomial Degree (>= 2)"};
 
 // for MarksMandel/Julia
-static const char *const s_exponent{"Real part of Exponent"};
-static const char *const s_im_exponent{"Imag part of Exponent"};
+static constexpr const char *RE_EXPONENT{"Real part of Exponent"};
+static constexpr const char *IM_EXPONENT{"Imag part of Exponent"};
 
 // for Lorenz
-static const char *const s_time_step{"Time Step"};
+static constexpr const char *TIME_STEP{"Time Step"};
 
 // for formula
-static const char *const s_p1_real{"Real portion of p1"};
-static const char *const s_p2_real{"Real portion of p2"};
-static const char *const s_p3_real{"Real portion of p3"};
-static const char *const s_p4_real{"Real portion of p4"};
-static const char *const s_p5_real{"Real portion of p5"};
-static const char *const s_p1_imag{"Imaginary portion of p1"};
-static const char *const s_p2_imag{"Imaginary portion of p2"};
-static const char *const s_p3_imag{"Imaginary portion of p3"};
-static const char *const s_p4_imag{"Imaginary portion of p4"};
-static const char *const s_p5_imag{"Imaginary portion of p5"};
+static constexpr const char *P1_REAL{"Real portion of p1"};
+static constexpr const char *P2_REAL{"Real portion of p2"};
+static constexpr const char *P3_REAL{"Real portion of p3"};
+static constexpr const char *P4_REAL{"Real portion of p4"};
+static constexpr const char *P5_REAL{"Real portion of p5"};
+static constexpr const char *P1_IMAG{"Imaginary portion of p1"};
+static constexpr const char *P2_IMAG{"Imaginary portion of p2"};
+static constexpr const char *P3_IMAG{"Imaginary portion of p3"};
+static constexpr const char *P4_IMAG{"Imaginary portion of p4"};
+static constexpr const char *P5_IMAG{"Imaginary portion of p5"};
 
 // trig functions
-static const char *const s_re_coef_trg1{"Real Coefficient First Function"};
-static const char *const s_im_coef_trg1{"Imag Coefficient First Function"};
-static const char *const s_re_coef_trg2{"Real Coefficient Second Function"};
-static const char *const s_im_coef_trg2{"Imag Coefficient Second Function"};
+static constexpr const char *RE_COEF_TRIG1{"Real Coefficient First Function"};
+static constexpr const char *IM_COEF_TRIG1{"Imag Coefficient First Function"};
+static constexpr const char *RE_COEF_TRIG2{"Real Coefficient Second Function"};
+static constexpr const char *IM_COEF_TRIG2{"Imag Coefficient Second Function"};
 
 // KAM Torus
-static const char *const s_kam_angle{"Angle (radians)"};
-static const char *const s_kam_step{"Step size"};
-static const char *const s_kam_stop{"Stop value"};
-static const char *const s_points_per_orbit{"+Points per orbit"};
+static constexpr const char *KAM_ANGLE{"Angle (radians)"};
+static constexpr const char *KAM_STEP{"Step size"};
+static constexpr const char *KAM_STOP{"Stop value"};
+static constexpr const char *POINTS_PER_ORBIT{"+Points per orbit"};
 
 // popcorn and julia popcorn generalized
-static const char *const s_step_x{"Step size (real)"};
-static const char *const s_step_y{"Step size (imaginary)"};
-static const char *const s_constant_x{"Constant C (real)"};
-static const char *const s_constant_y{"Constant C (imaginary)"};
+static constexpr const char *STEP_X{"Step size (real)"};
+static constexpr const char *STEP_Y{"Step size (imaginary)"};
+static constexpr const char *CONSTANT_X{"Constant C (real)"};
+static constexpr const char *CONSTANT_Y{"Constant C (imaginary)"};
 
 // bifurcations
-static const char *const s_filt{"+Filter Cycles"};
-static const char *const s_seed{"Seed Population"};
+static constexpr const char *FILT{"+Filter Cycles"};
+static constexpr const char *SEED_POP{"Seed Population"};
 
 // frothy basins
-static const char *const s_froth_mapping{"+Apply mapping once (1) or twice (2)"};
-static const char *const s_froth_shade{"+Enter non-zero value for alternate color shading"};
-static const char *const s_froth_a_value{"A (imaginary part of C)"};
+static constexpr const char *FROTH_MAPPING{"+Apply mapping once (1) or twice (2)"};
+static constexpr const char *FROTH_SHADE{"+Enter non-zero value for alternate color shading"};
+static constexpr const char *FROTH_A_VALUE{"A (imaginary part of C)"};
 
 // plasma and ant
-static const char *const s_random_seed{"+Random Seed Value (0 = Random, 1 = Reuse Last)"};
+static constexpr const char *RANDOM_SEED{"+Random Seed Value (0 = Random, 1 = Reuse Last)"};
 
 // ifs
-static const char *const s_color_method{"+Coloring method (0,1)"};
+static constexpr const char *COLOR_METHOD{"+Coloring method (0,1)"};
 
 // phoenix fractals
-static const char *const s_degree_z{"Degree = 0 | >= 2 | <= -3"};
+static constexpr const char *DEGREE_Z{"Degree = 0 | >= 2 | <= -3"};
 
 // julia inverse
-static const char *const s_max_hits{"Max Hits per Pixel"};
+static constexpr const char *MAX_HITS{"Max Hits per Pixel"};
 
 // halley
-static const char *const s_order{"+Order (integer > 1)"};
-static const char *const s_real_relax{"Real Relaxation coefficient"};
-static const char *const s_epsilon{"Epsilon"};
-static const char *const s_imag_relax{"Imag Relaxation coefficient"};
+static constexpr const char *ORDER{"+Order (integer > 1)"};
+static constexpr const char *REAL_RELAX{"Real Relaxation coefficient"};
+static constexpr const char *EPSILON{"Epsilon"};
+static constexpr const char *IMAG_RELAX{"Imag Relaxation coefficient"};
 
 // cellular
-static const char *const s_cell_init{"#Initial String | 0 = Random | -1 = Reuse Last Random"};
-static const char *const s_cell_rule{"#Rule = # of digits (see below) | 0 = Random"};
-static const char *const s_cell_type{"+Type (see below)"};
-static const char *const s_cell_start{"#Starting Row Number"};
+static constexpr const char *CELL_INIT{"#Initial String | 0 = Random | -1 = Reuse Last Random"};
+static constexpr const char *CELL_RULE{"#Rule = # of digits (see below) | 0 = Random"};
+static constexpr const char *CELL_TYPE{"+Type (see below)"};
+static constexpr const char *CELL_START{"#Starting Row Number"};
 
 // bailout values
 enum
@@ -144,14 +144,14 @@ MoreParams g_more_fractal_params[] =
     {FractalType::ICON_3D,              {"Omega", "+Degree of symmetry", "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
     {FractalType::HYPER_CMPLX_J_FP,     {"zj", "zk", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
     {FractalType::QUAT_JUL_FP,          {"zj", "zk", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::PHOENIX_CPLX,         {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::PHOENIX_FP_CPLX,      {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::MAND_PHOENIX_CPLX,    {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::MAND_PHOENIX_FP_CPLX, {s_degree_z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::FORMULA,              {s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::FORMULA_FP,           {s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-    {FractalType::ANT,                  {"+Wrap?", s_random_seed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
-    {FractalType::MANDELBROT_MIX4,      {s_p3_real, s_p3_imag, "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::PHOENIX_CPLX,         {DEGREE_Z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::PHOENIX_FP_CPLX,      {DEGREE_Z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::MAND_PHOENIX_CPLX,    {DEGREE_Z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::MAND_PHOENIX_FP_CPLX, {DEGREE_Z, "", "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::FORMULA,              {P3_REAL, P3_IMAG, P4_REAL, P4_IMAG, P5_REAL, P5_IMAG}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::FORMULA_FP,           {P3_REAL, P3_IMAG, P4_REAL, P4_IMAG, P5_REAL, P5_IMAG}, {0, 0, 0, 0, 0, 0}},
+    {FractalType::ANT,                  {"+Wrap?", RANDOM_SEED, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
+    {FractalType::MANDELBROT_MIX4,      {P3_REAL, P3_IMAG, "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
     {FractalType::NO_FRACTAL,           {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}, {0, 0, 0, 0, 0, 0}}
 };
 // clang-format on
@@ -182,72 +182,72 @@ AlternateMath g_alternate_math[] =
 };
 
 // These are only needed for types with both integer and float variations
-const char *const s_t_barnsley_j1{"*barnsleyj1"};
-const char *const s_t_barnsley_j2{"*barnsleyj2"};
-const char *const s_t_barnsley_j3{"*barnsleyj3"};
-const char *const s_t_barnsley_m1{"*barnsleym1"};
-const char *const s_t_barnsley_m2{"*barnsleym2"};
-const char *const s_t_barnsley_m3{"*barnsleym3"};
-const char *const s_t_bif_plus_sin_pi{"*bif+sinpi"};
-const char *const s_t_bif_eq_sin_pi{"*bif=sinpi"};
-const char *const s_t_bif_lambda{"*biflambda"};
-const char *const s_t_bif_may{"*bifmay"};
-const char *const s_t_bif_stewart{"*bifstewart"};
-const char *const s_t_bifurcation{"*bifurcation"};
-const char *const s_t_fn_z_plus_fn_pix{"*fn(z)+fn(pix)"};
-const char *const s_t_fn_zz{"*fn(z*z)"};
-const char *const s_t_fn_fn{"*fn*fn"};
-const char *const s_t_fn_z_plus_z{"*fn*z+z"};
-const char *const s_t_fn_plus_fn{"*fn+fn"};
-const char *const s_t_formula{"*formula"};
-const char *const s_t_henon{"*henon"};
-const char *const s_t_ifs3d{"*ifs3d"};
-const char *const s_t_jul_fn_plus_exp{"*julfn+exp"};
-const char *const s_t_jul_fn_plus_z_sqrd{"*julfn+zsqrd"};
-const char *const s_t_julia{"*julia"};
-const char *const s_t_julia_fn_or_fn{"*julia(fn||fn)"};
-const char *const s_t_julia4{"*julia4"};
-const char *const s_t_julia_inverse{"*julia_inverse"};
-const char *const s_t_julibrot{"*julibrot"};
-const char *const s_t_jul_z_power{"*julzpower"};
-const char *const s_t_kam_torus{"*kamtorus"};
-const char *const s_t_kam_torus3d{"*kamtorus3d"};
-const char *const s_t_lambda{"*lambda"};
-const char *const s_t_lambda_fn_or_fn{"*lambda(fn||fn)"};
-const char *const s_t_lambda_fn{"*lambdafn"};
-const char *const s_t_lorenz{"*lorenz"};
-const char *const s_t_lorenz3d{"*lorenz3d"};
-const char *const s_t_mandel{"*mandel"};
-const char *const s_t_mandel_fn_or_fn{"*mandel(fn||fn)"};
-const char *const s_t_mandel4{"*mandel4"};
-const char *const s_t_mandel_fn{"*mandelfn"};
-const char *const s_t_mandel_lambda{"*mandellambda"};
-const char *const s_t_mand_phoenix{"*mandphoenix"};
-const char *const s_t_mand_phoenix_cplx{"*mandphoenixclx"};
-const char *const s_t_man_fn_plus_exp{"*manfn+exp"};
-const char *const s_t_man_fn_plus_z_sqrd{"*manfn+zsqrd"};
-const char *const s_t_man_lam_fn_or_fn{"*manlam(fn||fn)"};
-const char *const s_t_man_o_war{"*manowar"};
-const char *const s_t_man_o_war_j{"*manowarj"};
-const char *const s_t_man_z_power{"*manzpower"};
-const char *const s_t_marks_julia{"*marksjulia"};
-const char *const s_t_marks_mandel{"*marksmandel"};
-const char *const s_t_marks_mandel_pwr{"*marksmandelpwr"};
-const char *const s_t_newt_basin{"*newtbasin"};
-const char *const s_t_newton{"*newton"};
-const char *const s_t_phoenix{"*phoenix"};
-const char *const s_t_phoenix_cplx{"*phoenixcplx"};
-const char *const s_t_popcorn{"*popcorn"};
-const char *const s_t_popcorn_jul{"*popcornjul"};
-const char *const s_t_rossler3d{"*rossler3d"};
-const char *const s_t_sierpinski{"*sierpinski"};
-const char *const s_t_spider{"*spider"};
-const char *const s_t_sqr_1_div_fn{"*sqr(1/fn)"};
-const char *const s_t_sqr_fn{"*sqr(fn)"};
-const char *const s_t_tims_error{"*tim's_error"};
-const char *const s_t_unity{"*unity"};
-const char *const s_t_frothy_basin{"*frothybasin"};
-const char *const s_t_halley{"*halley"};
+static constexpr const char *T_BARNSLEY_J1{"*barnsleyj1"};
+static constexpr const char *T_BARNSLEY_J2{"*barnsleyj2"};
+static constexpr const char *T_BARNSLEY_J3{"*barnsleyj3"};
+static constexpr const char *T_BARNSLEY_M1{"*barnsleym1"};
+static constexpr const char *T_BARNSLEY_M2{"*barnsleym2"};
+static constexpr const char *T_BARNSLEY_M3{"*barnsleym3"};
+static constexpr const char *T_BIF_PLUS_SIN_PI{"*bif+sinpi"};
+static constexpr const char *T_BIF_EQ_SIN_PI{"*bif=sinpi"};
+static constexpr const char *T_BIF_LAMBDA{"*biflambda"};
+static constexpr const char *T_BIF_MAY{"*bifmay"};
+static constexpr const char *T_BIF_STEWART{"*bifstewart"};
+static constexpr const char *T_BIFURCATION{"*bifurcation"};
+static constexpr const char *T_FN_Z_PLUS_FN_PIX{"*fn(z)+fn(pix)"};
+static constexpr const char *T_FN_ZZ{"*fn(z*z)"};
+static constexpr const char *T_FN_FN{"*fn*fn"};
+static constexpr const char *T_FN_Z_PLUS_Z{"*fn*z+z"};
+static constexpr const char *T_FN_PLUS_FN{"*fn+fn"};
+static constexpr const char *T_FORMULA{"*formula"};
+static constexpr const char *T_HENON{"*henon"};
+static constexpr const char *T_IFS3D{"*ifs3d"};
+static constexpr const char *T_JUL_FN_PLUS_EXP{"*julfn+exp"};
+static constexpr const char *T_JUL_FN_PLUS_Z_SQRD{"*julfn+zsqrd"};
+static constexpr const char *T_JULIA{"*julia"};
+static constexpr const char *T_JULIA_FN_OR_FN{"*julia(fn||fn)"};
+static constexpr const char *T_JULIA4{"*julia4"};
+static constexpr const char *T_JULIA_INVERSE{"*julia_inverse"};
+static constexpr const char *T_JULIBROT{"*julibrot"};
+static constexpr const char *T_JUL_Z_POWER{"*julzpower"};
+static constexpr const char *T_KAM_TORUS{"*kamtorus"};
+static constexpr const char *T_KAM_TORUS3D{"*kamtorus3d"};
+static constexpr const char *T_LAMBDA{"*lambda"};
+static constexpr const char *T_LAMBDA_FN_OR_FN{"*lambda(fn||fn)"};
+static constexpr const char *T_LAMBDA_FN{"*lambdafn"};
+static constexpr const char *T_LORENZ{"*lorenz"};
+static constexpr const char *T_LORENZ3D{"*lorenz3d"};
+static constexpr const char *T_MANDEL{"*mandel"};
+static constexpr const char *T_MANDEL_FN_OR_FN{"*mandel(fn||fn)"};
+static constexpr const char *T_MANDEL4{"*mandel4"};
+static constexpr const char *T_MANDEL_FN{"*mandelfn"};
+static constexpr const char *T_MANDEL_LAMBDA{"*mandellambda"};
+static constexpr const char *T_MAND_PHOENIX{"*mandphoenix"};
+static constexpr const char *T_MAND_PHOENIX_CPLX{"*mandphoenixclx"};
+static constexpr const char *T_MAN_FN_PLUS_EXP{"*manfn+exp"};
+static constexpr const char *T_MAN_FN_PLUS_Z_SQRD{"*manfn+zsqrd"};
+static constexpr const char *T_MAN_LAM_FN_OR_FN{"*manlam(fn||fn)"};
+static constexpr const char *T_MAN_O_WAR{"*manowar"};
+static constexpr const char *T_MAN_O_WAR_J{"*manowarj"};
+static constexpr const char *T_MAN_Z_POWER{"*manzpower"};
+static constexpr const char *T_MARKS_JULIA{"*marksjulia"};
+static constexpr const char *T_MARKS_MANDEL{"*marksmandel"};
+static constexpr const char *T_MARKS_MANDEL_PWR{"*marksmandelpwr"};
+static constexpr const char *T_NEWT_BASIN{"*newtbasin"};
+static constexpr const char *T_NEWTON{"*newton"};
+static constexpr const char *T_PHOENIX{"*phoenix"};
+static constexpr const char *T_PHOENIX_CPLX{"*phoenixcplx"};
+static constexpr const char *T_POPCORN{"*popcorn"};
+static constexpr const char *T_POPCORN_JUL{"*popcornjul"};
+static constexpr const char *T_ROSSLER3D{"*rossler3d"};
+static constexpr const char *T_SIERPINSKI{"*sierpinski"};
+static constexpr const char *T_SPIDER{"*spider"};
+static constexpr const char *T_SQR_1_DIV_FN{"*sqr(1/fn)"};
+static constexpr const char *T_SQR_FN{"*sqr(fn)"};
+static constexpr const char *T_TIMS_ERROR{"*tim's_error"};
+static constexpr const char *T_UNITY{"*unity"};
+static constexpr const char *T_FROTHY_BASIN{"*frothybasin"};
+static constexpr const char *T_HALLEY{"*halley"};
 
 // use next to cast orbitcalcs() that have arguments
 using VF = int(*)();
@@ -270,8 +270,8 @@ FractalSpecific g_fractal_specific[] =
     */
 
     {
-        s_t_mandel+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL, HelpLabels::HF_MANDEL, FractalFlags::BAIL_TEST | FractalFlags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -282,8 +282,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_JULIA+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.3, 0.6, 0, 0},
         HelpLabels::HT_JULIA, HelpLabels::HF_JULIA, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -293,8 +293,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_newt_basin,
-        {s_newt_degree, "Enter non-zero value for stripes", "", ""},
+        T_NEWT_BASIN,
+        {NEWT_DEGREE, "Enter non-zero value for stripes", "", ""},
         {3, 0, 0, 0},
         HelpLabels::HT_NEWTON_BASINS, HelpLabels::HF_NEWTON_BASIN, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -304,8 +304,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lambda+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_LAMBDA+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.85, 0.6, 0, 0},
         HelpLabels::HT_LAMBDA, HelpLabels::HF_LAMBDA, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -1.5F, 2.5F, -1.5F, 1.5F,
@@ -315,8 +315,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL, HelpLabels::HF_MANDEL, FractalFlags::BAIL_TEST|FractalFlags::BF_MATH|FractalFlags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -327,8 +327,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_newton,
-        {s_newt_degree, "", "", ""},
+        T_NEWTON,
+        {NEWT_DEGREE, "", "", ""},
         {3, 0, 0, 0},
         HelpLabels::HT_NEWTON, HelpLabels::HF_NEWTON, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -338,8 +338,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia,
-        {s_real_param, s_imag_param, "", ""},
+        T_JULIA,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.3, 0.6, 0, 0},
         HelpLabels::HT_JULIA, HelpLabels::HF_JULIA, FractalFlags::OK_JB|FractalFlags::BAIL_TEST|FractalFlags::BF_MATH,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -365,8 +365,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel_fn,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL_FN,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL_FN, HelpLabels::HF_MANDEL_FN, FractalFlags::TRIG1,
         -8.0F, 8.0F, -6.0F, 6.0F,
@@ -377,8 +377,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_o_war,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MAN_O_WAR,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_MAN_O_WAR, FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -388,8 +388,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_o_war+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MAN_O_WAR+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_MAN_O_WAR, FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -415,7 +415,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_sierpinski+1,
+        T_SIERPINSKI+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_SIERPINSKI, HelpLabels::HF_SIERPINSKI, FractalFlags::NONE,
@@ -427,8 +427,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_m1+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_BARNSLEY_M1+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M1, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -439,8 +439,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_j1+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_BARNSLEY_J1+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J1, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -450,8 +450,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_m2+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_BARNSLEY_M2+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M2, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -462,8 +462,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_j2+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_BARNSLEY_J2+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J2, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -473,7 +473,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_sqr_fn+1,
+        T_SQR_FN+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SQR_FN, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
@@ -484,7 +484,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_sqr_fn,
+        T_SQR_FN,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SQR_FN, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
@@ -495,8 +495,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_plus_fn+1,
-        {s_re_coef_trg1, s_im_coef_trg1, s_re_coef_trg2, s_im_coef_trg2},
+        T_FN_PLUS_FN+1,
+        {RE_COEF_TRIG1, IM_COEF_TRIG1, RE_COEF_TRIG2, IM_COEF_TRIG2},
         {1, 0, 1, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_PLUS_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -507,8 +507,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel_lambda+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL_LAMBDA+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL_LAMBDA, HelpLabels::HF_MANDEL_LAMBDA, FractalFlags::BAIL_TEST,
         -3.0F, 5.0F, -3.0F, 3.0F,
@@ -518,8 +518,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_marks_mandel+1,
-        {s_real_z0, s_imag_z0, s_exponent, ""},
+        T_MARKS_MANDEL+1,
+        {REAL_Z0, IMAG_Z0, RE_EXPONENT, ""},
         {0, 0, 1, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_MARKS_MANDEL, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -530,8 +530,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_marks_julia+1,
-        {s_real_param, s_imag_param, s_exponent, ""},
+        T_MARKS_JULIA+1,
+        {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, ""},
         {0.1, 0.9, 1, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_MARKS_JULIA, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -541,7 +541,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_unity+1,
+        T_UNITY+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_UNITY, HelpLabels::HF_UNITY, FractalFlags::NONE,
@@ -552,8 +552,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel4+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL4+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL_JULIA4, HelpLabels::HF_MANDEL4, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -563,8 +563,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia4+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_JULIA4+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 0.55, 0, 0},
         HelpLabels::HT_MANDEL_JULIA4, HelpLabels::HF_JULIA4, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -575,7 +575,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "ifs",
-        {s_color_method, "", "", ""},
+        {COLOR_METHOD, "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::INF_CALC,
         -8.0F, 8.0F, -1.0F, 11.0F,
@@ -585,8 +585,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_ifs3d,
-        {s_color_method, "", "", ""},
+        T_IFS3D,
+        {COLOR_METHOD, "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
         -11.0F, 11.0F, -11.0F, 11.0F,
@@ -596,8 +596,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_m3+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_BARNSLEY_M3+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M3, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -608,8 +608,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_j3+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_BARNSLEY_J3+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.1, 0.36, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J3, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -619,7 +619,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_zz+1,
+        T_FN_ZZ+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_Z_TIMES_Z, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
@@ -630,7 +630,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_zz,
+        T_FN_ZZ,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_Z_TIMES_Z, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
@@ -641,8 +641,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bifurcation,
-        {s_filt, s_seed, "", ""},
+        T_BIFURCATION,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIFURCATION, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         1.9F, 3.0F, 0.0F, 1.34F,
@@ -652,8 +652,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_plus_fn,
-        {s_re_coef_trg1, s_im_coef_trg1, s_re_coef_trg2, s_im_coef_trg2},
+        T_FN_PLUS_FN,
+        {RE_COEF_TRIG1, IM_COEF_TRIG1, RE_COEF_TRIG2, IM_COEF_TRIG2},
         {1, 0, 1, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_PLUS_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -664,7 +664,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_fn+1,
+        T_FN_FN+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_TIMES_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
@@ -675,7 +675,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_fn,
+        T_FN_FN,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_TIMES_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
@@ -686,7 +686,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_sqr_1_div_fn+1,
+        T_SQR_1_DIV_FN+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SQR_1_OVER_FN, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
@@ -698,7 +698,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_sqr_1_div_fn,
+        T_SQR_1_DIV_FN,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SQR_1_OVER_FN, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
@@ -710,8 +710,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_z_plus_z+1,
-        {s_re_coef_trg1, s_im_coef_trg1, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
+        T_FN_Z_PLUS_Z+1,
+        {RE_COEF_TRIG1, IM_COEF_TRIG1, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
         {1, 0, 1, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_X_Z_PLUS_Z, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -721,8 +721,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_z_plus_z,
-        {s_re_coef_trg1, s_im_coef_trg1, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
+        T_FN_Z_PLUS_Z,
+        {RE_COEF_TRIG1, IM_COEF_TRIG1, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
         {1, 0, 1, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_X_Z_PLUS_Z, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -733,8 +733,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_kam_torus,
-        {s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
+        T_KAM_TORUS,
+        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE,
         -1.0F, 1.0F, -.75F, .75F,
@@ -744,8 +744,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_kam_torus+1,
-        {s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
+        T_KAM_TORUS+1,
+        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE,
         -1.0F, 1.0F, -.75F, .75F,
@@ -755,8 +755,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_kam_torus3d,
-        {s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
+        T_KAM_TORUS3D,
+        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D,
         -3.0F, 3.0F, -1.0F, 3.5F,
@@ -766,8 +766,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_kam_torus3d+1,
-        {s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
+        T_KAM_TORUS3D+1,
+        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},
         {1.3, .05, 1.5, 150},
         HelpLabels::HT_KAM, HelpLabels::HF_KAM, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D,
         -3.0F, 3.0F, -1.0F, 3.5F,
@@ -777,8 +777,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lambda_fn+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_LAMBDA_FN+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {1.0, 0.4, 0, 0},
         HelpLabels::HT_LAMBDA_FN, HelpLabels::HF_LAMBDA_FN, FractalFlags::TRIG1|FractalFlags::OK_JB,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -789,8 +789,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_fn_plus_z_sqrd+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MAN_FN_PLUS_Z_SQRD+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_FN_PLUS_Z_SQRD, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -801,8 +801,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_jul_fn_plus_z_sqrd+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_JUL_FN_PLUS_Z_SQRD+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {-0.5, 0.5, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_FN_PLUS_Z_SQRD, FractalFlags::TRIG1|FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -813,8 +813,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_fn_plus_z_sqrd,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MAN_FN_PLUS_Z_SQRD,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_FN_PLUS_Z_SQRD, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -825,8 +825,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_jul_fn_plus_z_sqrd,
-        {s_real_param, s_imag_param, "", ""},
+        T_JUL_FN_PLUS_Z_SQRD,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {-0.5, 0.5, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_FN_PLUS_Z_SQRD, FractalFlags::TRIG1|FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -837,8 +837,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lambda_fn,
-        {s_real_param, s_imag_param, "", ""},
+        T_LAMBDA_FN,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {1.0, 0.4, 0, 0},
         HelpLabels::HT_LAMBDA_FN, HelpLabels::HF_LAMBDA_FN, FractalFlags::TRIG1|FractalFlags::OK_JB,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -849,8 +849,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel_fn+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL_FN+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL_FN, HelpLabels::HF_MANDEL_FN, FractalFlags::TRIG1,
         -8.0F, 8.0F, -6.0F, 6.0F,
@@ -861,8 +861,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_z_power+1,
-        {s_real_z0, s_imag_z0, s_exponent, s_im_exponent},
+        T_MAN_Z_POWER+1,
+        {REAL_Z0, IMAG_Z0, RE_EXPONENT, IM_EXPONENT},
         {0, 0, 2, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_Z_POWER, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -873,8 +873,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_jul_z_power+1,
-        {s_real_param, s_imag_param, s_exponent, s_im_exponent},
+        T_JUL_Z_POWER+1,
+        {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, IM_EXPONENT},
         {0.3, 0.6, 2, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_Z_POWER, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -885,8 +885,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_z_power,
-        {s_real_z0, s_imag_z0, s_exponent, s_im_exponent},
+        T_MAN_Z_POWER,
+        {REAL_Z0, IMAG_Z0, RE_EXPONENT, IM_EXPONENT},
         {0, 0, 2, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_Z_POWER, FractalFlags::BAIL_TEST|FractalFlags::BF_MATH|FractalFlags::PERTURB,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -898,8 +898,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_jul_z_power,
-        {s_real_param, s_imag_param, s_exponent, s_im_exponent},
+        T_JUL_Z_POWER,
+        {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, IM_EXPONENT},
         {0.3, 0.6, 2, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_Z_POWER, FractalFlags::OK_JB|FractalFlags::BAIL_TEST|FractalFlags::BF_MATH,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -911,7 +911,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "manzzpwr",
-        {s_real_z0, s_imag_z0, s_exponent, ""},
+        {REAL_Z0, IMAG_Z0, RE_EXPONENT, ""},
         {0, 0, 2, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_Z_Z_POWER, FractalFlags::BAIL_TEST|FractalFlags::BF_MATH,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -923,7 +923,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "julzzpwr",
-        {s_real_param, s_imag_param, s_exponent, ""},
+        {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, ""},
         {-0.3, 0.3, 2, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_Z_Z_PWR, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -934,8 +934,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_fn_plus_exp+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MAN_FN_PLUS_EXP+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_FN_PLUS_EXP, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -8.0F, 8.0F, -6.0F, 6.0F,
@@ -946,8 +946,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_jul_fn_plus_exp+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_JUL_FN_PLUS_EXP+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_FN_PLUS_EXP, FractalFlags::TRIG1|FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -958,8 +958,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_fn_plus_exp,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MAN_FN_PLUS_EXP,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_MANDEL_FN_PLUS_EXP, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -8.0F, 8.0F, -6.0F, 6.0F,
@@ -970,8 +970,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_jul_fn_plus_exp,
-        {s_real_param, s_imag_param, "", ""},
+        T_JUL_FN_PLUS_EXP,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PICKOVER_MANDEL_JULIA, HelpLabels::HF_JULIA_FN_PLUS_EXP, FractalFlags::TRIG1|FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -982,8 +982,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_popcorn,
-        {s_step_x, s_step_y, s_constant_x, s_constant_y},
+        T_POPCORN,
+        {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},
         {0.05, 0, 3.00, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
@@ -993,8 +993,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_popcorn+1,
-        {s_step_x, s_step_y, s_constant_x, s_constant_y},
+        T_POPCORN+1,
+        {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},
         {0.05, 0, 3.00, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
@@ -1004,8 +1004,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lorenz,
-        {s_time_step, "a", "b", "c"},
+        T_LORENZ,
+        {TIME_STEP, "a", "b", "c"},
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::INF_CALC,
         -15.0F, 15.0F, 0.0F, 30.0F,
@@ -1015,8 +1015,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lorenz+1,
-        {s_time_step, "a", "b", "c"},
+        T_LORENZ+1,
+        {TIME_STEP, "a", "b", "c"},
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::INF_CALC,
         -15.0F, 15.0F, 0.0F, 30.0F,
@@ -1026,8 +1026,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lorenz3d+1,
-        {s_time_step, "a", "b", "c"},
+        T_LORENZ3D+1,
+        {TIME_STEP, "a", "b", "c"},
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
@@ -1037,8 +1037,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_newton+1,
-        {s_newt_degree, "", "", ""},
+        T_NEWTON+1,
+        {NEWT_DEGREE, "", "", ""},
         {3, 0, 0, 0},
         HelpLabels::HT_NEWTON, HelpLabels::HF_NEWTON, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1048,8 +1048,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_newt_basin+1,
-        {s_newt_degree, "Enter non-zero value for stripes", "", ""},
+        T_NEWT_BASIN+1,
+        {NEWT_DEGREE, "Enter non-zero value for stripes", "", ""},
         {3, 0, 0, 0},
         HelpLabels::HT_NEWTON_BASINS, HelpLabels::HF_NEWTON_BASIN, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1084,7 +1084,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "cmplxmarksmand",
-        {s_real_z0, s_imag_z0, s_exponent, s_im_exponent},
+        {REAL_Z0, IMAG_Z0, RE_EXPONENT, IM_EXPONENT},
         {0, 0, 1, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_COMPLEX_MARKS_MAND, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1095,7 +1095,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "cmplxmarksjul",
-        {s_real_param, s_imag_param, s_exponent, s_im_exponent},
+        {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, IM_EXPONENT},
         {0.3, 0.6, 1, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_COMPLEX_MARKS_JUL, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1105,8 +1105,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_formula+1,
-        {s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
+        T_FORMULA+1,
+        {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},
         {0, 0, 0, 0},
         HelpLabels::HT_FORMULA, HelpLabels::SPECIAL_FORMULA, FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1116,8 +1116,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_formula,
-        {s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
+        T_FORMULA,
+        {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},
         {0, 0, 0, 0},
         HelpLabels::HT_FORMULA, HelpLabels::SPECIAL_FORMULA, FractalFlags::MORE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1127,7 +1127,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_sierpinski,
+        T_SIERPINSKI,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_SIERPINSKI, HelpLabels::HF_SIERPINSKI, FractalFlags::NONE,
@@ -1139,8 +1139,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lambda,
-        {s_real_param, s_imag_param, "", ""},
+        T_LAMBDA,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.85, 0.6, 0, 0},
         HelpLabels::HT_LAMBDA, HelpLabels::HF_LAMBDA, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1150,8 +1150,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_m1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_BARNSLEY_M1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M1, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1162,8 +1162,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_j1,
-        {s_real_param, s_imag_param, "", ""},
+        T_BARNSLEY_J1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J1, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1174,8 +1174,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_m2,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_BARNSLEY_M2,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M2, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1186,8 +1186,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_j2,
-        {s_real_param, s_imag_param, "", ""},
+        T_BARNSLEY_J2,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J2, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1198,8 +1198,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_m3,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_BARNSLEY_M3,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M3, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1210,8 +1210,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_barnsley_j3,
-        {s_real_param, s_imag_param, "", ""},
+        T_BARNSLEY_J3,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 1.1, 0, 0},
         HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J3, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1222,8 +1222,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel_lambda,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL_LAMBDA,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL_LAMBDA, HelpLabels::HF_MANDEL_LAMBDA, FractalFlags::BAIL_TEST,
         -3.0F, 5.0F, -3.0F, 3.0F,
@@ -1233,7 +1233,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julibrot+1,
+        T_JULIBROT+1,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_JULIBROT, HelpLabels::NONE, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE|FractalFlags::NO_RESUME,
@@ -1244,8 +1244,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lorenz3d,
-        {s_time_step, "a", "b", "c"},
+        T_LORENZ3D,
+        {TIME_STEP, "a", "b", "c"},
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
         -30.0F, 30.0F, -30.0F, 30.0F,
@@ -1255,8 +1255,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_rossler3d+1,
-        {s_time_step, "a", "b", "c"},
+        T_ROSSLER3D+1,
+        {TIME_STEP, "a", "b", "c"},
         {.04, .2, .2, 5.7},
         HelpLabels::HT_ROSSLER, HelpLabels::HF_ROSSLER, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
         -30.0F, 30.0F, -20.0F, 40.0F,
@@ -1266,8 +1266,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_rossler3d,
-        {s_time_step, "a", "b", "c"},
+        T_ROSSLER3D,
+        {TIME_STEP, "a", "b", "c"},
         {.04, .2, .2, 5.7},
         HelpLabels::HT_ROSSLER, HelpLabels::HF_ROSSLER, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
         -30.0F, 30.0F, -20.0F, 40.0F,
@@ -1277,7 +1277,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_henon+1,
+        T_HENON+1,
         {"a", "b", "", ""},
         {1.4, .3, 0, 0},
         HelpLabels::HT_HENON, HelpLabels::HF_HENON, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::INF_CALC,
@@ -1288,7 +1288,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_henon,
+        T_HENON,
         {"a", "b", "", ""},
         {1.4, .3, 0, 0},
         HelpLabels::HT_HENON, HelpLabels::HF_HENON, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::INF_CALC,
@@ -1337,7 +1337,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_unity,
+        T_UNITY,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_UNITY, HelpLabels::HF_UNITY, FractalFlags::NONE,
@@ -1348,8 +1348,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_spider,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_SPIDER,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SPIDER, FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -1359,8 +1359,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_spider+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_SPIDER+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SPIDER, FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -1371,7 +1371,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "tetrate",
-        {s_real_z0, s_imag_z0, "", ""},
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_TETRATE, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1383,7 +1383,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "magnet1m",
-        {s_real_z0, s_imag_z0, "", ""},
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_M1, FractalFlags::NONE,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1394,7 +1394,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "magnet1j",
-        {s_real_param, s_imag_param, "", ""},
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_J1, FractalFlags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
@@ -1405,7 +1405,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "magnet2m",
-        {s_real_z0, s_imag_z0, "", ""},
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_M2, FractalFlags::NONE,
         -1.5F, 3.7F, -1.95F, 1.95F,
@@ -1416,7 +1416,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "magnet2j",
-        {s_real_param, s_imag_param, "", ""},
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_J2, FractalFlags::NONE,
         -8.0F, 8.0F, -6.0F, 6.0F,
@@ -1426,8 +1426,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bifurcation+1,
-        {s_filt, s_seed, "", ""},
+        T_BIFURCATION+1,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIFURCATION, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         1.9F, 3.0F, 0.0F, 1.34F,
@@ -1437,8 +1437,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_lambda+1,
-        {s_filt, s_seed, "", ""},
+        T_BIF_LAMBDA+1,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_LAMBDA, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         -2.0F, 4.0F, -1.0F, 2.0F,
@@ -1448,8 +1448,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_lambda,
-        {s_filt, s_seed, "", ""},
+        T_BIF_LAMBDA,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_LAMBDA, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         -2.0F, 4.0F, -1.0F, 2.0F,
@@ -1459,8 +1459,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_plus_sin_pi,
-        {s_filt, s_seed, "", ""},
+        T_BIF_PLUS_SIN_PI,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_PLUS_SIN_PI, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         0.275F, 1.45F, 0.0F, 2.0F,
@@ -1470,8 +1470,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_eq_sin_pi,
-        {s_filt, s_seed, "", ""},
+        T_BIF_EQ_SIN_PI,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_EQ_SIN_PI, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         -2.5F, 2.5F, -3.5F, 3.5F,
@@ -1481,8 +1481,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_popcorn_jul,
-        {s_step_x, s_step_y, s_constant_x, s_constant_y},
+        T_POPCORN_JUL,
+        {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},
         {0.05, 0, 3.00, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN_JULIA, FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
@@ -1492,8 +1492,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_popcorn_jul+1,
-        {s_step_x, s_step_y, s_constant_x, s_constant_y},
+        T_POPCORN_JUL+1,
+        {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},
         {0.05, 0, 3.0, 0},
         HelpLabels::HT_POPCORN, HelpLabels::HF_POPCORN_JULIA, FractalFlags::TRIG4,
         -3.0F, 3.0F, -2.25F, 2.25F,
@@ -1514,8 +1514,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_o_war_j,
-        {s_real_param, s_imag_param, "", ""},
+        T_MAN_O_WAR_J,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_MAN_O_WAR_JULIA, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -1525,8 +1525,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_o_war_j+1,
-        {s_real_param, s_imag_param, "", ""},
+        T_MAN_O_WAR_J+1,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_MAN_O_WAR_JULIA, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -1536,8 +1536,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_z_plus_fn_pix,
-        {s_real_z0, s_imag_z0, s_re_coef_trg2, s_im_coef_trg2},
+        T_FN_Z_PLUS_FN_PIX,
+        {REAL_Z0, IMAG_Z0, RE_COEF_TRIG2, IM_COEF_TRIG2},
         {0, 0, 1, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_PLUS_FN_PIX, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -3.6F, 3.6F, -2.7F, 2.7F,
@@ -1548,8 +1548,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_fn_z_plus_fn_pix+1,
-        {s_real_z0, s_imag_z0, s_re_coef_trg2, s_im_coef_trg2},
+        T_FN_Z_PLUS_FN_PIX+1,
+        {REAL_Z0, IMAG_Z0, RE_COEF_TRIG2, IM_COEF_TRIG2},
         {0, 0, 1, 0},
         HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_PLUS_FN_PIX, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -3.6F, 3.6F, -2.7F, 2.7F,
@@ -1560,8 +1560,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_marks_mandel_pwr,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MARKS_MANDEL_PWR,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_MARKS_MANDEL_POWER, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -1572,8 +1572,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_marks_mandel_pwr+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MARKS_MANDEL_PWR+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_MARKS_MANDEL_POWER, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -1584,8 +1584,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_tims_error,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_TIMS_ERROR,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_TIMS_ERROR, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -2.9F, 4.3F, -2.7F, 2.7F,
@@ -1596,8 +1596,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_tims_error+1,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_TIMS_ERROR+1,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_TIMS_ERROR, FractalFlags::TRIG1|FractalFlags::BAIL_TEST,
         -2.9F, 4.3F, -2.7F, 2.7F,
@@ -1608,8 +1608,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_eq_sin_pi+1,
-        {s_filt, s_seed, "", ""},
+        T_BIF_EQ_SIN_PI+1,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_EQ_SIN_PI, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         -2.5F, 2.5F, -3.5F, 3.5F,
@@ -1619,8 +1619,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_plus_sin_pi+1,
-        {s_filt, s_seed, "", ""},
+        T_BIF_PLUS_SIN_PI+1,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_PLUS_SIN_PI, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         0.275F, 1.45F, 0.0F, 2.0F,
@@ -1630,8 +1630,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_stewart,
-        {s_filt, s_seed, "", ""},
+        T_BIF_STEWART,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_STEWART, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         0.7F, 2.0F, -1.1F, 1.1F,
@@ -1641,8 +1641,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_stewart+1,
-        {s_filt, s_seed, "", ""},
+        T_BIF_STEWART+1,
+        {FILT, SEED_POP, "", ""},
         {1000.0, 0.66, 0, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_STEWART, FractalFlags::TRIG1|FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         0.7F, 2.0F, -1.1F, 1.1F,
@@ -1697,7 +1697,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "lorenz3d1",
-        {s_time_step, "a", "b", "c"},
+        {TIME_STEP, "a", "b", "c"},
         {.02, 5, 15, 1},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D1,
         FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
@@ -1709,7 +1709,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "lorenz3d3",
-        {s_time_step, "a", "b", "c"},
+        {TIME_STEP, "a", "b", "c"},
         {.02, 10, 28, 2.66},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D3,
         FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
@@ -1721,7 +1721,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "lorenz3d4",
-        {s_time_step, "a", "b", "c"},
+        {TIME_STEP, "a", "b", "c"},
         {.02, 10, 28, 2.66},
         HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D4,
         FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_RESUME|FractalFlags::PARAMS_3D|FractalFlags::INF_CALC,
@@ -1732,8 +1732,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lambda_fn_or_fn+1,
-        {s_real_param, s_imag_param, "Function Shift Value", ""},
+        T_LAMBDA_FN_OR_FN+1,
+        {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},
         {1, 0.1, 1, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_LAMBDA_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1744,8 +1744,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_lambda_fn_or_fn,
-        {s_real_param, s_imag_param, "Function Shift Value", ""},
+        T_LAMBDA_FN_OR_FN,
+        {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},
         {1, 0.1, 1, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_LAMBDA_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1756,8 +1756,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia_fn_or_fn+1,
-        {s_real_param, s_imag_param, "Function Shift Value", ""},
+        T_JULIA_FN_OR_FN+1,
+        {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},
         {0, 0, 8, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_JULIA_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1768,8 +1768,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia_fn_or_fn,
-        {s_real_param, s_imag_param, "Function Shift Value", ""},
+        T_JULIA_FN_OR_FN,
+        {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},
         {0, 0, 8, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_JULIA_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1780,8 +1780,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_lam_fn_or_fn+1,
-        {s_real_z0, s_imag_z0, "Function Shift Value", ""},
+        T_MAN_LAM_FN_OR_FN+1,
+        {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},
         {0, 0, 10, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_MANDEL_LAMBDA_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1792,8 +1792,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_man_lam_fn_or_fn,
-        {s_real_z0, s_imag_z0, "Function Shift Value", ""},
+        T_MAN_LAM_FN_OR_FN,
+        {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},
         {0, 0, 10, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_MANDEL_LAMBDA_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1804,8 +1804,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel_fn_or_fn+1,
-        {s_real_z0, s_imag_z0, "Function Shift Value", ""},
+        T_MANDEL_FN_OR_FN+1,
+        {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},
         {0, 0, 0.5, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_MANDEL_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1816,8 +1816,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel_fn_or_fn,
-        {s_real_z0, s_imag_z0, "Function Shift Value", ""},
+        T_MANDEL_FN_OR_FN,
+        {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},
         {0, 0, 0.5, 0},
         HelpLabels::HT_FN_OR_FN, HelpLabels::HF_MANDEL_FN_FN, FractalFlags::TRIG2|FractalFlags::BAIL_TEST,
         -4.0F, 4.0F, -3.0F, 3.0F,
@@ -1828,8 +1828,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_may+1,
-        {s_filt, s_seed, "Beta >= 2", ""},
+        T_BIF_MAY+1,
+        {FILT, SEED_POP, "Beta >= 2", ""},
         {300.0, 0.9, 5, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_MAY, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         -3.5F, -0.9F, -0.5F, 3.2F,
@@ -1839,8 +1839,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_bif_may,
-        {s_filt, s_seed, "Beta >= 2", ""},
+        T_BIF_MAY,
+        {FILT, SEED_POP, "Beta >= 2", ""},
         {300.0, 0.9, 5, 0},
         HelpLabels::HT_BIFURCATION, HelpLabels::HF_BIF_MAY, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE,
         -3.5F, -0.9F, -0.5F, 3.2F,
@@ -1850,8 +1850,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_halley+1,
-        {s_order, s_real_relax, s_epsilon, s_imag_relax},
+        T_HALLEY+1,
+        {ORDER, REAL_RELAX, EPSILON, IMAG_RELAX},
         {6, 1.0, 0.0001, 0},
         HelpLabels::HT_HALLEY, HelpLabels::HF_HALLEY, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1861,8 +1861,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_halley,
-        {s_order, s_real_relax, s_epsilon, s_imag_relax},
+        T_HALLEY,
+        {ORDER, REAL_RELAX, EPSILON, IMAG_RELAX},
         {6, 1.0, 0.0001, 0},
         HelpLabels::HT_HALLEY, HelpLabels::HF_HALLEY, FractalFlags::NONE,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1908,7 +1908,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "cellular",
-        {s_cell_init, s_cell_rule, s_cell_type, s_cell_start},
+        {CELL_INIT, CELL_RULE, CELL_TYPE, CELL_START},
         {11.0, 3311100320.0, 41.0, 0},
         HelpLabels::HT_CELLULAR, HelpLabels::HF_CELLULAR, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ZOOM,
         -1.0F, 1.0F, -1.0F, 1.0F,
@@ -1918,7 +1918,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julibrot,
+        T_JULIBROT,
         {"", "", "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_JULIBROT, HelpLabels::NONE, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::NO_ROTATE|FractalFlags::NO_RESUME,
@@ -1929,8 +1929,8 @@ FractalSpecific g_fractal_specific[] =
     },
 #ifdef RANDOM_RUN
     {
-        s_t_julia_inverse+1,
-        {s_real_param, s_imag_param, s_max_hits, "Random Run Interval"},
+        T_JULIA_INVERSE+1,
+        {REAL_PARAM, IMAG_PARAM, MAX_HITS, "Random Run Interval"},
         {-0.11, 0.6557, 4, 1024},
         HelpLabels::HT_INVERSE_JULIA, HelpLabels::HF_INVERSE_JULIA, FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::INF_CALC | FractalFlags::NO_RESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1939,8 +1939,8 @@ FractalSpecific g_fractal_specific[] =
         NO_BAILOUT
     },
     {
-        s_t_julia_inverse,
-        {s_real_param, s_imag_param, s_max_hits, "Random Run Interval"},
+        T_JULIA_INVERSE,
+        {REAL_PARAM, IMAG_PARAM, MAX_HITS, "Random Run Interval"},
         {-0.11, 0.6557, 4, 1024},
         HelpLabels::HT_INVERSE_JULIA, HelpLabels::HF_INVERSE_JULIA, FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::INF_CALC | FractalFlags::NO_RESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1950,8 +1950,8 @@ FractalSpecific g_fractal_specific[] =
     },
 #else
     {
-        s_t_julia_inverse+1,
-        {s_real_param, s_imag_param, s_max_hits, ""},
+        T_JULIA_INVERSE+1,
+        {REAL_PARAM, IMAG_PARAM, MAX_HITS, ""},
         {-0.11, 0.6557, 4, 1024},
         HelpLabels::HT_INVERSE_JULIA, HelpLabels::HF_INVERSE_JULIA, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::INF_CALC|FractalFlags::NO_RESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1961,8 +1961,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia_inverse,
-        {s_real_param, s_imag_param, s_max_hits, ""},
+        T_JULIA_INVERSE,
+        {REAL_PARAM, IMAG_PARAM, MAX_HITS, ""},
         {-0.11, 0.6557, 4, 1024},
         HelpLabels::HT_INVERSE_JULIA, HelpLabels::HF_INVERSE_JULIA, FractalFlags::NO_GUESS|FractalFlags::NO_TRACE|FractalFlags::INF_CALC|FractalFlags::NO_RESUME,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1985,8 +1985,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_phoenix+1,
-        {s_p1_real, s_p2_real, s_degree_z, ""},
+        T_PHOENIX+1,
+        {P1_REAL, P2_REAL, DEGREE_Z, ""},
         {0.56667, -0.5, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIX, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -1997,8 +1997,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_phoenix,
-        {s_p1_real, s_p2_real, s_degree_z, ""},
+        T_PHOENIX,
+        {P1_REAL, P2_REAL, DEGREE_Z, ""},
         {0.56667, -0.5, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIX, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2008,8 +2008,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mand_phoenix+1,
-        {s_real_z0, s_imag_z0, s_degree_z, ""},
+        T_MAND_PHOENIX+1,
+        {REAL_Z0, IMAG_Z0, DEGREE_Z, ""},
         {0.0, 0.0, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDEL_PHOENIX, FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -2020,8 +2020,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mand_phoenix,
-        {s_real_z0, s_imag_z0, s_degree_z, ""},
+        T_MAND_PHOENIX,
+        {REAL_Z0, IMAG_Z0, DEGREE_Z, ""},
         {0.0, 0.0, 0, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDEL_PHOENIX, FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -2056,8 +2056,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_frothy_basin+1,
-        {s_froth_mapping, s_froth_shade, s_froth_a_value, ""},
+        T_FROTHY_BASIN+1,
+        {FROTH_MAPPING, FROTH_SHADE, FROTH_A_VALUE, ""},
         {1, 0, 1.028713768218725, 0},
         HelpLabels::HT_FROTH, HelpLabels::HF_FROTH, FractalFlags::NO_TRACE,
         -2.8F, 2.8F, -2.355F, 1.845F,
@@ -2067,8 +2067,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_frothy_basin,
-        {s_froth_mapping, s_froth_shade, s_froth_a_value, ""},
+        T_FROTHY_BASIN,
+        {FROTH_MAPPING, FROTH_SHADE, FROTH_A_VALUE, ""},
         {1, 0, 1.028713768218725, 0},
         HelpLabels::HT_FROTH, HelpLabels::HF_FROTH, FractalFlags::NO_TRACE,
         -2.8F, 2.8F, -2.355F, 1.845F,
@@ -2078,8 +2078,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mandel4,
-        {s_real_z0, s_imag_z0, "", ""},
+        T_MANDEL4,
+        {REAL_Z0, IMAG_Z0, "", ""},
         {0, 0, 0, 0},
         HelpLabels::HT_MANDEL_JULIA4, HelpLabels::HF_MANDEL4, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2089,8 +2089,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_julia4,
-        {s_real_param, s_imag_param, "", ""},
+        T_JULIA4,
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.6, 0.55, 0, 0},
         HelpLabels::HT_MANDEL_JULIA4, HelpLabels::HF_JULIA4, FractalFlags::OK_JB|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2100,8 +2100,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_marks_mandel,
-        {s_real_z0, s_imag_z0, s_exponent, ""},
+        T_MARKS_MANDEL,
+        {REAL_Z0, IMAG_Z0, RE_EXPONENT, ""},
         {0, 0, 1, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_MARKS_MANDEL, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2112,8 +2112,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_marks_julia,
-        {s_real_param, s_imag_param, s_exponent, ""},
+        T_MARKS_JULIA,
+        {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, ""},
         {0.1, 0.9, 1, 0},
         HelpLabels::HT_PETERSON_VARIATIONS, HelpLabels::HF_MARKS_JULIA, FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2146,8 +2146,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_phoenix_cplx+1,
-        {s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
+        T_PHOENIX_CPLX+1,
+        {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},
         {0.2, 0, 0.3, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIX_CPLX, FractalFlags::MORE|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2158,8 +2158,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_phoenix_cplx,
-        {s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
+        T_PHOENIX_CPLX,
+        {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},
         {0.2, 0, 0.3, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_PHOENIX_CPLX, FractalFlags::MORE|FractalFlags::BAIL_TEST,
         -2.0F, 2.0F, -1.5F, 1.5F,
@@ -2170,8 +2170,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mand_phoenix_cplx+1,
-        {s_real_z0, s_imag_z0, s_p2_real, s_p2_imag},
+        T_MAND_PHOENIX_CPLX+1,
+        {REAL_Z0, IMAG_Z0, P2_REAL, P2_IMAG},
         {0, 0, 0.5, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDEL_PHOENIX_CPLX, FractalFlags::MORE|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -2182,8 +2182,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        s_t_mand_phoenix_cplx,
-        {s_real_z0, s_imag_z0, s_p2_real, s_p2_imag},
+        T_MAND_PHOENIX_CPLX,
+        {REAL_Z0, IMAG_Z0, P2_REAL, P2_IMAG},
         {0, 0, 0.5, 0},
         HelpLabels::HT_PHOENIX, HelpLabels::HF_MANDEL_PHOENIX_CPLX, FractalFlags::MORE|FractalFlags::BAIL_TEST,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -2255,7 +2255,7 @@ FractalSpecific g_fractal_specific[] =
 
     {
         "escher_julia",
-        {s_real_param, s_imag_param, "", ""},
+        {REAL_PARAM, IMAG_PARAM, "", ""},
         {0.32, 0.043, 0, 0},
         HelpLabels::HT_ESCHER, HelpLabels::HF_ESCHER, FractalFlags::NONE,
         -1.6F, 1.6F, -1.2F, 1.2F,
@@ -2291,7 +2291,7 @@ FractalSpecific g_fractal_specific[] =
     },
     {
         "mandelbrotmix4",
-        {s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
+        {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},
         {0.05, 3, -1.5, -2},
         HelpLabels::HT_MANDELBROT_MIX4, HelpLabels::HF_MANDELBROT_MIX4, FractalFlags::BAIL_TEST|FractalFlags::TRIG1|FractalFlags::MORE,
         -2.5F, 1.5F, -1.5F, 1.5F,
@@ -2301,7 +2301,7 @@ FractalSpecific g_fractal_specific[] =
     },
     {
         "burning-ship",
-        {s_p1_real, s_p1_imag, "degree (2-5)", ""},
+        {P1_REAL, P1_IMAG, "degree (2-5)", ""},
         {0, 0, 2, 0},
         HelpLabels::HT_BURNING_SHIP, HelpLabels::HF_BURNING_SHIP, FractalFlags::BAIL_TEST|FractalFlags::PERTURB|FractalFlags::BF_MATH,
         -2.5f, 1.5f, -1.2f, 1.8f,
@@ -2322,4 +2322,4 @@ FractalSpecific g_fractal_specific[] =
     }
 };
 
-int g_num_fractal_types = (sizeof(g_fractal_specific) / sizeof(FractalSpecific)) - 1;
+int g_num_fractal_types = sizeof(g_fractal_specific) / sizeof(FractalSpecific) - 1;
