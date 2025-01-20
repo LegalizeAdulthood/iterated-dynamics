@@ -262,49 +262,49 @@ top:
                 from control-tab */
     help_title();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
-    int s_row = 2;
-    driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
+    int start_row = 2;
+    driver_put_string(start_row, 2, C_GENERAL_MED, "Fractal type:");
     if (g_display_3d > Display3DMode::NONE)
     {
-        driver_put_string(s_row, 16, C_GENERAL_HI, "3D Transform");
+        driver_put_string(start_row, 16, C_GENERAL_HI, "3D Transform");
     }
     else
     {
-        driver_put_string(s_row, 16, C_GENERAL_HI,
+        driver_put_string(start_row, 16, C_GENERAL_HI,
                           g_cur_fractal_specific->name[0] == '*' ?
                           &g_cur_fractal_specific->name[1] : g_cur_fractal_specific->name);
         int i = 0;
         if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
         {
-            driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name);
+            driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
+            driver_put_string(start_row+1, 16, C_GENERAL_HI, g_formula_name);
             i = static_cast<int>(g_formula_name.length() + 1);
-            driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            driver_put_string(s_row + 2 + add_row, 16, C_GENERAL_HI, trim_file_name(g_formula_filename, 29));
+            driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
+            driver_put_string(start_row + 2 + add_row, 16, C_GENERAL_HI, trim_file_name(g_formula_filename, 29));
         }
         trig_details(msg);
-        driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
+        driver_put_string(start_row+1, 16+i, C_GENERAL_HI, msg);
         if (g_fractal_type == FractalType::L_SYSTEM)
         {
-            driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_l_system_name);
-            driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
+            driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
+            driver_put_string(start_row+1, 16, C_GENERAL_HI, g_l_system_name);
+            driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) g_l_system_filename.length() >= 28)
             {
                 add_row = 1;
             }
-            driver_put_string(s_row+2+add_row, 16, C_GENERAL_HI, g_l_system_filename);
+            driver_put_string(start_row+2+add_row, 16, C_GENERAL_HI, g_l_system_filename);
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {
-            driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_ifs_name);
-            driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
+            driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
+            driver_put_string(start_row+1, 16, C_GENERAL_HI, g_ifs_name);
+            driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) g_ifs_filename.length() >= 28)
             {
                 add_row = 1;
             }
-            driver_put_string(s_row+2+add_row, 16, C_GENERAL_HI, g_ifs_filename);
+            driver_put_string(start_row+2+add_row, 16, C_GENERAL_HI, g_ifs_filename);
         }
     }
 
@@ -328,7 +328,7 @@ top:
     default:
         msg_ptr = "";
     }
-    driver_put_string(s_row, 45, C_GENERAL_HI, msg_ptr);
+    driver_put_string(start_row, 45, C_GENERAL_HI, msg_ptr);
     if (g_init_batch != BatchMode::NONE && g_calc_status != CalcStatus::PARAMS_CHANGED)
     {
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
@@ -336,11 +336,11 @@ top:
 
     if (g_help_mode == HelpLabels::HELP_CYCLING)
     {
-        driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
+        driver_put_string(start_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }
-    ++s_row;
+    ++start_row;
     // if (g_bf_math == bf_math_type::NONE)
-    ++s_row;
+    ++start_row;
 
     int j = 0;
     if (g_display_3d > Display3DMode::NONE)
@@ -359,36 +359,36 @@ top:
     {
         if (j)
         {
-            driver_put_string(s_row, 45, C_GENERAL_HI, "Floating-point");
+            driver_put_string(start_row, 45, C_GENERAL_HI, "Floating-point");
             driver_put_string(-1, -1, C_GENERAL_HI,
                               (j == 1) ? " flag is activated" : " in use (required)");
         }
         else
         {
-            driver_put_string(s_row, 45, C_GENERAL_HI, "Integer math is in use");
+            driver_put_string(start_row, 45, C_GENERAL_HI, "Integer math is in use");
         }
     }
     else
     {
         std::sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(Resolution::CURRENT)*/);
-        driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
+        driver_put_string(start_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
-    s_row += 1;
+    start_row += 1;
 
     if (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE)
     {
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
         {
-            driver_put_string(s_row++, 2, C_GENERAL_HI,
+            driver_put_string(start_row++, 2, C_GENERAL_HI,
                               "Note: can't resume this type after interrupts other than <tab> and <F1>");
         }
     }
-    s_row += add_row;
-    driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
-    driver_put_string(s_row, -1, C_GENERAL_HI, g_save_filename);
+    start_row += add_row;
+    driver_put_string(start_row, 2, C_GENERAL_MED, "Savename: ");
+    driver_put_string(start_row, -1, C_GENERAL_HI, g_save_filename);
 
-    ++s_row;
+    ++start_row;
 
     if (g_got_status >= StatusValues::ONE_OR_TWO_PASS &&
         (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE))
@@ -397,52 +397,52 @@ top:
         {
         case StatusValues::ONE_OR_TWO_PASS:
             std::sprintf(msg, "%d Pass Mode", g_total_passes);
-            driver_put_string(s_row, 2, C_GENERAL_HI, msg);
+            driver_put_string(start_row, 2, C_GENERAL_HI, msg);
             if (g_user_std_calc_mode == '3')
             {
-                driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
+                driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
             }
             break;
         case StatusValues::SOLID_GUESS:
-            driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
+            driver_put_string(start_row, 2, C_GENERAL_HI, "Solid Guessing");
             if (g_user_std_calc_mode == '3')
             {
-                driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
+                driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
             }
             break;
         case StatusValues::BOUNDARY_TRACE:
-            driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
+            driver_put_string(start_row, 2, C_GENERAL_HI, "Boundary Tracing");
             break;
         case StatusValues::THREE_D:
             std::sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
-            driver_put_string(s_row, 2, C_GENERAL_HI, msg);
+            driver_put_string(start_row, 2, C_GENERAL_HI, msg);
             break;
         case StatusValues::TESSERAL:
-            driver_put_string(s_row, 2, C_GENERAL_HI, "Tesseral");
+            driver_put_string(start_row, 2, C_GENERAL_HI, "Tesseral");
             break;
         case StatusValues::DIFFUSION:
-            driver_put_string(s_row, 2, C_GENERAL_HI, "Diffusion");
+            driver_put_string(start_row, 2, C_GENERAL_HI, "Diffusion");
             break;
         case StatusValues::ORBITS:
-            driver_put_string(s_row, 2, C_GENERAL_HI, "Orbits");
+            driver_put_string(start_row, 2, C_GENERAL_HI, "Orbits");
             break;
         case StatusValues::NONE:
             break;
         }
-        ++s_row;
+        ++start_row;
         if (g_got_status == StatusValues::DIFFUSION)
         {
             std::sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
                     (100.0 * g_diffusion_counter)/g_diffusion_limit,
                     g_diffusion_counter, g_diffusion_limit, g_diffusion_bits);
-            driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-            ++s_row;
+            driver_put_string(start_row, 2, C_GENERAL_MED, msg);
+            ++start_row;
         }
         else if (g_got_status != StatusValues::THREE_D)
         {
             std::sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
                     g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
-            driver_put_string(s_row, 2, C_GENERAL_MED, msg);
+            driver_put_string(start_row, 2, C_GENERAL_MED, msg);
             if (g_got_status == StatusValues::BOUNDARY_TRACE || g_got_status == StatusValues::TESSERAL)
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
@@ -468,10 +468,10 @@ top:
                 std::sprintf(msg, "%d", g_col);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
             }
-            ++s_row;
+            ++start_row;
         }
     }
-    driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
+    driver_put_string(start_row, 2, C_GENERAL_MED, "Calculation time:");
     strncpy(msg, get_calculation_time(g_calc_time).c_str(), std::size(msg));
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     if (g_got_status == StatusValues::DIFFUSION &&
@@ -486,25 +486,25 @@ top:
 
     if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC) && g_color_iter != 0)
     {
-        driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
+        driver_put_string(start_row, -1, C_GENERAL_MED, " 1000's of points:");
         std::sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
-        driver_put_string(s_row, -1, C_GENERAL_HI, msg);
+        driver_put_string(start_row, -1, C_GENERAL_HI, msg);
     }
 
-    ++s_row;
+    ++start_row;
     if (g_bf_math == BFMathType::NONE)
     {
-        ++s_row;
+        ++start_row;
     }
     std::snprintf(
         msg, std::size(msg), "Driver: %s, %s", g_driver->get_name().c_str(), g_driver->get_description().c_str());
-    driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
+    driver_put_string(start_row++, 2, C_GENERAL_MED, msg);
     if (g_video_entry.x_dots && g_bf_math == BFMathType::NONE)
     {
         std::sprintf(msg, "Video: %dx%dx%d %s",
                 g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,
                 g_video_entry.comment);
-        driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
+        driver_put_string(start_row++, 2, C_GENERAL_MED, msg);
     }
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM))
     {
@@ -526,23 +526,23 @@ top:
                 truncate = true;
             }
             int truncate_row = g_row;
-            driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
-            driver_put_string(s_row, 8, C_GENERAL_MED, "x");
+            driver_put_string(++start_row, 2, C_GENERAL_MED, "Ctr");
+            driver_put_string(start_row, 8, C_GENERAL_MED, "x");
             bf_to_str(msg, dec, bf_x_ctr);
-            if (put_string_wrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5))
+            if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, msg, 5))
             {
                 truncate = true;
             }
-            driver_put_string(++s_row, 8, C_GENERAL_MED, "y");
+            driver_put_string(++start_row, 8, C_GENERAL_MED, "y");
             bf_to_str(msg, dec, bf_y_ctr);
-            if (put_string_wrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
+            if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
             {
                 driver_put_string(truncate_row, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
-            driver_put_string(++s_row, 2, C_GENERAL_MED, "Mag");
+            driver_put_string(++start_row, 2, C_GENERAL_MED, "Mag");
             std::sprintf(msg, "%10.8Le", magnification);
             driver_put_string(-1, 11, C_GENERAL_HI, msg);
-            driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
+            driver_put_string(++start_row, 2, C_GENERAL_MED, "X-Mag-Factor");
             std::sprintf(msg, "%11.4f   ", x_mag_factor);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
@@ -556,28 +556,28 @@ top:
         {
             double x_ctr;
             double y_ctr;
-            driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
-            driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
+            driver_put_string(start_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
+            driver_put_string(++start_row, 3, C_GENERAL_MED, "Top-l");
             std::sprintf(msg, "%20.16f  %20.16f", g_x_min, g_y_max);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
-            driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-r");
+            driver_put_string(++start_row, 3, C_GENERAL_MED, "Bot-r");
             std::sprintf(msg, "%20.16f  %20.16f", g_x_max, g_y_min);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
             if (g_x_min != g_x_3rd || g_y_min != g_y_3rd)
             {
-                driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
+                driver_put_string(++start_row, 3, C_GENERAL_MED, "Bot-l");
                 std::sprintf(msg, "%20.16f  %20.16f", g_x_3rd, g_y_3rd);
                 driver_put_string(-1, 17, C_GENERAL_HI, msg);
             }
             cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-            driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Ctr");
+            driver_put_string(start_row += 2, 2, C_GENERAL_MED, "Ctr");
             std::sprintf(msg, "%20.16f %20.16f  ", x_ctr, y_ctr);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Mag");
             std::sprintf(msg, " %10.8Le", magnification);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
-            driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
+            driver_put_string(++start_row, 2, C_GENERAL_MED, "X-Mag-Factor");
             std::sprintf(msg, "%11.4f   ", x_mag_factor);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
@@ -599,7 +599,7 @@ top:
                 int col;
                 if (k%4 == 0)
                 {
-                    s_row++;
+                    start_row++;
                     col = 9;
                 }
                 else
@@ -608,10 +608,10 @@ top:
                 }
                 if (k == 0)   // only true with first displayed parameter
                 {
-                    driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
+                    driver_put_string(++start_row, 2, C_GENERAL_MED, "Params ");
                 }
                 std::sprintf(msg, "%3d: ", i+1);
-                driver_put_string(s_row, col, C_GENERAL_MED, msg);
+                driver_put_string(start_row, col, C_GENERAL_MED, msg);
                 if (*p == '+')
                 {
                     std::sprintf(msg, "%-12d", (int)g_params[i]);
@@ -636,7 +636,7 @@ top:
             }
         }
     }
-    driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
+    driver_put_string(start_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
     std::sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iterations);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
@@ -645,14 +645,14 @@ top:
 
     if (g_fractal_type == FractalType::PLASMA || g_fractal_type == FractalType::ANT || g_fractal_type == FractalType::CELLULAR)
     {
-        driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
+        driver_put_string(++start_row, 2, C_GENERAL_MED, "Current 'rseed': ");
         std::sprintf(msg, "%d", g_random_seed);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
     if (g_invert != 0)
     {
-        driver_put_string(++s_row, 2, C_GENERAL_MED, "Inversion radius: ");
+        driver_put_string(++start_row, 2, C_GENERAL_MED, "Inversion radius: ");
         std::sprintf(msg, "%12.9f", g_f_radius);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
         driver_put_string(-1, -1, C_GENERAL_MED, "  xcenter: ");
@@ -663,9 +663,9 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
-    if ((s_row += 2) < 23)
+    if ((start_row += 2) < 23)
     {
-        ++s_row;
+        ++start_row;
     }
     put_string_center(
         24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
