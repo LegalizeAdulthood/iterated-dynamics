@@ -369,13 +369,9 @@ retry_dir:
 // choice is used by other routines called by fullscreen_choice()
 static int check_f6_key(int key, int /*choice*/)
 {
-    if (key == ID_KEY_F6)
+    if (key == ID_KEY_F6 || key == ID_KEY_F4)
     {
-        return 0-ID_KEY_F6;
-    }
-    else if (key == ID_KEY_F4)
-    {
-        return 0-ID_KEY_F4;
+        return 0 - key;
     }
     return 0;
 }
