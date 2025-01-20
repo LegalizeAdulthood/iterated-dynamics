@@ -54,7 +54,7 @@ public:
         return result;
     }
 
-    operator GifFileType *() const
+    explicit operator GifFileType *() const
     {
         return m_gif;
     }

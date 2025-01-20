@@ -17,7 +17,7 @@ struct MemoryHandle
 {
     U16 index{};
 
-    operator bool() const
+    explicit operator bool() const
     {
         return index != 0;
     }

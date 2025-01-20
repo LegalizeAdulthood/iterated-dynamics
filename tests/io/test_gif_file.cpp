@@ -448,6 +448,7 @@ public:
         return result;
     }
 
+    // ReSharper disable once CppNonExplicitConversionOperator
     operator GifFileType *() const
     {
         return m_gif;
