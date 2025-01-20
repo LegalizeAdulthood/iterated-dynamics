@@ -80,7 +80,7 @@ static std::FILE *s_param_file{};
 
 static void put_param(char const *param, ...);
 static void put_param_line();
-static void put_float(int, double, int);
+static void put_float(int slash, double value, int prec);
 static void put_bf(int slash, BigFloat r, int prec);
 static void put_file_name(char const *keyword, char const *fname);
 static void strip_zeros(char *buf);
