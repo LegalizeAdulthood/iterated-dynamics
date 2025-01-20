@@ -71,7 +71,7 @@ private:
 
 #define DRIVER_MODE(width_, height_ ) \
     { 0, width_, height_, 256, nullptr, "                        " }
-static VideoInfo modes[] =
+static VideoInfo s_modes[] =
 {
     DRIVER_MODE( 800,  600),
     DRIVER_MODE(1024,  768),
@@ -139,7 +139,7 @@ bool DiskDriver::init(int *argc, char **argv)
     init_dac_box();
 
     // add default list of video modes
-    for (VideoInfo &mode : modes)
+    for (VideoInfo &mode : s_modes)
     {
         add_video_mode(this, &mode);
     }
