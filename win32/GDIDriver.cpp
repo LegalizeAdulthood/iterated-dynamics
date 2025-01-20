@@ -74,7 +74,7 @@ private:
 
 #define DRIVER_MODE(width_, height_) \
     { 0, width_, height_, 256, nullptr, "                        " }
-static VideoInfo modes[] =
+static VideoInfo s_modes[] =
 {
     DRIVER_MODE( 800,  600),
     DRIVER_MODE(1024,  768),
@@ -177,7 +177,7 @@ bool GDIDriver::init(int *argc, char **argv)
         int width, height;
         get_max_screen(width, height);
 
-        for (VideoInfo &mode : modes)
+        for (VideoInfo &mode : s_modes)
         {
             if (mode.x_dots <= width && mode.y_dots <= height)
             {
