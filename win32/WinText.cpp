@@ -111,7 +111,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
-static const char *const s_window_class{"IdText"};
+static const char *const WINDOW_CLASS{"IdText"};
 static WinText *s_me{};
 
 static COLORREF wintext_color[]
@@ -161,7 +161,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     std::strcpy(m_title, title);
     m_parent = parent;
 
-    bool return_value = GetClassInfoA(instance, s_window_class, &wc) != 0;
+    bool return_value = GetClassInfoA(instance, WINDOW_CLASS, &wc) != 0;
     if (!return_value)
     {
         wc.style = 0;
@@ -173,7 +173,7 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
         wc.lpszMenuName =  m_title;
-        wc.lpszClassName = s_window_class;
+        wc.lpszClassName = WINDOW_CLASS;
 
         return_value = RegisterClassA(&wc) != 0;
     }
@@ -267,7 +267,7 @@ int WinText::text_on()
      * is going to call the window procedure.
      */
     s_me = this;
-    m_window = CreateWindowA(s_window_class,                  //
+    m_window = CreateWindowA(WINDOW_CLASS,                  //
         m_title,                                              //
         nullptr == m_parent ? WS_OVERLAPPEDWINDOW : WS_CHILD, //
         CW_USEDEFAULT,                                        //
