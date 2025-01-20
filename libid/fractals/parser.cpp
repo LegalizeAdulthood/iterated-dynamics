@@ -338,7 +338,7 @@ static std::vector<Arg *> s_load;
 static int s_op_ptr{};
 static std::vector<FunctionPtr> s_fns;
 static std::vector<ConstArg> s_vars;
-#define LastSqr s_vars[4].a
+#define LAST_SQR (s_vars[4].a)
 static unsigned int s_op_count{};
 static int s_init_load_ptr{};
 static int s_init_store_ptr{};
@@ -364,7 +364,7 @@ static bool s_set_random{};
 static bool s_randomized{};
 static unsigned long s_rand_num{};
 static unsigned int s_chars_in_formula{};
-static constexpr std::array<char const *, 4> s_jump_list
+static constexpr std::array<char const *, 4> JUMP_LIST
 {
     "if",
     "elseif",
@@ -427,7 +427,7 @@ static FunctionPtr s_trig0{d_stk_sin};
 static FunctionPtr s_trig1{d_stk_sqr};
 static FunctionPtr s_trig2{d_stk_sinh};
 static FunctionPtr s_trig3{d_stk_cosh};
-static constexpr std::array<FunctList, 34> s_func_list
+static constexpr std::array<FunctList, 34> FUNC_LIST
 {
     FunctList{"sin",   &s_sin},
     FunctList{"sinh",  &s_sinh},
@@ -484,7 +484,7 @@ static std::array<char const *, 17> s_op_list
     "/",    // 15
     "^"     // 16
 };
-static constexpr std::array<char const *, 19> s_variables
+static constexpr std::array<char const *, 19> VARIABLES
 {
     "pixel",        // v[0]
     "p1",           // v[1]
@@ -506,7 +506,7 @@ static constexpr std::array<char const *, 19> s_variables
     "p4",           // v[17]
     "p5"            // v[18]
 };
-static constexpr std::array<SymmetryName, 14> s_symmetry_names
+static constexpr std::array<SymmetryName, 14> SYMMETRY_NAMES
 {
     SymmetryName{ "NOSYM",         SymmetryType::NONE },
     SymmetryName{ "XAXIS_NOPARM",  SymmetryType::X_AXIS_NO_PARAM },
@@ -620,7 +620,7 @@ static bool check_denom(double denom)
 static char const *parse_error_text(ParseError which)
 {
     // the entries in this array need to correspond to the ParseError enum values
-    static constexpr const char *const messages[]{
+    static constexpr const char *const MESSAGES[]{
         "Should be an Argument",
         "Should be an Operator",
         "')' needs a matching '('",
@@ -658,12 +658,12 @@ static char const *parse_error_text(ParseError which)
         R"msg(Only one ":" permitted in a formula)msg",
         "Invalid ParseErrs code",
     };
-    constexpr int last_err = std::size(messages) - 1;
+    constexpr int last_err = std::size(MESSAGES) - 1;
     if (+which > last_err)
     {
         which = static_cast<ParseError>(last_err);
     }
-    return messages[+which];
+    return MESSAGES[+which];
 }
 
 /* use the following when only float functions are implemented to
@@ -809,12 +809,12 @@ static void d_stk_lod_sqr2()
 {
     g_arg1++;
     g_arg2++;
-    LastSqr.d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x;
-    LastSqr.d.y = s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
+    LAST_SQR.d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x;
+    LAST_SQR.d.y = s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
     g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
-    g_arg1->d.x = LastSqr.d.x - LastSqr.d.y;
-    LastSqr.d.x += LastSqr.d.y;
-    LastSqr.d.y = 0;
+    g_arg1->d.x = LAST_SQR.d.x - LAST_SQR.d.y;
+    LAST_SQR.d.x += LAST_SQR.d.y;
+    LAST_SQR.d.y = 0;
     g_load_index++;
 }
 
@@ -829,9 +829,9 @@ static void d_stk_lod_dbl()
 
 static void d_stk_sqr0()
 {
-    LastSqr.d.y = g_arg1->d.y * g_arg1->d.y; // use LastSqr as temp storage
+    LAST_SQR.d.y = g_arg1->d.y * g_arg1->d.y; // use LastSqr as temp storage
     g_arg1->d.y = g_arg1->d.x * g_arg1->d.y * 2.0;
-    g_arg1->d.x = g_arg1->d.x * g_arg1->d.x - LastSqr.d.y;
+    g_arg1->d.x = g_arg1->d.x * g_arg1->d.x - LAST_SQR.d.y;
 }
 
 static void d_stk_sqr3()
@@ -865,34 +865,34 @@ void l_stk_abs()
 
 void d_stk_sqr()
 {
-    LastSqr.d.x = g_arg1->d.x * g_arg1->d.x;
-    LastSqr.d.y = g_arg1->d.y * g_arg1->d.y;
+    LAST_SQR.d.x = g_arg1->d.x * g_arg1->d.x;
+    LAST_SQR.d.y = g_arg1->d.y * g_arg1->d.y;
     g_arg1->d.y = g_arg1->d.x * g_arg1->d.y * 2.0;
-    g_arg1->d.x = LastSqr.d.x - LastSqr.d.y;
-    LastSqr.d.x += LastSqr.d.y;
-    LastSqr.d.y = 0;
+    g_arg1->d.x = LAST_SQR.d.x - LAST_SQR.d.y;
+    LAST_SQR.d.x += LAST_SQR.d.y;
+    LAST_SQR.d.y = 0;
 }
 
 void m_stk_sqr()
 {
-    LastSqr.m.x = *mp_mul(g_arg1->m.x, g_arg1->m.x);
-    LastSqr.m.y = *mp_mul(g_arg1->m.y, g_arg1->m.y);
+    LAST_SQR.m.x = *mp_mul(g_arg1->m.x, g_arg1->m.x);
+    LAST_SQR.m.y = *mp_mul(g_arg1->m.y, g_arg1->m.y);
     g_arg1->m.y = *mp_mul(g_arg1->m.x, g_arg1->m.y);
     g_arg1->m.y.exp++;
-    g_arg1->m.x = *mp_sub(LastSqr.m.x, LastSqr.m.y);
-    LastSqr.m.x = *mp_add(LastSqr.m.x, LastSqr.m.y);
-    LastSqr.m.y.exp = 0;
-    LastSqr.m.y.mant = 0;
+    g_arg1->m.x = *mp_sub(LAST_SQR.m.x, LAST_SQR.m.y);
+    LAST_SQR.m.x = *mp_add(LAST_SQR.m.x, LAST_SQR.m.y);
+    LAST_SQR.m.y.exp = 0;
+    LAST_SQR.m.y.mant = 0;
 }
 
 void l_stk_sqr()
 {
-    LastSqr.l.x = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift);
-    LastSqr.l.y = multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
+    LAST_SQR.l.x = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift);
+    LAST_SQR.l.y = multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
     g_arg1->l.y = multiply(g_arg1->l.x, g_arg1->l.y, g_bit_shift) << 1;
-    g_arg1->l.x = LastSqr.l.x - LastSqr.l.y;
-    LastSqr.l.x += LastSqr.l.y;
-    LastSqr.l.y = 0L;
+    g_arg1->l.x = LAST_SQR.l.x - LAST_SQR.l.y;
+    LAST_SQR.l.x += LAST_SQR.l.y;
+    LAST_SQR.l.y = 0L;
 }
 
 static void d_stk_add()
@@ -2120,13 +2120,13 @@ static void stk_jump_label()
     s_jump_index++;
 }
 
-static unsigned int skip_white_space(char const *Str)
+static unsigned int skip_white_space(char const *str)
 {
     unsigned n;
-    bool Done = false;
-    for (n = 0; !Done; n++)
+    bool done = false;
+    for (n = 0; !done; n++)
     {
-        switch (Str[n])
+        switch (str[n])
         {
         case ' ':
         case '\t':
@@ -2134,27 +2134,27 @@ static unsigned int skip_white_space(char const *Str)
         case '\r':
             break;
         default:
-            Done = true;
+            done = true;
         }
     }
     return n - 1;
 }
 
 // detect if constant is part of a (a,b) construct
-static bool is_const_pair(char const *Str)
+static bool is_const_pair(char const *str)
 {
     int n;
     bool answer = false;
     // skip past first number
-    for (n = 0; std::isdigit(Str[n]) || Str[n] == '.'; n++)
+    for (n = 0; std::isdigit(str[n]) || str[n] == '.'; n++)
     {
     }
-    if (Str[n] == ',')
+    if (str[n] == ',')
     {
-        int j = n + skip_white_space(&Str[n + 1]) + 1;
-        if (std::isdigit(Str[j])
-            || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
-            || Str[j] == '.')
+        int j = n + skip_white_space(&str[n + 1]) + 1;
+        if (std::isdigit(str[j])
+            || (str[j] == '-' && (std::isdigit(str[j+1]) || str[j+1] == '.'))
+            || str[j] == '.')
         {
             answer = true;
         }
@@ -2162,14 +2162,14 @@ static bool is_const_pair(char const *Str)
     return answer;
 }
 
-static ConstArg *is_const(char const *Str, int Len)
+static ConstArg *is_const(char const *str, int len)
 {
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_variable_index; n++)
     {
-        if (s_vars[n].len == Len)
+        if (s_vars[n].len == len)
         {
-            if (string_case_equal(s_vars[n].s, Str, Len))
+            if (string_case_equal(s_vars[n].s, str, len))
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
@@ -2206,15 +2206,15 @@ static ConstArg *is_const(char const *Str, int Len)
                         driver_unget_key('f');
                     }
                 }
-                if (!is_const_pair(Str))
+                if (!is_const_pair(str))
                 {
                     return &s_vars[n];
                 }
             }
         }
     }
-    s_vars[g_variable_index].s = Str;
-    s_vars[g_variable_index].len = Len;
+    s_vars[g_variable_index].s = str;
+    s_vars[g_variable_index].len = len;
     s_vars[g_variable_index].a.d.y = 0.0;
     s_vars[g_variable_index].a.d.x = s_vars[g_variable_index].a.d.y;
 
@@ -2235,9 +2235,9 @@ static ConstArg *is_const(char const *Str, int Len)
         break;
     }
 
-    if (std::isdigit(Str[0])
-        || (Str[0] == '-' && (std::isdigit(Str[1]) || Str[1] == '.'))
-        || Str[0] == '.')
+    if (std::isdigit(str[0])
+        || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.'))
+        || str[0] == '.')
     {
         DComplex z;
         assert(g_operation_index > 0);
@@ -2246,23 +2246,23 @@ static ConstArg *is_const(char const *Str, int Len)
         {
             s_op.pop_back();
             g_operation_index--;
-            Str = Str - 1;
+            str = str - 1;
             s_init_n--;
             s_vars[g_variable_index].len++;
         }
         unsigned n;
-        for (n = 1; std::isdigit(Str[n]) || Str[n] == '.'; n++)
+        for (n = 1; std::isdigit(str[n]) || str[n] == '.'; n++)
         {
         }
-        if (Str[n] == ',')
+        if (str[n] == ',')
         {
-            unsigned j = n + skip_white_space(&Str[n+1]) + 1;
-            if (std::isdigit(Str[j])
-                || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
-                || Str[j] == '.')
+            unsigned j = n + skip_white_space(&str[n+1]) + 1;
+            if (std::isdigit(str[j])
+                || (str[j] == '-' && (std::isdigit(str[j+1]) || str[j+1] == '.'))
+                || str[j] == '.')
             {
-                z.y = std::atof(&Str[j]);
-                for (; std::isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
+                z.y = std::atof(&str[j]);
+                for (; std::isdigit(str[j]) || str[j] == '.' || str[j] == '-'; j++)
                 {
                 }
                 s_vars[g_variable_index].len = j;
@@ -2276,7 +2276,7 @@ static ConstArg *is_const(char const *Str, int Len)
         {
             z.y = 0.0;
         }
-        z.x = std::atof(Str);
+        z.x = std::atof(str);
         switch (s_math_type)
         {
         case MathType::DOUBLE:
@@ -2290,7 +2290,7 @@ static ConstArg *is_const(char const *Str, int Len)
             s_vars[g_variable_index].a.l.y = (long)(z.y * s_fudge);
             break;
         }
-        s_vars[g_variable_index].s = Str;
+        s_vars[g_variable_index].s = str;
     }
     return &s_vars[g_variable_index++];
 }
@@ -2302,11 +2302,11 @@ static ConstArg *is_const(char const *Str, int Len)
     3 - else
     4 - endif
 */
-static JumpControlType is_jump(char const *Str, int Len)
+static JumpControlType is_jump(char const *str, int len)
 {
-    for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++)
+    for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
     {
-        if ((int) std::strlen(s_jump_list[i]) == Len && string_case_equal(s_jump_list[i], Str, Len))
+        if ((int) std::strlen(JUMP_LIST[i]) == len && string_case_equal(JUMP_LIST[i], str, len))
         {
             return static_cast<JumpControlType>(i + 1);
         }
@@ -2345,17 +2345,17 @@ static int which_fn(char const *s, int len)
     return out;
 }
 
-static FunctionPtr is_func(char const *Str, int Len)
+static FunctionPtr is_func(char const *str, int len)
 {
-    unsigned n = skip_white_space(&Str[Len]);
-    if (Str[Len+n] == '(')
+    unsigned n = skip_white_space(&str[len]);
+    if (str[len+n] == '(')
     {
-        for (n = 0; n < static_cast<unsigned>(s_func_list.size()); n++)
+        for (n = 0; n < static_cast<unsigned>(FUNC_LIST.size()); n++)
         {
-            if (string_case_equal(s_func_list[n].s, Str, Len))
+            if (string_case_equal(FUNC_LIST[n].s, str, len))
             {
                 // count function variables
-                int funct_num = which_fn(Str, Len);
+                int funct_num = which_fn(str, len);
                 if (funct_num != 0)
                 {
                     if (funct_num > g_max_function)
@@ -2363,7 +2363,7 @@ static FunctionPtr is_func(char const *Str, int Len)
                         g_max_function = (char)funct_num;
                     }
                 }
-                return *s_func_list[n].ptr;
+                return *FUNC_LIST[n].ptr;
             }
         }
         return funct_not_found;
@@ -2373,8 +2373,8 @@ static FunctionPtr is_func(char const *Str, int Len)
 
 static void sort_precedence()
 {
-    int ThisOp = s_next_op++;
-    while (s_op[ThisOp].p > s_op[s_next_op].p && s_next_op < g_operation_index)
+    int this_op = s_next_op++;
+    while (s_op[this_op].p > s_op[s_next_op].p && s_next_op < g_operation_index)
     {
         sort_precedence();
     }
@@ -2383,7 +2383,7 @@ static void sort_precedence()
         throw std::runtime_error(
             "OpPtr (" + std::to_string(s_op_ptr) + ") exceeds size of f[] (" + std::to_string(s_fns.size()) + ")");
     }
-    s_fns.push_back(s_op[ThisOp].f);
+    s_fns.push_back(s_op[this_op].f);
     ++s_op_ptr;
 }
 
@@ -2582,10 +2582,10 @@ static bool parse_formula_text(char const *text)
         break;
     }
     g_max_function = 0;
-    for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(s_variables.size()); g_variable_index++)
+    for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(VARIABLES.size()); g_variable_index++)
     {
-        s_vars[g_variable_index].s = s_variables[g_variable_index];
-        s_vars[g_variable_index].len = (int) std::strlen(s_variables[g_variable_index]);
+        s_vars[g_variable_index].s = VARIABLES[g_variable_index];
+        s_vars[g_variable_index].len = (int) std::strlen(VARIABLES[g_variable_index]);
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     double const_pi = std::atan(1.0) * 4;
@@ -3257,9 +3257,9 @@ static int frm_get_char(std::FILE *open_file)
 
 static void get_func_info(Token *tok)
 {
-    for (int i = 0; i < static_cast<int>(s_func_list.size()); i++)
+    for (int i = 0; i < static_cast<int>(FUNC_LIST.size()); i++)
     {
-        if (!std::strcmp(s_func_list[i].s, tok->str))
+        if (!std::strcmp(FUNC_LIST[i].s, tok->str))
         {
             tok->id = static_cast<TokenId>(i);
             if (tok->id >= TokenId::FUNC_FN1 && tok->id <= TokenId::FUNC_FN4)
@@ -3274,9 +3274,9 @@ static void get_func_info(Token *tok)
         }
     }
 
-    for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++) // pick up flow control
+    for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++) // pick up flow control
     {
-        if (std::strcmp(s_jump_list[i], tok->str) == 0)
+        if (std::strcmp(JUMP_LIST[i], tok->str) == 0)
         {
             tok->type = FormulaTokenType::FLOW_CONTROL;
             tok->id   = static_cast<TokenId>(i + 1);
@@ -3289,9 +3289,9 @@ static void get_func_info(Token *tok)
 
 static void get_var_info(Token *tok)
 {
-    for (int i = 0; i < static_cast<int>(s_variables.size()); i++)
+    for (int i = 0; i < static_cast<int>(VARIABLES.size()); i++)
     {
-        if (!std::strcmp(s_variables[i], tok->str))
+        if (!std::strcmp(VARIABLES[i], tok->str))
         {
             tok->id = static_cast<TokenId>(i);
             switch (tok->id)
@@ -3797,7 +3797,7 @@ CASE_TERMINATOR:
     }
 }
 
-int frm_get_param_stuff(char const *Name)
+int frm_get_param_stuff(char const *name)
 {
     std::FILE *debug_token = nullptr;
     int c;
@@ -3815,7 +3815,7 @@ int frm_get_param_stuff(char const *Name)
     {
         return 0;  //  and don't reset the pointers
     }
-    if (find_file_item(g_formula_filename, Name, &entry_file, ItemType::FORMULA))
+    if (find_file_item(g_formula_filename, name, &entry_file, ItemType::FORMULA))
     {
         stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
@@ -3835,7 +3835,7 @@ int frm_get_param_stuff(char const *Name)
         debug_token = open_save_file("frmtokens.txt", "at");
         if (debug_token != nullptr)
         {
-            std::fprintf(debug_token, "%s\n", Name);
+            std::fprintf(debug_token, "%s\n", name);
         }
     }
     while (frm_get_token(entry_file, &current_token))
@@ -4005,12 +4005,12 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             }
         }
         sym_buf[i] = (char) 0;
-        constexpr int num_names{s_symmetry_names.size()};
+        constexpr int num_names{SYMMETRY_NAMES.size()};
         for (i = 0; i < num_names; i++)
         {
-            if (string_case_equal(s_symmetry_names[i].s, sym_buf))
+            if (string_case_equal(SYMMETRY_NAMES[i].s, sym_buf))
             {
-                g_symmetry = s_symmetry_names[i].n;
+                g_symmetry = SYMMETRY_NAMES[i].n;
                 break;
             }
         }
@@ -4087,9 +4087,9 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
             std::fprintf(debug_fp, "%s\n", g_formula_name.c_str());
             if (g_symmetry != SymmetryType::NONE)
             {
-                auto it = std::find_if(std::begin(s_symmetry_names), std::end(s_symmetry_names),
+                auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
                     [](const SymmetryName &item) { return item.n == g_symmetry; });
-                if (it != std::end(s_symmetry_names))
+                if (it != std::end(SYMMETRY_NAMES))
                 {
                     std::fprintf(debug_fp, "%s\n", it->s);
                 }
