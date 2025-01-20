@@ -9,7 +9,7 @@
 #include "ui/video.h"
 
 // routines in this module
-static int  standard_calc(int);
+static int  standard_calc(int pass_num);
 
 int one_or_two_pass()
 {
