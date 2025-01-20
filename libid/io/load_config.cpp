@@ -67,7 +67,7 @@ void load_config(const std::string &cfg_path)
 
     int line_num = 0;
     char temp_string[150];
-    std::fill(std::begin(g_cfg_line_nums), std::begin(g_cfg_line_nums) + g_video_table_len, -1);
+    std::fill_n(std::begin(g_cfg_line_nums), g_video_table_len, -1);
     while (g_video_table_len < MAX_VIDEO_MODES
         && std::fgets(temp_string, std::size(temp_string), cfg_file))
     {
