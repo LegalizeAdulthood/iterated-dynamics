@@ -140,12 +140,9 @@ int newton_fractal2()
     {
         return 1;
     }
-    else
-    {
-        t2 = 1.0 / t2;
-        g_old_z.x = t2 * (g_new_z.x * g_tmp_z.x + g_new_z.y * g_tmp_z.y);
-        g_old_z.y = t2 * (g_new_z.y * g_tmp_z.x - g_new_z.x * g_tmp_z.y);
-    }
+    t2 = 1.0 / t2;
+    g_old_z.x = t2 * (g_new_z.x * g_tmp_z.x + g_new_z.y * g_tmp_z.y);
+    g_old_z.y = t2 * (g_new_z.y * g_tmp_z.x - g_new_z.x * g_tmp_z.y);
     return 0;
 }
 
