@@ -244,14 +244,7 @@ bool lambda_trig_setup()
         break;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
-    if (is_integer)
-    {
-        return julia_long_setup();
-    }
-    else
-    {
-        return julia_fp_setup();
-    }
+    return is_integer ? julia_long_setup() : julia_fp_setup();
 }
 
 bool mandel_trig_setup()
@@ -308,12 +301,5 @@ bool mandel_trig_setup()
         g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         break;
     }
-    if (is_integer)
-    {
-        return mandel_long_setup();
-    }
-    else
-    {
-        return mandel_fp_setup();
-    }
+    return is_integer ? mandel_long_setup() : mandel_fp_setup();
 }
