@@ -11,7 +11,8 @@
 LComplex complex_sqrt_long(long x, long y)
 {
     double theta;
-    long      mag_long, theta_long;
+    long mag_long;
+    long theta_long;
     LComplex    result;
 
     double mag = std::sqrt(std::sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge_factor +
@@ -74,7 +75,8 @@ DComplex complex_power(DComplex xx, DComplex yy)
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
 void asin_z(DComplex z, DComplex *rz)
 {
-    DComplex temp_z1, temp_z2;
+    DComplex temp_z1;
+    DComplex temp_z2;
 
     fpu_cmplx_mul(&z, &z, &temp_z1);
     temp_z1.x = 1 - temp_z1.x;
@@ -134,7 +136,9 @@ void acosh_z(DComplex z, DComplex *rz)
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
 void atanh_z(DComplex z, DComplex *rz)
 {
-    DComplex temp0, temp1, temp2;
+    DComplex temp0;
+    DComplex temp1;
+    DComplex temp2;
 
     if (z.x == 0.0)
     {
@@ -168,7 +172,10 @@ void atanh_z(DComplex z, DComplex *rz)
 // rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)}
 void atan_z(DComplex z, DComplex *rz)
 {
-    DComplex temp0, temp1, temp2, temp3;
+    DComplex temp0;
+    DComplex temp1;
+    DComplex temp2;
+    DComplex temp3;
     if (z.x == 0.0 && z.y == 0.0)
     {
         rz->y = 0;
