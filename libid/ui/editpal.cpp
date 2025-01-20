@@ -277,9 +277,9 @@ private:
     class CrossHairCursorNotification : public NullMouseNotification
     {
     public:
-        CrossHairCursorNotification(CrossHairCursor &cursor, PalTable *palTable) :
+        CrossHairCursorNotification(CrossHairCursor &cursor, PalTable *pal_table) :
             m_cursor(cursor),
-            m_palTable(palTable)
+            m_pal_table(pal_table)
         {
         }
         ~CrossHairCursorNotification() override = default;
@@ -288,13 +288,13 @@ private:
             if (!m_cursor.hidden())
             {
                 m_cursor.set_pos(x, y);
-                m_palTable->set_curr_from_cursor();
+                m_pal_table->set_curr_from_cursor();
             }
         }
 
     private:
         CrossHairCursor &m_cursor;
-        PalTable *m_palTable;
+        PalTable *m_pal_table;
     };
 
     void draw_status(bool stripe_mode);
