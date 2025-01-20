@@ -21,9 +21,9 @@ enum
 };
 
 static Plot *s_plot{};
-static const char *const s_window_class{"IdPlot"};
+static const char *const WINDOW_CLASS{"IdPlot"};
 
-static const Byte font_8x8[8][1024/8] =
+static const Byte FONT_8x8[8][1024/8] =
 {
     {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -338,7 +338,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
     m_instance = instance;
     m_title = title;
 
-    int result = GetClassInfoA(m_instance, s_window_class, &wc);
+    int result = GetClassInfoA(m_instance, WINDOW_CLASS, &wc);
     if (!result)
     {
         wc.style = 0;
@@ -350,7 +350,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
         wc.lpszMenuName = m_title.c_str();
-        wc.lpszClassName = s_window_class;
+        wc.lpszClassName = WINDOW_CLASS;
 
         result = RegisterClassA(&wc);
     }
@@ -397,7 +397,7 @@ void Plot::create_window(HWND parent)
         init_pixels();
         s_plot = this;
         m_parent = parent;
-        m_window = CreateWindowA(s_window_class,     //
+        m_window = CreateWindowA(WINDOW_CLASS,     //
             m_title.c_str(),                         //
             parent ? WS_CHILD : WS_OVERLAPPEDWINDOW, //
             CW_USEDEFAULT,                           // default horizontal position
@@ -558,7 +558,7 @@ void Plot::display_string(int x, int y, int fg, int bg, char const *text)
         {
             int x1 = x;
             int col = 8;
-            Byte pixel = font_8x8[row][static_cast<unsigned char>(*text)];
+            Byte pixel = FONT_8x8[row][static_cast<unsigned char>(*text)];
             while (col-- > 0)
             {
                 int color = (pixel & (1 << col)) ? fg : bg;
