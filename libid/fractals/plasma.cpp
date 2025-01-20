@@ -32,8 +32,8 @@ enum
                                override this value with a nonzero param1 */
 };
 
-static constexpr U16 (*s_get_color)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
-static U16 (*s_get_pix)(int x, int y){s_get_color};
+static constexpr U16 (*GET_COLOR)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
+static U16 (*s_get_pix)(int x, int y){GET_COLOR};
 static int s_i_param_x{};   // s_i_param_x = param.x * 8
 static int s_shift_value{}; // shift based on #colors
 static int s_recur1{1};
@@ -300,8 +300,8 @@ static void sub_divide(int x1, int y1, int x2, int y2)
 int plasma()
 {
     U16 rnd[4];
-    bool OldPotFlag = false;
-    bool OldPot16bit = false;
+    bool old_pot_flag = false;
+    bool old_pot_16bit = false;
     s_kbd_check = 0;
 
     if (g_colors < 4)
@@ -351,8 +351,8 @@ int plasma()
                 g_plot    = (PlotFn)put_pot;
             }
             s_get_pix =  get_pot;
-            OldPotFlag = g_potential_flag;
-            OldPot16bit = g_potential_16bit;
+            old_pot_flag = g_potential_flag;
+            old_pot_16bit = g_potential_16bit;
         }
         else
         {
@@ -366,7 +366,7 @@ int plasma()
             {
                 g_plot    = g_put_color;
             }
-            s_get_pix = s_get_color;
+            s_get_pix = GET_COLOR;
         }
     }
     else
@@ -379,7 +379,7 @@ int plasma()
         {
             g_plot    = g_put_color;
         }
-            s_get_pix = s_get_color;
+            s_get_pix = GET_COLOR;
     }
     std::srand(g_random_seed);
     if (!g_random_seed_flag)
@@ -484,11 +484,11 @@ int plasma()
 done:
     if (s_max_plasma != 0)
     {
-        g_potential_flag = OldPotFlag;
-        g_potential_16bit = OldPot16bit;
+        g_potential_flag = old_pot_flag;
+        g_potential_16bit = old_pot_16bit;
     }
     g_plot    = g_put_color;
-    s_get_pix = s_get_color;
+    s_get_pix = GET_COLOR;
     return n;
 }
 
