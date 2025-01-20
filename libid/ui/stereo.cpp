@@ -99,7 +99,7 @@ static StereoData *s_data{};
    0 to 255.
 */
 
-#define dac   (*((DACBox)(s_data->save_dac)))
+#define DAC   (*((DACBox)(s_data->save_dac)))
 
 static int get_depth(int xd, int yd)
 {
@@ -107,9 +107,9 @@ static int get_depth(int xd, int yd)
     if (g_gray_flag)
     {
         // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
-        pal = ((int) dac[pal][0] * 77 +
-               (int) dac[pal][1] * 151 +
-               (int) dac[pal][2] * 28);
+        pal = ((int) DAC[pal][0] * 77 +
+               (int) DAC[pal][1] * 151 +
+               (int) DAC[pal][2] * 28);
         pal >>= 6;
     }
     return pal;
