@@ -168,9 +168,9 @@ static long float_to_em(float f)
 }
 
 // Input is a 16 bit offset number.  Output is shifted by Fudge.
-unsigned long exp_fudged(long x, int Fudge)
+unsigned long exp_fudged(long x, int fudge)
 {
-    return (long)(std::exp((double) x / (double)(1 << 16))*(double)(1 << Fudge));
+    return (long)(std::exp((double) x / (double)(1 << 16))*(double)(1 << fudge));
 }
 
 // This multiplies two e/m numbers and returns an e/m number.
@@ -201,29 +201,29 @@ long reg_div_float(long x, long y)
 // TODO: this static assert fails on linux;
 // these long/float casting functions should be replaced with float.
 // static_assert(sizeof(float) == sizeof(long));
-long reg_fg_to_float(long x, int FudgeFact)
+long reg_fg_to_float(long x, int fudge_factor)
 {
-    float f = (float) x / (float)(1 << FudgeFact);
+    float f = (float) x / (float)(1 << fudge_factor);
     return float_to_em(f);
 }
 
 // This converts em to shifted integer format.
 //
-long reg_float_to_fg(long x, int Fudge)
+long reg_float_to_fg(long x, int fudge)
 {
-    return (long)(em_to_float(x)*(float)(1 << Fudge));
+    return (long)(em_to_float(x)*(float)(1 << fudge));
 }
 
-long reg_sft_float(long x, int Shift)
+long reg_sft_float(long x, int shift)
 {
     float f = em_to_float(x);
-    if (Shift > 0)
+    if (shift > 0)
     {
-        f *= (1 << Shift);
+        f *= (1 << shift);
     }
     else
     {
-        f /= (1 << Shift);
+        f /= (1 << shift);
     }
     return float_to_em(f);
 }
