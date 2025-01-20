@@ -64,7 +64,7 @@ static void display_error(MemoryLocation stored_at, long how_much);
 static void display_handle(U16 handle);
 
 static int s_num_total_handles{};
-static constexpr const char *const s_memory_names[3]{"nowhere", "memory", "disk"};
+static constexpr const char *const MEMORY_NAMES[3]{"nowhere", "memory", "disk"};
 static Memory s_handles[MAX_HANDLES];
 
 // Memory handling support routines
@@ -77,7 +77,7 @@ static bool check_disk_space(std::uint64_t size)
 
 static const char *memory_type(MemoryLocation where)
 {
-    return s_memory_names[static_cast<int>(where)];
+    return MEMORY_NAMES[static_cast<int>(where)];
 }
 
 static void which_disk_error(int status)
