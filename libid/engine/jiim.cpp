@@ -514,38 +514,38 @@ private:
     void finish();
 
     JIIMType m_which;
-    Affine cvt{};
-    bool exact{};
-    int count{};           // coloring julia
-    double c_real{};
-    double c_imag{};
-    double r{};
-    int x_factor{};
-    int y_factor{}; // aspect ratio
-    int x_off{};
-    int y_off{}; // center of the window
-    int x{};
-    int y{};
-    int key{-1};
-    long iter{};
-    int color{};
-    float zoom{};
-    int old_x{};
-    int old_y{};
-    double aspect{};
-    bool actively_computing{true};
-    bool first_time{true};
-    int old_screen_x_offset{g_logical_screen_x_offset};
-    int old_screen_y_offset{g_logical_screen_y_offset};
+    Affine m_cvt{};
+    bool m_exact{};
+    int m_count{};           // coloring julia
+    double m_c_real{};
+    double m_c_imag{};
+    double m_r{};
+    int m_x_factor{};
+    int m_y_factor{}; // aspect ratio
+    int m_x_off{};
+    int m_y_off{}; // center of the window
+    int m_x{};
+    int m_y{};
+    int m_key{-1};
+    long m_iter{};
+    int m_color{};
+    float m_zoom{};
+    int m_old_x{};
+    int m_old_y{};
+    double m_aspect{};
+    bool m_actively_computing{true};
+    bool m_first_time{true};
+    int m_old_screen_x_offset{g_logical_screen_x_offset};
+    int m_old_screen_y_offset{g_logical_screen_y_offset};
 
-    static OrbitFlags mode; // point, circle, ...
-    static int ran_dir;
-    static int ran_cnt;
+    static OrbitFlags s_mode; // point, circle, ...
+    static int s_ran_dir;
+    static int s_ran_cnt;
 };
 
-OrbitFlags InverseJulia::mode{};
-int InverseJulia::ran_dir{};
-int InverseJulia::ran_cnt{};
+OrbitFlags InverseJulia::s_mode{};
+int InverseJulia::s_ran_dir{};
+int InverseJulia::s_ran_cnt{};
 
 InverseJulia::InverseJulia(JIIMType which) :
     m_which(which)
@@ -562,9 +562,9 @@ void InverseJulia::start()
     s_show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-    aspect = ((double) g_logical_screen_x_dots * 3) / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
-    actively_computing = true;
-    set_aspect(aspect);
+    m_aspect = ((double) g_logical_screen_x_dots * 3) / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
+    m_actively_computing = true;
+    set_aspect(m_aspect);
 
     if (m_which == JIIMType::ORBIT)
     {
@@ -608,8 +608,8 @@ void InverseJulia::start()
         s_win_height = g_vesa_y_res / 3;
         s_corner_x = g_video_start_x + s_win_width * 2;
         s_corner_y = g_video_start_y + s_win_height * 2;
-        x_off = g_video_start_x + s_win_width * 5 / 2;
-        y_off = g_video_start_y + s_win_height * 5 / 2;
+        m_x_off = g_video_start_x + s_win_width * 5 / 2;
+        m_y_off = g_video_start_y + s_win_height * 5 / 2;
     }
     else if (g_logical_screen_x_dots > g_vesa_x_res / 3 && g_logical_screen_y_dots > g_vesa_y_res / 3)
     {
@@ -618,8 +618,8 @@ void InverseJulia::start()
         s_win_height = g_vesa_y_res - g_logical_screen_y_dots;
         s_corner_x = g_video_start_x + g_logical_screen_x_dots;
         s_corner_y = g_video_start_y + g_logical_screen_y_dots;
-        x_off = s_corner_x + s_win_width / 2;
-        y_off = s_corner_y + s_win_height / 2;
+        m_x_off = s_corner_x + s_win_width / 2;
+        m_y_off = s_corner_y + s_win_height / 2;
     }
     else
     {
@@ -628,12 +628,12 @@ void InverseJulia::start()
         s_win_height = g_vesa_y_res;
         s_corner_x = g_video_start_x;
         s_corner_y = g_video_start_y;
-        x_off = g_video_start_x + s_win_width / 2;
-        y_off = g_video_start_y + s_win_height / 2;
+        m_x_off = g_video_start_x + s_win_width / 2;
+        m_y_off = g_video_start_y + s_win_height / 2;
     }
 
-    x_factor = (int) (s_win_width / 5.33);
-    y_factor = (int) (-s_win_height / 4);
+    m_x_factor = (int) (s_win_width / 5.33);
+    m_y_factor = (int) (-s_win_height / 4);
 
     if (s_window_style == JuliaWindowStyle::LARGE)
     {
@@ -651,27 +651,27 @@ void InverseJulia::start()
         fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
     }
 
-    setup_convert_to_screen(&cvt);
+    setup_convert_to_screen(&m_cvt);
 
     // reuse last location if inside window
-    g_col = (int) std::lround(cvt.a * g_save_c.x + cvt.b * g_save_c.y + cvt.e);
-    g_row = (int) std::lround(cvt.c * g_save_c.x + cvt.d * g_save_c.y + cvt.f);
+    g_col = (int) std::lround(m_cvt.a * g_save_c.x + m_cvt.b * g_save_c.y + m_cvt.e);
+    g_row = (int) std::lround(m_cvt.c * g_save_c.x + m_cvt.d * g_save_c.y + m_cvt.f);
     if (g_col < 0 || g_col >= g_logical_screen_x_dots || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
-        c_real = (g_x_max + g_x_min) / 2.0;
-        c_imag = (g_y_max + g_y_min) / 2.0;
+        m_c_real = (g_x_max + g_x_min) / 2.0;
+        m_c_imag = (g_y_max + g_y_min) / 2.0;
     }
     else
     {
-        c_real = g_save_c.x;
-        c_imag = g_save_c.y;
+        m_c_real = g_save_c.x;
+        m_c_imag = g_save_c.y;
     }
 
-    old_y = -1;
-    old_x = -1;
+    m_old_y = -1;
+    m_old_x = -1;
 
-    g_col = (int) std::lround(cvt.a * c_real + cvt.b * c_imag + cvt.e);
-    g_row = (int) std::lround(cvt.c * c_real + cvt.d * c_imag + cvt.f);
+    g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
+    g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
 
     // possible extraseg arrays have been trashed, so set up again
     if (g_integer_fractal)
@@ -685,10 +685,10 @@ void InverseJulia::start()
 
     s_cursor.set_pos(g_col, g_row);
     s_cursor.show();
-    color = g_color_bright;
+    m_color = g_color_bright;
 
-    iter = 1;
-    zoom = 1.0f;
+    m_iter = 1;
+    m_zoom = 1.0f;
 
     g_cursor_mouse_tracking = true;
 }
@@ -696,7 +696,7 @@ void InverseJulia::start()
 bool InverseJulia::iterate()
 {
     bool still{true};
-    if (actively_computing)
+    if (m_actively_computing)
     {
         s_cursor.check_blink();
     }
@@ -704,19 +704,19 @@ bool InverseJulia::iterate()
     {
         s_cursor.wait_key();
     }
-    if (driver_key_pressed() || first_time)
+    if (driver_key_pressed() || m_first_time)
     {
-        first_time = false;
+        m_first_time = false;
         while (driver_key_pressed())
         {
             s_cursor.wait_key();
-            key = driver_get_key();
+            m_key = driver_get_key();
 
             int d_col = 0;
             int d_row = 0;
             g_julia_c_x = JULIA_C_NOT_SET;
             g_julia_c_y = JULIA_C_NOT_SET;
-            switch (key)
+            switch (m_key)
             {
             case ID_KEY_CTL_KEYPAD_5: // ctrl - keypad 5
             case ID_KEY_KEYPAD_5:     // keypad 5
@@ -796,32 +796,32 @@ bool InverseJulia::iterate()
 
             case 'z':
             case 'Z':
-                zoom = 1.0F;
+                m_zoom = 1.0F;
                 break;
 
             case '<':
             case ',':
-                zoom /= 1.15F;
+                m_zoom /= 1.15F;
                 break;
 
             case '>':
             case '.':
-                zoom *= 1.15F;
+                m_zoom *= 1.15F;
                 break;
 
             case ID_KEY_SPACE:
-                g_julia_c_x = c_real;
-                g_julia_c_y = c_imag;
+                g_julia_c_x = m_c_real;
+                g_julia_c_y = m_c_imag;
                 return false;
 
             case 'c':
             case 'C':
-                mode ^= OrbitFlags::CIRCLE;
+                s_mode ^= OrbitFlags::CIRCLE;
                 break;
 
             case 'l':
             case 'L':
-                mode ^= OrbitFlags::LINE;
+                s_mode ^= OrbitFlags::LINE;
                 break;
 
             case 'n':
@@ -837,10 +837,10 @@ bool InverseJulia::iterate()
 
             case 'p':
             case 'P':
-                get_a_number(&c_real, &c_imag);
-                exact = true;
-                g_col = (int) std::lround(cvt.a * c_real + cvt.b * c_imag + cvt.e);
-                g_row = (int) std::lround(cvt.c * c_real + cvt.d * c_imag + cvt.f);
+                get_a_number(&m_c_real, &m_c_imag);
+                m_exact = true;
+                g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
+                g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
                 d_row = 0;
                 d_col = 0;
                 break;
@@ -871,7 +871,7 @@ bool InverseJulia::iterate()
             case '9':
                 if (m_which == JIIMType::JIIM)
                 {
-                    s_secret_mode = static_cast<SecretMode>(key - '0');
+                    s_secret_mode = static_cast<SecretMode>(m_key - '0');
                 }
                 else
                 {
@@ -884,14 +884,14 @@ bool InverseJulia::iterate()
                 break;
             } // switch
 
-            if (key == 's' || key == 'S')
+            if (m_key == 's' || m_key == 'S')
             {
                 return false;
             }
 
             if (d_col > 0 || d_row > 0)
             {
-                exact = false;
+                m_exact = false;
             }
             g_col += d_col;
             g_row += d_row;
@@ -900,49 +900,49 @@ bool InverseJulia::iterate()
             if (g_col >= g_logical_screen_x_dots)
             {
                 g_col = g_logical_screen_x_dots - 1;
-                exact = false;
+                m_exact = false;
             }
             if (g_row >= g_logical_screen_y_dots)
             {
                 g_row = g_logical_screen_y_dots - 1;
-                exact = false;
+                m_exact = false;
             }
             if (g_col < 0)
             {
                 g_col = 0;
-                exact = false;
+                m_exact = false;
             }
             if (g_row < 0)
             {
                 g_row = 0;
-                exact = false;
+                m_exact = false;
             }
 
             s_cursor.set_pos(g_col, g_row);
         } // end while (driver_key_pressed)
 
-        if (!exact)
+        if (!m_exact)
         {
             if (g_integer_fractal)
             {
-                c_real = g_l_x_pixel();
-                c_imag = g_l_y_pixel();
-                c_real /= (1L << g_bit_shift);
-                c_imag /= (1L << g_bit_shift);
+                m_c_real = g_l_x_pixel();
+                m_c_imag = g_l_y_pixel();
+                m_c_real /= (1L << g_bit_shift);
+                m_c_imag /= (1L << g_bit_shift);
             }
             else
             {
-                c_real = g_dx_pixel();
-                c_imag = g_dy_pixel();
+                m_c_real = g_dx_pixel();
+                m_c_imag = g_dy_pixel();
             }
         }
 
-        actively_computing = true;
+        m_actively_computing = true;
         if (s_show_numbers) // write coordinates on screen
         {
             char str[41];
             std::snprintf(
-                str, std::size(str), "%16.14f %16.14f %3d", c_real, c_imag, get_color(g_col, g_row));
+                str, std::size(str), "%16.14f %16.14f %3d", m_c_real, m_c_imag, get_color(g_col, g_row));
             if (s_window_style == JuliaWindowStyle::LARGE)
             {
                 // show temp msg will clear self if new msg is a different length - pad to length 40
@@ -952,7 +952,7 @@ bool InverseJulia::iterate()
                 }
                 str[40] = 0;
                 s_cursor.hide();
-                actively_computing = true;
+                m_actively_computing = true;
                 show_temp_msg(str);
                 s_cursor.show();
             }
@@ -961,20 +961,20 @@ bool InverseJulia::iterate()
                 driver_display_string(5, g_vesa_y_res - s_show_numbers, WHITE, BLACK, str);
             }
         }
-        iter = 1;
+        m_iter = 1;
         g_l_old_z.y = 0;
         g_l_old_z.x = 0;
         g_old_z.y = 0;
         g_old_z.x = 0;
-        g_init.x = c_real;
-        g_save_c.x = c_real;
-        g_init.y = c_imag;
-        g_save_c.y = c_imag;
-        g_l_init.x = (long) (c_real * g_fudge_factor);
-        g_l_init.y = (long) (c_imag * g_fudge_factor);
+        g_init.x = m_c_real;
+        g_save_c.x = m_c_real;
+        g_init.y = m_c_imag;
+        g_save_c.y = m_c_imag;
+        g_l_init.x = (long) (m_c_real * g_fudge_factor);
+        g_l_init.y = (long) (m_c_imag * g_fudge_factor);
 
-        old_y = -1;
-        old_x = -1;
+        m_old_y = -1;
+        m_old_x = -1;
         // MIIM code: compute fixed points and use them as starting points of JIIM
         if (m_which == JIIMType::JIIM && s_ok_to_miim)
         {
@@ -982,7 +982,7 @@ bool InverseJulia::iterate()
             DComplex f2;
             DComplex Sqrt; // Fixed points of Julia
 
-            Sqrt = complex_sqrt_float(1 - 4 * c_real, -4 * c_imag);
+            Sqrt = complex_sqrt_float(1 - 4 * m_c_real, -4 * m_c_imag);
             f1.x = (1 + Sqrt.x) / 2;
             f2.x = (1 - Sqrt.x) / 2;
             f1.y = Sqrt.y / 2;
@@ -1011,7 +1011,7 @@ bool InverseJulia::iterate()
             {
                 s_corner_x = g_video_start_x + s_win_width * 2;
             }
-            x_off = s_corner_x + s_win_width / 2;
+            m_x_off = s_corner_x + s_win_width / 2;
             save_rect(s_corner_x, s_corner_y, s_win_width, s_win_height);
         }
         if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
@@ -1052,8 +1052,8 @@ bool InverseJulia::iterate()
                     s_lucky_x = 0.0f;
                     for (int i = 0; i < 199; i++)
                     {
-                        g_old_z = complex_sqrt_float(g_old_z.x - c_real, g_old_z.y - c_imag);
-                        g_new_z = complex_sqrt_float(g_new_z.x - c_real, g_new_z.y - c_imag);
+                        g_old_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
+                        g_new_z = complex_sqrt_float(g_new_z.x - m_c_real, g_new_z.y - m_c_imag);
                         enqueue_float((float) g_new_z.x, (float) g_new_z.y);
                         enqueue_float((float) -g_old_z.x, (float) -g_old_z.y);
                     }
@@ -1067,13 +1067,13 @@ bool InverseJulia::iterate()
 
             g_old_z = dequeue_float();
 
-            x = (int) (g_old_z.x * x_factor * zoom + x_off);
-            y = (int) (g_old_z.y * y_factor * zoom + y_off);
-            color = c_get_color(x, y);
-            if (color < s_max_hits)
+            m_x = (int) (g_old_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_old_z.y * m_y_factor * m_zoom + m_y_off);
+            m_color = c_get_color(m_x, m_y);
+            if (m_color < s_max_hits)
             {
-                c_put_color(x, y, color + 1);
-                g_new_z = complex_sqrt_float(g_old_z.x - c_real, g_old_z.y - c_imag);
+                c_put_color(m_x, m_y, m_color + 1);
+                g_new_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
                 enqueue_float((float) g_new_z.x, (float) g_new_z.y);
                 enqueue_float((float) -g_new_z.x, (float) -g_new_z.y);
             }
@@ -1081,32 +1081,32 @@ bool InverseJulia::iterate()
         else
         {
             // not MIIM code.
-            g_old_z.x -= c_real;
-            g_old_z.y -= c_imag;
-            r = g_old_z.x * g_old_z.x + g_old_z.y * g_old_z.y;
-            if (r > 10.0)
+            g_old_z.x -= m_c_real;
+            g_old_z.y -= m_c_imag;
+            m_r = g_old_z.x * g_old_z.x + g_old_z.y * g_old_z.y;
+            if (m_r > 10.0)
             {
                 g_old_z.y = 0.0;
                 g_old_z.x = 0.0; // avoids math error
-                iter = 1;
-                r = 0;
+                m_iter = 1;
+                m_r = 0;
             }
-            iter++;
-            color = ((count++) >> 5) % g_colors; // chg color every 32 pts
-            if (color == 0)
+            m_iter++;
+            m_color = ((m_count++) >> 5) % g_colors; // chg color every 32 pts
+            if (m_color == 0)
             {
-                color = 1;
+                m_color = 1;
             }
 
             //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
-            r = std::sqrt(r);
-            g_new_z.x = std::sqrt(std::abs((r + g_old_z.x) / 2));
+            m_r = std::sqrt(m_r);
+            g_new_z.x = std::sqrt(std::abs((m_r + g_old_z.x) / 2));
             if (g_old_z.y < 0)
             {
                 g_new_z.x = -g_new_z.x;
             }
 
-            g_new_z.y = std::sqrt(std::abs((r - g_old_z.x) / 2));
+            g_new_z.y = std::sqrt(std::abs((m_r - g_old_z.x) / 2));
 
             switch (s_secret_mode)
             {
@@ -1117,8 +1117,8 @@ bool InverseJulia::iterate()
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
                 }
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 break;
 
             case SecretMode::ALWAYS_GO_ONE_DIRECTION:
@@ -1127,8 +1127,8 @@ bool InverseJulia::iterate()
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
                 }
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 break;
 
             case SecretMode::GO_ONE_DIR_DRAW_OTHER_DIR:
@@ -1137,31 +1137,31 @@ bool InverseJulia::iterate()
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
                 }
-                x = (int) (-g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (-g_new_z.y * y_factor * zoom + y_off);
+                m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 break;
 
             case SecretMode::GO_NEGATIVE_IF_MAX_COLOR:
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
-                if (c_get_color(x, y) == g_colors - 1)
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+                if (c_get_color(m_x, m_y) == g_colors - 1)
                 {
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
-                    x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                    y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                    m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                    m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 }
                 break;
 
             case SecretMode::GO_POSITIVE_IF_MAX_COLOR:
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
-                if (c_get_color(x, y) == g_colors - 1)
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+                if (c_get_color(m_x, m_y) == g_colors - 1)
                 {
-                    x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                    y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                    m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                    m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 }
                 break;
 
@@ -1171,47 +1171,47 @@ bool InverseJulia::iterate()
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
                 }
-                x = (int) (-g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (-g_new_z.y * y_factor * zoom + y_off);
-                if (iter > 10)
+                m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
+                if (m_iter > 10)
                 {
-                    if (mode == OrbitFlags::POINT)
+                    if (s_mode == OrbitFlags::POINT)
                     {
-                        c_put_color(x, y, color);
+                        c_put_color(m_x, m_y, m_color);
                     }
-                    if (bit_set(mode, OrbitFlags::CIRCLE))
+                    if (bit_set(s_mode, OrbitFlags::CIRCLE))
                     {
-                        s_x_base = x;
-                        s_y_base = y;
-                        circle((int) (zoom * (s_win_width >> 1) / iter), color);
+                        s_x_base = m_x;
+                        s_y_base = m_y;
+                        circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
                     }
-                    if (bit_set(mode, OrbitFlags::LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+                    if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
                     {
-                        driver_draw_line(x, y, old_x, old_y, color);
+                        driver_draw_line(m_x, m_y, m_old_x, m_old_y, m_color);
                     }
-                    old_x = x;
-                    old_y = y;
+                    m_old_x = m_x;
+                    m_old_y = m_y;
                 }
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 break;
 
             case SecretMode::GO_IN_LONG_ZIG_ZAGS:
-                if (ran_cnt >= 300)
+                if (s_ran_cnt >= 300)
                 {
-                    ran_cnt = -300;
+                    s_ran_cnt = -300;
                 }
-                if (ran_cnt < 0)
+                if (s_ran_cnt < 0)
                 {
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
                 }
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 break;
 
             case SecretMode::RANDOM_RUN:
-                switch (ran_dir)
+                switch (s_ran_dir)
                 {
                 case 0: // go random direction for a while
                     if (std::rand() % 2)
@@ -1219,16 +1219,16 @@ bool InverseJulia::iterate()
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
                     }
-                    if (++ran_cnt > 1024)
+                    if (++s_ran_cnt > 1024)
                     {
-                        ran_cnt = 0;
+                        s_ran_cnt = 0;
                         if (std::rand() % 2)
                         {
-                            ran_dir = 1;
+                            s_ran_dir = 1;
                         }
                         else
                         {
-                            ran_dir = -1;
+                            s_ran_dir = -1;
                         }
                     }
                     break;
@@ -1237,24 +1237,24 @@ bool InverseJulia::iterate()
                     g_new_z.y = -g_new_z.y;
                     // fall through
                 case -1: // now go positive dir for a while
-                    if (++ran_cnt > 512)
+                    if (++s_ran_cnt > 512)
                     {
-                        ran_cnt = 0;
-                        ran_dir = 0;
+                        s_ran_cnt = 0;
+                        s_ran_dir = 0;
                     }
                     break;
                 }
-                x = (int) (g_new_z.x * x_factor * zoom + x_off);
-                y = (int) (g_new_z.y * y_factor * zoom + y_off);
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
                 break;
             }
         } // end if not MIIM
     }
     else // orbits
     {
-        if (iter < g_max_iterations)
+        if (m_iter < g_max_iterations)
         {
-            color = (int) iter % g_colors;
+            m_color = (int) m_iter % g_colors;
             if (g_integer_fractal)
             {
                 g_old_z.x = g_l_old_z.x;
@@ -1262,43 +1262,43 @@ bool InverseJulia::iterate()
                 g_old_z.y = g_l_old_z.y;
                 g_old_z.y /= g_fudge_factor;
             }
-            x = (int) ((g_old_z.x - g_init.x) * x_factor * 3 * zoom + x_off);
-            y = (int) ((g_old_z.y - g_init.y) * y_factor * 3 * zoom + y_off);
+            m_x = (int) ((g_old_z.x - g_init.x) * m_x_factor * 3 * m_zoom + m_x_off);
+            m_y = (int) ((g_old_z.y - g_init.y) * m_y_factor * 3 * m_zoom + m_y_off);
             if (orbit_calc())
             {
-                iter = g_max_iterations;
+                m_iter = g_max_iterations;
             }
             else
             {
-                iter++;
+                m_iter++;
             }
         }
         else
         {
-            y = -1;
-            x = -1;
-            actively_computing = false;
+            m_y = -1;
+            m_x = -1;
+            m_actively_computing = false;
         }
     }
 
-    if (m_which == JIIMType::ORBIT || iter > 10)
+    if (m_which == JIIMType::ORBIT || m_iter > 10)
     {
-        if (mode == OrbitFlags::POINT)
+        if (s_mode == OrbitFlags::POINT)
         {
-            c_put_color(x, y, color);
+            c_put_color(m_x, m_y, m_color);
         }
-        if (bit_set(mode, OrbitFlags::CIRCLE))
+        if (bit_set(s_mode, OrbitFlags::CIRCLE))
         {
-            s_x_base = x;
-            s_y_base = y;
-            circle((int) (zoom * (s_win_width >> 1) / iter), color);
+            s_x_base = m_x;
+            s_y_base = m_y;
+            circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
         }
-        if (bit_set(mode, OrbitFlags::LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+        if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
         {
-            driver_draw_line(x, y, old_x, old_y, color);
+            driver_draw_line(m_x, m_y, m_old_x, m_old_y, m_color);
         }
-        old_x = x;
-        old_y = y;
+        m_old_x = m_x;
+        m_old_y = m_y;
     }
     g_old_z = g_new_z;
     g_l_old_z = g_l_new_z;
@@ -1310,7 +1310,7 @@ void InverseJulia::finish()
 {
     free_queue();
 
-    if (key != 's' && key != 'S')
+    if (m_key != 's' && m_key != 'S')
     {
         s_cursor.hide();
         if (s_window_style == JuliaWindowStyle::LARGE)
@@ -1338,8 +1338,8 @@ void InverseJulia::finish()
             s_cursor.hide();
             ValueSaver saved_has_inverse{g_has_inverse, true};
             save_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-            g_logical_screen_x_offset = old_screen_x_offset;
-            g_logical_screen_y_offset = old_screen_y_offset;
+            g_logical_screen_x_offset = m_old_screen_x_offset;
+            g_logical_screen_y_offset = m_old_screen_y_offset;
             restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
         }
     }
@@ -1347,7 +1347,7 @@ void InverseJulia::finish()
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;
-    if (key == 's' || key == 'S')
+    if (m_key == 's' || m_key == 'S')
     {
         g_view_window = false;
         g_view_x_dots = 0;
@@ -1368,7 +1368,7 @@ void InverseJulia::finish()
         clear_temp_msg();
     }
     s_show_numbers = 0;
-    driver_unget_key(key);
+    driver_unget_key(m_key);
 
     if (g_cur_fractal_specific->calc_type == calc_froth)
     {
