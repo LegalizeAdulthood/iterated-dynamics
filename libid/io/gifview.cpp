@@ -63,9 +63,9 @@ constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 constexpr int DECODER_LINE_WIDTH{MAX_PIXELS};
 
 static void close_file();
-static int out_line_dither(Byte *, int);
-static int out_line_migs(Byte *, int);
-static int out_line_too_wide(Byte *, int);
+static int out_line_dither(Byte *pixels, int line_len);
+static int out_line_migs(Byte *pixels, int line_len);
+static int out_line_too_wide(Byte *pixels, int line_len);
 
 static std::FILE *s_fp_in{};
 static int s_col_count{};                    // keeps track of current column for wide images
