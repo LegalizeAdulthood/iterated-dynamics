@@ -60,7 +60,7 @@ MainState request_fractal_type(MainContext &context)
     return MainState::NOTHING;
 }
 
-MainState toggle_float(MainContext &)
+MainState toggle_float(MainContext &/*context*/)
 {
     if (!g_user_float_flag)
     {
@@ -216,7 +216,7 @@ MainState requested_video_fn(MainContext &context)
     return MainState::CONTINUE;
 }
 
-MainState request_restart(MainContext &)
+MainState request_restart(MainContext &/*context*/)
 {
     driver_set_for_text(); // force text mode
     return MainState::RESTART;
