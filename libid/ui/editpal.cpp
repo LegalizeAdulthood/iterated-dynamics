@@ -1742,8 +1742,8 @@ int PalTable::get_cursor_color() const
 
     if (is_reserved(color))
     {
-        if (is_in_box(
-                x, y, m_x, m_y, 1 + (m_csize * 16) + 1 + 1, 2 + RGB_EDITOR_HEIGHT + 2 + (m_csize * 16) + 1 + 1))
+        if (is_in_box(x, y, m_x, m_y, 1 + (m_csize * 16) + 1 + 1,
+                2 + RGB_EDITOR_HEIGHT + 2 + (m_csize * 16) + 1 + 1))
         {
             // is the cursor over the editor?
             x -= m_x + PAL_TABLE_PAL_X;
@@ -1766,10 +1766,7 @@ int PalTable::get_cursor_color() const
 
             return (y / size) * 16 + x / size;
         }
-        else
-        {
-            return color;
-        }
+        return color;
     }
 
     return color;
