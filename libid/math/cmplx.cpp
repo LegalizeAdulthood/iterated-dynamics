@@ -49,7 +49,7 @@ DComplex complex_sqrt_float(double x, double y)
 DComplex complex_power(DComplex xx, DComplex yy)
 {
     DComplex z;
-    DComplex cLog;
+    DComplex c_log;
     DComplex t;
 
     if (xx.x == 0 && xx.y == 0)
@@ -59,8 +59,8 @@ DComplex complex_power(DComplex xx, DComplex yy)
         return z;
     }
 
-    fpu_cmplx_log(&xx, &cLog);
-    fpu_cmplx_mul(&cLog, &yy, &t);
+    fpu_cmplx_log(&xx, &c_log);
+    fpu_cmplx_mul(&c_log, &yy, &t);
     fpu_cmplx_exp(&t, &z);
     return z;
 }
