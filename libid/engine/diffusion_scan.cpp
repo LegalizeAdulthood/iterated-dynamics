@@ -14,7 +14,7 @@
 static int diffusion_engine();
 
 // lookup tables to avoid too much bit fiddling :
-static constexpr int s_dif_la[] =
+static constexpr int DIF_LA[] =
 {
     0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
     2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
@@ -28,7 +28,7 @@ static constexpr int s_dif_la[] =
     1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-static constexpr int s_dif_lb[] =
+static constexpr int DIF_LB[] =
 {
     0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
     6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
@@ -104,27 +104,27 @@ static void plot_block_lim(int x, int y, int s, int c)
 }
 
 // count_to_int(dif_counter, colo, rowo, dif_offset)
-static void count_to_int(unsigned long C, int &x, int &y, int dif_offset)
+static void count_to_int(unsigned long c, int &x, int &y, int dif_offset)
 {
-    long unsigned tC = C;
-    x = s_dif_la[tC & 0xFF];
-    y = s_dif_lb[tC & 0xFF];
-    tC >>= 8;
+    long unsigned t_c = c;
+    x = DIF_LA[t_c & 0xFF];
+    y = DIF_LB[t_c & 0xFF];
+    t_c >>= 8;
     x <<= 4;
-    x += s_dif_la[tC & 0xFF];
+    x += DIF_LA[t_c & 0xFF];
     y <<= 4;
-    y += s_dif_lb[tC & 0xFF];
-    tC >>= 8;
+    y += DIF_LB[t_c & 0xFF];
+    t_c >>= 8;
     x <<= 4;
-    x += s_dif_la[tC & 0xFF];
+    x += DIF_LA[t_c & 0xFF];
     y <<= 4;
-    y += s_dif_lb[tC & 0xFF];
+    y += DIF_LB[t_c & 0xFF];
     x >>= dif_offset;
     y >>= dif_offset;
 }
 
 // Calculate the point
-#define calculate               \
+#define CALCULATE               \
     g_reset_periodicity = true;   \
     if ((*g_calc_type)() == -1)    \
         return -1;              \
@@ -176,7 +176,7 @@ static int diffusion_engine()
                 g_row = g_i_y_start + orig_row ;
                 do
                 {
-                    calculate;
+                    CALCULATE;
                     (*g_plot)(g_col, g_row, g_color);
                     j++;
                     g_row += s;                  // next tile
@@ -184,7 +184,7 @@ static int diffusion_engine()
                 // in the last y tile we may not need to plot the point
                 if (orig_row < rem_y)
                 {
-                    calculate;
+                    CALCULATE;
                     (*g_plot)(g_col, g_row, g_color);
                 }
                 i++;
@@ -197,14 +197,14 @@ static int diffusion_engine()
                 j = 0;
                 do
                 {
-                    calculate;
+                    CALCULATE;
                     (*g_plot)(g_col, g_row, g_color);
                     j++;
                     g_row += s; // next tile
                 } while (j < ny);
                 if (orig_row < rem_y)
                 {
-                    calculate;
+                    CALCULATE;
                     (*g_plot)(g_col, g_row, g_color);
                 }
             }
@@ -231,7 +231,7 @@ static int diffusion_engine()
                     g_col = g_i_x_start + orig_col + i * s; // get the right tiles
                     g_row = g_i_y_start + orig_row + j * s;
 
-                    calculate;
+                    CALCULATE;
                     plot_block(g_col, g_row, sq_size, g_color);
                     j++;
                 } while (j < ny);
@@ -240,7 +240,7 @@ static int diffusion_engine()
                 {
                     g_row = g_i_y_start + orig_row + ny * s;
 
-                    calculate;
+                    CALCULATE;
                     plot_block_lim(g_col, g_row, sq_size, g_color);
                 }
                 i++;
@@ -254,7 +254,7 @@ static int diffusion_engine()
                 {
                     g_row = g_i_y_start + orig_row + j * s; // get the right tiles
 
-                    calculate;
+                    CALCULATE;
                     plot_block_lim(g_col, g_row, sq_size, g_color);
                     j++;
                 } while (j < ny);
@@ -262,7 +262,7 @@ static int diffusion_engine()
                 {
                     g_row = g_i_y_start + orig_row + ny * s;
 
-                    calculate;
+                    CALCULATE;
                     plot_block_lim(g_col, g_row, sq_size, g_color);
                 }
             }
@@ -284,7 +284,7 @@ static int diffusion_engine()
                 g_col = g_i_x_start + orig_col + i * s; // get the right tiles
                 g_row = g_i_y_start + orig_row + j * s;
 
-                calculate;
+                CALCULATE;
                 (*g_plot)(g_col, g_row, g_color);
                 j++;
             } while (j < ny);
@@ -293,7 +293,7 @@ static int diffusion_engine()
             {
                 g_row = g_i_y_start + orig_row + ny * s;
 
-                calculate;
+                CALCULATE;
                 (*g_plot)(g_col, g_row, g_color);
             }
             i++;
@@ -307,7 +307,7 @@ static int diffusion_engine()
             {
                 g_row = g_i_y_start + orig_row + j * s; // get the right tiles
 
-                calculate;
+                CALCULATE;
                 (*g_plot)(g_col, g_row, g_color);
                 j++;
             } while (j < ny);
@@ -315,7 +315,7 @@ static int diffusion_engine()
             {
                 g_row = g_i_y_start + orig_row + ny * s;
 
-                calculate;
+                CALCULATE;
                 (*g_plot)(g_col, g_row, g_color);
             }
         }
