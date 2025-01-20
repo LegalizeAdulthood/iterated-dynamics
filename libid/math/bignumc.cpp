@@ -71,22 +71,22 @@ int cmp_bn(BigNum n1, BigNum n2)
     if (value1 > value2)
     {
         // now determine which of the two bytes was different
-        if ((S16)(value1&0xFF00) > (S16)(value2&0xFF00))     // compare just high bytes
+        if ((S16) (value1 & 0xFF00) > (S16) (value2 & 0xFF00)) // compare just high bytes
         {
             return g_bn_length; // high byte was different
         }
 
-        return g_bn_length-1; // low byte was different
+        return g_bn_length - 1; // low byte was different
     }
-    else if (value1 < value2)
+    if (value1 < value2)
     {
         // now determine which of the two bytes was different
-        if ((S16)(value1&0xFF00) < (S16)(value2&0xFF00))     // compare just high bytes
+        if ((S16) (value1 & 0xFF00) < (S16) (value2 & 0xFF00)) // compare just high bytes
         {
             return -(g_bn_length); // high byte was different
         }
 
-        return -(g_bn_length-1); // low byte was different
+        return -(g_bn_length - 1); // low byte was different
     }
 
     // unsigned comparison for the rest
@@ -97,22 +97,22 @@ int cmp_bn(BigNum n1, BigNum n2)
         if (n1_value > n2_value)
         {
             // now determine which of the two bytes was different
-            if ((n1_value&0xFF00) > (n2_value&0xFF00))     // compare just high bytes
+            if ((n1_value & 0xFF00) > (n2_value & 0xFF00)) // compare just high bytes
             {
-                return i+2; // high byte was different
+                return i + 2; // high byte was different
             }
 
-            return i+1; // low byte was different
+            return i + 1; // low byte was different
         }
-        else if (n1_value < n2_value)
+        if (n1_value < n2_value)
         {
             // now determine which of the two bytes was different
-            if ((n1_value&0xFF00) < (n2_value&0xFF00))     // compare just high bytes
+            if ((n1_value & 0xFF00) < (n2_value & 0xFF00)) // compare just high bytes
             {
-                return -(i+2); // high byte was different
+                return -(i + 2); // high byte was different
             }
 
-            return -(i+1); // low byte was different
+            return -(i + 1); // low byte was different
         }
     }
     return 0;
