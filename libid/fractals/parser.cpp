@@ -1096,7 +1096,7 @@ static void m_stk_real()
 
 static void l_stk_real()
 {
-    g_arg1->l.y = 0l;
+    g_arg1->l.y = 0L;
 }
 
 static void d_stk_imag()
@@ -1115,7 +1115,7 @@ static void m_stk_imag()
 static void l_stk_imag()
 {
     g_arg1->l.x = g_arg1->l.y;
-    g_arg1->l.y = 0l;
+    g_arg1->l.y = 0L;
 }
 
 static void d_stk_neg()
@@ -1775,7 +1775,7 @@ static void m_stk_lt()
 static void l_stk_lt()
 {
     g_arg2->l.x = (long)(g_arg2->l.x < g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1800,7 +1800,7 @@ static void m_stk_gt()
 static void l_stk_gt()
 {
     g_arg2->l.x = (long)(g_arg2->l.x > g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1826,7 +1826,7 @@ static void m_stk_lte()
 static void l_stk_lte()
 {
     g_arg2->l.x = (long)(g_arg2->l.x <= g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1852,7 +1852,7 @@ static void m_stk_gte()
 static void l_stk_gte()
 {
     g_arg2->l.x = (long)(g_arg2->l.x >= g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1878,7 +1878,7 @@ static void m_stk_eq()
 static void l_stk_eq()
 {
     g_arg2->l.x = (long)(g_arg2->l.x == g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1904,7 +1904,7 @@ static void m_stk_ne()
 static void l_stk_ne()
 {
     g_arg2->l.x = (long)(g_arg2->l.x != g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1929,7 +1929,7 @@ static void m_stk_or()
 static void l_stk_or()
 {
     g_arg2->l.x = (long)(g_arg2->l.x || g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1954,7 +1954,7 @@ static void m_stk_and()
 static void l_stk_and()
 {
     g_arg2->l.x = (long)(g_arg2->l.x && g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0l;
+    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }

@@ -300,7 +300,7 @@ int z_line(long x, long y)
         {
             if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
             {
-                g_color = (int)(128l * s_z_pixel / g_julibrot_z_dots);
+                g_color = (int)(128L * s_z_pixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
                 {
 
@@ -316,7 +316,7 @@ int z_line(long x, long y)
             }
             else
             {
-                g_color = (int)(254l * s_z_pixel / g_julibrot_z_dots);
+                g_color = (int)(254L * s_z_pixel / g_julibrot_z_dots);
                 (*g_plot)(g_col, g_row, g_color + 1);
             }
             s_plotted = 1;
@@ -400,7 +400,7 @@ int z_line_fp(double x, double y)
         {
             if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
             {
-                g_color = (int)(128l * s_z_pixel / g_julibrot_z_dots);
+                g_color = (int)(128L * s_z_pixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
                 {
                     (*g_plot)(g_col, g_row, 127 - g_color);
@@ -415,7 +415,7 @@ int z_line_fp(double x, double y)
             }
             else
             {
-                g_color = (int)(254l * s_z_pixel / g_julibrot_z_dots);
+                g_color = (int)(254L * s_z_pixel / g_julibrot_z_dots);
                 (*g_plot)(g_col, g_row, g_color + 1);
             }
             s_plotted = 1;

@@ -150,7 +150,7 @@ static int diffusion_engine()
     if (g_yy_begin == g_i_y_start && g_work_pass == 0)
     {
         // if restarting on pan:
-        g_diffusion_counter =0l;
+        g_diffusion_counter = 0L;
     }
     else
     {
