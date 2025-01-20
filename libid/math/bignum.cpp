@@ -190,7 +190,7 @@ S16 big_setS16(S16 *addr, S16 val)
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(bn_t new_num, bn_t old_num, int new_bn_len, int new_int_len,
+int convert_bn(BigNum new_num, BigNum old_num, int new_bn_len, int new_int_len,
                int old_bn_len, int old_int_len)
 {
     // save lengths so not dependent on external environment
@@ -224,7 +224,7 @@ int convert_bn(bn_t new_num, bn_t old_num, int new_bn_len, int new_int_len,
 /********************************************************************/
 // bn_hexdump() - for debugging, dumps to stdout
 
-void bn_hex_dump(bn_t r)
+void bn_hex_dump(BigNum r)
 {
     for (int i = 0; i < g_bn_length; i++)
     {
@@ -240,13 +240,13 @@ void bn_hex_dump(bn_t r)
 //   note: the string may not be empty or have extra space and may
 //   not use scientific notation (2.3e4).
 
-bn_t str_to_bn(bn_t r, char *s)
+BigNum str_to_bn(BigNum r, char *s)
 {
     bool sign_flag = false;
     long value;
 
     clear_bn(r);
-    bn_t ones_byte = r + g_bn_length - g_int_length;
+    BigNum ones_byte = r + g_bn_length - g_int_length;
 
     if (s[0] == '+')    // for + sign
     {
@@ -345,7 +345,7 @@ int strlen_needed_bn()
 //   SIDE-EFFECT: the bignumber, r, is destroyed.
 //                Copy it first if necessary.
 
-char *unsafe_bn_to_str(char *s, int dec, bn_t r)
+char *unsafe_bn_to_str(char *s, int dec, BigNum r)
 {
     int l = 0;
     long value = 0;
@@ -354,7 +354,7 @@ char *unsafe_bn_to_str(char *s, int dec, bn_t r)
     {
         dec = g_decimals;
     }
-    bn_t ones_byte = r + g_bn_length - g_int_length;
+    BigNum ones_byte = r + g_bn_length - g_int_length;
 
     if (is_bn_neg(r))
     {
@@ -395,10 +395,10 @@ char *unsafe_bn_to_str(char *s, int dec, bn_t r)
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bignumber
-bn_t int_to_bn(bn_t r, long value)
+BigNum int_to_bn(BigNum r, long value)
 {
     clear_bn(r);
-    bn_t ones_byte = r + g_bn_length - g_int_length;
+    BigNum ones_byte = r + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -418,11 +418,11 @@ bn_t int_to_bn(bn_t r, long value)
 /*********************************************************************/
 //  l = floor(b), floor rounds down
 //  Converts the integer part a bignumber to a long
-long bn_to_int(bn_t n)
+long bn_to_int(BigNum n)
 {
     long value = 0;
 
-    bn_t ones_byte = n + g_bn_length - g_int_length;
+    BigNum ones_byte = n + g_bn_length - g_int_length;
     switch (g_int_length)
     {
         // only 1, 2, or 4 are allowed
@@ -442,12 +442,12 @@ long bn_to_int(bn_t n)
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bignumber
-bn_t float_to_bn(bn_t r, LDouble f)
+BigNum float_to_bn(BigNum r, LDouble f)
 {
     bool sign_flag = false;
 
     clear_bn(r);
-    bn_t ones_byte = r + g_bn_length - g_int_length;
+    BigNum ones_byte = r + g_bn_length - g_int_length;
 
     if (f < 0)
     {
@@ -487,14 +487,14 @@ bn_t float_to_bn(bn_t r, LDouble f)
 
 /********************************************************************/
 // sign(r)
-int sign_bn(bn_t n)
+int sign_bn(BigNum n)
 {
     return is_bn_neg(n) ? -1 : is_bn_not_zero(n) ? 1 : 0;
 }
 
 /********************************************************************/
 // r = |n|
-bn_t abs_bn(bn_t r, bn_t n)
+BigNum abs_bn(BigNum r, BigNum n)
 {
     copy_bn(r, n);
     if (is_bn_neg(r))
@@ -506,7 +506,7 @@ bn_t abs_bn(bn_t r, bn_t n)
 
 /********************************************************************/
 // r = |r|
-bn_t abs_a_bn(bn_t r)
+BigNum abs_a_bn(BigNum r)
 {
     if (is_bn_neg(r))
     {
@@ -520,7 +520,7 @@ bn_t abs_a_bn(bn_t r)
 // uses g_bn_tmp1 - g_bn_tmp3 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|    Make copy first if necessary.
-bn_t unsafe_inv_bn(bn_t r, bn_t n)
+BigNum unsafe_inv_bn(BigNum r, BigNum n)
 {
     // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
@@ -560,8 +560,8 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    bn_t orig_r = r;
-    bn_t orig_n = n;
+    BigNum orig_r = r;
+    BigNum orig_n = n;
     // orig_bntmp1        = g_bn_tmp1;
 
     // calculate new starting values
@@ -619,7 +619,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 //  SIDE-EFFECTS:
 //      n1, n2 can end up as GARBAGE
 //      Make copies first if necessary.
-bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
+BigNum unsafe_div_bn(BigNum r, BigNum n1, BigNum n2)
 {
     // first, check for valid data
     LDouble a = bn_to_float(n1);
@@ -720,7 +720,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|
-bn_t sqrt_bn(bn_t r, bn_t n)
+BigNum sqrt_bn(BigNum r, BigNum n)
 {
     int almost_match = 0;
 
@@ -749,8 +749,8 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    bn_t orig_r = r;
-    bn_t orig_n = n;
+    BigNum orig_r = r;
+    BigNum orig_n = n;
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
@@ -807,7 +807,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 /********************************************************************/
 // exp(r)
 // uses g_bn_tmp1, g_bn_tmp2, g_bn_tmp3 - global temp bignumbers
-bn_t exp_bn(bn_t r, bn_t n)
+BigNum exp_bn(BigNum r, BigNum n)
 {
     U16 fact = 1;
 
@@ -841,7 +841,7 @@ bn_t exp_bn(bn_t r, bn_t n)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|
-bn_t unsafe_ln_bn(bn_t r, bn_t n)
+BigNum unsafe_ln_bn(BigNum r, BigNum n)
 {
     int almost_match = 0;
 
@@ -878,10 +878,10 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    bn_t orig_r = r;
-    bn_t orig_n = n;
-    bn_t orig_bn_tmp5 = g_bn_tmp5;
-    bn_t orig_bn_tmp4 = g_bn_tmp4;
+    BigNum orig_r = r;
+    BigNum orig_n = n;
+    BigNum orig_bn_tmp5 = g_bn_tmp5;
+    BigNum orig_bn_tmp4 = g_bn_tmp4;
 
     int_to_bn(g_bn_tmp4, 1); // set before setting new values
 
@@ -949,7 +949,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 // uses g_bn_tmp1 - g_bn_tmp2 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n| mod (pi/4)
-bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n)
+BigNum unsafe_sin_cos_bn(BigNum s, BigNum c, BigNum n)
 {
     U16 fact = 2;
     bool k = false;
@@ -1112,7 +1112,7 @@ bn_t unsafe_sin_cos_bn(bn_t s, bn_t c, bn_t n)
 // uses g_bn_tmp1 - g_bn_tmp5 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n| or 1/|n|
-bn_t unsafe_atan_bn(bn_t r, bn_t n)
+BigNum unsafe_atan_bn(BigNum r, BigNum n)
 {
     int almost_match = 0;
 
@@ -1146,10 +1146,10 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     int orig_padding = g_padding;
     int orig_r_length = g_r_length;
     int orig_shift_factor = g_shift_factor;
-    bn_t orig_bn_pi = g_bn_pi;
-    bn_t orig_r = r;
-    bn_t orig_n = n;
-    bn_t orig_bn_tmp3 = g_bn_tmp3;
+    BigNum orig_bn_pi = g_bn_pi;
+    BigNum orig_r = r;
+    BigNum orig_n = n;
+    BigNum orig_bn_tmp3 = g_bn_tmp3;
 
     // calculate new starting values
     g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
@@ -1248,7 +1248,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 /********************************************************************/
 // atan2(r, ny, nx)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bigfloats
-bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
+BigNum unsafe_atan2_bn(BigNum r, BigNum ny, BigNum nx)
 {
     int sign_x = sign_bn(nx);
     int sign_y = sign_bn(ny);
@@ -1303,7 +1303,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 /**********************************************************************/
 
 /**********************************************************************/
-bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
+BigNum full_mult_bn(BigNum r, BigNum n1, BigNum n2)
 {
     bool sign1 = is_bn_neg(n1);
     bool sign2 = is_bn_neg(n2);
@@ -1320,7 +1320,7 @@ bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 }
 
 /**********************************************************************/
-bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
+BigNum mult_bn(BigNum r, BigNum n1, BigNum n2)
 {
     bool sign1 = is_bn_neg(n1);
     bool sign2 = is_bn_neg(n2);
@@ -1337,7 +1337,7 @@ bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
 }
 
 /**********************************************************************/
-bn_t full_square_bn(bn_t r, bn_t n)
+BigNum full_square_bn(BigNum r, BigNum n)
 {
     bool sign = is_bn_neg(n);
     unsafe_full_square_bn(r, n);
@@ -1349,7 +1349,7 @@ bn_t full_square_bn(bn_t r, bn_t n)
 }
 
 /**********************************************************************/
-bn_t square_bn(bn_t r, bn_t n)
+BigNum square_bn(BigNum r, BigNum n)
 {
     bool sign = is_bn_neg(n);
     unsafe_square_bn(r, n);
@@ -1361,7 +1361,7 @@ bn_t square_bn(bn_t r, bn_t n)
 }
 
 /**********************************************************************/
-bn_t div_bn_int(bn_t r, bn_t n, U16 u)
+BigNum div_bn_int(BigNum r, BigNum n, U16 u)
 {
     bool sign = is_bn_neg(n);
     unsafe_div_bn_int(r, n, u);
@@ -1373,13 +1373,13 @@ bn_t div_bn_int(bn_t r, bn_t n, U16 u)
 }
 
 /**********************************************************************/
-char *bn_to_str(char *s, int dec, bn_t r)
+char *bn_to_str(char *s, int dec, BigNum r)
 {
     return unsafe_bn_to_str(s, dec, copy_bn(g_bn_tmp_copy2, r));
 }
 
 /**********************************************************************/
-bn_t inv_bn(bn_t r, bn_t n)
+BigNum inv_bn(BigNum r, BigNum n)
 {
     bool sign = is_bn_neg(n);
     unsafe_inv_bn(r, n);
@@ -1391,7 +1391,7 @@ bn_t inv_bn(bn_t r, bn_t n)
 }
 
 /**********************************************************************/
-bn_t div_bn(bn_t r, bn_t n1, bn_t n2)
+BigNum div_bn(BigNum r, BigNum n1, BigNum n2)
 {
     copy_bn(g_bn_tmp_copy1, n1);
     copy_bn(g_bn_tmp_copy2, n2);
@@ -1399,7 +1399,7 @@ bn_t div_bn(bn_t r, bn_t n1, bn_t n2)
 }
 
 /**********************************************************************/
-bn_t ln_bn(bn_t r, bn_t n)
+BigNum ln_bn(BigNum r, BigNum n)
 {
     copy_bn(g_bn_tmp_copy1, n); // allows r and n to overlap memory
     unsafe_ln_bn(r, g_bn_tmp_copy1);
@@ -1407,13 +1407,13 @@ bn_t ln_bn(bn_t r, bn_t n)
 }
 
 /**********************************************************************/
-bn_t sin_cos_bn(bn_t s, bn_t c, bn_t n)
+BigNum sin_cos_bn(BigNum s, BigNum c, BigNum n)
 {
     return unsafe_sin_cos_bn(s, c, copy_bn(g_bn_tmp_copy1, n));
 }
 
 /**********************************************************************/
-bn_t atan_bn(bn_t r, bn_t n)
+BigNum atan_bn(BigNum r, BigNum n)
 {
     bool sign = is_bn_neg(n);
     unsafe_atan_bn(r, n);
@@ -1425,7 +1425,7 @@ bn_t atan_bn(bn_t r, bn_t n)
 }
 
 /**********************************************************************/
-bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx)
+BigNum atan2_bn(BigNum r, BigNum ny, BigNum nx)
 {
     copy_bn(g_bn_tmp_copy1, ny);
     copy_bn(g_bn_tmp_copy2, nx);
@@ -1433,7 +1433,7 @@ bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx)
     return r;
 }
 
-bool is_bn_zero(bn_t n)
+bool is_bn_zero(BigNum n)
 {
     return !is_bn_not_zero(n);
 }

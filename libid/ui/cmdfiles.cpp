@@ -98,7 +98,7 @@ static void init_vars_restart();
 static void init_vars_fractal();
 static void init_vars3d();
 static void reset_ifs_definition();
-static int  get_bf(bf_t bf, char const *cur_arg);
+static int  get_bf(BigFloat bf, char const *cur_arg);
 static bool is_a_big_float(char const *str);
 
 // variables defined by the command line/files processor
@@ -1519,8 +1519,8 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     }
     g_use_center_mag = true;
     int saved = save_stack();
-    bf_t b_x_ctr = alloc_stack(g_bf_length + 2);
-    bf_t b_y_ctr = alloc_stack(g_bf_length + 2);
+    BigFloat b_x_ctr = alloc_stack(g_bf_length + 2);
+    BigFloat b_y_ctr = alloc_stack(g_bf_length + 2);
     get_bf(b_x_ctr, cmd.float_val_strs[0]);
     get_bf(b_y_ctr, cmd.float_val_strs[1]);
     double x_mag_factor = 1;
@@ -4004,7 +4004,7 @@ void set_3d_defaults()
 }
 
 // copy a big number from a string, up to slash
-static int get_bf(bf_t bf, char const *cur_arg)
+static int get_bf(BigFloat bf, char const *cur_arg)
 {
     if (char const *s = std::strchr(cur_arg, '/'); s)
     {

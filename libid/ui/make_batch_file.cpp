@@ -81,7 +81,7 @@ static std::FILE *s_param_file{};
 static void put_param(char const *param, ...);
 static void put_param_line();
 static void put_float(int, double, int);
-static void put_bf(int slash, bf_t r, int prec);
+static void put_bf(int slash, BigFloat r, int prec);
 static void put_file_name(char const *keyword, char const *fname);
 static void strip_zeros(char *buf);
 static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj);
@@ -600,8 +600,8 @@ static int get_prec(double a, double b, double c)
 static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj)
 {
     char buf[81];
-    bf_t bf_x_ctr = nullptr;
-    bf_t bf_y_ctr = nullptr;
+    BigFloat bf_x_ctr = nullptr;
+    BigFloat bf_y_ctr = nullptr;
     int saved = save_stack();
     if (g_bf_math != BFMathType::NONE)
     {
@@ -1723,7 +1723,7 @@ static void put_float(int slash, double value, int prec)
     put_param(buf);
 }
 
-static void put_bf(int slash, bf_t r, int prec)
+static void put_bf(int slash, BigFloat r, int prec)
 {
     std::vector<char> buf;              // "/-1.xxxxxxE-1234"
     buf.resize(5000);

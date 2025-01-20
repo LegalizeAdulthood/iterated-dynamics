@@ -46,7 +46,7 @@ bool perturbation()
     }
     else
     {
-        bf_t tmp_bf{alloc_stack(g_bf_length + 2)};
+        BigFloat tmp_bf{alloc_stack(g_bf_length + 2)};
         sub_bf(tmp_bf, g_bf_y_max, g_bf_y_min);
         mandel_width = bf_to_float(tmp_bf);
     }

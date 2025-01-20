@@ -326,7 +326,7 @@ static int bn_manr_bailout()
 static int bf_mod_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -346,7 +346,7 @@ static int bf_mod_bailout()
 static int bf_real_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -367,7 +367,7 @@ static int bf_real_bailout()
 static int bf_imag_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -387,7 +387,7 @@ static int bf_imag_bailout()
 static int bf_or_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -407,7 +407,7 @@ static int bf_or_bailout()
 static int bf_and_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -427,7 +427,7 @@ static int bf_and_bailout()
 static int bf_manh_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);
@@ -452,7 +452,7 @@ static int bf_manh_bailout()
 static int bf_manr_bailout()
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_new_z_bf.y);

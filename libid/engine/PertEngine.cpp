@@ -82,7 +82,7 @@ int PertEngine::calculate_one_frame()
     double magnified_radius = m_zoom_radius;
     int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
     BigStackSaver saved;
-    bf_t tmp_bf;
+    BigFloat tmp_bf;
 
     if (g_bf_math != BFMathType::NONE)
     {
@@ -449,9 +449,9 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
     BFComplex z_bf;
     z_bf.x = alloc_stack(g_r_bf_length + 2);
     z_bf.y = alloc_stack(g_r_bf_length + 2);
-    bf_t temp_real_bf = alloc_stack(g_r_bf_length + 2);
-    bf_t temp_imag_bf = alloc_stack(g_r_bf_length + 2);
-    bf_t tmp_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloat temp_real_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloat temp_imag_bf = alloc_stack(g_r_bf_length + 2);
+    BigFloat tmp_bf = alloc_stack(g_r_bf_length + 2);
 
     copy_bf(z_bf.x, center.x);
     copy_bf(z_bf.y, center.y);

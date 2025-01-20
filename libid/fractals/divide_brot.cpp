@@ -75,8 +75,8 @@ int divide_brot5_bn_fractal()
     bn_numer.y = alloc_stack(g_r_length);
     bn_c_exp.x = alloc_stack(g_bn_length);
     bn_c_exp.y = alloc_stack(g_bn_length);
-    bn_t tmp1 = alloc_stack(g_bn_length);
-    bn_t tmp2 = alloc_stack(g_r_length);
+    BigNum tmp1 = alloc_stack(g_bn_length);
+    BigNum tmp2 = alloc_stack(g_r_length);
 
     /* g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to */
     /* this function, so they must be shifted.                           */
@@ -122,7 +122,7 @@ int divide_brot5_bf_fractal()
     bf_numer.y = alloc_stack(g_r_bf_length + 2);
     bf_c_exp.x = alloc_stack(g_bf_length + 2);
     bf_c_exp.y = alloc_stack(g_bf_length + 2);
-    bf_t tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */

@@ -49,12 +49,12 @@ static void fix_work_list();
 static void move_row(int from_row, int to_row, int col);
 
 // big number declarations
-static void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
+static void calc_corner(BigFloat target, BigFloat p1, double p2, BigFloat p3, double p4, BigFloat p5)
 {
     const int saved = save_stack();
-    const bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
-    const bf_t b_tmp2 = alloc_stack(g_r_bf_length + 2);
-    const bf_t b_tmp3 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat b_tmp3 = alloc_stack(g_r_bf_length + 2);
 
     // use target as temporary variable
     float_to_bf(b_tmp3, p2);
@@ -132,11 +132,11 @@ void draw_box(bool draw_it)
     }
 
     int saved = 0;
-    bf_t bf_f_x_width;
-    bf_t bf_f_x_skew;
-    bf_t bf_f_y_depth;
-    bf_t bf_f_y_skew;
-    bf_t bf_f_x_adj;
+    BigFloat bf_f_x_width;
+    BigFloat bf_f_x_skew;
+    BigFloat bf_f_y_depth;
+    BigFloat bf_f_y_skew;
+    BigFloat bf_f_x_adj;
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
@@ -440,21 +440,21 @@ void change_box(int dw, int dd)
     change_box(dw / g_logical_screen_x_size_dots, dd / g_logical_screen_y_size_dots);
 }
 
-static void zoom_out_calc(bf_t bf_dx, bf_t bf_dy, //
-    bf_t bf_new_x, bf_t bf_new_y,                   //
-    bf_t bf_plot_mx1, bf_t bf_plot_mx2,             //
-    bf_t bf_plot_my1, bf_t bf_plot_my2,             //
-    bf_t bf_f_temp)
+static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
+    BigFloat bf_new_x, BigFloat bf_new_y,                   //
+    BigFloat bf_plot_mx1, BigFloat bf_plot_mx2,             //
+    BigFloat bf_plot_my1, BigFloat bf_plot_my2,             //
+    BigFloat bf_f_temp)
 {
     const int saved = save_stack();
-    bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp2 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp3 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp4 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp2a = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp4a = alloc_stack(g_r_bf_length + 2);
-    bf_t b_temp_x = alloc_stack(g_r_bf_length + 2);
-    bf_t b_temp_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp3 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp4 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp2a = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp4a = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_temp_x = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_temp_y = alloc_stack(g_r_bf_length + 2);
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft through (1,1) bottom right */
@@ -516,19 +516,19 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        new actual corners
        */
     const int saved = save_stack();
-    const bf_t save_bf_x_min = alloc_stack(g_r_bf_length + 2);
-    const bf_t save_bf_y_max = alloc_stack(g_r_bf_length + 2);
-    const bf_t bf_f_temp = alloc_stack(g_r_bf_length + 2);
-    const bf_t tmp1 = alloc_stack(g_r_bf_length + 2);
-    const bf_t tmp2 = alloc_stack(g_r_bf_length + 2);
-    const bf_t tmp3 = alloc_stack(g_r_bf_length + 2);
-    const bf_t tmp4 = alloc_stack(g_r_bf_length + 2);
-    const bf_t tmp5 = alloc_stack(g_r_bf_length + 2);
-    const bf_t tmp6 = alloc_stack(g_r_bf_length + 2);
-    const bf_t bf_plot_mx1 = alloc_stack(g_r_bf_length + 2);
-    const bf_t bf_plot_mx2 = alloc_stack(g_r_bf_length + 2);
-    const bf_t bf_plot_my1 = alloc_stack(g_r_bf_length + 2);
-    const bf_t bf_plot_my2 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat save_bf_x_min = alloc_stack(g_r_bf_length + 2);
+    const BigFloat save_bf_y_max = alloc_stack(g_r_bf_length + 2);
+    const BigFloat bf_f_temp = alloc_stack(g_r_bf_length + 2);
+    const BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat tmp2 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat tmp3 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat tmp4 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat tmp5 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat tmp6 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat bf_plot_mx1 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat bf_plot_mx2 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat bf_plot_my1 = alloc_stack(g_r_bf_length + 2);
+    const BigFloat bf_plot_my2 = alloc_stack(g_r_bf_length + 2);
     // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
     sub_bf(tmp1, g_bf_y_min, g_bf_y_3rd);
     sub_bf(tmp2, g_bf_x_3rd, g_bf_x_min);

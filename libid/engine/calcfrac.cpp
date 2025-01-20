@@ -2690,7 +2690,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
     bool x_axis_on_screen = false;
     bool y_axis_on_screen = false;
     double f_temp;
-    bf_t bft1;
+    BigFloat bft1;
     int saved = 0;
     g_symmetry = SymmetryType::X_AXIS;
     if (g_std_calc_mode == 's' || g_std_calc_mode == 'o')

@@ -12,7 +12,7 @@ extern long g_max_stack;
 extern long g_start_stack;
 
 void free_bf_vars();
-bn_t alloc_stack(size_t size);
+BigNum alloc_stack(size_t size);
 int save_stack();
 void restore_stack(int old_offset);
 void init_bf_dec(int dec);

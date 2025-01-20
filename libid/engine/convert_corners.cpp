@@ -72,11 +72,11 @@ void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, d
 }
 
 // convert center/mag to corners using bf
-void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
+void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
 {
     const int saved = save_stack();
-    bf_t bfh = alloc_stack(g_bf_length + 2);
-    bf_t bfw = alloc_stack(g_bf_length + 2);
+    BigFloat bfh = alloc_stack(g_bf_length + 2);
+    BigFloat bfw = alloc_stack(g_bf_length + 2);
 
     if (x_mag_factor == 0.0)
     {
@@ -106,7 +106,7 @@ void cvt_corners_bf(bf_t ctr_x, bf_t ctr_y, LDouble mag, double x_mag_factor, do
         return;
     }
 
-    bf_t bf_tmp = alloc_stack(g_bf_length + 2);
+    BigFloat bf_tmp = alloc_stack(g_bf_length + 2);
     // in unrotated, untranslated coordinate system
     const double tan_skew = std::tan(deg_to_rad(skew));
     const LDouble x_min = -w + h * tan_skew;

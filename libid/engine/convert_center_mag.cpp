@@ -115,7 +115,7 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
 }
 
 // convert corners to center/mag using bf
-void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew)
+void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew)
 {
     // needs to be LDouble or won't work past 307 (-DBL_MIN_10_EXP) or so digits
     BigStackSaver saved;
@@ -125,8 +125,8 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDouble &mag, double &x_mag_facto
     if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
     {
         // no rotation or skewing, but stretching is allowed
-        const bf_t width_bf = alloc_stack(g_bf_length + 2);
-        const bf_t height_bf = alloc_stack(g_bf_length+2);
+        const BigFloat width_bf = alloc_stack(g_bf_length + 2);
+        const BigFloat height_bf = alloc_stack(g_bf_length+2);
         // width  = g_x_max - g_x_min;
         sub_bf(width_bf, g_bf_x_max, g_bf_x_min);
         const LDouble width = bf_to_float(width_bf);
@@ -146,8 +146,8 @@ void cvt_center_mag_bf(bf_t ctr_x, bf_t ctr_y, LDouble &mag, double &x_mag_facto
     }
     else
     {
-        const bf_t tmp_x_bf = alloc_stack(g_bf_length + 2);
-        const bf_t tmp_y_bf = alloc_stack(g_bf_length+2);
+        const BigFloat tmp_x_bf = alloc_stack(g_bf_length + 2);
+        const BigFloat tmp_y_bf = alloc_stack(g_bf_length+2);
 
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)

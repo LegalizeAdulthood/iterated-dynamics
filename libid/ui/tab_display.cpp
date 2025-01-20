@@ -223,8 +223,8 @@ static bool tab_display2(char *msg)
 int tab_display()       // display the status of the current image
 {
     int add_row = 0;
-    bf_t bf_x_ctr = nullptr;
-    bf_t bf_y_ctr = nullptr;
+    BigFloat bf_x_ctr = nullptr;
+    BigFloat bf_y_ctr = nullptr;
     char msg[350];
     char const *msg_ptr;
     int key;

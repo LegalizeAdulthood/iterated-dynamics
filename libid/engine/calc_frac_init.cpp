@@ -43,7 +43,7 @@ static void   adjust_to_limits(double expand);
 static void   smallest_add(double *num);
 static int    ratio_bad(double actual, double desired);
 static void   adjust_to_limits_bf(double expand);
-static void   smallest_add_bf(bf_t num);
+static void   smallest_add_bf(BigFloat num);
 
 /* This function calculates the precision needed to distinguish adjacent
    pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
@@ -640,9 +640,9 @@ void adjust_corner_bf()
     LDouble magnification;
 
     int saved = save_stack();
-    bf_t bf_temp = alloc_stack(g_r_bf_length + 2);
-    bf_t bf_temp2 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bf_temp = alloc_stack(g_r_bf_length + 2);
+    BigFloat bf_temp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
 
     // While we're at it, let's adjust the x_mag_factor as well
     // use bf_temp, bftemp2 as bfXctr, bfYctr
@@ -766,8 +766,8 @@ void adjust_corner()
 
 static void adjust_to_limits_bf(double expand)
 {
-    bf_t b_corner_x[4];
-    bf_t b_corner_y[4];
+    BigFloat b_corner_x[4];
+    BigFloat b_corner_y[4];
     int saved = save_stack();
     b_corner_x[0] = alloc_stack(g_r_bf_length+2);
     b_corner_x[1] = alloc_stack(g_r_bf_length+2);
@@ -777,19 +777,19 @@ static void adjust_to_limits_bf(double expand)
     b_corner_y[1] = alloc_stack(g_r_bf_length+2);
     b_corner_y[2] = alloc_stack(g_r_bf_length+2);
     b_corner_y[3] = alloc_stack(g_r_bf_length+2);
-    bf_t b_low_x = alloc_stack(g_r_bf_length + 2);
-    bf_t b_high_x = alloc_stack(g_r_bf_length + 2);
-    bf_t b_low_y = alloc_stack(g_r_bf_length + 2);
-    bf_t b_high_y = alloc_stack(g_r_bf_length + 2);
-    bf_t b_limit = alloc_stack(g_r_bf_length + 2);
-    bf_t bf_temp = alloc_stack(g_r_bf_length + 2);
-    bf_t b_center_x = alloc_stack(g_r_bf_length + 2);
-    bf_t b_center_y = alloc_stack(g_r_bf_length + 2);
-    bf_t b_adj_x = alloc_stack(g_r_bf_length + 2);
-    bf_t b_adj_y = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp1 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_tmp2 = alloc_stack(g_r_bf_length + 2);
-    bf_t b_expand = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_low_x = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_high_x = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_low_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_high_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_limit = alloc_stack(g_r_bf_length + 2);
+    BigFloat bf_temp = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_center_x = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_center_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_adj_x = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_adj_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat b_expand = alloc_stack(g_r_bf_length + 2);
 
     LDouble limit = 32767.99;
 
@@ -1150,10 +1150,10 @@ static void smallest_add(double *num)
     *num += *num * 5.0e-16;
 }
 
-static void smallest_add_bf(bf_t num)
+static void smallest_add_bf(BigFloat num)
 {
     int saved = save_stack();
-    bf_t b_tmp1 = alloc_stack(g_bf_length + 2);
+    BigFloat b_tmp1 = alloc_stack(g_bf_length + 2);
     mult_bf(b_tmp1, float_to_bf(b_tmp1, 5.0e-16), num);
     add_a_bf(num, b_tmp1);
     restore_stack(saved);

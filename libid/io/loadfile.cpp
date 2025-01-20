@@ -178,7 +178,7 @@ static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info);
 static bool function_ok(FractalInfo const *info, int num_fn);
 static void check_history(char const *old_name, char const *new_name);
 static void bf_setup_convert_to_screen();
-static void bf_transform(bf_t, bf_t, DblCoords *);
+static void bf_transform(BigFloat, BigFloat, DblCoords *);
 
 static std::FILE *s_fp{};
 static std::vector<Window> s_browse_windows;
@@ -187,18 +187,18 @@ static std::vector<int> s_browse_box_y;
 static std::vector<int> s_browse_box_values;
 // here because must be visible inside several routines
 static Affine *s_cvt{};
-static bf_t s_bt_a{};
-static bf_t s_bt_b{};
-static bf_t s_bt_c{};
-static bf_t s_bt_d{};
-static bf_t s_bt_e{};
-static bf_t s_bt_f{};
-static bf_t s_n_a{};
-static bf_t s_n_b{};
-static bf_t s_n_c{};
-static bf_t s_n_d{};
-static bf_t s_n_e{};
-static bf_t s_n_f{};
+static BigFloat s_bt_a{};
+static BigFloat s_bt_b{};
+static BigFloat s_bt_c{};
+static BigFloat s_bt_d{};
+static BigFloat s_bt_e{};
+static BigFloat s_bt_f{};
+static BigFloat s_n_a{};
+static BigFloat s_n_b{};
+static BigFloat s_n_c{};
+static BigFloat s_n_d{};
+static BigFloat s_n_e{};
+static BigFloat s_n_f{};
 static BFMathType s_old_bf_math{};
 
 bool g_loaded_3d{};
@@ -1969,14 +1969,14 @@ static bool is_visible_window(
        }
     */
     int two_len = g_bf_length + 2;
-    bf_t bt_x = alloc_stack(two_len);
-    bf_t bt_y = alloc_stack(two_len);
-    bf_t bt_x_min = alloc_stack(two_len);
-    bf_t bt_x_max = alloc_stack(two_len);
-    bf_t bt_y_min = alloc_stack(two_len);
-    bf_t bt_y_max = alloc_stack(two_len);
-    bf_t bt_x_3rd = alloc_stack(two_len);
-    bf_t bt_y_3rd = alloc_stack(two_len);
+    BigFloat bt_x = alloc_stack(two_len);
+    BigFloat bt_y = alloc_stack(two_len);
+    BigFloat bt_x_min = alloc_stack(two_len);
+    BigFloat bt_x_max = alloc_stack(two_len);
+    BigFloat bt_y_min = alloc_stack(two_len);
+    BigFloat bt_y_max = alloc_stack(two_len);
+    BigFloat bt_x_3rd = alloc_stack(two_len);
+    BigFloat bt_y_3rd = alloc_stack(two_len);
 
     if (info->bf_math)
     {
@@ -1998,12 +1998,12 @@ static bool is_visible_window(
         convert_bf(s_n_e, s_bt_e, g_r_bf_length, orig_r_bf_length);
         convert_bf(s_n_f, s_bt_f, g_r_bf_length, orig_r_bf_length);
 
-        bf_t bt_t1 = alloc_stack(two_di_len);
-        bf_t bt_t2 = alloc_stack(two_di_len);
-        bf_t bt_t3 = alloc_stack(two_di_len);
-        bf_t bt_t4 = alloc_stack(two_di_len);
-        bf_t bt_t5 = alloc_stack(two_di_len);
-        bf_t bt_t6 = alloc_stack(two_di_len);
+        BigFloat bt_t1 = alloc_stack(two_di_len);
+        BigFloat bt_t2 = alloc_stack(two_di_len);
+        BigFloat bt_t3 = alloc_stack(two_di_len);
+        BigFloat bt_t4 = alloc_stack(two_di_len);
+        BigFloat bt_t5 = alloc_stack(two_di_len);
+        BigFloat bt_t6 = alloc_stack(two_di_len);
 
         std::memcpy(bt_t1, blk_5_info->apm_data.data(), two_di_len);
         std::memcpy(bt_t2, &blk_5_info->apm_data[two_di_len], two_di_len);
@@ -2286,13 +2286,13 @@ static void bf_setup_convert_to_screen()
     // Call only from within fgetwindow()
 
     int saved = save_stack();
-    bf_t bt_inter1 = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_inter2 = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_det = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_xd = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_yd = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_tmp1 = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_tmp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_inter1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_inter2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_det = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_xd = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_yd = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_tmp2 = alloc_stack(g_r_bf_length + 2);
 
     // xx3rd-xxmin
     sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
@@ -2366,11 +2366,11 @@ static void bf_setup_convert_to_screen()
 }
 
 // maps points onto view screen
-static void bf_transform(bf_t bt_x, bf_t bt_y, DblCoords *point)
+static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point)
 {
     int saved = save_stack();
-    bf_t bt_tmp1 = alloc_stack(g_r_bf_length + 2);
-    bf_t bt_tmp2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt_tmp2 = alloc_stack(g_r_bf_length + 2);
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
     mult_bf(bt_tmp1, s_n_a, bt_x);

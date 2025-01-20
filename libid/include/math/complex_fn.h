@@ -27,11 +27,11 @@ inline std::complex<double> cube(const std::complex<double> &z)
 inline void cube(BFComplex &out, const BFComplex &in)
 {
     BigStackSaver saved;
-    bf_t t = alloc_stack(g_r_bf_length + 2);
-    bf_t t1 = alloc_stack(g_r_bf_length + 2);
-    bf_t t2 = alloc_stack(g_r_bf_length + 2);
-    bf_t sqr_real = alloc_stack(g_r_bf_length + 2);
-    bf_t sqr_imag = alloc_stack(g_r_bf_length + 2);
+    BigFloat t = alloc_stack(g_r_bf_length + 2);
+    BigFloat t1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat t2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat sqr_real = alloc_stack(g_r_bf_length + 2);
+    BigFloat sqr_imag = alloc_stack(g_r_bf_length + 2);
 
     mult_bf(sqr_real, in.x, in.x); // sqr_real = x * x;
     mult_bf(sqr_imag, in.y, in.y); // sqr_imag = y * y;
@@ -86,11 +86,11 @@ inline std::complex<double> power(const std::complex<double> &base, int exp)
 inline void power(BFComplex &result, const BFComplex &z, int degree)
 {
     BigStackSaver saved;
-    bf_t t = alloc_stack(g_r_bf_length + 2);
-    bf_t t1 = alloc_stack(g_r_bf_length + 2);
-    bf_t t2 = alloc_stack(g_r_bf_length + 2);
-    bf_t t3 = alloc_stack(g_r_bf_length + 2);
-    bf_t t4 = alloc_stack(g_r_bf_length + 2);
+    BigFloat t = alloc_stack(g_r_bf_length + 2);
+    BigFloat t1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat t2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat t3 = alloc_stack(g_r_bf_length + 2);
+    BigFloat t4 = alloc_stack(g_r_bf_length + 2);
 
     degree = std::max(degree, 0);
 

@@ -32,81 +32,81 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-bn_t g_bn_tmp1{};
-bn_t g_bn_tmp2{};
-bn_t g_bn_tmp3{};
-bn_t g_bn_tmp4{};
-bn_t g_bn_tmp5{};
-bn_t g_bn_tmp6{};
-bn_t g_bn_tmp_copy1{};
-bn_t g_bn_tmp_copy2{};
+BigNum g_bn_tmp1{};
+BigNum g_bn_tmp2{};
+BigNum g_bn_tmp3{};
+BigNum g_bn_tmp4{};
+BigNum g_bn_tmp5{};
+BigNum g_bn_tmp6{};
+BigNum g_bn_tmp_copy1{};
+BigNum g_bn_tmp_copy2{};
 // used by other routines, g_bn_length
-bn_t g_x_min_bn{};
-bn_t g_x_max_bn{};
-bn_t g_y_min_bn{};
-bn_t g_y_max_bn{};
-bn_t g_x_3rd_bn{};
-bn_t g_y_3rd_bn{};
+BigNum g_x_min_bn{};
+BigNum g_x_max_bn{};
+BigNum g_y_min_bn{};
+BigNum g_y_max_bn{};
+BigNum g_x_3rd_bn{};
+BigNum g_y_3rd_bn{};
 // g_bn_length
-bn_t g_delta_x_bn{};
-bn_t g_delta_y_bn{};
-bn_t g_delta2_x_bn{};
-bn_t g_delta2_y_bn{};
-bn_t g_close_enough_bn{};
+BigNum g_delta_x_bn{};
+BigNum g_delta_y_bn{};
+BigNum g_delta2_x_bn{};
+BigNum g_delta2_y_bn{};
+BigNum g_close_enough_bn{};
 // g_r_length
-bn_t g_tmp_sqr_x_bn{};
-bn_t g_tmp_sqr_y_bn{};
-bn_t g_bn_tmp{};
+BigNum g_tmp_sqr_x_bn{};
+BigNum g_tmp_sqr_y_bn{};
+BigNum g_bn_tmp{};
 // g_bn_length
 BNComplex g_old_z_bn{};
 BNComplex g_param_z_bn{};
 BNComplex g_saved_z_bn{};
 BNComplex g_new_z_bn{};   // g_r_length
-bn_t g_bn_pi{};                      // TAKES NO SPACE
+BigNum g_bn_pi{};                      // TAKES NO SPACE
 // g_r_bf_length+2
-bf_t g_bf_tmp1{};
-bf_t g_bf_tmp2{};
-bf_t g_bf_tmp3{};
-bf_t g_bf_tmp4{};
-bf_t g_bf_tmp5{};
-bf_t g_bf_tmp6{};
-bf_t g_bf_tmp_copy1{};
-bf_t g_bf_tmp_copy2{};
-bf_t g_delta_x_bf{};
-bf_t g_delta_y_bf{};
-bf_t g_delta2_x_bf{};
-bf_t g_delta2_y_bf{};
-bf_t g_close_enough_bf{};
-bf_t g_tmp_sqr_x_bf{};
-bf_t g_tmp_sqr_y_bf{};
+BigFloat g_bf_tmp1{};
+BigFloat g_bf_tmp2{};
+BigFloat g_bf_tmp3{};
+BigFloat g_bf_tmp4{};
+BigFloat g_bf_tmp5{};
+BigFloat g_bf_tmp6{};
+BigFloat g_bf_tmp_copy1{};
+BigFloat g_bf_tmp_copy2{};
+BigFloat g_delta_x_bf{};
+BigFloat g_delta_y_bf{};
+BigFloat g_delta2_x_bf{};
+BigFloat g_delta2_y_bf{};
+BigFloat g_close_enough_bf{};
+BigFloat g_tmp_sqr_x_bf{};
+BigFloat g_tmp_sqr_y_bf{};
 // g_bf_length+2
 BFComplex g_param_z_bf{};
 BFComplex g_saved_z_bf{};
 // g_r_bf_length+2
 BFComplex g_old_z_bf{};
 BFComplex g_new_z_bf{};
-bf_t g_bf_pi{};      // TAKES NO SPACE
-bf_t g_big_pi{};     // g_bf_length+2
+BigFloat g_bf_pi{};      // TAKES NO SPACE
+BigFloat g_big_pi{};     // g_bf_length+2
 // g_bf_length+2
-bf_t g_bf_x_min{};
-bf_t g_bf_x_max{};
-bf_t g_bf_y_min{};
-bf_t g_bf_y_max{};
-bf_t g_bf_x_3rd{};
-bf_t g_bf_y_3rd{};
-bf_t g_bf_save_x_min{};
-bf_t g_bf_save_x_max{};
-bf_t g_bf_save_y_min{};
-bf_t g_bf_save_y_max{};
-bf_t g_bf_save_x_3rd{};
-bf_t g_bf_save_y_3rd{};
-bf_t g_bf_params[10]{}; // (g_bf_length + 2)*10
-bf_t g_bf_tmp{};
-bf_t g_bf10_tmp{}; // g_bf_decimals + 4
+BigFloat g_bf_x_min{};
+BigFloat g_bf_x_max{};
+BigFloat g_bf_y_min{};
+BigFloat g_bf_y_max{};
+BigFloat g_bf_x_3rd{};
+BigFloat g_bf_y_3rd{};
+BigFloat g_bf_save_x_min{};
+BigFloat g_bf_save_x_max{};
+BigFloat g_bf_save_y_min{};
+BigFloat g_bf_save_y_max{};
+BigFloat g_bf_save_x_3rd{};
+BigFloat g_bf_save_y_3rd{};
+BigFloat g_bf_params[10]{}; // (g_bf_length + 2)*10
+BigFloat g_bf_tmp{};
+BigFloat g_bf10_tmp{}; // g_bf_decimals + 4
 
 static char s_storage[4096];
-static bn_t s_bn_root{};
-static bn_t s_stack_ptr{}; // memory allocator base after global variables
+static BigNum s_bn_root{};
+static BigNum s_stack_ptr{}; // memory allocator base after global variables
 
 static int save_bf_vars();
 static int restore_bf_vars();
@@ -156,7 +156,7 @@ static void init_bf2()
 
     calc_lengths();
 
-    s_bn_root = (bf_t) &s_storage[0];
+    s_bn_root = (BigFloat) &s_storage[0];
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math e.g. long double */
@@ -182,7 +182,7 @@ static void init_bf2()
     // Now split up the memory among the pointers
     const auto alloc_size = [&ptr](int size)
     {
-        bn_t result = s_bn_root + ptr;
+        BigNum result = s_bn_root + ptr;
         ptr += size;
         return result;
     };
@@ -282,7 +282,7 @@ static void init_bf2()
     g_bf_y_max = alloc_size(g_bf_length+2);
     g_bf_x_3rd = alloc_size(g_bf_length+2);
     g_bf_y_3rd = alloc_size(g_bf_length+2);
-    for (bf_t &param : g_bf_params)
+    for (BigFloat &param : g_bf_params)
     {
         param = s_bn_root + ptr;
         ptr += g_bf_length + 2;
@@ -342,7 +342,7 @@ static int restore_bf_vars()
     {
         return -1;
     }
-    bf_t ptr = s_bn_root;
+    BigFloat ptr = s_bn_root;
     convert_bf(g_bf_x_min, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_x_max, ptr, g_bf_length, g_bf_save_len);
@@ -355,7 +355,7 @@ static int restore_bf_vars()
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_y_3rd, ptr, g_bf_length, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    for (bf_t &param : g_bf_params)
+    for (BigFloat &param : g_bf_params)
     {
         convert_bf(param, ptr, g_bf_length, g_bf_save_len);
         ptr += g_bf_save_len + 2;
@@ -398,8 +398,8 @@ void free_bf_vars()
 /************************************************************************/
 // Memory allocator routines start here.
 /************************************************************************/
-// Allocates a bn_t variable on stack
-bn_t alloc_stack(size_t size)
+// Allocates a BigNum variable on stack
+BigNum alloc_stack(size_t size)
 {
     if (g_bf_math == BFMathType::NONE)
     {
@@ -595,7 +595,7 @@ void init_big_pi()
         0xD3, 0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
         /* . */  0x03, 0x00, 0x00, 0x00
         //  <- up to g_int_length 4 ->
-        // or bf_t int length of 2 + 2 byte exp
+        // or BigFloat int length of 2 + 2 byte exp
     };
 
     int length = g_bf_length + 2; // 2 byte exp

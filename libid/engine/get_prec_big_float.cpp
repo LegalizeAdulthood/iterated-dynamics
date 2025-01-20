@@ -22,8 +22,8 @@ int get_prec_bf_mag()
     LDouble magnification;
 
     int saved = save_stack();
-    bf_t b_x_ctr = alloc_stack(g_bf_length + 2);
-    bf_t b_y_ctr = alloc_stack(g_bf_length + 2);
+    BigFloat b_x_ctr = alloc_stack(g_bf_length + 2);
+    BigFloat b_y_ctr = alloc_stack(g_bf_length + 2);
     // this is just to find magnification
     cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
     restore_stack(saved);
@@ -46,13 +46,13 @@ int get_prec_bf(ResolutionFlag flag)
 {
     int res;
     int saved = save_stack();
-    bf_t del1 = alloc_stack(g_bf_length + 2);
-    bf_t del2 = alloc_stack(g_bf_length + 2);
-    bf_t one = alloc_stack(g_bf_length + 2);
-    bf_t bf_x_delta = alloc_stack(g_bf_length + 2);
-    bf_t bf_x_delta2 = alloc_stack(g_bf_length + 2);
-    bf_t bf_y_delta = alloc_stack(g_bf_length + 2);
-    bf_t bf_y_delta2 = alloc_stack(g_bf_length + 2);
+    BigFloat del1 = alloc_stack(g_bf_length + 2);
+    BigFloat del2 = alloc_stack(g_bf_length + 2);
+    BigFloat one = alloc_stack(g_bf_length + 2);
+    BigFloat bf_x_delta = alloc_stack(g_bf_length + 2);
+    BigFloat bf_x_delta2 = alloc_stack(g_bf_length + 2);
+    BigFloat bf_y_delta = alloc_stack(g_bf_length + 2);
+    BigFloat bf_y_delta2 = alloc_stack(g_bf_length + 2);
     float_to_bf(one, 1.0);
     if (flag == ResolutionFlag::MAX)
     {

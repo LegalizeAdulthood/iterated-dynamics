@@ -30,7 +30,7 @@ BFMathType g_bf_math{};
 
 #ifndef NDEBUG
 //********************************************************************
-void show_var_bn(char const *s, bn_t n)
+void show_var_bn(char const *s, BigNum n)
 {
     char msg[200];
     std::strcpy(msg, s);
@@ -183,7 +183,7 @@ void show_corners_bf_save(char const *s)
     }
 }
 
-void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
+void show_two_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, int digits)
 {
     char msg1[200];
     char msg2[200];
@@ -197,7 +197,7 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
     }
 }
 
-void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const *s3, bf_t t3, int digits)
+void show_three_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, char const *s3, BigFloat t3, int digits)
 {
     char msg1[200];
     char msg2[200];
@@ -219,9 +219,9 @@ void show_aspect(char const *s)
     char msg[300];
     char str[100];
     int saved = save_stack();
-    bf_t bt1 = alloc_stack(g_r_bf_length + 2);
-    bf_t bt2 = alloc_stack(g_r_bf_length + 2);
-    bf_t aspect = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat bt2 = alloc_stack(g_r_bf_length + 2);
+    BigFloat aspect = alloc_stack(g_r_bf_length + 2);
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
@@ -238,7 +238,7 @@ void show_aspect(char const *s)
 }
 
 // compare a double and bignumber
-void compare_values(char const *s, LDouble x, bn_t bnx)
+void compare_values(char const *s, LDouble x, BigNum bnx)
 {
     int dec = 40;
     char msg[100];
@@ -251,7 +251,7 @@ void compare_values(char const *s, LDouble x, bn_t bnx)
     }
 }
 // compare a double and bignumber
-void compare_values_bf(char const *s, LDouble x, bf_t bfx)
+void compare_values_bf(char const *s, LDouble x, BigFloat bfx)
 {
     int dec = 40;
     char msg[300];
@@ -265,7 +265,7 @@ void compare_values_bf(char const *s, LDouble x, bf_t bfx)
 }
 
 //********************************************************************
-void show_var_bf(char const *s, bf_t n)
+void show_var_bf(char const *s, BigFloat n)
 {
     char msg[200];
     std::strcpy(msg, s);
@@ -303,8 +303,8 @@ bool mandel_bn_setup()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
-    bn_t bn_temp1 = alloc_stack(g_bn_length);
-    bn_t bn_temp2 = alloc_stack(g_bn_length);
+    BigNum bn_temp1 = alloc_stack(g_bn_length);
+    BigNum bn_temp2 = alloc_stack(g_bn_length);
 
     bf_to_bn(g_x_min_bn, g_bf_x_min);
     bf_to_bn(g_x_max_bn, g_bf_x_max);
@@ -420,8 +420,8 @@ bool mandel_bf_setup()
 
     // this should be set up dynamically based on corners
     BigStackSaver saved;
-    bf_t bf_temp1{alloc_stack(g_bf_length + 2)};
-    bf_t bf_temp2{alloc_stack(g_bf_length + 2)};
+    BigFloat bf_temp1{alloc_stack(g_bf_length + 2)};
+    BigFloat bf_temp2{alloc_stack(g_bf_length + 2)};
 
     g_bf_math = BFMathType::BIG_FLT;
 
@@ -695,7 +695,7 @@ julia_bf_per_pixel()
 int
 julia_bn_fractal()
 {
-    // Don't forget, with bn_t numbers, after multiplying or squaring
+    // Don't forget, with BigNum numbers, after multiplying or squaring
     // you must shift over by g_shift_factor to get the bn number.
 
     // g_tmp_sqr_x_bn and g_tmp_sqr_y_bn were previously squared before getting to
@@ -785,7 +785,7 @@ BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
 BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
     mult_bf(t->x, x->x, y->x);
     mult_bf(t->y, x->y, y->y);
     sub_bf(t->x, t->x, t->y);
@@ -800,8 +800,8 @@ BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     int saved = save_stack();
-    bf_t tmp1 = alloc_stack(g_r_bf_length + 2);
-    bf_t denom = alloc_stack(g_r_bf_length + 2);
+    BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
+    BigFloat denom = alloc_stack(g_r_bf_length + 2);
 
     square_bf(t->x, y->x);
     square_bf(t->y, y->y);
@@ -832,9 +832,9 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
     BFComplex tmp;
     int saved = save_stack();
-    bf_t e2x = alloc_stack(g_r_bf_length + 2);
-    bf_t sin_y = alloc_stack(g_r_bf_length + 2);
-    bf_t cos_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat e2x = alloc_stack(g_r_bf_length + 2);
+    BigFloat sin_y = alloc_stack(g_r_bf_length + 2);
+    BigFloat cos_y = alloc_stack(g_r_bf_length + 2);
     tmp.x = alloc_stack(g_r_bf_length+2);
     tmp.y = alloc_stack(g_r_bf_length+2);
 
@@ -876,7 +876,7 @@ BNComplex *cmplx_log_bn(BNComplex *t, BNComplex *s)
 BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     int saved = save_stack();
-    bn_t tmp1 = alloc_stack(g_r_length);
+    BigNum tmp1 = alloc_stack(g_r_length);
     mult_bn(t->x, x->x, y->x);
     mult_bn(t->y, x->y, y->y);
     sub_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
@@ -891,9 +891,9 @@ BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     int saved = save_stack();
-    bn_t tmp1 = alloc_stack(g_r_length);
-    bn_t tmp2 = alloc_stack(g_r_length);
-    bn_t denom = alloc_stack(g_r_length);
+    BigNum tmp1 = alloc_stack(g_r_length);
+    BigNum tmp2 = alloc_stack(g_r_length);
+    BigNum denom = alloc_stack(g_r_length);
 
     square_bn(tmp1, y->x);
     square_bn(tmp2, y->y);
@@ -930,9 +930,9 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
     BNComplex tmp;
     int saved = save_stack();
-    bn_t e2x = alloc_stack(g_r_length);
-    bn_t sin_y = alloc_stack(g_r_length);
-    bn_t cos_y = alloc_stack(g_r_length);
+    BigNum e2x = alloc_stack(g_r_length);
+    BigNum sin_y = alloc_stack(g_r_length);
+    BigNum cos_y = alloc_stack(g_r_length);
     tmp.x = alloc_stack(g_r_length);
     tmp.y = alloc_stack(g_r_length);
 
