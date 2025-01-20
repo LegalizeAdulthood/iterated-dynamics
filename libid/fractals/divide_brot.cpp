@@ -66,7 +66,9 @@ int divide_brot5_bf_per_pixel()
 
 int divide_brot5_bn_fractal()
 {
-    BNComplex bn_tmp_new, bn_numer, bn_c_exp;
+    BNComplex bn_tmp_new;
+    BNComplex bn_numer;
+    BNComplex bn_c_exp;
     int saved = save_stack();
 
     bn_tmp_new.x = alloc_stack(g_r_length);
@@ -113,7 +115,9 @@ int divide_brot5_bn_fractal()
 
 int divide_brot5_bf_fractal()
 {
-    BFComplex bf_tmp_new, bf_numer, bf_c_exp;
+    BFComplex bf_tmp_new;
+    BFComplex bf_numer;
+    BFComplex bf_c_exp;
     int saved = save_stack();
 
     bf_tmp_new.x = alloc_stack(g_r_bf_length + 2);
@@ -181,7 +185,9 @@ int divide_brot5_fp_fractal() /* from formula by Jim Muth */
     /* z=sqr(z)/(z^(-a)+b)+c */
     /* we'll set a to -a in setup, so don't need it here */
     /* z=sqr(z)/(z^(a)+b)+c */
-    DComplex tmp_sqr, tmp1, tmp2;
+    DComplex tmp_sqr;
+    DComplex tmp1;
+    DComplex tmp2;
 
     /* sqr(z) */
     tmp_sqr.x = g_temp_sqr_x - g_temp_sqr_y;
