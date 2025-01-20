@@ -16,7 +16,7 @@
 #include <cmath>
 
 // call float version of fractal if integer math overflow
-static int try_float_fractal(int (*fpFractal)())
+static int try_float_fractal(int (*fp_fractal)())
 {
     g_overflow = false;
     // lold had better not be changed!
@@ -26,7 +26,7 @@ static int try_float_fractal(int (*fpFractal)())
     g_old_z.y /= g_fudge_factor;
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
-    fpFractal();
+    fp_fractal();
     g_l_new_z.x = (long)(g_new_z.x*g_fudge_factor);
     g_l_new_z.y = (long)(g_new_z.y*g_fudge_factor);
     return 0;
