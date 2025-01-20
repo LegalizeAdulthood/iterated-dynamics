@@ -59,7 +59,7 @@ static bool check_disk_space(std::uint64_t size);
 static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size);
 static U16 next_handle();
 static int check_bounds(long start, long length, U16 handle);
-static void which_disk_error(int);
+static void which_disk_error(int status);
 static void display_error(MemoryLocation stored_at, long how_much);
 static void display_handle(U16 handle);
 
