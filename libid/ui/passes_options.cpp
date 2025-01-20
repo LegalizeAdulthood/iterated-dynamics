@@ -13,6 +13,7 @@
 #include "ui/id_keys.h"
 
 #include <algorithm>
+#include <iterator>
 
 /*
      passes_options invoked by <p> key
@@ -57,7 +58,7 @@ pass_option_restart:
     //   choices[++k] = "Orbit pass shape (rect,line,func)";
     values[k].type = 'l';
     values[k].uval.ch.vlen = 5;
-    values[k].uval.ch.list_len = sizeof(pass_calc_modes)/sizeof(*pass_calc_modes);
+    values[k].uval.ch.list_len = std::size(pass_calc_modes);
     values[k].uval.ch.list = pass_calc_modes;
     values[k].uval.ch.val = (g_draw_mode == 'r') ? 0
                              : (g_draw_mode == 'l') ? 1

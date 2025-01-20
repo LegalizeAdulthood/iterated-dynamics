@@ -51,7 +51,7 @@ int get_toggles()
     choices[++k] = "Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])";
     values[k].type = 'l';
     values[k].uval.ch.vlen = 3;
-    values[k].uval.ch.list_len = sizeof(calc_modes)/sizeof(*calc_modes);
+    values[k].uval.ch.list_len = std::size(calc_modes);
     values[k].uval.ch.list = calc_modes;
     values[k].uval.ch.val =
         (g_user_std_calc_mode == '1') ? 0
@@ -94,7 +94,7 @@ int get_toggles()
     choices[++k] = "Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)";
     values[k].type = 'l';
     values[k].uval.ch.vlen = 12;
-    values[k].uval.ch.list_len = sizeof(inside_modes)/sizeof(*inside_modes);
+    values[k].uval.ch.list_len = std::size(inside_modes);
     values[k].uval.ch.list = inside_modes;
     if (g_inside_color >= COLOR_BLACK)    // numb
     {
@@ -152,7 +152,7 @@ int get_toggles()
     choices[++k] = "Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)";
     values[k].type = 'l';
     values[k].uval.ch.vlen = 4;
-    values[k].uval.ch.list_len = sizeof(outside_modes)/sizeof(*outside_modes);
+    values[k].uval.ch.list_len = std::size(outside_modes);
     values[k].uval.ch.list = outside_modes;
     if (g_outside_color >= COLOR_BLACK)    // numb
     {

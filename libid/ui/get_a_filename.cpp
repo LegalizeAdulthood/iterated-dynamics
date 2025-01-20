@@ -24,6 +24,7 @@
 #include <config/path_limits.h>
 
 #include <cstring>
+#include <iterator>
 
 // speed key state values
 enum
@@ -127,7 +128,7 @@ retry_dir:
     }
     else
     {
-        num_templates = sizeof(s_masks)/sizeof(s_masks[0]);
+        num_templates = std::size(s_masks);
     }
     int file_count = -1;
     int dir_count = 0;

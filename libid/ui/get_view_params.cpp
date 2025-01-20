@@ -16,6 +16,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <iterator>
 
 // for videomodes added new options "virtual x/y" that change "sx/ydots"
 // for diskmode changed "viewx/ydots" to "virtual x/y" that do as above
@@ -105,7 +106,7 @@ get_view_restart:
         choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
         values[k].type = 'l';
         values[k].uval.ch.vlen = 7;
-        values[k].uval.ch.list_len = sizeof(scroll_types)/sizeof(*scroll_types);
+        values[k].uval.ch.list_len = std::size(scroll_types);
         values[k].uval.ch.list = scroll_types;
         values[k].uval.ch.val = g_z_scroll ? 1 : 0;
     }
