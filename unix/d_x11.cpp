@@ -148,7 +148,7 @@ public:
     int get_key() override;
     int key_cursor(int row, int col) override;
     int key_pressed() override;
-    int wait_key_pressed(int timeout) override;
+    int wait_key_pressed(bool timeout) override;
     void unget_key(int key) override;
     void shell() override;
     void set_video_mode(VideoInfo *mode) override;
@@ -2337,7 +2337,7 @@ int X11Driver::key_pressed()
     return ch;
 }
 
-int X11Driver::wait_key_pressed(int timeout)
+int X11Driver::wait_key_pressed(bool timeout)
 {
     return 0;
 }
