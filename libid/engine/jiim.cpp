@@ -551,6 +551,7 @@ int InverseJulia::s_ran_cnt{};
 InverseJulia::InverseJulia(JIIMType which) :
     m_which(which)
 {
+    find_special_colors();
 }
 
 void InverseJulia::start()
@@ -967,7 +968,7 @@ bool InverseJulia::iterate()
             }
             else
             {
-                driver_display_string(5, g_vesa_y_res - s_show_numbers, WHITE, BLACK, str);
+                driver_display_string(5, g_vesa_y_res - s_show_numbers, g_color_bright, g_color_dark, str);
             }
         }
         m_iter = 1;
