@@ -702,6 +702,9 @@ bool InverseJulia::handle_key_press(bool &still)
 
     int d_col = 0;
     int d_row = 0;
+    constexpr int BIG_DELTA{4};
+    constexpr int SMALL_DELTA{1};
+    constexpr float ZOOM_INCREMENT{1.15f};
     g_julia_c_x = JULIA_C_NOT_SET;
     g_julia_c_y = JULIA_C_NOT_SET;
     switch (m_key)
@@ -711,90 +714,90 @@ bool InverseJulia::handle_key_press(bool &still)
         break;                // do nothing
 
     case ID_KEY_CTL_PAGE_UP:
-        d_col = 4;
-        d_row = -4;
+        d_col = BIG_DELTA;
+        d_row = -BIG_DELTA;
         break;
 
     case ID_KEY_CTL_PAGE_DOWN:
-        d_col = 4;
-        d_row = 4;
+        d_col = BIG_DELTA;
+        d_row = BIG_DELTA;
         break;
 
     case ID_KEY_CTL_HOME:
-        d_col = -4;
-        d_row = -4;
+        d_col = -BIG_DELTA;
+        d_row = -BIG_DELTA;
         break;
 
     case ID_KEY_CTL_END:
-        d_col = -4;
-        d_row = 4;
+        d_col = -BIG_DELTA;
+        d_row = BIG_DELTA;
         break;
 
     case ID_KEY_PAGE_UP:
-        d_col = 1;
-        d_row = -1;
+        d_col = SMALL_DELTA;
+        d_row = -SMALL_DELTA;
         break;
 
     case ID_KEY_PAGE_DOWN:
-        d_col = 1;
-        d_row = 1;
+        d_col = SMALL_DELTA;
+        d_row = SMALL_DELTA;
         break;
 
     case ID_KEY_HOME:
-        d_col = -1;
-        d_row = -1;
+        d_col = -SMALL_DELTA;
+        d_row = -SMALL_DELTA;
         break;
 
     case ID_KEY_END:
-        d_col = -1;
-        d_row = 1;
+        d_col = -SMALL_DELTA;
+        d_row = SMALL_DELTA;
         break;
 
     case ID_KEY_UP_ARROW:
-        d_row = -1;
+        d_row = -SMALL_DELTA;
         break;
 
     case ID_KEY_DOWN_ARROW:
-        d_row = 1;
+        d_row = SMALL_DELTA;
         break;
 
     case ID_KEY_LEFT_ARROW:
-        d_col = -1;
+        d_col = -SMALL_DELTA;
         break;
 
     case ID_KEY_RIGHT_ARROW:
-        d_col = 1;
+        d_col = SMALL_DELTA;
         break;
 
     case ID_KEY_CTL_UP_ARROW:
-        d_row = -4;
+        d_row = -BIG_DELTA;
         break;
 
     case ID_KEY_CTL_DOWN_ARROW:
-        d_row = 4;
+        d_row = BIG_DELTA;
         break;
 
     case ID_KEY_CTL_LEFT_ARROW:
-        d_col = -4;
+        d_col = -BIG_DELTA;
         break;
 
     case ID_KEY_CTL_RIGHT_ARROW:
-        d_col = 4;
+        d_col = BIG_DELTA;
         break;
 
     case 'z':
     case 'Z':
-        m_zoom = 1.0F;
+        m_zoom = 1.0f;
         break;
 
     case '<':
     case ',':
-        m_zoom /= 1.15F;
+        m_zoom /= ZOOM_INCREMENT;
         break;
 
     case '>':
     case '.':
-        m_zoom *= 1.15F;
+        m_zoom *= ZOOM_INCREMENT;
         break;
 
     case ID_KEY_SPACE:
