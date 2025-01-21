@@ -63,7 +63,9 @@ enum class SecretMode
     RANDOM_RUN = 9,
 };
 
-static int s_show_numbers{};              // toggle for display of coords
+constexpr int NUMBER_FONT_HEIGHT{8};
+
+static bool s_show_numbers{};             // toggle for display of coords
 static std::vector<char> s_screen_rect;   //
 static JuliaWindowStyle s_window_style{}; // windows management system
 static int s_corner_x{};                  // corners of the window
@@ -115,7 +117,7 @@ static void c_put_color(int x, int y, int color)
     {
         return ;
     }
-    if (y >= g_screen_y_dots - s_show_numbers)   // avoid overwriting coords
+    if (y >= g_screen_y_dots - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0))   // avoid overwriting coords
     {
         return;
     }
@@ -136,7 +138,7 @@ static int c_get_color(int x, int y)
     {
         return 1000;
     }
-    if (y >= g_screen_y_dots - s_show_numbers)   // avoid over reading coords
+    if (y >= g_screen_y_dots - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0))   // avoid over reading coords
     {
         return 1000;
     }
@@ -561,7 +563,7 @@ void InverseJulia::start()
         g_has_inverse = true;
     }
 
-    s_show_numbers = 0;
+    s_show_numbers = false;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
     m_aspect = ((double) g_logical_screen_x_dots * 3) / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
@@ -817,8 +819,8 @@ bool InverseJulia::handle_key_press(bool &still)
 
     case 'n':
     case 'N':
-        s_show_numbers = 8 - s_show_numbers;
-        if (s_window_style == JuliaWindowStyle::LARGE && s_show_numbers == 0)
+        s_show_numbers = !s_show_numbers;
+        if (s_window_style == JuliaWindowStyle::LARGE && !s_show_numbers)
         {
             s_cursor.hide();
             clear_temp_msg();
@@ -971,7 +973,7 @@ bool InverseJulia::iterate()
             }
             else
             {
-                driver_display_string(5, g_vesa_y_res - s_show_numbers, g_color_bright, g_color_dark, str);
+                driver_display_string(5, g_vesa_y_res - NUMBER_FONT_HEIGHT, g_color_bright, g_color_dark, str);
             }
         }
         m_iter = 1;
@@ -1029,9 +1031,10 @@ bool InverseJulia::iterate()
         if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
         {
             fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width - g_logical_screen_x_dots,
-                s_win_height - s_show_numbers, g_color_dark);
+                s_win_height - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0), g_color_dark);
             fill_rect(s_corner_x, g_logical_screen_y_dots, g_logical_screen_x_dots,
-                s_win_height - g_logical_screen_y_dots - s_show_numbers, g_color_dark);
+                s_win_height - g_logical_screen_y_dots - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0),
+                g_color_dark);
         }
         else
         {
@@ -1379,7 +1382,7 @@ void InverseJulia::finish()
     {
         clear_temp_msg();
     }
-    s_show_numbers = 0;
+    s_show_numbers = false;
     driver_unget_key(m_key);
 
     if (g_cur_fractal_specific->calc_type == calc_froth)
