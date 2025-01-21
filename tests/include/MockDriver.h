@@ -37,7 +37,7 @@ public:
     MOCK_METHOD(int, get_key, (), (override));
     MOCK_METHOD(int, key_cursor, (int, int), (override));
     MOCK_METHOD(int, key_pressed, (), (override));
-    MOCK_METHOD(int, wait_key_pressed, (int), (override));
+    MOCK_METHOD(int, wait_key_pressed, (bool), (override));
     MOCK_METHOD(void, unget_key, (int), (override));
     MOCK_METHOD(void, shell, (), (override));
     MOCK_METHOD(void, set_video_mode, (VideoInfo *), (override));
