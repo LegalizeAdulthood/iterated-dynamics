@@ -1101,6 +1101,7 @@ void CrossHairCursor::set_pos(int x, int y)
 
     m_x = x;
     m_y = y;
+    m_pos_updated = true;
 
     if (!m_hidden)
     {
@@ -1170,10 +1171,11 @@ void CrossHairCursor::check_blink()
 
 int CrossHairCursor::wait_key()
 {
-    while (!driver_wait_key_pressed(true))
+    while (!driver_wait_key_pressed(true) && !m_pos_updated)
     {
         check_blink();
     }
+    m_pos_updated = false;
 
     return driver_key_pressed();
 }

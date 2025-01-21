@@ -1194,19 +1194,19 @@ bool InverseJulia::iterate()
 {
     bool still{true};
     bool mouse_updated{};
-    if (m_actively_computing)
+    if (s_cursor.get_x() != g_col || s_cursor.get_y() != g_row)
+    {
+        g_col = s_cursor.get_x();
+        g_row = s_cursor.get_y();
+        mouse_updated = true;
+    }
+    if (m_actively_computing || mouse_updated)
     {
         s_cursor.check_blink();
     }
     else
     {
         s_cursor.wait_key();
-    }
-    if (s_cursor.get_x() != g_col || s_cursor.get_y() != g_row)
-    {
-        g_col = s_cursor.get_x();
-        g_row = s_cursor.get_y();
-        mouse_updated = true;
     }
     if (driver_key_pressed() || m_first_time || mouse_updated)
     {

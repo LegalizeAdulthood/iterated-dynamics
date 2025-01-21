@@ -53,6 +53,7 @@ private:
     int m_hidden; // >0 if mouse hidden
     long m_last_blink;
     bool m_blink;
+    bool m_pos_updated{};
     char m_top[CURSOR_SIZE]; // save line segments here
     char m_bottom[CURSOR_SIZE];
     char m_left[CURSOR_SIZE];
