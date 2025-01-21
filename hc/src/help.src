@@ -289,6 +289,8 @@ o Configuration files 'sstools.ini' and 'id.cfg' can now be loaded from
   to the user's Documents directory.  Changing function key assignments
   while selecting video modes saves the updated id.cfg file to the savedir,
   defaulting to the user's Documents directory.  (Fixes #170)
+o Mouse support for the inverse Julia set cursor has been restored.
+  (Fixes #151)
 o The color palette editor can be positioned using the mouse and the
   current pixel whose color is displayed in the editor can also be
   selected with the mouse.  (Fixes #150)
@@ -315,8 +317,6 @@ o The version number is now correctly displayed in the title of help
   screens.  (Fixes #154)
 o When run from the Visual Studio debugger, the working directory of
   the program is properly set to the home directory.  (Fixes #153)
-o Mouse support for the inverse julia set cursor has been restored.
-  (Fixes #151)
 o Corrected an assert popup during a Debug build. (Fixes #147, #140)
 o When the monitor configuration changed since the last time Id was run
   and the previous window position is no longer on-screen, the previous
