@@ -1397,7 +1397,7 @@ void InverseJulia::process()
     ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
     ValueSaver saved_calc_type{g_calc_type};
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::POSITION};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::POSITION};
 
     start();
     while (iterate())

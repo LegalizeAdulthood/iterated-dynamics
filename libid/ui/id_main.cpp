@@ -238,7 +238,7 @@ static bool main_restore_start(MainContext &context)
     {
         std::memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
     }
-    g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
+    g_look_at_mouse = MouseLook::IGNORE_MOUSE;
     while (g_show_file <= 0) // image is to be loaded
     {
         g_tab_mode = false;
@@ -297,7 +297,7 @@ static bool main_restore_start(MainContext &context)
     }
     g_help_mode = HelpLabels::HELP_MENU; // now use this help mode
     g_tab_mode = true;
-    g_look_at_mouse = +MouseLook::IGNORE_MOUSE;
+    g_look_at_mouse = MouseLook::IGNORE_MOUSE;
     if (((g_overlay_3d && (g_init_batch == BatchMode::NONE)) || context.stacked) &&
         g_init_mode < 0) // overlay command failed
     {
@@ -337,7 +337,7 @@ static MainState main_image_start(bool &stacked, bool &resume_flag)
 
     if (g_init_batch == BatchMode::NONE)
     {
-        g_look_at_mouse = -ID_KEY_PAGE_UP;           // just mouse left button, == pgup
+        g_look_at_mouse = mouse_look_key(ID_KEY_PAGE_UP);
     }
 
     g_cycle_limit = g_init_cycle_limit;         // default cycle limit

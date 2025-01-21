@@ -885,7 +885,7 @@ int full_screen_prompt(       // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     return Prompt{hdg, num_prompts, prompts, values, fn_key_mask, extra_info}.prompt();
 }
 
@@ -1022,7 +1022,7 @@ static int input_field_list(int attr, // display attribute
 {
     int init_val;
     char buf[81];
-    ValueSaver save_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
+    ValueSaver save_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     for (init_val = 0; init_val < list_len; ++init_val)
     {
         if (std::strcmp(field, list[init_val]) == 0)

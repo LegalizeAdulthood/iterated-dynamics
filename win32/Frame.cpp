@@ -15,6 +15,7 @@
 #include <Windows.h>
 #include <windowsx.h>
 
+#include <cassert>
 #include <cctype>
 #include <stdexcept>
 
@@ -611,11 +612,18 @@ static std::string key_flags_string(UINT value)
     return result.empty() ? "NONE" : result;
 }
 
+static int get_mouse_look_key()
+{
+    const int key{+g_look_at_mouse};
+    assert(key < 0);
+    return -key;
+}
+
 void Frame::on_left_button_up(HWND window, int x, int y, UINT key_flags)
 {
-    if (g_look_at_mouse < 0)
+    if (+g_look_at_mouse < 0)
     {
-        add_key_press(-g_look_at_mouse);
+        add_key_press(get_mouse_look_key());
     }
     else
     {
@@ -1265,7 +1273,7 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
     m_pos.x = static_cast<LONG>(x);
     m_pos.y = static_cast<LONG>(y);
     mouse_notify_move(x, y, static_cast<int>(key_flags));
-    if (g_look_at_mouse <= +MouseLook::IGNORE_MOUSE)
+    if (g_look_at_mouse <= MouseLook::IGNORE_MOUSE)
     {
         return;
     }

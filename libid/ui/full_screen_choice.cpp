@@ -170,7 +170,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
     int (*check_key)(int key, int choice))
 {
     const int scrunch = bit_set(flags, ChoiceFlags::CRUNCH) ? 1 : 0; // scrunch up a line
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     // preset current to passed string
     int const speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);

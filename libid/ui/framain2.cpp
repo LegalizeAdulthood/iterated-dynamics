@@ -253,7 +253,7 @@ MainState big_while_loop(MainContext &context)
         g_save_dac = (g_save_dac == 0) ? 2 : 1;
         if (g_init_batch == BatchMode::NONE)
         {
-            g_look_at_mouse = -ID_KEY_PAGE_UP;        // mouse left button == pgup
+            g_look_at_mouse = mouse_look_key(ID_KEY_PAGE_UP); // mouse left button == pgup
         }
 
         if (g_show_file == 0)
@@ -550,7 +550,8 @@ resumeloop:                             // return here on failed overlays
             }
             else if (g_init_batch == BatchMode::NONE)      // not batch mode
             {
-                g_look_at_mouse = g_zoom_box_width == 0 ? -ID_KEY_PAGE_UP : +MouseLook::POSITION;
+                g_look_at_mouse =
+                    g_zoom_box_width == 0 ? mouse_look_key(ID_KEY_PAGE_UP) : MouseLook::POSITION;
                 if (g_calc_status == CalcStatus::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     context.key = ID_KEY_ENTER;  // no visible reason to stop, continue

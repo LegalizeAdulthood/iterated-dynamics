@@ -821,7 +821,7 @@ int help()
         return 0;
     }
 
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     g_timer_start -= std::clock();
     driver_stack_screen();
 

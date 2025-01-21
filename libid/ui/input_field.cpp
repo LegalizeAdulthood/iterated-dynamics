@@ -24,7 +24,7 @@ int input_field(InputFieldFlags options, //
     char save_fld[81];
     char buf[81];
     int j;
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, +MouseLook::IGNORE_MOUSE};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     std::strcpy(save_fld, fld);
     int insert = 0;

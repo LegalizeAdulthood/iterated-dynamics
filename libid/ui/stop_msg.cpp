@@ -74,7 +74,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         batch_mode = true; // fixes *second* stopmsg in batch mode bug
         return true;
     }
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, -ID_KEY_ENTER};
+    ValueSaver saved_look_at_mouse{g_look_at_mouse, mouse_look_key(ID_KEY_ENTER)};
     if (bit_set(flags, StopMsgFlags::NO_STACK))
     {
         blank_rows(top_row = 12, 10, 7);

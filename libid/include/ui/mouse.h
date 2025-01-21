@@ -5,9 +5,6 @@
 #include <memory>
 #include <utility>
 
-extern bool                  g_cursor_mouse_tracking;
-extern int                   g_look_at_mouse;
-
 // g_look_at_mouse is set to one of these positive values for handling mouse events,
 // or it is set to a negative key code for primary button click to generate a key.
 enum class MouseLook
@@ -21,6 +18,13 @@ inline int operator+(MouseLook value)
 {
     return static_cast<int>(value);
 }
+inline MouseLook mouse_look_key(int key)
+{
+    return static_cast<MouseLook>(-key);
+}
+
+extern bool                  g_cursor_mouse_tracking;
+extern MouseLook             g_look_at_mouse;
 
 class MouseNotification
 {
