@@ -72,8 +72,8 @@ static int s_corner_x{};                  // corners of the window
 static int s_corner_y{};                  //
 static int s_win_width{};                 // dots in the window
 static int s_win_height{};                //
-static int s_x_base{};                    // circle routines from Dr. Dobbs June 1990
-static int s_y_base{};                    //
+static int s_circle_x{};                  // circle routines from Dr. Dobbs June 1990
+static int s_circle_y{};                  // circle center point
 static unsigned int s_x_aspect{};         //
 static unsigned int s_y_aspect{};         //
 static long s_list_front{};               // head, tail, size of MIIM Queue
@@ -115,7 +115,7 @@ static void c_put_color(int x, int y, int color)
     // avoid writing outside window
     if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
     {
-        return ;
+        return;
     }
     if (y >= g_screen_y_dots - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0))   // avoid overwriting coords
     {
@@ -158,16 +158,16 @@ static void circle_plot(int x, int y, int color)
     {
         if (s_y_aspect == 0)
         {
-            c_put_color(x+s_x_base, y+s_y_base, color);
+            c_put_color(x+s_circle_x, y+s_circle_y, color);
         }
         else
         {
-            c_put_color(x+s_x_base, (short)(s_y_base + (((long) y * (long) s_y_aspect) >> 16)), color);
+            c_put_color(x+s_circle_x, (short)(s_circle_y + (((long) y * (long) s_y_aspect) >> 16)), color);
         }
     }
     else
     {
-        c_put_color((int)(s_x_base + (((long) x * (long) s_x_aspect) >> 16)), y+s_y_base, color);
+        c_put_color((int)(s_circle_x + (((long) x * (long) s_x_aspect) >> 16)), y+s_circle_y, color);
     }
 }
 
@@ -1196,8 +1196,8 @@ bool InverseJulia::iterate()
                     }
                     if (bit_set(s_mode, OrbitFlags::CIRCLE))
                     {
-                        s_x_base = m_x;
-                        s_y_base = m_y;
+                        s_circle_x = m_x;
+                        s_circle_y = m_y;
                         circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
                     }
                     if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
@@ -1304,8 +1304,8 @@ bool InverseJulia::iterate()
         }
         if (bit_set(s_mode, OrbitFlags::CIRCLE))
         {
-            s_x_base = m_x;
-            s_y_base = m_y;
+            s_circle_x = m_x;
+            s_circle_y = m_y;
             circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
         }
         if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
