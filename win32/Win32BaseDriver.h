@@ -48,7 +48,7 @@ public:
     void mute() override;
     bool is_disk() const override;
     int key_cursor(int row, int col) override;
-    int wait_key_pressed(int timeout) override;
+    int wait_key_pressed(bool timeout) override;
     int get_char_attr() override;
     void put_char_attr(int char_attr) override;
     void delay(int ms) override;

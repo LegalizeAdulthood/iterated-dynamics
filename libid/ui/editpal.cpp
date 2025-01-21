@@ -1170,7 +1170,7 @@ void CrossHairCursor::check_blink()
 
 int CrossHairCursor::wait_key()
 {
-    while (!driver_wait_key_pressed(1))
+    while (!driver_wait_key_pressed(true))
     {
         check_blink();
     }

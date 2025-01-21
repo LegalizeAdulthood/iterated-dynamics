@@ -363,7 +363,7 @@ bool auto_stereo_convert()
         toggle_bars(&bars, bar_width, colour.data());
         while (!done)
         {
-            driver_wait_key_pressed(0);
+            driver_wait_key_pressed(false);
             switch (int key = driver_get_key(); key)
             {
             case ID_KEY_ENTER:   // toggle bars

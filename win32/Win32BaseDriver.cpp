@@ -398,7 +398,7 @@ int Win32BaseDriver::key_cursor(int row, int col)
     return result;
 }
 
-int Win32BaseDriver::wait_key_pressed(int timeout)
+int Win32BaseDriver::wait_key_pressed(bool timeout)
 {
     int count = 10;
     while (!key_pressed())

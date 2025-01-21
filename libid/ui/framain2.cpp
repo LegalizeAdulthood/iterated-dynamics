@@ -564,7 +564,7 @@ resumeloop:                             // return here on failed overlays
                     }
                     else
                     {
-                        driver_wait_key_pressed(0);
+                        driver_wait_key_pressed(false);
                         context.key = driver_get_key();
                     }
                     if (context.key == ID_KEY_ESC || context.key == 'm' || context.key == 'M')

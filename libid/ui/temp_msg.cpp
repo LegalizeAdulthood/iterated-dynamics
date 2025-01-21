@@ -27,7 +27,7 @@ int text_temp_msg(char const *msg)
         return -1;
     }
 
-    driver_wait_key_pressed(0); // wait for a keystroke but don't eat it
+    driver_wait_key_pressed(false); // wait for a keystroke but don't eat it
     clear_temp_msg();
     return 0;
 }

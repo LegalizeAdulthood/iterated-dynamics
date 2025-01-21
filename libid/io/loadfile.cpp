@@ -1757,7 +1757,7 @@ rescan:  // entry for changed browse parms
                 clear_temp_msg();
                 std::snprintf(msg, std::size(msg), "Delete %s? (Y/N)", win_list.name.c_str());
                 show_temp_msg(msg);
-                driver_wait_key_pressed(0);
+                driver_wait_key_pressed(false);
                 clear_temp_msg();
                 c = driver_get_key();
                 if (c == 'Y' && g_confirm_file_deletes)

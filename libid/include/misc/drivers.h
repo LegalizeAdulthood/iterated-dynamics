@@ -87,7 +87,7 @@ public:
     virtual int get_key() = 0;                                                // poll or block for a key
     virtual int key_cursor(int row, int col) = 0;                             //
     virtual int key_pressed() = 0;                                            //
-    virtual int wait_key_pressed(int timeout) = 0;                            //
+    virtual int wait_key_pressed(bool timeout) = 0;                           //
     virtual void unget_key(int key) = 0;                                      //
     virtual void shell() = 0;                                                 // invoke a command shell
     virtual void set_video_mode(VideoInfo *mode) = 0;                         //
@@ -222,7 +222,7 @@ inline int driver_key_pressed()
 {
     return g_driver->key_pressed();
 }
-inline int driver_wait_key_pressed(int timeout)
+inline int driver_wait_key_pressed(bool timeout)
 {
     return g_driver->wait_key_pressed(timeout);
 }

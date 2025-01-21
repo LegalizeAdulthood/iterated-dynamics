@@ -89,7 +89,7 @@ void intro()
         {
             // spacebar pauses
             driver_get_key();
-            driver_wait_key_pressed(0);
+            driver_wait_key_pressed(false);
             if (driver_key_pressed() == ID_KEY_SPACE)
             {
                 driver_get_key();

@@ -516,7 +516,7 @@ static void pause_rotate()               // pause-the-rotate routine
         {
             dvid_status(100, " Paused in \"color cycling\" mode ");
         }
-        driver_wait_key_pressed(0);                // wait for any key
+        driver_wait_key_pressed(false);                // wait for any key
 
         if (driver_is_disk())
         {

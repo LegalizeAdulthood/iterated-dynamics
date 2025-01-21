@@ -483,7 +483,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
             driver_hide_text_cursor();
         }
 
-        driver_wait_key_pressed(0); // enables help
+        driver_wait_key_pressed(false); // enables help
         int key = driver_get_key();
         {
             int i = current - top_left_choice;           // unhighlight current choice
