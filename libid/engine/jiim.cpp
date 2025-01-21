@@ -527,6 +527,7 @@ public:
 private:
     void start();
     bool handle_key_press(bool &still);
+    bool iterate_jiim();
     bool iterate();
     void finish();
 
@@ -931,6 +932,232 @@ bool InverseJulia::handle_key_press(bool &still)
     return false;
 }
 
+bool InverseJulia::iterate_jiim()
+{
+    if (!g_has_inverse)
+    {
+        return true;
+    }
+    // If we have MIIM queue allocated, then use MIIM method.
+    if (s_ok_to_miim)
+    {
+        if (queue_empty())
+        {
+            if (s_max_hits < g_colors - 1 //
+                && s_max_hits < 5         //
+                && (s_lucky_x != 0.0 || s_lucky_y != 0.0))
+            {
+                s_l_max = 0;
+                s_l_size = 0;
+                g_new_z.x = s_lucky_x;
+                g_old_z.x = s_lucky_x;
+                g_new_z.y = s_lucky_y;
+                g_old_z.y = s_lucky_y;
+                s_lucky_y = 0.0f;
+                s_lucky_x = 0.0f;
+                for (int i = 0; i < 199; i++)
+                {
+                    g_old_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
+                    g_new_z = complex_sqrt_float(g_new_z.x - m_c_real, g_new_z.y - m_c_imag);
+                    enqueue_float((float) g_new_z.x, (float) g_new_z.y);
+                    enqueue_float((float) -g_old_z.x, (float) -g_old_z.y);
+                }
+                s_max_hits++;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        g_old_z = dequeue_float();
+
+        m_x = (int) (g_old_z.x * m_x_factor * m_zoom + m_x_off);
+        m_y = (int) (g_old_z.y * m_y_factor * m_zoom + m_y_off);
+        m_color = c_get_color(m_x, m_y);
+        if (m_color < s_max_hits)
+        {
+            c_put_color(m_x, m_y, m_color + 1);
+            g_new_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
+            enqueue_float((float) g_new_z.x, (float) g_new_z.y);
+            enqueue_float((float) -g_new_z.x, (float) -g_new_z.y);
+        }
+    }
+    else
+    {
+        // not MIIM code.
+        g_old_z.x -= m_c_real;
+        g_old_z.y -= m_c_imag;
+        m_r = g_old_z.x * g_old_z.x + g_old_z.y * g_old_z.y;
+        if (m_r > 10.0)
+        {
+            g_old_z.y = 0.0;
+            g_old_z.x = 0.0; // avoids math error
+            m_iter = 1;
+            m_r = 0;
+        }
+        m_iter++;
+        m_color = ((m_count++) >> 5) % g_colors; // chg color every 32 pts
+        if (m_color == 0)
+        {
+            m_color = 1;
+        }
+
+        //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
+        m_r = std::sqrt(m_r);
+        g_new_z.x = std::sqrt(std::abs((m_r + g_old_z.x) / 2));
+        if (g_old_z.y < 0)
+        {
+            g_new_z.x = -g_new_z.x;
+        }
+
+        g_new_z.y = std::sqrt(std::abs((m_r - g_old_z.x) / 2));
+
+        switch (s_secret_mode)
+        {
+        case SecretMode::UNMODIFIED_RANDOM_WALK:
+        default:
+            if (std::rand() % 2)
+            {
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+            }
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            break;
+
+        case SecretMode::ALWAYS_GO_ONE_DIRECTION:
+            if (g_save_c.y < 0)
+            {
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+            }
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            break;
+
+        case SecretMode::GO_ONE_DIR_DRAW_OTHER_DIR:
+            if (g_save_c.y < 0)
+            {
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+            }
+            m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            break;
+
+        case SecretMode::GO_NEGATIVE_IF_MAX_COLOR:
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            if (c_get_color(m_x, m_y) == g_colors - 1)
+            {
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            }
+            break;
+
+        case SecretMode::GO_POSITIVE_IF_MAX_COLOR:
+            g_new_z.x = -g_new_z.x;
+            g_new_z.y = -g_new_z.y;
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            if (c_get_color(m_x, m_y) == g_colors - 1)
+            {
+                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            }
+            break;
+
+        case SecretMode::SEVEN:
+            if (g_save_c.y < 0)
+            {
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+            }
+            m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            if (m_iter > 10)
+            {
+                if (s_mode == OrbitFlags::POINT)
+                {
+                    c_put_color(m_x, m_y, m_color);
+                }
+                if (bit_set(s_mode, OrbitFlags::CIRCLE))
+                {
+                    s_circle_x = m_x;
+                    s_circle_y = m_y;
+                    circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
+                }
+                if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
+                {
+                    driver_draw_line(m_x, m_y, m_old_x, m_old_y, m_color);
+                }
+                m_old_x = m_x;
+                m_old_y = m_y;
+            }
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            break;
+
+        case SecretMode::GO_IN_LONG_ZIG_ZAGS:
+            if (s_ran_cnt >= 300)
+            {
+                s_ran_cnt = -300;
+            }
+            if (s_ran_cnt < 0)
+            {
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+            }
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            break;
+
+        case SecretMode::RANDOM_RUN:
+            switch (s_ran_dir)
+            {
+            case 0: // go random direction for a while
+                if (std::rand() % 2)
+                {
+                    g_new_z.x = -g_new_z.x;
+                    g_new_z.y = -g_new_z.y;
+                }
+                if (++s_ran_cnt > 1024)
+                {
+                    s_ran_cnt = 0;
+                    if (std::rand() % 2)
+                    {
+                        s_ran_dir = 1;
+                    }
+                    else
+                    {
+                        s_ran_dir = -1;
+                    }
+                }
+                break;
+            case 1: // now go negative dir for a while
+                g_new_z.x = -g_new_z.x;
+                g_new_z.y = -g_new_z.y;
+                // fall through
+            case -1: // now go positive dir for a while
+                if (++s_ran_cnt > 512)
+                {
+                    s_ran_cnt = 0;
+                    s_ran_dir = 0;
+                }
+                break;
+            }
+            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            break;
+        }
+    }
+
+    return false;
+}
+
 bool InverseJulia::iterate()
 {
     bool still{true};
@@ -1068,226 +1295,10 @@ bool InverseJulia::iterate()
 
     if (m_which == JIIMType::JIIM)
     {
-        if (!g_has_inverse)
+        if (iterate_jiim())
         {
             return true;
         }
-        // If we have MIIM queue allocated, then use MIIM method.
-        if (s_ok_to_miim)
-        {
-            if (queue_empty())
-            {
-                if (s_max_hits < g_colors - 1 //
-                    && s_max_hits < 5         //
-                    && (s_lucky_x != 0.0 || s_lucky_y != 0.0))
-                {
-                    s_l_max = 0;
-                    s_l_size = 0;
-                    g_new_z.x = s_lucky_x;
-                    g_old_z.x = s_lucky_x;
-                    g_new_z.y = s_lucky_y;
-                    g_old_z.y = s_lucky_y;
-                    s_lucky_y = 0.0f;
-                    s_lucky_x = 0.0f;
-                    for (int i = 0; i < 199; i++)
-                    {
-                        g_old_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
-                        g_new_z = complex_sqrt_float(g_new_z.x - m_c_real, g_new_z.y - m_c_imag);
-                        enqueue_float((float) g_new_z.x, (float) g_new_z.y);
-                        enqueue_float((float) -g_old_z.x, (float) -g_old_z.y);
-                    }
-                    s_max_hits++;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-            g_old_z = dequeue_float();
-
-            m_x = (int) (g_old_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_old_z.y * m_y_factor * m_zoom + m_y_off);
-            m_color = c_get_color(m_x, m_y);
-            if (m_color < s_max_hits)
-            {
-                c_put_color(m_x, m_y, m_color + 1);
-                g_new_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
-                enqueue_float((float) g_new_z.x, (float) g_new_z.y);
-                enqueue_float((float) -g_new_z.x, (float) -g_new_z.y);
-            }
-        }
-        else
-        {
-            // not MIIM code.
-            g_old_z.x -= m_c_real;
-            g_old_z.y -= m_c_imag;
-            m_r = g_old_z.x * g_old_z.x + g_old_z.y * g_old_z.y;
-            if (m_r > 10.0)
-            {
-                g_old_z.y = 0.0;
-                g_old_z.x = 0.0; // avoids math error
-                m_iter = 1;
-                m_r = 0;
-            }
-            m_iter++;
-            m_color = ((m_count++) >> 5) % g_colors; // chg color every 32 pts
-            if (m_color == 0)
-            {
-                m_color = 1;
-            }
-
-            //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
-            m_r = std::sqrt(m_r);
-            g_new_z.x = std::sqrt(std::abs((m_r + g_old_z.x) / 2));
-            if (g_old_z.y < 0)
-            {
-                g_new_z.x = -g_new_z.x;
-            }
-
-            g_new_z.y = std::sqrt(std::abs((m_r - g_old_z.x) / 2));
-
-            switch (s_secret_mode)
-            {
-            case SecretMode::UNMODIFIED_RANDOM_WALK:
-            default:
-                if (std::rand() % 2)
-                {
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                }
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                break;
-
-            case SecretMode::ALWAYS_GO_ONE_DIRECTION:
-                if (g_save_c.y < 0)
-                {
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                }
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                break;
-
-            case SecretMode::GO_ONE_DIR_DRAW_OTHER_DIR:
-                if (g_save_c.y < 0)
-                {
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                }
-                m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                break;
-
-            case SecretMode::GO_NEGATIVE_IF_MAX_COLOR:
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                if (c_get_color(m_x, m_y) == g_colors - 1)
-                {
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                    m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                    m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                }
-                break;
-
-            case SecretMode::GO_POSITIVE_IF_MAX_COLOR:
-                g_new_z.x = -g_new_z.x;
-                g_new_z.y = -g_new_z.y;
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                if (c_get_color(m_x, m_y) == g_colors - 1)
-                {
-                    m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                    m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                }
-                break;
-
-            case SecretMode::SEVEN:
-                if (g_save_c.y < 0)
-                {
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                }
-                m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                if (m_iter > 10)
-                {
-                    if (s_mode == OrbitFlags::POINT)
-                    {
-                        c_put_color(m_x, m_y, m_color);
-                    }
-                    if (bit_set(s_mode, OrbitFlags::CIRCLE))
-                    {
-                        s_circle_x = m_x;
-                        s_circle_y = m_y;
-                        circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
-                    }
-                    if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
-                    {
-                        driver_draw_line(m_x, m_y, m_old_x, m_old_y, m_color);
-                    }
-                    m_old_x = m_x;
-                    m_old_y = m_y;
-                }
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                break;
-
-            case SecretMode::GO_IN_LONG_ZIG_ZAGS:
-                if (s_ran_cnt >= 300)
-                {
-                    s_ran_cnt = -300;
-                }
-                if (s_ran_cnt < 0)
-                {
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                }
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                break;
-
-            case SecretMode::RANDOM_RUN:
-                switch (s_ran_dir)
-                {
-                case 0: // go random direction for a while
-                    if (std::rand() % 2)
-                    {
-                        g_new_z.x = -g_new_z.x;
-                        g_new_z.y = -g_new_z.y;
-                    }
-                    if (++s_ran_cnt > 1024)
-                    {
-                        s_ran_cnt = 0;
-                        if (std::rand() % 2)
-                        {
-                            s_ran_dir = 1;
-                        }
-                        else
-                        {
-                            s_ran_dir = -1;
-                        }
-                    }
-                    break;
-                case 1: // now go negative dir for a while
-                    g_new_z.x = -g_new_z.x;
-                    g_new_z.y = -g_new_z.y;
-                    // fall through
-                case -1: // now go positive dir for a while
-                    if (++s_ran_cnt > 512)
-                    {
-                        s_ran_cnt = 0;
-                        s_ran_dir = 0;
-                    }
-                    break;
-                }
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
-                break;
-            }
-        } // end if not MIIM
     }
     else // orbits
     {
