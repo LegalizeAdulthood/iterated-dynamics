@@ -503,6 +503,20 @@ OrbitFlags &operator^=(OrbitFlags &lhs, OrbitFlags rhs)
     return lhs;
 }
 
+class InverseJuliaMouseNotification : public NullMouseNotification
+{
+public:
+    ~InverseJuliaMouseNotification() override = default;
+
+    void move(int x, int y, int key_flags) override;
+};
+
+void InverseJuliaMouseNotification::move(int x, int y, int key_flags)
+{
+    s_cursor.set_pos(x, y);
+    NullMouseNotification::move(x, y, key_flags);
+}
+
 class InverseJulia
 {
 public:
@@ -540,6 +554,7 @@ private:
     bool m_first_time{true};
     int m_old_screen_x_offset{g_logical_screen_x_offset};
     int m_old_screen_y_offset{g_logical_screen_y_offset};
+    int m_mouse_subscription{-1};
 
     static OrbitFlags s_mode; // point, circle, ...
     static int s_ran_dir;
@@ -695,6 +710,8 @@ void InverseJulia::start()
     m_zoom = 1.0f;
 
     g_cursor_mouse_tracking = true;
+    assert(m_mouse_subscription == -1);
+    m_mouse_subscription = mouse_subscribe(std::make_shared<InverseJuliaMouseNotification>());
 }
 
 bool InverseJulia::handle_key_press(bool &still)
@@ -917,6 +934,7 @@ bool InverseJulia::handle_key_press(bool &still)
 bool InverseJulia::iterate()
 {
     bool still{true};
+    bool mouse_updated{};
     if (m_actively_computing)
     {
         s_cursor.check_blink();
@@ -925,7 +943,13 @@ bool InverseJulia::iterate()
     {
         s_cursor.wait_key();
     }
-    if (driver_key_pressed() || m_first_time)
+    if (s_cursor.get_x() != g_col || s_cursor.get_y() != g_row)
+    {
+        g_col = s_cursor.get_x();
+        g_row = s_cursor.get_y();
+        mouse_updated = true;
+    }
+    if (driver_key_pressed() || m_first_time || mouse_updated)
     {
         m_first_time = false;
         while (driver_key_pressed())
@@ -1323,6 +1347,9 @@ bool InverseJulia::iterate()
 
 void InverseJulia::finish()
 {
+    mouse_unsubscribe(m_mouse_subscription);
+    m_mouse_subscription = -1;
+    
     free_queue();
 
     if (m_key != 's' && m_key != 'S')
