@@ -528,6 +528,7 @@ private:
     void start();
     bool handle_key_press(bool &still);
     bool iterate_jiim();
+    void iterate_orbit();
     bool iterate();
     void finish();
 
@@ -1158,6 +1159,37 @@ bool InverseJulia::iterate_jiim()
     return false;
 }
 
+void InverseJulia::iterate_orbit()
+{
+    if (m_iter < g_max_iterations)
+    {
+        m_color = (int) m_iter % g_colors;
+        if (g_integer_fractal)
+        {
+            g_old_z.x = g_l_old_z.x;
+            g_old_z.x /= g_fudge_factor;
+            g_old_z.y = g_l_old_z.y;
+            g_old_z.y /= g_fudge_factor;
+        }
+        m_x = (int) ((g_old_z.x - g_init.x) * m_x_factor * 3 * m_zoom + m_x_off);
+        m_y = (int) ((g_old_z.y - g_init.y) * m_y_factor * 3 * m_zoom + m_y_off);
+        if (orbit_calc())
+        {
+            m_iter = g_max_iterations;
+        }
+        else
+        {
+            m_iter++;
+        }
+    }
+    else
+    {
+        m_y = -1;
+        m_x = -1;
+        m_actively_computing = false;
+    }
+}
+
 bool InverseJulia::iterate()
 {
     bool still{true};
@@ -1302,33 +1334,7 @@ bool InverseJulia::iterate()
     }
     else // orbits
     {
-        if (m_iter < g_max_iterations)
-        {
-            m_color = (int) m_iter % g_colors;
-            if (g_integer_fractal)
-            {
-                g_old_z.x = g_l_old_z.x;
-                g_old_z.x /= g_fudge_factor;
-                g_old_z.y = g_l_old_z.y;
-                g_old_z.y /= g_fudge_factor;
-            }
-            m_x = (int) ((g_old_z.x - g_init.x) * m_x_factor * 3 * m_zoom + m_x_off);
-            m_y = (int) ((g_old_z.y - g_init.y) * m_y_factor * 3 * m_zoom + m_y_off);
-            if (orbit_calc())
-            {
-                m_iter = g_max_iterations;
-            }
-            else
-            {
-                m_iter++;
-            }
-        }
-        else
-        {
-            m_y = -1;
-            m_x = -1;
-            m_actively_computing = false;
-        }
+        iterate_orbit();
     }
 
     if (m_which == JIIMType::ORBIT || m_iter > 10)
