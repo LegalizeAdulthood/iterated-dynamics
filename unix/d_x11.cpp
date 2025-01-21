@@ -1168,7 +1168,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     bool banding = false;
     int bandx0, bandy0, bandx1, bandy1;
 
-    if (g_look_at_mouse == +MouseLook::POSITION || !g_zoom_enabled)
+    if (g_look_at_mouse == MouseLook::POSITION || !g_zoom_enabled)
     {
         m_last_x = xevent->xbutton.x;
         m_last_y = xevent->xbutton.y;
@@ -1276,7 +1276,7 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
             m_button_num = 0;
         }
 
-        if (g_look_at_mouse == +MouseLook::POSITION && m_button_num != 0)
+        if (g_look_at_mouse == MouseLook::POSITION && m_button_num != 0)
         {
             m_dx += (xevent->xmotion.x-m_last_x)/MOUSE_SCALE;
             m_dy += (xevent->xmotion.y-m_last_y)/MOUSE_SCALE;
@@ -1326,7 +1326,7 @@ void X11Driver::handle_events()
         }
     }
 
-    if (!m_key_buffer && g_cursor_mouse_tracking && !g_inside_help && g_look_at_mouse == +MouseLook::POSITION &&
+    if (!m_key_buffer && g_cursor_mouse_tracking && !g_inside_help && g_look_at_mouse == MouseLook::POSITION &&
             (m_dx != 0 || m_dy != 0))
     {
         if (ABS(m_dx) > ABS(m_dy))
