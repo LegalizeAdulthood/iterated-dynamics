@@ -811,7 +811,7 @@ mouse0: ; now the mouse stuff
         mov     ax,lookatmouse
 
 mouse1: or      ax,ax
-        jz      mouseidle       ; check nothing when lookatmouse=0
+        jz      mouseidle       ; check nothing when lookatmouse=IGNORE
         ; following code directly accesses bios tick counter; it would be
         ; better not to rely on addr (use int 1A instead) but old PCs don't
         ; have the required int, the addr is constant in bios to date, and
@@ -823,7 +823,7 @@ mouse1: or      ax,ax
         ; if timer same as last call, skip int 33s:  reduces expense and gives
         ; caller a chance to read all pending stuff and paint something
         jne     mnewtick
-        cmp     lookatmouse,0   ; interested in anything other than left button?
+        cmp     lookatmouse,IGNORE   ; interested in anything other than left button?
         jl      mouseidle       ; nope, done
         jmp     mouse5
 
@@ -833,8 +833,8 @@ mouseidle:
 
 mnewtick: ; new tick, read buttons and motion
         mov     mousetime,dx    ; note current timer
-        cmp     lookatmouse,3
-        je      mouse2          ; skip button press if mode 3
+        cmp     lookatmouse,POSITION
+        je      mouse2          ; skip button press if mode POSITION
 
         ; check press of left button
         mov     ax,MousePress
@@ -842,17 +842,17 @@ mnewtick: ; new tick, read buttons and motion
         int     33h
         or      bx,bx
         jnz     mleftb
-        cmp     lookatmouse,0
+        cmp     lookatmouse,IGNORE
         jl      mouseidle       ; exit if nothing but left button matters
-        jmp     mouse3          ; not mode 3 so skip past button release stuff
+        jmp     mouse3          ; not mode POSITION so skip past button release stuff
 mleftb: mov     ax,13
-        cmp     lookatmouse,0
+        cmp     lookatmouse,IGNORE
         jg      mouser          ; return fake key enter
         mov     ax,lookatmouse  ; return fake key 0-lookatmouse
         neg     ax
 mouser: jmp     mouseret
 
-mouse2: ; mode 3, check for double clicks
+mouse2: ; mode POSITION, check for double clicks
         mov     ax,MouseRelease ; get button release info
         mov     bx,LeftButton
         int     33h
@@ -949,10 +949,10 @@ mchkmx: mov     moveaxis,0      ; flag that we're going horiz
 
         ; if moving nearly horiz/vert, make it exactly horiz/vert
 mangle: mov     ax,TextVHLimit
-        cmp     lookatmouse,2   ; slow (text) mode?
+        cmp     lookatmouse,TEXT   ; slow (text) mode?
         je      mangl2
         mov     ax,GraphVHLimit
-        cmp     lookatmouse,3   ; special mode?
+        cmp     lookatmouse,POSITION   ; special mode?
         jne     mangl2
         cmp     mbstatus,0      ; yup, any buttons down?
         je      mangl2
@@ -967,10 +967,10 @@ mangl2: mul     cx              ; smaller axis * limit
 mzeroh: mov     mhmickeys,0
 
         ; pick sensitivity to use
-mchkmv: cmp     lookatmouse,2   ; slow (text) mode?
+mchkmv: cmp     lookatmouse,TEXT   ; slow (text) mode?
         je      mchkmt
         mov     dx,ZoomSens+JitterMickeys
-        cmp     lookatmouse,3   ; special mode?
+        cmp     lookatmouse,POSITION   ; special mode?
         jne     mchkmg
         cmp     mbstatus,0      ; yup, any buttons down?
         jne     mchkm2          ; yup, use zoomsens
@@ -1015,8 +1015,8 @@ mmovv2: add     mvmickeys,dx    ; vert, up
         mov     bx,6
 
         ; modify bx if a button is being held down
-mmoveb: cmp     lookatmouse,3
-        jne     mmovek          ; only modify in mode 3
+mmoveb: cmp     lookatmouse,POSITION
+        jne     mmovek          ; only modify in mode POSITION
         cmp     mbstatus,1
         jne     mmovb2
         add     bx,8            ; modify by left button
@@ -1160,10 +1160,10 @@ mchkmx:
     // if moving nearly horiz/vert, make it exactly horiz/vert
 mangle:
     ax = TextVHLimit;
-    if (lookatmouse == 2)   // slow (text) mode?
+    if (lookatmouse == TEXT)   // slow (text) mode?
         goto mangl2;
     ax = GraphVHLimit;
-    if (lookatmouse != 3)   // special mode?
+    if (lookatmouse != POSITION)   // special mode?
         goto mangl2;
     if (mbstatus == 0)      // yep, any buttons down?
         goto mangl2;
@@ -1179,10 +1179,10 @@ mangl2:
 mzeroh:
     mhmickeys = 0;
 mchkmv:
-    if (lookatmouse == 2)   // slow (text) mode?
+    if (lookatmouse == TEXT)   // slow (text) mode?
         goto mchkmt;
     dx = ZoomSens + JitterMickeys;
-    i (lookatmouse != 3)    // special mode?
+    i (lookatmouse != POSITION)    // special mode?
         goto mchkmg;
     if (mbstatus != 0)      // yep, any buttons down?
         goto mchkm2;        // yep, use zoomsens
@@ -1243,8 +1243,8 @@ mmovv2:
 
     // modify bx i a button is being held down
 mmoveb:
-    if (lookatmouse != 3)
-        goto mmovek;            // only modify in mode 3
+    if (lookatmouse != POSITION)
+        goto mmovek;            // only modify in mode POSITION
     if (mbstatus != 1)
         goto mmovb2;
     bx += 8;                    // moidfy by left button
