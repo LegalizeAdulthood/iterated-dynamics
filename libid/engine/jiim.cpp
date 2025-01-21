@@ -510,6 +510,7 @@ public:
 
 private:
     void start();
+    bool handle_key_press(bool &still);
     bool iterate();
     void finish();
 
@@ -693,6 +694,220 @@ void InverseJulia::start()
     g_cursor_mouse_tracking = true;
 }
 
+bool InverseJulia::handle_key_press(bool &still)
+{
+    s_cursor.wait_key();
+    m_key = driver_get_key();
+
+    int d_col = 0;
+    int d_row = 0;
+    g_julia_c_x = JULIA_C_NOT_SET;
+    g_julia_c_y = JULIA_C_NOT_SET;
+    switch (m_key)
+    {
+    case ID_KEY_CTL_KEYPAD_5: // ctrl - keypad 5
+    case ID_KEY_KEYPAD_5:     // keypad 5
+        break;                // do nothing
+
+    case ID_KEY_CTL_PAGE_UP:
+        d_col = 4;
+        d_row = -4;
+        break;
+
+    case ID_KEY_CTL_PAGE_DOWN:
+        d_col = 4;
+        d_row = 4;
+        break;
+
+    case ID_KEY_CTL_HOME:
+        d_col = -4;
+        d_row = -4;
+        break;
+
+    case ID_KEY_CTL_END:
+        d_col = -4;
+        d_row = 4;
+        break;
+
+    case ID_KEY_PAGE_UP:
+        d_col = 1;
+        d_row = -1;
+        break;
+
+    case ID_KEY_PAGE_DOWN:
+        d_col = 1;
+        d_row = 1;
+        break;
+
+    case ID_KEY_HOME:
+        d_col = -1;
+        d_row = -1;
+        break;
+
+    case ID_KEY_END:
+        d_col = -1;
+        d_row = 1;
+        break;
+
+    case ID_KEY_UP_ARROW:
+        d_row = -1;
+        break;
+
+    case ID_KEY_DOWN_ARROW:
+        d_row = 1;
+        break;
+
+    case ID_KEY_LEFT_ARROW:
+        d_col = -1;
+        break;
+
+    case ID_KEY_RIGHT_ARROW:
+        d_col = 1;
+        break;
+
+    case ID_KEY_CTL_UP_ARROW:
+        d_row = -4;
+        break;
+
+    case ID_KEY_CTL_DOWN_ARROW:
+        d_row = 4;
+        break;
+
+    case ID_KEY_CTL_LEFT_ARROW:
+        d_col = -4;
+        break;
+
+    case ID_KEY_CTL_RIGHT_ARROW:
+        d_col = 4;
+        break;
+
+    case 'z':
+    case 'Z':
+        m_zoom = 1.0F;
+        break;
+
+    case '<':
+    case ',':
+        m_zoom /= 1.15F;
+        break;
+
+    case '>':
+    case '.':
+        m_zoom *= 1.15F;
+        break;
+
+    case ID_KEY_SPACE:
+        g_julia_c_x = m_c_real;
+        g_julia_c_y = m_c_imag;
+        return true;
+
+    case 'c':
+    case 'C':
+        s_mode ^= OrbitFlags::CIRCLE;
+        break;
+
+    case 'l':
+    case 'L':
+        s_mode ^= OrbitFlags::LINE;
+        break;
+
+    case 'n':
+    case 'N':
+        s_show_numbers = 8 - s_show_numbers;
+        if (s_window_style == JuliaWindowStyle::LARGE && s_show_numbers == 0)
+        {
+            s_cursor.hide();
+            clear_temp_msg();
+            s_cursor.show();
+        }
+        break;
+
+    case 'p':
+    case 'P':
+        get_a_number(&m_c_real, &m_c_imag);
+        m_exact = true;
+        g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
+        g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
+        d_row = 0;
+        d_col = 0;
+        break;
+
+    case 'h': // hide fractal toggle
+    case 'H': // hide fractal toggle
+        if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
+        {
+            s_window_style = JuliaWindowStyle::HIDDEN;
+        }
+        else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
+        {
+            restore_rect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
+            s_window_style = JuliaWindowStyle::FULL_SCREEN;
+        }
+        break;
+
+    case '0':
+    case '1':
+    case '2':
+        // don't use '3', it's already meaningful
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+        if (m_which == JIIMType::JIIM)
+        {
+            s_secret_mode = static_cast<SecretMode>(m_key - '0');
+        }
+        else
+        {
+            still = false;
+        }
+        break;
+
+    default:
+        still = false;
+        break;
+    }
+
+    if (m_key == 's' || m_key == 'S')
+    {
+        return true;
+    }
+
+    if (d_col > 0 || d_row > 0)
+    {
+        m_exact = false;
+    }
+    g_col += d_col;
+    g_row += d_row;
+
+    // keep cursor in logical screen
+    if (g_col >= g_logical_screen_x_dots)
+    {
+        g_col = g_logical_screen_x_dots - 1;
+        m_exact = false;
+    }
+    if (g_row >= g_logical_screen_y_dots)
+    {
+        g_row = g_logical_screen_y_dots - 1;
+        m_exact = false;
+    }
+    if (g_col < 0)
+    {
+        g_col = 0;
+        m_exact = false;
+    }
+    if (g_row < 0)
+    {
+        g_row = 0;
+        m_exact = false;
+    }
+
+    s_cursor.set_pos(g_col, g_row);
+    return false;
+}
+
 bool InverseJulia::iterate()
 {
     bool still{true};
@@ -709,217 +924,11 @@ bool InverseJulia::iterate()
         m_first_time = false;
         while (driver_key_pressed())
         {
-            s_cursor.wait_key();
-            m_key = driver_get_key();
-
-            int d_col = 0;
-            int d_row = 0;
-            g_julia_c_x = JULIA_C_NOT_SET;
-            g_julia_c_y = JULIA_C_NOT_SET;
-            switch (m_key)
-            {
-            case ID_KEY_CTL_KEYPAD_5: // ctrl - keypad 5
-            case ID_KEY_KEYPAD_5:     // keypad 5
-                break;                // do nothing
-
-            case ID_KEY_CTL_PAGE_UP:
-                d_col = 4;
-                d_row = -4;
-                break;
-
-            case ID_KEY_CTL_PAGE_DOWN:
-                d_col = 4;
-                d_row = 4;
-                break;
-
-            case ID_KEY_CTL_HOME:
-                d_col = -4;
-                d_row = -4;
-                break;
-
-            case ID_KEY_CTL_END:
-                d_col = -4;
-                d_row = 4;
-                break;
-
-            case ID_KEY_PAGE_UP:
-                d_col = 1;
-                d_row = -1;
-                break;
-
-            case ID_KEY_PAGE_DOWN:
-                d_col = 1;
-                d_row = 1;
-                break;
-
-            case ID_KEY_HOME:
-                d_col = -1;
-                d_row = -1;
-                break;
-
-            case ID_KEY_END:
-                d_col = -1;
-                d_row = 1;
-                break;
-
-            case ID_KEY_UP_ARROW:
-                d_row = -1;
-                break;
-
-            case ID_KEY_DOWN_ARROW:
-                d_row = 1;
-                break;
-
-            case ID_KEY_LEFT_ARROW:
-                d_col = -1;
-                break;
-
-            case ID_KEY_RIGHT_ARROW:
-                d_col = 1;
-                break;
-
-            case ID_KEY_CTL_UP_ARROW:
-                d_row = -4;
-                break;
-
-            case ID_KEY_CTL_DOWN_ARROW:
-                d_row = 4;
-                break;
-
-            case ID_KEY_CTL_LEFT_ARROW:
-                d_col = -4;
-                break;
-
-            case ID_KEY_CTL_RIGHT_ARROW:
-                d_col = 4;
-                break;
-
-            case 'z':
-            case 'Z':
-                m_zoom = 1.0F;
-                break;
-
-            case '<':
-            case ',':
-                m_zoom /= 1.15F;
-                break;
-
-            case '>':
-            case '.':
-                m_zoom *= 1.15F;
-                break;
-
-            case ID_KEY_SPACE:
-                g_julia_c_x = m_c_real;
-                g_julia_c_y = m_c_imag;
-                return false;
-
-            case 'c':
-            case 'C':
-                s_mode ^= OrbitFlags::CIRCLE;
-                break;
-
-            case 'l':
-            case 'L':
-                s_mode ^= OrbitFlags::LINE;
-                break;
-
-            case 'n':
-            case 'N':
-                s_show_numbers = 8 - s_show_numbers;
-                if (s_window_style == JuliaWindowStyle::LARGE && s_show_numbers == 0)
-                {
-                    s_cursor.hide();
-                    clear_temp_msg();
-                    s_cursor.show();
-                }
-                break;
-
-            case 'p':
-            case 'P':
-                get_a_number(&m_c_real, &m_c_imag);
-                m_exact = true;
-                g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
-                g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
-                d_row = 0;
-                d_col = 0;
-                break;
-
-            case 'h': // hide fractal toggle
-            case 'H': // hide fractal toggle
-                if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
-                {
-                    s_window_style = JuliaWindowStyle::HIDDEN;
-                }
-                else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
-                {
-                    restore_rect(
-                        g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
-                    s_window_style = JuliaWindowStyle::FULL_SCREEN;
-                }
-                break;
-
-            case '0':
-            case '1':
-            case '2':
-                // don't use '3', it's already meaningful
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                if (m_which == JIIMType::JIIM)
-                {
-                    s_secret_mode = static_cast<SecretMode>(m_key - '0');
-                }
-                else
-                {
-                    still = false;
-                }
-                break;
-
-            default:
-                still = false;
-                break;
-            } // switch
-
-            if (m_key == 's' || m_key == 'S')
+            if (handle_key_press(still))
             {
                 return false;
             }
-
-            if (d_col > 0 || d_row > 0)
-            {
-                m_exact = false;
-            }
-            g_col += d_col;
-            g_row += d_row;
-
-            // keep cursor in logical screen
-            if (g_col >= g_logical_screen_x_dots)
-            {
-                g_col = g_logical_screen_x_dots - 1;
-                m_exact = false;
-            }
-            if (g_row >= g_logical_screen_y_dots)
-            {
-                g_row = g_logical_screen_y_dots - 1;
-                m_exact = false;
-            }
-            if (g_col < 0)
-            {
-                g_col = 0;
-                m_exact = false;
-            }
-            if (g_row < 0)
-            {
-                g_row = 0;
-                m_exact = false;
-            }
-
-            s_cursor.set_pos(g_col, g_row);
-        } // end while (driver_key_pressed)
+        }
 
         if (!m_exact)
         {
