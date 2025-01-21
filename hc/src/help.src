@@ -315,6 +315,8 @@ o The version number is now correctly displayed in the title of help
   screens.  (Fixes #154)
 o When run from the Visual Studio debugger, the working directory of
   the program is properly set to the home directory.  (Fixes #153)
+o Mouse support for the inverse julia set cursor has been restored.
+  (Fixes #151)
 o Corrected an assert popup during a Debug build. (Fixes #147, #140)
 o When the monitor configuration changed since the last time Id was run
   and the previous window position is no longer on-screen, the previous
