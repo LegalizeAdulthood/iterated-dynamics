@@ -289,6 +289,7 @@ o Configuration files 'sstools.ini' and 'id.cfg' can now be loaded from
   to the user's Documents directory.  Changing function key assignments
   while selecting video modes saves the updated id.cfg file to the savedir,
   defaulting to the user's Documents directory.  (Fixes #170)
+o Mouse support for the {Orbits Window} has been restored.\
 o Mouse support for the inverse Julia set cursor has been restored.
   (Fixes #151)
 o The color palette editor can be positioned using the mouse and the
