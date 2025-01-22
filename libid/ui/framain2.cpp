@@ -13,7 +13,7 @@
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"

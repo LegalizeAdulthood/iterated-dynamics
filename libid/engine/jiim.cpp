@@ -17,7 +17,7 @@
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

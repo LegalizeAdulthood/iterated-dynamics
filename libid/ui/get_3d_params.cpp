@@ -10,7 +10,7 @@
 #include "io/check_write_file.h"
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/cmdfiles.h"

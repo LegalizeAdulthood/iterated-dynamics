@@ -11,7 +11,7 @@
 #include "io/merge_path_names.h"
 #include "io/save_file.h"
 #include "math/rand15.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

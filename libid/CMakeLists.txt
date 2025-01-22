@@ -138,7 +138,7 @@ add_library(libid
     include/math/sqr.h
 
     include/misc/debug_flags.h misc/debug_flags.cpp
-    include/misc/drivers.h misc/drivers.cpp
+    include/misc/Driver.h misc/Driver.cpp
     include/misc/id.h
     include/misc/memory.h misc/memory.cpp
     include/misc/sized_types.h

@@ -8,7 +8,7 @@
 #include "io/is_writeable.h"
 #include "io/load_config.h"
 #include "io/save_file.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_key_no_help.h"

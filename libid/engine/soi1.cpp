@@ -18,7 +18,7 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/stack_avail.h"
 
 #include <algorithm>

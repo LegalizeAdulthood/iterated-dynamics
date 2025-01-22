@@ -5,7 +5,7 @@
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "io/encoder.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

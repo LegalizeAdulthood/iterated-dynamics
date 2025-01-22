@@ -46,7 +46,7 @@
 #include "math/mpmath.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"

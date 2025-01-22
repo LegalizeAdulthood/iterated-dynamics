@@ -28,7 +28,7 @@
 #include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/not_disk_msg.h"
 #include "ui/sound.h"

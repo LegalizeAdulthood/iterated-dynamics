@@ -7,7 +7,7 @@
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/save_file.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/help_title.h"

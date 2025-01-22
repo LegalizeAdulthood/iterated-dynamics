@@ -5,7 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/full_screen_prompt.h"

@@ -5,7 +5,7 @@
 #include "engine/wait_until.h"
 #include "io/dir_file.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/get_key_no_help.h"

@@ -10,7 +10,7 @@
 #include "io/special_dirs.h"
 #include "math/cmplx.h"
 #include "math/mpmath.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
 #include "ui/cmdfiles.h"

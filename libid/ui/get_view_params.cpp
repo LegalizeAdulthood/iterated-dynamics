@@ -4,7 +4,7 @@
 
 #include "engine/id_data.h"
 #include "helpdefs.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"

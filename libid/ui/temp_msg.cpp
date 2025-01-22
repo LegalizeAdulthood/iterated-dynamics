@@ -3,7 +3,7 @@
 #include "ui/temp_msg.h"
 
 #include "engine/id_data.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"

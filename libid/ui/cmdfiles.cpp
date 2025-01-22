@@ -38,7 +38,7 @@
 #include "io/special_dirs.h"
 #include "math/biginit.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/comments.h"
 #include "ui/do_pause.h"
 #include "ui/file_item.h"

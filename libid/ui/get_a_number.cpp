@@ -2,7 +2,7 @@
 //
 #include "ui/get_a_number.h"
 
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/ChoiceBuilder.h"
 
 int get_a_number(double *x, double *y)

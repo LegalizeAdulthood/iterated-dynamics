@@ -13,7 +13,7 @@
 #include "fractals/newton.h"
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/spindac.h"
 

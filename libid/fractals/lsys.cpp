@@ -7,7 +7,7 @@
 #include "io/file_gets.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/stack_avail.h"
 #include "ui/cmdfiles.h"
 #include "ui/file_item.h"

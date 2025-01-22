@@ -19,7 +19,7 @@
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/cmdfiles.h"

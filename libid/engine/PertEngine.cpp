@@ -16,7 +16,7 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 

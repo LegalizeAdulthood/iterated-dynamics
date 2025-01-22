@@ -12,7 +12,7 @@
 #include "engine/id_data.h"
 #include "engine/orbit.h"
 #include "fractals/fractype.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 
 #include <algorithm>

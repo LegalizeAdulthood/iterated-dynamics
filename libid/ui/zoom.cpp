@@ -16,7 +16,7 @@
 #include "fractals/lyapunov.h"
 #include "math/big.h"
 #include "math/biginit.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"

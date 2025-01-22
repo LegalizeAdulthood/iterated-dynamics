@@ -16,7 +16,7 @@ Miscellaneous fractal-specific code
 #include "fractals/population.h"
 #include "math/fixed_pt.h"
 #include "math/mpmath.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"

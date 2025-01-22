@@ -6,7 +6,7 @@
 #include "engine/pixel_limits.h"
 #include "io/find_path.h"
 #include "io/special_dirs.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/video_mode.h"
 
 #include <algorithm>

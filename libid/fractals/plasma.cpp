@@ -7,7 +7,7 @@
 #include "engine/id_data.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/sized_types.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

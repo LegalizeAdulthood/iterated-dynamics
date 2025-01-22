@@ -12,7 +12,7 @@
 #include "engine/id_data.h"
 #include "engine/wait_until.h"
 #include "helpdefs.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/id_keys.h"

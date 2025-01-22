@@ -10,7 +10,7 @@
 #include "io/loadfile.h"
 #include "io/update_save_name.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"

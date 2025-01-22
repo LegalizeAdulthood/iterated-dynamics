@@ -21,7 +21,7 @@
 #include "fractals/fractalp.h"
 #include "io/loadfile.h"
 #include "io/trim_filename.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "ui/cmdfiles.h"

@@ -12,7 +12,7 @@
 #include "math/fixed_pt.h"
 #include "math/sqr.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/get_3d_params.h"
 #include "ui/spindac.h"
 #include "ui/starfield.h"

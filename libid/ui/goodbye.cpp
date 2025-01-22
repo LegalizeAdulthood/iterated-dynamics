@@ -6,7 +6,7 @@
 #include "engine/resume.h"
 #include "fractals/ant.h"
 #include "helpcom.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/memory.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

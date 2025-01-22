@@ -7,7 +7,7 @@
 #include "engine/wait_until.h"
 #include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/sound.h"
 #include "ui/video.h"

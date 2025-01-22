@@ -9,7 +9,7 @@
 #include "engine/id_data.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

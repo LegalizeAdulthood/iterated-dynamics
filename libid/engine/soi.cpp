@@ -15,7 +15,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/stack_avail.h"
 
 #include <config/port.h>

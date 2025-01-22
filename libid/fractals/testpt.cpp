@@ -28,7 +28,7 @@ The sample code below is a straightforward Mandelbrot routine.
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 
 // standalone engine for "test"
 int test()

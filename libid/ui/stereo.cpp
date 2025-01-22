@@ -14,7 +14,7 @@
 #include "io/decoder.h"
 #include "io/encoder.h"
 #include "io/gifview.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/find_special_colors.h"

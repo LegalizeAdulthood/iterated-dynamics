@@ -10,7 +10,7 @@
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/slideshw.h"

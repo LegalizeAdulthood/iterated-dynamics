@@ -12,7 +12,7 @@
 #include "io/make_path.h"
 #include "io/split_path.h"
 #include "io/trim_filename.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"

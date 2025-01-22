@@ -11,7 +11,7 @@
 #include "io/load_config.h"
 #include "io/loadfile.h"
 #include "math/fixed_pt.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/memory.h"
 #include "ui/cmdfiles.h"

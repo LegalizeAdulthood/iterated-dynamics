@@ -3,7 +3,7 @@
 #include "ui/full_screen_choice.h"
 
 #include "io/ends_with_slash.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/help_title.h"

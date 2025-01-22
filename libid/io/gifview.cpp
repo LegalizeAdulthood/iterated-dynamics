@@ -22,7 +22,7 @@
 #include "io/has_ext.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"

@@ -20,7 +20,7 @@
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "math/fixed_pt.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"

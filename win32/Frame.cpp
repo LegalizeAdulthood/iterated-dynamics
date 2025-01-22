@@ -5,7 +5,7 @@
 #include "resource.h"
 #include "WinText.h"
 
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"
 

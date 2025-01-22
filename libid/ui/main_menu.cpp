@@ -6,7 +6,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "helpcom.h"
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"

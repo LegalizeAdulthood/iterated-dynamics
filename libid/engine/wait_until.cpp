@@ -6,7 +6,7 @@ fractals, i.e. which are non-fractal-specific fractal engine subroutines.
 */
 #include "engine/wait_until.h"
 
-#include "misc/drivers.h"
+#include "misc/Driver.h"
 #include "misc/usec_clock.h"
 
 #include <algorithm>

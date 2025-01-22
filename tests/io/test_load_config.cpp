@@ -10,7 +10,7 @@
 
 #include <engine/id_data.h>
 #include <io/special_dirs.h>
-#include <misc/drivers.h>
+#include <misc/Driver.h>
 #include <misc/ValueSaver.h>
 #include <ui/video_mode.h>
 
