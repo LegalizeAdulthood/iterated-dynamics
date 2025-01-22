@@ -525,7 +525,7 @@ Continuous potential is inaccurate at such a low value.
 The bad news is that the integer math which makes the "mandel" and "julia"
 types so fast imposes a hard-wired maximum value of 127.  You can still
 make interesting images from those types, though, so don't avoid them.  You
-will see "ridges" in the "hillsides." Some folks like the effect.
+will see "ridges" in the "hillsides."  Some folks like the effect.
 
 The good news is that the other fractal types, particularly the
 floating point algorithms, have no such limitation.  The even
