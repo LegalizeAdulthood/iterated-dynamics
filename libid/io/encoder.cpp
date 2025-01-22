@@ -19,6 +19,7 @@
 #include "fractals/parser.h"
 #include "io/decode_info.h"
 #include "io/extract_filename.h"
+#include "io/is_writeable.h"
 #include "io/loadfile.h"
 #include "io/save_file.h"
 #include "io/update_save_name.h"
@@ -156,7 +157,7 @@ restart:
                 goto restart;
             }
         }
-        if ((status(open_file).permissions() & std::filesystem::perms::owner_write) == std::filesystem::perms::none)
+        if (!is_writeable(open_file))
         {
             stop_msg(std::string{"Can't write "} + open_file.string());
             return -1;
@@ -181,7 +182,7 @@ restart:
     if (driver_is_disk())
     {
         // disk-video
-        dvid_status(1, "Saving " + extract_file_name(open_file.string().c_str()));
+        dvid_status(1, "Saving " + open_file.filename().string());
     }
 
     g_busy = true;
@@ -273,7 +274,7 @@ restart:
         driver_buzzer(Buzzer::COMPLETE);
         if (g_init_batch == BatchMode::NONE)
         {
-            text_temp_msg((" File saved as " + extract_file_name(open_file.string().c_str()) + ' ').c_str());
+            text_temp_msg((" File saved as " + open_file.filename().string() + ' ').c_str());
         }
     }
     if (g_init_save_time < 0)
