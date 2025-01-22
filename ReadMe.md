@@ -6,6 +6,12 @@ SPDX-License-Identifier: GPL-3.0-only
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![License](https://img.shields.io/github/license/LegalizeAdulthood/iterated-dynamics?label=License)](https://github.com/LegalizeAdulthood/iterated-dynamics/blob/master/LICENSE.txt)
 
+<!-- begin FOTD -->
+[![FOTD 2009.03.15](https://user.xmission.com/~legalize/fractals/fotd/2009/03/2009.03.15-Waiting_for_Autumn.thumb.jpg)](https://user.xmission.com/~legalize/fractals/fotd/2009/03/2009.03.15-Waiting_for_Autumn.jpg)<br/>
+[Fractal of the Day](https://user.xmission.com/~legalize/fractals/fotd/index.html), 2009.03.15<br/>
+Waiting for Autumn (<a href="https://user.xmission.com/~legalize/fractals/fotd/2009/03/2009.03.15-Waiting_for_Autumn.par">parameter file</a>)
+<!-- end FOTD -->
+
 # Iterated Dynamics
 
 Iterated Dynamics is an open source fractal renderer that can generate
