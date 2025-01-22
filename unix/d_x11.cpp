@@ -182,6 +182,7 @@ public:
         x = 0;
         y = 0;
     }
+    void check_memory() override;
 
     void setredrawscreen()
     {
@@ -2593,6 +2594,11 @@ void X11Driver::get_max_screen(int &width, int &height)
 void X11Driver::set_keyboard_timeout(int ms)
 {
     // TODO
+}
+
+void X11Driver::check_memory()
+{
+    // is there a way to check heap for corruption in libc++ or stdlibc++?
 }
 
 static X11Driver s_x11_driver;

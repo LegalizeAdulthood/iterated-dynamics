@@ -22,6 +22,8 @@
 #include "ui/text_screen.h"
 #include "ui/video.h"
 
+#include <crtdbg.h>
+
 #include <cassert>
 #include <ctime>
 
@@ -455,4 +457,9 @@ void Win32BaseDriver::debug_text(const char *text)
 void Win32BaseDriver::get_cursor_pos(int &x, int &y) const
 {
     g_frame.get_cursor_pos(x, y);
+}
+
+void Win32BaseDriver::check_memory()
+{
+    _ASSERTE(_CrtCheckMemory());
 }

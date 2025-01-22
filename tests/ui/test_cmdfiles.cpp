@@ -360,6 +360,7 @@ void TestCommandMakePar::SetUp()
     TestParameterGoodbye::SetUp();
     EXPECT_CALL(driver, stack_screen());
     EXPECT_CALL(driver, unstack_screen());
+    EXPECT_CALL(driver, check_memory());
     EXPECT_CALL(m_goodbye, Call());
 }
 

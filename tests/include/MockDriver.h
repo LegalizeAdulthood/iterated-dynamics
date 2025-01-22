@@ -66,4 +66,5 @@ public:
     MOCK_METHOD(void, flush, (), (override));
     MOCK_METHOD(void, debug_text, (const char *text), (override));
     MOCK_METHOD(void, get_cursor_pos, (int &x, int &y), (const, override));
+    MOCK_METHOD(void, check_memory, (), (override));
 };

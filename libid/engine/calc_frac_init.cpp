@@ -19,6 +19,7 @@
 #include "math/fixed_pt.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
+#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
@@ -244,9 +245,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     // cppcheck-suppress variableScope
     int tries = 0;
 init_restart:
-#if defined(_WIN32)
-    _ASSERTE(_CrtCheckMemory());
-#endif
+    driver_check_memory();
 
     /* the following variables may be forced to a different setting due to
        calc routine constraints;  usr_xxx is what the user last said is wanted,

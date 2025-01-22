@@ -759,9 +759,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
         g_float_flag = g_user_float_flag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
-#if defined(_WIN32)
-        _ASSERTE(_CrtCheckMemory());
-#endif
+        driver_check_memory();
         g_display_3d = old_display_ed;
         g_float_flag = old_float_flag2;
         if (i)

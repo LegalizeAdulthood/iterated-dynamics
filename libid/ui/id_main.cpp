@@ -159,9 +159,7 @@ static void bad_id_cfg_msg()
 
 static void main_restart(int const argc, char const *const argv[], MainContext &context)
 {
-#if defined(_WIN32)
-    _ASSERTE(_CrtCheckMemory());
-#endif
+    driver_check_memory();
     g_auto_browse = false;
     g_browse_check_fractal_type = false;
     g_browse_check_fractal_params = true;
@@ -231,9 +229,7 @@ static void main_restart(int const argc, char const *const argv[], MainContext &
 
 static bool main_restore_start(MainContext &context)
 {
-#if defined(_WIN32)
-    _ASSERTE(_CrtCheckMemory());
-#endif
+    driver_check_memory();
     if (g_colors_preloaded)
     {
         std::memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
@@ -318,10 +314,7 @@ static bool main_restore_start(MainContext &context)
 
 static MainState main_image_start(bool &stacked, bool &resume_flag)
 {
-#if defined(_WIN32)
-    _ASSERTE(_CrtCheckMemory());
-#endif
-
+    driver_check_memory();
     if (stacked)
     {
         driver_discard_screen();
@@ -512,9 +505,7 @@ int id_main(int argc, char *argv[])
     bool done{};
     while (!done)
     {
-#if defined(_WIN32)
-        assert(_CrtCheckMemory());
-#endif
+        driver_check_memory();
         switch (state)
         {
         case MainState::RESTART:

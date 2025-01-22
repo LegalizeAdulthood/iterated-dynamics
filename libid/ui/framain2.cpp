@@ -70,9 +70,7 @@ MainState big_while_loop(MainContext &context)
     int     i = 0;                           // temporary loop counters
     MainState mms_value;
 
-#if defined(_WIN32)
-    _ASSERTE(_CrtCheckMemory());
-#endif
+    driver_check_memory();
     context.from_mandel = false;            // if julia entered from mandel
     if (context.resume)
     {
@@ -81,10 +79,7 @@ MainState big_while_loop(MainContext &context)
 
     while (true)                    // eternal loop
     {
-#if defined(_WIN32)
-        _ASSERTE(_CrtCheckMemory());
-#endif
-
+        driver_check_memory();
         if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == 0)
         {
             std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
@@ -452,10 +447,7 @@ MainState big_while_loop(MainContext &context)
                     count ++;
                 }
 done:
-#if defined(_WIN32)
-                _ASSERTE(_CrtCheckMemory());
-#endif
-
+                driver_check_memory();
                 if (count == grid_sqr)
                 {
                     i = 0;
@@ -522,9 +514,7 @@ done:
         }
 
 resumeloop:                             // return here on failed overlays
-#if defined(_WIN32)
-        _ASSERTE(_CrtCheckMemory());
-#endif
+        driver_check_memory();
         context.more_keys = true;
         while (context.more_keys)
         {

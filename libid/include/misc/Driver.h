@@ -104,11 +104,11 @@ public:
     virtual void unstack_screen() = 0;                                        //
     virtual void discard_screen() = 0;                                        //
     virtual int init_fm() = 0;                                                // sound routines
-    virtual void buzzer(Buzzer kind) = 0;                               //
+    virtual void buzzer(Buzzer kind) = 0;                                     //
     virtual bool sound_on(int frequency) = 0;                                 //
     virtual void sound_off() = 0;                                             //
     virtual void mute() = 0;                                                  //
-    virtual bool is_disk() const = 0;                                           // is a disk driver?
+    virtual bool is_disk() const = 0;                                         // is a disk driver?
     virtual int get_char_attr() = 0;                                          //
     virtual void put_char_attr(int char_attr) = 0;                            //
     virtual void delay(int ms) = 0;                                           //
@@ -116,6 +116,7 @@ public:
     virtual void flush() = 0;                                                 //
     virtual void debug_text(const char *text) = 0;         // Emit debug text (no EOL assumed)
     virtual void get_cursor_pos(int &x, int &y) const = 0; // get cursor position within frame
+    virtual void check_memory() = 0;                       // check memory for corrupted heap
 };
 
 void load_driver(Driver *drv, int *argc, char **argv);
@@ -355,4 +356,8 @@ inline void driver_debug_line(const std::string &line)
 inline void driver_get_cursor_pos(int &x, int &y)
 {
     g_driver->get_cursor_pos(x, y);
+}
+inline void driver_check_memory()
+{
+    g_driver->check_memory();
 }

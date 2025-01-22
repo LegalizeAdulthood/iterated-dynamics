@@ -21,19 +21,6 @@
 #include "ui/rotate.h"
 #include "ui/zoom.h"
 
-#ifdef WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef STRICT
-#define STRICT
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <crtdbg.h>
-#endif
-
 #include <cassert>
 #include <cstdarg>
 
@@ -169,9 +156,7 @@ void put_color_a(int x, int y, int color)
 //
 int out_line(Byte *pixels, int line_len)
 {
-#ifdef WIN32
-    assert(_CrtCheckMemory());
-#endif
+    driver_check_memory();
     if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
     {
         return 0;

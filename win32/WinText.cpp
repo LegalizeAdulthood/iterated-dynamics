@@ -5,7 +5,6 @@
 #include "Frame.h"
 #include "ods.h"
 
-#include <crtdbg.h>
 #include <windowsx.h>
 
 #include <algorithm>

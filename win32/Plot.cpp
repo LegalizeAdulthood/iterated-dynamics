@@ -8,7 +8,6 @@
 #include "engine/id_data.h"
 #include "ui/rotate.h"
 
-#include <crtdbg.h>
 #include <windowsx.h>
 
 #include <cstring>

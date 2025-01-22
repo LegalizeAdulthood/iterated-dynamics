@@ -57,6 +57,7 @@ public:
     void set_keyboard_timeout(int ms) override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
+    void check_memory() override;
 
 protected:
     std::string m_name;

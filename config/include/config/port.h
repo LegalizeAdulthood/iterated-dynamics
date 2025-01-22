@@ -13,7 +13,6 @@
 using Byte = unsigned char;
 
 #if defined(_WIN32)
-#include <crtdbg.h>
 // disable deprecated CRT warnings
 #pragma warning(disable: 4996)
 #endif
