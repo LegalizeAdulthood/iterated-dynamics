@@ -489,7 +489,7 @@ arguments or read from a configuration file;
 ~Doc-,ADoc-
 see {Startup Parameters\, Parameter Files} for details.
 ~Doc+,ADoc+,Online-
-see "Command Line Parameters, Parameter Files, Batch Mode" for details.
+see {Introduction to Parameters} for details.
 ~Online+
 ;
 ;
