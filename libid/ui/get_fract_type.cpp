@@ -268,7 +268,6 @@ void set_fractal_default_functions(FractalType previous)
 static bool select_type_params(FractalType new_fract_type, FractalType old_fract_type)
 {
 sel_type_restart:
-    bool ret = true;
     g_fractal_type = new_fract_type;
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
@@ -302,29 +301,23 @@ sel_type_restart:
 
     if (get_fract_params(false) < 0)
     {
-        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP
-            || g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D
-            || g_fractal_type == FractalType::L_SYSTEM)
+        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP ||
+            g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D ||
+            g_fractal_type == FractalType::L_SYSTEM)
         {
             goto sel_type_restart;
         }
-        else
-        {
-            ret = false;
-        }
-    }
-    else
-    {
-        if (new_fract_type != old_fract_type)
-        {
-            g_invert = 0;
-            g_inversion[0] = 0.0;
-            g_inversion[1] = 0.0;
-            g_inversion[2] = 0.0;
-        }
+        return false;
     }
 
-    return ret;
+    if (new_fract_type != old_fract_type)
+    {
+        g_invert = 0;
+        g_inversion[0] = 0.0;
+        g_inversion[1] = 0.0;
+        g_inversion[2] = 0.0;
+    }
+    return true;
 }
 
 int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific params
