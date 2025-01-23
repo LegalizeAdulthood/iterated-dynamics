@@ -79,17 +79,14 @@ int get_fract_type()
         {
             break;
         }
-        bool i = select_type_params(t, g_fractal_type);
-        if (!i)
+        if (select_type_params(t, g_fractal_type))
         {
             // ok, all done
             done = 0;
             break;
         }
-        if (i)   // can't return to prior image anymore
-        {
-            done = 1;
-        }
+        // can't return to prior image anymore
+        done = 1;
     }
     if (done < 0)
     {
@@ -99,6 +96,7 @@ int get_fract_type()
     return done;
 }
 
+// Select a fractal type; returns FractalType::NO_FRACTAL if canceled out.
 static FractalType select_fract_type(FractalType t)
 {
     int num_types;
@@ -266,11 +264,11 @@ void set_fractal_default_functions(FractalType previous)
     }
 }
 
-// prompt for new fractal type parameters
+// prompt for new fractal type parameters; returns true on params accepted.
 static bool select_type_params(FractalType new_fract_type, FractalType old_fract_type)
 {
 sel_type_restart:
-    bool ret = false;
+    bool ret = true;
     g_fractal_type = new_fract_type;
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
@@ -279,7 +277,7 @@ sel_type_restart:
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_L_SYSTEM);
         if (get_file_entry(ItemType::L_SYSTEM, "L-System", "*.l", g_l_system_filename, g_l_system_name) < 0)
         {
-            return true;
+            return false;
         }
     }
     else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
@@ -287,7 +285,7 @@ sel_type_restart:
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_FORMULA);
         if (get_file_entry(ItemType::FORMULA, "Formula", "*.frm", g_formula_filename, g_formula_name) < 0)
         {
-            return true;
+            return false;
         }
     }
     else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
@@ -295,7 +293,7 @@ sel_type_restart:
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_IFS);
         if (get_file_entry(ItemType::IFS, "IFS", "*.ifs", g_ifs_filename, g_ifs_name) < 0)
         {
-            return true;
+            return false;
         }
     }
 
@@ -312,7 +310,7 @@ sel_type_restart:
         }
         else
         {
-            ret = true;
+            ret = false;
         }
     }
     else
