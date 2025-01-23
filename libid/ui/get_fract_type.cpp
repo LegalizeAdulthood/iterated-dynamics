@@ -162,23 +162,24 @@ static FractalType select_fract_type(FractalType t)
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
         "Press F2 for a description of the highlighted type", num_types, (char const **) choices, attributes,
         0, 0, 0, j, nullptr, type_name, nullptr, sel_fract_type_help);
-    FractalType result = FractalType::NO_FRACTAL;
-    if (done >= 0)
+    if (done < 0)
     {
-        result = static_cast<FractalType>(choices[done]->num);
-        if ((result == FractalType::FORMULA || result == FractalType::FORMULA_FP) &&
-            g_formula_filename == g_command_file)
-        {
-            g_formula_filename = g_search_for.frm;
-        }
-        if (result == FractalType::L_SYSTEM && g_l_system_filename == g_command_file)
-        {
-            g_l_system_filename = g_search_for.lsys;
-        }
-        if ((result == FractalType::IFS || result == FractalType::IFS_3D) && g_ifs_filename == g_command_file)
-        {
-            g_ifs_filename = g_search_for.ifs;
-        }
+        return FractalType::NO_FRACTAL;
+    }
+
+    const FractalType result{static_cast<FractalType>(choices[done]->num)};
+    if ((result == FractalType::FORMULA || result == FractalType::FORMULA_FP) &&
+        g_formula_filename == g_command_file)
+    {
+        g_formula_filename = g_search_for.frm;
+    }
+    if (result == FractalType::L_SYSTEM && g_l_system_filename == g_command_file)
+    {
+        g_l_system_filename = g_search_for.lsys;
+    }
+    if ((result == FractalType::IFS || result == FractalType::IFS_3D) && g_ifs_filename == g_command_file)
+    {
+        g_ifs_filename = g_search_for.ifs;
     }
 
     return result;
