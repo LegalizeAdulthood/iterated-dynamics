@@ -263,10 +263,8 @@ void set_fractal_default_functions(FractalType previous)
     }
 }
 
-static bool select_type_params( // prompt for new fractal type parameters
-    FractalType new_fract_type,        // new fractal type
-    FractalType old_fract_type         // previous fractal type
-)
+// prompt for new fractal type parameters
+static bool select_type_params(FractalType new_fract_type, FractalType old_fract_type)
 {
 sel_type_restart:
     bool ret = false;
