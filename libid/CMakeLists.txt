@@ -110,7 +110,6 @@ add_library(libid
     include/io/loadmap.h io/loadmap.cpp
     include/io/load_config.h io/load_config.cpp
     include/io/load_entry_text.h io/load_entry_text.cpp
-    include/ui/lowerize_parameter.h ui/lowerize_parameter.cpp
     include/io/make_path.h io/make_path.cpp
     include/io/merge_path_names.h io/merge_path_names.cpp
     include/io/path_match.h io/path_match.cpp
@@ -190,6 +189,7 @@ add_library(libid
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
     include/ui/load_params.h ui/load_params.cpp
+    include/ui/lowerize_parameter.h ui/lowerize_parameter.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/make_mig.h ui/make_mig.cpp
     include/ui/main_menu.h ui/main_menu.cpp
