@@ -645,18 +645,14 @@ resumeloop:                             // return here on failed overlays
             {
                 g_user_std_calc_mode = '1';
             }
-            switch (mms_value)
+            if (mms_value == MainState::IMAGE_START || mms_value == MainState::RESTORE_START ||
+                mms_value == MainState::RESTART)
             {
-            case MainState::IMAGE_START:
-                return MainState::IMAGE_START;
-            case MainState::RESTORE_START:
-                return MainState::RESTORE_START;
-            case MainState::RESTART:
-                return MainState::RESTART;
-            case MainState::CONTINUE:
+                return mms_value;
+            }
+            if (mms_value == MainState::CONTINUE)
+            {
                 continue;
-            default:
-                break;
             }
             if (g_zoom_enabled && context.more_keys) // draw/clear a zoom box?
             {
