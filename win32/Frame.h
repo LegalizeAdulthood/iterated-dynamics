@@ -42,13 +42,13 @@ public:
     void on_timer(HWND window, UINT id);
     void on_set_focus(HWND window, HWND old_focus);
     void on_kill_focus(HWND window, HWND old_focus);
-    void on_left_button_up(HWND window, int x, int y, UINT key_flags);
-    void on_right_button_up(HWND window, int x, int y, UINT key_flags);
+    void on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
+    void on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
+    void on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
+    void on_primary_button_up(HWND window, int x, int y, UINT key_flags);
+    void on_secondary_button_up(HWND window, int x, int y, UINT key_flags);
     void on_middle_button_up(HWND window, int x, int y, UINT key_flags);
     void on_mouse_move(HWND window, int x, int y, UINT key_flags);
-    void on_left_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
-    void on_right_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
-    void on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags);
     void get_cursor_pos(int &x, int &y) const
     {
         x = static_cast<int>(m_pos.x);

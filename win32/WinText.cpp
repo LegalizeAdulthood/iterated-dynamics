@@ -410,12 +410,12 @@ static void wintext_on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info)
 
 static void wintext_on_l_button_up(HWND window, int x, int y, UINT key_flags)
 {
-    g_frame.on_left_button_up(window, x, y, key_flags);
+    g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
 static void wintext_on_r_button_up(HWND window, int x, int y, UINT key_flags)
 {
-    g_frame.on_right_button_up(window, x, y, key_flags);
+    g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
 static void wintext_on_m_button_up(HWND window, int x, int y, UINT key_flags)

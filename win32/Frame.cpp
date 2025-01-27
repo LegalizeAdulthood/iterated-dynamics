@@ -366,14 +366,29 @@ static void frame_on_timer(HWND window, UINT id)
     g_frame.on_timer(window, id);
 }
 
-static void frame_on_l_button_up(HWND window, int x, int y, UINT key_flags)
+static void frame_on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
-    g_frame.on_left_button_up(window, x, y, key_flags);
+    g_frame.on_primary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_on_r_button_up(HWND window, int x, int y, UINT key_flags)
+static void frame_on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
-    g_frame.on_right_button_up(window, x, y, key_flags);
+    g_frame.on_secondary_button_down(window, double_click, x, y, key_flags);
+}
+
+static void frame_on_m_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+{
+    g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
+}
+
+static void frame_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_primary_button_up(window, x, y, key_flags);
+}
+
+static void frame_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
+{
+    g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
 static void frame_on_m_button_up(HWND window, int x, int y, UINT key_flags)
@@ -384,21 +399,6 @@ static void frame_on_m_button_up(HWND window, int x, int y, UINT key_flags)
 static void frame_on_mouse_move(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_mouse_move(window,x, y, key_flags);
-}
-
-static void frame_on_l_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
-{
-    g_frame.on_left_button_down(window, double_click, x, y, key_flags);
-}
-
-static void frame_on_r_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
-{
-    g_frame.on_right_button_down(window, double_click, x, y, key_flags);
-}
-
-static void frame_on_m_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
-{
-    g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
 
 static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -433,10 +433,10 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
         HANDLE_WM_TIMER(window, wp, lp, frame_on_timer);
         break;
     case WM_LBUTTONUP:
-        HANDLE_WM_LBUTTONUP(window, wp, lp, frame_on_l_button_up);
+        HANDLE_WM_LBUTTONUP(window, wp, lp, frame_on_primary_button_up);
         break;
     case WM_RBUTTONUP:
-        HANDLE_WM_RBUTTONUP(window, wp, lp, frame_on_r_button_up);
+        HANDLE_WM_RBUTTONUP(window, wp, lp, frame_on_secondary_button_up);
         break;
     case WM_MBUTTONUP:
         HANDLE_WM_MBUTTONUP(window, wp, lp, frame_on_m_button_up);
@@ -446,11 +446,11 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
         break;
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
-        HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_on_l_button_down);
+        HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_on_primary_button_down);
         break;
     case WM_RBUTTONDOWN:
     case WM_RBUTTONDBLCLK:
-        HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_on_r_button_down);
+        HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_on_secondary_button_down);
         break;
     case WM_MBUTTONDOWN:
     case WM_MBUTTONDBLCLK:
@@ -619,7 +619,7 @@ static int get_mouse_look_key()
     return -key;
 }
 
-void Frame::on_left_button_up(HWND window, int x, int y, UINT key_flags)
+void Frame::on_primary_button_up(HWND window, int x, int y, UINT key_flags)
 {
     if (+g_look_at_mouse < 0)
     {
@@ -632,7 +632,7 @@ void Frame::on_left_button_up(HWND window, int x, int y, UINT key_flags)
     }
 }
 
-void Frame::on_right_button_up(HWND window, int x, int y, UINT key_flags)
+void Frame::on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
 {
     driver_debug_line(
         "right up: " + std::to_string(x) + "," + std::to_string(y) + ", flags: " + key_flags_string(key_flags));
@@ -1330,14 +1330,14 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
         ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_left_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+void Frame::on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     mouse_notify_left_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "left down: (double)" : "left down: ") + std::to_string(x) + "," +
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_right_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+void Frame::on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
     mouse_notify_right_down(x, y, static_cast<int>(key_flags));
     driver_debug_line((double_click ? "right down: (double)" : "right down: ") + std::to_string(x) + "," +

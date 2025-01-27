@@ -269,22 +269,22 @@ static void plot_on_paint(HWND window)
     s_plot->on_paint(window);
 }
 
-static void plot_on_l_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void plot_on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
 {
-    g_frame.on_left_button_down(window, double_click, x, y, key_flags);
+    g_frame.on_primary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void plot_on_l_button_up(HWND window, int x, int y, UINT key_flags)
+static void plot_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
 {
-    g_frame.on_left_button_up(window, x, y, key_flags);
+    g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
-static void plot_on_r_button_up(HWND window, int x, int y, UINT key_flags)
+static void plot_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
 {
-    g_frame.on_right_button_up(window, x, y, key_flags);
+    g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
-static void plot_on_m_button_up(HWND window, int x, int y, UINT key_flags)
+static void plot_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
@@ -304,19 +304,19 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
         break;
 
     case WM_LBUTTONDOWN:
-        HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_on_l_button_down);
+        HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_on_primary_button_down);
         break;
 
     case WM_LBUTTONUP:
-        HANDLE_WM_LBUTTONUP(window, wp, lp, plot_on_l_button_up);
+        HANDLE_WM_LBUTTONUP(window, wp, lp, plot_on_primary_button_up);
         break;
 
     case WM_RBUTTONUP:
-        HANDLE_WM_RBUTTONUP(window, wp, lp, plot_on_r_button_up);
+        HANDLE_WM_RBUTTONUP(window, wp, lp, plot_on_secondary_button_up);
         break;
 
     case WM_MBUTTONUP:
-        HANDLE_WM_MBUTTONUP(window, wp, lp, plot_on_m_button_up);
+        HANDLE_WM_MBUTTONUP(window, wp, lp, plot_on_middle_button_up);
         break;
 
     case WM_MOUSEMOVE:
