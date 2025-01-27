@@ -43,6 +43,12 @@ int g_box_x[NUM_BOX_POINTS]{};
 int g_box_y[NUM_BOX_POINTS]{};
 int g_box_values[NUM_BOX_POINTS]{};
 int g_box_color{}; // Zoom-Box color
+int g_box_count{};                                              // 0 if no zoom-box yet
+int g_zoom_box_rotation{};                                      // zoombox rotation
+double g_zoom_box_x{}, g_zoom_box_y{};                          // topleft of zoombox
+double g_zoom_box_width{}, g_zoom_box_height{};                 // zoombox size
+double g_zoom_box_skew{};                                       // zoombox shape
+bool g_zoom_enabled{};                                          // true when zoom is enabled
 
 static int  check_pan();
 static void fix_work_list();

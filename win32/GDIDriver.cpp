@@ -18,6 +18,7 @@
 #include "ui/spindac.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
+#include "ui/zoom.h"
 
 #include <config/driver_types.h>
 

@@ -21,6 +21,7 @@
 #include "ui/stop_msg.h"
 #include "ui/text_screen.h"
 #include "ui/video.h"
+#include "ui/zoom.h"
 
 #include <crtdbg.h>
 

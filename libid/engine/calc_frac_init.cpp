@@ -23,6 +23,7 @@
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
+#include "ui/zoom.h"
 
 #include <config/port.h>
 

@@ -36,7 +36,6 @@ enum class HelpLabels;
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
 extern ConfigStatus          g_bad_config;
-extern int                   g_box_count;
 extern std::string           g_browse_mask;
 extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;
@@ -120,10 +119,3 @@ extern double                g_y_3rd;
 extern double                g_y_max;
 extern double                g_y_min;
 extern bool                  g_z_scroll;
-extern double                g_zoom_box_height;
-extern int                   g_zoom_box_rotation;
-extern double                g_zoom_box_skew;
-extern double                g_zoom_box_width;
-extern double                g_zoom_box_x;
-extern double                g_zoom_box_y;
-extern bool                  g_zoom_enabled;

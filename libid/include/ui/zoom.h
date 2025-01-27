@@ -10,10 +10,18 @@ struct Coord
     int y;
 };
 
-extern int                   g_box_color;
-extern int                   g_box_values[];
 extern int                   g_box_x[];
 extern int                   g_box_y[];
+extern int                   g_box_values[];
+extern int                   g_box_color;
+extern int                   g_box_count;
+extern double                g_zoom_box_height;
+extern int                   g_zoom_box_rotation;
+extern double                g_zoom_box_skew;
+extern double                g_zoom_box_width;
+extern double                g_zoom_box_x;
+extern double                g_zoom_box_y;
+extern bool                  g_zoom_enabled;
 
 void draw_box(bool draw_it);
 void move_box(double dx, double dy);

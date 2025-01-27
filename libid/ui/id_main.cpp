@@ -40,6 +40,7 @@
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
+#include "ui/zoom.h"
 
 #include <config/port.h>
 
@@ -62,11 +63,6 @@ int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on th
 double g_logical_screen_x_size_dots{}, g_logical_screen_y_size_dots{}; // xdots-1, ydots-1
 int g_colors{256};                                                     // maximum colors available
 long g_max_iterations{};                                               // try this many iterations
-int g_box_count{};                                                     // 0 if no zoom-box yet
-int g_zoom_box_rotation{};                                             // zoombox rotation
-double g_zoom_box_x{}, g_zoom_box_y{};                                 // topleft of zoombox
-double g_zoom_box_width{}, g_zoom_box_height{};                        // zoombox size
-double g_zoom_box_skew{};                                              // zoombox shape
 FractalType g_fractal_type{FractalType::NO_FRACTAL};                   // if == 0, use Mandelbrot
 char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
 long g_l_delta_x{}, g_l_delta_y{};                                     // screen pixel increments
@@ -116,7 +112,6 @@ double g_plot_mx1{}, g_plot_mx2{};      //
 double g_plot_my1{}, g_plot_my2{};      // real->screen multipliers
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
 long g_calc_time{};                                             //
-bool g_zoom_enabled{};                                          // true when zoom is enabled
 int g_save_dac{};                                               // save-the-Video DAC flag
 bool g_browsing{};                                              // browse mode flag
 std::string g_file_name_stack[16]{};                            // array of file names used while browsing
