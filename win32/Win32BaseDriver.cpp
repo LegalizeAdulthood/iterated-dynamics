@@ -407,9 +407,14 @@ int Win32BaseDriver::wait_key_pressed(bool timeout)
     while (!key_pressed())
     {
         Sleep(25);
-        if (timeout && (--count == 0))
+        if (timeout)
         {
-            break;
+            // timeout early if zooming
+            if (count == 0 || g_zoom_box_width != 0.0)
+            {
+                break;
+            }
+            --count;
         }
     }
 
