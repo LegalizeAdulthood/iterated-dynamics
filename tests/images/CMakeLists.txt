@@ -45,7 +45,7 @@ add_fractal_type_image_test(
     julia julia4 julia_inverse julzpower julzzpwr
     lambda lambdafn lyapunov
     magnet1j magnet1m magnet2j magnet2m
-    mandel mandel4 mandelcloud mandelfn mandellambda mandphoenix mandphoenixclx
+    mandel mandel4 mandelbrotmix4 mandelcloud mandelfn mandellambda mandphoenix mandphoenixclx
     manowar manowarj manzpower manzzpwr marksjulia marksmandel marksmandelpwr
     newtbasin newton
     phoenix phoenixcplx
