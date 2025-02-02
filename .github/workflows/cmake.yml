@@ -55,7 +55,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: html-docs
-        path: ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
+        path: |
+          ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
+          ${{github.workspace}}/hc/src/images/**/*.png
 
   build:
     needs: html-docs

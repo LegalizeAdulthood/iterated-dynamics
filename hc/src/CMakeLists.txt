@@ -70,3 +70,5 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)
     install(FILES ${CMAKE_SOURCE_DIR}/id.html DESTINATION .)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 endif()
+
+add_subdirectory(images)
