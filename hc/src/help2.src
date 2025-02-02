@@ -969,11 +969,11 @@ Select a fractal type:
 ;
 ~Topic=The Mandelbrot Set, Label=HT_MANDEL
 (type=mandel)
-~Doc-
+~Doc-,Format-
 
-image::images/thumbnails/mandel.png[link=images/mandel.png]
+image::help/images/thumbnails/type-mandel.png[link=help/images/type-mandel.png]
 
-~Doc+
+~Doc+,Format+
 
 This set is the classic: the only one implemented in many plotting
 programs, and the source of most of the printed fractal images published.
