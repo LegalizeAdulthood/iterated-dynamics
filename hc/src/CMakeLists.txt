@@ -71,7 +71,44 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 endif()
 
-set(image_files "type-mandel.png")
+set(image_files
+    "type-mandel.png"
+    "type-julia.png"
+# TODO: The thumbnail is so dark as to appear wholly black.
+#    "type-julia_inverse.png"
+    "type-newtbasin.png"
+    "type-newton.png"
+    "type-complexnewton.png"
+    "type-lambda.png"
+    "type-mandellambda.png"
+    "type-circle.png"
+    "type-plasma.png"
+    "type-lambdafn.png"
+    "type-mandelfn.png"
+    "type-barnsleym1.png"
+    "type-barnsleym2.png"
+    "type-barnsleym3.png"
+    "type-barnsleyj1.png"
+    "type-barnsleyj2.png"
+    "type-barnsleyj3.png"
+    "type-sierpinski.png"
+    "type-mandel4.png"
+    "type-julia4.png"
+    "type-manfn-plus-zsqrd.png"
+    "type-manzpower.png"
+    "type-manzzpwr.png"
+    "type-manfn-plus-exp.png"
+    "type-julfn-plus-zsqrd.png"
+    "type-julzpower.png"
+    "type-julzzpwr.png"
+    "type-julfn-plus-exp.png"
+    "type-popcorn.png"
+    "type-popcornjul.png"
+# TODO: the default parameters just yield regular M-set
+#    "type-marksmandel.png"
+#    "type-cmplxmarksmand.png"
+    "type-unity.png"
+)
 foreach(image ${image_files})
     configure_file(images/${image} help/images/${image} COPYONLY)
     install(FILES images/${image} DESTINATION help/images)
