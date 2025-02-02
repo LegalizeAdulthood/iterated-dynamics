@@ -10,6 +10,7 @@
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
 #include "ui/read_ticker.h"
+#include "ui/zoom.h"
 
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
@@ -453,9 +454,14 @@ int WXDriver::wait_key_pressed(bool timeout)
     while (!key_pressed())
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        if (timeout && (--count == 0))
+        if (timeout)
         {
-            break;
+            // timeout early if zooming
+            if (count == 0 || g_zoom_box_width != 0.0)
+            {
+                break;
+            }
+            --count;
         }
     }
 
