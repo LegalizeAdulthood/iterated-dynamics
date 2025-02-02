@@ -274,6 +274,9 @@ Found a bug?  File an issue on our github project!\
 
 New Features in Version 1.1:
 
+o Ctrl <+> and <-> can now be used to rotate the zoom box, in addition
+  to the numeric keypad <+> and <-> keys.  Some laptops don't have a
+  numeric keypad.
 o Perturbation drawing algorithm.  Paul de Leeuw contributed an
   implementation of the perturbation drawing algorithm with support
   for the Mandelbrot (type=mandel) and Mandelbrot power (type=manzpower)
@@ -823,10 +826,11 @@ rather warped things with it.  If you're a new Id user, we recommend
 skipping the rest of the zoom box functions for now and coming back to
 them when you're comfortable with the basic zoom box functions.
 
-<Ctrl+Keypad->, <Ctrl+Keypad+>\
-Holding <Ctrl> and pressing the numeric keypad's + or - keys rotates the
-zoom box.  Moving the mouse left or right while holding the secondary
-button down performs the same function.
+<Ctrl+->, <Ctrl++>, <Ctrl+Keypad->, <Ctrl+Keypad+>\
+Holding <Ctrl> and pressing the <+> or <-> keys, or the numeric
+keypad's <+> or <-> keys rotates the zoom box.  Moving the mouse left
+or right while holding the secondary button down performs the same
+function.
 
 <Ctrl+PageUp>, <Ctrl+PageDown>\
 These commands change the zoom box's "aspect ratio", stretching or

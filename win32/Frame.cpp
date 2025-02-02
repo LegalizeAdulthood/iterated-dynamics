@@ -171,6 +171,7 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
     unsigned int i = MapVirtualKeyA(vk, MAPVK_VK_TO_VSC);
     unsigned int j = MapVirtualKeyA(vk, MAPVK_VK_TO_CHAR);
     const bool alt = has_mod(VK_MENU);
+    const bool ctrl = has_mod(VK_CONTROL);
     debug_key_strokes("OnKeyDown vk: " + std::to_string(vk) + ", vsc: " + std::to_string(i) + ", char: " + std::to_string(j));
 
     // handle modifier keys on the non-WM_CHAR keys
@@ -250,26 +251,42 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
         }
     }
 
-    if (alt && j != 0)
+    if (j != 0)
     {
-        // handle Alt+1 through Alt+7
-        if (j >= '1' && j <= '7')
+        if (alt)
         {
-            i = ID_KEY_ALT_1 + (j - '1');
-            add_key_press(i);
-            debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+            // handle Alt+1 through Alt+7
+            if (j >= '1' && j <= '7')
+            {
+                i = ID_KEY_ALT_1 + (j - '1');
+                add_key_press(i);
+                debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+            }
+            else if (std::tolower(j) == 'a')
+            {
+                i = ID_KEY_ALT_A;
+                add_key_press(i);
+                debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+            }
+            else if (std::tolower(j) == 's')
+            {
+                i = ID_KEY_ALT_S;
+                add_key_press(i);
+                debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+            }
         }
-        else if (std::tolower(j) == 'a')
+        if (ctrl)
         {
-            i = ID_KEY_ALT_A;
-            add_key_press(i);
-            debug_key_strokes("OnKeyDown key: " + std::to_string(i));
-        }
-        else if (std::tolower(j) == 's')
-        {
-            i = ID_KEY_ALT_S;
-            add_key_press(i);
-            debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+            if (j == '-')
+            {
+                i = ID_KEY_CTL_MINUS;
+                add_key_press(i);
+            }
+            else if (j == '+' || j == '=')
+            {
+                i = ID_KEY_CTL_PLUS;
+                add_key_press(i);
+            }
         }
     }
 
