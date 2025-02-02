@@ -140,7 +140,7 @@ void draw_box(bool draw_it)
     int saved = 0;
     BigFloat bf_f_x_width;
     BigFloat bf_f_x_skew;
-    BigFloat bf_f_y_depth;
+    BigFloat bf_f_y_height;
     BigFloat bf_f_y_skew;
     BigFloat bf_f_x_adj;
     if (g_bf_math != BFMathType::NONE)
@@ -148,7 +148,7 @@ void draw_box(bool draw_it)
         saved = save_stack();
         bf_f_x_width = alloc_stack(g_r_bf_length+2);
         bf_f_x_skew  = alloc_stack(g_r_bf_length+2);
-        bf_f_y_depth = alloc_stack(g_r_bf_length+2);
+        bf_f_y_height = alloc_stack(g_r_bf_length+2);
         bf_f_y_skew  = alloc_stack(g_r_bf_length+2);
         bf_f_x_adj   = alloc_stack(g_r_bf_length+2);
     }
@@ -159,7 +159,7 @@ void draw_box(bool draw_it)
     // do some calcs just once here to reduce fp work a bit
     const double f_x_width = g_save_x_max - g_save_x_3rd;
     const double f_x_skew = g_save_x_3rd - g_save_x_min;
-    const double f_y_depth = g_save_y_3rd - g_save_y_max;
+    const double f_y_height = g_save_y_3rd - g_save_y_max;
     const double f_y_skew = g_save_y_min - g_save_y_3rd;
     const double f_x_adj = g_zoom_box_width * g_zoom_box_skew;
 
@@ -168,7 +168,7 @@ void draw_box(bool draw_it)
         // do some calcs just once here to reduce fp work a bit
         sub_bf(bf_f_x_width, g_bf_save_x_max, g_bf_save_x_3rd);
         sub_bf(bf_f_x_skew, g_bf_save_x_3rd, g_bf_save_x_min);
-        sub_bf(bf_f_y_depth, g_bf_save_y_3rd, g_bf_save_y_max);
+        sub_bf(bf_f_y_height, g_bf_save_y_3rd, g_bf_save_y_max);
         sub_bf(bf_f_y_skew, g_bf_save_y_min, g_bf_save_y_3rd);
         float_to_bf(bf_f_x_adj, f_x_adj);
     }
@@ -187,11 +187,11 @@ void draw_box(bool draw_it)
     top_left.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND)); // screen co-ords
     top_left.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
     g_x_min  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew; // real co-ords
-    g_y_max  = g_save_y_max + f_temp2*f_y_depth + f_temp1*f_y_skew;
+    g_y_max  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_min, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
-        calc_corner(g_bf_y_max, g_bf_save_y_max, f_temp2, bf_f_y_depth, f_temp1, bf_f_y_skew);
+        calc_corner(g_bf_y_max, g_bf_save_y_max, f_temp2, bf_f_y_height, f_temp1, bf_f_y_skew);
     }
 
     // calc co-ords of bottom right
@@ -201,11 +201,11 @@ void draw_box(bool draw_it)
     bot_right.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND));
     bot_right.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
     g_x_max  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
-    g_y_min  = g_save_y_max + f_temp2*f_y_depth + f_temp1*f_y_skew;
+    g_y_min  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_max, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
-        calc_corner(g_bf_y_min, g_bf_save_y_max, f_temp2, bf_f_y_depth, f_temp1, bf_f_y_skew);
+        calc_corner(g_bf_y_min, g_bf_save_y_max, f_temp2, bf_f_y_height, f_temp1, bf_f_y_skew);
     }
 
     // do the same for botleft & topright
@@ -219,11 +219,11 @@ void draw_box(bool draw_it)
     bot_left.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND));
     bot_left.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
     g_x_3rd  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
-    g_y_3rd  = g_save_y_max + f_temp2*f_y_depth + f_temp1*f_y_skew;
+    g_y_3rd  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_3rd, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
-        calc_corner(g_bf_y_3rd, g_bf_save_y_max, f_temp2, bf_f_y_depth, f_temp1, bf_f_y_skew);
+        calc_corner(g_bf_y_3rd, g_bf_save_y_max, f_temp2, bf_f_y_height, f_temp1, bf_f_y_skew);
         restore_stack(saved);
     }
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx + f_x_adj;
@@ -398,27 +398,27 @@ void move_box(double dx, double dy)
     }
 }
 
-static void change_box(double d_width, double d_depth)
+static void change_box(double delta_width, double delta_height)
 {
-    if (g_zoom_box_width+d_width > 1)
+    if (g_zoom_box_width + delta_width > 1.0)
     {
-        d_width = 1.0-g_zoom_box_width;
+        delta_width = 1.0 - g_zoom_box_width;
     }
-    if (g_zoom_box_width+d_width < 0.05)
+    if (g_zoom_box_width + delta_width < 0.05)
     {
-        d_width = 0.05-g_zoom_box_width;
+        delta_width = 0.05 - g_zoom_box_width;
     }
-    g_zoom_box_width += d_width;
-    if (g_zoom_box_height+d_depth > 1)
+    g_zoom_box_width += delta_width;
+    if (g_zoom_box_height + delta_height > 1.0)
     {
-        d_depth = 1.0-g_zoom_box_height;
+        delta_height = 1.0 - g_zoom_box_height;
     }
-    if (g_zoom_box_height+d_depth < 0.05)
+    if (g_zoom_box_height + delta_height < 0.05)
     {
-        d_depth = 0.05-g_zoom_box_height;
+        delta_height = 0.05 - g_zoom_box_height;
     }
-    g_zoom_box_height += d_depth;
-    move_box(d_width/-2, d_depth/-2); // keep it centered & check limits
+    g_zoom_box_height += delta_height;
+    move_box(delta_width / -2.0, delta_height / -2.0); // keep it centered & check limits
 }
 
 void resize_box(int steps)
@@ -440,10 +440,10 @@ void resize_box(int steps)
     change_box(delta_x, delta_y);
 }
 
-void change_box(int dw, int dd)
+// change size by pixels
+void change_box(int dw, int dh)
 {
-    // change size by pixels
-    change_box(dw / g_logical_screen_x_size_dots, dd / g_logical_screen_y_size_dots);
+    change_box(dw / g_logical_screen_x_size_dots, dh / g_logical_screen_y_size_dots);
 }
 
 static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
@@ -516,7 +516,7 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        (sxmin,symax), etc., are still the screen's corners;
        use the same logic as plot_orbit stuff to first calculate current screen
        corners relative to the zoombox, as if the zoombox were a square with
-       upper left (0,0) and width/depth 1; ie calc the current screen corners
+       upper left (0,0) and width/height 1; ie calc the current screen corners
        as if plotting them from the zoombox;
        then extend these co-ords from current real screen corners to get
        new actual corners
@@ -574,7 +574,7 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
        (sxmin,symax), etc., are still the screen's corners;
        use the same logic as plot_orbit stuff to first calculate current screen
        corners relative to the zoombox, as if the zoombox were a square with
-       upper left (0,0) and width/depth 1; ie calc the current screen corners
+       upper left (0,0) and width/height 1; ie calc the current screen corners
        as if plotting them from the zoombox;
        then extend these co-ords from current real screen corners to get
        new actual corners

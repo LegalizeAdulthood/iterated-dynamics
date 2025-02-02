@@ -26,7 +26,7 @@ extern bool                  g_zoom_enabled;
 void draw_box(bool draw_it);
 void move_box(double dx, double dy);
 void resize_box(int steps);
-void change_box(int dw, int dd);
+void change_box(int dw, int dh);
 void zoom_out();
 void aspect_ratio_crop(float old_aspect, float new_aspect);
 void init_pan_or_recalc(bool do_zoom_out);
