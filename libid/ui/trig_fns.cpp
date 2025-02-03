@@ -13,6 +13,30 @@
 #include <cstdio>
 #include <cstring>
 
+namespace
+{
+
+struct SavedTrigFunctions
+{
+    TrigFn trig_index[4]{};
+    void (*l_trig0)(){};
+    void (*l_trig1)(){};
+    void (*l_trig2)(){};
+    void (*l_trig3)(){};
+    void (*d_trig0)(){};
+    void (*d_trig1)(){};
+    void (*d_trig2)(){};
+    void (*d_trig3)(){};
+    void (*m_trig0)(){};
+    void (*m_trig1)(){};
+    void (*m_trig2)(){};
+    void (*m_trig3)(){};
+};
+
+} // namespace
+
+static SavedTrigFunctions s_saved_trig_functions{};
+
 // The index into this array must correspond to enum TrigFn
 // changing the order of these alters meaning of GIF extensions
 // maximum 6 characters in function names or recheck all related code
@@ -55,7 +79,7 @@ NamedTrigFunction g_trig_fn[] =
 
 const int g_num_trig_functions{std::size(g_trig_fn)};
 
-TrigFn g_trig_index[] =
+TrigFn g_trig_index[4] =
 {
     TrigFn::SIN, TrigFn::SQR, TrigFn::SINH, TrigFn::COSH
 };
@@ -173,4 +197,44 @@ void set_trig_pointers(int which)
         }
         break;
     }
+}
+
+void save_trig_functions()
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        s_saved_trig_functions.trig_index[i] = g_trig_index[i];
+    }
+    s_saved_trig_functions.l_trig0 = g_l_trig0;
+    s_saved_trig_functions.l_trig1 = g_l_trig1;
+    s_saved_trig_functions.l_trig2 = g_l_trig2;
+    s_saved_trig_functions.l_trig3 = g_l_trig3;
+    s_saved_trig_functions.d_trig0 = g_d_trig0;
+    s_saved_trig_functions.d_trig1 = g_d_trig1;
+    s_saved_trig_functions.d_trig2 = g_d_trig2;
+    s_saved_trig_functions.d_trig3 = g_d_trig3;
+    s_saved_trig_functions.m_trig0 = g_m_trig0;
+    s_saved_trig_functions.m_trig1 = g_m_trig1;
+    s_saved_trig_functions.m_trig2 = g_m_trig2;
+    s_saved_trig_functions.m_trig3 = g_m_trig3;
+}
+
+void restore_trig_functions()
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        g_trig_index[i] = s_saved_trig_functions.trig_index[i];
+    }
+    g_l_trig0 = s_saved_trig_functions.l_trig0;
+    g_l_trig1 = s_saved_trig_functions.l_trig1;
+    g_l_trig2 = s_saved_trig_functions.l_trig2;
+    g_l_trig3 = s_saved_trig_functions.l_trig3;
+    g_d_trig0 = s_saved_trig_functions.d_trig0;
+    g_d_trig1 = s_saved_trig_functions.d_trig1;
+    g_d_trig2 = s_saved_trig_functions.d_trig2;
+    g_d_trig3 = s_saved_trig_functions.d_trig3;
+    g_m_trig0 = s_saved_trig_functions.m_trig0;
+    g_m_trig1 = s_saved_trig_functions.m_trig1;
+    g_m_trig2 = s_saved_trig_functions.m_trig2;
+    g_m_trig3 = s_saved_trig_functions.m_trig3;
 }

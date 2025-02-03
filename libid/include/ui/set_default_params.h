@@ -3,3 +3,5 @@
 #pragma once
 
 void set_default_params();
+void save_params();
+void restore_params();

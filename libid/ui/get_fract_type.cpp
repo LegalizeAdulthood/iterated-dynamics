@@ -70,7 +70,7 @@ static bool select_type_params(FractalType new_fract_type, FractalType old_fract
 // prompt for and select fractal type
 int get_fract_type()
 {
-    int done = -1;
+    bool accepted{};
     FractalType old_fract_type = g_fractal_type;
     while (true)
     {
@@ -79,21 +79,19 @@ int get_fract_type()
         {
             break;
         }
-        if (select_type_params(t, g_fractal_type))
+        accepted = select_type_params(t, g_fractal_type);
+        if (accepted)
         {
             // ok, all done
-            done = 0;
             break;
         }
-        // can't return to prior image anymore
-        done = 1;
     }
-    if (done < 0)
+    if (!accepted)
     {
         g_fractal_type = old_fract_type;
     }
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-    return done;
+    return accepted ? 0 : -1;
 }
 
 // Select a fractal type; returns FractalType::NO_FRACTAL if canceled out.
@@ -265,9 +263,40 @@ void set_fractal_default_functions(FractalType previous)
     }
 }
 
+namespace {
+
+class SaveFractalType
+{
+public:
+    SaveFractalType() = default;
+
+    ~SaveFractalType()
+    {
+        if (!m_commit)
+        {
+            g_fractal_type = m_fractal_type;
+            g_cur_fractal_specific = m_fractal_specific;
+        }
+    }
+
+    void commit()
+    {
+        m_commit = true;
+    }
+
+private:
+    bool m_commit{};
+    FractalType m_fractal_type{g_fractal_type};
+    FractalSpecific *m_fractal_specific{g_cur_fractal_specific};
+};
+
+} // namespace
+
 // prompt for new fractal type parameters; returns true on params accepted.
 static bool select_type_params(FractalType new_fract_type, FractalType old_fract_type)
 {
+    SaveFractalType saved_fractal_type;
+
 sel_type_restart:
     g_fractal_type = new_fract_type;
     g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
@@ -297,11 +326,15 @@ sel_type_restart:
         }
     }
 
+    save_trig_functions();
+    save_params();
     set_fractal_default_functions(old_fract_type);
     set_default_params();
 
     if (get_fract_params(false) < 0)
     {
+        restore_trig_functions();
+        restore_params();
         if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP ||
             g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D ||
             g_fractal_type == FractalType::L_SYSTEM)
@@ -318,6 +351,8 @@ sel_type_restart:
         g_inversion[1] = 0.0;
         g_inversion[2] = 0.0;
     }
+
+    saved_fractal_type.commit();
     return true;
 }
 
