@@ -274,7 +274,6 @@ Found a bug?  File an issue on our github project!\
 
 New Features in Version 1.1:
 
-o Mouse support for the zoom box has been restored. (Fixes #14, #152)\
 o Ctrl <+> and <-> can now be used to rotate the zoom box, in addition
   to the numeric keypad <+> and <-> keys.  Some laptops don't have a
   numeric keypad.
@@ -293,6 +292,7 @@ o Configuration files 'sstools.ini' and 'id.cfg' can now be loaded from
   to the user's Documents directory.  Changing function key assignments
   while selecting video modes saves the updated id.cfg file to the savedir,
   defaulting to the user's Documents directory.  (Fixes #170)
+o Mouse support for the zoom box has been restored. (Fixes #14, #152)\
 o Mouse support for the {Orbits Window} has been restored.\
 o Mouse support for the inverse Julia set cursor has been restored.
   (Fixes #151)
@@ -329,6 +329,11 @@ o When the monitor configuration changed since the last time Id was run
   (Fixes #136)
 o On Windows, crash dump files are saved to the savedir location.
   (Fixes #133)
+o When changing fractal types, if the the fractal parameters screen or
+  entry name screen (for formula, ifs or L-system fractal types) were
+  cancelled, the previous fractal type and associated parameters were
+  lost.  Now, canceling those screens restores the previous state.
+  (Fixes #129)
 
 Code Cleanup in Version 1.1:
 
