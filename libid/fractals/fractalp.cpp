@@ -42,6 +42,12 @@
 #include "fractals/unity.h"
 #include "fractals/volterra_lotka.h"
 
+#include <algorithm>
+#include <array>
+#include <iterator>
+#include <stdexcept>
+#include <string>
+
 // parameter descriptions
 // Note: + prefix denotes integer parameters
 //       # prefix denotes U32 parameters
@@ -3057,4 +3063,15 @@ FractalSpecific g_fractal_specific[] =
     } //
 };
 
-int g_num_fractal_types = sizeof(g_fractal_specific) / sizeof(FractalSpecific) - 1;
+int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
+
+FractalSpecific *get_fractal_specific(FractalType type)
+{
+    if (FractalSpecific *it = std::find_if(std::begin(g_fractal_specific), std::end(g_fractal_specific),
+            [=](const FractalSpecific &entry) { return entry.type == type; });
+        it != std::end(g_fractal_specific))
+    {
+        return it;
+    }
+    throw std::runtime_error("Unknown fractal type " + std::to_string(+type));
+}

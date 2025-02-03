@@ -32,3 +32,16 @@ TEST(TestFractalSpecific, typeMatchesIndex)
         EXPECT_EQ(i, +g_fractal_specific[i].type) << "index " << i << ", " << g_fractal_specific[i].name;
     }
 }
+
+TEST(TestGetFractalSpecific, resultMatchesType)
+{
+    const FractalSpecific *entry = get_fractal_specific(FractalType::CELLULAR);
+
+    ASSERT_NE(nullptr, entry);
+    EXPECT_EQ(FractalType::CELLULAR, entry->type);
+}
+
+TEST(TestGetFractalSpecific, unknownTypeThrowsRuntimeError)
+{
+    EXPECT_THROW(get_fractal_specific(static_cast<FractalType>(-100)), std::runtime_error);
+}

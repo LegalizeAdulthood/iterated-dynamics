@@ -203,7 +203,7 @@ enum class FractalType
     LATOO                       = 171,
     DIVIDE_BROT5                = 172,
     MANDELBROT_MIX4             = 173,
-    BURNING_SHIP                = 174
+    BURNING_SHIP                = 174,
 };
 // clang-format on
 inline int operator+(FractalType rhs)
