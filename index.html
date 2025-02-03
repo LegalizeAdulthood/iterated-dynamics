@@ -440,7 +440,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_new_features_in_1_0">New Features in 1.0</a></li>
+<li><a href="#_new_features_in_1_1">New Features in 1.1</a></li>
 <li><a href="#_introduction">Introduction</a>
 <ul class="sectlevel2">
 <li><a href="#_conditions_on_use">Conditions on Use</a></li>
@@ -523,6 +523,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_latoocarfian">Latoocarfian</a></li>
 <li><a href="#_mandelbrot_mix_4">Mandelbrot Mix 4</a></li>
 <li><a href="#_dividebrot5">DivideBrot5</a></li>
+<li><a href="#_burning_ship">Burning Ship</a></li>
 </ul>
 </li>
 <li><a href="#_doodads_bells_and_whistles">Doodads, Bells, and Whistles</a>
@@ -610,6 +611,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_periodicity_logic">Periodicity Logic</a></li>
 <li><a href="#_limitations_of_integer_math_and_how_we_cope">Limitations of Integer Math (and How We Cope)</a></li>
 <li><a href="#_arbitrary_precision_and_deep_zooming">Arbitrary Precision and Deep Zooming</a></li>
+<li><a href="#_perturbation_algorithm">Perturbation Algorithm</a></li>
 <li><a href="#_the_id_fractal_engine_architecture">The Id "Fractal Engine" Architecture</a></li>
 </ul>
 </li>
@@ -644,7 +646,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_new_features_in_1_0">New Features in 1.0</h2>
+<h2 id="_new_features_in_1_1">New Features in 1.1</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
@@ -662,133 +664,173 @@ short, throughout.</p>
   <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/issues" class="bare">https://github.com/LegalizeAdulthood/iterated-dynamics/issues</a></p>
 </div>
 <div class="paragraph">
-<p>New features in Version 1.0:</p>
+<p>New Features in Version 1.1:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>New formula file MandelbrotDerivatives.frm with Burning Ship,
-Perpendicular Mandelbrot, Heart Mandelbrot, Mandelbar and other
-Mandelbrot set formula variations.  The parameter file BurningShip.par
-provides example parameters for these variations.  Contributed by Paul
-de Leeuw.</p>
+<p>Ctrl <kbd>+</kbd> and <kbd>-</kbd> can now be used to rotate the zoom box, in addition
+to the numeric keypad <kbd>+</kbd> and <kbd>-</kbd> keys.  Some laptops don&#8217;t have a
+numeric keypad.</p>
 </li>
 <li>
-<p>New $cpu$ comment variable expands to a description of your CPU.</p>
+<p>Perturbation drawing algorithm.  Paul de Leeuw contributed an
+implementation of the perturbation drawing algorithm with support for
+the Mandelbrot (type=mandel) and Mandelbrot power (type=manzpower)
+fractal types.  See <a href="#_drawing_method">Drawing Method</a> and <a href="#_perturbation_algorithm">Perturbation Algorithm</a> for
+details.  (PR #160)</p>
 </li>
 <li>
-<p>Long filenames are now supported throughout.</p>
+<p>Configuration files 'sstools.ini' and 'id.cfg' can now be loaded from
+outside the installation directory.  The following locations are
+searched in this order: user&#8217;s Documents directory, FRACTDIR
+environment variable location and then current directory.  The
+directory related parameter values do not change this search order.
+When video mode key assignments are changed interactively, the updated
+id.cfg is written to the location specified by the savedir parameter,
+defaulting to the user&#8217;s Documents directory.  Changing function key
+assignments while selecting video modes saves the updated id.cfg file
+to the savedir, defaulting to the user&#8217;s Documents directory.  (Fixes
+#170)</p>
 </li>
 <li>
-<p>All filename parameters are now case sensitive.</p>
+<p>Mouse support for the zoom box has been restored. (Fixes #14, #152)</p>
 </li>
 <li>
-<p>When browsing for files, e.g. <kbd>R</kbd>estoring *.GIF files, filenames are
-compared case insensitive against wildcard search masks.</p>
+<p>Mouse support for the <a href="#_orbits_window">Orbits Window</a> has been restored.</p>
 </li>
 <li>
-<p>Added new fractal types <a href="#_mandelbrot_mix_4">Mandelbrot Mix 4</a> and <a href="#_dividebrot5">DivideBrot5</a> by Jim Muth.
-DivideBrot5 has arbitrary precision (AP) math support.  Note that
-image skewing and inversion are not  supported by the AP math
-routines. See <a href="#_arbitrary_precision_and_deep_zooming">Arbitrary Precision and Deep Zooming</a> for other features
-not supported.</p>
+<p>Mouse support for the inverse Julia set cursor has been restored.
+(Fixes #151)</p>
 </li>
 <li>
-<p>The orbitsavename parameter was added to specify the name of the raw
-orbits file.  The orbits file, if it exists, is overwritten when
-overwrite=yes.  Otherwise, the value of orbitsavename is incremented
-until a filename is formed that does not exist.</p>
+<p>The color palette editor can be positioned using the mouse and the
+current pixel whose color is displayed in the editor can also be
+selected with the mouse.  (Fixes #150)</p>
 </li>
 <li>
-<p>The autokeyname parameter was enhanced to create a unique filename
-when autokey=record unless overwrite=yes is specified.</p>
-</li>
-<li>
-<p>Disk video buffer sizes were dramatically increased.</p>
-</li>
-<li>
-<p>The formula parser has been enhanced to remove internal size
-limitations.  The only limit on formula parsing is available memory.</p>
-</li>
-<li>
-<p>The savedir parameter was added to specify the default directory used
-for writing any files.  Since a Windows program is typically installed
-to the Program Files directory, which is read-only, it cannot be
-assumed that Id can write to the directory in which it is located.</p>
+<p>Disk video rendering performance and robustness improved.  Requested
+memory buffers are now unlimited in disk video mode and only fall back
+to using a disk file if memory allocation fails.  The operating
+system&#8217;s virtual memory will perform better than manual disk caches.
+Disk cache files are unique per-process, allowing multiple instances
+of Id to be running simultaneously without interfering with each
+other.  The the status screen will now update at most ten times per
+second.  This prevents GUI updates from being the bottleneck on disk
+video rendering.  (Fixes #173, #174)</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Additional changes in Version 1.0:</p>
+<p>Bugs Fixed in Version 1.1:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Most of the changes involve internal restructuring of the DOS Fractint
-code to build a bridge to the future.</p>
+<p>When selecting a formula, L-system or IFS fractal type and the item is
+wide and/or needs scrolling, such as the Fractint entry of
+example2.frm, the surrounding box was improperly displayed.  (Fixes
+#182)</p>
 </li>
 <li>
-<p>Iterated Dynamics is a native 64-bit Windows program written in C++
-with a CMake build system and vcpkg for obtaining 3rd party library
-dependencies.</p>
+<p>The makepar parameter, or <kbd>B</kbd> commnd, now saves any generated
+parameter and batch files to the savedir location.  (Fixes #176, #177)</p>
 </li>
 <li>
-<p>All assembly language code has been removed and, where practical,
-replaced with C++ code that performs the same function.</p>
+<p>Generated parameter file comments now properly handle escaped
+backslashes preceding another special character.  (Fixes #175)</p>
 </li>
 <li>
-<p>A CGA text display is simulated for all prompt screens and help
-screens.</p>
+<p>The version number is now correctly displayed in the title of help
+screens.  (Fixes #154)</p>
 </li>
 <li>
-<p>A "video mode" determines the resolution of all saved images and is
-provided by a driver.  Iterated Dynamics comes with two drivers: Disk
-and GDI.  The GDI driver renders to the screen through the Windows GDI
-interface.  The disk driver can be used to render images larger than
-your physical screen, but still uses your screen&#8217;s GUI for displaying
-status with a CGA style window.</p>
+<p>When run from the Visual Studio debugger, the working directory of the
+program is properly set to the home directory.  (Fixes #153)</p>
 </li>
 <li>
-<p>Id.cfg, which defines the default video modes, was updated to remove
-all modes smaller than 800x600 and very large disk video modes were
-added.</p>
+<p>Corrected an assert popup during a Debug build. (Fixes #147, #140)</p>
 </li>
 <li>
-<p>DOS related information in video modes was dropped.</p>
+<p>When the monitor configuration changed since the last time Id was run
+and the previous window position is no longer on-screen, the previous
+window position is forgotten and the window is placed by the system.
+(Fixes #136)</p>
 </li>
 <li>
-<p>All online help text has been reviewed and revised to drop DOS
-specific discussions.  Where still appropriate the text has been
-updated to reflect that Id is a program operating in a windowed
-environment.</p>
+<p>On Windows, crash dump files are saved to the savedir location.
+(Fixes #133)</p>
 </li>
 <li>
-<p>The release parameter resets all values to their default but does not
-enable any backwards compatible behavior in this release.  For
-backward compatability with old behavior, use Fractint.</p>
+<p>When changing fractal types, if the the fractal parameters screen or
+entry name screen (for formula, ifs or L-system fractal types) were
+cancelled, the previous fractal type and associated parameters were
+lost.  Now, canceling those screens restores the previous state.
+(Fixes #129)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Code Cleanup in Version 1.1:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Code style guide created to assist contributors. (Fixes #166)</p>
 </li>
 <li>
-<p>The monitorwidth parameter was renamed to stereowidth.  The old
-parameter name is still accepted but will be deprecated in a future
-release.</p>
+<p>More unit tests added, when reasonable, to prove buggy behavior and
+validate their fixes.</p>
 </li>
 <li>
-<p>Printing an image has been removed.  Use your operating system for
-that.  :)</p>
+<p>Library libid source and header files organized into subdirectories by
+role: 3d, engine, fractals, io, math, misc and ui.</p>
 </li>
 <li>
-<p>The following parameter file commands are deprecated and support will
-be removed in a future release.  In this release the arguments are
-parsed and validated and the results ignored.
-    adapter             halftone              ramvideo
-    afi                 iterincr              rleps
-    biospalette         linefeed              textsafe
-    colorps             maxcolorres           title
-    comport             noninterlaced         tplus
-    epsf                pixelzoom             translate
-    exitmode            plotstyle             tweaklzw
-    fpu                 printer               vesadetect
-    gif87a              printfile</p>
+<p>test-id unit tests files organized into subdirectories, matching the
+function or file they test.</p>
+</li>
+<li>
+<p>Identifier names renamed to conform to style guide.</p>
+</li>
+<li>
+<p>Names of files updated to conform to style guide.</p>
+</li>
+<li>
+<p>Calls to standard library functions qualified with namespace std to
+conform to style guide.</p>
+</li>
+<li>
+<p>All platform (e.g. linux vs. Windows) variations isolated to CMake
+checks in the config library.</p>
+</li>
+<li>
+<p>All calls to stricmp, strnicmp, and strncasecmp replaced with
+string_case_compare and string_case_equal from config library.</p>
+</li>
+<li>
+<p>Platform driver types selected by config library in driver_types.h.</p>
+</li>
+<li>
+<p>Platform file descriptor I/O header selected by config library in
+fdio.h.</p>
+</li>
+<li>
+<p>Platform filelength function selected by config library in
+filelength.h.</p>
+</li>
+<li>
+<p>Platform getpid function selected by config library in getpid.h.</p>
+</li>
+<li>
+<p>Platform path limits selected by config library in path_limits.h.</p>
+</li>
+<li>
+<p>All XFRACT conditionally compiled code eliminated by using config
+library.</p>
+</li>
+<li>
+<p>Many more small improvements, see the git commit history for details.</p>
 </li>
 </ul>
 </div>
@@ -798,8 +840,10 @@ parsed and validated and the results ignored.
 <div class="ulist">
 <ul>
 <li>
-<p>Navigation is exclusively through the keyboard.  Mouse support will be
-restored in a subsequent release.</p>
+<p>This initial implementation of perturbation does not support
+periodicity checking and only supports a limited number of inside and
+outside coloring algorithms.  Suspend and resume is not supported with
+perturbation.</p>
 </li>
 <li>
 <p>Sound output does nothing, although all controls can be set through
@@ -810,6 +854,11 @@ a suitable audio library has been identified.</p>
 <p>Some formulas don&#8217;t render correctly.  These problems have been around
 forever as xfractint also renders them incorrectly.  This will be
 fixed in a subsequent release.</p>
+</li>
+<li>
+<p>The code compiles on Linux, but the Linux port is incomplete and is
+planned on being completed with the switch to wxWidgets in version
+2.0.</p>
 </li>
 </ul>
 </div>
@@ -959,8 +1008,8 @@ described as <span class="keyseq"><kbd>Shift</kbd>+<kbd>D</kbd></span>.</p>
 </div>
 <div class="paragraph">
 <p>Many commands and parameters can be passed to Id as command-line
-arguments or read from a configuration file; see "Command Line
-Parameters, Parameter Files, Batch Mode" for details.</p>
+arguments or read from a configuration file; see
+<a href="#_introduction_to_parameters">Introduction to Parameters</a> for details.</p>
 </div>
 </div>
 <div class="sect2">
@@ -978,12 +1027,14 @@ redraw the screen.  For a quick start try one of the following:</p>
 <p>Win32 GDI 1024x768 medium size image:     <kbd>F7</kbd></p>
 </li>
 <li>
-<p>Win32 GDI 1200x900 large size image:      <kbd>F8</kbd>
-<kbd>F1</kbd>
-Display a help screen.  The function keys available in help mode are
-displayed at the bottom of the help screen.</p>
+<p>Win32 GDI 1200x900 large size image:      <kbd>F8</kbd></p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p><kbd>F1</kbd>
+Display a help screen.  The function keys available in help mode are
+displayed at the bottom of the help screen.</p>
 </div>
 <div class="paragraph">
 <p><kbd>M</kbd> or <kbd>Esc</kbd>
@@ -1181,8 +1232,8 @@ fractal types, but not all.</p>
 <p>The general approach to using the zoom box is:  Frame an area using the
 keys described below, then <kbd>Enter</kbd> to expand what&#8217;s in the frame to fill
 the whole screen (zoom in); or <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Enter</kbd></span> to shrink the current image
-into the framed area (zoom out).  With a mouse, double-click the left
-button to zoom in, double click the right button to zoom out.</p>
+into the framed area (zoom out).  With a mouse, double-click the primary
+button to zoom in, double click the secondary button to zoom out.</p>
 </div>
 <div class="paragraph">
 <p><kbd>PageUp</kbd>, <kbd>PageDown</kbd>
@@ -1190,8 +1241,8 @@ Use <kbd>PageUp</kbd> to initially bring up the zoom box.  It starts at full
 screen size.  Subsequent use of these keys makes the zoom box smaller or
 larger.  Using <kbd>PageDown</kbd> to enlarge the zoom box when it is already at
 maximum size removes the zoom box from the display.  Moving the mouse
-away from you or toward you while holding the left button down performs
-the same functions as these keys.</p>
+away from you or toward you while holding the primary button down
+performs the same functions as these keys.</p>
 </div>
 <div class="paragraph">
 <p>Using the "arrow" keys (<kbd>Left</kbd>, <kbd>Right</kbd>, <kbd>Up</kbd>, <kbd>Down</kbd>) or moving the
@@ -1217,10 +1268,10 @@ recommend skipping the rest of the zoom box functions for now and coming
 back to them when you&#8217;re comfortable with the basic zoom box functions.</p>
 </div>
 <div class="paragraph">
-<p><span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Keypad-</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Keypad+</kbd></span>
-Holding <kbd>Ctrl</kbd> and pressing the numeric keypad&#8217;s + or - keys rotates the
-zoom box.  Moving the mouse left or right while holding the right button
-down performs the same function.</p>
+<p><span class="keyseq"><kbd>Ctrl</kbd>+<kbd>-</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>+</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Keypad-</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Keypad+</kbd></span>
+Holding <kbd>Ctrl</kbd> and pressing the <kbd>+</kbd> or <kbd>-</kbd> keys, or the numeric keypad&#8217;s
+<kbd>+</kbd> or <kbd>-</kbd> keys rotates the zoom box.  Moving the mouse left or right
+while holding the secondary button down performs the same function.</p>
 </div>
 <div class="paragraph">
 <p><span class="keyseq"><kbd>Ctrl</kbd>+<kbd>PageUp</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>PageDown</kbd></span>
@@ -1244,7 +1295,7 @@ combined with rotation.</p>
 <p><span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Insert</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Delete</kbd></span>
 These commands change the zoom box color.  This is useful when you&#8217;re
 having trouble seeing the zoom box against the colors around it.  Moving
-the mouse away from you or toward you while holding the right button
+the mouse away from you or toward you while holding the secondary button
 down performs the same function.</p>
 </div>
 <div class="paragraph">
@@ -1263,8 +1314,8 @@ he&#8217;s baked enough.</p>
 <p>If you accidentally change your zoom box shape or rotate and forget
 which way is up, just use <kbd>PageDown</kbd> to make it bigger until it
 disappears, then <kbd>PageUp</kbd> to get a fresh one.  With a mouse, after
-removing the old zoom box from the display release and re-press the left
-button for a fresh one.</p>
+removing the old zoom box from the display release and re-press the
+primary button for a fresh one.</p>
 </div>
 <div class="paragraph">
 <p>If your video mode does not have a 4:3 "aspect ratio" (i.e. if the
@@ -1403,7 +1454,7 @@ from the main menu.</p>
 use the arrow keys to position the frame outline, and <kbd>PageUp</kbd> and
 <kbd>PageDown</kbd> to change its size.  (The upper and lower limits on the size
 depend on the current video mode.)  When the frame is positioned where
-you want it, hit Enter to display the current palette in the frame.</p>
+you want it, hit <kbd>Enter</kbd> to display the current palette in the frame.</p>
 </div>
 <div class="paragraph">
 <p>Note that the palette frame shows R(ed) G(reen) and B(lue) values for
@@ -1472,7 +1523,7 @@ keypad <kbd>+</kbd> and <kbd>-</kbd> keys do the same.</p>
 <div class="paragraph">
 <p><kbd>PageUp</kbd>, <kbd>PageDown</kbd>
 Increase or decrease the active color component value by 5; Moving the
-mouse up/down with left button held is the same</p>
+mouse up/down with primary button held is the same.</p>
 </div>
 <div class="paragraph">
 <p><kbd>0</kbd>, <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd>, <kbd>4</kbd>, <kbd>5</kbd>, <kbd>6</kbd>
@@ -1586,7 +1637,7 @@ the active register to the color under the cursor.</p>
 <div class="paragraph">
 <p><kbd>Enter</kbd>
 Only useful when 'auto' is off, as described above; double clicking the
-left mouse button is the same as Enter.</p>
+primary mouse button is the same as <kbd>Enter</kbd>.</p>
 </div>
 <div class="paragraph">
 <p><kbd>X</kbd>
@@ -1632,15 +1683,15 @@ the corresponding palette values).  While in Freestyle mode:</p>
 affected.</p>
 </li>
 <li>
-<p><span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Insert</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Delete</kbd></span> or the shifted-right-mouse-button changes
-the size of the affected palette range.</p>
+<p><span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Insert</kbd></span>, <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Delete</kbd></span> or the shifted-secondary-mouse-button
+changes the size of the affected palette range.</p>
 </li>
 <li>
 <p>The normal color editing keys (R,G,B,1-6, etc) set the central color
 of the affected palette range.</p>
 </li>
 <li>
-<p>Pressing <kbd>Enter</kbd> or double-clicking the left mouse button makes the
+<p>Pressing <kbd>Enter</kbd> or double-clicking the primary mouse button makes the
 palette changes permanent (if you don&#8217;t perform this step, any palette
 changes disappear when you press the <kbd>F</kbd> key again to exit freestyle
 mode).</p>
@@ -2331,6 +2382,11 @@ set, "a*b" means "a times b", and "a^b" means "a to the power b".</p>
 <div class="paragraph">
 <p>(type=mandel)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-mandel.png"><img src="help/images/thumbnails/type-mandel.png" alt="type mandel"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>This set is the classic: the only one implemented in many plotting
 programs, and the source of most of the printed fractal images
@@ -2436,13 +2492,20 @@ now.  We trust you.</p>
 <div class="paragraph">
 <p>(type=julia)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-julia.png"><img src="help/images/thumbnails/type-julia.png" alt="type julia"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>These sets were named for mathematician Gaston Julia, and can be
 generated by a simple change in the iteration process described for the
 <a href="#_the_mandelbrot_set">Mandelbrot Set</a>.  Start with a specified value of C, "C-real + i * C-
 imaginary"; use as the initial value of Z "x-coordinate + i * y-
-coordinate"; and repeat the same iteration, Z(n+1) = Z(n)^2 + C.
-There is a Julia set corresponding to every point on the complex plane&#8201;&#8212;&#8201;an infinite number of Julia sets.  But the most visually interesting
+coordinate"; and repeat the same iteration, Z(n+1) = Z(n)^2 + C.</p>
+</div>
+<div class="paragraph">
+<p>There is a Julia set corresponding to every point on the complex plane&#8201;&#8212;&#8201;an infinite number of Julia sets.  But the most visually interesting
 tend to be found for the same C values where the M-set image is busiest,
 i.e.  points just outside the boundary.  Go too far inside, and the
 corresponding Julia set is a circle; go too far outside, and it breaks
@@ -2510,8 +2573,10 @@ Julia types.  When viewing the Mandelbrot, the spacebar turns on a
 window mode that displays the Inverse Julia corresponding to the cursor
 position in a window.  Pressing the spacebar then causes the regular
 Julia escape time fractal corresponding to the cursor position to be
-generated.  The following keys take effect in Inverse Julia mode.
-<kbd>Space</kbd>     Generate the escape-time Julia Set corresponding to the
+generated.  The following keys take effect in Inverse Julia mode.</p>
+</div>
+<div class="paragraph">
+<p><kbd>Space</kbd>     Generate the escape-time Julia Set corresponding to the
 cursor
             position.  Only works if fractal is a "Mandelbrot" type.
 <kbd>N</kbd>         Numbers toggle - shows coordinates of the cursor on the
@@ -2523,8 +2588,8 @@ on
             the fractal, allowing the orbit to take up the whole screen.
             Press <kbd>H</kbd> again to uncover the fractal.
 <kbd>S</kbd>         Saves the fractal, cursor, orbits, and numbers.
-<kbd>&lt;</kbd> or <kbd>,</kbd>  Zoom inverse julia image smaller.
-<kbd>&gt;</kbd> or <kbd>.</kbd>  Zoom inverse julia image larger.
+<kbd>&lt;</kbd> or <kbd>,</kbd>  Zoom inverse Julia image smaller.
+<kbd>&gt;</kbd> or <kbd>.</kbd>  Zoom inverse Julia image larger.
 <kbd>Z</kbd>         Restore default zoom.</p>
 </div>
 <div class="paragraph">
@@ -2561,10 +2626,8 @@ repellers, and the former boundary itself becomes the attractor!  Now,
 starting from any point, all orbits are drawn irresistibly to the Julia
 Set!  In fact, once an orbit reaches the boundary, it will continue to
 hop about until it traces the entire Julia Set!  This method for drawing
-Julia Sets is called the Inverse Iteration Method, or IIM for short.</p>
-</div>
-<div class="paragraph">
-<p>Unfortunately, some parts of each Julia Set boundary are far more
+Julia Sets is called the Inverse Iteration Method, or IIM for short.
+Unfortunately, some parts of each Julia Set boundary are far more
 attractive to inverse orbits than others are, so that as an orbit traces
 out the set, it keeps coming back to these attractive parts again and
 again, only occasionally visiting the less attractive parts.  Thus it
@@ -2591,8 +2654,8 @@ positive first), and completely at random.  It turns out that most
 traversal methods lead to the same or similar pictures, but that how the
 image evolves as the orbits trace it out differs wildly depending on the
 traversal method chosen.  As far as we know, this fact is an original
-discovery by Michael Snyder, andversion 18.2 of Id&#8217;s ancestor, Fractint,
-was its first publication.</p>
+discovery by Michael Snyder, and version 18.2 of Id&#8217;s ancestor,
+Fractint, was its first publication.</p>
 </div>
 <div class="paragraph">
 <p>Pick a Julia constant such as Z(0) = (-.74543, .11301), the popular
@@ -2618,6 +2681,11 @@ corresponding Julia escape time fractal.</p>
 <h3 id="_newton_domains_of_attraction">Newton Domains of Attraction</h3>
 <div class="paragraph">
 <p>(type=newtbasin)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-newtbasin.png"><img src="help/images/thumbnails/type-newtbasin.png" alt="type newtbasin"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>The Newton formula is an algorithm used to find the roots of polynomial
@@ -2655,6 +2723,11 @@ good old fractal sense.  Zoom in and see for yourself.</p>
 <div class="paragraph">
 <p>(type=newton)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-newton.png"><img src="help/images/thumbnails/type-newton.png" alt="type newton"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>The generating formula here is identical to that for <a href="#_newton_domains_of_attraction">newtbasin</a>, but the
 coloring scheme is different.  Pixels are colored not according to the
@@ -2679,14 +2752,18 @@ is faster.</p>
 <div class="sect2">
 <h3 id="_complex_newton">Complex Newton</h3>
 <div class="paragraph">
-<p>(type=complexnewton/complexbasin)</p>
+<p>(type=complexnewton, complexbasin)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-complexnewton.png"><img src="help/images/thumbnails/type-complexnewton.png" alt="type complexnewton"></a></span>
+<span class="image"><a class="image" href="help/images/type-complexbasin.png"><img src="help/images/thumbnails/type-complexbasin.png" alt="type complexbasin"></a></span></p>
 </div>
 <div class="paragraph">
 <p>Well, hey, "Z^n - 1" is so boring when you can use "Z^a - b" where "a"
-and "b" are complex numbers!  The new "complexnewton" and "complexbasin"
-fractal types are just the old <a href="#_newton">"newton"</a> and <a href="#_newton_domains_of_attraction">"newtbasin"</a> fractal types
-with this little added twist.  When you select these fractal types, you
-are prompted for four values (the real and imaginary portions of "a" and
+and "b" are complex numbers!  The "complexnewton" and "complexbasin"
+fractal types are just the <a href="#_newton">"newton"</a> and <a href="#_newton_domains_of_attraction">"newtbasin"</a> fractal types with
+this little added twist.  When you select these fractal types, you are
+prompted for four values (the real and imaginary portions of "a" and
 "b").  If "a" has a complex portion, the fractal has a discontinuity
 along the negative axis - relax, we finally figured out that it&#8217;s
 <strong>supposed</strong> to be there!</p>
@@ -2696,6 +2773,11 @@ along the negative axis - relax, we finally figured out that it&#8217;s
 <h3 id="_lambda_sets">Lambda Sets</h3>
 <div class="paragraph">
 <p>(type=lambda)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-lambda.png"><img src="help/images/thumbnails/type-lambda.png" alt="type lambda"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>This type calculates the Julia set of the formula lambda*Z*(1-Z).  That
@@ -2721,6 +2803,11 @@ history of fractals.</p>
 <div class="paragraph">
 <p>(type=mandellambda)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-mandellambda.png"><img src="help/images/thumbnails/type-mandellambda.png" alt="type mandellambda"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>This type is the "Mandelbrot equivalent" of the <a href="#_lambda_sets">lambda</a> set.  A comment
 is in order here.  Almost all the Id "Mandelbrot" sets are created from
@@ -2737,10 +2824,8 @@ Mandelbrot knows more about fractals than we do, we defer!  Id
 calculates mandelambda Dr. Mandelbrot&#8217;s way instead of our way.  But all
 the other "Mandelbrot" sets in Id are still calculated our way!
 (Fortunately for us, for the classic Mandelbrot Set these two methods
-are the same!)</p>
-</div>
-<div class="paragraph">
-<p>Well now, folks, apart from questions of faithfulness to fractals named
+are the same!)
+Well now, folks, apart from questions of faithfulness to fractals named
 in the literature (which we do take seriously!), if a formula makes a
 beautiful fractal, it is not wrong.  In fact some of the best fractals
 in Id are the results of mistakes!  Nevertheless, thanks to Kevin for
@@ -2756,14 +2841,21 @@ for a way to experiment with different orbit intializations).</p>
 <div class="paragraph">
 <p>(type=circle)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-circle.png"><img src="help/images/thumbnails/type-circle.png" alt="type circle"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>This fractal types is from A. K. Dewdney&#8217;s "Computer Recreations" column
 in "Scientific American".  It is attributed to John Connett of the
 University of Minnesota.</p>
 </div>
 <div class="paragraph">
-<p>(Don&#8217;t tell anyone, but this fractal type is not really a fractal!)
-Fascinating Moire patterns can be formed by calculating x^2 + y^2 for
+<p>(Don&#8217;t tell anyone, but this fractal type is not really a fractal!)</p>
+</div>
+<div class="paragraph">
+<p>Fascinating Moire patterns can be formed by calculating x^2 + y^2 for
 each pixel in a piece of the complex plane.  After multiplication by a
 magnification factor (the parameter), the number is truncated to an
 integer and mapped to a color via color = value modulo (number of
@@ -2781,6 +2873,11 @@ by Id.  This is because type circle and inside=startrail locks up Id.</p>
 <h3 id="_plasma_clouds">Plasma Clouds</h3>
 <div class="paragraph">
 <p>(type=plasma)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-plasma.png"><img src="help/images/thumbnails/type-plasma.png" alt="type plasma"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>Plasma clouds are real live fractals, even though we didn&#8217;t know it at
@@ -2825,8 +2922,10 @@ plasma cloud (0) or to use the previous seed (1).</p>
 <p>The fourth parameter turns on 16-bit .POT output which provides much
 smoother height gradations.  This is especially useful for creating
 mountain landscapes when using the plasma output with a ray tracer such
-as POV-Ray.
-With parameter three set to 1, the next plasma cloud generated will be
+as POV-Ray.</p>
+</div>
+<div class="paragraph">
+<p>With parameter three set to 1, the next plasma cloud generated will be
 identical to the previous but at whatever new resolution is desired.</p>
 </div>
 <div class="paragraph">
@@ -2853,6 +2952,11 @@ independent of screen resolution.</p>
 <h3 id="_lambdafn">Lambdafn</h3>
 <div class="paragraph">
 <p>(type=lambdafn)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-lambdafn.png"><img src="help/images/thumbnails/type-lambdafn.png" alt="type lambdafn"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>Function=[sin|cos|sinh|cosh|exp|log|sqr|&#8230;&#8203;]) is specified with this
@@ -2885,6 +2989,11 @@ parameter or the <kbd>X</kbd> options screen.</p>
 <div class="paragraph">
 <p>(type=mandelfn)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-mandelfn.png"><img src="help/images/thumbnails/type-mandelfn.png" alt="type mandelfn"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>Function=[sin|cos|sinh|cosh|exp|log|sqr|&#8230;&#8203;]) is specified with this
 type.</p>
@@ -2908,16 +3017,25 @@ until Mark Peterson found them!</p>
 <div class="sect2">
 <h3 id="_barnsley_mandelbrotjulia_sets">Barnsley Mandelbrot/Julia Sets</h3>
 <div class="paragraph">
-<p>(type=barnsleym1/&#8230;&#8203;/j3)</p>
+<p>(type=barnsleym1, barnsleym2, barnsleym3, barnsleyj1, barnsleyj2,
+barnsleyj3)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-barnsleym1.png"><img src="help/images/thumbnails/type-barnsleym1.png" alt="type barnsleym1"></a></span>
+<span class="image"><a class="image" href="help/images/type-barnsleym2.png"><img src="help/images/thumbnails/type-barnsleym2.png" alt="type barnsleym2"></a></span>
+<span class="image"><a class="image" href="help/images/type-barnsleym3.png"><img src="help/images/thumbnails/type-barnsleym3.png" alt="type barnsleym3"></a></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-barnsleyj1.png"><img src="help/images/thumbnails/type-barnsleyj1.png" alt="type barnsleyj1"></a></span>
+<span class="image"><a class="image" href="help/images/type-barnsleyj2.png"><img src="help/images/thumbnails/type-barnsleyj2.png" alt="type barnsleyj2"></a></span>
+<span class="image"><a class="image" href="help/images/type-barnsleyj3.png"><img src="help/images/thumbnails/type-barnsleyj3.png" alt="type barnsleyj3"></a></span></p>
 </div>
 <div class="paragraph">
 <p>Michael Barnsley has written a fascinating college-level text, "Fractals
 Everywhere", on fractal geometry and its graphic applications. (See
 <a href="#_bibliography">Bibliography</a>.) In it, he applies the principle of the M and J sets to
-more general functions of two complex variables.</p>
-</div>
-<div class="paragraph">
-<p>We have incorporated three of Barnsley&#8217;s examples in Id.  Their
+more general functions of two complex variables.
+We have incorporated three of Barnsley&#8217;s examples in Id.  Their
 appearance suggests polarized-light microphotographs of minerals, with
 patterns that are less organic and more crystalline than those of the
 M/J sets.  Each example has both a "Mandelbrot" and a "Julia" type.
@@ -2982,10 +3100,8 @@ these values from the command line using:</p>
 <div class="paragraph">
 <p>rotation=xrot/yrot/zrot       (try 30/30/30)
 shift=xshift/yshift           (shifts before applying perspective!)
-perspective=viewerposition    (try 200)</p>
-</div>
-<div class="paragraph">
-<p>Alternatively, entering <kbd>I</kbd> from main screen will allow you to modify
+perspective=viewerposition    (try 200)
+Alternatively, entering <kbd>I</kbd> from main screen will allow you to modify
 these values.  The defaults are the same as for regular 3D, and are not
 always optimum for 3D IFS.  With the 3dfern IFS type, try
 rotation=30/30/30.  Note that applying shift when using perspective
@@ -3023,8 +3139,10 @@ e.g. in fern:
 <div class="paragraph">
 <p>The "p" values are the probabilities assigned to each function (how
 often it is used), which add up to one.  Id supports up to 32 functions,
-although usually three or four are enough.
-3D IFS definitions are a bit different.  The name is followed by (3D) in
+although usually three or four are enough.</p>
+</div>
+<div class="paragraph">
+<p>3D IFS definitions are a bit different.  The name is followed by (3D) in
 the definition file, and each line of the definition contains 13
 numbers: a b c d e f g h i j k l p, defining:
     matrix   vector  prob
@@ -3041,6 +3159,11 @@ is overwritten each time a fractal is generated.</p>
 <h3 id="_sierpinski_gasket">Sierpinski Gasket</h3>
 <div class="paragraph">
 <p>(type=sierpinski)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-sierpinski.png"><img src="help/images/thumbnails/type-sierpinski.png" alt="type sierpinski"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>Another pre-Mandelbrot classic, this one found by W. Sierpinski around
@@ -3066,7 +3189,11 @@ with integer math routines, so it runs fairly quickly.</p>
 <div class="sect2">
 <h3 id="_quartic_mandelbrotjulia">Quartic Mandelbrot/Julia</h3>
 <div class="paragraph">
-<p>(type=mandel4/julia4)</p>
+<p>(type=mandel4, julia4)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-mandel4.png"><img src="help/images/thumbnails/type-mandel4.png" alt="type mandel4"></a></span>
+<span class="image"><a class="image" href="help/images/type-julia4.png"><img src="help/images/thumbnails/type-julia4.png" alt="type julia4"></a></span></p>
 </div>
 <div class="paragraph">
 <p>These fractal types are the moral equivalent of the original M and J
@@ -3086,18 +3213,28 @@ We used this one only because we&#8217;re lazy, and Z(n)^4 = (Z(n)<sup>2)</sup>2
 <div class="sect2">
 <h3 id="_pickover_mandelbrotjulia_types">Pickover Mandelbrot/Julia Types</h3>
 <div class="paragraph">
-<p>(type=manfn+zsqrd/julfn+zsqrd, manzpower/julzpower, manzzpwr/julzzpwr,
-manfn+exp/julfn+exp)</p>
+<p>(type=manfn+zsqrd, julfn+zsqrd, manzpower, julzpower, manzzpwr,
+julzzpwr, manfn+exp, julfn+exp)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-manfn-plus-zsqrd.png"><img src="help/images/thumbnails/type-manfn-plus-zsqrd.png" alt="type manfn plus zsqrd"></a></span>
+<span class="image"><a class="image" href="help/images/type-manzpower.png"><img src="help/images/thumbnails/type-manzpower.png" alt="type manzpower"></a></span>
+<span class="image"><a class="image" href="help/images/type-manzzpwr.png"><img src="help/images/thumbnails/type-manzzpwr.png" alt="type manzzpwr"></a></span>
+<span class="image"><a class="image" href="help/images/type-manfn-plus-exp.png"><img src="help/images/thumbnails/type-manfn-plus-exp.png" alt="type manfn plus exp"></a></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-julfn-plus-zsqrd.png"><img src="help/images/thumbnails/type-julfn-plus-zsqrd.png" alt="type julfn plus zsqrd"></a></span>
+<span class="image"><a class="image" href="help/images/type-julzpower.png"><img src="help/images/thumbnails/type-julzpower.png" alt="type julzpower"></a></span>
+<span class="image"><a class="image" href="help/images/type-julzzpwr.png"><img src="help/images/thumbnails/type-julzzpwr.png" alt="type julzzpwr"></a></span>
+<span class="image"><a class="image" href="help/images/type-julfn-plus-exp.png"><img src="help/images/thumbnails/type-julfn-plus-exp.png" alt="type julfn plus exp"></a></span></p>
 </div>
 <div class="paragraph">
 <p>These types have been explored by Clifford A. Pickover, of the IBM
 Thomas J. Watson Research center.  As implemented in Id, they are
 regular Mandelbrot/Julia set pairs that may be plotted with or without
 the <a href="#_biomorphs">"biomorph"</a> option Pickover used to create organic-looking beasties
-(see below).</p>
-</div>
-<div class="paragraph">
-<p>These types are produced with formulas built from the functions z^z,
+(see below).
+These types are produced with formulas built from the functions z^z,
 z^n, sin(z), and e^z for complex z.  Types with "power" or "pwr" in
 their name have an exponent value as a third parameter.  For example,
 type=manzpower params=0/0/2 is our old friend the classical Mandelbrot,
@@ -3117,7 +3254,11 @@ original "biomorph" types, we should give an example.  Try:</p>
 <div class="sect2">
 <h3 id="_pickover_popcorn">Pickover Popcorn</h3>
 <div class="paragraph">
-<p>(type=popcorn/popcornjul)</p>
+<p>(type=popcorn, popcornjul)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-popcorn.png"><img src="help/images/thumbnails/type-popcorn.png" alt="type popcorn"></a></span>
+<span class="image"><a class="image" href="help/images/type-popcornjul.png"><img src="help/images/thumbnails/type-popcornjul.png" alt="type popcornjul"></a></span></p>
 </div>
 <div class="paragraph">
 <p>Here is another Pickover idea.  This one computes and plots the orbits
@@ -3158,6 +3299,14 @@ some insight as to where the popcorn comes from.</p>
 marksmandelpwr, tim&#8217;s_error)</p>
 </div>
 <div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-marksmandel.png"><img src="help/images/thumbnails/type-marksmandel.png" alt="type marksmandel"></a></span>
+<span class="image"><a class="image" href="help/images/type-marksjulia.png"><img src="help/images/thumbnails/type-marksjulia.png" alt="type marksjulia"></a></span>
+<span class="image"><a class="image" href="help/images/type-cmplxmarksmand.png"><img src="help/images/thumbnails/type-cmplxmarksmand.png" alt="type cmplxmarksmand"></a></span>
+<span class="image"><a class="image" href="help/images/type-cmplxmarksjul.png"><img src="help/images/thumbnails/type-cmplxmarksjul.png" alt="type cmplxmarksjul"></a></span>
+<span class="image"><a class="image" href="help/images/type-marksmandelpwr.png"><img src="help/images/thumbnails/type-marksmandelpwr.png" alt="type marksmandelpwr"></a></span>
+<span class="image"><a class="image" href="help/images/type-tims_error.png"><img src="help/images/thumbnails/type-tims_error.png" alt="type tims error"></a></span></p>
+</div>
+<div class="paragraph">
 <p>These fractal types are contributions of Mark Peterson.  MarksMandel and
 MarksJulia are two families of fractal types that are linked in the same
 manner as the classic Mandelbrot/Julia sets: each MarksMandel set can be
@@ -3184,6 +3333,11 @@ the type "tim&#8217;s_error" after making an interesting coding mistake.</p>
 <h3 id="_unity">Unity</h3>
 <div class="paragraph">
 <p>(type=unity)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-unity.png"><img src="help/images/thumbnails/type-unity.png" alt="type unity"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>This Peterson variation began with curiosity about other "Newton-style"
@@ -3219,8 +3373,24 @@ know what you come up with!</p>
 <div class="sect2">
 <h3 id="_scott_taylor_lee_skinner_variations">Scott Taylor / Lee Skinner Variations</h3>
 <div class="paragraph">
-<p>(type=fn(z*z), fn*fn, fn*z+z, fn+fn, fn+fn(pix), sqr(1/fn), sqr(fn),
+<p>(type=fn(z*z), fn*fn, fn*z+z, fn+fn, fn(z)+fn(pix), sqr(1/fn), sqr(fn),
 spider, tetrate, manowar)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-fn-zsqr.png"><img src="help/images/thumbnails/type-fn-zsqr.png" alt="type fn zsqr"></a></span>
+<span class="image"><a class="image" href="help/images/type-fn-mul-fn.png"><img src="help/images/thumbnails/type-fn-mul-fn.png" alt="type fn mul fn"></a></span>
+<span class="image"><a class="image" href="help/images/type-fn-mul-z-plus-z.png"><img src="help/images/thumbnails/type-fn-mul-z-plus-z.png" alt="type fn mul z plus z"></a></span>
+<span class="image"><a class="image" href="help/images/type-fn-plus-fn.png"><img src="help/images/thumbnails/type-fn-plus-fn.png" alt="type fn plus fn"></a></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-fnz-plus-fnpixel.png"><img src="help/images/thumbnails/type-fnz-plus-fnpixel.png" alt="type fnz plus fnpixel"></a></span>
+<span class="image"><a class="image" href="help/images/type-sqr-1-over-fn.png"><img src="help/images/thumbnails/type-sqr-1-over-fn.png" alt="type sqr 1 over fn"></a></span>
+<span class="image"><a class="image" href="help/images/type-sqr-fn.png"><img src="help/images/thumbnails/type-sqr-fn.png" alt="type sqr fn"></a></span>
+<span class="image"><a class="image" href="help/images/type-spider.png"><img src="help/images/thumbnails/type-spider.png" alt="type spider"></a></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-tetrate.png"><img src="help/images/thumbnails/type-tetrate.png" alt="type tetrate"></a></span>
+<span class="image"><a class="image" href="help/images/type-manowar.png"><img src="help/images/thumbnails/type-manowar.png" alt="type manowar"></a></span></p>
 </div>
 <div class="paragraph">
 <p>Two of Id&#8217;s faithful users went bonkers when we introduced the "formula"
@@ -3252,24 +3422,26 @@ appearance.  For example, the images produced by z = sin(z) + z^2 and z
 <p>(type=kamtorus, kamtorus3d)</p>
 </div>
 <div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-kamtorus.png"><img src="help/images/thumbnails/type-kamtorus.png" alt="type kamtorus"></a></span>
+<span class="image"><a class="image" href="help/images/type-kamtorus3d.png"><img src="help/images/thumbnails/type-kamtorus3d.png" alt="type kamtorus3d"></a></span></p>
+</div>
+<div class="paragraph">
 <p>This type is created by superimposing orbits generated by a set of
 equations, with a variable incremented each time.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>x(0) = y(0) = orbit/3;
-x(n+1) = x(n)*cos(a) + (x(n)*x(n)-y(n))*sin(a)
-y(n+1) = x(n)*sin(a) - (x(n)*x(n)-y(n))*cos(a)</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After each orbit, 'orbit' is incremented by a step size.  The parameters
+<pre>         x(0) = y(0) = orbit/3;
+         x(n+1) = x(n)*cos(a) + (x(n)*x(n)-y(n))*sin(a)
+         y(n+1) = x(n)*sin(a) - (x(n)*x(n)-y(n))*cos(a)
+After each orbit, 'orbit' is incremented by a step size.  The parameters
 are angle "a", step size for incrementing 'orbit', stop value for
 'orbit', and points per orbit.  Try this with a stop value of 5 with
 sound=x for some weird fractal music (ok, ok, fractal noise)!  You will
 also see the KAM Torus head into some chaotic territory that Scott
 Taylor wanted to hide from you by setting the defaults the way he did,
-but now we have revealed all!</p>
+but now we have revealed all!</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>The 3D variant is created by treating 'orbit' as the z coordinate.</p>
@@ -3295,7 +3467,17 @@ affectionatly known as chaotic orbits!  (Thanks, Wikipedia!)</p>
 <div class="sect2">
 <h3 id="_bifurcation">Bifurcation</h3>
 <div class="paragraph">
-<p>(type=bifxxx)</p>
+<p>(type=bifurcation, bifmay, bifstewart, biflambda, bif=sinpi, bif+sinpi)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-bifurcation.png"><img src="help/images/thumbnails/type-bifurcation.png" alt="type bifurcation"></a></span>
+<span class="image"><a class="image" href="help/images/type-bifmay.png"><img src="help/images/thumbnails/type-bifmay.png" alt="type bifmay"></a></span>
+<span class="image"><a class="image" href="help/images/type-bifstewart.png"><img src="help/images/thumbnails/type-bifstewart.png" alt="type bifstewart"></a></span></p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-biflambda.png"><img src="help/images/thumbnails/type-biflambda.png" alt="type biflambda"></a></span>
+<span class="image"><a class="image" href="help/images/type-bif-eq-sinpi.png"><img src="help/images/thumbnails/type-bif-eq-sinpi.png" alt="type bif eq sinpi"></a></span>
+<span class="image"><a class="image" href="help/images/type-bif-plus-sinpi.png"><img src="help/images/thumbnails/type-bif-plus-sinpi.png" alt="type bif plus sinpi"></a></span></p>
 </div>
 <div class="paragraph">
 <p>The wonder of fractal geometry is that such complex forms can arise from
@@ -3445,7 +3627,11 @@ if you want to save it.</p>
 <div class="sect2">
 <h3 id="_lorenz_attractors">Lorenz Attractors</h3>
 <div class="paragraph">
-<p>(type=lorenz/lorenz3d)</p>
+<p>(type=lorenz, lorenz3d)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-lorenz.png"><img src="help/images/thumbnails/type-lorenz.png" alt="type lorenz"></a></span>
+<span class="image"><a class="image" href="help/images/type-lorenz3d.png"><img src="help/images/thumbnails/type-lorenz3d.png" alt="type lorenz3d"></a></span></p>
 </div>
 <div class="paragraph">
 <p>The "Lorenz attractor" is a "simple" set of three deterministic
@@ -3533,6 +3719,11 @@ used in the differential equation (a, b, and c).  The default values are
 <div class="paragraph">
 <p>(type=rossler3d)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-rossler3d.png"><img src="help/images/thumbnails/type-rossler3d.png" alt="type rossler3d"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>This fractal is named after the German Otto Rossler, a non-practicing
 medical doctor who approached chaos with a bemusedly philosophical
@@ -3559,6 +3750,11 @@ znew = z + b*dt + x*z*dt - c*z*dt</pre>
 <h3 id="_henon_attractors">Henon Attractors</h3>
 <div class="paragraph">
 <p>(type=henon)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-henon.png"><img src="help/images/thumbnails/type-henon.png" alt="type henon"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>Michel Henon was an astronomer at Nice observatory in southern France.
@@ -3589,6 +3785,11 @@ ynew = b*x</pre>
 <div class="paragraph">
 <p>(type=pickover)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-pickover.png"><img src="help/images/thumbnails/type-pickover.png" alt="type pickover"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>Clifford A. Pickover of the IBM Thomas J. Watson Research center is such
 a creative source for fractals that we attach his name to this one only
@@ -3596,10 +3797,14 @@ with great trepidation.  Probably tomorrow he&#8217;ll come up with another
 one and we&#8217;ll be back to square one trying to figure out a name!</p>
 </div>
 <div class="paragraph">
-<p>This one is the three dimensional orbit defined by:
-             xnew = sin(a*y) - z*cos(b*x)
-             ynew = z*sin(c*x) - cos(d*y)
-             znew = sin(x)</p>
+<p>This one is the three dimensional orbit defined by:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>xnew = sin(a*y) - z*cos(b*x)
+ynew = z*sin(c*x) - cos(d*y)
+znew = sin(x)</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Default parameters are: a = 2.24, b = .43, c = -.65, d = -2.43</p>
@@ -3609,6 +3814,11 @@ one and we&#8217;ll be back to square one trying to figure out a name!</p>
 <h3 id="_gingerbreadman">Gingerbreadman</h3>
 <div class="paragraph">
 <p>(type=gingerbreadman)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-gingerbreadman.png"><img src="help/images/thumbnails/type-gingerbreadman.png" alt="type gingerbreadman"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>This simple fractal is a charming example stolen from "Science of
@@ -3627,7 +3837,11 @@ ynew = x</pre>
 <div class="sect2">
 <h3 id="_martin_attractors">Martin Attractors</h3>
 <div class="paragraph">
-<p>(type=hopalong/martin)</p>
+<p>(type=hopalong, martin)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-hopalong.png"><img src="help/images/thumbnails/type-hopalong.png" alt="type hopalong"></a></span>
+<span class="image"><a class="image" href="help/images/type-martin.png"><img src="help/images/thumbnails/type-martin.png" alt="type martin"></a></span></p>
 </div>
 <div class="paragraph">
 <p>These fractal types are from A. K. Dewdney&#8217;s "Computer Recreations"
@@ -3650,10 +3864,8 @@ iterations.</p>
 <p>Another Martin fractal is simpler.  The iterated formula is:
       x(n+1) = y(n) - sin(x(n))
       y(n+1) = a - x(n)
-The parameter is "a".  Try values near the number pi.</p>
-</div>
-<div class="paragraph">
-<p>Michael Peters has based the HOP program on variations of these Martin
+The parameter is "a".  Try values near the number pi.
+Michael Peters has based the HOP program on variations of these Martin
 types.  You will find three of these here: chip, quadruptwo, and
 threeply.</p>
 </div>
@@ -3661,12 +3873,18 @@ threeply.</p>
 <div class="sect2">
 <h3 id="_icon">Icon</h3>
 <div class="paragraph">
-<p>(type=icon/icon3d)</p>
+<p>(type=icons, icons3d)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-icons.png"><img src="help/images/thumbnails/type-icons.png" alt="type icons"></a></span>
+<span class="image"><a class="image" href="help/images/type-icons3d.png"><img src="help/images/thumbnails/type-icons3d.png" alt="type icons3d"></a></span></p>
 </div>
 <div class="paragraph">
 <p>This fractal type was inspired by the book "Symmetry in Chaos" by
-Michael Field and Martin Golubitsky (ISBN 0-19-853689-5, Oxford Press).
-To quote from the book&#8217;s jacket,</p>
+Michael Field and Martin Golubitsky (ISBN 0-19-853689-5, Oxford Press).</p>
+</div>
+<div class="paragraph">
+<p>To quote from the book&#8217;s jacket,</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -4091,6 +4309,11 @@ so try your formulas without symmetry before you use these.</p>
 <div class="paragraph">
 <p>(type=julibrot)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-julibrot.png"><img src="help/images/thumbnails/type-julibrot.png" alt="type julibrot"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>The Julibrot fractal type uses a general-purpose renderer for
 visualizing three dimensional solid fractals.  Originally Mark Peterson
@@ -4235,7 +4458,13 @@ documentation.  Juan J. Buhler added additional options.</p>
 <div class="sect2">
 <h3 id="_magnetic_fractals">Magnetic Fractals</h3>
 <div class="paragraph">
-<p>(type=magnet1m/&#8230;&#8203;/magnet2j)</p>
+<p>(type=magnet1m, magnet2m, magnet1j, magnet2j)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-magnet1m.png"><img src="help/images/thumbnails/type-magnet1m.png" alt="type magnet1m"></a></span>
+<span class="image"><a class="image" href="help/images/type-magnet2m.png"><img src="help/images/thumbnails/type-magnet2m.png" alt="type magnet2m"></a></span>
+<span class="image"><a class="image" href="help/images/type-magnet1j.png"><img src="help/images/thumbnails/type-magnet1j.png" alt="type magnet1j"></a></span>
+<span class="image"><a class="image" href="help/images/type-magnet2j.png"><img src="help/images/thumbnails/type-magnet2j.png" alt="type magnet2j"></a></span></p>
 </div>
 <div class="paragraph">
 <p>These fractals use formulae derived from the study of hierarchical
@@ -4261,10 +4490,8 @@ you start your new job as a professor of theoretical physics&#8230;&#8203;</p>
 <p>In Id terms, the important bits of the above are "fractals", "complex
 numbers", "formulae", and "The Beauty of Fractals".  Lifting the
 formulae straight out of the book and iterating them over the complex
-plane (just like the Mandelbrot set) produces fractals.</p>
-</div>
-<div class="paragraph">
-<p>The formulae are a bit more complicated than the Z^2+C used for the
+plane (just like the Mandelbrot set) produces fractals.
+The formulae are a bit more complicated than the Z^2+C used for the
 Mandelbrot set, that&#8217;s all.  They are :</p>
 </div>
 <div class="literalblock">
@@ -4470,6 +4697,11 @@ results, switch to the floating point code.</p>
 <div class="paragraph">
 <p>(type=lyapunov)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-lyapunov.png"><img src="help/images/thumbnails/type-lyapunov.png" alt="type lyapunov"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>The bifurcation fractal illustrates what happens in a simple population
 model as the growth rate increases.  The Lyapunov fractal expands that
@@ -4537,10 +4769,8 @@ Like the Bifurcation model, the Lyapunov allow you to set the number of
 cycles that will be run to allow the model to approach equilibrium
 before the lyapunov exponent calculation is begun.  The default value of
 0 uses one half of the iterations before beginning the calculation of
-the exponent.</p>
-</div>
-<div class="paragraph">
-<p>Reference: A.K. Dewdney, Mathematical Recreations, Scientific American,
+the exponent.
+Reference: A.K. Dewdney, Mathematical Recreations, Scientific American,
 Sept. 1991</p>
 </div>
 </div>
@@ -4548,6 +4778,12 @@ Sept. 1991</p>
 <h3 id="_fnfn_fractals">fn||fn Fractals</h3>
 <div class="paragraph">
 <p>(type=lambda(fn||fn), manlam(fn||fn), julia(fn||fn), mandel(fn||fn))</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-lambda-fn-or-fn.png"><img src="help/images/thumbnails/type-lambda-fn-or-fn.png" alt="type lambda fn or fn"></a></span>
+<span class="image"><a class="image" href="help/images/type-manlam-fn-or-fn.png"><img src="help/images/thumbnails/type-manlam-fn-or-fn.png" alt="type manlam fn or fn"></a></span>
+<span class="image"><a class="image" href="help/images/type-julia-fn-or-fn.png"><img src="help/images/thumbnails/type-julia-fn-or-fn.png" alt="type julia fn or fn"></a></span>
+<span class="image"><a class="image" href="help/images/type-mandel-fn-or-fn.png"><img src="help/images/thumbnails/type-mandel-fn-or-fn.png" alt="type mandel fn or fn"></a></span></p>
 </div>
 <div class="paragraph">
 <p>Two functions=[sin|cos|sinh|cosh|exp|log|sqr|&#8230;&#8203;]) are specified with
@@ -4592,6 +4828,11 @@ space bar will generate the corresponding julia set, julia(fn||fn).</p>
 <div class="paragraph">
 <p>(type=halley)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-halley.png"><img src="help/images/thumbnails/type-halley.png" alt="type halley"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>The Halley map is an algorithm used to find the roots of polynomial
 equations by successive "guesses" that converge on the correct value as
@@ -4618,7 +4859,12 @@ point to a root.</p>
 <div class="sect2">
 <h3 id="_dynamic_system">Dynamic System</h3>
 <div class="paragraph">
-<p>(type=dynamic, dynamic2)</p>
+<p>(type=dynamic)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-dynamic.png"><img src="help/images/thumbnails/type-dynamic.png" alt="type dynamic"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>These fractals are based on a cyclic system of differential equations:
@@ -4665,6 +4911,11 @@ Pattern, Chaos, and Beauty".</p>
 <div class="paragraph">
 <p>(type=mandelcloud)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-mandelcloud.png"><img src="help/images/thumbnails/type-mandelcloud.png" alt="type mandelcloud"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>This fractal computes the Mandelbrot function, but displays it
 differently.  It starts with regularly spaced initial pixels and
@@ -4689,6 +4940,10 @@ histogram.</p>
 <p>(type=quat,quatjul)</p>
 </div>
 <div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-quat.png"><img src="help/images/thumbnails/type-quat.png" alt="type quat"></a></span>
+<span class="image"><a class="image" href="help/images/type-quatjul.png"><img src="help/images/thumbnails/type-quatjul.png" alt="type quatjul"></a></span></p>
+</div>
+<div class="paragraph">
 <p>These fractals are based on quaternions.  Quaternions are an extension
 of complex numbers, with 4 parts instead of 2.  That is, a quaternion Q
 equals a+ib+jc+kd, where a,b,c,d are reals.  Quaternions have rules for
@@ -4700,10 +4955,8 @@ can be generalized to use quaternions instead of complex numbers.</p>
 displayed on a plane.  Quaternions have 4 parts, so they require 4
 dimensions to view.  That is, the quaternion Mandelbrot set is actually
 a 4-dimensional object.  Each quaternion C generates a 4-dimensional
-Julia set.</p>
-</div>
-<div class="paragraph">
-<p>One method of displaying the 4-dimensional object is to take a 3-
+Julia set.
+One method of displaying the 4-dimensional object is to take a 3-
 dimensional slice and render the resulting object in 3-dimensional
 perspective.  Id isn&#8217;t that sophisticated, so it merely displays a 2-
 dimensional slice of the resulting object. (Note: Now Id is that
@@ -4730,6 +4983,10 @@ Pattern, Chaos, and Beauty".</p>
 <h3 id="_hypercomplex">HyperComplex</h3>
 <div class="paragraph">
 <p>(type=hypercomplex,hypercomplexj)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-hypercomplex.png"><img src="help/images/thumbnails/type-hypercomplex.png" alt="type hypercomplex"></a></span>
+<span class="image"><a class="image" href="help/images/type-hypercomplexj.png"><img src="help/images/thumbnails/type-hypercomplexj.png" alt="type hypercomplexj"></a></span></p>
 </div>
 <div class="paragraph">
 <p>These fractals are based on hypercomplex numbers, which like quaternions
@@ -4763,6 +5020,11 @@ author of "A Hypercomplex Calculus with Applications to Relativity"
 <h3 id="_cellular_automata">Cellular Automata</h3>
 <div class="paragraph">
 <p>(type=cellular)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-cellular.png"><img src="help/images/thumbnails/type-cellular.png" alt="type cellular"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>These fractals are generated by 1-dimensional cellular automata.
@@ -4806,18 +5068,20 @@ examined, resulting in a 7 digit rule.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>  kr  #'s in rule  example rule     | kr  #'s in rule  example rule
-  21      4        1010             | 42     16        2300331230331001
-  31      7        1211001          | 23      8        10011001
-  41     10        3311100320       | 33     15        021110101210010
-  51     13        2114220444030    | 24     10        0101001110
-  61     16        3452355321541340 | 25     12        110101011001
-  22      6        011010           | 26     14        00001100000110
-  32     11        21212002010      | 27     16        0010000000000110
-The starting row of cells can be set to a pattern of up to 16 digits or
-to a random pattern.  The borders are set to zeros if a pattern is
-entered or are set randomly if the starting row is set randomly.</pre>
+<pre>kr  #'s in rule  example rule     | kr  #'s in rule  example rule
+21      4        1010             | 42     16        2300331230331001
+31      7        1211001          | 23      8        10011001
+41     10        3311100320       | 33     15        021110101210010
+51     13        2114220444030    | 24     10        0101001110
+61     16        3452355321541340 | 25     12        110101011001
+22      6        011010           | 26     14        00001100000110
+32     11        21212002010      | 27     16        0010000000000110</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The starting row of cells can be set to a pattern of up to 16 digits or
+to a random pattern.  The borders are set to zeros if a pattern is
+entered or are set randomly if the starting row is set randomly.</p>
 </div>
 <div class="paragraph">
 <p>A zero rule will randomly generate the rule to use.</p>
@@ -4915,6 +5179,12 @@ the orbit delay value in advance from the <kbd>P</kbd> screen.</p>
 <p>(type=phoenix, mandphoenix, phoenixcplx, mandphoenixclx)</p>
 </div>
 <div class="paragraph">
+<p><span class="image"><a class="image" href="help/images/type-phoenix.png"><img src="help/images/thumbnails/type-phoenix.png" alt="type phoenix"></a></span>
+<span class="image"><a class="image" href="help/images/type-mandphoenix.png"><img src="help/images/thumbnails/type-mandphoenix.png" alt="type mandphoenix"></a></span>
+<span class="image"><a class="image" href="help/images/type-phoenixcplx.png"><img src="help/images/thumbnails/type-phoenixcplx.png" alt="type phoenixcplx"></a></span>
+<span class="image"><a class="image" href="help/images/type-mandphoenixclx.png"><img src="help/images/thumbnails/type-mandphoenixclx.png" alt="type mandphoenixclx"></a></span></p>
+</div>
+<div class="paragraph">
 <p>The phoenix type defaults to the original phoenix curve discovered by
 Shigehiro Ushiki, "Phoenix", IEEE Transactions on Circuits and Systems,
 Vol. 35, No. 7, July 1988, pp. 788-789.  These images do not have the X
@@ -4936,10 +5206,8 @@ instead of the current calculation to determine when to bailout.</p>
 <div class="paragraph">
 <p>The phoenixcplx type is implemented using complex constants instead of
 the real constants that Stevens used.  This recreates the mapping as
-originally presented by Ushiki.</p>
-</div>
-<div class="paragraph">
-<p>The mandphoenixclx type is the corresponding Mandelbrot set image of the
+originally presented by Ushiki.
+The mandphoenixclx type is the corresponding Mandelbrot set image of the
 phoenixcplx type.  The spacebar toggles between the two as long as the
 mandphoenixclx type has a perturbation of z(0) = (0,0).  The
 mandphoenixclx is an effective index to the phoenixcplx type.</p>
@@ -4949,6 +5217,11 @@ mandphoenixclx is an effective index to the phoenixcplx type.</p>
 <h3 id="_frothy_basins">Frothy Basins</h3>
 <div class="paragraph">
 <p>(type=frothybasin)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-frothybasin.png"><img src="help/images/thumbnails/type-frothybasin.png" alt="type frothybasin"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>Frothy basins, or riddled basins, were discovered by James C. Alexander
@@ -5018,6 +5291,11 @@ shading.</p>
 <div class="paragraph">
 <p>(type=volterra-lotka)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-volterra-lotka.png"><img src="help/images/thumbnails/type-volterra-lotka.png" alt="type volterra lotka"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>In the book "The Beauty of Fractals", these images are offered as an
 example of "how an apparently innocent system of differential equations
@@ -5065,10 +5343,8 @@ considerable importance.</p>
 determines the types of attractors that will result.  Infinity and (1,
 1) are predictable attractors.  For certain combinations, an "invariant
 circle" (which is not strictly circular) and/or an orbit of period 9
-also are attractive.</p>
-</div>
-<div class="paragraph">
-<p>The invariant circle and periodic orbit change with each (h, p) pair,
+also are attractive.
+The invariant circle and periodic orbit change with each (h, p) pair,
 and they must be determined empirically.  That process would be
 thoroughly impractical to implement through any kind of fixed formula.
 This is especially true because even when these attractors are chosen,
@@ -5078,8 +5354,10 @@ compromise in the context of a generalized formula is to use either the
 "zmag" or "bof60" inside coloring options.  See
 <a href="#_insidebof60bof61zmagfmodperiodatan">Inside=bof60|bof61|zmag|fmod|period|atan</a> for details.  This formula
 performs best with a relatively high bailout value; the default is set
-at 256, rather than the standard default of 4.
-Reference: Peitgen, H.-O. and Richter, P.H. The Beauty of Fractals,
+at 256, rather than the standard default of 4.</p>
+</div>
+<div class="paragraph">
+<p>Reference: Peitgen, H.-O. and Richter, P.H. The Beauty of Fractals,
 Springer-Verlag, 1986; Section 8, pp. 125-7.</p>
 </div>
 </div>
@@ -5087,6 +5365,11 @@ Springer-Verlag, 1986; Section 8, pp. 125-7.</p>
 <h3 id="_escher_like_julia_sets">Escher-Like Julia Sets</h3>
 <div class="paragraph">
 <p>(type=escher_julia)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-escher_julia.png"><img src="help/images/thumbnails/type-escher_julia.png" alt="type escher julia"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>These unique variations on the Julia set theme, presented in "The
@@ -5125,12 +5408,8 @@ and systematic approach to Escher-like tilings."</p>
 <p>So, what we do is iterate the above formula, scale each iteration, and
 plug it into a second Julia formula.  This formula has a value of c
 selected by the user.  If the point converges to this non-circular
-target set:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>T = [ z: | (z * 15.0)^2 + c | &lt; BAILOUT ]</pre>
-</div>
+target set:
+  T = [ z: | (z * 15.0)^2 + c | &lt; BAILOUT ]</p>
 </div>
 <div class="paragraph">
 <p>we color it in proportion to the overall iteration count.  If not, it
@@ -5144,8 +5423,10 @@ handled by the standard fractal engine with all of its options.</p>
 <p>With the proper palette and parameters for c, and using the <a href="#_inversion">Inversion</a>
 option and a solid outside color from the <a href="#_color_parameters">Color Parameters</a>, you can
 create a solar eclipse, with the corona composed of Julia-shaped flames
-radiating from the sun&#8217;s surface.
-If you question the relevance of these images to Escher, check out his
+radiating from the sun&#8217;s surface.</p>
+</div>
+<div class="paragraph">
+<p>If you question the relevance of these images to Escher, check out his
 Circle Limit series (especially III and IV).  In his own words: "It is
 to be doubted whether there exist today many &#8230;&#8203; artists of any kind, to
 whom the desire has come to penetrate to the depths of infinity&#8230;&#8203;.
@@ -5173,6 +5454,11 @@ Verlag, 1988; pp. 185, 187.</p>
 <div class="paragraph">
 <p>(type=latoocarfian)</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-latoocarfian.png"><img src="help/images/thumbnails/type-latoocarfian.png" alt="type latoocarfian"></a>
+</div>
+</div>
 <div class="paragraph">
 <p>This fractal type first appeared in the book "Chaos in Wonderland" by
 Clifford Pickover (ISBN 0-312-10743-9 St. Martin&#8217;s Press).</p>
@@ -5196,6 +5482,11 @@ they are hit, the more periodic paths will become clarified with time.</p>
 <h3 id="_mandelbrot_mix_4">Mandelbrot Mix 4</h3>
 <div class="paragraph">
 <p>(type=mandelbrotmix4)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-mandelbrotmix4.png"><img src="help/images/thumbnails/type-mandelbrotmix4.png" alt="type mandelbrotmix4"></a>
+</div>
 </div>
 <div class="paragraph">
 <p>Jim Muth published a "Fractal of the Day" on the Fractint mailing list
@@ -5226,8 +5517,15 @@ requests the default bailout.</p>
 <div class="sect2">
 <h3 id="_dividebrot5">DivideBrot5</h3>
 <div class="paragraph">
-<p>(type=dividebrot5) This is Jim Muth&#8217;s fifth version of the DivideBrot
-formula.</p>
+<p>(type=dividebrot5)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-dividebrot5.png"><img src="help/images/thumbnails/type-dividebrot5.png" alt="type dividebrot5"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This is Jim Muth&#8217;s fifth version of the DivideBrot formula.</p>
 </div>
 <div class="paragraph">
 <p>The formula is:</p>
@@ -5241,6 +5539,22 @@ formula.</p>
    |z| &lt; 16
 }</pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_burning_ship">Burning Ship</h3>
+<div class="paragraph">
+<p>(type=burning-ship)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="help/images/type-burning-ship.png"><img src="help/images/thumbnails/type-burning-ship.png" alt="type burning ship"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This fractal is a derivative of the classic Mandelbrot fractal with a
+twist.  Some parts use absolute values in the equations and this gives
+an amazing angular quality to the fractal.</p>
 </div>
 </div>
 </div>
@@ -5323,6 +5637,14 @@ image being a good substitute for single/double/triple pass and presents
 a quick visualization even in the slowest fractals.  With "fillcolor=0"
 (below) the squares are not painted and the points are spread over the
 image until all have being calculated (sort of a "fade in").</p>
+</div>
+<div class="paragraph">
+<p>Perturbation ("p") is a drawing type that is particularly fast when used
+with deep-zooms of the Mandelbrot set that require arbitrary precision
+arithmetic.  This initial implementation of perturbation does not
+support periodicity checking and only supports a limited number of
+inside and outside coloring algorithms.  Suspend and resume is not
+supported with perturbation.</p>
 </div>
 <div class="paragraph">
 <p>The "fillcolor=" option in the <kbd>X</kbd> screen or on the command line sets a
@@ -5908,7 +6230,7 @@ a fractal calculation, the "modulus bailout value", is generally set to
 <p>The bad news is that the integer math which makes the "mandel" and
 "julia" types so fast imposes a hard-wired maximum value of 127.  You
 can still make interesting images from those types, though, so don&#8217;t
-avoid them.  You will see "ridges" in the "hillsides." Some folks like
+avoid them.  You will see "ridges" in the "hillsides."  Some folks like
 the effect.</p>
 </div>
 <div class="paragraph">
@@ -6491,21 +6813,21 @@ screen and a colour band is applied, centred on the cursor.  Although,
 at the moment, the colour of this band is grey and you won&#8217;t see much!</p>
 </div>
 <div class="paragraph">
-<p>In order to change the colour of the band, hold down the left mouse
+<p>In order to change the colour of the band, hold down the primary mouse
 button and drag up and down.  This changes the amount of red in the
 band.  You&#8217;ll see the values change in the status box above the palette
-grid.  Double clicking the right mouse button changes the colour
+grid.  Double clicking the secondary mouse button changes the colour
 component that&#8217;s varied in an r-g-b-r-cycle&#8230;&#8203;. try it out and conjure
 up any shade you like!</p>
 </div>
 <div class="paragraph">
-<p>To vary the width of the band, drag up and down with the right button
-held down.  Slower machines may show some 'lag' during this operation,
-so watch out as the mouse movements get buffered.</p>
+<p>To vary the width of the band, drag up and down with the secondary
+button held down.  Slower machines may show some 'lag' during this
+operation, so watch out as the mouse movements get buffered.</p>
 </div>
 <div class="paragraph">
 <p>Once you&#8217;ve got the band in a satisfactory position then double click
-the left button to fix it in place.</p>
+the primary button to fix it in place.</p>
 </div>
 <div class="paragraph">
 <p>Continue like this for as long as you like, adding different colours to
@@ -7687,10 +8009,10 @@ up quickly.</p>
 <div class="sect2">
 <h3 id="_calculation_mode_parameters">Calculation Mode Parameters</h3>
 <div class="paragraph">
-<p>PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o
+<p>PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o|p
 Selects single-pass, dual-pass, triple-pass, solid-guessing mode, solid-
 guessing stop after pass n, boundary tracing, tesseral, synchronous
-orbits, or the orbits algorithm.  See <a href="#_drawing_method">Drawing Method</a> and
+orbits, orbits, or the perturbation algorithm.  See <a href="#_drawing_method">Drawing Method</a> and
 <a href="#_passes_parameters">Passes Parameters</a>.</p>
 </div>
 <div class="paragraph">
@@ -9442,6 +9764,24 @@ history, orbit-in-window, and the browse feature.</p>
 </div>
 </div>
 <div class="sect3">
+<h4 id="_perturbation_algorithm">Perturbation Algorithm</h4>
+<div class="paragraph">
+<p>The perturbation algorithm was originally implemented in a program
+called "SuperFractalThing" by K. I. Martin.  The core observation is
+that orbits for nearby points in the complex plane can be related to
+each other through a difference equation.  Therefore, if a single orbit
+is computed at high precision as a reference point, the values in the
+orbits of nearby points can be computed from the reference orbit using
+lower precision math.</p>
+</div>
+<div class="paragraph">
+<p>This is the essence of how perturbation methods speed up deep zooms of
+the Mandelbrot set.  Only a few reference points need to be calculated
+at full precision using slower operations and nearby points can be
+calculated using faster lesser precision operations.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_the_id_fractal_engine_architecture">The Id "Fractal Engine" Architecture</h4>
 <div class="paragraph">
 <p>Several of the authors would never admit this, but Id has evolved a
@@ -9482,19 +9822,17 @@ be done to calculate a color for one pixel, and</pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>3) a once-per-orbit-iteration function, which is the fundamental
-fractal algorithm that is repeatedly iterated in the fractal
-calculation.</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The common framework that calls these functions can contain all sorts of
+<pre>   3) a once-per-orbit-iteration function, which is the fundamental
+   fractal algorithm that is repeatedly iterated in the fractal
+   calculation.
+The common framework that calls these functions can contain all sorts of
 speedups, tricks, and options that the fractal implementor need not
 worry about.  All that is necessary is to write the three functions in
-the correct way, and bingo!&#8201;&#8212;&#8201;all options automatically apply.  What
+the correct way, and bingo! -- all options automatically apply.  What
 makes it even easier is that usually one can re-use functions 1) and 2)
 written for other fractals, and therefore only need to write function
-3).</p>
+3).</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Then it occurred to us that there might be more than one sort of fractal
@@ -9503,8 +9841,10 @@ structure for each fractal that includes pointers to these four
 functions, various prompts, a default region of the complex plane, and
 various miscellaneous bits of information that allow toggling between
 Julia and Mandelbrot or toggling between the various kinds of math used
-in implementation.
-That sounds pretty flexible, but there is one drawback - you have to be
+in implementation.</p>
+</div>
+<div class="paragraph">
+<p>That sounds pretty flexible, but there is one drawback - you have to be
 a C programmer and have a C compiler to make use of it!  So we took
 it a step further, and designed a built-in high level compiler, so that
 you can enter the formulas for the various functions in a formula file
@@ -9633,6 +9973,15 @@ there.  See <a href="#_distribution_of_iterated_dynamics">Distribution of Iterat
 <p><a href="#_bifurcation">bifmay</a>
     Bifurcation variation: model is: P = r*p / ((1+p)^beta).
     Three parameters: Filter Cycles, Seed Population, and Beta.</p>
+</div>
+<div class="paragraph">
+<p><a href="#_burning_ship">burning-ship</a>
+    Classic Mandelbrot Derivative fractal.
+      z(0) = c = pixel;
+      real(tmp) = sqr(real(z(n))) - sqr(imag(z(n)))
+      imag(tmp) = abs(real(z(n)) * imag(z(n))) * -2.0
+      z(n+1) = tmp + c.
+      Three parameters: perturbations of z(0) and degree.</p>
 </div>
 <div class="paragraph">
 <p><a href="#_cellular_automata">cellular</a>
@@ -11225,7 +11574,7 @@ with current editions of Visual Studio (as of April, 2024) is here:
 support.  Download from <a href="https://fraktaler.mathr.co.uk/" class="bare">https://fraktaler.mathr.co.uk/</a></p>
 </div>
 <div class="paragraph">
-<p>ManPWin is a Windows fractal generator derived from DOS FRACTINT with
+<p>ManpWIN is a Windows fractal generator derived from DOS FRACTINT with
 lots of additional features by Paul de Leeuw.  You can download the
 latest release from his web site: <a href="https://www.deleeuw.com.au/" class="bare">https://www.deleeuw.com.au/</a>; Paul
 has collaborated with Richard Thomson to put his source code on github
@@ -11356,6 +11705,130 @@ rendered by Kalles-Fraktaler.
 <li>
 <p>Fork of Fractint 20.04 patch level 4</p>
 </li>
+<li>
+<p>New formula file MandelbrotDerivatives.frm with Burning Ship,
+Perpendicular Mandelbrot, Heart Mandelbrot, Mandelbar and other
+Mandelbrot set formula variations.  The parameter file BurningShip.par
+provides example parameters for these variations.  Contributed by Paul
+de Leeuw.</p>
+</li>
+<li>
+<p>New $cpu$ comment variable expands to a description of your CPU.</p>
+</li>
+<li>
+<p>Long filenames are now supported throughout.</p>
+</li>
+<li>
+<p>All filename parameters are now case sensitive.</p>
+</li>
+<li>
+<p>When browsing for files, e.g. <kbd>R</kbd>estoring *.GIF files, filenames are
+compared case insensitive against wildcard search masks.</p>
+</li>
+<li>
+<p>Added new fractal types <a href="#_mandelbrot_mix_4">Mandelbrot Mix 4</a> and <a href="#_dividebrot5">DivideBrot5</a> by Jim Muth.
+DivideBrot5 has arbitrary precision (AP) math support.  Note that
+image skewing and inversion are not  supported by the AP math
+routines. See <a href="#_arbitrary_precision_and_deep_zooming">Arbitrary Precision and Deep Zooming</a> for other features
+not supported.</p>
+</li>
+<li>
+<p>The orbitsavename parameter was added to specify the name of the raw
+orbits file.  The orbits file, if it exists, is overwritten when
+overwrite=yes.  Otherwise, the value of orbitsavename is incremented
+until a filename is formed that does not exist.</p>
+</li>
+<li>
+<p>The autokeyname parameter was enhanced to create a unique filename
+when autokey=record unless overwrite=yes is specified.</p>
+</li>
+<li>
+<p>Disk video buffer sizes were dramatically increased.</p>
+</li>
+<li>
+<p>The formula parser has been enhanced to remove internal size
+limitations.  The only limit on formula parsing is available memory.</p>
+</li>
+<li>
+<p>The savedir parameter was added to specify the default directory used
+for writing any files.  Since a Windows program is typically installed
+to the Program Files directory, which is read-only, it cannot be
+assumed that Id can write to the directory in which it is located.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Additional changes in Version 1.0:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Most of the changes involve internal restructuring of the DOS Fractint
+code to build a bridge to the future.</p>
+</li>
+<li>
+<p>Iterated Dynamics is a native 64-bit Windows program written in C++
+with a CMake build system and vcpkg for obtaining 3rd party library
+dependencies.</p>
+</li>
+<li>
+<p>All assembly language code has been removed and, where practical,
+replaced with C++ code that performs the same function.</p>
+</li>
+<li>
+<p>A CGA text display is simulated for all prompt screens and help
+screens.</p>
+</li>
+<li>
+<p>A "video mode" determines the resolution of all saved images and is
+provided by a driver.  Iterated Dynamics comes with two drivers: Disk
+and GDI.  The GDI driver renders to the screen through the Windows GDI
+interface.  The disk driver can be used to render images larger than
+your physical screen, but still uses your screen&#8217;s GUI for displaying
+status with a CGA style window.</p>
+</li>
+<li>
+<p>Id.cfg, which defines the default video modes, was updated to remove
+all modes smaller than 800x600 and very large disk video modes were
+added.</p>
+</li>
+<li>
+<p>DOS related information in video modes was dropped.</p>
+</li>
+<li>
+<p>All online help text has been reviewed and revised to drop DOS
+specific discussions.  Where still appropriate the text has been
+updated to reflect that Id is a program operating in a windowed
+environment.</p>
+</li>
+<li>
+<p>The release parameter resets all values to their default but does not
+enable any backwards compatible behavior in this release.  For
+backward compatability with old behavior, use Fractint.</p>
+</li>
+<li>
+<p>The monitorwidth parameter was renamed to stereowidth.  The old
+parameter name is still accepted but will be deprecated in a future
+release.</p>
+</li>
+<li>
+<p>Printing an image has been removed.  Use your operating system for
+that.  :)</p>
+</li>
+<li>
+<p>The following parameter file commands are deprecated and support will
+be removed in a future release.  In this release the arguments are
+parsed and validated and the results ignored.
+    adapter             halftone              ramvideo
+    afi                 iterincr              rleps
+    biospalette         linefeed              textsafe
+    colorps             maxcolorres           title
+    comport             noninterlaced         tplus
+    epsf                pixelzoom             translate
+    exitmode            plotstyle             tweaklzw
+    fpu                 printer               vesadetect
+    gif87a              printfile</p>
+</li>
 </ul>
 </div>
 </div>
@@ -11363,7 +11836,7 @@ rendered by Kalles-Fraktaler.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-02 21:45:41 -0600
+Last updated 2025-02-02 20:52:21 -0700
 </div>
 </div>
 </body>
