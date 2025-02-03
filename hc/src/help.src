@@ -624,6 +624,10 @@ o Win32 GDI 800x600 small size image:       <F6>\
 o Win32 GDI 1024x768 medium size image:     <F7>\
 o Win32 GDI 1200x900 large size image:      <F8>\
 
+~Doc-
+//
+
+~Doc+
 <F1>\
 Display a help screen.  The function keys available in help mode are
 displayed at the bottom of the help screen.
