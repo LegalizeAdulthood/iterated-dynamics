@@ -322,7 +322,7 @@ o The version number is now correctly displayed in the title of help
   screens.  (Fixes #154)
 o When run from the Visual Studio debugger, the working directory of
   the program is properly set to the home directory.  (Fixes #153)
-o Corrected an assert popup during a Debug build. (Fixes #147, #140)
+o Corrected an assert popup during a Debug build. (Fixes #147, #140)\
 o When the monitor configuration changed since the last time Id was run
   and the previous window position is no longer on-screen, the previous
   window position is forgotten and the window is placed by the system.
@@ -337,27 +337,27 @@ o When changing fractal types, if the the fractal parameters screen or
 
 Code Cleanup in Version 1.1:
 
-o Code style guide created to assist contributors. (Fixes #166)
+o Code style guide created to assist contributors. (Fixes #166)\
 o More unit tests added, when reasonable, to prove buggy behavior and
   validate their fixes.
 o Library libid source and header files organized into subdirectories by
   role: 3d, engine, fractals, io, math, misc and ui.
 o test-id unit tests files organized into subdirectories, matching the
   function or file they test.
-o Identifier names renamed to conform to style guide.
-o Names of files updated to conform to style guide.
+o Identifier names renamed to conform to style guide.\
+o Names of files updated to conform to style guide.\
 o Calls to standard library functions qualified with namespace std to
   conform to style guide.
 o All platform (e.g. linux vs. Windows) variations isolated to CMake
   checks in the config library.
 o All calls to stricmp, strnicmp, and strncasecmp replaced with
   string_case_compare and string_case_equal from config library.
-o Platform driver types selected by config library in driver_types.h.
-o Platform file descriptor I/O header selected by config library in fdio.h.
-o Platform filelength function selected by config library in filelength.h.
-o Platform getpid function selected by config library in getpid.h.
-o Platform path limits selected by config library in path_limits.h.
-o All XFRACT conditionally compiled code eliminated by using config library.
+o Platform driver types selected by config library in driver_types.h.\
+o Platform file descriptor I/O header selected by config library in fdio.h.\
+o Platform filelength function selected by config library in filelength.h.\
+o Platform getpid function selected by config library in getpid.h.\
+o Platform path limits selected by config library in path_limits.h.\
+o All XFRACT conditionally compiled code eliminated by using config library.\
 o Many more small improvements, see the git commit history for details.
 
 Known limitations:
