@@ -24,3 +24,11 @@ TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
             << ") has no perturbation point function";
     }
 }
+
+TEST(TestFractalSpecific, typeMatchesIndex)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        EXPECT_EQ(i, +g_fractal_specific[i].type) << "index " << i << ", " << g_fractal_specific[i].name;
+    }
+}

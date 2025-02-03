@@ -272,6 +272,7 @@ FractalSpecific g_fractal_specific[] =
     */
 
     {
+        FractalType::MANDEL,                                                 //
         T_MANDEL + 1,                                                        //
         {REAL_Z0, IMAG_Z0, "", ""},                                          //
         {0, 0, 0, 0},                                                        //
@@ -287,6 +288,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::JULIA,                                                  //
         T_JULIA + 1,                                                         //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                    //
         {0.3, 0.6, 0, 0},                                                    //
@@ -301,6 +303,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::NEWT_BASIN,                                                      //
         T_NEWT_BASIN,                                                                 //
         {NEWT_DEGREE, "Enter non-zero value for stripes", "", ""},                    //
         {3, 0, 0, 0},                                                                 //
@@ -315,6 +318,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::LAMBDA,                                                         //
         T_LAMBDA + 1,                                                                //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                            //
         {0.85, 0.6, 0, 0},                                                           //
@@ -329,6 +333,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MANDEL_FP,                                                   //
         T_MANDEL,                                                                 //
         {REAL_Z0, IMAG_Z0, "", ""},                                               //
         {0, 0, 0, 0},                                                             //
@@ -344,6 +349,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::NEWTON,                                                       //
         T_NEWTON,                                                                  //
         {NEWT_DEGREE, "", "", ""},                                                 //
         {3, 0, 0, 0},                                                              //
@@ -358,6 +364,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::JULIA_FP,                                                  //
         T_JULIA,                                                                //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                       //
         {0.3, 0.6, 0, 0},                                                       //
@@ -372,7 +379,8 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        "plasma",
+        FractalType::PLASMA,                                                                               //
+        "plasma",                                                                                          //
         {
             "Graininess Factor (0 or 0.125 to 100, default is 2)",                                         //
             "+Algorithm (0 = original, 1 = new)",                                                          //
@@ -391,6 +399,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MANDEL_TRIG_FP,                                                    //
         T_MANDEL_FN,                                                                    //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -406,6 +415,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MAN_O_WAR_FP,                                                    //
         T_MAN_O_WAR,                                                                  //
         {REAL_Z0, IMAG_Z0, "", ""},                                                   //
         {0, 0, 0, 0},                                                                 //
@@ -420,6 +430,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MAN_O_WAR,                                                       //
         T_MAN_O_WAR + 1,                                                              //
         {REAL_Z0, IMAG_Z0, "", ""},                                                   //
         {0, 0, 0, 0},                                                                 //
@@ -434,6 +445,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::TEST,                                                         //
         "test",                                                                    //
         {
             "(testpt Param #1)",                                                   //
@@ -453,6 +465,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::SIERPINSKI,                                                      //
         T_SIERPINSKI + 1,                                                             //
         {"", "", "", ""},                                                             //
         {0, 0, 0, 0},                                                                 //
@@ -468,6 +481,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::BARNSLEY_M1,                                                       //
         T_BARNSLEY_M1 + 1,                                                              //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -483,6 +497,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::BARNSLEY_J1,                                                       //
         T_BARNSLEY_J1 + 1,                                                              //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {0.6, 1.1, 0, 0},                                                               //
@@ -497,6 +512,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::BARNSLEY_M2,                                                       //
         T_BARNSLEY_M2 + 1,                                                              //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -512,6 +528,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::BARNSLEY_J2,                                                       //
         T_BARNSLEY_J2 + 1,                                                              //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {0.6, 1.1, 0, 0},                                                               //
@@ -526,6 +543,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::SQR_TRIG,                                                      //
         T_SQR_FN + 1,                                                               //
         {"", "", "", ""},                                                           //
         {0, 0, 0, 0},                                                               //
@@ -540,6 +558,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::SQR_TRIG_FP,                                                        //
         T_SQR_FN,                                                                        //
         {"", "", "", ""},                                                                //
         {0, 0, 0, 0},                                                                    //
@@ -554,6 +573,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::TRIG_PLUS_TRIG,                                                      //
         T_FN_PLUS_FN + 1,                                                                 //
         {RE_COEF_TRIG1, IM_COEF_TRIG1, RE_COEF_TRIG2, IM_COEF_TRIG2},                     //
         {1, 0, 1, 0},                                                                     //
@@ -569,6 +589,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MANDEL_LAMBDA,                                                  //
         T_MANDEL_LAMBDA + 1,                                                         //
         {REAL_Z0, IMAG_Z0, "", ""},                                                  //
         {0, 0, 0, 0},                                                                //
@@ -583,6 +604,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MARKS_MANDEL,                                                       //
         T_MARKS_MANDEL + 1,                                                              //
         {REAL_Z0, IMAG_Z0, RE_EXPONENT, ""},                                             //
         {0, 0, 1, 0},                                                                    //
@@ -598,6 +620,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MARKS_JULIA,                                                        //
         T_MARKS_JULIA + 1,                                                               //
         {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, ""},                                       //
         {0.1, 0.9, 1, 0},                                                                //
@@ -612,6 +635,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::UNITY,                                                      //
         T_UNITY + 1,                                                             //
         {"", "", "", ""},                                                        //
         {0, 0, 0, 0},                                                            //
@@ -626,6 +650,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::MANDEL4,                                                   //
         T_MANDEL4 + 1,                                                          //
         {REAL_Z0, IMAG_Z0, "", ""},                                             //
         {0, 0, 0, 0},                                                           //
@@ -640,6 +665,7 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::JULIA4,                                                   //
         T_JULIA4 + 1,                                                          //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                      //
         {0.6, 0.55, 0, 0},                                                     //
@@ -654,35 +680,38 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
+        FractalType::IFS,                                                                                   //
         "ifs",                                                                                              //
         {COLOR_METHOD, "", "", ""},                                                                         //
         {0, 0, 0, 0},                                                                                       //
         HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS,                                                        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::INF_CALC, //
         -8.0F, 8.0F, -1.0F, 11.0F,                                                                          //
-        16, //
-FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
+        16,                                                                                                 //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                          //
         SymmetryType::NONE,                                                                                 //
         nullptr, nullptr, standalone_setup, ifs,                                                            //
         NO_BAILOUT                                                                                          //
     },
 
     {
-        T_IFS3D,                                                                       //
-        {COLOR_METHOD, "", "", ""},                                                    //
-        {0, 0, 0, 0},                                                                  //
-        HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS,                                   //
+        FractalType::IFS_3D,                                                       //
+        T_IFS3D,                                                                   //
+        {COLOR_METHOD, "", "", ""},                                                //
+        {0, 0, 0, 0},                                                              //
+        HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS,                               //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::PARAMS_3D |
-            FractalFlags::INF_CALC,                                                    //
-        -11.0F, 11.0F, -11.0F, 11.0F,                                                  //
-        16, //
-FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
-        SymmetryType::NONE,                                                            //
-        nullptr, nullptr, standalone_setup, ifs,                                       //
-        NO_BAILOUT                                                                     //
+            FractalFlags::INF_CALC,                                                //
+        -11.0F, 11.0F, -11.0F, 11.0F,                                              //
+        16,                                                                        //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
+        SymmetryType::NONE,                                                        //
+        nullptr, nullptr, standalone_setup, ifs,                                   //
+        NO_BAILOUT                                                                 //
     },
 
     {
+        FractalType::BARNSLEY_M3,                                                       //
         T_BARNSLEY_M3 + 1,                                                              //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -698,6 +727,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
     },
 
     {
+        FractalType::BARNSLEY_J3,                                                       //
         T_BARNSLEY_J3 + 1,                                                              //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {0.1, 0.36, 0, 0},                                                              //
@@ -712,20 +742,22 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
     },
 
     {
-        T_FN_ZZ + 1,                                                                    //
-        {"", "", "", ""},                                                               //
-        {0, 0, 0, 0},                                                                   //
-        HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_Z_TIMES_Z,          //
-        FractalFlags::TRIG1 | FractalFlags::BAIL_TEST,                                  //
-        -4.0F, 4.0F, -3.0F, 3.0F,                                                       //
-        16, //
-FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR_FP, //
-        SymmetryType::XY_AXIS,                                                          //
-        trig_z_sqrd_fractal, julia_per_pixel, julia_long_setup, standard_fractal,       //
-        STD_BAILOUT                                                                     //
+        FractalType::TRIG_SQR,                                                      //
+        T_FN_ZZ + 1,                                                                //
+        {"", "", "", ""},                                                           //
+        {0, 0, 0, 0},                                                               //
+        HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_Z_TIMES_Z,      //
+        FractalFlags::TRIG1 | FractalFlags::BAIL_TEST,                              //
+        -4.0F, 4.0F, -3.0F, 3.0F,                                                   //
+        16,                                                                         //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR_FP, //
+        SymmetryType::XY_AXIS,                                                      //
+        trig_z_sqrd_fractal, julia_per_pixel, julia_long_setup, standard_fractal,   //
+        STD_BAILOUT                                                                 //
     },
 
     {
+        FractalType::TRIG_SQR_FP,                                                     //
         T_FN_ZZ,                                                                      //
         {"", "", "", ""},                                                             //
         {0, 0, 0, 0},                                                                 //
@@ -740,6 +772,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR_FP, //
     },
 
     {
+        FractalType::BIFURCATION,                                                                        //
         T_BIFURCATION,                                                                                   //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -754,6 +787,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR_FP, //
     },
 
     {
+        FractalType::TRIG_PLUS_TRIG_FP,                                                //
         T_FN_PLUS_FN,                                                                  //
         {RE_COEF_TRIG1, IM_COEF_TRIG1, RE_COEF_TRIG2, IM_COEF_TRIG2},                  //
         {1, 0, 1, 0},                                                                  //
@@ -769,20 +803,22 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_SQR_FP, //
     },
 
     {
-        T_FN_FN + 1,                                                                       //
-        {"", "", "", ""},                                                                  //
-        {0, 0, 0, 0},                                                                      //
-        HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_TIMES_FN,              //
-        FractalFlags::TRIG2 | FractalFlags::BAIL_TEST,                                     //
-        -4.0F, 4.0F, -3.0F, 3.0F,                                                          //
-        16, //
-FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_X_TRIG_FP, //
-        SymmetryType::X_AXIS,                                                              //
-        trig_x_trig_fractal, long_julia_per_pixel, fn_x_fn_setup, standard_fractal,        //
-        TRIG_BAILOUT_L                                                                     //
+        FractalType::TRIG_X_TRIG,                                                      //
+        T_FN_FN + 1,                                                                   //
+        {"", "", "", ""},                                                              //
+        {0, 0, 0, 0},                                                                  //
+        HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_FN_TIMES_FN,          //
+        FractalFlags::TRIG2 | FractalFlags::BAIL_TEST,                                 //
+        -4.0F, 4.0F, -3.0F, 3.0F,                                                      //
+        16,                                                                            //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_X_TRIG_FP, //
+        SymmetryType::X_AXIS,                                                          //
+        trig_x_trig_fractal, long_julia_per_pixel, fn_x_fn_setup, standard_fractal,    //
+        TRIG_BAILOUT_L                                                                 //
     },
 
     {
+        FractalType::TRIG_X_TRIG_FP,                                                       //
         T_FN_FN,                                                                           //
         {"", "", "", ""},                                                                  //
         {0, 0, 0, 0},                                                                      //
@@ -797,21 +833,23 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::TRIG_X_TRIG_FP, /
     },
 
     {
-        T_SQR_1_DIV_FN + 1,                                                                    //
-        {"", "", "", ""},                                                                      //
-        {0, 0, 0, 0},                                                                          //
-        HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SQR_1_OVER_FN,                //
-        FractalFlags::TRIG1 | FractalFlags::BAIL_TEST,                                         //
-        -4.0F, 4.0F, -3.0F, 3.0F,                                                              //
-        16, //
-FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_FP, //
-        SymmetryType::NONE,                                                                    //
-        sqr_1_over_trig_fractal, long_julia_per_pixel, sqr_trig_setup,                         //
-        standard_fractal,                                                                      //
-        TRIG_BAILOUT_L                                                                         //
+        FractalType::SQR_1_OVER_TRIG,                                                      //
+        T_SQR_1_DIV_FN + 1,                                                                //
+        {"", "", "", ""},                                                                  //
+        {0, 0, 0, 0},                                                                      //
+        HelpLabels::HT_TAYLOR_SKINNER_VARIATIONS, HelpLabels::HF_SQR_1_OVER_FN,            //
+        FractalFlags::TRIG1 | FractalFlags::BAIL_TEST,                                     //
+        -4.0F, 4.0F, -3.0F, 3.0F,                                                          //
+        16,                                                                                //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_FP, //
+        SymmetryType::NONE,                                                                //
+        sqr_1_over_trig_fractal, long_julia_per_pixel, sqr_trig_setup,                     //
+        standard_fractal,                                                                  //
+        TRIG_BAILOUT_L                                                                     //
     },
 
     {
+        FractalType::SQR_1_OVER_TRIG_FP,                                                //
         T_SQR_1_DIV_FN,                                                                 //
         {"", "", "", ""},                                                               //
         {0, 0, 0, 0},                                                                   //
@@ -827,6 +865,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::Z_X_TRIG_PLUS_Z,                                                                   //
         T_FN_Z_PLUS_Z + 1,                                                                              //
         {RE_COEF_TRIG1, IM_COEF_TRIG1, "Real Coefficient Second Term", "Imag Coefficient Second Term"}, //
         {1, 0, 1, 0},                                                                                   //
@@ -841,6 +880,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::Z_X_TRIG_PLUS_Z_FP,                                                                //
         T_FN_Z_PLUS_Z,                                                                                  //
         {RE_COEF_TRIG1, IM_COEF_TRIG1, "Real Coefficient Second Term", "Imag Coefficient Second Term"}, //
         {1, 0, 1, 0},                                                                                   //
@@ -856,6 +896,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::KAM_FP,                                                     //
         T_KAM_TORUS,                                                             //
         {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},                       //
         {1.3, .05, 1.5, 150},                                                    //
@@ -870,6 +911,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::KAM,                                                      //
         T_KAM_TORUS + 1,                                                       //
         {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},                     //
         {1.3, .05, 1.5, 150},                                                  //
@@ -884,6 +926,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::KAM_3D_FP,                                                  //
         T_KAM_TORUS3D,                                                           //
         {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},                       //
         {1.3, .05, 1.5, 150},                                                    //
@@ -899,6 +942,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::KAM_3D,                                                      //
         T_KAM_TORUS3D + 1,                                                        //
         {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},                        //
         {1.3, .05, 1.5, 150},                                                     //
@@ -914,6 +958,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LAMBDA_TRIG,                                                       //
         T_LAMBDA_FN + 1,                                                                //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {1.0, 0.4, 0, 0},                                                               //
@@ -929,6 +974,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_TRIG_PLUS_Z_SQRD_L,                                                                //
         T_MAN_FN_PLUS_Z_SQRD + 1,                                                                           //
         {REAL_Z0, IMAG_Z0, "", ""},                                                                         //
         {0, 0, 0, 0},                                                                                       //
@@ -944,6 +990,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_TRIG_PLUS_Z_SQRD_L,                                                                //
         T_JUL_FN_PLUS_Z_SQRD + 1,                                                                           //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                                                   //
         {-0.5, 0.5, 0, 0},                                                                                  //
@@ -959,6 +1006,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_TRIG_PLUS_Z_SQRD_FP,                                                               //
         T_MAN_FN_PLUS_Z_SQRD,                                                                               //
         {REAL_Z0, IMAG_Z0, "", ""},                                                                         //
         {0, 0, 0, 0},                                                                                       //
@@ -974,6 +1022,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_TRIG_PLUS_Z_SQRD_FP,                                                               //
         T_JUL_FN_PLUS_Z_SQRD,                                                                               //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                                                   //
         {-0.5, 0.5, 0, 0},                                                                                  //
@@ -989,6 +1038,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LAMBDA_TRIG_FP,                                                    //
         T_LAMBDA_FN,                                                                    //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {1.0, 0.4, 0, 0},                                                               //
@@ -1004,6 +1054,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MANDEL_TRIG,                                                       //
         T_MANDEL_FN + 1,                                                                //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -1019,6 +1070,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MANDEL_Z_POWER_L,                                                         //
         T_MAN_Z_POWER + 1,                                                                     //
         {REAL_Z0, IMAG_Z0, RE_EXPONENT, IM_EXPONENT},                                          //
         {0, 0, 2, 0},                                                                          //
@@ -1034,6 +1086,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JULIA_Z_POWER_L,                                                          //
         T_JUL_Z_POWER + 1,                                                                     //
         {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, IM_EXPONENT},                                    //
         {0.3, 0.6, 2, 0},                                                                      //
@@ -1049,6 +1102,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MANDEL_Z_POWER_FP,                                                        //
         T_MAN_Z_POWER,                                                                         //
         {REAL_Z0, IMAG_Z0, RE_EXPONENT, IM_EXPONENT},                                          //
         {0, 0, 2, 0},                                                                          //
@@ -1065,6 +1119,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JULIA_Z_POWER_FP,                                                         //
         T_JUL_Z_POWER,                                                                         //
         {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, IM_EXPONENT},                                    //
         {0.3, 0.6, 2, 0},                                                                      //
@@ -1080,6 +1135,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_Z_TO_Z_PLUS_Z_PWR_FP,                                                   //
         "manzzpwr",                                                                              //
         {REAL_Z0, IMAG_Z0, RE_EXPONENT, ""},                                                     //
         {0, 0, 2, 0},                                                                            //
@@ -1095,6 +1151,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_Z_TO_Z_PLUS_Z_PWR_FP,                                                   //
         "julzzpwr",                                                                              //
         {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, ""},                                               //
         {-0.3, 0.3, 2, 0},                                                                       //
@@ -1110,6 +1167,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_TRIG_PLUS_EXP_L,                                                             //
         T_MAN_FN_PLUS_EXP + 1,                                                                        //
         {REAL_Z0, IMAG_Z0, "", ""},                                                                   //
         {0, 0, 0, 0},                                                                                 //
@@ -1125,6 +1183,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_TRIG_PLUS_EXP_L,                                                             //
         T_JUL_FN_PLUS_EXP + 1,                                                                        //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                                             //
         {0, 0, 0, 0},                                                                                 //
@@ -1140,6 +1199,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_TRIG_PLUS_EXP_FP,                                                            //
         T_MAN_FN_PLUS_EXP,                                                                            //
         {REAL_Z0, IMAG_Z0, "", ""},                                                                   //
         {0, 0, 0, 0},                                                                                 //
@@ -1155,6 +1215,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_TRIG_PLUS_EXP_FP,                                                            //
         T_JUL_FN_PLUS_EXP,                                                                            //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                                             //
         {0, 0, 0, 0},                                                                                 //
@@ -1170,6 +1231,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::POPCORN_FP,                                                  //
         T_POPCORN,                                                                //
         {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},                                 //
         {0.05, 0, 3.00, 0},                                                       //
@@ -1184,6 +1246,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::POPCORN_L,                                                    //
         T_POPCORN + 1,                                                             //
         {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},                                  //
         {0.05, 0, 3.00, 0},                                                        //
@@ -1198,6 +1261,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_FP,                                                   //
         T_LORENZ,                                                                 //
         {TIME_STEP, "a", "b", "c"},                                               //
         {.02, 5, 15, 1},                                                          //
@@ -1212,6 +1276,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_L,                                                    //
         T_LORENZ + 1,                                                             //
         {TIME_STEP, "a", "b", "c"},                                               //
         {.02, 5, 15, 1},                                                          //
@@ -1226,6 +1291,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_3D_L,                                                    //
         T_LORENZ3D + 1,                                                              //
         {TIME_STEP, "a", "b", "c"},                                                  //
         {.02, 5, 15, 1},                                                             //
@@ -1241,6 +1307,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::NEWTON_MP,                                                  //
         T_NEWTON + 1,                                                            //
         {NEWT_DEGREE, "", "", ""},                                               //
         {3, 0, 0, 0},                                                            //
@@ -1255,6 +1322,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::NEWT_BASIN_MP,                                                //
         T_NEWT_BASIN + 1,                                                          //
         {NEWT_DEGREE, "Enter non-zero value for stripes", "", ""},                 //
         {3, 0, 0, 0},                                                              //
@@ -1269,6 +1337,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::COMPLEX_NEWTON,                                                              //
         "complexnewton",                                                                          //
         {"Real part of Degree", "Imag part of Degree", "Real part of Root", "Imag part of Root"}, //
         {3, 0, 1, 0},                                                                             //
@@ -1284,6 +1353,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::COMPLEX_BASIN,                                                               //
         "complexbasin",                                                                           //
         {"Real part of Degree", "Imag part of Degree", "Real part of Root", "Imag part of Root"}, //
         {3, 0, 1, 0},                                                                             //
@@ -1299,6 +1369,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::COMPLEX_MARKS_MAND,                                                  //
         "cmplxmarksmand",                                                                 //
         {REAL_Z0, IMAG_Z0, RE_EXPONENT, IM_EXPONENT},                                     //
         {0, 0, 1, 0},                                                                     //
@@ -1313,6 +1384,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::COMPLEX_MARKS_JUL,                                                    //
         "cmplxmarksjul",                                                                   //
         {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, IM_EXPONENT},                                //
         {0.3, 0.6, 1, 0},                                                                  //
@@ -1327,6 +1399,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::FORMULA,                                                      //
         T_FORMULA + 1,                                                             //
         {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},                                      //
         {0, 0, 0, 0},                                                              //
@@ -1341,6 +1414,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::FORMULA_FP,                                                //
         T_FORMULA,                                                              //
         {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},                                   //
         {0, 0, 0, 0},                                                           //
@@ -1355,6 +1429,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::SIERPINSKI_FP,                                                //
         T_SIERPINSKI,                                                              //
         {"", "", "", ""},                                                          //
         {0, 0, 0, 0},                                                              //
@@ -1370,6 +1445,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LAMBDA_FP,                                                      //
         T_LAMBDA,                                                                    //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                            //
         {0.85, 0.6, 0, 0},                                                           //
@@ -1384,6 +1460,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BARNSLEY_M1_FP,                                                    //
         T_BARNSLEY_M1,                                                                  //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -1399,6 +1476,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BARNSLEY_J1_FP,                                                    //
         T_BARNSLEY_J1,                                                                  //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {0.6, 1.1, 0, 0},                                                               //
@@ -1414,6 +1492,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BARNSLEY_M2_FP,                                                    //
         T_BARNSLEY_M2,                                                                  //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -1429,6 +1508,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BARNSLEY_J2_FP,                                                    //
         T_BARNSLEY_J2,                                                                  //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {0.6, 1.1, 0, 0},                                                               //
@@ -1444,6 +1524,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BARNSLEY_M3_FP,                                                    //
         T_BARNSLEY_M3,                                                                  //
         {REAL_Z0, IMAG_Z0, "", ""},                                                     //
         {0, 0, 0, 0},                                                                   //
@@ -1459,6 +1540,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BARNSLEY_J3_FP,                                                    //
         T_BARNSLEY_J3,                                                                  //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                               //
         {0.6, 1.1, 0, 0},                                                               //
@@ -1474,6 +1556,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MANDEL_LAMBDA_FP,                                               //
         T_MANDEL_LAMBDA,                                                             //
         {REAL_Z0, IMAG_Z0, "", ""},                                                  //
         {0, 0, 0, 0},                                                                //
@@ -1488,6 +1571,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JULIBROT,                                                      //
         T_JULIBROT + 1,                                                             //
         {"", "", "", ""},                                                           //
         {0, 0, 0, 0},                                                               //
@@ -1503,6 +1587,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_3D_FP,                                                  //
         T_LORENZ3D,                                                                 //
         {TIME_STEP, "a", "b", "c"},                                                 //
         {.02, 5, 15, 1},                                                            //
@@ -1518,6 +1603,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::ROSSLER_L,                                                    //
         T_ROSSLER3D + 1,                                                           //
         {TIME_STEP, "a", "b", "c"},                                                //
         {.04, .2, .2, 5.7},                                                        //
@@ -1533,6 +1619,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::ROSSLER_FP,                                                  //
         T_ROSSLER3D,                                                              //
         {TIME_STEP, "a", "b", "c"},                                               //
         {.04, .2, .2, 5.7},                                                       //
@@ -1548,6 +1635,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HENON_L,                                                     //
         T_HENON + 1,                                                              //
         {"a", "b", "", ""},                                                       //
         {1.4, .3, 0, 0},                                                          //
@@ -1562,6 +1650,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HENON_FP,                                                    //
         T_HENON,                                                                  //
         {"a", "b", "", ""},                                                       //
         {1.4, .3, 0, 0},                                                          //
@@ -1576,6 +1665,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::PICKOVER_FP,                                                  //
         "pickover",                                                                //
         {"a", "b", "c", "d"},                                                      //
         {2.24, .43, -.65, -2.43},                                                  //
@@ -1591,6 +1681,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::GINGERBREAD_FP,                                                //
         "gingerbreadman",                                                           //
         {"Initial x", "Initial y", "", ""},                                         //
         {-.1, 0, 0, 0},                                                             //
@@ -1605,6 +1696,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::DIFFUSION,                                                    //
         "diffusion",                                                               //
         {
             "+Border size",                                                        //
@@ -1624,6 +1716,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::UNITY_FP,                                                        //
         T_UNITY,                                                                      //
         {"", "", "", ""},                                                             //
         {0, 0, 0, 0},                                                                 //
@@ -1638,6 +1731,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::SPIDER_FP,                                                    //
         T_SPIDER,                                                                  //
         {REAL_Z0, IMAG_Z0, "", ""},                                                //
         {0, 0, 0, 0},                                                              //
@@ -1652,6 +1746,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::SPIDER,                                                      //
         T_SPIDER + 1,                                                             //
         {REAL_Z0, IMAG_Z0, "", ""},                                               //
         {0, 0, 0, 0},                                                             //
@@ -1666,6 +1761,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::TETRATE_FP,                                                   //
         "tetrate",                                                                 //
         {REAL_Z0, IMAG_Z0, "", ""},                                                //
         {0, 0, 0, 0},                                                              //
@@ -1681,6 +1777,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAGNET_1M,                                                   //
         "magnet1m",                                                               //
         {REAL_Z0, IMAG_Z0, "", ""},                                               //
         {0, 0, 0, 0},                                                             //
@@ -1695,6 +1792,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAGNET_1J,                                                   //
         "magnet1j",                                                               //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                         //
         {0, 0, 0, 0},                                                             //
@@ -1709,6 +1807,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAGNET_2M,                                                   //
         "magnet2m",                                                               //
         {REAL_Z0, IMAG_Z0, "", ""},                                               //
         {0, 0, 0, 0},                                                             //
@@ -1723,6 +1822,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAGNET_2J,                                                   //
         "magnet2j",                                                               //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                         //
         {0, 0, 0, 0},                                                             //
@@ -1737,6 +1837,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIFURCATION_L,                                                                      //
         T_BIFURCATION + 1,                                                                               //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1751,6 +1852,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_LAMBDA_L,                                                                       //
         T_BIF_LAMBDA + 1,                                                                                //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1765,6 +1867,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_LAMBDA,                                                                         //
         T_BIF_LAMBDA,                                                                                    //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1779,6 +1882,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_PLUS_SIN_PI,                                                                    //
         T_BIF_PLUS_SIN_PI,                                                                               //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1793,6 +1897,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_EQ_SIN_PI,                                                                      //
         T_BIF_EQ_SIN_PI,                                                                                 //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1807,6 +1912,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::POPCORN_JUL_FP,                                                    //
         T_POPCORN_JUL,                                                                  //
         {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},                                       //
         {0.05, 0, 3.00, 0},                                                             //
@@ -1821,6 +1927,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::POPCORN_JUL_L,                                                        //
         T_POPCORN_JUL + 1,                                                                 //
         {STEP_X, STEP_Y, CONSTANT_X, CONSTANT_Y},                                          //
         {0.05, 0, 3.0, 0},                                                                 //
@@ -1835,6 +1942,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::L_SYSTEM,                                                                             //
         "lsystem",                                                                                         //
         {"+Order", "", "", ""},                                                                            //
         {2, 0, 0, 0},                                                                                      //
@@ -1849,6 +1957,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_O_WAR_J_FP,                                                  //
         T_MAN_O_WAR_J,                                                                //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                             //
         {0, 0, 0, 0},                                                                 //
@@ -1863,6 +1972,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_O_WAR_J,                                                     //
         T_MAN_O_WAR_J + 1,                                                            //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                             //
         {0, 0, 0, 0},                                                                 //
@@ -1877,6 +1987,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::FN_PLUS_FN_PIX_FP,                                                     //
         T_FN_Z_PLUS_FN_PIX,                                                                 //
         {REAL_Z0, IMAG_Z0, RE_COEF_TRIG2, IM_COEF_TRIG2},                                   //
         {0, 0, 1, 0},                                                                       //
@@ -1892,6 +2003,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::FN_PLUS_FN_PIX_LONG,                                                 //
         T_FN_Z_PLUS_FN_PIX + 1,                                                           //
         {REAL_Z0, IMAG_Z0, RE_COEF_TRIG2, IM_COEF_TRIG2},                                 //
         {0, 0, 1, 0},                                                                     //
@@ -1907,6 +2019,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MARKS_MANDEL_PWR_FP,                                                //
         T_MARKS_MANDEL_PWR,                                                              //
         {REAL_Z0, IMAG_Z0, "", ""},                                                      //
         {0, 0, 0, 0},                                                                    //
@@ -1922,6 +2035,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MARKS_MANDEL_PWR,                                                      //
         T_MARKS_MANDEL_PWR + 1,                                                             //
         {REAL_Z0, IMAG_Z0, "", ""},                                                         //
         {0, 0, 0, 0},                                                                       //
@@ -1937,6 +2051,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::TIMS_ERROR_FP,                                                //
         T_TIMS_ERROR,                                                              //
         {REAL_Z0, IMAG_Z0, "", ""},                                                //
         {0, 0, 0, 0},                                                              //
@@ -1952,6 +2067,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::TIMS_ERROR,                                                      //
         T_TIMS_ERROR + 1,                                                             //
         {REAL_Z0, IMAG_Z0, "", ""},                                                   //
         {0, 0, 0, 0},                                                                 //
@@ -1967,6 +2083,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_EQ_SIN_PI_L,                                                                    //
         T_BIF_EQ_SIN_PI + 1,                                                                             //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1981,6 +2098,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_PLUS_SIN_PI_L,                                                                  //
         T_BIF_PLUS_SIN_PI + 1,                                                                           //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -1995,6 +2113,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_STEWART,                                                                        //
         T_BIF_STEWART,                                                                                   //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -2009,6 +2128,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_STEWART_L,                                                                      //
         T_BIF_STEWART + 1,                                                                               //
         {FILT, SEED_POP, "", ""},                                                                        //
         {1000.0, 0.66, 0, 0},                                                                            //
@@ -2023,6 +2143,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HOPALONG_FP,                                                  //
         "hopalong",                                                                //
         {"a", "b", "c", ""},                                                       //
         {.4, 1, 0, 0},                                                             //
@@ -2037,6 +2158,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::CIRCLE_FP,                                                    //
         "circle",                                                                  //
         {"magnification", "", "", ""},                                             //
         {200000L, 0, 0, 0},                                                        //
@@ -2051,6 +2173,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MARTIN_FP,                                                    //
         "martin",                                                                  //
         {"a", "", "", ""},                                                         //
         {3.14, 0, 0, 0},                                                           //
@@ -2065,6 +2188,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LYAPUNOV,                                                     //
         "lyapunov",                                                                //
         {"+Order (integer)", "Population Seed", "+Filter Cycles", ""},             //
         {0, 0.5, 0, 0},                                                            //
@@ -2079,6 +2203,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_3D1_FP,                                                //
         "lorenz3d1",                                                               //
         {TIME_STEP, "a", "b", "c"},                                                //
         {.02, 5, 15, 1},                                                           //
@@ -2094,6 +2219,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_3D3_FP,                                                //
         "lorenz3d3",                                                               //
         {TIME_STEP, "a", "b", "c"},                                                //
         {.02, 10, 28, 2.66},                                                       //
@@ -2109,6 +2235,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LORENZ_3D4_FP,                                                //
         "lorenz3d4",                                                               //
         {TIME_STEP, "a", "b", "c"},                                                //
         {.02, 10, 28, 2.66},                                                       //
@@ -2124,6 +2251,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LAMBDA_FN_FN_L,                                                         //
         T_LAMBDA_FN_OR_FN + 1,                                                               //
         {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},                                //
         {1, 0.1, 1, 0},                                                                      //
@@ -2139,6 +2267,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::LAMBDA_FN_FN_FP,                                                        //
         T_LAMBDA_FN_OR_FN,                                                                   //
         {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},                                //
         {1, 0.1, 1, 0},                                                                      //
@@ -2154,6 +2283,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_FN_FN_L,                                                     //
         T_JULIA_FN_OR_FN + 1,                                                         //
         {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},                         //
         {0, 0, 8, 0},                                                                 //
@@ -2169,6 +2299,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JUL_FN_FN_FP,                                                    //
         T_JULIA_FN_OR_FN,                                                             //
         {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},                         //
         {0, 0, 8, 0},                                                                 //
@@ -2184,6 +2315,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_LAM_FN_FN_L,                                                        //
         T_MAN_LAM_FN_OR_FN + 1,                                                              //
         {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},                                      //
         {0, 0, 10, 0},                                                                       //
@@ -2199,6 +2331,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_LAM_FN_FN_FP,                                                       //
         T_MAN_LAM_FN_OR_FN,                                                                  //
         {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},                                      //
         {0, 0, 10, 0},                                                                       //
@@ -2214,6 +2347,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_FN_FN_L,                                                     //
         T_MANDEL_FN_OR_FN + 1,                                                        //
         {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},                               //
         {0, 0, 0.5, 0},                                                               //
@@ -2229,6 +2363,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAN_FN_FN_FP,                                                    //
         T_MANDEL_FN_OR_FN,                                                            //
         {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},                               //
         {0, 0, 0.5, 0},                                                               //
@@ -2244,6 +2379,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_MAY_L,                                                    //
         T_BIF_MAY + 1,                                                             //
         {FILT, SEED_POP, "Beta >= 2", ""},                                         //
         {300.0, 0.9, 5, 0},                                                        //
@@ -2258,6 +2394,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BIF_MAY,                                                      //
         T_BIF_MAY,                                                                 //
         {FILT, SEED_POP, "Beta >= 2", ""},                                         //
         {300.0, 0.9, 5, 0},                                                        //
@@ -2272,6 +2409,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HALLEY_MP,                                                   //
         T_HALLEY + 1,                                                             //
         {ORDER, REAL_RELAX, EPSILON, IMAG_RELAX},                                 //
         {6, 1.0, 0.0001, 0},                                                      //
@@ -2286,6 +2424,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HALLEY,                                                      //
         T_HALLEY,                                                                 //
         {ORDER, REAL_RELAX, EPSILON, IMAG_RELAX},                                 //
         {6, 1.0, 0.0001, 0},                                                      //
@@ -2300,6 +2439,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::DYNAMIC_FP,                                                   //
         "dynamic",                                                                 //
         {"+# of intervals (<0 = connect)", "time step (<0 = Euler)", "a", "b"},    //
         {50, .1, 1, 3},                                                            //
@@ -2314,6 +2454,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::QUAT_FP,                                                       //
         "quat",                                                                     //
         {"notused", "notused", "cj", "ck"},                                         //
         {0, 0, 0, 0},                                                               //
@@ -2329,6 +2470,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::QUAT_JUL_FP,                                               //
         "quatjul",                                                              //
         {"c1", "ci", "cj", "ck"},                                               //
         {-.745, 0, .113, .05},                                                  //
@@ -2344,6 +2486,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::CELLULAR,                                                     //
         "cellular",                                                                //
         {CELL_INIT, CELL_RULE, CELL_TYPE, CELL_START},                             //
         {11.0, 3311100320.0, 41.0, 0},                                             //
@@ -2358,6 +2501,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JULIBROT_FP,                                                //
         T_JULIBROT,                                                              //
         {"", "", "", ""},                                                        //
         {0, 0, 0, 0},                                                            //
@@ -2374,6 +2518,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
 
 #ifdef RANDOM_RUN
     {
+        FractalType::INVERSE_JULIA,                                                                         //
         T_JULIA_INVERSE + 1,                                                                                //
         {REAL_PARAM, IMAG_PARAM, MAX_HITS, "Random Run Interval"},                                          //
         {-0.11, 0.6557, 4, 1024},                                                                           //
@@ -2388,6 +2533,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::INVERSE_JULIA_FP,                                                                      //
         T_JULIA_INVERSE,                                                                                    //
         {REAL_PARAM, IMAG_PARAM, MAX_HITS, "Random Run Interval"},                                          //
         {-0.11, 0.6557, 4, 1024},                                                                           //
@@ -2403,6 +2549,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
 
 #else
     {
+        FractalType::INVERSE_JULIA,                                                                         //
         T_JULIA_INVERSE + 1,                                                                                //
         {REAL_PARAM, IMAG_PARAM, MAX_HITS, ""},                                                             //
         {-0.11, 0.6557, 4, 1024},                                                                           //
@@ -2417,6 +2564,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::INVERSE_JULIA_FP,                                                                      //
         T_JULIA_INVERSE,                                                                                    //
         {REAL_PARAM, IMAG_PARAM, MAX_HITS, ""},                                                             //
         {-0.11, 0.6557, 4, 1024},                                                                           //
@@ -2433,6 +2581,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
 #endif
 
     {
+        FractalType::MANDEL_CLOUD,                                                 //
         "mandelcloud",                                                             //
         {"+# of intervals (<0 = connect)", "", "", ""},                            //
         {50, 0, 0, 0},                                                             //
@@ -2447,6 +2596,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::PHOENIX,                                                        //
         T_PHOENIX + 1,                                                               //
         {P1_REAL, P2_REAL, DEGREE_Z, ""},                                            //
         {0.56667, -0.5, 0, 0},                                                       //
@@ -2462,6 +2612,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::PHOENIX_FP,                                                     //
         T_PHOENIX,                                                                   //
         {P1_REAL, P2_REAL, DEGREE_Z, ""},                                            //
         {0.56667, -0.5, 0, 0},                                                       //
@@ -2476,6 +2627,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAND_PHOENIX,                                                   //
         T_MAND_PHOENIX + 1,                                                          //
         {REAL_Z0, IMAG_Z0, DEGREE_Z, ""},                                            //
         {0.0, 0.0, 0, 0},                                                            //
@@ -2491,6 +2643,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAND_PHOENIX_FP,                                                //
         T_MAND_PHOENIX,                                                              //
         {REAL_Z0, IMAG_Z0, DEGREE_Z, ""},                                            //
         {0.0, 0.0, 0, 0},                                                            //
@@ -2506,6 +2659,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HYPER_CMPLX_FP,                                                     //
         "hypercomplex",                                                                  //
         {"notused", "notused", "cj", "ck"},                                              //
         {0, 0, 0, 0},                                                                    //
@@ -2521,6 +2675,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::HYPER_CMPLX_J_FP,                                                 //
         "hypercomplexj",                                                               //
         {"c1", "ci", "cj", "ck"},                                                      //
         {-.745, 0, .113, .05},                                                         //
@@ -2536,6 +2691,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::FROTH,                                                      //
         T_FROTHY_BASIN + 1,                                                      //
         {FROTH_MAPPING, FROTH_SHADE, FROTH_A_VALUE, ""},                         //
         {1, 0, 1.028713768218725, 0},                                            //
@@ -2550,6 +2706,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::FROTH_FP,                                                //
         T_FROTHY_BASIN,                                                       //
         {FROTH_MAPPING, FROTH_SHADE, FROTH_A_VALUE, ""},                      //
         {1, 0, 1.028713768218725, 0},                                         //
@@ -2564,6 +2721,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MANDEL4_FP,                                                    //
         T_MANDEL4,                                                                  //
         {REAL_Z0, IMAG_Z0, "", ""},                                                 //
         {0, 0, 0, 0},                                                               //
@@ -2578,6 +2736,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::JULIA4_FP,                                                   //
         T_JULIA4,                                                                 //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                         //
         {0.6, 0.55, 0, 0},                                                        //
@@ -2592,6 +2751,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MARKS_MANDEL_FP,                                                    //
         T_MARKS_MANDEL,                                                                  //
         {REAL_Z0, IMAG_Z0, RE_EXPONENT, ""},                                             //
         {0, 0, 1, 0},                                                                    //
@@ -2607,6 +2767,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MARKS_JULIA_FP,                                                     //
         T_MARKS_JULIA,                                                                   //
         {REAL_PARAM, IMAG_PARAM, RE_EXPONENT, ""},                                       //
         {0.1, 0.9, 1, 0},                                                                //
@@ -2622,6 +2783,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::ICON,                                                                             //
         "icons",                                                                                       //
         {"Lambda", "Alpha", "Beta", "Gamma"},                                                          //
         {-2.34, 2.0, 0.2, 0.1},                                                                        //
@@ -2636,6 +2798,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::ICON_3D,                                                      //
         "icons3d",                                                                 //
         {"Lambda", "Alpha", "Beta", "Gamma"},                                      //
         {-2.34, 2.0, 0.2, 0.1},                                                    //
@@ -2651,6 +2814,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::PHOENIX_CPLX,                                                             //
         T_PHOENIX_CPLX + 1,                                                                    //
         {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},                                                  //
         {0.2, 0, 0.3, 0},                                                                      //
@@ -2666,6 +2830,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::PHOENIX_FP_CPLX,                                                          //
         T_PHOENIX_CPLX,                                                                        //
         {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},                                                  //
         {0.2, 0, 0.3, 0},                                                                      //
@@ -2681,6 +2846,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAND_PHOENIX_CPLX,                                                        //
         T_MAND_PHOENIX_CPLX + 1,                                                               //
         {REAL_Z0, IMAG_Z0, P2_REAL, P2_IMAG},                                                  //
         {0, 0, 0.5, 0},                                                                        //
@@ -2696,6 +2862,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::MAND_PHOENIX_FP_CPLX,                                                     //
         T_MAND_PHOENIX_CPLX,                                                                   //
         {REAL_Z0, IMAG_Z0, P2_REAL, P2_IMAG},                                                  //
         {0, 0, 0.5, 0},                                                                        //
@@ -2711,6 +2878,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::ANT,                                                          //
         "ant",                                                                     //
         {
             "#Rule String (1's and non-1's, 0 rand)",                              //
@@ -2731,6 +2899,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::CHIP,                                                         //
         "chip",                                                                    //
         {"a", "b", "c", ""},                                                       //
         {-15, -19, 1, 0},                                                          //
@@ -2745,6 +2914,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::QUADRUP_TWO,                                                    //
         "quadruptwo",                                                                //
         {"a", "b", "c", ""},                                                         //
         {34, 1, 5, 0},                                                               //
@@ -2759,6 +2929,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::THREEPLY,                                                     //
         "threeply",                                                                //
         {"a", "b", "c", ""},                                                       //
         {-55, -1, -42, 0},                                                         //
@@ -2773,6 +2944,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::VL,                                                           //
         "volterra-lotka",                                                          //
         {"h", "p", "", ""},                                                        //
         {0.739, 0.739, 0, 0},                                                      //
@@ -2787,6 +2959,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::ESCHER,                                                       //
         "escher_julia",                                                            //
         {REAL_PARAM, IMAG_PARAM, "", ""},                                          //
         {0.32, 0.043, 0, 0},                                                       //
@@ -2805,36 +2978,39 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     // included by Humberto R. Baptista
     // code adapted from king.cpp bt James Rankin
     {
-        "latoocarfian",                                                                                    //
-        {"a", "b", "c", "d"},                                                                              //
-        {-0.966918, 2.879879, 0.765145, 0.744728},                                                         //
-        HelpLabels::HT_LATOO, HelpLabels::HF_LATOO,                                                        //
-        FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::INF_CALC | FractalFlags::TRIG4,    //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                                                          //
-        0,                                                                                                 //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
-        SymmetryType::NONE,                                                                                //
-        (VF) latoo_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,                               //
-        NO_BAILOUT                                                                                         //
+        FractalType::LATOO,                                                                             //
+        "latoocarfian",                                                                                 //
+        {"a", "b", "c", "d"},                                                                           //
+        {-0.966918, 2.879879, 0.765145, 0.744728},                                                      //
+        HelpLabels::HT_LATOO, HelpLabels::HF_LATOO,                                                     //
+        FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::INF_CALC | FractalFlags::TRIG4, //
+        -2.0F, 2.0F, -1.5F, 1.5F,                                                                       //
+        0,                                                                                              //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
+        SymmetryType::NONE,                                                                             //
+        (VF) latoo_float_orbit, nullptr, orbit3d_float_setup, orbit2d_float,                            //
+        NO_BAILOUT                                                                                      //
     },
 
     // Jim Muth formula
     {
-        "dividebrot5",                                                                                     //
-        {"a", "b", "", ""},                                                                                //
-        {2.0, 0.0, 0.0, 0.0},                                                                              //
-        HelpLabels::HT_DIVIDE_BROT5, HelpLabels::HF_DIVIDE_BROT5,                                          //
-        FractalFlags::BAIL_TEST | FractalFlags::BF_MATH,                                                   //
-        -2.5f, 1.5f, -1.5f, 1.5f,                                                                          //
-        0,                                                                                                 //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
-        SymmetryType::NONE,                                                                                //
-        divide_brot5_fp_fractal, divide_brot5_fp_per_pixel, divide_brot5_setup, standard_fractal,          //
-        16                                                                                                 //
+        FractalType::DIVIDE_BROT5,                                                                //
+        "dividebrot5",                                                                            //
+        {"a", "b", "", ""},                                                                       //
+        {2.0, 0.0, 0.0, 0.0},                                                                     //
+        HelpLabels::HT_DIVIDE_BROT5, HelpLabels::HF_DIVIDE_BROT5,                                 //
+        FractalFlags::BAIL_TEST | FractalFlags::BF_MATH,                                          //
+        -2.5f, 1.5f, -1.5f, 1.5f,                                                                 //
+        0,                                                                                        //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                //
+        SymmetryType::NONE,                                                                       //
+        divide_brot5_fp_fractal, divide_brot5_fp_per_pixel, divide_brot5_setup, standard_fractal, //
+        16                                                                                        //
     },
 
     // Jim Muth formula
     {
+        FractalType::MANDELBROT_MIX4,                                                                      //
         "mandelbrotmix4",                                                                                  //
         {P1_REAL, P1_IMAG, P2_REAL, P2_IMAG},                                                              //
         {0.05, 3, -1.5, -2},                                                                               //
@@ -2849,6 +3025,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
     },
 
     {
+        FractalType::BURNING_SHIP,                                                          //
         "burning-ship",                                                                     //
         {P1_REAL, P1_IMAG, "degree (2-5)", ""},                                             //
         {0, 0, 2, 0},                                                                       //
@@ -2865,6 +3042,7 @@ FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, FractalType::SQR_1_OVER_TRIG_F
 
     // marks the END of the list
     {
+        FractalType::NO_FRACTAL,                                                   //
         nullptr,                                                                   //
         {nullptr, nullptr, nullptr, nullptr},                                      //
         {0, 0, 0, 0},                                                              //
