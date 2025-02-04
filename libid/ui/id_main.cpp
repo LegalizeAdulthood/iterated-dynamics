@@ -63,7 +63,6 @@ int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on th
 double g_logical_screen_x_size_dots{}, g_logical_screen_y_size_dots{}; // xdots-1, ydots-1
 int g_colors{256};                                                     // maximum colors available
 long g_max_iterations{};                                               // try this many iterations
-FractalType g_fractal_type{FractalType::NO_FRACTAL};                   // if == 0, use Mandelbrot
 char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
 long g_l_delta_x{}, g_l_delta_y{};                                     // screen pixel increments
 long g_l_delta_x2{}, g_l_delta_y2{};                                   // screen pixel increments
