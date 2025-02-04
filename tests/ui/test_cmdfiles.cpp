@@ -349,7 +349,7 @@ protected:
 
     ValueSaver<std::string> saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
     ValueSaver<FractalType> saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<FractalSpecific *> saved_cur_fractal_specific{g_cur_fractal_specific, &g_fractal_specific[+g_fractal_type]};
+    ValueSaver<FractalSpecific *> saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> saved_x_dots{g_file_x_dots, 800};
     ValueSaver<int> saved_y_dots{g_file_y_dots, 600};
     MockDriver driver;
@@ -1074,7 +1074,7 @@ TEST_F(TestParameterCommand, typeSierpinski)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
-    EXPECT_EQ(g_cur_fractal_specific, &g_fractal_specific[+FractalType::SIERPINSKI]);
+    EXPECT_EQ(g_cur_fractal_specific, get_fractal_specific(FractalType::SIERPINSKI));
     const FractalSpecific &fractal{*g_cur_fractal_specific};
     EXPECT_EQ(g_x_min, fractal.x_min);
     EXPECT_EQ(g_x_max, fractal.x_max);

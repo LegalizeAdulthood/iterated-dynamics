@@ -186,7 +186,8 @@ static int sel_fract_type_help(int key, int choice)
 {
     if (key == ID_KEY_F2)
     {
-        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[(*(s_ft_choices + choice))->num].help_text};
+        ValueSaver saved_help_mode{g_help_mode,
+            get_fractal_specific(static_cast<FractalType>((*(s_ft_choices + choice))->num))->help_text};
         help();
     }
     return 0;
@@ -405,7 +406,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             current_type = static_cast<FractalType>(i);
         }
     }
-    g_cur_fractal_specific = &g_fractal_specific[+current_type];
+    g_cur_fractal_specific = get_fractal_specific(current_type);
     s_tmp_stack[0] = 0;
     HelpLabels help_formula = g_cur_fractal_specific->help_formula;
     if (help_formula < HelpLabels::NONE)
@@ -542,7 +543,7 @@ gfp_top:
         {
             g_new_orbit_type = i;
         }
-        jb_orbit = &g_fractal_specific[+g_new_orbit_type];
+        jb_orbit = get_fractal_specific(g_new_orbit_type);
         julia_orbit_name = jb_orbit->name;
     }
 
@@ -973,6 +974,6 @@ gfp_top:
         ++prompt_num;
     }
 gfp_exit:
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     return ret;
 }

@@ -119,8 +119,8 @@ void trig_details(char *buf)
     {
         num_fn = (+g_cur_fractal_specific->flags >> 6) & 7;
     }
-    if (g_cur_fractal_specific == &g_fractal_specific[+FractalType::FORMULA]
-        || g_cur_fractal_specific == &g_fractal_specific[+FractalType::FORMULA_FP])
+    if (g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA)
+        || g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA_FP))
     {
         num_fn = g_max_function;
     }
