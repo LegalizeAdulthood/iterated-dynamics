@@ -413,12 +413,15 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         return -1;
     }
 
-    g_max_iterations        = read_info.iterations_old;
-    int const read_fracal_type = read_info.fractal_type;
-    if (read_fracal_type < 0 || read_fracal_type >= g_num_fractal_types)
+    g_max_iterations = read_info.iterations_old;
+    const int read_fractal_type = read_info.fractal_type;
+    if (read_fractal_type < 0 || read_fractal_type >= +FractalType::MAX)
     {
-        std::snprintf(msg, std::size(msg), "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
-        g_fractal_type = FractalType::MANDEL;
+        std::snprintf(msg, std::size(msg), "Warning: %s has a bad fractal type %d; using 0",
+            g_read_filename.c_str(), read_fractal_type);
+        set_fractal_type(FractalType::MANDEL);
+        stop_msg(msg);
+        return -1;
     }
     g_fractal_type = static_cast<FractalType>(read_fracal_type);
     g_cur_fractal_specific = &g_fractal_specific[read_fracal_type];
