@@ -3069,9 +3069,10 @@ FractalSpecific *g_cur_fractal_specific{};
 
 FractalSpecific *get_fractal_specific(FractalType type)
 {
-    if (FractalSpecific *it = std::find_if(std::begin(g_fractal_specific), std::end(g_fractal_specific),
-            [=](const FractalSpecific &entry) { return entry.type == type; });
-        it != std::end(g_fractal_specific))
+    // g_fractal_specific is sorted by the type member, so we can use binary search.
+    if (auto it = std::lower_bound(std::begin(g_fractal_specific), std::end(g_fractal_specific), type,
+            [](const FractalSpecific &specific, FractalType value) { return specific.type < value; });
+        it != std::end(g_fractal_specific) && it->type == type)
     {
         return it;
     }

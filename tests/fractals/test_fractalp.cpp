@@ -4,9 +4,11 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+
 TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {
-    for (int i =0; i < g_num_fractal_types; ++i)
+    for (int i = 0; i < g_num_fractal_types; ++i)
     {
         if (!bit_set(g_fractal_specific[i].flags, FractalFlags::PERTURB))
         {
@@ -31,6 +33,12 @@ TEST(TestFractalSpecific, typeMatchesIndex)
     {
         EXPECT_EQ(i, +g_fractal_specific[i].type) << "index " << i << ", " << g_fractal_specific[i].name;
     }
+}
+
+TEST(TestFractalSpecific, fractalSpecificEntriesAreSortedByType)
+{
+    EXPECT_TRUE(std::is_sorted(&g_fractal_specific[0], &g_fractal_specific[g_num_fractal_types],
+        [](const FractalSpecific &lhs, const FractalSpecific &rhs) { return lhs.type < rhs.type; }));
 }
 
 TEST(TestGetFractalSpecific, resultMatchesType)
