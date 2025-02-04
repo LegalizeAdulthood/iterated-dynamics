@@ -19,7 +19,7 @@ bool type_has_param(FractalType type, int param, char *buf)
     char const *ret = nullptr;
     if (0 <= param && param < 4)
     {
-        ret = g_fractal_specific[+type].param_names[param];
+        ret = get_fractal_specific(type)->param_names[param];
     }
     else if (param >= 4 && param < MAX_PARAMS)
     {

@@ -1455,8 +1455,8 @@ void InverseJulia::process()
 void jiim(JIIMType which)
 {
     // must use standard fractal or be calcfroth
-    if (g_fractal_specific[+g_fractal_type].calc_type != standard_fractal &&
-        g_fractal_specific[+g_fractal_type].calc_type != calc_froth)
+    if (get_fractal_specific(g_fractal_type)->calc_type != standard_fractal &&
+        get_fractal_specific(g_fractal_type)->calc_type != calc_froth)
     {
         return;
     }

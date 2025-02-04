@@ -139,14 +139,14 @@ static void toggle_mandelbrot_julia(MainContext &context)
     {
         if (g_is_mandelbrot)
         {
-            g_fractal_specific[+g_fractal_type].to_julia = g_fractal_type;
-            g_fractal_specific[+g_fractal_type].to_mandel = FractalType::NO_FRACTAL;
+            get_fractal_specific(g_fractal_type)->to_julia = g_fractal_type;
+            get_fractal_specific(g_fractal_type)->to_mandel = FractalType::NO_FRACTAL;
             g_is_mandelbrot = false;
         }
         else
         {
-            g_fractal_specific[+g_fractal_type].to_julia = FractalType::NO_FRACTAL;
-            g_fractal_specific[+g_fractal_type].to_mandel = g_fractal_type;
+            get_fractal_specific(g_fractal_type)->to_julia = FractalType::NO_FRACTAL;
+            get_fractal_specific(g_fractal_type)->to_mandel = g_fractal_type;
             g_is_mandelbrot = true;
         }
     }
@@ -384,10 +384,10 @@ static MainState request_3d_fractal_params(MainContext &context)
 static MainState show_orbit_window(MainContext &/*context*/)
 {
     // must use standard fractal and have a float variant
-    if ((g_fractal_specific[+g_fractal_type].calc_type == standard_fractal
-            || g_fractal_specific[+g_fractal_type].calc_type == calc_froth)
-        && (g_fractal_specific[+g_fractal_type].is_integer == 0 ||
-             g_fractal_specific[+g_fractal_type].to_float != FractalType::NO_FRACTAL)
+    if ((get_fractal_specific(g_fractal_type)->calc_type == standard_fractal
+            || get_fractal_specific(g_fractal_type)->calc_type == calc_froth)
+        && (get_fractal_specific(g_fractal_type)->is_integer == 0 ||
+             get_fractal_specific(g_fractal_type)->to_float != FractalType::NO_FRACTAL)
         && (g_bf_math == BFMathType::NONE) // for now no arbitrary precision support
         && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {

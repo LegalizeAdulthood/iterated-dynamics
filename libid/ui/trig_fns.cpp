@@ -113,7 +113,7 @@ void trig_details(char *buf)
     int num_fn;
     if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
     {
-        num_fn = (+g_fractal_specific[+g_new_orbit_type].flags >> 6) & 7;
+        num_fn = (+get_fractal_specific(g_new_orbit_type)->flags >> 6) & 7;
     }
     else
     {

@@ -653,7 +653,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             }
             if (g_new_orbit_type != FractalType::JULIA)
             {
-                char const *name = g_fractal_specific[+g_new_orbit_type].name;
+                char const *name = get_fractal_specific(g_new_orbit_type)->name;
                 if (*name == '*')
                 {
                     name++;

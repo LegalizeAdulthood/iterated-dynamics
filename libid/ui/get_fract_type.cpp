@@ -149,7 +149,7 @@ static FractalType select_fract_type(FractalType t)
     int j = 0;
     for (int i = 0; i < num_types; ++i)   // find starting choice in sorted list
     {
-        if (choices[i]->num == +t || choices[i]->num == +g_fractal_specific[+t].to_float)
+        if (choices[i]->num == +t || choices[i]->num == +get_fractal_specific(t)->to_float)
         {
             j = i;
         }

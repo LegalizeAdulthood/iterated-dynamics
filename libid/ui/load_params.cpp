@@ -10,7 +10,7 @@ void load_params(FractalType type)
 {
     for (int i = 0; i < 4; ++i)
     {
-        g_params[i] = g_fractal_specific[+type].params[i];
+        g_params[i] = get_fractal_specific(type)->params[i];
     }
     if (const int extra = find_extra_param(type); extra > -1)
     {

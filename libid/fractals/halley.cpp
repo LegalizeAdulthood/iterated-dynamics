@@ -35,8 +35,7 @@ bool halley_setup()
     {
         g_fractal_type = FractalType::HALLEY_MP;
     }
-
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
 
     g_degree = (int)g_param_z1.x;
     g_degree = std::max(g_degree, 2);
