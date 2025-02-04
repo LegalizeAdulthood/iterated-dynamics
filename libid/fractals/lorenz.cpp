@@ -2187,8 +2187,7 @@ int plot_orbits2d_setup()
         }
         g_float_flag = true;
         g_user_float_flag = true; // force floating point
-        g_cur_fractal_specific = &g_fractal_specific[+to_float];
-        g_fractal_type = to_float;
+        set_fractal_type(to_float);
     }
 
     per_image();

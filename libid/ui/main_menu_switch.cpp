@@ -165,8 +165,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
             driver_unget_key(key);
             return;
         }
-        g_fractal_type = g_cur_fractal_specific->to_julia;
-        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        set_fractal_type(g_cur_fractal_specific->to_julia);
         if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
         {
             g_params[0] = (g_x_max + g_x_min) / 2;
@@ -208,8 +207,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
     else if (g_cur_fractal_specific->to_mandel != FractalType::NO_FRACTAL)
     {
         // switch to corresponding Mandel set
-        g_fractal_type = g_cur_fractal_specific->to_mandel;
-        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        set_fractal_type(g_cur_fractal_specific->to_mandel);
         if (context.from_mandel)
         {
             g_x_min = s_j_x_min;
@@ -341,8 +339,7 @@ static MainState begin_ant(MainContext &/*context*/)
     }
     if (g_fractal_type != FractalType::ANT)
     {
-        g_fractal_type = FractalType::ANT;
-        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        set_fractal_type(FractalType::ANT);
         load_params(g_fractal_type);
     }
     if (!g_from_text)
@@ -363,7 +360,7 @@ static MainState begin_ant(MainContext &/*context*/)
     {
         driver_unstack_screen();
     }
-    g_fractal_type = old_type;
+    set_fractal_type(old_type);
     for (int j = 0; j < MAX_PARAMS; ++j)
     {
         g_params[j] = old_param[j];
@@ -428,20 +425,15 @@ static MainState inverse_julia_toggle(MainContext &context)
         if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
         {
             old_type = g_fractal_type;
-            g_fractal_type = FractalType::INVERSE_JULIA;
+            set_fractal_type(FractalType::INVERSE_JULIA);
         }
         else if (g_fractal_type == FractalType::INVERSE_JULIA)
         {
-            if (old_type != FractalType::NO_FRACTAL)
-            {
-                g_fractal_type = old_type;
-            }
-            else
-            {
-                g_fractal_type = FractalType::JULIA;
-            }
+            set_fractal_type(old_type != FractalType::NO_FRACTAL ? old_type : FractalType::JULIA);
         }
-        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        // TODO: is it really necessary to reset g_cur_fractal_specific?
+        assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
+        g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
         g_zoom_enabled = true;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;

@@ -88,9 +88,8 @@ int get_fract_type()
     }
     if (!accepted)
     {
-        g_fractal_type = old_fract_type;
+        set_fractal_type(old_fract_type);
     }
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     return accepted ? 0 : -1;
 }
 
@@ -298,8 +297,7 @@ static bool select_type_params(FractalType new_fract_type, FractalType old_fract
     SaveFractalType saved_fractal_type;
 
 sel_type_restart:
-    g_fractal_type = new_fract_type;
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+    set_fractal_type(new_fract_type);
 
     if (g_fractal_type == FractalType::L_SYSTEM)
     {

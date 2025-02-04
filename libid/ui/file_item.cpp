@@ -790,8 +790,7 @@ long get_file_entry(
         case ItemType::IFS:
             if (ifs_load() == 0)
             {
-                g_fractal_type = !g_ifs_type ? FractalType::IFS : FractalType::IFS_3D;
-                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+                set_fractal_type(!g_ifs_type ? FractalType::IFS : FractalType::IFS_3D);
                 set_default_params(); // to correct them if 3d
                 return 0;
             }

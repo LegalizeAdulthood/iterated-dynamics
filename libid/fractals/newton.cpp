@@ -13,6 +13,7 @@
 #include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
+#include <cassert>
 #include <cfloat>
 #include <cmath>
 #include <vector>
@@ -266,13 +267,15 @@ bool newton_setup()
     {
         if (g_fractal_type == FractalType::NEWTON_MP)
         {
-            g_fractal_type = FractalType::NEWTON;
+            set_fractal_type(FractalType::NEWTON);
         }
         else if (g_fractal_type == FractalType::NEWT_BASIN_MP)
         {
-            g_fractal_type = FractalType::NEWT_BASIN;
+            set_fractal_type(FractalType::NEWT_BASIN);
         }
-        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+        // TODO: is it necessary to update g_cur_fractal_specific?
+        assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
+        g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     }
     // set up table of roots of 1 along unit circle
     g_degree = (int)g_param_z1.x;

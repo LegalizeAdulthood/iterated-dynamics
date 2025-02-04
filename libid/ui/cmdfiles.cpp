@@ -497,8 +497,7 @@ static void init_vars_fractal()
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
     g_user_float_flag = true;                            // turn on the float flag
     g_finite_attractor = false;                          // disable finite attractor logic
-    g_fractal_type = FractalType::MANDEL;                // initial type Set flag
-    g_cur_fractal_specific = &g_fractal_specific[0];     //
+    set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //
     g_bailout = 0;                                       // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
@@ -3549,8 +3548,7 @@ static CmdArgFlags cmd_type(const Command &cmd)
         return cmd.bad_arg();
     }
     const FractalType previous{g_fractal_type};
-    g_fractal_type = static_cast<FractalType>(k);
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+    set_fractal_type(static_cast<FractalType>(k));
     if (!s_init_corners)
     {
         g_x_min = g_cur_fractal_specific->x_min;

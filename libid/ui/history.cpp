@@ -341,7 +341,7 @@ void restore_history_info(int i)
     g_invert = 0;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
-    g_fractal_type = last.image_fractal_type;
+    set_fractal_type(last.image_fractal_type);
     g_x_min = last.x_min;
     g_x_max = last.x_max;
     g_y_min = last.y_min;
@@ -455,7 +455,6 @@ void restore_history_info(int i)
     g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     g_potential_flag = (g_potential_params[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {

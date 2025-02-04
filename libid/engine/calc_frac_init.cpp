@@ -29,6 +29,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cfloat>
 #include <cmath>
 #include <cstdio>
@@ -151,8 +152,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         }
         else if (g_bf_math != BFMathType::NONE)
         {
-            g_cur_fractal_specific = get_fractal_specific(to_float);
-            g_fractal_type = to_float;
+            set_fractal_type(to_float);
         }
     }
 
@@ -173,32 +173,28 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     else if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
         && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        g_fractal_type = FractalType::MANDEL_FP;
-        g_cur_fractal_specific = get_fractal_specific(FractalType::MANDEL_FP);
+        set_fractal_type(FractalType::MANDEL_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
         && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        g_fractal_type = FractalType::JULIA_FP;
-        g_cur_fractal_specific = get_fractal_specific(FractalType::JULIA_FP);
+        set_fractal_type(FractalType::JULIA_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == FractalType::MANDEL_Z_POWER_L || g_fractal_type == FractalType::MANDEL_Z_POWER_FP)
         && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        g_fractal_type = FractalType::MANDEL_Z_POWER_FP;
-        g_cur_fractal_specific = get_fractal_specific(FractalType::MANDEL_Z_POWER_FP);
+        set_fractal_type(FractalType::MANDEL_Z_POWER_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == FractalType::JULIA_Z_POWER_L || g_fractal_type == FractalType::JULIA_Z_POWER_FP)
         && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        g_fractal_type = FractalType::JULIA_Z_POWER_FP;
-        g_cur_fractal_specific = get_fractal_specific(FractalType::JULIA_Z_POWER_FP);
+        set_fractal_type(FractalType::JULIA_Z_POWER_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
@@ -279,7 +275,7 @@ init_restart:
         if (g_cur_fractal_specific->is_integer != 0
             && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
         {
-            g_fractal_type = g_cur_fractal_specific->to_float;
+            set_fractal_type(g_cur_fractal_specific->to_float);
         }
     }
     else
@@ -287,7 +283,7 @@ init_restart:
         if (g_cur_fractal_specific->is_integer == 0
             && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
         {
-            g_fractal_type = g_cur_fractal_specific->to_float;
+            set_fractal_type(g_cur_fractal_specific->to_float);
         }
     }
     // match Julibrot with integer mode of orbit
@@ -300,7 +296,7 @@ init_restart:
         }
         else
         {
-            g_fractal_type = FractalType::JULIBROT;
+            set_fractal_type(FractalType::JULIBROT);
         }
     }
     else if (g_fractal_type == FractalType::JULIBROT && get_fractal_specific(g_new_orbit_type)->is_integer == 0)
@@ -312,10 +308,11 @@ init_restart:
         }
         else
         {
-            g_fractal_type = FractalType::JULIBROT_FP;
+            set_fractal_type(FractalType::JULIBROT_FP);
         }
     }
 
+    assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
 
     g_integer_fractal = g_cur_fractal_specific->is_integer;

@@ -131,3 +131,9 @@ inline int orbit_calc()
 {
     return get_fractal_specific(g_fractal_type)->orbit_calc();
 }
+
+inline void set_fractal_type(FractalType value)
+{
+    g_fractal_type = value;
+    g_cur_fractal_specific = get_fractal_specific(value);
+}
