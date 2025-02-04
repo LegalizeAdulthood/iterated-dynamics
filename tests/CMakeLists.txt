@@ -25,6 +25,7 @@ add_executable(test-id
     include/test_data.h.in
     engine/test_log_map.cpp
     engine/test_resume.cpp
+    fractals/test_check_orbit_name.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
     io/test_check_write_file.cpp

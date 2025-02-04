@@ -3833,3 +3833,13 @@ TEST_F(TestParameterCommand, saveDir)
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(ID_TEST_DATA_DIR, g_save_dir);
 }
+
+TEST_F(TestParameterCommand, orbitNameJulia)
+{
+    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::LAMBDA};
+
+    exec_cmd_arg("orbitname=julia");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(FractalType::JULIA, g_new_orbit_type);
+}
