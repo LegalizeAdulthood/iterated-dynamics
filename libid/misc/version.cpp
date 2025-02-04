@@ -10,3 +10,5 @@ int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
 
 // g_patch_level can't be modified.
 const int g_patch_level{ID_VERSION_PATCH};
+
+Version g_version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};

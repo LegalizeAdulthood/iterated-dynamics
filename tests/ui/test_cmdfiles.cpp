@@ -426,12 +426,107 @@ foo                {
 
 TEST_F(TestParameterCommandError, resetBadArg)
 {
-    ValueSaver saved_escape_exit{g_escape_exit, true};
+    ValueSaver saved_escape_exit{g_release, 123};
 
     exec_cmd_arg("reset=foo");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_TRUE(g_escape_exit);
+    EXPECT_EQ(123, g_release);
+}
+
+TEST_F(TestParameterCommand, resetNoArg)
+{
+    ValueSaver saved_release{g_release, 102};
+    ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
+
+    exec_cmd_arg("reset");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(102, g_release);
+    EXPECT_EQ(1, g_version.major);
+    EXPECT_EQ(2, g_version.minor);
+    EXPECT_EQ(0, g_version.patch);
+    EXPECT_EQ(0, g_version.tweak);
+    EXPECT_FALSE(g_version.legacy);
+}
+
+TEST_F(TestParameterCommand, resetVersion10)
+{
+    ValueSaver saved_release{g_release, 0};
+    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
+
+    exec_cmd_arg("reset=100");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(100, g_release);
+    EXPECT_EQ(1, g_version.major);
+    EXPECT_EQ(0, g_version.minor);
+    EXPECT_EQ(0, g_version.patch);
+    EXPECT_EQ(0, g_version.tweak);
+    EXPECT_FALSE(g_version.legacy);
+}
+
+TEST_F(TestParameterCommand, resetVersion11)
+{
+    ValueSaver saved_release{g_release, 0};
+    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
+
+    exec_cmd_arg("reset=101");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(101, g_release);
+    EXPECT_EQ(1, g_version.major);
+    EXPECT_EQ(1, g_version.minor);
+    EXPECT_EQ(0, g_version.patch);
+    EXPECT_EQ(0, g_version.tweak);
+    EXPECT_FALSE(g_version.legacy);
+}
+
+TEST_F(TestParameterCommand, resetVersion12)
+{
+    ValueSaver saved_release{g_release, 0};
+    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
+
+    exec_cmd_arg("reset=1/2");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(102, g_release);
+    EXPECT_EQ(1, g_version.major);
+    EXPECT_EQ(2, g_version.minor);
+    EXPECT_EQ(0, g_version.patch);
+    EXPECT_EQ(0, g_version.tweak);
+    EXPECT_FALSE(g_version.legacy);
+}
+
+TEST_F(TestParameterCommand, resetLegacyVersion)
+{
+    ValueSaver saved_release{g_release, 0};
+    ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, false}};
+
+    exec_cmd_arg("reset=1906");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(1906, g_release);
+    EXPECT_EQ(19, g_version.major);
+    EXPECT_EQ(6, g_version.minor);
+    EXPECT_EQ(0, g_version.patch);
+    EXPECT_EQ(0, g_version.tweak);
+    EXPECT_TRUE(g_version.legacy);
+}
+
+TEST_F(TestParameterCommand, resetVersionAllFields)
+{
+    ValueSaver saved_release{g_release, 0};
+
+    exec_cmd_arg("reset=1/2/3/4");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(102, g_release);
+    EXPECT_EQ(1, g_version.major);
+    EXPECT_EQ(2, g_version.minor);
+    EXPECT_EQ(3, g_version.patch);
+    EXPECT_EQ(4, g_version.tweak);
+    EXPECT_FALSE(g_version.legacy);
 }
 
 TEST_F(TestParameterCommandError, filenameExtensionTooLong)

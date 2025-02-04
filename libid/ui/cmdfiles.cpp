@@ -39,6 +39,7 @@
 #include "math/biginit.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/version.h"
 #include "ui/comments.h"
 #include "ui/do_pause.h"
 #include "ui/file_item.h"
@@ -3050,6 +3051,39 @@ static CmdArgFlags cmd_reset(const Command &cmd)
     }
 
     init_vars_fractal();
+    if (cmd.num_int_params == 1)
+    {
+        if (cmd.int_vals[0] >= 100)
+        {
+            g_release = cmd.int_vals[0];
+            g_version.major = g_release/100;
+            g_version.minor = g_release % 100;
+            g_version.patch = 0;
+            g_version.tweak = 0;
+            g_version.legacy = cmd.int_vals[0] != 100 && cmd.int_vals[0] != 101;
+        }
+        else
+        {
+            g_release = cmd.int_vals[0]*100;
+            g_version = Version{};
+            g_version.major = cmd.int_vals[0];
+        }
+    }
+    else if (cmd.num_int_params > 1)
+    {
+        g_release = cmd.int_vals[0]*100 + cmd.int_vals[1];
+        g_version = Version{};
+        g_version.major = cmd.int_vals[0];
+        g_version.minor = cmd.int_vals[1];
+        if (cmd.num_int_params > 2)
+        {
+            g_version.patch = cmd.int_vals[2];
+        }
+        if (cmd.num_int_params > 3)
+        {
+            g_version.tweak = cmd.int_vals[3];
+        }
+    }
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET;
 }
 
