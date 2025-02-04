@@ -289,8 +289,7 @@ init_restart:
     // match Julibrot with integer mode of orbit
     if (g_fractal_type == FractalType::JULIBROT_FP && get_fractal_specific(g_new_orbit_type)->is_integer)
     {
-        FractalType i = get_fractal_specific(g_new_orbit_type)->to_float;
-        if (i != FractalType::NO_FRACTAL)
+        if (const FractalType i = get_fractal_specific(g_new_orbit_type)->to_float; i != FractalType::NO_FRACTAL)
         {
             g_new_orbit_type = i;
         }
@@ -301,8 +300,7 @@ init_restart:
     }
     else if (g_fractal_type == FractalType::JULIBROT && get_fractal_specific(g_new_orbit_type)->is_integer == 0)
     {
-        FractalType i = get_fractal_specific(g_new_orbit_type)->to_float;
-        if (i != FractalType::NO_FRACTAL)
+        if (FractalType i = get_fractal_specific(g_new_orbit_type)->to_float; i != FractalType::NO_FRACTAL)
         {
             g_new_orbit_type = i;
         }
