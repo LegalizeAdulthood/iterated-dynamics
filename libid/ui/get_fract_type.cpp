@@ -529,8 +529,7 @@ gfp_top:
     prompt_num = 0;
     if (g_julibrot)
     {
-        FractalType i = select_fract_type(g_new_orbit_type);
-        if (i == FractalType::NO_FRACTAL)
+        if (const FractalType i = select_fract_type(g_new_orbit_type); i == FractalType::NO_FRACTAL)
         {
             if (ret == 0)
             {
