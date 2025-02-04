@@ -115,6 +115,7 @@ extern AlternateMath         g_alternate_math[];    // alternate math function p
 extern FractalSpecific       g_fractal_specific[];
 extern MoreParams            g_more_fractal_params[];
 extern int                   g_num_fractal_types;
+extern FractalSpecific      *g_cur_fractal_specific;
 
 FractalSpecific *get_fractal_specific(FractalType type);
 

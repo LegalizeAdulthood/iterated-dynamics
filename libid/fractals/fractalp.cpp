@@ -3065,6 +3065,8 @@ FractalSpecific g_fractal_specific[] =
 
 int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
 
+FractalSpecific *g_cur_fractal_specific{};
+
 FractalSpecific *get_fractal_specific(FractalType type)
 {
     if (FractalSpecific *it = std::find_if(std::begin(g_fractal_specific), std::end(g_fractal_specific),
