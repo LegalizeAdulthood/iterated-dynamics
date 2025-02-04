@@ -4,6 +4,7 @@
 
 #include "CurrentPathSaver.h"
 #include "engine/log_map.h"
+#include "misc/version.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "ValueUnchanged.h"
@@ -373,7 +374,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
     EXPECT_EQ(R"par(bar                {
-  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
   fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
@@ -394,7 +395,7 @@ TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 {
     std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "bar.par"};
     set_file_contents(path, R"par(bar                {
-  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
   fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
@@ -406,14 +407,14 @@ TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
     EXPECT_EQ(R"par(bar                {
-  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
   fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
 }
 
 foo                {
-  reset=101 type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
+  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
   fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
