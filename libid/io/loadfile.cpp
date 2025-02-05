@@ -1412,7 +1412,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 // switch obsolete fractal types to new generalizations
 static void backwards_compat(FractalInfo *info)
 {
-    switch (g_fractal_type)
+    switch (+g_fractal_type)
     {
     case DeprecatedFractalType::LAMBDA_SINE:
         set_fractal_type(FractalType::LAMBDA_TRIG_FP);
