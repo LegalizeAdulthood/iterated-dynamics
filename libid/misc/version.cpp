@@ -12,3 +12,21 @@ int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
 const int g_patch_level{ID_VERSION_PATCH};
 
 Version g_version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};
+
+std::string to_par_string(const Version &value)
+{
+    std::string result{std::to_string(value.major) + '/' + std::to_string(value.minor)};
+    if (value.patch)
+    {
+        result.append('/' + std::to_string(value.patch));
+        if (value.tweak)
+        {
+            result.append('/' + std::to_string(value.tweak));
+        }
+    }
+    else if (value.tweak)
+    {
+        result.append("/0/" + std::to_string(value.tweak));
+    }
+    return result;
+}
