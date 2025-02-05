@@ -240,7 +240,7 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "xdots": )" << value.x_dots                          //
                << R"(, "ydots": )" << value.y_dots                          //
                << R"(, "colors": )" << value.colors                         //
-               << R"(, "version": )" << value.version                       //
+               << R"(, "version": )" << value.info_version                  //
                << R"(, "param3": )" << value.param3                         //
                << R"(, "param4": )" << value.param4                         //
                << R"(, "potential": )" << ArrayPrinter(value.potential)     //
@@ -320,7 +320,7 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "bailoutest": )" << value.bailout_test               //
                << R"(, "iterations": )" << value.iterations                 //
                << R"(, "bf_math": )" << value.bf_math                       //
-               << R"(, "g_bf_length": )" << value.bf_length               //
+               << R"(, "g_bf_length": )" << value.bf_length                 //
                << R"(, "yadjust": )" << value.y_adjust                      //
                << R"(, "old_demm_colors": )" << value.old_demm_colors       //
                << R"(, "logmap": )" << value.log_map                        //
@@ -334,6 +334,10 @@ std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
                << R"(, "orbit_interval": )" << value.orbit_interval         //
                << R"(, "orbit_delay": )" << value.orbit_delay               //
                << R"(, "math_tol": )" << ArrayPrinter(value.math_tol)       //
+               << R"(, "version_major": )" << value.version_major           //
+               << R"(, "version_minor": )" << value.version_minor           //
+               << R"(, "version_patch": )" << value.version_patch           //
+               << R"(, "version_tweak": )" << value.version_tweak           //
                << " }";                                                     //
 }
 
@@ -538,7 +542,7 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_EQ(640, info.x_dots);
     EXPECT_EQ(480, info.y_dots);
     EXPECT_EQ(256, info.colors);
-    EXPECT_EQ(17, info.version);
+    EXPECT_EQ(17, info.info_version);
     EXPECT_NEAR(0.0f, info.param3, EPS);
     EXPECT_NEAR(0.0f, info.param4, EPS);
     EXPECT_NEAR(0.0f, info.potential[0], EPS);

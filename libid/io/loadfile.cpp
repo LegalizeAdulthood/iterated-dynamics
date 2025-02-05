@@ -29,6 +29,7 @@
 #include "math/round_float_double.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/field_prompt.h"
@@ -74,6 +75,17 @@ namespace
 enum
 {
     MAX_WINDOWS_OPEN = 450
+};
+
+enum class GifExtensionId
+{
+    HEADER = 1,
+    RESUME_INFO = 2,
+    FORMULA_INFO = 3,
+    RANGES_INFO = 4,
+    EXTENDED_PRECISION = 5,
+    EVOLVER_INFO = 6,
+    ORBITS_INFO = 7,
 };
 
 constexpr double MIN_DIF{0.001};
@@ -211,6 +223,8 @@ short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
 std::string g_browse_name; // name for browse file
 
+static Version s_file_version{};
+
 static bool within_eps(float lhs, float rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
@@ -243,117 +257,121 @@ static bool equal(const double (&lhs)[N], const double (&rhs)[N])
 
 bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
 {
-    return equal(lhs.info_id, rhs.info_id)                //
-        && lhs.iterations_old == rhs.iterations_old         //
-        && lhs.fractal_type == rhs.fractal_type           //
-        && within_eps(lhs.x_min, rhs.x_min)                 //
-        && within_eps(lhs.x_max, rhs.x_max)                 //
-        && within_eps(lhs.y_min, rhs.y_min)                 //
-        && within_eps(lhs.y_max, rhs.y_max)                 //
-        && within_eps(lhs.c_real, rhs.c_real)               //
-        && within_eps(lhs.c_imag, rhs.c_imag)               //
-        && lhs.ax == rhs.ax             //
-        && lhs.bx == rhs.bx             //
-        && lhs.cx == rhs.cx             //
-        && lhs.dx == rhs.dx             //
-        && lhs.dot_mode == rhs.dot_mode                     //
-        && lhs.x_dots == rhs.x_dots                         //
-        && lhs.y_dots == rhs.y_dots                         //
-        && lhs.colors == rhs.colors                       //
-        && lhs.version == rhs.version                     //
-        && within_eps(lhs.param3, rhs.param3)               //
-        && within_eps(lhs.param4, rhs.param4)               //
-        && equal(lhs.potential, rhs.potential)            //
+    return equal(lhs.info_id, rhs.info_id)                            //
+        && lhs.iterations_old == rhs.iterations_old                   //
+        && lhs.fractal_type == rhs.fractal_type                       //
+        && within_eps(lhs.x_min, rhs.x_min)                           //
+        && within_eps(lhs.x_max, rhs.x_max)                           //
+        && within_eps(lhs.y_min, rhs.y_min)                           //
+        && within_eps(lhs.y_max, rhs.y_max)                           //
+        && within_eps(lhs.c_real, rhs.c_real)                         //
+        && within_eps(lhs.c_imag, rhs.c_imag)                         //
+        && lhs.ax == rhs.ax                                           //
+        && lhs.bx == rhs.bx                                           //
+        && lhs.cx == rhs.cx                                           //
+        && lhs.dx == rhs.dx                                           //
+        && lhs.dot_mode == rhs.dot_mode                               //
+        && lhs.x_dots == rhs.x_dots                                   //
+        && lhs.y_dots == rhs.y_dots                                   //
+        && lhs.colors == rhs.colors                                   //
+        && lhs.info_version == rhs.info_version                       //
+        && within_eps(lhs.param3, rhs.param3)                         //
+        && within_eps(lhs.param4, rhs.param4)                         //
+        && equal(lhs.potential, rhs.potential)                        //
         && lhs.random_seed == rhs.random_seed                         //
-        && lhs.random_seed_flag == rhs.random_seed_flag                         //
-        && lhs.biomorph == rhs.biomorph                   //
-        && lhs.inside == rhs.inside                       //
-        && lhs.log_map_old == rhs.log_map_old                 //
-        && equal(lhs.invert, rhs.invert)                  //
-        && equal(lhs.decomp, rhs.decomp)                  //
-        && lhs.symmetry == rhs.symmetry                   //
-        && equal(lhs.init3d, rhs.init3d)                  //
-        && lhs.preview_factor == rhs.preview_factor         //
-        && lhs.x_trans == rhs.x_trans                       //
-        && lhs.y_trans == rhs.y_trans                       //
-        && lhs.red_crop_left == rhs.red_crop_left         //
-        && lhs.red_crop_right == rhs.red_crop_right       //
-        && lhs.blue_crop_left == rhs.blue_crop_left       //
-        && lhs.blue_crop_right == rhs.blue_crop_right     //
-        && lhs.red_bright == rhs.red_bright               //
-        && lhs.blue_bright == rhs.blue_bright             //
-        && lhs.x_adjust == rhs.x_adjust                     //
-        && lhs.eye_separation == rhs.eye_separation         //
-        && lhs.glasses_type == rhs.glasses_type             //
-        && lhs.outside == rhs.outside                     //
-        && within_eps(lhs.x3rd, rhs.x3rd)                 //
-        && within_eps(lhs.y3rd, rhs.y3rd)                 //
-        && lhs.std_calc_mode == rhs.std_calc_mode             //
-        && lhs.use_init_orbit == rhs.use_init_orbit           //
-        && lhs.calc_status == rhs.calc_status             //
-        && lhs.tot_extend_len == rhs.tot_extend_len       //
-        && lhs.dist_est_old == rhs.dist_est_old               //
-        && lhs.float_flag == rhs.float_flag                 //
-        && lhs.bailout_old == rhs.bailout_old               //
-        && lhs.calc_time == rhs.calc_time                   //
-        && equal(lhs.trig_index, rhs.trig_index)                //
+        && lhs.random_seed_flag == rhs.random_seed_flag               //
+        && lhs.biomorph == rhs.biomorph                               //
+        && lhs.inside == rhs.inside                                   //
+        && lhs.log_map_old == rhs.log_map_old                         //
+        && equal(lhs.invert, rhs.invert)                              //
+        && equal(lhs.decomp, rhs.decomp)                              //
+        && lhs.symmetry == rhs.symmetry                               //
+        && equal(lhs.init3d, rhs.init3d)                              //
+        && lhs.preview_factor == rhs.preview_factor                   //
+        && lhs.x_trans == rhs.x_trans                                 //
+        && lhs.y_trans == rhs.y_trans                                 //
+        && lhs.red_crop_left == rhs.red_crop_left                     //
+        && lhs.red_crop_right == rhs.red_crop_right                   //
+        && lhs.blue_crop_left == rhs.blue_crop_left                   //
+        && lhs.blue_crop_right == rhs.blue_crop_right                 //
+        && lhs.red_bright == rhs.red_bright                           //
+        && lhs.blue_bright == rhs.blue_bright                         //
+        && lhs.x_adjust == rhs.x_adjust                               //
+        && lhs.eye_separation == rhs.eye_separation                   //
+        && lhs.glasses_type == rhs.glasses_type                       //
+        && lhs.outside == rhs.outside                                 //
+        && within_eps(lhs.x3rd, rhs.x3rd)                             //
+        && within_eps(lhs.y3rd, rhs.y3rd)                             //
+        && lhs.std_calc_mode == rhs.std_calc_mode                     //
+        && lhs.use_init_orbit == rhs.use_init_orbit                   //
+        && lhs.calc_status == rhs.calc_status                         //
+        && lhs.tot_extend_len == rhs.tot_extend_len                   //
+        && lhs.dist_est_old == rhs.dist_est_old                       //
+        && lhs.float_flag == rhs.float_flag                           //
+        && lhs.bailout_old == rhs.bailout_old                         //
+        && lhs.calc_time == rhs.calc_time                             //
+        && equal(lhs.trig_index, rhs.trig_index)                      //
         && lhs.finite_attractor == rhs.finite_attractor               //
-        && equal(lhs.init_orbit, rhs.init_orbit)            //
-        && lhs.periodicity == rhs.periodicity             //
-        && lhs.pot16bit == rhs.pot16bit                   //
+        && equal(lhs.init_orbit, rhs.init_orbit)                      //
+        && lhs.periodicity == rhs.periodicity                         //
+        && lhs.pot16bit == rhs.pot16bit                               //
         && within_eps(lhs.final_aspect_ratio, rhs.final_aspect_ratio) //
-        && lhs.system == rhs.system                       //
-        && lhs.release == rhs.release                     //
-        && lhs.display_3d == rhs.display_3d               //
-        && equal(lhs.transparent, rhs.transparent)        //
-        && lhs.ambient == rhs.ambient                     //
-        && lhs.haze == rhs.haze                           //
-        && lhs.randomize == rhs.randomize                 //
-        && lhs.rotate_lo == rhs.rotate_lo                 //
-        && lhs.rotate_hi == rhs.rotate_hi                 //
-        && lhs.dist_est_width == rhs.dist_est_width           //
-        && within_eps(lhs.d_param3, rhs.d_param3)             //
-        && within_eps(lhs.d_param4, rhs.d_param4)             //
-        && lhs.fill_color == rhs.fill_color                 //
-        && within_eps(lhs.julibrot_x_max, rhs.julibrot_x_max)           //
-        && within_eps(lhs.julibrot_x_min, rhs.julibrot_x_min)           //
-        && within_eps(lhs.julibrot_y_max, rhs.julibrot_y_max)           //
-        && within_eps(lhs.julibrot_y_min, rhs.julibrot_y_min)           //
-        && lhs.julibrot_z_dots == rhs.julibrot_z_dots                         //
-        && within_eps(lhs.julibrot_origin_fp, rhs.julibrot_origin_fp)         //
-        && within_eps(lhs.julibrot_depth_fp, rhs.julibrot_depth_fp)           //
-        && within_eps(lhs.julibrot_height_fp, rhs.julibrot_height_fp)         //
-        && within_eps(lhs.julibrot_width_fp, rhs.julibrot_width_fp)           //
-        && within_eps(lhs.julibrot_dist_fp, rhs.julibrot_dist_fp)             //
-        && within_eps(lhs.eyes_fp, rhs.eyes_fp)             //
-        && lhs.orbit_type == rhs.orbit_type                 //
-        && lhs.juli3d_mode == rhs.juli3d_mode               //
-        && lhs.max_fn == rhs.max_fn                         //
-        && lhs.inverse_julia == rhs.inverse_julia           //
-        && within_eps(lhs.d_param5, rhs.d_param5)             //
-        && within_eps(lhs.d_param6, rhs.d_param6)             //
-        && within_eps(lhs.d_param7, rhs.d_param7)             //
-        && within_eps(lhs.d_param8, rhs.d_param8)             //
-        && within_eps(lhs.d_param9, rhs.d_param9)             //
-        && within_eps(lhs.d_param10, rhs.d_param10)           //
-        && lhs.bailout == rhs.bailout                     //
-        && lhs.bailout_test == rhs.bailout_test               //
-        && lhs.iterations == rhs.iterations               //
-        && lhs.bf_math == rhs.bf_math                     //
-        && lhs.bf_length == rhs.bf_length                   //
-        && lhs.y_adjust == rhs.y_adjust                     //
-        && lhs.old_demm_colors == rhs.old_demm_colors     //
-        && lhs.log_map == rhs.log_map                       //
-        && lhs.dist_est == rhs.dist_est                     //
-        && equal(lhs.d_invert, rhs.d_invert)                //
-        && lhs.log_calc == rhs.log_calc                     //
-        && lhs.stop_pass == rhs.stop_pass                   //
-        && lhs.quick_calc == rhs.quick_calc               //
-        && within_eps(lhs.close_prox, rhs.close_prox)       //
-        && lhs.no_bof == rhs.no_bof                         //
-        && lhs.orbit_interval == rhs.orbit_interval       //
-        && lhs.orbit_delay == rhs.orbit_delay             //
-        && equal(lhs.math_tol, rhs.math_tol);             //
+        && lhs.system == rhs.system                                   //
+        && lhs.release == rhs.release                                 //
+        && lhs.display_3d == rhs.display_3d                           //
+        && equal(lhs.transparent, rhs.transparent)                    //
+        && lhs.ambient == rhs.ambient                                 //
+        && lhs.haze == rhs.haze                                       //
+        && lhs.randomize == rhs.randomize                             //
+        && lhs.rotate_lo == rhs.rotate_lo                             //
+        && lhs.rotate_hi == rhs.rotate_hi                             //
+        && lhs.dist_est_width == rhs.dist_est_width                   //
+        && within_eps(lhs.d_param3, rhs.d_param3)                     //
+        && within_eps(lhs.d_param4, rhs.d_param4)                     //
+        && lhs.fill_color == rhs.fill_color                           //
+        && within_eps(lhs.julibrot_x_max, rhs.julibrot_x_max)         //
+        && within_eps(lhs.julibrot_x_min, rhs.julibrot_x_min)         //
+        && within_eps(lhs.julibrot_y_max, rhs.julibrot_y_max)         //
+        && within_eps(lhs.julibrot_y_min, rhs.julibrot_y_min)         //
+        && lhs.julibrot_z_dots == rhs.julibrot_z_dots                 //
+        && within_eps(lhs.julibrot_origin_fp, rhs.julibrot_origin_fp) //
+        && within_eps(lhs.julibrot_depth_fp, rhs.julibrot_depth_fp)   //
+        && within_eps(lhs.julibrot_height_fp, rhs.julibrot_height_fp) //
+        && within_eps(lhs.julibrot_width_fp, rhs.julibrot_width_fp)   //
+        && within_eps(lhs.julibrot_dist_fp, rhs.julibrot_dist_fp)     //
+        && within_eps(lhs.eyes_fp, rhs.eyes_fp)                       //
+        && lhs.orbit_type == rhs.orbit_type                           //
+        && lhs.juli3d_mode == rhs.juli3d_mode                         //
+        && lhs.max_fn == rhs.max_fn                                   //
+        && lhs.inverse_julia == rhs.inverse_julia                     //
+        && within_eps(lhs.d_param5, rhs.d_param5)                     //
+        && within_eps(lhs.d_param6, rhs.d_param6)                     //
+        && within_eps(lhs.d_param7, rhs.d_param7)                     //
+        && within_eps(lhs.d_param8, rhs.d_param8)                     //
+        && within_eps(lhs.d_param9, rhs.d_param9)                     //
+        && within_eps(lhs.d_param10, rhs.d_param10)                   //
+        && lhs.bailout == rhs.bailout                                 //
+        && lhs.bailout_test == rhs.bailout_test                       //
+        && lhs.iterations == rhs.iterations                           //
+        && lhs.bf_math == rhs.bf_math                                 //
+        && lhs.bf_length == rhs.bf_length                             //
+        && lhs.y_adjust == rhs.y_adjust                               //
+        && lhs.old_demm_colors == rhs.old_demm_colors                 //
+        && lhs.log_map == rhs.log_map                                 //
+        && lhs.dist_est == rhs.dist_est                               //
+        && equal(lhs.d_invert, rhs.d_invert)                          //
+        && lhs.log_calc == rhs.log_calc                               //
+        && lhs.stop_pass == rhs.stop_pass                             //
+        && lhs.quick_calc == rhs.quick_calc                           //
+        && within_eps(lhs.close_prox, rhs.close_prox)                 //
+        && lhs.no_bof == rhs.no_bof                                   //
+        && lhs.orbit_interval == rhs.orbit_interval                   //
+        && lhs.orbit_delay == rhs.orbit_delay                         //
+        && equal(lhs.math_tol, rhs.math_tol)                          //
+        && lhs.version_major == rhs.version_major                     //
+        && lhs.version_minor == rhs.version_minor                     //
+        && lhs.version_patch == rhs.version_patch                     //
+        && lhs.version_tweak == rhs.version_tweak;                    //
 }
 
 bool operator==(const FormulaInfo &lhs, const FormulaInfo &rhs)
@@ -370,14 +388,14 @@ bool operator==(const FormulaInfo &lhs, const FormulaInfo &rhs)
 
 bool operator==(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
 {
-    return lhs.orbit_corner_min_x == rhs.orbit_corner_min_x                       //
-        && lhs.orbit_corner_max_x == rhs.orbit_corner_max_x                       //
-        && lhs.orbit_corner_min_y == rhs.orbit_corner_min_y                       //
-        && lhs.orbit_corner_max_y == rhs.orbit_corner_max_y                       //
-        && lhs.orbit_corner_3rd_x == rhs.orbit_corner_3rd_x                       //
-        && lhs.orbit_corner_3rd_y == rhs.orbit_corner_3rd_y                       //
+    return lhs.orbit_corner_min_x == rhs.orbit_corner_min_x //
+        && lhs.orbit_corner_max_x == rhs.orbit_corner_max_x //
+        && lhs.orbit_corner_min_y == rhs.orbit_corner_min_y //
+        && lhs.orbit_corner_max_y == rhs.orbit_corner_max_y //
+        && lhs.orbit_corner_3rd_x == rhs.orbit_corner_3rd_x //
+        && lhs.orbit_corner_3rd_y == rhs.orbit_corner_3rd_y //
         && lhs.keep_screen_coords == rhs.keep_screen_coords //
-        && lhs.draw_mode == rhs.draw_mode;                //
+        && lhs.draw_mode == rhs.draw_mode;                  //
 }
 
 int read_overlay()      // read overlay/3D files, if reqr'd
@@ -424,102 +442,106 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         return -1;
     }
     set_fractal_type(static_cast<FractalType>(read_fractal_type));
-    g_x_min        = read_info.x_min;
-    g_x_max        = read_info.x_max;
-    g_y_min        = read_info.y_min;
-    g_y_max        = read_info.y_max;
-    g_params[0]     = read_info.c_real;
-    g_params[1]     = read_info.c_imag;
+    g_x_min = read_info.x_min;
+    g_x_max = read_info.x_max;
+    g_y_min = read_info.y_min;
+    g_y_max = read_info.y_max;
+    g_params[0] = read_info.c_real;
+    g_params[1] = read_info.c_imag;
+    s_file_version = Version{11, 0, 0, 0, true};
 
     g_invert = 0;
-    if (read_info.version > 0)
+    if (read_info.info_version > 0)
     {
-        g_params[2]      = read_info.param3;
+        g_params[2] = read_info.param3;
         round_float_double(&g_params[2]);
-        g_params[3]      = read_info.param4;
+        g_params[3] = read_info.param4;
         round_float_double(&g_params[3]);
-        g_potential_params[0]   = read_info.potential[0];
-        g_potential_params[1]   = read_info.potential[1];
-        g_potential_params[2]   = read_info.potential[2];
+        g_potential_params[0] = read_info.potential[0];
+        g_potential_params[1] = read_info.potential[1];
+        g_potential_params[2] = read_info.potential[2];
         if (g_make_parameter_file)
         {
             g_colors = read_info.colors;
         }
-        g_potential_flag       = (g_potential_params[0] != 0.0);
-        g_random_seed_flag         = read_info.random_seed_flag != 0;
-        g_random_seed         = read_info.random_seed;
-        g_inside_color        = read_info.inside;
-        g_log_map_flag       = read_info.log_map_old;
-        g_inversion[0]  = read_info.invert[0];
-        g_inversion[1]  = read_info.invert[1];
-        g_inversion[2]  = read_info.invert[2];
+        g_potential_flag = (g_potential_params[0] != 0.0);
+        g_random_seed_flag = read_info.random_seed_flag != 0;
+        g_random_seed = read_info.random_seed;
+        g_inside_color = read_info.inside;
+        g_log_map_flag = read_info.log_map_old;
+        g_inversion[0] = read_info.invert[0];
+        g_inversion[1] = read_info.invert[1];
+        g_inversion[2] = read_info.invert[2];
         if (g_inversion[0] != 0.0)
         {
             g_invert = 3;
         }
-        g_decomp[0]     = read_info.decomp[0];
-        g_decomp[1]     = read_info.decomp[1];
-        g_user_biomorph_value  = read_info.biomorph;
+        g_decomp[0] = read_info.decomp[0];
+        g_decomp[1] = read_info.decomp[1];
+        g_user_biomorph_value = read_info.biomorph;
         g_force_symmetry = static_cast<SymmetryType>(read_info.symmetry);
     }
 
-    if (read_info.version > 1)
+    if (read_info.info_version > 1)
     {
-        if (g_display_3d == Display3DMode::NONE //
-            && (read_info.version <= 4             //
-                   || read_info.display_3d > 0     //
+        s_file_version = Version{12, 0, 0, 0, true};
+        if (g_display_3d == Display3DMode::NONE                       //
+            && (read_info.info_version <= 4                           //
+                   || read_info.display_3d > 0                        //
                    || bit_set(g_cur_fractal_specific->flags, FractalFlags::PARAMS_3D)))
         {
-            g_sphere = read_info.init3d[0] != 0;                       // sphere? 1 = yes, 0 = no
-            g_x_rot = read_info.init3d[1];                             // rotate x-axis 60 degrees
-            g_y_rot = read_info.init3d[2];                             // rotate y-axis 90 degrees
-            g_z_rot = read_info.init3d[3];                             // rotate x-axis  0 degrees
-            g_x_scale = read_info.init3d[4];                           // scale x-axis, 90 percent
-            g_y_scale = read_info.init3d[5];                           // scale y-axis, 90 percent
-            g_sphere_phi_min = read_info.init3d[1];                    // longitude start, 180
-            g_sphere_phi_max = read_info.init3d[2];                    // longitude end ,   0
-            g_sphere_theta_min = read_info.init3d[3];                  // latitude start,-90 degrees
-            g_sphere_theta_max = read_info.init3d[4];                  // latitude stop,  90 degrees
-            g_sphere_radius = read_info.init3d[5];                     // should be user input
-            g_rough = read_info.init3d[6];                             // scale z-axis, 30 percent
-            g_water_line = read_info.init3d[7];                        // water level
+            g_sphere = read_info.init3d[0] != 0;                      // sphere? 1 = yes, 0 = no
+            g_x_rot = read_info.init3d[1];                            // rotate x-axis 60 degrees
+            g_y_rot = read_info.init3d[2];                            // rotate y-axis 90 degrees
+            g_z_rot = read_info.init3d[3];                            // rotate x-axis  0 degrees
+            g_x_scale = read_info.init3d[4];                          // scale x-axis, 90 percent
+            g_y_scale = read_info.init3d[5];                          // scale y-axis, 90 percent
+            g_sphere_phi_min = read_info.init3d[1];                   // longitude start, 180
+            g_sphere_phi_max = read_info.init3d[2];                   // longitude end ,   0
+            g_sphere_theta_min = read_info.init3d[3];                 // latitude start,-90 degrees
+            g_sphere_theta_max = read_info.init3d[4];                 // latitude stop,  90 degrees
+            g_sphere_radius = read_info.init3d[5];                    // should be user input
+            g_rough = read_info.init3d[6];                            // scale z-axis, 30 percent
+            g_water_line = read_info.init3d[7];                       // water level
             g_fill_type = static_cast<FillType>(read_info.init3d[8]); // fill type
-            g_viewer_z = read_info.init3d[9];                          // perspective view point
-            g_shift_x = read_info.init3d[10];                          // x shift
-            g_shift_y = read_info.init3d[11];                          // y shift
-            g_light_x = read_info.init3d[12];                          // x light vector coordinate
-            g_light_y = read_info.init3d[13];                          // y light vector coordinate
-            g_light_z = read_info.init3d[14];                          // z light vector coordinate
-            g_light_avg = read_info.init3d[15];                        // number of points to average
-            g_preview_factor   = read_info.preview_factor;
-            g_adjust_3d_x          = read_info.x_trans;
-            g_adjust_3d_y          = read_info.y_trans;
-            g_red_crop_left   = read_info.red_crop_left;
-            g_red_crop_right  = read_info.red_crop_right;
-            g_blue_crop_left  = read_info.blue_crop_left;
+            g_viewer_z = read_info.init3d[9];                         // perspective view point
+            g_shift_x = read_info.init3d[10];                         // x shift
+            g_shift_y = read_info.init3d[11];                         // y shift
+            g_light_x = read_info.init3d[12];                         // x light vector coordinate
+            g_light_y = read_info.init3d[13];                         // y light vector coordinate
+            g_light_z = read_info.init3d[14];                         // z light vector coordinate
+            g_light_avg = read_info.init3d[15];                       // number of points to average
+            g_preview_factor = read_info.preview_factor;
+            g_adjust_3d_x = read_info.x_trans;
+            g_adjust_3d_y = read_info.y_trans;
+            g_red_crop_left = read_info.red_crop_left;
+            g_red_crop_right = read_info.red_crop_right;
+            g_blue_crop_left = read_info.blue_crop_left;
             g_blue_crop_right = read_info.blue_crop_right;
-            g_red_bright      = read_info.red_bright;
-            g_blue_bright     = read_info.blue_bright;
-            g_converge_x_adjust         = read_info.x_adjust;
-            g_eye_separation   = read_info.eye_separation;
-            g_glasses_type     = read_info.glasses_type;
+            g_red_bright = read_info.red_bright;
+            g_blue_bright = read_info.blue_bright;
+            g_converge_x_adjust = read_info.x_adjust;
+            g_eye_separation = read_info.eye_separation;
+            g_glasses_type = read_info.glasses_type;
         }
     }
 
-    if (read_info.version > 2)
+    if (read_info.info_version > 2)
     {
-        g_outside_color      = read_info.outside;
+        s_file_version = Version{13, 0, 0, 0, true};
+        g_outside_color = read_info.outside;
     }
 
-    g_calc_status = CalcStatus::PARAMS_CHANGED;       // defaults if version < 4
+    g_calc_status = CalcStatus::PARAMS_CHANGED; // defaults if version < 4
     g_x_3rd = g_x_min;
     g_y_3rd = g_y_min;
     g_user_distance_estimator_value = 0;
     g_calc_time = 0;
-    if (read_info.version > 3)
+    if (read_info.info_version > 3)
     {
-        g_x_3rd       = read_info.x3rd;
-        g_y_3rd       = read_info.y3rd;
+        s_file_version = Version{14, 0, 0, 0, true};
+        g_x_3rd = read_info.x3rd;
+        g_y_3rd = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
         g_user_std_calc_mode = read_info.std_calc_mode;
         g_three_pass = false;
@@ -528,15 +550,15 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_three_pass = true;
             g_user_std_calc_mode = '3';
         }
-        g_user_distance_estimator_value     = read_info.dist_est_old;
-        g_user_float_flag   = read_info.float_flag != 0;
-        g_bailout     = read_info.bailout_old;
-        g_calc_time    = read_info.calc_time;
-        g_trig_index[0]  = static_cast<TrigFn>(read_info.trig_index[0]);
-        g_trig_index[1]  = static_cast<TrigFn>(read_info.trig_index[1]);
-        g_trig_index[2]  = static_cast<TrigFn>(read_info.trig_index[2]);
-        g_trig_index[3]  = static_cast<TrigFn>(read_info.trig_index[3]);
-        g_finite_attractor  = read_info.finite_attractor != 0;
+        g_user_distance_estimator_value = read_info.dist_est_old;
+        g_user_float_flag = read_info.float_flag != 0;
+        g_bailout = read_info.bailout_old;
+        g_calc_time = read_info.calc_time;
+        g_trig_index[0] = static_cast<TrigFn>(read_info.trig_index[0]);
+        g_trig_index[1] = static_cast<TrigFn>(read_info.trig_index[1]);
+        g_trig_index[2] = static_cast<TrigFn>(read_info.trig_index[2]);
+        g_trig_index[3] = static_cast<TrigFn>(read_info.trig_index[3]);
+        g_finite_attractor = read_info.finite_attractor != 0;
         g_init_orbit.x = read_info.init_orbit[0];
         g_init_orbit.y = read_info.init_orbit[1];
         g_use_init_orbit = static_cast<InitOrbitMode>(read_info.use_init_orbit);
@@ -545,7 +567,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     g_potential_16bit = false;
     g_save_system = 0;
-    if (read_info.version > 4)
+    if (read_info.info_version > 4)
     {
         g_potential_16bit = read_info.pot16bit != 0;
         if (g_potential_16bit)
@@ -553,17 +575,24 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_file_x_dots >>= 1;
         }
         g_file_aspect_ratio = read_info.final_aspect_ratio;
-        if (g_file_aspect_ratio < 0.01)       // fix files produced in early v14.1
+        if (g_file_aspect_ratio < 0.01) // fix files produced in early v14.1
         {
             g_file_aspect_ratio = g_screen_aspect;
         }
         g_save_system = 0;
+        s_file_version = parse_legacy_version(read_info.release);
+        if (read_info.info_version == 5 /* except a few early fmt 5 cases: */
+            && (read_info.release <= 0 || read_info.release >= 4000))
+        {
+            s_file_version = parse_legacy_version(1410);
+            g_save_system = 0;
+        }
         if (g_display_3d == Display3DMode::NONE && read_info.display_3d > 0)
         {
-            g_loaded_3d       = true;
-            g_ambient        = read_info.ambient;
-            g_randomize_3d      = read_info.randomize;
-            g_haze           = read_info.haze;
+            g_loaded_3d = true;
+            g_ambient = read_info.ambient;
+            g_randomize_3d = read_info.randomize;
+            g_haze = read_info.haze;
             g_transparent_color_3d[0] = read_info.transparent[0];
             g_transparent_color_3d[1] = read_info.transparent[1];
         }
@@ -572,40 +601,40 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_color_cycle_range_lo = 1;
     g_color_cycle_range_hi = 255;
     g_distance_estimator_width_factor = 71;
-    if (read_info.version > 5)
+    if (read_info.info_version > 5)
     {
-        g_color_cycle_range_lo         = read_info.rotate_lo;
-        g_color_cycle_range_hi         = read_info.rotate_hi;
-        g_distance_estimator_width_factor      = read_info.dist_est_width;
+        g_color_cycle_range_lo = read_info.rotate_lo;
+        g_color_cycle_range_hi = read_info.rotate_hi;
+        g_distance_estimator_width_factor = read_info.dist_est_width;
     }
 
-    if (read_info.version > 6)
+    if (read_info.info_version > 6)
     {
-        g_params[2]          = read_info.d_param3;
-        g_params[3]          = read_info.d_param4;
+        g_params[2] = read_info.d_param3;
+        g_params[3] = read_info.d_param4;
     }
 
-    if (read_info.version > 7)
+    if (read_info.info_version > 7)
     {
-        g_fill_color         = read_info.fill_color;
+        g_fill_color = read_info.fill_color;
     }
 
-    if (read_info.version > 8)
+    if (read_info.info_version > 8)
     {
-        g_julibrot_x_max   =  read_info.julibrot_x_max        ;
-        g_julibrot_x_min   =  read_info.julibrot_x_min        ;
-        g_julibrot_y_max   =  read_info.julibrot_y_max        ;
-        g_julibrot_y_min   =  read_info.julibrot_y_min        ;
-        g_julibrot_z_dots     =  read_info.julibrot_z_dots          ;
-        g_julibrot_origin_fp  =  read_info.julibrot_origin_fp       ;
-        g_julibrot_depth_fp   =  read_info.julibrot_depth_fp        ;
-        g_julibrot_height_fp  =  read_info.julibrot_height_fp       ;
-        g_julibrot_width_fp   =  read_info.julibrot_width_fp        ;
-        g_julibrot_dist_fp    =  read_info.julibrot_dist_fp         ;
-        g_eyes_fp    =  read_info.eyes_fp         ;
+        g_julibrot_x_max = read_info.julibrot_x_max;
+        g_julibrot_x_min = read_info.julibrot_x_min;
+        g_julibrot_y_max = read_info.julibrot_y_max;
+        g_julibrot_y_min = read_info.julibrot_y_min;
+        g_julibrot_z_dots = read_info.julibrot_z_dots;
+        g_julibrot_origin_fp = read_info.julibrot_origin_fp;
+        g_julibrot_depth_fp = read_info.julibrot_depth_fp;
+        g_julibrot_height_fp = read_info.julibrot_height_fp;
+        g_julibrot_width_fp = read_info.julibrot_width_fp;
+        g_julibrot_dist_fp = read_info.julibrot_dist_fp;
+        g_eyes_fp = read_info.eyes_fp;
         g_new_orbit_type = static_cast<FractalType>(read_info.orbit_type);
-        g_julibrot_3d_mode   = static_cast<Julibrot3DMode>(read_info.juli3d_mode);
-        g_max_function    = (char)read_info.max_fn          ;
+        g_julibrot_3d_mode = static_cast<Julibrot3DMode>(read_info.juli3d_mode);
+        g_max_function = (char) read_info.max_fn;
         g_major_method = static_cast<Major>(read_info.inverse_julia >> 8);
         g_inverse_julia_minor_method = static_cast<Minor>(read_info.inverse_julia & 255);
         g_params[4] = read_info.d_param5;
@@ -616,9 +645,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_params[9] = read_info.d_param10;
     }
 
-    if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0?
+    if (read_info.info_version < 4 && read_info.info_version != 0) // pre-version 14.0?
     {
-        backwards_compat(&read_info); // translate obsolete types
+        backwards_compat(&read_info);                              // translate obsolete types
         if (g_log_map_flag)
         {
             g_log_map_flag = 2;
@@ -626,9 +655,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_user_float_flag = g_cur_fractal_specific->is_integer == 0;
     }
 
-    if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
+    if (read_info.info_version < 5 && read_info.info_version != 0) // pre-version 15.0?
     {
-        if (g_log_map_flag == 2) // logmap=old changed again in format 5!
+        if (g_log_map_flag == 2)                                   // logmap=old changed again in format 5!
         {
             g_log_map_flag = -1;
         }
@@ -637,24 +666,22 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_bailout = g_decomp[1];
         }
     }
+
     if (g_potential_flag) // in version 15.x and 16.x logmap didn't work with pot
     {
-        if (read_info.version == 6 || read_info.version == 7)
+        if (read_info.info_version == 6 || read_info.info_version == 7)
         {
             g_log_map_flag = 0;
         }
     }
     set_trig_pointers(-1);
 
-    if (read_info.version < 9 && read_info.version != 0) // pre-version 18.0?
+    if (read_info.info_version < 9 && read_info.info_version != 0) // pre-version 18.0?
     {
         /* forcesymmetry==1000 means we want to force symmetry but don't
             know which symmetry yet, will find out in setsymmetry() */
-        if (g_outside_color == REAL
-            || g_outside_color == IMAG
-            || g_outside_color == MULT
-            || g_outside_color == SUM
-            || g_outside_color == ATAN)
+        if (g_outside_color == REAL || g_outside_color == IMAG || g_outside_color == MULT ||
+            g_outside_color == SUM || g_outside_color == ATAN)
         {
             if (g_force_symmetry == SymmetryType::NOT_FORCED)
             {
@@ -662,11 +689,17 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             }
         }
     }
+    // pre-version 17.25
+    if (s_file_version < 1725 && read_info.info_version != 0)
+    {
+          set_if_old_bif(); /* translate bifurcation types */
+          g_new_bifurcation_functions_loaded = true;
+    }
 
-    if (read_info.version > 9)
+    if (read_info.info_version > 9)
     {
         // post-version 18.22
-        g_bailout     = read_info.bailout; // use long bailout
+        g_bailout = read_info.bailout; // use long bailout
         g_bailout_test = static_cast<Bailout>(read_info.bailout_test);
     }
     else
@@ -675,7 +708,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     set_bailout_formula(g_bailout_test);
 
-    if (read_info.version > 9)
+    if (read_info.info_version > 9)
     {
         // post-version 18.23
         g_max_iterations = read_info.iterations; // use long maxit
@@ -683,44 +716,44 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_old_demm_colors = read_info.old_demm_colors != 0;
     }
 
-    if (read_info.version > 10) // post-version 19.20
+    if (read_info.info_version > 10) // post-version 19.20
     {
         g_log_map_flag = read_info.log_map;
         g_user_distance_estimator_value = read_info.dist_est;
     }
 
-    if (read_info.version > 11) // post-version 19.20, inversion fix
+    if (read_info.info_version > 11) // post-version 19.20, inversion fix
     {
         g_inversion[0] = read_info.d_invert[0];
         g_inversion[1] = read_info.d_invert[1];
         g_inversion[2] = read_info.d_invert[2];
         g_log_map_fly_calculate = read_info.log_calc;
-        g_stop_pass     = read_info.stop_pass;
+        g_stop_pass = read_info.stop_pass;
     }
 
-    if (read_info.version > 12) // post-version 19.60
+    if (read_info.info_version > 12) // post-version 19.60
     {
-        g_quick_calc   = read_info.quick_calc != 0;
-        g_close_proximity    = read_info.close_prox;
+        g_quick_calc = read_info.quick_calc != 0;
+        g_close_proximity = read_info.close_prox;
         if (g_fractal_type == FractalType::POPCORN_FP || g_fractal_type == FractalType::POPCORN_L ||
-                g_fractal_type == FractalType::POPCORN_JUL_FP || g_fractal_type == FractalType::POPCORN_JUL_L ||
-                g_fractal_type == FractalType::LATOO)
+            g_fractal_type == FractalType::POPCORN_JUL_FP || g_fractal_type == FractalType::POPCORN_JUL_L ||
+            g_fractal_type == FractalType::LATOO)
         {
             g_new_bifurcation_functions_loaded = true;
         }
     }
 
     g_bof_match_book_images = true;
-    if (read_info.version > 13) // post-version 20.1.2
+    if (read_info.info_version > 13) // post-version 20.1.2
     {
         g_bof_match_book_images = read_info.no_bof == 0;
     }
 
     // if (read_info.version > 14)  post-version 20.1.12
-    g_log_map_auto_calculate = false;              // make sure it's turned off
+    g_log_map_auto_calculate = false; // make sure it's turned off
 
     g_orbit_interval = 1;
-    if (read_info.version > 15) // post-version 20.3.2
+    if (read_info.info_version > 15) // post-version 20.3.2
     {
         g_orbit_interval = read_info.orbit_interval;
     }
@@ -728,16 +761,32 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_orbit_delay = 0;
     g_math_tol[0] = 0.05;
     g_math_tol[1] = 0.05;
-    if (read_info.version > 16) // post-version 20.4.0
+    if (read_info.info_version > 16) // post-version 20.4.0
     {
         g_orbit_delay = read_info.orbit_delay;
         g_math_tol[0] = read_info.math_tol[0];
         g_math_tol[1] = read_info.math_tol[1];
     }
 
-    backwards_v18();
-    backwards_v19();
-    backwards_v20();
+    // Id 1.0 and 1.1 used a legacy info version but wrote new version into release field
+    if (read_info.info_version == FRACTAL_INFO_VERSION_LEGACY_20_4)
+    {
+        if (read_info.release == 100 || read_info.release == 101)
+        {
+            s_file_version = Version{read_info.release / 100, read_info.release % 100, 0, 0, false};
+        }
+    }
+
+    // Id 1.2
+    if (read_info.info_version > FRACTAL_INFO_VERSION_LEGACY_20_4)
+    {
+        s_file_version = Version{read_info.version_major, read_info.version_minor, //
+            read_info.version_patch, read_info.version_tweak, false};
+    }
+
+    backwards_legacy_v18();
+    backwards_legacy_v19();
+    backwards_legacy_v20();
 
     if (g_display_3d != Display3DMode::NONE)
     {
@@ -854,7 +903,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         GeneBase gene[NUM_GENES];
         copy_genes_from_bank(gene);
-        if (read_info.version < 15)
+        if (read_info.info_version < 15)
         {
             // Increasing NUM_GENES moves ecount in the data structure
             // We added 4 to NUM_GENES, so ecount is at NUM_GENES-4
@@ -911,7 +960,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_view_window = g_evolving != EvolutionModeFlags::NONE;
         g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size - 1);
         g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
-        if (read_info.version > 14)
+        if (read_info.info_version > 14)
         {
             for (int i = 0; i < NUM_GENES; i++)
             {
@@ -1120,7 +1169,7 @@ static int find_fractal_info(const std::string &gif_file, //
     {
         // we found INFO_ID
 
-        if (info->version >= 4)
+        if (info->info_version >= 4)
         {
             /* first reload main extension block, reasons:
                  might be over 255 chars, and thus earlier load might be bad
@@ -1139,7 +1188,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 temp1[13] = 0;
                 switch (std::atoi(&temp1[10]))   // e.g. "fractint002"
                 {
-                case 1: // "fractint001", the main extension block
+                case GifExtensionId::HEADER: // "fractint001", the main extension block
                     if (scan_extend == 2)
                     {
                         // we've been here before, done now
@@ -1152,20 +1201,22 @@ static int find_fractal_info(const std::string &gif_file, //
                     // now we know total extension len, back up to first block
                     fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
                     break;
-                case 2: // resume info
+                case GifExtensionId::RESUME_INFO: // resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)g_block, data_len);
+                    // resume data is assumed to be platform native; no need to decode
                     std::copy(&g_block[0], &g_block[data_len], blk_2_info->resume_data.data());
                     blk_2_info->length = data_len;
                     blk_2_info->got_data = true;
                     break;
-                case 3: // formula info
+                case GifExtensionId::FORMULA_INFO: // formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     // check data_len for backward compatibility
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&formula_info, data_len);
+                    // TODO: decode formula info?
                     std::strcpy(blk_3_info->form_name, formula_info.form_name);
                     blk_3_info->length = data_len;
                     blk_3_info->got_data = true;
@@ -1191,7 +1242,7 @@ static int find_fractal_info(const std::string &gif_file, //
                         blk_3_info->uses_p5 = formula_info.uses_p5;
                     }
                     break;
-                case 4: // ranges info
+                case GifExtensionId::RANGES_INFO: // ranges info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
                     blk_4_info->length = data_len/2;
@@ -1208,14 +1259,15 @@ static int find_fractal_info(const std::string &gif_file, //
                     }
                     blk_4_info->got_data = true;
                     break;
-                case 5: // extended precision parameters
+                case GifExtensionId::EXTENDED_PRECISION: // extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_5_info->apm_data.resize(data_len);
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk(blk_5_info->apm_data.data(), data_len);
+                    // TODO: decode extended precision parameters?
                     blk_5_info->got_data = true;
                     break;
-                case 6: // evolver params
+                case GifExtensionId::EVOLVER_INFO: // evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&evolution_info, data_len);
@@ -1245,7 +1297,7 @@ static int find_fractal_info(const std::string &gif_file, //
                         blk_6_info->mutate[i]    = evolution_info.mutate[i];
                     }
                     break;
-                case 7: // orbits parameters
+                case GifExtensionId::ORBITS_INFO: // orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&orbits_info, data_len);
@@ -1292,7 +1344,7 @@ static int find_fractal_info(const std::string &gif_file, //
     info->x_dots = (short)g_file_x_dots;
     info->y_dots = (short)g_file_y_dots;
     info->colors = (short)g_file_colors;
-    info->version = 0; // this forces lots more init at calling end too
+    info->info_version = 0; // this forces lots more init at calling end too
 
     // zero means we won
     std::fclose(s_fp);
@@ -1490,26 +1542,69 @@ void set_function_param_defaults()
     }
 }
 
-void backwards_v18()
+void backwards_legacy_v18()
 {
     if (!g_new_bifurcation_functions_loaded)
     {
         set_if_old_bif(); // old bifs need function set
     }
+    if (s_file_version < 1800)
+    {
+        if ((g_fractal_type == FractalType::MANDEL_TRIG || g_fractal_type == FractalType::LAMBDA_TRIG) &&
+            g_user_float_flag && g_bailout == 0)
+        {
+            g_bailout = 2500;
+        }
+    }
 }
 
-void backwards_v19()
+void backwards_legacy_v19()
 {
-    // fractal might have old bof60/61 problem with magnitude
+    if (g_fractal_type == FractalType::MARKS_JULIA || g_fractal_type == FractalType::MARKS_JULIA_FP)
+    {
+        if (s_file_version < 1825)
+        {
+            if (g_params[2] == 0)
+            {
+                g_params[2] = 2;
+            }
+            else
+            {
+                g_params[2] += 1;
+            }
+        }
+    }
+    else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+    {
+        if (s_file_version < 1824)
+        {
+            g_inversion[0] = 0;
+            g_inversion[1] = 0;
+            g_inversion[2] = 0;
+            g_invert = 0;
+        }
+    }
+
+    // fractal has old bof60/61 problem with magnitude
     g_magnitude_calc = !fix_bof();
-    // fractal might use old periodicity method
+    // fractal uses old periodicity method
     g_use_old_periodicity = fix_period_bof();
-    g_use_old_distance_estimator = false;
+    g_use_old_distance_estimator = s_file_version < 1827 && g_distance_estimator;
 }
 
-void backwards_v20()
+void backwards_legacy_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
+    g_bad_outside = s_file_version <= 1960 && //
+        (g_fractal_type == FractalType::MANDEL_FP || g_fractal_type == FractalType::JULIA_FP ||
+            g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA) &&
+        g_outside_color <= REAL && g_outside_color >= SUM;
+
+    if (s_file_version < 1961 && g_inside_color == EPS_CROSS)
+    {
+        g_close_proximity = 0.01;
+    }
+
     g_bad_outside = false;
     if (!g_new_bifurcation_functions_loaded)
     {
@@ -2173,7 +2268,7 @@ static bool params_ok(FractalInfo const *info)
     double tmp_param9;
     double tmp_param10;
 
-    if (info->version > 6)
+    if (info->info_version > 6)
     {
         tmp_param3 = info->d_param3;
         tmp_param4 = info->d_param4;
@@ -2185,7 +2280,7 @@ static bool params_ok(FractalInfo const *info)
         tmp_param4 = info->param4;
         round_float_double(&tmp_param4);
     }
-    if (info->version > 8)
+    if (info->info_version > 8)
     {
         tmp_param5 = info->d_param5;
         tmp_param6 = info->d_param6;

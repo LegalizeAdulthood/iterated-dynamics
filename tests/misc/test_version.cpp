@@ -142,3 +142,11 @@ TEST(TestVersion, lesserTweakVersion)
 
     EXPECT_LT(lhs, rhs);
 }
+
+TEST(TestVersion, legacyVersionNotEqualIdVersion)
+{
+    const Version lhs{1, 0, 0, 0, true};
+    const Version rhs{1, 0, 0, 0, false};
+
+    EXPECT_NE(lhs, rhs);
+}

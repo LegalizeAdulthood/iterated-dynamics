@@ -12,7 +12,6 @@ int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
 const int g_patch_level{ID_VERSION_PATCH};
 
 Version g_version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};
-Version g_file_version{};
 
 std::string to_par_string(const Version &value)
 {
@@ -39,4 +38,49 @@ Version parse_legacy_version(int version)
     result.minor = version % 100;
     result.legacy = true;
     return result;
+}
+
+bool operator==(const Version &lhs, const Version &rhs)
+{
+    return false;
+}
+
+bool operator<(const Version &lhs, const Version &rhs)
+{
+    if (lhs.legacy)
+    {
+        if (!rhs.legacy)
+        {
+            return true;
+        }
+    }
+    else if (rhs.legacy)
+    {
+        return false;
+    }
+    // now both lhs and rhs are either both legacy or both modern
+    if (lhs.major < rhs.major)
+    {
+        return true;
+    }
+    if (lhs.major == rhs.major)
+    {
+        if (lhs.minor < rhs.minor)
+        {
+            return true;
+        }
+        if (lhs.minor == rhs.minor)
+        {
+            if (lhs.patch < rhs.patch)
+            {
+                return true;
+            }
+            if (lhs.patch == rhs.patch && lhs.tweak < rhs.tweak)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

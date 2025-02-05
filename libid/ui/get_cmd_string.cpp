@@ -28,9 +28,9 @@ int get_cmd_string()
         i = +cmd_arg(cmd_buf, CmdFile::AT_AFTER_STARTUP);
         if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
         {
-            backwards_v18();
-            backwards_v19();
-            backwards_v20();
+            backwards_legacy_v18();
+            backwards_legacy_v19();
+            backwards_legacy_v20();
         }
     }
 

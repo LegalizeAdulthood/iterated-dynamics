@@ -236,7 +236,7 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.x_dots = deser.extract_int16();
     result.y_dots = deser.extract_int16();
     result.colors = deser.extract_int16();
-    result.version = deser.extract_int16();
+    result.info_version = deser.extract_int16();
     result.param3 = deser.extract_float();
     result.param4 = deser.extract_float();
     {
@@ -395,9 +395,13 @@ FractalInfo get_fractal_info(GifFileType *gif)
             result.math_tol[i] = math_tol[i];
         }
     }
+    result.version_major = deser.extract_byte();
+    result.version_minor = deser.extract_byte();
+    result.version_patch = deser.extract_byte();
+    result.version_tweak = deser.extract_byte();
     {
         // TODO: error: cannot bind packed field
-        std::int16_t future[7];
+        std::int16_t future[std::size(result.future)];
         deser.extract_int16(future);
         for (size_t i = 0; i < std::size(future); ++i)
         {
@@ -550,7 +554,7 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.insert_int16(info.x_dots);
     ser.insert_int16(info.y_dots);
     ser.insert_int16(info.colors);
-    ser.insert_int16(info.version);
+    ser.insert_int16(info.info_version);
     ser.insert_float(info.param3);
     ser.insert_float(info.param4);
     ser.insert_float(info.potential);

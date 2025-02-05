@@ -70,7 +70,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_int16(&info->x_dots, &buf_ptr, dir);
     get_int16(&info->y_dots, &buf_ptr, dir);
     get_int16(&info->colors, &buf_ptr, dir);
-    get_int16(&info->version, &buf_ptr, dir);
+    get_int16(&info->info_version, &buf_ptr, dir);
     get_float(&info->param3, &buf_ptr, dir);
     get_float(&info->param4, &buf_ptr, dir);
     get_float(&info->potential[0], &buf_ptr, dir);

@@ -740,7 +740,7 @@ static void setup_save_info(FractalInfo *save_info)
     }
     // set save parameters in save structure
     std::strcpy(save_info->info_id, INFO_ID);
-    save_info->version = FRACTAL_INFO_VERSION;
+    save_info->info_version = FRACTAL_INFO_VERSION;
     save_info->iterations_old =
         static_cast<std::int16_t>(g_max_iterations <= SHRT_MAX ? g_max_iterations : SHRT_MAX);
     save_info->fractal_type = static_cast<std::int16_t>(+g_fractal_type);
@@ -885,8 +885,12 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->orbit_delay = static_cast<std::int16_t>(g_orbit_delay);
     save_info->math_tol[0] = g_math_tol[0];
     save_info->math_tol[1] = g_math_tol[1];
+    save_info->version_major = static_cast<std::uint8_t>(g_version.major);
+    save_info->version_minor = static_cast<std::uint8_t>(g_version.minor);
+    save_info->version_patch = static_cast<std::uint8_t>(g_version.patch);
+    save_info->version_tweak = static_cast<std::uint8_t>(g_version.tweak);
     // NOTE: can't use std::fill here on gcc due to packed constraints.
-    for (int i = 0; i < 7; ++i)  // NOLINT(modernize-loop-convert)
+    for (int i = 0; i < static_cast<int>(std::size(save_info->future)); ++i) // NOLINT(modernize-loop-convert)
     {
         save_info->future[i] = 0;
     }

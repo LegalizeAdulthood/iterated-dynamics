@@ -147,7 +147,7 @@ InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_mode{};                                        // initial video mode
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
-long g_bailout{};                                        // user input bailout value
+long g_bailout{};                                         // user input bailout value
 double g_inversion[3]{};                                  // radius, x center, y center
 int g_color_cycle_range_lo{};                             //
 int g_color_cycle_range_hi{};                             // cycling color range
@@ -649,9 +649,9 @@ static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
 
     if (bit_set(change_flag, CmdArgFlags::FRACTAL_PARAM))
     {
-        backwards_v18();
-        backwards_v19();
-        backwards_v20();
+        backwards_legacy_v18();
+        backwards_legacy_v19();
+        backwards_legacy_v20();
     }
     return change_flag;
 }
@@ -3053,25 +3053,28 @@ static CmdArgFlags cmd_reset(const Command &cmd)
     init_vars_fractal();
     if (cmd.num_int_params == 1)
     {
+        // Id version: reset=100, reset=101; legacy version: reset=1960
         if (cmd.int_vals[0] >= 100)
         {
             g_release = cmd.int_vals[0];
-            g_version.major = g_release/100;
+            g_version.major = g_release / 100;
             g_version.minor = g_release % 100;
             g_version.patch = 0;
             g_version.tweak = 0;
             g_version.legacy = cmd.int_vals[0] != 100 && cmd.int_vals[0] != 101;
         }
+        // Id version: reset=<major>
         else
         {
-            g_release = cmd.int_vals[0]*100;
+            g_release = cmd.int_vals[0] * 100;
             g_version = Version{};
             g_version.major = cmd.int_vals[0];
         }
     }
+    // Id version: reset=<major>/<minor>[/<patch>[/<tweak>]]
     else if (cmd.num_int_params > 1)
     {
-        g_release = cmd.int_vals[0]*100 + cmd.int_vals[1];
+        g_release = cmd.int_vals[0] * 100 + cmd.int_vals[1];
         g_version = Version{};
         g_version.major = cmd.int_vals[0];
         g_version.minor = cmd.int_vals[1];
