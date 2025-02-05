@@ -347,41 +347,43 @@ struct TestCommandMakePar : TestParameterGoodbye
 protected:
     void SetUp() override;
 
-    ValueSaver<std::string> saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
-    ValueSaver<FractalType> saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<FractalSpecific *> saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
-    ValueSaver<int> saved_x_dots{g_file_x_dots, 800};
-    ValueSaver<int> saved_y_dots{g_file_y_dots, 600};
-    MockDriver driver;
-    ValueSaver<Driver *> saved_driver{g_driver, &driver};
+    ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
+    ValueSaver<int> m_saved_release{g_release};
+    ValueSaver<std::string> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
+    ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
+    ValueSaver<int> m_saved_x_dots{g_file_x_dots, 800};
+    ValueSaver<int> m_saved_y_dots{g_file_y_dots, 600};
+    MockDriver m_driver;
+    ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
 };
 
 void TestCommandMakePar::SetUp()
 {
     TestParameterGoodbye::SetUp();
-    EXPECT_CALL(driver, stack_screen());
-    EXPECT_CALL(driver, unstack_screen());
-    EXPECT_CALL(driver, check_memory());
+    EXPECT_CALL(m_driver, stack_screen());
+    EXPECT_CALL(m_driver, unstack_screen());
+    EXPECT_CALL(m_driver, check_memory());
     EXPECT_CALL(m_goodbye, Call());
 }
 
 TEST_F(TestCommandMakePar, makeParNewFile)
 {
-    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "foo.par"};
+    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "new.par"};
     remove(path);
 
-    exec_cmd_arg("makepar=foo.par/bar", CmdFile::SSTOOLS_INI);
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
     EXPECT_EQ(R"par(bar                {
-  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
-  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
+  maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
 }
 
 )par",
-        read_file_contents(path));
+        read_file_contents(path)) << path;
 }
 
 static void set_file_contents(const std::filesystem::path &path, std::string_view contents)
@@ -393,35 +395,35 @@ static void set_file_contents(const std::filesystem::path &path, std::string_vie
 
 TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 {
-    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "bar.par"};
+    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "existing.par"};
     set_file_contents(path, R"par(bar                {
-  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
-  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
+  maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
 }
 
 )par");
 
-    exec_cmd_arg("makepar=bar.par/foo", CmdFile::SSTOOLS_INI);
+    exec_cmd_arg("makepar=" + path.filename().string() + "/foo", CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
     EXPECT_EQ(R"par(bar                {
-  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
-  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
+  maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
 }
 
 foo                {
-  reset=)par" + std::to_string(g_release) + R"par( type=mandel passes= corners=0/0/0/0 params=0/0 maxiter=0
-  fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
+  reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
+  maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
   decay=0 sustain=0 srelease=0 orbitinterval=0
 }
 
 )par",
-        read_file_contents(path));
+        read_file_contents(path)) << path;
 }
 
 TEST_F(TestParameterCommandError, resetBadArg)

@@ -622,8 +622,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
         // a fractal was generated
 
         //***** fractal only parameters in this section ******
-        put_param(" reset");
-        put_param("=%d", g_release);
+        put_param(" reset=%s", to_par_string(g_version).c_str());
 
         char const *str_ptr = g_cur_fractal_specific->name;
         if (*str_ptr == '*')
