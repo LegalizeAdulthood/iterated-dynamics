@@ -34,6 +34,11 @@ enum
 static_assert(sizeof(float) == sizeof(std::uint32_t));
 static_assert(sizeof(double) == sizeof(std::uint64_t));
 
+enum
+{
+    NUM_FRACTAL_INFO_FUTURE = 5
+};
+
 // for saving data in GIF file
 struct FractalInfo
 {
@@ -152,7 +157,7 @@ struct FractalInfo
     std::uint8_t version_minor;    //
     std::uint8_t version_patch;    //
     std::uint8_t version_tweak;    //
-    std::int16_t future[5];        //
+    std::int16_t future[NUM_FRACTAL_INFO_FUTURE]; //
 } ID_PACKED;
 
 struct FormulaInfo         // for saving formula data in GIF file

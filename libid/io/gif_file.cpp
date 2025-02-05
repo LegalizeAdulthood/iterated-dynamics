@@ -401,7 +401,7 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.version_tweak = deser.extract_byte();
     {
         // TODO: error: cannot bind packed field
-        std::int16_t future[std::size(result.future)];
+        std::int16_t future[NUM_FRACTAL_INFO_FUTURE];
         deser.extract_int16(future);
         for (size_t i = 0; i < std::size(future); ++i)
         {
