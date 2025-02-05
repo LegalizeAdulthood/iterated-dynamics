@@ -185,7 +185,7 @@ enum class FractalType
     MAX                         = 175,
 };
 // clang-format on
-inline int operator+(FractalType rhs)
+constexpr int operator+(FractalType rhs)
 {
     return static_cast<int>(rhs);
 }

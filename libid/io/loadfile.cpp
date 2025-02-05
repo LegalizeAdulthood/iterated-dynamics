@@ -77,41 +77,47 @@ enum
     MAX_WINDOWS_OPEN = 450
 };
 
-enum DeprecatedFractalType
+struct DeprecatedFractalType
 {
-    LAMBDA_SINE                 = 8, // obsolete
-    LAMBDA_COS                  = 9, // obsolete
-    LAMBDA_EXP                  = 10, // obsolete
-    MANDEL_SINE                 = 17, // obsolete
-    MANDEL_COS                  = 18, // obsolete
-    MANDEL_EXP                  = 19, // obsolete
-    DEM_M                       = 30, // obsolete
-    DEM_J                       = 31, // obsolete
-    MANDEL_SINH                 = 33, // obsolete
-    LAMBDA_SINH                 = 34, // obsolete
-    MANDEL_COSH                 = 35, // obsolete
-    LAMBDA_COSH                 = 36, // obsolete
-    MANDEL_SINE_L               = 37, // obsolete
-    LAMBDA_SINE_L               = 38, // obsolete
-    MANDEL_COS_L                = 39, // obsolete
-    LAMBDA_COS_L                = 40, // obsolete
-    MANDEL_SINH_L               = 41, // obsolete
-    LAMBDA_SINH_L               = 42, // obsolete
-    MANDEL_COSH_L               = 43, // obsolete
-    LAMBDA_COSH_L               = 44, // obsolete
-    MANDEL_EXP_L                = 49, // obsolete
-    LAMBDA_EXP_L                = 50, // obsolete
+    enum
+    {
+        LAMBDA_SINE = 8,    // obsolete
+        LAMBDA_COS = 9,     // obsolete
+        LAMBDA_EXP = 10,    // obsolete
+        MANDEL_SINE = 17,   // obsolete
+        MANDEL_COS = 18,    // obsolete
+        MANDEL_EXP = 19,    // obsolete
+        DEM_M = 30,         // obsolete
+        DEM_J = 31,         // obsolete
+        MANDEL_SINH = 33,   // obsolete
+        LAMBDA_SINH = 34,   // obsolete
+        MANDEL_COSH = 35,   // obsolete
+        LAMBDA_COSH = 36,   // obsolete
+        MANDEL_SINE_L = 37, // obsolete
+        LAMBDA_SINE_L = 38, // obsolete
+        MANDEL_COS_L = 39,  // obsolete
+        LAMBDA_COS_L = 40,  // obsolete
+        MANDEL_SINH_L = 41, // obsolete
+        LAMBDA_SINH_L = 42, // obsolete
+        MANDEL_COSH_L = 43, // obsolete
+        LAMBDA_COSH_L = 44, // obsolete
+        MANDEL_EXP_L = 49,  // obsolete
+        LAMBDA_EXP_L = 50,  // obsolete
+    };
 };
 
-enum GifExtensionId
+struct GifExtensionId
 {
-    HEADER = 1,
-    RESUME_INFO = 2,
-    FORMULA_INFO = 3,
-    RANGES_INFO = 4,
-    EXTENDED_PRECISION = 5,
-    EVOLVER_INFO = 6,
-    ORBITS_INFO = 7,
+    enum
+    {
+        HEADER = 1,
+        RESUME_INFO = 2,
+        FORMULA_INFO = 3,
+        RANGES_INFO = 4,
+        EXTENDED_PRECISION = 5,
+        EVOLVER_INFO = 6,
+        ORBITS_INFO = 7,
+    };
 };
 
 constexpr double MIN_DIF{0.001};
@@ -1502,11 +1508,12 @@ static void backwards_compat(FractalInfo *info)
         set_fractal_type(FractalType::JULIA_FP);
         g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
-    case FractalType::MANDEL_LAMBDA:
-        g_use_init_orbit = InitOrbitMode::PIXEL;
-        break;
     default:
         break;
+    }
+    if (g_fractal_type == FractalType::MANDEL_LAMBDA)
+    {
+        g_use_init_orbit = InitOrbitMode::PIXEL;
     }
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
