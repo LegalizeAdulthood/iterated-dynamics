@@ -77,7 +77,7 @@ enum
     MAX_WINDOWS_OPEN = 450
 };
 
-enum class DeprecatedFractalType
+enum DeprecatedFractalType
 {
     LAMBDA_SINE                 = 8, // obsolete
     LAMBDA_COS                  = 9, // obsolete
@@ -103,7 +103,7 @@ enum class DeprecatedFractalType
     LAMBDA_EXP_L                = 50, // obsolete
 };
 
-enum class GifExtensionId
+enum GifExtensionId
 {
     HEADER = 1,
     RESUME_INFO = 2,
