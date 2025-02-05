@@ -209,7 +209,7 @@ mandel_fp_setup()
             g_periodicity_check = 4;
         }
         break;
-    case FractalType::MANDEL_EXP:
+    case FractalType::TRIG_PLUS_TRIG:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         break;
     case FractalType::MAN_TRIG_PLUS_EXP_FP:
@@ -334,7 +334,7 @@ julia_fp_setup()
         get_julia_attractor(0.0, 0.0);    // another attractor?
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
-    case FractalType::LAMBDA_EXP:
+    case FractalType::MAN_O_WAR:
         if (g_param_z1.y == 0.0)
         {
             g_symmetry = SymmetryType::X_AXIS;
@@ -433,7 +433,8 @@ mandel_long_setup()
     {
         g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;    // odd exponents
     }
-    if ((g_fractal_type == FractalType::MARKS_MANDEL && (g_c_exponent & 1)) || g_fractal_type == FractalType::MANDEL_EXP_L)
+    if ((g_fractal_type == FractalType::MARKS_MANDEL && (g_c_exponent & 1)) ||
+        g_fractal_type == FractalType::LAMBDA_TRIG_FP)
     {
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
     }
@@ -514,7 +515,7 @@ julia_long_setup()
         get_julia_attractor(0.0, 0.0);    // another attractor?
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
-    case FractalType::LAMBDA_EXP_L:
+    case FractalType::MANDEL_TRIG:
         if (g_l_param.y == 0)
         {
             g_symmetry = SymmetryType::X_AXIS;

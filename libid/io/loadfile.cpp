@@ -77,6 +77,32 @@ enum
     MAX_WINDOWS_OPEN = 450
 };
 
+enum class DeprecatedFractalType
+{
+    LAMBDA_SINE                 = 8, // obsolete
+    LAMBDA_COS                  = 9, // obsolete
+    LAMBDA_EXP                  = 10, // obsolete
+    MANDEL_SINE                 = 17, // obsolete
+    MANDEL_COS                  = 18, // obsolete
+    MANDEL_EXP                  = 19, // obsolete
+    DEM_M                       = 30, // obsolete
+    DEM_J                       = 31, // obsolete
+    MANDEL_SINH                 = 33, // obsolete
+    LAMBDA_SINH                 = 34, // obsolete
+    MANDEL_COSH                 = 35, // obsolete
+    LAMBDA_COSH                 = 36, // obsolete
+    MANDEL_SINE_L               = 37, // obsolete
+    LAMBDA_SINE_L               = 38, // obsolete
+    MANDEL_COS_L                = 39, // obsolete
+    LAMBDA_COS_L                = 40, // obsolete
+    MANDEL_SINH_L               = 41, // obsolete
+    LAMBDA_SINH_L               = 42, // obsolete
+    MANDEL_COSH_L               = 43, // obsolete
+    LAMBDA_COSH_L               = 44, // obsolete
+    MANDEL_EXP_L                = 49, // obsolete
+    LAMBDA_EXP_L                = 50, // obsolete
+};
+
 enum class GifExtensionId
 {
     HEADER = 1,
@@ -1388,91 +1414,91 @@ static void backwards_compat(FractalInfo *info)
 {
     switch (g_fractal_type)
     {
-    case FractalType::LAMBDA_SINE:
+    case DeprecatedFractalType::LAMBDA_SINE:
         set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::SIN;
         break;
-    case FractalType::LAMBDA_COS:
+    case DeprecatedFractalType::LAMBDA_COS:
         set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::COSXX;
         break;
-    case FractalType::LAMBDA_EXP:
+    case DeprecatedFractalType::LAMBDA_EXP:
         set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::EXP;
         break;
-    case FractalType::MANDEL_SINE:
+    case DeprecatedFractalType::MANDEL_SINE:
         set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::SIN;
         break;
-    case FractalType::MANDEL_COS:
+    case DeprecatedFractalType::MANDEL_COS:
         set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::COSXX;
         break;
-    case FractalType::MANDEL_EXP:
+    case DeprecatedFractalType::MANDEL_EXP:
         set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::EXP;
         break;
-    case FractalType::MANDEL_SINH:
+    case DeprecatedFractalType::MANDEL_SINH:
         set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::SINH;
         break;
-    case FractalType::LAMBDA_SINH:
+    case DeprecatedFractalType::LAMBDA_SINH:
         set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::SINH;
         break;
-    case FractalType::MANDEL_COSH:
+    case DeprecatedFractalType::MANDEL_COSH:
         set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::COSH;
         break;
-    case FractalType::LAMBDA_COSH:
+    case DeprecatedFractalType::LAMBDA_COSH:
         set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::COSH;
         break;
-    case FractalType::MANDEL_SINE_L:
+    case DeprecatedFractalType::MANDEL_SINE_L:
         set_fractal_type(FractalType::MANDEL_TRIG);
         g_trig_index[0] = TrigFn::SIN;
         break;
-    case FractalType::LAMBDA_SINE_L:
+    case DeprecatedFractalType::LAMBDA_SINE_L:
         set_fractal_type(FractalType::LAMBDA_TRIG);
         g_trig_index[0] = TrigFn::SIN;
         break;
-    case FractalType::MANDEL_COS_L:
+    case DeprecatedFractalType::MANDEL_COS_L:
         set_fractal_type(FractalType::MANDEL_TRIG);
         g_trig_index[0] = TrigFn::COSXX;
         break;
-    case FractalType::LAMBDA_COS_L:
+    case DeprecatedFractalType::LAMBDA_COS_L:
         set_fractal_type(FractalType::LAMBDA_TRIG);
         g_trig_index[0] = TrigFn::COSXX;
         break;
-    case FractalType::MANDEL_SINH_L:
+    case DeprecatedFractalType::MANDEL_SINH_L:
         set_fractal_type(FractalType::MANDEL_TRIG);
         g_trig_index[0] = TrigFn::SINH;
         break;
-    case FractalType::LAMBDA_SINH_L:
+    case DeprecatedFractalType::LAMBDA_SINH_L:
         set_fractal_type(FractalType::LAMBDA_TRIG);
         g_trig_index[0] = TrigFn::SINH;
         break;
-    case FractalType::MANDEL_COSH_L:
+    case DeprecatedFractalType::MANDEL_COSH_L:
         set_fractal_type(FractalType::MANDEL_TRIG);
         g_trig_index[0] = TrigFn::COSH;
         break;
-    case FractalType::LAMBDA_COSH_L:
+    case DeprecatedFractalType::LAMBDA_COSH_L:
         set_fractal_type(FractalType::LAMBDA_TRIG);
         g_trig_index[0] = TrigFn::COSH;
         break;
-    case FractalType::MANDEL_EXP_L:
+    case DeprecatedFractalType::MANDEL_EXP_L:
         set_fractal_type(FractalType::MANDEL_TRIG);
         g_trig_index[0] = TrigFn::EXP;
         break;
-    case FractalType::LAMBDA_EXP_L:
+    case DeprecatedFractalType::LAMBDA_EXP_L:
         set_fractal_type(FractalType::LAMBDA_TRIG);
         g_trig_index[0] = TrigFn::EXP;
         break;
-    case FractalType::DEM_M:
+    case DeprecatedFractalType::DEM_M:
         set_fractal_type(FractalType::MANDEL_FP);
         g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
-    case FractalType::DEM_J:
+    case DeprecatedFractalType::DEM_J:
         set_fractal_type(FractalType::JULIA_FP);
         g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
