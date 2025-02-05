@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+#include <iostream>
+
 TEST(TestVersion, release)
 {
     EXPECT_EQ(ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR, g_release);
@@ -15,6 +17,15 @@ TEST(TestVersion, release)
 TEST(TestVersion, patchLevel)
 {
     EXPECT_EQ(ID_VERSION_PATCH, g_patch_level);
+}
+
+// In GIF extension blocks, we store the version components as std::uint8_t
+TEST(TestVersion, versionComponentsFitInUInt8)
+{
+    EXPECT_GT(256, ID_VERSION_MAJOR);
+    EXPECT_GT(256, ID_VERSION_MINOR);
+    EXPECT_GT(256, ID_VERSION_PATCH);
+    EXPECT_GT(256, ID_VERSION_TWEAK);
 }
 
 TEST(TestVersion, parStringMajor)
@@ -50,4 +61,84 @@ TEST(TestVersion, parStringMajorMinorPatchTweak)
     ValueSaver saved_version{g_version, Version{5, 6, 7, 8, false}};
 
     EXPECT_EQ("5/6/7/8", to_par_string(g_version));
+}
+
+TEST(TestVersion, parseLegacyVersionMajor)
+{
+    Version result{parse_legacy_version(100)};
+
+    EXPECT_TRUE(result.legacy);
+    EXPECT_EQ(1, result.major);
+    EXPECT_EQ(0, result.minor);
+    EXPECT_EQ(0, result.patch);
+    EXPECT_EQ(0, result.tweak);
+}
+
+TEST(TestVersion, parseLegacyVersionMajorMinor)
+{
+    Version result{parse_legacy_version(1401)};
+
+    EXPECT_TRUE(result.legacy);
+    EXPECT_EQ(14, result.major);
+    EXPECT_EQ(1, result.minor);
+    EXPECT_EQ(0, result.patch);
+    EXPECT_EQ(0, result.tweak);
+}
+
+inline std::ostream &operator<<(std::ostream &str, const Version &value)
+{
+    if (value.legacy)
+    {
+        return str << "legacy{" << value.major << '.' << value.minor << '}';
+    }
+    return str << "id{" << value.major << '.' << value.minor //
+               << '.' << value.patch << '.' << value.tweak << '}';
+}
+
+TEST(TestVersion, legacyVersionLessThanIdVersion)
+{
+    const Version lhs{parse_legacy_version(1401)};
+    const Version rhs{1, 0, 0, 0, false};
+
+    EXPECT_LT(lhs, rhs);
+}
+
+TEST(TestVersion, idVersionGreaterThanLegacyVersion)
+{
+    const Version lhs{1, 0, 0, 0, false};
+    const Version rhs{parse_legacy_version(1401)};
+
+    EXPECT_GT(lhs, rhs);
+}
+
+TEST(TestVersion, legacyLesserMajorVersion)
+{
+    const Version lhs{parse_legacy_version(1301)};
+    const Version rhs{parse_legacy_version(1401)};
+
+    EXPECT_LT(lhs, rhs);
+}
+
+TEST(TestVersion, legacyLesserMinorVersion)
+{
+    const Version lhs{parse_legacy_version(1301)};
+    const Version rhs{parse_legacy_version(1306)};
+
+    EXPECT_LT(lhs, rhs);
+}
+
+TEST(TestVersion, lesserPatchVersion)
+{
+    const Version lhs{1, 1, 0, 0, false};
+    const Version rhs{1, 1, 1, 0, false};
+
+    EXPECT_LT(lhs, rhs);
+}
+
+TEST(TestVersion, lesserTweakVersion)
+{
+    const Version lhs{1, 1, 1, 0, false};
+    const Version rhs{1, 1, 1, 1, false};
+
+    EXPECT_LT(lhs, rhs);
 }
