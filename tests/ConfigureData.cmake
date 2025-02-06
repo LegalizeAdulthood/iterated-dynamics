@@ -59,6 +59,8 @@ configure_gif_extension_file(4)
 configure_gif_extension_file(5)
 configure_gif_extension_file(6)
 configure_gif_extension_file(7)
+SET(ID_TEST_GIF_MANDEL_INT "${ID_TEST_GIF_DIR}/mandel-int.gif")
+configure_file("gif/mandel-int.gif" "${ID_TEST_GIF_MANDEL_INT}" COPYONLY)
 
 # IFS test data
 set(ID_TEST_FIRST_IFS_NAME "binary")

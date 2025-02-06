@@ -62,6 +62,7 @@ add_executable(test-id
     io/test_find_path.cpp
     io/test_gif_file.cpp
     io/test_is_directory.cpp
+    io/test_loadfile.cpp
     io/test_load_config.cpp
     io/test_load_entry_text.cpp
     io/test_make_path.cpp
