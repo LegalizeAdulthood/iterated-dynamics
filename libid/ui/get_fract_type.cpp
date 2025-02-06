@@ -96,7 +96,6 @@ int get_fract_type()
 // Select a fractal type; returns FractalType::NO_FRACTAL if canceled out.
 static FractalType select_fract_type(FractalType t)
 {
-    int num_types;
     enum
     {
         MAX_FRACT_TYPES = 200
@@ -122,35 +121,32 @@ static FractalType select_fract_type(FractalType t)
     {
         t = FractalType::IFS;
     }
+    int num_types{};
+    for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        int i = -1;
-        int j = -1;
-        while (g_fractal_specific[++i].name)
+        const FractalSpecific specific{g_fractal_specific[i]};
+        if (specific.name[0] == '*')
         {
-            if (g_julibrot)
-            {
-                if (!(bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && *g_fractal_specific[i].name != '*'))
-                {
-                    continue;
-                }
-            }
-            if (g_fractal_specific[i].name[0] == '*')
-            {
-                continue;
-            }
-            std::strcpy(choices[++j]->name, g_fractal_specific[i].name);
-            choices[j]->name[14] = 0; // safety
-            choices[j]->num = i;      // remember where the real item is
+            continue;
         }
-        num_types = j + 1;
+        if (g_julibrot && !bit_set(specific.flags, FractalFlags::OK_JB))
+        {
+            continue;
+        }
+        std::strcpy(choices[num_types]->name, specific.name);
+        choices[num_types]->name[14] = 0; // safety
+        choices[num_types]->num = i;      // remember where the real item is
+        ++num_types;
     }
     shell_sort(&choices, num_types, sizeof(FractalTypeChoice *)); // sort list
     int j = 0;
     for (int i = 0; i < num_types; ++i)   // find starting choice in sorted list
     {
-        if (choices[i]->num == +t || choices[i]->num == +get_fractal_specific(t)->to_float)
+        const FractalSpecific specific{g_fractal_specific[i]};
+        if (specific.type == t || specific.type == get_fractal_specific(t)->to_float)
         {
             j = i;
+            break;
         }
     }
 
@@ -164,7 +160,7 @@ static FractalType select_fract_type(FractalType t)
         return FractalType::NO_FRACTAL;
     }
 
-    const FractalType result{static_cast<FractalType>(choices[done]->num)};
+    const FractalType result{g_fractal_specific[choices[done]->num].type};
     if ((result == FractalType::FORMULA || result == FractalType::FORMULA_FP) &&
         g_formula_filename == g_command_file)
     {
@@ -186,8 +182,7 @@ static int sel_fract_type_help(int key, int choice)
 {
     if (key == ID_KEY_F2)
     {
-        ValueSaver saved_help_mode{g_help_mode,
-            get_fractal_specific(static_cast<FractalType>((*(s_ft_choices + choice))->num))->help_text};
+        ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[s_ft_choices[choice]->num].help_text};
         help();
     }
     return 0;
