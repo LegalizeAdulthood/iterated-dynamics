@@ -397,13 +397,12 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     old_bailout = g_bailout;
     g_julibrot = g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP;
     FractalType current_type = g_fractal_type;
+    if (g_cur_fractal_specific->name[0] == '*')
     {
-        int i;
-        if (g_cur_fractal_specific->name[0] == '*'
-            && (i = +g_cur_fractal_specific->to_float) != +FractalType::NO_FRACTAL
-            && g_fractal_specific[i].name[0] != '*')
+        if (const FractalType to_float{g_cur_fractal_specific->to_float};
+            to_float != FractalType::NO_FRACTAL && get_fractal_specific(to_float)->name[0] != '*')
         {
-            current_type = static_cast<FractalType>(i);
+            current_type = to_float;
         }
     }
     g_cur_fractal_specific = get_fractal_specific(current_type);
