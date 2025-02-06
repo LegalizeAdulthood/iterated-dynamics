@@ -3572,20 +3572,21 @@ static CmdArgFlags cmd_type(const Command &cmd)
     {
         value = "ifs";
     }
-    int k;
-    for (k = 0; g_fractal_specific[k].name != nullptr; k++)
+    FractalType type{FractalType::NO_FRACTAL};
+    for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        if (value == g_fractal_specific[k].name)
+        if (value == g_fractal_specific[i].name)
         {
+            type = g_fractal_specific[i].type;
             break;
         }
     }
-    if (g_fractal_specific[k].name == nullptr)
+    if (type == FractalType::NO_FRACTAL)
     {
         return cmd.bad_arg();
     }
     const FractalType previous{g_fractal_type};
-    set_fractal_type(static_cast<FractalType>(k));
+    set_fractal_type(type);
     if (!s_init_corners)
     {
         g_x_min = g_cur_fractal_specific->x_min;
