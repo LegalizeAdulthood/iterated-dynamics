@@ -316,8 +316,8 @@ int lsystem()
         if (lsysi_find_scale(s_rule_cmds[0], &ts, &s_rule_cmds[1], order))
         {
             ts.reverse = 0;
-            ts.angle = ts.reverse;
-            ts.real_angle = ts.angle;
+            ts.angle = 0;
+            ts.real_angle = 0;
 
             free_l_cmds();
             s_rule_cmds.push_back(lsysi_draw_transform(s_axiom.c_str(), &ts));
@@ -363,8 +363,8 @@ int lsystem()
         if (lsysf_find_scale(s_rule_f_cmds[0], &ts, &s_rule_f_cmds[1], order))
         {
             ts.reverse = 0;
-            ts.angle = ts.reverse;
-            ts.real_angle = ts.angle;
+            ts.angle = 0;
+            ts.real_angle = 0;
 
             free_l_cmds();
             s_rule_f_cmds.push_back(lsysf_draw_transform(s_axiom.c_str(), &ts));
@@ -802,15 +802,15 @@ static bool lsysi_find_scale(LSysCmd *command, LSysTurtleStateI *ts, LSysCmd **r
     double local_aspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
     ts->aspect = FIXED_PT(local_aspect);
     ts->counter = 0;
-    ts->reverse = ts->counter;
-    ts->angle = ts->reverse;
-    ts->real_angle = ts->angle;
-    ts->y_min = ts->real_angle;
-    ts->y_max = ts->y_min;
-    ts->x_max = ts->y_max;
-    ts->x_min = ts->x_max;
-    ts->y_pos = ts->x_min;
-    ts->x_pos = ts->y_pos;
+    ts->reverse = 0;
+    ts->angle = 0;
+    ts->real_angle = 0;
+    ts->y_min = 0;
+    ts->y_max = 0;
+    ts->x_max = 0;
+    ts->x_min = 0;
+    ts->y_pos = 0;
+    ts->x_pos = 0;
     ts->size = FIXED_PT(1L);
     LSysCmd *f_s_ret = find_size(command, ts, rules, depth);
     thinking(0, nullptr); // erase thinking message if any

@@ -111,7 +111,7 @@ int input_field(InputFieldFlags options, //
         case ID_KEY_F5:
             std::strcpy(fld, save_fld);
             offset = 0;
-            insert = offset;
+            insert = 0;
             started = false;
             display = true;
             break;

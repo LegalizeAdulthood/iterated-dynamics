@@ -339,14 +339,14 @@ lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int 
 {
     ts->aspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     ts->y_min = 0;
-    ts->y_max = ts->y_min;
-    ts->x_max = ts->y_max;
-    ts->x_min = ts->x_max;
-    ts->y_pos = ts->x_min;
-    ts->x_pos = ts->y_pos;
+    ts->y_max = 0;
+    ts->x_max = 0;
+    ts->x_min = 0;
+    ts->y_pos = 0;
+    ts->x_pos = 0;
     ts->counter = 0;
-    ts->reverse = ts->counter;
-    ts->angle = ts->reverse;
+    ts->reverse = 0;
+    ts->angle = 0;
     ts->real_angle = 0;
     ts->size = 1;
     LSysFCmd *f_s_ret = find_size(command, ts, rules, depth);

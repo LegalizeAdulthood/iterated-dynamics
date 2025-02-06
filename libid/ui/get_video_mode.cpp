@@ -363,16 +363,16 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         {
             g_view_reduction = (float)(g_video_entry.x_dots / g_view_x_dots);
             g_view_y_dots = 0;
-            g_view_x_dots = g_view_y_dots; // easier to use auto reduction
+            g_view_x_dots = 0; // easier to use auto reduction
         }
         g_view_reduction = std::round(g_view_reduction); // need integer value
         g_skip_y_dots = (short)(g_view_reduction - 1);
-        g_skip_x_dots = g_skip_y_dots;
+        g_skip_x_dots = (short)(g_view_reduction - 1);
         return 0;
     }
 
     g_skip_y_dots = 0;
-    g_skip_x_dots = g_skip_y_dots; // set for no reduction
+    g_skip_x_dots = 0; // set for no reduction
     if (g_video_entry.x_dots < g_file_x_dots || g_video_entry.y_dots < g_file_y_dots)
     {
         // set up to load only every nth pixel to make image fit
@@ -381,7 +381,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             g_calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
         }
         g_skip_y_dots = 1;
-        g_skip_x_dots = g_skip_y_dots;
+        g_skip_x_dots = 1;
         while (g_skip_x_dots * g_video_entry.x_dots < g_file_x_dots)
         {
             ++g_skip_x_dots;

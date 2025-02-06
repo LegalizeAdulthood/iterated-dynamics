@@ -693,7 +693,7 @@ bool DocumentProcessor::topic_paragraph()
 
     m_skip_blanks = false;
     m_size = 0;
-    m_width = m_size;
+    m_width = 0;
 
     return true;
 }

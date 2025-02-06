@@ -137,7 +137,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
 
                 skip_blanks = false;
                 size = 0;
-                width = size;
+                width = 0;
                 break;
             }
 

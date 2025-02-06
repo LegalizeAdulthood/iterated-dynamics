@@ -464,15 +464,17 @@ static void initdacbox()
         g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
         g_dac_box[i][2] = (((i+2) & 3))*16+15;
     }
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;
-    g_dac_box[0][1] = g_dac_box[0][2];
-    g_dac_box[0][0] = g_dac_box[0][1];
+
+    g_dac_box[1][0] = 63;
+    g_dac_box[1][1] = 63;
     g_dac_box[1][2] = 63;
-    g_dac_box[1][1] = g_dac_box[1][2];
-    g_dac_box[1][0] = g_dac_box[1][1];
+
     g_dac_box[2][0] = 47;
+    g_dac_box[2][1] = 63;
     g_dac_box[2][2] = 63;
-    g_dac_box[2][1] = g_dac_box[2][2];
 }
 
 void X11Driver::erase_text_screen()
@@ -735,9 +737,9 @@ int X11Driver::xcmapstuff()
     if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(m_screen) != 0)
     {
         m_inv_pixtab[0] = 1;
-        m_pixtab[0] = m_inv_pixtab[0];
         m_inv_pixtab[1] = 0;
-        m_pixtab[1] = m_inv_pixtab[1];
+        m_pixtab[0] = 1;
+        m_pixtab[1] = 0;
         m_use_pixtab = true;
     }
 

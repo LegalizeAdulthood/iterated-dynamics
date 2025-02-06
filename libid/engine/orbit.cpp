@@ -64,7 +64,7 @@ static void plot_d_orbit(double dx, double dy, int color)
     int save_screen_x_offset = g_logical_screen_x_offset;
     int save_screen_y_offset = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
-    g_logical_screen_x_offset = g_logical_screen_y_offset;
+    g_logical_screen_x_offset = 0;
     // save orbit value
     if (color == -1)
     {
@@ -134,7 +134,7 @@ void scrub_orbit()
     int save_screen_x_offset = g_logical_screen_x_offset;
     int save_screen_y_offset = g_logical_screen_y_offset;
     g_logical_screen_y_offset = 0;
-    g_logical_screen_x_offset = g_logical_screen_y_offset;
+    g_logical_screen_x_offset = 0;
     while (g_orbit_save_index >= 3)
     {
         int c = s_save_orbit[--g_orbit_save_index];

@@ -149,9 +149,9 @@ short decoder(short line_width)
     short old_code = 0;
     short y_skip = 0;
     short x_skip = 0;
-    s_sizeof_string[slot] = x_skip;
-    s_num_bits_left = s_sizeof_string[slot];
-    s_num_avail_bytes = s_num_bits_left;
+    s_sizeof_string[slot] = 0;
+    s_num_bits_left = 0;
+    s_num_avail_bytes = 0;
     Byte out_value = 0;
     for (short i = 0; i < slot; i++)
     {

@@ -793,7 +793,7 @@ get_evol_restart:
     if (!g_view_window)
     {
         g_view_y_dots = 0;
-        g_view_x_dots = g_view_y_dots;
+        g_view_x_dots = 0;
     }
 
     i = 0;

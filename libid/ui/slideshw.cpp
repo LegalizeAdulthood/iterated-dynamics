@@ -237,7 +237,7 @@ start:
         {
             slide_show_err("error in * argument");
             s_repeats = 0;
-            s_last1 = s_repeats;
+            s_last1 = 0;
         }
         s_repeats -= 2;
         out = s_last1;

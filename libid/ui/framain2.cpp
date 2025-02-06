@@ -681,7 +681,7 @@ done:
                     g_have_evolve_info = true;
                 }
                 g_logical_screen_y_offset = 0;
-                g_logical_screen_x_offset = g_logical_screen_y_offset;
+                g_logical_screen_x_offset = 0;
                 g_logical_screen_x_dots = g_screen_x_dots;
                 g_logical_screen_y_dots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
 

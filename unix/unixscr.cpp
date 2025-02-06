@@ -626,15 +626,15 @@ initdacbox()
             g_dac_box[i][1] = (((i+16)&28) >> 2)*8+7;
             g_dac_box[i][2] = (((i+2)&3))*16+15;
         }
+        g_dac_box[0][0] = 0;
+        g_dac_box[0][1] = 0;
         g_dac_box[0][2] = 0;
-        g_dac_box[0][1] = g_dac_box[0][2];
-        g_dac_box[0][0] = g_dac_box[0][1];
+        g_dac_box[1][1] = 63;
         g_dac_box[1][2] = 63;
-        g_dac_box[1][1] = g_dac_box[1][2];
-        g_dac_box[1][0] = g_dac_box[1][1];
+        g_dac_box[1][0] = 63;
         g_dac_box[2][0] = 47;
+        g_dac_box[2][1] = 63;
         g_dac_box[2][2] = 63;
-        g_dac_box[2][1] = g_dac_box[2][2];
     }
     if (s0)
         for (int i = 0; i < 256; i++)
@@ -838,9 +838,9 @@ xcmapstuff()
     if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
     {
         ipixtab[0] = 1;
-        pixtab[0] = ipixtab[0];
         ipixtab[1] = 0;
-        pixtab[1] = ipixtab[1];
+        pixtab[0] = 1;
+        pixtab[1] = 0;
         usepixtab = 1;
     }
 

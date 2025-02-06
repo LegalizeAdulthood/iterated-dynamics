@@ -126,7 +126,7 @@ bool julibrot_setup()
     }
     s_jb_fp.left_eye.x = -s_jb_fp.right_eye.x;
     s_jb_fp.right_eye.y = 0;
-    s_jb_fp.left_eye.y = s_jb_fp.right_eye.y;
+    s_jb_fp.left_eye.y = 0;
     s_jb_fp.right_eye.zx = g_julibrot_dist_fp;
     s_jb_fp.left_eye.zx = s_jb_fp.right_eye.zx;
     s_jb_fp.right_eye.zy = g_julibrot_dist_fp;

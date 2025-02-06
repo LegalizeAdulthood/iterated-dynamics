@@ -137,9 +137,9 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
     int ny = sub_y.v[0];
     sub_y.v[2] = y1;
     int ny1 = sub_y.v[2];
-    sub_y.r[2] = 0;
-    sub_y.r[0] = sub_y.r[2];
+    sub_y.r[0] = 0;
     sub_y.r[1] = 1;
+    sub_y.r[2] = 0;
     sub_y.v[1] = (ny1 + ny) >> 1;
     int y = sub_y.v[1];
 
@@ -174,11 +174,11 @@ static bool new_sub_d(int x1, int y1, int x2, int y2, int recur)
         }
         sub_x.t = 2;
         sub_x.v[0] = x2;
-        int nx = sub_x.v[0];
+        int nx = x2;
         sub_x.v[2] = x1;
-        int nx1 = sub_x.v[2];
+        int nx1 = x1;
         sub_x.r[2] = 0;
-        sub_x.r[0] = sub_x.r[2];
+        sub_x.r[0] = 0;
         sub_x.r[1] = 1;
         sub_x.v[1] = (nx1 + nx) >> 1;
         int x = sub_x.v[1];

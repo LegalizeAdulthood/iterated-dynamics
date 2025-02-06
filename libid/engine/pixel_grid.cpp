@@ -146,7 +146,7 @@ void fill_dx_array()
         g_grid_x0[0] = g_x_min;              // fill up the x, y grids
         g_grid_y0[0] = g_y_max;
         g_grid_y1[0] = 0;
-        g_grid_x1[0] = g_grid_y1[0];
+        g_grid_x1[0] = 0;
         for (int i = 1; i < g_logical_screen_x_dots; i++)
         {
             g_grid_x0[i] = (double)(g_grid_x0[0] + i*g_delta_x);
@@ -168,8 +168,8 @@ void fill_lx_array()
     {
         g_l_x0[0] = g_l_x_min;               // fill up the x, y grids
         g_l_y0[0] = g_l_y_max;
+        g_l_x1[0] = 0;
         g_l_y1[0] = 0;
-        g_l_x1[0] = g_l_y1[0];
         for (int i = 1; i < g_logical_screen_x_dots; i++)
         {
             g_l_x0[i] = g_l_x0[i-1] + g_l_delta_x;

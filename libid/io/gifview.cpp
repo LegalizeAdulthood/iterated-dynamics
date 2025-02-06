@@ -104,7 +104,7 @@ int gif_view()
 
     // initialize the col and row count for write-lines
     g_row_count = 0;
-    s_col_count = g_row_count;
+    s_col_count = 0;
 
     // Open the file
     if (g_out_line == out_line_stereo)

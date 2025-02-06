@@ -450,9 +450,9 @@ int line3d(Byte * pixels, unsigned line_len)
                 {
                     f_cur.color = (float)(-r * cos_theta * s_sin_phi * s_scale_z);
                 }
-                v[2] = 0;               // Why do we do this?
-                v[1] = v[2];
-                v[0] = v[1];
+                v[0] = 0;
+                v[1] = 0;
+                v[2] = 0;               // TODO: Why do we do this?
             }
         }
         else                            // non-sphere 3D
@@ -955,8 +955,8 @@ static void corners(Matrix m, bool show, double *x_min, double *y_min, double *z
     {
         for (int i = 0; i < 3; i++)
         {
+            s[0][j][i] = 0;
             s[1][j][i] = 0;
-            s[0][j][i] = s[1][j][i];
         }
     }
 
@@ -2380,7 +2380,7 @@ static int first_time(int line_len, Vector v)
     g_out_line_cleanup = line3d_cleanup;
 
     s_even_odd_row = 0;
-    g_calc_time = s_even_odd_row;
+    g_calc_time = 0;
     // mark as in-progress, and enable <tab> timer display
     g_calc_status = CalcStatus::IN_PROGRESS;
 
@@ -2400,8 +2400,8 @@ static int first_time(int line_len, Vector v)
     }
 
     s_ro = 0;
-    s_co = s_ro;
-    s_co_max = s_co;
+    s_co = 0;
+    s_co_max = 0;
 
     set_upr_lwr();
     s_error = 0;
@@ -2494,9 +2494,9 @@ static int first_time(int line_len, Vector v)
 
         if (g_raytrace_format != RayTraceFormat::NONE)
         {
+            x_val = 0;
+            y_val = 0;
             z_val = 0;
-            y_val = z_val;
-            x_val = y_val;
         }
 
         x_rot(x_val, g_m);

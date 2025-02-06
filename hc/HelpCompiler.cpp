@@ -310,7 +310,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
                 skip_blanks = false;
                 size = 0;
-                width = size;
+                width = 0;
                 break;
             }
 

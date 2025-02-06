@@ -639,7 +639,7 @@ static int check_gfe_key(int key, int choice)
                     if (in_scrolling_mode)
                     {
                         left_column = 0;
-                        top_line = left_column;
+                        top_line = 0;
                         rewrite_inf_buf = true;
                     }
                     break;

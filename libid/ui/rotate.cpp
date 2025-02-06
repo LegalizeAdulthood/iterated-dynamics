@@ -83,15 +83,15 @@ void rotate(int direction)      // rotate-the-palette routine
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_CYCLING};
 
-    s_paused = false;                      // not paused
-    f_key = 0;                            // no random coloring
+    s_paused = false;                          // not paused
+    f_key = 0;                                 // no random coloring
     step = 1;
-    old_step = step;                      // single-step
+    old_step = 1;                              // single-step
     f_step = 1;
-    change_color = -1;                    // no color (rgb) to change
-    change_direction = 0;                 // no color direction to change
-    incr = 999;                          // ready to randomize
-    std::srand((unsigned)std::time(nullptr));         // randomize things
+    change_color = -1;                         // no color (rgb) to change
+    change_direction = 0;                      // no color direction to change
+    incr = 999;                                // ready to randomize
+    std::srand((unsigned) std::time(nullptr)); // randomize things
 
     if (direction == 0)
     {
@@ -533,9 +533,9 @@ static void pause_rotate()               // pause-the-rotate routine
 
 static void set_palette(Byte start[3], Byte finish[3])
 {
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;
-    g_dac_box[0][1] = g_dac_box[0][2];
-    g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 255; i++)                    // fill the palette
     {
         for (int j = 0; j < 3; j++)
@@ -547,9 +547,9 @@ static void set_palette(Byte start[3], Byte finish[3])
 
 static void set_palette2(Byte start[3], Byte finish[3])
 {
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;
-    g_dac_box[0][1] = g_dac_box[0][2];
-    g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 128; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -562,9 +562,9 @@ static void set_palette2(Byte start[3], Byte finish[3])
 
 static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 {
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;
-    g_dac_box[0][1] = g_dac_box[0][2];
-    g_dac_box[0][0] = g_dac_box[0][1];
     for (int i = 1; i <= 85; i++)
     {
         for (int j = 0; j < 3; j++)

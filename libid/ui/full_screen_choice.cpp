@@ -643,12 +643,12 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         case ID_KEY_HOME:
             current = -1;
             rev_increment = 1;
-            increment = rev_increment;
+            increment = 1;
             break;
         case ID_KEY_CTL_HOME:
             current = -1;
             rev_increment = 1;
-            increment = rev_increment;
+            increment = 1;
             for (int new_current = 0; new_current < num_choices; ++new_current)
             {
                 if (!is_a_dir_name(choices[new_current]))

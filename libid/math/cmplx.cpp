@@ -176,7 +176,7 @@ void atan_z(DComplex z, DComplex *rz)
     if (z.x == 0.0 && z.y == 0.0)
     {
         rz->y = 0;
-        rz->x = rz->y;
+        rz->x = 0;
     }
     else if (z.x != 0.0 && z.y == 0.0)
     {

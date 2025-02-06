@@ -1063,7 +1063,7 @@ void m_stk_zero()
 void l_stk_zero()
 {
     g_arg1->l.x = 0;
-    g_arg1->l.y = g_arg1->l.x;
+    g_arg1->l.y = 0;
 }
 
 void d_stk_one()
@@ -2229,7 +2229,7 @@ static ConstArg *is_const(char const *str, int len)
         break;
     case MathType::LONG:
         s_vars[g_variable_index].a.l.y = 0;
-        s_vars[g_variable_index].a.l.x = s_vars[g_variable_index].a.l.y;
+        s_vars[g_variable_index].a.l.x = 0;
         break;
     case MathType::DOUBLE:
         break;
@@ -2735,7 +2735,7 @@ static bool parse_formula_text(char const *text)
                 push_pending_op(nullptr, 15);
                 push_pending_op(stk_clr, -30000);
                 s_paren = 0;
-                equals = s_paren;
+                equals = 0;
             }
             break;
         case ':':
@@ -2743,7 +2743,7 @@ static bool parse_formula_text(char const *text)
             push_pending_op(nullptr, 15);
             push_pending_op(end_init, -30000);
             s_paren = 0;
-            equals = s_paren;
+            equals = 0;
             g_last_init_op = 10000;
             break;
         case '+':

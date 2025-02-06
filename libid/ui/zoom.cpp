@@ -859,7 +859,7 @@ static void restart_window(int index)
         write_span(y, x_start, x_stop, temp.data());
     }
     g_work_list[index].pass = 0;
-    g_work_list[index].symmetry = g_work_list[index].pass;
+    g_work_list[index].symmetry = 0;
     g_work_list[index].yy_begin = g_work_list[index].yy_start;
     g_work_list[index].xx_begin = g_work_list[index].xx_start;
 }

@@ -107,7 +107,7 @@ gc_loop:
             if (g_x_min == g_x_3rd && g_y_min == g_y_3rd)
             {
                 g_y_3rd = 0;
-                g_x_3rd = g_y_3rd;
+                g_x_3rd = 0;
             }
             // 4 items
             builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
@@ -319,7 +319,7 @@ gsc_loop:
         if (g_orbit_corner_min_x == g_orbit_corner_3rd_x && g_orbit_corner_min_y == g_orbit_corner_3rd_y)
         {
             g_orbit_corner_3rd_y = 0;
-            g_orbit_corner_3rd_x = g_orbit_corner_3rd_y;
+            g_orbit_corner_3rd_x = 0;
         }
         builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
             .double_number(x_prompt, g_orbit_corner_3rd_x)

@@ -163,7 +163,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
     int col = 0;
 
     width = 0;
-    size = width;
+    size = 0;
 
     if (start_margin >= 0)
     {
@@ -260,7 +260,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             }
 
             size = 0;
-            width = size;
+            width = 0;
             break;
         }
 
