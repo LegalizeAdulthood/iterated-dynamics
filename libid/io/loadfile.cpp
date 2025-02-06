@@ -456,7 +456,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (find_fractal_info(
             g_read_filename, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
-        // didn't find a useable file
+        // didn't find a usable file
         std::snprintf(msg, std::size(msg), "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
         stop_msg(msg);
         return -1;
