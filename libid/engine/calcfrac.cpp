@@ -2089,13 +2089,13 @@ plot_inside: // we're "inside"
         {
             if (hooper == 1)
             {
-                int const green = 2;
-                g_color_iter = green;
+                constexpr int GREEN = 2;
+                g_color_iter = GREEN;
             }
             else if (hooper == 2)
             {
-                int const yellow = 6;
-                g_color_iter = yellow;
+                constexpr int YELLOW = 6;
+                g_color_iter = YELLOW;
             }
             else if (hooper == 0)
             {
