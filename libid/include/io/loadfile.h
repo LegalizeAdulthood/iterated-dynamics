@@ -236,6 +236,7 @@ extern int                   g_file_y_dots;
 extern bool                  g_loaded_3d;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;
+extern Version               g_file_version;
 
 int read_overlay();
 void set_if_old_bif();

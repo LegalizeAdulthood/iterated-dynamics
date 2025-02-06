@@ -31,6 +31,30 @@ std::string to_par_string(const Version &value)
     return result;
 }
 
+std::string to_display_string(const Version &value)
+{
+    if (value.legacy)
+    {
+        return std::string{"FRACTINT v"} + std::to_string(value.major) + '.' +
+            std::to_string(value.minor + 100).substr(1);
+    }
+    std::string result{"Id v"};
+    result.append(std::to_string(value.major) + '.' + std::to_string(value.minor));
+    if (value.patch)
+    {
+        result.append('.' + std::to_string(value.patch));
+        if (value.tweak)
+        {
+            result.append('.' + std::to_string(value.tweak));
+        }
+    }
+    else if (value.tweak)
+    {
+        result.append(".0." + std::to_string(value.tweak));
+    }
+    return result;
+}
+
 Version parse_legacy_version(int version)
 {
     Version result{};

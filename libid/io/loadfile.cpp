@@ -254,8 +254,7 @@ short g_skip_x_dots{};
 short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
 std::string g_browse_name; // name for browse file
-
-static Version s_file_version{};
+Version g_file_version{};
 
 static bool within_eps(float lhs, float rhs)
 {
@@ -480,7 +479,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_y_max = read_info.y_max;
     g_params[0] = read_info.c_real;
     g_params[1] = read_info.c_imag;
-    s_file_version = Version{11, 0, 0, 0, true};
+    g_file_version = Version{11, 0, 0, 0, true};
 
     g_invert = 0;
     if (read_info.info_version > 0)
@@ -516,7 +515,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.info_version > 1)
     {
-        s_file_version = Version{12, 0, 0, 0, true};
+        g_file_version = Version{12, 0, 0, 0, true};
         if (g_display_3d == Display3DMode::NONE                       //
             && (read_info.info_version <= 4                           //
                    || read_info.display_3d > 0                        //
@@ -560,7 +559,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.info_version > 2)
     {
-        s_file_version = Version{13, 0, 0, 0, true};
+        g_file_version = Version{13, 0, 0, 0, true};
         g_outside_color = read_info.outside;
     }
 
@@ -571,7 +570,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_calc_time = 0;
     if (read_info.info_version > 3)
     {
-        s_file_version = Version{14, 0, 0, 0, true};
+        g_file_version = Version{14, 0, 0, 0, true};
         g_x_3rd = read_info.x3rd;
         g_y_3rd = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
@@ -612,11 +611,11 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_file_aspect_ratio = g_screen_aspect;
         }
         g_save_system = 0;
-        s_file_version = parse_legacy_version(read_info.release);
+        g_file_version = parse_legacy_version(read_info.release);
         if (read_info.info_version == 5 /* except a few early fmt 5 cases: */
             && (read_info.release <= 0 || read_info.release >= 4000))
         {
-            s_file_version = parse_legacy_version(1410);
+            g_file_version = parse_legacy_version(1410);
             g_save_system = 0;
         }
         if (g_display_3d == Display3DMode::NONE && read_info.display_3d > 0)
@@ -722,7 +721,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
     // pre-version 17.25
-    if (s_file_version < 1725 && read_info.info_version != 0)
+    if (g_file_version < 1725 && read_info.info_version != 0)
     {
           set_if_old_bif(); /* translate bifurcation types */
           g_new_bifurcation_functions_loaded = true;
@@ -805,14 +804,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         if (read_info.release == 100 || read_info.release == 101)
         {
-            s_file_version = Version{read_info.release / 100, read_info.release % 100, 0, 0, false};
+            g_file_version = Version{read_info.release / 100, read_info.release % 100, 0, 0, false};
         }
     }
 
     // Id 1.2
     if (read_info.info_version > FRACTAL_INFO_VERSION_LEGACY_20_4)
     {
-        s_file_version = Version{read_info.version_major, read_info.version_minor, //
+        g_file_version = Version{read_info.version_major, read_info.version_minor, //
             read_info.version_patch, read_info.version_tweak, false};
     }
 
@@ -1581,7 +1580,7 @@ void backwards_legacy_v18()
     {
         set_if_old_bif(); // old bifs need function set
     }
-    if (s_file_version < 1800)
+    if (g_file_version < 1800)
     {
         if ((g_fractal_type == FractalType::MANDEL_TRIG || g_fractal_type == FractalType::LAMBDA_TRIG) &&
             g_user_float_flag && g_bailout == 0)
@@ -1595,7 +1594,7 @@ void backwards_legacy_v19()
 {
     if (g_fractal_type == FractalType::MARKS_JULIA || g_fractal_type == FractalType::MARKS_JULIA_FP)
     {
-        if (s_file_version < 1825)
+        if (g_file_version < 1825)
         {
             if (g_params[2] == 0)
             {
@@ -1609,7 +1608,7 @@ void backwards_legacy_v19()
     }
     else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
     {
-        if (s_file_version < 1824)
+        if (g_file_version < 1824)
         {
             g_inversion[0] = 0;
             g_inversion[1] = 0;
@@ -1622,18 +1621,18 @@ void backwards_legacy_v19()
     g_magnitude_calc = !fix_bof();
     // fractal uses old periodicity method
     g_use_old_periodicity = fix_period_bof();
-    g_use_old_distance_estimator = s_file_version < 1827 && g_distance_estimator;
+    g_use_old_distance_estimator = g_file_version < 1827 && g_distance_estimator;
 }
 
 void backwards_legacy_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
-    g_bad_outside = s_file_version <= 1960 && //
+    g_bad_outside = g_file_version <= 1960 && //
         (g_fractal_type == FractalType::MANDEL_FP || g_fractal_type == FractalType::JULIA_FP ||
             g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA) &&
         g_outside_color <= REAL && g_outside_color >= SUM;
 
-    if (s_file_version < 1961 && g_inside_color == EPS_CROSS)
+    if (g_file_version < 1961 && g_inside_color == EPS_CROSS)
     {
         g_close_proximity = 0.01;
     }

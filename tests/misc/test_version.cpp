@@ -150,3 +150,48 @@ TEST(TestVersion, legacyVersionNotEqualIdVersion)
 
     EXPECT_NE(lhs, rhs);
 }
+
+TEST(TestVersion, legacyVersionToDisplayString)
+{
+    const Version versino{parse_legacy_version(2004)};
+
+    const std::string result{to_display_string(versino)};
+
+    EXPECT_EQ("FRACTINT v20.04", result);
+}
+
+TEST(TestVersion, idVersionToDisplayString)
+{
+    const Version version{Version{1, 2, 3, 4, false}};
+
+    const std::string result{to_display_string(version)};
+
+    EXPECT_EQ("Id v1.2.3.4", result);
+}
+
+TEST(TestVersion, idVersionMajorMinorToDisplayString)
+{
+    const Version version{Version{1, 0, 0, 0, false}};
+
+    const std::string result{to_display_string(version)};
+
+    EXPECT_EQ("Id v1.0", result);
+}
+
+TEST(TestVersion, idVersionMajorPatchToDisplayString)
+{
+    const Version version{Version{1, 0, 1, 0, false}};
+
+    const std::string result{to_display_string(version)};
+
+    EXPECT_EQ("Id v1.0.1", result);
+}
+
+TEST(TestVersion, idVersionMajorTweakToDisplayString)
+{
+    const Version version{Version{1, 0, 0, 1, false}};
+
+    const std::string result{to_display_string(version)};
+
+    EXPECT_EQ("Id v1.0.0.1", result);
+}

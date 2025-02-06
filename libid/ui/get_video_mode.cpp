@@ -147,19 +147,6 @@ static std::string heading_detail(FractalInfo const *info, ExtBlock3 const *blk_
     return result.str();
 }
 
-static std::string save_release_detail()
-{
-    char buff[80];
-    std::snprintf(buff, std::size(buff), "v%d.%01d", g_release/100, (g_release%100)/10);
-    if (g_release%100)
-    {
-        int i = (int) std::strlen(buff);
-        buff[i] = (char)((g_release%10) + '0');
-        buff[i+1] = 0;
-    }
-    return buff;
-}
-
 int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 {
     double f_temp;
@@ -279,7 +266,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             {
                 std::strcat(heading, "Id       ");
             }
-            std::strcat(heading, save_release_detail().c_str());
+            std::strcat(heading, to_display_string(g_file_version).c_str());
         }
         std::strcat(heading, "\n");
         if (info->info_id[0] != 'G' && g_save_system == 0)
