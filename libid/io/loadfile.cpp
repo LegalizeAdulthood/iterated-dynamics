@@ -110,7 +110,7 @@ struct GifExtensionId
 {
     enum
     {
-        HEADER = 1,
+        FRACTAL_INFO = 1,
         RESUME_INFO = 2,
         FORMULA_INFO = 3,
         RANGES_INFO = 4,
@@ -1220,7 +1220,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 temp1[13] = 0;
                 switch (std::atoi(&temp1[10]))   // e.g. "fractint002"
                 {
-                case GifExtensionId::HEADER: // "fractint001", the main extension block
+                case GifExtensionId::FRACTAL_INFO: // "fractint001", the main extension block
                     if (scan_extend == 2)
                     {
                         // we've been here before, done now
@@ -1233,7 +1233,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     // now we know total extension len, back up to first block
                     fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
                     break;
-                case GifExtensionId::RESUME_INFO: // resume info
+                case GifExtensionId::RESUME_INFO: // "fractint002", resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
@@ -1243,7 +1243,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     blk_2_info->length = data_len;
                     blk_2_info->got_data = true;
                     break;
-                case GifExtensionId::FORMULA_INFO: // formula info
+                case GifExtensionId::FORMULA_INFO: // "fractint003", formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     // check data_len for backward compatibility
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
@@ -1274,7 +1274,7 @@ static int find_fractal_info(const std::string &gif_file, //
                         blk_3_info->uses_p5 = formula_info.uses_p5;
                     }
                     break;
-                case GifExtensionId::RANGES_INFO: // ranges info
+                case GifExtensionId::RANGES_INFO: // "fractint004", ranges info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
                     blk_4_info->length = data_len/2;
@@ -1291,7 +1291,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     }
                     blk_4_info->got_data = true;
                     break;
-                case GifExtensionId::EXTENDED_PRECISION: // extended precision parameters
+                case GifExtensionId::EXTENDED_PRECISION: // "fractint005", extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_5_info->apm_data.resize(data_len);
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
@@ -1299,7 +1299,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     // TODO: decode extended precision parameters?
                     blk_5_info->got_data = true;
                     break;
-                case GifExtensionId::EVOLVER_INFO: // evolver params
+                case GifExtensionId::EVOLVER_INFO: // "fractint006", evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&evolution_info, data_len);
@@ -1329,7 +1329,7 @@ static int find_fractal_info(const std::string &gif_file, //
                         blk_6_info->mutate[i]    = evolution_info.mutate[i];
                     }
                     break;
-                case GifExtensionId::ORBITS_INFO: // orbits parameters
+                case GifExtensionId::ORBITS_INFO: // "fractint007", orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&orbits_info, data_len);
