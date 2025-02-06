@@ -35,6 +35,39 @@ TEST(TestFractalSpecific, typeMatchesIndex)
     }
 }
 
+TEST(TestFractalSpecific, toJuliaExists)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        const FractalSpecific &from{g_fractal_specific[i]};
+        if (FractalType julia_type = from.to_julia; julia_type != FractalType::NO_FRACTAL)
+        {
+            EXPECT_NO_THROW(get_fractal_specific(julia_type)) << "index " << i << " (" << from.name << ")";
+            EXPECT_EQ(from.type, get_fractal_specific(julia_type)->to_mandel)
+                << "index " << i << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
+        }
+    }
+}
+
+TEST(TestFractalSpecific, toMandelbrotExists)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        const FractalSpecific &from{g_fractal_specific[i]};
+        if (FractalType mandel_type = from.to_mandel; mandel_type != FractalType::NO_FRACTAL)
+        {
+            EXPECT_NO_THROW(get_fractal_specific(mandel_type)) << "index " << i << " (" << from.name << ")";
+            // type=inverse_julia is a special case;
+            // it has a link to Mandelbrot, but doesn't have a link back.
+            if (from.type != FractalType::INVERSE_JULIA && from.type != FractalType::INVERSE_JULIA_FP)
+            {
+                EXPECT_EQ(from.type, get_fractal_specific(mandel_type)->to_julia)
+                    << "index " << i << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
+            }
+        }
+    }
+}
+
 TEST(TestFractalSpecific, fractalSpecificEntriesAreSortedByType)
 {
     EXPECT_TRUE(std::is_sorted(&g_fractal_specific[0], &g_fractal_specific[g_num_fractal_types],
