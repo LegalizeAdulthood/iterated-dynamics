@@ -32,13 +32,21 @@
 #include <string>
 #include <vector>
 
+namespace
+{
+
 struct FractalTypeChoice
 {
     char name[15];
-    int  num;
+    int num;
 };
 
+} // namespace
+
+static std::vector<FractalTypeChoice> s_type_choices;
+
 static FractalTypeChoice **s_ft_choices{}; // for sel_fractype_help subrtn
+
 // Julia inverse iteration method (jiim)
 #ifdef RANDOM_RUN
 static const char *s_jiim_method_prompt{"Breadth first, Depth first, Random Walk, Random Run?"};

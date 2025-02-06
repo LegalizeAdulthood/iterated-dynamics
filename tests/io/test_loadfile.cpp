@@ -25,8 +25,8 @@ TEST(TestLoadFile, migrateIntegerType)
     ValueSaver saved_loaded_3d{g_loaded_3d};
     ValueSaver saved_fast_restore{g_fast_restore};
     ValueSaver saved_view_window{g_view_window};
-    ValueSaver saved_fractal_type{g_fractal_type, FractalType::JULIA};
-    ValueSaver saved_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::JULIA)};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::JULIA_FP};
+    ValueSaver saved_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::JULIA_FP)};
     ValueSaver saved_invert{g_invert};
     ValueSaver saved_make_parameter_file{g_make_parameter_file};
     ValueSaver saved_colors{g_colors};

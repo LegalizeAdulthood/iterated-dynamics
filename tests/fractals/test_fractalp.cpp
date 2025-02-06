@@ -2,9 +2,12 @@
 //
 #include <fractals/fractalp.h>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <algorithm>
+
+using namespace testing;
 
 TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {
@@ -27,11 +30,12 @@ TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
     }
 }
 
-TEST(TestFractalSpecific, typeMatchesIndex)
+TEST(TestFractalSpecific, typeMatchesGet)
 {
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        EXPECT_EQ(i, +g_fractal_specific[i].type) << "index " << i << ", " << g_fractal_specific[i].name;
+        const FractalSpecific &from{g_fractal_specific[i]};
+        EXPECT_EQ(&from, get_fractal_specific(from.type)) << "index " << i << ", " << g_fractal_specific[i].name;
     }
 }
 
@@ -65,6 +69,34 @@ TEST(TestFractalSpecific, toMandelbrotExists)
                     << "index " << i << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";
             }
         }
+    }
+}
+
+std::ostream &operator<<(std::ostream &str, const FractalSpecific &value)
+{
+    return str << "type: " << +value.type << " '" << value.name << "'";
+}
+
+TEST(TestFractalSpecific, noIntegerTypesWithFloatEquivalent)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        const FractalSpecific &from{g_fractal_specific[i]};
+        EXPECT_FALSE(from.is_integer != 0 && from.to_float != FractalType::NO_FRACTAL)
+            << "index " << i << " (" << from.name << "), is_integer " //
+            << from.is_integer << ", to_float " << +from.to_float;
+    }
+}
+
+TEST(TestFractalSpecific, floatTypeHasNoIntegerEquivalent)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        const FractalSpecific &from{g_fractal_specific[i]};
+        EXPECT_TRUE(
+            (from.is_integer == 0 && from.to_float == FractalType::NO_FRACTAL) || from.is_integer != 0)
+            << "index " << i << " (" << from.name << "), is_integer " //
+            << from.is_integer << ", to_float " << +from.to_float;
     }
 }
 

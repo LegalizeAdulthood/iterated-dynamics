@@ -79,7 +79,7 @@ int g_integer_fractal{};                                               // TRUE i
 char g_user_std_calc_mode{};            //
 int g_user_periodicity_value{};         //
 long g_user_distance_estimator_value{}; //
-bool g_user_float_flag{};               //
+bool g_user_float_flag{true};           //
 bool g_view_window{};                   // false for full screen, true for window
 float g_view_reduction{};               // window auto-sizing
 bool g_view_crop{};                     // true to crop default coords

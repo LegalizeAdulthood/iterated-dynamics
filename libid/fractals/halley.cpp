@@ -27,7 +27,7 @@ bool halley_setup()
     // Halley
     g_periodicity_check = 0;
 
-    set_fractal_type(g_user_float_flag ? FractalType::HALLEY : FractalType::HALLEY_MP);
+    set_fractal_type(FractalType::HALLEY);
 
     g_degree = (int)g_param_z1.x;
     g_degree = std::max(g_degree, 2);

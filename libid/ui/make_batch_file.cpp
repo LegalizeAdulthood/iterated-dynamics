@@ -851,11 +851,6 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             put_param(" %s=%.15g/%.15g", "initorbit", g_init_orbit.x, g_init_orbit.y);
         }
 
-        if (g_float_flag)
-        {
-            put_param(" %s=y", "float");
-        }
-
         if (g_max_iterations != 150)
         {
             put_param(" %s=%ld", "maxiter", g_max_iterations);

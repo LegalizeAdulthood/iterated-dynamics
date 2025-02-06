@@ -429,7 +429,7 @@ static MainState inverse_julia_toggle(MainContext &context)
         }
         else if (g_fractal_type == FractalType::INVERSE_JULIA)
         {
-            set_fractal_type(old_type != FractalType::NO_FRACTAL ? old_type : FractalType::JULIA);
+            set_fractal_type(old_type != FractalType::NO_FRACTAL ? old_type : FractalType::JULIA_FP);
         }
         // TODO: is it really necessary to reset g_cur_fractal_specific?
         assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));

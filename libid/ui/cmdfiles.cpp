@@ -122,7 +122,7 @@ bool g_potential_flag{};                                  // continuous potentia
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 bool g_ask_video{};                                       // flag for video prompting
-bool g_float_flag{};                                      //
+bool g_float_flag{true};                                  //
 int g_biomorph{};                                         // flag for biomorph
 int g_user_biomorph_value{};                              //
 int g_show_file{};                                        // zero if file display pending
@@ -498,7 +498,7 @@ static void init_vars_fractal()
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
     g_user_float_flag = true;                            // turn on the float flag
     g_finite_attractor = false;                          // disable finite attractor logic
-    set_fractal_type(FractalType::MANDEL);               // initial fractal type
+    set_fractal_type(FractalType::MANDEL_FP);            // initial fractal type
     init_param_flags();                                  //
     g_bailout = 0;                                       // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images

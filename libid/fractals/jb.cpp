@@ -88,7 +88,7 @@ float g_julibrot_dist_fp{24.0f};
 float g_eyes_fp{2.5f};
 float g_julibrot_depth_fp{8.0f};
 Julibrot3DMode g_julibrot_3d_mode{};
-FractalType g_new_orbit_type{FractalType::JULIA};
+FractalType g_new_orbit_type{FractalType::JULIA_FP};
 const char *g_julibrot_3d_options[]{
     to_string(Julibrot3DMode::MONOCULAR), //
     to_string(Julibrot3DMode::LEFT_EYE),  //
