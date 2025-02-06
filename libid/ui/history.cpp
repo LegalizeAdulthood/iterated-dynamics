@@ -46,7 +46,7 @@ struct ImageHistory
     int inside_color;
     long log_map_flag;
     double inversion[3];
-    int decomp;
+    int decomp[2];
     SymmetryType force_symmetry;
     int init_3d[16];
     int preview_factor;
@@ -182,7 +182,8 @@ void save_history_info()
     current.inversion[0] = g_inversion[0];
     current.inversion[1] = g_inversion[1];
     current.inversion[2] = g_inversion[2];
-    current.decomp = g_decomp[0];
+    current.decomp[0] = g_decomp[0];
+    current.decomp[1] = g_decomp[1];
     current.biomorph = g_biomorph;
     current.force_symmetry = g_force_symmetry;
     current.init_3d[0] = g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
@@ -367,7 +368,8 @@ void restore_history_info(int i)
     g_inversion[0] = last.inversion[0];
     g_inversion[1] = last.inversion[1];
     g_inversion[2] = last.inversion[2];
-    g_decomp[0] = last.decomp;
+    g_decomp[0] = last.decomp[0];
+    g_decomp[1] = last.decomp[1];
     g_user_biomorph_value = last.biomorph;
     g_biomorph = last.biomorph;
     g_force_symmetry = last.force_symmetry;
