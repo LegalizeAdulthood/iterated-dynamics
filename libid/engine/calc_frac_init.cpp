@@ -357,15 +357,14 @@ init_restart:
     {
         g_bit_shift = g_integer_fractal;
     }
+    // float?
     if (g_integer_fractal == 0)
     {
-        // float?
-        FractalType i = g_cur_fractal_specific->to_float;
-        if (i != FractalType::NO_FRACTAL) // -> int?
+        if (const FractalType to_int = g_cur_fractal_specific->to_float; to_int != FractalType::NO_FRACTAL) // -> int?
         {
-            if (get_fractal_specific(i)->is_integer > 1)   // specific shift?
+            if (const int is_integer = get_fractal_specific(to_int)->is_integer; is_integer > 1)   // specific shift?
             {
-                g_bit_shift = get_fractal_specific(i)->is_integer;
+                g_bit_shift = is_integer;
             }
         }
         else
