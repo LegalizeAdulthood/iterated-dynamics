@@ -85,9 +85,9 @@ using PerturbationPoint = void(
 struct FractalSpecific
 {
     FractalType type;                       // type of the fractal
-    char const *name;                       // name of the fractal
+    const char *name;                       // name of the fractal
                                             // (leading "*" suppresses name display)
-    char const *param_names[4];             // name of the parameters
+    const char *param_names[4];             // name of the parameters
     double params[4];                       // default parameter values
     HelpLabels help_text;                   // helpdefs.h HT_xxxx or NONE
     HelpLabels help_formula;                // helpdefs.h HF_xxxx or NONE
