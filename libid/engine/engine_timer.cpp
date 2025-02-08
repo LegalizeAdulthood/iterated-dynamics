@@ -7,6 +7,7 @@
 #include "io/decoder.h"
 #include "io/dir_file.h"
 #include "io/encoder.h"
+#include "io/save_file.h"
 #include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 
@@ -51,7 +52,7 @@ static int timer(TimerType type, int (*fn)(), ...)
     }
     if (do_bench)
     {
-        fp = dir_fopen(g_working_dir.c_str(), "bench", "a");
+        fp = fopen(get_save_name("id-bench.txt").string().c_str(), "a");
     }
     g_timer_start = std::clock();
     switch (type)
