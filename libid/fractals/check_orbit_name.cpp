@@ -38,17 +38,17 @@ static int build_fractal_list(FractalType fractals[], int *last_val, char const 
 
 bool check_orbit_name(char const *orbit_name)
 {
-    char const *name_ptr[MAX_FRACTALS];
-    FractalType fractals[MAX_FRACTALS];
+    char const *names[MAX_FRACTALS];
+    FractalType types[MAX_FRACTALS];
     int last_val;
 
-    int num_types = build_fractal_list(fractals, &last_val, name_ptr);
+    int num_types = build_fractal_list(types, &last_val, names);
     bool bad = true;
     for (int i = 0; i < num_types; i++)
     {
-        if (std::strcmp(orbit_name, name_ptr[i]) == 0)
+        if (std::strcmp(orbit_name, names[i]) == 0)
         {
-            g_new_orbit_type = fractals[i];
+            g_new_orbit_type = types[i];
             bad = false;
             break;
         }
