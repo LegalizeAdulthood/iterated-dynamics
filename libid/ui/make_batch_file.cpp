@@ -624,12 +624,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
         //***** fractal only parameters in this section ******
         put_param(" reset=%s", to_par_string(g_version).c_str());
 
-        char const *str_ptr = g_cur_fractal_specific->name;
-        if (*str_ptr == '*')
-        {
-            ++str_ptr;
-        }
-        put_param(" %s=%s", "type", str_ptr);
+        put_param(" type=%s", g_cur_fractal_specific->name);
 
         if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
         {
@@ -652,12 +647,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             }
             if (g_new_orbit_type != FractalType::JULIA)
             {
-                char const *name = get_fractal_specific(g_new_orbit_type)->name;
-                if (*name == '*')
-                {
-                    name++;
-                }
-                put_param(" %s=%s", "orbitname", name);
+                put_param(" orbitname=%s", get_fractal_specific(g_new_orbit_type)->name);
             }
             if (g_julibrot_3d_mode != Julibrot3DMode::MONOCULAR)
             {

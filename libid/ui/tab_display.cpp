@@ -269,9 +269,7 @@ top:
     }
     else
     {
-        driver_put_string(start_row, 16, C_GENERAL_HI,
-                          g_cur_fractal_specific->name[0] == '*' ?
-                          &g_cur_fractal_specific->name[1] : g_cur_fractal_specific->name);
+        driver_put_string(start_row, 16, C_GENERAL_HI, g_cur_fractal_specific->name);
         int i = 0;
         if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
         {

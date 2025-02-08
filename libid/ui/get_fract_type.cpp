@@ -133,10 +133,6 @@ static FractalType select_fract_type(FractalType t)
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
         const FractalSpecific specific{g_fractal_specific[i]};
-        if (specific.name[0] == '*')
-        {
-            continue;
-        }
         if (g_julibrot && !bit_set(specific.flags, FractalFlags::OK_JB))
         {
             continue;
@@ -400,14 +396,6 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     old_bailout = g_bailout;
     g_julibrot = g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP;
     FractalType current_type = g_fractal_type;
-    if (g_cur_fractal_specific->name[0] == '*')
-    {
-        if (const FractalType to_float{g_cur_fractal_specific->to_float};
-            to_float != FractalType::NO_FRACTAL && get_fractal_specific(to_float)->name[0] != '*')
-        {
-            current_type = to_float;
-        }
-    }
     g_cur_fractal_specific = get_fractal_specific(current_type);
     s_tmp_stack[0] = 0;
     HelpLabels help_formula = g_cur_fractal_specific->help_formula;
@@ -675,10 +663,6 @@ gfp_top:
         choices[prompt_num++] = trg[i];
     }
     type_name = g_cur_fractal_specific->name;
-    if (*type_name == '*')
-    {
-        ++type_name;
-    }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
     if (orbit_bailout != 0                                      //

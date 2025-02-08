@@ -17,7 +17,7 @@ static int build_fractal_list(FractalType fractals[], int *last_val, char const 
     int num_fractals = 0;
     for (int i = 0; i < g_num_fractal_types; i++)
     {
-        if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && *g_fractal_specific[i].name != '*')
+        if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB))
         {
             const FractalType type{g_fractal_specific[i].type};
             fractals[num_fractals] = type;

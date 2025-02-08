@@ -127,11 +127,7 @@ static std::string heading_detail(FractalInfo const *info, ExtBlock3 const *blk_
     }
     else
     {
-        char const *name_ptr = g_cur_fractal_specific->name;
-        if (*name_ptr == '*')
-        {
-            ++name_ptr;
-        }
+        const char *name_ptr = g_cur_fractal_specific->name;
         if (g_display_3d != Display3DMode::NONE)
         {
             name_ptr = "3D Transform";

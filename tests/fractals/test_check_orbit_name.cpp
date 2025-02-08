@@ -14,7 +14,7 @@ TEST(TestCheckOrbitName, julibrotNames)
     std::vector<std::string> names;
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && g_fractal_specific[i].name[0] != '*')
+        if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB))
         {
             names.emplace_back(g_fractal_specific[i].name);
         }
@@ -31,7 +31,7 @@ TEST(TestCheckOrbitName, notValidNames)
     std::vector<std::string> names;
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
-        if (!bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB) && g_fractal_specific[i].name[0] != '*')
+        if (!bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB))
         {
             names.emplace_back(g_fractal_specific[i].name);
         }
