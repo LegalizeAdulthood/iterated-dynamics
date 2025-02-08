@@ -29,18 +29,6 @@ static double distance(const DComplex &z1, const DComplex &z2)
     return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
 }
 
-static MP mp_sqr(MP z)
-{
-    return *mp_mul(z, z);
-}
-
-static MP mp_distance(const MPC &z1, const MPC &z2)
-{
-    return *mp_add(mp_sqr(*mp_sub(z1.x, z2.x)), mp_sqr(*mp_sub(z1.y, z2.y)));
-}
-
-static MPC s_mpc_old{};
-static MPC s_mpc_temp1{};
 static double s_two_pi{};
 static DComplex s_temp{};
 static DComplex s_base_log{};
@@ -351,75 +339,4 @@ bool newton_setup()
 
     g_calc_type = standard_fractal;
     return true;
-}
-
-int mpc_newton_fractal()
-{
-    g_mp_overflow = false;
-    MPC mpc_tmp = mpc_pow(s_mpc_old, g_degree - 1);
-
-    MPC mpc_new;
-    mpc_new.x = *mp_sub(*mp_mul(mpc_tmp.x, s_mpc_old.x), *mp_mul(mpc_tmp.y, s_mpc_old.y));
-    mpc_new.y = *mp_add(*mp_mul(mpc_tmp.x, s_mpc_old.y), *mp_mul(mpc_tmp.y, s_mpc_old.x));
-    s_mpc_temp1.x = *mp_sub(mpc_new.x, g_mpc_one.x);
-    s_mpc_temp1.y = *mp_sub(mpc_new.y, g_mpc_one.y);
-    if (mp_cmp(mpc_mod(s_mpc_temp1), s_mp_threshold) < 0)
-    {
-        if (g_fractal_type == FractalType::NEWT_BASIN_MP)
-        {
-            long tmp_color = -1;
-            for (int i = 0; i < g_degree; i++)
-            {
-                if (mp_cmp(mp_distance(s_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
-                {
-                    if (g_basin == 2)
-                    {
-                        tmp_color = 1 + (i & 7) + ((g_color_iter & 1) << 3);
-                    }
-                    else
-                    {
-                        tmp_color = 1 + i;
-                    }
-                    break;
-                }
-            }
-            if (tmp_color == -1)
-            {
-                g_color_iter = g_max_color;
-            }
-            else
-            {
-                g_color_iter = tmp_color;
-            }
-        }
-        return 1;
-    }
-
-    mpc_new.x = *mp_add(*mp_mul(s_mp_degree_minus_1_over_degree, mpc_new.x), s_newton_mp_r_over_d);
-    mpc_new.y = *mp_mul(mpc_new.y, s_mp_degree_minus_1_over_degree);
-    MP temp2 = mpc_mod(mpc_tmp);
-    temp2 = *mp_div(g_mp_one, temp2);
-    s_mpc_old.x = *mp_mul(temp2, (*mp_add(*mp_mul(mpc_new.x, mpc_tmp.x), *mp_mul(mpc_new.y, mpc_tmp.y))));
-    s_mpc_old.y = *mp_mul(temp2, (*mp_sub(*mp_mul(mpc_new.y, mpc_tmp.x), *mp_mul(mpc_new.x, mpc_tmp.y))));
-    g_new_z.x = *mp_to_d(s_mpc_old.x);
-    g_new_z.y = *mp_to_d(s_mpc_old.y);
-    return g_mp_overflow ? 1 : 0;
-}
-
-int mpc_julia_per_pixel()
-{
-    // floating point julia
-    // juliafp
-    if (g_invert != 0)
-    {
-        invertz2(&g_old_z);
-    }
-    else
-    {
-        g_old_z.x = g_dx_pixel();
-        g_old_z.y = g_dy_pixel();
-    }
-    s_mpc_old.x = *d_to_mp(g_old_z.x);
-    s_mpc_old.y = *d_to_mp(g_old_z.y);
-    return 0;
 }

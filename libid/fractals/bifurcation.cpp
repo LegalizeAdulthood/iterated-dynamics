@@ -350,16 +350,6 @@ int bifurc_verhulst_trig()
     return population_orbit();
 }
 
-int long_bifurc_verhulst_trig()
-{
-    g_l_temp.x = s_population_l;
-    g_l_temp.y = 0;
-    trig0(g_l_temp, g_l_temp);
-    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
-    s_population_l += multiply(s_rate_l, g_l_temp.y, g_bit_shift);
-    return g_overflow;
-}
-
 int bifurc_stewart_trig()
 {
     //  Population = (Rate * fn(Population) * fn(Population)) - 1.0
@@ -368,17 +358,6 @@ int bifurc_stewart_trig()
     cmplx_trig0(g_tmp_z, g_tmp_z);
     g_population = (g_rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
     return population_orbit();
-}
-
-int long_bifurc_stewart_trig()
-{
-    g_l_temp.x = s_population_l;
-    g_l_temp.y = 0;
-    trig0(g_l_temp, g_l_temp);
-    s_population_l = multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
-    s_population_l = multiply(s_population_l, s_rate_l,      g_bit_shift);
-    s_population_l -= g_fudge_factor;
-    return g_overflow;
 }
 
 int bifurc_set_trig_pi()
@@ -390,15 +369,6 @@ int bifurc_set_trig_pi()
     return population_orbit();
 }
 
-int long_bifurc_set_trig_pi()
-{
-    g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
-    g_l_temp.y = 0;
-    trig0(g_l_temp, g_l_temp);
-    s_population_l = multiply(s_rate_l, g_l_temp.x, g_bit_shift);
-    return g_overflow;
-}
-
 int bifurc_add_trig_pi()
 {
     g_tmp_z.x = g_population * PI;
@@ -406,15 +376,6 @@ int bifurc_add_trig_pi()
     cmplx_trig0(g_tmp_z, g_tmp_z);
     g_population += g_rate * g_tmp_z.x;
     return population_orbit();
-}
-
-int long_bifurc_add_trig_pi()
-{
-    g_l_temp.x = multiply(s_population_l, s_pi_l, g_bit_shift);
-    g_l_temp.y = 0;
-    trig0(g_l_temp, g_l_temp);
-    s_population_l += multiply(s_rate_l, g_l_temp.x, g_bit_shift);
-    return g_overflow;
 }
 
 int bifurc_lambda_trig()
@@ -427,16 +388,6 @@ int bifurc_lambda_trig()
     return population_orbit();
 }
 
-int long_bifurc_lambda_trig()
-{
-    g_l_temp.x = s_population_l;
-    g_l_temp.y = 0;
-    trig0(g_l_temp, g_l_temp);
-    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
-    s_population_l = multiply(s_rate_l, g_l_temp.y, g_bit_shift);
-    return g_overflow;
-}
-
 int bifurc_may()
 {
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
@@ -445,17 +396,6 @@ int bifurc_may()
     g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with math/mpmath.h
     g_population = (g_rate * g_population) * g_tmp_z.x;
     return population_orbit();
-}
-
-int long_bifurc_may()
-{
-    g_l_temp.x = s_population_l + g_fudge_factor;
-    g_l_temp.y = 0;
-    g_l_param2.x = s_beta * g_fudge_factor;
-    lcmplx_pwr(g_l_temp, g_l_param2, g_l_temp);
-    s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
-    s_population_l = divide(s_population_l, g_l_temp.x, g_bit_shift);
-    return g_overflow;
 }
 
 bool bifurc_may_setup()

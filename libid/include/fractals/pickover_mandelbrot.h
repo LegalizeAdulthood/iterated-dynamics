@@ -7,7 +7,6 @@
 #include <complex>
 
 int float_trig_plus_exponent_fractal();
-int long_trig_plus_exponent_fractal();
 
 int long_z_power_fractal();
 int float_z_power_fractal();

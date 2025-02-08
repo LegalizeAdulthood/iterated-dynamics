@@ -2,7 +2,6 @@
 //
 #pragma once
 
-int lambda_fractal();
 int lambda_fp_fractal();
 
 bool lambda_trig_setup();

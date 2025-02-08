@@ -96,6 +96,12 @@ const char *g_julibrot_3d_options[]{
     to_string(Julibrot3DMode::RED_BLUE)   //
 };
 
+static int s_z_pixel;
+static int s_plotted;
+static long s_n;
+
+static int z_line_fp(double x, double y);
+
 bool julibrot_setup()
 {
     char const *map_name;
@@ -246,90 +252,6 @@ int jb_fp_per_pixel()
     return 1;
 }
 
-static int s_z_pixel;
-static int s_plotted;
-static long s_n;
-
-int z_line(long x, long y)
-{
-    s_jb.x_pixel = x;
-    s_jb.y_pixel = y;
-    s_jb.mx = s_mx_min;
-    s_jb.my = s_my_min;
-    switch (g_julibrot_3d_mode)
-    {
-    case Julibrot3DMode::MONOCULAR:
-    case Julibrot3DMode::LEFT_EYE:
-        s_jb.per = &s_jb.left_eye;
-        break;
-    case Julibrot3DMode::RIGHT_EYE:
-        s_jb.per = &s_jb.right_eye;
-        break;
-    case Julibrot3DMode::RED_BLUE:
-        if ((g_row + g_col) & 1)
-        {
-            s_jb.per = &s_jb.left_eye;
-        }
-        else
-        {
-            s_jb.per = &s_jb.right_eye;
-        }
-        break;
-    }
-    jb_per_pixel();
-    for (s_z_pixel = 0; s_z_pixel < g_julibrot_z_dots; s_z_pixel++)
-    {
-        g_l_old_z.x = s_jb.jx;
-        g_l_old_z.y = s_jb.jy;
-        s_jb.jb_c.x = s_jb.mx;
-        s_jb.jb_c.y = s_jb.my;
-        if (driver_key_pressed())
-        {
-            return -1;
-        }
-        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
-        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-        for (s_n = 0; s_n < g_max_iterations; s_n++)
-        {
-            if (get_fractal_specific(g_new_orbit_type)->orbit_calc())
-            {
-                break;
-            }
-        }
-        if (s_n == g_max_iterations)
-        {
-            if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
-            {
-                g_color = (int)(128L * s_z_pixel / g_julibrot_z_dots);
-                if ((g_row + g_col) & 1)
-                {
-
-                    (*g_plot)(g_col, g_row, 127 - g_color);
-                }
-                else
-                {
-                    g_color = (int)(multiply((long) g_color << 16, s_br_ratio, 16) >> 16);
-                    g_color = std::max(g_color, 1);
-                    g_color = std::min(g_color, 127);
-                    (*g_plot)(g_col, g_row, 127 + s_b_base - g_color);
-                }
-            }
-            else
-            {
-                g_color = (int)(254L * s_z_pixel / g_julibrot_z_dots);
-                (*g_plot)(g_col, g_row, g_color + 1);
-            }
-            s_plotted = 1;
-            break;
-        }
-        s_jb.mx += s_jb.delta_mx;
-        s_jb.my += s_jb.delta_my;
-        s_jb.jx += s_jb.delta_jx;
-        s_jb.jy += s_jb.delta_jy;
-    }
-    return 0;
-}
-
 int z_line_fp(double x, double y)
 {
     s_jb_fp.x_pixel = x;
@@ -425,57 +347,6 @@ int z_line_fp(double x, double y)
         s_jb_fp.my += s_jb_fp.delta_my;
         s_jb_fp.jx += s_jb_fp.delta_jx;
         s_jb_fp.jy += s_jb_fp.delta_jy;
-    }
-    return 0;
-}
-
-int std_4d_fractal()
-{
-    g_c_exponent = (int)g_params[2];
-    if (g_new_orbit_type == FractalType::JULIA_Z_POWER_L)
-    {
-        g_c_exponent = std::max(g_c_exponent, 1);
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
-        {
-            get_fractal_specific(g_new_orbit_type)->orbit_calc = long_z_power_fractal;
-        }
-        else
-        {
-            get_fractal_specific(g_new_orbit_type)->orbit_calc = long_cmplx_z_power_fractal;
-        }
-    }
-
-    long y = 0;
-    for (int y_dot = (g_logical_screen_y_dots >> 1) - 1; y_dot >= 0; y_dot--, y -= s_jb.inch_per_y_dot)
-    {
-        s_plotted = 0;
-        long x = -(s_width >> 1);
-        for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++, x += s_jb.inch_per_x_dot)
-        {
-            g_col = x_dot;
-            g_row = y_dot;
-            if (z_line(x, y) < 0)
-            {
-                return -1;
-            }
-            g_col = g_logical_screen_x_dots - g_col - 1;
-            g_row = g_logical_screen_y_dots - g_row - 1;
-            if (z_line(-x, -y) < 0)
-            {
-                return -1;
-            }
-        }
-        if (s_plotted == 0)
-        {
-            if (y == 0)
-            {
-                s_plotted = -1;  // no points first pass; don't give up
-            }
-            else
-            {
-                break;
-            }
-        }
     }
     return 0;
 }

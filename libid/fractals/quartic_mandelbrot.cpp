@@ -5,28 +5,6 @@
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "math/fixed_pt.h"
-
-int mandel4_fractal()
-{
-    /*
-       this routine calculates the Mandelbrot/Julia set based on the
-       polynomial z**4 + lambda
-     */
-
-    // first, compute (x + iy)**2
-    g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
-    if (g_bailout_long())
-    {
-        return 1;
-    }
-
-    // then, compute ((x + iy)**2)**2 + lambda
-    g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
-    return g_bailout_long();
-}
 
 int mandel4_fp_fractal()
 {

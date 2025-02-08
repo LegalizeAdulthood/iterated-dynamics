@@ -217,36 +217,6 @@ int phoenix_cplx_minus_fractal()
     return g_bailout_float();
 }
 
-int long_phoenix_per_pixel()
-{
-    if (g_invert != 0)
-    {
-        // invert
-        invertz2(&g_old_z);
-
-        // watch out for overflow
-        if (sqr(g_old_z.x)+sqr(g_old_z.y) >= 127)
-        {
-            g_old_z.x = 8;  // value to bail out in one iteration
-            g_old_z.y = 8;
-        }
-
-        // convert to fudged longs
-        g_l_old_z.x = (long)(g_old_z.x*g_fudge_factor);
-        g_l_old_z.y = (long)(g_old_z.y*g_fudge_factor);
-    }
-    else
-    {
-        g_l_old_z.x = g_l_x_pixel();
-        g_l_old_z.y = g_l_y_pixel();
-    }
-    g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
-    g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    s_l_tmp2.x = 0; // use ltmp2 as the complex Y value
-    s_l_tmp2.y = 0;
-    return 0;
-}
-
 int phoenix_per_pixel()
 {
     if (g_invert != 0)
@@ -263,46 +233,6 @@ int phoenix_per_pixel()
     s_tmp2.x = 0; // use tmp2 as the complex Y value
     s_tmp2.y = 0;
     return 0;
-}
-
-int long_mand_phoenix_per_pixel()
-{
-    g_l_init.x = g_l_x_pixel();
-    g_l_init.y = g_l_y_pixel();
-
-    if (g_invert != 0)
-    {
-        // invert
-        invertz2(&g_init);
-
-        // watch out for overflow
-        if (sqr(g_init.x)+sqr(g_init.y) >= 127)
-        {
-            g_init.x = 8;  // value to bail out in one iteration
-            g_init.y = 8;
-        }
-
-        // convert to fudged longs
-        g_l_init.x = (long)(g_init.x*g_fudge_factor);
-        g_l_init.y = (long)(g_init.y*g_fudge_factor);
-    }
-
-    if (g_use_init_orbit == InitOrbitMode::VALUE)
-    {
-        g_l_old_z = g_l_init_orbit;
-    }
-    else
-    {
-        g_l_old_z = g_l_init;
-    }
-
-    g_l_old_z.x += g_l_param.x;    // initial pertubation of parameters set
-    g_l_old_z.y += g_l_param.y;
-    g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
-    g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    s_l_tmp2.x = 0;
-    s_l_tmp2.y = 0;
-    return 1; // 1st iteration has been done
 }
 
 int mand_phoenix_per_pixel()

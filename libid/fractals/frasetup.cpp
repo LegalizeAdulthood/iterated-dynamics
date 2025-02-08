@@ -61,35 +61,6 @@ mandel_setup()           // Mandelbrot Routine
 }
 
 bool
-julia_setup()            // Julia Routine
-{
-    if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL
-        && (g_invert == 0)
-        && g_decomp[0] == 0
-        && g_magnitude_limit == 4.0
-        && g_bit_shift == 29
-        && !g_potential_flag
-        && g_biomorph == -1
-        && g_inside_color > ZMAG
-        && g_outside_color >= ITER
-        && !g_finite_attractor
-        && !g_using_jiim
-        && g_bailout_test == Bailout::MOD
-        && (g_orbit_save_flags & OSF_MIDI) == 0)
-    {
-        g_calc_type = calc_mand; // the normal case - use CALCMAND
-    }
-    else
-    {
-        // special case: use the main processing loop
-        g_calc_type = standard_fractal;
-        g_long_param = &g_l_param;
-        get_julia_attractor(0.0, 0.0);    // another attractor?
-    }
-    return true;
-}
-
-bool
 standalone_setup()
 {
     engine_timer(g_cur_fractal_specific->calc_type);

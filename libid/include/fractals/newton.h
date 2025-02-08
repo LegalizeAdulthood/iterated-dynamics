@@ -13,6 +13,3 @@ int complex_newton();
 int complex_basin();
 
 bool newton_setup();
-int mpc_julia_per_pixel();
-
-int mpc_newton_fractal();

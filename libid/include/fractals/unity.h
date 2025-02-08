@@ -3,5 +3,4 @@
 #pragma once
 
 bool unity_setup();
-int unity_fractal();
 int unity_fp_fractal();

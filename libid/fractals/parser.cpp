@@ -4227,27 +4227,6 @@ bool formula_setup_fp()
     return !run_formula(g_formula_name, false); // run_formula() returns true for failure
 }
 
-#undef FORMULA_INTEGER_MATH
-bool formula_setup_l()
-{
-#ifndef FORMULA_INTEGER_MATH
-    static bool been_here = false;
-    if (!been_here)
-    {
-        stop_msg("This integer fractal type is unimplemented;\n"
-                "Use float=yes to get a real image.");
-        been_here = true;
-    }
-    return false;
-#else
-    s_math_type = L_MATH;
-    s_fudge = (double)(1L << g_bit_shift);
-    g_fudge_limit = (double)0x7fffffffL / s_fudge;
-    s_shift_back = 32 - g_bit_shift;
-    return !run_formula(g_formula_name, false);
-#endif
-}
-
 void init_misc()
 {
     static Arg arg_first;

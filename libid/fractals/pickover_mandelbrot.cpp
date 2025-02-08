@@ -45,33 +45,6 @@ int float_trig_plus_exponent_fractal()
     return g_bailout_float();
 }
 
-static bool trig16_check(long val)
-{
-    static constexpr long l16_trig_lim = 8L << 16; // domain limit of fast trig functions
-
-    return std::abs(val) > l16_trig_lim;
-}
-
-int long_trig_plus_exponent_fractal()
-{
-    // calculate exp(z)
-
-    // domain check for fast transcendental functions
-    if (trig16_check(g_l_old_z.x) || trig16_check(g_l_old_z.y))
-    {
-        return 1;
-    }
-
-    const long long_tmp = exp_long(g_l_old_z.x);
-    long l_cos_y;
-    long l_sin_y;
-    sin_cos(g_l_old_z.y, &l_sin_y,  &l_cos_y);
-    trig0(g_l_old_z, g_l_new_z);
-    g_l_new_z.x += multiply(long_tmp,    l_cos_y,   g_bit_shift) + g_long_param->x;
-    g_l_new_z.y += multiply(long_tmp,    l_sin_y,   g_bit_shift) + g_long_param->y;
-    return g_bailout_long();
-}
-
 int long_z_power_fractal()
 {
     if (pow(&g_l_old_z, g_c_exponent, &g_l_new_z, g_bit_shift))
@@ -233,17 +206,6 @@ bool julia_fn_plus_z_sqrd_setup()
         break;
     }
     return g_cur_fractal_specific->is_integer ? julia_long_setup() : julia_fp_setup();
-}
-
-int trig_plus_z_squared_fractal()
-{
-    // From Scientific American, July 1989
-    // A Biomorph
-    // z(n+1) = trig(z(n))+z(n)**2+C
-    trig0(g_l_old_z, g_l_new_z);
-    g_l_new_z.x += g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
-    g_l_new_z.y += multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
-    return g_bailout_long();
 }
 
 int trig_plus_z_squared_fp_fractal()

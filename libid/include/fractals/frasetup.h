@@ -6,7 +6,6 @@ bool mandel_perturbation_setup();
 bool mandel_z_power_perturbation_setup();
 bool mandel_setup();
 bool mandel_fp_setup();
-bool julia_setup();
 bool standalone_setup();
 bool julia_fp_setup();
 bool mandel_long_setup();

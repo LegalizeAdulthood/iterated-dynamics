@@ -123,6 +123,5 @@ int form_per_pixel();
 int frm_get_param_stuff(char const *name);
 bool run_formula(const std::string &name, bool report_bad_sym);
 bool formula_setup_fp();
-bool formula_setup_l();
 void init_misc();
 void free_work_area();

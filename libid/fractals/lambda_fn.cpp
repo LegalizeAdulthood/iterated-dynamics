@@ -14,22 +14,6 @@
 
 #include <cmath>
 
-int lambda_fractal()
-{
-    // variation of classical Mandelbrot/Julia
-
-    // (in complex math) temp = Z * (1-Z)
-    g_l_temp_sqr_x = g_l_old_z.x - g_l_temp_sqr_x + g_l_temp_sqr_y;
-    g_l_temp_sqr_y = g_l_old_z.y
-                - multiply(g_l_old_z.y, g_l_old_z.x, g_bit_shift_less_1);
-    // (in complex math) Z = Lambda * Z
-    g_l_new_z.x = multiply(g_long_param->x, g_l_temp_sqr_x, g_bit_shift)
-             - multiply(g_long_param->y, g_l_temp_sqr_y, g_bit_shift);
-    g_l_new_z.y = multiply(g_long_param->x, g_l_temp_sqr_y, g_bit_shift)
-             + multiply(g_long_param->y, g_l_temp_sqr_x, g_bit_shift);
-    return g_bailout_long();
-}
-
 int lambda_fp_fractal()
 {
     // variation of classical Mandelbrot/Julia

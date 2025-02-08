@@ -45,10 +45,6 @@ extern FractalType           g_new_orbit_type;
 extern const char *          g_julibrot_3d_options[];
 
 bool julibrot_setup();
-bool julibrot_fp_setup();
 int jb_per_pixel();
 int jb_fp_per_pixel();
-int z_line(long x, long y);
-int z_line_fp(double x, double y);
-int std_4d_fractal();
 int std_4d_fp_fractal();

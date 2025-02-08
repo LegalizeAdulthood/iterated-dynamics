@@ -59,23 +59,6 @@ bool lambda_trig_or_trig_setup()
    or alternate calculations.  The shift is made when the mod
    reaches a given value.  */
 
-int lambda_trig_or_trig_fractal()
-{
-    /* z = trig0(z)*p1 if mod(old) < p2.x and
-           trig1(z)*p1 if mod(old) >= p2.x */
-    if ((modulus(g_l_old_z)) < g_l_param2.x)
-    {
-        trig0(g_l_old_z, g_l_temp);
-        g_l_new_z = *g_long_param * g_l_temp;
-    }
-    else
-    {
-        trig1(g_l_old_z, g_l_temp);
-        g_l_new_z = *g_long_param * g_l_temp;
-    }
-    return g_bailout_long();
-}
-
 int lambda_trig_or_trig_fp_fractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
@@ -108,23 +91,6 @@ bool julia_trig_or_trig_setup()
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
     return true;
-}
-
-int julia_trig_or_trig_fractal()
-{
-    /* z = trig0(z)+p1 if mod(old) < p2.x and
-           trig1(z)+p1 if mod(old) >= p2.x */
-    if (modulus(g_l_old_z) < g_l_param2.x)
-    {
-        trig0(g_l_old_z, g_l_temp);
-        g_l_new_z = *g_long_param + g_l_temp;
-    }
-    else
-    {
-        trig1(g_l_old_z, g_l_temp);
-        g_l_new_z = *g_long_param + g_l_temp;
-    }
-    return g_bailout_long();
 }
 
 int julia_trig_or_trig_fp_fractal()

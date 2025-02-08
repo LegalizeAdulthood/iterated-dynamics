@@ -4,7 +4,6 @@
 
 int long_phoenix_fractal();
 int phoenix_fractal();
-int long_phoenix_per_pixel();
 int phoenix_per_pixel();
 int long_mand_phoenix_per_pixel();
 int mand_phoenix_per_pixel();
