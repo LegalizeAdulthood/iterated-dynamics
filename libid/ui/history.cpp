@@ -16,6 +16,9 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "io/save_file.h"
+#include "misc/debug_flags.h"
+#include "misc/Driver.h"
 #include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
@@ -23,7 +26,9 @@
 #include "ui/spindac.h"
 #include "ui/trig_fns.h"
 
+#include <array>
 #include <cstring>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -132,6 +137,229 @@ struct ImageHistory
     bool keep_screen_coords;
     char draw_mode;
 };
+
+std::ostream &operator<<(std::ostream &str, FractalType value)
+{
+    str << +value;
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, SymmetryType value)
+{
+    str << static_cast<int>(value);
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, TrigFn value)
+{
+    str << +value;
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, Display3DMode value)
+{
+    str << static_cast<int>(value);
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, Julibrot3DMode value)
+{
+    str << '"' << to_string(value) << '"';
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, Major value)
+{
+    str << +value;
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, Minor value)
+{
+    str << +value;
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, Bailout value)
+{
+    str << static_cast<int>(value);
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, InitOrbitMode value)
+{
+    str << static_cast<int>(value);
+    return str;
+}
+
+template <typename T, size_t N>
+struct JsonArray
+{
+    JsonArray(const T (&value)[N])
+    {
+        for (size_t i = 0; i < N; ++i)
+        {
+            array[i] = value[i];
+        }
+    }
+
+    std::array<T, N> array{};
+};
+
+template <typename T, size_t N>
+std::ostream &operator<<(std::ostream &str, const JsonArray<T, N> &value)
+{
+    str << '[';
+    bool first{true};
+    for (T elem : value.array)
+    {
+        if (!first)
+        {
+            str << ',';
+        }
+        str << elem;
+        first = false;
+    }
+    str << ']';
+    return str;
+}
+
+struct DacBox
+{
+    explicit DacBox(const unsigned char dac[256][3])
+    {
+        for (int i = 0; i < 256; ++i)
+        {
+            value[i][0] = dac[i][0];
+            value[i][1] = dac[i][1];
+            value[i][2] = dac[i][2];
+        }
+    }
+
+    unsigned char value[256][3];
+};
+
+std::ostream &operator<<(std::ostream &str, const DacBox &value)
+{
+    str << '[';
+    for (int i = 0; i < 256; ++i)
+    {
+        if (i > 0)
+        {
+            str << ',';
+        }
+        str << '[' << static_cast<int>(value.value[i][0]) << ',' << static_cast<int>(value.value[i][1]) << ','
+            << static_cast<int>(value.value[i][2]) << ']';
+    }
+    str << ']';
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
+{
+    str << '{';
+    str << R"json("image_fractal_type":)json" << value.image_fractal_type << ',';
+    str << R"json("x_min":)json" << value.x_min << ',';
+    str << R"json("x_max":)json" << value.x_max << ',';
+    str << R"json("y_min":)json" << value.y_min << ',';
+    str << R"json("y_max":)json" << value.y_max << ',';
+    str << R"json("c_real":)json" << value.c_real << ',';
+    str << R"json("c_imag":)json" << value.c_imag << ',';
+    str << R"json("potential_params":)json" << JsonArray(value.potential_params) << ',';
+    str << R"json("random_seed":)json" << value.random_seed << ',';
+    str << R"json("random_seed_flag":)json" << value.random_seed_flag << ',';
+    str << R"json("biomorph":)json" << value.biomorph << ',';
+    str << R"json("inside_color":)json" << value.inside_color << ',';
+    str << R"json("log_map_flag":)json" << value.log_map_flag << ',';
+    str << R"json("inversion":)json" << JsonArray(value.inversion) << ',';
+    str << R"json("decomp":)json" << JsonArray(value.decomp) << ',';
+    str << R"json("force_symmetry":)json" << value.force_symmetry << ',';
+    str << R"json("init_3d":)json" << JsonArray(value.init_3d) << ',';
+    str << R"json("preview_factor":)json" << value.preview_factor << ',';
+    str << R"json("adjust_3d_x":)json" << value.adjust_3d_x << ',';
+    str << R"json("adjust_3d_y":)json" << value.adjust_3d_y << ',';
+    str << R"json("red_crop_left":)json" << value.red_crop_left << ',';
+    str << R"json("red_crop_right":)json" << value.red_crop_right << ',';
+    str << R"json("blue_crop_left":)json" << value.blue_crop_left << ',';
+    str << R"json("blue_crop_right":)json" << value.blue_crop_right << ',';
+    str << R"json("red_bright":)json" << value.red_bright << ',';
+    str << R"json("blue_bright":)json" << value.blue_bright << ',';
+    str << R"json("converge_x_adjust":)json" << value.converge_x_adjust << ',';
+    str << R"json("eye_separation":)json" << value.eye_separation << ',';
+    str << R"json("glasses_type":)json" << value.glasses_type << ',';
+    str << R"json("outside_color":)json" << value.outside_color << ',';
+    str << R"json("x_3rd":)json" << value.x_3rd << ',';
+    str << R"json("y_3rd":)json" << value.y_3rd << ',';
+    str << R"json("dist_est":)json" << value.dist_est << ',';
+    str << R"json("trig_index":)json" << JsonArray(value.trig_index) << ',';
+    str << R"json("finite_attractor":)json" << value.finite_attractor << ',';
+    str << R"json("init_orbit":)json" << JsonArray(value.init_orbit) << ',';
+    str << R"json("periodicity_check":)json" << value.periodicity_check << ',';
+    str << R"json("disk_16_bit":)json" << value.disk_16_bit << ',';
+    str << R"json("release":)json" << value.release << ',';
+    str << R"json("save_release":)json" << value.save_release << ',';
+    str << R"json("display_3d":)json" << value.display_3d << ',';
+    str << R"json("transparent_color_3d":)json" << JsonArray(value.transparent_color_3d) << ',';
+    str << R"json("ambient":)json" << value.ambient << ',';
+    str << R"json("haze":)json" << value.haze << ',';
+    str << R"json("randomize_3d":)json" << value.randomize_3d << ',';
+    str << R"json("color_cycle_range_lo":)json" << value.color_cycle_range_lo << ',';
+    str << R"json("color_cycle_range_hi":)json" << value.color_cycle_range_hi << ',';
+    str << R"json("distance_estimator_width_factor":)json" << value.distance_estimator_width_factor << ',';
+    str << R"json("d_param3":)json" << value.d_param3 << ',';
+    str << R"json("d_param4":)json" << value.d_param4 << ',';
+    str << R"json("fill_color":)json" << value.fill_color << ',';
+    str << R"json("julibrot_x_max":)json" << value.julibrot_x_max << ',';
+    str << R"json("julibrot_x_min":)json" << value.julibrot_x_min << ',';
+    str << R"json("julibrot_y_max":)json" << value.julibrot_y_max << ',';
+    str << R"json("julibrot_y_min":)json" << value.julibrot_y_min << ',';
+    str << R"json("julibrot_z_dots":)json" << value.julibrot_z_dots << ',';
+    str << R"json("julibrot_origin_fp":)json" << value.julibrot_origin_fp << ',';
+    str << R"json("julibrot_depth_fp":)json" << value.julibrot_depth_fp << ',';
+    str << R"json("julibrot_height_fp":)json" << value.julibrot_height_fp << ',';
+    str << R"json("julibrot_width_fp":)json" << value.julibrot_width_fp << ',';
+    str << R"json("julibrot_dist_fp":)json" << value.julibrot_dist_fp << ',';
+    str << R"json("eyes_fp":)json" << value.eyes_fp << ',';
+    str << R"json("new_orbit_type":)json" << value.new_orbit_type << ',';
+    str << R"json("julibrot_mode":)json" << value.julibrot_mode << ',';
+    str << R"json("major_method":)json" << value.major_method << ',';
+    str << R"json("inverse_julia_minor_method":)json" << value.inverse_julia_minor_method << ',';
+    str << R"json("d_param5":)json" << value.d_param5 << ',';
+    str << R"json("d_param6":)json" << value.d_param6 << ',';
+    str << R"json("d_param7":)json" << value.d_param7 << ',';
+    str << R"json("d_param8":)json" << value.d_param8 << ',';
+    str << R"json("d_param9":)json" << value.d_param9 << ',';
+    str << R"json("d_param10":)json" << value.d_param10 << ',';
+    str << R"json("bailout":)json" << value.bailout << ',';
+    str << R"json("bailout_test":)json" << value.bailout_test << ',';
+    str << R"json("iterations":)json" << value.iterations << ',';
+    str << R"json("converge_y_adjust":)json" << value.converge_y_adjust << ',';
+    str << R"json("old_demm_colors":)json" << value.old_demm_colors << ',';
+    str << R"json("filename":)json" << value.filename << ',';
+    str << R"json("file_item_name":)json" << value.file_item_name << ',';
+    str << R"json("dac_box":)json" << DacBox(value.dac_box) << ',';
+    str << R"json("max_function":)json" << static_cast<int>(value.max_function) << ',';
+    str << R"json("user_std_calc_mode":)json" << '"' << value.user_std_calc_mode << '"' << ',';
+    str << R"json("three_pass":)json" << value.three_pass << ',';
+    str << R"json("use_init_orbit":)json" << value.use_init_orbit << ',';
+    str << R"json("log_map_fly_calculate":)json" << value.log_map_fly_calculate << ',';
+    str << R"json("stop_pass":)json" << value.stop_pass << ',';
+    str << R"json("is_mandelbrot":)json" << value.is_mandelbrot << ',';
+    str << R"json("close_proximity":)json" << value.close_proximity << ',';
+    str << R"json("bof_match_book_images":)json" << value.bof_match_book_images << ',';
+    str << R"json("orbit_delay":)json" << value.orbit_delay << ',';
+    str << R"json("orbit_interval":)json" << value.orbit_interval << ',';
+    str << R"json("orbit_corner_min_x":)json" << value.orbit_corner_min_x << ',';
+    str << R"json("orbit_corner_max_x":)json" << value.orbit_corner_max_x << ',';
+    str << R"json("orbit_corner_min_y":)json" << value.orbit_corner_min_y << ',';
+    str << R"json("orbit_corner_max_y":)json" << value.orbit_corner_max_y << ',';
+    str << R"json("orbit_corner_3_x":)json" << value.orbit_corner_3_x << ',';
+    str << R"json("orbit_corner_3_y":)json" << value.orbit_corner_3_y << ',';
+    str << R"json("keep_screen_coords":)json" << value.keep_screen_coords << ',';
+    str << R"json("draw_mode":)json" << '"' << value.draw_mode << '"';
+    str << '}';
+    return str;
+}
 
 } // namespace
 
@@ -329,6 +557,11 @@ void save_history_info()
             g_history_ptr = 0;
         }
         s_history[s_save_ptr] = current;
+    }
+    if (g_debug_flag == DebugFlags::HISTORY_DUMP_JSON)
+    {
+        std::ofstream str(get_save_name("history.json"), std::ios_base::app);
+        str << current;
     }
 }
 

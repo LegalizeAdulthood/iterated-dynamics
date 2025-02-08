@@ -9,6 +9,7 @@ Example:
 "id debug=22" forces Id to use floating-point math for 3D perpsective calculations.
 "id debug=23" does the same thing, but also turns on the benchmark timer.
 
+2       append image history values as JSON to history.json
 22      force float for 3D perspective
 50      compare <r>estored files
 90      force "C" mandel & julia code (no calcmand or calmanfp)

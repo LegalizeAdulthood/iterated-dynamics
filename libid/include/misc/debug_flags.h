@@ -6,6 +6,7 @@ enum class DebugFlags
 {
     NONE                                = 0,
     BENCHMARK_TIMER                     = 1,
+    HISTORY_DUMP_JSON                   = 2,
     FORCE_FLOAT_PERSPECTIVE             = 22,
     FORCE_DISK_RESTORE_NOT_SAVE         = 50,
     FORCE_STANDARD_FRACTAL              = 90,
@@ -37,7 +38,7 @@ enum class DebugFlags
     FORCE_SCALED_SOUND_FORMULA          = 4030,
     FORCE_DISK_MIN_CACHE                = 4200,
     FORCE_COMPLEX_POWER                 = 6000,
-    DISPLAY_MEMORY_STATISTICS           = 10000
+    DISPLAY_MEMORY_STATISTICS           = 10000,
 };
 
 inline int operator+(DebugFlags val)
