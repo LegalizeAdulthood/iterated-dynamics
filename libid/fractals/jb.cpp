@@ -19,44 +19,45 @@
 
 #include <algorithm>
 
-template <typename T>
-struct PerspectiveT
+namespace
 {
-    T x;
-    T y;
-    T zx;
-    T zy;
+
+struct Perspective
+{
+    double x;
+    double y;
+    double zx;
+    double zy;
 };
 
-using PerspectiveFP = PerspectiveT<double>;
-
-template <typename T>
 struct JuliBrot
 {
-    T x_per_inch{};
-    T y_per_inch{};
-    T inch_per_x_dot{};
-    T inch_per_y_dot{};
-    T x_pixel{};
-    T y_pixel{};
-    T init_z{};
-    T delta_jx{};
-    T delta_jy{};
-    T delta_mx{};
-    T delta_my{};
-    T jx{};
-    T jy{};
-    T mx{};
-    T my{};
-    T x_offset{};
-    T y_offset{};
-    PerspectiveT<T> left_eye{};
-    PerspectiveT<T> right_eye{};
-    PerspectiveT<T> *per{};
-    id::Complex<T> jb_c{};
+    double x_per_inch{};
+    double y_per_inch{};
+    double inch_per_x_dot{};
+    double inch_per_y_dot{};
+    double x_pixel{};
+    double y_pixel{};
+    double init_z{};
+    double delta_jx{};
+    double delta_jy{};
+    double delta_mx{};
+    double delta_my{};
+    double jx{};
+    double jy{};
+    double mx{};
+    double my{};
+    double x_offset{};
+    double y_offset{};
+    Perspective left_eye{};
+    Perspective right_eye{};
+    Perspective *per{};
+    DComplex jb_c{};
 };
 
-static JuliBrot<double> s_jb_fp{};
+} // namespace
+
+static JuliBrot s_jb_fp{};
 static int s_b_base{};
 static float s_br_ratio_fp{1.0f};
 
