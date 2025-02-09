@@ -38,20 +38,17 @@
 #include <cstdlib>
 #include <vector>
 
-template <typename T>
-using OrbitCalc = int (*)(T *x, T *y, T *z);
+using OrbitCalc = int (*)(double *x, double *y, double *z);
 
 // orbitcalc is declared with no arguments so jump through hoops here
-template <typename T>
-static int orbit(T *x, T *y, T*z)
+static int orbit(double *x, double *y, double *z)
 {
-    return (*reinterpret_cast<OrbitCalc<T>>(g_cur_fractal_specific->orbit_calc))(x, y, z);
+    return (*reinterpret_cast<OrbitCalc>(g_cur_fractal_specific->orbit_calc))(x, y, z);
 }
 
-template <typename T>
-static int orbit(T *x, T *y)
+static int orbit(double *x, double *y)
 {
-    return orbit(x, y, static_cast<T *>(nullptr));
+    return orbit(x, y, nullptr);
 }
 
 static int random(int x)
