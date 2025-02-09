@@ -55,7 +55,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
-LComplex g_l_new_z{};
 LComplex g_l_param{};
 LComplex g_l_temp{};
 LComplex g_l_param2{};
