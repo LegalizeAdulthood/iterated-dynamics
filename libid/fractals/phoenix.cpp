@@ -168,7 +168,6 @@ int mand_phoenix_per_pixel()
 
 bool phoenix_setup()
 {
-    g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
     g_degree = (int)g_param_z2.x;
     if (g_degree < 2 && g_degree > -3)
@@ -196,7 +195,6 @@ bool phoenix_setup()
 
 bool phoenix_cplx_setup()
 {
-    g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
     g_degree = (int)g_params[4];
     if (g_degree < 2 && g_degree > -3)
@@ -252,7 +250,6 @@ bool phoenix_cplx_setup()
 
 bool mand_phoenix_setup()
 {
-    g_long_param = &g_l_init;
     g_float_param = &g_init;
     g_degree = (int)g_param_z2.x;
     if (g_degree < 2 && g_degree > -3)
@@ -280,7 +277,6 @@ bool mand_phoenix_setup()
 
 bool mand_phoenix_cplx_setup()
 {
-    g_long_param = &g_l_init;
     g_float_param = &g_init;
     g_degree = (int)g_params[4];
     if (g_degree < 2 && g_degree > -3)

@@ -1242,8 +1242,6 @@ bool InverseJulia::iterate()
         g_save_c.x = m_c_real;
         g_init.y = m_c_imag;
         g_save_c.y = m_c_imag;
-        g_l_init.x = (long) (m_c_real * g_fudge_factor);
-        g_l_init.y = (long) (m_c_imag * g_fudge_factor);
 
         m_old_y = -1;
         m_old_x = -1;

@@ -58,7 +58,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 LComplex g_l_old_z{};
 LComplex g_l_new_z{};
 LComplex g_l_param{};
-LComplex g_l_init{};
 LComplex g_l_temp{};
 LComplex g_l_param2{};
 long g_l_temp_sqr_x{};
@@ -73,7 +72,6 @@ int g_c_exponent{};
 DComplex g_param_z1{};
 DComplex g_param_z2{};
 DComplex *g_float_param{};
-LComplex *g_long_param{};
 double g_sin_x{};
 double g_cos_x{};
 double g_temp_sqr_x{};

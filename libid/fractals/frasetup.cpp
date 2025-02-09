@@ -55,7 +55,6 @@ mandel_setup()           // Mandelbrot Routine
     {
         // special case: use the main processing loop
         g_calc_type = standard_fractal;
-        g_long_param = &g_l_init;
     }
     return true;
 }
