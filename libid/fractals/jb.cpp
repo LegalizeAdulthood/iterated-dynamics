@@ -9,7 +9,6 @@
 #include "fractals/fractype.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "io/loadmap.h"
-#include "math/fixed_pt.h"
 #include "math/sqr.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -29,7 +28,6 @@ struct PerspectiveT
     T zy;
 };
 
-using Perspective = PerspectiveT<long>;
 using PerspectiveFP = PerspectiveT<double>;
 
 template <typename T>
@@ -58,19 +56,9 @@ struct JuliBrot
     id::Complex<T> jb_c{};
 };
 
-static JuliBrot<long> s_jb{};
 static JuliBrot<double> s_jb_fp{};
-static long s_mx_min{};
-static long s_my_min{};
 static int s_b_base{};
-static double s_fg{};
-static double s_fg16{};
 static float s_br_ratio_fp{1.0f};
-static long s_width{};
-static long s_dist{};
-static long s_depth{};
-static long s_br_ratio{};
-static long s_eyes{};
 
 bool g_julibrot{}; // flag for julibrot
 
@@ -161,27 +149,6 @@ bool julibrot_setup()
         }
     }
     return true;
-}
-
-int jb_per_pixel()
-{
-    s_jb.jx = multiply(s_jb.per->x - s_jb.x_pixel, s_jb.init_z, 16);
-    s_jb.jx = divide(s_jb.jx, s_dist, 16) - s_jb.x_pixel;
-    s_jb.jx = multiply(s_jb.jx << (g_bit_shift - 16), s_jb.x_per_inch, g_bit_shift);
-    s_jb.jx += s_jb.x_offset;
-    s_jb.delta_jx = divide(s_depth, s_dist, 16);
-    s_jb.delta_jx = multiply(s_jb.delta_jx, s_jb.per->x - s_jb.x_pixel, 16) << (g_bit_shift - 16);
-    s_jb.delta_jx = multiply(s_jb.delta_jx, s_jb.x_per_inch, g_bit_shift) / g_julibrot_z_dots;
-
-    s_jb.jy = multiply(s_jb.per->y - s_jb.y_pixel, s_jb.init_z, 16);
-    s_jb.jy = divide(s_jb.jy, s_dist, 16) - s_jb.y_pixel;
-    s_jb.jy = multiply(s_jb.jy << (g_bit_shift - 16), s_jb.y_per_inch, g_bit_shift);
-    s_jb.jy += s_jb.y_offset;
-    s_jb.delta_jy = divide(s_depth, s_dist, 16);
-    s_jb.delta_jy = multiply(s_jb.delta_jy, s_jb.per->y - s_jb.y_pixel, 16) << (g_bit_shift - 16);
-    s_jb.delta_jy = multiply(s_jb.delta_jy, s_jb.y_per_inch, g_bit_shift) / g_julibrot_z_dots;
-
-    return 1;
 }
 
 int jb_fp_per_pixel()
