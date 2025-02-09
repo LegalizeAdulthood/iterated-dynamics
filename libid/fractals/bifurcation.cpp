@@ -18,7 +18,6 @@ Miscellaneous fractal-specific code
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
 
 #include <algorithm>
@@ -42,11 +41,8 @@ constexpr double SEED{0.66}; // starting value for population
 static std::vector<int> s_verhulst_array;
 static unsigned long s_filter_cycles{};
 static bool s_half_time_check{};
-static long s_population_l{}, s_rate_l{};
 static bool s_mono{};
 static int s_outside_x{};
-static long s_pi_l{};
-static long s_bif_close_enough_l{}, s_bif_saved_pop_l{}; // poss future use
 static double s_bif_close_enough{}, s_bif_saved_pop{};
 static int s_bif_saved_inc{};
 static long s_bif_saved_and{};
@@ -106,8 +102,6 @@ int bifurcation()
         stop_msg("Insufficient free memory for calculation.");
         return -1;
     }
-
-    s_pi_l = (long)(PI * g_fudge_factor);
 
     for (int y = 0; y <= g_i_y_stop; y++)   // should be iystop
     {
