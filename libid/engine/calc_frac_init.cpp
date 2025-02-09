@@ -44,7 +44,7 @@ static long   fudge_to_long(double d);
 static double fudge_to_double(long l);
 static void   adjust_to_limits(double expand);
 static void   smallest_add(double *num);
-static int    ratio_bad(double actual, double desired);
+static bool ratio_bad(double actual, double desired);
 static void   adjust_to_limits_bf(double expand);
 static void   smallest_add_bf(BigFloat num);
 
@@ -937,24 +937,24 @@ static void smallest_add_bf(BigFloat num)
     restore_stack(saved);
 }
 
-static int ratio_bad(double actual, double desired)
+static bool ratio_bad(double actual, double desired)
 {
     double tol = g_math_tol[1];
     if (tol <= 0.0)
     {
-        return 1;
+        return true;
     }
     if (tol >= 1.0)
     {
-        return 0;
+        return false;
     }
     if (desired != 0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         double f_temp = actual / desired;
         if (f_temp < (1.0-tol) || f_temp > (1.0+tol))
         {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
