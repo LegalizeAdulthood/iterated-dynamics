@@ -119,8 +119,6 @@ long g_l_magnitude{};                           //
 long g_l_magnitude_limit{};                     //
 long g_l_magnitude_limit2{};                    //
 long g_l_close_enough{};                        //
-long g_l_init_x{};                              //
-long g_l_init_y{};                              //
 DComplex g_init{};                              //
 DComplex g_tmp_z{};                             //
 DComplex g_old_z{};                             //
@@ -1205,8 +1203,6 @@ static long calc_mand_asm()
 int calc_mand()              // fast per pixel 1/2/b/g, called with row & col set
 {
     // setup values from array to avoid using es reg in calcmand.asm
-    g_l_init_x = g_l_x_pixel();
-    g_l_init_y = g_l_y_pixel();
     if (calc_mand_asm() >= 0)
     {
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
