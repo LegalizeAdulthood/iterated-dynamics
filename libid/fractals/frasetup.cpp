@@ -16,7 +16,6 @@
 #include "fractals/peterson_variations.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
-#include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
 #include "ui/cmdfiles.h"
 #include "ui/editpal.h"

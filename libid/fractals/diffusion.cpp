@@ -6,7 +6,6 @@
 #include "engine/check_key.h"
 #include "engine/id_data.h"
 #include "engine/resume.h"
-#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
