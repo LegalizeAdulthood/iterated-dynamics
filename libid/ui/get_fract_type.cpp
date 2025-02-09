@@ -146,7 +146,7 @@ static FractalType select_fract_type(FractalType t)
     int j = 0;
     for (int i = 0; i < num_types; ++i)   // find starting choice in sorted list
     {
-        if (g_fractal_specific[i].type == t)
+        if (g_fractal_specific[choices[i]->num].type == t)
         {
             j = i;
             break;
