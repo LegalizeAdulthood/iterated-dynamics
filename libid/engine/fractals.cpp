@@ -55,7 +55,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
-LComplex g_l_old_z{};
 LComplex g_l_new_z{};
 LComplex g_l_param{};
 LComplex g_l_temp{};
@@ -122,57 +121,6 @@ void pow(DComplex *base, int exp, DComplex *result)
         }
         exp >>= 1;
     }
-}
-
-// long version
-int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
-{
-    if (exp < 0)
-    {
-        g_overflow = pow(base, -exp, result, bit_shift) != 0;
-        lcmplx_recip(*result, *result);
-        return g_overflow ? 1 : 0;
-    }
-
-    g_overflow = false;
-    long lxt = base->x;
-    long lyt = base->y;
-
-    if (exp & 1)
-    {
-        result->x = lxt;
-        result->y = lyt;
-    }
-    else
-    {
-        result->x = 1L << bit_shift;
-        result->y = 0L;
-    }
-
-    exp >>= 1;
-    while (exp)
-    {
-        long lt2 = multiply(lxt, lxt, bit_shift) - multiply(lyt, lyt, bit_shift);
-        lyt = multiply(lxt, lyt, g_bit_shift_less_1);
-        if (g_overflow)
-        {
-            return g_overflow;
-        }
-        lxt = lt2;
-
-        if (exp & 1)
-        {
-            lt2 = multiply(lxt, result->x, bit_shift) - multiply(lyt, result->y, bit_shift);
-            result->y = multiply(result->y, lxt, bit_shift) + multiply(lyt, result->x, bit_shift);
-            result->x = lt2;
-        }
-        exp >>= 1;
-    }
-    if (result->x == 0 && result->y == 0)
-    {
-        g_overflow = true;
-    }
-    return g_overflow;
 }
 
 int julia_fp_fractal()

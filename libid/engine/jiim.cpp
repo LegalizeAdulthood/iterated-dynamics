@@ -1234,8 +1234,6 @@ bool InverseJulia::iterate()
             }
         }
         m_iter = 1;
-        g_l_old_z.y = 0;
-        g_l_old_z.x = 0;
         g_old_z.y = 0;
         g_old_z.x = 0;
         g_init.x = m_c_real;
@@ -1329,7 +1327,6 @@ bool InverseJulia::iterate()
         m_old_y = m_y;
     }
     g_old_z = g_new_z;
-    g_l_old_z = g_l_new_z;
 
     return still;
 }

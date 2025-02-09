@@ -58,17 +58,6 @@ TEST_F(TestMathLComplex, subtract)
     EXPECT_EQ(-fixed_point(2), result.y);
 }
 
-TEST_F(TestMathLComplex, multiplyReal)
-{
-    const LComplex lhs{fixed_point(1), fixed_point(2)};
-
-    LComplex result{};
-    lcmplx_times_real(lhs, fixed_point(3), result);
-
-    EXPECT_EQ(fixed_point(3), result.x);
-    EXPECT_EQ(fixed_point(6), result.y);
-}
-
 TEST_F(TestMathLComplex, multiplyOperator)
 {
     const LComplex lhs{fixed_point(1), fixed_point(2)};

@@ -54,10 +54,6 @@ extern Arg *g_arg2;
 // The following functions allow the complex transcendental functions
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
-inline long modulus(const LComplex &z)
-{
-    return lsqr(z.x) + lsqr(z.y);
-}
 inline void cmplx_trig0(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
@@ -82,16 +78,6 @@ inline void cmplx_trig3(const DComplex &arg, DComplex &out)
     g_d_trig3();
     (out) = g_arg1->d;
 }
-inline void lcmplx_sqr(const LComplex &arg, LComplex &out)
-{
-    out.x = lsqr(arg.x) - lsqr(arg.y);
-    out.y = multiply(arg.x, arg.y, g_bit_shift_less_1);
-}
-inline void lcmplx_sqr_old(LComplex &out)
-{
-    out.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
-    out.x = g_l_temp_sqr_x - g_l_temp_sqr_y;
-}
 
 inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)
 {
@@ -100,24 +86,6 @@ inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)
     return {x, y};
 }
 
-inline void lcmplx_times_real(const LComplex &arg, long real, LComplex &out)
-{
-    out.x = multiply(arg.x, real, g_bit_shift);
-    out.y = multiply(arg.y, real, g_bit_shift);
-}
-inline void lcmplx_recip(const LComplex &arg, LComplex &out)
-{
-    const long denom = lsqr(arg.x) + lsqr(arg.y);
-    if (denom == 0L)
-    {
-        g_overflow = true;
-    }
-    else
-    {
-        out.x = divide(arg.x, denom, g_bit_shift);
-        out.y = -divide(arg.y, denom, g_bit_shift);
-    }
-}
 inline double cmplx_mod(const DComplex &z)
 {
     return sqr(z.x) + sqr(z.y);
