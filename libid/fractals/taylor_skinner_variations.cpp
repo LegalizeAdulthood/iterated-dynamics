@@ -11,6 +11,8 @@
 #include "math/arg.h"
 #include "misc/debug_flags.h"
 
+static bool fn_plus_fn_sym();
+
 // generalization of Scott and Skinner types
 static int trig_plus_sqr_fp_fractal()
 {
@@ -114,7 +116,7 @@ int trig_plus_trig_fp_fractal()
     return g_bailout_float();
 }
 
-bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
+static bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
 {
     static SymmetryType fn_plus_fn[7][7] =
     {

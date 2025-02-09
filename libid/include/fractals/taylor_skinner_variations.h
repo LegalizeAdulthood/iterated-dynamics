@@ -2,8 +2,6 @@
 //
 #pragma once
 
-bool fn_plus_fn_sym();
-
 int sqr_trig_fp_fractal();
 
 bool trig_plus_trig_fp_setup();
