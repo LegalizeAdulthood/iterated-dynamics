@@ -170,54 +170,25 @@ static int lambda_exponent_fractal()
 
 bool lambda_trig_setup()
 {
-    bool const is_integer = g_cur_fractal_specific->is_integer != 0;
-    if (is_integer)
-    {
-        g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal;
-    }
-    else
-    {
-        g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal;
-    }
+    g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal;
     switch (g_trig_index[0])
     {
     case TrigFn::SIN:
     case TrigFn::COSXX:
     case TrigFn::COS:
         g_symmetry = SymmetryType::PI_SYM;
-        if (is_integer)
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal1;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal1;
-        }
+        g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal1;
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
         g_symmetry = SymmetryType::ORIGIN;
-        if (is_integer)
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal2;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal2;
-        }
+        g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal2;
         break;
     case TrigFn::SQR:
         g_symmetry = SymmetryType::ORIGIN;
         break;
     case TrigFn::EXP:
-        if (is_integer)
-        {
-            g_cur_fractal_specific->orbit_calc =  long_lambda_exponent_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_exponent_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = lambda_exponent_fractal;
         g_symmetry = SymmetryType::NONE;
         break;
     case TrigFn::LOG:
@@ -228,55 +199,26 @@ bool lambda_trig_setup()
         break;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
-    return is_integer ? julia_long_setup() : julia_fp_setup();
+    return julia_fp_setup();
 }
 
 bool mandel_trig_setup()
 {
-    bool const is_integer = g_cur_fractal_specific->is_integer != 0;
-    if (is_integer)
-    {
-        g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal;
-    }
-    else
-    {
-        g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal;
-    }
+    g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal;
     g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
     {
     case TrigFn::SIN:
     case TrigFn::COSXX:
-        if (is_integer)
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal1;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal1;
-        }
+        g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal1;
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
-        if (is_integer)
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fractal2;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_trig_fp_fractal2;
-        }
+        g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal2;
         break;
     case TrigFn::EXP:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
-        if (is_integer)
-        {
-            g_cur_fractal_specific->orbit_calc =  long_lambda_exponent_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  lambda_exponent_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = lambda_exponent_fractal;
         break;
     case TrigFn::LOG:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
@@ -285,5 +227,5 @@ bool mandel_trig_setup()
         g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         break;
     }
-    return is_integer ? mandel_long_setup() : mandel_fp_setup();
+    return mandel_fp_setup();
 }

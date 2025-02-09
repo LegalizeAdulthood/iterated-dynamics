@@ -244,7 +244,7 @@ init_restart:
     }
 
     // match Julibrot with integer mode of orbit
-    if (g_fractal_type == FractalType::JULIBROT && get_fractal_specific(g_new_orbit_type)->is_integer == 0)
+    if (g_fractal_type == FractalType::JULIBROT)
     {
         set_fractal_type(FractalType::JULIBROT_FP);
     }
@@ -252,7 +252,7 @@ init_restart:
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
 
-    g_integer_fractal = g_cur_fractal_specific->is_integer;
+    g_integer_fractal = 0;
 
     if (g_potential_flag && g_potential_params[2] != 0.0)
     {

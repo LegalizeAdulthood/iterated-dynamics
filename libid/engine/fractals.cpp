@@ -177,13 +177,6 @@ int pow(LComplex *base, int exp, LComplex *result, int bit_shift)
     return g_overflow;
 }
 
-int julia_fractal()
-{
-    g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
-    return g_bailout_long();
-}
-
 int julia_fp_fractal()
 {
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;

@@ -713,7 +713,7 @@ void restore_history_info(int i)
         g_set_orbit_corners = true;
     }
     g_draw_mode = last.draw_mode;
-    g_user_float_flag = g_cur_fractal_specific->is_integer == 0;
+    g_user_float_flag = true;
     std::memcpy(g_dac_box, last.dac_box, 256*3);
     std::memcpy(g_old_dac_box, last.dac_box, 256*3);
     if (g_map_specified)

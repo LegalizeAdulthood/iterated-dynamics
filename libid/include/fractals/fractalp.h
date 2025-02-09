@@ -96,7 +96,6 @@ struct FractalSpecific
     float x_max;                            // default XMAX corner
     float y_min;                            // default YMIN corner
     float y_max;                            // default YMAX corner
-    int is_integer;                         // 1 if integer fractal, 0 otherwise
     FractalType to_julia;                   // mandel-to-julia switch
     FractalType to_mandel;                  // julia-to-mandel switch
     SymmetryType symmetry;                  // applicable symmetry logic

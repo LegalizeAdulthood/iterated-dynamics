@@ -4,27 +4,11 @@
 //
 #pragma once
 
-#include "misc/id.h"
-
 #include <config/port.h>
 
 enum
 {
     MAX_LSYS_LINE_LEN = 255 // this limits line length to 255
-};
-
-struct LSysTurtleStateI
-{
-    char counter, angle, reverse;
-    bool stack_overflow;
-    // dmaxangle is maxangle - 1
-    char max_angle, d_max_angle, curr_color, dummy;  // dummy ensures longword alignment
-    long size;
-    long real_angle;
-    long x_pos, y_pos; // xpos and ypos are long, not fixed point
-    long x_min, y_min, x_max, y_max; // as are these
-    long aspect; // aspect ratio of each pixel, ysize/xsize
-    long num;
 };
 
 struct LSysTurtleStateF

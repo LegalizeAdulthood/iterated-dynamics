@@ -660,7 +660,7 @@ static void backwards_info_pre4(FractalInfo read_info)
         {
             g_log_map_flag = 2;
         }
-        g_user_float_flag = g_cur_fractal_specific->is_integer == 0;
+        g_user_float_flag = true;
     }
 }
 

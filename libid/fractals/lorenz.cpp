@@ -90,27 +90,7 @@ struct LAffine
 };
 
 // data used by 3d view transform subroutine
-struct ViewTransform3DLong
-{
-    long orbit[3];        // iterated function orbit value
-    long iview[3];        // perspective viewer's coordinates
-    long view_vect[3];    // orbit transformed for viewing
-    long view_vect1[3];   // orbit transformed for viewing
-    long max_vals[3];     //
-    long min_vals[3];     //
-    Matrix double_mat;    // transformation matrix
-    Matrix double_mat1;   // transformation matrix
-    long long_mat[4][4];  // long version of matrix
-    long long_mat1[4][4]; // long version of matrix
-    int row;              //
-    int col;              // results
-    int row1;             //
-    int col1;             //
-    LAffine cvt;          //
-};
-
-// data used by 3d view transform subroutine
-struct ViewTransform3DFloat
+struct ViewTransform3D
 {
     double orbit[3];      // iterated function orbit value
     double view_vect[3];  // orbit transformed for viewing
@@ -130,32 +110,17 @@ struct ViewTransform3DFloat
 
 static int  ifs2d();
 static int  ifs3d();
-static int  ifs3d_long();
 static int  ifs3d_float();
 static bool l_setup_convert_to_screen(LAffine *l_cvt);
 static void setup_matrix(Matrix double_mat);
-static bool long_view_transf3d(ViewTransform3DLong *inf);
-static bool float_view_transf3d(ViewTransform3DFloat *inf);
+static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
 static void plot_hist(int x, int y, int color);
 
 static bool s_real_time{};
 static int s_t{};
 
-static long s_l_dx{};
-static long s_l_dy{};
-static long s_l_dz{};
-static long s_l_dt{};
-static long s_l_a{};
-static long s_l_b{};
-static long s_l_c{};
 static long s_l_d{};
-static long s_l_adt{};
-static long s_l_bdt{};
-static long s_l_cdt{};
-static long s_l_xdt{};
-static long s_l_ydt{};
-static long s_init_orbit_long[3]{};
 
 static double s_dx{};
 static double s_dy{};
@@ -177,12 +142,9 @@ static double s_init_orbit_fp[3]{};
 static int      s_max_hits{};
 static int      s_run_length{};
 static Affine   s_cvt{};
-static LAffine s_l_cvt{};
 
 static double s_cx{};
 static double s_cy{};
-static long s_cx_l{};
-static long s_cy_l{};
 
 /*
  * end of Inverse Julia declarations;
@@ -341,9 +303,6 @@ static bool l_setup_convert_to_screen(LAffine *l_cvt)
 //****************************************************************
 
 static double s_orbit{};
-static long s_orbit_l{};
-static long s_sin_x_l{};
-static long s_cos_x_l{};
 
 static double &s_cos_b{s_dx};
 static double &s_sin_sum_a_b_c{s_dy};
@@ -1167,129 +1126,6 @@ int orbit2d_float()
     return ret;
 }
 
-static int orbit3d_long_calc()
-{
-    int color = 2;
-    if (color >= g_colors)
-    {
-        color = 1;
-    }
-
-    ViewTransform3DLong inf;
-    l_setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
-    inf.orbit[0] = s_init_orbit_long[0];
-    inf.orbit[1] = s_init_orbit_long[1];
-    inf.orbit[2] = s_init_orbit_long[2];
-
-    if (driver_is_disk())                  // this would KILL a disk drive!
-    {
-        not_disk_msg();
-    }
-
-    if (g_max_iterations > 0x1fffffL || g_max_count)
-    {
-        g_max_count = 0x7fffffffL;
-    }
-    else
-    {
-        g_max_count = g_max_iterations*1024L;
-    }
-    g_color_iter = 0L;
-
-    std::FILE *fp = open_orbit_save();
-    int ret = 0;
-    unsigned long count = 0;
-    int old_row = -1;
-    int old_col = -1;
-    int old_row1 = -1;
-    int old_col1 = -1;
-    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
-    {
-        // calc goes here
-        if (++count > 1000)
-        {
-            // time to switch colors?
-            count = 0;
-            if (++color >= g_colors)     // another color to switch to?
-            {
-                color = 1;        // (don't use the background color)
-            }
-        }
-        if (driver_key_pressed())
-        {
-            driver_mute();
-            ret = -1;
-            break;
-        }
-
-        orbit(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
-        if (fp)
-        {
-            std::fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge_factor, (double)inf.orbit[1]/g_fudge_factor, (double)inf.orbit[2]/g_fudge_factor);
-        }
-        if (long_view_transf3d(&inf))
-        {
-            // plot if inside window
-            if (inf.col >= 0)
-            {
-                if (s_real_time)
-                {
-                    g_which_image = StereoImage::RED;
-                }
-                if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
-                {
-                    double yy = inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)];
-                    yy = yy/g_fudge_factor;
-                    write_sound((int)(yy*100+g_base_hertz));
-                }
-                if (old_col != -1 && s_connect)
-                {
-                    driver_draw_line(inf.col, inf.row, old_col, old_row, color%g_colors);
-                }
-                else
-                {
-                    (*g_plot)(inf.col, inf.row, color%g_colors);
-                }
-            }
-            else if (inf.col == -2)
-            {
-                return ret;
-            }
-            old_col = inf.col;
-            old_row = inf.row;
-            if (s_real_time)
-            {
-                g_which_image = StereoImage::BLUE;
-                // plot if inside window
-                if (inf.col1 >= 0)
-                {
-                    if (old_col1 != -1 && s_connect)
-                    {
-                        driver_draw_line(inf.col1, inf.row1, old_col1, old_row1, color%g_colors);
-                    }
-                    else
-                    {
-                        (*g_plot)(inf.col1, inf.row1, color%g_colors);
-                    }
-                }
-                else if (inf.col1 == -2)
-                {
-                    return ret;
-                }
-                old_col1 = inf.col1;
-                old_row1 = inf.row1;
-            }
-        }
-    }
-
-    if (fp)
-    {
-        std::fclose(fp);
-    }
-
-    return ret;
-}
-
 static int orbit3d_float_calc()
 {
     int color = 2;
@@ -1298,7 +1134,7 @@ static int orbit3d_float_calc()
         color = 1;
     }
 
-    ViewTransform3DFloat inf;
+    ViewTransform3D inf;
     setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
     inf.orbit[0] = s_init_orbit_fp[0];
     inf.orbit[1] = s_init_orbit_fp[1];
@@ -1844,7 +1680,7 @@ static int ifs3d_float()
 
     int k;
 
-    ViewTransform3DFloat inf;
+    ViewTransform3D inf;
 
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
@@ -1988,16 +1824,11 @@ static int ifs2d()
 
     std::srand(1);
     int color_method = (int) g_params[0];
-    bool resized = false;
     try
     {
         local_ifs.resize(g_num_affine_transforms*NUM_IFS_PARAMS);
-        resized = true;
     }
     catch (const std::bad_alloc &)
-    {
-    }
-    if (!resized)
     {
         stop_msg("Insufficient memory for IFS");
         return -1;
@@ -2088,152 +1919,6 @@ static int ifs2d()
     return ret;
 }
 
-static int ifs3d_long()
-{
-    int color;
-    std::vector<long> local_ifs;
-    ViewTransform3DLong inf;
-
-    std::srand(1);
-    int color_method = (int) g_params[0];
-    try
-    {
-        local_ifs.resize(g_num_affine_transforms*NUM_IFS_3D_PARAMS);
-    }
-    catch (const std::bad_alloc &)
-    {
-        stop_msg("Insufficient memory for IFS");
-        return -1;
-    }
-
-    // setup affine screen coord conversion
-    l_setup_convert_to_screen(&inf.cvt);
-
-    for (int i = 0; i < g_num_affine_transforms; i++)      // fill in the local IFS array
-    {
-        for (int j = 0; j < NUM_IFS_3D_PARAMS; j++)
-        {
-            local_ifs[i*NUM_IFS_3D_PARAMS+j] = (long)(g_ifs_definition[i*NUM_IFS_3D_PARAMS+j] * g_fudge_factor);
-        }
-    }
-
-    long temp_r = g_fudge_factor / 32767;        // find the proper rand() fudge
-
-    inf.orbit[0] = 0;
-    inf.orbit[1] = 0;
-    inf.orbit[2] = 0;
-
-    std::FILE *fp = open_orbit_save();
-
-    int ret = 0;
-    if (g_max_iterations > 0x1fffffL)
-    {
-        g_max_count = 0x7fffffffL;
-    }
-    else
-    {
-        g_max_count = g_max_iterations*1024L;
-    }
-    g_color_iter = 0L;
-    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
-    {
-        if (driver_key_pressed())  // keypress bails out
-        {
-            ret = -1;
-            break;
-        }
-        long r = RAND15();      // generate fudged random number between 0 and 1
-        r *= temp_r;
-
-        // pick which iterated function to execute, weighted by probability
-        long sum = local_ifs[12];  // [0][12]
-        int k = 0;
-        while (sum < r && ++k < g_num_affine_transforms*NUM_IFS_3D_PARAMS)
-        {
-            sum += local_ifs[k*NUM_IFS_3D_PARAMS+12];
-            if (g_ifs_definition[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
-            {
-                break; // for safety
-            }
-        }
-
-        // calculate image of last point under selected iterated function
-        long *l_f_ptr = local_ifs.data() + k * NUM_IFS_3D_PARAMS; // point to first parm in row
-
-        // calculate image of last point under selected iterated function
-        long new_x = multiply(l_f_ptr[0], inf.orbit[0], g_bit_shift) +
-            multiply(l_f_ptr[1], inf.orbit[1], g_bit_shift) + multiply(l_f_ptr[2], inf.orbit[2], g_bit_shift) +
-            l_f_ptr[9];
-        long new_y = multiply(l_f_ptr[3], inf.orbit[0], g_bit_shift) +
-            multiply(l_f_ptr[4], inf.orbit[1], g_bit_shift) + multiply(l_f_ptr[5], inf.orbit[2], g_bit_shift) +
-            l_f_ptr[10];
-        long new_z = multiply(l_f_ptr[6], inf.orbit[0], g_bit_shift) +
-            multiply(l_f_ptr[7], inf.orbit[1], g_bit_shift) + multiply(l_f_ptr[8], inf.orbit[2], g_bit_shift) +
-            l_f_ptr[11];
-
-        inf.orbit[0] = new_x;
-        inf.orbit[1] = new_y;
-        inf.orbit[2] = new_z;
-        if (fp)
-        {
-            std::fprintf(fp, "%g %g %g 15\n", (double)new_x/g_fudge_factor, (double)new_y/g_fudge_factor, (double)new_z/g_fudge_factor);
-        }
-
-        if (long_view_transf3d(&inf))
-        {
-            if ((long)std::abs(inf.row) + (long)std::abs(inf.col) > BAD_PIXEL)   // sanity check
-            {
-                return ret;
-            }
-            // plot if inside window
-            if (inf.col >= 0)
-            {
-                if (s_real_time)
-                {
-                    g_which_image = StereoImage::RED;
-                }
-                if (color_method)
-                {
-                    color = (k%g_colors)+1;
-                }
-                else
-                {
-                    color = get_color(inf.col, inf.row)+1;
-                }
-                if (color < g_colors)     // color sticks on last value
-                {
-                    (*g_plot)(inf.col, inf.row, color);
-                }
-            }
-            if (s_real_time)
-            {
-                g_which_image = StereoImage::BLUE;
-                // plot if inside window
-                if (inf.col1 >= 0)
-                {
-                    if (color_method)
-                    {
-                        color = (k%g_colors)+1;
-                    }
-                    else
-                    {
-                        color = get_color(inf.col1, inf.row1)+1;
-                    }
-                    if (color < g_colors)     // color sticks on last value
-                    {
-                        (*g_plot)(inf.col1, inf.row1, color);
-                    }
-                }
-            }
-        }
-    }
-    if (fp)
-    {
-        std::fclose(fp);
-    }
-    return ret;
-}
-
 static void setup_matrix(Matrix double_mat)
 {
     // build transformation matrix
@@ -2260,200 +1945,10 @@ static int ifs3d()
     g_display_3d = Display3DMode::MINUS_ONE;
 
     s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
-    return funny_glasses_call(g_float_flag ? ifs3d_float : ifs3d_long); // double version of ifs3d
+    return funny_glasses_call(ifs3d_float); // double version of ifs3d
 }
 
-static bool long_view_transf3d(ViewTransform3DLong *inf)
-{
-    if (g_color_iter == 1)  // initialize on first call
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            inf->min_vals[i] =  1L << 30;
-            inf->max_vals[i] = -inf->min_vals[i];
-        }
-        setup_matrix(inf->double_mat);
-        if (s_real_time)
-        {
-            setup_matrix(inf->double_mat1);
-        }
-        // copy xform matrix to long for fixed point math
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                inf->long_mat[i][j] = (long)(inf->double_mat[i][j] * g_fudge_factor);
-                if (s_real_time)
-                {
-                    inf->long_mat1[i][j] = (long)(inf->double_mat1[i][j] * g_fudge_factor);
-                }
-            }
-        }
-    }
-
-    // 3D VIEWING TRANSFORM
-    long_vec_mat_mul(inf->orbit, inf->long_mat, inf->view_vect, g_bit_shift);
-    if (s_real_time)
-    {
-        long_vec_mat_mul(inf->orbit, inf->long_mat1, inf->view_vect1, g_bit_shift);
-    }
-
-    if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
-    {
-        // find minz and maxz
-        for (int i = 0; i < 3; i++)
-        {
-            long const tmp = inf->view_vect[i];
-            if (tmp < inf->min_vals[i])
-            {
-                inf->min_vals[i] = tmp;
-            }
-            else if (tmp > inf->max_vals[i])
-            {
-                inf->max_vals[i] = tmp;
-            }
-        }
-
-        if (g_color_iter == s_waste) // time to work it out
-        {
-            inf->iview[0] = 0L; // center viewer on origin
-            inf->iview[1] = 0L;
-
-            /* z value of user's eye - should be more negative than extreme
-                           negative part of image */
-            inf->iview[2] = (long)((inf->min_vals[2]-inf->max_vals[2])*(double)g_viewer_z/100.0);
-
-            // center image on origin
-            double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0*g_fudge_factor); // center x
-            double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0*g_fudge_factor); // center y
-
-            // apply perspective shift
-            tmp_x += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-            tmp_y += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-            double tmp_z = -((double)inf->max_vals[2]) / g_fudge_factor;
-            trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
-
-            if (s_real_time)
-            {
-                // center image on origin
-                tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0*g_fudge_factor); // center x
-                tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0*g_fudge_factor); // center y
-
-                tmp_x += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-                tmp_y += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-                tmp_z = -((double)inf->max_vals[2]) / g_fudge_factor;
-                trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                g_view[i] = (double)inf->iview[i] / g_fudge_factor;
-            }
-
-            // copy xform matrix to long for fixed point math
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    inf->long_mat[i][j] = (long)(inf->double_mat[i][j] * g_fudge_factor);
-                    if (s_real_time)
-                    {
-                        inf->long_mat1[i][j] = (long)(inf->double_mat1[i][j] * g_fudge_factor);
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    // apply perspective if requested
-    if (g_viewer_z)
-    {
-        if (g_debug_flag == DebugFlags::FORCE_FLOAT_PERSPECTIVE || g_viewer_z < 100) // use float for small persp
-        {
-            // use float perspective calc
-            Vector tmp_v;
-            for (int i = 0; i < 3; i++)
-            {
-                tmp_v[i] = (double)inf->view_vect[i] / g_fudge_factor;
-            }
-            perspective(tmp_v);
-            for (int i = 0; i < 3; i++)
-            {
-                inf->view_vect[i] = (long)(tmp_v[i]*g_fudge_factor);
-            }
-            if (s_real_time)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    tmp_v[i] = (double)inf->view_vect1[i] / g_fudge_factor;
-                }
-                perspective(tmp_v);
-                for (int i = 0; i < 3; i++)
-                {
-                    inf->view_vect1[i] = (long)(tmp_v[i]*g_fudge_factor);
-                }
-            }
-        }
-        else
-        {
-            long_persp(inf->view_vect, inf->iview, g_bit_shift);
-            if (s_real_time)
-            {
-                long_persp(inf->view_vect1, inf->iview, g_bit_shift);
-            }
-        }
-    }
-
-    // work out the screen positions
-    inf->row = (int)(((multiply(inf->cvt.c, inf->view_vect[0], g_bit_shift) +
-                       multiply(inf->cvt.d, inf->view_vect[1], g_bit_shift) + inf->cvt.f)
-                      >> g_bit_shift)
-                     + g_yy_adjust);
-    inf->col = (int)(((multiply(inf->cvt.a, inf->view_vect[0], g_bit_shift) +
-                       multiply(inf->cvt.b, inf->view_vect[1], g_bit_shift) + inf->cvt.e)
-                      >> g_bit_shift)
-                     + g_xx_adjust);
-    if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
-    {
-        if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)
-        {
-            inf->row = -2;
-            inf->col = -2;
-        }
-        else
-        {
-            inf->row = -1;
-            inf->col = -1;
-        }
-    }
-    if (s_real_time)
-    {
-        inf->row1 = (int)(((multiply(inf->cvt.c, inf->view_vect1[0], g_bit_shift) +
-                            multiply(inf->cvt.d, inf->view_vect1[1], g_bit_shift) +
-                            inf->cvt.f) >> g_bit_shift)
-                          + g_yy_adjust1);
-        inf->col1 = (int)(((multiply(inf->cvt.a, inf->view_vect1[0], g_bit_shift) +
-                            multiply(inf->cvt.b, inf->view_vect1[1], g_bit_shift) +
-                            inf->cvt.e) >> g_bit_shift)
-                          + g_xx_adjust1);
-        if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
-        {
-            if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)
-            {
-                inf->row1 = -2;
-                inf->col1 = -2;
-            }
-            else
-            {
-                inf->row1 = -1;
-                inf->col1 = -1;
-            }
-        }
-    }
-    return true;
-}
-
-static bool float_view_transf3d(ViewTransform3DFloat *inf)
+static bool float_view_transf3d(ViewTransform3D *inf)
 {
     if (g_color_iter == 1)  // initialize on first call
     {

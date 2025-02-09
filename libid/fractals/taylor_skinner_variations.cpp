@@ -188,7 +188,7 @@ bool fn_x_fn_setup()
             g_symmetry = SymmetryType::PI_SYM;
         }
     }
-    return g_cur_fractal_specific->is_integer ? julia_long_setup() : julia_fp_setup();
+    return julia_fp_setup();
 }
 
 int trig_x_trig_fp_fractal()
@@ -225,7 +225,7 @@ bool sqr_trig_setup()
     default:
         break;
     }
-    return g_cur_fractal_specific->is_integer ? julia_long_setup() : julia_fp_setup();
+    return julia_fp_setup();
 }
 
 int sqr_trig_fp_fractal()
@@ -330,23 +330,6 @@ bool z_x_trig_plus_z_setup()
             g_symmetry = SymmetryType::NONE;
             break;
         }
-    }
-    if (g_cur_fractal_specific->is_integer)
-    {
-        g_cur_fractal_specific->orbit_calc = z_x_trig_plus_z_fractal;
-        if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L &&
-            g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
-        {
-            if (g_l_param2.x == g_fudge_factor) // Scott variant
-            {
-                g_cur_fractal_specific->orbit_calc = scott_z_x_trig_plus_z_fractal;
-            }
-            else if (g_l_param2.x == -g_fudge_factor) // Skinner variant
-            {
-                g_cur_fractal_specific->orbit_calc = skinner_z_x_trig_sub_z_fractal;
-            }
-        }
-        return julia_long_setup();
     }
     g_cur_fractal_specific->orbit_calc = z_x_trig_plus_z_fp_fractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 &&

@@ -205,7 +205,7 @@ bool julia_fn_plus_z_sqrd_setup()
     default:
         break;
     }
-    return g_cur_fractal_specific->is_integer ? julia_long_setup() : julia_fp_setup();
+    return julia_fp_setup();
 }
 
 int trig_plus_z_squared_fp_fractal()
