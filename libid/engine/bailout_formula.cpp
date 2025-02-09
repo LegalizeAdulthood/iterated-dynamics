@@ -11,106 +11,9 @@
 #include <cmath>
 
 Bailout g_bailout_test{}; // test used for determining bailout
-int (*g_bailout_long)(){};
 int (*g_bailout_float)(){};
 int (*g_bailout_bignum)(){};
 int (*g_bailout_bigfloat)(){};
-
-static int long_mod_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_magnitude_limit
-        || g_l_magnitude < 0
-        || std::abs(g_l_new_z.x) > g_l_magnitude_limit2
-        || std::abs(g_l_new_z.y) > g_l_magnitude_limit2
-        || g_overflow)
-    {
-        g_overflow = false;
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
-static int long_real_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    if (g_l_temp_sqr_x >= g_l_magnitude_limit || g_overflow)
-    {
-        g_overflow = false;
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
-static int long_imag_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    if (g_l_temp_sqr_y >= g_l_magnitude_limit || g_overflow)
-    {
-        g_overflow = false;
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
-static int long_or_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    if (g_l_temp_sqr_x >= g_l_magnitude_limit || g_l_temp_sqr_y >= g_l_magnitude_limit || g_overflow)
-    {
-        g_overflow = false;
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
-static int long_and_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    if ((g_l_temp_sqr_x >= g_l_magnitude_limit && g_l_temp_sqr_y >= g_l_magnitude_limit) || g_overflow)
-    {
-        g_overflow = false;
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
-static int long_manh_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = std::abs(g_new_z.x) + std::abs(g_new_z.y);
-    if (g_magnitude*g_magnitude >= g_magnitude_limit)
-    {
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
-static int long_manr_bailout()
-{
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = std::abs(g_new_z.x + g_new_z.y);
-    if (g_magnitude*g_magnitude >= g_magnitude_limit)
-    {
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
 
 static int fp_mod_bailout()
 {
@@ -478,49 +381,42 @@ void set_bailout_formula(Bailout test)
     {
     case Bailout::MOD:
         g_bailout_float = fp_mod_bailout;
-        g_bailout_long = long_mod_bailout;
         g_bailout_bignum = bn_mod_bailout;
         g_bailout_bigfloat = bf_mod_bailout;
         break;
 
     case Bailout::REAL:
         g_bailout_float = fp_real_bailout;
-        g_bailout_long = long_real_bailout;
         g_bailout_bignum = bn_real_bailout;
         g_bailout_bigfloat = bf_real_bailout;
         break;
 
     case Bailout::IMAG:
         g_bailout_float = fp_imag_bailout;
-        g_bailout_long = long_imag_bailout;
         g_bailout_bignum = bn_imag_bailout;
         g_bailout_bigfloat = bf_imag_bailout;
         break;
 
     case Bailout::OR:
         g_bailout_float = fp_or_bailout;
-        g_bailout_long = long_or_bailout;
         g_bailout_bignum = bn_or_bailout;
         g_bailout_bigfloat = bf_or_bailout;
         break;
 
     case Bailout::AND:
         g_bailout_float = fp_and_bailout;
-        g_bailout_long = long_and_bailout;
         g_bailout_bignum = bn_and_bailout;
         g_bailout_bigfloat = bf_and_bailout;
         break;
 
     case Bailout::MANH:
         g_bailout_float = fp_manh_bailout;
-        g_bailout_long = long_manh_bailout;
         g_bailout_bignum = bn_manh_bailout;
         g_bailout_bigfloat = bf_manh_bailout;
         break;
 
     case Bailout::MANR:
         g_bailout_float = fp_manr_bailout;
-        g_bailout_long = long_manr_bailout;
         g_bailout_bignum = bn_manr_bailout;
         g_bailout_bigfloat = bf_manr_bailout;
         break;
