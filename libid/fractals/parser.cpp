@@ -56,12 +56,6 @@
 namespace
 {
 
-enum class MathType
-{
-    DOUBLE,
-    LONG
-};
-
 using Function = void();
 using FunctionPtr = Function *;
 
@@ -347,7 +341,6 @@ static int s_init_store_ptr{};
 static int s_init_op_ptr{};
 static bool s_uses_jump{};
 static std::vector<Arg *> s_store;
-static MathType s_math_type{MathType::DOUBLE};
 static unsigned long s_num_ops{};
 static unsigned long s_num_loads{};
 static unsigned long s_num_stores{};
@@ -1833,13 +1826,6 @@ static ConstArg *is_const(char const *str, int len)
                 {
                     g_frm_uses_p5 = true;
                 }
-                if (n == 10 || n == 11 || n == 12)
-                {
-                    if (s_math_type == MathType::LONG)
-                    {
-                        driver_unget_key('f');
-                    }
-                }
                 if (!is_const_pair(str))
                 {
                     return &s_vars[n];
@@ -1851,17 +1837,6 @@ static ConstArg *is_const(char const *str, int len)
     s_vars[g_variable_index].len = len;
     s_vars[g_variable_index].a.d.y = 0.0;
     s_vars[g_variable_index].a.d.x = s_vars[g_variable_index].a.d.y;
-
-    // v[vsp].a should already be zeroed out
-    switch (s_math_type)
-    {
-    case MathType::LONG:
-        s_vars[g_variable_index].a.l.y = 0;
-        s_vars[g_variable_index].a.l.x = 0;
-        break;
-    case MathType::DOUBLE:
-        break;
-    }
 
     if (std::isdigit(str[0])
         || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.'))
@@ -1905,16 +1880,7 @@ static ConstArg *is_const(char const *str, int len)
             z.y = 0.0;
         }
         z.x = std::atof(str);
-        switch (s_math_type)
-        {
-        case MathType::DOUBLE:
-            s_vars[g_variable_index].a.d = z;
-            break;
-        case MathType::LONG:
-            s_vars[g_variable_index].a.l.x = (long)(z.x * s_fudge);
-            s_vars[g_variable_index].a.l.y = (long)(z.y * s_fudge);
-            break;
-        }
+        s_vars[g_variable_index].a.d = z;
         s_vars[g_variable_index].s = str;
     }
     return &s_vars[g_variable_index++];
@@ -2038,116 +2004,59 @@ static bool parse_formula_text(char const *text)
     s_jump_index = 0;
     s_jump_control.clear();
 
-    switch (s_math_type)
-    {
-    case MathType::DOUBLE:
-        s_add = d_stk_add;
-        s_sub = d_stk_sub;
-        s_neg = d_stk_neg;
-        s_mul = d_stk_mul;
-        s_sin = d_stk_sin;
-        s_sinh = d_stk_sinh;
-        s_lt = d_stk_lt;
-        s_lte = d_stk_lte;
-        s_mod = d_stk_mod;
-        s_sqr = d_stk_sqr;
-        s_cos = d_stk_cos;
-        s_cosh = d_stk_cosh;
-        s_log = d_stk_log;
-        s_exp = d_stk_exp;
-        s_pwr = d_stk_pwr;
-        s_div = d_stk_div;
-        s_abs = d_stk_abs;
-        s_real = d_stk_real;
-        s_imag = d_stk_imag;
-        s_conj = d_stk_conj;
-        s_trig0 = g_d_trig0;
-        s_trig1 = g_d_trig1;
-        s_trig2 = g_d_trig2;
-        s_trig3 = g_d_trig3;
-        s_flip = d_stk_flip;
-        s_tan = d_stk_tan;
-        s_tanh = d_stk_tanh;
-        s_cotan = d_stk_cotan;
-        s_cotanh = d_stk_cotanh;
-        s_cosxx = d_stk_cosxx;
-        s_gt  = d_stk_gt;
-        s_gte = d_stk_gte;
-        s_eq  = d_stk_eq;
-        s_ne  = d_stk_ne;
-        s_and = d_stk_and;
-        s_or  = d_stk_or ;
-        s_srand = d_stk_srand;
-        s_asin = d_stk_asin;
-        s_asinh = d_stk_asinh;
-        s_acos = d_stk_acos;
-        s_acosh = d_stk_acosh;
-        s_atan = d_stk_atan;
-        s_atanh = d_stk_atanh;
-        s_cabs = d_stk_cabs;
-        s_sqrt = d_stk_sqrt;
-        s_zero = d_stk_zero;
-        s_floor = d_stk_floor;
-        s_ceil = d_stk_ceil;
-        s_trunc = d_stk_trunc;
-        s_round = d_stk_round;
-        s_jump_on_true  = d_stk_jump_on_true;
-        s_jump_on_false = d_stk_jump_on_false;
-        s_one = d_stk_one;
-        break;
-    case MathType::LONG:
-        s_delta16 = g_bit_shift - 16;
-        s_shift_back = 32 - g_bit_shift;
-        s_add = l_stk_add;
-        s_sub = l_stk_sub;
-        s_neg = l_stk_neg;
-        s_mul = l_stk_mul;
-        s_sin = l_stk_sin;
-        s_sinh = l_stk_sinh;
-        s_lt = l_stk_lt;
-        s_lte = l_stk_lte;
-        s_mod = l_stk_mod;
-        s_sqr = l_stk_sqr;
-        s_cos = l_stk_cos;
-        s_cosh = l_stk_cosh;
-        s_log = l_stk_log;
-        s_exp = l_stk_exp;
-        s_pwr = l_stk_pwr;
-        s_div = l_stk_div;
-        s_abs = l_stk_abs;
-        s_real = l_stk_real;
-        s_imag = l_stk_imag;
-        s_conj = l_stk_conj;
-        s_flip = l_stk_flip;
-        s_tan  = l_stk_tan;
-        s_tanh  = l_stk_tanh;
-        s_cotan  = l_stk_cotan;
-        s_cotanh  = l_stk_cotanh;
-        s_cosxx = l_stk_cosxx;
-        s_gt  = l_stk_gt;
-        s_gte = l_stk_gte;
-        s_eq  = l_stk_eq;
-        s_ne  = l_stk_ne;
-        s_and = l_stk_and;
-        s_or  = l_stk_or ;
-        s_srand = l_stk_srand;
-        s_asin = l_stk_asin;
-        s_acos = l_stk_acos;
-        s_acosh = l_stk_acosh;
-        s_atan = l_stk_atan;
-        s_atanh = l_stk_atanh;
-        s_cabs = l_stk_cabs;
-        s_sqrt = l_stk_sqrt;
-        s_zero = l_stk_zero;
-        s_floor = l_stk_floor;
-        s_ceil = l_stk_ceil;
-        s_trunc = l_stk_trunc;
-        s_round = l_stk_round;
-        s_jump_on_true  = l_stk_jump_on_true;
-        s_jump_on_false = l_stk_jump_on_false;
-        s_one = l_stk_one;
-        break;
-    }
+    s_add = d_stk_add;
+    s_sub = d_stk_sub;
+    s_neg = d_stk_neg;
+    s_mul = d_stk_mul;
+    s_sin = d_stk_sin;
+    s_sinh = d_stk_sinh;
+    s_lt = d_stk_lt;
+    s_lte = d_stk_lte;
+    s_mod = d_stk_mod;
+    s_sqr = d_stk_sqr;
+    s_cos = d_stk_cos;
+    s_cosh = d_stk_cosh;
+    s_log = d_stk_log;
+    s_exp = d_stk_exp;
+    s_pwr = d_stk_pwr;
+    s_div = d_stk_div;
+    s_abs = d_stk_abs;
+    s_real = d_stk_real;
+    s_imag = d_stk_imag;
+    s_conj = d_stk_conj;
+    s_trig0 = g_d_trig0;
+    s_trig1 = g_d_trig1;
+    s_trig2 = g_d_trig2;
+    s_trig3 = g_d_trig3;
+    s_flip = d_stk_flip;
+    s_tan = d_stk_tan;
+    s_tanh = d_stk_tanh;
+    s_cotan = d_stk_cotan;
+    s_cotanh = d_stk_cotanh;
+    s_cosxx = d_stk_cosxx;
+    s_gt = d_stk_gt;
+    s_gte = d_stk_gte;
+    s_eq = d_stk_eq;
+    s_ne = d_stk_ne;
+    s_and = d_stk_and;
+    s_or = d_stk_or;
+    s_srand = d_stk_srand;
+    s_asin = d_stk_asin;
+    s_asinh = d_stk_asinh;
+    s_acos = d_stk_acos;
+    s_acosh = d_stk_acosh;
+    s_atan = d_stk_atan;
+    s_atanh = d_stk_atanh;
+    s_cabs = d_stk_cabs;
+    s_sqrt = d_stk_sqrt;
+    s_zero = d_stk_zero;
+    s_floor = d_stk_floor;
+    s_ceil = d_stk_ceil;
+    s_trunc = d_stk_trunc;
+    s_round = d_stk_round;
+    s_jump_on_true = d_stk_jump_on_true;
+    s_jump_on_false = d_stk_jump_on_false;
+    s_one = d_stk_one;
     g_max_function = 0;
     for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(VARIABLES.size()); g_variable_index++)
     {
@@ -2172,57 +2081,20 @@ static bool parse_formula_text(char const *text)
     s_vars[16].a.d.x = rotation;
     s_vars[16].a.d.y = skew;
 
-    switch (s_math_type)
-    {
-    case MathType::DOUBLE:
-        s_vars[1].a.d.x = g_params[0];
-        s_vars[1].a.d.y = g_params[1];
-        s_vars[2].a.d.x = g_params[2];
-        s_vars[2].a.d.y = g_params[3];
-        s_vars[5].a.d.x = const_pi;
-        s_vars[5].a.d.y = 0.0;
-        s_vars[6].a.d.x = const_e;
-        s_vars[6].a.d.y = 0.0;
-        s_vars[8].a.d.x = g_params[4];
-        s_vars[8].a.d.y = g_params[5];
-        s_vars[17].a.d.x = g_params[6];
-        s_vars[17].a.d.y = g_params[7];
-        s_vars[18].a.d.x = g_params[8];
-        s_vars[18].a.d.y = g_params[9];
-        break;
-    case MathType::LONG:
-        s_vars[1].a.l.x = (long)(g_params[0] * s_fudge);
-        s_vars[1].a.l.y = (long)(g_params[1] * s_fudge);
-        s_vars[2].a.l.x = (long)(g_params[2] * s_fudge);
-        s_vars[2].a.l.y = (long)(g_params[3] * s_fudge);
-        s_vars[5].a.l.x = (long)(const_pi * s_fudge);
-        s_vars[5].a.l.y = 0L;
-        s_vars[6].a.l.x = (long)(const_e * s_fudge);
-        s_vars[6].a.l.y = 0L;
-        s_vars[8].a.l.x = (long)(g_params[4] * s_fudge);
-        s_vars[8].a.l.y = (long)(g_params[5] * s_fudge);
-        s_vars[11].a.l.x = g_logical_screen_x_dots;
-        s_vars[11].a.l.x <<= g_bit_shift;
-        s_vars[11].a.l.y = g_logical_screen_y_dots;
-        s_vars[11].a.l.y <<= g_bit_shift;
-        s_vars[12].a.l.x = g_max_iterations;
-        s_vars[12].a.l.x <<= g_bit_shift;
-        s_vars[12].a.l.y = 0L;
-        s_vars[13].a.l.x = g_is_mandelbrot ? 1 : 0;
-        s_vars[13].a.l.x <<= g_bit_shift;
-        s_vars[13].a.l.y = 0L;
-        s_vars[14].a.l.x = (long)(s_vars[14].a.d.x * s_fudge);
-        s_vars[14].a.l.y = (long)(s_vars[14].a.d.y * s_fudge);
-        s_vars[15].a.l.x = (long)(s_vars[15].a.d.x * s_fudge);
-        s_vars[15].a.l.y = (long)(s_vars[15].a.d.y * s_fudge);
-        s_vars[16].a.l.x = (long)(s_vars[16].a.d.x * s_fudge);
-        s_vars[16].a.l.y = (long)(s_vars[16].a.d.y * s_fudge);
-        s_vars[17].a.l.x = (long)(g_params[6] * s_fudge);
-        s_vars[17].a.l.y = (long)(g_params[7] * s_fudge);
-        s_vars[18].a.l.x = (long)(g_params[8] * s_fudge);
-        s_vars[18].a.l.y = (long)(g_params[9] * s_fudge);
-        break;
-    }
+    s_vars[1].a.d.x = g_params[0];
+    s_vars[1].a.d.y = g_params[1];
+    s_vars[2].a.d.x = g_params[2];
+    s_vars[2].a.d.y = g_params[3];
+    s_vars[5].a.d.x = const_pi;
+    s_vars[5].a.d.y = 0.0;
+    s_vars[6].a.d.x = const_e;
+    s_vars[6].a.d.y = 0.0;
+    s_vars[8].a.d.x = g_params[4];
+    s_vars[8].a.d.y = g_params[5];
+    s_vars[17].a.d.x = g_params[6];
+    s_vars[17].a.d.y = g_params[7];
+    s_vars[18].a.d.x = g_params[8];
+    s_vars[18].a.d.y = g_params[9];
 
     g_operation_index = 0;
     s_op.clear();
@@ -2463,42 +2335,21 @@ int formula()
     // Set the random number
     if (s_set_random || s_randomized)
     {
-        switch (s_math_type)
-        {
-        case MathType::DOUBLE:
-            d_random();
-            break;
-        case MathType::LONG:
-            l_random();
-            break;
-        }
+        d_random();
     }
 
     g_arg1 = s_stack.data();
     g_arg2 = s_stack.data();
     --g_arg2;
-    while (s_op_ptr < (int)s_op_count)
+    while (s_op_ptr < (int) s_op_count)
     {
         s_fns[s_op_ptr]();
         s_op_ptr++;
     }
 
-    switch (s_math_type)
-    {
-    case MathType::DOUBLE:
-        g_new_z = s_vars[3].a.d;
-        g_old_z = g_new_z;
-        return g_arg1->d.x == 0.0;
-    case MathType::LONG:
-        g_l_new_z = s_vars[3].a.l;
-        g_l_old_z = g_l_new_z;
-        if (g_overflow)
-        {
-            return 1;
-        }
-        return g_arg1->l.x == 0L;
-    }
-    return 1;
+    g_new_z = s_vars[3].a.d;
+    g_old_z = g_new_z;
+    return g_arg1->d.x == 0.0;
 }
 
 int form_per_pixel()
@@ -2517,68 +2368,29 @@ int form_per_pixel()
     g_arg2--;
 
     s_vars[10].a.d.x = (double)g_col;
-    s_vars[10].a.d.y = (double)g_row;
+    s_vars[10].a.d.y = (double) g_row;
 
-    switch (s_math_type)
+    if ((g_row + g_col) & 1)
     {
-    case MathType::DOUBLE:
-        if ((g_row+g_col)&1)
-        {
-            s_vars[9].a.d.x = 1.0;
-        }
-        else
-        {
-            s_vars[9].a.d.x = 0.0;
-        }
-        s_vars[9].a.d.y = 0.0;
-        break;
-
-    case MathType::LONG:
-        s_vars[9].a.l.x = (long)(((g_row+g_col)&1) * s_fudge);
-        s_vars[9].a.l.y = 0L;
-        s_vars[10].a.l.x = g_col;
-        s_vars[10].a.l.x <<= g_bit_shift;
-        s_vars[10].a.l.y = g_row;
-        s_vars[10].a.l.y <<= g_bit_shift;
-        break;
+        s_vars[9].a.d.x = 1.0;
     }
+    else
+    {
+        s_vars[9].a.d.x = 0.0;
+    }
+    s_vars[9].a.d.y = 0.0;
 
     {
         if (g_invert != 0)
         {
             invertz2(&g_old_z);
-            switch (s_math_type)
-            {
-            case MathType::DOUBLE:
-                s_vars[0].a.d.x = g_old_z.x;
-                s_vars[0].a.d.y = g_old_z.y;
-                break;
-            case MathType::LONG:
-                // watch out for overflow
-                if (sqr(g_old_z.x)+sqr(g_old_z.y) >= 127)
-                {
-                    g_old_z.x = 8;  // value to bail out in one iteration
-                    g_old_z.y = 8;
-                }
-                // convert to fudged longs
-                s_vars[0].a.l.x = (long)(g_old_z.x*s_fudge);
-                s_vars[0].a.l.y = (long)(g_old_z.y*s_fudge);
-                break;
-            }
+            s_vars[0].a.d.x = g_old_z.x;
+            s_vars[0].a.d.y = g_old_z.y;
         }
         else
         {
-            switch (s_math_type)
-            {
-            case MathType::DOUBLE:
-                s_vars[0].a.d.x = g_dx_pixel();
-                s_vars[0].a.d.y = g_dy_pixel();
-                break;
-            case MathType::LONG:
-                s_vars[0].a.l.x = g_l_x_pixel();
-                s_vars[0].a.l.y = g_l_y_pixel();
-                break;
-            }
+            s_vars[0].a.d.x = g_dx_pixel();
+            s_vars[0].a.d.y = g_dy_pixel();
         }
     }
 
@@ -2595,15 +2407,7 @@ int form_per_pixel()
     s_init_store_ptr = g_store_index;
     s_init_op_ptr = s_op_ptr;
     // Set old variable for orbits
-    switch (s_math_type)
-    {
-    case MathType::DOUBLE:
-        g_old_z = s_vars[3].a.d;
-        break;
-    case MathType::LONG:
-        g_l_old_z = s_vars[3].a.l;
-        break;
-    }
+    g_old_z = s_vars[3].a.d;
 
     return g_overflow ? 0 : 1;
 }
@@ -3735,7 +3539,6 @@ bool run_formula(const std::string &name, bool report_bad_sym)
 
 bool formula_setup_fp()
 {
-    s_math_type = MathType::DOUBLE;
     return !run_formula(g_formula_name, false); // run_formula() returns true for failure
 }
 
