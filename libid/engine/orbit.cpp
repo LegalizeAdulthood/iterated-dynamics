@@ -5,7 +5,6 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/wait_until.h"
-#include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/cmdfiles.h"
@@ -116,11 +115,6 @@ static void plot_d_orbit(double dx, double dy, int color)
     }
 
     // placing sleepms here delays each dot
-}
-
-void iplot_orbit(long real, long imag, int color)
-{
-    plot_d_orbit((double)real/g_fudge_factor-g_x_min, (double)imag/g_fudge_factor-g_y_max, color);
 }
 
 void plot_orbit(double real, double imag, int color)
