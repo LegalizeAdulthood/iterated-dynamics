@@ -23,21 +23,6 @@
 #include <string>
 #include <vector>
 
-/* Macro to take an FP number and turn it into a
- * 16/16-bit fixed-point number.
- */
-#define FIXED_MUL        524288L
-#define FIXED_PT(x)      ((long) (FIXED_MUL * (x)))
-/* The number by which to multiply sines, cosines and other
- * values with magnitudes less than or equal to 1.
- * sins and coss are a 3/29 bit fixed-point scheme (so the
- * range is +/- 2), with good accuracy.  The range is to
- * avoid overflowing when the aspect ratio is taken into
- * account.
- */
-#define FIXED_LT1       536870912.0
-#define ANGLE_TO_DOUBLE (2.0*PI / 4294967296.0)
-
 static bool read_lsystem_file(char const *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
@@ -46,10 +31,9 @@ static bool save_rule(char const *rule, int index);
 static bool append_rule(char const *rule, int index);
 static void free_l_cmds();
 
-constexpr long PI_DIV_180_L{11930465L};
 static std::string s_axiom;
 static std::vector<std::string> s_rules;
-static std::vector<LSysFCmd *> s_rule_f_cmds;
+static std::vector<LSysCmd *> s_rule_f_cmds;
 static bool s_loaded{};
 
 char g_max_angle{};
@@ -253,7 +237,7 @@ int lsystem()
     int order = (int) g_params[0];
     order = std::max(order, 0);
 
-    LSysTurtleStateF ts;
+    LSysTurtleState ts;
 
     ts.stack_overflow = false;
     ts.max_angle = g_max_angle;

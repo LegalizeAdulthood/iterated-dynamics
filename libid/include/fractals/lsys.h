@@ -11,7 +11,7 @@ enum
     MAX_LSYS_LINE_LEN = 255 // this limits line length to 255
 };
 
-struct LSysTurtleStateF
+struct LSysTurtleState
 {
     char counter, angle, reverse;
     bool stack_overflow;
@@ -31,9 +31,9 @@ struct LSysTurtleStateF
 
 extern char g_max_angle;
 
-struct LSysFCmd;
-LSysFCmd *draw_lsysf(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
-bool lsysf_find_scale(LSysFCmd *command, LSysTurtleStateF *ts, LSysFCmd **rules, int depth);
-LSysFCmd *lsysf_size_transform(char const *s, LSysTurtleStateF *ts);
-LSysFCmd *lsysf_draw_transform(char const *s, LSysTurtleStateF *ts);
+struct LSysCmd;
+LSysCmd *draw_lsysf(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);
+bool lsysf_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);
+LSysCmd *lsysf_size_transform(char const *s, LSysTurtleState *ts);
+LSysCmd *lsysf_draw_transform(char const *s, LSysTurtleState *ts);
 void lsysf_do_sin_cos();
