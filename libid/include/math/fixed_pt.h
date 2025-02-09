@@ -4,9 +4,6 @@
 
 // Fixed-point math, e.g. 'long' arithmetic, related data and functions
 
-extern int                   g_bit_shift;
-extern long                  g_fudge_factor;
-extern double                g_fudge_limit;
 extern bool                  g_overflow;
 
 // TODO: Implement these routines using only integer operations
@@ -34,9 +31,4 @@ inline long multiply(long x, long y, int n)
         g_overflow = true;
     }
     return l;
-}
-
-inline long lsqr(long x)
-{
-    return multiply(x, x, g_bit_shift);
 }

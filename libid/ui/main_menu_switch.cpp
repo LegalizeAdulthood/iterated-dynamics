@@ -189,7 +189,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_y_max = g_cur_fractal_specific->y_max;
         g_x_3rd = g_x_min;
         g_y_3rd = g_y_min;
-        if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
+        if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1)
         {
             g_x_min *= 3.0;
             g_x_max *= 3.0;

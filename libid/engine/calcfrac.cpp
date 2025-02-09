@@ -93,7 +93,6 @@ static long auto_log_map();
 static DComplex s_saved{};            //
 static double s_rq_lim_save{};        //
 static int (*s_calc_type_tmp)(){};    //
-static unsigned long s_lm{};          // magnitude limit (CALCMAND)
 static double s_dem_delta{};          //
 static double s_dem_width{};          // distance estimator variables
 static double s_dem_too_big{};        //
@@ -645,7 +644,6 @@ int calc_fract()
             setup_log_table();
         }
     }
-    s_lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
 
     g_atan_colors = g_colors;
 

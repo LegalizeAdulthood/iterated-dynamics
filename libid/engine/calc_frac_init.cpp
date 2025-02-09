@@ -249,9 +249,6 @@ init_restart:
         g_y_3rd = g_y_min;
     }
 
-    g_bit_shift = 16; // to allow larger corners
-    g_fudge_factor = 1L << g_bit_shift;
-
     g_f_at_rad = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel

@@ -60,7 +60,6 @@ int g_degree{};
 int g_basin{};
 long g_fudge_half{};
 DComplex g_power_z{};
-int g_bit_shift_less_1{}; // bit shift less 1
 int g_c_exponent{};
 DComplex g_param_z1{};
 DComplex g_param_z2{};

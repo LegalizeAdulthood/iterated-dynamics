@@ -49,8 +49,6 @@ int diffusion()
 
     int y = -1;
     int x = y;
-    g_bit_shift = 16;
-    g_fudge_factor = 1L << 16;
 
     int border = (int) g_params[0]; // Distance between release point and fractal
     int mode = (int) g_params[1];   // Determines diffusion type:  0 = central (classic)

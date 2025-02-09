@@ -285,6 +285,8 @@ struct ErrorData
     ParseError error_number;
 };
 
+constexpr int BIT_SHIFT{16};
+
 } // namespace
 
 // forward declarations
@@ -353,9 +355,6 @@ static unsigned int s_next_op{};
 static unsigned int s_init_n{};
 static int s_paren{};
 static bool s_expecting_arg{};
-static int s_delta16{};
-static double s_fudge{};
-static int s_shift_back{};
 static bool s_set_random{};
 static bool s_randomized{};
 static unsigned long s_rand_num{};
@@ -677,10 +676,10 @@ static void d_random()
 {
     /* Use the same algorithm as for fixed math so that they will generate
            the same fractals when the srand() function is used. */
-    long x = new_random_num() >> (32 - g_bit_shift);
-    long y = new_random_num() >> (32 - g_bit_shift);
-    s_vars[7].a.d.x = ((double)x / (1L << g_bit_shift));
-    s_vars[7].a.d.y = ((double)y / (1L << g_bit_shift));
+    long x = new_random_num() >> (32 - BIT_SHIFT);
+    long y = new_random_num() >> (32 - BIT_SHIFT);
+    s_vars[7].a.d.x = ((double)x / (1L << BIT_SHIFT));
+    s_vars[7].a.d.y = ((double)y / (1L << BIT_SHIFT));
 }
 
 static void set_random()
@@ -716,8 +715,8 @@ static void random_seed()
 
 static void d_stk_srand()
 {
-    s_rand_x = (long)(g_arg1->d.x * (1L << g_bit_shift));
-    s_rand_y = (long)(g_arg1->d.y * (1L << g_bit_shift));
+    s_rand_x = (long)(g_arg1->d.x * (1L << BIT_SHIFT));
+    s_rand_y = (long)(g_arg1->d.y * (1L << BIT_SHIFT));
     set_random();
     d_random();
     g_arg1->d = s_vars[7].a.d;
@@ -3045,11 +3044,6 @@ void init_misc()
     }
     g_arg1 = &arg_first;
     g_arg2 = &arg_second; // needed by all the ?stk* functions
-    s_fudge = (double)(1L << g_bit_shift);
-    g_fudge_limit = (double)0x7fffffffL / s_fudge;
-    s_shift_back = 32 - g_bit_shift;
-    s_delta16 = g_bit_shift - 16;
-    g_bit_shift_less_1 = g_bit_shift-1;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;

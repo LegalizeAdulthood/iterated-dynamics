@@ -28,34 +28,15 @@
 //              Setup (once per fractal image) routines
 // --------------------------------------------------------------------
 
-bool
-mandel_setup()           // Mandelbrot Routine
+// Mandelbrot Routine
+bool mandel_setup()
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         return mandel_perturbation_setup();
     }
-    if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL
-        && (g_invert == 0)
-        && g_decomp[0] == 0
-        && g_magnitude_limit == 4.0
-        && g_bit_shift == 29
-        && !g_potential_flag
-        && g_biomorph == -1
-        && g_inside_color > ZMAG
-        && g_outside_color >= ITER
-        && g_use_init_orbit != InitOrbitMode::VALUE
-        && !g_using_jiim
-        && g_bailout_test == Bailout::MOD
-        && (g_orbit_save_flags & OSF_MIDI) == 0)
-    {
-        g_calc_type = calc_mand; // the normal case - use CALCMAND
-    }
-    else
-    {
-        // special case: use the main processing loop
-        g_calc_type = standard_fractal;
-    }
+    // use the main processing loop
+    g_calc_type = standard_fractal;
     return true;
 }
 

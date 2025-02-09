@@ -8,7 +8,6 @@
 #include <complex>
 
 extern int                   g_basin;
-extern int                   g_bit_shift_less_1;
 extern int                   g_c_exponent;
 extern double                g_cos_x;
 extern int                   g_degree;
