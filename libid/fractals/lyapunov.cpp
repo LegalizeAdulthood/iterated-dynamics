@@ -3,26 +3,20 @@
 #include "fractals/lyapunov.h"
 
 #include "engine/calcfrac.h"
-#include "engine/engine_timer.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
 #include "engine/pixel_grid.h"
-#include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "fractals/population.h"
 #include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "misc/id.h"
-#include "ui/cmdfiles.h"
 #include "ui/stop_msg.h"
 
 #include <cmath>
 #include <cstdlib>
-#include <new>
-#include <vector>
 
 static unsigned long s_filter_cycles{};
 static int s_lya_length{};
