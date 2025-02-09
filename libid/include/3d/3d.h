@@ -8,13 +8,11 @@ enum
     ROW_MAX = 4  // maximum row    (4 x 4 matrix)
 };
 using Matrix = double[ROW_MAX][COL_MAX];  // matrix of doubles
-using MatrixI = int[ROW_MAX][COL_MAX];  // matrix of ints
 using MatrixL = long[ROW_MAX][COL_MAX];  // matrix of longs
 /* A Matrix is used to describe a transformation from one coordinate
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
 using Vector = double[3];  // vector of doubles
-using VectorI = int[3];  // vector of ints
 using VectorL = long[3];  // vector of longs
 /* A Vector is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
@@ -84,5 +82,3 @@ int vec_mat_mul(Vector s, Matrix m, Vector t);
 void vec_g_mat_mul(Vector s);
 int perspective(Vector v);
 int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, int bit_shift);
-int long_persp(VectorL v, VectorL view, int bit_shift);
-int long_vec_mat_mul(VectorL s, MatrixL m, VectorL t, int bit_shift);

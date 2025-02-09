@@ -353,28 +353,3 @@ int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL 
     t[2] = tmp[2];
     return g_overflow ? 1 : 0;
 }
-
-int long_vec_mat_mul(VectorL s, MatrixL m, VectorL t, int bit_shift)
-{
-    VectorL tmp;
-    g_overflow = false;
-    int k = COL_MAX - 1;
-
-    for (int j = 0; j < k; j++)
-    {
-        tmp[j] = 0;
-        for (int i = 0; i < ROW_MAX-1; i++)
-        {
-            tmp[j] += multiply(s[i], m[i][j], bit_shift);
-        }
-        // vector is really four dimensional with last component always 1
-        tmp[j] += m[3][j];
-    }
-
-    // set target = tmp. Necessary to use tmp in case source = target
-    // faster than for loop, if less general
-    t[0] = tmp[0];
-    t[1] = tmp[1];
-    t[2] = tmp[2];
-    return g_overflow ? 1 : 0;
-}
