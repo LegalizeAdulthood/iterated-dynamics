@@ -75,7 +75,8 @@ double g_potential_params[3]{};                                        // three 
 ConfigStatus g_bad_config{};                                           // 'id.cfg' ok?
 bool g_has_inverse{};                                                  //
 int g_integer_fractal{};                                               // TRUE if fractal uses integer math
-                         // user_xxx is what the user wants, vs what we may be forced to do
+bool g_use_perturbation{};                                             // select perturbation code
+                           // user_xxx is what the user wants, vs what we may be forced to do
 char g_user_std_calc_mode{};            //
 int g_user_periodicity_value{};         //
 long g_user_distance_estimator_value{}; //

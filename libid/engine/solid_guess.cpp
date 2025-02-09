@@ -7,7 +7,7 @@
 #include "engine/pixel_limits.h"
 #include "engine/work_list.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
+#include "misc/driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/video.h"
 
@@ -276,6 +276,13 @@ static bool guess_row(bool first_pass, int y, int block_size)
     unsigned int *pfx_ptr;
     unsigned int pfx_mask;
 
+    /*
+    if (g_pixel_is_complete && g_use_perturbation)
+    {
+        add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_symmetry);
+        return false;
+    }
+    */
     c42 = 0;  // just for warning
     c41 = 0;
     c44 = 0;
@@ -330,7 +337,10 @@ static bool guess_row(bool first_pass, int y, int block_size)
 
         if (first_pass)    // 1st pass, paint topleft corner
         {
-            plot_block(0, x, y, c22);
+            if (!(g_pixel_is_complete && g_use_perturbation))
+            {
+                plot_block(0, x, y, c22);
+            }
         }
         // setup variables
         x_plus_half = x + s_half_block;
@@ -446,36 +456,46 @@ static bool guess_row(bool first_pass, int y, int block_size)
             {
                 if (s_guess_plot)
                 {
-                    if (guessed23 > 0)
+                    if (!(g_pixel_is_complete && g_use_perturbation))
                     {
-                        (*g_plot)(x, y_plus_half, c23);
-                    }
-                    if (guessed32 > 0)
-                    {
-                        (*g_plot)(x_plus_half, y, c32);
-                    }
-                    if (guessed33 > 0)
-                    {
-                        (*g_plot)(x_plus_half, y_plus_half, c33);
+                        if (guessed23 > 0)
+                        {
+                            (*g_plot)(x, y_plus_half, c23);
+                        }
+                        if (guessed32 > 0)
+                        {
+                            (*g_plot)(x_plus_half, y, c32);
+                        }
+                        if (guessed33 > 0)
+                        {
+                            (*g_plot)(x_plus_half, y_plus_half, c33);
+                        }
                     }
                 }
-                plot_block(1, x, y_plus_half, c23);
-                plot_block(0, x_plus_half, y, c32);
-                plot_block(1, x_plus_half, y_plus_half, c33);
+                if (!(g_pixel_is_complete && g_use_perturbation))
+                {
+                    plot_block(1, x, y_plus_half, c23);
+                    plot_block(0, x_plus_half, y, c32);
+                    plot_block(1, x_plus_half, y_plus_half, c33);
+                }
+
             }
             else  // repaint changed blocks
             {
-                if (c23 != c22)
+                if (!(g_pixel_is_complete && g_use_perturbation))
                 {
-                    plot_block(-1, x, y_plus_half, c23);
-                }
-                if (c32 != c22)
-                {
-                    plot_block(-1, x_plus_half, y, c32);
-                }
-                if (c33 != c22)
-                {
-                    plot_block(-1, x_plus_half, y_plus_half, c33);
+                    if (c23 != c22)
+                    {
+                        plot_block(-1, x, y_plus_half, c23);
+                    }
+                    if (c32 != c22)
+                    {
+                        plot_block(-1, x_plus_half, y, c32);
+                    }
+                    if (c33 != c22)
+                    {
+                        plot_block(-1, x_plus_half, y_plus_half, c33);
+                    }
                 }
             }
         }
@@ -503,7 +523,10 @@ static bool guess_row(bool first_pass, int y, int block_size)
             }
             if (s_half_block > 1 && c21 != c22)
             {
-                plot_block(-1, x, y_less_half, c21);
+                if (!(g_pixel_is_complete && g_use_perturbation))
+                {
+                    plot_block(-1, x, y_less_half, c21);
+                }
             }
         }
         if (fix31)
@@ -515,7 +538,10 @@ static bool guess_row(bool first_pass, int y, int block_size)
             }
             if (s_half_block > 1 && c31 != c22)
             {
-                plot_block(-1, x_plus_half, y_less_half, c31);
+                if (!(g_pixel_is_complete && g_use_perturbation))
+                {
+                    plot_block(-1, x_plus_half, y_less_half, c31);
+                }
             }
         }
         if (c23 != c22)
@@ -529,7 +555,10 @@ static bool guess_row(bool first_pass, int y, int block_size)
                 }
                 if (s_half_block > 1 && c12 != c22)
                 {
-                    plot_block(-1, x-s_half_block, y, c12);
+                    if (!(g_pixel_is_complete && g_use_perturbation))
+                    {
+                        plot_block(-1, x - s_half_block, y, c12);
+                    }
                 }
             }
             if (guessed13)
@@ -541,7 +570,10 @@ static bool guess_row(bool first_pass, int y, int block_size)
                 }
                 if (s_half_block > 1 && c13 != c22)
                 {
-                    plot_block(-1, x-s_half_block, y_plus_half, c13);
+                    if (!(g_pixel_is_complete && g_use_perturbation))
+                    {
+                        plot_block(-1, x - s_half_block, y_plus_half, c13);
+                    }
                 }
             }
         }
@@ -567,12 +599,18 @@ static bool guess_row(bool first_pass, int y, int block_size)
         j = y+i;
         if (j <= g_i_y_stop)
         {
+            if (!(g_pixel_is_complete && g_use_perturbation))
+            {
             write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
+            }
         }
         j = y+i+s_half_block;
         if (j <= g_i_y_stop)
         {
-            write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
+            if (!(g_pixel_is_complete && g_use_perturbation))
+            {
+                write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start + OLD_MAX_PIXELS]);
+            }
         }
         if (driver_key_pressed())
         {
@@ -601,12 +639,18 @@ static bool guess_row(bool first_pass, int y, int block_size)
             j = g_yy_stop-(y+i-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
+                if (!(g_pixel_is_complete && g_use_perturbation))
+                {
+                    write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start]);
+                }
             }
             j = g_yy_stop-(y+i+s_half_block-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start+OLD_MAX_PIXELS]);
+                if (!(g_pixel_is_complete && g_use_perturbation))
+                {
+                    write_span(j, g_xx_start, g_i_x_stop, &s_stack[g_xx_start + OLD_MAX_PIXELS]);
+                }
             }
             if (driver_key_pressed())
             {
