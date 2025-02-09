@@ -370,10 +370,6 @@ int mandel_per_pixel()
     }
     switch (g_fractal_type)
     {
-    case FractalType::MANDEL_LAMBDA:              // Critical Value 0.5 + 0.0i
-        g_l_old_z.x = g_fudge_half;
-        g_l_old_z.y = 0;
-        break;
     default:
         g_l_old_z = g_l_init;
         break;

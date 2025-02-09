@@ -490,7 +490,7 @@ bool encoder()
     }
     // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
     //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
-    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA_FP)
     {
         save_info.tot_extend_len += store_item_name(g_formula_name.c_str());
     }
@@ -706,7 +706,7 @@ static int store_item_name(char const *name)
 {
     FormulaInfo formula_info{};
     std::strncpy(formula_info.form_name, name, std::size(formula_info.form_name));
-    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA_FP)
     {
         formula_info.uses_p1 = static_cast<std::int16_t>(g_frm_uses_p1);
         formula_info.uses_p2 = static_cast<std::int16_t>(g_frm_uses_p2);
@@ -734,7 +734,7 @@ static int store_item_name(char const *name)
 
 static void setup_save_info(FractalInfo *save_info)
 {
-    if (g_fractal_type != FractalType::FORMULA && g_fractal_type != FractalType::FORMULA_FP)
+    if (g_fractal_type != FractalType::FORMULA_FP)
     {
         g_max_function = 0;
     }

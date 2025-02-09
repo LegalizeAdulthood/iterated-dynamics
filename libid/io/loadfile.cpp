@@ -768,8 +768,8 @@ static void backwards_info13(FractalInfo read_info)
     {
         g_quick_calc = read_info.quick_calc != 0;
         g_close_proximity = read_info.close_prox;
-        if (g_fractal_type == FractalType::POPCORN_FP || g_fractal_type == FractalType::POPCORN_L ||
-            g_fractal_type == FractalType::POPCORN_JUL_FP || g_fractal_type == FractalType::POPCORN_JUL_L ||
+        if (g_fractal_type == FractalType::POPCORN_FP ||
+            g_fractal_type == FractalType::POPCORN_JUL_FP ||
             g_fractal_type == FractalType::LATOO)
         {
             g_new_bifurcation_functions_loaded = true;
@@ -839,6 +839,7 @@ static void backwards_id1_2(FractalInfo read_info)
 namespace
 {
 
+// Integer fractal types that could be encountered from loaded GIF files
 enum class DeprecatedIntegerType
 {
     MANDEL                      = 0,
@@ -1140,18 +1141,17 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_3_info.got_data)
     {
         blk_3_info.form_name[ITEM_NAME_LEN] = 0;
-        switch (static_cast<FractalType>(read_info.fractal_type))
+        if (const FractalType read_type{migrate_integer_types(read_info.fractal_type)};
+            read_type == FractalType::L_SYSTEM)
         {
-        case FractalType::L_SYSTEM:
             g_l_system_name = blk_3_info.form_name;
-            break;
-
-        case FractalType::IFS:
-        case FractalType::IFS_3D:
+        }
+        else if (read_type == FractalType::IFS || read_type == FractalType::IFS_3D)
+        {
             g_ifs_name = blk_3_info.form_name;
-            break;
-
-        default:
+        }
+        else
+        {
             g_formula_name = blk_3_info.form_name;
             g_frm_uses_p1 = blk_3_info.uses_p1 != 0;
             g_frm_uses_p2 = blk_3_info.uses_p2 != 0;
@@ -1160,7 +1160,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_is_mandelbrot = blk_3_info.ismand != 0;
             g_frm_uses_p4 = blk_3_info.uses_p4 != 0;
             g_frm_uses_p5 = blk_3_info.uses_p5 != 0;
-            break;
         }
         // perhaps in future add more here, check block_len for backward compatibility
     }
@@ -1718,43 +1717,43 @@ static void backwards_compat(FractalInfo *info)
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::MANDEL_SINE_L:
-        set_fractal_type(FractalType::MANDEL_TRIG);
+        set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::SIN;
         break;
     case DeprecatedFractalType::LAMBDA_SINE_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG);
+        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::SIN;
         break;
     case DeprecatedFractalType::MANDEL_COS_L:
-        set_fractal_type(FractalType::MANDEL_TRIG);
+        set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::COSXX;
         break;
     case DeprecatedFractalType::LAMBDA_COS_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG);
+        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::COSXX;
         break;
     case DeprecatedFractalType::MANDEL_SINH_L:
-        set_fractal_type(FractalType::MANDEL_TRIG);
+        set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::SINH;
         break;
     case DeprecatedFractalType::LAMBDA_SINH_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG);
+        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::SINH;
         break;
     case DeprecatedFractalType::MANDEL_COSH_L:
-        set_fractal_type(FractalType::MANDEL_TRIG);
+        set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::LAMBDA_COSH_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG);
+        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::MANDEL_EXP_L:
-        set_fractal_type(FractalType::MANDEL_TRIG);
+        set_fractal_type(FractalType::MANDEL_TRIG_FP);
         g_trig_index[0] = TrigFn::EXP;
         break;
     case DeprecatedFractalType::LAMBDA_EXP_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG);
+        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
         g_trig_index[0] = TrigFn::EXP;
         break;
     case DeprecatedFractalType::DEM_M:
@@ -1768,7 +1767,7 @@ static void backwards_compat(FractalInfo *info)
     default:
         break;
     }
-    if (g_fractal_type == FractalType::MANDEL_LAMBDA)
+    if (g_fractal_type == FractalType::MANDEL_LAMBDA_FP)
     {
         g_use_init_orbit = InitOrbitMode::PIXEL;
     }
@@ -1785,18 +1784,13 @@ void set_if_old_bif()
     switch (g_fractal_type)
     {
     case FractalType::BIFURCATION:
-    case FractalType::BIFURCATION_L:
     case FractalType::BIF_STEWART:
-    case FractalType::BIF_STEWART_L:
     case FractalType::BIF_LAMBDA:
-    case FractalType::BIF_LAMBDA_L:
         set_trig_array(0, "ident");
         break;
 
     case FractalType::BIF_EQ_SIN_PI:
-    case FractalType::BIF_EQ_SIN_PI_L:
     case FractalType::BIF_PLUS_SIN_PI:
-    case FractalType::BIF_PLUS_SIN_PI_L:
         set_trig_array(0, "sin");
         break;
 
@@ -1811,9 +1805,7 @@ void set_function_param_defaults()
     switch (g_fractal_type)
     {
     case FractalType::POPCORN_FP:
-    case FractalType::POPCORN_L:
     case FractalType::POPCORN_JUL_FP:
-    case FractalType::POPCORN_JUL_L:
         set_trig_array(0, "sin");
         set_trig_array(1, "tan");
         set_trig_array(2, "sin");
@@ -1838,19 +1830,18 @@ void backwards_legacy_v18()
     {
         set_if_old_bif(); // old bifs need function set
     }
-    if (g_file_version < 1800)
+    if (g_file_version < 1800                                                                            //
+        && (g_fractal_type == FractalType::MANDEL_TRIG_FP || g_fractal_type == FractalType::LAMBDA_TRIG_FP) //
+        && g_user_float_flag                                                                             //
+        && g_bailout == 0)
     {
-        if ((g_fractal_type == FractalType::MANDEL_TRIG || g_fractal_type == FractalType::LAMBDA_TRIG) &&
-            g_user_float_flag && g_bailout == 0)
-        {
-            g_bailout = 2500;
-        }
+        g_bailout = 2500;
     }
 }
 
 void backwards_legacy_v19()
 {
-    if (g_fractal_type == FractalType::MARKS_JULIA || g_fractal_type == FractalType::MARKS_JULIA_FP)
+    if (g_fractal_type == FractalType::MARKS_JULIA_FP)
     {
         if (g_file_version < 1825)
         {
@@ -1864,7 +1855,7 @@ void backwards_legacy_v19()
             }
         }
     }
-    else if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+    else if (g_fractal_type == FractalType::FORMULA_FP)
     {
         if (g_file_version < 1824)
         {
@@ -1885,10 +1876,9 @@ void backwards_legacy_v19()
 void backwards_legacy_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
-    g_bad_outside = g_file_version <= 1960 && //
-        (g_fractal_type == FractalType::MANDEL_FP || g_fractal_type == FractalType::JULIA_FP ||
-            g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA) &&
-        g_outside_color <= REAL && g_outside_color >= SUM;
+    g_bad_outside = g_file_version <= 1960                                                       //
+        && (g_fractal_type == FractalType::MANDEL_FP || g_fractal_type == FractalType::JULIA_FP) //
+        && g_outside_color <= REAL && g_outside_color >= SUM;
 
     if (g_file_version < 1961 && g_inside_color == EPS_CROSS)
     {
@@ -2617,8 +2607,7 @@ static bool function_ok(FractalInfo const *info, int num_fn)
 static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
 {
     int num_fn;
-    if ((g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP) &&
-        (info->fractal_type == +FractalType::FORMULA || info->fractal_type == +FractalType::FORMULA_FP))
+    if (g_fractal_type == FractalType::FORMULA_FP && migrate_integer_types(info->fractal_type) == FractalType::FORMULA_FP)
     {
         if (string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
         {

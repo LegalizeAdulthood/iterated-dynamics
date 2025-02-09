@@ -174,7 +174,7 @@ static bool tab_display2(char *msg)
               g_num_fractal_types*(int)sizeof(FractalSpecific));
     write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);
     ++row;
-    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA_FP)
     {
         write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
                   g_operation_index, g_variable_index);
@@ -245,7 +245,7 @@ int tab_display()       // display the status of the current image
         bf_x_ctr = alloc_stack(g_bf_length+2);
         bf_y_ctr = alloc_stack(g_bf_length+2);
     }
-    if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA_FP)
     {
         for (int i = 0; i < MAX_PARAMS; i += 2)
         {
@@ -271,7 +271,7 @@ top:
     {
         driver_put_string(start_row, 16, C_GENERAL_HI, g_cur_fractal_specific->name);
         int i = 0;
-        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+        if (g_fractal_type == FractalType::FORMULA_FP)
         {
             driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(start_row+1, 16, C_GENERAL_HI, g_formula_name);

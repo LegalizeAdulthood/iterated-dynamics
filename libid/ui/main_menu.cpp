@@ -38,9 +38,8 @@ static bool has_julia_toggle()
 
 static bool is_julia()
 {
-    return g_fractal_type == FractalType::JULIA   //
-        || g_fractal_type == FractalType::JULIA_FP //
-        || g_fractal_type == FractalType::INVERSE_JULIA;
+    return g_fractal_type == FractalType::JULIA_FP //
+        || g_fractal_type == FractalType::INVERSE_JULIA_FP;
 }
 
 static int menu_check_key(int key, int /*choice*/)

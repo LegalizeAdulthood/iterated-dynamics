@@ -626,7 +626,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
 
         put_param(" type=%s", g_cur_fractal_specific->name);
 
-        if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
+        if (g_fractal_type == FractalType::JULIBROT_FP)
         {
             put_param(" %s=%.15g/%.15g/%.15g/%.15g",
                      "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
@@ -645,7 +645,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             {
                 put_param(" %s=%g", "julibroteyes", g_eyes_fp);
             }
-            if (g_new_orbit_type != FractalType::JULIA)
+            if (g_new_orbit_type != FractalType::JULIA_FP)
             {
                 put_param(" orbitname=%s", get_fractal_specific(g_new_orbit_type)->name);
             }
@@ -654,7 +654,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
                 put_param(" %s=%s", "3dmode", to_string(g_julibrot_3d_mode));
             }
         }
-        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+        if (g_fractal_type == FractalType::FORMULA_FP)
         {
             put_file_name("formulafile", g_formula_filename.c_str());
             put_param(" %s=%s", "formulaname", g_formula_name.c_str());
@@ -673,7 +673,7 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
             put_file_name("ifsfile", g_ifs_filename.c_str());
             put_param(" %s=%s", "ifs", g_ifs_name.c_str());
         }
-        if (g_fractal_type == FractalType::INVERSE_JULIA || g_fractal_type == FractalType::INVERSE_JULIA_FP)
+        if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
         {
             put_param(" %s=%s/%s", "miim", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
@@ -788,8 +788,8 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
         int i;
         for (i = (MAX_PARAMS-1); i >= 0; --i)
         {
-            if (type_has_param((g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
-                            ?g_new_orbit_type:g_fractal_type, i, nullptr))
+            if (type_has_param(g_fractal_type == FractalType::JULIBROT_FP ? g_new_orbit_type : g_fractal_type,
+                    i, nullptr))
             {
                 break;
             }

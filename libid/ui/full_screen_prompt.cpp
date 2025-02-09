@@ -132,7 +132,7 @@ void Prompt::init_scroll_file()
         */
     if (extra_info && *extra_info)
     {
-        if (g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP)
+        if (g_fractal_type == FractalType::FORMULA_FP)
         {
             find_file_item(g_formula_filename, g_formula_name.c_str(), &scroll_file, ItemType::FORMULA);
             in_scrolling_mode = true;

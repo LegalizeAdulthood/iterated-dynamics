@@ -8,10 +8,8 @@
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
+#include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "math/mpmath.h"
-#include "misc/debug_flags.h"
-#include "ui/cmdfiles.h"
 
 #include <cassert>
 #include <cfloat>
@@ -19,7 +17,6 @@
 #include <vector>
 
 static double                s_degree_minus_1_over_degree{};
-static std::vector<MPC>      s_mpc_roots;
 static double                s_newton_r_over_d{};
 static std::vector<DComplex> s_roots;
 static double                s_threshold{};
@@ -34,9 +31,6 @@ static DComplex s_temp{};
 static DComplex s_base_log{};
 static DComplex s_c_degree{3.0, 0.0};
 static DComplex s_c_root{1.0, 0.0};
-static MP s_newton_mp_r_over_d{};
-static MP s_mp_degree_minus_1_over_degree{};
-static MP s_mp_threshold{};
 
 // transform points with reciprocal function
 void invertz2(DComplex *z)
@@ -86,7 +80,7 @@ int newton_fractal2()
 
     if (distance1(g_new_z) < s_threshold)
     {
-        if (g_fractal_type == FractalType::NEWT_BASIN || g_fractal_type == FractalType::NEWT_BASIN_MP)
+        if (g_fractal_type == FractalType::NEWT_BASIN)
         {
             long tmp_color = -1;
             /* this code determines which degree-th root of root the
@@ -251,20 +245,9 @@ int complex_basin()
 // Newton/NewtBasin Routines
 bool newton_setup()
 {
-    if (g_debug_flag != DebugFlags::ALLOW_NEWTON_MP_TYPE)
-    {
-        if (g_fractal_type == FractalType::NEWTON_MP)
-        {
-            set_fractal_type(FractalType::NEWTON);
-        }
-        else if (g_fractal_type == FractalType::NEWT_BASIN_MP)
-        {
-            set_fractal_type(FractalType::NEWT_BASIN);
-        }
-        // TODO: is it necessary to update g_cur_fractal_specific?
-        assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
-        g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
-    }
+    // TODO: is it necessary to update g_cur_fractal_specific?
+    assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
+    g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     // set up table of roots of 1 along unit circle
     g_degree = (int)g_param_z1.x;
     if (g_degree < 2)
@@ -277,13 +260,6 @@ bool newton_setup()
     s_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
     g_max_color     = 0;
     s_threshold    = .3*PI/g_degree; // less than half distance between roots
-    if (g_fractal_type == FractalType::NEWTON_MP || g_fractal_type == FractalType::NEWT_BASIN_MP)
-    {
-        s_newton_mp_r_over_d = *d_to_mp(s_newton_r_over_d);
-        s_mp_degree_minus_1_over_degree = *d_to_mp(s_degree_minus_1_over_degree);
-        s_mp_threshold = *d_to_mp(s_threshold);
-        g_mp_one = *d_to_mp(1.0);
-    }
 
     g_basin = 0;
     s_roots.resize(16);
@@ -304,26 +280,6 @@ bool newton_setup()
         {
             s_roots[i].x = std::cos(i*PI*2.0/(double)g_degree);
             s_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
-        }
-    }
-    else if (g_fractal_type == FractalType::NEWT_BASIN_MP)
-    {
-        if (g_param_z1.y)
-        {
-            g_basin = 2;    //stripes
-        }
-        else
-        {
-            g_basin = 1;
-        }
-
-        s_mpc_roots.resize(g_degree);
-
-        // list of roots to discover where we converged for newtbasin
-        for (int i = 0; i < g_degree; i++)
-        {
-            s_mpc_roots[i].x = *d_to_mp(std::cos(i*PI*2.0/(double)g_degree));
-            s_mpc_roots[i].y = *d_to_mp(std::sin(i*PI*2.0/(double)g_degree));
         }
     }
 

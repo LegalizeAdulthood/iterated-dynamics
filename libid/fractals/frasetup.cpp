@@ -180,7 +180,7 @@ mandel_fp_setup()
             g_periodicity_check = 4;
         }
         break;
-    case FractalType::TRIG_PLUS_TRIG:
+    case FractalType::TRIG_PLUS_TRIG_FP:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         break;
     case FractalType::MAN_TRIG_PLUS_EXP_FP:
@@ -305,7 +305,7 @@ julia_fp_setup()
         get_julia_attractor(0.0, 0.0);    // another attractor?
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
-    case FractalType::MAN_O_WAR:
+    case FractalType::MAN_O_WAR_FP:
         if (g_param_z1.y == 0.0)
         {
             g_symmetry = SymmetryType::X_AXIS;

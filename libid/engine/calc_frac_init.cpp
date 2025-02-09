@@ -161,29 +161,29 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
             init_bf_dec(got_prec);
         }
     }
-    else if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
-        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
+    else if (g_fractal_type == FractalType::MANDEL_FP &&
+        g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::MANDEL_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::JULIA_FP)
-        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
+    else if (g_fractal_type == FractalType::JULIA_FP &&
+        g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::JULIA_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == FractalType::MANDEL_Z_POWER_L || g_fractal_type == FractalType::MANDEL_Z_POWER_FP)
-        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
+    else if (g_fractal_type == FractalType::MANDEL_Z_POWER_FP &&
+        g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::MANDEL_Z_POWER_FP);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == FractalType::JULIA_Z_POWER_L || g_fractal_type == FractalType::JULIA_Z_POWER_FP)
-        && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
+    else if (g_fractal_type == FractalType::JULIA_Z_POWER_FP &&
+        g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::JULIA_Z_POWER_FP);
         fractal_float_to_bf();
@@ -203,7 +203,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     g_float_flag = true;
     if (g_user_std_calc_mode == 's')
     {
-        if (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
+        if (g_fractal_type == FractalType::MANDEL_FP)
         {
             g_float_flag = true;
         }
@@ -241,12 +241,6 @@ init_restart:
     if (g_distance_estimator)
     {
         g_float_flag = true;  // force floating point for dist est
-    }
-
-    // match Julibrot with integer mode of orbit
-    if (g_fractal_type == FractalType::JULIBROT)
-    {
-        set_fractal_type(FractalType::JULIBROT_FP);
     }
 
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
@@ -300,24 +294,6 @@ init_restart:
     if (g_integer_fractal == 0)
     {
         g_bit_shift = 16; // to allow larger corners
-    }
-    // We want this code if we're using the assembler calcmand
-    if (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA)
-    {
-        // adjust shift bits if...
-        if (!g_potential_flag                                    // not using potential
-            && (g_params[0] > -2.0 && g_params[0] < 2.0)  // parameters not too large
-            && (g_params[1] > -2.0 && g_params[1] < 2.0)
-            && (g_invert == 0)                        // and not inverting
-            && g_biomorph == -1                     // and not biomorphing
-            && g_magnitude_limit <= 4.0                         // and bailout not too high
-            && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
-            && g_debug_flag != DebugFlags::FORCE_SMALLER_BIT_SHIFT // and not debugging
-            && g_close_proximity <= 2.0             // and g_close_proximity not too large
-            && g_bailout_test == Bailout::MOD)    // and bailout test = mod
-        {
-            g_bit_shift = FUDGE_FACTOR;                     // use the larger bitshift
-        }
     }
 
     g_fudge_factor = 1L << g_bit_shift;

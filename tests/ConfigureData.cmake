@@ -59,8 +59,30 @@ configure_gif_extension_file(4)
 configure_gif_extension_file(5)
 configure_gif_extension_file(6)
 configure_gif_extension_file(7)
-SET(ID_TEST_GIF_MANDEL_INT "${ID_TEST_GIF_DIR}/mandel-int.gif")
-configure_file("gif/mandel-int.gif" "${ID_TEST_GIF_MANDEL_INT}" COPYONLY)
+
+function(configure_migrate_int_gif name)
+    set(var "ID_TEST_GIF_${name}_INT")
+    string(TOUPPER "${var}" var)
+    set(path "${ID_TEST_GIF_DIR}/${name}-int.gif")
+    configure_file("gif/${name}-int.gif" "${path}" COPYONLY)
+    set(${var} "${path}" PARENT_SCOPE)
+endfunction()
+foreach(name
+        mandel julia lambda manowar sierpinski barnsleym1 barnsleyj1
+        barnsleym2 barnsleyj2 barnsleym3 barnsleyj3 sqrtrig trigplustrig
+        mandellambda marksmandel marksjulia unity mandel4 julia4 trigsqr
+        trigxtrig sqr1fn fnmulzz kam kam3d lambdatrig manfnzsqrd julfnzsqrd
+        mandelfn manzpower julzpower manfnplusexp julfnplusexp popcorn
+        lorenz newton newtbasin lorenz3d formula julibrot rossler henon
+        spider bifurcation biflambda popcornjulia manowarjulia fnzfnpix
+        marksmandelpower timserror bifeqsinpi bifplussinpi bifstewart
+        lambdafnfn juliafnfn manlamfnfn mandelfnfn bifmay halleymp
+        juliainverse phoenix mandphoenix frothybasin phoenixcmplx
+        mandphoenixcmplx
+    )
+    configure_migrate_int_gif(${name})
+endforeach()
+configure_file(include/test_migrate_gif.h.in include/test_migrate_gif.h @ONLY)
 
 # IFS test data
 set(ID_TEST_FIRST_IFS_NAME "binary")

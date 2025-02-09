@@ -37,7 +37,7 @@ bool type_has_param(FractalType type, int param, char *buf)
         }
     }
 
-    if (type == FractalType::FORMULA || type == FractalType::FORMULA_FP)
+    if (type == FractalType::FORMULA_FP)
     {
         if (param_not_used(param))
         {

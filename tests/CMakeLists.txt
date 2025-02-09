@@ -44,11 +44,13 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_check_write_file_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
     include/CurrentPathSaver.h
     include/MockDriver.h
     include/ValueUnchanged.h
     include/test_config_data.h.in
     include/test_data.h.in
+    include/test_migrate_gif.h.in
     engine/test_log_map.cpp
     engine/test_resume.cpp
     fractals/test_check_orbit_name.cpp

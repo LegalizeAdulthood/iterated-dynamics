@@ -566,7 +566,7 @@ static void init_vars_fractal()
     g_julibrot_dist_fp = 24;                                        //
     g_eyes_fp = 2.5F;                                               //
     g_julibrot_depth_fp = 8;                                        //
-    g_new_orbit_type = FractalType::JULIA;                          //
+    g_new_orbit_type = FractalType::JULIA_FP;                       //
     g_julibrot_z_dots = 128;                                        //
     init_vars3d();                                                  //
     g_base_hertz = 440;                                             // basic hertz rate

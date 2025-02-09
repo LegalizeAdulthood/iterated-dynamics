@@ -513,7 +513,6 @@ void save_history_info()
     std::memcpy(current.dac_box, g_dac_box, 256*3);
     switch (g_fractal_type)
     {
-    case FractalType::FORMULA:
     case FractalType::FORMULA_FP:
         current.filename = g_formula_filename;
         current.file_item_name = g_formula_name;
@@ -726,7 +725,7 @@ void restore_history_info(int i)
         }
     }
     spin_dac(0, 1);
-    if (g_fractal_type == FractalType::JULIBROT || g_fractal_type == FractalType::JULIBROT_FP)
+    if (g_fractal_type == FractalType::JULIBROT_FP)
     {
         g_save_dac = 0;
     }
@@ -736,7 +735,6 @@ void restore_history_info(int i)
     }
     switch (g_fractal_type)
     {
-    case FractalType::FORMULA:
     case FractalType::FORMULA_FP:
         g_formula_filename = last.filename;
         g_formula_name = last.file_item_name;
