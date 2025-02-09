@@ -80,66 +80,6 @@ int popcorn_fractal()
     return 0;
 }
 
-static bool trig16_check(long val)
-{
-    static constexpr long L16_TRIG_LIM = 8L << 16; // domain limit of fast trig functions
-
-    return std::abs(val) > L16_TRIG_LIM;
-}
-
-static void ltrig_arg(long &val)
-{
-    if (trig16_check(val))
-    {
-        double tmp = val;
-        tmp /= g_fudge_factor;
-        tmp = std::fmod(tmp, PI * 2.0);
-        tmp *= g_fudge_factor;
-        val = (long) tmp;
-    }
-}
-
-int long_popcorn_fractal()
-{
-    g_l_temp = g_l_old_z;
-    g_l_temp.x *= 3L;
-    g_l_temp.y *= 3L;
-    ltrig_arg(g_l_temp.x);
-    ltrig_arg(g_l_temp.y);
-    long l_cos_x;
-    long l_sin_x;
-    sin_cos(g_l_temp.x, &l_sin_x, &l_cos_x);
-    long l_cos_y;
-    long l_sin_y;
-    sin_cos(g_l_temp.y, &l_sin_y, &l_cos_y);
-    g_l_temp.x = divide(l_sin_x, l_cos_x, g_bit_shift) + g_l_old_z.x;
-    g_l_temp.y = divide(l_sin_y, l_cos_y, g_bit_shift) + g_l_old_z.y;
-    ltrig_arg(g_l_temp.x);
-    ltrig_arg(g_l_temp.y);
-    sin_cos(g_l_temp.x, &l_sin_x, &l_cos_x);
-    sin_cos(g_l_temp.y, &l_sin_y, &l_cos_y);
-    g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, l_sin_y, g_bit_shift);
-    g_l_new_z.y = g_l_old_z.y - multiply(g_l_param.x, l_sin_x, g_bit_shift);
-    if (g_plot == no_plot)
-    {
-        iplot_orbit(g_l_new_z.x, g_l_new_z.y, 1+g_row%g_colors);
-        g_l_old_z = g_l_new_z;
-    }
-    // else
-    g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-    g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_magnitude_limit
-        || g_l_magnitude < 0
-        || std::abs(g_l_new_z.x) > g_l_magnitude_limit2
-        || std::abs(g_l_new_z.y) > g_l_magnitude_limit2)
-    {
-        return 1;
-    }
-    g_l_old_z = g_l_new_z;
-    return 0;
-}
-
 // Popcorn generalization
 
 int popcorn_fractal_fn()
