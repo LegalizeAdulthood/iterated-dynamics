@@ -664,38 +664,10 @@ static char const *parse_error_text(ParseError which)
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
-// call l_stk via d_stk
-static void l_stk_funct(FunctionPtr fct)
-{
-    /*
-       intermediate variable needed for safety because of
-       different size of double and long in Arg union
-    */
-    double y = (double) g_arg1->l.y / s_fudge;
-    g_arg1->d.x = (double)g_arg1->l.x / s_fudge;
-    g_arg1->d.y = y;
-    (*fct)();
-    if (std::abs(g_arg1->d.x) < g_fudge_limit && std::abs(g_arg1->d.y) < g_fudge_limit)
-    {
-        g_arg1->l.x = (long)(g_arg1->d.x * s_fudge);
-        g_arg1->l.y = (long)(g_arg1->d.y * s_fudge);
-    }
-    else
-    {
-        g_overflow = true;
-    }
-}
-
 static unsigned long new_random_num()
 {
     s_rand_num = ((s_rand_num << 15) + RAND15()) ^ s_rand_num;
     return s_rand_num;
-}
-
-static void l_random()
-{
-    s_vars[7].a.l.x = new_random_num() >> (32 - g_bit_shift);
-    s_vars[7].a.l.y = new_random_num() >> (32 - g_bit_shift);
 }
 
 static void d_random()
@@ -737,13 +709,6 @@ static void random_seed()
     new_random_num();
     new_random_num();
     s_randomized = true;
-}
-
-static void l_stk_srand()
-{
-    set_random();
-    l_random();
-    g_arg1->l = s_vars[7].a.l;
 }
 
 static void d_stk_srand()
@@ -813,12 +778,6 @@ void d_stk_abs()
     g_arg1->d.y = std::abs(g_arg1->d.y);
 }
 
-void l_stk_abs()
-{
-    g_arg1->l.x = std::abs(g_arg1->l.x);
-    g_arg1->l.y = std::abs(g_arg1->l.y);
-}
-
 void d_stk_sqr()
 {
     LAST_SQR.d.x = g_arg1->d.x * g_arg1->d.x;
@@ -829,28 +788,10 @@ void d_stk_sqr()
     LAST_SQR.d.y = 0;
 }
 
-void l_stk_sqr()
-{
-    LAST_SQR.l.x = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift);
-    LAST_SQR.l.y = multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
-    g_arg1->l.y = multiply(g_arg1->l.x, g_arg1->l.y, g_bit_shift) << 1;
-    g_arg1->l.x = LAST_SQR.l.x - LAST_SQR.l.y;
-    LAST_SQR.l.x += LAST_SQR.l.y;
-    LAST_SQR.l.y = 0L;
-}
-
 static void d_stk_add()
 {
     g_arg2->d.x += g_arg1->d.x;
     g_arg2->d.y += g_arg1->d.y;
-    g_arg1--;
-    g_arg2--;
-}
-
-static void l_stk_add()
-{
-    g_arg2->l.x += g_arg1->l.x;
-    g_arg2->l.y += g_arg1->l.y;
     g_arg1--;
     g_arg2--;
 }
@@ -863,22 +804,9 @@ static void d_stk_sub()
     g_arg2--;
 }
 
-static void l_stk_sub()
-{
-    g_arg2->l.x -= g_arg1->l.x;
-    g_arg2->l.y -= g_arg1->l.y;
-    g_arg1--;
-    g_arg2--;
-}
-
 void d_stk_conj()
 {
     g_arg1->d.y = -g_arg1->d.y;
-}
-
-void l_stk_conj()
-{
-    g_arg1->l.y = -g_arg1->l.y;
 }
 
 void d_stk_floor()
@@ -887,32 +815,10 @@ void d_stk_floor()
     g_arg1->d.y = floor(g_arg1->d.y);
 }
 
-void l_stk_floor()
-{
-    /*
-     * Kill fractional part. This operation truncates negative numbers
-     * toward negative infinity as desired.
-     */
-    g_arg1->l.x = (g_arg1->l.x) >> g_bit_shift;
-    g_arg1->l.y = (g_arg1->l.y) >> g_bit_shift;
-    g_arg1->l.x = (g_arg1->l.x) << g_bit_shift;
-    g_arg1->l.y = (g_arg1->l.y) << g_bit_shift;
-}
-
 void d_stk_ceil()
 {
     g_arg1->d.x = ceil(g_arg1->d.x);
     g_arg1->d.y = ceil(g_arg1->d.y);
-}
-
-void l_stk_ceil()
-{
-    /* the shift operation does the "floor" operation, so we
-       negate everything before the operation */
-    g_arg1->l.x = (-g_arg1->l.x) >> g_bit_shift;
-    g_arg1->l.y = (-g_arg1->l.y) >> g_bit_shift;
-    g_arg1->l.x = -((g_arg1->l.x) << g_bit_shift);
-    g_arg1->l.y = -((g_arg1->l.y) << g_bit_shift);
 }
 
 void d_stk_trunc()
@@ -921,34 +827,10 @@ void d_stk_trunc()
     g_arg1->d.y = (int)(g_arg1->d.y);
 }
 
-void l_stk_trunc()
-{
-    /* shifting and shifting back truncates positive numbers,
-       so we make the numbers positive */
-    int sign_x = sign(g_arg1->l.x);
-    int sign_y = sign(g_arg1->l.y);
-    g_arg1->l.x = std::abs(g_arg1->l.x);
-    g_arg1->l.y = std::abs(g_arg1->l.y);
-    g_arg1->l.x = (g_arg1->l.x) >> g_bit_shift;
-    g_arg1->l.y = (g_arg1->l.y) >> g_bit_shift;
-    g_arg1->l.x = (g_arg1->l.x) << g_bit_shift;
-    g_arg1->l.y = (g_arg1->l.y) << g_bit_shift;
-    g_arg1->l.x = sign_x*g_arg1->l.x;
-    g_arg1->l.y = sign_y*g_arg1->l.y;
-}
-
 void d_stk_round()
 {
     g_arg1->d.x = floor(g_arg1->d.x+.5);
     g_arg1->d.y = floor(g_arg1->d.y+.5);
-}
-
-void l_stk_round()
-{
-    // Add .5 then truncate
-    g_arg1->l.x += (1L << g_bit_shift_less_1);
-    g_arg1->l.y += (1L << g_bit_shift_less_1);
-    l_stk_floor();
 }
 
 void d_stk_zero()
@@ -957,32 +839,15 @@ void d_stk_zero()
     g_arg1->d.y = g_arg1->d.x;
 }
 
-void l_stk_zero()
-{
-    g_arg1->l.x = 0;
-    g_arg1->l.y = 0;
-}
-
 void d_stk_one()
 {
     g_arg1->d.x = 1.0;
     g_arg1->d.y = 0.0;
 }
 
-void l_stk_one()
-{
-    g_arg1->l.x = (long) s_fudge;
-    g_arg1->l.y = 0L;
-}
-
 static void d_stk_real()
 {
     g_arg1->d.y = 0.0;
-}
-
-static void l_stk_real()
-{
-    g_arg1->l.y = 0L;
 }
 
 static void d_stk_imag()
@@ -991,34 +856,15 @@ static void d_stk_imag()
     g_arg1->d.y = 0.0;
 }
 
-static void l_stk_imag()
-{
-    g_arg1->l.x = g_arg1->l.y;
-    g_arg1->l.y = 0L;
-}
-
 static void d_stk_neg()
 {
     g_arg1->d.x = -g_arg1->d.x;
     g_arg1->d.y = -g_arg1->d.y;
 }
 
-static void l_stk_neg()
-{
-    g_arg1->l.x = -g_arg1->l.x;
-    g_arg1->l.y = -g_arg1->l.y;
-}
-
 void d_stk_mul()
 {
     fpu_cmplx_mul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
-    g_arg1--;
-    g_arg2--;
-}
-
-void l_stk_mul()
-{
-    g_arg2->l = g_arg2->l * g_arg1->l;
     g_arg1--;
     g_arg2--;
 }
@@ -1030,37 +876,10 @@ static void d_stk_div()
     g_arg2--;
 }
 
-static void l_stk_div()
-{
-    long mod =
-        multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift) + multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
-    long x = divide(g_arg1->l.x, mod, g_bit_shift);
-    long y = -divide(g_arg1->l.y, mod, g_bit_shift);
-    long x2 = multiply(g_arg2->l.x, x, g_bit_shift) - multiply(g_arg2->l.y, y, g_bit_shift);
-    long y2 = multiply(g_arg2->l.y, x, g_bit_shift) + multiply(g_arg2->l.x, y, g_bit_shift);
-    g_arg2->l.x = x2;
-    g_arg2->l.y = y2;
-    g_arg1--;
-    g_arg2--;
-}
-
 static void d_stk_mod()
 {
     g_arg1->d.x = (g_arg1->d.x * g_arg1->d.x) + (g_arg1->d.y * g_arg1->d.y);
     g_arg1->d.y = 0.0;
-}
-
-static void l_stk_mod()
-{
-    //   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
-    //   multiply(Arg2->l.y, Arg1->l.y, bitshift);
-    g_arg1->l.x = multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift) +
-                multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
-    if (g_arg1->l.x < 0)
-    {
-        g_overflow = true;
-    }
-    g_arg1->l.y = 0L;
 }
 
 static void stk_sto()
@@ -1091,13 +910,6 @@ void d_stk_flip()
     g_arg1->d.y = t;
 }
 
-void l_stk_flip()
-{
-    long t = g_arg1->l.x;
-    g_arg1->l.x = g_arg1->l.y;
-    g_arg1->l.y = t;
-}
-
 void d_stk_sin()
 {
     double sin_x;
@@ -1109,20 +921,6 @@ void d_stk_sin()
     sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
     g_arg1->d.x = sin_x*cosh_y;
     g_arg1->d.y = cos_x*sinh_y;
-}
-
-void l_stk_sin()
-{
-    long sin_x;
-    long cos_x;
-    long sinh_y;
-    long cosh_y;
-    long x = g_arg1->l.x >> s_delta16;
-    long y = g_arg1->l.y >> s_delta16;
-    sin_cos(x, &sin_x, &cos_x);
-    sinh_cosh(y, &sinh_y, &cosh_y);
-    g_arg1->l.x = multiply(sin_x, cosh_y, s_shift_back);
-    g_arg1->l.y = multiply(cos_x, sinh_y, s_shift_back);
 }
 
 /* The following functions are supported by both the parser and for fn
@@ -1147,27 +945,6 @@ void d_stk_tan()
     g_arg1->d.y = sinh_y/denom;
 }
 
-void l_stk_tan()
-{
-    long sin_x;
-    long cos_x;
-    long sinh_y;
-    long cosh_y;
-    long x = g_arg1->l.x >> s_delta16;
-    x = x << 1;
-    long y = g_arg1->l.y >> s_delta16;
-    y = y << 1;
-    sin_cos(x, &sin_x, &cos_x);
-    sinh_cosh(y, &sinh_y, &cosh_y);
-    long denom = cos_x + cosh_y;
-    if (check_denom(denom))
-    {
-        return;
-    }
-    g_arg1->l.x = divide(sin_x, denom, g_bit_shift);
-    g_arg1->l.y = divide(sinh_y, denom, g_bit_shift);
-}
-
 void d_stk_tanh()
 {
     double sin_y;
@@ -1185,27 +962,6 @@ void d_stk_tanh()
     }
     g_arg1->d.x = sinh_x/denom;
     g_arg1->d.y = sin_y/denom;
-}
-
-void l_stk_tanh()
-{
-    long sin_y;
-    long cos_y;
-    long sinh_x;
-    long cosh_x;
-    long x = g_arg1->l.x >> s_delta16;
-    x = x << 1;
-    long y = g_arg1->l.y >> s_delta16;
-    y = y << 1;
-    sin_cos(y, &sin_y, &cos_y);
-    sinh_cosh(x, &sinh_x, &cosh_x);
-    long denom = cosh_x + cos_y;
-    if (check_denom(denom))
-    {
-        return;
-    }
-    g_arg1->l.x = divide(sinh_x, denom, g_bit_shift);
-    g_arg1->l.y = divide(sin_y, denom, g_bit_shift);
 }
 
 void d_stk_cotan()
@@ -1227,27 +983,6 @@ void d_stk_cotan()
     g_arg1->d.y = -sinh_y/denom;
 }
 
-void l_stk_cotan()
-{
-    long sin_x;
-    long cos_x;
-    long sinh_y;
-    long cosh_y;
-    long x = g_arg1->l.x >> s_delta16;
-    x = x << 1;
-    long y = g_arg1->l.y >> s_delta16;
-    y = y << 1;
-    sin_cos(x, &sin_x, &cos_x);
-    sinh_cosh(y, &sinh_y, &cosh_y);
-    long denom = cosh_y - cos_x;
-    if (check_denom(denom))
-    {
-        return;
-    }
-    g_arg1->l.x = divide(sin_x, denom, g_bit_shift);
-    g_arg1->l.y = -divide(sinh_y, denom, g_bit_shift);
-}
-
 void d_stk_cotanh()
 {
     double sin_y;
@@ -1265,27 +1000,6 @@ void d_stk_cotanh()
     }
     g_arg1->d.x = sinh_x/denom;
     g_arg1->d.y = -sin_y/denom;
-}
-
-void l_stk_cotanh()
-{
-    long sin_y;
-    long cos_y;
-    long sinh_x;
-    long cosh_x;
-    long x = g_arg1->l.x >> s_delta16;
-    x = x << 1;
-    long y = g_arg1->l.y >> s_delta16;
-    y = y << 1;
-    sin_cos(y, &sin_y, &cos_y);
-    sinh_cosh(x, &sinh_x, &cosh_x);
-    long denom = cosh_x - cos_y;
-    if (check_denom(denom))
-    {
-        return;
-    }
-    g_arg1->l.x = divide(sinh_x, denom, g_bit_shift);
-    g_arg1->l.y = -divide(sin_y, denom, g_bit_shift);
 }
 
 /* The following functions are not directly used by the parser - support
@@ -1306,18 +1020,6 @@ void d_stk_recip()
     g_arg1->d.y = -g_arg1->d.y/mod;
 }
 
-void l_stk_recip()
-{
-    long mod =
-        multiply(g_arg1->l.x, g_arg1->l.x, g_bit_shift) + multiply(g_arg1->l.y, g_arg1->l.y, g_bit_shift);
-    if (check_denom(mod))
-    {
-        return;
-    }
-    g_arg1->l.x =  divide(g_arg1->l.x, mod, g_bit_shift);
-    g_arg1->l.y = -divide(g_arg1->l.y, mod, g_bit_shift);
-}
-
 void stk_ident()
 {
     // do nothing - the function Z
@@ -1336,21 +1038,6 @@ void d_stk_sinh()
     g_arg1->d.y = cosh_x*sin_y;
 }
 
-void l_stk_sinh()
-{
-    long sinh_x;
-    long cosh_x;
-    long sin_y;
-    long cos_y;
-
-    long x = g_arg1->l.x >> s_delta16;
-    long y = g_arg1->l.y >> s_delta16;
-    sin_cos(y, &sin_y, &cos_y);
-    sinh_cosh(x, &sinh_x, &cosh_x);
-    g_arg1->l.x = multiply(cos_y, sinh_x, s_shift_back);
-    g_arg1->l.y = multiply(sin_y, cosh_x, s_shift_back);
-}
-
 void d_stk_cos()
 {
     double sin_x;
@@ -1364,33 +1051,12 @@ void d_stk_cos()
     g_arg1->d.y = -sin_x*sinh_y;
 }
 
-void l_stk_cos()
-{
-    long sin_x;
-    long cos_x;
-    long sinh_y;
-    long cosh_y;
-
-    long x = g_arg1->l.x >> s_delta16;
-    long y = g_arg1->l.y >> s_delta16;
-    sin_cos(x, &sin_x, &cos_x);
-    sinh_cosh(y, &sinh_y, &cosh_y);
-    g_arg1->l.x = multiply(cos_x, cosh_y, s_shift_back);
-    g_arg1->l.y = -multiply(sin_x, sinh_y, s_shift_back);
-}
-
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
 void d_stk_cosxx()
 {
     d_stk_cos();
     g_arg1->d.y = -g_arg1->d.y;
-}
-
-void l_stk_cosxx()
-{
-    l_stk_cos();
-    g_arg1->l.y = -g_arg1->l.y;
 }
 
 void d_stk_cosh()
@@ -1406,29 +1072,9 @@ void d_stk_cosh()
     g_arg1->d.y = sinh_x*sin_y;
 }
 
-void l_stk_cosh()
-{
-    long sinh_x;
-    long cosh_x;
-    long sin_y;
-    long cos_y;
-
-    long x = g_arg1->l.x >> s_delta16;
-    long y = g_arg1->l.y >> s_delta16;
-    sin_cos(y, &sin_y, &cos_y);
-    sinh_cosh(x, &sinh_x, &cosh_x);
-    g_arg1->l.x = multiply(cos_y, cosh_x, s_shift_back);
-    g_arg1->l.y = multiply(sin_y, sinh_x, s_shift_back);
-}
-
 void d_stk_asin()
 {
     asin_z(g_arg1->d, &(g_arg1->d));
-}
-
-void l_stk_asin()
-{
-    l_stk_funct(d_stk_asin);
 }
 
 void d_stk_asinh()
@@ -1436,19 +1082,9 @@ void d_stk_asinh()
     asinh_z(g_arg1->d, &(g_arg1->d));
 }
 
-void l_stk_asinh()
-{
-    l_stk_funct(d_stk_asinh);
-}
-
 void d_stk_acos()
 {
     acos_z(g_arg1->d, &(g_arg1->d));
-}
-
-void l_stk_acos()
-{
-    l_stk_funct(d_stk_acos);
 }
 
 void d_stk_acosh()
@@ -1456,19 +1092,9 @@ void d_stk_acosh()
     acosh_z(g_arg1->d, &(g_arg1->d));
 }
 
-void l_stk_acosh()
-{
-    l_stk_funct(d_stk_acosh);
-}
-
 void d_stk_atan()
 {
     atan_z(g_arg1->d, &(g_arg1->d));
-}
-
-void l_stk_atan()
-{
-    l_stk_funct(d_stk_atan);
 }
 
 void d_stk_atanh()
@@ -1476,19 +1102,9 @@ void d_stk_atanh()
     atanh_z(g_arg1->d, &(g_arg1->d));
 }
 
-void l_stk_atanh()
-{
-    l_stk_funct(d_stk_atanh);
-}
-
 void d_stk_sqrt()
 {
     g_arg1->d = complex_sqrt_float(g_arg1->d.x, g_arg1->d.y);
-}
-
-void l_stk_sqrt()
-{
-    g_arg1->l = complex_sqrt_long(g_arg1->l.x, g_arg1->l.y);
 }
 
 void d_stk_cabs()
@@ -1497,23 +1113,10 @@ void d_stk_cabs()
     g_arg1->d.y = 0.0;
 }
 
-void l_stk_cabs()
-{
-    l_stk_funct(d_stk_cabs);
-}
-
 static void d_stk_lt()
 {
     g_arg2->d.x = (double)(g_arg2->d.x < g_arg1->d.x);
     g_arg2->d.y = 0.0;
-    g_arg1--;
-    g_arg2--;
-}
-
-static void l_stk_lt()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x < g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1526,26 +1129,10 @@ static void d_stk_gt()
     g_arg2--;
 }
 
-static void l_stk_gt()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x > g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
-    g_arg1--;
-    g_arg2--;
-}
-
 static void d_stk_lte()
 {
     g_arg2->d.x = (double)(g_arg2->d.x <= g_arg1->d.x);
     g_arg2->d.y = 0.0;
-    g_arg1--;
-    g_arg2--;
-}
-
-static void l_stk_lte()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x <= g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1558,26 +1145,10 @@ static void d_stk_gte()
     g_arg2--;
 }
 
-static void l_stk_gte()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x >= g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
-    g_arg1--;
-    g_arg2--;
-}
-
 static void d_stk_eq()
 {
     g_arg2->d.x = (double)(g_arg2->d.x == g_arg1->d.x);
     g_arg2->d.y = 0.0;
-    g_arg1--;
-    g_arg2--;
-}
-
-static void l_stk_eq()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x == g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1590,26 +1161,10 @@ static void d_stk_ne()
     g_arg2--;
 }
 
-static void l_stk_ne()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x != g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
-    g_arg1--;
-    g_arg2--;
-}
-
 static void d_stk_or()
 {
     g_arg2->d.x = (double)(g_arg2->d.x || g_arg1->d.x);
     g_arg2->d.y = 0.0;
-    g_arg1--;
-    g_arg2--;
-}
-
-static void l_stk_or()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x || g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
     g_arg1--;
     g_arg2--;
 }
@@ -1622,22 +1177,9 @@ static void d_stk_and()
     g_arg2--;
 }
 
-static void l_stk_and()
-{
-    g_arg2->l.x = (long)(g_arg2->l.x && g_arg1->l.x) << g_bit_shift;
-    g_arg2->l.y = 0L;
-    g_arg1--;
-    g_arg2--;
-}
-
 void d_stk_log()
 {
     fpu_cmplx_log(&g_arg1->d, &g_arg1->d);
-}
-
-void l_stk_log()
-{
-    l_stk_funct(d_stk_log);
 }
 
 void d_stk_exp()
@@ -1645,37 +1187,9 @@ void d_stk_exp()
     fpu_cmplx_exp(&g_arg1->d, &g_arg1->d);
 }
 
-void l_stk_exp()
-{
-    l_stk_funct(d_stk_exp);
-}
-
 void d_stk_pwr()
 {
     g_arg2->d = complex_power(g_arg2->d, g_arg1->d);
-    g_arg1--;
-    g_arg2--;
-}
-
-void l_stk_pwr()
-{
-    DComplex x;
-    DComplex y;
-
-    x.x = (double)g_arg2->l.x / s_fudge;
-    x.y = (double)g_arg2->l.y / s_fudge;
-    y.x = (double)g_arg1->l.x / s_fudge;
-    y.y = (double)g_arg1->l.y / s_fudge;
-    x = complex_power(x, y);
-    if (std::abs(x.x) < g_fudge_limit && std::abs(x.y) < g_fudge_limit)
-    {
-        g_arg2->l.x = (long)(x.x * s_fudge);
-        g_arg2->l.y = (long)(x.y * s_fudge);
-    }
-    else
-    {
-        g_overflow = true;
-    }
     g_arg1--;
     g_arg2--;
 }
@@ -1706,33 +1220,9 @@ static void d_stk_jump_on_false()
     }
 }
 
-static void l_stk_jump_on_false()
-{
-    if (g_arg1->l.x == 0)
-    {
-        stk_jump();
-    }
-    else
-    {
-        s_jump_index++;
-    }
-}
-
 static void d_stk_jump_on_true()
 {
     if (g_arg1->d.x)
-    {
-        stk_jump();
-    }
-    else
-    {
-        s_jump_index++;
-    }
-}
-
-static void l_stk_jump_on_true()
-{
-    if (g_arg1->l.x)
     {
         stk_jump();
     }
