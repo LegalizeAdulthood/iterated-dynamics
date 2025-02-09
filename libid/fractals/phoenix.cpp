@@ -9,24 +9,11 @@
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
-#include "math/arg.h"
 #include "math/cmplx.h"
-#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "ui/cmdfiles.h"
 
-static LComplex s_l_tmp2{};
 static DComplex s_tmp2{};
-
-int long_phoenix_fractal()
-{
-    // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
-    g_l_temp.x = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
-    g_l_new_z.x = g_l_temp_sqr_x-g_l_temp_sqr_y+g_long_param->x+multiply(g_long_param->y, s_l_tmp2.x, g_bit_shift);
-    g_l_new_z.y = (g_l_temp.x + g_l_temp.x) + multiply(g_long_param->y, s_l_tmp2.y, g_bit_shift);
-    s_l_tmp2 = g_l_old_z; // set ltmp2 to Y value
-    return g_bailout_long();
-}
 
 int phoenix_fractal()
 {
@@ -38,16 +25,6 @@ int phoenix_fractal()
     return g_bailout_float();
 }
 
-int long_phoenix_fractal_cplx()
-{
-    // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
-    g_l_temp.x = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
-    g_l_new_z.x = g_l_temp_sqr_x-g_l_temp_sqr_y+g_long_param->x+multiply(g_l_param2.x, s_l_tmp2.x, g_bit_shift)-multiply(g_l_param2.y, s_l_tmp2.y, g_bit_shift);
-    g_l_new_z.y = (g_l_temp.x + g_l_temp.x)+g_long_param->y+multiply(g_l_param2.x, s_l_tmp2.y, g_bit_shift)+multiply(g_l_param2.y, s_l_tmp2.x, g_bit_shift);
-    s_l_tmp2 = g_l_old_z; // set ltmp2 to Y value
-    return g_bailout_long();
-}
-
 int phoenix_fractal_cplx()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
@@ -56,24 +33,6 @@ int phoenix_fractal_cplx()
     g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + g_float_param->y + (g_param_z2.x * s_tmp2.y) + (g_param_z2.y * s_tmp2.x);
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
-}
-
-int long_phoenix_plus_fractal()
-{
-    // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    LComplex l_old_plus{g_l_old_z};
-    g_l_temp = g_l_old_z;
-    for (int i = 1; i < g_degree; i++)
-    {
-        // degree >= 2, degree=degree-1 in setup
-        g_l_temp = g_l_old_z * g_l_temp; // = old^(degree-1)
-    }
-    l_old_plus.x += g_long_param->x;
-    const LComplex l_new_minus{g_l_temp * l_old_plus};
-    g_l_new_z.x = l_new_minus.x + multiply(g_long_param->y, s_l_tmp2.x, g_bit_shift);
-    g_l_new_z.y = l_new_minus.y + multiply(g_long_param->y, s_l_tmp2.y, g_bit_shift);
-    s_l_tmp2 = g_l_old_z; // set ltmp2 to Y value
-    return g_bailout_long();
 }
 
 int phoenix_plus_fractal()
@@ -96,24 +55,6 @@ int phoenix_plus_fractal()
     return g_bailout_float();
 }
 
-int long_phoenix_minus_fractal()
-{
-    // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    LComplex l_old_sqr{g_l_old_z * g_l_old_z};
-    g_l_temp = g_l_old_z;
-    for (int i = 1; i < g_degree; i++)
-    {
-        // degree >= 3, degree=degree-2 in setup
-        g_l_temp = g_l_old_z * g_l_temp; // = old^(degree-2)
-    }
-    l_old_sqr.x += g_long_param->x;
-    const LComplex l_new_minus{g_l_temp * l_old_sqr};
-    g_l_new_z.x = l_new_minus.x + multiply(g_long_param->y, s_l_tmp2.x, g_bit_shift);
-    g_l_new_z.y = l_new_minus.y + multiply(g_long_param->y, s_l_tmp2.y, g_bit_shift);
-    s_l_tmp2 = g_l_old_z; // set ltmp2 to Y value
-    return g_bailout_long();
-}
-
 int phoenix_minus_fractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
@@ -132,26 +73,6 @@ int phoenix_minus_fractal()
     g_new_z.y = new_minus.y + (g_float_param->y * s_tmp2.y);
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
-}
-
-int long_phoenix_cplx_plus_fractal()
-{
-    // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    LComplex l_old_plus{g_l_old_z};
-    g_l_temp = g_l_old_z;
-    for (int i = 1; i < g_degree; i++)
-    {
-        // degree >= 2, degree=degree-1 in setup
-        g_l_temp = g_l_old_z * g_l_temp; // = old^(degree-1)
-    }
-    l_old_plus.x += g_long_param->x;
-    l_old_plus.y += g_long_param->y;
-    const LComplex l_new_minus{g_l_temp * l_old_plus};
-    g_l_temp = g_l_param2 * s_l_tmp2;
-    g_l_new_z.x = l_new_minus.x + g_l_temp.x;
-    g_l_new_z.y = l_new_minus.y + g_l_temp.y;
-    s_l_tmp2 = g_l_old_z; // set ltmp2 to Y value
-    return g_bailout_long();
 }
 
 int phoenix_cplx_plus_fractal()
@@ -173,26 +94,6 @@ int phoenix_cplx_plus_fractal()
     g_new_z.y = new_minus.y + g_tmp_z.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
-}
-
-int long_phoenix_cplx_minus_fractal()
-{
-    // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    LComplex l_old_sqr{g_l_old_z * g_l_old_z};
-    g_l_temp = g_l_old_z;
-    for (int i = 1; i < g_degree; i++)
-    {
-        // degree >= 3, degree=degree-2 in setup
-        g_l_temp = g_l_old_z * g_l_temp; // = old^(degree-2)
-    }
-    l_old_sqr.x += g_long_param->x;
-    l_old_sqr.y += g_long_param->y;
-    const LComplex l_new_minus{g_l_temp * l_old_sqr};
-    g_l_temp = g_l_param2 * s_l_tmp2;
-    g_l_new_z.x = l_new_minus.x + g_l_temp.x;
-    g_l_new_z.y = l_new_minus.y + g_l_temp.y;
-    s_l_tmp2 = g_l_old_z; // set ltmp2 to Y value
-    return g_bailout_long();
 }
 
 int phoenix_cplx_minus_fractal()
@@ -277,38 +178,17 @@ bool phoenix_setup()
     g_params[2] = (double)g_degree;
     if (g_degree == 0)
     {
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_fractal;
     }
     if (g_degree >= 2)
     {
         g_degree = g_degree - 1;
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_plus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_plus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_plus_fractal;
     }
     if (g_degree <= -3)
     {
         g_degree = std::abs(g_degree) - 2;
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_minus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_minus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_minus_fractal;
     }
 
     return true;
@@ -338,14 +218,7 @@ bool phoenix_cplx_setup()
         {
             g_symmetry = SymmetryType::X_AXIS;
         }
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_fractal_cplx;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal_cplx;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx;
     }
     if (g_degree >= 2)
     {
@@ -358,14 +231,7 @@ bool phoenix_cplx_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_plus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_plus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_cplx_plus_fractal;
     }
     if (g_degree <= -3)
     {
@@ -378,14 +244,7 @@ bool phoenix_cplx_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_minus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_minus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_cplx_minus_fractal;
     }
 
     return true;
@@ -403,38 +262,17 @@ bool mand_phoenix_setup()
     g_params[2] = (double)g_degree;
     if (g_degree == 0)
     {
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_fractal;
     }
     if (g_degree >= 2)
     {
         g_degree = g_degree - 1;
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_plus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_plus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_plus_fractal;
     }
     if (g_degree <= -3)
     {
         g_degree = std::abs(g_degree) - 2;
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_minus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_minus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_minus_fractal;
     }
 
     return true;
@@ -456,38 +294,17 @@ bool mand_phoenix_cplx_setup()
     }
     if (g_degree == 0)
     {
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_fractal_cplx;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_fractal_cplx;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx;
     }
     if (g_degree >= 2)
     {
         g_degree = g_degree - 1;
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_plus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_plus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_cplx_plus_fractal;
     }
     if (g_degree <= -3)
     {
         g_degree = std::abs(g_degree) - 2;
-        if (g_user_float_flag)
-        {
-            g_cur_fractal_specific->orbit_calc =  phoenix_cplx_minus_fractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbit_calc =  long_phoenix_cplx_minus_fractal;
-        }
+        g_cur_fractal_specific->orbit_calc = phoenix_cplx_minus_fractal;
     }
 
     return true;
