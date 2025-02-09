@@ -358,6 +358,8 @@ static int s_shift_back{};
 static bool s_set_random{};
 static bool s_randomized{};
 static unsigned long s_rand_num{};
+static long s_rand_x{};
+static long s_rand_y{};
 static unsigned int s_chars_in_formula{};
 static constexpr std::array<char const *, 4> JUMP_LIST
 {
@@ -684,7 +686,7 @@ static void set_random()
 {
     if (!s_set_random)
     {
-        s_rand_num = g_arg1->l.x ^ g_arg1->l.y;
+        s_rand_num = s_rand_x ^ s_rand_y;
     }
 
     const unsigned int seed = (unsigned) s_rand_num ^ (unsigned) (s_rand_num >> 16);
@@ -713,8 +715,8 @@ static void random_seed()
 
 static void d_stk_srand()
 {
-    g_arg1->l.x = (long)(g_arg1->d.x * (1L << g_bit_shift));
-    g_arg1->l.y = (long)(g_arg1->d.y * (1L << g_bit_shift));
+    s_rand_x = (long)(g_arg1->d.x * (1L << g_bit_shift));
+    s_rand_y = (long)(g_arg1->d.y * (1L << g_bit_shift));
     set_random();
     d_random();
     g_arg1->d = s_vars[7].a.d;
