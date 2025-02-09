@@ -14,22 +14,6 @@
 
 #include <cstdint>
 
-struct MP
-{
-    std::int16_t exp;
-    std::uint32_t mant;
-};
-
-struct MPC
-{
-    MP x;
-    MP y;
-};
-
-extern bool                  g_mp_overflow;
-extern MP                    g_mp_one;
-extern MPC                   g_mpc_one;
-
 long exp_float14(long xx);
 
 inline void f_shift(float x, int shift, float &z)
@@ -54,7 +38,6 @@ inline void f_sqrt14(float x, float &z)
 union Arg
 {
     DComplex d;
-    MPC m;
     LComplex l;
 };
 
@@ -286,35 +269,3 @@ inline void cmplx_recip(const DComplex &arg, DComplex &out)
         out.y = -arg.y / denom;
     }
 }
-
-// Mark Peterson's expanded floating point operators. If
-// the operation results in an overflow (result < 2**(2**14), or division
-// by zero) the global 'g_mp_overflow' is set to one.
-MP *mp_mul(MP x, MP y);
-MP *mp_div(MP x, MP y);
-MP *mp_add(MP x, MP y);
-int mp_cmp(MP x, MP y);
-MP *d_to_mp(double x); // Convert double to type MP
-double *mp_to_d(MP x);
-MP *fg_to_mp(long x, int fg); // Convert fudged to type MP
-
-inline MP *mp_sub(MP x, MP y)
-{
-    y.exp ^= 0x8000;
-    return mp_add(x, y);
-}
-
-MP *mp_abs(MP x);
-MPC mpc_sqr(MPC x);
-inline MP mpc_mod(MPC x)
-{
-    return *mp_add(*mp_mul(x.x, x.x), *mp_mul(x.y, x.y));
-}
-MPC mpc_mul(MPC x, MPC y);
-MPC mpc_div(MPC x, MPC y);
-MPC mpc_add(MPC x, MPC y);
-MPC mpc_sub(MPC x, MPC y);
-MPC mpc_pow(MPC x, int exp);
-int mpc_cmp(MPC x, MPC y);
-DComplex mpc_to_cmplx(MPC x);
-MPC cmplx_to_mpc(DComplex z);

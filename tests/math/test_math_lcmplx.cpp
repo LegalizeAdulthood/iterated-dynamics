@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <math/mpmath.h>
+#include <math/cmplx.h>
 
+#include <fractals/parser.h>
+#include <math/arg.h>
+#include <math/fixed_pt.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>

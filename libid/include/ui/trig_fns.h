@@ -64,10 +64,6 @@ extern void                (*g_d_trig0)();
 extern void                (*g_d_trig1)();
 extern void                (*g_d_trig2)();
 extern void                (*g_d_trig3)();
-extern void                (*g_m_trig0)();
-extern void                (*g_m_trig1)();
-extern void                (*g_m_trig2)();
-extern void                (*g_m_trig3)();
 
 std::string show_trig();
 void trig_details(char *buf);

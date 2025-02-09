@@ -3,7 +3,9 @@
 // some hyper complex functions
 #include "math/hcmplx.h"
 
-#include "math/mpmath.h"
+#include "math/arg.h"
+#include "math/cmplx.h"
+#include "math/sqr.h"
 
 void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {

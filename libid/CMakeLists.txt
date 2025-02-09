@@ -120,6 +120,7 @@ add_library(libid
     include/io/trim_filename.h io/trim_filename.cpp
     include/io/update_save_name.h io/update_save_name.cpp
 
+    include/math/arg.h math/arg.cpp
     include/math/big.h
     math/bigflt.cpp
     include/math/biginit.h math/biginit.cpp
@@ -130,7 +131,6 @@ add_library(libid
     include/math/fixed_pt.h math/fixed_pt.cpp
     include/math/fpu087.h math/fpu087.cpp
     include/math/hcmplx.h math/hcmplx.cpp
-    include/math/mpmath.h math/mpmath.cpp
     include/math/rand15.h
     include/math/round_float_double.h math/round_float_double.cpp
     include/math/sign.h

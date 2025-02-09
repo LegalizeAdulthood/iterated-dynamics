@@ -48,8 +48,8 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "fractals/fractype.h"
 #include "fractals/magnet.h"
 #include "fractals/newton.h"
+#include "math/arg.h"
 #include "math/biginit.h"
-#include "math/mpmath.h"
 #include "ui/cmdfiles.h"
 
 #include <cfloat>

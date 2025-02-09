@@ -9,10 +9,10 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
+#include "math/arg.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
-#include "math/mpmath.h"
 #include "ui/cmdfiles.h"
 
 #include <cmath>

@@ -87,10 +87,6 @@ void (*g_l_trig0)(){l_stk_sin};
 void (*g_l_trig1)(){l_stk_sqr};
 void (*g_l_trig2)(){l_stk_sinh};
 void (*g_l_trig3)(){l_stk_cosh};
-void (*g_m_trig0)(){m_stk_sin};
-void (*g_m_trig1)(){m_stk_sqr};
-void (*g_m_trig2)(){m_stk_sinh};
-void (*g_m_trig3)(){m_stk_cosh};
 void (*g_d_trig0)(){d_stk_sin};
 void (*g_d_trig1)(){d_stk_sqr};
 void (*g_d_trig2)(){d_stk_sinh};
@@ -171,22 +167,18 @@ void set_trig_pointers(int which)
     {
     case 0:
         g_l_trig0 = g_trig_fn[+g_trig_index[0]].l_fn;
-        g_m_trig0 = g_trig_fn[+g_trig_index[0]].m_fn;
         g_d_trig0 = g_trig_fn[+g_trig_index[0]].d_fn;
         break;
     case 1:
         g_l_trig1 = g_trig_fn[+g_trig_index[1]].l_fn;
-        g_m_trig1 = g_trig_fn[+g_trig_index[1]].m_fn;
         g_d_trig1 = g_trig_fn[+g_trig_index[1]].d_fn;
         break;
     case 2:
         g_l_trig2 = g_trig_fn[+g_trig_index[2]].l_fn;
-        g_m_trig2 = g_trig_fn[+g_trig_index[2]].m_fn;
         g_d_trig2 = g_trig_fn[+g_trig_index[2]].d_fn;
         break;
     case 3:
         g_l_trig3 = g_trig_fn[+g_trig_index[3]].l_fn;
-        g_m_trig3 = g_trig_fn[+g_trig_index[3]].m_fn;
         g_d_trig3 = g_trig_fn[+g_trig_index[3]].d_fn;
         break;
     default: // do 'em all
@@ -212,10 +204,6 @@ void save_trig_functions()
     s_saved_trig_functions.d_trig1 = g_d_trig1;
     s_saved_trig_functions.d_trig2 = g_d_trig2;
     s_saved_trig_functions.d_trig3 = g_d_trig3;
-    s_saved_trig_functions.m_trig0 = g_m_trig0;
-    s_saved_trig_functions.m_trig1 = g_m_trig1;
-    s_saved_trig_functions.m_trig2 = g_m_trig2;
-    s_saved_trig_functions.m_trig3 = g_m_trig3;
 }
 
 void restore_trig_functions()
@@ -232,8 +220,4 @@ void restore_trig_functions()
     g_d_trig1 = s_saved_trig_functions.d_trig1;
     g_d_trig2 = s_saved_trig_functions.d_trig2;
     g_d_trig3 = s_saved_trig_functions.d_trig3;
-    g_m_trig0 = s_saved_trig_functions.m_trig0;
-    g_m_trig1 = s_saved_trig_functions.m_trig1;
-    g_m_trig2 = s_saved_trig_functions.m_trig2;
-    g_m_trig3 = s_saved_trig_functions.m_trig3;
 }

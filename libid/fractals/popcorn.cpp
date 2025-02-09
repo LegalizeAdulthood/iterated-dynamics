@@ -7,8 +7,9 @@
 #include "engine/id_data.h"
 #include "engine/orbit.h"
 #include "engine/resume.h"
+#include "math/arg.h"
+#include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "math/mpmath.h"
 #include "misc/id.h"
 
 #include <cmath>

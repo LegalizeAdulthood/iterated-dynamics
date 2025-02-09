@@ -8,8 +8,7 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
-#include "math/fixed_pt.h"
-#include "math/mpmath.h"
+#include "math/arg.h"
 #include "misc/debug_flags.h"
 
 // generalization of Scott and Skinner types

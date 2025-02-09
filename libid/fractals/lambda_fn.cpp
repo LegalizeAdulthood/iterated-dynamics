@@ -8,8 +8,8 @@
 #include "engine/get_julia_attractor.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
+#include "math/arg.h"
 #include "math/fixed_pt.h"
-#include "math/mpmath.h"
 #include "ui/cmdfiles.h"
 
 #include <cmath>

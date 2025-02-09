@@ -9,10 +9,10 @@
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
+#include "math/arg.h"
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "math/mpmath.h"
 #include "ui/cmdfiles.h"
 
 static LComplex s_l_tmp2{};
