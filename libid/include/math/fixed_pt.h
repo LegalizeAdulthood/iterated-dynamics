@@ -6,6 +6,7 @@
 
 extern int                   g_bit_shift;
 extern long                  g_fudge_factor;
+extern double                g_fudge_limit;
 extern bool                  g_overflow;
 
 // TODO: Implement these routines using only integer operations

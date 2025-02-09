@@ -325,7 +325,6 @@ bool g_is_mandelbrot{true};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
 int g_last_init_op{};
-double g_fudge_limit{};
 bool g_frm_uses_p1{};
 bool g_frm_uses_p2{};
 bool g_frm_uses_p3{};
