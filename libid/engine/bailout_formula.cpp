@@ -6,7 +6,6 @@
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 #include "math/biginit.h"
-#include "math/fixed_pt.h"
 
 #include <cmath>
 

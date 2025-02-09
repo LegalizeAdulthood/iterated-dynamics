@@ -2,7 +2,6 @@
 //
 #include "engine/calc_frac_init.h"
 
-#include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
@@ -14,9 +13,7 @@
 #include "engine/soi.h"
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
-#include "fractals/jb.h"
 #include "math/biginit.h"
-#include "math/fixed_pt.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -32,7 +29,6 @@
 #include <cassert>
 #include <cfloat>
 #include <cmath>
-#include <cstdio>
 
 static void adjust_to_limits(double expand);
 static void smallest_add(double *num);

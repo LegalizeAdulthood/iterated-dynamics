@@ -2,8 +2,6 @@
 //
 #include "math/cmplx.h"
 
-#include "io/loadfile.h"
-#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 
 #include <cmath>

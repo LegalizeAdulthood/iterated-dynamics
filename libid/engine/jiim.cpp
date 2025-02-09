@@ -14,7 +14,6 @@
 #include "fractals/fractalp.h"
 #include "fractals/frothy_basin.h"
 #include "fractals/lorenz.h"
-#include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
