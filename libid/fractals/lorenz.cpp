@@ -23,11 +23,9 @@
 #include "io/encoder.h"
 #include "io/save_file.h"
 #include "math/cmplx.h"
-#include "math/fixed_pt.h"
 #include "math/mpmath.h"
 #include "math/rand15.h"
 #include "math/sign.h"
-#include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/not_disk_msg.h"
@@ -38,7 +36,6 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <new>
 #include <vector>
 
 template <typename T>
@@ -78,17 +75,6 @@ enum
 namespace
 {
 
-struct LAffine
-{
-    // weird order so a,b,e and c,d,f are vectors
-    long a;
-    long b;
-    long e;
-    long c;
-    long d;
-    long f;
-};
-
 // data used by 3d view transform subroutine
 struct ViewTransform3D
 {
@@ -111,7 +97,6 @@ struct ViewTransform3D
 static int  ifs2d();
 static int  ifs3d();
 static int  ifs3d_float();
-static bool l_setup_convert_to_screen(LAffine *l_cvt);
 static void setup_matrix(Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
@@ -276,25 +261,6 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
     scrn_cnvt->d =  yd*(g_x_3rd-g_x_max);
     scrn_cnvt->f = -scrn_cnvt->c*g_x_min - scrn_cnvt->d*g_y_max;
-    return false;
-}
-
-static bool l_setup_convert_to_screen(LAffine *l_cvt)
-{
-    Affine cvt;
-
-    // This function should return a something!
-    if (setup_convert_to_screen(&cvt))
-    {
-        return true;
-    }
-    l_cvt->a = (long)(cvt.a*g_fudge_factor);
-    l_cvt->b = (long)(cvt.b*g_fudge_factor);
-    l_cvt->c = (long)(cvt.c*g_fudge_factor);
-    l_cvt->d = (long)(cvt.d*g_fudge_factor);
-    l_cvt->e = (long)(cvt.e*g_fudge_factor);
-    l_cvt->f = (long)(cvt.f*g_fudge_factor);
-
     return false;
 }
 
@@ -1806,57 +1772,25 @@ int ifs()                       // front-end for ifs2d and ifs3d
     {
         return -1;
     }
-    if (driver_is_disk())                  // this would KILL a disk drive!
-    {
-        not_disk_msg();
-    }
     return !g_ifs_type ? ifs2d() : ifs3d();
 }
 
-// IFS logic shamelessly converted to integer math
 static int ifs2d()
 {
     int color;
-    std::vector<long> local_ifs;
-    LAffine cvt;
+    Affine cvt;
     // setup affine screen coord conversion
-    l_setup_convert_to_screen(&cvt);
+    setup_convert_to_screen(&cvt);
 
     std::srand(1);
     int color_method = (int) g_params[0];
-    try
-    {
-        local_ifs.resize(g_num_affine_transforms*NUM_IFS_2D_PARAMS);
-    }
-    catch (const std::bad_alloc &)
-    {
-        stop_msg("Insufficient memory for IFS");
-        return -1;
-    }
-
-    for (int i = 0; i < g_num_affine_transforms; i++)      // fill in the local IFS array
-    {
-        for (int j = 0; j < NUM_IFS_2D_PARAMS; j++)
-        {
-            local_ifs[i*NUM_IFS_2D_PARAMS+j] = (long)(g_ifs_definition[i*NUM_IFS_2D_PARAMS+j] * g_fudge_factor);
-        }
-    }
-
-    long temp_r = g_fudge_factor / 32767;        // find the proper rand() fudge
 
     std::FILE *fp = open_orbit_save();
 
-    long x = 0;
-    long y = 0;
+    double x = 0;
+    double y = 0;
     int ret = 0;
-    if (g_max_iterations > 0x1fffffL)
-    {
-        g_max_count = 0x7fffffffL;
-    }
-    else
-    {
-        g_max_count = g_max_iterations*1024L;
-    }
+    g_max_count = g_max_iterations > 0x1fffffL ? 0x7fffffffL : g_max_iterations * 1024L;
     g_color_iter = 0L;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
@@ -1865,42 +1799,39 @@ static int ifs2d()
             ret = -1;
             break;
         }
-        long r = RAND15();      // generate fudged random number between 0 and 1
-        r *= temp_r;
+        double r = static_cast<double>(RAND15())/32767.0; // generate random number between 0 and 1
 
         // pick which iterated function to execute, weighted by probability
-        long sum = local_ifs[6];  // [0][6]
+        double sum = g_ifs_definition[6];  // [0][6]
         int k = 0;
         while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
         {
-            sum += local_ifs[++k*NUM_IFS_2D_PARAMS+6];
+            sum += g_ifs_definition[++k * NUM_IFS_2D_PARAMS + 6];
         }
         // calculate image of last point under selected iterated function
-        long *l_f_ptr = local_ifs.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
-        long new_x = multiply(l_f_ptr[0], x, g_bit_shift) + multiply(l_f_ptr[1], y, g_bit_shift) + l_f_ptr[4];
-        long new_y = multiply(l_f_ptr[2], x, g_bit_shift) + multiply(l_f_ptr[3], y, g_bit_shift) + l_f_ptr[5];
+        float *f_f_ptr = g_ifs_definition.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
+        double new_x = *(f_f_ptr + 0) * x + *(f_f_ptr + 1) * y + *(f_f_ptr + 4);
+        double new_y = *(f_f_ptr + 2) * x + *(f_f_ptr + 3) * y + *(f_f_ptr + 5);
         x = new_x;
         y = new_y;
         if (fp)
         {
-            std::fprintf(fp, "%g %g %g 15\n", (double)new_x/g_fudge_factor, (double)new_y/g_fudge_factor, 0.0);
+            std::fprintf(fp, "%g %g %g 15\n", new_x, new_y, 0.0);
         }
 
         // plot if inside window
-        int col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >>
-            g_bit_shift);
-        int row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >>
-            g_bit_shift);
+        const int col = (int) (cvt.a * x + cvt.b * y + cvt.e);
+        const int row = (int) (cvt.c * x + cvt.d * y + cvt.f);
         if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
         {
-            // color is count of hits on this pixel
             if (color_method)
             {
-                color = (k%g_colors)+1;
+                color = (k % g_colors) + 1;
             }
             else
             {
-                color = get_color(col, row)+1;
+                // color is count of hits on this pixel
+                color = get_color(col, row) + 1;
             }
             if (color < g_colors)     // color sticks on last value
             {

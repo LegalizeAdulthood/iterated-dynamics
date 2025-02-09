@@ -85,3 +85,4 @@ add_image_test(fractint-formula PARAMETERS "type=formula" "formulafile=example2.
 foreach(bailout and imag manh manr or real)
     add_image_test(bailout-${bailout} PARAMETERS "type=mandel" "bailoutest=${bailout}")
 endforeach()
+add_image_test(ifs-dragon-1 PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")

@@ -355,7 +355,6 @@ FractalSpecific g_fractal_specific[] =
         HelpLabels::HT_IFS, HelpLabels::SPECIAL_IFS,                                                        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::INF_CALC, //
         -8.0F, 8.0F, -1.0F, 11.0F,                                                                          //
-        // 16, TODO: convert to floating-point                                                              //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                   //
         SymmetryType::NONE,                                                                                 //
         nullptr, nullptr, standalone_setup, ifs,                                                            //
