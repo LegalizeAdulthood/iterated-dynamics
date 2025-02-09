@@ -1826,7 +1826,7 @@ static int ifs2d()
     int color_method = (int) g_params[0];
     try
     {
-        local_ifs.resize(g_num_affine_transforms*NUM_IFS_PARAMS);
+        local_ifs.resize(g_num_affine_transforms*NUM_IFS_2D_PARAMS);
     }
     catch (const std::bad_alloc &)
     {
@@ -1836,9 +1836,9 @@ static int ifs2d()
 
     for (int i = 0; i < g_num_affine_transforms; i++)      // fill in the local IFS array
     {
-        for (int j = 0; j < NUM_IFS_PARAMS; j++)
+        for (int j = 0; j < NUM_IFS_2D_PARAMS; j++)
         {
-            local_ifs[i*NUM_IFS_PARAMS+j] = (long)(g_ifs_definition[i*NUM_IFS_PARAMS+j] * g_fudge_factor);
+            local_ifs[i*NUM_IFS_2D_PARAMS+j] = (long)(g_ifs_definition[i*NUM_IFS_2D_PARAMS+j] * g_fudge_factor);
         }
     }
 
@@ -1873,10 +1873,10 @@ static int ifs2d()
         int k = 0;
         while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
         {
-            sum += local_ifs[++k*NUM_IFS_PARAMS+6];
+            sum += local_ifs[++k*NUM_IFS_2D_PARAMS+6];
         }
         // calculate image of last point under selected iterated function
-        long *l_f_ptr = local_ifs.data() + k * NUM_IFS_PARAMS; // point to first parm in row
+        long *l_f_ptr = local_ifs.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
         long new_x = multiply(l_f_ptr[0], x, g_bit_shift) + multiply(l_f_ptr[1], y, g_bit_shift) + l_f_ptr[4];
         long new_y = multiply(l_f_ptr[2], x, g_bit_shift) + multiply(l_f_ptr[3], y, g_bit_shift) + l_f_ptr[5];
         x = new_x;

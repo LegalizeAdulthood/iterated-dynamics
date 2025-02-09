@@ -73,7 +73,7 @@ int ifs_load()                   // read in IFS parameters
     }
 
     string_lower(buf);
-    int const row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_PARAMS;
+    int const row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_2D_PARAMS;
     g_ifs_type = row_size == NUM_IFS_3D_PARAMS;
 
     int ret = 0;

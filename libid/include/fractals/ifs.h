@@ -6,7 +6,7 @@
 
 enum
 {
-    NUM_IFS_PARAMS = 7,
+    NUM_IFS_2D_PARAMS = 7,
     NUM_IFS_3D_PARAMS = 13
 };
 
