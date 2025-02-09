@@ -768,8 +768,8 @@ static void backwards_info13(FractalInfo read_info)
     {
         g_quick_calc = read_info.quick_calc != 0;
         g_close_proximity = read_info.close_prox;
-        if (g_fractal_type == FractalType::POPCORN_FP ||
-            g_fractal_type == FractalType::POPCORN_JUL_FP ||
+        if (g_fractal_type == FractalType::POPCORN ||
+            g_fractal_type == FractalType::POPCORN_JUL ||
             g_fractal_type == FractalType::LATOO)
         {
             g_new_bifurcation_functions_loaded = true;
@@ -921,69 +921,69 @@ struct MigrateReadType
 } // namespace
 
 static constexpr MigrateReadType MIGRATED_TYPES[]{
-    {DeprecatedIntegerType::MANDEL, FractalType::MANDEL_FP},                               //
-    {DeprecatedIntegerType::JULIA, FractalType::JULIA_FP},                                 //
-    {DeprecatedIntegerType::LAMBDA, FractalType::LAMBDA_FP},                               //
-    {DeprecatedIntegerType::MAN_O_WAR, FractalType::MAN_O_WAR_FP},                         //
-    {DeprecatedIntegerType::SIERPINSKI, FractalType::SIERPINSKI_FP},                       //
-    {DeprecatedIntegerType::BARNSLEY_M1, FractalType::BARNSLEY_M1_FP},                     //
-    {DeprecatedIntegerType::BARNSLEY_J1, FractalType::BARNSLEY_J1_FP},                     //
-    {DeprecatedIntegerType::BARNSLEY_M2, FractalType::BARNSLEY_M2_FP},                     //
-    {DeprecatedIntegerType::BARNSLEY_J2, FractalType::BARNSLEY_J2_FP},                     //
-    {DeprecatedIntegerType::SQR_TRIG, FractalType::SQR_TRIG_FP},                           //
-    {DeprecatedIntegerType::TRIG_PLUS_TRIG, FractalType::TRIG_PLUS_TRIG_FP},               //
-    {DeprecatedIntegerType::MANDEL_LAMBDA, FractalType::MANDEL_LAMBDA_FP},                 //
-    {DeprecatedIntegerType::MARKS_MANDEL, FractalType::MARKS_MANDEL_FP},                   //
-    {DeprecatedIntegerType::MARKS_JULIA, FractalType::MARKS_JULIA_FP},                     //
-    {DeprecatedIntegerType::UNITY, FractalType::UNITY_FP},                                 //
-    {DeprecatedIntegerType::MANDEL4, FractalType::MANDEL4_FP},                             //
-    {DeprecatedIntegerType::JULIA4, FractalType::JULIA4_FP},                               //
-    {DeprecatedIntegerType::BARNSLEY_M3, FractalType::BARNSLEY_M3_FP},                     //
-    {DeprecatedIntegerType::BARNSLEY_J3, FractalType::BARNSLEY_J3_FP},                     //
-    {DeprecatedIntegerType::TRIG_SQR, FractalType::TRIG_SQR_FP},                           //
-    {DeprecatedIntegerType::TRIG_X_TRIG, FractalType::TRIG_X_TRIG_FP},                     //
-    {DeprecatedIntegerType::SQR_1_OVER_TRIG, FractalType::SQR_1_OVER_TRIG_FP},             //
-    {DeprecatedIntegerType::Z_X_TRIG_PLUS_Z, FractalType::Z_X_TRIG_PLUS_Z_FP},             //
-    {DeprecatedIntegerType::KAM, FractalType::KAM_FP},                                     //
-    {DeprecatedIntegerType::KAM_3D, FractalType::KAM_3D_FP},                               //
-    {DeprecatedIntegerType::LAMBDA_TRIG, FractalType::LAMBDA_TRIG_FP},                     //
-    {DeprecatedIntegerType::MAN_TRIG_PLUS_Z_SQRD_L, FractalType::MAN_TRIG_PLUS_Z_SQRD_FP}, //
-    {DeprecatedIntegerType::JUL_TRIG_PLUS_Z_SQRD_L, FractalType::JUL_TRIG_PLUS_Z_SQRD_FP}, //
-    {DeprecatedIntegerType::MANDEL_TRIG, FractalType::MANDEL_TRIG_FP},                     //
-    {DeprecatedIntegerType::MANDEL_Z_POWER_L, FractalType::MANDEL_Z_POWER_FP},             //
-    {DeprecatedIntegerType::JULIA_Z_POWER_L, FractalType::JULIA_Z_POWER_FP},               //
-    {DeprecatedIntegerType::MAN_TRIG_PLUS_EXP_L, FractalType::MAN_TRIG_PLUS_EXP_FP},       //
-    {DeprecatedIntegerType::JUL_TRIG_PLUS_EXP_L, FractalType::JUL_TRIG_PLUS_EXP_FP},       //
-    {DeprecatedIntegerType::POPCORN_L, FractalType::POPCORN_FP},                           //
-    {DeprecatedIntegerType::LORENZ_L, FractalType::LORENZ_FP},                             //
-    {DeprecatedIntegerType::LORENZ_3D_L, FractalType::LORENZ_3D_FP},                       //
-    {DeprecatedIntegerType::FORMULA, FractalType::FORMULA_FP},                             //
-    {DeprecatedIntegerType::JULIBROT, FractalType::JULIBROT_FP},                           //
-    {DeprecatedIntegerType::ROSSLER_L, FractalType::ROSSLER_FP},                           //
-    {DeprecatedIntegerType::HENON_L, FractalType::HENON_FP},                               //
-    {DeprecatedIntegerType::SPIDER, FractalType::SPIDER_FP},                               //
-    {DeprecatedIntegerType::BIFURCATION_L, FractalType::BIFURCATION},                      //
-    {DeprecatedIntegerType::BIF_LAMBDA_L, FractalType::BIF_LAMBDA},                        //
-    {DeprecatedIntegerType::POPCORN_JUL_L, FractalType::POPCORN_JUL_FP},                   //
-    {DeprecatedIntegerType::MAN_O_WAR_J, FractalType::MAN_O_WAR_J_FP},                     //
-    {DeprecatedIntegerType::FN_PLUS_FN_PIX_LONG, FractalType::FN_PLUS_FN_PIX_FP},          //
-    {DeprecatedIntegerType::MARKS_MANDEL_PWR, FractalType::MARKS_MANDEL_PWR_FP},           //
-    {DeprecatedIntegerType::TIMS_ERROR, FractalType::TIMS_ERROR_FP},                       //
-    {DeprecatedIntegerType::BIF_EQ_SIN_PI_L, FractalType::BIF_EQ_SIN_PI},                  //
-    {DeprecatedIntegerType::BIF_PLUS_SIN_PI_L, FractalType::BIF_PLUS_SIN_PI},              //
-    {DeprecatedIntegerType::BIF_STEWART_L, FractalType::BIF_STEWART},                      //
-    {DeprecatedIntegerType::LAMBDA_FN_FN_L, FractalType::LAMBDA_FN_FN_FP},                 //
-    {DeprecatedIntegerType::JUL_FN_FN_L, FractalType::JUL_FN_FN_FP},                       //
-    {DeprecatedIntegerType::MAN_LAM_FN_FN_L, FractalType::MAN_LAM_FN_FN_FP},               //
-    {DeprecatedIntegerType::MAN_FN_FN_L, FractalType::MAN_FN_FN_FP},                       //
-    {DeprecatedIntegerType::BIF_MAY_L, FractalType::BIF_MAY},                              //
-    {DeprecatedIntegerType::HALLEY_MP, FractalType::HALLEY},                               //
-    {DeprecatedIntegerType::INVERSE_JULIA, FractalType::INVERSE_JULIA_FP},                 //
-    {DeprecatedIntegerType::PHOENIX, FractalType::PHOENIX_FP},                             //
-    {DeprecatedIntegerType::MAND_PHOENIX, FractalType::MAND_PHOENIX_FP},                   //
-    {DeprecatedIntegerType::FROTH, FractalType::FROTH_FP},                                 //
-    {DeprecatedIntegerType::PHOENIX_CPLX, FractalType::PHOENIX_FP_CPLX},                   //
-    {DeprecatedIntegerType::MAND_PHOENIX_CPLX, FractalType::MAND_PHOENIX_FP_CPLX}          //
+    {DeprecatedIntegerType::MANDEL, FractalType::MANDEL},                                //
+    {DeprecatedIntegerType::JULIA, FractalType::JULIA},                                  //
+    {DeprecatedIntegerType::LAMBDA, FractalType::LAMBDA},                                //
+    {DeprecatedIntegerType::MAN_O_WAR, FractalType::MAN_O_WAR},                          //
+    {DeprecatedIntegerType::SIERPINSKI, FractalType::SIERPINSKI},                        //
+    {DeprecatedIntegerType::BARNSLEY_M1, FractalType::BARNSLEY_M1},                      //
+    {DeprecatedIntegerType::BARNSLEY_J1, FractalType::BARNSLEY_J1},                      //
+    {DeprecatedIntegerType::BARNSLEY_M2, FractalType::BARNSLEY_M2},                      //
+    {DeprecatedIntegerType::BARNSLEY_J2, FractalType::BARNSLEY_J2},                      //
+    {DeprecatedIntegerType::SQR_TRIG, FractalType::SQR_FN},                              //
+    {DeprecatedIntegerType::TRIG_PLUS_TRIG, FractalType::FN_PLUS_FN},                    //
+    {DeprecatedIntegerType::MANDEL_LAMBDA, FractalType::MANDEL_LAMBDA},                  //
+    {DeprecatedIntegerType::MARKS_MANDEL, FractalType::MARKS_MANDEL},                    //
+    {DeprecatedIntegerType::MARKS_JULIA, FractalType::MARKS_JULIA},                      //
+    {DeprecatedIntegerType::UNITY, FractalType::UNITY},                                  //
+    {DeprecatedIntegerType::MANDEL4, FractalType::MANDEL4},                              //
+    {DeprecatedIntegerType::JULIA4, FractalType::JULIA4},                                //
+    {DeprecatedIntegerType::BARNSLEY_M3, FractalType::BARNSLEY_M3},                      //
+    {DeprecatedIntegerType::BARNSLEY_J3, FractalType::BARNSLEY_J3},                      //
+    {DeprecatedIntegerType::TRIG_SQR, FractalType::FN_Z_SQR},                            //
+    {DeprecatedIntegerType::TRIG_X_TRIG, FractalType::FN_TIMES_FN},                      //
+    {DeprecatedIntegerType::SQR_1_OVER_TRIG, FractalType::SQR_1_OVER_FN},                //
+    {DeprecatedIntegerType::Z_X_TRIG_PLUS_Z, FractalType::FN_MUL_Z_PLUS_Z},              //
+    {DeprecatedIntegerType::KAM, FractalType::KAM},                                      //
+    {DeprecatedIntegerType::KAM_3D, FractalType::KAM_3D},                                //
+    {DeprecatedIntegerType::LAMBDA_TRIG, FractalType::LAMBDA_FN},                        //
+    {DeprecatedIntegerType::MAN_TRIG_PLUS_Z_SQRD_L, FractalType::MANDEL_FN_PLUS_Z_SQRD}, //
+    {DeprecatedIntegerType::JUL_TRIG_PLUS_Z_SQRD_L, FractalType::JULIA_FN_PLUS_Z_SQRD},  //
+    {DeprecatedIntegerType::MANDEL_TRIG, FractalType::MANDEL_FN},                        //
+    {DeprecatedIntegerType::MANDEL_Z_POWER_L, FractalType::MANDEL_Z_POWER},              //
+    {DeprecatedIntegerType::JULIA_Z_POWER_L, FractalType::JULIA_Z_POWER},                //
+    {DeprecatedIntegerType::MAN_TRIG_PLUS_EXP_L, FractalType::MANDEL_FN_PLUS_EXP},       //
+    {DeprecatedIntegerType::JUL_TRIG_PLUS_EXP_L, FractalType::JULIA_FN_PLUS_EXP},        //
+    {DeprecatedIntegerType::POPCORN_L, FractalType::POPCORN},                            //
+    {DeprecatedIntegerType::LORENZ_L, FractalType::LORENZ},                              //
+    {DeprecatedIntegerType::LORENZ_3D_L, FractalType::LORENZ_3D},                        //
+    {DeprecatedIntegerType::FORMULA, FractalType::FORMULA},                              //
+    {DeprecatedIntegerType::JULIBROT, FractalType::JULIBROT},                            //
+    {DeprecatedIntegerType::ROSSLER_L, FractalType::ROSSLER},                            //
+    {DeprecatedIntegerType::HENON_L, FractalType::HENON},                                //
+    {DeprecatedIntegerType::SPIDER, FractalType::SPIDER},                                //
+    {DeprecatedIntegerType::BIFURCATION_L, FractalType::BIFURCATION},                    //
+    {DeprecatedIntegerType::BIF_LAMBDA_L, FractalType::BIF_LAMBDA},                      //
+    {DeprecatedIntegerType::POPCORN_JUL_L, FractalType::POPCORN_JUL},                    //
+    {DeprecatedIntegerType::MAN_O_WAR_J, FractalType::MAN_O_WAR_J},                      //
+    {DeprecatedIntegerType::FN_PLUS_FN_PIX_LONG, FractalType::FN_PLUS_FN_PIX},           //
+    {DeprecatedIntegerType::MARKS_MANDEL_PWR, FractalType::MARKS_MANDEL_PWR},            //
+    {DeprecatedIntegerType::TIMS_ERROR, FractalType::TIMS_ERROR},                        //
+    {DeprecatedIntegerType::BIF_EQ_SIN_PI_L, FractalType::BIF_EQ_SIN_PI},                //
+    {DeprecatedIntegerType::BIF_PLUS_SIN_PI_L, FractalType::BIF_PLUS_SIN_PI},            //
+    {DeprecatedIntegerType::BIF_STEWART_L, FractalType::BIF_STEWART},                    //
+    {DeprecatedIntegerType::LAMBDA_FN_FN_L, FractalType::LAMBDA_FN_FN},                  //
+    {DeprecatedIntegerType::JUL_FN_FN_L, FractalType::JUL_FN_FN},                        //
+    {DeprecatedIntegerType::MAN_LAM_FN_FN_L, FractalType::MAN_LAM_FN_FN},                //
+    {DeprecatedIntegerType::MAN_FN_FN_L, FractalType::MAN_FN_FN},                        //
+    {DeprecatedIntegerType::BIF_MAY_L, FractalType::BIF_MAY},                            //
+    {DeprecatedIntegerType::HALLEY_MP, FractalType::HALLEY},                             //
+    {DeprecatedIntegerType::INVERSE_JULIA, FractalType::INVERSE_JULIA},                  //
+    {DeprecatedIntegerType::PHOENIX, FractalType::PHOENIX},                              //
+    {DeprecatedIntegerType::MAND_PHOENIX, FractalType::MAND_PHOENIX},                    //
+    {DeprecatedIntegerType::FROTH, FractalType::FROTHY_BASIN},                           //
+    {DeprecatedIntegerType::PHOENIX_CPLX, FractalType::PHOENIX_CPLX},                    //
+    {DeprecatedIntegerType::MAND_PHOENIX_CPLX, FractalType::MAND_PHOENIX_CPLX}           //
 };
 
 static FractalType migrate_integer_types(int read_type)
@@ -1036,7 +1036,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         std::snprintf(msg, std::size(msg), "Warning: %s has a bad fractal type %d; using mandel",
             g_read_filename.c_str(), read_fractal_type);
-        set_fractal_type(FractalType::MANDEL_FP);
+        set_fractal_type(FractalType::MANDEL);
         stop_msg(msg);
         return -1;
     }
@@ -1677,97 +1677,97 @@ static void backwards_compat(FractalInfo *info)
     switch (+g_fractal_type)
     {
     case DeprecatedFractalType::LAMBDA_SINE:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::SIN;
         break;
     case DeprecatedFractalType::LAMBDA_COS:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::COSXX;
         break;
     case DeprecatedFractalType::LAMBDA_EXP:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::EXP;
         break;
     case DeprecatedFractalType::MANDEL_SINE:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::SIN;
         break;
     case DeprecatedFractalType::MANDEL_COS:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::COSXX;
         break;
     case DeprecatedFractalType::MANDEL_EXP:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::EXP;
         break;
     case DeprecatedFractalType::MANDEL_SINH:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::SINH;
         break;
     case DeprecatedFractalType::LAMBDA_SINH:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::SINH;
         break;
     case DeprecatedFractalType::MANDEL_COSH:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::LAMBDA_COSH:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::MANDEL_SINE_L:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::SIN;
         break;
     case DeprecatedFractalType::LAMBDA_SINE_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::SIN;
         break;
     case DeprecatedFractalType::MANDEL_COS_L:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::COSXX;
         break;
     case DeprecatedFractalType::LAMBDA_COS_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::COSXX;
         break;
     case DeprecatedFractalType::MANDEL_SINH_L:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::SINH;
         break;
     case DeprecatedFractalType::LAMBDA_SINH_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::SINH;
         break;
     case DeprecatedFractalType::MANDEL_COSH_L:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::LAMBDA_COSH_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::COSH;
         break;
     case DeprecatedFractalType::MANDEL_EXP_L:
-        set_fractal_type(FractalType::MANDEL_TRIG_FP);
+        set_fractal_type(FractalType::MANDEL_FN);
         g_trig_index[0] = TrigFn::EXP;
         break;
     case DeprecatedFractalType::LAMBDA_EXP_L:
-        set_fractal_type(FractalType::LAMBDA_TRIG_FP);
+        set_fractal_type(FractalType::LAMBDA_FN);
         g_trig_index[0] = TrigFn::EXP;
         break;
     case DeprecatedFractalType::DEM_M:
-        set_fractal_type(FractalType::MANDEL_FP);
+        set_fractal_type(FractalType::MANDEL);
         g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
     case DeprecatedFractalType::DEM_J:
-        set_fractal_type(FractalType::JULIA_FP);
+        set_fractal_type(FractalType::JULIA);
         g_user_distance_estimator_value = (info->y_dots - 1) * 2;
         break;
     default:
         break;
     }
-    if (g_fractal_type == FractalType::MANDEL_LAMBDA_FP)
+    if (g_fractal_type == FractalType::MANDEL_LAMBDA)
     {
         g_use_init_orbit = InitOrbitMode::PIXEL;
     }
@@ -1804,8 +1804,8 @@ void set_function_param_defaults()
 {
     switch (g_fractal_type)
     {
-    case FractalType::POPCORN_FP:
-    case FractalType::POPCORN_JUL_FP:
+    case FractalType::POPCORN:
+    case FractalType::POPCORN_JUL:
         set_trig_array(0, "sin");
         set_trig_array(1, "tan");
         set_trig_array(2, "sin");
@@ -1830,9 +1830,9 @@ void backwards_legacy_v18()
     {
         set_if_old_bif(); // old bifs need function set
     }
-    if (g_file_version < 1800                                                                            //
-        && (g_fractal_type == FractalType::MANDEL_TRIG_FP || g_fractal_type == FractalType::LAMBDA_TRIG_FP) //
-        && g_user_float_flag                                                                             //
+    if (g_file_version < 1800                                                                     //
+        && (g_fractal_type == FractalType::MANDEL_FN || g_fractal_type == FractalType::LAMBDA_FN) //
+        && g_user_float_flag                                                                      //
         && g_bailout == 0)
     {
         g_bailout = 2500;
@@ -1841,7 +1841,7 @@ void backwards_legacy_v18()
 
 void backwards_legacy_v19()
 {
-    if (g_fractal_type == FractalType::MARKS_JULIA_FP)
+    if (g_fractal_type == FractalType::MARKS_JULIA)
     {
         if (g_file_version < 1825)
         {
@@ -1855,7 +1855,7 @@ void backwards_legacy_v19()
             }
         }
     }
-    else if (g_fractal_type == FractalType::FORMULA_FP)
+    else if (g_fractal_type == FractalType::FORMULA)
     {
         if (g_file_version < 1824)
         {
@@ -1876,8 +1876,8 @@ void backwards_legacy_v19()
 void backwards_legacy_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
-    g_bad_outside = g_file_version <= 1960                                                       //
-        && (g_fractal_type == FractalType::MANDEL_FP || g_fractal_type == FractalType::JULIA_FP) //
+    g_bad_outside = g_file_version <= 1960                                                 //
+        && (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA) //
         && g_outside_color <= REAL && g_outside_color >= SUM;
 
     if (g_file_version < 1961 && g_inside_color == EPS_CROSS)
@@ -2607,7 +2607,7 @@ static bool function_ok(FractalInfo const *info, int num_fn)
 static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
 {
     int num_fn;
-    if (g_fractal_type == FractalType::FORMULA_FP && migrate_integer_types(info->fractal_type) == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA && migrate_integer_types(info->fractal_type) == FractalType::FORMULA)
     {
         if (string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
         {

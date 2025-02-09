@@ -498,7 +498,7 @@ static void init_vars_fractal()
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
     g_user_float_flag = true;                            // turn on the float flag
     g_finite_attractor = false;                          // disable finite attractor logic
-    set_fractal_type(FractalType::MANDEL_FP);            // initial fractal type
+    set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //
     g_bailout = 0;                                       // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
@@ -566,7 +566,7 @@ static void init_vars_fractal()
     g_julibrot_dist_fp = 24;                                        //
     g_eyes_fp = 2.5F;                                               //
     g_julibrot_depth_fp = 8;                                        //
-    g_new_orbit_type = FractalType::JULIA_FP;                       //
+    g_new_orbit_type = FractalType::JULIA;                          //
     g_julibrot_z_dots = 128;                                        //
     init_vars3d();                                                  //
     g_base_hertz = 440;                                             // basic hertz rate

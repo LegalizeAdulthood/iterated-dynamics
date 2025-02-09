@@ -427,11 +427,11 @@ int mandel_fp_per_pixel()
         break;
     case FractalType::MAGNET_2M:
         float_pre_calc_magnet2();
-    case FractalType::MAGNET_1M:  // NOLINT(clang-diagnostic-implicit-fallthrough)
-        g_old_z.y = 0.0;       // Critical Val Zero both, but neither
-        g_old_z.x = g_old_z.y; // is of the form f(Z,C) = Z*g(Z)+C
+    case FractalType::MAGNET_1M:     // NOLINT(clang-diagnostic-implicit-fallthrough)
+        g_old_z.y = 0.0;             // Critical Val Zero both, but neither
+        g_old_z.x = g_old_z.y;       // is of the form f(Z,C) = Z*g(Z)+C
         break;
-    case FractalType::MANDEL_LAMBDA_FP:            // Critical Value 0.5 + 0.0i
+    case FractalType::MANDEL_LAMBDA: // Critical Value 0.5 + 0.0i
         g_old_z.x = 0.5;
         g_old_z.y = 0.0;
         break;

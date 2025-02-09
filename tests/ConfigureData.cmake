@@ -69,9 +69,9 @@ function(configure_migrate_int_gif name)
 endfunction()
 foreach(name
         mandel julia lambda manowar sierpinski barnsleym1 barnsleyj1
-        barnsleym2 barnsleyj2 barnsleym3 barnsleyj3 sqrtrig trigplustrig
+        barnsleym2 barnsleyj2 barnsleym3 barnsleyj3 sqrtrig fnplusfn
         mandellambda marksmandel marksjulia unity mandel4 julia4 trigsqr
-        trigxtrig sqr1fn fnmulzz kam kam3d lambdatrig manfnzsqrd julfnzsqrd
+        fntimesfn sqr1fn fnmulzz kam kam3d lambdafn manfnzsqrd julfnzsqrd
         mandelfn manzpower julzpower manfnplusexp julfnplusexp popcorn
         lorenz newton newtbasin lorenz3d formula julibrot rossler henon
         spider bifurcation biflambda popcornjulia manowarjulia fnzfnpix

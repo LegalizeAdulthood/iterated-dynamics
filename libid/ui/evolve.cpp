@@ -415,7 +415,7 @@ static int get_the_rest()
     copy_genes_from_bank(gene);
 
     int num_trig = (+g_cur_fractal_specific->flags >> 6) & 7;
-    if (g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA)
     {
         num_trig = g_max_function;
     }
@@ -501,7 +501,7 @@ int get_variations()
 
     copy_genes_from_bank(gene);
 
-    if (g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA)
     {
         if (g_frm_uses_p1)    // set first parameter
         {
@@ -551,7 +551,7 @@ int get_variations()
     {
         if (type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, nullptr) == 0)
         {
-            if (g_fractal_type == FractalType::FORMULA_FP)
+            if (g_fractal_type == FractalType::FORMULA)
             {
                 if (param_not_used(i))
                 {
@@ -563,7 +563,7 @@ int get_variations()
         num_params++;
     }
 
-    if (g_fractal_type != FractalType::FORMULA_FP)
+    if (g_fractal_type != FractalType::FORMULA)
     {
         last_param = num_params;
     }
@@ -572,7 +572,7 @@ choose_vars_restart:
     choices.reset();
     for (int num = first_param; num < last_param; num++)
     {
-        if (g_fractal_type == FractalType::FORMULA_FP)
+        if (g_fractal_type == FractalType::FORMULA)
         {
             if (param_not_used(num))
             {
@@ -621,7 +621,7 @@ choose_vars_restart:
     // read out values
     for (int num = first_param; num < last_param; num++)
     {
-        if (g_fractal_type == FractalType::FORMULA_FP)
+        if (g_fractal_type == FractalType::FORMULA)
         {
             if (param_not_used(num))
             {

@@ -979,7 +979,7 @@ static void perform_work_list()
         // must be mandel type, formula, or old PAR/GIF
         s_dem_mandel = g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL
             || g_use_old_distance_estimator
-            || g_fractal_type == FractalType::FORMULA_FP;
+            || g_fractal_type == FractalType::FORMULA;
         s_dem_delta = sqr(del_xx) + sqr(del_yy2);
         double f_temp = sqr(del_yy) + sqr(del_xx2);
         s_dem_delta = std::max(f_temp, s_dem_delta);
@@ -1432,7 +1432,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     g_orbit_save_index = 0;
     g_color_iter = 0;
-    if (g_fractal_type == FractalType::JULIA_FP)
+    if (g_fractal_type == FractalType::JULIA)
     {
         g_color_iter = -1;
     }
@@ -2751,14 +2751,14 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
     bool params_no_imag = (g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
     switch (g_fractal_type)
     {
-    case FractalType::MAN_LAM_FN_FN_FP:     // These need only P1 checked.  P2 is used for a switch value
-    case FractalType::MAN_FN_FN_FP:        // These have NOPARM set in fractalp.cpp, but it only applies to P1.
-    case FractalType::MANDEL_Z_POWER_FP:   // or P2 is an exponent
-    case FractalType::MAN_Z_TO_Z_PLUS_Z_PWR_FP:
-    case FractalType::MARKS_MANDEL_FP:
-    case FractalType::MARKS_JULIA_FP:
+    case FractalType::MAN_LAM_FN_FN:  // These need only P1 checked.  P2 is used for a switch value
+    case FractalType::MAN_FN_FN:      // These have NOPARM set in fractalp.cpp, but it only applies to P1.
+    case FractalType::MANDEL_Z_POWER: // or P2 is an exponent
+    case FractalType::MAN_Z_TO_Z_PLUS_Z_PWR:
+    case FractalType::MARKS_MANDEL:
+    case FractalType::MARKS_JULIA:
         break;
-    case FractalType::FORMULA_FP: // Check P2, P3, P4 and P5
+    case FractalType::FORMULA: // Check P2, P3, P4 and P5
         params_zero = (params_zero && g_params[2] == 0.0 && g_params[3] == 0.0
             && g_params[4] == 0.0 && g_params[5] == 0.0
             && g_params[6] == 0.0 && g_params[7] == 0.0

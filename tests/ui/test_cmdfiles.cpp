@@ -350,8 +350,8 @@ protected:
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver<int> m_saved_release{g_release};
     ValueSaver<std::string> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
-    ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL_FP};
-    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL_FP)};
+    ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> m_saved_x_dots{g_file_x_dots, 800};
     ValueSaver<int> m_saved_y_dots{g_file_y_dots, 600};
     MockDriver m_driver;
@@ -1170,8 +1170,8 @@ TEST_F(TestParameterCommand, typeSierpinski)
     exec_cmd_arg("type=sierpinski", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(FractalType::SIERPINSKI_FP, g_fractal_type);
-    EXPECT_EQ(g_cur_fractal_specific, get_fractal_specific(FractalType::SIERPINSKI_FP));
+    EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
+    EXPECT_EQ(g_cur_fractal_specific, get_fractal_specific(FractalType::SIERPINSKI));
     const FractalSpecific &fractal{*g_cur_fractal_specific};
     EXPECT_EQ(g_x_min, fractal.x_min);
     EXPECT_EQ(g_x_max, fractal.x_max);
@@ -3933,10 +3933,10 @@ TEST_F(TestParameterCommand, saveDir)
 
 TEST_F(TestParameterCommand, orbitNameJulia)
 {
-    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::LAMBDA_FP};
+    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::LAMBDA};
 
     exec_cmd_arg("orbitname=julia");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(FractalType::JULIA_FP, g_new_orbit_type);
+    EXPECT_EQ(FractalType::JULIA, g_new_orbit_type);
 }

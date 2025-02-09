@@ -63,7 +63,7 @@ TEST(TestFractalSpecific, toMandelbrotExists)
             EXPECT_NO_THROW(get_fractal_specific(mandel_type)) << "index " << i << " (" << from.name << ")";
             // type=inverse_julia is a special case;
             // it has a link to Mandelbrot, but doesn't have a link back.
-            if (from.type != FractalType::INVERSE_JULIA_FP)
+            if (from.type != FractalType::INVERSE_JULIA)
             {
                 EXPECT_EQ(from.type, get_fractal_specific(mandel_type)->to_julia)
                     << "index " << i << " (" << from.name << ") mismatched Julia/Mandelbrot toggle";

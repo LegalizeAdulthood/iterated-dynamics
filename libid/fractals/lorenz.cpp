@@ -280,27 +280,27 @@ bool orbit3d_float_setup()
     s_waste = 100;
     s_projection = 2;
 
-    if (g_fractal_type == FractalType::HENON_FP
-        || g_fractal_type == FractalType::PICKOVER_FP
-        || g_fractal_type == FractalType::GINGERBREAD_FP
-        || g_fractal_type == FractalType::KAM_FP
-        || g_fractal_type == FractalType::KAM_3D_FP
-        || g_fractal_type == FractalType::HOPALONG_FP
-        || g_fractal_type == FractalType::INVERSE_JULIA_FP)
+    if (g_fractal_type == FractalType::HENON          //
+        || g_fractal_type == FractalType::PICKOVER    //
+        || g_fractal_type == FractalType::GINGERBREAD //
+        || g_fractal_type == FractalType::KAM         //
+        || g_fractal_type == FractalType::KAM_3D      //
+        || g_fractal_type == FractalType::HOPALONG    //
+        || g_fractal_type == FractalType::INVERSE_JULIA)
     {
         s_connect = false;
     }
-    if (g_fractal_type == FractalType::LORENZ_3D1_FP
-        || g_fractal_type == FractalType::LORENZ_3D3_FP
-        || g_fractal_type == FractalType::LORENZ_3D4_FP)
+    if (g_fractal_type == FractalType::LORENZ_3D1    //
+        || g_fractal_type == FractalType::LORENZ_3D3 //
+        || g_fractal_type == FractalType::LORENZ_3D4)
     {
         s_waste = 750;
     }
-    if (g_fractal_type == FractalType::ROSSLER_FP)
+    if (g_fractal_type == FractalType::ROSSLER)
     {
         s_waste = 500;
     }
-    if (g_fractal_type == FractalType::LORENZ_FP)
+    if (g_fractal_type == FractalType::LORENZ)
     {
         s_projection = 1; // plot x and z
     }
@@ -308,7 +308,7 @@ bool orbit3d_float_setup()
     s_init_orbit_fp[0] = 1;  // initial conditions
     s_init_orbit_fp[1] = 1;
     s_init_orbit_fp[2] = 1;
-    if (g_fractal_type == FractalType::GINGERBREAD_FP)
+    if (g_fractal_type == FractalType::GINGERBREAD)
     {
         s_init_orbit_fp[0] = g_params[0];        // initial conditions
         s_init_orbit_fp[1] = g_params[1];
@@ -327,7 +327,7 @@ bool orbit3d_float_setup()
         s_connect = false;
     }
 
-    if (g_fractal_type == FractalType::HENON_FP || g_fractal_type == FractalType::PICKOVER_FP)
+    if (g_fractal_type == FractalType::HENON || g_fractal_type == FractalType::PICKOVER)
     {
         s_a =  g_params[0];
         s_b =  g_params[1];
@@ -346,7 +346,7 @@ bool orbit3d_float_setup()
         s_c  =   g_params[2];
         s_d  =   g_params[3];
     }
-    else if (g_fractal_type == FractalType::KAM_FP || g_fractal_type == FractalType::KAM_3D_FP)
+    else if (g_fractal_type == FractalType::KAM || g_fractal_type == FractalType::KAM_3D)
     {
         g_max_count = 1L;
         s_a = g_params[0];           // angle
@@ -365,10 +365,10 @@ bool orbit3d_float_setup()
         s_init_orbit_fp[1] = 0;
         s_init_orbit_fp[2] = 0;
     }
-    else if (g_fractal_type == FractalType::HOPALONG_FP
-        || g_fractal_type == FractalType::MARTIN_FP
-        || g_fractal_type == FractalType::CHIP
-        || g_fractal_type == FractalType::QUADRUP_TWO
+    else if (g_fractal_type == FractalType::HOPALONG  //
+        || g_fractal_type == FractalType::MARTIN      //
+        || g_fractal_type == FractalType::CHIP        //
+        || g_fractal_type == FractalType::QUADRUP_TWO //
         || g_fractal_type == FractalType::THREEPLY)
     {
         s_init_orbit_fp[0] = 0;  // initial conditions
@@ -385,7 +385,7 @@ bool orbit3d_float_setup()
             s_sin_sum_a_b_c = std::sin(s_a + s_b + s_c);
         }
     }
-    else if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
+    else if (g_fractal_type == FractalType::INVERSE_JULIA)
     {
         s_cx = g_params[0];
         s_cy = g_params[1];
@@ -1228,10 +1228,10 @@ bool dynam2d_float_setup()
     {
         s_d = 1;
     }
-    if (g_fractal_type == FractalType::DYNAMIC_FP)
+    if (g_fractal_type == FractalType::DYNAMIC)
     {
-        s_a = g_params[2]; // parameter
-        s_b = g_params[3]; // parameter
+        s_a = g_params[2];  // parameter
+        s_b = g_params[3];  // parameter
         s_dt = g_params[1]; // step size
         if (s_dt < 0)
         {

@@ -89,7 +89,7 @@ mandel_fp_setup()
     g_float_param = &g_init;
     switch (g_fractal_type)
     {
-    case FractalType::MARKS_MANDEL_FP:
+    case FractalType::MARKS_MANDEL:
         if (g_c_exponent < 1)
         {
             g_c_exponent = 1;
@@ -105,7 +105,7 @@ mandel_fp_setup()
         }
         break;
 
-    case FractalType::MANDEL_FP:
+    case FractalType::MANDEL:
         /*
            floating point code could probably be altered to handle many of
            the situations that otherwise are using standard_fractal().
@@ -138,7 +138,7 @@ mandel_fp_setup()
         }
         break;
 
-    case FractalType::MANDEL_Z_POWER_FP:
+    case FractalType::MANDEL_Z_POWER:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             if (g_c_exponent == 2)
@@ -174,17 +174,17 @@ mandel_fp_setup()
         g_attractor_period[0] = 1;
         g_attractors = 1;
         break;
-    case FractalType::SPIDER_FP:
+    case FractalType::SPIDER:
         if (g_periodicity_check == 1)   // if not user set
         {
             g_periodicity_check = 4;
         }
         break;
-    case FractalType::TRIG_PLUS_TRIG_FP:
+    case FractalType::FN_PLUS_FN:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
         break;
-    case FractalType::MAN_TRIG_PLUS_EXP_FP:
-    case FractalType::MAN_TRIG_PLUS_Z_SQRD_FP:
+    case FractalType::MANDEL_FN_PLUS_EXP:
+    case FractalType::MANDEL_FN_PLUS_Z_SQRD:
         if (g_param_z1.y == 0.0)
         {
             g_symmetry = SymmetryType::X_AXIS;
@@ -198,12 +198,12 @@ mandel_fp_setup()
             g_symmetry = SymmetryType::NONE;
         }
         break;
-    case FractalType::QUAT_FP:
+    case FractalType::QUAT:
         g_float_param = &g_tmp_z;
         g_attractors = 0;
         g_periodicity_check = 0;
         break;
-    case FractalType::HYPER_CMPLX_FP:
+    case FractalType::HYPER_CMPLX:
         g_float_param = &g_tmp_z;
         g_attractors = 0;
         g_periodicity_check = 0;
@@ -216,13 +216,13 @@ mandel_fp_setup()
             g_symmetry = SymmetryType::NONE;
         }
         break;
-    case FractalType::TIMS_ERROR_FP:
+    case FractalType::TIMS_ERROR:
         if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
         break;
-    case FractalType::MARKS_MANDEL_PWR_FP:
+    case FractalType::MARKS_MANDEL_PWR:
         if (g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
@@ -247,7 +247,7 @@ julia_fp_setup()
     }
     switch (g_fractal_type)
     {
-    case FractalType::JULIA_FP:
+    case FractalType::JULIA:
         /*
            floating point code could probably be altered to handle many of
            the situations that otherwise are using standard_fractal().
@@ -277,7 +277,7 @@ julia_fp_setup()
             get_julia_attractor(0.0, 0.0);    // another attractor?
         }
         break;
-    case FractalType::JULIA_Z_POWER_FP:
+    case FractalType::JULIA_Z_POWER:
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
@@ -301,19 +301,19 @@ julia_fp_setup()
         g_attractors = 1;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case FractalType::LAMBDA_FP:
+    case FractalType::LAMBDA:
         get_julia_attractor(0.0, 0.0);    // another attractor?
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
-    case FractalType::MAN_O_WAR_FP:
+    case FractalType::MAN_O_WAR:
         if (g_param_z1.y == 0.0)
         {
             g_symmetry = SymmetryType::X_AXIS;
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case FractalType::JUL_TRIG_PLUS_EXP_FP:
-    case FractalType::JUL_TRIG_PLUS_Z_SQRD_FP:
+    case FractalType::JULIA_FN_PLUS_EXP:
+    case FractalType::JULIA_FN_PLUS_Z_SQRD:
         if (g_param_z1.y == 0.0)
         {
             g_symmetry = SymmetryType::X_AXIS;
@@ -328,7 +328,7 @@ julia_fp_setup()
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
-    case FractalType::HYPER_CMPLX_J_FP:
+    case FractalType::HYPER_CMPLX_J:
         if (g_params[2] != 0)
         {
             g_symmetry = SymmetryType::NONE;
@@ -337,7 +337,7 @@ julia_fp_setup()
         {
             g_symmetry = SymmetryType::NONE;
         }
-    case FractalType::QUAT_JUL_FP:
+    case FractalType::QUAT_JUL:
         g_attractors = 0;   // attractors broken since code checks r,i not j,k
         g_periodicity_check = 0;
         if (g_params[4] != 0.0 || g_params[5] != 0)
@@ -345,8 +345,8 @@ julia_fp_setup()
             g_symmetry = SymmetryType::NONE;
         }
         break;
-    case FractalType::POPCORN_FP:
-    case FractalType::POPCORN_JUL_FP:
+    case FractalType::POPCORN:
+    case FractalType::POPCORN_JUL:
     {
         bool default_functions = false;
         if (g_trig_index[0] == TrigFn::SIN
@@ -358,7 +358,7 @@ julia_fp_setup()
             && g_param_z1.y == 0)
         {
             default_functions = true;
-            if (g_fractal_type == FractalType::POPCORN_JUL_FP)
+            if (g_fractal_type == FractalType::POPCORN_JUL)
             {
                 g_symmetry = SymmetryType::ORIGIN;
             }
@@ -375,8 +375,8 @@ julia_fp_setup()
         break;
     }
 
-    case FractalType::CIRCLE_FP:
-        if (g_inside_color == STAR_TRAIL)   // FPCIRCLE locks up when used with STARTRAIL
+    case FractalType::CIRCLE:
+        if (g_inside_color == STAR_TRAIL)   // CIRCLE locks up when used with STAR_TRAIL
         {
             g_inside_color = COLOR_BLACK; // arbitrarily set inside = NUMB
         }
@@ -392,7 +392,7 @@ julia_fp_setup()
 bool
 standard_setup()
 {
-    if (g_fractal_type == FractalType::UNITY_FP)
+    if (g_fractal_type == FractalType::UNITY)
     {
         g_periodicity_check = 0;
     }

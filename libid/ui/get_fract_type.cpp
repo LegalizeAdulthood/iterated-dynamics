@@ -164,7 +164,7 @@ static FractalType select_fract_type(FractalType t)
     }
 
     const FractalType result{g_fractal_specific[choices[done]->num].type};
-    if (result == FractalType::FORMULA_FP && g_formula_filename == g_command_file)
+    if (result == FractalType::FORMULA && g_formula_filename == g_command_file)
     {
         g_formula_filename = g_search_for.frm;
     }
@@ -231,9 +231,9 @@ void set_fractal_default_functions(FractalType previous)
 
     // Next assumes that user going between popcorn and popcornjul
     // might not want to change function variables
-    case FractalType::POPCORN_FP:
-    case FractalType::POPCORN_JUL_FP:
-        if (!(previous == FractalType::POPCORN_FP || previous == FractalType::POPCORN_JUL_FP))
+    case FractalType::POPCORN:
+    case FractalType::POPCORN_JUL:
+        if (!(previous == FractalType::POPCORN || previous == FractalType::POPCORN_JUL))
         {
             set_function_param_defaults();
         }
@@ -301,7 +301,7 @@ sel_type_restart:
             return false;
         }
     }
-    else if (g_fractal_type == FractalType::FORMULA_FP)
+    else if (g_fractal_type == FractalType::FORMULA)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_FORMULA);
         std::string saved_filename{g_formula_filename};
@@ -335,7 +335,7 @@ sel_type_restart:
     {
         restore_trig_functions();
         restore_params();
-        if (g_fractal_type == FractalType::FORMULA_FP ||
+        if (g_fractal_type == FractalType::FORMULA ||
             g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D ||
             g_fractal_type == FractalType::L_SYSTEM)
         {
@@ -384,7 +384,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     int fn_key_mask = 0;
 
     old_bailout = g_bailout;
-    g_julibrot = g_fractal_type == FractalType::JULIBROT_FP;
+    g_julibrot = g_fractal_type == FractalType::JULIBROT;
     FractalType current_type = g_fractal_type;
     g_cur_fractal_specific = get_fractal_specific(current_type);
     s_tmp_stack[0] = 0;
@@ -446,7 +446,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
         {
             load_entry_text(entry_file, s_tmp_stack, 17, 0, 0);
             std::fclose(entry_file);
-            if (g_fractal_type == FractalType::FORMULA_FP)
+            if (g_fractal_type == FractalType::FORMULA)
             {
                 frm_get_param_stuff(entry_name); // no error check, should be okay, from above
             }
@@ -526,7 +526,7 @@ gfp_top:
         julia_orbit_name = jb_orbit->name;
     }
 
-    if (g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA)
     {
         if (g_frm_uses_p1)    // set first parameter
         {
@@ -575,14 +575,14 @@ gfp_top:
     {
         g_cur_fractal_specific = jb_orbit;
         first_param = 2; // in most case Julibrot does not need first two parms
-        if (g_new_orbit_type == FractalType::QUAT_JUL_FP        // all parameters needed
-            || g_new_orbit_type == FractalType::HYPER_CMPLX_J_FP)
+        if (g_new_orbit_type == FractalType::QUAT_JUL        // all parameters needed
+            || g_new_orbit_type == FractalType::HYPER_CMPLX_J)
         {
             first_param = 0;
             last_param = 4;
         }
-        if (g_new_orbit_type == FractalType::QUAT_FP           // no parameters needed
-            || g_new_orbit_type == FractalType::HYPER_CMPLX_FP)
+        if (g_new_orbit_type == FractalType::QUAT           // no parameters needed
+            || g_new_orbit_type == FractalType::HYPER_CMPLX)
         {
             first_param = 4;
         }
@@ -596,7 +596,7 @@ gfp_top:
             char tmp_buf[30];
             if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, param_prompt[j]))
             {
-                if (current_type == FractalType::FORMULA_FP)
+                if (current_type == FractalType::FORMULA)
                 {
                     if (param_not_used(i))
                     {
@@ -627,13 +627,13 @@ gfp_top:
     /* The following is a goofy kludge to make reading in the formula
      * parameters work.
      */
-    if (current_type == FractalType::FORMULA_FP)
+    if (current_type == FractalType::FORMULA)
     {
         num_params = last_param - first_param;
     }
 
     num_trig = (+g_cur_fractal_specific->flags >> 6) & 7;
-    if (current_type == FractalType::FORMULA_FP)
+    if (current_type == FractalType::FORMULA)
     {
         num_trig = g_max_function;
     }
@@ -700,15 +700,15 @@ gfp_top:
         char const *v3 = "To   cy (imaginary part)";
         switch (g_new_orbit_type)
         {
-        case FractalType::QUAT_FP:
-        case FractalType::HYPER_CMPLX_FP:
+        case FractalType::QUAT:
+        case FractalType::HYPER_CMPLX:
             v0 = "From cj (3rd dim)";
             v1 = "From ck (4th dim)";
             v2 = "To   cj (3rd dim)";
             v3 = "To   ck (4th dim)";
             break;
-        case FractalType::QUAT_JUL_FP:
-        case FractalType::HYPER_CMPLX_J_FP:
+        case FractalType::QUAT_JUL:
+        case FractalType::HYPER_CMPLX_J:
             v0 = "From zj (3rd dim)";
             v1 = "From zk (4th dim)";
             v2 = "To   zj (3rd dim)";
@@ -766,7 +766,7 @@ gfp_top:
         choices[prompt_num++] = "Distance to Screen";
     }
 
-    if (current_type == FractalType::INVERSE_JULIA_FP)
+    if (current_type == FractalType::INVERSE_JULIA)
     {
         choices[prompt_num] = s_jiim_method_prompt;
         param_values[prompt_num].type = 'l';
@@ -787,7 +787,7 @@ gfp_top:
         param_values[prompt_num++].uval.ch.val  = static_cast<int>(g_inverse_julia_minor_method);
     }
 
-    if (current_type == FractalType::FORMULA_FP && g_frm_uses_ismand)
+    if (current_type == FractalType::FORMULA && g_frm_uses_ismand)
     {
         choices[prompt_num] = "ismand";
         param_values[prompt_num].type = 'y';
@@ -844,7 +844,7 @@ gfp_top:
     prompt_num = 0;
     for (int i = first_param; i < num_params+first_param; i++)
     {
-        if (current_type == FractalType::FORMULA_FP)
+        if (current_type == FractalType::FORMULA)
         {
             if (param_not_used(i))
             {
@@ -929,7 +929,7 @@ gfp_top:
         g_julibrot_dist_fp     = (float)param_values[prompt_num++].uval.dval;
         ret = 1;  // force new calc since not resumable anyway
     }
-    if (current_type == FractalType::INVERSE_JULIA_FP)
+    if (current_type == FractalType::INVERSE_JULIA)
     {
         if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_major_method)
             || param_values[prompt_num+1].uval.ch.val != static_cast<int>(g_inverse_julia_minor_method))
@@ -939,7 +939,7 @@ gfp_top:
         g_major_method = static_cast<Major>(param_values[prompt_num++].uval.ch.val);
         g_inverse_julia_minor_method = static_cast<Minor>(param_values[prompt_num++].uval.ch.val);
     }
-    if (current_type == FractalType::FORMULA_FP && g_frm_uses_ismand)
+    if (current_type == FractalType::FORMULA && g_frm_uses_ismand)
     {
         if (g_is_mandelbrot != (param_values[prompt_num].uval.ch.val != 0))
         {

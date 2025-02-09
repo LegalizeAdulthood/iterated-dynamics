@@ -111,7 +111,7 @@ std::string show_trig()
 void trig_details(char *buf)
 {
     int num_fn;
-    if (g_fractal_type == FractalType::JULIBROT_FP)
+    if (g_fractal_type == FractalType::JULIBROT)
     {
         num_fn = (+get_fractal_specific(g_new_orbit_type)->flags >> 6) & 7;
     }
@@ -119,7 +119,7 @@ void trig_details(char *buf)
     {
         num_fn = (+g_cur_fractal_specific->flags >> 6) & 7;
     }
-    if (g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA)
     {
         num_fn = g_max_function;
     }

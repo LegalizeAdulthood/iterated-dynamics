@@ -135,7 +135,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
     static double s_j_x_3rd;
     static double s_j_y_3rd;
 
-    if (g_fractal_type == FractalType::FORMULA_FP)
+    if (g_fractal_type == FractalType::FORMULA)
     {
         if (g_is_mandelbrot)
         {
@@ -154,7 +154,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_params[1] == 0.0)
     {
         // switch to corresponding Julia set
-        g_has_inverse = g_fractal_type == FractalType::MANDEL_FP && g_bf_math == BFMathType::NONE;
+        g_has_inverse = g_fractal_type == FractalType::MANDEL && g_bf_math == BFMathType::NONE;
         clear_zoom_box();
         jiim(JIIMType::JIIM);
         // flush keyboard buffer
@@ -414,17 +414,17 @@ static MainState space_command(MainContext &context)
 static MainState inverse_julia_toggle(MainContext &context)
 {
     // if the inverse types proliferate, something more elegant will be needed
-    if (g_fractal_type == FractalType::JULIA_FP || g_fractal_type == FractalType::INVERSE_JULIA_FP)
+    if (g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::INVERSE_JULIA)
     {
         static FractalType old_type = FractalType::NO_FRACTAL;
-        if (g_fractal_type == FractalType::JULIA_FP)
+        if (g_fractal_type == FractalType::JULIA)
         {
             old_type = g_fractal_type;
-            set_fractal_type(FractalType::INVERSE_JULIA_FP);
+            set_fractal_type(FractalType::INVERSE_JULIA);
         }
-        else if (g_fractal_type == FractalType::INVERSE_JULIA_FP)
+        else if (g_fractal_type == FractalType::INVERSE_JULIA)
         {
-            set_fractal_type(old_type != FractalType::NO_FRACTAL ? old_type : FractalType::JULIA_FP);
+            set_fractal_type(old_type != FractalType::NO_FRACTAL ? old_type : FractalType::JULIA);
         }
         // TODO: is it really necessary to reset g_cur_fractal_specific?
         assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));

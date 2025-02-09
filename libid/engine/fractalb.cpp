@@ -367,12 +367,12 @@ bool mandel_bn_setup()
     g_c_exponent = (int) g_params[2];
     switch (g_fractal_type)
     {
-    case FractalType::JULIA_FP:
+    case FractalType::JULIA:
         bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
         bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
         break;
 
-    case FractalType::MANDEL_Z_POWER_FP:
+    case FractalType::MANDEL_Z_POWER:
         init_big_pi();
         if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {
@@ -384,7 +384,7 @@ bool mandel_bn_setup()
         }
         break;
 
-    case FractalType::JULIA_Z_POWER_FP:
+    case FractalType::JULIA_Z_POWER:
         init_big_pi();
         bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
         bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
@@ -472,7 +472,7 @@ bool mandel_bf_setup()
     g_c_exponent = (int)g_params[2];
     switch (g_fractal_type)
     {
-    case FractalType::MANDEL_FP:
+    case FractalType::MANDEL:
     case FractalType::BURNING_SHIP:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
@@ -480,12 +480,12 @@ bool mandel_bf_setup()
         }
         break;
 
-    case FractalType::JULIA_FP:
+    case FractalType::JULIA:
         copy_bf(g_param_z_bf.x, g_bf_params[0]);
         copy_bf(g_param_z_bf.y, g_bf_params[1]);
         break;
 
-    case FractalType::MANDEL_Z_POWER_FP:
+    case FractalType::MANDEL_Z_POWER:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             // only allow integer values of real part
@@ -510,7 +510,7 @@ bool mandel_bf_setup()
         }
         break;
 
-    case FractalType::JULIA_Z_POWER_FP:
+    case FractalType::JULIA_Z_POWER:
         init_big_pi();
         copy_bf(g_param_z_bf.x, g_bf_params[0]);
         copy_bf(g_param_z_bf.y, g_bf_params[1]);

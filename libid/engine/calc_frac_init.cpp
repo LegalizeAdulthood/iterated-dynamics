@@ -161,31 +161,31 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
             init_bf_dec(got_prec);
         }
     }
-    else if (g_fractal_type == FractalType::MANDEL_FP &&
+    else if (g_fractal_type == FractalType::MANDEL &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        set_fractal_type(FractalType::MANDEL_FP);
+        set_fractal_type(FractalType::MANDEL);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if (g_fractal_type == FractalType::JULIA_FP &&
+    else if (g_fractal_type == FractalType::JULIA &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        set_fractal_type(FractalType::JULIA_FP);
+        set_fractal_type(FractalType::JULIA);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if (g_fractal_type == FractalType::MANDEL_Z_POWER_FP &&
+    else if (g_fractal_type == FractalType::MANDEL_Z_POWER &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        set_fractal_type(FractalType::MANDEL_Z_POWER_FP);
+        set_fractal_type(FractalType::MANDEL_Z_POWER);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
-    else if (g_fractal_type == FractalType::JULIA_Z_POWER_FP &&
+    else if (g_fractal_type == FractalType::JULIA_Z_POWER &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
-        set_fractal_type(FractalType::JULIA_Z_POWER_FP);
+        set_fractal_type(FractalType::JULIA_Z_POWER);
         fractal_float_to_bf();
         g_user_float_flag = true;
     }
@@ -203,7 +203,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     g_float_flag = true;
     if (g_user_std_calc_mode == 's')
     {
-        if (g_fractal_type == FractalType::MANDEL_FP)
+        if (g_fractal_type == FractalType::MANDEL)
         {
             g_float_flag = true;
         }
