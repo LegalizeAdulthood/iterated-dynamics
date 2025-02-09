@@ -146,8 +146,7 @@ static FractalType select_fract_type(FractalType t)
     int j = 0;
     for (int i = 0; i < num_types; ++i)   // find starting choice in sorted list
     {
-        const FractalSpecific specific{g_fractal_specific[i]};
-        if (specific.type == t || specific.type == get_fractal_specific(t)->to_float)
+        if (g_fractal_specific[i].type == t)
         {
             j = i;
             break;

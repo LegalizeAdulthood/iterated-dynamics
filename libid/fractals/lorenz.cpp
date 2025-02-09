@@ -1651,18 +1651,6 @@ static int setup_orbits_to_screen(Affine *scrn_cnvt)
 
 int plot_orbits2d_setup()
 {
-    if (g_cur_fractal_specific->is_integer != 0)
-    {
-        const FractalType to_float = g_cur_fractal_specific->to_float;
-        if (to_float == FractalType::NO_FRACTAL)
-        {
-            return -1;
-        }
-        g_float_flag = true;
-        g_user_float_flag = true; // force floating point
-        set_fractal_type(to_float);
-    }
-
     per_image();
 
     // setup affine screen coord conversion

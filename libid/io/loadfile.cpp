@@ -2614,7 +2614,7 @@ static bool function_ok(FractalInfo const *info, int num_fn)
     return true; // they all match
 }
 
-static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
+static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
 {
     int num_fn;
     if ((g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::FORMULA_FP) &&
@@ -2631,7 +2631,7 @@ static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info)
         }
         return false; // two formulas but names don't match
     }
-    if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->to_float)
+    if (info->fractal_type == +g_fractal_type || g_fractal_type == migrate_integer_types(info->fractal_type))
     {
         num_fn = (+g_cur_fractal_specific->flags >> 6) & 7;
         if (num_fn > 0)

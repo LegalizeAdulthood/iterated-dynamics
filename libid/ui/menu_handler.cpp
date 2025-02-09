@@ -98,14 +98,7 @@ MainState get_history(int kbd_char)
     restore_history_info(g_history_ptr);
     g_zoom_enabled = true;
     g_init_mode = g_adapter;
-    if (g_cur_fractal_specific->is_integer != 0 && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
-    {
-        g_user_float_flag = false;
-    }
-    if (g_cur_fractal_specific->is_integer == 0 && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
-    {
-        g_user_float_flag = true;
-    }
+    g_user_float_flag = true;
     g_history_flag = true; // avoid re-store parms due to rounding errs
     return MainState::IMAGE_START;
 }

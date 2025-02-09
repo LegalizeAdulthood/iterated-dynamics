@@ -144,16 +144,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
-        FractalType to_float = g_cur_fractal_specific->to_float;
-        if (to_float == FractalType::NO_FRACTAL ||
-            bit_clear(get_fractal_specific(to_float)->flags, FractalFlags::BF_MATH))
-        {
-            g_bf_math = BFMathType::NONE;
-        }
-        else if (g_bf_math != BFMathType::NONE)
-        {
-            set_fractal_type(to_float);
-        }
+        g_bf_math = BFMathType::NONE;
     }
 
     // switch back to double when zooming out if using arbitrary precision
@@ -209,24 +200,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     {
         free_bf_vars();
     }
-    if (g_bf_math != BFMathType::NONE)
-    {
-        g_float_flag = true;
-    }
-    else
-    {
-        g_float_flag = g_user_float_flag;
-    }
-    if (g_calc_status == CalcStatus::RESUMABLE)
-    {
-        // on resume, ensure floatflag correct
-        g_float_flag = g_cur_fractal_specific->is_integer == 0;
-    }
-    // if floating pt only, set floatflag for TAB screen
-    if (!g_cur_fractal_specific->is_integer && g_cur_fractal_specific->to_float == FractalType::NO_FRACTAL)
-    {
-        g_float_flag = true;
-    }
+    g_float_flag = true;
     if (g_user_std_calc_mode == 's')
     {
         if (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_FP)
@@ -269,45 +243,10 @@ init_restart:
         g_float_flag = true;  // force floating point for dist est
     }
 
-    if (g_float_flag)
-    {
-        // ensure type matches floatflag
-        if (g_cur_fractal_specific->is_integer != 0
-            && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
-        {
-            set_fractal_type(g_cur_fractal_specific->to_float);
-        }
-    }
-    else
-    {
-        if (g_cur_fractal_specific->is_integer == 0
-            && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
-        {
-            set_fractal_type(g_cur_fractal_specific->to_float);
-        }
-    }
     // match Julibrot with integer mode of orbit
-    if (g_fractal_type == FractalType::JULIBROT_FP && get_fractal_specific(g_new_orbit_type)->is_integer)
+    if (g_fractal_type == FractalType::JULIBROT && get_fractal_specific(g_new_orbit_type)->is_integer == 0)
     {
-        if (const FractalType i = get_fractal_specific(g_new_orbit_type)->to_float; i != FractalType::NO_FRACTAL)
-        {
-            g_new_orbit_type = i;
-        }
-        else
-        {
-            set_fractal_type(FractalType::JULIBROT);
-        }
-    }
-    else if (g_fractal_type == FractalType::JULIBROT && get_fractal_specific(g_new_orbit_type)->is_integer == 0)
-    {
-        if (FractalType i = get_fractal_specific(g_new_orbit_type)->to_float; i != FractalType::NO_FRACTAL)
-        {
-            g_new_orbit_type = i;
-        }
-        else
-        {
-            set_fractal_type(FractalType::JULIBROT_FP);
-        }
+        set_fractal_type(FractalType::JULIBROT_FP);
     }
 
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
@@ -360,17 +299,7 @@ init_restart:
     // float?
     if (g_integer_fractal == 0)
     {
-        if (const FractalType to_int = g_cur_fractal_specific->to_float; to_int != FractalType::NO_FRACTAL) // -> int?
-        {
-            if (const int is_integer = get_fractal_specific(to_int)->is_integer; is_integer > 1)   // specific shift?
-            {
-                g_bit_shift = is_integer;
-            }
-        }
-        else
-        {
-            g_bit_shift = 16;  // to allow larger corners
-        }
+        g_bit_shift = 16; // to allow larger corners
     }
     // We want this code if we're using the assembler calcmand
     if (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA)
@@ -453,18 +382,10 @@ init_restart:
                 || ratio_bad((double)g_l_y1[(g_logical_screen_x_dots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
             {
 expand_retry:
-                if (g_integer_fractal          // integer fractal type?
-                    && g_cur_fractal_specific->to_float != FractalType::NO_FRACTAL)
+                g_float_flag = true;                            // switch to floating pt
+                if (g_calc_status == CalcStatus::RESUMABLE)     // due to restore of an old file?
                 {
-                    g_float_flag = true;       // switch to floating pt
-                }
-                else
-                {
-                    adjust_to_limits(2.0);   // double the size
-                }
-                if (g_calc_status == CalcStatus::RESUMABLE)         // due to restore of an old file?
-                {
-                    g_calc_status = CalcStatus::PARAMS_CHANGED;         //   whatever, it isn't resumable
+                    g_calc_status = CalcStatus::PARAMS_CHANGED; //   whatever, it isn't resumable
                 }
                 goto init_restart;
             } // end if ratio bad

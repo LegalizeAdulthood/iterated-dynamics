@@ -21,7 +21,7 @@ static int build_fractal_list(FractalType fractals[], int *last_val, char const 
         {
             const FractalType type{g_fractal_specific[i].type};
             fractals[num_fractals] = type;
-            if (type == g_new_orbit_type || type == get_fractal_specific(g_new_orbit_type)->to_float)
+            if (type == g_new_orbit_type)
             {
                 *last_val = num_fractals;
             }

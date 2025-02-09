@@ -77,29 +77,6 @@ std::ostream &operator<<(std::ostream &str, const FractalSpecific &value)
     return str << "type: " << +value.type << " '" << value.name << "'";
 }
 
-TEST(TestFractalSpecific, noIntegerTypesWithFloatEquivalent)
-{
-    for (int i = 0; i < g_num_fractal_types; ++i)
-    {
-        const FractalSpecific &from{g_fractal_specific[i]};
-        EXPECT_FALSE(from.is_integer != 0 && from.to_float != FractalType::NO_FRACTAL)
-            << "index " << i << " (" << from.name << "), is_integer " //
-            << from.is_integer << ", to_float " << +from.to_float;
-    }
-}
-
-TEST(TestFractalSpecific, floatTypeHasNoIntegerEquivalent)
-{
-    for (int i = 0; i < g_num_fractal_types; ++i)
-    {
-        const FractalSpecific &from{g_fractal_specific[i]};
-        EXPECT_TRUE(
-            (from.is_integer == 0 && from.to_float == FractalType::NO_FRACTAL) || from.is_integer != 0)
-            << "index " << i << " (" << from.name << "), is_integer " //
-            << from.is_integer << ", to_float " << +from.to_float;
-    }
-}
-
 TEST(TestFractalSpecific, fractalSpecificEntriesAreSortedByType)
 {
     EXPECT_TRUE(std::is_sorted(&g_fractal_specific[0], &g_fractal_specific[g_num_fractal_types],

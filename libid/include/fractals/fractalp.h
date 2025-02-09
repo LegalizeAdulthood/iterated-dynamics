@@ -99,7 +99,6 @@ struct FractalSpecific
     int is_integer;                         // 1 if integer fractal, 0 otherwise
     FractalType to_julia;                   // mandel-to-julia switch
     FractalType to_mandel;                  // julia-to-mandel switch
-    FractalType to_float;                   // integer-to-floating switch
     SymmetryType symmetry;                  // applicable symmetry logic
     int (*orbit_calc)();                    // function that calculates one orbit
     int (*per_pixel)();                     // once-per-pixel init
