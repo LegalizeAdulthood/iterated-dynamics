@@ -12,7 +12,6 @@
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "math/arg.h"
-#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "ui/cmdfiles.h"
 
