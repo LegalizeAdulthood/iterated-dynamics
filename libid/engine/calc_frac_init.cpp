@@ -34,19 +34,11 @@
 #include <cmath>
 #include <cstdio>
 
-enum
-{
-    FUDGE_FACTOR = 29, // fudge all values up by 2**this
-    FUDGE_FACTOR2 = 24 // (or maybe this)
-};
-
-static long   fudge_to_long(double d);
-static double fudge_to_double(long l);
-static void   adjust_to_limits(double expand);
-static void   smallest_add(double *num);
+static void adjust_to_limits(double expand);
+static void smallest_add(double *num);
 static bool ratio_bad(double actual, double desired);
-static void   adjust_to_limits_bf(double expand);
-static void   smallest_add_bf(BigFloat num);
+static void adjust_to_limits_bf(double expand);
+static void smallest_add_bf(BigFloat num);
 
 /* This function calculates the precision needed to distinguish adjacent
    pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
@@ -405,28 +397,6 @@ expand_retry:
     {
         free_bf_vars();
     }
-}
-
-static long fudge_to_long(double d)
-{
-    if ((d *= g_fudge_factor) > 0)
-    {
-        d += 0.5;
-    }
-    else
-    {
-        d -= 0.5;
-    }
-    return (long)d;
-}
-
-static double fudge_to_double(long l)
-{
-    char buf[30];
-    double d;
-    std::snprintf(buf, std::size(buf), "%.9g", (double)l / g_fudge_factor);
-    std::sscanf(buf, "%lg", &d);
-    return d;
 }
 
 void adjust_corner_bf()
