@@ -339,28 +339,9 @@ top:
     // if (g_bf_math == bf_math_type::NONE)
     ++start_row;
 
-    int j = 0;
-    if (g_display_3d > Display3DMode::NONE)
-    {
-        j = 1;
-    }
-    else if (g_float_flag)
-    {
-        j = 1;
-    }
-
     if (g_bf_math == BFMathType::NONE)
     {
-        if (j)
-        {
-            driver_put_string(start_row, 45, C_GENERAL_HI, "Floating-point");
-            driver_put_string(-1, -1, C_GENERAL_HI,
-                              (j == 1) ? " flag is activated" : " in use (required)");
-        }
-        else
-        {
-            driver_put_string(start_row, 45, C_GENERAL_HI, "Integer math is in use");
-        }
+        driver_put_string(start_row, 45, C_GENERAL_HI, "Floating-point in use");
     }
     else
     {

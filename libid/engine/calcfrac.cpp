@@ -2501,23 +2501,14 @@ int potential(double mag, long iterations)
         }
         else   // pot = log(mag) / pow(2.0, (double)pot);
         {
-            if (l_pot < 120 && !g_float_flag) // empirically determined limit of fShift
+            double d_tmp = std::log(mag) / (double) std::pow(2.0, (double) pot);
+            if (d_tmp > FLT_MIN) // prevent float type underflow
             {
-                float f_mag = (float) mag;
-                f_log14(f_mag, f_tmp); // this SHOULD be non-negative
-                f_shift(f_tmp, (char)-l_pot, pot);
+                pot = (float) d_tmp;
             }
             else
             {
-                double d_tmp = std::log(mag)/(double)std::pow(2.0, (double)pot);
-                if (d_tmp > FLT_MIN)   // prevent float type underflow
-                {
-                    pot = (float)d_tmp;
-                }
-                else
-                {
-                    pot = 0.0F;
-                }
+                pot = 0.0F;
             }
         }
 
@@ -2528,15 +2519,7 @@ int potential(double mag, long iterations)
         //    potparam[2] -- rqlim value if changeable (bailout for modulus)
         if (pot > 0.0)
         {
-            if (g_float_flag)
-            {
-                pot = (float)std::sqrt((double)pot);
-            }
-            else
-            {
-                f_sqrt14(pot, f_tmp);
-                pot = f_tmp;
-            }
+            pot = (float) std::sqrt((double) pot);
             pot = (float)(g_potential_params[0] - pot*g_potential_params[1] - 1.0);
         }
         else

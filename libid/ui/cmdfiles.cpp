@@ -122,7 +122,6 @@ bool g_potential_flag{};                                  // continuous potentia
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 bool g_ask_video{};                                       // flag for video prompting
-bool g_float_flag{true};                                  //
 int g_biomorph{};                                         // flag for biomorph
 int g_user_biomorph_value{};                              //
 int g_show_file{};                                        // zero if file display pending

@@ -177,8 +177,6 @@ static void init_bf2()
         }
     }
 
-    g_float_flag = true;
-
     // Now split up the memory among the pointers
     const auto alloc_size = [&ptr](int size)
     {

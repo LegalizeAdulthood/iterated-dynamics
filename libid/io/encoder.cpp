@@ -824,7 +824,7 @@ static void setup_save_info(FractalInfo *save_info)
         static_cast<char>(g_three_pass && g_std_calc_mode == '3' ? 127 : g_std_calc_mode);
     save_info->dist_est_old =
         static_cast<std::int16_t>(g_distance_estimator <= 32000 ? g_distance_estimator : 32000);
-    save_info->float_flag = static_cast<std::int16_t>(g_float_flag ? 1 : 0);
+    save_info->float_flag = static_cast<std::int16_t>(1);
     save_info->bailout_old = static_cast<std::int16_t>(g_bailout >= 4 && g_bailout <= 32000 ? g_bailout : 0);
     save_info->calc_time = static_cast<std::int32_t>(g_calc_time);
     save_info->trig_index[0] = static_cast<Byte>(g_trig_index[0]);

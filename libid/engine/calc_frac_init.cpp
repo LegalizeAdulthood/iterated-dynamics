@@ -131,7 +131,6 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         || g_debug_flag == DebugFlags::PREVENT_COORDINATE_GRID)
     {
         g_use_grid = false;
-        g_float_flag = true;
     }
     else
     {
@@ -193,17 +192,9 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     {
         free_bf_vars();
     }
-    g_float_flag = true;
-    if (g_user_std_calc_mode == 's')
+    if (g_user_std_calc_mode == 's' && g_fractal_type != FractalType::MANDEL)
     {
-        if (g_fractal_type == FractalType::MANDEL)
-        {
-            g_float_flag = true;
-        }
-        else
-        {
-            g_user_std_calc_mode = '1';
-        }
+        g_user_std_calc_mode = '1';
     }
 
     // cppcheck-suppress variableScope
@@ -229,11 +220,6 @@ init_restart:
         g_potential_flag = true;
         g_user_distance_estimator_value = 0;
         g_distance_estimator = 0;    // can't do distest too
-    }
-
-    if (g_distance_estimator)
-    {
-        g_float_flag = true;  // force floating point for dist est
     }
 
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
@@ -351,7 +337,7 @@ init_restart:
                 || ratio_bad((double)g_l_y1[(g_logical_screen_x_dots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
             {
 expand_retry:
-                g_float_flag = true;                            // switch to floating pt
+                // switch to floating pt
                 if (g_calc_status == CalcStatus::RESUMABLE)     // due to restore of an old file?
                 {
                     g_calc_status = CalcStatus::PARAMS_CHANGED; //   whatever, it isn't resumable

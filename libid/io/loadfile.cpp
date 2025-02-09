@@ -1088,13 +1088,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     else
     {
         Display3DMode const old_display_ed = g_display_3d;
-        bool const old_float_flag2 = g_float_flag;
         g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
-        g_float_flag = true; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
         driver_check_memory();
         g_display_3d = old_display_ed;
-        g_float_flag = old_float_flag2;
         if (i)
         {
             if (blk_2_info.got_data)
@@ -2263,7 +2260,6 @@ rescan:  // entry for changed browse parms
         free_bf_vars();
     }
     g_bf_math = s_old_bf_math;
-    g_float_flag = true;
 
     return c;
 }
