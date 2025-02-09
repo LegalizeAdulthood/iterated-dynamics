@@ -496,7 +496,6 @@ static void init_vars_fractal()
     g_quick_calc = false;                                //
     g_close_proximity = 0.01;                            //
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
-    g_user_float_flag = true;                            // turn on the float flag
     g_finite_attractor = false;                          // disable finite attractor logic
     set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //
@@ -2044,14 +2043,14 @@ static CmdArgFlags cmd_fin_attract(const Command &cmd)
 }
 
 // float=?
+// deprecated, validate argument and swallow value
 static CmdArgFlags cmd_float(const Command &cmd)
 {
     if (cmd.yes_no_val[0] < 0)
     {
         return cmd.bad_arg();
     }
-    g_user_float_flag = cmd.yes_no_val[0] != 0;
-    return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
+    return CmdArgFlags::NONE;
 }
 
 // formulafile=?

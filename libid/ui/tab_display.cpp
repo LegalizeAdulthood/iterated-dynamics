@@ -342,14 +342,11 @@ top:
     int j = 0;
     if (g_display_3d > Display3DMode::NONE)
     {
-        if (g_user_float_flag)
-        {
-            j = 1;
-        }
+        j = 1;
     }
     else if (g_float_flag)
     {
-        j = g_user_float_flag ? 1 : 2;
+        j = 1;
     }
 
     if (g_bf_math == BFMathType::NONE)

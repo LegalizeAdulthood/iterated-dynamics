@@ -495,12 +495,6 @@ MainState big_while_loop(MainContext &context)
             {
                 g_out_line = out_line;        // regular decoding
             }
-            if (g_debug_flag == DebugFlags::SHOW_FLOAT_FLAG)
-            {
-                char msg[MSG_LEN];
-                std::snprintf(msg, std::size(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
-                stop_msg(StopMsgFlags::NO_BUZZER, msg);
-            }
             i = funny_glasses_call(gif_view);
             if (g_out_line_cleanup)              // cleanup routine defined?
             {

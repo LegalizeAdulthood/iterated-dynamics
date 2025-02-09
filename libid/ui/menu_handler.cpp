@@ -60,20 +60,6 @@ MainState request_fractal_type(MainContext &context)
     return MainState::NOTHING;
 }
 
-MainState toggle_float(MainContext &/*context*/)
-{
-    if (!g_user_float_flag)
-    {
-        g_user_float_flag = true;
-    }
-    else if (g_std_calc_mode != 'o')     // don't go there
-    {
-        g_user_float_flag = false;
-    }
-    g_init_mode = g_adapter;
-    return MainState::IMAGE_START;
-}
-
 MainState get_history(int kbd_char)
 {
     if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
@@ -98,7 +84,6 @@ MainState get_history(int kbd_char)
     restore_history_info(g_history_ptr);
     g_zoom_enabled = true;
     g_init_mode = g_adapter;
-    g_user_float_flag = true;
     g_history_flag = true; // avoid re-store parms due to rounding errs
     return MainState::IMAGE_START;
 }

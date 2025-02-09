@@ -541,7 +541,6 @@ static void backwards_info4(const FractalInfo &read_info)
             g_user_std_calc_mode = '3';
         }
         g_user_distance_estimator_value = read_info.dist_est_old;
-        g_user_float_flag = read_info.float_flag != 0;
         g_bailout = read_info.bailout_old;
         g_calc_time = read_info.calc_time;
         g_trig_index[0] = static_cast<TrigFn>(read_info.trig_index[0]);
@@ -660,7 +659,6 @@ static void backwards_info_pre4(FractalInfo read_info)
         {
             g_log_map_flag = 2;
         }
-        g_user_float_flag = true;
     }
 }
 
@@ -1010,7 +1008,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     g_show_file = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
-    const bool old_float_flag = g_user_float_flag;
     g_loaded_3d = false;
     if (g_fast_restore)
     {
@@ -1078,11 +1075,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     backwards_legacy_v19();
     backwards_legacy_v20();
 
-    if (g_display_3d != Display3DMode::NONE)
-    {
-        g_user_float_flag = old_float_flag;
-    }
-
     if (g_overlay_3d)
     {
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
@@ -1098,7 +1090,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         Display3DMode const old_display_ed = g_display_3d;
         bool const old_float_flag2 = g_float_flag;
         g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
-        g_float_flag = g_user_float_flag; // ditto
+        g_float_flag = true; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
         driver_check_memory();
         g_display_3d = old_display_ed;
@@ -1832,7 +1824,6 @@ void backwards_legacy_v18()
     }
     if (g_file_version < 1800                                                                     //
         && (g_fractal_type == FractalType::MANDEL_FN || g_fractal_type == FractalType::LAMBDA_FN) //
-        && g_user_float_flag                                                                      //
         && g_bailout == 0)
     {
         g_bailout = 2500;
@@ -2272,7 +2263,7 @@ rescan:  // entry for changed browse parms
         free_bf_vars();
     }
     g_bf_math = s_old_bf_math;
-    g_float_flag = g_user_float_flag;
+    g_float_flag = true;
 
     return c;
 }

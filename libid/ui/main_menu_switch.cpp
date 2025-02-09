@@ -651,7 +651,6 @@ static MenuHandler s_handlers[]{
     {'c', color_cycle},                             //
     {'d', request_shell},                           //
     {'e', color_editing},                           //
-    {'f', toggle_float},                            //
     {'g', prompt_options},                          //
     {'h', main_history},                            //
     {'i', request_3d_fractal_params},               //

@@ -2577,12 +2577,16 @@ TEST_F(TestParameterCommand, ramVideoIgnored)
 
 TEST_F(TestParameterCommand, floatYes)
 {
-    ValueSaver saved_user_float_flag{g_user_float_flag, false};
-
     exec_cmd_arg("float=y");
 
-    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_TRUE(g_user_float_flag);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+}
+
+TEST_F(TestParameterCommand, floatNo)
+{
+    exec_cmd_arg("float=n");
+
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommand, fastRestoreYes)
@@ -2665,6 +2669,13 @@ TEST_F(TestParameterCommand, bailOutTestMod)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(Bailout::MOD, g_bailout_test);
+}
+
+TEST_F(TestParameterCommandError, floatBadValue)
+{
+    exec_cmd_arg("float=foo");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
 TEST_F(TestParameterCommandError, bailOutTestBadValue)

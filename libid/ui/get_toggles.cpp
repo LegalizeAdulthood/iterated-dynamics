@@ -72,9 +72,6 @@ int get_toggles()
         :        /* "p"erturbation */     15;
     char old_user_std_calc_mode = g_user_std_calc_mode;
     int old_stop_pass = g_stop_pass;
-    choices[++k] = "Floating Point Algorithm";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_user_float_flag ? 1 : 0;
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     values[k].type = 'L';
     long old_max_iterations = g_max_iterations;
@@ -263,11 +260,6 @@ int get_toggles()
     }
     if (old_stop_pass != g_stop_pass)
     {
-        j++;
-    }
-    if ((values[++k].uval.ch.val != 0) != g_user_float_flag)
-    {
-        g_user_float_flag = values[k].uval.ch.val != 0;
         j++;
     }
     ++k;

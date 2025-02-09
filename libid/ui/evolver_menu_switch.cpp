@@ -387,7 +387,6 @@ static const MenuHandler HANDLERS[]{
     {'b', exit_evolver},                                // quick exit from evolve mode
     {'c', color_cycle},                                 // switch to color cycling
     {'e', color_editing},                               // switch to color editing
-    {'f', toggle_float},                                // floating pt toggle
     {'g', prompt_evolver_options},                      //
     {'h', evolver_get_history},                         // return to prev image
     {'p', prompt_evolver_options},                      // passes options

@@ -405,38 +405,25 @@ int line3d(Byte * pixels, unsigned line_len)
                 lv[0] = (long)(s_x_center + sin_theta * s_scale_x * r);   // x
                 lv[1] = (long)(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
 
-                if ((g_fill_type >= FillType::LIGHT_SOURCE_BEFORE) || g_raytrace_format != RayTraceFormat::NONE)
+                if ((g_fill_type >= FillType::LIGHT_SOURCE_BEFORE) ||
+                    g_raytrace_format != RayTraceFormat::NONE)
                 {
                     // calculate illumination normal before persp
 
                     r0 = r / 65536L;
-                    f_cur.x = (float)(x_center0 + sin_theta * s_scale_x * r0);
-                    f_cur.y = (float)(y_center0 + cos_theta * s_cos_phi * s_scale_y * r0);
-                    f_cur.color = (float)(-r0 * cos_theta * s_sin_phi);
+                    f_cur.x = (float) (x_center0 + sin_theta * s_scale_x * r0);
+                    f_cur.y = (float) (y_center0 + cos_theta * s_cos_phi * s_scale_y * r0);
+                    f_cur.color = (float) (-r0 * cos_theta * s_sin_phi);
                 }
-                if (!g_user_float_flag && g_raytrace_format == RayTraceFormat::NONE)
-                {
-                    if (long_persp(lv, s_l_view, 16) == -1)
-                    {
-                        cur = s_bad;
-                        f_cur = s_f_bad;
-                        goto loopbottom;   // another goto !
-                    }
-                    cur.x = (int)(((lv[0] + 32768L) >> 16) + g_xx_adjust);
-                    cur.y = (int)(((lv[1] + 32768L) >> 16) + g_yy_adjust);
-                }
-                if (g_user_float_flag || g_overflow || g_raytrace_format != RayTraceFormat::NONE)
-                {
-                    v[0] = lv[0];
-                    v[1] = lv[1];
-                    v[2] = lv[2];
-                    v[0] /= fudge;
-                    v[1] /= fudge;
-                    v[2] /= fudge;
-                    perspective(v);
-                    cur.x = (int)(v[0] + .5 + g_xx_adjust);
-                    cur.y = (int)(v[1] + .5 + g_yy_adjust);
-                }
+                v[0] = lv[0];
+                v[1] = lv[1];
+                v[2] = lv[2];
+                v[0] /= fudge;
+                v[1] /= fudge;
+                v[2] /= fudge;
+                perspective(v);
+                cur.x = (int) (v[0] + .5 + g_xx_adjust);
+                cur.y = (int) (v[1] + .5 + g_yy_adjust);
             }
             // Not sure how this a 3rd if above relate
             else
@@ -457,89 +444,40 @@ int line3d(Byte * pixels, unsigned line_len)
         }
         else                            // non-sphere 3D
         {
-            if (!g_user_float_flag && g_raytrace_format == RayTraceFormat::NONE)
+            // do in float if integer math overflowed or doing Ray trace
+            // slow float version for comparison
+            v[0] = col;
+            v[1] = g_current_row;
+            v[2] = f_cur.color; // Actually the z value
+
+            vec_g_mat_mul(v);   // matrix*vector routine
+
+            if (g_fill_type > FillType::SOLID_FILL || g_raytrace_format != RayTraceFormat::NONE)
             {
-                if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)         // flag to save vector before perspective
-                {
-                    lv0[0] = 1;   // in longvmultpersp calculation
-                }
-                else
-                {
-                    lv0[0] = 0;
-                }
+                f_cur.x = (float) v[0];
+                f_cur.y = (float) v[1];
+                f_cur.color = (float) v[2];
 
-                // use 32-bit multiply math to snap this out
-                lv[0] = col;
-                lv[0] = lv[0] << 16;
-                lv[1] = g_current_row;
-                lv[1] = lv[1] << 16;
-                if (g_potential_16bit)             // don't truncate fractional part
+                if (g_raytrace_format == RayTraceFormat::ACROSPIN)
                 {
-                    lv[2] = (long)(f_cur.color * 65536.0);
-                }
-                else                              // there IS no fractional part here!
-                {
-                    lv[2] = (long) f_cur.color;
-                    lv[2] = lv[2] << 16;
-                }
-
-                if (long_vec_mat_mul_persp(lv, s_llm, lv0, lv, s_l_view, 16) == -1)
-                {
-                    cur = s_bad;
-                    f_cur = s_f_bad;
-                    goto loopbottom;
-                }
-
-                cur.x = (int)(((lv[0] + 32768L) >> 16) + g_xx_adjust);
-                cur.y = (int)(((lv[1] + 32768L) >> 16) + g_yy_adjust);
-                if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE && !g_overflow)
-                {
-                    f_cur.x = (float) lv0[0];
-                    f_cur.x /= 65536.0F;
-                    f_cur.y = (float) lv0[1];
-                    f_cur.y /= 65536.0F;
-                    f_cur.color = (float) lv0[2];
-                    f_cur.color /= 65536.0F;
+                    f_cur.x = f_cur.x * (2.0F / g_logical_screen_x_dots) - 1.0F;
+                    f_cur.y = f_cur.y * (2.0F / g_logical_screen_y_dots) - 1.0F;
+                    f_cur.color = -f_cur.color * (2.0F / g_num_colors) - 1.0F;
                 }
             }
 
-            if (g_user_float_flag || g_overflow || g_raytrace_format != RayTraceFormat::NONE)
-                // do in float if integer math overflowed or doing Ray trace
+            if (s_persp && g_raytrace_format == RayTraceFormat::NONE)
             {
-                // slow float version for comparison
-                v[0] = col;
-                v[1] = g_current_row;
-                v[2] = f_cur.color;      // Actually the z value
-
-                vec_g_mat_mul(v);     // matrix*vector routine
-
-                if (g_fill_type > FillType::SOLID_FILL || g_raytrace_format != RayTraceFormat::NONE)
-                {
-                    f_cur.x = (float) v[0];
-                    f_cur.y = (float) v[1];
-                    f_cur.color = (float) v[2];
-
-                    if (g_raytrace_format == RayTraceFormat::ACROSPIN)
-                    {
-                        f_cur.x = f_cur.x * (2.0F / g_logical_screen_x_dots) - 1.0F;
-                        f_cur.y = f_cur.y * (2.0F / g_logical_screen_y_dots) - 1.0F;
-                        f_cur.color = -f_cur.color * (2.0F / g_num_colors) - 1.0F;
-                    }
-                }
-
-                if (s_persp && g_raytrace_format == RayTraceFormat::NONE)
-                {
-                    perspective(v);
-                }
-                cur.x = (int) std::lround(v[0] + g_xx_adjust);
-                cur.y = (int) std::lround(v[1] + g_yy_adjust);
-
-                v[0] = 0;
-                v[1] = 0;
-                v[2] = g_water_line;
-                vec_g_mat_mul(v);
-                f_water = (float) v[2];
+                perspective(v);
             }
+            cur.x = (int) std::lround(v[0] + g_xx_adjust);
+            cur.y = (int) std::lround(v[1] + g_yy_adjust);
+
+            v[0] = 0;
+            v[1] = 0;
+            v[2] = g_water_line;
+            vec_g_mat_mul(v);
+            f_water = (float) v[2];
         }
 
         if (g_randomize_3d != 0)
@@ -2520,10 +2458,6 @@ static int first_time(int line_len, Vector v)
     if (g_viewer_z != 0)
     {
         s_persp = true;
-        if (g_viewer_z < 80)           // force float
-        {
-            g_user_float_flag = true;
-        }
     }
 
     // set up view vector, and put viewer in center of screen

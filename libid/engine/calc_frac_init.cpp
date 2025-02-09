@@ -127,13 +127,11 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     // space req for grid is 2(xdots+ydots)*sizeof(long or double)
     // space available in extraseg is 65536 Bytes
     long xy_temp = g_logical_screen_x_dots + g_logical_screen_y_dots;
-    if ((!g_user_float_flag && (xy_temp*sizeof(long) > 32768))
-        || (g_user_float_flag && (xy_temp*sizeof(double) > 32768))
+    if (xy_temp * sizeof(double) > 32768
         || g_debug_flag == DebugFlags::PREVENT_COORDINATE_GRID)
     {
         g_use_grid = false;
         g_float_flag = true;
-        g_user_float_flag = true;
     }
     else
     {
@@ -166,35 +164,30 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     {
         set_fractal_type(FractalType::MANDEL);
         fractal_float_to_bf();
-        g_user_float_flag = true;
     }
     else if (g_fractal_type == FractalType::JULIA &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::JULIA);
         fractal_float_to_bf();
-        g_user_float_flag = true;
     }
     else if (g_fractal_type == FractalType::MANDEL_Z_POWER &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::MANDEL_Z_POWER);
         fractal_float_to_bf();
-        g_user_float_flag = true;
     }
     else if (g_fractal_type == FractalType::JULIA_Z_POWER &&
         g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         set_fractal_type(FractalType::JULIA_Z_POWER);
         fractal_float_to_bf();
-        g_user_float_flag = true;
     }
     else if (g_fractal_type == FractalType::DIVIDE_BROT5 //
         && g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH)
     {
         g_cur_fractal_specific = get_fractal_specific(FractalType::DIVIDE_BROT5);
         fractal_float_to_bf();
-        g_user_float_flag = true;
     }
     else
     {
