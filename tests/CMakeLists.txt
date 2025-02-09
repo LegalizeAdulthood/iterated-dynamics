@@ -78,7 +78,6 @@ add_executable(test-id
     io/test_update_save_name.cpp
     math/test_cmplx.cpp
     math/test_math.cpp
-    math/test_math_lcmplx.cpp
     misc/test_driver.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp

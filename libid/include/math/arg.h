@@ -6,7 +6,6 @@
 #include "engine/fractals.h"
 #include "fractals/parser.h"
 #include "math/cmplx.h"
-#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "ui/trig_fns.h"
 
@@ -77,13 +76,6 @@ inline void cmplx_trig3(const DComplex &arg, DComplex &out)
     g_arg1->d = (arg);
     g_d_trig3();
     (out) = g_arg1->d;
-}
-
-inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)
-{
-    const long x = multiply(rhs.x, lhs.x, g_bit_shift) - multiply(rhs.y, lhs.y, g_bit_shift);
-    const long y = multiply(rhs.y, lhs.x, g_bit_shift) + multiply(rhs.x, lhs.y, g_bit_shift);
-    return {x, y};
 }
 
 inline double cmplx_mod(const DComplex &z)

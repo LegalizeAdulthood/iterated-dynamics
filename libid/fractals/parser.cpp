@@ -28,6 +28,7 @@
 #include "io/save_file.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
+#include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "math/rand15.h"
 #include "math/sign.h"

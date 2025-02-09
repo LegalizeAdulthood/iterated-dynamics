@@ -101,7 +101,6 @@ double modulus(const Complex<T> &z)
 } // namespace id
 
 using DComplex = id::Complex<double>;
-using LComplex = id::Complex<long>;
 
 DComplex complex_sqrt_float(double x, double y);
 inline DComplex complex_sqrt_float(const DComplex &z)
