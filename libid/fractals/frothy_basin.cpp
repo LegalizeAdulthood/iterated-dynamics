@@ -19,16 +19,9 @@
 #include <algorithm>
 #include <cmath>
 
-constexpr int FROTH_BIT_SHIFT{28};
-constexpr static long froth_d_to_l(double x)
-{
-    return (long) (x * (1L << FROTH_BIT_SHIFT));
-}
 constexpr double FROTH_CLOSE{1e-6};                     // seems like a good value
-constexpr long FROTH_L_CLOSE{froth_d_to_l(FROTH_CLOSE)}; //
 constexpr double SQRT3{1.732050807568877193};           //
 constexpr double FROTH_SLOPE{SQRT3};                    //
-constexpr long FROTH_L_SLOPE{froth_d_to_l(FROTH_SLOPE)}; //
 constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
 struct FrothDouble
