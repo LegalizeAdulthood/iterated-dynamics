@@ -35,10 +35,9 @@ inline void f_sqrt14(float x, float &z)
     f_exp14(z, z);
 }
 
-union Arg
+struct Arg
 {
     DComplex d;
-    LComplex l;
 };
 
 struct ConstArg
