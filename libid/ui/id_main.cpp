@@ -64,11 +64,8 @@ double g_logical_screen_x_size_dots{}, g_logical_screen_y_size_dots{}; // xdots-
 int g_colors{256};                                                     // maximum colors available
 long g_max_iterations{};                                               // try this many iterations
 char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
-long g_l_delta_x{}, g_l_delta_y{};                                     // screen pixel increments
-long g_l_delta_x2{}, g_l_delta_y2{};                                   // screen pixel increments
 LDouble g_delta_x{}, g_delta_y{};                                      // screen pixel increments
 LDouble g_delta_x2{}, g_delta_y2{};                                    // screen pixel increments
-long g_l_delta_min{};                                                  // for calcfrac/calcmand
 double g_delta_min{};                                                  // same as a double
 double g_params[MAX_PARAMS]{};                                         // parameters
 double g_potential_params[3]{};                                        // three potential parameters
@@ -99,9 +96,6 @@ bool g_tab_mode{true};                  // tab display enabled
 double g_x_min{}, g_x_max{};            //
 double g_y_min{}, g_y_max{};            //
 double g_x_3rd{}, g_y_3rd{};            // selected screen corners
-long g_l_x_min{}, g_l_x_max{};          //
-long g_l_y_min{}, g_l_y_max{};          //
-long g_l_x_3rd{}, g_l_y_3rd{};          // integer equivs
 double g_save_x_min{}, g_save_x_max{};  //
 double g_save_y_min{}, g_save_y_max{};  //
 double g_save_x_3rd{}, g_save_y_3rd{};  // displayed screen corners

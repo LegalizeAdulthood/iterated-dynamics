@@ -36,12 +36,6 @@ void get_julia_attractor(double real, double imag)
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
 
-    g_l_temp_sqr_x = (long)g_temp_sqr_x;
-    g_l_temp_sqr_y = (long)g_temp_sqr_y;
-
-    g_l_temp_sqr_x = g_l_temp_sqr_x << g_bit_shift;
-    g_l_temp_sqr_y = g_l_temp_sqr_y << g_bit_shift;
-
     // we're going to try at least this hard
     g_max_iterations = std::max(g_max_iterations, 500L);
     g_color_iter = 0;

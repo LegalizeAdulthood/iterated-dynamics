@@ -112,13 +112,7 @@ static int s_show_dot_width{};        //
 
 int g_xx_begin{};                               // these are same as work list,
 int g_yy_begin{};                               // declared as separate items
-long g_l_at_rad{};                              // finite attractor radius
 double g_f_at_rad{};                            // finite attractor radius
-LComplex g_l_init_orbit{};                      //
-long g_l_magnitude{};                           //
-long g_l_magnitude_limit{};                     //
-long g_l_magnitude_limit2{};                    //
-long g_l_close_enough{};                        //
 DComplex g_init{};                              //
 DComplex g_tmp_z{};                             //
 DComplex g_old_z{};                             //
@@ -174,7 +168,6 @@ int g_current_column{};                          //
 bool g_three_pass{};                             // for solid_guess & its subroutines
 int g_attractors{};                              // number of finite attractors
 DComplex g_attractor[MAX_NUM_ATTRACTORS]{};      // finite attractor vals (f.p)
-LComplex g_l_attractor[MAX_NUM_ATTRACTORS]{};    // finite attractor vals (int)
 int g_attractor_period[MAX_NUM_ATTRACTORS]{};    // period of the finite attractor
 int g_inside_color{};                            // inside color: 1=blue
 int g_outside_color{};                           // outside color
@@ -748,7 +741,6 @@ int calc_fract()
             // not a stand-alone
             // next two lines in case periodicity changed
             g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
-            g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             set_symmetry(g_symmetry, false);
             engine_timer(g_calc_type); // non-standard fractal engine
         }
@@ -1103,7 +1095,6 @@ static void perform_work_list()
 
         // some common initialization for escape-time pixel level routines
         g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
-        g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
         set_symmetry(g_symmetry, true);
@@ -1414,7 +1405,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     if (g_inside_color <= BOF60 && g_inside_color >= BOF61)
     {
-        g_l_magnitude = 0;
         g_magnitude = 0;
         min_orbit = 100000.0;
     }

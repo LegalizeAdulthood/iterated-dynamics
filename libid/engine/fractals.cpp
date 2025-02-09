@@ -55,11 +55,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
-LComplex g_l_param{};
-LComplex g_l_temp{};
-LComplex g_l_param2{};
-long g_l_temp_sqr_x{};
-long g_l_temp_sqr_y{};
 int g_max_color{};
 int g_degree{};
 int g_basin{};

@@ -27,7 +27,6 @@ int popcorn()
     }
     g_keyboard_check_interval = g_max_keyboard_check_interval;
     g_plot = no_plot;
-    g_l_temp_sqr_x = 0;
     g_temp_sqr_x = 0;
     for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
     {

@@ -260,7 +260,6 @@ init_restart:
     g_bit_shift = 16; // to allow larger corners
     g_fudge_factor = 1L << g_bit_shift;
 
-    g_l_at_rad = g_fudge_factor/32768L;
     g_f_at_rad = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel
@@ -276,20 +275,6 @@ init_restart:
         g_delta_x2 = (LDouble)(g_x_3rd - g_x_min) / (LDouble)g_logical_screen_y_size_dots;
         g_delta_y2 = (LDouble)(g_y_3rd - g_y_min) / (LDouble)g_logical_screen_x_size_dots;
         fill_dx_array();
-    }
-
-    if (g_fractal_type != FractalType::CELLULAR && g_fractal_type != FractalType::ANT)  // fudgetolong fails w >10 digits in double
-    {
-        g_l_x_min  = fudge_to_long(g_x_min);
-        g_l_x_max  = fudge_to_long(g_x_max);
-        g_l_x_3rd  = fudge_to_long(g_x_3rd);
-        g_l_y_min  = fudge_to_long(g_y_min);
-        g_l_y_max  = fudge_to_long(g_y_max);
-        g_l_y_3rd  = fudge_to_long(g_y_3rd);
-        g_l_delta_x  = fudge_to_long((double)g_delta_x);
-        g_l_delta_y  = fudge_to_long((double)g_delta_y);
-        g_l_delta_x2 = fudge_to_long((double)g_delta_x2);
-        g_l_delta_y2 = fudge_to_long((double)g_delta_y2);
     }
 
     // skip this if plasma to avoid 3d problems
@@ -404,7 +389,6 @@ expand_retry:
     {
         g_delta_min = std::abs((double)g_delta_y2);
     }
-    g_l_delta_min = fudge_to_long(g_delta_min);
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this

@@ -71,7 +71,6 @@ enum class StatusValues
 };
 
 extern int                   g_and_color;           // AND mask for iteration to get color index
-extern  long                 g_l_at_rad;            // finite attractor radius
 extern  double               g_f_at_rad;            // finite attractor radius
 extern int                   g_atan_colors;
 extern DComplex              g_attractor[];
@@ -90,7 +89,7 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
-extern StatusValues         g_got_status;
+extern StatusValues          g_got_status;
 extern int                   g_i_x_start;
 extern int                   g_i_x_stop;
 extern int                   g_i_y_start;
@@ -98,12 +97,6 @@ extern int                   g_i_y_stop;
 extern DComplex              g_init;
 extern int                   g_invert;
 extern int                   g_keyboard_check_interval;
-extern LComplex              g_l_attractor[];
-extern long                  g_l_close_enough;
-extern LComplex              g_l_init_orbit;
-extern long                  g_l_magnitude;
-extern long                  g_l_magnitude_limit;
-extern long                  g_l_magnitude_limit2;
 extern double                g_magnitude;
 extern bool                  g_magnitude_calc;
 extern double                g_magnitude_limit;
