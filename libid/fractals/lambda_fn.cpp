@@ -9,8 +9,6 @@
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
-#include "math/fixed_pt.h"
-#include "ui/cmdfiles.h"
 
 #include <cmath>
 
