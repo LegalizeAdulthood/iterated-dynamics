@@ -244,24 +244,6 @@ int sqr_1_over_trig_fp_fractal()
     return g_bailout_float();
 }
 
-static int scott_z_x_trig_plus_z_fractal()
-{
-    // z = (z*trig(z))+z
-    trig0(g_l_old_z, g_l_temp);        // ltmp  = trig(old)
-    g_l_new_z = g_l_old_z * g_l_temp;  // lnew  = old*trig(old)
-    g_l_new_z = g_l_new_z + g_l_old_z; // lnew  = trig(old) + old
-    return g_bailout_long();
-}
-
-static int skinner_z_x_trig_sub_z_fractal()
-{
-    // z = (z*trig(z))-z
-    trig0(g_l_old_z, g_l_temp);        // ltmp  = trig(old)
-    g_l_new_z = g_l_old_z * g_l_temp;  // lnew  = old*trig(old)
-    g_l_new_z = g_l_new_z - g_l_old_z; // lnew  = trig(old) - old
-    return g_bailout_long();
-}
-
 static int scott_z_x_trig_plus_z_fp_fractal()
 {
     // z = (z*trig(z))+z
@@ -356,17 +338,6 @@ int z_x_trig_plus_z_fp_fractal()
     cmplx_mult(g_param_z2, g_old_z, g_tmp_z); // tmp  = p2*old
     g_new_z = tmp2 + g_tmp_z;                // new  = p1*trig(old) + p2*old
     return g_bailout_float();
-}
-
-int z_x_trig_plus_z_fractal()
-{
-    // z = (p1*z*trig(z))+p2*z
-    trig0(g_l_old_z, g_l_temp);                 // ltmp  = trig(old)
-    g_l_temp = g_l_param * g_l_temp;            // ltmp  = p1*trig(old)
-    const LComplex ltmp2{g_l_old_z * g_l_temp}; // ltmp2 = p1*old*trig(old)
-    g_l_temp = g_l_param2 * g_l_old_z;          // ltmp  = p2*old
-    g_l_new_z = ltmp2 + g_l_temp;               // lnew  = p1*trig(old) + p2*old
-    return g_bailout_long();
 }
 
 int man_o_war_fp_fractal()

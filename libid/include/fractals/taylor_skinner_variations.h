@@ -18,7 +18,6 @@ bool sqr_trig_setup();
 int sqr_1_over_trig_fp_fractal();
 
 bool z_x_trig_plus_z_setup();
-int z_x_trig_plus_z_fractal();
 int z_x_trig_plus_z_fp_fractal();
 
 int man_o_war_fp_fractal();

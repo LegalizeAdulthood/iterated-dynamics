@@ -2118,10 +2118,6 @@ static bool parse_formula_text(char const *text)
         s_real = l_stk_real;
         s_imag = l_stk_imag;
         s_conj = l_stk_conj;
-        s_trig0 = g_l_trig0;
-        s_trig1 = g_l_trig1;
-        s_trig2 = g_l_trig2;
-        s_trig3 = g_l_trig3;
         s_flip = l_stk_flip;
         s_tan  = l_stk_tan;
         s_tanh  = l_stk_tanh;

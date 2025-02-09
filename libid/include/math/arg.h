@@ -59,30 +59,6 @@ inline long modulus(const LComplex &z)
 {
     return lsqr(z.x) + lsqr(z.y);
 }
-inline void trig0(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    g_l_trig0();
-    out = g_arg1->l;
-}
-inline void trig1(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    g_l_trig1();
-    out = g_arg1->l;
-}
-inline void trig2(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    g_l_trig2();
-    out = g_arg1->l;
-}
-inline void trig3(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    g_l_trig3();
-    out = g_arg1->l;
-}
 inline void cmplx_trig0(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
@@ -107,42 +83,6 @@ inline void cmplx_trig3(const DComplex &arg, DComplex &out)
     g_d_trig3();
     (out) = g_arg1->d;
 }
-inline void lcmplx_sin(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    l_stk_sin();
-    (out) = g_arg1->l;
-}
-inline void lcmplx_cos(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    l_stk_cos();
-    out = g_arg1->l;
-}
-inline void lcmplx_sinh(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    l_stk_sinh();
-    out = g_arg1->l;
-}
-inline void lcmplx_cosh(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    l_stk_cosh();
-    out = g_arg1->l;
-}
-inline void lcmplx_log(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    l_stk_log();
-    out = g_arg1->l;
-}
-inline void lcmplx_exp(const LComplex &arg, LComplex &out)
-{
-    g_arg1->l = arg;
-    l_stk_exp();
-    out = g_arg1->l;
-}
 inline void lcmplx_sqr(const LComplex &arg, LComplex &out)
 {
     out.x = lsqr(arg.x) - lsqr(arg.y);
@@ -152,15 +92,6 @@ inline void lcmplx_sqr_old(LComplex &out)
 {
     out.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     out.x = g_l_temp_sqr_x - g_l_temp_sqr_y;
-}
-inline void lcmplx_pwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
-{
-    g_arg2->l = arg1;
-    g_arg1->l = arg2;
-    l_stk_pwr();
-    g_arg1++;
-    g_arg2++;
-    out = g_arg2->l;
 }
 
 inline LComplex operator*(const LComplex &lhs, const LComplex &rhs)

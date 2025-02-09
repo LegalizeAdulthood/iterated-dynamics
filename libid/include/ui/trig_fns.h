@@ -48,18 +48,12 @@ inline int operator+(TrigFn value)
 struct NamedTrigFunction
 {
     char const *name;
-    void (*l_fn)();
     void (*d_fn)();
-    void (*m_fn)();
 };
 
 extern NamedTrigFunction     g_trig_fn[];
 extern TrigFn                g_trig_index[];
 extern const int             g_num_trig_functions;
-extern void                (*g_l_trig0)();
-extern void                (*g_l_trig1)();
-extern void                (*g_l_trig2)();
-extern void                (*g_l_trig3)();
 extern void                (*g_d_trig0)();
 extern void                (*g_d_trig1)();
 extern void                (*g_d_trig2)();
