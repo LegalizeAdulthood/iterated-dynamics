@@ -354,36 +354,6 @@ int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL 
     return g_overflow ? 1 : 0;
 }
 
-// Long version of perspective. Because of use of fixed point math, there
-// is danger of overflow and underflow
-int long_persp(VectorL v, VectorL view, int bit_shift)
-{
-    g_overflow = false;
-    long denom = view[2] - v[2];
-    if (denom >= 0)              // bail out if point is "behind" us
-    {
-        v[0] = BAD_VALUE;
-        v[0] = v[0] << bit_shift;
-        v[1] = v[0];
-        v[2] = v[0];
-        return -1;
-    }
-
-    // doing math in this order helps prevent overflow
-    VectorL tmp_view;
-    tmp_view[0] = divide(view[0], denom, bit_shift);
-    tmp_view[1] = divide(view[1], denom, bit_shift);
-    tmp_view[2] = divide(view[2], denom, bit_shift);
-
-    v[0] = multiply(v[0], tmp_view[2], bit_shift) -
-            multiply(tmp_view[0], v[2], bit_shift);
-
-    v[1] = multiply(v[1], tmp_view[2], bit_shift) -
-            multiply(tmp_view[1], v[2], bit_shift);
-
-    return g_overflow ? 1 : 0;
-}
-
 int long_vec_mat_mul(VectorL s, MatrixL m, VectorL t, int bit_shift)
 {
     VectorL tmp;
