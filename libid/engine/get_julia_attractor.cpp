@@ -59,41 +59,20 @@ void get_julia_attractor(double real, double imag)
     }
     if (g_color_iter >= g_max_iterations)      // if orbit stays in the lake
     {
-        if (g_integer_fractal)     // remember where it went to
-        {
-            l_result = g_l_new_z;
-        }
-        else
-        {
-            result =  g_new_z;
-        }
+        result = g_new_z;
         for (int i = 0; i < 10; i++)
         {
             g_overflow = false;
             if (!g_cur_fractal_specific->orbit_calc() && !g_overflow) // if it stays in the lake
             {
-                // and doesn't move far, probably
-                if (g_integer_fractal)   //   found a finite attractor
+                // and doesn't move far, probably found a finite attractor
+                if (std::abs(result.x - g_new_z.x) < g_close_enough &&
+                    std::abs(result.y - g_new_z.y) < g_close_enough)
                 {
-                    if (std::abs(l_result.x-g_l_new_z.x) < g_l_close_enough
-                        && std::abs(l_result.y-g_l_new_z.y) < g_l_close_enough)
-                    {
-                        g_l_attractor[g_attractors] = g_l_new_z;
-                        g_attractor_period[g_attractors] = i+1;
-                        g_attractors++;   // another attractor - coloured lakes !
-                        break;
-                    }
-                }
-                else
-                {
-                    if (std::abs(result.x-g_new_z.x) < g_close_enough
-                        && std::abs(result.y-g_new_z.y) < g_close_enough)
-                    {
-                        g_attractor[g_attractors] = g_new_z;
-                        g_attractor_period[g_attractors] = i+1;
-                        g_attractors++;   // another attractor - coloured lakes !
-                        break;
-                    }
+                    g_attractor[g_attractors] = g_new_z;
+                    g_attractor_period[g_attractors] = i + 1;
+                    g_attractors++; // another attractor - coloured lakes !
+                    break;
                 }
             }
             else

@@ -225,8 +225,6 @@ init_restart:
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
 
-    g_integer_fractal = 0;
-
     if (g_potential_flag && g_potential_params[2] != 0.0)
     {
         g_magnitude_limit = g_potential_params[2];
@@ -242,10 +240,6 @@ init_restart:
     else
     {
         g_magnitude_limit = g_cur_fractal_specific->orbit_bailout;
-    }
-    if (g_integer_fractal)   // the bailout limit mustn't be too high here
-    {
-        g_magnitude_limit = std::min(g_magnitude_limit, 127.0);
     }
 
     if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
@@ -263,18 +257,7 @@ init_restart:
         g_y_3rd = g_y_min;
     }
 
-    // set up bitshift for integer math
-    g_bit_shift = FUDGE_FACTOR2; // by default, the smaller shift
-    if (g_integer_fractal > 1)    // use specific override from table
-    {
-        g_bit_shift = g_integer_fractal;
-    }
-    // float?
-    if (g_integer_fractal == 0)
-    {
-        g_bit_shift = 16; // to allow larger corners
-    }
-
+    g_bit_shift = 16; // to allow larger corners
     g_fudge_factor = 1L << g_bit_shift;
 
     g_l_at_rad = g_fudge_factor/32768L;
@@ -319,132 +302,94 @@ init_restart:
         && g_fractal_type != FractalType::IFS_3D
         && g_fractal_type != FractalType::L_SYSTEM)
     {
-        if (g_integer_fractal && (g_invert == 0) && g_use_grid)
-        {
-            if ((g_l_delta_x  == 0 && g_delta_x  != 0.0)
-                || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
-                || (g_l_delta_y  == 0 && g_delta_y  != 0.0)
-                || (g_l_delta_y2 == 0 && g_delta_y2 != 0.0))
-            {
-                goto expand_retry;
-            }
-
-            fill_lx_array();   // fill up the x,y grids
-            // past max res?  check corners within 10% of expected
-            if (ratio_bad((double)g_l_x0[g_logical_screen_x_dots-1]-g_l_x_min, (double)g_l_x_max-g_l_x_3rd)
-                || ratio_bad((double)g_l_y0[g_logical_screen_y_dots-1]-g_l_y_max, (double)g_l_y_3rd-g_l_y_max)
-                || ratio_bad((double)g_l_x1[(g_logical_screen_y_dots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
-                || ratio_bad((double)g_l_y1[(g_logical_screen_x_dots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
-            {
 expand_retry:
-                // switch to floating pt
-                if (g_calc_status == CalcStatus::RESUMABLE)     // due to restore of an old file?
-                {
-                    g_calc_status = CalcStatus::PARAMS_CHANGED; //   whatever, it isn't resumable
-                }
-                goto init_restart;
-            } // end if ratio bad
-
-            // re-set corners to match reality
-            g_l_x_max = g_l_x0[g_logical_screen_x_dots-1] + g_l_x1[g_logical_screen_y_dots-1];
-            g_l_y_min = g_l_y0[g_logical_screen_y_dots-1] + g_l_y1[g_logical_screen_x_dots-1];
-            g_l_x_3rd = g_l_x_min + g_l_x1[g_logical_screen_y_dots-1];
-            g_l_y_3rd = g_l_y0[g_logical_screen_y_dots-1];
-            g_x_min = fudge_to_double(g_l_x_min);
-            g_x_max = fudge_to_double(g_l_x_max);
-            g_x_3rd = fudge_to_double(g_l_x_3rd);
-            g_y_min = fudge_to_double(g_l_y_min);
-            g_y_max = fudge_to_double(g_l_y_max);
-            g_y_3rd = fudge_to_double(g_l_y_3rd);
-        } // end if (integerfractal && !invert && use_grid)
-        else
+        // set up dx0 and dy0 analogs of lx0 and ly0
+        // put fractal parameters in doubles
+        double dx0 = g_x_min; // fill up the x, y grids
+        double dy0 = g_y_max;
+        double dy1 = 0;
+        double dx1 = 0;
+        /* this way of defining the dx and dy arrays is not the most
+           accurate, but it is kept because it is used to determine
+           the limit of resolution */
+        for (int i = 1; i < g_logical_screen_x_dots; i++)
         {
-            // set up dx0 and dy0 analogs of lx0 and ly0
-            // put fractal parameters in doubles
-            double dx0 = g_x_min;                // fill up the x, y grids
-            double dy0 = g_y_max;
-            double dy1 = 0;
-            double dx1 = 0;
-            /* this way of defining the dx and dy arrays is not the most
-               accurate, but it is kept because it is used to determine
-               the limit of resolution */
-            for (int i = 1; i < g_logical_screen_x_dots; i++)
+            dx0 = (double) (dx0 + (double) g_delta_x);
+            dy1 = (double) (dy1 - (double) g_delta_y2);
+        }
+        for (int i = 1; i < g_logical_screen_y_dots; i++)
+        {
+            dy0 = (double) (dy0 - (double) g_delta_y);
+            dx1 = (double) (dx1 + (double) g_delta_x2);
+        }
+        if (g_bf_math == BFMathType::NONE) // redundant test, leave for now
+        {
+            /* Following is the old logic for detecting failure of double
+               precision. It has two advantages: it is independent of the
+               representation of numbers, and it is sensitive to resolution
+               (allows deeper zooms at lower resolution). However, it fails
+               for rotations of exactly 90 degrees, so we added a safety net
+               by using the magnification.  */
+            if (++tries < 2) // for safety
             {
-                dx0 = (double)(dx0 + (double)g_delta_x);
-                dy1 = (double)(dy1 - (double)g_delta_y2);
-            }
-            for (int i = 1; i < g_logical_screen_y_dots; i++)
-            {
-                dy0 = (double)(dy0 - (double)g_delta_y);
-                dx1 = (double)(dx1 + (double)g_delta_x2);
-            }
-            if (g_bf_math == BFMathType::NONE) // redundant test, leave for now
-            {
-                /* Following is the old logic for detecting failure of double
-                   precision. It has two advantages: it is independent of the
-                   representation of numbers, and it is sensitive to resolution
-                   (allows deeper zooms at lower resolution). However, it fails
-                   for rotations of exactly 90 degrees, so we added a safety net
-                   by using the magnification.  */
-                if (++tries < 2) // for safety
+                if (tries > 1)
                 {
-                    if (tries > 1)
+                    stop_msg("precision-detection error");
+                }
+                /* Previously there were four tests of distortions in the
+                   zoom box used to detect precision limitations. In some
+                   cases of rotated/skewed zoom boxes, this causes the algorithm
+                   to bail out to arbitrary precision too soon. The logic
+                   now only tests the larger of the two deltas in an attempt
+                   to repair this bug. This should never make the transition
+                   to arbitrary precision sooner, but always later.*/
+                double test_x_try;
+                double test_x_exact;
+                if (std::abs(g_x_max - g_x_3rd) > std::abs(g_x_3rd - g_x_min))
+                {
+                    test_x_exact = g_x_max - g_x_3rd;
+                    test_x_try = dx0 - g_x_min;
+                }
+                else
+                {
+                    test_x_exact = g_x_3rd - g_x_min;
+                    test_x_try = dx1;
+                }
+                double testy_try;
+                double testy_exact;
+                if (std::abs(g_y_3rd - g_y_max) > std::abs(g_y_min - g_y_3rd))
+                {
+                    testy_exact = g_y_3rd - g_y_max;
+                    testy_try = dy0 - g_y_max;
+                }
+                else
+                {
+                    testy_exact = g_y_min - g_y_3rd;
+                    testy_try = dy1;
+                }
+                if (ratio_bad(test_x_try, test_x_exact) || ratio_bad(testy_try, testy_exact))
+                {
+                    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
                     {
-                        stop_msg("precision-detection error");
+                        fractal_float_to_bf();
+                        goto init_restart;
                     }
-                    /* Previously there were four tests of distortions in the
-                       zoom box used to detect precision limitations. In some
-                       cases of rotated/skewed zoom boxes, this causes the algorithm
-                       to bail out to arbitrary precision too soon. The logic
-                       now only tests the larger of the two deltas in an attempt
-                       to repair this bug. This should never make the transition
-                       to arbitrary precision sooner, but always later.*/
-                    double test_x_try;
-                    double test_x_exact;
-                    if (std::abs(g_x_max-g_x_3rd) > std::abs(g_x_3rd-g_x_min))
-                    {
-                        test_x_exact  = g_x_max-g_x_3rd;
-                        test_x_try    = dx0-g_x_min;
-                    }
-                    else
-                    {
-                        test_x_exact  = g_x_3rd-g_x_min;
-                        test_x_try    = dx1;
-                    }
-                    double testy_try;
-                    double testy_exact;
-                    if (std::abs(g_y_3rd-g_y_max) > std::abs(g_y_min-g_y_3rd))
-                    {
-                        testy_exact = g_y_3rd-g_y_max;
-                        testy_try   = dy0-g_y_max;
-                    }
-                    else
-                    {
-                        testy_exact = g_y_min-g_y_3rd;
-                        testy_try   = dy1;
-                    }
-                    if (ratio_bad(test_x_try, test_x_exact)
-                        || ratio_bad(testy_try, testy_exact))
-                    {
-                        if (bit_set(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
-                        {
-                            fractal_float_to_bf();
-                            goto init_restart;
-                        }
-                        goto expand_retry;
-                    } // end if ratio_bad etc.
-                } // end if tries < 2
-            } // end if bf_math == 0
+                    goto expand_retry;
+                } // end if ratio_bad etc.
+            } // end if tries < 2
+        } // end if bf_math == 0
 
-            // if long double available, this is more accurate
-            fill_dx_array();       // fill up the x, y grids
+        // if long double available, this is more accurate
+        fill_dx_array(); // fill up the x, y grids
 
-            // re-set corners to match reality
-            g_x_max = (double)(g_x_min + (g_logical_screen_x_dots-1)*g_delta_x + (g_logical_screen_y_dots-1)*g_delta_x2);
-            g_y_min = (double)(g_y_max - (g_logical_screen_y_dots-1)*g_delta_y - (g_logical_screen_x_dots-1)*g_delta_y2);
-            g_x_3rd = (double)(g_x_min + (g_logical_screen_y_dots-1)*g_delta_x2);
-            g_y_3rd = (double)(g_y_max - (g_logical_screen_y_dots-1)*g_delta_y);
-        } // end else
+        // re-set corners to match reality
+        g_x_max = (double) (g_x_min + (g_logical_screen_x_dots - 1) * g_delta_x +
+            (g_logical_screen_y_dots - 1) * g_delta_x2);
+        g_y_min = (double) (g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y -
+            (g_logical_screen_x_dots - 1) * g_delta_y2);
+        g_x_3rd = (double) (g_x_min + (g_logical_screen_y_dots - 1) * g_delta_x2);
+        g_y_3rd = (double) (g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y);
+        // end else
     } // end if not plasma
 
     // for periodicity close-enough, and for unity:
@@ -583,24 +528,19 @@ void adjust_corner()
 {
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
-    double f_temp;
-
-    if (!g_integer_fractal)
+    double x_ctr;
+    double y_ctr;
+    double x_mag_factor;
+    double rotation;
+    double skew;
+    LDouble magnification;
+    // While we're at it, let's adjust the x_mag_factor as well
+    cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
+    double f_temp = std::abs(x_mag_factor);
+    if (f_temp != 1 && f_temp >= (1 - g_aspect_drift) && f_temp <= (1 + g_aspect_drift))
     {
-        double x_ctr;
-        double y_ctr;
-        double x_mag_factor;
-        double rotation;
-        double skew;
-        LDouble magnification;
-        // While we're at it, let's adjust the x_mag_factor as well
-        cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-        f_temp = std::abs(x_mag_factor);
-        if (f_temp != 1 && f_temp >= (1-g_aspect_drift) && f_temp <= (1+g_aspect_drift))
-        {
-            x_mag_factor = sign(x_mag_factor);
-            cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-        }
+        x_mag_factor = sign(x_mag_factor);
+        cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     }
 
     f_temp = std::abs(g_x_3rd-g_x_min);
@@ -886,23 +826,7 @@ static void adjust_to_limits(double expand)
 {
     double corner_x[4];
     double corner_y[4];
-
     double limit = 32767.99;
-
-    if (g_integer_fractal)
-    {
-        // let user reproduce old GIF's and PAR's
-        limit = 1023.99;
-        if (g_bit_shift >= 24)
-        {
-            limit = 31.99;
-        }
-        if (g_bit_shift >= 29)
-        {
-            limit = 3.99;
-        }
-    }
-
     double center_x = (g_x_min + g_x_max) / 2;
     double center_y = (g_y_min + g_y_max) / 2;
 
@@ -1031,15 +955,7 @@ static void smallest_add_bf(BigFloat num)
 
 static int ratio_bad(double actual, double desired)
 {
-    double tol;
-    if (g_integer_fractal)
-    {
-        tol = g_math_tol[0];
-    }
-    else
-    {
-        tol = g_math_tol[1];
-    }
+    double tol = g_math_tol[1];
     if (tol <= 0.0)
     {
         return 1;

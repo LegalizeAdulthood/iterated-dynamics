@@ -134,20 +134,13 @@ int bifurcation()
 
     s_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long)g_param_z1.x;
     s_half_time_check = false;
-    if (g_periodicity_check && (unsigned long)g_max_iterations < s_filter_cycles)
+    if (g_periodicity_check && (unsigned long) g_max_iterations < s_filter_cycles)
     {
         s_filter_cycles = (s_filter_cycles - g_max_iterations + 1) / 2;
         s_half_time_check = true;
     }
 
-    if (g_integer_fractal)
-    {
-        g_l_init.y = g_l_y_max - g_i_y_stop*g_l_delta_y;            // Y-value of
-    }
-    else
-    {
-        g_init.y = (double)(g_y_max - g_i_y_stop*g_delta_y); // bottom pixels
-    }
+    g_init.y = (double) (g_y_max - g_i_y_stop * g_delta_y); // bottom pixels
 
     while (x <= g_i_x_stop)
     {
@@ -159,14 +152,7 @@ int bifurcation()
             return -1;
         }
 
-        if (g_integer_fractal)
-        {
-            s_rate_l = g_l_x_min + x*g_l_delta_x;
-        }
-        else
-        {
-            g_rate = (double)(g_x_min + x*g_delta_x);
-        }
+        g_rate = (double) (g_x_min + x * g_delta_x);
         verhulst();        // calculate array once per column
 
         for (int y = g_i_y_stop; y >= 0; y--) // should be iystop & >=0
@@ -197,14 +183,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 {
     unsigned int pixel_row;
 
-    if (g_integer_fractal)
-    {
-        s_population_l = (g_param_z1.y == 0) ? (long)(SEED*g_fudge_factor) : (long)(g_param_z1.y*g_fudge_factor);
-    }
-    else
-    {
-        g_population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
-    }
+    g_population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
 
     g_overflow = false;
 
@@ -254,14 +233,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
 
         // assign population value to Y coordinate in pixels
-        if (g_integer_fractal)
-        {
-            pixel_row = g_i_y_stop - (int)((s_population_l - g_l_init.y) / g_l_delta_y); // iystop
-        }
-        else
-        {
-            pixel_row = g_i_y_stop - (int)((g_population - g_init.y) / g_delta_y);
-        }
+        pixel_row = g_i_y_stop - (int) ((g_population - g_init.y) / g_delta_y);
 
         // if it's visible on the screen, save it in the column array
         if (pixel_row <= (unsigned int)g_i_y_stop)
@@ -283,16 +255,8 @@ static void bif_period_init()
 {
     s_bif_saved_inc = 1;
     s_bif_saved_and = 1;
-    if (g_integer_fractal)
-    {
-        s_bif_saved_pop_l = -1;
-        s_bif_close_enough_l = g_l_delta_y / 8;
-    }
-    else
-    {
-        s_bif_saved_pop = -1.0;
-        s_bif_close_enough = (double)g_delta_y / 8.0;
-    }
+    s_bif_saved_pop = -1.0;
+    s_bif_close_enough = (double) g_delta_y / 8.0;
 }
 
 // Bifurcation Population Periodicity Check
@@ -301,14 +265,7 @@ static bool bif_periodic(long time)
 {
     if ((time & s_bif_saved_and) == 0)      // time to save a new value
     {
-        if (g_integer_fractal)
-        {
-            s_bif_saved_pop_l = s_population_l;
-        }
-        else
-        {
-            s_bif_saved_pop =  g_population;
-        }
+        s_bif_saved_pop = g_population;
         if (--s_bif_saved_inc == 0)
         {
             s_bif_saved_and = (s_bif_saved_and << 1) + 1;
@@ -317,19 +274,9 @@ static bool bif_periodic(long time)
     }
     else                         // check against an old save
     {
-        if (g_integer_fractal)
+        if (std::abs(s_bif_saved_pop - g_population) <= s_bif_close_enough)
         {
-            if (std::abs(s_bif_saved_pop_l-s_population_l) <= s_bif_close_enough_l)
-            {
-                return true;
-            }
-        }
-        else
-        {
-            if (std::abs(s_bif_saved_pop-g_population) <= s_bif_close_enough)
-            {
-                return true;
-            }
+            return true;
         }
     }
     return false;

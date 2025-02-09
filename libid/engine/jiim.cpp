@@ -693,15 +693,7 @@ void InverseJulia::start()
     g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
     g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
 
-    // possible extraseg arrays have been trashed, so set up again
-    if (g_integer_fractal)
-    {
-        fill_lx_array();
-    }
-    else
-    {
-        fill_dx_array();
-    }
+    fill_dx_array();
 
     s_cursor.set_pos(g_col, g_row);
     s_cursor.show();
@@ -1163,13 +1155,6 @@ void InverseJulia::iterate_orbit()
     if (m_iter < g_max_iterations)
     {
         m_color = (int) m_iter % g_colors;
-        if (g_integer_fractal)
-        {
-            g_old_z.x = g_l_old_z.x;
-            g_old_z.x /= g_fudge_factor;
-            g_old_z.y = g_l_old_z.y;
-            g_old_z.y /= g_fudge_factor;
-        }
         m_x = (int) ((g_old_z.x - g_init.x) * m_x_factor * 3 * m_zoom + m_x_off);
         m_y = (int) ((g_old_z.y - g_init.y) * m_y_factor * 3 * m_zoom + m_y_off);
         if (orbit_calc())
@@ -1220,18 +1205,8 @@ bool InverseJulia::iterate()
 
         if (!m_exact)
         {
-            if (g_integer_fractal)
-            {
-                m_c_real = g_l_x_pixel();
-                m_c_imag = g_l_y_pixel();
-                m_c_real /= (1L << g_bit_shift);
-                m_c_imag /= (1L << g_bit_shift);
-            }
-            else
-            {
-                m_c_real = g_dx_pixel();
-                m_c_imag = g_dy_pixel();
-            }
+            m_c_real = g_dx_pixel();
+            m_c_imag = g_dy_pixel();
         }
 
         m_actively_computing = true;

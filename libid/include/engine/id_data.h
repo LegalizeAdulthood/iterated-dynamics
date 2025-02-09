@@ -58,7 +58,6 @@ extern std::string           g_fractal_search_dir1;
 extern std::string           g_fractal_search_dir2;
 extern bool                  g_has_inverse;
 extern HelpLabels            g_help_mode;
-extern int                   g_integer_fractal;
 extern bool                  g_keep_aspect_ratio;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;

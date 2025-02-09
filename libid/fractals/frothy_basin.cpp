@@ -195,30 +195,6 @@ bool froth_setup()
         g_orbit_color = g_colors - 1;
     }
 
-    if (g_integer_fractal)
-    {
-        FrothLong tmp_l;
-
-        tmp_l.a        = froth_d_to_l(s_fsp.fl.f.a);
-        tmp_l.half_a    = froth_d_to_l(s_fsp.fl.f.half_a);
-
-        tmp_l.top_x1   = froth_d_to_l(s_fsp.fl.f.top_x1);
-        tmp_l.top_x2   = froth_d_to_l(s_fsp.fl.f.top_x2);
-        tmp_l.top_x3   = froth_d_to_l(s_fsp.fl.f.top_x3);
-        tmp_l.top_x4   = froth_d_to_l(s_fsp.fl.f.top_x4);
-
-        tmp_l.left_x1  = froth_d_to_l(s_fsp.fl.f.left_x1);
-        tmp_l.left_x2  = froth_d_to_l(s_fsp.fl.f.left_x2);
-        tmp_l.left_x3  = froth_d_to_l(s_fsp.fl.f.left_x3);
-        tmp_l.left_x4  = froth_d_to_l(s_fsp.fl.f.left_x4);
-
-        tmp_l.right_x1 = froth_d_to_l(s_fsp.fl.f.right_x1);
-        tmp_l.right_x2 = froth_d_to_l(s_fsp.fl.f.right_x2);
-        tmp_l.right_x3 = froth_d_to_l(s_fsp.fl.f.right_x3);
-        tmp_l.right_x4 = froth_d_to_l(s_fsp.fl.f.right_x4);
-
-        s_fsp.fl.l = tmp_l;
-    }
     return true;
 }
 
@@ -240,295 +216,141 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
     g_color_iter = 0;
     if (g_show_dot > 0)
     {
-        (*g_plot)(g_col, g_row, g_show_dot %g_colors);
+        (*g_plot)(g_col, g_row, g_show_dot % g_colors);
     }
-    if (!g_integer_fractal) // fp mode
+    if (g_invert != 0)
     {
-        if (g_invert != 0)
+        invertz2(&g_tmp_z);
+        g_old_z = g_tmp_z;
+    }
+    else
+    {
+        g_old_z.x = g_dx_pixel();
+        g_old_z.y = g_dy_pixel();
+    }
+
+    g_temp_sqr_x = sqr(g_old_z.x);
+    g_temp_sqr_y = sqr(g_old_z.y);
+    while (!found_attractor && (g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit) &&
+        (g_color_iter < g_max_iterations))
+    {
+        // simple formula: z = z^2 + conj(z*(-1+ai))
+        // but it's the attractor that makes this so interesting
+        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
+        g_old_z.y += (g_old_z.x + g_old_z.x) * g_old_z.y - s_fsp.fl.f.a * g_old_z.x;
+        g_old_z.x = g_new_z.x;
+        if (s_fsp.repeat_mapping)
         {
-            invertz2(&g_tmp_z);
-            g_old_z = g_tmp_z;
-        }
-        else
-        {
-            g_old_z.x = g_dx_pixel();
-            g_old_z.y = g_dy_pixel();
+            g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
+            g_old_z.y += (g_old_z.x + g_old_z.x) * g_old_z.y - s_fsp.fl.f.a * g_old_z.x;
+            g_old_z.x = g_new_z.x;
         }
 
+        g_color_iter++;
+
+        if (g_show_orbit)
+        {
+            if (driver_key_pressed())
+            {
+                break;
+            }
+            plot_orbit(g_old_z.x, g_old_z.y, -1);
+        }
+
+        if (std::abs(s_fsp.fl.f.half_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x >= s_fsp.fl.f.top_x1 &&
+            g_old_z.x <= s_fsp.fl.f.top_x2)
+        {
+            if ((!s_fsp.repeat_mapping && s_fsp.attractors == 2) ||
+                (s_fsp.repeat_mapping && s_fsp.attractors == 3))
+            {
+                found_attractor = 1;
+            }
+            else if (g_old_z.x <= s_fsp.fl.f.top_x3)
+            {
+                found_attractor = 1;
+            }
+            else if (g_old_z.x >= s_fsp.fl.f.top_x4)
+            {
+                if (!s_fsp.repeat_mapping)
+                {
+                    found_attractor = 1;
+                }
+                else
+                {
+                    found_attractor = 2;
+                }
+            }
+        }
+        else if (std::abs(FROTH_SLOPE * g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE &&
+            g_old_z.x <= s_fsp.fl.f.right_x1 && g_old_z.x >= s_fsp.fl.f.right_x2)
+        {
+            if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
+            {
+                found_attractor = 2;
+            }
+            else if (s_fsp.repeat_mapping && s_fsp.attractors == 3)
+            {
+                found_attractor = 3;
+            }
+            else if (g_old_z.x >= s_fsp.fl.f.right_x3)
+            {
+                if (!s_fsp.repeat_mapping)
+                {
+                    found_attractor = 2;
+                }
+                else
+                {
+                    found_attractor = 4;
+                }
+            }
+            else if (g_old_z.x <= s_fsp.fl.f.right_x4)
+            {
+                if (!s_fsp.repeat_mapping)
+                {
+                    found_attractor = 3;
+                }
+                else
+                {
+                    found_attractor = 6;
+                }
+            }
+        }
+        else if (std::abs(-FROTH_SLOPE * g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE &&
+            g_old_z.x <= s_fsp.fl.f.left_x1 && g_old_z.x >= s_fsp.fl.f.left_x2)
+        {
+            if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
+            {
+                found_attractor = 2;
+            }
+            else if (s_fsp.repeat_mapping && s_fsp.attractors == 3)
+            {
+                found_attractor = 2;
+            }
+            else if (g_old_z.x >= s_fsp.fl.f.left_x3)
+            {
+                if (!s_fsp.repeat_mapping)
+                {
+                    found_attractor = 3;
+                }
+                else
+                {
+                    found_attractor = 5;
+                }
+            }
+            else if (g_old_z.x <= s_fsp.fl.f.left_x4)
+            {
+                if (!s_fsp.repeat_mapping)
+                {
+                    found_attractor = 2;
+                }
+                else
+                {
+                    found_attractor = 3;
+                }
+            }
+        }
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
-        while (!found_attractor
-            && (g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit)
-            && (g_color_iter < g_max_iterations))
-        {
-            // simple formula: z = z^2 + conj(z*(-1+ai))
-            // but it's the attractor that makes this so interesting
-            g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.fl.f.a*g_old_z.y;
-            g_old_z.y += (g_old_z.x+g_old_z.x)*g_old_z.y - s_fsp.fl.f.a*g_old_z.x;
-            g_old_z.x = g_new_z.x;
-            if (s_fsp.repeat_mapping)
-            {
-                g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.fl.f.a*g_old_z.y;
-                g_old_z.y += (g_old_z.x+g_old_z.x)*g_old_z.y - s_fsp.fl.f.a*g_old_z.x;
-                g_old_z.x = g_new_z.x;
-            }
-
-            g_color_iter++;
-
-            if (g_show_orbit)
-            {
-                if (driver_key_pressed())
-                {
-                    break;
-                }
-                plot_orbit(g_old_z.x, g_old_z.y, -1);
-            }
-
-            if (std::abs(s_fsp.fl.f.half_a-g_old_z.y) < FROTH_CLOSE
-                && g_old_z.x >= s_fsp.fl.f.top_x1
-                && g_old_z.x <= s_fsp.fl.f.top_x2)
-            {
-                if ((!s_fsp.repeat_mapping && s_fsp.attractors == 2)
-                    || (s_fsp.repeat_mapping && s_fsp.attractors == 3))
-                {
-                    found_attractor = 1;
-                }
-                else if (g_old_z.x <= s_fsp.fl.f.top_x3)
-                {
-                    found_attractor = 1;
-                }
-                else if (g_old_z.x >= s_fsp.fl.f.top_x4)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 1;
-                    }
-                    else
-                    {
-                        found_attractor = 2;
-                    }
-                }
-            }
-            else if (std::abs(FROTH_SLOPE*g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
-                && g_old_z.x <= s_fsp.fl.f.right_x1
-                && g_old_z.x >= s_fsp.fl.f.right_x2)
-            {
-                if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
-                {
-                    found_attractor = 2;
-                }
-                else if (s_fsp.repeat_mapping && s_fsp.attractors == 3)
-                {
-                    found_attractor = 3;
-                }
-                else if (g_old_z.x >= s_fsp.fl.f.right_x3)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 2;
-                    }
-                    else
-                    {
-                        found_attractor = 4;
-                    }
-                }
-                else if (g_old_z.x <= s_fsp.fl.f.right_x4)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 3;
-                    }
-                    else
-                    {
-                        found_attractor = 6;
-                    }
-                }
-            }
-            else if (std::abs(-FROTH_SLOPE*g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
-                && g_old_z.x <= s_fsp.fl.f.left_x1
-                && g_old_z.x >= s_fsp.fl.f.left_x2)
-            {
-                if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
-                {
-                    found_attractor = 2;
-                }
-                else if (s_fsp.repeat_mapping && s_fsp.attractors == 3)
-                {
-                    found_attractor = 2;
-                }
-                else if (g_old_z.x >= s_fsp.fl.f.left_x3)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 3;
-                    }
-                    else
-                    {
-                        found_attractor = 5;
-                    }
-                }
-                else if (g_old_z.x <= s_fsp.fl.f.left_x4)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 2;
-                    }
-                    else
-                    {
-                        found_attractor = 3;
-                    }
-                }
-            }
-            g_temp_sqr_x = sqr(g_old_z.x);
-            g_temp_sqr_y = sqr(g_old_z.y);
-        }
-    }
-    else // integer mode
-    {
-        if (g_invert != 0)
-        {
-            invertz2(&g_tmp_z);
-            g_l_old_z.x = (long)(g_tmp_z.x * g_fudge_factor);
-            g_l_old_z.y = (long)(g_tmp_z.y * g_fudge_factor);
-        }
-        else
-        {
-            g_l_old_z.x = g_l_x_pixel();
-            g_l_old_z.y = g_l_y_pixel();
-        }
-
-        g_l_temp_sqr_x = lsqr(g_l_old_z.x);
-        g_l_temp_sqr_y = lsqr(g_l_old_z.y);
-        g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-        while (!found_attractor
-            && (g_l_magnitude < g_l_magnitude_limit)
-            && (g_l_magnitude >= 0)
-            && (g_color_iter < g_max_iterations))
-        {
-            // simple formula: z = z^2 + conj(z*(-1+ai))
-            // but it's the attractor that makes this so interesting
-            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(s_fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
-            g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(s_fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
-            g_l_old_z.x = g_l_new_z.x;
-            if (s_fsp.repeat_mapping)
-            {
-                g_l_magnitude = (g_l_temp_sqr_x = lsqr(g_l_old_z.x)) + (g_l_temp_sqr_y = lsqr(g_l_old_z.y));
-                if ((g_l_magnitude > g_l_magnitude_limit) || (g_l_magnitude < 0))
-                {
-                    break;
-                }
-                g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(s_fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
-                g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(s_fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
-                g_l_old_z.x = g_l_new_z.x;
-            }
-            g_color_iter++;
-
-            if (g_show_orbit)
-            {
-                if (driver_key_pressed())
-                {
-                    break;
-                }
-                iplot_orbit(g_l_old_z.x, g_l_old_z.y, -1);
-            }
-
-            if (std::abs(s_fsp.fl.l.half_a-g_l_old_z.y) < FROTH_L_CLOSE
-                && g_l_old_z.x > s_fsp.fl.l.top_x1
-                && g_l_old_z.x < s_fsp.fl.l.top_x2)
-            {
-                if ((!s_fsp.repeat_mapping && s_fsp.attractors == 2)
-                    || (s_fsp.repeat_mapping && s_fsp.attractors == 3))
-                {
-                    found_attractor = 1;
-                }
-                else if (g_l_old_z.x <= s_fsp.fl.l.top_x3)
-                {
-                    found_attractor = 1;
-                }
-                else if (g_l_old_z.x >= s_fsp.fl.l.top_x4)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 1;
-                    }
-                    else
-                    {
-                        found_attractor = 2;
-                    }
-                }
-            }
-            else if (std::abs(multiply(FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE
-                && g_l_old_z.x <= s_fsp.fl.l.right_x1
-                && g_l_old_z.x >= s_fsp.fl.l.right_x2)
-            {
-                if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
-                {
-                    found_attractor = 2;
-                }
-                else if (s_fsp.repeat_mapping && s_fsp.attractors == 3)
-                {
-                    found_attractor = 3;
-                }
-                else if (g_l_old_z.x >= s_fsp.fl.l.right_x3)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 2;
-                    }
-                    else
-                    {
-                        found_attractor = 4;
-                    }
-                }
-                else if (g_l_old_z.x <= s_fsp.fl.l.right_x4)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 3;
-                    }
-                    else
-                    {
-                        found_attractor = 6;
-                    }
-                }
-            }
-            else if (std::abs(multiply(-FROTH_L_SLOPE, g_l_old_z.x, g_bit_shift)-s_fsp.fl.l.a-g_l_old_z.y) < FROTH_L_CLOSE)
-            {
-                if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
-                {
-                    found_attractor = 2;
-                }
-                else if (s_fsp.repeat_mapping && s_fsp.attractors == 3)
-                {
-                    found_attractor = 2;
-                }
-                else if (g_l_old_z.x >= s_fsp.fl.l.left_x3)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 3;
-                    }
-                    else
-                    {
-                        found_attractor = 5;
-                    }
-                }
-                else if (g_l_old_z.x <= s_fsp.fl.l.left_x4)
-                {
-                    if (!s_fsp.repeat_mapping)
-                    {
-                        found_attractor = 2;
-                    }
-                    else
-                    {
-                        found_attractor = 3;
-                    }
-                }
-            }
-            g_l_temp_sqr_x = lsqr(g_l_old_z.x);
-            g_l_temp_sqr_y = lsqr(g_l_old_z.y);
-            g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-        }
     }
     if (g_show_orbit)
     {
@@ -638,67 +460,30 @@ putting in as a stand-alone.
 
 int froth_per_pixel()
 {
-    if (!g_integer_fractal) // fp mode
-    {
-        g_old_z.x = g_dx_pixel();
-        g_old_z.y = g_dy_pixel();
-        g_temp_sqr_x = sqr(g_old_z.x);
-        g_temp_sqr_y = sqr(g_old_z.y);
-    }
-    else  // integer mode
-    {
-        g_l_old_z.x = g_l_x_pixel();
-        g_l_old_z.y = g_l_y_pixel();
-        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
-        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    }
+    g_old_z.x = g_dx_pixel();
+    g_old_z.y = g_dy_pixel();
+    g_temp_sqr_x = sqr(g_old_z.x);
+    g_temp_sqr_y = sqr(g_old_z.y);
     return 0;
 }
 
 int froth_per_orbit()
 {
-    if (!g_integer_fractal) // fp mode
+    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
+    g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.fl.f.a * g_old_z.x + g_old_z.y;
+    if (s_fsp.repeat_mapping)
     {
-        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.fl.f.a*g_old_z.y;
-        g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_fsp.fl.f.a*g_old_z.x + g_old_z.y;
-        if (s_fsp.repeat_mapping)
-        {
-            g_old_z = g_new_z;
-            g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.fl.f.a*g_old_z.y;
-            g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_fsp.fl.f.a*g_old_z.x + g_old_z.y;
-        }
-
-        g_temp_sqr_x = sqr(g_new_z.x);
-        g_temp_sqr_y = sqr(g_new_z.y);
-        if (g_temp_sqr_x + g_temp_sqr_y >= g_magnitude_limit)
-        {
-            return 1;
-        }
         g_old_z = g_new_z;
+        g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
+        g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.fl.f.a * g_old_z.x + g_old_z.y;
     }
-    else  // integer mode
+
+    g_temp_sqr_x = sqr(g_new_z.x);
+    g_temp_sqr_y = sqr(g_new_z.y);
+    if (g_temp_sqr_x + g_temp_sqr_y >= g_magnitude_limit)
     {
-        g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(s_fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
-        g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(s_fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
-        if (s_fsp.repeat_mapping)
-        {
-            g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-            g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-            if (g_l_temp_sqr_x + g_l_temp_sqr_y >= g_l_magnitude_limit)
-            {
-                return 1;
-            }
-            g_l_old_z = g_l_new_z;
-            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(s_fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
-            g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(s_fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
-        }
-        g_l_temp_sqr_x = lsqr(g_l_new_z.x);
-        g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-        if (g_l_temp_sqr_x + g_l_temp_sqr_y >= g_l_magnitude_limit)
-        {
-            return 1;
-        }
-        g_l_old_z = g_l_new_z;
+        return 1;
     }
+    g_old_z = g_new_z;
     return 0;
 }
