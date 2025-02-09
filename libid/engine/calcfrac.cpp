@@ -1292,7 +1292,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     long save_max_it = 0;
     double tan_table[16]{};
     int hooper = 0;
-    long l_close_prox = 0;
     double mem_value = 0.0;
     double min_orbit = 100000.0;        // orbit value closest to origin
     long   min_index = 0;               // iteration of min_orbit
@@ -1301,9 +1300,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     bool caught_a_cycle = false;
     long saved_and = 0;
     int saved_incr = 0;                  // for periodicity checking
-    LComplex l_saved{};
     bool attracted = false;
-    LComplex lat{};
     DComplex  at{};
     DComplex deriv{};
     long dem_color = -1;
@@ -1312,7 +1309,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     double total_dist = 0.0;
     DComplex last_z{};
 
-    l_close_prox = (long)(g_close_proximity*g_fudge_factor);
     save_max_it = g_max_iterations;
     if (g_inside_color == STAR_TRAIL)
     {

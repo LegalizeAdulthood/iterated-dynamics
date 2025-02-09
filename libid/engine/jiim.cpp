@@ -292,26 +292,6 @@ void free_queue()
     s_list_front = 0;
 }
 
-int push_long(long x, long y)
-{
-    if (((s_list_front + 1) % s_list_size) != s_list_back)
-    {
-        if (to_mem_disk(8*s_list_front, sizeof(x), &x)
-            && to_mem_disk(8*s_list_front +sizeof(x), sizeof(y), &y))
-        {
-            s_list_front = (s_list_front + 1) % s_list_size;
-            if (++s_l_size > s_l_max)
-            {
-                s_l_max   = s_l_size;
-                s_lucky_x = (float)x;
-                s_lucky_y = (float)y;
-            }
-            return 1;
-        }
-    }
-    return 0;                    // fail
-}
-
 int push_float(float x, float y)
 {
     if (((s_list_front + 1) % s_list_size) != s_list_back)
@@ -359,37 +339,9 @@ DComplex pop_float()
     return pop;
 }
 
-LComplex pop_long()
-{
-    LComplex pop;
-
-    if (!queue_empty())
-    {
-        s_list_front--;
-        if (s_list_front < 0)
-        {
-            s_list_front = s_list_size - 1;
-        }
-        if (from_mem_disk(8*s_list_front, sizeof(pop.x), &pop.x)
-            && from_mem_disk(8*s_list_front +sizeof(pop.x), sizeof(pop.y), &pop.y))
-        {
-            --s_l_size;
-        }
-        return pop;
-    }
-    pop.x = 0;
-    pop.y = 0;
-    return pop;
-}
-
 int enqueue_float(float x, float y)
 {
     return push_float(x, y);
-}
-
-int enqueue_long(long x, long y)
-{
-    return push_long(x, y);
 }
 
 DComplex dequeue_float()
@@ -406,27 +358,6 @@ DComplex dequeue_float()
             s_list_back = (s_list_back + 1) % s_list_size;
             out.x = out_x;
             out.y = out_y;
-            s_l_size--;
-        }
-        return out;
-    }
-    out.x = 0;
-    out.y = 0;
-    return out;
-}
-
-LComplex dequeue_long()
-{
-    LComplex out;
-    out.x = 0;
-    out.y = 0;
-
-    if (s_list_back != s_list_front)
-    {
-        if (from_mem_disk(8*s_list_back, sizeof(out.x), &out.x)
-            && from_mem_disk(8*s_list_back +sizeof(out.x), sizeof(out.y), &out.y))
-        {
-            s_list_back = (s_list_back + 1) % s_list_size;
             s_l_size--;
         }
         return out;
