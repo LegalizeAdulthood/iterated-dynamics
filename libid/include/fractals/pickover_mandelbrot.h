@@ -8,7 +8,6 @@
 
 int float_trig_plus_exponent_fractal();
 
-int long_z_power_fractal();
 int float_z_power_fractal();
 void pascal_triangle();
 void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z);

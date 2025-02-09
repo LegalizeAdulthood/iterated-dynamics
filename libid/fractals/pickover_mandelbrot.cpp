@@ -7,13 +7,11 @@
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
-#include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
-#include "ui/cmdfiles.h"
 
 #include <cmath>
 
@@ -43,18 +41,6 @@ int float_trig_plus_exponent_fractal()
     g_new_z.x += tmp_exp*cos_y + g_float_param->x;
     g_new_z.y += tmp_exp*sin_y + g_float_param->y;
     return g_bailout_float();
-}
-
-int long_z_power_fractal()
-{
-    if (pow(&g_l_old_z, g_c_exponent, &g_l_new_z, g_bit_shift))
-    {
-        g_l_new_z.y = 8L << g_bit_shift;
-        g_l_new_z.x = g_l_new_z.y;
-    }
-    g_l_new_z.x += g_long_param->x;
-    g_l_new_z.y += g_long_param->y;
-    return g_bailout_long();
 }
 
 int float_z_power_fractal()
