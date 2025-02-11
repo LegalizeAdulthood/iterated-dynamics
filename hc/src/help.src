@@ -274,9 +274,54 @@ Found a bug?  File an issue on our github project!\
 
 New Features in Version 1.2
 
+Version 1.2 is mostly a code cleanup release that removes integer fractal
+types and replaces them exclusively with floating-point types.  This change
+was made to simplify the existing code paths in preparation for migration
+to wxWidgets in version 2.0.
+
+Version Handling in Version 1.2 Onward
+
+Previous versions of Iterated Dynamics reset the version to 1.0 in a
+breaking change from the legacy DOS FRACTINT version numbering.  While
+this properly served to indicate the reality of Id being a fork from
+DOS FRACTINT, it created some interopability problems with parameter
+sets and image files between the two programs.
+
+When creating a parameter file, the reset parameter is now written
+as reset=major/minor/patch/tweak.  The major and minor version components
+are always written.  The patch and tweak components appear if either
+component is non-zero.  Legacy FRACTINT version numbers, such as reset=2004,
+when read from a parameter set are all treated as version 1.0 of Id for
+the purposes of backward compatibility.
+
+Currently, no backwards compatibility with old FRACTINT behavior is applied
+to parameter sets.  Legacy DOS FRACTINT parameter sets that rely on the
+reset parameter to have behavior adjusted may not render identical images
+in Id.  Such parameter sets can be upgraded by loading the parameter set
+into DOS FRACTINT and either saving an image or creating a new parameter
+set in DOS FRACTINT.
+
+When reading an image file, integer fractal types are converted to their
+corresponding floating-point fractal type.  Legacy FRACTINT version numbers
+in image files are used to migrate legacy FRACTINT behavior to the current
+behavior in Id.
+
+When writing an image file, Id writes the full major/minor/patch/tweak
+version number into the file and writes a legacy FRACTINT version number
+of 20.04.  Such files may load in DOS FRACTINT, but no guarantees of
+compatibility with DOS FRACTINT are made.
+
 Bugs Fixed in Version 1.2
 
+o The orbitname parameter for julibrot types is now documented.\
+o The chip, quadruptwo and threeply types documentation was improved.\
+o Versions 1.0, 1.1 and 1.1.1 wrote a version number into image files
+  that was not compatible with loading into legacy DOS FRACTINT.  That
+  has been corrected.
+
 Code Cleanup in Version 1.2
+
+o All integer fractal code paths and associated data have been removed.\
 
 Known limitations:
 
@@ -292,6 +337,9 @@ o Some formulas don't render correctly.  These problems have been around
   in a subsequent release.
 o The code compiles on Linux, but the Linux port is incomplete and is
   planned on being completed with the switch to wxWidgets in version 2.0.
+  It may be feasible to run the Windows version of Id, via the ZIP package,
+  under Wine (Windows Emulation), but this has not been verified.  Give it
+  a try and let us know if it works!
 ;
 ;
 ;
