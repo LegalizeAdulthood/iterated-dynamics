@@ -2403,7 +2403,7 @@ The initial x and y values are set by parameters, defaults x=-.1, y = 0.
 ;
 ;
 ~Topic=Martin Attractors, Label=HT_MARTIN
-(type=hopalong, martin)
+(type=hopalong, martin, chip, quadruptwo, threeply)
 ~Doc-,Format-,Online-
 
 image:help/images/thumbnails/type-hopalong.png[link=help/images/type-hopalong.png]
