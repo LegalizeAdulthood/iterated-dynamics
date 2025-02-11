@@ -91,6 +91,7 @@
   julibrot3d=nn[/nn[/nn[/nn[/nn[/nn]]]]]")  Sets julibrot 3D parameters zdots,
                            origin, depth, height, width, and distance
   julibroteyes=nn          Distance between the virtual eyes for julibrot
+  orbitname=name           Specifies the orbit algorithm for julibrot
   julibrotfromto=nn/nn[/nn/nn] "From-to" parameters used for julibrot
   miim=depth|breadth|walk[/left|right] Parameters for MIIM julias.
 ~FF
