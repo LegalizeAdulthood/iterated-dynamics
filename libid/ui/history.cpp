@@ -26,6 +26,9 @@
 #include "ui/spindac.h"
 #include "ui/trig_fns.h"
 
+#include <config/port.h>
+
+#include <algorithm>
 #include <array>
 #include <cstring>
 #include <fstream>
@@ -137,6 +140,123 @@ struct ImageHistory
     bool keep_screen_coords;
     char draw_mode;
 };
+
+bool dac_box_equal(const Byte lhs[256][3], const Byte rhs[256][3])
+{
+    for (int i = 0; i < 256; ++i)
+    {
+        if (lhs[i][0] != rhs[i][0] || lhs[i][1] != rhs[i][1] || lhs[i][2] != rhs[i][2])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
+{
+    return lhs.image_fractal_type == rhs.image_fractal_type                                             //
+        && lhs.x_min == rhs.x_min                                                                       //
+        && lhs.x_max == rhs.x_max                                                                       //
+        && lhs.y_min == rhs.y_min                                                                       //
+        && lhs.y_max == rhs.y_max                                                                       //
+        && lhs.c_real == rhs.c_real                                                                     //
+        && lhs.c_imag == rhs.c_imag                                                                     //
+        && std::equal(std::begin(lhs.potential_params), std::end(lhs.potential_params),
+               std::begin(rhs.potential_params))                                                        //
+        && lhs.random_seed == rhs.random_seed                                                           //
+        && lhs.random_seed_flag == rhs.random_seed_flag                                                 //
+        && lhs.biomorph == rhs.biomorph                                                                 //
+        && lhs.inside_color == rhs.inside_color                                                         //
+        && lhs.log_map_flag == rhs.log_map_flag                                                         //
+        && std::equal(std::begin(lhs.inversion), std::end(lhs.inversion), std::begin(rhs.inversion))    //
+        && std::equal(std::begin(lhs.decomp), std::end(lhs.decomp), std::begin(rhs.decomp))             //
+        && lhs.force_symmetry == rhs.force_symmetry                                                     //
+        && std::equal(std::begin(lhs.init_3d), std::end(lhs.init_3d), std::begin(rhs.init_3d))          //
+        && lhs.preview_factor == rhs.preview_factor                                                     //
+        && lhs.adjust_3d_x == rhs.adjust_3d_x                                                           //
+        && lhs.adjust_3d_y == rhs.adjust_3d_y                                                           //
+        && lhs.red_crop_left == rhs.red_crop_left                                                       //
+        && lhs.red_crop_right == rhs.red_crop_right                                                     //
+        && lhs.blue_crop_left == rhs.blue_crop_left                                                     //
+        && lhs.blue_crop_right == rhs.blue_crop_right                                                   //
+        && lhs.red_bright == rhs.red_bright                                                             //
+        && lhs.blue_bright == rhs.blue_bright                                                           //
+        && lhs.converge_x_adjust == rhs.converge_x_adjust                                               //
+        && lhs.eye_separation == rhs.eye_separation                                                     //
+        && lhs.glasses_type == rhs.glasses_type                                                         //
+        && lhs.outside_color == rhs.outside_color                                                       //
+        && lhs.x_3rd == rhs.x_3rd                                                                       //
+        && lhs.y_3rd == rhs.y_3rd                                                                       //
+        && lhs.dist_est == rhs.dist_est                                                                 //
+        && std::equal(std::begin(lhs.trig_index), std::end(lhs.trig_index), std::begin(rhs.trig_index)) //
+        && lhs.finite_attractor == rhs.finite_attractor                                                 //
+        && std::equal(std::begin(lhs.init_orbit), std::end(lhs.init_orbit), std::begin(rhs.init_orbit)) //
+        && lhs.periodicity_check == rhs.periodicity_check                                               //
+        && lhs.disk_16_bit == rhs.disk_16_bit                                                           //
+        && lhs.release == rhs.release                                                                   //
+        && lhs.save_release == rhs.save_release                                                         //
+        && lhs.display_3d == rhs.display_3d                                                             //
+        && std::equal(std::begin(lhs.transparent_color_3d), std::end(lhs.transparent_color_3d),
+               std::begin(rhs.transparent_color_3d))                                                    //
+        && lhs.ambient == rhs.ambient                                                                   //
+        && lhs.haze == rhs.haze                                                                         //
+        && lhs.randomize_3d == rhs.randomize_3d                                                         //
+        && lhs.color_cycle_range_lo == rhs.color_cycle_range_lo                                         //
+        && lhs.color_cycle_range_hi == rhs.color_cycle_range_hi                                         //
+        && lhs.distance_estimator_width_factor == rhs.distance_estimator_width_factor                   //
+        && lhs.d_param3 == rhs.d_param3                                                                 //
+        && lhs.d_param4 == rhs.d_param4                                                                 //
+        && lhs.fill_color == rhs.fill_color                                                             //
+        && lhs.julibrot_x_max == rhs.julibrot_x_max                                                     //
+        && lhs.julibrot_x_min == rhs.julibrot_x_min                                                     //
+        && lhs.julibrot_y_max == rhs.julibrot_y_max                                                     //
+        && lhs.julibrot_y_min == rhs.julibrot_y_min                                                     //
+        && lhs.julibrot_z_dots == rhs.julibrot_z_dots                                                   //
+        && lhs.julibrot_origin_fp == rhs.julibrot_origin_fp                                             //
+        && lhs.julibrot_depth_fp == rhs.julibrot_depth_fp                                               //
+        && lhs.julibrot_height_fp == rhs.julibrot_height_fp                                             //
+        && lhs.julibrot_width_fp == rhs.julibrot_width_fp                                               //
+        && lhs.julibrot_dist_fp == rhs.julibrot_dist_fp                                                 //
+        && lhs.eyes_fp == rhs.eyes_fp                                                                   //
+        && lhs.new_orbit_type == rhs.new_orbit_type                                                     //
+        && lhs.julibrot_mode == rhs.julibrot_mode                                                       //
+        && lhs.major_method == rhs.major_method                                                         //
+        && lhs.inverse_julia_minor_method == rhs.inverse_julia_minor_method                             //
+        && lhs.d_param5 == rhs.d_param5                                                                 //
+        && lhs.d_param6 == rhs.d_param6                                                                 //
+        && lhs.d_param7 == rhs.d_param7                                                                 //
+        && lhs.d_param8 == rhs.d_param8                                                                 //
+        && lhs.d_param9 == rhs.d_param9                                                                 //
+        && lhs.d_param10 == rhs.d_param10                                                               //
+        && lhs.bailout == rhs.bailout                                                                   //
+        && lhs.bailout_test == rhs.bailout_test                                                         //
+        && lhs.iterations == rhs.iterations                                                             //
+        && lhs.converge_y_adjust == rhs.converge_y_adjust                                               //
+        && lhs.old_demm_colors == rhs.old_demm_colors                                                   //
+        && lhs.filename == rhs.filename                                                                 //
+        && lhs.file_item_name == rhs.file_item_name                                                     //
+        && dac_box_equal(lhs.dac_box, rhs.dac_box)                                                      //
+        && lhs.max_function == rhs.max_function                                                         //
+        && lhs.user_std_calc_mode == rhs.user_std_calc_mode                                             //
+        && lhs.three_pass == rhs.three_pass                                                             //
+        && lhs.use_init_orbit == rhs.use_init_orbit                                                     //
+        && lhs.log_map_fly_calculate == rhs.log_map_fly_calculate                                       //
+        && lhs.stop_pass == rhs.stop_pass                                                               //
+        && lhs.is_mandelbrot == rhs.is_mandelbrot                                                       //
+        && lhs.close_proximity == rhs.close_proximity                                                   //
+        && lhs.bof_match_book_images == rhs.bof_match_book_images                                       //
+        && lhs.orbit_delay == rhs.orbit_delay                                                           //
+        && lhs.orbit_interval == rhs.orbit_interval                                                     //
+        && lhs.orbit_corner_min_x == rhs.orbit_corner_min_x                                             //
+        && lhs.orbit_corner_max_x == rhs.orbit_corner_max_x                                             //
+        && lhs.orbit_corner_min_y == rhs.orbit_corner_min_y                                             //
+        && lhs.orbit_corner_max_y == rhs.orbit_corner_max_y                                             //
+        && lhs.orbit_corner_3_x == rhs.orbit_corner_3_x                                                 //
+        && lhs.orbit_corner_3_y == rhs.orbit_corner_3_y                                                 //
+        && lhs.keep_screen_coords == rhs.keep_screen_coords                                             //
+        && lhs.draw_mode == rhs.draw_mode;                                                              //
+}
 
 std::ostream &operator<<(std::ostream &str, FractalType value)
 {
@@ -545,7 +665,7 @@ void save_history_info()
     {
         g_history_flag = false;            // coming from user history command, don't save
     }
-    else if (std::memcmp(&current, &last, sizeof(ImageHistory)) != 0)
+    else if (current == last)
     {
         if (++s_save_ptr >= g_max_image_history)    // back to beginning of circular buffer
         {
