@@ -169,7 +169,7 @@ bool GDIDriver::init(int *argc, char **argv)
     if (!Win32BaseDriver::init(argc, argv))
     {
         return false;
-    };
+    }
 
     m_plot.init(g_instance, "Plot");
 

@@ -1964,7 +1964,7 @@ void read_src(std::string const &fname, Mode mode)
                 {
                     if (ch == ' ')
                     {
-                        ; // do nothing
+                        // do nothing
                     }
                     else if ((ch&0xFF) == '\n')
                     {

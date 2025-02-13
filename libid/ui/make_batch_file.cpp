@@ -400,7 +400,7 @@ skip_ui:
                     }
                     while (std::strchr(line, '}') == nullptr && file_gets(line, 255, infile) > 0)
                     {
-                        ; // skip to end of set
+                        // skip to end of set
                     }
                     break;
                 }
