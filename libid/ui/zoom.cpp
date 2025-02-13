@@ -50,7 +50,6 @@ double g_zoom_box_x{}, g_zoom_box_y{};                          // topleft of zo
 double g_zoom_box_width{}, g_zoom_box_height{};                 // zoombox size
 double g_zoom_box_skew{};                                       // zoombox shape
 bool g_zoom_enabled{};                                          // true when zoom is enabled
-bool g_zoom_box_active{};                                       // true when zoom box is active
 
 static int  check_pan();
 static void fix_work_list();

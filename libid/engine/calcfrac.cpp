@@ -2018,20 +2018,6 @@ static void decomposition()
     static double tan5_625  = 0.09849140335716425; // tan 5.625  degrees
     static double tan2_8125 = 0.04912684976946725; // tan 2.8125 degrees
     static double tan1_4063 = 0.02454862210892544; // tan 1.4063 degrees
-    // static long l_cos45;      // cos 45   degrees
-    static long l_sin45;         // sin 45     degrees
-    static long l_cos22_5;       // cos 22.5   degrees
-    static long l_sin22_5;       // sin 22.5   degrees
-    static long l_cos11_25;      // cos 11.25  degrees
-    static long l_sin11_25;      // sin 11.25  degrees
-    static long l_cos5_625;      // cos 5.625  degrees
-    static long l_sin5_625;      // sin 5.625  degrees
-    static long l_tan22_5;       // tan 22.5   degrees
-    static long l_tan11_25;      // tan 11.25  degrees
-    static long l_tan5_625;      // tan 5.625  degrees
-    static long l_tan2_8125;     // tan 2.8125 degrees
-    static long l_tan1_4063;     // tan 1.4063 degrees
-    static long reset_fudge = -1;
     int temp = 0;
     int save_temp = 0;
     g_color_iter = 0;
@@ -2176,7 +2162,6 @@ int potential(double mag, long iterations)
 
     if (iterations < g_max_iterations)
     {
-        float f_tmp;
         l_pot = iterations+2;
         pot = (float) l_pot;
         if (l_pot <= 0 || mag <= 1.0)

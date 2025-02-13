@@ -43,8 +43,6 @@ struct FractalTypeChoice
 
 } // namespace
 
-static std::vector<FractalTypeChoice> s_type_choices;
-
 static FractalTypeChoice **s_ft_choices{}; // for sel_fractype_help subrtn
 
 // Julia inverse iteration method (jiim)
