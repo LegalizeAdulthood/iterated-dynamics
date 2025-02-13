@@ -1945,14 +1945,14 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
 
     // Normalize each vertex to screen size and adjust coordinate system
     pt_t[0][0] = 2 * pt1.x / g_logical_screen_x_dots - 1;
-    pt_t[0][1] = (2 * pt1.y / g_logical_screen_y_dots - 1);
-    pt_t[0][2] = -2 * pt1.color / g_num_colors - 1;
+    pt_t[0][1] = 2 * pt1.y / g_logical_screen_y_dots - 1;
+    pt_t[0][2] = -2.0f * pt1.color / g_num_colors - 1;
     pt_t[1][0] = 2 * pt2.x / g_logical_screen_x_dots - 1;
-    pt_t[1][1] = (2 * pt2.y / g_logical_screen_y_dots - 1);
-    pt_t[1][2] = -2 * pt2.color / g_num_colors - 1;
+    pt_t[1][1] = 2 * pt2.y / g_logical_screen_y_dots - 1;
+    pt_t[1][2] = -2.0f * pt2.color / g_num_colors - 1;
     pt_t[2][0] = 2 * pt3.x / g_logical_screen_x_dots - 1;
-    pt_t[2][1] = (2 * pt3.y / g_logical_screen_y_dots - 1);
-    pt_t[2][2] = -2 * pt3.color / g_num_colors - 1;
+    pt_t[2][1] = 2 * pt3.y / g_logical_screen_y_dots - 1;
+    pt_t[2][2] = -2.0f * pt3.color / g_num_colors - 1;
 
     // Color of triangle is average of colors of its verticies
     if (!g_brief)
