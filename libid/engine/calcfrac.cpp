@@ -2000,7 +2000,6 @@ plot_pixel:
 }
 
 #define cos45  sin45
-#define l_cos45 l_sin45
 
 // standardfractal doodad subroutines
 static void decomposition()
