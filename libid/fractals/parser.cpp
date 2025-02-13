@@ -590,20 +590,6 @@ static void push_jump(JumpControlType type)
 #define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
 
-static bool check_denom(long denom)
-{
-    if (denom == 0 || g_overflow)
-    {
-        g_overflow = true;
-        return true;
-    }
-    if (denom == 0)
-    {
-        return true;
-    }
-    return false;
-}
-
 static bool check_denom(double denom)
 {
     if (std::abs(denom) <= DBL_MIN)
