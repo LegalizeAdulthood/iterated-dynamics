@@ -88,16 +88,11 @@ int bifurcation()
         get_resume(x);
         end_resume();
     }
-    bool resized = false;
     try
     {
         s_verhulst_array.resize(g_i_y_stop + 1);
-        resized = true;
     }
     catch (const std::bad_alloc &)
-    {
-    }
-    if (!resized)
     {
         stop_msg("Insufficient free memory for calculation.");
         return -1;

@@ -2991,16 +2991,11 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    bool resized{};
     try
     {
         g_iteration_ranges.resize(entries);
-        resized = true;
     }
     catch (std::bad_alloc const &)
-    {
-    }
-    if (!resized)
     {
         stop_msg(StopMsgFlags::NO_STACK, "Insufficient memory for ranges=");
         return CmdArgFlags::BAD_ARG;

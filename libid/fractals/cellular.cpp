@@ -230,17 +230,12 @@ int cellular()
     }
 
     S16 start_row = 0;
-    bool resized = false;
     try
     {
         s_cell_array[0].resize(g_i_x_stop+1);
         s_cell_array[1].resize(g_i_x_stop+1);
-        resized = true;
     }
     catch (std::bad_alloc const&)
-    {
-    }
-    if (!resized)
     {
         abort_cellular(BAD_MEM, 0);
         return -1;

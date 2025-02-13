@@ -804,18 +804,13 @@ int help()
         return 0;
     }
 
-    bool resized = false;
     try
     {
         s_buffer.resize(MAX_PAGE_SIZE);
         s_link_table.resize(s_max_links);
         s_page_table.resize(s_max_pages);
-        resized = true;
     }
     catch (const std::bad_alloc &)
-    {
-    }
-    if (!resized)
     {
         driver_buzzer(Buzzer::PROBLEM);
         return 0;
@@ -1397,19 +1392,13 @@ int init_help()
     assert(s_num_label > 0);
 
     // allocate all three arrays
-    bool resized = false;
     try
     {
         s_topic_offset.resize(s_num_topic);
         s_label.resize(s_num_label);
         s_hist.resize(MAX_HIST);
-        resized = true;
     }
     catch (const std::bad_alloc &)
-    {
-    }
-
-    if (!resized)
     {
         std::fclose(s_help_file);
         s_help_file = nullptr;
