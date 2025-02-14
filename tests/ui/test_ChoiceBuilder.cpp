@@ -311,7 +311,7 @@ FullScreenValuePredicate has_string_buff(char *buff, int len)
     };
 }
 
-MATCHER_P2(has_choice, n, str, "")
+MATCHER_P2(has_choice, n, str, "")  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 {
     if (std::strcmp(arg[n], str) != 0)
     {
@@ -322,7 +322,7 @@ MATCHER_P2(has_choice, n, str, "")
     return true;
 }
 
-MATCHER_P2(has_value, n, predicate, "")
+MATCHER_P2(has_value, n, predicate, "")  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 {
     *result_listener << "Index " << n << ' ';
     return predicate(result_listener, arg[n]);
@@ -527,7 +527,7 @@ TEST_F(TestChoiceBuilderPrompting, buildOverflow)
     EXPECT_THROW(builder.comment("Second"), std::runtime_error);
 }
 
-MATCHER_P(has_null_choice, n, "")
+MATCHER_P(has_null_choice, n, "")  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 {
     if (arg == nullptr)
     {

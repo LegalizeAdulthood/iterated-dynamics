@@ -175,6 +175,12 @@ public:
     {
     }
 
+    ArrayPrinter(const ArrayPrinter &rhs) = delete;
+    ArrayPrinter(ArrayPrinter &&rhs) = delete;
+    ~ArrayPrinter() = default;
+    ArrayPrinter &operator=(const ArrayPrinter &rhs) = delete;
+    ArrayPrinter &operator=(ArrayPrinter &&rhs) = delete;
+
     const T (&m_value)[N];
 };
 
@@ -362,6 +368,13 @@ public:
         m_values(values)
     {
     }
+
+    VecPrinter(const VecPrinter &rhs) = delete;
+    VecPrinter(VecPrinter &&rhs) = delete;
+    ~VecPrinter() = default;
+    VecPrinter &operator=(const VecPrinter &rhs) = delete;
+    VecPrinter &operator=(VecPrinter &&rhs) = delete;
+
     const std::vector<T> &m_values;
 };
 

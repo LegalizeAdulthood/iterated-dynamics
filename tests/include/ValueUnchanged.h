@@ -16,11 +16,17 @@ public:
     {
         m_data = value;
     }
+
     ~ValueUnchanged()
     {
         EXPECT_EQ(m_value, m_data) << m_label;
         m_data = m_saved_value;
     }
+
+    ValueUnchanged(const ValueUnchanged &rhs) = delete;
+    ValueUnchanged(ValueUnchanged &&rhs) = delete;
+    ValueUnchanged &operator=(const ValueUnchanged &rhs) = delete;
+    ValueUnchanged &operator=(ValueUnchanged &&rhs) = delete;
 
 private:
     std::string m_label;

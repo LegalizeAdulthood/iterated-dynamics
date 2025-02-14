@@ -196,7 +196,11 @@ public:
         m_str(str)
     {
     }
+    AsciiDocProcessor(const AsciiDocProcessor &rhs) = delete;
+    AsciiDocProcessor(AsciiDocProcessor &&rhs) = delete;
     ~AsciiDocProcessor() = default;
+    AsciiDocProcessor &operator=(const AsciiDocProcessor &rhs) = delete;
+    AsciiDocProcessor &operator=(AsciiDocProcessor &&rhs) = delete;
 
     void process();
 

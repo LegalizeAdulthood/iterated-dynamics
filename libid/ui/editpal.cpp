@@ -137,7 +137,13 @@ public:
         m_box(box)
     {
     }
+
+    MoveBoxNotification(const MoveBoxNotification &rhs) = delete;
+    MoveBoxNotification(MoveBoxNotification &&rhs) = delete;
     ~MoveBoxNotification() override = default;
+    MoveBoxNotification &operator=(const MoveBoxNotification &rhs) = delete;
+    MoveBoxNotification &operator=(MoveBoxNotification &&rhs) = delete;
+
     void move(int x, int y, int key_flags) override
     {
         m_box.erase();
@@ -282,7 +288,13 @@ private:
             m_pal_table(pal_table)
         {
         }
+
+        CrossHairCursorNotification(const CrossHairCursorNotification &rhs) = delete;
+        CrossHairCursorNotification(CrossHairCursorNotification &&rhs) = delete;
         ~CrossHairCursorNotification() override = default;
+        CrossHairCursorNotification &operator=(const CrossHairCursorNotification &rhs) = delete;
+        CrossHairCursorNotification &operator=(CrossHairCursorNotification &&rhs) = delete;
+
         void move(int x, int y, int key_flags) override
         {
             if (!m_cursor.hidden())
