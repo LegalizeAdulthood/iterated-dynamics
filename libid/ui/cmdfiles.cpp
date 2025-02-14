@@ -1157,10 +1157,8 @@ static CmdArgFlags cmd_text_safe(const Command &cmd)
 {
     if (g_first_init)
     {
-        if (!(cmd.char_val[0] == 'n'        // no
-                || cmd.char_val[0] == 'y'   // yes
-                || cmd.char_val[0] == 'b'   // bios
-                || cmd.char_val[0] == 's')) // save
+        // no, yes, bios, save
+        if (std::string_view{"nybs"}.find(cmd.char_val[0]) == std::string_view::npos)
         {
             return cmd.bad_arg();
         }
