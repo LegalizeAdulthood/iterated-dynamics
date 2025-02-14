@@ -404,7 +404,7 @@ CmdArgFlags load_commands(std::FILE *infile)
     const CmdArgFlags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
-    g_read_color = !(g_colors_preloaded && g_show_file == 0);
+    g_read_color = !g_colors_preloaded || g_show_file != 0;
 
     return ret;
 }
