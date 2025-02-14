@@ -557,6 +557,7 @@ static char *char_lit(int ch)
     }
     else
     {
+        // ReSharper disable once CppPrintfExtraArg
         std::sprintf(buff, R"('\x%02X')", static_cast<unsigned int>(ch & 0xFF));
     }
 
