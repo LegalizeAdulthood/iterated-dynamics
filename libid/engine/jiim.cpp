@@ -215,7 +215,7 @@ static void fill_rect(int x, int y, int width, int depth, int color)
     {
         return;
     }
-    std::vector<char> row(width, char(color % g_colors));
+    std::vector row(width, char(color % g_colors));
     while (depth-- > 0)
     {
         if (driver_key_pressed())   // we could do this less often when in fast modes
@@ -374,7 +374,7 @@ static void save_rect(int x, int y, int width, int depth)
     }
 
     s_screen_rect.clear();
-    std::vector<char> const background(width, char(g_color_dark));
+    const std::vector background(width, char(g_color_dark));
     s_screen_rect.resize(width*depth);
     s_cursor.hide();
     for (int y_off = 0; y_off < depth; y_off++)

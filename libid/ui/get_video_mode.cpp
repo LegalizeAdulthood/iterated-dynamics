@@ -249,7 +249,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
         std::sort(s_video_choices.begin(), s_video_choices.end(), video_choice_less);
 
-        std::vector<int> attributes(g_video_table_len, 1);
+        std::vector attributes(g_video_table_len, 1);
 
         // format heading
         char heading[256];  // big enough for more than a few lines
