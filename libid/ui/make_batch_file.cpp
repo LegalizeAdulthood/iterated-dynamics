@@ -1202,9 +1202,9 @@ static void write_batch_params(char const *color_inf, bool colors_only, int max_
         {
             put_param(" %s=%d/%d", "xyadjust", g_adjust_3d_x, g_adjust_3d_y);
         }
-        if (g_glasses_type)
+        if (g_glasses_type != GlassesType::NONE)
         {
-            put_param(" %s=%d", "stereo", g_glasses_type);
+            put_param(" %s=%d", "stereo", static_cast<int>(g_glasses_type));
             put_param(" %s=%d", "interocular", g_eye_separation);
             put_param(" %s=%d", "converge", g_converge_x_adjust);
             put_param(" %s=%d/%d/%d/%d", "crop",

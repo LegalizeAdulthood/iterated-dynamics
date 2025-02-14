@@ -3377,12 +3377,13 @@ TEST_F(TestParameterCommand, parmFile)
 
 TEST_F(TestParameterCommand, stereoValue)
 {
-    ValueSaver saved_glasses_type{g_glasses_type, -1};
+    ValueSaver saved_glasses_type{g_glasses_type, static_cast<GlassesType>(-1)};
 
     exec_cmd_arg("stereo=3");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_glasses_type);
+    EXPECT_EQ(3, static_cast<int>(g_glasses_type));
+    EXPECT_EQ(GlassesType::PHOTO, g_glasses_type);
 }
 
 TEST_F(TestParameterCommand, rotation)

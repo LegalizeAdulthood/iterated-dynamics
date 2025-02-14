@@ -68,7 +68,7 @@ restart_1:
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
     values[k].type = 'i';
-    values[k].uval.ival = g_glasses_type;
+    values[k].uval.ival = static_cast<int>(g_glasses_type);
 
     prompts3d[++k] = "                  3=photo,4=stereo pair)";
     values[k].type = '*';
@@ -111,7 +111,7 @@ restart_1:
     g_show_box = values[k++].uval.ch.val != 0;
     g_preview_factor  = values[k++].uval.ival;
     sphere = values[k++].uval.ch.val;
-    g_glasses_type = values[k++].uval.ival;
+    g_glasses_type = static_cast<GlassesType>(values[k++].uval.ival);
     k++;
     g_raytrace_format = static_cast<RayTraceFormat>(values[k++].uval.ival);
     k++;
@@ -144,9 +144,9 @@ restart_1:
         set_3d_defaults();
     }
 
-    g_glasses_type = std::max(g_glasses_type, 0);
-    g_glasses_type = std::min(g_glasses_type, 4);
-    if (g_glasses_type)
+    g_glasses_type = std::max(g_glasses_type, GlassesType::NONE);
+    g_glasses_type = std::min(g_glasses_type, GlassesType::STEREO_PAIR);
+    if (g_glasses_type != GlassesType::NONE)
     {
         g_which_image = StereoImage::RED;
     }
@@ -193,7 +193,7 @@ restart_1:
         }
         g_fill_type = static_cast<FillType>(i - 1);
 
-        if (g_glasses_type)
+        if (g_glasses_type != GlassesType::NONE)
         {
             if (get_funny_glasses_params())
             {
@@ -430,7 +430,7 @@ static bool check_map_file()
     {
         std::strcpy(buff, g_map_name.c_str());
     }
-    if (!(g_glasses_type == 1 || g_glasses_type == 2))
+    if (!glasses_alternating_or_superimpose())
     {
         ask_flag = true;
     }
@@ -493,11 +493,11 @@ static bool get_funny_glasses_params()
         }
     }
 
-    if (g_glasses_type == 1)
+    if (g_glasses_type == GlassesType::ALTERNATING)
     {
         s_funny_glasses_map_name = g_glasses1_map;
     }
-    else if (g_glasses_type == 2)
+    else if (g_glasses_type == GlassesType::SUPERIMPOSE)
     {
         if (g_fill_type == FillType::SURFACE_GRID)
         {
@@ -520,7 +520,7 @@ static bool get_funny_glasses_params()
         .int_number("Right blue image crop (% of screen)", g_blue_crop_right)
         .int_number("Red brightness factor (%)", g_red_bright)
         .int_number("Blue brightness factor (%)", g_blue_bright);
-    if (g_glasses_type == 1 || g_glasses_type == 2)
+    if (glasses_alternating_or_superimpose())
     {
         builder.string("Map file name", s_funny_glasses_map_name.c_str());
     }
@@ -542,7 +542,7 @@ static bool get_funny_glasses_params()
     g_red_bright      =  builder.read_int_number();
     g_blue_bright     =  builder.read_int_number();
 
-    if (g_glasses_type == 1 || g_glasses_type == 2)
+    if (glasses_alternating_or_superimpose())
     {
         s_funny_glasses_map_name = builder.read_string();
     }
@@ -559,7 +559,8 @@ int get_fract3d_params() // prompt for 3D fractal parameters
         .int_number("Perspective distance [1 - 999, 0 for no persp]", g_viewer_z)
         .int_number("X shift with perspective (positive = right)", g_shift_x)
         .int_number("Y shift with perspective (positive = up   )", g_shift_y)
-        .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)", g_glasses_type);
+        .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)",
+            static_cast<int>(g_glasses_type));
 
     int i;
     {
@@ -580,12 +581,12 @@ int get_fract3d_params() // prompt for 3D fractal parameters
     g_viewer_z = builder.read_int_number();
     g_shift_x  = builder.read_int_number();
     g_shift_y  = builder.read_int_number();
-    g_glasses_type = builder.read_int_number();
-    if (g_glasses_type < 0 || g_glasses_type > 4)
+    g_glasses_type = static_cast<GlassesType>(builder.read_int_number());
+    if (g_glasses_type < GlassesType::NONE || g_glasses_type > GlassesType::STEREO_PAIR)
     {
-        g_glasses_type = 0;
+        g_glasses_type = GlassesType::NONE;
     }
-    if (g_glasses_type)
+    if (g_glasses_type != GlassesType::NONE)
     {
         if (get_funny_glasses_params() || check_map_file())
         {

@@ -68,7 +68,7 @@ struct ImageHistory
     int blue_bright;
     int converge_x_adjust;
     int eye_separation;
-    int glasses_type;
+    GlassesType glasses_type;
     int outside_color;
     double x_3rd;
     double y_3rd;
@@ -307,6 +307,12 @@ std::ostream &operator<<(std::ostream &str, Bailout value)
 }
 
 std::ostream &operator<<(std::ostream &str, InitOrbitMode value)
+{
+    str << static_cast<int>(value);
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &str, GlassesType value)
 {
     str << static_cast<int>(value);
     return str;

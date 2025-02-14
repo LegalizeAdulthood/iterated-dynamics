@@ -1577,18 +1577,18 @@ int plot_orbits2d_float()
 // stuff so the code is not duplicated for ifs3d() and lorenz3d()
 int funny_glasses_call(int (*calc)())
 {
-    g_which_image = g_glasses_type ? StereoImage::RED : StereoImage::NONE;
+    g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
     plot_setup();
     g_plot = g_standard_plot;
     int status = calc();
-    if (s_real_time && g_glasses_type < 3)
+    if (s_real_time && g_glasses_type < GlassesType::PHOTO)
     {
         s_real_time = false;
         goto done;
     }
-    if (g_glasses_type && status == 0 && g_display_3d != Display3DMode::NONE)
+    if (g_glasses_type != GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
     {
-        if (g_glasses_type == 3)
+        if (g_glasses_type == GlassesType::PHOTO)
         {
             // photographer's mode
             stop_msg(StopMsgFlags::INFO_ONLY,
@@ -1614,13 +1614,13 @@ int funny_glasses_call(int (*calc)())
         {
             goto done;
         }
-        if (g_glasses_type == 3)   // photographer's mode
+        if (g_glasses_type == GlassesType::PHOTO)   // photographer's mode
         {
             stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
 done:
-    if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
     {
         // turn off view windows so will save properly
         g_logical_screen_x_offset = 0;
@@ -1864,7 +1864,7 @@ static void setup_matrix(Matrix double_mat)
 int orbit3d_float()
 {
     g_display_3d = Display3DMode::MINUS_ONE ;
-    s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
+    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
     return funny_glasses_call(orbit3d_float_calc);
 }
 
@@ -1872,7 +1872,7 @@ static int ifs3d()
 {
     g_display_3d = Display3DMode::MINUS_ONE;
 
-    s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
+    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
     return funny_glasses_call(ifs3d_float); // double version of ifs3d
 }
 

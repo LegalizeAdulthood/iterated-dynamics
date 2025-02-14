@@ -505,7 +505,7 @@ static void backwards_info2(const FractalInfo &read_info)
             g_blue_bright = read_info.blue_bright;
             g_converge_x_adjust = read_info.x_adjust;
             g_eye_separation = read_info.eye_separation;
-            g_glasses_type = read_info.glasses_type;
+            g_glasses_type = static_cast<GlassesType>(read_info.glasses_type);
         }
     }
 }

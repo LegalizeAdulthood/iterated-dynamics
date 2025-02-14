@@ -33,7 +33,7 @@ StereoImage g_which_image;
 int g_xx_adjust1{};
 int g_yy_adjust1{};
 int g_eye_separation{};
-int g_glasses_type{};
+GlassesType g_glasses_type{};
 int g_x_shift1{};
 int g_y_shift1{};
 int g_adjust_3d_x{};
@@ -427,11 +427,11 @@ void plot_setup()
     // set funny glasses plot function
     switch (g_glasses_type)
     {
-    case 1:
+    case GlassesType::ALTERNATING:
         g_standard_plot = plot3d_alternate;
         break;
 
-    case 2:
+    case GlassesType::SUPERIMPOSE:
         if (g_colors == 256)
         {
             if (g_fractal_type != FractalType::IFS_3D)
@@ -449,7 +449,7 @@ void plot_setup()
         }
         break;
 
-    case 4: // crosseyed mode
+    case GlassesType::STEREO_PAIR: // crosseyed mode
         if (g_screen_x_dots < 2*g_logical_screen_x_dots)
         {
             if (g_x_rot == 0 && g_y_rot == 0)
@@ -481,7 +481,7 @@ void plot_setup()
     g_y_shift = (int)((g_shift_y * (double)g_logical_screen_y_dots)/100);
     g_y_shift1 = g_y_shift;
 
-    if (g_glasses_type)
+    if (g_glasses_type != GlassesType::NONE)
     {
         s_red_local_left  = (int)((g_red_crop_left      * (double)g_logical_screen_x_dots)/100.0);
         s_red_local_right = (int)(((100 - g_red_crop_right) * (double)g_logical_screen_x_dots)/100.0);
@@ -497,7 +497,7 @@ void plot_setup()
             g_xx_adjust = (int)(((g_adjust_3d_x+g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             g_x_shift1 -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             g_xx_adjust1 = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
-            if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+            if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;
             }
@@ -506,7 +506,7 @@ void plot_setup()
         case StereoImage::BLUE:
             g_x_shift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             g_xx_adjust = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
-            if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+            if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2;
             }
@@ -525,9 +525,9 @@ void plot_setup()
     if (g_map_set)
     {
         validate_luts(g_map_name.c_str()); // read the palette file
-        if (g_glasses_type == 1 || g_glasses_type == 2)
+        if (glasses_alternating_or_superimpose())
         {
-            if (g_glasses_type == 2 && g_colors < 256)
+            if (g_glasses_type == GlassesType::SUPERIMPOSE && g_colors < 256)
             {
                 g_dac_box[PAL_RED  ][0] = 63;
                 g_dac_box[PAL_RED  ][1] =  0;
@@ -538,7 +538,7 @@ void plot_setup()
                 g_dac_box[PAL_BLUE ][2] = 63;
 
                 g_dac_box[PAL_MAGENTA][0] = 63;
-                g_dac_box[PAL_MAGENTA][1] =    0;
+                g_dac_box[PAL_MAGENTA][1] = 0;
                 g_dac_box[PAL_MAGENTA][2] = 63;
             }
             for (auto &elem : g_dac_box)

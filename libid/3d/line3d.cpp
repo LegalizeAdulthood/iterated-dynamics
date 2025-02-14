@@ -1220,7 +1220,7 @@ static void clip_color(int x, int y, int color)
         if (g_targa_out)
         {
             // standardplot modifies color in these types
-            if (!(g_glasses_type == 1 || g_glasses_type == 2))
+            if (!glasses_alternating_or_superimpose())
             {
                 targa_color(x, y, color);
             }
@@ -1246,7 +1246,7 @@ static void transparent_clip_color(int x, int y, int color)
         if (g_targa_out)
         {
             // standardplot modifies color in these types
-            if (!(g_glasses_type == 1 || g_glasses_type == 2))
+            if (!glasses_alternating_or_superimpose())
             {
                 targa_color(x, y, color);
             }
@@ -1293,7 +1293,7 @@ static void interp_color(int x, int y, int color)
         if (g_targa_out)
         {
             // standardplot modifies color in these types
-            if (!(g_glasses_type == 1 || g_glasses_type == 2))
+            if (!glasses_alternating_or_superimpose())
             {
                 d = targa_color(x, y, color);
             }
@@ -1334,7 +1334,7 @@ int targa_color(int x, int y, int color)
     unsigned long val;
     Byte rgb[3];
 
-    if (g_fill_type == FillType::SURFACE_INTERPOLATED || g_glasses_type == 1 || g_glasses_type == 2 || g_true_color)
+    if (g_fill_type == FillType::SURFACE_INTERPOLATED || glasses_alternating_or_superimpose() || g_true_color)
     {
         s_real_color = (Byte)color;       // So Targa gets interpolated color
     }
@@ -1359,7 +1359,7 @@ int targa_color(int x, int y, int color)
     rgb_to_hsv(rgb[0], rgb[1], rgb[2], &hue, &sat, &val);
 
     // Modify original S and V components
-    if (g_fill_type > FillType::SOLID_FILL && !(g_glasses_type == 1 || g_glasses_type == 2))
+    if (g_fill_type > FillType::SOLID_FILL && !glasses_alternating_or_superimpose())
     {
         // Adjust for Ambient
         val = (val * (65535L - (unsigned)(color * s_i_ambient))) / 65535L;
@@ -2348,9 +2348,7 @@ static int first_time(int line_len, Vector v)
         s_t_safe = false; // Not safe yet to mess with the source image
     }
 
-    if (g_targa_out
-        && !((g_glasses_type == 1 || g_glasses_type == 2)
-            && g_which_image == StereoImage::BLUE))
+    if (g_targa_out && !(glasses_alternating_or_superimpose() && g_which_image == StereoImage::BLUE))
     {
         if (g_targa_overlay)
         {

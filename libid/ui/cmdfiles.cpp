@@ -590,7 +590,7 @@ static void init_vars3d()
     g_converge_x_adjust = 0;
     g_converge_y_adjust = 0;
     g_eye_separation = 0;
-    g_glasses_type = 0;
+    g_glasses_type = GlassesType::NONE;
     g_preview_factor = 20;
     g_red_crop_left   = 4;
     g_red_crop_right  = 0;
@@ -3358,7 +3358,7 @@ static CmdArgFlags cmd_stereo(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_glasses_type = cmd.num_val;
+    g_glasses_type = static_cast<GlassesType>(cmd.num_val);
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
