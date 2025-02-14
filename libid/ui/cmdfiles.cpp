@@ -1612,7 +1612,7 @@ static CmdArgFlags parse_colors(char const *value)
                     {
                         goto badcolor;
                     }
-                    else if (k <= '9')
+                    if (k <= '9')
                     {
                         k -= '0';
                     }

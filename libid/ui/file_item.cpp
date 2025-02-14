@@ -369,17 +369,14 @@ top:
                 }
                 if (c == '{') //second '{' found
                 {
-                    if (temp_offset == name_offset) //if on same line, skip line
+                    if (temp_offset == name_offset) // if on same line, skip line
                     {
                         skip_comment(infile, &file_offset);
                         goto top;
                     }
-                    else
-                    {
-                        std::fseek(infile, temp_offset, SEEK_SET); //else, go back to
-                        file_offset = temp_offset - 1;        //beginning of line
-                        goto top;
-                    }
+                    std::fseek(infile, temp_offset, SEEK_SET); // else, go back to
+                    file_offset = temp_offset - 1;             // beginning of line
+                    goto top;
                 }
             }
             if (c != '}')     // i.e. is EOF

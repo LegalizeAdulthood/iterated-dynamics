@@ -652,7 +652,7 @@ top:
         driver_unstack_screen();
         goto top;
     }
-    else if (key == ID_KEY_CTL_TAB || key == ID_KEY_SHF_TAB || key == ID_KEY_F7)
+    if (key == ID_KEY_CTL_TAB || key == ID_KEY_SHF_TAB || key == ID_KEY_F7)
     {
         if (tab_display2(msg))
         {

@@ -2373,7 +2373,7 @@ CASE_NUM:
                 tok->str[i] = (char) 0;
                 return false;
             }
-            else if (var_name_too_long)
+            if (var_name_too_long)
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = TokenId::TOKEN_TOO_LONG;

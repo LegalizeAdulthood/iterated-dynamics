@@ -1557,7 +1557,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     hooper = (g_close_proximity > 0 ? 1 : -1); // close to y axis
                     goto plot_inside;
                 }
-                else if (std::abs(g_new_z.y) < std::abs(g_close_proximity))
+                if (std::abs(g_new_z.y) < std::abs(g_close_proximity))
                 {
                     hooper = (g_close_proximity > 0 ? 2 : -2); // close to x axis
                     goto plot_inside;

@@ -344,7 +344,7 @@ retry_dir:
             }
             goto restart;
         }
-        else // speedstate == SEARCHPATH
+        // speedstate == SEARCHPATH
         {
             const std::string full_path{find_path(speed_str)};
             if (!full_path.empty())
