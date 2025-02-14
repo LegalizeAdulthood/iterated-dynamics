@@ -1265,7 +1265,7 @@ void InverseJulia::finish()
 {
     mouse_unsubscribe(m_mouse_subscription);
     m_mouse_subscription = -1;
-    
+
     free_queue();
 
     if (m_key != 's' && m_key != 'S')
