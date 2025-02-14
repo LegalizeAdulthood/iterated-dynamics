@@ -872,7 +872,7 @@ int Prompt::full_screen_exit()
         scroll_file = nullptr;
     }
     return done;
-};
+}
 
 } // namespace
 

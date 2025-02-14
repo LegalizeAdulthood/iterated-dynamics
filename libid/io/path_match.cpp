@@ -48,7 +48,7 @@ static std::regex wild_regex(const std::string &wildcard)
         }
     }
     return std::regex(pat, std::regex_constants::ECMAScript | std::regex_constants::icase);
-};
+}
 
 MatchFn match_fn(const fs::path &pattern)
 {
