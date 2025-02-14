@@ -641,7 +641,7 @@ real-valued functions of a real variable, which are usually found in
 compiler math libraries.  In what follows, we sometimes use "*" for
 multiplication, but leave it out when clarity is not lost.  We use "^" for
 exponentiation; x^y is x to the y power.
-~Format-
+~Format-,ADoc-
 
    (u+iv) + (x+iy) = (u+x) + i(v+y)
    (u+iv) - (x+iy) = (u-x) + i(v-y)
@@ -707,14 +707,76 @@ exponentiation; x^y is x to the y power.
    trunc(x+iy) = trunc(x) + i*trunc(y)
    round(x+iy) = round(x) + i*round(y)
 
-~Format+
+~ADoc+,Online-,Doc-
+
+[stem]
+++++
+(u+iv) + (x+iy) = (u+x) + i(v+y)\\
+(u+iv) - (x+iy) = (u-x) + i(v-y)\\
+(u+iv) (x+iy) = (ux - vy) + i(vx + uy)\\
+(u+iv) / (x+iy) = ((ux + vy) + i(vx - uy)) / (x^2 + y^2)\\
+e^(x+iy) = e^x (cos(y) + i sin(y))\\
+log(x+iy) = (1/2)log(x^2 + y^2) + i(tan^(-1)(y/x) + 2k pi)\\
+"for " k = 0, -1, 1, -2, 2, ...
+++++
+(The stem:[log] function refers to log base stem:[e], or stem:[ln].  The expression
+stem:[tan^(-1)(y/x)] is an angle between stem:[-pi] and stem:[pi] in the quadrant containing
+stem:[(x,y)].)
+[stem]
+++++
+z^w = e^(w log(z))\\
+sin(x+iy)  = sin(x)cosh(y) + i cos(x)sinh(y)\\
+cos(x+iy)  = cos(x)cosh(y) - i sin(x)sinh(y)\\
+tan(x+iy)  = sin(x+iy) / cos(x+iy)\\
+sinh(x+iy) = sinh(x)cos(y) + i cosh(x)sin(y)\\
+cosh(x+iy) = cosh(x)cos(y) + i sinh(x)sin(y)\\
+tanh(x+iy) = sinh(x+iy) / cosh(x+iy)\\
+"cosxx"(x+iy) = cos(x)cosh(y) + i sin(x)sinh(y)
+++++
+(stem:["cosxx"] is present to provide compatibility
+with a bug in its stem:[cos] calculation)
+[stem]
+++++
+tan(x+iy) = sin(2x)/(cos(2x) + cosh(2y) ) + i sinh(2y)/(cos(2x) + cosh(2y))\\
+tan^(-1)(x+iy) = (sin(2x) - i*sinh(2y))/(cosh(2y) - cos(2x))\\
+tanh(x+iy) = sinh(2x)/(cosh(2x) + cos(2y)) + i sin(2y)/(cosh(2x) + cos(2y))\\
+tanh^(-1)(x+iy) = (sinh(2x) - i sin(2y))/(cosh(2x) - cos(2y))\\
+sin^(-1)(z) = -i log(i z+sqrt(1-z^2))\\
+cos^(-1)(z) = -i log(z+sqrt(z^2-1))\\
+tan^(-1)(z) = i (1/2)log((1-i z)/(1+i z))\\
+sinh^(-1)(z) = log(z+sqrt(z^2+1))\\
+cosh^(-1)(z) = log(z+sqrt(z^2-1))\\
+tanh^(-1)(z) = (1/2) log((1+z)/(1-z))\\
+(x+iy)^2 = (x^2-y^2) + i 2xy\\
+sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) (cos(tan^(-1)(y/x)/2) + i sin(tan^(-1)(y/x)/2))\\
+"ident"(x+iy) = x + iy\\
+"conj"(x+iy) = x - iy\\
+"recip"(x+iy) = (x-iy) / (x^2+y^2)\\
+"flip"(x+iy) = y + ix\\
+"zero"(x+iy) = 0\\
+"one"(x+iy)  = 1\\
+"cabs"(x+iy) = sqrt(x^2 + y^2)\\
+"floor"(x+iy) = "floor"(x) + i "floor"(y)\\
+"ceil"(x+iy)  = "ceil"(x) + i"ceil"(y)\\
+"trunc"(x+iy) = "trunc"(x) + i"trunc"(y)\\
+"round"(x+iy) = "round"(x) + i"round"(y)
+++++
+
+~Format+,Online+,Doc+
 Id's definitions of abs(x+iy) and |x+iy| below are non-standard.
 Math texts define both absolute value and modulus of a complex number to
 be the same thing.  They are both equal to cabs(x+iy) as defined above.
-~Format-
+~Format-,ADoc-
 
    |x+iy| = x^2 + y^2
    abs(x+iy) = sqrt(x^2) + i sqrt(y^2)
+~ADoc+,Online-,Doc-
+[stem]
+++++
+|x+iy| = x^2 + y^2\\
+"abs"(x+iy) = sqrt(x^2) + i sqrt(y^2) = ("cabs"(x+iy))^2
+++++
+~Format+,Online+,Doc+
 ;
 ;
 ;

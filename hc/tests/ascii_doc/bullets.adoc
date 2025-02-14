@@ -1,4 +1,5 @@
 = Iterated Dynamics
+:stem:
 :toc: left
 :toclevels: 4
 :experimental:

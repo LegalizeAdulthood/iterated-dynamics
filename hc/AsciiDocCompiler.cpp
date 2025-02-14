@@ -657,6 +657,7 @@ void AsciiDocCompiler::print_ascii_doc()
         throw std::runtime_error("Couldn't open output file " + out_file.string());
     }
     str << "= Iterated Dynamics\n"
+           ":stem:\n"
            ":toc: left\n"
            ":toclevels: 4\n"
            ":experimental:\n";
