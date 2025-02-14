@@ -999,12 +999,27 @@ OK, now pick any complex number -- any point on the complex plane -- and
 call it C, a constant.  Pick another, this time one which can vary, and
 call it Z.  Starting with Z=0 (i.e., at the origin, where the real and
 imaginary axes cross), calculate the value of the expression
+~ADoc-
 
     Z^2 + C
 
+~Online-,Doc-,ADoc+,Format-
+
+[stem]
+++++
+Z^2 + C
+++++
+
+~Online+,Doc+,Format+
 Take the result, make it the new value of the variable Z, and calculate
 again.  Take that result, make it Z, and do it again, and so on: in
-mathematical terms, iterate the function Z(n+1) = Z(n)^2 + C.  For certain
+mathematical terms, iterate the function
+~ADoc-
+Z(n+1) = Z(n)^2 + C.
+~Online-,Doc-,ADoc+
+stem:[Z_(n+1) = Z_n^2 + C].
+~Online+,Doc+
+For certain
 values of C, the result "levels off" after a while.  For all others, it
 grows without limit.  The Mandelbrot set you see at the start -- the solid-
 colored lake (blue by default), the blue circles sprouting from it, and
