@@ -28,11 +28,20 @@ std::string to_display_string(const Version &value);
 // Parse legacy g_release style version.
 Version parse_legacy_version(int version);
 
-bool operator==(const Version &lhs, const Version &rhs);
+inline bool operator==(const Version &lhs, const Version &rhs)
+{
+    return lhs.major == rhs.major    //
+        && lhs.minor == rhs.minor    //
+        && lhs.patch == rhs.patch    //
+        && lhs.tweak == rhs.tweak    //
+        && lhs.legacy == rhs.legacy; //
+}
+
 inline bool operator!=(const Version &lhs, const Version &rhs)
 {
     return !(lhs == rhs);
 }
+
 bool operator<(const Version &lhs, const Version &rhs);
 
 inline bool operator>(const Version &lhs, const Version &rhs)

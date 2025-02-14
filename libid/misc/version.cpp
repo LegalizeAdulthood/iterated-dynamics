@@ -64,11 +64,6 @@ Version parse_legacy_version(int version)
     return result;
 }
 
-bool operator==(const Version &lhs, const Version &rhs)
-{
-    return false;
-}
-
 bool operator<(const Version &lhs, const Version &rhs)
 {
     if (lhs.legacy)

@@ -195,3 +195,56 @@ TEST(TestVersion, idVersionMajorTweakToDisplayString)
 
     EXPECT_EQ("Id v1.0.0.1", result);
 }
+
+TEST(TestVersion, legacyDifferentFromId)
+{
+    constexpr Version lhs{Version{1, 0, 0, 0, false}};
+    constexpr Version rhs{Version{1, 0, 0, 0, true}};
+
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+}
+
+TEST(TestVersion, sameVersionsEqual)
+{
+    constexpr Version ver{Version{1, 0, 0, 0, false}};
+
+    EXPECT_TRUE(ver == ver);
+    EXPECT_FALSE(ver != ver);
+}
+
+TEST(TestVersion, majorVersionDifferent)
+{
+    constexpr Version lhs{Version{1, 0, 0, 0, false}};
+    constexpr Version rhs{Version{2, 0, 0, 0, false}};
+
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+}
+
+TEST(TestVersion, minorVersionDifferent)
+{
+    constexpr Version lhs{Version{1, 0, 0, 0, false}};
+    constexpr Version rhs{Version{1, 1, 0, 0, false}};
+
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+}
+
+TEST(TestVersion, patchVersionDifferent)
+{
+    constexpr Version lhs{Version{1, 1, 0, 0, false}};
+    constexpr Version rhs{Version{1, 1, 1, 0, false}};
+
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+}
+
+TEST(TestVersion, tweakVersionDifferent)
+{
+    constexpr Version lhs{Version{1, 1, 1, 0, false}};
+    constexpr Version rhs{Version{1, 1, 1, 1, false}};
+
+    EXPECT_FALSE(lhs == rhs);
+    EXPECT_TRUE(lhs != rhs);
+}
