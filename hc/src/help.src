@@ -274,6 +274,11 @@ Found a bug?  File an issue on our github project!\
 
 New Features in Version 1.2
 
+o Improved version handling with the reset parameter\
+o Improved version handling when reading GIF files\
+o Improved version handling when writing GIF files\
+o Improved rendering of mathematics in the HTML help\
+
 Version 1.2 is mostly a code cleanup release that removes integer fractal
 types and replaces them exclusively with floating-point types.  This change
 was made to simplify the existing code paths in preparation for migration
