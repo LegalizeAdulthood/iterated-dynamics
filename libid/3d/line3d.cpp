@@ -395,7 +395,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
                 lv[2] = (long)(-s_radius - r * cos_theta * s_sin_phi);      // z
-                if ((lv[2] > s_z_cutoff) && !(g_fill_type < FillType::POINTS))
+                if (lv[2] > s_z_cutoff && g_fill_type >= FillType::POINTS)
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
