@@ -2811,14 +2811,15 @@ PalTable::PalTable() :
     m_csize(std::max(+CSIZE_MIN, (g_screen_y_dots - (PAL_TABLE_PAL_Y + 1 + 1)) / (2 * 16))),
     m_curr({1, 1}),
     m_rgb({RGBEditor(0, 0, this), RGBEditor(0, 0, this)}),
-    m_move_box(0, 0, 0, PAL_TABLE_PAL_X + 1, PAL_TABLE_PAL_Y + 1)
+    m_move_box(0, 0, 0, PAL_TABLE_PAL_X + 1, PAL_TABLE_PAL_Y + 1),
+    m_undo_file(dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b")),
+    m_top(255),
+    m_band_width(15)
 {
     m_fs_color.red = 42;
     m_fs_color.green = 42;
     m_fs_color.blue = 42;
-    m_band_width = 15;
-    m_top = 255;
-    m_undo_file = dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b");
+
     m_rgb[0].set_rgb(m_curr[0], &m_pal[m_curr[0]]);
     m_rgb[1].set_rgb(m_curr[1], &m_pal[m_curr[0]]);
     {

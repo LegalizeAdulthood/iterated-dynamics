@@ -827,11 +827,12 @@ struct Command
 
 Command::Command(char *cur_arg, CmdFile a_mode) :
     arg(cur_arg),
-    mode(a_mode)
+    mode(a_mode),
+    value(std::strchr(&cur_arg[1], '='))
 {
     lowerize_parameter(cur_arg);
     int j;
-    value = std::strchr(&cur_arg[1], '=');
+
     if (value != nullptr)
     {
         j = (int) (value++ - cur_arg);
