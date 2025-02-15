@@ -9,17 +9,16 @@
 // <https://github.com/ShiromMakkad/MandelbrotPerturbation>
 
 #include "engine/PertEngine.h"
-#include "engine/perturbation.h"
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/perturbation.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
-#include "misc/driver.h"
-#include "misc/id.h"
+#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 
 #include <algorithm>
