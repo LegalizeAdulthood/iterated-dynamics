@@ -70,10 +70,10 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
 
     int dx = x2 - x1;                   // find vector components
     int dy = y2 - y1;
-    char pos_slope = dx > 0;                   // is slope positive?
+    bool pos_slope = dx > 0;                   // is slope positive?
     if (dy < 0)
     {
-        pos_slope = (char)!pos_slope;
+        pos_slope = !pos_slope;
     }
     if (std::abs(dx) > std::abs(dy))                  // shallow line case
     {
